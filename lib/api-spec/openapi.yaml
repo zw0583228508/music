@@ -4720,6 +4720,55 @@ components:
     CandidateStrategyId:
       type: string
       enum: [conservative, rhythmic, melodic, sparse, adventurous]
+    CritiqueDimension:
+      type: string
+      enum: [harmony, groove, voiceLeading, leadCompatibility, orchestration, sectionDevelopment, motifCoherence, contrast, transitions, playability, performancePotential]
+    CritiqueFinding:
+      type: object
+      required: [dimension, severity, message]
+      properties:
+        dimension: { type: string }
+        severity: { type: string, enum: [info, warning, error] }
+        sectionName: { type: string }
+        instrument: { type: string }
+        startBar: { type: number }
+        endBar: { type: number }
+        message: { type: string }
+    CritiqueDimensionScore:
+      type: object
+      required: [dimension, score, weight, confidence, findings]
+      properties:
+        dimension: { $ref: "#/components/schemas/CritiqueDimension" }
+        score: { type: number, minimum: 0, maximum: 100 }
+        weight: { type: number, minimum: 0, maximum: 1 }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        findings: { type: array, items: { type: string } }
+    CritiqueRecommendedRepair:
+      type: object
+      required: [dimension, action, reason]
+      properties:
+        dimension: { $ref: "#/components/schemas/CritiqueDimension" }
+        sectionName: { type: string }
+        instrument: { type: string }
+        startBar: { type: number }
+        endBar: { type: number }
+        action: { type: string }
+        reason: { type: string }
+    ArrangementCritique:
+      type: object
+      description: Music Critic V1 (PR-11) — deep musical critique with a hard-rule gate.
+      required: [version, method, evaluatedNotes, feasible, hardRuleFindings, overallScore, dimensions, strengths, weaknesses, recommendedRepairs]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        method: { type: string }
+        evaluatedNotes: { type: boolean }
+        feasible: { type: boolean }
+        hardRuleFindings: { type: array, items: { $ref: "#/components/schemas/CritiqueFinding" } }
+        overallScore: { type: number, minimum: 0, maximum: 100 }
+        dimensions: { type: array, items: { $ref: "#/components/schemas/CritiqueDimensionScore" } }
+        strengths: { type: array, items: { type: string } }
+        weaknesses: { type: array, items: { type: string } }
+        recommendedRepairs: { type: array, items: { $ref: "#/components/schemas/CritiqueRecommendedRepair" } }
     CandidateGenerationPlan:
       type: object
       description: Deliberate candidate-generation strategies (PR-10).

@@ -2184,6 +2184,61 @@ export type PartComposerPlan = {
   }>;
 };
 
+/** Dimensions the Music Critic V1 scores (PR-11). */
+export type CritiqueDimension =
+  | "harmony" | "groove" | "voiceLeading" | "leadCompatibility" | "orchestration"
+  | "sectionDevelopment" | "motifCoherence" | "contrast" | "transitions"
+  | "playability" | "performancePotential";
+
+export type CritiqueFinding = {
+  dimension: CritiqueDimension | "hardRule";
+  severity: "info" | "warning" | "error";
+  sectionName?: string;
+  instrument?: string;
+  startBar?: number;
+  endBar?: number;
+  message: string;
+};
+
+export type CritiqueDimensionScore = {
+  dimension: CritiqueDimension;
+  /** 0..100. */
+  score: number;
+  weight: number;
+  /** 0..1 — lower when judged from the plan alone (no notes yet). */
+  confidence: number;
+  findings: string[];
+};
+
+export type CritiqueRecommendedRepair = {
+  dimension: CritiqueDimension;
+  sectionName?: string;
+  instrument?: string;
+  startBar?: number;
+  endBar?: number;
+  action: string;
+  reason: string;
+};
+
+/**
+ * Music Critic V1 (PR-11) — deep musical critique on top of the existing
+ * reliability ranking. A `feasible` hard-rule gate, per-dimension scores with
+ * findings, and targeted repair recommendations.
+ */
+export type ArrangementCritique = {
+  version: "1.0";
+  method: string;
+  /** True when track models (notes) were supplied, not just the plan. */
+  evaluatedNotes: boolean;
+  feasible: boolean;
+  hardRuleFindings: CritiqueFinding[];
+  overallScore: number;
+  dimensions: CritiqueDimensionScore[];
+  strengths: string[];
+  weaknesses: string[];
+  recommendedRepairs: CritiqueRecommendedRepair[];
+};
+
 /** Deliberate candidate-generation strategies (PR-10). */
 export type CandidateStrategyId =
   | "conservative" | "rhythmic" | "melodic" | "sparse" | "adventurous";

@@ -5457,6 +5457,99 @@ export interface ArrangementPlan {
   generationPreference?: GenerationPreferenceSnapshot | null;
 }
 
+export type CritiqueDimension = typeof CritiqueDimension[keyof typeof CritiqueDimension];
+
+
+export const CritiqueDimension = {
+  harmony: 'harmony',
+  groove: 'groove',
+  voiceLeading: 'voiceLeading',
+  leadCompatibility: 'leadCompatibility',
+  orchestration: 'orchestration',
+  sectionDevelopment: 'sectionDevelopment',
+  motifCoherence: 'motifCoherence',
+  contrast: 'contrast',
+  transitions: 'transitions',
+  playability: 'playability',
+  performancePotential: 'performancePotential',
+} as const;
+
+export type CritiqueFindingSeverity = typeof CritiqueFindingSeverity[keyof typeof CritiqueFindingSeverity];
+
+
+export const CritiqueFindingSeverity = {
+  info: 'info',
+  warning: 'warning',
+  error: 'error',
+} as const;
+
+export interface CritiqueFinding {
+  dimension: string;
+  severity: CritiqueFindingSeverity;
+  sectionName?: string;
+  instrument?: string;
+  startBar?: number;
+  endBar?: number;
+  message: string;
+}
+
+export interface CritiqueDimensionScore {
+  dimension: CritiqueDimension;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  score: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  weight: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+  findings: string[];
+}
+
+export interface CritiqueRecommendedRepair {
+  dimension: CritiqueDimension;
+  sectionName?: string;
+  instrument?: string;
+  startBar?: number;
+  endBar?: number;
+  action: string;
+  reason: string;
+}
+
+export type ArrangementCritiqueVersion = typeof ArrangementCritiqueVersion[keyof typeof ArrangementCritiqueVersion];
+
+
+export const ArrangementCritiqueVersion = {
+  '10': '1.0',
+} as const;
+
+/**
+ * Music Critic V1 (PR-11) — deep musical critique with a hard-rule gate.
+ */
+export interface ArrangementCritique {
+  version: ArrangementCritiqueVersion;
+  method: string;
+  evaluatedNotes: boolean;
+  feasible: boolean;
+  hardRuleFindings: CritiqueFinding[];
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  overallScore: number;
+  dimensions: CritiqueDimensionScore[];
+  strengths: string[];
+  weaknesses: string[];
+  recommendedRepairs: CritiqueRecommendedRepair[];
+}
+
 /**
  * Resource not found
  */
