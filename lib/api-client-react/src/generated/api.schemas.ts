@@ -4156,6 +4156,77 @@ export interface MixPlan {
   styleInputs: MixPlanStyleInputsItem[];
 }
 
+export type StyleFingerprintInputSourceKind = typeof StyleFingerprintInputSourceKind[keyof typeof StyleFingerprintInputSourceKind];
+
+
+export const StyleFingerprintInputSourceKind = {
+  song_model: 'song_model',
+  arrangement: 'arrangement',
+} as const;
+
+export interface StyleFingerprintInput {
+  sourceKind: StyleFingerprintInputSourceKind;
+  sourceId?: string;
+  /** @maxLength 120 */
+  label?: string;
+}
+
+export interface StyleFingerprintCompareInput {
+  /** @minLength 1 */
+  leftId: string;
+  /** @minLength 1 */
+  rightId: string;
+}
+
+export type StyleFingerprintRecordSourceKind = typeof StyleFingerprintRecordSourceKind[keyof typeof StyleFingerprintRecordSourceKind];
+
+
+export const StyleFingerprintRecordSourceKind = {
+  song_model: 'song_model',
+  arrangement: 'arrangement',
+  reference_upload: 'reference_upload',
+} as const;
+
+export type StyleFingerprintRecordFingerprint = { [key: string]: unknown };
+
+/**
+ * PR-27 — a content-free statistical fingerprint. Every field is a scalar, a class word or a distribution of at most 16 numbers.
+ */
+export interface StyleFingerprintRecord {
+  id: string;
+  projectId: string;
+  sourceKind: StyleFingerprintRecordSourceKind;
+  sourceId: string;
+  sourceVersion: number | null;
+  digest: string;
+  fingerprint: StyleFingerprintRecordFingerprint;
+  createdAt: string;
+}
+
+export type FingerprintComparisonVersion = typeof FingerprintComparisonVersion[keyof typeof FingerprintComparisonVersion];
+
+
+export const FingerprintComparisonVersion = {
+  '10': '1.0',
+} as const;
+
+export type FingerprintComparisonDeltasItem = {
+  feature: string;
+  left: number | string;
+  right: number | string;
+  distance: number;
+  summary: string;
+};
+
+export interface FingerprintComparison {
+  version: FingerprintComparisonVersion;
+  leftId: string;
+  rightId: string;
+  distance: number;
+  deltas: FingerprintComparisonDeltasItem[];
+  headline: string[];
+}
+
 export interface MixPlanInput {
   /** @minLength 1 */
   arrangementId: string;

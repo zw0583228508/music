@@ -18465,6 +18465,87 @@ export const CreateMixPlanResponse = zod.object({
 
 
 /**
+ * @summary Style fingerprints taken in this project (PR-27; abstract statistics only, never content)
+ */
+export const ListStyleFingerprintsParams = zod.object({
+  "projectId": zod.coerce.string()
+})
+
+export const ListStyleFingerprintsResponseItem = zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "sourceKind": zod.enum(['song_model', 'arrangement', 'reference_upload']),
+  "sourceId": zod.string(),
+  "sourceVersion": zod.number().nullable(),
+  "digest": zod.string(),
+  "fingerprint": zod.record(zod.string(), zod.unknown()),
+  "createdAt": zod.string()
+}).describe('PR-27 — a content-free statistical fingerprint. Every field is a scalar, a class word or a distribution of at most 16 numbers.')
+export const ListStyleFingerprintsResponse = zod.array(ListStyleFingerprintsResponseItem)
+
+
+/**
+ * @summary Take a style fingerprint of the project's Song Model or of an arrangement
+ */
+export const CreateStyleFingerprintParams = zod.object({
+  "projectId": zod.coerce.string()
+})
+
+export const createStyleFingerprintBodyLabelMax = 120;
+
+
+
+export const CreateStyleFingerprintBody = zod.strictObject({
+  "sourceKind": zod.enum(['song_model', 'arrangement']),
+  "sourceId": zod.string().optional(),
+  "label": zod.string().max(createStyleFingerprintBodyLabelMax).optional()
+})
+
+export const CreateStyleFingerprintResponse = zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "sourceKind": zod.enum(['song_model', 'arrangement', 'reference_upload']),
+  "sourceId": zod.string(),
+  "sourceVersion": zod.number().nullable(),
+  "digest": zod.string(),
+  "fingerprint": zod.record(zod.string(), zod.unknown()),
+  "createdAt": zod.string()
+}).describe('PR-27 — a content-free statistical fingerprint. Every field is a scalar, a class word or a distribution of at most 16 numbers.')
+
+
+/**
+ * @summary Compare two fingerprints feature by feature, in words
+ */
+export const CompareStyleFingerprintsParams = zod.object({
+  "projectId": zod.coerce.string()
+})
+
+
+
+
+
+export const CompareStyleFingerprintsBody = zod.strictObject({
+  "leftId": zod.string().min(1),
+  "rightId": zod.string().min(1)
+})
+
+export const CompareStyleFingerprintsResponse = zod.object({
+  "version": zod.enum(['1.0']),
+  "leftId": zod.string(),
+  "rightId": zod.string(),
+  "distance": zod.number(),
+  "deltas": zod.array(zod.object({
+  "feature": zod.string(),
+  "left": zod.union([zod.number(),zod.string()]),
+  "right": zod.union([zod.number(),zod.string()]),
+  "distance": zod.number(),
+  "summary": zod.string()
+})),
+  "headline": zod.array(zod.string())
+})
+
+
+/**
  * @summary List the authenticated producer's private immutable decisions
  */
 export const listProducerDecisionsQueryLimitDefault = 50;

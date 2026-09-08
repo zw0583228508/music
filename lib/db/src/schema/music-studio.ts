@@ -192,6 +192,125 @@ export type MixMasterControls = {
   master: { targetLufs: number; truePeakDbtp: number; processing: { limiter: boolean; stereoWidth: number } };
 };
 
+// ---------------------------------------------------------------------------
+// Wave 7 — PR-27: reference style fingerprint.
+//
+// A fingerprint is a small set of *abstract* statistics about how a piece of
+// music behaves — never its content. No note sequence, melody, chord
+// progression, lyric, audio or anything from which those could be rebuilt
+// ever enters it: every field is a scalar, a class word, or a distribution of
+// at most 16 numbers. `assertContentFree` enforces that structurally. This is
+// the rule PR-U4 (reference intelligence) and PR-28..31 (learning) build on.
+// ---------------------------------------------------------------------------
+
+export type StyleFingerprintSourceKind = "song_model" | "arrangement" | "reference_upload";
+
+export type StyleFingerprintSource = {
+  kind: StyleFingerprintSourceKind;
+  id: string;
+  version: number | null;
+  label?: string;
+};
+
+/** Where onsets fall, as fractions of all onsets (sums to ~1). */
+export type SubdivisionDistribution = { quarter: number; eighth: number; sixteenth: number; triplet: number; other: number };
+
+export type StyleFingerprint = {
+  version: "1.0";
+  method: string;
+  derivedAt: string;
+  /** Digest of the inputs (song model / track models) the fingerprint was taken from. */
+  inputsDigestSha256: string;
+  source: StyleFingerprintSource;
+  /** Structural guarantee, re-checked on every read: see assertContentFree. */
+  contentFree: true;
+  tempo: { bpm: number; stability: number; meter: string; behavior: "slow" | "moderate" | "fast" | "rubato_tolerant" | "strict_grid" };
+  groove: {
+    /** 0.5 straight … ~0.67 triplet swing, estimated from offbeat placement. */
+    swingRatio: number;
+    /** Mean signed onset offset from the 16th grid, ms (negative = ahead). */
+    microtimingMs: number;
+    microtiming: "quantized" | "on_top" | "behind" | "ahead" | "loose";
+    /** Fraction of onsets on metrically weak positions. */
+    syncopation: number;
+    subdivisions: SubdivisionDistribution;
+    /** Onsets per beat, mean. */
+    onsetDensity: number;
+  };
+  harmony: {
+    chordsPerBar: number;
+    harmonicRhythm: "slow" | "moderate" | "fast";
+    /** Share of chords beyond triads. */
+    extensionShare: number;
+    chordExtensions: "triads" | "sevenths" | "extended";
+    keyChanges: number;
+    /** Share of chords whose root moves by a fourth/fifth (functional motion). */
+    functionalMotion: number;
+  };
+  /** Statistics of the melodic line — never the line. */
+  melodicShape: {
+    rangeSemitones: number;
+    stepwiseRatio: number;
+    leapRatio: number;
+    meanIntervalSemitones: number;
+    /** Median phrase length in beats (phrases split on rests ≥ one beat). */
+    phraseLengthBeats: number;
+    phraseLength: "short" | "regular" | "long" | "irregular";
+    ornamentDensity: number;
+    ornamentation: "none" | "light" | "moderate" | "heavy";
+  };
+  register: { low: number; mid: number; high: number; tendency: "low" | "mid" | "high" | "wide" };
+  dynamics: { velocityP10: number; velocityP90: number; rangeClass: "narrow" | "moderate" | "wide" };
+  /** Eight-point normalised energy arc over the piece (0..1). */
+  energyArc: number[];
+  density: { notesPerBarMean: number; notesPerBarP10: number; notesPerBarP90: number; arcShape: "flat" | "rising" | "falling" | "arch" | "valley" };
+  instrumentation: {
+    /** Families ordered by note share, most present first. */
+    hierarchy: string[];
+    familyShare: Record<string, number>;
+    trackCount: number;
+  };
+  sectionCount: number;
+  durationSeconds: number;
+};
+
+export type FingerprintFeatureDelta = {
+  feature: string;
+  left: number | string;
+  right: number | string;
+  /** 0 identical … 1 as different as the feature's range allows. */
+  distance: number;
+  /** A sentence a producer would say ("the reference swings harder: 0.62 vs 0.52"). */
+  summary: string;
+};
+
+export type FingerprintComparison = {
+  version: "1.0";
+  leftId: string;
+  rightId: string;
+  /** Weighted mean of the per-feature distances, 0..1. */
+  distance: number;
+  deltas: FingerprintFeatureDelta[];
+  /** The three largest differences, in words. */
+  headline: string[];
+};
+
+export const styleFingerprintsTable = pgTable(
+  "music_style_fingerprints",
+  {
+    id: text("id").primaryKey(),
+    projectId: text("project_id").notNull().references(() => musicProjectsTable.id, { onDelete: "cascade" }),
+    sourceKind: text("source_kind").notNull(),
+    sourceId: text("source_id").notNull(),
+    sourceVersion: integer("source_version"),
+    digest: text("digest").notNull(),
+    fingerprint: jsonb("fingerprint").$type<StyleFingerprint>().notNull(),
+    createdBy: text("created_by").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("music_style_fingerprints_source_unique").on(table.projectId, table.sourceKind, table.sourceId, table.digest)],
+);
+
 /**
  * Mastering Engine (PR-26): what a master *achieved*, measured with
  * BS.1770-4 gated loudness and 4× true peak — never asserted from the

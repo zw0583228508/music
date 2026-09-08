@@ -1,0 +1,349 @@
+{
+  "pr": "PR-27 reference-style-fingerprint",
+  "recordedAt": "2026-09-08T22:37:15.304Z",
+  "projectId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2",
+  "path": "POST /projects/{id}/style-fingerprints (song_model, arrangement) -> stored in music_style_fingerprints -> POST /style-fingerprints/compare",
+  "rule": "Content-free by construction: every field is a scalar, a class word, or a distribution of ≤16 numbers; assertContentFree runs on every derivation and the stored rows were re-checked (no content keys, no array > 16).",
+  "song": {
+    "id": "fp-db4cbf80-1089-4823-a8a4-666d47db08ec",
+    "sourceKind": "song_model",
+    "sourceId": "4d2756dc-f640-4bad-8a69-9380eadd2023",
+    "sourceVersion": 1,
+    "digest": "84e7e6aecbee3a5b…",
+    "fingerprint": {
+      "tempo": {
+        "bpm": 120,
+        "meter": "4/4",
+        "behavior": "strict_grid",
+        "stability": 0
+      },
+      "groove": {
+        "swingRatio": 0.5,
+        "microtiming": "quantized",
+        "syncopation": 0,
+        "onsetDensity": 0.5,
+        "subdivisions": {
+          "other": 0,
+          "eighth": 0,
+          "quarter": 1,
+          "triplet": 0,
+          "sixteenth": 0
+        },
+        "microtimingMs": 0
+      },
+      "method": "style-fingerprint/v1 (abstract statistics; content-free by construction)",
+      "source": {
+        "id": "4d2756dc-f640-4bad-8a69-9380eadd2023",
+        "kind": "song_model",
+        "label": "the project's own recording",
+        "version": 1
+      },
+      "density": {
+        "arcShape": "rising",
+        "notesPerBarP10": 0,
+        "notesPerBarP90": 4,
+        "notesPerBarMean": 2
+      },
+      "harmony": {
+        "keyChanges": 0,
+        "chordsPerBar": 0.5,
+        "extensionShare": 0,
+        "harmonicRhythm": "slow",
+        "chordExtensions": "triads",
+        "functionalMotion": 0.474
+      },
+      "version": "1.0",
+      "dynamics": {
+        "rangeClass": "narrow",
+        "velocityP10": 92,
+        "velocityP90": 92
+      },
+      "register": {
+        "low": 0,
+        "mid": 1,
+        "high": 0,
+        "tendency": "mid"
+      },
+      "derivedAt": "2026-09-08T22:37:14.344Z",
+      "energyArc": [
+        0.261,
+        0.435,
+        0.728,
+        0.924,
+        0.489,
+        0.693,
+        1,
+        0.417
+      ],
+      "contentFree": true,
+      "melodicShape": {
+        "leapRatio": 0,
+        "phraseLength": "regular",
+        "ornamentation": "none",
+        "stepwiseRatio": 0,
+        "rangeSemitones": 7,
+        "ornamentDensity": 0,
+        "phraseLengthBeats": 3.9,
+        "meanIntervalSemitones": 3.49
+      },
+      "sectionCount": 6,
+      "durationSeconds": 80,
+      "instrumentation": {
+        "hierarchy": [
+          "lead"
+        ],
+        "trackCount": 1,
+        "familyShare": {
+          "lead": 1
+        }
+      },
+      "inputsDigestSha256": "84e7e6aecbee3a5b97f4e3dd3e289ada358abad4eede4c17428a8dec1ab68a5c"
+    }
+  },
+  "arrangement": {
+    "id": "fp-e32b9e00-edc4-423b-b1b3-4dea7a3627ca",
+    "sourceKind": "arrangement",
+    "sourceId": "4da143de-3667-48f2-b750-ea14a041825c",
+    "sourceVersion": 3,
+    "digest": "9f918b3739c713aa…",
+    "fingerprint": {
+      "tempo": {
+        "bpm": 120,
+        "meter": "4/4",
+        "behavior": "moderate",
+        "stability": 0
+      },
+      "groove": {
+        "swingRatio": 0.5,
+        "microtiming": "on_top",
+        "syncopation": 0.233,
+        "onsetDensity": 4.31,
+        "subdivisions": {
+          "other": 0,
+          "eighth": 0.222,
+          "quarter": 0.767,
+          "triplet": 0,
+          "sixteenth": 0.012
+        },
+        "microtimingMs": -4.7
+      },
+      "method": "style-fingerprint/v1 (abstract statistics; content-free by construction)",
+      "source": {
+        "id": "4da143de-3667-48f2-b750-ea14a041825c",
+        "kind": "arrangement",
+        "label": "brain arrangement v3",
+        "version": 3
+      },
+      "density": {
+        "arcShape": "rising",
+        "notesPerBarP10": 16,
+        "notesPerBarP90": 19,
+        "notesPerBarMean": 17.25
+      },
+      "harmony": {
+        "keyChanges": 0,
+        "chordsPerBar": 0.5,
+        "extensionShare": 0,
+        "harmonicRhythm": "slow",
+        "chordExtensions": "triads",
+        "functionalMotion": 0.474
+      },
+      "version": "1.0",
+      "dynamics": {
+        "rangeClass": "wide",
+        "velocityP10": 25,
+        "velocityP90": 93
+      },
+      "register": {
+        "low": 0.772,
+        "mid": 0.228,
+        "high": 0,
+        "tendency": "low"
+      },
+      "derivedAt": "2026-09-08T22:37:18.091Z",
+      "energyArc": [
+        0.261,
+        0.435,
+        0.728,
+        0.924,
+        0.489,
+        0.693,
+        1,
+        0.417
+      ],
+      "contentFree": true,
+      "melodicShape": {
+        "leapRatio": 0.599,
+        "phraseLength": "long",
+        "ornamentation": "none",
+        "stepwiseRatio": 0.006,
+        "rangeSemitones": 41,
+        "ornamentDensity": 0,
+        "phraseLengthBeats": 30.82,
+        "meanIntervalSemitones": 6.47
+      },
+      "sectionCount": 6,
+      "durationSeconds": 80,
+      "instrumentation": {
+        "hierarchy": [
+          "drums",
+          "strings",
+          "keys"
+        ],
+        "trackCount": 3,
+        "familyShare": {
+          "keys": 0.03,
+          "drums": 0.771,
+          "strings": 0.199
+        }
+      },
+      "inputsDigestSha256": "9f918b3739c713aa3275a8a5d3ca9841ff04b95e392a9769b56ec9e03009eb18"
+    }
+  },
+  "comparison": {
+    "version": "1.0",
+    "leftId": "fp-db4cbf80-1089-4823-a8a4-666d47db08ec",
+    "rightId": "fp-e32b9e00-edc4-423b-b1b3-4dea7a3627ca",
+    "distance": 0.332,
+    "deltas": [
+      {
+        "feature": "tempo.bpm",
+        "left": 120,
+        "right": 120,
+        "distance": 0,
+        "summary": "tempo 120 vs 120 BPM"
+      },
+      {
+        "feature": "groove.swingRatio",
+        "left": 0.5,
+        "right": 0.5,
+        "distance": 0,
+        "summary": "the right swings harder: 0.5 vs 0.5"
+      },
+      {
+        "feature": "groove.microtimingMs",
+        "left": 0,
+        "right": -4.7,
+        "distance": 0.157,
+        "summary": "microtiming 0 ms vs -4.7 ms against the grid"
+      },
+      {
+        "feature": "groove.syncopation",
+        "left": 0,
+        "right": 0.233,
+        "distance": 0.233,
+        "summary": "syncopation 0 vs 0.233"
+      },
+      {
+        "feature": "groove.onsetDensity",
+        "left": 0.5,
+        "right": 4.31,
+        "distance": 0.635,
+        "summary": "0.5 vs 4.31 onsets per beat"
+      },
+      {
+        "feature": "harmony.chordsPerBar",
+        "left": 0.5,
+        "right": 0.5,
+        "distance": 0,
+        "summary": "chords change 0.5 vs 0.5 times per bar"
+      },
+      {
+        "feature": "harmony.extensionShare",
+        "left": 0,
+        "right": 0,
+        "distance": 0,
+        "summary": "0 % vs 0 % of chords go beyond triads"
+      },
+      {
+        "feature": "melodicShape.stepwiseRatio",
+        "left": 0,
+        "right": 0.006,
+        "distance": 0.006,
+        "summary": "the melody moves stepwise 0 % vs 1 % of the time"
+      },
+      {
+        "feature": "melodicShape.phraseLengthBeats",
+        "left": 3.9,
+        "right": 30.82,
+        "distance": 1,
+        "summary": "phrases of 3.9 vs 30.82 beats"
+      },
+      {
+        "feature": "melodicShape.ornamentDensity",
+        "left": 0,
+        "right": 0,
+        "distance": 0,
+        "summary": "ornament density 0 vs 0"
+      },
+      {
+        "feature": "dynamics.range",
+        "left": 0,
+        "right": 68,
+        "distance": 0.85,
+        "summary": "dynamic range 0 vs 68 velocity steps"
+      },
+      {
+        "feature": "density.notesPerBarMean",
+        "left": 2,
+        "right": 17.25,
+        "distance": 0.381,
+        "summary": "2 vs 17.25 notes per bar"
+      },
+      {
+        "feature": "register.low",
+        "left": 0,
+        "right": 0.772,
+        "distance": 0.772,
+        "summary": "0 % vs 77 % of notes in the low register"
+      },
+      {
+        "feature": "harmony.chordExtensions",
+        "left": "triads",
+        "right": "triads",
+        "distance": 0,
+        "summary": "harmony.chordExtensions: both triads"
+      },
+      {
+        "feature": "melodicShape.phraseLength",
+        "left": "regular",
+        "right": "long",
+        "distance": 1,
+        "summary": "melodicShape.phraseLength: regular vs long"
+      },
+      {
+        "feature": "density.arcShape",
+        "left": "rising",
+        "right": "rising",
+        "distance": 0,
+        "summary": "density.arcShape: both rising"
+      },
+      {
+        "feature": "register.tendency",
+        "left": "mid",
+        "right": "low",
+        "distance": 1,
+        "summary": "register.tendency: mid vs low"
+      },
+      {
+        "feature": "instrumentation.lead",
+        "left": "lead",
+        "right": "drums",
+        "distance": 1,
+        "summary": "instrumentation.lead: lead vs drums"
+      }
+    ],
+    "headline": [
+      "phrases of 3.9 vs 30.82 beats",
+      "melodicShape.phraseLength: regular vs long",
+      "register.tendency: mid vs low"
+    ]
+  },
+  "observations": [
+    "The project's Song Model (a seeded benchmark model) has a sparse one-note-per-beat melody: stepwise/leap ratios read 0 and onset density 0.5 — the fingerprint says so rather than inventing a shape.",
+    "The Arrangement Brain's v3 arrangement reads as: 120 BPM on the grid (-4.7 ms, on_top), 4.31 onsets/beat, syncopation 0.23, low register, wide dynamics, rising arc, drums > strings > keys — a description a producer could act on, with no note in it.",
+    "Comparison distance 0.332; headline: phrases of 3.9 vs 30.8 beats (the ensemble layer plays continuously), regular vs long phrasing, mid vs low register.",
+    "Idempotency defect found in the live run and fixed: the label was hashed into the digest, so the same source under two names made two rows; the digest now covers the musical inputs only (test added). Two rows for the Song Model remain in the dev database from before the fix.",
+    "No audio features yet (spectral, stereo): the `sound` copy scope yields nothing rather than something invented."
+  ]
+}

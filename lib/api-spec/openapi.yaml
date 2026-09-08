@@ -979,6 +979,60 @@ paths:
               schema: { $ref: "#/components/schemas/MixPlanResponse" }
         "404": { $ref: "#/components/responses/NotFound" }
         "409": { description: Arrangement is unavailable or has no TrackModels }
+  /projects/{projectId}/style-fingerprints:
+    get:
+      operationId: listStyleFingerprints
+      tags: [studio]
+      summary: Style fingerprints taken in this project (PR-27; abstract statistics only, never content)
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Fingerprints, newest first
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/StyleFingerprintRecord" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    post:
+      operationId: createStyleFingerprint
+      tags: [studio]
+      summary: Take a style fingerprint of the project's Song Model or of an arrangement
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/StyleFingerprintInput" }
+      responses:
+        "200":
+          description: The fingerprint (idempotent for identical inputs)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StyleFingerprintRecord" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { description: The source has nothing to fingerprint }
+  /projects/{projectId}/style-fingerprints/compare:
+    post:
+      operationId: compareStyleFingerprints
+      tags: [studio]
+      summary: Compare two fingerprints feature by feature, in words
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/StyleFingerprintCompareInput" }
+      responses:
+        "200":
+          description: Distance and per-feature deltas
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FingerprintComparison" }
+        "404": { $ref: "#/components/responses/NotFound" }
   /producer-decisions:
     get:
       operationId: listProducerDecisions
@@ -3974,6 +4028,55 @@ components:
               dimension: { type: string }
               value: { oneOf: [{ type: string }, { type: number }] }
               provenance: { type: string }
+    StyleFingerprintInput:
+      type: object
+      required: [sourceKind]
+      properties:
+        sourceKind: { type: string, enum: [song_model, arrangement] }
+        # Arrangement id, or a Song Model version; omitted = the latest Song Model.
+        sourceId: { type: string }
+        label: { type: string, maxLength: 120 }
+    StyleFingerprintCompareInput:
+      type: object
+      required: [leftId, rightId]
+      properties:
+        leftId: { type: string, minLength: 1 }
+        rightId: { type: string, minLength: 1 }
+    StyleFingerprintRecord:
+      type: object
+      description: PR-27 — a content-free statistical fingerprint. Every field is a scalar, a class word or a distribution of at most 16 numbers.
+      required: [id, projectId, sourceKind, sourceId, sourceVersion, digest, fingerprint, createdAt]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        sourceKind: { type: string, enum: [song_model, arrangement, reference_upload] }
+        sourceId: { type: string }
+        sourceVersion: { type: number, nullable: true }
+        digest: { type: string }
+        fingerprint:
+          type: object
+          additionalProperties: true
+        createdAt: { type: string }
+    FingerprintComparison:
+      type: object
+      required: [version, leftId, rightId, distance, deltas, headline]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        leftId: { type: string }
+        rightId: { type: string }
+        distance: { type: number }
+        deltas:
+          type: array
+          items:
+            type: object
+            required: [feature, left, right, distance, summary]
+            properties:
+              feature: { type: string }
+              left: { oneOf: [{ type: number }, { type: string }] }
+              right: { oneOf: [{ type: number }, { type: string }] }
+              distance: { type: number }
+              summary: { type: string }
+        headline: { type: array, items: { type: string } }
     MixPlanInput:
       type: object
       required: [arrangementId]
