@@ -113,6 +113,7 @@ const suites = {
     bundles: [
       ["src/lib/producerChat.test.ts", "producer-chat.test.mjs"],
       ["src/lib/producerIntelligence/openAiIntentModel.test.ts", "pi-openai-intent-model.test.mjs"],
+      ["src/lib/referenceIntelligence.test.ts", "reference-intelligence.test.mjs"],
     ],
   },
 };

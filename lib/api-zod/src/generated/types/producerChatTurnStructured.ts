@@ -28,4 +28,6 @@ export interface ProducerChatTurnStructured {
   explanation?: PlanExplanation;
   planSource?: ProducerChatTurnStructuredPlanSource;
   intentMethod?: string;
+  /** PR-U4 - the reference rows this turn touched */
+  referenceIds?: string[];
 }

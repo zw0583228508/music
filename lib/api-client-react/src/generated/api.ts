@@ -88,6 +88,12 @@ import type {
   ProjectInput,
   ProjectSource,
   ProjectWorkspace,
+  ReferenceCompareInput,
+  ReferenceComparison,
+  ReferenceMutationResult,
+  ReferenceTrack,
+  ReferenceTrackInput,
+  ReferenceTrackPatchInput,
   RegisterSourceInput,
   RestoreArrangementRevisionInput,
   SongModel,
@@ -6630,5 +6636,458 @@ export const useSupersedeProducerDecision = <TError = ErrorType<NotFoundResponse
         TContext
       > => {
       return useMutation(getSupersedeProducerDecisionMutationOptions(options));
+    }
+
+export const getListProjectReferencesUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/references`
+}
+
+/**
+ * @summary The project's references with what each lends the current brief
+ */
+export const listProjectReferences = async (projectId: string, options?: Parameters<typeof customFetch>[1]): Promise<ReferenceTrack[]> => {
+
+  return customFetch<ReferenceTrack[]>(getListProjectReferencesUrl(projectId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListProjectReferencesQueryKey = (projectId: string,) => {
+    return [
+    `/api/projects/${projectId}/references`
+    ] as const;
+    }
+
+
+export const getListProjectReferencesQueryOptions = <TData = Awaited<ReturnType<typeof listProjectReferences>>, TError = ErrorType<NotFoundResponse>>(projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProjectReferences>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListProjectReferencesQueryKey(projectId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listProjectReferences>>> = ({ signal }) => listProjectReferences(projectId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listProjectReferences>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListProjectReferencesQueryResult = NonNullable<Awaited<ReturnType<typeof listProjectReferences>>>
+export type ListProjectReferencesQueryError = ErrorType<NotFoundResponse>
+
+
+/**
+ * @summary The project's references with what each lends the current brief
+ */
+
+export function useListProjectReferences<TData = Awaited<ReturnType<typeof listProjectReferences>>, TError = ErrorType<NotFoundResponse>>(
+ projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProjectReferences>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListProjectReferencesQueryOptions(projectId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateProjectReferenceUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/references`
+}
+
+/**
+ * A named reference has no audio and no fingerprint: it stays a label carrying
+ * an allowed copy scope and an optional rights note. An uploaded reference must
+ * be one of your own project sources (any of your projects) and needs a rights
+ * note in your own words; once its analysis exists it is fingerprinted (PR-27,
+ * abstract statistics only) and that fingerprint is the only thing read from it.
+ * When a brief exists it is recompiled and a `reference` turn is recorded.
+ * @summary Add a named reference (a label) or attach one of your own analysed uploads as a reference
+ */
+export const createProjectReference = async (projectId: string,
+    referenceTrackInput: ReferenceTrackInput, options?: Parameters<typeof customFetch>[1]): Promise<ReferenceMutationResult> => {
+
+  return customFetch<ReferenceMutationResult>(getCreateProjectReferenceUrl(projectId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(referenceTrackInput)
+  }
+);}
+
+
+
+
+
+export const getCreateProjectReferenceMutationOptions = <TError = ErrorType<void | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createProjectReference>>, TError,{projectId: string;data: BodyType<ReferenceTrackInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createProjectReference>>, TError,{projectId: string;data: BodyType<ReferenceTrackInput>}, TContext> => {
+
+const mutationKey = ['createProjectReference'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createProjectReference>>, {projectId: string;data: BodyType<ReferenceTrackInput>}> = (props) => {
+          const {projectId,data} = props ?? {};
+
+          return  createProjectReference(projectId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateProjectReferenceMutationResult = NonNullable<Awaited<ReturnType<typeof createProjectReference>>>
+    export type CreateProjectReferenceMutationBody = BodyType<ReferenceTrackInput>
+    export type CreateProjectReferenceMutationError = ErrorType<void | NotFoundResponse>
+
+    /**
+ * @summary Add a named reference (a label) or attach one of your own analysed uploads as a reference
+ */
+export const useCreateProjectReference = <TError = ErrorType<void | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createProjectReference>>, TError,{projectId: string;data: BodyType<ReferenceTrackInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createProjectReference>>,
+        TError,
+        {projectId: string;data: BodyType<ReferenceTrackInput>},
+        TContext
+      > => {
+      return useMutation(getCreateProjectReferenceMutationOptions(options));
+    }
+
+export const getUpdateProjectReferenceUrl = (projectId: string,
+    referenceId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/references/${referenceId}`
+}
+
+/**
+ * A scope or label change recompiles the brief; a rights note is recorded and changes nothing else.
+ * @summary Change what may be copied from a reference, its label or its rights note
+ */
+export const updateProjectReference = async (projectId: string,
+    referenceId: string,
+    referenceTrackPatchInput: ReferenceTrackPatchInput, options?: Parameters<typeof customFetch>[1]): Promise<ReferenceMutationResult> => {
+
+  return customFetch<ReferenceMutationResult>(getUpdateProjectReferenceUrl(projectId,referenceId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(referenceTrackPatchInput)
+  }
+);}
+
+
+
+
+
+export const getUpdateProjectReferenceMutationOptions = <TError = ErrorType<void | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateProjectReference>>, TError,{projectId: string;referenceId: string;data: BodyType<ReferenceTrackPatchInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateProjectReference>>, TError,{projectId: string;referenceId: string;data: BodyType<ReferenceTrackPatchInput>}, TContext> => {
+
+const mutationKey = ['updateProjectReference'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateProjectReference>>, {projectId: string;referenceId: string;data: BodyType<ReferenceTrackPatchInput>}> = (props) => {
+          const {projectId,referenceId,data} = props ?? {};
+
+          return  updateProjectReference(projectId,referenceId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateProjectReferenceMutationResult = NonNullable<Awaited<ReturnType<typeof updateProjectReference>>>
+    export type UpdateProjectReferenceMutationBody = BodyType<ReferenceTrackPatchInput>
+    export type UpdateProjectReferenceMutationError = ErrorType<void | NotFoundResponse>
+
+    /**
+ * @summary Change what may be copied from a reference, its label or its rights note
+ */
+export const useUpdateProjectReference = <TError = ErrorType<void | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateProjectReference>>, TError,{projectId: string;referenceId: string;data: BodyType<ReferenceTrackPatchInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateProjectReference>>,
+        TError,
+        {projectId: string;referenceId: string;data: BodyType<ReferenceTrackPatchInput>},
+        TContext
+      > => {
+      return useMutation(getUpdateProjectReferenceMutationOptions(options));
+    }
+
+export const getDeleteProjectReferenceUrl = (projectId: string,
+    referenceId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/references/${referenceId}`
+}
+
+/**
+ * The row goes, and its reference_upload fingerprint row with it unless another reference shares it. The project's own sources and Song Models are never touched.
+ * @summary Remove a reference and its fingerprint link
+ */
+export const deleteProjectReference = async (projectId: string,
+    referenceId: string, options?: Parameters<typeof customFetch>[1]): Promise<ReferenceMutationResult> => {
+
+  return customFetch<ReferenceMutationResult>(getDeleteProjectReferenceUrl(projectId,referenceId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getDeleteProjectReferenceMutationOptions = <TError = ErrorType<NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteProjectReference>>, TError,{projectId: string;referenceId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteProjectReference>>, TError,{projectId: string;referenceId: string}, TContext> => {
+
+const mutationKey = ['deleteProjectReference'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteProjectReference>>, {projectId: string;referenceId: string}> = (props) => {
+          const {projectId,referenceId} = props ?? {};
+
+          return  deleteProjectReference(projectId,referenceId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteProjectReferenceMutationResult = NonNullable<Awaited<ReturnType<typeof deleteProjectReference>>>
+
+    export type DeleteProjectReferenceMutationError = ErrorType<NotFoundResponse>
+
+    /**
+ * @summary Remove a reference and its fingerprint link
+ */
+export const useDeleteProjectReference = <TError = ErrorType<NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteProjectReference>>, TError,{projectId: string;referenceId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof deleteProjectReference>>,
+        TError,
+        {projectId: string;referenceId: string},
+        TContext
+      > => {
+      return useMutation(getDeleteProjectReferenceMutationOptions(options));
+    }
+
+export const getFingerprintProjectReferenceUrl = (projectId: string,
+    referenceId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/references/${referenceId}/fingerprint`
+}
+
+/**
+ * The analysis-completion hook does this automatically; this is the explicit step for an upload analysed before the reference was attached, or after a failed hook.
+ * @summary Take the content-free fingerprint of an uploaded reference once its analysis exists
+ */
+export const fingerprintProjectReference = async (projectId: string,
+    referenceId: string, options?: Parameters<typeof customFetch>[1]): Promise<ReferenceMutationResult> => {
+
+  return customFetch<ReferenceMutationResult>(getFingerprintProjectReferenceUrl(projectId,referenceId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getFingerprintProjectReferenceMutationOptions = <TError = ErrorType<NotFoundResponse | void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof fingerprintProjectReference>>, TError,{projectId: string;referenceId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof fingerprintProjectReference>>, TError,{projectId: string;referenceId: string}, TContext> => {
+
+const mutationKey = ['fingerprintProjectReference'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof fingerprintProjectReference>>, {projectId: string;referenceId: string}> = (props) => {
+          const {projectId,referenceId} = props ?? {};
+
+          return  fingerprintProjectReference(projectId,referenceId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type FingerprintProjectReferenceMutationResult = NonNullable<Awaited<ReturnType<typeof fingerprintProjectReference>>>
+
+    export type FingerprintProjectReferenceMutationError = ErrorType<NotFoundResponse | void>
+
+    /**
+ * @summary Take the content-free fingerprint of an uploaded reference once its analysis exists
+ */
+export const useFingerprintProjectReference = <TError = ErrorType<NotFoundResponse | void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof fingerprintProjectReference>>, TError,{projectId: string;referenceId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof fingerprintProjectReference>>,
+        TError,
+        {projectId: string;referenceId: string},
+        TContext
+      > => {
+      return useMutation(getFingerprintProjectReferenceMutationOptions(options));
+    }
+
+export const getCompareProjectReferenceUrl = (projectId: string,
+    referenceId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/references/${referenceId}/compare`
+}
+
+/**
+ * PR-27's comparison between the reference's fingerprint and the arrangement's (the given one, or the latest with persisted TrackModels). Path + body rather than a query parameter on purpose (generator symbol collision).
+ * @summary How close an arrangement is to the reference, feature by feature, in words
+ */
+export const compareProjectReference = async (projectId: string,
+    referenceId: string,
+    referenceCompareInput: ReferenceCompareInput, options?: Parameters<typeof customFetch>[1]): Promise<ReferenceComparison> => {
+
+  return customFetch<ReferenceComparison>(getCompareProjectReferenceUrl(projectId,referenceId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(referenceCompareInput)
+  }
+);}
+
+
+
+
+
+export const getCompareProjectReferenceMutationOptions = <TError = ErrorType<NotFoundResponse | void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof compareProjectReference>>, TError,{projectId: string;referenceId: string;data: BodyType<ReferenceCompareInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof compareProjectReference>>, TError,{projectId: string;referenceId: string;data: BodyType<ReferenceCompareInput>}, TContext> => {
+
+const mutationKey = ['compareProjectReference'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof compareProjectReference>>, {projectId: string;referenceId: string;data: BodyType<ReferenceCompareInput>}> = (props) => {
+          const {projectId,referenceId,data} = props ?? {};
+
+          return  compareProjectReference(projectId,referenceId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CompareProjectReferenceMutationResult = NonNullable<Awaited<ReturnType<typeof compareProjectReference>>>
+    export type CompareProjectReferenceMutationBody = BodyType<ReferenceCompareInput>
+    export type CompareProjectReferenceMutationError = ErrorType<NotFoundResponse | void>
+
+    /**
+ * @summary How close an arrangement is to the reference, feature by feature, in words
+ */
+export const useCompareProjectReference = <TError = ErrorType<NotFoundResponse | void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof compareProjectReference>>, TError,{projectId: string;referenceId: string;data: BodyType<ReferenceCompareInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof compareProjectReference>>,
+        TError,
+        {projectId: string;referenceId: string;data: BodyType<ReferenceCompareInput>},
+        TContext
+      > => {
+      return useMutation(getCompareProjectReferenceMutationOptions(options));
     }
 

@@ -5,6 +5,7 @@ import devAuthRouter, { devAuthEnabled } from "./devAuth";
 import storageRouter from "./storage";
 import studioRouter from "./studio";
 import producerRouter from "./producer";
+import referencesRouter from "./references";
 import clamp3Router from "./clamp3";
 import { logger } from "../lib/logger";
 
@@ -19,6 +20,7 @@ if (devAuthEnabled()) {
 router.use(storageRouter);
 router.use(studioRouter);
 router.use(producerRouter);
+router.use(referencesRouter);
 router.use(clamp3Router);
 
 export default router;

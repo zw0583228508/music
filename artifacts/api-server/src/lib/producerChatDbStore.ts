@@ -2,6 +2,9 @@
  * Drizzle-backed `ProducerChatStore` (Wave U, PR-U2). Reads the project's
  * latest Song Model and the latest stored ArrangementPlan; writes the three
  * additive tables. Every write of one turn happens inside one transaction.
+ * PR-U4's reference persistence rides on the same executor
+ * (`referenceIntelligenceDbStore.ts`), so a reference change and the brief it
+ * recompiles commit together.
  */
 import { and, desc, eq, isNotNull, lt, or, sql } from "drizzle-orm";
 import {
@@ -18,6 +21,7 @@ import type {
   ProducerChatStore,
   ProducerChatTurnRecord,
 } from "./producerChat";
+import { createReferenceDbStore } from "./referenceIntelligenceDbStore";
 
 type Database = typeof db;
 type Executor = Database | Parameters<Parameters<Database["transaction"]>[0]>[0];
@@ -26,6 +30,8 @@ const iso = (value: Date): string => value.toISOString();
 
 export function createProducerChatDbStore(executor: Executor = db): ProducerChatStore {
   const store: ProducerChatStore = {
+    ...createReferenceDbStore(executor),
+
     async currentBrief(projectId) {
       const [row] = await executor
         .select()

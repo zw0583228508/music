@@ -10,6 +10,7 @@ import type { ClarificationQuestion } from './clarificationQuestion';
 import type { ProducerBriefStatePlanSource } from './producerBriefStatePlanSource';
 import type { ProducerDecisionRecord } from './producerDecisionRecord';
 import type { ProductionBrief } from './productionBrief';
+import type { ReferenceTrack } from './referenceTrack';
 import type { StyleProfile } from './styleProfile';
 import type { UserIntent } from './userIntent';
 
@@ -30,5 +31,7 @@ export interface ProducerBriefState {
   songModelVersion: number | null;
   /** arrangement = the latest stored ArrangementPlan; derived = planned from the Song Model with the brief's hints; none = no Song Model yet */
   planSource: ProducerBriefStatePlanSource;
+  /** PR-U4 - the project's references with what each lends this brief version */
+  references: ReferenceTrack[];
   createdAt: Date;
 }

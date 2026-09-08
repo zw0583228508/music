@@ -3,35 +3,60 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   getGetProducerBriefQueryKey,
   getListProducerTurnsQueryKey,
+  getListProjectReferencesQueryKey,
+  getListProjectSourcesQueryKey,
   useAnswerProducerClarifications,
+  useCompareProjectReference,
+  useCreateProjectReference,
+  useDeleteProjectReference,
+  useFingerprintProjectReference,
   useGetProducerBrief,
   useListProducerTurns,
+  useListProjectReferences,
+  useListProjectSources,
   useRunProducerIntake,
   useSendProducerChat,
+  useUpdateProjectReference,
   type ClarificationQuestion,
   type ProducerBriefDecision,
   type ProducerBriefState,
   type ProducerChatTurn,
   type ProducerTurnResult,
   type ProductionBrief,
+  type ReferenceCopyScope,
+  type ReferenceMutationResult,
+  type ReferenceTrack,
 } from "@workspace/api-client-react";
 import {
   Ban,
   CheckCircle2,
   ChevronDown,
   ChevronRight,
+  Fingerprint,
   Loader2,
   MessageSquareText,
+  Music4,
+  Plus,
   Send,
   ShieldCheck,
   Sparkles,
+  Trash2,
   Wand2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+
+/** The four copy scopes (PR-U4). `sound` is honest about being empty until audio features exist. */
+const REFERENCE_SCOPES: Array<{ id: ReferenceCopyScope; label: string; hint: string }> = [
+  { id: "groove", label: "groove", hint: "tempo behaviour, swing, microtiming, subdivisions, fill frequency" },
+  { id: "sound", label: "sound", hint: "no audio features yet — the fingerprint is symbolic, so this scope lends nothing for now" },
+  { id: "arrangement", label: "arrangement", hint: "harmonic rhythm, chord extensions, phrase length, register, instrumentation hierarchy, ornamentation" },
+  { id: "mood", label: "mood", hint: "dynamics range and tempo behaviour" },
+];
 
 interface ProducerChatProps {
   projectId: string;
@@ -177,6 +202,207 @@ function Section({ title, count, children, defaultOpen = false }: { title: strin
         {open ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
       </button>
       {open && <div className="px-4 pb-3">{children}</div>}
+    </div>
+  );
+}
+
+function referenceStatus(reference: ReferenceTrack): { text: string; tone: "muted" | "ok" | "wait" } {
+  if (reference.kind === "named") return { text: "label only — no audio, no fingerprint", tone: "muted" };
+  if (reference.fingerprintId) return { text: `fingerprinted (Song Model v${reference.songModelVersion ?? "?"}; statistics only)`, tone: "ok" };
+  return { text: "upload attached — awaiting analysis / fingerprint", tone: "wait" };
+}
+
+/**
+ * PR-U4: the project's references — what each is (a label, or one of the
+ * owner's own uploads), what may be copied from it (the scope toggles), what
+ * it lends the current brief, and the user's own rights note. Modest by
+ * design; the producer chat's questions set the same scopes.
+ */
+function ReferencesPanel({
+  projectId,
+  state,
+  onMutated,
+}: {
+  projectId: string;
+  state: ProducerBriefState | undefined;
+  onMutated: (result: ReferenceMutationResult) => void;
+}) {
+  const queryClient = useQueryClient();
+  const listQuery = useListProjectReferences(projectId, {
+    query: { queryKey: getListProjectReferencesQueryKey(projectId), retry: false, staleTime: 5_000 },
+  });
+  const sourcesQuery = useListProjectSources(projectId, {
+    query: { queryKey: getListProjectSourcesQueryKey(projectId), retry: false, staleTime: 30_000 },
+  });
+  const create = useCreateProjectReference();
+  const update = useUpdateProjectReference();
+  const remove = useDeleteProjectReference();
+  const fingerprint = useFingerprintProjectReference();
+  const compare = useCompareProjectReference();
+  const [adding, setAdding] = useState(false);
+  const [label, setLabel] = useState("");
+  const [sourceId, setSourceId] = useState("");
+  const [rightsNote, setRightsNote] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [comparisons, setComparisons] = useState<Record<string, string>>({});
+
+  // The brief state carries what each reference lends; before any brief the list is the truth.
+  const references: ReferenceTrack[] = state?.references ?? listQuery.data ?? [];
+  const busy = create.isPending || update.isPending || remove.isPending || fingerprint.isPending || compare.isPending;
+  const readySources = (sourcesQuery.data ?? []).filter((s) => s.status === "ready");
+
+  const settle = (result: ReferenceMutationResult) => {
+    setError(null);
+    void queryClient.invalidateQueries({ queryKey: getListProjectReferencesQueryKey(projectId) });
+    onMutated(result);
+  };
+  const fail = (e: unknown) => setError(e && typeof e === "object" && "message" in e ? String((e as { message: unknown }).message) : "The reference could not be changed");
+
+  const toggleScope = (reference: ReferenceTrack, scope: ReferenceCopyScope) => {
+    const next = reference.allowedScopes.includes(scope)
+      ? reference.allowedScopes.filter((s) => s !== scope)
+      : [...reference.allowedScopes, scope];
+    update.mutate({ projectId, referenceId: reference.id, data: { allowedScopes: next } }, { onSuccess: settle, onError: fail });
+  };
+
+  const submitAdd = (event: React.FormEvent) => {
+    event.preventDefault();
+    const trimmed = label.trim();
+    if (!trimmed) return;
+    const upload = sourceId !== "";
+    create.mutate(
+      {
+        projectId,
+        data: upload
+          ? { kind: "uploaded_audio", label: trimmed, sourceId, rightsNote: rightsNote.trim() }
+          : { kind: "named", label: trimmed, ...(rightsNote.trim() ? { rightsNote: rightsNote.trim() } : {}) },
+      },
+      {
+        onSuccess: (r) => { settle(r); setLabel(""); setSourceId(""); setRightsNote(""); setAdding(false); },
+        onError: fail,
+      },
+    );
+  };
+
+  return (
+    <div className="text-xs" data-testid="producer-references">
+      <p className="mb-2 text-[11px] text-muted-foreground">
+        A named reference is a label. An uploaded one is one of your own analysed recordings; only its content-free fingerprint is ever read, and only inside the scopes you allow — below anything you said.
+      </p>
+      {references.length === 0 && !adding && <p className="italic text-muted-foreground">No reference yet — name one in the chat or add one here.</p>}
+      <div className="space-y-2">
+        {references.map((reference) => {
+          const status = referenceStatus(reference);
+          return (
+            <div key={reference.id} className="rounded border p-2" data-testid={`reference-${reference.id}`}>
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-1">
+                    <span className="font-medium">{reference.label}</span>
+                    <Badge variant="outline" className="h-4 px-1 text-[9px] uppercase">{reference.kind === "named" ? "named" : "upload"}</Badge>
+                  </div>
+                  <p className={cn("text-[10px]", status.tone === "ok" ? "text-emerald-700" : status.tone === "wait" ? "text-amber-700" : "text-muted-foreground")}>
+                    {status.tone === "ok" && <Fingerprint className="mr-1 inline h-3 w-3" />}{status.text}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-1">
+                  {reference.kind === "uploaded_audio" && !reference.fingerprintId && (
+                    <Button type="button" size="sm" variant="outline" className="h-6 px-2 text-[10px]" disabled={busy} title="Take the content-free fingerprint once the recording's analysis exists"
+                      onClick={() => fingerprint.mutate({ projectId, referenceId: reference.id }, { onSuccess: settle, onError: fail })}>
+                      <Fingerprint className="mr-1 h-3 w-3" /> Fingerprint
+                    </Button>
+                  )}
+                  {reference.fingerprintId && (
+                    <Button type="button" size="sm" variant="outline" className="h-6 px-2 text-[10px]" disabled={busy} title="How close is the latest arrangement to this reference, feature by feature?"
+                      onClick={() => compare.mutate({ projectId, referenceId: reference.id, data: {} }, {
+                        onSuccess: (r) => { setError(null); setComparisons((c) => ({ ...c, [reference.id]: r.explanation.answer })); },
+                        onError: fail,
+                      })}>
+                      Compare
+                    </Button>
+                  )}
+                  <Button type="button" size="sm" variant="ghost" className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive" disabled={busy} title="Remove the reference and its fingerprint (your upload is untouched)"
+                    onClick={() => remove.mutate({ projectId, referenceId: reference.id }, { onSuccess: settle, onError: fail })}>
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+              <div className="mt-1.5 flex flex-wrap items-center gap-1">
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground">copy</span>
+                {REFERENCE_SCOPES.map((scope) => {
+                  const on = reference.allowedScopes.includes(scope.id);
+                  return (
+                    <button
+                      key={scope.id}
+                      type="button"
+                      aria-pressed={on}
+                      disabled={busy}
+                      title={scope.hint}
+                      className={cn(
+                        "rounded-full border px-2 py-0.5 text-[10px] transition-colors",
+                        on ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground",
+                        scope.id === "sound" && on && "border-dashed",
+                      )}
+                      onClick={() => toggleScope(reference, scope.id)}
+                    >
+                      {scope.label}{scope.id === "sound" ? " (empty for now)" : ""}
+                    </button>
+                  );
+                })}
+              </div>
+              {reference.contributes && reference.contributes.length > 0 && (
+                <p className="mt-1 text-[10px] text-muted-foreground">lends this brief (inferred): {reference.contributes.join(", ")}</p>
+              )}
+              {reference.withheld && reference.withheld.length > 0 && (
+                <p className="mt-0.5 text-[10px] text-amber-700" title={reference.withheld.map((w) => `${w.dimension}: ${w.reason}`).join("\n")}>
+                  withheld {reference.withheld.length} value(s) that contradict what you said
+                </p>
+              )}
+              {reference.fingerprintId && reference.allowedScopes.length === 0 && (
+                <p className="mt-0.5 text-[10px] text-muted-foreground">no scope allowed: the fingerprint lends nothing</p>
+              )}
+              <p className="mt-1 text-[10px]">
+                <span className="uppercase tracking-wider text-muted-foreground">rights</span>{" "}
+                {reference.rightsNote ? <span>{reference.rightsNote}</span> : <span className="italic text-muted-foreground">{reference.kind === "named" ? "not stated (a label needs none)" : "not stated"}</span>}
+              </p>
+              {comparisons[reference.id] && <p className="mt-1 rounded bg-muted p-1.5 text-[10px]">{comparisons[reference.id]}</p>}
+            </div>
+          );
+        })}
+      </div>
+
+      {adding ? (
+        <form className="mt-2 space-y-1.5 rounded border border-dashed p-2" onSubmit={submitAdd} data-testid="reference-add-form">
+          <Input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Label — a song, an artist, or a name for your recording" className="h-7 text-xs" disabled={busy} />
+          <select
+            className="h-7 w-full rounded-md border bg-background px-2 text-xs"
+            value={sourceId}
+            onChange={(e) => setSourceId(e.target.value)}
+            disabled={busy}
+            aria-label="Recording"
+          >
+            <option value="">Named only (no recording)</option>
+            {readySources.map((s) => <option key={s.id} value={s.id}>{s.name} — this project's analysed upload</option>)}
+          </select>
+          <Input
+            value={rightsNote}
+            onChange={(e) => setRightsNote(e.target.value)}
+            placeholder={sourceId ? "Rights note (required): e.g. my own demo / commercial track, reference only" : "Rights note (optional)"}
+            className="h-7 text-xs"
+            disabled={busy}
+          />
+          <p className="text-[10px] text-muted-foreground">A recording from another of your projects can be attached through the API with its source id; the studio lists this project's analysed uploads only.</p>
+          <div className="flex items-center gap-1.5">
+            <Button type="submit" size="sm" className="h-7 text-xs" disabled={busy || !label.trim() || (sourceId !== "" && !rightsNote.trim())}>Add</Button>
+            <Button type="button" size="sm" variant="ghost" className="h-7 text-xs" disabled={busy} onClick={() => setAdding(false)}>Cancel</Button>
+          </div>
+        </form>
+      ) : (
+        <Button type="button" size="sm" variant="outline" className="mt-2 h-7 text-xs" disabled={busy} onClick={() => setAdding(true)} data-testid="reference-add">
+          <Plus className="mr-1 h-3 w-3" /> Add reference
+        </Button>
+      )}
+      {error && <div className="mt-2 rounded-md border border-destructive/30 bg-destructive/5 p-2 text-[11px] text-destructive" role="alert">{error}</div>}
     </div>
   );
 }
@@ -409,6 +635,18 @@ export function ProducerChat({ projectId, onBriefChanged }: ProducerChatProps) {
 
   const language = state?.intent.language ?? "en";
 
+  // A reference change may have recompiled the brief: its `reference` turn is
+  // the same shape as any producer turn, so it lands in the transcript too.
+  const referenceMutated = (result: ReferenceMutationResult) => {
+    if (result.turn) settle(result.turn, result.reference ? `reference: ${result.reference.label}` : "reference removed");
+  };
+  const [referencesOpen, setReferencesOpen] = useState(false);
+  // Before any brief the list query is the only count; the same key is shared with the panel.
+  const referencesQuery = useListProjectReferences(projectId, {
+    query: { queryKey: getListProjectReferencesQueryKey(projectId), retry: false, staleTime: 5_000 },
+  });
+  const referenceCount = state?.references.length ?? referencesQuery.data?.length ?? 0;
+
   return (
     <div className="flex h-full min-h-0 flex-col" data-testid="producer-chat">
       <div className="flex h-12 shrink-0 items-center gap-2 border-b bg-muted/10 px-4 text-sm font-semibold">
@@ -456,6 +694,22 @@ export function ProducerChat({ projectId, onBriefChanged }: ProducerChatProps) {
             ))}
           </div>
         )}
+
+        <div className="border-t bg-card/50" data-testid="producer-references-section">
+          <button
+            type="button"
+            className="flex w-full items-center justify-between px-4 py-2 text-left text-[11px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground"
+            onClick={() => setReferencesOpen((v) => !v)}
+          >
+            <span className="flex items-center gap-1.5"><Music4 className="h-3.5 w-3.5" /> References ({referenceCount})</span>
+            {referencesOpen ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+          </button>
+          {referencesOpen && (
+            <div className="px-4 pb-3">
+              <ReferencesPanel projectId={projectId} state={state} onMutated={referenceMutated} />
+            </div>
+          )}
+        </div>
 
         {state && (
           <div className="border-t bg-card/50">
