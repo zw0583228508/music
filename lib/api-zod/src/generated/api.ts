@@ -1323,7 +1323,7 @@ export const GetProjectResponse = zod.object({
   "generationProvenance": zod.union([zod.object({
   "jobId": zod.string(),
   "candidateId": zod.string(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "reportedModelVersion": zod.string().nullish(),
   "providerRequestId": zod.string().nullish(),
@@ -7787,7 +7787,7 @@ export const ListArrangementsResponseItem = zod.object({
   "generationProvenance": zod.union([zod.object({
   "jobId": zod.string(),
   "candidateId": zod.string(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "reportedModelVersion": zod.string().nullish(),
   "providerRequestId": zod.string().nullish(),
@@ -9312,7 +9312,7 @@ export const CreateArrangementResponse = zod.object({
   "generationProvenance": zod.union([zod.object({
   "jobId": zod.string(),
   "candidateId": zod.string(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "reportedModelVersion": zod.string().nullish(),
   "providerRequestId": zod.string().nullish(),
@@ -10933,7 +10933,7 @@ export const UpdateArrangementResponse = zod.object({
   "generationProvenance": zod.union([zod.object({
   "jobId": zod.string(),
   "candidateId": zod.string(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "reportedModelVersion": zod.string().nullish(),
   "providerRequestId": zod.string().nullish(),
@@ -12579,7 +12579,7 @@ export const RestoreArrangementRevisionResponse = zod.object({
   "generationProvenance": zod.union([zod.object({
   "jobId": zod.string(),
   "candidateId": zod.string(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "reportedModelVersion": zod.string().nullish(),
   "providerRequestId": zod.string().nullish(),
@@ -13446,7 +13446,7 @@ export const GenerateArrangementBody = zod.strictObject({
   "end": zod.number().gt(generateArrangementBodyRegionEndExclusiveMin),
   "crossfadeSeconds": zod.number().min(generateArrangementBodyRegionCrossfadeSecondsMin).max(generateArrangementBodyRegionCrossfadeSecondsMax).default(generateArrangementBodyRegionCrossfadeSecondsDefault)
 }).optional(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR']).optional(),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']).optional(),
   "task": zod.enum(['SEPARATION', 'TRANSCRIPTION', 'ACCOMPANIMENT', 'ORCHESTRATION', 'ARRANGEMENT']).optional(),
   "hardware": zod.enum(['AUTO', 'CPU', 'GPU']).optional(),
   "speed": zod.enum(['FAST', 'BALANCED', 'QUALITY']).optional(),
@@ -13471,7 +13471,7 @@ export const GenerateArrangementResponse = zod.object({
   "arrangementId": zod.string(),
   "task": zod.enum(['SEPARATION', 'TRANSCRIPTION', 'ACCOMPANIMENT', 'ORCHESTRATION', 'ARRANGEMENT']),
   "status": zod.enum(['queued', 'running', 'cancel_requested', 'cancelled', 'succeeded', 'failed']),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "providerRuntime": zod.union([zod.object({
   "availability": zod.enum(['ready', 'configured', 'unavailable']),
@@ -13541,7 +13541,7 @@ export const GetGenerationJobResponse = zod.object({
   "arrangementId": zod.string(),
   "task": zod.enum(['SEPARATION', 'TRANSCRIPTION', 'ACCOMPANIMENT', 'ORCHESTRATION', 'ARRANGEMENT']),
   "status": zod.enum(['queued', 'running', 'cancel_requested', 'cancelled', 'succeeded', 'failed']),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "providerRuntime": zod.union([zod.object({
   "availability": zod.enum(['ready', 'configured', 'unavailable']),
@@ -13611,7 +13611,7 @@ export const CancelGenerationJobResponse = zod.object({
   "arrangementId": zod.string(),
   "task": zod.enum(['SEPARATION', 'TRANSCRIPTION', 'ACCOMPANIMENT', 'ORCHESTRATION', 'ARRANGEMENT']),
   "status": zod.enum(['queued', 'running', 'cancel_requested', 'cancelled', 'succeeded', 'failed']),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "providerRuntime": zod.union([zod.object({
   "availability": zod.enum(['ready', 'configured', 'unavailable']),
@@ -13681,7 +13681,7 @@ export const RetryGenerationJobResponse = zod.object({
   "arrangementId": zod.string(),
   "task": zod.enum(['SEPARATION', 'TRANSCRIPTION', 'ACCOMPANIMENT', 'ORCHESTRATION', 'ARRANGEMENT']),
   "status": zod.enum(['queued', 'running', 'cancel_requested', 'cancelled', 'succeeded', 'failed']),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "providerRuntime": zod.union([zod.object({
   "availability": zod.enum(['ready', 'configured', 'unavailable']),
@@ -14429,7 +14429,7 @@ export const listGenerationCandidatesResponseEvaluationRepairRepairedQualityScor
 export const ListGenerationCandidatesResponseItem = zod.object({
   "id": zod.string(),
   "jobId": zod.string(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "reportedModelVersion": zod.string().nullish(),
   "providerRequestId": zod.string().nullish(),
@@ -16220,7 +16220,7 @@ export const SelectGenerationCandidateResponse = zod.object({
   "generationProvenance": zod.union([zod.object({
   "jobId": zod.string(),
   "candidateId": zod.string(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "reportedModelVersion": zod.string().nullish(),
   "providerRequestId": zod.string().nullish(),
@@ -17135,7 +17135,7 @@ export const RepairGenerationCandidateResponse = zod.object({
   "arrangementId": zod.string(),
   "task": zod.enum(['SEPARATION', 'TRANSCRIPTION', 'ACCOMPANIMENT', 'ORCHESTRATION', 'ARRANGEMENT']),
   "status": zod.enum(['queued', 'running', 'cancel_requested', 'cancelled', 'succeeded', 'failed']),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "providerRuntime": zod.union([zod.object({
   "availability": zod.enum(['ready', 'configured', 'unavailable']),
@@ -17190,7 +17190,7 @@ export const listGenerationProvidersResponseRuntimeProvenanceOneSourceImageDiges
 
 
 export const ListGenerationProvidersResponseItem = zod.object({
-  "id": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR']),
+  "id": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "name": zod.string(),
   "modelVersion": zod.string(),
   "tasks": zod.array(zod.enum(['SEPARATION', 'TRANSCRIPTION', 'ACCOMPANIMENT', 'ORCHESTRATION', 'ARRANGEMENT'])),
@@ -18866,6 +18866,116 @@ export const RetirePairwiseCriticResponse = zod.object({
   "promotedAt": zod.string().nullable(),
   "retiredAt": zod.string().nullable()
 }).describe('PR-29 — one immutable version of the owner\'s learned pairwise critic, with the held-out verdict that decides whether it may be applied.')
+
+
+/**
+ * @summary Versions of YOUR_ARRANGER_MODEL (PR-31) with their benchmark verdicts, newest first
+ */
+export const ListArrangerModelsResponseItem = zod.object({
+  "id": zod.string(),
+  "version": zod.number(),
+  "status": zod.enum(['candidate', 'active', 'retired']),
+  "neutral": zod.boolean(),
+  "beatsBaseline": zod.boolean(),
+  "reason": zod.string(),
+  "policy": zod.record(zod.string(), zod.unknown()),
+  "trainedOn": zod.record(zod.string(), zod.unknown()),
+  "evidence": zod.array(zod.string()),
+  "undecided": zod.array(zod.string()),
+  "verdict": zod.record(zod.string(), zod.unknown()),
+  "trainedAt": zod.string(),
+  "createdAt": zod.string(),
+  "promotedAt": zod.string().nullable(),
+  "retiredAt": zod.string().nullable()
+}).describe('PR-31 — one version of the learned arranger policy with the benchmark verdict that decides whether it may be promoted.')
+export const ListArrangerModelsResponse = zod.array(ListArrangerModelsResponseItem)
+
+
+/**
+ * @summary Train a policy from every consented preference event, benchmark it against the reference pipeline, store it as a candidate version
+ */
+export const TrainArrangerModelResponse = zod.object({
+  "id": zod.string(),
+  "version": zod.number(),
+  "status": zod.enum(['candidate', 'active', 'retired']),
+  "neutral": zod.boolean(),
+  "beatsBaseline": zod.boolean(),
+  "reason": zod.string(),
+  "policy": zod.record(zod.string(), zod.unknown()),
+  "trainedOn": zod.record(zod.string(), zod.unknown()),
+  "evidence": zod.array(zod.string()),
+  "undecided": zod.array(zod.string()),
+  "verdict": zod.record(zod.string(), zod.unknown()),
+  "trainedAt": zod.string(),
+  "createdAt": zod.string(),
+  "promotedAt": zod.string().nullable(),
+  "retiredAt": zod.string().nullable()
+}).describe('PR-31 — one version of the learned arranger policy with the benchmark verdict that decides whether it may be promoted.')
+
+
+/**
+ * @summary Promote a version that beat the reference pipeline; YOUR_ARRANGER_MODEL becomes routable as a default
+ */
+export const PromoteArrangerModelParams = zod.object({
+  "modelId": zod.coerce.string()
+})
+
+export const PromoteArrangerModelResponse = zod.object({
+  "id": zod.string(),
+  "version": zod.number(),
+  "status": zod.enum(['candidate', 'active', 'retired']),
+  "neutral": zod.boolean(),
+  "beatsBaseline": zod.boolean(),
+  "reason": zod.string(),
+  "policy": zod.record(zod.string(), zod.unknown()),
+  "trainedOn": zod.record(zod.string(), zod.unknown()),
+  "evidence": zod.array(zod.string()),
+  "undecided": zod.array(zod.string()),
+  "verdict": zod.record(zod.string(), zod.unknown()),
+  "trainedAt": zod.string(),
+  "createdAt": zod.string(),
+  "promotedAt": zod.string().nullable(),
+  "retiredAt": zod.string().nullable()
+}).describe('PR-31 — one version of the learned arranger policy with the benchmark verdict that decides whether it may be promoted.')
+
+
+/**
+ * @summary Retire a version (roll back to the reference pipeline as default)
+ */
+export const RetireArrangerModelParams = zod.object({
+  "modelId": zod.coerce.string()
+})
+
+export const RetireArrangerModelResponse = zod.object({
+  "id": zod.string(),
+  "version": zod.number(),
+  "status": zod.enum(['candidate', 'active', 'retired']),
+  "neutral": zod.boolean(),
+  "beatsBaseline": zod.boolean(),
+  "reason": zod.string(),
+  "policy": zod.record(zod.string(), zod.unknown()),
+  "trainedOn": zod.record(zod.string(), zod.unknown()),
+  "evidence": zod.array(zod.string()),
+  "undecided": zod.array(zod.string()),
+  "verdict": zod.record(zod.string(), zod.unknown()),
+  "trainedAt": zod.string(),
+  "createdAt": zod.string(),
+  "promotedAt": zod.string().nullable(),
+  "retiredAt": zod.string().nullable()
+}).describe('PR-31 — one version of the learned arranger policy with the benchmark verdict that decides whether it may be promoted.')
+
+
+/**
+ * @summary Gate C — the anonymised A/B sheet between the reference run and this version's run, for human raters
+ */
+export const GetArrangerModelBlindSheetParams = zod.object({
+  "modelId": zod.coerce.string()
+})
+
+export const GetArrangerModelBlindSheetResponse = zod.object({
+  "pairs": zod.array(zod.record(zod.string(), zod.unknown())),
+  "keyBySide": zod.record(zod.string(), zod.string())
+})
 
 
 /**

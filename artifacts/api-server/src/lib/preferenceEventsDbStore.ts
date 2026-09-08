@@ -36,6 +36,13 @@ export class DbPreferenceEventStore implements PreferenceEventStore {
     return rows.map(toEvent);
   }
 
+  /** Every owner's events, for the platform-wide arranger policy (PR-31). Consent was applied at write time. */
+  async listAll(limit = 2000): Promise<PreferenceEvent[]> {
+    const rows = await this.executor.select().from(preferenceEventsTable)
+      .orderBy(desc(preferenceEventsTable.createdAt)).limit(Math.min(5000, Math.max(1, limit)));
+    return rows.map(toEvent);
+  }
+
   async erase(ownerId: string, projectId?: string): Promise<number> {
     const rows = await this.executor.delete(preferenceEventsTable)
       .where(projectId ? and(eq(preferenceEventsTable.ownerId, ownerId), eq(preferenceEventsTable.projectId, projectId)) : eq(preferenceEventsTable.ownerId, ownerId))

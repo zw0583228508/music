@@ -114,6 +114,14 @@ import {
   PromotePairwiseCriticResponse,
   RetirePairwiseCriticParams,
   RetirePairwiseCriticResponse,
+  ListArrangerModelsResponse,
+  TrainArrangerModelResponse,
+  PromoteArrangerModelParams,
+  PromoteArrangerModelResponse,
+  RetireArrangerModelParams,
+  RetireArrangerModelResponse,
+  GetArrangerModelBlindSheetParams,
+  GetArrangerModelBlindSheetResponse,
   ListPersonalArrangementProfilesResponse,
   DerivePersonalArrangementProfileResponse,
   ActivatePersonalArrangementProfileParams,
@@ -204,6 +212,7 @@ import { FEATURE_NAMES, recordPreferenceEvent, trainingRows, type PreferenceSubj
 import { DbPreferenceEventStore } from "../lib/preferenceEventsDbStore";
 import { listPairwiseCritics, promotePairwiseCritic, retirePairwiseCritic, trainPairwiseCriticForOwner, type PairwiseCriticRecord } from "../lib/pairwiseCriticStore";
 import { derivePersonalProfileForOwner, listPersonalProfiles, setPersonalProfileActive, type PersonalProfileRecord } from "../lib/personalProfileStore";
+import { blindSheetForArrangerModel, listArrangerModels, promoteArrangerModel, retireArrangerModel, trainArrangerModelVersion, type ArrangerModelRecord } from "../lib/arrangerModelStore";
 import {
   activateLicensedInstrumentPack as activateLicensedInstrumentPackOnWorker,
   applyArrangementEditorChanges,
@@ -3001,6 +3010,54 @@ router.post("/pairwise-critic/:modelId/retire", async (req, res): Promise<void> 
   if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
   try {
     res.json(RetirePairwiseCriticResponse.parse(pairwiseCriticRecordResponse(await retirePairwiseCritic(req.user!.id, params.data.modelId))));
+  } catch (error) {
+    res.status(404).json({ error: error instanceof Error ? error.message : "Not found" });
+  }
+});
+
+// PR-31: YOUR_ARRANGER_MODEL — train, inspect, promote (benchmark-gated), retire, blind sheet.
+const arrangerModelResponse = (row: ArrangerModelRecord) => ({
+  id: row.id, version: row.version, status: row.status, neutral: row.model.neutral, beatsBaseline: row.beatsBaseline,
+  reason: row.benchmark.reason, policy: row.model.policy, trainedOn: row.model.trainedOn, evidence: row.model.evidence, undecided: row.model.undecided,
+  verdict: row.benchmark.verdict, trainedAt: row.model.trainedAt, createdAt: row.createdAt, promotedAt: row.promotedAt, retiredAt: row.retiredAt,
+});
+
+router.get("/arranger-model", async (req, res): Promise<void> => {
+  res.setHeader("Cache-Control", "no-store");
+  res.json(ListArrangerModelsResponse.parse((await listArrangerModels()).map(arrangerModelResponse)));
+});
+
+router.post("/arranger-model/train", async (req, res): Promise<void> => {
+  const { record } = await trainArrangerModelVersion(req.user!.id);
+  res.json(TrainArrangerModelResponse.parse(arrangerModelResponse(record)));
+});
+
+router.post("/arranger-model/:modelId/promote", async (req, res): Promise<void> => {
+  const params = PromoteArrangerModelParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  try {
+    res.json(PromoteArrangerModelResponse.parse(arrangerModelResponse(await promoteArrangerModel(params.data.modelId))));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Promotion refused";
+    res.status(/not found/i.test(message) ? 404 : 409).json({ error: message });
+  }
+});
+
+router.post("/arranger-model/:modelId/retire", async (req, res): Promise<void> => {
+  const params = RetireArrangerModelParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  try {
+    res.json(RetireArrangerModelResponse.parse(arrangerModelResponse(await retireArrangerModel(params.data.modelId))));
+  } catch (error) {
+    res.status(404).json({ error: error instanceof Error ? error.message : "Not found" });
+  }
+});
+
+router.get("/arranger-model/:modelId/blind-sheet", async (req, res): Promise<void> => {
+  const params = GetArrangerModelBlindSheetParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  try {
+    res.json(GetArrangerModelBlindSheetResponse.parse(await blindSheetForArrangerModel(params.data.modelId)));
   } catch (error) {
     res.status(404).json({ error: error instanceof Error ? error.message : "Not found" });
   }

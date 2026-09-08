@@ -1210,6 +1210,80 @@ paths:
         "200":
           description: The retired model
           content: { application/json: { schema: { $ref: "#/components/schemas/PairwiseCriticRecord" } } }
+  /arranger-model:
+    get:
+      operationId: listArrangerModels
+      tags: [studio]
+      summary: Versions of YOUR_ARRANGER_MODEL (PR-31) with their benchmark verdicts, newest first
+      responses:
+        "200":
+          description: Model versions
+          content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/ArrangerModelVersionRecord" } } } }
+  /arranger-model/train:
+    post:
+      operationId: trainArrangerModel
+      tags: [studio]
+      summary: Train a policy from every consented preference event, benchmark it against the reference pipeline, store it as a candidate version
+      responses:
+        "200":
+          description: The stored version and its verdict
+          content: { application/json: { schema: { $ref: "#/components/schemas/ArrangerModelVersionRecord" } } }
+  /arranger-model/{modelId}/promote:
+    post:
+      operationId: promoteArrangerModel
+      tags: [studio]
+      summary: Promote a version that beat the reference pipeline; YOUR_ARRANGER_MODEL becomes routable as a default
+      parameters:
+        - name: modelId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The active version
+          content: { application/json: { schema: { $ref: "#/components/schemas/ArrangerModelVersionRecord" } } }
+        "409": { description: The version did not beat the reference pipeline }
+  /arranger-model/{modelId}/retire:
+    post:
+      operationId: retireArrangerModel
+      tags: [studio]
+      summary: Retire a version (roll back to the reference pipeline as default)
+      parameters:
+        - name: modelId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The retired version
+          content: { application/json: { schema: { $ref: "#/components/schemas/ArrangerModelVersionRecord" } } }
+  /arranger-model/{modelId}/blind-sheet:
+    get:
+      operationId: getArrangerModelBlindSheet
+      tags: [studio]
+      summary: Gate C — the anonymised A/B sheet between the reference run and this version's run, for human raters
+      parameters:
+        - name: modelId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Pairs with anonymised tokens (the key is returned separately for the evaluation owner)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [pairs, keyBySide]
+                properties:
+                  pairs:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
+                  keyBySide:
+                    type: object
+                    additionalProperties: { type: string }
   /personal-arrangement-profile:
     get:
       operationId: listPersonalArrangementProfiles
@@ -1672,6 +1746,32 @@ components:
       properties:
         examples: { type: number }
         heldOutAgreement: { type: number }
+    ArrangerModelVersionRecord:
+      type: object
+      description: PR-31 — one version of the learned arranger policy with the benchmark verdict that decides whether it may be promoted.
+      required: [id, version, status, neutral, beatsBaseline, reason, policy, trainedOn, evidence, undecided, verdict, trainedAt, createdAt, promotedAt, retiredAt]
+      properties:
+        id: { type: string }
+        version: { type: number }
+        status: { type: string, enum: [candidate, active, retired] }
+        neutral: { type: boolean }
+        beatsBaseline: { type: boolean }
+        reason: { type: string }
+        policy:
+          type: object
+          additionalProperties: true
+        trainedOn:
+          type: object
+          additionalProperties: true
+        evidence: { type: array, items: { type: string } }
+        undecided: { type: array, items: { type: string } }
+        verdict:
+          type: object
+          additionalProperties: true
+        trainedAt: { type: string }
+        createdAt: { type: string }
+        promotedAt: { type: string, nullable: true }
+        retiredAt: { type: string, nullable: true }
     PersonalArrangementProfileRecord:
       type: object
       description: PR-30 — the owner's learned defaults; every dimension is `default` provenance and is outranked by anything the owner states.
@@ -3475,7 +3575,7 @@ components:
             crossfadeSeconds: { type: number, minimum: 0, maximum: 10, default: 0.25 }
         provider:
           type: string
-          enum: [BS_ROFORMER, ALL_IN_ONE, MT3, BASIC_PITCH, ACE_STEP, MUSICGEN, ANYACCOMP, LADA_BAND, HAFM, SYMPHONYGEN, METEOR, MIDI_SAG, MUSE_CONTROL_LITE, STABLE_AUDIO_3_SMALL_MUSIC, STABLE_AUDIO_3_MEDIUM, MAGENTA_RT2, MIDI_RWKV, ARRANGEMENT_ORCHESTRATOR]
+          enum: [BS_ROFORMER, ALL_IN_ONE, MT3, BASIC_PITCH, ACE_STEP, MUSICGEN, ANYACCOMP, LADA_BAND, HAFM, SYMPHONYGEN, METEOR, MIDI_SAG, MUSE_CONTROL_LITE, STABLE_AUDIO_3_SMALL_MUSIC, STABLE_AUDIO_3_MEDIUM, MAGENTA_RT2, MIDI_RWKV, ARRANGEMENT_ORCHESTRATOR, YOUR_ARRANGER_MODEL]
         task:
           type: string
           enum: [SEPARATION, TRANSCRIPTION, ACCOMPANIMENT, ORCHESTRATION, ARRANGEMENT]
@@ -3497,7 +3597,7 @@ components:
         candidateId: { type: string }
         provider:
           type: string
-          enum: [BS_ROFORMER, ALL_IN_ONE, MT3, BASIC_PITCH, ACE_STEP, MUSICGEN, ANYACCOMP, LADA_BAND, HAFM, SYMPHONYGEN, METEOR, MIDI_SAG, MUSE_CONTROL_LITE, STABLE_AUDIO_3_SMALL_MUSIC, STABLE_AUDIO_3_MEDIUM, MAGENTA_RT2, MIDI_RWKV, ARRANGEMENT_ORCHESTRATOR]
+          enum: [BS_ROFORMER, ALL_IN_ONE, MT3, BASIC_PITCH, ACE_STEP, MUSICGEN, ANYACCOMP, LADA_BAND, HAFM, SYMPHONYGEN, METEOR, MIDI_SAG, MUSE_CONTROL_LITE, STABLE_AUDIO_3_SMALL_MUSIC, STABLE_AUDIO_3_MEDIUM, MAGENTA_RT2, MIDI_RWKV, ARRANGEMENT_ORCHESTRATOR, YOUR_ARRANGER_MODEL]
         modelVersion: { type: string }
         reportedModelVersion:
           type: [string, "null"]
@@ -3529,7 +3629,7 @@ components:
           enum: [queued, running, cancel_requested, cancelled, succeeded, failed]
         provider:
           type: string
-          enum: [BS_ROFORMER, ALL_IN_ONE, MT3, BASIC_PITCH, ACE_STEP, MUSICGEN, ANYACCOMP, LADA_BAND, HAFM, SYMPHONYGEN, METEOR, MIDI_SAG, MUSE_CONTROL_LITE, STABLE_AUDIO_3_SMALL_MUSIC, STABLE_AUDIO_3_MEDIUM, MAGENTA_RT2, MIDI_RWKV, ARRANGEMENT_ORCHESTRATOR]
+          enum: [BS_ROFORMER, ALL_IN_ONE, MT3, BASIC_PITCH, ACE_STEP, MUSICGEN, ANYACCOMP, LADA_BAND, HAFM, SYMPHONYGEN, METEOR, MIDI_SAG, MUSE_CONTROL_LITE, STABLE_AUDIO_3_SMALL_MUSIC, STABLE_AUDIO_3_MEDIUM, MAGENTA_RT2, MIDI_RWKV, ARRANGEMENT_ORCHESTRATOR, YOUR_ARRANGER_MODEL]
         modelVersion: { type: string }
         providerRuntime:
           oneOf:
@@ -3930,7 +4030,7 @@ components:
         jobId: { type: string }
         provider:
           type: string
-          enum: [BS_ROFORMER, ALL_IN_ONE, MT3, BASIC_PITCH, ACE_STEP, MUSICGEN, ANYACCOMP, LADA_BAND, HAFM, SYMPHONYGEN, METEOR, MIDI_SAG, MUSE_CONTROL_LITE, STABLE_AUDIO_3_SMALL_MUSIC, STABLE_AUDIO_3_MEDIUM, MAGENTA_RT2, MIDI_RWKV, ARRANGEMENT_ORCHESTRATOR]
+          enum: [BS_ROFORMER, ALL_IN_ONE, MT3, BASIC_PITCH, ACE_STEP, MUSICGEN, ANYACCOMP, LADA_BAND, HAFM, SYMPHONYGEN, METEOR, MIDI_SAG, MUSE_CONTROL_LITE, STABLE_AUDIO_3_SMALL_MUSIC, STABLE_AUDIO_3_MEDIUM, MAGENTA_RT2, MIDI_RWKV, ARRANGEMENT_ORCHESTRATOR, YOUR_ARRANGER_MODEL]
         modelVersion: { type: string }
         reportedModelVersion:
           type: [string, "null"]
@@ -4033,7 +4133,7 @@ components:
       properties:
         id:
           type: string
-          enum: [BS_ROFORMER, ALL_IN_ONE, MT3, BASIC_PITCH, ACE_STEP, MUSICGEN, ANYACCOMP, LADA_BAND, HAFM, SYMPHONYGEN, METEOR, MIDI_SAG, MUSE_CONTROL_LITE, STABLE_AUDIO_3_SMALL_MUSIC, STABLE_AUDIO_3_MEDIUM, MAGENTA_RT2, MIDI_RWKV, ARRANGEMENT_ORCHESTRATOR]
+          enum: [BS_ROFORMER, ALL_IN_ONE, MT3, BASIC_PITCH, ACE_STEP, MUSICGEN, ANYACCOMP, LADA_BAND, HAFM, SYMPHONYGEN, METEOR, MIDI_SAG, MUSE_CONTROL_LITE, STABLE_AUDIO_3_SMALL_MUSIC, STABLE_AUDIO_3_MEDIUM, MAGENTA_RT2, MIDI_RWKV, ARRANGEMENT_ORCHESTRATOR, YOUR_ARRANGER_MODEL]
         name: { type: string }
         modelVersion: { type: string }
         tasks:

@@ -27,6 +27,7 @@ import type {
   ArrangementInput,
   ArrangementRevision,
   ArrangementUpdate,
+  ArrangerModelVersionRecord,
   Artifact,
   AuthUserEnvelope,
   BeginBrowserLoginParams,
@@ -45,6 +46,7 @@ import type {
   GenerationInput,
   GenerationJob,
   GenerationProvider,
+  GetArrangerModelBlindSheet200,
   HealthStatus,
   LicensedInstrumentPack,
   LicensedInstrumentPackCatalog,
@@ -4776,6 +4778,373 @@ export const useRetirePairwiseCritic = <TError = ErrorType<unknown>,
       > => {
       return useMutation(getRetirePairwiseCriticMutationOptions(options));
     }
+
+export const getListArrangerModelsUrl = () => {
+
+
+
+
+  return `/api/arranger-model`
+}
+
+/**
+ * @summary Versions of YOUR_ARRANGER_MODEL (PR-31) with their benchmark verdicts, newest first
+ */
+export const listArrangerModels = async ( options?: Parameters<typeof customFetch>[1]): Promise<ArrangerModelVersionRecord[]> => {
+
+  return customFetch<ArrangerModelVersionRecord[]>(getListArrangerModelsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListArrangerModelsQueryKey = () => {
+    return [
+    `/api/arranger-model`
+    ] as const;
+    }
+
+
+export const getListArrangerModelsQueryOptions = <TData = Awaited<ReturnType<typeof listArrangerModels>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listArrangerModels>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListArrangerModelsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listArrangerModels>>> = ({ signal }) => listArrangerModels({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listArrangerModels>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListArrangerModelsQueryResult = NonNullable<Awaited<ReturnType<typeof listArrangerModels>>>
+export type ListArrangerModelsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Versions of YOUR_ARRANGER_MODEL (PR-31) with their benchmark verdicts, newest first
+ */
+
+export function useListArrangerModels<TData = Awaited<ReturnType<typeof listArrangerModels>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listArrangerModels>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListArrangerModelsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getTrainArrangerModelUrl = () => {
+
+
+
+
+  return `/api/arranger-model/train`
+}
+
+/**
+ * @summary Train a policy from every consented preference event, benchmark it against the reference pipeline, store it as a candidate version
+ */
+export const trainArrangerModel = async ( options?: Parameters<typeof customFetch>[1]): Promise<ArrangerModelVersionRecord> => {
+
+  return customFetch<ArrangerModelVersionRecord>(getTrainArrangerModelUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getTrainArrangerModelMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof trainArrangerModel>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof trainArrangerModel>>, TError,void, TContext> => {
+
+const mutationKey = ['trainArrangerModel'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof trainArrangerModel>>, void> = () => {
+
+
+          return  trainArrangerModel(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type TrainArrangerModelMutationResult = NonNullable<Awaited<ReturnType<typeof trainArrangerModel>>>
+
+    export type TrainArrangerModelMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Train a policy from every consented preference event, benchmark it against the reference pipeline, store it as a candidate version
+ */
+export const useTrainArrangerModel = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof trainArrangerModel>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof trainArrangerModel>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getTrainArrangerModelMutationOptions(options));
+    }
+
+export const getPromoteArrangerModelUrl = (modelId: string,) => {
+
+
+
+
+  return `/api/arranger-model/${modelId}/promote`
+}
+
+/**
+ * @summary Promote a version that beat the reference pipeline; YOUR_ARRANGER_MODEL becomes routable as a default
+ */
+export const promoteArrangerModel = async (modelId: string, options?: Parameters<typeof customFetch>[1]): Promise<ArrangerModelVersionRecord> => {
+
+  return customFetch<ArrangerModelVersionRecord>(getPromoteArrangerModelUrl(modelId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getPromoteArrangerModelMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof promoteArrangerModel>>, TError,{modelId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof promoteArrangerModel>>, TError,{modelId: string}, TContext> => {
+
+const mutationKey = ['promoteArrangerModel'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof promoteArrangerModel>>, {modelId: string}> = (props) => {
+          const {modelId} = props ?? {};
+
+          return  promoteArrangerModel(modelId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PromoteArrangerModelMutationResult = NonNullable<Awaited<ReturnType<typeof promoteArrangerModel>>>
+
+    export type PromoteArrangerModelMutationError = ErrorType<void>
+
+    /**
+ * @summary Promote a version that beat the reference pipeline; YOUR_ARRANGER_MODEL becomes routable as a default
+ */
+export const usePromoteArrangerModel = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof promoteArrangerModel>>, TError,{modelId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof promoteArrangerModel>>,
+        TError,
+        {modelId: string},
+        TContext
+      > => {
+      return useMutation(getPromoteArrangerModelMutationOptions(options));
+    }
+
+export const getRetireArrangerModelUrl = (modelId: string,) => {
+
+
+
+
+  return `/api/arranger-model/${modelId}/retire`
+}
+
+/**
+ * @summary Retire a version (roll back to the reference pipeline as default)
+ */
+export const retireArrangerModel = async (modelId: string, options?: Parameters<typeof customFetch>[1]): Promise<ArrangerModelVersionRecord> => {
+
+  return customFetch<ArrangerModelVersionRecord>(getRetireArrangerModelUrl(modelId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getRetireArrangerModelMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof retireArrangerModel>>, TError,{modelId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof retireArrangerModel>>, TError,{modelId: string}, TContext> => {
+
+const mutationKey = ['retireArrangerModel'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof retireArrangerModel>>, {modelId: string}> = (props) => {
+          const {modelId} = props ?? {};
+
+          return  retireArrangerModel(modelId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RetireArrangerModelMutationResult = NonNullable<Awaited<ReturnType<typeof retireArrangerModel>>>
+
+    export type RetireArrangerModelMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Retire a version (roll back to the reference pipeline as default)
+ */
+export const useRetireArrangerModel = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof retireArrangerModel>>, TError,{modelId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof retireArrangerModel>>,
+        TError,
+        {modelId: string},
+        TContext
+      > => {
+      return useMutation(getRetireArrangerModelMutationOptions(options));
+    }
+
+export const getGetArrangerModelBlindSheetUrl = (modelId: string,) => {
+
+
+
+
+  return `/api/arranger-model/${modelId}/blind-sheet`
+}
+
+/**
+ * @summary Gate C — the anonymised A/B sheet between the reference run and this version's run, for human raters
+ */
+export const getArrangerModelBlindSheet = async (modelId: string, options?: Parameters<typeof customFetch>[1]): Promise<GetArrangerModelBlindSheet200> => {
+
+  return customFetch<GetArrangerModelBlindSheet200>(getGetArrangerModelBlindSheetUrl(modelId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetArrangerModelBlindSheetQueryKey = (modelId: string,) => {
+    return [
+    `/api/arranger-model/${modelId}/blind-sheet`
+    ] as const;
+    }
+
+
+export const getGetArrangerModelBlindSheetQueryOptions = <TData = Awaited<ReturnType<typeof getArrangerModelBlindSheet>>, TError = ErrorType<unknown>>(modelId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getArrangerModelBlindSheet>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetArrangerModelBlindSheetQueryKey(modelId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getArrangerModelBlindSheet>>> = ({ signal }) => getArrangerModelBlindSheet(modelId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: modelId !== null && modelId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getArrangerModelBlindSheet>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetArrangerModelBlindSheetQueryResult = NonNullable<Awaited<ReturnType<typeof getArrangerModelBlindSheet>>>
+export type GetArrangerModelBlindSheetQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Gate C — the anonymised A/B sheet between the reference run and this version's run, for human raters
+ */
+
+export function useGetArrangerModelBlindSheet<TData = Awaited<ReturnType<typeof getArrangerModelBlindSheet>>, TError = ErrorType<unknown>>(
+ modelId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getArrangerModelBlindSheet>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetArrangerModelBlindSheetQueryOptions(modelId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getListPersonalArrangementProfilesUrl = () => {
 
