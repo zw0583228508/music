@@ -102,7 +102,20 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
 
 **Wave 2 (generation & critique) complete.**
 
-## Next: Wave 3 — PR-13 SFIZZ/VSCO2 renderer
+- **PR-13** (#14) ✅ — Reference render worker: REFERENCE_SYNTH_V1 behind the
+  SFIZZ_VSCO2_CE interface — per-family synth -> 48kHz/24-bit stems with the full
+  section-26 RenderAttestation (incl. measured pitch + expression sensitivity).
+- **PR-14** (#15) ✅ — Performance Engine V1: Composition MIDI -> Performance MIDI.
+  Timing/velocity from family, tempo, groove, phrase, metrical position, dynamic
+  shape and role + seeded jitter scaled by all of them. Chord rolls, strums,
+  ghost notes, flams, CC1/CC11 arcs, breaths, sustain pedal. Per-note evidence.
+- **PR-15** (#16) ✅ — Audio Critic V1: 10 weighted dimensions on the rendered
+  stems (balance/masking/harshness/mud/lowEndConflict/transients/stereo/dynamics/
+  realism/crowding) + concrete mix actions + A/B candidate comparison.
+
+**Wave 3 (sound) complete.**
+
+## Next: Wave 4 — PR-16 end-to-end orchestrator
 
 ## Environment findings (Windows local)
 
