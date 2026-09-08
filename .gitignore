@@ -53,6 +53,11 @@ Thumbs.db
 .cache/
 .local/
 
+# Local development
+.env.local
+.env.*.local
+.local-object-store/
+
 # Files uploaded into chat are local working inputs, not source files.
 # Already tracked assets remain tracked; new uploads must not block Git Sync.
 attached_assets/

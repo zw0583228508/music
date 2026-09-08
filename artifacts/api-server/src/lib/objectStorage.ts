@@ -4,26 +4,39 @@ import { pipeline } from "node:stream/promises";
 import type { Readable } from "node:stream";
 import { Storage, type File } from "@google-cloud/storage";
 import { waitForProjectStorageRaceGate } from "./projectStorageRaceTestHook";
+import { createLocalStorage } from "./localObjectStore";
 
 const REPLIT_SIDECAR_ENDPOINT = "http://127.0.0.1:1106";
 
-export const objectStorageClient = new Storage({
-  credentials: {
-    audience: "replit",
-    subject_token_type: "access_token",
-    token_url: `${REPLIT_SIDECAR_ENDPOINT}/token`,
-    type: "external_account",
-    credential_source: {
-      url: `${REPLIT_SIDECAR_ENDPOINT}/credential`,
-      format: {
-        type: "json",
-        subject_token_field_name: "access_token",
+/**
+ * Local development uses a filesystem backend instead of the Replit Object
+ * Storage sidecar. It is opt-in via `MUSIC_OBJECT_STORAGE_DRIVER=local` and is
+ * never selected on the deployed path.
+ */
+const USE_LOCAL_OBJECT_STORAGE =
+  process.env.MUSIC_OBJECT_STORAGE_DRIVER === "local";
+
+export const objectStorageClient: Storage = USE_LOCAL_OBJECT_STORAGE
+  ? (createLocalStorage(
+      process.env.LOCAL_OBJECT_STORAGE_DIR ?? "./.local-object-store",
+    ) as unknown as Storage)
+  : new Storage({
+      credentials: {
+        audience: "replit",
+        subject_token_type: "access_token",
+        token_url: `${REPLIT_SIDECAR_ENDPOINT}/token`,
+        type: "external_account",
+        credential_source: {
+          url: `${REPLIT_SIDECAR_ENDPOINT}/credential`,
+          format: {
+            type: "json",
+            subject_token_field_name: "access_token",
+          },
+        },
+        universe_domain: "googleapis.com",
       },
-    },
-    universe_domain: "googleapis.com",
-  },
-  projectId: "",
-});
+      projectId: "",
+    });
 
 function parseObjectPath(path: string): {
   bucketName: string;
@@ -72,6 +85,12 @@ async function signObjectUrl(
   method: "GET" | "PUT",
   expiresAt = new Date(Date.now() + 15 * 60 * 1000),
 ): Promise<string> {
+  if (USE_LOCAL_OBJECT_STORAGE) {
+    // Dev only: model workers run offline locally, so no external service
+    // dereferences this URL. Return a same-origin path the API can serve.
+    const base = process.env.PUBLIC_BASE_URL?.replace(/\/$/, "") ?? "";
+    return `${base}/api/storage/local/${bucketName}/${objectName}`;
+  }
   const response = await fetch(
     `${REPLIT_SIDECAR_ENDPOINT}/object-storage/signed-object-url`,
     {

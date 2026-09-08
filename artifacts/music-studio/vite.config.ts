@@ -14,6 +14,13 @@ if (Number.isNaN(port) || port <= 0) {
 
 const basePath = process.env.BASE_PATH ?? '/';
 
+// Local dev only: the deployed studio is served same-origin with the API, but a
+// local `vite` dev server is not. Proxy `/api` to the local API server so the
+// session cookie stays same-origin. Set API_PROXY_TARGET to disable/retarget.
+const apiProxyTarget =
+  process.env.API_PROXY_TARGET ??
+  (process.env.NODE_ENV !== 'production' ? 'http://localhost:5000' : '');
+
 export default defineConfig({
   base: basePath,
   plugins: [
@@ -59,6 +66,13 @@ export default defineConfig({
     fs: {
       strict: true,
     },
+    ...(apiProxyTarget
+      ? {
+          proxy: {
+            '/api': { target: apiProxyTarget, changeOrigin: true },
+          },
+        }
+      : {}),
   },
   preview: {
     port,
