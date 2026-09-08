@@ -39,10 +39,16 @@ PerformanceData` — never an audio generator.
   → `DomainReconciliationReport`, `SongModelData.reconciliation`, OpenAPI + orval,
   `sourceAnalyzer` wiring. Tests: `providerReliability` (5), `analysisReconciliation` (+2).
 
-Regression baseline held every PR: `songModelValidation` (30), `canonicalTimeline` (9),
-`analysisProviders` (31).
+- **PR-03** (#4) ✅ — Vocal / Phrase / Space Intelligence: `musicalMap` 2.1→2.2
+  with `vocals` (per-phrase activity/density/range/contour/cadence/pickup/
+  emotionalIntensity, breath+silence windows, vocalDensityCurve, registerMap)
+  and `arrangementSpace` (budget-annotated windows: vocalDensity level +
+  counterMelody/fill/pad budgets). OpenAPI + orval, studio panel. Tests: +2 (11).
 
-## Next: PR-03 — vocal / phrase / space intelligence
+Regression baseline held every PR: `songModelValidation` (30), `canonicalTimeline` (9),
+`analysisProviders` (31), `analysisReconciliation` (6).
+
+## Next: PR-04 — global arrangement planner
 
 ## Environment findings (Windows local)
 
