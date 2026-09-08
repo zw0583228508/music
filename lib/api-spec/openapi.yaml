@@ -4451,6 +4451,7 @@ components:
         orchestrationBudget: { $ref: "#/components/schemas/OrchestrationBudgetPlan" }
         transitionPlan: { $ref: "#/components/schemas/TransitionPlanSet" }
         partComposerPlan: { $ref: "#/components/schemas/PartComposerPlan" }
+        candidateGenerationPlan: { $ref: "#/components/schemas/CandidateGenerationPlan" }
         compositionIntelligence: { $ref: "#/components/schemas/CompositionIntelligencePlan" }
         generationPreference:
           oneOf:
@@ -4716,3 +4717,39 @@ components:
               endBar: { type: number, minimum: 1 }
               seed: { type: number, minimum: 0 }
               dependsOn: { type: array, items: { type: string } }
+    CandidateStrategyId:
+      type: string
+      enum: [conservative, rhythmic, melodic, sparse, adventurous]
+    CandidateGenerationPlan:
+      type: object
+      description: Deliberate candidate-generation strategies (PR-10).
+      required: [version, derivedAt, inputsDigestSha256, method, baseSeed, candidates]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        derivedAt: { type: string, format: date-time }
+        inputsDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        method: { type: string }
+        baseSeed: { type: number, minimum: 0 }
+        candidates:
+          type: array
+          items:
+            type: object
+            required: [candidateId, label, strategy, seed, parameters, partAdjustments]
+            properties:
+              candidateId: { type: string }
+              label: { type: string }
+              strategy: { $ref: "#/components/schemas/CandidateStrategyId" }
+              seed: { type: number, minimum: 0 }
+              parameters:
+                type: object
+                additionalProperties: { type: number }
+              partAdjustments:
+                type: array
+                items:
+                  type: object
+                  required: [taskId, densityMultiplier, seed, note]
+                  properties:
+                    taskId: { type: string }
+                    densityMultiplier: { type: number, minimum: 0 }
+                    seed: { type: number, minimum: 0 }
+                    note: { type: string }

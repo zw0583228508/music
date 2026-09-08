@@ -5385,6 +5385,59 @@ export interface PartComposerPlan {
   tasks: PartComposerPlanTasksItem[];
 }
 
+export type CandidateGenerationPlanVersion = typeof CandidateGenerationPlanVersion[keyof typeof CandidateGenerationPlanVersion];
+
+
+export const CandidateGenerationPlanVersion = {
+  '10': '1.0',
+} as const;
+
+export type CandidateStrategyId = typeof CandidateStrategyId[keyof typeof CandidateStrategyId];
+
+
+export const CandidateStrategyId = {
+  conservative: 'conservative',
+  rhythmic: 'rhythmic',
+  melodic: 'melodic',
+  sparse: 'sparse',
+  adventurous: 'adventurous',
+} as const;
+
+export type CandidateGenerationPlanCandidatesItemParameters = {[key: string]: number};
+
+export type CandidateGenerationPlanCandidatesItemPartAdjustmentsItem = {
+  taskId: string;
+  /** @minimum 0 */
+  densityMultiplier: number;
+  /** @minimum 0 */
+  seed: number;
+  note: string;
+};
+
+export type CandidateGenerationPlanCandidatesItem = {
+  candidateId: string;
+  label: string;
+  strategy: CandidateStrategyId;
+  /** @minimum 0 */
+  seed: number;
+  parameters: CandidateGenerationPlanCandidatesItemParameters;
+  partAdjustments: CandidateGenerationPlanCandidatesItemPartAdjustmentsItem[];
+};
+
+/**
+ * Deliberate candidate-generation strategies (PR-10).
+ */
+export interface CandidateGenerationPlan {
+  version: CandidateGenerationPlanVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  /** @minimum 0 */
+  baseSeed: number;
+  candidates: CandidateGenerationPlanCandidatesItem[];
+}
+
 export interface ArrangementPlan {
   id: string;
   version: number;
@@ -5399,6 +5452,7 @@ export interface ArrangementPlan {
   orchestrationBudget?: OrchestrationBudgetPlan;
   transitionPlan?: TransitionPlanSet;
   partComposerPlan?: PartComposerPlan;
+  candidateGenerationPlan?: CandidateGenerationPlan;
   compositionIntelligence?: CompositionIntelligencePlan;
   generationPreference?: GenerationPreferenceSnapshot | null;
 }

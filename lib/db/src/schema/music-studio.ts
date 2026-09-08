@@ -2184,6 +2184,36 @@ export type PartComposerPlan = {
   }>;
 };
 
+/** Deliberate candidate-generation strategies (PR-10). */
+export type CandidateStrategyId =
+  | "conservative" | "rhythmic" | "melodic" | "sparse" | "adventurous";
+
+/**
+ * Deliberate diversity for candidate generation (PR-10): instead of random
+ * seeds, each candidate is steered by a named strategy so the critic chooses
+ * between genuinely different ideas.
+ */
+export type CandidateGenerationPlan = {
+  version: "1.0";
+  derivedAt: string;
+  inputsDigestSha256: string;
+  method: string;
+  baseSeed: number;
+  candidates: Array<{
+    candidateId: string;
+    label: string;
+    strategy: CandidateStrategyId;
+    seed: number;
+    parameters: Record<string, number>;
+    partAdjustments: Array<{
+      taskId: string;
+      densityMultiplier: number;
+      seed: number;
+      note: string;
+    }>;
+  }>;
+};
+
 /** Transition Engine (PR-08): planned devices for every section boundary. */
 export type TransitionPlanSet = {
   version: "1.0";
@@ -2209,6 +2239,8 @@ export type ArrangementPlan = {
   transitionPlan?: TransitionPlanSet;
   /** Compact index of parts to compose (full request built on demand); absent on historical plans. */
   partComposerPlan?: PartComposerPlan;
+  /** Deliberate candidate-generation strategy set; absent on historical plans. */
+  candidateGenerationPlan?: CandidateGenerationPlan;
   /** Absent only on historical persisted plans, which are interpreted as v1. */
   compositionIntelligence?: CompositionIntelligencePlan;
   /** Frozen before notes are generated; absent on historical plans. */

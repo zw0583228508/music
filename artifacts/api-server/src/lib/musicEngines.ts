@@ -28,6 +28,7 @@ import { deriveSectionPhrasePlan } from "./sectionPhrasePlanner";
 import { deriveOrchestrationBudget } from "./orchestrationBudget";
 import { deriveTransitionPlan } from "./transitionEngine";
 import { buildPartComposerPlan } from "./partComposer";
+import { planCandidateGeneration } from "./candidateStrategies";
 
 export type PerformanceNote = MusicalNote & {
   articulation: string;
@@ -1698,6 +1699,7 @@ function planningLayers(songModel: SongModelData): {
   orchestrationBudget: ReturnType<typeof deriveOrchestrationBudget>;
   transitionPlan: ReturnType<typeof deriveTransitionPlan>;
   partComposerPlan: ReturnType<typeof buildPartComposerPlan>;
+  candidateGenerationPlan: ReturnType<typeof planCandidateGeneration>;
 } {
   // The arrangement plan is required to be byte-deterministic for a given input,
   // so the embedded planning layers use a fixed timestamp; staleness is tracked
@@ -1706,14 +1708,16 @@ function planningLayers(songModel: SongModelData): {
   const globalPlan = deriveGlobalArrangementPlan(songModel, { now });
   const sectionPlan = deriveSectionPhrasePlan(songModel, globalPlan, { now });
   const transitionPlan = deriveTransitionPlan(songModel, globalPlan, sectionPlan, { now });
+  const partComposerPlan = buildPartComposerPlan(
+    songModel, globalPlan, sectionPlan, transitionPlan.transitions, { now },
+  );
   return {
     globalPlan,
     sectionPlan,
     orchestrationBudget: deriveOrchestrationBudget(songModel, sectionPlan, { now }),
     transitionPlan,
-    partComposerPlan: buildPartComposerPlan(
-      songModel, globalPlan, sectionPlan, transitionPlan.transitions, { now },
-    ),
+    partComposerPlan,
+    candidateGenerationPlan: planCandidateGeneration(songModel, 5, { now, partPlan: partComposerPlan }),
   };
 }
 
