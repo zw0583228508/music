@@ -14,6 +14,7 @@ import {
 import { CANONICAL_PPQ, createCanonicalTimeline } from "./canonicalTimeline";
 import { publicCandidateEvaluation } from "./candidateRanking";
 import type { CandidateEvaluation } from "@workspace/db";
+import { objectStorageClient } from "./objectStorage";
 
 type Project = {
   id: string;
@@ -152,7 +153,6 @@ const SAMPLE_RATE = 8_000;
 const CHANNELS = 1;
 const BITS_PER_SAMPLE = 16;
 const LEGACY_PPQ = 480;
-const REPLIT_SIDECAR_ENDPOINT = "http://127.0.0.1:1106";
 
 function meterTicksPerBar(meter: string, ppq: number = CANONICAL_PPQ): number {
   const [rawNumerator, rawDenominator] = meter.split("/");
@@ -195,59 +195,32 @@ function exportObjectPath(exportId: string): {
   };
 }
 
-async function signedObjectUrl(
-  exportId: string,
-  method: "GET" | "PUT",
-): Promise<string> {
-  const objectPath = exportObjectPath(exportId);
-  const response = await fetch(
-    `${REPLIT_SIDECAR_ENDPOINT}/object-storage/signed-object-url`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        bucket_name: objectPath.bucketName,
-        object_name: objectPath.objectName,
-        method,
-        expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-      }),
-      signal: AbortSignal.timeout(30_000),
-    },
-  );
-  if (!response.ok) {
-    throw new Error(`Could not create export storage URL (${response.status})`);
-  }
-  const payload = await response.json() as { signed_url?: string };
-  if (!payload.signed_url) throw new Error("Export storage URL was not returned");
-  return payload.signed_url;
-}
-
+/**
+ * Export packages are written and read through the object storage client
+ * itself (GCS on Replit, the filesystem backend locally) rather than by
+ * minting signed URLs from the Replit sidecar and PUT/GET-ing them. The
+ * sidecar only ever existed to sign URLs for this process's own I/O; it is
+ * not present outside Replit, and every other private object in this
+ * service already goes through the client (see objectStorage.ts).
+ */
 export async function persistExportBundle(
   bundle: ExportBundle,
   storageObjectId = bundle.package.id,
 ): Promise<void> {
-  const uploadUrl = await signedObjectUrl(storageObjectId, "PUT");
-  const response = await fetch(uploadUrl, {
-    method: "PUT",
-    headers: { "Content-Type": "application/zip" },
-    body: new Uint8Array(bundle.zip),
-    signal: AbortSignal.timeout(120_000),
+  const { bucketName, objectName } = exportObjectPath(storageObjectId);
+  await objectStorageClient.bucket(bucketName).file(objectName).save(bundle.zip, {
+    resumable: false,
+    metadata: { contentType: "application/zip", cacheControl: "private, max-age=3600" },
   });
-  if (!response.ok) {
-    throw new Error(`Could not store export package (${response.status})`);
-  }
 }
 
 export async function loadExportZip(exportId: string): Promise<Buffer | null> {
-  const downloadUrl = await signedObjectUrl(exportId, "GET");
-  const response = await fetch(downloadUrl, {
-    signal: AbortSignal.timeout(120_000),
-  });
-  if (response.status === 404) return null;
-  if (!response.ok) {
-    throw new Error(`Could not load export package (${response.status})`);
-  }
-  return Buffer.from(await response.arrayBuffer());
+  const { bucketName, objectName } = exportObjectPath(exportId);
+  const file = objectStorageClient.bucket(bucketName).file(objectName);
+  const [exists] = await file.exists();
+  if (!exists) return null;
+  const [data] = await file.download();
+  return Buffer.from(data);
 }
 
 function durationSeconds(duration: string): number {

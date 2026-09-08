@@ -93,3 +93,12 @@ Then set `PEDALBOARD_VST3_API_URL` / `PEDALBOARD_VST3_API_TOKEN` in `.env.local`
 (see `.env.local.example`). The worker is unhealthy — and the API falls back to
 the preview synth — until the smoke proof for exactly that plugin and host
 binary exists.
+
+### Routing tracks to specific instruments (PR-22)
+
+With several instruments in the worker manifest, `PREMIUM_INSTRUMENT_ROUTING`
+(inline JSON) or `PREMIUM_INSTRUMENT_ROUTING_PATH` picks the instrument per
+track by instrument name, role or family, with a default. Only instruments the
+worker has attested (their own smoke passed) can be chosen; a rule that names
+an unattested one makes that track fall back to the preview synth with the
+reason recorded in the export's renderer evidence.

@@ -603,7 +603,28 @@ export function structuredJobError(
   // Unknown failures remain retryable so a diagnostic format change cannot
   // silently turn a transient provider or host outage into a terminal job.
   const retryable = structuredRetryability(error) ?? true;
-  return { code: fallbackCode, message, retryable };
+  return { code: fallbackCode, message: withCauseChain(message, error), retryable };
+}
+
+/**
+ * Node's fetch reports every network failure as "fetch failed" and hides the
+ * useful part (ECONNREFUSED 127.0.0.1:8022, ENOTFOUND host, …) in `cause`.
+ * A job row that says only "fetch failed" cannot be acted on, so the cause
+ * chain is appended, bounded and sanitised like the message itself.
+ */
+function withCauseChain(message: string, error: unknown): string {
+  const parts: string[] = [];
+  let current: unknown = error;
+  for (let depth = 0; depth < 3; depth += 1) {
+    const cause = (current as { cause?: unknown } | null)?.cause;
+    if (!cause) break;
+    const code = typeof (cause as { code?: unknown }).code === "string" ? (cause as { code: string }).code : "";
+    const text = formatHostErrorMessage(cause, "");
+    const label = [code, text].filter((v) => v && v !== code).join(" ") || code;
+    if (label) parts.push(label.slice(0, 160));
+    current = cause;
+  }
+  return parts.length ? `${message} (cause: ${parts.join(" <- ")})` : message;
 }
 
 export async function productionQueueMetrics() {

@@ -57,6 +57,28 @@ The manifest and state live in `.local-vst3-assets/`, which is git-ignored.
 Plugins, presets and content libraries never enter the repository, a build
 context, or a response — only identity strings and SHA-256 digests do.
 
+## Several instruments, one worker (manifest v2, PR-22)
+
+`make_manifest.py --append` adds an instrument to an existing manifest under
+`assets`; the first instrument stays the default (`vst3`). Routing hints are
+informational — the routing decision is the API's (`PREMIUM_INSTRUMENT_ROUTING`):
+
+```powershell
+python make_manifest.py --plugin "C:/Program Files/Common Files/VST3/Steinberg/Groove Agent SE.vst3" --families drums --roles GROOVE,FILL --append --license-owner "<you>" --license-reference "<licence>"
+python smoke.py    # one proof per asset; the worker offers only assets whose own proof passed
+```
+
+`/health` lists every attested asset under `assets[]`, each with its own
+`smokeEvidence`; `POST /render` accepts `parameters.assetId` and echoes the
+asset it used, which the API verifies against that asset's evidence.
+
+**Content instruments render silence until a program is loaded.** HALion Sonic,
+Groove Agent SE and Padshop have empty default programs; their smoke fails with
+`audible: false` and they are simply not offered — the attested instruments are
+unaffected. Save a preset from your DAW and give the asset a `presetPath`
+(`make_manifest.py --preset <file>.vstpreset`), then re-run `smoke.py`.
+Retrologue, a pure synth with an audible default program, needs none.
+
 ## Smoke contract (`smoke.py`)
 
 Gates: a real TrackModel renders at the exact frame count, audibly, without

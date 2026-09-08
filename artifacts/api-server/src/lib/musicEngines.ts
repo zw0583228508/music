@@ -3576,10 +3576,21 @@ export class PedalboardRenderer {
     return (await this.renderAttested(track, sampleRate, durationSeconds)).samples;
   }
 
+  /** Instruments the worker has attested; premium routing chooses among these. */
+  async listAttestedAssetIds(): Promise<string[]> {
+    this.assertConfigured();
+    return listAttestedRendererAssetIds({
+      endpoint: process.env.PEDALBOARD_VST3_API_URL!,
+      token: process.env.PEDALBOARD_VST3_API_TOKEN,
+      provider: "VST3",
+    });
+  }
+
   async renderAttested(
     track: TrackModel,
     sampleRate: number,
     durationSeconds: number,
+    options: { assetId?: string } = {},
   ): Promise<NativeRenderResult> {
     this.assertConfigured();
     return renderRemoteInstrument({
@@ -3589,7 +3600,9 @@ export class PedalboardRenderer {
       track,
       sampleRate,
       durationSeconds,
-      parameters: {},
+      // Only the asset id crosses the wire; the worker resolves it against its
+      // private manifest. Never a filesystem path.
+      parameters: options.assetId ? { assetId: options.assetId } : {},
     });
   }
 }
@@ -3607,46 +3620,13 @@ async function renderRemoteInstrument(input: {
     "Content-Type": "application/json",
     ...(input.token ? { Authorization: `Bearer ${input.token}` } : {}),
   };
-  const healthResponse = await fetch(
-    new URL(`/health?provider=${encodeURIComponent(input.provider)}`, input.endpoint),
-    {
-      headers,
-      signal: AbortSignal.timeout(30_000),
-    },
-  );
-  if (!healthResponse.ok) {
-    throw new Error(`${input.provider} health returned HTTP ${healthResponse.status}`);
-  }
-  const health = await healthResponse.json() as {
-    contractVersion?: string;
-    healthy?: boolean;
-    provider?: string;
-    modelVersion?: string;
-    runtimeIdentity?: string;
-    runtimeReady?: boolean;
-    smokeTested?: boolean;
-    asset?: {
-      id?: string;
-      identity?: string;
-      sha256?: string;
-      licenseOwner?: string;
-      licenseReference?: string;
-      rendererIdentity?: string;
-      rendererSha256?: string;
-    };
-    smokeEvidence?: {
-      assetId?: string;
-      sha256?: string;
-      trackModelRendered?: boolean;
-      audible?: boolean;
-      canonicalSensitivity?: boolean;
-      nativeHostAttested?: boolean;
-      outputSha256?: string;
-      rendererSha256?: string;
-    };
-  };
-  const asset = health.asset;
-  const smoke = health.smokeEvidence;
+  const health = await fetchRendererHealth(input.endpoint, headers, input.provider);
+  // PR-22: a worker may attest several instruments; the caller names one per
+  // track. Without a name, the worker's default asset is used, as before.
+  const requestedAssetId = typeof input.parameters.assetId === "string" && input.parameters.assetId.trim()
+    ? input.parameters.assetId.trim()
+    : null;
+  const selected = selectAttestedAsset(health, requestedAssetId);
   if (
     health.healthy !== true ||
     health.contractVersion !== "1.0" ||
@@ -3655,24 +3635,13 @@ async function renderRemoteInstrument(input: {
     health.provider !== input.provider ||
     !health.modelVersion ||
     !health.runtimeIdentity ||
-    !asset?.id ||
-    !asset.identity ||
-    !asset.sha256 ||
-    !asset.licenseOwner ||
-    !asset.licenseReference ||
-    !asset.rendererIdentity ||
-    !asset.rendererSha256 ||
-    smoke?.assetId !== asset.id ||
-    smoke.sha256 !== asset.sha256 ||
-    smoke.rendererSha256 !== asset.rendererSha256 ||
-    smoke.trackModelRendered !== true ||
-    smoke.audible !== true ||
-    smoke.canonicalSensitivity !== true ||
-    smoke.nativeHostAttested !== true ||
-    !smoke.outputSha256
+    !selected
   ) {
-    throw new Error(`${input.provider} renderer is not backed by a healthy attested asset`);
+    throw new Error(
+      `${input.provider} renderer is not backed by a healthy attested asset${requestedAssetId ? ` (${requestedAssetId})` : ""}`,
+    );
   }
+  const { asset, smoke } = selected;
   const trackModelSha256 = createHash("sha256")
     .update(canonicalJson(input.track))
     .digest("hex");
@@ -3788,6 +3757,149 @@ function canonicalJson(value: unknown): string {
   }
   return JSON.stringify(value);
 }
+// --- native renderer health: attested assets (PR-22) -----------------------
+
+type RendererAssetFields = {
+  id?: string;
+  identity?: string;
+  sha256?: string;
+  licenseOwner?: string;
+  licenseReference?: string;
+  rendererIdentity?: string;
+  rendererSha256?: string;
+};
+
+type RendererSmokeFields = {
+  assetId?: string;
+  sha256?: string;
+  trackModelRendered?: boolean;
+  audible?: boolean;
+  canonicalSensitivity?: boolean;
+  nativeHostAttested?: boolean;
+  outputSha256?: string;
+  rendererSha256?: string;
+};
+
+export type RendererHealth = {
+  contractVersion?: string;
+  healthy?: boolean;
+  provider?: string;
+  modelVersion?: string;
+  runtimeIdentity?: string;
+  runtimeReady?: boolean;
+  smokeTested?: boolean;
+  asset?: RendererAssetFields;
+  smokeEvidence?: RendererSmokeFields;
+  /** Every attested instrument the worker offers, each with its own evidence. */
+  assets?: Array<RendererAssetFields & { smokeEvidence?: RendererSmokeFields }>;
+};
+
+export type AttestedRendererAsset = Required<RendererAssetFields>;
+type AttestedRendererSmoke = RendererSmokeFields & {
+  assetId: string; sha256: string; rendererSha256: string; outputSha256: string;
+};
+
+const RENDERER_HEALTH_TTL_MS = 30_000;
+const rendererHealthCache = new Map<string, { expiresAt: number; health: RendererHealth }>();
+
+/** Tests and operators toggling a worker can drop the cache explicitly. */
+export function clearRendererHealthCache(): void {
+  rendererHealthCache.clear();
+}
+
+/**
+ * One health round trip per worker per 30 s. An export renders every track of
+ * an arrangement; fetching the same attestation for each would be waste.
+ * Failures are never cached.
+ */
+async function fetchRendererHealth(
+  endpoint: string,
+  headers: Record<string, string>,
+  provider: string,
+): Promise<RendererHealth> {
+  const key = `${endpoint}|${provider}|${headers.Authorization ?? ""}`;
+  const cached = rendererHealthCache.get(key);
+  if (cached && cached.expiresAt > Date.now()) return cached.health;
+  const response = await fetch(
+    new URL(`/health?provider=${encodeURIComponent(provider)}`, endpoint),
+    { headers, signal: AbortSignal.timeout(30_000) },
+  );
+  if (!response.ok) {
+    throw new Error(`${provider} health returned HTTP ${response.status}`);
+  }
+  const health = await response.json() as RendererHealth;
+  rendererHealthCache.set(key, { expiresAt: Date.now() + RENDERER_HEALTH_TTL_MS, health });
+  return health;
+}
+
+function attestedPair(
+  asset: RendererAssetFields | undefined,
+  smoke: RendererSmokeFields | undefined,
+): { asset: AttestedRendererAsset; smoke: AttestedRendererSmoke } | null {
+  if (
+    !asset?.id ||
+    !asset.identity ||
+    !asset.sha256 ||
+    !asset.licenseOwner ||
+    !asset.licenseReference ||
+    !asset.rendererIdentity ||
+    !asset.rendererSha256 ||
+    smoke?.assetId !== asset.id ||
+    smoke.sha256 !== asset.sha256 ||
+    smoke.rendererSha256 !== asset.rendererSha256 ||
+    smoke.trackModelRendered !== true ||
+    smoke.audible !== true ||
+    smoke.canonicalSensitivity !== true ||
+    smoke.nativeHostAttested !== true ||
+    !smoke.outputSha256
+  ) {
+    return null;
+  }
+  return {
+    asset: asset as AttestedRendererAsset,
+    smoke: smoke as AttestedRendererSmoke,
+  };
+}
+
+/**
+ * The asset a render is allowed to use. With no request, the worker's default
+ * asset must be attested exactly as before. With a request, the named asset
+ * must appear in `assets` with its own passed evidence — the default's proof
+ * says nothing about a different instrument.
+ */
+function selectAttestedAsset(
+  health: RendererHealth,
+  requestedAssetId: string | null,
+): { asset: AttestedRendererAsset; smoke: AttestedRendererSmoke } | null {
+  if (requestedAssetId === null || requestedAssetId === health.asset?.id) {
+    return attestedPair(health.asset, health.smokeEvidence);
+  }
+  const entry = health.assets?.find((candidate) => candidate.id === requestedAssetId);
+  return entry ? attestedPair(entry, entry.smokeEvidence) : null;
+}
+
+/** Ids of every instrument the worker has attested, default first. */
+export async function listAttestedRendererAssetIds(input: {
+  endpoint: string;
+  token?: string;
+  provider: string;
+}): Promise<string[]> {
+  const headers = {
+    "Content-Type": "application/json",
+    ...(input.token ? { Authorization: `Bearer ${input.token}` } : {}),
+  };
+  const health = await fetchRendererHealth(input.endpoint, headers, input.provider);
+  if (health.healthy !== true || health.provider !== input.provider) return [];
+  const ids: string[] = [];
+  const defaultPair = attestedPair(health.asset, health.smokeEvidence);
+  if (defaultPair) ids.push(defaultPair.asset.id);
+  for (const entry of health.assets ?? []) {
+    const pair = attestedPair(entry, entry.smokeEvidence);
+    if (pair && !ids.includes(pair.asset.id)) ids.push(pair.asset.id);
+  }
+  return ids;
+}
+
 export function decodePcm16Wav(buffer: Buffer, expectedSampleRate: number): Float32Array {
   if (
     buffer.length < 44 ||

@@ -27,6 +27,7 @@ import type {
   ProviderProgress,
 } from "./musicProviders";
 import type { ProviderRuntimeSnapshot } from "@workspace/db";
+import { performedMaterialSha256 } from "./musicEngines";
 
 export const ARRANGEMENT_ORCHESTRATOR_ID = "ARRANGEMENT_ORCHESTRATOR" as const;
 
@@ -157,10 +158,18 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
     const scopedId = (id: string) => `${input.projectId}--${id}`;
     const candidates: ProviderCandidate[] = ranked.map((candidate) => {
       const symbolic = candidate.critique.overallScore;
-      const trackModels: TrackModel[] = candidate.trackModels.map((track) => ({
-        ...track,
-        id: scopedId(track.id),
-      }));
+      const trackModels: TrackModel[] = candidate.trackModels.map((track) => {
+        const scoped: TrackModel = { ...track, id: scopedId(track.id) };
+        // The performed-material digest covers the id, so re-scoping it must
+        // re-seal the evidence or the export will reject it as stale.
+        if (scoped.performanceEvidence) {
+          scoped.performanceEvidence = {
+            ...scoped.performanceEvidence,
+            performedMaterialSha256: performedMaterialSha256(scoped),
+          };
+        }
+        return scoped;
+      });
       const strengths = candidate.critique.strengths.slice(0, 2).join("; ");
       const weaknesses = candidate.critique.weaknesses.slice(0, 1).join("; ");
       return {

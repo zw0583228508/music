@@ -1,0 +1,25 @@
+{
+ "arrangement": {
+  "id": "4da143de-3667-48f2-b750-ea14a041825c",
+  "name": "Brain E2E · A · conservative · A · conservative",
+  "version": 3
+ },
+ "exportJob": {
+  "id": "f1f51757-a315-4ada-8f39-191583078f92",
+  "projectId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2",
+  "kind": "export",
+  "status": "queued",
+  "stage": "queued",
+  "progress": 0,
+  "attempt": 0,
+  "maxAttempts": 3,
+  "retryable": true,
+  "error": null,
+  "outputArtifactIds": [],
+  "createdAt": "2026-09-08T20:57:54.132Z",
+  "updatedAt": "2026-09-08T20:57:54.132Z",
+  "completedAt": null
+ },
+ "exportArtifact": null,
+ "rendererEvidence": []
+}

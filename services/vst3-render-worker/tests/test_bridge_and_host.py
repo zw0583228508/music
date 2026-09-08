@@ -104,7 +104,11 @@ def test_manifest_gate_refuses_a_changed_host():
 def test_manifest_gate_names_missing_fields():
     assert host.verify_asset_manifest({}) == ["manifest has no vst3 asset entry"]
     problems = host.verify_asset_manifest({"vst3": {"id": "only"}})
-    assert "asset field path is missing" in problems
+    assert "asset only: field path is missing" in problems
+    # Manifest v2: every listed asset is verified, and each problem names its asset.
+    two = host.verify_asset_manifest({"vst3": {"id": "a"}, "assets": [{"id": "b"}]})
+    assert any(p.startswith("asset a:") for p in two) and any(p.startswith("asset b:") for p in two)
+    assert [a["id"] for a in host.list_assets({"vst3": {"id": "a"}, "assets": [{"id": "b"}, {"id": "a"}]})] == ["a", "b"]
 
 
 def test_public_asset_fields_never_include_paths():

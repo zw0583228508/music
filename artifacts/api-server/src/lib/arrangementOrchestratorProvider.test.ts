@@ -12,6 +12,11 @@ import {
   verifyProviderRegistry,
   type ProviderGenerationInput,
 } from "./musicProviders";
+import {
+  canonicalPerformancePhraseIds,
+  canonicalPerformanceTimelineSha256,
+  performedMaterialSha256,
+} from "./musicEngines";
 
 const songModel = buildBenchmarkSongModel(BENCHMARK_CORPUS[0]);
 
@@ -77,6 +82,17 @@ test("every candidate passes the runner's canonical TrackModel contract", async 
     }
     assert.deepEqual(validateCanonicalTrackModels(tracks, tracks.map((t) => t.id)), []);
     assert.deepEqual(candidate.plan.tracks?.map((t) => t.id), tracks.map((t) => t.id));
+    // Production export gate: every track carries canonical performance
+    // evidence, still sealed after the ids were re-scoped to the project.
+    for (const track of tracks) {
+      const evidence = track.performanceEvidence;
+      assert.ok(evidence, `${track.id} carries performance evidence`);
+      assert.equal(evidence.performedMaterialSha256, performedMaterialSha256(track), `${track.id} evidence is sealed over the scoped track`);
+      assert.equal(evidence.canonicalTimelineSha256, canonicalPerformanceTimelineSha256(songModel));
+      assert.deepEqual(evidence.phraseIds, canonicalPerformancePhraseIds(songModel));
+      assert.equal(evidence.playability.valid, true, `${track.id}: ${evidence.playability.violations.join("; ")}`);
+      assert.equal(evidence.instrumentFamily, track.instrumentDefinition.family);
+    }
   }
 });
 
