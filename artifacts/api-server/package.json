@@ -10,6 +10,7 @@
     "start": "node --enable-source-maps ./dist/index.mjs",
     "exports:reconcile": "pnpm run build && node --enable-source-maps ./dist/export-reconciliation.mjs",
     "benchmark": "node ./scripts/run-benchmark.mjs",
+    "loudness:crosscheck": "node ./scripts/loudness-crosscheck.mjs",
     "test:arrangement-benchmark": "node ./scripts/run-benchmark.mjs --test",
     "test": "pnpm run build && node --test tests/*.test.mjs && pnpm run test:music-engines && pnpm run test:validation && pnpm run test:analysis-providers && pnpm run test:source-ingestion && pnpm run test:revisions && pnpm run test:export-lineage && pnpm run test:copilot",
     "test:focused-bundle-concurrency": "node --test tests/focused-api-bundle-concurrency.test.mjs",

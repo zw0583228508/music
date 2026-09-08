@@ -193,6 +193,31 @@ export type MixMasterControls = {
 };
 
 /**
+ * Mastering Engine (PR-26): what a master *achieved*, measured with
+ * BS.1770-4 gated loudness and 4× true peak — never asserted from the
+ * profile alone.
+ */
+export type MasteringReport = {
+  version: "2.0";
+  method: string;
+  profile: string;
+  intent: string;
+  sampleRate: number;
+  target: { integratedLufs: number; truePeakDbtp: number; stereoWidth: number; limiter: boolean };
+  input: { integratedLufs: number | null; truePeakDbtp: number; loudnessRangeLu: number };
+  output: { integratedLufs: number | null; truePeakDbtp: number; loudnessRangeLu: number; maxMomentaryLufs: number | null };
+  gainDb: number;
+  compression: { ratio: number; maxReductionDb: number };
+  limiter: { enabled: boolean; maxReductionDb: number; limitedFrameRatio: number };
+  /** Output loudness within ±1 LU of the target. */
+  withinTarget: boolean;
+  warnings: string[];
+  steps: Array<{ step: string; detail: string }>;
+  /** Tracks the profile left out of the mix (stems keep them). */
+  excludedTracks: Array<{ trackId: string; role: string; family: string; reason: string }>;
+};
+
+/**
  * Mix Brain V1 (PR-25). A mix decided per musical role — not per track
  * index — that evolves across the song's sections, with every value
  * explained. `mixPlanToControls` turns it into the controls the mix/master

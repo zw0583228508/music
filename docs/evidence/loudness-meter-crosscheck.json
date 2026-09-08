@@ -1,0 +1,82 @@
+{
+  "pr": "PR-26 mastering-engine",
+  "recordedAt": "2026-09-08T22:18:57.862050+00:00",
+  "reference": "pyloudnorm unknown (BS.1770-4)",
+  "meterUnderTest": "BS.1770-4 (artifacts/api-server/src/lib/loudness.ts)",
+  "toleranceLu": 0.1,
+  "worstDifferenceLu": 0.0,
+  "pass": true,
+  "signals": [
+    {
+      "signal": "sine-997hz-minus20dbfs",
+      "seconds": 8,
+      "sampleRate": 48000,
+      "tsMeterLufs": -20.041,
+      "pyloudnormLufs": -20.042,
+      "differenceLu": 0.0,
+      "tsTruePeakDbtp": -19.999,
+      "samplePeakDbfs": -19.999,
+      "truePeakAtLeastSamplePeak": true
+    },
+    {
+      "signal": "sine-100hz-minus20dbfs",
+      "seconds": 8,
+      "sampleRate": 48000,
+      "tsMeterLufs": -21.863,
+      "pyloudnormLufs": -21.863,
+      "differenceLu": 0.0,
+      "tsTruePeakDbtp": -19.999,
+      "samplePeakDbfs": -19.999,
+      "truePeakAtLeastSamplePeak": true
+    },
+    {
+      "signal": "pinkish-noise-minus18dbfs",
+      "seconds": 10,
+      "sampleRate": 48000,
+      "tsMeterLufs": -24.121,
+      "pyloudnormLufs": -24.121,
+      "differenceLu": 0.0,
+      "tsTruePeakDbtp": -16.712,
+      "samplePeakDbfs": -16.949,
+      "truePeakAtLeastSamplePeak": true
+    },
+    {
+      "signal": "programme-with-gap",
+      "seconds": 20,
+      "sampleRate": 48000,
+      "tsMeterLufs": -15.286,
+      "pyloudnormLufs": -15.286,
+      "differenceLu": 0.0,
+      "tsTruePeakDbtp": 0.009,
+      "samplePeakDbfs": -0.0,
+      "truePeakAtLeastSamplePeak": true
+    },
+    {
+      "signal": "programme-mastered-streaming",
+      "seconds": 20,
+      "sampleRate": 48000,
+      "tsMeterLufs": -14.184,
+      "pyloudnormLufs": -14.185,
+      "differenceLu": 0.0,
+      "tsTruePeakDbtp": -1.0,
+      "samplePeakDbfs": -1.0,
+      "truePeakAtLeastSamplePeak": true
+    },
+    {
+      "signal": "programme-mastered-master",
+      "seconds": 20,
+      "sampleRate": 48000,
+      "tsMeterLufs": -10.494,
+      "pyloudnormLufs": -10.495,
+      "differenceLu": 0.0,
+      "tsTruePeakDbtp": -1.0,
+      "samplePeakDbfs": -1.0,
+      "truePeakAtLeastSamplePeak": true
+    }
+  ],
+  "notes": [
+    "Signals are generated deterministically, quantised to 16-bit and written as WAV; both meters read the same bytes.",
+    "pyloudnorm has no true-peak meter; the TS true peak is checked to be >= the sample peak (it can only add inter-sample peaks).",
+    "The mastered signals were produced by masteringEngine.ts at the STREAMING (-14) and MASTER (-10) profiles; pyloudnorm's reading of them is the independent proof the engine hits its targets."
+  ]
+}

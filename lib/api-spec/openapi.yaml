@@ -3857,7 +3857,8 @@ components:
         includeMetadata: { type: boolean }
         masterProfile:
           type: string
-          enum: [STREAMING, DYNAMIC, CLASSICAL, POP, LOUD, FILM]
+          # PR-26 delivery intents first; the legacy flavours keep working.
+          enum: [STREAMING, MASTER, DEMO, BACKING_TRACK, KARAOKE, LIVE_PLAYBACK, DYNAMIC, CLASSICAL, POP, LOUD, FILM]
     MixControlAutomationSegment:
       type: object
       description: PR-25 — a section of the song where this track's level / send differ from its static controls (offsets in dB).

@@ -366,6 +366,58 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   and density tucking were exercised by tests, not by the live run. No
   StyleProfile was attached (PR-U2).
 
+- **PR-26** ✅ — `mastering-engine`: the master is **measured, not asserted**.
+  `loudness.ts` is a real ITU-R BS.1770-4 meter — two-stage K-weighting
+  designed for the actual sample rate, 400 ms blocks at 75 % overlap, the
+  −70 LUFS absolute and −10 LU relative gates, 4× oversampled true peak —
+  cross-checked against **pyloudnorm** on six signals with a worst difference
+  of **0.000 LU** (`docs/evidence/loudness-meter-crosscheck.json`,
+  `pnpm --filter @workspace/api-server run loudness:crosscheck`). Before
+  this, every "LUFS" figure in the codebase was plain RMS dBFS.
+  `masteringEngine.ts` replaces the `tanh × peak` stub with a chain: 2nd-order
+  high-pass → glue compression → mid/side width → loudness normalisation to
+  the profile's integrated target → lookahead true-peak limiter at its
+  ceiling (sliding-minimum gain, box-smoothed attack, exponential release,
+  never above the ceiling at the oversampled estimate) → re-measure. One
+  bounded make-up pass when limiting cost more than 0.5 LU, then the report
+  says what was achieved: input/output LUFS, true peak, loudness range, gain,
+  compression and limiter work, `withinTarget`, warnings.
+
+  **Profiles are delivery intents**: STREAMING (−14 / −1), MASTER (−10 / −1),
+  DEMO (−16, no compression), BACKING_TRACK (−16; LEAD-role tracks left out of
+  the mix), KARAOKE (−16; voice-family tracks left out), LIVE_PLAYBACK (−12 /
+  −1.5, width 0.85, 30 Hz high-pass). Stems always keep every track. The
+  legacy ids keep working with honest targets. The revision route's
+  `measureWav` now reports true LUFS; the export bundle's `project/manifest.json`
+  carries the full `MasteringReport`, and `mix/master.wav`'s provenance the
+  measured numbers.
+
+  **Found and fixed on the way — a product defect.** The durable export job
+  verified the approved mix/master revision (checksum, version) and then
+  rendered the arrangement's **default mix**: the levels, pans and PR-25
+  automation the user auditioned and approved never reached the export.
+  `revisionControlsForExport` now feeds the revision's track controls into the
+  render; the delivery profile decides the master targets (with no profile
+  asked for, the revision's own targets stand). The report's `sources` steps
+  name both.
+
+  **Proven live** (`docs/evidence/mastering-export.json`) on the approved Mix
+  Brain revision v7: LIVE_PLAYBACK → **−12.00 LUFS at the −12 target,
+  −1.59 dBTP**, limiter idle; MASTER → **−10.00 LUFS, −1.00 dBTP**, limiter
+  max 1.0 dB; both with "mix from the approved revision: 3 track controls, 15
+  automation segment(s)".
+
+  Suites: loudness 5, masteringEngine 8, mixAutomation 3; typecheck green;
+  pyloudnorm cross-check PASS.
+
+  **Honest limits.** No multiband processing, no EQ beyond the high-pass, no
+  inter-sample-aware oversampled *limiting* (detection is oversampled, gain
+  is applied at the base rate — the measured true peak still lands under the
+  ceiling on every run). Loudness range is a percentile proxy, not EBU
+  R128 LRA. KARAOKE / BACKING_TRACK exclusions are unit-tested only; this
+  arrangement has no voice or LEAD track. The preview / candidate-quality
+  path still uses the old `MasterEngine` so benchmark numbers are unchanged.
+
   **Honest limits.** Only Retrologue is attested here: Groove Agent SE, Padshop
   and HALion Sonic render silence without a loaded program, so their smoke
   correctly refuses them until a `.vstpreset` is provided. The bass lives in

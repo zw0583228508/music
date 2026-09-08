@@ -20,6 +20,7 @@ import {
   rendererEvidenceTechnicalMetadata,
   processingEvidenceTechnicalMetadata,
 } from "./exportEngine";
+import { masteringProfile, revisionControlsForExport } from "./masteringEngine";
 import { processPedalboardBuiltinWav, type PedalboardProcessingEvidence } from "./pedalboardBuiltin";
 import { resolveExportSongModel } from "./exportLineage";
 import { applyArrangementEditorChanges } from "./musicEngines";
@@ -62,7 +63,7 @@ type ExportInputSnapshot = {
   includeMidi?: boolean;
   includeMix?: boolean;
   includeMetadata?: boolean;
-  masterProfile?: "STREAMING" | "DYNAMIC" | "CLASSICAL" | "POP" | "LOUD" | "FILM";
+  masterProfile?: "STREAMING" | "MASTER" | "DEMO" | "BACKING_TRACK" | "KARAOKE" | "LIVE_PLAYBACK" | "DYNAMIC" | "CLASSICAL" | "POP" | "LOUD" | "FILM";
   processingProvider?: "PEDALBOARD_BUILTIN";
   pedalboardProcessing?: boolean;
   approvedRevisionId?: string;
@@ -317,10 +318,20 @@ export async function runExportProductionJob(jobId: string): Promise<void> {
     }
 
     await heartbeat("rendering", 25);
+    // PR-26: the export renders the mix the user approved — the revision's
+    // track controls and automation — mastered to the delivery profile.
+    // Before this the job verified the approved revision and then rendered
+    // the arrangement's default mix, so the audition and the export differed.
+    const exportControls = revisionControlsForExport(
+      approvedRevision.controls,
+      masteringProfile(input.masterProfile ?? "STREAMING"),
+      input.masterProfile !== undefined,
+    );
     const deterministicFiles = exportTrackModels.length > 0
       ? await renderArrangementExport({
           projectName: project.name, bpm, key, meter,
           arrangementName: arrangement.name, arrangementVersion: arrangement.version,
+          mixMasterControls: exportControls.controls, masteringNotes: exportControls.notes,
           masterProfile: input.masterProfile ?? "STREAMING", energy: arrangement.energy, density: arrangement.density,
           harmonyComplexity: arrangement.harmonyComplexity, sections: arrangement.sections, tracks, songModel: songModel.model,
           plan: arrangement.plan, trackModels: exportTrackModels, styleSpec: arrangement.styleSpec, seed: arrangement.seed ?? undefined,

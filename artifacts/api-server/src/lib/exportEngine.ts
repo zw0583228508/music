@@ -8,9 +8,9 @@ import type {
   TrackModel,
   MixMasterControls,
   StyleProfile,
+  MasteringReport,
 } from "@workspace/db";
 import {
-  MasterEngine,
   MixGraph,
   PedalboardRenderer,
   QualityEngine,
@@ -24,6 +24,7 @@ import {
 } from "./musicEngines";
 import { loadPremiumRoutingTable } from "./premiumInstrumentRouting";
 import { resolveTrackAsset, toSoundCatalogue } from "./soundSelectionBrain";
+import { MASTERING_ENGINE_VERSION, masterAudio as masterThroughEngine, masteringProfile, tracksForMasterProfile } from "./masteringEngine";
 import { validateCanonicalTrackModels } from "./musicProviders";
 import type { PedalboardProcessingEvidence } from "./pedalboardBuiltin";
 import {
@@ -326,7 +327,8 @@ export function encodeWav(samples: Float32Array): Buffer {
 export function applyMixMasterControls(
   tracks: RenderedTrack[],
   controls: MixMasterControls,
-): { tracks: RenderedTrack[]; mixed: Float32Array; mastered: Float32Array; integratedLufs: number; truePeakDbtp: number } {
+  profileId: string = "STREAMING",
+): { tracks: RenderedTrack[]; mixed: Float32Array; mastered: Float32Array; integratedLufs: number; truePeakDbtp: number; masteringReport: MasteringReport } {
   const processed = tracks.map((track) => {
     const control = controls.tracks[track.trackModel.id];
     if (!control) return track;
@@ -373,23 +375,21 @@ export function applyMixMasterControls(
     return { ...track, samples };
   });
   const mixed = new MixGraph().mix(processed, { production: { stereoWidth: controls.master.processing.stereoWidth } } as StyleSpec, Math.ceil((processed[0]?.samples.length ?? 0) / CHANNELS));
-  const ceiling = 10 ** (controls.master.truePeakDbtp / 20);
-  const targetRms = 10 ** (controls.master.targetLufs / 20);
-  let sum = 0;
-  for (const value of mixed) sum += value * value;
-  const rms = Math.sqrt(sum / Math.max(1, mixed.length));
-  const targetGain = Math.min(8, targetRms / Math.max(rms, 1e-9));
-  const mastered = new Float32Array(mixed.length);
-  let peak = 0; let masteredSum = 0;
-  for (let i = 0; i < mixed.length; i += 1) {
-    const value = mixed[i] * targetGain;
-    const output = controls.master.processing.limiter ? Math.max(-ceiling, Math.min(ceiling, value)) : Math.tanh(value);
-    mastered[i] = output; peak = Math.max(peak, Math.abs(output)); masteredSum += output * output;
-  }
+  // PR-26: the revision's master targets go through the mastering engine —
+  // BS.1770-4 gated loudness to the target, a true-peak limiter at the
+  // ceiling — and the numbers returned are measured on the result.
+  const { master: mastered, report: masteringReport } = masterThroughEngine(mixed, masteringProfile(profileId), {
+    sampleRate: SAMPLE_RATE,
+    targetLufs: controls.master.targetLufs,
+    ceilingDbtp: controls.master.truePeakDbtp,
+    stereoWidth: controls.master.processing.stereoWidth,
+    limiter: controls.master.processing.limiter,
+  });
   return {
     tracks: processed, mixed, mastered,
-    integratedLufs: 20 * Math.log10(Math.sqrt(masteredSum / Math.max(1, mastered.length)) + 1e-12),
-    truePeakDbtp: 20 * Math.log10(peak + 1e-12),
+    integratedLufs: masteringReport.output.integratedLufs ?? Number.NEGATIVE_INFINITY,
+    truePeakDbtp: masteringReport.output.truePeakDbtp,
+    masteringReport,
   };
 }
 
@@ -667,6 +667,8 @@ export async function renderArrangementExport(input: {
   mixMasterControls?: MixMasterControls;
   /** PR-24: the project's resolved StyleProfile, so sound selection can read its sound dimensions. */
   styleProfile?: StyleProfile | null;
+  /** PR-26: where the mix and the master targets came from, recorded in the mastering report. */
+  masteringNotes?: string[];
 }): Promise<GeneratedExportFile[]> {
   const [meterNumerator, meterDenominator] = input.meter.split("/").map(Number);
   const beatsPerBar = Number.isFinite(meterNumerator) && meterNumerator > 0
@@ -822,13 +824,25 @@ export async function renderArrangementExport(input: {
         ...(soundSelection ? { soundSelection } : {}),
       };
     }));
+  // PR-26: the mastering profile decides which tracks are *in the mix*
+  // (a karaoke master leaves the voice out; a backing track leaves the lead
+  // out — the stems above keep every track) and how the master is made.
+  const profile = masteringProfile(input.masterProfile);
+  const forMix = tracksForMasterProfile(remoteTracks, profile);
   const controlled = input.mixMasterControls
-    ? applyMixMasterControls(remoteTracks, input.mixMasterControls)
+    ? applyMixMasterControls(forMix.included, input.mixMasterControls, profile.id)
     : null;
-  const mix = controlled?.mixed ?? new MixGraph().mix(remoteTracks, input.styleSpec, Math.ceil(SAMPLE_RATE * pipeline.durationSeconds));
+  const mix = controlled?.mixed ?? new MixGraph().mix(forMix.included, input.styleSpec, Math.ceil(SAMPLE_RATE * pipeline.durationSeconds));
+  const engineMaster = controlled ? null : masterThroughEngine(mix, profile, { sampleRate: SAMPLE_RATE });
   const mastered = controlled
     ? { premaster: mix, master: controlled.mastered }
-    : new MasterEngine().process(mix, input.masterProfile);
+    : { premaster: mix, master: engineMaster!.master };
+  const baseReport = controlled ? controlled.masteringReport : engineMaster!.report;
+  const masteringReport: MasteringReport = {
+    ...baseReport,
+    steps: [...(input.masteringNotes ?? []).map((detail) => ({ step: "sources", detail })), ...baseReport.steps],
+    excludedTracks: forMix.excluded,
+  };
   const quality = new QualityEngine().assess(
     remoteTracks.map((track) => track.trackModel),
     mix,
@@ -1093,9 +1107,9 @@ export async function renderArrangementExport(input: {
       format: "WAV",
       contentType: "audio/wav",
       data: encodeWav(mastered.premaster),
-      provenance: fileProvenance("MASTER_ENGINE", "1.0.0", {
+      provenance: fileProvenance("MASTER_ENGINE", MASTERING_ENGINE_VERSION, {
         stage: "premaster",
-        profile: "DYNAMIC",
+        profile: profile.id,
       }),
     },
     {
@@ -1104,9 +1118,16 @@ export async function renderArrangementExport(input: {
       format: "WAV",
       contentType: "audio/wav",
       data: encodeWav(mastered.master),
-      provenance: fileProvenance("MASTER_ENGINE", "1.0.0", {
+      provenance: fileProvenance("MASTER_ENGINE", MASTERING_ENGINE_VERSION, {
         stage: "master",
-        profile: input.masterProfile,
+        profile: profile.id,
+        targetLufs: masteringReport.target.integratedLufs,
+        ceilingDbtp: masteringReport.target.truePeakDbtp,
+        measuredLufs: masteringReport.output.integratedLufs ?? "silent",
+        measuredTruePeakDbtp: Number(masteringReport.output.truePeakDbtp.toFixed(2)),
+        withinTarget: masteringReport.withinTarget,
+        limiterMaxReductionDb: masteringReport.limiter.maxReductionDb,
+        excludedTracks: masteringReport.excludedTracks.length,
       }),
     },
   );
@@ -1171,6 +1192,7 @@ export async function renderArrangementExport(input: {
     },
     quality: pipeline.quality,
     productionReadiness: pipeline.quality.productionReadiness,
+    mastering: masteringReport,
     provenance: pipeline.provenance.map((item) => {
       const parentIds = item.model === "ARRANGEMENT_DIRECTOR"
         ? planParents
