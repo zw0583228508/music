@@ -1,15 +1,28 @@
 {
   "schemaVersion": 1,
   "provider": "MAGENTA_RT2_SMALL",
-  "finalStatus": "BLOCKED_NO_WEIGHTS",
-  "checkedAt": "2026-09-06",
+  "finalStatus": "SHADOW_READY",
+  "checkedAt": "2026-09-08",
   "evidence": [
-    "Source: https://github.com/magenta/magenta-realtime/tree/694a545e4ba0b88bf1150137b129582166d3e07f (Apache-2.0).",
-    "Official combined model snapshot: https://huggingface.co/google/magenta-realtime-2/tree/010aa0dcb0dfd27b24f0ad07b4dad63e8f9521cc (CC-BY-4.0); includes checkpoints/mrt2_small.safetensors."
+    "Source: https://github.com/magenta/magenta-realtime/tree/694a545e4ba0b88bf1150137b129582166d3e07f (Apache-2.0, confirmed by reading LICENSE directly because GitHub's licence API reports NOASSERTION).",
+    "Official combined model snapshot: https://huggingface.co/google/magenta-realtime-2/tree/010aa0dcb0dfd27b24f0ad07b4dad63e8f9521cc (CC-BY-4.0, ungated); includes checkpoints/mrt2_small.safetensors.",
+    "Provisioned to a Modal volume in magenta_rt's own $MAGENTA_HOME/magenta-rt-v2 layout: 12 files, asset tree 5df82db977fa20d024f1476844cdd887446c48ed41b9565603982d640af5eb52.",
+    "Checkpoint SHA256 5dd1cbc7c606c512c21de0bcb04d4818bf0a3b873d7cbb9d1556d67d3b034de3, verified against Hugging Face LFS metadata recorded before the download rather than self-computed.",
+    "Three real smoke contracts passed on an L4 in an isolated JAX CUDA runtime, retained at services/magenta-rt2-worker/release-evidence/smoke-proof.json: text (style alone, all 128 pitches masked), MIDI (C major vs A minor conditioning under one style prompt produce different dominant pitch classes), audio-context (6 s streamed render, 288000 samples, no silent seam, realtime factor 1.53).",
+    "CC-BY-4.0 attribution is attached to every realization response and every smoke proof by the worker, so an output cannot leave unattributed."
   ],
-  "reason": "Public, permissively usable weights are identified but have not been provisioned, hashed, or smoke-tested in an isolated JAX CUDA runtime.",
+  "reason": "Weights are provisioned, hashed and smoke-tested, and the licence permits commercial use. The model is nonetheless not routable: the plan requires a new model to beat the existing pipeline in blind evaluation before it becomes a default, and that evaluation has not been run.",
   "blockers": [
-    "No immutable local asset inventory or deployed endpoint exists.",
-    "The required text, MIDI, and audio-context real smoke contracts have not run."
+    "No blind evaluation has compared MAGENTA_RT2 against the existing reference pipeline, so it stays SHADOW_ONLY in musicProviders.ts and cannot be selected as a default.",
+    "MAGENTA_RT2_API_URL is not configured on the API server; the worker is deployed but deliberately not wired into routing."
+  ],
+  "notRoutableBecause": "QUALITY_EVIDENCE",
+  "notRoutableBecauseNote": "This is not a licence block. Reporting it as one would be false and would hide the real gate.",
+  "role": "SYMBOLIC_TO_AUDIO_REALIZER",
+  "roleNote": "Registered with capabilities [audio_generation] only. It realizes an arrangement this platform composed and is never routed as an arranger.",
+  "honestLimits": [
+    "The MIDI contract's pitch classes come from a coarse FFT chroma. It shows that note conditioning changed the output; it is not a transcription and is no evidence that the realization is in tune.",
+    "Only the 230M small variant has been provisioned and run. The 2.4B base checkpoint (9.84 GB) is manifested but untested.",
+    "No musical quality judgement has been made about the output at all."
   ]
 }
