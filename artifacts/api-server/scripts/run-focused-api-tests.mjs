@@ -108,6 +108,12 @@ const suites = {
       ["src/lib/producerIntelligence/explain.test.ts", "pi-explain.test.mjs"],
     ],
   },
+  "producer-chat": {
+    bundles: [
+      ["src/lib/producerChat.test.ts", "producer-chat.test.mjs"],
+      ["src/lib/producerIntelligence/openAiIntentModel.test.ts", "pi-openai-intent-model.test.mjs"],
+    ],
+  },
 };
 
 const supportedPermissionFailureCodes = new Set(["EPERM", "EACCES"]);

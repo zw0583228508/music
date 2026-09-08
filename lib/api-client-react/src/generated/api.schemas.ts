@@ -6055,6 +6055,885 @@ export interface CriticRepairLoopResult {
   finalCritique: ArrangementCritique;
 }
 
+export type IntelligenceProvenance = typeof IntelligenceProvenance[keyof typeof IntelligenceProvenance];
+
+
+export const IntelligenceProvenance = {
+  stated: 'stated',
+  inferred: 'inferred',
+  default: 'default',
+  researched: 'researched',
+} as const;
+
+export type StyleDimensionValue = string | number | string[];
+
+export interface StyleDimension {
+  value: StyleDimensionValue;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+  provenance: IntelligenceProvenance;
+  sourceRefs?: string[];
+}
+
+export type IntentSectionFunction = typeof IntentSectionFunction[keyof typeof IntentSectionFunction];
+
+
+export const IntentSectionFunction = {
+  intro: 'intro',
+  verse: 'verse',
+  prechorus: 'prechorus',
+  chorus: 'chorus',
+  bridge: 'bridge',
+  breakdown: 'breakdown',
+  outro: 'outro',
+  instrumental: 'instrumental',
+  unknown: 'unknown',
+} as const;
+
+export interface IntentSectionRef {
+  function: IntentSectionFunction;
+  ordinal: number | 'last' | 'all';
+  sectionName?: string;
+}
+
+export type IntentScopeKind = typeof IntentScopeKind[keyof typeof IntentScopeKind];
+
+
+export const IntentScopeKind = {
+  global: 'global',
+  section: 'section',
+  phrase: 'phrase',
+  track: 'track',
+} as const;
+
+export interface IntentScope {
+  kind: IntentScopeKind;
+  section?: IntentSectionRef;
+  phraseId?: string;
+  instrument?: string;
+}
+
+export type IntentSlotName = typeof IntentSlotName[keyof typeof IntentSlotName];
+
+
+export const IntentSlotName = {
+  mood: 'mood',
+  energy: 'energy',
+  density: 'density',
+  era: 'era',
+  tradition: 'tradition',
+  genre_word: 'genre_word',
+  scene: 'scene',
+  instrument: 'instrument',
+  ensemble_size: 'ensemble_size',
+  tempo_feel: 'tempo_feel',
+  tempo_bpm: 'tempo_bpm',
+  production_feel: 'production_feel',
+  vocal_treatment: 'vocal_treatment',
+} as const;
+
+export interface IntentInference {
+  id: string;
+  slot: IntentSlotName;
+  value: string;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+  provenance: IntelligenceProvenance;
+  evidence: string[];
+  scope: IntentScope;
+}
+
+export type IntentConstraintKind = typeof IntentConstraintKind[keyof typeof IntentConstraintKind];
+
+
+export const IntentConstraintKind = {
+  avoid: 'avoid',
+  limit: 'limit',
+  require: 'require',
+  keep: 'keep',
+} as const;
+
+export interface IntentConstraint {
+  id: string;
+  kind: IntentConstraintKind;
+  subject: string;
+  statement: string;
+  scope: IntentScope;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+  provenance: IntelligenceProvenance;
+}
+
+export type IntentReferenceKind = typeof IntentReferenceKind[keyof typeof IntentReferenceKind];
+
+
+export const IntentReferenceKind = {
+  song: 'song',
+  artist: 'artist',
+  recording: 'recording',
+  playlist: 'playlist',
+  description: 'description',
+} as const;
+
+export interface IntentReference {
+  id: string;
+  kind: IntentReferenceKind;
+  label: string;
+  aspect?: string;
+  evidence?: string;
+}
+
+export interface IntentSectionRequest {
+  id: string;
+  section: IntentSectionRef;
+  text: string;
+  inferenceIds: string[];
+  constraintIds: string[];
+}
+
+export type UserIntentVersion = typeof UserIntentVersion[keyof typeof UserIntentVersion];
+
+
+export const UserIntentVersion = {
+  '10': '1.0',
+} as const;
+
+export type UserIntentLanguage = typeof UserIntentLanguage[keyof typeof UserIntentLanguage];
+
+
+export const UserIntentLanguage = {
+  he: 'he',
+  en: 'en',
+  mixed: 'mixed',
+  unknown: 'unknown',
+} as const;
+
+/**
+ * Layer 1 - what the user said and what was read out of it; every item quotes verbatim evidence.
+ */
+export interface UserIntent {
+  version: UserIntentVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  rawText: string;
+  language: UserIntentLanguage;
+  inferences: IntentInference[];
+  constraints: IntentConstraint[];
+  references: IntentReference[];
+  sectionRequests: IntentSectionRequest[];
+  unresolvedTerms: string[];
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+}
+
+export type StyleProfileVersion = typeof StyleProfileVersion[keyof typeof StyleProfileVersion];
+
+
+export const StyleProfileVersion = {
+  '10': '1.0',
+} as const;
+
+export type StyleProfileDimensions = {[key: string]: StyleDimension};
+
+export type StyleProfileExclusionsItem = {
+  dimension?: string;
+  value: string;
+  sourceRefs: string[];
+};
+
+export type StyleProfileConflictsItem = {
+  dimension: string;
+  values: string[];
+};
+
+/**
+ * Layer 2 - independent dimensions of the musical world; only dimensions with evidence are present.
+ */
+export interface StyleProfile {
+  version: StyleProfileVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  dimensions: StyleProfileDimensions;
+  exclusions: StyleProfileExclusionsItem[];
+  conflicts: StyleProfileConflictsItem[];
+  sources: string[];
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+}
+
+export type ProducerDecisionScopeKind = typeof ProducerDecisionScopeKind[keyof typeof ProducerDecisionScopeKind];
+
+
+export const ProducerDecisionScopeKind = {
+  global: 'global',
+  section: 'section',
+  phrase: 'phrase',
+  track: 'track',
+} as const;
+
+export interface ProducerDecisionScope {
+  kind: ProducerDecisionScopeKind;
+  sectionName?: string;
+  phraseId?: string;
+  instrument?: string;
+}
+
+export type ProducerDecisionTopic = typeof ProducerDecisionTopic[keyof typeof ProducerDecisionTopic];
+
+
+export const ProducerDecisionTopic = {
+  energy: 'energy',
+  density: 'density',
+  instrumentation: 'instrumentation',
+  climax: 'climax',
+  ornamentation: 'ornamentation',
+  vocal_space: 'vocal_space',
+  groove: 'groove',
+  harmony: 'harmony',
+  aesthetic: 'aesthetic',
+  structure: 'structure',
+  style_dimension: 'style_dimension',
+  reference: 'reference',
+  other: 'other',
+} as const;
+
+export type ProducerBriefDecisionStrength = typeof ProducerBriefDecisionStrength[keyof typeof ProducerBriefDecisionStrength];
+
+
+export const ProducerBriefDecisionStrength = {
+  hard: 'hard',
+  soft: 'soft',
+} as const;
+
+export type ProducerBriefDecisionCreatedBy = typeof ProducerBriefDecisionCreatedBy[keyof typeof ProducerBriefDecisionCreatedBy];
+
+
+export const ProducerBriefDecisionCreatedBy = {
+  intake: 'intake',
+  clarification: 'clarification',
+  chat: 'chat',
+  producer: 'producer',
+  system: 'system',
+} as const;
+
+/**
+ * A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger's ProducerDecision).
+ */
+export interface ProducerBriefDecision {
+  id: string;
+  scope: ProducerDecisionScope;
+  topic: ProducerDecisionTopic;
+  statement: string;
+  dimension?: string;
+  value?: StyleDimensionValue;
+  strength: ProducerBriefDecisionStrength;
+  provenance: IntelligenceProvenance;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+  sourceRefs: string[];
+  supersedes: string[];
+  createdBy: ProducerBriefDecisionCreatedBy;
+  createdAt: string;
+}
+
+export type BriefDimensionDecisionDisposition = typeof BriefDimensionDecisionDisposition[keyof typeof BriefDimensionDecisionDisposition];
+
+
+export const BriefDimensionDecisionDisposition = {
+  adopt: 'adopt',
+  modify: 'modify',
+  reject: 'reject',
+} as const;
+
+export type BriefDimensionDecisionDecidedBy = typeof BriefDimensionDecisionDecidedBy[keyof typeof BriefDimensionDecisionDecidedBy];
+
+
+export const BriefDimensionDecisionDecidedBy = {
+  style_profile: 'style_profile',
+  constraint: 'constraint',
+  answer: 'answer',
+  producer: 'producer',
+} as const;
+
+export interface BriefDimensionDecision {
+  dimension: string;
+  disposition: BriefDimensionDecisionDisposition;
+  styleValue: StyleDimensionValue;
+  briefValue?: StyleDimensionValue;
+  rationale: string;
+  decidedBy: BriefDimensionDecisionDecidedBy;
+  provenance: IntelligenceProvenance;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+}
+
+export type BriefSectionIntentionFunction = typeof BriefSectionIntentionFunction[keyof typeof BriefSectionIntentionFunction];
+
+
+export const BriefSectionIntentionFunction = {
+  intro: 'intro',
+  verse: 'verse',
+  prechorus: 'prechorus',
+  chorus: 'chorus',
+  bridge: 'bridge',
+  breakdown: 'breakdown',
+  outro: 'outro',
+  instrumental: 'instrumental',
+  neutral: 'neutral',
+} as const;
+
+export type BriefSectionIntentionInstrumentation = {
+  add: string[];
+  remove: string[];
+  feature: string[];
+};
+
+export interface BriefSectionIntention {
+  sectionName: string;
+  function: BriefSectionIntentionFunction;
+  energyBias?: StyleDimension;
+  densityBias?: StyleDimension;
+  instrumentation?: BriefSectionIntentionInstrumentation;
+  climax?: StyleDimension;
+  character: StyleDimension[];
+  decisionIds: string[];
+}
+
+export type VocalSpacePolicyUnderLead = typeof VocalSpacePolicyUnderLead[keyof typeof VocalSpacePolicyUnderLead];
+
+
+export const VocalSpacePolicyUnderLead = {
+  open: 'open',
+  moderate: 'moderate',
+  tight: 'tight',
+} as const;
+
+export type VocalSpacePolicyGapFill = typeof VocalSpacePolicyGapFill[keyof typeof VocalSpacePolicyGapFill];
+
+
+export const VocalSpacePolicyGapFill = {
+  none: 'none',
+  sparse: 'sparse',
+  active: 'active',
+} as const;
+
+export interface VocalSpacePolicy {
+  underLead: VocalSpacePolicyUnderLead;
+  gapFill: VocalSpacePolicyGapFill;
+  counterMelodyAllowed: boolean;
+  provenance: IntelligenceProvenance;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+  rationale: string;
+}
+
+export type BriefInstrumentationEntryTier = typeof BriefInstrumentationEntryTier[keyof typeof BriefInstrumentationEntryTier];
+
+
+export const BriefInstrumentationEntryTier = {
+  foundation: 'foundation',
+  core: 'core',
+  colour: 'colour',
+  feature: 'feature',
+} as const;
+
+export interface BriefInstrumentationEntry {
+  family: string;
+  tier: BriefInstrumentationEntryTier;
+  rationale: string;
+  provenance: IntelligenceProvenance;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+}
+
+export type BriefDeltaKind = typeof BriefDeltaKind[keyof typeof BriefDeltaKind];
+
+
+export const BriefDeltaKind = {
+  set_dimension: 'set_dimension',
+  exclude_value: 'exclude_value',
+  section_intention: 'section_intention',
+  instrumentation: 'instrumentation',
+  vocal_space: 'vocal_space',
+  decision: 'decision',
+} as const;
+
+/**
+ * A concrete change to a ProductionBrief (set_dimension / exclude_value / section_intention / instrumentation / vocal_space / decision). The shape depends on `kind`; see lib/db `BriefDelta`.
+ */
+export interface BriefDelta {
+  kind: BriefDeltaKind;
+  rationale: string;
+  [key: string]: unknown;
+ }
+
+export type ProductionBriefVersion = typeof ProductionBriefVersion[keyof typeof ProductionBriefVersion];
+
+
+export const ProductionBriefVersion = {
+  '10': '1.0',
+} as const;
+
+export type ProductionBriefInstrumentation = {
+  hierarchy: BriefInstrumentationEntry[];
+  excludedFamilies: string[];
+};
+
+export type ProductionBriefProductionAestheticPlannerAesthetic = typeof ProductionBriefProductionAestheticPlannerAesthetic[keyof typeof ProductionBriefProductionAestheticPlannerAesthetic];
+
+
+export const ProductionBriefProductionAestheticPlannerAesthetic = {
+  raw_band: 'raw_band',
+  polished_pop: 'polished_pop',
+  cinematic: 'cinematic',
+  orchestral: 'orchestral',
+  electronic: 'electronic',
+  intimate: 'intimate',
+} as const;
+
+export type ProductionBriefProductionAesthetic = {
+  descriptors: StyleDimension[];
+  plannerAesthetic?: ProductionBriefProductionAestheticPlannerAesthetic;
+};
+
+/**
+ * Layer 3 - how THIS song realises the style; the single source of truth the planners read.
+ */
+export interface ProductionBrief {
+  version: ProductionBriefVersion;
+  id: string;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  intentDigestSha256: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  styleProfileDigestSha256: string;
+  sectionNames: string[];
+  dimensionDecisions: BriefDimensionDecision[];
+  sectionIntentions: BriefSectionIntention[];
+  unresolvedSectionRequests: IntentSectionRequest[];
+  vocalSpace: VocalSpacePolicy;
+  instrumentation: ProductionBriefInstrumentation;
+  productionAesthetic: ProductionBriefProductionAesthetic;
+  producerDecisions: ProducerBriefDecision[];
+  openQuestionIds: string[];
+  answeredQuestionIds: string[];
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+}
+
+export interface ClarificationOption {
+  id: string;
+  label: string;
+  labelHe?: string;
+  description: string;
+  briefDeltas: BriefDelta[];
+}
+
+export type ClarificationQuestionTrigger = {
+  reason: string;
+  sourceRefs: string[];
+};
+
+/**
+ * A question worth asking now - its answer materially changes the arrangement.
+ */
+export interface ClarificationQuestion {
+  id: string;
+  question: string;
+  questionHe?: string;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  informationGain: number;
+  settlesDimensions: string[];
+  trigger: ClarificationQuestionTrigger;
+  options: ClarificationOption[];
+  allowFreeText: boolean;
+}
+
+export type ArrangementConceptContrastsWithItem = {
+  conceptId: string;
+  dimensions: string[];
+};
+
+export interface ArrangementConcept {
+  id: string;
+  name: string;
+  thesis: string;
+  deltas: BriefDelta[];
+  differsIn: string[];
+  candidateStrategy: CandidateStrategyId;
+  contrastsWith: ArrangementConceptContrastsWithItem[];
+}
+
+export type ArrangementConceptSetVersion = typeof ArrangementConceptSetVersion[keyof typeof ArrangementConceptSetVersion];
+
+
+export const ArrangementConceptSetVersion = {
+  '10': '1.0',
+} as const;
+
+/**
+ * Exactly three deliberately different directions for the same brief, before any note.
+ */
+export interface ArrangementConceptSet {
+  version: ArrangementConceptSetVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  briefId: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  briefDigestSha256: string;
+  concepts: ArrangementConcept[];
+}
+
+export type EditPlanVersion = typeof EditPlanVersion[keyof typeof EditPlanVersion];
+
+
+export const EditPlanVersion = {
+  '10': '1.0',
+} as const;
+
+export type EditPlanScope = {
+  kind: LockScope;
+  sectionName?: string;
+  instrument?: string;
+  phraseId?: string;
+  /** @minimum 1 */
+  startBar?: number;
+  /** @minimum 1 */
+  endBar?: number;
+};
+
+export type EditPlanIntent = typeof EditPlanIntent[keyof typeof EditPlanIntent];
+
+
+export const EditPlanIntent = {
+  reduce_density: 'reduce_density',
+  raise_density: 'raise_density',
+  lower_energy: 'lower_energy',
+  raise_energy: 'raise_energy',
+  raise_climax: 'raise_climax',
+  change_ornamentation: 'change_ornamentation',
+  add_instrument: 'add_instrument',
+  remove_instrument: 'remove_instrument',
+  feature_instrument: 'feature_instrument',
+  regenerate_part: 'regenerate_part',
+  change_groove: 'change_groove',
+  change_harmony: 'change_harmony',
+  change_aesthetic: 'change_aesthetic',
+  keep: 'keep',
+  unclear: 'unclear',
+} as const;
+
+/**
+ * A chat edit request mapped onto the PR-17 lock / regeneration scopes. Returned, not executed, in PR-U2.
+ */
+export interface EditPlan {
+  version: EditPlanVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  rawText: string;
+  scope: EditPlanScope;
+  intent: EditPlanIntent;
+  preserve: ArrangementLock[];
+  modify: RegenerationScope[];
+  briefDeltas: BriefDelta[];
+  rationale: string;
+  evidence: string[];
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+}
+
+export type PlanExplanationEvidenceItem = {
+  source: string;
+  ref: string;
+  detail: string;
+};
+
+/**
+ * An answer to "why is X here?" built only from the plan's own data.
+ */
+export interface PlanExplanation {
+  answered: boolean;
+  answer: string;
+  evidence: PlanExplanationEvidenceItem[];
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+}
+
+export type ProducerChatTurnKind = typeof ProducerChatTurnKind[keyof typeof ProducerChatTurnKind];
+
+
+export const ProducerChatTurnKind = {
+  intake: 'intake',
+  answers: 'answers',
+  refinement: 'refinement',
+  edit: 'edit',
+  explanation: 'explanation',
+  supersede: 'supersede',
+} as const;
+
+export interface ClarificationAnswer {
+  questionId: string;
+  optionId?: string;
+  freeText?: string;
+}
+
+export type ProducerChatTurnStructuredIntentDelta = {
+  inferences: IntentInference[];
+  constraints: IntentConstraint[];
+  references: IntentReference[];
+  unresolvedTerms: string[];
+};
+
+export type ProducerChatTurnStructuredPlanSource = typeof ProducerChatTurnStructuredPlanSource[keyof typeof ProducerChatTurnStructuredPlanSource];
+
+
+export const ProducerChatTurnStructuredPlanSource = {
+  arrangement: 'arrangement',
+  derived: 'derived',
+  none: 'none',
+} as const;
+
+/**
+ * What a producer turn did to the musical state.
+ */
+export interface ProducerChatTurnStructured {
+  kind: ProducerChatTurnKind;
+  /** @nullable */
+  briefVersion: number | null;
+  intentDelta?: ProducerChatTurnStructuredIntentDelta;
+  clarifications?: ClarificationQuestion[];
+  answers?: ClarificationAnswer[];
+  editPlan?: EditPlan;
+  decisionIds?: string[];
+  explanation?: PlanExplanation;
+  planSource?: ProducerChatTurnStructuredPlanSource;
+  intentMethod?: string;
+}
+
+export type ProducerChatTurnRole = typeof ProducerChatTurnRole[keyof typeof ProducerChatTurnRole];
+
+
+export const ProducerChatTurnRole = {
+  user: 'user',
+  producer: 'producer',
+} as const;
+
+export interface ProducerChatTurn {
+  id: string;
+  projectId: string;
+  /** @nullable */
+  briefId: string | null;
+  role: ProducerChatTurnRole;
+  text: string;
+  structured: ProducerChatTurnStructured | null;
+  createdAt: string;
+}
+
+export interface ProducerTurnPage {
+  turns: ProducerChatTurn[];
+  hasMore: boolean;
+  /** @nullable */
+  oldestTurnId: string | null;
+}
+
+/**
+ * A durable chat decision row; superseded rows keep `supersededBy`.
+ */
+export interface ProducerDecisionRecord {
+  id: string;
+  projectId: string;
+  briefId: string;
+  decisionId: string;
+  decision: ProducerBriefDecision;
+  delta: BriefDelta | null;
+  /** @nullable */
+  supersededBy: string | null;
+  createdAt: string;
+}
+
+/**
+ * arrangement = the latest stored ArrangementPlan; derived = planned from the Song Model with the brief's hints; none = no Song Model yet
+ */
+export type ProducerBriefStatePlanSource = typeof ProducerBriefStatePlanSource[keyof typeof ProducerBriefStatePlanSource];
+
+
+export const ProducerBriefStatePlanSource = {
+  arrangement: 'arrangement',
+  derived: 'derived',
+  none: 'none',
+} as const;
+
+/**
+ * The current brief version with everything the studio shows around it.
+ */
+export interface ProducerBriefState {
+  briefRecordId: string;
+  /** @minimum 1 */
+  version: number;
+  brief: ProductionBrief;
+  intent: UserIntent;
+  styleProfile: StyleProfile;
+  clarifications: ClarificationQuestion[];
+  decisions: ProducerDecisionRecord[];
+  concepts: ArrangementConceptSet;
+  /** @nullable */
+  songModelVersion: number | null;
+  /** arrangement = the latest stored ArrangementPlan; derived = planned from the Song Model with the brief's hints; none = no Song Model yet */
+  planSource: ProducerBriefStatePlanSource;
+  createdAt: string;
+}
+
+export interface ProducerTurnResult {
+  kind: ProducerChatTurnKind;
+  /** The persisted user turn */
+  turnId: string;
+  producerTurnId: string;
+  /** The producer's reply - a reading of the request */
+  understanding: string;
+  brief: ProductionBrief;
+  clarifications: ClarificationQuestion[];
+  editPlan?: EditPlan;
+  explanation?: PlanExplanation;
+  state: ProducerBriefState;
+}
+
+export type ProducerIntakeInputReferencesItemKind = typeof ProducerIntakeInputReferencesItemKind[keyof typeof ProducerIntakeInputReferencesItemKind];
+
+
+export const ProducerIntakeInputReferencesItemKind = {
+  song: 'song',
+  artist: 'artist',
+  recording: 'recording',
+  playlist: 'playlist',
+  description: 'description',
+} as const;
+
+export type ProducerIntakeInputReferencesItem = {
+  kind: ProducerIntakeInputReferencesItemKind;
+  /**
+     * @minLength 1
+     * @maxLength 200
+     */
+  label: string;
+  /** @maxLength 60 */
+  aspect?: string;
+};
+
+export interface ProducerIntakeInput {
+  /**
+     * @minLength 1
+     * @maxLength 4000
+     */
+  text: string;
+  /** @maxItems 20 */
+  references?: ProducerIntakeInputReferencesItem[];
+}
+
+export type ProducerAnswersInputAnswersItem = {
+  /** @minLength 1 */
+  questionId: string;
+  /** @minLength 1 */
+  answerId?: string;
+  /**
+     * @minLength 1
+     * @maxLength 1000
+     */
+  freeText?: string;
+};
+
+export interface ProducerAnswersInput {
+  /**
+     * @minItems 1
+     * @maxItems 10
+     */
+  answers: ProducerAnswersInputAnswersItem[];
+}
+
+export interface ProducerChatInput {
+  /**
+     * @minLength 1
+     * @maxLength 4000
+     */
+  text: string;
+}
+
+export type ProducerDecisionSupersedeInputDecisionStrength = typeof ProducerDecisionSupersedeInputDecisionStrength[keyof typeof ProducerDecisionSupersedeInputDecisionStrength];
+
+
+export const ProducerDecisionSupersedeInputDecisionStrength = {
+  hard: 'hard',
+  soft: 'soft',
+} as const;
+
+export type ProducerDecisionSupersedeInputDecision = {
+  scope: ProducerDecisionScope;
+  topic: ProducerDecisionTopic;
+  /**
+     * @minLength 1
+     * @maxLength 500
+     */
+  statement: string;
+  strength: ProducerDecisionSupersedeInputDecisionStrength;
+  dimension?: string;
+  value?: StyleDimensionValue;
+  /** @maxLength 500 */
+  rationale?: string;
+};
+
+export interface ProducerDecisionSupersedeInput {
+  decision: ProducerDecisionSupersedeInputDecision;
+}
+
 /**
  * Resource not found
  */

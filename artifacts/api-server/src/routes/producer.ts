@@ -1,0 +1,247 @@
+/**
+ * Producer conversation routes (Wave U, PR-U2).
+ *
+ *   POST /projects/:projectId/producer/intake
+ *   POST /projects/:projectId/producer/answers
+ *   GET  /projects/:projectId/producer/brief
+ *   POST /projects/:projectId/producer/chat
+ *   GET  /projects/:projectId/producer/turns
+ *   POST /projects/:projectId/producer/decisions/:decisionId/supersede
+ *
+ * Auth and ownership follow `routes/studio.ts`: every route needs a session,
+ * and a project owned by someone else is a 404 (nothing about it is revealed).
+ */
+import { Router, type IRouter, type NextFunction, type Request, type Response } from "express";
+import { eq } from "drizzle-orm";
+import {
+  AnswerProducerClarificationsBody,
+  AnswerProducerClarificationsParams,
+  AnswerProducerClarificationsResponse,
+  GetProducerBriefParams,
+  GetProducerBriefResponse,
+  ListProducerTurnsBeforeParams,
+  ListProducerTurnsBeforeResponse,
+  ListProducerTurnsParams,
+  ListProducerTurnsResponse,
+  RunProducerIntakeBody,
+  RunProducerIntakeParams,
+  RunProducerIntakeResponse,
+  SendProducerChatBody,
+  SendProducerChatParams,
+  SendProducerChatResponse,
+  SupersedeProducerDecisionBody,
+  SupersedeProducerDecisionParams,
+  SupersedeProducerDecisionResponse,
+} from "@workspace/api-zod";
+import { db, musicProjectsTable } from "@workspace/db";
+import { logger } from "../lib/logger";
+import {
+  ProducerChatError,
+  createProducerChatService,
+  isStyleDimensionName,
+  type ProducerBriefState,
+  type ProducerChatService,
+  type ProducerTurnOutcome,
+} from "../lib/producerChat";
+import { createProducerChatDbStore } from "../lib/producerChatDbStore";
+import { openAiIntentModelSelected, selectIntentLanguageModel } from "../lib/producerIntelligence/openAiIntentModel";
+
+const router: IRouter = Router();
+
+let service: ProducerChatService | null = null;
+function producerService(): ProducerChatService {
+  if (!service) {
+    const intentModel = selectIntentLanguageModel();
+    logger.info(
+      { intentModel: intentModel?.id ?? "deterministic-fallback", selected: openAiIntentModelSelected() },
+      "producer_intent_model_selected",
+    );
+    service = createProducerChatService(createProducerChatDbStore(), { intentModel });
+  }
+  return service;
+}
+
+function requireStudioAuth(req: Request, res: Response, next: NextFunction): void {
+  if (!req.isAuthenticated()) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  next();
+}
+router.use(requireStudioAuth);
+
+/** The project, only when the caller owns it; otherwise a 404 has been sent. */
+async function ownedProject(req: Request, res: Response, projectId: string): Promise<boolean> {
+  const [project] = await db
+    .select({ id: musicProjectsTable.id, ownerId: musicProjectsTable.ownerId })
+    .from(musicProjectsTable)
+    .where(eq(musicProjectsTable.id, projectId))
+    .limit(1);
+  if (!project || project.ownerId !== req.user!.id) {
+    res.status(404).json({ error: "Project not found" });
+    return false;
+  }
+  return true;
+}
+
+function sendError(res: Response, error: unknown): void {
+  if (error instanceof ProducerChatError) {
+    res.status(error.status).json({ error: error.message });
+    return;
+  }
+  throw error;
+}
+
+const statePayload = (state: ProducerBriefState) => ({
+  briefRecordId: state.briefRecordId,
+  version: state.version,
+  brief: state.brief,
+  intent: state.intent,
+  styleProfile: state.styleProfile,
+  clarifications: state.clarifications,
+  decisions: state.decisions,
+  concepts: state.concepts,
+  songModelVersion: state.songModelVersion,
+  planSource: state.planSource,
+  createdAt: state.createdAt,
+});
+
+const turnPayload = (outcome: ProducerTurnOutcome) => ({
+  kind: outcome.kind,
+  turnId: outcome.turnId,
+  producerTurnId: outcome.producerTurnId,
+  understanding: outcome.reply,
+  brief: outcome.state.brief,
+  clarifications: outcome.state.clarifications,
+  ...(outcome.editPlan ? { editPlan: outcome.editPlan } : {}),
+  ...(outcome.explanation ? { explanation: outcome.explanation } : {}),
+  state: statePayload(outcome.state),
+});
+
+router.post("/projects/:projectId/producer/intake", async (req, res): Promise<void> => {
+  const params = RunProducerIntakeParams.safeParse(req.params);
+  const body = RunProducerIntakeBody.safeParse(req.body);
+  if (!params.success || !body.success) {
+    res.status(400).json({ error: params.success ? body.error!.message : params.error.message });
+    return;
+  }
+  if (!(await ownedProject(req, res, params.data.projectId))) return;
+  try {
+    const outcome = await producerService().intake(params.data.projectId, {
+      text: body.data.text,
+      references: body.data.references?.map((r) => ({ kind: r.kind, label: r.label, ...(r.aspect ? { aspect: r.aspect } : {}) })),
+    });
+    res.status(201).json(RunProducerIntakeResponse.parse(turnPayload(outcome)));
+  } catch (error) {
+    sendError(res, error);
+  }
+});
+
+router.post("/projects/:projectId/producer/answers", async (req, res): Promise<void> => {
+  const params = AnswerProducerClarificationsParams.safeParse(req.params);
+  const body = AnswerProducerClarificationsBody.safeParse(req.body);
+  if (!params.success || !body.success) {
+    res.status(400).json({ error: params.success ? body.error!.message : params.error.message });
+    return;
+  }
+  if (!(await ownedProject(req, res, params.data.projectId))) return;
+  try {
+    const outcome = await producerService().answer(params.data.projectId, { answers: body.data.answers });
+    res.json(AnswerProducerClarificationsResponse.parse(turnPayload(outcome)));
+  } catch (error) {
+    sendError(res, error);
+  }
+});
+
+router.get("/projects/:projectId/producer/brief", async (req, res): Promise<void> => {
+  const params = GetProducerBriefParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+  if (!(await ownedProject(req, res, params.data.projectId))) return;
+  const state = await producerService().state(params.data.projectId);
+  if (!state) {
+    res.status(404).json({ error: "No production brief yet — start with intake" });
+    return;
+  }
+  res.json(GetProducerBriefResponse.parse(statePayload(state)));
+});
+
+router.post("/projects/:projectId/producer/chat", async (req, res): Promise<void> => {
+  const params = SendProducerChatParams.safeParse(req.params);
+  const body = SendProducerChatBody.safeParse(req.body);
+  if (!params.success || !body.success) {
+    res.status(400).json({ error: params.success ? body.error!.message : params.error.message });
+    return;
+  }
+  if (!(await ownedProject(req, res, params.data.projectId))) return;
+  try {
+    const outcome = await producerService().chat(params.data.projectId, { text: body.data.text });
+    res.json(SendProducerChatResponse.parse(turnPayload(outcome)));
+  } catch (error) {
+    sendError(res, error);
+  }
+});
+
+const TURN_PAGE_SIZE = 50;
+
+router.get("/projects/:projectId/producer/turns", async (req, res): Promise<void> => {
+  const params = ListProducerTurnsParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+  if (!(await ownedProject(req, res, params.data.projectId))) return;
+  const page = await producerService().turns(params.data.projectId, { limit: TURN_PAGE_SIZE });
+  res.json(ListProducerTurnsResponse.parse({
+    turns: page.turns,
+    hasMore: page.hasMore,
+    oldestTurnId: page.turns[0]?.id ?? null,
+  }));
+});
+
+router.get("/projects/:projectId/producer/turns/before/:turnId", async (req, res): Promise<void> => {
+  const params = ListProducerTurnsBeforeParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+  if (!(await ownedProject(req, res, params.data.projectId))) return;
+  const page = await producerService().turns(params.data.projectId, { limit: TURN_PAGE_SIZE, before: params.data.turnId });
+  res.json(ListProducerTurnsBeforeResponse.parse({
+    turns: page.turns,
+    hasMore: page.hasMore,
+    oldestTurnId: page.turns[0]?.id ?? null,
+  }));
+});
+
+router.post("/projects/:projectId/producer/decisions/:decisionId/supersede", async (req, res): Promise<void> => {
+  const params = SupersedeProducerDecisionParams.safeParse(req.params);
+  const body = SupersedeProducerDecisionBody.safeParse(req.body);
+  if (!params.success || !body.success) {
+    res.status(400).json({ error: params.success ? body.error!.message : params.error.message });
+    return;
+  }
+  if (!(await ownedProject(req, res, params.data.projectId))) return;
+  const { scope, dimension, ...rest } = body.data.decision;
+  if (dimension !== undefined && !isStyleDimensionName(dimension)) {
+    res.status(400).json({ error: `Unknown style dimension "${dimension}"` });
+    return;
+  }
+  try {
+    const outcome = await producerService().supersedeDecision(params.data.projectId, params.data.decisionId, {
+      ...rest,
+      ...(dimension !== undefined && isStyleDimensionName(dimension) ? { dimension } : {}),
+      scope: scope.kind === "global" ? { kind: "global" }
+        : scope.kind === "section" ? { kind: "section", sectionName: scope.sectionName ?? "" }
+          : scope.kind === "phrase" ? { kind: "phrase", phraseId: scope.phraseId ?? "" }
+            : { kind: "track", instrument: scope.instrument ?? "", ...(scope.sectionName ? { sectionName: scope.sectionName } : {}) },
+    });
+    res.json(SupersedeProducerDecisionResponse.parse(turnPayload(outcome)));
+  } catch (error) {
+    sendError(res, error);
+  }
+});
+
+export default router;

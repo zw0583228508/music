@@ -65,6 +65,7 @@ import {
   Wrench,
   Play,
   Pause,
+  MessageSquareText,
 } from "lucide-react";
 
 import { EmptyState } from "@/components/ui/empty";
@@ -104,6 +105,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ExportRenderEvidence, type RenderEvidence } from "@/components/studio/export-render-evidence";
+import { ProducerChat } from "@/components/studio/producer-chat";
 import {
   Dialog,
   DialogContent,
@@ -139,6 +141,9 @@ export default function ProjectWorkspace() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
+  // The Producer conversation (Wave U) lives in a drawer so it is reachable
+  // from every tab of the workspace without restructuring the page.
+  const [producerOpen, setProducerOpen] = useState(false);
 
   const { data: workspace, isLoading, error } = useGetProject(projectId);
   const { data: songModel } = useGetProjectSongModel(projectId, {
@@ -1193,6 +1198,17 @@ export default function ProjectWorkspace() {
           <Button variant="outline" size="sm" className="font-mono text-xs hidden sm:flex">
             <Layers className="h-3.5 w-3.5 mr-1.5" />
             Artifacts ({artifacts?.length ?? workspace.artifacts?.length ?? 0})
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs"
+            onClick={() => setProducerOpen(true)}
+            aria-label="Open the Producer conversation"
+            data-testid="open-producer-chat"
+          >
+            <MessageSquareText className="h-3.5 w-3.5 mr-1.5 text-primary" />
+            Producer
           </Button>
           <Button
             size="sm"
@@ -2357,6 +2373,26 @@ export default function ProjectWorkspace() {
         </aside>
 
       </div>
+
+      {/* The Producer conversation: persistent per project, available on every tab. */}
+      <Sheet open={producerOpen} onOpenChange={setProducerOpen}>
+        <SheetContent side="right" className="flex w-[min(94vw,480px)] flex-col gap-0 p-0 sm:max-w-[480px]">
+          <SheetHeader className="sr-only">
+            <SheetTitle>Producer</SheetTitle>
+            <SheetDescription>Talk to the producer: describe the arrangement, answer its questions, ask for changes or explanations</SheetDescription>
+          </SheetHeader>
+          <div className="flex min-h-0 flex-1 flex-col bg-card">
+            {producerOpen && (
+              <ProducerChat
+                projectId={projectId}
+                onBriefChanged={() => {
+                  void queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+                }}
+              />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Mobile panel sheets overlay the editor so the workspace width and selection never change. */}
       {isMobile && (

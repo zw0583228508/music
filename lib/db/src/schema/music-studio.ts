@@ -3435,3 +3435,107 @@ export type GenerationPreferenceSnapshot = {
   evidenceSha256: string;
   effects: GenerationPreferenceEffects;
 };
+
+// ---------------------------------------------------------------------------
+// Wave U — PR-U2: persistent producer conversation. Additive tables only.
+//
+// One "current" ProductionBrief per project = the row with the highest
+// `version`. Every version keeps the UserIntent + StyleProfile it was compiled
+// from and the clarification answers it applied, so any version can be
+// recompiled from its own inputs. Chat turns are append-only; durable
+// decisions are superseded, never deleted.
+// ---------------------------------------------------------------------------
+
+export type ProducerChatTurnRole = "user" | "producer";
+
+export type ProducerChatTurnKind =
+  | "intake" | "answers" | "refinement" | "edit" | "explanation" | "supersede";
+
+/** What a producer turn did to the musical state, in machine-readable form. */
+export type ProducerChatTurnStructured = {
+  kind: ProducerChatTurnKind;
+  briefVersion: number | null;
+  /** Intent items this turn added (verbatim-evidenced; never the full intent). */
+  intentDelta?: {
+    inferences: IntentInference[];
+    constraints: IntentConstraint[];
+    references: IntentReference[];
+    unresolvedTerms: string[];
+  };
+  clarifications?: ClarificationQuestion[];
+  answers?: ClarificationAnswer[];
+  editPlan?: EditPlan;
+  /** Ids (in the brief) of the durable decisions this turn created. */
+  decisionIds?: string[];
+  explanation?: PlanExplanation;
+  /** Where the plan the turn reasoned over came from. */
+  planSource?: "arrangement" | "derived" | "none";
+  /** `intent-extraction/v1` or `intent-extraction/v1+<model id>`. */
+  intentMethod?: string;
+};
+
+export const musicProductionBriefsTable = pgTable(
+  "music_production_briefs",
+  {
+    id: text("id").primaryKey(),
+    projectId: text("project_id")
+      .notNull()
+      .references(() => musicProjectsTable.id, { onDelete: "cascade" }),
+    version: integer("version").notNull(),
+    intent: jsonb("intent").$type<UserIntent>().notNull(),
+    styleProfile: jsonb("style_profile").$type<StyleProfile>().notNull(),
+    brief: jsonb("brief").$type<ProductionBrief>().notNull(),
+    /** Clarification answers applied at this version (carried to later ones). */
+    answers: jsonb("answers").$type<ClarificationAnswer[]>().notNull().default([]),
+    inputsDigestSha256: text("inputs_digest_sha256").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("music_production_briefs_project_version_unique").on(table.projectId, table.version),
+  ],
+);
+
+export const musicProducerChatTurnsTable = pgTable(
+  "music_producer_chat_turns",
+  {
+    id: text("id").primaryKey(),
+    projectId: text("project_id")
+      .notNull()
+      .references(() => musicProjectsTable.id, { onDelete: "cascade" }),
+    briefId: text("brief_id"),
+    role: text("role").$type<ProducerChatTurnRole>().notNull(),
+    text: text("text").notNull(),
+    structured: jsonb("structured").$type<ProducerChatTurnStructured | null>(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("music_producer_chat_turns_project_created_at_idx").on(table.projectId, table.createdAt),
+  ],
+);
+
+/**
+ * Durable producer decisions made in chat (standing rules and scoped
+ * overrides). Named `music_producer_brief_decisions` because
+ * `music_producer_decisions` is the learning ledger (`producerDecisionsTable`).
+ * `delta` is the BriefDelta that produces `decision` when the brief is
+ * recompiled; a superseded row's delta is no longer applied.
+ */
+export const musicProducerBriefDecisionsTable = pgTable(
+  "music_producer_brief_decisions",
+  {
+    id: text("id").primaryKey(),
+    projectId: text("project_id")
+      .notNull()
+      .references(() => musicProjectsTable.id, { onDelete: "cascade" }),
+    briefId: text("brief_id").notNull(),
+    /** The decision's id inside the brief (`dec-…`), stable across recompiles. */
+    decisionId: text("decision_id").notNull(),
+    decision: jsonb("decision").$type<ProducerBriefDecision>().notNull(),
+    delta: jsonb("delta").$type<BriefDelta | null>(),
+    supersededBy: text("superseded_by"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("music_producer_brief_decisions_project_idx").on(table.projectId, table.createdAt),
+  ],
+);

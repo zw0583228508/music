@@ -28,6 +28,7 @@
     "test:copilot": "sh ./scripts/run-focused-api-tests.sh copilot",
     "test:revisions": "sh ./scripts/run-focused-api-tests.sh revisions",
     "test:producer-intelligence": "sh ./scripts/run-focused-api-tests.sh producer-intelligence",
+    "test:producer-chat": "sh ./scripts/run-focused-api-tests.sh producer-chat",
     "pretypecheck": "tsc --build ../../lib/db/tsconfig.json ../../lib/api-zod/tsconfig.json ../../lib/integrations-openai-ai-server/tsconfig.json --force",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },

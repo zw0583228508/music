@@ -11,6 +11,7 @@
  */
 import type {
   GlobalArrangementPlan,
+  ProducerBriefDecision,
   ProductionBrief,
   SectionPhrasePlan,
   SongModelData,
@@ -47,19 +48,26 @@ export function briefPlannerHints(brief: ProductionBrief): BriefPlannerHints {
 
   const decisions = activeDecisions(brief);
 
+  // A constraint ("not too busy", "לא עמוס מדי") is compiled as a decision
+  // whose `value` is the ruled-out word and whose statement starts with the
+  // compiler's boundary verb; it means the opposite direction of `value`.
+  const boundary = (d: ProducerBriefDecision): boolean => /^(?:no|less) /.test(d.statement);
+
   // Global energy / density decisions bias every section a little.
   for (const d of decisions) {
     if (d.scope.kind !== "global") continue;
     if (d.topic === "energy" && (d.value === "high" || d.value === "low")) {
-      const mul = d.value === "high" ? 1.15 : 0.85;
+      const higher = (d.value === "high") !== boundary(d);
+      const mul = higher ? 1.15 : 0.85;
       for (const name of brief.sectionNames) sectionEnergyBias[name] = clampMul((sectionEnergyBias[name] ?? 1) * mul);
-      evidence.push(`${d.id}: global energy ${d.value} → all sections ×${mul}`);
+      evidence.push(`${d.id}: global energy ${boundary(d) ? `not ${d.value}` : d.value} → all sections ×${mul}`);
     }
     if (d.topic === "density" && (d.value === "dense" || d.value === "sparse")) {
-      const mul = d.value === "dense" ? 1.15 : 0.8;
+      const denser = (d.value === "dense") !== boundary(d);
+      const mul = denser ? 1.15 : 0.8;
       for (const name of brief.sectionNames) sectionDensityBias[name] = clampMul((sectionDensityBias[name] ?? 1) * mul);
-      activeFamilyBias += d.value === "dense" ? 0.3 : -0.35;
-      evidence.push(`${d.id}: global density ${d.value} → all sections ×${mul}, family bias ${d.value === "dense" ? "+0.3" : "-0.35"}`);
+      activeFamilyBias += denser ? 0.3 : -0.35;
+      evidence.push(`${d.id}: global density ${boundary(d) ? `not ${d.value}` : d.value} → all sections ×${mul}, family bias ${denser ? "+0.3" : "-0.35"}`);
     }
   }
 

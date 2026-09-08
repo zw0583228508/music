@@ -24,6 +24,8 @@ tags:
     description: Source upload, preprocessing, and Song Model generation
   - name: providers
     description: Music model registry and provider capability routing
+  - name: producer
+    description: Conversational intake, the production brief and the persistent producer chat (Wave U)
 paths:
   /healthz:
     get:
@@ -1170,6 +1172,174 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CopilotResult"
+  /projects/{projectId}/producer/intake:
+    post:
+      operationId: runProducerIntake
+      tags: [producer]
+      summary: Start (or restart) the producer conversation from free text
+      description: |
+        Free text in any language (plus optional references) becomes a UserIntent,
+        a StyleProfile, the clarification questions worth asking (at most two,
+        scored by information gain) and a new ProductionBrief version. Both the
+        user turn and the producer's reply are persisted. Nothing is generated.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProducerIntakeInput"
+      responses:
+        "201":
+          description: The producer's reading, the open questions and the new brief
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProducerTurnResult"
+        "400":
+          description: Empty text
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /projects/{projectId}/producer/answers:
+    post:
+      operationId: answerProducerClarifications
+      tags: [producer]
+      summary: Answer open clarification questions
+      description: Applies the chosen options' brief deltas (free text is also read as intake) and compiles a new brief version.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProducerAnswersInput"
+      responses:
+        "200":
+          description: The updated brief and any remaining questions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProducerTurnResult"
+        "400":
+          description: Unknown question or option
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: No brief yet — run intake first
+  /projects/{projectId}/producer/brief:
+    get:
+      operationId: getProducerBrief
+      tags: [producer]
+      summary: The current production brief, its decisions and the three arrangement concepts
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Current brief state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProducerBriefState"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /projects/{projectId}/producer/chat:
+    post:
+      operationId: sendProducerChat
+      tags: [producer]
+      summary: Send a message to the producer
+      description: |
+        A question ("why is there a clarinet here?") is answered from the latest
+        plan's own evidence. An edit request ("the last chorus is too busy",
+        "no strings in the whole song") becomes a structured EditPlan and durable,
+        scoped decisions on the brief. Anything else refines the intake. Both
+        turns are persisted; nothing is regenerated here.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProducerChatInput"
+      responses:
+        "200":
+          description: The producer's reply, with the edit plan or explanation it rests on
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProducerTurnResult"
+        "400":
+          description: Empty text
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /projects/{projectId}/producer/turns:
+    get:
+      operationId: listProducerTurns
+      tags: [producer]
+      summary: The persistent producer chat (latest page of 50, newest last)
+      description: Older turns are fetched page by page through `/producer/turns/before/{turnId}`.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: A page of turns
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProducerTurnPage"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /projects/{projectId}/producer/turns/before/{turnId}:
+    get:
+      operationId: listProducerTurnsBefore
+      tags: [producer]
+      summary: The page of 50 turns older than a turn (newest last)
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - name: turnId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: A page of turns
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProducerTurnPage"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /projects/{projectId}/producer/decisions/{decisionId}/supersede:
+    post:
+      operationId: supersedeProducerDecision
+      tags: [producer]
+      summary: Replace a standing decision with a new one
+      description: The old decision is marked superseded (never deleted) and the brief is recompiled without it.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - name: decisionId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProducerDecisionSupersedeInput"
+      responses:
+        "200":
+          description: The brief recompiled with the replacement
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProducerTurnResult"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: No brief yet, or the replacement produced no decision
 components:
   parameters:
     ProjectId:
@@ -5145,3 +5315,514 @@ components:
                     densityMultiplier: { type: number, minimum: 0 }
                     seed: { type: number, minimum: 0 }
                     note: { type: string }
+    # -----------------------------------------------------------------------
+    # Wave U — Universal Producer Intelligence (PR-U1 contracts, PR-U2 API).
+    # Mirrors lib/db/src/schema/music-studio.ts; the open-ended parts
+    # (BriefDelta, StyleDimension values) are typed loosely on purpose.
+    # -----------------------------------------------------------------------
+    IntelligenceProvenance:
+      type: string
+      enum: [stated, inferred, default, researched]
+    StyleDimensionValue:
+      oneOf:
+        - { type: string }
+        - { type: number }
+        - { type: array, items: { type: string } }
+    StyleDimension:
+      type: object
+      required: [value, confidence, provenance]
+      properties:
+        value: { $ref: "#/components/schemas/StyleDimensionValue" }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        provenance: { $ref: "#/components/schemas/IntelligenceProvenance" }
+        sourceRefs: { type: array, items: { type: string } }
+    IntentSectionFunction:
+      type: string
+      enum: [intro, verse, prechorus, chorus, bridge, breakdown, outro, instrumental, unknown]
+    IntentSectionRef:
+      type: object
+      required: [function, ordinal]
+      properties:
+        function: { $ref: "#/components/schemas/IntentSectionFunction" }
+        ordinal:
+          oneOf:
+            - { type: number, minimum: 1 }
+            - { type: string, enum: [last, all] }
+        sectionName: { type: string }
+    IntentScope:
+      type: object
+      required: [kind]
+      properties:
+        kind: { type: string, enum: [global, section, phrase, track] }
+        section: { $ref: "#/components/schemas/IntentSectionRef" }
+        phraseId: { type: string }
+        instrument: { type: string }
+    IntentSlotName:
+      type: string
+      enum: [mood, energy, density, era, tradition, genre_word, scene, instrument, ensemble_size, tempo_feel, tempo_bpm, production_feel, vocal_treatment]
+    IntentInference:
+      type: object
+      required: [id, slot, value, confidence, provenance, evidence, scope]
+      properties:
+        id: { type: string }
+        slot: { $ref: "#/components/schemas/IntentSlotName" }
+        value: { type: string }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        provenance: { $ref: "#/components/schemas/IntelligenceProvenance" }
+        evidence: { type: array, items: { type: string } }
+        scope: { $ref: "#/components/schemas/IntentScope" }
+    IntentConstraint:
+      type: object
+      required: [id, kind, subject, statement, scope, confidence, provenance]
+      properties:
+        id: { type: string }
+        kind: { type: string, enum: [avoid, limit, require, keep] }
+        subject: { type: string }
+        statement: { type: string }
+        scope: { $ref: "#/components/schemas/IntentScope" }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        provenance: { $ref: "#/components/schemas/IntelligenceProvenance" }
+    IntentReference:
+      type: object
+      required: [id, kind, label]
+      properties:
+        id: { type: string }
+        kind: { type: string, enum: [song, artist, recording, playlist, description] }
+        label: { type: string }
+        aspect: { type: string }
+        evidence: { type: string }
+    IntentSectionRequest:
+      type: object
+      required: [id, section, text, inferenceIds, constraintIds]
+      properties:
+        id: { type: string }
+        section: { $ref: "#/components/schemas/IntentSectionRef" }
+        text: { type: string }
+        inferenceIds: { type: array, items: { type: string } }
+        constraintIds: { type: array, items: { type: string } }
+    UserIntent:
+      type: object
+      description: Layer 1 - what the user said and what was read out of it; every item quotes verbatim evidence.
+      required: [version, derivedAt, inputsDigestSha256, method, rawText, language, inferences, constraints, references, sectionRequests, unresolvedTerms, confidence]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        derivedAt: { type: string, format: date-time }
+        inputsDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        method: { type: string }
+        rawText: { type: string }
+        language: { type: string, enum: [he, en, mixed, unknown] }
+        inferences: { type: array, items: { $ref: "#/components/schemas/IntentInference" } }
+        constraints: { type: array, items: { $ref: "#/components/schemas/IntentConstraint" } }
+        references: { type: array, items: { $ref: "#/components/schemas/IntentReference" } }
+        sectionRequests: { type: array, items: { $ref: "#/components/schemas/IntentSectionRequest" } }
+        unresolvedTerms: { type: array, items: { type: string } }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+    StyleProfile:
+      type: object
+      description: Layer 2 - independent dimensions of the musical world; only dimensions with evidence are present.
+      required: [version, derivedAt, inputsDigestSha256, method, dimensions, exclusions, conflicts, sources, confidence]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        derivedAt: { type: string, format: date-time }
+        inputsDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        method: { type: string }
+        dimensions:
+          type: object
+          additionalProperties: { $ref: "#/components/schemas/StyleDimension" }
+        exclusions:
+          type: array
+          items:
+            type: object
+            required: [value, sourceRefs]
+            properties:
+              dimension: { type: string }
+              value: { type: string }
+              sourceRefs: { type: array, items: { type: string } }
+        conflicts:
+          type: array
+          items:
+            type: object
+            required: [dimension, values]
+            properties:
+              dimension: { type: string }
+              values: { type: array, items: { type: string } }
+        sources: { type: array, items: { type: string } }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+    ProducerDecisionScope:
+      type: object
+      required: [kind]
+      properties:
+        kind: { type: string, enum: [global, section, phrase, track] }
+        sectionName: { type: string }
+        phraseId: { type: string }
+        instrument: { type: string }
+    ProducerDecisionTopic:
+      type: string
+      enum: [energy, density, instrumentation, climax, ornamentation, vocal_space, groove, harmony, aesthetic, structure, style_dimension, reference, other]
+    ProducerBriefDecision:
+      type: object
+      description: A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger's ProducerDecision).
+      required: [id, scope, topic, statement, strength, provenance, confidence, sourceRefs, supersedes, createdBy, createdAt]
+      properties:
+        id: { type: string }
+        scope: { $ref: "#/components/schemas/ProducerDecisionScope" }
+        topic: { $ref: "#/components/schemas/ProducerDecisionTopic" }
+        statement: { type: string }
+        dimension: { type: string }
+        value: { $ref: "#/components/schemas/StyleDimensionValue" }
+        strength: { type: string, enum: [hard, soft] }
+        provenance: { $ref: "#/components/schemas/IntelligenceProvenance" }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        sourceRefs: { type: array, items: { type: string } }
+        supersedes: { type: array, items: { type: string } }
+        createdBy: { type: string, enum: [intake, clarification, chat, producer, system] }
+        createdAt: { type: string, format: date-time }
+    BriefDimensionDecision:
+      type: object
+      required: [dimension, disposition, styleValue, rationale, decidedBy, provenance, confidence]
+      properties:
+        dimension: { type: string }
+        disposition: { type: string, enum: [adopt, modify, reject] }
+        styleValue: { $ref: "#/components/schemas/StyleDimensionValue" }
+        briefValue: { $ref: "#/components/schemas/StyleDimensionValue" }
+        rationale: { type: string }
+        decidedBy: { type: string, enum: [style_profile, constraint, answer, producer] }
+        provenance: { $ref: "#/components/schemas/IntelligenceProvenance" }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+    BriefSectionIntention:
+      type: object
+      required: [sectionName, function, character, decisionIds]
+      properties:
+        sectionName: { type: string }
+        function: { type: string, enum: [intro, verse, prechorus, chorus, bridge, breakdown, outro, instrumental, neutral] }
+        energyBias: { $ref: "#/components/schemas/StyleDimension" }
+        densityBias: { $ref: "#/components/schemas/StyleDimension" }
+        instrumentation:
+          type: object
+          required: [add, remove, feature]
+          properties:
+            add: { type: array, items: { type: string } }
+            remove: { type: array, items: { type: string } }
+            feature: { type: array, items: { type: string } }
+        climax: { $ref: "#/components/schemas/StyleDimension" }
+        character: { type: array, items: { $ref: "#/components/schemas/StyleDimension" } }
+        decisionIds: { type: array, items: { type: string } }
+    VocalSpacePolicy:
+      type: object
+      required: [underLead, gapFill, counterMelodyAllowed, provenance, confidence, rationale]
+      properties:
+        underLead: { type: string, enum: [open, moderate, tight] }
+        gapFill: { type: string, enum: [none, sparse, active] }
+        counterMelodyAllowed: { type: boolean }
+        provenance: { $ref: "#/components/schemas/IntelligenceProvenance" }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        rationale: { type: string }
+    BriefInstrumentationEntry:
+      type: object
+      required: [family, tier, rationale, provenance, confidence]
+      properties:
+        family: { type: string }
+        tier: { type: string, enum: [foundation, core, colour, feature] }
+        rationale: { type: string }
+        provenance: { $ref: "#/components/schemas/IntelligenceProvenance" }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+    BriefDelta:
+      type: object
+      description: A concrete change to a ProductionBrief (set_dimension / exclude_value / section_intention / instrumentation / vocal_space / decision). The shape depends on `kind`; see lib/db `BriefDelta`.
+      required: [kind, rationale]
+      properties:
+        kind: { type: string, enum: [set_dimension, exclude_value, section_intention, instrumentation, vocal_space, decision] }
+        rationale: { type: string }
+      additionalProperties: true
+    ProductionBrief:
+      type: object
+      description: Layer 3 - how THIS song realises the style; the single source of truth the planners read.
+      required: [version, id, derivedAt, inputsDigestSha256, method, intentDigestSha256, styleProfileDigestSha256, sectionNames, dimensionDecisions, sectionIntentions, unresolvedSectionRequests, vocalSpace, instrumentation, productionAesthetic, producerDecisions, openQuestionIds, answeredQuestionIds, confidence]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        id: { type: string }
+        derivedAt: { type: string, format: date-time }
+        inputsDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        method: { type: string }
+        intentDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        styleProfileDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        sectionNames: { type: array, items: { type: string } }
+        dimensionDecisions: { type: array, items: { $ref: "#/components/schemas/BriefDimensionDecision" } }
+        sectionIntentions: { type: array, items: { $ref: "#/components/schemas/BriefSectionIntention" } }
+        unresolvedSectionRequests: { type: array, items: { $ref: "#/components/schemas/IntentSectionRequest" } }
+        vocalSpace: { $ref: "#/components/schemas/VocalSpacePolicy" }
+        instrumentation:
+          type: object
+          required: [hierarchy, excludedFamilies]
+          properties:
+            hierarchy: { type: array, items: { $ref: "#/components/schemas/BriefInstrumentationEntry" } }
+            excludedFamilies: { type: array, items: { type: string } }
+        productionAesthetic:
+          type: object
+          required: [descriptors]
+          properties:
+            descriptors: { type: array, items: { $ref: "#/components/schemas/StyleDimension" } }
+            plannerAesthetic: { type: string, enum: [raw_band, polished_pop, cinematic, orchestral, electronic, intimate] }
+        producerDecisions: { type: array, items: { $ref: "#/components/schemas/ProducerBriefDecision" } }
+        openQuestionIds: { type: array, items: { type: string } }
+        answeredQuestionIds: { type: array, items: { type: string } }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+    ClarificationOption:
+      type: object
+      required: [id, label, description, briefDeltas]
+      properties:
+        id: { type: string }
+        label: { type: string }
+        labelHe: { type: string }
+        description: { type: string }
+        briefDeltas: { type: array, items: { $ref: "#/components/schemas/BriefDelta" } }
+    ClarificationQuestion:
+      type: object
+      description: A question worth asking now - its answer materially changes the arrangement.
+      required: [id, question, informationGain, settlesDimensions, trigger, options, allowFreeText]
+      properties:
+        id: { type: string }
+        question: { type: string }
+        questionHe: { type: string }
+        informationGain: { type: number, minimum: 0, maximum: 1 }
+        settlesDimensions: { type: array, items: { type: string } }
+        trigger:
+          type: object
+          required: [reason, sourceRefs]
+          properties:
+            reason: { type: string }
+            sourceRefs: { type: array, items: { type: string } }
+        options: { type: array, items: { $ref: "#/components/schemas/ClarificationOption" } }
+        allowFreeText: { type: boolean }
+    ArrangementConcept:
+      type: object
+      required: [id, name, thesis, deltas, differsIn, candidateStrategy, contrastsWith]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        thesis: { type: string }
+        deltas: { type: array, items: { $ref: "#/components/schemas/BriefDelta" } }
+        differsIn: { type: array, items: { type: string } }
+        candidateStrategy: { $ref: "#/components/schemas/CandidateStrategyId" }
+        contrastsWith:
+          type: array
+          items:
+            type: object
+            required: [conceptId, dimensions]
+            properties:
+              conceptId: { type: string }
+              dimensions: { type: array, items: { type: string } }
+    ArrangementConceptSet:
+      type: object
+      description: Exactly three deliberately different directions for the same brief, before any note.
+      required: [version, derivedAt, inputsDigestSha256, method, briefId, briefDigestSha256, concepts]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        derivedAt: { type: string, format: date-time }
+        inputsDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        method: { type: string }
+        briefId: { type: string }
+        briefDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        concepts: { type: array, items: { $ref: "#/components/schemas/ArrangementConcept" } }
+    EditPlan:
+      type: object
+      description: A chat edit request mapped onto the PR-17 lock / regeneration scopes. Returned, not executed, in PR-U2.
+      required: [version, derivedAt, inputsDigestSha256, method, rawText, scope, intent, preserve, modify, briefDeltas, rationale, evidence, confidence]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        derivedAt: { type: string, format: date-time }
+        inputsDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        method: { type: string }
+        rawText: { type: string }
+        scope:
+          type: object
+          required: [kind]
+          properties:
+            kind: { $ref: "#/components/schemas/LockScope" }
+            sectionName: { type: string }
+            instrument: { type: string }
+            phraseId: { type: string }
+            startBar: { type: number, minimum: 1 }
+            endBar: { type: number, minimum: 1 }
+        intent:
+          type: string
+          enum: [reduce_density, raise_density, lower_energy, raise_energy, raise_climax, change_ornamentation, add_instrument, remove_instrument, feature_instrument, regenerate_part, change_groove, change_harmony, change_aesthetic, keep, unclear]
+        preserve: { type: array, items: { $ref: "#/components/schemas/ArrangementLock" } }
+        modify: { type: array, items: { $ref: "#/components/schemas/RegenerationScope" } }
+        briefDeltas: { type: array, items: { $ref: "#/components/schemas/BriefDelta" } }
+        rationale: { type: string }
+        evidence: { type: array, items: { type: string } }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+    PlanExplanation:
+      type: object
+      description: An answer to "why is X here?" built only from the plan's own data.
+      required: [answered, answer, evidence, confidence]
+      properties:
+        answered: { type: boolean }
+        answer: { type: string }
+        evidence:
+          type: array
+          items:
+            type: object
+            required: [source, ref, detail]
+            properties:
+              source: { type: string }
+              ref: { type: string }
+              detail: { type: string }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+    ProducerChatTurnKind:
+      type: string
+      enum: [intake, answers, refinement, edit, explanation, supersede]
+    ClarificationAnswer:
+      type: object
+      required: [questionId]
+      properties:
+        questionId: { type: string }
+        optionId: { type: string }
+        freeText: { type: string }
+    ProducerChatTurnStructured:
+      type: object
+      description: What a producer turn did to the musical state.
+      required: [kind, briefVersion]
+      properties:
+        kind: { $ref: "#/components/schemas/ProducerChatTurnKind" }
+        briefVersion:
+          type: [number, "null"]
+        intentDelta:
+          type: object
+          required: [inferences, constraints, references, unresolvedTerms]
+          properties:
+            inferences: { type: array, items: { $ref: "#/components/schemas/IntentInference" } }
+            constraints: { type: array, items: { $ref: "#/components/schemas/IntentConstraint" } }
+            references: { type: array, items: { $ref: "#/components/schemas/IntentReference" } }
+            unresolvedTerms: { type: array, items: { type: string } }
+        clarifications: { type: array, items: { $ref: "#/components/schemas/ClarificationQuestion" } }
+        answers: { type: array, items: { $ref: "#/components/schemas/ClarificationAnswer" } }
+        editPlan: { $ref: "#/components/schemas/EditPlan" }
+        decisionIds: { type: array, items: { type: string } }
+        explanation: { $ref: "#/components/schemas/PlanExplanation" }
+        planSource: { type: string, enum: [arrangement, derived, none] }
+        intentMethod: { type: string }
+    ProducerChatTurn:
+      type: object
+      required: [id, projectId, briefId, role, text, structured, createdAt]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        briefId:
+          type: [string, "null"]
+        role: { type: string, enum: [user, producer] }
+        text: { type: string }
+        structured:
+          oneOf:
+            - { $ref: "#/components/schemas/ProducerChatTurnStructured" }
+            - { type: "null" }
+        createdAt: { type: string, format: date-time }
+    ProducerTurnPage:
+      type: object
+      required: [turns, hasMore, oldestTurnId]
+      properties:
+        turns: { type: array, items: { $ref: "#/components/schemas/ProducerChatTurn" } }
+        hasMore: { type: boolean }
+        oldestTurnId:
+          type: [string, "null"]
+    ProducerDecisionRecord:
+      type: object
+      description: A durable chat decision row; superseded rows keep `supersededBy`.
+      required: [id, projectId, briefId, decisionId, decision, delta, supersededBy, createdAt]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        briefId: { type: string }
+        decisionId: { type: string }
+        decision: { $ref: "#/components/schemas/ProducerBriefDecision" }
+        delta:
+          oneOf:
+            - { $ref: "#/components/schemas/BriefDelta" }
+            - { type: "null" }
+        supersededBy:
+          type: [string, "null"]
+        createdAt: { type: string, format: date-time }
+    ProducerBriefState:
+      type: object
+      description: The current brief version with everything the studio shows around it.
+      required: [briefRecordId, version, brief, intent, styleProfile, clarifications, decisions, concepts, songModelVersion, planSource, createdAt]
+      properties:
+        briefRecordId: { type: string }
+        version: { type: number, minimum: 1 }
+        brief: { $ref: "#/components/schemas/ProductionBrief" }
+        intent: { $ref: "#/components/schemas/UserIntent" }
+        styleProfile: { $ref: "#/components/schemas/StyleProfile" }
+        clarifications: { type: array, items: { $ref: "#/components/schemas/ClarificationQuestion" } }
+        decisions: { type: array, items: { $ref: "#/components/schemas/ProducerDecisionRecord" } }
+        concepts: { $ref: "#/components/schemas/ArrangementConceptSet" }
+        songModelVersion:
+          type: [number, "null"]
+        planSource:
+          type: string
+          enum: [arrangement, derived, none]
+          description: arrangement = the latest stored ArrangementPlan; derived = planned from the Song Model with the brief's hints; none = no Song Model yet
+        createdAt: { type: string, format: date-time }
+    ProducerTurnResult:
+      type: object
+      required: [kind, turnId, producerTurnId, understanding, brief, clarifications, state]
+      properties:
+        kind: { $ref: "#/components/schemas/ProducerChatTurnKind" }
+        turnId: { type: string, description: The persisted user turn }
+        producerTurnId: { type: string }
+        understanding: { type: string, description: The producer's reply - a reading of the request, an edit rationale, or an explanation }
+        brief: { $ref: "#/components/schemas/ProductionBrief" }
+        clarifications: { type: array, items: { $ref: "#/components/schemas/ClarificationQuestion" } }
+        editPlan: { $ref: "#/components/schemas/EditPlan" }
+        explanation: { $ref: "#/components/schemas/PlanExplanation" }
+        state: { $ref: "#/components/schemas/ProducerBriefState" }
+    ProducerIntakeInput:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string, minLength: 1, maxLength: 4000 }
+        references:
+          type: array
+          maxItems: 20
+          items:
+            type: object
+            required: [kind, label]
+            properties:
+              kind: { type: string, enum: [song, artist, recording, playlist, description] }
+              label: { type: string, minLength: 1, maxLength: 200 }
+              aspect: { type: string, maxLength: 60 }
+    ProducerAnswersInput:
+      type: object
+      required: [answers]
+      properties:
+        answers:
+          type: array
+          minItems: 1
+          maxItems: 10
+          items:
+            type: object
+            required: [questionId]
+            properties:
+              questionId: { type: string, minLength: 1 }
+              answerId: { type: string, minLength: 1 }
+              freeText: { type: string, minLength: 1, maxLength: 1000 }
+    ProducerChatInput:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string, minLength: 1, maxLength: 4000 }
+    ProducerDecisionSupersedeInput:
+      type: object
+      required: [decision]
+      properties:
+        decision:
+          type: object
+          required: [scope, topic, statement, strength]
+          properties:
+            scope: { $ref: "#/components/schemas/ProducerDecisionScope" }
+            topic: { $ref: "#/components/schemas/ProducerDecisionTopic" }
+            statement: { type: string, minLength: 1, maxLength: 500 }
+            strength: { type: string, enum: [hard, soft] }
+            dimension: { type: string }
+            value: { $ref: "#/components/schemas/StyleDimensionValue" }
+            rationale: { type: string, maxLength: 500 }
