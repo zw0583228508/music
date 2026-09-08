@@ -1,0 +1,117 @@
+{
+  "kind": "live-e2e",
+  "ranAt": "2026-09-08",
+  "endpointBase": "http://localhost:5000 (Neon Postgres)",
+  "note": "The Song Model is the licence-clean benchmark case 'pop-full', seeded into the project because the GPU analysis workers are offline locally; it is not an analysis of the project's uploaded MP3s.",
+  "flow": [
+    "POST /api/dev-login",
+    "GET /api/music-providers (ARRANGEMENT_ORCHESTRATOR available/ready; MAGENTA_RT2 and MIDI_RWKV listed)",
+    "POST /api/projects/{id}/arrangements (PRO_SCORE)",
+    "POST /api/arrangements/{id}/generate provider=ARRANGEMENT_ORCHESTRATOR -> 202",
+    "GET /api/generation-jobs/{id} -> succeeded",
+    "GET /api/generation-jobs/{id}/candidates",
+    "POST /api/generation-candidates/{id}/select -> arrangement v2",
+    "GET /api/projects/{id}/tracks -> ensemble persisted"
+  ],
+  "job": {
+    "id": "6116dc87-1f50-4837-b3bc-58db0ab7fb32",
+    "status": "succeeded",
+    "stage": "insufficient_diversity",
+    "errorCode": "INSUFFICIENT_DIVERSITY",
+    "provider": "ARRANGEMENT_ORCHESTRATOR",
+    "modelVersion": "1.0",
+    "requestedCandidates": 3
+  },
+  "candidates": [
+    {
+      "label": "A · conservative",
+      "rank": 1,
+      "status": "selected",
+      "score": 0.716097387482036,
+      "tracks": 3,
+      "notes": 690,
+      "qualityScore": 0.972,
+      "diversity": {
+        "comparedToCandidateId": null,
+        "distance": null,
+        "threshold": 0.25,
+        "rejected": false,
+        "reason": "baseline_retained"
+      },
+      "summary": "conservative · symbolic 75/100 · 0 playability error(s) · 1 repair pass(es) · groove: Groove feel is coherent.; leadCompatibility: Support instruments make room"
+    },
+    {
+      "label": "C · melodic",
+      "rank": null,
+      "status": "diversity_rejected",
+      "score": 0.7167273404439644,
+      "tracks": 3,
+      "notes": 739,
+      "qualityScore": 0.973,
+      "diversity": {
+        "comparedToCandidateId": "323c11bb-33da-4c01-86e6-042cbe51b53e",
+        "distance": 0.04832876712328767,
+        "threshold": 0.25,
+        "rejected": true,
+        "reason": "near_duplicate"
+      },
+      "summary": "melodic · symbolic 75/100 · 0 playability error(s) · 1 repair pass(es) · groove: Groove feel is coherent.; leadCompatibility: Support instruments make room for "
+    },
+    {
+      "label": "E · adventurous",
+      "rank": null,
+      "status": "diversity_rejected",
+      "score": 0.716504602341575,
+      "tracks": 3,
+      "notes": 739,
+      "qualityScore": 0.974,
+      "diversity": {
+        "comparedToCandidateId": "323c11bb-33da-4c01-86e6-042cbe51b53e",
+        "distance": 0.04832876712328767,
+        "threshold": 0.25,
+        "rejected": true,
+        "reason": "near_duplicate"
+      },
+      "summary": "adventurous · symbolic 75/100 · 0 playability error(s) · 1 repair pass(es) · groove: Groove feel is coherent.; leadCompatibility: Support instruments make room "
+    }
+  ],
+  "selectedArrangement": {
+    "id": "d8babd04-21a7-425b-addd-2b0798f6cd4a",
+    "name": "Brain E2E · A · conservative",
+    "version": 2,
+    "status": "ready",
+    "sourceCandidateId": "323c11bb-33da-4c01-86e6-042cbe51b53e",
+    "modelVersion": null
+  },
+  "ensembleTracks": [
+    {
+      "id": "drums-groove",
+      "name": "drums",
+      "role": "GROOVE",
+      "status": "rendered",
+      "notes": 532,
+      "family": "drums"
+    },
+    {
+      "id": "bass-bass",
+      "name": "bass",
+      "role": "BASS",
+      "status": "rendered",
+      "notes": 137,
+      "family": "strings"
+    },
+    {
+      "id": "ensemble-transition",
+      "name": "ensemble",
+      "role": "TRANSITION",
+      "status": "rendered",
+      "notes": 21,
+      "family": "keys"
+    }
+  ],
+  "honestLimits": [
+    "INSUFFICIENT_DIVERSITY: two of three strategies were near-duplicates under the runner's diversity metric (identical note counts); only the retained baseline is selectable. Consistent with the PR-18 finding that candidateDiversity barely varies.",
+    "The keys track present in offline runs was thinned to zero notes by a strategy density multiplier and dropped; the ensemble persisted here is drums, bass and a transition layer.",
+    "Symbolic 75/100 is the reference part composer's floor, not a musical judgement."
+  ]
+}

@@ -20,6 +20,7 @@ import type {
   PerformanceEvidence,
   PhrasePlan,
 } from "@workspace/db";
+import { LEGATO_TOLERANCE_SECONDS } from "./musicalConstraints";
 
 export const PERFORMANCE_ENGINE = "PERFORMANCE_ENGINE_V1" as const;
 const MAX_DECISION_SAMPLE = 64;
@@ -41,6 +42,18 @@ export type PerformanceInput = {
   seed?: number;
   /** Bar → seconds, so metrical position can be computed. */
   barSeconds?: number;
+  /**
+   * The instrument definition's articulation names. When given, the engine
+   * never emits an articulation the instrument cannot map — a bow change on a
+   * plucked bass is not a performance decision, it is a rendering error.
+   */
+  articulationVocabulary?: string[];
+  /**
+   * The instrument's polyphony limit. At 1, humanised lengths are clamped so
+   * no note sustains past the next onset by more than the legato tolerance:
+   * a performance must never break a constraint the composition satisfied.
+   */
+  maxSimultaneousNotes?: number;
 };
 
 export type PerformedTrack = {
@@ -158,7 +171,12 @@ function dynamicRamp(shape: string | undefined): [number, number] {
 export function applyPerformance(input: PerformanceInput): PerformedTrack {
   const seed = input.seed ?? 1;
   const family = input.family;
-  const profile = profileFor(family);
+  // The bass lives in the strings definition family but is plucked, exactly
+  // the confusion the constraint engine already corrects for (PR-16). Without
+  // this it inherits the bowed profile's legato lengthening and every note
+  // overlaps the next; the finger-bass profile below was unreachable.
+  const plucked = /bass/i.test(input.instrument);
+  const profile = plucked ? FAMILY_PROFILES.bass : profileFor(family);
   const beatsPerBar = Number((input.meter ?? "4/4").split("/")[0]) || 4;
   const beatSeconds = 60 / Math.max(1, input.tempoBpm);
   const barSeconds = input.barSeconds ?? beatSeconds * beatsPerBar;
@@ -172,6 +190,10 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
   const notes: MusicalNote[] = [];
   const cc: ControlEvent[] = [];
   const articulations: ArticulationEvent[] = [];
+  const vocabulary = input.articulationVocabulary;
+  const pushArticulation = (event: ArticulationEvent) => {
+    if (!vocabulary || vocabulary.includes(event.name)) articulations.push(event);
+  };
   const decisions: PerformanceDecision[] = [];
   const added = { ghostNotes: 0, flams: 0, strumSpreadNotes: 0, breathGaps: 0 };
   const ccCurves: string[] = [];
@@ -293,7 +315,7 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
         duration: 0.05, pitch: 38, velocity: Math.max(20, Math.round(loudest.velocity * 0.45)),
       });
       added.flams += 1;
-      articulations.push({ time: loudest.start, name: "flam", intensity: 0.6 });
+      pushArticulation({ time: loudest.start, name: "flam", intensity: 0.6 });
     }
   }
 
@@ -309,9 +331,9 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
     ccCurves.push("CC1 phrase arc", "CC11 bow/breath dynamics");
     // Bow changes / attacks at phrase starts.
     for (const phrase of input.phrases ?? []) {
-      articulations.push({
+      pushArticulation({
         time: Number(((phrase.startBar - 1) * barSeconds).toFixed(3)),
-        name: family === "strings" ? "bow_change" : "attack",
+        name: family === "strings" && !plucked ? "bow_change" : "attack",
         intensity: 0.5,
       });
     }
@@ -330,7 +352,7 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
   }
 
   if (family === "guitar" && (input.role === "RHYTHMIC_HARMONY" || input.role === "OSTINATO")) {
-    articulations.push({ time: 0, name: "palm_mute", intensity: 0.4 });
+    pushArticulation({ time: 0, name: "palm_mute", intensity: 0.4 });
   }
   if (family === "keys") {
     // Sustain pedal follows the harmonic rhythm, lifted on the beat.
@@ -349,6 +371,19 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
   const variance = offsets.length
     ? offsets.reduce((s, v) => s + (v - meanOffset) ** 2, 0) / offsets.length
     : 0;
+
+  if (input.maxSimultaneousNotes === 1) {
+    // Monophonic instrument: a humanised tail may lap the next onset by the
+    // legato tolerance and no more. Same rule the constraint engine and the
+    // provider contract validator apply, so what is performed still passes.
+    notes.sort((a, b) => a.start - b.start || a.pitch - b.pitch);
+    for (let index = 0; index + 1 < notes.length; index += 1) {
+      const limit = notes[index + 1].start + LEGATO_TOLERANCE_SECONDS - notes[index].start;
+      if (notes[index].duration > limit) {
+        notes[index] = { ...notes[index], duration: Number(Math.max(0.02, limit).toFixed(4)) };
+      }
+    }
+  }
 
   return {
     notes,

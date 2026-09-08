@@ -2256,6 +2256,9 @@ export const GenerationProvenanceProvider = {
   MUSE_CONTROL_LITE: 'MUSE_CONTROL_LITE',
   STABLE_AUDIO_3_SMALL_MUSIC: 'STABLE_AUDIO_3_SMALL_MUSIC',
   STABLE_AUDIO_3_MEDIUM: 'STABLE_AUDIO_3_MEDIUM',
+  MAGENTA_RT2: 'MAGENTA_RT2',
+  MIDI_RWKV: 'MIDI_RWKV',
+  ARRANGEMENT_ORCHESTRATOR: 'ARRANGEMENT_ORCHESTRATOR',
 } as const;
 
 export type CandidateEvaluationStatus = typeof CandidateEvaluationStatus[keyof typeof CandidateEvaluationStatus];
@@ -2978,6 +2981,25 @@ export interface ControlEvent {
   channel?: number;
 }
 
+/**
+ * Canonical TrackModel articulation as emitted by the Performance Engine (seconds + articulation name from the instrument definition). Distinct from the tick-based ArticulationEvent used by TrackPerformance.
+ */
+export interface TrackModelArticulationEvent {
+  /** @minimum 0 */
+  time: number;
+  name: string;
+  /**
+     * @minimum 0
+     * @maximum 127
+     */
+  keyswitch?: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  intensity?: number;
+}
+
 export interface TrackAutomationPoint {
   parameter: string;
   time: number;
@@ -3171,7 +3193,7 @@ export interface TrackModel {
   role: string;
   notes: MusicalNote[];
   cc: ControlEvent[];
-  articulations: ArticulationEvent[];
+  articulations: TrackModelArticulationEvent[];
   automation: TrackAutomationPoint[];
   source: string;
   version: number;
@@ -3469,6 +3491,9 @@ export const GenerationInputProvider = {
   MUSE_CONTROL_LITE: 'MUSE_CONTROL_LITE',
   STABLE_AUDIO_3_SMALL_MUSIC: 'STABLE_AUDIO_3_SMALL_MUSIC',
   STABLE_AUDIO_3_MEDIUM: 'STABLE_AUDIO_3_MEDIUM',
+  MAGENTA_RT2: 'MAGENTA_RT2',
+  MIDI_RWKV: 'MIDI_RWKV',
+  ARRANGEMENT_ORCHESTRATOR: 'ARRANGEMENT_ORCHESTRATOR',
 } as const;
 
 export type GenerationInputTask = typeof GenerationInputTask[keyof typeof GenerationInputTask];
@@ -3578,6 +3603,9 @@ export const GenerationJobProvider = {
   MUSE_CONTROL_LITE: 'MUSE_CONTROL_LITE',
   STABLE_AUDIO_3_SMALL_MUSIC: 'STABLE_AUDIO_3_SMALL_MUSIC',
   STABLE_AUDIO_3_MEDIUM: 'STABLE_AUDIO_3_MEDIUM',
+  MAGENTA_RT2: 'MAGENTA_RT2',
+  MIDI_RWKV: 'MIDI_RWKV',
+  ARRANGEMENT_ORCHESTRATOR: 'ARRANGEMENT_ORCHESTRATOR',
 } as const;
 
 export type GenerationJobHardware = typeof GenerationJobHardware[keyof typeof GenerationJobHardware];
@@ -3722,6 +3750,9 @@ export const GenerationCandidateProvider = {
   MUSE_CONTROL_LITE: 'MUSE_CONTROL_LITE',
   STABLE_AUDIO_3_SMALL_MUSIC: 'STABLE_AUDIO_3_SMALL_MUSIC',
   STABLE_AUDIO_3_MEDIUM: 'STABLE_AUDIO_3_MEDIUM',
+  MAGENTA_RT2: 'MAGENTA_RT2',
+  MIDI_RWKV: 'MIDI_RWKV',
+  ARRANGEMENT_ORCHESTRATOR: 'ARRANGEMENT_ORCHESTRATOR',
 } as const;
 
 export type GenerationCandidateStatus = typeof GenerationCandidateStatus[keyof typeof GenerationCandidateStatus];
@@ -3837,6 +3868,9 @@ export const GenerationProviderId = {
   MUSE_CONTROL_LITE: 'MUSE_CONTROL_LITE',
   STABLE_AUDIO_3_SMALL_MUSIC: 'STABLE_AUDIO_3_SMALL_MUSIC',
   STABLE_AUDIO_3_MEDIUM: 'STABLE_AUDIO_3_MEDIUM',
+  MAGENTA_RT2: 'MAGENTA_RT2',
+  MIDI_RWKV: 'MIDI_RWKV',
+  ARRANGEMENT_ORCHESTRATOR: 'ARRANGEMENT_ORCHESTRATOR',
 } as const;
 
 export type GenerationProviderTasksItem = typeof GenerationProviderTasksItem[keyof typeof GenerationProviderTasksItem];

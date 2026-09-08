@@ -1,0 +1,209 @@
+/**
+ * The Arrangement Brain as a registry provider (PR-W1).
+ *
+ * PR-16's orchestrator ran only in tests and the benchmark; nothing a user could
+ * reach called it. This adapter makes it a first-class `MusicGenerationProvider`,
+ * so the existing generation job runner, candidate persistence, ranking, repair
+ * and the studio's candidate UI all work with it unchanged. Zero special-casing
+ * in the runner: the orchestrator is just another provider that happens to run
+ * in-process on the CPU and have no weights.
+ *
+ * The one thing it asks of the runner is `materializesTrackModels`: its notes
+ * have already been composed, constraint-checked, critiqued, repaired and
+ * performed, so the legacy modulation/composition passes must not touch them.
+ */
+import type { CandidatePlan, SongModelData, TrackModel } from "@workspace/db";
+import {
+  ORCHESTRATOR_VERSION,
+  orchestrateArrangement,
+  type OrchestratedCandidate,
+} from "./arrangementOrchestrator";
+import type {
+  MusicGenerationProvider,
+  ProviderCandidate,
+  ProviderDefinition,
+  ProviderGenerationInput,
+  ProviderGenerationResult,
+  ProviderProgress,
+} from "./musicProviders";
+import type { ProviderRuntimeSnapshot } from "@workspace/db";
+
+export const ARRANGEMENT_ORCHESTRATOR_ID = "ARRANGEMENT_ORCHESTRATOR" as const;
+
+export const ARRANGEMENT_ORCHESTRATOR_DEFINITION: ProviderDefinition = {
+  id: ARRANGEMENT_ORCHESTRATOR_ID,
+  displayName: "Arrangement Brain (local orchestrator)",
+  modelVersion: ORCHESTRATOR_VERSION,
+  tasks: ["ARRANGEMENT", "ORCHESTRATION"],
+  hardware: ["CPU"],
+  speeds: ["FAST", "BALANCED", "QUALITY"],
+  styles: [
+    "pop", "rock", "ballad", "acoustic", "cinematic", "orchestral",
+    "jazz", "electronic", "dance", "ethnic", "ambient", "folk",
+  ],
+  materializesTrackModels: true,
+};
+
+function healthySnapshot(): ProviderRuntimeSnapshot {
+  return {
+    availability: "ready",
+    configurationReady: true,
+    checkpointReady: true,
+    runtimeReady: true,
+    smokeTested: true,
+    healthStatus: "healthy",
+    checkedAt: new Date().toISOString(),
+    latencyMs: 0,
+    message: "In-process symbolic arrangement brain. No endpoint, no weights, no GPU.",
+    reportedVersion: ORCHESTRATOR_VERSION,
+    maximumCandidates: 5,
+    reportedChecksum: null,
+  };
+}
+
+function isSongModel(value: unknown): value is SongModelData {
+  if (!value || typeof value !== "object") return false;
+  const model = value as Record<string, unknown>;
+  return Array.isArray(model["sections"]) &&
+    Array.isArray(model["tempoMap"]) &&
+    Array.isArray(model["chords"]) &&
+    Array.isArray(model["melody"]);
+}
+
+function clampUnit(value: number): number {
+  return Math.max(0, Math.min(1, Number.isFinite(value) ? value : 0));
+}
+
+/** Same ordering the orchestrator uses to pick its winner: feasible first, then score. */
+function rankCandidates(candidates: OrchestratedCandidate[]): OrchestratedCandidate[] {
+  return [...candidates].sort((a, b) =>
+    Number(b.critique.feasible) - Number(a.critique.feasible) ||
+    b.finalScore - a.finalScore ||
+    a.candidateId.localeCompare(b.candidateId));
+}
+
+function candidatePlan(songModel: SongModelData, trackModels: TrackModel[], candidate: OrchestratedCandidate, sectionDensity: Map<string, number>): CandidatePlan {
+  const instruments = trackModels.map((track) => track.instrument);
+  return {
+    sections: songModel.sections.map((section) => ({
+      name: section.name,
+      energy: clampUnit(section.energy ?? 0.5),
+      density: clampUnit(sectionDensity.get(section.name.toLowerCase()) ?? 0.5),
+      tracks: instruments,
+    })),
+    tracks: trackModels.map((track) => ({
+      id: track.id,
+      name: track.instrument,
+      role: track.role,
+      kind: "instrument",
+    })),
+  } as CandidatePlan;
+}
+
+export class LocalArrangementOrchestratorProvider implements MusicGenerationProvider {
+  readonly definition = ARRANGEMENT_ORCHESTRATOR_DEFINITION;
+  readonly available = true;
+  readiness: ProviderRuntimeSnapshot = healthySnapshot();
+
+  async checkHealth(): Promise<ProviderRuntimeSnapshot> {
+    this.readiness = healthySnapshot();
+    return this.readiness;
+  }
+
+  async generate(
+    input: ProviderGenerationInput,
+    onProgress?: (progress: ProviderProgress) => Promise<void>,
+    signal?: AbortSignal,
+  ): Promise<ProviderGenerationResult> {
+    if (!isSongModel(input.songModel)) {
+      throw new Error(
+        "The Arrangement Brain needs a complete Song Model snapshot (sections, tempoMap, chords, melody); the job snapshot is missing one of them",
+      );
+    }
+    const songModel = input.songModel;
+    await onProgress?.({ progress: 10, stage: "planning" });
+
+    // Rendering is left to the job runner, which already renders, quality-checks
+    // and critiques every candidate it persists. Rendering here as well would
+    // double the cost of each candidate for nothing. `now` is fixed so the
+    // same Song Model and seed always give the same arrangement.
+    const result = orchestrateArrangement({
+      songModel,
+      candidateCount: input.candidates,
+      render: false,
+      now: new Date(0),
+    });
+    if (signal?.aborted) throw new Error("Arrangement generation was cancelled");
+    await onProgress?.({ progress: 60, stage: "composed" });
+
+    const ranked = rankCandidates(result.candidates);
+    if (ranked.length !== input.candidates) {
+      // Padding with duplicates would fake diversity; say what happened instead.
+      throw new Error(
+        `The Arrangement Brain produced ${ranked.length} candidate(s) for a request of ${input.candidates}`,
+      );
+    }
+
+    const sectionDensity = new Map<string, number>();
+    for (const target of result.plan.globalPlan?.sectionTargets ?? []) {
+      sectionDensity.set(target.sectionName.toLowerCase(), target.density);
+    }
+
+    const stageSummary = result.stages.map((stage) => `${stage.stage}:${stage.status}`).join(",");
+    // Track ids are a global primary key in the studio, and the brain names
+    // tracks by instrument ("drums-groove"). Scope them to the project so two
+    // projects' drum tracks never collide, and so a regeneration in the same
+    // project reuses the same track rows.
+    const scopedId = (id: string) => `${input.projectId}--${id}`;
+    const candidates: ProviderCandidate[] = ranked.map((candidate) => {
+      const symbolic = candidate.critique.overallScore;
+      const trackModels: TrackModel[] = candidate.trackModels.map((track) => ({
+        ...track,
+        id: scopedId(track.id),
+      }));
+      const strengths = candidate.critique.strengths.slice(0, 2).join("; ");
+      const weaknesses = candidate.critique.weaknesses.slice(0, 1).join("; ");
+      return {
+        providerRequestId: null,
+        label: candidate.label,
+        score: clampUnit(candidate.finalScore / 100),
+        // Confidence tracks the critic: a candidate that failed a hard rule is
+        // reported as low-confidence however well it scored elsewhere.
+        confidence: candidate.critique.feasible
+          ? clampUnit(0.5 + symbolic / 200)
+          : 0.3,
+        summary: [
+          `${candidate.strategy} · symbolic ${symbolic.toFixed(0)}/100`,
+          `${candidate.constraintErrors} playability error(s)`,
+          candidate.repair ? `${candidate.repair.passes.length} repair pass(es)` : null,
+          strengths || null,
+          weaknesses ? `weakest: ${weaknesses}` : null,
+        ].filter(Boolean).join(" · "),
+        seed: candidate.seed,
+        plan: candidatePlan(songModel, trackModels, candidate, sectionDensity),
+        parameters: {
+          orchestratorVersion: ORCHESTRATOR_VERSION,
+          orchestratorMethod: result.method,
+          composer: result.composer,
+          strategy: candidate.strategy,
+          symbolicScore: symbolic,
+          hardRuleFeasible: candidate.critique.feasible,
+          constraintErrors: candidate.constraintErrors,
+          repairPasses: candidate.repair?.passes.length ?? 0,
+          stages: stageSummary,
+          traceable: result.traceable,
+        },
+        parentArtifactIds: [],
+        trackModels,
+      };
+    });
+
+    await onProgress?.({ progress: 65, stage: "candidates_ready" });
+    return {
+      requestId: null,
+      modelVersion: ORCHESTRATOR_VERSION,
+      checkpointSha256: null,
+      candidates,
+    };
+  }
+}

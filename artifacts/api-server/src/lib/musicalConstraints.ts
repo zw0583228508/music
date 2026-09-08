@@ -98,10 +98,14 @@ const idOf = (note: ConstraintNote, index: number): string => note.id ?? `note-$
  * distinct onset we collect the notes sounding at that instant, then keep the
  * distinct groups of two or more.
  */
+/**
+ * A previous note whose tail laps a few milliseconds into the next onset is
+ * legato connection, not a chord. Shared with the provider contract validator
+ * so the platform has one definition of "simultaneous", not two.
+ */
+export const LEGATO_TOLERANCE_SECONDS = 0.03;
+
 function simultaneousClusters(notes: ConstraintNote[]): ConstraintNote[][] {
-  // A previous note whose tail laps a few milliseconds into the next onset is
-  // legato connection, not a chord.
-  const LEGATO_TOLERANCE_SECONDS = 0.03;
   const onsets = [...new Set(notes.map((note) => Math.round(note.start * 1000)))]
     .sort((a, b) => a - b);
   const seen = new Set<string>();

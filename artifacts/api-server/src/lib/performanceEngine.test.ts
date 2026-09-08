@@ -90,6 +90,39 @@ test("strings get CC1/CC11 curves, bow changes, and a legato length factor", () 
   assert.ok(performedNote.duration > source.duration, "legato lengthening");
 });
 
+test("a bass is plucked, and no articulation leaves the instrument's vocabulary", () => {
+  // The bass lives in the strings definition family. Bowing it is not a
+  // performance decision the renderer can map, so it must never be emitted.
+  const performed = applyPerformance({
+    ...base, instrument: "Electric Bass", family: "strings", role: "BASS",
+    notes: eighths(40), articulationVocabulary: ["finger", "pick", "slap", "mute", "slide"],
+  });
+  assert.ok(!performed.articulations.some((a) => a.name === "bow_change"), "no bow changes on a bass");
+  // Plucked, not bowed: no legato lengthening, and never more than the legato
+  // tolerance of overlap with the next note once monophony is declared.
+  const mono = applyPerformance({
+    ...base, instrument: "Electric Bass", family: "strings", role: "BASS",
+    notes: eighths(40), maxSimultaneousNotes: 1,
+  });
+  const sorted = [...mono.notes].sort((a, b) => a.start - b.start);
+  for (let i = 0; i + 1 < sorted.length; i += 1) {
+    const overlap = sorted[i].start + sorted[i].duration - sorted[i + 1].start;
+    assert.ok(overlap <= 0.03 + 1e-6, `note ${i} overlaps the next by ${overlap.toFixed(3)}s`);
+  }
+  for (const articulation of performed.articulations) {
+    assert.ok(
+      ["finger", "pick", "slap", "mute", "slide"].includes(articulation.name),
+      `${articulation.name} is outside the bass vocabulary`,
+    );
+  }
+  // A bowed section keeps its bow changes when its vocabulary allows them.
+  const section = applyPerformance({
+    ...base, instrument: "Violins", family: "strings", role: "HARMONIC_BED",
+    notes: eighths(72), articulationVocabulary: ["legato", "bow_change", "staccato"],
+  });
+  assert.ok(section.articulations.some((a) => a.name === "bow_change"));
+});
+
 test("a wind part breathes before long rests", () => {
   const notes: MusicalNote[] = [
     { id: "a", start: 0, duration: 1.2, pitch: 72, velocity: 90 },

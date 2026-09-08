@@ -569,6 +569,62 @@ function normalizeSongModelSnapshot(value: unknown): SongModelData {
   };
 }
 
+const ENSEMBLE_TRACK_COLORS = [
+  "#fb7185", "#38bdf8", "#fbbf24", "#34d399", "#f97316", "#a78bfa", "#f472b6", "#22d3ee",
+];
+
+/** Deterministic colour per role, so a regenerated ensemble keeps its look. */
+function ensembleTrackColor(role: string): string {
+  let hash = 0;
+  for (const char of role) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  return ENSEMBLE_TRACK_COLORS[hash % ENSEMBLE_TRACK_COLORS.length];
+}
+
+/**
+ * A provider that materializes its own track models (the in-process
+ * Arrangement Brain) decides the ensemble. The project's track list has to
+ * reflect that decision, or the candidate cannot be evaluated against the
+ * project, selected into an arrangement, or shown in the studio's mixer.
+ */
+async function ensureEnsembleTracks(
+  projectId: string,
+  candidates: ProviderCandidate[],
+): Promise<void> {
+  const ensemble = new Map<string, TrackModel>();
+  for (const candidate of candidates) {
+    for (const track of candidate.trackModels ?? []) {
+      if (!ensemble.has(track.id)) ensemble.set(track.id, track);
+    }
+  }
+  if (ensemble.size === 0) return;
+  await db
+    .insert(tracksTable)
+    .values([...ensemble.values()].map((track) => ({
+      id: track.id,
+      projectId,
+      name: track.instrument,
+      role: track.role,
+      kind: "midi",
+      color: ensembleTrackColor(track.role),
+      volume: 0,
+      muted: false,
+      solo: false,
+      status: "generated",
+      instrumentDefinition: track.instrumentDefinition,
+      provenance: track.provenance,
+    })))
+    .onConflictDoNothing();
+}
+
+function ensembleTracksOf(candidate: ProviderCandidate) {
+  return (candidate.trackModels ?? []).map((track) => ({
+    id: track.id,
+    name: track.instrument,
+    role: track.role,
+    instrument: track.instrument,
+  }));
+}
+
 export async function listProviderCatalog() {
   return providerCatalog(await verifyProviderRegistry());
 }
@@ -1143,6 +1199,10 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
       );
     }
     const providerCandidates = result.candidates;
+    const materializesEnsemble = provider.definition.materializesTrackModels === true;
+    if (materializesEnsemble) {
+      await ensureEnsembleTracks(job.projectId, providerCandidates);
+    }
     const artifactRows: Array<typeof musicArtifactsTable.$inferInsert> = [];
     const candidateRows: Array<
       typeof musicGenerationCandidatesTable.$inferInsert & {
@@ -1220,6 +1280,11 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
       let evaluationScore = 0;
       let candidateStatus = "rejected";
       const candidateObjectUrls: string[] = [];
+      // A materializing provider is evaluated against the ensemble it chose;
+      // every other provider must fill the project's existing tracks.
+      const evaluationTracks = materializesEnsemble && candidate.trackModels?.length
+        ? ensembleTracksOf(candidate)
+        : snapshot.tracks;
       try {
         const audioArtifactId = randomUUID();
         const midiArtifactId = randomUUID();
@@ -1230,7 +1295,7 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
           source: snapshot.arrangement,
           songModel: evaluationSongModel,
           songModelVersion: job.songModelVersion,
-          tracks: snapshot.tracks,
+          tracks: evaluationTracks,
           candidate: {
             provider: provider.definition.id,
             // Bounded repair is a child revision of the persisted source, not
@@ -1242,6 +1307,10 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
             trackModels: candidate.trackModels,
           },
           generationPreference: snapshot.generationPreference ?? null,
+          // A provider whose notes are already composed, critiqued and
+          // performed (the in-process Arrangement Brain) must not have the
+          // legacy modulation and composition passes re-applied over them.
+          trackModelsMaterialized: provider.definition.materializesTrackModels === true,
         });
         const bounded = snapshot.repair
           ? applyBoundedRepair({
@@ -1289,7 +1358,7 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
         const pipeline = renderMusicPipeline({
           songModel: evaluationSongModel,
           plan: materialized.plan,
-          tracks: snapshot.tracks,
+          tracks: evaluationTracks,
           trackModels: materialized.trackModels,
           style: materialized.styleSpec,
           seed: candidate.seed,
