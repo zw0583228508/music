@@ -5,6 +5,7 @@ import { startGenerationRecoveryScheduler } from "./lib/arrangementGeneration";
 import { recoverInterruptedAnalyses } from "./lib/sourceAnalyzer";
 import { startArtifactRetentionScheduler } from "./lib/artifactLifecycle";
 import { recoverExportProductionJobs } from "./lib/exportJobs";
+import { refreshArrangerModelRouting } from "./lib/arrangerModelStore";
 import { formatHostErrorMessage } from "./lib/hostErrorDiagnostics";
 
 const recoveryDiagnostic = (error: unknown, fallback: string) =>
@@ -43,6 +44,10 @@ app.listen(port, (err) => {
   logger.info({ port }, "Server listening");
   void syncModelRegistry()
     .then(() => {
+      // PR-31: whether a learned arranger version is promoted decides its routing.
+      void refreshArrangerModelRouting().catch((error) => {
+        logger.error({ errorMessage: recoveryDiagnostic(error, "Arranger model routing refresh failed") }, "arranger_model_routing_refresh_failed");
+      });
       recover();
       const recoveryTimer = setInterval(recover, 30_000);
       recoveryTimer.unref();

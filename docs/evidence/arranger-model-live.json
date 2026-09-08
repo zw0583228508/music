@@ -1,0 +1,139 @@
+{
+  "pr": "PR-31 arranger-training-pipeline",
+  "recordedAt": "2026-09-08T23:21:26.214Z",
+  "path": "POST /arranger-model/train (all consented events -> dataset -> policy -> benchmark vs REFERENCE_PIPELINE) -> POST .../promote (refused) -> GET .../blind-sheet -> POST /arrangements/{id}/generate provider=YOUR_ARRANGER_MODEL -> default routing check",
+  "version": {
+    "id": "arm-c4d3a35e-c9b3-4ad3-8ca7-a94f239e5606",
+    "version": 1,
+    "status": "candidate",
+    "neutral": true,
+    "beatsBaseline": false,
+    "reason": "the data decided nothing: the policy equals the reference pipeline, so there is nothing to promote",
+    "trainedOn": {
+      "events": 2,
+      "owners": 1,
+      "ratings": 1,
+      "excluded": 0,
+      "pairwise": 1,
+      "rightsBases": {
+        "platform_generated": 2
+      },
+      "preferredSubjects": 2,
+      "dispreferredSubjects": 1
+    },
+    "policy": {
+      "plannerHints": {
+        "activeFamilyBias": 0,
+        "densityMultiplier": 1
+      },
+      "performanceStyle": {}
+    },
+    "undecided": [
+      "density: 1 decisive pairwise choices, agreement 1.00 (need ≥ 5 and ≥ 0.65)",
+      "active families: 0 decisive pairwise choices, agreement 0.50",
+      "swingRatio: only 2 preferred subject(s); 5 needed",
+      "melodicOrnamentation: only 2 preferred subject(s); 5 needed",
+      "fillFrequency: only 2 preferred subject(s); 5 needed",
+      "dynamics: only 2 preferred subject(s); 5 needed"
+    ]
+  },
+  "benchmarkVerdict": {
+    "summary": "YOUR_ARRANGER_MODEL@0.1 is not measurably better — do not promote",
+    "comparisons": [
+      {
+        "metric": "criticScore",
+        "baseline": 74.56,
+        "candidate": 74.56,
+        "delta": 0,
+        "verdict": "unchanged"
+      },
+      {
+        "metric": "audioScore",
+        "baseline": null,
+        "candidate": null,
+        "delta": null,
+        "verdict": "unavailable"
+      },
+      {
+        "metric": "playabilityErrors",
+        "baseline": 4.33,
+        "candidate": 4.33,
+        "delta": 0,
+        "verdict": "unchanged"
+      },
+      {
+        "metric": "harmonyScore",
+        "baseline": 58.33,
+        "candidate": 58.33,
+        "delta": 0,
+        "verdict": "unchanged"
+      },
+      {
+        "metric": "sectionConsistency",
+        "baseline": 100,
+        "candidate": 100,
+        "delta": 0,
+        "verdict": "unchanged"
+      },
+      {
+        "metric": "candidateDiversity",
+        "baseline": 50.4,
+        "candidate": 50.4,
+        "delta": 0,
+        "verdict": "unchanged"
+      },
+      {
+        "metric": "renderFailures",
+        "baseline": null,
+        "candidate": null,
+        "delta": null,
+        "verdict": "unavailable"
+      },
+      {
+        "metric": "noteCount",
+        "baseline": 576.56,
+        "candidate": 576.56,
+        "delta": 0,
+        "verdict": "unchanged"
+      },
+      {
+        "metric": "latencyMs",
+        "baseline": 0,
+        "candidate": 0,
+        "delta": 0,
+        "verdict": "unchanged"
+      }
+    ]
+  },
+  "promotionAttempt": "{\"error\":\"This version did not beat the reference pipeline on the benchmark: the data decided nothing: the policy equals the reference pipeline, so there is nothing to promote\"}",
+  "blindSheet": {
+    "pairs": 9,
+    "questionsPerPair": 6,
+    "note": "tokens are 8-hex anonymised labels; keyBySide is returned separately for the evaluation owner"
+  },
+  "explicitGeneration": {
+    "jobId": "73a117ca-5bd1-44aa-aaa2-db09e84495fa",
+    "candidates": [
+      {
+        "id": "36740b54-7156-4b07-8abe-aeab19428577",
+        "provider": "YOUR_ARRANGER_MODEL",
+        "arrangerModelId": null,
+        "neutral": true
+      },
+      {
+        "id": "7f5679c0-897a-41f3-bcf8-4b87581a8cc7",
+        "provider": "YOUR_ARRANGER_MODEL",
+        "arrangerModelId": null,
+        "neutral": true
+      }
+    ]
+  },
+  "defaultRoutingProvider": "ARRANGEMENT_ORCHESTRATOR",
+  "observations": [
+    "With 2 consented events the policy is neutral by construction (density needs >= 5 decisive pairwise choices; it had 1), so the candidate run reproduces the reference run exactly and the verdict is 'not measurably better - do not promote'. Promotion was refused with that reason. This is the plan's rule executing, not a failure.",
+    "YOUR_ARRANGER_MODEL is requestable explicitly (generation succeeded; every candidate says 'no active version: identical to the reference pipeline') and is never the default: an unqualified request routed to ARRANGEMENT_ORCHESTRATOR.",
+    "The blind A/B sheet (Gate C) is produced from the two benchmark runs with anonymised tokens - the human evaluation the plan names as the top-level measure can now be run, but has not been.",
+    "FOUND: the benchmark's playabilityErrors aggregate reads 4.33 on both sides where the PR-18 baseline recorded 0. The metric sums candidate.constraintErrors, which since PR-W1/PR-22 also counts the post-performance re-check; the drift predates PR-31 (identical on both sides) and needs its own investigation.",
+    "The pipeline is trained on all owners' events (consent applied at write time; rights basis counted per event; content-free by construction); the platform has 2 events, so the moat is a loop with an empty reservoir today."
+  ]
+}

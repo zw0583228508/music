@@ -574,6 +574,70 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   only what the fingerprint expresses. Nobody has enough events for a real
   profile yet.
 
+- **PR-31** ✅ — `arranger-training-pipeline` → **`YOUR_ARRANGER_MODEL`**.
+  The moat is the loop, in code: every consented choice becomes
+  rights-cleared, content-free training data (PR-28); a policy is learned
+  from it; the policy is benchmarked against the reference pipeline on the
+  fixed PR-18 corpus; **only a policy that measurably beats the incumbent may
+  be promoted** — and until one is, the provider is shadow-only. v0.1 learns
+  an arranger *policy* over the levers the orchestrator already exposes:
+  planner hints (a density multiplier, an active-family bias) and a
+  performance style (swing, microtiming, ornamentation, fills, dynamics, via
+  PR-30's consistent-tendency rule across every consenting owner). A policy
+  the data cannot support stays **neutral** — identical to the reference
+  pipeline — and says so.
+
+  `arrangerTrainingPipeline.ts`: `buildTrainingDataset` (rights basis counted
+  per event, content-free re-checked), `trainArrangerPolicy` (≥ 5 decisive
+  pairwise choices and ≥ 0.65 agreement per lever; evidence and undecided
+  lists), `policyOrchestrateOptions` (the request's own hints and style win),
+  `evaluateArrangerModel` (reference vs policy runs, `compareBenchmarkRuns`
+  verdict; promotable = not neutral **and** `beatsBaseline`). The orchestrator
+  gained `plannerHints` (the same seam a brief uses). `LocalArrangerModelProvider`
+  is the Brain with the active policy; the registry lists it; the router
+  keeps it **requestable for comparison but never the default** until a
+  version is promoted (`arrangerModelRouting.ts`, refreshed at boot and on
+  promote / retire). Lifecycle: `music_arranger_model_versions`; `POST
+  /arranger-model/train`, `GET /arranger-model`, `POST …/{id}/promote`
+  (gated by the stored benchmark verdict), `POST …/{id}/retire`, and `GET
+  …/{id}/blind-sheet` — Gate C's anonymised A/B sheet between the reference
+  run and the version's run.
+
+  **Proven live** (`docs/evidence/arranger-model-live.json`): train on the
+  platform's 2 events → v1 neutral (density needed 5 decisive choices, had
+  1) → benchmark identical to the reference (criticScore 74.56 both sides) →
+  verdict "not measurably better — do not promote" → promotion **refused
+  with the reason** → blind sheet of 9 pairs × 6 questions → explicit
+  generation through `YOUR_ARRANGER_MODEL` succeeds with every candidate
+  saying "no active version: identical to the reference pipeline" → an
+  unqualified request still routes to `ARRANGEMENT_ORCHESTRATOR`. In the
+  suites: 24 consistent synthetic choices train a non-neutral policy
+  (density ×<0.9, fewer families, swing ≥ 0.6) that measurably changes the
+  arrangement; promotability equals the benchmark verdict and nothing else.
+
+  Suites: arrangerTrainingPipeline 5, arrangerModelProvider 2; orchestrator,
+  provider, routing and benchmark suites unchanged; typecheck green; audit
+  PASS.
+
+  **Found on the way.** The benchmark's `playabilityErrors` aggregate reads
+  **4.33** on both sides where the PR-18 baseline recorded **0**. The metric
+  sums `candidate.constraintErrors`, which since PR-W1/PR-22 also counts the
+  post-performance re-check; the drift is identical on both sides and
+  predates PR-31. It needs its own investigation before the next baseline is
+  re-recorded.
+
+  **Honest limits.** v0.1 is a policy, not a neural arranger: it can only
+  move levers the orchestrator exposes and only along tendencies the
+  fingerprint measures. Two events on the platform make the reservoir empty;
+  the loop is proven, the moat is not yet filled. Gate C (blind human wins)
+  now has a sheet and no rater. Promotion is a benchmark verdict on a
+  synthesised corpus — the plan's central KPI still needs real ears.
+
+**Wave 7 complete** (PR-27…PR-31): fingerprint → events → pairwise critic →
+personal defaults → training loop with benchmark gate. Everything learns only
+from consented, content-free data, and nothing learned may outrank what the
+owner says or a clear critic verdict.
+
   **Honest limits.** Only Retrologue is attested here: Groove Agent SE, Padshop
   and HALion Sonic render silence without a loaded program, so their smoke
   correctly refuses them until a `.vstpreset` is provided. The bass lives in

@@ -29,8 +29,8 @@ import {
   getInstrumentPerformanceCapability,
   performedMaterialSha256,
 } from "./musicEngines";
-import { deriveGlobalArrangementPlan } from "./globalArrangementPlanner";
-import { deriveSectionPhrasePlan } from "./sectionPhrasePlanner";
+import { deriveGlobalArrangementPlan, type GlobalPlannerHints } from "./globalArrangementPlanner";
+import { deriveSectionPhrasePlan, type SectionPlannerHints } from "./sectionPhrasePlanner";
 import { deriveOrchestrationBudget } from "./orchestrationBudget";
 import { deriveTransitionPlan } from "./transitionEngine";
 import { buildPartComposerPlan, buildPartGenerationRequest, type PartGenerationRequest } from "./partComposer";
@@ -106,6 +106,11 @@ export type OrchestrateInput = {
    * (performanceStyleFromProfile). Absent keeps V1 performance behaviour.
    */
   performanceStyle?: PerformanceStyle;
+  /**
+   * PR-31: planner hints from a brief or a learned arranger policy. Absent
+   * keeps the planners' own reading of the Song Model.
+   */
+  plannerHints?: { global?: GlobalPlannerHints; section?: SectionPlannerHints };
 };
 
 // ---------------------------------------------------------------------------
@@ -191,8 +196,8 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     (input.composeParts ? "INJECTED_COMPOSER" : REFERENCE_PART_COMPOSER);
 
   // --- 1. plan ----------------------------------------------------------
-  const globalPlan = deriveGlobalArrangementPlan(songModel, { now });
-  const sectionPlan = deriveSectionPhrasePlan(songModel, globalPlan, { now });
+  const globalPlan = deriveGlobalArrangementPlan(songModel, { now, hints: input.plannerHints?.global });
+  const sectionPlan = deriveSectionPhrasePlan(songModel, globalPlan, { now, hints: input.plannerHints?.section });
   const orchestrationBudget = deriveOrchestrationBudget(songModel, sectionPlan, { now });
   const transitionPlan = deriveTransitionPlan(songModel, globalPlan, sectionPlan, { now });
   const plan: ArrangementPlan = {

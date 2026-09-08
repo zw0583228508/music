@@ -14,6 +14,9 @@ import type {
 import { db, modelRegistryTable } from "@workspace/db";
 import { attestAnalysisProviderHealth } from "./analysisProviderManifest";
 import { LocalArrangementOrchestratorProvider } from "./arrangementOrchestratorProvider";
+import { LocalArrangerModelProvider } from "./arrangerModelProvider";
+import { ARRANGER_MODEL_PROVIDER_ID, arrangerModelIsPromoted, loadActiveArrangerModel, setArrangerModelPromoted } from "./arrangerModelRouting";
+export { setArrangerModelPromoted, arrangerModelIsPromoted };
 import { LEGATO_TOLERANCE_SECONDS } from "./musicalConstraints";
 import {
   anyAccompCommercialUseAuthorized,
@@ -158,9 +161,14 @@ function providerRoutingAuthorized(providerId: string): boolean {
     (providerId !== "ANYACCOMP" || anyAccompCommercialUseAuthorized());
 }
 
+// PR-31: the learned arranger is shadow-only until a version beats the
+// reference pipeline on the benchmark; the store flips this at boot and on
+// promote / retire. Unlike the HTTP shadow providers it stays *requestable*
+// for comparison and blind evaluation -- only default routing is withheld.
 /** Shadow providers may be invoked for comparison, never selected as default. */
 export function providerIsShadowOnly(providerId: string): boolean {
-  return SHADOW_ONLY_PROVIDER_IDS.has(providerId);
+  return SHADOW_ONLY_PROVIDER_IDS.has(providerId) ||
+    (providerId === ARRANGER_MODEL_PROVIDER_ID && !arrangerModelIsPromoted());
 }
 
 function assertProviderCommercialUseAuthorized(providerId: string): void {
@@ -207,6 +215,19 @@ export const MUSIC_PROVIDERS: MusicProviderDescriptor[] = [
     license: "First-party code; no model weights",
     priority: 5,
     notes: "The symbolic pipeline from PR-04..PR-17: plan → parts → candidates → compose → constraints → critique → repair → perform. Runs in-process on CPU with no endpoint and no weights, so a local install can always generate. The reference part composer it ships with is a deliberate floor, not a professional arranger; its benchmark baseline is recorded in docs/master-plan.md.",
+  },
+  {
+    id: "YOUR_ARRANGER_MODEL",
+    name: "Your Arranger Model (learned policy)",
+    provider: "This platform",
+    version: "0.1",
+    capabilities: ["arrangement", "orchestration"],
+    inputTypes: ["FULL_SONG", "VOCAL_ONLY", "SOLO_INSTRUMENT", "MIDI"],
+    execution: "local",
+    status: "ready",
+    license: "First-party code; a policy learned only from consented, content-free preference events",
+    priority: 6,
+    notes: "PR-31: the Arrangement Brain with a learned arranger policy (planner hints + performance style) trained from the platform's preference events. Shadow-only — requestable for comparison, never the default — until a version beats the reference pipeline on the PR-18 benchmark and is promoted.",
   },
   {
     id: "LOCAL_SIGNAL_ANALYZER_V1",
@@ -1345,6 +1366,7 @@ function taskCapability(task: MusicGenerationTask): ModelCapability {
 
 export const musicProviderIds = [
   "ARRANGEMENT_ORCHESTRATOR",
+  "YOUR_ARRANGER_MODEL",
   "BS_ROFORMER",
   "ALL_IN_ONE",
   "MT3",
@@ -1868,9 +1890,9 @@ export function selectMusicProvider(
       `${request.requestedProvider} is unavailable or incompatible with ${request.task}`,
     );
   }
-  const selected = compatible.sort(
-    (left, right) => routeScore(right, request) - routeScore(left, request),
-  )[0];
+  const selected = compatible
+    .filter((provider) => !(provider.definition.id === ARRANGER_MODEL_PROVIDER_ID && !arrangerModelIsPromoted()))
+    .sort((left, right) => routeScore(right, request) - routeScore(left, request))[0];
   if (!selected) {
     throw new Error(
       `No configured provider is available for ${request.task} (${request.hardware}, ${request.speed})`,
@@ -2032,7 +2054,11 @@ export function createProviderRegistry(): MusicGenerationProvider[] {
   // The in-process Arrangement Brain is always present and always healthy, so
   // a local install with no GPU worker can still generate. Remote providers
   // that are healthy outrank it on GPU-preferring requests via routeScore.
-  return [...remote, new LocalArrangementOrchestratorProvider()];
+  return [
+    ...remote,
+    new LocalArrangementOrchestratorProvider(),
+    new LocalArrangerModelProvider(loadActiveArrangerModel, arrangerModelIsPromoted),
+  ];
 }
 
 const PROVIDER_HEALTH_TTL_MS = 30_000;

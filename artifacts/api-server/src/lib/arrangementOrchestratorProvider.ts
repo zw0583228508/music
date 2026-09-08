@@ -17,6 +17,7 @@ import {
   ORCHESTRATOR_VERSION,
   orchestrateArrangement,
   type OrchestratedCandidate,
+  type OrchestrateInput,
 } from "./arrangementOrchestrator";
 import { performanceStyleFromProfile } from "./performanceEngine";
 
@@ -110,13 +111,33 @@ function candidatePlan(songModel: SongModelData, trackModels: TrackModel[], cand
   } as CandidatePlan;
 }
 
+/** What a subclass may add to one orchestration and to every candidate's parameters (PR-31). */
+export type OrchestrateOverrides = {
+  orchestrate?: Partial<Pick<OrchestrateInput, "plannerHints" | "performanceStyle">>;
+  parameters?: Record<string, string | number | boolean | null>;
+};
+
 export class LocalArrangementOrchestratorProvider implements MusicGenerationProvider {
-  readonly definition = ARRANGEMENT_ORCHESTRATOR_DEFINITION;
+  readonly definition: ProviderDefinition;
   readonly available = true;
-  readiness: ProviderRuntimeSnapshot = healthySnapshot();
+  readiness: ProviderRuntimeSnapshot;
+
+  constructor(definition: ProviderDefinition = ARRANGEMENT_ORCHESTRATOR_DEFINITION) {
+    this.definition = definition;
+    this.readiness = this.snapshot();
+  }
+
+  protected snapshot(): ProviderRuntimeSnapshot {
+    return healthySnapshot();
+  }
+
+  /** A learned policy (PR-31) or a brief may shape the orchestration; the base brain adds nothing. */
+  protected async orchestrateOverrides(_input: ProviderGenerationInput, _songModel: SongModelData): Promise<OrchestrateOverrides> {
+    return {};
+  }
 
   async checkHealth(): Promise<ProviderRuntimeSnapshot> {
-    this.readiness = healthySnapshot();
+    this.readiness = this.snapshot();
     return this.readiness;
   }
 
@@ -143,12 +164,17 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
     // performance is V1, byte for byte.
     const styleProfile = readStyleProfile(input.parameters);
     const performanceStyle = styleProfile ? performanceStyleFromProfile(styleProfile) : undefined;
+    const overrides = await this.orchestrateOverrides(input, songModel);
     const result = orchestrateArrangement({
       songModel,
       candidateCount: input.candidates,
       render: false,
       now: new Date(0),
-      performanceStyle,
+      ...(overrides.orchestrate ?? {}),
+      // The request's own style (a brief or a personal profile) outranks a learned policy's.
+      performanceStyle: performanceStyle
+        ? { ...(overrides.orchestrate?.performanceStyle ?? {}), ...performanceStyle }
+        : overrides.orchestrate?.performanceStyle,
     });
     if (signal?.aborted) throw new Error("Arrangement generation was cancelled");
     await onProgress?.({ progress: 60, stage: "composed" });
@@ -217,7 +243,8 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
           repairPasses: candidate.repair?.passes.length ?? 0,
           stages: stageSummary,
           traceable: result.traceable,
-          performanceEngineVersion: performanceStyle ? "2.0" : "1.0",
+          performanceEngineVersion: performanceStyle || overrides.orchestrate?.performanceStyle ? "2.0" : "1.0",
+          ...(overrides.parameters ?? {}),
           ...(performanceStyle?.sources?.length
             ? { performanceStyleInputs: performanceStyle.sources.map((s) => `${s.dimension}=${s.value} (${s.provenance})`) }
             : {}),

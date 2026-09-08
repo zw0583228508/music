@@ -149,6 +149,42 @@ export interface ProducerCalibrationEvaluation {
   heldOutAgreement: number;
 }
 
+export type ArrangerModelVersionRecordStatus = typeof ArrangerModelVersionRecordStatus[keyof typeof ArrangerModelVersionRecordStatus];
+
+
+export const ArrangerModelVersionRecordStatus = {
+  candidate: 'candidate',
+  active: 'active',
+  retired: 'retired',
+} as const;
+
+export type ArrangerModelVersionRecordPolicy = { [key: string]: unknown };
+
+export type ArrangerModelVersionRecordTrainedOn = { [key: string]: unknown };
+
+export type ArrangerModelVersionRecordVerdict = { [key: string]: unknown };
+
+/**
+ * PR-31 — one version of the learned arranger policy with the benchmark verdict that decides whether it may be promoted.
+ */
+export interface ArrangerModelVersionRecord {
+  id: string;
+  version: number;
+  status: ArrangerModelVersionRecordStatus;
+  neutral: boolean;
+  beatsBaseline: boolean;
+  reason: string;
+  policy: ArrangerModelVersionRecordPolicy;
+  trainedOn: ArrangerModelVersionRecordTrainedOn;
+  evidence: string[];
+  undecided: string[];
+  verdict: ArrangerModelVersionRecordVerdict;
+  trainedAt: string;
+  createdAt: string;
+  promotedAt: string | null;
+  retiredAt: string | null;
+}
+
 export type PersonalArrangementProfileRecordSupport = {
   events: number;
   pairwise: number;
@@ -2349,6 +2385,7 @@ export const GenerationProvenanceProvider = {
   MAGENTA_RT2: 'MAGENTA_RT2',
   MIDI_RWKV: 'MIDI_RWKV',
   ARRANGEMENT_ORCHESTRATOR: 'ARRANGEMENT_ORCHESTRATOR',
+  YOUR_ARRANGER_MODEL: 'YOUR_ARRANGER_MODEL',
 } as const;
 
 export type CandidateEvaluationStatus = typeof CandidateEvaluationStatus[keyof typeof CandidateEvaluationStatus];
@@ -3587,6 +3624,7 @@ export const GenerationInputProvider = {
   MAGENTA_RT2: 'MAGENTA_RT2',
   MIDI_RWKV: 'MIDI_RWKV',
   ARRANGEMENT_ORCHESTRATOR: 'ARRANGEMENT_ORCHESTRATOR',
+  YOUR_ARRANGER_MODEL: 'YOUR_ARRANGER_MODEL',
 } as const;
 
 export type GenerationInputTask = typeof GenerationInputTask[keyof typeof GenerationInputTask];
@@ -3699,6 +3737,7 @@ export const GenerationJobProvider = {
   MAGENTA_RT2: 'MAGENTA_RT2',
   MIDI_RWKV: 'MIDI_RWKV',
   ARRANGEMENT_ORCHESTRATOR: 'ARRANGEMENT_ORCHESTRATOR',
+  YOUR_ARRANGER_MODEL: 'YOUR_ARRANGER_MODEL',
 } as const;
 
 export type GenerationJobHardware = typeof GenerationJobHardware[keyof typeof GenerationJobHardware];
@@ -3846,6 +3885,7 @@ export const GenerationCandidateProvider = {
   MAGENTA_RT2: 'MAGENTA_RT2',
   MIDI_RWKV: 'MIDI_RWKV',
   ARRANGEMENT_ORCHESTRATOR: 'ARRANGEMENT_ORCHESTRATOR',
+  YOUR_ARRANGER_MODEL: 'YOUR_ARRANGER_MODEL',
 } as const;
 
 export type GenerationCandidateStatus = typeof GenerationCandidateStatus[keyof typeof GenerationCandidateStatus];
@@ -3971,6 +4011,7 @@ export const GenerationProviderId = {
   MAGENTA_RT2: 'MAGENTA_RT2',
   MIDI_RWKV: 'MIDI_RWKV',
   ARRANGEMENT_ORCHESTRATOR: 'ARRANGEMENT_ORCHESTRATOR',
+  YOUR_ARRANGER_MODEL: 'YOUR_ARRANGER_MODEL',
 } as const;
 
 export type GenerationProviderTasksItem = typeof GenerationProviderTasksItem[keyof typeof GenerationProviderTasksItem];
@@ -7315,5 +7356,14 @@ export type ListPreferenceTrainingRows200RowsItem = { [key: string]: unknown };
 export type ListPreferenceTrainingRows200 = {
   featureNames: string[];
   rows: ListPreferenceTrainingRows200RowsItem[];
+};
+
+export type GetArrangerModelBlindSheet200PairsItem = { [key: string]: unknown };
+
+export type GetArrangerModelBlindSheet200KeyBySide = {[key: string]: string};
+
+export type GetArrangerModelBlindSheet200 = {
+  pairs: GetArrangerModelBlindSheet200PairsItem[];
+  keyBySide: GetArrangerModelBlindSheet200KeyBySide;
 };
 

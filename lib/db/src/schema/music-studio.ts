@@ -454,6 +454,62 @@ export const personalArrangementProfilesTable = pgTable("music_personal_arrangem
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => [uniqueIndex("music_personal_arrangement_profiles_owner_version_unique").on(table.ownerId, table.version)]);
 
+// ---------------------------------------------------------------------------
+// Wave 7 — PR-31: the arranger training pipeline → YOUR_ARRANGER_MODEL.
+// A model version is a learned arranger *policy* (planner hints + performance
+// style) trained from every consented, content-free preference event, stored
+// with the benchmark verdict that decides whether it may be promoted. Until a
+// version is promoted the provider is shadow-only: usable for comparison,
+// never the default. That is the plan's rule, in code.
+// ---------------------------------------------------------------------------
+
+export type ArrangerPolicy = {
+  plannerHints: {
+    /** Multiplier on every section's density (1 = the planner's own reading). */
+    densityMultiplier: number;
+    /** -1..1 bias on how many palette families stay active. */
+    activeFamilyBias: number;
+  };
+  performanceStyle: PerformanceStyle;
+};
+
+export type ArrangerPolicyModel = {
+  version: "0.1";
+  id: "YOUR_ARRANGER_MODEL";
+  method: string;
+  trainedAt: string;
+  inputsDigestSha256: string;
+  trainedOn: {
+    events: number;
+    owners: number;
+    pairwise: number;
+    preferredSubjects: number;
+    dispreferredSubjects: number;
+    rightsBases: Record<string, number>;
+  };
+  /** True when the data decided nothing: the policy equals the reference pipeline. */
+  neutral: boolean;
+  policy: ArrangerPolicy;
+  evidence: string[];
+  undecided: string[];
+};
+
+export type ArrangerModelStatus = "candidate" | "active" | "retired";
+
+export const arrangerModelVersionsTable = pgTable("music_arranger_model_versions", {
+  id: text("id").primaryKey(),
+  version: integer("version").notNull(),
+  status: text("status").$type<ArrangerModelStatus>().notNull().default("candidate"),
+  model: jsonb("model").$type<ArrangerPolicyModel>().notNull(),
+  /** Reference run, candidate run and the verdict (arrangementBenchmark types). */
+  benchmark: jsonb("benchmark").$type<Record<string, unknown>>().notNull(),
+  beatsBaseline: boolean("beats_baseline").notNull().default(false),
+  createdBy: text("created_by").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  promotedAt: timestamp("promoted_at", { withTimezone: true }),
+  retiredAt: timestamp("retired_at", { withTimezone: true }),
+}, (table) => [uniqueIndex("music_arranger_model_versions_version_unique").on(table.version)]);
+
 /**
  * Mastering Engine (PR-26): what a master *achieved*, measured with
  * BS.1770-4 gated loudness and 4× true peak — never asserted from the
