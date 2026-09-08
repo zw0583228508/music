@@ -2068,6 +2068,60 @@ export type SectionPhrasePlan = {
   roleAssignments: InstrumentRoleAssignment[];
 };
 
+/** One instrument's rebalancing under a budget window. */
+export type OrchestrationInstrumentAdjustment = {
+  instrument: string;
+  /** Multiplier on planned density: <1 ducks, >1 opens up. */
+  densityMultiplier: number;
+  /** Octave/register shift in semitones (e.g. -12, 0, +12). */
+  registerShift: number;
+  note: string;
+};
+
+export type OrchestrationBudgetWindow = {
+  id: string;
+  startBar: number;
+  endBar: number;
+  /** How much listener attention the lead is holding here, 0..1. */
+  vocalAttention: number;
+  budgets: {
+    totalDensity: number;
+    melodic: number;
+    rhythmic: number;
+    harmonic: number;
+    register: number;
+    spectral: number;
+    attention: number;
+  };
+  instrumentAdjustments: OrchestrationInstrumentAdjustment[];
+};
+
+export type RegisterOccupancySpan = {
+  startBar: number;
+  endBar: number;
+  occupancy: Partial<Record<RegisterBand, number>>;
+  overcrowdedBands: RegisterBand[];
+  resolutions: Array<{
+    instrument: string;
+    action: "drop_octave" | "raise_octave" | "simplify" | "thin_voicing";
+    band: RegisterBand;
+  }>;
+};
+
+/**
+ * Orchestration Budget Engine (PR-06): per-moment density/attention budgets and
+ * a register-occupancy map with overcrowding resolutions, derived from the
+ * section/phrase plan and the vocal arrangement-space map.
+ */
+export type OrchestrationBudgetPlan = {
+  version: "1.0";
+  derivedAt: string;
+  inputsDigestSha256: string;
+  method: string;
+  windows: OrchestrationBudgetWindow[];
+  registerOccupancy: RegisterOccupancySpan[];
+};
+
 export type ArrangementPlan = {
   id: string; version: number; sections: ArrangementPlanSection[]; style: StyleSpec;
   songModelVersion: number; parameters: Record<string, number | string | boolean>;
@@ -2078,6 +2132,8 @@ export type ArrangementPlan = {
   globalPlan?: GlobalArrangementPlan;
   /** Section / phrase / instrument-role plan; absent on historical plans. */
   sectionPlan?: SectionPhrasePlan;
+  /** Per-moment orchestration budgets + register occupancy; absent on historical plans. */
+  orchestrationBudget?: OrchestrationBudgetPlan;
   /** Absent only on historical persisted plans, which are interpreted as v1. */
   compositionIntelligence?: CompositionIntelligencePlan;
   /** Frozen before notes are generated; absent on historical plans. */

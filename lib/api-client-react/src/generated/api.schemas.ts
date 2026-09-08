@@ -5120,6 +5120,115 @@ export interface SectionPhrasePlan {
   roleAssignments: InstrumentRoleAssignment[];
 }
 
+export type OrchestrationBudgetPlanVersion = typeof OrchestrationBudgetPlanVersion[keyof typeof OrchestrationBudgetPlanVersion];
+
+
+export const OrchestrationBudgetPlanVersion = {
+  '10': '1.0',
+} as const;
+
+export interface OrchestrationInstrumentAdjustment {
+  instrument: string;
+  /** @minimum 0 */
+  densityMultiplier: number;
+  registerShift: number;
+  note: string;
+}
+
+export type OrchestrationBudgetWindowBudgets = {
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  totalDensity: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  melodic: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  rhythmic: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  harmonic: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  register: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  spectral: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  attention: number;
+};
+
+export interface OrchestrationBudgetWindow {
+  id: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  vocalAttention: number;
+  budgets: OrchestrationBudgetWindowBudgets;
+  instrumentAdjustments: OrchestrationInstrumentAdjustment[];
+}
+
+export type RegisterOccupancySpanResolutionsItemAction = typeof RegisterOccupancySpanResolutionsItemAction[keyof typeof RegisterOccupancySpanResolutionsItemAction];
+
+
+export const RegisterOccupancySpanResolutionsItemAction = {
+  drop_octave: 'drop_octave',
+  raise_octave: 'raise_octave',
+  simplify: 'simplify',
+  thin_voicing: 'thin_voicing',
+} as const;
+
+export type RegisterOccupancySpanOccupancy = {[key: string]: number};
+
+export type RegisterOccupancySpanResolutionsItem = {
+  instrument: string;
+  action: RegisterOccupancySpanResolutionsItemAction;
+  band: RegisterBand;
+};
+
+export interface RegisterOccupancySpan {
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  occupancy: RegisterOccupancySpanOccupancy;
+  overcrowdedBands: RegisterBand[];
+  resolutions: RegisterOccupancySpanResolutionsItem[];
+}
+
+/**
+ * Orchestration Budget Engine (PR-06) — per-moment density/attention budgets + register occupancy.
+ */
+export interface OrchestrationBudgetPlan {
+  version: OrchestrationBudgetPlanVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  windows: OrchestrationBudgetWindow[];
+  registerOccupancy: RegisterOccupancySpan[];
+}
+
 export interface ArrangementPlan {
   id: string;
   version: number;
@@ -5131,6 +5240,7 @@ export interface ArrangementPlan {
   hierarchy: ArrangementHierarchy;
   globalPlan?: GlobalArrangementPlan;
   sectionPlan?: SectionPhrasePlan;
+  orchestrationBudget?: OrchestrationBudgetPlan;
   compositionIntelligence?: CompositionIntelligencePlan;
   generationPreference?: GenerationPreferenceSnapshot | null;
 }
