@@ -91,6 +91,9 @@ import {
   activeGenerationPreferenceForOwner,
 } from "./producerDecisionLedger";
 import { appendProducerDecisionTx } from "./producerDecisionLedger";
+import { recordSelectionAmongSiblings } from "./preferenceEvents";
+import { DbPreferenceEventStore } from "./preferenceEventsDbStore";
+import { deriveStyleFingerprint } from "./styleFingerprint";
 
 const sha256 = (value: string | Buffer): string =>
   createHash("sha256").update(value).digest("hex");
@@ -2314,7 +2317,7 @@ export async function selectGenerationCandidate(
   if (!candidate) return null;
   const [project, sourceArrangement] = await Promise.all([
     db
-      .select({ ownerId: musicProjectsTable.ownerId })
+      .select({ ownerId: musicProjectsTable.ownerId, bpm: musicProjectsTable.bpm, meter: musicProjectsTable.meter })
       .from(musicProjectsTable)
       .where(eq(musicProjectsTable.id, candidate.projectId))
       .limit(1),
@@ -2530,7 +2533,7 @@ export async function selectGenerationCandidate(
       detail: `${candidate.label} · arrangement v${nextVersion}`,
       type: "arrangement",
     });
-    await appendProducerDecisionTx(tx, {
+    const decision = await appendProducerDecisionTx(tx, {
       ownerId, projectId: arrangement.projectId, domain: "candidate", kind: "approval",
       source: "inferred_behavior",
       context: { subjectId: candidate.id, modelVersion: candidate.modelVersion,
@@ -2539,6 +2542,27 @@ export async function selectGenerationCandidate(
         rankingScore: candidate.evaluation.qualityReport?.score ?? null,
         criticScore: candidate.evaluation.musicCritic?.score ?? null },
     });
+    // PR-28: the selection is a preference over every sibling the owner saw
+    // and did not choose — stored as content-free fingerprint features, under
+    // the same consent the ledger applies (a null decision means learning is
+    // off, and no event is written either).
+    if (decision) {
+      const siblings = await tx.select().from(musicGenerationCandidatesTable)
+        .where(eq(musicGenerationCandidatesTable.jobId, candidate.jobId));
+      const subjectOf = (row: typeof candidate) => ({
+        kind: "candidate" as const, id: row.id, origin: "platform_generated" as const,
+        modelVersion: row.modelVersion,
+        rankingScore: row.evaluation.qualityReport?.score ?? null,
+        criticScore: row.evaluation.musicCritic?.score ?? null,
+        fingerprint: row.trackModels?.length
+          ? deriveStyleFingerprint({ source: { kind: "arrangement", id: row.id, version: null }, trackModels: row.trackModels, tempoBpm: project[0]?.bpm, meter: project[0]?.meter })
+          : null,
+      });
+      await recordSelectionAmongSiblings(new DbPreferenceEventStore(tx), {
+        ownerId, projectId: arrangement.projectId, decisionId: decision.id, source: "inferred_behavior",
+        selected: subjectOf(candidate), siblings: siblings.filter((row) => row.id !== candidate.id).map(subjectOf),
+      });
+    }
     return arrangement;
   });
 }
