@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "provider": "MAGENTA_RT2",
+  "source_repository": "magenta/magenta-realtime",
+  "source_revision": "694a545e4ba0b88bf1150137b129582166d3e07f",
+  "model_repository": "google/magenta-realtime-2",
+  "model_revision": "010aa0dcb0dfd27b24f0ad07b4dad63e8f9521cc",
+  "license_status": "VERIFIED_PERMISSIVE",
+  "routing_status": "SHADOW_ONLY",
+  "source_first_party_license": "Apache-2.0",
+  "model_card_license": "cc-by-4.0",
+  "model_access": "PUBLIC_UNGATED",
+  "commercial_use_permitted": true,
+  "research_use_permitted": true,
+  "redistribution_permitted": true,
+  "attribution_required": true,
+  "attribution_text": "Music realized with Magenta RealTime 2 (Google LLC), model weights licensed CC-BY-4.0.",
+  "attribution_reference": "https://creativecommons.org/licenses/by/4.0/legalcode",
+  "additional_usage_terms": [
+    "Do not generate content, including outputs, that infringes or violates the rights of others, including rights in copyrighted content.",
+    "Google claims no rights in generated outputs; the operator and its users are solely responsible for outputs and their subsequent uses.",
+    "Software and weights are distributed AS IS, without warranties or conditions of any kind."
+  ],
+  "additional_usage_terms_reference": "https://github.com/magenta/magenta-realtime/blob/694a545e4ba0b88bf1150137b129582166d3e07f/MODEL.md",
+  "obligations_enforced_in_code": [
+    "attribution_required is asserted by app.py on every realization response and by smoke.py on every proof"
+  ],
+  "access_token_environment": null,
+  "environment_values_are_authorization_evidence": false,
+  "evidence_file": "release-evidence/license-review.json"
+}

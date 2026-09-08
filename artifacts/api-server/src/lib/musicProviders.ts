@@ -135,12 +135,27 @@ const LICENSE_BLOCKED_PROVIDER_IDS = new Set<string>(["BS_ROFORMER"]);
 const RESEARCH_ONLY_PROVIDER_IDS = new Set<string>(["LADA_BAND", "DIFFRHYTHM_2"]);
 
 const UPSTREAM_BLOCKED_PROVIDER_IDS = new Set<string>(["MIDI_SAG"]);
+
+// Licensed for production, but not yet earned it. The plan requires a new model
+// to beat the existing pipeline in blind evaluation before it can be routed as
+// a default; until the PR-18 benchmark records that win, these providers are
+// reachable only through an explicit shadow comparison. This is a separate gate
+// from the licence gates above on purpose: the reason is quality, not rights,
+// and conflating them would let a licence review silently promote a model.
+const SHADOW_ONLY_PROVIDER_IDS = new Set<string>(["MAGENTA_RT2"]);
+
 function providerRoutingAuthorized(providerId: string): boolean {
   return !LICENSE_BLOCKED_PROVIDER_IDS.has(providerId) &&
     !UPSTREAM_BLOCKED_PROVIDER_IDS.has(providerId) &&
     !MISSING_LICENSED_ASSET_PROVIDER_IDS.has(providerId) &&
     !RESEARCH_ONLY_PROVIDER_IDS.has(providerId) &&
+    !SHADOW_ONLY_PROVIDER_IDS.has(providerId) &&
     (providerId !== "ANYACCOMP" || anyAccompCommercialUseAuthorized());
+}
+
+/** Shadow providers may be invoked for comparison, never selected as default. */
+export function providerIsShadowOnly(providerId: string): boolean {
+  return SHADOW_ONLY_PROVIDER_IDS.has(providerId);
 }
 
 function assertProviderCommercialUseAuthorized(providerId: string): void {
@@ -322,6 +337,22 @@ export const MUSIC_PROVIDERS: MusicProviderDescriptor[] = [
     license: "UNVERIFIED first-party source/model rights",
     priority: 41,
     notes: "BLOCKED_LICENSE: the first-party source has no owner-specified license, the license=other model revision requires manual approval, and no accepted-account or complete bundled-weight grant is retained. Endpoint, token, and acceptance environment values cannot authorize routing.",
+  },
+  {
+    id: "MAGENTA_RT2",
+    name: "Magenta RealTime 2",
+    provider: "Google",
+    version: "010aa0dcb0dfd27b24f0ad07b4dad63e8f9521cc",
+    // Deliberately not "arrangement" or "orchestration". RT2 realizes an
+    // arrangement this platform already composed; it is conditioned on our
+    // piano roll and never asked to invent structure, harmony or instrumentation.
+    capabilities: ["audio_generation"],
+    inputTypes: ["MIDI"],
+    execution: "remote",
+    status: remoteConfigured("MAGENTA_RT2") ? "configured" : "unavailable",
+    license: "Apache-2.0 source; CC-BY-4.0 weights (attribution required)",
+    priority: 41,
+    notes: "SHADOW_ONLY: symbolic-to-audio realizer, not an arranger. Licence is verified permissive and ungated, so routing is gated on quality rather than rights — it stays out of default routing until it beats the existing pipeline in the PR-18 blind evaluation. Requires MAGENTA_RT2_API_URL. CC-BY-4.0 attribution is attached to every realization by the worker.",
   },
   {
     id: "HAFM",
@@ -1290,6 +1321,7 @@ export const musicProviderIds = [
   "ACE_STEP",
   "ANYACCOMP",
   "LADA_BAND",
+  "MAGENTA_RT2",
   "HAFM",
   "SYMPHONYGEN",
   "METEOR",
@@ -1889,6 +1921,15 @@ export const providerDefinitions: ProviderDefinition[] = [
     styles: ["vocal", "singing"],
   },
   {
+    id: "MAGENTA_RT2",
+    displayName: "Magenta RealTime 2 (Shadow)",
+    modelVersion: "010aa0dcb0dfd27b24f0ad07b4dad63e8f9521cc",
+    tasks: ["ORCHESTRATION"],
+    hardware: ["GPU"],
+    speeds: ["QUALITY"],
+    styles: ["pop", "electronic", "acoustic", "cinematic"],
+  },
+  {
     id: "HAFM",
     displayName: "HAFM",
     modelVersion: "1653c3c7bffdc9b4b2d57d8b6e4f5bb3002a64fe",
@@ -1990,7 +2031,12 @@ function blockedProviderReadiness(providerId: string): ProviderRuntimeSnapshot {
     ? "BLOCKED_UPSTREAM: pinned source lacks the required production adapter."
     : MISSING_LICENSED_ASSET_PROVIDER_IDS.has(providerId)
       ? "BLOCKED_MISSING_LICENSED_ASSET: required licensed asset is unavailable."
-      : "BLOCKED_LICENSE until checkpoint-owner rights are verified.";
+      : SHADOW_ONLY_PROVIDER_IDS.has(providerId)
+        // Reporting a shadow model as licence-blocked would be false; its rights
+        // are verified. It is held back on quality evidence, and the operator
+        // needs to know which of the two it is to act on it.
+        ? "SHADOW_ONLY: licensed for production but not yet promoted; it must beat the current pipeline in blind evaluation first."
+        : "BLOCKED_LICENSE until checkpoint-owner rights are verified.";
   return {
     ...initialProviderReadiness(false),
     healthStatus: "unhealthy",

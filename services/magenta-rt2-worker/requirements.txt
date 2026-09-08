@@ -1,0 +1,24 @@
+# Versions come from magenta-realtime's own uv.lock at the pinned source
+# revision, not from a guess about what is current:
+#   https://github.com/magenta/magenta-realtime/blob/694a545e4ba0b88bf1150137b129582166d3e07f/uv.lock
+jax[cuda12]==0.10.1
+jaxlib==0.10.1
+flax==0.12.7
+recurrentgemma[jax]==1.0.1
+safetensors==0.4.5
+numpy==2.1.3
+scipy==1.14.1
+einops==0.8.0
+librosa==0.10.2.post1
+resampy==0.4.3
+soundfile==0.12.1
+sentencepiece==0.2.0
+typeguard==2.13.3
+jaxtyping==0.2.36
+ai-edge-litert==1.2.0
+click==8.1.7
+simple-term-menu==1.6.6
+huggingface_hub==0.26.5
+fastapi==0.115.6
+uvicorn==0.34.0
+pydantic==2.10.4
