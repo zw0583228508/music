@@ -17725,6 +17725,16 @@ export const listMixMasterRevisionsResponseControlsTracksProcessingCompressorRat
 export const listMixMasterRevisionsResponseControlsTracksProcessingSaturationMin = 0;
 export const listMixMasterRevisionsResponseControlsTracksProcessingSaturationMax = 1;
 
+export const listMixMasterRevisionsResponseControlsTracksAutomationItemStartSecondsMin = 0;
+
+export const listMixMasterRevisionsResponseControlsTracksAutomationItemEndSecondsMin = 0;
+
+export const listMixMasterRevisionsResponseControlsTracksAutomationItemLevelOffsetDbMin = -24;
+export const listMixMasterRevisionsResponseControlsTracksAutomationItemLevelOffsetDbMax = 12;
+
+export const listMixMasterRevisionsResponseControlsTracksAutomationItemSendOffsetDbMin = -24;
+export const listMixMasterRevisionsResponseControlsTracksAutomationItemSendOffsetDbMax = 12;
+
 export const listMixMasterRevisionsResponseVariantsOriginalOneDurationSecondsMin = 0;
 
 export const listMixMasterRevisionsResponseVariantsRepairedOneDurationSecondsMin = 0;
@@ -17762,7 +17772,14 @@ export const ListMixMasterRevisionsResponseItem = zod.object({
   "highPassHz": zod.number().min(listMixMasterRevisionsResponseControlsTracksProcessingHighPassHzMin).max(listMixMasterRevisionsResponseControlsTracksProcessingHighPassHzMax),
   "compressorRatio": zod.number().min(1).max(listMixMasterRevisionsResponseControlsTracksProcessingCompressorRatioMax),
   "saturation": zod.number().min(listMixMasterRevisionsResponseControlsTracksProcessingSaturationMin).max(listMixMasterRevisionsResponseControlsTracksProcessingSaturationMax)
-})
+}),
+  "automation": zod.array(zod.object({
+  "startSeconds": zod.number().min(listMixMasterRevisionsResponseControlsTracksAutomationItemStartSecondsMin),
+  "endSeconds": zod.number().min(listMixMasterRevisionsResponseControlsTracksAutomationItemEndSecondsMin),
+  "levelOffsetDb": zod.number().min(listMixMasterRevisionsResponseControlsTracksAutomationItemLevelOffsetDbMin).max(listMixMasterRevisionsResponseControlsTracksAutomationItemLevelOffsetDbMax),
+  "sendOffsetDb": zod.number().min(listMixMasterRevisionsResponseControlsTracksAutomationItemSendOffsetDbMin).max(listMixMasterRevisionsResponseControlsTracksAutomationItemSendOffsetDbMax),
+  "label": zod.string().optional()
+}).describe('PR-25 — a section of the song where this track\'s level \/ send differ from its static controls (offsets in dB).')).optional()
 })),
   "master": zod.object({
   "targetLufs": zod.number(),
@@ -17895,6 +17912,16 @@ export const createMixMasterRevisionBodyTracksProcessingCompressorRatioMax = 20;
 export const createMixMasterRevisionBodyTracksProcessingSaturationMin = 0;
 export const createMixMasterRevisionBodyTracksProcessingSaturationMax = 1;
 
+export const createMixMasterRevisionBodyTracksAutomationItemStartSecondsMin = 0;
+
+export const createMixMasterRevisionBodyTracksAutomationItemEndSecondsMin = 0;
+
+export const createMixMasterRevisionBodyTracksAutomationItemLevelOffsetDbMin = -24;
+export const createMixMasterRevisionBodyTracksAutomationItemLevelOffsetDbMax = 12;
+
+export const createMixMasterRevisionBodyTracksAutomationItemSendOffsetDbMin = -24;
+export const createMixMasterRevisionBodyTracksAutomationItemSendOffsetDbMax = 12;
+
 export const createMixMasterRevisionBodyMasterTargetLufsMin = -24;
 export const createMixMasterRevisionBodyMasterTargetLufsMax = -6;
 
@@ -17917,7 +17944,14 @@ export const CreateMixMasterRevisionBody = zod.strictObject({
   "highPassHz": zod.number().min(createMixMasterRevisionBodyTracksProcessingHighPassHzMin).max(createMixMasterRevisionBodyTracksProcessingHighPassHzMax),
   "compressorRatio": zod.number().min(1).max(createMixMasterRevisionBodyTracksProcessingCompressorRatioMax),
   "saturation": zod.number().min(createMixMasterRevisionBodyTracksProcessingSaturationMin).max(createMixMasterRevisionBodyTracksProcessingSaturationMax)
-})
+}),
+  "automation": zod.array(zod.strictObject({
+  "startSeconds": zod.number().min(createMixMasterRevisionBodyTracksAutomationItemStartSecondsMin),
+  "endSeconds": zod.number().min(createMixMasterRevisionBodyTracksAutomationItemEndSecondsMin),
+  "levelOffsetDb": zod.number().min(createMixMasterRevisionBodyTracksAutomationItemLevelOffsetDbMin).max(createMixMasterRevisionBodyTracksAutomationItemLevelOffsetDbMax),
+  "sendOffsetDb": zod.number().min(createMixMasterRevisionBodyTracksAutomationItemSendOffsetDbMin).max(createMixMasterRevisionBodyTracksAutomationItemSendOffsetDbMax),
+  "label": zod.string().optional()
+}).describe('PR-25 — a section of the song where this track\'s level \/ send differ from its static controls (offsets in dB).')).optional()
 })),
   "master": zod.strictObject({
   "targetLufs": zod.number().min(createMixMasterRevisionBodyMasterTargetLufsMin).max(createMixMasterRevisionBodyMasterTargetLufsMax),
@@ -17945,6 +17979,16 @@ export const createMixMasterRevisionResponseControlsTracksProcessingCompressorRa
 
 export const createMixMasterRevisionResponseControlsTracksProcessingSaturationMin = 0;
 export const createMixMasterRevisionResponseControlsTracksProcessingSaturationMax = 1;
+
+export const createMixMasterRevisionResponseControlsTracksAutomationItemStartSecondsMin = 0;
+
+export const createMixMasterRevisionResponseControlsTracksAutomationItemEndSecondsMin = 0;
+
+export const createMixMasterRevisionResponseControlsTracksAutomationItemLevelOffsetDbMin = -24;
+export const createMixMasterRevisionResponseControlsTracksAutomationItemLevelOffsetDbMax = 12;
+
+export const createMixMasterRevisionResponseControlsTracksAutomationItemSendOffsetDbMin = -24;
+export const createMixMasterRevisionResponseControlsTracksAutomationItemSendOffsetDbMax = 12;
 
 export const createMixMasterRevisionResponseVariantsOriginalOneDurationSecondsMin = 0;
 
@@ -17983,7 +18027,14 @@ export const CreateMixMasterRevisionResponse = zod.object({
   "highPassHz": zod.number().min(createMixMasterRevisionResponseControlsTracksProcessingHighPassHzMin).max(createMixMasterRevisionResponseControlsTracksProcessingHighPassHzMax),
   "compressorRatio": zod.number().min(1).max(createMixMasterRevisionResponseControlsTracksProcessingCompressorRatioMax),
   "saturation": zod.number().min(createMixMasterRevisionResponseControlsTracksProcessingSaturationMin).max(createMixMasterRevisionResponseControlsTracksProcessingSaturationMax)
-})
+}),
+  "automation": zod.array(zod.object({
+  "startSeconds": zod.number().min(createMixMasterRevisionResponseControlsTracksAutomationItemStartSecondsMin),
+  "endSeconds": zod.number().min(createMixMasterRevisionResponseControlsTracksAutomationItemEndSecondsMin),
+  "levelOffsetDb": zod.number().min(createMixMasterRevisionResponseControlsTracksAutomationItemLevelOffsetDbMin).max(createMixMasterRevisionResponseControlsTracksAutomationItemLevelOffsetDbMax),
+  "sendOffsetDb": zod.number().min(createMixMasterRevisionResponseControlsTracksAutomationItemSendOffsetDbMin).max(createMixMasterRevisionResponseControlsTracksAutomationItemSendOffsetDbMax),
+  "label": zod.string().optional()
+}).describe('PR-25 — a section of the song where this track\'s level \/ send differ from its static controls (offsets in dB).')).optional()
 })),
   "master": zod.object({
   "targetLufs": zod.number(),
@@ -18115,6 +18166,16 @@ export const approveMixMasterRevisionResponseControlsTracksProcessingCompressorR
 export const approveMixMasterRevisionResponseControlsTracksProcessingSaturationMin = 0;
 export const approveMixMasterRevisionResponseControlsTracksProcessingSaturationMax = 1;
 
+export const approveMixMasterRevisionResponseControlsTracksAutomationItemStartSecondsMin = 0;
+
+export const approveMixMasterRevisionResponseControlsTracksAutomationItemEndSecondsMin = 0;
+
+export const approveMixMasterRevisionResponseControlsTracksAutomationItemLevelOffsetDbMin = -24;
+export const approveMixMasterRevisionResponseControlsTracksAutomationItemLevelOffsetDbMax = 12;
+
+export const approveMixMasterRevisionResponseControlsTracksAutomationItemSendOffsetDbMin = -24;
+export const approveMixMasterRevisionResponseControlsTracksAutomationItemSendOffsetDbMax = 12;
+
 export const approveMixMasterRevisionResponseVariantsOriginalOneDurationSecondsMin = 0;
 
 export const approveMixMasterRevisionResponseVariantsRepairedOneDurationSecondsMin = 0;
@@ -18152,7 +18213,14 @@ export const ApproveMixMasterRevisionResponse = zod.object({
   "highPassHz": zod.number().min(approveMixMasterRevisionResponseControlsTracksProcessingHighPassHzMin).max(approveMixMasterRevisionResponseControlsTracksProcessingHighPassHzMax),
   "compressorRatio": zod.number().min(1).max(approveMixMasterRevisionResponseControlsTracksProcessingCompressorRatioMax),
   "saturation": zod.number().min(approveMixMasterRevisionResponseControlsTracksProcessingSaturationMin).max(approveMixMasterRevisionResponseControlsTracksProcessingSaturationMax)
-})
+}),
+  "automation": zod.array(zod.object({
+  "startSeconds": zod.number().min(approveMixMasterRevisionResponseControlsTracksAutomationItemStartSecondsMin),
+  "endSeconds": zod.number().min(approveMixMasterRevisionResponseControlsTracksAutomationItemEndSecondsMin),
+  "levelOffsetDb": zod.number().min(approveMixMasterRevisionResponseControlsTracksAutomationItemLevelOffsetDbMin).max(approveMixMasterRevisionResponseControlsTracksAutomationItemLevelOffsetDbMax),
+  "sendOffsetDb": zod.number().min(approveMixMasterRevisionResponseControlsTracksAutomationItemSendOffsetDbMin).max(approveMixMasterRevisionResponseControlsTracksAutomationItemSendOffsetDbMax),
+  "label": zod.string().optional()
+}).describe('PR-25 — a section of the song where this track\'s level \/ send differ from its static controls (offsets in dB).')).optional()
 })),
   "master": zod.object({
   "targetLufs": zod.number(),
@@ -18256,6 +18324,143 @@ export const ApproveMixMasterRevisionResponse = zod.object({
   "approvedAt": zod.string().nullable(),
   "approvedBy": zod.string().nullable(),
   "createdAt": zod.string()
+})
+
+
+/**
+ * @summary Derive a Mix Brain plan for an arrangement (PR-25) and the revision controls that realize it
+ */
+export const CreateMixPlanParams = zod.object({
+  "projectId": zod.coerce.string()
+})
+
+
+
+
+export const CreateMixPlanBody = zod.strictObject({
+  "arrangementId": zod.string().min(1)
+})
+
+export const createMixPlanResponsePlanConflictsItemTrackIdsMin = 2;
+export const createMixPlanResponsePlanConflictsItemTrackIdsMax = 2;
+
+export const createMixPlanResponseControlsTracksLevelDbMin = -60;
+export const createMixPlanResponseControlsTracksLevelDbMax = 12;
+
+export const createMixPlanResponseControlsTracksPanMin = -1;
+export const createMixPlanResponseControlsTracksPanMax = 1;
+
+export const createMixPlanResponseControlsTracksSendDbMin = -80;
+export const createMixPlanResponseControlsTracksSendDbMax = 6;
+
+export const createMixPlanResponseControlsTracksProcessingHighPassHzMin = 20;
+export const createMixPlanResponseControlsTracksProcessingHighPassHzMax = 20000;
+
+export const createMixPlanResponseControlsTracksProcessingCompressorRatioMax = 20;
+
+export const createMixPlanResponseControlsTracksProcessingSaturationMin = 0;
+export const createMixPlanResponseControlsTracksProcessingSaturationMax = 1;
+
+export const createMixPlanResponseControlsTracksAutomationItemStartSecondsMin = 0;
+
+export const createMixPlanResponseControlsTracksAutomationItemEndSecondsMin = 0;
+
+export const createMixPlanResponseControlsTracksAutomationItemLevelOffsetDbMin = -24;
+export const createMixPlanResponseControlsTracksAutomationItemLevelOffsetDbMax = 12;
+
+export const createMixPlanResponseControlsTracksAutomationItemSendOffsetDbMin = -24;
+export const createMixPlanResponseControlsTracksAutomationItemSendOffsetDbMax = 12;
+
+
+
+export const CreateMixPlanResponse = zod.object({
+  "plan": zod.object({
+  "version": zod.enum(['1.0']),
+  "method": zod.string(),
+  "derivedAt": zod.string(),
+  "inputsDigestSha256": zod.string(),
+  "arrangementId": zod.string().nullable(),
+  "tracks": zod.array(zod.object({
+  "trackId": zod.string(),
+  "instrument": zod.string(),
+  "role": zod.string(),
+  "family": zod.string(),
+  "bus": zod.enum(['MIX', 'DRUMS', 'MUSIC', 'VOCALS', 'FX']),
+  "levelDb": zod.number(),
+  "pan": zod.number(),
+  "sendDb": zod.number(),
+  "processing": zod.object({
+  "highPassHz": zod.number(),
+  "compressorRatio": zod.number(),
+  "saturation": zod.number()
+}),
+  "priority": zod.number(),
+  "rationale": zod.array(zod.string()),
+  "sections": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "startSeconds": zod.number(),
+  "endSeconds": zod.number(),
+  "levelOffsetDb": zod.number(),
+  "sendOffsetDb": zod.number(),
+  "reason": zod.string()
+}))
+})),
+  "master": zod.object({
+  "targetLufs": zod.number(),
+  "truePeakDbtp": zod.number(),
+  "processing": zod.object({
+  "limiter": zod.boolean(),
+  "stereoWidth": zod.number()
+}),
+  "rationale": zod.array(zod.string())
+}),
+  "sections": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "startSeconds": zod.number(),
+  "endSeconds": zod.number(),
+  "energy": zod.number(),
+  "density": zod.number(),
+  "focusTrackIds": zod.array(zod.string())
+})),
+  "conflicts": zod.array(zod.object({
+  "trackIds": zod.array(zod.string()).min(createMixPlanResponsePlanConflictsItemTrackIdsMin).max(createMixPlanResponsePlanConflictsItemTrackIdsMax),
+  "kind": zod.enum(['register_masking', 'role_duplicate']),
+  "resolution": zod.string()
+})),
+  "styleInputs": zod.array(zod.object({
+  "dimension": zod.string(),
+  "value": zod.union([zod.string(),zod.number()]),
+  "provenance": zod.string()
+}))
+}).describe('PR-25 — a mix decided per musical role that evolves across the song, every value explained.'),
+  "controls": zod.object({
+  "tracks": zod.record(zod.string(), zod.object({
+  "levelDb": zod.number().min(createMixPlanResponseControlsTracksLevelDbMin).max(createMixPlanResponseControlsTracksLevelDbMax),
+  "pan": zod.number().min(createMixPlanResponseControlsTracksPanMin).max(createMixPlanResponseControlsTracksPanMax),
+  "bus": zod.enum(['MIX', 'DRUMS', 'MUSIC', 'VOCALS', 'FX']),
+  "sendDb": zod.number().min(createMixPlanResponseControlsTracksSendDbMin).max(createMixPlanResponseControlsTracksSendDbMax),
+  "processing": zod.object({
+  "highPassHz": zod.number().min(createMixPlanResponseControlsTracksProcessingHighPassHzMin).max(createMixPlanResponseControlsTracksProcessingHighPassHzMax),
+  "compressorRatio": zod.number().min(1).max(createMixPlanResponseControlsTracksProcessingCompressorRatioMax),
+  "saturation": zod.number().min(createMixPlanResponseControlsTracksProcessingSaturationMin).max(createMixPlanResponseControlsTracksProcessingSaturationMax)
+}),
+  "automation": zod.array(zod.object({
+  "startSeconds": zod.number().min(createMixPlanResponseControlsTracksAutomationItemStartSecondsMin),
+  "endSeconds": zod.number().min(createMixPlanResponseControlsTracksAutomationItemEndSecondsMin),
+  "levelOffsetDb": zod.number().min(createMixPlanResponseControlsTracksAutomationItemLevelOffsetDbMin).max(createMixPlanResponseControlsTracksAutomationItemLevelOffsetDbMax),
+  "sendOffsetDb": zod.number().min(createMixPlanResponseControlsTracksAutomationItemSendOffsetDbMin).max(createMixPlanResponseControlsTracksAutomationItemSendOffsetDbMax),
+  "label": zod.string().optional()
+}).describe('PR-25 — a section of the song where this track\'s level \/ send differ from its static controls (offsets in dB).')).optional()
+})),
+  "master": zod.object({
+  "targetLufs": zod.number(),
+  "truePeakDbtp": zod.number(),
+  "processing": zod.object({
+  "limiter": zod.boolean(),
+  "stereoWidth": zod.number()
+})
+})
+})
 })
 
 

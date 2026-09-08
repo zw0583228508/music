@@ -322,6 +322,50 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   (Wave U persistence, PR-U2); that path is unit-tested only. Character
   matching is word overlap, not timbre analysis: the brain does not listen.
 
+- **PR-25** ✅ — `mix-brain-v1`: a mix decided **per musical role** that
+  **evolves across the song**. `mixBrain.ts` → `MixPlan`: for every track a
+  bus, level, pan, high-pass, compression, saturation and reverb send from
+  role + family knowledge (a bass is centred and dry; a pad is wide,
+  high-passed away from the bass and well under everything; the lead sits in
+  front), then the notes: two parts sharing a register are resolved —
+  background parts panned apart, high-passed 40 Hz higher and tucked 1 dB, a
+  mid-ground part under the lead −1.5 dB — each recorded as a `conflict` with
+  its resolution. Then the sections: foreground follows energy, mid-ground
+  and beds tuck for density, reverb opens in sparse sections and closes in
+  dense ones, quiet sections push the beds back, the climax lets the beds
+  open up. The StyleProfile's mix dimensions (`stereoAesthetic` → pan scale
+  and master width, `roomSize` → send baseline, `saturation`, `dynamics` →
+  loudness target, `instrumentationHierarchy` → level priority) override
+  with provenance. Every value carries its reasons; each section names its
+  focus tracks.
+
+  **Plumbing, not a parallel path.** `mixPlanToControls` emits exactly the
+  controls `createMixMasterRevision` takes; `MixMasterTrackControl` gained an
+  optional `automation[]` (level / send offsets per time window), and
+  `applyMixMasterControls` follows it through a 20 ms one-pole smoother — the
+  mix moves, and it never clicks (tested: −6 dB inside the window only, max
+  sample-to-sample jump < 0.02 at a −12 dB edge, byte-identical without
+  automation). New `POST /projects/{id}/mix-plans` returns `{ plan, controls }`;
+  the studio's audition card has a **"Mix Brain: propose a mix"** button that
+  fills the existing sliders and shows why each track sits where it sits.
+
+  **Proven live** (`docs/evidence/mix-brain-revision.json`): plan → revision
+  v7 with the plan's controls unchanged (6/6/3 automation segments persisted)
+  → measured **−14.0 LUFS at the −14 target, −6.1 dBTP, no findings** →
+  approved → durable export **succeeded**. Kit and bass follow section energy
+  (Intro −0.4 … Chorus 2 +0.6 dB); the ensemble layer steps back in the quiet
+  Intro/Outro and opens +1.5 dB at the Chorus 2 climax.
+
+  Suites: mixBrain 6, mixAutomation 3; typecheck green (API + studio).
+
+  **Honest limits.** The mix is symbolic and rule-based: no spectral
+  analysis, no listening, no LUFS-per-section measurement feeding back into
+  the plan. The reference `MixGraph` still pans by track index underneath
+  (the plan's pans are applied before it); replacing it belongs with PR-26.
+  This arrangement had three tracks and flat density, so masking resolution
+  and density tucking were exercised by tests, not by the live run. No
+  StyleProfile was attached (PR-U2).
+
   **Honest limits.** Only Retrologue is attested here: Groove Agent SE, Padshop
   and HALion Sonic render silence without a loaded program, so their smoke
   correctly refuses them until a `.vstpreset` is provided. The bass lives in

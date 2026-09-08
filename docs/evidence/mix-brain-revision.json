@@ -1,0 +1,280 @@
+{
+  "pr": "PR-25 mix-brain-v1",
+  "recordedAt": "2026-09-08T21:59:10.274Z",
+  "path": "POST /projects/{id}/mix-plans -> POST /mix-master-revisions (the plan's controls, unchanged) -> approve -> POST /projects/{id}/export (durable job)",
+  "projectId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2",
+  "arrangementId": "4da143de-3667-48f2-b750-ea14a041825c",
+  "planInputsDigestSha256": "cd15d6dbbde4a4d053cfc7023412c730537fa6830b2ca161f5c8938506f0f225",
+  "styleProfile": null,
+  "plan": {
+    "tracks": [
+      {
+        "track": "drums-groove",
+        "role": "GROOVE",
+        "bus": "DRUMS",
+        "levelDb": -1,
+        "pan": 0,
+        "sendDb": -24,
+        "processing": {
+          "highPassHz": 40,
+          "compressorRatio": 3,
+          "saturation": 0.1
+        },
+        "priority": 2,
+        "rationale": [
+          "GROOVE: the kit anchors the centre with a little glue and a short room"
+        ],
+        "moving": [
+          {
+            "section": "Intro",
+            "levelOffsetDb": -0.4,
+            "sendOffsetDb": 0,
+            "reason": "foreground follows energy 0.20"
+          },
+          {
+            "section": "Verse",
+            "levelOffsetDb": -0.1,
+            "sendOffsetDb": 0,
+            "reason": "foreground follows energy 0.40"
+          },
+          {
+            "section": "Chorus",
+            "levelOffsetDb": 0.5,
+            "sendOffsetDb": 0,
+            "reason": "foreground follows energy 0.85"
+          },
+          {
+            "section": "Verse 2",
+            "levelOffsetDb": -0.1,
+            "sendOffsetDb": 0,
+            "reason": "foreground follows energy 0.45"
+          },
+          {
+            "section": "Chorus 2",
+            "levelOffsetDb": 0.6,
+            "sendOffsetDb": 0,
+            "reason": "foreground follows energy 0.92"
+          },
+          {
+            "section": "Outro",
+            "levelOffsetDb": -0.4,
+            "sendOffsetDb": 0,
+            "reason": "foreground follows energy 0.25"
+          }
+        ]
+      },
+      {
+        "track": "bass-bass",
+        "role": "BASS",
+        "bus": "MUSIC",
+        "levelDb": 0,
+        "pan": 0,
+        "sendDb": -80,
+        "processing": {
+          "highPassHz": 30,
+          "compressorRatio": 4,
+          "saturation": 0.15
+        },
+        "priority": 2,
+        "rationale": [
+          "BASS: low end stays centred, even and dry",
+          "no reverb send: low end stays dry"
+        ],
+        "moving": [
+          {
+            "section": "Intro",
+            "levelOffsetDb": -0.4,
+            "sendOffsetDb": 0,
+            "reason": "foreground follows energy 0.20"
+          },
+          {
+            "section": "Verse",
+            "levelOffsetDb": -0.1,
+            "sendOffsetDb": 0,
+            "reason": "foreground follows energy 0.40"
+          },
+          {
+            "section": "Chorus",
+            "levelOffsetDb": 0.5,
+            "sendOffsetDb": 0,
+            "reason": "foreground follows energy 0.85"
+          },
+          {
+            "section": "Verse 2",
+            "levelOffsetDb": -0.1,
+            "sendOffsetDb": 0,
+            "reason": "foreground follows energy 0.45"
+          },
+          {
+            "section": "Chorus 2",
+            "levelOffsetDb": 0.6,
+            "sendOffsetDb": 0,
+            "reason": "foreground follows energy 0.92"
+          },
+          {
+            "section": "Outro",
+            "levelOffsetDb": -0.4,
+            "sendOffsetDb": 0,
+            "reason": "foreground follows energy 0.25"
+          }
+        ]
+      },
+      {
+        "track": "ensemble-transition",
+        "role": "TRANSITION",
+        "bus": "MUSIC",
+        "levelDb": -4,
+        "pan": 0.5,
+        "sendDb": -10,
+        "processing": {
+          "highPassHz": 120,
+          "compressorRatio": 1.5,
+          "saturation": 0
+        },
+        "priority": 4,
+        "rationale": [
+          "TRANSITION: transitions are wide and wet so they lead the ear, not the level"
+        ],
+        "moving": [
+          {
+            "section": "Intro",
+            "levelOffsetDb": -1,
+            "sendOffsetDb": 0,
+            "reason": "quiet section: bed a step further back"
+          },
+          {
+            "section": "Chorus 2",
+            "levelOffsetDb": 1.5,
+            "sendOffsetDb": 0,
+            "reason": "climax: beds open up"
+          },
+          {
+            "section": "Outro",
+            "levelOffsetDb": -1,
+            "sendOffsetDb": 0,
+            "reason": "quiet section: bed a step further back"
+          }
+        ]
+      }
+    ],
+    "sections": [
+      {
+        "name": "Intro",
+        "start": 0,
+        "end": 13.33,
+        "energy": 0.2,
+        "density": 0.5,
+        "focus": [
+          "drums-groove",
+          "bass-bass"
+        ]
+      },
+      {
+        "name": "Verse",
+        "start": 13.33,
+        "end": 26.67,
+        "energy": 0.4,
+        "density": 0.5,
+        "focus": [
+          "drums-groove",
+          "bass-bass"
+        ]
+      },
+      {
+        "name": "Chorus",
+        "start": 26.67,
+        "end": 40,
+        "energy": 0.85,
+        "density": 0.5,
+        "focus": [
+          "drums-groove",
+          "bass-bass"
+        ]
+      },
+      {
+        "name": "Verse 2",
+        "start": 40,
+        "end": 53.33,
+        "energy": 0.45,
+        "density": 0.5,
+        "focus": [
+          "drums-groove",
+          "bass-bass"
+        ]
+      },
+      {
+        "name": "Chorus 2",
+        "start": 53.33,
+        "end": 66.67,
+        "energy": 0.92,
+        "density": 0.5,
+        "focus": [
+          "drums-groove",
+          "bass-bass"
+        ]
+      },
+      {
+        "name": "Outro",
+        "start": 66.67,
+        "end": 80,
+        "energy": 0.25,
+        "density": 0.5,
+        "focus": [
+          "drums-groove",
+          "bass-bass"
+        ]
+      }
+    ],
+    "conflicts": [],
+    "master": {
+      "targetLufs": -14,
+      "truePeakDbtp": -1,
+      "processing": {
+        "limiter": true,
+        "stereoWidth": 1
+      },
+      "rationale": [
+        "streaming default: -14 LUFS integrated",
+        "natural stereo width",
+        "true-peak ceiling -1 dBTP with the limiter engaged, so codecs do not over"
+      ]
+    }
+  },
+  "revision": {
+    "id": "1f644436-6d38-4911-a6d3-ec452a84c1ab",
+    "version": 7,
+    "approvedAt": "2026-09-08T21:57:49.023Z",
+    "persistedAutomationSegments": {
+      "bass-bass": 6,
+      "drums-groove": 6,
+      "ensemble-transition": 3
+    },
+    "quality": {
+      "integratedLufs": -14.0,
+      "truePeakDbtp": -6.11,
+      "findings": []
+    }
+  },
+  "exportJob": {
+    "id": "e4840d61-fac8-43b8-8515-93707a518819",
+    "status": "succeeded",
+    "outputArtifactIds": [
+      "export-0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2-7-b3202c9f",
+      "export-file-e4840d61-fac8-43b8-8515-93707a518819-2eb2e802526e9fff",
+      "export-file-e4840d61-fac8-43b8-8515-93707a518819-ee5bf9c3efc1f12b",
+      "export-file-e4840d61-fac8-43b8-8515-93707a518819-0b2f10abdbb07b66",
+      "export-file-e4840d61-fac8-43b8-8515-93707a518819-598902d5c8e35697",
+      "export-file-e4840d61-fac8-43b8-8515-93707a518819-c67af7466dd76730",
+      "export-file-e4840d61-fac8-43b8-8515-93707a518819-cdacb79c1a64119f",
+      "export-file-e4840d61-fac8-43b8-8515-93707a518819-3ddf57d032bda6a1",
+      "export-file-e4840d61-fac8-43b8-8515-93707a518819-5838dcd63969b2c6"
+    ]
+  },
+  "observations": [
+    "The plan was auditioned, approved and exported through the existing revision path with its controls unchanged: the brain proposes, the product's own gates decide.",
+    "The mix moves with the song: kit and bass follow section energy (Intro -0.4 dB ... Chorus 2 +0.6 dB), the ensemble transition layer steps back in the quiet Intro/Outro and opens +1.5 dB at the Chorus 2 climax; 6/6/3 automation segments persisted on the revision.",
+    "Mastered preview measured -14.0 LUFS integrated at the plan's -14 target, true peak -6.1 dBTP, no findings.",
+    "This arrangement has three tracks (kit, bass, ensemble transition), so no register conflict arose; masking resolution and style-driven mix dimensions are covered by unit tests. No StyleProfile was attached (Wave U persistence, PR-U2).",
+    "The sections' density is a flat 0.5 in this arrangement, so density-driven tucking did not trigger here; energy-driven movement did."
+  ]
+}

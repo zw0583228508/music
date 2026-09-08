@@ -957,6 +957,26 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/MixMasterRevision" }
         "404": { $ref: "#/components/responses/NotFound" }
+  /projects/{projectId}/mix-plans:
+    post:
+      operationId: createMixPlan
+      tags: [studio]
+      summary: Derive a Mix Brain plan for an arrangement (PR-25) and the revision controls that realize it
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MixPlanInput" }
+      responses:
+        "200":
+          description: The plan, with every value explained, and the controls to audition it
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MixPlanResponse" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { description: Arrangement is unavailable or has no TrackModels }
   /producer-decisions:
     get:
       operationId: listProducerDecisions
@@ -3668,6 +3688,16 @@ components:
         masterProfile:
           type: string
           enum: [STREAMING, DYNAMIC, CLASSICAL, POP, LOUD, FILM]
+    MixControlAutomationSegment:
+      type: object
+      description: PR-25 — a section of the song where this track's level / send differ from its static controls (offsets in dB).
+      required: [startSeconds, endSeconds, levelOffsetDb, sendOffsetDb]
+      properties:
+        startSeconds: { type: number, minimum: 0 }
+        endSeconds: { type: number, minimum: 0 }
+        levelOffsetDb: { type: number, minimum: -24, maximum: 12 }
+        sendOffsetDb: { type: number, minimum: -24, maximum: 12 }
+        label: { type: string }
     MixMasterTrackControl:
       type: object
       required: [levelDb, pan, bus, sendDb, processing]
@@ -3683,6 +3713,125 @@ components:
             highPassHz: { type: number, minimum: 20, maximum: 20000 }
             compressorRatio: { type: number, minimum: 1, maximum: 20 }
             saturation: { type: number, minimum: 0, maximum: 1 }
+        automation:
+          type: array
+          items: { $ref: "#/components/schemas/MixControlAutomationSegment" }
+    MixPlanTrack:
+      type: object
+      required: [trackId, instrument, role, family, bus, levelDb, pan, sendDb, processing, priority, rationale, sections]
+      properties:
+        trackId: { type: string }
+        instrument: { type: string }
+        role: { type: string }
+        family: { type: string }
+        bus: { type: string, enum: [MIX, DRUMS, MUSIC, VOCALS, FX] }
+        levelDb: { type: number }
+        pan: { type: number }
+        sendDb: { type: number }
+        processing:
+          type: object
+          required: [highPassHz, compressorRatio, saturation]
+          properties:
+            highPassHz: { type: number }
+            compressorRatio: { type: number }
+            saturation: { type: number }
+        priority: { type: number }
+        rationale: { type: array, items: { type: string } }
+        sections:
+          type: array
+          items:
+            type: object
+            required: [sectionName, startSeconds, endSeconds, levelOffsetDb, sendOffsetDb, reason]
+            properties:
+              sectionName: { type: string }
+              startSeconds: { type: number }
+              endSeconds: { type: number }
+              levelOffsetDb: { type: number }
+              sendOffsetDb: { type: number }
+              reason: { type: string }
+    MixPlan:
+      type: object
+      description: PR-25 — a mix decided per musical role that evolves across the song, every value explained.
+      required: [version, method, derivedAt, inputsDigestSha256, arrangementId, tracks, master, sections, conflicts, styleInputs]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        method: { type: string }
+        derivedAt: { type: string }
+        inputsDigestSha256: { type: string }
+        arrangementId: { type: string, nullable: true }
+        tracks: { type: array, items: { $ref: "#/components/schemas/MixPlanTrack" } }
+        master:
+          type: object
+          required: [targetLufs, truePeakDbtp, processing, rationale]
+          properties:
+            targetLufs: { type: number }
+            truePeakDbtp: { type: number }
+            processing:
+              type: object
+              required: [limiter, stereoWidth]
+              properties:
+                limiter: { type: boolean }
+                stereoWidth: { type: number }
+            rationale: { type: array, items: { type: string } }
+        sections:
+          type: array
+          items:
+            type: object
+            required: [sectionName, startSeconds, endSeconds, energy, density, focusTrackIds]
+            properties:
+              sectionName: { type: string }
+              startSeconds: { type: number }
+              endSeconds: { type: number }
+              energy: { type: number }
+              density: { type: number }
+              focusTrackIds: { type: array, items: { type: string } }
+        conflicts:
+          type: array
+          items:
+            type: object
+            required: [trackIds, kind, resolution]
+            properties:
+              trackIds: { type: array, items: { type: string }, minItems: 2, maxItems: 2 }
+              kind: { type: string, enum: [register_masking, role_duplicate] }
+              resolution: { type: string }
+        styleInputs:
+          type: array
+          items:
+            type: object
+            required: [dimension, value, provenance]
+            properties:
+              dimension: { type: string }
+              value: { oneOf: [{ type: string }, { type: number }] }
+              provenance: { type: string }
+    MixPlanInput:
+      type: object
+      required: [arrangementId]
+      properties:
+        arrangementId: { type: string, minLength: 1 }
+    MixPlanResponse:
+      type: object
+      required: [plan, controls]
+      properties:
+        plan: { $ref: "#/components/schemas/MixPlan" }
+        controls:
+          type: object
+          required: [tracks, master]
+          properties:
+            tracks:
+              type: object
+              additionalProperties: { $ref: "#/components/schemas/MixMasterTrackControl" }
+            master:
+              type: object
+              required: [targetLufs, truePeakDbtp, processing]
+              properties:
+                targetLufs: { type: number }
+                truePeakDbtp: { type: number }
+                processing:
+                  type: object
+                  required: [limiter, stereoWidth]
+                  properties:
+                    limiter: { type: boolean }
+                    stereoWidth: { type: number }
     MixMasterRevisionInput:
       type: object
       required: [arrangementId, tracks, master]
