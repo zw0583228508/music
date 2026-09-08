@@ -5550,6 +5550,76 @@ export interface ArrangementCritique {
   recommendedRepairs: CritiqueRecommendedRepair[];
 }
 
+export interface CriticRepairRequest {
+  id: string;
+  dimension: CritiqueDimension;
+  sectionName?: string;
+  instrument?: string;
+  startBar?: number;
+  endBar?: number;
+  operations: string[];
+  reason: string;
+}
+
+export interface CriticRepairPass {
+  /** @minimum 1 */
+  pass: number;
+  requests: CriticRepairRequest[];
+  applied: string[];
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  scoreBefore: number;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  scoreAfter: number;
+  feasibleAfter: boolean;
+}
+
+export type CriticRepairLoopResultVersion = typeof CriticRepairLoopResultVersion[keyof typeof CriticRepairLoopResultVersion];
+
+
+export const CriticRepairLoopResultVersion = {
+  '10': '1.0',
+} as const;
+
+export type CriticRepairLoopResultOutcome = typeof CriticRepairLoopResultOutcome[keyof typeof CriticRepairLoopResultOutcome];
+
+
+export const CriticRepairLoopResultOutcome = {
+  not_needed: 'not_needed',
+  improved: 'improved',
+  plateau: 'plateau',
+  exhausted: 'exhausted',
+  infeasible: 'infeasible',
+} as const;
+
+/**
+ * Critic → Repair loop result (PR-12).
+ */
+export interface CriticRepairLoopResult {
+  version: CriticRepairLoopResultVersion;
+  method: string;
+  /** @minimum 1 */
+  maxPasses: number;
+  outcome: CriticRepairLoopResultOutcome;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  initialScore: number;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  finalScore: number;
+  passes: CriticRepairPass[];
+  finalCritique: ArrangementCritique;
+}
+
 /**
  * Resource not found
  */
