@@ -56,7 +56,15 @@ Regression baseline held every PR: `songModelValidation` (30), `canonicalTimelin
 `analysisProviders` (31), `analysisReconciliation` (6), `music-engines` (40),
 `candidateRanking` (14), `candidateRepair` (20).
 
-## Next: PR-05 — section / phrase / instrument-role planner
+- **PR-05** (#6) ✅ — Section / Phrase / Instrument-Role Planner: per-section `SectionPlan`
+  (function/energy/density/tension/groove, active vs inactive families, lead +
+  supporting roles, register distribution, activity metrics, transitions, novelty),
+  `InstrumentRoleAssignment` per active instrument (GROOVE/BASS/HARMONIC_BED/
+  OSTINATO/COUNTER_MELODY/CALL_RESPONSE/PAD/CLIMAX_LAYER/... + register/voicing/
+  articulation/dynamic shape/interaction-with-lead/entry-exit), `PhrasePlan` 2/4/8-bar
+  units. Wired into `createArrangementPlan`. OpenAPI + orval. Tests: `sectionPhrasePlanner` (6).
+
+## Next: PR-06 — orchestration budget engine
 
 ## Environment findings (Windows local)
 
