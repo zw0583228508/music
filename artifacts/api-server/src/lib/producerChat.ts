@@ -4,7 +4,8 @@
  * The user starts with free text, not a form. Every turn is persisted per
  * project and changes musical state through PR-U1's pure modules only:
  *
- *   intake / refinement  text → extractUserIntent → resolveStyleProfile
+ *   intake / refinement  text → extractUserIntent → style research (PR-U3,
+ *                        async, pre-fetched) → resolveStyleProfile
  *                        → planClarifications → compileProductionBrief
  *                        (a new brief version; the producer replies with a
  *                        one-paragraph reading + ≤2 information-gain questions)
@@ -52,6 +53,13 @@ import {
   extractUserIntentSync,
   type IntentLanguageModel,
 } from "./producerIntelligence/intentExtraction";
+import {
+  createStyleResearchAgent,
+  researchResolveOptions,
+  settledIdentityFromAnswers,
+  settledIdentityFromBrief,
+  type StyleResearchAgent,
+} from "./producerIntelligence/styleResearch";
 import { resolveStyleProfile } from "./producerIntelligence/styleResolution";
 import { describeUnderstanding, intentDelta, type IntentDelta } from "./producerIntelligence/understanding";
 import { instrumentFamily, lookupWord } from "./producerIntelligence/vocabulary";
@@ -163,6 +171,12 @@ export type SupersedeDecisionInput = {
 
 export type ProducerChatServiceOptions = {
   intentModel?: IntentLanguageModel;
+  /**
+   * PR-U3's research agent. Default: the seed corpus alone (deterministic,
+   * offline); the route adds the model provider when configured. `null`
+   * turns research off.
+   */
+  researchAgent?: StyleResearchAgent | null;
   now?: () => Date;
   newId?: () => string;
 };
@@ -326,6 +340,7 @@ const fallbackId = (): string => `pc-${Date.now().toString(36)}-${Math.random().
 export function createProducerChatService(store: ProducerChatStore, options: ProducerChatServiceOptions = {}) {
   const now = options.now ?? (() => new Date());
   const newId = options.newId ?? fallbackId;
+  const researchAgent = options.researchAgent === undefined ? createStyleResearchAgent() : options.researchAgent;
 
   const providedReferences = (intent: UserIntent | undefined): IntakeReference[] =>
     (intent?.references ?? []).filter((r) => !r.evidence).map(({ kind, label, aspect }) => ({ kind, label, ...(aspect ? { aspect } : {}) }));
@@ -353,7 +368,20 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
     const at = now();
     const songModel = await tx.loadSongModel(projectId);
     const intent = await extractUserIntent(input.text, { llm: options.intentModel, references: input.references, now: at });
-    const profile = resolveStyleProfile(intent, { now: at });
+    // Research is async and runs first; the profile is then resolved with
+    // its gated findings pre-fetched (PR-U1's documented path). A world an
+    // answer settled (e.g. the communal-singing ensemble) — in an earlier
+    // version or in the answers applied right now — is part of what is
+    // researched, so answering can unlock the matching conventions.
+    const research = researchAgent
+      ? await researchAgent.research(intent, {
+        settled: {
+          ...settledIdentityFromBrief(input.previous?.brief),
+          ...(input.previous ? settledIdentityFromAnswers(planClarifications(input.previous.intent, input.previous.styleProfile), input.answers) : {}),
+        },
+      })
+      : null;
+    const profile = resolveStyleProfile(intent, research ? researchResolveOptions(research, { now: at }) : { now: at });
     const rows = await tx.listDecisions(projectId);
     const excluded = new Set(input.excludeRowIds ?? []);
     const activeRows = rows.filter((r) => !r.supersededBy && !excluded.has(r.id));

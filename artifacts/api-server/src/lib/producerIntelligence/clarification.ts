@@ -11,9 +11,13 @@
  * traditional orchestral one — is one instance of a general shape: a named
  * tradition with a vague era and no ensemble, school or scene. The three
  * worlds offered are archetypes any tradition has (band recordings of the
- * era / communal vocal world / arranged-orchestral tradition); a knowledge
- * source may replace the wording with tradition-specific worlds via
- * `worldsFor` (PR-U3).
+ * era / communal vocal world / arranged-orchestral tradition); PR-U3's
+ * `worldsFor` rewords them for the traditions its vocabulary knows — same
+ * ids, same deltas — and a caller may still pass its own `worldsFor`.
+ *
+ * PR-U3 also adds the questions research raised: a finding the agent was not
+ * sure enough to assert is offered here as an option, scored like any other
+ * question, so the ≤2 rule holds across both kinds.
  */
 import type {
   BriefDelta,
@@ -24,6 +28,7 @@ import type {
   StyleProfile,
   UserIntent,
 } from "@workspace/db";
+import { researchQuestions, worldWordingFor } from "./styleResearch";
 
 export const CLARIFICATION_THRESHOLD = 0.4;
 export const MAX_CLARIFICATIONS = 2;
@@ -87,6 +92,18 @@ export function genericWorlds(tradition: string): ClarificationOption[] {
   ];
 }
 
+/**
+ * The archetypal worlds in the tradition's own words, when PR-U3's world
+ * vocabulary has them (hasidic, klezmer); null — the generic wording — when
+ * it does not. Only labels and descriptions change: ids and deltas are the
+ * generic ones, so an answer means the same thing whichever wording was shown.
+ */
+export function worldsFor(tradition: string): ClarificationOption[] | null {
+  const wording = worldWordingFor(tradition);
+  if (!wording) return null;
+  return genericWorlds(tradition).map((option) => ({ ...option, ...(wording[option.id] ?? {}) }));
+}
+
 const ERA_WORLDS: ClarificationOption[] = [
   {
     id: "electronic_era",
@@ -141,7 +158,7 @@ const worldOfTradition: Detector = (intent, profile, options) => {
   if (namedInstruments(intent) >= 2) gain -= 0.15;
   if (d.soundAesthetic) gain -= 0.1;
   const tradition = String(d.tradition.value);
-  const options_ = options.worldsFor?.(tradition) ?? genericWorlds(tradition);
+  const options_ = (options.worldsFor ?? worldsFor)(tradition) ?? genericWorlds(tradition);
   const eraWord = d.era ? String(d.era.value) : "";
   return {
     id: "world_of_tradition",
@@ -238,6 +255,14 @@ const referenceAspect: Detector = (intent) => {
 
 const DETECTORS: Detector[] = [worldOfTradition, eraWithoutWorld, genreConflict, referenceAspect];
 
+/** Detector questions plus the research agent's, from the profile alone. */
+function candidateQuestions(intent: UserIntent, profile: StyleProfile, options: ClarificationOptions): ClarificationQuestion[] {
+  return [
+    ...DETECTORS.map((detect) => detect(intent, profile, options)).filter((q): q is ClarificationQuestion => q !== null),
+    ...researchQuestions(profile),
+  ];
+}
+
 /**
  * The questions worth asking now: at most `max`, each above `threshold`,
  * highest information gain first.
@@ -249,22 +274,19 @@ export function planClarifications(
 ): ClarificationQuestion[] {
   const threshold = options.threshold ?? CLARIFICATION_THRESHOLD;
   const max = options.max ?? MAX_CLARIFICATIONS;
-  const questions = DETECTORS
-    .map((detect) => detect(intent, profile, options))
-    .filter((q): q is ClarificationQuestion => q !== null && q.informationGain >= threshold)
+  const questions = candidateQuestions(intent, profile, options)
+    .filter((q) => q.informationGain >= threshold)
     .sort((a, b) => b.informationGain - a.informationGain || a.id.localeCompare(b.id));
   return questions.slice(0, max);
 }
 
-/** Every question a detector would raise, regardless of threshold (for audit). */
+/** Every question a detector or research would raise, regardless of threshold (for audit). */
 export function allClarificationCandidates(
   intent: UserIntent,
   profile: StyleProfile,
   options: ClarificationOptions = {},
 ): ClarificationQuestion[] {
-  return DETECTORS
-    .map((detect) => detect(intent, profile, options))
-    .filter((q): q is ClarificationQuestion => q !== null)
+  return candidateQuestions(intent, profile, options)
     .sort((a, b) => b.informationGain - a.informationGain || a.id.localeCompare(b.id));
 }
 

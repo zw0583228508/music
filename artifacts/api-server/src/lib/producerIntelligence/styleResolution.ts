@@ -23,6 +23,7 @@ import type {
   StyleExclusion,
   StyleProfile,
   StyleProfileDimensions,
+  StyleResearchSummary,
   UserIntent,
 } from "@workspace/db";
 import { instrumentFamily, lookupWord } from "./vocabulary";
@@ -52,9 +53,10 @@ export type StyleKnowledgeQuery = {
 
 /**
  * Where style knowledge comes from. PR-U1 ships one in-code source (the
- * universal vocabulary below). PR-U3's research agent is another; because
- * research is asynchronous, its findings are passed pre-fetched through
- * `ResolveStyleOptions.findings` rather than through a blocking `lookup`.
+ * universal vocabulary below). PR-U3's research agent (`styleResearch.ts`)
+ * is asynchronous, so it runs first and hands its gated findings in through
+ * this same seam — one source per provider consulted
+ * (`researchKnowledgeSources`) — rather than through a blocking `lookup`.
  */
 export type StyleKnowledgeSource = {
   id: string;
@@ -65,6 +67,8 @@ export type ResolveStyleOptions = {
   knowledge?: StyleKnowledgeSource[];
   /** Pre-fetched findings (e.g. from an async research agent). */
   findings?: StyleKnowledgeFinding[];
+  /** What research contributed beyond the findings (question-band candidates, discards); stored with the profile. */
+  research?: StyleResearchSummary;
   now?: Date;
 };
 
@@ -330,6 +334,7 @@ export function styleProfileInputsDigest(intent: UserIntent, options: ResolveSty
       constraints: intent.constraints,
       sources: (options.knowledge ?? [UNIVERSAL_VOCABULARY_SOURCE]).map((s) => s.id),
       findings: options.findings ?? [],
+      research: options.research ?? null,
     }))
     .digest("hex");
 }
@@ -444,6 +449,7 @@ export function resolveStyleProfile(
     conflicts: conflicts.sort((a, b) => a.dimension.localeCompare(b.dimension)),
     sources: sources.map((s) => s.id),
     confidence,
+    ...(options.research ? { research: options.research } : {}),
   };
 }
 

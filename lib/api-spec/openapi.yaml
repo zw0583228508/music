@@ -5842,6 +5842,42 @@ components:
               values: { type: array, items: { type: string } }
         sources: { type: array, items: { type: string } }
         confidence: { type: number, minimum: 0, maximum: 1 }
+        research: { $ref: "#/components/schemas/StyleResearchSummary" }
+    StyleResearchCandidate:
+      type: object
+      description: A research finding that did not become a dimension value (PR-U3).
+      required: [dimension, value, confidence, sourceRefs, rationale]
+      properties:
+        dimension: { type: string }
+        value: { $ref: "#/components/schemas/StyleDimensionValue" }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        sourceRefs: { type: array, items: { type: string } }
+        rationale: { type: string }
+    StyleResearchDiscarded:
+      type: object
+      description: A research finding that never surfaces, with the reason.
+      required: [dimension, value, confidence, sourceRefs, rationale, reason]
+      properties:
+        dimension: { type: string }
+        value: { $ref: "#/components/schemas/StyleDimensionValue" }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        sourceRefs: { type: array, items: { type: string } }
+        rationale: { type: string }
+        reason: { type: string }
+    StyleResearchSummary:
+      type: object
+      description: >-
+        What per-project style research contributed to a profile (PR-U3): the providers consulted,
+        the findings gated into clarification questions (0.4 <= confidence < 0.7; they never populate a
+        dimension) and the findings discarded with a reason. Researched dimension values themselves are in
+        `dimensions` with provenance `researched`. Absent when no world was named.
+      required: [method, world, providers, candidates, discarded]
+      properties:
+        method: { type: string }
+        world: { type: array, items: { type: string } }
+        providers: { type: array, items: { type: string } }
+        candidates: { type: array, items: { $ref: "#/components/schemas/StyleResearchCandidate" } }
+        discarded: { type: array, items: { $ref: "#/components/schemas/StyleResearchDiscarded" } }
     ProducerDecisionScope:
       type: object
       required: [kind]

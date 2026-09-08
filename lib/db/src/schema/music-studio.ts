@@ -2909,6 +2909,35 @@ export type StyleExclusion = {
   sourceRefs: string[];
 };
 
+/** A research finding that did not become a dimension value (PR-U3). */
+export type StyleResearchCandidate = {
+  dimension: StyleDimensionName;
+  value: StyleDimensionValue;
+  /** 0..1 */
+  confidence: number;
+  sourceRefs: string[];
+  /** One line: why the world usually does this. */
+  rationale: string;
+};
+
+/**
+ * What per-project style research contributed to a profile (PR-U3). Stored
+ * with the profile so the questions it raises can be re-derived from the
+ * record alone — no research is re-run to read a brief. Absent when no
+ * world was named, so nothing was researched.
+ */
+export type StyleResearchSummary = {
+  method: string;
+  /** The identity terms that named the world (`tradition=hasidic`, `genre=ballad`). */
+  world: string[];
+  /** Research providers consulted, in order (also listed in `sources`). */
+  providers: string[];
+  /** Findings gated into clarification questions (0.4 ≤ confidence < 0.7). They never populate a dimension. */
+  candidates: StyleResearchCandidate[];
+  /** Findings that never surface (too weak, out of vocabulary, or contradicting what the user said), with the reason. */
+  discarded: Array<StyleResearchCandidate & { reason: string }>;
+};
+
 export type StyleProfile = {
   version: "1.0";
   derivedAt: string;
@@ -2923,6 +2952,8 @@ export type StyleProfile = {
   sources: string[];
   /** Mean confidence over populated dimensions; 0 when none. */
   confidence: number;
+  /** Per-project research, when a world was named (PR-U3). */
+  research?: StyleResearchSummary;
 };
 
 /** Scope of a durable producer decision, resolved to this song's sections. */

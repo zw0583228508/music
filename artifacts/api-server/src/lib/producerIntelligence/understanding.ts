@@ -76,6 +76,19 @@ function worldPhrase(intent: UserIntent, profile: StyleProfile): string | null {
   return parts.length ? parts.join(", ") : null;
 }
 
+/**
+ * What research added (PR-U3): the dimensions the profile holds with
+ * provenance `researched`, named with their providers. Each is a brief
+ * decision, so the sentence still says nothing the data does not contain.
+ */
+function researchPhrase(profile: StyleProfile): string | null {
+  const researched = (Object.entries(profile.dimensions) as Array<[string, StyleProfile["dimensions"][keyof StyleProfile["dimensions"]]]>)
+    .filter((entry): entry is [string, NonNullable<typeof entry[1]>] => entry[1]?.provenance === "researched")
+    .map(([name, dim]) => `${name.replace(/([A-Z])/g, " $1").toLowerCase()} ${Array.isArray(dim.value) ? dim.value.join("/") : String(dim.value).replace(/_/g, " ")}`);
+  if (!researched.length || !profile.research) return null;
+  return `From what is known of ${profile.research.world.join(", ").replace(/\b\w+=/g, "")} (${profile.research.providers.join(", ")}): ${list(researched)} — marked researched in the brief, below anything you said`;
+}
+
 function constraintPhrase(constraints: IntentConstraint[]): string | null {
   const global = constraints.filter((c) => c.scope.kind === "global");
   if (!global.length) return null;
@@ -185,6 +198,8 @@ export function describeUnderstanding(input: UnderstandingInput): string {
     if (instruments) sentences.push(`${instruments[0].toUpperCase()}${instruments.slice(1)}.`);
     const refs = referencePhrase(intent.references);
     if (refs) sentences.push(`${refs[0].toUpperCase()}${refs.slice(1)}.`);
+    const research = researchPhrase(profile);
+    if (research) sentences.push(`${research}.`);
   }
 
   const sections = sectionPhrase(brief);

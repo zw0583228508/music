@@ -93,4 +93,11 @@ test("a knowledge source can supply tradition-specific worlds through worldsFor"
     "The 90s wedding-band sound", "The yeshiva / niggun world", "Traditional orchestral",
   ]);
   assert.deepEqual(plan("old klezmer", { worldsFor: () => null }).questions[0].options.map((o) => o.id), ["era_band", "communal_vocal", "arranged_orchestral"]);
+  // Without a caller's worldsFor, PR-U3's tradition wording is the default —
+  // same ids, same deltas — and a tradition it does not know stays generic.
+  const defaulted = plan("old hasidic").questions[0];
+  assert.deepEqual(defaulted.options.map((o) => o.id), ["era_band", "communal_vocal", "arranged_orchestral"]);
+  assert.match(defaulted.options[1].label, /niggun/);
+  assert.deepEqual(defaulted.options[1].briefDeltas, plan("old balkan").questions[0].options[1].briefDeltas);
+  assert.match(plan("old balkan").questions[0].options[0].label, /party-band balkan sound/);
 });
