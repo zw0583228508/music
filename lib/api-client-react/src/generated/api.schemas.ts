@@ -1491,6 +1491,67 @@ export interface SongModelMusicalMap {
   styleFingerprint: SongModelMusicalMapStyleFingerprint;
 }
 
+export type DomainReconciliationReportVersion = typeof DomainReconciliationReportVersion[keyof typeof DomainReconciliationReportVersion];
+
+
+export const DomainReconciliationReportVersion = {
+  '10': '1.0',
+} as const;
+
+export type AnalysisDomain = typeof AnalysisDomain[keyof typeof AnalysisDomain];
+
+
+export const AnalysisDomain = {
+  tempo: 'tempo',
+  downbeats: 'downbeats',
+  meter: 'meter',
+  key: 'key',
+  chords: 'chords',
+  melody: 'melody',
+  bass: 'bass',
+  sections: 'sections',
+  instruments: 'instruments',
+} as const;
+
+export type DomainReconciliationStatus = typeof DomainReconciliationStatus[keyof typeof DomainReconciliationStatus];
+
+
+export const DomainReconciliationStatus = {
+  detected: 'detected',
+  low_confidence: 'low_confidence',
+  not_available: 'not_available',
+} as const;
+
+export interface DomainReconciliation {
+  domain: AnalysisDomain;
+  value: string | number | null;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number | null;
+  providers: string[];
+  status: DomainReconciliationStatus;
+  message: string | null;
+  margin: number | null;
+}
+
+export type DomainReconciliationReportDomains = {[key: string]: DomainReconciliation};
+
+/**
+ * Per-domain provider reconciliation (Analysis Reconciliation V2).
+ */
+export interface DomainReconciliationReport {
+  version: DomainReconciliationReportVersion;
+  domains: DomainReconciliationReportDomains;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  consensusScore: number;
+  contestedDomains: AnalysisDomain[];
+}
+
 export interface LyricEvent {
   start: number;
   end: number;
@@ -1619,6 +1680,7 @@ export interface SongModel {
   vocalEvidence: VocalEvidence;
   vocalIntelligence: VocalIntelligence;
   musicalMap?: SongModelMusicalMap;
+  reconciliation?: DomainReconciliationReport;
   lyrics: LyricEvent[];
   confidenceByField: SongModelConfidenceByField;
   providerProvenance: ProviderProvenance[];

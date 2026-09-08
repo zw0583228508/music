@@ -1539,6 +1539,8 @@ components:
           $ref: "#/components/schemas/VocalIntelligence"
         musicalMap:
           $ref: "#/components/schemas/SongModelMusicalMap"
+        reconciliation:
+          $ref: "#/components/schemas/DomainReconciliationReport"
         lyrics:
           type: array
           items:
@@ -1948,6 +1950,38 @@ components:
             sectionContrast: { type: number, nullable: true, minimum: 0, maximum: 1 }
             instrumentPaletteHints: { type: array, items: { type: string } }
             orchestrationSize: { type: string, nullable: true, enum: [sparse, medium, dense] }
+    AnalysisDomain:
+      type: string
+      enum: [tempo, downbeats, meter, key, chords, melody, bass, sections, instruments]
+    DomainReconciliation:
+      type: object
+      required: [domain, value, confidence, providers, status, message, margin]
+      properties:
+        domain: { $ref: "#/components/schemas/AnalysisDomain" }
+        value:
+          nullable: true
+          oneOf:
+            - type: string
+            - type: number
+        confidence: { type: number, nullable: true, minimum: 0, maximum: 1 }
+        providers: { type: array, items: { type: string } }
+        status: { type: string, enum: [detected, low_confidence, not_available] }
+        message: { type: string, nullable: true }
+        margin: { type: number, nullable: true }
+    DomainReconciliationReport:
+      type: object
+      description: Per-domain provider reconciliation (Analysis Reconciliation V2).
+      required: [version, domains, consensusScore, contestedDomains]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        domains:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/DomainReconciliation"
+        consensusScore: { type: number, minimum: 0, maximum: 1 }
+        contestedDomains:
+          type: array
+          items: { $ref: "#/components/schemas/AnalysisDomain" }
     SongModelValidation:
       type: object
       required: [status, issues]

@@ -10,6 +10,7 @@ import type { BassEvidenceEvent } from './bassEvidenceEvent';
 import type { BeatEvent } from './beatEvent';
 import type { CanonicalTimebase } from './canonicalTimebase';
 import type { ChordEvent } from './chordEvent';
+import type { DomainReconciliationReport } from './domainReconciliationReport';
 import type { KeyEvent } from './keyEvent';
 import type { LyricEvent } from './lyricEvent';
 import type { MeterEvent } from './meterEvent';
@@ -78,6 +79,7 @@ export interface SongModel {
   vocalEvidence: VocalEvidence;
   vocalIntelligence: VocalIntelligence;
   musicalMap?: SongModelMusicalMap;
+  reconciliation?: DomainReconciliationReport;
   lyrics: LyricEvent[];
   confidenceByField: SongModelConfidenceByField;
   providerProvenance: ProviderProvenance[];

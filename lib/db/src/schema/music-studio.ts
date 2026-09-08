@@ -371,6 +371,39 @@ export type SongModelMusicalMap = {
   }>;
 };
 
+/** Musical domains reconciled independently across providers. */
+export type AnalysisDomain =
+  | "tempo"
+  | "downbeats"
+  | "meter"
+  | "key"
+  | "chords"
+  | "melody"
+  | "bass"
+  | "sections"
+  | "instruments";
+
+export type DomainReconciliation = {
+  domain: AnalysisDomain;
+  value: string | number | null;
+  confidence: number | null;
+  providers: string[];
+  status: "detected" | "low_confidence" | "not_available";
+  message: string | null;
+  margin: number | null;
+};
+
+/**
+ * Per-domain provider reconciliation. `consensusScore` is the mean confidence
+ * across domains that resolved to `detected`; `contestedDomains` did not.
+ */
+export type DomainReconciliationReport = {
+  version: "1.0";
+  domains: Partial<Record<AnalysisDomain, DomainReconciliation>>;
+  consensusScore: number;
+  contestedDomains: AnalysisDomain[];
+};
+
 export type SongModelData = SongModelCore & {
   contractVersion: "1.0" | "2.0";
   /**
@@ -536,6 +569,11 @@ export type SongModelData = SongModelCore & {
    * v2 models; absent on historical models until they are re-derived.
    */
   musicalMap?: SongModelMusicalMap;
+  /**
+   * Per-domain provider reconciliation (Analysis Reconciliation V2). Records how
+   * strongly the independent providers agreed on each musical fact.
+   */
+  reconciliation?: DomainReconciliationReport;
   confidenceByField: Record<string, number>;
   providerProvenance: Array<{
     capability: string;
