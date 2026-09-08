@@ -80,6 +80,18 @@ test("pre-fetched findings (an async research agent) are merged the same way", (
   assert.equal(profile.dimensions.productionSchool?.provenance, "researched");
 });
 
+test("a research summary rides with the profile and its digest; without one the field is absent", () => {
+  const summary = {
+    method: "style-research/v1", world: ["tradition=hasidic"], providers: ["fake-research/v1"],
+    candidates: [{ dimension: "roomSize" as const, value: "hall", confidence: 0.5, sourceRefs: ["research:x"], rationale: "r" }],
+    discarded: [],
+  };
+  const withResearch = profileOf("80s", { research: summary });
+  assert.deepEqual(withResearch.research, summary);
+  assert.equal(profileOf("80s").research, undefined);
+  assert.notEqual(withResearch.inputsDigestSha256, profileOf("80s").inputsDigestSha256, "what research contributed is part of the profile's inputs");
+});
+
 test("the vocabulary is not a genre catalogue", () => {
   assert.ok(UNIVERSAL_VOCABULARY_RULES.length <= 40, `kept small: ${UNIVERSAL_VOCABULARY_RULES.length} rules`);
   assert.equal(UNIVERSAL_VOCABULARY_RULES.some((r) => r.when.slot === "tradition"), false, "no rule keyed on a tradition");

@@ -101,10 +101,71 @@ test("intake persists brief v1 and both turns, and replies with a reading the us
   assert.match(outcome.reply, /לא פופית מדי/);
   assert.match(outcome.reply, /Chorus/);
   assert.doesNotMatch(outcome.reply, /clarinet|jazz|1980s/);
-  assert.equal(outcome.state.clarifications.length, 0, "a modern, well-specified request needs no question");
   assert.equal(outcome.state.concepts.concepts.length, 3);
   assert.equal(outcome.state.planSource, "derived");
   assert.equal(outcome.state.songModelVersion, 1);
+
+  // PR-U3: the named world was researched (seed corpus, no model), each
+  // researched value carries provenance + sourceRefs and ranks below what
+  // was said; the doubts became at most two questions, in Hebrew.
+  const profile = outcome.state.styleProfile;
+  assert.deepEqual(profile.sources, ["universal-vocabulary/v1", "curated-world-notes/v1"]);
+  assert.deepEqual(profile.research?.providers, ["curated-world-notes/v1"]);
+  const researched = brief.dimensionDecisions.filter((d) => d.provenance === "researched");
+  assert.ok(researched.length >= 5, `researched decisions: ${researched.map((d) => d.dimension).join(", ")}`);
+  for (const d of researched) {
+    assert.ok(profile.dimensions[d.dimension]?.sourceRefs?.some((r) => r.startsWith("research:curated-world-notes/v1/")), `${d.dimension} cites its research source`);
+    assert.match(d.rationale, /from the style profile \(researched/);
+  }
+  assert.equal(profile.dimensions.instrumentationHierarchy?.provenance, "stated", "piano + flute were named: research does not reorder them");
+  assert.ok(profile.research!.discarded.some((d) => d.dimension === "instrumentationHierarchy"));
+  assert.ok(outcome.state.clarifications.length >= 1 && outcome.state.clarifications.length <= 2);
+  assert.ok(outcome.state.clarifications.every((q) => q.id.startsWith("research_") && q.questionHe));
+  assert.match(outcome.reply, /From what is known of hasidic, ballad, modern \(curated-world-notes\/v1\)/);
+  assert.match(outcome.reply, /קרעכץ ודריידלעך/, "the Hebrew question uses the tradition's own words");
+  assert.match(outcome.reply, /marked researched in the brief, below anything you said/);
+});
+
+test("research is optional: with the agent off, the intake is PR-U2's exactly", async () => {
+  const store = createInMemoryProducerChatStore({ songModel: { version: 1, model: makeTestSongModel() } });
+  const service = createProducerChatService(store, { now: clock(), newId: ids(), researchAgent: null });
+  const outcome = await service.intake(PROJECT, { text: HEBREW_INTAKE });
+  assert.deepEqual(outcome.state.styleProfile.sources, ["universal-vocabulary/v1"]);
+  assert.equal(outcome.state.styleProfile.research, undefined);
+  assert.equal(outcome.state.clarifications.length, 0, "a modern, well-specified request needs no question of PR-U1's own");
+  assert.doesNotMatch(outcome.reply, /From what is known/);
+});
+
+test("answering the world question researches the chosen world in the same version, not one version late", async () => {
+  const { service } = setup();
+  const intake = await service.intake(PROJECT, { text: "old hasidic" });
+  assert.equal(intake.state.brief.dimensionDecisions.some((d) => d.provenance === "researched"), false, "a tradition alone matches no seed note");
+  assert.deepEqual(intake.state.clarifications.map((q) => q.id), ["world_of_tradition"]);
+  const answered = await service.answer(PROJECT, { answers: [{ questionId: "world_of_tradition", answerId: "communal_vocal" }] });
+  assert.equal(answered.state.version, 2);
+  assert.ok(answered.state.styleProfile.research?.world.includes("ensembleType=vocal_led_small (settled)"), `world: ${answered.state.styleProfile.research?.world.join(", ")}`);
+  const hierarchy = answered.state.brief.dimensionDecisions.find((d) => d.dimension === "instrumentationHierarchy");
+  assert.equal(hierarchy?.provenance, "researched");
+  assert.deepEqual(hierarchy?.styleValue, ["vocals", "guitar", "keys", "percussion"], "the communal-singing note's conventions, researched in v2");
+  assert.equal(answered.state.brief.dimensionDecisions.find((d) => d.dimension === "ensembleType")?.decidedBy, "answer");
+  assert.equal(answered.state.brief.dimensionDecisions.find((d) => d.dimension === "roomSize")?.decidedBy, "answer", "the answer's own deltas still decide what they decide");
+});
+
+test("answering a research question settles the dimension as an answer and the question closes; the world stays researchable across versions", async () => {
+  const { store, service } = setup();
+  const intake = await service.intake(PROJECT, { text: "a slow modern hasidic ballad" });
+  const question = intake.state.clarifications.find((q) => q.id === "research_melodicOrnamentation");
+  assert.ok(question, `the ornamentation doubt is asked: ${intake.state.clarifications.map((q) => q.id).join(",")}`);
+  assert.equal(intake.state.brief.dimensionDecisions.some((d) => d.dimension === "melodicOrnamentation"), false, "a doubt never populates the brief");
+  const answered = await service.answer(PROJECT, { answers: [{ questionId: question!.id, answerId: question!.options[0].id }] });
+  assert.equal(answered.state.version, 2);
+  const decision = answered.state.brief.dimensionDecisions.find((d) => d.dimension === "melodicOrnamentation");
+  assert.equal(decision?.decidedBy, "answer");
+  assert.equal(decision?.styleValue, "moderate");
+  assert.equal(answered.state.clarifications.some((q) => q.id === question!.id), false);
+  assert.ok(answered.state.brief.dimensionDecisions.some((d) => d.provenance === "researched"), "the researched facts are carried into v2");
+  assert.equal(store.briefs[1].styleProfile.research?.providers[0], "curated-world-notes/v1", "the stored profile keeps its research summary");
+  await assert.rejects(service.answer(PROJECT, { answers: [{ questionId: question!.id, answerId: question!.options[0].id }] }), (e: unknown) => e instanceof ProducerChatError && e.status === 400);
 });
 
 test("English intake asks at most two information-gain questions and only those that change the arrangement", async () => {
@@ -137,8 +198,12 @@ test("answering a clarification applies the chosen option's deltas in a new brie
   assert.deepEqual(store.briefs[1].answers, [{ questionId: "world_of_tradition", optionId: "communal_vocal" }]);
   const brief = answered.state.brief;
   assert.deepEqual(brief.answeredQuestionIds, ["world_of_tradition"]);
-  assert.equal(brief.openQuestionIds.length, 0);
-  assert.equal(answered.state.clarifications.length, 0);
+  // PR-U3: the chosen world is researched in this same version, and the one
+  // doubt the seed corpus has about it (ornamentation) is asked next — the
+  // two-question budget counts the question just answered.
+  assert.deepEqual(brief.openQuestionIds, ["research_melodicOrnamentation"]);
+  assert.equal(answered.state.clarifications.length, 1);
+  assert.ok(brief.dimensionDecisions.some((d) => d.provenance === "researched" && d.dimension === "tempoBehavior" && d.styleValue === "breathing"), "the communal-singing conventions were researched once the world was settled");
   const ensemble = brief.dimensionDecisions.find((d) => d.dimension === "ensembleType");
   assert.equal(ensemble?.styleValue, "vocal_led_small");
   assert.equal(ensemble?.decidedBy, "answer");

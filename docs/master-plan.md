@@ -848,11 +848,175 @@ existing `ArrangementPlan`:
   choosable; references are labels, not fingerprints (PR-U4); nothing flows
   into `createArrangementPlan` or regeneration (PR-U5); no producer memory
   across projects (PR-U6). Nobody has listened to anything a brief produced.
-- **PR-U3** `dynamic-style-research-agent` — a `StyleKnowledgeSource` that
-  researches the named world per project and returns candidate dimension
-  values with provenance `researched`, confidence and `sourceRefs`; gated so
-  low-confidence findings are questions, not facts, and never outrank stated
-  intent; tradition-specific `worldsFor` wording.
+- **PR-U3** `dynamic-style-research-agent` — implemented on branch
+  `pr-u3-style-research-agent`, awaiting review and merge. The seam PR-U1
+  left is now used: the world the user *named* (tradition / genre / scene /
+  era / ensemble, plus a stated production word such as "cinematic") is
+  researched per project, and what comes back is gated before it can touch
+  the profile.
+
+  `producerIntelligence/styleResearch.ts`:
+  - `ResearchKnowledgeProvider { id; describe(world) }` — pluggable. Two
+    implementations. **`CuratedWorldNotesProvider`** (`curated-world-notes/v1`)
+    is a small *seed* corpus in code: seven worlds (a slow hasidic ballad, the
+    hasidic communal-singing / niggun / kumzitz world, a 1970s soul ballad, a
+    Balkan brass groove, a bossa nova, a modern hybrid cinematic score, a
+    klezmer freylekhs), each a list of conventions in the universal vocabulary
+    with a confidence for how consistently the world does it and a one-line
+    rationale. Descriptions of how a world tends to behave — no lyrics, no
+    melodies, no note sequences, no named recordings. A note needs a *world*
+    (a tradition plus a form, feel, scene or ensemble); no note fires on a
+    tradition name alone (tested), so "old hasidic" still gets PR-U1's world
+    question first. **`LlmResearchProvider`** (`openai-research/<model>`) uses
+    PR-U2's workspace OpenAI path (lazy import, JSON-only completion) and is
+    selected **only** when `PRODUCER_LLM=openai` *and* the integration env is
+    present — the same opt-in as the intent model. It is asked for the
+    conventions of the named world in the fixed vocabulary, nothing else; the
+    system prompt forbids notes, chords, melodies, lyrics and naming any song,
+    recording or artist. No web scraping, no internet fetch of anything.
+  - **The vocabulary is closed.** `RESEARCH_VOCABULARY` lists every dimension
+    research may speak about and the values it may use — the contract's
+    unions for the closed dimensions (checked at compile time), a closed
+    research list for the contract's open-string ones (`kickSnareLanguage`,
+    `cadenceLanguage`, `transitionLanguage`, …), the planner families for
+    `instrumentationHierarchy`. Identity dimensions are absent on purpose:
+    they are what the user names, never what research decides. An
+    out-of-vocabulary value is **dropped, never coerced** — by the LLM
+    provider and again by the agent for every provider's output (tested with
+    a fake client: "baroque", "cathedral", a swing ratio of 0.9, a list with
+    an unknown family, an identity dimension, a "notes" dimension — all
+    dropped; the valid items survive).
+  - **Gating** (`gateResearchFindings`, per dimension on the strongest
+    finding): confidence ≥ 0.7 → a candidate value with provenance
+    `researched`, `sourceRefs` and a rationale, merged by
+    `resolveStyleProfile` through one `StyleKnowledgeSource` per provider
+    consulted — so `StyleProfile.sources` lists the providers in order
+    (`universal-vocabulary/v1, curated-world-notes/v1[, openai-research/…]`)
+    and two providers disagreeing above the threshold end up as the
+    higher-confidence winner plus an entry in `StyleProfile.conflicts`;
+    0.4 ≤ c < 0.7 → a **clarification question** (PR-U1's shape, one per
+    dimension, each candidate value an option whose delta is a
+    `set_dimension`; it offers, never asserts), scored by
+    `informationGain = weight(dimension) × (1 − (c − 0.4))`, weights capped at
+    0.7 so PR-U1's structural questions win a tie; ranked with the detector
+    questions by the same `planClarifications`, so the ≤2 rule holds across
+    both kinds; c < 0.4 → recorded in `discarded` with the reason, never
+    shown. Two further gates: a finding that **contradicts a value the user's
+    own words set or imply** (a stated identity dimension, the named
+    instruments, or the universal vocabulary's implication of a *stated*
+    word — "slow", "ballad", "cinematic") is discarded, not merged; the merge
+    order alone would not protect a vocabulary-implied value because PR-U1
+    ranks those `inferred`. An agreeing finding corroborates and is cited.
+    Stated still beats researched in the resolver whatever the confidence
+    (PR-U1's test, plus a new one through the agent).
+  - **Persistence without a new table.** The profile gains an optional
+    `research` summary (`StyleResearchSummary`: world terms, providers, the
+    question-band candidates, the discards with reasons) — additive on the
+    jsonb the brief already stores, added to the OpenAPI `StyleProfile` and
+    regenerated. Research questions are built from the stored profile alone
+    (`researchQuestions(profile)`), so reading a brief back, listing its open
+    questions or validating an answer never re-runs research and never calls
+    a model. The profile digest includes the summary.
+  - **`worldsFor` wording.** `WORLD_VOCABULARY` maps tradition-specific terms
+    onto universal dimension values for question and option wording only,
+    where the terms are well established (hasidic: krekhts / dreydlekh,
+    niggun, kumzitz, table; klezmer: kapelye, freygish / Ahava Rabbah,
+    oom-pah). `clarification.ts` now exports `worldsFor(tradition)`: the
+    three archetypal worlds reworded for hasidic and klezmer — same ids, same
+    deltas, so an answer means the same thing whichever wording was shown —
+    and `null` (the generic wording) for every other tradition. It is the
+    default when a caller passes none; a caller's `worldsFor` still wins.
+    The hasidic-ballad ornamentation question reads "How ornamented should
+    the melody be — krekhts and dreydlekh-style turns as in a niggun, or
+    plainer lines?" / "כמה לקשט את המנגינה — סלסולים בסגנון קרעכץ ודריידלעך
+    כמו בניגון, או קו נקי יותר?"; a tradition the table does not know gets
+    "How much ornamentation in the melody?" / "כמה קישוט במנגינה?".
+  - **Wiring.** `producerChat.ts` runs the agent before `resolveStyleProfile`
+    on every compiled version (async, pre-fetched — PR-U1's documented path),
+    with the identity values earlier answers settled *and* the answers being
+    applied right now, so choosing "the communal singing world" for "old
+    hasidic" researches that world in the same version (the live run caught
+    the one-version-late bug; fixed and tested). `createProducerChatService`
+    defaults to the seed corpus; `routes/producer.ts` builds the agent with
+    `selectResearchProviders()` and logs the provider ids next to the intent
+    model; `researchAgent: null` turns research off (tested: PR-U2's intake
+    then comes out exactly as before). The reply gains one data-derived
+    sentence: "From what is known of hasidic, ballad, modern
+    (curated-world-notes/v1): tempo behavior slow, … — marked researched in
+    the brief, below anything you said." Provider failures are reported in
+    the report and the other providers still count; provider answers are
+    memoised per world so a chat turn that recompiles the same text does not
+    research twice.
+
+  Tests: `styleResearch.test.ts` (16) — the Hebrew intake "בלדה חסידית
+  מודרנית, איטית, לא פופית מדי" yields ten researched dimensions, each with
+  provenance, a `research:` and a `curated:` reference, and exactly two
+  questions (which families lead; ornamentation in krekhts / dreydlekh
+  wording, Hebrew and English); the three bands; stated beats researched
+  through the resolver and through the agent's guard; named instruments are
+  never reordered; the ≤2 rule across detector + research questions with the
+  world question first; inter-provider conflict recording; failing provider
+  + memoisation; the fake-client LLM test above; selection off by default;
+  the agent re-validating any provider; the corpus invariants (a handful, a
+  world per note, every value in the vocabulary, one-line rationales, and no
+  world word has become a `UNIVERSAL_VOCABULARY_RULES` rule — that source is
+  still genre- and tradition-free); `worldsFor`; settled-world research;
+  re-derivability from the stored profile and digest determinism; a
+  bilingual question for every researchable dimension. Additions:
+  `styleResolution.test.ts` (+1, the summary rides with the profile and its
+  digest), `clarification.test.ts` (default `worldsFor`), `producerChat.test.ts`
+  (+3: research on the Hebrew intake with sourceRefs and Hebrew wording in the
+  reply; research off; a research answer settling a dimension; the world
+  answer researched in the same version) and two PR-U2 assertions updated
+  because research now legitimately asks about the settled world. Suites:
+  `producer-intelligence` 81/81 (9 files), `producer-chat` 19/19; `pnpm run
+  typecheck` green for all four projects. No test calls a model.
+
+  **Live check** (`docs/evidence/style-research-live.json`, API on :5001
+  against Neon, dev-login, four fresh projects, no Song Model): the Hebrew
+  intake → brief v1 with ten researched dimensions (`tempoBehavior slow
+  0.85`, `chordRhythm sustained`, `chordExtensions triads`, `harmonicRhythm
+  slow`, `phraseLength regular`, `registerTendencies mid`, `saturation warm`,
+  `stereoAesthetic natural`, `fillFrequency rare`, `bassAttackPosition
+  sustained`), `sources` = vocabulary + curated notes, eight question-band
+  candidates stored, two questions asked in Hebrew; answering the
+  ornamentation question → v2 with `melodicOrnamentation moderate` decided
+  by *answer*, one question still open; `GET brief` re-derives the same open
+  question from the stored profile; a Hebrew refinement ("יותר אינטימי
+  ואקוסטי") → v3 where the now-stated *acoustic* makes research's `saturation
+  warm` a recorded discard ("contradicts what the user said"). "an old hasidic
+  song" → the world question in hasidic wording (wedding-band recordings /
+  niggun–yeshiva table–kumzitz / choir with orchestra); answering the
+  communal world → v2 researched from the communal-singing note
+  (`tempoBehavior breathing`, `instrumentationHierarchy vocals, guitar, keys,
+  percussion`, `roomSize small` — the answer's own delta — …) with the
+  ornamentation doubt asked next. "a modern cinematic hybrid score, epic" →
+  thirteen researched dimensions and two English questions (grid or breathing
+  tempo; half-time hits or isolated impacts), while research's `roomSize
+  hall`, `transitionLanguage risers_and_impacts` and `soundAesthetic hybrid`
+  were discarded because the user's own word "cinematic" implies `large`,
+  `swells_and_builds` and *cinematic* through PR-U1's vocabulary. "a modern
+  gospel anthem" → a named world the seed corpus does not know: nothing
+  researched, nothing invented, no question.
+
+  **What PR-U3 does NOT do, honestly.** No language model was exercised: no
+  OpenAI key is configured and `PRODUCER_LLM` is unset, so the live run and
+  every test use the seed corpus only; the LLM provider is proven against a
+  fake client and nothing else — its real output quality, cost and latency
+  are unmeasured. The seed corpus is seven notes written by hand from general
+  knowledge of conventions; it is a demonstration that the path works, not
+  coverage of anything, and by design it must not grow into a catalogue. No
+  internet, no scraping, no reference audio. The stated-intent guard is
+  deliberately strict: it treats the vocabulary's implication of a stated
+  word as said, so research cannot refine "cinematic ⇒ large" into "hall" —
+  loosening that needs a notion of compatible values, not a threshold. The
+  world question's Hebrew text still carries PR-U1's canonical English
+  values ("כשאתה אומר hasidic old"). Question wording for open-list values
+  outside the table falls back to humanised English in both languages.
+  Nothing new in the studio drawer beyond what provenance already shows;
+  the `research` summary is in the API but not rendered. Concepts,
+  references (PR-U4), regeneration (PR-U5) and producer memory (PR-U6) are
+  untouched. Nobody has listened to anything a brief produced.
 - **PR-U4** `reference-intelligence` — a style fingerprint per reference
   (abstract features only, never content — the PR-27 rule) and an
   allowed-to-copy scope (groove / sound / arrangement / mood) wired to the
@@ -961,6 +1125,7 @@ fabricate candidates when workers are offline.
 | API contract | `lib/api-spec/openapi.yaml` (orval → `api-zod`, `api-client-react`) |
 | Producer intelligence contracts (Wave U) | `UserIntent` / `StyleProfile` / `ProductionBrief` / `ClarificationQuestion` / `ArrangementConcept` / `EditPlan` in `lib/db/src/schema/music-studio.ts`; pure modules in `artifacts/api-server/src/lib/producerIntelligence/` |
 | Producer conversation (Wave U, PR-U2) | `routes/producer.ts` (`/projects/{id}/producer/*`), `src/lib/producerChat.ts` (store-agnostic logic) + `producerChatDbStore.ts`; tables `music_production_briefs` / `music_producer_chat_turns` / `music_producer_brief_decisions`; studio drawer `components/studio/producer-chat.tsx` |
+| Style research agent (Wave U, PR-U3) | `src/lib/producerIntelligence/styleResearch.ts` — `ResearchKnowledgeProvider` (curated seed notes; OpenAI only when `PRODUCER_LLM=openai`), the closed `RESEARCH_VOCABULARY`, gating into researched dimensions / questions / discards, `WORLD_VOCABULARY` wording; `StyleProfile.research` summary in `lib/db` + OpenAPI; evidence `docs/evidence/style-research-live.json` |
 
 Every PR below is an **extension** of the above unless noted.
 

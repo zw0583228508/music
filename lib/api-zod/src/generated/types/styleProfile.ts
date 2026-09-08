@@ -9,6 +9,7 @@ import type { StyleProfileConflictsItem } from './styleProfileConflictsItem';
 import type { StyleProfileDimensions } from './styleProfileDimensions';
 import type { StyleProfileExclusionsItem } from './styleProfileExclusionsItem';
 import type { StyleProfileVersion } from './styleProfileVersion';
+import type { StyleResearchSummary } from './styleResearchSummary';
 
 /**
  * Layer 2 - independent dimensions of the musical world; only dimensions with evidence are present.
@@ -28,4 +29,5 @@ export interface StyleProfile {
      * @maximum 1
      */
   confidence: number;
+  research?: StyleResearchSummary;
 }

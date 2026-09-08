@@ -19354,6 +19354,12 @@ export const runProducerIntakeResponseStateStyleProfileDimensionsConfidenceMax =
 export const runProducerIntakeResponseStateStyleProfileConfidenceMin = 0;
 export const runProducerIntakeResponseStateStyleProfileConfidenceMax = 1;
 
+export const runProducerIntakeResponseStateStyleProfileResearchCandidatesItemConfidenceMin = 0;
+export const runProducerIntakeResponseStateStyleProfileResearchCandidatesItemConfidenceMax = 1;
+
+export const runProducerIntakeResponseStateStyleProfileResearchDiscardedItemConfidenceMin = 0;
+export const runProducerIntakeResponseStateStyleProfileResearchDiscardedItemConfidenceMax = 1;
+
 export const runProducerIntakeResponseStateClarificationsItemInformationGainMin = 0;
 export const runProducerIntakeResponseStateClarificationsItemInformationGainMax = 1;
 
@@ -19762,7 +19768,27 @@ export const RunProducerIntakeResponse = zod.object({
   "values": zod.array(zod.string())
 })),
   "sources": zod.array(zod.string()),
-  "confidence": zod.number().min(runProducerIntakeResponseStateStyleProfileConfidenceMin).max(runProducerIntakeResponseStateStyleProfileConfidenceMax)
+  "confidence": zod.number().min(runProducerIntakeResponseStateStyleProfileConfidenceMin).max(runProducerIntakeResponseStateStyleProfileConfidenceMax),
+  "research": zod.object({
+  "method": zod.string(),
+  "world": zod.array(zod.string()),
+  "providers": zod.array(zod.string()),
+  "candidates": zod.array(zod.object({
+  "dimension": zod.string(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(runProducerIntakeResponseStateStyleProfileResearchCandidatesItemConfidenceMin).max(runProducerIntakeResponseStateStyleProfileResearchCandidatesItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "rationale": zod.string()
+}).describe('A research finding that did not become a dimension value (PR-U3).')),
+  "discarded": zod.array(zod.object({
+  "dimension": zod.string(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(runProducerIntakeResponseStateStyleProfileResearchDiscardedItemConfidenceMin).max(runProducerIntakeResponseStateStyleProfileResearchDiscardedItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "rationale": zod.string(),
+  "reason": zod.string()
+}).describe('A research finding that never surfaces, with the reason.'))
+}).optional().describe('What per-project style research contributed to a profile (PR-U3): the providers consulted, the findings gated into clarification questions (0.4 <= confidence < 0.7; they never populate a dimension) and the findings discarded with a reason. Researched dimension values themselves are in `dimensions` with provenance `researched`. Absent when no world was named.')
 }).describe('Layer 2 - independent dimensions of the musical world; only dimensions with evidence are present.'),
   "clarifications": zod.array(zod.object({
   "id": zod.string(),
@@ -19976,6 +20002,12 @@ export const answerProducerClarificationsResponseStateStyleProfileDimensionsConf
 
 export const answerProducerClarificationsResponseStateStyleProfileConfidenceMin = 0;
 export const answerProducerClarificationsResponseStateStyleProfileConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseStateStyleProfileResearchCandidatesItemConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateStyleProfileResearchCandidatesItemConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseStateStyleProfileResearchDiscardedItemConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateStyleProfileResearchDiscardedItemConfidenceMax = 1;
 
 export const answerProducerClarificationsResponseStateClarificationsItemInformationGainMin = 0;
 export const answerProducerClarificationsResponseStateClarificationsItemInformationGainMax = 1;
@@ -20385,7 +20417,27 @@ export const AnswerProducerClarificationsResponse = zod.object({
   "values": zod.array(zod.string())
 })),
   "sources": zod.array(zod.string()),
-  "confidence": zod.number().min(answerProducerClarificationsResponseStateStyleProfileConfidenceMin).max(answerProducerClarificationsResponseStateStyleProfileConfidenceMax)
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateStyleProfileConfidenceMin).max(answerProducerClarificationsResponseStateStyleProfileConfidenceMax),
+  "research": zod.object({
+  "method": zod.string(),
+  "world": zod.array(zod.string()),
+  "providers": zod.array(zod.string()),
+  "candidates": zod.array(zod.object({
+  "dimension": zod.string(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateStyleProfileResearchCandidatesItemConfidenceMin).max(answerProducerClarificationsResponseStateStyleProfileResearchCandidatesItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "rationale": zod.string()
+}).describe('A research finding that did not become a dimension value (PR-U3).')),
+  "discarded": zod.array(zod.object({
+  "dimension": zod.string(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateStyleProfileResearchDiscardedItemConfidenceMin).max(answerProducerClarificationsResponseStateStyleProfileResearchDiscardedItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "rationale": zod.string(),
+  "reason": zod.string()
+}).describe('A research finding that never surfaces, with the reason.'))
+}).optional().describe('What per-project style research contributed to a profile (PR-U3): the providers consulted, the findings gated into clarification questions (0.4 <= confidence < 0.7; they never populate a dimension) and the findings discarded with a reason. Researched dimension values themselves are in `dimensions` with provenance `researched`. Absent when no world was named.')
 }).describe('Layer 2 - independent dimensions of the musical world; only dimensions with evidence are present.'),
   "clarifications": zod.array(zod.object({
   "id": zod.string(),
@@ -20532,6 +20584,12 @@ export const getProducerBriefResponseStyleProfileDimensionsConfidenceMax = 1;
 
 export const getProducerBriefResponseStyleProfileConfidenceMin = 0;
 export const getProducerBriefResponseStyleProfileConfidenceMax = 1;
+
+export const getProducerBriefResponseStyleProfileResearchCandidatesItemConfidenceMin = 0;
+export const getProducerBriefResponseStyleProfileResearchCandidatesItemConfidenceMax = 1;
+
+export const getProducerBriefResponseStyleProfileResearchDiscardedItemConfidenceMin = 0;
+export const getProducerBriefResponseStyleProfileResearchDiscardedItemConfidenceMax = 1;
 
 export const getProducerBriefResponseClarificationsItemInformationGainMin = 0;
 export const getProducerBriefResponseClarificationsItemInformationGainMax = 1;
@@ -20746,7 +20804,27 @@ export const GetProducerBriefResponse = zod.object({
   "values": zod.array(zod.string())
 })),
   "sources": zod.array(zod.string()),
-  "confidence": zod.number().min(getProducerBriefResponseStyleProfileConfidenceMin).max(getProducerBriefResponseStyleProfileConfidenceMax)
+  "confidence": zod.number().min(getProducerBriefResponseStyleProfileConfidenceMin).max(getProducerBriefResponseStyleProfileConfidenceMax),
+  "research": zod.object({
+  "method": zod.string(),
+  "world": zod.array(zod.string()),
+  "providers": zod.array(zod.string()),
+  "candidates": zod.array(zod.object({
+  "dimension": zod.string(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(getProducerBriefResponseStyleProfileResearchCandidatesItemConfidenceMin).max(getProducerBriefResponseStyleProfileResearchCandidatesItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "rationale": zod.string()
+}).describe('A research finding that did not become a dimension value (PR-U3).')),
+  "discarded": zod.array(zod.object({
+  "dimension": zod.string(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(getProducerBriefResponseStyleProfileResearchDiscardedItemConfidenceMin).max(getProducerBriefResponseStyleProfileResearchDiscardedItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "rationale": zod.string(),
+  "reason": zod.string()
+}).describe('A research finding that never surfaces, with the reason.'))
+}).optional().describe('What per-project style research contributed to a profile (PR-U3): the providers consulted, the findings gated into clarification questions (0.4 <= confidence < 0.7; they never populate a dimension) and the findings discarded with a reason. Researched dimension values themselves are in `dimensions` with provenance `researched`. Absent when no world was named.')
 }).describe('Layer 2 - independent dimensions of the musical world; only dimensions with evidence are present.'),
   "clarifications": zod.array(zod.object({
   "id": zod.string(),
@@ -20955,6 +21033,12 @@ export const sendProducerChatResponseStateStyleProfileDimensionsConfidenceMax = 
 
 export const sendProducerChatResponseStateStyleProfileConfidenceMin = 0;
 export const sendProducerChatResponseStateStyleProfileConfidenceMax = 1;
+
+export const sendProducerChatResponseStateStyleProfileResearchCandidatesItemConfidenceMin = 0;
+export const sendProducerChatResponseStateStyleProfileResearchCandidatesItemConfidenceMax = 1;
+
+export const sendProducerChatResponseStateStyleProfileResearchDiscardedItemConfidenceMin = 0;
+export const sendProducerChatResponseStateStyleProfileResearchDiscardedItemConfidenceMax = 1;
 
 export const sendProducerChatResponseStateClarificationsItemInformationGainMin = 0;
 export const sendProducerChatResponseStateClarificationsItemInformationGainMax = 1;
@@ -21364,7 +21448,27 @@ export const SendProducerChatResponse = zod.object({
   "values": zod.array(zod.string())
 })),
   "sources": zod.array(zod.string()),
-  "confidence": zod.number().min(sendProducerChatResponseStateStyleProfileConfidenceMin).max(sendProducerChatResponseStateStyleProfileConfidenceMax)
+  "confidence": zod.number().min(sendProducerChatResponseStateStyleProfileConfidenceMin).max(sendProducerChatResponseStateStyleProfileConfidenceMax),
+  "research": zod.object({
+  "method": zod.string(),
+  "world": zod.array(zod.string()),
+  "providers": zod.array(zod.string()),
+  "candidates": zod.array(zod.object({
+  "dimension": zod.string(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(sendProducerChatResponseStateStyleProfileResearchCandidatesItemConfidenceMin).max(sendProducerChatResponseStateStyleProfileResearchCandidatesItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "rationale": zod.string()
+}).describe('A research finding that did not become a dimension value (PR-U3).')),
+  "discarded": zod.array(zod.object({
+  "dimension": zod.string(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(sendProducerChatResponseStateStyleProfileResearchDiscardedItemConfidenceMin).max(sendProducerChatResponseStateStyleProfileResearchDiscardedItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "rationale": zod.string(),
+  "reason": zod.string()
+}).describe('A research finding that never surfaces, with the reason.'))
+}).optional().describe('What per-project style research contributed to a profile (PR-U3): the providers consulted, the findings gated into clarification questions (0.4 <= confidence < 0.7; they never populate a dimension) and the findings discarded with a reason. Researched dimension values themselves are in `dimensions` with provenance `researched`. Absent when no world was named.')
 }).describe('Layer 2 - independent dimensions of the musical world; only dimensions with evidence are present.'),
   "clarifications": zod.array(zod.object({
   "id": zod.string(),
@@ -21949,6 +22053,12 @@ export const supersedeProducerDecisionResponseStateStyleProfileDimensionsConfide
 export const supersedeProducerDecisionResponseStateStyleProfileConfidenceMin = 0;
 export const supersedeProducerDecisionResponseStateStyleProfileConfidenceMax = 1;
 
+export const supersedeProducerDecisionResponseStateStyleProfileResearchCandidatesItemConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateStyleProfileResearchCandidatesItemConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseStateStyleProfileResearchDiscardedItemConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateStyleProfileResearchDiscardedItemConfidenceMax = 1;
+
 export const supersedeProducerDecisionResponseStateClarificationsItemInformationGainMin = 0;
 export const supersedeProducerDecisionResponseStateClarificationsItemInformationGainMax = 1;
 
@@ -22357,7 +22467,27 @@ export const SupersedeProducerDecisionResponse = zod.object({
   "values": zod.array(zod.string())
 })),
   "sources": zod.array(zod.string()),
-  "confidence": zod.number().min(supersedeProducerDecisionResponseStateStyleProfileConfidenceMin).max(supersedeProducerDecisionResponseStateStyleProfileConfidenceMax)
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateStyleProfileConfidenceMin).max(supersedeProducerDecisionResponseStateStyleProfileConfidenceMax),
+  "research": zod.object({
+  "method": zod.string(),
+  "world": zod.array(zod.string()),
+  "providers": zod.array(zod.string()),
+  "candidates": zod.array(zod.object({
+  "dimension": zod.string(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateStyleProfileResearchCandidatesItemConfidenceMin).max(supersedeProducerDecisionResponseStateStyleProfileResearchCandidatesItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "rationale": zod.string()
+}).describe('A research finding that did not become a dimension value (PR-U3).')),
+  "discarded": zod.array(zod.object({
+  "dimension": zod.string(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateStyleProfileResearchDiscardedItemConfidenceMin).max(supersedeProducerDecisionResponseStateStyleProfileResearchDiscardedItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "rationale": zod.string(),
+  "reason": zod.string()
+}).describe('A research finding that never surfaces, with the reason.'))
+}).optional().describe('What per-project style research contributed to a profile (PR-U3): the providers consulted, the findings gated into clarification questions (0.4 <= confidence < 0.7; they never populate a dimension) and the findings discarded with a reason. Researched dimension values themselves are in `dimensions` with provenance `researched`. Absent when no world was named.')
 }).describe('Layer 2 - independent dimensions of the musical world; only dimensions with evidence are present.'),
   "clarifications": zod.array(zod.object({
   "id": zod.string(),

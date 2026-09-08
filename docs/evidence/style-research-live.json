@@ -1,0 +1,2778 @@
+{
+  "kind": "live-style-research-pr-u3",
+  "ranAt": "2026-09-08T23:02:55.220Z",
+  "apiBase": "http://127.0.0.1:5001",
+  "note": "PR-U3 live check on a Neon-backed local API (PORT 5001) from the pr-u3-style-research-agent worktree, dev-login. All four projects are fresh (no source uploaded, no Song Model). No OpenAI key is configured in .env.local and PRODUCER_LLM is unset, so the intent reading is the deterministic PR-U1 extractor and the ONLY research provider is the curated seed corpus (curated-world-notes/v1): the LLM research provider was NOT selected and NO language model was exercised anywhere in this run. Everything researched here therefore proves the wiring, gating, persistence and wording of the seed path — not what a model would say. Nothing was generated or regenerated.",
+  "projects": {
+    "hebrew": "2d4f3746-52de-45af-9f86-0d75ed79a53d",
+    "english": "3ea81157-40b2-4bce-81c9-ad7789273809",
+    "score": "0a7db81b-ee7b-4a54-8182-b27ca0d8ea91",
+    "unknownWorld": "ba0654cb-510e-4458-84f5-62b832385147"
+  },
+  "researchProviders": [
+    "curated-world-notes/v1"
+  ],
+  "llmExercised": false,
+  "steps": [
+    {
+      "step": 1,
+      "method": "GET",
+      "path": "/api/healthz",
+      "status": 200,
+      "ms": 425,
+      "request": null,
+      "response": {
+        "status": "ok",
+        "database": "ok",
+        "providers": {
+          "configured": 1,
+          "available": 1
+        },
+        "queues": {
+          "analysis_failed": 10,
+          "generation_failed": 1,
+          "generation_succeeded": 3,
+          "pipeline_succeeded": 8,
+          "pipeline_failed": 2
+        },
+        "timestamp": "2026-09-08T23:02:35.225Z"
+      }
+    },
+    {
+      "step": 2,
+      "method": "POST",
+      "path": "/api/dev-login",
+      "status": 200,
+      "ms": 374,
+      "request": null,
+      "response": {
+        "userId": "dev-local-user"
+      }
+    },
+    {
+      "step": 3,
+      "method": "POST",
+      "path": "/api/projects",
+      "status": 201,
+      "ms": 549,
+      "request": {
+        "name": "PR-U3 live check (he) 2026-09-08T23:02:35.611Z",
+        "sourceType": "FULL_SONG"
+      },
+      "response": {
+        "id": "2d4f3746-52de-45af-9f86-0d75ed79a53d",
+        "status": "draft"
+      }
+    },
+    {
+      "step": 4,
+      "method": "POST",
+      "path": "/api/projects/2d4f3746-52de-45af-9f86-0d75ed79a53d/producer/intake",
+      "status": 201,
+      "ms": 3261,
+      "request": {
+        "text": "בלדה חסידית מודרנית, איטית, לא פופית מדי"
+      },
+      "response": {
+        "kind": "intake",
+        "understanding": "Here is how I read it: a modern hasidic ballad, slow tempo. Boundaries — ruled out: pop (\"לא פופית מדי\"). From what is known of hasidic, ballad, modern (curated-world-notes/v1): tempo behavior slow, chord rhythm sustained, fill frequency rare, stereo aesthetic natural, bass attack position sustained, chord extensions triads, harmonic rhythm slow, phrase length regular, register tendencies mid and saturation warm — marked researched in the brief, below anything you said.\n\nTwo things would change the arrangement materially: אילו משפחות כלים מובילות את העיבוד? (a) keys, vocals, strings, bass, drums (b) guitar, vocals, keys, bass, drums כמה לקשט את המנגינה — סלסולים בסגנון קרעכץ ודריידלעך כמו בניגון, או קו נקי יותר? (a) בינוני — קרעכץ בסופי משפט, דריידלעך על צלילים ארוכים",
+        "version": 1,
+        "sources": [
+          "universal-vocabulary/v1",
+          "curated-world-notes/v1"
+        ],
+        "research": {
+          "method": "style-research/v1",
+          "world": [
+            "tradition=hasidic",
+            "genre=ballad",
+            "era=modern"
+          ],
+          "providers": [
+            "curated-world-notes/v1"
+          ],
+          "candidates": [
+            {
+              "dimension": "cadenceLanguage",
+              "value": "harmonic_minor",
+              "confidence": 0.5,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "minor cadences with the raised seventh are the default colour"
+            },
+            {
+              "dimension": "dynamics",
+              "value": "wide",
+              "confidence": 0.5,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "modern productions build from a quiet verse to a big chorus; the older ballad stays level"
+            },
+            {
+              "dimension": "instrumentationHierarchy",
+              "value": [
+                "keys",
+                "vocals",
+                "strings",
+                "bass",
+                "drums"
+              ],
+              "confidence": 0.55,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "the keys-led production: piano under the voice, strings for the chorus"
+            },
+            {
+              "dimension": "instrumentationHierarchy",
+              "value": [
+                "guitar",
+                "vocals",
+                "keys",
+                "bass",
+                "drums"
+              ],
+              "confidence": 0.45,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "the guitar-led, more acoustic production of the same form"
+            },
+            {
+              "dimension": "melodicOrnamentation",
+              "value": "moderate",
+              "confidence": 0.55,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "vocal turns at phrase ends are common, but how many varies by singer"
+            },
+            {
+              "dimension": "roomSize",
+              "value": "medium",
+              "confidence": 0.65,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "a medium room with a longer tail on the voice: not a dry pop vocal, not a hall"
+            },
+            {
+              "dimension": "transitionLanguage",
+              "value": "swells_and_builds",
+              "confidence": 0.6,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "sections hand over with a swell or a held chord, not a drum fill"
+            },
+            {
+              "dimension": "voicingWidth",
+              "value": "open",
+              "confidence": 0.6,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "open keyboard voicings under the voice; close voicings feel thin here"
+            }
+          ],
+          "discarded": []
+        },
+        "dimensions": {
+          "genre": {
+            "value": "ballad",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:בלדה"
+            ]
+          },
+          "tradition": {
+            "value": "hasidic",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:חסידית"
+            ]
+          },
+          "era": {
+            "value": "modern",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:מודרנית"
+            ]
+          },
+          "soundAesthetic": {
+            "value": "modern",
+            "confidence": 0.5,
+            "provenance": "inferred",
+            "sourceRefs": [
+              "text:מודרנית"
+            ]
+          },
+          "tempoBehavior": {
+            "value": "slow",
+            "confidence": 0.85,
+            "provenance": "researched",
+            "sourceRefs": [
+              "vocab:form.ballad",
+              "text:בלדה",
+              "vocab:tempo.slow",
+              "text:איטית",
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "chordRhythm": {
+            "value": "sustained",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "vocab:form.ballad",
+              "text:בלדה",
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "fillFrequency": {
+            "value": "rare",
+            "confidence": 0.75,
+            "provenance": "researched",
+            "sourceRefs": [
+              "vocab:form.ballad",
+              "text:בלדה",
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "stereoAesthetic": {
+            "value": "natural",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "bassAttackPosition": {
+            "value": "sustained",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "chordExtensions": {
+            "value": "triads",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "harmonicRhythm": {
+            "value": "slow",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "phraseLength": {
+            "value": "regular",
+            "confidence": 0.75,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "registerTendencies": {
+            "value": "mid",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "saturation": {
+            "value": "warm",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          }
+        },
+        "conflicts": [
+          {
+            "dimension": "stereoAesthetic",
+            "values": [
+              "wide",
+              "natural"
+            ]
+          }
+        ],
+        "exclusions": [
+          {
+            "dimension": "genre",
+            "value": "pop",
+            "sourceRefs": [
+              "text:לא פופית מדי"
+            ]
+          }
+        ],
+        "clarifications": [
+          {
+            "id": "research_instrumentationHierarchy",
+            "informationGain": 0.595,
+            "question": "Which families should lead the arrangement?",
+            "questionHe": "אילו משפחות כלים מובילות את העיבוד?",
+            "settlesDimensions": [
+              "instrumentationHierarchy"
+            ],
+            "options": [
+              {
+                "id": "instrumentationHierarchy_keys-vocals-strings-bass-drums",
+                "label": "keys, vocals, strings, bass, drums",
+                "labelHe": "keys, vocals, strings, bass, drums"
+              },
+              {
+                "id": "instrumentationHierarchy_guitar-vocals-keys-bass-drums",
+                "label": "guitar, vocals, keys, bass, drums",
+                "labelHe": "guitar, vocals, keys, bass, drums"
+              }
+            ]
+          },
+          {
+            "id": "research_melodicOrnamentation",
+            "informationGain": 0.553,
+            "question": "How ornamented should the melody be — krekhts and dreydlekh-style turns as in a niggun, or plainer lines?",
+            "questionHe": "כמה לקשט את המנגינה — סלסולים בסגנון קרעכץ ודריידלעך כמו בניגון, או קו נקי יותר?",
+            "settlesDimensions": [
+              "melodicOrnamentation"
+            ],
+            "options": [
+              {
+                "id": "melodicOrnamentation_moderate",
+                "label": "moderate — a krekhts at phrase ends, dreydlekh on held notes",
+                "labelHe": "בינוני — קרעכץ בסופי משפט, דריידלעך על צלילים ארוכים"
+              }
+            ]
+          }
+        ],
+        "dimensionDecisions": [
+          {
+            "dimension": "bassAttackPosition",
+            "disposition": "adopt",
+            "styleValue": "sustained",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "chordExtensions",
+            "disposition": "adopt",
+            "styleValue": "triads",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "chordRhythm",
+            "disposition": "adopt",
+            "styleValue": "sustained",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "era",
+            "disposition": "adopt",
+            "styleValue": "modern",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "fillFrequency",
+            "disposition": "adopt",
+            "styleValue": "rare",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.75
+          },
+          {
+            "dimension": "genre",
+            "disposition": "adopt",
+            "styleValue": "ballad",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "harmonicRhythm",
+            "disposition": "adopt",
+            "styleValue": "slow",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "phraseLength",
+            "disposition": "adopt",
+            "styleValue": "regular",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.75
+          },
+          {
+            "dimension": "registerTendencies",
+            "disposition": "adopt",
+            "styleValue": "mid",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "saturation",
+            "disposition": "adopt",
+            "styleValue": "warm",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "soundAesthetic",
+            "disposition": "adopt",
+            "styleValue": "modern",
+            "decidedBy": "style_profile",
+            "provenance": "inferred",
+            "confidence": 0.5
+          },
+          {
+            "dimension": "stereoAesthetic",
+            "disposition": "adopt",
+            "styleValue": "natural",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "tempoBehavior",
+            "disposition": "adopt",
+            "styleValue": "slow",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "tradition",
+            "disposition": "adopt",
+            "styleValue": "hasidic",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          }
+        ],
+        "openQuestionIds": [
+          "research_instrumentationHierarchy",
+          "research_melodicOrnamentation"
+        ],
+        "answeredQuestionIds": []
+      }
+    },
+    {
+      "step": 5,
+      "method": "POST",
+      "path": "/api/projects/2d4f3746-52de-45af-9f86-0d75ed79a53d/producer/answers",
+      "status": 200,
+      "ms": 1829,
+      "request": {
+        "answers": [
+          {
+            "questionId": "research_melodicOrnamentation",
+            "answerId": "melodicOrnamentation_moderate"
+          }
+        ]
+      },
+      "response": {
+        "kind": "answers",
+        "understanding": "Understood: moderate — a krekhts at phrase ends, dreydlekh on held notes — settles melodicOrnamentation. Brief updated to v2. Still open: Which families should lead the arrangement?",
+        "version": 2,
+        "sources": [
+          "universal-vocabulary/v1",
+          "curated-world-notes/v1"
+        ],
+        "research": {
+          "method": "style-research/v1",
+          "world": [
+            "tradition=hasidic",
+            "genre=ballad",
+            "era=modern"
+          ],
+          "providers": [
+            "curated-world-notes/v1"
+          ],
+          "candidates": [
+            {
+              "dimension": "cadenceLanguage",
+              "value": "harmonic_minor",
+              "confidence": 0.5,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "minor cadences with the raised seventh are the default colour"
+            },
+            {
+              "dimension": "dynamics",
+              "value": "wide",
+              "confidence": 0.5,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "modern productions build from a quiet verse to a big chorus; the older ballad stays level"
+            },
+            {
+              "dimension": "instrumentationHierarchy",
+              "value": [
+                "keys",
+                "vocals",
+                "strings",
+                "bass",
+                "drums"
+              ],
+              "confidence": 0.55,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "the keys-led production: piano under the voice, strings for the chorus"
+            },
+            {
+              "dimension": "instrumentationHierarchy",
+              "value": [
+                "guitar",
+                "vocals",
+                "keys",
+                "bass",
+                "drums"
+              ],
+              "confidence": 0.45,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "the guitar-led, more acoustic production of the same form"
+            },
+            {
+              "dimension": "melodicOrnamentation",
+              "value": "moderate",
+              "confidence": 0.55,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "vocal turns at phrase ends are common, but how many varies by singer"
+            },
+            {
+              "dimension": "roomSize",
+              "value": "medium",
+              "confidence": 0.65,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "a medium room with a longer tail on the voice: not a dry pop vocal, not a hall"
+            },
+            {
+              "dimension": "transitionLanguage",
+              "value": "swells_and_builds",
+              "confidence": 0.6,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "sections hand over with a swell or a held chord, not a drum fill"
+            },
+            {
+              "dimension": "voicingWidth",
+              "value": "open",
+              "confidence": 0.6,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "open keyboard voicings under the voice; close voicings feel thin here"
+            }
+          ],
+          "discarded": []
+        },
+        "dimensions": {
+          "genre": {
+            "value": "ballad",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:בלדה"
+            ]
+          },
+          "tradition": {
+            "value": "hasidic",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:חסידית"
+            ]
+          },
+          "era": {
+            "value": "modern",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:מודרנית"
+            ]
+          },
+          "soundAesthetic": {
+            "value": "modern",
+            "confidence": 0.5,
+            "provenance": "inferred",
+            "sourceRefs": [
+              "text:מודרנית"
+            ]
+          },
+          "tempoBehavior": {
+            "value": "slow",
+            "confidence": 0.85,
+            "provenance": "researched",
+            "sourceRefs": [
+              "vocab:form.ballad",
+              "text:בלדה",
+              "vocab:tempo.slow",
+              "text:איטית",
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "chordRhythm": {
+            "value": "sustained",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "vocab:form.ballad",
+              "text:בלדה",
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "fillFrequency": {
+            "value": "rare",
+            "confidence": 0.75,
+            "provenance": "researched",
+            "sourceRefs": [
+              "vocab:form.ballad",
+              "text:בלדה",
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "stereoAesthetic": {
+            "value": "natural",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "bassAttackPosition": {
+            "value": "sustained",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "chordExtensions": {
+            "value": "triads",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "harmonicRhythm": {
+            "value": "slow",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "phraseLength": {
+            "value": "regular",
+            "confidence": 0.75,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "registerTendencies": {
+            "value": "mid",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "saturation": {
+            "value": "warm",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          }
+        },
+        "conflicts": [
+          {
+            "dimension": "stereoAesthetic",
+            "values": [
+              "wide",
+              "natural"
+            ]
+          }
+        ],
+        "exclusions": [
+          {
+            "dimension": "genre",
+            "value": "pop",
+            "sourceRefs": [
+              "text:לא פופית מדי"
+            ]
+          }
+        ],
+        "clarifications": [
+          {
+            "id": "research_instrumentationHierarchy",
+            "informationGain": 0.595,
+            "question": "Which families should lead the arrangement?",
+            "questionHe": "אילו משפחות כלים מובילות את העיבוד?",
+            "settlesDimensions": [
+              "instrumentationHierarchy"
+            ],
+            "options": [
+              {
+                "id": "instrumentationHierarchy_keys-vocals-strings-bass-drums",
+                "label": "keys, vocals, strings, bass, drums",
+                "labelHe": "keys, vocals, strings, bass, drums"
+              },
+              {
+                "id": "instrumentationHierarchy_guitar-vocals-keys-bass-drums",
+                "label": "guitar, vocals, keys, bass, drums",
+                "labelHe": "guitar, vocals, keys, bass, drums"
+              }
+            ]
+          }
+        ],
+        "dimensionDecisions": [
+          {
+            "dimension": "bassAttackPosition",
+            "disposition": "adopt",
+            "styleValue": "sustained",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "chordExtensions",
+            "disposition": "adopt",
+            "styleValue": "triads",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "chordRhythm",
+            "disposition": "adopt",
+            "styleValue": "sustained",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "era",
+            "disposition": "adopt",
+            "styleValue": "modern",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "fillFrequency",
+            "disposition": "adopt",
+            "styleValue": "rare",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.75
+          },
+          {
+            "dimension": "genre",
+            "disposition": "adopt",
+            "styleValue": "ballad",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "harmonicRhythm",
+            "disposition": "adopt",
+            "styleValue": "slow",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "melodicOrnamentation",
+            "disposition": "adopt",
+            "styleValue": "moderate",
+            "decidedBy": "answer",
+            "provenance": "stated",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "phraseLength",
+            "disposition": "adopt",
+            "styleValue": "regular",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.75
+          },
+          {
+            "dimension": "registerTendencies",
+            "disposition": "adopt",
+            "styleValue": "mid",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "saturation",
+            "disposition": "adopt",
+            "styleValue": "warm",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "soundAesthetic",
+            "disposition": "adopt",
+            "styleValue": "modern",
+            "decidedBy": "style_profile",
+            "provenance": "inferred",
+            "confidence": 0.5
+          },
+          {
+            "dimension": "stereoAesthetic",
+            "disposition": "adopt",
+            "styleValue": "natural",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "tempoBehavior",
+            "disposition": "adopt",
+            "styleValue": "slow",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "tradition",
+            "disposition": "adopt",
+            "styleValue": "hasidic",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          }
+        ],
+        "openQuestionIds": [
+          "research_instrumentationHierarchy"
+        ],
+        "answeredQuestionIds": [
+          "research_melodicOrnamentation"
+        ]
+      }
+    },
+    {
+      "step": 6,
+      "method": "GET",
+      "path": "/api/projects/2d4f3746-52de-45af-9f86-0d75ed79a53d/producer/brief",
+      "status": 200,
+      "ms": 1059,
+      "request": null,
+      "response": {
+        "version": 2,
+        "sources": [
+          "universal-vocabulary/v1",
+          "curated-world-notes/v1"
+        ],
+        "research": {
+          "method": "style-research/v1",
+          "world": [
+            "tradition=hasidic",
+            "genre=ballad",
+            "era=modern"
+          ],
+          "providers": [
+            "curated-world-notes/v1"
+          ],
+          "candidates": [
+            {
+              "dimension": "cadenceLanguage",
+              "value": "harmonic_minor",
+              "confidence": 0.5,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "minor cadences with the raised seventh are the default colour"
+            },
+            {
+              "dimension": "dynamics",
+              "value": "wide",
+              "confidence": 0.5,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "modern productions build from a quiet verse to a big chorus; the older ballad stays level"
+            },
+            {
+              "dimension": "instrumentationHierarchy",
+              "value": [
+                "keys",
+                "vocals",
+                "strings",
+                "bass",
+                "drums"
+              ],
+              "confidence": 0.55,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "the keys-led production: piano under the voice, strings for the chorus"
+            },
+            {
+              "dimension": "instrumentationHierarchy",
+              "value": [
+                "guitar",
+                "vocals",
+                "keys",
+                "bass",
+                "drums"
+              ],
+              "confidence": 0.45,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "the guitar-led, more acoustic production of the same form"
+            },
+            {
+              "dimension": "melodicOrnamentation",
+              "value": "moderate",
+              "confidence": 0.55,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "vocal turns at phrase ends are common, but how many varies by singer"
+            },
+            {
+              "dimension": "roomSize",
+              "value": "medium",
+              "confidence": 0.65,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "a medium room with a longer tail on the voice: not a dry pop vocal, not a hall"
+            },
+            {
+              "dimension": "transitionLanguage",
+              "value": "swells_and_builds",
+              "confidence": 0.6,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "sections hand over with a swell or a held chord, not a drum fill"
+            },
+            {
+              "dimension": "voicingWidth",
+              "value": "open",
+              "confidence": 0.6,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "open keyboard voicings under the voice; close voicings feel thin here"
+            }
+          ],
+          "discarded": []
+        },
+        "researchedDimensions": [
+          "saturation=\"warm\"@0.7",
+          "chordRhythm=\"sustained\"@0.7",
+          "phraseLength=\"regular\"@0.75",
+          "fillFrequency=\"rare\"@0.75",
+          "tempoBehavior=\"slow\"@0.85",
+          "harmonicRhythm=\"slow\"@0.7",
+          "chordExtensions=\"triads\"@0.7",
+          "stereoAesthetic=\"natural\"@0.7",
+          "bassAttackPosition=\"sustained\"@0.7",
+          "registerTendencies=\"mid\"@0.7"
+        ],
+        "clarifications": [
+          {
+            "id": "research_instrumentationHierarchy",
+            "informationGain": 0.595,
+            "question": "Which families should lead the arrangement?",
+            "questionHe": "אילו משפחות כלים מובילות את העיבוד?",
+            "settlesDimensions": [
+              "instrumentationHierarchy"
+            ],
+            "options": [
+              {
+                "id": "instrumentationHierarchy_keys-vocals-strings-bass-drums",
+                "label": "keys, vocals, strings, bass, drums",
+                "labelHe": "keys, vocals, strings, bass, drums"
+              },
+              {
+                "id": "instrumentationHierarchy_guitar-vocals-keys-bass-drums",
+                "label": "guitar, vocals, keys, bass, drums",
+                "labelHe": "guitar, vocals, keys, bass, drums"
+              }
+            ]
+          }
+        ],
+        "answeredQuestionIds": [
+          "research_melodicOrnamentation"
+        ]
+      }
+    },
+    {
+      "step": 7,
+      "method": "POST",
+      "path": "/api/projects/2d4f3746-52de-45af-9f86-0d75ed79a53d/producer/chat",
+      "status": 200,
+      "ms": 2366,
+      "request": {
+        "text": "יותר אינטימי ואקוסטי"
+      },
+      "response": {
+        "kind": "refinement",
+        "understanding": "Added to the brief (v3): mood intimate (\"יותר אינטימי\") and production feel acoustic (\"ואקוסטי\"). Production aesthetic for the planners: intimate.\n\nOne thing would change the arrangement materially: אילו משפחות כלים מובילות את העיבוד? (a) keys, vocals, strings, bass, drums (b) guitar, vocals, keys, bass, drums",
+        "version": 3,
+        "sources": [
+          "universal-vocabulary/v1",
+          "curated-world-notes/v1"
+        ],
+        "research": {
+          "method": "style-research/v1",
+          "world": [
+            "tradition=hasidic",
+            "genre=ballad",
+            "era=modern",
+            "soundAesthetic=acoustic"
+          ],
+          "providers": [
+            "curated-world-notes/v1"
+          ],
+          "candidates": [
+            {
+              "dimension": "cadenceLanguage",
+              "value": "harmonic_minor",
+              "confidence": 0.5,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "minor cadences with the raised seventh are the default colour"
+            },
+            {
+              "dimension": "dynamics",
+              "value": "wide",
+              "confidence": 0.5,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "modern productions build from a quiet verse to a big chorus; the older ballad stays level"
+            },
+            {
+              "dimension": "instrumentationHierarchy",
+              "value": [
+                "keys",
+                "vocals",
+                "strings",
+                "bass",
+                "drums"
+              ],
+              "confidence": 0.55,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "the keys-led production: piano under the voice, strings for the chorus"
+            },
+            {
+              "dimension": "instrumentationHierarchy",
+              "value": [
+                "guitar",
+                "vocals",
+                "keys",
+                "bass",
+                "drums"
+              ],
+              "confidence": 0.45,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "the guitar-led, more acoustic production of the same form"
+            },
+            {
+              "dimension": "melodicOrnamentation",
+              "value": "moderate",
+              "confidence": 0.55,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "vocal turns at phrase ends are common, but how many varies by singer"
+            },
+            {
+              "dimension": "roomSize",
+              "value": "medium",
+              "confidence": 0.65,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "a medium room with a longer tail on the voice: not a dry pop vocal, not a hall"
+            },
+            {
+              "dimension": "transitionLanguage",
+              "value": "swells_and_builds",
+              "confidence": 0.6,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "sections hand over with a swell or a held chord, not a drum fill"
+            },
+            {
+              "dimension": "voicingWidth",
+              "value": "open",
+              "confidence": 0.6,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "open keyboard voicings under the voice; close voicings feel thin here"
+            }
+          ],
+          "discarded": [
+            {
+              "dimension": "saturation",
+              "value": "warm",
+              "confidence": 0.7,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_slow_ballad",
+                "curated: a slow hasidic ballad conventions"
+              ],
+              "rationale": "warm, clean instruments; distortion is foreign to the form",
+              "reason": "contradicts what the user said or implied (saturation = \"clean\")"
+            }
+          ]
+        },
+        "dimensions": {
+          "genre": {
+            "value": "ballad",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:בלדה"
+            ]
+          },
+          "tradition": {
+            "value": "hasidic",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:חסידית"
+            ]
+          },
+          "era": {
+            "value": "modern",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:מודרנית"
+            ]
+          },
+          "soundAesthetic": {
+            "value": "acoustic",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:ואקוסטי"
+            ]
+          },
+          "tempoBehavior": {
+            "value": "slow",
+            "confidence": 0.85,
+            "provenance": "researched",
+            "sourceRefs": [
+              "vocab:form.ballad",
+              "text:בלדה",
+              "vocab:tempo.slow",
+              "text:איטית",
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "chordRhythm": {
+            "value": "sustained",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "vocab:form.ballad",
+              "text:בלדה",
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "fillFrequency": {
+            "value": "rare",
+            "confidence": 0.75,
+            "provenance": "researched",
+            "sourceRefs": [
+              "vocab:form.ballad",
+              "text:בלדה",
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "stereoAesthetic": {
+            "value": "natural",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "vocab:production.acoustic",
+              "text:ואקוסטי",
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "saturation": {
+            "value": "clean",
+            "confidence": 0.51,
+            "provenance": "inferred",
+            "sourceRefs": [
+              "vocab:production.acoustic",
+              "text:ואקוסטי"
+            ]
+          },
+          "bassAttackPosition": {
+            "value": "sustained",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "chordExtensions": {
+            "value": "triads",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "harmonicRhythm": {
+            "value": "slow",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "phraseLength": {
+            "value": "regular",
+            "confidence": 0.75,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          },
+          "registerTendencies": {
+            "value": "mid",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_slow_ballad",
+              "curated: a slow hasidic ballad conventions"
+            ]
+          }
+        },
+        "conflicts": [
+          {
+            "dimension": "soundAesthetic",
+            "values": [
+              "modern",
+              "acoustic"
+            ]
+          },
+          {
+            "dimension": "stereoAesthetic",
+            "values": [
+              "wide",
+              "natural"
+            ]
+          }
+        ],
+        "exclusions": [
+          {
+            "dimension": "genre",
+            "value": "pop",
+            "sourceRefs": [
+              "text:לא פופית מדי"
+            ]
+          }
+        ],
+        "clarifications": [
+          {
+            "id": "research_instrumentationHierarchy",
+            "informationGain": 0.595,
+            "question": "Which families should lead the arrangement?",
+            "questionHe": "אילו משפחות כלים מובילות את העיבוד?",
+            "settlesDimensions": [
+              "instrumentationHierarchy"
+            ],
+            "options": [
+              {
+                "id": "instrumentationHierarchy_keys-vocals-strings-bass-drums",
+                "label": "keys, vocals, strings, bass, drums",
+                "labelHe": "keys, vocals, strings, bass, drums"
+              },
+              {
+                "id": "instrumentationHierarchy_guitar-vocals-keys-bass-drums",
+                "label": "guitar, vocals, keys, bass, drums",
+                "labelHe": "guitar, vocals, keys, bass, drums"
+              }
+            ]
+          }
+        ],
+        "dimensionDecisions": [
+          {
+            "dimension": "bassAttackPosition",
+            "disposition": "adopt",
+            "styleValue": "sustained",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "chordExtensions",
+            "disposition": "adopt",
+            "styleValue": "triads",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "chordRhythm",
+            "disposition": "adopt",
+            "styleValue": "sustained",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "era",
+            "disposition": "adopt",
+            "styleValue": "modern",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "fillFrequency",
+            "disposition": "adopt",
+            "styleValue": "rare",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.75
+          },
+          {
+            "dimension": "genre",
+            "disposition": "adopt",
+            "styleValue": "ballad",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "harmonicRhythm",
+            "disposition": "adopt",
+            "styleValue": "slow",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "melodicOrnamentation",
+            "disposition": "adopt",
+            "styleValue": "moderate",
+            "decidedBy": "answer",
+            "provenance": "stated",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "phraseLength",
+            "disposition": "adopt",
+            "styleValue": "regular",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.75
+          },
+          {
+            "dimension": "registerTendencies",
+            "disposition": "adopt",
+            "styleValue": "mid",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "saturation",
+            "disposition": "adopt",
+            "styleValue": "clean",
+            "decidedBy": "style_profile",
+            "provenance": "inferred",
+            "confidence": 0.51
+          },
+          {
+            "dimension": "soundAesthetic",
+            "disposition": "adopt",
+            "styleValue": "acoustic",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "stereoAesthetic",
+            "disposition": "adopt",
+            "styleValue": "natural",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "tempoBehavior",
+            "disposition": "adopt",
+            "styleValue": "slow",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "tradition",
+            "disposition": "adopt",
+            "styleValue": "hasidic",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          }
+        ],
+        "openQuestionIds": [
+          "research_instrumentationHierarchy"
+        ],
+        "answeredQuestionIds": [
+          "research_melodicOrnamentation"
+        ]
+      }
+    },
+    {
+      "step": 8,
+      "method": "POST",
+      "path": "/api/projects",
+      "status": 201,
+      "ms": 531,
+      "request": {
+        "name": "PR-U3 live check (en) 2026-09-08T23:02:44.678Z",
+        "sourceType": "FULL_SONG"
+      },
+      "response": {
+        "id": "3ea81157-40b2-4bce-81c9-ad7789273809",
+        "status": "draft"
+      }
+    },
+    {
+      "step": 9,
+      "method": "POST",
+      "path": "/api/projects/3ea81157-40b2-4bce-81c9-ad7789273809/producer/intake",
+      "status": 201,
+      "ms": 3089,
+      "request": {
+        "text": "an old hasidic song"
+      },
+      "response": {
+        "kind": "intake",
+        "understanding": "Here is how I read it: a old hasidic.\n\nOne thing would change the arrangement materially: When you say old hasidic, which world do you mean? (a) The hasidic wedding-band recordings of that era (rhythm section, keys, brass or strings, a produced sound) (b) The communal singing world — niggun, yeshiva table, kumzitz: voices lead, a guitar or keys follow (c) The arranged hasidic-orchestral sound — choir with orchestra, written arrangements, formal dynamics",
+        "version": 1,
+        "sources": [
+          "universal-vocabulary/v1",
+          "curated-world-notes/v1"
+        ],
+        "research": {
+          "method": "style-research/v1",
+          "world": [
+            "tradition=hasidic",
+            "era=old"
+          ],
+          "providers": [
+            "curated-world-notes/v1"
+          ],
+          "candidates": [],
+          "discarded": []
+        },
+        "dimensions": {
+          "era": {
+            "value": "old",
+            "confidence": 0.6,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:old"
+            ]
+          },
+          "tradition": {
+            "value": "hasidic",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:hasidic"
+            ]
+          }
+        },
+        "conflicts": [],
+        "exclusions": [],
+        "clarifications": [
+          {
+            "id": "world_of_tradition",
+            "informationGain": 0.85,
+            "question": "When you say old hasidic, which world do you mean?",
+            "questionHe": "כשאתה אומר hasidic old, לאיזה עולם אתה מתכוון?",
+            "settlesDimensions": [
+              "ensembleType",
+              "productionSchool",
+              "soundAesthetic"
+            ],
+            "options": [
+              {
+                "id": "era_band",
+                "label": "The hasidic wedding-band recordings of that era (rhythm section, keys, brass or strings, a produced sound)",
+                "labelHe": "הקלטות להקות החתונות החסידיות של התקופה (חטיבת קצב, קלידים, נשיפה או מיתרים, סאונד מופק)"
+              },
+              {
+                "id": "communal_vocal",
+                "label": "The communal singing world — niggun, yeshiva table, kumzitz: voices lead, a guitar or keys follow",
+                "labelHe": "עולם השירה בציבור — ניגון, טיש ישיבתי, קומזיץ: הקולות מובילים, גיטרה או קלידים מלווים"
+              },
+              {
+                "id": "arranged_orchestral",
+                "label": "The arranged hasidic-orchestral sound — choir with orchestra, written arrangements, formal dynamics",
+                "labelHe": "הצליל התזמורתי-החסידי המעובד — מקהלה עם תזמורת, עיבודים כתובים, דינמיקה פורמלית"
+              }
+            ]
+          }
+        ],
+        "dimensionDecisions": [
+          {
+            "dimension": "era",
+            "disposition": "adopt",
+            "styleValue": "old",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.6
+          },
+          {
+            "dimension": "tradition",
+            "disposition": "adopt",
+            "styleValue": "hasidic",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          }
+        ],
+        "openQuestionIds": [
+          "world_of_tradition"
+        ],
+        "answeredQuestionIds": []
+      }
+    },
+    {
+      "step": 10,
+      "method": "POST",
+      "path": "/api/projects/3ea81157-40b2-4bce-81c9-ad7789273809/producer/answers",
+      "status": 200,
+      "ms": 2043,
+      "request": {
+        "answers": [
+          {
+            "questionId": "world_of_tradition",
+            "answerId": "communal_vocal"
+          }
+        ]
+      },
+      "response": {
+        "kind": "answers",
+        "understanding": "Understood: The communal singing world — niggun, yeshiva table, kumzitz: voices lead, a guitar or keys follow — settles ensembleType, soundAesthetic, roomSize. Brief updated to v2. Still open: How ornamented should the melody be — krekhts and dreydlekh-style turns as in a niggun, or plainer lines?",
+        "version": 2,
+        "sources": [
+          "universal-vocabulary/v1",
+          "curated-world-notes/v1"
+        ],
+        "research": {
+          "method": "style-research/v1",
+          "world": [
+            "tradition=hasidic",
+            "era=old",
+            "ensembleType=vocal_led_small (settled)",
+            "soundAesthetic=raw_intimate (settled)"
+          ],
+          "providers": [
+            "curated-world-notes/v1"
+          ],
+          "candidates": [
+            {
+              "dimension": "callAndResponse",
+              "value": "occasional",
+              "confidence": 0.5,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_communal_niggun",
+                "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+              ],
+              "rationale": "a lead voice starts a phrase and the room answers"
+            },
+            {
+              "dimension": "chordRhythm",
+              "value": "pulsing",
+              "confidence": 0.55,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_communal_niggun",
+                "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+              ],
+              "rationale": "a strummed guitar pulse under the singing"
+            },
+            {
+              "dimension": "chordRhythm",
+              "value": "sustained",
+              "confidence": 0.45,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_communal_niggun",
+                "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+              ],
+              "rationale": "held keys under the singing when there is no guitar"
+            },
+            {
+              "dimension": "dynamics",
+              "value": "narrow",
+              "confidence": 0.6,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_communal_niggun",
+                "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+              ],
+              "rationale": "the room's energy rises through repetition, not through arrangement"
+            },
+            {
+              "dimension": "kickSnareLanguage",
+              "value": "hand_percussion_only",
+              "confidence": 0.6,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_communal_niggun",
+                "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+              ],
+              "rationale": "a hand drum or table-tapping, no kit"
+            },
+            {
+              "dimension": "melodicOrnamentation",
+              "value": "moderate",
+              "confidence": 0.6,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_communal_niggun",
+                "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+              ],
+              "rationale": "turns and slides at phrase ends, more from a lead voice than from the group"
+            },
+            {
+              "dimension": "pickupBehavior",
+              "value": "occasional",
+              "confidence": 0.5,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/hasidic_communal_niggun",
+                "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+              ],
+              "rationale": "some tunes start on a pickup, most on the beat"
+            }
+          ],
+          "discarded": []
+        },
+        "dimensions": {
+          "era": {
+            "value": "old",
+            "confidence": 0.6,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:old"
+            ]
+          },
+          "tradition": {
+            "value": "hasidic",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:hasidic"
+            ]
+          },
+          "chordExtensions": {
+            "value": "triads",
+            "confidence": 0.85,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_communal_niggun",
+              "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+            ]
+          },
+          "doublingRules": {
+            "value": "unison_sections",
+            "confidence": 0.75,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_communal_niggun",
+              "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+            ]
+          },
+          "fillFrequency": {
+            "value": "rare",
+            "confidence": 0.85,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_communal_niggun",
+              "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+            ]
+          },
+          "harmonicRhythm": {
+            "value": "slow",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_communal_niggun",
+              "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+            ]
+          },
+          "instrumentationHierarchy": {
+            "value": [
+              "vocals",
+              "guitar",
+              "keys",
+              "percussion"
+            ],
+            "confidence": 0.75,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_communal_niggun",
+              "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+            ]
+          },
+          "phraseLength": {
+            "value": "regular",
+            "confidence": 0.8,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_communal_niggun",
+              "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+            ]
+          },
+          "registerTendencies": {
+            "value": "mid",
+            "confidence": 0.75,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_communal_niggun",
+              "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+            ]
+          },
+          "roomSize": {
+            "value": "small",
+            "confidence": 0.75,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_communal_niggun",
+              "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+            ]
+          },
+          "saturation": {
+            "value": "clean",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_communal_niggun",
+              "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+            ]
+          },
+          "stereoAesthetic": {
+            "value": "natural",
+            "confidence": 0.75,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_communal_niggun",
+              "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+            ]
+          },
+          "tempoBehavior": {
+            "value": "breathing",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/hasidic_communal_niggun",
+              "curated: the hasidic communal-singing (niggun / kumzitz) world conventions"
+            ]
+          }
+        },
+        "conflicts": [],
+        "exclusions": [],
+        "clarifications": [
+          {
+            "id": "research_melodicOrnamentation",
+            "informationGain": 0.52,
+            "question": "How ornamented should the melody be — krekhts and dreydlekh-style turns as in a niggun, or plainer lines?",
+            "questionHe": "כמה לקשט את המנגינה — סלסולים בסגנון קרעכץ ודריידלעך כמו בניגון, או קו נקי יותר?",
+            "settlesDimensions": [
+              "melodicOrnamentation"
+            ],
+            "options": [
+              {
+                "id": "melodicOrnamentation_moderate",
+                "label": "moderate — a krekhts at phrase ends, dreydlekh on held notes",
+                "labelHe": "בינוני — קרעכץ בסופי משפט, דריידלעך על צלילים ארוכים"
+              }
+            ]
+          }
+        ],
+        "dimensionDecisions": [
+          {
+            "dimension": "chordExtensions",
+            "disposition": "adopt",
+            "styleValue": "triads",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "doublingRules",
+            "disposition": "adopt",
+            "styleValue": "unison_sections",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.75
+          },
+          {
+            "dimension": "ensembleType",
+            "disposition": "adopt",
+            "styleValue": "vocal_led_small",
+            "decidedBy": "answer",
+            "provenance": "stated",
+            "confidence": 0.8
+          },
+          {
+            "dimension": "era",
+            "disposition": "adopt",
+            "styleValue": "old",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.6
+          },
+          {
+            "dimension": "fillFrequency",
+            "disposition": "adopt",
+            "styleValue": "rare",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "harmonicRhythm",
+            "disposition": "adopt",
+            "styleValue": "slow",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "instrumentationHierarchy",
+            "disposition": "adopt",
+            "styleValue": [
+              "vocals",
+              "guitar",
+              "keys",
+              "percussion"
+            ],
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.75
+          },
+          {
+            "dimension": "phraseLength",
+            "disposition": "adopt",
+            "styleValue": "regular",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.8
+          },
+          {
+            "dimension": "registerTendencies",
+            "disposition": "adopt",
+            "styleValue": "mid",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.75
+          },
+          {
+            "dimension": "roomSize",
+            "disposition": "adopt",
+            "styleValue": "small",
+            "decidedBy": "answer",
+            "provenance": "stated",
+            "confidence": 0.5
+          },
+          {
+            "dimension": "saturation",
+            "disposition": "adopt",
+            "styleValue": "clean",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "soundAesthetic",
+            "disposition": "adopt",
+            "styleValue": "raw_intimate",
+            "decidedBy": "answer",
+            "provenance": "stated",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "stereoAesthetic",
+            "disposition": "adopt",
+            "styleValue": "natural",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.75
+          },
+          {
+            "dimension": "tempoBehavior",
+            "disposition": "adopt",
+            "styleValue": "breathing",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "tradition",
+            "disposition": "adopt",
+            "styleValue": "hasidic",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          }
+        ],
+        "openQuestionIds": [
+          "research_melodicOrnamentation"
+        ],
+        "answeredQuestionIds": [
+          "world_of_tradition"
+        ]
+      }
+    },
+    {
+      "step": 11,
+      "method": "POST",
+      "path": "/api/projects",
+      "status": 201,
+      "ms": 479,
+      "request": {
+        "name": "PR-U3 live check (score) 2026-09-08T23:02:50.343Z",
+        "sourceType": "FULL_SONG"
+      },
+      "response": {
+        "id": "0a7db81b-ee7b-4a54-8182-b27ca0d8ea91",
+        "status": "draft"
+      }
+    },
+    {
+      "step": 12,
+      "method": "POST",
+      "path": "/api/projects/0a7db81b-ee7b-4a54-8182-b27ca0d8ea91/producer/intake",
+      "status": 201,
+      "ms": 1912,
+      "request": {
+        "text": "a modern cinematic hybrid score, epic"
+      },
+      "response": {
+        "kind": "intake",
+        "understanding": "Here is how I read it: a modern, feel: cinematic and epic. From what is known of modern, cinematic (curated-world-notes/v1): stereo aesthetic wide, dynamics wide, doubling rules orchestral, voicing width wide, articulations legato/tremolo/swells, chord rhythm pulsing, fill frequency rare, harmonic rhythm slow, instrumentation hierarchy strings/percussion/synth/brass/pads/keys, melodic ornamentation none, microtiming quantized, phrase length long and register tendencies wide — marked researched in the brief, below anything you said. Production aesthetic for the planners: cinematic.\n\nTwo things would change the arrangement materially: How should the tempo behave? (a) strictly on a grid (b) breathing with the phrases What should the drums' basic pattern be? (a) half time (b) isolated hits",
+        "version": 1,
+        "sources": [
+          "universal-vocabulary/v1",
+          "curated-world-notes/v1"
+        ],
+        "research": {
+          "method": "style-research/v1",
+          "world": [
+            "era=modern",
+            "soundAesthetic=cinematic"
+          ],
+          "providers": [
+            "curated-world-notes/v1"
+          ],
+          "candidates": [
+            {
+              "dimension": "chordExtensions",
+              "value": "modal",
+              "confidence": 0.65,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/cinematic_hybrid_modern",
+                "curated: a modern hybrid cinematic score conventions"
+              ],
+              "rationale": "modal, mostly triadic harmony with pedal tones"
+            },
+            {
+              "dimension": "kickSnareLanguage",
+              "value": "half_time",
+              "confidence": 0.55,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/cinematic_hybrid_modern",
+                "curated: a modern hybrid cinematic score conventions"
+              ],
+              "rationale": "big half-time hits under the build"
+            },
+            {
+              "dimension": "kickSnareLanguage",
+              "value": "sparse_hits",
+              "confidence": 0.45,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/cinematic_hybrid_modern",
+                "curated: a modern hybrid cinematic score conventions"
+              ],
+              "rationale": "isolated impacts rather than a pattern"
+            },
+            {
+              "dimension": "saturation",
+              "value": "driven",
+              "confidence": 0.5,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/cinematic_hybrid_modern",
+                "curated: a modern hybrid cinematic score conventions"
+              ],
+              "rationale": "processed, distorted hybrid textures"
+            },
+            {
+              "dimension": "saturation",
+              "value": "clean",
+              "confidence": 0.5,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/cinematic_hybrid_modern",
+                "curated: a modern hybrid cinematic score conventions"
+              ],
+              "rationale": "a clean orchestral sound with synths kept subtle"
+            },
+            {
+              "dimension": "subdivisionVocabulary",
+              "value": [
+                "eighths",
+                "sixteenths",
+                "triplets"
+              ],
+              "confidence": 0.6,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/cinematic_hybrid_modern",
+                "curated: a modern hybrid cinematic score conventions"
+              ],
+              "rationale": "eighth- and sixteenth-note ostinati"
+            },
+            {
+              "dimension": "tempoBehavior",
+              "value": "strict_grid",
+              "confidence": 0.6,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/cinematic_hybrid_modern",
+                "curated: a modern hybrid cinematic score conventions"
+              ],
+              "rationale": "ostinati on a grid under the long lines"
+            },
+            {
+              "dimension": "tempoBehavior",
+              "value": "breathing",
+              "confidence": 0.4,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/cinematic_hybrid_modern",
+                "curated: a modern hybrid cinematic score conventions"
+              ],
+              "rationale": "a breathing, conducted tempo without ostinati"
+            }
+          ],
+          "discarded": [
+            {
+              "dimension": "transitionLanguage",
+              "value": "risers_and_impacts",
+              "confidence": 0.8,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/cinematic_hybrid_modern",
+                "curated: a modern hybrid cinematic score conventions"
+              ],
+              "rationale": "risers into impacts at section changes",
+              "reason": "contradicts what the user said or implied (transitionLanguage = \"swells_and_builds\")"
+            },
+            {
+              "dimension": "roomSize",
+              "value": "hall",
+              "confidence": 0.8,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/cinematic_hybrid_modern",
+                "curated: a modern hybrid cinematic score conventions"
+              ],
+              "rationale": "a large scoring-stage ambience",
+              "reason": "contradicts what the user said or implied (roomSize = \"large\")"
+            },
+            {
+              "dimension": "soundAesthetic",
+              "value": "hybrid",
+              "confidence": 0.75,
+              "sourceRefs": [
+                "research:curated-world-notes/v1/cinematic_hybrid_modern",
+                "curated: a modern hybrid cinematic score conventions"
+              ],
+              "rationale": "orchestra and synthesis as one texture",
+              "reason": "contradicts what the user said or implied (soundAesthetic = \"cinematic\")"
+            }
+          ]
+        },
+        "dimensions": {
+          "era": {
+            "value": "modern",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:modern"
+            ]
+          },
+          "soundAesthetic": {
+            "value": "cinematic",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:cinematic"
+            ]
+          },
+          "stereoAesthetic": {
+            "value": "wide",
+            "confidence": 0.9,
+            "provenance": "researched",
+            "sourceRefs": [
+              "vocab:production.modern",
+              "text:modern",
+              "research:curated-world-notes/v1/cinematic_hybrid_modern",
+              "curated: a modern hybrid cinematic score conventions"
+            ]
+          },
+          "dynamics": {
+            "value": "wide",
+            "confidence": 0.9,
+            "provenance": "researched",
+            "sourceRefs": [
+              "vocab:production.cinematic",
+              "text:cinematic",
+              "vocab:mood.epic",
+              "text:epic",
+              "research:curated-world-notes/v1/cinematic_hybrid_modern",
+              "curated: a modern hybrid cinematic score conventions"
+            ]
+          },
+          "roomSize": {
+            "value": "large",
+            "confidence": 0.595,
+            "provenance": "inferred",
+            "sourceRefs": [
+              "vocab:production.cinematic",
+              "text:cinematic",
+              "vocab:mood.epic",
+              "text:epic"
+            ]
+          },
+          "doublingRules": {
+            "value": "orchestral",
+            "confidence": 0.85,
+            "provenance": "researched",
+            "sourceRefs": [
+              "vocab:production.cinematic",
+              "text:cinematic",
+              "research:curated-world-notes/v1/cinematic_hybrid_modern",
+              "curated: a modern hybrid cinematic score conventions"
+            ]
+          },
+          "voicingWidth": {
+            "value": "wide",
+            "confidence": 0.8,
+            "provenance": "researched",
+            "sourceRefs": [
+              "vocab:production.cinematic",
+              "text:cinematic",
+              "research:curated-world-notes/v1/cinematic_hybrid_modern",
+              "curated: a modern hybrid cinematic score conventions"
+            ]
+          },
+          "transitionLanguage": {
+            "value": "swells_and_builds",
+            "confidence": 0.425,
+            "provenance": "inferred",
+            "sourceRefs": [
+              "vocab:production.cinematic",
+              "text:cinematic"
+            ]
+          },
+          "articulations": {
+            "value": [
+              "legato",
+              "tremolo",
+              "swells"
+            ],
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/cinematic_hybrid_modern",
+              "curated: a modern hybrid cinematic score conventions"
+            ]
+          },
+          "chordRhythm": {
+            "value": "pulsing",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/cinematic_hybrid_modern",
+              "curated: a modern hybrid cinematic score conventions"
+            ]
+          },
+          "fillFrequency": {
+            "value": "rare",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/cinematic_hybrid_modern",
+              "curated: a modern hybrid cinematic score conventions"
+            ]
+          },
+          "harmonicRhythm": {
+            "value": "slow",
+            "confidence": 0.85,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/cinematic_hybrid_modern",
+              "curated: a modern hybrid cinematic score conventions"
+            ]
+          },
+          "instrumentationHierarchy": {
+            "value": [
+              "strings",
+              "percussion",
+              "synth",
+              "brass",
+              "pads",
+              "keys"
+            ],
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/cinematic_hybrid_modern",
+              "curated: a modern hybrid cinematic score conventions"
+            ]
+          },
+          "melodicOrnamentation": {
+            "value": "none",
+            "confidence": 0.8,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/cinematic_hybrid_modern",
+              "curated: a modern hybrid cinematic score conventions"
+            ]
+          },
+          "microtiming": {
+            "value": "quantized",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/cinematic_hybrid_modern",
+              "curated: a modern hybrid cinematic score conventions"
+            ]
+          },
+          "phraseLength": {
+            "value": "long",
+            "confidence": 0.7,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/cinematic_hybrid_modern",
+              "curated: a modern hybrid cinematic score conventions"
+            ]
+          },
+          "registerTendencies": {
+            "value": "wide",
+            "confidence": 0.85,
+            "provenance": "researched",
+            "sourceRefs": [
+              "research:curated-world-notes/v1/cinematic_hybrid_modern",
+              "curated: a modern hybrid cinematic score conventions"
+            ]
+          }
+        },
+        "conflicts": [
+          {
+            "dimension": "soundAesthetic",
+            "values": [
+              "modern",
+              "cinematic"
+            ]
+          }
+        ],
+        "exclusions": [],
+        "clarifications": [
+          {
+            "id": "research_tempoBehavior",
+            "informationGain": 0.56,
+            "question": "How should the tempo behave?",
+            "questionHe": "איך הקצב אמור להתנהג?",
+            "settlesDimensions": [
+              "tempoBehavior"
+            ],
+            "options": [
+              {
+                "id": "tempoBehavior_strict_grid",
+                "label": "strictly on a grid",
+                "labelHe": "קשיח על גריד"
+              },
+              {
+                "id": "tempoBehavior_breathing",
+                "label": "breathing with the phrases",
+                "labelHe": "נושם עם המשפטים"
+              }
+            ]
+          },
+          {
+            "id": "research_kickSnareLanguage",
+            "informationGain": 0.51,
+            "question": "What should the drums' basic pattern be?",
+            "questionHe": "מה התבנית הבסיסית של התופים?",
+            "settlesDimensions": [
+              "kickSnareLanguage"
+            ],
+            "options": [
+              {
+                "id": "kickSnareLanguage_half_time",
+                "label": "half time",
+                "labelHe": "האף-טיים"
+              },
+              {
+                "id": "kickSnareLanguage_sparse_hits",
+                "label": "isolated hits",
+                "labelHe": "מכות בודדות"
+              }
+            ]
+          }
+        ],
+        "dimensionDecisions": [
+          {
+            "dimension": "articulations",
+            "disposition": "adopt",
+            "styleValue": [
+              "legato",
+              "tremolo",
+              "swells"
+            ],
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "chordRhythm",
+            "disposition": "adopt",
+            "styleValue": "pulsing",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "doublingRules",
+            "disposition": "adopt",
+            "styleValue": "orchestral",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "dynamics",
+            "disposition": "adopt",
+            "styleValue": "wide",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.9
+          },
+          {
+            "dimension": "era",
+            "disposition": "adopt",
+            "styleValue": "modern",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "fillFrequency",
+            "disposition": "adopt",
+            "styleValue": "rare",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "harmonicRhythm",
+            "disposition": "adopt",
+            "styleValue": "slow",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "instrumentationHierarchy",
+            "disposition": "adopt",
+            "styleValue": [
+              "strings",
+              "percussion",
+              "synth",
+              "brass",
+              "pads",
+              "keys"
+            ],
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "melodicOrnamentation",
+            "disposition": "adopt",
+            "styleValue": "none",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.8
+          },
+          {
+            "dimension": "microtiming",
+            "disposition": "adopt",
+            "styleValue": "quantized",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "phraseLength",
+            "disposition": "adopt",
+            "styleValue": "long",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.7
+          },
+          {
+            "dimension": "registerTendencies",
+            "disposition": "adopt",
+            "styleValue": "wide",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "roomSize",
+            "disposition": "adopt",
+            "styleValue": "large",
+            "decidedBy": "style_profile",
+            "provenance": "inferred",
+            "confidence": 0.595
+          },
+          {
+            "dimension": "soundAesthetic",
+            "disposition": "adopt",
+            "styleValue": "cinematic",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "stereoAesthetic",
+            "disposition": "adopt",
+            "styleValue": "wide",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.9
+          },
+          {
+            "dimension": "transitionLanguage",
+            "disposition": "adopt",
+            "styleValue": "swells_and_builds",
+            "decidedBy": "style_profile",
+            "provenance": "inferred",
+            "confidence": 0.425
+          },
+          {
+            "dimension": "voicingWidth",
+            "disposition": "adopt",
+            "styleValue": "wide",
+            "decidedBy": "style_profile",
+            "provenance": "researched",
+            "confidence": 0.8
+          }
+        ],
+        "openQuestionIds": [
+          "research_tempoBehavior",
+          "research_kickSnareLanguage"
+        ],
+        "answeredQuestionIds": []
+      }
+    },
+    {
+      "step": 13,
+      "method": "POST",
+      "path": "/api/projects",
+      "status": 201,
+      "ms": 530,
+      "request": {
+        "name": "PR-U3 live check (unknown world) 2026-09-08T23:02:52.734Z",
+        "sourceType": "FULL_SONG"
+      },
+      "response": {
+        "id": "ba0654cb-510e-4458-84f5-62b832385147",
+        "status": "draft"
+      }
+    },
+    {
+      "step": 14,
+      "method": "POST",
+      "path": "/api/projects/ba0654cb-510e-4458-84f5-62b832385147/producer/intake",
+      "status": 201,
+      "ms": 1955,
+      "request": {
+        "text": "a modern gospel anthem"
+      },
+      "response": {
+        "kind": "intake",
+        "understanding": "Here is how I read it: a modern gospel anthem.",
+        "version": 1,
+        "sources": [
+          "universal-vocabulary/v1",
+          "curated-world-notes/v1"
+        ],
+        "research": {
+          "method": "style-research/v1",
+          "world": [
+            "tradition=gospel",
+            "genre=anthem",
+            "era=modern"
+          ],
+          "providers": [
+            "curated-world-notes/v1"
+          ],
+          "candidates": [],
+          "discarded": []
+        },
+        "dimensions": {
+          "era": {
+            "value": "modern",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:modern"
+            ]
+          },
+          "soundAesthetic": {
+            "value": "modern",
+            "confidence": 0.5,
+            "provenance": "inferred",
+            "sourceRefs": [
+              "text:modern"
+            ]
+          },
+          "tradition": {
+            "value": "gospel",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:gospel"
+            ]
+          },
+          "genre": {
+            "value": "anthem",
+            "confidence": 0.85,
+            "provenance": "stated",
+            "sourceRefs": [
+              "text:anthem"
+            ]
+          },
+          "stereoAesthetic": {
+            "value": "wide",
+            "confidence": 0.2,
+            "provenance": "inferred",
+            "sourceRefs": [
+              "vocab:production.modern",
+              "text:modern"
+            ]
+          },
+          "dynamics": {
+            "value": "wide",
+            "confidence": 0.51,
+            "provenance": "inferred",
+            "sourceRefs": [
+              "vocab:form.anthem",
+              "text:anthem"
+            ]
+          },
+          "doublingRules": {
+            "value": "unison_sections",
+            "confidence": 0.425,
+            "provenance": "inferred",
+            "sourceRefs": [
+              "vocab:form.anthem",
+              "text:anthem"
+            ]
+          },
+          "voicingWidth": {
+            "value": "wide",
+            "confidence": 0.425,
+            "provenance": "inferred",
+            "sourceRefs": [
+              "vocab:form.anthem",
+              "text:anthem"
+            ]
+          }
+        },
+        "conflicts": [],
+        "exclusions": [],
+        "clarifications": [],
+        "dimensionDecisions": [
+          {
+            "dimension": "doublingRules",
+            "disposition": "adopt",
+            "styleValue": "unison_sections",
+            "decidedBy": "style_profile",
+            "provenance": "inferred",
+            "confidence": 0.425
+          },
+          {
+            "dimension": "dynamics",
+            "disposition": "adopt",
+            "styleValue": "wide",
+            "decidedBy": "style_profile",
+            "provenance": "inferred",
+            "confidence": 0.51
+          },
+          {
+            "dimension": "era",
+            "disposition": "adopt",
+            "styleValue": "modern",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "genre",
+            "disposition": "adopt",
+            "styleValue": "anthem",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "soundAesthetic",
+            "disposition": "adopt",
+            "styleValue": "modern",
+            "decidedBy": "style_profile",
+            "provenance": "inferred",
+            "confidence": 0.5
+          },
+          {
+            "dimension": "stereoAesthetic",
+            "disposition": "adopt",
+            "styleValue": "wide",
+            "decidedBy": "style_profile",
+            "provenance": "inferred",
+            "confidence": 0.2
+          },
+          {
+            "dimension": "tradition",
+            "disposition": "adopt",
+            "styleValue": "gospel",
+            "decidedBy": "style_profile",
+            "provenance": "stated",
+            "confidence": 0.85
+          },
+          {
+            "dimension": "voicingWidth",
+            "disposition": "adopt",
+            "styleValue": "wide",
+            "decidedBy": "style_profile",
+            "provenance": "inferred",
+            "confidence": 0.425
+          }
+        ],
+        "openQuestionIds": [],
+        "answeredQuestionIds": []
+      }
+    }
+  ]
+}

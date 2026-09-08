@@ -45,6 +45,7 @@ import {
 } from "../lib/producerChat";
 import { createProducerChatDbStore } from "../lib/producerChatDbStore";
 import { openAiIntentModelSelected, selectIntentLanguageModel } from "../lib/producerIntelligence/openAiIntentModel";
+import { createStyleResearchAgent, selectResearchProviders } from "../lib/producerIntelligence/styleResearch";
 
 const router: IRouter = Router();
 
@@ -52,11 +53,18 @@ let service: ProducerChatService | null = null;
 function producerService(): ProducerChatService {
   if (!service) {
     const intentModel = selectIntentLanguageModel();
+    // Research providers follow the same opt-in as the intent model: the seed
+    // corpus always, the model only with PRODUCER_LLM=openai + integration env.
+    const researchAgent = createStyleResearchAgent({ providers: selectResearchProviders() });
     logger.info(
-      { intentModel: intentModel?.id ?? "deterministic-fallback", selected: openAiIntentModelSelected() },
+      {
+        intentModel: intentModel?.id ?? "deterministic-fallback",
+        selected: openAiIntentModelSelected(),
+        researchProviders: researchAgent.providerIds,
+      },
       "producer_intent_model_selected",
     );
-    service = createProducerChatService(createProducerChatDbStore(), { intentModel });
+    service = createProducerChatService(createProducerChatDbStore(), { intentModel, researchAgent });
   }
   return service;
 }

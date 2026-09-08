@@ -6524,6 +6524,48 @@ export type StyleProfileConflictsItem = {
 };
 
 /**
+ * A research finding that did not become a dimension value (PR-U3).
+ */
+export interface StyleResearchCandidate {
+  dimension: string;
+  value: StyleDimensionValue;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+  sourceRefs: string[];
+  rationale: string;
+}
+
+/**
+ * A research finding that never surfaces, with the reason.
+ */
+export interface StyleResearchDiscarded {
+  dimension: string;
+  value: StyleDimensionValue;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+  sourceRefs: string[];
+  rationale: string;
+  reason: string;
+}
+
+/**
+ * What per-project style research contributed to a profile (PR-U3): the providers consulted, the findings gated into clarification questions (0.4 <= confidence < 0.7; they never populate a dimension) and the findings discarded with a reason. Researched dimension values themselves are in `dimensions` with provenance `researched`. Absent when no world was named.
+ */
+export interface StyleResearchSummary {
+  method: string;
+  world: string[];
+  providers: string[];
+  candidates: StyleResearchCandidate[];
+  discarded: StyleResearchDiscarded[];
+}
+
+/**
  * Layer 2 - independent dimensions of the musical world; only dimensions with evidence are present.
  */
 export interface StyleProfile {
@@ -6541,6 +6583,7 @@ export interface StyleProfile {
      * @maximum 1
      */
   confidence: number;
+  research?: StyleResearchSummary;
 }
 
 export type ProducerDecisionScopeKind = typeof ProducerDecisionScopeKind[keyof typeof ProducerDecisionScopeKind];
