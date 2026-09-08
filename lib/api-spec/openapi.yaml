@@ -26,6 +26,8 @@ tags:
     description: Music model registry and provider capability routing
   - name: producer
     description: Conversational intake, the production brief and the persistent producer chat (Wave U)
+  - name: references
+    description: Reference tracks per project - named or uploaded, with the copy scope the user allowed; only the content-free PR-27 fingerprint is ever read (Wave U, PR-U4)
 paths:
   /healthz:
     get:
@@ -1629,6 +1631,138 @@ paths:
           $ref: "#/components/responses/NotFound"
         "409":
           description: No brief yet, or the replacement produced no decision
+  /projects/{projectId}/references:
+    get:
+      operationId: listProjectReferences
+      tags: [references]
+      summary: The project's references with what each lends the current brief
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: References, oldest first
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/ReferenceTrack" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    post:
+      operationId: createProjectReference
+      tags: [references]
+      summary: Add a named reference (a label) or attach one of your own analysed uploads as a reference
+      description: |
+        A named reference has no audio and no fingerprint: it stays a label carrying
+        an allowed copy scope and an optional rights note. An uploaded reference must
+        be one of your own project sources (any of your projects) and needs a rights
+        note in your own words; once its analysis exists it is fingerprinted (PR-27,
+        abstract statistics only) and that fingerprint is the only thing read from it.
+        When a brief exists it is recompiled and a `reference` turn is recorded.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ReferenceTrackInput" }
+      responses:
+        "201":
+          description: The reference, the project's references and the recompiled brief's turn when there was a brief
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ReferenceMutationResult" }
+        "400": { description: "Invalid input (an uploaded reference without a rights note, an unknown scope, a named reference with a sourceId)" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { description: The label already is a reference on this project }
+  /projects/{projectId}/references/{referenceId}:
+    patch:
+      operationId: updateProjectReference
+      tags: [references]
+      summary: Change what may be copied from a reference, its label or its rights note
+      description: A scope or label change recompiles the brief; a rights note is recorded and changes nothing else.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - name: referenceId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ReferenceTrackPatchInput" }
+      responses:
+        "200":
+          description: The updated reference (and the recompiled brief's turn when scopes or label changed)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ReferenceMutationResult" }
+        "400": { description: Invalid patch }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { description: The new label already is a reference on this project }
+    delete:
+      operationId: deleteProjectReference
+      tags: [references]
+      summary: Remove a reference and its fingerprint link
+      description: The row goes, and its reference_upload fingerprint row with it unless another reference shares it. The project's own sources and Song Models are never touched.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - name: referenceId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The remaining references and the recompiled brief's turn when there was a brief
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ReferenceMutationResult" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /projects/{projectId}/references/{referenceId}/fingerprint:
+    post:
+      operationId: fingerprintProjectReference
+      tags: [references]
+      summary: Take the content-free fingerprint of an uploaded reference once its analysis exists
+      description: The analysis-completion hook does this automatically; this is the explicit step for an upload analysed before the reference was attached, or after a failed hook.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - name: referenceId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The reference with its fingerprint linked, and the recompiled brief's turn
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ReferenceMutationResult" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { description: "A named reference (no audio), or an upload whose Song Model does not exist yet" }
+  /projects/{projectId}/references/{referenceId}/compare:
+    post:
+      operationId: compareProjectReference
+      tags: [references]
+      summary: How close an arrangement is to the reference, feature by feature, in words
+      description: PR-27's comparison between the reference's fingerprint and the arrangement's (the given one, or the latest with persisted TrackModels). Path + body rather than a query parameter on purpose (generator symbol collision).
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - name: referenceId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ReferenceCompareInput" }
+      responses:
+        "200":
+          description: Distance, per-feature deltas and the explanation in a producer's words
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ReferenceComparison" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { description: "The reference has no fingerprint, or there is no arrangement with TrackModels to compare" }
 components:
   parameters:
     ProjectId:
@@ -6202,7 +6336,7 @@ components:
         confidence: { type: number, minimum: 0, maximum: 1 }
     ProducerChatTurnKind:
       type: string
-      enum: [intake, answers, refinement, edit, explanation, supersede]
+      enum: [intake, answers, refinement, edit, explanation, supersede, reference]
     ClarificationAnswer:
       type: object
       required: [questionId]
@@ -6233,6 +6367,7 @@ components:
         explanation: { $ref: "#/components/schemas/PlanExplanation" }
         planSource: { type: string, enum: [arrangement, derived, none] }
         intentMethod: { type: string }
+        referenceIds: { type: array, items: { type: string }, description: PR-U4 - the reference rows this turn touched }
     ProducerChatTurn:
       type: object
       required: [id, projectId, briefId, role, text, structured, createdAt]
@@ -6276,7 +6411,7 @@ components:
     ProducerBriefState:
       type: object
       description: The current brief version with everything the studio shows around it.
-      required: [briefRecordId, version, brief, intent, styleProfile, clarifications, decisions, concepts, songModelVersion, planSource, createdAt]
+      required: [briefRecordId, version, brief, intent, styleProfile, clarifications, decisions, concepts, songModelVersion, planSource, references, createdAt]
       properties:
         briefRecordId: { type: string }
         version: { type: number, minimum: 1 }
@@ -6292,6 +6427,10 @@ components:
           type: string
           enum: [arrangement, derived, none]
           description: arrangement = the latest stored ArrangementPlan; derived = planned from the Song Model with the brief's hints; none = no Song Model yet
+        references:
+          type: array
+          description: PR-U4 - the project's references with what each lends this brief version
+          items: { $ref: "#/components/schemas/ReferenceTrack" }
         createdAt: { type: string, format: date-time }
     ProducerTurnResult:
       type: object
@@ -6356,3 +6495,95 @@ components:
             dimension: { type: string }
             value: { $ref: "#/components/schemas/StyleDimensionValue" }
             rationale: { type: string, maxLength: 500 }
+    ReferenceCopyScope:
+      type: string
+      enum: [groove, sound, arrangement, mood]
+      description: What a reference may lend the brief (PR-U4). `sound` is empty until audio features exist (PR-27 is symbolic).
+    ReferenceTrack:
+      type: object
+      description: PR-U4 - a named or uploaded reference. Only its content-free PR-27 fingerprint is ever read; a named reference has none and stays a label with a scope and a rights note.
+      required: [id, projectId, ownerId, kind, label, sourceId, songModelVersion, fingerprintId, allowedScopes, rightsNote, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        ownerId:
+          type: [string, "null"]
+        kind: { type: string, enum: [uploaded_audio, named] }
+        label: { type: string }
+        sourceId:
+          type: [string, "null"]
+          description: One of the owner's own uploads (music_project_sources); null for a named reference
+        songModelVersion:
+          type: [number, "null"]
+        fingerprintId:
+          type: [string, "null"]
+          description: The music_style_fingerprints row (sourceKind reference_upload) - the only thing learning may read
+        allowedScopes: { type: array, items: { $ref: "#/components/schemas/ReferenceCopyScope" } }
+        rightsNote:
+          type: [string, "null"]
+          description: The user's own statement of what this is; required for an uploaded reference, never assumed
+        contributes:
+          type: array
+          items: { type: string }
+          description: Dimensions of the current profile that cite this reference's fingerprint (won or corroborated)
+        withheld:
+          type: array
+          description: Fingerprint values inside the allowed scopes not offered because the user's own words decide otherwise
+          items:
+            type: object
+            required: [dimension, value, reason]
+            properties:
+              dimension: { type: string }
+              value: { $ref: "#/components/schemas/StyleDimensionValue" }
+              reason: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    ReferenceTrackInput:
+      type: object
+      required: [kind, label]
+      properties:
+        kind: { type: string, enum: [uploaded_audio, named] }
+        label: { type: string, minLength: 1, maxLength: 200 }
+        sourceId: { type: string, minLength: 1, description: Required for uploaded_audio - one of your own project sources }
+        allowedScopes: { type: array, maxItems: 4, items: { $ref: "#/components/schemas/ReferenceCopyScope" } }
+        rightsNote: { type: string, maxLength: 500, description: Required for uploaded_audio }
+    ReferenceTrackPatchInput:
+      type: object
+      properties:
+        label: { type: string, minLength: 1, maxLength: 200 }
+        allowedScopes: { type: array, maxItems: 4, items: { $ref: "#/components/schemas/ReferenceCopyScope" } }
+        rightsNote:
+          type: [string, "null"]
+          maxLength: 500
+    ReferenceCompareInput:
+      type: object
+      properties:
+        arrangementId: { type: string, minLength: 1, description: Omitted = the latest arrangement with persisted TrackModels }
+    ReferenceFingerprint:
+      type: object
+      required: [id, fingerprint]
+      properties:
+        id: { type: string }
+        fingerprint:
+          type: object
+          additionalProperties: true
+    ReferenceMutationResult:
+      type: object
+      required: [reference, references]
+      properties:
+        reference:
+          oneOf:
+            - { $ref: "#/components/schemas/ReferenceTrack" }
+            - { type: "null" }
+        references: { type: array, items: { $ref: "#/components/schemas/ReferenceTrack" } }
+        fingerprint: { $ref: "#/components/schemas/ReferenceFingerprint" }
+        turn: { $ref: "#/components/schemas/ProducerTurnResult" }
+    ReferenceComparison:
+      type: object
+      required: [reference, arrangementId, arrangementFingerprintId, comparison, explanation]
+      properties:
+        reference: { $ref: "#/components/schemas/ReferenceTrack" }
+        arrangementId: { type: string }
+        arrangementFingerprintId: { type: string }
+        comparison: { $ref: "#/components/schemas/FingerprintComparison" }
+        explanation: { $ref: "#/components/schemas/PlanExplanation" }

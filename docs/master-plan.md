@@ -535,7 +535,10 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   positions against a fixed grid; a rubato source will read as "loose", not
   as a tempo curve. The comparison weights are hand-set and untested against
   human judgement — that is exactly what PR-29 (pairwise critic from real
-  choices) is for. No UI yet; the reference flow arrives with PR-U4.
+  choices) is for. The reference flow (rows, scopes, the `reference_aspect`
+  answer, the closeness question and a studio panel) is PR-U4's, which also
+  fixed `dimensionsFromFingerprint` offering an empty instrumentation
+  hierarchy from a Song Model source.
 
 - **PR-28** ✅ — `preference-event-storage`: the learning system's
   rights-cleared memory. The PR-19 ledger records *that* the owner chose (ids
@@ -1156,10 +1159,171 @@ existing `ArrangementPlan`:
   the `research` summary is in the API but not rendered. Concepts,
   references (PR-U4), regeneration (PR-U5) and producer memory (PR-U6) are
   untouched. Nobody has listened to anything a brief produced.
-- **PR-U4** `reference-intelligence` — a style fingerprint per reference
-  (abstract features only, never content — the PR-27 rule) and an
-  allowed-to-copy scope (groove / sound / arrangement / mood) wired to the
-  `reference_aspect` clarification.
+- **PR-U4** `reference-intelligence` — implemented on branch
+  `pr-u4-reference-intelligence`, awaiting review and merge. A style
+  fingerprint per reference (abstract features only, never content — the
+  PR-27 rule) and an allowed-to-copy scope (groove / sound / arrangement /
+  mood) wired to the `reference_aspect` clarification.
+
+  **Reference rows.** `music_reference_tracks` (additive; the live DB also
+  carries `music_arranger_model_versions`, which main's schema does not
+  define, so a blind `drizzle-kit push` would have prompted and then planned
+  a DROP — the table was created from drizzle-kit's own generated DDL for
+  exactly this table, nothing else touched): id, project, owner, `kind`
+  (`named` | `uploaded_audio`), label, `sourceId` (one of the owner's own
+  `music_project_sources` rows — any of their projects), `songModelVersion`,
+  `fingerprintId` (the PR-27 row, `sourceKind: reference_upload`),
+  `allowedScopes`, `rightsNote`. A reference the user *names* — in the text
+  ("like a Yosef Karduner song") or through the intake API — becomes a named
+  row the first time it is named: no audio, no fingerprint, a label that
+  carries a scope and an optional rights note (PR-U1 behaviour until a
+  recording is attached). Only *new* references get rows, so a deleted
+  reference does not come back on the next turn. An *uploaded* reference is
+  one of the owner's own analysed uploads (rights note **required**, in the
+  user's words; someone else's upload is a 404); the reference row never
+  holds anything the project did not already store for that upload.
+
+  **Fingerprint on upload — where the analysis hook went.** A reference
+  upload goes through the same `sourceAnalyzer.ts` pipeline as any project
+  source *because it is one*: the owner uploads the recording as a project
+  source (in the same or another project of theirs) and points the reference
+  at that `sourceId`. Two things then read the Song Model: the explicit
+  `POST …/references/{id}/fingerprint` (and `POST …/references` itself when
+  the Song Model already exists), and `fingerprintPendingReferences(sourceId)`
+  called after the analyzer's persist transaction commits — best-effort,
+  logged, never failing the analysis. Fingerprints are PR-27's
+  (`deriveStyleFingerprint`, `assertContentFree` on every derivation), stored
+  idempotently in `music_style_fingerprints` under the *reference's* project.
+  The hook was not wired into the analysis transaction itself on purpose: a
+  reference must not be able to fail or slow an upload.
+
+  **The `reference_aspect` clarification is real.** PR-U1's detector asks
+  "What do you want from "X"?" with the four scopes as options. PR-U1's
+  answer shape carries one option, so several answers to the same question
+  in one call are read as a multi-select (the union); the studio's one-click
+  chips pick one and the References panel's toggles cover the rest. The
+  answer sets `allowedScopes` on the row; the scope rides on the intent as
+  the reference's `aspect` ("groove, mood"), so the intent digest changes
+  with it, the question closes (a re-answer is a 400) and the brief records
+  `reference: X (groove, mood)`. A scope word the user *stated* ("the groove
+  of X", "הגרוב") seeds the scope; an instrument ("the drums from X") is not
+  guessed into a scope — the reference then lends nothing until the user
+  picks one.
+
+  **Dimensions flow, scoped, below the user.** On every compiled version
+  `producerChat.ts` builds one `StyleKnowledgeSource` per fingerprinted,
+  scoped reference (id `reference:<fingerprintId>` — the same string the
+  dimensions cite — so `StyleProfile.sources` lists it) from PR-27's
+  `dimensionsFromFingerprint(fp, id, allowedScopes)`, at `inferred`
+  provenance, next to the vocabulary and below research; `stated >
+  researched > inferred` holds unchanged. PR-U3's stated-intent guard is
+  reused: a fingerprint value that contradicts what the user said *or what
+  their own words imply through the vocabulary* ("slow" ⇒ `tempoBehavior
+  slow`) is **withheld** with the reason, never merged. Disallowed scopes
+  contribute nothing; `sound` contributes nothing at all (no audio features
+  yet); a reference with no allowed scope is not even listed as a source. The
+  state carries per reference `contributes` (dimensions of the stored profile
+  citing its fingerprint) and `withheld`. Every reference change — add,
+  rescope, fingerprint, remove — recompiles the current brief from its own
+  inputs and leaves a `reference` turn (new `ProducerChatTurnKind`) in the
+  transcript; a rights-note-only change is recorded and recompiles nothing.
+  PR-27 fix on the way: a Song Model fingerprint knows only `lead` / `bass`
+  families, so `dimensionsFromFingerprint` offered an *empty*
+  `instrumentationHierarchy` that won an untouched dimension in the live run;
+  it now offers no hierarchy rather than an empty one (tested).
+
+  **Comparison for explainability.** `POST …/references/{id}/compare`
+  (`{ arrangementId? }` — body rather than a query parameter, the orval
+  collision PR-U2 hit) returns PR-27's `compareFingerprints` between the
+  reference fingerprint and the arrangement's (derived from its persisted
+  TrackModels and stored idempotently) plus a `PlanExplanation` in a
+  producer's words, reference on the left ("the reference swings harder");
+  in chat, "how close is this to my reference?" / "כמה זה קרוב לרפרנס?" is
+  answered the same way, and honestly refused when there is no reference, no
+  fingerprint (a named reference has no audio) or no arrangement to compare.
+
+  **API** (`routes/references.ts`, tag `references`, orval regenerated,
+  request bodies as components): `GET/POST /projects/{id}/references`,
+  `PATCH/DELETE …/{referenceId}`, `POST …/{referenceId}/fingerprint`,
+  `POST …/{referenceId}/compare`; `ProducerBriefState.references`. `DELETE`
+  removes the row and its `reference_upload` fingerprint row when no other
+  reference shares it — never a project source, Song Model or any other
+  fingerprint. Ownership as in `studio.ts` (401 / 404).
+
+  **Studio.** A collapsible "References" section in the producer drawer:
+  each reference with kind, fingerprint status, the four scope toggles
+  (`sound` marked "empty for now"), what it lends the brief, withheld count,
+  the rights note, Fingerprint / Compare / Remove; an add form (named, or one
+  of this project's analysed uploads with a required rights note). A
+  recording from another of the owner's projects is attached through the
+  API by source id — the studio lists this project's uploads only.
+
+  Tests: `referenceIntelligence.test.ts` (13, in the `producer-chat` suite):
+  scope words (English/Hebrew, nothing guessed from an instrument); rights
+  validation; rows ↔ intent; the multi-select answer; scope gating with
+  `sound` empty and no source without a scope; provenance `inferred` +
+  `reference:` refs; the stated-word guard; closeness wording; through the
+  service — named reference → question → answers → question gone and the
+  brief recording the scope, deletion final; uploaded reference needs a rights
+  note and the owner's own upload, fingerprinted at once, scopes widened /
+  narrowed with recompiles, rights-note-only change without one; stated beats
+  reference and researched beats reference (recorded in `conflicts`); an
+  un-analysed upload waits, the explicit step takes the fingerprint, idempotent,
+  named references refuse, a label upgraded to an upload; deletion removes the
+  fingerprint but not the source; closeness questions with and without an
+  arrangement; intake-API references. Suites: `producer-chat` 16 + 3 + 13,
+  `producer-intelligence` 81/81, `styleFingerprint` 6/6; `pnpm run typecheck`
+  green for all projects. No test calls a model.
+
+  **Live check** (`docs/evidence/reference-intelligence-live.json`, API on
+  :5001 against Neon, dev-login, 38 steps, every status as expected). Fresh
+  project A: "An old hasidic song … like a Yosef Karduner song" → a named row
+  (no fingerprint, no scope) and the question `reference_aspect_ref-1` with
+  the four options; answering groove + mood in one call → v2, row scopes
+  `[groove, mood]`, question gone, brief decision `reference: Yosef Karduner
+  song (groove, mood)`, re-answer 400, fingerprint / compare 409 ("a named
+  reference … has no audio"), a rights-note PATCH with no recompile, the
+  closeness question refused with the reason. Fresh project B ("a slow
+  modern hasidic ballad"): uploaded reference without a rights note → 400;
+  the dev user's own earlier upload (another project's source) attached with
+  `groove` → fingerprinted at once (`reference_upload`, `contentFree`, no note
+  arrays on the stored row), brief v2 with `sources = [vocabulary,
+  reference:<fp>, curated notes]`, `microtiming` and `subdivisionVocabulary`
+  from the reference at `inferred` with `reference:` refs, `fillFrequency`
+  corroborating research's *rare*, and `tempoBehavior strict_grid` **withheld**
+  because the user's "slow" implies `slow`; widening to arrangement → v3 with
+  harmony / phrase / register dimensions; `sound` only → v4 with the source
+  listed and nothing lent; no scope → v5 with no reference source; `GET
+  brief` reads the same back; the fingerprint step is idempotent (same id, no
+  new version); compare and the closeness chat refused for lack of an
+  arrangement; a source owned by nobody-you → 404. The dev project with a
+  Song Model and arrangements: its own recording attached as a reference,
+  compared to its latest arrangement at **distance 0.332** — the same number
+  PR-27's live run measured for the same pair — with the headline "phrases of
+  3.9 vs 30.82 beats; phrase length regular vs long; register mid vs low",
+  answered identically in English and Hebrew chat (`planSource: arrangement`);
+  deleting it removed the one `reference_upload` fingerprint row, left every
+  other fingerprint and the source in place, and recompiled without it.
+  Anonymous 401, foreign project 404.
+
+  **What PR-U4 does NOT do, honestly.** No language model anywhere: the
+  intent reading and research were the deterministic paths. The
+  analysis-completion hook was **not** exercised live — no audio was uploaded
+  or analysed in the run; the reference pointed at an upload analysed
+  earlier, so the live proof covers the explicit fingerprint step and the
+  create-time fingerprint only (the hook is the same function, unit-tested
+  through the explicit path). PR-27's fingerprint is symbolic: `sound` is an
+  empty scope; swing / microtiming read against a fixed grid; a Song Model
+  source knows only `lead` and `bass`, so the `arrangement` scope lends
+  harmony, phrase, register and ornamentation but no instrumentation
+  hierarchy. The comparison weights are PR-27's hand-set ones. The scope
+  answer is a multi-select only through repeated answers or the panel's
+  toggles, not a native multi-select question. A reference from another of
+  the owner's projects is API-only in the studio. Deleting a reference named
+  in the intake text leaves the words in the intake as a label (PR-U1
+  behaviour). The brief still does not flow into `createArrangementPlan` or
+  regeneration (PR-U5); no producer memory across projects (PR-U6). Nobody
+  has listened to anything a brief produced.
 - **PR-U5** `chat-scope-aware-regeneration` — `EditPlan` → the PR-17 lock set +
   regeneration scopes + brief deltas, executed through the orchestrator with a
   `PartialRegenerationReport`; the brief stamped on every `ArrangementPlan`.
@@ -1265,6 +1429,7 @@ fabricate candidates when workers are offline.
 | Producer intelligence contracts (Wave U) | `UserIntent` / `StyleProfile` / `ProductionBrief` / `ClarificationQuestion` / `ArrangementConcept` / `EditPlan` in `lib/db/src/schema/music-studio.ts`; pure modules in `artifacts/api-server/src/lib/producerIntelligence/` |
 | Producer conversation (Wave U, PR-U2) | `routes/producer.ts` (`/projects/{id}/producer/*`), `src/lib/producerChat.ts` (store-agnostic logic) + `producerChatDbStore.ts`; tables `music_production_briefs` / `music_producer_chat_turns` / `music_producer_brief_decisions`; studio drawer `components/studio/producer-chat.tsx` |
 | Style research agent (Wave U, PR-U3) | `src/lib/producerIntelligence/styleResearch.ts` — `ResearchKnowledgeProvider` (curated seed notes; OpenAI only when `PRODUCER_LLM=openai`), the closed `RESEARCH_VOCABULARY`, gating into researched dimensions / questions / discards, `WORLD_VOCABULARY` wording; `StyleProfile.research` summary in `lib/db` + OpenAPI; evidence `docs/evidence/style-research-live.json` |
+| Reference intelligence (Wave U, PR-U4) | `src/lib/referenceIntelligence.ts` (store-agnostic: scopes, rows ↔ intent, `referenceKnowledge` into the resolver, closeness explanations) + `referenceIntelligenceDbStore.ts` (Drizzle; `fingerprintPendingReferences` analysis hook); `routes/references.ts` (`/projects/{id}/references/*`); table `music_reference_tracks`; PR-27's `styleFingerprint.ts` is the only thing read from a reference; References section in `components/studio/producer-chat.tsx`; evidence `docs/evidence/reference-intelligence-live.json` |
 
 Every PR below is an **extension** of the above unless noted.
 

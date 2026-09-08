@@ -14,7 +14,13 @@
  *   edit request         interpretEditRequest against the current brief and
  *                        the latest plan → an EditPlan (returned, never
  *                        executed here) + durable, scoped decisions
- *   question             explainDecision from the latest plan's own evidence
+ *   question             explainDecision from the latest plan's own evidence;
+ *                        "how close is this to my reference?" is answered from
+ *                        PR-27's fingerprint comparison (PR-U4)
+ *   references (PR-U4)   named or uploaded references are durable rows; their
+ *                        allowed copy scopes gate what their fingerprint may
+ *                        lend the profile — as `inferred`, below anything the
+ *                        user said — and every reference change recompiles
  *
  * Nothing here writes notes and nothing regenerates; PR-U5 wires the plans to
  * regeneration. The store is injectable so the logic is testable without a
@@ -26,6 +32,7 @@ import type {
   ClarificationAnswer,
   ClarificationQuestion,
   EditPlan,
+  FingerprintComparison,
   IntentReference,
   PlanExplanation,
   ProducerBriefDecision,
@@ -35,8 +42,11 @@ import type {
   ProducerDecisionScope,
   ProducerDecisionTopic,
   ProductionBrief,
+  ReferenceCopyScope,
+  ReferenceTrackKind,
   SongModelData,
   StyleDimensionName,
+  StyleFingerprint,
   StyleProfile,
   UserIntent,
 } from "@workspace/db";
@@ -60,9 +70,37 @@ import {
   settledIdentityFromBrief,
   type StyleResearchAgent,
 } from "./producerIntelligence/styleResearch";
-import { resolveStyleProfile } from "./producerIntelligence/styleResolution";
+import { UNIVERSAL_VOCABULARY_SOURCE, resolveStyleProfile } from "./producerIntelligence/styleResolution";
 import { describeUnderstanding, intentDelta, type IntentDelta } from "./producerIntelligence/understanding";
 import { instrumentFamily, lookupWord } from "./producerIntelligence/vocabulary";
+import {
+  applyReferenceScopes,
+  compareReferenceToArrangement,
+  createInMemoryReferenceStore,
+  deriveArrangementFingerprint,
+  deriveReferenceFingerprint,
+  describeReferenceContributions,
+  dimensionsCiting,
+  explainReferenceComparison,
+  findReferenceByLabel,
+  intakeReferencesFromRows,
+  isReferenceClosenessQuestion,
+  mergeIntakeReferences,
+  namedReferenceRecord,
+  normalizeScopes,
+  referenceForClosenessQuestion,
+  referenceInputProblem,
+  referenceKnowledge,
+  referenceRowsToCreate,
+  referenceScopeAnswers,
+  scopesAspect,
+  type InMemoryReferenceSeed,
+  type ReferenceContribution,
+  type ReferenceInput,
+  type ReferenceStore,
+  type ReferenceTrackRecord,
+  type ReferenceWithheld,
+} from "./referenceIntelligence";
 
 // ---------------------------------------------------------------------------
 // Records and store contract
@@ -101,7 +139,8 @@ export type ProducerBriefDecisionRecord = {
   createdAt: string;
 };
 
-export type ProducerChatStore = {
+/** The brief store plus PR-U4's reference persistence; one transaction covers both. */
+export type ProducerChatStore = ReferenceStore & {
   currentBrief(projectId: string): Promise<ProducerBriefRecord | null>;
   insertBrief(record: ProducerBriefRecord): Promise<void>;
   insertTurns(records: ProducerChatTurnRecord[]): Promise<void>;
@@ -130,6 +169,14 @@ export class ProducerChatError extends Error {
 
 export type PlanSource = "arrangement" | "derived" | "none";
 
+/** A reference row with what it did to the current brief (PR-U4). */
+export type ReferenceTrackSummary = ReferenceTrackRecord & {
+  /** Dimensions of the current profile that cite this reference's fingerprint (won or corroborated). */
+  contributes: StyleDimensionName[];
+  /** Fingerprint values inside the allowed scopes that were withheld because the user's own words decide otherwise. */
+  withheld: ReferenceWithheld[];
+};
+
 export type ProducerBriefState = {
   briefRecordId: string;
   version: number;
@@ -142,8 +189,28 @@ export type ProducerBriefState = {
   concepts: ReturnType<typeof generateArrangementConcepts>;
   songModelVersion: number | null;
   planSource: PlanSource;
+  references: ReferenceTrackSummary[];
   createdAt: string;
 };
+
+export type ReferenceMutationOutcome = {
+  reference: ReferenceTrackRecord | null;
+  references: ReferenceTrackRecord[];
+  fingerprint?: { id: string; fingerprint: StyleFingerprint };
+  /** The recompiled brief's turn, when a brief existed to recompile. */
+  turn?: ProducerTurnOutcome;
+};
+
+export type ReferenceComparisonOutcome = {
+  reference: ReferenceTrackRecord;
+  arrangementId: string;
+  arrangementFingerprintId: string;
+  comparison: FingerprintComparison;
+  explanation: PlanExplanation;
+};
+
+export type AddReferenceInput = ReferenceInput & { ownerId?: string | null };
+export type UpdateReferenceInput = { label?: string; allowedScopes?: readonly unknown[]; rightsNote?: string | null };
 
 export type ProducerTurnOutcome = {
   kind: ProducerChatTurnKind;
@@ -333,6 +400,9 @@ type CompiledVersion = {
   unchanged: boolean;
   songModel: { version: number; model: SongModelData } | null;
   delta: IntentDelta;
+  /** The reference rows this version compiled against (PR-U4), and what their fingerprints offered. */
+  references: ReferenceTrackRecord[];
+  referenceContributions: ReferenceContribution[];
 };
 
 const fallbackId = (): string => `pc-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
@@ -363,11 +433,37 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
       /** Decision rows whose deltas must not be applied any more. */
       excludeRowIds?: string[];
       briefRecordId?: string;
+      /** A reference changed (scope / fingerprint / row): persist a version even if the intent read nothing new. */
+      force?: boolean;
     },
   ): Promise<CompiledVersion> {
     const at = now();
     const songModel = await tx.loadSongModel(projectId);
-    const intent = await extractUserIntent(input.text, { llm: options.intentModel, references: input.references, now: at });
+    // PR-U4: the project's reference rows are part of the intent's inputs —
+    // their labels (so a reference added through the API is in the reading)
+    // and their allowed scopes as the aspect (so the intent digest changes
+    // with the scope, and PR-U1's reference_aspect question stops once set).
+    const rowsBefore = await tx.listReferences(projectId);
+    const references = mergeIntakeReferences(input.references, intakeReferencesFromRows(rowsBefore));
+    const rawIntent = await extractUserIntent(input.text, { llm: options.intentModel, references, now: at });
+    const delta = intentDelta(input.previous?.intent ?? null, rawIntent);
+    // A reference the user names for the first time becomes a durable row —
+    // named, no audio, no fingerprint: a label with a scope (PR-U1 behaviour
+    // until one of the owner's recordings is attached).
+    const created = referenceRowsToCreate(delta.references, rowsBefore, { projectId, now: at, newId });
+    for (const row of created) await tx.insertReference(row);
+    const rows = [...rowsBefore, ...created];
+    const intent = applyReferenceScopes(rawIntent, rows);
+    const fingerprints = new Map<string, StyleFingerprint>();
+    for (const row of rows) {
+      if (!row.fingerprintId || !row.allowedScopes.length) continue;
+      const fingerprint = await tx.loadFingerprint(projectId, row.fingerprintId);
+      if (fingerprint) fingerprints.set(row.fingerprintId, fingerprint);
+    }
+    // What the fingerprints may lend, inside the allowed scopes only, as
+    // `inferred` sources next to the vocabulary — below stated and researched.
+    const knowledge = referenceKnowledge(rows, fingerprints, intent);
+    const baseOptions = { now: at, knowledge: [UNIVERSAL_VOCABULARY_SOURCE, ...knowledge.sources] };
     // Research is async and runs first; the profile is then resolved with
     // its gated findings pre-fetched (PR-U1's documented path). A world an
     // answer settled (e.g. the communal-singing ensemble) — in an earlier
@@ -381,10 +477,10 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
         },
       })
       : null;
-    const profile = resolveStyleProfile(intent, research ? researchResolveOptions(research, { now: at }) : { now: at });
-    const rows = await tx.listDecisions(projectId);
+    const profile = resolveStyleProfile(intent, research ? researchResolveOptions(research, baseOptions) : baseOptions);
+    const decisionRows = await tx.listDecisions(projectId);
     const excluded = new Set(input.excludeRowIds ?? []);
-    const activeRows = rows.filter((r) => !r.supersededBy && !excluded.has(r.id));
+    const activeRows = decisionRows.filter((r) => !r.supersededBy && !excluded.has(r.id));
     const deltas = [
       ...activeRows.map((r) => r.delta).filter((d): d is BriefDelta => !!d),
       ...input.newDeltas,
@@ -392,7 +488,7 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
     const compiled = compileProductionBrief(intent, profile, songModel?.model, input.answers, {
       now: at,
       deltas,
-      decisions: rows.map((r) => r.decision),
+      decisions: decisionRows.map((r) => r.decision),
     });
     const briefRecordId = input.briefRecordId ?? newId();
     const version = (input.previous?.version ?? 0) + 1;
@@ -408,14 +504,13 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
         });
       }
     }
-    const brief = applySupersessions(compiled, [...rows, ...newDecisions]);
+    const brief = applySupersessions(compiled, [...decisionRows, ...newDecisions]);
     const questions = planClarifications(intent, profile).filter((q) => brief.openQuestionIds.includes(q.id));
-    const delta = intentDelta(input.previous?.intent ?? null, intent);
     // A turn that read nothing new, decided nothing and answered nothing
     // leaves the current version in place (the transcript still records it).
     const nothingRead = !delta.inferences.length && !delta.constraints.length && !delta.references.length;
     const sameAnswers = JSON.stringify(input.previous?.answers ?? []) === JSON.stringify(input.answers);
-    const unchanged = !!input.previous && nothingRead && newDecisions.length === 0 && sameAnswers && excluded.size === 0;
+    const unchanged = !!input.previous && nothingRead && newDecisions.length === 0 && sameAnswers && excluded.size === 0 && !input.force;
     return {
       record: {
         id: briefRecordId, projectId, version, intent, styleProfile: profile, brief,
@@ -426,6 +521,8 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
       unchanged,
       songModel,
       delta,
+      references: rows,
+      referenceContributions: knowledge.contributions,
     };
   }
 
@@ -457,6 +554,28 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
     return { context: { brief }, source: "none" };
   }
 
+  /**
+   * The reference rows with what they did to `record`'s profile: `contributes`
+   * is read from the stored profile (the truth of that version); `withheld`
+   * is re-derived from the fingerprints, which is cheap and needs no model.
+   */
+  async function referenceSummaries(tx: ProducerChatStore, projectId: string, record: Pick<ProducerBriefRecord, "intent" | "styleProfile"> | null): Promise<ReferenceTrackSummary[]> {
+    const rows = await tx.listReferences(projectId);
+    if (!rows.length) return [];
+    const fingerprints = new Map<string, StyleFingerprint>();
+    for (const row of rows) {
+      if (!row.fingerprintId || !row.allowedScopes.length) continue;
+      const fingerprint = await tx.loadFingerprint(projectId, row.fingerprintId);
+      if (fingerprint) fingerprints.set(row.fingerprintId, fingerprint);
+    }
+    const contributions = record ? referenceKnowledge(rows, fingerprints, record.intent).contributions : [];
+    return rows.map((row) => ({
+      ...row,
+      contributes: record && row.fingerprintId ? dimensionsCiting(record.styleProfile, row.fingerprintId) : [],
+      withheld: contributions.find((c) => c.referenceId === row.id)?.withheld ?? [],
+    }));
+  }
+
   async function stateFor(tx: ProducerChatStore, record: ProducerBriefRecord, songModel: { version: number } | null, planSource: PlanSource): Promise<ProducerBriefState> {
     const decisions = await tx.listDecisions(record.projectId);
     const questions = planClarifications(record.intent, record.styleProfile).filter((q) => record.brief.openQuestionIds.includes(q.id));
@@ -464,7 +583,9 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
       briefRecordId: record.id, version: record.version, brief: record.brief, intent: record.intent,
       styleProfile: record.styleProfile, clarifications: questions, decisions,
       concepts: generateArrangementConcepts(record.brief, { now: now() }),
-      songModelVersion: songModel?.version ?? null, planSource, createdAt: record.createdAt,
+      songModelVersion: songModel?.version ?? null, planSource,
+      references: await referenceSummaries(tx, record.projectId, record),
+      createdAt: record.createdAt,
     };
   }
 
@@ -505,11 +626,15 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
       answers: previous?.answers ?? [], newDeltas: [],
     });
     const record = await persistVersion(tx, compiled, previous);
-    const reply = describeUnderstanding({
-      intent: compiled.record.intent, profile: compiled.record.styleProfile, brief: compiled.record.brief,
-      questions: compiled.questions, hasSongModel: !!compiled.songModel, version: record.version,
-      ...(previous ? { delta: compiled.delta } : {}),
-    });
+    const referenceSentence = describeReferenceContributions(compiled.referenceContributions);
+    const reply = [
+      describeUnderstanding({
+        intent: compiled.record.intent, profile: compiled.record.styleProfile, brief: compiled.record.brief,
+        questions: compiled.questions, hasSongModel: !!compiled.songModel, version: record.version,
+        ...(previous ? { delta: compiled.delta } : {}),
+      }),
+      ...(referenceSentence ? [referenceSentence] : []),
+    ].join(" ");
     const [userTurn, producerTurn] = turnPair(projectId, record.id, text, reply, {
       kind, briefVersion: record.version, intentDelta: compiled.delta, clarifications: compiled.questions,
       intentMethod: compiled.record.intent.method,
@@ -517,6 +642,93 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
     await tx.insertTurns([userTurn, producerTurn]);
     const planSource = compiled.songModel ? "derived" : "none";
     return { kind, turnId: userTurn.id, producerTurnId: producerTurn.id, reply, state: await stateFor(tx, record, compiled.songModel, planSource) };
+  }
+
+  // -------------------------------------------------------------------------
+  // PR-U4: references
+  // -------------------------------------------------------------------------
+
+  /** The fingerprint of the given (or latest) arrangement, stored idempotently like PR-27's route does. */
+  async function arrangementFingerprint(tx: ProducerChatStore, projectId: string, arrangementId?: string): Promise<{ arrangementId: string; fingerprintId: string; fingerprint: StyleFingerprint } | null> {
+    const arrangement = await tx.loadArrangementForFingerprint(projectId, arrangementId);
+    if (!arrangement || !arrangement.trackModels.length) return null;
+    const fingerprint = deriveArrangementFingerprint(arrangement, now());
+    const fingerprintId = await tx.insertFingerprint(projectId, fingerprint, null);
+    return { arrangementId: arrangement.id, fingerprintId, fingerprint };
+  }
+
+  async function compareAgainstArrangement(tx: ProducerChatStore, projectId: string, row: ReferenceTrackRecord, arrangementId?: string): Promise<ReferenceComparisonOutcome> {
+    if (!row.fingerprintId) throw new ProducerChatError(409, `"${row.label}" has no fingerprint yet${row.kind === "named" ? " — a named reference has no audio; attach one of your own recordings first" : " — fingerprint it once its analysis is complete"}`);
+    const referenceFingerprint = await tx.loadFingerprint(projectId, row.fingerprintId);
+    if (!referenceFingerprint) throw new ProducerChatError(409, `The fingerprint of "${row.label}" is missing`);
+    const arrangement = await arrangementFingerprint(tx, projectId, arrangementId);
+    if (!arrangement) throw new ProducerChatError(409, arrangementId ? `Arrangement "${arrangementId}" has no persisted TrackModels to compare` : "No arrangement with persisted TrackModels to compare the reference to yet");
+    const comparison = compareReferenceToArrangement({ ...row, fingerprintId: row.fingerprintId }, referenceFingerprint, arrangement.fingerprintId, arrangement.fingerprint);
+    return { reference: row, arrangementId: arrangement.arrangementId, arrangementFingerprintId: arrangement.fingerprintId, comparison, explanation: explainReferenceComparison(row, arrangement.arrangementId, comparison) };
+  }
+
+  /** A closeness question as a PlanExplanation — honest when there is nothing to compare. */
+  async function referenceCloseness(tx: ProducerChatStore, projectId: string, target: ReferenceTrackRecord | null, rows: ReferenceTrackRecord[]): Promise<{ explanation: PlanExplanation }> {
+    if (!target) {
+      const fingerprinted = rows.filter((r) => r.fingerprintId);
+      const answer = !rows.length
+        ? "There is no reference on this project yet — name one in the brief or attach one of your own recordings."
+        : !fingerprinted.length
+          ? `None of the references (${rows.map((r) => `"${r.label}"`).join(", ")}) has a fingerprint: a named reference has no audio to compare, and an uploaded one needs its analysis finished and fingerprinted first.`
+          : `Which reference — ${fingerprinted.map((r) => `"${r.label}"`).join(" or ")}? Name it and I will compare the arrangement's fingerprint to it.`;
+      return { explanation: { answered: false, answer, evidence: [], confidence: 1 } };
+    }
+    try {
+      return { explanation: (await compareAgainstArrangement(tx, projectId, target)).explanation };
+    } catch (error) {
+      if (error instanceof ProducerChatError) return { explanation: { answered: false, answer: error.message, evidence: [], confidence: 1 } };
+      throw error;
+    }
+  }
+
+  /** Take the PR-27 fingerprint of an uploaded reference's Song Model and link it; null when the upload is not analysed yet. */
+  async function takeReferenceFingerprint(tx: ProducerChatStore, projectId: string, row: ReferenceTrackRecord): Promise<{ row: ReferenceTrackRecord; fingerprint: { id: string; fingerprint: StyleFingerprint } } | null> {
+    if (row.kind !== "uploaded_audio" || !row.sourceId) throw new ProducerChatError(409, `"${row.label}" is a named reference: it has no audio and can carry a scope and a rights note only`);
+    const songModel = await tx.loadSourceSongModel(row.sourceId);
+    if (!songModel) return null;
+    const at = now();
+    const fingerprint = deriveReferenceFingerprint(row, songModel, at);
+    const id = await tx.insertFingerprint(projectId, fingerprint, row.ownerId);
+    const updated = await tx.updateReference(projectId, row.id, { fingerprintId: id, songModelVersion: songModel.version }, at.toISOString());
+    return { row: updated ?? { ...row, fingerprintId: id, songModelVersion: songModel.version }, fingerprint: { id, fingerprint } };
+  }
+
+  /**
+   * Every reference change recompiles the current brief from its own inputs
+   * (the rows are among them) and leaves a `reference` turn in the transcript,
+   * so the version history says why the profile moved. No brief yet → nothing
+   * to recompile; the rows simply wait for the intake.
+   */
+  async function recompileAfterReferenceChange(tx: ProducerChatStore, projectId: string, userText: string, referenceIds: string[], what: string): Promise<ProducerTurnOutcome | undefined> {
+    const previous = await tx.currentBrief(projectId);
+    if (!previous) return undefined;
+    const compiled = await compileVersion(tx, projectId, {
+      previous, text: previous.intent.rawText, references: providedReferences(previous.intent),
+      answers: previous.answers, newDeltas: [], force: true,
+    });
+    const record = await persistVersion(tx, compiled, previous);
+    const referenceSentence = describeReferenceContributions(compiled.referenceContributions);
+    const reply = [
+      `${what} Brief recompiled to v${record.version}.`,
+      referenceSentence ?? "No reference lends the brief anything right now — a named reference is a label; an uploaded one needs a fingerprint and at least one allowed scope.",
+      ...(compiled.questions.length ? [`Still open: ${compiled.questions.map((q) => q.question).join(" ")}`] : []),
+    ].join(" ");
+    const [userTurn, producerTurn] = turnPair(projectId, record.id, userText, reply, {
+      kind: "reference", briefVersion: record.version, referenceIds, clarifications: compiled.questions, intentDelta: compiled.delta,
+    });
+    await tx.insertTurns([userTurn, producerTurn]);
+    return { kind: "reference", turnId: userTurn.id, producerTurnId: producerTurn.id, reply, state: await stateFor(tx, record, compiled.songModel, compiled.songModel ? "derived" : "none") };
+  }
+
+  async function referenceRow(tx: ProducerChatStore, projectId: string, referenceId: string): Promise<ReferenceTrackRecord> {
+    const row = (await tx.listReferences(projectId)).find((r) => r.id === referenceId);
+    if (!row) throw new ProducerChatError(404, `No reference "${referenceId}" on this project`);
+    return row;
   }
 
   return {
@@ -547,6 +759,27 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
           }
         }
         if (!answers.length) throw new ProducerChatError(400, "No answers given");
+        // PR-U4: an answer to "what do you want from <reference>?" sets the
+        // reference row's allowed scopes (several answers to the same question
+        // in one call = a multi-select). The scope then rides on the intent as
+        // the reference's aspect, so the question closes and the brief records
+        // it; the fingerprint — if the reference has one — lends only that.
+        const scopeAnswers = referenceScopeAnswers(open, answers, previous.intent);
+        const scopedReferenceIds: string[] = [];
+        const scopeLines: string[] = [];
+        for (const scoped of scopeAnswers) {
+          const at = now();
+          const rows = await tx.listReferences(projectId);
+          let row = findReferenceByLabel(rows, scoped.label);
+          if (!row) {
+            row = namedReferenceRecord({ kind: scoped.kind, label: scoped.label }, { projectId, now: at, newId });
+            await tx.insertReference(row);
+          }
+          const allowedScopes = normalizeScopes([...row.allowedScopes, ...scoped.scopes]);
+          const updated = await tx.updateReference(projectId, row.id, { allowedScopes }, at.toISOString());
+          scopedReferenceIds.push(row.id);
+          scopeLines.push(`From "${row.label}" only ${scopesAspect(allowedScopes).replace(/, /g, " and ")} may be copied${updated?.fingerprintId ? "" : row.kind === "named" ? " — a named reference lends nothing until one of your own recordings is attached and fingerprinted" : " — its fingerprint will apply once the recording is analysed"}.`);
+        }
         // Free text is also fed back through intent extraction (PR-U1's note).
         const cumulative = freeTexts.length ? `${previous.intent.rawText}\n${freeTexts.join("\n")}` : previous.intent.rawText;
         const compiled = await compileVersion(tx, projectId, {
@@ -564,8 +797,11 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
             : `"${a.freeText}" (noted as a soft decision and read as intake)`;
         });
         const remaining = compiled.questions;
+        const referenceSentence = describeReferenceContributions(compiled.referenceContributions);
         const reply = [
           `Understood: ${chosen.join("; ")}. Brief updated to v${record.version}.`,
+          ...scopeLines,
+          ...(referenceSentence ? [referenceSentence] : []),
           remaining.length ? `Still open: ${remaining.map((q) => q.question).join(" ")}` : "No further questions — the brief is ready to plan from.",
         ].join(" ");
         const userText = answers.map((a) => {
@@ -576,6 +812,7 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
         const [userTurn, producerTurn] = turnPair(projectId, record.id, userText, reply, {
           kind: "answers", briefVersion: record.version, answers, clarifications: remaining, intentDelta: compiled.delta,
           intentMethod: compiled.record.intent.method,
+          ...(scopedReferenceIds.length ? { referenceIds: scopedReferenceIds } : {}),
         });
         await tx.insertTurns([userTurn, producerTurn]);
         return { kind: "answers", turnId: userTurn.id, producerTurnId: producerTurn.id, reply, state: await stateFor(tx, record, compiled.songModel, compiled.songModel ? "derived" : "none") };
@@ -596,6 +833,19 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
         const turnClass = classifyChatTurn(text, editPlan, intent);
 
         if (turnClass === "question") {
+          // PR-U4: "how close is this to my reference?" is answered from the
+          // fingerprint comparison, never from the reference's content.
+          const referenceRows = await tx.listReferences(projectId);
+          if (isReferenceClosenessQuestion(text, referenceRows)) {
+            const target = referenceForClosenessQuestion(text, referenceRows);
+            const closeness = await referenceCloseness(tx, projectId, target, referenceRows);
+            const [userTurn, producerTurn] = turnPair(projectId, previous.id, text, closeness.explanation.answer, {
+              kind: "explanation", briefVersion: previous.version, explanation: closeness.explanation, planSource: source,
+              ...(target ? { referenceIds: [target.id] } : {}),
+            });
+            await tx.insertTurns([userTurn, producerTurn]);
+            return { kind: "explanation", turnId: userTurn.id, producerTurnId: producerTurn.id, reply: closeness.explanation.answer, explanation: closeness.explanation, state: await stateFor(tx, previous, songModel, source) };
+          }
           const explanation = explainDecision(context, text);
           const prefix = source === "derived"
             ? "(Reading the plan derived from the current brief — no arrangement has been generated yet.) "
@@ -653,6 +903,128 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
       return stateFor(store, record, songModel, source);
     },
 
+    // --- PR-U4: references -------------------------------------------------
+
+    /** The project's references with what each did to the current brief (empty `contributes` before any brief). */
+    async references(projectId: string): Promise<ReferenceTrackSummary[]> {
+      return referenceSummaries(store, projectId, await store.currentBrief(projectId));
+    },
+
+    /**
+     * Add a named reference (a label + scope + optional rights note) or an
+     * uploaded one (one of the owner's own analysed uploads, rights note
+     * required). An uploaded reference is fingerprinted right away when its
+     * Song Model already exists; otherwise the analysis hook does it later.
+     * Attaching an upload to a label that is already a named reference
+     * upgrades that row instead of duplicating it.
+     */
+    async addReference(projectId: string, input: AddReferenceInput): Promise<ReferenceMutationOutcome> {
+      const problem = referenceInputProblem(input);
+      if (problem) throw new ProducerChatError(400, problem);
+      return store.transaction(async (tx) => {
+        const at = now();
+        const rows = await tx.listReferences(projectId);
+        const existing = findReferenceByLabel(rows, input.label);
+        const scopes = normalizeScopes(input.allowedScopes ?? []);
+        let row: ReferenceTrackRecord;
+        if (input.kind === "uploaded_audio") {
+          const source = await tx.loadProjectSource(input.sourceId!.trim());
+          // Someone else's upload is a 404, not a 403: nothing about it is revealed.
+          if (!source || (input.ownerId && source.ownerId !== input.ownerId)) throw new ProducerChatError(404, "Upload not found among your project sources");
+          if (existing?.kind === "uploaded_audio") throw new ProducerChatError(409, `"${existing.label}" already is an uploaded reference on this project`);
+          if (existing) {
+            // The kind and source change only through this upgrade path.
+            row = (await tx.updateReference(projectId, existing.id, {
+              kind: "uploaded_audio", sourceId: source.id,
+              allowedScopes: normalizeScopes([...existing.allowedScopes, ...scopes]), rightsNote: input.rightsNote!.trim(),
+            }, at.toISOString()))!;
+          } else {
+            row = {
+              id: newId(), projectId, ownerId: input.ownerId ?? source.ownerId, kind: "uploaded_audio", label: input.label.trim(),
+              sourceId: source.id, songModelVersion: null, fingerprintId: null, allowedScopes: scopes, rightsNote: input.rightsNote!.trim(),
+              createdAt: at.toISOString(), updatedAt: at.toISOString(),
+            };
+            await tx.insertReference(row);
+          }
+        } else {
+          if (existing) throw new ProducerChatError(409, `"${existing.label}" already is a reference on this project`);
+          row = { ...namedReferenceRecord({ kind: "song", label: input.label, rightsNote: input.rightsNote ?? null }, { projectId, ownerId: input.ownerId ?? null, now: at, newId }), allowedScopes: scopes };
+          await tx.insertReference(row);
+        }
+        let fingerprint: ReferenceMutationOutcome["fingerprint"];
+        if (row.kind === "uploaded_audio") {
+          const taken = await takeReferenceFingerprint(tx, projectId, row);
+          if (taken) { row = taken.row; fingerprint = taken.fingerprint; }
+        }
+        const what = row.kind === "uploaded_audio"
+          ? `Reference "${row.label}" attached from your upload (${fingerprint ? "fingerprinted; the fingerprint is the only thing read from it" : "not analysed yet — it will be fingerprinted when the analysis completes"}); rights: ${row.rightsNote}.`
+          : `Reference "${row.label}" noted as a label${row.allowedScopes.length ? ` (${scopesAspect(row.allowedScopes)} allowed)` : ""}.`;
+        const turn = await recompileAfterReferenceChange(tx, projectId, `reference: ${row.label}`, [row.id], what);
+        return { reference: row, references: await tx.listReferences(projectId), ...(fingerprint ? { fingerprint } : {}), ...(turn ? { turn } : {}) };
+      });
+    },
+
+    /** Change scopes, label or rights note. Scope and label changes recompile; a rights note is recorded and nothing else. */
+    async updateReference(projectId: string, referenceId: string, patch: UpdateReferenceInput): Promise<ReferenceMutationOutcome> {
+      if (patch.allowedScopes !== undefined) {
+        const problem = referenceInputProblem({ kind: "named", label: "x", allowedScopes: patch.allowedScopes });
+        if (problem) throw new ProducerChatError(400, problem);
+      }
+      return store.transaction(async (tx) => {
+        const row = await referenceRow(tx, projectId, referenceId);
+        const label = patch.label?.trim();
+        if (patch.label !== undefined && !label) throw new ProducerChatError(400, "A reference needs a label");
+        if (label && label.length > 200) throw new ProducerChatError(400, "A reference label is at most 200 characters");
+        if (label && label.toLowerCase() !== row.label.toLowerCase() && findReferenceByLabel(await tx.listReferences(projectId), label)) throw new ProducerChatError(409, `"${label}" already is a reference on this project`);
+        const rightsNote = patch.rightsNote === undefined ? undefined : (patch.rightsNote?.trim() || null);
+        if (rightsNote === null && row.kind === "uploaded_audio") throw new ProducerChatError(400, "An uploaded reference keeps a rights note — say what this recording is");
+        if ((rightsNote?.length ?? 0) > 500) throw new ProducerChatError(400, "A rights note is at most 500 characters");
+        const at = now();
+        const scopesBefore = scopesAspect(row.allowedScopes);
+        const updated = await tx.updateReference(projectId, row.id, {
+          ...(label ? { label } : {}),
+          ...(patch.allowedScopes !== undefined ? { allowedScopes: normalizeScopes(patch.allowedScopes) } : {}),
+          ...(rightsNote !== undefined ? { rightsNote } : {}),
+        }, at.toISOString());
+        const changed = updated ?? row;
+        const recompile = (label !== undefined && label !== row.label) || (patch.allowedScopes !== undefined && scopesAspect(changed.allowedScopes) !== scopesBefore);
+        const what = recompile
+          ? `Reference "${changed.label}": ${changed.allowedScopes.length ? `${scopesAspect(changed.allowedScopes)} may be copied` : "nothing may be copied"}.`
+          : "";
+        const turn = recompile ? await recompileAfterReferenceChange(tx, projectId, `reference: ${changed.label}`, [changed.id], what) : undefined;
+        return { reference: changed, references: await tx.listReferences(projectId), ...(turn ? { turn } : {}) };
+      });
+    },
+
+    /** Removes the row and its fingerprint link (and the fingerprint row when nothing else shares it). The upload itself is never touched. */
+    async removeReference(projectId: string, referenceId: string): Promise<ReferenceMutationOutcome> {
+      return store.transaction(async (tx) => {
+        const row = await referenceRow(tx, projectId, referenceId);
+        await tx.deleteReference(projectId, row.id);
+        const turn = await recompileAfterReferenceChange(tx, projectId, `remove reference: ${row.label}`, [row.id], `Reference "${row.label}" removed${row.fingerprintId ? " together with its fingerprint" : ""}; your upload, if any, is untouched.`);
+        return { reference: null, references: await tx.listReferences(projectId), ...(turn ? { turn } : {}) };
+      });
+    },
+
+    /** Explicit fingerprint step for an uploaded reference whose analysis has completed (the analysis hook does the same). */
+    async fingerprintReference(projectId: string, referenceId: string): Promise<ReferenceMutationOutcome> {
+      return store.transaction(async (tx) => {
+        const row = await referenceRow(tx, projectId, referenceId);
+        const linkedBefore = row.fingerprintId;
+        const taken = await takeReferenceFingerprint(tx, projectId, row);
+        if (!taken) throw new ProducerChatError(409, `"${row.label}" is not analysed yet — its Song Model does not exist, so there is nothing content-free to read`);
+        // The same Song Model fingerprints to the same row (PR-27 idempotency): nothing to recompile then.
+        const unchanged = linkedBefore === taken.fingerprint.id;
+        const turn = unchanged ? undefined : await recompileAfterReferenceChange(tx, projectId, `fingerprint reference: ${row.label}`, [row.id], `Reference "${row.label}" fingerprinted (Song Model v${taken.row.songModelVersion}; abstract statistics only).`);
+        return { reference: taken.row, references: await tx.listReferences(projectId), fingerprint: taken.fingerprint, ...(turn ? { turn } : {}) };
+      });
+    },
+
+    /** PR-27's comparison between the reference's fingerprint and an arrangement's, in words. */
+    async compareReference(projectId: string, referenceId: string, arrangementId?: string): Promise<ReferenceComparisonOutcome> {
+      return store.transaction(async (tx) => compareAgainstArrangement(tx, projectId, await referenceRow(tx, projectId, referenceId), arrangementId));
+    },
+
     turns(projectId: string, page: { limit?: number; before?: string } = {}) {
       const limit = Math.max(1, Math.min(200, Math.floor(page.limit ?? 50)));
       return store.listTurns(projectId, { limit, ...(page.before ? { before: page.before } : {}) });
@@ -699,16 +1071,25 @@ export type ProducerChatService = ReturnType<typeof createProducerChatService>;
 // In-memory store (tests and the fallback for the service's own unit tests)
 // ---------------------------------------------------------------------------
 
-export function createInMemoryProducerChatStore(seed: {
+export type InMemoryProducerChatSeed = InMemoryReferenceSeed & {
   songModel?: { version: number; model: SongModelData } | null;
   arrangementPlan?: ArrangementPlan | null;
-} = {}): ProducerChatStore & { briefs: ProducerBriefRecord[]; turns: ProducerChatTurnRecord[]; decisions: ProducerBriefDecisionRecord[] } {
+};
+
+export type InMemoryProducerChatStore = ProducerChatStore & {
+  briefs: ProducerBriefRecord[];
+  turns: ProducerChatTurnRecord[];
+  decisions: ProducerBriefDecisionRecord[];
+} & Pick<ReturnType<typeof createInMemoryReferenceStore>, "references" | "fingerprints" | "projectSources">;
+
+export function createInMemoryProducerChatStore(seed: InMemoryProducerChatSeed = {}): InMemoryProducerChatStore {
   const briefs: ProducerBriefRecord[] = [];
   const turns: ProducerChatTurnRecord[] = [];
   const decisions: ProducerBriefDecisionRecord[] = [];
   const byTime = (a: { createdAt: string; id: string }, b: { createdAt: string; id: string }) =>
     a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id);
-  const self: ProducerChatStore & { briefs: ProducerBriefRecord[]; turns: ProducerChatTurnRecord[]; decisions: ProducerBriefDecisionRecord[] } = {
+  const self: InMemoryProducerChatStore = {
+    ...createInMemoryReferenceStore(seed),
     briefs, turns, decisions,
     async currentBrief(projectId) {
       return briefs.filter((b) => b.projectId === projectId).sort((a, b) => b.version - a.version)[0] ?? null;

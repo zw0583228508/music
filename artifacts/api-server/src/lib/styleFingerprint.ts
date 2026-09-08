@@ -17,6 +17,7 @@ import { createHash } from "node:crypto";
 import type {
   FingerprintComparison,
   FingerprintFeatureDelta,
+  ReferenceCopyScope,
   SongModelData,
   StyleFingerprint,
   StyleFingerprintSource,
@@ -348,14 +349,15 @@ export const fingerprintDistance = (left: StyleFingerprint, right: StyleFingerpr
 // into the StyleProfile, by allowed scope
 // ---------------------------------------------------------------------------
 
-export type ReferenceCopyScope = "groove" | "sound" | "arrangement" | "mood";
+/** The scope union now lives in the contract (PR-U4 stores it per reference row); re-exported so callers keep importing it from here. */
+export type { ReferenceCopyScope };
 
 /**
  * Dimensions a reference may contribute, restricted to what the user allowed
  * to be copied from it. Provenance is `inferred` with a `reference:<id>`
- * source ref (the contract has no "referenced" provenance yet; PR-U4 may add
- * one). Confidence is deliberately below a stated value's, so a reference
- * never overrides what the user said.
+ * source ref (the contract has no "referenced" provenance; PR-U4 keeps this
+ * rank on purpose). Confidence is deliberately below a stated value's, so a
+ * reference never overrides what the user said.
  */
 export function dimensionsFromFingerprint(fingerprint: StyleFingerprint, fingerprintId: string, scopes: readonly ReferenceCopyScope[]): Partial<StyleProfileDimensions> {
   const dim = <T>(value: T, confidence = 0.6) => ({ value, confidence, provenance: "inferred" as const, sourceRefs: [`reference:${fingerprintId}`] });
@@ -374,7 +376,11 @@ export function dimensionsFromFingerprint(fingerprint: StyleFingerprint, fingerp
     out.chordExtensions = dim(fingerprint.harmony.chordExtensions === "extended" ? "extended" : fingerprint.harmony.chordExtensions === "sevenths" ? "sevenths" : "triads");
     out.phraseLength = dim(fingerprint.melodicShape.phraseLength, 0.55);
     out.registerTendencies = dim(fingerprint.register.tendency, 0.55);
-    if (fingerprint.instrumentation.hierarchy.length) out.instrumentationHierarchy = dim(fingerprint.instrumentation.hierarchy.filter((f) => f !== "lead" && f !== "bass").slice(0, 6), 0.5);
+    // A Song Model source knows only "lead" and "bass" families; once those
+    // are dropped nothing may remain, and an empty hierarchy is not a value
+    // (PR-U4 live run: it would otherwise win an untouched dimension).
+    const families = fingerprint.instrumentation.hierarchy.filter((f) => f !== "lead" && f !== "bass").slice(0, 6);
+    if (families.length) out.instrumentationHierarchy = dim(families, 0.5);
     out.melodicOrnamentation = dim(fingerprint.melodicShape.ornamentation, 0.5);
   }
   if (allow.has("mood")) {

@@ -50,7 +50,8 @@ import { createStyleResearchAgent, selectResearchProviders } from "../lib/produc
 const router: IRouter = Router();
 
 let service: ProducerChatService | null = null;
-function producerService(): ProducerChatService {
+/** Shared with `routes/references.ts` (PR-U4) so a reference change recompiles through the same service. */
+export function producerService(): ProducerChatService {
   if (!service) {
     const intentModel = selectIntentLanguageModel();
     // Research providers follow the same opt-in as the intent model: the seed
@@ -111,10 +112,11 @@ const statePayload = (state: ProducerBriefState) => ({
   concepts: state.concepts,
   songModelVersion: state.songModelVersion,
   planSource: state.planSource,
+  references: state.references,
   createdAt: state.createdAt,
 });
 
-const turnPayload = (outcome: ProducerTurnOutcome) => ({
+export const turnPayload = (outcome: ProducerTurnOutcome) => ({
   kind: outcome.kind,
   turnId: outcome.turnId,
   producerTurnId: outcome.producerTurnId,

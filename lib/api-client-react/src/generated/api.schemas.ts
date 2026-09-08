@@ -7066,6 +7066,7 @@ export const ProducerChatTurnKind = {
   edit: 'edit',
   explanation: 'explanation',
   supersede: 'supersede',
+  reference: 'reference',
 } as const;
 
 export interface ClarificationAnswer {
@@ -7105,6 +7106,8 @@ export interface ProducerChatTurnStructured {
   explanation?: PlanExplanation;
   planSource?: ProducerChatTurnStructuredPlanSource;
   intentMethod?: string;
+  /** PR-U4 - the reference rows this turn touched */
+  referenceIds?: string[];
 }
 
 export type ProducerChatTurnRole = typeof ProducerChatTurnRole[keyof typeof ProducerChatTurnRole];
@@ -7160,6 +7163,69 @@ export const ProducerBriefStatePlanSource = {
   none: 'none',
 } as const;
 
+export type ReferenceTrackKind = typeof ReferenceTrackKind[keyof typeof ReferenceTrackKind];
+
+
+export const ReferenceTrackKind = {
+  uploaded_audio: 'uploaded_audio',
+  named: 'named',
+} as const;
+
+/**
+ * What a reference may lend the brief (PR-U4). `sound` is empty until audio features exist (PR-27 is symbolic).
+ */
+export type ReferenceCopyScope = typeof ReferenceCopyScope[keyof typeof ReferenceCopyScope];
+
+
+export const ReferenceCopyScope = {
+  groove: 'groove',
+  sound: 'sound',
+  arrangement: 'arrangement',
+  mood: 'mood',
+} as const;
+
+export type ReferenceTrackWithheldItem = {
+  dimension: string;
+  value: StyleDimensionValue;
+  reason: string;
+};
+
+/**
+ * PR-U4 - a named or uploaded reference. Only its content-free PR-27 fingerprint is ever read; a named reference has none and stays a label with a scope and a rights note.
+ */
+export interface ReferenceTrack {
+  id: string;
+  projectId: string;
+  /** @nullable */
+  ownerId: string | null;
+  kind: ReferenceTrackKind;
+  label: string;
+  /**
+     * One of the owner's own uploads (music_project_sources); null for a named reference
+     * @nullable
+     */
+  sourceId: string | null;
+  /** @nullable */
+  songModelVersion: number | null;
+  /**
+     * The music_style_fingerprints row (sourceKind reference_upload) - the only thing learning may read
+     * @nullable
+     */
+  fingerprintId: string | null;
+  allowedScopes: ReferenceCopyScope[];
+  /**
+     * The user's own statement of what this is; required for an uploaded reference, never assumed
+     * @nullable
+     */
+  rightsNote: string | null;
+  /** Dimensions of the current profile that cite this reference's fingerprint (won or corroborated) */
+  contributes?: string[];
+  /** Fingerprint values inside the allowed scopes not offered because the user's own words decide otherwise */
+  withheld?: ReferenceTrackWithheldItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 /**
  * The current brief version with everything the studio shows around it.
  */
@@ -7177,6 +7243,8 @@ export interface ProducerBriefState {
   songModelVersion: number | null;
   /** arrangement = the latest stored ArrangementPlan; derived = planned from the Song Model with the brief's hints; none = no Song Model yet */
   planSource: ProducerBriefStatePlanSource;
+  /** PR-U4 - the project's references with what each lends this brief version */
+  references: ReferenceTrack[];
   createdAt: string;
 }
 
@@ -7279,6 +7347,80 @@ export type ProducerDecisionSupersedeInputDecision = {
 
 export interface ProducerDecisionSupersedeInput {
   decision: ProducerDecisionSupersedeInputDecision;
+}
+
+export type ReferenceTrackInputKind = typeof ReferenceTrackInputKind[keyof typeof ReferenceTrackInputKind];
+
+
+export const ReferenceTrackInputKind = {
+  uploaded_audio: 'uploaded_audio',
+  named: 'named',
+} as const;
+
+export interface ReferenceTrackInput {
+  kind: ReferenceTrackInputKind;
+  /**
+     * @minLength 1
+     * @maxLength 200
+     */
+  label: string;
+  /**
+     * Required for uploaded_audio - one of your own project sources
+     * @minLength 1
+     */
+  sourceId?: string;
+  /** @maxItems 4 */
+  allowedScopes?: ReferenceCopyScope[];
+  /**
+     * Required for uploaded_audio
+     * @maxLength 500
+     */
+  rightsNote?: string;
+}
+
+export interface ReferenceTrackPatchInput {
+  /**
+     * @minLength 1
+     * @maxLength 200
+     */
+  label?: string;
+  /** @maxItems 4 */
+  allowedScopes?: ReferenceCopyScope[];
+  /**
+     * @maxLength 500
+     * @nullable
+     */
+  rightsNote?: string | null;
+}
+
+export interface ReferenceCompareInput {
+  /**
+     * Omitted = the latest arrangement with persisted TrackModels
+     * @minLength 1
+     */
+  arrangementId?: string;
+}
+
+export type ReferenceFingerprintFingerprint = { [key: string]: unknown };
+
+export interface ReferenceFingerprint {
+  id: string;
+  fingerprint: ReferenceFingerprintFingerprint;
+}
+
+export interface ReferenceMutationResult {
+  reference: ReferenceTrack | null;
+  references: ReferenceTrack[];
+  fingerprint?: ReferenceFingerprint;
+  turn?: ProducerTurnResult;
+}
+
+export interface ReferenceComparison {
+  reference: ReferenceTrack;
+  arrangementId: string;
+  arrangementFingerprintId: string;
+  comparison: FingerprintComparison;
+  explanation: PlanExplanation;
 }
 
 /**

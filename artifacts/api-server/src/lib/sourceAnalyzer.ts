@@ -47,6 +47,7 @@ import { deriveVocalPhrasing, detectVocalActivity, isEffectivelySilent } from ".
 import { recordSheetSageCapacityRejection } from "./sheetSageCapacityAlerts";
 import { buildMeterAwareEvidence, createCanonicalTimeline } from "./canonicalTimeline";
 import { formatHostErrorMessage } from "./hostErrorDiagnostics";
+import { fingerprintPendingReferences } from "./referenceIntelligenceDbStore";
 
 export { isEffectivelySilent };
 
@@ -2054,6 +2055,15 @@ export async function analyzeProjectSource(
       });
     });
     hasUncommittedAnalysisObjects = false;
+    // PR-U4: a reference that points at this upload can now be read — as a
+    // content-free fingerprint of the Song Model just committed, nothing
+    // else. Best-effort and after the commit: it never fails the analysis.
+    void fingerprintPendingReferences(source.id).catch((error) => {
+      logger.error({
+        errorMessage: formatHostErrorMessage(error, "Reference fingerprint failed"),
+        sourceId: source.id,
+      }, "reference_fingerprint_hook_failed");
+    });
     logger.info({
       sourceId: source.id,
       attemptId: attempt.id,

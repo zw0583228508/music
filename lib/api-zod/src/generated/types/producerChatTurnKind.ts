@@ -16,4 +16,5 @@ export const ProducerChatTurnKind = {
   edit: 'edit',
   explanation: 'explanation',
   supersede: 'supersede',
+  reference: 'reference',
 } as const;

@@ -312,6 +312,46 @@ export const styleFingerprintsTable = pgTable(
 );
 
 // ---------------------------------------------------------------------------
+// Wave U — PR-U4: reference tracks. A reference the user names or uploads,
+// durable per project. What may be copied from it is an explicit, user-set
+// scope; what *can* be read from it is only its PR-27 fingerprint — a named
+// reference (a song or artist by name) has no audio and no fingerprint, so it
+// stays a label that carries a scope and a rights note and nothing else. The
+// row never holds the reference's content beyond what the project already
+// stores for its own uploads (`sourceId` points at a `music_project_sources`
+// row the same owner uploaded).
+// ---------------------------------------------------------------------------
+
+/** What a reference is allowed to lend the brief. `sound` is empty until audio features exist (PR-27). */
+export type ReferenceCopyScope = "groove" | "sound" | "arrangement" | "mood";
+
+export type ReferenceTrackKind = "uploaded_audio" | "named";
+
+export const musicReferenceTracksTable = pgTable(
+  "music_reference_tracks",
+  {
+    id: text("id").primaryKey(),
+    projectId: text("project_id").notNull().references(() => musicProjectsTable.id, { onDelete: "cascade" }),
+    /** Mirrors `music_projects.owner_id` (nullable there, so nullable here). */
+    ownerId: text("owner_id"),
+    kind: text("kind").$type<ReferenceTrackKind>().notNull(),
+    label: text("label").notNull(),
+    /** The owner's own upload this reference is (any of their projects); null for a named reference. */
+    sourceId: text("source_id").references(() => projectSourcesTable.id, { onDelete: "set null" }),
+    /** Version of that source's Song Model the fingerprint was taken from. */
+    songModelVersion: integer("song_model_version"),
+    /** The PR-27 row (`music_style_fingerprints`, sourceKind `reference_upload`). The only thing learning may read. */
+    fingerprintId: text("fingerprint_id"),
+    allowedScopes: jsonb("allowed_scopes").$type<ReferenceCopyScope[]>().notNull().default([]),
+    /** The user's own statement of what this is ("my own demo", "commercial track for reference only"). Recorded, never assumed. */
+    rightsNote: text("rights_note"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
+  },
+  (table) => [index("music_reference_tracks_project_idx").on(table.projectId, table.createdAt)],
+);
+
+// ---------------------------------------------------------------------------
 // Wave 7 — PR-28: preference events. What the learning system may learn from.
 //
 // The producer-decision ledger (PR-19) records *that* a choice happened, with
@@ -3823,7 +3863,9 @@ export type GenerationPreferenceSnapshot = {
 export type ProducerChatTurnRole = "user" | "producer";
 
 export type ProducerChatTurnKind =
-  | "intake" | "answers" | "refinement" | "edit" | "explanation" | "supersede";
+  | "intake" | "answers" | "refinement" | "edit" | "explanation" | "supersede"
+  /** PR-U4: a reference was added, rescoped, fingerprinted or removed, and the brief recompiled. */
+  | "reference";
 
 /** What a producer turn did to the musical state, in machine-readable form. */
 export type ProducerChatTurnStructured = {
@@ -3846,6 +3888,8 @@ export type ProducerChatTurnStructured = {
   planSource?: "arrangement" | "derived" | "none";
   /** `intent-extraction/v1` or `intent-extraction/v1+<model id>`. */
   intentMethod?: string;
+  /** PR-U4: the reference rows a turn touched (added / rescoped / fingerprinted / removed / compared). */
+  referenceIds?: string[];
 };
 
 export const musicProductionBriefsTable = pgTable(
