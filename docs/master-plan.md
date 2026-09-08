@@ -45,10 +45,18 @@ PerformanceData` — never an audio generator.
   and `arrangementSpace` (budget-annotated windows: vocalDensity level +
   counterMelody/fill/pad budgets). OpenAPI + orval, studio panel. Tests: +2 (11).
 
-Regression baseline held every PR: `songModelValidation` (30), `canonicalTimeline` (9),
-`analysisProviders` (31), `analysisReconciliation` (6).
+- **PR-04** (#5) ✅ — Global Arrangement Planner: `deriveGlobalArrangementPlan()`
+  — whole-song plan before any note (style/substyle, ranked instrument palette,
+  per-section energy/density/tension targets + role + novelty, climax +
+  secondary climax, groove/orchestration/motif/contrast strategy, complexity,
+  production aesthetic, confidence). `ArrangementPlan.globalPlan`; wired into
+  `createArrangementPlan`. OpenAPI + orval. Tests: `globalArrangementPlanner` (7).
 
-## Next: PR-04 — global arrangement planner
+Regression baseline held every PR: `songModelValidation` (30), `canonicalTimeline` (9),
+`analysisProviders` (31), `analysisReconciliation` (6), `music-engines` (40),
+`candidateRanking` (14), `candidateRepair` (20).
+
+## Next: PR-05 — section / phrase / instrument-role planner
 
 ## Environment findings (Windows local)
 
