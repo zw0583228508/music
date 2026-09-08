@@ -2152,6 +2152,38 @@ export type TransitionPlan = {
   devices: TransitionDevicePlan[];
 };
 
+/** Part composition task types (PR-09). */
+export type PartTask =
+  | "DRUMS" | "PERCUSSION" | "BASS" | "PIANO" | "KEYS"
+  | "ACOUSTIC_GUITAR" | "ELECTRIC_GUITAR" | "STRINGS" | "BRASS" | "WOODWINDS"
+  | "PAD" | "OSTINATO" | "COUNTER_MELODY" | "CALL_RESPONSE" | "FILL"
+  | "TRANSITION" | "INTRO" | "ENDING";
+
+/**
+ * Compact index of the parts to compose for an arrangement (PR-09). The full
+ * self-contained `PartGenerationRequest` (previous + current + next context) is
+ * built on demand by the Part Composer; this list fixes the enumeration and the
+ * deterministic seeds so candidate generation (PR-10) is reproducible.
+ */
+export type PartComposerPlan = {
+  version: "1.0";
+  derivedAt: string;
+  inputsDigestSha256: string;
+  method: string;
+  tasks: Array<{
+    id: string;
+    task: PartTask;
+    sectionName: string;
+    instrument: string;
+    role: InstrumentArrangementRole;
+    startBar: number;
+    endBar: number;
+    seed: number;
+    /** Task ids that must be composed first so this part has its context. */
+    dependsOn: string[];
+  }>;
+};
+
 /** Transition Engine (PR-08): planned devices for every section boundary. */
 export type TransitionPlanSet = {
   version: "1.0";
@@ -2175,6 +2207,8 @@ export type ArrangementPlan = {
   orchestrationBudget?: OrchestrationBudgetPlan;
   /** Planned transition devices per section boundary; absent on historical plans. */
   transitionPlan?: TransitionPlanSet;
+  /** Compact index of parts to compose (full request built on demand); absent on historical plans. */
+  partComposerPlan?: PartComposerPlan;
   /** Absent only on historical persisted plans, which are interpreted as v1. */
   compositionIntelligence?: CompositionIntelligencePlan;
   /** Frozen before notes are generated; absent on historical plans. */

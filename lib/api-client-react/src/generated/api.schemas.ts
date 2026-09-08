@@ -5327,6 +5327,64 @@ export interface TransitionPlanSet {
   transitions: TransitionPlan[];
 }
 
+export type PartComposerPlanVersion = typeof PartComposerPlanVersion[keyof typeof PartComposerPlanVersion];
+
+
+export const PartComposerPlanVersion = {
+  '10': '1.0',
+} as const;
+
+export type PartTask = typeof PartTask[keyof typeof PartTask];
+
+
+export const PartTask = {
+  DRUMS: 'DRUMS',
+  PERCUSSION: 'PERCUSSION',
+  BASS: 'BASS',
+  PIANO: 'PIANO',
+  KEYS: 'KEYS',
+  ACOUSTIC_GUITAR: 'ACOUSTIC_GUITAR',
+  ELECTRIC_GUITAR: 'ELECTRIC_GUITAR',
+  STRINGS: 'STRINGS',
+  BRASS: 'BRASS',
+  WOODWINDS: 'WOODWINDS',
+  PAD: 'PAD',
+  OSTINATO: 'OSTINATO',
+  COUNTER_MELODY: 'COUNTER_MELODY',
+  CALL_RESPONSE: 'CALL_RESPONSE',
+  FILL: 'FILL',
+  TRANSITION: 'TRANSITION',
+  INTRO: 'INTRO',
+  ENDING: 'ENDING',
+} as const;
+
+export type PartComposerPlanTasksItem = {
+  id: string;
+  task: PartTask;
+  sectionName: string;
+  instrument: string;
+  role: InstrumentArrangementRole;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  /** @minimum 0 */
+  seed: number;
+  dependsOn: string[];
+};
+
+/**
+ * Part Composer contract (PR-09) — compact index of parts to compose.
+ */
+export interface PartComposerPlan {
+  version: PartComposerPlanVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  tasks: PartComposerPlanTasksItem[];
+}
+
 export interface ArrangementPlan {
   id: string;
   version: number;
@@ -5340,6 +5398,7 @@ export interface ArrangementPlan {
   sectionPlan?: SectionPhrasePlan;
   orchestrationBudget?: OrchestrationBudgetPlan;
   transitionPlan?: TransitionPlanSet;
+  partComposerPlan?: PartComposerPlan;
   compositionIntelligence?: CompositionIntelligencePlan;
   generationPreference?: GenerationPreferenceSnapshot | null;
 }

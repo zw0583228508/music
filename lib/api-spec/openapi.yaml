@@ -4450,6 +4450,7 @@ components:
         sectionPlan: { $ref: "#/components/schemas/SectionPhrasePlan" }
         orchestrationBudget: { $ref: "#/components/schemas/OrchestrationBudgetPlan" }
         transitionPlan: { $ref: "#/components/schemas/TransitionPlanSet" }
+        partComposerPlan: { $ref: "#/components/schemas/PartComposerPlan" }
         compositionIntelligence: { $ref: "#/components/schemas/CompositionIntelligencePlan" }
         generationPreference:
           oneOf:
@@ -4688,3 +4689,30 @@ components:
         inputsDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
         method: { type: string }
         transitions: { type: array, items: { $ref: "#/components/schemas/TransitionPlan" } }
+    PartTask:
+      type: string
+      enum: [DRUMS, PERCUSSION, BASS, PIANO, KEYS, ACOUSTIC_GUITAR, ELECTRIC_GUITAR, STRINGS, BRASS, WOODWINDS, PAD, OSTINATO, COUNTER_MELODY, CALL_RESPONSE, FILL, TRANSITION, INTRO, ENDING]
+    PartComposerPlan:
+      type: object
+      description: Part Composer contract (PR-09) — compact index of parts to compose.
+      required: [version, derivedAt, inputsDigestSha256, method, tasks]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        derivedAt: { type: string, format: date-time }
+        inputsDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        method: { type: string }
+        tasks:
+          type: array
+          items:
+            type: object
+            required: [id, task, sectionName, instrument, role, startBar, endBar, seed, dependsOn]
+            properties:
+              id: { type: string }
+              task: { $ref: "#/components/schemas/PartTask" }
+              sectionName: { type: string }
+              instrument: { type: string }
+              role: { $ref: "#/components/schemas/InstrumentArrangementRole" }
+              startBar: { type: number, minimum: 1 }
+              endBar: { type: number, minimum: 1 }
+              seed: { type: number, minimum: 0 }
+              dependsOn: { type: array, items: { type: string } }
