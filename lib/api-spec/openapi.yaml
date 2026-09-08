@@ -4769,6 +4769,41 @@ components:
         strengths: { type: array, items: { type: string } }
         weaknesses: { type: array, items: { type: string } }
         recommendedRepairs: { type: array, items: { $ref: "#/components/schemas/CritiqueRecommendedRepair" } }
+    CriticRepairRequest:
+      type: object
+      required: [id, dimension, operations, reason]
+      properties:
+        id: { type: string }
+        dimension: { $ref: "#/components/schemas/CritiqueDimension" }
+        sectionName: { type: string }
+        instrument: { type: string }
+        startBar: { type: number }
+        endBar: { type: number }
+        operations: { type: array, items: { type: string } }
+        reason: { type: string }
+    CriticRepairPass:
+      type: object
+      required: [pass, requests, applied, scoreBefore, scoreAfter, feasibleAfter]
+      properties:
+        pass: { type: number, minimum: 1 }
+        requests: { type: array, items: { $ref: "#/components/schemas/CriticRepairRequest" } }
+        applied: { type: array, items: { type: string } }
+        scoreBefore: { type: number, minimum: 0, maximum: 100 }
+        scoreAfter: { type: number, minimum: 0, maximum: 100 }
+        feasibleAfter: { type: boolean }
+    CriticRepairLoopResult:
+      type: object
+      description: Critic → Repair loop result (PR-12).
+      required: [version, method, maxPasses, outcome, initialScore, finalScore, passes, finalCritique]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        method: { type: string }
+        maxPasses: { type: number, minimum: 1 }
+        outcome: { type: string, enum: [not_needed, improved, plateau, exhausted, infeasible] }
+        initialScore: { type: number, minimum: 0, maximum: 100 }
+        finalScore: { type: number, minimum: 0, maximum: 100 }
+        passes: { type: array, items: { $ref: "#/components/schemas/CriticRepairPass" } }
+        finalCritique: { $ref: "#/components/schemas/ArrangementCritique" }
     CandidateGenerationPlan:
       type: object
       description: Deliberate candidate-generation strategies (PR-10).

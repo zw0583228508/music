@@ -2239,6 +2239,43 @@ export type ArrangementCritique = {
   recommendedRepairs: CritiqueRecommendedRepair[];
 };
 
+/** A bounded repair request produced from a critique (PR-12). */
+export type CriticRepairRequest = {
+  id: string;
+  dimension: CritiqueDimension;
+  sectionName?: string;
+  instrument?: string;
+  startBar?: number;
+  endBar?: number;
+  /** Concrete operations a generator/plan-editor should perform, scoped tight. */
+  operations: string[];
+  reason: string;
+};
+
+export type CriticRepairPass = {
+  pass: number;
+  requests: CriticRepairRequest[];
+  applied: string[];
+  scoreBefore: number;
+  scoreAfter: number;
+  feasibleAfter: boolean;
+};
+
+/**
+ * Critic → Repair loop result (PR-12). Bounded number of passes; each pass
+ * regenerates only the flagged scope, then re-critiques.
+ */
+export type CriticRepairLoopResult = {
+  version: "1.0";
+  method: string;
+  maxPasses: number;
+  outcome: "not_needed" | "improved" | "plateau" | "exhausted" | "infeasible";
+  initialScore: number;
+  finalScore: number;
+  passes: CriticRepairPass[];
+  finalCritique: ArrangementCritique;
+};
+
 /** Deliberate candidate-generation strategies (PR-10). */
 export type CandidateStrategyId =
   | "conservative" | "rhythmic" | "melodic" | "sparse" | "adventurous";
