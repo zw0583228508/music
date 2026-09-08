@@ -4449,6 +4449,7 @@ components:
         globalPlan: { $ref: "#/components/schemas/GlobalArrangementPlan" }
         sectionPlan: { $ref: "#/components/schemas/SectionPhrasePlan" }
         orchestrationBudget: { $ref: "#/components/schemas/OrchestrationBudgetPlan" }
+        transitionPlan: { $ref: "#/components/schemas/TransitionPlanSet" }
         compositionIntelligence: { $ref: "#/components/schemas/CompositionIntelligencePlan" }
         generationPreference:
           oneOf:
@@ -4650,3 +4651,40 @@ components:
         registerOccupancy:
           type: array
           items: { $ref: "#/components/schemas/RegisterOccupancySpan" }
+    TransitionDevice:
+      type: string
+      enum: [drum_fill, bass_pickup, keys_pickup, guitar_pickup, string_run, brass_push, cymbal_swell, cymbal_choke, break, stop, anticipation, turnaround, riser, reverse, build_up, breakdown, ending_hit, ritardando]
+    TransitionDevicePlan:
+      type: object
+      required: [device, instrument, startBar, endBar, intensity, rationale]
+      properties:
+        device: { $ref: "#/components/schemas/TransitionDevice" }
+        instrument: { type: string }
+        startBar: { type: number, minimum: 1 }
+        endBar: { type: number, minimum: 1 }
+        intensity: { type: number, minimum: 0, maximum: 1 }
+        rationale: { type: string }
+    TransitionPlan:
+      type: object
+      required: [id, fromSection, toSection, atBar, approachBars, kind, strength, harmonicApproach, vocalSafe, devices]
+      properties:
+        id: { type: string }
+        fromSection: { type: string }
+        toSection: { type: string }
+        atBar: { type: number, minimum: 1 }
+        approachBars: { type: number, minimum: 0 }
+        kind: { type: string, enum: [build, drop, continue, break] }
+        strength: { type: number, minimum: 0, maximum: 1 }
+        harmonicApproach: { type: string, enum: [dominant_prep, plagal, chromatic, static, none] }
+        vocalSafe: { type: boolean }
+        devices: { type: array, items: { $ref: "#/components/schemas/TransitionDevicePlan" } }
+    TransitionPlanSet:
+      type: object
+      description: Transition Engine (PR-08) — planned devices per section boundary.
+      required: [version, derivedAt, inputsDigestSha256, method, transitions]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        derivedAt: { type: string, format: date-time }
+        inputsDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        method: { type: string }
+        transitions: { type: array, items: { $ref: "#/components/schemas/TransitionPlan" } }

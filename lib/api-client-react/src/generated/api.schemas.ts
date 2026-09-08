@@ -5229,6 +5229,104 @@ export interface OrchestrationBudgetPlan {
   registerOccupancy: RegisterOccupancySpan[];
 }
 
+export type TransitionPlanSetVersion = typeof TransitionPlanSetVersion[keyof typeof TransitionPlanSetVersion];
+
+
+export const TransitionPlanSetVersion = {
+  '10': '1.0',
+} as const;
+
+export type TransitionPlanKind = typeof TransitionPlanKind[keyof typeof TransitionPlanKind];
+
+
+export const TransitionPlanKind = {
+  build: 'build',
+  drop: 'drop',
+  continue: 'continue',
+  break: 'break',
+} as const;
+
+export type TransitionPlanHarmonicApproach = typeof TransitionPlanHarmonicApproach[keyof typeof TransitionPlanHarmonicApproach];
+
+
+export const TransitionPlanHarmonicApproach = {
+  dominant_prep: 'dominant_prep',
+  plagal: 'plagal',
+  chromatic: 'chromatic',
+  static: 'static',
+  none: 'none',
+} as const;
+
+export type TransitionDevice = typeof TransitionDevice[keyof typeof TransitionDevice];
+
+
+export const TransitionDevice = {
+  drum_fill: 'drum_fill',
+  bass_pickup: 'bass_pickup',
+  keys_pickup: 'keys_pickup',
+  guitar_pickup: 'guitar_pickup',
+  string_run: 'string_run',
+  brass_push: 'brass_push',
+  cymbal_swell: 'cymbal_swell',
+  cymbal_choke: 'cymbal_choke',
+  break: 'break',
+  stop: 'stop',
+  anticipation: 'anticipation',
+  turnaround: 'turnaround',
+  riser: 'riser',
+  reverse: 'reverse',
+  build_up: 'build_up',
+  breakdown: 'breakdown',
+  ending_hit: 'ending_hit',
+  ritardando: 'ritardando',
+} as const;
+
+export interface TransitionDevicePlan {
+  device: TransitionDevice;
+  instrument: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  intensity: number;
+  rationale: string;
+}
+
+export interface TransitionPlan {
+  id: string;
+  fromSection: string;
+  toSection: string;
+  /** @minimum 1 */
+  atBar: number;
+  /** @minimum 0 */
+  approachBars: number;
+  kind: TransitionPlanKind;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  strength: number;
+  harmonicApproach: TransitionPlanHarmonicApproach;
+  vocalSafe: boolean;
+  devices: TransitionDevicePlan[];
+}
+
+/**
+ * Transition Engine (PR-08) — planned devices per section boundary.
+ */
+export interface TransitionPlanSet {
+  version: TransitionPlanSetVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  transitions: TransitionPlan[];
+}
+
 export interface ArrangementPlan {
   id: string;
   version: number;
@@ -5241,6 +5339,7 @@ export interface ArrangementPlan {
   globalPlan?: GlobalArrangementPlan;
   sectionPlan?: SectionPhrasePlan;
   orchestrationBudget?: OrchestrationBudgetPlan;
+  transitionPlan?: TransitionPlanSet;
   compositionIntelligence?: CompositionIntelligencePlan;
   generationPreference?: GenerationPreferenceSnapshot | null;
 }

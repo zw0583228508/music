@@ -15,6 +15,7 @@ import type { GlobalArrangementPlan } from './globalArrangementPlan';
 import type { OrchestrationBudgetPlan } from './orchestrationBudgetPlan';
 import type { SectionPhrasePlan } from './sectionPhrasePlan';
 import type { StyleSpec } from './styleSpec';
+import type { TransitionPlanSet } from './transitionPlanSet';
 
 export interface ArrangementPlan {
   id: string;
@@ -28,6 +29,7 @@ export interface ArrangementPlan {
   globalPlan?: GlobalArrangementPlan;
   sectionPlan?: SectionPhrasePlan;
   orchestrationBudget?: OrchestrationBudgetPlan;
+  transitionPlan?: TransitionPlanSet;
   compositionIntelligence?: CompositionIntelligencePlan;
   generationPreference?: GenerationPreferenceSnapshot | null;
 }

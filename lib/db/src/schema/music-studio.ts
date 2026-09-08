@@ -2122,6 +2122,45 @@ export type OrchestrationBudgetPlan = {
   registerOccupancy: RegisterOccupancySpan[];
 };
 
+export type TransitionDevice =
+  | "drum_fill" | "bass_pickup" | "keys_pickup" | "guitar_pickup" | "string_run"
+  | "brass_push" | "cymbal_swell" | "cymbal_choke" | "break" | "stop"
+  | "anticipation" | "turnaround" | "riser" | "reverse" | "build_up"
+  | "breakdown" | "ending_hit" | "ritardando";
+
+export type TransitionDevicePlan = {
+  device: TransitionDevice;
+  instrument: string;
+  startBar: number;
+  endBar: number;
+  intensity: number;
+  rationale: string;
+};
+
+export type TransitionPlan = {
+  id: string;
+  fromSection: string;
+  toSection: string;
+  /** First bar of the target section. */
+  atBar: number;
+  /** Bars before `atBar` the transition occupies. */
+  approachBars: number;
+  kind: "build" | "drop" | "continue" | "break";
+  strength: number;
+  harmonicApproach: "dominant_prep" | "plagal" | "chromatic" | "static" | "none";
+  vocalSafe: boolean;
+  devices: TransitionDevicePlan[];
+};
+
+/** Transition Engine (PR-08): planned devices for every section boundary. */
+export type TransitionPlanSet = {
+  version: "1.0";
+  derivedAt: string;
+  inputsDigestSha256: string;
+  method: string;
+  transitions: TransitionPlan[];
+};
+
 export type ArrangementPlan = {
   id: string; version: number; sections: ArrangementPlanSection[]; style: StyleSpec;
   songModelVersion: number; parameters: Record<string, number | string | boolean>;
@@ -2134,6 +2173,8 @@ export type ArrangementPlan = {
   sectionPlan?: SectionPhrasePlan;
   /** Per-moment orchestration budgets + register occupancy; absent on historical plans. */
   orchestrationBudget?: OrchestrationBudgetPlan;
+  /** Planned transition devices per section boundary; absent on historical plans. */
+  transitionPlan?: TransitionPlanSet;
   /** Absent only on historical persisted plans, which are interpreted as v1. */
   compositionIntelligence?: CompositionIntelligencePlan;
   /** Frozen before notes are generated; absent on historical plans. */
