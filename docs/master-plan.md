@@ -21,23 +21,28 @@ PerformanceData` — never an audio generator.
 
 | Item | State |
 |---|---|
-| Repo imported, `git init`, baseline commit | ✅ `9b6f6a5` |
-| `pnpm install` | ✅ 537 pkgs |
-| `pnpm run typecheck` green | ✅ after `7070637` (music-critic v1/v2 finding union) |
-| `pnpm run build` (full) | ⚠️ `vite build` fails on Windows — rollup native binary stripped by `pnpm-workspace.yaml` overrides (Replit-linux-only). Dev server (`vite`) is unaffected. Deferred to PR-00. |
-| PostgreSQL | ⏳ user created a Neon project ("music ai") — connection string pending |
-| GitHub remote | ✅ `github.com/zw0583228508/music`; `main` + PR-00 (#1) + PR-01 (#2, draft) pushed |
-| Local run (api-server + music-studio) | ⏳ needs `DATABASE_URL` → `pnpm run db:push` |
+| `pnpm install` / `pnpm run typecheck` | ✅ green (fix `7070637`) |
+| Local stack (api-server :5000 + music-studio :5173) | ✅ running against Neon; `pnpm run dev:api` / `dev:studio` |
+| GitHub | ✅ `github.com/zw0583228508/music` |
+| Windows `vite` dev + `db:push` + launcher | ✅ fixed in PR-00 |
 
-## PR progress
+## PR progress (merged to `main`)
 
-- **PR-00** (#1) — local dev harness. Done, PR open.
-- **PR-01** (#2, draft) — Canonical Song Model V2. Core landed:
-  `SongModelData.musicalMap` type; `songMusicalMap.ts` (`deriveMusicalMap`,
-  digest/staleness, coordinate canonicalization, shape validation);
-  fusion + refresh wiring; `songMusicalMap.test.ts` (9). Regression:
-  `songModelValidation` (30) + `canonicalTimeline` (9) green. Remaining:
-  OpenAPI `SongModelMusicalMap` + orval regen; read-only studio panel.
+- **PR-00** (#1) ✅ — local dev harness: filesystem object storage, `/api/dev-login`,
+  vite `/api` proxy, cross-platform launcher, Windows native-binary + drizzle-glob fixes.
+- **PR-01** (#2) ✅ — Canonical Song Model V2: additive `musicalMap`
+  (harmony/melody/rhythm/energy/structure/styleFingerprint) — deterministic
+  deriver, digest/staleness, coordinate canonicalization, shape validation,
+  fusion wiring, OpenAPI + orval, read-only studio panel. Tests: `songMusicalMap` (9).
+- **PR-02** (#3) ✅ — Analysis Reconciliation V2: `ProviderReliabilityProfile`
+  registry (9 domains, legacy weights preserved), `reconcileAnalysisDomains()`
+  → `DomainReconciliationReport`, `SongModelData.reconciliation`, OpenAPI + orval,
+  `sourceAnalyzer` wiring. Tests: `providerReliability` (5), `analysisReconciliation` (+2).
+
+Regression baseline held every PR: `songModelValidation` (30), `canonicalTimeline` (9),
+`analysisProviders` (31).
+
+## Next: PR-03 — vocal / phrase / space intelligence
 
 ## Environment findings (Windows local)
 
