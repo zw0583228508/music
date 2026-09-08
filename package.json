@@ -7,9 +7,9 @@
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
-    "db:push": "sh -c 'set -a; . ./.env.local; set +a; pnpm --filter @workspace/db run push'",
-    "dev:api": "sh -c 'set -a; . ./.env.local; set +a; pnpm --filter @workspace/api-server run dev'",
-    "dev:studio": "sh -c 'pnpm --filter @workspace/music-studio run dev'"
+    "db:push": "node scripts/dev-local.mjs db-push",
+    "dev:api": "node scripts/dev-local.mjs api",
+    "dev:studio": "node scripts/dev-local.mjs studio"
   },
   "private": true,
   "dependencies": {
