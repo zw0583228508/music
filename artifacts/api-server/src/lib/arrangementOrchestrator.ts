@@ -20,6 +20,7 @@ import type {
   MusicalNote,
   SongModelData,
   TrackModel,
+  PerformanceStyle,
 } from "@workspace/db";
 import {
   canonicalPerformancePhraseIds,
@@ -100,6 +101,11 @@ export type OrchestrateInput = {
   render?: boolean;
   renderOptions?: StemRenderOptions;
   now?: Date;
+  /**
+   * PR-23: performance style resolved from the project's StyleProfile
+   * (performanceStyleFromProfile). Absent keeps V1 performance behaviour.
+   */
+  performanceStyle?: PerformanceStyle;
 };
 
 // ---------------------------------------------------------------------------
@@ -301,6 +307,11 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
         // and a monophonic instrument stays monophonic after humanisation.
         articulationVocabulary: track.instrumentDefinition.articulations,
         maxSimultaneousNotes: track.instrumentDefinition.constraints.maxSimultaneousNotes,
+        // PR-23: the project's performance style (from its StyleProfile) and
+        // the track's articulation map, so keyswitches reach the renderer.
+        performanceStyle: input.performanceStyle,
+        articulationMap: track.mapping?.articulationMap,
+        playableRange: track.instrumentDefinition.playableRange,
       });
       const performedTrack: TrackModel = {
         ...track,

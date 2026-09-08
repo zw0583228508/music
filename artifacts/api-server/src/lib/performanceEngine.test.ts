@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { MusicalNote, PhrasePlan } from "@workspace/db";
-import { PERFORMANCE_ENGINE, applyPerformance } from "./performanceEngine";
+import { PERFORMANCE_ENGINE, applyPerformance, performanceStyleFromProfile } from "./performanceEngine";
 
 /** Straight 8ths at 120 BPM (beat = 0.5 s, bar = 2 s). */
 const eighths = (pitch: number, count = 16): MusicalNote[] =>
@@ -121,6 +121,126 @@ test("a bass is plucked, and no articulation leaves the instrument's vocabulary"
     notes: eighths(72), articulationVocabulary: ["legato", "bow_change", "staccato"],
   });
   assert.ok(section.articulations.some((a) => a.name === "bow_change"));
+});
+
+// ---------------------------------------------------------------------------
+// PR-23: style-driven performance
+// ---------------------------------------------------------------------------
+
+test("without a style the engine is V1: no ornaments, fills or keyswitches, evidence says 1.0", () => {
+  const performed = applyPerformance({ ...base, instrument: "keys", family: "keys", role: "LEAD", notes: eighths(64) });
+  assert.equal(performed.evidence.engineVersion, "1.0");
+  assert.equal(performed.evidence.styleInputs, undefined);
+  assert.ok(!performed.notes.some((n) => n.id.includes("-grace") || n.id.includes("-fill")));
+  assert.ok(!performed.articulations.some((a) => a.keyswitch !== undefined));
+  // An empty style enables V2 without changing any parameter it does not name.
+  const v2 = applyPerformance({ ...base, instrument: "keys", family: "keys", role: "LEAD", notes: eighths(64), performanceStyle: {} });
+  assert.equal(v2.evidence.engineVersion, "2.0");
+  assert.deepEqual(v2.evidence.styleInputs, []);
+});
+
+test("the swing ratio comes from the style, not a constant", () => {
+  const notes = eighths(60);
+  const light = applyPerformance({ ...base, instrument: "keys", family: "keys", role: "GROOVE", notes, performanceStyle: { swingRatio: 0.58 } });
+  const heavy = applyPerformance({ ...base, instrument: "keys", family: "keys", role: "GROOVE", notes, performanceStyle: { swingRatio: 0.67 } });
+  const offbeat = (p: ReturnType<typeof applyPerformance>) => p.notes.find((n) => n.id === "n1")!.start - 0.25;
+  assert.ok(offbeat(heavy) > offbeat(light) + 0.02, "a heavier ratio pushes the offbeat later");
+  assert.ok(heavy.evidence.decisions.some((d) => d.reasons.some((r) => /swing ratio 0\.67/.test(r))));
+});
+
+test("microtiming behind sits later than ahead, and quantized is tighter than loose", () => {
+  const run = (microtiming: "behind" | "ahead" | "quantized" | "loose") =>
+    applyPerformance({ ...base, instrument: "keys", family: "keys", role: "HARMONIC_BED", notes: eighths(60), performanceStyle: { microtiming } });
+  assert.ok(run("behind").evidence.meanTimingOffsetMs > run("ahead").evidence.meanTimingOffsetMs + 10);
+  assert.ok(run("quantized").evidence.timingStdMs < run("loose").evidence.timingStdMs);
+});
+
+test("wide dynamics spread velocity more than narrow", () => {
+  const spread = (dynamics: "narrow" | "wide") => {
+    const p = applyPerformance({ ...base, instrument: "keys", family: "keys", role: "LEAD", notes: eighths(64, 32), performanceStyle: { dynamics } });
+    const v = p.notes.map((n) => n.velocity);
+    return Math.max(...v) - Math.min(...v);
+  };
+  assert.ok(spread("wide") > spread("narrow"));
+});
+
+test("ornaments go to melodic roles only, stay in range, and keep a monophonic line playable", () => {
+  // A real contour: the phrase peaks mid-way, so peak, start and end differ.
+  const contour = eighths(72).map((n, i) => ({ ...n, pitch: 72 + [0, 2, 4, 5, 7, 5, 4, 2][i % 8] }));
+  const lead = applyPerformance({
+    ...base, instrument: "flute", family: "winds", role: "LEAD", notes: contour,
+    performanceStyle: { melodicOrnamentation: "heavy" }, playableRange: { min: 60, max: 96 }, maxSimultaneousNotes: 1,
+  });
+  const graces = lead.notes.filter((n) => n.id.endsWith("-grace"));
+  assert.equal(graces.length, 2, "heavy: the phrase peak and the phrase end get a grace note (the first note has no room before it)");
+  assert.ok(graces.some((g) => g.id === "n4-grace"), "the grace leads into the peak");
+  assert.ok(graces.every((g) => g.pitch >= 60), "ornaments never leave the playable range");
+  const sorted = [...lead.notes].sort((a, b) => a.start - b.start);
+  for (let i = 0; i + 1 < sorted.length; i += 1) {
+    assert.ok(sorted[i].start + sorted[i].duration - sorted[i + 1].start <= 0.03 + 1e-6, "monophony survives the ornaments");
+  }
+  assert.equal(lead.evidence.addedEvents.ornaments, graces.length);
+  const bed = applyPerformance({ ...base, instrument: "keys", family: "keys", role: "HARMONIC_BED", notes: eighths(60), performanceStyle: { melodicOrnamentation: "heavy" } });
+  assert.equal(bed.evidence.addedEvents.ornaments, 0, "a harmonic bed is not ornamented");
+});
+
+test("drum fills land on the beat before a cadence, and only for the groove role", () => {
+  const drumNotes: MusicalNote[] = Array.from({ length: 32 }, (_, i) => ({
+    id: `k${i}`, start: i * 0.5, duration: 0.2, pitch: i % 2 ? 38 : 36, velocity: 100,
+  }));
+  const kit = applyPerformance({ ...base, instrument: "drums", family: "drums", role: "GROOVE", notes: drumNotes, performanceStyle: { fillFrequency: "moderate" } });
+  const fills = kit.notes.filter((n) => n.id.includes("-fill-"));
+  assert.equal(fills.length, 4, "one four-note fill into the cadence phrase (bar 5)");
+  const phraseStart = 4 * 2; // bar 5 at 2 s per bar
+  assert.ok(fills.every((n) => n.start >= phraseStart - 0.5 - 1e-6 && n.start < phraseStart));
+  assert.ok(fills[3].velocity > fills[0].velocity, "the fill rises into the phrase");
+  const rare = applyPerformance({ ...base, instrument: "drums", family: "drums", role: "GROOVE", notes: drumNotes, performanceStyle: { fillFrequency: "rare" } });
+  assert.equal(rare.evidence.addedEvents.fills, 0, "rare fills only into explicit fill phrases");
+});
+
+test("articulations resolve to keyswitches through the track map, and never without one", () => {
+  const withMap = applyPerformance({
+    ...base, instrument: "Violins", family: "strings", role: "HARMONIC_BED", notes: eighths(72),
+    articulationVocabulary: ["legato", "bow_change", "staccato"], performanceStyle: {}, articulationMap: { bow_change: 24, legato: "25" },
+  });
+  const keyed = withMap.articulations.filter((a) => a.keyswitch !== undefined);
+  assert.ok(keyed.length > 0);
+  assert.ok(keyed.every((a) => (a.name === "bow_change" && a.keyswitch === 24) || (a.name === "legato" && a.keyswitch === 25)));
+  assert.equal(withMap.evidence.addedEvents.keyswitches, keyed.length);
+  const withoutMap = applyPerformance({
+    ...base, instrument: "Violins", family: "strings", role: "HARMONIC_BED", notes: eighths(72),
+    articulationVocabulary: ["legato", "bow_change", "staccato"], performanceStyle: {},
+  });
+  assert.ok(withoutMap.articulations.every((a) => a.keyswitch === undefined));
+  assert.ok(withoutMap.articulations.some((a) => a.name === "legato"), "a connected line is marked legato at phrase starts");
+});
+
+test("a bass placed laid back arrives after one anticipated, and sustained lengthens within monophony", () => {
+  const notes = eighths(40);
+  const laidBack = applyPerformance({ ...base, instrument: "Electric Bass", family: "strings", role: "BASS", notes, performanceStyle: { bassAttackPosition: "laid_back" }, maxSimultaneousNotes: 1 });
+  const early = applyPerformance({ ...base, instrument: "Electric Bass", family: "strings", role: "BASS", notes, performanceStyle: { bassAttackPosition: "anticipated" }, maxSimultaneousNotes: 1 });
+  assert.ok(laidBack.evidence.meanTimingOffsetMs > early.evidence.meanTimingOffsetMs + 20);
+  const sustained = applyPerformance({ ...base, instrument: "Electric Bass", family: "strings", role: "BASS", notes, performanceStyle: { bassAttackPosition: "sustained" }, maxSimultaneousNotes: 1 });
+  const sorted = [...sustained.notes].sort((a, b) => a.start - b.start);
+  for (let i = 0; i + 1 < sorted.length; i += 1) assert.ok(sorted[i].start + sorted[i].duration - sorted[i + 1].start <= 0.03 + 1e-6);
+});
+
+test("performanceStyleFromProfile carries only evidenced dimensions, with provenance", () => {
+  const profile = {
+    version: "1.0", derivedAt: "", inputsDigestSha256: "", method: "t", exclusions: [], conflicts: [], sources: [], confidence: 0.5,
+    dimensions: {
+      swingRatio: { value: 0.62, confidence: 0.8, provenance: "stated" },
+      microtiming: { value: "behind", confidence: 0.6, provenance: "inferred" },
+      dynamics: { value: "nonsense", confidence: 0.9, provenance: "stated" },
+    },
+  } as unknown as Parameters<typeof performanceStyleFromProfile>[0];
+  const style = performanceStyleFromProfile(profile);
+  assert.equal(style.swingRatio, 0.62);
+  assert.equal(style.microtiming, "behind");
+  assert.equal(style.dynamics, undefined, "an out-of-vocabulary value is not carried");
+  assert.equal(style.melodicOrnamentation, undefined, "absent stays absent");
+  assert.deepEqual(style.sources?.map((s) => [s.dimension, s.provenance]), [["swingRatio", "stated"], ["microtiming", "inferred"]]);
+  assert.deepEqual(performanceStyleFromProfile(null), {});
 });
 
 test("a wind part breathes before long rests", () => {

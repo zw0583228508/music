@@ -237,6 +237,44 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
     chain (`ECONNREFUSED 127.0.0.1:1106`) is now kept, and the export job logs
     the full error.
 
+- **PR-23** ✅ — `performance-engine-v2`: the Performance Engine reads the
+  style instead of hard-coding it. `performanceStyleFromProfile(StyleProfile)`
+  lifts the performance-relevant slice of a resolved profile — `swingRatio`,
+  `microtiming`, `dynamics`, `melodicOrnamentation`, `bassAttackPosition`,
+  `fillFrequency`, `articulationLanguage` — keeping only dimensions the profile
+  evidences, each with its provenance. `applyPerformance` takes it as
+  `performanceStyle` and:
+  - swings to the profile's ratio (V1 swung every offbeat to the triplet
+    point); sits behind/ahead/quantized/loose per `microtiming`; widens or
+    narrows the velocity range per `dynamics`; places the bass attack
+    (anticipated / laid back / sustained) against the kick;
+  - shapes phrases by role — openings and pickups start under, cadences taper,
+    fills lean in;
+  - adds seeded grace notes for melodic roles (LEAD / COUNTER_MELODY /
+    CALL_RESPONSE only), inside the playable range, before the monophony clamp
+    so a solo line stays playable;
+  - writes four-sixteenth drum fills into phrase boundaries for the GROOVE
+    role, gated by `fillFrequency`;
+  - marks sustaining lines legato / staccato per phrase through the vocabulary
+    gate, and resolves articulations to **keyswitches** through the track's
+    `articulationMap` so the VST3 worker plays them.
+  Evidence is extended additively (`engineVersion`, `addedEvents.{ornaments,
+  fills,keyswitches}`, `styleInputs[]` with provenance). The Arrangement Brain
+  provider reads `parameters.styleProfile` and records
+  `performanceEngineVersion` / `performanceStyleInputs` on every candidate,
+  which is where Wave U's brief pipeline hands the profile over.
+
+  **Regression guarantee.** With no style, the output is byte-identical to V1:
+  verified against `main`'s engine across 7 instrument/role cases × 3 seeds
+  (notes, CC, articulations, evidence), and the V1 suite passes unchanged.
+  Suites: performanceEngine 19, orchestrator 7, provider 7.
+
+  **Honest limits.** Grace notes are a whole step below the target (no key
+  awareness yet — the engine has no key at this point in the chain); fills use
+  a fixed snare/tom pattern; `articulationLanguage` is carried in evidence but
+  not yet interpreted beyond legato/staccato. Nobody has listened to a styled
+  performance; that waits for the blind evaluation the plan requires.
+
   **Honest limits.** Only Retrologue is attested here: Groove Agent SE, Padshop
   and HALion Sonic render silence without a loaded program, so their smoke
   correctly refuses them until a `.vstpreset` is provided. The bass lives in

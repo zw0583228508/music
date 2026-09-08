@@ -106,6 +106,35 @@ test("the same Song Model and seed give the same arrangement", async () => {
   );
 });
 
+test("a StyleProfile in the parameters shapes the performance (PR-23); without one the performance is V1", async () => {
+  const provider = new LocalArrangementOrchestratorProvider();
+  const plain = await provider.generate(generationInput(1));
+  assert.equal(plain.candidates[0].parameters["performanceEngineVersion"], "1.0");
+  const styleProfile = {
+    version: "1.0", derivedAt: "1970-01-01T00:00:00.000Z", inputsDigestSha256: "0".repeat(64), method: "test",
+    exclusions: [], conflicts: [], sources: [], confidence: 0.7,
+    dimensions: {
+      swingRatio: { value: 0.64, confidence: 0.8, provenance: "stated" },
+      microtiming: { value: "behind", confidence: 0.6, provenance: "inferred" },
+    },
+  };
+  const styled = await provider.generate({ ...generationInput(1), parameters: { styleProfile } });
+  assert.equal(styled.candidates[0].parameters["performanceEngineVersion"], "2.0");
+  assert.deepEqual(styled.candidates[0].parameters["performanceStyleInputs"], [
+    "swingRatio=0.64 (stated)", "microtiming=behind (inferred)",
+  ]);
+  // The style changed the performed notes, and the evidence still seals them.
+  const plainNotes = JSON.stringify(plain.candidates[0].trackModels!.map((t) => t.notes));
+  const styledNotes = JSON.stringify(styled.candidates[0].trackModels!.map((t) => t.notes));
+  assert.notEqual(plainNotes, styledNotes, "a swung, behind-the-beat style moves the notes");
+  for (const track of styled.candidates[0].trackModels!) {
+    assert.ok(track.performanceEvidence?.performedMaterialSha256, "evidence is sealed with the styled material");
+  }
+  // Junk in the slot is ignored, not trusted.
+  const junk = await provider.generate({ ...generationInput(1), parameters: { styleProfile: "swing please" } });
+  assert.equal(junk.candidates[0].parameters["performanceEngineVersion"], "1.0");
+});
+
 test("it refuses an incomplete Song Model rather than arranging silence", async () => {
   const provider = new LocalArrangementOrchestratorProvider();
   await assert.rejects(
