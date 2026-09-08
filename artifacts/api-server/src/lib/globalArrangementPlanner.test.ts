@@ -150,6 +150,32 @@ test("staleness tracks the planning inputs digest", () => {
   assert.equal(isGlobalPlanStale(edited, plan), true);
 });
 
+test("a vocal-only source still gets a band to arrange with", () => {
+  // The stems describe the source, not the arrangement. A vocal-only import is
+  // exactly the case where the studio has to supply the instruments.
+  const model = makeModel({
+    stems: [{ name: "vocals", role: "vocals", source: "d", channels: 2, confidence: 0.9 }],
+  });
+  const plan = deriveGlobalArrangementPlan(model, { now: FIXED_NOW });
+  const roles = plan.instrumentPalette.map((p) => p.role);
+  assert.ok(roles.includes("drums"), "a rhythm section is seeded");
+  assert.ok(roles.includes("bass"));
+  assert.ok(roles.some((r) => r !== "vocals"), "the palette is not vocals-only");
+});
+
+test("a vocal + single accompaniment source still gets a rhythm section", () => {
+  const model = makeModel({
+    stems: [
+      { name: "vocals", role: "vocals", source: "d", channels: 2, confidence: 0.9 },
+      { name: "keys", role: "keys", source: "d", channels: 2, confidence: 0.9 },
+    ],
+  });
+  const plan = deriveGlobalArrangementPlan(model, { now: FIXED_NOW });
+  const roles = plan.instrumentPalette.map((p) => p.role);
+  assert.ok(roles.includes("keys"), "the observed instrument is kept");
+  assert.ok(roles.includes("drums") && roles.includes("bass"), "a rhythm section joins it");
+});
+
 test("degrades without a musical map rather than throwing", () => {
   const model = makeModel();
   delete model.musicalMap;

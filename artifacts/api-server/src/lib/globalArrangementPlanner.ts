@@ -116,12 +116,19 @@ function buildPalette(
 ): GlobalArrangementPlan["instrumentPalette"] {
   const fp = map.styleFingerprint;
   const roles = new Set(fp.instrumentPaletteHints);
-  // Fill out the palette from the orchestration size when the observed stems
-  // under-describe the arrangement the song is asking for.
-  if (roles.size === 0 || fp.orchestrationSize === "medium" || fp.orchestrationSize === "dense") {
+  // The observed stems describe the *source*, not the arrangement to write. A
+  // vocal-only or vocal+piano import is exactly the case where the studio has
+  // to supply a band, so seed one whenever no instrumental family is present.
+  const instrumental = [...roles].filter((role) => role !== "vocals" && role !== "fx");
+  if (instrumental.length === 0 || fp.orchestrationSize === "medium" || fp.orchestrationSize === "dense") {
     roles.add("drums");
     roles.add("bass");
     roles.add("keys");
+  }
+  // A lone accompaniment instrument still needs a rhythm section under it.
+  if (instrumental.length === 1 && !roles.has("drums")) {
+    roles.add("drums");
+    roles.add("bass");
   }
   if (fp.orchestrationSize === "dense") {
     roles.add("pads");

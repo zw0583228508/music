@@ -122,7 +122,68 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   constraint-engine defects it surfaced (legato read as a chord; bass judged as
   a bowed solo string). 32 playability errors -> 0; mean symbolic 46 -> 70.
 
-## Next: PR-17 — partial regeneration + locks
+- **PR-17** (#18) ✅ — Partial regeneration + producer locks: global/section/
+  track/phrase/event lock scopes, a regeneration scope resolver that refuses to
+  touch locked material, and a per-run `PartialRegenerationReport`.
+- **PR-18** (#19) ✅ — Arrangement quality benchmark: 9 licence-clean cases
+  (pop/ballad/rock/dance/acoustic/orchestral/ethnic/jazz/cinematic ×
+  full_song/piano_vocal/vocal_only/rough_demo/midi) synthesised from explicit
+  musical specs, automated metrics, a promotion gate, a blind A/B sheet and Elo.
+
+**Wave 4 (control & measurement) complete. PR-00..PR-18 merged.**
+
+## Benchmark baseline — the number every later change is judged against
+
+`pnpm --filter @workspace/api-server run benchmark` (add `-- --render` for audio).
+Recorded 2026-09-08, `REFERENCE_PIPELINE`, 9 cases, 5 candidates each:
+
+| metric | symbolic run | with rendering |
+|---|---|---|
+| criticScore (mean) | **74.56** | 74.56 |
+| harmonyScore | 58.33 | 58.33 |
+| sectionConsistency | 100 | 100 |
+| candidateDiversity | 50.40 | 50.40 |
+| playabilityErrors | **0** | 0 |
+| audioScore | not measured | **91.11** |
+| noteCount (mean) | 576.6 | 576.6 |
+| latency (mean) | 51 ms | 28.3 s |
+
+Never measurable in this environment, and reported as `null` rather than faked:
+`analysisAccuracy` (needs a labelled analysis set + live providers) and `gpuCost`.
+
+**What the baseline says, honestly.** The chain is feasible on all 9 cases and
+breaks no instrument's physical constraints — that is the floor, not a win.
+Three numbers are unearned:
+
+- **`sectionConsistency` = 100 on every case.** A metric that never varies is
+  measuring the planner's own bookkeeping, not the music. It needs a harder
+  definition before it means anything.
+- **`candidateDiversity` ≈ 50.4 with almost no spread.** The five strategies
+  differ, but by a near-constant amount — this reads like a mechanical
+  transform, not five genuinely different musical ideas.
+- **`audioScore` 87–93 across the board** while symbolic scores sit at 71–77.
+  The audio critic is not discriminating; it currently rewards a clean render
+  more than a good arrangement.
+
+`harmonyScore` 58 is the most honest number here and the clearest target.
+
+### The gate before Wave 5
+
+The plan's top KPI is *how often a new Arrangement Brain beats the previous one
+in blind musical evaluation*. `compareBenchmarkRuns()` enforces the asymmetry:
+a challenger is promoted only if it improves at least one quality metric and
+regresses none. Latency and note count are explicitly **not** quality. A model
+that is merely faster does not ship.
+
+Two things this benchmark still cannot tell us, and no number here should be
+read as if it could:
+
+1. **No blind human evaluation has been run.** `buildBlindComparisonSheet()` and
+   the Elo table exist and are tested, but no person has voted.
+2. **The corpus is synthesised, not recorded.** Cases come from explicit musical
+   specs, so they are licence-clean and deterministic — and they are also
+   exactly the kind of music this pipeline finds easy. A real recorded corpus
+   will score lower.
 
 ## Environment findings (Windows local)
 
