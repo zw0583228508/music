@@ -4905,6 +4905,221 @@ export interface GlobalArrangementPlan {
   productionAesthetic: GlobalArrangementPlanProductionAesthetic;
 }
 
+export type SectionPhrasePlanVersion = typeof SectionPhrasePlanVersion[keyof typeof SectionPhrasePlanVersion];
+
+
+export const SectionPhrasePlanVersion = {
+  '10': '1.0',
+} as const;
+
+export type SectionPlanFunction = typeof SectionPlanFunction[keyof typeof SectionPlanFunction];
+
+
+export const SectionPlanFunction = {
+  intro: 'intro',
+  verse: 'verse',
+  prechorus: 'prechorus',
+  chorus: 'chorus',
+  bridge: 'bridge',
+  breakdown: 'breakdown',
+  outro: 'outro',
+  instrumental: 'instrumental',
+  neutral: 'neutral',
+} as const;
+
+export type SectionPlanRegisterDistribution = {[key: string]: number};
+
+export interface SectionPlan {
+  sectionName: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  function: SectionPlanFunction;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  energy: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  density: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  tension: number;
+  groove: string;
+  activeInstrumentFamilies: string[];
+  inactiveInstrumentFamilies: string[];
+  leadRole: string;
+  supportingRoles: string[];
+  registerDistribution: SectionPlanRegisterDistribution;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  rhythmicActivity: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  melodicActivity: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  harmonicActivity: number;
+  transitionIn: string;
+  transitionOut: string;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  noveltyRelativeToPreviousSection: number;
+}
+
+export type PhrasePlanRole = typeof PhrasePlanRole[keyof typeof PhrasePlanRole];
+
+
+export const PhrasePlanRole = {
+  opening: 'opening',
+  development: 'development',
+  response: 'response',
+  cadence: 'cadence',
+  pickup: 'pickup',
+  fill: 'fill',
+} as const;
+
+export interface PhrasePlan {
+  id: string;
+  sectionName: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  role: PhrasePlanRole;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  energyTarget: number;
+  entersFamilies: string[];
+  leavesFamilies: string[];
+}
+
+export type InstrumentArrangementRole = typeof InstrumentArrangementRole[keyof typeof InstrumentArrangementRole];
+
+
+export const InstrumentArrangementRole = {
+  LEAD: 'LEAD',
+  FOUNDATION: 'FOUNDATION',
+  BASS: 'BASS',
+  GROOVE: 'GROOVE',
+  RHYTHMIC_HARMONY: 'RHYTHMIC_HARMONY',
+  HARMONIC_BED: 'HARMONIC_BED',
+  OSTINATO: 'OSTINATO',
+  COUNTER_MELODY: 'COUNTER_MELODY',
+  CALL_RESPONSE: 'CALL_RESPONSE',
+  ACCENT: 'ACCENT',
+  PAD: 'PAD',
+  FILL: 'FILL',
+  TRANSITION: 'TRANSITION',
+  CLIMAX_LAYER: 'CLIMAX_LAYER',
+} as const;
+
+export type RegisterBand = typeof RegisterBand[keyof typeof RegisterBand];
+
+
+export const RegisterBand = {
+  low: 'low',
+  low_mid: 'low_mid',
+  mid: 'mid',
+  upper_mid: 'upper_mid',
+  high: 'high',
+} as const;
+
+export type InstrumentRoleAssignmentVoicingStrategy = typeof InstrumentRoleAssignmentVoicingStrategy[keyof typeof InstrumentRoleAssignmentVoicingStrategy];
+
+
+export const InstrumentRoleAssignmentVoicingStrategy = {
+  open: 'open',
+  close: 'close',
+  unison: 'unison',
+  spread: 'spread',
+  drone: 'drone',
+  percussive: 'percussive',
+} as const;
+
+export type InstrumentRoleAssignmentArticulationFamily = typeof InstrumentRoleAssignmentArticulationFamily[keyof typeof InstrumentRoleAssignmentArticulationFamily];
+
+
+export const InstrumentRoleAssignmentArticulationFamily = {
+  legato: 'legato',
+  staccato: 'staccato',
+  sustain: 'sustain',
+  pluck: 'pluck',
+  percussive: 'percussive',
+  mixed: 'mixed',
+} as const;
+
+export type InstrumentRoleAssignmentInteractionWithLead = typeof InstrumentRoleAssignmentInteractionWithLead[keyof typeof InstrumentRoleAssignmentInteractionWithLead];
+
+
+export const InstrumentRoleAssignmentInteractionWithLead = {
+  avoid: 'avoid',
+  support: 'support',
+  answer: 'answer',
+  double: 'double',
+  independent: 'independent',
+} as const;
+
+export interface InstrumentRoleAssignment {
+  sectionName: string;
+  instrument: string;
+  role: InstrumentArrangementRole;
+  register: RegisterBand;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  density: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  rhythmicActivity: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  melodicActivity: number;
+  voicingStrategy: InstrumentRoleAssignmentVoicingStrategy;
+  articulationFamily: InstrumentRoleAssignmentArticulationFamily;
+  dynamicShape: string;
+  interactionWithLead: InstrumentRoleAssignmentInteractionWithLead;
+  /** @minimum 1 */
+  entryBar: number;
+  /** @minimum 1 */
+  exitBar: number;
+}
+
+/**
+ * Section / phrase / instrument-role plan (PR-05).
+ */
+export interface SectionPhrasePlan {
+  version: SectionPhrasePlanVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  sections: SectionPlan[];
+  phrases: PhrasePlan[];
+  roleAssignments: InstrumentRoleAssignment[];
+}
+
 export interface ArrangementPlan {
   id: string;
   version: number;
@@ -4915,6 +5130,7 @@ export interface ArrangementPlan {
   provenance: ArtifactProvenance;
   hierarchy: ArrangementHierarchy;
   globalPlan?: GlobalArrangementPlan;
+  sectionPlan?: SectionPhrasePlan;
   compositionIntelligence?: CompositionIntelligencePlan;
   generationPreference?: GenerationPreferenceSnapshot | null;
 }

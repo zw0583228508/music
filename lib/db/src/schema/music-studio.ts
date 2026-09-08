@@ -1983,6 +1983,91 @@ export type GlobalArrangementPlan = {
     | "electronic" | "orchestral";
 };
 
+/** Standard arrangement roles an instrument can hold in a section. */
+export type InstrumentArrangementRole =
+  | "LEAD"
+  | "FOUNDATION"
+  | "BASS"
+  | "GROOVE"
+  | "RHYTHMIC_HARMONY"
+  | "HARMONIC_BED"
+  | "OSTINATO"
+  | "COUNTER_MELODY"
+  | "CALL_RESPONSE"
+  | "ACCENT"
+  | "PAD"
+  | "FILL"
+  | "TRANSITION"
+  | "CLIMAX_LAYER";
+
+export type RegisterBand = "low" | "low_mid" | "mid" | "upper_mid" | "high";
+
+export type InstrumentRoleAssignment = {
+  sectionName: string;
+  /** Palette role, e.g. "drums", "bass", "strings". */
+  instrument: string;
+  role: InstrumentArrangementRole;
+  register: RegisterBand;
+  density: number;
+  rhythmicActivity: number;
+  melodicActivity: number;
+  voicingStrategy: "open" | "close" | "unison" | "spread" | "drone" | "percussive";
+  articulationFamily: "legato" | "staccato" | "sustain" | "pluck" | "percussive" | "mixed";
+  dynamicShape: string;
+  interactionWithLead: "avoid" | "support" | "answer" | "double" | "independent";
+  entryBar: number;
+  exitBar: number;
+};
+
+export type SectionPlan = {
+  sectionName: string;
+  startBar: number;
+  endBar: number;
+  function:
+    | "intro" | "verse" | "prechorus" | "chorus" | "bridge"
+    | "breakdown" | "outro" | "instrumental" | "neutral";
+  energy: number;
+  density: number;
+  tension: number;
+  groove: string;
+  activeInstrumentFamilies: string[];
+  inactiveInstrumentFamilies: string[];
+  leadRole: string;
+  supportingRoles: string[];
+  registerDistribution: Partial<Record<RegisterBand, number>>;
+  rhythmicActivity: number;
+  melodicActivity: number;
+  harmonicActivity: number;
+  transitionIn: string;
+  transitionOut: string;
+  noveltyRelativeToPreviousSection: number;
+};
+
+export type PhrasePlan = {
+  id: string;
+  sectionName: string;
+  startBar: number;
+  endBar: number;
+  role: "opening" | "development" | "response" | "cadence" | "pickup" | "fill";
+  energyTarget: number;
+  entersFamilies: string[];
+  leavesFamilies: string[];
+};
+
+/**
+ * Section / phrase / instrument-role plan (PR-05), derived from the
+ * GlobalArrangementPlan + musical map before any note is written.
+ */
+export type SectionPhrasePlan = {
+  version: "1.0";
+  derivedAt: string;
+  inputsDigestSha256: string;
+  method: string;
+  sections: SectionPlan[];
+  phrases: PhrasePlan[];
+  roleAssignments: InstrumentRoleAssignment[];
+};
+
 export type ArrangementPlan = {
   id: string; version: number; sections: ArrangementPlanSection[]; style: StyleSpec;
   songModelVersion: number; parameters: Record<string, number | string | boolean>;
@@ -1991,6 +2076,8 @@ export type ArrangementPlan = {
   hierarchy: ArrangementHierarchy;
   /** Whole-song direction, derived before section planning; absent on historical plans. */
   globalPlan?: GlobalArrangementPlan;
+  /** Section / phrase / instrument-role plan; absent on historical plans. */
+  sectionPlan?: SectionPhrasePlan;
   /** Absent only on historical persisted plans, which are interpreted as v1. */
   compositionIntelligence?: CompositionIntelligencePlan;
   /** Frozen before notes are generated; absent on historical plans. */

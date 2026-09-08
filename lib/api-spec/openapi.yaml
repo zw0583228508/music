@@ -4447,6 +4447,7 @@ components:
         provenance: { $ref: "#/components/schemas/ArtifactProvenance" }
         hierarchy: { $ref: "#/components/schemas/ArrangementHierarchy" }
         globalPlan: { $ref: "#/components/schemas/GlobalArrangementPlan" }
+        sectionPlan: { $ref: "#/components/schemas/SectionPhrasePlan" }
         compositionIntelligence: { $ref: "#/components/schemas/CompositionIntelligencePlan" }
         generationPreference:
           oneOf:
@@ -4510,3 +4511,75 @@ components:
         harmonicComplexity: { type: number, minimum: 0, maximum: 1 }
         rhythmicComplexity: { type: number, minimum: 0, maximum: 1 }
         productionAesthetic: { type: string, enum: [intimate, polished_pop, cinematic, raw_band, electronic, orchestral] }
+    RegisterBand:
+      type: string
+      enum: [low, low_mid, mid, upper_mid, high]
+    InstrumentArrangementRole:
+      type: string
+      enum: [LEAD, FOUNDATION, BASS, GROOVE, RHYTHMIC_HARMONY, HARMONIC_BED, OSTINATO, COUNTER_MELODY, CALL_RESPONSE, ACCENT, PAD, FILL, TRANSITION, CLIMAX_LAYER]
+    InstrumentRoleAssignment:
+      type: object
+      required: [sectionName, instrument, role, register, density, rhythmicActivity, melodicActivity, voicingStrategy, articulationFamily, dynamicShape, interactionWithLead, entryBar, exitBar]
+      properties:
+        sectionName: { type: string }
+        instrument: { type: string }
+        role: { $ref: "#/components/schemas/InstrumentArrangementRole" }
+        register: { $ref: "#/components/schemas/RegisterBand" }
+        density: { type: number, minimum: 0, maximum: 1 }
+        rhythmicActivity: { type: number, minimum: 0, maximum: 1 }
+        melodicActivity: { type: number, minimum: 0, maximum: 1 }
+        voicingStrategy: { type: string, enum: [open, close, unison, spread, drone, percussive] }
+        articulationFamily: { type: string, enum: [legato, staccato, sustain, pluck, percussive, mixed] }
+        dynamicShape: { type: string }
+        interactionWithLead: { type: string, enum: [avoid, support, answer, double, independent] }
+        entryBar: { type: number, minimum: 1 }
+        exitBar: { type: number, minimum: 1 }
+    SectionPlan:
+      type: object
+      required: [sectionName, startBar, endBar, function, energy, density, tension, groove, activeInstrumentFamilies, inactiveInstrumentFamilies, leadRole, supportingRoles, registerDistribution, rhythmicActivity, melodicActivity, harmonicActivity, transitionIn, transitionOut, noveltyRelativeToPreviousSection]
+      properties:
+        sectionName: { type: string }
+        startBar: { type: number, minimum: 1 }
+        endBar: { type: number, minimum: 1 }
+        function: { type: string, enum: [intro, verse, prechorus, chorus, bridge, breakdown, outro, instrumental, neutral] }
+        energy: { type: number, minimum: 0, maximum: 1 }
+        density: { type: number, minimum: 0, maximum: 1 }
+        tension: { type: number, minimum: 0, maximum: 1 }
+        groove: { type: string }
+        activeInstrumentFamilies: { type: array, items: { type: string } }
+        inactiveInstrumentFamilies: { type: array, items: { type: string } }
+        leadRole: { type: string }
+        supportingRoles: { type: array, items: { type: string } }
+        registerDistribution:
+          type: object
+          additionalProperties: { type: number, minimum: 0, maximum: 1 }
+        rhythmicActivity: { type: number, minimum: 0, maximum: 1 }
+        melodicActivity: { type: number, minimum: 0, maximum: 1 }
+        harmonicActivity: { type: number, minimum: 0, maximum: 1 }
+        transitionIn: { type: string }
+        transitionOut: { type: string }
+        noveltyRelativeToPreviousSection: { type: number, minimum: 0, maximum: 1 }
+    PhrasePlan:
+      type: object
+      required: [id, sectionName, startBar, endBar, role, energyTarget, entersFamilies, leavesFamilies]
+      properties:
+        id: { type: string }
+        sectionName: { type: string }
+        startBar: { type: number, minimum: 1 }
+        endBar: { type: number, minimum: 1 }
+        role: { type: string, enum: [opening, development, response, cadence, pickup, fill] }
+        energyTarget: { type: number, minimum: 0, maximum: 1 }
+        entersFamilies: { type: array, items: { type: string } }
+        leavesFamilies: { type: array, items: { type: string } }
+    SectionPhrasePlan:
+      type: object
+      description: Section / phrase / instrument-role plan (PR-05).
+      required: [version, derivedAt, inputsDigestSha256, method, sections, phrases, roleAssignments]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        derivedAt: { type: string, format: date-time }
+        inputsDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        method: { type: string }
+        sections: { type: array, items: { $ref: "#/components/schemas/SectionPlan" } }
+        phrases: { type: array, items: { $ref: "#/components/schemas/PhrasePlan" } }
+        roleAssignments: { type: array, items: { $ref: "#/components/schemas/InstrumentRoleAssignment" } }
