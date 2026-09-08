@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "provider": "MIDI_RWKV",
+  "reviewedAt": "2026-09-08",
+  "sourceRepository": "https://github.com/christianazinn/MIDI-RWKV",
+  "sourceRevision": "7c94e9e2980d1f3cdb0d3a9ca2780ef0a5af6530",
+  "summary": "MIT code, non-commercial weights. The plan flagged this provider as 'MIT code; audit weights/lineage before any COMMERCIAL_READY claim'. The audit finds the claim cannot be made: the distributed base weights are pretrained on a CC-BY-NC-4.0 dataset, and a permissive code licence does not launder the training data's terms.",
+  "findings": [
+    {
+      "claim": "The MIDI-RWKV source code is MIT.",
+      "verifiedBy": "GitHub repository licence metadata reports MIT at the audited revision.",
+      "result": "CONFIRMED"
+    },
+    {
+      "claim": "The distributed base weights (midi_rwkv.pth) are pretrained on GigaMIDI.",
+      "verifiedBy": "The repository README states the pretraining dataset used is GigaMIDI and that the repository ships pretrained base weights.",
+      "result": "CONFIRMED"
+    },
+    {
+      "claim": "GigaMIDI is permissively licensed.",
+      "verifiedBy": "Hugging Face dataset metadata for Metacreation/GigaMIDI reports license cc-by-nc-4.0 and gated: auto.",
+      "result": "REFUTED"
+    },
+    {
+      "claim": "The POP909 finetuning dataset blocks commercial use.",
+      "verifiedBy": "GitHub repository licence metadata for music-x-lab/POP909-Dataset reports MIT.",
+      "result": "REFUTED"
+    },
+    {
+      "claim": "MIT code makes the weights commercially usable.",
+      "verifiedBy": "The code licence governs the code. The base weights are a derivative of CC-BY-NC-4.0 training data, and the NC term is not removed by training or by the code's licence.",
+      "result": "REFUTED"
+    }
+  ],
+  "upstreamDependencies": [
+    "Training and finetuning code derives from RWKV-LM and RWKV-PEFT (Apache-2.0), which does not change the weight lineage."
+  ],
+  "source": {
+    "firstPartyLicenseStatus": "MIT_CONFIRMED"
+  },
+  "model": {
+    "weightsLicenseStatus": "NONCOMMERCIAL_INHERITED_FROM_TRAINING_DATA",
+    "trainingDataLicense": "CC-BY-NC-4.0",
+    "commercialCorpusRetrainEvidenceRetained": false
+  },
+  "decision": {
+    "commercialUseAuthorized": false,
+    "researchUseAuthorized": true,
+    "redistributionAuthorized": false,
+    "assetDownloadAuthorized": false,
+    "runtimeBuildAuthorized": false,
+    "provisioningAuthorized": false,
+    "inferenceAuthorized": false
+  },
+  "routingStatus": "BLOCKED_LICENSE",
+  "routingStatusReason": "Base weights inherit CC-BY-NC-4.0 from GigaMIDI. Commercial routing must fail closed, exactly as it does for LADA_BAND and DIFFRHYTHM_2.",
+  "pathToCommercialUse": [
+    "Pretrain from scratch on a corpus whose licence permits commercial derivatives, retain the corpus licence evidence and the training provenance, set model.commercialCorpusRetrainEvidenceRetained to true here, and re-audit. The MIT code makes this legitimate; the shipped weights do not."
+  ]
+}

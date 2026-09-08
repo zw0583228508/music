@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "provider": "MIDI_RWKV",
+  "finalStatus": "BLOCKED_LICENSE",
+  "checkedAt": "2026-09-08",
+  "evidence": [
+    "Source: https://github.com/christianazinn/MIDI-RWKV/tree/7c94e9e2980d1f3cdb0d3a9ca2780ef0a5af6530 (MIT, per GitHub licence metadata).",
+    "The repository README states it ships pretrained base weights (midi_rwkv.pth) and that the pretraining dataset is GigaMIDI.",
+    "Hugging Face dataset metadata for Metacreation/GigaMIDI reports license cc-by-nc-4.0 and gated: auto.",
+    "GitHub licence metadata for music-x-lab/POP909-Dataset (the finetuning set) reports MIT, so the finetuning data is not the blocker.",
+    "Full audit with confirmed and refuted claims: services/midi-rwkv-worker/release-evidence/license-review.json."
+  ],
+  "reason": "The master plan required a weight and lineage audit before any COMMERCIAL_READY claim for this MIT-licensed project. The audit finds the shipped base weights are a derivative of CC-BY-NC-4.0 training data. A permissive code licence does not remove the NC term, so the claim cannot be made and commercial routing fails closed.",
+  "blockers": [
+    "Base weights inherit CC-BY-NC-4.0 from GigaMIDI; no commercial-corpus retrain evidence is retained.",
+    "No isolated research runtime build is authorised by the retained review, so nothing has been downloaded, built, provisioned or run."
+  ],
+  "notRoutableBecause": "RIGHTS",
+  "notRoutableBecauseNote": "This is a rights block, unlike MAGENTA_RT2's quality-evidence shadow gate. The two are recorded differently on purpose.",
+  "pathToCommercialUse": "Pretrain from scratch on a corpus whose licence permits commercial derivatives, retain the corpus licence and training provenance, set model.commercialCorpusRetrainEvidenceRetained to true in the review, and re-audit."
+}

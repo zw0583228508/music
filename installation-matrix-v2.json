@@ -1097,6 +1097,40 @@
       "blockers": [
         "No licensed VST3 instrument binary, checksum, or native render evidence."
       ]
+    },
+    {
+      "provider": "MIDI_RWKV",
+      "category": "generation",
+      "codeRepository": "https://github.com/christianazinn/MIDI-RWKV",
+      "codeRevision": "7c94e9e2980d1f3cdb0d3a9ca2780ef0a5af6530",
+      "modelRepository": "https://github.com/christianazinn/MIDI-RWKV (midi_rwkv.pth in-repo)",
+      "modelRevision": "7c94e9e2980d1f3cdb0d3a9ca2780ef0a5af6530",
+      "runtimeBuilt": false,
+      "sourcePinned": true,
+      "assetsDownloaded": false,
+      "assetsChecksummed": false,
+      "assetManifestCreated": false,
+      "volumeProvisioned": false,
+      "licenseStatus": "RESEARCH_ONLY",
+      "secretsConfigured": false,
+      "realSmokePassed": false,
+      "nonSilentOutputVerified": false,
+      "endpointDeployed": false,
+      "endpointConfigured": false,
+      "healthReady": false,
+      "promotionRequired": true,
+      "promotionSigned": false,
+      "apiConnected": false,
+      "finalStatus": "BLOCKED_LICENSE",
+      "notes": [
+        "services/midi-rwkv-worker/release-evidence/license-review.json.",
+        "Code is MIT; the shipped base weights midi_rwkv.pth are pretrained on GigaMIDI (CC-BY-NC-4.0, gated) and inherit that restriction. POP909 finetuning data is MIT and is not the blocker.",
+        "Dockerfile and modal_app.py refuse before any download or resource creation; tests/test_contract.py proves the gate is closed for the stated reason."
+      ],
+      "blockers": [
+        "Base weights are a derivative of CC-BY-NC-4.0 training data; no commercial-corpus retrain evidence is retained, so commercial routing fails closed.",
+        "No isolated research runtime build is authorised by the retained review."
+      ]
     }
   ]
 }

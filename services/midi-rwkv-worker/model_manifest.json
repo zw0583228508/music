@@ -1,0 +1,41 @@
+{
+  "provider": "MIDI_RWKV",
+  "asset_root": "/var/lib/midi-rwkv/models",
+  "asset_manifest": "model-assets.json",
+  "smoke_proof": "smoke-proof.json",
+  "role": "SYMBOLIC_INFILL_CANDIDATE",
+  "role_note": "MIDI-RWKV is a symbolic infilling model. If it were ever routable it would be a candidate generator feeding the critic, never the arranger and never a default. It is not routable: see routing_status.",
+  "source": {
+    "repository": "https://github.com/christianazinn/MIDI-RWKV",
+    "revision": "7c94e9e2980d1f3cdb0d3a9ca2780ef0a5af6530",
+    "license": "MIT",
+    "derived_from": [
+      "https://github.com/BlinkDL/RWKV-LM (Apache-2.0)",
+      "https://github.com/JL-er/RWKV-PEFT"
+    ]
+  },
+  "model": {
+    "repository": "https://github.com/christianazinn/MIDI-RWKV",
+    "revision": "7c94e9e2980d1f3cdb0d3a9ca2780ef0a5af6530",
+    "distributed_weights": "midi_rwkv.pth",
+    "distribution_note": "The base weights ship inside the source repository rather than on a model hub, so there is no separate weight licence: they inherit the terms of what they were trained on.",
+    "pretraining_data": {
+      "name": "GigaMIDI",
+      "repository": "https://huggingface.co/datasets/Metacreation/GigaMIDI",
+      "license": "CC-BY-NC-4.0",
+      "gated": true
+    },
+    "finetuning_data": {
+      "name": "POP909",
+      "repository": "https://github.com/music-x-lab/POP909-Dataset",
+      "license": "MIT"
+    }
+  },
+  "runtime": {
+    "python": "3.11",
+    "note": "No runtime is pinned because none is authorised to build. Pins belong to a build that is permitted to exist."
+  },
+  "license_evidence": "release-evidence/license-review.json",
+  "routing_status": "BLOCKED_LICENSE",
+  "routing_status_note": "Base weights are a derivative of CC-BY-NC-4.0 training data. A permissive code licence does not remove the NC term. Commercial routing fails closed, exactly as it does for LADA_BAND and DIFFRHYTHM_2."
+}
