@@ -171,7 +171,7 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
 
 ## Wave 6 — production quality
 
-- **PR-21** `vst3-render-worker` ✅ — the API's `PEDALBOARD_VST3` renderer, made
+- **PR-21** (#23) ✅ — `vst3-render-worker`: the API's `PEDALBOARD_VST3` renderer, made
   real: a standalone Windows worker (`services/vst3-render-worker`) that hosts the
   operator's **own** VST3 instruments in-process with pedalboard and speaks the
   `/health` + `/render` contract `renderRemoteInstrument()` already enforces.
