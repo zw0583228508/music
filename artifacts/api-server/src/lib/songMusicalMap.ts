@@ -27,7 +27,7 @@ import type {
 } from "@workspace/db";
 import { createCanonicalTimeline } from "./canonicalTimeline";
 
-export const MUSICAL_MAP_VERSION = "2.1" as const;
+export const MUSICAL_MAP_VERSION = "2.2" as const;
 
 type Timeline = ReturnType<typeof createCanonicalTimeline>;
 
@@ -777,6 +777,256 @@ function deriveStructure(
   };
 }
 
+// -- vocals ---------------------------------------------------------
+
+const REGISTER_BUCKETS: Array<[number, SongModelMusicalMap["vocals"]["registerMap"][number]["register"]]> = [
+  [48, "low"],
+  [55, "low_mid"],
+  [62, "mid"],
+  [69, "upper_mid"],
+  [Infinity, "high"],
+];
+
+function registerOf(pitch: number): SongModelMusicalMap["vocals"]["registerMap"][number]["register"] {
+  return REGISTER_BUCKETS.find(([ceiling]) => pitch < ceiling)![1];
+}
+
+const overlapSeconds = (
+  aStart: number, aEnd: number, bStart: number, bEnd: number,
+): number => Math.max(0, Math.min(aEnd, bEnd) - Math.max(aStart, bStart));
+
+function endCadenceOf(pitches: number[], lastNoteDuration: number): SongModelMusicalMap["vocals"]["phrases"][number]["cadence"] {
+  if (pitches.length < 2) return "unknown";
+  const last = pitches[pitches.length - 1];
+  const prev = pitches[pitches.length - 2];
+  if (last > prev + 1) return "rising";
+  if (last < prev - 1) return "falling";
+  if (Math.abs(last - prev) <= 1 && lastNoteDuration >= 0.4) return "sustained";
+  return "unknown";
+}
+
+function deriveVocals(
+  model: SongModelData,
+  geometry: BarGeometry,
+  timeline: Timeline,
+): SongModelMusicalMap["vocals"] {
+  const method = "vocals-map/v1";
+  const derivedFrom = ["vocalIntelligence", "vocalEvidence", "melody", "energy"];
+  const empty = (reason: string): SongModelMusicalMap["vocals"] => ({
+    status: "not_available", reason, derivedFrom, method,
+    phrases: [], breathWindows: [], silenceWindows: [],
+    vocalDensityCurve: [], registerMap: [],
+  });
+
+  const vi = model.vocalIntelligence;
+  if (!vi || !["detected", "low_confidence"].includes(vi.phrases.status)) {
+    return empty("No verified vocal phrases are present on the Song Model.");
+  }
+  const phraseEvents = vi.phrases.events;
+  if (phraseEvents.length === 0) return empty("Vocal phrase evidence is empty.");
+
+  const voiced = model.vocalEvidence?.observedVoicedWindows ?? [];
+  const silent = model.vocalEvidence?.observedSilentWindows ?? [];
+  const melody = (model.melody ?? []).filter(
+    (note) => Number.isFinite(note.start) && Number.isFinite(note.end),
+  );
+  const alignedByPhrase = new Map<string, number[]>();
+  if (vi.melodyAlignment?.status === "aligned") {
+    for (const entry of vi.melodyAlignment.alignments) {
+      alignedByPhrase.set(entry.phraseId, entry.melodyIndexes);
+    }
+  }
+  const energySamples = (model.energy ?? []).filter((v) => Number.isFinite(v));
+  const duration = model.audio?.durationSeconds ?? geometry.barBounds(geometry.totalBars).end;
+  const meterNumerator = Number((model.meterMap?.[0]?.meter ?? "4/4").split("/")[0]) || 4;
+
+  const phrases = phraseEvents.map((event) => {
+    const span = event.end - event.start;
+    const activity = span > 0
+      ? clamp01(
+          voiced.reduce(
+            (sum, window) => sum + overlapSeconds(event.start, event.end, window.start, window.end),
+            0,
+          ) / span,
+        )
+      : 0;
+    const noteIndexes = alignedByPhrase.get(event.id) ??
+      melody
+        .map((note, index) => ({ note, index }))
+        .filter(({ note }) => overlapSeconds(event.start, event.end, note.start, note.end) > 0)
+        .map(({ index }) => index);
+    const notes = noteIndexes
+      .map((index) => melody[index])
+      .filter((note): note is (typeof melody)[number] => Boolean(note))
+      .sort((a, b) => a.start - b.start);
+    const pitches = notes.map((note) => note.pitch);
+    const range = pitches.length
+      ? { lowPitch: Math.min(...pitches), highPitch: Math.max(...pitches) }
+      : null;
+    const peakPitch = pitches.length ? Math.max(...pitches) : null;
+    const density = round3(span > 0 ? notes.length / span : notes.length);
+    const midEnergy = sampleWindowMean(energySamples, duration, event.start, event.end) ?? 0;
+    const rangeSemitones = range ? range.highPitch - range.lowPitch : 0;
+    const registerLift = peakPitch !== null ? clamp01((peakPitch - 55) / 34) : 0;
+    const emotionalIntensity = round3(clamp01(
+      (rangeSemitones / 24) * 0.4 + registerLift * 0.3 + clamp01(midEnergy) * 0.3,
+    ));
+    let pickup = false;
+    try {
+      const start = timeline.coordinateAtSeconds(event.start);
+      pickup = start.beatInBar >= meterNumerator && start.beatFraction < 0.5;
+    } catch {
+      pickup = false;
+    }
+    const lastNote = notes[notes.length - 1];
+    return {
+      phraseId: event.id,
+      start: event.start,
+      end: event.end,
+      activity: round3(activity),
+      density,
+      range,
+      peakPitch,
+      contour: contourOf(pitches),
+      cadence: endCadenceOf(pitches, lastNote ? lastNote.end - lastNote.start : 0),
+      pickup,
+      emotionalIntensity,
+    };
+  });
+
+  const breathWindows = vi.breaths.status === "detected"
+    ? vi.breaths.events.map((event) => ({ id: event.id, start: event.start, end: event.end }))
+    : [];
+  const silenceWindows = silent
+    .filter((window) => window.end - window.start >= 0.3)
+    .map((window, index) => ({ id: `sil-${index + 1}`, start: window.start, end: window.end }));
+
+  const densityPerBar: Array<{ bar: number; vocalDensity: number }> = [];
+  const registerPerBar: Array<{
+    bar: number;
+    register: SongModelMusicalMap["vocals"]["registerMap"][number]["register"];
+  }> = [];
+  for (let bar = 1; bar <= geometry.totalBars; bar += 1) {
+    const { start, end } = geometry.barBounds(bar);
+    const barLength = end - start;
+    const covered = voiced.reduce(
+      (sum, window) => sum + overlapSeconds(start, end, window.start, window.end),
+      0,
+    );
+    densityPerBar.push({
+      bar,
+      vocalDensity: round3(barLength > 0 ? clamp01(covered / barLength) : 0),
+    });
+    const barPitches = melody
+      .filter((note) => note.start >= start - 1e-6 && note.start < end - 1e-6)
+      .map((note) => note.pitch);
+    if (barPitches.length) {
+      registerPerBar.push({ bar, register: registerOf(mean(barPitches)) });
+    }
+  }
+
+  return {
+    status: vi.phrases.status === "low_confidence" ? "low_confidence" : "detected",
+    reason: vi.phrases.status === "low_confidence"
+      ? "Vocal phrase evidence is low confidence; phrase analytics are approximate."
+      : null,
+    derivedFrom, method,
+    phrases,
+    breathWindows,
+    silenceWindows,
+    vocalDensityCurve: coalesceBars(densityPerBar, (r) => String(r.vocalDensity)),
+    registerMap: coalesceBars(registerPerBar, (r) => r.register),
+  };
+}
+
+// -- arrangementSpace ---------------------------------------------
+
+function densityLevel(activity: number): SongModelMusicalMap["arrangementSpace"]["windows"][number]["vocalDensity"] {
+  if (activity < 0.05) return "none";
+  if (activity < 0.35) return "low";
+  if (activity < 0.7) return "medium";
+  return "high";
+}
+
+function deriveArrangementSpace(
+  model: SongModelData,
+  vocals: SongModelMusicalMap["vocals"],
+  geometry: BarGeometry,
+  timeline: Timeline,
+): SongModelMusicalMap["arrangementSpace"] {
+  const method = "arrangement-space-map/v1";
+  const derivedFrom = ["vocalIntelligence", "vocals", "sections"];
+  const empty = (reason: string): SongModelMusicalMap["arrangementSpace"] => ({
+    status: "not_available", reason, derivedFrom, method, windows: [],
+  });
+
+  if (vocals.status === "not_available" || vocals.phrases.length === 0) {
+    return empty("No verified vocal phrases to map arrangement space against.");
+  }
+
+  const sections = model.sections ?? [];
+  const barsBetween = (start: number, end: number): number[] => {
+    try {
+      const startBar = timeline.coordinateAtSeconds(start).bar;
+      const endBar = timeline.coordinateAtSeconds(Math.max(start, end)).bar;
+      return Array.from({ length: endBar - startBar + 1 }, (_, offset) => startBar + offset);
+    } catch {
+      return [];
+    }
+  };
+  const sectionsOver = (bars: number[]): string[] => {
+    if (!bars.length) return [];
+    const lo = bars[0];
+    const hi = bars[bars.length - 1];
+    return sections
+      .filter((section) => section.endBar >= lo && section.startBar <= hi)
+      .map((section) => section.name);
+  };
+
+  type Win = SongModelMusicalMap["arrangementSpace"]["windows"][number];
+  const raw: Array<Omit<Win, "id" | "bars" | "sections">> = [];
+
+  // A window per vocal phrase: budgets shrink as the singer is more active.
+  for (const phrase of vocals.phrases) {
+    raw.push({
+      start: phrase.start,
+      end: phrase.end,
+      vocalDensity: densityLevel(phrase.activity),
+      counterMelodyBudget: round3(clamp01(0.35 * (1 - phrase.activity))),
+      fillBudget: round3(clamp01(0.15 * (1 - phrase.activity))),
+      padBudget: 0.5,
+    });
+  }
+
+  // A window per inter-phrase gap: the singer is out, so budgets open up,
+  // scaled by how much room the gap gives.
+  const ordered = [...vocals.phrases].sort((a, b) => a.start - b.start);
+  for (let index = 1; index < ordered.length; index += 1) {
+    const gapStart = ordered[index - 1].end;
+    const gapEnd = ordered[index].start;
+    const gap = gapEnd - gapStart;
+    if (gap < 0.2) continue;
+    const room = clamp01(gap / 2);
+    raw.push({
+      start: gapStart,
+      end: gapEnd,
+      vocalDensity: "none",
+      counterMelodyBudget: round3(0.55 + 0.35 * room),
+      fillBudget: round3(0.4 + 0.55 * room),
+      padBudget: round3(0.6 + 0.3 * room),
+    });
+  }
+
+  const windows: Win[] = raw
+    .sort((a, b) => a.start - b.start || a.end - b.end)
+    .map((entry, index) => {
+      const bars = barsBetween(entry.start, entry.end);
+      return { id: `space-${index + 1}`, ...entry, bars, sections: sectionsOver(bars) };
+    });
+
+  return { status: "detected", reason: null, derivedFrom, method, windows };
+}
+
 // -- styleFingerprint ------------------------------------------------
 
 function deriveStyleFingerprint(
@@ -908,6 +1158,8 @@ export function deriveMusicalMap(
   const energy = deriveEnergy(model, geometry);
   const structure = deriveStructure(model, energy, harmony, melody);
   const styleFingerprint = deriveStyleFingerprint(model, harmony, rhythm);
+  const vocals = deriveVocals(model, geometry, timeline);
+  const arrangementSpace = deriveArrangementSpace(model, vocals, geometry, timeline);
 
   return {
     version: MUSICAL_MAP_VERSION,
@@ -919,6 +1171,8 @@ export function deriveMusicalMap(
     energy,
     structure,
     styleFingerprint,
+    vocals,
+    arrangementSpace,
   };
 }
 
@@ -1015,6 +1269,26 @@ export function canonicalizeMusicalMapCoordinates(
         ...candidate, coordinates: atBar(candidate.atBar),
       })),
     },
+    vocals: {
+      ...map.vocals,
+      phrases: map.vocals.phrases.map((phrase) => ({
+        ...phrase, coordinates: secondsRange(phrase.start, phrase.end),
+      })),
+      breathWindows: map.vocals.breathWindows.map((window) => ({
+        ...window, coordinates: secondsRange(window.start, window.end),
+      })),
+      silenceWindows: map.vocals.silenceWindows.map((window) => ({
+        ...window, coordinates: secondsRange(window.start, window.end),
+      })),
+      vocalDensityCurve: withBarSpan(map.vocals.vocalDensityCurve),
+      registerMap: withBarSpan(map.vocals.registerMap),
+    },
+    arrangementSpace: {
+      ...map.arrangementSpace,
+      windows: map.arrangementSpace.windows.map((window) => ({
+        ...window, coordinates: secondsRange(window.start, window.end),
+      })),
+    },
   };
 }
 
@@ -1066,7 +1340,10 @@ export function validateMusicalMapShape(input: unknown): MapIssue[] {
       "Musical map derivedAt must be an ISO timestamp.");
   }
 
-  const groupNames = ["harmony", "melody", "rhythm", "energy", "structure", "styleFingerprint"] as const;
+  const groupNames = [
+    "harmony", "melody", "rhythm", "energy", "structure", "styleFingerprint",
+    "vocals", "arrangementSpace",
+  ] as const;
   const arraysByGroup: Record<string, string[]> = {
     harmony: ["harmonicRhythm", "cadences", "tensionMap"],
     melody: ["phrases", "motifs", "melodicDensity", "contour"],
@@ -1074,6 +1351,8 @@ export function validateMusicalMapShape(input: unknown): MapIssue[] {
     energy: ["energyCurve", "dynamicCurve", "spectralDensity"],
     structure: ["subphrases", "transitions", "climaxCandidates"],
     styleFingerprint: [],
+    vocals: ["phrases", "breathWindows", "silenceWindows", "vocalDensityCurve", "registerMap"],
+    arrangementSpace: ["windows"],
   };
 
   for (const name of groupNames) {
@@ -1161,6 +1440,41 @@ export function validateMusicalMapShape(input: unknown): MapIssue[] {
         !Array.isArray(candidate.evidence)) {
         push("INVALID_CLIMAX_CANDIDATE", `musicalMap.structure.climaxCandidates.${index}`,
           "Climax candidate needs a positive bar, a unit score, and evidence.");
+      }
+    }
+  }
+  if (isRecord(input.vocals)) {
+    for (const [index, phrase] of asArray(input.vocals.phrases).entries()) {
+      if (!isRecord(phrase) || typeof phrase.phraseId !== "string" || !phrase.phraseId ||
+        !unit(phrase.activity) || !unit(phrase.emotionalIntensity) ||
+        typeof phrase.density !== "number" || phrase.density < 0 ||
+        typeof phrase.pickup !== "boolean" ||
+        !["rising", "falling", "arch", "valley", "flat", "mixed"].includes(String(phrase.contour)) ||
+        !["rising", "falling", "sustained", "unknown"].includes(String(phrase.cadence)) ||
+        typeof phrase.start !== "number" || typeof phrase.end !== "number" ||
+        phrase.end <= phrase.start) {
+        push("INVALID_VOCAL_PHRASE_ANALYTIC", `musicalMap.vocals.phrases.${index}`,
+          "Vocal phrase analytic needs a phraseId, unit activity/intensity, a valid contour/cadence, and an increasing span.");
+      }
+    }
+    for (const [index, span] of asArray(input.vocals.registerMap).entries()) {
+      if (!isRecord(span) || !posInt(span.startBar) || !posInt(span.endBar) ||
+        !["low", "low_mid", "mid", "upper_mid", "high"].includes(String(span.register))) {
+        push("INVALID_REGISTER_SPAN", `musicalMap.vocals.registerMap.${index}`,
+          "Register span needs ordered bars and a known register.");
+      }
+    }
+  }
+  if (isRecord(input.arrangementSpace)) {
+    for (const [index, window] of asArray(input.arrangementSpace.windows).entries()) {
+      if (!isRecord(window) ||
+        !["none", "low", "medium", "high"].includes(String(window.vocalDensity)) ||
+        !unit(window.counterMelodyBudget) || !unit(window.fillBudget) || !unit(window.padBudget) ||
+        typeof window.start !== "number" || typeof window.end !== "number" ||
+        window.end <= window.start ||
+        !Array.isArray(window.bars) || !Array.isArray(window.sections)) {
+        push("INVALID_ARRANGEMENT_SPACE_WINDOW", `musicalMap.arrangementSpace.windows.${index}`,
+          "Arrangement-space window needs a density level, unit budgets, an increasing span, and bar/section arrays.");
       }
     }
   }

@@ -1265,11 +1265,16 @@ function MapStatusBadge({ status }: { status: string }) {
  */
 function MusicalMapCard({ map }: { map?: SongModelMusicalMap }) {
   if (!map) return null;
-  const { harmony, melody, rhythm, energy, structure, styleFingerprint } = map;
+  const { harmony, melody, rhythm, energy, structure, styleFingerprint, vocals, arrangementSpace } = map;
   const fp = styleFingerprint;
   const climax = structure.climaxCandidates
     .slice()
     .sort((a, b) => b.score - a.score)[0];
+  const openGaps = arrangementSpace.windows.filter((w) => w.vocalDensity === "none").length;
+  const peakIntensity = vocals.phrases.reduce(
+    (max, phrase) => Math.max(max, phrase.emotionalIntensity),
+    0,
+  );
   const peakTension = harmony.tensionMap.reduce(
     (max, seg) => Math.max(max, seg.tension),
     0,
@@ -1366,6 +1371,31 @@ function MusicalMapCard({ map }: { map?: SongModelMusicalMap }) {
               </p>
             )}
           </div>
+
+          <div className="rounded-md border bg-card p-2 space-y-1">
+            <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <Mic className="h-3 w-3" /> Vocals <MapStatusBadge status={vocals.status} />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {vocals.phrases.length} phrase{vocals.phrases.length === 1 ? "" : "s"} ·
+              {" "}{vocals.breathWindows.length} breath{vocals.breathWindows.length === 1 ? "" : "s"}
+            </p>
+            {vocals.phrases.length > 0 && (
+              <p className="text-[10px] text-muted-foreground">peak intensity {Math.round(peakIntensity * 100)}</p>
+            )}
+          </div>
+
+          <div className="rounded-md border bg-card p-2 space-y-1">
+            <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <Layers className="h-3 w-3" /> Space <MapStatusBadge status={arrangementSpace.status} />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {arrangementSpace.windows.length} window{arrangementSpace.windows.length === 1 ? "" : "s"}
+            </p>
+            {arrangementSpace.windows.length > 0 && (
+              <p className="text-[10px] text-muted-foreground">{openGaps} open for fills / counter-melody</p>
+            )}
+          </div>
         </div>
 
         {energy.status !== "not_available" && energy.energyCurve.length > 0 && (
@@ -1398,7 +1428,7 @@ function MusicalMapCard({ map }: { map?: SongModelMusicalMap }) {
           </div>
         )}
 
-        {[harmony, melody, rhythm, energy, structure].some(
+        {[harmony, melody, rhythm, energy, structure, vocals, arrangementSpace].some(
           (group) => group.status === "not_available",
         ) && (
           <p className="text-[10px] text-muted-foreground italic">

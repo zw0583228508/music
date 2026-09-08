@@ -239,10 +239,87 @@ test("missing evidence degrades each group to not_available, never fabricated", 
   assert.equal(map.rhythm.status, "not_available");
   assert.equal(map.energy.status, "not_available");
   assert.equal(map.structure.status, "not_available");
+  assert.equal(map.vocals.status, "not_available");
+  assert.deepEqual(map.vocals.phrases, []);
+  assert.equal(map.arrangementSpace.status, "not_available");
+  assert.deepEqual(map.arrangementSpace.windows, []);
   assert.ok(
-    [map.harmony, map.melody, map.rhythm, map.energy, map.structure]
+    [map.harmony, map.melody, map.rhythm, map.energy, map.structure, map.vocals, map.arrangementSpace]
       .every((group) => typeof group.reason === "string" && group.reason.length > 0),
   );
+});
+
+/** A model with verified vocal phrases + voiced/silent windows over the verse. */
+function makeVocalModel(): SongModelData {
+  const model = makeModel();
+  const phrases = [
+    { id: "phrase-1", start: 0.5, end: 3.5, confidence: 0.9 },
+    { id: "phrase-2", start: 6.0, end: 9.0, confidence: 0.9 },
+    { id: "phrase-3", start: 12.0, end: 15.0, confidence: 0.9 },
+  ];
+  model.vocalEvidence = {
+    status: "detected",
+    reason: null,
+    provenance: { sourceStemRole: "vocals", objectPath: "/objects/analysis/x", provider: "DEMUCS" },
+    sampleRate: 44_100,
+    channels: 1,
+    frameSizeSamples: 2048,
+    thresholds: { rms: 0.01, peak: 0.02, activitySample: 0.01, activityRatio: 0.2 },
+    observedVoicedWindows: phrases.map((p) => ({ start: p.start, end: p.end })),
+    observedSilentWindows: [
+      { start: 3.5, end: 6.0 },
+      { start: 9.0, end: 12.0 },
+    ],
+  };
+  model.vocalIntelligence = {
+    version: "1.0",
+    provenance: model.vocalEvidence.provenance,
+    phrases: { status: "detected", reason: null, events: phrases },
+    breaths: {
+      status: "detected",
+      reason: null,
+      events: [{ id: "breath-1", start: 3.5, end: 6.0, confidence: 0.8, kind: "inter_phrase" }],
+    },
+    lyricAlignment: { status: "not_available", reason: "n/a", alignments: [] },
+    melodyAlignment: { status: "not_available", reason: "n/a", alignments: [] },
+    arrangementSpace: {
+      status: "detected",
+      reason: null,
+      windows: [
+        { id: "space-1", start: 3.5, end: 6.0, confidence: 0.8, phraseBeforeId: "phrase-1", phraseAfterId: "phrase-2", bars: [2, 3], sections: ["Verse"] },
+      ],
+    },
+  };
+  return model;
+}
+
+test("vocals: per-phrase analytics derived from verified evidence", () => {
+  const { vocals } = deriveMusicalMap(makeVocalModel(), { now: FIXED_NOW });
+  assert.equal(vocals.status, "detected");
+  assert.equal(vocals.phrases.length, 3);
+  for (const phrase of vocals.phrases) {
+    assert.ok(phrase.activity > 0.9, "voiced windows cover the phrase span");
+    assert.ok(phrase.activity <= 1 && phrase.emotionalIntensity >= 0 && phrase.emotionalIntensity <= 1);
+    assert.equal(phrase.phraseId.startsWith("phrase-"), true);
+  }
+  assert.equal(vocals.breathWindows.length, 1);
+  assert.ok(vocals.silenceWindows.length >= 2);
+  assert.ok(vocals.vocalDensityCurve.length > 0);
+});
+
+test("arrangementSpace: budgets open in the gaps and close under the voice", () => {
+  const { arrangementSpace } = deriveMusicalMap(makeVocalModel(), { now: FIXED_NOW });
+  assert.equal(arrangementSpace.status, "detected");
+  const gap = arrangementSpace.windows.find((w) => w.vocalDensity === "none");
+  const sung = arrangementSpace.windows.find((w) => w.vocalDensity === "high");
+  assert.ok(gap && sung, "windows for both gap and sung regions");
+  assert.ok(gap.fillBudget > sung.fillBudget, "more fill room in the gap");
+  assert.ok(gap.counterMelodyBudget > sung.counterMelodyBudget);
+  for (const w of arrangementSpace.windows) {
+    assert.ok(w.counterMelodyBudget >= 0 && w.counterMelodyBudget <= 1);
+    assert.ok(w.fillBudget >= 0 && w.fillBudget <= 1);
+    assert.ok(w.end > w.start);
+  }
 });
 
 test("staleness tracks the evidence digest", () => {

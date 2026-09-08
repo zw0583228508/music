@@ -1699,9 +1699,9 @@ components:
         Derived musical map (Canonical Song Model V2). Additive and optional.
         Each group is status-tagged and carries no derived payload when its
         inputs are absent.
-      required: [version, derivedAt, inputsDigestSha256, harmony, melody, rhythm, energy, structure, styleFingerprint]
+      required: [version, derivedAt, inputsDigestSha256, harmony, melody, rhythm, energy, structure, styleFingerprint, vocals, arrangementSpace]
       properties:
-        version: { type: string, enum: ["2.1"] }
+        version: { type: string, enum: ["2.2"] }
         derivedAt: { type: string, format: date-time }
         inputsDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
         harmony:
@@ -1950,6 +1950,100 @@ components:
             sectionContrast: { type: number, nullable: true, minimum: 0, maximum: 1 }
             instrumentPaletteHints: { type: array, items: { type: string } }
             orchestrationSize: { type: string, nullable: true, enum: [sparse, medium, dense] }
+        vocals:
+          type: object
+          required: [status, reason, derivedFrom, method, phrases, breathWindows, silenceWindows, vocalDensityCurve, registerMap]
+          properties:
+            status: { $ref: "#/components/schemas/MusicalMapStatus" }
+            reason: { type: string, nullable: true }
+            derivedFrom: { type: array, items: { type: string } }
+            method: { type: string }
+            phrases:
+              type: array
+              items:
+                type: object
+                required: [phraseId, start, end, activity, density, range, peakPitch, contour, cadence, pickup, emotionalIntensity]
+                properties:
+                  phraseId: { type: string }
+                  start: { type: number, minimum: 0 }
+                  end: { type: number, minimum: 0 }
+                  activity: { type: number, minimum: 0, maximum: 1 }
+                  density: { type: number, minimum: 0 }
+                  range:
+                    type: object
+                    nullable: true
+                    required: [lowPitch, highPitch]
+                    properties:
+                      lowPitch: { type: number }
+                      highPitch: { type: number }
+                  peakPitch: { type: number, nullable: true }
+                  contour: { type: string, enum: [rising, falling, arch, valley, flat, mixed] }
+                  cadence: { type: string, enum: [rising, falling, sustained, unknown] }
+                  pickup: { type: boolean }
+                  emotionalIntensity: { type: number, minimum: 0, maximum: 1 }
+                  coordinates: { $ref: "#/components/schemas/CanonicalTimeRange" }
+            breathWindows:
+              type: array
+              items:
+                type: object
+                required: [id, start, end]
+                properties:
+                  id: { type: string }
+                  start: { type: number, minimum: 0 }
+                  end: { type: number, minimum: 0 }
+                  coordinates: { $ref: "#/components/schemas/CanonicalTimeRange" }
+            silenceWindows:
+              type: array
+              items:
+                type: object
+                required: [id, start, end]
+                properties:
+                  id: { type: string }
+                  start: { type: number, minimum: 0 }
+                  end: { type: number, minimum: 0 }
+                  coordinates: { $ref: "#/components/schemas/CanonicalTimeRange" }
+            vocalDensityCurve:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/MusicalMapBarSpan"
+                  - type: object
+                    required: [vocalDensity]
+                    properties:
+                      vocalDensity: { type: number, minimum: 0, maximum: 1 }
+            registerMap:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/MusicalMapBarSpan"
+                  - type: object
+                    required: [register]
+                    properties:
+                      register: { type: string, enum: [low, low_mid, mid, upper_mid, high] }
+        arrangementSpace:
+          type: object
+          required: [status, reason, derivedFrom, method, windows]
+          properties:
+            status: { $ref: "#/components/schemas/MusicalMapStatus" }
+            reason: { type: string, nullable: true }
+            derivedFrom: { type: array, items: { type: string } }
+            method: { type: string }
+            windows:
+              type: array
+              items:
+                type: object
+                required: [id, start, end, bars, sections, vocalDensity, counterMelodyBudget, fillBudget, padBudget]
+                properties:
+                  id: { type: string }
+                  start: { type: number, minimum: 0 }
+                  end: { type: number, minimum: 0 }
+                  bars: { type: array, items: { type: number } }
+                  sections: { type: array, items: { type: string } }
+                  vocalDensity: { type: string, enum: [none, low, medium, high] }
+                  counterMelodyBudget: { type: number, minimum: 0, maximum: 1 }
+                  fillBudget: { type: number, minimum: 0, maximum: 1 }
+                  padBudget: { type: number, minimum: 0, maximum: 1 }
+                  coordinates: { $ref: "#/components/schemas/CanonicalTimeRange" }
     AnalysisDomain:
       type: string
       enum: [tempo, downbeats, meter, key, chords, melody, bass, sections, instruments]

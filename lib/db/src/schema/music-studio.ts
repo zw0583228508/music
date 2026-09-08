@@ -248,7 +248,7 @@ export type MusicalMapBarSpan = {
  * already present on the model.
  */
 export type SongModelMusicalMap = {
-  version: "2.1";
+  version: "2.2";
   /** ISO timestamp the map was derived. */
   derivedAt: string;
   /** SHA-256 over the canonical evidence this map was derived from. */
@@ -368,6 +368,71 @@ export type SongModelMusicalMap = {
     sectionContrast: number | null;
     instrumentPaletteHints: string[];
     orchestrationSize: "sparse" | "medium" | "dense" | null;
+  }>;
+
+  /**
+   * Phrase-level vocal intelligence (PR-03). Derived from the verified
+   * `vocalIntelligence` phrases/breaths + melody + energy. `phraseId` links to
+   * `vocalIntelligence.phrases.events[].id`.
+   */
+  vocals: MusicalMapGroup<{
+    phrases: Array<{
+      phraseId: string;
+      start: number;
+      end: number;
+      /** Voiced fraction of the phrase span, 0..1. */
+      activity: number;
+      /** Aligned melody-note rate across the phrase, notes/second. */
+      density: number;
+      range: { lowPitch: number; highPitch: number } | null;
+      peakPitch: number | null;
+      contour: "rising" | "falling" | "arch" | "valley" | "flat" | "mixed";
+      /** End-of-phrase melodic motion. */
+      cadence: "rising" | "falling" | "sustained" | "unknown";
+      /** Phrase begins before its bar downbeat. */
+      pickup: boolean;
+      /** 0..1 from range, register height, and local energy. */
+      emotionalIntensity: number;
+      coordinates?: CanonicalTimeRange;
+    }>;
+    breathWindows: Array<{
+      id: string;
+      start: number;
+      end: number;
+      coordinates?: CanonicalTimeRange;
+    }>;
+    silenceWindows: Array<{
+      id: string;
+      start: number;
+      end: number;
+      coordinates?: CanonicalTimeRange;
+    }>;
+    vocalDensityCurve: Array<MusicalMapBarSpan & { vocalDensity: number }>;
+    registerMap: Array<
+      MusicalMapBarSpan & {
+        register: "low" | "low_mid" | "mid" | "upper_mid" | "high";
+      }
+    >;
+  }>;
+
+  /**
+   * Budget-annotated arrangement space (PR-03). Extends
+   * `vocalIntelligence.arrangementSpace` windows with per-window
+   * counter-melody / fill / pad budgets and a vocal-density level.
+   */
+  arrangementSpace: MusicalMapGroup<{
+    windows: Array<{
+      id: string;
+      start: number;
+      end: number;
+      bars: number[];
+      sections: string[];
+      vocalDensity: "none" | "low" | "medium" | "high";
+      counterMelodyBudget: number;
+      fillBudget: number;
+      padBudget: number;
+      coordinates?: CanonicalTimeRange;
+    }>;
   }>;
 };
 

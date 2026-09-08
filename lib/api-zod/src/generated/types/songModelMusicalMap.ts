@@ -5,6 +5,7 @@
  * API for the AI Music Production Studio
  * OpenAPI spec version: 0.1.0
  */
+import type { SongModelMusicalMapArrangementSpace } from './songModelMusicalMapArrangementSpace';
 import type { SongModelMusicalMapEnergy } from './songModelMusicalMapEnergy';
 import type { SongModelMusicalMapHarmony } from './songModelMusicalMapHarmony';
 import type { SongModelMusicalMapMelody } from './songModelMusicalMapMelody';
@@ -12,6 +13,7 @@ import type { SongModelMusicalMapRhythm } from './songModelMusicalMapRhythm';
 import type { SongModelMusicalMapStructure } from './songModelMusicalMapStructure';
 import type { SongModelMusicalMapStyleFingerprint } from './songModelMusicalMapStyleFingerprint';
 import type { SongModelMusicalMapVersion } from './songModelMusicalMapVersion';
+import type { SongModelMusicalMapVocals } from './songModelMusicalMapVocals';
 
 /**
  * Derived musical map (Canonical Song Model V2). Additive and optional. Each group is status-tagged and carries no derived payload when its inputs are absent.
@@ -27,4 +29,6 @@ export interface SongModelMusicalMap {
   energy: SongModelMusicalMapEnergy;
   structure: SongModelMusicalMapStructure;
   styleFingerprint: SongModelMusicalMapStyleFingerprint;
+  vocals: SongModelMusicalMapVocals;
+  arrangementSpace: SongModelMusicalMapArrangementSpace;
 }
