@@ -50,6 +50,11 @@ const suites = {
         "midi-sag-routing.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      [
+        "src/lib/musicProviders.shadowRouting.test.ts",
+        "shadow-routing.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       ["src/lib/clamp3Attestation.test.ts", "clamp3-attestation.test.mjs"],
     ],
   },

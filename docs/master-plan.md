@@ -132,6 +132,48 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
 
 **Wave 4 (control & measurement) complete. PR-00..PR-18 merged.**
 
+## Wave 5 — models, entering as tools rather than as the brain
+
+- **PR-19** (#20) ✅ — Magenta RT2 worker, **deployed and smoke-tested on GPU**.
+  Role is MIDI → conditioned audio realization: RT2 renders an arrangement the
+  symbolic pipeline already composed and is never asked to invent structure,
+  harmony or instrumentation. Registered with capabilities `["audio_generation"]`
+  only, and a test asserts that boundary.
+
+  Provisioned on Modal (L4), 12 files, asset tree `5df82db977fa`, checkpoint
+  SHA256 verified against Hugging Face LFS metadata read *before* the download.
+  Three real smoke contracts passed; the one that matters is `midi`: C major and
+  A minor conditioning under an identical style prompt produced different
+  dominant pitch classes, so the model is genuinely following our notes.
+  Streamed 6 s render at realtime factor 1.53.
+
+  **Routing status `SHADOW_ONLY` / `SHADOW_READY`.** The licence permits
+  production use; the plan does not. Enforced in code, not documentation:
+  `SHADOW_ONLY_PROVIDER_IDS` is a separate gate from the licence gates, because
+  conflating them would let a clean licence review silently promote an
+  unevaluated model.
+
+  What this does **not** show: the smoke chroma is a coarse FFT, so it proves the
+  conditioning changed the output and nothing about whether the result is in
+  tune. Only the 230M variant has been run. No musical judgement has been made,
+  and RT2 has not been compared against the reference renderer on the benchmark.
+
+- **PR-20** `midi-rwkv-worker` — **audit complete, commercial routing refused.**
+  The plan flagged this as "MIT code; audit weights/lineage before any
+  COMMERCIAL_READY claim". The audit finds the claim cannot be made:
+
+  | layer | licence | commercial |
+  |---|---|---|
+  | MIDI-RWKV code | MIT | yes |
+  | POP909 (finetune) | MIT | yes |
+  | **GigaMIDI (pretraining)** | **CC-BY-NC-4.0**, gated | **no** |
+
+  The distributed base weights are pretrained on GigaMIDI, and a permissive code
+  licence does not launder the training data's terms. MIDI-RWKV is therefore
+  `BLOCKED_LICENSE` for commercial routing, exactly like `LADA_BAND` and
+  `DIFFRHYTHM_2`. The MIT code would make pretraining from scratch on a
+  commercially-licensed corpus legitimate; the shipped weights are not.
+
 ## Benchmark baseline — the number every later change is judged against
 
 `pnpm --filter @workspace/api-server run benchmark` (add `-- --render` for audio).

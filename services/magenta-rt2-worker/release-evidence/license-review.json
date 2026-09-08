@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "provider": "MAGENTA_RT2",
+  "reviewedAt": "2026-09-08",
+  "sourceRepository": "https://github.com/magenta/magenta-realtime",
+  "sourceRevision": "694a545e4ba0b88bf1150137b129582166d3e07f",
+  "modelRepository": "https://huggingface.co/google/magenta-realtime-2",
+  "modelRevision": "010aa0dcb0dfd27b24f0ad07b4dad63e8f9521cc",
+  "findings": [
+    {
+      "claim": "Codebase is Apache-2.0.",
+      "verifiedBy": "Fetched LICENSE at the pinned revision; the text is the Apache License, Version 2.0. GitHub's licence API reports NOASSERTION for this repository, so the label was not trusted and the file itself was read.",
+      "result": "CONFIRMED"
+    },
+    {
+      "claim": "Model weights are CC-BY-4.0.",
+      "verifiedBy": "Hugging Face model metadata at the pinned revision reports license cc-by-4.0, and MODEL.md states the weights are under Creative Commons Attribution 4.0 International.",
+      "result": "CONFIRMED"
+    },
+    {
+      "claim": "Weights are publicly downloadable without gated approval.",
+      "verifiedBy": "Hugging Face model metadata at the pinned revision reports gated: false. No access token is required, and license_manifest.json records access_token_environment as null.",
+      "result": "CONFIRMED"
+    },
+    {
+      "claim": "The additional usage terms do not restrict commercial use.",
+      "verifiedBy": "MODEL.md's usage terms at the pinned revision impose a responsible-use obligation, disclaim Google rights in generated outputs, and disclaim warranties. They contain no non-commercial or field-of-use restriction.",
+      "result": "CONFIRMED"
+    },
+    {
+      "claim": "Attribution is a live obligation, not a formality.",
+      "verifiedBy": "CC-BY-4.0 requires attribution. The obligation is carried in code: app.py attaches the attribution to every realization response and smoke.py to every proof, so an output cannot leave the worker unattributed.",
+      "result": "ENFORCED_IN_CODE"
+    }
+  ],
+  "checkpointDigests": {
+    "note": "Taken from Hugging Face LFS metadata at the pinned revision before any download, so bootstrap_assets.py verifies against a digest it did not compute itself.",
+    "checkpoints/mrt2_small.safetensors": "5dd1cbc7c606c512c21de0bcb04d4818bf0a3b873d7cbb9d1556d67d3b034de3",
+    "checkpoints/mrt2_base.safetensors": "60f3e813d9da4a41a166c734a3074e6d54254c2fc14b0817bad6b8d25cddc044"
+  },
+  "commercialUseAuthorized": true,
+  "researchUseAuthorized": true,
+  "redistributionAuthorized": true,
+  "runtimeBuildAuthorized": true,
+  "routingStatus": "SHADOW_ONLY",
+  "routingStatusReason": "Licence permits production use. Routing does not: the plan requires a new model to beat the existing pipeline in blind evaluation before it becomes a default, and that evaluation has not been run."
+}

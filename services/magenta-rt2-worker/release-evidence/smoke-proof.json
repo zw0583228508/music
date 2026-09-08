@@ -1,0 +1,109 @@
+{
+  "attribution": "Music realized with Magenta RealTime 2 (Google LLC), model weights licensed CC-BY-4.0.",
+  "checkpointSha256": "5dd1cbc7c606c512c21de0bcb04d4818bf0a3b873d7cbb9d1556d67d3b034de3",
+  "contracts": [
+    {
+      "audio": {
+        "channels": 2,
+        "clippedSamples": 0,
+        "dcOffset": -7.2e-05,
+        "isSilent": false,
+        "peak": 0.267136,
+        "rmsDbfs": -27.79,
+        "sampleRate": 48000,
+        "samples": 144000
+      },
+      "contract": "text",
+      "latencySeconds": 2.229,
+      "passed": true,
+      "realtimeFactor": 1.346
+    },
+    {
+      "aMinorDominantPitchClasses": [
+        0,
+        4,
+        9,
+        11
+      ],
+      "audio": {
+        "aMinor": {
+          "channels": 2,
+          "clippedSamples": 0,
+          "dcOffset": -2.4e-05,
+          "isSilent": false,
+          "peak": 0.230591,
+          "rmsDbfs": -37.78,
+          "sampleRate": 48000,
+          "samples": 144000
+        },
+        "cMajor": {
+          "channels": 2,
+          "clippedSamples": 0,
+          "dcOffset": -2.8e-05,
+          "isSilent": false,
+          "peak": 0.240234,
+          "rmsDbfs": -37.55,
+          "sampleRate": 48000,
+          "samples": 144000
+        }
+      },
+      "cMajorDominantPitchClasses": [
+        4,
+        7,
+        11,
+        0
+      ],
+      "conditioning": {
+        "distinctPitches": 3,
+        "frames": 75,
+        "maskedPitches": 0,
+        "onsets": 6,
+        "pitchRange": [
+          60,
+          67
+        ],
+        "seconds": 3.0,
+        "soundingFrameSlots": 149
+      },
+      "contract": "midi",
+      "latencySeconds": 1.911,
+      "note": "Pitch classes are measured from a coarse FFT chroma, which is enough to detect that conditioning changed the output but is not a transcription. It does not prove the realization is in tune.",
+      "passed": true,
+      "respondsToNoteConditioning": true
+    },
+    {
+      "audio": {
+        "channels": 2,
+        "clippedSamples": 0,
+        "dcOffset": -0.000104,
+        "isSilent": false,
+        "peak": 0.339142,
+        "rmsDbfs": -23.82,
+        "sampleRate": 48000,
+        "samples": 288000
+      },
+      "contract": "audio_context",
+      "expectedSamples": 288000,
+      "frames": 150,
+      "latencySeconds": 3.914,
+      "passed": true,
+      "realtimeFactor": 1.533,
+      "seamIsSilent": false
+    }
+  ],
+  "evidenceNote": "Produced by services/magenta-rt2-worker/smoke.py on a Modal L4 against the provisioned volume. Pitch classes come from a coarse FFT chroma: enough to show the note conditioning changed the output, not a transcription, and no evidence that the realization is in tune.",
+  "gpu": "L4",
+  "modelRevision": "010aa0dcb0dfd27b24f0ad07b4dad63e8f9521cc",
+  "passed": true,
+  "provider": "MAGENTA_RT2",
+  "ranAt": "2026-09-08",
+  "routingStatus": "SHADOW_ONLY",
+  "routingStatusNote": "The plan requires a new model to beat the existing pipeline in blind evaluation before it becomes a default. Until PR-18's benchmark records that win, MAGENTA_RT2 is available for explicit opt-in and shadow comparison only.",
+  "runtime": {
+    "cuda_image": "nvidia/cuda:12.6.3-cudnn-runtime-ubuntu22.04",
+    "jax": "0.10.1"
+  },
+  "sourceRevision": "694a545e4ba0b88bf1150137b129582166d3e07f",
+  "treeSha256": "5df82db977fa20d024f1476844cdd887446c48ed41b9565603982d640af5eb52",
+  "variant": "MAGENTA_RT2_SMALL"
+}

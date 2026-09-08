@@ -1,0 +1,36 @@
+# Worker images are built with the repository root as the build context (see
+# services/*/modal_config.py REPOSITORY_ROOT), so anything not excluded here is
+# uploaded to the build host on every deploy.
+
+# Secrets must never enter a build context. .env.local holds the live database
+# URL; workers receive configuration through Modal secrets, never through files.
+.env
+.env.*
+!.env.local.example
+*.pem
+*.key
+
+# Large and reproducible. node_modules alone dwarfs every worker's real context.
+node_modules
+**/node_modules
+.git
+.github
+pnpm-lock.yaml
+
+# Build output and local state.
+dist
+**/dist
+build
+**/build
+.turbo
+coverage
+**/coverage
+.local-object-store
+*.tsbuildinfo
+*.log
+
+# Not part of any worker runtime.
+screenshots
+docs
+artifacts/music-studio
+artifacts/mockup-sandbox

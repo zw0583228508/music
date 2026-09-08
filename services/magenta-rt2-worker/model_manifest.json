@@ -1,0 +1,79 @@
+{
+  "provider": "MAGENTA_RT2",
+  "asset_root": "/var/lib/magenta-rt2/models",
+  "asset_manifest": "model-assets.json",
+  "smoke_proof": "smoke-proof.json",
+  "role": "SYMBOLIC_TO_AUDIO_REALIZER",
+  "role_note": "Magenta RT2 realizes an arrangement this platform has already composed. It is conditioned on our piano roll and style, never asked to invent structure, harmony or instrumentation. It is not an arranger and must not be routed as one.",
+  "source": {
+    "repository": "https://github.com/magenta/magenta-realtime",
+    "revision": "694a545e4ba0b88bf1150137b129582166d3e07f",
+    "license": "Apache-2.0",
+    "license_reference": "https://github.com/magenta/magenta-realtime/blob/694a545e4ba0b88bf1150137b129582166d3e07f/LICENSE"
+  },
+  "model": {
+    "repository": "google/magenta-realtime-2",
+    "revision": "010aa0dcb0dfd27b24f0ad07b4dad63e8f9521cc",
+    "license": "CC-BY-4.0",
+    "license_reference": "https://huggingface.co/google/magenta-realtime-2/blob/010aa0dcb0dfd27b24f0ad07b4dad63e8f9521cc/MODEL.md",
+    "gated": false,
+    "required_trees": ["checkpoints", "models", "resources"]
+  },
+  "runtime": {
+    "python": "3.11",
+    "cuda_image": "nvidia/cuda:12.6.3-cudnn-runtime-ubuntu22.04",
+    "jax": "0.10.1",
+    "jaxlib": "0.10.1",
+    "flax": "0.12.7",
+    "recurrentgemma": "1.0.1",
+    "pin_source": "https://github.com/magenta/magenta-realtime/blob/694a545e4ba0b88bf1150137b129582166d3e07f/uv.lock"
+  },
+  "variants": {
+    "MAGENTA_RT2_SMALL": {
+      "size": "mrt2_small",
+      "checkpoint_path": "checkpoints/mrt2_small.safetensors",
+      "checkpoint_sha256": "5dd1cbc7c606c512c21de0bcb04d4818bf0a3b873d7cbb9d1556d67d3b034de3",
+      "checkpoint_bytes": 1130000000,
+      "parameters": "230M",
+      "gpu": "L4",
+      "runner_env": "MUSIC_GPU_RUNNER_MAGENTA_RT2_SMALL",
+      "smoke_env": "MUSIC_GPU_SMOKE_MAGENTA_RT2_SMALL"
+    },
+    "MAGENTA_RT2_BASE": {
+      "size": "mrt2_base",
+      "checkpoint_path": "checkpoints/mrt2_base.safetensors",
+      "checkpoint_sha256": "60f3e813d9da4a41a166c734a3074e6d54254c2fc14b0817bad6b8d25cddc044",
+      "checkpoint_bytes": 9840000000,
+      "parameters": "2.4B",
+      "gpu": "L40S",
+      "runner_env": "MUSIC_GPU_RUNNER_MAGENTA_RT2_BASE",
+      "smoke_env": "MUSIC_GPU_SMOKE_MAGENTA_RT2_BASE"
+    }
+  },
+  "conditioning_contract": {
+    "note": "Taken from magenta_rt/config.py at the pinned source revision. These are the model's own token configs, not our interpretation of them.",
+    "frame_rate_hz": 25,
+    "audio": {"sample_rate": 48000, "channels": 2},
+    "notes": {
+      "key": "pianoroll_with_onsets_tokens",
+      "dimension": 128,
+      "values": {
+        "-1": "pitch masked out (we assert nothing)",
+        "0": "pitch off",
+        "1": "pitch on, sustained (not a new onset)",
+        "2": "pitch on, onset",
+        "3": "pitch on, model chooses onset or sustain"
+      }
+    },
+    "drums": {
+      "key": "drum_pianoroll_tokens",
+      "dimension": 1,
+      "values": {"-1": "masked", "0": "no drum", "1": "play drum"}
+    },
+    "style": {"key": "mulan_tokens_25hz", "dimension": 12, "embedding_size": 768},
+    "audio_context": {"key": "spectrostream_tokens", "dimension": 12}
+  },
+  "license_evidence": "release-evidence/license-review.json",
+  "routing_status": "SHADOW_ONLY",
+  "routing_status_note": "The plan requires a new model to beat the existing pipeline in blind evaluation before it becomes a default. Until PR-18's benchmark records that win, MAGENTA_RT2 is available for explicit opt-in and shadow comparison only."
+}
