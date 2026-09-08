@@ -24,6 +24,24 @@ import { deriveMusicalMap, isMusicalMapStale } from "./songMusicalMap";
 export const SECTION_PHRASE_PLAN_VERSION = "1.0" as const;
 const METHOD = "section-phrase-role-planner/v1";
 
+/**
+ * Optional biases from a ProductionBrief (Wave U). They nudge which palette
+ * families a section keeps active; role assignment, registers and activity
+ * metrics are still derived exactly as before from the resulting families.
+ */
+export type SectionPlannerHints = {
+  /** -1..1 bias on how many palette families every section keeps active. */
+  activeFamilyBias?: number;
+  /** Per-section families to force in or out (palette families only). */
+  sectionFamilies?: Record<string, { add?: string[]; remove?: string[] }>;
+};
+
+const hasSectionHints = (hints: SectionPlannerHints | undefined): hints is SectionPlannerHints =>
+  !!hints && (
+    (hints.activeFamilyBias !== undefined && hints.activeFamilyBias !== 0) ||
+    Object.keys(hints.sectionFamilies ?? {}).length > 0
+  );
+
 const clamp01 = (v: number): number => (v < 0 ? 0 : v > 1 ? 1 : v);
 const round3 = (v: number): number => Math.round(v * 1000) / 1000;
 
@@ -172,6 +190,7 @@ function interactionFor(
 export function sectionPhrasePlanInputsDigest(
   songModel: SongModelData,
   globalPlan: GlobalArrangementPlan,
+  hints?: SectionPlannerHints,
 ): string {
   return createHash("sha256")
     .update(JSON.stringify({
@@ -182,6 +201,8 @@ export function sectionPhrasePlanInputsDigest(
       transitions: songModel.musicalMap?.structure.transitions ?? null,
       vocals: songModel.musicalMap?.vocals.phrases.map((p) => p.phraseId) ?? null,
       arrangementSpace: songModel.musicalMap?.arrangementSpace.windows.map((w) => w.id) ?? null,
+      // Only when present, so plans derived without hints keep their digests.
+      ...(hasSectionHints(hints) ? { hints } : {}),
     }))
     .digest("hex");
 }
@@ -189,13 +210,14 @@ export function sectionPhrasePlanInputsDigest(
 export function deriveSectionPhrasePlan(
   songModel: SongModelData,
   globalPlanInput?: GlobalArrangementPlan,
-  options: { now?: Date } = {},
+  options: { now?: Date; hints?: SectionPlannerHints } = {},
 ): SectionPhrasePlan {
+  const hints = options.hints ?? {};
   const map: SongModelMusicalMap =
     songModel.musicalMap && !isMusicalMapStale(songModel)
       ? songModel.musicalMap
-      : deriveMusicalMap(songModel, options);
-  const globalPlan = globalPlanInput ?? deriveGlobalArrangementPlan(songModel, options);
+      : deriveMusicalMap(songModel, { now: options.now });
+  const globalPlan = globalPlanInput ?? deriveGlobalArrangementPlan(songModel, { now: options.now });
 
   const paletteFamilies = [
     ...new Set(globalPlan.instrumentPalette.map((entry) => canonicalFamily(entry.role))),
@@ -223,10 +245,15 @@ export function deriveSectionPhrasePlan(
     const barCount = endBar - startBar + 1;
 
     // How many families this section keeps: 2 (foundation) up to the full
-    // palette, scaled by planned energy.
+    // palette, scaled by planned energy. A brief bias shifts the count by up
+    // to half the palette's headroom without escaping the same bounds.
+    const familyBias = Math.max(-1, Math.min(1, hints.activeFamilyBias ?? 0));
     const activeCount = Math.max(
       2,
-      Math.min(paletteFamilies.length, Math.round(2 + target.energy * (paletteFamilies.length - 2))),
+      Math.min(
+        paletteFamilies.length,
+        Math.round(2 + (target.energy + familyBias * 0.5) * (paletteFamilies.length - 2)),
+      ),
     );
     const orderedFamilies = [...paletteFamilies].sort(
       (a, b) => (FAMILY_TIER[a] ?? 3) - (FAMILY_TIER[b] ?? 3) || a.localeCompare(b),
@@ -234,6 +261,21 @@ export function deriveSectionPhrasePlan(
     const activeFamilies = orderedFamilies.slice(0, activeCount);
     if (target.energy > 0.2 && !activeFamilies.includes("bass") && orderedFamilies.includes("bass")) {
       activeFamilies.push("bass");
+    }
+    // Per-section brief requests: a family the user asked for here joins if
+    // the palette has it; one they asked out leaves. Everything downstream
+    // (roles, registers, activity) is still derived from the resulting set.
+    const sectionHint = hints.sectionFamilies?.[target.sectionName];
+    for (const family of sectionHint?.add ?? []) {
+      const canonical = canonicalFamily(family);
+      if (orderedFamilies.includes(canonical) && !activeFamilies.includes(canonical)) {
+        activeFamilies.push(canonical);
+      }
+    }
+    for (const family of sectionHint?.remove ?? []) {
+      const canonical = canonicalFamily(family);
+      const at = activeFamilies.indexOf(canonical);
+      if (at >= 0 && activeFamilies.length > 1) activeFamilies.splice(at, 1);
     }
     const inactiveFamilies = orderedFamilies.filter((f) => !activeFamilies.includes(f));
 
@@ -398,7 +440,7 @@ export function deriveSectionPhrasePlan(
   return {
     version: SECTION_PHRASE_PLAN_VERSION,
     derivedAt: (options.now ?? new Date()).toISOString(),
-    inputsDigestSha256: sectionPhrasePlanInputsDigest(songModel, globalPlan),
+    inputsDigestSha256: sectionPhrasePlanInputsDigest(songModel, globalPlan, options.hints),
     method: METHOD,
     sections,
     phrases,
@@ -410,7 +452,8 @@ export function isSectionPhrasePlanStale(
   songModel: SongModelData,
   globalPlan: GlobalArrangementPlan | undefined,
   plan: SectionPhrasePlan | undefined,
+  hints?: SectionPlannerHints,
 ): boolean {
   if (!plan || plan.version !== SECTION_PHRASE_PLAN_VERSION || !globalPlan) return true;
-  return plan.inputsDigestSha256 !== sectionPhrasePlanInputsDigest(songModel, globalPlan);
+  return plan.inputsDigestSha256 !== sectionPhrasePlanInputsDigest(songModel, globalPlan, hints);
 }

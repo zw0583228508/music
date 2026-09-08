@@ -2263,6 +2263,455 @@ export type PartialRegenerationReport = {
   locksHonoured: boolean;
 };
 
+// ---------------------------------------------------------------------------
+// Wave U — Universal Producer Intelligence (PR-U1): contracts.
+//
+// Four strictly separated layers sit in front of the ArrangementPlan:
+//   UserIntent      — what the user said, plus what was inferred from it;
+//   StyleProfile    — independent dimensions of the musical world asked for;
+//   ProductionBrief — how THIS song realises that world: the single source of
+//                     truth the planners read;
+//   ArrangementPlan — unchanged in shape; may reference the brief it came from.
+//
+// The platform holds no closed catalogue of styles. Identity dimensions
+// (tradition, genre, scene, ...) are open strings; the fine dimensions form a
+// universal vocabulary for describing music. A dimension with no evidence is
+// absent — never defaulted — and every populated value carries confidence and
+// provenance.
+// ---------------------------------------------------------------------------
+
+/** Where a piece of producer knowledge came from. */
+export type IntelligenceProvenance = "stated" | "inferred" | "default" | "researched";
+
+/**
+ * One populated, evidence-bearing value of a style dimension. `sourceRefs`
+ * name the evidence: a verbatim user span (`text:"..."`), a vocabulary rule
+ * (`vocab:<id>`), a research source (`research:<id>`), or a clarification
+ * answer (`answer:<questionId>/<optionId>`).
+ */
+export type StyleDimension<T = string> = {
+  value: T;
+  /** 0..1 */
+  confidence: number;
+  provenance: IntelligenceProvenance;
+  sourceRefs?: string[];
+};
+
+export type IntentSectionFunction =
+  | "intro" | "verse" | "prechorus" | "chorus" | "bridge"
+  | "breakdown" | "outro" | "instrumental" | "unknown";
+
+/** A section as the user refers to it ("second chorus", "last chorus"). */
+export type IntentSectionRef = {
+  function: IntentSectionFunction;
+  /** 1-based ordinal, or "last" / "all" when the user did not number it. */
+  ordinal: number | "last" | "all";
+  /** Resolved against the Song Model's sections when one was available. */
+  sectionName?: string;
+};
+
+/** Scope of an inference or constraint, as spoken (sections not yet resolved). */
+export type IntentScope =
+  | { kind: "global" }
+  | { kind: "section"; section: IntentSectionRef }
+  | { kind: "phrase"; phraseId: string }
+  | { kind: "track"; instrument: string };
+
+export type IntentSlotName =
+  | "mood" | "energy" | "density" | "era" | "tradition" | "genre_word" | "scene"
+  | "instrument" | "ensemble_size" | "tempo_feel" | "tempo_bpm"
+  | "production_feel" | "vocal_treatment";
+
+/** Something read out of the user's words. Never present without evidence. */
+export type IntentInference = {
+  id: string;
+  slot: IntentSlotName;
+  value: string;
+  confidence: number;
+  provenance: IntelligenceProvenance;
+  /** Verbatim spans of the user's text this rests on. */
+  evidence: string[];
+  scope: IntentScope;
+};
+
+/**
+ * A boundary the user drew ("not too poppy", "no drums", "keep the piano").
+ * Never a style: a negated style word is recorded here and nowhere else.
+ */
+export type IntentConstraint = {
+  id: string;
+  kind: "avoid" | "limit" | "require" | "keep";
+  /** Normalised subject ("poppy", "busy", "drums"). */
+  subject: string;
+  /** The user's words, verbatim. */
+  statement: string;
+  scope: IntentScope;
+  confidence: number;
+  provenance: IntelligenceProvenance;
+};
+
+export type IntentReference = {
+  id: string;
+  kind: "song" | "artist" | "recording" | "playlist" | "description";
+  label: string;
+  /** What the user wants from it, when said ("the drums from ..."). */
+  aspect?: string;
+  /** Verbatim span, when it came from the text. */
+  evidence?: string;
+};
+
+export type IntentSectionRequest = {
+  id: string;
+  section: IntentSectionRef;
+  /** The clause the user said about this section, verbatim. */
+  text: string;
+  inferenceIds: string[];
+  constraintIds: string[];
+};
+
+/** Layer 1: what the user actually said, and what was read out of it. */
+export type UserIntent = {
+  version: "1.0";
+  derivedAt: string;
+  inputsDigestSha256: string;
+  method: string;
+  /** Untouched user text. */
+  rawText: string;
+  language: "he" | "en" | "mixed" | "unknown";
+  inferences: IntentInference[];
+  constraints: IntentConstraint[];
+  references: IntentReference[];
+  sectionRequests: IntentSectionRequest[];
+  /** "more X" / "less X" targets the extractor could not classify. Surfaced, not guessed. */
+  unresolvedTerms: string[];
+  /** Mean confidence over inferences + constraints; 0 when nothing was extracted. */
+  confidence: number;
+};
+
+/**
+ * Layer 2: the independent dimensions of a musical world. Every field is
+ * optional; only dimensions with evidence are populated. Identity dimensions
+ * are open strings so any tradition, scene or school can be named; the fine
+ * dimensions use a fixed universal vocabulary the planners can read.
+ */
+export type StyleProfileDimensions = {
+  tradition?: StyleDimension<string>;
+  genre?: StyleDimension<string>;
+  subgenre?: StyleDimension<string>;
+  scene?: StyleDimension<string>;
+  era?: StyleDimension<string>;
+  productionSchool?: StyleDimension<string>;
+  ensembleType?: StyleDimension<string>;
+  grooveFamily?: StyleDimension<string>;
+  harmonicLanguage?: StyleDimension<string>;
+  melodicLanguage?: StyleDimension<string>;
+  articulationLanguage?: StyleDimension<string>;
+  soundAesthetic?: StyleDimension<string>;
+
+  tempoBehavior?: StyleDimension<"slow" | "moderate" | "fast" | "rubato_tolerant" | "strict_grid" | "breathing">;
+  /** 0.5 (straight) .. ~0.75 (hard swing). */
+  swingRatio?: StyleDimension<number>;
+  microtiming?: StyleDimension<"quantized" | "on_top" | "behind" | "ahead" | "loose">;
+  subdivisionVocabulary?: StyleDimension<string[]>;
+  kickSnareLanguage?: StyleDimension<string>;
+  bassAttackPosition?: StyleDimension<"on_the_beat" | "anticipated" | "laid_back" | "sustained">;
+  chordRhythm?: StyleDimension<"sustained" | "pulsing" | "syncopated" | "arpeggiated" | "stabs">;
+  chordExtensions?: StyleDimension<"triads" | "sevenths" | "extended" | "quartal" | "modal">;
+  harmonicRhythm?: StyleDimension<"slow" | "moderate" | "fast">;
+  passingChordDensity?: StyleDimension<"none" | "sparse" | "frequent">;
+  melodicOrnamentation?: StyleDimension<"none" | "light" | "moderate" | "heavy">;
+  phraseLength?: StyleDimension<"short" | "regular" | "long" | "irregular">;
+  pickupBehavior?: StyleDimension<"none" | "occasional" | "characteristic">;
+  cadenceLanguage?: StyleDimension<string>;
+  callAndResponse?: StyleDimension<"none" | "occasional" | "structural">;
+  registerTendencies?: StyleDimension<"low" | "mid" | "high" | "wide">;
+  voicingWidth?: StyleDimension<"close" | "open" | "wide">;
+  doublingRules?: StyleDimension<"none" | "octaves" | "unison_sections" | "orchestral">;
+  articulations?: StyleDimension<string[]>;
+  fillFrequency?: StyleDimension<"rare" | "moderate" | "frequent">;
+  transitionLanguage?: StyleDimension<string>;
+  /** Families in order of importance for this world. */
+  instrumentationHierarchy?: StyleDimension<string[]>;
+  dynamics?: StyleDimension<"narrow" | "moderate" | "wide">;
+  roomSize?: StyleDimension<"dry" | "small" | "medium" | "large" | "hall">;
+  saturation?: StyleDimension<"clean" | "warm" | "driven" | "lo_fi">;
+  stereoAesthetic?: StyleDimension<"mono" | "narrow" | "natural" | "wide">;
+};
+
+export type StyleDimensionName = keyof StyleProfileDimensions;
+export type StyleDimensionValue = string | number | string[];
+
+/** A value the user ruled out. It never populates a dimension. */
+export type StyleExclusion = {
+  /** The dimension the value would have populated, when known. */
+  dimension?: StyleDimensionName;
+  value: string;
+  sourceRefs: string[];
+};
+
+export type StyleProfile = {
+  version: "1.0";
+  derivedAt: string;
+  inputsDigestSha256: string;
+  method: string;
+  /** Only dimensions with evidence are present. */
+  dimensions: StyleProfileDimensions;
+  exclusions: StyleExclusion[];
+  /** Dimensions where sources disagreed; the winner is in `dimensions`. */
+  conflicts: Array<{ dimension: StyleDimensionName; values: string[] }>;
+  /** Knowledge sources consulted, in order. */
+  sources: string[];
+  /** Mean confidence over populated dimensions; 0 when none. */
+  confidence: number;
+};
+
+/** Scope of a durable producer decision, resolved to this song's sections. */
+export type ProducerDecisionScope =
+  | { kind: "global" }
+  | { kind: "section"; sectionName: string }
+  | { kind: "phrase"; phraseId: string }
+  | { kind: "track"; instrument: string; sectionName?: string };
+
+export type ProducerDecisionTopic =
+  | "energy" | "density" | "instrumentation" | "climax" | "ornamentation"
+  | "vocal_space" | "groove" | "harmony" | "aesthetic" | "structure"
+  | "style_dimension" | "reference" | "other";
+
+/**
+ * A durable arrangement decision inside a ProductionBrief. Later chat turns
+ * add decisions or supersede earlier ones on the same scope + topic. Distinct
+ * from the learning ledger's `producerDecisionsTable` / OpenAPI
+ * `ProducerDecision`, which record feedback about generated candidates.
+ */
+export type ProducerBriefDecision = {
+  id: string;
+  scope: ProducerDecisionScope;
+  topic: ProducerDecisionTopic;
+  /** Human-readable, in the user's terms. */
+  statement: string;
+  /** Machine-readable, when the decision sets a style dimension. */
+  dimension?: StyleDimensionName;
+  value?: StyleDimensionValue;
+  /** "hard" = the planners must not violate it; "soft" = a preference. */
+  strength: "hard" | "soft";
+  provenance: IntelligenceProvenance;
+  confidence: number;
+  sourceRefs: string[];
+  /** Ids of earlier decisions this one replaces. */
+  supersedes: string[];
+  createdBy: "intake" | "clarification" | "chat" | "producer" | "system";
+  createdAt: string;
+};
+
+/** How the brief treats one style dimension for this song. */
+export type BriefDimensionDecision = {
+  dimension: StyleDimensionName;
+  disposition: "adopt" | "modify" | "reject";
+  /** The style profile's value (or the answer's, when the profile had none). */
+  styleValue: StyleDimensionValue;
+  /** For "modify": the value the brief actually uses. */
+  briefValue?: StyleDimensionValue;
+  rationale: string;
+  decidedBy: "style_profile" | "constraint" | "answer" | "producer";
+  provenance: IntelligenceProvenance;
+  confidence: number;
+};
+
+export type ArrangementSectionFunction =
+  | "intro" | "verse" | "prechorus" | "chorus" | "bridge"
+  | "breakdown" | "outro" | "instrumental" | "neutral";
+
+export type BriefSectionIntention = {
+  sectionName: string;
+  function: ArrangementSectionFunction;
+  /** -1..1 relative to the analysed section energy; absent when the planners decide. */
+  energyBias?: StyleDimension<number>;
+  densityBias?: StyleDimension<number>;
+  instrumentation?: { add: string[]; remove: string[]; feature: string[] };
+  climax?: StyleDimension<"none" | "secondary" | "primary">;
+  /** Descriptors ("cinematic", "intimate") in the universal vocabulary. */
+  character: StyleDimension<string>[];
+  decisionIds: string[];
+};
+
+export type VocalSpacePolicy = {
+  /** How much the arrangement thins under the lead. */
+  underLead: "open" | "moderate" | "tight";
+  /** Activity in the gaps between vocal phrases. */
+  gapFill: "none" | "sparse" | "active";
+  counterMelodyAllowed: boolean;
+  provenance: IntelligenceProvenance;
+  confidence: number;
+  rationale: string;
+};
+
+export type BriefInstrumentationEntry = {
+  family: string;
+  tier: "foundation" | "core" | "colour" | "feature";
+  rationale: string;
+  provenance: IntelligenceProvenance;
+  confidence: number;
+};
+
+/** A concrete change to a ProductionBrief (from an answer, a concept or an edit). */
+export type BriefDelta =
+  | {
+      kind: "set_dimension";
+      dimension: StyleDimensionName;
+      value: StyleDimensionValue;
+      confidence: number;
+      rationale: string;
+    }
+  | { kind: "exclude_value"; dimension?: StyleDimensionName; value: string; rationale: string }
+  | {
+      kind: "section_intention";
+      section: IntentSectionRef;
+      energyBias?: number;
+      densityBias?: number;
+      climax?: "none" | "secondary" | "primary";
+      character?: string[];
+      add?: string[];
+      remove?: string[];
+      rationale: string;
+    }
+  | { kind: "instrumentation"; add?: string[]; remove?: string[]; feature?: string[]; rationale: string }
+  | {
+      kind: "vocal_space";
+      underLead?: VocalSpacePolicy["underLead"];
+      gapFill?: VocalSpacePolicy["gapFill"];
+      counterMelodyAllowed?: boolean;
+      rationale: string;
+    }
+  | {
+      kind: "decision";
+      scope: ProducerDecisionScope;
+      topic: ProducerDecisionTopic;
+      statement: string;
+      strength: "hard" | "soft";
+      dimension?: StyleDimensionName;
+      value?: StyleDimensionValue;
+      rationale: string;
+    };
+
+/**
+ * Layer 3: how we choose to realise the style in THIS song. Deterministic,
+ * digest-tracked (`derivedAt` excluded), and the only thing the planners read.
+ */
+export type ProductionBrief = {
+  version: "1.0";
+  id: string;
+  derivedAt: string;
+  inputsDigestSha256: string;
+  method: string;
+  intentDigestSha256: string;
+  styleProfileDigestSha256: string;
+  /** Section names the brief was compiled against (empty without a Song Model). */
+  sectionNames: string[];
+  dimensionDecisions: BriefDimensionDecision[];
+  sectionIntentions: BriefSectionIntention[];
+  /** Section requests that matched no section of this song. */
+  unresolvedSectionRequests: IntentSectionRequest[];
+  vocalSpace: VocalSpacePolicy;
+  instrumentation: { hierarchy: BriefInstrumentationEntry[]; excludedFamilies: string[] };
+  productionAesthetic: {
+    descriptors: StyleDimension<string>[];
+    /** Nearest value the current planner consumes; absent unless stated with confidence. */
+    plannerAesthetic?: GlobalArrangementPlan["productionAesthetic"];
+  };
+  producerDecisions: ProducerBriefDecision[];
+  openQuestionIds: string[];
+  answeredQuestionIds: string[];
+  confidence: number;
+};
+
+export type ClarificationOption = {
+  id: string;
+  label: string;
+  labelHe?: string;
+  description: string;
+  /** What choosing this answer does to the brief. */
+  briefDeltas: BriefDelta[];
+};
+
+/** A question worth asking: the answer materially changes the arrangement. */
+export type ClarificationQuestion = {
+  id: string;
+  question: string;
+  questionHe?: string;
+  /** 0..1: how much of the arrangement would change depending on the answer. */
+  informationGain: number;
+  settlesDimensions: StyleDimensionName[];
+  trigger: { reason: string; sourceRefs: string[] };
+  options: ClarificationOption[];
+  allowFreeText: boolean;
+};
+
+export type ClarificationAnswer = { questionId: string; optionId?: string; freeText?: string };
+
+/** One deliberately different direction for the same brief, before any notes. */
+export type ArrangementConcept = {
+  id: string;
+  name: string;
+  thesis: string;
+  deltas: BriefDelta[];
+  /** Brief dimensions this concept changes relative to the base brief. */
+  differsIn: StyleDimensionName[];
+  /** The existing candidate strategy that best realises this direction. */
+  candidateStrategy: CandidateStrategyId;
+  contrastsWith: Array<{ conceptId: string; dimensions: StyleDimensionName[] }>;
+};
+
+export type ArrangementConceptSet = {
+  version: "1.0";
+  derivedAt: string;
+  inputsDigestSha256: string;
+  method: string;
+  briefId: string;
+  briefDigestSha256: string;
+  concepts: ArrangementConcept[];
+};
+
+export type EditPlanIntent =
+  | "reduce_density" | "raise_density" | "lower_energy" | "raise_energy" | "raise_climax"
+  | "change_ornamentation" | "add_instrument" | "remove_instrument" | "feature_instrument"
+  | "regenerate_part" | "change_groove" | "change_harmony" | "change_aesthetic"
+  | "keep" | "unclear";
+
+/** A chat edit request mapped onto the existing PR-17 lock / regeneration scopes. */
+export type EditPlan = {
+  version: "1.0";
+  derivedAt: string;
+  inputsDigestSha256: string;
+  method: string;
+  rawText: string;
+  scope: {
+    kind: LockScope;
+    sectionName?: string;
+    instrument?: string;
+    phraseId?: string;
+    startBar?: number;
+    endBar?: number;
+  };
+  intent: EditPlanIntent;
+  /** Locks that must survive verbatim. */
+  preserve: ArrangementLock[];
+  /** Regeneration scopes to request. */
+  modify: RegenerationScope[];
+  /** Durable brief changes so a later full regeneration honours the edit too. */
+  briefDeltas: BriefDelta[];
+  rationale: string;
+  evidence: string[];
+  confidence: number;
+};
+
+/** An answer to "why is X here?" built only from the plan's own data. */
+export type PlanExplanation = {
+  answered: boolean;
+  answer: string;
+  evidence: Array<{ source: string; ref: string; detail: string }>;
+  confidence: number;
+};
+
 /** Dimensions the Audio Critic V1 scores after rendering (PR-15). */
 export type AudioCritiqueDimension =
   | "balance" | "masking" | "harshness" | "mud" | "lowEndConflict"
@@ -2483,6 +2932,9 @@ export type ArrangementPlan = {
   compositionIntelligence?: CompositionIntelligencePlan;
   /** Frozen before notes are generated; absent on historical plans. */
   generationPreference?: GenerationPreferenceSnapshot | null;
+  /** The ProductionBrief this plan was planned from (Wave U); absent without a brief. */
+  productionBriefId?: string;
+  productionBriefDigestSha256?: string;
 };
 
 export type MusicalNote = {

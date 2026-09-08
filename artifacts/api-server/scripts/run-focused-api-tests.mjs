@@ -96,6 +96,18 @@ const suites = {
       ],
     ],
   },
+  "producer-intelligence": {
+    bundles: [
+      ["src/lib/producerIntelligence/intentExtraction.test.ts", "pi-intent-extraction.test.mjs"],
+      ["src/lib/producerIntelligence/styleResolution.test.ts", "pi-style-resolution.test.mjs"],
+      ["src/lib/producerIntelligence/clarification.test.ts", "pi-clarification.test.mjs"],
+      ["src/lib/producerIntelligence/briefCompiler.test.ts", "pi-brief-compiler.test.mjs"],
+      ["src/lib/producerIntelligence/briefToPlanner.test.ts", "pi-brief-to-planner.test.mjs"],
+      ["src/lib/producerIntelligence/conceptGenerator.test.ts", "pi-concept-generator.test.mjs"],
+      ["src/lib/producerIntelligence/editPlan.test.ts", "pi-edit-plan.test.mjs"],
+      ["src/lib/producerIntelligence/explain.test.ts", "pi-explain.test.mjs"],
+    ],
+  },
 };
 
 const supportedPermissionFailureCodes = new Set(["EPERM", "EACCES"]);

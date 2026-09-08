@@ -247,6 +247,143 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   `DIFFRHYTHM_2`. The MIT code would make pretraining from scratch on a
   commercially-licensed corpus legitimate; the shipped weights are not.
 
+## Wave U — Universal Producer Intelligence
+
+The product directive, translated into code: the platform must **not** hold a
+closed catalogue of styles (`Pop / Rock / Jazz / Chassidic / EDM`). It holds a
+**universal language for describing music**, and style-specific knowledge is
+resolved per project. Four strictly separated layers sit in front of the
+existing `ArrangementPlan`:
+
+| layer | what it is | where |
+|---|---|---|
+| `UserIntent` | what the user said (any language, references, constraints) + what was read out of it; every item carries `confidence` + `provenance` (`stated` / `inferred` / `default` / `researched`) and verbatim evidence | `lib/db/src/schema/music-studio.ts` |
+| `StyleProfile` | the musical world asked for, as **independent dimensions** (`tradition`, `genre`, `scene`, `era`, `productionSchool`, `ensembleType`, `grooveFamily`, … plus ~30 fine dimensions such as `tempoBehavior`, `swingRatio`, `chordExtensions`, `doublingRules`, `roomSize`); each `StyleDimension<T>` = value + confidence + provenance + sourceRefs; a dimension with no evidence is **absent**, never defaulted | same |
+| `ProductionBrief` | how THIS song realises that world: adopt / modify / reject per dimension, per-section intentions, vocal-space policy, instrumentation hierarchy, production aesthetic, and durable scoped `ProducerBriefDecision`s that later turns add to or supersede. The single source of truth the planners read | same |
+| `ArrangementPlan` | unchanged in shape; optional `productionBriefId` / `productionBriefDigestSha256` reference | same |
+
+- **PR-U1** `producer-intelligence-contracts` — *this PR* (branch
+  `pr-u1-producer-intelligence-contracts`, pending review). The contracts above
+  plus `ClarificationQuestion` (with `informationGain` and the concrete
+  `BriefDelta`s each answer causes), `ArrangementConcept` / `ArrangementConceptSet`,
+  `EditPlan` (on the existing PR-17 `LockScope` / `ArrangementLock` /
+  `RegenerationScope`) and `PlanExplanation`. All additive.
+
+  Pure, deterministic modules in `artifacts/api-server/src/lib/producerIntelligence/`:
+  - `vocabulary.ts` — the word list (180 entries, ≈740 Hebrew + English surface
+    forms, prefix/suffix tolerant) the fallback extractor recognises: section words, ordinals,
+    instruments → planner families, moods, eras, tradition *names*. A
+    vocabulary, not a style catalogue: it knows "חסידי" names a tradition and
+    nothing about how it sounds.
+  - `intentExtraction.ts` — `extractUserIntent(text, { llm?, references?, now })`
+    with an injectable `IntentLanguageModel` and a deterministic fallback.
+    Negations ("לא פופית מדי" / "not too poppy") become constraints and never a
+    style; "keep / add / remove / regenerate" are told apart; "second chorus" /
+    "הפזמון האחרון" become section-scoped requests with ordinals; "more X" for
+    an unknown X lands in `unresolvedTerms`. Model output is validated by the
+    same rule the fallback obeys — every item must quote a verbatim span of the
+    text — and deterministic readings are never removed by the model.
+  - `styleResolution.ts` — `resolveStyleProfile(intent, { knowledge?, findings? })`.
+    `StyleKnowledgeSource` is the plug point for the research agent (PR-U3);
+    async research passes its findings pre-fetched. The only in-code source is
+    `UNIVERSAL_VOCABULARY_SOURCE`: 39 rules keyed on **forms, feels, functions
+    and production words** ("ballad" ⇒ `tempoBehavior` slow, "cinematic" ⇒
+    `dynamics` wide + `roomSize` large + `doublingRules` orchestral) and, by
+    construction and by test, no rule for any genre or tradition name. Merge
+    order: stated > researched > inferred > default — research never outranks
+    what the user said, whatever its confidence.
+  - `clarification.ts` — `planClarifications(intent, profile)`: detectors for
+    ambiguities that materially change the arrangement, each scored for
+    `informationGain`, at most 2 returned above 0.4. The owner's example is a
+    general shape — a named tradition + a vague era + no ensemble / school /
+    scene — and "חסידי ישן" yields one question with three worlds: the band
+    recordings of the era (wedding / party band), the communal vocal world
+    (yeshiva / niggun), the arranged-orchestral tradition — each with its
+    ensemble / school / sound deltas. A knowledge source may replace the
+    wording with tradition-specific worlds via `worldsFor`.
+  - `briefCompiler.ts` — `compileProductionBrief(intent, profile, songModel?, answers?, options?)`:
+    resolves section refs against the song's real sections (unmatched ones are
+    surfaced in `unresolvedSectionRequests`, never guessed), turns constraints
+    into hard decisions and section nudges, applies clarification answers /
+    concept / edit deltas, carries earlier turns' decisions and marks
+    `supersedes` on the same scope + topic. Digest-tracked; `derivedAt` excluded.
+  - `briefToPlanner.ts` — `briefPlannerHints(brief)` → the optional `hints`
+    the planners now accept, and `applyBriefToPlans(songModel, brief)`.
+  - `conceptGenerator.ts` — `generateArrangementConcepts(brief)`: exactly three
+    worlds (intimate & rooted / contemporary & full / hybrid & cinematic) as
+    brief-dimension deltas with `differsIn` and pairwise `contrastsWith`; a
+    dimension the user stated is never touched; a direction the brief rules
+    out (no strings / brass / winds / pads) falls back to a sibling that still
+    differs. Intended as the fix for PR-18's flat `candidateDiversity`.
+  - `editPlan.ts` — `interpretEditRequest(text, brief, plan)`: "הפזמון השני
+    עמוס מדי" → `reduce_density` on *Chorus 2* with every other section locked;
+    "the last chorus still doesn't feel like a climax" → `raise_climax`; "make
+    the violins more Jewish" → `change_ornamentation` on the strings track with
+    the other tracks locked. Locks and scopes come from
+    `planPartialRegeneration`; `resolveRegenerationScopes` on the plan's own
+    output blocks nothing.
+  - `explain.ts` — `explainDecision(plan, question)`: answers from role
+    assignments, palette rationale, budget windows, transition devices and brief
+    decisions, listing the evidence; a question that presupposes something the
+    plan does not contain ("why is there a clarinet here?" with no winds)
+    returns `answered: false` with the palette as evidence.
+
+  Planner hooks (the only changes to existing code):
+  `deriveGlobalArrangementPlan(songModel, { hints })` and
+  `deriveSectionPhrasePlan(songModel, globalPlan, { hints })`. Every hint
+  **biases** a value the planner already derives — section energy / density
+  multipliers, palette add / remove, a preferred climax section that only
+  re-ranks the map's own candidates, an aesthetic honoured only when the
+  palette can carry it, a groove honoured unless detected rhythm evidence
+  contradicts it, per-section family add / remove. Plans derived without hints
+  keep byte-identical digests. `classifySectionFunction` is now exported.
+
+  Tests: 63 in 8 files, suite `producer-intelligence`
+  (`pnpm run test:producer-intelligence`; on Windows use the esbuild command
+  directly). Regression: `music-engines` (40), `globalArrangementPlanner` (9),
+  `sectionPhrasePlanner` (6), `regenerationLocks` (8), `arrangementOrchestrator`
+  (7), `transitionEngine` (5), `orchestrationBudget` (5), `partComposer` (4),
+  `criticRepairLoop` (5) all green; `pnpm run typecheck` green.
+
+  Naming: the brief's decision type is `ProducerBriefDecision`, not
+  `ProducerDecision` — that name is already the OpenAPI / api-zod type for the
+  learning ledger's feedback rows, and PR-U2 will expose the brief over OpenAPI.
+
+  **What PR-U1 does NOT do.** No LLM is called anywhere: `IntentLanguageModel`
+  is an interface with a test double and nothing behind it. No research: the
+  only `StyleKnowledgeSource` is the in-code vocabulary. No UI, no routes, no
+  OpenAPI change, no persistence — nothing a user can reach. The brief does not
+  yet flow into `createArrangementPlan` or the orchestrator (only
+  `applyBriefToPlans` exists); the legacy `StyleSpec` is untouched.
+  Explanations are English-only. The fallback extractor is a lexicon: phrasing
+  outside its 180 entries is not understood — it surfaces `unresolvedTerms`
+  rather than guessing, which is the point, but it is not comprehension.
+  Concept diversity is asserted structurally (named dimensions differ), not
+  yet measured against the benchmark's `candidateDiversity`. Nobody has
+  listened to anything a brief produced.
+
+- **PR-U2** `conversational-intake-api` — Express routes + OpenAPI + orval for
+  intake (text → `UserIntent` → `StyleProfile` → `ClarificationQuestion`s →
+  `ProductionBrief`), persistent per-project producer chat with the brief and
+  its decisions as durable state, a studio panel showing the brief and asking
+  the clarifications. First real `IntentLanguageModel` (behind the existing
+  OpenAI integration), still validated against verbatim evidence.
+- **PR-U3** `dynamic-style-research-agent` — a `StyleKnowledgeSource` that
+  researches the named world per project and returns candidate dimension
+  values with provenance `researched`, confidence and `sourceRefs`; gated so
+  low-confidence findings are questions, not facts, and never outrank stated
+  intent; tradition-specific `worldsFor` wording.
+- **PR-U4** `reference-intelligence` — a style fingerprint per reference
+  (abstract features only, never content — the PR-27 rule) and an
+  allowed-to-copy scope (groove / sound / arrangement / mood) wired to the
+  `reference_aspect` clarification.
+- **PR-U5** `chat-scope-aware-regeneration` — `EditPlan` → the PR-17 lock set +
+  regeneration scopes + brief deltas, executed through the orchestrator with a
+  `PartialRegenerationReport`; the brief stamped on every `ArrangementPlan`.
+- **PR-U6** `producer-memory-explainability` — durable producer memory across
+  projects (rights-cleared, the PR-28 rule) and `explainDecision` surfaced in
+  the studio: "why is there a clarinet here?" answered from the plan.
+
 ## Benchmark baseline — the number every later change is judged against
 
 `pnpm --filter @workspace/api-server run benchmark` (add `-- --render` for audio).
@@ -342,6 +479,7 @@ fabricate candidates when workers are offline.
 | Renderer contracts | `sfz-sample-library.ts`, `sfizzRender*` env, `pedalboardBuiltin.ts` |
 | Export / mix / master | `exportEngine.ts`, `exportAudioRoles.ts`, master profiles in export UI |
 | API contract | `lib/api-spec/openapi.yaml` (orval → `api-zod`, `api-client-react`) |
+| Producer intelligence contracts (Wave U) | `UserIntent` / `StyleProfile` / `ProductionBrief` / `ClarificationQuestion` / `ArrangementConcept` / `EditPlan` in `lib/db/src/schema/music-studio.ts`; pure modules in `artifacts/api-server/src/lib/producerIntelligence/` |
 
 Every PR below is an **extension** of the above unless noted.
 
