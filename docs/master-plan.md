@@ -262,8 +262,7 @@ existing `ArrangementPlan`:
 | `ProductionBrief` | how THIS song realises that world: adopt / modify / reject per dimension, per-section intentions, vocal-space policy, instrumentation hierarchy, production aesthetic, and durable scoped `ProducerBriefDecision`s that later turns add to or supersede. The single source of truth the planners read | same |
 | `ArrangementPlan` | unchanged in shape; optional `productionBriefId` / `productionBriefDigestSha256` reference | same |
 
-- **PR-U1** `producer-intelligence-contracts` — *this PR* (branch
-  `pr-u1-producer-intelligence-contracts`, pending review). The contracts above
+- **PR-U1** (#25) ✅ — `producer-intelligence-contracts`. The contracts above
   plus `ClarificationQuestion` (with `informationGain` and the concrete
   `BriefDelta`s each answer causes), `ArrangementConcept` / `ArrangementConceptSet`,
   `EditPlan` (on the existing PR-17 `LockScope` / `ArrangementLock` /
