@@ -158,7 +158,7 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   tune. Only the 230M variant has been run. No musical judgement has been made,
   and RT2 has not been compared against the reference renderer on the benchmark.
 
-- **PR-20** `midi-rwkv-worker` — **audit complete, commercial routing refused.**
+- **PR-20** (#21) ✅ — `midi-rwkv-worker`: **audit complete, commercial routing refused.** The worker exists as a fail-closed gate with 7 tests proving it is closed for the stated reason; nothing has been downloaded, built or run.
   The plan flagged this as "MIT code; audit weights/lineage before any
   COMMERCIAL_READY claim". The audit finds the claim cannot be made:
 
