@@ -64,7 +64,14 @@ Regression baseline held every PR: `songModelValidation` (30), `canonicalTimelin
   articulation/dynamic shape/interaction-with-lead/entry-exit), `PhrasePlan` 2/4/8-bar
   units. Wired into `createArrangementPlan`. OpenAPI + orval. Tests: `sectionPhrasePlanner` (6).
 
-## Next: PR-06 — orchestration budget engine
+- **PR-06** (#7) ✅ — Orchestration Budget Engine: per-window density/melodic/
+  rhythmic/harmonic/register/spectral/attention budgets driven by vocalAttention
+  (tighten under the lead, open in gaps) + per-instrument duck/open adjustments;
+  per-section RegisterOccupancySpan with overcrowded bands + concrete resolutions
+  (drop/raise octave, simplify, thin voicing). Wired into `createArrangementPlan`.
+  OpenAPI + orval. Tests: `orchestrationBudget` (5).
+
+## Next: PR-07 — musical constraint engine v2
 
 ## Environment findings (Windows local)
 
