@@ -11,6 +11,7 @@ import type { ArrangementPlanSection } from './arrangementPlanSection';
 import type { ArtifactProvenance } from './artifactProvenance';
 import type { CompositionIntelligencePlan } from './compositionIntelligencePlan';
 import type { GenerationPreferenceSnapshot } from './generationPreferenceSnapshot';
+import type { GlobalArrangementPlan } from './globalArrangementPlan';
 import type { StyleSpec } from './styleSpec';
 
 export interface ArrangementPlan {
@@ -22,6 +23,7 @@ export interface ArrangementPlan {
   parameters: ArrangementPlanParameters;
   provenance: ArtifactProvenance;
   hierarchy: ArrangementHierarchy;
+  globalPlan?: GlobalArrangementPlan;
   compositionIntelligence?: CompositionIntelligencePlan;
   generationPreference?: GenerationPreferenceSnapshot | null;
 }

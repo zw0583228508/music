@@ -4733,6 +4733,178 @@ export interface GenerationPreferenceSnapshot {
 
 export type ArrangementPlanParameters = { [key: string]: unknown };
 
+export type GlobalArrangementPlanVersion = typeof GlobalArrangementPlanVersion[keyof typeof GlobalArrangementPlanVersion];
+
+
+export const GlobalArrangementPlanVersion = {
+  '10': '1.0',
+} as const;
+
+export type GlobalArrangementPlanSectionTargetsItemRole = typeof GlobalArrangementPlanSectionTargetsItemRole[keyof typeof GlobalArrangementPlanSectionTargetsItemRole];
+
+
+export const GlobalArrangementPlanSectionTargetsItemRole = {
+  intro: 'intro',
+  verse: 'verse',
+  prechorus: 'prechorus',
+  chorus: 'chorus',
+  bridge: 'bridge',
+  breakdown: 'breakdown',
+  outro: 'outro',
+  instrumental: 'instrumental',
+  neutral: 'neutral',
+} as const;
+
+export type GlobalArrangementPlanGrooveStrategy = typeof GlobalArrangementPlanGrooveStrategy[keyof typeof GlobalArrangementPlanGrooveStrategy];
+
+
+export const GlobalArrangementPlanGrooveStrategy = {
+  steady_pulse: 'steady_pulse',
+  syncopated: 'syncopated',
+  swing: 'swing',
+  half_time_feel: 'half_time_feel',
+  four_on_floor: 'four_on_floor',
+  rubato: 'rubato',
+} as const;
+
+export type GlobalArrangementPlanOrchestrationStrategy = typeof GlobalArrangementPlanOrchestrationStrategy[keyof typeof GlobalArrangementPlanOrchestrationStrategy];
+
+
+export const GlobalArrangementPlanOrchestrationStrategy = {
+  layered_build: 'layered_build',
+  call_and_response: 'call_and_response',
+  wave_dynamics: 'wave_dynamics',
+  static_bed: 'static_bed',
+  sparse_to_full: 'sparse_to_full',
+} as const;
+
+export type GlobalArrangementPlanMotifStrategy = typeof GlobalArrangementPlanMotifStrategy[keyof typeof GlobalArrangementPlanMotifStrategy];
+
+
+export const GlobalArrangementPlanMotifStrategy = {
+  recurring_hook: 'recurring_hook',
+  developing_motif: 'developing_motif',
+  through_composed: 'through_composed',
+} as const;
+
+export type GlobalArrangementPlanContrastStrategy = typeof GlobalArrangementPlanContrastStrategy[keyof typeof GlobalArrangementPlanContrastStrategy];
+
+
+export const GlobalArrangementPlanContrastStrategy = {
+  dynamic_contrast: 'dynamic_contrast',
+  textural_contrast: 'textural_contrast',
+  harmonic_contrast: 'harmonic_contrast',
+  register_contrast: 'register_contrast',
+  minimal_contrast: 'minimal_contrast',
+} as const;
+
+export type GlobalArrangementPlanProductionAesthetic = typeof GlobalArrangementPlanProductionAesthetic[keyof typeof GlobalArrangementPlanProductionAesthetic];
+
+
+export const GlobalArrangementPlanProductionAesthetic = {
+  intimate: 'intimate',
+  polished_pop: 'polished_pop',
+  cinematic: 'cinematic',
+  raw_band: 'raw_band',
+  electronic: 'electronic',
+  orchestral: 'orchestral',
+} as const;
+
+export type GlobalArrangementPlanInstrumentPaletteItem = {
+  role: string;
+  /** @minimum 1 */
+  priority: number;
+  rationale: string;
+};
+
+export type GlobalArrangementPlanSectionTargetsItem = {
+  sectionName: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  energy: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  density: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  tension: number;
+  role: GlobalArrangementPlanSectionTargetsItemRole;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  noveltyVsPrevious: number;
+};
+
+export type GlobalArrangementPlanClimax = {
+  sectionName: string;
+  /** @minimum 1 */
+  atBar: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  energy: number;
+} | null;
+
+export type GlobalArrangementPlanSecondaryClimax = {
+  sectionName: string;
+  /** @minimum 1 */
+  atBar: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  energy: number;
+} | null;
+
+/**
+ * Whole-song arrangement direction (PR-04), derived before section planning.
+ */
+export interface GlobalArrangementPlan {
+  version: GlobalArrangementPlanVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+  style: string;
+  substyle: string | null;
+  instrumentPalette: GlobalArrangementPlanInstrumentPaletteItem[];
+  sectionTargets: GlobalArrangementPlanSectionTargetsItem[];
+  climax: GlobalArrangementPlanClimax;
+  secondaryClimax: GlobalArrangementPlanSecondaryClimax;
+  grooveStrategy: GlobalArrangementPlanGrooveStrategy;
+  orchestrationStrategy: GlobalArrangementPlanOrchestrationStrategy;
+  motifStrategy: GlobalArrangementPlanMotifStrategy;
+  contrastStrategy: GlobalArrangementPlanContrastStrategy;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  harmonicComplexity: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  rhythmicComplexity: number;
+  productionAesthetic: GlobalArrangementPlanProductionAesthetic;
+}
+
 export interface ArrangementPlan {
   id: string;
   version: number;
@@ -4742,6 +4914,7 @@ export interface ArrangementPlan {
   parameters: ArrangementPlanParameters;
   provenance: ArtifactProvenance;
   hierarchy: ArrangementHierarchy;
+  globalPlan?: GlobalArrangementPlan;
   compositionIntelligence?: CompositionIntelligencePlan;
   generationPreference?: GenerationPreferenceSnapshot | null;
 }
