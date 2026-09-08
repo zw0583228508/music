@@ -90,21 +90,35 @@ const physicalFor = (family: string): PhysicalProfile =>
 const noteEnd = (note: ConstraintNote): number => note.start + note.duration;
 const idOf = (note: ConstraintNote, index: number): string => note.id ?? `note-${index}`;
 
-/** Groups of notes that sound at the same instant (any pairwise overlap). */
+/**
+ * Groups of notes actually sounding together at a given onset.
+ *
+ * This deliberately does NOT chain by transitive overlap: a legato line where
+ * each note ends as the next begins is a melody, not a 24-note chord. For every
+ * distinct onset we collect the notes sounding at that instant, then keep the
+ * distinct groups of two or more.
+ */
 function simultaneousClusters(notes: ConstraintNote[]): ConstraintNote[][] {
-  const sorted = notes
-    .map((note, index) => ({ note, index }))
-    .sort((a, b) => a.note.start - b.note.start || a.index - b.index);
+  // A previous note whose tail laps a few milliseconds into the next onset is
+  // legato connection, not a chord.
+  const LEGATO_TOLERANCE_SECONDS = 0.03;
+  const onsets = [...new Set(notes.map((note) => Math.round(note.start * 1000)))]
+    .sort((a, b) => a - b);
+  const seen = new Set<string>();
   const clusters: ConstraintNote[][] = [];
-  for (const { note } of sorted) {
-    const open = clusters[clusters.length - 1];
-    if (open && open.some((other) => note.start < noteEnd(other) - 1e-6)) {
-      open.push(note);
-    } else {
-      clusters.push([note]);
-    }
+  for (const onsetMs of onsets) {
+    const t = onsetMs / 1000;
+    const sounding = notes
+      .filter((note) =>
+        note.start <= t + 1e-6 && noteEnd(note) > t + LEGATO_TOLERANCE_SECONDS)
+      .sort((a, b) => a.pitch - b.pitch || a.start - b.start);
+    if (sounding.length < 2) continue;
+    const key = sounding.map((n) => `${n.pitch}@${n.start.toFixed(3)}`).join("|");
+    if (seen.has(key)) continue;
+    seen.add(key);
+    clusters.push(sounding);
   }
-  return clusters.filter((cluster) => cluster.length >= 2);
+  return clusters;
 }
 
 /** Can `pitches` be split into ≤ `hands` groups each within `span` semitones? */
@@ -146,9 +160,17 @@ function phrases(notes: ConstraintNote[], gap = 0.15): ConstraintNote[][] {
 export function checkInstrumentConstraints(
   input: ConstraintCheckInput,
 ): ConstraintCheckResult {
-  const family = input.family;
-  const definition = safeDefinition(input.instrument ?? family, input.role ?? "");
+  const definition = safeDefinition(input.instrument ?? input.family, input.role ?? "");
+  // A bass guitar lives in the "strings" definition family but is not a bowed
+  // solo string player; give it its own physical rules.
+  const family = /bass/i.test(`${input.instrument ?? ""} ${input.family}`)
+    ? "bass"
+    : input.family;
   const physical = physicalFor(family);
+  // A string *section* has many players: divisi and independent leaps are fine.
+  // Solo writing is the restrictive case.
+  const isSection = input.isSection ??
+    (family === "strings" && (definition?.constraints.maxSimultaneousNotes ?? 1) > 2);
   const notes = input.notes
     .filter((note) =>
       Number.isFinite(note.start) && Number.isFinite(note.duration) &&
@@ -217,7 +239,8 @@ export function checkInstrumentConstraints(
   // 4. Melodic leaps (top voice at each onset).
   const topLine = topVoice(notes);
   const maxLeap = definition?.constraints.maxLeap ?? 24;
-  for (let i = 1; i < topLine.length; i += 1) {
+  // Section writing spreads leaps across players; only solo lines are bound.
+  for (let i = 1; !isSection && i < topLine.length; i += 1) {
     const gap = topLine[i].start - noteEnd(topLine[i - 1]);
     if (gap > 0.6) continue;
     const leap = Math.abs(topLine[i].pitch - topLine[i - 1].pitch);
@@ -275,7 +298,7 @@ export function checkInstrumentConstraints(
   }
 
   // 7. String double stops (solo only).
-  if (family === "strings" && physical.doubleStopMaxSemitones && input.isSection !== true) {
+  if (family === "strings" && physical.doubleStopMaxSemitones && !isSection) {
     for (const cluster of clusters) {
       if (cluster.length > 2) {
         add("triple_stop", "error", cluster,
@@ -416,7 +439,9 @@ export function checkArrangementConstraints(
       tempoBpm: context.tempoBpm,
       notes: track.notes,
       articulations: track.articulations,
-      isSection: /section|ensemble|divisi/i.test(track.role ?? ""),
+      // Only force "section" when the role says so; otherwise let the engine
+      // infer it from the instrument definition's voice count.
+      isSection: /section|ensemble|divisi|pad|bed/i.test(track.role ?? "") || undefined,
     });
     return {
       trackId: track.id,

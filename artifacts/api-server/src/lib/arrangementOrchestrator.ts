@@ -1,0 +1,404 @@
+/**
+ * End-to-end arrangement orchestrator (PR-16).
+ *
+ * Runs the whole chain the master plan describes, in order, with per-stage
+ * evidence:
+ *
+ *   plan → parts → candidates → compose → constraints → critique → repair →
+ *   perform → render → audio critique → select
+ *
+ * Every stage is recorded (ok / skipped / failed) so the result is traceable
+ * and repeatable. The note generator is injected: without one the built-in
+ * reference composer runs, so the chain completes locally with no workers.
+ */
+import type {
+  ArrangementCritique,
+  ArrangementPlan,
+  AudioCritique,
+  CandidateStrategyId,
+  CriticRepairLoopResult,
+  MusicalNote,
+  SongModelData,
+  TrackModel,
+} from "@workspace/db";
+import { getInstrumentDefinition } from "./musicEngines";
+import { deriveGlobalArrangementPlan } from "./globalArrangementPlanner";
+import { deriveSectionPhrasePlan } from "./sectionPhrasePlanner";
+import { deriveOrchestrationBudget } from "./orchestrationBudget";
+import { deriveTransitionPlan } from "./transitionEngine";
+import { buildPartComposerPlan, buildPartGenerationRequest, type PartGenerationRequest } from "./partComposer";
+import { planCandidateGeneration } from "./candidateStrategies";
+import { checkArrangementConstraints } from "./musicalConstraints";
+import { critiqueArrangement } from "./musicCritic";
+import { runCriticRepairLoop } from "./criticRepairLoop";
+import { applyPerformance } from "./performanceEngine";
+import { renderArrangementStems, renderStem, type StemRenderOptions } from "./referenceRenderWorker";
+import { abCompareCandidates, critiqueRenderedAudio, type AudioAbResult, type AudioStem } from "./audioCritic";
+import { composeReferencePart, REFERENCE_PART_COMPOSER } from "./referencePartComposer";
+
+export const ORCHESTRATOR_VERSION = "1.0" as const;
+const METHOD = "arrangement-orchestrator/v1";
+
+export type OrchestratorStage =
+  | "plan" | "parts" | "candidates" | "compose" | "constraints"
+  | "critique" | "repair" | "perform" | "render" | "audio_critique" | "select";
+
+export type StageRecord = {
+  stage: OrchestratorStage;
+  status: "ok" | "skipped" | "failed";
+  detail: string;
+  evidence?: Record<string, number | string | boolean>;
+};
+
+export type OrchestratedCandidate = {
+  candidateId: string;
+  label: string;
+  strategy: CandidateStrategyId;
+  seed: number;
+  trackModels: TrackModel[];
+  noteCount: number;
+  constraintErrors: number;
+  critique: ArrangementCritique;
+  repair: CriticRepairLoopResult | null;
+  audioCritique: AudioCritique | null;
+  renderFeasible: boolean | null;
+  finalScore: number;
+};
+
+export type OrchestrationResult = {
+  version: "1.0";
+  method: string;
+  composer: string;
+  stages: StageRecord[];
+  plan: ArrangementPlan;
+  candidates: OrchestratedCandidate[];
+  abComparison: AudioAbResult | null;
+  selected: {
+    candidateId: string;
+    reason: string;
+    symbolicScore: number;
+    audioScore: number | null;
+    combinedScore: number;
+  } | null;
+  traceable: boolean;
+};
+
+export type PartComposerFn = (request: PartGenerationRequest) => MusicalNote[];
+
+export type OrchestrateInput = {
+  songModel: SongModelData;
+  candidateCount?: number;
+  /** Injected note generator; defaults to the deterministic reference composer. */
+  composeParts?: PartComposerFn;
+  composerName?: string;
+  render?: boolean;
+  renderOptions?: StemRenderOptions;
+  now?: Date;
+};
+
+// ---------------------------------------------------------------------------
+
+/**
+ * Deterministically thin/boost a part to match a strategy's density multiplier.
+ * Thinning is proportional (an evenly-spaced stride keeps the musical shape)
+ * rather than "every Nth note", so a 0.95 multiplier really does write 5% less.
+ */
+function applyDensity(notes: MusicalNote[], multiplier: number): MusicalNote[] {
+  if (notes.length === 0) return notes;
+  const velocityScale = multiplier > 1
+    ? Math.min(1.18, multiplier)
+    : 0.78 + multiplier * 0.22;
+  const scale = (list: MusicalNote[]) =>
+    list.map((n) => ({
+      ...n,
+      velocity: Math.max(1, Math.min(127, Math.round(n.velocity * velocityScale))),
+    }));
+  const target = Math.max(1, Math.round(notes.length * Math.min(1, multiplier)));
+  if (target >= notes.length) return scale(notes);
+  const stride = notes.length / target;
+  const kept: MusicalNote[] = [];
+  for (let i = 0; i < target; i += 1) kept.push(notes[Math.floor(i * stride)]);
+  return scale(kept);
+}
+
+/** Drop duplicate onsets of the same pitch, keeping the loudest. */
+function dedupeSimultaneous(notes: MusicalNote[]): MusicalNote[] {
+  const best = new Map<string, MusicalNote>();
+  for (const note of notes.slice().sort((a, b) => a.start - b.start || a.pitch - b.pitch)) {
+    const key = `${Math.round(note.start * 200)}:${note.pitch}`;
+    const held = best.get(key);
+    if (!held || note.velocity > held.velocity) best.set(key, note);
+  }
+  return [...best.values()].sort((a, b) => a.start - b.start || a.pitch - b.pitch);
+}
+
+function trackModelFor(
+  instrument: string,
+  role: string,
+  notes: MusicalNote[],
+  version: number,
+): TrackModel {
+  const definition = getInstrumentDefinition(instrument, role);
+  return {
+    id: `${instrument}-${role}`.toLowerCase().replace(/\s+/g, "_"),
+    instrument,
+    instrumentDefinition: definition,
+    role,
+    notes,
+    cc: [],
+    articulations: [],
+    automation: [],
+    source: REFERENCE_PART_COMPOSER,
+    version,
+    provenance: {
+      model: REFERENCE_PART_COMPOSER,
+      version: "1.0.0",
+      parameters: { noteCount: notes.length },
+      parentIds: [],
+      createdBy: METHOD,
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
+
+export function orchestrateArrangement(input: OrchestrateInput): OrchestrationResult {
+  const now = input.now ?? new Date(0);
+  const stages: StageRecord[] = [];
+  const record = (
+    stage: OrchestratorStage, status: StageRecord["status"], detail: string,
+    evidence?: StageRecord["evidence"],
+  ) => stages.push({ stage, status, detail, evidence });
+
+  const songModel = input.songModel;
+  const tempoBpm = songModel.tempoMap?.[0]?.bpm ?? 120;
+  const meter = songModel.meterMap?.[0]?.meter ?? "4/4";
+  const compose = input.composeParts ??
+    ((request: PartGenerationRequest) => composeReferencePart(request, { tempoBpm, meter }));
+  const composerName = input.composerName ??
+    (input.composeParts ? "INJECTED_COMPOSER" : REFERENCE_PART_COMPOSER);
+
+  // --- 1. plan ----------------------------------------------------------
+  const globalPlan = deriveGlobalArrangementPlan(songModel, { now });
+  const sectionPlan = deriveSectionPhrasePlan(songModel, globalPlan, { now });
+  const orchestrationBudget = deriveOrchestrationBudget(songModel, sectionPlan, { now });
+  const transitionPlan = deriveTransitionPlan(songModel, globalPlan, sectionPlan, { now });
+  const plan: ArrangementPlan = {
+    id: `orchestrated-${globalPlan.inputsDigestSha256.slice(0, 8)}`,
+    version: 1,
+    sections: [],
+    style: {} as ArrangementPlan["style"],
+    songModelVersion: 1,
+    parameters: {},
+    provenance: {
+      model: METHOD, version: "1.0.0", parameters: {}, parentIds: [], createdBy: METHOD,
+    },
+    hierarchy: {} as ArrangementPlan["hierarchy"],
+    globalPlan, sectionPlan, orchestrationBudget, transitionPlan,
+  } as ArrangementPlan;
+  record("plan", "ok", `${globalPlan.sectionTargets.length} sections planned`, {
+    style: globalPlan.style,
+    climaxBar: globalPlan.climax?.atBar ?? 0,
+    confidence: globalPlan.confidence,
+  });
+
+  // --- 2. parts ---------------------------------------------------------
+  const partPlan = buildPartComposerPlan(songModel, globalPlan, sectionPlan, transitionPlan.transitions, { now });
+  plan.partComposerPlan = partPlan;
+  record("parts", "ok", `${partPlan.tasks.length} part tasks`, { tasks: partPlan.tasks.length });
+
+  // --- 3. candidates ----------------------------------------------------
+  const candidatePlan = planCandidateGeneration(songModel, input.candidateCount ?? 5, {
+    now, partPlan,
+  });
+  plan.candidateGenerationPlan = candidatePlan;
+  record("candidates", "ok", `${candidatePlan.candidates.length} strategies`, {
+    strategies: candidatePlan.candidates.map((c) => c.strategy).join(","),
+  });
+
+  const layers = {
+    globalPlan, sectionPlan,
+    budgetWindows: orchestrationBudget.windows,
+    transitions: transitionPlan.transitions,
+  };
+
+  const composed: OrchestratedCandidate[] = [];
+  let totalNotes = 0;
+  let totalConstraintErrors = 0;
+  let renderedAny = false;
+
+  for (const candidate of candidatePlan.candidates) {
+    // --- 4. compose ---------------------------------------------------
+    // One physical instrument is one performer: parts for the same instrument
+    // merge into a single track even when their section roles differ, so the
+    // constraint engine sees the real simultaneous load (limbs, hands, strings).
+    const byTrack = new Map<string, { instrument: string; role: string; notes: MusicalNote[] }>();
+    const existing: Array<{ instrument: string; role: string; noteCount: number }> = [];
+    for (const task of partPlan.tasks) {
+      const adjustment = candidate.partAdjustments.find((a) => a.taskId === task.id);
+      const request = buildPartGenerationRequest(
+        songModel, { ...task, seed: adjustment?.seed ?? task.seed }, layers, existing,
+      );
+      const raw = compose(request);
+      const notes = applyDensity(raw, adjustment?.densityMultiplier ?? 1);
+      if (notes.length === 0) continue;
+      const key = task.instrument;
+      const entry = byTrack.get(key) ?? { instrument: task.instrument, role: task.role, notes: [] };
+      entry.notes.push(...notes);
+      byTrack.set(key, entry);
+      existing.push({ instrument: task.instrument, role: task.role, noteCount: notes.length });
+    }
+    // Merged parts can now double the same pitch at the same instant; keep the
+    // loudest and drop the duplicate rather than asking for a third hand.
+    for (const entry of byTrack.values()) {
+      entry.notes = dedupeSimultaneous(entry.notes);
+    }
+    const trackModels = [...byTrack.values()]
+      .map((entry, index) => trackModelFor(entry.instrument, entry.role, entry.notes.sort((a, b) => a.start - b.start), index + 1))
+      .filter((track) => track.notes.length > 0);
+    const noteCount = trackModels.reduce((sum, t) => sum + t.notes.length, 0);
+    totalNotes += noteCount;
+
+    // --- 5. constraints ------------------------------------------------
+    const constraintReport = checkArrangementConstraints(
+      trackModels.map((t) => ({
+        id: t.id, instrument: t.instrument, role: t.role,
+        instrumentDefinition: t.instrumentDefinition, notes: t.notes,
+      })),
+      { tempoBpm },
+    );
+    totalConstraintErrors += constraintReport.errorCount;
+
+    // --- 6/7. critique + repair ---------------------------------------
+    const initialCritique = critiqueArrangement({ songModel, plan, trackModels });
+    const repair = runCriticRepairLoop({ songModel, plan, trackModels });
+    const critique = repair.finalCritique;
+
+    // --- 8. perform ----------------------------------------------------
+    const performed = trackModels.map((track) => {
+      const assignment = sectionPlan.roleAssignments.find(
+        (r) => r.instrument === track.instrument,
+      );
+      const result = applyPerformance({
+        trackId: track.id,
+        instrument: track.instrument,
+        family: track.instrumentDefinition.family,
+        role: (assignment?.role ?? "HARMONIC_BED"),
+        notes: track.notes,
+        tempoBpm,
+        meter,
+        groove: globalPlan.grooveStrategy,
+        style: globalPlan.style,
+        dynamicShape: assignment?.dynamicShape,
+        phrases: sectionPlan.phrases,
+        seed: candidate.seed,
+      });
+      return {
+        ...track,
+        notes: result.notes,
+        cc: result.cc,
+        articulations: result.articulations,
+        performanceEvidence: undefined,
+      } as TrackModel;
+    });
+
+    // --- 9/10. render + audio critique ---------------------------------
+    let audioCritique: AudioCritique | null = null;
+    let renderFeasible: boolean | null = null;
+    if (input.render !== false && performed.length > 0) {
+      const renderReport = renderArrangementStems(performed, input.renderOptions ?? { sampleRate: 48_000, bitDepth: 24 });
+      renderFeasible = renderReport.feasible;
+      const stems: AudioStem[] = performed.map((track) => {
+        const rendered = renderStem(
+          {
+            id: track.id, instrument: track.instrument, role: track.role,
+            instrumentDefinition: track.instrumentDefinition, notes: track.notes,
+            articulations: track.articulations,
+          },
+          input.renderOptions ?? { sampleRate: 48_000, bitDepth: 24 },
+        );
+        return {
+          trackId: track.id, instrument: track.instrument, role: track.role,
+          family: track.instrumentDefinition.family, samples: rendered.samples,
+          attestation: rendered.attestation,
+        };
+      });
+      audioCritique = critiqueRenderedAudio({
+        stems, sampleRate: input.renderOptions?.sampleRate ?? 48_000,
+      });
+      renderedAny = true;
+    }
+
+    const symbolic = critique.overallScore;
+    const audio = audioCritique?.overallScore ?? null;
+    composed.push({
+      candidateId: candidate.candidateId,
+      label: candidate.label,
+      strategy: candidate.strategy,
+      seed: candidate.seed,
+      trackModels: performed,
+      noteCount,
+      constraintErrors: constraintReport.errorCount,
+      critique,
+      repair: repair.passes.length ? repair : null,
+      audioCritique,
+      renderFeasible,
+      finalScore: audio === null ? symbolic : Number((symbolic * 0.6 + audio * 0.4).toFixed(2)),
+    });
+    void initialCritique;
+  }
+
+  record("compose", composed.length ? "ok" : "failed",
+    `${totalNotes} notes across ${composed.length} candidate(s) via ${composerName}`,
+    { notes: totalNotes, composer: composerName });
+  record("constraints", totalConstraintErrors === 0 ? "ok" : "failed",
+    `${totalConstraintErrors} playability error(s)`, { errors: totalConstraintErrors });
+  record("critique", composed.length ? "ok" : "skipped",
+    composed.length ? `mean symbolic ${(composed.reduce((s, c) => s + c.critique.overallScore, 0) / composed.length).toFixed(1)}` : "no candidates");
+  const repaired = composed.filter((c) => c.repair && c.repair.passes.length > 0).length;
+  record("repair", repaired ? "ok" : "skipped", `${repaired} candidate(s) repaired`);
+  record("perform", composed.length ? "ok" : "skipped", "performance humanisation applied");
+  record("render", renderedAny ? "ok" : "skipped",
+    renderedAny ? "stems rendered with attestations" : "rendering disabled");
+  record("audio_critique", renderedAny ? "ok" : "skipped",
+    renderedAny ? "audio critique complete" : "no rendered audio");
+
+  // --- 11. select --------------------------------------------------------
+  const abComparison = renderedAny
+    ? abCompareCandidates(composed
+        .filter((c) => c.audioCritique)
+        .map((c) => ({ candidateId: c.candidateId, label: c.label, critique: c.audioCritique! })))
+    : null;
+
+  const ranked = [...composed].sort((a, b) =>
+    Number(b.critique.feasible) - Number(a.critique.feasible) ||
+    b.finalScore - a.finalScore ||
+    a.candidateId.localeCompare(b.candidateId));
+  const winner = ranked[0] ?? null;
+  const selected = winner
+    ? {
+        candidateId: winner.candidateId,
+        reason: winner.critique.feasible
+          ? `highest combined score (${winner.strategy})`
+          : "no candidate passed the hard-rule gate; best available",
+        symbolicScore: winner.critique.overallScore,
+        audioScore: winner.audioCritique?.overallScore ?? null,
+        combinedScore: winner.finalScore,
+      }
+    : null;
+  record("select", winner ? "ok" : "failed",
+    winner ? `${winner.candidateId} (${winner.strategy})` : "nothing to select",
+    winner ? { candidateId: winner.candidateId, combinedScore: winner.finalScore } : undefined);
+
+  return {
+    version: ORCHESTRATOR_VERSION,
+    method: METHOD,
+    composer: composerName,
+    stages,
+    plan,
+    candidates: composed,
+    abComparison,
+    selected,
+    traceable: stages.length === 11,
+  };
+}
