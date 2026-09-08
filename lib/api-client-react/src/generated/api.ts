@@ -62,6 +62,8 @@ import type {
   MobileTokenExchangeSuccess,
   MusicProvider,
   NotFoundResponse,
+  PairwiseCriticRecord,
+  PairwiseCriticTrainResult,
   PreferenceEvent,
   ProducerAnswersInput,
   ProducerBriefState,
@@ -4482,6 +4484,296 @@ export const useUpdateProducerPreferences = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getUpdateProducerPreferencesMutationOptions(options));
+    }
+
+export const getListPairwiseCriticsUrl = () => {
+
+
+
+
+  return `/api/pairwise-critic`
+}
+
+/**
+ * @summary The owner's pairwise critic models (PR-29), newest first, with their held-out verdicts
+ */
+export const listPairwiseCritics = async ( options?: Parameters<typeof customFetch>[1]): Promise<PairwiseCriticRecord[]> => {
+
+  return customFetch<PairwiseCriticRecord[]>(getListPairwiseCriticsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListPairwiseCriticsQueryKey = () => {
+    return [
+    `/api/pairwise-critic`
+    ] as const;
+    }
+
+
+export const getListPairwiseCriticsQueryOptions = <TData = Awaited<ReturnType<typeof listPairwiseCritics>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listPairwiseCritics>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListPairwiseCriticsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listPairwiseCritics>>> = ({ signal }) => listPairwiseCritics({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listPairwiseCritics>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListPairwiseCriticsQueryResult = NonNullable<Awaited<ReturnType<typeof listPairwiseCritics>>>
+export type ListPairwiseCriticsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary The owner's pairwise critic models (PR-29), newest first, with their held-out verdicts
+ */
+
+export function useListPairwiseCritics<TData = Awaited<ReturnType<typeof listPairwiseCritics>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listPairwiseCritics>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListPairwiseCriticsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getTrainPairwiseCriticUrl = () => {
+
+
+
+
+  return `/api/pairwise-critic/train`
+}
+
+/**
+ * @summary Train a pairwise critic from the owner's preference events; stored as a candidate with its held-out metrics
+ */
+export const trainPairwiseCritic = async ( options?: Parameters<typeof customFetch>[1]): Promise<PairwiseCriticTrainResult> => {
+
+  return customFetch<PairwiseCriticTrainResult>(getTrainPairwiseCriticUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getTrainPairwiseCriticMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof trainPairwiseCritic>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof trainPairwiseCritic>>, TError,void, TContext> => {
+
+const mutationKey = ['trainPairwiseCritic'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof trainPairwiseCritic>>, void> = () => {
+
+
+          return  trainPairwiseCritic(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type TrainPairwiseCriticMutationResult = NonNullable<Awaited<ReturnType<typeof trainPairwiseCritic>>>
+
+    export type TrainPairwiseCriticMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Train a pairwise critic from the owner's preference events; stored as a candidate with its held-out metrics
+ */
+export const useTrainPairwiseCritic = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof trainPairwiseCritic>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof trainPairwiseCritic>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getTrainPairwiseCriticMutationOptions(options));
+    }
+
+export const getPromotePairwiseCriticUrl = (modelId: string,) => {
+
+
+
+
+  return `/api/pairwise-critic/${modelId}/promote`
+}
+
+/**
+ * @summary Activate a model that beat the critic-only baseline on held-out pairs; the previous active model is retired
+ */
+export const promotePairwiseCritic = async (modelId: string, options?: Parameters<typeof customFetch>[1]): Promise<PairwiseCriticRecord> => {
+
+  return customFetch<PairwiseCriticRecord>(getPromotePairwiseCriticUrl(modelId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getPromotePairwiseCriticMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof promotePairwiseCritic>>, TError,{modelId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof promotePairwiseCritic>>, TError,{modelId: string}, TContext> => {
+
+const mutationKey = ['promotePairwiseCritic'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof promotePairwiseCritic>>, {modelId: string}> = (props) => {
+          const {modelId} = props ?? {};
+
+          return  promotePairwiseCritic(modelId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PromotePairwiseCriticMutationResult = NonNullable<Awaited<ReturnType<typeof promotePairwiseCritic>>>
+
+    export type PromotePairwiseCriticMutationError = ErrorType<void>
+
+    /**
+ * @summary Activate a model that beat the critic-only baseline on held-out pairs; the previous active model is retired
+ */
+export const usePromotePairwiseCritic = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof promotePairwiseCritic>>, TError,{modelId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof promotePairwiseCritic>>,
+        TError,
+        {modelId: string},
+        TContext
+      > => {
+      return useMutation(getPromotePairwiseCriticMutationOptions(options));
+    }
+
+export const getRetirePairwiseCriticUrl = (modelId: string,) => {
+
+
+
+
+  return `/api/pairwise-critic/${modelId}/retire`
+}
+
+/**
+ * @summary Retire a model (roll back to no learned preference)
+ */
+export const retirePairwiseCritic = async (modelId: string, options?: Parameters<typeof customFetch>[1]): Promise<PairwiseCriticRecord> => {
+
+  return customFetch<PairwiseCriticRecord>(getRetirePairwiseCriticUrl(modelId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getRetirePairwiseCriticMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof retirePairwiseCritic>>, TError,{modelId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof retirePairwiseCritic>>, TError,{modelId: string}, TContext> => {
+
+const mutationKey = ['retirePairwiseCritic'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof retirePairwiseCritic>>, {modelId: string}> = (props) => {
+          const {modelId} = props ?? {};
+
+          return  retirePairwiseCritic(modelId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RetirePairwiseCriticMutationResult = NonNullable<Awaited<ReturnType<typeof retirePairwiseCritic>>>
+
+    export type RetirePairwiseCriticMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Retire a model (roll back to no learned preference)
+ */
+export const useRetirePairwiseCritic = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof retirePairwiseCritic>>, TError,{modelId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof retirePairwiseCritic>>,
+        TError,
+        {modelId: string},
+        TContext
+      > => {
+      return useMutation(getRetirePairwiseCriticMutationOptions(options));
     }
 
 export const getListProducerCalibrationsUrl = () => {

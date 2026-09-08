@@ -108,6 +108,12 @@ import {
   ListPreferenceTrainingRowsResponse,
   ErasePreferenceEventsQueryParams,
   ErasePreferenceEventsResponse,
+  ListPairwiseCriticsResponse,
+  TrainPairwiseCriticResponse,
+  PromotePairwiseCriticParams,
+  PromotePairwiseCriticResponse,
+  RetirePairwiseCriticParams,
+  RetirePairwiseCriticResponse,
   CreateProducerDecisionBody,
   CreateProducerDecisionResponse,
   GetProducerPreferencesResponse,
@@ -192,6 +198,7 @@ import { deriveMixPlan, mixPlanToControls } from "../lib/mixBrain";
 import { compareFingerprints, deriveStyleFingerprint } from "../lib/styleFingerprint";
 import { FEATURE_NAMES, recordPreferenceEvent, trainingRows, type PreferenceSubjectInput } from "../lib/preferenceEvents";
 import { DbPreferenceEventStore } from "../lib/preferenceEventsDbStore";
+import { listPairwiseCritics, promotePairwiseCritic, retirePairwiseCritic, trainPairwiseCriticForOwner, type PairwiseCriticRecord } from "../lib/pairwiseCriticStore";
 import {
   activateLicensedInstrumentPack as activateLicensedInstrumentPackOnWorker,
   applyArrangementEditorChanges,
@@ -2945,6 +2952,53 @@ router.post("/producer-decisions", async (req, res): Promise<void> => {
     }
   }
   res.status(201).json(CreateProducerDecisionResponse.parse(producerDecisionResponse(decision)));
+});
+
+// PR-29: the owner's learned pairwise critic — train, inspect, promote, retire.
+const pairwiseCriticRecordResponse = (row: PairwiseCriticRecord) => ({
+  id: row.id, version: row.version, status: row.status,
+  heldOutAccuracy: row.model.metrics.heldOutAccuracy, baselineAccuracy: row.model.metrics.baselineAccuracy,
+  trainingPairs: row.model.trainedOn.trainingPairs, heldOutPairs: row.model.trainedOn.heldOutPairs, events: row.model.trainedOn.events,
+  promotable: row.model.promotable, promotionReason: row.model.promotionReason, influentialFeatures: row.model.influentialFeatures,
+  method: row.model.method, trainedAt: row.model.trainedAt, createdAt: row.createdAt, promotedAt: row.promotedAt, retiredAt: row.retiredAt,
+});
+
+router.get("/pairwise-critic", async (req, res): Promise<void> => {
+  res.setHeader("Cache-Control", "no-store");
+  res.json(ListPairwiseCriticsResponse.parse((await listPairwiseCritics(req.user!.id)).map(pairwiseCriticRecordResponse)));
+});
+
+router.post("/pairwise-critic/train", async (req, res): Promise<void> => {
+  const { outcome, stored } = await trainPairwiseCriticForOwner(req.user!.id);
+  if (outcome.status === "insufficient") {
+    res.json(TrainPairwiseCriticResponse.parse({ status: "insufficient", reason: outcome.reason, events: outcome.events, trainingPairs: outcome.trainingPairs, heldOutPairs: outcome.heldOutPairs }));
+    return;
+  }
+  res.json(TrainPairwiseCriticResponse.parse({
+    status: "trained", events: outcome.model.trainedOn.events, trainingPairs: outcome.model.trainedOn.trainingPairs, heldOutPairs: outcome.model.trainedOn.heldOutPairs,
+    model: stored ? pairwiseCriticRecordResponse(stored) : undefined,
+  }));
+});
+
+router.post("/pairwise-critic/:modelId/promote", async (req, res): Promise<void> => {
+  const params = PromotePairwiseCriticParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  try {
+    res.json(PromotePairwiseCriticResponse.parse(pairwiseCriticRecordResponse(await promotePairwiseCritic(req.user!.id, params.data.modelId))));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Promotion refused";
+    res.status(/not found/i.test(message) ? 404 : 409).json({ error: message });
+  }
+});
+
+router.post("/pairwise-critic/:modelId/retire", async (req, res): Promise<void> => {
+  const params = RetirePairwiseCriticParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  try {
+    res.json(RetirePairwiseCriticResponse.parse(pairwiseCriticRecordResponse(await retirePairwiseCritic(req.user!.id, params.data.modelId))));
+  } catch (error) {
+    res.status(404).json({ error: error instanceof Error ? error.message : "Not found" });
+  }
 });
 
 // PR-28: the owner's learning memory — list it, export it for training, erase it.

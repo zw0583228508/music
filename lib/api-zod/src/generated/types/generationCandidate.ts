@@ -8,6 +8,7 @@
 import type { CandidateEvaluation } from './candidateEvaluation';
 import type { GenerationCandidateParameters } from './generationCandidateParameters';
 import type { GenerationCandidatePlan } from './generationCandidatePlan';
+import type { GenerationCandidatePreference } from './generationCandidatePreference';
 import type { GenerationCandidateProvider } from './generationCandidateProvider';
 import type { GenerationCandidateStatus } from './generationCandidateStatus';
 import type { HarmonyDecisionEvidence } from './harmonyDecisionEvidence';
@@ -37,5 +38,6 @@ export interface GenerationCandidate {
   trackModels: TrackModel[] | null;
   harmonyDecisions: HarmonyDecisionEvidence[];
   evaluation: CandidateEvaluation;
+  preference?: GenerationCandidatePreference;
   createdAt: string;
 }

@@ -1163,6 +1163,53 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ProducerPreferences" }
+  /pairwise-critic:
+    get:
+      operationId: listPairwiseCritics
+      tags: [studio]
+      summary: The owner's pairwise critic models (PR-29), newest first, with their held-out verdicts
+      responses:
+        "200":
+          description: Model versions
+          content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/PairwiseCriticRecord" } } } }
+  /pairwise-critic/train:
+    post:
+      operationId: trainPairwiseCritic
+      tags: [studio]
+      summary: Train a pairwise critic from the owner's preference events; stored as a candidate with its held-out metrics
+      responses:
+        "200":
+          description: Training outcome — a stored candidate model, or the reason the data was insufficient
+          content: { application/json: { schema: { $ref: "#/components/schemas/PairwiseCriticTrainResult" } } }
+  /pairwise-critic/{modelId}/promote:
+    post:
+      operationId: promotePairwiseCritic
+      tags: [studio]
+      summary: Activate a model that beat the critic-only baseline on held-out pairs; the previous active model is retired
+      parameters:
+        - name: modelId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The active model
+          content: { application/json: { schema: { $ref: "#/components/schemas/PairwiseCriticRecord" } } }
+        "409": { description: The model did not prove itself }
+  /pairwise-critic/{modelId}/retire:
+    post:
+      operationId: retirePairwiseCritic
+      tags: [studio]
+      summary: Retire a model (roll back to no learned preference)
+      parameters:
+        - name: modelId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The retired model
+          content: { application/json: { schema: { $ref: "#/components/schemas/PairwiseCriticRecord" } } }
   /producer-calibrations:
     get:
       operationId: listProducerCalibrations
@@ -1577,6 +1624,44 @@ components:
       properties:
         examples: { type: number }
         heldOutAgreement: { type: number }
+    PairwiseCriticRecord:
+      type: object
+      description: PR-29 — one immutable version of the owner's learned pairwise critic, with the held-out verdict that decides whether it may be applied.
+      required: [id, version, status, heldOutAccuracy, baselineAccuracy, trainingPairs, heldOutPairs, events, promotable, promotionReason, influentialFeatures, method, trainedAt, createdAt, promotedAt, retiredAt]
+      properties:
+        id: { type: string }
+        version: { type: number }
+        status: { type: string, enum: [candidate, active, retired] }
+        heldOutAccuracy: { type: number }
+        baselineAccuracy: { type: number }
+        trainingPairs: { type: number }
+        heldOutPairs: { type: number }
+        events: { type: number }
+        promotable: { type: boolean }
+        promotionReason: { type: string }
+        influentialFeatures:
+          type: array
+          items:
+            type: object
+            required: [name, weight]
+            properties:
+              name: { type: string }
+              weight: { type: number }
+        method: { type: string }
+        trainedAt: { type: string }
+        createdAt: { type: string }
+        promotedAt: { type: string, nullable: true }
+        retiredAt: { type: string, nullable: true }
+    PairwiseCriticTrainResult:
+      type: object
+      required: [status, events, trainingPairs, heldOutPairs]
+      properties:
+        status: { type: string, enum: [trained, insufficient] }
+        reason: { type: string }
+        events: { type: number }
+        trainingPairs: { type: number }
+        heldOutPairs: { type: number }
+        model: { $ref: "#/components/schemas/PairwiseCriticRecord" }
     ProducerCalibration:
       type: object
       required: [id, version, rankingWeight, criticWeight, heldOutAgreement, baselineAgreement, active, createdAt]
@@ -3807,6 +3892,15 @@ components:
             $ref: "#/components/schemas/HarmonyDecisionEvidence"
         evaluation:
           $ref: "#/components/schemas/CandidateEvaluation"
+        # PR-29: present only when the owner has an active pairwise critic;
+        # `score` is the candidate's mean probability of beating its siblings.
+        preference:
+          type: object
+          required: [modelVersion, score, rerankedFrom]
+          properties:
+            modelVersion: { type: number }
+            score: { type: number }
+            rerankedFrom: { type: number, nullable: true }
         createdAt: { type: string }
     HarmonyCandidateRationale:
       type: object

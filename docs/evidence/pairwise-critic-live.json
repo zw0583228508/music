@@ -1,0 +1,34 @@
+{
+  "pr": "PR-29 pairwise-arrangement-critic",
+  "recordedAt": "2026-09-09T01:30:00Z",
+  "projectId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2",
+  "path": "POST /pairwise-critic/train (from the owner's preference events) -> GET /pairwise-critic -> GET /generation-jobs/{id}/candidates",
+  "live": {
+    "train": {
+      "status": "insufficient",
+      "reason": "need at least 8 training and 4 held-out pairs (mirrored); have 0 and 2 from 2 event(s)",
+      "events": 2,
+      "trainingPairs": 0,
+      "heldOutPairs": 2
+    },
+    "models": 0,
+    "candidatesCarryPreference": [
+      false,
+      false,
+      false
+    ]
+  },
+  "unitProof": {
+    "suite": "pairwiseCritic.test.ts (5 tests)",
+    "syntheticOwner": "prefers more swing and slightly more onset density while the critic is indifferent",
+    "learned": "swing weight > 0.3, density weight > 0, held-out accuracy >= 0.8 vs critic-only baseline < 0.7 -> promotable",
+    "antisymmetry": "P(A>B)+P(B>A)=1",
+    "gating": "3 events refused; an owner who follows the critic exactly trains a model that is not promotable (baseline already 1.0)",
+    "reranking": "only near-ties (<= 0.03 evidence apart) may swap; a clear critic verdict is never overturned"
+  },
+  "observations": [
+    "The live owner has 2 events (1 pairwise, 1 rating): 2 mirrored pairs, both held out under the chronological split -> the trainer refused with the reason; no model was stored; candidates were served exactly as before (no `preference` field).",
+    "This is the correct outcome: the plan says a model must prove it beats the pipeline before it becomes default, and 2 events prove nothing. The learning path is demonstrated on synthetic labelled events in the suite, not on this owner's data.",
+    "When a model is active it decides only the critics' near-ties and every re-ranked candidate carries `preference.rerankedFrom`, so an audit can see exactly where taste moved a rank."
+  ]
+}
