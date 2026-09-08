@@ -56,13 +56,20 @@ import type {
   MobileTokenExchangeSuccess,
   MusicProvider,
   NotFoundResponse,
+  ProducerAnswersInput,
+  ProducerBriefState,
   ProducerCalibration,
   ProducerCalibrationEvaluation,
   ProducerCalibrationInput,
+  ProducerChatInput,
   ProducerDecision,
   ProducerDecisionInput,
+  ProducerDecisionSupersedeInput,
+  ProducerIntakeInput,
   ProducerPreferences,
   ProducerPreferencesInput,
+  ProducerTurnPage,
+  ProducerTurnResult,
   ProductionJob,
   Project,
   ProjectDeletion,
@@ -4656,5 +4663,543 @@ export const useRunCopilot = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getRunCopilotMutationOptions(options));
+    }
+
+export const getRunProducerIntakeUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/producer/intake`
+}
+
+/**
+ * Free text in any language (plus optional references) becomes a UserIntent,
+ * a StyleProfile, the clarification questions worth asking (at most two,
+ * scored by information gain) and a new ProductionBrief version. Both the
+ * user turn and the producer's reply are persisted. Nothing is generated.
+ * @summary Start (or restart) the producer conversation from free text
+ */
+export const runProducerIntake = async (projectId: string,
+    producerIntakeInput: ProducerIntakeInput, options?: Parameters<typeof customFetch>[1]): Promise<ProducerTurnResult> => {
+
+  return customFetch<ProducerTurnResult>(getRunProducerIntakeUrl(projectId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(producerIntakeInput)
+  }
+);}
+
+
+
+
+
+export const getRunProducerIntakeMutationOptions = <TError = ErrorType<void | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof runProducerIntake>>, TError,{projectId: string;data: BodyType<ProducerIntakeInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof runProducerIntake>>, TError,{projectId: string;data: BodyType<ProducerIntakeInput>}, TContext> => {
+
+const mutationKey = ['runProducerIntake'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof runProducerIntake>>, {projectId: string;data: BodyType<ProducerIntakeInput>}> = (props) => {
+          const {projectId,data} = props ?? {};
+
+          return  runProducerIntake(projectId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RunProducerIntakeMutationResult = NonNullable<Awaited<ReturnType<typeof runProducerIntake>>>
+    export type RunProducerIntakeMutationBody = BodyType<ProducerIntakeInput>
+    export type RunProducerIntakeMutationError = ErrorType<void | NotFoundResponse>
+
+    /**
+ * @summary Start (or restart) the producer conversation from free text
+ */
+export const useRunProducerIntake = <TError = ErrorType<void | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof runProducerIntake>>, TError,{projectId: string;data: BodyType<ProducerIntakeInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof runProducerIntake>>,
+        TError,
+        {projectId: string;data: BodyType<ProducerIntakeInput>},
+        TContext
+      > => {
+      return useMutation(getRunProducerIntakeMutationOptions(options));
+    }
+
+export const getAnswerProducerClarificationsUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/producer/answers`
+}
+
+/**
+ * Applies the chosen options' brief deltas (free text is also read as intake) and compiles a new brief version.
+ * @summary Answer open clarification questions
+ */
+export const answerProducerClarifications = async (projectId: string,
+    producerAnswersInput: ProducerAnswersInput, options?: Parameters<typeof customFetch>[1]): Promise<ProducerTurnResult> => {
+
+  return customFetch<ProducerTurnResult>(getAnswerProducerClarificationsUrl(projectId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(producerAnswersInput)
+  }
+);}
+
+
+
+
+
+export const getAnswerProducerClarificationsMutationOptions = <TError = ErrorType<void | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof answerProducerClarifications>>, TError,{projectId: string;data: BodyType<ProducerAnswersInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof answerProducerClarifications>>, TError,{projectId: string;data: BodyType<ProducerAnswersInput>}, TContext> => {
+
+const mutationKey = ['answerProducerClarifications'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof answerProducerClarifications>>, {projectId: string;data: BodyType<ProducerAnswersInput>}> = (props) => {
+          const {projectId,data} = props ?? {};
+
+          return  answerProducerClarifications(projectId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AnswerProducerClarificationsMutationResult = NonNullable<Awaited<ReturnType<typeof answerProducerClarifications>>>
+    export type AnswerProducerClarificationsMutationBody = BodyType<ProducerAnswersInput>
+    export type AnswerProducerClarificationsMutationError = ErrorType<void | NotFoundResponse>
+
+    /**
+ * @summary Answer open clarification questions
+ */
+export const useAnswerProducerClarifications = <TError = ErrorType<void | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof answerProducerClarifications>>, TError,{projectId: string;data: BodyType<ProducerAnswersInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof answerProducerClarifications>>,
+        TError,
+        {projectId: string;data: BodyType<ProducerAnswersInput>},
+        TContext
+      > => {
+      return useMutation(getAnswerProducerClarificationsMutationOptions(options));
+    }
+
+export const getGetProducerBriefUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/producer/brief`
+}
+
+/**
+ * @summary The current production brief, its decisions and the three arrangement concepts
+ */
+export const getProducerBrief = async (projectId: string, options?: Parameters<typeof customFetch>[1]): Promise<ProducerBriefState> => {
+
+  return customFetch<ProducerBriefState>(getGetProducerBriefUrl(projectId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetProducerBriefQueryKey = (projectId: string,) => {
+    return [
+    `/api/projects/${projectId}/producer/brief`
+    ] as const;
+    }
+
+
+export const getGetProducerBriefQueryOptions = <TData = Awaited<ReturnType<typeof getProducerBrief>>, TError = ErrorType<NotFoundResponse>>(projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProducerBrief>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetProducerBriefQueryKey(projectId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getProducerBrief>>> = ({ signal }) => getProducerBrief(projectId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getProducerBrief>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetProducerBriefQueryResult = NonNullable<Awaited<ReturnType<typeof getProducerBrief>>>
+export type GetProducerBriefQueryError = ErrorType<NotFoundResponse>
+
+
+/**
+ * @summary The current production brief, its decisions and the three arrangement concepts
+ */
+
+export function useGetProducerBrief<TData = Awaited<ReturnType<typeof getProducerBrief>>, TError = ErrorType<NotFoundResponse>>(
+ projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProducerBrief>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetProducerBriefQueryOptions(projectId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getSendProducerChatUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/producer/chat`
+}
+
+/**
+ * A question ("why is there a clarinet here?") is answered from the latest
+ * plan's own evidence. An edit request ("the last chorus is too busy",
+ * "no strings in the whole song") becomes a structured EditPlan and durable,
+ * scoped decisions on the brief. Anything else refines the intake. Both
+ * turns are persisted; nothing is regenerated here.
+ * @summary Send a message to the producer
+ */
+export const sendProducerChat = async (projectId: string,
+    producerChatInput: ProducerChatInput, options?: Parameters<typeof customFetch>[1]): Promise<ProducerTurnResult> => {
+
+  return customFetch<ProducerTurnResult>(getSendProducerChatUrl(projectId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(producerChatInput)
+  }
+);}
+
+
+
+
+
+export const getSendProducerChatMutationOptions = <TError = ErrorType<void | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof sendProducerChat>>, TError,{projectId: string;data: BodyType<ProducerChatInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof sendProducerChat>>, TError,{projectId: string;data: BodyType<ProducerChatInput>}, TContext> => {
+
+const mutationKey = ['sendProducerChat'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof sendProducerChat>>, {projectId: string;data: BodyType<ProducerChatInput>}> = (props) => {
+          const {projectId,data} = props ?? {};
+
+          return  sendProducerChat(projectId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SendProducerChatMutationResult = NonNullable<Awaited<ReturnType<typeof sendProducerChat>>>
+    export type SendProducerChatMutationBody = BodyType<ProducerChatInput>
+    export type SendProducerChatMutationError = ErrorType<void | NotFoundResponse>
+
+    /**
+ * @summary Send a message to the producer
+ */
+export const useSendProducerChat = <TError = ErrorType<void | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof sendProducerChat>>, TError,{projectId: string;data: BodyType<ProducerChatInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof sendProducerChat>>,
+        TError,
+        {projectId: string;data: BodyType<ProducerChatInput>},
+        TContext
+      > => {
+      return useMutation(getSendProducerChatMutationOptions(options));
+    }
+
+export const getListProducerTurnsUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/producer/turns`
+}
+
+/**
+ * Older turns are fetched page by page through `/producer/turns/before/{turnId}`.
+ * @summary The persistent producer chat (latest page of 50, newest last)
+ */
+export const listProducerTurns = async (projectId: string, options?: Parameters<typeof customFetch>[1]): Promise<ProducerTurnPage> => {
+
+  return customFetch<ProducerTurnPage>(getListProducerTurnsUrl(projectId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListProducerTurnsQueryKey = (projectId: string,) => {
+    return [
+    `/api/projects/${projectId}/producer/turns`
+    ] as const;
+    }
+
+
+export const getListProducerTurnsQueryOptions = <TData = Awaited<ReturnType<typeof listProducerTurns>>, TError = ErrorType<NotFoundResponse>>(projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProducerTurns>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListProducerTurnsQueryKey(projectId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listProducerTurns>>> = ({ signal }) => listProducerTurns(projectId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listProducerTurns>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListProducerTurnsQueryResult = NonNullable<Awaited<ReturnType<typeof listProducerTurns>>>
+export type ListProducerTurnsQueryError = ErrorType<NotFoundResponse>
+
+
+/**
+ * @summary The persistent producer chat (latest page of 50, newest last)
+ */
+
+export function useListProducerTurns<TData = Awaited<ReturnType<typeof listProducerTurns>>, TError = ErrorType<NotFoundResponse>>(
+ projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProducerTurns>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListProducerTurnsQueryOptions(projectId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getListProducerTurnsBeforeUrl = (projectId: string,
+    turnId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/producer/turns/before/${turnId}`
+}
+
+/**
+ * @summary The page of 50 turns older than a turn (newest last)
+ */
+export const listProducerTurnsBefore = async (projectId: string,
+    turnId: string, options?: Parameters<typeof customFetch>[1]): Promise<ProducerTurnPage> => {
+
+  return customFetch<ProducerTurnPage>(getListProducerTurnsBeforeUrl(projectId,turnId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListProducerTurnsBeforeQueryKey = (projectId: string,
+    turnId: string,) => {
+    return [
+    `/api/projects/${projectId}/producer/turns/before/${turnId}`
+    ] as const;
+    }
+
+
+export const getListProducerTurnsBeforeQueryOptions = <TData = Awaited<ReturnType<typeof listProducerTurnsBefore>>, TError = ErrorType<NotFoundResponse>>(projectId: string,
+    turnId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProducerTurnsBefore>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListProducerTurnsBeforeQueryKey(projectId,turnId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listProducerTurnsBefore>>> = ({ signal }) => listProducerTurnsBefore(projectId,turnId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined && turnId !== null && turnId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listProducerTurnsBefore>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListProducerTurnsBeforeQueryResult = NonNullable<Awaited<ReturnType<typeof listProducerTurnsBefore>>>
+export type ListProducerTurnsBeforeQueryError = ErrorType<NotFoundResponse>
+
+
+/**
+ * @summary The page of 50 turns older than a turn (newest last)
+ */
+
+export function useListProducerTurnsBefore<TData = Awaited<ReturnType<typeof listProducerTurnsBefore>>, TError = ErrorType<NotFoundResponse>>(
+ projectId: string,
+    turnId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProducerTurnsBefore>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListProducerTurnsBeforeQueryOptions(projectId,turnId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getSupersedeProducerDecisionUrl = (projectId: string,
+    decisionId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/producer/decisions/${decisionId}/supersede`
+}
+
+/**
+ * The old decision is marked superseded (never deleted) and the brief is recompiled without it.
+ * @summary Replace a standing decision with a new one
+ */
+export const supersedeProducerDecision = async (projectId: string,
+    decisionId: string,
+    producerDecisionSupersedeInput: ProducerDecisionSupersedeInput, options?: Parameters<typeof customFetch>[1]): Promise<ProducerTurnResult> => {
+
+  return customFetch<ProducerTurnResult>(getSupersedeProducerDecisionUrl(projectId,decisionId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(producerDecisionSupersedeInput)
+  }
+);}
+
+
+
+
+
+export const getSupersedeProducerDecisionMutationOptions = <TError = ErrorType<NotFoundResponse | void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof supersedeProducerDecision>>, TError,{projectId: string;decisionId: string;data: BodyType<ProducerDecisionSupersedeInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof supersedeProducerDecision>>, TError,{projectId: string;decisionId: string;data: BodyType<ProducerDecisionSupersedeInput>}, TContext> => {
+
+const mutationKey = ['supersedeProducerDecision'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof supersedeProducerDecision>>, {projectId: string;decisionId: string;data: BodyType<ProducerDecisionSupersedeInput>}> = (props) => {
+          const {projectId,decisionId,data} = props ?? {};
+
+          return  supersedeProducerDecision(projectId,decisionId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SupersedeProducerDecisionMutationResult = NonNullable<Awaited<ReturnType<typeof supersedeProducerDecision>>>
+    export type SupersedeProducerDecisionMutationBody = BodyType<ProducerDecisionSupersedeInput>
+    export type SupersedeProducerDecisionMutationError = ErrorType<NotFoundResponse | void>
+
+    /**
+ * @summary Replace a standing decision with a new one
+ */
+export const useSupersedeProducerDecision = <TError = ErrorType<NotFoundResponse | void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof supersedeProducerDecision>>, TError,{projectId: string;decisionId: string;data: BodyType<ProducerDecisionSupersedeInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof supersedeProducerDecision>>,
+        TError,
+        {projectId: string;decisionId: string;data: BodyType<ProducerDecisionSupersedeInput>},
+        TContext
+      > => {
+      return useMutation(getSupersedeProducerDecisionMutationOptions(options));
     }
 

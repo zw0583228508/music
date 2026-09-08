@@ -1,0 +1,2470 @@
+{
+  "kind": "live-producer-chat-pr-u2",
+  "ranAt": "2026-09-08T21:48:53.057Z",
+  "apiBase": "http://127.0.0.1:5001",
+  "note": "PR-U2 live check on a Neon-backed local API (PORT 5001) from the pr-u2-producer-chat-api worktree. Projects A (Hebrew) and B (English) are fresh (no source uploaded), so there is no Song Model: section wishes are kept as unresolved requests, a scoped edit whose section cannot be matched is kept as a section wish (refinement) rather than a decision, and plan-based explanations say so honestly (planSource: none). Project C is the dev user's existing project that already has a Song Model and an orchestrator arrangement: there the same Hebrew intake resolves 'בית ראשון' / 'הפזמון האחרון' to real sections, the scoped edit becomes a section override, and questions are answered from the stored plan's own evidence (planSource: arrangement). No OpenAI key is configured in .env.local and PRODUCER_LLM is unset, so every reading here is the deterministic PR-U1 extractor (intentMethod intent-extraction/v1); no language model was exercised. Nothing was generated or regenerated; edit turns return EditPlans and record durable decisions only.",
+  "projects": {
+    "hebrew": "f403e23e-6683-44f7-b5e7-6f38e07b2fa3",
+    "english": "6dcf7c49-6b8b-4304-ae22-22b6f4615375",
+    "existingWithSongModel": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2"
+  },
+  "intentModel": "intent-extraction/v1 (deterministic fallback)",
+  "steps": [
+    {
+      "step": 1,
+      "method": "GET",
+      "path": "/api/healthz",
+      "status": 200,
+      "ms": 404,
+      "request": null,
+      "response": {
+        "status": "ok",
+        "database": "ok",
+        "providers": {
+          "configured": 1,
+          "available": 1
+        },
+        "queues": {
+          "analysis_failed": 10,
+          "generation_failed": 1,
+          "generation_succeeded": 3,
+          "pipeline_failed": 2,
+          "pipeline_succeeded": 4
+        },
+        "timestamp": "2026-09-08T21:48:04.347Z"
+      }
+    },
+    {
+      "step": 2,
+      "method": "POST",
+      "path": "/api/dev-login",
+      "status": 200,
+      "ms": 377,
+      "request": null,
+      "response": {
+        "userId": "dev-local-user"
+      }
+    },
+    {
+      "step": 3,
+      "method": "POST",
+      "path": "/api/projects",
+      "status": 201,
+      "ms": 564,
+      "request": {
+        "name": "PR-U2 live check (he) 2026-09-08T21:48:04.736Z",
+        "sourceType": "FULL_SONG"
+      },
+      "response": {
+        "id": "f403e23e-6683-44f7-b5e7-6f38e07b2fa3",
+        "status": "draft"
+      }
+    },
+    {
+      "step": 4,
+      "method": "GET",
+      "path": "/api/projects/f403e23e-6683-44f7-b5e7-6f38e07b2fa3/producer/brief",
+      "status": 404,
+      "ms": 535,
+      "request": null,
+      "response": {
+        "error": "No production brief yet — start with intake"
+      }
+    },
+    {
+      "step": 5,
+      "method": "POST",
+      "path": "/api/projects/f403e23e-6683-44f7-b5e7-6f38e07b2fa3/producer/intake",
+      "status": 201,
+      "ms": 2531,
+      "request": {
+        "text": "אני רוצה בלדה חסידית מודרנית, אבל לא פופית מדי. בית ראשון כמעט ישיבתי, פסנתר וחליל, פזמון רחב יותר עם מיתרים"
+      },
+      "response": {
+        "kind": "intake",
+        "turnId": "pc-mtt7b08w-sotd5dvn",
+        "producerTurnId": "pc-mtt7b08w-87fml8fz",
+        "understanding": "Here is how I read it: a modern hasidic ballad, slow tempo. Boundaries — ruled out: pop (\"לא פופית מדי\"). Instruments named: piano → keys and flute → winds. \"בית ראשון כמעט ישיבתי\" and \"פזמון רחב יותר עם מיתרים\" is kept for when the song is analysed; there is no Song Model to place it on yet.",
+        "state": {
+          "version": 1,
+          "briefId": "brief-82a737e1fd6b",
+          "planSource": "none",
+          "songModelVersion": null,
+          "language": "he",
+          "intentMethod": "intent-extraction/v1",
+          "inferences": [
+            "genre_word=ballad@global <בלדה>",
+            "tempo_feel=slow@global <בלדה>",
+            "tradition=hasidic@global <חסידית>",
+            "era=modern@global <מודרנית>",
+            "production_feel=modern@global <מודרנית>",
+            "scene=yeshiva@section:verse/1 <ישיבתי>",
+            "instrument=piano@global <פסנתר>",
+            "instrument=flute@global <וחליל>",
+            "production_feel=wide@section:chorus/all <רחב יותר>",
+            "instrument=strings@section:chorus/all <מיתרים>"
+          ],
+          "constraints": [
+            "avoid:pop@global <לא פופית מדי>"
+          ],
+          "references": [],
+          "unresolvedTerms": [],
+          "styleDimensions": {
+            "genre": "\"ballad\" (stated 0.85)",
+            "tradition": "\"hasidic\" (stated 0.85)",
+            "era": "\"modern\" (stated 0.85)",
+            "soundAesthetic": "\"modern\" (inferred 0.5)",
+            "instrumentationHierarchy": "[\"keys\",\"winds\"] (stated 0.85)",
+            "tempoBehavior": "\"slow\" (inferred 0.595)",
+            "chordRhythm": "\"sustained\" (inferred 0.425)",
+            "fillFrequency": "\"rare\" (inferred 0.425)",
+            "stereoAesthetic": "\"wide\" (inferred 0.2)"
+          },
+          "dimensionDecisions": [
+            "adopt chordRhythm=\"sustained\" by style_profile",
+            "adopt era=\"modern\" by style_profile",
+            "adopt fillFrequency=\"rare\" by style_profile",
+            "adopt genre=\"ballad\" by style_profile",
+            "adopt instrumentationHierarchy=[\"keys\",\"winds\"] by style_profile",
+            "adopt soundAesthetic=\"modern\" by style_profile",
+            "adopt stereoAesthetic=\"wide\" by style_profile",
+            "adopt tempoBehavior=\"slow\" by style_profile",
+            "adopt tradition=\"hasidic\" by style_profile"
+          ],
+          "sectionNames": [],
+          "sectionIntentions": [],
+          "unresolvedSectionRequests": [
+            "בית ראשון כמעט ישיבתי",
+            "פזמון רחב יותר עם מיתרים"
+          ],
+          "instrumentation": {
+            "hierarchy": [
+              {
+                "family": "keys",
+                "tier": "feature",
+                "rationale": "style profile hierarchy (stated)",
+                "provenance": "stated",
+                "confidence": 0.85
+              },
+              {
+                "family": "winds",
+                "tier": "feature",
+                "rationale": "style profile hierarchy (stated)",
+                "provenance": "stated",
+                "confidence": 0.85
+              }
+            ],
+            "excludedFamilies": []
+          },
+          "vocalSpace": "moderate/sparse (default)",
+          "plannerAesthetic": null,
+          "activeDecisions": [
+            "[global] hard style_dimension: no pop — \"לא פופית מדי\" (intake)",
+            "[global] soft instrumentation: feature keys (piano) (intake)",
+            "[global] soft instrumentation: feature winds (flute) (intake)"
+          ],
+          "chatDecisionRows": [],
+          "openQuestions": [],
+          "concepts": [
+            "Intimate & rooted [sparse] differs in doublingRules,dynamics,ensembleType,roomSize,voicingWidth",
+            "Contemporary & full [rhythmic] differs in chordRhythm,ensembleType,fillFrequency,roomSize,saturation",
+            "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,ensembleType,roomSize,transitionLanguage,voicingWidth"
+          ]
+        }
+      }
+    },
+    {
+      "step": 6,
+      "method": "POST",
+      "path": "/api/projects/f403e23e-6683-44f7-b5e7-6f38e07b2fa3/producer/chat",
+      "status": 200,
+      "ms": 2372,
+      "request": {
+        "text": "בכל השיר בלי מיתרים"
+      },
+      "response": {
+        "kind": "edit",
+        "turnId": "pc-mtt7b22s-9btmmqp4",
+        "producerTurnId": "pc-mtt7b22s-17yhn17w",
+        "understanding": "remove instrument on the whole arrangement: 0 regeneration scope(s), 0 lock(s). Evidence: \"בלי מיתרים\". Standing rule for the whole song: edit: \"בכל השיר בלי מיתרים\". Brief updated to v2. Nothing is regenerated from chat yet — the plan is returned for the next arrangement.",
+        "editPlan": {
+          "intent": "remove_instrument",
+          "scope": {
+            "kind": "global"
+          },
+          "modify": 0,
+          "preserve": 0,
+          "briefDeltas": [
+            {
+              "kind": "instrumentation",
+              "rationale": "edit: \"בכל השיר בלי מיתרים\""
+            }
+          ],
+          "confidence": 0.85
+        },
+        "state": {
+          "version": 2,
+          "briefId": "brief-040b0bc61bed",
+          "planSource": "none",
+          "songModelVersion": null,
+          "language": "he",
+          "intentMethod": "intent-extraction/v1",
+          "inferences": [
+            "genre_word=ballad@global <בלדה>",
+            "tempo_feel=slow@global <בלדה>",
+            "tradition=hasidic@global <חסידית>",
+            "era=modern@global <מודרנית>",
+            "production_feel=modern@global <מודרנית>",
+            "scene=yeshiva@section:verse/1 <ישיבתי>",
+            "instrument=piano@global <פסנתר>",
+            "instrument=flute@global <וחליל>",
+            "production_feel=wide@section:chorus/all <רחב יותר>",
+            "instrument=strings@section:chorus/all <מיתרים>"
+          ],
+          "constraints": [
+            "avoid:pop@global <לא פופית מדי>"
+          ],
+          "references": [],
+          "unresolvedTerms": [],
+          "styleDimensions": {
+            "genre": "\"ballad\" (stated 0.85)",
+            "tradition": "\"hasidic\" (stated 0.85)",
+            "era": "\"modern\" (stated 0.85)",
+            "soundAesthetic": "\"modern\" (inferred 0.5)",
+            "instrumentationHierarchy": "[\"keys\",\"winds\"] (stated 0.85)",
+            "tempoBehavior": "\"slow\" (inferred 0.595)",
+            "chordRhythm": "\"sustained\" (inferred 0.425)",
+            "fillFrequency": "\"rare\" (inferred 0.425)",
+            "stereoAesthetic": "\"wide\" (inferred 0.2)"
+          },
+          "dimensionDecisions": [
+            "adopt chordRhythm=\"sustained\" by style_profile",
+            "adopt era=\"modern\" by style_profile",
+            "adopt fillFrequency=\"rare\" by style_profile",
+            "adopt genre=\"ballad\" by style_profile",
+            "adopt instrumentationHierarchy=[\"keys\",\"winds\"] by style_profile",
+            "adopt soundAesthetic=\"modern\" by style_profile",
+            "adopt stereoAesthetic=\"wide\" by style_profile",
+            "adopt tempoBehavior=\"slow\" by style_profile",
+            "adopt tradition=\"hasidic\" by style_profile"
+          ],
+          "sectionNames": [],
+          "sectionIntentions": [],
+          "unresolvedSectionRequests": [
+            "בית ראשון כמעט ישיבתי",
+            "פזמון רחב יותר עם מיתרים"
+          ],
+          "instrumentation": {
+            "hierarchy": [
+              {
+                "family": "keys",
+                "tier": "feature",
+                "rationale": "style profile hierarchy (stated)",
+                "provenance": "stated",
+                "confidence": 0.85
+              },
+              {
+                "family": "winds",
+                "tier": "feature",
+                "rationale": "style profile hierarchy (stated)",
+                "provenance": "stated",
+                "confidence": 0.85
+              }
+            ],
+            "excludedFamilies": [
+              "strings"
+            ]
+          },
+          "vocalSpace": "moderate/sparse (default)",
+          "plannerAesthetic": null,
+          "activeDecisions": [
+            "[global] hard style_dimension: no pop — \"לא פופית מדי\" (intake)",
+            "[global] soft instrumentation: feature keys (piano) (intake)",
+            "[global] soft instrumentation: feature winds (flute) (intake)",
+            "[global] hard instrumentation: edit: \"בכל השיר בלי מיתרים\" (producer)"
+          ],
+          "chatDecisionRows": [
+            {
+              "decisionId": "dec-605faf909b23",
+              "supersededBy": null,
+              "delta": "instrumentation",
+              "statement": "edit: \"בכל השיר בלי מיתרים\""
+            }
+          ],
+          "openQuestions": [],
+          "concepts": [
+            "Intimate & rooted [sparse] differs in doublingRules,dynamics,ensembleType,roomSize,voicingWidth",
+            "Contemporary & full [rhythmic] differs in chordRhythm,ensembleType,fillFrequency,roomSize,saturation",
+            "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,ensembleType,roomSize,transitionLanguage,voicingWidth"
+          ]
+        }
+      }
+    },
+    {
+      "step": 7,
+      "method": "POST",
+      "path": "/api/projects/f403e23e-6683-44f7-b5e7-6f38e07b2fa3/producer/chat",
+      "status": 200,
+      "ms": 1611,
+      "request": {
+        "text": "למה יש כאן קלרינט?"
+      },
+      "response": {
+        "kind": "explanation",
+        "turnId": "pc-mtt7b3cc-fpu8j78z",
+        "producerTurnId": "pc-mtt7b3cc-wv8ch3ti",
+        "understanding": "(There is no Song Model or arrangement to read yet.) I can't explain that from the plan: the plan has no global or section plan to read.",
+        "explanation": {
+          "answered": false,
+          "answer": "I can't explain that from the plan: the plan has no global or section plan to read.",
+          "evidence": [
+            {
+              "source": "brief.producerDecisions",
+              "ref": "dec-64dd85db18dd",
+              "detail": "soft instrumentation: feature winds (flute) (stated)"
+            }
+          ],
+          "confidence": 0
+        },
+        "state": {
+          "version": 2,
+          "briefId": "brief-040b0bc61bed",
+          "planSource": "none",
+          "songModelVersion": null,
+          "language": "he",
+          "intentMethod": "intent-extraction/v1",
+          "inferences": [
+            "genre_word=ballad@global <בלדה>",
+            "tempo_feel=slow@global <בלדה>",
+            "tradition=hasidic@global <חסידית>",
+            "era=modern@global <מודרנית>",
+            "production_feel=modern@global <מודרנית>",
+            "scene=yeshiva@section:verse/1 <ישיבתי>",
+            "instrument=piano@global <פסנתר>",
+            "instrument=flute@global <וחליל>",
+            "production_feel=wide@section:chorus/all <רחב יותר>",
+            "instrument=strings@section:chorus/all <מיתרים>"
+          ],
+          "constraints": [
+            "avoid:pop@global <לא פופית מדי>"
+          ],
+          "references": [],
+          "unresolvedTerms": [],
+          "styleDimensions": {
+            "era": "\"modern\" (stated 0.85)",
+            "genre": "\"ballad\" (stated 0.85)",
+            "tradition": "\"hasidic\" (stated 0.85)",
+            "chordRhythm": "\"sustained\" (inferred 0.425)",
+            "fillFrequency": "\"rare\" (inferred 0.425)",
+            "tempoBehavior": "\"slow\" (inferred 0.595)",
+            "soundAesthetic": "\"modern\" (inferred 0.5)",
+            "stereoAesthetic": "\"wide\" (inferred 0.2)",
+            "instrumentationHierarchy": "[\"keys\",\"winds\"] (stated 0.85)"
+          },
+          "dimensionDecisions": [
+            "adopt chordRhythm=\"sustained\" by style_profile",
+            "adopt era=\"modern\" by style_profile",
+            "adopt fillFrequency=\"rare\" by style_profile",
+            "adopt genre=\"ballad\" by style_profile",
+            "adopt instrumentationHierarchy=[\"keys\",\"winds\"] by style_profile",
+            "adopt soundAesthetic=\"modern\" by style_profile",
+            "adopt stereoAesthetic=\"wide\" by style_profile",
+            "adopt tempoBehavior=\"slow\" by style_profile",
+            "adopt tradition=\"hasidic\" by style_profile"
+          ],
+          "sectionNames": [],
+          "sectionIntentions": [],
+          "unresolvedSectionRequests": [
+            "בית ראשון כמעט ישיבתי",
+            "פזמון רחב יותר עם מיתרים"
+          ],
+          "instrumentation": {
+            "hierarchy": [
+              {
+                "family": "keys",
+                "tier": "feature",
+                "rationale": "style profile hierarchy (stated)",
+                "provenance": "stated",
+                "confidence": 0.85
+              },
+              {
+                "family": "winds",
+                "tier": "feature",
+                "rationale": "style profile hierarchy (stated)",
+                "provenance": "stated",
+                "confidence": 0.85
+              }
+            ],
+            "excludedFamilies": [
+              "strings"
+            ]
+          },
+          "vocalSpace": "moderate/sparse (default)",
+          "plannerAesthetic": null,
+          "activeDecisions": [
+            "[global] hard style_dimension: no pop — \"לא פופית מדי\" (intake)",
+            "[global] soft instrumentation: feature keys (piano) (intake)",
+            "[global] soft instrumentation: feature winds (flute) (intake)",
+            "[global] hard instrumentation: edit: \"בכל השיר בלי מיתרים\" (producer)"
+          ],
+          "chatDecisionRows": [
+            {
+              "decisionId": "dec-605faf909b23",
+              "supersededBy": null,
+              "delta": "instrumentation",
+              "statement": "edit: \"בכל השיר בלי מיתרים\""
+            }
+          ],
+          "openQuestions": [],
+          "concepts": [
+            "Intimate & rooted [sparse] differs in doublingRules,dynamics,ensembleType,roomSize,voicingWidth",
+            "Contemporary & full [rhythmic] differs in chordRhythm,ensembleType,fillFrequency,roomSize,saturation",
+            "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,ensembleType,roomSize,transitionLanguage,voicingWidth"
+          ]
+        }
+      }
+    },
+    {
+      "step": 8,
+      "method": "POST",
+      "path": "/api/projects/f403e23e-6683-44f7-b5e7-6f38e07b2fa3/producer/chat",
+      "status": 200,
+      "ms": 2375,
+      "request": {
+        "text": "actually I want it more intimate and acoustic"
+      },
+      "response": {
+        "kind": "refinement",
+        "turnId": "pc-mtt7b56a-nb0bmal4",
+        "producerTurnId": "pc-mtt7b56a-sx16y1jp",
+        "understanding": "Added to the brief (v3): mood intimate (\"more intimate\") and production feel acoustic (\"acoustic\"); section wishes: scene yeshiva for the verse 1, production feel wide for the chorus and instrument strings for the chorus. \"בית ראשון כמעט ישיבתי\" and \"פזמון רחב יותר עם מיתרים\" is kept for when the song is analysed; there is no Song Model to place it on yet. Excluded from the palette: strings. Production aesthetic for the planners: intimate.",
+        "state": {
+          "version": 3,
+          "briefId": "brief-9ae4aaf8ca47",
+          "planSource": "none",
+          "songModelVersion": null,
+          "language": "mixed",
+          "intentMethod": "intent-extraction/v1",
+          "inferences": [
+            "genre_word=ballad@global <בלדה>",
+            "tempo_feel=slow@global <בלדה>",
+            "tradition=hasidic@global <חסידית>",
+            "era=modern@global <מודרנית>",
+            "production_feel=modern@global <מודרנית>",
+            "scene=yeshiva@section:verse/1 <ישיבתי>",
+            "instrument=piano@global <פסנתר>",
+            "instrument=flute@global <וחליל>",
+            "production_feel=wide@section:chorus/all <רחב יותר>",
+            "instrument=strings@section:chorus/all <מיתרים>",
+            "mood=intimate@global <more intimate>",
+            "production_feel=acoustic@global <acoustic>"
+          ],
+          "constraints": [
+            "avoid:pop@global <לא פופית מדי>"
+          ],
+          "references": [],
+          "unresolvedTerms": [],
+          "styleDimensions": {
+            "genre": "\"ballad\" (stated 0.85)",
+            "tradition": "\"hasidic\" (stated 0.85)",
+            "era": "\"modern\" (stated 0.85)",
+            "soundAesthetic": "\"acoustic\" (stated 0.85)",
+            "instrumentationHierarchy": "[\"keys\",\"winds\"] (stated 0.85)",
+            "tempoBehavior": "\"slow\" (inferred 0.595)",
+            "chordRhythm": "\"sustained\" (inferred 0.425)",
+            "fillFrequency": "\"rare\" (inferred 0.425)",
+            "stereoAesthetic": "\"natural\" (inferred 0.51)",
+            "saturation": "\"clean\" (inferred 0.51)"
+          },
+          "dimensionDecisions": [
+            "adopt chordRhythm=\"sustained\" by style_profile",
+            "adopt era=\"modern\" by style_profile",
+            "adopt fillFrequency=\"rare\" by style_profile",
+            "adopt genre=\"ballad\" by style_profile",
+            "adopt instrumentationHierarchy=[\"keys\",\"winds\"] by style_profile",
+            "adopt saturation=\"clean\" by style_profile",
+            "adopt soundAesthetic=\"acoustic\" by style_profile",
+            "adopt stereoAesthetic=\"natural\" by style_profile",
+            "adopt tempoBehavior=\"slow\" by style_profile",
+            "adopt tradition=\"hasidic\" by style_profile"
+          ],
+          "sectionNames": [],
+          "sectionIntentions": [],
+          "unresolvedSectionRequests": [
+            "בית ראשון כמעט ישיבתי",
+            "פזמון רחב יותר עם מיתרים"
+          ],
+          "instrumentation": {
+            "hierarchy": [
+              {
+                "family": "keys",
+                "tier": "feature",
+                "rationale": "style profile hierarchy (stated)",
+                "provenance": "stated",
+                "confidence": 0.85
+              },
+              {
+                "family": "winds",
+                "tier": "feature",
+                "rationale": "style profile hierarchy (stated)",
+                "provenance": "stated",
+                "confidence": 0.85
+              }
+            ],
+            "excludedFamilies": [
+              "strings"
+            ]
+          },
+          "vocalSpace": "moderate/sparse (default)",
+          "plannerAesthetic": "intimate",
+          "activeDecisions": [
+            "[global] hard style_dimension: no pop — \"לא פופית מדי\" (intake)",
+            "[global] soft instrumentation: feature keys (piano) (intake)",
+            "[global] soft instrumentation: feature winds (flute) (intake)",
+            "[global] soft aesthetic: mood: intimate (intake)",
+            "[global] hard instrumentation: edit: \"בכל השיר בלי מיתרים\" (producer)"
+          ],
+          "chatDecisionRows": [
+            {
+              "decisionId": "dec-605faf909b23",
+              "supersededBy": null,
+              "delta": "instrumentation",
+              "statement": "edit: \"בכל השיר בלי מיתרים\""
+            }
+          ],
+          "openQuestions": [],
+          "concepts": [
+            "Intimate & rooted [sparse] differs in doublingRules,dynamics,ensembleType,roomSize,voicingWidth",
+            "Contemporary & full [rhythmic] differs in chordRhythm,ensembleType,fillFrequency,roomSize,saturation,stereoAesthetic",
+            "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,ensembleType,roomSize,transitionLanguage,voicingWidth"
+          ]
+        }
+      }
+    },
+    {
+      "step": 9,
+      "method": "GET",
+      "path": "/api/projects/f403e23e-6683-44f7-b5e7-6f38e07b2fa3/producer/brief",
+      "status": 200,
+      "ms": 1059,
+      "request": null,
+      "response": {
+        "version": 3,
+        "briefId": "brief-9ae4aaf8ca47",
+        "planSource": "none",
+        "songModelVersion": null,
+        "language": "mixed",
+        "intentMethod": "intent-extraction/v1",
+        "inferences": [
+          "genre_word=ballad@global <בלדה>",
+          "tempo_feel=slow@global <בלדה>",
+          "tradition=hasidic@global <חסידית>",
+          "era=modern@global <מודרנית>",
+          "production_feel=modern@global <מודרנית>",
+          "scene=yeshiva@section:verse/1 <ישיבתי>",
+          "instrument=piano@global <פסנתר>",
+          "instrument=flute@global <וחליל>",
+          "production_feel=wide@section:chorus/all <רחב יותר>",
+          "instrument=strings@section:chorus/all <מיתרים>",
+          "mood=intimate@global <more intimate>",
+          "production_feel=acoustic@global <acoustic>"
+        ],
+        "constraints": [
+          "avoid:pop@global <לא פופית מדי>"
+        ],
+        "references": [],
+        "unresolvedTerms": [],
+        "styleDimensions": {
+          "era": "\"modern\" (stated 0.85)",
+          "genre": "\"ballad\" (stated 0.85)",
+          "tradition": "\"hasidic\" (stated 0.85)",
+          "saturation": "\"clean\" (inferred 0.51)",
+          "chordRhythm": "\"sustained\" (inferred 0.425)",
+          "fillFrequency": "\"rare\" (inferred 0.425)",
+          "tempoBehavior": "\"slow\" (inferred 0.595)",
+          "soundAesthetic": "\"acoustic\" (stated 0.85)",
+          "stereoAesthetic": "\"natural\" (inferred 0.51)",
+          "instrumentationHierarchy": "[\"keys\",\"winds\"] (stated 0.85)"
+        },
+        "dimensionDecisions": [
+          "adopt chordRhythm=\"sustained\" by style_profile",
+          "adopt era=\"modern\" by style_profile",
+          "adopt fillFrequency=\"rare\" by style_profile",
+          "adopt genre=\"ballad\" by style_profile",
+          "adopt instrumentationHierarchy=[\"keys\",\"winds\"] by style_profile",
+          "adopt saturation=\"clean\" by style_profile",
+          "adopt soundAesthetic=\"acoustic\" by style_profile",
+          "adopt stereoAesthetic=\"natural\" by style_profile",
+          "adopt tempoBehavior=\"slow\" by style_profile",
+          "adopt tradition=\"hasidic\" by style_profile"
+        ],
+        "sectionNames": [],
+        "sectionIntentions": [],
+        "unresolvedSectionRequests": [
+          "בית ראשון כמעט ישיבתי",
+          "פזמון רחב יותר עם מיתרים"
+        ],
+        "instrumentation": {
+          "hierarchy": [
+            {
+              "family": "keys",
+              "tier": "feature",
+              "rationale": "style profile hierarchy (stated)",
+              "provenance": "stated",
+              "confidence": 0.85
+            },
+            {
+              "family": "winds",
+              "tier": "feature",
+              "rationale": "style profile hierarchy (stated)",
+              "provenance": "stated",
+              "confidence": 0.85
+            }
+          ],
+          "excludedFamilies": [
+            "strings"
+          ]
+        },
+        "vocalSpace": "moderate/sparse (default)",
+        "plannerAesthetic": "intimate",
+        "activeDecisions": [
+          "[global] hard style_dimension: no pop — \"לא פופית מדי\" (intake)",
+          "[global] soft instrumentation: feature keys (piano) (intake)",
+          "[global] soft instrumentation: feature winds (flute) (intake)",
+          "[global] soft aesthetic: mood: intimate (intake)",
+          "[global] hard instrumentation: edit: \"בכל השיר בלי מיתרים\" (producer)"
+        ],
+        "chatDecisionRows": [
+          {
+            "decisionId": "dec-605faf909b23",
+            "supersededBy": null,
+            "delta": "instrumentation",
+            "statement": "edit: \"בכל השיר בלי מיתרים\""
+          }
+        ],
+        "openQuestions": [],
+        "concepts": [
+          "Intimate & rooted [sparse] differs in doublingRules,dynamics,ensembleType,roomSize,voicingWidth",
+          "Contemporary & full [rhythmic] differs in chordRhythm,ensembleType,fillFrequency,roomSize,saturation,stereoAesthetic",
+          "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,ensembleType,roomSize,transitionLanguage,voicingWidth"
+        ]
+      }
+    },
+    {
+      "step": 10,
+      "method": "GET",
+      "path": "/api/projects/f403e23e-6683-44f7-b5e7-6f38e07b2fa3/producer/turns",
+      "status": 200,
+      "ms": 538,
+      "request": null,
+      "response": {
+        "count": 8,
+        "hasMore": false,
+        "oldestTurnId": "pc-mtt7b08w-sotd5dvn",
+        "turns": [
+          {
+            "id": "pc-mtt7b08w-sotd5dvn",
+            "role": "user",
+            "kind": null,
+            "briefVersion": null,
+            "text": "אני רוצה בלדה חסידית מודרנית, אבל לא פופית מדי. בית ראשון כמעט ישיבתי, פסנתר וחליל, פזמון רחב יותר עם מיתרים"
+          },
+          {
+            "id": "pc-mtt7b08w-87fml8fz",
+            "role": "producer",
+            "kind": "intake",
+            "briefVersion": 1,
+            "text": "Here is how I read it: a modern hasidic ballad, slow tempo. Boundaries — ruled out: pop (\"לא פופית מדי\"). Instruments named: piano → keys and flute → winds. \"בית ראשון כמעט ישיבתי\" and \"פזמון רחב יותר עם מיתרים\" is kept …"
+          },
+          {
+            "id": "pc-mtt7b22s-9btmmqp4",
+            "role": "user",
+            "kind": null,
+            "briefVersion": null,
+            "text": "בכל השיר בלי מיתרים"
+          },
+          {
+            "id": "pc-mtt7b22s-17yhn17w",
+            "role": "producer",
+            "kind": "edit",
+            "briefVersion": 2,
+            "text": "remove instrument on the whole arrangement: 0 regeneration scope(s), 0 lock(s). Evidence: \"בלי מיתרים\". Standing rule for the whole song: edit: \"בכל השיר בלי מיתרים\". Brief updated to v2. Nothing is regenerated from chat…"
+          },
+          {
+            "id": "pc-mtt7b3cc-fpu8j78z",
+            "role": "user",
+            "kind": null,
+            "briefVersion": null,
+            "text": "למה יש כאן קלרינט?"
+          },
+          {
+            "id": "pc-mtt7b3cc-wv8ch3ti",
+            "role": "producer",
+            "kind": "explanation",
+            "briefVersion": 2,
+            "text": "(There is no Song Model or arrangement to read yet.) I can't explain that from the plan: the plan has no global or section plan to read."
+          },
+          {
+            "id": "pc-mtt7b56a-nb0bmal4",
+            "role": "user",
+            "kind": null,
+            "briefVersion": null,
+            "text": "actually I want it more intimate and acoustic"
+          },
+          {
+            "id": "pc-mtt7b56a-sx16y1jp",
+            "role": "producer",
+            "kind": "refinement",
+            "briefVersion": 3,
+            "text": "Added to the brief (v3): mood intimate (\"more intimate\") and production feel acoustic (\"acoustic\"); section wishes: scene yeshiva for the verse 1, production feel wide for the chorus and instrument strings for the chorus…"
+          }
+        ]
+      }
+    },
+    {
+      "step": 11,
+      "method": "POST",
+      "path": "/api/projects",
+      "status": 201,
+      "ms": 529,
+      "request": {
+        "name": "PR-U2 live check (en) 2026-09-08T21:48:16.326Z",
+        "sourceType": "FULL_SONG"
+      },
+      "response": {
+        "id": "6dcf7c49-6b8b-4304-ae22-22b6f4615375",
+        "status": "draft"
+      }
+    },
+    {
+      "step": 12,
+      "method": "POST",
+      "path": "/api/projects/6dcf7c49-6b8b-4304-ae22-22b6f4615375/producer/intake",
+      "status": 201,
+      "ms": 1773,
+      "request": {
+        "text": "An old hasidic song, warm and simple, like a Yosef Karduner song. Keep the piano; the last chorus should be the climax.",
+        "references": [
+          {
+            "kind": "recording",
+            "label": "reference-upload.wav",
+            "aspect": "sound"
+          }
+        ]
+      },
+      "response": {
+        "kind": "intake",
+        "turnId": "pc-mtt7b86s-qqx3v0vo",
+        "producerTurnId": "pc-mtt7b86s-jgmpikfe",
+        "understanding": "Here is how I read it: a old hasidic, feel: warm. Boundaries — keep: piano (\"Keep the piano\"). References: Yosef Karduner song and reference-upload.wav (sound).\n\nTwo things would change the arrangement materially: When you say old hasidic, which world do you mean? (a) The band recordings of that era (the wedding / party-band hasidic sound) (b) The communal singing world (informal, vocal-led — e.g. a yeshiva / niggun setting) (c) The traditional arranged / orchestral hasidic sound What do you want from \"Yosef Karduner song\"? (a) Its groove (b) Its sound (c) Its arrangement (d) Its mood",
+        "state": {
+          "version": 1,
+          "briefId": "brief-53737b0fa741",
+          "planSource": "none",
+          "songModelVersion": null,
+          "language": "en",
+          "intentMethod": "intent-extraction/v1",
+          "inferences": [
+            "era=old@global <old>",
+            "tradition=hasidic@global <hasidic>",
+            "mood=warm@global <warm>"
+          ],
+          "constraints": [
+            "keep:piano@global <Keep the piano>"
+          ],
+          "references": [
+            "description:Yosef Karduner song",
+            "recording:reference-upload.wav(sound)"
+          ],
+          "unresolvedTerms": [],
+          "styleDimensions": {
+            "era": "\"old\" (stated 0.6)",
+            "tradition": "\"hasidic\" (stated 0.85)"
+          },
+          "dimensionDecisions": [
+            "adopt era=\"old\" by style_profile",
+            "adopt tradition=\"hasidic\" by style_profile"
+          ],
+          "sectionNames": [],
+          "sectionIntentions": [],
+          "unresolvedSectionRequests": [],
+          "instrumentation": {
+            "hierarchy": [],
+            "excludedFamilies": []
+          },
+          "vocalSpace": "moderate/sparse (default)",
+          "plannerAesthetic": null,
+          "activeDecisions": [
+            "[global] hard instrumentation: keep piano — \"Keep the piano\" (intake)",
+            "[global] soft aesthetic: mood: warm (intake)",
+            "[global] soft reference: reference: Yosef Karduner song (intake)",
+            "[global] soft reference: reference: reference-upload.wav (sound) (intake)"
+          ],
+          "chatDecisionRows": [],
+          "openQuestions": [
+            {
+              "id": "world_of_tradition",
+              "gain": 0.6,
+              "question": "When you say old hasidic, which world do you mean?",
+              "options": [
+                "era_band",
+                "communal_vocal",
+                "arranged_orchestral"
+              ]
+            },
+            {
+              "id": "reference_aspect_ref-1",
+              "gain": 0.45,
+              "question": "What do you want from \"Yosef Karduner song\"?",
+              "options": [
+                "aspect_groove",
+                "aspect_sound",
+                "aspect_arrangement",
+                "aspect_mood"
+              ]
+            }
+          ],
+          "concepts": [
+            "Intimate & rooted [sparse] differs in doublingRules,dynamics,ensembleType,fillFrequency,roomSize,voicingWidth",
+            "Contemporary & full [rhythmic] differs in chordRhythm,ensembleType,fillFrequency,roomSize,saturation,stereoAesthetic",
+            "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,ensembleType,roomSize,transitionLanguage,voicingWidth"
+          ]
+        }
+      }
+    },
+    {
+      "step": 13,
+      "method": "POST",
+      "path": "/api/projects/6dcf7c49-6b8b-4304-ae22-22b6f4615375/producer/answers",
+      "status": 200,
+      "ms": 2076,
+      "request": {
+        "answers": [
+          {
+            "questionId": "world_of_tradition",
+            "answerId": "communal_vocal"
+          }
+        ]
+      },
+      "response": {
+        "kind": "answers",
+        "turnId": "pc-mtt7b9sg-bsut0n8q",
+        "producerTurnId": "pc-mtt7b9sg-jajz8wu7",
+        "understanding": "Understood: The communal singing world (informal, vocal-led — e.g. a yeshiva / niggun setting) — settles ensembleType, soundAesthetic, roomSize. Brief updated to v2. Still open: What do you want from \"Yosef Karduner song\"?",
+        "state": {
+          "version": 2,
+          "briefId": "brief-b4c4ed4249b0",
+          "planSource": "none",
+          "songModelVersion": null,
+          "language": "en",
+          "intentMethod": "intent-extraction/v1",
+          "inferences": [
+            "era=old@global <old>",
+            "tradition=hasidic@global <hasidic>",
+            "mood=warm@global <warm>"
+          ],
+          "constraints": [
+            "keep:piano@global <Keep the piano>"
+          ],
+          "references": [
+            "description:Yosef Karduner song",
+            "recording:reference-upload.wav(sound)"
+          ],
+          "unresolvedTerms": [],
+          "styleDimensions": {
+            "era": "\"old\" (stated 0.6)",
+            "tradition": "\"hasidic\" (stated 0.85)"
+          },
+          "dimensionDecisions": [
+            "adopt ensembleType=\"vocal_led_small\" by answer",
+            "adopt era=\"old\" by style_profile",
+            "adopt roomSize=\"small\" by answer",
+            "adopt soundAesthetic=\"raw_intimate\" by answer",
+            "adopt tradition=\"hasidic\" by style_profile"
+          ],
+          "sectionNames": [],
+          "sectionIntentions": [],
+          "unresolvedSectionRequests": [],
+          "instrumentation": {
+            "hierarchy": [],
+            "excludedFamilies": []
+          },
+          "vocalSpace": "tight/sparse (stated)",
+          "plannerAesthetic": "intimate",
+          "activeDecisions": [
+            "[global] hard instrumentation: keep piano — \"Keep the piano\" (intake)",
+            "[global] soft aesthetic: mood: warm (intake)",
+            "[global] soft reference: reference: Yosef Karduner song (intake)",
+            "[global] soft reference: reference: reference-upload.wav (sound) (intake)",
+            "[global] hard style_dimension: ensembleType = \"vocal_led_small\" — chosen world: communal singing (clarification)",
+            "[global] hard style_dimension: soundAesthetic = \"raw_intimate\" — chosen world: communal singing (clarification)",
+            "[global] hard style_dimension: roomSize = \"small\" — chosen world: communal singing (clarification)",
+            "[global] hard vocal_space: voices lead in the communal world (clarification)"
+          ],
+          "chatDecisionRows": [],
+          "openQuestions": [
+            {
+              "id": "reference_aspect_ref-1",
+              "gain": 0.45,
+              "question": "What do you want from \"Yosef Karduner song\"?",
+              "options": [
+                "aspect_groove",
+                "aspect_sound",
+                "aspect_arrangement",
+                "aspect_mood"
+              ]
+            }
+          ],
+          "concepts": [
+            "Intimate & rooted [sparse] differs in doublingRules,dynamics,fillFrequency,voicingWidth",
+            "Contemporary & full [rhythmic] differs in chordRhythm,fillFrequency,saturation,stereoAesthetic",
+            "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,transitionLanguage,voicingWidth"
+          ]
+        }
+      }
+    },
+    {
+      "step": 14,
+      "method": "POST",
+      "path": "/api/projects/6dcf7c49-6b8b-4304-ae22-22b6f4615375/producer/answers",
+      "status": 400,
+      "ms": 917,
+      "request": {
+        "answers": [
+          {
+            "questionId": "world_of_tradition",
+            "answerId": "era_band"
+          }
+        ]
+      },
+      "response": {
+        "error": "Unknown or already answered question \"world_of_tradition\" (open: reference_aspect_ref-1)"
+      }
+    },
+    {
+      "step": 15,
+      "method": "POST",
+      "path": "/api/projects/6dcf7c49-6b8b-4304-ae22-22b6f4615375/producer/chat",
+      "status": 200,
+      "ms": 2509,
+      "request": {
+        "text": "no strings in the whole song"
+      },
+      "response": {
+        "kind": "edit",
+        "turnId": "pc-mtt7bcfn-47uyal1e",
+        "producerTurnId": "pc-mtt7bcfn-inxjp42k",
+        "understanding": "remove instrument on the whole arrangement: 0 regeneration scope(s), 0 lock(s). Evidence: \"no strings\". Standing rule for the whole song: edit: \"no strings in the whole song\". Brief updated to v3. Nothing is regenerated from chat yet — the plan is returned for the next arrangement.",
+        "editPlan": {
+          "intent": "remove_instrument",
+          "scope": {
+            "kind": "global"
+          },
+          "modify": 0,
+          "preserve": 0,
+          "briefDeltas": [
+            {
+              "kind": "instrumentation",
+              "rationale": "edit: \"no strings in the whole song\""
+            }
+          ],
+          "confidence": 0.85
+        },
+        "state": {
+          "version": 3,
+          "briefId": "brief-91082709703f",
+          "planSource": "none",
+          "songModelVersion": null,
+          "language": "en",
+          "intentMethod": "intent-extraction/v1",
+          "inferences": [
+            "era=old@global <old>",
+            "tradition=hasidic@global <hasidic>",
+            "mood=warm@global <warm>"
+          ],
+          "constraints": [
+            "keep:piano@global <Keep the piano>"
+          ],
+          "references": [
+            "description:Yosef Karduner song",
+            "recording:reference-upload.wav(sound)"
+          ],
+          "unresolvedTerms": [],
+          "styleDimensions": {
+            "era": "\"old\" (stated 0.6)",
+            "tradition": "\"hasidic\" (stated 0.85)"
+          },
+          "dimensionDecisions": [
+            "adopt ensembleType=\"vocal_led_small\" by answer",
+            "adopt era=\"old\" by style_profile",
+            "adopt roomSize=\"small\" by answer",
+            "adopt soundAesthetic=\"raw_intimate\" by answer",
+            "adopt tradition=\"hasidic\" by style_profile"
+          ],
+          "sectionNames": [],
+          "sectionIntentions": [],
+          "unresolvedSectionRequests": [],
+          "instrumentation": {
+            "hierarchy": [],
+            "excludedFamilies": [
+              "strings"
+            ]
+          },
+          "vocalSpace": "tight/sparse (stated)",
+          "plannerAesthetic": "intimate",
+          "activeDecisions": [
+            "[global] hard instrumentation: keep piano — \"Keep the piano\" (intake)",
+            "[global] soft aesthetic: mood: warm (intake)",
+            "[global] soft reference: reference: Yosef Karduner song (intake)",
+            "[global] soft reference: reference: reference-upload.wav (sound) (intake)",
+            "[global] hard style_dimension: ensembleType = \"vocal_led_small\" — chosen world: communal singing (clarification)",
+            "[global] hard style_dimension: soundAesthetic = \"raw_intimate\" — chosen world: communal singing (clarification)",
+            "[global] hard style_dimension: roomSize = \"small\" — chosen world: communal singing (clarification)",
+            "[global] hard vocal_space: voices lead in the communal world (clarification)",
+            "[global] hard instrumentation: edit: \"no strings in the whole song\" (producer)"
+          ],
+          "chatDecisionRows": [
+            {
+              "decisionId": "dec-74ac1c577f0f",
+              "supersededBy": null,
+              "delta": "instrumentation",
+              "statement": "edit: \"no strings in the whole song\""
+            }
+          ],
+          "openQuestions": [
+            {
+              "id": "reference_aspect_ref-1",
+              "gain": 0.45,
+              "question": "What do you want from \"Yosef Karduner song\"?",
+              "options": [
+                "aspect_groove",
+                "aspect_sound",
+                "aspect_arrangement",
+                "aspect_mood"
+              ]
+            }
+          ],
+          "concepts": [
+            "Intimate & rooted [sparse] differs in doublingRules,dynamics,fillFrequency,voicingWidth",
+            "Contemporary & full [rhythmic] differs in chordRhythm,fillFrequency,saturation,stereoAesthetic",
+            "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,transitionLanguage,voicingWidth"
+          ]
+        }
+      }
+    },
+    {
+      "step": 16,
+      "method": "POST",
+      "path": "/api/projects/6dcf7c49-6b8b-4304-ae22-22b6f4615375/producer/chat",
+      "status": 200,
+      "ms": 2704,
+      "request": {
+        "text": "only in the last chorus bring in strings"
+      },
+      "response": {
+        "kind": "refinement",
+        "turnId": "pc-mtt7behx-s9w7o8sf",
+        "producerTurnId": "pc-mtt7behx-ijcu15nz",
+        "understanding": "Added to the brief (v4): section wishes: \"bring in strings\" for the last chorus. \"only in the last chorus bring in strings\" is kept for when the song is analysed; there is no Song Model to place it on yet. Excluded from the palette: strings. Production aesthetic for the planners: intimate.\n\nOne thing would change the arrangement materially: What do you want from \"Yosef Karduner song\"? (a) Its groove (b) Its sound (c) Its arrangement (d) Its mood",
+        "state": {
+          "version": 4,
+          "briefId": "brief-e0921adaac4e",
+          "planSource": "none",
+          "songModelVersion": null,
+          "language": "en",
+          "intentMethod": "intent-extraction/v1",
+          "inferences": [
+            "era=old@global <old>",
+            "tradition=hasidic@global <hasidic>",
+            "mood=warm@global <warm>"
+          ],
+          "constraints": [
+            "keep:piano@global <Keep the piano>",
+            "require:strings@section <bring in strings>"
+          ],
+          "references": [
+            "description:Yosef Karduner song",
+            "recording:reference-upload.wav(sound)"
+          ],
+          "unresolvedTerms": [],
+          "styleDimensions": {
+            "era": "\"old\" (stated 0.6)",
+            "tradition": "\"hasidic\" (stated 0.85)"
+          },
+          "dimensionDecisions": [
+            "adopt ensembleType=\"vocal_led_small\" by answer",
+            "adopt era=\"old\" by style_profile",
+            "adopt roomSize=\"small\" by answer",
+            "adopt soundAesthetic=\"raw_intimate\" by answer",
+            "adopt tradition=\"hasidic\" by style_profile"
+          ],
+          "sectionNames": [],
+          "sectionIntentions": [],
+          "unresolvedSectionRequests": [
+            "only in the last chorus bring in strings"
+          ],
+          "instrumentation": {
+            "hierarchy": [],
+            "excludedFamilies": [
+              "strings"
+            ]
+          },
+          "vocalSpace": "tight/sparse (stated)",
+          "plannerAesthetic": "intimate",
+          "activeDecisions": [
+            "[global] hard instrumentation: keep piano — \"Keep the piano\" (intake)",
+            "[global] soft aesthetic: mood: warm (intake)",
+            "[global] soft reference: reference: Yosef Karduner song (intake)",
+            "[global] soft reference: reference: reference-upload.wav (sound) (intake)",
+            "[global] hard style_dimension: ensembleType = \"vocal_led_small\" — chosen world: communal singing (clarification)",
+            "[global] hard style_dimension: soundAesthetic = \"raw_intimate\" — chosen world: communal singing (clarification)",
+            "[global] hard style_dimension: roomSize = \"small\" — chosen world: communal singing (clarification)",
+            "[global] hard vocal_space: voices lead in the communal world (clarification)",
+            "[global] hard instrumentation: edit: \"no strings in the whole song\" (producer)"
+          ],
+          "chatDecisionRows": [
+            {
+              "decisionId": "dec-74ac1c577f0f",
+              "supersededBy": null,
+              "delta": "instrumentation",
+              "statement": "edit: \"no strings in the whole song\""
+            }
+          ],
+          "openQuestions": [
+            {
+              "id": "reference_aspect_ref-1",
+              "gain": 0.45,
+              "question": "What do you want from \"Yosef Karduner song\"?",
+              "options": [
+                "aspect_groove",
+                "aspect_sound",
+                "aspect_arrangement",
+                "aspect_mood"
+              ]
+            }
+          ],
+          "concepts": [
+            "Intimate & rooted [sparse] differs in doublingRules,dynamics,fillFrequency,voicingWidth",
+            "Contemporary & full [rhythmic] differs in chordRhythm,fillFrequency,saturation,stereoAesthetic",
+            "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,transitionLanguage,voicingWidth"
+          ]
+        }
+      }
+    },
+    {
+      "step": 17,
+      "method": "POST",
+      "path": "/api/projects/6dcf7c49-6b8b-4304-ae22-22b6f4615375/producer/chat",
+      "status": 200,
+      "ms": 2833,
+      "request": {
+        "text": "in the whole song I don't like high strings"
+      },
+      "response": {
+        "kind": "edit",
+        "turnId": "pc-mtt7bgm7-tvqg17gb",
+        "producerTurnId": "pc-mtt7bgm7-vyc6bv03",
+        "understanding": "regenerate part on strings: 0 regeneration scope(s), 0 lock(s). Evidence: \"strings\", \"don't like high\". Standing rule for the whole song: no high — \"don't like high\". Brief updated to v5. Nothing is regenerated from chat yet — the plan is returned for the next arrangement.",
+        "editPlan": {
+          "intent": "regenerate_part",
+          "scope": {
+            "kind": "track",
+            "instrument": "strings"
+          },
+          "modify": 0,
+          "preserve": 0,
+          "briefDeltas": [],
+          "confidence": 0.85
+        },
+        "state": {
+          "version": 5,
+          "briefId": "brief-6e126ff07645",
+          "planSource": "none",
+          "songModelVersion": null,
+          "language": "en",
+          "intentMethod": "intent-extraction/v1",
+          "inferences": [
+            "era=old@global <old>",
+            "tradition=hasidic@global <hasidic>",
+            "mood=warm@global <warm>"
+          ],
+          "constraints": [
+            "keep:piano@global <Keep the piano>",
+            "require:strings@section <bring in strings>"
+          ],
+          "references": [
+            "description:Yosef Karduner song",
+            "recording:reference-upload.wav(sound)"
+          ],
+          "unresolvedTerms": [],
+          "styleDimensions": {
+            "era": "\"old\" (stated 0.6)",
+            "tradition": "\"hasidic\" (stated 0.85)"
+          },
+          "dimensionDecisions": [
+            "adopt ensembleType=\"vocal_led_small\" by answer",
+            "adopt era=\"old\" by style_profile",
+            "adopt roomSize=\"small\" by answer",
+            "adopt soundAesthetic=\"raw_intimate\" by answer",
+            "adopt tradition=\"hasidic\" by style_profile"
+          ],
+          "sectionNames": [],
+          "sectionIntentions": [],
+          "unresolvedSectionRequests": [
+            "only in the last chorus bring in strings"
+          ],
+          "instrumentation": {
+            "hierarchy": [],
+            "excludedFamilies": [
+              "strings"
+            ]
+          },
+          "vocalSpace": "tight/sparse (stated)",
+          "plannerAesthetic": "intimate",
+          "activeDecisions": [
+            "[global] hard instrumentation: keep piano — \"Keep the piano\" (intake)",
+            "[global] soft aesthetic: mood: warm (intake)",
+            "[global] soft reference: reference: Yosef Karduner song (intake)",
+            "[global] soft reference: reference: reference-upload.wav (sound) (intake)",
+            "[global] hard style_dimension: ensembleType = \"vocal_led_small\" — chosen world: communal singing (clarification)",
+            "[global] hard style_dimension: soundAesthetic = \"raw_intimate\" — chosen world: communal singing (clarification)",
+            "[global] hard style_dimension: roomSize = \"small\" — chosen world: communal singing (clarification)",
+            "[global] hard vocal_space: voices lead in the communal world (clarification)",
+            "[global] hard instrumentation: edit: \"no strings in the whole song\" (producer)",
+            "[global] hard other: no high — \"don't like high\" (producer)"
+          ],
+          "chatDecisionRows": [
+            {
+              "decisionId": "dec-74ac1c577f0f",
+              "supersededBy": null,
+              "delta": "instrumentation",
+              "statement": "edit: \"no strings in the whole song\""
+            },
+            {
+              "decisionId": "dec-6449f8c0245a",
+              "supersededBy": null,
+              "delta": "decision",
+              "statement": "no high — \"don't like high\""
+            }
+          ],
+          "openQuestions": [
+            {
+              "id": "reference_aspect_ref-1",
+              "gain": 0.45,
+              "question": "What do you want from \"Yosef Karduner song\"?",
+              "options": [
+                "aspect_groove",
+                "aspect_sound",
+                "aspect_arrangement",
+                "aspect_mood"
+              ]
+            }
+          ],
+          "concepts": [
+            "Intimate & rooted [sparse] differs in doublingRules,dynamics,fillFrequency,voicingWidth",
+            "Contemporary & full [rhythmic] differs in chordRhythm,fillFrequency,saturation,stereoAesthetic",
+            "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,transitionLanguage,voicingWidth"
+          ]
+        }
+      }
+    },
+    {
+      "step": 18,
+      "method": "POST",
+      "path": "/api/projects/6dcf7c49-6b8b-4304-ae22-22b6f4615375/producer/decisions/dec-74ac1c577f0f/supersede",
+      "status": 200,
+      "ms": 2650,
+      "request": {
+        "decision": {
+          "scope": {
+            "kind": "global"
+          },
+          "topic": "instrumentation",
+          "statement": "strings only as colour, never doubled",
+          "strength": "soft",
+          "value": "strings"
+        }
+      },
+      "response": {
+        "kind": "supersede",
+        "turnId": "pc-mtt7bir3-9n34jw25",
+        "producerTurnId": "pc-mtt7bir3-wx3bpw9n",
+        "understanding": "Replaced \"edit: \"no strings in the whole song\"\" with \"strings only as colour, never doubled\" (soft, global). Brief updated to v6.",
+        "state": {
+          "version": 6,
+          "briefId": "brief-ce1d3dea344d",
+          "planSource": "none",
+          "songModelVersion": null,
+          "language": "en",
+          "intentMethod": "intent-extraction/v1",
+          "inferences": [
+            "era=old@global <old>",
+            "tradition=hasidic@global <hasidic>",
+            "mood=warm@global <warm>"
+          ],
+          "constraints": [
+            "keep:piano@global <Keep the piano>",
+            "require:strings@section <bring in strings>"
+          ],
+          "references": [
+            "description:Yosef Karduner song",
+            "recording:reference-upload.wav(sound)"
+          ],
+          "unresolvedTerms": [],
+          "styleDimensions": {
+            "era": "\"old\" (stated 0.6)",
+            "tradition": "\"hasidic\" (stated 0.85)"
+          },
+          "dimensionDecisions": [
+            "adopt ensembleType=\"vocal_led_small\" by answer",
+            "adopt era=\"old\" by style_profile",
+            "adopt roomSize=\"small\" by answer",
+            "adopt soundAesthetic=\"raw_intimate\" by answer",
+            "adopt tradition=\"hasidic\" by style_profile"
+          ],
+          "sectionNames": [],
+          "sectionIntentions": [],
+          "unresolvedSectionRequests": [
+            "only in the last chorus bring in strings"
+          ],
+          "instrumentation": {
+            "hierarchy": [],
+            "excludedFamilies": []
+          },
+          "vocalSpace": "tight/sparse (stated)",
+          "plannerAesthetic": "intimate",
+          "activeDecisions": [
+            "[global] hard instrumentation: keep piano — \"Keep the piano\" (intake)",
+            "[global] soft aesthetic: mood: warm (intake)",
+            "[global] soft reference: reference: Yosef Karduner song (intake)",
+            "[global] soft reference: reference: reference-upload.wav (sound) (intake)",
+            "[global] hard style_dimension: ensembleType = \"vocal_led_small\" — chosen world: communal singing (clarification)",
+            "[global] hard style_dimension: soundAesthetic = \"raw_intimate\" — chosen world: communal singing (clarification)",
+            "[global] hard style_dimension: roomSize = \"small\" — chosen world: communal singing (clarification)",
+            "[global] hard vocal_space: voices lead in the communal world (clarification)",
+            "[global] hard other: no high — \"don't like high\" (producer)",
+            "[global] soft instrumentation: strings only as colour, never doubled (producer)"
+          ],
+          "chatDecisionRows": [
+            {
+              "decisionId": "dec-74ac1c577f0f",
+              "supersededBy": "pc-mtt7bich-i45tlx6h",
+              "delta": "instrumentation",
+              "statement": "edit: \"no strings in the whole song\""
+            },
+            {
+              "decisionId": "dec-6449f8c0245a",
+              "supersededBy": null,
+              "delta": "decision",
+              "statement": "no high — \"don't like high\""
+            },
+            {
+              "decisionId": "dec-e77610a2949f",
+              "supersededBy": null,
+              "delta": "decision",
+              "statement": "strings only as colour, never doubled"
+            }
+          ],
+          "openQuestions": [
+            {
+              "id": "reference_aspect_ref-1",
+              "gain": 0.45,
+              "question": "What do you want from \"Yosef Karduner song\"?",
+              "options": [
+                "aspect_groove",
+                "aspect_sound",
+                "aspect_arrangement",
+                "aspect_mood"
+              ]
+            }
+          ],
+          "concepts": [
+            "Intimate & rooted [sparse] differs in doublingRules,dynamics,fillFrequency,voicingWidth",
+            "Contemporary & full [rhythmic] differs in chordRhythm,fillFrequency,saturation,stereoAesthetic",
+            "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,transitionLanguage,voicingWidth"
+          ]
+        }
+      }
+    },
+    {
+      "step": 19,
+      "method": "GET",
+      "path": "/api/projects/6dcf7c49-6b8b-4304-ae22-22b6f4615375/producer/brief",
+      "status": 200,
+      "ms": 1061,
+      "request": null,
+      "response": {
+        "version": 6,
+        "briefId": "brief-ce1d3dea344d",
+        "planSource": "none",
+        "songModelVersion": null,
+        "language": "en",
+        "intentMethod": "intent-extraction/v1",
+        "inferences": [
+          "era=old@global <old>",
+          "tradition=hasidic@global <hasidic>",
+          "mood=warm@global <warm>"
+        ],
+        "constraints": [
+          "keep:piano@global <Keep the piano>",
+          "require:strings@section <bring in strings>"
+        ],
+        "references": [
+          "description:Yosef Karduner song",
+          "recording:reference-upload.wav(sound)"
+        ],
+        "unresolvedTerms": [],
+        "styleDimensions": {
+          "era": "\"old\" (stated 0.6)",
+          "tradition": "\"hasidic\" (stated 0.85)"
+        },
+        "dimensionDecisions": [
+          "adopt ensembleType=\"vocal_led_small\" by answer",
+          "adopt era=\"old\" by style_profile",
+          "adopt roomSize=\"small\" by answer",
+          "adopt soundAesthetic=\"raw_intimate\" by answer",
+          "adopt tradition=\"hasidic\" by style_profile"
+        ],
+        "sectionNames": [],
+        "sectionIntentions": [],
+        "unresolvedSectionRequests": [
+          "only in the last chorus bring in strings"
+        ],
+        "instrumentation": {
+          "hierarchy": [],
+          "excludedFamilies": []
+        },
+        "vocalSpace": "tight/sparse (stated)",
+        "plannerAesthetic": "intimate",
+        "activeDecisions": [
+          "[global] hard instrumentation: keep piano — \"Keep the piano\" (intake)",
+          "[global] soft aesthetic: mood: warm (intake)",
+          "[global] soft reference: reference: Yosef Karduner song (intake)",
+          "[global] soft reference: reference: reference-upload.wav (sound) (intake)",
+          "[global] hard style_dimension: ensembleType = \"vocal_led_small\" — chosen world: communal singing (clarification)",
+          "[global] hard style_dimension: soundAesthetic = \"raw_intimate\" — chosen world: communal singing (clarification)",
+          "[global] hard style_dimension: roomSize = \"small\" — chosen world: communal singing (clarification)",
+          "[global] hard vocal_space: voices lead in the communal world (clarification)",
+          "[global] hard other: no high — \"don't like high\" (producer)",
+          "[global] soft instrumentation: strings only as colour, never doubled (producer)"
+        ],
+        "chatDecisionRows": [
+          {
+            "decisionId": "dec-74ac1c577f0f",
+            "supersededBy": "pc-mtt7bich-i45tlx6h",
+            "delta": "instrumentation",
+            "statement": "edit: \"no strings in the whole song\""
+          },
+          {
+            "decisionId": "dec-6449f8c0245a",
+            "supersededBy": null,
+            "delta": "decision",
+            "statement": "no high — \"don't like high\""
+          },
+          {
+            "decisionId": "dec-e77610a2949f",
+            "supersededBy": null,
+            "delta": "decision",
+            "statement": "strings only as colour, never doubled"
+          }
+        ],
+        "openQuestions": [
+          {
+            "id": "reference_aspect_ref-1",
+            "gain": 0.45,
+            "question": "What do you want from \"Yosef Karduner song\"?",
+            "options": [
+              "aspect_groove",
+              "aspect_sound",
+              "aspect_arrangement",
+              "aspect_mood"
+            ]
+          }
+        ],
+        "concepts": [
+          "Intimate & rooted [sparse] differs in doublingRules,dynamics,fillFrequency,voicingWidth",
+          "Contemporary & full [rhythmic] differs in chordRhythm,fillFrequency,saturation,stereoAesthetic",
+          "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,transitionLanguage,voicingWidth"
+        ]
+      }
+    },
+    {
+      "step": 20,
+      "method": "GET",
+      "path": "/api/projects/6dcf7c49-6b8b-4304-ae22-22b6f4615375/producer/turns",
+      "status": 200,
+      "ms": 724,
+      "request": null,
+      "response": {
+        "count": 12,
+        "hasMore": false,
+        "oldestTurnId": "pc-mtt7b86s-qqx3v0vo",
+        "kinds": [
+          "user:-",
+          "producer:intake",
+          "user:-",
+          "producer:answers",
+          "user:-",
+          "producer:edit",
+          "user:-",
+          "producer:refinement",
+          "user:-",
+          "producer:edit",
+          "user:-",
+          "producer:supersede"
+        ]
+      }
+    },
+    {
+      "step": 21,
+      "method": "GET",
+      "path": "/api/projects/6dcf7c49-6b8b-4304-ae22-22b6f4615375/producer/turns/before/pc-mtt7b9sg-bsut0n8q",
+      "status": 200,
+      "ms": 718,
+      "request": null,
+      "response": {
+        "count": 2,
+        "hasMore": false
+      }
+    },
+    {
+      "step": 22,
+      "method": "GET",
+      "path": "/api/projects",
+      "status": 200,
+      "ms": 1589,
+      "request": null,
+      "response": {
+        "count": 6,
+        "ready": [
+          "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2"
+        ]
+      }
+    },
+    {
+      "step": 23,
+      "method": "GET",
+      "path": "/api/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/song-model",
+      "status": 200,
+      "ms": 1272,
+      "request": null,
+      "response": {
+        "version": 1,
+        "sections": [
+          "Intro 1-4",
+          "Verse 5-12",
+          "Chorus 13-20",
+          "Verse 2 21-28",
+          "Chorus 2 29-36",
+          "Outro 37-40"
+        ]
+      }
+    },
+    {
+      "step": 24,
+      "method": "POST",
+      "path": "/api/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/intake",
+      "status": 201,
+      "ms": 2483,
+      "request": {
+        "text": "בלדה חסידית מודרנית, לא פופית מדי. בית ראשון כמעט ישיבתי, הפזמון האחרון רחב יותר עם מיתרים"
+      },
+      "response": {
+        "kind": "intake",
+        "turnId": "pc-mtt7bosz-cuxnwg3e",
+        "producerTurnId": "pc-mtt7bosz-8w2hlsfo",
+        "understanding": "Here is how I read it: a modern hasidic ballad, slow tempo. Boundaries — ruled out: pop (\"לא פופית מדי\"). Per section — Verse: scene yeshiva; Chorus 2: wide and feature strings.",
+        "state": {
+          "version": 1,
+          "briefId": "brief-319b4563624c",
+          "planSource": "derived",
+          "songModelVersion": 1,
+          "language": "he",
+          "intentMethod": "intent-extraction/v1",
+          "inferences": [
+            "genre_word=ballad@global <בלדה>",
+            "tempo_feel=slow@global <בלדה>",
+            "tradition=hasidic@global <חסידית>",
+            "era=modern@global <מודרנית>",
+            "production_feel=modern@global <מודרנית>",
+            "scene=yeshiva@section:verse/1 <ישיבתי>",
+            "production_feel=wide@section:chorus/last <רחב יותר>",
+            "instrument=strings@section:chorus/last <מיתרים>"
+          ],
+          "constraints": [
+            "avoid:pop@global <לא פופית מדי>"
+          ],
+          "references": [],
+          "unresolvedTerms": [],
+          "styleDimensions": {
+            "genre": "\"ballad\" (stated 0.85)",
+            "tradition": "\"hasidic\" (stated 0.85)",
+            "era": "\"modern\" (stated 0.85)",
+            "soundAesthetic": "\"modern\" (inferred 0.5)",
+            "tempoBehavior": "\"slow\" (inferred 0.595)",
+            "chordRhythm": "\"sustained\" (inferred 0.425)",
+            "fillFrequency": "\"rare\" (inferred 0.425)",
+            "stereoAesthetic": "\"wide\" (inferred 0.2)"
+          },
+          "dimensionDecisions": [
+            "adopt chordRhythm=\"sustained\" by style_profile",
+            "adopt era=\"modern\" by style_profile",
+            "adopt fillFrequency=\"rare\" by style_profile",
+            "adopt genre=\"ballad\" by style_profile",
+            "adopt soundAesthetic=\"modern\" by style_profile",
+            "adopt stereoAesthetic=\"wide\" by style_profile",
+            "adopt tempoBehavior=\"slow\" by style_profile",
+            "adopt tradition=\"hasidic\" by style_profile"
+          ],
+          "sectionNames": [
+            "Intro",
+            "Verse",
+            "Chorus",
+            "Verse 2",
+            "Chorus 2",
+            "Outro"
+          ],
+          "sectionIntentions": [
+            {
+              "section": "Verse",
+              "instrumentation": null,
+              "energyBias": null,
+              "densityBias": null,
+              "character": []
+            },
+            {
+              "section": "Chorus 2",
+              "instrumentation": {
+                "add": [
+                  "strings"
+                ],
+                "remove": [],
+                "feature": [
+                  "strings"
+                ]
+              },
+              "energyBias": null,
+              "densityBias": null,
+              "character": [
+                "wide"
+              ]
+            }
+          ],
+          "unresolvedSectionRequests": [],
+          "instrumentation": {
+            "hierarchy": [],
+            "excludedFamilies": []
+          },
+          "vocalSpace": "moderate/sparse (default)",
+          "plannerAesthetic": null,
+          "activeDecisions": [
+            "[global] hard style_dimension: no pop — \"לא פופית מדי\" (intake)",
+            "[section:Verse] soft other: Verse: scene yeshiva (intake)",
+            "[section:Chorus 2] soft aesthetic: Chorus 2: wide (intake)",
+            "[section:Chorus 2] soft instrumentation: Chorus 2: feature strings (intake)"
+          ],
+          "chatDecisionRows": [],
+          "openQuestions": [],
+          "concepts": [
+            "Intimate & rooted [sparse] differs in doublingRules,dynamics,ensembleType,roomSize,voicingWidth",
+            "Contemporary & full [rhythmic] differs in chordRhythm,ensembleType,fillFrequency,roomSize,saturation",
+            "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,ensembleType,roomSize,transitionLanguage,voicingWidth"
+          ]
+        }
+      }
+    },
+    {
+      "step": 25,
+      "method": "POST",
+      "path": "/api/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/chat",
+      "status": 200,
+      "ms": 3023,
+      "request": {
+        "text": "no strings in the whole song"
+      },
+      "response": {
+        "kind": "edit",
+        "turnId": "pc-mtt7br54-ha3hy62z",
+        "producerTurnId": "pc-mtt7br54-p8f0vfq5",
+        "understanding": "remove instrument on the whole arrangement: 6 regeneration scope(s), 0 lock(s). Evidence: \"no strings\". Standing rule for the whole song: edit: \"no strings in the whole song\". Brief updated to v2. Nothing is regenerated from chat yet — the plan is returned for the next arrangement.",
+        "editPlan": {
+          "intent": "remove_instrument",
+          "scope": {
+            "kind": "global"
+          },
+          "modify": 6,
+          "preserve": 0,
+          "briefDeltas": [
+            {
+              "kind": "instrumentation",
+              "rationale": "edit: \"no strings in the whole song\""
+            }
+          ],
+          "confidence": 0.85
+        },
+        "state": {
+          "version": 2,
+          "briefId": "brief-2392b1f4a4a7",
+          "planSource": "arrangement",
+          "songModelVersion": 1,
+          "language": "he",
+          "intentMethod": "intent-extraction/v1",
+          "inferences": [
+            "genre_word=ballad@global <בלדה>",
+            "tempo_feel=slow@global <בלדה>",
+            "tradition=hasidic@global <חסידית>",
+            "era=modern@global <מודרנית>",
+            "production_feel=modern@global <מודרנית>",
+            "scene=yeshiva@section:verse/1 <ישיבתי>",
+            "production_feel=wide@section:chorus/last <רחב יותר>",
+            "instrument=strings@section:chorus/last <מיתרים>"
+          ],
+          "constraints": [
+            "avoid:pop@global <לא פופית מדי>"
+          ],
+          "references": [],
+          "unresolvedTerms": [],
+          "styleDimensions": {
+            "genre": "\"ballad\" (stated 0.85)",
+            "tradition": "\"hasidic\" (stated 0.85)",
+            "era": "\"modern\" (stated 0.85)",
+            "soundAesthetic": "\"modern\" (inferred 0.5)",
+            "tempoBehavior": "\"slow\" (inferred 0.595)",
+            "chordRhythm": "\"sustained\" (inferred 0.425)",
+            "fillFrequency": "\"rare\" (inferred 0.425)",
+            "stereoAesthetic": "\"wide\" (inferred 0.2)"
+          },
+          "dimensionDecisions": [
+            "adopt chordRhythm=\"sustained\" by style_profile",
+            "adopt era=\"modern\" by style_profile",
+            "adopt fillFrequency=\"rare\" by style_profile",
+            "adopt genre=\"ballad\" by style_profile",
+            "adopt soundAesthetic=\"modern\" by style_profile",
+            "adopt stereoAesthetic=\"wide\" by style_profile",
+            "adopt tempoBehavior=\"slow\" by style_profile",
+            "adopt tradition=\"hasidic\" by style_profile"
+          ],
+          "sectionNames": [
+            "Intro",
+            "Verse",
+            "Chorus",
+            "Verse 2",
+            "Chorus 2",
+            "Outro"
+          ],
+          "sectionIntentions": [
+            {
+              "section": "Verse",
+              "instrumentation": null,
+              "energyBias": null,
+              "densityBias": null,
+              "character": []
+            },
+            {
+              "section": "Chorus 2",
+              "instrumentation": {
+                "add": [
+                  "strings"
+                ],
+                "remove": [],
+                "feature": [
+                  "strings"
+                ]
+              },
+              "energyBias": null,
+              "densityBias": null,
+              "character": [
+                "wide"
+              ]
+            }
+          ],
+          "unresolvedSectionRequests": [],
+          "instrumentation": {
+            "hierarchy": [],
+            "excludedFamilies": [
+              "strings"
+            ]
+          },
+          "vocalSpace": "moderate/sparse (default)",
+          "plannerAesthetic": null,
+          "activeDecisions": [
+            "[global] hard style_dimension: no pop — \"לא פופית מדי\" (intake)",
+            "[section:Verse] soft other: Verse: scene yeshiva (intake)",
+            "[section:Chorus 2] soft aesthetic: Chorus 2: wide (intake)",
+            "[section:Chorus 2] soft instrumentation: Chorus 2: feature strings (intake)",
+            "[global] hard instrumentation: edit: \"no strings in the whole song\" (producer)"
+          ],
+          "chatDecisionRows": [
+            {
+              "decisionId": "dec-74ac1c577f0f",
+              "supersededBy": null,
+              "delta": "instrumentation",
+              "statement": "edit: \"no strings in the whole song\""
+            }
+          ],
+          "openQuestions": [],
+          "concepts": [
+            "Intimate & rooted [sparse] differs in doublingRules,dynamics,ensembleType,roomSize,voicingWidth",
+            "Contemporary & full [rhythmic] differs in chordRhythm,ensembleType,fillFrequency,roomSize,saturation",
+            "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,ensembleType,roomSize,transitionLanguage,voicingWidth"
+          ]
+        }
+      }
+    },
+    {
+      "step": 26,
+      "method": "POST",
+      "path": "/api/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/chat",
+      "status": 200,
+      "ms": 2860,
+      "request": {
+        "text": "only in the last chorus bring in strings"
+      },
+      "response": {
+        "kind": "edit",
+        "turnId": "pc-mtt7btd8-pe1wwzef",
+        "producerTurnId": "pc-mtt7btd8-w1oxgszc",
+        "understanding": "add instrument on section \"Chorus 2\": 1 regeneration scope(s), 5 lock(s). Evidence: \"bring in strings\". Standing rule for \"Chorus 2\": Chorus 2: edit: \"only in the last chorus bring in strings\". Brief updated to v3. Nothing is regenerated from chat yet — the plan is returned for the next arrangement.",
+        "editPlan": {
+          "intent": "add_instrument",
+          "scope": {
+            "kind": "section",
+            "sectionName": "Chorus 2"
+          },
+          "modify": 1,
+          "preserve": 5,
+          "briefDeltas": [
+            {
+              "kind": "section_intention",
+              "rationale": "edit: \"only in the last chorus bring in strings\""
+            }
+          ],
+          "confidence": 0.85
+        },
+        "state": {
+          "version": 3,
+          "briefId": "brief-8c688a64ad80",
+          "planSource": "arrangement",
+          "songModelVersion": 1,
+          "language": "he",
+          "intentMethod": "intent-extraction/v1",
+          "inferences": [
+            "genre_word=ballad@global <בלדה>",
+            "tempo_feel=slow@global <בלדה>",
+            "tradition=hasidic@global <חסידית>",
+            "era=modern@global <מודרנית>",
+            "production_feel=modern@global <מודרנית>",
+            "scene=yeshiva@section:verse/1 <ישיבתי>",
+            "production_feel=wide@section:chorus/last <רחב יותר>",
+            "instrument=strings@section:chorus/last <מיתרים>"
+          ],
+          "constraints": [
+            "avoid:pop@global <לא פופית מדי>"
+          ],
+          "references": [],
+          "unresolvedTerms": [],
+          "styleDimensions": {
+            "genre": "\"ballad\" (stated 0.85)",
+            "tradition": "\"hasidic\" (stated 0.85)",
+            "era": "\"modern\" (stated 0.85)",
+            "soundAesthetic": "\"modern\" (inferred 0.5)",
+            "tempoBehavior": "\"slow\" (inferred 0.595)",
+            "chordRhythm": "\"sustained\" (inferred 0.425)",
+            "fillFrequency": "\"rare\" (inferred 0.425)",
+            "stereoAesthetic": "\"wide\" (inferred 0.2)"
+          },
+          "dimensionDecisions": [
+            "adopt chordRhythm=\"sustained\" by style_profile",
+            "adopt era=\"modern\" by style_profile",
+            "adopt fillFrequency=\"rare\" by style_profile",
+            "adopt genre=\"ballad\" by style_profile",
+            "adopt soundAesthetic=\"modern\" by style_profile",
+            "adopt stereoAesthetic=\"wide\" by style_profile",
+            "adopt tempoBehavior=\"slow\" by style_profile",
+            "adopt tradition=\"hasidic\" by style_profile"
+          ],
+          "sectionNames": [
+            "Intro",
+            "Verse",
+            "Chorus",
+            "Verse 2",
+            "Chorus 2",
+            "Outro"
+          ],
+          "sectionIntentions": [
+            {
+              "section": "Verse",
+              "instrumentation": null,
+              "energyBias": null,
+              "densityBias": null,
+              "character": []
+            },
+            {
+              "section": "Chorus 2",
+              "instrumentation": {
+                "add": [
+                  "strings"
+                ],
+                "remove": [],
+                "feature": [
+                  "strings"
+                ]
+              },
+              "energyBias": null,
+              "densityBias": null,
+              "character": [
+                "wide"
+              ]
+            }
+          ],
+          "unresolvedSectionRequests": [],
+          "instrumentation": {
+            "hierarchy": [],
+            "excludedFamilies": [
+              "strings"
+            ]
+          },
+          "vocalSpace": "moderate/sparse (default)",
+          "plannerAesthetic": null,
+          "activeDecisions": [
+            "[global] hard style_dimension: no pop — \"לא פופית מדי\" (intake)",
+            "[section:Verse] soft other: Verse: scene yeshiva (intake)",
+            "[section:Chorus 2] soft aesthetic: Chorus 2: wide (intake)",
+            "[section:Chorus 2] soft instrumentation: Chorus 2: feature strings (intake)",
+            "[global] hard instrumentation: edit: \"no strings in the whole song\" (producer)",
+            "[section:Chorus 2] hard instrumentation: Chorus 2: edit: \"only in the last chorus bring in strings\" (producer)"
+          ],
+          "chatDecisionRows": [
+            {
+              "decisionId": "dec-74ac1c577f0f",
+              "supersededBy": null,
+              "delta": "instrumentation",
+              "statement": "edit: \"no strings in the whole song\""
+            },
+            {
+              "decisionId": "dec-a7ad7d2941ef",
+              "supersededBy": null,
+              "delta": "section_intention",
+              "statement": "Chorus 2: edit: \"only in the last chorus bring in strings\""
+            }
+          ],
+          "openQuestions": [],
+          "concepts": [
+            "Intimate & rooted [sparse] differs in doublingRules,dynamics,ensembleType,roomSize,voicingWidth",
+            "Contemporary & full [rhythmic] differs in chordRhythm,ensembleType,fillFrequency,roomSize,saturation",
+            "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,ensembleType,roomSize,transitionLanguage,voicingWidth"
+          ]
+        }
+      }
+    },
+    {
+      "step": 27,
+      "method": "POST",
+      "path": "/api/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/chat",
+      "status": 200,
+      "ms": 2521,
+      "request": {
+        "text": "why is there a clarinet in the chorus?"
+      },
+      "response": {
+        "kind": "explanation",
+        "turnId": "pc-mtt7bv9c-18diqmr8",
+        "producerTurnId": "pc-mtt7bv9c-fzexmcq4",
+        "understanding": "I can't explain that from the plan: winds is not in this plan's palette at all (palette: drums, bass, keys, vocals).",
+        "explanation": {
+          "answered": false,
+          "answer": "I can't explain that from the plan: winds is not in this plan's palette at all (palette: drums, bass, keys, vocals).",
+          "evidence": [
+            {
+              "source": "globalPlan.instrumentPalette",
+              "ref": "(all)",
+              "detail": "palette: drums, bass, keys, vocals"
+            }
+          ],
+          "confidence": 0
+        },
+        "state": {
+          "version": 3,
+          "briefId": "brief-8c688a64ad80",
+          "planSource": "arrangement",
+          "songModelVersion": 1,
+          "language": "he",
+          "intentMethod": "intent-extraction/v1",
+          "inferences": [
+            "genre_word=ballad@global <בלדה>",
+            "tempo_feel=slow@global <בלדה>",
+            "tradition=hasidic@global <חסידית>",
+            "era=modern@global <מודרנית>",
+            "production_feel=modern@global <מודרנית>",
+            "scene=yeshiva@section:verse/1 <ישיבתי>",
+            "production_feel=wide@section:chorus/last <רחב יותר>",
+            "instrument=strings@section:chorus/last <מיתרים>"
+          ],
+          "constraints": [
+            "avoid:pop@global <לא פופית מדי>"
+          ],
+          "references": [],
+          "unresolvedTerms": [],
+          "styleDimensions": {
+            "era": "\"modern\" (stated 0.85)",
+            "genre": "\"ballad\" (stated 0.85)",
+            "tradition": "\"hasidic\" (stated 0.85)",
+            "chordRhythm": "\"sustained\" (inferred 0.425)",
+            "fillFrequency": "\"rare\" (inferred 0.425)",
+            "tempoBehavior": "\"slow\" (inferred 0.595)",
+            "soundAesthetic": "\"modern\" (inferred 0.5)",
+            "stereoAesthetic": "\"wide\" (inferred 0.2)"
+          },
+          "dimensionDecisions": [
+            "adopt chordRhythm=\"sustained\" by style_profile",
+            "adopt era=\"modern\" by style_profile",
+            "adopt fillFrequency=\"rare\" by style_profile",
+            "adopt genre=\"ballad\" by style_profile",
+            "adopt soundAesthetic=\"modern\" by style_profile",
+            "adopt stereoAesthetic=\"wide\" by style_profile",
+            "adopt tempoBehavior=\"slow\" by style_profile",
+            "adopt tradition=\"hasidic\" by style_profile"
+          ],
+          "sectionNames": [
+            "Intro",
+            "Verse",
+            "Chorus",
+            "Verse 2",
+            "Chorus 2",
+            "Outro"
+          ],
+          "sectionIntentions": [
+            {
+              "section": "Verse",
+              "instrumentation": null,
+              "energyBias": null,
+              "densityBias": null,
+              "character": []
+            },
+            {
+              "section": "Chorus 2",
+              "instrumentation": {
+                "add": [
+                  "strings"
+                ],
+                "remove": [],
+                "feature": [
+                  "strings"
+                ]
+              },
+              "energyBias": null,
+              "densityBias": null,
+              "character": [
+                "wide"
+              ]
+            }
+          ],
+          "unresolvedSectionRequests": [],
+          "instrumentation": {
+            "hierarchy": [],
+            "excludedFamilies": [
+              "strings"
+            ]
+          },
+          "vocalSpace": "moderate/sparse (default)",
+          "plannerAesthetic": null,
+          "activeDecisions": [
+            "[global] hard style_dimension: no pop — \"לא פופית מדי\" (intake)",
+            "[section:Verse] soft other: Verse: scene yeshiva (intake)",
+            "[section:Chorus 2] soft aesthetic: Chorus 2: wide (intake)",
+            "[section:Chorus 2] soft instrumentation: Chorus 2: feature strings (intake)",
+            "[global] hard instrumentation: edit: \"no strings in the whole song\" (producer)",
+            "[section:Chorus 2] hard instrumentation: Chorus 2: edit: \"only in the last chorus bring in strings\" (producer)"
+          ],
+          "chatDecisionRows": [
+            {
+              "decisionId": "dec-74ac1c577f0f",
+              "supersededBy": null,
+              "delta": "instrumentation",
+              "statement": "edit: \"no strings in the whole song\""
+            },
+            {
+              "decisionId": "dec-a7ad7d2941ef",
+              "supersededBy": null,
+              "delta": "section_intention",
+              "statement": "Chorus 2: edit: \"only in the last chorus bring in strings\""
+            }
+          ],
+          "openQuestions": [],
+          "concepts": [
+            "Intimate & rooted [sparse] differs in doublingRules,dynamics,ensembleType,roomSize,voicingWidth",
+            "Contemporary & full [rhythmic] differs in chordRhythm,ensembleType,fillFrequency,roomSize,saturation",
+            "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,ensembleType,roomSize,transitionLanguage,voicingWidth"
+          ]
+        }
+      }
+    },
+    {
+      "step": 28,
+      "method": "POST",
+      "path": "/api/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/chat",
+      "status": 200,
+      "ms": 2372,
+      "request": {
+        "text": "why are the drums in the chorus?"
+      },
+      "response": {
+        "kind": "explanation",
+        "turnId": "pc-mtt7bx5c-certvx9k",
+        "producerTurnId": "pc-mtt7bx5c-iytbmjgp",
+        "understanding": "drums is planned as groove in Chorus; climax layer in Chorus 2. It is in the palette because it is present in the source stems. The orchestration budget adjusts it in 4 window(s) around the vocal.",
+        "explanation": {
+          "answered": true,
+          "answer": "drums is planned as groove in Chorus; climax layer in Chorus 2. It is in the palette because it is present in the source stems. The orchestration budget adjusts it in 4 window(s) around the vocal.",
+          "evidence": [
+            {
+              "source": "sectionPlan.roleAssignments",
+              "ref": "Chorus/drums",
+              "detail": "role GROOVE, register low_mid, density 0.78, melodic 0.05, interaction with lead: independent, bars 13–20"
+            },
+            {
+              "source": "sectionPlan.roleAssignments",
+              "ref": "Chorus 2/drums",
+              "detail": "role CLIMAX_LAYER, register low_mid, density 0.92, melodic 0.45, interaction with lead: independent, bars 29–36"
+            },
+            {
+              "source": "globalPlan.instrumentPalette",
+              "ref": "drums",
+              "detail": "priority 1: present in the source stems"
+            },
+            {
+              "source": "orchestrationBudget.windows",
+              "ref": "phrase-Chorus-1",
+              "detail": "bars 13–16: vocal attention 0.55, density ×1, register shift 0 — foundation — unchanged"
+            },
+            {
+              "source": "orchestrationBudget.windows",
+              "ref": "phrase-Chorus-2",
+              "detail": "bars 17–20: vocal attention 0.55, density ×1, register shift 0 — foundation — unchanged"
+            },
+            {
+              "source": "orchestrationBudget.windows",
+              "ref": "phrase-Chorus_2-1",
+              "detail": "bars 29–32: vocal attention 0.55, density ×0.99, register shift 0 — climax layer"
+            },
+            {
+              "source": "orchestrationBudget.windows",
+              "ref": "phrase-Chorus_2-2",
+              "detail": "bars 33–36: vocal attention 0.55, density ×0.99, register shift 0 — climax layer"
+            },
+            {
+              "source": "transitionPlan.transitions",
+              "ref": "trans-2",
+              "detail": "drum_fill into Chorus (bars 12–12): Drum fill lifts into the next section."
+            },
+            {
+              "source": "transitionPlan.transitions",
+              "ref": "trans-2",
+              "detail": "cymbal_swell into Chorus (bars 11–12): Crescendo cymbal swell under the build."
+            },
+            {
+              "source": "transitionPlan.transitions",
+              "ref": "trans-3",
+              "detail": "cymbal_choke into Verse 2 (bars 20–20): Choke the cymbal to clear space for the drop."
+            },
+            {
+              "source": "transitionPlan.transitions",
+              "ref": "trans-4",
+              "detail": "drum_fill into Chorus 2 (bars 28–28): Drum fill lifts into the next section."
+            },
+            {
+              "source": "transitionPlan.transitions",
+              "ref": "trans-4",
+              "detail": "cymbal_swell into Chorus 2 (bars 27–28): Crescendo cymbal swell under the build."
+            },
+            {
+              "source": "transitionPlan.transitions",
+              "ref": "trans-5",
+              "detail": "ending_hit into Outro (bars 36–36): Mark the end of the song."
+            }
+          ],
+          "confidence": 0.9
+        },
+        "state": {
+          "version": 3,
+          "briefId": "brief-8c688a64ad80",
+          "planSource": "arrangement",
+          "songModelVersion": 1,
+          "language": "he",
+          "intentMethod": "intent-extraction/v1",
+          "inferences": [
+            "genre_word=ballad@global <בלדה>",
+            "tempo_feel=slow@global <בלדה>",
+            "tradition=hasidic@global <חסידית>",
+            "era=modern@global <מודרנית>",
+            "production_feel=modern@global <מודרנית>",
+            "scene=yeshiva@section:verse/1 <ישיבתי>",
+            "production_feel=wide@section:chorus/last <רחב יותר>",
+            "instrument=strings@section:chorus/last <מיתרים>"
+          ],
+          "constraints": [
+            "avoid:pop@global <לא פופית מדי>"
+          ],
+          "references": [],
+          "unresolvedTerms": [],
+          "styleDimensions": {
+            "era": "\"modern\" (stated 0.85)",
+            "genre": "\"ballad\" (stated 0.85)",
+            "tradition": "\"hasidic\" (stated 0.85)",
+            "chordRhythm": "\"sustained\" (inferred 0.425)",
+            "fillFrequency": "\"rare\" (inferred 0.425)",
+            "tempoBehavior": "\"slow\" (inferred 0.595)",
+            "soundAesthetic": "\"modern\" (inferred 0.5)",
+            "stereoAesthetic": "\"wide\" (inferred 0.2)"
+          },
+          "dimensionDecisions": [
+            "adopt chordRhythm=\"sustained\" by style_profile",
+            "adopt era=\"modern\" by style_profile",
+            "adopt fillFrequency=\"rare\" by style_profile",
+            "adopt genre=\"ballad\" by style_profile",
+            "adopt soundAesthetic=\"modern\" by style_profile",
+            "adopt stereoAesthetic=\"wide\" by style_profile",
+            "adopt tempoBehavior=\"slow\" by style_profile",
+            "adopt tradition=\"hasidic\" by style_profile"
+          ],
+          "sectionNames": [
+            "Intro",
+            "Verse",
+            "Chorus",
+            "Verse 2",
+            "Chorus 2",
+            "Outro"
+          ],
+          "sectionIntentions": [
+            {
+              "section": "Verse",
+              "instrumentation": null,
+              "energyBias": null,
+              "densityBias": null,
+              "character": []
+            },
+            {
+              "section": "Chorus 2",
+              "instrumentation": {
+                "add": [
+                  "strings"
+                ],
+                "remove": [],
+                "feature": [
+                  "strings"
+                ]
+              },
+              "energyBias": null,
+              "densityBias": null,
+              "character": [
+                "wide"
+              ]
+            }
+          ],
+          "unresolvedSectionRequests": [],
+          "instrumentation": {
+            "hierarchy": [],
+            "excludedFamilies": [
+              "strings"
+            ]
+          },
+          "vocalSpace": "moderate/sparse (default)",
+          "plannerAesthetic": null,
+          "activeDecisions": [
+            "[global] hard style_dimension: no pop — \"לא פופית מדי\" (intake)",
+            "[section:Verse] soft other: Verse: scene yeshiva (intake)",
+            "[section:Chorus 2] soft aesthetic: Chorus 2: wide (intake)",
+            "[section:Chorus 2] soft instrumentation: Chorus 2: feature strings (intake)",
+            "[global] hard instrumentation: edit: \"no strings in the whole song\" (producer)",
+            "[section:Chorus 2] hard instrumentation: Chorus 2: edit: \"only in the last chorus bring in strings\" (producer)"
+          ],
+          "chatDecisionRows": [
+            {
+              "decisionId": "dec-74ac1c577f0f",
+              "supersededBy": null,
+              "delta": "instrumentation",
+              "statement": "edit: \"no strings in the whole song\""
+            },
+            {
+              "decisionId": "dec-a7ad7d2941ef",
+              "supersededBy": null,
+              "delta": "section_intention",
+              "statement": "Chorus 2: edit: \"only in the last chorus bring in strings\""
+            }
+          ],
+          "openQuestions": [],
+          "concepts": [
+            "Intimate & rooted [sparse] differs in doublingRules,dynamics,ensembleType,roomSize,voicingWidth",
+            "Contemporary & full [rhythmic] differs in chordRhythm,ensembleType,fillFrequency,roomSize,saturation",
+            "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,ensembleType,roomSize,transitionLanguage,voicingWidth"
+          ]
+        }
+      }
+    },
+    {
+      "step": 29,
+      "method": "GET",
+      "path": "/api/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/brief",
+      "status": 200,
+      "ms": 1781,
+      "request": null,
+      "response": {
+        "version": 3,
+        "briefId": "brief-8c688a64ad80",
+        "planSource": "arrangement",
+        "songModelVersion": 1,
+        "language": "he",
+        "intentMethod": "intent-extraction/v1",
+        "inferences": [
+          "genre_word=ballad@global <בלדה>",
+          "tempo_feel=slow@global <בלדה>",
+          "tradition=hasidic@global <חסידית>",
+          "era=modern@global <מודרנית>",
+          "production_feel=modern@global <מודרנית>",
+          "scene=yeshiva@section:verse/1 <ישיבתי>",
+          "production_feel=wide@section:chorus/last <רחב יותר>",
+          "instrument=strings@section:chorus/last <מיתרים>"
+        ],
+        "constraints": [
+          "avoid:pop@global <לא פופית מדי>"
+        ],
+        "references": [],
+        "unresolvedTerms": [],
+        "styleDimensions": {
+          "era": "\"modern\" (stated 0.85)",
+          "genre": "\"ballad\" (stated 0.85)",
+          "tradition": "\"hasidic\" (stated 0.85)",
+          "chordRhythm": "\"sustained\" (inferred 0.425)",
+          "fillFrequency": "\"rare\" (inferred 0.425)",
+          "tempoBehavior": "\"slow\" (inferred 0.595)",
+          "soundAesthetic": "\"modern\" (inferred 0.5)",
+          "stereoAesthetic": "\"wide\" (inferred 0.2)"
+        },
+        "dimensionDecisions": [
+          "adopt chordRhythm=\"sustained\" by style_profile",
+          "adopt era=\"modern\" by style_profile",
+          "adopt fillFrequency=\"rare\" by style_profile",
+          "adopt genre=\"ballad\" by style_profile",
+          "adopt soundAesthetic=\"modern\" by style_profile",
+          "adopt stereoAesthetic=\"wide\" by style_profile",
+          "adopt tempoBehavior=\"slow\" by style_profile",
+          "adopt tradition=\"hasidic\" by style_profile"
+        ],
+        "sectionNames": [
+          "Intro",
+          "Verse",
+          "Chorus",
+          "Verse 2",
+          "Chorus 2",
+          "Outro"
+        ],
+        "sectionIntentions": [
+          {
+            "section": "Verse",
+            "instrumentation": null,
+            "energyBias": null,
+            "densityBias": null,
+            "character": []
+          },
+          {
+            "section": "Chorus 2",
+            "instrumentation": {
+              "add": [
+                "strings"
+              ],
+              "remove": [],
+              "feature": [
+                "strings"
+              ]
+            },
+            "energyBias": null,
+            "densityBias": null,
+            "character": [
+              "wide"
+            ]
+          }
+        ],
+        "unresolvedSectionRequests": [],
+        "instrumentation": {
+          "hierarchy": [],
+          "excludedFamilies": [
+            "strings"
+          ]
+        },
+        "vocalSpace": "moderate/sparse (default)",
+        "plannerAesthetic": null,
+        "activeDecisions": [
+          "[global] hard style_dimension: no pop — \"לא פופית מדי\" (intake)",
+          "[section:Verse] soft other: Verse: scene yeshiva (intake)",
+          "[section:Chorus 2] soft aesthetic: Chorus 2: wide (intake)",
+          "[section:Chorus 2] soft instrumentation: Chorus 2: feature strings (intake)",
+          "[global] hard instrumentation: edit: \"no strings in the whole song\" (producer)",
+          "[section:Chorus 2] hard instrumentation: Chorus 2: edit: \"only in the last chorus bring in strings\" (producer)"
+        ],
+        "chatDecisionRows": [
+          {
+            "decisionId": "dec-74ac1c577f0f",
+            "supersededBy": null,
+            "delta": "instrumentation",
+            "statement": "edit: \"no strings in the whole song\""
+          },
+          {
+            "decisionId": "dec-a7ad7d2941ef",
+            "supersededBy": null,
+            "delta": "section_intention",
+            "statement": "Chorus 2: edit: \"only in the last chorus bring in strings\""
+          }
+        ],
+        "openQuestions": [],
+        "concepts": [
+          "Intimate & rooted [sparse] differs in doublingRules,dynamics,ensembleType,roomSize,voicingWidth",
+          "Contemporary & full [rhythmic] differs in chordRhythm,ensembleType,fillFrequency,roomSize,saturation",
+          "Hybrid & cinematic [adventurous] differs in doublingRules,dynamics,ensembleType,roomSize,transitionLanguage,voicingWidth"
+        ]
+      }
+    },
+    {
+      "step": 30,
+      "method": "GET",
+      "path": "/api/projects/6dcf7c49-6b8b-4304-ae22-22b6f4615375/producer/brief",
+      "status": 401,
+      "ms": 2,
+      "request": null,
+      "response": {
+        "error": "Unauthorized"
+      }
+    },
+    {
+      "step": 31,
+      "method": "GET",
+      "path": "/api/projects/does-not-exist/producer/brief",
+      "status": 404,
+      "ms": 329,
+      "request": null,
+      "response": {
+        "error": "Project not found"
+      }
+    }
+  ],
+  "checks": {
+    "hebrewIntakeCreatedBriefV1": true,
+    "hebrewIntakeReadTradition": true,
+    "hebrewIntakeKeptNotTooPoppyAsBoundary": true,
+    "hebrewEditRecordedGlobalRule": true,
+    "hebrewQuestionAnsweredHonestly": true,
+    "hebrewRefinementNewVersion": true,
+    "englishIntakeAskedQuestions": 2,
+    "englishAnswerAppliedDeltas": true,
+    "englishGlobalRuleRecorded": true,
+    "englishScopedEditWithoutSongModelKeptAsSectionWish": true,
+    "existingProjectSectionsResolved": true,
+    "existingProjectGlobalThenScopedOverride": true,
+    "existingProjectQuestionFromStoredPlan": true,
+    "existingProjectBriefVersions": 3,
+    "ownerPhraseKeptVerbatim": true,
+    "supersedeMarkedOldRow": true,
+    "turnsPagedNewestLast": true,
+    "anonymousIs401": true,
+    "missingProjectIs404": true
+  }
+}

@@ -18807,3 +18807,3227 @@ export const RunCopilotResponse = zod.object({
 })
 
 
+/**
+ * Free text in any language (plus optional references) becomes a UserIntent,
+ * a StyleProfile, the clarification questions worth asking (at most two,
+ * scored by information gain) and a new ProductionBrief version. Both the
+ * user turn and the producer's reply are persisted. Nothing is generated.
+ * @summary Start (or restart) the producer conversation from free text
+ */
+export const RunProducerIntakeParams = zod.object({
+  "projectId": zod.coerce.string()
+})
+
+export const runProducerIntakeBodyTextMax = 4000;
+
+export const runProducerIntakeBodyReferencesItemLabelMax = 200;
+
+export const runProducerIntakeBodyReferencesItemAspectMax = 60;
+
+export const runProducerIntakeBodyReferencesMax = 20;
+
+
+
+export const RunProducerIntakeBody = zod.strictObject({
+  "text": zod.string().min(1).max(runProducerIntakeBodyTextMax),
+  "references": zod.array(zod.strictObject({
+  "kind": zod.enum(['song', 'artist', 'recording', 'playlist', 'description']),
+  "label": zod.string().min(1).max(runProducerIntakeBodyReferencesItemLabelMax),
+  "aspect": zod.string().max(runProducerIntakeBodyReferencesItemAspectMax).optional()
+})).max(runProducerIntakeBodyReferencesMax).optional()
+})
+
+export const runProducerIntakeResponseBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const runProducerIntakeResponseBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const runProducerIntakeResponseBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const runProducerIntakeResponseBriefDimensionDecisionsItemConfidenceMin = 0;
+export const runProducerIntakeResponseBriefDimensionDecisionsItemConfidenceMax = 1;
+
+export const runProducerIntakeResponseBriefSectionIntentionsItemEnergyBiasConfidenceMin = 0;
+export const runProducerIntakeResponseBriefSectionIntentionsItemEnergyBiasConfidenceMax = 1;
+
+export const runProducerIntakeResponseBriefSectionIntentionsItemDensityBiasConfidenceMin = 0;
+export const runProducerIntakeResponseBriefSectionIntentionsItemDensityBiasConfidenceMax = 1;
+
+export const runProducerIntakeResponseBriefSectionIntentionsItemClimaxConfidenceMin = 0;
+export const runProducerIntakeResponseBriefSectionIntentionsItemClimaxConfidenceMax = 1;
+
+export const runProducerIntakeResponseBriefSectionIntentionsItemCharacterItemConfidenceMin = 0;
+export const runProducerIntakeResponseBriefSectionIntentionsItemCharacterItemConfidenceMax = 1;
+
+
+export const runProducerIntakeResponseBriefVocalSpaceConfidenceMin = 0;
+export const runProducerIntakeResponseBriefVocalSpaceConfidenceMax = 1;
+
+export const runProducerIntakeResponseBriefInstrumentationHierarchyItemConfidenceMin = 0;
+export const runProducerIntakeResponseBriefInstrumentationHierarchyItemConfidenceMax = 1;
+
+export const runProducerIntakeResponseBriefProductionAestheticDescriptorsItemConfidenceMin = 0;
+export const runProducerIntakeResponseBriefProductionAestheticDescriptorsItemConfidenceMax = 1;
+
+export const runProducerIntakeResponseBriefProducerDecisionsItemConfidenceMin = 0;
+export const runProducerIntakeResponseBriefProducerDecisionsItemConfidenceMax = 1;
+
+export const runProducerIntakeResponseBriefConfidenceMin = 0;
+export const runProducerIntakeResponseBriefConfidenceMax = 1;
+
+export const runProducerIntakeResponseClarificationsItemInformationGainMin = 0;
+export const runProducerIntakeResponseClarificationsItemInformationGainMax = 1;
+
+export const runProducerIntakeResponseEditPlanInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+
+
+
+
+export const runProducerIntakeResponseEditPlanConfidenceMin = 0;
+export const runProducerIntakeResponseEditPlanConfidenceMax = 1;
+
+export const runProducerIntakeResponseExplanationConfidenceMin = 0;
+export const runProducerIntakeResponseExplanationConfidenceMax = 1;
+
+
+export const runProducerIntakeResponseStateBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const runProducerIntakeResponseStateBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const runProducerIntakeResponseStateBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const runProducerIntakeResponseStateBriefDimensionDecisionsItemConfidenceMin = 0;
+export const runProducerIntakeResponseStateBriefDimensionDecisionsItemConfidenceMax = 1;
+
+export const runProducerIntakeResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMin = 0;
+export const runProducerIntakeResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMax = 1;
+
+export const runProducerIntakeResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMin = 0;
+export const runProducerIntakeResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMax = 1;
+
+export const runProducerIntakeResponseStateBriefSectionIntentionsItemClimaxConfidenceMin = 0;
+export const runProducerIntakeResponseStateBriefSectionIntentionsItemClimaxConfidenceMax = 1;
+
+export const runProducerIntakeResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMin = 0;
+export const runProducerIntakeResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMax = 1;
+
+
+export const runProducerIntakeResponseStateBriefVocalSpaceConfidenceMin = 0;
+export const runProducerIntakeResponseStateBriefVocalSpaceConfidenceMax = 1;
+
+export const runProducerIntakeResponseStateBriefInstrumentationHierarchyItemConfidenceMin = 0;
+export const runProducerIntakeResponseStateBriefInstrumentationHierarchyItemConfidenceMax = 1;
+
+export const runProducerIntakeResponseStateBriefProductionAestheticDescriptorsItemConfidenceMin = 0;
+export const runProducerIntakeResponseStateBriefProductionAestheticDescriptorsItemConfidenceMax = 1;
+
+export const runProducerIntakeResponseStateBriefProducerDecisionsItemConfidenceMin = 0;
+export const runProducerIntakeResponseStateBriefProducerDecisionsItemConfidenceMax = 1;
+
+export const runProducerIntakeResponseStateBriefConfidenceMin = 0;
+export const runProducerIntakeResponseStateBriefConfidenceMax = 1;
+
+export const runProducerIntakeResponseStateIntentInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const runProducerIntakeResponseStateIntentInferencesItemConfidenceMin = 0;
+export const runProducerIntakeResponseStateIntentInferencesItemConfidenceMax = 1;
+
+
+
+export const runProducerIntakeResponseStateIntentConstraintsItemConfidenceMin = 0;
+export const runProducerIntakeResponseStateIntentConstraintsItemConfidenceMax = 1;
+
+
+export const runProducerIntakeResponseStateIntentConfidenceMin = 0;
+export const runProducerIntakeResponseStateIntentConfidenceMax = 1;
+
+export const runProducerIntakeResponseStateStyleProfileInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const runProducerIntakeResponseStateStyleProfileDimensionsConfidenceMin = 0;
+export const runProducerIntakeResponseStateStyleProfileDimensionsConfidenceMax = 1;
+
+export const runProducerIntakeResponseStateStyleProfileConfidenceMin = 0;
+export const runProducerIntakeResponseStateStyleProfileConfidenceMax = 1;
+
+export const runProducerIntakeResponseStateClarificationsItemInformationGainMin = 0;
+export const runProducerIntakeResponseStateClarificationsItemInformationGainMax = 1;
+
+export const runProducerIntakeResponseStateDecisionsItemDecisionConfidenceMin = 0;
+export const runProducerIntakeResponseStateDecisionsItemDecisionConfidenceMax = 1;
+
+export const runProducerIntakeResponseStateConceptsInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const runProducerIntakeResponseStateConceptsBriefDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+export const RunProducerIntakeResponse = zod.object({
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede']),
+  "turnId": zod.string().describe('The persisted user turn'),
+  "producerTurnId": zod.string(),
+  "understanding": zod.string().describe('The producer\'s reply - a reading of the request'),
+  "brief": zod.object({
+  "version": zod.enum(['1.0']),
+  "id": zod.string(),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(runProducerIntakeResponseBriefInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "intentDigestSha256": zod.string().regex(runProducerIntakeResponseBriefIntentDigestSha256RegExp),
+  "styleProfileDigestSha256": zod.string().regex(runProducerIntakeResponseBriefStyleProfileDigestSha256RegExp),
+  "sectionNames": zod.array(zod.string()),
+  "dimensionDecisions": zod.array(zod.object({
+  "dimension": zod.string(),
+  "disposition": zod.enum(['adopt', 'modify', 'reject']),
+  "styleValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "briefValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "rationale": zod.string(),
+  "decidedBy": zod.enum(['style_profile', 'constraint', 'answer', 'producer']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(runProducerIntakeResponseBriefDimensionDecisionsItemConfidenceMin).max(runProducerIntakeResponseBriefDimensionDecisionsItemConfidenceMax)
+})),
+  "sectionIntentions": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'neutral']),
+  "energyBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(runProducerIntakeResponseBriefSectionIntentionsItemEnergyBiasConfidenceMin).max(runProducerIntakeResponseBriefSectionIntentionsItemEnergyBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "densityBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(runProducerIntakeResponseBriefSectionIntentionsItemDensityBiasConfidenceMin).max(runProducerIntakeResponseBriefSectionIntentionsItemDensityBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "instrumentation": zod.object({
+  "add": zod.array(zod.string()),
+  "remove": zod.array(zod.string()),
+  "feature": zod.array(zod.string())
+}).optional(),
+  "climax": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(runProducerIntakeResponseBriefSectionIntentionsItemClimaxConfidenceMin).max(runProducerIntakeResponseBriefSectionIntentionsItemClimaxConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "character": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(runProducerIntakeResponseBriefSectionIntentionsItemCharacterItemConfidenceMin).max(runProducerIntakeResponseBriefSectionIntentionsItemCharacterItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "decisionIds": zod.array(zod.string())
+})),
+  "unresolvedSectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "vocalSpace": zod.object({
+  "underLead": zod.enum(['open', 'moderate', 'tight']),
+  "gapFill": zod.enum(['none', 'sparse', 'active']),
+  "counterMelodyAllowed": zod.boolean(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(runProducerIntakeResponseBriefVocalSpaceConfidenceMin).max(runProducerIntakeResponseBriefVocalSpaceConfidenceMax),
+  "rationale": zod.string()
+}),
+  "instrumentation": zod.object({
+  "hierarchy": zod.array(zod.object({
+  "family": zod.string(),
+  "tier": zod.enum(['foundation', 'core', 'colour', 'feature']),
+  "rationale": zod.string(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(runProducerIntakeResponseBriefInstrumentationHierarchyItemConfidenceMin).max(runProducerIntakeResponseBriefInstrumentationHierarchyItemConfidenceMax)
+})),
+  "excludedFamilies": zod.array(zod.string())
+}),
+  "productionAesthetic": zod.object({
+  "descriptors": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(runProducerIntakeResponseBriefProductionAestheticDescriptorsItemConfidenceMin).max(runProducerIntakeResponseBriefProductionAestheticDescriptorsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "plannerAesthetic": zod.enum(['raw_band', 'polished_pop', 'cinematic', 'orchestral', 'electronic', 'intimate']).optional()
+}),
+  "producerDecisions": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(runProducerIntakeResponseBriefProducerDecisionsItemConfidenceMin).max(runProducerIntakeResponseBriefProducerDecisionsItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).')),
+  "openQuestionIds": zod.array(zod.string()),
+  "answeredQuestionIds": zod.array(zod.string()),
+  "confidence": zod.number().min(runProducerIntakeResponseBriefConfidenceMin).max(runProducerIntakeResponseBriefConfidenceMax)
+}).describe('Layer 3 - how THIS song realises the style; the single source of truth the planners read.'),
+  "clarifications": zod.array(zod.object({
+  "id": zod.string(),
+  "question": zod.string(),
+  "questionHe": zod.string().optional(),
+  "informationGain": zod.number().min(runProducerIntakeResponseClarificationsItemInformationGainMin).max(runProducerIntakeResponseClarificationsItemInformationGainMax),
+  "settlesDimensions": zod.array(zod.string()),
+  "trigger": zod.object({
+  "reason": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+}),
+  "options": zod.array(zod.object({
+  "id": zod.string(),
+  "label": zod.string(),
+  "labelHe": zod.string().optional(),
+  "description": zod.string(),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'))
+})),
+  "allowFreeText": zod.boolean()
+}).describe('A question worth asking now - its answer materially changes the arrangement.')),
+  "editPlan": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(runProducerIntakeResponseEditPlanInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "rawText": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional()
+}),
+  "intent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "preserve": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "modify": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.')),
+  "rationale": zod.string(),
+  "evidence": zod.array(zod.string()),
+  "confidence": zod.number().min(runProducerIntakeResponseEditPlanConfidenceMin).max(runProducerIntakeResponseEditPlanConfidenceMax)
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+  "explanation": zod.object({
+  "answered": zod.boolean(),
+  "answer": zod.string(),
+  "evidence": zod.array(zod.object({
+  "source": zod.string(),
+  "ref": zod.string(),
+  "detail": zod.string()
+})),
+  "confidence": zod.number().min(runProducerIntakeResponseExplanationConfidenceMin).max(runProducerIntakeResponseExplanationConfidenceMax)
+}).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
+  "state": zod.object({
+  "briefRecordId": zod.string(),
+  "version": zod.number().min(1),
+  "brief": zod.object({
+  "version": zod.enum(['1.0']),
+  "id": zod.string(),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(runProducerIntakeResponseStateBriefInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "intentDigestSha256": zod.string().regex(runProducerIntakeResponseStateBriefIntentDigestSha256RegExp),
+  "styleProfileDigestSha256": zod.string().regex(runProducerIntakeResponseStateBriefStyleProfileDigestSha256RegExp),
+  "sectionNames": zod.array(zod.string()),
+  "dimensionDecisions": zod.array(zod.object({
+  "dimension": zod.string(),
+  "disposition": zod.enum(['adopt', 'modify', 'reject']),
+  "styleValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "briefValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "rationale": zod.string(),
+  "decidedBy": zod.enum(['style_profile', 'constraint', 'answer', 'producer']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(runProducerIntakeResponseStateBriefDimensionDecisionsItemConfidenceMin).max(runProducerIntakeResponseStateBriefDimensionDecisionsItemConfidenceMax)
+})),
+  "sectionIntentions": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'neutral']),
+  "energyBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(runProducerIntakeResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMin).max(runProducerIntakeResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "densityBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(runProducerIntakeResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMin).max(runProducerIntakeResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "instrumentation": zod.object({
+  "add": zod.array(zod.string()),
+  "remove": zod.array(zod.string()),
+  "feature": zod.array(zod.string())
+}).optional(),
+  "climax": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(runProducerIntakeResponseStateBriefSectionIntentionsItemClimaxConfidenceMin).max(runProducerIntakeResponseStateBriefSectionIntentionsItemClimaxConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "character": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(runProducerIntakeResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMin).max(runProducerIntakeResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "decisionIds": zod.array(zod.string())
+})),
+  "unresolvedSectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "vocalSpace": zod.object({
+  "underLead": zod.enum(['open', 'moderate', 'tight']),
+  "gapFill": zod.enum(['none', 'sparse', 'active']),
+  "counterMelodyAllowed": zod.boolean(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(runProducerIntakeResponseStateBriefVocalSpaceConfidenceMin).max(runProducerIntakeResponseStateBriefVocalSpaceConfidenceMax),
+  "rationale": zod.string()
+}),
+  "instrumentation": zod.object({
+  "hierarchy": zod.array(zod.object({
+  "family": zod.string(),
+  "tier": zod.enum(['foundation', 'core', 'colour', 'feature']),
+  "rationale": zod.string(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(runProducerIntakeResponseStateBriefInstrumentationHierarchyItemConfidenceMin).max(runProducerIntakeResponseStateBriefInstrumentationHierarchyItemConfidenceMax)
+})),
+  "excludedFamilies": zod.array(zod.string())
+}),
+  "productionAesthetic": zod.object({
+  "descriptors": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(runProducerIntakeResponseStateBriefProductionAestheticDescriptorsItemConfidenceMin).max(runProducerIntakeResponseStateBriefProductionAestheticDescriptorsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "plannerAesthetic": zod.enum(['raw_band', 'polished_pop', 'cinematic', 'orchestral', 'electronic', 'intimate']).optional()
+}),
+  "producerDecisions": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(runProducerIntakeResponseStateBriefProducerDecisionsItemConfidenceMin).max(runProducerIntakeResponseStateBriefProducerDecisionsItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).')),
+  "openQuestionIds": zod.array(zod.string()),
+  "answeredQuestionIds": zod.array(zod.string()),
+  "confidence": zod.number().min(runProducerIntakeResponseStateBriefConfidenceMin).max(runProducerIntakeResponseStateBriefConfidenceMax)
+}).describe('Layer 3 - how THIS song realises the style; the single source of truth the planners read.'),
+  "intent": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(runProducerIntakeResponseStateIntentInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "rawText": zod.string(),
+  "language": zod.enum(['he', 'en', 'mixed', 'unknown']),
+  "inferences": zod.array(zod.object({
+  "id": zod.string(),
+  "slot": zod.enum(['mood', 'energy', 'density', 'era', 'tradition', 'genre_word', 'scene', 'instrument', 'ensemble_size', 'tempo_feel', 'tempo_bpm', 'production_feel', 'vocal_treatment']),
+  "value": zod.string(),
+  "confidence": zod.number().min(runProducerIntakeResponseStateIntentInferencesItemConfidenceMin).max(runProducerIntakeResponseStateIntentInferencesItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "evidence": zod.array(zod.string()),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+})
+})),
+  "constraints": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['avoid', 'limit', 'require', 'keep']),
+  "subject": zod.string(),
+  "statement": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "confidence": zod.number().min(runProducerIntakeResponseStateIntentConstraintsItemConfidenceMin).max(runProducerIntakeResponseStateIntentConstraintsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched'])
+})),
+  "references": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['song', 'artist', 'recording', 'playlist', 'description']),
+  "label": zod.string(),
+  "aspect": zod.string().optional(),
+  "evidence": zod.string().optional()
+})),
+  "sectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "unresolvedTerms": zod.array(zod.string()),
+  "confidence": zod.number().min(runProducerIntakeResponseStateIntentConfidenceMin).max(runProducerIntakeResponseStateIntentConfidenceMax)
+}).describe('Layer 1 - what the user said and what was read out of it; every item quotes verbatim evidence.'),
+  "styleProfile": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(runProducerIntakeResponseStateStyleProfileInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "dimensions": zod.record(zod.string(), zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(runProducerIntakeResponseStateStyleProfileDimensionsConfidenceMin).max(runProducerIntakeResponseStateStyleProfileDimensionsConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "exclusions": zod.array(zod.object({
+  "dimension": zod.string().optional(),
+  "value": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+})),
+  "conflicts": zod.array(zod.object({
+  "dimension": zod.string(),
+  "values": zod.array(zod.string())
+})),
+  "sources": zod.array(zod.string()),
+  "confidence": zod.number().min(runProducerIntakeResponseStateStyleProfileConfidenceMin).max(runProducerIntakeResponseStateStyleProfileConfidenceMax)
+}).describe('Layer 2 - independent dimensions of the musical world; only dimensions with evidence are present.'),
+  "clarifications": zod.array(zod.object({
+  "id": zod.string(),
+  "question": zod.string(),
+  "questionHe": zod.string().optional(),
+  "informationGain": zod.number().min(runProducerIntakeResponseStateClarificationsItemInformationGainMin).max(runProducerIntakeResponseStateClarificationsItemInformationGainMax),
+  "settlesDimensions": zod.array(zod.string()),
+  "trigger": zod.object({
+  "reason": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+}),
+  "options": zod.array(zod.object({
+  "id": zod.string(),
+  "label": zod.string(),
+  "labelHe": zod.string().optional(),
+  "description": zod.string(),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'))
+})),
+  "allowFreeText": zod.boolean()
+}).describe('A question worth asking now - its answer materially changes the arrangement.')),
+  "decisions": zod.array(zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "briefId": zod.string(),
+  "decisionId": zod.string(),
+  "decision": zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(runProducerIntakeResponseStateDecisionsItemDecisionConfidenceMin).max(runProducerIntakeResponseStateDecisionsItemDecisionConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).'),
+  "delta": zod.union([zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'),zod.null()]),
+  "supersededBy": zod.string().nullable(),
+  "createdAt": zod.coerce.date()
+}).describe('A durable chat decision row; superseded rows keep `supersededBy`.')),
+  "concepts": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(runProducerIntakeResponseStateConceptsInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "briefId": zod.string(),
+  "briefDigestSha256": zod.string().regex(runProducerIntakeResponseStateConceptsBriefDigestSha256RegExp),
+  "concepts": zod.array(zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "thesis": zod.string(),
+  "deltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.')),
+  "differsIn": zod.array(zod.string()),
+  "candidateStrategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "contrastsWith": zod.array(zod.object({
+  "conceptId": zod.string(),
+  "dimensions": zod.array(zod.string())
+}))
+}))
+}).describe('Exactly three deliberately different directions for the same brief, before any note.'),
+  "songModelVersion": zod.number().nullable(),
+  "planSource": zod.enum(['arrangement', 'derived', 'none']).describe('arrangement = the latest stored ArrangementPlan; derived = planned from the Song Model with the brief\'s hints; none = no Song Model yet'),
+  "createdAt": zod.coerce.date()
+}).describe('The current brief version with everything the studio shows around it.')
+})
+
+
+/**
+ * Applies the chosen options' brief deltas (free text is also read as intake) and compiles a new brief version.
+ * @summary Answer open clarification questions
+ */
+export const AnswerProducerClarificationsParams = zod.object({
+  "projectId": zod.coerce.string()
+})
+
+
+
+export const answerProducerClarificationsBodyAnswersItemFreeTextMax = 1000;
+
+export const answerProducerClarificationsBodyAnswersMax = 10;
+
+
+
+export const AnswerProducerClarificationsBody = zod.strictObject({
+  "answers": zod.array(zod.strictObject({
+  "questionId": zod.string().min(1),
+  "answerId": zod.string().min(1).optional(),
+  "freeText": zod.string().min(1).max(answerProducerClarificationsBodyAnswersItemFreeTextMax).optional()
+})).min(1).max(answerProducerClarificationsBodyAnswersMax)
+})
+
+export const answerProducerClarificationsResponseBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const answerProducerClarificationsResponseBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const answerProducerClarificationsResponseBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const answerProducerClarificationsResponseBriefDimensionDecisionsItemConfidenceMin = 0;
+export const answerProducerClarificationsResponseBriefDimensionDecisionsItemConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseBriefSectionIntentionsItemEnergyBiasConfidenceMin = 0;
+export const answerProducerClarificationsResponseBriefSectionIntentionsItemEnergyBiasConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseBriefSectionIntentionsItemDensityBiasConfidenceMin = 0;
+export const answerProducerClarificationsResponseBriefSectionIntentionsItemDensityBiasConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseBriefSectionIntentionsItemClimaxConfidenceMin = 0;
+export const answerProducerClarificationsResponseBriefSectionIntentionsItemClimaxConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseBriefSectionIntentionsItemCharacterItemConfidenceMin = 0;
+export const answerProducerClarificationsResponseBriefSectionIntentionsItemCharacterItemConfidenceMax = 1;
+
+
+export const answerProducerClarificationsResponseBriefVocalSpaceConfidenceMin = 0;
+export const answerProducerClarificationsResponseBriefVocalSpaceConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseBriefInstrumentationHierarchyItemConfidenceMin = 0;
+export const answerProducerClarificationsResponseBriefInstrumentationHierarchyItemConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseBriefProductionAestheticDescriptorsItemConfidenceMin = 0;
+export const answerProducerClarificationsResponseBriefProductionAestheticDescriptorsItemConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseBriefProducerDecisionsItemConfidenceMin = 0;
+export const answerProducerClarificationsResponseBriefProducerDecisionsItemConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseBriefConfidenceMin = 0;
+export const answerProducerClarificationsResponseBriefConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseClarificationsItemInformationGainMin = 0;
+export const answerProducerClarificationsResponseClarificationsItemInformationGainMax = 1;
+
+export const answerProducerClarificationsResponseEditPlanInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+
+
+
+
+export const answerProducerClarificationsResponseEditPlanConfidenceMin = 0;
+export const answerProducerClarificationsResponseEditPlanConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseExplanationConfidenceMin = 0;
+export const answerProducerClarificationsResponseExplanationConfidenceMax = 1;
+
+
+export const answerProducerClarificationsResponseStateBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const answerProducerClarificationsResponseStateBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const answerProducerClarificationsResponseStateBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const answerProducerClarificationsResponseStateBriefDimensionDecisionsItemConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateBriefDimensionDecisionsItemConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseStateBriefSectionIntentionsItemClimaxConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateBriefSectionIntentionsItemClimaxConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMax = 1;
+
+
+export const answerProducerClarificationsResponseStateBriefVocalSpaceConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateBriefVocalSpaceConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseStateBriefInstrumentationHierarchyItemConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateBriefInstrumentationHierarchyItemConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseStateBriefProductionAestheticDescriptorsItemConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateBriefProductionAestheticDescriptorsItemConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseStateBriefProducerDecisionsItemConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateBriefProducerDecisionsItemConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseStateBriefConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateBriefConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseStateIntentInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const answerProducerClarificationsResponseStateIntentInferencesItemConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateIntentInferencesItemConfidenceMax = 1;
+
+
+
+export const answerProducerClarificationsResponseStateIntentConstraintsItemConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateIntentConstraintsItemConfidenceMax = 1;
+
+
+export const answerProducerClarificationsResponseStateIntentConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateIntentConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseStateStyleProfileInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const answerProducerClarificationsResponseStateStyleProfileDimensionsConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateStyleProfileDimensionsConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseStateStyleProfileConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateStyleProfileConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseStateClarificationsItemInformationGainMin = 0;
+export const answerProducerClarificationsResponseStateClarificationsItemInformationGainMax = 1;
+
+export const answerProducerClarificationsResponseStateDecisionsItemDecisionConfidenceMin = 0;
+export const answerProducerClarificationsResponseStateDecisionsItemDecisionConfidenceMax = 1;
+
+export const answerProducerClarificationsResponseStateConceptsInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const answerProducerClarificationsResponseStateConceptsBriefDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+export const AnswerProducerClarificationsResponse = zod.object({
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede']),
+  "turnId": zod.string().describe('The persisted user turn'),
+  "producerTurnId": zod.string(),
+  "understanding": zod.string().describe('The producer\'s reply - a reading of the request'),
+  "brief": zod.object({
+  "version": zod.enum(['1.0']),
+  "id": zod.string(),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(answerProducerClarificationsResponseBriefInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "intentDigestSha256": zod.string().regex(answerProducerClarificationsResponseBriefIntentDigestSha256RegExp),
+  "styleProfileDigestSha256": zod.string().regex(answerProducerClarificationsResponseBriefStyleProfileDigestSha256RegExp),
+  "sectionNames": zod.array(zod.string()),
+  "dimensionDecisions": zod.array(zod.object({
+  "dimension": zod.string(),
+  "disposition": zod.enum(['adopt', 'modify', 'reject']),
+  "styleValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "briefValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "rationale": zod.string(),
+  "decidedBy": zod.enum(['style_profile', 'constraint', 'answer', 'producer']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(answerProducerClarificationsResponseBriefDimensionDecisionsItemConfidenceMin).max(answerProducerClarificationsResponseBriefDimensionDecisionsItemConfidenceMax)
+})),
+  "sectionIntentions": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'neutral']),
+  "energyBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(answerProducerClarificationsResponseBriefSectionIntentionsItemEnergyBiasConfidenceMin).max(answerProducerClarificationsResponseBriefSectionIntentionsItemEnergyBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "densityBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(answerProducerClarificationsResponseBriefSectionIntentionsItemDensityBiasConfidenceMin).max(answerProducerClarificationsResponseBriefSectionIntentionsItemDensityBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "instrumentation": zod.object({
+  "add": zod.array(zod.string()),
+  "remove": zod.array(zod.string()),
+  "feature": zod.array(zod.string())
+}).optional(),
+  "climax": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(answerProducerClarificationsResponseBriefSectionIntentionsItemClimaxConfidenceMin).max(answerProducerClarificationsResponseBriefSectionIntentionsItemClimaxConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "character": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(answerProducerClarificationsResponseBriefSectionIntentionsItemCharacterItemConfidenceMin).max(answerProducerClarificationsResponseBriefSectionIntentionsItemCharacterItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "decisionIds": zod.array(zod.string())
+})),
+  "unresolvedSectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "vocalSpace": zod.object({
+  "underLead": zod.enum(['open', 'moderate', 'tight']),
+  "gapFill": zod.enum(['none', 'sparse', 'active']),
+  "counterMelodyAllowed": zod.boolean(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(answerProducerClarificationsResponseBriefVocalSpaceConfidenceMin).max(answerProducerClarificationsResponseBriefVocalSpaceConfidenceMax),
+  "rationale": zod.string()
+}),
+  "instrumentation": zod.object({
+  "hierarchy": zod.array(zod.object({
+  "family": zod.string(),
+  "tier": zod.enum(['foundation', 'core', 'colour', 'feature']),
+  "rationale": zod.string(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(answerProducerClarificationsResponseBriefInstrumentationHierarchyItemConfidenceMin).max(answerProducerClarificationsResponseBriefInstrumentationHierarchyItemConfidenceMax)
+})),
+  "excludedFamilies": zod.array(zod.string())
+}),
+  "productionAesthetic": zod.object({
+  "descriptors": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(answerProducerClarificationsResponseBriefProductionAestheticDescriptorsItemConfidenceMin).max(answerProducerClarificationsResponseBriefProductionAestheticDescriptorsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "plannerAesthetic": zod.enum(['raw_band', 'polished_pop', 'cinematic', 'orchestral', 'electronic', 'intimate']).optional()
+}),
+  "producerDecisions": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(answerProducerClarificationsResponseBriefProducerDecisionsItemConfidenceMin).max(answerProducerClarificationsResponseBriefProducerDecisionsItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).')),
+  "openQuestionIds": zod.array(zod.string()),
+  "answeredQuestionIds": zod.array(zod.string()),
+  "confidence": zod.number().min(answerProducerClarificationsResponseBriefConfidenceMin).max(answerProducerClarificationsResponseBriefConfidenceMax)
+}).describe('Layer 3 - how THIS song realises the style; the single source of truth the planners read.'),
+  "clarifications": zod.array(zod.object({
+  "id": zod.string(),
+  "question": zod.string(),
+  "questionHe": zod.string().optional(),
+  "informationGain": zod.number().min(answerProducerClarificationsResponseClarificationsItemInformationGainMin).max(answerProducerClarificationsResponseClarificationsItemInformationGainMax),
+  "settlesDimensions": zod.array(zod.string()),
+  "trigger": zod.object({
+  "reason": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+}),
+  "options": zod.array(zod.object({
+  "id": zod.string(),
+  "label": zod.string(),
+  "labelHe": zod.string().optional(),
+  "description": zod.string(),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'))
+})),
+  "allowFreeText": zod.boolean()
+}).describe('A question worth asking now - its answer materially changes the arrangement.')),
+  "editPlan": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(answerProducerClarificationsResponseEditPlanInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "rawText": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional()
+}),
+  "intent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "preserve": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "modify": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.')),
+  "rationale": zod.string(),
+  "evidence": zod.array(zod.string()),
+  "confidence": zod.number().min(answerProducerClarificationsResponseEditPlanConfidenceMin).max(answerProducerClarificationsResponseEditPlanConfidenceMax)
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+  "explanation": zod.object({
+  "answered": zod.boolean(),
+  "answer": zod.string(),
+  "evidence": zod.array(zod.object({
+  "source": zod.string(),
+  "ref": zod.string(),
+  "detail": zod.string()
+})),
+  "confidence": zod.number().min(answerProducerClarificationsResponseExplanationConfidenceMin).max(answerProducerClarificationsResponseExplanationConfidenceMax)
+}).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
+  "state": zod.object({
+  "briefRecordId": zod.string(),
+  "version": zod.number().min(1),
+  "brief": zod.object({
+  "version": zod.enum(['1.0']),
+  "id": zod.string(),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(answerProducerClarificationsResponseStateBriefInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "intentDigestSha256": zod.string().regex(answerProducerClarificationsResponseStateBriefIntentDigestSha256RegExp),
+  "styleProfileDigestSha256": zod.string().regex(answerProducerClarificationsResponseStateBriefStyleProfileDigestSha256RegExp),
+  "sectionNames": zod.array(zod.string()),
+  "dimensionDecisions": zod.array(zod.object({
+  "dimension": zod.string(),
+  "disposition": zod.enum(['adopt', 'modify', 'reject']),
+  "styleValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "briefValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "rationale": zod.string(),
+  "decidedBy": zod.enum(['style_profile', 'constraint', 'answer', 'producer']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateBriefDimensionDecisionsItemConfidenceMin).max(answerProducerClarificationsResponseStateBriefDimensionDecisionsItemConfidenceMax)
+})),
+  "sectionIntentions": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'neutral']),
+  "energyBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMin).max(answerProducerClarificationsResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "densityBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMin).max(answerProducerClarificationsResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "instrumentation": zod.object({
+  "add": zod.array(zod.string()),
+  "remove": zod.array(zod.string()),
+  "feature": zod.array(zod.string())
+}).optional(),
+  "climax": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateBriefSectionIntentionsItemClimaxConfidenceMin).max(answerProducerClarificationsResponseStateBriefSectionIntentionsItemClimaxConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "character": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMin).max(answerProducerClarificationsResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "decisionIds": zod.array(zod.string())
+})),
+  "unresolvedSectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "vocalSpace": zod.object({
+  "underLead": zod.enum(['open', 'moderate', 'tight']),
+  "gapFill": zod.enum(['none', 'sparse', 'active']),
+  "counterMelodyAllowed": zod.boolean(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateBriefVocalSpaceConfidenceMin).max(answerProducerClarificationsResponseStateBriefVocalSpaceConfidenceMax),
+  "rationale": zod.string()
+}),
+  "instrumentation": zod.object({
+  "hierarchy": zod.array(zod.object({
+  "family": zod.string(),
+  "tier": zod.enum(['foundation', 'core', 'colour', 'feature']),
+  "rationale": zod.string(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateBriefInstrumentationHierarchyItemConfidenceMin).max(answerProducerClarificationsResponseStateBriefInstrumentationHierarchyItemConfidenceMax)
+})),
+  "excludedFamilies": zod.array(zod.string())
+}),
+  "productionAesthetic": zod.object({
+  "descriptors": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateBriefProductionAestheticDescriptorsItemConfidenceMin).max(answerProducerClarificationsResponseStateBriefProductionAestheticDescriptorsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "plannerAesthetic": zod.enum(['raw_band', 'polished_pop', 'cinematic', 'orchestral', 'electronic', 'intimate']).optional()
+}),
+  "producerDecisions": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateBriefProducerDecisionsItemConfidenceMin).max(answerProducerClarificationsResponseStateBriefProducerDecisionsItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).')),
+  "openQuestionIds": zod.array(zod.string()),
+  "answeredQuestionIds": zod.array(zod.string()),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateBriefConfidenceMin).max(answerProducerClarificationsResponseStateBriefConfidenceMax)
+}).describe('Layer 3 - how THIS song realises the style; the single source of truth the planners read.'),
+  "intent": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(answerProducerClarificationsResponseStateIntentInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "rawText": zod.string(),
+  "language": zod.enum(['he', 'en', 'mixed', 'unknown']),
+  "inferences": zod.array(zod.object({
+  "id": zod.string(),
+  "slot": zod.enum(['mood', 'energy', 'density', 'era', 'tradition', 'genre_word', 'scene', 'instrument', 'ensemble_size', 'tempo_feel', 'tempo_bpm', 'production_feel', 'vocal_treatment']),
+  "value": zod.string(),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateIntentInferencesItemConfidenceMin).max(answerProducerClarificationsResponseStateIntentInferencesItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "evidence": zod.array(zod.string()),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+})
+})),
+  "constraints": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['avoid', 'limit', 'require', 'keep']),
+  "subject": zod.string(),
+  "statement": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateIntentConstraintsItemConfidenceMin).max(answerProducerClarificationsResponseStateIntentConstraintsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched'])
+})),
+  "references": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['song', 'artist', 'recording', 'playlist', 'description']),
+  "label": zod.string(),
+  "aspect": zod.string().optional(),
+  "evidence": zod.string().optional()
+})),
+  "sectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "unresolvedTerms": zod.array(zod.string()),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateIntentConfidenceMin).max(answerProducerClarificationsResponseStateIntentConfidenceMax)
+}).describe('Layer 1 - what the user said and what was read out of it; every item quotes verbatim evidence.'),
+  "styleProfile": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(answerProducerClarificationsResponseStateStyleProfileInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "dimensions": zod.record(zod.string(), zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateStyleProfileDimensionsConfidenceMin).max(answerProducerClarificationsResponseStateStyleProfileDimensionsConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "exclusions": zod.array(zod.object({
+  "dimension": zod.string().optional(),
+  "value": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+})),
+  "conflicts": zod.array(zod.object({
+  "dimension": zod.string(),
+  "values": zod.array(zod.string())
+})),
+  "sources": zod.array(zod.string()),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateStyleProfileConfidenceMin).max(answerProducerClarificationsResponseStateStyleProfileConfidenceMax)
+}).describe('Layer 2 - independent dimensions of the musical world; only dimensions with evidence are present.'),
+  "clarifications": zod.array(zod.object({
+  "id": zod.string(),
+  "question": zod.string(),
+  "questionHe": zod.string().optional(),
+  "informationGain": zod.number().min(answerProducerClarificationsResponseStateClarificationsItemInformationGainMin).max(answerProducerClarificationsResponseStateClarificationsItemInformationGainMax),
+  "settlesDimensions": zod.array(zod.string()),
+  "trigger": zod.object({
+  "reason": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+}),
+  "options": zod.array(zod.object({
+  "id": zod.string(),
+  "label": zod.string(),
+  "labelHe": zod.string().optional(),
+  "description": zod.string(),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'))
+})),
+  "allowFreeText": zod.boolean()
+}).describe('A question worth asking now - its answer materially changes the arrangement.')),
+  "decisions": zod.array(zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "briefId": zod.string(),
+  "decisionId": zod.string(),
+  "decision": zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(answerProducerClarificationsResponseStateDecisionsItemDecisionConfidenceMin).max(answerProducerClarificationsResponseStateDecisionsItemDecisionConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).'),
+  "delta": zod.union([zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'),zod.null()]),
+  "supersededBy": zod.string().nullable(),
+  "createdAt": zod.coerce.date()
+}).describe('A durable chat decision row; superseded rows keep `supersededBy`.')),
+  "concepts": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(answerProducerClarificationsResponseStateConceptsInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "briefId": zod.string(),
+  "briefDigestSha256": zod.string().regex(answerProducerClarificationsResponseStateConceptsBriefDigestSha256RegExp),
+  "concepts": zod.array(zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "thesis": zod.string(),
+  "deltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.')),
+  "differsIn": zod.array(zod.string()),
+  "candidateStrategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "contrastsWith": zod.array(zod.object({
+  "conceptId": zod.string(),
+  "dimensions": zod.array(zod.string())
+}))
+}))
+}).describe('Exactly three deliberately different directions for the same brief, before any note.'),
+  "songModelVersion": zod.number().nullable(),
+  "planSource": zod.enum(['arrangement', 'derived', 'none']).describe('arrangement = the latest stored ArrangementPlan; derived = planned from the Song Model with the brief\'s hints; none = no Song Model yet'),
+  "createdAt": zod.coerce.date()
+}).describe('The current brief version with everything the studio shows around it.')
+})
+
+
+/**
+ * @summary The current production brief, its decisions and the three arrangement concepts
+ */
+export const GetProducerBriefParams = zod.object({
+  "projectId": zod.coerce.string()
+})
+
+
+export const getProducerBriefResponseBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const getProducerBriefResponseBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const getProducerBriefResponseBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const getProducerBriefResponseBriefDimensionDecisionsItemConfidenceMin = 0;
+export const getProducerBriefResponseBriefDimensionDecisionsItemConfidenceMax = 1;
+
+export const getProducerBriefResponseBriefSectionIntentionsItemEnergyBiasConfidenceMin = 0;
+export const getProducerBriefResponseBriefSectionIntentionsItemEnergyBiasConfidenceMax = 1;
+
+export const getProducerBriefResponseBriefSectionIntentionsItemDensityBiasConfidenceMin = 0;
+export const getProducerBriefResponseBriefSectionIntentionsItemDensityBiasConfidenceMax = 1;
+
+export const getProducerBriefResponseBriefSectionIntentionsItemClimaxConfidenceMin = 0;
+export const getProducerBriefResponseBriefSectionIntentionsItemClimaxConfidenceMax = 1;
+
+export const getProducerBriefResponseBriefSectionIntentionsItemCharacterItemConfidenceMin = 0;
+export const getProducerBriefResponseBriefSectionIntentionsItemCharacterItemConfidenceMax = 1;
+
+
+export const getProducerBriefResponseBriefVocalSpaceConfidenceMin = 0;
+export const getProducerBriefResponseBriefVocalSpaceConfidenceMax = 1;
+
+export const getProducerBriefResponseBriefInstrumentationHierarchyItemConfidenceMin = 0;
+export const getProducerBriefResponseBriefInstrumentationHierarchyItemConfidenceMax = 1;
+
+export const getProducerBriefResponseBriefProductionAestheticDescriptorsItemConfidenceMin = 0;
+export const getProducerBriefResponseBriefProductionAestheticDescriptorsItemConfidenceMax = 1;
+
+export const getProducerBriefResponseBriefProducerDecisionsItemConfidenceMin = 0;
+export const getProducerBriefResponseBriefProducerDecisionsItemConfidenceMax = 1;
+
+export const getProducerBriefResponseBriefConfidenceMin = 0;
+export const getProducerBriefResponseBriefConfidenceMax = 1;
+
+export const getProducerBriefResponseIntentInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const getProducerBriefResponseIntentInferencesItemConfidenceMin = 0;
+export const getProducerBriefResponseIntentInferencesItemConfidenceMax = 1;
+
+
+
+export const getProducerBriefResponseIntentConstraintsItemConfidenceMin = 0;
+export const getProducerBriefResponseIntentConstraintsItemConfidenceMax = 1;
+
+
+export const getProducerBriefResponseIntentConfidenceMin = 0;
+export const getProducerBriefResponseIntentConfidenceMax = 1;
+
+export const getProducerBriefResponseStyleProfileInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const getProducerBriefResponseStyleProfileDimensionsConfidenceMin = 0;
+export const getProducerBriefResponseStyleProfileDimensionsConfidenceMax = 1;
+
+export const getProducerBriefResponseStyleProfileConfidenceMin = 0;
+export const getProducerBriefResponseStyleProfileConfidenceMax = 1;
+
+export const getProducerBriefResponseClarificationsItemInformationGainMin = 0;
+export const getProducerBriefResponseClarificationsItemInformationGainMax = 1;
+
+export const getProducerBriefResponseDecisionsItemDecisionConfidenceMin = 0;
+export const getProducerBriefResponseDecisionsItemDecisionConfidenceMax = 1;
+
+export const getProducerBriefResponseConceptsInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const getProducerBriefResponseConceptsBriefDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+export const GetProducerBriefResponse = zod.object({
+  "briefRecordId": zod.string(),
+  "version": zod.number().min(1),
+  "brief": zod.object({
+  "version": zod.enum(['1.0']),
+  "id": zod.string(),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(getProducerBriefResponseBriefInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "intentDigestSha256": zod.string().regex(getProducerBriefResponseBriefIntentDigestSha256RegExp),
+  "styleProfileDigestSha256": zod.string().regex(getProducerBriefResponseBriefStyleProfileDigestSha256RegExp),
+  "sectionNames": zod.array(zod.string()),
+  "dimensionDecisions": zod.array(zod.object({
+  "dimension": zod.string(),
+  "disposition": zod.enum(['adopt', 'modify', 'reject']),
+  "styleValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "briefValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "rationale": zod.string(),
+  "decidedBy": zod.enum(['style_profile', 'constraint', 'answer', 'producer']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(getProducerBriefResponseBriefDimensionDecisionsItemConfidenceMin).max(getProducerBriefResponseBriefDimensionDecisionsItemConfidenceMax)
+})),
+  "sectionIntentions": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'neutral']),
+  "energyBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(getProducerBriefResponseBriefSectionIntentionsItemEnergyBiasConfidenceMin).max(getProducerBriefResponseBriefSectionIntentionsItemEnergyBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "densityBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(getProducerBriefResponseBriefSectionIntentionsItemDensityBiasConfidenceMin).max(getProducerBriefResponseBriefSectionIntentionsItemDensityBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "instrumentation": zod.object({
+  "add": zod.array(zod.string()),
+  "remove": zod.array(zod.string()),
+  "feature": zod.array(zod.string())
+}).optional(),
+  "climax": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(getProducerBriefResponseBriefSectionIntentionsItemClimaxConfidenceMin).max(getProducerBriefResponseBriefSectionIntentionsItemClimaxConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "character": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(getProducerBriefResponseBriefSectionIntentionsItemCharacterItemConfidenceMin).max(getProducerBriefResponseBriefSectionIntentionsItemCharacterItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "decisionIds": zod.array(zod.string())
+})),
+  "unresolvedSectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "vocalSpace": zod.object({
+  "underLead": zod.enum(['open', 'moderate', 'tight']),
+  "gapFill": zod.enum(['none', 'sparse', 'active']),
+  "counterMelodyAllowed": zod.boolean(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(getProducerBriefResponseBriefVocalSpaceConfidenceMin).max(getProducerBriefResponseBriefVocalSpaceConfidenceMax),
+  "rationale": zod.string()
+}),
+  "instrumentation": zod.object({
+  "hierarchy": zod.array(zod.object({
+  "family": zod.string(),
+  "tier": zod.enum(['foundation', 'core', 'colour', 'feature']),
+  "rationale": zod.string(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(getProducerBriefResponseBriefInstrumentationHierarchyItemConfidenceMin).max(getProducerBriefResponseBriefInstrumentationHierarchyItemConfidenceMax)
+})),
+  "excludedFamilies": zod.array(zod.string())
+}),
+  "productionAesthetic": zod.object({
+  "descriptors": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(getProducerBriefResponseBriefProductionAestheticDescriptorsItemConfidenceMin).max(getProducerBriefResponseBriefProductionAestheticDescriptorsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "plannerAesthetic": zod.enum(['raw_band', 'polished_pop', 'cinematic', 'orchestral', 'electronic', 'intimate']).optional()
+}),
+  "producerDecisions": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(getProducerBriefResponseBriefProducerDecisionsItemConfidenceMin).max(getProducerBriefResponseBriefProducerDecisionsItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).')),
+  "openQuestionIds": zod.array(zod.string()),
+  "answeredQuestionIds": zod.array(zod.string()),
+  "confidence": zod.number().min(getProducerBriefResponseBriefConfidenceMin).max(getProducerBriefResponseBriefConfidenceMax)
+}).describe('Layer 3 - how THIS song realises the style; the single source of truth the planners read.'),
+  "intent": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(getProducerBriefResponseIntentInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "rawText": zod.string(),
+  "language": zod.enum(['he', 'en', 'mixed', 'unknown']),
+  "inferences": zod.array(zod.object({
+  "id": zod.string(),
+  "slot": zod.enum(['mood', 'energy', 'density', 'era', 'tradition', 'genre_word', 'scene', 'instrument', 'ensemble_size', 'tempo_feel', 'tempo_bpm', 'production_feel', 'vocal_treatment']),
+  "value": zod.string(),
+  "confidence": zod.number().min(getProducerBriefResponseIntentInferencesItemConfidenceMin).max(getProducerBriefResponseIntentInferencesItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "evidence": zod.array(zod.string()),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+})
+})),
+  "constraints": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['avoid', 'limit', 'require', 'keep']),
+  "subject": zod.string(),
+  "statement": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "confidence": zod.number().min(getProducerBriefResponseIntentConstraintsItemConfidenceMin).max(getProducerBriefResponseIntentConstraintsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched'])
+})),
+  "references": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['song', 'artist', 'recording', 'playlist', 'description']),
+  "label": zod.string(),
+  "aspect": zod.string().optional(),
+  "evidence": zod.string().optional()
+})),
+  "sectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "unresolvedTerms": zod.array(zod.string()),
+  "confidence": zod.number().min(getProducerBriefResponseIntentConfidenceMin).max(getProducerBriefResponseIntentConfidenceMax)
+}).describe('Layer 1 - what the user said and what was read out of it; every item quotes verbatim evidence.'),
+  "styleProfile": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(getProducerBriefResponseStyleProfileInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "dimensions": zod.record(zod.string(), zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(getProducerBriefResponseStyleProfileDimensionsConfidenceMin).max(getProducerBriefResponseStyleProfileDimensionsConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "exclusions": zod.array(zod.object({
+  "dimension": zod.string().optional(),
+  "value": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+})),
+  "conflicts": zod.array(zod.object({
+  "dimension": zod.string(),
+  "values": zod.array(zod.string())
+})),
+  "sources": zod.array(zod.string()),
+  "confidence": zod.number().min(getProducerBriefResponseStyleProfileConfidenceMin).max(getProducerBriefResponseStyleProfileConfidenceMax)
+}).describe('Layer 2 - independent dimensions of the musical world; only dimensions with evidence are present.'),
+  "clarifications": zod.array(zod.object({
+  "id": zod.string(),
+  "question": zod.string(),
+  "questionHe": zod.string().optional(),
+  "informationGain": zod.number().min(getProducerBriefResponseClarificationsItemInformationGainMin).max(getProducerBriefResponseClarificationsItemInformationGainMax),
+  "settlesDimensions": zod.array(zod.string()),
+  "trigger": zod.object({
+  "reason": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+}),
+  "options": zod.array(zod.object({
+  "id": zod.string(),
+  "label": zod.string(),
+  "labelHe": zod.string().optional(),
+  "description": zod.string(),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'))
+})),
+  "allowFreeText": zod.boolean()
+}).describe('A question worth asking now - its answer materially changes the arrangement.')),
+  "decisions": zod.array(zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "briefId": zod.string(),
+  "decisionId": zod.string(),
+  "decision": zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(getProducerBriefResponseDecisionsItemDecisionConfidenceMin).max(getProducerBriefResponseDecisionsItemDecisionConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).'),
+  "delta": zod.union([zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'),zod.null()]),
+  "supersededBy": zod.string().nullable(),
+  "createdAt": zod.coerce.date()
+}).describe('A durable chat decision row; superseded rows keep `supersededBy`.')),
+  "concepts": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(getProducerBriefResponseConceptsInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "briefId": zod.string(),
+  "briefDigestSha256": zod.string().regex(getProducerBriefResponseConceptsBriefDigestSha256RegExp),
+  "concepts": zod.array(zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "thesis": zod.string(),
+  "deltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.')),
+  "differsIn": zod.array(zod.string()),
+  "candidateStrategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "contrastsWith": zod.array(zod.object({
+  "conceptId": zod.string(),
+  "dimensions": zod.array(zod.string())
+}))
+}))
+}).describe('Exactly three deliberately different directions for the same brief, before any note.'),
+  "songModelVersion": zod.number().nullable(),
+  "planSource": zod.enum(['arrangement', 'derived', 'none']).describe('arrangement = the latest stored ArrangementPlan; derived = planned from the Song Model with the brief\'s hints; none = no Song Model yet'),
+  "createdAt": zod.coerce.date()
+}).describe('The current brief version with everything the studio shows around it.')
+
+
+/**
+ * A question ("why is there a clarinet here?") is answered from the latest
+ * plan's own evidence. An edit request ("the last chorus is too busy",
+ * "no strings in the whole song") becomes a structured EditPlan and durable,
+ * scoped decisions on the brief. Anything else refines the intake. Both
+ * turns are persisted; nothing is regenerated here.
+ * @summary Send a message to the producer
+ */
+export const SendProducerChatParams = zod.object({
+  "projectId": zod.coerce.string()
+})
+
+export const sendProducerChatBodyTextMax = 4000;
+
+
+
+export const SendProducerChatBody = zod.strictObject({
+  "text": zod.string().min(1).max(sendProducerChatBodyTextMax)
+})
+
+export const sendProducerChatResponseBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const sendProducerChatResponseBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const sendProducerChatResponseBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const sendProducerChatResponseBriefDimensionDecisionsItemConfidenceMin = 0;
+export const sendProducerChatResponseBriefDimensionDecisionsItemConfidenceMax = 1;
+
+export const sendProducerChatResponseBriefSectionIntentionsItemEnergyBiasConfidenceMin = 0;
+export const sendProducerChatResponseBriefSectionIntentionsItemEnergyBiasConfidenceMax = 1;
+
+export const sendProducerChatResponseBriefSectionIntentionsItemDensityBiasConfidenceMin = 0;
+export const sendProducerChatResponseBriefSectionIntentionsItemDensityBiasConfidenceMax = 1;
+
+export const sendProducerChatResponseBriefSectionIntentionsItemClimaxConfidenceMin = 0;
+export const sendProducerChatResponseBriefSectionIntentionsItemClimaxConfidenceMax = 1;
+
+export const sendProducerChatResponseBriefSectionIntentionsItemCharacterItemConfidenceMin = 0;
+export const sendProducerChatResponseBriefSectionIntentionsItemCharacterItemConfidenceMax = 1;
+
+
+export const sendProducerChatResponseBriefVocalSpaceConfidenceMin = 0;
+export const sendProducerChatResponseBriefVocalSpaceConfidenceMax = 1;
+
+export const sendProducerChatResponseBriefInstrumentationHierarchyItemConfidenceMin = 0;
+export const sendProducerChatResponseBriefInstrumentationHierarchyItemConfidenceMax = 1;
+
+export const sendProducerChatResponseBriefProductionAestheticDescriptorsItemConfidenceMin = 0;
+export const sendProducerChatResponseBriefProductionAestheticDescriptorsItemConfidenceMax = 1;
+
+export const sendProducerChatResponseBriefProducerDecisionsItemConfidenceMin = 0;
+export const sendProducerChatResponseBriefProducerDecisionsItemConfidenceMax = 1;
+
+export const sendProducerChatResponseBriefConfidenceMin = 0;
+export const sendProducerChatResponseBriefConfidenceMax = 1;
+
+export const sendProducerChatResponseClarificationsItemInformationGainMin = 0;
+export const sendProducerChatResponseClarificationsItemInformationGainMax = 1;
+
+export const sendProducerChatResponseEditPlanInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+
+
+
+
+export const sendProducerChatResponseEditPlanConfidenceMin = 0;
+export const sendProducerChatResponseEditPlanConfidenceMax = 1;
+
+export const sendProducerChatResponseExplanationConfidenceMin = 0;
+export const sendProducerChatResponseExplanationConfidenceMax = 1;
+
+
+export const sendProducerChatResponseStateBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const sendProducerChatResponseStateBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const sendProducerChatResponseStateBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const sendProducerChatResponseStateBriefDimensionDecisionsItemConfidenceMin = 0;
+export const sendProducerChatResponseStateBriefDimensionDecisionsItemConfidenceMax = 1;
+
+export const sendProducerChatResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMin = 0;
+export const sendProducerChatResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMax = 1;
+
+export const sendProducerChatResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMin = 0;
+export const sendProducerChatResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMax = 1;
+
+export const sendProducerChatResponseStateBriefSectionIntentionsItemClimaxConfidenceMin = 0;
+export const sendProducerChatResponseStateBriefSectionIntentionsItemClimaxConfidenceMax = 1;
+
+export const sendProducerChatResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMin = 0;
+export const sendProducerChatResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMax = 1;
+
+
+export const sendProducerChatResponseStateBriefVocalSpaceConfidenceMin = 0;
+export const sendProducerChatResponseStateBriefVocalSpaceConfidenceMax = 1;
+
+export const sendProducerChatResponseStateBriefInstrumentationHierarchyItemConfidenceMin = 0;
+export const sendProducerChatResponseStateBriefInstrumentationHierarchyItemConfidenceMax = 1;
+
+export const sendProducerChatResponseStateBriefProductionAestheticDescriptorsItemConfidenceMin = 0;
+export const sendProducerChatResponseStateBriefProductionAestheticDescriptorsItemConfidenceMax = 1;
+
+export const sendProducerChatResponseStateBriefProducerDecisionsItemConfidenceMin = 0;
+export const sendProducerChatResponseStateBriefProducerDecisionsItemConfidenceMax = 1;
+
+export const sendProducerChatResponseStateBriefConfidenceMin = 0;
+export const sendProducerChatResponseStateBriefConfidenceMax = 1;
+
+export const sendProducerChatResponseStateIntentInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const sendProducerChatResponseStateIntentInferencesItemConfidenceMin = 0;
+export const sendProducerChatResponseStateIntentInferencesItemConfidenceMax = 1;
+
+
+
+export const sendProducerChatResponseStateIntentConstraintsItemConfidenceMin = 0;
+export const sendProducerChatResponseStateIntentConstraintsItemConfidenceMax = 1;
+
+
+export const sendProducerChatResponseStateIntentConfidenceMin = 0;
+export const sendProducerChatResponseStateIntentConfidenceMax = 1;
+
+export const sendProducerChatResponseStateStyleProfileInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const sendProducerChatResponseStateStyleProfileDimensionsConfidenceMin = 0;
+export const sendProducerChatResponseStateStyleProfileDimensionsConfidenceMax = 1;
+
+export const sendProducerChatResponseStateStyleProfileConfidenceMin = 0;
+export const sendProducerChatResponseStateStyleProfileConfidenceMax = 1;
+
+export const sendProducerChatResponseStateClarificationsItemInformationGainMin = 0;
+export const sendProducerChatResponseStateClarificationsItemInformationGainMax = 1;
+
+export const sendProducerChatResponseStateDecisionsItemDecisionConfidenceMin = 0;
+export const sendProducerChatResponseStateDecisionsItemDecisionConfidenceMax = 1;
+
+export const sendProducerChatResponseStateConceptsInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const sendProducerChatResponseStateConceptsBriefDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+export const SendProducerChatResponse = zod.object({
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede']),
+  "turnId": zod.string().describe('The persisted user turn'),
+  "producerTurnId": zod.string(),
+  "understanding": zod.string().describe('The producer\'s reply - a reading of the request'),
+  "brief": zod.object({
+  "version": zod.enum(['1.0']),
+  "id": zod.string(),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(sendProducerChatResponseBriefInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "intentDigestSha256": zod.string().regex(sendProducerChatResponseBriefIntentDigestSha256RegExp),
+  "styleProfileDigestSha256": zod.string().regex(sendProducerChatResponseBriefStyleProfileDigestSha256RegExp),
+  "sectionNames": zod.array(zod.string()),
+  "dimensionDecisions": zod.array(zod.object({
+  "dimension": zod.string(),
+  "disposition": zod.enum(['adopt', 'modify', 'reject']),
+  "styleValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "briefValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "rationale": zod.string(),
+  "decidedBy": zod.enum(['style_profile', 'constraint', 'answer', 'producer']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(sendProducerChatResponseBriefDimensionDecisionsItemConfidenceMin).max(sendProducerChatResponseBriefDimensionDecisionsItemConfidenceMax)
+})),
+  "sectionIntentions": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'neutral']),
+  "energyBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(sendProducerChatResponseBriefSectionIntentionsItemEnergyBiasConfidenceMin).max(sendProducerChatResponseBriefSectionIntentionsItemEnergyBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "densityBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(sendProducerChatResponseBriefSectionIntentionsItemDensityBiasConfidenceMin).max(sendProducerChatResponseBriefSectionIntentionsItemDensityBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "instrumentation": zod.object({
+  "add": zod.array(zod.string()),
+  "remove": zod.array(zod.string()),
+  "feature": zod.array(zod.string())
+}).optional(),
+  "climax": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(sendProducerChatResponseBriefSectionIntentionsItemClimaxConfidenceMin).max(sendProducerChatResponseBriefSectionIntentionsItemClimaxConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "character": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(sendProducerChatResponseBriefSectionIntentionsItemCharacterItemConfidenceMin).max(sendProducerChatResponseBriefSectionIntentionsItemCharacterItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "decisionIds": zod.array(zod.string())
+})),
+  "unresolvedSectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "vocalSpace": zod.object({
+  "underLead": zod.enum(['open', 'moderate', 'tight']),
+  "gapFill": zod.enum(['none', 'sparse', 'active']),
+  "counterMelodyAllowed": zod.boolean(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(sendProducerChatResponseBriefVocalSpaceConfidenceMin).max(sendProducerChatResponseBriefVocalSpaceConfidenceMax),
+  "rationale": zod.string()
+}),
+  "instrumentation": zod.object({
+  "hierarchy": zod.array(zod.object({
+  "family": zod.string(),
+  "tier": zod.enum(['foundation', 'core', 'colour', 'feature']),
+  "rationale": zod.string(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(sendProducerChatResponseBriefInstrumentationHierarchyItemConfidenceMin).max(sendProducerChatResponseBriefInstrumentationHierarchyItemConfidenceMax)
+})),
+  "excludedFamilies": zod.array(zod.string())
+}),
+  "productionAesthetic": zod.object({
+  "descriptors": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(sendProducerChatResponseBriefProductionAestheticDescriptorsItemConfidenceMin).max(sendProducerChatResponseBriefProductionAestheticDescriptorsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "plannerAesthetic": zod.enum(['raw_band', 'polished_pop', 'cinematic', 'orchestral', 'electronic', 'intimate']).optional()
+}),
+  "producerDecisions": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(sendProducerChatResponseBriefProducerDecisionsItemConfidenceMin).max(sendProducerChatResponseBriefProducerDecisionsItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).')),
+  "openQuestionIds": zod.array(zod.string()),
+  "answeredQuestionIds": zod.array(zod.string()),
+  "confidence": zod.number().min(sendProducerChatResponseBriefConfidenceMin).max(sendProducerChatResponseBriefConfidenceMax)
+}).describe('Layer 3 - how THIS song realises the style; the single source of truth the planners read.'),
+  "clarifications": zod.array(zod.object({
+  "id": zod.string(),
+  "question": zod.string(),
+  "questionHe": zod.string().optional(),
+  "informationGain": zod.number().min(sendProducerChatResponseClarificationsItemInformationGainMin).max(sendProducerChatResponseClarificationsItemInformationGainMax),
+  "settlesDimensions": zod.array(zod.string()),
+  "trigger": zod.object({
+  "reason": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+}),
+  "options": zod.array(zod.object({
+  "id": zod.string(),
+  "label": zod.string(),
+  "labelHe": zod.string().optional(),
+  "description": zod.string(),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'))
+})),
+  "allowFreeText": zod.boolean()
+}).describe('A question worth asking now - its answer materially changes the arrangement.')),
+  "editPlan": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(sendProducerChatResponseEditPlanInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "rawText": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional()
+}),
+  "intent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "preserve": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "modify": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.')),
+  "rationale": zod.string(),
+  "evidence": zod.array(zod.string()),
+  "confidence": zod.number().min(sendProducerChatResponseEditPlanConfidenceMin).max(sendProducerChatResponseEditPlanConfidenceMax)
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+  "explanation": zod.object({
+  "answered": zod.boolean(),
+  "answer": zod.string(),
+  "evidence": zod.array(zod.object({
+  "source": zod.string(),
+  "ref": zod.string(),
+  "detail": zod.string()
+})),
+  "confidence": zod.number().min(sendProducerChatResponseExplanationConfidenceMin).max(sendProducerChatResponseExplanationConfidenceMax)
+}).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
+  "state": zod.object({
+  "briefRecordId": zod.string(),
+  "version": zod.number().min(1),
+  "brief": zod.object({
+  "version": zod.enum(['1.0']),
+  "id": zod.string(),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(sendProducerChatResponseStateBriefInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "intentDigestSha256": zod.string().regex(sendProducerChatResponseStateBriefIntentDigestSha256RegExp),
+  "styleProfileDigestSha256": zod.string().regex(sendProducerChatResponseStateBriefStyleProfileDigestSha256RegExp),
+  "sectionNames": zod.array(zod.string()),
+  "dimensionDecisions": zod.array(zod.object({
+  "dimension": zod.string(),
+  "disposition": zod.enum(['adopt', 'modify', 'reject']),
+  "styleValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "briefValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "rationale": zod.string(),
+  "decidedBy": zod.enum(['style_profile', 'constraint', 'answer', 'producer']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(sendProducerChatResponseStateBriefDimensionDecisionsItemConfidenceMin).max(sendProducerChatResponseStateBriefDimensionDecisionsItemConfidenceMax)
+})),
+  "sectionIntentions": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'neutral']),
+  "energyBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(sendProducerChatResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMin).max(sendProducerChatResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "densityBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(sendProducerChatResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMin).max(sendProducerChatResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "instrumentation": zod.object({
+  "add": zod.array(zod.string()),
+  "remove": zod.array(zod.string()),
+  "feature": zod.array(zod.string())
+}).optional(),
+  "climax": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(sendProducerChatResponseStateBriefSectionIntentionsItemClimaxConfidenceMin).max(sendProducerChatResponseStateBriefSectionIntentionsItemClimaxConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "character": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(sendProducerChatResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMin).max(sendProducerChatResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "decisionIds": zod.array(zod.string())
+})),
+  "unresolvedSectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "vocalSpace": zod.object({
+  "underLead": zod.enum(['open', 'moderate', 'tight']),
+  "gapFill": zod.enum(['none', 'sparse', 'active']),
+  "counterMelodyAllowed": zod.boolean(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(sendProducerChatResponseStateBriefVocalSpaceConfidenceMin).max(sendProducerChatResponseStateBriefVocalSpaceConfidenceMax),
+  "rationale": zod.string()
+}),
+  "instrumentation": zod.object({
+  "hierarchy": zod.array(zod.object({
+  "family": zod.string(),
+  "tier": zod.enum(['foundation', 'core', 'colour', 'feature']),
+  "rationale": zod.string(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(sendProducerChatResponseStateBriefInstrumentationHierarchyItemConfidenceMin).max(sendProducerChatResponseStateBriefInstrumentationHierarchyItemConfidenceMax)
+})),
+  "excludedFamilies": zod.array(zod.string())
+}),
+  "productionAesthetic": zod.object({
+  "descriptors": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(sendProducerChatResponseStateBriefProductionAestheticDescriptorsItemConfidenceMin).max(sendProducerChatResponseStateBriefProductionAestheticDescriptorsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "plannerAesthetic": zod.enum(['raw_band', 'polished_pop', 'cinematic', 'orchestral', 'electronic', 'intimate']).optional()
+}),
+  "producerDecisions": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(sendProducerChatResponseStateBriefProducerDecisionsItemConfidenceMin).max(sendProducerChatResponseStateBriefProducerDecisionsItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).')),
+  "openQuestionIds": zod.array(zod.string()),
+  "answeredQuestionIds": zod.array(zod.string()),
+  "confidence": zod.number().min(sendProducerChatResponseStateBriefConfidenceMin).max(sendProducerChatResponseStateBriefConfidenceMax)
+}).describe('Layer 3 - how THIS song realises the style; the single source of truth the planners read.'),
+  "intent": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(sendProducerChatResponseStateIntentInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "rawText": zod.string(),
+  "language": zod.enum(['he', 'en', 'mixed', 'unknown']),
+  "inferences": zod.array(zod.object({
+  "id": zod.string(),
+  "slot": zod.enum(['mood', 'energy', 'density', 'era', 'tradition', 'genre_word', 'scene', 'instrument', 'ensemble_size', 'tempo_feel', 'tempo_bpm', 'production_feel', 'vocal_treatment']),
+  "value": zod.string(),
+  "confidence": zod.number().min(sendProducerChatResponseStateIntentInferencesItemConfidenceMin).max(sendProducerChatResponseStateIntentInferencesItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "evidence": zod.array(zod.string()),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+})
+})),
+  "constraints": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['avoid', 'limit', 'require', 'keep']),
+  "subject": zod.string(),
+  "statement": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "confidence": zod.number().min(sendProducerChatResponseStateIntentConstraintsItemConfidenceMin).max(sendProducerChatResponseStateIntentConstraintsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched'])
+})),
+  "references": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['song', 'artist', 'recording', 'playlist', 'description']),
+  "label": zod.string(),
+  "aspect": zod.string().optional(),
+  "evidence": zod.string().optional()
+})),
+  "sectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "unresolvedTerms": zod.array(zod.string()),
+  "confidence": zod.number().min(sendProducerChatResponseStateIntentConfidenceMin).max(sendProducerChatResponseStateIntentConfidenceMax)
+}).describe('Layer 1 - what the user said and what was read out of it; every item quotes verbatim evidence.'),
+  "styleProfile": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(sendProducerChatResponseStateStyleProfileInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "dimensions": zod.record(zod.string(), zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(sendProducerChatResponseStateStyleProfileDimensionsConfidenceMin).max(sendProducerChatResponseStateStyleProfileDimensionsConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "exclusions": zod.array(zod.object({
+  "dimension": zod.string().optional(),
+  "value": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+})),
+  "conflicts": zod.array(zod.object({
+  "dimension": zod.string(),
+  "values": zod.array(zod.string())
+})),
+  "sources": zod.array(zod.string()),
+  "confidence": zod.number().min(sendProducerChatResponseStateStyleProfileConfidenceMin).max(sendProducerChatResponseStateStyleProfileConfidenceMax)
+}).describe('Layer 2 - independent dimensions of the musical world; only dimensions with evidence are present.'),
+  "clarifications": zod.array(zod.object({
+  "id": zod.string(),
+  "question": zod.string(),
+  "questionHe": zod.string().optional(),
+  "informationGain": zod.number().min(sendProducerChatResponseStateClarificationsItemInformationGainMin).max(sendProducerChatResponseStateClarificationsItemInformationGainMax),
+  "settlesDimensions": zod.array(zod.string()),
+  "trigger": zod.object({
+  "reason": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+}),
+  "options": zod.array(zod.object({
+  "id": zod.string(),
+  "label": zod.string(),
+  "labelHe": zod.string().optional(),
+  "description": zod.string(),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'))
+})),
+  "allowFreeText": zod.boolean()
+}).describe('A question worth asking now - its answer materially changes the arrangement.')),
+  "decisions": zod.array(zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "briefId": zod.string(),
+  "decisionId": zod.string(),
+  "decision": zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(sendProducerChatResponseStateDecisionsItemDecisionConfidenceMin).max(sendProducerChatResponseStateDecisionsItemDecisionConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).'),
+  "delta": zod.union([zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'),zod.null()]),
+  "supersededBy": zod.string().nullable(),
+  "createdAt": zod.coerce.date()
+}).describe('A durable chat decision row; superseded rows keep `supersededBy`.')),
+  "concepts": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(sendProducerChatResponseStateConceptsInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "briefId": zod.string(),
+  "briefDigestSha256": zod.string().regex(sendProducerChatResponseStateConceptsBriefDigestSha256RegExp),
+  "concepts": zod.array(zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "thesis": zod.string(),
+  "deltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.')),
+  "differsIn": zod.array(zod.string()),
+  "candidateStrategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "contrastsWith": zod.array(zod.object({
+  "conceptId": zod.string(),
+  "dimensions": zod.array(zod.string())
+}))
+}))
+}).describe('Exactly three deliberately different directions for the same brief, before any note.'),
+  "songModelVersion": zod.number().nullable(),
+  "planSource": zod.enum(['arrangement', 'derived', 'none']).describe('arrangement = the latest stored ArrangementPlan; derived = planned from the Song Model with the brief\'s hints; none = no Song Model yet'),
+  "createdAt": zod.coerce.date()
+}).describe('The current brief version with everything the studio shows around it.')
+})
+
+
+/**
+ * Older turns are fetched page by page through `/producer/turns/before/{turnId}`.
+ * @summary The persistent producer chat (latest page of 50, newest last)
+ */
+export const ListProducerTurnsParams = zod.object({
+  "projectId": zod.coerce.string()
+})
+
+export const listProducerTurnsResponseTurnsItemStructuredOneIntentDeltaInferencesItemConfidenceMin = 0;
+export const listProducerTurnsResponseTurnsItemStructuredOneIntentDeltaInferencesItemConfidenceMax = 1;
+
+
+
+export const listProducerTurnsResponseTurnsItemStructuredOneIntentDeltaConstraintsItemConfidenceMin = 0;
+export const listProducerTurnsResponseTurnsItemStructuredOneIntentDeltaConstraintsItemConfidenceMax = 1;
+
+export const listProducerTurnsResponseTurnsItemStructuredOneClarificationsItemInformationGainMin = 0;
+export const listProducerTurnsResponseTurnsItemStructuredOneClarificationsItemInformationGainMax = 1;
+
+export const listProducerTurnsResponseTurnsItemStructuredOneEditPlanInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+
+
+
+
+export const listProducerTurnsResponseTurnsItemStructuredOneEditPlanConfidenceMin = 0;
+export const listProducerTurnsResponseTurnsItemStructuredOneEditPlanConfidenceMax = 1;
+
+export const listProducerTurnsResponseTurnsItemStructuredOneExplanationConfidenceMin = 0;
+export const listProducerTurnsResponseTurnsItemStructuredOneExplanationConfidenceMax = 1;
+
+
+
+export const ListProducerTurnsResponse = zod.object({
+  "turns": zod.array(zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "briefId": zod.string().nullable(),
+  "role": zod.enum(['user', 'producer']),
+  "text": zod.string(),
+  "structured": zod.union([zod.object({
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede']),
+  "briefVersion": zod.number().nullable(),
+  "intentDelta": zod.object({
+  "inferences": zod.array(zod.object({
+  "id": zod.string(),
+  "slot": zod.enum(['mood', 'energy', 'density', 'era', 'tradition', 'genre_word', 'scene', 'instrument', 'ensemble_size', 'tempo_feel', 'tempo_bpm', 'production_feel', 'vocal_treatment']),
+  "value": zod.string(),
+  "confidence": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneIntentDeltaInferencesItemConfidenceMin).max(listProducerTurnsResponseTurnsItemStructuredOneIntentDeltaInferencesItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "evidence": zod.array(zod.string()),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+})
+})),
+  "constraints": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['avoid', 'limit', 'require', 'keep']),
+  "subject": zod.string(),
+  "statement": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "confidence": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneIntentDeltaConstraintsItemConfidenceMin).max(listProducerTurnsResponseTurnsItemStructuredOneIntentDeltaConstraintsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched'])
+})),
+  "references": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['song', 'artist', 'recording', 'playlist', 'description']),
+  "label": zod.string(),
+  "aspect": zod.string().optional(),
+  "evidence": zod.string().optional()
+})),
+  "unresolvedTerms": zod.array(zod.string())
+}).optional(),
+  "clarifications": zod.array(zod.object({
+  "id": zod.string(),
+  "question": zod.string(),
+  "questionHe": zod.string().optional(),
+  "informationGain": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneClarificationsItemInformationGainMin).max(listProducerTurnsResponseTurnsItemStructuredOneClarificationsItemInformationGainMax),
+  "settlesDimensions": zod.array(zod.string()),
+  "trigger": zod.object({
+  "reason": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+}),
+  "options": zod.array(zod.object({
+  "id": zod.string(),
+  "label": zod.string(),
+  "labelHe": zod.string().optional(),
+  "description": zod.string(),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'))
+})),
+  "allowFreeText": zod.boolean()
+}).describe('A question worth asking now - its answer materially changes the arrangement.')).optional(),
+  "answers": zod.array(zod.object({
+  "questionId": zod.string(),
+  "optionId": zod.string().optional(),
+  "freeText": zod.string().optional()
+})).optional(),
+  "editPlan": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(listProducerTurnsResponseTurnsItemStructuredOneEditPlanInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "rawText": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional()
+}),
+  "intent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "preserve": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "modify": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.')),
+  "rationale": zod.string(),
+  "evidence": zod.array(zod.string()),
+  "confidence": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneEditPlanConfidenceMin).max(listProducerTurnsResponseTurnsItemStructuredOneEditPlanConfidenceMax)
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+  "decisionIds": zod.array(zod.string()).optional(),
+  "explanation": zod.object({
+  "answered": zod.boolean(),
+  "answer": zod.string(),
+  "evidence": zod.array(zod.object({
+  "source": zod.string(),
+  "ref": zod.string(),
+  "detail": zod.string()
+})),
+  "confidence": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneExplanationConfidenceMin).max(listProducerTurnsResponseTurnsItemStructuredOneExplanationConfidenceMax)
+}).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
+  "planSource": zod.enum(['arrangement', 'derived', 'none']).optional(),
+  "intentMethod": zod.string().optional()
+}).describe('What a producer turn did to the musical state.'),zod.null()]),
+  "createdAt": zod.coerce.date()
+})),
+  "hasMore": zod.boolean(),
+  "oldestTurnId": zod.string().nullable()
+})
+
+
+/**
+ * @summary The page of 50 turns older than a turn (newest last)
+ */
+export const ListProducerTurnsBeforeParams = zod.object({
+  "projectId": zod.coerce.string(),
+  "turnId": zod.coerce.string()
+})
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneIntentDeltaInferencesItemConfidenceMin = 0;
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneIntentDeltaInferencesItemConfidenceMax = 1;
+
+
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneIntentDeltaConstraintsItemConfidenceMin = 0;
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneIntentDeltaConstraintsItemConfidenceMax = 1;
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneClarificationsItemInformationGainMin = 0;
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneClarificationsItemInformationGainMax = 1;
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneEditPlanInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+
+
+
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneEditPlanConfidenceMin = 0;
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneEditPlanConfidenceMax = 1;
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneExplanationConfidenceMin = 0;
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneExplanationConfidenceMax = 1;
+
+
+
+export const ListProducerTurnsBeforeResponse = zod.object({
+  "turns": zod.array(zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "briefId": zod.string().nullable(),
+  "role": zod.enum(['user', 'producer']),
+  "text": zod.string(),
+  "structured": zod.union([zod.object({
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede']),
+  "briefVersion": zod.number().nullable(),
+  "intentDelta": zod.object({
+  "inferences": zod.array(zod.object({
+  "id": zod.string(),
+  "slot": zod.enum(['mood', 'energy', 'density', 'era', 'tradition', 'genre_word', 'scene', 'instrument', 'ensemble_size', 'tempo_feel', 'tempo_bpm', 'production_feel', 'vocal_treatment']),
+  "value": zod.string(),
+  "confidence": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneIntentDeltaInferencesItemConfidenceMin).max(listProducerTurnsBeforeResponseTurnsItemStructuredOneIntentDeltaInferencesItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "evidence": zod.array(zod.string()),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+})
+})),
+  "constraints": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['avoid', 'limit', 'require', 'keep']),
+  "subject": zod.string(),
+  "statement": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "confidence": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneIntentDeltaConstraintsItemConfidenceMin).max(listProducerTurnsBeforeResponseTurnsItemStructuredOneIntentDeltaConstraintsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched'])
+})),
+  "references": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['song', 'artist', 'recording', 'playlist', 'description']),
+  "label": zod.string(),
+  "aspect": zod.string().optional(),
+  "evidence": zod.string().optional()
+})),
+  "unresolvedTerms": zod.array(zod.string())
+}).optional(),
+  "clarifications": zod.array(zod.object({
+  "id": zod.string(),
+  "question": zod.string(),
+  "questionHe": zod.string().optional(),
+  "informationGain": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneClarificationsItemInformationGainMin).max(listProducerTurnsBeforeResponseTurnsItemStructuredOneClarificationsItemInformationGainMax),
+  "settlesDimensions": zod.array(zod.string()),
+  "trigger": zod.object({
+  "reason": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+}),
+  "options": zod.array(zod.object({
+  "id": zod.string(),
+  "label": zod.string(),
+  "labelHe": zod.string().optional(),
+  "description": zod.string(),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'))
+})),
+  "allowFreeText": zod.boolean()
+}).describe('A question worth asking now - its answer materially changes the arrangement.')).optional(),
+  "answers": zod.array(zod.object({
+  "questionId": zod.string(),
+  "optionId": zod.string().optional(),
+  "freeText": zod.string().optional()
+})).optional(),
+  "editPlan": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(listProducerTurnsBeforeResponseTurnsItemStructuredOneEditPlanInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "rawText": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional()
+}),
+  "intent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "preserve": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "modify": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.')),
+  "rationale": zod.string(),
+  "evidence": zod.array(zod.string()),
+  "confidence": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneEditPlanConfidenceMin).max(listProducerTurnsBeforeResponseTurnsItemStructuredOneEditPlanConfidenceMax)
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+  "decisionIds": zod.array(zod.string()).optional(),
+  "explanation": zod.object({
+  "answered": zod.boolean(),
+  "answer": zod.string(),
+  "evidence": zod.array(zod.object({
+  "source": zod.string(),
+  "ref": zod.string(),
+  "detail": zod.string()
+})),
+  "confidence": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneExplanationConfidenceMin).max(listProducerTurnsBeforeResponseTurnsItemStructuredOneExplanationConfidenceMax)
+}).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
+  "planSource": zod.enum(['arrangement', 'derived', 'none']).optional(),
+  "intentMethod": zod.string().optional()
+}).describe('What a producer turn did to the musical state.'),zod.null()]),
+  "createdAt": zod.coerce.date()
+})),
+  "hasMore": zod.boolean(),
+  "oldestTurnId": zod.string().nullable()
+})
+
+
+/**
+ * The old decision is marked superseded (never deleted) and the brief is recompiled without it.
+ * @summary Replace a standing decision with a new one
+ */
+export const SupersedeProducerDecisionParams = zod.object({
+  "projectId": zod.coerce.string(),
+  "decisionId": zod.coerce.string()
+})
+
+export const supersedeProducerDecisionBodyDecisionStatementMax = 500;
+
+export const supersedeProducerDecisionBodyDecisionRationaleMax = 500;
+
+
+
+export const SupersedeProducerDecisionBody = zod.strictObject({
+  "decision": zod.strictObject({
+  "scope": zod.strictObject({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string().min(1).max(supersedeProducerDecisionBodyDecisionStatementMax),
+  "strength": zod.enum(['hard', 'soft']),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "rationale": zod.string().max(supersedeProducerDecisionBodyDecisionRationaleMax).optional()
+})
+})
+
+export const supersedeProducerDecisionResponseBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const supersedeProducerDecisionResponseBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const supersedeProducerDecisionResponseBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const supersedeProducerDecisionResponseBriefDimensionDecisionsItemConfidenceMin = 0;
+export const supersedeProducerDecisionResponseBriefDimensionDecisionsItemConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseBriefSectionIntentionsItemEnergyBiasConfidenceMin = 0;
+export const supersedeProducerDecisionResponseBriefSectionIntentionsItemEnergyBiasConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseBriefSectionIntentionsItemDensityBiasConfidenceMin = 0;
+export const supersedeProducerDecisionResponseBriefSectionIntentionsItemDensityBiasConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseBriefSectionIntentionsItemClimaxConfidenceMin = 0;
+export const supersedeProducerDecisionResponseBriefSectionIntentionsItemClimaxConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseBriefSectionIntentionsItemCharacterItemConfidenceMin = 0;
+export const supersedeProducerDecisionResponseBriefSectionIntentionsItemCharacterItemConfidenceMax = 1;
+
+
+export const supersedeProducerDecisionResponseBriefVocalSpaceConfidenceMin = 0;
+export const supersedeProducerDecisionResponseBriefVocalSpaceConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseBriefInstrumentationHierarchyItemConfidenceMin = 0;
+export const supersedeProducerDecisionResponseBriefInstrumentationHierarchyItemConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseBriefProductionAestheticDescriptorsItemConfidenceMin = 0;
+export const supersedeProducerDecisionResponseBriefProductionAestheticDescriptorsItemConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseBriefProducerDecisionsItemConfidenceMin = 0;
+export const supersedeProducerDecisionResponseBriefProducerDecisionsItemConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseBriefConfidenceMin = 0;
+export const supersedeProducerDecisionResponseBriefConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseClarificationsItemInformationGainMin = 0;
+export const supersedeProducerDecisionResponseClarificationsItemInformationGainMax = 1;
+
+export const supersedeProducerDecisionResponseEditPlanInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+
+
+
+
+export const supersedeProducerDecisionResponseEditPlanConfidenceMin = 0;
+export const supersedeProducerDecisionResponseEditPlanConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseExplanationConfidenceMin = 0;
+export const supersedeProducerDecisionResponseExplanationConfidenceMax = 1;
+
+
+export const supersedeProducerDecisionResponseStateBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const supersedeProducerDecisionResponseStateBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const supersedeProducerDecisionResponseStateBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const supersedeProducerDecisionResponseStateBriefDimensionDecisionsItemConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateBriefDimensionDecisionsItemConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseStateBriefSectionIntentionsItemClimaxConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateBriefSectionIntentionsItemClimaxConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMax = 1;
+
+
+export const supersedeProducerDecisionResponseStateBriefVocalSpaceConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateBriefVocalSpaceConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseStateBriefInstrumentationHierarchyItemConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateBriefInstrumentationHierarchyItemConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseStateBriefProductionAestheticDescriptorsItemConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateBriefProductionAestheticDescriptorsItemConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseStateBriefProducerDecisionsItemConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateBriefProducerDecisionsItemConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseStateBriefConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateBriefConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseStateIntentInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const supersedeProducerDecisionResponseStateIntentInferencesItemConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateIntentInferencesItemConfidenceMax = 1;
+
+
+
+export const supersedeProducerDecisionResponseStateIntentConstraintsItemConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateIntentConstraintsItemConfidenceMax = 1;
+
+
+export const supersedeProducerDecisionResponseStateIntentConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateIntentConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseStateStyleProfileInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const supersedeProducerDecisionResponseStateStyleProfileDimensionsConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateStyleProfileDimensionsConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseStateStyleProfileConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateStyleProfileConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseStateClarificationsItemInformationGainMin = 0;
+export const supersedeProducerDecisionResponseStateClarificationsItemInformationGainMax = 1;
+
+export const supersedeProducerDecisionResponseStateDecisionsItemDecisionConfidenceMin = 0;
+export const supersedeProducerDecisionResponseStateDecisionsItemDecisionConfidenceMax = 1;
+
+export const supersedeProducerDecisionResponseStateConceptsInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const supersedeProducerDecisionResponseStateConceptsBriefDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+export const SupersedeProducerDecisionResponse = zod.object({
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede']),
+  "turnId": zod.string().describe('The persisted user turn'),
+  "producerTurnId": zod.string(),
+  "understanding": zod.string().describe('The producer\'s reply - a reading of the request'),
+  "brief": zod.object({
+  "version": zod.enum(['1.0']),
+  "id": zod.string(),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(supersedeProducerDecisionResponseBriefInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "intentDigestSha256": zod.string().regex(supersedeProducerDecisionResponseBriefIntentDigestSha256RegExp),
+  "styleProfileDigestSha256": zod.string().regex(supersedeProducerDecisionResponseBriefStyleProfileDigestSha256RegExp),
+  "sectionNames": zod.array(zod.string()),
+  "dimensionDecisions": zod.array(zod.object({
+  "dimension": zod.string(),
+  "disposition": zod.enum(['adopt', 'modify', 'reject']),
+  "styleValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "briefValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "rationale": zod.string(),
+  "decidedBy": zod.enum(['style_profile', 'constraint', 'answer', 'producer']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseBriefDimensionDecisionsItemConfidenceMin).max(supersedeProducerDecisionResponseBriefDimensionDecisionsItemConfidenceMax)
+})),
+  "sectionIntentions": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'neutral']),
+  "energyBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseBriefSectionIntentionsItemEnergyBiasConfidenceMin).max(supersedeProducerDecisionResponseBriefSectionIntentionsItemEnergyBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "densityBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseBriefSectionIntentionsItemDensityBiasConfidenceMin).max(supersedeProducerDecisionResponseBriefSectionIntentionsItemDensityBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "instrumentation": zod.object({
+  "add": zod.array(zod.string()),
+  "remove": zod.array(zod.string()),
+  "feature": zod.array(zod.string())
+}).optional(),
+  "climax": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseBriefSectionIntentionsItemClimaxConfidenceMin).max(supersedeProducerDecisionResponseBriefSectionIntentionsItemClimaxConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "character": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseBriefSectionIntentionsItemCharacterItemConfidenceMin).max(supersedeProducerDecisionResponseBriefSectionIntentionsItemCharacterItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "decisionIds": zod.array(zod.string())
+})),
+  "unresolvedSectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "vocalSpace": zod.object({
+  "underLead": zod.enum(['open', 'moderate', 'tight']),
+  "gapFill": zod.enum(['none', 'sparse', 'active']),
+  "counterMelodyAllowed": zod.boolean(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseBriefVocalSpaceConfidenceMin).max(supersedeProducerDecisionResponseBriefVocalSpaceConfidenceMax),
+  "rationale": zod.string()
+}),
+  "instrumentation": zod.object({
+  "hierarchy": zod.array(zod.object({
+  "family": zod.string(),
+  "tier": zod.enum(['foundation', 'core', 'colour', 'feature']),
+  "rationale": zod.string(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseBriefInstrumentationHierarchyItemConfidenceMin).max(supersedeProducerDecisionResponseBriefInstrumentationHierarchyItemConfidenceMax)
+})),
+  "excludedFamilies": zod.array(zod.string())
+}),
+  "productionAesthetic": zod.object({
+  "descriptors": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseBriefProductionAestheticDescriptorsItemConfidenceMin).max(supersedeProducerDecisionResponseBriefProductionAestheticDescriptorsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "plannerAesthetic": zod.enum(['raw_band', 'polished_pop', 'cinematic', 'orchestral', 'electronic', 'intimate']).optional()
+}),
+  "producerDecisions": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseBriefProducerDecisionsItemConfidenceMin).max(supersedeProducerDecisionResponseBriefProducerDecisionsItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).')),
+  "openQuestionIds": zod.array(zod.string()),
+  "answeredQuestionIds": zod.array(zod.string()),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseBriefConfidenceMin).max(supersedeProducerDecisionResponseBriefConfidenceMax)
+}).describe('Layer 3 - how THIS song realises the style; the single source of truth the planners read.'),
+  "clarifications": zod.array(zod.object({
+  "id": zod.string(),
+  "question": zod.string(),
+  "questionHe": zod.string().optional(),
+  "informationGain": zod.number().min(supersedeProducerDecisionResponseClarificationsItemInformationGainMin).max(supersedeProducerDecisionResponseClarificationsItemInformationGainMax),
+  "settlesDimensions": zod.array(zod.string()),
+  "trigger": zod.object({
+  "reason": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+}),
+  "options": zod.array(zod.object({
+  "id": zod.string(),
+  "label": zod.string(),
+  "labelHe": zod.string().optional(),
+  "description": zod.string(),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'))
+})),
+  "allowFreeText": zod.boolean()
+}).describe('A question worth asking now - its answer materially changes the arrangement.')),
+  "editPlan": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(supersedeProducerDecisionResponseEditPlanInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "rawText": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional()
+}),
+  "intent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "preserve": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "modify": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.')),
+  "rationale": zod.string(),
+  "evidence": zod.array(zod.string()),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseEditPlanConfidenceMin).max(supersedeProducerDecisionResponseEditPlanConfidenceMax)
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+  "explanation": zod.object({
+  "answered": zod.boolean(),
+  "answer": zod.string(),
+  "evidence": zod.array(zod.object({
+  "source": zod.string(),
+  "ref": zod.string(),
+  "detail": zod.string()
+})),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseExplanationConfidenceMin).max(supersedeProducerDecisionResponseExplanationConfidenceMax)
+}).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
+  "state": zod.object({
+  "briefRecordId": zod.string(),
+  "version": zod.number().min(1),
+  "brief": zod.object({
+  "version": zod.enum(['1.0']),
+  "id": zod.string(),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(supersedeProducerDecisionResponseStateBriefInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "intentDigestSha256": zod.string().regex(supersedeProducerDecisionResponseStateBriefIntentDigestSha256RegExp),
+  "styleProfileDigestSha256": zod.string().regex(supersedeProducerDecisionResponseStateBriefStyleProfileDigestSha256RegExp),
+  "sectionNames": zod.array(zod.string()),
+  "dimensionDecisions": zod.array(zod.object({
+  "dimension": zod.string(),
+  "disposition": zod.enum(['adopt', 'modify', 'reject']),
+  "styleValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "briefValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "rationale": zod.string(),
+  "decidedBy": zod.enum(['style_profile', 'constraint', 'answer', 'producer']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateBriefDimensionDecisionsItemConfidenceMin).max(supersedeProducerDecisionResponseStateBriefDimensionDecisionsItemConfidenceMax)
+})),
+  "sectionIntentions": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'neutral']),
+  "energyBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMin).max(supersedeProducerDecisionResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "densityBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMin).max(supersedeProducerDecisionResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "instrumentation": zod.object({
+  "add": zod.array(zod.string()),
+  "remove": zod.array(zod.string()),
+  "feature": zod.array(zod.string())
+}).optional(),
+  "climax": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateBriefSectionIntentionsItemClimaxConfidenceMin).max(supersedeProducerDecisionResponseStateBriefSectionIntentionsItemClimaxConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "character": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMin).max(supersedeProducerDecisionResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "decisionIds": zod.array(zod.string())
+})),
+  "unresolvedSectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "vocalSpace": zod.object({
+  "underLead": zod.enum(['open', 'moderate', 'tight']),
+  "gapFill": zod.enum(['none', 'sparse', 'active']),
+  "counterMelodyAllowed": zod.boolean(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateBriefVocalSpaceConfidenceMin).max(supersedeProducerDecisionResponseStateBriefVocalSpaceConfidenceMax),
+  "rationale": zod.string()
+}),
+  "instrumentation": zod.object({
+  "hierarchy": zod.array(zod.object({
+  "family": zod.string(),
+  "tier": zod.enum(['foundation', 'core', 'colour', 'feature']),
+  "rationale": zod.string(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateBriefInstrumentationHierarchyItemConfidenceMin).max(supersedeProducerDecisionResponseStateBriefInstrumentationHierarchyItemConfidenceMax)
+})),
+  "excludedFamilies": zod.array(zod.string())
+}),
+  "productionAesthetic": zod.object({
+  "descriptors": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateBriefProductionAestheticDescriptorsItemConfidenceMin).max(supersedeProducerDecisionResponseStateBriefProductionAestheticDescriptorsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "plannerAesthetic": zod.enum(['raw_band', 'polished_pop', 'cinematic', 'orchestral', 'electronic', 'intimate']).optional()
+}),
+  "producerDecisions": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateBriefProducerDecisionsItemConfidenceMin).max(supersedeProducerDecisionResponseStateBriefProducerDecisionsItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).')),
+  "openQuestionIds": zod.array(zod.string()),
+  "answeredQuestionIds": zod.array(zod.string()),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateBriefConfidenceMin).max(supersedeProducerDecisionResponseStateBriefConfidenceMax)
+}).describe('Layer 3 - how THIS song realises the style; the single source of truth the planners read.'),
+  "intent": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(supersedeProducerDecisionResponseStateIntentInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "rawText": zod.string(),
+  "language": zod.enum(['he', 'en', 'mixed', 'unknown']),
+  "inferences": zod.array(zod.object({
+  "id": zod.string(),
+  "slot": zod.enum(['mood', 'energy', 'density', 'era', 'tradition', 'genre_word', 'scene', 'instrument', 'ensemble_size', 'tempo_feel', 'tempo_bpm', 'production_feel', 'vocal_treatment']),
+  "value": zod.string(),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateIntentInferencesItemConfidenceMin).max(supersedeProducerDecisionResponseStateIntentInferencesItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "evidence": zod.array(zod.string()),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+})
+})),
+  "constraints": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['avoid', 'limit', 'require', 'keep']),
+  "subject": zod.string(),
+  "statement": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateIntentConstraintsItemConfidenceMin).max(supersedeProducerDecisionResponseStateIntentConstraintsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched'])
+})),
+  "references": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['song', 'artist', 'recording', 'playlist', 'description']),
+  "label": zod.string(),
+  "aspect": zod.string().optional(),
+  "evidence": zod.string().optional()
+})),
+  "sectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "unresolvedTerms": zod.array(zod.string()),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateIntentConfidenceMin).max(supersedeProducerDecisionResponseStateIntentConfidenceMax)
+}).describe('Layer 1 - what the user said and what was read out of it; every item quotes verbatim evidence.'),
+  "styleProfile": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(supersedeProducerDecisionResponseStateStyleProfileInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "dimensions": zod.record(zod.string(), zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateStyleProfileDimensionsConfidenceMin).max(supersedeProducerDecisionResponseStateStyleProfileDimensionsConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "exclusions": zod.array(zod.object({
+  "dimension": zod.string().optional(),
+  "value": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+})),
+  "conflicts": zod.array(zod.object({
+  "dimension": zod.string(),
+  "values": zod.array(zod.string())
+})),
+  "sources": zod.array(zod.string()),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateStyleProfileConfidenceMin).max(supersedeProducerDecisionResponseStateStyleProfileConfidenceMax)
+}).describe('Layer 2 - independent dimensions of the musical world; only dimensions with evidence are present.'),
+  "clarifications": zod.array(zod.object({
+  "id": zod.string(),
+  "question": zod.string(),
+  "questionHe": zod.string().optional(),
+  "informationGain": zod.number().min(supersedeProducerDecisionResponseStateClarificationsItemInformationGainMin).max(supersedeProducerDecisionResponseStateClarificationsItemInformationGainMax),
+  "settlesDimensions": zod.array(zod.string()),
+  "trigger": zod.object({
+  "reason": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+}),
+  "options": zod.array(zod.object({
+  "id": zod.string(),
+  "label": zod.string(),
+  "labelHe": zod.string().optional(),
+  "description": zod.string(),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'))
+})),
+  "allowFreeText": zod.boolean()
+}).describe('A question worth asking now - its answer materially changes the arrangement.')),
+  "decisions": zod.array(zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "briefId": zod.string(),
+  "decisionId": zod.string(),
+  "decision": zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(supersedeProducerDecisionResponseStateDecisionsItemDecisionConfidenceMin).max(supersedeProducerDecisionResponseStateDecisionsItemDecisionConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).'),
+  "delta": zod.union([zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'),zod.null()]),
+  "supersededBy": zod.string().nullable(),
+  "createdAt": zod.coerce.date()
+}).describe('A durable chat decision row; superseded rows keep `supersededBy`.')),
+  "concepts": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(supersedeProducerDecisionResponseStateConceptsInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "briefId": zod.string(),
+  "briefDigestSha256": zod.string().regex(supersedeProducerDecisionResponseStateConceptsBriefDigestSha256RegExp),
+  "concepts": zod.array(zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "thesis": zod.string(),
+  "deltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.')),
+  "differsIn": zod.array(zod.string()),
+  "candidateStrategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "contrastsWith": zod.array(zod.object({
+  "conceptId": zod.string(),
+  "dimensions": zod.array(zod.string())
+}))
+}))
+}).describe('Exactly three deliberately different directions for the same brief, before any note.'),
+  "songModelVersion": zod.number().nullable(),
+  "planSource": zod.enum(['arrangement', 'derived', 'none']).describe('arrangement = the latest stored ArrangementPlan; derived = planned from the Song Model with the brief\'s hints; none = no Song Model yet'),
+  "createdAt": zod.coerce.date()
+}).describe('The current brief version with everything the studio shows around it.')
+})
+
+

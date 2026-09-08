@@ -118,3 +118,18 @@ test("a global density request biases every section and how many families stay a
   assert.ok(count(sparse) <= count(plain), "no section keeps more families than before");
   assert.ok(sparse.sections.every((s) => s.activeInstrumentFamilies.length >= 2), "the planner's floor still holds");
 });
+
+test("a global boundary ('not too busy' / 'לא עמוס מדי') thins the texture; it never thickens it", () => {
+  for (const text of ["not too busy", "לא עמוס מדי"]) {
+    const hints = briefPlannerHints(briefFor(text));
+    for (const name of ["Verse", "Chorus", "Final Chorus"]) {
+      assert.ok((hints.global.sectionDensityBias?.[name] ?? 1) < 1, `${text}: ${name} density multiplier < 1`);
+    }
+    assert.ok((hints.section.activeFamilyBias ?? 0) < 0, `${text}: fewer active families`);
+    assert.ok(hints.evidence.some((line) => /global density not dense/.test(line)), `${text}: the evidence names the boundary`);
+  }
+  // The positive request still goes the other way.
+  const dense = briefPlannerHints(briefFor("a dense, full texture"));
+  assert.ok((dense.global.sectionDensityBias?.Chorus ?? 1) > 1);
+  assert.ok((dense.section.activeFamilyBias ?? 0) > 0);
+});

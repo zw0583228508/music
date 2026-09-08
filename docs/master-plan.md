@@ -530,12 +530,116 @@ existing `ArrangementPlan`:
   yet measured against the benchmark's `candidateDiversity`. Nobody has
   listened to anything a brief produced.
 
-- **PR-U2** `conversational-intake-api` — Express routes + OpenAPI + orval for
-  intake (text → `UserIntent` → `StyleProfile` → `ClarificationQuestion`s →
-  `ProductionBrief`), persistent per-project producer chat with the brief and
-  its decisions as durable state, a studio panel showing the brief and asking
-  the clarifications. First real `IntentLanguageModel` (behind the existing
-  OpenAI integration), still validated against verbatim evidence.
+- **PR-U2** `conversational-intake-api` — implemented on branch
+  `pr-u2-producer-chat-api`, awaiting review and merge. The conversation is
+  the front door. The user writes freely (Hebrew or
+  English, references optional); the producer replies with a one-paragraph
+  reading built only from the extracted intent / profile / brief (every phrase
+  quotes the user's words or names a brief decision) and asks at most the two
+  `informationGain`-scored questions from PR-U1's `planClarifications`.
+
+  Persistence (Drizzle, additive only, pushed to the dev DB after a
+  table/column drift check showed nothing else would change):
+  `music_production_briefs` (one row per version: intent, styleProfile, brief,
+  the answers applied, digest; the current brief = highest version),
+  `music_producer_chat_turns` (append-only, `structured` = what the turn did:
+  intent delta / clarifications / answers / EditPlan / explanation / decision
+  ids / plan source / intent method), `music_producer_brief_decisions` (durable
+  chat decisions: the `BriefDelta` that produces them + the decision, marked
+  `supersededBy`, never deleted — named so because `music_producer_decisions`
+  is the PR-19 learning ledger).
+
+  API (`routes/producer.ts`, OpenAPI tag `producer`, orval regenerated):
+  `POST …/producer/intake`, `POST …/producer/answers`, `GET …/producer/brief`
+  (brief + intent + profile + open questions + decision rows + the three
+  concepts + `planSource`), `POST …/producer/chat`, `GET …/producer/turns`
+  (+ `/turns/before/{turnId}` — path-only paging because an operation with
+  both path and query params makes orval emit two `…Params` symbols),
+  `POST …/producer/decisions/{id}/supersede`. Ownership exactly like
+  `studio.ts` (session required; another owner's project is a 404).
+  `src/lib/producerChat.ts` holds the logic behind an injectable store, so the
+  unit suite runs without a database; `producerChatDbStore.ts` is Drizzle.
+
+  How a chat turn changes state: a question (`why…?` / `למה…?`) is answered by
+  `explainDecision` from the latest stored `ArrangementPlan`, or — when the
+  project has a Song Model but no arrangement — from a plan *derived* with
+  `applyBriefToPlans` + budget + transitions (`planSource: derived`); an edit
+  request runs `interpretEditRequest` and records its `briefDeltas` as durable
+  decisions — global ("no strings in the whole song") or scoped ("only in the
+  last chorus bring in strings" → `Chorus 2` on the live project). When
+  PR-U1 maps a phrase to `regenerate_part` with no delta but the text drew a
+  boundary (the owner's "in the whole song I don't like high strings"), the
+  constraint is kept **verbatim** as a hard decision scoped by the edit plan
+  (global on a whole-song marker) — never inflated to "remove strings". A
+  scoped edit whose section cannot be matched (no Song Model yet) becomes a
+  section wish on the intake, listed under `unresolvedSectionRequests` and
+  resolved the moment the song is analysed (tested). A global descriptor with
+  no boundary, section or instrument ("make it more intimate and acoustic")
+  refines the intake — cumulative text, re-extracted — because that changes
+  the world the profile describes. Every version is recompiled from its own
+  inputs; the brief carries every earlier decision and marks `supersedes`.
+  Nothing regenerates: the EditPlan is returned for PR-U5.
+
+  LLM: `openAiIntentModel.ts` implements `IntentLanguageModel` over the
+  workspace OpenAI integration (lazy import; JSON-only completion), selected
+  **only** when `PRODUCER_LLM=openai` *and* the integration env is present;
+  its output still passes PR-U1's verbatim-span validation and can never
+  remove a deterministic reading (tested with a fake client). The model
+  describes intent only; it writes no notes, plans or briefs.
+
+  Studio: `components/studio/producer-chat.tsx` in a right-hand drawer opened
+  from the workspace header on every tab (`project-workspace.tsx` otherwise
+  untouched). First run shows the intake prompt; afterwards the transcript
+  (kind / brief version / "deterministic reading" vs "read with a language
+  model" badges), one-click clarification chips (Hebrew labels when the user
+  wrote Hebrew), and the brief: adopted / modified / rejected dimensions with
+  provenance, per-section intentions, instrumentation + exclusions, vocal
+  space, standing decisions (chat-made ones marked), the three concepts.
+  Generated hooks only.
+
+  PR-U1 bug fixed on the way (`briefToPlanner.ts`): a global boundary such as
+  "not too busy" / "לא עמוס מדי" is compiled as a density decision carrying
+  the ruled-out value `dense`, and the planner hint read it as *dense* and
+  raised density ×1.15 + family bias +0.3 — the opposite of the request. Hints
+  now read the compiler's boundary verbs and invert; regression test added.
+
+  Tests: 13 in `producerChat.test.ts` + 3 in `openAiIntentModel.test.ts`,
+  suite `producer-chat` (`pnpm run test:producer-chat`; on Windows bundle with
+  esbuild and `node --test`). PR-U1 suite 64/64 (63 + the fix's test).
+  `pnpm run typecheck` green for all four projects.
+
+  **Live check** (`docs/evidence/producer-chat-live.json`, API on :5001
+  against Neon, dev-login): fresh Hebrew project — intake read *modern hasidic
+  ballad, slow, ruled out pop ("לא פופית מדי"), piano → keys, flute → winds*
+  and kept "בית ראשון כמעט ישיבתי" / "פזמון רחב יותר עם מיתרים" as unresolved
+  (no Song Model); "בכל השיר בלי מיתרים" → global hard rule, brief v2; "למה יש
+  כאן קלרינט?" → honest refusal (no plan); an English refinement → v3. Fresh
+  English project — "An old hasidic song … like a Yosef Karduner song" raised
+  exactly two questions (`world_of_tradition` 0.6, `reference_aspect` 0.45);
+  answering *communal singing* settled ensembleType / soundAesthetic / roomSize
+  in v2; a re-answer was refused (400); global rule → v3, the scoped edit was
+  kept as a section wish (v4), the owner's phrase kept verbatim (v5),
+  supersede marked the old row and recompiled without it (v6); turns paged
+  newest-last; anonymous 401, foreign project 404. The dev user's existing
+  project with a Song Model + orchestrator arrangement — the same Hebrew
+  intake resolved to *Verse* and *Chorus 2*; "no strings in the whole song"
+  then "only in the last chorus bring in strings" → global rule + `Chorus 2`
+  override (5 locks, 1 regeneration scope); "why is there a clarinet in the
+  chorus?" → *winds is not in this plan's palette (drums, bass, keys, vocals)*;
+  "why are the drums in the chorus?" → answered from the stored plan with 13
+  pieces of evidence (`planSource: arrangement`).
+
+  **What PR-U2 does NOT do, honestly.** No language model was exercised: no
+  OpenAI key is configured locally and `PRODUCER_LLM` is unset, so every live
+  reading was the deterministic PR-U1 extractor (`intent-extraction/v1`); the
+  adapter is tested only against a fake client. The extractor's limits show
+  in the evidence: "פסנתר וחליל" after a comma lands globally rather than on
+  the verse; "high strings" is not a vocabulary phrase, so the owner's rule is
+  kept as the verbatim boundary `no high — "don't like high"` with topic
+  `other`. Replies and explanations are English. Concepts are shown, not
+  choosable; references are labels, not fingerprints (PR-U4); nothing flows
+  into `createArrangementPlan` or regeneration (PR-U5); no producer memory
+  across projects (PR-U6). Nobody has listened to anything a brief produced.
 - **PR-U3** `dynamic-style-research-agent` — a `StyleKnowledgeSource` that
   researches the named world per project and returns candidate dimension
   values with provenance `researched`, confidence and `sourceRefs`; gated so
@@ -648,6 +752,7 @@ fabricate candidates when workers are offline.
 | Export / mix / master | `exportEngine.ts`, `exportAudioRoles.ts`, master profiles in export UI |
 | API contract | `lib/api-spec/openapi.yaml` (orval → `api-zod`, `api-client-react`) |
 | Producer intelligence contracts (Wave U) | `UserIntent` / `StyleProfile` / `ProductionBrief` / `ClarificationQuestion` / `ArrangementConcept` / `EditPlan` in `lib/db/src/schema/music-studio.ts`; pure modules in `artifacts/api-server/src/lib/producerIntelligence/` |
+| Producer conversation (Wave U, PR-U2) | `routes/producer.ts` (`/projects/{id}/producer/*`), `src/lib/producerChat.ts` (store-agnostic logic) + `producerChatDbStore.ts`; tables `music_production_briefs` / `music_producer_chat_turns` / `music_producer_brief_decisions`; studio drawer `components/studio/producer-chat.tsx` |
 
 Every PR below is an **extension** of the above unless noted.
 
