@@ -6,6 +6,7 @@ import {
   getListProjectSourcesQueryKey,
   ProjectSource,
   SongModelFieldStatusProperty,
+  SongModelMusicalMap,
   useCorrectProjectSongModel,
   useGetProjectSongModel,
   useListAnalysisJobs,
@@ -34,8 +35,10 @@ import {
   Server,
   ShieldAlert,
   ShieldCheck,
+  Sparkles,
   Timer,
   Trash2,
+  Waves,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -873,6 +876,8 @@ export function SongModelInspector({ projectId }: SongModelInspectorProps) {
         </CardContent>
       </Card>
 
+      <MusicalMapCard map={model.musicalMap} />
+
       <Tabs defaultValue="tempo" className="flex-1 flex flex-col min-h-0">
         <TabsList className="justify-start shrink-0 w-full rounded-none border-b bg-transparent h-12 p-0 overflow-x-auto overflow-y-hidden space-x-6">
           <TabsTrigger value="tempo" data-testid="tab-tempo" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-2 data-[state=active]:shadow-none">
@@ -1233,6 +1238,173 @@ function AnalysisActivity({
             )}
           </div>
         ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+function MapStatusBadge({ status }: { status: string }) {
+  const className =
+    status === "detected"
+      ? "border-sky-500/30 bg-sky-500/10 text-sky-700"
+      : status === "low_confidence"
+        ? "border-amber-500/30 bg-amber-500/10 text-amber-700"
+        : status === "conflicting"
+          ? "border-red-500/30 bg-red-500/10 text-red-700"
+          : "border-border bg-muted text-muted-foreground";
+  return (
+    <Badge variant="outline" className={cn("font-mono text-[9px] capitalize", className)}>
+      {status.replace("_", " ")}
+    </Badge>
+  );
+}
+
+/**
+ * Read-only view of the derived Canonical Song Model V2 musical map. Renders
+ * nothing for historical models that have no map yet.
+ */
+function MusicalMapCard({ map }: { map?: SongModelMusicalMap }) {
+  if (!map) return null;
+  const { harmony, melody, rhythm, energy, structure, styleFingerprint } = map;
+  const fp = styleFingerprint;
+  const climax = structure.climaxCandidates
+    .slice()
+    .sort((a, b) => b.score - a.score)[0];
+  const peakTension = harmony.tensionMap.reduce(
+    (max, seg) => Math.max(max, seg.tension),
+    0,
+  );
+
+  return (
+    <Card className="shadow-sm" data-testid="card-musical-map">
+      <CardHeader className="p-4 pb-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+            <Sparkles className="h-3.5 w-3.5" /> Musical Map
+            <span className="ml-1 font-mono text-[9px] text-muted-foreground/70">
+              v{map.version} · {new Date(map.derivedAt).toLocaleDateString()}
+            </span>
+          </CardTitle>
+        </div>
+      </CardHeader>
+      <CardContent className="p-4 pt-0 space-y-4">
+        {fp.status !== "not_available" && (
+          <div className="flex flex-wrap gap-1.5" data-testid="musical-map-fingerprint">
+            {fp.tempoBand && (
+              <Badge variant="outline" className="text-[10px] capitalize">{fp.tempoBand}</Badge>
+            )}
+            {fp.meterFamily && (
+              <Badge variant="outline" className="text-[10px] font-mono">{fp.meterFamily}</Badge>
+            )}
+            {fp.orchestrationSize && (
+              <Badge variant="outline" className="text-[10px] capitalize">{fp.orchestrationSize}</Badge>
+            )}
+            {fp.harmonicComplexity != null && (
+              <Badge variant="outline" className="text-[10px]">harm {Math.round(fp.harmonicComplexity * 100)}</Badge>
+            )}
+            {fp.rhythmicComplexity != null && (
+              <Badge variant="outline" className="text-[10px]">rhythm {Math.round(fp.rhythmicComplexity * 100)}</Badge>
+            )}
+            {fp.sectionContrast != null && (
+              <Badge variant="outline" className="text-[10px]">contrast {Math.round(fp.sectionContrast * 100)}</Badge>
+            )}
+            {fp.instrumentPaletteHints.map((hint) => (
+              <Badge key={hint} variant="outline" className="text-[10px] capitalize opacity-70">{hint}</Badge>
+            ))}
+          </div>
+        )}
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-md border bg-card p-2 space-y-1">
+            <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <Music2 className="h-3 w-3" /> Harmony <MapStatusBadge status={harmony.status} />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {harmony.cadences.length} cadence{harmony.cadences.length === 1 ? "" : "s"} ·
+              {" "}{harmony.harmonicRhythm.length} rhythm span{harmony.harmonicRhythm.length === 1 ? "" : "s"}
+            </p>
+            <p className="text-[10px] text-muted-foreground">peak tension {Math.round(peakTension * 100)}</p>
+          </div>
+
+          <div className="rounded-md border bg-card p-2 space-y-1">
+            <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <Activity className="h-3 w-3" /> Melody <MapStatusBadge status={melody.status} />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {melody.phrases.length} phrase{melody.phrases.length === 1 ? "" : "s"} ·
+              {" "}{melody.motifs.length} motif{melody.motifs.length === 1 ? "" : "s"}
+            </p>
+            {melody.range && (
+              <p className="text-[10px] text-muted-foreground font-mono">
+                {midiToNote(melody.range.lowPitch)}–{midiToNote(melody.range.highPitch)}
+              </p>
+            )}
+          </div>
+
+          <div className="rounded-md border bg-card p-2 space-y-1">
+            <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <Waves className="h-3 w-3" /> Rhythm <MapStatusBadge status={rhythm.status} />
+            </div>
+            <p className="text-xs text-muted-foreground capitalize">
+              {rhythm.grooveProfile.subdivision.replace("-", " ")}
+            </p>
+            {rhythm.grooveProfile.pushPullMs != null && (
+              <p className="text-[10px] text-muted-foreground">push/pull {rhythm.grooveProfile.pushPullMs.toFixed(1)} ms</p>
+            )}
+          </div>
+
+          <div className="rounded-md border bg-card p-2 space-y-1">
+            <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <BarChart2 className="h-3 w-3" /> Structure <MapStatusBadge status={structure.status} />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {structure.transitions.length} transition{structure.transitions.length === 1 ? "" : "s"}
+            </p>
+            {climax && (
+              <p className="text-[10px] text-muted-foreground">
+                climax ~bar {climax.atBar} ({Math.round(climax.score * 100)})
+              </p>
+            )}
+          </div>
+        </div>
+
+        {energy.status !== "not_available" && energy.energyCurve.length > 0 && (
+          <div className="h-12 w-full" data-testid="musical-map-energy">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart
+                data={energy.energyCurve.map((span) => ({ bar: span.startBar, energy: span.energy }))}
+                margin={{ top: 2, right: 0, left: 0, bottom: 0 }}
+              >
+                <Area
+                  type="stepAfter"
+                  dataKey="energy"
+                  stroke="hsl(var(--primary))"
+                  fill="hsl(var(--primary))"
+                  fillOpacity={0.15}
+                  strokeWidth={1.5}
+                  isAnimationActive={false}
+                />
+                <Tooltip
+                  content={({ active, payload }) =>
+                    active && payload && payload.length ? (
+                      <div className="rounded border bg-popover px-2 py-1 font-mono text-[10px] text-popover-foreground shadow-md">
+                        bar {payload[0].payload.bar}: {Number(payload[0].value).toFixed(2)}
+                      </div>
+                    ) : null
+                  }
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        {[harmony, melody, rhythm, energy, structure].some(
+          (group) => group.status === "not_available",
+        ) && (
+          <p className="text-[10px] text-muted-foreground italic">
+            Some layers are unavailable — the map only derives what the analysis evidence supports.
+          </p>
+        )}
       </CardContent>
     </Card>
   );

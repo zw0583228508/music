@@ -5,6 +5,12 @@ import type {
   SongModelValidationIssue,
 } from "@workspace/db";
 import { createCanonicalTimeline, type CanonicalCoordinate } from "./canonicalTimeline";
+import {
+  canonicalizeMusicalMapCoordinates,
+  deriveMusicalMap,
+  isMusicalMapStale,
+  validateMusicalMapShape,
+} from "./songMusicalMap";
 
 export const SONG_MODEL_CONTRACT_VERSION = "2.0" as const;
 export const LEGACY_SONG_MODEL_CONTRACT_VERSION = "1.0" as const;
@@ -137,6 +143,9 @@ export function canonicalizeSongModelCoordinates(model: SongModelData): SongMode
         end: timeline.coordinateAtSeconds(event.end),
       },
     })),
+    musicalMap: model.musicalMap
+      ? canonicalizeMusicalMapCoordinates(model.musicalMap, timeline)
+      : model.musicalMap,
     vocalEvidence: (core as Partial<SongModelData>).vocalEvidence,
     vocalIntelligence: (core as Partial<SongModelData>).vocalIntelligence,
   };
@@ -1284,7 +1293,18 @@ export function fuseProviderSongModels(
       decisions,
     },
   } as SongModelData;
-  return { accepted: true, model: canonicalizeSongModelCoordinates(model), decisions };
+  // Derive the V2 musical map from the canonicalized evidence, then canonicalize
+  // once more so the map's own bar spans and time ranges carry coordinates.
+  const canonicalModel = canonicalizeSongModelCoordinates(model);
+  const modelWithMap: SongModelData = {
+    ...canonicalModel,
+    musicalMap: deriveMusicalMap(canonicalModel),
+  };
+  return {
+    accepted: true,
+    model: canonicalizeSongModelCoordinates(modelWithMap),
+    decisions,
+  };
 }
 
 export function validateCanonicalSongModel(input: unknown): ValidationResult<SongModelData> {
@@ -1334,6 +1354,13 @@ export function validateCanonicalSongModel(input: unknown): ValidationResult<Son
       input,
     );
     validateV2Coordinates(input, issues);
+    if (input.musicalMap !== undefined) {
+      issues.push(
+        ...validateMusicalMapShape(input.musicalMap).map((mapIssue) => issue(
+          mapIssue.code, mapIssue.severity, mapIssue.path, mapIssue.message,
+        )),
+      );
+    }
   }
   if (!isRecord(input.validation) || !["accepted", "flagged"].includes(String(input.validation.status))) {
     issues.push(issue(
@@ -1441,10 +1468,18 @@ export function validateCanonicalSongModel(input: unknown): ValidationResult<Son
 }
 
 export function refreshSongModelValidation(model: SongModelData): SongModelData {
-  const coordinated = model.contractVersion === SONG_MODEL_CONTRACT_VERSION
-    ? canonicalizeSongModelCoordinates(model)
-    : model;
-  const validation = model.contractVersion === SONG_MODEL_CONTRACT_VERSION
+  let working = model;
+  if (
+    model.contractVersion === SONG_MODEL_CONTRACT_VERSION &&
+    isMusicalMapStale(model)
+  ) {
+    // Re-derive the musical map when the evidence it was built from has changed.
+    working = { ...model, musicalMap: deriveMusicalMap(model) };
+  }
+  const coordinated = working.contractVersion === SONG_MODEL_CONTRACT_VERSION
+    ? canonicalizeSongModelCoordinates(working)
+    : working;
+  const validation = working.contractVersion === SONG_MODEL_CONTRACT_VERSION
     ? validateCanonicalSongModel(coordinated)
     : validateSongModelCore(coordinated);
   return {

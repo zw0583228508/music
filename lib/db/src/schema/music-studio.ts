@@ -212,6 +212,165 @@ export type SongModelValidationIssue = {
   message: string;
   provider?: string;
 };
+
+/**
+ * Status of a derived musical-map group. Mirrors the discipline of
+ * `vocalIntelligence`: when the evidence needed to derive a group is missing the
+ * group is `not_available` with a `reason` and an empty payload — the map never
+ * fabricates musical structure.
+ */
+export type MusicalMapStatus =
+  | "detected"
+  | "low_confidence"
+  | "not_available"
+  | "conflicting";
+
+type MusicalMapGroup<T> = {
+  status: MusicalMapStatus;
+  reason: string | null;
+  /** Song Model fields this group was derived from, e.g. `["chords", "beats"]`. */
+  derivedFrom: string[];
+  /** Versioned derivation method id, e.g. `"harmonic-rhythm/v1"`. */
+  method: string;
+} & T;
+
+/** A bar-indexed span; canonical coordinates are filled in by canonicalization. */
+export type MusicalMapBarSpan = {
+  startBar: number;
+  endBar: number;
+  coordinates?: CanonicalTimeRange;
+};
+
+/**
+ * Canonical Song Model V2 musical map — the derived analytical layer the
+ * Arrangement Brain reads. Additive and optional: `contractVersion` stays
+ * `"2.0"` and every field here is derived deterministically from evidence
+ * already present on the model.
+ */
+export type SongModelMusicalMap = {
+  version: "2.1";
+  /** ISO timestamp the map was derived. */
+  derivedAt: string;
+  /** SHA-256 over the canonical evidence this map was derived from. */
+  inputsDigestSha256: string;
+
+  harmony: MusicalMapGroup<{
+    harmonicRhythm: Array<MusicalMapBarSpan & { chordsPerBar: number }>;
+    cadences: Array<{
+      id: string;
+      kind: "authentic" | "plagal" | "half" | "deceptive" | "none";
+      atBar: number;
+      strength: number;
+      chordIndexes: number[];
+      coordinates?: CanonicalTimeCoordinate;
+    }>;
+    tensionMap: Array<{
+      start: number;
+      end: number;
+      tension: number;
+      coordinates?: CanonicalTimeRange;
+    }>;
+  }>;
+
+  melody: MusicalMapGroup<{
+    phrases: Array<{
+      id: string;
+      start: number;
+      end: number;
+      noteIndexes: number[];
+      contour: "rising" | "falling" | "arch" | "valley" | "flat" | "mixed";
+      peakNoteIndex: number | null;
+      density: number;
+      range: { lowPitch: number; highPitch: number };
+      coordinates?: CanonicalTimeRange;
+    }>;
+    motifs: Array<{
+      id: string;
+      label: string;
+      intervalSignature: number[];
+      rhythmSignature: number[];
+      occurrences: Array<{
+        phraseId: string;
+        noteIndexes: number[];
+        transposition: number;
+        variation: "exact" | "transposed" | "rhythmic" | "developed";
+      }>;
+    }>;
+    melodicDensity: Array<MusicalMapBarSpan & { notesPerBar: number }>;
+    range: { lowPitch: number; highPitch: number } | null;
+    contour: Array<{ time: number; pitch: number }>;
+  }>;
+
+  rhythm: MusicalMapGroup<{
+    grooveProfile: {
+      subdivision:
+        | "straight-8"
+        | "straight-16"
+        | "swing-8"
+        | "swing-16"
+        | "triplet"
+        | "mixed";
+      swingRatio: number | null;
+      pushPullMs: number | null;
+    };
+    syncopation: Array<MusicalMapBarSpan & { syncopation: number }>;
+    subdivisions: Array<
+      MusicalMapBarSpan & {
+        dominant: "quarter" | "eighth" | "sixteenth" | "triplet";
+      }
+    >;
+    rhythmicDensity: Array<MusicalMapBarSpan & { onsetsPerBar: number }>;
+  }>;
+
+  energy: MusicalMapGroup<{
+    energyCurve: Array<MusicalMapBarSpan & { energy: number }>;
+    dynamicCurve: Array<MusicalMapBarSpan & { dynamic: number }>;
+    spectralDensity: Array<MusicalMapBarSpan & { density: number }>;
+  }>;
+
+  structure: MusicalMapGroup<{
+    subphrases: Array<
+      MusicalMapBarSpan & {
+        id: string;
+        sectionName: string;
+        role:
+          | "opening"
+          | "development"
+          | "response"
+          | "cadence"
+          | "pickup"
+          | "fill";
+      }
+    >;
+    transitions: Array<{
+      id: string;
+      fromSection: string;
+      toSection: string;
+      atBar: number;
+      energyDelta: number;
+      kind: "build" | "drop" | "continue" | "break";
+      coordinates?: CanonicalTimeCoordinate;
+    }>;
+    climaxCandidates: Array<{
+      id: string;
+      atBar: number;
+      score: number;
+      evidence: string[];
+      coordinates?: CanonicalTimeCoordinate;
+    }>;
+  }>;
+
+  styleFingerprint: MusicalMapGroup<{
+    tempoBand: "ballad" | "midtempo" | "uptempo" | "double-time" | null;
+    meterFamily: string | null;
+    harmonicComplexity: number | null;
+    rhythmicComplexity: number | null;
+    sectionContrast: number | null;
+    instrumentPaletteHints: string[];
+    orchestrationSize: "sparse" | "medium" | "dense" | null;
+  }>;
+};
+
 export type SongModelData = SongModelCore & {
   contractVersion: "1.0" | "2.0";
   /**
@@ -372,6 +531,11 @@ export type SongModelData = SongModelCore & {
     confidence: number;
     coordinates?: CanonicalTimeRange;
   }>;
+  /**
+   * Derived musical map (Canonical Song Model V2). Present on freshly analysed
+   * v2 models; absent on historical models until they are re-derived.
+   */
+  musicalMap?: SongModelMusicalMap;
   confidenceByField: Record<string, number>;
   providerProvenance: Array<{
     capability: string;

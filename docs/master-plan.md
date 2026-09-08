@@ -25,9 +25,19 @@ PerformanceData` — never an audio generator.
 | `pnpm install` | ✅ 537 pkgs |
 | `pnpm run typecheck` green | ✅ after `7070637` (music-critic v1/v2 finding union) |
 | `pnpm run build` (full) | ⚠️ `vite build` fails on Windows — rollup native binary stripped by `pnpm-workspace.yaml` overrides (Replit-linux-only). Dev server (`vite`) is unaffected. Deferred to PR-00. |
-| PostgreSQL | ⏳ user installing locally |
-| GitHub remote | ⏳ user creating repo |
-| Local run (api-server + music-studio) | ⏳ needs PR-00 harness (storage + auth shims) |
+| PostgreSQL | ⏳ user created a Neon project ("music ai") — connection string pending |
+| GitHub remote | ✅ `github.com/zw0583228508/music`; `main` + PR-00 (#1) + PR-01 (#2, draft) pushed |
+| Local run (api-server + music-studio) | ⏳ needs `DATABASE_URL` → `pnpm run db:push` |
+
+## PR progress
+
+- **PR-00** (#1) — local dev harness. Done, PR open.
+- **PR-01** (#2, draft) — Canonical Song Model V2. Core landed:
+  `SongModelData.musicalMap` type; `songMusicalMap.ts` (`deriveMusicalMap`,
+  digest/staleness, coordinate canonicalization, shape validation);
+  fusion + refresh wiring; `songMusicalMap.test.ts` (9). Regression:
+  `songModelValidation` (30) + `canonicalTimeline` (9) green. Remaining:
+  OpenAPI `SongModelMusicalMap` + orval regen; read-only studio panel.
 
 ## Environment findings (Windows local)
 

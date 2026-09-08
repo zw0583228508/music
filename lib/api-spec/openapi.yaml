@@ -1537,6 +1537,8 @@ components:
           $ref: "#/components/schemas/VocalEvidence"
         vocalIntelligence:
           $ref: "#/components/schemas/VocalIntelligence"
+        musicalMap:
+          $ref: "#/components/schemas/SongModelMusicalMap"
         lyrics:
           type: array
           items:
@@ -1678,6 +1680,274 @@ components:
           $ref: "#/components/schemas/CanonicalTimeCoordinate"
         end:
           $ref: "#/components/schemas/CanonicalTimeCoordinate"
+    MusicalMapStatus:
+      type: string
+      enum: [detected, low_confidence, not_available, conflicting]
+    MusicalMapBarSpan:
+      type: object
+      required: [startBar, endBar]
+      properties:
+        startBar: { type: number, minimum: 1 }
+        endBar: { type: number, minimum: 1 }
+        coordinates:
+          $ref: "#/components/schemas/CanonicalTimeRange"
+    SongModelMusicalMap:
+      type: object
+      description: >-
+        Derived musical map (Canonical Song Model V2). Additive and optional.
+        Each group is status-tagged and carries no derived payload when its
+        inputs are absent.
+      required: [version, derivedAt, inputsDigestSha256, harmony, melody, rhythm, energy, structure, styleFingerprint]
+      properties:
+        version: { type: string, enum: ["2.1"] }
+        derivedAt: { type: string, format: date-time }
+        inputsDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        harmony:
+          type: object
+          required: [status, reason, derivedFrom, method, harmonicRhythm, cadences, tensionMap]
+          properties:
+            status: { $ref: "#/components/schemas/MusicalMapStatus" }
+            reason: { type: string, nullable: true }
+            derivedFrom: { type: array, items: { type: string } }
+            method: { type: string }
+            harmonicRhythm:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/MusicalMapBarSpan"
+                  - type: object
+                    required: [chordsPerBar]
+                    properties:
+                      chordsPerBar: { type: number, minimum: 0 }
+            cadences:
+              type: array
+              items:
+                type: object
+                required: [id, kind, atBar, strength, chordIndexes]
+                properties:
+                  id: { type: string }
+                  kind: { type: string, enum: [authentic, plagal, half, deceptive, none] }
+                  atBar: { type: number, minimum: 1 }
+                  strength: { type: number, minimum: 0, maximum: 1 }
+                  chordIndexes: { type: array, items: { type: number } }
+                  coordinates: { $ref: "#/components/schemas/CanonicalTimeCoordinate" }
+            tensionMap:
+              type: array
+              items:
+                type: object
+                required: [start, end, tension]
+                properties:
+                  start: { type: number, minimum: 0 }
+                  end: { type: number, minimum: 0 }
+                  tension: { type: number, minimum: 0, maximum: 1 }
+                  coordinates: { $ref: "#/components/schemas/CanonicalTimeRange" }
+        melody:
+          type: object
+          required: [status, reason, derivedFrom, method, phrases, motifs, melodicDensity, range, contour]
+          properties:
+            status: { $ref: "#/components/schemas/MusicalMapStatus" }
+            reason: { type: string, nullable: true }
+            derivedFrom: { type: array, items: { type: string } }
+            method: { type: string }
+            phrases:
+              type: array
+              items:
+                type: object
+                required: [id, start, end, noteIndexes, contour, peakNoteIndex, density, range]
+                properties:
+                  id: { type: string }
+                  start: { type: number, minimum: 0 }
+                  end: { type: number, minimum: 0 }
+                  noteIndexes: { type: array, items: { type: number } }
+                  contour: { type: string, enum: [rising, falling, arch, valley, flat, mixed] }
+                  peakNoteIndex: { type: number, nullable: true }
+                  density: { type: number, minimum: 0 }
+                  range:
+                    type: object
+                    required: [lowPitch, highPitch]
+                    properties:
+                      lowPitch: { type: number }
+                      highPitch: { type: number }
+                  coordinates: { $ref: "#/components/schemas/CanonicalTimeRange" }
+            motifs:
+              type: array
+              items:
+                type: object
+                required: [id, label, intervalSignature, rhythmSignature, occurrences]
+                properties:
+                  id: { type: string }
+                  label: { type: string }
+                  intervalSignature: { type: array, items: { type: number } }
+                  rhythmSignature: { type: array, items: { type: number } }
+                  occurrences:
+                    type: array
+                    items:
+                      type: object
+                      required: [phraseId, noteIndexes, transposition, variation]
+                      properties:
+                        phraseId: { type: string }
+                        noteIndexes: { type: array, items: { type: number } }
+                        transposition: { type: number }
+                        variation: { type: string, enum: [exact, transposed, rhythmic, developed] }
+            melodicDensity:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/MusicalMapBarSpan"
+                  - type: object
+                    required: [notesPerBar]
+                    properties:
+                      notesPerBar: { type: number, minimum: 0 }
+            range:
+              type: object
+              nullable: true
+              required: [lowPitch, highPitch]
+              properties:
+                lowPitch: { type: number }
+                highPitch: { type: number }
+            contour:
+              type: array
+              items:
+                type: object
+                required: [time, pitch]
+                properties:
+                  time: { type: number, minimum: 0 }
+                  pitch: { type: number }
+        rhythm:
+          type: object
+          required: [status, reason, derivedFrom, method, grooveProfile, syncopation, subdivisions, rhythmicDensity]
+          properties:
+            status: { $ref: "#/components/schemas/MusicalMapStatus" }
+            reason: { type: string, nullable: true }
+            derivedFrom: { type: array, items: { type: string } }
+            method: { type: string }
+            grooveProfile:
+              type: object
+              required: [subdivision, swingRatio, pushPullMs]
+              properties:
+                subdivision: { type: string, enum: [straight-8, straight-16, swing-8, swing-16, triplet, mixed] }
+                swingRatio: { type: number, nullable: true }
+                pushPullMs: { type: number, nullable: true }
+            syncopation:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/MusicalMapBarSpan"
+                  - type: object
+                    required: [syncopation]
+                    properties:
+                      syncopation: { type: number, minimum: 0, maximum: 1 }
+            subdivisions:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/MusicalMapBarSpan"
+                  - type: object
+                    required: [dominant]
+                    properties:
+                      dominant: { type: string, enum: [quarter, eighth, sixteenth, triplet] }
+            rhythmicDensity:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/MusicalMapBarSpan"
+                  - type: object
+                    required: [onsetsPerBar]
+                    properties:
+                      onsetsPerBar: { type: number, minimum: 0 }
+        energy:
+          type: object
+          required: [status, reason, derivedFrom, method, energyCurve, dynamicCurve, spectralDensity]
+          properties:
+            status: { $ref: "#/components/schemas/MusicalMapStatus" }
+            reason: { type: string, nullable: true }
+            derivedFrom: { type: array, items: { type: string } }
+            method: { type: string }
+            energyCurve:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/MusicalMapBarSpan"
+                  - type: object
+                    required: [energy]
+                    properties:
+                      energy: { type: number, minimum: 0, maximum: 1 }
+            dynamicCurve:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/MusicalMapBarSpan"
+                  - type: object
+                    required: [dynamic]
+                    properties:
+                      dynamic: { type: number, minimum: 0, maximum: 1 }
+            spectralDensity:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/MusicalMapBarSpan"
+                  - type: object
+                    required: [density]
+                    properties:
+                      density: { type: number, minimum: 0, maximum: 1 }
+        structure:
+          type: object
+          required: [status, reason, derivedFrom, method, subphrases, transitions, climaxCandidates]
+          properties:
+            status: { $ref: "#/components/schemas/MusicalMapStatus" }
+            reason: { type: string, nullable: true }
+            derivedFrom: { type: array, items: { type: string } }
+            method: { type: string }
+            subphrases:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/MusicalMapBarSpan"
+                  - type: object
+                    required: [id, sectionName, role]
+                    properties:
+                      id: { type: string }
+                      sectionName: { type: string }
+                      role: { type: string, enum: [opening, development, response, cadence, pickup, fill] }
+            transitions:
+              type: array
+              items:
+                type: object
+                required: [id, fromSection, toSection, atBar, energyDelta, kind]
+                properties:
+                  id: { type: string }
+                  fromSection: { type: string }
+                  toSection: { type: string }
+                  atBar: { type: number, minimum: 1 }
+                  energyDelta: { type: number }
+                  kind: { type: string, enum: [build, drop, continue, break] }
+                  coordinates: { $ref: "#/components/schemas/CanonicalTimeCoordinate" }
+            climaxCandidates:
+              type: array
+              items:
+                type: object
+                required: [id, atBar, score, evidence]
+                properties:
+                  id: { type: string }
+                  atBar: { type: number, minimum: 1 }
+                  score: { type: number, minimum: 0, maximum: 1 }
+                  evidence: { type: array, items: { type: string } }
+                  coordinates: { $ref: "#/components/schemas/CanonicalTimeCoordinate" }
+        styleFingerprint:
+          type: object
+          required: [status, reason, derivedFrom, method, tempoBand, meterFamily, harmonicComplexity, rhythmicComplexity, sectionContrast, instrumentPaletteHints, orchestrationSize]
+          properties:
+            status: { $ref: "#/components/schemas/MusicalMapStatus" }
+            reason: { type: string, nullable: true }
+            derivedFrom: { type: array, items: { type: string } }
+            method: { type: string }
+            tempoBand: { type: string, nullable: true, enum: [ballad, midtempo, uptempo, double-time] }
+            meterFamily: { type: string, nullable: true }
+            harmonicComplexity: { type: number, nullable: true, minimum: 0, maximum: 1 }
+            rhythmicComplexity: { type: number, nullable: true, minimum: 0, maximum: 1 }
+            sectionContrast: { type: number, nullable: true, minimum: 0, maximum: 1 }
+            instrumentPaletteHints: { type: array, items: { type: string } }
+            orchestrationSize: { type: string, nullable: true, enum: [sparse, medium, dense] }
     SongModelValidation:
       type: object
       required: [status, issues]
