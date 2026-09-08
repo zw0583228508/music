@@ -5457,6 +5457,59 @@ export interface ArrangementPlan {
   generationPreference?: GenerationPreferenceSnapshot | null;
 }
 
+export type RenderCheckName = typeof RenderCheckName[keyof typeof RenderCheckName];
+
+
+export const RenderCheckName = {
+  audio_exists: 'audio_exists',
+  non_silent: 'non_silent',
+  correct_duration: 'correct_duration',
+  correct_sample_rate: 'correct_sample_rate',
+  no_clipping: 'no_clipping',
+  correct_instrument: 'correct_instrument',
+  correct_note_events: 'correct_note_events',
+  pitch_sensitivity: 'pitch_sensitivity',
+  expression_sensitivity: 'expression_sensitivity',
+  asset_identity: 'asset_identity',
+  renderer_identity: 'renderer_identity',
+} as const;
+
+export interface RenderCheck {
+  name: RenderCheckName;
+  passed: boolean;
+  detail: string;
+}
+
+export type RenderAttestationVersion = typeof RenderAttestationVersion[keyof typeof RenderAttestationVersion];
+
+
+export const RenderAttestationVersion = {
+  '10': '1.0',
+} as const;
+
+/**
+ * Full §26 render attestation for one stem (PR-13).
+ */
+export interface RenderAttestation {
+  version: RenderAttestationVersion;
+  renderer: string;
+  rendererVersion: string;
+  assetId: string;
+  trackId: string;
+  instrument: string;
+  family: string;
+  sampleRate: number;
+  bitDepth: number;
+  channels: number;
+  durationSeconds: number;
+  noteEventCount: number;
+  rmsDbfs: number;
+  truePeakDbfs: number;
+  sha256: string;
+  checks: RenderCheck[];
+  feasible: boolean;
+}
+
 export type CritiqueDimension = typeof CritiqueDimension[keyof typeof CritiqueDimension];
 
 
