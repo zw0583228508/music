@@ -64,3 +64,6 @@ attached_assets/
 
 # Private licensed-instrument manifests and render worker state (never commit)
 .local-vst3-assets/
+
+# Plugin hosts write this into the working directory
+debug.log
