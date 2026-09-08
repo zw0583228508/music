@@ -1,0 +1,19 @@
+{
+  "_evidence": {
+    "httpStatus": 200,
+    "kind": "live-health",
+    "ranAt": "2026-09-08",
+    "wallSeconds": 0.69
+  },
+  "checkpointSha256": "5dd1cbc7c606c512c21de0bcb04d4818bf0a3b873d7cbb9d1556d67d3b034de3",
+  "licenseStatus": "VERIFIED_PERMISSIVE",
+  "modelLoaded": false,
+  "modelRevision": "010aa0dcb0dfd27b24f0ad07b4dad63e8f9521cc",
+  "provider": "MAGENTA_RT2",
+  "role": "SYMBOLIC_TO_AUDIO_REALIZER",
+  "routingStatus": "SHADOW_ONLY",
+  "sourceRevision": "694a545e4ba0b88bf1150137b129582166d3e07f",
+  "status": "READY",
+  "variant": "MAGENTA_RT2_SMALL",
+  "weightsProvisioned": true
+}

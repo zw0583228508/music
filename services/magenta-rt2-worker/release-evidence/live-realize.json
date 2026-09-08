@@ -1,0 +1,49 @@
+{
+  "_evidence": {
+    "endpoint": "https://windot100--magenta-rt2-worker-endpoint.modal.run/realize",
+    "httpStatus": 200,
+    "kind": "live-realize",
+    "note": "Wall time includes cold model load and JIT on a fresh L4 container; generation itself took latencySeconds. The request notes are a C major arpeggio then triad; the WAV itself is retained on the artifact volume by its own SHA256, not in the repository.",
+    "ranAt": "2026-09-08",
+    "wallSeconds": 79.05
+  },
+  "artifactPath": "/var/lib/magenta-rt2/artifacts/realization-0c609f92dd90c7a8.wav",
+  "attribution": "Music realized with Magenta RealTime 2 (Google LLC), model weights licensed CC-BY-4.0.",
+  "audioBytes": 576044,
+  "audioSha256": "0c609f92dd90c7a8c308429bb1027cbc90cf8c325ebc80204837558ec78fd9c2",
+  "channels": 2,
+  "conditioning": {
+    "cfgNotes": 4.0,
+    "drumOnsets": 2,
+    "drumsMasked": false,
+    "freeArticulation": false,
+    "notesMasked": false,
+    "roll": {
+      "distinctPitches": 3,
+      "frames": 50,
+      "maskedPitches": 0,
+      "onsets": 6,
+      "pitchRange": [
+        60,
+        67
+      ],
+      "seconds": 2.0,
+      "soundingFrameSlots": 74
+    },
+    "style": "clean electric piano, dry"
+  },
+  "durationSeconds": 2.0,
+  "latencySeconds": 1.906,
+  "provenance": {
+    "checkpointSha256": "5dd1cbc7c606c512c21de0bcb04d4818bf0a3b873d7cbb9d1556d67d3b034de3",
+    "modelRevision": "010aa0dcb0dfd27b24f0ad07b4dad63e8f9521cc",
+    "provider": "MAGENTA_RT2",
+    "routingStatus": "SHADOW_ONLY",
+    "size": "mrt2_small",
+    "sourceRevision": "694a545e4ba0b88bf1150137b129582166d3e07f",
+    "treeSha256": "5df82db977fa20d024f1476844cdd887446c48ed41b9565603982d640af5eb52",
+    "variant": "MAGENTA_RT2_SMALL"
+  },
+  "realtimeFactor": 1.05,
+  "sampleRate": 48000
+}
