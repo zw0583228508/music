@@ -71,7 +71,22 @@ Regression baseline held every PR: `songModelValidation` (30), `canonicalTimelin
   (drop/raise octave, simplify, thin voicing). Wired into `createArrangementPlan`.
   OpenAPI + orval. Tests: `orchestrationBudget` (5).
 
-## Next: PR-07 — musical constraint engine v2
+- **PR-07** (#8) ✅ — Musical Constraint Engine V2: checkInstrumentConstraints() —
+  per-family physical checks (piano hand span, guitar/bass fret span, solo-string
+  triple stops, brass/wind/voice breath capacity + recovery, drum limbs + hi-hat
+  state, re-articulation, range, leaps) each with a concrete suggestedFix;
+  checkArrangementConstraints() aggregates per track. Tests: `musicalConstraints` (8).
+- **PR-08** (#9) ✅ — Transition Engine: deriveTransitionPlan() — per boundary
+  kind/strength/approachBars/harmonicApproach/vocalSafe + device selection
+  (drum_fill/cymbal_swell/bass_pickup/string_run/riser/build_up for builds;
+  cymbal_choke/break/breakdown for drops; stop/anticipation; turnaround;
+  ending_hit/ritardando) conditioned on energy, cadence, available instruments,
+  vocal activity. `ArrangementPlan.transitionPlan`. OpenAPI + orval. Tests: `transitionEngine` (5).
+
+**Wave 1 (core brain) complete.** Every `ArrangementPlan` now carries globalPlan +
+sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
+
+## Next: Wave 2 — PR-09 part-composer contract
 
 ## Environment findings (Windows local)
 
