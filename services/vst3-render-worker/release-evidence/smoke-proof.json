@@ -1,0 +1,64 @@
+{
+  "_evidence": {
+    "kind": "worker-smoke",
+    "note": "Copied from the git-ignored state directory. Contains identity strings and digests only; the plugin binary path is redacted at source.",
+    "workstation": "development (Windows 11, Cubase 14 licence)"
+  },
+  "assetId": "retrologue-2.4.0",
+  "attribution": "Rendered through the operator's licensed VST3 instrument via pedalboard (Spotify AB, GPL-3.0) running as a separate worker process.",
+  "audible": true,
+  "canonicalSensitivity": true,
+  "deterministic": false,
+  "fixture": {
+    "durationSeconds": 3.0,
+    "notes": 7,
+    "sampleRate": 48000,
+    "trackModelId": "p1--keys-harmonic_bed"
+  },
+  "identity": "VST3-Retrologue-f78a36a1-8be6f179@2.4.0",
+  "loadSeconds": 1.76,
+  "measurements": {
+    "activeFrameRatio": 0.9018,
+    "clippedSamples": 0,
+    "expectedFrames": 144000,
+    "frames": 144000,
+    "headroomGainDb": -0.5,
+    "loudRmsDbfs": -12.6,
+    "midiEvents": 17,
+    "peak": 0.944,
+    "rawPluginPeak": 1.0,
+    "rmsDbfs": -12.58,
+    "softRmsDbfs": -12.58,
+    "sparseRmsDbfs": -25.32,
+    "spectralCentroidHz": 3720.5,
+    "spectralCentroidHzOctaveUp": 4352.7
+  },
+  "nativeHostAttested": true,
+  "noClipping": true,
+  "outputSha256": "a5d6878c53835897d193284a3b97151cc89df3f1e9d72d039bcfbf9438a40305",
+  "passed": true,
+  "plugin": {
+    "binary_path": "<private>",
+    "binary_sha256": "ee5467001fe6590095d8745e5254ae240b8d5e6592b7eb0214690655243c7692",
+    "category": "Instrument|Synth",
+    "identifier": "VST3-Retrologue-f78a36a1-8be6f179",
+    "identity": "VST3-Retrologue-f78a36a1-8be6f179@2.4.0",
+    "is_instrument": true,
+    "manufacturer": "Steinberg Media Technologies",
+    "name": "Retrologue",
+    "state_sha256": "bd6b5c693df95eae3d4e95915381354b1782300bf234a9732675dc24ebd3ce99",
+    "version": "2.4.0"
+  },
+  "provider": "VST3",
+  "ranAt": "2026-09-08T19:34:44+00:00",
+  "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+  "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+  "runtimeIdentity": "pedalboard-0.9.24/python-3.11.9/windows-amd64",
+  "sha256": "ee5467001fe6590095d8745e5254ae240b8d5e6592b7eb0214690655243c7692",
+  "trackModelRendered": true,
+  "velocitySensitive": false,
+  "worker": {
+    "name": "VST3_RENDER_WORKER",
+    "version": "1.0.0"
+  }
+}

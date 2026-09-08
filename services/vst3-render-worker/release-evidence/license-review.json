@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "provider": "VST3_RENDER_WORKER",
+  "reviewedAt": "2026-09-08",
+  "findings": [
+    {
+      "claim": "pedalboard 0.9.24 can be used as the VST3 host.",
+      "verifiedBy": "pedalboard is GPL-3.0. It runs in this standalone worker process and is reached over HTTP; the platform's TypeScript never links or bundles it. services/music-ai-worker already ships pedalboard 0.9.24 under the same process boundary, so this introduces no new licence posture.",
+      "result": "CONFIRMED"
+    },
+    {
+      "claim": "The worker can host the operator's Steinberg instruments.",
+      "verifiedBy": "On the development workstation, pedalboard loads Retrologue 2.4.0 and Padshop as instruments when given the inner binary path (Contents/x86_64-win/*.vst3). Given the bundle folder it fails with 'unsupported plugin format or scan failure' -- the cause of the earlier assumption that a separate native host was required. HALion Sonic and Groove Agent SE were not probed beyond the bundle-path failure.",
+      "result": "CONFIRMED_ON_WORKSTATION"
+    },
+    {
+      "claim": "No plugin, preset or content library is redistributed.",
+      "verifiedBy": "The asset manifest lives in a git-ignored directory; responses expose asset id, identity string and SHA-256 digests only (host.asset_public_fields); /health replaces binary paths with '<private>'.",
+      "result": "ENFORCED_IN_CODE"
+    },
+    {
+      "claim": "Rendered audio may be used by the operator.",
+      "verifiedBy": "Plugin vendor EULAs govern bounced audio; the operator's licence, not the platform's, applies. The worker attaches an attribution string to every render and smoke proof and asserts no rights in the output.",
+      "result": "CONFIRMED_SUBJECT_TO_OPERATOR_LICENCE"
+    }
+  ],
+  "commercialUseAuthorized": true,
+  "commercialUseNote": "Subject to the operator's own plugin licences.",
+  "runtimeBuildAuthorized": true,
+  "routingStatus": "OPERATOR_LICENSED_LOCAL"
+}

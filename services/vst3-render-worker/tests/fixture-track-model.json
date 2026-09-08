@@ -1,0 +1,33 @@
+{
+  "id": "p1--keys-harmonic_bed",
+  "instrument": "keys",
+  "role": "harmonic_bed",
+  "instrumentDefinition": {
+    "id": "keys.grand_piano", "family": "keys", "maxVoices": 10, "polyphonic": true,
+    "playableRange": { "min": 21, "max": 108 },
+    "articulations": ["soft", "normal", "hard", "sustain", "staccato"],
+    "constraints": { "maxSimultaneousNotes": 10, "minNoteDuration": 0.03, "maxLeapSemitones": 24 }
+  },
+  "notes": [
+    { "id": "n1", "start": 0, "duration": 0.45, "pitch": 60, "velocity": 96 },
+    { "id": "n2", "start": 0.5, "duration": 0.45, "pitch": 64, "velocity": 90 },
+    { "id": "n3", "start": 1.0, "duration": 0.45, "pitch": 67, "velocity": 84 },
+    { "id": "n4", "start": 1.5, "duration": 1.25, "pitch": 60, "velocity": 100 },
+    { "id": "n5", "start": 1.5, "duration": 1.25, "pitch": 64, "velocity": 100 },
+    { "id": "n6", "start": 1.5, "duration": 1.25, "pitch": 67, "velocity": 100 },
+    { "id": "n7", "start": 2.0, "duration": 0.000001, "pitch": 72, "velocity": 1 }
+  ],
+  "cc": [
+    { "controller": 64, "time": 1.5, "value": 127 },
+    { "controller": 64, "time": 2.75, "value": 0 },
+    { "controller": 11, "time": 0, "value": 96.5 }
+  ],
+  "articulations": [
+    { "time": 0, "name": "normal", "intensity": 0.5 },
+    { "time": 1.5, "name": "sustain" }
+  ],
+  "automation": [],
+  "source": "REFERENCE_PART_COMPOSER_V1",
+  "version": 2.0,
+  "provenance": { "model": "REFERENCE_PART_COMPOSER_V1", "version": "1.0.0", "parameters": { "noteCount": 7, "Zeta": 1e-7, "big": 1.5e22 }, "parentIds": [], "createdBy": "arrangement-orchestrator/v1" }
+}

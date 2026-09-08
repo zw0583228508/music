@@ -61,3 +61,6 @@ Thumbs.db
 # Files uploaded into chat are local working inputs, not source files.
 # Already tracked assets remain tracked; new uploads must not block Git Sync.
 attached_assets/
+
+# Private licensed-instrument manifests and render worker state (never commit)
+.local-vst3-assets/

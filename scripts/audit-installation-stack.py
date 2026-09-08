@@ -126,6 +126,10 @@ ENDPOINT_KEYS = {
     "PYLOUDNORM": "PYLOUDNORM_API_URL", "SONGFORMER": "SONGFORMER_API_URL",
     "LADA_BAND": "LADA_BAND_API_URL", "ANYACCOMP": "ANYACCOMP_API_URL",
     "DIFFRHYTHM_2": "DIFFRHYTHM2_API_URL",
+    # Operator-local VST3 render worker (services/vst3-render-worker). The API
+    # reads PEDALBOARD_VST3_API_URL; on Replit it stays unset because the worker
+    # hosts the operator's own plugins on their own workstation.
+    "PEDALBOARD_VST3": "PEDALBOARD_VST3_API_URL",
     "CLAMP3": "CLAMP3_API_URL",
     "STABLE_AUDIO_3_SMALL_MUSIC": "STABLE_AUDIO_3_SMALL_MUSIC_API_URL",
     "STABLE_AUDIO_3_MEDIUM": "STABLE_AUDIO_3_MEDIUM_API_URL",

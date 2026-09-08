@@ -1131,6 +1131,39 @@
         "Base weights are a derivative of CC-BY-NC-4.0 training data; no commercial-corpus retrain evidence is retained, so commercial routing fails closed.",
         "No isolated research runtime build is authorised by the retained review."
       ]
+    },
+    {
+      "provider": "PEDALBOARD_VST3",
+      "category": "render",
+      "codeRepository": "services/vst3-render-worker (in-repo) + https://github.com/spotify/pedalboard",
+      "codeRevision": "pedalboard 0.9.24 (pedalboard_native.cp311-win_amd64.pyd sha256 b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391)",
+      "modelRepository": "OPERATOR_LICENSED: Steinberg Retrologue (Cubase 14 bundle) on the development workstation",
+      "modelRevision": "VST3-Retrologue-f78a36a1-8be6f179@2.4.0 (binary sha256 ee5467001fe6590095d8745e5254ae240b8d5e6592b7eb0214690655243c7692)",
+      "runtimeBuilt": true,
+      "sourcePinned": true,
+      "assetsDownloaded": true,
+      "assetsChecksummed": true,
+      "assetManifestCreated": true,
+      "volumeProvisioned": true,
+      "licenseStatus": "COMMERCIAL",
+      "secretsConfigured": true,
+      "realSmokePassed": true,
+      "nonSilentOutputVerified": true,
+      "endpointDeployed": true,
+      "endpointConfigured": true,
+      "healthReady": true,
+      "promotionRequired": false,
+      "promotionSigned": false,
+      "apiConnected": true,
+      "finalStatus": "READY",
+      "notes": [
+        "services/vst3-render-worker/release-evidence/smoke-proof.json and api-client-render.json.",
+        "Operator-licensed local worker: READY describes the development workstation where the smoke proof and the API-client render evidence were produced. Every operator runs make_manifest.py + smoke.py against their own instrument; the worker is unhealthy until that proof matches its manifest.",
+        "pedalboard (GPL-3.0) is the in-process VST3 host and runs in this separate worker process behind HTTP; the platform's TypeScript never links it. It loads Steinberg instruments only via the inner binary path (Contents/x86_64-win/*.vst3).",
+        "Byte-exact digest parity with the API's canonicalJson/performedMaterialSha256 is proven by Node-generated fixtures in tests/ and confirmed on the wire by api-client-render.json.",
+        "Recorded but not gated: the render is not bit-deterministic (analog-modelled oscillators) and Retrologue's default program ignores velocity. A -0.5 dB headroom gain is applied deterministically when the plugin peaks and is reported in every response."
+      ],
+      "blockers": []
     }
   ]
 }

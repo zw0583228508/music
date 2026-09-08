@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 2,
+  "provider": "VST3_RENDER_WORKER",
+  "host_library": "pedalboard",
+  "host_version": "0.9.24",
+  "host_license": "GPL-3.0",
+  "host_license_reference": "https://github.com/spotify/pedalboard/blob/master/LICENSE",
+  "host_boundary": "pedalboard runs inside this standalone Python worker process and is reached by the platform over HTTP. The platform's TypeScript code does not link, import or bundle it. services/music-ai-worker already depends on the same pedalboard version under the same boundary.",
+  "plugin_licenses": "OPERATOR_OWNED",
+  "plugin_license_note": "Every VST3 instrument this worker loads is licensed to the operator under its vendor's EULA (for example Steinberg's, activated through Steinberg Activation Manager). The worker never copies, bundles, uploads or redistributes plugin binaries, presets or content libraries; responses carry identity strings, digests and rendered audio only.",
+  "rendered_output_rights": "Rendered audio is the operator's output under the plugin vendor's EULA terms for rendered/bounced audio; the platform asserts no rights in it.",
+  "commercial_use_permitted": true,
+  "commercial_use_note": "Subject to the operator's own plugin licences. The worker adds no restriction and removes none.",
+  "redistribution_of_plugins_permitted": false,
+  "environment_values_are_authorization_evidence": false,
+  "attribution_required": true,
+  "attribution_text": "Rendered through the operator's licensed VST3 instrument via pedalboard (Spotify AB, GPL-3.0) running as a separate worker process.",
+  "evidence_file": "release-evidence/license-review.json"
+}
