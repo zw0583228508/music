@@ -24,6 +24,29 @@ import { deriveMusicalMap, isMusicalMapStale } from "./songMusicalMap";
 export const GLOBAL_ARRANGEMENT_PLAN_VERSION = "1.0" as const;
 const METHOD = "global-arrangement-planner/v1";
 
+/**
+ * Optional biases from a ProductionBrief (Wave U). Every hint nudges a value
+ * the planner derives from the musical map; none replaces the derivation, and
+ * a hint that the evidence cannot support (a climax section with no climax
+ * candidate, an aesthetic the palette cannot carry) is ignored.
+ */
+export type GlobalPlannerHints = {
+  /** Multiplier on the analysed section energy, keyed by section name (1 = unchanged). */
+  sectionEnergyBias?: Record<string, number>;
+  /** Multiplier on the analysed section density, keyed by section name (1 = unchanged). */
+  sectionDensityBias?: Record<string, number>;
+  /** Families to add to the palette (colour tier unless already present). */
+  paletteAdd?: string[];
+  /** Families to drop from the palette. */
+  paletteRemove?: string[];
+  /** Section whose climax candidate is preferred, when it has one. */
+  climaxSectionName?: string;
+  /** Honoured only when the resulting palette can carry it. */
+  productionAesthetic?: GlobalArrangementPlan["productionAesthetic"];
+  /** Honoured only when the map's rhythm evidence does not contradict it. */
+  grooveStrategy?: GlobalArrangementPlan["grooveStrategy"];
+};
+
 const clamp01 = (value: number): number =>
   value < 0 ? 0 : value > 1 ? 1 : value;
 const round3 = (value: number): number => Math.round(value * 1000) / 1000;
@@ -31,6 +54,11 @@ const mean = (values: number[]): number =>
   values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
 
 type SectionRole = GlobalArrangementPlan["sectionTargets"][number]["role"];
+
+/** The section function a section name implies ("Final Chorus" → "chorus"). */
+export function classifySectionFunction(name: string): SectionRole {
+  return classifySection(name);
+}
 
 function classifySection(name: string): SectionRole {
   const n = name.toLowerCase();
@@ -113,9 +141,12 @@ const ROLE_TIER: Record<string, number> = {
 
 function buildPalette(
   map: SongModelMusicalMap,
+  hints: GlobalPlannerHints = {},
 ): GlobalArrangementPlan["instrumentPalette"] {
   const fp = map.styleFingerprint;
   const roles = new Set(fp.instrumentPaletteHints);
+  const requested = new Set(hints.paletteAdd ?? []);
+  const removed = new Set(hints.paletteRemove ?? []);
   // The observed stems describe the *source*, not the arrangement to write. A
   // vocal-only or vocal+piano import is exactly the case where the studio has
   // to supply a band, so seed one whenever no instrumental family is present.
@@ -135,6 +166,10 @@ function buildPalette(
     roles.add("strings");
     roles.add("percussion");
   }
+  // Brief hints bias the palette after the evidence-driven seeding: requested
+  // families join at their conventional tier; removed families leave.
+  for (const role of requested) roles.add(role);
+  for (const role of removed) roles.delete(role);
   const ordered = [...roles].sort((a, b) => {
     const tierA = ROLE_TIER[a] ?? 3;
     const tierB = ROLE_TIER[b] ?? 3;
@@ -145,24 +180,37 @@ function buildPalette(
     priority: index + 1,
     rationale: fp.instrumentPaletteHints.includes(role)
       ? "present in the source stems"
-      : `added for a ${fp.orchestrationSize ?? "medium"} arrangement`,
+      : requested.has(role)
+        ? "requested in the production brief"
+        : `added for a ${fp.orchestrationSize ?? "medium"} arrangement`,
   }));
 }
 
 function pickGroove(
   map: SongModelMusicalMap,
+  hint?: GlobalArrangementPlan["grooveStrategy"],
 ): GlobalArrangementPlan["grooveStrategy"] {
   const groove = map.rhythm.grooveProfile;
-  if (groove.subdivision === "triplet" || groove.subdivision === "swing-8" || groove.subdivision === "swing-16") {
-    return "swing";
-  }
+  const swung = groove.subdivision === "triplet" || groove.subdivision === "swing-8" || groove.subdivision === "swing-16";
   const syncMean = mean(map.rhythm.syncopation.map((s) => s.syncopation));
-  if (map.styleFingerprint.tempoBand === "ballad") return "rubato";
-  if (syncMean > 0.45) return "syncopated";
-  if ((map.styleFingerprint.tempoBand === "uptempo" || map.styleFingerprint.tempoBand === "double-time") && syncMean < 0.25) {
-    return "four_on_floor";
-  }
-  return "steady_pulse";
+  const derived: GlobalArrangementPlan["grooveStrategy"] = swung
+    ? "swing"
+    : map.styleFingerprint.tempoBand === "ballad"
+      ? "rubato"
+      : syncMean > 0.45
+        ? "syncopated"
+        : (map.styleFingerprint.tempoBand === "uptempo" || map.styleFingerprint.tempoBand === "double-time") && syncMean < 0.25
+          ? "four_on_floor"
+          : "steady_pulse";
+  if (!hint || hint === derived) return derived;
+  // A stated groove is the arrangement's target, not the source's description,
+  // so it is honoured unless detected rhythm evidence flatly contradicts it:
+  // a straight, un-syncopated source cannot be read as already swinging, and a
+  // detected swing feel is not thrown away for a four-on-the-floor grid.
+  const contradicts =
+    (hint === "swing" && map.rhythm.status === "detected" && !swung && syncMean < 0.15) ||
+    (hint === "four_on_floor" && map.rhythm.status === "detected" && swung);
+  return contradicts ? derived : hint;
 }
 
 function pickOrchestration(
@@ -210,38 +258,73 @@ function pickContrast(
 function pickAesthetic(
   map: SongModelMusicalMap,
   style: string,
+  palette: GlobalArrangementPlan["instrumentPalette"],
+  hint?: GlobalArrangementPlan["productionAesthetic"],
 ): GlobalArrangementPlan["productionAesthetic"] {
   const fp = map.styleFingerprint;
   const hints = new Set(fp.instrumentPaletteHints);
-  if (style === "orchestral" || style === "cinematic") return hints.has("drums") ? "cinematic" : "orchestral";
-  if (style === "electronic" || style === "dance") return "electronic";
-  if (fp.orchestrationSize === "sparse" || style === "ballad" || style === "acoustic") return "intimate";
-  if ((fp.harmonicComplexity ?? 0) < 0.35 && (fp.rhythmicComplexity ?? 0) < 0.45) return "raw_band";
-  return "polished_pop";
+  const derived: GlobalArrangementPlan["productionAesthetic"] =
+    style === "orchestral" || style === "cinematic"
+      ? hints.has("drums") ? "cinematic" : "orchestral"
+      : style === "electronic" || style === "dance"
+        ? "electronic"
+        : fp.orchestrationSize === "sparse" || style === "ballad" || style === "acoustic"
+          ? "intimate"
+          : (fp.harmonicComplexity ?? 0) < 0.35 && (fp.rhythmicComplexity ?? 0) < 0.45
+            ? "raw_band"
+            : "polished_pop";
+  if (!hint || hint === derived) return derived;
+  // A stated aesthetic is honoured only when the palette can actually carry
+  // it; the palette itself may already have been widened by the same brief.
+  const families = new Set(palette.map((p) => p.role));
+  const carriers: Record<GlobalArrangementPlan["productionAesthetic"], string[]> = {
+    cinematic: ["strings", "pads", "brass", "winds"],
+    orchestral: ["strings", "brass", "winds"],
+    electronic: ["synth", "synths", "pads", "fx"],
+    intimate: [],
+    raw_band: ["drums", "guitar", "bass"],
+    polished_pop: [],
+  };
+  const required = carriers[hint];
+  return required.length === 0 || required.some((f) => families.has(f)) ? hint : derived;
 }
 
 // ---------------------------------------------------------------------------
 // Assembly
 // ---------------------------------------------------------------------------
 
-export function globalPlanInputsDigest(songModel: SongModelData): string {
+const hasHints = (hints: GlobalPlannerHints | undefined): hints is GlobalPlannerHints =>
+  !!hints && Object.values(hints).some((v) => v !== undefined &&
+    (Array.isArray(v) ? v.length > 0 : typeof v === "object" ? Object.keys(v).length > 0 : true));
+
+/**
+ * Digest of everything the plan depends on. Brief hints are part of it only
+ * when present, so plans derived without hints keep their historical digests.
+ */
+export function globalPlanInputsDigest(
+  songModel: SongModelData,
+  hints?: GlobalPlannerHints,
+): string {
   return createHash("sha256")
     .update(JSON.stringify({
       sections: songModel.sections,
       musicalMap: songModel.musicalMap ?? null,
       reconciliation: songModel.reconciliation ?? null,
+      ...(hasHints(hints) ? { hints } : {}),
     }))
     .digest("hex");
 }
 
 /**
  * Derive the whole-song arrangement plan. `now` is metadata only and is
- * excluded from `inputsDigestSha256`.
+ * excluded from `inputsDigestSha256`. `hints` (from a ProductionBrief) bias
+ * the derived values; they never replace the derivation.
  */
 export function deriveGlobalArrangementPlan(
   songModel: SongModelData,
-  options: { now?: Date } = {},
+  options: { now?: Date; hints?: GlobalPlannerHints } = {},
 ): GlobalArrangementPlan {
+  const hints = options.hints ?? {};
   const map =
     songModel.musicalMap && !isMusicalMapStale(songModel)
       ? songModel.musicalMap
@@ -278,7 +361,9 @@ export function deriveGlobalArrangementPlan(
         start: barSeconds(section.startBar),
         end: barSeconds(section.endBar + 1),
       });
-      const energy = round3(clamp01(energyFromMap ?? section.energy ?? 0));
+      const energyBias = hints.sectionEnergyBias?.[section.name] ?? 1;
+      const densityBias = hints.sectionDensityBias?.[section.name] ?? 1;
+      const energy = round3(clamp01((energyFromMap ?? section.energy ?? 0) * energyBias));
       const previous = index > 0
         ? {
             energy: round3(clamp01(sections[index - 1].energy ?? 0)),
@@ -297,7 +382,7 @@ export function deriveGlobalArrangementPlan(
         startBar: section.startBar,
         endBar: section.endBar,
         energy,
-        density: round3(clamp01(density ?? energy)),
+        density: round3(clamp01((density ?? energy) * densityBias)),
         tension: round3(clamp01(tension ?? energy * 0.6)),
         role,
         noveltyVsPrevious: novelty,
@@ -319,12 +404,24 @@ export function deriveGlobalArrangementPlan(
       energy: target?.energy ?? round3(clamp01(candidate.score)),
     };
   };
+  // A brief's preferred climax section re-ranks the map's own candidates; it
+  // cannot conjure a climax where the evidence found none.
+  const preferredClimaxSection = hints.climaxSectionName
+    ? sections.find((s) => s.name === hints.climaxSectionName)
+    : undefined;
+  const climaxBonus = (candidate: { atBar: number }): number =>
+    preferredClimaxSection &&
+    candidate.atBar >= preferredClimaxSection.startBar &&
+    candidate.atBar <= preferredClimaxSection.endBar
+      ? 0.25
+      : 0;
   const rankedClimaxes = map.structure.climaxCandidates
     .slice()
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => (b.score + climaxBonus(b)) - (a.score + climaxBonus(a)));
 
   const { style, substyle } = pickStyle(map);
   const energies = sectionTargets.map((t) => t.energy);
+  const instrumentPalette = buildPalette(map, hints);
 
   const groupConfidence = (status: string): number =>
     status === "detected" ? 1 : status === "low_confidence" ? 0.5 : 0;
@@ -343,22 +440,22 @@ export function deriveGlobalArrangementPlan(
   return {
     version: GLOBAL_ARRANGEMENT_PLAN_VERSION,
     derivedAt: (options.now ?? new Date()).toISOString(),
-    inputsDigestSha256: globalPlanInputsDigest(songModel),
+    inputsDigestSha256: globalPlanInputsDigest(songModel, options.hints),
     method: METHOD,
     confidence,
     style,
     substyle,
-    instrumentPalette: buildPalette(map),
+    instrumentPalette,
     sectionTargets,
     climax: climaxOf(rankedClimaxes[0]),
     secondaryClimax: climaxOf(rankedClimaxes[1]),
-    grooveStrategy: pickGroove(map),
+    grooveStrategy: pickGroove(map, hints.grooveStrategy),
     orchestrationStrategy: pickOrchestration(energies),
     motifStrategy: pickMotifStrategy(map),
     contrastStrategy: pickContrast(map),
     harmonicComplexity: round3(clamp01(map.styleFingerprint.harmonicComplexity ?? 0.3)),
     rhythmicComplexity: round3(clamp01(map.styleFingerprint.rhythmicComplexity ?? 0.3)),
-    productionAesthetic: pickAesthetic(map, style),
+    productionAesthetic: pickAesthetic(map, style, instrumentPalette, hints.productionAesthetic),
   };
 }
 
@@ -366,7 +463,8 @@ export function deriveGlobalArrangementPlan(
 export function isGlobalPlanStale(
   songModel: SongModelData,
   plan: GlobalArrangementPlan | undefined,
+  hints?: GlobalPlannerHints,
 ): boolean {
   if (!plan || plan.version !== GLOBAL_ARRANGEMENT_PLAN_VERSION) return true;
-  return plan.inputsDigestSha256 !== globalPlanInputsDigest(songModel);
+  return plan.inputsDigestSha256 !== globalPlanInputsDigest(songModel, hints);
 }
