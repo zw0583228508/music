@@ -22,6 +22,7 @@ def main() -> None:
     parser.add_argument("--preset", help="optional .vstpreset to load")
     parser.add_argument("--families", help="comma-separated routing hint, e.g. drums or keys,synth")
     parser.add_argument("--roles", help="comma-separated routing hint, e.g. GROOVE or PAD,HARMONIC_BED")
+    parser.add_argument("--character", help="comma-separated character words for sound selection, e.g. analog,warm or granular,pad")
     parser.add_argument("--append", action="store_true",
                         help="add this asset to an existing manifest's `assets` (keeps the existing default)")
     parser.add_argument("--out", default=".local-vst3-assets/asset-manifest.json")
@@ -53,6 +54,8 @@ def main() -> None:
         asset["families"] = [f.strip() for f in args.families.split(",") if f.strip()]
     if args.roles:
         asset["roles"] = [r.strip() for r in args.roles.split(",") if r.strip()]
+    if args.character:
+        asset["character"] = [c.strip().lower() for c in args.character.split(",") if c.strip()]
     out.parent.mkdir(parents=True, exist_ok=True)
     if args.append and out.is_file():
         manifest = json.loads(out.read_text(encoding="utf-8"))

@@ -3967,7 +3967,10 @@ components:
         projectId: { type: string }
         type:
           type: string
-          enum: [SOURCE, NORMALIZED_AUDIO, STEM, ANALYSIS, SONG_MODEL, ARRANGEMENT_PLAN, TRACK_MODEL, MIDI, AUDIO_TRACK, QUALITY_REPORT, MIX, MASTER, EXPORT]
+          # Every type the export job persists (ExportFile.type) must be listed
+          # here too, or the artifacts list fails response validation as soon
+          # as one export completes (PR-24 found this with PREMASTER).
+          enum: [SOURCE, NORMALIZED_AUDIO, STEM, ANALYSIS, SONG_MODEL, ARRANGEMENT_PLAN, TRACK_MODEL, MIDI, AUDIO_TRACK, QUALITY_REPORT, MIX, PREMASTER, MASTER, METADATA, BUNDLE, EXPORT]
         label: { type: string }
         version: { type: number }
         size: { type: string }

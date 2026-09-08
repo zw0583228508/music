@@ -7,6 +7,7 @@ import type {
   StyleSpec,
   TrackModel,
   MixMasterControls,
+  StyleProfile,
 } from "@workspace/db";
 import {
   MasterEngine,
@@ -21,7 +22,8 @@ import {
   renderMusicPipeline,
   type RenderedTrack,
 } from "./musicEngines";
-import { loadPremiumRoutingTable, routePremiumInstrument } from "./premiumInstrumentRouting";
+import { loadPremiumRoutingTable } from "./premiumInstrumentRouting";
+import { resolveTrackAsset, toSoundCatalogue } from "./soundSelectionBrain";
 import { validateCanonicalTrackModels } from "./musicProviders";
 import type { PedalboardProcessingEvidence } from "./pedalboardBuiltin";
 import {
@@ -69,6 +71,8 @@ export type ExportRendererEvidence = {
   midiAgreementSha256: string;
   productionReady: boolean;
   fallbackReason?: string;
+  /** PR-24: "<source>: <reason>" — how the instrument for this stem was chosen. */
+  soundSelection?: string;
 };
 
 export function rendererEvidenceTechnicalMetadata(
@@ -93,6 +97,7 @@ export function rendererEvidenceTechnicalMetadata(
     midiAgreementSha256: evidence.midiAgreementSha256,
     productionReady: String(evidence.productionReady),
     ...(evidence.fallbackReason ? { fallbackReason: evidence.fallbackReason } : {}),
+    ...(evidence.soundSelection ? { soundSelection: evidence.soundSelection } : {}),
   };
 }
 
@@ -642,6 +647,8 @@ export async function renderArrangementExport(input: {
   includeStems: boolean;
   includeMidi: boolean;
   mixMasterControls?: MixMasterControls;
+  /** PR-24: the project's resolved StyleProfile, so sound selection can read its sound dimensions. */
+  styleProfile?: StyleProfile | null;
 }): Promise<GeneratedExportFile[]> {
   const [meterNumerator, meterDenominator] = input.meter.split("/").map(Number);
   const beatsPerBar = Number.isFinite(meterNumerator) && meterNumerator > 0
@@ -695,13 +702,13 @@ export async function renderArrangementExport(input: {
   const sfizzRenderer = new SfzRenderer();
   const pedalboardRenderer = new PedalboardRenderer();
   const nativeRendererConfigured = sfizzRenderer.isConfigured() || pedalboardRenderer.isConfigured();
-  // PR-22: with a routing table, each track is sent to the instrument the
-  // operator chose for its family/role, and only to instruments the worker
-  // has attested. Without a table, the worker's default asset renders
-  // everything, exactly as before.
+  // PR-22/24: each track goes to the attested instrument that fits it — an
+  // explicit operator rule first, otherwise the Sound Selection Brain's
+  // choice from the worker's attested catalogue, then the table default, then
+  // the worker's own default. Only attested instruments can be chosen.
   const routingTable = pedalboardRenderer.isConfigured() ? loadPremiumRoutingTable() : null;
-  const attestedAssetIds = routingTable
-    ? await pedalboardRenderer.listAttestedAssetIds().catch(() => [] as string[])
+  const soundCatalogue = pedalboardRenderer.isConfigured()
+    ? toSoundCatalogue(await pedalboardRenderer.listAttestedAssets().catch(() => []))
     : [];
   const remoteTracks: RenderedTrack[] = await Promise.all(pipeline.tracks.map(async (rendered): Promise<RenderedTrack> => {
       const fallback = (reason: string): RenderedTrack => ({
@@ -730,21 +737,28 @@ export async function renderArrangementExport(input: {
       }
       const renderer = usePedalboard ? pedalboardRenderer : sfizzRenderer;
       let assetId: string | undefined;
-      if (usePedalboard && routingTable) {
-        const route = routePremiumInstrument(
-          {
+      let soundSelection: RenderedTrack["soundSelection"];
+      if (usePedalboard && (routingTable || soundCatalogue.length)) {
+        const resolved = resolveTrackAsset({
+          track: {
+            trackId: rendered.trackModel.id,
             instrument: rendered.trackModel.instrument,
             role: rendered.trackModel.role,
             family: rendered.trackModel.instrumentDefinition.family,
+            notes: rendered.trackModel.notes,
           },
-          routingTable,
-          attestedAssetIds,
-        );
+          table: routingTable,
+          catalogue: soundCatalogue,
+          styleProfile: input.styleProfile ?? null,
+        });
+        soundSelection = { assetId: resolved.assetId, source: resolved.source, reason: resolved.reason };
         // A rule that cannot be honoured is a refusal, not a guess: rendering
         // with a different instrument than the operator named would be wrong
         // audio presented as right.
-        if (!route.assetId) return fallback(`Premium instrument routing: ${route.reason}.`);
-        assetId = route.assetId;
+        if (resolved.source === "refused") {
+          return { ...fallback(`Premium instrument routing: ${resolved.reason}.`), soundSelection };
+        }
+        assetId = resolved.assetId ?? undefined;
       }
       let samples: Float32Array;
       let rendererAttestation: RenderedTrack["rendererAttestation"];
@@ -787,6 +801,7 @@ export async function renderArrangementExport(input: {
         // The preview pass recorded why *it* cannot be production audio. That
         // reason must not travel with a stem that was rendered natively.
         fallbackReason: undefined,
+        ...(soundSelection ? { soundSelection } : {}),
       };
     }));
   const controlled = input.mixMasterControls
@@ -1037,6 +1052,7 @@ export async function renderArrangementExport(input: {
           } : {}),
           ...(!attestation ? { stemOutputSha256 } : {}),
           ...(stem.fallbackReason ? { fallbackReason: stem.fallbackReason } : {}),
+          ...(stem.soundSelection ? { soundSelection: `${stem.soundSelection.source}: ${stem.soundSelection.reason}` } : {}),
         },
       });
     }
@@ -1113,7 +1129,7 @@ export async function renderArrangementExport(input: {
     },
     sections: input.sections,
     tracks: activeTracks.map(({ id, name, role }) => ({ id, name, role })),
-    trackModels: pipeline.tracks.map(({ trackModel, renderer, rendererStatus, fallbackReason, rendererAttestation }) => ({
+    trackModels: pipeline.tracks.map(({ trackModel, renderer, rendererStatus, fallbackReason, rendererAttestation, soundSelection }) => ({
       ...trackModel,
       provenance: {
         ...trackModel.provenance,
@@ -1125,6 +1141,7 @@ export async function renderArrangementExport(input: {
       ...(rendererAttestation ? {
         rendererAttestation,
       } : {}),
+      ...(soundSelection ? { soundSelection } : {}),
     })),
     styleSpec: input.styleSpec,
     arrangementPlan: {

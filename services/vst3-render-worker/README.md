@@ -61,10 +61,12 @@ context, or a response — only identity strings and SHA-256 digests do.
 
 `make_manifest.py --append` adds an instrument to an existing manifest under
 `assets`; the first instrument stays the default (`vst3`). Routing hints are
-informational — the routing decision is the API's (`PREMIUM_INSTRUMENT_ROUTING`):
+informational — the routing decision is the API's (`PREMIUM_INSTRUMENT_ROUTING`,
+and from PR-24 the Sound Selection Brain, which reads `families`, `roles` and
+the `--character` words to match a track's target sound):
 
 ```powershell
-python make_manifest.py --plugin "C:/Program Files/Common Files/VST3/Steinberg/Groove Agent SE.vst3" --families drums --roles GROOVE,FILL --append --license-owner "<you>" --license-reference "<licence>"
+python make_manifest.py --plugin "C:/Program Files/Common Files/VST3/Steinberg/Groove Agent SE.vst3" --families drums --roles GROOVE,FILL --character acoustic,kit --append --license-owner "<you>" --license-reference "<licence>"
 python smoke.py    # one proof per asset; the worker offers only assets whose own proof passed
 ```
 

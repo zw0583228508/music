@@ -330,10 +330,11 @@ def verify_asset_manifest(manifest: dict) -> list[str]:
 
 def asset_public_fields(asset: dict) -> dict:
     """What leaves the worker: identity and licence evidence, never paths.
-    Routing hints (`families`, `roles`) are informational for operators; the
-    routing decision itself is the API's."""
+    Routing hints (`families`, `roles`) and the operator's `character` words
+    are informational; the routing and sound-selection decisions are the
+    API's."""
     public = {key: asset[key] for key in ("id", "identity", "sha256", "licenseOwner", "licenseReference", "rendererIdentity", "rendererSha256")}
-    for hint in ("name", "manufacturer", "families", "roles"):
+    for hint in ("name", "manufacturer", "families", "roles", "character"):
         if hint in asset:
             public[hint] = asset[hint]
     return public

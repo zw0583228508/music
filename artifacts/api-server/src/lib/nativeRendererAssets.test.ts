@@ -65,8 +65,8 @@ const health = {
   runtimeIdentity: "pedalboard-0.9.24", runtimeReady: true, smokeTested: true,
   asset: asset("retro"), smokeEvidence: smoke("retro"),
   assets: [
-    { ...asset("retro"), smokeEvidence: smoke("retro") },
-    { ...asset("groove"), smokeEvidence: smoke("groove") },
+    { ...asset("retro"), name: "Retrologue", character: ["analog", "warm"], smokeEvidence: smoke("retro") },
+    { ...asset("groove"), families: ["drums"], roles: ["GROOVE"], smokeEvidence: smoke("groove") },
     { ...asset("broken"), smokeEvidence: smoke("broken", false) },
   ],
 };
@@ -125,6 +125,13 @@ test("a named asset is used and its own evidence is checked", async () => {
     await assert.rejects(renderer.renderAttested(track, SR, DURATION, { assetId: "broken" }), /not backed by a healthy attested asset \(broken\)/);
     await assert.rejects(renderer.renderAttested(track, SR, DURATION, { assetId: "nope" }), /\(nope\)/);
     assert.deepEqual(await renderer.listAttestedAssetIds(), ["retro", "groove"]);
+    // PR-24: the hints travel with the attested assets (the default's come
+    // from its assets[] entry), and an unattested asset never appears.
+    const attested = await renderer.listAttestedAssets();
+    assert.deepEqual(attested.map((a) => [a.id, a.name, a.families, a.roles, a.character]), [
+      ["retro", "Retrologue", undefined, undefined, ["analog", "warm"]],
+      ["groove", undefined, ["drums"], ["GROOVE"], undefined],
+    ]);
   } finally { globalThis.fetch = originalFetch; }
 });
 

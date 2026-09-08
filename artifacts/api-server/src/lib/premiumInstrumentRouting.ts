@@ -25,6 +25,8 @@ export type PremiumRoute = {
   assetId: string | null;
   /** Which rule matched, or why no asset could be chosen. */
   reason: string;
+  /** The rule that matched (attested or not); absent when no rule applied. */
+  rule?: string;
 };
 
 export type RoutableTrack = {
@@ -60,13 +62,14 @@ export function routePremiumInstrument(
   ];
   for (const [rule, assetId] of candidates) {
     if (!assetId) continue;
-    if (attested.has(assetId)) return { assetId, reason: `routed by ${rule} -> ${assetId}` };
+    if (attested.has(assetId)) return { assetId, reason: `routed by ${rule} -> ${assetId}`, rule };
     // The table names an asset the worker has not attested. Say so and stop:
     // falling through to a less specific rule would silently substitute a
     // different instrument for the one the operator asked for.
     return {
       assetId: null,
       reason: `${rule} names asset ${assetId}, which the renderer has not attested (attested: ${[...attested].join(", ") || "none"})`,
+      rule,
     };
   }
   return { assetId: null, reason: `no routing rule matches instrument "${track.instrument}", role ${track.role}, family ${track.family}, and the table has no default` };

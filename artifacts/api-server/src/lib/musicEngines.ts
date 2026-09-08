@@ -51,6 +51,8 @@ export type RenderedTrack = {
   rendererStatus?: "licensed-native" | "preview-only";
   fallbackReason?: string;
   rendererAttestation?: NativeRendererAttestation;
+  /** PR-24: how the instrument for this stem was chosen, and why. */
+  soundSelection?: { assetId: string | null; source: string; reason: string };
 };
 
 export type NativeRendererAttestation = {
@@ -3578,8 +3580,13 @@ export class PedalboardRenderer {
 
   /** Instruments the worker has attested; premium routing chooses among these. */
   async listAttestedAssetIds(): Promise<string[]> {
+    return (await this.listAttestedAssets()).map((asset) => asset.id);
+  }
+
+  /** The attested instruments with their manifest hints, for sound selection. */
+  async listAttestedAssets(): Promise<AttestedRendererAsset[]> {
     this.assertConfigured();
-    return listAttestedRendererAssetIds({
+    return listAttestedRendererAssets({
       endpoint: process.env.PEDALBOARD_VST3_API_URL!,
       token: process.env.PEDALBOARD_VST3_API_TOKEN,
       provider: "VST3",
@@ -3759,7 +3766,7 @@ function canonicalJson(value: unknown): string {
 }
 // --- native renderer health: attested assets (PR-22) -----------------------
 
-type RendererAssetFields = {
+type RendererAssetIdentityFields = {
   id?: string;
   identity?: string;
   sha256?: string;
@@ -3768,6 +3775,15 @@ type RendererAssetFields = {
   rendererIdentity?: string;
   rendererSha256?: string;
 };
+/** Informational hints the worker passes through from the manifest (PR-22/24). */
+export type RendererAssetHints = {
+  name?: string;
+  manufacturer?: string;
+  families?: string[];
+  roles?: string[];
+  character?: string[];
+};
+type RendererAssetFields = RendererAssetIdentityFields & RendererAssetHints;
 
 type RendererSmokeFields = {
   assetId?: string;
@@ -3794,7 +3810,7 @@ export type RendererHealth = {
   assets?: Array<RendererAssetFields & { smokeEvidence?: RendererSmokeFields }>;
 };
 
-export type AttestedRendererAsset = Required<RendererAssetFields>;
+export type AttestedRendererAsset = Required<RendererAssetIdentityFields> & RendererAssetHints;
 type AttestedRendererSmoke = RendererSmokeFields & {
   assetId: string; sha256: string; rendererSha256: string; outputSha256: string;
 };
@@ -3878,26 +3894,42 @@ function selectAttestedAsset(
   return entry ? attestedPair(entry, entry.smokeEvidence) : null;
 }
 
-/** Ids of every instrument the worker has attested, default first. */
-export async function listAttestedRendererAssetIds(input: {
+/**
+ * Every instrument the worker has attested, default first, with the manifest
+ * hints (name, families, roles, character) the Sound Selection Brain reads.
+ */
+export async function listAttestedRendererAssets(input: {
   endpoint: string;
   token?: string;
   provider: string;
-}): Promise<string[]> {
+}): Promise<AttestedRendererAsset[]> {
   const headers = {
     "Content-Type": "application/json",
     ...(input.token ? { Authorization: `Bearer ${input.token}` } : {}),
   };
   const health = await fetchRendererHealth(input.endpoint, headers, input.provider);
   if (health.healthy !== true || health.provider !== input.provider) return [];
-  const ids: string[] = [];
+  const assets: AttestedRendererAsset[] = [];
   const defaultPair = attestedPair(health.asset, health.smokeEvidence);
-  if (defaultPair) ids.push(defaultPair.asset.id);
+  if (defaultPair) assets.push(defaultPair.asset);
   for (const entry of health.assets ?? []) {
     const pair = attestedPair(entry, entry.smokeEvidence);
-    if (pair && !ids.includes(pair.asset.id)) ids.push(pair.asset.id);
+    if (!pair) continue;
+    const held = assets.findIndex((a) => a.id === pair.asset.id);
+    // The `assets[]` entry carries the hints; the top-level default may not.
+    if (held === -1) assets.push(pair.asset);
+    else assets[held] = { ...assets[held], ...pair.asset };
   }
-  return ids;
+  return assets;
+}
+
+/** Ids of every instrument the worker has attested, default first. */
+export async function listAttestedRendererAssetIds(input: {
+  endpoint: string;
+  token?: string;
+  provider: string;
+}): Promise<string[]> {
+  return (await listAttestedRendererAssets(input)).map((asset) => asset.id);
 }
 
 export function decodePcm16Wav(buffer: Buffer, expectedSampleRate: number): Float32Array {

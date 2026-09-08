@@ -1,0 +1,40 @@
+{
+  "pr": "PR-24 sound-selection-brain",
+  "recordedAt": "2026-09-08T21:35:00.413Z",
+  "path": "brain arrangement v3 -> mix/master revision v6 -> approve -> POST /projects/{id}/export (durable production job) -> bundle metadata",
+  "projectId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2",
+  "exportJobId": "a999d966-af2f-4ef0-b21d-b7eb2f52580f",
+  "exportArtifactId": "export-0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2-6-adee0735",
+  "bundle": {
+    "label": "track-v6-export.zip",
+    "size": "85.4 MB",
+    "entries": [
+      "stems/01_drums.wav", "stems/02_bass.wav", "stems/03_ensemble.wav",
+      "mix/full_mix.wav", "mix/premaster.wav", "mix/master.wav",
+      "midi/full_arrangement.mid", "project/manifest.json", "metadata/export-manifest.json"
+    ]
+  },
+  "worker": { "attestedAssets": ["retrologue-2.4.0"] },
+  "operatorTable": { "default": "retrologue-2.4.0", "byRole": { "BASS": "retrologue-2.4.0", "GROOVE": "retrologue-2.4.0" } },
+  "styleProfile": null,
+  "stems": [
+    {
+      "role": "GROOVE", "rendererStatus": "licensed-native",
+      "soundSelection": { "assetId": "retrologue-2.4.0", "source": "operator", "reason": "routed by role GROOVE -> retrologue-2.4.0" }
+    },
+    {
+      "role": "BASS", "rendererStatus": "licensed-native",
+      "soundSelection": { "assetId": "retrologue-2.4.0", "source": "operator", "reason": "routed by role BASS -> retrologue-2.4.0" }
+    },
+    {
+      "role": "TRANSITION", "rendererStatus": "licensed-native",
+      "soundSelection": { "assetId": "retrologue-2.4.0", "source": "brain", "reason": "retrologue-2.4.0 (score 1): universal instrument (no families declared)" }
+    }
+  ],
+  "observations": [
+    "Precedence proven live: explicit byRole rules decided GROOVE and BASS (source=operator); the ensemble TRANSITION track had no explicit rule, so the brain chose (source=brain) and outranked the table default, as designed.",
+    "With one attested, undeclared instrument the brain can only say 'universal instrument'; the musical scoring (families/roles/character) needs the operator to attest and describe more instruments (.vstpreset for HALion Sonic / Groove Agent SE / Padshop, `make_manifest.py --character ...`).",
+    "Found on the way: GET /projects/{id}/artifacts returned 500 (ZodError) for any project with a completed export, because the OpenAPI Artifact.type enum lacked PREMASTER/METADATA/BUNDLE while the export job persists those types. Enum aligned with ExportFile.type; clients regenerated.",
+    "No StyleProfile was attached to this export (Wave U persistence lands with PR-U2); the sound dimensions path is covered by unit tests only."
+  ]
+}
