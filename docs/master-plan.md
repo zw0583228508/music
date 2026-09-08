@@ -205,6 +205,46 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   needs per-track instrument routing before a whole arrangement goes through
   this worker — that is PR-22.
 
+- **PR-22** `premium-instrument-routing` ✅ — one worker, several instruments,
+  and the API choosing which renders each track. The worker's manifest v2
+  holds `assets[]` with **one smoke proof per asset**; `/health` lists every
+  attested instrument with its own evidence; `/render` takes `parameters.assetId`
+  and echoes the asset used. The API verifies the *selected* asset's proof
+  (`selectAttestedAsset`), caches health per worker for 30 s instead of once
+  per track, and `premiumInstrumentRouting.ts` maps instrument > role > family
+  > default onto attested asset ids — refusing, with the exact reason, when a
+  rule names an instrument the worker has not attested.
+
+  **Proven live** (`docs/evidence/premium-routing-export.json`), through the
+  durable production job (mix/master revision → approve → export):
+  - run 1, table naming unattested instruments: every stem fell back with the
+    precise reason ("family drums names asset groove-agent-se-5.2.20, which the
+    renderer has not attested (attested: retrologue-2.4.0)").
+  - run 2, attested-only table: **all 3 stems `licensed-native` through
+    Retrologue, export `production-ready`, 3 native stems, 0 fallbacks.**
+
+  Three real defects on the way, each fixed with a test:
+  - The orchestrator **discarded the Performance Engine's evidence**
+    (`performanceEvidence: undefined`), so no brain arrangement could ever pass
+    the export's production gate. Performed tracks now carry canonical
+    `TrackPerformanceEvidence` (timeline + phrase digests, post-performance
+    playability, sealed material digest), re-sealed when ids are re-scoped.
+  - `export-pipeline.ts` persisted bundles by minting signed URLs from the
+    **Replit sidecar** (`127.0.0.1:1106`) — the last Replit-only path PR-00
+    missed, hit only when an export actually completes. Bundles now go through
+    the storage client, which already handles GCS and the local backend.
+  - Job rows recorded network failures as a bare `fetch failed`; the cause
+    chain (`ECONNREFUSED 127.0.0.1:1106`) is now kept, and the export job logs
+    the full error.
+
+  **Honest limits.** Only Retrologue is attested here: Groove Agent SE, Padshop
+  and HALion Sonic render silence without a loaded program, so their smoke
+  correctly refuses them until a `.vstpreset` is provided. The bass lives in
+  the `strings` definition family, so a family rule routes it to the strings
+  instrument — role/instrument rules exist for exactly that. Nobody has
+  listened to the stems; "production-ready" is the export engine's evidence
+  gate, not a musical judgement.
+
 ## Wave 5 — models, entering as tools rather than as the brain
 
 - **PR-19** (#20) ✅ — Magenta RT2 worker, **deployed and smoke-tested on GPU**.

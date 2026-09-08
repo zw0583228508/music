@@ -549,6 +549,13 @@ export async function runExportProductionJob(jobId: string): Promise<void> {
       }
       return;
     }
+    // The job row keeps a bounded, structured error; the log keeps the whole
+    // thing. A bare "fetch failed" in the row is not something an operator can
+    // act on without the stack and the cause behind it.
+    logger.error(
+      { err: error, jobId: job.id, projectId: job.projectId, exportId },
+      "export_job_failed",
+    );
     const failed = await failProductionJob(
       job.id,
       workerId,

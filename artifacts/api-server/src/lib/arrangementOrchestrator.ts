@@ -21,7 +21,13 @@ import type {
   SongModelData,
   TrackModel,
 } from "@workspace/db";
-import { getInstrumentDefinition } from "./musicEngines";
+import {
+  canonicalPerformancePhraseIds,
+  canonicalPerformanceTimelineSha256,
+  getInstrumentDefinition,
+  getInstrumentPerformanceCapability,
+  performedMaterialSha256,
+} from "./musicEngines";
 import { deriveGlobalArrangementPlan } from "./globalArrangementPlanner";
 import { deriveSectionPhrasePlan } from "./sectionPhrasePlanner";
 import { deriveOrchestrationBudget } from "./orchestrationBudget";
@@ -296,13 +302,54 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
         articulationVocabulary: track.instrumentDefinition.articulations,
         maxSimultaneousNotes: track.instrumentDefinition.constraints.maxSimultaneousNotes,
       });
-      return {
+      const performedTrack: TrackModel = {
         ...track,
         notes: result.notes,
         cc: result.cc,
         articulations: result.articulations,
-        performanceEvidence: undefined,
-      } as TrackModel;
+      };
+      // Canonical performance evidence, in the exact shape the production
+      // export verifies (exportEngine readiness): the timeline and phrase
+      // digests of the Song Model, the post-performance playability result,
+      // and a digest of the performed material itself. Without it a brain
+      // arrangement can never be rendered through a licensed instrument --
+      // the engine produced this evidence all along; it was being discarded.
+      const capability = getInstrumentPerformanceCapability(track.instrumentDefinition);
+      const playability = checkArrangementConstraints(
+        [{
+          id: track.id, instrument: track.instrument, role: track.role,
+          instrumentDefinition: track.instrumentDefinition,
+          notes: performedTrack.notes, articulations: performedTrack.articulations,
+        }],
+        { tempoBpm },
+      ).byTrack[0];
+      performedTrack.performanceEvidence = {
+        version: "1.0",
+        seed: candidate.seed,
+        compositionSeed: candidate.seed,
+        performanceSeed: candidate.seed,
+        instrumentFamily: track.instrumentDefinition.family,
+        articulationProfile: capability.articulationProfile,
+        timingProfile: capability.timingProfile,
+        dynamicsProfile: capability.dynamicsProfile,
+        canonicalTimelineSha256: canonicalPerformanceTimelineSha256(songModel),
+        phraseIds: canonicalPerformancePhraseIds(songModel),
+        sectionRanges: (performedTrack.appliedDirectives ?? []).map((item) => ({
+          section: item.section, startBar: item.startBar, endBar: item.endBar,
+          start: item.start, end: item.end,
+        })),
+        playability: {
+          valid: playability ? playability.feasible : true,
+          checkedNotes: performedTrack.notes.length,
+          violations: (playability?.violations ?? []).map((violation) =>
+            typeof (violation as { message?: unknown }).message === "string"
+              ? (violation as { message: string }).message
+              : JSON.stringify(violation)),
+        },
+        // Computed last: it covers every field above that the renderer echoes.
+        performedMaterialSha256: performedMaterialSha256(performedTrack),
+      };
+      return performedTrack;
     });
 
     // Constraints are judged on what will be rendered. The pre-performance

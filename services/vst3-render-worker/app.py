@@ -51,22 +51,52 @@ def require_bearer(authorization: str | None = Header(default=None)) -> None:
 
 
 @dataclass
+class LoadedAsset:
+    asset: dict
+    plugin: Any
+    identity: host.PluginIdentity
+
+
+@dataclass
 class Runtime:
     problems: list[str] = field(default_factory=list)
-    asset: dict | None = None
-    plugin: Any = None
+    manifest: dict | None = None
+    asset: dict | None = None  # the default asset
+    plugin: Any = None  # the default asset's plugin
     identity: host.PluginIdentity | None = None
-    smoke: dict | None = None
+    smoke: dict | None = None  # the default asset's smoke proof (top-level of smoke-proof.json)
+    smoke_by_asset: dict[str, dict] = field(default_factory=dict)
+    loaded: dict[str, LoadedAsset] = field(default_factory=dict)
     loaded_at: float = 0.0
 
     @property
     def healthy(self) -> bool:
         return not self.problems and self.plugin is not None and self.smoke is not None
 
+    def attested_assets(self) -> list[dict]:
+        """Assets whose own smoke proof passed. Only these may be requested."""
+        if not self.manifest:
+            return []
+        return [a for a in host.list_assets(self.manifest) if self.smoke_by_asset.get(a["id"], {}).get("passed") is True]
+
 
 _runtime: Runtime | None = None
 _runtime_lock = threading.Lock()
 _render_lock = threading.Lock()  # plugins are not re-entrant
+
+
+def _load_asset(runtime: Runtime, asset: dict) -> LoadedAsset:
+    """Load an asset's plugin on first use and verify it is what the manifest
+    (and therefore the smoke proof) says it is."""
+    cached = runtime.loaded.get(asset["id"])
+    if cached:
+        return cached
+    plugin, identity = host.load_instrument(asset["path"], asset.get("presetPath"))
+    if identity.identity != asset["identity"]:
+        raise RuntimeError(f"loaded plugin identity {identity.identity} does not match manifest {asset['identity']}")
+    entry = LoadedAsset(asset=asset, plugin=plugin, identity=identity)
+    runtime.loaded[asset["id"]] = entry
+    return entry
 
 
 # Resolved at import, before any plugin load can change the working directory.
@@ -95,17 +125,15 @@ def _build_runtime() -> Runtime:
     runtime.problems.extend(host.verify_asset_manifest(manifest))
     if runtime.problems:
         return runtime
-    asset = manifest["vst3"]
+    runtime.manifest = manifest
+    asset = host.default_asset(manifest)
     runtime.asset = asset
     try:
-        runtime.plugin, runtime.identity = host.load_instrument(asset["path"], asset.get("presetPath"))
+        entry = _load_asset(runtime, asset)
+        runtime.plugin, runtime.identity = entry.plugin, entry.identity
     except Exception as error:  # noqa: BLE001 - reported, never raised out of health
         runtime.problems.append(f"plugin failed to load: {error}")
         return runtime
-    if runtime.identity.identity != asset["identity"]:
-        runtime.problems.append(
-            f"loaded plugin identity {runtime.identity.identity} does not match manifest {asset['identity']}"
-        )
     proof_path = smoke_proof_path()
     if not proof_path.is_file():
         runtime.problems.append(f"smoke proof {proof_path} is missing; run smoke.py")
@@ -115,7 +143,7 @@ def _build_runtime() -> Runtime:
     except (OSError, json.JSONDecodeError) as error:
         runtime.problems.append(f"smoke proof is unreadable: {error}")
         return runtime
-    # The proof must be about exactly this asset and this host binary.
+    # The proof must be about exactly this default asset and this host binary.
     if (
         smoke.get("assetId") != asset["id"]
         or smoke.get("sha256") != asset["sha256"]
@@ -124,6 +152,18 @@ def _build_runtime() -> Runtime:
     ):
         runtime.problems.append("smoke proof does not match the configured asset and renderer; re-run smoke.py")
         return runtime
+    # Per-asset proofs (manifest v2). Each must match its own asset digest and
+    # this host; an asset without a matching passed proof is simply not offered.
+    per_asset = smoke.get("assets") if isinstance(smoke.get("assets"), dict) else {}
+    for candidate in host.list_assets(manifest):
+        proof = per_asset.get(candidate["id"]) or (smoke if candidate["id"] == asset["id"] else None)
+        if (
+            isinstance(proof, dict)
+            and proof.get("sha256") == candidate["sha256"]
+            and proof.get("rendererSha256") == candidate["rendererSha256"]
+            and proof.get("passed") is True
+        ):
+            runtime.smoke_by_asset[candidate["id"]] = proof
     runtime.smoke = smoke
     return runtime
 
@@ -157,14 +197,18 @@ def health(provider: str = Query(default=PROVIDER), _: None = Depends(require_be
     if runtime.asset:
         base["asset"] = host.asset_public_fields(runtime.asset)
         base["plugin"] = runtime.identity.to_dict() | {"binary_path": "<private>"} if runtime.identity else None
+    smoke_keys = (
+        "assetId", "sha256", "rendererSha256", "outputSha256", "trackModelRendered",
+        "audible", "canonicalSensitivity", "nativeHostAttested", "deterministic", "velocitySensitive", "ranAt",
+    )
     if runtime.smoke:
-        base["smokeEvidence"] = {
-            key: runtime.smoke.get(key)
-            for key in (
-                "assetId", "sha256", "rendererSha256", "outputSha256", "trackModelRendered",
-                "audible", "canonicalSensitivity", "nativeHostAttested", "deterministic", "ranAt",
-            )
-        }
+        base["smokeEvidence"] = {key: runtime.smoke.get(key) for key in smoke_keys}
+    # Every attested asset, each with its own evidence, so the API can route a
+    # track to a specific instrument and verify that instrument's proof.
+    base["assets"] = [
+        host.asset_public_fields(a) | {"smokeEvidence": {key: runtime.smoke_by_asset[a["id"]].get(key) for key in smoke_keys}}
+        for a in runtime.attested_assets()
+    ]
     return base
 
 
@@ -194,9 +238,23 @@ def render(request: RenderRequest, _: None = Depends(require_bearer)) -> dict:
     if len(track["notes"]) > max_notes:
         raise HTTPException(413, f"trackModel has more than {max_notes} notes")
 
+    # Asset selection (PR-22): the API may name the instrument for this track.
+    # Only assets with their own passed smoke proof can be chosen, and the
+    # response echoes the asset actually used so the API can verify it.
+    requested = request.parameters.get("assetId")
+    if requested is not None and not isinstance(requested, str):
+        raise HTTPException(422, "parameters.assetId must be a string")
+    target = host.find_asset(runtime.manifest, requested) if requested else runtime.asset
+    if target is None or target["id"] not in runtime.smoke_by_asset:
+        raise HTTPException(422, {"error": f"asset {requested!r} is not an attested instrument on this worker",
+                                  "attestedAssets": [a["id"] for a in runtime.attested_assets()]})
     started = time.time()
     with _render_lock:
-        output = host.render_track(runtime.plugin, track, request.sampleRate, request.durationSeconds)
+        try:
+            entry = _load_asset(runtime, target)
+        except Exception as error:  # noqa: BLE001
+            raise HTTPException(503, f"asset {target['id']} failed to load: {error}") from error
+        output = host.render_track(entry.plugin, track, request.sampleRate, request.durationSeconds)
     elapsed = time.time() - started
     return {
         "contractVersion": CONTRACT_VERSION,
@@ -209,7 +267,7 @@ def render(request: RenderRequest, _: None = Depends(require_bearer)) -> dict:
         "durationSeconds": request.durationSeconds,
         "outputSha256": output.wav_sha256,
         "audio_base64": base64.b64encode(output.wav).decode("ascii"),
-        "asset": host.asset_public_fields(runtime.asset),
+        "asset": host.asset_public_fields(target),
         "measurements": {
             "peak": round(output.peak, 6),
             "rawPluginPeak": round(output.raw_peak, 6),

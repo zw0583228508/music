@@ -257,39 +257,86 @@ def load_asset_manifest(path: str | Path) -> dict:
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
-def verify_asset_manifest(manifest: dict) -> list[str]:
-    """Everything that must hold before a single note is rendered. Returns the
-    list of problems; empty means the asset and the host are exactly what the
-    manifest says they are."""
+def list_assets(manifest: dict) -> list[dict]:
+    """All assets in a manifest, default first, de-duplicated by id.
+
+    Manifest v1 has a single `vst3` entry. v2 keeps it as the default and adds
+    `assets: [...]` so one worker can offer drums, pads and synths and let the
+    API route each track (PR-22). The default is what /health reports as
+    `asset` for callers that never ask for a specific one.
+    """
+    if not isinstance(manifest, dict):
+        return []
+    ordered: list[dict] = []
+    seen: set[str] = set()
+    default = manifest.get("vst3")
+    extra = manifest.get("assets") if isinstance(manifest.get("assets"), list) else []
+    for asset in [default, *extra]:
+        if isinstance(asset, dict) and isinstance(asset.get("id"), str) and asset["id"] not in seen:
+            seen.add(asset["id"])
+            ordered.append(asset)
+    return ordered
+
+
+def default_asset(manifest: dict) -> dict | None:
+    assets = list_assets(manifest)
+    return assets[0] if assets else None
+
+
+def find_asset(manifest: dict, asset_id: str | None) -> dict | None:
+    assets = list_assets(manifest)
+    if asset_id is None:
+        return assets[0] if assets else None
+    return next((asset for asset in assets if asset["id"] == asset_id), None)
+
+
+def verify_one_asset(asset: dict) -> list[str]:
     problems: list[str] = []
-    asset = manifest.get("vst3") if isinstance(manifest, dict) else None
-    if not isinstance(asset, dict):
-        return ["manifest has no vst3 asset entry"]
+    label = asset.get("id") if isinstance(asset.get("id"), str) else "<unnamed>"
     for field in REQUIRED_ASSET_FIELDS:
         if not isinstance(asset.get(field), str) or not asset[field].strip():
-            problems.append(f"asset field {field} is missing")
+            problems.append(f"asset {label}: field {field} is missing")
     if problems:
         return problems
     try:
         binary = resolve_plugin_binary(asset["path"])
     except FileNotFoundError as error:
-        return [str(error)]
+        return [f"asset {label}: {error}"]
     actual = sha256_file(binary)
     if actual.lower() != asset["sha256"].lower():
-        problems.append(f"plugin binary digest {actual[:12]} does not match manifest {asset['sha256'][:12]}")
+        problems.append(f"asset {label}: plugin binary digest {actual[:12]} does not match manifest {asset['sha256'][:12]}")
     if asset["rendererIdentity"] != renderer_identity():
-        problems.append(f"renderer identity {renderer_identity()} does not match manifest {asset['rendererIdentity']}")
+        problems.append(f"asset {label}: renderer identity {renderer_identity()} does not match manifest {asset['rendererIdentity']}")
     if renderer_sha256().lower() != asset["rendererSha256"].lower():
-        problems.append("renderer binary digest does not match manifest")
+        problems.append(f"asset {label}: renderer binary digest does not match manifest")
     preset = asset.get("presetPath")
     if preset and not Path(preset).is_file():
-        problems.append(f"preset {preset} is missing")
+        problems.append(f"asset {label}: preset {preset} is missing")
+    return problems
+
+
+def verify_asset_manifest(manifest: dict) -> list[str]:
+    """Everything that must hold before a single note is rendered. Returns the
+    list of problems; empty means every asset and the host are exactly what
+    the manifest says they are."""
+    assets = list_assets(manifest)
+    if not assets:
+        return ["manifest has no vst3 asset entry"]
+    problems: list[str] = []
+    for asset in assets:
+        problems.extend(verify_one_asset(asset))
     return problems
 
 
 def asset_public_fields(asset: dict) -> dict:
-    """What leaves the worker: identity and licence evidence, never paths."""
-    return {key: asset[key] for key in ("id", "identity", "sha256", "licenseOwner", "licenseReference", "rendererIdentity", "rendererSha256")}
+    """What leaves the worker: identity and licence evidence, never paths.
+    Routing hints (`families`, `roles`) are informational for operators; the
+    routing decision itself is the API's."""
+    public = {key: asset[key] for key in ("id", "identity", "sha256", "licenseOwner", "licenseReference", "rendererIdentity", "rendererSha256")}
+    for hint in ("name", "manufacturer", "families", "roles"):
+        if hint in asset:
+            public[hint] = asset[hint]
+    return public
 
 
 # Resolved once, at import, before any plugin is loaded: some plugins change

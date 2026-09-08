@@ -21,6 +21,7 @@ import {
   renderMusicPipeline,
   type RenderedTrack,
 } from "./musicEngines";
+import { loadPremiumRoutingTable, routePremiumInstrument } from "./premiumInstrumentRouting";
 import { validateCanonicalTrackModels } from "./musicProviders";
 import type { PedalboardProcessingEvidence } from "./pedalboardBuiltin";
 import {
@@ -694,6 +695,14 @@ export async function renderArrangementExport(input: {
   const sfizzRenderer = new SfzRenderer();
   const pedalboardRenderer = new PedalboardRenderer();
   const nativeRendererConfigured = sfizzRenderer.isConfigured() || pedalboardRenderer.isConfigured();
+  // PR-22: with a routing table, each track is sent to the instrument the
+  // operator chose for its family/role, and only to instruments the worker
+  // has attested. Without a table, the worker's default asset renders
+  // everything, exactly as before.
+  const routingTable = pedalboardRenderer.isConfigured() ? loadPremiumRoutingTable() : null;
+  const attestedAssetIds = routingTable
+    ? await pedalboardRenderer.listAttestedAssetIds().catch(() => [] as string[])
+    : [];
   const remoteTracks: RenderedTrack[] = await Promise.all(pipeline.tracks.map(async (rendered): Promise<RenderedTrack> => {
       const fallback = (reason: string): RenderedTrack => ({
         ...rendered,
@@ -720,14 +729,38 @@ export async function renderArrangementExport(input: {
         return fallback("Render lineage was incomplete, so licensed native rendering was skipped.");
       }
       const renderer = usePedalboard ? pedalboardRenderer : sfizzRenderer;
+      let assetId: string | undefined;
+      if (usePedalboard && routingTable) {
+        const route = routePremiumInstrument(
+          {
+            instrument: rendered.trackModel.instrument,
+            role: rendered.trackModel.role,
+            family: rendered.trackModel.instrumentDefinition.family,
+          },
+          routingTable,
+          attestedAssetIds,
+        );
+        // A rule that cannot be honoured is a refusal, not a guess: rendering
+        // with a different instrument than the operator named would be wrong
+        // audio presented as right.
+        if (!route.assetId) return fallback(`Premium instrument routing: ${route.reason}.`);
+        assetId = route.assetId;
+      }
       let samples: Float32Array;
       let rendererAttestation: RenderedTrack["rendererAttestation"];
       try {
-        const native = await renderer.renderAttested(
-          rendered.trackModel,
-          SAMPLE_RATE,
-          pipeline.durationSeconds,
-        );
+        const native = usePedalboard
+          ? await pedalboardRenderer.renderAttested(
+              rendered.trackModel,
+              SAMPLE_RATE,
+              pipeline.durationSeconds,
+              { assetId },
+            )
+          : await renderer.renderAttested(
+              rendered.trackModel,
+              SAMPLE_RATE,
+              pipeline.durationSeconds,
+            );
         samples = native.samples;
         rendererAttestation = native.attestation;
       } catch {
@@ -751,6 +784,9 @@ export async function renderArrangementExport(input: {
         renderer: renderer.providerId,
         rendererStatus: "licensed-native",
         rendererAttestation,
+        // The preview pass recorded why *it* cannot be production audio. That
+        // reason must not travel with a stem that was rendered natively.
+        fallbackReason: undefined,
       };
     }));
   const controlled = input.mixMasterControls

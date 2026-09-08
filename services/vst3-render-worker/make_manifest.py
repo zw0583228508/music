@@ -20,6 +20,10 @@ def main() -> None:
     parser.add_argument("--license-reference", required=True)
     parser.add_argument("--id", help="asset id (default: derived from the plugin identifier)")
     parser.add_argument("--preset", help="optional .vstpreset to load")
+    parser.add_argument("--families", help="comma-separated routing hint, e.g. drums or keys,synth")
+    parser.add_argument("--roles", help="comma-separated routing hint, e.g. GROOVE or PAD,HARMONIC_BED")
+    parser.add_argument("--append", action="store_true",
+                        help="add this asset to an existing manifest's `assets` (keeps the existing default)")
     parser.add_argument("--out", default=".local-vst3-assets/asset-manifest.json")
     args = parser.parse_args()
     # Resolve outputs before loading: a plugin may change the working directory
@@ -45,10 +49,26 @@ def main() -> None:
     }
     if preset:
         asset["presetPath"] = str(preset)
+    if args.families:
+        asset["families"] = [f.strip() for f in args.families.split(",") if f.strip()]
+    if args.roles:
+        asset["roles"] = [r.strip() for r in args.roles.split(",") if r.strip()]
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps({"vst3": asset}, indent=2), encoding="utf-8")
+    if args.append and out.is_file():
+        manifest = json.loads(out.read_text(encoding="utf-8"))
+        extra = [a for a in (manifest.get("assets") or []) if a.get("id") != asset["id"]]
+        if manifest.get("vst3", {}).get("id") == asset["id"]:
+            manifest["vst3"] = asset
+        else:
+            extra.append(asset)
+        manifest["assets"] = extra
+        if "vst3" not in manifest:
+            manifest["vst3"] = asset
+    else:
+        manifest = {"vst3": asset}
+    out.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(json.dumps({**asset, "path": "<private>"}, indent=2))
-    print(f"\nwrote {out}")
+    print(f"\nwrote {out} ({len(host.list_assets(manifest))} asset(s))")
 
 
 if __name__ == "__main__":
