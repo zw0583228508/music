@@ -418,6 +418,50 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   arrangement has no voice or LEAD track. The preview / candidate-quality
   path still uses the old `MasterEngine` so benchmark numbers are unchanged.
 
+### Wave 7 — learning system: progress
+
+- **PR-27** ✅ — `reference-style-fingerprint`: how a piece of music
+  *behaves*, never what it *is*. `styleFingerprint.ts` derives a
+  `StyleFingerprint` from a Song Model (the analysis of a recording) or an
+  arrangement's TrackModels: tempo and stability, groove (swing ratio from
+  offbeat placement, signed microtiming against the 16th grid, syncopation,
+  subdivision distribution, onset density), harmony (chords per bar,
+  extension share, functional motion, key changes), melodic shape (stepwise /
+  leap ratios, phrase length, ornament density), register shares, dynamics
+  range, an 8-point energy arc with its shape, notes-per-bar distribution,
+  instrumentation hierarchy. **The rule is enforced, not promised**:
+  `assertContentFree` refuses any array longer than 16, any non-scalar
+  array, any key that names content (notes, melody, chords, audio, …) and any
+  long string; it runs on every derivation, and the suite proves it bites.
+  `compareFingerprints` gives a weighted distance and per-feature deltas in a
+  producer's words ("the right swings harder: 0.66 vs 0.5"; "phrases of 3.9
+  vs 30.8 beats"); `dimensionsFromFingerprint` turns a fingerprint into
+  StyleProfile dimensions **only for the copy scopes the user allowed**
+  (groove / arrangement / mood; `sound` yields nothing until audio features
+  exist), as `inferred` values with `reference:<id>` refs and a confidence a
+  stated value always beats — the seam PR-U4 wires to the reference
+  clarification.
+
+  Storage and API: `music_style_fingerprints` (additive, pushed after a live
+  drift check), `POST /projects/{id}/style-fingerprints` (song_model |
+  arrangement; idempotent per source + inputs digest), `GET …`, `POST
+  …/compare`.
+
+  **Proven live** (`docs/evidence/style-fingerprint-live.json`): the project's
+  recording and the Brain's v3 arrangement fingerprinted, stored content-free
+  (re-checked on the stored rows), compared at distance 0.332 with a
+  three-line headline. An idempotency defect (label hashed into the digest)
+  was found by the live run and fixed with a test.
+
+  Suites: styleFingerprint 6 (incl. the guard and the digest regression); typecheck green.
+
+  **Honest limits.** Symbolic only: no spectral / stereo / loudness features
+  yet, so the `sound` scope is empty. Swing and microtiming come from onset
+  positions against a fixed grid; a rubato source will read as "loose", not
+  as a tempo curve. The comparison weights are hand-set and untested against
+  human judgement — that is exactly what PR-29 (pairwise critic from real
+  choices) is for. No UI yet; the reference flow arrives with PR-U4.
+
   **Honest limits.** Only Retrologue is attested here: Groove Agent SE, Padshop
   and HALion Sonic render silence without a loaded program, so their smoke
   correctly refuses them until a `.vstpreset` is provided. The bass lives in

@@ -94,6 +94,14 @@ import {
   CreateMixPlanParams,
   CreateMixPlanBody,
   CreateMixPlanResponse,
+  ListStyleFingerprintsParams,
+  ListStyleFingerprintsResponse,
+  CreateStyleFingerprintParams,
+  CreateStyleFingerprintBody,
+  CreateStyleFingerprintResponse,
+  CompareStyleFingerprintsParams,
+  CompareStyleFingerprintsBody,
+  CompareStyleFingerprintsResponse,
   CreateProducerDecisionBody,
   CreateProducerDecisionResponse,
   GetProducerPreferencesResponse,
@@ -128,6 +136,7 @@ import {
   studioActivitiesTable,
   tracksTable,
   mixMasterRevisionsTable,
+  styleFingerprintsTable,
   type ArrangementRevisionSnapshot,
   type SongModelData,
   type SongModelField,
@@ -174,6 +183,7 @@ import {
   type ExportBundle,
 } from "../lib/export-pipeline";
 import { deriveMixPlan, mixPlanToControls } from "../lib/mixBrain";
+import { compareFingerprints, deriveStyleFingerprint } from "../lib/styleFingerprint";
 import {
   activateLicensedInstrumentPack as activateLicensedInstrumentPackOnWorker,
   applyArrangementEditorChanges,
@@ -3454,6 +3464,88 @@ router.post("/projects/:projectId/mix-plans", async (req, res): Promise<void> =>
     styleProfile: null,
   });
   res.json(CreateMixPlanResponse.parse({ plan, controls: mixPlanToControls(plan) }));
+});
+
+// PR-27: style fingerprints — abstract statistics of how a source behaves,
+// never its content. Idempotent per (source, input digest): taking the same
+// fingerprint twice returns the stored row.
+const fingerprintRecord = (row: typeof styleFingerprintsTable.$inferSelect) => ({
+  id: row.id, projectId: row.projectId, sourceKind: row.sourceKind, sourceId: row.sourceId,
+  sourceVersion: row.sourceVersion, digest: row.digest, fingerprint: row.fingerprint, createdAt: row.createdAt.toISOString(),
+});
+
+router.get("/projects/:projectId/style-fingerprints", async (req, res): Promise<void> => {
+  const params = ListStyleFingerprintsParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  const [project] = await db.select({ id: musicProjectsTable.id }).from(musicProjectsTable).where(and(
+    eq(musicProjectsTable.id, params.data.projectId), eq(musicProjectsTable.ownerId, req.user!.id),
+  )).limit(1);
+  if (!project) { res.status(404).json({ error: "Project not found" }); return; }
+  const rows = await db.select().from(styleFingerprintsTable)
+    .where(eq(styleFingerprintsTable.projectId, project.id)).orderBy(desc(styleFingerprintsTable.createdAt));
+  res.json(ListStyleFingerprintsResponse.parse(rows.map(fingerprintRecord)));
+});
+
+router.post("/projects/:projectId/style-fingerprints", async (req, res): Promise<void> => {
+  const params = CreateStyleFingerprintParams.safeParse(req.params);
+  const body = CreateStyleFingerprintBody.safeParse(req.body);
+  if (!params.success || !body.success) { res.status(400).json({ error: "Invalid style fingerprint request" }); return; }
+  const [project] = await db.select().from(musicProjectsTable).where(and(
+    eq(musicProjectsTable.id, params.data.projectId), eq(musicProjectsTable.ownerId, req.user!.id),
+  )).limit(1);
+  if (!project) { res.status(404).json({ error: "Project not found" }); return; }
+  let fingerprint;
+  if (body.data.sourceKind === "arrangement") {
+    const [arrangement] = body.data.sourceId
+      ? await db.select().from(arrangementsTable).where(and(eq(arrangementsTable.id, body.data.sourceId), eq(arrangementsTable.projectId, project.id))).limit(1)
+      : [];
+    if (!arrangement || !arrangement.trackModels.length) { res.status(409).json({ error: "An arrangement with persisted TrackModels is required" }); return; }
+    const songModels = await db.select().from(songModelsTable).where(eq(songModelsTable.projectId, project.id));
+    const songModel = songModels.find((model) => model.version === arrangement.songModelVersion) ?? null;
+    fingerprint = deriveStyleFingerprint({
+      source: { kind: "arrangement", id: arrangement.id, version: arrangement.version, ...(body.data.label ? { label: body.data.label } : {}) },
+      trackModels: arrangement.trackModels, songModel: songModel?.model ?? null,
+      tempoBpm: project.bpm, meter: project.meter,
+    });
+  } else {
+    const songModels = await db.select().from(songModelsTable).where(eq(songModelsTable.projectId, project.id));
+    const wanted = body.data.sourceId ? Number(body.data.sourceId) : undefined;
+    const songModel = wanted !== undefined && Number.isFinite(wanted)
+      ? songModels.find((model) => model.version === wanted)
+      : [...songModels].sort((a, b) => b.version - a.version)[0];
+    if (!songModel) { res.status(409).json({ error: "The project has no Song Model to fingerprint" }); return; }
+    fingerprint = deriveStyleFingerprint({
+      source: { kind: "song_model", id: songModel.id, version: songModel.version, ...(body.data.label ? { label: body.data.label } : {}) },
+      songModel: songModel.model, tempoBpm: project.bpm, meter: project.meter,
+    });
+  }
+  const [existing] = await db.select().from(styleFingerprintsTable).where(and(
+    eq(styleFingerprintsTable.projectId, project.id),
+    eq(styleFingerprintsTable.sourceKind, fingerprint.source.kind),
+    eq(styleFingerprintsTable.sourceId, fingerprint.source.id),
+    eq(styleFingerprintsTable.digest, fingerprint.inputsDigestSha256),
+  )).limit(1);
+  if (existing) { res.json(CreateStyleFingerprintResponse.parse(fingerprintRecord(existing))); return; }
+  const [created] = await db.insert(styleFingerprintsTable).values({
+    id: `fp-${randomUUID()}`, projectId: project.id, sourceKind: fingerprint.source.kind, sourceId: fingerprint.source.id,
+    sourceVersion: fingerprint.source.version, digest: fingerprint.inputsDigestSha256, fingerprint, createdBy: req.user!.id,
+  }).returning();
+  res.json(CreateStyleFingerprintResponse.parse(fingerprintRecord(created)));
+});
+
+router.post("/projects/:projectId/style-fingerprints/compare", async (req, res): Promise<void> => {
+  const params = CompareStyleFingerprintsParams.safeParse(req.params);
+  const body = CompareStyleFingerprintsBody.safeParse(req.body);
+  if (!params.success || !body.success) { res.status(400).json({ error: "Invalid fingerprint comparison request" }); return; }
+  const [project] = await db.select({ id: musicProjectsTable.id }).from(musicProjectsTable).where(and(
+    eq(musicProjectsTable.id, params.data.projectId), eq(musicProjectsTable.ownerId, req.user!.id),
+  )).limit(1);
+  if (!project) { res.status(404).json({ error: "Project not found" }); return; }
+  const rows = await db.select().from(styleFingerprintsTable).where(eq(styleFingerprintsTable.projectId, project.id));
+  const left = rows.find((row) => row.id === body.data.leftId);
+  const right = rows.find((row) => row.id === body.data.rightId);
+  if (!left || !right) { res.status(404).json({ error: "Fingerprint not found in this project" }); return; }
+  res.json(CompareStyleFingerprintsResponse.parse(compareFingerprints(left.fingerprint, right.fingerprint, { leftId: left.id, rightId: right.id })));
 });
 
 router.post("/projects/:projectId/mix-master-revisions/:revisionId/approve", async (req, res): Promise<void> => {

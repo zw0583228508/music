@@ -37,6 +37,7 @@ import type {
   Error,
   ExportInput,
   ExportPackage,
+  FingerprintComparison,
   GenerationBlockedError,
   GenerationCandidate,
   GenerationInput,
@@ -81,6 +82,9 @@ import type {
   SongModel,
   SongModelCorrectionInput,
   StageLicensedInstrumentPackBody,
+  StyleFingerprintCompareInput,
+  StyleFingerprintInput,
+  StyleFingerprintRecord,
   Track,
   UploadUrlRequest,
   UploadUrlResponse
@@ -3702,6 +3706,227 @@ export const useCreateMixPlan = <TError = ErrorType<NotFoundResponse | void>,
         TContext
       > => {
       return useMutation(getCreateMixPlanMutationOptions(options));
+    }
+
+export const getListStyleFingerprintsUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/style-fingerprints`
+}
+
+/**
+ * @summary Style fingerprints taken in this project (PR-27; abstract statistics only, never content)
+ */
+export const listStyleFingerprints = async (projectId: string, options?: Parameters<typeof customFetch>[1]): Promise<StyleFingerprintRecord[]> => {
+
+  return customFetch<StyleFingerprintRecord[]>(getListStyleFingerprintsUrl(projectId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListStyleFingerprintsQueryKey = (projectId: string,) => {
+    return [
+    `/api/projects/${projectId}/style-fingerprints`
+    ] as const;
+    }
+
+
+export const getListStyleFingerprintsQueryOptions = <TData = Awaited<ReturnType<typeof listStyleFingerprints>>, TError = ErrorType<NotFoundResponse>>(projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listStyleFingerprints>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListStyleFingerprintsQueryKey(projectId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listStyleFingerprints>>> = ({ signal }) => listStyleFingerprints(projectId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listStyleFingerprints>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListStyleFingerprintsQueryResult = NonNullable<Awaited<ReturnType<typeof listStyleFingerprints>>>
+export type ListStyleFingerprintsQueryError = ErrorType<NotFoundResponse>
+
+
+/**
+ * @summary Style fingerprints taken in this project (PR-27; abstract statistics only, never content)
+ */
+
+export function useListStyleFingerprints<TData = Awaited<ReturnType<typeof listStyleFingerprints>>, TError = ErrorType<NotFoundResponse>>(
+ projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listStyleFingerprints>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListStyleFingerprintsQueryOptions(projectId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateStyleFingerprintUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/style-fingerprints`
+}
+
+/**
+ * @summary Take a style fingerprint of the project's Song Model or of an arrangement
+ */
+export const createStyleFingerprint = async (projectId: string,
+    styleFingerprintInput: StyleFingerprintInput, options?: Parameters<typeof customFetch>[1]): Promise<StyleFingerprintRecord> => {
+
+  return customFetch<StyleFingerprintRecord>(getCreateStyleFingerprintUrl(projectId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(styleFingerprintInput)
+  }
+);}
+
+
+
+
+
+export const getCreateStyleFingerprintMutationOptions = <TError = ErrorType<NotFoundResponse | void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createStyleFingerprint>>, TError,{projectId: string;data: BodyType<StyleFingerprintInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createStyleFingerprint>>, TError,{projectId: string;data: BodyType<StyleFingerprintInput>}, TContext> => {
+
+const mutationKey = ['createStyleFingerprint'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createStyleFingerprint>>, {projectId: string;data: BodyType<StyleFingerprintInput>}> = (props) => {
+          const {projectId,data} = props ?? {};
+
+          return  createStyleFingerprint(projectId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateStyleFingerprintMutationResult = NonNullable<Awaited<ReturnType<typeof createStyleFingerprint>>>
+    export type CreateStyleFingerprintMutationBody = BodyType<StyleFingerprintInput>
+    export type CreateStyleFingerprintMutationError = ErrorType<NotFoundResponse | void>
+
+    /**
+ * @summary Take a style fingerprint of the project's Song Model or of an arrangement
+ */
+export const useCreateStyleFingerprint = <TError = ErrorType<NotFoundResponse | void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createStyleFingerprint>>, TError,{projectId: string;data: BodyType<StyleFingerprintInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createStyleFingerprint>>,
+        TError,
+        {projectId: string;data: BodyType<StyleFingerprintInput>},
+        TContext
+      > => {
+      return useMutation(getCreateStyleFingerprintMutationOptions(options));
+    }
+
+export const getCompareStyleFingerprintsUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/style-fingerprints/compare`
+}
+
+/**
+ * @summary Compare two fingerprints feature by feature, in words
+ */
+export const compareStyleFingerprints = async (projectId: string,
+    styleFingerprintCompareInput: StyleFingerprintCompareInput, options?: Parameters<typeof customFetch>[1]): Promise<FingerprintComparison> => {
+
+  return customFetch<FingerprintComparison>(getCompareStyleFingerprintsUrl(projectId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(styleFingerprintCompareInput)
+  }
+);}
+
+
+
+
+
+export const getCompareStyleFingerprintsMutationOptions = <TError = ErrorType<NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof compareStyleFingerprints>>, TError,{projectId: string;data: BodyType<StyleFingerprintCompareInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof compareStyleFingerprints>>, TError,{projectId: string;data: BodyType<StyleFingerprintCompareInput>}, TContext> => {
+
+const mutationKey = ['compareStyleFingerprints'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof compareStyleFingerprints>>, {projectId: string;data: BodyType<StyleFingerprintCompareInput>}> = (props) => {
+          const {projectId,data} = props ?? {};
+
+          return  compareStyleFingerprints(projectId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CompareStyleFingerprintsMutationResult = NonNullable<Awaited<ReturnType<typeof compareStyleFingerprints>>>
+    export type CompareStyleFingerprintsMutationBody = BodyType<StyleFingerprintCompareInput>
+    export type CompareStyleFingerprintsMutationError = ErrorType<NotFoundResponse>
+
+    /**
+ * @summary Compare two fingerprints feature by feature, in words
+ */
+export const useCompareStyleFingerprints = <TError = ErrorType<NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof compareStyleFingerprints>>, TError,{projectId: string;data: BodyType<StyleFingerprintCompareInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof compareStyleFingerprints>>,
+        TError,
+        {projectId: string;data: BodyType<StyleFingerprintCompareInput>},
+        TContext
+      > => {
+      return useMutation(getCompareStyleFingerprintsMutationOptions(options));
     }
 
 export const getListProducerDecisionsUrl = (params?: ListProducerDecisionsParams,) => {
