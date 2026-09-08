@@ -275,6 +275,53 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   not yet interpreted beyond legato/staccato. Nobody has listened to a styled
   performance; that waits for the blind evaluation the plan requires.
 
+- **PR-24** ✅ — `sound-selection-brain`: the sound of each track is chosen
+  for musical reasons, not by an operator table alone. `soundSelectionBrain.ts`
+  has two layers kept apart: `deriveSoundTarget` turns role, family and the
+  notes themselves into a catalogue-independent `SoundTarget` (register,
+  attack, sustain, brightness, width, space, saturation, dynamics response,
+  character words), with the StyleProfile's sound dimensions
+  (`soundAesthetic`, `roomSize`, `saturation`, `stereoAesthetic`, `dynamics`,
+  `era`) overriding field by field with provenance; `selectTrackSound` scores
+  every attested instrument against that target using the worker manifest's
+  `families` / `roles` / new `character` hints — deterministic, family-gated
+  (a pad instrument offered a bass loses to one that claims nothing), honouring
+  producer exclusions ("no synths"), and refusing with the reason when nothing
+  fits. The result is an `InstrumentSoundProfile` per track: target,
+  provenance, every candidate's score and reasons, every rejection's reason,
+  and an inputs digest.
+
+  **Precedence** (`resolveTrackAsset`): explicit operator rule > brain > table
+  `default` > worker default; a rule naming an unattested instrument still
+  refuses. The export records `soundSelection` (source + reason) on every stem
+  — in the bundle's `project/manifest.json` and the stem's
+  `technicalMetadata`. The worker passes `character` through `/health`;
+  `make_manifest.py --character analog,warm` declares it.
+
+  **Proven live** (`docs/evidence/sound-selection-export.json`): a brain
+  arrangement exported through the durable job with the operator's table —
+  GROOVE and BASS decided by the explicit rules (`source: operator`), the
+  ensemble TRANSITION track by the brain (`source: brain`, outranking the
+  table default), 3/3 stems licensed-native.
+
+  **Found on the way.** `GET /projects/{id}/artifacts` returned **500** for any
+  project with a completed export: the export job persists `PREMASTER` /
+  `METADATA` / `BUNDLE` artifact rows, and the OpenAPI `Artifact.type` enum
+  never listed them, so the response failed Zod validation. The studio could
+  not list a project's artifacts after its first export. Enum aligned with
+  `ExportFile.type`; clients regenerated.
+
+  Suites: soundSelectionBrain 9, premiumInstrumentRouting 5,
+  nativeRendererAssets 4, worker pytest 21.
+
+  **Honest limits.** With a single attested, undeclared instrument the brain
+  can only say "universal instrument" — the musical scoring needs the operator
+  to attest and describe more instruments (`.vstpreset` for HALion Sonic /
+  Groove Agent SE / Padshop, then `--families/--roles/--character`). The
+  StyleProfile is not yet threaded from the project into the export call
+  (Wave U persistence, PR-U2); that path is unit-tested only. Character
+  matching is word overlap, not timbre analysis: the brain does not listen.
+
   **Honest limits.** Only Retrologue is attested here: Groove Agent SE, Padshop
   and HALion Sonic render silence without a loaded program, so their smoke
   correctly refuses them until a `.vstpreset` is provided. The bass lives in

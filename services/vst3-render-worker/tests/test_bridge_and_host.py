@@ -116,3 +116,7 @@ def test_public_asset_fields_never_include_paths():
     public = host.asset_public_fields(asset)
     assert "path" not in public and "presetPath" not in public
     assert set(public) == {"id", "identity", "sha256", "licenseOwner", "licenseReference", "rendererIdentity", "rendererSha256"}
+    # Hints pass through for the API's routing and sound selection; paths still never do.
+    hinted = host.asset_public_fields(asset | {"families": ["drums"], "roles": ["GROOVE"], "character": ["acoustic", "punchy"]})
+    assert hinted["families"] == ["drums"] and hinted["roles"] == ["GROOVE"] and hinted["character"] == ["acoustic", "punchy"]
+    assert "presetPath" not in hinted

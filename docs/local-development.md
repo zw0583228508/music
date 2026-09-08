@@ -102,3 +102,18 @@ track by instrument name, role or family, with a default. Only instruments the
 worker has attested (their own smoke passed) can be chosen; a rule that names
 an unattested one makes that track fall back to the preview synth with the
 reason recorded in the export's renderer evidence.
+
+### Sound selection (PR-24)
+
+Without an explicit rule, the Sound Selection Brain chooses among the
+worker's attested instruments for musical reasons: the track's role, family
+and notes give a target sound (register, attack, sustain, brightness, width,
+space, saturation), the project's StyleProfile overrides it (sound aesthetic,
+room size, saturation, stereo aesthetic), and each instrument is scored
+against that target using the manifest's `families` / `roles` / `character`
+hints. Precedence per track: **explicit operator rule > brain > table
+`default` > worker default**. Every export records the choice and its reason
+under `soundSelection` (bundle metadata and the stem's `technicalMetadata`).
+Declare character words when you register an instrument
+(`make_manifest.py --character analog,warm`) so the brain can match a "warm
+vintage" brief to it.

@@ -2244,6 +2244,68 @@ export type PerformanceStyle = {
   sources?: Array<{ dimension: string; value: string | number; provenance: string }>;
 };
 
+/**
+ * Sound selection (PR-24). What a track's sound *should be*, decided for
+ * musical reasons before any catalogue is consulted; then which attested
+ * instrument realizes it, with every candidate scored and explained.
+ */
+export type SoundTarget = {
+  register: "low" | "mid" | "high" | "wide";
+  attack: "soft" | "medium" | "sharp";
+  sustain: "short" | "medium" | "long";
+  brightness: "dark" | "neutral" | "bright";
+  width: "mono" | "narrow" | "natural" | "wide";
+  space: "dry" | "small" | "medium" | "large" | "hall";
+  saturation: "clean" | "warm" | "driven" | "lo_fi";
+  dynamicsResponse: "narrow" | "moderate" | "wide";
+  /** Character words the style asked for ("vintage", "cinematic", "granular"). */
+  character: string[];
+};
+
+/** One attested instrument the renderer offers, as the brain sees it. */
+export type SoundCatalogueEntry = {
+  assetId: string;
+  name?: string;
+  manufacturer?: string;
+  /** Track families this instrument can serve; absent means universal. */
+  families?: string[];
+  /** Arrangement roles it is meant for; absent means any. */
+  roles?: string[];
+  /** Operator-declared character words ("analog", "warm", "granular", "acoustic"). */
+  character?: string[];
+};
+
+export type SoundSelectionCandidate = {
+  assetId: string;
+  score: number;
+  reasons: string[];
+};
+
+export type SoundTargetProvenance = {
+  field: keyof SoundTarget;
+  source: "default" | "family" | "role" | "notes" | "style";
+  detail: string;
+};
+
+export type InstrumentSoundProfile = {
+  version: "1.0";
+  method: string;
+  trackId: string;
+  instrument: string;
+  role: string;
+  family: string;
+  target: SoundTarget;
+  provenance: SoundTargetProvenance[];
+  selection: {
+    assetId: string | null;
+    reason: string;
+    /** Every compatible candidate, best first; incompatible ones are listed in `rejected`. */
+    candidates: SoundSelectionCandidate[];
+    rejected: Array<{ assetId: string; reason: string }>;
+  };
+  inputsDigestSha256: string;
+};
+
 /** Granularity at which a producer can freeze material (PR-17). */
 export type LockScope = "global" | "section" | "track" | "phrase" | "event";
 

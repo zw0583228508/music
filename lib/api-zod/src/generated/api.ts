@@ -2431,7 +2431,7 @@ export const GetProjectResponse = zod.object({
   "artifacts": zod.array(zod.object({
   "id": zod.string(),
   "projectId": zod.string(),
-  "type": zod.enum(['SOURCE', 'NORMALIZED_AUDIO', 'STEM', 'ANALYSIS', 'SONG_MODEL', 'ARRANGEMENT_PLAN', 'TRACK_MODEL', 'MIDI', 'AUDIO_TRACK', 'QUALITY_REPORT', 'MIX', 'MASTER', 'EXPORT']),
+  "type": zod.enum(['SOURCE', 'NORMALIZED_AUDIO', 'STEM', 'ANALYSIS', 'SONG_MODEL', 'ARRANGEMENT_PLAN', 'TRACK_MODEL', 'MIDI', 'AUDIO_TRACK', 'QUALITY_REPORT', 'MIX', 'PREMASTER', 'MASTER', 'METADATA', 'BUNDLE', 'EXPORT']),
   "label": zod.string(),
   "version": zod.number(),
   "size": zod.string(),
@@ -17633,7 +17633,7 @@ export const ListArtifactsParams = zod.object({
 export const ListArtifactsResponseItem = zod.object({
   "id": zod.string(),
   "projectId": zod.string(),
-  "type": zod.enum(['SOURCE', 'NORMALIZED_AUDIO', 'STEM', 'ANALYSIS', 'SONG_MODEL', 'ARRANGEMENT_PLAN', 'TRACK_MODEL', 'MIDI', 'AUDIO_TRACK', 'QUALITY_REPORT', 'MIX', 'MASTER', 'EXPORT']),
+  "type": zod.enum(['SOURCE', 'NORMALIZED_AUDIO', 'STEM', 'ANALYSIS', 'SONG_MODEL', 'ARRANGEMENT_PLAN', 'TRACK_MODEL', 'MIDI', 'AUDIO_TRACK', 'QUALITY_REPORT', 'MIX', 'PREMASTER', 'MASTER', 'METADATA', 'BUNDLE', 'EXPORT']),
   "label": zod.string(),
   "version": zod.number(),
   "size": zod.string(),
