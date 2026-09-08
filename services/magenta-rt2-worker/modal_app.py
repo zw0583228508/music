@@ -83,17 +83,16 @@ def smoke() -> str:
 )
 @modal.web_server(port=PORT, startup_timeout=900)
 def endpoint() -> None:
-    process = subprocess.Popen(
+    # Launch and return. @web_server treats the decorated function as container
+    # initialisation and probes the port itself, so blocking on the child here
+    # means the runner never finishes initialising: every request is answered
+    # with a 303 retry token until Modal gives up with "Runner has been
+    # initializing for too long". Do not add a wait() to this function.
+    subprocess.Popen(
         [f"{VENV}/bin/python", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", str(PORT)],
         cwd="/app",
         env={**os.environ, **worker_environment()},
     )
-    try:
-        if process.wait():
-            raise RuntimeError("Magenta RT2 workload exited unexpectedly")
-    finally:
-        if process.poll() is None:
-            process.terminate()
 
 
 @app.local_entrypoint()
