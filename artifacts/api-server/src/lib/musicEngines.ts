@@ -26,6 +26,7 @@ import { CANONICAL_PPQ, createCanonicalTimeline } from "./canonicalTimeline";
 import { deriveGlobalArrangementPlan } from "./globalArrangementPlanner";
 import { deriveSectionPhrasePlan } from "./sectionPhrasePlanner";
 import { deriveOrchestrationBudget } from "./orchestrationBudget";
+import { deriveTransitionPlan } from "./transitionEngine";
 
 export type PerformanceNote = MusicalNote & {
   articulation: string;
@@ -1694,6 +1695,7 @@ function planningLayers(songModel: SongModelData): {
   globalPlan: ReturnType<typeof deriveGlobalArrangementPlan>;
   sectionPlan: ReturnType<typeof deriveSectionPhrasePlan>;
   orchestrationBudget: ReturnType<typeof deriveOrchestrationBudget>;
+  transitionPlan: ReturnType<typeof deriveTransitionPlan>;
 } {
   // The arrangement plan is required to be byte-deterministic for a given input,
   // so the embedded planning layers use a fixed timestamp; staleness is tracked
@@ -1705,6 +1707,7 @@ function planningLayers(songModel: SongModelData): {
     globalPlan,
     sectionPlan,
     orchestrationBudget: deriveOrchestrationBudget(songModel, sectionPlan, { now }),
+    transitionPlan: deriveTransitionPlan(songModel, globalPlan, sectionPlan, { now }),
   };
 }
 
