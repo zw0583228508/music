@@ -132,7 +132,10 @@ export class ProviderUnavailableError extends Error {
 }
 
 const LICENSE_BLOCKED_PROVIDER_IDS = new Set<string>(["BS_ROFORMER"]);
-const RESEARCH_ONLY_PROVIDER_IDS = new Set<string>(["LADA_BAND", "DIFFRHYTHM_2"]);
+// MIDI_RWKV: MIT code, but the shipped base weights are pretrained on GigaMIDI
+// (CC-BY-NC-4.0) and inherit that restriction. The code licence does not
+// launder the training data's terms. See services/midi-rwkv-worker/README.md.
+const RESEARCH_ONLY_PROVIDER_IDS = new Set<string>(["LADA_BAND", "DIFFRHYTHM_2", "MIDI_RWKV"]);
 
 const UPSTREAM_BLOCKED_PROVIDER_IDS = new Set<string>(["MIDI_SAG"]);
 
@@ -337,6 +340,19 @@ export const MUSIC_PROVIDERS: MusicProviderDescriptor[] = [
     license: "UNVERIFIED first-party source/model rights",
     priority: 41,
     notes: "BLOCKED_LICENSE: the first-party source has no owner-specified license, the license=other model revision requires manual approval, and no accepted-account or complete bundled-weight grant is retained. Endpoint, token, and acceptance environment values cannot authorize routing.",
+  },
+  {
+    id: "MIDI_RWKV",
+    name: "MIDI-RWKV",
+    provider: "christianazinn",
+    version: "7c94e9e2980d1f3cdb0d3a9ca2780ef0a5af6530",
+    capabilities: ["arrangement"],
+    inputTypes: ["MIDI"],
+    execution: "remote",
+    status: "unavailable",
+    license: "MIT source; weights inherit CC-BY-NC-4.0 from GigaMIDI pretraining data",
+    priority: 43,
+    notes: "BLOCKED_LICENSE: the base weights shipped in the source repository were pretrained on GigaMIDI (CC-BY-NC-4.0). A permissive code licence does not remove the NC term from a derivative of NC data, so commercial routing fails closed. The finetuning set POP909 is MIT and is not the blocker. Endpoint, token and acceptance environment values cannot authorize routing.",
   },
   {
     id: "MAGENTA_RT2",
@@ -1321,6 +1337,7 @@ export const musicProviderIds = [
   "ACE_STEP",
   "ANYACCOMP",
   "LADA_BAND",
+  "MIDI_RWKV",
   "MAGENTA_RT2",
   "HAFM",
   "SYMPHONYGEN",
@@ -1919,6 +1936,15 @@ export const providerDefinitions: ProviderDefinition[] = [
     hardware: ["GPU"],
     speeds: ["QUALITY"],
     styles: ["vocal", "singing"],
+  },
+  {
+    id: "MIDI_RWKV",
+    displayName: "MIDI-RWKV (Licence Blocked)",
+    modelVersion: "7c94e9e2980d1f3cdb0d3a9ca2780ef0a5af6530",
+    tasks: ["ARRANGEMENT"],
+    hardware: ["GPU"],
+    speeds: ["QUALITY"],
+    styles: ["pop", "midi"],
   },
   {
     id: "MAGENTA_RT2",

@@ -104,3 +104,28 @@ test("shadow status is a quality gate, not a licence gate", () => {
   assert.doesNotMatch(shadow.notes, /BLOCKED_LICENSE/);
   assert.equal(providerIsShadowOnly("LADA_BAND"), false, "licence blocks are a different mechanism");
 });
+
+test("MIT code does not make MIDI-RWKV's weights routable", async () => {
+  // The exact trap the plan warned about: a permissive code licence hiding
+  // non-commercial weights. The descriptor has to name the real blocker.
+  const descriptor = MUSIC_PROVIDERS.find((candidate) => candidate.id === "MIDI_RWKV");
+  assert.ok(descriptor, "MIDI_RWKV is registered");
+  assert.equal(descriptor.status, "unavailable");
+  assert.match(descriptor.notes, /BLOCKED_LICENSE/);
+  assert.match(descriptor.notes, /GigaMIDI/);
+  assert.match(descriptor.license ?? "", /MIT source/);
+  assert.match(descriptor.license ?? "", /CC-BY-NC-4\.0/);
+  assert.equal(providerIsShadowOnly("MIDI_RWKV"), false, "this is a rights block, not a quality gate");
+
+  await assert.rejects(
+    runArrangementProvider(descriptor, {} as ArrangementProviderInput),
+    ProviderUnavailableError,
+  );
+  const registry = createProviderRegistry();
+  const provider = registry.find((candidate) => candidate.definition.id === "MIDI_RWKV");
+  assert.ok(provider);
+  assert.equal(provider.available, false);
+  const readiness = await provider.checkHealth(true);
+  assert.equal(readiness.availability, "unavailable");
+  assert.match(readiness.message ?? "", /BLOCKED_LICENSE/);
+});
