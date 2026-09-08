@@ -134,7 +134,7 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
 
 ## Wave 4 — completion: the brain is reachable
 
-- **PR-W1** `orchestrator-api-wiring` ✅ — PR-16's orchestrator ran only in tests
+- **PR-W1** (#22) ✅ — `orchestrator-api-wiring`: PR-16's orchestrator ran only in tests
   and the benchmark; nothing a user could reach called it. It is now a
   first-class registry provider, `ARRANGEMENT_ORCHESTRATOR`, so the existing
   job runner, candidate persistence, ranking, repair, selection and the studio's
