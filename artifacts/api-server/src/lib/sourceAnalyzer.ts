@@ -27,7 +27,10 @@ import {
   type SeparationAnalysisResult,
 } from "./analysisProviders";
 import { fuseProviderSongModels } from "./songModelValidation";
-import { reconcileAnalysisField } from "./analysisReconciliation";
+import {
+  reconcileAnalysisDomains,
+  reconcileAnalysisField,
+} from "./analysisReconciliation";
 import {
   createSourceDownloadUrl,
   createAnalysisDownloadUrl,
@@ -1633,6 +1636,76 @@ export async function analyzeProjectSource(
     const vocalIntelligence = derivePhraseLevelVocalIntelligence(
       vocalEvidence, melody, lyrics, sections, candidateTempoMap, candidateMeterMap, durationSeconds,
     );
+
+    // Per-domain provider reconciliation (Analysis Reconciliation V2). Built
+    // from the same independent observations used above; MIDI sources are a
+    // single authoritative source and are not reconciled.
+    const domainReconciliation = midi
+      ? undefined
+      : reconcileAnalysisDomains({
+          tempo: [
+            ...(providerResults.structure
+              ? [{
+                  provider: providerResults.structure.providerId,
+                  value: providerResults.structure.bpm,
+                  confidence: providerResults.structure.confidence,
+                }]
+              : []),
+            ...providerResults.rhythmEvidence.map((evidence) => ({
+              provider: evidence.provider,
+              value: evidence.tempoBpm,
+            })),
+            ...(localTempo
+              ? [{
+                  provider: "LOCAL_SIGNAL_ANALYZER_V1",
+                  value: localTempo.bpm,
+                  confidence: localTempo.confidence,
+                }]
+              : []),
+          ],
+          downbeats: [
+            ...(providerResults.structure
+              ? [{
+                  provider: providerResults.structure.providerId,
+                  value: providerResults.structure.bars.length,
+                  confidence: providerResults.structure.confidence,
+                }]
+              : []),
+            ...providerResults.rhythmEvidence.map((evidence) => ({
+              provider: evidence.provider,
+              value: evidence.downbeats.length,
+            })),
+          ],
+          meter: providerResults.structure
+            ? [{
+                provider: providerResults.structure.providerId,
+                value: providerResults.structure.meter,
+                confidence: providerResults.structure.confidence,
+              }]
+            : [],
+          key: [
+            ...providerResults.keyEvidence.map((evidence) => ({
+              provider: evidence.provider,
+              value: `${evidence.key} ${evidence.scale}`.trim(),
+              confidence: evidence.confidence,
+            })),
+            ...(keyDetection
+              ? [{
+                  provider: "LOCAL_SIGNAL_ANALYZER_V1",
+                  value: keyDetection.key,
+                  confidence: keyDetection.confidence,
+                }]
+              : []),
+          ],
+          sections: providerResults.structure
+            ? [{
+                provider: providerResults.structure.providerId,
+                value: String(providerResults.structure.sections.length),
+                confidence: providerResults.structure.confidence,
+              }]
+            : [],
+        });
+
     const candidate = {
       audio: {
         name: source.name,
@@ -1680,6 +1753,7 @@ export async function analyzeProjectSource(
       vocalIntelligence,
       lyrics,
       confidenceByField,
+      ...(domainReconciliation ? { reconciliation: domainReconciliation } : {}),
       providerProvenance: [
         {
           capability: "preprocessing",

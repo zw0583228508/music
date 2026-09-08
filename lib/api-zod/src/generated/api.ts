@@ -3450,6 +3450,12 @@ export const getProjectSongModelResponseMusicalMapStyleFingerprintRhythmicComple
 export const getProjectSongModelResponseMusicalMapStyleFingerprintSectionContrastMin = 0;
 export const getProjectSongModelResponseMusicalMapStyleFingerprintSectionContrastMax = 1;
 
+export const getProjectSongModelResponseReconciliationDomainsConfidenceMin = 0;
+export const getProjectSongModelResponseReconciliationDomainsConfidenceMax = 1;
+
+export const getProjectSongModelResponseReconciliationConsensusScoreMin = 0;
+export const getProjectSongModelResponseReconciliationConsensusScoreMax = 1;
+
 export const getProjectSongModelResponseLyricsItemCoordinatesStartSecondsMin = 0;
 
 export const getProjectSongModelResponseLyricsItemCoordinatesStartTickMin = 0;
@@ -4372,6 +4378,20 @@ export const GetProjectSongModelResponse = zod.object({
   "orchestrationSize": zod.enum(['sparse', 'medium', 'dense']).nullable()
 })
 }).optional().describe('Derived musical map (Canonical Song Model V2). Additive and optional. Each group is status-tagged and carries no derived payload when its inputs are absent.'),
+  "reconciliation": zod.object({
+  "version": zod.enum(['1.0']),
+  "domains": zod.record(zod.string(), zod.object({
+  "domain": zod.enum(['tempo', 'downbeats', 'meter', 'key', 'chords', 'melody', 'bass', 'sections', 'instruments']),
+  "value": zod.union([zod.string(),zod.number()]).nullable(),
+  "confidence": zod.number().min(getProjectSongModelResponseReconciliationDomainsConfidenceMin).max(getProjectSongModelResponseReconciliationDomainsConfidenceMax).nullable(),
+  "providers": zod.array(zod.string()),
+  "status": zod.enum(['detected', 'low_confidence', 'not_available']),
+  "message": zod.string().nullable(),
+  "margin": zod.number().nullable()
+})),
+  "consensusScore": zod.number().min(getProjectSongModelResponseReconciliationConsensusScoreMin).max(getProjectSongModelResponseReconciliationConsensusScoreMax),
+  "contestedDomains": zod.array(zod.enum(['tempo', 'downbeats', 'meter', 'key', 'chords', 'melody', 'bass', 'sections', 'instruments']))
+}).optional().describe('Per-domain provider reconciliation (Analysis Reconciliation V2).'),
   "lyrics": zod.array(zod.object({
   "start": zod.number(),
   "end": zod.number(),
@@ -5262,6 +5282,12 @@ export const correctProjectSongModelResponseMusicalMapStyleFingerprintRhythmicCo
 
 export const correctProjectSongModelResponseMusicalMapStyleFingerprintSectionContrastMin = 0;
 export const correctProjectSongModelResponseMusicalMapStyleFingerprintSectionContrastMax = 1;
+
+export const correctProjectSongModelResponseReconciliationDomainsConfidenceMin = 0;
+export const correctProjectSongModelResponseReconciliationDomainsConfidenceMax = 1;
+
+export const correctProjectSongModelResponseReconciliationConsensusScoreMin = 0;
+export const correctProjectSongModelResponseReconciliationConsensusScoreMax = 1;
 
 export const correctProjectSongModelResponseLyricsItemCoordinatesStartSecondsMin = 0;
 
@@ -6185,6 +6211,20 @@ export const CorrectProjectSongModelResponse = zod.object({
   "orchestrationSize": zod.enum(['sparse', 'medium', 'dense']).nullable()
 })
 }).optional().describe('Derived musical map (Canonical Song Model V2). Additive and optional. Each group is status-tagged and carries no derived payload when its inputs are absent.'),
+  "reconciliation": zod.object({
+  "version": zod.enum(['1.0']),
+  "domains": zod.record(zod.string(), zod.object({
+  "domain": zod.enum(['tempo', 'downbeats', 'meter', 'key', 'chords', 'melody', 'bass', 'sections', 'instruments']),
+  "value": zod.union([zod.string(),zod.number()]).nullable(),
+  "confidence": zod.number().min(correctProjectSongModelResponseReconciliationDomainsConfidenceMin).max(correctProjectSongModelResponseReconciliationDomainsConfidenceMax).nullable(),
+  "providers": zod.array(zod.string()),
+  "status": zod.enum(['detected', 'low_confidence', 'not_available']),
+  "message": zod.string().nullable(),
+  "margin": zod.number().nullable()
+})),
+  "consensusScore": zod.number().min(correctProjectSongModelResponseReconciliationConsensusScoreMin).max(correctProjectSongModelResponseReconciliationConsensusScoreMax),
+  "contestedDomains": zod.array(zod.enum(['tempo', 'downbeats', 'meter', 'key', 'chords', 'melody', 'bass', 'sections', 'instruments']))
+}).optional().describe('Per-domain provider reconciliation (Analysis Reconciliation V2).'),
   "lyrics": zod.array(zod.object({
   "start": zod.number(),
   "end": zod.number(),

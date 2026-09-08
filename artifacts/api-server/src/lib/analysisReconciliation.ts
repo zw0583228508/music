@@ -1,8 +1,18 @@
 /**
  * Field-level reconciliation for independent analysis observations.  Provider
  * responses are evidence, not a single all-or-nothing Song Model authority.
+ *
+ * Per-domain provider reliability now lives in `providerReliability.ts`; this
+ * module consumes it rather than carrying its own weight table.
  */
-export type ReconciliationField = "tempo" | "meter" | "key";
+import {
+  type AnalysisDomain,
+  ANALYSIS_DOMAINS,
+  reliabilityFor,
+} from "./providerReliability";
+
+/** @deprecated use {@link AnalysisDomain}. Kept for existing call sites. */
+export type ReconciliationField = AnalysisDomain;
 
 export type AnalysisObservation<T> = {
   provider: string;
@@ -20,14 +30,8 @@ export type ReconciliationResult<T> = {
   margin: number | null;
 };
 
-const reliability: Record<ReconciliationField, Record<string, number>> = {
-  tempo: {
-    STANDARD_MIDI: .99, ALL_IN_ONE: .84, BEAT_THIS: .82, MADMOM: .78,
-    LOCAL_SIGNAL_ANALYZER_V1: .48,
-  },
-  meter: { STANDARD_MIDI: .99, ALL_IN_ONE: .84 },
-  key: { STANDARD_MIDI: .99, ESSENTIA: .82, LOCAL_SIGNAL_ANALYZER_V1: .45 },
-};
+/** Domains compared with a numeric tolerance rather than exact equality. */
+const NUMERIC_TOLERANCE_DOMAINS = new Set<AnalysisDomain>(["tempo", "downbeats"]);
 
 const clamp = (value: number): number => Math.max(0, Math.min(1, value));
 const round = (value: number): number => Number(value.toFixed(3));
@@ -44,11 +48,11 @@ function normalizedKey(value: string): string | null {
 }
 
 function observationWeight(
-  field: ReconciliationField,
+  field: AnalysisDomain,
   observation: AnalysisObservation<unknown>,
 ): number {
   return clamp(observation.confidence ?? 1) *
-    (reliability[field][observation.provider] ?? .35);
+    reliabilityFor(observation.provider, field);
 }
 
 /**
@@ -56,7 +60,7 @@ function observationWeight(
  * one observation so duplicated output cannot masquerade as corroboration.
  */
 export function reconcileAnalysisField<T extends number | string>(
-  field: ReconciliationField,
+  field: AnalysisDomain,
   observations: AnalysisObservation<T>[],
 ): ReconciliationResult<T> {
   const byProvider = new Map<string, AnalysisObservation<T>>();
@@ -85,9 +89,10 @@ export function reconcileAnalysisField<T extends number | string>(
   const clusters: Array<{ value: T; observations: AnalysisObservation<T>[] }> = [];
   for (const observation of unique) {
     const cluster = clusters.find((item) => {
-      if (field === "tempo") {
+      if (NUMERIC_TOLERANCE_DOMAINS.has(field)) {
         const left = Number(item.value);
         const right = Number(observation.value);
+        if (!Number.isFinite(left) || !Number.isFinite(right)) return item.value === observation.value;
         return Math.abs(left - right) <= Math.max(3, Math.min(left, right) * .025);
       }
       return item.value === observation.value;
@@ -130,4 +135,57 @@ export function reconcileAnalysisField<T extends number | string>(
       "Only one independent provider supports this value; review before arranging.",
     margin,
   };
+}
+// ---------------------------------------------------------------------------
+// Multi-domain reconciliation
+// ---------------------------------------------------------------------------
+
+export type DomainReconciliation = ReconciliationResult<string | number> & {
+  domain: AnalysisDomain;
+};
+
+/**
+ * A per-domain view of how well the providers agreed. `consensusScore` is the
+ * mean confidence across domains that resolved to `detected`; `contestedDomains`
+ * are those that did not (disagreement or single weak source). The Arrangement
+ * Brain reads this to know which musical facts it can lean on.
+ */
+export type DomainReconciliationReport = {
+  version: "1.0";
+  domains: Partial<Record<AnalysisDomain, DomainReconciliation>>;
+  consensusScore: number;
+  contestedDomains: AnalysisDomain[];
+};
+
+/**
+ * Reconcile every supplied domain independently. Domains with no observations
+ * are omitted (not fabricated as `not_available`), matching the rest of the
+ * Song Model contract.
+ */
+export function reconcileAnalysisDomains(
+  observationsByDomain: Partial<
+    Record<AnalysisDomain, AnalysisObservation<string | number>[]>
+  >,
+): DomainReconciliationReport {
+  const domains: Partial<Record<AnalysisDomain, DomainReconciliation>> = {};
+  for (const domain of ANALYSIS_DOMAINS) {
+    const observations = observationsByDomain[domain];
+    if (!observations || observations.length === 0) continue;
+    domains[domain] = { domain, ...reconcileAnalysisField(domain, observations) };
+  }
+  const resolved = Object.values(domains).filter(
+    (result): result is DomainReconciliation => result.status === "detected",
+  );
+  const consensusScore = resolved.length
+    ? Number(
+        (
+          resolved.reduce((sum, result) => sum + (result.confidence ?? 0), 0) /
+          resolved.length
+        ).toFixed(3),
+      )
+    : 0;
+  const contestedDomains = (Object.keys(domains) as AnalysisDomain[]).filter(
+    (domain) => domains[domain]!.status !== "detected",
+  );
+  return { version: "1.0", domains, consensusScore, contestedDomains };
 }

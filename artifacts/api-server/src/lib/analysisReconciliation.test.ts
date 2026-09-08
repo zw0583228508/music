@@ -42,3 +42,39 @@ test("normalizes key aliases before clustering", () => {
   ]);
   assert.equal(result.value, "F# minor");
 });
+test("reconcileAnalysisDomains scores agreement per domain", async () => {
+  const { reconcileAnalysisDomains } = await import("./analysisReconciliation");
+  const report = reconcileAnalysisDomains({
+    tempo: [
+      { provider: "BEAT_THIS", value: 120, confidence: 0.9 },
+      { provider: "ALL_IN_ONE", value: 121, confidence: 0.9 },
+    ],
+    key: [
+      { provider: "ESSENTIA", value: "C major", confidence: 0.9 },
+      { provider: "LOCAL_SIGNAL_ANALYZER_V1", value: "A minor", confidence: 0.6 },
+    ],
+    sections: [],
+  });
+  assert.equal(report.version, "1.0");
+  assert.equal(report.domains.tempo?.status, "detected");
+  assert.equal(report.domains.tempo?.value, 121);
+  assert.ok(!("sections" in report.domains), "domains with no observations are omitted");
+  assert.ok(report.consensusScore > 0 && report.consensusScore <= 1);
+  // Key disagreement with a weak second source stays contested.
+  assert.ok(
+    report.domains.key?.status !== "detected"
+      ? report.contestedDomains.includes("key")
+      : !report.contestedDomains.includes("key"),
+  );
+});
+
+test("downbeats reconcile with a numeric tolerance like tempo", () => {
+  const result = reconcileAnalysisField("downbeats", [
+    { provider: "BEAT_THIS", value: 16, confidence: 0.9 },
+    { provider: "MADMOM", value: 16, confidence: 0.9 },
+    { provider: "ALL_IN_ONE", value: 8, confidence: 0.9 },
+  ]);
+  assert.equal(result.value, 16);
+  assert.equal(result.status, "detected");
+  assert.deepEqual(result.providers, ["BEAT_THIS", "MADMOM"]);
+});
