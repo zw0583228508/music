@@ -149,6 +149,59 @@ export interface ProducerCalibrationEvaluation {
   heldOutAgreement: number;
 }
 
+export type PairwiseCriticRecordStatus = typeof PairwiseCriticRecordStatus[keyof typeof PairwiseCriticRecordStatus];
+
+
+export const PairwiseCriticRecordStatus = {
+  candidate: 'candidate',
+  active: 'active',
+  retired: 'retired',
+} as const;
+
+export type PairwiseCriticRecordInfluentialFeaturesItem = {
+  name: string;
+  weight: number;
+};
+
+/**
+ * PR-29 — one immutable version of the owner's learned pairwise critic, with the held-out verdict that decides whether it may be applied.
+ */
+export interface PairwiseCriticRecord {
+  id: string;
+  version: number;
+  status: PairwiseCriticRecordStatus;
+  heldOutAccuracy: number;
+  baselineAccuracy: number;
+  trainingPairs: number;
+  heldOutPairs: number;
+  events: number;
+  promotable: boolean;
+  promotionReason: string;
+  influentialFeatures: PairwiseCriticRecordInfluentialFeaturesItem[];
+  method: string;
+  trainedAt: string;
+  createdAt: string;
+  promotedAt: string | null;
+  retiredAt: string | null;
+}
+
+export type PairwiseCriticTrainResultStatus = typeof PairwiseCriticTrainResultStatus[keyof typeof PairwiseCriticTrainResultStatus];
+
+
+export const PairwiseCriticTrainResultStatus = {
+  trained: 'trained',
+  insufficient: 'insufficient',
+} as const;
+
+export interface PairwiseCriticTrainResult {
+  status: PairwiseCriticTrainResultStatus;
+  reason?: string;
+  events: number;
+  trainingPairs: number;
+  heldOutPairs: number;
+  model?: PairwiseCriticRecord;
+}
+
 export interface ProducerCalibration {
   id: string;
   version: number;
@@ -3783,6 +3836,12 @@ export type GenerationCandidatePlan = {
   tracks?: GenerationCandidatePlanTracksItem[];
 };
 
+export type GenerationCandidatePreference = {
+  modelVersion: number;
+  score: number;
+  rerankedFrom: number | null;
+};
+
 export type HarmonyDecisionEvidenceSource = typeof HarmonyDecisionEvidenceSource[keyof typeof HarmonyDecisionEvidenceSource];
 
 
@@ -3849,6 +3908,7 @@ export interface GenerationCandidate {
   trackModels: TrackModel[] | null;
   harmonyDecisions: HarmonyDecisionEvidence[];
   evaluation: CandidateEvaluation;
+  preference?: GenerationCandidatePreference;
   createdAt: string;
 }
 

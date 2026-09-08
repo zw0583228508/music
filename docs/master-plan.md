@@ -500,6 +500,45 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   Two events in one dev project is not a dataset; PR-29 needs real choices at
   scale, and the plan's KPI (blind wins) still has no human behind it.
 
+- **PR-29** ✅ — `pairwise-arrangement-critic`: "A > B" learned from real
+  choices. `pairwiseCritic.ts` is a Bradley–Terry style logistic model over
+  the PR-28 pair features (40 content-free fingerprint deltas + the critics'
+  score deltas), **without a bias term** so P(A>B) + P(B>A) = 1 by
+  construction; every pair is mirrored so no side bias can be learned;
+  training is deterministic (zero init, fixed iterations, per-feature
+  standardisation, L2). The last 25 % of events by time are held out; the
+  model is scored against the **critic-only baseline** (whoever the music
+  critic scored higher wins) and is `promotable` only with ≥ 8 training and
+  ≥ 4 held-out pairs and held-out accuracy ≥ max(0.55, baseline + 0.05). The
+  model reports its most influential features by name.
+
+  **Applied only where it is allowed to matter.** `rerankNearTies` lets an
+  active model decide only adjacent candidates whose evidence scores are
+  within 0.03; a clear critic verdict is never overturned by taste. Every
+  candidate the model scored carries `preference { modelVersion, score,
+  rerankedFrom }` in the studio's candidate list. Lifecycle:
+  `music_pairwise_critic_models` (immutable versions), `POST
+  /pairwise-critic/train` (stores a candidate with its metrics or returns
+  the reason the data was insufficient), `POST …/{id}/promote` (gated by the
+  model's own held-out verdict; the previous active model is retired),
+  `POST …/{id}/retire` (rollback), `GET /pairwise-critic`.
+
+  **Proven** two ways. In the suite (5 tests): a synthetic owner who prefers
+  swing while the critic is indifferent → swing is the top weight, held-out
+  accuracy ≥ 0.8 against a baseline < 0.7, promotable; an owner who follows
+  the critic exactly → a model that is *not* promotable; determinism;
+  antisymmetry; near-tie-only re-ranking. **Live**
+  (`docs/evidence/pairwise-critic-live.json`): the dev owner's 2 events gave 2
+  mirrored pairs → the trainer **refused with the reason**, stored nothing,
+  and the candidate list was served unchanged — which is exactly what the
+  plan demands of a model that has not proved itself.
+
+  **Honest limits.** A linear model over hand-chosen statistics; it cannot
+  learn a preference the fingerprint does not express (no timbre, no lyric,
+  no mix). Per owner only (the global model is PR-31's question). The
+  near-tie tolerance (0.03) is a judgement, not a measurement. No real owner
+  has enough events yet for any of this to run in anger.
+
   **Honest limits.** Only Retrologue is attested here: Groove Agent SE, Padshop
   and HALion Sonic render silence without a loaded program, so their smoke
   correctly refuses them until a `.vstpreset` is provided. The bass lives in

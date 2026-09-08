@@ -91,9 +91,12 @@ import {
   activeGenerationPreferenceForOwner,
 } from "./producerDecisionLedger";
 import { appendProducerDecisionTx } from "./producerDecisionLedger";
-import { recordSelectionAmongSiblings } from "./preferenceEvents";
+import { fingerprintFeatureVector, recordSelectionAmongSiblings } from "./preferenceEvents";
 import { DbPreferenceEventStore } from "./preferenceEventsDbStore";
 import { deriveStyleFingerprint } from "./styleFingerprint";
+import { preferenceScores, rerankNearTies } from "./pairwiseCritic";
+import { activePairwiseCritic } from "./pairwiseCriticStore";
+import { candidateEvidenceScore } from "./candidateRanking";
 
 const sha256 = (value: string | Buffer): string =>
   createHash("sha256").update(value).digest("hex");
@@ -259,8 +262,10 @@ export const generationJobResponse = (
 });
 
 export const generationCandidateResponse = (
-  row: typeof musicGenerationCandidatesTable.$inferSelect,
+  row: typeof musicGenerationCandidatesTable.$inferSelect & { preference?: { modelVersion: number; score: number; rerankedFrom: number | null } },
 ) => ({
+  // PR-29: present only when an active pairwise critic scored this candidate.
+  ...(row.preference ? { preference: row.preference } : {}),
   id: row.id,
   jobId: row.jobId,
   provider: row.provider,
@@ -2302,7 +2307,38 @@ export async function listGenerationCandidatesForOwner(
     .orderBy(musicGenerationCandidatesTable.rank);
   // The calibration is read per owner and applied only to this response; it
   // never changes persisted ranks or another producer's view.
-  return rankEvaluatedCandidates(rows, (await activeCalibrationForOwner(ownerId)) ?? undefined);
+  const calibration = (await activeCalibrationForOwner(ownerId)) ?? undefined;
+  const ranked = rankEvaluatedCandidates(rows, calibration);
+  // PR-29: the owner's active pairwise critic decides only the critics'
+  // near-ties. Candidates without TrackModels have no fingerprint and take no
+  // part; the original rank travels with a re-ranked candidate for audit.
+  const critic = await activePairwiseCritic(ownerId);
+  if (!critic) return ranked;
+  const subjects = ranked.flatMap((candidate) => candidate.trackModels?.length
+    ? [{
+        id: candidate.id,
+        features: fingerprintFeatureVector(deriveStyleFingerprint({ source: { kind: "arrangement", id: candidate.id, version: null }, trackModels: candidate.trackModels })),
+        criticScore: candidate.evaluation.musicCritic?.score ?? null,
+        rankingScore: candidate.evaluation.qualityReport?.score ?? null,
+      }]
+    : []);
+  if (subjects.length < 2) return ranked;
+  const scores = preferenceScores(critic.model, subjects);
+  const reranked = rerankNearTies(
+    ranked,
+    (candidate) => (candidate.rank === null ? null : candidateEvidenceScore(candidate, calibration)),
+    (candidate) => scores.get(candidate.id) ?? null,
+  );
+  let nextRank = 1;
+  return reranked.map((candidate) => {
+    const score = scores.get(candidate.id);
+    const rank = candidate.rank === null ? null : nextRank++;
+    return {
+      ...candidate,
+      rank,
+      ...(score !== undefined ? { preference: { modelVersion: critic.version, score, rerankedFrom: candidate.rank !== rank ? candidate.rank : null } } : {}),
+    };
+  });
 }
 
 export async function selectGenerationCandidate(

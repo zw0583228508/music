@@ -380,6 +380,41 @@ export const preferenceEventsTable = pgTable("music_preference_events", {
   index("music_preference_events_project_idx").on(table.projectId),
 ]);
 
+// ---------------------------------------------------------------------------
+// Wave 7 — PR-29: pairwise arrangement critic, learned from preference events.
+// A model is stored as a candidate with its held-out metrics; only a model
+// that beat the critic-only baseline may be promoted to active, and an active
+// model only decides the critics' near-ties.
+// ---------------------------------------------------------------------------
+
+export type PairwiseCriticModel = {
+  version: "1.0";
+  method: string;
+  featureNames: string[];
+  weights: number[];
+  standardization: { mean: number[]; std: number[] };
+  trainedOn: { events: number; trainingPairs: number; heldOutPairs: number };
+  metrics: { heldOutAccuracy: number; baselineAccuracy: number; trainingLogLoss: number; heldOutLogLoss: number };
+  influentialFeatures: Array<{ name: string; weight: number }>;
+  promotable: boolean;
+  promotionReason: string;
+  trainedAt: string;
+  inputsDigestSha256: string;
+};
+
+export type PairwiseCriticStatus = "candidate" | "active" | "retired";
+
+export const pairwiseCriticModelsTable = pgTable("music_pairwise_critic_models", {
+  id: text("id").primaryKey(),
+  ownerId: text("owner_id").notNull(),
+  version: integer("version").notNull(),
+  status: text("status").$type<PairwiseCriticStatus>().notNull().default("candidate"),
+  model: jsonb("model").$type<PairwiseCriticModel>().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  promotedAt: timestamp("promoted_at", { withTimezone: true }),
+  retiredAt: timestamp("retired_at", { withTimezone: true }),
+}, (table) => [uniqueIndex("music_pairwise_critic_models_owner_version_unique").on(table.ownerId, table.version)]);
+
 /**
  * Mastering Engine (PR-26): what a master *achieved*, measured with
  * BS.1770-4 gated loudness and 4× true peak — never asserted from the

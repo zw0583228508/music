@@ -337,7 +337,7 @@ export function rankEvaluatedCandidates<
     });
 }
 
-function candidateEvidenceScore(
+export function candidateEvidenceScore(
   candidate: { evaluation: CandidateEvaluation },
   calibration?: CandidateRankingCalibration,
 ): number {

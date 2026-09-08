@@ -15528,6 +15528,11 @@ export const ListGenerationCandidatesResponseItem = zod.object({
   "improved": zod.boolean()
 }).optional()
 }),
+  "preference": zod.object({
+  "modelVersion": zod.number(),
+  "score": zod.number(),
+  "rerankedFrom": zod.number().nullable()
+}).optional(),
   "createdAt": zod.string()
 })
 export const ListGenerationCandidatesResponse = zod.array(ListGenerationCandidatesResponseItem)
@@ -18741,6 +18746,126 @@ export const UpdateProducerPreferencesResponse = zod.object({
   "inferredBehaviorEnabled": zod.boolean(),
   "updatedAt": zod.coerce.date()
 })
+
+
+/**
+ * @summary The owner's pairwise critic models (PR-29), newest first, with their held-out verdicts
+ */
+export const ListPairwiseCriticsResponseItem = zod.object({
+  "id": zod.string(),
+  "version": zod.number(),
+  "status": zod.enum(['candidate', 'active', 'retired']),
+  "heldOutAccuracy": zod.number(),
+  "baselineAccuracy": zod.number(),
+  "trainingPairs": zod.number(),
+  "heldOutPairs": zod.number(),
+  "events": zod.number(),
+  "promotable": zod.boolean(),
+  "promotionReason": zod.string(),
+  "influentialFeatures": zod.array(zod.object({
+  "name": zod.string(),
+  "weight": zod.number()
+})),
+  "method": zod.string(),
+  "trainedAt": zod.string(),
+  "createdAt": zod.string(),
+  "promotedAt": zod.string().nullable(),
+  "retiredAt": zod.string().nullable()
+}).describe('PR-29 — one immutable version of the owner\'s learned pairwise critic, with the held-out verdict that decides whether it may be applied.')
+export const ListPairwiseCriticsResponse = zod.array(ListPairwiseCriticsResponseItem)
+
+
+/**
+ * @summary Train a pairwise critic from the owner's preference events; stored as a candidate with its held-out metrics
+ */
+export const TrainPairwiseCriticResponse = zod.object({
+  "status": zod.enum(['trained', 'insufficient']),
+  "reason": zod.string().optional(),
+  "events": zod.number(),
+  "trainingPairs": zod.number(),
+  "heldOutPairs": zod.number(),
+  "model": zod.object({
+  "id": zod.string(),
+  "version": zod.number(),
+  "status": zod.enum(['candidate', 'active', 'retired']),
+  "heldOutAccuracy": zod.number(),
+  "baselineAccuracy": zod.number(),
+  "trainingPairs": zod.number(),
+  "heldOutPairs": zod.number(),
+  "events": zod.number(),
+  "promotable": zod.boolean(),
+  "promotionReason": zod.string(),
+  "influentialFeatures": zod.array(zod.object({
+  "name": zod.string(),
+  "weight": zod.number()
+})),
+  "method": zod.string(),
+  "trainedAt": zod.string(),
+  "createdAt": zod.string(),
+  "promotedAt": zod.string().nullable(),
+  "retiredAt": zod.string().nullable()
+}).optional().describe('PR-29 — one immutable version of the owner\'s learned pairwise critic, with the held-out verdict that decides whether it may be applied.')
+})
+
+
+/**
+ * @summary Activate a model that beat the critic-only baseline on held-out pairs; the previous active model is retired
+ */
+export const PromotePairwiseCriticParams = zod.object({
+  "modelId": zod.coerce.string()
+})
+
+export const PromotePairwiseCriticResponse = zod.object({
+  "id": zod.string(),
+  "version": zod.number(),
+  "status": zod.enum(['candidate', 'active', 'retired']),
+  "heldOutAccuracy": zod.number(),
+  "baselineAccuracy": zod.number(),
+  "trainingPairs": zod.number(),
+  "heldOutPairs": zod.number(),
+  "events": zod.number(),
+  "promotable": zod.boolean(),
+  "promotionReason": zod.string(),
+  "influentialFeatures": zod.array(zod.object({
+  "name": zod.string(),
+  "weight": zod.number()
+})),
+  "method": zod.string(),
+  "trainedAt": zod.string(),
+  "createdAt": zod.string(),
+  "promotedAt": zod.string().nullable(),
+  "retiredAt": zod.string().nullable()
+}).describe('PR-29 — one immutable version of the owner\'s learned pairwise critic, with the held-out verdict that decides whether it may be applied.')
+
+
+/**
+ * @summary Retire a model (roll back to no learned preference)
+ */
+export const RetirePairwiseCriticParams = zod.object({
+  "modelId": zod.coerce.string()
+})
+
+export const RetirePairwiseCriticResponse = zod.object({
+  "id": zod.string(),
+  "version": zod.number(),
+  "status": zod.enum(['candidate', 'active', 'retired']),
+  "heldOutAccuracy": zod.number(),
+  "baselineAccuracy": zod.number(),
+  "trainingPairs": zod.number(),
+  "heldOutPairs": zod.number(),
+  "events": zod.number(),
+  "promotable": zod.boolean(),
+  "promotionReason": zod.string(),
+  "influentialFeatures": zod.array(zod.object({
+  "name": zod.string(),
+  "weight": zod.number()
+})),
+  "method": zod.string(),
+  "trainedAt": zod.string(),
+  "createdAt": zod.string(),
+  "promotedAt": zod.string().nullable(),
+  "retiredAt": zod.string().nullable()
+}).describe('PR-29 — one immutable version of the owner\'s learned pairwise critic, with the held-out verdict that decides whether it may be applied.')
 
 
 /**
