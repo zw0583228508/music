@@ -149,6 +149,43 @@ export interface ProducerCalibrationEvaluation {
   heldOutAgreement: number;
 }
 
+export type PersonalArrangementProfileRecordSupport = {
+  events: number;
+  pairwise: number;
+  preferredSubjects: number;
+  dispreferredSubjects: number;
+};
+
+export type PersonalArrangementProfileRecordDimensions = { [key: string]: unknown };
+
+export type PersonalArrangementProfileRecordEvidenceItem = {
+  dimension: string;
+  support: number;
+  agreement: number;
+  summary: string;
+};
+
+export type PersonalArrangementProfileRecordUndecidedItem = {
+  dimension: string;
+  reason: string;
+};
+
+/**
+ * PR-30 — the owner's learned defaults; every dimension is `default` provenance and is outranked by anything the owner states.
+ */
+export interface PersonalArrangementProfileRecord {
+  id: string;
+  version: number;
+  active: boolean;
+  method: string;
+  derivedAt: string;
+  support: PersonalArrangementProfileRecordSupport;
+  dimensions: PersonalArrangementProfileRecordDimensions;
+  evidence: PersonalArrangementProfileRecordEvidenceItem[];
+  undecided: PersonalArrangementProfileRecordUndecidedItem[];
+  createdAt: string;
+}
+
 export type PairwiseCriticRecordStatus = typeof PairwiseCriticRecordStatus[keyof typeof PairwiseCriticRecordStatus];
 
 

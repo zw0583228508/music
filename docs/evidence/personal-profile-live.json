@@ -1,0 +1,74 @@
+{
+  "pr": "PR-30 personalized-arrangement-profile",
+  "recordedAt": "2026-09-08T23:04:38.840Z",
+  "projectId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2",
+  "path": "POST /personal-arrangement-profile/derive -> POST .../activate -> POST /arrangements/{id}/generate (ARRANGEMENT_ORCHESTRATOR) -> candidates carry the profile -> POST .../deactivate",
+  "profile": {
+    "id": "pap-10da11a9-033a-4bf9-975c-03752b513c9b",
+    "version": 1,
+    "support": {
+      "events": 2,
+      "pairwise": 1,
+      "preferredSubjects": 2,
+      "dispreferredSubjects": 1
+    },
+    "decidedDimensions": [],
+    "undecided": [
+      {
+        "dimension": "swingRatio",
+        "reason": "only 2 preferred subject(s); 5 needed"
+      },
+      {
+        "dimension": "harmonicRhythm",
+        "reason": "only 2 preferred subject(s); 5 needed"
+      },
+      {
+        "dimension": "chordExtensions",
+        "reason": "only 2 preferred subject(s); 5 needed"
+      },
+      {
+        "dimension": "melodicOrnamentation",
+        "reason": "only 2 preferred subject(s); 5 needed"
+      },
+      {
+        "dimension": "registerTendencies",
+        "reason": "only 2 preferred subject(s); 5 needed"
+      },
+      {
+        "dimension": "fillFrequency",
+        "reason": "only 2 preferred subject(s); 5 needed"
+      },
+      {
+        "dimension": "phraseLength",
+        "reason": "only 2 preferred subject(s); 5 needed"
+      },
+      {
+        "dimension": "dynamics",
+        "reason": "only 2 preferred subject(s); 5 needed"
+      }
+    ],
+    "evidence": []
+  },
+  "generationJobId": "adffbfc8-8563-4106-a54a-1eacc2d5e57b",
+  "candidates": [
+    {
+      "id": "1f0f8a28-b0e0-40b8-926a-a2101f82e044",
+      "rank": 1,
+      "personalProfileId": "pap-10da11a9-033a-4bf9-975c-03752b513c9b",
+      "performanceEngineVersion": "2.0"
+    },
+    {
+      "id": "41ea17b0-31e4-4b1b-ab4e-95fb4b5e6143",
+      "rank": null,
+      "personalProfileId": "pap-10da11a9-033a-4bf9-975c-03752b513c9b",
+      "performanceEngineVersion": "2.0"
+    }
+  ],
+  "unitProof": "personalProfile.test.ts (5): 12 consistent choices -> swingRatio >= 0.6, registerTendencies low, harmonicRhythm moderate, dynamics moderate at default provenance with confidence <= 0.6 and per-dimension human evidence; 3 choices decide nothing; a 50/50 direction is left undecided; deterministic",
+  "observations": [
+    "With 2 events the profile decided nothing and said why for every dimension (only 2 preferred subjects; 5 needed) - the correct outcome for an owner the system barely knows.",
+    "Activation is the owner's explicit act; deriving never changes generation. While active, both new candidates carried personalProfileId and ran the V2 performance engine with the (empty) personal StyleProfile; a request that brings its own StyleProfile (a brief) is never overridden.",
+    "The profile was deactivated at the end of the run so the dev owner's generations are unaffected afterwards.",
+    "Not yet a StyleKnowledgeSource for the brief pipeline: the StyleKnowledgeFinding contract only carries inferred|researched provenance, and personal defaults must sit below inferred - left for PR-U5 with a note in the module."
+  ]
+}
