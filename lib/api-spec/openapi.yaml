@@ -4720,6 +4720,36 @@ components:
     CandidateStrategyId:
       type: string
       enum: [conservative, rhythmic, melodic, sparse, adventurous]
+    PerformanceDecision:
+      type: object
+      required: [noteId, timingOffsetMs, velocityDelta, reasons]
+      properties:
+        noteId: { type: string }
+        timingOffsetMs: { type: number }
+        velocityDelta: { type: number }
+        reasons: { type: array, items: { type: string } }
+    PerformanceEvidence:
+      type: object
+      description: How Composition MIDI became Performance MIDI (PR-14).
+      required: [version, engine, seed, family, profile, meanTimingOffsetMs, timingStdMs, addedEvents, ccCurves, decisions]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        engine: { type: string }
+        seed: { type: number }
+        family: { type: string }
+        profile: { type: string }
+        meanTimingOffsetMs: { type: number }
+        timingStdMs: { type: number }
+        addedEvents:
+          type: object
+          required: [ghostNotes, flams, strumSpreadNotes, breathGaps]
+          properties:
+            ghostNotes: { type: number, minimum: 0 }
+            flams: { type: number, minimum: 0 }
+            strumSpreadNotes: { type: number, minimum: 0 }
+            breathGaps: { type: number, minimum: 0 }
+        ccCurves: { type: array, items: { type: string } }
+        decisions: { type: array, items: { $ref: "#/components/schemas/PerformanceDecision" } }
     RenderCheck:
       type: object
       required: [name, passed, detail]
