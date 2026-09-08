@@ -24,6 +24,7 @@ import type {
 import { createHash } from "node:crypto";
 import { CANONICAL_PPQ, createCanonicalTimeline } from "./canonicalTimeline";
 import { deriveGlobalArrangementPlan } from "./globalArrangementPlanner";
+import { deriveSectionPhrasePlan } from "./sectionPhrasePlanner";
 
 export type PerformanceNote = MusicalNote & {
   articulation: string;
@@ -1679,8 +1680,27 @@ export function createArrangementPlan(input: {
         generationPreferenceEvidenceSha256: input.generationPreference?.evidenceSha256 ?? "none",
       },
     },
-    globalPlan: deriveGlobalArrangementPlan(input.songModel),
+    ...planningLayers(input.songModel),
     generationPreference: input.generationPreference ?? null,
+  };
+}
+
+/**
+ * PR-04/PR-05 planning layers: one whole-song direction and its section /
+ * phrase / instrument-role breakdown, both derived before any note.
+ */
+function planningLayers(songModel: SongModelData): {
+  globalPlan: ReturnType<typeof deriveGlobalArrangementPlan>;
+  sectionPlan: ReturnType<typeof deriveSectionPhrasePlan>;
+} {
+  // The arrangement plan is required to be byte-deterministic for a given input,
+  // so the embedded planning layers use a fixed timestamp; staleness is tracked
+  // by their `inputsDigestSha256`, not `derivedAt`.
+  const now = new Date(0);
+  const globalPlan = deriveGlobalArrangementPlan(songModel, { now });
+  return {
+    globalPlan,
+    sectionPlan: deriveSectionPhrasePlan(songModel, globalPlan, { now }),
   };
 }
 
