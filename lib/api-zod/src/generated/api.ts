@@ -18642,6 +18642,83 @@ export const CreateProducerDecisionResponse = zod.object({
 
 
 /**
+ * @summary The owner's learning memory (PR-28) — content-free preference events, newest first
+ */
+export const listPreferenceEventsQueryLimitDefault = 100;
+export const listPreferenceEventsQueryLimitMax = 500;
+
+
+
+export const ListPreferenceEventsQueryParams = zod.object({
+  "projectId": zod.coerce.string().optional(),
+  "limit": zod.coerce.number().min(1).max(listPreferenceEventsQueryLimitMax).default(listPreferenceEventsQueryLimitDefault)
+})
+
+export const ListPreferenceEventsResponseItem = zod.object({
+  "id": zod.string(),
+  "ownerId": zod.string(),
+  "projectId": zod.string(),
+  "decisionId": zod.string().nullable(),
+  "kind": zod.enum(['pairwise', 'rating', 'approval', 'rejection']),
+  "source": zod.enum(['explicit_feedback', 'inferred_behavior', 'objective_evidence']),
+  "rightsBasis": zod.enum(['platform_generated', 'owner_upload', 'fingerprint_only']),
+  "subject": zod.object({
+  "kind": zod.enum(['candidate', 'arrangement', 'mix_revision']),
+  "id": zod.string(),
+  "fingerprintDigest": zod.string().nullable(),
+  "rankingScore": zod.number().nullable(),
+  "criticScore": zod.number().nullable(),
+  "modelVersion": zod.string().nullable()
+}),
+  "compared": zod.union([zod.object({
+  "kind": zod.enum(['candidate', 'arrangement', 'mix_revision']),
+  "id": zod.string(),
+  "fingerprintDigest": zod.string().nullable(),
+  "rankingScore": zod.number().nullable(),
+  "criticScore": zod.number().nullable(),
+  "modelVersion": zod.string().nullable()
+}),zod.null()]),
+  "outcome": zod.object({
+  "preferred": zod.enum(['subject', 'compared']).nullable(),
+  "rating": zod.number().nullable(),
+  "reasons": zod.array(zod.string())
+}),
+  "features": zod.object({
+  "subject": zod.record(zod.string(), zod.number()),
+  "compared": zod.union([zod.record(zod.string(), zod.number()),zod.null()]),
+  "delta": zod.union([zod.record(zod.string(), zod.number()),zod.null()])
+}),
+  "createdAt": zod.string()
+}).describe('PR-28 — what a choice was about, in rights-cleared form. Features are content-free fingerprint statistics.')
+export const ListPreferenceEventsResponse = zod.array(ListPreferenceEventsResponseItem)
+
+
+/**
+ * @summary Erase the owner's preference events (all, or one project's)
+ */
+export const ErasePreferenceEventsQueryParams = zod.object({
+  "projectId": zod.coerce.string().optional()
+})
+
+export const ErasePreferenceEventsResponse = zod.object({
+  "erased": zod.number()
+})
+
+
+/**
+ * @summary The owner's preference events as fixed-column training rows (PR-31 input)
+ */
+export const ListPreferenceTrainingRowsQueryParams = zod.object({
+  "projectId": zod.coerce.string().optional()
+})
+
+export const ListPreferenceTrainingRowsResponse = zod.object({
+  "featureNames": zod.array(zod.string()),
+  "rows": zod.array(zod.record(zod.string(), zod.unknown()))
+})
+
+
+/**
  * @summary Get private producer preference and learning controls
  */
 export const GetProducerPreferencesResponse = zod.object({

@@ -34,6 +34,8 @@ import type {
   CopilotInput,
   CopilotResult,
   Dashboard,
+  ErasePreferenceEvents200,
+  ErasePreferenceEventsParams,
   Error,
   ExportInput,
   ExportPackage,
@@ -46,6 +48,9 @@ import type {
   HealthStatus,
   LicensedInstrumentPack,
   LicensedInstrumentPackCatalog,
+  ListPreferenceEventsParams,
+  ListPreferenceTrainingRows200,
+  ListPreferenceTrainingRowsParams,
   ListProducerDecisionsParams,
   LogoutBrowserSessionParams,
   LogoutSuccess,
@@ -57,6 +62,7 @@ import type {
   MobileTokenExchangeSuccess,
   MusicProvider,
   NotFoundResponse,
+  PreferenceEvent,
   ProducerAnswersInput,
   ProducerBriefState,
   ProducerCalibration,
@@ -4083,6 +4089,252 @@ export const useCreateProducerDecision = <TError = ErrorType<NotFoundResponse>,
       > => {
       return useMutation(getCreateProducerDecisionMutationOptions(options));
     }
+
+export const getListPreferenceEventsUrl = (params?: ListPreferenceEventsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/preference-events?${stringifiedParams}` : `/api/preference-events`
+}
+
+/**
+ * @summary The owner's learning memory (PR-28) — content-free preference events, newest first
+ */
+export const listPreferenceEvents = async (params?: ListPreferenceEventsParams, options?: Parameters<typeof customFetch>[1]): Promise<PreferenceEvent[]> => {
+
+  return customFetch<PreferenceEvent[]>(getListPreferenceEventsUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListPreferenceEventsQueryKey = (params?: ListPreferenceEventsParams,) => {
+    return [
+    `/api/preference-events`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getListPreferenceEventsQueryOptions = <TData = Awaited<ReturnType<typeof listPreferenceEvents>>, TError = ErrorType<unknown>>(params?: ListPreferenceEventsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listPreferenceEvents>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListPreferenceEventsQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listPreferenceEvents>>> = ({ signal }) => listPreferenceEvents(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listPreferenceEvents>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListPreferenceEventsQueryResult = NonNullable<Awaited<ReturnType<typeof listPreferenceEvents>>>
+export type ListPreferenceEventsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary The owner's learning memory (PR-28) — content-free preference events, newest first
+ */
+
+export function useListPreferenceEvents<TData = Awaited<ReturnType<typeof listPreferenceEvents>>, TError = ErrorType<unknown>>(
+ params?: ListPreferenceEventsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listPreferenceEvents>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListPreferenceEventsQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getErasePreferenceEventsUrl = (params?: ErasePreferenceEventsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/preference-events?${stringifiedParams}` : `/api/preference-events`
+}
+
+/**
+ * @summary Erase the owner's preference events (all, or one project's)
+ */
+export const erasePreferenceEvents = async (params?: ErasePreferenceEventsParams, options?: Parameters<typeof customFetch>[1]): Promise<ErasePreferenceEvents200> => {
+
+  return customFetch<ErasePreferenceEvents200>(getErasePreferenceEventsUrl(params),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getErasePreferenceEventsMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof erasePreferenceEvents>>, TError,{params?: ErasePreferenceEventsParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof erasePreferenceEvents>>, TError,{params?: ErasePreferenceEventsParams}, TContext> => {
+
+const mutationKey = ['erasePreferenceEvents'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof erasePreferenceEvents>>, {params?: ErasePreferenceEventsParams}> = (props) => {
+          const {params} = props ?? {};
+
+          return  erasePreferenceEvents(params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ErasePreferenceEventsMutationResult = NonNullable<Awaited<ReturnType<typeof erasePreferenceEvents>>>
+
+    export type ErasePreferenceEventsMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Erase the owner's preference events (all, or one project's)
+ */
+export const useErasePreferenceEvents = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof erasePreferenceEvents>>, TError,{params?: ErasePreferenceEventsParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof erasePreferenceEvents>>,
+        TError,
+        {params?: ErasePreferenceEventsParams},
+        TContext
+      > => {
+      return useMutation(getErasePreferenceEventsMutationOptions(options));
+    }
+
+export const getListPreferenceTrainingRowsUrl = (params?: ListPreferenceTrainingRowsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/preference-events/training-rows?${stringifiedParams}` : `/api/preference-events/training-rows`
+}
+
+/**
+ * @summary The owner's preference events as fixed-column training rows (PR-31 input)
+ */
+export const listPreferenceTrainingRows = async (params?: ListPreferenceTrainingRowsParams, options?: Parameters<typeof customFetch>[1]): Promise<ListPreferenceTrainingRows200> => {
+
+  return customFetch<ListPreferenceTrainingRows200>(getListPreferenceTrainingRowsUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListPreferenceTrainingRowsQueryKey = (params?: ListPreferenceTrainingRowsParams,) => {
+    return [
+    `/api/preference-events/training-rows`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getListPreferenceTrainingRowsQueryOptions = <TData = Awaited<ReturnType<typeof listPreferenceTrainingRows>>, TError = ErrorType<unknown>>(params?: ListPreferenceTrainingRowsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listPreferenceTrainingRows>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListPreferenceTrainingRowsQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listPreferenceTrainingRows>>> = ({ signal }) => listPreferenceTrainingRows(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listPreferenceTrainingRows>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListPreferenceTrainingRowsQueryResult = NonNullable<Awaited<ReturnType<typeof listPreferenceTrainingRows>>>
+export type ListPreferenceTrainingRowsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary The owner's preference events as fixed-column training rows (PR-31 input)
+ */
+
+export function useListPreferenceTrainingRows<TData = Awaited<ReturnType<typeof listPreferenceTrainingRows>>, TError = ErrorType<unknown>>(
+ params?: ListPreferenceTrainingRowsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listPreferenceTrainingRows>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListPreferenceTrainingRowsQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getGetProducerPreferencesUrl = () => {
 

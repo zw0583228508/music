@@ -102,6 +102,12 @@ import {
   CompareStyleFingerprintsParams,
   CompareStyleFingerprintsBody,
   CompareStyleFingerprintsResponse,
+  ListPreferenceEventsQueryParams,
+  ListPreferenceEventsResponse,
+  ListPreferenceTrainingRowsQueryParams,
+  ListPreferenceTrainingRowsResponse,
+  ErasePreferenceEventsQueryParams,
+  ErasePreferenceEventsResponse,
   CreateProducerDecisionBody,
   CreateProducerDecisionResponse,
   GetProducerPreferencesResponse,
@@ -184,6 +190,8 @@ import {
 } from "../lib/export-pipeline";
 import { deriveMixPlan, mixPlanToControls } from "../lib/mixBrain";
 import { compareFingerprints, deriveStyleFingerprint } from "../lib/styleFingerprint";
+import { FEATURE_NAMES, recordPreferenceEvent, trainingRows, type PreferenceSubjectInput } from "../lib/preferenceEvents";
+import { DbPreferenceEventStore } from "../lib/preferenceEventsDbStore";
 import {
   activateLicensedInstrumentPack as activateLicensedInstrumentPackOnWorker,
   applyArrangementEditorChanges,
@@ -2893,7 +2901,74 @@ router.post("/producer-decisions", async (req, res): Promise<void> => {
     res.status(409).json({ error: "Producer learning is disabled" });
     return;
   }
+  // PR-28: explicit feedback on candidates or arrangements also becomes a
+  // preference event with content-free fingerprint features, so the learning
+  // system can learn what the owner preferred, not only that they did.
+  const eventKind = body.data.kind === "comparison" ? "pairwise"
+    : body.data.kind === "rating" ? "rating"
+      : body.data.kind === "approval" ? "approval"
+        : body.data.kind === "rejection" ? "rejection" : null;
+  if (eventKind && body.data.subjectId) {
+    const subjectFor = async (id: string): Promise<PreferenceSubjectInput | null> => {
+      const [candidate] = await db.select().from(musicGenerationCandidatesTable).where(and(
+        eq(musicGenerationCandidatesTable.id, id), eq(musicGenerationCandidatesTable.projectId, body.data.projectId),
+      )).limit(1);
+      if (candidate) {
+        const features = deployedCalibrationFeatures(candidate.evaluation);
+        return {
+          kind: "candidate", id: candidate.id, origin: "platform_generated", modelVersion: candidate.modelVersion,
+          rankingScore: features.rankingScore, criticScore: features.criticScore,
+          fingerprint: candidate.trackModels?.length
+            ? deriveStyleFingerprint({ source: { kind: "arrangement", id: candidate.id, version: null }, trackModels: candidate.trackModels })
+            : null,
+        };
+      }
+      const [arrangement] = await db.select().from(arrangementsTable).where(and(eq(arrangementsTable.id, id), eq(arrangementsTable.projectId, body.data.projectId))).limit(1);
+      if (arrangement) {
+        return {
+          kind: "arrangement", id: arrangement.id, origin: "platform_generated", modelVersion: arrangement.modelVersion ?? null,
+          fingerprint: arrangement.trackModels.length
+            ? deriveStyleFingerprint({ source: { kind: "arrangement", id: arrangement.id, version: arrangement.version }, trackModels: arrangement.trackModels })
+            : null,
+        };
+      }
+      return null;
+    };
+    const subject = await subjectFor(body.data.subjectId);
+    const compared = body.data.comparedSubjectId ? await subjectFor(body.data.comparedSubjectId) : null;
+    if (subject && (eventKind !== "pairwise" || compared)) {
+      await recordPreferenceEvent(new DbPreferenceEventStore(), {
+        ownerId: req.user!.id, projectId: body.data.projectId, decisionId: decision.id, kind: eventKind, source: "explicit_feedback",
+        subject, compared, preferred: eventKind === "pairwise" ? "subject" : null,
+        rating: body.data.rating ?? null, reasons: body.data.reasons ?? [],
+      });
+    }
+  }
   res.status(201).json(CreateProducerDecisionResponse.parse(producerDecisionResponse(decision)));
+});
+
+// PR-28: the owner's learning memory — list it, export it for training, erase it.
+router.get("/preference-events", async (req, res): Promise<void> => {
+  const query = ListPreferenceEventsQueryParams.safeParse(req.query);
+  if (!query.success) { res.status(400).json({ error: query.error.message }); return; }
+  const events = await new DbPreferenceEventStore().list(req.user!.id, { projectId: query.data.projectId, limit: query.data.limit });
+  res.setHeader("Cache-Control", "no-store");
+  res.json(ListPreferenceEventsResponse.parse(events));
+});
+
+router.get("/preference-events/training-rows", async (req, res): Promise<void> => {
+  const query = ListPreferenceTrainingRowsQueryParams.safeParse(req.query);
+  if (!query.success) { res.status(400).json({ error: query.error.message }); return; }
+  const events = await new DbPreferenceEventStore().list(req.user!.id, { projectId: query.data.projectId, limit: 500 });
+  res.setHeader("Cache-Control", "no-store");
+  res.json(ListPreferenceTrainingRowsResponse.parse({ featureNames: [...FEATURE_NAMES], rows: trainingRows(events) }));
+});
+
+router.delete("/preference-events", async (req, res): Promise<void> => {
+  const query = ErasePreferenceEventsQueryParams.safeParse(req.query);
+  if (!query.success) { res.status(400).json({ error: query.error.message }); return; }
+  const erased = await new DbPreferenceEventStore().erase(req.user!.id, query.data.projectId);
+  res.json(ErasePreferenceEventsResponse.parse({ erased }));
 });
 
 router.get("/producer-preferences", async (req, res): Promise<void> => {

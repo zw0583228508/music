@@ -462,6 +462,44 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   human judgement — that is exactly what PR-29 (pairwise critic from real
   choices) is for. No UI yet; the reference flow arrives with PR-U4.
 
+- **PR-28** ✅ — `preference-event-storage`: the learning system's
+  rights-cleared memory. The PR-19 ledger records *that* the owner chose (ids
+  and one-way hashes); a **preference event** records what the choice was
+  *about*, in the only form that is safe to learn from — the content-free
+  fingerprint features (PR-27) of the subject and, for a comparison, of the
+  alternative, with their delta, the critic/ranking scores and the outcome.
+  `preferenceEvents.ts` (store-agnostic; `preferenceEventsDbStore.ts` is
+  Drizzle) gives three guarantees, each tested: **consent** — writes go
+  through the same rule as the ledger, now lifted into `learningPolicy.ts` as
+  the single source of truth (a disabled owner produces no event; objective
+  evidence is always kept); **rights** — every event names its basis
+  (`platform_generated` / `owner_upload` / `fingerprint_only`; a third
+  party's material only ever reaches learning as a fingerprint); **content-
+  free** — `assertContentFree` runs on every stored row. Fixed 40-feature
+  vector (`FEATURE_NAMES`), fixed-column training rows for PR-31, and erasure
+  (all or per project).
+
+  Hooks: selecting a candidate records **N−1 pairwise events** (chosen over
+  each sibling the owner saw) inside the same transaction as the ledger row;
+  `POST /producer-decisions` (rating / comparison / approval / rejection on a
+  candidate or arrangement) records an event with fingerprints. Routes:
+  `GET /preference-events`, `GET /preference-events/training-rows`, `DELETE
+  /preference-events`. Table `music_preference_events` (additive, pushed).
+
+  **Proven live** (`docs/evidence/preference-events-live.json`): a rating and a
+  comparison on two Brain candidates → two events with 40 features each, a
+  delta vector, scores and rights basis, listed and exported as training
+  rows. The delta is honestly small: those siblings were flagged
+  INSUFFICIENT_DIVERSITY by PR-18.
+
+  Suites: preferenceEvents 6; styleFingerprint 6 unchanged; typecheck green.
+
+  **Honest limits.** Nothing is learned yet — this is memory. The selection
+  hook was not exercised live in this run. Mix/master revisions have no
+  fingerprint yet, so their approvals reach the ledger but not the events.
+  Two events in one dev project is not a dataset; PR-29 needs real choices at
+  scale, and the plan's KPI (blind wins) still has no human behind it.
+
   **Honest limits.** Only Retrologue is attested here: Groove Agent SE, Padshop
   and HALion Sonic render silence without a loaded program, so their smoke
   correctly refuses them until a `.vstpreset` is provided. The bass lives in

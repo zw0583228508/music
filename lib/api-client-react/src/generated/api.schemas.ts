@@ -4156,6 +4156,96 @@ export interface MixPlan {
   styleInputs: MixPlanStyleInputsItem[];
 }
 
+export type PreferenceSubjectKind = typeof PreferenceSubjectKind[keyof typeof PreferenceSubjectKind];
+
+
+export const PreferenceSubjectKind = {
+  candidate: 'candidate',
+  arrangement: 'arrangement',
+  mix_revision: 'mix_revision',
+} as const;
+
+export interface PreferenceSubject {
+  kind: PreferenceSubjectKind;
+  id: string;
+  fingerprintDigest: string | null;
+  rankingScore: number | null;
+  criticScore: number | null;
+  modelVersion: string | null;
+}
+
+export type PreferenceEventKind = typeof PreferenceEventKind[keyof typeof PreferenceEventKind];
+
+
+export const PreferenceEventKind = {
+  pairwise: 'pairwise',
+  rating: 'rating',
+  approval: 'approval',
+  rejection: 'rejection',
+} as const;
+
+export type PreferenceEventSource = typeof PreferenceEventSource[keyof typeof PreferenceEventSource];
+
+
+export const PreferenceEventSource = {
+  explicit_feedback: 'explicit_feedback',
+  inferred_behavior: 'inferred_behavior',
+  objective_evidence: 'objective_evidence',
+} as const;
+
+export type PreferenceEventRightsBasis = typeof PreferenceEventRightsBasis[keyof typeof PreferenceEventRightsBasis];
+
+
+export const PreferenceEventRightsBasis = {
+  platform_generated: 'platform_generated',
+  owner_upload: 'owner_upload',
+  fingerprint_only: 'fingerprint_only',
+} as const;
+
+export type PreferenceEventOutcomePreferred = typeof PreferenceEventOutcomePreferred[keyof typeof PreferenceEventOutcomePreferred] | null;
+
+
+export const PreferenceEventOutcomePreferred = {
+  subject: 'subject',
+  compared: 'compared',
+} as const;
+
+export type PreferenceEventOutcome = {
+  preferred: PreferenceEventOutcomePreferred;
+  rating: number | null;
+  reasons: string[];
+};
+
+export type PreferenceEventFeaturesSubject = {[key: string]: number};
+
+export type PreferenceEventFeaturesCompared = {[key: string]: number} | null;
+
+export type PreferenceEventFeaturesDelta = {[key: string]: number} | null;
+
+export type PreferenceEventFeatures = {
+  subject: PreferenceEventFeaturesSubject;
+  compared: PreferenceEventFeaturesCompared;
+  delta: PreferenceEventFeaturesDelta;
+};
+
+/**
+ * PR-28 — what a choice was about, in rights-cleared form. Features are content-free fingerprint statistics.
+ */
+export interface PreferenceEvent {
+  id: string;
+  ownerId: string;
+  projectId: string;
+  decisionId: string | null;
+  kind: PreferenceEventKind;
+  source: PreferenceEventSource;
+  rightsBasis: PreferenceEventRightsBasis;
+  subject: PreferenceSubject;
+  compared: PreferenceSubject | null;
+  outcome: PreferenceEventOutcome;
+  features: PreferenceEventFeatures;
+  createdAt: string;
+}
+
 export type StyleFingerprintInputSourceKind = typeof StyleFingerprintInputSourceKind[keyof typeof StyleFingerprintInputSourceKind];
 
 
@@ -7057,5 +7147,33 @@ projectId?: string;
  * @maximum 100
  */
 limit?: number;
+};
+
+export type ListPreferenceEventsParams = {
+projectId?: string;
+/**
+ * @minimum 1
+ * @maximum 500
+ */
+limit?: number;
+};
+
+export type ErasePreferenceEventsParams = {
+projectId?: string;
+};
+
+export type ErasePreferenceEvents200 = {
+  erased: number;
+};
+
+export type ListPreferenceTrainingRowsParams = {
+projectId?: string;
+};
+
+export type ListPreferenceTrainingRows200RowsItem = { [key: string]: unknown };
+
+export type ListPreferenceTrainingRows200 = {
+  featureNames: string[];
+  rows: ListPreferenceTrainingRows200RowsItem[];
 };
 

@@ -1071,6 +1071,72 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/ProducerDecision" }
         "404": { $ref: "#/components/responses/NotFound" }
+  /preference-events:
+    get:
+      operationId: listPreferenceEvents
+      tags: [studio]
+      summary: The owner's learning memory (PR-28) — content-free preference events, newest first
+      parameters:
+        - name: projectId
+          in: query
+          required: false
+          schema: { type: string }
+        - name: limit
+          in: query
+          required: false
+          schema: { type: number, minimum: 1, maximum: 500, default: 100 }
+      responses:
+        "200":
+          description: Preference events
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/PreferenceEvent" }
+    delete:
+      operationId: erasePreferenceEvents
+      tags: [studio]
+      summary: Erase the owner's preference events (all, or one project's)
+      parameters:
+        - name: projectId
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        "200":
+          description: How many events were erased
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [erased]
+                properties:
+                  erased: { type: number }
+  /preference-events/training-rows:
+    get:
+      operationId: listPreferenceTrainingRows
+      tags: [studio]
+      summary: The owner's preference events as fixed-column training rows (PR-31 input)
+      parameters:
+        - name: projectId
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        "200":
+          description: Feature names and rows
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [featureNames, rows]
+                properties:
+                  featureNames: { type: array, items: { type: string } }
+                  rows:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: true
   /producer-preferences:
     get:
       operationId: getProducerPreferences
@@ -4028,6 +4094,48 @@ components:
               dimension: { type: string }
               value: { oneOf: [{ type: string }, { type: number }] }
               provenance: { type: string }
+    PreferenceSubject:
+      type: object
+      required: [kind, id, fingerprintDigest, rankingScore, criticScore, modelVersion]
+      properties:
+        kind: { type: string, enum: [candidate, arrangement, mix_revision] }
+        id: { type: string }
+        fingerprintDigest: { type: string, nullable: true }
+        rankingScore: { type: number, nullable: true }
+        criticScore: { type: number, nullable: true }
+        modelVersion: { type: string, nullable: true }
+    PreferenceEvent:
+      type: object
+      description: PR-28 — what a choice was about, in rights-cleared form. Features are content-free fingerprint statistics.
+      required: [id, ownerId, projectId, decisionId, kind, source, rightsBasis, subject, compared, outcome, features, createdAt]
+      properties:
+        id: { type: string }
+        ownerId: { type: string }
+        projectId: { type: string }
+        decisionId: { type: string, nullable: true }
+        kind: { type: string, enum: [pairwise, rating, approval, rejection] }
+        source: { type: string, enum: [explicit_feedback, inferred_behavior, objective_evidence] }
+        rightsBasis: { type: string, enum: [platform_generated, owner_upload, fingerprint_only] }
+        subject: { $ref: "#/components/schemas/PreferenceSubject" }
+        compared:
+          oneOf: [{ $ref: "#/components/schemas/PreferenceSubject" }, { type: "null" }]
+        outcome:
+          type: object
+          required: [preferred, rating, reasons]
+          properties:
+            preferred: { type: string, enum: [subject, compared], nullable: true }
+            rating: { type: number, nullable: true }
+            reasons: { type: array, items: { type: string } }
+        features:
+          type: object
+          required: [subject, compared, delta]
+          properties:
+            subject: { type: object, additionalProperties: { type: number } }
+            compared:
+              oneOf: [{ type: object, additionalProperties: { type: number } }, { type: "null" }]
+            delta:
+              oneOf: [{ type: object, additionalProperties: { type: number } }, { type: "null" }]
+        createdAt: { type: string }
     StyleFingerprintInput:
       type: object
       required: [sourceKind]

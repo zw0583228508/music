@@ -12,6 +12,7 @@ import {
   type ProducerDecisionSource,
   type GenerationPreferenceSnapshot,
 } from "@workspace/db";
+import { learningWriteAllowed } from "./learningPolicy";
 
 const sha256 = (value: unknown) =>
   createHash("sha256").update(JSON.stringify(value)).digest("hex");
@@ -30,14 +31,9 @@ export function privateDecisionContext(value: Partial<ProducerDecisionContext>):
     criticScore: Number.isFinite(value.criticScore) ? value.criticScore : null,
   };
 }
-export function learningWriteAllowed(
-  preferences: { learningEnabled: boolean; inferredBehaviorEnabled: boolean },
-  source: ProducerDecisionSource,
-): boolean {
-  return source === "objective_evidence" ||
-    (preferences.learningEnabled &&
-      (source !== "inferred_behavior" || preferences.inferredBehaviorEnabled));
-}
+// The consent rule lives in learningPolicy.ts (shared with PR-28's preference
+// events); re-exported so existing importers keep working.
+export { learningWriteAllowed };
 type LedgerTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
 /** Transaction-only append: caller's primary mutation and ledger record commit together. */
 export async function appendProducerDecisionTx(

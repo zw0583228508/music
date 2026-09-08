@@ -311,6 +311,75 @@ export const styleFingerprintsTable = pgTable(
   (table) => [uniqueIndex("music_style_fingerprints_source_unique").on(table.projectId, table.sourceKind, table.sourceId, table.digest)],
 );
 
+// ---------------------------------------------------------------------------
+// Wave 7 — PR-28: preference events. What the learning system may learn from.
+//
+// The producer-decision ledger (PR-19) records *that* a choice happened, with
+// ids and one-way hashes only. A preference event records what the choice
+// was *about*, in the only form that is rights-cleared by construction: the
+// content-free fingerprint features of the subjects (PR-27), the critic and
+// ranking scores, and the outcome. No note, audio or text of the music ever
+// enters an event; `assertContentFree` is applied to every stored row.
+// Writes obey the owner's learning controls; the owner can erase everything.
+// ---------------------------------------------------------------------------
+
+export type PreferenceEventKind = "pairwise" | "rating" | "approval" | "rejection";
+
+export type PreferenceSubjectKind = "candidate" | "arrangement" | "mix_revision";
+
+/**
+ * Why the platform may learn from this subject at all. Platform-generated
+ * material and the owner's own uploads are the only bases today; a
+ * third-party reference reaches learning only as a fingerprint
+ * (`fingerprint_only`), never as content.
+ */
+export type PreferenceRightsBasis = "platform_generated" | "owner_upload" | "fingerprint_only";
+
+export type PreferenceSubject = {
+  kind: PreferenceSubjectKind;
+  id: string;
+  fingerprintDigest: string | null;
+  rankingScore: number | null;
+  criticScore: number | null;
+  modelVersion: string | null;
+};
+
+/** Named, content-free numeric features in a fixed order (see fingerprintFeatureVector). */
+export type PreferenceFeatureVector = Record<string, number>;
+
+export type PreferenceEvent = {
+  id: string;
+  ownerId: string;
+  projectId: string;
+  decisionId: string | null;
+  kind: PreferenceEventKind;
+  source: ProducerDecisionSource;
+  rightsBasis: PreferenceRightsBasis;
+  subject: PreferenceSubject;
+  compared: PreferenceSubject | null;
+  outcome: { preferred: "subject" | "compared" | null; rating: number | null; reasons: string[] };
+  features: { subject: PreferenceFeatureVector; compared: PreferenceFeatureVector | null; delta: PreferenceFeatureVector | null };
+  createdAt: string;
+};
+
+export const preferenceEventsTable = pgTable("music_preference_events", {
+  id: text("id").primaryKey(),
+  ownerId: text("owner_id").notNull(),
+  projectId: text("project_id").notNull().references(() => musicProjectsTable.id, { onDelete: "cascade" }),
+  decisionId: text("decision_id"),
+  kind: text("kind").$type<PreferenceEventKind>().notNull(),
+  source: text("source").$type<ProducerDecisionSource>().notNull(),
+  rightsBasis: text("rights_basis").$type<PreferenceRightsBasis>().notNull(),
+  subject: jsonb("subject").$type<PreferenceSubject>().notNull(),
+  compared: jsonb("compared").$type<PreferenceSubject | null>(),
+  outcome: jsonb("outcome").$type<PreferenceEvent["outcome"]>().notNull(),
+  features: jsonb("features").$type<PreferenceEvent["features"]>().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
+  index("music_preference_events_owner_created_at_idx").on(table.ownerId, table.createdAt),
+  index("music_preference_events_project_idx").on(table.projectId),
+]);
+
 /**
  * Mastering Engine (PR-26): what a master *achieved*, measured with
  * BS.1770-4 gated loudness and 4× true peak — never asserted from the
