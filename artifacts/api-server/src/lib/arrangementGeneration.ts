@@ -96,6 +96,8 @@ import { DbPreferenceEventStore } from "./preferenceEventsDbStore";
 import { deriveStyleFingerprint } from "./styleFingerprint";
 import { preferenceScores, rerankNearTies } from "./pairwiseCritic";
 import { activePairwiseCritic } from "./pairwiseCriticStore";
+import { personalStyleProfile } from "./personalProfile";
+import { activePersonalProfile } from "./personalProfileStore";
 import { candidateEvidenceScore } from "./candidateRanking";
 
 const sha256 = (value: string | Buffer): string =>
@@ -745,12 +747,19 @@ export async function queueArrangementGeneration(
     throw new Error(`${operation} requires a project-owned source audio artifact`);
   }
   const sourceArtifactId = sourceArtifact?.id ?? requestedSourceArtifactId;
+  // PR-30: the owner's active personal profile supplies default style
+  // dimensions when the request carries no StyleProfile of its own (a brief
+  // always wins). The provider reads `parameters.styleProfile` (PR-23/24).
+  const personalProfile = input.parameters?.styleProfile ? null : await activePersonalProfile(ownerId);
   const normalizedParameters: GenerationParameters = {
     ...(input.parameters ?? {}),
     ...(operation ? { operation } : {}),
     ...(sourceArtifactId ? { sourceArtifactId } : {}),
     ...(instrument ? { instrument } : {}),
     ...(region ? { region } : {}),
+    ...(personalProfile
+      ? { styleProfile: personalStyleProfile(personalProfile.profile, personalProfile.id), personalProfileId: personalProfile.id, personalProfileVersion: personalProfile.version }
+      : {}),
     generationPreference,
   };
   const idempotencyKey = (input.idempotencyKey?.trim() ||

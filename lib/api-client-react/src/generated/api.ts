@@ -64,6 +64,7 @@ import type {
   NotFoundResponse,
   PairwiseCriticRecord,
   PairwiseCriticTrainResult,
+  PersonalArrangementProfileRecord,
   PreferenceEvent,
   ProducerAnswersInput,
   ProducerBriefState,
@@ -4774,6 +4775,296 @@ export const useRetirePairwiseCritic = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getRetirePairwiseCriticMutationOptions(options));
+    }
+
+export const getListPersonalArrangementProfilesUrl = () => {
+
+
+
+
+  return `/api/personal-arrangement-profile`
+}
+
+/**
+ * @summary The owner's personalized arrangement profiles (PR-30) — learned defaults, newest first
+ */
+export const listPersonalArrangementProfiles = async ( options?: Parameters<typeof customFetch>[1]): Promise<PersonalArrangementProfileRecord[]> => {
+
+  return customFetch<PersonalArrangementProfileRecord[]>(getListPersonalArrangementProfilesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListPersonalArrangementProfilesQueryKey = () => {
+    return [
+    `/api/personal-arrangement-profile`
+    ] as const;
+    }
+
+
+export const getListPersonalArrangementProfilesQueryOptions = <TData = Awaited<ReturnType<typeof listPersonalArrangementProfiles>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listPersonalArrangementProfiles>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListPersonalArrangementProfilesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listPersonalArrangementProfiles>>> = ({ signal }) => listPersonalArrangementProfiles({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listPersonalArrangementProfiles>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListPersonalArrangementProfilesQueryResult = NonNullable<Awaited<ReturnType<typeof listPersonalArrangementProfiles>>>
+export type ListPersonalArrangementProfilesQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary The owner's personalized arrangement profiles (PR-30) — learned defaults, newest first
+ */
+
+export function useListPersonalArrangementProfiles<TData = Awaited<ReturnType<typeof listPersonalArrangementProfiles>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listPersonalArrangementProfiles>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListPersonalArrangementProfilesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getDerivePersonalArrangementProfileUrl = () => {
+
+
+
+
+  return `/api/personal-arrangement-profile/derive`
+}
+
+/**
+ * @summary Derive a new profile version from the owner's preference events (not activated)
+ */
+export const derivePersonalArrangementProfile = async ( options?: Parameters<typeof customFetch>[1]): Promise<PersonalArrangementProfileRecord> => {
+
+  return customFetch<PersonalArrangementProfileRecord>(getDerivePersonalArrangementProfileUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getDerivePersonalArrangementProfileMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof derivePersonalArrangementProfile>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof derivePersonalArrangementProfile>>, TError,void, TContext> => {
+
+const mutationKey = ['derivePersonalArrangementProfile'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof derivePersonalArrangementProfile>>, void> = () => {
+
+
+          return  derivePersonalArrangementProfile(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DerivePersonalArrangementProfileMutationResult = NonNullable<Awaited<ReturnType<typeof derivePersonalArrangementProfile>>>
+
+    export type DerivePersonalArrangementProfileMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Derive a new profile version from the owner's preference events (not activated)
+ */
+export const useDerivePersonalArrangementProfile = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof derivePersonalArrangementProfile>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof derivePersonalArrangementProfile>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getDerivePersonalArrangementProfileMutationOptions(options));
+    }
+
+export const getActivatePersonalArrangementProfileUrl = (profileId: string,) => {
+
+
+
+
+  return `/api/personal-arrangement-profile/${profileId}/activate`
+}
+
+/**
+ * @summary Make this profile the owner's defaults for new generations (deactivates any other)
+ */
+export const activatePersonalArrangementProfile = async (profileId: string, options?: Parameters<typeof customFetch>[1]): Promise<PersonalArrangementProfileRecord> => {
+
+  return customFetch<PersonalArrangementProfileRecord>(getActivatePersonalArrangementProfileUrl(profileId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getActivatePersonalArrangementProfileMutationOptions = <TError = ErrorType<NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof activatePersonalArrangementProfile>>, TError,{profileId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof activatePersonalArrangementProfile>>, TError,{profileId: string}, TContext> => {
+
+const mutationKey = ['activatePersonalArrangementProfile'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof activatePersonalArrangementProfile>>, {profileId: string}> = (props) => {
+          const {profileId} = props ?? {};
+
+          return  activatePersonalArrangementProfile(profileId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ActivatePersonalArrangementProfileMutationResult = NonNullable<Awaited<ReturnType<typeof activatePersonalArrangementProfile>>>
+
+    export type ActivatePersonalArrangementProfileMutationError = ErrorType<NotFoundResponse>
+
+    /**
+ * @summary Make this profile the owner's defaults for new generations (deactivates any other)
+ */
+export const useActivatePersonalArrangementProfile = <TError = ErrorType<NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof activatePersonalArrangementProfile>>, TError,{profileId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof activatePersonalArrangementProfile>>,
+        TError,
+        {profileId: string},
+        TContext
+      > => {
+      return useMutation(getActivatePersonalArrangementProfileMutationOptions(options));
+    }
+
+export const getDeactivatePersonalArrangementProfileUrl = (profileId: string,) => {
+
+
+
+
+  return `/api/personal-arrangement-profile/${profileId}/deactivate`
+}
+
+/**
+ * @summary Stop using this profile as defaults
+ */
+export const deactivatePersonalArrangementProfile = async (profileId: string, options?: Parameters<typeof customFetch>[1]): Promise<PersonalArrangementProfileRecord> => {
+
+  return customFetch<PersonalArrangementProfileRecord>(getDeactivatePersonalArrangementProfileUrl(profileId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getDeactivatePersonalArrangementProfileMutationOptions = <TError = ErrorType<NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deactivatePersonalArrangementProfile>>, TError,{profileId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deactivatePersonalArrangementProfile>>, TError,{profileId: string}, TContext> => {
+
+const mutationKey = ['deactivatePersonalArrangementProfile'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deactivatePersonalArrangementProfile>>, {profileId: string}> = (props) => {
+          const {profileId} = props ?? {};
+
+          return  deactivatePersonalArrangementProfile(profileId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeactivatePersonalArrangementProfileMutationResult = NonNullable<Awaited<ReturnType<typeof deactivatePersonalArrangementProfile>>>
+
+    export type DeactivatePersonalArrangementProfileMutationError = ErrorType<NotFoundResponse>
+
+    /**
+ * @summary Stop using this profile as defaults
+ */
+export const useDeactivatePersonalArrangementProfile = <TError = ErrorType<NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deactivatePersonalArrangementProfile>>, TError,{profileId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof deactivatePersonalArrangementProfile>>,
+        TError,
+        {profileId: string},
+        TContext
+      > => {
+      return useMutation(getDeactivatePersonalArrangementProfileMutationOptions(options));
     }
 
 export const getListProducerCalibrationsUrl = () => {

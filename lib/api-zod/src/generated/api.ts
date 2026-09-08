@@ -18869,6 +18869,135 @@ export const RetirePairwiseCriticResponse = zod.object({
 
 
 /**
+ * @summary The owner's personalized arrangement profiles (PR-30) — learned defaults, newest first
+ */
+export const ListPersonalArrangementProfilesResponseItem = zod.object({
+  "id": zod.string(),
+  "version": zod.number(),
+  "active": zod.boolean(),
+  "method": zod.string(),
+  "derivedAt": zod.string(),
+  "support": zod.object({
+  "events": zod.number(),
+  "pairwise": zod.number(),
+  "preferredSubjects": zod.number(),
+  "dispreferredSubjects": zod.number()
+}),
+  "dimensions": zod.record(zod.string(), zod.unknown()),
+  "evidence": zod.array(zod.object({
+  "dimension": zod.string(),
+  "support": zod.number(),
+  "agreement": zod.number(),
+  "summary": zod.string()
+})),
+  "undecided": zod.array(zod.object({
+  "dimension": zod.string(),
+  "reason": zod.string()
+})),
+  "createdAt": zod.string()
+}).describe('PR-30 — the owner\'s learned defaults; every dimension is `default` provenance and is outranked by anything the owner states.')
+export const ListPersonalArrangementProfilesResponse = zod.array(ListPersonalArrangementProfilesResponseItem)
+
+
+/**
+ * @summary Derive a new profile version from the owner's preference events (not activated)
+ */
+export const DerivePersonalArrangementProfileResponse = zod.object({
+  "id": zod.string(),
+  "version": zod.number(),
+  "active": zod.boolean(),
+  "method": zod.string(),
+  "derivedAt": zod.string(),
+  "support": zod.object({
+  "events": zod.number(),
+  "pairwise": zod.number(),
+  "preferredSubjects": zod.number(),
+  "dispreferredSubjects": zod.number()
+}),
+  "dimensions": zod.record(zod.string(), zod.unknown()),
+  "evidence": zod.array(zod.object({
+  "dimension": zod.string(),
+  "support": zod.number(),
+  "agreement": zod.number(),
+  "summary": zod.string()
+})),
+  "undecided": zod.array(zod.object({
+  "dimension": zod.string(),
+  "reason": zod.string()
+})),
+  "createdAt": zod.string()
+}).describe('PR-30 — the owner\'s learned defaults; every dimension is `default` provenance and is outranked by anything the owner states.')
+
+
+/**
+ * @summary Make this profile the owner's defaults for new generations (deactivates any other)
+ */
+export const ActivatePersonalArrangementProfileParams = zod.object({
+  "profileId": zod.coerce.string()
+})
+
+export const ActivatePersonalArrangementProfileResponse = zod.object({
+  "id": zod.string(),
+  "version": zod.number(),
+  "active": zod.boolean(),
+  "method": zod.string(),
+  "derivedAt": zod.string(),
+  "support": zod.object({
+  "events": zod.number(),
+  "pairwise": zod.number(),
+  "preferredSubjects": zod.number(),
+  "dispreferredSubjects": zod.number()
+}),
+  "dimensions": zod.record(zod.string(), zod.unknown()),
+  "evidence": zod.array(zod.object({
+  "dimension": zod.string(),
+  "support": zod.number(),
+  "agreement": zod.number(),
+  "summary": zod.string()
+})),
+  "undecided": zod.array(zod.object({
+  "dimension": zod.string(),
+  "reason": zod.string()
+})),
+  "createdAt": zod.string()
+}).describe('PR-30 — the owner\'s learned defaults; every dimension is `default` provenance and is outranked by anything the owner states.')
+
+
+/**
+ * @summary Stop using this profile as defaults
+ */
+export const DeactivatePersonalArrangementProfileParams = zod.object({
+  "profileId": zod.coerce.string()
+})
+
+export const DeactivatePersonalArrangementProfileResponse = zod.object({
+  "id": zod.string(),
+  "version": zod.number(),
+  "active": zod.boolean(),
+  "method": zod.string(),
+  "derivedAt": zod.string(),
+  "support": zod.object({
+  "events": zod.number(),
+  "pairwise": zod.number(),
+  "preferredSubjects": zod.number(),
+  "dispreferredSubjects": zod.number()
+}),
+  "dimensions": zod.record(zod.string(), zod.unknown()),
+  "evidence": zod.array(zod.object({
+  "dimension": zod.string(),
+  "support": zod.number(),
+  "agreement": zod.number(),
+  "summary": zod.string()
+})),
+  "undecided": zod.array(zod.object({
+  "dimension": zod.string(),
+  "reason": zod.string()
+})),
+  "createdAt": zod.string()
+}).describe('PR-30 — the owner\'s learned defaults; every dimension is `default` provenance and is outranked by anything the owner states.')
+
+
+/**
  * @summary List private immutable calibration versions
  */
 export const ListProducerCalibrationsResponseItem = zod.object({

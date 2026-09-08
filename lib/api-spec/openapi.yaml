@@ -1210,6 +1210,54 @@ paths:
         "200":
           description: The retired model
           content: { application/json: { schema: { $ref: "#/components/schemas/PairwiseCriticRecord" } } }
+  /personal-arrangement-profile:
+    get:
+      operationId: listPersonalArrangementProfiles
+      tags: [studio]
+      summary: The owner's personalized arrangement profiles (PR-30) — learned defaults, newest first
+      responses:
+        "200":
+          description: Profile versions
+          content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/PersonalArrangementProfileRecord" } } } }
+  /personal-arrangement-profile/derive:
+    post:
+      operationId: derivePersonalArrangementProfile
+      tags: [studio]
+      summary: Derive a new profile version from the owner's preference events (not activated)
+      responses:
+        "200":
+          description: The derived profile, with what it decided and what it left undecided
+          content: { application/json: { schema: { $ref: "#/components/schemas/PersonalArrangementProfileRecord" } } }
+  /personal-arrangement-profile/{profileId}/activate:
+    post:
+      operationId: activatePersonalArrangementProfile
+      tags: [studio]
+      summary: Make this profile the owner's defaults for new generations (deactivates any other)
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The active profile
+          content: { application/json: { schema: { $ref: "#/components/schemas/PersonalArrangementProfileRecord" } } }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /personal-arrangement-profile/{profileId}/deactivate:
+    post:
+      operationId: deactivatePersonalArrangementProfile
+      tags: [studio]
+      summary: Stop using this profile as defaults
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The profile, no longer active
+          content: { application/json: { schema: { $ref: "#/components/schemas/PersonalArrangementProfileRecord" } } }
+        "404": { $ref: "#/components/responses/NotFound" }
   /producer-calibrations:
     get:
       operationId: listProducerCalibrations
@@ -1624,6 +1672,46 @@ components:
       properties:
         examples: { type: number }
         heldOutAgreement: { type: number }
+    PersonalArrangementProfileRecord:
+      type: object
+      description: PR-30 — the owner's learned defaults; every dimension is `default` provenance and is outranked by anything the owner states.
+      required: [id, version, active, method, derivedAt, support, dimensions, evidence, undecided, createdAt]
+      properties:
+        id: { type: string }
+        version: { type: number }
+        active: { type: boolean }
+        method: { type: string }
+        derivedAt: { type: string }
+        support:
+          type: object
+          required: [events, pairwise, preferredSubjects, dispreferredSubjects]
+          properties:
+            events: { type: number }
+            pairwise: { type: number }
+            preferredSubjects: { type: number }
+            dispreferredSubjects: { type: number }
+        dimensions:
+          type: object
+          additionalProperties: true
+        evidence:
+          type: array
+          items:
+            type: object
+            required: [dimension, support, agreement, summary]
+            properties:
+              dimension: { type: string }
+              support: { type: number }
+              agreement: { type: number }
+              summary: { type: string }
+        undecided:
+          type: array
+          items:
+            type: object
+            required: [dimension, reason]
+            properties:
+              dimension: { type: string }
+              reason: { type: string }
+        createdAt: { type: string }
     PairwiseCriticRecord:
       type: object
       description: PR-29 — one immutable version of the owner's learned pairwise critic, with the held-out verdict that decides whether it may be applied.

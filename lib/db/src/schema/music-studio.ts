@@ -415,6 +415,45 @@ export const pairwiseCriticModelsTable = pgTable("music_pairwise_critic_models",
   retiredAt: timestamp("retired_at", { withTimezone: true }),
 }, (table) => [uniqueIndex("music_pairwise_critic_models_owner_version_unique").on(table.ownerId, table.version)]);
 
+// ---------------------------------------------------------------------------
+// Wave 7 — PR-30: personalized arrangement profile. The owner's learned
+// *defaults*: StyleProfile dimensions derived from what they preferred, at
+// `default` provenance so anything they state, research finds or the text
+// implies always outranks them. Derived only from preference events (already
+// consent-gated, rights-cleared and content-free).
+// ---------------------------------------------------------------------------
+
+export type PersonalDimensionEvidence = {
+  dimension: StyleDimensionName;
+  /** How many preferred subjects supported this value. */
+  support: number;
+  /** Fraction of pairwise choices that agreed with the direction / class (0.5 = coin flip). */
+  agreement: number;
+  summary: string;
+};
+
+export type PersonalizedArrangementProfile = {
+  version: "1.0";
+  method: string;
+  derivedAt: string;
+  inputsDigestSha256: string;
+  support: { events: number; pairwise: number; preferredSubjects: number; dispreferredSubjects: number };
+  /** Dimensions with enough consistent support; all `default` provenance. */
+  dimensions: StyleProfileDimensions;
+  evidence: PersonalDimensionEvidence[];
+  /** Tendencies with too little or too mixed support to become defaults, kept for honesty. */
+  undecided: Array<{ dimension: StyleDimensionName; reason: string }>;
+};
+
+export const personalArrangementProfilesTable = pgTable("music_personal_arrangement_profiles", {
+  id: text("id").primaryKey(),
+  ownerId: text("owner_id").notNull(),
+  version: integer("version").notNull(),
+  active: boolean("active").notNull().default(false),
+  profile: jsonb("profile").$type<PersonalizedArrangementProfile>().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [uniqueIndex("music_personal_arrangement_profiles_owner_version_unique").on(table.ownerId, table.version)]);
+
 /**
  * Mastering Engine (PR-26): what a master *achieved*, measured with
  * BS.1770-4 gated loudness and 4× true peak — never asserted from the

@@ -539,6 +539,41 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   near-tie tolerance (0.03) is a judgement, not a measurement. No real owner
   has enough events yet for any of this to run in anger.
 
+- **PR-30** ✅ — `personalized-arrangement-profile`: the owner's learned
+  **defaults**. `personalProfile.ts` reads the preference events (already
+  consent-gated, rights-cleared, content-free) and derives the StyleProfile
+  dimensions the owner keeps choosing — swing ratio, harmonic rhythm, chord
+  extensions, ornamentation, register tendency, fill frequency, phrase length,
+  dynamics — each at **`default` provenance**, the lowest rung of the merge
+  order, so anything the owner states, research finds or the text implies
+  always outranks it. A dimension needs ≥ 5 preferred subjects and, where
+  pairwise evidence exists, ≥ 0.65 direction agreement; confidence is capped
+  at 0.6; every decided dimension carries a sentence of evidence ("your
+  preferred arrangements swing at 0.64 — the ones you passed over: 0.51"),
+  and every undecided one carries its reason. Versions are immutable
+  (`music_personal_arrangement_profiles`); **activation is the owner's
+  explicit act** — deriving never changes generation.
+
+  Applied at the generation seam: an active profile becomes
+  `parameters.styleProfile` for a request that brings none (a brief always
+  wins), so PR-23's performance style, PR-24's sound selection and PR-25's mix
+  read it, and every candidate records `personalProfileId` / version. Routes:
+  `GET /personal-arrangement-profile`, `POST …/derive`, `POST
+  …/{id}/activate`, `POST …/{id}/deactivate`.
+
+  **Proven live** (`docs/evidence/personal-profile-live.json`): derive on the
+  dev owner's 2 events → nothing decided, every dimension explained; activate
+  → a fresh Brain generation whose candidates carry the profile id and run
+  the V2 performance engine; deactivate. In the suite (5 tests): 12
+  consistent choices → swing / register / harmonic-rhythm / dynamics defaults
+  with evidence; a 50/50 direction stays undecided; deterministic.
+
+  **Honest limits.** Not yet a knowledge source for the brief pipeline (the
+  `StyleKnowledgeFinding` contract carries only inferred | researched
+  provenance; personal defaults must sit *below* inferred — PR-U5). Learns
+  only what the fingerprint expresses. Nobody has enough events for a real
+  profile yet.
+
   **Honest limits.** Only Retrologue is attested here: Groove Agent SE, Padshop
   and HALion Sonic render silence without a loaded program, so their smoke
   correctly refuses them until a `.vstpreset` is provided. The bass lives in

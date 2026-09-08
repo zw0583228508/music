@@ -114,6 +114,10 @@ import {
   PromotePairwiseCriticResponse,
   RetirePairwiseCriticParams,
   RetirePairwiseCriticResponse,
+  ListPersonalArrangementProfilesResponse,
+  DerivePersonalArrangementProfileResponse,
+  ActivatePersonalArrangementProfileParams,
+  ActivatePersonalArrangementProfileResponse,
   CreateProducerDecisionBody,
   CreateProducerDecisionResponse,
   GetProducerPreferencesResponse,
@@ -199,6 +203,7 @@ import { compareFingerprints, deriveStyleFingerprint } from "../lib/styleFingerp
 import { FEATURE_NAMES, recordPreferenceEvent, trainingRows, type PreferenceSubjectInput } from "../lib/preferenceEvents";
 import { DbPreferenceEventStore } from "../lib/preferenceEventsDbStore";
 import { listPairwiseCritics, promotePairwiseCritic, retirePairwiseCritic, trainPairwiseCriticForOwner, type PairwiseCriticRecord } from "../lib/pairwiseCriticStore";
+import { derivePersonalProfileForOwner, listPersonalProfiles, setPersonalProfileActive, type PersonalProfileRecord } from "../lib/personalProfileStore";
 import {
   activateLicensedInstrumentPack as activateLicensedInstrumentPackOnWorker,
   applyArrangementEditorChanges,
@@ -3000,6 +3005,34 @@ router.post("/pairwise-critic/:modelId/retire", async (req, res): Promise<void> 
     res.status(404).json({ error: error instanceof Error ? error.message : "Not found" });
   }
 });
+
+// PR-30: the owner's learned defaults — derive, inspect, activate, deactivate.
+const personalProfileResponse = (row: PersonalProfileRecord) => ({
+  id: row.id, version: row.version, active: row.active, method: row.profile.method, derivedAt: row.profile.derivedAt,
+  support: row.profile.support, dimensions: row.profile.dimensions, evidence: row.profile.evidence, undecided: row.profile.undecided, createdAt: row.createdAt,
+});
+
+router.get("/personal-arrangement-profile", async (req, res): Promise<void> => {
+  res.setHeader("Cache-Control", "no-store");
+  res.json(ListPersonalArrangementProfilesResponse.parse((await listPersonalProfiles(req.user!.id)).map(personalProfileResponse)));
+});
+
+router.post("/personal-arrangement-profile/derive", async (req, res): Promise<void> => {
+  res.json(DerivePersonalArrangementProfileResponse.parse(personalProfileResponse(await derivePersonalProfileForOwner(req.user!.id))));
+});
+
+for (const [action, active] of [["activate", true], ["deactivate", false]] as const) {
+  router.post(`/personal-arrangement-profile/:profileId/${action}`, async (req, res): Promise<void> => {
+    const params = ActivatePersonalArrangementProfileParams.safeParse(req.params);
+    if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+    try {
+      const row = await setPersonalProfileActive(req.user!.id, params.data.profileId, active);
+      res.json(ActivatePersonalArrangementProfileResponse.parse(personalProfileResponse(row)));
+    } catch (error) {
+      res.status(404).json({ error: error instanceof Error ? error.message : "Not found" });
+    }
+  });
+}
 
 // PR-28: the owner's learning memory — list it, export it for training, erase it.
 router.get("/preference-events", async (req, res): Promise<void> => {
