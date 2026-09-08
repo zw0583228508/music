@@ -2200,6 +2200,8 @@ export type PerformanceDecision = {
 export type PerformanceEvidence = {
   version: "1.0";
   engine: string;
+  /** "1.0" when no performance style was supplied (V1 behaviour), "2.0" otherwise. */
+  engineVersion?: "1.0" | "2.0";
   seed: number;
   family: string;
   profile: string;
@@ -2210,10 +2212,36 @@ export type PerformanceEvidence = {
     flams: number;
     strumSpreadNotes: number;
     breathGaps: number;
+    /** PR-23: grace notes / turns added for melodic roles. */
+    ornaments?: number;
+    /** PR-23: drum fills added at phrase boundaries. */
+    fills?: number;
+    /** PR-23: articulation events that resolved to a keyswitch. */
+    keyswitches?: number;
   };
   ccCurves: string[];
+  /** PR-23: which style dimensions shaped this performance, with provenance. */
+  styleInputs?: Array<{ dimension: string; value: string | number; provenance: string }>;
   /** Bounded sample of per-note decisions for audit. */
   decisions: PerformanceDecision[];
+};
+
+/**
+ * Performance style (PR-23): the performance-relevant slice of a StyleProfile,
+ * resolved per project. Every field is optional and absent means "the V1
+ * default" -- a style never invents a value the profile did not evidence.
+ */
+export type PerformanceStyle = {
+  /** 0.5 straight … ~0.67 triplet swing. */
+  swingRatio?: number;
+  microtiming?: "quantized" | "on_top" | "behind" | "ahead" | "loose";
+  dynamics?: "narrow" | "moderate" | "wide";
+  melodicOrnamentation?: "none" | "light" | "moderate" | "heavy";
+  bassAttackPosition?: "on_the_beat" | "anticipated" | "laid_back" | "sustained";
+  fillFrequency?: "rare" | "moderate" | "frequent";
+  articulationLanguage?: string;
+  /** Which StyleProfile dimensions produced the values above, for evidence. */
+  sources?: Array<{ dimension: string; value: string | number; provenance: string }>;
 };
 
 /** Granularity at which a producer can freeze material (PR-17). */

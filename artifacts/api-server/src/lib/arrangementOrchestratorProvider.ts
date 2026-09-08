@@ -12,12 +12,21 @@
  * have already been composed, constraint-checked, critiqued, repaired and
  * performed, so the legacy modulation/composition passes must not touch them.
  */
-import type { CandidatePlan, SongModelData, TrackModel } from "@workspace/db";
+import type { CandidatePlan, GenerationParameters, SongModelData, StyleProfile, TrackModel } from "@workspace/db";
 import {
   ORCHESTRATOR_VERSION,
   orchestrateArrangement,
   type OrchestratedCandidate,
 } from "./arrangementOrchestrator";
+import { performanceStyleFromProfile } from "./performanceEngine";
+
+/** A StyleProfile travels in `parameters.styleProfile`; anything else is ignored. */
+function readStyleProfile(parameters: GenerationParameters | undefined): StyleProfile | null {
+  const candidate = parameters?.styleProfile;
+  if (!candidate || typeof candidate !== "object") return null;
+  const profile = candidate as Partial<StyleProfile>;
+  return profile.dimensions && typeof profile.dimensions === "object" ? (profile as StyleProfile) : null;
+}
 import type {
   MusicGenerationProvider,
   ProviderCandidate,
@@ -128,11 +137,18 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
     // and critiques every candidate it persists. Rendering here as well would
     // double the cost of each candidate for nothing. `now` is fixed so the
     // same Song Model and seed always give the same arrangement.
+    // PR-23: a resolved StyleProfile in the generation parameters (the Wave U
+    // brief pipeline puts it there) shapes the performance — swing ratio,
+    // microtiming, dynamics width, ornaments, fills. Without one the
+    // performance is V1, byte for byte.
+    const styleProfile = readStyleProfile(input.parameters);
+    const performanceStyle = styleProfile ? performanceStyleFromProfile(styleProfile) : undefined;
     const result = orchestrateArrangement({
       songModel,
       candidateCount: input.candidates,
       render: false,
       now: new Date(0),
+      performanceStyle,
     });
     if (signal?.aborted) throw new Error("Arrangement generation was cancelled");
     await onProgress?.({ progress: 60, stage: "composed" });
@@ -201,6 +217,10 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
           repairPasses: candidate.repair?.passes.length ?? 0,
           stages: stageSummary,
           traceable: result.traceable,
+          performanceEngineVersion: performanceStyle ? "2.0" : "1.0",
+          ...(performanceStyle?.sources?.length
+            ? { performanceStyleInputs: performanceStyle.sources.map((s) => `${s.dimension}=${s.value} (${s.provenance})`) }
+            : {}),
         },
         parentArtifactIds: [],
         trackModels,

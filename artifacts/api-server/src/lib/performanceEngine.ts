@@ -18,12 +18,53 @@ import type {
   MusicalNote,
   PerformanceDecision,
   PerformanceEvidence,
+  PerformanceStyle,
   PhrasePlan,
+  StyleProfile,
 } from "@workspace/db";
 import { LEGATO_TOLERANCE_SECONDS } from "./musicalConstraints";
 
-export const PERFORMANCE_ENGINE = "PERFORMANCE_ENGINE_V1" as const;
+export const PERFORMANCE_ENGINE = "PERFORMANCE_ENGINE_V2" as const;
 const MAX_DECISION_SAMPLE = 64;
+
+// ---------------------------------------------------------------------------
+// Style -> performance (PR-23)
+// ---------------------------------------------------------------------------
+
+const MELODIC_ROLES: ReadonlySet<string> = new Set(["LEAD", "COUNTER_MELODY", "CALL_RESPONSE"]);
+const SUSTAINING_FAMILIES: ReadonlySet<string> = new Set(["strings", "brass", "winds", "voice"]);
+
+/**
+ * The performance-relevant slice of a resolved StyleProfile. Only dimensions
+ * the profile actually evidences are carried, each with its provenance, so
+ * the evidence can say *why* a bass sits behind the beat. Absent stays absent:
+ * the engine then behaves exactly as V1 for that parameter.
+ */
+export function performanceStyleFromProfile(profile: StyleProfile | null | undefined): PerformanceStyle {
+  const style: PerformanceStyle = {};
+  if (!profile) return style;
+  const dims = profile.dimensions as Record<string, { value: unknown; provenance: string } | undefined>;
+  const sources: NonNullable<PerformanceStyle["sources"]> = [];
+  const take = <K extends keyof PerformanceStyle>(key: K, dimension: string, accept: (value: unknown) => PerformanceStyle[K] | undefined) => {
+    const dim = dims[dimension];
+    if (!dim) return;
+    const value = accept(dim.value);
+    if (value === undefined) return;
+    style[key] = value;
+    sources.push({ dimension, value: value as string | number, provenance: dim.provenance });
+  };
+  const oneOf = <T extends string>(...allowed: T[]) => (value: unknown): T | undefined =>
+    typeof value === "string" && (allowed as string[]).includes(value) ? (value as T) : undefined;
+  take("swingRatio", "swingRatio", (v) => (typeof v === "number" && v >= 0.5 && v <= 0.8 ? v : undefined));
+  take("microtiming", "microtiming", oneOf("quantized", "on_top", "behind", "ahead", "loose"));
+  take("dynamics", "dynamics", oneOf("narrow", "moderate", "wide"));
+  take("melodicOrnamentation", "melodicOrnamentation", oneOf("none", "light", "moderate", "heavy"));
+  take("bassAttackPosition", "bassAttackPosition", oneOf("on_the_beat", "anticipated", "laid_back", "sustained"));
+  take("fillFrequency", "fillFrequency", oneOf("rare", "moderate", "frequent"));
+  take("articulationLanguage", "articulationLanguage", (v) => (typeof v === "string" && v.trim() ? v : undefined));
+  if (sources.length) style.sources = sources;
+  return style;
+}
 
 export type PerformanceInput = {
   trackId: string;
@@ -42,6 +83,8 @@ export type PerformanceInput = {
   seed?: number;
   /** Bar → seconds, so metrical position can be computed. */
   barSeconds?: number;
+  /** PR-23: the instrument's playable range, so ornaments never leave it. */
+  playableRange?: { min: number; max: number };
   /**
    * The instrument definition's articulation names. When given, the engine
    * never emits an articulation the instrument cannot map — a bow change on a
@@ -54,6 +97,20 @@ export type PerformanceInput = {
    * a performance must never break a constraint the composition satisfied.
    */
   maxSimultaneousNotes?: number;
+  /**
+   * PR-23: performance style resolved from the project's StyleProfile. When
+   * absent, every parameter keeps its V1 default and the output is identical
+   * to V1 -- supplying even an empty style enables the V2 behaviours (phrase
+   * dynamics, legato/staccato articulation, keyswitch resolution).
+   */
+  performanceStyle?: PerformanceStyle;
+  /**
+   * PR-23: the track's articulation map (TrackMappingMetadata.articulationMap
+   * or InstrumentDefinition.directiveMappings): articulation name -> keyswitch
+   * note or renderer label. Numeric entries become `keyswitch` on the event,
+   * which the VST3 worker plays as a short lead note.
+   */
+  articulationMap?: Record<string, string | number>;
 };
 
 export type PerformedTrack = {
@@ -180,9 +237,21 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
   const beatsPerBar = Number((input.meter ?? "4/4").split("/")[0]) || 4;
   const beatSeconds = 60 / Math.max(1, input.tempoBpm);
   const barSeconds = input.barSeconds ?? beatSeconds * beatsPerBar;
-  const swing = (input.groove ?? "").includes("swing");
+  const style = input.performanceStyle;
+  const v2 = style !== undefined;
+  const swing = (input.groove ?? "").includes("swing") || (style?.swingRatio ?? 0.5) > 0.5;
+  // V1 swung every offbeat to the triplet point; a style names the ratio.
+  const swingRatio = style?.swingRatio ?? 2 / 3;
   const rubato = input.groove === "rubato";
   const [dynStart, dynEnd] = dynamicRamp(input.dynamicShape);
+  // Dynamics width: how much metrical accent and dynamic shape move velocity.
+  const accentDepthScale = style?.dynamics === "narrow" ? 0.6 : style?.dynamics === "wide" ? 1.35 : 1;
+  const [rangeFloor, rangeSpan] = style?.dynamics === "narrow" ? [0.82, 0.3]
+    : style?.dynamics === "wide" ? [0.65, 0.6] : [0.75, 0.45];
+  // Microtiming: where the player sits relative to the grid, and how loosely.
+  const microFeelMs = style?.microtiming === "behind" ? 8 : style?.microtiming === "ahead" ? -6 : 0;
+  const microJitterScale = style?.microtiming === "quantized" ? 0.1 : style?.microtiming === "loose" ? 1.6 : 1;
+  const microFeelScale = style?.microtiming === "quantized" ? 0.2 : 1;
 
   const source = [...input.notes].sort((a, b) => a.start - b.start || a.pitch - b.pitch);
   const songEnd = Math.max(0.001, ...source.map((n) => n.start + n.duration));
@@ -195,9 +264,27 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
     if (!vocabulary || vocabulary.includes(event.name)) articulations.push(event);
   };
   const decisions: PerformanceDecision[] = [];
-  const added = { ghostNotes: 0, flams: 0, strumSpreadNotes: 0, breathGaps: 0 };
+  const added = { ghostNotes: 0, flams: 0, strumSpreadNotes: 0, breathGaps: 0, ornaments: 0, fills: 0, keyswitches: 0 };
   const ccCurves: string[] = [];
   const offsets: number[] = [];
+  const phraseAt = (time: number): PhrasePlan | undefined => {
+    if (!input.phrases?.length || barSeconds <= 0) return undefined;
+    const bar = Math.floor(time / barSeconds) + 1;
+    return input.phrases.find((p) => bar >= p.startBar && bar <= p.endBar);
+  };
+  // Phrase-role dynamics (V2): a pickup or opening starts a touch under, a
+  // cadence tapers, a fill leans in. Applied on top of the phrase arc.
+  const phraseRoleGain = (time: number): number => {
+    if (!v2) return 1;
+    const phrase = phraseAt(time);
+    if (!phrase) return 1;
+    const span = Math.max(1, phrase.endBar - phrase.startBar + 1) * barSeconds;
+    const position = clamp((time - (phrase.startBar - 1) * barSeconds) / span, 0, 1);
+    if (phrase.role === "pickup" || phrase.role === "opening") return position < 0.25 ? 0.94 : 1;
+    if (phrase.role === "cadence") return position > 0.75 ? 0.9 : 1;
+    if (phrase.role === "fill") return 1.05;
+    return 1;
+  };
 
   // Group simultaneous notes so chords can be rolled/strummed as one gesture.
   const clusters: MusicalNote[][] = [];
@@ -217,18 +304,27 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
 
     // --- timing -------------------------------------------------------
     const reasons: string[] = [];
-    let offsetMs = profile.feelMs + (ROLE_FEEL_MS[input.role] ?? 0);
+    let offsetMs = (profile.feelMs + (ROLE_FEEL_MS[input.role] ?? 0)) * microFeelScale + microFeelMs;
     reasons.push(`${family} feel ${profile.feelMs}ms`, `${input.role} feel ${ROLE_FEEL_MS[input.role] ?? 0}ms`);
+    if (style?.microtiming) reasons.push(`microtiming ${style.microtiming}`);
+    if (plucked && style?.bassAttackPosition) {
+      // Where the bassist places the attack against the kick.
+      const bassMs = style.bassAttackPosition === "anticipated" ? -12
+        : style.bassAttackPosition === "laid_back" ? 14 : 0;
+      offsetMs += bassMs;
+      reasons.push(`bass attack ${style.bassAttackPosition}`);
+    }
     if (swing && Math.abs(fraction - 0.5) < 0.08) {
-      offsetMs += beatSeconds * 1000 * (2 / 3 - 0.5);
+      offsetMs += beatSeconds * 1000 * (swingRatio - 0.5);
       reasons.push("swung offbeat");
+      if (style?.swingRatio !== undefined) reasons.push(`swing ratio ${swingRatio.toFixed(2)}`);
     }
     if (rubato && arc > 0) {
       offsetMs += (1 - arc) * 12;
       reasons.push("rubato phrase breathing");
     }
     // Tighter on strong beats; looser off the grid.
-    const jitterScale = profile.jitterMs * (0.4 + (1 - weight) * 0.9);
+    const jitterScale = profile.jitterMs * (0.4 + (1 - weight) * 0.9) * microJitterScale;
     const jitter = seededUnit(seed, `${anchor.id}:t`) * jitterScale;
     offsetMs += jitter;
     reasons.push(`metrical weight ${weight.toFixed(2)}`);
@@ -261,10 +357,11 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
       const start = Math.max(0, note.start + (offsetMs + gestureMs + handMs) / 1000);
 
       // --- velocity ---------------------------------------------------
-      const accent = 1 - profile.accentDepth * (1 - weight);
+      const accent = 1 - profile.accentDepth * accentDepthScale * (1 - weight);
       let velocity = (note.velocity || 90) * accent;
-      velocity *= 0.75 + dynamicLevel * 0.45;
+      velocity *= rangeFloor + dynamicLevel * rangeSpan;
       velocity *= 0.9 + arc * 0.2;
+      velocity *= phraseRoleGain(anchor.start);
       if (family === "drums") {
         // Kick/snare carry the accent; hats sit under them.
         if (note.pitch === 42 || note.pitch === 44 || note.pitch === 46) velocity *= 0.72;
@@ -275,6 +372,7 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
 
       // --- length -----------------------------------------------------
       let duration = note.duration * profile.lengthFactor;
+      if (plucked && style?.bassAttackPosition === "sustained") duration *= 1.15;
       if (input.role === "PAD" || input.role === "HARMONIC_BED") duration *= 1.06;
       if (input.role === "GROOVE" || family === "drums") duration = Math.min(duration, 0.25);
       duration = Math.max(0.02, duration);
@@ -363,6 +461,102 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
     ccCurves.push("CC64 sustain pedal per bar");
   }
 
+  // --- V2: ornaments, fills, articulation language, keyswitches -------------
+  if (v2) {
+    const phrases = input.phrases ?? [];
+    const minPitch = input.playableRange?.min ?? 0;
+    const maxPitch = input.playableRange?.max ?? 127;
+
+    // Ornaments for melodic roles: a grace note from below into the phrase
+    // peak (light), also into the phrase's first note (moderate), and a
+    // slide-in to the phrase's last note (heavy). Deterministic, in range,
+    // and short enough that the monophony clamp keeps the line playable.
+    const ornamentation = style?.melodicOrnamentation ?? "none";
+    if (ornamentation !== "none" && MELODIC_ROLES.has(input.role) && phrases.length) {
+      for (const phrase of phrases) {
+        const start = (phrase.startBar - 1) * barSeconds;
+        const end = phrase.endBar * barSeconds;
+        const inPhrase = notes.filter((n) => n.start >= start && n.start < end && !n.id.includes("-grace"));
+        if (!inPhrase.length) continue;
+        const targets: MusicalNote[] = [inPhrase.reduce((best, n) => (n.pitch > best.pitch ? n : best), inPhrase[0])];
+        if (ornamentation !== "light") targets.push(inPhrase[0]);
+        if (ornamentation === "heavy") targets.push(inPhrase[inPhrase.length - 1]);
+        for (const target of new Set(targets)) {
+          const gracePitch = target.pitch - 2;
+          if (gracePitch < minPitch || target.start < 0.07) continue;
+          notes.push({
+            id: `${target.id}-grace`,
+            start: Number((target.start - 0.06).toFixed(4)),
+            duration: 0.05,
+            pitch: gracePitch,
+            velocity: midi(target.velocity * 0.7),
+          });
+          added.ornaments += 1;
+        }
+      }
+      if (added.ornaments) ccCurves.push(`ornaments ${ornamentation}`);
+    }
+
+    // Drum fills into phrase boundaries: four sixteenths on the beat before a
+    // phrase, rising into it. Frequency decides which boundaries earn one.
+    if (family === "drums" && input.role === "GROOVE" && style?.fillFrequency && phrases.length) {
+      const wants = (phrase: PhrasePlan): boolean =>
+        style.fillFrequency === "rare" ? phrase.role === "fill"
+          : style.fillFrequency === "moderate" ? phrase.role === "fill" || phrase.role === "cadence"
+            : phrase.role === "fill" || phrase.role === "cadence" || phrase.entersFamilies.length > 0;
+      const fillPitches = [38, 45, 43, 41];
+      for (const phrase of phrases) {
+        if (!wants(phrase)) continue;
+        const phraseStart = (phrase.startBar - 1) * barSeconds;
+        const fillStart = phraseStart - beatSeconds;
+        if (fillStart < 0) continue;
+        for (let i = 0; i < 4; i += 1) {
+          notes.push({
+            id: `${phrase.id}-fill-${i}`,
+            start: Number((fillStart + (i * beatSeconds) / 4).toFixed(4)),
+            duration: 0.08,
+            pitch: fillPitches[i],
+            velocity: 70 + i * 13,
+          });
+        }
+        added.fills += 1;
+      }
+    }
+
+    // Articulation language for sustaining lines: legato at phrase starts
+    // when the line is connected; staccato once per phrase when most of its
+    // notes are detached. Both go through the vocabulary gate.
+    if (SUSTAINING_FAMILIES.has(family) && !plucked && phrases.length) {
+      for (const phrase of phrases) {
+        const start = (phrase.startBar - 1) * barSeconds;
+        const end = phrase.endBar * barSeconds;
+        const inPhrase = notes.filter((n) => n.start >= start && n.start < end).sort((a, b) => a.start - b.start);
+        if (inPhrase.length < 2) continue;
+        let detached = 0;
+        for (let i = 0; i + 1 < inPhrase.length; i += 1) {
+          const ioi = inPhrase[i + 1].start - inPhrase[i].start;
+          if (ioi > 0 && inPhrase[i].duration < ioi * 0.35) detached += 1;
+        }
+        const ratio = detached / (inPhrase.length - 1);
+        pushArticulation({ time: Number(start.toFixed(3)), name: ratio >= 0.6 ? "staccato" : "legato", intensity: 0.5 });
+      }
+    }
+
+    // Keyswitches: resolve articulation names through the track's map so the
+    // renderer plays them, not just reads them.
+    if (input.articulationMap) {
+      for (let i = 0; i < articulations.length; i += 1) {
+        const mapped = input.articulationMap[articulations[i].name];
+        const key = typeof mapped === "number" ? mapped : typeof mapped === "string" && /^\d+$/.test(mapped) ? Number(mapped) : undefined;
+        if (key !== undefined && key >= 0 && key <= 127 && articulations[i].keyswitch === undefined) {
+          articulations[i] = { ...articulations[i], keyswitch: key };
+          added.keyswitches += 1;
+        }
+      }
+    }
+    void maxPitch;
+  }
+
   notes.sort((a, b) => a.start - b.start || a.pitch - b.pitch);
   cc.sort((a, b) => a.time - b.time || a.controller - b.controller);
   articulations.sort((a, b) => a.time - b.time);
@@ -392,13 +586,17 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
     evidence: {
       version: "1.0",
       engine: PERFORMANCE_ENGINE,
+      engineVersion: v2 ? "2.0" : "1.0",
       seed,
       family,
       profile: profile.id,
       meanTimingOffsetMs: Number(meanOffset.toFixed(2)),
       timingStdMs: Number(Math.sqrt(variance).toFixed(2)),
-      addedEvents: added,
+      addedEvents: v2
+        ? added
+        : { ghostNotes: added.ghostNotes, flams: added.flams, strumSpreadNotes: added.strumSpreadNotes, breathGaps: added.breathGaps },
       ccCurves,
+      ...(v2 ? { styleInputs: style?.sources ?? [] } : {}),
       decisions,
     },
   };
