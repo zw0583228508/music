@@ -1119,7 +1119,7 @@ export type SongModelMusicalMapVersion = typeof SongModelMusicalMapVersion[keyof
 
 
 export const SongModelMusicalMapVersion = {
-  '21': '2.1',
+  '22': '2.2',
 } as const;
 
 export type MusicalMapStatus = typeof MusicalMapStatus[keyof typeof MusicalMapStatus];
@@ -1234,6 +1234,49 @@ export const SongModelMusicalMapStyleFingerprintOrchestrationSize = {
   sparse: 'sparse',
   medium: 'medium',
   dense: 'dense',
+} as const;
+
+export type SongModelMusicalMapVocalsPhrasesItemContour = typeof SongModelMusicalMapVocalsPhrasesItemContour[keyof typeof SongModelMusicalMapVocalsPhrasesItemContour];
+
+
+export const SongModelMusicalMapVocalsPhrasesItemContour = {
+  rising: 'rising',
+  falling: 'falling',
+  arch: 'arch',
+  valley: 'valley',
+  flat: 'flat',
+  mixed: 'mixed',
+} as const;
+
+export type SongModelMusicalMapVocalsPhrasesItemCadence = typeof SongModelMusicalMapVocalsPhrasesItemCadence[keyof typeof SongModelMusicalMapVocalsPhrasesItemCadence];
+
+
+export const SongModelMusicalMapVocalsPhrasesItemCadence = {
+  rising: 'rising',
+  falling: 'falling',
+  sustained: 'sustained',
+  unknown: 'unknown',
+} as const;
+
+export type SongModelMusicalMapVocalsRegisterMapItemRegister = typeof SongModelMusicalMapVocalsRegisterMapItemRegister[keyof typeof SongModelMusicalMapVocalsRegisterMapItemRegister];
+
+
+export const SongModelMusicalMapVocalsRegisterMapItemRegister = {
+  low: 'low',
+  low_mid: 'low_mid',
+  mid: 'mid',
+  upper_mid: 'upper_mid',
+  high: 'high',
+} as const;
+
+export type SongModelMusicalMapArrangementSpaceWindowsItemVocalDensity = typeof SongModelMusicalMapArrangementSpaceWindowsItemVocalDensity[keyof typeof SongModelMusicalMapArrangementSpaceWindowsItemVocalDensity];
+
+
+export const SongModelMusicalMapArrangementSpaceWindowsItemVocalDensity = {
+  none: 'none',
+  low: 'low',
+  medium: 'medium',
+  high: 'high',
 } as const;
 
 export type SongModelMusicalMapHarmonyHarmonicRhythmItem = MusicalMapBarSpan & {
@@ -1475,6 +1518,114 @@ export type SongModelMusicalMapStyleFingerprint = {
   orchestrationSize: SongModelMusicalMapStyleFingerprintOrchestrationSize;
 };
 
+export type SongModelMusicalMapVocalsPhrasesItemRange = {
+  lowPitch: number;
+  highPitch: number;
+} | null;
+
+export type SongModelMusicalMapVocalsPhrasesItem = {
+  phraseId: string;
+  /** @minimum 0 */
+  start: number;
+  /** @minimum 0 */
+  end: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  activity: number;
+  /** @minimum 0 */
+  density: number;
+  range: SongModelMusicalMapVocalsPhrasesItemRange;
+  peakPitch: number | null;
+  contour: SongModelMusicalMapVocalsPhrasesItemContour;
+  cadence: SongModelMusicalMapVocalsPhrasesItemCadence;
+  pickup: boolean;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  emotionalIntensity: number;
+  coordinates?: CanonicalTimeRange;
+};
+
+export type SongModelMusicalMapVocalsBreathWindowsItem = {
+  id: string;
+  /** @minimum 0 */
+  start: number;
+  /** @minimum 0 */
+  end: number;
+  coordinates?: CanonicalTimeRange;
+};
+
+export type SongModelMusicalMapVocalsSilenceWindowsItem = {
+  id: string;
+  /** @minimum 0 */
+  start: number;
+  /** @minimum 0 */
+  end: number;
+  coordinates?: CanonicalTimeRange;
+};
+
+export type SongModelMusicalMapVocalsVocalDensityCurveItem = MusicalMapBarSpan & {
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  vocalDensity: number;
+};
+
+export type SongModelMusicalMapVocalsRegisterMapItem = MusicalMapBarSpan & {
+  register: SongModelMusicalMapVocalsRegisterMapItemRegister;
+};
+
+export type SongModelMusicalMapVocals = {
+  status: MusicalMapStatus;
+  reason: string | null;
+  derivedFrom: string[];
+  method: string;
+  phrases: SongModelMusicalMapVocalsPhrasesItem[];
+  breathWindows: SongModelMusicalMapVocalsBreathWindowsItem[];
+  silenceWindows: SongModelMusicalMapVocalsSilenceWindowsItem[];
+  vocalDensityCurve: SongModelMusicalMapVocalsVocalDensityCurveItem[];
+  registerMap: SongModelMusicalMapVocalsRegisterMapItem[];
+};
+
+export type SongModelMusicalMapArrangementSpaceWindowsItem = {
+  id: string;
+  /** @minimum 0 */
+  start: number;
+  /** @minimum 0 */
+  end: number;
+  bars: number[];
+  sections: string[];
+  vocalDensity: SongModelMusicalMapArrangementSpaceWindowsItemVocalDensity;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  counterMelodyBudget: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  fillBudget: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  padBudget: number;
+  coordinates?: CanonicalTimeRange;
+};
+
+export type SongModelMusicalMapArrangementSpace = {
+  status: MusicalMapStatus;
+  reason: string | null;
+  derivedFrom: string[];
+  method: string;
+  windows: SongModelMusicalMapArrangementSpaceWindowsItem[];
+};
+
 /**
  * Derived musical map (Canonical Song Model V2). Additive and optional. Each group is status-tagged and carries no derived payload when its inputs are absent.
  */
@@ -1489,6 +1640,8 @@ export interface SongModelMusicalMap {
   energy: SongModelMusicalMapEnergy;
   structure: SongModelMusicalMapStructure;
   styleFingerprint: SongModelMusicalMapStyleFingerprint;
+  vocals: SongModelMusicalMapVocals;
+  arrangementSpace: SongModelMusicalMapArrangementSpace;
 }
 
 export type DomainReconciliationReportVersion = typeof DomainReconciliationReportVersion[keyof typeof DomainReconciliationReportVersion];
