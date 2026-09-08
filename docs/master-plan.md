@@ -86,7 +86,23 @@ Regression baseline held every PR: `songModelValidation` (30), `canonicalTimelin
 **Wave 1 (core brain) complete.** Every `ArrangementPlan` now carries globalPlan +
 sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
 
-## Next: Wave 2 — PR-09 part-composer contract
+- **PR-09** (#10) ✅ — Part Composer contract: `buildPartComposerPlan()` (task per
+  active role/section + TRANSITION/INTRO/ENDING, deterministic seeds, dependency
+  order) + `buildPartGenerationRequest()` (prev+current+next context bundle).
+- **PR-10** (#11) ✅ — Candidate Generation Engine: 5 deliberate strategy profiles
+  (conservative/rhythmic/melodic/sparse/adventurous), per-part density steer +
+  seeds. Steers the parts, not just the seed.
+- **PR-11** (#12) ✅ — Music Critic V1: hard-rule gate + 11 weighted dimensions
+  (harmony/groove/voiceLeading/leadCompatibility/orchestration/sectionDevelopment/
+  motifCoherence/contrast/transitions/playability/performancePotential) with
+  findings + targeted repairs.
+- **PR-12** (#13) ✅ — Critic → Repair loop: near-miss detection, bounded
+  worst-first repair requests, deterministic plan-level applier + injectable
+  note-regen applier, ≤3 passes with per-pass evidence.
+
+**Wave 2 (generation & critique) complete.**
+
+## Next: Wave 3 — PR-13 SFIZZ/VSCO2 renderer
 
 ## Environment findings (Windows local)
 
