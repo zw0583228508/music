@@ -5457,6 +5457,74 @@ export interface ArrangementPlan {
   generationPreference?: GenerationPreferenceSnapshot | null;
 }
 
+export type AudioCritiqueDimension = typeof AudioCritiqueDimension[keyof typeof AudioCritiqueDimension];
+
+
+export const AudioCritiqueDimension = {
+  balance: 'balance',
+  masking: 'masking',
+  harshness: 'harshness',
+  mud: 'mud',
+  lowEndConflict: 'lowEndConflict',
+  transientQuality: 'transientQuality',
+  stereoDistribution: 'stereoDistribution',
+  dynamicMovement: 'dynamicMovement',
+  instrumentRealism: 'instrumentRealism',
+  spectralCrowding: 'spectralCrowding',
+} as const;
+
+export interface AudioCritiqueScore {
+  dimension: AudioCritiqueDimension;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  score: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  weight: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+  findings: string[];
+}
+
+export interface AudioMixAction {
+  dimension: AudioCritiqueDimension;
+  instrument?: string;
+  action: string;
+  reason: string;
+}
+
+export type AudioCritiqueVersion = typeof AudioCritiqueVersion[keyof typeof AudioCritiqueVersion];
+
+
+export const AudioCritiqueVersion = {
+  '10': '1.0',
+} as const;
+
+/**
+ * Audio Critic V1 (PR-15) — second critique, after rendering.
+ */
+export interface AudioCritique {
+  version: AudioCritiqueVersion;
+  method: string;
+  sampleRate: number;
+  /** @minimum 0 */
+  stemCount: number;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  overallScore: number;
+  dimensions: AudioCritiqueScore[];
+  recommendedMixActions: AudioMixAction[];
+}
+
 export interface PerformanceDecision {
   noteId: string;
   timingOffsetMs: number;

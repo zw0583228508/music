@@ -4720,6 +4720,38 @@ components:
     CandidateStrategyId:
       type: string
       enum: [conservative, rhythmic, melodic, sparse, adventurous]
+    AudioCritiqueDimension:
+      type: string
+      enum: [balance, masking, harshness, mud, lowEndConflict, transientQuality, stereoDistribution, dynamicMovement, instrumentRealism, spectralCrowding]
+    AudioCritiqueScore:
+      type: object
+      required: [dimension, score, weight, confidence, findings]
+      properties:
+        dimension: { $ref: "#/components/schemas/AudioCritiqueDimension" }
+        score: { type: number, minimum: 0, maximum: 100 }
+        weight: { type: number, minimum: 0, maximum: 1 }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        findings: { type: array, items: { type: string } }
+    AudioMixAction:
+      type: object
+      required: [dimension, action, reason]
+      properties:
+        dimension: { $ref: "#/components/schemas/AudioCritiqueDimension" }
+        instrument: { type: string }
+        action: { type: string }
+        reason: { type: string }
+    AudioCritique:
+      type: object
+      description: Audio Critic V1 (PR-15) — second critique, after rendering.
+      required: [version, method, sampleRate, stemCount, overallScore, dimensions, recommendedMixActions]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        method: { type: string }
+        sampleRate: { type: number }
+        stemCount: { type: number, minimum: 0 }
+        overallScore: { type: number, minimum: 0, maximum: 100 }
+        dimensions: { type: array, items: { $ref: "#/components/schemas/AudioCritiqueScore" } }
+        recommendedMixActions: { type: array, items: { $ref: "#/components/schemas/AudioMixAction" } }
     PerformanceDecision:
       type: object
       required: [noteId, timingOffsetMs, velocityDelta, reasons]
