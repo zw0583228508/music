@@ -2184,6 +2184,41 @@ export type PartComposerPlan = {
   }>;
 };
 
+/** One §26 render check (PR-13). */
+export type RenderCheck = {
+  name:
+    | "audio_exists" | "non_silent" | "correct_duration" | "correct_sample_rate"
+    | "no_clipping" | "correct_instrument" | "correct_note_events"
+    | "pitch_sensitivity" | "expression_sensitivity" | "asset_identity"
+    | "renderer_identity";
+  passed: boolean;
+  detail: string;
+};
+
+/**
+ * Full render attestation for one stem (PR-13). Every check from the plan's
+ * §26 list; `feasible` is true only when no check fails.
+ */
+export type RenderAttestation = {
+  version: "1.0";
+  renderer: string;
+  rendererVersion: string;
+  assetId: string;
+  trackId: string;
+  instrument: string;
+  family: string;
+  sampleRate: number;
+  bitDepth: number;
+  channels: number;
+  durationSeconds: number;
+  noteEventCount: number;
+  rmsDbfs: number;
+  truePeakDbfs: number;
+  sha256: string;
+  checks: RenderCheck[];
+  feasible: boolean;
+};
+
 /** Dimensions the Music Critic V1 scores (PR-11). */
 export type CritiqueDimension =
   | "harmony" | "groove" | "voiceLeading" | "leadCompatibility" | "orchestration"
