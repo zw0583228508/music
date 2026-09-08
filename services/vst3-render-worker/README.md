@@ -1,0 +1,74 @@
+# VST3 render worker — the API's `PEDALBOARD_VST3` renderer, made real
+
+A standalone Windows worker that realizes Performance MIDI through the
+operator's **own** VST3 instruments. It renders what the Performance Engine
+decided; it composes nothing and chooses no sounds (sound selection is PR-24,
+per-track instrument routing is PR-22).
+
+It speaks the contract the API already enforces in
+`artifacts/api-server/src/lib/musicEngines.ts → renderRemoteInstrument()`:
+`GET /health?provider=VST3` must present an attested licensed asset with
+retained smoke evidence, and `POST /render` must echo **byte-exact** digests
+(`trackModelSha256`, `performedMaterialSha256`) of the TrackModel it rendered.
+`contract.py` is a port of the API's `canonicalJson`, proven against
+Node-computed fixtures in `tests/`.
+
+## The finding that made it possible
+
+pedalboard loads Steinberg instruments (Retrologue, Padshop) **only when given
+the inner binary** — `<bundle>.vst3/Contents/x86_64-win/<name>.vst3`. Given the
+bundle folder it reports *"unsupported plugin format or scan failure"*, which is
+why `services/music-ai-worker` assumed pedalboard could merely verify a plugin
+loads and a separate native host had to render. `host.resolve_plugin_binary`
+accepts either form.
+
+## Fail-closed by construction
+
+`/health` is unhealthy and `/render` refuses unless **all** of these hold:
+
+- `VST3_RENDER_TOKEN` is set and presented as a Bearer token (unset → 503)
+- the asset manifest exists and its plugin binary digest matches
+- the pedalboard host binary's identity **and** digest match the manifest
+- the plugin loads and reports the manifested identity string
+- a smoke proof exists for exactly this asset and host, and `passed` is true
+
+## Setup (once per workstation)
+
+```powershell
+pip install -r services/vst3-render-worker/requirements.txt
+cd services/vst3-render-worker
+python discover.py --only Retrologue          # which instruments can be hosted here
+python make_manifest.py --plugin "C:\Program Files\Common Files\VST3\Steinberg\Retrologue.vst3" `
+  --license-owner "Local Steinberg licence holder (Activation Manager)" `
+  --license-reference "Steinberg Cubase 14 licence"
+$env:VST3_RENDER_TOKEN = "<random secret>"
+python smoke.py                                # writes .local-vst3-assets/state/smoke-proof.json
+python -m uvicorn app:app --host 127.0.0.1 --port 8022
+```
+
+Then point the API at it in `.env.local`:
+
+```
+PEDALBOARD_VST3_API_URL=http://127.0.0.1:8022
+PEDALBOARD_VST3_API_TOKEN=<the same secret>
+```
+
+The manifest and state live in `.local-vst3-assets/`, which is git-ignored.
+Plugins, presets and content libraries never enter the repository, a build
+context, or a response — only identity strings and SHA-256 digests do.
+
+## Smoke contract (`smoke.py`)
+
+Gates: a real TrackModel renders at the exact frame count, audibly, without
+clipping; transposing it an octave produces a different, brighter output and
+removing its material produces a different, quieter one (`canonicalSensitivity`);
+the host binary is the one attested. Recorded but not gated: velocity
+sensitivity (many synth programs ignore velocity) and determinism
+(analog-modelled oscillators drift between renders).
+
+## Licence
+
+pedalboard is GPL-3.0 and runs in this separate process behind HTTP; the
+platform's TypeScript never links it. `services/music-ai-worker` already ships
+the same version under the same boundary. Plugins are the operator's own
+licensed software under their vendors' EULAs. See `release-evidence/license-review.json`.

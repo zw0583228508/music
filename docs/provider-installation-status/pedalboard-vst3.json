@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "provider": "PEDALBOARD_VST3",
+  "finalStatus": "READY",
+  "checkedAt": "2026-09-08",
+  "scope": "Operator-licensed local worker. READY is a statement about the development workstation where the evidence was produced; each operator must produce their own smoke proof, and the worker is unhealthy until it matches the manifest.",
+  "evidence": [
+    "services/vst3-render-worker: standalone Windows worker hosting the operator's VST3 instrument in-process with pedalboard 0.9.24 (GPL-3.0, separate process behind HTTP).",
+    "Smoke on Steinberg Retrologue 2.4.0: real TrackModel rendered at exactly 144000 frames, -12.6 dBFS, 0 clipped frames after a reported -0.5 dB headroom gain; octave-up transposition is brighter (3720 -> 4353 Hz centroid) and removing material is quieter (-25.3 dBFS); host binary identity and digest attested. services/vst3-render-worker/release-evidence/smoke-proof.json.",
+    "API client proof: PedalboardRenderer.renderAttested() in artifacts/api-server accepted /health and /render, returned 132300 exact frames at 44.1 kHz, with trackModelSha256 and performedMaterialSha256 equal to Node-computed fixtures. services/vst3-render-worker/release-evidence/api-client-render.json.",
+    "Digest parity proven offline by tests/fixture-digests.json (Node) vs contract.py (Python), 21 unit tests."
+  ],
+  "honestLimits": [
+    "Not bit-deterministic across renders (analog-modelled oscillators drift); the API contract does not require determinism and this is recorded in every proof.",
+    "Retrologue's default program ignores velocity; velocity sensitivity is recorded, not gated. Preset selection and per-track instrument routing are PR-22/PR-24.",
+    "Only Retrologue was smoke-tested. Padshop loads; HALion Sonic and Groove Agent SE were not probed past the bundle-path failure.",
+    "The studio export path additionally requires render lineage before it will call a native renderer; the end-to-end studio export through this worker is PR-22's proof, not this one's."
+  ],
+  "blockers": []
+}

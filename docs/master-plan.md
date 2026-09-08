@@ -169,6 +169,42 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   is the seeded benchmark case, because analysis of the project's real MP3s
   needs the offline GPU workers. Nobody has listened.
 
+## Wave 6 — production quality
+
+- **PR-21** `vst3-render-worker` ✅ — the API's `PEDALBOARD_VST3` renderer, made
+  real: a standalone Windows worker (`services/vst3-render-worker`) that hosts the
+  operator's **own** VST3 instruments in-process with pedalboard and speaks the
+  `/health` + `/render` contract `renderRemoteInstrument()` already enforces.
+  `contract.py` is a byte-exact port of the API's `canonicalJson` /
+  `performedMaterialSha256`, proven against Node-generated fixtures and then on
+  the wire.
+
+  **Proven on this workstation's Steinberg Retrologue 2.4.0**
+  (`release-evidence/smoke-proof.json`, `api-client-render.json`): a real
+  TrackModel renders at exactly 144 000 frames, −12.6 dBFS, 0 clipped frames;
+  octave-up is brighter, sparse material quieter; host binary attested; and the
+  API's own `PedalboardRenderer.renderAttested()` accepted the attestation and
+  returned 132 300 exact frames in 152 ms.
+
+  The finding that made it possible: pedalboard loads Steinberg plugins only via
+  the **inner binary** (`Contents/x86_64-win/*.vst3`); given the bundle folder
+  it reports "unsupported plugin format", which is why `music-ai-worker` had
+  assumed a separate native host was required. A second real bug: loading a
+  Steinberg plugin **changes the process working directory** (Activation
+  Manager), so every path is resolved before any plugin load.
+
+  Fail-closed by construction: no token, no manifest, a changed plugin or host
+  binary, or a missing/mismatched smoke proof each make the worker unhealthy
+  and the API fall back to the preview synth. Plugins never enter the repo, a
+  build context or a response — identity strings and digests only.
+
+  **Honest limits.** Not bit-deterministic (analog drift) and Retrologue's
+  default program ignores velocity — both recorded, neither gated. A −0.5 dB
+  headroom gain is applied when the plugin peaks and reported in every
+  response. Only Retrologue was smoke-tested. The studio's export path still
+  needs per-track instrument routing before a whole arrangement goes through
+  this worker — that is PR-22.
+
 ## Wave 5 — models, entering as tools rather than as the brain
 
 - **PR-19** (#20) ✅ — Magenta RT2 worker, **deployed and smoke-tested on GPU**.

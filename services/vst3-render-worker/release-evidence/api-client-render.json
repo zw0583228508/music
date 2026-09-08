@@ -1,0 +1,28 @@
+{
+  "kind": "api-client-render-through-worker",
+  "frames": 132300,
+  "expectedFrames": 132300,
+  "peak": 0.8726,
+  "activeFrameRatio": 0.8923,
+  "wallMs": 152,
+  "attestation": {
+    "contractVersion": "1.0",
+    "provider": "VST3",
+    "modelVersion": "VST3-Retrologue-f78a36a1-8be6f179@2.4.0",
+    "runtimeIdentity": "pedalboard-0.9.24/python-3.11.9/windows-amd64",
+    "assetId": "retrologue-2.4.0",
+    "assetIdentity": "VST3-Retrologue-f78a36a1-8be6f179@2.4.0",
+    "assetSha256": "ee5467001fe6590095d8745e5254ae240b8d5e6592b7eb0214690655243c7692",
+    "licenseOwner": "Local Steinberg licence holder (Steinberg Activation Manager)",
+    "licenseReference": "Steinberg Cubase 14 bundle licence, activated on this workstation",
+    "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+    "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+    "smokeOutputSha256": "a5d6878c53835897d193284a3b97151cc89df3f1e9d72d039bcfbf9438a40305",
+    "trackModelSha256": "94c0fa282208efde4390c29b72331c27b0e0e058e29e9ae4814c525f7fb959ff",
+    "rendererOutputSha256": "35230e78f8f652c660fd063076c0000fb8f8463707006e84af6d574b987ac297",
+    "performedMaterialSha256": "c14dfab893590a896d82b11b91c6fde83b46cf1da480bea9cb3bf1a18474463b",
+    "sampleRate": 44100,
+    "frameCount": 132300,
+    "durationSeconds": 3
+  }
+}

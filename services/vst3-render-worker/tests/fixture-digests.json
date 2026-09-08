@@ -1,0 +1,23 @@
+{
+  "trackModelSha256": "94c0fa282208efde4390c29b72331c27b0e0e058e29e9ae4814c525f7fb959ff",
+  "performedMaterialSha256": "c14dfab893590a896d82b11b91c6fde83b46cf1da480bea9cb3bf1a18474463b",
+  "canonicalJsonSha256": "94c0fa282208efde4390c29b72331c27b0e0e058e29e9ae4814c525f7fb959ff",
+  "canonicalJsonPrefix": "{\"articulations\":[{\"intensity\":0.5,\"name\":\"normal\",\"time\":0},{\"name\":\"sustain\",\"time\":1.5}],\"automation\":[],\"cc\":[{\"controller\":64,\"time\":1.5,\"value\":127},{\"con",
+  "canonicalJsonLength": 1288,
+  "keyOrderSample": [
+    "articulations",
+    "constraints",
+    "family",
+    "id",
+    "maxVoices",
+    "playableRange",
+    "polyphonic"
+  ],
+  "numberSamples": {
+    "two": "2",
+    "tiny": "1e-7",
+    "big": "1.5e+22",
+    "half": "96.5",
+    "micro": "0.000001"
+  }
+}

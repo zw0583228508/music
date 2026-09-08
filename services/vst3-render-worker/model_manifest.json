@@ -1,0 +1,32 @@
+{
+  "provider": "VST3_RENDER_WORKER",
+  "api_provider_id": "PEDALBOARD_VST3",
+  "wire_provider": "VST3",
+  "version": "1.0.0",
+  "role": "LICENSED_INSTRUMENT_RENDERER",
+  "role_note": "Realizes Performance MIDI (TrackModels) through the operator's own VST3 instruments. It renders what the Performance Engine decided; it composes nothing and chooses no sounds. Sound selection is PR-24's job and per-track instrument routing is PR-22's.",
+  "runtime": {
+    "platform": "windows-x64 (macOS/Linux paths recognised, untested)",
+    "python": ">=3.11",
+    "host_library": "pedalboard",
+    "host_version": "0.9.24",
+    "host_license": "GPL-3.0",
+    "host_note": "pedalboard is the in-process VST3 host. It needs the plugin's inner binary (Contents/x86_64-win/*.vst3); given the bundle folder it reports 'unsupported plugin format', which is why services/music-ai-worker assumed a separate native host was required."
+  },
+  "assets": {
+    "source": "OPERATOR_LICENSED",
+    "manifest_env": "VST3_RENDER_ASSET_MANIFEST",
+    "default_manifest": ".local-vst3-assets/asset-manifest.json",
+    "note": "Plugins are the operator's own licensed software and never enter the repository, a build context, or a response. Only identity strings and digests leave the worker."
+  },
+  "smoke_proof": "smoke-proof.json",
+  "contract": {
+    "version": "1.0",
+    "health": "GET /health?provider=VST3 -> asset + smokeEvidence exactly as renderRemoteInstrument() in artifacts/api-server/src/lib/musicEngines.ts requires",
+    "render": "POST /render {contractVersion, provider, trackModel, sampleRate, durationSeconds, parameters} -> 16-bit PCM stereo WAV (base64) at ceil(sampleRate*durationSeconds) frames, with trackModelSha256 and performedMaterialSha256 echoed byte-exactly",
+    "auth": "Bearer VST3_RENDER_TOKEN on every route; unset token fails closed with 503"
+  },
+  "attribution": "Rendered through the operator's licensed VST3 instrument via pedalboard (Spotify AB, GPL-3.0) running as a separate worker process.",
+  "routing_status": "OPERATOR_LICENSED_LOCAL",
+  "routing_status_note": "Available to the API only where an operator has configured PEDALBOARD_VST3_API_URL/TOKEN for a worker whose smoke proof matches its manifest. There is nothing to promote centrally: the asset is the operator's."
+}

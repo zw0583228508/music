@@ -1,0 +1,10 @@
+# pedalboard is pinned to the version services/music-ai-worker already ships.
+pedalboard==0.9.24
+mido==1.3.3
+numpy>=1.26,<3
+fastapi>=0.110,<1
+uvicorn>=0.29,<1
+pydantic>=2.6,<3
+# tests only
+httpx>=0.25
+pytest>=8
