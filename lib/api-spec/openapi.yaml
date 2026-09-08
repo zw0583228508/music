@@ -4448,6 +4448,7 @@ components:
         hierarchy: { $ref: "#/components/schemas/ArrangementHierarchy" }
         globalPlan: { $ref: "#/components/schemas/GlobalArrangementPlan" }
         sectionPlan: { $ref: "#/components/schemas/SectionPhrasePlan" }
+        orchestrationBudget: { $ref: "#/components/schemas/OrchestrationBudgetPlan" }
         compositionIntelligence: { $ref: "#/components/schemas/CompositionIntelligencePlan" }
         generationPreference:
           oneOf:
@@ -4583,3 +4584,69 @@ components:
         sections: { type: array, items: { $ref: "#/components/schemas/SectionPlan" } }
         phrases: { type: array, items: { $ref: "#/components/schemas/PhrasePlan" } }
         roleAssignments: { type: array, items: { $ref: "#/components/schemas/InstrumentRoleAssignment" } }
+    OrchestrationInstrumentAdjustment:
+      type: object
+      required: [instrument, densityMultiplier, registerShift, note]
+      properties:
+        instrument: { type: string }
+        densityMultiplier: { type: number, minimum: 0 }
+        registerShift: { type: number }
+        note: { type: string }
+    OrchestrationBudgetWindow:
+      type: object
+      required: [id, startBar, endBar, vocalAttention, budgets, instrumentAdjustments]
+      properties:
+        id: { type: string }
+        startBar: { type: number, minimum: 1 }
+        endBar: { type: number, minimum: 1 }
+        vocalAttention: { type: number, minimum: 0, maximum: 1 }
+        budgets:
+          type: object
+          required: [totalDensity, melodic, rhythmic, harmonic, register, spectral, attention]
+          properties:
+            totalDensity: { type: number, minimum: 0, maximum: 1 }
+            melodic: { type: number, minimum: 0, maximum: 1 }
+            rhythmic: { type: number, minimum: 0, maximum: 1 }
+            harmonic: { type: number, minimum: 0, maximum: 1 }
+            register: { type: number, minimum: 0, maximum: 1 }
+            spectral: { type: number, minimum: 0, maximum: 1 }
+            attention: { type: number, minimum: 0, maximum: 1 }
+        instrumentAdjustments:
+          type: array
+          items: { $ref: "#/components/schemas/OrchestrationInstrumentAdjustment" }
+    RegisterOccupancySpan:
+      type: object
+      required: [startBar, endBar, occupancy, overcrowdedBands, resolutions]
+      properties:
+        startBar: { type: number, minimum: 1 }
+        endBar: { type: number, minimum: 1 }
+        occupancy:
+          type: object
+          additionalProperties: { type: number, minimum: 0, maximum: 1 }
+        overcrowdedBands:
+          type: array
+          items: { $ref: "#/components/schemas/RegisterBand" }
+        resolutions:
+          type: array
+          items:
+            type: object
+            required: [instrument, action, band]
+            properties:
+              instrument: { type: string }
+              action: { type: string, enum: [drop_octave, raise_octave, simplify, thin_voicing] }
+              band: { $ref: "#/components/schemas/RegisterBand" }
+    OrchestrationBudgetPlan:
+      type: object
+      description: Orchestration Budget Engine (PR-06) — per-moment density/attention budgets + register occupancy.
+      required: [version, derivedAt, inputsDigestSha256, method, windows, registerOccupancy]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        derivedAt: { type: string, format: date-time }
+        inputsDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        method: { type: string }
+        windows:
+          type: array
+          items: { $ref: "#/components/schemas/OrchestrationBudgetWindow" }
+        registerOccupancy:
+          type: array
+          items: { $ref: "#/components/schemas/RegisterOccupancySpan" }
