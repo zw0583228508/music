@@ -13,6 +13,8 @@ import type {
 } from "@workspace/db";
 import { db, modelRegistryTable } from "@workspace/db";
 import { attestAnalysisProviderHealth } from "./analysisProviderManifest";
+import { LocalArrangementOrchestratorProvider } from "./arrangementOrchestratorProvider";
+import { LEGATO_TOLERANCE_SECONDS } from "./musicalConstraints";
 import {
   anyAccompCommercialUseAuthorized,
   expectedGpuContainerDigest,
@@ -193,6 +195,19 @@ const remoteConfigured = (name: string): boolean =>
   Boolean(process.env[`${name}_API_URL`]);
 
 export const MUSIC_PROVIDERS: MusicProviderDescriptor[] = [
+  {
+    id: "ARRANGEMENT_ORCHESTRATOR",
+    name: "Arrangement Brain (local orchestrator)",
+    provider: "This platform",
+    version: "1.0",
+    capabilities: ["arrangement", "orchestration"],
+    inputTypes: ["FULL_SONG", "VOCAL_ONLY", "SOLO_INSTRUMENT", "MIDI"],
+    execution: "local",
+    status: "ready",
+    license: "First-party code; no model weights",
+    priority: 5,
+    notes: "The symbolic pipeline from PR-04..PR-17: plan → parts → candidates → compose → constraints → critique → repair → perform. Runs in-process on CPU with no endpoint and no weights, so a local install can always generate. The reference part composer it ships with is a deliberate floor, not a professional arranger; its benchmark baseline is recorded in docs/master-plan.md.",
+  },
   {
     id: "LOCAL_SIGNAL_ANALYZER_V1",
     name: "Local Signal Analyzer",
@@ -1329,6 +1344,7 @@ function taskCapability(task: MusicGenerationTask): ModelCapability {
 }
 
 export const musicProviderIds = [
+  "ARRANGEMENT_ORCHESTRATOR",
   "BS_ROFORMER",
   "ALL_IN_ONE",
   "MT3",
@@ -2003,7 +2019,7 @@ export const providerDefinitions: ProviderDefinition[] = [
 ];
 
 export function createProviderRegistry(): MusicGenerationProvider[] {
-  return providerDefinitions.map((definition) => {
+  const remote = providerDefinitions.map((definition) => {
     const routingAuthorized = providerRoutingAuthorized(definition.id);
     const endpoint = routingAuthorized
       ? remoteProviderEndpoint(definition.id)
@@ -2013,6 +2029,10 @@ export function createProviderRegistry(): MusicGenerationProvider[] {
       : undefined;
     return new HttpMusicGenerationProvider(definition, endpoint, token);
   });
+  // The in-process Arrangement Brain is always present and always healthy, so
+  // a local install with no GPU worker can still generate. Remote providers
+  // that are healthy outrank it on GPU-preferring requests via routeScore.
+  return [...remote, new LocalArrangementOrchestratorProvider()];
 }
 
 const PROVIDER_HEALTH_TTL_MS = 30_000;
@@ -2099,7 +2119,7 @@ export async function verifyProviderRegistry(
 
 export type GenerationSpeed = "FAST" | "BALANCED" | "QUALITY";
 
-type ProviderDefinition = {
+export type ProviderDefinition = {
   id: MusicProviderId;
   displayName: string;
   modelVersion: string;
@@ -2108,6 +2128,12 @@ type ProviderDefinition = {
   speeds: GenerationSpeed[];
   styles: string[];
   routingStatus?: "ACTIVE" | "BLOCKED_LICENSE";
+  /**
+   * The provider's track models are already composed, constraint-checked,
+   * critiqued and performed. The job runner must persist them as-is rather
+   * than run its legacy modulation and composition passes over them.
+   */
+  materializesTrackModels?: boolean;
 };
 
 export type ProviderGenerationInput = {
@@ -2624,9 +2650,16 @@ export function validateCanonicalTrackModels(
       track.instrumentDefinition.constraints.maxSimultaneousNotes,
     );
     for (const note of sortedNotes) {
-      const concurrent = sortedNotes.filter((other) =>
-        other.start < note.start + note.duration &&
-        other.start + other.duration > note.start).length;
+      // Two notes are simultaneous only when they overlap by more than the
+      // legato tolerance; a tail lapping a few ms into the next onset is a
+      // connected line, not a chord. Same rule as the constraint engine.
+      const noteEnd = note.start + note.duration;
+      const concurrent = sortedNotes.filter((other) => {
+        const overlap = Math.min(noteEnd, other.start + other.duration) -
+          Math.max(note.start, other.start);
+        // Epsilon: 0.5 + 0.03 - 0.5 is 0.030000000000000027 in floating point.
+        return other === note || overlap > LEGATO_TOLERANCE_SECONDS + 1e-9;
+      }).length;
       if (
         concurrent > allowedVoices ||
         (!track.instrumentDefinition.polyphonic && concurrent > 1)

@@ -22,6 +22,16 @@ const suites = {
       ["src/lib/candidateRanking.test.ts", "candidate-ranking.test.mjs"],
       ["src/lib/candidateQuality.test.ts", "candidate-quality.test.mjs"],
       ["src/lib/candidateRepair.test.ts", "candidate-repair.test.mjs"],
+      [
+        "src/lib/arrangementOrchestratorProvider.test.ts",
+        "arrangement-orchestrator-provider.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/musicProviders.trackModelContract.test.ts",
+        "track-model-contract.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
     ],
   },
   validation: {

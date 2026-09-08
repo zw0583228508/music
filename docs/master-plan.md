@@ -132,6 +132,43 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
 
 **Wave 4 (control & measurement) complete. PR-00..PR-18 merged.**
 
+## Wave 4 — completion: the brain is reachable
+
+- **PR-W1** (#22) ✅ — `orchestrator-api-wiring`: PR-16's orchestrator ran only in tests
+  and the benchmark; nothing a user could reach called it. It is now a
+  first-class registry provider, `ARRANGEMENT_ORCHESTRATOR`, so the existing
+  job runner, candidate persistence, ranking, repair, selection and the studio's
+  candidate UI all work with it unchanged. Always present, always healthy,
+  CPU-only, no weights — a local install with no GPU worker can generate.
+
+  **Proven live against Neon** (`docs/evidence/orchestrator-live-e2e.json`):
+  generate → job succeeded → 3 candidates (3 tracks, ~700 notes, symbolic
+  75/100, 0 playability errors, 1 repair pass each) → select → arrangement v2
+  → the brain's ensemble persisted as project tracks with track models.
+
+  Defects this surfaced and fixed, each with a test:
+  - `/music-providers` was **throwing on `main`**: PR-19/20 added ids to the TS
+    list but not the OpenAPI enum the response is validated against.
+  - The Performance Engine bowed the bass (`bow_change` on a plucked
+    instrument) and gave it the bowed legato profile; the `finger-bass` profile
+    existed but was unreachable. Articulations are now limited to the
+    instrument's own vocabulary.
+  - **Constraints were checked before performance**, and performance could
+    break them. The orchestrator now re-checks after `applyPerformance`, and a
+    monophonic instrument is clamped to the legato tolerance.
+  - The runner's contract validator had its own, stricter "simultaneous" rule
+    with no legato tolerance; it now shares the constraint engine's constant.
+  - OpenAPI's `ArticulationEvent` (`tick/type/keyswitch`) never matched the
+    canonical `{time, name}`; no provider had returned articulations before.
+  - The validator required provider tracks to map one-to-one onto *project*
+    tracks. A provider that decides the ensemble now materializes those tracks.
+
+  **Honest limits.** `INSUFFICIENT_DIVERSITY`: two of three strategies were
+  near-duplicates under the runner's metric — the same finding as PR-18's flat
+  `candidateDiversity`, now visible to a user. The Song Model in the live run
+  is the seeded benchmark case, because analysis of the project's real MP3s
+  needs the offline GPU workers. Nobody has listened.
+
 ## Wave 5 — models, entering as tools rather than as the brain
 
 - **PR-19** (#20) ✅ — Magenta RT2 worker, **deployed and smoke-tested on GPU**.

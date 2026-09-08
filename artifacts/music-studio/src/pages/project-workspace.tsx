@@ -585,6 +585,16 @@ export default function ProjectWorkspace() {
   const handleGenerate = () => {
     if (!activeArrangement) return;
     const sourceArtifactId = aceSourceArtifactId || undefined;
+    // ACE-Step operations need a GPU worker. When none is reachable, the
+    // in-process Arrangement Brain takes the request instead of the button
+    // failing with "ACE_STEP is unavailable" — PRO_SCORE already lets routing
+    // choose, and gets the same fallback for free.
+    const providerAvailable = (id: string) =>
+      generationProviders?.some((provider) => provider.id === id && provider.available) ?? false;
+    const useBrainFallback =
+      activeArrangement.mode !== "PRO_SCORE" &&
+      !providerAvailable("ACE_STEP") &&
+      providerAvailable("ARRANGEMENT_ORCHESTRATOR");
     generateArrangement.mutate({
       arrangementId: activeArrangement.id,
       data: {
@@ -594,6 +604,8 @@ export default function ProjectWorkspace() {
         speed: requestedGenerationSpeed,
         ...(activeArrangement.mode === "PRO_SCORE"
           ? {}
+          : useBrainFallback
+          ? { provider: "ARRANGEMENT_ORCHESTRATOR" as const }
           : {
               provider: "ACE_STEP" as const,
               operation: aceOperation,

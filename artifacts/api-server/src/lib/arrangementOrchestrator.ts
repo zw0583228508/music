@@ -267,7 +267,6 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
       })),
       { tempoBpm },
     );
-    totalConstraintErrors += constraintReport.errorCount;
 
     // --- 6/7. critique + repair ---------------------------------------
     const initialCritique = critiqueArrangement({ songModel, plan, trackModels });
@@ -292,6 +291,10 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
         dynamicShape: assignment?.dynamicShape,
         phrases: sectionPlan.phrases,
         seed: candidate.seed,
+        // Only articulations this instrument can actually map are performed,
+        // and a monophonic instrument stays monophonic after humanisation.
+        articulationVocabulary: track.instrumentDefinition.articulations,
+        maxSimultaneousNotes: track.instrumentDefinition.constraints.maxSimultaneousNotes,
       });
       return {
         ...track,
@@ -301,6 +304,19 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
         performanceEvidence: undefined,
       } as TrackModel;
     });
+
+    // Constraints are judged on what will be rendered. The pre-performance
+    // check above guards the composition; this one guards the performance,
+    // which can lengthen and shift notes and must not break a rule the
+    // composition satisfied.
+    const performedConstraints = checkArrangementConstraints(
+      performed.map((t) => ({
+        id: t.id, instrument: t.instrument, role: t.role,
+        instrumentDefinition: t.instrumentDefinition, notes: t.notes,
+      })),
+      { tempoBpm },
+    );
+    totalConstraintErrors += performedConstraints.errorCount;
 
     // --- 9/10. render + audio critique ---------------------------------
     let audioCritique: AudioCritique | null = null;
@@ -338,7 +354,9 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
       seed: candidate.seed,
       trackModels: performed,
       noteCount,
-      constraintErrors: constraintReport.errorCount,
+      // Composition errors and performance errors both count; a candidate is
+      // only clean if what reaches the renderer is clean.
+      constraintErrors: constraintReport.errorCount + performedConstraints.errorCount,
       critique,
       repair: repair.passes.length ? repair : null,
       audioCritique,

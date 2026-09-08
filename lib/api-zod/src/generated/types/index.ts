@@ -496,6 +496,7 @@ export * from './trackMappingMetadata';
 export * from './trackMappingMetadataArticulationMap';
 export * from './trackMappingMetadataControlMap';
 export * from './trackModel';
+export * from './trackModelArticulationEvent';
 export * from './trackPerformance';
 export * from './trackPerformanceEvidence';
 export * from './trackPerformanceEvidenceInstrumentFamily';

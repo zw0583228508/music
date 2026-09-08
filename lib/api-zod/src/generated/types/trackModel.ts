@@ -6,7 +6,6 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { AppliedTrackDirective } from './appliedTrackDirective';
-import type { ArticulationEvent } from './articulationEvent';
 import type { ArtifactProvenance } from './artifactProvenance';
 import type { ControlEvent } from './controlEvent';
 import type { InstrumentDefinition } from './instrumentDefinition';
@@ -15,6 +14,7 @@ import type { TrackAutomationPoint } from './trackAutomationPoint';
 import type { TrackDirective } from './trackDirective';
 import type { TrackHarmonyEvidence } from './trackHarmonyEvidence';
 import type { TrackMappingMetadata } from './trackMappingMetadata';
+import type { TrackModelArticulationEvent } from './trackModelArticulationEvent';
 import type { TrackPerformanceEvidence } from './trackPerformanceEvidence';
 
 export interface TrackModel {
@@ -24,7 +24,7 @@ export interface TrackModel {
   role: string;
   notes: MusicalNote[];
   cc: ControlEvent[];
-  articulations: ArticulationEvent[];
+  articulations: TrackModelArticulationEvent[];
   automation: TrackAutomationPoint[];
   source: string;
   version: number;
