@@ -205,7 +205,7 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   needs per-track instrument routing before a whole arrangement goes through
   this worker — that is PR-22.
 
-- **PR-22** `premium-instrument-routing` ✅ — one worker, several instruments,
+- **PR-22** (#24) ✅ — `premium-instrument-routing`: one worker, several instruments,
   and the API choosing which renders each track. The worker's manifest v2
   holds `assets[]` with **one smoke proof per asset**; `/health` lists every
   attested instrument with its own evidence; `/render` takes `parameters.assetId`
