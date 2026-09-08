@@ -6,6 +6,7 @@ no "generate me a song" route. The caller must supply the notes.
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -38,6 +39,7 @@ class RealizeRequest(BaseModel):
     cfgNotes: float = Field(default=4.0, ge=-1.0, le=7.0)
     freeArticulation: bool = False
     maskDrums: bool = False
+    maskNotes: bool = False
 
 
 @app.get("/health")
@@ -92,6 +94,7 @@ def realize(request: RealizeRequest) -> dict:
             cfg_notes=request.cfgNotes,
             free_articulation=request.freeArticulation,
             mask_drums=request.maskDrums,
+            mask_notes=request.maskNotes,
         )
     except RuntimeError as error:
         raise HTTPException(status_code=503, detail=str(error)) from error
@@ -102,10 +105,15 @@ def realize(request: RealizeRequest) -> dict:
     wav = inference.encode_wav(audio, result["sampleRate"])
     artifact_root = os.getenv("MAGENTA_RT2_ARTIFACT_ROOT")
     if artifact_root:
-        path = Path(artifact_root) / f"realization-{result['provenance']['treeSha256'] or 'unpinned'}.wav"
+        # Named by the audio's own digest. Naming it after the model tree would
+        # give every realization the same filename and silently overwrite the
+        # previous one, which is the opposite of what an artifact store is for.
+        digest = hashlib.sha256(wav).hexdigest()
+        path = Path(artifact_root) / f"realization-{digest[:16]}.wav"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(wav)
         result["artifactPath"] = str(path)
+        result["audioSha256"] = digest
     result["audioWavBase64"] = base64.b64encode(wav).decode("ascii")
     result["audioBytes"] = len(wav)
     return result

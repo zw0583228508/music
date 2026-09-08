@@ -119,6 +119,7 @@ def realize(
     cfg_notes: float = 4.0,
     free_articulation: bool = False,
     mask_drums: bool = False,
+    mask_notes: bool = False,
 ) -> dict:
     """Realize a symbolic arrangement as 48 kHz stereo audio.
 
@@ -132,7 +133,15 @@ def realize(
         raise ValueError("realization requires at least one note")
 
     frames = frame_count(duration_seconds)
-    roll = notes_to_pianoroll(parsed, frames, free_articulation=free_articulation)
+    # Masking every pitch is the only way to ask RT2 for style alone. Passing
+    # "no notes" would still assert 128 explicit offs, i.e. silence, which is a
+    # constraint rather than an absence of one.
+    roll = notes_to_pianoroll(
+        parsed,
+        frames,
+        free_articulation=free_articulation,
+        masked_pitches=set(range(PITCH_COUNT)) if mask_notes else None,
+    )
     drums = drums_to_track(drum_onsets or [], frames, masked=mask_drums)
 
     embedding = system.embed_style(style, use_mapper=True)
@@ -182,6 +191,7 @@ def realize(
             "cfgNotes": cfg_notes,
             "freeArticulation": free_articulation,
             "drumsMasked": mask_drums,
+            "notesMasked": mask_notes,
             "roll": describe_roll(roll),
             "drumOnsets": sum(1 for value in drums if value == 1),
         },

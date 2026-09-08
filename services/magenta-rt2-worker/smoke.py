@@ -80,12 +80,13 @@ def _dominant_pitch_classes(audio: np.ndarray, sample_rate: int, top: int = 4) -
 
 
 def contract_text_only() -> dict:
-    """Style prompt alone, notes masked out. Proves the style path works."""
+    """Style prompt alone, every pitch masked. Proves the style path works
+    without our conditioning, which is the only honest way to isolate it."""
     result = inference.realize(
         notes=[{"pitch": 60, "start": 0.0, "end": 3.0}],
         style="warm analog synth pad, slow",
         duration_seconds=3.0,
-        free_articulation=True,
+        mask_notes=True,
         mask_drums=True,
     )
     audio = result.pop("audio")
