@@ -115,7 +115,14 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
 
 **Wave 3 (sound) complete.**
 
-## Next: Wave 4 — PR-16 end-to-end orchestrator
+- **PR-16** (#17) ✅ — End-to-end orchestrator: plan→parts→candidates→compose→
+  constraints→critique→repair→perform→render→audio critique→select, every stage
+  recorded, deterministic, injectable composer. Ships referencePartComposer so
+  the chain produces a real multitrack arrangement locally. Fixed two real
+  constraint-engine defects it surfaced (legato read as a chord; bass judged as
+  a bowed solo string). 32 playability errors -> 0; mean symbolic 46 -> 70.
+
+## Next: PR-17 — partial regeneration + locks
 
 ## Environment findings (Windows local)
 
