@@ -24,6 +24,7 @@ import type { SongModelFieldStatus } from './songModelFieldStatus';
 import type { SongModelFusion } from './songModelFusion';
 import type { SongModelKeyEvidenceItem } from './songModelKeyEvidenceItem';
 import type { SongModelLoudness } from './songModelLoudness';
+import type { SongModelMusicalMap } from './songModelMusicalMap';
 import type { SongModelPitchEvidenceItem } from './songModelPitchEvidenceItem';
 import type { SongModelProvenance } from './songModelProvenance';
 import type { SongModelRhythmEvidenceItem } from './songModelRhythmEvidenceItem';
@@ -76,6 +77,7 @@ export interface SongModel {
   sourceStems: SourceStem[];
   vocalEvidence: VocalEvidence;
   vocalIntelligence: VocalIntelligence;
+  musicalMap?: SongModelMusicalMap;
   lyrics: LyricEvent[];
   confidenceByField: SongModelConfidenceByField;
   providerProvenance: ProviderProvenance[];

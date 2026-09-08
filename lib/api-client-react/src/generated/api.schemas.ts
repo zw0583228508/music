@@ -1115,6 +1115,382 @@ export interface VocalIntelligence {
   arrangementSpace: VocalArrangementSpaceEvidence;
 }
 
+export type SongModelMusicalMapVersion = typeof SongModelMusicalMapVersion[keyof typeof SongModelMusicalMapVersion];
+
+
+export const SongModelMusicalMapVersion = {
+  '21': '2.1',
+} as const;
+
+export type MusicalMapStatus = typeof MusicalMapStatus[keyof typeof MusicalMapStatus];
+
+
+export const MusicalMapStatus = {
+  detected: 'detected',
+  low_confidence: 'low_confidence',
+  not_available: 'not_available',
+  conflicting: 'conflicting',
+} as const;
+
+export interface MusicalMapBarSpan {
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  coordinates?: CanonicalTimeRange;
+}
+
+export type SongModelMusicalMapHarmonyCadencesItemKind = typeof SongModelMusicalMapHarmonyCadencesItemKind[keyof typeof SongModelMusicalMapHarmonyCadencesItemKind];
+
+
+export const SongModelMusicalMapHarmonyCadencesItemKind = {
+  authentic: 'authentic',
+  plagal: 'plagal',
+  half: 'half',
+  deceptive: 'deceptive',
+  none: 'none',
+} as const;
+
+export type SongModelMusicalMapMelodyPhrasesItemContour = typeof SongModelMusicalMapMelodyPhrasesItemContour[keyof typeof SongModelMusicalMapMelodyPhrasesItemContour];
+
+
+export const SongModelMusicalMapMelodyPhrasesItemContour = {
+  rising: 'rising',
+  falling: 'falling',
+  arch: 'arch',
+  valley: 'valley',
+  flat: 'flat',
+  mixed: 'mixed',
+} as const;
+
+export type SongModelMusicalMapMelodyMotifsItemOccurrencesItemVariation = typeof SongModelMusicalMapMelodyMotifsItemOccurrencesItemVariation[keyof typeof SongModelMusicalMapMelodyMotifsItemOccurrencesItemVariation];
+
+
+export const SongModelMusicalMapMelodyMotifsItemOccurrencesItemVariation = {
+  exact: 'exact',
+  transposed: 'transposed',
+  rhythmic: 'rhythmic',
+  developed: 'developed',
+} as const;
+
+export type SongModelMusicalMapRhythmGrooveProfileSubdivision = typeof SongModelMusicalMapRhythmGrooveProfileSubdivision[keyof typeof SongModelMusicalMapRhythmGrooveProfileSubdivision];
+
+
+export const SongModelMusicalMapRhythmGrooveProfileSubdivision = {
+  'straight-8': 'straight-8',
+  'straight-16': 'straight-16',
+  'swing-8': 'swing-8',
+  'swing-16': 'swing-16',
+  triplet: 'triplet',
+  mixed: 'mixed',
+} as const;
+
+export type SongModelMusicalMapRhythmSubdivisionsItemDominant = typeof SongModelMusicalMapRhythmSubdivisionsItemDominant[keyof typeof SongModelMusicalMapRhythmSubdivisionsItemDominant];
+
+
+export const SongModelMusicalMapRhythmSubdivisionsItemDominant = {
+  quarter: 'quarter',
+  eighth: 'eighth',
+  sixteenth: 'sixteenth',
+  triplet: 'triplet',
+} as const;
+
+export type SongModelMusicalMapStructureSubphrasesItemRole = typeof SongModelMusicalMapStructureSubphrasesItemRole[keyof typeof SongModelMusicalMapStructureSubphrasesItemRole];
+
+
+export const SongModelMusicalMapStructureSubphrasesItemRole = {
+  opening: 'opening',
+  development: 'development',
+  response: 'response',
+  cadence: 'cadence',
+  pickup: 'pickup',
+  fill: 'fill',
+} as const;
+
+export type SongModelMusicalMapStructureTransitionsItemKind = typeof SongModelMusicalMapStructureTransitionsItemKind[keyof typeof SongModelMusicalMapStructureTransitionsItemKind];
+
+
+export const SongModelMusicalMapStructureTransitionsItemKind = {
+  build: 'build',
+  drop: 'drop',
+  continue: 'continue',
+  break: 'break',
+} as const;
+
+export type SongModelMusicalMapStyleFingerprintTempoBand = typeof SongModelMusicalMapStyleFingerprintTempoBand[keyof typeof SongModelMusicalMapStyleFingerprintTempoBand] | null;
+
+
+export const SongModelMusicalMapStyleFingerprintTempoBand = {
+  ballad: 'ballad',
+  midtempo: 'midtempo',
+  uptempo: 'uptempo',
+  'double-time': 'double-time',
+} as const;
+
+export type SongModelMusicalMapStyleFingerprintOrchestrationSize = typeof SongModelMusicalMapStyleFingerprintOrchestrationSize[keyof typeof SongModelMusicalMapStyleFingerprintOrchestrationSize] | null;
+
+
+export const SongModelMusicalMapStyleFingerprintOrchestrationSize = {
+  sparse: 'sparse',
+  medium: 'medium',
+  dense: 'dense',
+} as const;
+
+export type SongModelMusicalMapHarmonyHarmonicRhythmItem = MusicalMapBarSpan & {
+  /** @minimum 0 */
+  chordsPerBar: number;
+};
+
+export type SongModelMusicalMapHarmonyCadencesItem = {
+  id: string;
+  kind: SongModelMusicalMapHarmonyCadencesItemKind;
+  /** @minimum 1 */
+  atBar: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  strength: number;
+  chordIndexes: number[];
+  coordinates?: CanonicalTimeCoordinate;
+};
+
+export type SongModelMusicalMapHarmonyTensionMapItem = {
+  /** @minimum 0 */
+  start: number;
+  /** @minimum 0 */
+  end: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  tension: number;
+  coordinates?: CanonicalTimeRange;
+};
+
+export type SongModelMusicalMapHarmony = {
+  status: MusicalMapStatus;
+  reason: string | null;
+  derivedFrom: string[];
+  method: string;
+  harmonicRhythm: SongModelMusicalMapHarmonyHarmonicRhythmItem[];
+  cadences: SongModelMusicalMapHarmonyCadencesItem[];
+  tensionMap: SongModelMusicalMapHarmonyTensionMapItem[];
+};
+
+export type SongModelMusicalMapMelodyPhrasesItemRange = {
+  lowPitch: number;
+  highPitch: number;
+};
+
+export type SongModelMusicalMapMelodyPhrasesItem = {
+  id: string;
+  /** @minimum 0 */
+  start: number;
+  /** @minimum 0 */
+  end: number;
+  noteIndexes: number[];
+  contour: SongModelMusicalMapMelodyPhrasesItemContour;
+  peakNoteIndex: number | null;
+  /** @minimum 0 */
+  density: number;
+  range: SongModelMusicalMapMelodyPhrasesItemRange;
+  coordinates?: CanonicalTimeRange;
+};
+
+export type SongModelMusicalMapMelodyMotifsItemOccurrencesItem = {
+  phraseId: string;
+  noteIndexes: number[];
+  transposition: number;
+  variation: SongModelMusicalMapMelodyMotifsItemOccurrencesItemVariation;
+};
+
+export type SongModelMusicalMapMelodyMotifsItem = {
+  id: string;
+  label: string;
+  intervalSignature: number[];
+  rhythmSignature: number[];
+  occurrences: SongModelMusicalMapMelodyMotifsItemOccurrencesItem[];
+};
+
+export type SongModelMusicalMapMelodyMelodicDensityItem = MusicalMapBarSpan & {
+  /** @minimum 0 */
+  notesPerBar: number;
+};
+
+export type SongModelMusicalMapMelodyRange = {
+  lowPitch: number;
+  highPitch: number;
+} | null;
+
+export type SongModelMusicalMapMelodyContourItem = {
+  /** @minimum 0 */
+  time: number;
+  pitch: number;
+};
+
+export type SongModelMusicalMapMelody = {
+  status: MusicalMapStatus;
+  reason: string | null;
+  derivedFrom: string[];
+  method: string;
+  phrases: SongModelMusicalMapMelodyPhrasesItem[];
+  motifs: SongModelMusicalMapMelodyMotifsItem[];
+  melodicDensity: SongModelMusicalMapMelodyMelodicDensityItem[];
+  range: SongModelMusicalMapMelodyRange;
+  contour: SongModelMusicalMapMelodyContourItem[];
+};
+
+export type SongModelMusicalMapRhythmGrooveProfile = {
+  subdivision: SongModelMusicalMapRhythmGrooveProfileSubdivision;
+  swingRatio: number | null;
+  pushPullMs: number | null;
+};
+
+export type SongModelMusicalMapRhythmSyncopationItem = MusicalMapBarSpan & {
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  syncopation: number;
+};
+
+export type SongModelMusicalMapRhythmSubdivisionsItem = MusicalMapBarSpan & {
+  dominant: SongModelMusicalMapRhythmSubdivisionsItemDominant;
+};
+
+export type SongModelMusicalMapRhythmRhythmicDensityItem = MusicalMapBarSpan & {
+  /** @minimum 0 */
+  onsetsPerBar: number;
+};
+
+export type SongModelMusicalMapRhythm = {
+  status: MusicalMapStatus;
+  reason: string | null;
+  derivedFrom: string[];
+  method: string;
+  grooveProfile: SongModelMusicalMapRhythmGrooveProfile;
+  syncopation: SongModelMusicalMapRhythmSyncopationItem[];
+  subdivisions: SongModelMusicalMapRhythmSubdivisionsItem[];
+  rhythmicDensity: SongModelMusicalMapRhythmRhythmicDensityItem[];
+};
+
+export type SongModelMusicalMapEnergyEnergyCurveItem = MusicalMapBarSpan & {
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  energy: number;
+};
+
+export type SongModelMusicalMapEnergyDynamicCurveItem = MusicalMapBarSpan & {
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  dynamic: number;
+};
+
+export type SongModelMusicalMapEnergySpectralDensityItem = MusicalMapBarSpan & {
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  density: number;
+};
+
+export type SongModelMusicalMapEnergy = {
+  status: MusicalMapStatus;
+  reason: string | null;
+  derivedFrom: string[];
+  method: string;
+  energyCurve: SongModelMusicalMapEnergyEnergyCurveItem[];
+  dynamicCurve: SongModelMusicalMapEnergyDynamicCurveItem[];
+  spectralDensity: SongModelMusicalMapEnergySpectralDensityItem[];
+};
+
+export type SongModelMusicalMapStructureSubphrasesItem = MusicalMapBarSpan & {
+  id: string;
+  sectionName: string;
+  role: SongModelMusicalMapStructureSubphrasesItemRole;
+};
+
+export type SongModelMusicalMapStructureTransitionsItem = {
+  id: string;
+  fromSection: string;
+  toSection: string;
+  /** @minimum 1 */
+  atBar: number;
+  energyDelta: number;
+  kind: SongModelMusicalMapStructureTransitionsItemKind;
+  coordinates?: CanonicalTimeCoordinate;
+};
+
+export type SongModelMusicalMapStructureClimaxCandidatesItem = {
+  id: string;
+  /** @minimum 1 */
+  atBar: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  score: number;
+  evidence: string[];
+  coordinates?: CanonicalTimeCoordinate;
+};
+
+export type SongModelMusicalMapStructure = {
+  status: MusicalMapStatus;
+  reason: string | null;
+  derivedFrom: string[];
+  method: string;
+  subphrases: SongModelMusicalMapStructureSubphrasesItem[];
+  transitions: SongModelMusicalMapStructureTransitionsItem[];
+  climaxCandidates: SongModelMusicalMapStructureClimaxCandidatesItem[];
+};
+
+export type SongModelMusicalMapStyleFingerprint = {
+  status: MusicalMapStatus;
+  reason: string | null;
+  derivedFrom: string[];
+  method: string;
+  tempoBand: SongModelMusicalMapStyleFingerprintTempoBand;
+  meterFamily: string | null;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  harmonicComplexity: number | null;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  rhythmicComplexity: number | null;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  sectionContrast: number | null;
+  instrumentPaletteHints: string[];
+  orchestrationSize: SongModelMusicalMapStyleFingerprintOrchestrationSize;
+};
+
+/**
+ * Derived musical map (Canonical Song Model V2). Additive and optional. Each group is status-tagged and carries no derived payload when its inputs are absent.
+ */
+export interface SongModelMusicalMap {
+  version: SongModelMusicalMapVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  harmony: SongModelMusicalMapHarmony;
+  melody: SongModelMusicalMapMelody;
+  rhythm: SongModelMusicalMapRhythm;
+  energy: SongModelMusicalMapEnergy;
+  structure: SongModelMusicalMapStructure;
+  styleFingerprint: SongModelMusicalMapStyleFingerprint;
+}
+
 export interface LyricEvent {
   start: number;
   end: number;
@@ -1242,6 +1618,7 @@ export interface SongModel {
   sourceStems: SourceStem[];
   vocalEvidence: VocalEvidence;
   vocalIntelligence: VocalIntelligence;
+  musicalMap?: SongModelMusicalMap;
   lyrics: LyricEvent[];
   confidenceByField: SongModelConfidenceByField;
   providerProvenance: ProviderProvenance[];
@@ -4202,3 +4579,4 @@ projectId?: string;
  */
 limit?: number;
 };
+
