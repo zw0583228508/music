@@ -26,6 +26,7 @@ import {
   configuredAnalysisProviderEndpoint,
   type SeparationAnalysisResult,
 } from "./analysisProviders";
+import { deriveLocalStructure, detectTempoEvidence as detectLocalTempoEvidence, type LocalStructure } from "./localStructureAnalysis";
 import { fuseProviderSongModels } from "./songModelValidation";
 import {
   reconcileAnalysisDomains,
@@ -1286,7 +1287,7 @@ export async function analyzeProjectSource(
       );
     }
     const energyDetection = midi ? null : detectEnergyEvidence(samples);
-    const localTempo = midi ? null : detectTempoEvidence(samples, decodeRate);
+    const localTempo = midi ? null : detectLocalTempoEvidence(samples, decodeRate);
     const keyDetection = midi ? null : detectKeyEvidence(samples, decodeRate);
     const energy = midi
       ? (() => {
@@ -1507,6 +1508,23 @@ export async function analyzeProjectSource(
       : providerResults.structure?.meterMap[0]?.meter
         ?? meterReconciliation?.value
         ?? "—";
+    // Local structure fallback: with no structure provider (no GPU worker) the
+    // Song Model would fail validation and nothing could ever be arranged
+    // locally. Estimate tempo / assume 4/4 / cut sections on bar energy, all
+    // flagged low_confidence with a message that says so. A provider result
+    // always wins; the reconciled tempo wins over the raw local estimate.
+    let localStructure: LocalStructure | null = null;
+    if (!midi && !providerResults.structure) {
+      const fallbackBpm = bpm || localTempo?.bpm || 0;
+      localStructure = fallbackBpm ? deriveLocalStructure({ energy, durationSeconds, bpm: fallbackBpm }) : null;
+      if (localStructure) {
+        bpm = fallbackBpm;
+        meter = localStructure.meter;
+        beats = localStructure.beats;
+        bars = localStructure.bars;
+        sections = localStructure.sections;
+      }
+    }
     key = midi?.keyMap.length ? midi.key : keyReconciliation?.value ?? "—";
     const melody = midi?.melody ??
       fuseCanonicalNotes(providerResults.transcriptions);
@@ -1521,7 +1539,7 @@ export async function analyzeProjectSource(
       tempo: midi ? 1 : tempoReconciliation?.confidence ?? 0,
       meter: midi?.meterMap.length ? 1 : meterReconciliation?.confidence ?? 0,
       key: midi?.keyMap.length ? 1 : keyReconciliation?.confidence ?? 0,
-      structure: providerResults.structure?.confidence ?? 0,
+      structure: providerResults.structure?.confidence ?? localStructure?.confidence ?? 0,
       melody: midi
         ? 1
         : providerResults.transcriptions.length
@@ -1532,27 +1550,40 @@ export async function analyzeProjectSource(
       separation: midi ? 1 : providerResults.separation?.confidence ?? 0,
       energy: midi ? 1 : energyDetection?.confidence ?? 0,
     };
-    const structureProvider = providerResults.structure?.providerId;
+    const structureProvider = providerResults.structure?.providerId ?? localStructure?.provider;
     const melodyProviders = midi
       ? ["STANDARD_MIDI"]
       : [...new Set(providerResults.transcriptions.map((item) => item.providerId))];
     const harmonyProviders = [...new Set(providerResults.harmony.map((item) => item.providerId))];
     const fieldStatus: Record<SongModelField, SongModelFieldStatus> = {
       tempo: {
-        status: midi ? "detected" : tempoReconciliation?.status ?? "not_available",
-        confidence: confidenceByField.tempo || null,
-        providers: midi ? ["STANDARD_MIDI"] : tempoReconciliation?.providers ?? [],
-        message: midi ? null : tempoReconciliation?.message ??
-          "No usable periodic tempo evidence was detected.",
+        status: midi ? "detected"
+          : tempoReconciliation?.status === "detected" ? "detected"
+            : localStructure ? "low_confidence"
+              : tempoReconciliation?.status ?? "not_available",
+        confidence: (midi ? 1 : tempoReconciliation?.confidence || (localStructure ? localTempo?.confidence ?? 0 : 0)) || null,
+        providers: midi ? ["STANDARD_MIDI"]
+          : tempoReconciliation?.providers?.length ? tempoReconciliation.providers
+            : localStructure ? [localStructure.provider] : [],
+        message: midi ? null
+          : tempoReconciliation?.status === "detected" ? tempoReconciliation.message ?? null
+            : localStructure ? "Estimated locally at " + localStructure.bpm + " BPM from the onset envelope; no provider corroborated it."
+              : tempoReconciliation?.message ?? "No usable periodic tempo evidence was detected.",
         edited: false,
       },
       meter: {
-        status: midi?.meterMap.length ? "detected" : meterReconciliation?.status ?? "not_available",
-        confidence: confidenceByField.meter || null,
-        providers: midi?.meterMap.length ? ["STANDARD_MIDI"] :
-          meterReconciliation?.providers ?? [],
-        message: midi?.meterMap.length ? null : meterReconciliation?.message ??
-          "No structure provider returned a verified meter.",
+        status: midi?.meterMap.length ? "detected"
+          : meterReconciliation?.status === "detected" ? "detected"
+            : localStructure ? "low_confidence"
+              : meterReconciliation?.status ?? "not_available",
+        confidence: (midi?.meterMap.length ? 1 : meterReconciliation?.confidence || (localStructure ? localStructure.meterConfidence : 0)) || null,
+        providers: midi?.meterMap.length ? ["STANDARD_MIDI"]
+          : meterReconciliation?.providers?.length ? meterReconciliation.providers
+            : localStructure ? [localStructure.provider] : [],
+        message: midi?.meterMap.length ? null
+          : meterReconciliation?.status === "detected" ? meterReconciliation.message ?? null
+            : localStructure ? "4/4 assumed: no structure provider returned a verified meter."
+              : meterReconciliation?.message ?? "No structure provider returned a verified meter.",
         edited: false,
       },
       key: {
@@ -1586,10 +1617,10 @@ export async function analyzeProjectSource(
         edited: false,
       },
       sections: {
-        status: providerResults.structure ? "detected" : "not_available",
+        status: providerResults.structure ? "detected" : localStructure ? "low_confidence" : "not_available",
         confidence: confidenceByField.structure || null,
         providers: structureProvider ? [structureProvider] : [],
-        message: providerResults.structure ? null :
+        message: providerResults.structure ? null : localStructure ? localStructure.message :
           "No structure provider returned verified section boundaries.",
         edited: false,
       },
@@ -1624,14 +1655,18 @@ export async function analyzeProjectSource(
         ? providerResults.structure.tempoMap
         : tempoReconciliation?.value !== null && tempoReconciliation?.value !== undefined
           ? [{ time: 0, bpm: tempoReconciliation.value, confidence: tempoReconciliation.confidence ?? 0 }]
-          : [];
+          : localStructure
+            ? [{ time: 0, bpm: localStructure.bpm, confidence: localTempo?.confidence ?? localStructure.confidence }]
+            : [];
     const candidateMeterMap = midi?.meterMap.length
       ? midi.meterMap
       : providerResults.structure?.meterMap.length
         ? providerResults.structure.meterMap
         : meterReconciliation?.value
           ? [{ bar: 1, meter: meterReconciliation.value, confidence: meterReconciliation.confidence ?? 0 }]
-          : [];
+          : localStructure
+            ? [{ bar: 1, meter: localStructure.meter, confidence: localStructure.meterConfidence }]
+            : [];
     const lyrics: SongModelData["lyrics"] = [];
     const vocalIntelligence = derivePhraseLevelVocalIntelligence(
       vocalEvidence, melody, lyrics, sections, candidateTempoMap, candidateMeterMap, durationSeconds,
@@ -1703,7 +1738,9 @@ export async function analyzeProjectSource(
                 value: String(providerResults.structure.sections.length),
                 confidence: providerResults.structure.confidence,
               }]
-            : [],
+            : localStructure
+              ? [{ provider: localStructure.provider, value: String(localStructure.sections.length), confidence: localStructure.confidence }]
+              : [],
         });
 
     const candidate = {
@@ -2391,40 +2428,3 @@ function detectKeyEvidence(
   };
 }
 
-function detectTempoEvidence(
-  samples: Float32Array,
-  sampleRate: number,
-): { bpm: number; confidence: number } | null {
-  const hop = 512;
-  const frame = 1024;
-  const envelope: number[] = [];
-  let previous = 0;
-  for (let start = 0; start + frame < samples.length; start += hop) {
-    let sum = 0;
-    for (let i = start; i < start + frame; i += 1) sum += samples[i] * samples[i];
-    const rms = Math.sqrt(sum / frame);
-    envelope.push(Math.max(0, rms - previous));
-    previous = rms;
-  }
-  if (envelope.length < 16) return null;
-  const scores: Array<{ bpm: number; score: number }> = [];
-  for (let bpm = 60; bpm <= 180; bpm += 1) {
-    const lag = Math.round((60 * sampleRate) / (bpm * hop));
-    let score = 0;
-    for (let i = lag; i < envelope.length; i += 1) score += envelope[i] * envelope[i - lag];
-    scores.push({ bpm, score });
-  }
-  scores.sort((a, b) => b.score - a.score);
-  const best = scores[0];
-  const runnerUp = scores.find((item) => Math.abs(item.bpm - best.bpm) > 4);
-  const total = envelope.reduce((sum, value) => sum + value, 0);
-  if (!best || best.score <= 0 || total <= 0) return null;
-  const separation = runnerUp ? (best.score - runnerUp.score) / best.score : 1;
-  const onsetDensity = envelope.filter((value) => value > total / envelope.length).length /
-    envelope.length;
-  if (separation < 0.025 || onsetDensity < 0.01) return null;
-  return {
-    bpm: best.bpm,
-    confidence: Number(Math.min(0.78, 0.35 + separation * 1.8 + onsetDensity).toFixed(2)),
-  };
-}

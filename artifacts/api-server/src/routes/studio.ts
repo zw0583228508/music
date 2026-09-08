@@ -207,6 +207,7 @@ import {
   type ExportBundle,
 } from "../lib/export-pipeline";
 import { deriveMixPlan, mixPlanToControls } from "../lib/mixBrain";
+import { correctionFields, regridTimeline, sectionCountMayChange, verifiedConfidence } from "../lib/songModelCorrection";
 import { compareFingerprints, deriveStyleFingerprint } from "../lib/styleFingerprint";
 import { FEATURE_NAMES, recordPreferenceEvent, trainingRows, type PreferenceSubjectInput } from "../lib/preferenceEvents";
 import { DbPreferenceEventStore } from "../lib/preferenceEventsDbStore";
@@ -2020,8 +2021,11 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
   }
   if (correction.sections) {
     const isEstablishingMissingSections = latest.model.sections.length === 0;
+    // A structure that is only a local low-confidence sketch (PR-32) may be
+    // re-cut freely: the user is drawing the real form, not editing a verified one.
     if (
       !isEstablishingMissingSections &&
+      !sectionCountMayChange(latest.model) &&
       correction.sections.length !== latest.model.sections.length
     ) {
       res.status(400).json({ error: "Section corrections must retain the existing section count" });
@@ -2039,33 +2043,13 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
     }
   }
 
-  const sectionsChanged = correction.sections !== undefined &&
-    JSON.stringify(correction.sections.map(({ name, startBar, endBar }) => ({
-      name,
-      startBar,
-      endBar,
-    }))) !== JSON.stringify(latest.model.sections.map(({ name, startBar, endBar }) => ({
-      name,
-      startBar,
-      endBar,
-    })));
-  const hasCorrection = (
-    (correction.bpm !== undefined && correction.bpm !== latest.model.tempoMap[0]?.bpm) ||
-    (correction.key !== undefined && correction.key !== latest.model.keyMap[0]?.key) ||
-    (correction.meter !== undefined && correction.meter !== latest.model.meterMap[0]?.meter) ||
-    sectionsChanged
-  );
-  if (!hasCorrection) {
+  // Changed values, plus values that confirm a low-confidence estimate (PR-32):
+  // the producer looked and agreed, which makes the field authoritative.
+  const fields = correctionFields(latest.model, correction);
+  if (!fields.length) {
     res.status(400).json({ error: "Song Model corrections must change at least one value" });
     return;
   }
-  const fields = (["bpm", "key", "meter", "sections"] as const)
-    .filter((field) =>
-      field === "bpm" ? correction.bpm !== undefined && correction.bpm !== latest.model.tempoMap[0]?.bpm :
-      field === "key" ? correction.key !== undefined && correction.key !== latest.model.keyMap[0]?.key :
-      field === "meter" ? correction.meter !== undefined && correction.meter !== latest.model.meterMap[0]?.meter :
-      sectionsChanged,
-    );
   const now = new Date();
   const existingTempo = latest.model.tempoMap[0];
   const existingKey = latest.model.keyMap[0];
@@ -2082,9 +2066,10 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
           tempo: {
             ...latest.model.fieldStatus?.tempo,
             status: "detected" as const,
-            confidence: latest.model.fieldStatus?.tempo?.confidence ?? null,
+            // A value the user verified is the truth for this project.
+            confidence: 1,
             providers: latest.model.fieldStatus?.tempo?.providers ?? [],
-            message: "User-edited value; detected provider output remains in provenance.",
+            message: "User-verified value; the detected provider output remains in provenance.",
             edited: true,
           },
         }),
@@ -2094,9 +2079,10 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
           key: {
             ...latest.model.fieldStatus?.key,
             status: "detected" as const,
-            confidence: latest.model.fieldStatus?.key?.confidence ?? null,
+            // A value the user verified is the truth for this project.
+            confidence: 1,
             providers: latest.model.fieldStatus?.key?.providers ?? [],
-            message: "User-edited value; detected provider output remains in provenance.",
+            message: "User-verified value; the detected provider output remains in provenance.",
             edited: true,
           },
         }),
@@ -2106,9 +2092,10 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
           meter: {
             ...latest.model.fieldStatus?.meter,
             status: "detected" as const,
-            confidence: latest.model.fieldStatus?.meter?.confidence ?? null,
+            // A value the user verified is the truth for this project.
+            confidence: 1,
             providers: latest.model.fieldStatus?.meter?.providers ?? [],
-            message: "User-edited value; detected provider output remains in provenance.",
+            message: "User-verified value; the detected provider output remains in provenance.",
             edited: true,
           },
         }),
@@ -2118,16 +2105,20 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
           sections: {
             ...latest.model.fieldStatus?.sections,
             status: "detected" as const,
-            confidence: latest.model.fieldStatus?.sections?.confidence ?? null,
+            // A value the user verified is the truth for this project.
+            confidence: 1,
             providers: latest.model.fieldStatus?.sections?.providers ?? [],
-            message: "User-edited value; detected provider output remains in provenance.",
+            message: "User-verified value; the detected provider output remains in provenance.",
             edited: true,
           },
         }),
   };
-  const correctedModelDraft: SongModelData = {
+  const verified = verifiedConfidence(latest.model.confidenceByField, fields);
+  const correctedModelBase: SongModelData = {
     ...latest.model,
     fieldStatus: editedFieldStatus,
+    confidenceByField: verified.confidenceByField,
+    fusion: { ...latest.model.fusion, confidence: Math.max(latest.model.fusion.confidence, verified.confidence) },
     ...(!fields.includes("bpm")
       ? {}
       : {
@@ -2135,9 +2126,7 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
             {
               time: existingTempo?.time ?? 0,
               bpm: correction.bpm!,
-              confidence: existingTempo?.confidence
-                ?? latest.model.confidenceByField.tempo
-                ?? latest.confidence,
+              confidence: 1,
             },
             ...latest.model.tempoMap.slice(1),
           ],
@@ -2149,9 +2138,7 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
             {
               time: existingKey?.time ?? 0,
               key: correction.key!,
-              confidence: existingKey?.confidence
-                ?? latest.model.confidenceByField.key
-                ?? latest.confidence,
+              confidence: 1,
             },
             ...latest.model.keyMap.slice(1),
           ],
@@ -2163,9 +2150,7 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
             {
               bar: existingMeter?.bar ?? 1,
               meter: correction.meter!,
-              confidence: existingMeter?.confidence
-                ?? latest.model.confidenceByField.meter
-                ?? latest.confidence,
+              confidence: 1,
             },
             ...latest.model.meterMap.slice(1),
           ],
@@ -2179,6 +2164,10 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
           })),
         }),
   };
+  // A verified tempo or meter re-derives the beat/bar grid (PR-32): the grid the
+  // analyzer tracked at its own estimate cannot describe the timeline the
+  // producer declared.
+  const correctedModelDraft: SongModelData = { ...correctedModelBase, ...regridTimeline(correctedModelBase, fields) };
   const correctedModel = refreshSongModelValidation(
     correctedModelDraft.contractVersion === "2.0"
       ? canonicalizeSongModelCoordinates(correctedModelDraft)
@@ -2226,7 +2215,7 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
         },
         model: correctedModel,
         providers: lockedLatest.providers,
-        confidence: lockedLatest.confidence,
+        confidence: Math.max(lockedLatest.confidence, verified.confidence),
         createdAt: now,
       })
       .returning();

@@ -1,0 +1,258 @@
+{
+  "title": "Definition of Done — Arrangement V1, end to end on a real upload (local providers only)",
+  "recordedAt": null,
+  "path": "synthesised song upload -> local analysis (FFMPEG + LOCAL_SIGNAL_ANALYZER_V1 with the PR-32 structure fallback) -> canonical Song Model v1 (low_confidence sketch) -> producer verifies tempo/meter/form in the Song Model editor -> Song Model v2 -> arrangement -> Arrangement Brain (3 candidates) -> select -> Mix Brain plan -> revision -> approve -> mastered STREAMING export -> bundle",
+  "ids": {
+    "projectId": "899b167f-bcc4-47c2-879d-728693ca6ff8",
+    "sourceId": "cfb68989-36bb-416b-8c21-d1aec965f4f0",
+    "songModelVersion": 2,
+    "arrangementId": "810d6e53-e4ea-4295-9306-f509b23dc3a6",
+    "generationJobId": "8597852b-fe95-42cf-a683-c1cc3a8dcdf5",
+    "revisionId": "6a0839d5-b889-4477-a7f8-8c86fec3117b",
+    "exportJobId": "58f6fda8-eaf4-441f-a2d2-dfdf83d6c7d2",
+    "exportArtifactId": "export-899b167f-bcc4-47c2-879d-728693ca6ff8-1-070da77b"
+  },
+  "song": {
+    "seconds": 96.0,
+    "bars": 40,
+    "bpm": 100,
+    "bytes": 16934444,
+    "form": [
+      "Intro:4",
+      "Verse:8",
+      "Chorus:8",
+      "Verse 2:8",
+      "Chorus 2:8",
+      "Outro:4"
+    ]
+  },
+  "analysis": {
+    "final": {
+      "step": "analysis status",
+      "status": "ready",
+      "stage": null,
+      "progress": 100
+    },
+    "songModel": {
+      "version": 1,
+      "tempo": [
+        99.2
+      ],
+      "key": [
+        "A minor"
+      ],
+      "sections": [
+        [
+          "Intro",
+          1,
+          12
+        ],
+        [
+          "Chorus",
+          13,
+          20
+        ],
+        [
+          "Verse",
+          21,
+          27
+        ],
+        [
+          "Chorus 2",
+          28,
+          34
+        ],
+        [
+          "Outro",
+          35,
+          39
+        ]
+      ],
+      "chords": 0,
+      "melodyNotes": 0,
+      "providers": [
+        "FFMPEG",
+        "LOCAL_SIGNAL_ANALYZER_V1"
+      ]
+    }
+  },
+  "producerVerification": {
+    "version": 2,
+    "confidenceBefore": 0.44,
+    "confidenceAfter": 0.84,
+    "fields": [
+      "bpm",
+      "meter",
+      "sections"
+    ],
+    "tempo": [
+      100
+    ],
+    "meter": [
+      "4/4"
+    ],
+    "sections": [
+      [
+        "Intro",
+        1,
+        4
+      ],
+      [
+        "Verse",
+        5,
+        12
+      ],
+      [
+        "Chorus",
+        13,
+        20
+      ],
+      [
+        "Verse 2",
+        21,
+        28
+      ],
+      [
+        "Chorus 2",
+        29,
+        36
+      ],
+      [
+        "Outro",
+        37,
+        40
+      ]
+    ],
+    "tempoStatus": "detected",
+    "sectionsStatus": "detected"
+  },
+  "generation": {
+    "job": {
+      "status": "succeeded",
+      "stage": "insufficient_diversity",
+      "provider": "ARRANGEMENT_ORCHESTRATOR"
+    },
+    "candidates": {
+      "items": [
+        {
+          "id": "bca8c908",
+          "rank": 1,
+          "status": "validated",
+          "score": 0.687,
+          "tracks": 2,
+          "notes": 543
+        },
+        {
+          "id": "bc8a2047",
+          "rank": null,
+          "status": "diversity_rejected",
+          "score": 0.686,
+          "tracks": 2,
+          "notes": 583
+        },
+        {
+          "id": "9320ff85",
+          "rank": null,
+          "status": "diversity_rejected",
+          "score": 0.681,
+          "tracks": 2,
+          "notes": 583
+        }
+      ]
+    },
+    "selected": {
+      "arrangementVersion": 2,
+      "tracks": []
+    },
+    "preferenceEvents": {
+      "count": 2
+    }
+  },
+  "mix": {
+    "plan": {
+      "tracks": [
+        [
+          "GROOVE",
+          "DRUMS",
+          -1,
+          0
+        ],
+        [
+          "TRANSITION",
+          "MUSIC",
+          -4,
+          0.5
+        ]
+      ],
+      "conflicts": 0,
+      "sections": 6
+    },
+    "revision": {
+      "version": 1,
+      "lufs": -14.0,
+      "truePeak": -5.42,
+      "findings": [],
+      "automationSegments": 7
+    },
+    "approved": {
+      "approvedAt": "2026-09-08T23:51:18.002Z"
+    }
+  },
+  "export": {
+    "job": {
+      "status": "succeeded",
+      "stage": "complete",
+      "error": null
+    },
+    "bundle": {
+      "artifactId": "export-899b167f-bcc4-47c2-879d-728693ca6ff8-1-070da77b",
+      "size": "81.2 MB",
+      "entries": [
+        "stems/01_drums.wav",
+        "stems/02_ensemble.wav",
+        "mix/full_mix.wav",
+        "mix/premaster.wav",
+        "mix/master.wav",
+        "midi/full_arrangement.mid",
+        "project/manifest.json",
+        "metadata/export-manifest.json"
+      ],
+      "productionReadiness": {
+        "ready": true,
+        "status": "production-ready",
+        "reasons": [],
+        "performedMaterialSha256": "2c757b39d46e7f3873384220ccd704936c359731713aedfc3b81d4befa71bf1f",
+        "midiAgreementSha256": "f13609d69749ea22f81bbbdd8b361dbdda2dd6373180cd551ac1b7a1261cc914"
+      },
+      "mastering": {
+        "profile": "STREAMING",
+        "lufs": -14,
+        "truePeak": -5.63,
+        "withinTarget": true
+      },
+      "stems": [
+        {
+          "role": "GROOVE",
+          "instrument": "drums",
+          "rendererStatus": "licensed-native",
+          "soundSelection": "operator",
+          "fallbackReason": null
+        },
+        {
+          "role": "TRANSITION",
+          "instrument": "ensemble",
+          "rendererStatus": "licensed-native",
+          "soundSelection": "brain",
+          "fallbackReason": null
+        }
+      ]
+    }
+  },
+  "observations": [
+    "Every stage of the plan's Definition of Done ran on a genuine upload with no GPU worker: analysis, Song Model, brain candidates, selection, mix plan, revision, approval, export.",
+    "Tempo, meter and sections came from the PR-32 local fallback and are stamped low_confidence with LOCAL_SIGNAL_ANALYZER_V1 as provider; no chord or melody provider ran locally, so the Song Model carries no chords and no melody -- the Brain arranged from tempo, energy and sections alone. That is the honest floor of a local install.",
+    "The sketch alone did not clear the arrangement gate (model confidence below MIN_ARRANGEMENT_CONFIDENCE 0.55). The product path is the Song Model editor: the producer corrected the tempo (99.2 -> 100), confirmed the assumed 4/4 and re-cut the form; verified fields became authoritative (confidence 1), the beat/bar grid was re-derived on the canonical timeline, and the recomputed model confidence cleared the gate. The provider sketch remains in provenance.",
+    "Stems from the reference synth are preview-only unless the VST3 worker is running; the mastered export is measured by the BS.1770 meter regardless.",
+    "Nobody listened. Gate C is unchanged."
+  ]
+}
