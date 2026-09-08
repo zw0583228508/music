@@ -3971,6 +3971,27 @@ export interface ExportInput {
   masterProfile?: ExportInputMasterProfile;
 }
 
+/**
+ * PR-25 — a section of the song where this track's level / send differ from its static controls (offsets in dB).
+ */
+export interface MixControlAutomationSegment {
+  /** @minimum 0 */
+  startSeconds: number;
+  /** @minimum 0 */
+  endSeconds: number;
+  /**
+     * @minimum -24
+     * @maximum 12
+     */
+  levelOffsetDb: number;
+  /**
+     * @minimum -24
+     * @maximum 12
+     */
+  sendOffsetDb: number;
+  label?: string;
+}
+
 export type MixMasterTrackControlBus = typeof MixMasterTrackControlBus[keyof typeof MixMasterTrackControlBus];
 
 
@@ -4018,6 +4039,144 @@ export interface MixMasterTrackControl {
      */
   sendDb: number;
   processing: MixMasterTrackControlProcessing;
+  automation?: MixControlAutomationSegment[];
+}
+
+export type MixPlanTrackBus = typeof MixPlanTrackBus[keyof typeof MixPlanTrackBus];
+
+
+export const MixPlanTrackBus = {
+  MIX: 'MIX',
+  DRUMS: 'DRUMS',
+  MUSIC: 'MUSIC',
+  VOCALS: 'VOCALS',
+  FX: 'FX',
+} as const;
+
+export type MixPlanTrackProcessing = {
+  highPassHz: number;
+  compressorRatio: number;
+  saturation: number;
+};
+
+export type MixPlanTrackSectionsItem = {
+  sectionName: string;
+  startSeconds: number;
+  endSeconds: number;
+  levelOffsetDb: number;
+  sendOffsetDb: number;
+  reason: string;
+};
+
+export interface MixPlanTrack {
+  trackId: string;
+  instrument: string;
+  role: string;
+  family: string;
+  bus: MixPlanTrackBus;
+  levelDb: number;
+  pan: number;
+  sendDb: number;
+  processing: MixPlanTrackProcessing;
+  priority: number;
+  rationale: string[];
+  sections: MixPlanTrackSectionsItem[];
+}
+
+export type MixPlanVersion = typeof MixPlanVersion[keyof typeof MixPlanVersion];
+
+
+export const MixPlanVersion = {
+  '10': '1.0',
+} as const;
+
+export type MixPlanMasterProcessing = {
+  limiter: boolean;
+  stereoWidth: number;
+};
+
+export type MixPlanMaster = {
+  targetLufs: number;
+  truePeakDbtp: number;
+  processing: MixPlanMasterProcessing;
+  rationale: string[];
+};
+
+export type MixPlanSectionsItem = {
+  sectionName: string;
+  startSeconds: number;
+  endSeconds: number;
+  energy: number;
+  density: number;
+  focusTrackIds: string[];
+};
+
+export type MixPlanConflictsItemKind = typeof MixPlanConflictsItemKind[keyof typeof MixPlanConflictsItemKind];
+
+
+export const MixPlanConflictsItemKind = {
+  register_masking: 'register_masking',
+  role_duplicate: 'role_duplicate',
+} as const;
+
+export type MixPlanConflictsItem = {
+  /**
+     * @minItems 2
+     * @maxItems 2
+     */
+  trackIds: string[];
+  kind: MixPlanConflictsItemKind;
+  resolution: string;
+};
+
+export type MixPlanStyleInputsItem = {
+  dimension: string;
+  value: string | number;
+  provenance: string;
+};
+
+/**
+ * PR-25 — a mix decided per musical role that evolves across the song, every value explained.
+ */
+export interface MixPlan {
+  version: MixPlanVersion;
+  method: string;
+  derivedAt: string;
+  inputsDigestSha256: string;
+  arrangementId: string | null;
+  tracks: MixPlanTrack[];
+  master: MixPlanMaster;
+  sections: MixPlanSectionsItem[];
+  conflicts: MixPlanConflictsItem[];
+  styleInputs: MixPlanStyleInputsItem[];
+}
+
+export interface MixPlanInput {
+  /** @minLength 1 */
+  arrangementId: string;
+}
+
+export type MixPlanResponseControlsTracks = {[key: string]: MixMasterTrackControl};
+
+export type MixPlanResponseControlsMasterProcessing = {
+  limiter: boolean;
+  stereoWidth: number;
+};
+
+export type MixPlanResponseControlsMaster = {
+  targetLufs: number;
+  truePeakDbtp: number;
+  processing: MixPlanResponseControlsMasterProcessing;
+};
+
+export type MixPlanResponseControls = {
+  tracks: MixPlanResponseControlsTracks;
+  master: MixPlanResponseControlsMaster;
+};
+
+export interface MixPlanResponse {
+  plan: MixPlan;
+  controls: MixPlanResponseControls;
 }
 
 export type MixMasterRevisionInputTracks = {[key: string]: MixMasterTrackControl};

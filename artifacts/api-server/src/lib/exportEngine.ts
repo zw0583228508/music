@@ -331,17 +331,35 @@ export function applyMixMasterControls(
     const control = controls.tracks[track.trackModel.id];
     if (!control) return track;
     const samples = new Float32Array(track.samples.length);
-    const gain = 10 ** (control.levelDb / 20);
+    const staticGain = 10 ** (control.levelDb / 20);
     const panLeft = Math.cos((control.pan + 1) * Math.PI / 4);
     const panRight = Math.sin((control.pan + 1) * Math.PI / 4);
-    const send = 10 ** (control.sendDb / 20);
+    const staticSend = 10 ** (control.sendDb / 20);
     // The one-pole DC/high-pass approximation and soft saturation are stable,
     // bounded, and ensure each persisted control changes audible PCM.
     const hp = Math.exp(-2 * Math.PI * control.processing.highPassHz / SAMPLE_RATE);
     let previousL = 0; let previousR = 0; let filteredL = 0; let filteredR = 0;
     const busGain = control.bus === "FX" ? .8 : control.bus === "VOCALS" ? 1.04 :
       control.bus === "DRUMS" ? .96 : control.bus === "MUSIC" ? 1.02 : 1;
+    // PR-25: section automation. Offsets follow the segments through a 20 ms
+    // one-pole smoother, so the mix moves with the song and never clicks.
+    const segments = (control.automation ?? [])
+      .filter((s) => Number.isFinite(s.startSeconds) && Number.isFinite(s.endSeconds) && s.endSeconds > s.startSeconds)
+      .sort((a, b) => a.startSeconds - b.startSeconds);
+    const smoothing = 1 - Math.exp(-1 / (0.02 * SAMPLE_RATE));
+    let segmentIndex = 0; let levelOffset = 0; let sendOffset = 0;
+    let gain = staticGain; let send = staticSend;
     for (let i = 0; i < samples.length; i += 2) {
+      if (segments.length) {
+        const t = (i / 2) / SAMPLE_RATE;
+        while (segmentIndex < segments.length && t >= segments[segmentIndex].endSeconds) segmentIndex += 1;
+        const current = segments[segmentIndex];
+        const inside = current !== undefined && t >= current.startSeconds;
+        levelOffset += ((inside ? current.levelOffsetDb : 0) - levelOffset) * smoothing;
+        sendOffset += ((inside ? current.sendOffsetDb : 0) - sendOffset) * smoothing;
+        gain = 10 ** ((control.levelDb + levelOffset) / 20);
+        send = 10 ** ((control.sendDb + sendOffset) / 20);
+      }
       const left = track.samples[i]; const right = track.samples[i + 1];
       filteredL = hp * (filteredL + left - previousL); previousL = left;
       filteredR = hp * (filteredR + right - previousR); previousR = right;

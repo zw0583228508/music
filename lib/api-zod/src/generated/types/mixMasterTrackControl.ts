@@ -5,6 +5,7 @@
  * API for the AI Music Production Studio
  * OpenAPI spec version: 0.1.0
  */
+import type { MixControlAutomationSegment } from './mixControlAutomationSegment';
 import type { MixMasterTrackControlBus } from './mixMasterTrackControlBus';
 import type { MixMasterTrackControlProcessing } from './mixMasterTrackControlProcessing';
 
@@ -26,4 +27,5 @@ export interface MixMasterTrackControl {
      */
   sendDb: number;
   processing: MixMasterTrackControlProcessing;
+  automation?: MixControlAutomationSegment[];
 }

@@ -22,6 +22,7 @@ import {
   useUpdateProducerPreferences,
   useListMixMasterRevisions,
   useCreateMixMasterRevision,
+  useCreateMixPlan,
   useApproveMixMasterRevision,
   getListMixMasterRevisionsQueryKey,
   useGetProductionJob,
@@ -40,7 +41,8 @@ import {
   ArrangementMode,
   Arrangement,
   ArrangementSection,
-  ProducerDecisionInput
+  ProducerDecisionInput,
+  MixPlan,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getGetProjectQueryKey, getListArrangementsQueryKey } from "@workspace/api-client-react";
@@ -202,9 +204,16 @@ export default function ProjectWorkspace() {
   const [truePeakDbtp, setTruePeakDbtp] = useState(-1);
   const [limiter, setLimiter] = useState(true);
   const [stereoWidth, setStereoWidth] = useState(1);
-  type LocalTrackMix = { levelDb: number; pan: number; bus: "MIX" | "DRUMS" | "MUSIC" | "VOCALS" | "FX"; sendDb: number; processing: { highPassHz: number; compressorRatio: number; saturation: number } };
+  type LocalTrackMix = {
+    levelDb: number; pan: number; bus: "MIX" | "DRUMS" | "MUSIC" | "VOCALS" | "FX"; sendDb: number;
+    processing: { highPassHz: number; compressorRatio: number; saturation: number };
+    /** PR-25: section-by-section evolution proposed by the Mix Brain; kept with the controls it belongs to. */
+    automation?: Array<{ startSeconds: number; endSeconds: number; levelOffsetDb: number; sendOffsetDb: number; label?: string }>;
+  };
   const [selectedMixTrackId, setSelectedMixTrackId] = useState("");
   const [trackMixControls, setTrackMixControls] = useState<Record<string, LocalTrackMix>>({});
+  const [mixPlan, setMixPlan] = useState<MixPlan | null>(null);
+  const createMixPlan = useCreateMixPlan();
   useEffect(() => {
     if (!tracks?.length) return;
     setSelectedMixTrackId((current) => current || tracks[0].id);
@@ -1703,6 +1712,43 @@ export default function ProjectWorkspace() {
                     <p className="text-sm text-muted-foreground">Create immutable WAV previews from the current arrangement. All versions share the project’s canonical timeline.</p>
                   </CardHeader>
                   <CardContent className="space-y-5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Button size="sm" variant="secondary" disabled={!activeArrangement || createMixPlan.isPending} onClick={() => {
+                        if (!activeArrangement) return;
+                        createMixPlan.mutate({ projectId, data: { arrangementId: activeArrangement.id } }, {
+                          onSuccess: ({ plan, controls }) => {
+                            setMixPlan(plan);
+                            setTrackMixControls((current) => ({ ...current, ...(controls.tracks as Record<string, LocalTrackMix>) }));
+                            setMasterLufs(controls.master.targetLufs);
+                            setTruePeakDbtp(controls.master.truePeakDbtp);
+                            setLimiter(controls.master.processing.limiter);
+                            setStereoWidth(controls.master.processing.stereoWidth);
+                            toast({ title: "Mix Brain proposed a mix", description: `${plan.tracks.length} tracks by role, ${plan.sections.length} sections, ${plan.conflicts.length} conflict(s) resolved. Adjust anything, then render.` });
+                          },
+                          onError: () => toast({ title: "Mix Brain could not plan", description: "The arrangement needs persisted TrackModels first.", variant: "destructive" }),
+                        });
+                      }}>
+                        {createMixPlan.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}Mix Brain: propose a mix
+                      </Button>
+                      {mixPlan && <span className="text-xs text-muted-foreground">Plan {mixPlan.inputsDigestSha256.slice(0, 8)} · master {mixPlan.master.targetLufs} LUFS · {mixPlan.master.rationale[0]}</span>}
+                    </div>
+                    {mixPlan && selectedMixTrackId && (() => {
+                      const planned = mixPlan.tracks.find((track) => track.trackId === selectedMixTrackId);
+                      return planned ? (
+                        <div className="rounded-md border bg-muted/30 p-3 text-xs space-y-1">
+                          <div className="font-medium">Why this mix for {planned.role} (priority {planned.priority})</div>
+                          {planned.rationale.map((reason, index) => <div key={index}>• {reason}</div>)}
+                          {planned.sections.filter((section) => section.levelOffsetDb !== 0 || section.sendOffsetDb !== 0).map((section) => (
+                            <div key={section.sectionName} className="text-muted-foreground">
+                              {section.sectionName}: level {section.levelOffsetDb > 0 ? "+" : ""}{section.levelOffsetDb} dB, send {section.sendOffsetDb > 0 ? "+" : ""}{section.sendOffsetDb} dB — {section.reason}
+                            </div>
+                          ))}
+                          {mixPlan.conflicts.filter((conflict) => conflict.trackIds.includes(selectedMixTrackId)).map((conflict, index) => (
+                            <div key={index} className="text-amber-700">{conflict.kind.replace("_", " ")}: {conflict.resolution}</div>
+                          ))}
+                        </div>
+                      ) : null;
+                    })()}
                     <div><Label>Track</Label><Select value={selectedMixTrackId} onValueChange={setSelectedMixTrackId}><SelectTrigger><SelectValue placeholder="Select track" /></SelectTrigger><SelectContent>{(tracks ?? []).map((track) => <SelectItem key={track.id} value={track.id}>{track.name}</SelectItem>)}</SelectContent></Select></div>
                     {selectedTrackMix && <>
                     <div className="grid gap-4 md:grid-cols-3">

@@ -50,6 +50,8 @@ import type {
   LogoutSuccess,
   MixMasterRevision,
   MixMasterRevisionInput,
+  MixPlanInput,
+  MixPlanResponse,
   MobileTokenExchangeRequest,
   MobileTokenExchangeSuccess,
   MusicProvider,
@@ -3621,6 +3623,78 @@ export const useApproveMixMasterRevision = <TError = ErrorType<NotFoundResponse>
         TContext
       > => {
       return useMutation(getApproveMixMasterRevisionMutationOptions(options));
+    }
+
+export const getCreateMixPlanUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/mix-plans`
+}
+
+/**
+ * @summary Derive a Mix Brain plan for an arrangement (PR-25) and the revision controls that realize it
+ */
+export const createMixPlan = async (projectId: string,
+    mixPlanInput: MixPlanInput, options?: Parameters<typeof customFetch>[1]): Promise<MixPlanResponse> => {
+
+  return customFetch<MixPlanResponse>(getCreateMixPlanUrl(projectId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(mixPlanInput)
+  }
+);}
+
+
+
+
+
+export const getCreateMixPlanMutationOptions = <TError = ErrorType<NotFoundResponse | void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createMixPlan>>, TError,{projectId: string;data: BodyType<MixPlanInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createMixPlan>>, TError,{projectId: string;data: BodyType<MixPlanInput>}, TContext> => {
+
+const mutationKey = ['createMixPlan'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createMixPlan>>, {projectId: string;data: BodyType<MixPlanInput>}> = (props) => {
+          const {projectId,data} = props ?? {};
+
+          return  createMixPlan(projectId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateMixPlanMutationResult = NonNullable<Awaited<ReturnType<typeof createMixPlan>>>
+    export type CreateMixPlanMutationBody = BodyType<MixPlanInput>
+    export type CreateMixPlanMutationError = ErrorType<NotFoundResponse | void>
+
+    /**
+ * @summary Derive a Mix Brain plan for an arrangement (PR-25) and the revision controls that realize it
+ */
+export const useCreateMixPlan = <TError = ErrorType<NotFoundResponse | void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createMixPlan>>, TError,{projectId: string;data: BodyType<MixPlanInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createMixPlan>>,
+        TError,
+        {projectId: string;data: BodyType<MixPlanInput>},
+        TContext
+      > => {
+      return useMutation(getCreateMixPlanMutationOptions(options));
     }
 
 export const getListProducerDecisionsUrl = (params?: ListProducerDecisionsParams,) => {

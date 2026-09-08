@@ -91,6 +91,9 @@ import {
   CreateMixMasterRevisionResponse,
   ApproveMixMasterRevisionParams,
   ApproveMixMasterRevisionResponse,
+  CreateMixPlanParams,
+  CreateMixPlanBody,
+  CreateMixPlanResponse,
   CreateProducerDecisionBody,
   CreateProducerDecisionResponse,
   GetProducerPreferencesResponse,
@@ -170,12 +173,14 @@ import {
   persistExportBundle,
   type ExportBundle,
 } from "../lib/export-pipeline";
+import { deriveMixPlan, mixPlanToControls } from "../lib/mixBrain";
 import {
   activateLicensedInstrumentPack as activateLicensedInstrumentPackOnWorker,
   applyArrangementEditorChanges,
   applyPlanModulations,
   buildTrackModels,
   canonicalPerformanceTimelineSha256,
+  secondsPerBar,
   createArrangementPlan,
   createStyleSpec,
   ensureArrangementPlanHierarchy,
@@ -3399,6 +3404,56 @@ router.post("/projects/:projectId/mix-master-revisions", async (req, res): Promi
     revision.created,
     masteredUrl,
   )));
+});
+
+// PR-25: the Mix Brain proposes a mix per musical role that evolves across the
+// song; the response's `controls` are exactly what createMixMasterRevision
+// takes, so the user auditions, approves and exports it through the same path.
+router.post("/projects/:projectId/mix-plans", async (req, res): Promise<void> => {
+  const params = CreateMixPlanParams.safeParse(req.params);
+  const body = CreateMixPlanBody.safeParse(req.body);
+  if (!params.success || !body.success) {
+    res.status(400).json({ error: "Invalid mix plan request" });
+    return;
+  }
+  const [projectRows, arrangementRows] = await Promise.all([
+    db.select().from(musicProjectsTable).where(and(
+      eq(musicProjectsTable.id, params.data.projectId),
+      eq(musicProjectsTable.ownerId, req.user!.id),
+    )).limit(1),
+    db.select().from(arrangementsTable).where(and(
+      eq(arrangementsTable.id, body.data.arrangementId),
+      eq(arrangementsTable.projectId, params.data.projectId),
+    )).limit(1),
+  ]);
+  const project = projectRows[0];
+  const arrangement = arrangementRows[0];
+  if (!project) {
+    res.status(404).json({ error: "Project not found" });
+    return;
+  }
+  if (!arrangement || !arrangement.trackModels.length) {
+    res.status(409).json({ error: "A persisted arrangement with TrackModels is required to plan a mix" });
+    return;
+  }
+  const songModelRows = await db.select().from(songModelsTable).where(eq(songModelsTable.projectId, project.id));
+  const songModel = songModelRows.find((model) => model.version === arrangement.songModelVersion) ?? songModelRows.at(-1);
+  const noteEnd = Math.max(0, ...arrangement.trackModels.flatMap((track) => track.notes.map((note) => note.start + note.duration)));
+  const durationSeconds = songModel?.model.audio.durationSeconds || noteEnd || secondsPerBar(project.bpm, project.meter) * 8;
+  const plan = deriveMixPlan({
+    arrangementId: arrangement.id,
+    tracks: arrangement.trackModels.map((track) => ({
+      trackId: track.id, instrument: track.instrument, role: track.role,
+      family: track.instrumentDefinition.family, notes: track.notes,
+    })),
+    sections: arrangement.sections.map((section) => ({
+      name: section.name, energy: section.energy, density: section.density,
+      startBar: section.startBar, endBar: section.endBar,
+    })),
+    bpm: project.bpm, meter: project.meter, durationSeconds,
+    styleProfile: null,
+  });
+  res.json(CreateMixPlanResponse.parse({ plan, controls: mixPlanToControls(plan) }));
 });
 
 router.post("/projects/:projectId/mix-master-revisions/:revisionId/approve", async (req, res): Promise<void> => {

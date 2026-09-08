@@ -162,15 +162,98 @@ export type ExportFileRecord = {
 };
 
 /** Immutable producer-facing mix/master decision, including render proof. */
+/**
+ * PR-25: a time segment of a track's mix that differs from its static
+ * controls. Offsets are relative to `levelDb` / `sendDb`; segments never
+ * overlap and are applied with a short ramp so the evolution is inaudible as
+ * a step but audible as a mix that moves with the song.
+ */
+export type MixControlAutomationSegment = {
+  startSeconds: number;
+  endSeconds: number;
+  levelOffsetDb: number;
+  sendOffsetDb: number;
+  /** Section name or reason, for the revision's evidence. */
+  label?: string;
+};
+
+export type MixMasterTrackControl = {
+  levelDb: number;
+  pan: number;
+  bus: "MIX" | "DRUMS" | "MUSIC" | "VOCALS" | "FX";
+  sendDb: number;
+  processing: { highPassHz: number; compressorRatio: number; saturation: number };
+  /** PR-25: section-by-section evolution; absent means a static mix. */
+  automation?: MixControlAutomationSegment[];
+};
+
 export type MixMasterControls = {
-  tracks: Record<string, {
-    levelDb: number;
-    pan: number;
-    bus: "MIX" | "DRUMS" | "MUSIC" | "VOCALS" | "FX";
-    sendDb: number;
-    processing: { highPassHz: number; compressorRatio: number; saturation: number };
-  }>;
+  tracks: Record<string, MixMasterTrackControl>;
   master: { targetLufs: number; truePeakDbtp: number; processing: { limiter: boolean; stereoWidth: number } };
+};
+
+/**
+ * Mix Brain V1 (PR-25). A mix decided per musical role — not per track
+ * index — that evolves across the song's sections, with every value
+ * explained. `mixPlanToControls` turns it into the controls the mix/master
+ * revision route already accepts, so the plan is auditioned, approved and
+ * exported through the existing path.
+ */
+export type MixPlanTrack = {
+  trackId: string;
+  instrument: string;
+  role: string;
+  family: string;
+  bus: MixMasterTrackControl["bus"];
+  levelDb: number;
+  pan: number;
+  sendDb: number;
+  processing: MixMasterTrackControl["processing"];
+  /** 1 = foreground (lead) … 5 = deepest background (pad). */
+  priority: number;
+  rationale: string[];
+  /** Per-section evolution, only for sections where the track plays. */
+  sections: Array<{
+    sectionName: string;
+    startSeconds: number;
+    endSeconds: number;
+    levelOffsetDb: number;
+    sendOffsetDb: number;
+    reason: string;
+  }>;
+};
+
+export type MixPlanConflict = {
+  trackIds: [string, string];
+  kind: "register_masking" | "role_duplicate";
+  resolution: string;
+};
+
+export type MixPlan = {
+  version: "1.0";
+  method: string;
+  derivedAt: string;
+  inputsDigestSha256: string;
+  arrangementId: string | null;
+  tracks: MixPlanTrack[];
+  master: {
+    targetLufs: number;
+    truePeakDbtp: number;
+    processing: { limiter: boolean; stereoWidth: number };
+    rationale: string[];
+  };
+  sections: Array<{
+    sectionName: string;
+    startSeconds: number;
+    endSeconds: number;
+    energy: number;
+    density: number;
+    /** The tracks the listener should follow in this section. */
+    focusTrackIds: string[];
+  }>;
+  conflicts: MixPlanConflict[];
+  /** StyleProfile dimensions that shaped the plan, with provenance. */
+  styleInputs: Array<{ dimension: string; value: string | number; provenance: string }>;
 };
 export type MixMasterFinding = {
   id: string;
