@@ -13,6 +13,7 @@ import type { CompositionIntelligencePlan } from './compositionIntelligencePlan'
 import type { GenerationPreferenceSnapshot } from './generationPreferenceSnapshot';
 import type { GlobalArrangementPlan } from './globalArrangementPlan';
 import type { OrchestrationBudgetPlan } from './orchestrationBudgetPlan';
+import type { PartComposerPlan } from './partComposerPlan';
 import type { SectionPhrasePlan } from './sectionPhrasePlan';
 import type { StyleSpec } from './styleSpec';
 import type { TransitionPlanSet } from './transitionPlanSet';
@@ -30,6 +31,7 @@ export interface ArrangementPlan {
   sectionPlan?: SectionPhrasePlan;
   orchestrationBudget?: OrchestrationBudgetPlan;
   transitionPlan?: TransitionPlanSet;
+  partComposerPlan?: PartComposerPlan;
   compositionIntelligence?: CompositionIntelligencePlan;
   generationPreference?: GenerationPreferenceSnapshot | null;
 }
