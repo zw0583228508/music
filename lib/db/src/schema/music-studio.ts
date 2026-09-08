@@ -2184,6 +2184,38 @@ export type PartComposerPlan = {
   }>;
 };
 
+/** One humanisation decision, with the musical reasons behind it (PR-14). */
+export type PerformanceDecision = {
+  noteId: string;
+  timingOffsetMs: number;
+  velocityDelta: number;
+  reasons: string[];
+};
+
+/**
+ * Evidence for how Composition MIDI became Performance MIDI (PR-14). Timing and
+ * dynamics are derived from instrument, tempo, groove, style, phrase, metrical
+ * position, dynamic shape and musical role — never a single random offset.
+ */
+export type PerformanceEvidence = {
+  version: "1.0";
+  engine: string;
+  seed: number;
+  family: string;
+  profile: string;
+  meanTimingOffsetMs: number;
+  timingStdMs: number;
+  addedEvents: {
+    ghostNotes: number;
+    flams: number;
+    strumSpreadNotes: number;
+    breathGaps: number;
+  };
+  ccCurves: string[];
+  /** Bounded sample of per-note decisions for audit. */
+  decisions: PerformanceDecision[];
+};
+
 /** One §26 render check (PR-13). */
 export type RenderCheck = {
   name:

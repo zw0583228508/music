@@ -5457,6 +5457,47 @@ export interface ArrangementPlan {
   generationPreference?: GenerationPreferenceSnapshot | null;
 }
 
+export interface PerformanceDecision {
+  noteId: string;
+  timingOffsetMs: number;
+  velocityDelta: number;
+  reasons: string[];
+}
+
+export type PerformanceEvidenceVersion = typeof PerformanceEvidenceVersion[keyof typeof PerformanceEvidenceVersion];
+
+
+export const PerformanceEvidenceVersion = {
+  '10': '1.0',
+} as const;
+
+export type PerformanceEvidenceAddedEvents = {
+  /** @minimum 0 */
+  ghostNotes: number;
+  /** @minimum 0 */
+  flams: number;
+  /** @minimum 0 */
+  strumSpreadNotes: number;
+  /** @minimum 0 */
+  breathGaps: number;
+};
+
+/**
+ * How Composition MIDI became Performance MIDI (PR-14).
+ */
+export interface PerformanceEvidence {
+  version: PerformanceEvidenceVersion;
+  engine: string;
+  seed: number;
+  family: string;
+  profile: string;
+  meanTimingOffsetMs: number;
+  timingStdMs: number;
+  addedEvents: PerformanceEvidenceAddedEvents;
+  ccCurves: string[];
+  decisions: PerformanceDecision[];
+}
+
 export type RenderCheckName = typeof RenderCheckName[keyof typeof RenderCheckName];
 
 
