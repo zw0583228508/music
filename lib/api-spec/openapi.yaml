@@ -4720,6 +4720,59 @@ components:
     CandidateStrategyId:
       type: string
       enum: [conservative, rhythmic, melodic, sparse, adventurous]
+    LockScope:
+      type: string
+      enum: [global, section, track, phrase, event]
+    ArrangementLock:
+      type: object
+      required: [id, scope, createdAt]
+      properties:
+        id: { type: string }
+        scope: { $ref: "#/components/schemas/LockScope" }
+        sectionName: { type: string }
+        instrument: { type: string }
+        trackId: { type: string }
+        phraseId: { type: string }
+        startBar: { type: number, minimum: 1 }
+        endBar: { type: number, minimum: 1 }
+        noteIds: { type: array, items: { type: string } }
+        reason: { type: string }
+        createdAt: { type: string, format: date-time }
+    ArrangementLockSet:
+      type: object
+      required: [version, locks]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        locks: { type: array, items: { $ref: "#/components/schemas/ArrangementLock" } }
+    RegenerationScope:
+      type: object
+      required: [instrument, sectionName, startBar, endBar, reason]
+      properties:
+        instrument: { type: string }
+        sectionName: { type: string }
+        startBar: { type: number, minimum: 1 }
+        endBar: { type: number, minimum: 1 }
+        reason: { type: string }
+    PartialRegenerationReport:
+      type: object
+      description: Partial regeneration honouring producer locks (PR-17).
+      required: [version, method, requested, blockedByLock, regenerated, keptNotes, replacedNotes, locksHonoured]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        method: { type: string }
+        requested: { type: array, items: { $ref: "#/components/schemas/RegenerationScope" } }
+        blockedByLock:
+          type: array
+          items:
+            type: object
+            required: [scope, lockId]
+            properties:
+              scope: { $ref: "#/components/schemas/RegenerationScope" }
+              lockId: { type: string }
+        regenerated: { type: array, items: { $ref: "#/components/schemas/RegenerationScope" } }
+        keptNotes: { type: number, minimum: 0 }
+        replacedNotes: { type: number, minimum: 0 }
+        locksHonoured: { type: boolean }
     AudioCritiqueDimension:
       type: string
       enum: [balance, masking, harshness, mud, lowEndConflict, transientQuality, stereoDistribution, dynamicMovement, instrumentRealism, spectralCrowding]
