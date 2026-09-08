@@ -1,0 +1,55 @@
+- [Arrangement export semantics](arrangement-export-semantics.md) — deterministic exports must still follow section structure, controls, and track activation rather than generic audio.
+- [Object Storage stream warnings](object-storage-stream-warnings.md) — analysis downloads can emit benign PassThrough listener-limit warnings despite successful completion.
+- [Provider truth and job fencing](provider-truth-and-job-fencing.md) — unavailable music models stay explicit; durable jobs require database fencing before any musical result is committed.
+- [Managed database schema flow](managed-database-schema-flow.md) — use Drizzle push for dev/test and Replit Publish’s schema diff for production; never run startup or deploy DDL.
+- [Generated-code verification](generated-code-verification.md) — restart the frontend workflow after API code generation before trusting browser HMR or module-loading logs.
+- [Background analysis leases](background-analysis-leases.md) — resumable workers must use expiring DB leases and lease-conditional writes, not process-local job guards.
+- [Song Model evidence gates](song-model-evidence-gates.md) — field confidence must come from musical evidence; absent evidence yields empty maps, never duration-based defaults.
+- [Versioned editor rehydration](versioned-editor-rehydration.md) — local DAW edits must clear “saving” only after acknowledgment and rehydrate from each accepted server revision.
+- [Browser audio transport identity](browser-audio-transport-identity.md) — keep one media lifecycle and bind playback to an explicit source identity shared with timeline data.
+- [Private artifact publication](private-artifact-publication.md) — durable private outputs must coordinate publication with project deletion and keep storage identities cleanup-compatible.
+- [Project deletion storage fencing](project-deletion-storage-fencing.md) — private object writes must share a project fence with deletion; signed URL expiry is not terminal proof.
+- [Python music runtime compatibility](python-music-runtime-compatibility.md) — Basic Pitch, Demucs, and Pedalboard need specific Python/Nix compatibility pins before smoke inference succeeds.
+- [Licensed native render attestation](licensed-native-render-attestation.md) — native music readiness must bind TrackModel, asset, host, and output evidence before attribution.
+- [Modal GPU identity and model immutability](modal-gpu-identity.md) — use one CI-signed promotion bundle for Modal identity pins; keep loader writes outside checkpoints.
+- [Structure-model smoke evidence](structure-model-smoke-evidence.md) — smoke fixtures need multi-bar rhythm/harmony; preserve evidence by trimming pickups to the first detected downbeat.
+- [MT3 adapter compatibility](mt3-adapter-compatibility.md) — trust real GPU inference over declared dependency ranges; bind any exact compatibility correction into provenance.
+- [BS-RoFormer adapter contract](bs-roformer-adapter-contract.md) — v0.1.5 exposes a folder API, not a session wrapper; explicit paths are required to prevent downloads.
+- [Provider-audio arrangement semantics](provider-audio-arrangement-semantics.md) — audio-only candidates stay selectable/exportable without fake MIDI; chained provider audio remains private with explicit parent lineage.
+- [Observable musical controls](observable-musical-controls.md) — producer controls and readiness claims must survive typed evidence flow and change shipped musical output, not just metadata.
+- [Pino regression harnesses](pino-regression-harnesses.md) — standalone logger tests should externalize Pino and emit inside the package tree rather than rebundling its workers.
+- [Historical export reconciliation](historical-export-reconciliation.md) — cleanup requires an aged current-package dry run and exact reviewed candidates; ambiguous export objects stay preserved.
+- [MIR runtime isolation](mir-runtime-isolation.md) — exact MIR pins require separate Python 3.11 and 3.14 images; SheetSage weights are noncommercial/share-alike licensed.
+- [MusicGen native runtime](musicgen-native-runtime.md) — exact AudioCraft builds native PyAV/PESQ; FFmpeg 4.4 satisfies PyAV 11 while remaining below version 5.
+- [MOSS media-runtime conflict](moss-media-runtime-conflict.md) — the resolver can be clean while TorchCodec wheel variants still fail native loading; require media preflight before provisioning.
+- [Modal container path portability](modal-container-path-portability.md) — Dockerfile-backed modules must resolve paths under both the repo tree and Modal’s flat `/app` layout.
+- [Deployment attestation gates](deployment-attestation-gates.md) — couple deploy and live validation; never send credentials to caller-selected endpoints or redirects.
+- [Private recovery drills](private-recovery-drills.md) — verify owner archives in disposable storage with no production volume mount, and suppress URL-bearing exception chains.
+- [Crash-safe private temp storage](crash-safe-private-temp-storage.md) — isolate uploads per process and use OS-held locks to distinguish active data from crash remnants.
+- [Protected release proposals](protected-release-proposals.md) — GPU activation uses enforced review; retained evidence can reopen the same proposal without redeploying.
+- [Runtime package identity](runtime-package-identity.md) — provider health must bind the executing package bytes to pinned source and artifact provenance, not echo manifest metadata.
+- [Modal digest-only image references](modal-digest-only-image-references.md) — use repository@sha256 in Modal, but verify GHCR digest availability and prefer the platform manifest.
+- [Checkpoint license provenance](checkpoint-license-provenance.md) — code/model-card licenses do not authorize external weights; invalid remote digests require direct byte hashing.
+- [Blocked-provider evidence preimages](blocked-provider-evidence-preimages.md) — retain hash preimages and keep provisioning manifest schemas identical to runtime validators.
+- [Attested generation I/O](attested-generation-response-urls.md) — results repeat health provenance; artifact origins and source allowlists are deployment gates, never request-host defaults.
+- [Focused API bundle boundaries](focused-api-bundle-boundaries.md) — no-route tests should alias database packages to throwing stubs rather than bundle native clients or externalize workspace source.
+- [Nested Node test exits](nested-node-test-exits.md) — nested node test runners must shed the parent test-context marker so child failures retain a nonzero exit status.
+- [DiffRhythm upstream recovery](diffrhythm-upstream-recovery.md) — bypass its unsafe boolean CLI path, install omitted G2P dependencies, and wire pinned local tokenizer/MuQ state explicitly.
+- [Codec threshold fixtures](codec-threshold-fixtures.md) — decode lossy codec fixtures through FFmpeg before waveform checks because worker libsndfile lacks AAC container support.
+- [Modal Docker USER behavior](modal-docker-user.md) — Modal skips Dockerfile USER; verify runtime UID instead of assuming container privilege dropping.
+- [CLaMP3 source scratch isolation](clamp3-source-scratch.md) — redirect upstream preprocessing logs outside the per-request attested source tree.
+- [CLaMP3 offline model resolution](clamp3-offline-model-resolution.md) — enforce egress denial and bind upstream model arguments to exact local snapshots.
+- [Modal concurrency queue drills](modal-concurrency-queue-drills.md) — max_inputs is per container; constrain the fleet and verify waiting from identity-bound timing evidence.
+- [Stable Audio 3 offline inference](stable-audio3-offline-inference.md) — local checkpoints must localize nested conditioners; exact inpainting boundaries require source-layout compositing.
+- [Consolidated cancellation evidence](consolidated-cancellation-evidence.md) — one full-capacity batch may prove three cancellation guarantees only with strict independent validation.
+- [Killed spawn-worker fixtures](killed-spawn-worker-fixtures.md) — use plain blocking work, not shared synchronization primitives, when tests intentionally kill spawned workers.
+- [Canonical musical timeline consumers](canonical-musical-timeline-consumers.md) — corrections and render/export math must reuse canonical tempo/meter semantics, including meter denominators.
+- [Song Model timebase compatibility](song-model-timebase-compatibility.md) — v2 uses explicit 960 PPQ; historical performances without PPQ must remain interpreted at 480.
+- [Candidate diversity gates](candidate-diversity-gates.md) — compare canonical musical structure, keep retry seeds stable, and never rank near-duplicate candidates.
+- [OpenAPI bounded counts](openapi-bounded-counts.md) — avoid bare integer schemas until generated Zod targets support zod.int; use bounded numbers for small count summaries.
+- [Vocal phrase evidence](vocal-phrase-evidence.md) — phrases and breaths require verified stem PCM; symbolic alignment conflicts remain explicitly unavailable.
+- [Perceptual audio evidence gates](perceptual-audio-evidence-gates.md) — release confidence requires artifact-bound PCM evidence; unsupported perceptual dimensions must abstain.
+- [Closed-world release verification](closed-world-release-verification.md) — production completion gates must require every named stage and fail closed on missing evidence or provenance.
+- [Composition reasoning authority](composition-reasoning-authority.md) — v2 decisions follow fixed musical precedence and bind seed plus evidence identity through performed output.
+- [Versioned musical vocabulary](versioned-musical-vocabulary.md) — every declared style/preference dimension must alter consumed musical decisions without changing legacy replay.
+- [Groove vocal-space evidence](groove-vocal-space-evidence.md) — arrangement space and measured voice are independent evidence; enforce both after performance timing.

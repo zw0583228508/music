@@ -1,0 +1,393 @@
+name: Release and attest Beat This
+
+on:
+  workflow_dispatch:
+    inputs:
+      resume_source_revision:
+        description: Immutable source revision whose existing activation branch should be resumed
+        required: false
+        type: string
+      resume_run_id:
+        description: Retained successful release run containing the original signed evidence
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: beat-this-production-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: inputs.resume_source_revision == ''
+    name: Deploy, attest, and propose Beat This activation
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: production
+    env:
+      MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+      MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
+      MUSIC_AI_WORKER_TOKEN: ${{ secrets.MUSIC_AI_WORKER_TOKEN }}
+    steps:
+      - name: Check out the immutable release source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Install the pinned Python tooling
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          python-version: "3.11"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+
+      - name: Install API dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Require a clean branch head
+        env:
+          RELEASE_BRANCH: ${{ github.ref_name }}
+          SOURCE_REVISION: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          git fetch origin "$RELEASE_BRANCH"
+          test "$(git rev-parse "origin/$RELEASE_BRANCH")" = "$SOURCE_REVISION"
+          git diff --quiet
+
+      - name: Install the candidate-only fail-closed identity placeholder
+        run: |
+          set -euo pipefail
+          mkdir -p promotion
+          cat > promotion/unpromoted-identity.json <<'JSON'
+          {"BEAT_THIS_MODAL_APP_ID":"unpromoted","BEAT_THIS_MODAL_DEPLOYMENT_ID":"unpromoted","BEAT_THIS_MODAL_FUNCTION_ID":"unpromoted"}
+          JSON
+          uv run modal secret create beat-this-candidate-deployment-identity-v1 \
+            --from-json promotion/unpromoted-identity.json --force
+          candidate_token="$(openssl rand -hex 32)"
+          echo "::add-mask::$candidate_token"
+          echo "BEAT_THIS_CANDIDATE_WORKER_TOKEN=$candidate_token" >> "$GITHUB_ENV"
+          CANDIDATE_TOKEN="$candidate_token" python - <<'PY'
+          import json, os
+          from pathlib import Path
+          Path("promotion/candidate-runtime.json").write_text(json.dumps({
+              "BEAT_THIS_WORKER_TOKEN": os.environ["CANDIDATE_TOKEN"],
+          }))
+          PY
+          uv run modal secret create beat-this-candidate-runtime \
+            --from-json promotion/candidate-runtime.json --force
+          rm -f promotion/candidate-runtime.json
+
+      - name: Deploy the exact non-production candidate revision
+        run: uv run python services/beat-this-worker/deploy.py --candidate
+
+      - name: Observe the candidate Modal identity
+        run: |
+          set -euo pipefail
+          uv run python services/beat-this-worker/release_modal.py observe \
+            --app-name beat-this-candidate \
+            --output promotion/candidate-metadata.json
+
+      - name: Install the isolated candidate identity
+        run: |
+          set -euo pipefail
+          uv run python services/beat-this-worker/release_modal.py install-identity \
+            --app-name beat-this-candidate \
+            --metadata promotion/candidate-metadata.json \
+            --identity-output promotion/candidate-identity.json \
+            --refresh-output promotion/candidate-container-refresh.json
+
+      - name: Capture candidate identity and real beat evidence
+        run: |
+          set -euo pipefail
+          uv run python services/beat-this-worker/release_modal.py capture \
+            --app-name beat-this-candidate \
+            --expected-identity promotion/candidate-identity.json \
+            --output promotion/candidate-release-evidence.json
+
+      - name: Recreate and verify the non-production candidate
+        run: |
+          set -euo pipefail
+          uv run python services/beat-this-worker/release_modal.py \
+            verify-candidate-refresh \
+            --evidence promotion/candidate-release-evidence.json \
+            --output promotion/candidate-refresh-health.json
+
+      - name: Deploy the exact production worker revision
+        run: uv run python services/beat-this-worker/deploy.py
+
+      - name: Observe the production Modal identity
+        run: |
+          set -euo pipefail
+          uv run python services/beat-this-worker/release_modal.py observe \
+            --app-name beat-this-worker \
+            --output promotion/production-metadata.json
+
+      - name: Install final production identity and refresh active containers
+        run: |
+          set -euo pipefail
+          uv run python services/beat-this-worker/release_modal.py install-identity \
+            --app-name beat-this-worker \
+            --metadata promotion/production-metadata.json \
+            --identity-output promotion/worker-identity.json \
+            --refresh-output promotion/container-refresh.json
+
+      - name: Capture final production identity and real beat evidence
+        env:
+          RELEASE_BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          uv run python services/beat-this-worker/release_modal.py capture \
+            --app-name beat-this-worker \
+            --release-branch "$RELEASE_BRANCH" \
+            --expected-identity promotion/worker-identity.json \
+            --output promotion/release-evidence.json
+
+      - name: Require final authenticated health
+        run: |
+          set -euo pipefail
+          uv run python services/beat-this-worker/release_modal.py verify-health \
+            --evidence promotion/release-evidence.json \
+            --output promotion/live-health.json
+
+      - name: Materialize or rotate the CI-only Ed25519 key
+        id: signing-key
+        env:
+          STANDARD_KEY: ${{ secrets.MUSIC_GPU_PROMOTION_PRIVATE_KEY }}
+          LEGACY_KEY: ${{ secrets.MUSIC_GPU_PROMOTION_SIGNING_KEY }}
+          GH_TOKEN: ${{ secrets.PROMOTION_SECRET_ADMIN_TOKEN }}
+        run: |
+          set -euo pipefail
+          key_path="$RUNNER_TEMP/beat-this-ed25519.pem"
+          if test -n "$STANDARD_KEY" || test -n "$LEGACY_KEY"; then
+            echo "key_file=" >> "$GITHUB_OUTPUT"
+          else
+            test -n "$GH_TOKEN"
+            openssl genpkey -algorithm Ed25519 -out "$key_path"
+            gh secret set MUSIC_GPU_PROMOTION_PRIVATE_KEY \
+              --repo "$GITHUB_REPOSITORY" < "$key_path"
+            echo "key_file=$key_path" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Sign only the health-bound promotion
+        env:
+          STANDARD_KEY: ${{ secrets.MUSIC_GPU_PROMOTION_PRIVATE_KEY }}
+          LEGACY_KEY: ${{ secrets.MUSIC_GPU_PROMOTION_SIGNING_KEY }}
+          KEY_FILE: ${{ steps.signing-key.outputs.key_file }}
+        run: |
+          set -euo pipefail
+          readarray -t fields < <(python - <<'PY'
+          import json
+          value = json.load(open("promotion/release-evidence.json"))
+          for key in ("modalAppId", "modalDeploymentId", "modalFunctionId",
+                      "modalImageId", "endpointOrigin", "sourceRevision",
+                      "sourceImageDigest"):
+              print(value[key])
+          PY
+          )
+          args=()
+          if test -n "$KEY_FILE"; then
+            args+=(--private-key-file "$KEY_FILE")
+          else
+            export MUSIC_GPU_PROMOTION_SIGNING_KEY="${STANDARD_KEY:-$LEGACY_KEY}"
+          fi
+          uv run python services/beat-this-worker/promote_modal.py \
+            --modal-app-id "${fields[0]}" \
+            --modal-deployment-id "${fields[1]}" \
+            --modal-function-id "${fields[2]}" \
+            --modal-image-id "${fields[3]}" \
+            --endpoint-origin "${fields[4]}" \
+            --source-revision "${fields[5]}" \
+            --source-image-digest "${fields[6]}" \
+            --release-evidence promotion/release-evidence.json \
+            --health-file promotion/live-health.json \
+            --output promotion/bundle.json \
+            --public-key-output promotion/public-key.pem \
+            "${args[@]}"
+          if test -n "$KEY_FILE"; then rm -f "$KEY_FILE"; fi
+
+      - name: Validate before changing canonical API records
+        run: |
+          set -euo pipefail
+          uv run python services/beat-this-worker/activate_promotion.py \
+            --bundle promotion/bundle.json \
+            --public-key promotion/public-key.pem \
+            --evidence promotion/release-evidence.json \
+            --refresh promotion/container-refresh.json \
+            --health promotion/live-health.json \
+            --api-output artifacts/api-server/src/lib/beatThisPromotion.generated.ts \
+            --release-output services/beat-this-worker/release-attestation.json
+          pnpm run typecheck:libs
+          pnpm --filter @workspace/api-server run typecheck
+          pnpm --filter @workspace/api-server run test:gpu-promotion
+
+      - name: Publish the verified activation pull request
+        id: activation
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_BRANCH: ${{ github.ref_name }}
+          SOURCE_REVISION: ${{ github.sha }}
+          RELEASE_ARTIFACT: beat-this-release-${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          git fetch origin "$RELEASE_BRANCH"
+          test "$(git rev-parse "origin/$RELEASE_BRANCH")" = "$SOURCE_REVISION"
+          git add \
+            artifacts/api-server/src/lib/beatThisPromotion.generated.ts \
+            services/beat-this-worker/release-attestation.json
+          git diff --cached --quiet && {
+            echo "The release produced no new canonical promotion record." >&2
+            exit 1
+          }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: activate verified Beat This release from $SOURCE_REVISION"
+
+          activation_branch="beat-this-activation/$SOURCE_REVISION"
+          git push origin "HEAD:refs/heads/$activation_branch"
+
+          evidence_sha256="$(sha256sum promotion/release-evidence.json | cut -d' ' -f1)"
+          bundle_sha256="$(sha256sum promotion/bundle.json | cut -d' ' -f1)"
+          cat > "$RUNNER_TEMP/beat-this-activation.md" <<EOF
+          ## Verified Beat This activation
+
+          This pull request is the only activation step. Merging it applies the
+          canonical API promotion without bypassing the release branch's review rules.
+
+          - Immutable source revision: \`$SOURCE_REVISION\`
+          - Signed bundle SHA-256: \`$bundle_sha256\`
+          - Release evidence SHA-256: \`$evidence_sha256\`
+          - Retained workflow artifact: \`$RELEASE_ARTIFACT\`
+          - Validation run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+
+          If review rejects or closes this proposal, the deployed worker is not made
+          canonical. Reopen or merge this same pull request to resume activation;
+          do not deploy a different worker revision.
+          EOF
+
+          pr_url="$(gh pr create \
+            --base "$RELEASE_BRANCH" \
+            --head "$activation_branch" \
+            --title "Activate verified Beat This release ${SOURCE_REVISION:0:12}" \
+            --body-file "$RUNNER_TEMP/beat-this-activation.md")"
+          echo "pull_request_url=$pr_url" >> "$GITHUB_OUTPUT"
+          {
+            echo "## Beat This activation awaits protected-branch review"
+            echo
+            echo "The worker and signed evidence were validated, but are not active until this pull request is merged:"
+            echo
+            echo "$pr_url"
+            echo
+            echo "A rejection is safe and resumable: reopen or merge the same pull request without redeploying another revision."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Retain public release and smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: beat-this-release-${{ github.run_id }}
+          path: promotion
+          if-no-files-found: warn
+          retention-days: 90
+
+  resume-activation:
+    if: inputs.resume_source_revision != ''
+    name: Resume a retained Beat This activation proposal
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require immutable resume inputs
+        env:
+          SOURCE_REVISION: ${{ inputs.resume_source_revision }}
+          RELEASE_RUN_ID: ${{ inputs.resume_run_id }}
+        run: |
+          set -euo pipefail
+          [[ "$SOURCE_REVISION" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$RELEASE_RUN_ID" =~ ^[1-9][0-9]*$ ]]
+
+      - name: Check out the existing source-revision activation branch
+        uses: actions/checkout@v4
+        with:
+          ref: beat-this-activation/${{ inputs.resume_source_revision }}
+          fetch-depth: 0
+
+      - name: Download the original retained release evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: beat-this-release-${{ inputs.resume_run_id }}
+          path: promotion
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.resume_run_id }}
+
+      - name: Authenticate retained evidence and verify the activation branch
+        id: retained
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_REVISION: ${{ inputs.resume_source_revision }}
+          RELEASE_RUN_ID: ${{ inputs.resume_run_id }}
+        run: |
+          set -euo pipefail
+          readarray -t run_fields < <(gh run view "$RELEASE_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json event,headBranch,headSha \
+            --jq '.event,.headBranch,.headSha')
+          test "${run_fields[0]}" = "workflow_dispatch"
+          test "${run_fields[2]}" = "$SOURCE_REVISION"
+          run_branch="${run_fields[1]}"
+          python services/beat-this-worker/activate_promotion.py \
+            --verify-existing \
+            --expected-source-revision "$SOURCE_REVISION" \
+            --repository . \
+            --retained-run-branch "$run_branch" \
+            --github-output "$GITHUB_OUTPUT" \
+            --bundle promotion/bundle.json \
+            --public-key promotion/public-key.pem \
+            --evidence promotion/release-evidence.json \
+            --refresh promotion/container-refresh.json \
+            --health promotion/live-health.json \
+            --api-output artifacts/api-server/src/lib/beatThisPromotion.generated.ts \
+            --release-output services/beat-this-worker/release-attestation.json
+
+      - name: Reopen the protected-branch activation proposal
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_REVISION: ${{ inputs.resume_source_revision }}
+          RELEASE_RUN_ID: ${{ inputs.resume_run_id }}
+          BASE_BRANCH: ${{ steps.retained.outputs.base_branch }}
+        run: |
+          set -euo pipefail
+          evidence_sha256="$(sha256sum promotion/release-evidence.json | cut -d' ' -f1)"
+          bundle_sha256="$(sha256sum promotion/bundle.json | cut -d' ' -f1)"
+          cat > "$RUNNER_TEMP/beat-this-activation.md" <<EOF
+          ## Verified Beat This activation
+
+          This pull request resumes the original retained release without another
+          worker deployment.
+
+          - Immutable source revision: \`$SOURCE_REVISION\`
+          - Signed bundle SHA-256: \`$bundle_sha256\`
+          - Release evidence SHA-256: \`$evidence_sha256\`
+          - Retained workflow artifact: \`beat-this-release-$RELEASE_RUN_ID\`
+          - Validation run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$RELEASE_RUN_ID
+          EOF
+          activation_head="$(git rev-parse HEAD)"
+          python services/beat-this-worker/resume_activation_pr.py \
+            --repository "$GITHUB_REPOSITORY" \
+            --base "$BASE_BRANCH" \
+            --head "beat-this-activation/$SOURCE_REVISION" \
+            --expected-head-oid "$activation_head" \
+            --title "Activate verified Beat This release ${SOURCE_REVISION:0:12}" \
+            --body-file "$RUNNER_TEMP/beat-this-activation.md"

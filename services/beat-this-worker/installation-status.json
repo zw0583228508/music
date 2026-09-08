@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "providers": {
+    "BEAT_THIS": {
+      "classification": "READY",
+      "evidence": {
+        "modelManifestSource": "services/beat-this-worker/model_manifest.json",
+        "packageVersion": "1.1.0",
+        "codeRevision": "350507bdf206a79d766604ee5842c03cb6defd6b",
+        "modelRevision": "b95c8ab0c58c2d9fcfd40508ae8dffbc05ac4f5c",
+        "checkpointSha256": "8c328b45f59d8dd3dff219253ff6a8d6482be57d0133a29140e2febbf8eb8331",
+        "sourceImageDigest": "sha256:0331219251e9a6995af8e27b2d49cd6a70e341956811094955a282f10bda96f4",
+        "canonicalEndpointEnvironmentSource": "shared environment:MUSIC_PROVIDER_BEAT_THIS_URL",
+        "promotionBundleEnvironmentSource": "shared environment:MUSIC_PROVIDER_BEAT_THIS_PROMOTION_BUNDLE",
+        "promotionPublicKeyEnvironmentSource": "shared environment:MUSIC_PROVIDER_BEAT_THIS_PROMOTION_PUBLIC_KEY",
+        "endpointConfigured": true,
+        "liveHealthObservedAt": "2026-09-06T09:12:00Z",
+        "liveHealthEndpointOrigin": "https://windot100--beat-this.modal.run",
+        "liveHealthStatus": "ready",
+        "liveHealthReadiness": {
+          "packageReady": true,
+          "assetReady": true,
+          "runtimeReady": true,
+          "checkpointReady": true,
+          "featureExecutionReady": true,
+          "smokeTested": true,
+          "gpuReady": true,
+          "identityReady": true
+        },
+        "modalAppId": "ap-PQ5CqhaR31JiEloxyPn8La",
+        "modalDeploymentId": "v5",
+        "modalFunctionId": "fu-KbPbWu24nJvCT8BqewUOR0",
+        "modalImageId": "im-4V16rk3pGnKOjo3rPHQML4",
+        "runtime": {
+          "python": "3.11.11",
+          "cudaImage": "nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04",
+          "cuda": "12.4.1",
+          "pytorch": "2.5.1+cu124",
+          "torchvision": "0.20.1+cu124",
+          "torchaudio": "2.5.1+cu124",
+          "torchIndexUrl": "https://download.pytorch.org/whl/cu124",
+          "transformers": "4.47.1",
+          "accelerate": "1.2.1"
+        },
+        "realSmoke": {
+          "fixtureSha256": "c62f093a57ba440a938cf449e105190ec04b812bd3e5c952eebbeea8e8015155",
+          "sourceSha256": "ae58781b9d3ac4b6e57aaf94a146cb04565ea1b4cc58cc99cdc41cb507274749",
+          "beatCount": 92,
+          "downbeatCount": 16,
+          "confidence": 0.945024,
+          "firstBeats": [0.0, 0.2, 0.52, 0.84, 1.18, 1.52, 1.84, 2.16],
+          "firstDownbeats": [0.0, 1.84, 3.82, 5.8, 7.8, 9.76, 10.74, 13.72]
+        },
+        "signedPromotionRecordPresent": true,
+        "promotionSignatureValidated": true,
+        "apiAttestationValidated": true
+      },
+      "blockers": []
+    }
+  }
+}

@@ -1,0 +1,4055 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API for the AI Music Production Studio
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: dashboard
+    description: Studio dashboard summaries
+  - name: projects
+    description: Song projects and analysis
+  - name: arrangements
+    description: Arrangement plans and generations
+  - name: studio
+    description: Tracks, artifacts, and copilot commands
+  - name: Auth
+    description: Browser authentication
+  - name: sources
+    description: Source upload, preprocessing, and Song Model generation
+  - name: providers
+    description: Music model registry and provider capability routing
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [dashboard]
+      summary: Get studio dashboard
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+  /instrument-packs:
+    get:
+      operationId: listLicensedInstrumentPacks
+      tags: [studio]
+      summary: List active, staged, and previously active licensed instrument packs
+      responses:
+        "200":
+          description: Licensed instrument pack catalog
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LicensedInstrumentPackCatalog"
+        "403":
+          description: Studio administrator access required
+  /instrument-packs/stage:
+    post:
+      operationId: stageLicensedInstrumentPack
+      tags: [studio]
+      summary: Upload and verify a licensed instrument pack candidate
+      description: Streams a licensed plugin/library and its preapproved native host to private worker storage, then returns only after canonical smoke verification succeeds.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - kind
+                - assetId
+                - identity
+                - licenseOwner
+                - licenseReference
+                - rendererIdentity
+                - assetFiles
+                - rendererFile
+              properties:
+                kind:
+                  type: string
+                  enum: [vst3, sfz]
+                assetId:
+                  type: string
+                  minLength: 1
+                identity:
+                  type: string
+                  minLength: 1
+                licenseOwner:
+                  type: string
+                  minLength: 1
+                licenseReference:
+                  type: string
+                  minLength: 1
+                rendererIdentity:
+                  type: string
+                  minLength: 1
+                assetFiles:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    format: binary
+                assetRelativePaths:
+                  type: array
+                  items:
+                    type: string
+                  description: Optional relative paths paired with assetFiles.
+                rendererFile:
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: Candidate passed checksum and canonical TrackModel smoke verification
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LicensedInstrumentPack"
+        "403":
+          description: Studio administrator access required
+        "422":
+          description: Candidate could not pass native renderer verification
+  /instrument-packs/{candidateId}/activate:
+    post:
+      operationId: activateLicensedInstrumentPack
+      tags: [studio]
+      summary: Atomically activate a verified licensed instrument pack
+      parameters:
+        - name: candidateId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Verified candidate is now active
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LicensedInstrumentPack"
+        "403":
+          description: Studio administrator access required
+        "409":
+          description: Candidate is not verified or changed after verification
+  /instrument-packs/history/{historyId}/activate:
+    post:
+      operationId: reactivateLicensedInstrumentPack
+      tags: [studio]
+      summary: Reactivate a previously verified licensed instrument pack
+      description: Revalidates the historical asset and native-host checksums against its original smoke evidence before atomically switching the active manifest.
+      parameters:
+        - name: historyId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Historical pack is now active
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LicensedInstrumentPack"
+        "403":
+          description: Studio administrator access required
+        "404":
+          description: Historical pack was not found
+        "409":
+          description: Historical bytes or smoke evidence no longer match
+  /auth/user:
+    get:
+      tags: [Auth]
+      operationId: getCurrentAuthUser
+      summary: Get the current authentication state
+      responses:
+        "200":
+          description: Authentication state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUserEnvelope"
+  /login:
+    get:
+      tags: [Auth]
+      operationId: beginBrowserLogin
+      summary: Start browser login
+      parameters:
+        - name: returnTo
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        "302": { description: Redirect to identity provider }
+  /callback:
+    get:
+      tags: [Auth]
+      operationId: handleBrowserLoginCallback
+      summary: Complete browser login
+      responses:
+        "302": { description: Redirect after login }
+  /logout:
+    get:
+      tags: [Auth]
+      operationId: logoutBrowserSession
+      summary: End browser session
+      parameters:
+        - name: returnTo
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        "302": { description: Redirect after logout }
+  /mobile-auth/token-exchange:
+    post:
+      tags: [Auth]
+      operationId: exchangeMobileAuthorizationCode
+      summary: Exchange a mobile authorization code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MobileTokenExchangeRequest"
+      responses:
+        "200":
+          description: Session token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MobileTokenExchangeSuccess"
+  /mobile-auth/logout:
+    post:
+      tags: [Auth]
+      operationId: logoutMobileSession
+      summary: Delete a mobile session
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LogoutSuccess"
+  /storage/uploads/request-url:
+    post:
+      tags: [sources]
+      operationId: requestSourceUploadUrl
+      summary: Request a protected direct-upload URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadUrlRequest"
+      responses:
+        "200":
+          description: Direct upload target
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadUrlResponse"
+        "401":
+          description: Login required
+  /projects:
+    get:
+      operationId: listProjects
+      tags: [projects]
+      summary: List music projects
+      responses:
+        "200":
+          description: Project list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+    post:
+      operationId: createProject
+      tags: [projects]
+      summary: Create a music project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectInput"
+      responses:
+        "201":
+          description: Created project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+  /projects/{projectId}:
+    get:
+      operationId: getProject
+      tags: [projects]
+      summary: Get project workspace data
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Project workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectWorkspace"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteProject
+      tags: [projects]
+      summary: Delete a music project and schedule private file cleanup
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Project deleted and private files cleaned up
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDeletion"
+        "202":
+          description: Project deleted; private file cleanup is incomplete and retryable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDeletion"
+        "401":
+          description: Login required
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /project-deletions/{deletionId}:
+    get:
+      operationId: getProjectDeletion
+      tags: [projects]
+      summary: Get project deletion cleanup status
+      parameters:
+        - $ref: "#/components/parameters/ProjectDeletionId"
+      responses:
+        "200":
+          description: Project deletion cleanup status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDeletion"
+        "401":
+          description: Login required
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /project-deletions/{deletionId}/retry:
+    post:
+      operationId: retryProjectDeletion
+      tags: [projects]
+      summary: Retry incomplete private file cleanup
+      parameters:
+        - $ref: "#/components/parameters/ProjectDeletionId"
+      responses:
+        "200":
+          description: Cleanup completed or was already complete
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDeletion"
+        "202":
+          description: Cleanup remains incomplete and can be retried
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDeletion"
+        "401":
+          description: Login required
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Cleanup is already in progress
+  /projects/{projectId}/analyze:
+    post:
+      operationId: analyzeProject
+      tags: [projects]
+      summary: Analyze the latest imported source recording
+      description: Creates and awaits a durable analysis attempt for the authenticated project owner.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalysisInput"
+      responses:
+        "200":
+          description: Completed analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Analysis"
+        "401":
+          description: Login required
+        "403":
+          description: Project is owned by another user
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: An analysis is already queued or running
+        "422":
+          description: Analysis completed with a failure
+  /projects/{projectId}/sources:
+    get:
+      operationId: listProjectSources
+      tags: [sources]
+      summary: List imported source recordings
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Source recordings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectSource"
+    post:
+      operationId: registerProjectSource
+      tags: [sources]
+      summary: Register an uploaded source and begin analysis
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterSourceInput"
+      responses:
+        "202":
+          description: Source accepted for processing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectSource"
+        "401":
+          description: Login required
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /projects/{projectId}/sources/{sourceId}/retry:
+    post:
+      operationId: retryProjectSourceAnalysis
+      tags: [sources]
+      summary: Retry a failed source analysis
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - name: sourceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "202":
+          description: Source accepted for another analysis attempt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectSource"
+        "400":
+          description: Invalid retry request
+        "401":
+          description: Login required
+        "403":
+          description: Forbidden
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Source analysis is already in progress
+  /projects/{projectId}/song-model:
+    get:
+      operationId: getProjectSongModel
+      tags: [sources]
+      summary: Get the latest canonical Song Model
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Latest Song Model
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SongModel"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      operationId: correctProjectSongModel
+      tags: [sources]
+      summary: Create a corrected Song Model version
+      description: Creates an auditable immutable revision of the latest Song Model and updates the project analysis summary atomically. Omitted fields remain unchanged.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SongModelCorrectionInput"
+      responses:
+        "200":
+          description: Corrected Song Model revision
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SongModel"
+        "400":
+          description: Invalid correction
+        "401":
+          description: Login required
+        "403":
+          description: Project is owned by another user
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /projects/{projectId}/analysis-jobs:
+    get:
+      operationId: listAnalysisJobs
+      tags: [sources]
+      summary: List durable analysis attempts for a project
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Analysis job attempts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AnalysisJob"
+  /providers:
+    get:
+      operationId: listMusicProviders
+      tags: [providers]
+      summary: List registered music providers and availability
+      responses:
+        "200":
+          description: Model registry
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MusicProvider"
+  /projects/{projectId}/arrangements:
+    get:
+      operationId: listArrangements
+      tags: [arrangements]
+      summary: List arrangement versions
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Arrangement versions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Arrangement"
+    post:
+      operationId: createArrangement
+      tags: [arrangements]
+      summary: Create an arrangement plan
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArrangementInput"
+      responses:
+        "201":
+          description: Created arrangement
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Arrangement"
+  /arrangements/{arrangementId}:
+    patch:
+      operationId: updateArrangement
+      tags: [arrangements]
+      summary: Update arrangement controls
+      parameters:
+        - $ref: "#/components/parameters/ArrangementId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArrangementUpdate"
+      responses:
+        "200":
+          description: Updated arrangement
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Arrangement"
+        "400":
+          description: Invalid arrangement update or missing expected version
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Arrangement changed before the update could be applied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /arrangements/{arrangementId}/revisions:
+    get:
+      operationId: listArrangementRevisions
+      tags: [arrangements]
+      summary: List immutable arrangement revisions
+      parameters:
+        - $ref: "#/components/parameters/ArrangementId"
+      responses:
+        "200":
+          description: Arrangement revision history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ArrangementRevision"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /arrangements/{arrangementId}/revisions/{revisionId}/restore:
+    post:
+      operationId: restoreArrangementRevision
+      tags: [arrangements]
+      summary: Restore a revision as a new arrangement version
+      parameters:
+        - $ref: "#/components/parameters/ArrangementId"
+        - name: revisionId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RestoreArrangementRevisionInput"
+      responses:
+        "200":
+          description: Restored arrangement
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Arrangement"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Arrangement changed before restore could be applied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /arrangements/{arrangementId}/generate:
+    post:
+      operationId: generateArrangement
+      tags: [arrangements]
+      summary: Queue provider-backed arrangement generation
+      parameters:
+        - $ref: "#/components/parameters/ArrangementId"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerationInput"
+      responses:
+        "202":
+          description: Generation job accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerationJob"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          description: Generation blocked because the Song Model is missing, invalid, flagged, or unreliable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerationBlockedError"
+        "503":
+          description: No compatible provider worker is available
+  /generation-jobs/{jobId}:
+    get:
+      operationId: getGenerationJob
+      tags: [arrangements]
+      summary: Get live provider generation progress
+      parameters:
+        - $ref: "#/components/parameters/GenerationJobId"
+      responses:
+        "200":
+          description: Current generation job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerationJob"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /generation-jobs/{jobId}/cancel:
+    post:
+      operationId: cancelGenerationJob
+      tags: [arrangements]
+      summary: Request cancellation of a queued or running generation job
+      parameters:
+        - $ref: "#/components/parameters/GenerationJobId"
+      responses:
+        "200":
+          description: Cancellation state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerationJob"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: The job is already terminal
+  /generation-jobs/{jobId}/retry:
+    post:
+      operationId: retryGenerationJob
+      tags: [arrangements]
+      summary: Retry a recoverable failed generation job
+      parameters:
+        - $ref: "#/components/parameters/GenerationJobId"
+      responses:
+        "202":
+          description: Retry accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerationJob"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: The job is not retryable or exhausted its attempts
+  /generation-jobs/{jobId}/candidates:
+    get:
+      operationId: listGenerationCandidates
+      tags: [arrangements]
+      summary: List ranked provider generation candidates
+      parameters:
+        - $ref: "#/components/parameters/GenerationJobId"
+      responses:
+        "200":
+          description: Ranked generated candidates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GenerationCandidate"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /generation-candidates/{candidateId}/select:
+    post:
+      operationId: selectGenerationCandidate
+      tags: [arrangements]
+      summary: Select a validated candidate as a new arrangement version
+      parameters:
+        - $ref: "#/components/parameters/GenerationCandidateId"
+      responses:
+        "200":
+          description: Newly selected arrangement version
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Arrangement"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /generation-candidates/{candidateId}/repair:
+    post:
+      operationId: repairGenerationCandidate
+      tags: [arrangements]
+      summary: Queue a bounded repair from a concrete Music Critic finding
+      parameters:
+        - $ref: "#/components/parameters/GenerationCandidateId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CandidateRepairInput"
+      responses:
+        "202":
+          description: Bounded repair job accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerationJob"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          description: The critic finding is incomplete or does not match the candidate
+  /music-providers:
+    get:
+      operationId: listGenerationProviders
+      tags: [arrangements]
+      summary: List generation provider capabilities and availability
+      responses:
+        "200":
+          description: Generation provider catalog
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GenerationProvider"
+  /arrangements/{arrangementId}/export:
+    post:
+      operationId: exportArrangement
+      tags: [studio]
+      deprecated: true
+      summary: Compatibility alias for the durable project export pipeline
+      parameters:
+        - $ref: "#/components/parameters/ArrangementId"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExportInput"
+      responses:
+        "200":
+          description: Completed durable export package
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExportPackage"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /projects/{projectId}/tracks:
+    get:
+      operationId: listTracks
+      tags: [studio]
+      summary: List project tracks
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Track list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Track"
+  /projects/{projectId}/artifacts:
+    get:
+      operationId: listArtifacts
+      tags: [studio]
+      summary: List project artifacts
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Artifact list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Artifact"
+  /projects/{projectId}/export:
+    post:
+      operationId: createProjectExport
+      tags: [studio]
+      summary: Queue a versioned project export render
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExportInput"
+      responses:
+        "202":
+          description: Export render queued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductionJob"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: An approved mix/master revision is required
+  /projects/{projectId}/mix-master-revisions:
+    get:
+      operationId: listMixMasterRevisions
+      tags: [studio]
+      summary: List immutable mix and master revisions
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Revisions ordered newest first
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/MixMasterRevision" }
+    post:
+      operationId: createMixMasterRevision
+      tags: [studio]
+      summary: Render an immutable WAV audition revision
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MixMasterRevisionInput" }
+      responses:
+        "201":
+          description: Rendered revision
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MixMasterRevision" }
+        "409": { description: Arrangement is unavailable or has no renderable tracks }
+  /projects/{projectId}/mix-master-revisions/{revisionId}/approve:
+    post:
+      operationId: approveMixMasterRevision
+      tags: [studio]
+      summary: Approve an immutable revision for export
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - name: revisionId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Approved revision
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MixMasterRevision" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /producer-decisions:
+    get:
+      operationId: listProducerDecisions
+      tags: [studio]
+      summary: List the authenticated producer's private immutable decisions
+      parameters:
+        - name: projectId
+          in: query
+          required: false
+          schema: { type: string }
+        - name: limit
+          in: query
+          required: false
+          schema: { type: number, minimum: 1, maximum: 100, default: 50 }
+      responses:
+        "200":
+          description: Private append-only decision history
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/ProducerDecision" }
+    post:
+      operationId: createProducerDecision
+      tags: [studio]
+      summary: Append explicit producer feedback to the private ledger
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProducerDecisionInput" }
+      responses:
+        "201":
+          description: Appended private decision
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProducerDecision" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /producer-preferences:
+    get:
+      operationId: getProducerPreferences
+      tags: [studio]
+      summary: Get private producer preference and learning controls
+      responses:
+        "200":
+          description: Private preference controls
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProducerPreferences" }
+    put:
+      operationId: updateProducerPreferences
+      tags: [studio]
+      summary: Replace private producer preference and learning controls
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProducerPreferencesInput" }
+      responses:
+        "200":
+          description: Updated private preference controls
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProducerPreferences" }
+  /producer-calibrations:
+    get:
+      operationId: listProducerCalibrations
+      tags: [studio]
+      summary: List private immutable calibration versions
+      responses:
+        "200":
+          description: Calibration version history
+          content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/ProducerCalibration" } } } }
+    post:
+      operationId: promoteProducerCalibration
+      tags: [studio]
+      summary: Promote a measurably better held-out calibration
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/ProducerCalibrationInput" } } }
+      responses:
+        "201":
+          description: Promoted immutable calibration
+          content: { application/json: { schema: { $ref: "#/components/schemas/ProducerCalibration" } } }
+        "409": { description: Held-out evaluation did not measurably improve }
+  /producer-calibrations/evaluate:
+    post:
+      operationId: evaluateProducerCalibration
+      tags: [studio]
+      summary: Deterministically evaluate proposed calibration on held-out feedback
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/ProducerCalibrationInput" } } }
+      responses:
+        "200":
+          description: Held-out agreement
+          content: { application/json: { schema: { $ref: "#/components/schemas/ProducerCalibrationEvaluation" } } }
+  /producer-calibrations/{calibrationId}/rollback:
+    post:
+      operationId: rollbackProducerCalibration
+      tags: [studio]
+      summary: Activate a historical calibration without modifying history
+      parameters:
+        - name: calibrationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Historical calibration activated
+          content: { application/json: { schema: { $ref: "#/components/schemas/ProducerCalibration" } } }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /production-jobs/{jobId}:
+    get:
+      operationId: getProductionJob
+      tags: [studio]
+      summary: Get an authenticated production job
+      parameters:
+        - $ref: "#/components/parameters/ProductionJobId"
+      responses:
+        "200":
+          description: Production job status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductionJob"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /production-jobs/{jobId}/cancel:
+    post:
+      operationId: cancelProductionJob
+      tags: [studio]
+      summary: Cancel a queued or running production job
+      parameters:
+        - $ref: "#/components/parameters/ProductionJobId"
+      responses:
+        "202":
+          description: Cancellation accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductionJob"
+  /production-jobs/{jobId}/retry:
+    post:
+      operationId: retryProductionJob
+      tags: [studio]
+      summary: Retry a recoverable failed production job
+      parameters:
+        - $ref: "#/components/parameters/ProductionJobId"
+      responses:
+        "202":
+          description: Retry accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductionJob"
+  /exports/{exportId}/download:
+    get:
+      operationId: downloadProjectExport
+      tags: [studio]
+      summary: Download a project export ZIP
+      parameters:
+        - $ref: "#/components/parameters/ExportId"
+      responses:
+        "200":
+          description: ZIP archive containing playable project files
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /projects/{projectId}/copilot:
+    post:
+      operationId: runCopilot
+      tags: [studio]
+      summary: Interpret an arranger copilot command
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CopilotInput"
+      responses:
+        "200":
+          description: Parsed copilot operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CopilotResult"
+components:
+  parameters:
+    ProjectId:
+      name: projectId
+      in: path
+      required: true
+      schema:
+        type: string
+    ProjectDeletionId:
+      name: deletionId
+      in: path
+      required: true
+      schema:
+        type: string
+    ArrangementId:
+      name: arrangementId
+      in: path
+      required: true
+      schema:
+        type: string
+    SourceId:
+      name: sourceId
+      in: path
+      required: true
+      schema:
+        type: string
+    GenerationJobId:
+      name: jobId
+      in: path
+      required: true
+      schema:
+        type: string
+    ProductionJobId:
+      name: jobId
+      in: path
+      required: true
+      schema:
+        type: string
+    GenerationCandidateId:
+      name: candidateId
+      in: path
+      required: true
+      schema:
+        type: string
+    ExportId:
+      name: exportId
+      in: path
+      required: true
+      schema:
+        type: string
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+  schemas:
+    ProducerDecision:
+      type: object
+      required: [id, projectId, domain, kind, source, rating, reasons, context, version, createdAt]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        domain: { type: string, enum: [candidate, repair, arrangement, performance, mix, master] }
+        kind: { type: string, enum: [rating, comparison, approval, rejection, edit, restore, repair_requested, repair_completed] }
+        source: { type: string, enum: [explicit_feedback, inferred_behavior, objective_evidence] }
+        rating: { type: [number, "null"], minimum: 1, maximum: 5 }
+        reasons: { type: array, items: { type: string }, maxItems: 20 }
+        context:
+          type: object
+          required: [subjectId, modelVersion, evidenceIds, lineageIds]
+          properties:
+            subjectId: { type: [string, "null"] }
+            comparedSubjectId: { type: [string, "null"] }
+            modelVersion: { type: [string, "null"] }
+            evidenceIds: { type: array, items: { type: string } }
+            lineageIds: { type: array, items: { type: string } }
+            evidenceSha256: { type: [string, "null"] }
+        version: { type: number, minimum: 1 }
+        createdAt: { type: string, format: date-time }
+    ProducerDecisionInput:
+      type: object
+      required: [projectId, domain, kind]
+      properties:
+        projectId: { type: string, minLength: 1 }
+        domain: { type: string, enum: [candidate, repair, arrangement, performance, mix, master] }
+        kind: { type: string, enum: [rating, comparison, approval, rejection, edit, restore, repair_requested, repair_completed] }
+        subjectId: { type: string, maxLength: 200 }
+        comparedSubjectId: { type: string, maxLength: 200 }
+        rating: { type: number, minimum: 1, maximum: 5 }
+        reasons: { type: array, items: { type: string, maxLength: 500 }, maxItems: 20 }
+    ProducerPreferences:
+      type: object
+      required: [learningEnabled, inferredBehaviorEnabled, updatedAt]
+      properties:
+        learningEnabled: { type: boolean }
+        inferredBehaviorEnabled: { type: boolean }
+        updatedAt: { type: string, format: date-time }
+    ProducerPreferencesInput:
+      type: object
+      required: [learningEnabled, inferredBehaviorEnabled]
+      properties:
+        learningEnabled: { type: boolean }
+        inferredBehaviorEnabled: { type: boolean }
+    ProducerCalibrationInput:
+      type: object
+      required: [rankingWeight, criticWeight]
+      properties:
+        rankingWeight: { type: number, minimum: 0, maximum: 1 }
+        criticWeight: { type: number, minimum: 0, maximum: 1 }
+    ProducerCalibrationEvaluation:
+      type: object
+      required: [examples, heldOutAgreement]
+      properties:
+        examples: { type: number }
+        heldOutAgreement: { type: number }
+    ProducerCalibration:
+      type: object
+      required: [id, version, rankingWeight, criticWeight, heldOutAgreement, baselineAgreement, active, createdAt]
+      properties:
+        id: { type: string }
+        version: { type: number }
+        rankingWeight: { type: number }
+        criticWeight: { type: number }
+        heldOutAgreement: { type: number }
+        baselineAgreement: { type: number }
+        active: { type: boolean }
+        createdAt: { type: string, format: date-time }
+    LicensedInstrumentSmokeEvidence:
+      type: object
+      required: [assetId, sha256, rendererIdentity, rendererSha256, trackModelRendered, audible, canonicalSensitivity, nativeHostAttested, outputSha256, pitchVariantSha256, expressionVariantSha256, peak, sampleRate, durationSeconds, format]
+      properties:
+        assetId: { type: string }
+        sha256: { type: string }
+        rendererIdentity: { type: string }
+        rendererSha256: { type: string }
+        trackModelRendered: { type: boolean }
+        audible: { type: boolean }
+        canonicalSensitivity: { type: boolean }
+        nativeHostAttested: { type: boolean }
+        outputSha256: { type: string }
+        pitchVariantSha256: { type: string }
+        expressionVariantSha256: { type: string }
+        peak: { type: number }
+        sampleRate: { type: number }
+        durationSeconds: { type: number }
+        format: { type: string }
+    LicensedInstrumentPack:
+      type: object
+      required: [status]
+      properties:
+        candidateId: { type: string }
+        historyId: { type: string }
+        kind: { type: string, enum: [vst3, sfz] }
+        assetId: { type: string }
+        id: { type: string }
+        identity: { type: string }
+        licenseOwner: { type: string }
+        licenseReference: { type: string }
+        rendererIdentity: { type: string }
+        sha256: { type: string }
+        rendererSha256: { type: string }
+        status: { type: string, enum: [unavailable, verified, active] }
+        smokeEvidence:
+          $ref: "#/components/schemas/LicensedInstrumentSmokeEvidence"
+        createdAt: { type: string }
+        activatedAt: { type: string }
+        deactivatedAt: { type: string }
+        unavailableReason: { type: string }
+    LicensedInstrumentPackCatalog:
+      type: object
+      required: [active, candidates, history]
+      properties:
+        active:
+          type: object
+          required: [vst3, sfz]
+          properties:
+            vst3:
+              $ref: "#/components/schemas/LicensedInstrumentPack"
+            sfz:
+              $ref: "#/components/schemas/LicensedInstrumentPack"
+        candidates:
+          type: array
+          items:
+            $ref: "#/components/schemas/LicensedInstrumentPack"
+        history:
+          type: object
+          required: [vst3, sfz]
+          properties:
+            vst3:
+              type: array
+              items:
+                $ref: "#/components/schemas/LicensedInstrumentPack"
+            sfz:
+              type: array
+              items:
+                $ref: "#/components/schemas/LicensedInstrumentPack"
+    AuthUser:
+      type: object
+      required: [id, email, firstName, lastName, profileImageUrl]
+      properties:
+        id: { type: string }
+        email: { type: ["string", "null"] }
+        firstName: { type: ["string", "null"] }
+        lastName: { type: ["string", "null"] }
+        profileImageUrl: { type: ["string", "null"] }
+    AuthUserEnvelope:
+      type: object
+      required: [user]
+      properties:
+        user:
+          oneOf:
+            - $ref: "#/components/schemas/AuthUser"
+            - type: "null"
+    MobileTokenExchangeRequest:
+      type: object
+      required: [code, code_verifier, redirect_uri, state]
+      properties:
+        code: { type: string, minLength: 1 }
+        code_verifier: { type: string, minLength: 1 }
+        redirect_uri: { type: string, minLength: 1 }
+        state: { type: string, minLength: 1 }
+        nonce: { type: string }
+    MobileTokenExchangeSuccess:
+      type: object
+      required: [token]
+      properties:
+        token: { type: string }
+    LogoutSuccess:
+      type: object
+      required: [success]
+      properties:
+        success: { type: boolean }
+    UploadUrlRequest:
+      type: object
+      required: [projectId, name, size, contentType]
+      properties:
+        projectId: { type: string, minLength: 1 }
+        name: { type: string, minLength: 1 }
+        size: { type: number, minimum: 1, maximum: 524288000 }
+        contentType: { type: string, minLength: 1 }
+    UploadUrlResponse:
+      type: object
+      required: [uploadURL, objectPath, metadata]
+      properties:
+        uploadURL: { type: string }
+        objectPath: { type: string }
+        metadata:
+          $ref: "#/components/schemas/UploadUrlRequest"
+    RegisterSourceInput:
+      type: object
+      required: [objectPath, name, size, contentType, sourceType]
+      properties:
+        objectPath: { type: string, minLength: 1 }
+        name: { type: string, minLength: 1 }
+        size: { type: number, minimum: 1, maximum: 524288000 }
+        contentType: { type: string, minLength: 1 }
+        sourceType:
+          type: string
+          enum: [FULL_SONG, VOCAL_ONLY, SOLO_INSTRUMENT, INSTRUMENTAL, MIDI, VIDEO]
+    AnalysisAttempt:
+      type: object
+      required: [id, sourceId, attemptNumber, status, stage, progress, createdAt, heartbeatAt]
+      properties:
+        id: { type: string }
+        sourceId: { type: string }
+        attemptNumber: { type: number }
+        status:
+          type: string
+          enum: [queued, running, succeeded, failed, interrupted]
+        stage:
+          type: string
+          enum: [queued, preprocessing, probing, analyzing, persisting, complete]
+        progress: { type: number, minimum: 0, maximum: 100 }
+        error: { type: ["string", "null"] }
+        startedAt: { type: ["string", "null"] }
+        completedAt: { type: ["string", "null"] }
+        heartbeatAt: { type: string }
+        createdAt: { type: string }
+    ProjectSource:
+      type: object
+      required: [id, projectId, name, size, contentType, sourceType, status, progress, attempts, createdAt]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        name: { type: string }
+        size: { type: number }
+        contentType: { type: string }
+        sourceType:
+          type: string
+          enum: [FULL_SONG, VOCAL_ONLY, SOLO_INSTRUMENT, INSTRUMENTAL, MIDI, VIDEO]
+        status:
+          type: string
+          enum: [queued, preprocessing, analyzing, ready, failed]
+        progress: { type: number, minimum: 0, maximum: 100 }
+        durationSeconds: { type: ["number", "null"] }
+        sampleRate: { type: ["number", "null"] }
+        channels: { type: ["number", "null"] }
+        error: { type: ["string", "null"] }
+        attempts:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnalysisAttempt"
+        createdAt: { type: string }
+    SongModel:
+      type: object
+      required: [id, projectId, sourceId, version, status, contractVersion, validation, fusion, audio, analysisStartSeconds, analysisDurationSeconds, analysisCoverage, tempoMap, meterMap, keyMap, beats, bars, melody, bass, chords, sections, energy, waveform, stems, dynamics, sourceStems, vocalEvidence, vocalIntelligence, lyrics, confidenceByField, providerProvenance, fieldStatus, provenance, providers, confidence, createdAt]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        sourceId: { type: string }
+        version: { type: number }
+        status:
+          type: string
+          enum: [ready]
+        contractVersion:
+          $ref: "#/components/schemas/SongModelContractVersion"
+        timebase:
+          $ref: "#/components/schemas/CanonicalTimebase"
+        validation:
+          $ref: "#/components/schemas/SongModelValidation"
+        fusion:
+          $ref: "#/components/schemas/SongModelFusion"
+        audio:
+          $ref: "#/components/schemas/SongModelAudio"
+        analysisStartSeconds: { type: number, minimum: 0 }
+        analysisDurationSeconds: { type: number, minimum: 0, maximum: 300 }
+        analysisCoverage: { type: number, minimum: 0, maximum: 1 }
+        tempoMap:
+          type: array
+          items:
+            $ref: "#/components/schemas/TempoEvent"
+        meterMap:
+          type: array
+          items:
+            $ref: "#/components/schemas/MeterEvent"
+        keyMap:
+          type: array
+          items:
+            $ref: "#/components/schemas/KeyEvent"
+        beats:
+          type: array
+          items:
+            $ref: "#/components/schemas/BeatEvent"
+        bars:
+          type: array
+          items:
+            $ref: "#/components/schemas/BarEvent"
+        melody:
+          type: array
+          items:
+            $ref: "#/components/schemas/NoteEvent"
+        bass:
+          type: array
+          description: Observed bass evidence. An empty array means no provider bass evidence was available.
+          items:
+            $ref: "#/components/schemas/BassEvidenceEvent"
+        chords:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChordEvent"
+        sections:
+          type: array
+          items:
+            $ref: "#/components/schemas/Section"
+        energy:
+          type: array
+          items: { type: number }
+        waveform:
+          type: array
+          items: { type: number }
+        stems:
+          type: array
+          items:
+            $ref: "#/components/schemas/SongModelStem"
+        dynamics:
+          type: array
+          items: { type: number }
+        sourceStems:
+          type: array
+          items:
+            $ref: "#/components/schemas/SourceStem"
+        vocalEvidence:
+          $ref: "#/components/schemas/VocalEvidence"
+        vocalIntelligence:
+          $ref: "#/components/schemas/VocalIntelligence"
+        lyrics:
+          type: array
+          items:
+            $ref: "#/components/schemas/LyricEvent"
+        confidenceByField:
+          type: object
+          additionalProperties: { type: number }
+        providerProvenance:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProviderProvenance"
+        rhythmEvidence:
+          type: array
+          items:
+            type: object
+            required: [provider, version, beats, downbeats, tempoBpm]
+            properties:
+              provider: { type: string, enum: [MADMOM] }
+              version: { type: string }
+              beats: { type: array, items: { type: number, minimum: 0 } }
+              downbeats: { type: array, items: { type: number, minimum: 0 } }
+              tempoBpm: { type: number, minimum: 20, maximum: 400 }
+        timingEvidence:
+          type: array
+          items:
+            type: object
+            required: [provider, version, events]
+            properties:
+              provider: { type: string, enum: [SHEETSAGE] }
+              version: { type: string }
+              events:
+                type: array
+                items:
+                  type: object
+                  required: [start, end, beat]
+                  properties:
+                    start: { type: number, minimum: 0 }
+                    end: { type: number, minimum: 0 }
+                    beat: { type: number }
+        pitchEvidence:
+          type: array
+          items:
+            type: object
+            required: [provider, version, sourceStem, frames]
+            properties:
+              provider: { type: string, enum: [TORCHCREPE] }
+              version: { type: string }
+              sourceStem: { type: string }
+              frames:
+                type: array
+                items:
+                  type: object
+                  required: [time, frequencyHz, midiPitch, periodicity, voiced, confidence]
+                  properties:
+                    time: { type: number, minimum: 0 }
+                    frequencyHz: { type: number, minimum: 0 }
+                    midiPitch: { type: ["number", "null"] }
+                    periodicity: { type: number, minimum: 0, maximum: 1 }
+                    voiced: { type: boolean }
+                    confidence: { type: number, minimum: 0, maximum: 1 }
+        keyEvidence:
+          type: array
+          items:
+            type: object
+            required: [provider, version, key, scale, confidence, hpcp]
+            properties:
+              provider: { type: string, enum: [ESSENTIA] }
+              version: { type: string }
+              key: { type: string }
+              scale: { type: string }
+              confidence: { type: number, minimum: 0, maximum: 1 }
+              hpcp:
+                type: array
+                minItems: 12
+                maxItems: 12
+                items: { type: number, minimum: 0 }
+        loudness:
+          description: pyloudnorm evidence. samplePeak is linear sample peak, not true peak.
+          oneOf:
+            - type: object
+              required: [provider, version, integratedLUFS, loudnessRange, samplePeak]
+              properties:
+                provider: { type: string, enum: [PYLOUDNORM] }
+                version: { type: string }
+                integratedLUFS: { type: number }
+                loudnessRange: { type: number, minimum: 0 }
+                samplePeak: { type: number, minimum: 0 }
+            - type: "null"
+        fieldStatus:
+          $ref: "#/components/schemas/SongModelFieldStatus"
+        provenance:
+          $ref: "#/components/schemas/SongModelProvenance"
+        providers:
+          type: array
+          items: { type: string }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        createdAt: { type: string }
+        parentModelId: { type: ["string", "null"] }
+        correction:
+          oneOf:
+            - $ref: "#/components/schemas/SongModelCorrection"
+            - type: "null"
+    SongModelCorrection:
+      type: object
+      required: [correctedBy, correctedAt, fields]
+      properties:
+        correctedBy: { type: string }
+        correctedAt: { type: string }
+        fields:
+          type: array
+          items:
+            type: string
+            enum: [bpm, key, meter, sections]
+    SongModelContractVersion:
+      type: string
+      enum: ["1.0", "2.0"]
+    CanonicalTimebase:
+      type: object
+      required: [ppq, originSeconds, coordinateSystem]
+      properties:
+        ppq: { type: number, enum: [960] }
+        originSeconds: { type: number, enum: [0] }
+        coordinateSystem: { type: string, enum: [seconds+ticks] }
+    CanonicalTimeCoordinate:
+      type: object
+      required: [seconds, tick, beat, bar, beatInBar, beatFraction]
+      properties:
+        seconds: { type: number, minimum: 0 }
+        tick: { type: number, minimum: 0 }
+        beat: { type: number, minimum: 1 }
+        bar: { type: number, minimum: 1 }
+        beatInBar: { type: number, minimum: 1 }
+        beatFraction: { type: number, minimum: 0, exclusiveMaximum: 1 }
+    CanonicalTimeRange:
+      type: object
+      required: [start, end]
+      properties:
+        start:
+          $ref: "#/components/schemas/CanonicalTimeCoordinate"
+        end:
+          $ref: "#/components/schemas/CanonicalTimeCoordinate"
+    SongModelValidation:
+      type: object
+      required: [status, issues]
+      properties:
+        status:
+          type: string
+          enum: [accepted, flagged]
+        issues:
+          type: array
+          items:
+            $ref: "#/components/schemas/SongModelValidationIssue"
+    SongModelValidationIssue:
+      type: object
+      required: [code, severity, path, message]
+      properties:
+        code: { type: string }
+        severity:
+          type: string
+          enum: [error, warning]
+        path: { type: string }
+        message: { type: string }
+        provider: { type: string }
+    SongModelFusion:
+      type: object
+      required: [selectedProvider, confidence, decisions]
+      properties:
+        selectedProvider: { type: ["string", "null"] }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        decisions:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/ProviderFusionDecision"
+    ProviderFusionDecision:
+      type: object
+      required: [provider, status, confidence, compatibility, issues]
+      properties:
+        provider: { type: string }
+        status:
+          type: string
+          enum: [selected, accepted, flagged, rejected]
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        compatibility: { type: number, minimum: 0, maximum: 1 }
+        issues:
+          type: array
+          items:
+            $ref: "#/components/schemas/SongModelValidationIssue"
+    SongModelCorrectionInput:
+      type: object
+      minProperties: 1
+      required: [baseVersion]
+      properties:
+        baseVersion: { type: number, minimum: 1 }
+        bpm: { type: number, minimum: 20, maximum: 400 }
+        key: { type: string, minLength: 1, maxLength: 80 }
+        meter:
+          type: string
+          pattern: '^[1-9][0-9]*/[1-9][0-9]*$'
+        sections:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/SectionCorrection"
+    SectionCorrection:
+      type: object
+      required: [name, startBar, endBar]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 120 }
+        startBar: { type: number, minimum: 1 }
+        endBar: { type: number, minimum: 1 }
+    SongModelAudio:
+      type: object
+      required: [name, contentType, size, durationSeconds, sampleRate, channels, proxyObjectPath, proxyContentType, analysisStartSeconds, analysisDurationSeconds, analysisCoverage]
+      properties:
+        name: { type: string }
+        contentType: { type: string }
+        size: { type: number, minimum: 1 }
+        durationSeconds: { type: number, exclusiveMinimum: 0 }
+        sampleRate: { type: number, minimum: 1 }
+        channels: { type: number, minimum: 1 }
+        proxyObjectPath: { type: ["string", "null"] }
+        proxyContentType: { type: ["string", "null"] }
+        analysisStartSeconds: { type: number }
+        analysisDurationSeconds: { type: number }
+        analysisCoverage:
+          type: string
+          enum: [full, representative]
+    SongModelStem:
+      type: object
+      required: [name, role, source, channels, confidence]
+      properties:
+        name: { type: string }
+        role: { type: string }
+        source: { type: string }
+        channels: { type: number, minimum: 1 }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+    TempoEvent:
+      type: object
+      required: [time, bpm, confidence]
+      properties:
+        time: { type: number }
+        bpm: { type: number, minimum: 30, maximum: 300 }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        coordinates:
+          $ref: "#/components/schemas/CanonicalTimeCoordinate"
+    MeterEvent:
+      type: object
+      required: [bar, meter, confidence]
+      properties:
+        bar: { type: number }
+        meter: { type: string }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        coordinates:
+          $ref: "#/components/schemas/CanonicalTimeCoordinate"
+    KeyEvent:
+      type: object
+      required: [time, key, confidence]
+      properties:
+        time: { type: number }
+        key: { type: string }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        coordinates:
+          $ref: "#/components/schemas/CanonicalTimeCoordinate"
+    BeatEvent:
+      type: object
+      required: [time, beat, bar, confidence]
+      properties:
+        time: { type: number }
+        beat: { type: number }
+        bar: { type: number }
+        confidence: { type: number }
+        coordinates:
+          $ref: "#/components/schemas/CanonicalTimeCoordinate"
+    BarEvent:
+      type: object
+      required: [bar, start, end, beats, confidence]
+      properties:
+        bar: { type: number }
+        start: { type: number }
+        end: { type: number }
+        beats: { type: number }
+        confidence: { type: number }
+        coordinates:
+          $ref: "#/components/schemas/CanonicalTimeRange"
+    SourceStem:
+      type: object
+      required: [role, objectPath, provider, confidence]
+      properties:
+        role: { type: string }
+        objectPath: { type: string }
+        provider: { type: string }
+        confidence: { type: number }
+        checksum: { type: string, pattern: '^[a-fA-F0-9]{64}$' }
+    VocalEvidence:
+      type: object
+      required: [status, reason, provenance, sampleRate, channels, frameSizeSamples, thresholds, observedVoicedWindows, observedSilentWindows]
+      properties:
+        status:
+          type: string
+          enum: [detected, low_confidence, not_available, failed]
+        reason: { type: ["string", "null"] }
+        provenance:
+          oneOf:
+            - $ref: "#/components/schemas/VocalStemProvenance"
+            - type: "null"
+        sampleRate: { type: ["number", "null"], minimum: 1 }
+        channels: { type: ["number", "null"], minimum: 1 }
+        frameSizeSamples: { type: ["number", "null"], minimum: 1 }
+        thresholds:
+          oneOf:
+            - $ref: "#/components/schemas/VocalActivityThresholds"
+            - type: "null"
+        observedVoicedWindows:
+          type: array
+          items: { $ref: "#/components/schemas/VocalObservedWindow" }
+        observedSilentWindows:
+          type: array
+          items: { $ref: "#/components/schemas/VocalObservedWindow" }
+    VocalStemProvenance:
+      type: object
+      required: [sourceStemRole, objectPath, provider]
+      properties:
+        sourceStemRole: { type: string }
+        objectPath: { type: string }
+        provider: { type: string }
+        contentChecksum: { type: string, pattern: '^[a-fA-F0-9]{64}$' }
+    VocalActivityThresholds:
+      type: object
+      required: [rms, peak, activitySample, activityRatio]
+      properties:
+        rms: { type: number, minimum: 0 }
+        peak: { type: number, minimum: 0 }
+        activitySample: { type: number, minimum: 0 }
+        activityRatio: { type: number, minimum: 0, maximum: 1 }
+    VocalObservedWindow:
+      type: object
+      required: [start, end, coordinates]
+      properties:
+        start: { type: number, minimum: 0 }
+        end: { type: number, minimum: 0 }
+        coordinates: { $ref: "#/components/schemas/CanonicalTimeRange" }
+    VocalIntelligence:
+      type: object
+      required: [version, provenance, phrases, breaths, lyricAlignment, melodyAlignment, arrangementSpace]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        provenance:
+          oneOf:
+            - $ref: "#/components/schemas/VocalStemProvenance"
+            - type: "null"
+        phrases: { $ref: "#/components/schemas/VocalPhraseEvidence" }
+        breaths: { $ref: "#/components/schemas/VocalBreathEvidence" }
+        lyricAlignment: { $ref: "#/components/schemas/VocalAlignmentEvidence" }
+        melodyAlignment: { $ref: "#/components/schemas/VocalAlignmentEvidence" }
+        arrangementSpace: { $ref: "#/components/schemas/VocalArrangementSpaceEvidence" }
+    VocalPhraseEvidence:
+      type: object
+      required: [status, reason, events]
+      properties:
+        status: { type: string, enum: [detected, low_confidence, not_available, conflicting] }
+        reason: { type: ["string", "null"] }
+        events:
+          type: array
+          items: { $ref: "#/components/schemas/VocalPhraseEvent" }
+    VocalPhraseEvent:
+      type: object
+      required: [id, start, end, confidence, coordinates]
+      properties:
+        id: { type: string }
+        start: { type: number, minimum: 0 }
+        end: { type: number, minimum: 0 }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        coordinates: { $ref: "#/components/schemas/CanonicalTimeRange" }
+    VocalBreathEvidence:
+      type: object
+      required: [status, reason, events]
+      properties:
+        status: { type: string, enum: [detected, not_available] }
+        reason: { type: ["string", "null"] }
+        events:
+          type: array
+          items: { $ref: "#/components/schemas/VocalBreathEvent" }
+    VocalBreathEvent:
+      allOf:
+        - $ref: "#/components/schemas/VocalPhraseEvent"
+        - type: object
+          required: [kind]
+          properties:
+            kind: { type: string, enum: [inter_phrase] }
+    VocalAlignmentEvidence:
+      type: object
+      required: [status, reason, alignments]
+      properties:
+        status: { type: string, enum: [aligned, not_available, conflicting] }
+        reason: { type: ["string", "null"] }
+        alignments:
+          type: array
+          items:
+            type: object
+            required: [phraseId, confidence]
+            properties:
+              phraseId: { type: string }
+              lyricIndexes: { type: array, items: { type: number, minimum: 0 } }
+              melodyIndexes: { type: array, items: { type: number, minimum: 0 } }
+              confidence: { type: number, minimum: 0, maximum: 1 }
+    VocalArrangementSpaceEvidence:
+      type: object
+      required: [status, reason, windows]
+      properties:
+        status: { type: string, enum: [detected, not_available] }
+        reason: { type: ["string", "null"] }
+        windows:
+          type: array
+          items:
+            type: object
+            required: [id, start, end, confidence, phraseBeforeId, phraseAfterId, bars, sections, coordinates]
+            properties:
+              id: { type: string }
+              start: { type: number, minimum: 0 }
+              end: { type: number, minimum: 0 }
+              confidence: { type: number, minimum: 0, maximum: 1 }
+              phraseBeforeId: { type: ["string", "null"] }
+              phraseAfterId: { type: ["string", "null"] }
+              bars: { type: array, items: { type: number, minimum: 1 } }
+              sections: { type: array, items: { type: string } }
+              coordinates: { $ref: "#/components/schemas/CanonicalTimeRange" }
+    LyricEvent:
+      type: object
+      required: [start, end, text, confidence]
+      properties:
+        start: { type: number }
+        end: { type: number }
+        text: { type: string }
+        confidence: { type: number }
+        coordinates:
+          $ref: "#/components/schemas/CanonicalTimeRange"
+    ProviderProvenance:
+      type: object
+      required: [capability, provider, version, status]
+      properties:
+        capability: { type: string }
+        provider: { type: string }
+        version: { type: string }
+        status:
+          type: string
+          enum: [ready, fallback, unavailable, failed]
+        attempts: { type: number, minimum: 0 }
+        errorCode: { type: string }
+        errorMessage: { type: string }
+    SongModelFieldStatusProperty:
+      type: object
+      required: [status, confidence, providers, message, edited]
+      properties:
+        status:
+          type: string
+          enum: [detected, low_confidence, failed, not_available]
+        confidence:
+          type: ["number", "null"]
+        providers:
+          type: array
+          items: { type: string }
+        message:
+          type: ["string", "null"]
+        edited:
+          type: boolean
+    SongModelFieldStatus:
+      type: object
+      required: [tempo, meter, key, melody, bass, harmony, sections, energy]
+      properties:
+        tempo: { $ref: "#/components/schemas/SongModelFieldStatusProperty" }
+        meter: { $ref: "#/components/schemas/SongModelFieldStatusProperty" }
+        key: { $ref: "#/components/schemas/SongModelFieldStatusProperty" }
+        melody: { $ref: "#/components/schemas/SongModelFieldStatusProperty" }
+        bass: { $ref: "#/components/schemas/SongModelFieldStatusProperty" }
+        harmony: { $ref: "#/components/schemas/SongModelFieldStatusProperty" }
+        sections: { $ref: "#/components/schemas/SongModelFieldStatusProperty" }
+        energy: { $ref: "#/components/schemas/SongModelFieldStatusProperty" }
+    SongModelProvenance:
+      type: object
+      required: [tempo, meter, key, melody, bass, harmony, sections, energy]
+      properties:
+        tempo: { type: array, items: { type: string } }
+        meter: { type: array, items: { type: string } }
+        key: { type: array, items: { type: string } }
+        melody: { type: array, items: { type: string } }
+        bass: { type: array, items: { type: string } }
+        harmony: { type: array, items: { type: string } }
+        sections: { type: array, items: { type: string } }
+        energy: { type: array, items: { type: string } }
+    AnalysisJob:
+      type: object
+      required: [id, projectId, sourceId, status, stage, progress, attempt, error, startedAt, finishedAt, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        sourceId: { type: string }
+        status:
+          type: string
+          enum: [queued, running, completed, failed]
+        stage: { type: string }
+        progress: { type: number }
+        attempt: { type: number }
+        error: { type: ["string", "null"] }
+        startedAt: { type: ["string", "null"] }
+        finishedAt: { type: ["string", "null"] }
+        createdAt: { type: string }
+        updatedAt: { type: string }
+    MusicProvider:
+      type: object
+      required: [id, name, provider, version, capabilities, inputTypes, execution, status, configured, checkpointReady, runtimeReady, packageReady, smokeTested, reportedVersion, lastHealth, license, priority, notes]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        provider: { type: string }
+        version: { type: string }
+        capabilities:
+          type: array
+          items: { type: string }
+        inputTypes:
+          type: array
+          items: { type: string }
+        execution:
+          type: string
+          enum: [local, remote]
+        status:
+          type: string
+          enum: [ready, configured, unavailable]
+        configured: { type: boolean }
+        checkpointReady: { type: boolean }
+        runtimeReady: { type: boolean }
+        packageReady: { type: boolean }
+        smokeTested: { type: boolean }
+        reportedVersion:
+          type: [string, "null"]
+        lastHealth:
+          $ref: "#/components/schemas/ProviderHealthResult"
+        license: { type: ["string", "null"] }
+        priority: { type: number }
+        notes: { type: string }
+    NoteEvent:
+      type: object
+      required: [start, end, pitch, velocity, confidence, source]
+      properties:
+        start: { type: number }
+        end: { type: number }
+        pitch: { type: number }
+        velocity: { type: number }
+        confidence: { type: number }
+        source: { type: string }
+        coordinates:
+          $ref: "#/components/schemas/CanonicalTimeRange"
+    BassEvidenceEvent:
+      type: object
+      required: [start, end, pitch, confidence]
+      properties:
+        start: { type: number, minimum: 0 }
+        end: { type: number, minimum: 0 }
+        pitch: { type: number, minimum: 0, maximum: 127 }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        provider: { type: string }
+        sourceStem:
+          type: string
+          description: Private persisted analysis artifact lineage; never a signed URL.
+        sourceStemProvider: { type: string, enum: [BS_ROFORMER] }
+        providers:
+          type: array
+          items: { type: string }
+        coordinates:
+          $ref: "#/components/schemas/CanonicalTimeRange"
+    ChordEvent:
+      type: object
+      required: [start, end, symbol, roman, confidence]
+      properties:
+        # Legacy fields remain required; canonical fields below are additive.
+        start: { type: number }
+        end: { type: number }
+        symbol: { type: string }
+        roman: { type: string }
+        confidence: { type: number }
+        root:
+          type: string
+          description: Canonical chromatic root (for example C, F#, or Bb).
+        quality:
+          type: string
+          description: Canonical chord quality independent of display symbol.
+        extensions:
+          type: array
+          items: { type: string }
+        alterations:
+          type: array
+          items: { type: string }
+        inversion: { type: number, minimum: 0 }
+        bass: { type: string }
+        function:
+          type: string
+          description: Harmonic function in the current tonal context.
+        timing:
+          $ref: "#/components/schemas/ChordTiming"
+        melodyConflictEvidence:
+          type: array
+          description: Melody-note evidence considered when selecting this chord.
+          items:
+            $ref: "#/components/schemas/MelodyConflictEvidence"
+        candidateProvenance:
+          type: array
+          description: Candidate-level provider evidence for this selected chord.
+          items:
+            $ref: "#/components/schemas/ChordCandidateProvenance"
+        bassSupportEvidence:
+          type: array
+          maxItems: 16
+          description: Observed provider bass notes that supported this selected chord.
+          items:
+            $ref: "#/components/schemas/ChordBassSupportEvidence"
+        coordinates:
+          $ref: "#/components/schemas/CanonicalTimeRange"
+    ChordTiming:
+      type: object
+      properties:
+        startBeat: { type: number, minimum: 0 }
+        durationBeats: { type: number, exclusiveMinimum: 0 }
+        startSeconds: { type: number, minimum: 0 }
+        endSeconds: { type: number, minimum: 0 }
+    ChordBassSupportEvidence:
+      type: object
+      required: [start, end, pitch, confidence, provider]
+      properties:
+        start: { type: number, minimum: 0 }
+        end: { type: number, minimum: 0 }
+        pitch: { type: number, minimum: 0, maximum: 127 }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        provider: { type: string, minLength: 1, maxLength: 512 }
+    MelodyConflictEvidence:
+      type: object
+      required: [conflict]
+      properties:
+        noteId: { type: string }
+        pitch: { type: number }
+        start: { type: number, minimum: 0 }
+        end: { type: number, minimum: 0 }
+        conflict:
+          type: string
+          enum: [clash, avoid_note, unresolved_tension, unknown]
+        severity: { type: number, minimum: 0, maximum: 1 }
+        explanation: { type: string }
+    ChordCandidateProvenance:
+      type: object
+      required: [candidateId, provider]
+      properties:
+        candidateId: { type: string }
+        provider: { type: string }
+        modelVersion: { type: string }
+        score: { type: number }
+        selected: { type: boolean }
+        evidence:
+          type: array
+          items: { type: string }
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded]
+        database:
+          type: string
+          enum: [ok, unavailable]
+        providers:
+          type: object
+          required: [configured, available]
+          properties:
+            configured: { type: number }
+            available: { type: number }
+        queues:
+          type: object
+          additionalProperties:
+            type: number
+        timestamp:
+          type: string
+      required:
+        - status
+        - database
+        - providers
+        - queues
+        - timestamp
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+    GenerationBlockedError:
+      type: object
+      required: [error, code, action, issues]
+      properties:
+        error: { type: string }
+        code: { type: string }
+        action: { type: string }
+        issues:
+          type: array
+          items:
+            $ref: "#/components/schemas/SongModelValidationIssue"
+    Dashboard:
+      type: object
+      required: [activeProjects, totalRenders, savedArtifacts, recentActivity]
+      properties:
+        activeProjects:
+          type: number
+        totalRenders:
+          type: number
+        savedArtifacts:
+          type: number
+        recentActivity:
+          type: array
+          items:
+            $ref: "#/components/schemas/Activity"
+    Activity:
+      type: object
+      required: [id, title, detail, time, type]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        detail: { type: string }
+        time: { type: string }
+        type:
+          type: string
+          enum: [analysis, arrangement, render, export]
+    ProjectInput:
+      type: object
+      required: [name, sourceType]
+      properties:
+        name: { type: string, minLength: 1 }
+        sourceType:
+          type: string
+          enum: [FULL_SONG, VOCAL_ONLY, SOLO_INSTRUMENT, INSTRUMENTAL, MIDI, VIDEO]
+        sourceName: { type: ["string", "null"] }
+    Project:
+      type: object
+      required: [id, name, sourceType, status, updatedAt, duration, key, bpm]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        sourceType:
+          type: string
+          enum: [FULL_SONG, VOCAL_ONLY, SOLO_INSTRUMENT, INSTRUMENTAL, MIDI, VIDEO]
+        status:
+          type: string
+          enum: [draft, analyzing, ready, rendering]
+        updatedAt: { type: string }
+        duration: { type: string }
+        key: { type: string }
+        bpm: { type: number }
+        coverColor: { type: string }
+    ProjectWorkspace:
+      type: object
+      required: [project, analysis, arrangements, tracks, artifacts]
+      properties:
+        project:
+          $ref: "#/components/schemas/Project"
+        analysis:
+          $ref: "#/components/schemas/Analysis"
+        arrangements:
+          type: array
+          items:
+            $ref: "#/components/schemas/Arrangement"
+        tracks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Track"
+        artifacts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Artifact"
+    ProjectDeletion:
+      type: object
+      required: [id, projectId, status, attempts, pendingObjectCount, lastError, createdAt, updatedAt, completedAt]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        status:
+          type: string
+          enum: [queued, running, partial, completed]
+        attempts: { type: number, minimum: 0 }
+        pendingObjectCount: { type: number, minimum: 0 }
+        lastError: { type: ["string", "null"] }
+        createdAt: { type: string }
+        updatedAt: { type: string }
+        completedAt: { type: ["string", "null"] }
+    AnalysisInput:
+      type: object
+      properties:
+        provider:
+          type: string
+          enum: [BS_ROFORMER, DEMUCS, ALL_IN_ONE, MT3, BASIC_PITCH, SHEETSAGE, CHROMA, BASS, FUSION]
+        refresh:
+          type: boolean
+    Analysis:
+      type: object
+      required: [bpm, meter, key, confidence, sections, energy, providers]
+      properties:
+        bpm: { type: number }
+        meter: { type: string }
+        key: { type: string }
+        confidence: { type: number }
+        sections:
+          type: array
+          items:
+            $ref: "#/components/schemas/Section"
+        energy:
+          type: array
+          items: { type: number }
+        providers:
+          type: array
+          items: { type: string }
+    Section:
+      type: object
+      required: [name, startBar, endBar, energy]
+      properties:
+        name: { type: string }
+        startBar: { type: number }
+        endBar: { type: number }
+        energy: { type: number }
+        coordinates:
+          $ref: "#/components/schemas/CanonicalTimeRange"
+    ArrangementInput:
+      type: object
+      required: [name, style, harmonyComplexity, mode]
+      properties:
+        name: { type: string, minLength: 1 }
+        style: { type: string }
+        harmonyComplexity: { type: number, minimum: 1, maximum: 10 }
+        mode:
+          type: string
+          enum: [QUICK_ARRANGE, STUDIO, PRO_SCORE]
+    ArrangementUpdate:
+      type: object
+      required: [expectedVersion]
+      properties:
+        name: { type: string }
+        harmonyComplexity: { type: number, minimum: 1, maximum: 10 }
+        energy: { type: number, minimum: 0, maximum: 1 }
+        density: { type: number, minimum: 0, maximum: 1 }
+        orchestraSize: { type: number, minimum: 0, maximum: 1 }
+        rhythmIntensity: { type: number, minimum: 0, maximum: 1 }
+        selectedCandidateId: { type: ["string", "null"] }
+        expectedVersion: { type: number, minimum: 1 }
+        sections:
+          type: array
+          description: Local timeline and semantic edits for this arrangement
+          items:
+            $ref: "#/components/schemas/ArrangementSection"
+    Arrangement:
+      type: object
+      required: [id, projectId, name, style, mode, version, status, harmonyComplexity, energy, density, orchestraSize, rhythmIntensity, sections, generationProvider, candidates, selectedCandidateId, createdAt]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        name: { type: string }
+        style: { type: string }
+        mode:
+          type: string
+          enum: [QUICK_ARRANGE, STUDIO, PRO_SCORE]
+        version: { type: number }
+        status:
+          type: string
+          enum: [draft, generating, ready]
+        harmonyComplexity: { type: number }
+        energy: { type: number }
+        density: { type: number }
+        orchestraSize: { type: number }
+        rhythmIntensity: { type: number }
+        sections:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArrangementSection"
+        generationProvider: { type: ["string", "null"] }
+        candidates:
+          type: array
+          items:
+            $ref: "#/components/schemas/Candidate"
+        selectedCandidateId: { type: ["string", "null"] }
+        sourceGenerationJobId:
+          type: [string, "null"]
+        sourceCandidateId:
+          type: [string, "null"]
+        generationProvenance:
+          oneOf:
+            - $ref: "#/components/schemas/GenerationProvenance"
+            - { type: "null" }
+        createdAt: { type: string }
+    ArrangementRevisionSummary:
+      type: object
+      required: [affectedSections, affectedTracks, trackMembershipChanges, chordChanges, noteChanges, ccChanges, conductorControls, candidateSelectionChanged]
+      properties:
+        affectedSections:
+          type: array
+          items: { type: string }
+        affectedTracks:
+          type: array
+          items: { type: string }
+        trackMembershipChanges: { type: number, minimum: 0 }
+        chordChanges: { type: number, minimum: 0 }
+        noteChanges: { type: number, minimum: 0 }
+        ccChanges: { type: number, minimum: 0 }
+        conductorControls:
+          type: array
+          items: { type: string }
+        candidateSelectionChanged: { type: boolean }
+    ArrangementRevisionSnapshot:
+      type: object
+      required: [name, harmonyComplexity, energy, density, orchestraSize, rhythmIntensity, selectedCandidateId, sections]
+      properties:
+        name: { type: string }
+        harmonyComplexity: { type: number }
+        energy: { type: number }
+        density: { type: number }
+        orchestraSize: { type: number }
+        rhythmIntensity: { type: number }
+        selectedCandidateId: { type: ["string", "null"] }
+        sections:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArrangementSection"
+    ArrangementRevision:
+      type: object
+      required: [id, arrangementId, version, snapshot, summary, createdAt]
+      properties:
+        id: { type: string }
+        arrangementId: { type: string }
+        version: { type: number }
+        snapshot:
+          $ref: "#/components/schemas/ArrangementRevisionSnapshot"
+        summary:
+          $ref: "#/components/schemas/ArrangementRevisionSummary"
+        createdAt: { type: string }
+    RestoreArrangementRevisionInput:
+      type: object
+      required: [expectedVersion]
+      properties:
+        expectedVersion: { type: number, minimum: 1 }
+    ArrangementSection:
+      type: object
+      required: [name, energy, density, tracks]
+      properties:
+        name: { type: string }
+        energy: { type: number }
+        density: { type: number }
+        tracks:
+          type: array
+          items: { type: string }
+        startBar: { type: number }
+        endBar: { type: number }
+        chords:
+          type: array
+          items:
+            $ref: "#/components/schemas/EditorChordEvent"
+        markers:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimelineMarker"
+        automation:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutomationPoint"
+        midiNotes:
+          type: array
+          items:
+            $ref: "#/components/schemas/PianoNote"
+        cc:
+          type: array
+          items: { type: number, minimum: 0, maximum: 127 }
+        midiTracks:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/MidiTrackEditor"
+        transposeSemitones: { type: number, minimum: -24, maximum: 24 }
+    EditorChordEvent:
+      type: object
+      required: [id, startBeat, durationBeats, symbol, quality, inversion]
+      properties:
+        id: { type: string }
+        startBeat: { type: number }
+        durationBeats: { type: number }
+        symbol: { type: string }
+        quality:
+          type: string
+          enum: [major, minor, dominant, suspended, diminished]
+        inversion: { type: number, minimum: 0, maximum: 3 }
+        bass: { type: string }
+    TimelineMarker:
+      type: object
+      required: [id, bar, label, color]
+      properties:
+        id: { type: string }
+        bar: { type: number }
+        label: { type: string }
+        color: { type: string }
+    AutomationPoint:
+      type: object
+      required: [bar, value]
+      properties:
+        bar: { type: number }
+        value: { type: number, minimum: 0, maximum: 1 }
+    PianoNote:
+      type: object
+      required: [id, pitch, start, duration, velocity, articulation]
+      properties:
+        id: { type: string }
+        pitch: { type: number, minimum: 0, maximum: 127 }
+        start: { type: number, minimum: 0 }
+        duration: { type: number, minimum: 0.0625 }
+        velocity: { type: number, minimum: 1, maximum: 127 }
+        articulation:
+          type: string
+          enum: [sustain, staccato, accent, ghost]
+    MidiTrackEditor:
+      type: object
+      required: [notes, cc]
+      properties:
+        notes:
+          type: array
+          items:
+            $ref: "#/components/schemas/PianoNote"
+        cc:
+          type: array
+          items: { type: number, minimum: 0, maximum: 127 }
+    GenerationInput:
+      type: object
+      properties:
+        candidates: { type: number, minimum: 1, maximum: 5 }
+        idempotencyKey: { type: string, minLength: 1, maxLength: 200 }
+        operation:
+          type: string
+          enum: [COMPLETE, LEGO, REPAINT, COVER, EXTRACT]
+          description: Explicit ACE-Step operation. Supplying it selects ACE-Step.
+        sourceArtifactId:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Project-owned source artifact used by source-conditioned ACE-Step operations.
+        instrument:
+          type: string
+          minLength: 1
+          maxLength: 64
+          description: Focused instrument family required by LEGO and EXTRACT.
+        region:
+          type: object
+          required: [unit, start, end]
+          properties:
+            unit:
+              type: string
+              enum: [bar, beat, time]
+            start: { type: number, minimum: 0 }
+            end: { type: number, exclusiveMinimum: 0 }
+            crossfadeSeconds: { type: number, minimum: 0, maximum: 10, default: 0.25 }
+        provider:
+          type: string
+          enum: [BS_ROFORMER, ALL_IN_ONE, MT3, BASIC_PITCH, ACE_STEP, MUSICGEN, ANYACCOMP, LADA_BAND, HAFM, SYMPHONYGEN, METEOR, MIDI_SAG, MUSE_CONTROL_LITE, STABLE_AUDIO_3_SMALL_MUSIC, STABLE_AUDIO_3_MEDIUM]
+        task:
+          type: string
+          enum: [SEPARATION, TRANSCRIPTION, ACCOMPANIMENT, ORCHESTRATION, ARRANGEMENT]
+        hardware:
+          type: string
+          enum: [AUTO, CPU, GPU]
+        speed:
+          type: string
+          enum: [FAST, BALANCED, QUALITY]
+        seed: { type: number }
+        parameters:
+          type: object
+          additionalProperties: true
+    GenerationProvenance:
+      type: object
+      required: [jobId, candidateId, provider, modelVersion, seed, parameters, parentArtifactIds, evaluation]
+      properties:
+        jobId: { type: string }
+        candidateId: { type: string }
+        provider:
+          type: string
+          enum: [BS_ROFORMER, ALL_IN_ONE, MT3, BASIC_PITCH, ACE_STEP, MUSICGEN, ANYACCOMP, LADA_BAND, HAFM, SYMPHONYGEN, METEOR, MIDI_SAG, MUSE_CONTROL_LITE, STABLE_AUDIO_3_SMALL_MUSIC, STABLE_AUDIO_3_MEDIUM]
+        modelVersion: { type: string }
+        reportedModelVersion:
+          type: [string, "null"]
+        providerRequestId:
+          type: [string, "null"]
+        songModelVersion:
+          type: [number, "null"]
+        seed: { type: number }
+        parameters:
+          type: object
+          additionalProperties: true
+        parentArtifactIds:
+          type: array
+          items: { type: string }
+        evaluation:
+          $ref: "#/components/schemas/CandidateEvaluation"
+    GenerationJob:
+      type: object
+      required: [id, projectId, arrangementId, task, status, provider, modelVersion, providerRuntime, hardware, speed, progress, stage, requestedCandidates, seed, parameters, parentArtifactIds, retryable, attempt, maxAttempts, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        arrangementId: { type: string }
+        task:
+          type: string
+          enum: [SEPARATION, TRANSCRIPTION, ACCOMPANIMENT, ORCHESTRATION, ARRANGEMENT]
+        status:
+          type: string
+          enum: [queued, running, cancel_requested, cancelled, succeeded, failed]
+        provider:
+          type: string
+          enum: [BS_ROFORMER, ALL_IN_ONE, MT3, BASIC_PITCH, ACE_STEP, MUSICGEN, ANYACCOMP, LADA_BAND, HAFM, SYMPHONYGEN, METEOR, MIDI_SAG, MUSE_CONTROL_LITE, STABLE_AUDIO_3_SMALL_MUSIC, STABLE_AUDIO_3_MEDIUM]
+        modelVersion: { type: string }
+        providerRuntime:
+          oneOf:
+            - $ref: "#/components/schemas/ProviderRuntimeSnapshot"
+            - type: "null"
+        hardware:
+          type: string
+          enum: [AUTO, CPU, GPU]
+        speed:
+          type: string
+          enum: [FAST, BALANCED, QUALITY]
+        progress: { type: number, minimum: 0, maximum: 100 }
+        stage: { type: string }
+        providerRequestId:
+          type: [string, "null"]
+        requestedCandidates: { type: number }
+        seed: { type: number }
+        parameters:
+          type: object
+          additionalProperties: true
+        parentArtifactIds:
+          type: array
+          items: { type: string }
+        error:
+          type: [string, "null"]
+        errorCode:
+          type: [string, "null"]
+        retryable: { type: boolean }
+        attempt: { type: number, minimum: 0 }
+        maxAttempts: { type: number, minimum: 1 }
+        cancelRequestedAt:
+          type: [string, "null"]
+        createdAt: { type: string }
+        updatedAt: { type: string }
+        completedAt:
+          type: [string, "null"]
+    CandidateQualityReport:
+      type: object
+      required: [score, checks, weights, strengths, weaknesses, warnings, evaluatedAt, renderArtifactIds, lineageComplete]
+      properties:
+        score: { type: number, minimum: 0, maximum: 1 }
+        checks:
+          type: object
+          additionalProperties: { type: number }
+        weights:
+          type: object
+          additionalProperties: { type: number }
+        strengths:
+          type: array
+          items: { type: string }
+        weaknesses:
+          type: array
+          items: { type: string }
+        warnings:
+          type: array
+          items: { type: string }
+        evaluatedAt: { type: string }
+        renderArtifactIds:
+          type: array
+          items: { type: string }
+        lineageComplete: { type: boolean }
+    CandidateEvaluation:
+      type: object
+      required: [status, providerScore, renderArtifactIds, artifacts, qualityReport, musicCritic, audioCritic, error]
+      properties:
+        status:
+          type: string
+          enum: [plan_received, rendering, render_succeeded, analyzing, evaluated, render_failed, analysis_failed, diversity_rejected, repair_not_improved, repair_scope_violated]
+        providerScore: { type: number }
+        renderArtifactIds:
+          type: array
+          items: { type: string }
+        artifacts:
+          type: array
+          items:
+            type: object
+            required: [id, type, label, url]
+            properties:
+              id: { type: string }
+              type:
+                type: string
+                enum: [AUDIO_TRACK, MIDI, QUALITY_REPORT]
+              label: { type: string }
+              url: { type: string }
+              artifactSha256:
+                type: string
+                pattern: '^[a-f0-9]{64}$'
+                description: SHA-256 of the exact stored artifact bytes; absent on historical rows.
+        qualityReport:
+          oneOf:
+            - $ref: "#/components/schemas/CandidateQualityReport"
+            - type: "null"
+        musicCritic:
+          oneOf:
+            - $ref: "#/components/schemas/CandidateMusicCriticReport"
+            - type: "null"
+        audioCritic:
+          oneOf:
+            - $ref: "#/components/schemas/CandidateAudioCriticReport"
+            - type: "null"
+        error:
+          type: [string, "null"]
+        strategy:
+          type: object
+          required: [name, index, baseSeed, seed]
+          properties:
+            name: { type: string, enum: [sparse, balanced, rhythmic, harmonic, orchestral] }
+            index: { type: number, minimum: 0 }
+            baseSeed: { type: number, minimum: 0, maximum: 2147483647 }
+            seed: { type: number, minimum: 0, maximum: 2147483647 }
+        diversity:
+          type: object
+          required: [comparedToCandidateId, distance, threshold, rejected, reason]
+          properties:
+            comparedToCandidateId: { type: [string, "null"] }
+            distance: { type: [number, "null"] }
+            threshold: { type: number, const: 0.25 }
+            rejected: { type: boolean }
+            reason: { type: string, enum: [baseline_retained, near_duplicate, sufficiently_distinct] }
+        repair:
+          $ref: "#/components/schemas/CandidateRepairEvidence"
+    CandidateMusicCriticEvidence:
+      type: object
+      required: [source, summary, observations]
+      properties:
+        source:
+          type: string
+          enum: [vocal_activity, harmony_decisions, section_plan, track_notes, instrument_constraints, style_and_directives, composition_intelligence, rhythm_evidence]
+        summary: { type: string }
+        observations:
+          type: object
+          additionalProperties:
+            oneOf:
+              - { type: string }
+              - { type: number }
+              - { type: boolean }
+    CandidateMusicCriticDimensionResultV1:
+      type: object
+      required: [status, score, evidence, explanation, findings]
+      properties:
+        status: { type: string, enum: [available, unavailable, failed] }
+        score: { type: [number, "null"], minimum: 0, maximum: 1 }
+        evidence:
+          type: array
+          items: { $ref: "#/components/schemas/CandidateMusicCriticEvidence" }
+        explanation: { type: string }
+        findings:
+          type: array
+          items: { $ref: "#/components/schemas/CandidateMusicCriticFindingV1" }
+    CandidateMusicCriticFindingV1:
+      type: object
+      additionalProperties: false
+      required: [id, affectedSections, startBar, endBar, affectedTrackIds, musicalReason]
+      properties:
+        id: { type: string, minLength: 1 }
+        affectedSections: { type: array, minItems: 1, items: { type: string, minLength: 1 } }
+        startBar: { type: number, minimum: 1 }
+        endBar: { type: number, minimum: 1 }
+        affectedTrackIds: { type: array, minItems: 1, items: { type: string, minLength: 1 } }
+        musicalReason: { type: string, minLength: 1, maxLength: 2000 }
+    CandidateMusicCriticDimensionResult:
+      type: object
+      required: [status, score, evidence, explanation, findings]
+      properties:
+        status: { type: string, enum: [available, unavailable, failed] }
+        score: { type: [number, "null"], minimum: 0, maximum: 1 }
+        evidence:
+          type: array
+          items:
+            $ref: "#/components/schemas/CandidateMusicCriticEvidence"
+        explanation: { type: string }
+        findings:
+          type: array
+          description: Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.
+          items:
+            $ref: "#/components/schemas/CandidateMusicCriticFinding"
+    CandidateMusicCriticFinding:
+      type: object
+      additionalProperties: false
+      required: [id, affectedSections, startBar, endBar, affectedTrackIds, affectedRoles, canonicalScope, evidenceReferences, permissibleRepairOperations, musicalReason]
+      properties:
+        id: { type: string, minLength: 1 }
+        affectedSections:
+          type: array
+          minItems: 1
+          items: { type: string, minLength: 1 }
+        startBar: { type: number, minimum: 1 }
+        endBar: { type: number, minimum: 1 }
+        affectedTrackIds:
+          type: array
+          minItems: 1
+          items: { type: string, minLength: 1 }
+        affectedRoles:
+          type: array
+          items: { type: string, minLength: 1 }
+        canonicalScope:
+          type: object
+          required: [startBar, endBar]
+          properties:
+            startBar: { type: number, minimum: 1 }
+            endBar: { type: number, minimum: 1 }
+        evidenceReferences:
+          type: array
+          maxItems: 8
+          items:
+            type: object
+            required: [source, summary]
+            properties:
+              source: { type: string }
+              summary: { type: string, maxLength: 2000 }
+        permissibleRepairOperations:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            enum: [adjust_notes, adjust_rhythm, adjust_register, adjust_dynamics, adjust_voicing, adjust_directive]
+        musicalReason: { type: string, minLength: 1, maxLength: 2000 }
+    CandidateMusicCriticReport:
+      oneOf:
+        - $ref: "#/components/schemas/CandidateMusicCriticReportV1"
+        - $ref: "#/components/schemas/CandidateMusicCriticReportV2"
+      discriminator:
+        propertyName: version
+        mapping:
+          music-critic-v1: "#/components/schemas/CandidateMusicCriticReportV1"
+          music-critic-v2: "#/components/schemas/CandidateMusicCriticReportV2"
+    CandidateMusicCriticReportV1:
+      type: object
+      required: [version, score, coverage, dimensions]
+      properties:
+        version: { type: string, const: music-critic-v1 }
+        score: { type: number, minimum: 0, maximum: 1 }
+        coverage:
+          type: object
+          description: Producer-safe summary of how broadly the aggregate score is supported.
+          required: [availableDimensions, totalDimensions, sparse]
+          properties:
+            availableDimensions:
+              type: number
+              minimum: 0
+              maximum: 8
+            totalDimensions: { type: number, const: 8 }
+            sparse:
+              type: boolean
+              description: True when fewer than half of the critic dimensions have available evidence.
+        dimensions:
+          type: object
+          required: [vocalFit, harmony, development, contrastAndTransitions, registerCollisions, playability, repetition, styleAndControlAdherence]
+          properties:
+            vocalFit: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResultV1" }
+            harmony: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResultV1" }
+            development: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResultV1" }
+            contrastAndTransitions: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResultV1" }
+            registerCollisions: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResultV1" }
+            playability: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResultV1" }
+            repetition: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResultV1" }
+            styleAndControlAdherence: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResultV1" }
+    CandidateMusicCriticReportV2:
+      type: object
+      required: [version, score, coverage, dimensions]
+      properties:
+        version: { type: string, const: music-critic-v2 }
+        score: { type: number, minimum: 0, maximum: 1 }
+        coverage:
+          type: object
+          required: [availableDimensions, totalDimensions, sparse]
+          properties:
+            availableDimensions: { type: number, minimum: 0, maximum: 17 }
+            totalDimensions: { type: number, const: 17 }
+            sparse: { type: boolean }
+        dimensions:
+          type: object
+          required: [vocalFit, harmony, development, contrastAndTransitions, registerCollisions, playability, repetition, styleAndControlAdherence, motifContinuityAndDevelopment, phraseIntent, vocalInteraction, roleDuplication, orchestralBalance, grooveCoordination, voiceLeading, countermelodyShape, dramaticTrajectory]
+          properties:
+            vocalFit: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            harmony: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            development: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            contrastAndTransitions: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            registerCollisions: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            playability: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            repetition: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            styleAndControlAdherence: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            motifContinuityAndDevelopment: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            phraseIntent: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            vocalInteraction: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            roleDuplication: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            orchestralBalance: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            grooveCoordination: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            voiceLeading: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            countermelodyShape: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+            dramaticTrajectory: { $ref: "#/components/schemas/CandidateMusicCriticDimensionResult" }
+    CandidateAudioCriticEvidence:
+      type: object
+      description: Privacy-bounded evidence derived only from the rendered PCM and its artifact lineage; it contains no samples, waveform, or private source URL.
+      required: [artifactId, artifactSha256, sampleRate, analyzerVersion]
+      properties:
+        artifactId: { type: string }
+        artifactSha256: { type: string, pattern: '^[a-f0-9]{64}$' }
+        sampleRate: { type: number, minimum: 1 }
+        analyzerVersion: { type: string }
+    CandidateAudioCriticFinding:
+      type: object
+      required: [id, startSeconds, endSeconds, confidence, provenance, recommendation]
+      properties:
+        id: { type: string }
+        startSeconds: { type: number, minimum: 0 }
+        endSeconds: { type: number, minimum: 0 }
+        affectedTrackIds: { type: array, items: { type: string } }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        provenance: { type: string, enum: [rendered_pcm] }
+        recommendation: { type: string, maxLength: 2000 }
+    CandidateAudioCriticDimensionResult:
+      type: object
+      required: [status, score, explanation, findings]
+      properties:
+        status: { type: string, enum: [available, unavailable, failed] }
+        score: { type: [number, "null"], minimum: 0, maximum: 1 }
+        explanation: { type: string }
+        findings:
+          type: array
+          items: { $ref: "#/components/schemas/CandidateAudioCriticFinding" }
+    CandidateAudioCriticReport:
+      type: object
+      description: Deterministic perceptual analysis of rendered PCM. An unavailable, failed, or insufficient report must not be used as positive release evidence.
+      required: [version, status, score, coverage, evidence, dimensions]
+      properties:
+        version: { type: string, const: perceptual-audio-critic-v1 }
+        status: { type: string, enum: [available, unavailable, failed, insufficient] }
+        score: { type: [number, "null"], minimum: 0, maximum: 1 }
+        coverage:
+          type: object
+          required: [availableDimensions, totalDimensions, sufficient]
+          properties:
+            availableDimensions: { type: number, minimum: 0, maximum: 7 }
+            totalDimensions: { type: number, const: 7 }
+            sufficient: { type: boolean }
+        evidence:
+          oneOf:
+            - $ref: "#/components/schemas/CandidateAudioCriticEvidence"
+            - type: "null"
+        dimensions:
+          type: object
+          required: [vocalFit, masking, balance, dynamics, artifactsAndDistortion, transitions, repetition]
+          properties:
+            vocalFit: { $ref: "#/components/schemas/CandidateAudioCriticDimensionResult" }
+            masking: { $ref: "#/components/schemas/CandidateAudioCriticDimensionResult" }
+            balance: { $ref: "#/components/schemas/CandidateAudioCriticDimensionResult" }
+            dynamics: { $ref: "#/components/schemas/CandidateAudioCriticDimensionResult" }
+            artifactsAndDistortion: { $ref: "#/components/schemas/CandidateAudioCriticDimensionResult" }
+            transitions: { $ref: "#/components/schemas/CandidateAudioCriticDimensionResult" }
+            repetition: { $ref: "#/components/schemas/CandidateAudioCriticDimensionResult" }
+    CandidateRepairInput:
+      type: object
+      required: [findingId, finding]
+      properties:
+        idempotencyKey:
+          type: string
+          maxLength: 200
+        findingId: { type: string, minLength: 1 }
+        finding:
+          oneOf:
+            - $ref: "#/components/schemas/CandidateMusicCriticFindingV1"
+            - $ref: "#/components/schemas/CandidateMusicCriticFinding"
+    CandidateRepairEvidence:
+      type: object
+      required: [sourceCandidateId, findingId, seed, attempt, maxAttempts, scope, musicalReason, outsideScopePreserved, changedScopes, sourceQualityScore, repairedQualityScore, improved]
+      properties:
+        sourceCandidateId: { type: string }
+        sourceCandidateLabel:
+          type: string
+          description: Display-safe parent label persisted independently of the historical source job.
+        findingId: { type: string }
+        seed: { type: number, minimum: 0, maximum: 2147483647 }
+        attempt: { type: number, minimum: 1 }
+        maxAttempts: { type: number, minimum: 1 }
+        scope:
+          type: object
+          required: [affectedSections, startBar, endBar, affectedTrackIds]
+          properties:
+            affectedSections: { type: array, items: { type: string } }
+            startBar: { type: number, minimum: 1 }
+            endBar: { type: number, minimum: 1 }
+            affectedTrackIds: { type: array, items: { type: string } }
+        musicalReason: { type: string }
+        outsideScopePreserved: { type: boolean }
+        changedScopes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArrangementHierarchyScope"
+        sourceQualityScore: { type: number, minimum: 0, maximum: 1 }
+        repairedQualityScore: { type: [number, "null"], minimum: 0, maximum: 1 }
+        improved: { type: boolean }
+    GenerationCandidate:
+      type: object
+      required: [id, jobId, provider, modelVersion, seed, rank, label, score, confidence, summary, status, parameters, parentArtifactIds, plan, trackModels, harmonyDecisions, evaluation, createdAt]
+      properties:
+        id: { type: string }
+        jobId: { type: string }
+        provider:
+          type: string
+          enum: [BS_ROFORMER, ALL_IN_ONE, MT3, BASIC_PITCH, ACE_STEP, MUSICGEN, ANYACCOMP, LADA_BAND, HAFM, SYMPHONYGEN, METEOR, MIDI_SAG, MUSE_CONTROL_LITE, STABLE_AUDIO_3_SMALL_MUSIC, STABLE_AUDIO_3_MEDIUM]
+        modelVersion: { type: string }
+        reportedModelVersion:
+          type: [string, "null"]
+        providerRequestId:
+          type: [string, "null"]
+        seed: { type: number }
+        rank:
+          type: [number, "null"]
+        label: { type: string }
+        score: { type: number }
+        confidence: { type: number }
+        summary: { type: string }
+        status:
+          type: string
+          enum: [validated, selected, rejected, diversity_rejected, repair_not_improved]
+        parameters:
+          type: object
+          additionalProperties: true
+        parentArtifactIds:
+          type: array
+          items: { type: string }
+        plan:
+          type: object
+          required: [sections]
+          properties:
+            sections:
+              type: array
+              items:
+                $ref: "#/components/schemas/ArrangementSection"
+            tracks:
+              type: array
+              items:
+                type: object
+                required: [id, name, role, kind]
+                properties:
+                  id: { type: string }
+                  name: { type: string }
+                  role: { type: string }
+                  kind: { type: string }
+        trackModels:
+          type: [array, "null"]
+          items:
+            $ref: "#/components/schemas/TrackModel"
+        harmonyDecisions:
+          type: array
+          items:
+            $ref: "#/components/schemas/HarmonyDecisionEvidence"
+        evaluation:
+          $ref: "#/components/schemas/CandidateEvaluation"
+        createdAt: { type: string }
+    HarmonyCandidateRationale:
+      type: object
+      required: [symbol, function, score, melodyFit, bassFit, voiceLeading, selected]
+      properties:
+        symbol: { type: string }
+        function: { type: string }
+        score: { type: number }
+        melodyFit: { type: number }
+        bassFit: { type: number }
+        voiceLeading: { type: number }
+        selected: { type: boolean }
+    HarmonyDecisionEvidence:
+      type: object
+      required: [start, end, symbol, source]
+      properties:
+        start: { type: number, minimum: 0 }
+        end: { type: number, minimum: 0 }
+        symbol: { type: string }
+        function: { type: string }
+        source:
+          type: string
+          enum: [song_model_chord_evidence, deterministic_candidate_scoring]
+        score: { type: number }
+        melodyFit: { type: number }
+        bassFit: { type: number }
+        voiceLeading: { type: number }
+        harmonicBars: { type: number, minimum: 1 }
+        complexity: { type: number, minimum: 1, maximum: 10 }
+        candidateRationale:
+          type: array
+          items:
+            $ref: "#/components/schemas/HarmonyCandidateRationale"
+        bassSupportEvidence:
+          type: array
+          maxItems: 16
+          items:
+            $ref: "#/components/schemas/ChordBassSupportEvidence"
+    GenerationProvider:
+      type: object
+      required: [id, name, modelVersion, tasks, hardware, speeds, available, status, configured, checkpointReady, runtimeReady, smokeTested, reportedVersion, lastHealth]
+      properties:
+        id:
+          type: string
+          enum: [BS_ROFORMER, ALL_IN_ONE, MT3, BASIC_PITCH, ACE_STEP, MUSICGEN, ANYACCOMP, LADA_BAND, HAFM, SYMPHONYGEN, METEOR, MIDI_SAG, MUSE_CONTROL_LITE, STABLE_AUDIO_3_SMALL_MUSIC, STABLE_AUDIO_3_MEDIUM]
+        name: { type: string }
+        modelVersion: { type: string }
+        tasks:
+          type: array
+          items:
+            type: string
+            enum: [SEPARATION, TRANSCRIPTION, ACCOMPANIMENT, ORCHESTRATION, ARRANGEMENT]
+        hardware:
+          type: array
+          items:
+            type: string
+            enum: [CPU, GPU]
+        speeds:
+          type: array
+          items:
+            type: string
+            enum: [FAST, BALANCED, QUALITY]
+        available: { type: boolean }
+        status:
+          type: string
+          enum: [ready, configured, unavailable]
+        configured: { type: boolean }
+        checkpointReady: { type: boolean }
+        runtimeReady: { type: boolean }
+        smokeTested:
+          type: boolean
+          description: True only when the worker's live health response proves a real smoke inference completed.
+        reportedVersion:
+          type: [string, "null"]
+        reportedChecksum:
+          type: [string, "null"]
+        runtimeProvenance:
+          oneOf:
+            - $ref: "#/components/schemas/ProviderRuntimeProvenance"
+            - type: "null"
+        lastHealth:
+          $ref: "#/components/schemas/ProviderHealthResult"
+    ProviderHealthResult:
+      type: object
+      required: [status, checkedAt, latencyMs, message]
+      properties:
+        status:
+          type: string
+          enum: [healthy, unhealthy, unknown]
+        checkedAt:
+          type: [string, "null"]
+        latencyMs:
+          type: [number, "null"]
+        message:
+          type: [string, "null"]
+    ProviderRuntimeSnapshot:
+      type: object
+      required: [availability, configurationReady, checkpointReady, runtimeReady, smokeTested, healthStatus, checkedAt, latencyMs, message, reportedVersion]
+      properties:
+        availability:
+          type: string
+          enum: [ready, configured, unavailable]
+        configurationReady: { type: boolean }
+        checkpointReady: { type: boolean }
+        runtimeReady: { type: boolean }
+        smokeTested: { type: boolean }
+        healthStatus:
+          type: string
+          enum: [healthy, unhealthy, unknown]
+        checkedAt:
+          type: [string, "null"]
+        latencyMs:
+          type: [number, "null"]
+        message:
+          type: [string, "null"]
+        reportedVersion:
+          type: [string, "null"]
+        reportedChecksum:
+          type: [string, "null"]
+        runtimeProvenance:
+          oneOf:
+            - $ref: "#/components/schemas/ProviderRuntimeProvenance"
+            - type: "null"
+    ProviderRuntimeProvenance:
+      type: object
+      description: Immutable worker attestation captured from live health and required to match the completion payload. The Modal image ID is the independently promoted runtime identity; the source image digest is retained as an additional compatibility check.
+      required: [model, checkpointSha256, revision, modalImageId, sourceImageDigest, cudaVersion, pytorchVersion, gpu]
+      properties:
+        model: { type: string }
+        checkpointSha256: { type: string, pattern: "^[a-fA-F0-9]{64}$" }
+        revision: { type: string }
+        modalImageId: { type: string, pattern: "^im-[A-Za-z0-9]+$" }
+        sourceImageDigest: { type: string, pattern: "^sha256:[a-fA-F0-9]{64}$" }
+        cudaVersion: { type: string }
+        pytorchVersion: { type: string }
+        gpu: { type: string }
+    GenerationResult:
+      type: object
+      required: [arrangement, candidates, selectedCandidate, provider]
+      properties:
+        arrangement:
+          $ref: "#/components/schemas/Arrangement"
+        candidates:
+          type: array
+          items:
+            $ref: "#/components/schemas/Candidate"
+        selectedCandidate: { type: string }
+        provider:
+          $ref: "#/components/schemas/MusicProvider"
+    Candidate:
+      type: object
+      required: [id, label, score, summary, provider]
+      properties:
+        id: { type: string }
+        label: { type: string }
+        score: { type: number }
+        summary: { type: string }
+        provider: { type: string }
+    ExportInput:
+      type: object
+      properties:
+        idempotencyKey: { type: string, minLength: 1, maxLength: 200 }
+        arrangementId: { type: ["string", "null"] }
+        approvedRevisionId: { type: string, minLength: 1 }
+        includeStems: { type: boolean }
+        includeMidi: { type: boolean }
+        includeMix: { type: boolean }
+        includeMetadata: { type: boolean }
+        masterProfile:
+          type: string
+          enum: [STREAMING, DYNAMIC, CLASSICAL, POP, LOUD, FILM]
+    MixMasterTrackControl:
+      type: object
+      required: [levelDb, pan, bus, sendDb, processing]
+      properties:
+        levelDb: { type: number, minimum: -60, maximum: 12 }
+        pan: { type: number, minimum: -1, maximum: 1 }
+        bus: { type: string, enum: [MIX, DRUMS, MUSIC, VOCALS, FX] }
+        sendDb: { type: number, minimum: -80, maximum: 6 }
+        processing:
+          type: object
+          required: [highPassHz, compressorRatio, saturation]
+          properties:
+            highPassHz: { type: number, minimum: 20, maximum: 20000 }
+            compressorRatio: { type: number, minimum: 1, maximum: 20 }
+            saturation: { type: number, minimum: 0, maximum: 1 }
+    MixMasterRevisionInput:
+      type: object
+      required: [arrangementId, tracks, master]
+      properties:
+        arrangementId: { type: string, minLength: 1 }
+        tracks:
+          type: object
+          additionalProperties: { $ref: "#/components/schemas/MixMasterTrackControl" }
+        master:
+          type: object
+          required: [targetLufs, truePeakDbtp, processing]
+          properties:
+            targetLufs: { type: number, minimum: -24, maximum: -6 }
+            truePeakDbtp: { type: number, minimum: -6, maximum: -0.1 }
+            processing:
+              type: object
+              required: [limiter, stereoWidth]
+              properties:
+                limiter: { type: boolean }
+                stereoWidth: { type: number, minimum: 0, maximum: 2 }
+    MixMasterFinding:
+      type: object
+      required: [id, severity, message, control, startSeconds, endSeconds]
+      properties:
+        id: { type: string }
+        severity: { type: string, enum: [info, warning, error] }
+        message: { type: string }
+        control: { type: string }
+        startSeconds: { type: number, minimum: 0 }
+        endSeconds: { type: number, minimum: 0 }
+    MixMasterPreviewVariant:
+      type: object
+      required: [url, timelineSha256, durationSeconds]
+      properties:
+        url: { type: string }
+        timelineSha256: { type: string }
+        durationSeconds: { type: number, minimum: 0 }
+        sourceId: { type: string }
+        artifactId: { type: string }
+        checksum: { type: string }
+    MixMasterRevision:
+      type: object
+      required: [id, projectId, arrangementId, version, controls, previewUrl, variants, evidence, approvedAt, approvedBy, createdAt]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        arrangementId: { type: string }
+        version: { type: number }
+        controls:
+          type: object
+          required: [tracks, master]
+          properties:
+            tracks:
+              type: object
+              additionalProperties: { $ref: "#/components/schemas/MixMasterTrackControl" }
+            master:
+              type: object
+              required: [targetLufs, truePeakDbtp, processing]
+              properties:
+                targetLufs: { type: number }
+                truePeakDbtp: { type: number }
+                processing:
+                  type: object
+                  required: [limiter, stereoWidth]
+                  properties:
+                    limiter: { type: boolean }
+                    stereoWidth: { type: number }
+        previewUrl: { type: string }
+        variants:
+          type: object
+          required: [original, repaired, mixed, mastered]
+          properties:
+            original:
+              oneOf: [{ $ref: "#/components/schemas/MixMasterPreviewVariant" }, { type: "null" }]
+            repaired:
+              oneOf: [{ $ref: "#/components/schemas/MixMasterPreviewVariant" }, { type: "null" }]
+            mixed: { $ref: "#/components/schemas/MixMasterPreviewVariant" }
+            mastered: { $ref: "#/components/schemas/MixMasterPreviewVariant" }
+        evidence:
+          type: object
+          required: [arrangementId, arrangementVersion, songModelVersion, timelineSha256, artifactIds, variants, renderer, quality]
+          properties:
+            arrangementId: { type: string }
+            arrangementVersion: { type: number }
+            songModelVersion: { type: ["number", "null"] }
+            timelineSha256: { type: string }
+            artifactIds: { type: array, items: { type: string } }
+            variants:
+              type: object
+              required: [original, repaired, mixed, mastered]
+              properties:
+                original:
+                  oneOf: [{ $ref: "#/components/schemas/MixMasterPreviewVariant" }, { type: "null" }]
+                repaired:
+                  oneOf: [{ $ref: "#/components/schemas/MixMasterPreviewVariant" }, { type: "null" }]
+                mixed: { $ref: "#/components/schemas/MixMasterPreviewVariant" }
+                mastered: { $ref: "#/components/schemas/MixMasterPreviewVariant" }
+            renderer: { type: string }
+            quality:
+              type: object
+              required: [integratedLufs, truePeakDbtp, truePeakMethod, findings]
+              properties:
+                integratedLufs: { type: number }
+                truePeakDbtp: { type: number }
+                truePeakMethod: { type: string, enum: [4x-windowed-sinc-estimate] }
+                findings: { type: array, items: { $ref: "#/components/schemas/MixMasterFinding" } }
+        approvedAt: { type: ["string", "null"] }
+        approvedBy: { type: ["string", "null"] }
+        createdAt: { type: string }
+    ProductionJob:
+      type: object
+      required: [id, projectId, kind, status, stage, progress, attempt, maxAttempts, retryable, outputArtifactIds, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        kind: { type: string, enum: [analysis, separation, transcription, arrangement, rendering, mixing, mastering, quality, export] }
+        status: { type: string, enum: [queued, running, succeeded, failed, cancel_requested, cancelled] }
+        stage: { type: string }
+        progress: { type: number }
+        attempt: { type: number }
+        maxAttempts: { type: number }
+        retryable: { type: boolean }
+        error:
+          type: [object, "null"]
+          properties:
+            code: { type: string }
+            message: { type: string }
+            retryable: { type: boolean }
+        outputArtifactIds:
+          type: array
+          items: { type: string }
+        createdAt: { type: string }
+        updatedAt: { type: string }
+        completedAt: { type: ["string", "null"] }
+    ExportResult:
+      type: object
+      required: [id, status, files, bundleUrl, createdAt]
+      properties:
+        id: { type: string }
+        status:
+          type: string
+          enum: [ready]
+        files:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExportFile"
+        bundleUrl: { type: string }
+        createdAt: { type: string }
+    ExportFile:
+      type: object
+      required: [name, type, size, format, url]
+      properties:
+        name: { type: string }
+        type:
+          type: string
+          enum: [STEM, MIDI, MIX, PREMASTER, MASTER, METADATA, BUNDLE, SONG_MODEL, ARRANGEMENT_PLAN, EXPORT]
+        size: { type: string }
+        format: { type: string }
+        url: { type: string }
+    ExportPackage:
+      type: object
+      required: [id, projectId, version, status, filename, size, createdAt, url, files]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        version: { type: number }
+        status:
+          type: string
+          enum: [ready]
+        filename: { type: string }
+        size: { type: string }
+        createdAt: { type: string }
+        url: { type: string }
+        files:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExportFile"
+    TempoMapEvent:
+      type: object
+      required: [tick, bpm]
+      properties:
+        tick: { type: number }
+        bpm: { type: number }
+    MeterMapEvent:
+      type: object
+      required: [tick, numerator, denominator]
+      properties:
+        tick: { type: number }
+        numerator: { type: number }
+        denominator: { type: number }
+    MidiNote:
+      type: object
+      required: [startTick, durationTicks, pitch, velocity]
+      properties:
+        startTick: { type: number }
+        durationTicks: { type: number }
+        pitch: { type: number }
+        velocity: { type: number }
+    ExpressionEvent:
+      type: object
+      required: [tick, value]
+      properties:
+        tick: { type: number }
+        value: { type: number }
+    ArticulationEvent:
+      type: object
+      required: [tick, type, keyswitch]
+      properties:
+        tick: { type: number }
+        type: { type: string }
+        keyswitch: { type: number }
+    TrackPerformance:
+      type: object
+      required: [tempoMap, meterMap, notes, expression, articulations]
+      properties:
+        tempoMap:
+          type: array
+          items:
+            $ref: "#/components/schemas/TempoMapEvent"
+        meterMap:
+          type: array
+          items:
+            $ref: "#/components/schemas/MeterMapEvent"
+        notes:
+          type: array
+          items:
+            $ref: "#/components/schemas/MidiNote"
+        expression:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExpressionEvent"
+        articulations:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArticulationEvent"
+        performedMaterialSha256:
+          type: string
+          pattern: "^[a-f0-9]{64}$"
+    Track:
+      type: object
+      required: [id, projectId, name, role, kind, color, volume, muted, solo, status, performance]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        name: { type: string }
+        role: { type: string }
+        kind:
+          type: string
+          enum: [audio, midi]
+        color: { type: string }
+        volume: { type: number }
+        muted: { type: boolean }
+        solo: { type: boolean }
+        status:
+          type: string
+          enum: [source, generated, rendered]
+        performance:
+          $ref: "#/components/schemas/TrackPerformance"
+        instrumentDefinition:
+          $ref: "#/components/schemas/InstrumentDefinition"
+        trackModel:
+          $ref: "#/components/schemas/TrackModel"
+        provenance:
+          $ref: "#/components/schemas/ArtifactProvenance"
+    Artifact:
+      type: object
+      required: [id, projectId, type, label, version, size, format, state, parentIds, technicalMetadata, retentionPolicy, immutable, createdAt]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        type:
+          type: string
+          enum: [SOURCE, NORMALIZED_AUDIO, STEM, ANALYSIS, SONG_MODEL, ARRANGEMENT_PLAN, TRACK_MODEL, MIDI, AUDIO_TRACK, QUALITY_REPORT, MIX, MASTER, EXPORT]
+        label: { type: string }
+        version: { type: number }
+        size: { type: string }
+        format: { type: string }
+        state:
+          type: string
+          enum: [rendering, ready, failed, expired]
+        createdAt: { type: string }
+        url: { type: ["string", "null"] }
+        checksum: { type: ["string", "null"] }
+        parentIds:
+          type: array
+          items: { type: string }
+        createdBy: { type: ["string", "null"] }
+        modelVersion: { type: ["string", "null"] }
+        storageUri: { type: ["string", "null"] }
+        technicalMetadata:
+          type: object
+          additionalProperties: true
+        provider: { type: ["string", "null"] }
+        license: { type: ["string", "null"] }
+        retentionPolicy: { type: string }
+        expiresAt: { type: ["string", "null"] }
+        immutable: { type: boolean }
+    CopilotInput:
+      type: object
+      required: [command]
+      properties:
+        command: { type: string, minLength: 1 }
+        arrangementId: { type: string }
+        targetSection: { type: string }
+        targetTrack: { type: string }
+        startBar: { type: number, minimum: 1 }
+        endBar: { type: number, minimum: 1 }
+    CopilotResult:
+      type: object
+      required: [reply, operations, affectedSections, interpreter]
+      properties:
+        reply: { type: string }
+        operations:
+          type: array
+          items:
+            $ref: "#/components/schemas/CopilotOperation"
+        affectedSections:
+          type: array
+          items: { type: string }
+        interpreter:
+          type: string
+          enum: [openai, deterministic]
+    CopilotOperation:
+      type: object
+      required: [type, label]
+      properties:
+        type: { type: string }
+        label: { type: string }
+        targetSection: { type: string }
+        targetTrack: { type: string }
+        startBar: { type: number, minimum: 1 }
+        endBar: { type: number, minimum: 1 }
+    ArtifactProvenance:
+      type: object
+      required: [model, version, parameters, parentIds, createdBy]
+      properties:
+        model: { type: string }
+        version: { type: string }
+        parameters: { type: object, additionalProperties: { oneOf: [{ type: string }, { type: number }, { type: boolean }] } }
+        parentIds: { type: array, items: { type: string } }
+        createdBy: { type: string }
+    MusicalNote:
+      type: object
+      required: [id, start, duration, pitch, velocity]
+      properties:
+        id: { type: string }
+        start: { type: number }
+        duration: { type: number }
+        pitch: { type: number }
+        velocity: { type: number }
+        channel: { type: number }
+        voice: { type: string }
+    ControlEvent:
+      type: object
+      required: [controller, time, value]
+      properties:
+        controller: { type: number }
+        time: { type: number }
+        value: { type: number }
+        channel: { type: number }
+    TrackAutomationPoint:
+      type: object
+      required: [parameter, time, value]
+      properties:
+        parameter: { type: string }
+        time: { type: number }
+        value: { type: number }
+    InstrumentDefinition:
+      type: object
+      required: [id, family, playableRange, comfortableRange, registers, polyphonic, maxVoices, articulations, constraints, controls]
+      properties:
+        id: { type: string }
+        family: { type: string, enum: [keys, strings, brass, drums, guitar, voice, synth] }
+        playableRange: { type: object, required: [min, max], properties: { min: { type: number }, max: { type: number } } }
+        comfortableRange: { type: object, required: [min, max], properties: { min: { type: number }, max: { type: number } } }
+        registers: { type: array, items: { type: object, required: [name, min, max, character], properties: { name: { type: string }, min: { type: number }, max: { type: number }, character: { type: string } } } }
+        polyphonic: { type: boolean }
+        maxVoices: { type: number }
+        articulations: { type: array, items: { type: string } }
+        constraints:
+          type: object
+          required: [maxLeap, minNoteDuration, maxSimultaneousNotes]
+          properties:
+            maxLeap: { type: number }
+            minNoteDuration: { type: number }
+            maxSimultaneousNotes: { type: number }
+            breathSeconds: { type: number }
+            strings: { type: number }
+            frets: { type: number }
+            hands: { type: number }
+            feet: { type: number }
+        controls:
+          type: object
+          required: [dynamics, expression, pitchBend, aftertouch]
+          properties:
+            dynamics: { type: array, items: { type: number } }
+            expression: { type: array, items: { type: number } }
+            sustain: { type: number }
+            pitchBend: { type: boolean }
+            aftertouch: { type: boolean }
+        directiveMappings:
+          $ref: "#/components/schemas/InstrumentDirectiveMappings"
+    TrackModel:
+      type: object
+      required: [id, instrument, instrumentDefinition, role, notes, cc, articulations, automation, source, version, provenance]
+      properties:
+        id: { type: string }
+        instrument: { type: string }
+        instrumentDefinition: { $ref: "#/components/schemas/InstrumentDefinition" }
+        role: { type: string }
+        notes: { type: array, items: { $ref: "#/components/schemas/MusicalNote" } }
+        cc: { type: array, items: { $ref: "#/components/schemas/ControlEvent" } }
+        articulations: { type: array, items: { $ref: "#/components/schemas/ArticulationEvent" } }
+        automation: { type: array, items: { $ref: "#/components/schemas/TrackAutomationPoint" } }
+        source: { type: string }
+        version: { type: number }
+        provenance: { $ref: "#/components/schemas/ArtifactProvenance" }
+        directive:
+          $ref: "#/components/schemas/TrackDirective"
+        appliedDirectives:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppliedTrackDirective"
+        mapping:
+          $ref: "#/components/schemas/TrackMappingMetadata"
+        performanceEvidence:
+          $ref: "#/components/schemas/TrackPerformanceEvidence"
+        harmonyEvidence:
+          $ref: "#/components/schemas/TrackHarmonyEvidence"
+    TrackHarmonyEvidence:
+      type: object
+      required: [version, mode, melodyEvidencePreserved, bassEvidencePreserved]
+      properties:
+        version: { type: string, enum: ["2.0"] }
+        mode: { type: string, enum: [advanced_voicing, phrase_countermelody] }
+        selectedMotion: { type: number, minimum: 0 }
+        baselineMotion: { type: number, minimum: 0 }
+        maximumLeap: { type: number, minimum: 0 }
+        motifRefs: { type: array, items: { type: string } }
+        resolutionObligations: { type: number, minimum: 0 }
+        melodyEvidencePreserved: { type: boolean }
+        bassEvidencePreserved: { type: boolean }
+    TrackPerformanceEvidence:
+      type: object
+      required:
+        - version
+        - seed
+        - instrumentFamily
+        - articulationProfile
+        - timingProfile
+        - dynamicsProfile
+        - canonicalTimelineSha256
+        - phraseIds
+        - sectionRanges
+        - playability
+        - performedMaterialSha256
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        seed: { type: number }
+        instrumentFamily:
+          type: string
+          enum: [keys, strings, brass, drums, guitar, voice, synth]
+        articulationProfile: { type: string }
+        timingProfile: { type: string }
+        dynamicsProfile: { type: string }
+        canonicalTimelineSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        phraseIds: { type: array, items: { type: string } }
+        sectionRanges:
+          type: array
+          items:
+            type: object
+            required: [section, startBar, endBar, start, end]
+            properties:
+              section: { type: string }
+              startBar: { type: number }
+              endBar: { type: number }
+              start: { type: number }
+              end: { type: number }
+        playability:
+          type: object
+          required: [valid, checkedNotes, violations]
+          properties:
+            valid: { type: boolean }
+            checkedNotes: { type: number }
+            violations: { type: array, items: { type: string } }
+        performedMaterialSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+    StyleGrammar:
+      type: object
+      required: [version, evidenceSha256, vocabulary]
+      properties:
+        version: { type: string, const: "1.0" }
+        evidenceSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        vocabulary:
+          type: object
+          required: [groove, voicing, articulation, instrumentation, phraseBehavior, fills, transitions, development]
+          properties:
+            groove: { type: string, enum: [straight, swung, syncopated, four_on_floor] }
+            voicing: { type: string, enum: [close, open, drop_two, quartal, wide] }
+            articulation: { type: string, enum: [legato, tight, accented, pulsed] }
+            instrumentation: { type: string, enum: [acoustic, electronic, hybrid, orchestral] }
+            phraseBehavior: { type: string, enum: [call_response, continuous, sparse_answers, motivic] }
+            fills: { type: string, enum: [none, cadential, frequent, sectional] }
+            transitions: { type: string, enum: [hard_cut, thin_build, riser, orchestral_swell] }
+            development: { type: string, enum: [repetition, additive, transformative, dynamic_arc] }
+    StyleSpec:
+      type: object
+      required: [genre, subgenre, era, tempoCharacter, rhythm, harmony, instrumentation, orchestration, production, dynamics]
+      properties:
+        genre: { type: string }
+        subgenre: { type: string }
+        era: { type: string }
+        tempoCharacter: { type: string, enum: [laid_back, steady, driving, rubato] }
+        rhythm: { type: object }
+        harmony: { type: object }
+        instrumentation: { type: object }
+        orchestration: { type: object }
+        production: { type: object }
+        dynamics: { type: object }
+        grammar: { $ref: "#/components/schemas/StyleGrammar" }
+    ArrangementPlanSection:
+      type: object
+      required: [section, startBar, endBar, energy, density, tracks, operations]
+      properties:
+        section: { type: string }
+        startBar: { type: number }
+        endBar: { type: number }
+        energy: { type: number }
+        density: { type: number }
+        tracks: { type: object, additionalProperties: { type: string } }
+        operations: { type: array, items: { type: string } }
+        activeTracks:
+          type: array
+          description: Explicit track ids active in this section.
+          items: { type: string }
+        trackDirectives:
+          type: object
+          description: Per-track orchestration intent indexed by track id.
+          additionalProperties:
+            $ref: "#/components/schemas/TrackDirective"
+    ArrangementHierarchyScope:
+      type: object
+      required: [level, id]
+      properties:
+        level: { type: string, enum: [song, section, phrase, bar, event] }
+        id: { type: string }
+    ArrangementHierarchy:
+      type: object
+      required: [version, status, reason, precedence, song, sections, phrases, bars, events]
+      properties:
+        version: { type: string, const: "1.0" }
+        status: { type: string, enum: [applied, no_op] }
+        reason: { type: [string, "null"] }
+        precedence:
+          type: array
+          prefixItems:
+            - { type: string, const: song }
+            - { type: string, const: section }
+            - { type: string, const: phrase }
+            - { type: string, const: bar }
+            - { type: string, const: event }
+          minItems: 5
+          maxItems: 5
+        song:
+          type: object
+          required: [id, intent, climaxSectionId]
+          properties:
+            id: { type: string }
+            intent: { type: string, enum: [development_arc, preserve_observed_form] }
+            climaxSectionId: { type: [string, "null"] }
+        sections:
+          type: array
+          items:
+            type: object
+            required: [id, sourceSection, startBar, endBar, function, development, targetEnergy, targetDensity, phraseIds, barIds]
+            properties:
+              id: { type: string }
+              sourceSection: { type: string }
+              startBar: { type: number, minimum: 1 }
+              endBar: { type: number, minimum: 1 }
+              function: { type: string, enum: [intro, verse, prechorus, chorus, bridge, outro, neutral] }
+              development: { type: string, enum: [initial, development, reprise, neutral] }
+              targetEnergy: { type: number, minimum: 0, maximum: 1 }
+              targetDensity: { type: number, minimum: 0, maximum: 1 }
+              phraseIds: { type: array, items: { type: string } }
+              barIds: { type: array, items: { type: string } }
+        phrases:
+          type: array
+          items:
+            type: object
+            required: [id, sectionId, startBar, endBar, confidence, intent]
+            properties:
+              id: { type: string }
+              sectionId: { type: string }
+              startBar: { type: number, minimum: 1 }
+              endBar: { type: number, minimum: 1 }
+              confidence: { type: number, minimum: 0, maximum: 1 }
+              intent: { type: string, const: protect_vocal_phrase }
+        bars:
+          type: array
+          items:
+            type: object
+            required: [id, sectionId, bar, meter, phraseIds, vocalSpace]
+            properties:
+              id: { type: string }
+              sectionId: { type: string }
+              bar: { type: number, minimum: 1 }
+              meter: { type: string }
+              phraseIds: { type: array, items: { type: string } }
+              vocalSpace: { type: string, enum: [occupied, available, unknown] }
+        events:
+          type: array
+          items:
+            type: object
+            required: [id, sectionId, barId, trackId, intent, source]
+            properties:
+              id: { type: string }
+              sectionId: { type: string }
+              barId: { type: string }
+              trackId: { type: string }
+              intent: { type: string, enum: [support_vocal, use_vocal_space, follow_section] }
+              source: { type: string, enum: [section, vocal_phrase, vocal_space] }
+    OrchestrationCue:
+      type: object
+      properties:
+        bar: { type: number, minimum: 0 }
+        beat: { type: number, minimum: 0 }
+        mode: { type: string }
+        durationBeats: { type: number, exclusiveMinimum: 0 }
+    TrackDirective:
+      type: object
+      properties:
+        role: { type: string }
+        musicalFunction:
+          type: string
+          enum: [foundation, pulse, groove, harmonic_support, texture, countermelody, hook, response, lift, transition, accent, doubling, pad]
+        register: { type: string }
+        rhythmicActivity: { type: number, minimum: 0, maximum: 1 }
+        harmonicActivity: { type: number, minimum: 0, maximum: 1 }
+        dynamicTarget: { type: number, minimum: 0, maximum: 1 }
+        articulationFamily: { type: string }
+        entry: { $ref: "#/components/schemas/OrchestrationCue" }
+        exit: { $ref: "#/components/schemas/OrchestrationCue" }
+        transition: { type: string }
+        fill: { type: boolean }
+        handoffFromTrackId: { type: string }
+        doublingTrackId: { type: string }
+    OrchestrationAssignment:
+      type: object
+      required: [sectionId, phraseId, trackId, role, register, handoffFromTrackId, doublingTrackId]
+      properties:
+        sectionId: { type: string }
+        phraseId: { type: string }
+        trackId: { type: string }
+        role:
+          type: string
+          enum: [foundation, pulse, groove, harmonic_support, texture, countermelody, hook, response, lift, transition, accent, doubling, pad]
+        register: { type: string, enum: [low, middle, high] }
+        handoffFromTrackId: { type: [string, "null"] }
+        doublingTrackId: { type: [string, "null"] }
+    CompositionIntelligencePlan:
+      type: object
+      required: [version, mode, precedence, seed, evidenceSha256, songIntent, tensionRelease, phrases, instrumentRoles]
+      properties:
+        version: { type: string, enum: ["1.0", "2.0"] }
+        mode: { type: string, enum: [legacy, reasoning_core] }
+        precedence:
+          type: array
+          items: { type: string }
+        seed: { type: number }
+        evidenceSha256: { type: string }
+        songIntent: { type: string, enum: [preserve_observed_form, develop_observed_form] }
+        tensionRelease:
+          type: array
+          items: { type: object }
+        phrases:
+          type: array
+          items: { type: object }
+        instrumentRoles:
+          type: array
+          items: { type: object }
+        orchestrationAssignments:
+          type: array
+          items: { $ref: "#/components/schemas/OrchestrationAssignment" }
+    AppliedTrackDirective:
+      type: object
+      required: [section, startBar, endBar, start, end, directive]
+      properties:
+        section: { type: string }
+        startBar: { type: number, minimum: 1 }
+        endBar: { type: number, minimum: 1 }
+        start: { type: number, minimum: 0 }
+        end: { type: number, minimum: 0 }
+        directive:
+          $ref: "#/components/schemas/TrackDirective"
+    TrackMappingMetadata:
+      type: object
+      properties:
+        midiChannel: { type: number, minimum: 1, maximum: 16 }
+        program: { type: number, minimum: 0, maximum: 127 }
+        articulationMap:
+          type: object
+          additionalProperties:
+            oneOf: [{ type: string }, { type: number }]
+        controlMap:
+          type: object
+          additionalProperties: { type: number }
+    InstrumentDirectiveMappings:
+      type: object
+      properties:
+        registers:
+          type: object
+          additionalProperties:
+            type: object
+            required: [min, max]
+            properties:
+              min: { type: number }
+              max: { type: number }
+        articulationFamilies:
+          type: object
+          additionalProperties:
+            type: array
+            items: { type: string }
+        dynamicTargets:
+          type: object
+          additionalProperties: { type: number }
+        controls:
+          type: object
+          additionalProperties: { type: number }
+    GenerationPreferenceEffects:
+      type: object
+      required: [orchestrationDensity, responseFrequency, roleEmphasis, voicingCharacter, development, transitionIntensity]
+      properties:
+        orchestrationDensity: { type: number, minimum: -0.35, maximum: 0.35 }
+        responseFrequency: { type: number, minimum: 0.25, maximum: 0.75 }
+        roleEmphasis: { type: string, enum: [foundation, pulse, harmony, counterline, texture] }
+        voicingCharacter: { type: string, enum: [close, open, wide] }
+        development: { type: string, enum: [restrained, balanced, progressive] }
+        transitionIntensity: { type: number, minimum: 0.25, maximum: 0.75 }
+    GenerationPreferenceSnapshot:
+      type: object
+      required: [contractVersion, calibrationId, calibrationVersion, heldOutAgreement, baselineAgreement, heldOutExamples, evaluationSha256, evidenceSha256, effects]
+      properties:
+        contractVersion: { type: string, const: "1.0" }
+        calibrationId: { type: string, minLength: 1 }
+        calibrationVersion: { type: number, minimum: 1, multipleOf: 1 }
+        heldOutAgreement: { type: number, minimum: 0, maximum: 1 }
+        baselineAgreement: { type: number, minimum: 0, maximum: 1 }
+        heldOutExamples: { type: number, minimum: 5, multipleOf: 1 }
+        evaluationSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        evidenceSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        effects: { $ref: "#/components/schemas/GenerationPreferenceEffects" }
+    ArrangementPlan:
+      type: object
+      required: [id, version, sections, style, songModelVersion, parameters, provenance, hierarchy]
+      properties:
+        id: { type: string }
+        version: { type: number }
+        sections: { type: array, items: { $ref: "#/components/schemas/ArrangementPlanSection" } }
+        style: { $ref: "#/components/schemas/StyleSpec" }
+        songModelVersion: { type: number }
+        parameters: { type: object }
+        provenance: { $ref: "#/components/schemas/ArtifactProvenance" }
+        hierarchy: { $ref: "#/components/schemas/ArrangementHierarchy" }
+        compositionIntelligence: { $ref: "#/components/schemas/CompositionIntelligencePlan" }
+        generationPreference:
+          oneOf:
+            - { $ref: "#/components/schemas/GenerationPreferenceSnapshot" }
+            - { type: "null" }
