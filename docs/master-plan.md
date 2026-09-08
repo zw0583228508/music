@@ -25,6 +25,14 @@ PerformanceData` — never an audio generator.
 | Local stack (api-server :5000 + music-studio :5173) | ✅ running against Neon; `pnpm run dev:api` / `dev:studio` |
 | GitHub | ✅ `github.com/zw0583228508/music` |
 | Windows `vite` dev + `db:push` + launcher | ✅ fixed in PR-00 |
+| Waves 1–4 (brain, generation & critique, sound, end to end) | ✅ merged (PR-01…PR-18, PR-W1) |
+| Wave 5 (models as tools) | ✅ Magenta RT2 live on Modal as SHADOW_READY; MIDI-RWKV BLOCKED_LICENSE |
+| Wave 6 (production quality) | ✅ merged (PR-21…PR-26): VST3 worker, routing, performance V2, sound selection, mix brain, mastering (BS.1770 meter) |
+| Wave 7 (learning system) | ✅ merged (PR-27…PR-31): fingerprint, preference events, pairwise critic, personal defaults, training loop with benchmark gate |
+| Wave U (universal producer intelligence) | 🟡 U1–U3 merged; U4 in progress; U5–U6 planned |
+| Quality gate A (technical) | ✅ every merged PR carries tests, typecheck, live evidence under `docs/evidence/`; **Definition of Done passed end to end on a real upload, local providers only (PR-32)** |
+| Quality gate B (musical) | 🟡 critics pass, no illegal notes; benchmark `playabilityErrors` drift 0 → 4.33 under investigation |
+| Quality gate C (human) | ❌ **nobody has listened**: the blind A/B sheet exists (`/arranger-model/{id}/blind-sheet`), no rater has used it |
 
 ## PR progress (merged to `main`)
 
@@ -168,6 +176,73 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   `candidateDiversity`, now visible to a user. The Song Model in the live run
   is the seeded benchmark case, because analysis of the project's real MP3s
   needs the offline GPU workers. Nobody has listened.
+
+- **PR-32** ✅ — `local-structure-fallback` + producer-verified Song Model:
+  **the Definition of Done, run on a real upload with no GPU worker.** Every
+  earlier live proof used the seeded benchmark Song Model. Running the plan's
+  DoD on a genuine upload (a synthesised 96 s song: intro / verse / chorus /
+  verse / chorus / outro at 100 BPM) with local providers only, **analysis
+  failed** — "Tempo analysis is required. Meter analysis is required. At least
+  one structural section is required before arranging." A single local tempo
+  observation scored below the reconciliation margin, meter had no local
+  source, and sections only ever came from a remote structure provider. A
+  local install could not arrange anything it uploaded.
+
+  `localStructureAnalysis.ts` — an explicit, **low-confidence** fallback used
+  only when no structure provider answered, replaced by any provider's result:
+  tempo from a mean-centred normalised autocorrelation of the onset envelope
+  (60–180 BPM, octave bonus, peak floor so noise reads *nothing*, runner-up
+  separation, parabolic lag interpolation — the old integer-lag detector read
+  98 for a 100 BPM pulse and is replaced); meter `4/4` **assumed** at 0.3;
+  sections cut where the smoothed bar energy moves ≥ 0.18 against the
+  preceding bars (≥ 4 bars apart, ≤ 12), named by energy rank and position.
+  Every field is stamped `low_confidence` with `LOCAL_SIGNAL_ANALYZER_V1` as
+  provider and a message that calls it a sketch to correct in the editor; the
+  reconciliation report carries the observation.
+
+  The sketch then hit the arrangement gate honestly: model confidence
+  0.44 < `MIN_ARRANGEMENT_CONFIDENCE` 0.55. The product
+  path is the Song Model editor — and the correction route could not carry it:
+  confirming an assumed value was "not a change" (400), a sketch could not be
+  re-cut into a different number of sections, a corrected field kept its
+  provider confidence so the gate never opened, and a corrected tempo left the
+  analyzer's beat grid contradicting the canonical timeline (400,
+  `CONTRADICTORY_COORDINATES`). `songModelCorrection.ts` (tested): confirming
+  a `low_confidence` value **is** a correction; a sketched form may be re-cut;
+  a verified field is authoritative (confidence 1, provider output kept in
+  provenance) and the model confidence is recomputed by the analyzer's own
+  rule; a verified tempo or meter **re-derives the beat/bar grid** on canonical
+  ticks (`regridTimeline`).
+
+  **Proven live** (`docs/evidence/definition-of-done-e2e.json`): upload →
+  analysis ready in ~12 s (FFMPEG + LOCAL_SIGNAL_ANALYZER_V1; tempo read
+  99.2, key A minor, form Intro 1–12 / Chorus 13–20 / Verse 21–27 / Chorus 2 28–34 / Outro 35–39) →
+  producer verifies (tempo 100, 4/4 confirmed, form
+  re-cut to Intro 1–4 / Verse 5–12 / Chorus 13–20 / Verse 2 21–28 / Chorus 2 29–36 / Outro 37–40) → Song Model v2,
+  confidence 0.44 → 0.84 → Brain job
+  `succeeded` (3 candidates, 1 validated at
+  0.687, 2 tracks / 543 notes; stage
+  `insufficient_diversity`) → select → 2
+  preference events → Mix Brain plan (2 tracks,
+  6 sections) → revision v1
+  (-14.0 LUFS, -5.42 dBTP, findings none) →
+  approved → `STREAMING` export `succeeded`
+  (-14 LUFS, -5.63 dBTP, withinTarget True) →
+  bundle of 8 entries, production readiness
+  `{'ready': True, 'status': 'production-ready', 'reasons': [], 'performedMaterialSha256': '2c757b39d46e7f3873384220ccd704936c359731713aedfc3b81d4befa71bf1f', 'midiAgreementSha256': 'f13609d69749ea22f81bbbdd8b361dbdda2dd6373180cd551ac1b7a1261cc914'}`. Every step saved, versioned, editable,
+  repeatable, traceable.
+
+  Suites: localStructureAnalysis 3, songModelCorrection 4; reconciliation and
+  validation suites unchanged; typecheck green.
+
+  **Honest limits.** The local floor is thin: no chord, melody or bass
+  provider runs locally, so the Brain arranged from tempo, energy and form
+  alone — 2 tracks, not an ensemble; the local analysis is a
+  sketch (4/4 assumed, names from energy, octave errors possible) and needed a
+  producer's three corrections to become arrangeable; two of three candidates
+  were again near-duplicates (`insufficient_diversity`); stems are the
+  reference synth's. A structure/harmony provider on a GPU worker replaces the
+  sketch and fills the ensemble. Nobody has listened.
 
 ## Wave 6 — production quality
 
