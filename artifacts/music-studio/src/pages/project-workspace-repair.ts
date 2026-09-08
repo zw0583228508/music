@@ -1,12 +1,22 @@
 import type {
   CandidateMusicCriticFinding,
+  CandidateMusicCriticFindingV1,
   GenerationCandidate,
 } from "@workspace/api-client-react";
+
+/**
+ * The persisted `musicCritic` report is a discriminated union: `music-critic-v1`
+ * carries lean findings, `music-critic-v2` carries the richer scope/repair
+ * metadata. Repair preview and eligibility only read the fields common to both.
+ */
+export type RepairFinding =
+  | CandidateMusicCriticFinding
+  | CandidateMusicCriticFindingV1;
 
 export type RepairFindingPreview = {
   candidate: GenerationCandidate;
   dimensionName: string;
-  finding: CandidateMusicCriticFinding;
+  finding: RepairFinding;
 };
 
 export function isRepairEligible(
@@ -16,7 +26,7 @@ export function isRepairEligible(
     score: number | null;
   },
   existingRepair: unknown,
-  finding: CandidateMusicCriticFinding | null,
+  finding: RepairFinding | null,
 ): boolean {
   return Boolean(
     candidate.status === "validated" &&
