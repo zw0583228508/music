@@ -2216,6 +2216,38 @@ export type PerformanceEvidence = {
   decisions: PerformanceDecision[];
 };
 
+/** Dimensions the Audio Critic V1 scores after rendering (PR-15). */
+export type AudioCritiqueDimension =
+  | "balance" | "masking" | "harshness" | "mud" | "lowEndConflict"
+  | "transientQuality" | "stereoDistribution" | "dynamicMovement"
+  | "instrumentRealism" | "spectralCrowding";
+
+export type AudioCritiqueScore = {
+  dimension: AudioCritiqueDimension;
+  score: number;
+  weight: number;
+  confidence: number;
+  findings: string[];
+};
+
+export type AudioMixAction = {
+  dimension: AudioCritiqueDimension;
+  instrument?: string;
+  action: string;
+  reason: string;
+};
+
+/** Second critique, after rendering (PR-15). */
+export type AudioCritique = {
+  version: "1.0";
+  method: string;
+  sampleRate: number;
+  stemCount: number;
+  overallScore: number;
+  dimensions: AudioCritiqueScore[];
+  recommendedMixActions: AudioMixAction[];
+};
+
 /** One §26 render check (PR-13). */
 export type RenderCheck = {
   name:
