@@ -9,6 +9,7 @@ import type { ArrangementHierarchy } from './arrangementHierarchy';
 import type { ArrangementPlanParameters } from './arrangementPlanParameters';
 import type { ArrangementPlanSection } from './arrangementPlanSection';
 import type { ArtifactProvenance } from './artifactProvenance';
+import type { CandidateGenerationPlan } from './candidateGenerationPlan';
 import type { CompositionIntelligencePlan } from './compositionIntelligencePlan';
 import type { GenerationPreferenceSnapshot } from './generationPreferenceSnapshot';
 import type { GlobalArrangementPlan } from './globalArrangementPlan';
@@ -32,6 +33,7 @@ export interface ArrangementPlan {
   orchestrationBudget?: OrchestrationBudgetPlan;
   transitionPlan?: TransitionPlanSet;
   partComposerPlan?: PartComposerPlan;
+  candidateGenerationPlan?: CandidateGenerationPlan;
   compositionIntelligence?: CompositionIntelligencePlan;
   generationPreference?: GenerationPreferenceSnapshot | null;
 }
