@@ -23,6 +23,7 @@ import type {
 } from "@workspace/db";
 import { createHash } from "node:crypto";
 import { CANONICAL_PPQ, createCanonicalTimeline } from "./canonicalTimeline";
+import { deriveGlobalArrangementPlan } from "./globalArrangementPlanner";
 
 export type PerformanceNote = MusicalNote & {
   articulation: string;
@@ -1678,6 +1679,7 @@ export function createArrangementPlan(input: {
         generationPreferenceEvidenceSha256: input.generationPreference?.evidenceSha256 ?? "none",
       },
     },
+    globalPlan: deriveGlobalArrangementPlan(input.songModel),
     generationPreference: input.generationPreference ?? null,
   };
 }

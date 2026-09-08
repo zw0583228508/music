@@ -4446,8 +4446,67 @@ components:
         parameters: { type: object }
         provenance: { $ref: "#/components/schemas/ArtifactProvenance" }
         hierarchy: { $ref: "#/components/schemas/ArrangementHierarchy" }
+        globalPlan: { $ref: "#/components/schemas/GlobalArrangementPlan" }
         compositionIntelligence: { $ref: "#/components/schemas/CompositionIntelligencePlan" }
         generationPreference:
           oneOf:
             - { $ref: "#/components/schemas/GenerationPreferenceSnapshot" }
             - { type: "null" }
+    GlobalArrangementPlan:
+      type: object
+      description: Whole-song arrangement direction (PR-04), derived before section planning.
+      required: [version, derivedAt, inputsDigestSha256, method, confidence, style, substyle, instrumentPalette, sectionTargets, climax, secondaryClimax, grooveStrategy, orchestrationStrategy, motifStrategy, contrastStrategy, harmonicComplexity, rhythmicComplexity, productionAesthetic]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        derivedAt: { type: string, format: date-time }
+        inputsDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        method: { type: string }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        style: { type: string }
+        substyle: { type: string, nullable: true }
+        instrumentPalette:
+          type: array
+          items:
+            type: object
+            required: [role, priority, rationale]
+            properties:
+              role: { type: string }
+              priority: { type: number, minimum: 1 }
+              rationale: { type: string }
+        sectionTargets:
+          type: array
+          items:
+            type: object
+            required: [sectionName, startBar, endBar, energy, density, tension, role, noveltyVsPrevious]
+            properties:
+              sectionName: { type: string }
+              startBar: { type: number, minimum: 1 }
+              endBar: { type: number, minimum: 1 }
+              energy: { type: number, minimum: 0, maximum: 1 }
+              density: { type: number, minimum: 0, maximum: 1 }
+              tension: { type: number, minimum: 0, maximum: 1 }
+              role: { type: string, enum: [intro, verse, prechorus, chorus, bridge, breakdown, outro, instrumental, neutral] }
+              noveltyVsPrevious: { type: number, minimum: 0, maximum: 1 }
+        climax:
+          nullable: true
+          type: object
+          required: [sectionName, atBar, energy]
+          properties:
+            sectionName: { type: string }
+            atBar: { type: number, minimum: 1 }
+            energy: { type: number, minimum: 0, maximum: 1 }
+        secondaryClimax:
+          nullable: true
+          type: object
+          required: [sectionName, atBar, energy]
+          properties:
+            sectionName: { type: string }
+            atBar: { type: number, minimum: 1 }
+            energy: { type: number, minimum: 0, maximum: 1 }
+        grooveStrategy: { type: string, enum: [steady_pulse, syncopated, swing, half_time_feel, four_on_floor, rubato] }
+        orchestrationStrategy: { type: string, enum: [layered_build, call_and_response, wave_dynamics, static_bed, sparse_to_full] }
+        motifStrategy: { type: string, enum: [recurring_hook, developing_motif, through_composed] }
+        contrastStrategy: { type: string, enum: [dynamic_contrast, textural_contrast, harmonic_contrast, register_contrast, minimal_contrast] }
+        harmonicComplexity: { type: number, minimum: 0, maximum: 1 }
+        rhythmicComplexity: { type: number, minimum: 0, maximum: 1 }
+        productionAesthetic: { type: string, enum: [intimate, polished_pop, cinematic, raw_band, electronic, orchestral] }

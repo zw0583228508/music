@@ -1939,12 +1939,58 @@ export type InstrumentDirectiveMappings = {
   controls?: Record<string, number>;
 };
 
+/**
+ * Whole-song arrangement direction (PR-04), derived before any section or note
+ * is written. Every candidate section is planned against this one plan.
+ */
+export type GlobalArrangementPlan = {
+  version: "1.0";
+  derivedAt: string;
+  inputsDigestSha256: string;
+  method: string;
+  confidence: number;
+  style: string;
+  substyle: string | null;
+  instrumentPalette: Array<{ role: string; priority: number; rationale: string }>;
+  sectionTargets: Array<{
+    sectionName: string;
+    startBar: number;
+    endBar: number;
+    energy: number;
+    density: number;
+    tension: number;
+    role:
+      | "intro" | "verse" | "prechorus" | "chorus" | "bridge"
+      | "breakdown" | "outro" | "instrumental" | "neutral";
+    noveltyVsPrevious: number;
+  }>;
+  climax: { sectionName: string; atBar: number; energy: number } | null;
+  secondaryClimax: { sectionName: string; atBar: number; energy: number } | null;
+  grooveStrategy:
+    | "steady_pulse" | "syncopated" | "swing" | "half_time_feel"
+    | "four_on_floor" | "rubato";
+  orchestrationStrategy:
+    | "layered_build" | "call_and_response" | "wave_dynamics"
+    | "static_bed" | "sparse_to_full";
+  motifStrategy: "recurring_hook" | "developing_motif" | "through_composed";
+  contrastStrategy:
+    | "dynamic_contrast" | "textural_contrast" | "harmonic_contrast"
+    | "register_contrast" | "minimal_contrast";
+  harmonicComplexity: number;
+  rhythmicComplexity: number;
+  productionAesthetic:
+    | "intimate" | "polished_pop" | "cinematic" | "raw_band"
+    | "electronic" | "orchestral";
+};
+
 export type ArrangementPlan = {
   id: string; version: number; sections: ArrangementPlanSection[]; style: StyleSpec;
   songModelVersion: number; parameters: Record<string, number | string | boolean>;
   provenance: ArtifactProvenance;
   /** Auditable song → section → phrase → bar → event planning authority. */
   hierarchy: ArrangementHierarchy;
+  /** Whole-song direction, derived before section planning; absent on historical plans. */
+  globalPlan?: GlobalArrangementPlan;
   /** Absent only on historical persisted plans, which are interpreted as v1. */
   compositionIntelligence?: CompositionIntelligencePlan;
   /** Frozen before notes are generated; absent on historical plans. */
