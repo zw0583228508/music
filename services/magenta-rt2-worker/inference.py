@@ -15,7 +15,15 @@ from pathlib import Path
 
 import numpy as np
 
-from pianoroll import FRAME_RATE_HZ, Note, describe_roll, drums_to_track, frame_count, notes_to_pianoroll
+from pianoroll import (
+    FRAME_RATE_HZ,
+    PITCH_COUNT,
+    Note,
+    describe_roll,
+    drums_to_track,
+    frame_count,
+    notes_to_pianoroll,
+)
 
 ROOT = Path(__file__).resolve().parent
 SPEC = json.loads((ROOT / "model_manifest.json").read_text(encoding="utf-8"))
@@ -67,17 +75,32 @@ def load_system():
         from magenta_rt import config as mrt_config
         from magenta_rt.jax.system import MagentaRT2System
 
-        for expected, attribute in (
-            (NOTES_KEY, "PIANOROLL_WITH_ONSETS"),
-            (DRUMS_KEY, "DRUM_PIANOROLL"),
-            (STYLE_KEY, "MUSICCOCA"),
+        for expected, attribute, width in (
+            (NOTES_KEY, "PIANOROLL_WITH_ONSETS", PITCH_COUNT),
+            (DRUMS_KEY, "DRUM_PIANOROLL", 1),
+            (STYLE_KEY, "MUSICCOCA", None),
         ):
-            actual = getattr(mrt_config, attribute).key
-            if actual != expected:
+            config = getattr(mrt_config, attribute)
+            if config.key != expected:
                 raise RuntimeError(
-                    f"magenta_rt conditioning key changed: {attribute} is {actual!r}, "
+                    f"magenta_rt conditioning key changed: {attribute} is {config.key!r}, "
                     f"this worker was pinned against {expected!r}"
                 )
+            # _build_conditioning asserts exactly rvq_truncation_level tokens per
+            # key, and we build one frame's worth per step. Check the width here
+            # so a change upstream fails at load with an explanation rather than
+            # as a bare AssertionError deep inside a generate() call.
+            if width is not None and config.rvq_truncation_level != width:
+                raise RuntimeError(
+                    f"magenta_rt {attribute} width changed: expected {width} tokens "
+                    f"per frame, upstream now wants {config.rvq_truncation_level}"
+                )
+        if abs(mrt_config.PIANOROLL_WITH_ONSETS.frame_rate - FRAME_RATE_HZ) > 1e-9:
+            raise RuntimeError(
+                f"magenta_rt frame rate changed to "
+                f"{mrt_config.PIANOROLL_WITH_ONSETS.frame_rate} Hz; pianoroll.py "
+                f"encodes at {FRAME_RATE_HZ} Hz"
+            )
 
         started = time.time()
         _system = MagentaRT2System(size=variant()["size"])
@@ -112,31 +135,31 @@ def realize(
     roll = notes_to_pianoroll(parsed, frames, free_articulation=free_articulation)
     drums = drums_to_track(drum_onsets or [], frames, masked=mask_drums)
 
-    from magenta_rt.jax.system import MagentaRT2State  # noqa: F401  (typing only)
-
     embedding = system.embed_style(style, use_mapper=True)
 
-    # RT2 is a streaming model: one second of audio per 25-frame step, carrying
-    # state forward. Conditioning is sliced to match, so a 30-second render is
-    # still driven by our notes at every step rather than only the first.
+    # RT2's conditioning block is one frame wide and is reused for every frame
+    # inside a single generate() call -- _build_conditioning asserts exactly
+    # rvq_truncation_level tokens per key. So driving the model with a whole
+    # arrangement means stepping it frame by frame at 25 Hz and handing it that
+    # frame's 128 pitch states, rather than generating a second at a time from
+    # one static conditioning block. This is the difference between RT2 playing
+    # our arrangement and RT2 improvising over its first frame.
     started = time.time()
     chunks: list[np.ndarray] = []
     state = None
-    step = int(FRAME_RATE_HZ)
     sample_rate = 48000
-    for offset in range(0, frames, step):
-        window = min(step, frames - offset)
+    for index in range(frames):
         conditioning = {
             STYLE_KEY: embedding,
-            NOTES_KEY: _flatten(roll[offset : offset + window]),
-            DRUMS_KEY: drums[offset : offset + window],
+            NOTES_KEY: roll[index],
+            DRUMS_KEY: [drums[index]],
         }
         waveform, state = system.generate(
             conditioning=conditioning,
             cfg_scales={"musiccoca": 3.0, "notes": cfg_notes, "drums": 1.0},
             temperature=temperature,
             top_k=top_k,
-            frames=window,
+            frames=1,
             state=state,
         )
         samples = np.asarray(waveform.samples, dtype=np.float32)
@@ -184,7 +207,3 @@ def encode_wav(audio: np.ndarray, sample_rate: int) -> bytes:
     buffer = io.BytesIO()
     sf.write(buffer, audio, sample_rate, format="WAV", subtype="PCM_24")
     return buffer.getvalue()
-
-
-def _flatten(rows: list[list[int]]) -> list[int]:
-    return [value for row in rows for value in row]

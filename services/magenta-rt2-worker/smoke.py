@@ -166,7 +166,7 @@ def contract_audio_context() -> dict:
         "expectedSamples": expected,
         "seamIsSilent": seam_silent,
         "audio": checks,
-        "steps": math.ceil(6.0 * FRAME_RATE_HZ / FRAME_RATE_HZ),
+        "frames": int(6.0 * FRAME_RATE_HZ),
         "latencySeconds": result["latencySeconds"],
         "realtimeFactor": result["realtimeFactor"],
     }
