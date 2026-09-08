@@ -5457,6 +5457,83 @@ export interface ArrangementPlan {
   generationPreference?: GenerationPreferenceSnapshot | null;
 }
 
+export type LockScope = typeof LockScope[keyof typeof LockScope];
+
+
+export const LockScope = {
+  global: 'global',
+  section: 'section',
+  track: 'track',
+  phrase: 'phrase',
+  event: 'event',
+} as const;
+
+export interface ArrangementLock {
+  id: string;
+  scope: LockScope;
+  sectionName?: string;
+  instrument?: string;
+  trackId?: string;
+  phraseId?: string;
+  /** @minimum 1 */
+  startBar?: number;
+  /** @minimum 1 */
+  endBar?: number;
+  noteIds?: string[];
+  reason?: string;
+  createdAt: string;
+}
+
+export type ArrangementLockSetVersion = typeof ArrangementLockSetVersion[keyof typeof ArrangementLockSetVersion];
+
+
+export const ArrangementLockSetVersion = {
+  '10': '1.0',
+} as const;
+
+export interface ArrangementLockSet {
+  version: ArrangementLockSetVersion;
+  locks: ArrangementLock[];
+}
+
+export interface RegenerationScope {
+  instrument: string;
+  sectionName: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  reason: string;
+}
+
+export type PartialRegenerationReportVersion = typeof PartialRegenerationReportVersion[keyof typeof PartialRegenerationReportVersion];
+
+
+export const PartialRegenerationReportVersion = {
+  '10': '1.0',
+} as const;
+
+export type PartialRegenerationReportBlockedByLockItem = {
+  scope: RegenerationScope;
+  lockId: string;
+};
+
+/**
+ * Partial regeneration honouring producer locks (PR-17).
+ */
+export interface PartialRegenerationReport {
+  version: PartialRegenerationReportVersion;
+  method: string;
+  requested: RegenerationScope[];
+  blockedByLock: PartialRegenerationReportBlockedByLockItem[];
+  regenerated: RegenerationScope[];
+  /** @minimum 0 */
+  keptNotes: number;
+  /** @minimum 0 */
+  replacedNotes: number;
+  locksHonoured: boolean;
+}
+
 export type AudioCritiqueDimension = typeof AudioCritiqueDimension[keyof typeof AudioCritiqueDimension];
 
 

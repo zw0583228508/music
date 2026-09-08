@@ -2216,6 +2216,53 @@ export type PerformanceEvidence = {
   decisions: PerformanceDecision[];
 };
 
+/** Granularity at which a producer can freeze material (PR-17). */
+export type LockScope = "global" | "section" | "track" | "phrase" | "event";
+
+/**
+ * A producer decision to keep existing material. Anything a lock covers is
+ * carried over verbatim on regeneration; everything else may be rewritten.
+ */
+export type ArrangementLock = {
+  id: string;
+  scope: LockScope;
+  sectionName?: string;
+  instrument?: string;
+  trackId?: string;
+  phraseId?: string;
+  startBar?: number;
+  endBar?: number;
+  noteIds?: string[];
+  reason?: string;
+  createdAt: string;
+};
+
+export type ArrangementLockSet = {
+  version: "1.0";
+  locks: ArrangementLock[];
+};
+
+/** What a partial regeneration is allowed to touch (PR-17). */
+export type RegenerationScope = {
+  instrument: string;
+  sectionName: string;
+  startBar: number;
+  endBar: number;
+  reason: string;
+};
+
+export type PartialRegenerationReport = {
+  version: "1.0";
+  method: string;
+  requested: RegenerationScope[];
+  blockedByLock: Array<{ scope: RegenerationScope; lockId: string }>;
+  regenerated: RegenerationScope[];
+  keptNotes: number;
+  replacedNotes: number;
+  /** True when every locked note survived the merge byte-identical. */
+  locksHonoured: boolean;
+};
+
 /** Dimensions the Audio Critic V1 scores after rendering (PR-15). */
 export type AudioCritiqueDimension =
   | "balance" | "masking" | "harshness" | "mud" | "lowEndConflict"
