@@ -43,11 +43,16 @@ def main() -> None:
 
     from huggingface_hub import snapshot_download
 
-    destination = ASSETS / "snapshot"
+    # magenta_rt/paths.py resolves everything under $MAGENTA_HOME/magenta-rt-v2,
+    # so provision into that layout rather than inventing our own and hoping an
+    # environment variable redirects the package.
+    destination = ASSETS / "magenta-rt-v2"
     destination.mkdir(parents=True, exist_ok=True)
 
     # Only the requested variant's checkpoint is fetched. Pulling both would
-    # cost 11 GB of volume and download time to prove one of them.
+    # cost 11 GB of volume and download time to prove one of them. The .mlxfn
+    # exports are Apple MLX builds and unusable from the JAX runtime, so they
+    # are excluded too -- another ~560 MB of volume for nothing.
     allow = [
         variant["checkpoint_path"],
         "resources/**",
@@ -61,11 +66,31 @@ def main() -> None:
         revision=SPEC["model"]["revision"],
         local_dir=destination,
         allow_patterns=allow,
+        ignore_patterns=["*.mlxfn"],
     )
 
+    # Check every path magenta_rt/paths.py will resolve, here on cheap CPU,
+    # rather than discovering a layout mistake after a GPU container has spun
+    # up and loaded half a model.
+    required = [
+        variant["checkpoint_path"],
+        "resources/spectrostream/encoder.safetensors",
+        "resources/spectrostream/decoder.safetensors",
+        "resources/musiccoca/text_encoder.tflite",
+        "resources/musiccoca/music_encoder.tflite",
+        "resources/musiccoca/mapper.tflite",
+        "resources/musiccoca/pretrained_vector_quantizer.tflite",
+        "resources/musiccoca/audio_preprocessor.tflite",
+        "resources/musiccoca/spm.model",
+    ]
+    missing = [path for path in required if not (destination / path).is_file()]
+    if missing:
+        raise RuntimeError(
+            "Magenta RT2 assets are incomplete; the runtime would fail at load.\n"
+            + "\n".join(f"  missing: {path}" for path in missing)
+        )
+
     checkpoint = destination / variant["checkpoint_path"]
-    if not checkpoint.is_file():
-        raise RuntimeError(f"checkpoint missing after download: {variant['checkpoint_path']}")
 
     actual = digest(checkpoint)
     expected = variant["checkpoint_sha256"]
@@ -100,7 +125,7 @@ def main() -> None:
         "size": variant["size"],
         "source": SPEC["source"],
         "model": SPEC["model"],
-        "path": "snapshot",
+        "path": "magenta-rt-v2",
         "checkpoint": {
             "path": variant["checkpoint_path"],
             "sha256": actual,

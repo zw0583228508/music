@@ -53,8 +53,12 @@ def worker_environment(*, online: bool = False) -> dict[str, str]:
         "MAGENTA_RT2_SMOKE_ROOT": SMOKE_MOUNT,
         "MAGENTA_RT2_ARTIFACT_ROOT": OUTPUT_MOUNT,
         "MAGENTA_RT2_VARIANT": variant_name(),
-        # magenta_rt resolves checkpoints through its own paths helper.
-        "MAGENTA_RT_CACHE_DIR": MODEL_MOUNT,
+        # magenta_rt/paths.py resolves every asset under
+        # $MAGENTA_HOME/magenta-rt-v2, so the snapshot is provisioned into that
+        # exact layout and MAGENTA_HOME points at its parent. This is the
+        # package's own contract; pointing a differently-named variable at the
+        # snapshot silently falls back to ~/Documents/Magenta.
+        "MAGENTA_HOME": MODEL_MOUNT,
         "HF_HOME": f"{MODEL_MOUNT}/hf-cache",
         "HF_HUB_OFFLINE": "0" if online else "1",
         "TRANSFORMERS_OFFLINE": "0" if online else "1",
