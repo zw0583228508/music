@@ -146,7 +146,7 @@ import {
   formatBytes,
   renderArrangementExport,
 } from "../lib/exportEngine";
-import { estimateTruePeak4x } from "../lib/audioMeter";
+import { measureLoudness, measureTruePeakDbtp } from "../lib/loudness";
 import {
   deleteAnalysisObjects,
   deleteExportObject,
@@ -525,18 +525,18 @@ const iso = (value: Date) => value.toISOString();
 const nullableIso = (value: Date | null) => value ? iso(value) : null;
 const sha256 = (value: Buffer | string): string =>
   createHash("sha256").update(value).digest("hex");
+/** PR-26: a real BS.1770-4 measurement of a 16-bit stereo 44.1 kHz preview WAV. */
 export function measureWav(buffer: Buffer): { integratedLufs: number; truePeakDbtp: number } {
   if (buffer.length < 44 || buffer.toString("ascii", 0, 4) !== "RIFF") throw new Error("Rendered preview is not WAV audio");
-  let sum = 0; let peak = 0; const samples = Math.floor((buffer.length - 44) / 2);
-  const pcm = new Float64Array(samples);
-  for (let index = 0; index < samples; index += 1) {
-    const value = buffer.readInt16LE(44 + index * 2) / 32768;
-    pcm[index] = value; sum += value * value;
-  }
-  peak = estimateTruePeak4x(pcm);
+  const samples = Math.floor((buffer.length - 44) / 2);
+  const pcm = new Float32Array(samples);
+  for (let index = 0; index < samples; index += 1) pcm[index] = buffer.readInt16LE(44 + index * 2) / 32768;
+  const channels = buffer.readUInt16LE(22) === 1 ? 1 : 2;
+  const sampleRate = buffer.readUInt32LE(24) || 44_100;
+  const loudness = measureLoudness(pcm, sampleRate, channels);
   return {
-    integratedLufs: 20 * Math.log10(Math.sqrt(sum / Math.max(1, samples)) + 1e-12),
-    truePeakDbtp: 20 * Math.log10(peak + 1e-12),
+    integratedLufs: Number.isFinite(loudness.integratedLufs) ? loudness.integratedLufs : -99,
+    truePeakDbtp: measureTruePeakDbtp(pcm, channels),
   };
 }
 const productionJobResponse = (job: typeof productionJobsTable.$inferSelect) => ({

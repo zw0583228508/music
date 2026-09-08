@@ -1,0 +1,164 @@
+{
+  "pr": "PR-26 mastering-engine",
+  "recordedAt": "2026-09-09T00:00:00Z",
+  "projectId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2",
+  "path": "approved Mix Brain revision (PR-25) -> POST /projects/{id}/export with masterProfile -> durable job -> bundle project/manifest.json `mastering`",
+  "approvedRevision": {
+    "id": "1f644436-6d38-4911-a6d3-ec452a84c1ab",
+    "version": 7,
+    "master": {
+      "targetLufs": -14,
+      "truePeakDbtp": -1,
+      "processing": {
+        "limiter": true,
+        "stereoWidth": 1
+      }
+    }
+  },
+  "exports": {
+    "LIVE_PLAYBACK": {
+      "exportJobId": "aade41b4-2b52-4f79-bc89-4dc8259a85e7",
+      "exportArtifactId": "export-0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2-9-cfdb7625",
+      "mastering": {
+        "profile": "LIVE_PLAYBACK",
+        "intent": "through a PA: mono-safe width, 30 Hz high-pass, extra ceiling headroom",
+        "target": {
+          "integratedLufs": -12,
+          "truePeakDbtp": -1.5,
+          "stereoWidth": 0.85,
+          "limiter": true
+        },
+        "input": {
+          "integratedLufs": -8.18,
+          "truePeakDbtp": -0.9645537014168465,
+          "loudnessRangeLu": 1.8069841509639089
+        },
+        "output": {
+          "integratedLufs": -12,
+          "truePeakDbtp": -1.5890737068466247,
+          "loudnessRangeLu": 1.1248351259211322,
+          "maxMomentaryLufs": -11.14
+        },
+        "gainDb": 0.34,
+        "compression": {
+          "ratio": 1.8,
+          "maxReductionDb": 4.73
+        },
+        "limiter": {
+          "enabled": true,
+          "maxReductionDb": 0,
+          "limitedFrameRatio": 0
+        },
+        "withinTarget": true,
+        "warnings": [],
+        "steps": [
+          {
+            "step": "sources",
+            "detail": "mix from the approved revision: 3 track controls, 15 automation segment(s)"
+          },
+          {
+            "step": "sources",
+            "detail": "master targets from the LIVE_PLAYBACK profile (-12 LUFS / -1.5 dBTP); the revision's -14 LUFS / -1 dBTP were its audition targets"
+          },
+          {
+            "step": "high_pass",
+            "detail": "30 Hz Butterworth, 2nd order"
+          },
+          {
+            "step": "glue_compression",
+            "detail": "1.8:1 above -16 dB, max 4.7 dB reduction"
+          },
+          {
+            "step": "stereo_width",
+            "detail": "mid/side ×0.85"
+          },
+          {
+            "step": "loudness_normalise",
+            "detail": "+0.34 dB to reach -12 LUFS (measured -12.34 LUFS)"
+          },
+          {
+            "step": "true_peak_limiter",
+            "detail": "ceiling -1.5 dBTP, 5 ms lookahead, 100 ms release, max 0.00 dB reduction on 0.00 % of frames"
+          }
+        ],
+        "excludedTracks": []
+      }
+    },
+    "MASTER": {
+      "exportJobId": "dce722b7-e513-4930-abd8-084388639b6c",
+      "exportArtifactId": "export-0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2-10-a51a4231",
+      "mastering": {
+        "profile": "MASTER",
+        "intent": "a competitive release master: -10 LUFS with the limiter doing real work",
+        "target": {
+          "integratedLufs": -10,
+          "truePeakDbtp": -1,
+          "stereoWidth": 1,
+          "limiter": true
+        },
+        "input": {
+          "integratedLufs": -8.05,
+          "truePeakDbtp": -1.0288095704844975,
+          "loudnessRangeLu": 1.8519005562153588
+        },
+        "output": {
+          "integratedLufs": -10,
+          "truePeakDbtp": -0.9999998307118994,
+          "loudnessRangeLu": 0.9227848783131645,
+          "maxMomentaryLufs": -9.33
+        },
+        "gainDb": 2.83,
+        "compression": {
+          "ratio": 2,
+          "maxReductionDb": 5.47
+        },
+        "limiter": {
+          "enabled": true,
+          "maxReductionDb": 1,
+          "limitedFrameRatio": 1e-05
+        },
+        "withinTarget": true,
+        "warnings": [],
+        "steps": [
+          {
+            "step": "sources",
+            "detail": "mix from the approved revision: 3 track controls, 15 automation segment(s)"
+          },
+          {
+            "step": "sources",
+            "detail": "master targets from the MASTER profile (-10 LUFS / -1 dBTP); the revision's -14 LUFS / -1 dBTP were its audition targets"
+          },
+          {
+            "step": "high_pass",
+            "detail": "24 Hz Butterworth, 2nd order"
+          },
+          {
+            "step": "glue_compression",
+            "detail": "2:1 above -16 dB, max 5.5 dB reduction"
+          },
+          {
+            "step": "stereo_width",
+            "detail": "unchanged"
+          },
+          {
+            "step": "loudness_normalise",
+            "detail": "+2.83 dB to reach -10 LUFS (measured -12.83 LUFS)"
+          },
+          {
+            "step": "true_peak_limiter",
+            "detail": "ceiling -1 dBTP, 5 ms lookahead, 100 ms release, max 1.00 dB reduction on 0.00 % of frames"
+          }
+        ],
+        "excludedTracks": []
+      }
+    }
+  },
+  "meterCrossCheck": "docs/evidence/loudness-meter-crosscheck.json (worst difference vs pyloudnorm 0.000 LU over 6 signals)",
+  "observations": [
+    "LIVE_PLAYBACK: -12.00 LUFS integrated at the -12 target, true peak -1.59 dBTP under the -1.5 ceiling, glue compression max 4.7 dB, limiter never engaged; MASTER: -10.00 LUFS at the -10 target, -1.00 dBTP, limiter max 1.0 dB on 0.001 % of frames.",
+    "Found and fixed on the way: the durable export job verified the approved mix/master revision but never passed its controls into the render, so the exported master used the arrangement's default mix, not the mix the user auditioned and approved (levels, pans, PR-25 automation). The `sources` steps in each report now name the revision's 15 automation segments and which targets won.",
+    "Rule made explicit: the approved revision decides the mix; the delivery profile decides the master targets; with no profile asked for, the revision's own targets stand so the export sounds like its audition.",
+    "KARAOKE / BACKING_TRACK exclusions were not exercised live: this arrangement has no voice or LEAD-role track; unit-tested.",
+    "Every LUFS figure here is BS.1770-4 gated loudness measured on the output, cross-checked against pyloudnorm; before PR-26 the code reported plain RMS dBFS as 'LUFS'."
+  ]
+}

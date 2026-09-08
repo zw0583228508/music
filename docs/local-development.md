@@ -103,6 +103,22 @@ worker has attested (their own smoke passed) can be chosen; a rule that names
 an unattested one makes that track fall back to the preview synth with the
 reason recorded in the export's renderer evidence.
 
+### Mastering and loudness (PR-26)
+
+Exports are mastered by `masteringEngine.ts` to the chosen delivery profile
+(STREAMING −14 LUFS / −1 dBTP, MASTER −10, DEMO −16, BACKING_TRACK / KARAOKE
+−16 with the lead / the voice left out of the mix, LIVE_PLAYBACK −12 / −1.5)
+and every figure is measured with the in-repo BS.1770-4 meter. To re-verify
+the meter against pyloudnorm (`pip install pyloudnorm soundfile`):
+
+```bash
+pnpm --filter @workspace/api-server run loudness:crosscheck
+```
+
+The approved mix/master revision decides the *mix* of an export; the profile
+decides the *master* targets. The bundle's `project/manifest.json` carries the
+full mastering report.
+
 ### Sound selection (PR-24)
 
 Without an explicit rule, the Sound Selection Brain chooses among the

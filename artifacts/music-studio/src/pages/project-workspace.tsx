@@ -908,7 +908,7 @@ export default function ProjectWorkspace() {
         includeMidi,
         includeMix: true,
         includeMetadata: true,
-        masterProfile: masterProfile as "STREAMING" | "DYNAMIC" | "CLASSICAL" | "POP" | "LOUD" | "FILM",
+        masterProfile: masterProfile as "STREAMING" | "MASTER" | "DEMO" | "BACKING_TRACK" | "KARAOKE" | "LIVE_PLAYBACK" | "DYNAMIC" | "CLASSICAL" | "POP" | "LOUD" | "FILM",
       },
     }, {
       onSuccess: (result) => {
@@ -2513,7 +2513,12 @@ export default function ProjectWorkspace() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="STREAMING">Streaming balanced</SelectItem>
+                  <SelectItem value="STREAMING">Streaming (−14 LUFS, −1 dBTP)</SelectItem>
+                  <SelectItem value="MASTER">Release master (−10 LUFS)</SelectItem>
+                  <SelectItem value="DEMO">Demo (−16 LUFS, untouched)</SelectItem>
+                  <SelectItem value="BACKING_TRACK">Backing track (no lead)</SelectItem>
+                  <SelectItem value="KARAOKE">Karaoke (no voice)</SelectItem>
+                  <SelectItem value="LIVE_PLAYBACK">Live playback (mono-safe, −1.5 dBTP)</SelectItem>
                   <SelectItem value="DYNAMIC">Dynamic / acoustic</SelectItem>
                   <SelectItem value="CLASSICAL">Classical headroom</SelectItem>
                   <SelectItem value="POP">Modern pop</SelectItem>

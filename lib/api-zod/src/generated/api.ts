@@ -17240,7 +17240,7 @@ export const ExportArrangementBody = zod.strictObject({
   "includeMidi": zod.boolean().optional(),
   "includeMix": zod.boolean().optional(),
   "includeMetadata": zod.boolean().optional(),
-  "masterProfile": zod.enum(['STREAMING', 'DYNAMIC', 'CLASSICAL', 'POP', 'LOUD', 'FILM']).optional()
+  "masterProfile": zod.enum(['STREAMING', 'MASTER', 'DEMO', 'BACKING_TRACK', 'KARAOKE', 'LIVE_PLAYBACK', 'DYNAMIC', 'CLASSICAL', 'POP', 'LOUD', 'FILM']).optional()
 })
 
 export const ExportArrangementResponse = zod.object({
@@ -17676,7 +17676,7 @@ export const CreateProjectExportBody = zod.strictObject({
   "includeMidi": zod.boolean().optional(),
   "includeMix": zod.boolean().optional(),
   "includeMetadata": zod.boolean().optional(),
-  "masterProfile": zod.enum(['STREAMING', 'DYNAMIC', 'CLASSICAL', 'POP', 'LOUD', 'FILM']).optional()
+  "masterProfile": zod.enum(['STREAMING', 'MASTER', 'DEMO', 'BACKING_TRACK', 'KARAOKE', 'LIVE_PLAYBACK', 'DYNAMIC', 'CLASSICAL', 'POP', 'LOUD', 'FILM']).optional()
 })
 
 export const CreateProjectExportResponse = zod.object({

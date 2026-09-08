@@ -3947,6 +3947,11 @@ export type ExportInputMasterProfile = typeof ExportInputMasterProfile[keyof typ
 
 export const ExportInputMasterProfile = {
   STREAMING: 'STREAMING',
+  MASTER: 'MASTER',
+  DEMO: 'DEMO',
+  BACKING_TRACK: 'BACKING_TRACK',
+  KARAOKE: 'KARAOKE',
+  LIVE_PLAYBACK: 'LIVE_PLAYBACK',
   DYNAMIC: 'DYNAMIC',
   CLASSICAL: 'CLASSICAL',
   POP: 'POP',

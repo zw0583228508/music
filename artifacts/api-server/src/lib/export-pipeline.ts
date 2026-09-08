@@ -116,7 +116,7 @@ export type ExportInput = {
   includeMidi?: boolean;
   includeMix?: boolean;
   includeMetadata?: boolean;
-  masterProfile?: "STREAMING" | "DYNAMIC" | "CLASSICAL" | "POP" | "LOUD" | "FILM";
+  masterProfile?: "STREAMING" | "MASTER" | "DEMO" | "BACKING_TRACK" | "KARAOKE" | "LIVE_PLAYBACK" | "DYNAMIC" | "CLASSICAL" | "POP" | "LOUD" | "FILM";
 };
 
 export type ExportFile = {
@@ -621,14 +621,20 @@ function mixSamples(
   }
   let peak = 0;
   for (const value of mixed) peak = Math.max(peak, Math.abs(value));
-  const profile = {
+  const profiles: Record<string, { peak: number; drive: number }> = {
     STREAMING: { peak: 0.92, drive: 1.35 },
+    MASTER: { peak: 0.97, drive: 1.6 },
+    DEMO: { peak: 0.8, drive: 1.05 },
+    BACKING_TRACK: { peak: 0.8, drive: 1.1 },
+    KARAOKE: { peak: 0.8, drive: 1.1 },
+    LIVE_PLAYBACK: { peak: 0.86, drive: 1.3 },
     DYNAMIC: { peak: 0.82, drive: 1.1 },
     CLASSICAL: { peak: 0.76, drive: 1.04 },
     POP: { peak: 0.95, drive: 1.5 },
     LOUD: { peak: 0.98, drive: 1.75 },
     FILM: { peak: 0.86, drive: 1.18 },
-  }[masterProfile ?? "STREAMING"];
+  };
+  const profile = profiles[masterProfile ?? "STREAMING"] ?? profiles.STREAMING;
   const gain = peak > 0 ? (master ? profile.peak / peak : 0.78 / peak) : 1;
   for (let index = 0; index < mixed.length; index += 1) {
     const value = mixed[index] * gain;
