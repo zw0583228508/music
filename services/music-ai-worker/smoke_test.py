@@ -40,31 +40,42 @@ with tempfile.TemporaryDirectory() as tmp:
     assert Model(onnx_checkpoint).predict(
         np.zeros((1, 43844, 1), dtype=np.float32)
     )
-    import torch
-    cache = Path(torch.hub.get_dir()) / "checkpoints"
-    checkpoint = cache / MANIFEST["demucs"]["checkpoint_file"]
-    assert checkpoint.is_file()
-    assert hashlib.sha256(checkpoint.read_bytes()).hexdigest() == MANIFEST["demucs"]["checkpoint_sha256"]
-    demucs_input = Path(tmp) / "demucs-smoke.wav"
-    stereo = np.stack([
-        np.sin(np.arange(44100, dtype=np.float32) * 220 * 2 * np.pi / 44100),
-        np.sin(np.arange(44100, dtype=np.float32) * 330 * 2 * np.pi / 44100),
-    ], axis=1) * 0.2
-    sf.write(demucs_input, stereo, 44100)
-    output = Path(tmp) / "demucs-output"
-    subprocess.run(
-        [
-            sys.executable, "-m", "demucs", "-n", "htdemucs", "-d", "cpu",
-            "--two-stems", "vocals", "--segment", "1", "-o", str(output),
-            str(demucs_input),
-        ],
-        check=True,
-        capture_output=True,
-        timeout=180,
-    )
-    stem_root = output / "htdemucs" / demucs_input.stem
-    assert (stem_root / "vocals.wav").stat().st_size > 44
-    assert (stem_root / "no_vocals.wav").stat().st_size > 44
+    # Demucs is verified only where its runtime is installed. A deployment
+    # built for one provider (the Basic Pitch image) has neither Torch nor
+    # the checkpoint, and must still be able to prove the provider it does
+    # serve. The marker below records exactly what was verified, and
+    # `/health?provider=DEMUCS` keeps reporting unhealthy without it.
+    try:
+        import torch  # noqa: F401 -- presence decides whether Demucs is smoked
+        demucs_available = True
+    except ModuleNotFoundError:
+        demucs_available = False
+    if demucs_available:
+        import torch
+        cache = Path(torch.hub.get_dir()) / "checkpoints"
+        checkpoint = cache / MANIFEST["demucs"]["checkpoint_file"]
+        assert checkpoint.is_file()
+        assert hashlib.sha256(checkpoint.read_bytes()).hexdigest() == MANIFEST["demucs"]["checkpoint_sha256"]
+        demucs_input = Path(tmp) / "demucs-smoke.wav"
+        stereo = np.stack([
+            np.sin(np.arange(44100, dtype=np.float32) * 220 * 2 * np.pi / 44100),
+            np.sin(np.arange(44100, dtype=np.float32) * 330 * 2 * np.pi / 44100),
+        ], axis=1) * 0.2
+        sf.write(demucs_input, stereo, 44100)
+        output = Path(tmp) / "demucs-output"
+        subprocess.run(
+            [
+                sys.executable, "-m", "demucs", "-n", "htdemucs", "-d", "cpu",
+                "--two-stems", "vocals", "--segment", "1", "-o", str(output),
+                str(demucs_input),
+            ],
+            check=True,
+            capture_output=True,
+            timeout=180,
+        )
+        stem_root = output / "htdemucs" / demucs_input.stem
+        assert (stem_root / "vocals.wav").stat().st_size > 44
+        assert (stem_root / "no_vocals.wav").stat().st_size > 44
 
 renderer_evidence = {}
 for renderer_provider, marker_name in (("VST3", "vst3"), ("SFIZZ_VSCO2_CE", "sfizz")):
@@ -95,7 +106,7 @@ ready.mkdir(exist_ok=True)
     "midi": midi_evidence,
     "pedalboard": True,
     "pedalboardEvidence": pedalboard_evidence,
-    "demucs": True,
+    "demucs": demucs_available,
     **renderer_evidence,
 }))
 print("music-ai-worker smoke test passed")

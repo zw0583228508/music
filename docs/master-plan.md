@@ -1643,6 +1643,54 @@ any of it.
   script, so a Hebrew speaker writing one English sentence is answered in
   English for that turn.
 
+- **PR-37** ✅ — `full-song-transcription` (Wave Q, Q-01): a full song is sent
+  for note transcription at all, and Basic Pitch has an endpoint for the first
+  time.
+
+  **Two defects, both found by looking rather than guessing.** Transcription
+  was scheduled for `VOCAL_ONLY` and `SOLO_INSTRUMENT` sources only
+  (`wantsBasicPitch`), so an uploaded song reached the Arrangement Brain with
+  no melody and no bass — exactly what the Definition-of-Done Song Model
+  recorded (`chords: 0, melodyNotes: 0`) and what PR-32 attributed to "the
+  local floor". And **no analysis provider was wired at all**: the environment
+  had no `BASIC_PITCH_API_URL`, no `DEMUCS_API_URL`, none of them. Every
+  analysis this platform has ever run on this machine was FFMPEG plus the local
+  signal analyzer. The `READY` in the provider catalogue is a licence and
+  capability state, not a live endpoint.
+
+  Basic Pitch itself was never missing: the worker code, an Apache-2.0 licence
+  attestation, the checkpoint tree checksum, the pinned runtime and `/health`'s
+  identity gate were all already in the repo, audited, and had never been run.
+  This PR gives it an image and a Modal app (`services/music-ai-worker/`), with
+  the manifest's exact runtime — `tensorflow` 2.14.0, the distribution the
+  manifest *names*, not `tensorflow-cpu` — and the **real smoke at build time**,
+  so a container that starts is one whose checkpoint produced notes. The smoke
+  now verifies only the capabilities a given image installs and records
+  `demucs: false` when Torch is absent, so `/health?provider=DEMUCS` keeps
+  refusing rather than pretending. The endpoint carries its own bearer token
+  (a dedicated secret) instead of borrowing the shared one.
+
+  **Proven live** (`docs/evidence/basic-pitch-live.json`): the endpoint is
+  healthy and passes the whole identity gate — pinned package tree, pinned
+  checkpoint tree `b74344cd…`, pinned runtime, build-time smoke, Apache-2.0,
+  source revision `9991303b…` — and refuses an unauthenticated caller with
+  401. On the Definition-of-Done song, `BASIC_PITCH` now appears in
+  `providerProvenance` for a `FULL_SONG`, which it never could before.
+
+  **What did not work, and why.** No notes came back: the worker refuses any
+  source URL that does not resolve to a global address (its SSRF guard), and
+  this development API serves signed URLs from
+  `PUBLIC_BASE_URL=http://localhost:5000`. A cloud worker cannot reach a local
+  object store. The worker is right to refuse; the run records the HTTP 400
+  instead of pretending. Notes in a Song Model need the API reachable from the
+  worker — a deployment topology question, not more code.
+
+  **Honest limits.** Basic Pitch would run on the **mix** here in any case;
+  upstream recommends one instrument at a time, so stem-by-stem transcription
+  (Demucs → Basic Pitch per stem) is better and needs a Demucs endpoint.
+  Nobody has listened to an arrangement built on transcribed notes, because
+  none has been built yet.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

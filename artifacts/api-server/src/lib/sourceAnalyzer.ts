@@ -827,6 +827,8 @@ async function retiredAnalysisPath(sourceId: string): Promise<void> {
            "DEMUCS_API_URL",
           "BS_ROFORMER_API_URL",
           "SHEET_SAGE_API_URL",
+          // PR-37: a full song is transcribed too, so it needs the source URL.
+          "BASIC_PITCH_API_URL",
         ]
       : ["BASIC_PITCH_API_URL", "SHEET_SAGE_API_URL"];
     const needsProviderSource = providerEndpointKeys.some((key) => Boolean(process.env[key]));
