@@ -1,7 +1,8 @@
 # DECISION PACK — the eighteen answers required before any paid training
 
 **Status: INCOMPLETE — approval is not requested on this version.**
-Rebuilt 2026-09-09 after PR-60/64/67/68.
+Rebuilt 2026-09-09 after PR-60/61/63/64/65/66/67/68/70 and the owner's first
+49 blind ratings.
 
 This is the single document the owner asked for before any training job over
 $25. It answers the eighteen points in order. Every line is either a
@@ -12,7 +13,34 @@ that will produce it. Nothing here is an estimate presented as a result.
 
 ## 1. Human blind ratings
 
-**PENDING — Workstream A. The machinery is finished and proven; the ratings are the owner's action.**
+**MEASURED — the owner rated 49 of 50 pairs.** `docs/evidence/human-blind-ratings-live.json`.
+
+| comparison | A | B | p vs coin flip |
+| --- | --- | --- | --- |
+| HUMAN vs CA2+CTX | **7** | 3 | 0.34 |
+| CA2+CTX vs REFERENCE | 4 | **6** | 0.75 |
+| CA2 raw vs CA2+CTX | 5 | 5 | 1.00 |
+| HUMAN vs REFERENCE | 5 | 5 | 1.00 |
+| CONTEXT_AWARE vs CA2+CTX | 3 | **6** | 0.51 |
+
+**Not one comparison is distinguishable from a coin flip** — n = 9–10, one
+rater. This session establishes no ranking and was never large enough to.
+What it *does* establish:
+
+- **The proxy's central claim is not reproduced by a listener.** The
+  tournament scored CA2+CTX above REFERENCE on 72 % of cells; the listener
+  preferred REFERENCE 6–4. The direction reversed. The 72 % was never
+  evidence about a human.
+- **The context passes are inaudible here** (5–5) though on the proxy they
+  halved playability errors.
+- **HUMAN vs REFERENCE at 5–5 is the result that matters most, and it is
+  about the experiment.** If real human parts are not audibly better than a
+  rule-based part, this rendering — one 8-bar window, one reference synth, no
+  performance — is flattening what distinguishes them. Until the experiment
+  can separate a human from a rule engine, it cannot be trusted to separate
+  a trained model from an untrained one.
+
+Below are the pre-rating facts about the session, kept for the record.
 
 | fact | value | evidence |
 | --- | --- | --- |
@@ -24,9 +52,12 @@ that will produce it. Nothing here is an estimate presented as a result.
 | further pairs | **840 more written by the non-classical tournament, none rated** | `docs/evidence/tournament-global/` |
 | Gate C | ≥ 5 independent raters and ≥ 60 % release share; the owner's votes are recorded and **excluded** from the verdict by design | `blindListening.ts` |
 
-**Consequence:** the owner's 50 ratings are enough to *falsify* a proxy claim
-and enough to justify a pilot. They are one rater, so they can never *promote*
-a model. Training may be approved on them; promotion may not.
+**Consequence:** the owner's ratings falsified one proxy claim (CA2+CTX >
+REFERENCE) and exposed that the listening experiment is not yet sensitive
+enough to judge a training run. Gate C still needs five independent raters
+and the owner cannot be one. **Fixing the experiment — longer excerpts, more
+pairs, several raters, a rendering that keeps performance — costs nothing and
+now precedes any pilot.**
 
 ## 2. Current classical tournament
 
@@ -91,18 +122,30 @@ out-of-subset MuseScore are **REFUSED** on rights. Nothing was downloaded.
 
 ## 4. Judge calibration
 
-**PENDING — Workstream C.** Known today: the judge flags real human parts — a
-nine-note human tuba line in 8/8 drew five playability errors; a human sax part
-one. `judgeSuspect` fired on 7 of 36 classical cells. Two judge bugs were found
-and fixed during PR-59 (instrument ranges by GM program; metre changes breaking
-bar alignment). PR-60 adds a third caution: **CA2's error mean is
-outlier-driven** — 22 of 750 entries exceed 10 errors, and the drums mean of
-14.27 is *one* entry (359 notes into an 8-bar window); the penalty saturates at
-−60, so the error mean describes the tail, not the score.
+**MEASURED.** `docs/evidence/judge-calibration.json` (PR-61): **30,570 human
+8-bar windows** from 2,000 rights-cleared multitrack works, every pitched and
+drum track, two full runs.
 
-**Until the false-positive rate per constraint × family is measured, the
-playability gate is not trustworthy enough to be the reason a model is
-refused — and it is currently the only reason CA2 is refused.**
+| | judge 1.0 | judge 1.1 |
+| --- | --- | --- |
+| human windows with ≥ 1 playability error | 8,129 (**26.6 %**) | 496 (**1.6 %**) |
+| mean errors per window | 2.22 | **0.12** |
+| errors classed judge / mapping / register error | 41,914 | **3** |
+
+**The finding that voids the tournament's verdict:** re-judging the live
+tournament under judge 1.1, **every playability error vanishes except one —
+and that one belongs to the platform's own REFERENCE_PART_COMPOSER**. PR-59's
+"CA2 makes three times the reference's playability errors" was judge false
+positives (human brass 2.50 errors/entry vs CA2 2.67 under 1.0; both 0 after).
+The `do_not_promote` verdicts in §2 and §3 rested on that number and must be
+re-run. Playability no longer discriminates between arms at all; the
+family-shaped failures that survive are harmonic (CA2 chord-tone share
+0.47–0.54 on brass/strings) and repetitive (0.71 on bass).
+
+Still honest: the reference physics is compiled from orchestration references,
+not measured; nobody has listened to any of the 30,570 windows; 564 errors
+remain `ambiguous_case`; only the physical half of the judge is calibrated;
+`unrealistic_repetition` fires on 68–89 % of human windows and is not a gate.
 
 ## 5. Foundation-model tournament
 
@@ -148,31 +191,40 @@ NotaGen (recipe reference; classical). **None is licence-clean and proven live.*
 
 ## 8. Real usable dataset size
 
-**PARTIAL — Workstream G is remeasuring at full scale.** Measured:
+**MEASURED on the whole corpus.** `docs/evidence/corpus-profile.json` (PR-65):
+**all 222,820 admitted MIDI files scanned, 0 parse failures**, run twice with
+identical results.
 
-- **222,856 works** admitted by both our rights gate and the authors'
-  `no_license_conflict` subset (PR-51), digests recorded.
-- **25,414 multitrack works** (PR-60, full-table count — firmer than the earlier
-  9 % extrapolation from a 5,000-work sample).
-- ≈ 150–200 k arranger tasks extrapolated from 3,577 measured (PR-53).
-- The single-track remainder is **not** waste: strategy C uses it for continued
-  pretraining, where no tracks are needed.
+- **20,638 multitrack works (9.26 %)**; after near-duplicate collapse,
+  **19,588 independent multitrack works**. PR-53's 9 % sample estimate is
+  confirmed on the whole corpus. (PR-60's 25,414 counted the CSV's track
+  column; this counts what the MIDI actually contains.)
+- **3,313,967 tasks across 16 Tier B types** — 1,347,597 from multitrack works,
+  **1,019,817 from the nine types that structurally require an arrangement**,
+  39,136 whole-form tasks. Capped at 4 per (work, type): 2,155,379.
+- Duplicates: 33.7 % exact, **43.4 % in a near-duplicate group** → 160,206
+  distinct works. Multitrack works are cleaner at 8.3 %. Validation: 86.3 %
+  recall on metadata-declared same-arrangement pairs, **0 false positives in
+  60,000 random pairs**. The 90/5/5 split is now group-aware: 8,275 groups
+  would have straddled it, **0 do**.
+- The single-track 91 % is **not** waste: strategy C uses it for continued
+  pretraining.
 
-Pending from G: near-duplicate rate, per-family and per-genre task counts at
-full scale, whole-form task counts, extended task-type yields.
+**A defect found by this measurement:** the tokenizer grid uses each file's
+*first* metre, which is not the dominant one for **103,469 works (46 %)** —
+usually an anacrusis exported as a metre change. Every bar-window task cut from
+those works is cut in the wrong place. Unfixed; lives in `arrangerRemi.ts`.
 
 ## 9. Task distribution
 
-**MEASURED, and the imbalance is the story.** 3,577 sampled tasks (PR-53):
-keys 1,399 · drums 731 · strings 350 · brass 288 · synth 150 · organ 118 ·
-reed 106 · chromatic_perc 101 · pipe 101 · ensemble 93 · guitar 88 · **bass 51**.
-54 % of tasks have exactly one context family; 2 % have ≥ 6; ≈ 65 target notes
-per task.
-
-The two families CA2 loses on classical (strings, brass) have 638 tasks between
-them; bass, which it wins, has 51 — so task count does not explain quality.
-Genre is far more skewed: 17 families, but blues has 7 multitrack works and
-reggae 6.
+**MEASURED on the whole corpus** (PR-65, multitrack-only task types): keys
+280k (20.1 %) · strings 166k · reed 165k · drums 164k · brass 150k · pipe 146k ·
+bass 77k · guitar 59k — far better balanced than the original single task type
+suggested (where bass had 51 of 3,577). Per genre: **74 % of works carry no
+genre label**; classical 800k tasks, folk 98k, soundtrack 90k, rock 87k, pop
+49k. **3,197 labelled non-classical multitrack works; 0 Mizrahi/Israeli** — the
+open pop/dance question is a property of the corpus, not of any experiment.
+Bass (2,745) and guitar (2,294) multitrack works are the thin end.
 
 ## 10. Recommended architecture
 
@@ -235,19 +287,22 @@ $500 pilot ceiling; both over $25, so both need approval.
 
 Loss falling is **not** success. The trained model must show musical improvement:
 
-1. **Playability equal or better** than base CA2 — measured with the
-   *calibrated* judge (Workstream C must land first, or this is measured with a
-   ruler we know is bent).
+1. **Playability equal or better** than base CA2 — measured with judge 1.1
+   (PR-61). Under it playability no longer discriminates between arms, so this
+   criterion is now a floor, not a differentiator.
 2. **Better musical quality** on the tournament — on **both** slices.
 3. **No repetition regression** — bar-repetition share and collapse rate not
    worse than base.
 4. **Better instrument behaviour** where the base loses: strings and brass on
    classical; pop, jazz and hip-hop outside it.
 5. **Style-transfer improvement** measurable on the non-classical slice.
-6. **Increased human blind preference** against base CA2+CTX.
+6. **Increased human blind preference** against base CA2+CTX — measured by a
+   listening experiment that can first separate a human part from a rule-based
+   one, which the current one cannot (§1).
 
 If the proxy rises and human preference falls, **the model did not improve.**
-The judge is never the training target.
+The judge is never the training target — and the first ratings showed the
+judge and the listener disagreeing on the central question.
 
 ## 16. Early-stop criteria
 
@@ -286,14 +341,17 @@ Either way the pilot buys a decision, which is what a pilot is for.
 
 | # | missing | workstream | blocks |
 | --- | --- | --- | --- |
-| 1 | the owner's 50 blind ratings | **A — owner's action; everything else is built** | §1, §15.6 |
-| 2 | judge false-positive rates per constraint × family | C | §4, §15.1 — the gate CA2 currently fails |
-| 3 | a second foundation proven live | D | §5, §7 — "best available" is still unproven |
-| 4 | the **$0** prefix experiment | F follow-up | §11 step 0 — may reorder the plan |
-| 5 | the **$0** per-family context-pass switch | C/K | §10 — the passes hurt outside classical |
-| 6 | full-corpus dataset numbers | G | §8, §9 |
-| 7 | training infrastructure + tiny overfit | E | §11 step 1 cannot start |
+| ~~1~~ | ~~the owner's blind ratings~~ — **done: 49 rated; result: the experiment is not yet sensitive enough** | A | — |
+| ~~2~~ | ~~judge false-positive rates~~ — **done: 26.6 % → 1.6 %; the tournament verdict is void** | C | — |
+| ~~6~~ | ~~full-corpus dataset numbers~~ — **done: 19,588 independent multitrack works, 1.02 M arrangement tasks** | G | — |
+| ~~7~~ | ~~training infrastructure + tiny overfit~~ — **done: 200 CPU steps, resume proven, guard fails closed, $0** | E | — |
+| 3 | a second foundation proven live | D (running) | §5, §7 |
+| 4 | the **$0** prefix experiment | F follow-up | §11 step 0 |
+| 5 | the **$0** per-family context-pass switch | C/K | §10 |
+| **8** | **re-score both tournaments under judge 1.1** — the `do_not_promote` verdicts rest on false positives | new, $0 | §2, §3 |
+| **9** | **a listening experiment that separates a human part from a rule-based one** — longer excerpts, more pairs, several raters, performance kept | new, $0 + listening time | §1, §15.6 |
 
-Item 1 costs listening time. Items 2–6 cost **no money at all**. Item 7 costs
-about $5. **The pack is finished by measurement, not by spending** — which is
-why no approval is requested yet.
+Four of seven cleared today by measurement. Items 3–5 and 8–9 remain, and
+**none costs money**. Item 9 is now the critical path: a pilot judged by an
+experiment that cannot tell a human from a rule engine would be judged by
+noise.
