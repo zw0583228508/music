@@ -374,6 +374,18 @@ const suites = {
         "local-structure-analysis.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // ANALYSIS ENGINE Stream F (PR-87): the local SSM segmenter and the
+      // structure tournament (scorers + reconciliation with contested regions).
+      [
+        "src/lib/audioStructure.test.ts",
+        "audio-structure.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/structureTournament.test.ts",
+        "structure-tournament.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
     ],
   },
   "analysis-providers": {

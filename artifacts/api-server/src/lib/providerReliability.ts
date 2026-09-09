@@ -140,6 +140,24 @@ export const PROVIDER_RELIABILITY: Record<string, ProviderReliabilityProfile> = 
     note: "Verified bass-stem transcription.",
     domains: { bass: 0.9 },
   },
+  LOCAL_SSM_STRUCTURE_V1: {
+    provider: "LOCAL_SSM_STRUCTURE_V1",
+    note:
+      "CPU chroma + MFCC self-similarity / checkerboard-novelty segmenter " +
+      "(PR-87). Measured against SYNTHETIC_EXACT in " +
+      "docs/evidence/structure-tournament-live.json; held at the local " +
+      "baseline so on its own it never outvotes a real provider.",
+    domains: { sections: 0.4 },
+  },
+  MSAF: {
+    provider: "MSAF",
+    note:
+      "Music Structure Analysis Framework (MIT): unsupervised Serra structural " +
+      "features / Foote boundaries with 2D-FMC labels, run as a pinned CPU " +
+      "Modal worker (PR-87). Unlearned, so a modest prior; the tournament " +
+      "evidence is where its competence is actually measured.",
+    domains: { sections: 0.45 },
+  },
   LOCAL_SIGNAL_ANALYZER_V1: {
     provider: "LOCAL_SIGNAL_ANALYZER_V1",
     note: "Always-available CPU baseline (FFmpeg + local extraction).",

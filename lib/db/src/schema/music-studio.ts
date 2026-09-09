@@ -944,6 +944,49 @@ export type DomainReconciliation = {
  * Per-domain provider reconciliation. `consensusScore` is the mean confidence
  * across domains that resolved to `detected`; `contestedDomains` did not.
  */
+/**
+ * Structure evidence (PR-87): every independent section reading of the
+ * analysed window and their reconciliation — boundaries two readings agree
+ * on are corroborated, one reading's alone are lone, and every disagreement
+ * is a contested region carrying both readings. Additive: `sections` on the
+ * Song Model are still chosen by the default path; this records what the
+ * candidates said so a person (or Stream I) can weigh them.
+ */
+export type StructureEvidenceReport = {
+  version: "STRUCTURE_EVIDENCE_V1";
+  /** The analysed window in source seconds. */
+  window: { start: number; end: number };
+  readings: Array<{
+    provider: string;
+    /** Interior boundaries in source seconds. */
+    boundaries: number[];
+    /** Section letters (or the provider's names) in order. */
+    form: string;
+    confidence: number | null;
+  }>;
+  status: "detected" | "low_confidence" | "contested" | "not_available";
+  boundaries: Array<{
+    time: number;
+    status: "corroborated" | "lone";
+    providers: string[];
+    score: number;
+  }>;
+  sections: Array<{
+    start: number;
+    end: number;
+    label: string;
+    labelStatus: "agreed" | "majority" | "contested" | "single_source";
+    confidence: number;
+  }>;
+  contested: Array<{
+    start: number;
+    end: number;
+    kind: "boundary" | "label";
+    candidates: Array<{ provider: string; reading: string; score: number }>;
+  }>;
+  message: string;
+};
+
 export type DomainReconciliationReport = {
   version: "1.0";
   domains: Partial<Record<AnalysisDomain, DomainReconciliation>>;
@@ -960,6 +1003,8 @@ export type DomainReconciliationReport = {
       singleObservationFloor: number;
     };
   };
+  /** Present when the analyzer ran the structure candidates (PR-87). */
+  structure?: StructureEvidenceReport;
 };
 
 export type SongModelData = SongModelCore & {

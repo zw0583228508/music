@@ -8,6 +8,7 @@
 import type { AnalysisDomain } from './analysisDomain';
 import type { DomainReconciliationReportDomains } from './domainReconciliationReportDomains';
 import type { DomainReconciliationReportEngine } from './domainReconciliationReportEngine';
+import type { DomainReconciliationReportStructure } from './domainReconciliationReportStructure';
 import type { DomainReconciliationReportVerdicts } from './domainReconciliationReportVerdicts';
 import type { DomainReconciliationReportVersion } from './domainReconciliationReportVersion';
 
@@ -26,4 +27,6 @@ export interface DomainReconciliationReport {
   /** PR-89 - the disagreement engine's four-way verdict per domain. */
   verdicts?: DomainReconciliationReportVerdicts;
   engine?: DomainReconciliationReportEngine;
+  /** Structure evidence (PR-87) - every independent section reading of the analysed window and their reconciliation (corroborated / lone boundaries, contested regions). Additive; the default sections path is unchanged. */
+  structure?: DomainReconciliationReportStructure;
 }

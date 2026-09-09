@@ -4921,6 +4921,86 @@ any of it.
   in is still unknown; the spectral detector's 22 % is synthetic evidence
   against its candidate, not real-audio evidence. Only the studio's Key
   Map panel reads candidates; no panel reads `trustReport` yet.
+- **PR-87** ✅ — `structure-engine-tournament` (ANALYSIS ENGINE wave, Stream F —
+  **which section reading can be proven, and where do the owner's songs
+  disagree?**). Three structure candidates put through one scorer against two
+  exact truth sets, reconciled the way PR-86 reconciles a contested key, and
+  run over the owner's two uploads. Nothing promoted; the default `sections`
+  path is unchanged.
+
+  **What was built.** `audioStructure.ts` — `LOCAL_SSM_STRUCTURE_V1`, a CPU,
+  dependency-free, deterministic segmenter (chroma + MFCC self-similarity,
+  Foote checkerboard novelty, adaptive peaks, repetition labels A / B / A' —
+  a letter says *this repeats that*, nothing is called a chorus; reliability
+  0.4, confidence ≤ 0.55). `structureTournament.ts` — boundary P/R/F1 at
+  ±0.5 s and ±3 s (bipartite matching), over/under-segmentation, pairwise
+  label F (Levy & Sandler), and `reconcileStructures`: boundaries two
+  independent readings place within ±3 s are **corroborated**, one reading's
+  alone are **lone** and every lone one is a **contested region carrying both
+  readings**; labels merge only when the weighted "same" vote wins by a 0.2
+  margin (`agreed | majority | contested | single_source`). A pinned CPU
+  Modal worker runs **MSAF** 0.1.80 (MIT, unsupervised; `sf` + 2D-FMC, with
+  Foote and scluster reported as non-independent arms). Truth: **20 pieces
+  assembled from real PDMX multitrack sections** in fixed patterns (exact bar
+  lines, construction letters) and Stream H's **24 composed ANALYSIS_GOLD_V1
+  pieces** (rebuilt from `origin/main`'s builder after the Stream H worktree
+  was removed mid-run; 24/24 byte-identical to the committed manifest) — two
+  arms, never pooled. `ALL_IN_ONE` is not configured and `SONGFORMER` is
+  licence-blocked: the live-provider arm is empty. The Song Model gains an
+  additive `reconciliation.structure` (`STRUCTURE_EVIDENCE_V1`: readings,
+  corroborated / lone boundaries, sections with label status, contested
+  regions; spec + orval regenerated; `ANALYSIS_STRUCTURE_EVIDENCE=off`
+  disables; can never fail an analysis). Tests: audioStructure 5,
+  structureTournament 9; typecheck green.
+
+  **Numbers** (`docs/evidence/structure-tournament-live.json`,
+  `docs/model-discovery/structure-engine.md`). PDMX arm, boundary F1 @ ±3 s /
+  ±0.5 s: SSM **0.473 / 0.296** (recall 0.70, over-segments 15/20), MSAF
+  0.464 / 0.185 (precision 0.43), energy fallback 0.243 / 0.037
+  (under-segments 11/20, blind at half a second), RECONCILED 0.452 / 0.181,
+  RECONCILED_CORROBORATED **0.490 / 0.181** with the best precision (0.544) and
+  a sane segmentation ratio (0.92). Gold arm: SSM 0.359 / 0.195, MSAF 0.308 /
+  0.072, energy 0.188 / 0.076, RECONCILED 0.387 / 0.165, corroborated-only
+  0.268 / 0.058. Reconciliation beat the per-piece oracle best single on **0
+  of 44** pieces (mean best 0.73 / 0.59 vs reconciled 0.45 / 0.39); its value
+  is the corroborated / lone labelling, not a better number. Pairwise label F
+  0.54–0.64 everywhere, highest for the flat energy labelling — labels are the
+  weak half. Every reconciliation on both arms came out `contested`.
+
+  **The owner's songs** (no truth). Song 1 (259.7 s): **8 boundaries
+  corroborated** by SSM and MSAF independently (8.8, 22.5, 37.3, 95.4, 110.1,
+  122.6, 149.9, 175.1 s), 23 lone, corroborated form `A? B? B? C B? D? C? C?
+  D?` — one label decided, the rest CONTESTED. Song 2 (230.4 s): **3
+  corroborated** (60.4 s and 121.3 s by all three readings, 84.8 s by two), 19
+  lone, corroborated form **`A B B C` with every label decided** — the 60 s
+  material returns at 85 s and 121 s starts something else. Both `contested`
+  overall; the lone boundaries are carried as questions, not answers.
+
+  **Found on the way.** (1) The reconciler's absolute lone-boundary floor
+  (0.15) silently discarded every reading the production path has (local
+  weights ≈ 0.13), so the evidence read "no section change they agree on";
+  the floor is now relative (0.4 × the heaviest reading). (2) Label votes
+  without a margin merged and chained a whole song into one letter with
+  hundreds of "disagreements"; now a 0.2 margin decides, and an undecided pair
+  is contested and not merged. (3) The MSAF worker wrote every input as
+  `<tmp>/audio.wav`, so MSAF's feature cache at `/tmp/features/audio.json` fed
+  one file's features to the next in the same container (0.09 s runtimes,
+  different boundaries on byte-identical audio); fixed, `featuresCached`
+  recorded per reading (0 of 138), and MSAF's numbers now reproduce the very
+  first run exactly. Modal: four worker runs of 74–93 s on 2-CPU containers,
+  ≈ $0.20 estimated, no GPU.
+
+  **Honest limits.** Both truth arms are rendered scores with hard cuts — no
+  transitions, fills or production; they measure whether a change at a bar
+  line is heard, not pop structure. No candidate is provider-grade: the best
+  F1 at ±0.5 s is 0.30, and a provider-grade reading (`ALL_IN_ONE`,
+  SongFormer) has not been measured at all. The owner's songs were
+  re-analysed from the 22.05 kHz mono conversions cached from the first run
+  (DB unreachable from this session; original sha256 recorded). The ±3 s
+  window, the floor ratio, the label margin and the two reliabilities are
+  design choices for Stream I to calibrate. The evidence field is unit-tested
+  and typechecked but was not observed on a live analysis, and no studio panel
+  reads it yet. Pairwise F rewards flat labelling and is not label quality.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
