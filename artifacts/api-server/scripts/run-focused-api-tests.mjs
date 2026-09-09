@@ -64,6 +64,13 @@ const suites = {
         "pdmx-ingest.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // The transport a cloud analysis worker is allowed to reach, and the
+      // routes it is not: exposing the API would expose /api/dev-login.
+      [
+        "src/lib/analysisAssetLease.test.ts",
+        "analysis-asset-lease.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
     ],
   },
   validation: {

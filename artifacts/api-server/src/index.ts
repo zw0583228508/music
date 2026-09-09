@@ -7,6 +7,9 @@ import { startArtifactRetentionScheduler } from "./lib/artifactLifecycle";
 import { recoverExportProductionJobs } from "./lib/exportJobs";
 import { refreshArrangerModelRouting } from "./lib/arrangerModelStore";
 import { formatHostErrorMessage } from "./lib/hostErrorDiagnostics";
+import { analysisAssetBase } from "./lib/analysisAssetLease";
+import { startAnalysisAssetServer } from "./lib/analysisAssetServer";
+import { analysisLeaseStore, readStoredObject } from "./lib/objectStorage";
 
 const recoveryDiagnostic = (error: unknown, fallback: string) =>
   formatHostErrorMessage(error, fallback);
@@ -23,6 +26,51 @@ const port = Number(rawPort);
 
 if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
+}
+
+/**
+ * The read-only surface a cloud analysis worker may reach (Wave Q, Q-01).
+ *
+ * It is a separate port on purpose. A tunnel is pointed here and never at the
+ * API, because the API mounts `/api/dev-login`: exposing it would let anyone
+ * who finds the URL mint a session and reach the database. This surface has one
+ * route, serves only objects that were explicitly leased, and can write
+ * nothing. It starts only when both an asset port and a valid public base are
+ * configured, so it is never a side effect of starting the API.
+ */
+function startAssetSurface(): void {
+  const rawAssetPort = process.env.ANALYSIS_ASSET_PORT;
+  if (!rawAssetPort) return;
+  const assetPort = Number(rawAssetPort);
+  if (Number.isNaN(assetPort) || assetPort < 0) {
+    logger.error({ rawAssetPort }, "analysis_asset_port_invalid");
+    return;
+  }
+  const configured = analysisAssetBase();
+  if ("refusal" in configured) {
+    // Starting it without a usable public base would serve leases nothing can
+    // fetch, while still opening a port. Refuse, and say why.
+    logger.warn({ reason: configured.refusal }, "analysis_asset_surface_not_started");
+    return;
+  }
+  void startAnalysisAssetServer({
+    port: assetPort,
+    store: analysisLeaseStore,
+    readObject: readStoredObject,
+    onEvent: (event) => {
+      if (event.kind === "refused") logger.warn({ reason: event.reason }, "analysis_asset_refused");
+      else if (event.kind === "failed") logger.error({ errorMessage: event.message }, "analysis_asset_failed");
+      else logger.info({ objectName: event.objectName, bytes: event.bytes }, "analysis_asset_served");
+    },
+  })
+    .then((running) => {
+      logger.info({ port: running.port, base: configured.base }, "analysis_asset_surface_listening");
+    })
+    .catch((error: unknown) => {
+      logger.error({
+        errorMessage: recoveryDiagnostic(error, "Analysis asset surface failed to listen"),
+      }, "analysis_asset_surface_failed");
+    });
 }
 
 const recover = () => {
@@ -42,6 +90,7 @@ app.listen(port, (err) => {
   }
 
   logger.info({ port }, "Server listening");
+  startAssetSurface();
   void syncModelRegistry()
     .then(() => {
       // PR-31: whether a learned arranger version is promoted decides its routing.
