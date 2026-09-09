@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Separation tournament (PR-82): four separators judged by downstream accuracy per stem. Nothing here is a routed provider; every entry is a benchmark arm.",
+  "msst": {
+    "repository": "https://github.com/ZFTurbo/Music-Source-Separation-Training",
+    "revision": "050cae7345f4ac1e1e27e066c2c5cdc0a2cdb679",
+    "license": "MIT",
+    "usedFiles": [
+      "utils/model_utils.py",
+      "models/bs_roformer/bs_roformer.py",
+      "models/bs_roformer/mel_band_roformer.py",
+      "models/bs_roformer/attend.py"
+    ],
+    "note": "Imported at the pinned revision through a stub package so the conformer modules the package __init__ pulls in (and their dependencies) never load. demix/load_start_checkpoint are upstream's own."
+  },
+  "demucs": {
+    "package": "demucs",
+    "version": "4.0.1",
+    "source_repository": "https://github.com/facebookresearch/demucs",
+    "source_revision": "ef66d254cd6d558e207eeff2c4b8d053db2e77dd",
+    "source_license": "MIT",
+    "package_artifact_sha256": "e45a5a788bae79767c37bbf6e69aae03862ddcca05550fb79b926346a177d713"
+  },
+  "runtime": {
+    "python": "3.11.11",
+    "torch": "2.5.1+cu124",
+    "torchaudio": "2.5.1+cu124",
+    "cuda_image": "nvidia/cuda@sha256:2fcc4280646484290cc50dce5e65f388dd04352b07cbe89a635703bd1f9aedb6",
+    "sample_rate": 44100
+  },
+  "separators": {
+    "HTDEMUCS_FT": {
+      "backend": "demucs",
+      "model": "htdemucs_ft",
+      "stems": ["drums", "bass", "other", "vocals"],
+      "license": "MIT (code and weights, Meta AI Research)",
+      "trainingData": "MUSDB18-HQ plus 800 internal songs (Hybrid Transformer Demucs paper); fine-tuned per source",
+      "weights": [
+        {"file": "f7e0c4bc-ba3fe64a.th", "url": "https://dl.fbaipublicfiles.com/demucs/hybrid_transformer/f7e0c4bc-ba3fe64a.th", "bytes": 84141271, "sha256": "ba3fe64ae8ef66ac9a4857222ce48efbdc5eb3ad375cb79dd13debee5aaa4066", "location": "torch_hub"},
+        {"file": "d12395a8-e57c48e6.th", "url": "https://dl.fbaipublicfiles.com/demucs/hybrid_transformer/d12395a8-e57c48e6.th", "bytes": 84141271, "sha256": "e57c48e6b0e38af4f7118d7bd08c49f0a0c0edf7d09143bdd902ea0d237303e6", "location": "torch_hub"},
+        {"file": "92cfc3b6-ef3bcb9c.th", "url": "https://dl.fbaipublicfiles.com/demucs/hybrid_transformer/92cfc3b6-ef3bcb9c.th", "bytes": 84141271, "sha256": "ef3bcb9c8b40d14ae5d51b6db2587339cc12c6b77c0be151ce6d69002e087bf2", "location": "torch_hub"},
+        {"file": "04573f0d-f3cf25b2.th", "url": "https://dl.fbaipublicfiles.com/demucs/hybrid_transformer/04573f0d-f3cf25b2.th", "bytes": 84141271, "sha256": "f3cf25b222c4eed7cd49dd8b2c9597d50c18bd154090f7b919cfa5f93cf22c49", "location": "torch_hub"}
+      ]
+    },
+    "BS_ROFORMER_4STEM": {
+      "backend": "msst",
+      "modelType": "bs_roformer",
+      "stems": ["drums", "bass", "other", "vocals"],
+      "license": "MIT repository release (ZFTurbo, v1.0.12); weights trained on MUSDB18-HQ, whose own licence is research-only. Benchmark arm; not shippable without review.",
+      "publishedSdr": {"musdb18": {"mean": 9.65, "bass": 8.48, "drums": 11.61, "vocals": 11.08, "other": 7.44}},
+      "weights": [
+        {"file": "bs_roformer_4stem.ckpt", "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/releases/download/v1.0.12/model_bs_roformer_ep_17_sdr_9.6568.ckpt", "bytes": 527385512, "sha256": "3e9daecd70aaed5b5a0d1f861cc4d77eaa45afb3fc6301b1cf32c1be0f5868fb", "location": "weights", "role": "checkpoint"},
+        {"file": "bs_roformer_4stem.yaml", "url": "https://github.com/ZFTurbo/Music-Source-Separation-Training/releases/download/v1.0.12/config_bs_roformer_384_8_2_485100.yaml", "bytes": 4566, "sha256": "d8afb980318d0c08b9c2e24a7adc00d4f3150320c127a7e4de861800d1321939", "location": "weights", "role": "config"}
+      ]
+    },
+    "BS_ROFORMER_VIPERX": {
+      "backend": "msst",
+      "modelType": "bs_roformer",
+      "stems": ["vocals", "other"],
+      "license": "UNVERIFIED checkpoint rights - the platform's existing BLOCKED_LICENSE entry (viperx, TRvlvr release). Benchmark arm only; can never route.",
+      "publishedSdr": {"vocals": 12.98},
+      "weights": [
+        {"file": "bs_roformer_viperx.ckpt", "url": "https://github.com/TRvlvr/model_repo/releases/download/all_public_uvr_models/model_bs_roformer_ep_317_sdr_12.9755.ckpt", "bytes": 639331213, "sha256": "5b84f37e8d444c8cb30c79d77f613a41c05868ff9c9ac6c7049c00aefae115aa", "location": "weights", "role": "checkpoint"},
+        {"file": "bs_roformer_viperx.yaml", "url": "https://raw.githubusercontent.com/ZFTurbo/Music-Source-Separation-Training/050cae7345f4ac1e1e27e066c2c5cdc0a2cdb679/configs/viperx/model_bs_roformer_ep_317_sdr_12.9755.yaml", "bytes": 1881, "sha256": "42e5635ceab7287b83d9591c9880966f0b61cff26a0a40a29d236bacb32e5f2c", "location": "weights", "role": "config"}
+      ]
+    },
+    "MEL_BAND_ROFORMER_KJ": {
+      "backend": "msst",
+      "modelType": "mel_band_roformer",
+      "stems": ["vocals", "other"],
+      "license": "Checkpoint on Hugging Face KimberleyJSN/melbandroformer; no licence file retained - UNKNOWN. Benchmark arm only.",
+      "publishedSdr": {"vocals": 10.98},
+      "weights": [
+        {"file": "mel_band_roformer_kj.ckpt", "url": "https://huggingface.co/KimberleyJSN/melbandroformer/resolve/main/MelBandRoformer.ckpt", "bytes": 913106900, "sha256": "87201f4d31afb5bc79993230fc49446918425574db48c01c405e44f365c7559e", "location": "weights", "role": "checkpoint"},
+        {"file": "mel_band_roformer_kj.yaml", "url": "https://raw.githubusercontent.com/ZFTurbo/Music-Source-Separation-Training/050cae7345f4ac1e1e27e066c2c5cdc0a2cdb679/configs/KimberleyJensen/config_vocals_mel_band_roformer_kj.yaml", "bytes": 1721, "sha256": "f63f38eb1e6e40a7db0dade714a5ae257555dd8748f4e774eae8679275a81926", "location": "weights", "role": "config"}
+      ]
+    }
+  }
+}
