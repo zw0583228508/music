@@ -31,8 +31,8 @@ PerformanceData` — never an audio generator.
 | Wave 7 (learning system) | ✅ merged (PR-27…PR-31): fingerprint, preference events, pairwise critic, personal defaults, training loop with benchmark gate |
 | Wave U (universal producer intelligence) | 🟡 U1–U3 merged; U4 in progress; U5–U6 planned |
 | Quality gate A (technical) | ✅ every merged PR carries tests, typecheck, live evidence under `docs/evidence/`; **Definition of Done passed end to end on a real upload, local providers only (PR-32)** |
-| Quality gate B (musical) | 🟡 critics pass, no illegal notes; benchmark `playabilityErrors` drift 0 → 4.33 under investigation |
-| Quality gate C (human) | ❌ **nobody has listened**: the blind A/B sheet exists (`/arranger-model/{id}/blind-sheet`), no rater has used it |
+| Quality gate B (musical) | ✅ critics pass, no illegal notes; benchmark `playabilityErrors` back to 0 on every case (PR-33) |
+| Quality gate C (human) | 🟡 **operable, not passed**: the listening room (PR-34) serves blind A/B with votes, Elo and an explicit verdict (≥ 5 independent raters, ≥ 60 % release share); no real listener has rated yet |
 
 ## PR progress (merged to `main`)
 
@@ -277,6 +277,56 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   clamp treats a `strings` track written as one four-voice instrument; a
   divisi section (role matching section / ensemble / pad / bed) is exempt in
   the constraint engine and therefore untouched here.
+
+- **PR-34** ✅ — `listening-room`: **Gate C becomes operable.** The plan's
+  central KPI is how often the new brain beats the previous one in *blind*
+  musical evaluation, and until now nobody could listen: PR-18's blind sheet
+  was an API over benchmark case ids with no audio and no vote, and the
+  storage route serves a render only to the project's owner — a rater is by
+  design not the owner. A listening session takes two generation candidates
+  of the same song, each standing for a system under test (the ranked winner
+  vs the first candidate, the brain with a brief vs without, V1 vs V2
+  performance, reference vs `YOUR_ARRANGER_MODEL`), and serves their existing
+  evaluation renders as anonymised A/B with the six PR-18 questions.
+
+  `blindListening.ts` (pure, tested): one pair per session with the
+  benchmark sheet's token scheme, so session votes and sheet votes feed the
+  same Elo; the rater view carries tokens and **token-addressed audio**
+  (`/listening-sessions/{id}/audio/{token}`) — no system label, no candidate
+  id, no storage path (the first live run leaked candidate ids through the
+  render URL; the test now forbids it) — with the A/B order decided per rater
+  so a shared link does not share an order; votes validated against the
+  session's pairs, questions and tokens, re-voting replaces; the owner's votes
+  are recorded and **excluded**; results per question, PR-18 Elo, and an
+  explicit verdict: **`GATE_C_MIN_RATERS` 5 independent raters and a
+  `GATE_C_MIN_WIN_SHARE` 0.6 release share for the challenger**, with the
+  reason spelled out either way. `music_blind_listening_sessions` /
+  `music_blind_listening_votes` (additive, pushed). Routes in
+  `routes/listening.ts` (tag `listening`); the studio gets a Listening room
+  card in the Candidates tab (open a session, copy the rater link, reveal the
+  key, close) and a rater page at `/listen/{sessionId}`. The dev sign-in may
+  mint extra local identities only under `DEV_AUTH_ALLOW_IDENTITIES=true`
+  (on top of its hard gates), so a local box can have raters.
+
+  **Proven live** (`docs/evidence/listening-room-live.json`, on the DoD
+  project's job): session opened (runner-up vs ranked #1; the job's first
+  candidate *was* the ranked winner, so the fallback pairs the rejected
+  runner-up) → equal labels 400, unknown candidate 404 → rater view leaks
+  nothing (checked) → a rater streams both versions (17.1 MB each), a foreign
+  token 404 → the owner's 6 votes recorded, `countsTowardVerdict: false` →
+  unknown question / foreign token 400 → 6 dev identities vote → results:
+  6 raters, 12 counted, 6 owner votes excluded, Elo 1540.6 vs 1459.4, release
+  5–1, gate verdict stated → close → late vote 409 → anonymous 401, non-owner
+  results 404. Suites: blindListening 3 (+ performanceEngine, songModelCorrection
+  and localStructureAnalysis now registered in the focused runner); typecheck
+  green.
+
+  **Honest limits.** The six "raters" in the live run are one person on one
+  machine proving the mechanics; **Gate C is not passed** and the tracker
+  does not say it is. Audio is the candidates' evaluation renders through the
+  reference synth. One pair per session (the whole song); no per-section
+  excerpts, no rater instructions beyond the questions, no anonymity against
+  an owner who also rates (their votes are excluded, not hidden).
 
 ## Wave 6 — production quality
 

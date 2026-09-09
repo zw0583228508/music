@@ -4455,6 +4455,231 @@ export interface FingerprintComparison {
   headline: string[];
 }
 
+/**
+ * With generationJobId - the ranked winner (default) or the first candidate the provider produced.
+ */
+export type ListeningSideInputPick = typeof ListeningSideInputPick[keyof typeof ListeningSideInputPick];
+
+
+export const ListeningSideInputPick = {
+  ranked: 'ranked',
+  first: 'first',
+} as const;
+
+export interface ListeningSideInput {
+  /**
+     * The system under test this side stands for. Never shown to raters.
+     * @minLength 1
+     * @maxLength 120
+     */
+  label: string;
+  /**
+     * @minLength 1
+     * @maxLength 200
+     */
+  candidateId?: string;
+  /**
+     * @minLength 1
+     * @maxLength 200
+     */
+  generationJobId?: string;
+  /** With generationJobId - the ranked winner (default) or the first candidate the provider produced. */
+  pick?: ListeningSideInputPick;
+}
+
+/**
+ * The side that has to win (default right).
+ */
+export type CreateListeningSessionInputChallenger = typeof CreateListeningSessionInputChallenger[keyof typeof CreateListeningSessionInputChallenger];
+
+
+export const CreateListeningSessionInputChallenger = {
+  left: 'left',
+  right: 'right',
+} as const;
+
+export interface CreateListeningSessionInput {
+  /** @maxLength 200 */
+  title?: string;
+  /** The side that has to win (default right). */
+  challenger?: CreateListeningSessionInputChallenger;
+  left: ListeningSideInput;
+  right: ListeningSideInput;
+}
+
+export type ListeningSessionSidePick = typeof ListeningSessionSidePick[keyof typeof ListeningSessionSidePick];
+
+
+export const ListeningSessionSidePick = {
+  ranked: 'ranked',
+  first: 'first',
+  explicit: 'explicit',
+} as const;
+
+export interface ListeningSessionSide {
+  label: string;
+  generationJobId: string;
+  candidateId: string;
+  candidateLabel: string;
+  pick: ListeningSessionSidePick;
+  audioUrl: string;
+}
+
+export interface ListeningPairSide {
+  token: string;
+  systemUnderTest: string;
+}
+
+export interface ListeningPair {
+  pairId: string;
+  caseId: string;
+  left: ListeningPairSide;
+  right: ListeningPairSide;
+  questions: string[];
+}
+
+export type ListeningQuestionResultBySystem = {[key: string]: number};
+
+export interface ListeningQuestionResult {
+  question: string;
+  votes: number;
+  bySystem: ListeningQuestionResultBySystem;
+  leader: string | null;
+}
+
+export interface EloRating {
+  systemUnderTest: string;
+  rating: number;
+  comparisons: number;
+}
+
+export interface ListeningGateC {
+  passed: boolean;
+  challenger: string;
+  incumbent: string;
+  releaseVotes: number;
+  releaseShare: number | null;
+  minRaters: number;
+  minWinShare: number;
+  reason: string;
+}
+
+export interface ListeningResults {
+  version: string;
+  /** Distinct raters other than the owner */
+  raters: number;
+  ownerVotesExcluded: number;
+  votesCounted: number;
+  perQuestion: ListeningQuestionResult[];
+  elo: EloRating[];
+  gateC: ListeningGateC;
+}
+
+export type ListeningSessionStatus = typeof ListeningSessionStatus[keyof typeof ListeningSessionStatus];
+
+
+export const ListeningSessionStatus = {
+  open: 'open',
+  closed: 'closed',
+} as const;
+
+export type ListeningSessionChallenger = typeof ListeningSessionChallenger[keyof typeof ListeningSessionChallenger];
+
+
+export const ListeningSessionChallenger = {
+  left: 'left',
+  right: 'right',
+} as const;
+
+export type ListeningSessionSides = {
+  left: ListeningSessionSide;
+  right: ListeningSessionSide;
+};
+
+/**
+ * token -> system under test. Owner-only.
+ */
+export type ListeningSessionKeyBySide = {[key: string]: string};
+
+export interface ListeningSession {
+  id: string;
+  projectId: string;
+  title: string;
+  status: ListeningSessionStatus;
+  challenger: ListeningSessionChallenger;
+  sides: ListeningSessionSides;
+  pairs: ListeningPair[];
+  /** token -> system under test. Owner-only. */
+  keyBySide: ListeningSessionKeyBySide;
+  /** Studio path to hand a rater */
+  raterPath: string;
+  results: ListeningResults;
+  createdAt: string;
+  closedAt: string | null;
+}
+
+export interface ListeningRaterSide {
+  token: string;
+  audioUrl: string;
+}
+
+export interface ListeningRaterPair {
+  pairId: string;
+  caseId: string;
+  questions: string[];
+  a: ListeningRaterSide;
+  b: ListeningRaterSide;
+}
+
+export interface ListeningVoteInput {
+  /**
+     * @minLength 1
+     * @maxLength 200
+     */
+  pairId: string;
+  /**
+     * @minLength 1
+     * @maxLength 200
+     */
+  question: string;
+  /**
+     * @minLength 1
+     * @maxLength 64
+     */
+  winnerToken: string;
+}
+
+export type ListeningRaterViewStatus = typeof ListeningRaterViewStatus[keyof typeof ListeningRaterViewStatus];
+
+
+export const ListeningRaterViewStatus = {
+  open: 'open',
+  closed: 'closed',
+} as const;
+
+export interface ListeningRaterView {
+  sessionId: string;
+  title: string;
+  status: ListeningRaterViewStatus;
+  pairs: ListeningRaterPair[];
+  yourVotes: ListeningVoteInput[];
+}
+
+export interface SubmitListeningVotesInput {
+  /**
+     * @minItems 1
+     * @maxItems 60
+     */
+  votes: ListeningVoteInput[];
+}
+
+export interface ListeningVotesResult {
+  recorded: number;
+  /** False for the owner's own votes */
+  countsTowardVerdict: boolean;
+  yourVotes: ListeningVoteInput[];
+}
+
 export interface MixPlanInput {
   /** @minLength 1 */
   arrangementId: string;

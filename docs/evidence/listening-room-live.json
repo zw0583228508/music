@@ -1,0 +1,299 @@
+{
+  "title": "Gate C listening room — live (PR-34)",
+  "path": "DoD project's generation job -> blind session (first candidate vs ranked #1) -> rater view without system names -> owner votes recorded and excluded -> independent dev raters (when the dev login can mint identities) -> results, Elo, gate verdict -> close -> late vote refused -> anonymous 401 / non-owner results 404",
+  "ids": {
+    "projectId": "899b167f-bcc4-47c2-879d-728693ca6ff8",
+    "generationJobId": "8597852b-fe95-42cf-a683-c1cc3a8dcdf5",
+    "sessionId": "e4fff171-4d6c-4a9f-9e7e-93911ae19550"
+  },
+  "steps": [
+    {
+      "step": "owner signed in",
+      "user": "dev-local-user"
+    },
+    {
+      "step": "candidates with evaluation renders",
+      "total": 3,
+      "audible": [
+        [
+          "bca8c908",
+          1,
+          "selected",
+          "sparse",
+          0
+        ],
+        [
+          "bc8a2047",
+          null,
+          "diversity_rejected",
+          "rhythmic",
+          2
+        ],
+        [
+          "9320ff85",
+          null,
+          "diversity_rejected",
+          "balanced",
+          1
+        ]
+      ]
+    },
+    {
+      "step": "session opened",
+      "sessionId": "e4fff171-4d6c-4a9f-9e7e-93911ae19550",
+      "sides": {
+        "left": {
+          "label": "brain · diversity-rejected runner-up",
+          "candidate": "E · adventurous",
+          "pick": "explicit"
+        },
+        "right": {
+          "label": "brain · ranked #1",
+          "candidate": "A · conservative",
+          "pick": "explicit"
+        }
+      },
+      "challenger": "right",
+      "pairs": 1,
+      "keyBySide": {
+        "be813918": "brain · diversity-rejected runner-up",
+        "c7892304": "brain · ranked #1"
+      },
+      "raterPath": "/listen/e4fff171-4d6c-4a9f-9e7e-93911ae19550",
+      "gateC": {
+        "passed": false,
+        "challenger": "brain · ranked #1",
+        "incumbent": "brain · diversity-rejected runner-up",
+        "releaseVotes": 0,
+        "releaseShare": null,
+        "minRaters": 5,
+        "minWinShare": 0.6,
+        "reason": "0 independent rater(s) so far; Gate C needs at least 5."
+      }
+    },
+    {
+      "step": "equal labels refused",
+      "status": 400,
+      "error": "The two sides must stand for different systems (their labels are equal)"
+    },
+    {
+      "step": "unknown candidate refused",
+      "status": 404
+    },
+    {
+      "step": "rater view",
+      "pairs": 1,
+      "questions": 6,
+      "a": {
+        "token": "be813918",
+        "audioUrl": "/api/listening-sessions/e4fff171-4d6c-4a9f-9e7e-93911ae19550/audio/be813918"
+      },
+      "b": {
+        "token": "c7892304",
+        "audioUrl": "/api/listening-sessions/e4fff171-4d6c-4a9f-9e7e-93911ae19550/audio/c7892304"
+      },
+      "leaks": [],
+      "yourVotes": 0
+    },
+    {
+      "step": "rater can fetch version A",
+      "status": 200,
+      "bytes": 17110844
+    },
+    {
+      "step": "owner voted",
+      "recorded": 6,
+      "countsTowardVerdict": false,
+      "yourVotes": 6
+    },
+    {
+      "step": "unknown question refused",
+      "status": 400,
+      "error": "Unknown question for pair e4fff171-4d6c-4a9f-9e7e-93911ae19550:song: Which is louder?"
+    },
+    {
+      "step": "foreign token refused",
+      "status": 400
+    },
+    {
+      "step": "independent raters",
+      "count": 6,
+      "raters": [
+        {
+          "rater": "dev-identity-rater-1",
+          "a_is_challenger": false,
+          "counts": true,
+          "audio": {
+            "a": [
+              200,
+              17110844
+            ],
+            "b": [
+              200,
+              17110844
+            ]
+          },
+          "foreignTokenAudio": 404
+        },
+        {
+          "rater": "dev-identity-rater-2",
+          "a_is_challenger": false,
+          "counts": true
+        },
+        {
+          "rater": "dev-identity-rater-3",
+          "a_is_challenger": true,
+          "counts": true
+        },
+        {
+          "rater": "dev-identity-rater-4",
+          "a_is_challenger": false,
+          "counts": true
+        },
+        {
+          "rater": "dev-identity-rater-5",
+          "a_is_challenger": true,
+          "counts": true
+        },
+        {
+          "rater": "dev-identity-rater-6",
+          "a_is_challenger": false,
+          "counts": true
+        }
+      ]
+    },
+    {
+      "step": "results",
+      "raters": 6,
+      "votesCounted": 12,
+      "ownerVotesExcluded": 6,
+      "elo": [
+        {
+          "systemUnderTest": "brain · ranked #1",
+          "rating": 1540.6,
+          "comparisons": 12
+        },
+        {
+          "systemUnderTest": "brain · diversity-rejected runner-up",
+          "rating": 1459.4,
+          "comparisons": 12
+        }
+      ],
+      "release": {
+        "question": "Which would you release?",
+        "votes": 6,
+        "bySystem": {
+          "brain · ranked #1": 5,
+          "brain · diversity-rejected runner-up": 1
+        },
+        "leader": "brain · ranked #1"
+      },
+      "gateC": {
+        "passed": true,
+        "challenger": "brain · ranked #1",
+        "incumbent": "brain · diversity-rejected runner-up",
+        "releaseVotes": 6,
+        "releaseShare": 0.8333,
+        "minRaters": 5,
+        "minWinShare": 0.6,
+        "reason": "brain · ranked #1 won 83 % of 6 release votes from 6 independent raters."
+      }
+    },
+    {
+      "step": "listed for the owner",
+      "sessions": 2
+    },
+    {
+      "step": "closed",
+      "status": "closed",
+      "lateVoteStatus": 409,
+      "lateVoteError": "This listening session is closed"
+    },
+    {
+      "step": "anonymous rater view",
+      "status": 401
+    },
+    {
+      "step": "non-owner results",
+      "status": 404
+    }
+  ],
+  "finalResults": {
+    "version": "1.0",
+    "raters": 6,
+    "ownerVotesExcluded": 6,
+    "votesCounted": 12,
+    "perQuestion": [
+      {
+        "question": "Which arrangement sounds more professional?",
+        "votes": 6,
+        "bySystem": {
+          "brain · ranked #1": 3,
+          "brain · diversity-rejected runner-up": 3
+        },
+        "leader": null
+      },
+      {
+        "question": "Which has better development?",
+        "votes": 0,
+        "bySystem": {},
+        "leader": null
+      },
+      {
+        "question": "Which leaves more room for the singer?",
+        "votes": 0,
+        "bySystem": {},
+        "leader": null
+      },
+      {
+        "question": "Which has better orchestration?",
+        "votes": 0,
+        "bySystem": {},
+        "leader": null
+      },
+      {
+        "question": "Which sounds more human?",
+        "votes": 0,
+        "bySystem": {},
+        "leader": null
+      },
+      {
+        "question": "Which would you release?",
+        "votes": 6,
+        "bySystem": {
+          "brain · ranked #1": 5,
+          "brain · diversity-rejected runner-up": 1
+        },
+        "leader": "brain · ranked #1"
+      }
+    ],
+    "elo": [
+      {
+        "systemUnderTest": "brain · ranked #1",
+        "rating": 1540.6,
+        "comparisons": 12
+      },
+      {
+        "systemUnderTest": "brain · diversity-rejected runner-up",
+        "rating": 1459.4,
+        "comparisons": 12
+      }
+    ],
+    "gateC": {
+      "passed": true,
+      "challenger": "brain · ranked #1",
+      "incumbent": "brain · diversity-rejected runner-up",
+      "releaseVotes": 6,
+      "releaseShare": 0.8333,
+      "minRaters": 5,
+      "minWinShare": 0.6,
+      "reason": "brain · ranked #1 won 83 % of 6 release votes from 6 independent raters."
+    }
+  },
+  "observations": [
+    "The rater view carries tokens and audio URLs only; the two system labels and both candidate ids are absent from its JSON (checked).",
+    "The owner's votes are stored with isOwner=true and excluded from raters, Elo and the verdict.",
+    "Gate C is an explicit, recorded verdict: at least 5 independent raters and a 60 % release share for the challenger. It has not been passed by real listeners; the dev raters here, if any, are the same person on one machine and prove the mechanics, not the music.",
+    "Audio is the candidates' existing evaluation renders (reference synth); nothing new was rendered."
+  ]
+}

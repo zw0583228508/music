@@ -18979,6 +18979,448 @@ export const GetArrangerModelBlindSheetResponse = zod.object({
 
 
 /**
+ * Each side stands for a system under test (label) and resolves to one generation candidate with a rendered evaluation audio - explicitly by id, or the ranked winner / the first candidate of a generation job. Raters never see the labels.
+ * @summary Gate C - open a blind listening session between two candidates of this project
+ */
+export const CreateListeningSessionParams = zod.object({
+  "projectId": zod.coerce.string()
+})
+
+export const createListeningSessionBodyTitleMax = 200;
+
+export const createListeningSessionBodyLeftLabelMax = 120;
+
+export const createListeningSessionBodyLeftCandidateIdMax = 200;
+
+export const createListeningSessionBodyLeftGenerationJobIdMax = 200;
+
+export const createListeningSessionBodyRightLabelMax = 120;
+
+export const createListeningSessionBodyRightCandidateIdMax = 200;
+
+export const createListeningSessionBodyRightGenerationJobIdMax = 200;
+
+
+
+export const CreateListeningSessionBody = zod.strictObject({
+  "title": zod.string().max(createListeningSessionBodyTitleMax).optional(),
+  "challenger": zod.enum(['left', 'right']).optional().describe('The side that has to win (default right).'),
+  "left": zod.strictObject({
+  "label": zod.string().min(1).max(createListeningSessionBodyLeftLabelMax).describe('The system under test this side stands for. Never shown to raters.'),
+  "candidateId": zod.string().min(1).max(createListeningSessionBodyLeftCandidateIdMax).optional(),
+  "generationJobId": zod.string().min(1).max(createListeningSessionBodyLeftGenerationJobIdMax).optional(),
+  "pick": zod.enum(['ranked', 'first']).optional().describe('With generationJobId - the ranked winner (default) or the first candidate the provider produced.')
+}),
+  "right": zod.strictObject({
+  "label": zod.string().min(1).max(createListeningSessionBodyRightLabelMax).describe('The system under test this side stands for. Never shown to raters.'),
+  "candidateId": zod.string().min(1).max(createListeningSessionBodyRightCandidateIdMax).optional(),
+  "generationJobId": zod.string().min(1).max(createListeningSessionBodyRightGenerationJobIdMax).optional(),
+  "pick": zod.enum(['ranked', 'first']).optional().describe('With generationJobId - the ranked winner (default) or the first candidate the provider produced.')
+})
+})
+
+export const CreateListeningSessionResponse = zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "title": zod.string(),
+  "status": zod.enum(['open', 'closed']),
+  "challenger": zod.enum(['left', 'right']),
+  "sides": zod.object({
+  "left": zod.object({
+  "label": zod.string(),
+  "generationJobId": zod.string(),
+  "candidateId": zod.string(),
+  "candidateLabel": zod.string(),
+  "pick": zod.enum(['ranked', 'first', 'explicit']),
+  "audioUrl": zod.string()
+}),
+  "right": zod.object({
+  "label": zod.string(),
+  "generationJobId": zod.string(),
+  "candidateId": zod.string(),
+  "candidateLabel": zod.string(),
+  "pick": zod.enum(['ranked', 'first', 'explicit']),
+  "audioUrl": zod.string()
+})
+}),
+  "pairs": zod.array(zod.object({
+  "pairId": zod.string(),
+  "caseId": zod.string(),
+  "left": zod.object({
+  "token": zod.string(),
+  "systemUnderTest": zod.string()
+}),
+  "right": zod.object({
+  "token": zod.string(),
+  "systemUnderTest": zod.string()
+}),
+  "questions": zod.array(zod.string())
+})),
+  "keyBySide": zod.record(zod.string(), zod.string()).describe('token -> system under test. Owner-only.'),
+  "raterPath": zod.string().describe('Studio path to hand a rater'),
+  "results": zod.object({
+  "version": zod.string(),
+  "raters": zod.number().describe('Distinct raters other than the owner'),
+  "ownerVotesExcluded": zod.number(),
+  "votesCounted": zod.number(),
+  "perQuestion": zod.array(zod.object({
+  "question": zod.string(),
+  "votes": zod.number(),
+  "bySystem": zod.record(zod.string(), zod.number()),
+  "leader": zod.string().nullable()
+})),
+  "elo": zod.array(zod.object({
+  "systemUnderTest": zod.string(),
+  "rating": zod.number(),
+  "comparisons": zod.number()
+})),
+  "gateC": zod.object({
+  "passed": zod.boolean(),
+  "challenger": zod.string(),
+  "incumbent": zod.string(),
+  "releaseVotes": zod.number(),
+  "releaseShare": zod.number().nullable(),
+  "minRaters": zod.number(),
+  "minWinShare": zod.number(),
+  "reason": zod.string()
+})
+}),
+  "createdAt": zod.string(),
+  "closedAt": zod.string().nullable()
+})
+
+
+/**
+ * @summary Gate C - the project's listening sessions with their current results (owner)
+ */
+export const ListListeningSessionsParams = zod.object({
+  "projectId": zod.coerce.string()
+})
+
+export const ListListeningSessionsResponseItem = zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "title": zod.string(),
+  "status": zod.enum(['open', 'closed']),
+  "challenger": zod.enum(['left', 'right']),
+  "sides": zod.object({
+  "left": zod.object({
+  "label": zod.string(),
+  "generationJobId": zod.string(),
+  "candidateId": zod.string(),
+  "candidateLabel": zod.string(),
+  "pick": zod.enum(['ranked', 'first', 'explicit']),
+  "audioUrl": zod.string()
+}),
+  "right": zod.object({
+  "label": zod.string(),
+  "generationJobId": zod.string(),
+  "candidateId": zod.string(),
+  "candidateLabel": zod.string(),
+  "pick": zod.enum(['ranked', 'first', 'explicit']),
+  "audioUrl": zod.string()
+})
+}),
+  "pairs": zod.array(zod.object({
+  "pairId": zod.string(),
+  "caseId": zod.string(),
+  "left": zod.object({
+  "token": zod.string(),
+  "systemUnderTest": zod.string()
+}),
+  "right": zod.object({
+  "token": zod.string(),
+  "systemUnderTest": zod.string()
+}),
+  "questions": zod.array(zod.string())
+})),
+  "keyBySide": zod.record(zod.string(), zod.string()).describe('token -> system under test. Owner-only.'),
+  "raterPath": zod.string().describe('Studio path to hand a rater'),
+  "results": zod.object({
+  "version": zod.string(),
+  "raters": zod.number().describe('Distinct raters other than the owner'),
+  "ownerVotesExcluded": zod.number(),
+  "votesCounted": zod.number(),
+  "perQuestion": zod.array(zod.object({
+  "question": zod.string(),
+  "votes": zod.number(),
+  "bySystem": zod.record(zod.string(), zod.number()),
+  "leader": zod.string().nullable()
+})),
+  "elo": zod.array(zod.object({
+  "systemUnderTest": zod.string(),
+  "rating": zod.number(),
+  "comparisons": zod.number()
+})),
+  "gateC": zod.object({
+  "passed": zod.boolean(),
+  "challenger": zod.string(),
+  "incumbent": zod.string(),
+  "releaseVotes": zod.number(),
+  "releaseShare": zod.number().nullable(),
+  "minRaters": zod.number(),
+  "minWinShare": zod.number(),
+  "reason": zod.string()
+})
+}),
+  "createdAt": zod.string(),
+  "closedAt": zod.string().nullable()
+})
+export const ListListeningSessionsResponse = zod.array(ListListeningSessionsResponseItem)
+
+
+/**
+ * @summary Gate C - the rater view of a session (anonymised A/B, no system names)
+ */
+export const GetListeningSessionParams = zod.object({
+  "sessionId": zod.coerce.string()
+})
+
+export const getListeningSessionResponseYourVotesItemPairIdMax = 200;
+
+export const getListeningSessionResponseYourVotesItemQuestionMax = 200;
+
+export const getListeningSessionResponseYourVotesItemWinnerTokenMax = 64;
+
+
+
+export const GetListeningSessionResponse = zod.object({
+  "sessionId": zod.string(),
+  "title": zod.string(),
+  "status": zod.enum(['open', 'closed']),
+  "pairs": zod.array(zod.object({
+  "pairId": zod.string(),
+  "caseId": zod.string(),
+  "questions": zod.array(zod.string()),
+  "a": zod.object({
+  "token": zod.string(),
+  "audioUrl": zod.string()
+}),
+  "b": zod.object({
+  "token": zod.string(),
+  "audioUrl": zod.string()
+})
+})),
+  "yourVotes": zod.array(zod.object({
+  "pairId": zod.string().min(1).max(getListeningSessionResponseYourVotesItemPairIdMax),
+  "question": zod.string().min(1).max(getListeningSessionResponseYourVotesItemQuestionMax),
+  "winnerToken": zod.string().min(1).max(getListeningSessionResponseYourVotesItemWinnerTokenMax)
+}))
+})
+
+
+/**
+ * @summary Gate C - record this rater's votes (one per question per pair; re-voting replaces)
+ */
+export const SubmitListeningVotesParams = zod.object({
+  "sessionId": zod.coerce.string()
+})
+
+export const submitListeningVotesBodyVotesItemPairIdMax = 200;
+
+export const submitListeningVotesBodyVotesItemQuestionMax = 200;
+
+export const submitListeningVotesBodyVotesItemWinnerTokenMax = 64;
+
+export const submitListeningVotesBodyVotesMax = 60;
+
+
+
+export const SubmitListeningVotesBody = zod.strictObject({
+  "votes": zod.array(zod.strictObject({
+  "pairId": zod.string().min(1).max(submitListeningVotesBodyVotesItemPairIdMax),
+  "question": zod.string().min(1).max(submitListeningVotesBodyVotesItemQuestionMax),
+  "winnerToken": zod.string().min(1).max(submitListeningVotesBodyVotesItemWinnerTokenMax)
+})).min(1).max(submitListeningVotesBodyVotesMax)
+})
+
+export const submitListeningVotesResponseYourVotesItemPairIdMax = 200;
+
+export const submitListeningVotesResponseYourVotesItemQuestionMax = 200;
+
+export const submitListeningVotesResponseYourVotesItemWinnerTokenMax = 64;
+
+
+
+export const SubmitListeningVotesResponse = zod.object({
+  "recorded": zod.number(),
+  "countsTowardVerdict": zod.boolean().describe('False for the owner\'s own votes'),
+  "yourVotes": zod.array(zod.object({
+  "pairId": zod.string().min(1).max(submitListeningVotesResponseYourVotesItemPairIdMax),
+  "question": zod.string().min(1).max(submitListeningVotesResponseYourVotesItemQuestionMax),
+  "winnerToken": zod.string().min(1).max(submitListeningVotesResponseYourVotesItemWinnerTokenMax)
+}))
+})
+
+
+/**
+ * @summary Gate C - the audio behind one anonymised token (so a rater's URL names no candidate)
+ */
+export const StreamListeningAudioParams = zod.object({
+  "sessionId": zod.coerce.string(),
+  "token": zod.coerce.string()
+})
+
+export const StreamListeningAudioResponse = zod.unknown()
+
+
+/**
+ * @summary Gate C - results, Elo and the gate verdict, with the token key (owner)
+ */
+export const GetListeningResultsParams = zod.object({
+  "sessionId": zod.coerce.string()
+})
+
+export const GetListeningResultsResponse = zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "title": zod.string(),
+  "status": zod.enum(['open', 'closed']),
+  "challenger": zod.enum(['left', 'right']),
+  "sides": zod.object({
+  "left": zod.object({
+  "label": zod.string(),
+  "generationJobId": zod.string(),
+  "candidateId": zod.string(),
+  "candidateLabel": zod.string(),
+  "pick": zod.enum(['ranked', 'first', 'explicit']),
+  "audioUrl": zod.string()
+}),
+  "right": zod.object({
+  "label": zod.string(),
+  "generationJobId": zod.string(),
+  "candidateId": zod.string(),
+  "candidateLabel": zod.string(),
+  "pick": zod.enum(['ranked', 'first', 'explicit']),
+  "audioUrl": zod.string()
+})
+}),
+  "pairs": zod.array(zod.object({
+  "pairId": zod.string(),
+  "caseId": zod.string(),
+  "left": zod.object({
+  "token": zod.string(),
+  "systemUnderTest": zod.string()
+}),
+  "right": zod.object({
+  "token": zod.string(),
+  "systemUnderTest": zod.string()
+}),
+  "questions": zod.array(zod.string())
+})),
+  "keyBySide": zod.record(zod.string(), zod.string()).describe('token -> system under test. Owner-only.'),
+  "raterPath": zod.string().describe('Studio path to hand a rater'),
+  "results": zod.object({
+  "version": zod.string(),
+  "raters": zod.number().describe('Distinct raters other than the owner'),
+  "ownerVotesExcluded": zod.number(),
+  "votesCounted": zod.number(),
+  "perQuestion": zod.array(zod.object({
+  "question": zod.string(),
+  "votes": zod.number(),
+  "bySystem": zod.record(zod.string(), zod.number()),
+  "leader": zod.string().nullable()
+})),
+  "elo": zod.array(zod.object({
+  "systemUnderTest": zod.string(),
+  "rating": zod.number(),
+  "comparisons": zod.number()
+})),
+  "gateC": zod.object({
+  "passed": zod.boolean(),
+  "challenger": zod.string(),
+  "incumbent": zod.string(),
+  "releaseVotes": zod.number(),
+  "releaseShare": zod.number().nullable(),
+  "minRaters": zod.number(),
+  "minWinShare": zod.number(),
+  "reason": zod.string()
+})
+}),
+  "createdAt": zod.string(),
+  "closedAt": zod.string().nullable()
+})
+
+
+/**
+ * @summary Gate C - close a session to further votes (owner)
+ */
+export const CloseListeningSessionParams = zod.object({
+  "sessionId": zod.coerce.string()
+})
+
+export const CloseListeningSessionResponse = zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "title": zod.string(),
+  "status": zod.enum(['open', 'closed']),
+  "challenger": zod.enum(['left', 'right']),
+  "sides": zod.object({
+  "left": zod.object({
+  "label": zod.string(),
+  "generationJobId": zod.string(),
+  "candidateId": zod.string(),
+  "candidateLabel": zod.string(),
+  "pick": zod.enum(['ranked', 'first', 'explicit']),
+  "audioUrl": zod.string()
+}),
+  "right": zod.object({
+  "label": zod.string(),
+  "generationJobId": zod.string(),
+  "candidateId": zod.string(),
+  "candidateLabel": zod.string(),
+  "pick": zod.enum(['ranked', 'first', 'explicit']),
+  "audioUrl": zod.string()
+})
+}),
+  "pairs": zod.array(zod.object({
+  "pairId": zod.string(),
+  "caseId": zod.string(),
+  "left": zod.object({
+  "token": zod.string(),
+  "systemUnderTest": zod.string()
+}),
+  "right": zod.object({
+  "token": zod.string(),
+  "systemUnderTest": zod.string()
+}),
+  "questions": zod.array(zod.string())
+})),
+  "keyBySide": zod.record(zod.string(), zod.string()).describe('token -> system under test. Owner-only.'),
+  "raterPath": zod.string().describe('Studio path to hand a rater'),
+  "results": zod.object({
+  "version": zod.string(),
+  "raters": zod.number().describe('Distinct raters other than the owner'),
+  "ownerVotesExcluded": zod.number(),
+  "votesCounted": zod.number(),
+  "perQuestion": zod.array(zod.object({
+  "question": zod.string(),
+  "votes": zod.number(),
+  "bySystem": zod.record(zod.string(), zod.number()),
+  "leader": zod.string().nullable()
+})),
+  "elo": zod.array(zod.object({
+  "systemUnderTest": zod.string(),
+  "rating": zod.number(),
+  "comparisons": zod.number()
+})),
+  "gateC": zod.object({
+  "passed": zod.boolean(),
+  "challenger": zod.string(),
+  "incumbent": zod.string(),
+  "releaseVotes": zod.number(),
+  "releaseShare": zod.number().nullable(),
+  "minRaters": zod.number(),
+  "minWinShare": zod.number(),
+  "reason": zod.string()
+})
+}),
+  "createdAt": zod.string(),
+  "closedAt": zod.string().nullable()
+})
+
+
+/**
  * @summary The owner's personalized arrangement profiles (PR-30) — learned defaults, newest first
  */
 export const ListPersonalArrangementProfilesResponseItem = zod.object({

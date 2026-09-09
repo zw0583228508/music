@@ -3957,3 +3957,77 @@ export const musicProducerBriefDecisionsTable = pgTable(
     index("music_producer_brief_decisions_project_idx").on(table.projectId, table.createdAt),
   ],
 );
+
+// ---------------------------------------------------------------------------
+// Gate C — PR-34: blind listening sessions. Two arrangements of the same song
+// (two generation candidates the owner picks, each standing for a system under
+// test), served to human raters as anonymised A/B audio with the PR-18
+// questions. Raters see tokens and audio, never a system name; the owner's own
+// votes are recorded but excluded from the verdict. The audio is the
+// candidates' existing evaluation renders — nothing new is rendered or stored.
+// ---------------------------------------------------------------------------
+
+export type BlindListeningPick = "ranked" | "first" | "explicit";
+
+export type BlindListeningSide = {
+  /** The system under test this side stands for (e.g. "brain · ranked #1"). Never shown to a rater. */
+  label: string;
+  generationJobId: string;
+  candidateId: string;
+  candidateLabel: string;
+  pick: BlindListeningPick;
+  /** The candidate's evaluation render (AUDIO_TRACK artifact URL). */
+  audioUrl: string;
+};
+
+export type BlindListeningSides = {
+  left: BlindListeningSide;
+  right: BlindListeningSide;
+  /** Which side has to win: the plan's KPI is "the new brain beats the previous one". */
+  challenger: "left" | "right";
+};
+
+/** Same shape as the benchmark's `BlindPair` (arrangementBenchmark.ts). */
+export type BlindListeningPair = {
+  pairId: string;
+  caseId: string;
+  left: { token: string; systemUnderTest: string };
+  right: { token: string; systemUnderTest: string };
+  questions: string[];
+};
+
+export type BlindListeningSessionStatus = "open" | "closed";
+
+export const musicBlindListeningSessionsTable = pgTable(
+  "music_blind_listening_sessions",
+  {
+    id: text("id").primaryKey(),
+    projectId: text("project_id").notNull().references(() => musicProjectsTable.id, { onDelete: "cascade" }),
+    ownerId: text("owner_id").notNull(),
+    title: text("title").notNull(),
+    sides: jsonb("sides").$type<BlindListeningSides>().notNull(),
+    pairs: jsonb("pairs").$type<BlindListeningPair[]>().notNull(),
+    /** token → system under test. Owner-only; never part of a rater view. */
+    keyBySide: jsonb("key_by_side").$type<Record<string, string>>().notNull(),
+    status: text("status").$type<BlindListeningSessionStatus>().notNull().default("open"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    closedAt: timestamp("closed_at", { withTimezone: true }),
+  },
+  (table) => [index("music_blind_listening_sessions_project_idx").on(table.projectId, table.createdAt)],
+);
+
+export const musicBlindListeningVotesTable = pgTable(
+  "music_blind_listening_votes",
+  {
+    id: text("id").primaryKey(),
+    sessionId: text("session_id").notNull().references(() => musicBlindListeningSessionsTable.id, { onDelete: "cascade" }),
+    pairId: text("pair_id").notNull(),
+    raterId: text("rater_id").notNull(),
+    question: text("question").notNull(),
+    winnerToken: text("winner_token").notNull(),
+    /** The session owner's votes are kept for the record and excluded from the verdict. */
+    isOwner: boolean("is_owner").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("music_blind_listening_votes_unique").on(table.sessionId, table.pairId, table.raterId, table.question)],
+);

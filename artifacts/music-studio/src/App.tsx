@@ -18,6 +18,7 @@ import Dashboard from '@/pages/dashboard';
 import Projects from '@/pages/projects';
 import ProjectWorkspace from '@/pages/project-workspace';
 import InstrumentPacks from '@/pages/instrument-packs';
+import ListeningRoom from '@/pages/listening-room';
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ function Router() {
           <Route path="/projects" component={Projects} />
           <Route path="/projects/:projectId" component={ProjectWorkspace} />
           <Route path="/instrument-packs" component={InstrumentPacks} />
+          <Route path="/listen/:sessionId" component={ListeningRoom} />
           <Route component={NotFound} />
         </Switch>
       </RoutedErrorBoundary>

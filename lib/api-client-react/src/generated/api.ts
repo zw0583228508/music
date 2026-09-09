@@ -34,6 +34,7 @@ import type {
   CandidateRepairInput,
   CopilotInput,
   CopilotResult,
+  CreateListeningSessionInput,
   Dashboard,
   ErasePreferenceEvents200,
   ErasePreferenceEventsParams,
@@ -54,6 +55,9 @@ import type {
   ListPreferenceTrainingRows200,
   ListPreferenceTrainingRowsParams,
   ListProducerDecisionsParams,
+  ListeningRaterView,
+  ListeningSession,
+  ListeningVotesResult,
   LogoutBrowserSessionParams,
   LogoutSuccess,
   MixMasterRevision,
@@ -102,6 +106,7 @@ import type {
   StyleFingerprintCompareInput,
   StyleFingerprintInput,
   StyleFingerprintRecord,
+  SubmitListeningVotesInput,
   Track,
   UploadUrlRequest,
   UploadUrlResponse
@@ -5151,6 +5156,535 @@ export function useGetArrangerModelBlindSheet<TData = Awaited<ReturnType<typeof 
 
 
 
+
+export const getCreateListeningSessionUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/listening-sessions`
+}
+
+/**
+ * Each side stands for a system under test (label) and resolves to one generation candidate with a rendered evaluation audio - explicitly by id, or the ranked winner / the first candidate of a generation job. Raters never see the labels.
+ * @summary Gate C - open a blind listening session between two candidates of this project
+ */
+export const createListeningSession = async (projectId: string,
+    createListeningSessionInput: CreateListeningSessionInput, options?: Parameters<typeof customFetch>[1]): Promise<ListeningSession> => {
+
+  return customFetch<ListeningSession>(getCreateListeningSessionUrl(projectId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createListeningSessionInput)
+  }
+);}
+
+
+
+
+
+export const getCreateListeningSessionMutationOptions = <TError = ErrorType<Error | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createListeningSession>>, TError,{projectId: string;data: BodyType<CreateListeningSessionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createListeningSession>>, TError,{projectId: string;data: BodyType<CreateListeningSessionInput>}, TContext> => {
+
+const mutationKey = ['createListeningSession'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createListeningSession>>, {projectId: string;data: BodyType<CreateListeningSessionInput>}> = (props) => {
+          const {projectId,data} = props ?? {};
+
+          return  createListeningSession(projectId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateListeningSessionMutationResult = NonNullable<Awaited<ReturnType<typeof createListeningSession>>>
+    export type CreateListeningSessionMutationBody = BodyType<CreateListeningSessionInput>
+    export type CreateListeningSessionMutationError = ErrorType<Error | NotFoundResponse>
+
+    /**
+ * @summary Gate C - open a blind listening session between two candidates of this project
+ */
+export const useCreateListeningSession = <TError = ErrorType<Error | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createListeningSession>>, TError,{projectId: string;data: BodyType<CreateListeningSessionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createListeningSession>>,
+        TError,
+        {projectId: string;data: BodyType<CreateListeningSessionInput>},
+        TContext
+      > => {
+      return useMutation(getCreateListeningSessionMutationOptions(options));
+    }
+
+export const getListListeningSessionsUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/listening-sessions`
+}
+
+/**
+ * @summary Gate C - the project's listening sessions with their current results (owner)
+ */
+export const listListeningSessions = async (projectId: string, options?: Parameters<typeof customFetch>[1]): Promise<ListeningSession[]> => {
+
+  return customFetch<ListeningSession[]>(getListListeningSessionsUrl(projectId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListListeningSessionsQueryKey = (projectId: string,) => {
+    return [
+    `/api/projects/${projectId}/listening-sessions`
+    ] as const;
+    }
+
+
+export const getListListeningSessionsQueryOptions = <TData = Awaited<ReturnType<typeof listListeningSessions>>, TError = ErrorType<NotFoundResponse>>(projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listListeningSessions>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListListeningSessionsQueryKey(projectId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listListeningSessions>>> = ({ signal }) => listListeningSessions(projectId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listListeningSessions>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListListeningSessionsQueryResult = NonNullable<Awaited<ReturnType<typeof listListeningSessions>>>
+export type ListListeningSessionsQueryError = ErrorType<NotFoundResponse>
+
+
+/**
+ * @summary Gate C - the project's listening sessions with their current results (owner)
+ */
+
+export function useListListeningSessions<TData = Awaited<ReturnType<typeof listListeningSessions>>, TError = ErrorType<NotFoundResponse>>(
+ projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listListeningSessions>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListListeningSessionsQueryOptions(projectId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetListeningSessionUrl = (sessionId: string,) => {
+
+
+
+
+  return `/api/listening-sessions/${sessionId}`
+}
+
+/**
+ * @summary Gate C - the rater view of a session (anonymised A/B, no system names)
+ */
+export const getListeningSession = async (sessionId: string, options?: Parameters<typeof customFetch>[1]): Promise<ListeningRaterView> => {
+
+  return customFetch<ListeningRaterView>(getGetListeningSessionUrl(sessionId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetListeningSessionQueryKey = (sessionId: string,) => {
+    return [
+    `/api/listening-sessions/${sessionId}`
+    ] as const;
+    }
+
+
+export const getGetListeningSessionQueryOptions = <TData = Awaited<ReturnType<typeof getListeningSession>>, TError = ErrorType<NotFoundResponse>>(sessionId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getListeningSession>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetListeningSessionQueryKey(sessionId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getListeningSession>>> = ({ signal }) => getListeningSession(sessionId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: sessionId !== null && sessionId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getListeningSession>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetListeningSessionQueryResult = NonNullable<Awaited<ReturnType<typeof getListeningSession>>>
+export type GetListeningSessionQueryError = ErrorType<NotFoundResponse>
+
+
+/**
+ * @summary Gate C - the rater view of a session (anonymised A/B, no system names)
+ */
+
+export function useGetListeningSession<TData = Awaited<ReturnType<typeof getListeningSession>>, TError = ErrorType<NotFoundResponse>>(
+ sessionId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getListeningSession>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetListeningSessionQueryOptions(sessionId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getSubmitListeningVotesUrl = (sessionId: string,) => {
+
+
+
+
+  return `/api/listening-sessions/${sessionId}/votes`
+}
+
+/**
+ * @summary Gate C - record this rater's votes (one per question per pair; re-voting replaces)
+ */
+export const submitListeningVotes = async (sessionId: string,
+    submitListeningVotesInput: SubmitListeningVotesInput, options?: Parameters<typeof customFetch>[1]): Promise<ListeningVotesResult> => {
+
+  return customFetch<ListeningVotesResult>(getSubmitListeningVotesUrl(sessionId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(submitListeningVotesInput)
+  }
+);}
+
+
+
+
+
+export const getSubmitListeningVotesMutationOptions = <TError = ErrorType<Error | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof submitListeningVotes>>, TError,{sessionId: string;data: BodyType<SubmitListeningVotesInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof submitListeningVotes>>, TError,{sessionId: string;data: BodyType<SubmitListeningVotesInput>}, TContext> => {
+
+const mutationKey = ['submitListeningVotes'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof submitListeningVotes>>, {sessionId: string;data: BodyType<SubmitListeningVotesInput>}> = (props) => {
+          const {sessionId,data} = props ?? {};
+
+          return  submitListeningVotes(sessionId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SubmitListeningVotesMutationResult = NonNullable<Awaited<ReturnType<typeof submitListeningVotes>>>
+    export type SubmitListeningVotesMutationBody = BodyType<SubmitListeningVotesInput>
+    export type SubmitListeningVotesMutationError = ErrorType<Error | NotFoundResponse>
+
+    /**
+ * @summary Gate C - record this rater's votes (one per question per pair; re-voting replaces)
+ */
+export const useSubmitListeningVotes = <TError = ErrorType<Error | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof submitListeningVotes>>, TError,{sessionId: string;data: BodyType<SubmitListeningVotesInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof submitListeningVotes>>,
+        TError,
+        {sessionId: string;data: BodyType<SubmitListeningVotesInput>},
+        TContext
+      > => {
+      return useMutation(getSubmitListeningVotesMutationOptions(options));
+    }
+
+export const getStreamListeningAudioUrl = (sessionId: string,
+    token: string,) => {
+
+
+
+
+  return `/api/listening-sessions/${sessionId}/audio/${token}`
+}
+
+/**
+ * @summary Gate C - the audio behind one anonymised token (so a rater's URL names no candidate)
+ */
+export const streamListeningAudio = async (sessionId: string,
+    token: string, options?: Parameters<typeof customFetch>[1]): Promise<Blob> => {
+
+  return customFetch<Blob>(getStreamListeningAudioUrl(sessionId,token),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getStreamListeningAudioQueryKey = (sessionId: string,
+    token: string,) => {
+    return [
+    `/api/listening-sessions/${sessionId}/audio/${token}`
+    ] as const;
+    }
+
+
+export const getStreamListeningAudioQueryOptions = <TData = Awaited<ReturnType<typeof streamListeningAudio>>, TError = ErrorType<NotFoundResponse>>(sessionId: string,
+    token: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof streamListeningAudio>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getStreamListeningAudioQueryKey(sessionId,token);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof streamListeningAudio>>> = ({ signal }) => streamListeningAudio(sessionId,token, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: sessionId !== null && sessionId !== undefined && token !== null && token !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof streamListeningAudio>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type StreamListeningAudioQueryResult = NonNullable<Awaited<ReturnType<typeof streamListeningAudio>>>
+export type StreamListeningAudioQueryError = ErrorType<NotFoundResponse>
+
+
+/**
+ * @summary Gate C - the audio behind one anonymised token (so a rater's URL names no candidate)
+ */
+
+export function useStreamListeningAudio<TData = Awaited<ReturnType<typeof streamListeningAudio>>, TError = ErrorType<NotFoundResponse>>(
+ sessionId: string,
+    token: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof streamListeningAudio>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getStreamListeningAudioQueryOptions(sessionId,token,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetListeningResultsUrl = (sessionId: string,) => {
+
+
+
+
+  return `/api/listening-sessions/${sessionId}/results`
+}
+
+/**
+ * @summary Gate C - results, Elo and the gate verdict, with the token key (owner)
+ */
+export const getListeningResults = async (sessionId: string, options?: Parameters<typeof customFetch>[1]): Promise<ListeningSession> => {
+
+  return customFetch<ListeningSession>(getGetListeningResultsUrl(sessionId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetListeningResultsQueryKey = (sessionId: string,) => {
+    return [
+    `/api/listening-sessions/${sessionId}/results`
+    ] as const;
+    }
+
+
+export const getGetListeningResultsQueryOptions = <TData = Awaited<ReturnType<typeof getListeningResults>>, TError = ErrorType<NotFoundResponse>>(sessionId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getListeningResults>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetListeningResultsQueryKey(sessionId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getListeningResults>>> = ({ signal }) => getListeningResults(sessionId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: sessionId !== null && sessionId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getListeningResults>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetListeningResultsQueryResult = NonNullable<Awaited<ReturnType<typeof getListeningResults>>>
+export type GetListeningResultsQueryError = ErrorType<NotFoundResponse>
+
+
+/**
+ * @summary Gate C - results, Elo and the gate verdict, with the token key (owner)
+ */
+
+export function useGetListeningResults<TData = Awaited<ReturnType<typeof getListeningResults>>, TError = ErrorType<NotFoundResponse>>(
+ sessionId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getListeningResults>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetListeningResultsQueryOptions(sessionId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCloseListeningSessionUrl = (sessionId: string,) => {
+
+
+
+
+  return `/api/listening-sessions/${sessionId}/close`
+}
+
+/**
+ * @summary Gate C - close a session to further votes (owner)
+ */
+export const closeListeningSession = async (sessionId: string, options?: Parameters<typeof customFetch>[1]): Promise<ListeningSession> => {
+
+  return customFetch<ListeningSession>(getCloseListeningSessionUrl(sessionId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getCloseListeningSessionMutationOptions = <TError = ErrorType<NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof closeListeningSession>>, TError,{sessionId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof closeListeningSession>>, TError,{sessionId: string}, TContext> => {
+
+const mutationKey = ['closeListeningSession'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof closeListeningSession>>, {sessionId: string}> = (props) => {
+          const {sessionId} = props ?? {};
+
+          return  closeListeningSession(sessionId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CloseListeningSessionMutationResult = NonNullable<Awaited<ReturnType<typeof closeListeningSession>>>
+
+    export type CloseListeningSessionMutationError = ErrorType<NotFoundResponse>
+
+    /**
+ * @summary Gate C - close a session to further votes (owner)
+ */
+export const useCloseListeningSession = <TError = ErrorType<NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof closeListeningSession>>, TError,{sessionId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof closeListeningSession>>,
+        TError,
+        {sessionId: string},
+        TContext
+      > => {
+      return useMutation(getCloseListeningSessionMutationOptions(options));
+    }
 
 export const getListPersonalArrangementProfilesUrl = () => {
 
