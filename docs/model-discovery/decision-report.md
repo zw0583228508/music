@@ -102,3 +102,10 @@ time that every option needs equally.
 - Blind ratings on at least one tournament's pairs (owner as the first rater; Gate D expands the panel).
 - Provenance resolution for MuPT, NotaGen, CLaMP 3 and GETMusic (still LEGAL_REVIEW_REQUIRED), and REMI-z code/weights.
 - A CA2 LoRA pilot cost measured, not estimated (it is the first Modal training job and fixes the budget guard's units).
+
+## 6. Pointers
+
+Two studies written after this draft, on the same evidence (PR-64, `conditioning-and-training-strategy-study`):
+
+- [`conditioning-study.md`](conditioning-study.md) — every field of `PartGenerationRequestV2` (201 paths, V1 and V2) classified for eight conditioning approaches, CA2's 49-instruction surface characterised from its source, the finding that the platform has never sent CA2 an instruction, and a $0 falsifier before any training. Data and tests: `artifacts/api-server/src/lib/conditioningMap.ts`.
+- [`training-strategy.md`](training-strategy.md) — twelve training strategies (CA2 LoRA … hierarchical planner + note generator) priced on Modal list prices against the repo's real data figures, with a recommended order and an explicit proposed change to the master plan's model sequence.
