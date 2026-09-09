@@ -1803,6 +1803,57 @@ any of it.
   serves whatever a run leases; it does not itself judge whether that object
   should leave the machine.
 
+- **PR-42** ✅ — `part-generation-context-v2` (Wave Q, Q-03): the context that
+  turns a correct part into an arrangement.
+
+  V1 tells a part composer what the song is. It does not tell it what the other
+  players are doing: `existingParts` carries `{ instrument, role, noteCount }`.
+  **You cannot voice against a count.** You cannot stay out of the singer's way,
+  answer a horn line, or leave the low end to the bass, if all you know is that
+  eleven notes exist somewhere. That is the whole distance between a part that
+  is individually correct and an arrangement.
+
+  `PartGenerationRequestV2` extends V1 rather than replacing it — a test walks
+  every V1 field and asserts it is untouched, so existing composers and the
+  orchestrator's injected `composeParts` seam keep working unchanged. What it
+  adds is each a decision a real arranger makes:
+
+  - **siblingParts** — the actual notes already written, with register, onsets
+    and occupancy. This is what arranging reads.
+  - **vocalAttentionMap** — where the voice is and, more usefully, where it is
+    not. Overlapping vocal notes merge into one block to stay out of; gaps under
+    0.75 s are breaths, not invitations, and are not offered as fill windows. No
+    vocal is reported as `no_vocal`: an instrumental is not a silent singer.
+  - **motifMemory** — recurring cells as intervals and rhythm ratios, so a
+    restatement is recognised **transposed**, which is how songs restate them. A
+    part can then quote the song instead of inventing a fourth unrelated idea.
+  - **previousSectionSummary / nextSectionIntent** — where this section came
+    from and where it must arrive. A section before a bigger one is told to
+    `build` and leave room; after a climax it is told to `clear_out`. The first
+    section reports `none` rather than a fabricated history, because inventing
+    one makes every opening sound like a continuation.
+  - **hard vs soft constraints** — V1 mixes "physically impossible" with
+    "stylistically wrong". A composer under pressure must know which line it may
+    cross: out of range is unplayable, denser than the style prefers is merely
+    arguable. Hard constraints carry no weight to trade against.
+  - **lockedMaterial** — the producer's kept notes plus the frozen time ranges
+    they imply. An empty lock claims no reason.
+  - **candidateStrategy** — distinct, reproducible seeds so a ranker sees real
+    alternatives rather than three shades of one take.
+
+  `styleGrammar` (Q-02) and `harmonyPlan` (Q-04) are typed slots that default to
+  an explicit `not_available` naming the stage that will fill them. A slot that
+  says it is empty is honest; a missing field reads as "nothing to say".
+
+  Suites: partGenerationContextV2 11, registered in the `music-engines` group;
+  partComposer 4 unchanged; typecheck green.
+
+  **Honest limits.** Nothing consumes V2 yet. The reference composer still reads
+  V1, so no arrangement in the repo sounds different because of this PR — it is
+  the contract the Q-06 arranger and the instrument experts are written against.
+  `upgradePartGenerationRequest` must be called with the sibling parts by
+  whoever holds them; the orchestrator does not pass them yet.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
