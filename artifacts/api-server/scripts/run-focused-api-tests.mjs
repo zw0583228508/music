@@ -368,6 +368,15 @@ const suites = {
       // Wave Q, Q-01: the key a real recording's transcription implies, which
       // is what lets a full song reach a Song Model with no key provider.
       ["src/lib/keyFromNotes.test.ts", "key-from-notes.test.mjs"],
+      // ANALYSIS ENGINE wave, PR-81: the truth set every analysis tournament
+      // scores against — tier-separated manifest, per-domain scorers with
+      // partial credits reported apart, and the synthetic tier's generator.
+      ["src/lib/analysisGold.test.ts", "analysis-gold.test.mjs"],
+      [
+        "src/lib/analysisGoldSynthetic.test.ts",
+        "analysis-gold-synthetic.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       [
         "src/lib/gpuProviderAttestation.test.ts",
         "gpu-provider-attestation.test.mjs",

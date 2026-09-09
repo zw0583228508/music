@@ -1,0 +1,4038 @@
+{
+  "title": "ANALYSIS_GOLD_V1 baseline — the platform's current local analysers on the SYNTHETIC_EXACT tier",
+  "scoredAt": "2026-09-09T21:58:51.738Z",
+  "manifest": {
+    "path": "docs/evidence/analysis-gold-v1-manifest.json",
+    "version": "ANALYSIS_GOLD_V1",
+    "builtAt": "2026-09-09T21:58:34.559Z"
+  },
+  "tier": "SYNTHETIC_EXACT",
+  "predictor": "platform-local-analyzers (LOCAL_SIGNAL_ANALYZER_V1 tempo/structure on the mix; keyFromNotes and chordsFromNotes on the TRUE notes)",
+  "baselineNotes": {
+    "itemsWithAudio": 52,
+    "itemsWithoutAudio": 0,
+    "tempoRefusals": 2,
+    "keyRefusals": 0,
+    "chordBarsNamed": 970,
+    "chordBarsTotal": 1708
+  },
+  "summary": {
+    "tempo": {
+      "headline": "exact (±4 %)",
+      "mean": 0.64,
+      "itemsScored": 50,
+      "itemsWithTruth": 52,
+      "itemsWithoutPrediction": 2,
+      "means": {
+        "halfTempoCredit": 0.2,
+        "doubleTempoCredit": 0,
+        "quarterUnitCredit": 0,
+        "mapAccuracy": 0.6148
+      }
+    },
+    "metre": {
+      "headline": "exact",
+      "mean": 0.8269,
+      "itemsScored": 52,
+      "itemsWithTruth": 52,
+      "itemsWithoutPrediction": 0,
+      "means": {
+        "sameBarLength": 0.8269
+      }
+    },
+    "key": {
+      "headline": "exact",
+      "mean": 0.9583,
+      "itemsScored": 35,
+      "itemsWithTruth": 35,
+      "itemsWithoutPrediction": 0,
+      "means": {
+        "relative": 0.0417,
+        "parallel": 0,
+        "fifthNeighbour": 0,
+        "mirexWeighted": 0.9708,
+        "keySignatureMatch": 0.8857
+      }
+    },
+    "chords": {
+      "headline": "majmin accuracy (time-weighted)",
+      "mean": 0.6774,
+      "itemsScored": 24,
+      "itemsWithTruth": 24,
+      "itemsWithoutPrediction": 0,
+      "means": {
+        "root": 0.6739,
+        "majminBass": 0.6377,
+        "sevenths": 0.5763,
+        "seventhsBass": 0.561
+      }
+    },
+    "notes": {
+      "headline": "onset+pitch F1, pitched tracks",
+      "mean": null,
+      "itemsScored": 0,
+      "itemsWithTruth": 52,
+      "itemsWithoutPrediction": 52,
+      "means": {}
+    },
+    "beats": {
+      "headline": "F-measure ±70 ms",
+      "mean": 0.5999,
+      "itemsScored": 50,
+      "itemsWithTruth": 52,
+      "itemsWithoutPrediction": 2,
+      "means": {
+        "precision": 0.6477,
+        "recall": 0.5805
+      }
+    },
+    "downbeats": {
+      "headline": "F-measure ±70 ms",
+      "mean": 0.5584,
+      "itemsScored": 50,
+      "itemsWithTruth": 52,
+      "itemsWithoutPrediction": 2,
+      "means": {
+        "precision": 0.6121,
+        "recall": 0.5339
+      }
+    },
+    "sections": {
+      "headline": "boundary F1 ±3 s",
+      "mean": 0.058,
+      "itemsScored": 23,
+      "itemsWithTruth": 24,
+      "itemsWithoutPrediction": 1,
+      "means": {
+        "at0_5s": 0.029
+      }
+    }
+  },
+  "perItem": {
+    "composed-pop-c-major-120": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 60.1,
+        "truthBpm": 120,
+        "ratio": 0.5008,
+        "exact": false,
+        "halfTempoCredit": true,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "C major",
+        "truth": "C major",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 60,
+        "unpredictedSeconds": 16,
+        "root": {
+          "correctSeconds": 38,
+          "scoredSeconds": 60,
+          "accuracy": 0.6333
+        },
+        "majmin": {
+          "correctSeconds": 38,
+          "scoredSeconds": 60,
+          "accuracy": 0.6333
+        },
+        "majminBass": {
+          "correctSeconds": 30,
+          "scoredSeconds": 60,
+          "accuracy": 0.5
+        },
+        "sevenths": {
+          "correctSeconds": 26,
+          "scoredSeconds": 60,
+          "accuracy": 0.4333
+        },
+        "seventhsBass": {
+          "correctSeconds": 26,
+          "scoredSeconds": 60,
+          "accuracy": 0.4333
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.6935,
+        "recall": 0.3583,
+        "f1": 0.4725,
+        "matched": 43,
+        "predicted": 62,
+        "reference": 120
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.6875,
+        "recall": 0.3667,
+        "f1": 0.4783,
+        "matched": 11,
+        "predicted": 16,
+        "reference": 30
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 4,
+        "predictedBoundaries": 2,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 2,
+          "reference": 4
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 2,
+          "reference": 4
+        }
+      }
+    },
+    "composed-rock-e-minor-140": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 70,
+        "truthBpm": 140,
+        "ratio": 0.5,
+        "exact": false,
+        "halfTempoCredit": true,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "E minor",
+        "truth": "E minor",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 54.857,
+        "unpredictedSeconds": 29.14,
+        "root": {
+          "correctSeconds": 25.717,
+          "scoredSeconds": 54.857,
+          "accuracy": 0.4688
+        },
+        "majmin": {
+          "correctSeconds": 25.717,
+          "scoredSeconds": 54.857,
+          "accuracy": 0.4688
+        },
+        "majminBass": {
+          "correctSeconds": 25.717,
+          "scoredSeconds": 54.857,
+          "accuracy": 0.4688
+        },
+        "sevenths": {
+          "correctSeconds": 24.003,
+          "scoredSeconds": 54.857,
+          "accuracy": 0.4376
+        },
+        "seventhsBass": {
+          "correctSeconds": 24.003,
+          "scoredSeconds": 54.857,
+          "accuracy": 0.4376
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9697,
+        "recall": 0.5,
+        "f1": 0.6598,
+        "matched": 64,
+        "predicted": 66,
+        "reference": 128
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9412,
+        "recall": 0.5,
+        "f1": 0.6531,
+        "matched": 16,
+        "predicted": 17,
+        "reference": 32
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 4,
+        "predictedBoundaries": 2,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 2,
+          "reference": 4
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 2,
+          "reference": 4
+        }
+      }
+    },
+    "composed-folk-g-major-3-4-pickup": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 66.7,
+        "truthBpm": 100,
+        "ratio": 0.667,
+        "exact": false,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true,
+        "traps": [
+          "pickup_bar"
+        ]
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "3/4",
+        "exact": false,
+        "sameBarLength": false,
+        "truthChanges": 0,
+        "pickupBar": true
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "G major",
+        "truth": "G major",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 65.4,
+        "unpredictedSeconds": 15,
+        "root": {
+          "correctSeconds": 43.8,
+          "scoredSeconds": 65.4,
+          "accuracy": 0.6697
+        },
+        "majmin": {
+          "correctSeconds": 43.8,
+          "scoredSeconds": 65.4,
+          "accuracy": 0.6697
+        },
+        "majminBass": {
+          "correctSeconds": 43.8,
+          "scoredSeconds": 65.4,
+          "accuracy": 0.6697
+        },
+        "sevenths": {
+          "correctSeconds": 36.6,
+          "scoredSeconds": 65.4,
+          "accuracy": 0.5596
+        },
+        "seventhsBass": {
+          "correctSeconds": 36.6,
+          "scoredSeconds": 65.4,
+          "accuracy": 0.5596
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.4933,
+        "recall": 0.3394,
+        "f1": 0.4022,
+        "matched": 37,
+        "predicted": 75,
+        "reference": 109
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0,
+        "recall": 0,
+        "f1": 0,
+        "matched": 0,
+        "predicted": 19,
+        "reference": 36
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-jazz-f-major-swing-160": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 80.1,
+        "truthBpm": 160,
+        "ratio": 0.5006,
+        "exact": false,
+        "halfTempoCredit": true,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "F major",
+        "truth": "F major",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 36,
+        "unpredictedSeconds": 7.5,
+        "root": {
+          "correctSeconds": 26.25,
+          "scoredSeconds": 36,
+          "accuracy": 0.7292
+        },
+        "majmin": {
+          "correctSeconds": 26.25,
+          "scoredSeconds": 36,
+          "accuracy": 0.7292
+        },
+        "majminBass": {
+          "correctSeconds": 26.25,
+          "scoredSeconds": 36,
+          "accuracy": 0.7292
+        },
+        "sevenths": {
+          "correctSeconds": 26.25,
+          "scoredSeconds": 36,
+          "accuracy": 0.7292
+        },
+        "seventhsBass": {
+          "correctSeconds": 26.25,
+          "scoredSeconds": 36,
+          "accuracy": 0.7292
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9412,
+        "recall": 0.5,
+        "f1": 0.6531,
+        "matched": 48,
+        "predicted": 51,
+        "reference": 96
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9231,
+        "recall": 0.5,
+        "f1": 0.6486,
+        "matched": 12,
+        "predicted": 13,
+        "reference": 24
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 1,
+          "recall": 0.5,
+          "f1": 0.6667,
+          "matched": 1,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-classical-a-minor-alberti-96": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 95.9,
+        "truthBpm": 96,
+        "ratio": 0.999,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "A minor",
+        "truth": "A minor",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 60,
+        "unpredictedSeconds": 30,
+        "root": {
+          "correctSeconds": 27.5,
+          "scoredSeconds": 60,
+          "accuracy": 0.4583
+        },
+        "majmin": {
+          "correctSeconds": 27.5,
+          "scoredSeconds": 60,
+          "accuracy": 0.4583
+        },
+        "majminBass": {
+          "correctSeconds": 20,
+          "scoredSeconds": 60,
+          "accuracy": 0.3333
+        },
+        "sevenths": {
+          "correctSeconds": 15,
+          "scoredSeconds": 60,
+          "accuracy": 0.25
+        },
+        "seventhsBass": {
+          "correctSeconds": 7.5,
+          "scoredSeconds": 60,
+          "accuracy": 0.125
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9697,
+        "recall": 1,
+        "f1": 0.9846,
+        "matched": 96,
+        "predicted": 99,
+        "reference": 96
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.96,
+        "recall": 1,
+        "f1": 0.9796,
+        "matched": 24,
+        "predicted": 25,
+        "reference": 24
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-key-trap-eb-major-88": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 88.1,
+        "truthBpm": 88,
+        "ratio": 1.0011,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true,
+        "traps": [
+          "relative_key_pair:eb-major-vs-c-minor"
+        ]
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "Eb major",
+        "truth": "Eb major",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 65.455,
+        "unpredictedSeconds": 16.365,
+        "root": {
+          "correctSeconds": 46.363,
+          "scoredSeconds": 65.455,
+          "accuracy": 0.7083
+        },
+        "majmin": {
+          "correctSeconds": 46.363,
+          "scoredSeconds": 65.455,
+          "accuracy": 0.7083
+        },
+        "majminBass": {
+          "correctSeconds": 38.18,
+          "scoredSeconds": 65.455,
+          "accuracy": 0.5833
+        },
+        "sevenths": {
+          "correctSeconds": 29.999,
+          "scoredSeconds": 65.455,
+          "accuracy": 0.4583
+        },
+        "seventhsBass": {
+          "correctSeconds": 29.999,
+          "scoredSeconds": 65.455,
+          "accuracy": 0.4583
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9192,
+        "recall": 0.9479,
+        "f1": 0.9333,
+        "matched": 91,
+        "predicted": 99,
+        "reference": 96
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.92,
+        "recall": 0.9583,
+        "f1": 0.9388,
+        "matched": 23,
+        "predicted": 25,
+        "reference": 24
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-key-trap-c-minor-88": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 88.1,
+        "truthBpm": 88,
+        "ratio": 1.0011,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true,
+        "traps": [
+          "relative_key_pair:eb-major-vs-c-minor"
+        ]
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "C minor",
+        "truth": "C minor",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 65.455,
+        "unpredictedSeconds": 19.092,
+        "root": {
+          "correctSeconds": 46.363,
+          "scoredSeconds": 65.455,
+          "accuracy": 0.7083
+        },
+        "majmin": {
+          "correctSeconds": 46.363,
+          "scoredSeconds": 65.455,
+          "accuracy": 0.7083
+        },
+        "majminBass": {
+          "correctSeconds": 46.363,
+          "scoredSeconds": 65.455,
+          "accuracy": 0.7083
+        },
+        "sevenths": {
+          "correctSeconds": 40.909,
+          "scoredSeconds": 65.455,
+          "accuracy": 0.625
+        },
+        "seventhsBass": {
+          "correctSeconds": 40.909,
+          "scoredSeconds": 65.455,
+          "accuracy": 0.625
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9192,
+        "recall": 0.9479,
+        "f1": 0.9333,
+        "matched": 91,
+        "predicted": 99,
+        "reference": 96
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.92,
+        "recall": 0.9583,
+        "f1": 0.9388,
+        "matched": 23,
+        "predicted": 25,
+        "reference": 24
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-key-trap-c-major-sixths-104": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 104.1,
+        "truthBpm": 104,
+        "ratio": 1.001,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true,
+        "traps": [
+          "c6_vs_am7_ambiguity"
+        ]
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "C major",
+        "truth": "C major",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 55.385,
+        "unpredictedSeconds": 9.23,
+        "root": {
+          "correctSeconds": 32.308,
+          "scoredSeconds": 55.385,
+          "accuracy": 0.5833
+        },
+        "majmin": {
+          "correctSeconds": 32.308,
+          "scoredSeconds": 55.385,
+          "accuracy": 0.5833
+        },
+        "majminBass": {
+          "correctSeconds": 30,
+          "scoredSeconds": 55.385,
+          "accuracy": 0.5417
+        },
+        "sevenths": {
+          "correctSeconds": 30,
+          "scoredSeconds": 41.538,
+          "accuracy": 0.7222
+        },
+        "seventhsBass": {
+          "correctSeconds": 30,
+          "scoredSeconds": 41.538,
+          "accuracy": 0.7222
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9697,
+        "recall": 1,
+        "f1": 0.9846,
+        "matched": 96,
+        "predicted": 99,
+        "reference": 96
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.96,
+        "recall": 1,
+        "f1": 0.9796,
+        "matched": 24,
+        "predicted": 25,
+        "reference": 24
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-key-trap-a-minor-sevenths-104": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 104.2,
+        "truthBpm": 104,
+        "ratio": 1.0019,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true,
+        "traps": [
+          "c6_vs_am7_ambiguity"
+        ]
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "A minor",
+        "truth": "A minor",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 55.385,
+        "unpredictedSeconds": 13.846,
+        "root": {
+          "correctSeconds": 36.923,
+          "scoredSeconds": 55.385,
+          "accuracy": 0.6667
+        },
+        "majmin": {
+          "correctSeconds": 36.923,
+          "scoredSeconds": 55.385,
+          "accuracy": 0.6667
+        },
+        "majminBass": {
+          "correctSeconds": 36.923,
+          "scoredSeconds": 55.385,
+          "accuracy": 0.6667
+        },
+        "sevenths": {
+          "correctSeconds": 36.923,
+          "scoredSeconds": 53.077,
+          "accuracy": 0.6956
+        },
+        "seventhsBass": {
+          "correctSeconds": 36.923,
+          "scoredSeconds": 53.077,
+          "accuracy": 0.6956
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.6465,
+        "recall": 0.6667,
+        "f1": 0.6564,
+        "matched": 64,
+        "predicted": 99,
+        "reference": 96
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.64,
+        "recall": 0.6667,
+        "f1": 0.6531,
+        "matched": 16,
+        "predicted": 25,
+        "reference": 24
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-tempo-trap-double-feel-68": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 68,
+        "truthBpm": 68,
+        "ratio": 1,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true,
+        "traps": [
+          "double_tempo_feel:136"
+        ]
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "D major",
+        "truth": "D major",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 77.647,
+        "unpredictedSeconds": 17.647,
+        "root": {
+          "correctSeconds": 49.412,
+          "scoredSeconds": 77.647,
+          "accuracy": 0.6364
+        },
+        "majmin": {
+          "correctSeconds": 49.412,
+          "scoredSeconds": 77.647,
+          "accuracy": 0.6364
+        },
+        "majminBass": {
+          "correctSeconds": 42.353,
+          "scoredSeconds": 77.647,
+          "accuracy": 0.5455
+        },
+        "sevenths": {
+          "correctSeconds": 28.234,
+          "scoredSeconds": 77.647,
+          "accuracy": 0.3636
+        },
+        "seventhsBass": {
+          "correctSeconds": 21.175,
+          "scoredSeconds": 77.647,
+          "accuracy": 0.2727
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9778,
+        "recall": 1,
+        "f1": 0.9888,
+        "matched": 88,
+        "predicted": 90,
+        "reference": 88
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9565,
+        "recall": 1,
+        "f1": 0.9778,
+        "matched": 22,
+        "predicted": 23,
+        "reference": 22
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 3,
+        "predictedBoundaries": 2,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 2,
+          "reference": 3
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 2,
+          "reference": 3
+        }
+      }
+    },
+    "composed-tempo-trap-half-feel-168": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 84,
+        "truthBpm": 168,
+        "ratio": 0.5,
+        "exact": false,
+        "halfTempoCredit": true,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true,
+        "traps": [
+          "half_tempo_feel:84"
+        ]
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "A major",
+        "truth": "A major",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 57.143,
+        "unpredictedSeconds": 24.287,
+        "root": {
+          "correctSeconds": 32.856,
+          "scoredSeconds": 57.143,
+          "accuracy": 0.575
+        },
+        "majmin": {
+          "correctSeconds": 32.856,
+          "scoredSeconds": 57.143,
+          "accuracy": 0.575
+        },
+        "majminBass": {
+          "correctSeconds": 32.856,
+          "scoredSeconds": 57.143,
+          "accuracy": 0.575
+        },
+        "sevenths": {
+          "correctSeconds": 29.999,
+          "scoredSeconds": 57.143,
+          "accuracy": 0.525
+        },
+        "seventhsBass": {
+          "correctSeconds": 29.999,
+          "scoredSeconds": 57.143,
+          "accuracy": 0.525
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9639,
+        "recall": 0.5,
+        "f1": 0.6584,
+        "matched": 80,
+        "predicted": 83,
+        "reference": 160
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9524,
+        "recall": 0.5,
+        "f1": 0.6557,
+        "matched": 20,
+        "predicted": 21,
+        "reference": 40
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 3,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 3
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 3
+        }
+      }
+    },
+    "composed-tempo-step-100-125": {
+      "tempo": {
+        "status": "NO_PREDICTION"
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "F major",
+        "truth": "F major",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 53.76,
+        "unpredictedSeconds": 16.8,
+        "root": {
+          "correctSeconds": 32.64,
+          "scoredSeconds": 53.76,
+          "accuracy": 0.6071
+        },
+        "majmin": {
+          "correctSeconds": 32.64,
+          "scoredSeconds": 53.76,
+          "accuracy": 0.6071
+        },
+        "majminBass": {
+          "correctSeconds": 25.44,
+          "scoredSeconds": 53.76,
+          "accuracy": 0.4732
+        },
+        "sevenths": {
+          "correctSeconds": 25.44,
+          "scoredSeconds": 53.76,
+          "accuracy": 0.4732
+        },
+        "seventhsBass": {
+          "correctSeconds": 25.44,
+          "scoredSeconds": 53.76,
+          "accuracy": 0.4732
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "NO_PREDICTION"
+      },
+      "downbeats": {
+        "status": "NO_PREDICTION"
+      },
+      "sections": {
+        "status": "NO_PREDICTION"
+      }
+    },
+    "composed-tempo-ritardando-120-to-72": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 118.8,
+        "truthBpm": 120,
+        "ratio": 0.99,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0.8162,
+        "truthConstant": false,
+        "traps": [
+          "ritardando"
+        ]
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "G minor",
+        "truth": "G minor",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 50.247,
+        "unpredictedSeconds": 16.085,
+        "root": {
+          "correctSeconds": 34.162,
+          "scoredSeconds": 50.247,
+          "accuracy": 0.6799
+        },
+        "majmin": {
+          "correctSeconds": 34.162,
+          "scoredSeconds": 50.247,
+          "accuracy": 0.6799
+        },
+        "majminBass": {
+          "correctSeconds": 34.162,
+          "scoredSeconds": 50.247,
+          "accuracy": 0.6799
+        },
+        "sevenths": {
+          "correctSeconds": 26.162,
+          "scoredSeconds": 50.247,
+          "accuracy": 0.5207
+        },
+        "seventhsBass": {
+          "correctSeconds": 26.162,
+          "scoredSeconds": 50.247,
+          "accuracy": 0.5207
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.1553,
+        "recall": 0.1667,
+        "f1": 0.1608,
+        "matched": 16,
+        "predicted": 103,
+        "reference": 96
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.1923,
+        "recall": 0.2083,
+        "f1": 0.2,
+        "matched": 5,
+        "predicted": 26,
+        "reference": 24
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-metre-change-4-4-to-3-4": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 116.1,
+        "truthBpm": 116,
+        "ratio": 1.0009,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true,
+        "traps": [
+          "metre_change"
+        ]
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 1,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "Bb major",
+        "truth": "Bb major",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 62.069,
+        "unpredictedSeconds": 27.931,
+        "root": {
+          "correctSeconds": 28.966,
+          "scoredSeconds": 62.069,
+          "accuracy": 0.4667
+        },
+        "majmin": {
+          "correctSeconds": 28.966,
+          "scoredSeconds": 62.069,
+          "accuracy": 0.4667
+        },
+        "majminBass": {
+          "correctSeconds": 26.897,
+          "scoredSeconds": 62.069,
+          "accuracy": 0.4333
+        },
+        "sevenths": {
+          "correctSeconds": 15.001,
+          "scoredSeconds": 62.069,
+          "accuracy": 0.2417
+        },
+        "seventhsBass": {
+          "correctSeconds": 15.001,
+          "scoredSeconds": 62.069,
+          "accuracy": 0.2417
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9677,
+        "recall": 1,
+        "f1": 0.9836,
+        "matched": 120,
+        "predicted": 124,
+        "reference": 120
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.8387,
+        "recall": 0.8125,
+        "f1": 0.8254,
+        "matched": 26,
+        "predicted": 31,
+        "reference": 32
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 3,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 3
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 3
+        }
+      }
+    },
+    "composed-metre-6-8-ballad-60": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 60,
+        "truthBpm": 60,
+        "ratio": 1,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true,
+        "traps": [
+          "compound_metre:quarter=90"
+        ]
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "6/8",
+        "exact": false,
+        "sameBarLength": false,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "E major",
+        "truth": "E major",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 40,
+        "unpredictedSeconds": 6,
+        "root": {
+          "correctSeconds": 26,
+          "scoredSeconds": 40,
+          "accuracy": 0.65
+        },
+        "majmin": {
+          "correctSeconds": 26,
+          "scoredSeconds": 40,
+          "accuracy": 0.65
+        },
+        "majminBass": {
+          "correctSeconds": 24,
+          "scoredSeconds": 40,
+          "accuracy": 0.6
+        },
+        "sevenths": {
+          "correctSeconds": 16,
+          "scoredSeconds": 40,
+          "accuracy": 0.4
+        },
+        "seventhsBass": {
+          "correctSeconds": 16,
+          "scoredSeconds": 40,
+          "accuracy": 0.4
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9524,
+        "recall": 1,
+        "f1": 0.9756,
+        "matched": 40,
+        "predicted": 42,
+        "reference": 40
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9091,
+        "recall": 0.5,
+        "f1": 0.6452,
+        "matched": 10,
+        "predicted": 11,
+        "reference": 20
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-metre-3-4-waltz-150": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 100.2,
+        "truthBpm": 150,
+        "ratio": 0.668,
+        "exact": false,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "3/4",
+        "exact": false,
+        "sameBarLength": false,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "D major",
+        "truth": "D major",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 57.6,
+        "unpredictedSeconds": 13.2,
+        "root": {
+          "correctSeconds": 36,
+          "scoredSeconds": 57.6,
+          "accuracy": 0.625
+        },
+        "majmin": {
+          "correctSeconds": 36,
+          "scoredSeconds": 57.6,
+          "accuracy": 0.625
+        },
+        "majminBass": {
+          "correctSeconds": 34.8,
+          "scoredSeconds": 57.6,
+          "accuracy": 0.6042
+        },
+        "sevenths": {
+          "correctSeconds": 30,
+          "scoredSeconds": 57.6,
+          "accuracy": 0.5208
+        },
+        "seventhsBass": {
+          "correctSeconds": 30,
+          "scoredSeconds": 57.6,
+          "accuracy": 0.5208
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.303,
+        "recall": 0.2083,
+        "f1": 0.2469,
+        "matched": 30,
+        "predicted": 99,
+        "reference": 144
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.6,
+        "recall": 0.3125,
+        "f1": 0.411,
+        "matched": 15,
+        "predicted": 25,
+        "reference": 48
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-film-strings-brass-d-minor-72": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 72,
+        "truthBpm": 72,
+        "ratio": 1,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "D minor",
+        "truth": "D minor",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 66.667,
+        "unpredictedSeconds": 3.333,
+        "root": {
+          "correctSeconds": 60,
+          "scoredSeconds": 66.667,
+          "accuracy": 0.9
+        },
+        "majmin": {
+          "correctSeconds": 60,
+          "scoredSeconds": 66.667,
+          "accuracy": 0.9
+        },
+        "majminBass": {
+          "correctSeconds": 60,
+          "scoredSeconds": 66.667,
+          "accuracy": 0.9
+        },
+        "sevenths": {
+          "correctSeconds": 56.667,
+          "scoredSeconds": 66.667,
+          "accuracy": 0.85
+        },
+        "seventhsBass": {
+          "correctSeconds": 56.667,
+          "scoredSeconds": 66.667,
+          "accuracy": 0.85
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9756,
+        "recall": 1,
+        "f1": 0.9877,
+        "matched": 80,
+        "predicted": 82,
+        "reference": 80
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9524,
+        "recall": 1,
+        "f1": 0.9756,
+        "matched": 20,
+        "predicted": 21,
+        "reference": 20
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 1,
+          "recall": 0.5,
+          "f1": 0.6667,
+          "matched": 1,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 1,
+          "recall": 0.5,
+          "f1": 0.6667,
+          "matched": 1,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-latin-bossa-a-minor-130": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 65,
+        "truthBpm": 130,
+        "ratio": 0.5,
+        "exact": false,
+        "halfTempoCredit": true,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "A minor",
+        "truth": "A minor",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 44.308,
+        "unpredictedSeconds": 3.692,
+        "root": {
+          "correctSeconds": 40.616,
+          "scoredSeconds": 44.308,
+          "accuracy": 0.9167
+        },
+        "majmin": {
+          "correctSeconds": 40.616,
+          "scoredSeconds": 40.616,
+          "accuracy": 1
+        },
+        "majminBass": {
+          "correctSeconds": 40.616,
+          "scoredSeconds": 40.616,
+          "accuracy": 1
+        },
+        "sevenths": {
+          "correctSeconds": 40.616,
+          "scoredSeconds": 40.616,
+          "accuracy": 1
+        },
+        "seventhsBass": {
+          "correctSeconds": 40.616,
+          "scoredSeconds": 40.616,
+          "accuracy": 1
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.96,
+        "recall": 0.5,
+        "f1": 0.6575,
+        "matched": 48,
+        "predicted": 50,
+        "reference": 96
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9231,
+        "recall": 0.5,
+        "f1": 0.6486,
+        "matched": 12,
+        "predicted": 13,
+        "reference": 24
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-funk-e-104": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 138,
+        "truthBpm": 104,
+        "ratio": 1.3269,
+        "exact": false,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "E major",
+        "truth": "E major",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 55.385,
+        "unpredictedSeconds": 0,
+        "root": {
+          "correctSeconds": 55.385,
+          "scoredSeconds": 55.385,
+          "accuracy": 1
+        },
+        "majmin": {
+          "correctSeconds": 55.385,
+          "scoredSeconds": 55.385,
+          "accuracy": 1
+        },
+        "majminBass": {
+          "correctSeconds": 55.385,
+          "scoredSeconds": 55.385,
+          "accuracy": 1
+        },
+        "sevenths": {
+          "correctSeconds": 55.385,
+          "scoredSeconds": 55.385,
+          "accuracy": 1
+        },
+        "seventhsBass": {
+          "correctSeconds": 55.385,
+          "scoredSeconds": 55.385,
+          "accuracy": 1
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.2443,
+        "recall": 0.3333,
+        "f1": 0.2819,
+        "matched": 32,
+        "predicted": 131,
+        "reference": 96
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.0909,
+        "recall": 0.125,
+        "f1": 0.1053,
+        "matched": 3,
+        "predicted": 33,
+        "reference": 24
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-reggae-g-major-76": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 75.9,
+        "truthBpm": 76,
+        "ratio": 0.9987,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "G major",
+        "truth": "G major",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 75.789,
+        "unpredictedSeconds": 15.79,
+        "root": {
+          "correctSeconds": 44.209,
+          "scoredSeconds": 75.789,
+          "accuracy": 0.5833
+        },
+        "majmin": {
+          "correctSeconds": 44.209,
+          "scoredSeconds": 75.789,
+          "accuracy": 0.5833
+        },
+        "majminBass": {
+          "correctSeconds": 44.209,
+          "scoredSeconds": 75.789,
+          "accuracy": 0.5833
+        },
+        "sevenths": {
+          "correctSeconds": 28.42,
+          "scoredSeconds": 75.789,
+          "accuracy": 0.375
+        },
+        "seventhsBass": {
+          "correctSeconds": 28.42,
+          "scoredSeconds": 75.789,
+          "accuracy": 0.375
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.6939,
+        "recall": 0.7083,
+        "f1": 0.701,
+        "matched": 68,
+        "predicted": 98,
+        "reference": 96
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.68,
+        "recall": 0.7083,
+        "f1": 0.6939,
+        "matched": 17,
+        "predicted": 25,
+        "reference": 24
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-electronic-f-minor-128": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 127.8,
+        "truthBpm": 128,
+        "ratio": 0.9984,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "Ab major",
+        "truth": "F minor",
+        "credit": "relative",
+        "exact": false,
+        "relative": true,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 0.3,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 45,
+        "unpredictedSeconds": 13.125,
+        "root": {
+          "correctSeconds": 31.875,
+          "scoredSeconds": 45,
+          "accuracy": 0.7083
+        },
+        "majmin": {
+          "correctSeconds": 31.875,
+          "scoredSeconds": 45,
+          "accuracy": 0.7083
+        },
+        "majminBass": {
+          "correctSeconds": 31.875,
+          "scoredSeconds": 45,
+          "accuracy": 0.7083
+        },
+        "sevenths": {
+          "correctSeconds": 26.25,
+          "scoredSeconds": 45,
+          "accuracy": 0.5833
+        },
+        "seventhsBass": {
+          "correctSeconds": 26.25,
+          "scoredSeconds": 45,
+          "accuracy": 0.5833
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.96,
+        "recall": 1,
+        "f1": 0.9796,
+        "matched": 96,
+        "predicted": 100,
+        "reference": 96
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.96,
+        "recall": 1,
+        "f1": 0.9796,
+        "matched": 24,
+        "predicted": 25,
+        "reference": 24
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 3,
+        "predictedBoundaries": 2,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 2,
+          "reference": 3
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 2,
+          "reference": 3
+        }
+      }
+    },
+    "composed-country-a-major-2-beat-112": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 112.2,
+        "truthBpm": 112,
+        "ratio": 1.0018,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "A major",
+        "truth": "A major",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 51.429,
+        "unpredictedSeconds": 21.43,
+        "root": {
+          "correctSeconds": 25.713,
+          "scoredSeconds": 51.429,
+          "accuracy": 0.5
+        },
+        "majmin": {
+          "correctSeconds": 25.713,
+          "scoredSeconds": 51.429,
+          "accuracy": 0.5
+        },
+        "majminBass": {
+          "correctSeconds": 25.713,
+          "scoredSeconds": 51.429,
+          "accuracy": 0.5
+        },
+        "sevenths": {
+          "correctSeconds": 21.428,
+          "scoredSeconds": 51.429,
+          "accuracy": 0.4167
+        },
+        "seventhsBass": {
+          "correctSeconds": 21.428,
+          "scoredSeconds": 51.429,
+          "accuracy": 0.4167
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.7475,
+        "recall": 0.7708,
+        "f1": 0.759,
+        "matched": 74,
+        "predicted": 99,
+        "reference": 96
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.76,
+        "recall": 0.7917,
+        "f1": 0.7755,
+        "matched": 19,
+        "predicted": 25,
+        "reference": 24
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-worship-ab-major-72": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 72,
+        "truthBpm": 72,
+        "ratio": 1,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "Ab major",
+        "truth": "Ab major",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 66.667,
+        "unpredictedSeconds": 16.666,
+        "root": {
+          "correctSeconds": 46.668,
+          "scoredSeconds": 66.667,
+          "accuracy": 0.7
+        },
+        "majmin": {
+          "correctSeconds": 46.668,
+          "scoredSeconds": 66.667,
+          "accuracy": 0.7
+        },
+        "majminBass": {
+          "correctSeconds": 33.334,
+          "scoredSeconds": 66.667,
+          "accuracy": 0.5
+        },
+        "sevenths": {
+          "correctSeconds": 43.335,
+          "scoredSeconds": 66.667,
+          "accuracy": 0.65
+        },
+        "seventhsBass": {
+          "correctSeconds": 33.334,
+          "scoredSeconds": 66.667,
+          "accuracy": 0.5
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9756,
+        "recall": 1,
+        "f1": 0.9877,
+        "matched": 80,
+        "predicted": 82,
+        "reference": 80
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9524,
+        "recall": 1,
+        "f1": 0.9756,
+        "matched": 20,
+        "predicted": 21,
+        "reference": 20
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 2,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 2
+        }
+      }
+    },
+    "composed-hiphop-c-minor-90": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 60.1,
+        "truthBpm": 90,
+        "ratio": 0.6678,
+        "exact": false,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "C minor",
+        "truth": "C minor",
+        "credit": "exact",
+        "exact": true,
+        "relative": false,
+        "parallel": false,
+        "fifthNeighbour": false,
+        "mirexWeighted": 1,
+        "keySignatureMatch": true
+      },
+      "chords": {
+        "status": "scored",
+        "totalSeconds": 69.333,
+        "unpredictedSeconds": 0,
+        "root": {
+          "correctSeconds": 69.333,
+          "scoredSeconds": 69.333,
+          "accuracy": 1
+        },
+        "majmin": {
+          "correctSeconds": 69.333,
+          "scoredSeconds": 69.333,
+          "accuracy": 1
+        },
+        "majminBass": {
+          "correctSeconds": 69.333,
+          "scoredSeconds": 69.333,
+          "accuracy": 1
+        },
+        "sevenths": {
+          "correctSeconds": 69.333,
+          "scoredSeconds": 69.333,
+          "accuracy": 1
+        },
+        "seventhsBass": {
+          "correctSeconds": 69.333,
+          "scoredSeconds": 69.333,
+          "accuracy": 1
+        }
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.3099,
+        "recall": 0.2115,
+        "f1": 0.2514,
+        "matched": 22,
+        "predicted": 71,
+        "reference": 104
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.3333,
+        "recall": 0.2308,
+        "f1": 0.2727,
+        "matched": 6,
+        "predicted": 18,
+        "reference": 26
+      },
+      "sections": {
+        "status": "scored",
+        "truthBoundaries": 3,
+        "predictedBoundaries": 1,
+        "at0_5s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 3
+        },
+        "at3s": {
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "predicted": 1,
+          "reference": 3
+        }
+      }
+    },
+    "pdmx-pop-QmaDAC3itTA8": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 169.1,
+        "truthBpm": 72,
+        "ratio": 2.3486,
+        "exact": false,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "12/8",
+        "exact": false,
+        "sameBarLength": false,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.1687,
+        "recall": 0.4,
+        "f1": 0.2373,
+        "matched": 42,
+        "predicted": 249,
+        "reference": 105
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.0635,
+        "recall": 0.1481,
+        "f1": 0.0889,
+        "matched": 4,
+        "predicted": 63,
+        "reference": 27
+      }
+    },
+    "pdmx-rock-Qma5YAg4nH44": {
+      "tempo": {
+        "status": "NO_PREDICTION"
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "E minor",
+        "keySignatureMatch": true
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "NO_PREDICTION"
+      },
+      "downbeats": {
+        "status": "NO_PREDICTION"
+      }
+    },
+    "pdmx-folk-Qma1u5W4mYQE": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 120.2,
+        "truthBpm": 240,
+        "ratio": 0.5008,
+        "exact": false,
+        "halfTempoCredit": true,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "G major",
+        "keySignatureMatch": true
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9459,
+        "recall": 0.5,
+        "f1": 0.6542,
+        "matched": 70,
+        "predicted": 74,
+        "reference": 140
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9474,
+        "recall": 0.5143,
+        "f1": 0.6667,
+        "matched": 18,
+        "predicted": 19,
+        "reference": 35
+      }
+    },
+    "pdmx-jazz-Qma4v6Vsb2Bw": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 86.8,
+        "truthBpm": 87,
+        "ratio": 0.9977,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.3462,
+        "recall": 0.3488,
+        "f1": 0.3475,
+        "matched": 45,
+        "predicted": 130,
+        "reference": 129
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.3636,
+        "recall": 0.3636,
+        "f1": 0.3636,
+        "matched": 12,
+        "predicted": 33,
+        "reference": 33
+      }
+    },
+    "pdmx-classical-Qma1Fwn2MS6N": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 120.2,
+        "truthBpm": 120,
+        "ratio": 1.0017,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "G major",
+        "keySignatureMatch": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9524,
+        "recall": 1,
+        "f1": 0.9756,
+        "matched": 80,
+        "predicted": 84,
+        "reference": 80
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9524,
+        "recall": 1,
+        "f1": 0.9756,
+        "matched": 20,
+        "predicted": 21,
+        "reference": 20
+      }
+    },
+    "pdmx-film_game-Qma17QDkQeaF": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 68,
+        "truthBpm": 68,
+        "ratio": 1,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "12/8",
+        "exact": false,
+        "sameBarLength": false,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9804,
+        "recall": 1,
+        "f1": 0.9901,
+        "matched": 100,
+        "predicted": 102,
+        "reference": 100
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9615,
+        "recall": 1,
+        "f1": 0.9804,
+        "matched": 25,
+        "predicted": 26,
+        "reference": 25
+      }
+    },
+    "pdmx-electronic-Qma3KDfPJTb2": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 124.6,
+        "truthBpm": 125,
+        "ratio": 0.9968,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.246,
+        "recall": 0.25,
+        "f1": 0.248,
+        "matched": 46,
+        "predicted": 187,
+        "reference": 184
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.2553,
+        "recall": 0.2609,
+        "f1": 0.2581,
+        "matched": 12,
+        "predicted": 47,
+        "reference": 46
+      }
+    },
+    "pdmx-hiphop-QmaNbhUYUMSf": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 87,
+        "truthBpm": 87,
+        "ratio": 1,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0.9773,
+        "truthConstant": false
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 1,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9695,
+        "recall": 0.9769,
+        "f1": 0.9732,
+        "matched": 127,
+        "predicted": 131,
+        "reference": 130
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.5152,
+        "recall": 0.5152,
+        "f1": 0.5152,
+        "matched": 17,
+        "predicted": 33,
+        "reference": 33
+      }
+    },
+    "pdmx-rnb_funk_soul-QmaCJhJGoPgu": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 120.1,
+        "truthBpm": 120,
+        "ratio": 1.0008,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9185,
+        "recall": 0.9389,
+        "f1": 0.9286,
+        "matched": 169,
+        "predicted": 184,
+        "reference": 180
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9348,
+        "recall": 0.9556,
+        "f1": 0.9451,
+        "matched": 43,
+        "predicted": 46,
+        "reference": 45
+      }
+    },
+    "pdmx-country-Qmaq6MJsAxw2": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 117.2,
+        "truthBpm": 120,
+        "ratio": 0.9767,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "3/4",
+        "exact": false,
+        "sameBarLength": false,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "E minor",
+        "keySignatureMatch": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.3017,
+        "recall": 0.3,
+        "f1": 0.3008,
+        "matched": 54,
+        "predicted": 179,
+        "reference": 180
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.1111,
+        "recall": 0.0833,
+        "f1": 0.0952,
+        "matched": 5,
+        "predicted": 45,
+        "reference": 60
+      }
+    },
+    "pdmx-world_traditional-QmaELaJC2TZq": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 100.2,
+        "truthBpm": 100,
+        "ratio": 1.002,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "2/4",
+        "exact": false,
+        "sameBarLength": false,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.3856,
+        "recall": 0.3907,
+        "f1": 0.3882,
+        "matched": 59,
+        "predicted": 153,
+        "reference": 151
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.3846,
+        "recall": 0.1974,
+        "f1": 0.2609,
+        "matched": 15,
+        "predicted": 39,
+        "reference": 76
+      }
+    },
+    "pdmx-religious_worship-Qma8Lob5yMU3": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 101,
+        "truthBpm": 100,
+        "ratio": 1.01,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0.7778,
+        "truthConstant": false
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.0748,
+        "recall": 0.0833,
+        "f1": 0.0788,
+        "matched": 8,
+        "predicted": 107,
+        "reference": 96
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.037,
+        "recall": 0.0417,
+        "f1": 0.0392,
+        "matched": 1,
+        "predicted": 27,
+        "reference": 24
+      }
+    },
+    "pdmx-metal-QmaeSK2gjnGp": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 60.8,
+        "truthBpm": 120,
+        "ratio": 0.5067,
+        "exact": false,
+        "halfTempoCredit": true,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "G minor",
+        "keySignatureMatch": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.3011,
+        "recall": 0.1556,
+        "f1": 0.2051,
+        "matched": 28,
+        "predicted": 93,
+        "reference": 180
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.0833,
+        "recall": 0.0444,
+        "f1": 0.058,
+        "matched": 2,
+        "predicted": 24,
+        "reference": 45
+      }
+    },
+    "pdmx-reggae_ska-QmeuGpDFNwqh": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 80.1,
+        "truthBpm": 80,
+        "ratio": 1.0012,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "12/8",
+        "exact": false,
+        "sameBarLength": false,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.6098,
+        "recall": 0.625,
+        "f1": 0.6173,
+        "matched": 75,
+        "predicted": 123,
+        "reference": 120
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.6129,
+        "recall": 0.6333,
+        "f1": 0.623,
+        "matched": 19,
+        "predicted": 31,
+        "reference": 30
+      }
+    },
+    "pdmx-pop-QmaeJ6aLyYLN": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 69.4,
+        "truthBpm": 60,
+        "ratio": 1.1567,
+        "exact": false,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "C major",
+        "keySignatureMatch": true
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.1346,
+        "recall": 0.1591,
+        "f1": 0.1458,
+        "matched": 14,
+        "predicted": 104,
+        "reference": 88
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.0385,
+        "recall": 0.0455,
+        "f1": 0.0417,
+        "matched": 1,
+        "predicted": 26,
+        "reference": 22
+      }
+    },
+    "pdmx-rock-Qma8ku2uuS1h": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 80.1,
+        "truthBpm": 80,
+        "ratio": 1.0012,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "F# minor",
+        "keySignatureMatch": true
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.7576,
+        "recall": 0.7813,
+        "f1": 0.7692,
+        "matched": 75,
+        "predicted": 99,
+        "reference": 96
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.76,
+        "recall": 0.7917,
+        "f1": 0.7755,
+        "matched": 19,
+        "predicted": 25,
+        "reference": 24
+      }
+    },
+    "pdmx-folk-Qma4qT5w34kj": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 74.9,
+        "truthBpm": 150,
+        "ratio": 0.4993,
+        "exact": false,
+        "halfTempoCredit": true,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "A major",
+        "keySignatureMatch": true
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9697,
+        "recall": 0.5,
+        "f1": 0.6598,
+        "matched": 64,
+        "predicted": 66,
+        "reference": 128
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9412,
+        "recall": 0.5,
+        "f1": 0.6531,
+        "matched": 16,
+        "predicted": 17,
+        "reference": 32
+      }
+    },
+    "pdmx-jazz-Qmaa6zgW92mE": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 120,
+        "truthBpm": 120,
+        "ratio": 1,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9836,
+        "recall": 1,
+        "f1": 0.9917,
+        "matched": 180,
+        "predicted": 183,
+        "reference": 180
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.9783,
+        "recall": 1,
+        "f1": 0.989,
+        "matched": 45,
+        "predicted": 46,
+        "reference": 45
+      }
+    },
+    "pdmx-classical-Qma1iHGLQ8WH": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 120.4,
+        "truthBpm": 120,
+        "ratio": 1.0033,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.2337,
+        "recall": 0.2389,
+        "f1": 0.2363,
+        "matched": 43,
+        "predicted": 184,
+        "reference": 180
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.2391,
+        "recall": 0.2444,
+        "f1": 0.2418,
+        "matched": 11,
+        "predicted": 46,
+        "reference": 45
+      }
+    },
+    "pdmx-film_game-Qma1VWM2HvX9": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 74.9,
+        "truthBpm": 150,
+        "ratio": 0.4993,
+        "exact": false,
+        "halfTempoCredit": true,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.7174,
+        "recall": 0.3667,
+        "f1": 0.4853,
+        "matched": 66,
+        "predicted": 92,
+        "reference": 180
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.7391,
+        "recall": 0.3778,
+        "f1": 0.5,
+        "matched": 17,
+        "predicted": 23,
+        "reference": 45
+      }
+    },
+    "pdmx-electronic-QmaABgxzx4tf": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 123.2,
+        "truthBpm": 123.333,
+        "ratio": 0.9989,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0.6667,
+        "truthConstant": false
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "12/8",
+        "exact": false,
+        "sameBarLength": false,
+        "truthChanges": 1,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "D minor",
+        "keySignatureMatch": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.7484,
+        "recall": 0.6538,
+        "f1": 0.6979,
+        "matched": 119,
+        "predicted": 159,
+        "reference": 182
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.85,
+        "recall": 0.8718,
+        "f1": 0.8608,
+        "matched": 34,
+        "predicted": 40,
+        "reference": 39
+      }
+    },
+    "pdmx-hiphop-QmanYWjTEPXe": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 80.1,
+        "truthBpm": 80,
+        "ratio": 1.0012,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.6303,
+        "recall": 0.6466,
+        "f1": 0.6383,
+        "matched": 75,
+        "predicted": 119,
+        "reference": 116
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.6333,
+        "recall": 0.6552,
+        "f1": 0.6441,
+        "matched": 19,
+        "predicted": 30,
+        "reference": 29
+      }
+    },
+    "pdmx-rnb_funk_soul-Qman4NnnDCm9": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 79.7,
+        "truthBpm": 120,
+        "ratio": 0.6642,
+        "exact": false,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.2955,
+        "recall": 0.2063,
+        "f1": 0.243,
+        "matched": 13,
+        "predicted": 44,
+        "reference": 63
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.3636,
+        "recall": 0.25,
+        "f1": 0.2963,
+        "matched": 4,
+        "predicted": 11,
+        "reference": 16
+      }
+    },
+    "pdmx-country-QmathC87FPf1": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 175.5,
+        "truthBpm": 180,
+        "ratio": 0.975,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0.4995,
+        "truthConstant": false
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 2,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.3308,
+        "recall": 0.3946,
+        "f1": 0.3599,
+        "matched": 88,
+        "predicted": 266,
+        "reference": 223
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.0448,
+        "recall": 0.0517,
+        "f1": 0.048,
+        "matched": 3,
+        "predicted": 67,
+        "reference": 58
+      }
+    },
+    "pdmx-world_traditional-QmanLWFfJ4iK": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 80.1,
+        "truthBpm": 120,
+        "ratio": 0.6675,
+        "exact": false,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.3089,
+        "recall": 0.2111,
+        "f1": 0.2508,
+        "matched": 38,
+        "predicted": 123,
+        "reference": 180
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.3226,
+        "recall": 0.2222,
+        "f1": 0.2632,
+        "matched": 10,
+        "predicted": 31,
+        "reference": 45
+      }
+    },
+    "pdmx-religious_worship-QmaRdK13q5BQ": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 120.3,
+        "truthBpm": 120,
+        "ratio": 1.0025,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "C major",
+        "keySignatureMatch": true
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.8382,
+        "recall": 0.8906,
+        "f1": 0.8636,
+        "matched": 57,
+        "predicted": 68,
+        "reference": 64
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.8824,
+        "recall": 0.9375,
+        "f1": 0.9091,
+        "matched": 15,
+        "predicted": 17,
+        "reference": 16
+      }
+    },
+    "pdmx-metal-QmcgPQjWHv1e": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 95.8,
+        "truthBpm": 192,
+        "ratio": 0.499,
+        "exact": false,
+        "halfTempoCredit": true,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 0,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.3673,
+        "recall": 0.1875,
+        "f1": 0.2483,
+        "matched": 54,
+        "predicted": 147,
+        "reference": 288
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.3784,
+        "recall": 0.1944,
+        "f1": 0.2569,
+        "matched": 14,
+        "predicted": 37,
+        "reference": 72
+      }
+    },
+    "pdmx-reggae_ska-QmSjU4qo4rHg": {
+      "tempo": {
+        "status": "scored",
+        "predictedBpm": 100.5,
+        "truthBpm": 100,
+        "ratio": 1.005,
+        "exact": true,
+        "halfTempoCredit": false,
+        "doubleTempoCredit": false,
+        "quarterUnitCredit": false,
+        "mapAccuracy": 1,
+        "truthConstant": true
+      },
+      "metre": {
+        "status": "scored",
+        "predicted": "4/4",
+        "truth": "4/4",
+        "exact": true,
+        "sameBarLength": true,
+        "truthChanges": 0,
+        "pickupBar": false
+      },
+      "key": {
+        "status": "scored",
+        "predicted": "A major",
+        "keySignatureMatch": true
+      },
+      "notes": {
+        "status": "NO_PREDICTION"
+      },
+      "beats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.1579,
+        "recall": 0.1611,
+        "f1": 0.1595,
+        "matched": 24,
+        "predicted": 152,
+        "reference": 149
+      },
+      "downbeats": {
+        "status": "scored",
+        "toleranceSeconds": 0.07,
+        "precision": 0.1579,
+        "recall": 0.1579,
+        "f1": 0.1579,
+        "matched": 6,
+        "predicted": 38,
+        "reference": 38
+      }
+    }
+  }
+}

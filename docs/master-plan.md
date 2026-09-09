@@ -4456,6 +4456,87 @@ any of it.
   session that wrote it died, and the recount from the evidence holds only
   for `YMT3+` — corrected in the doc and here.
 
+- **PR-81** ✅ — `analysis-gold-v1-corpus` (ANALYSIS ENGINE wave, Stream H —
+  the truth set every analysis tournament scores against): **`ANALYSIS_GOLD_V1`,
+  55 items in three tiers that are never mixed, truth stated per domain with
+  how it is known, scorers that refuse an unknown domain and report every
+  partial credit beside the headline, the platform's own local analysers
+  scored on the synthetic tier as the sanity baseline, and the owner's two
+  uploads registered with empty truth and an annotation template.**
+
+  **What was built.** `analysisGold.ts` — tiers `SYNTHETIC_EXACT` /
+  `REAL_AUDIO` / `PROFESSIONAL_REAL_WORLD` (a score call covers one tier; a
+  prediction from another throws), coverage per domain per item (`EXACT`
+  synthetic-only, `HUMAN_VERIFIED` real-only, `PARTIAL` = a written key
+  signature without its mode, `UNKNOWN`), lenient parsers for keys, chord
+  symbols with slash basses, notes, times and tempo maps, and eight scorers:
+  tempo ±4 % with half / double / quarter-unit credit and a time-weighted map
+  accuracy; metre exact with equal-bar-length reported; key exact with
+  relative / parallel / fifth reported apart and a MIREX weight shown for
+  comparability; chords time-weighted over root / majmin / majminBass /
+  sevenths / seventhsBass with gaps scored as N; notes onset ±50 ms, onset+pitch,
+  onset+pitch+offset F1 by maximum bipartite matching, drums apart, per track
+  when named; beats and downbeats F ±70 ms; section boundaries F1 at ±0.5 s and
+  ±3 s, labels ignored. `validateManifest` rejects EXACT truth on a real tier,
+  a value in an annotation field that nobody verified, an owner claim with any
+  status but `UNVERIFIED_OWNER_CLAIM`, and HUMAN_VERIFIED coverage with no
+  verified field. `analysisGoldSynthetic.ts` — a seeded arranger that writes
+  comp, bass, melody and drums from a chord sheet (24 composed works with named
+  traps: the double- and half-tempo feels, a stepped map, a ritardando, a 3/4
+  bridge, 6/8, a pickup bar, the Eb major / C minor and C6 / Am7 pairs, slash
+  chords) and `pdmxGold`, which takes a 30–90 s window of a human-written PDMX
+  score trimmed at a downbeat with notes, tempo map, written metre, beats and
+  downbeats exact, the key at most a signature, chords and sections UNKNOWN
+  (28 works, 2 from each of 14 families, cc-zero / public domain only).
+  `midiFile.ts` now reads key signatures and markers. Rendering is
+  `LISTENING_SYNTH_V2` (stems sum to the mix, deterministic), 336 WAVs, 3,633 s,
+  git-ignored with every sha256 in the manifest; a build resumes from
+  `render.json`. Scripts `build-analysis-gold-v1.mjs`, `score-analysis-gold.mjs`
+  (`--prediction` or `--baseline-local`).
+
+  **Tier counts and coverage.** SYNTHETIC_EXACT 52 (tempo, metre, notes, beats,
+  downbeats EXACT on 52; key EXACT 24 / PARTIAL 11 / UNKNOWN 17; chords and
+  sections EXACT 24 / UNKNOWN 28); REAL_AUDIO 1 (the PR-46 fixture, all
+  UNKNOWN); PROFESSIONAL_REAL_WORLD 2 (the owner's uploads, all UNKNOWN). The
+  owner's rows were read from the dev database (read-only; the Neon host
+  answers, contrary to the first build's note): source ids, sizes, durations
+  and the latest song models' estimates are in the templates as *what to
+  check*. The owner's statement that ולעורר ליבי is around 115 BPM (the model
+  says 64.8) is recorded as an `UNVERIFIED_OWNER_CLAIM` on the tempo field —
+  never as the value, never as truth.
+
+  **The sanity baseline** (`docs/evidence/analysis-gold-v1-baseline.json`, also
+  in the manifest's `baseline` block), SYNTHETIC_EXACT: tempo exact 0.64
+  (32/50, 2 refusals; half-credit 0.20, ten exact halves, five at a 2:3 ratio
+  that takes no credit); metre 0.83 = the share of 4/4 in the corpus, since
+  4/4 is assumed; key on the TRUE notes 0.96 (23/24; one relative miss; both
+  key traps passed; signature match 7/11 on PDMX); chords on the true notes
+  and true bars 0.68 majmin (root 0.67, with bass 0.64, sevenths 0.58; 970 of
+  1,708 bars named, the rest scored N); beats F 0.60, downbeats 0.56 from an
+  assumed grid at the detected tempo; sections F1 ±3 s 0.06; notes no local
+  predictor. Doc: `docs/model-discovery/analysis-gold-v1.md`.
+
+  Suites: analysisGold 22, analysisGoldSynthetic 12, registered in the
+  focused runner; typecheck green.
+
+  **Honest limits.** Nothing scores a real recording yet: 0 of 1 REAL_AUDIO
+  and 0 of 2 PROFESSIONAL_REAL_WORLD items have a verified domain, and the
+  baseline is on one renderer's synthetic timbres. The baseline's key and
+  chords used the true notes (and true bars), an upper bound for the
+  inference steps and no statement about the audio-to-key path the owner's
+  contested key came from; notes have no baseline. The metre number measures
+  the corpus (43/52 in 4/4), not an analyser. The composed half is one
+  arranger's fixed patterns, 24 works, families with 1–2 items; the PDMX half
+  is a stated but not random pick of 28 from 6,598 with the corpus's own genre
+  labels, and its exact tempo is the written one (`rocky top` at 240) which a
+  listener may halve. PDMX key truth is at most a signature; chords and
+  sections are UNKNOWN on all 28. The owner's 115 is unverified and the tempo
+  analyser's usual half-tempo failure does not fit the 1.78 ratio, so no cause
+  is named. The uploads' checksums are UNKNOWN. The manifest is 5.9 MB with
+  notes inline. Determinism was shown on this machine only. One predictor has
+  been scored; no tournament has run and the corpus has not yet caught a wrong
+  decision.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
