@@ -464,6 +464,13 @@ const suites = {
         "analysis-calibration.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Analysis Engine wave, Stream J (PR-90): the whole engine on real songs -
+      // per-domain aggregation, tier refusal, verdict counting.
+      [
+        "src/lib/analysisEndToEnd.test.ts",
+        "analysis-end-to-end.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       [
         "src/lib/gpuProviderAttestation.test.ts",
         "gpu-provider-attestation.test.mjs",

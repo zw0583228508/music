@@ -99,3 +99,6 @@ services/composers-assistant-train/.smoke/
 # PR-83 (stream C): transcription sweep scratch — worker token, rendered WAVs,
 # raw worker output. The gold set and the scored evidence live in docs/evidence/.
 .amt-bench/
+
+# PR-90: raw per-phase outputs of the analysis end-to-end run (Song Models, worker responses, decoded WAVs)
+.tmp-an-j/
