@@ -3800,6 +3800,119 @@ any of it.
   re-validated by this PR. Gate C is unpassed and the human-vs-reference
   5–5 is untouched by any judge; approval for training is not requested.
 
+- **PR-78** ✅ — `planning-supervision` (Wave Q — the decision pack's §10b
+  correction: **planner ≠ note generator**): **the 39,136 whole-form tasks
+  turned into the section-level plans a whole-song planner can learn from, with
+  the quality filters measured rather than assumed.** Report:
+  `docs/model-discovery/planning-supervision.md`. Evidence:
+  `docs/evidence/planning-supervision.json`. Per-work plans and the twenty
+  rendered examples: `.corpus-data/planning-supervision/` (git-ignored).
+
+  **`planningSupervision.ts`** — one whole admitted multitrack score → the
+  section-level plan **as the human built it**: per section (via
+  `formSegmentation`, untouched) the instrument families active, entries and
+  exits with their bar, note density per family and total relative to the
+  piece's own maxima, register span/centre/band per family and a five-band
+  distribution, an energy proxy stated in the code
+  (`cbrt(densityRel × velocityRel × registerWidthRel)`), harmonic rhythm and
+  chord-change rate from `chordsFromNotes`, a tension proxy (0.6 × non-chord-tone
+  share + 0.4 × interval-class dissonance), per-section key, motif recurrence
+  across sections, novelty as 1 − aligned self-similarity, the repeat structure,
+  and per boundary what changes (families ±, Δdensity, Δregister, Δenergy, a
+  gap flag, a kind). Output in the platform's own vocabulary where it fits —
+  `SectionPlan[]` and `GlobalArrangementPlan.sectionTargets` in 1-based
+  inclusive bars with families mapped onto the planners' names — and in a
+  neutral schema where it does not; **every field carries how it was derived**
+  in a `derivation` map, and `renderPlanText` writes the plan a musician reads.
+
+  **The filters, measured on the whole corpus.** A full pass over **222,820 of
+  222,820 admitted files, 0 parse failures**, 221 s over 10 worker threads
+  (1,007 files/s; 48.4 ms to plan one work; 262 s wall). Of **20,638 multitrack
+  works** (PR-65's count, reached independently): ≥ 24 bars → 15,210; ≥ 3
+  families → 7,262; one dominant metre → 6,122; ≥ 3 sections stable under two
+  feature settings (boundary F1 ≥ 0.67 at ±1 bar between kernel 4 and kernel 6)
+  → 4,828; non-degenerate arc → 4,674; no near-duplicate leak → **4,599
+  admitted (22.3 %)**, 52,073 sections, 47,474 boundaries, split 4,095/253/251
+  with **0 duplicate groups straddling**. Why the rest fail is measured, not
+  guessed: 12,477 of the 12,557 family failures have exactly two families
+  (PR-65's `keys + synth` artefact); the short works have median 16 bars; the
+  metre failures cover a median 0.67 of their ticks; 2,559 works find ≥ 3
+  sections both ways but **disagree where they are** (F1 median 0.57) while the
+  eligible population's F1 median is 0.86 and the admitted works' 0.89; the
+  degenerate works have density spread 0.04 over 2 sections. **Against the
+  owner's 39,136:** that population is 15,576 works / 40,848 tasks on the
+  post-PR-75 grid, of which **3,628 (23.3 %) are admitted** — under a tenth of
+  the raw task count is worth learning a plan from, which is exactly why the
+  instruction said raw material.
+
+  **What the plans say.** Median 9 sections per work (7 bars each), 4 families
+  per work, 3 active per section. **82 % of works bring a family in after the
+  opening** (median 3 entries, 2 exits; half of all boundaries change the family
+  set; 36 % are all-in from bar one) — a different picture from PR-67's 25.5 %,
+  because that counted track/channel pairs over every work and this counts
+  families over works with a real ensemble. Density arc **arch 63.5 %**, rise
+  24 %, fall 8.9 %; the climax sits at median position 0.64 and the **last
+  section is the densest in only 17.3 % of works** (widest register 34.1 %,
+  highest energy 20.6 %) — a generator that always builds to the biggest finale
+  would be wrong four times in five. Boundaries: continue 65.6 %, build 16.8 %,
+  drop 13.5 %, break 4.2 %. Motif quoting is bimodal (median 0.22, mean 0.38,
+  p90 1.0). Per genre, hip-hop is the one slice that rises (42.9 %) more often
+  than it arches and ends densest 30.4 % of the time; classical admits at 9.3 %
+  against rock 50.1 % and pop 45.9 %.
+
+  **The platform's own planners, on the same human scores.**
+  `planningSupervisionAgreement.ts` builds a Canonical Song Model V2 **from the
+  score** (skyline melody, lowest family as bass, `chordsFromNotes`, a per-bar
+  energy curve, one stem per family) and runs
+  `deriveGlobalArrangementPlan` → `deriveSectionPhrasePlan` → `deriveTransitionPlan`
+  on it. 300 works, 0 errors: energy r = 0.935 (**by construction** — the curve
+  is our proxy), density r = 0.737, novelty r = 0.254, transition kind 0.60,
+  climax 42.3 %; and the real finding — **active-family Jaccard 0.41, exact set
+  match 4.9 %, and in 264 of 300 works the planner puts a family into a section
+  the human never used anywhere** (bass 2,009 sections, keys 1,221, drums
+  1,190). That is `buildPalette` seeding a band for an under-specified import,
+  meeting finished scores that already say what they contain: **a reasonable
+  arranger of an import, a poor imitator of a human arrangement** — and the
+  exact baseline a learned planner must beat.
+
+  **Planner V1 task spec** (report §4): input = song-level facts + the plans of
+  the sections written so far; target = the next section's plan (function,
+  active families, per-family enter/stay/leave/out, density, energy, tension,
+  register shares, harmonic activity, novelty, motif share, transition kind,
+  length bin); loss = cross-entropy + per-family BCE + L1 on the bounded
+  continuous block; metrics = family Jaccard and entry/exit F1, density/energy
+  MAE, repeat-structure accuracy, and whole-work arc roll-outs against the
+  baselines "copy the previous section", the corpus mean, and today's rule-based
+  `deriveSectionPhrasePlan`; a plan drives the note generator through
+  `PartGenerationRequestV2`'s existing slots (`section`, `globalPlan.sectionTargets`,
+  `transitions`, `motifMemory`, soft density/register constraints).
+
+  **The label-quality report is part of the deliverable.** Twenty fully rendered
+  plans are in the evidence for a human to read, and the report names six
+  defects they show: through-composed labelling (≈ 40 % of sections end up
+  `neutral`), over-segmentation of long works, a transition kind thresholded on
+  energy alone that can contradict its own density numbers, per-section keys
+  that differ in 89.8 % of works (KK over 5–10 bars is not a modulation
+  detector), chords named in only half the bars, and GM families that split one
+  instrument in two.
+
+  Suites: planningSupervision 11, planningSupervisionAgreement 4 (both
+  registered in `run-focused-api-tests.mjs`); `pnpm run typecheck` green.
+  Additive only — `formSegmentation.ts`, the planners, the tournament/listening/
+  judge files and `services/` are untouched.
+
+  **Honest limits.** **No human has validated a single boundary or label** — the
+  stability filter compares two of our own settings, not our settings with a
+  musician. **No planner has been trained**: §4 is a spec, and no baseline
+  numbers exist yet. The function names are a heuristic over the repeat
+  structure (`prechorus`, `breakdown` and `instrumental` are never emitted);
+  energy and tension are stated proxies no listener has checked. The agreement
+  run is 300 works, not 4,599, and its energy and role columns agree by
+  construction. **Nothing was written as a training dataset** — no shards, no
+  plan-prefix tokens, no model has consumed one of these plans. A plan carries
+  no producer intent, no lyrics and no "why", and it never will: those are not
+  in a score.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
