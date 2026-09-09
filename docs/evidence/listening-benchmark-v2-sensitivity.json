@@ -1,0 +1,540 @@
+{
+  "title": "Listening benchmark V2 - sensitivity report before any vote, the worked example on the owner's 49 PR-71 votes, and the proxy side (Wave Q, PR-72)",
+  "date": "2026-09-09",
+  "gateRule": "may_judge_training only when the strongest rung (pitch_shift 60 %) is detected at >= 90 % and the moderate rung (pitch_shift 30 %) beats chance with one-sided exact p < 0.05, each on >= 8 primary-question votes; fewer votes on either rung is insufficient_data; a missed threshold is not_sensitive.",
+  "thresholds": {
+    "strongest": {
+      "kind": "pitch_shift",
+      "strength": 0.6
+    },
+    "strongestMinDetection": 0.9,
+    "moderate": {
+      "kind": "pitch_shift",
+      "strength": 0.3
+    },
+    "moderateMaxP": 0.05,
+    "minVotesPerRung": 8,
+    "alpha": 0.05,
+    "power": 0.8
+  },
+  "decisionTable": [
+    {
+      "id": "no_controls_or_too_few_votes",
+      "when": "either gate rung has fewer votes than the minimum, or the session has no control pairs",
+      "establishes": "nothing about sensitivity; the session cannot be read for HUMAN vs REFERENCE either",
+      "candidateCausesToTest": [],
+      "gate": "insufficient_data"
+    },
+    {
+      "id": "strongest_not_detected",
+      "when": "the strongest rung is detected below the threshold",
+      "establishes": "the pipeline as a whole flattens a 60 % pitch-shifted copy of a real part into something a listener cannot separate from the original; every result on this session is uninterpretable, including HUMAN vs REFERENCE",
+      "candidateCausesToTest": [
+        "the renderer (compare the same pairs under a second renderer)",
+        "the excerpt length (compare 8-bar, 16-bar and section windows on the same task)",
+        "the mix (candidate gain, loudness normalisation)",
+        "the rater's listening conditions or fatigue (repeat a subset in a fresh sitting)"
+      ],
+      "gate": "not_sensitive"
+    },
+    {
+      "id": "strongest_detected_moderate_not",
+      "when": "the strongest rung passes but the moderate rung is not above chance",
+      "establishes": "the experiment hears gross damage only; it can gate gross regressions, not the differences training is expected to make; a 50/50 HUMAN vs REFERENCE here means the difference between them is smaller than a 30 % pitch shift at this length, which is a fact about both composers and the experiment",
+      "candidateCausesToTest": [
+        "excerpt length (longer passages give more evidence per pair)",
+        "more pairs per comparison (the 30 % rung may be real but under-powered at this n)",
+        "which kinds of damage are heard (compare the jitter, deletion and random-pitch rungs)"
+      ],
+      "gate": "not_sensitive"
+    },
+    {
+      "id": "sensitive_reference_competitive",
+      "when": "both gate rungs pass and HUMAN vs REFERENCE is not distinguishable from a coin flip",
+      "establishes": "the experiment is sensitive and the reference is genuinely competitive with the human part at this excerpt length; the PR-71 5-5 was about the composers, not the pipeline",
+      "candidateCausesToTest": [
+        "the reference's strength on these families and this genre slice (run the calibration pair on the non-classical slice)",
+        "whether the difference appears at section length (compare window kinds on the same tasks)"
+      ],
+      "gate": "may_judge_training"
+    },
+    {
+      "id": "sensitive_human_preferred",
+      "when": "both gate rungs pass and HUMAN vs REFERENCE favours the human (two-sided p < 0.05)",
+      "establishes": "the experiment is sensitive and the human anchor holds; the session may judge a training run on the platform comparisons",
+      "candidateCausesToTest": [],
+      "gate": "may_judge_training"
+    }
+  ],
+  "preVote": {
+    "sessionId": "00b41a7f-8b37-4895-89d7-53b5a394e89e",
+    "report": {
+      "version": "1.0",
+      "sessionId": "00b41a7f-8b37-4895-89d7-53b5a394e89e",
+      "primaryQuestion": "Overall: which version do you prefer?",
+      "raters": {
+        "counted": "all",
+        "distinct": 0,
+        "ownerVotes": 0,
+        "independentVotes": 0
+      },
+      "votesConsidered": 0,
+      "controls": [
+        {
+          "comparison": "human_vs_degraded_pitch_shift_10",
+          "kind": "pitch_shift",
+          "strength": 0.1,
+          "description": "the given share of the part's notes moved by ±1 or ±2 semitones",
+          "pairs": 4,
+          "votes": 0,
+          "detected": 0,
+          "detectionRate": null,
+          "ci95": null,
+          "pOneSidedVsChance": null,
+          "aboveChance": false,
+          "gateRole": null
+        },
+        {
+          "comparison": "human_vs_degraded_pitch_shift_30",
+          "kind": "pitch_shift",
+          "strength": 0.3,
+          "description": "the given share of the part's notes moved by ±1 or ±2 semitones",
+          "pairs": 10,
+          "votes": 0,
+          "detected": 0,
+          "detectionRate": null,
+          "ci95": null,
+          "pOneSidedVsChance": null,
+          "aboveChance": false,
+          "gateRole": "moderate"
+        },
+        {
+          "comparison": "human_vs_degraded_pitch_shift_60",
+          "kind": "pitch_shift",
+          "strength": 0.6,
+          "description": "the given share of the part's notes moved by ±1 or ±2 semitones",
+          "pairs": 10,
+          "votes": 0,
+          "detected": 0,
+          "detectionRate": null,
+          "ci95": null,
+          "pOneSidedVsChance": null,
+          "aboveChance": false,
+          "gateRole": "strongest"
+        },
+        {
+          "comparison": "human_vs_degraded_onset_jitter_30",
+          "kind": "onset_jitter",
+          "strength": 0.3,
+          "description": "the given share of the part's notes started early or late by 0.1–0.33 of a beat, duration kept",
+          "pairs": 3,
+          "votes": 0,
+          "detected": 0,
+          "detectionRate": null,
+          "ci95": null,
+          "pOneSidedVsChance": null,
+          "aboveChance": false,
+          "gateRole": null
+        },
+        {
+          "comparison": "human_vs_degraded_note_deletion_50",
+          "kind": "note_deletion",
+          "strength": 0.5,
+          "description": "the given share of the part's notes removed",
+          "pairs": 3,
+          "votes": 0,
+          "detected": 0,
+          "detectionRate": null,
+          "ci95": null,
+          "pOneSidedVsChance": null,
+          "aboveChance": false,
+          "gateRole": null
+        },
+        {
+          "comparison": "human_vs_degraded_random_pitch_30",
+          "kind": "random_pitch",
+          "strength": 0.3,
+          "description": "the given share of the part's notes replaced by a uniformly random pitch inside the part's own register (at least an octave wide)",
+          "pairs": 3,
+          "votes": 0,
+          "detected": 0,
+          "detectionRate": null,
+          "ci95": null,
+          "pOneSidedVsChance": null,
+          "aboveChance": false,
+          "gateRole": null
+        }
+      ],
+      "minimumDetectableEffect": {
+        "atGateRungN": 0,
+        "criticalWins": null,
+        "detectionRate": null,
+        "note": "no control votes yet; the minimum detectable effect is undefined until a rung has votes"
+      },
+      "calibration": [
+        {
+          "comparison": "human_vs_ca2ctx",
+          "a": "HUMAN_ORIGIN_REFERENCE",
+          "b": "COMPOSERS_ASSISTANT_2+CTX",
+          "pairs": 5,
+          "votes": 0,
+          "aWins": 0,
+          "aShare": null,
+          "ci95": null,
+          "pTwoSidedVsCoinFlip": null
+        },
+        {
+          "comparison": "ca2ctx_vs_reference",
+          "a": "COMPOSERS_ASSISTANT_2+CTX",
+          "b": "REFERENCE_PART_COMPOSER",
+          "pairs": 4,
+          "votes": 0,
+          "aWins": 0,
+          "aShare": null,
+          "ci95": null,
+          "pTwoSidedVsCoinFlip": null
+        },
+        {
+          "comparison": "human_vs_reference",
+          "a": "HUMAN_ORIGIN_REFERENCE",
+          "b": "REFERENCE_PART_COMPOSER",
+          "pairs": 8,
+          "votes": 0,
+          "aWins": 0,
+          "aShare": null,
+          "ci95": null,
+          "pTwoSidedVsCoinFlip": null
+        }
+      ],
+      "gate": {
+        "verdict": "insufficient_data",
+        "rule": "may_judge_training only when the strongest rung (pitch_shift 60 %) is detected at >= 90 % and the moderate rung (pitch_shift 30 %) beats chance with one-sided exact p < 0.05, each on >= 8 primary-question votes; fewer votes on either rung is insufficient_data; a missed threshold is not_sensitive.",
+        "thresholds": {
+          "strongest": {
+            "kind": "pitch_shift",
+            "strength": 0.6
+          },
+          "strongestMinDetection": 0.9,
+          "moderate": {
+            "kind": "pitch_shift",
+            "strength": 0.3
+          },
+          "moderateMaxP": 0.05,
+          "minVotesPerRung": 8,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "reasons": [
+          "strongest rung has 0 vote(s) and moderate rung 0; each needs at least 8"
+        ]
+      },
+      "decisionTable": [
+        {
+          "id": "no_controls_or_too_few_votes",
+          "when": "either gate rung has fewer votes than the minimum, or the session has no control pairs",
+          "establishes": "nothing about sensitivity; the session cannot be read for HUMAN vs REFERENCE either",
+          "candidateCausesToTest": [],
+          "gate": "insufficient_data"
+        },
+        {
+          "id": "strongest_not_detected",
+          "when": "the strongest rung is detected below the threshold",
+          "establishes": "the pipeline as a whole flattens a 60 % pitch-shifted copy of a real part into something a listener cannot separate from the original; every result on this session is uninterpretable, including HUMAN vs REFERENCE",
+          "candidateCausesToTest": [
+            "the renderer (compare the same pairs under a second renderer)",
+            "the excerpt length (compare 8-bar, 16-bar and section windows on the same task)",
+            "the mix (candidate gain, loudness normalisation)",
+            "the rater's listening conditions or fatigue (repeat a subset in a fresh sitting)"
+          ],
+          "gate": "not_sensitive"
+        },
+        {
+          "id": "strongest_detected_moderate_not",
+          "when": "the strongest rung passes but the moderate rung is not above chance",
+          "establishes": "the experiment hears gross damage only; it can gate gross regressions, not the differences training is expected to make; a 50/50 HUMAN vs REFERENCE here means the difference between them is smaller than a 30 % pitch shift at this length, which is a fact about both composers and the experiment",
+          "candidateCausesToTest": [
+            "excerpt length (longer passages give more evidence per pair)",
+            "more pairs per comparison (the 30 % rung may be real but under-powered at this n)",
+            "which kinds of damage are heard (compare the jitter, deletion and random-pitch rungs)"
+          ],
+          "gate": "not_sensitive"
+        },
+        {
+          "id": "sensitive_reference_competitive",
+          "when": "both gate rungs pass and HUMAN vs REFERENCE is not distinguishable from a coin flip",
+          "establishes": "the experiment is sensitive and the reference is genuinely competitive with the human part at this excerpt length; the PR-71 5-5 was about the composers, not the pipeline",
+          "candidateCausesToTest": [
+            "the reference's strength on these families and this genre slice (run the calibration pair on the non-classical slice)",
+            "whether the difference appears at section length (compare window kinds on the same tasks)"
+          ],
+          "gate": "may_judge_training"
+        },
+        {
+          "id": "sensitive_human_preferred",
+          "when": "both gate rungs pass and HUMAN vs REFERENCE favours the human (two-sided p < 0.05)",
+          "establishes": "the experiment is sensitive and the human anchor holds; the session may judge a training run on the platform comparisons",
+          "candidateCausesToTest": [],
+          "gate": "may_judge_training"
+        }
+      ],
+      "interpretation": {
+        "row": "no_controls_or_too_few_votes",
+        "text": "either gate rung has fewer votes than the minimum, or the session has no control pairs: nothing about sensitivity; the session cannot be read for HUMAN vs REFERENCE either"
+      }
+    }
+  },
+  "workedExample": {
+    "sessionId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8",
+    "note": "the owner's PR-71 session: 49 primary votes, no control pairs. The gate must fail here, and does.",
+    "report": {
+      "version": "1.0",
+      "sessionId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8",
+      "primaryQuestion": "Overall: which version do you prefer?",
+      "raters": {
+        "counted": "all",
+        "distinct": 1,
+        "ownerVotes": 50,
+        "independentVotes": 0
+      },
+      "votesConsidered": 50,
+      "controls": [],
+      "minimumDetectableEffect": {
+        "atGateRungN": 0,
+        "criticalWins": null,
+        "detectionRate": null,
+        "note": "no control votes yet; the minimum detectable effect is undefined until a rung has votes"
+      },
+      "calibration": [
+        {
+          "comparison": "human_vs_ca2ctx",
+          "a": "HUMAN_ORIGIN_REFERENCE",
+          "b": "COMPOSERS_ASSISTANT_2+CTX",
+          "pairs": 10,
+          "votes": 10,
+          "aWins": 7,
+          "aShare": 0.7,
+          "ci95": [
+            0.3475,
+            0.9333
+          ],
+          "pTwoSidedVsCoinFlip": 0.3438
+        },
+        {
+          "comparison": "ca2ctx_vs_reference",
+          "a": "COMPOSERS_ASSISTANT_2+CTX",
+          "b": "REFERENCE_PART_COMPOSER",
+          "pairs": 10,
+          "votes": 10,
+          "aWins": 4,
+          "aShare": 0.4,
+          "ci95": [
+            0.1216,
+            0.7376
+          ],
+          "pTwoSidedVsCoinFlip": 0.7539
+        },
+        {
+          "comparison": "ca2raw_vs_ca2ctx",
+          "a": "COMPOSERS_ASSISTANT_2",
+          "b": "COMPOSERS_ASSISTANT_2+CTX",
+          "pairs": 10,
+          "votes": 10,
+          "aWins": 5,
+          "aShare": 0.5,
+          "ci95": [
+            0.1871,
+            0.8129
+          ],
+          "pTwoSidedVsCoinFlip": 1
+        },
+        {
+          "comparison": "human_vs_reference",
+          "a": "HUMAN_ORIGIN_REFERENCE",
+          "b": "REFERENCE_PART_COMPOSER",
+          "pairs": 10,
+          "votes": 10,
+          "aWins": 5,
+          "aShare": 0.5,
+          "ci95": [
+            0.1871,
+            0.8129
+          ],
+          "pTwoSidedVsCoinFlip": 1
+        },
+        {
+          "comparison": "contextaware_vs_ca2ctx",
+          "a": "CONTEXT_AWARE_ARRANGER",
+          "b": "COMPOSERS_ASSISTANT_2+CTX",
+          "pairs": 10,
+          "votes": 10,
+          "aWins": 3,
+          "aShare": 0.3,
+          "ci95": [
+            0.0667,
+            0.6525
+          ],
+          "pTwoSidedVsCoinFlip": 0.3438
+        }
+      ],
+      "gate": {
+        "verdict": "insufficient_data",
+        "rule": "may_judge_training only when the strongest rung (pitch_shift 60 %) is detected at >= 90 % and the moderate rung (pitch_shift 30 %) beats chance with one-sided exact p < 0.05, each on >= 8 primary-question votes; fewer votes on either rung is insufficient_data; a missed threshold is not_sensitive.",
+        "thresholds": {
+          "strongest": {
+            "kind": "pitch_shift",
+            "strength": 0.6
+          },
+          "strongestMinDetection": 0.9,
+          "moderate": {
+            "kind": "pitch_shift",
+            "strength": 0.3
+          },
+          "moderateMaxP": 0.05,
+          "minVotesPerRung": 8,
+          "alpha": 0.05,
+          "power": 0.8
+        },
+        "reasons": [
+          "the session has no control pairs; it cannot demonstrate sensitivity"
+        ]
+      },
+      "decisionTable": [
+        {
+          "id": "no_controls_or_too_few_votes",
+          "when": "either gate rung has fewer votes than the minimum, or the session has no control pairs",
+          "establishes": "nothing about sensitivity; the session cannot be read for HUMAN vs REFERENCE either",
+          "candidateCausesToTest": [],
+          "gate": "insufficient_data"
+        },
+        {
+          "id": "strongest_not_detected",
+          "when": "the strongest rung is detected below the threshold",
+          "establishes": "the pipeline as a whole flattens a 60 % pitch-shifted copy of a real part into something a listener cannot separate from the original; every result on this session is uninterpretable, including HUMAN vs REFERENCE",
+          "candidateCausesToTest": [
+            "the renderer (compare the same pairs under a second renderer)",
+            "the excerpt length (compare 8-bar, 16-bar and section windows on the same task)",
+            "the mix (candidate gain, loudness normalisation)",
+            "the rater's listening conditions or fatigue (repeat a subset in a fresh sitting)"
+          ],
+          "gate": "not_sensitive"
+        },
+        {
+          "id": "strongest_detected_moderate_not",
+          "when": "the strongest rung passes but the moderate rung is not above chance",
+          "establishes": "the experiment hears gross damage only; it can gate gross regressions, not the differences training is expected to make; a 50/50 HUMAN vs REFERENCE here means the difference between them is smaller than a 30 % pitch shift at this length, which is a fact about both composers and the experiment",
+          "candidateCausesToTest": [
+            "excerpt length (longer passages give more evidence per pair)",
+            "more pairs per comparison (the 30 % rung may be real but under-powered at this n)",
+            "which kinds of damage are heard (compare the jitter, deletion and random-pitch rungs)"
+          ],
+          "gate": "not_sensitive"
+        },
+        {
+          "id": "sensitive_reference_competitive",
+          "when": "both gate rungs pass and HUMAN vs REFERENCE is not distinguishable from a coin flip",
+          "establishes": "the experiment is sensitive and the reference is genuinely competitive with the human part at this excerpt length; the PR-71 5-5 was about the composers, not the pipeline",
+          "candidateCausesToTest": [
+            "the reference's strength on these families and this genre slice (run the calibration pair on the non-classical slice)",
+            "whether the difference appears at section length (compare window kinds on the same tasks)"
+          ],
+          "gate": "may_judge_training"
+        },
+        {
+          "id": "sensitive_human_preferred",
+          "when": "both gate rungs pass and HUMAN vs REFERENCE favours the human (two-sided p < 0.05)",
+          "establishes": "the experiment is sensitive and the human anchor holds; the session may judge a training run on the platform comparisons",
+          "candidateCausesToTest": [],
+          "gate": "may_judge_training"
+        }
+      ],
+      "interpretation": {
+        "row": "no_controls_or_too_few_votes",
+        "text": "either gate rung has fewer votes than the minimum, or the session has no control pairs: nothing about sensitivity; the session cannot be read for HUMAN vs REFERENCE either"
+      }
+    }
+  },
+  "proxy": {
+    "note": "judge 1.1 and the coherence metric on every control pair: does the proxy prefer the human original over its degraded copy? Recorded now so the human report can later say where proxy and listener agree.",
+    "perComparison": [
+      {
+        "comparison": "human_vs_degraded_pitch_shift_10",
+        "kind": "pitch_shift",
+        "strength": 0.1,
+        "pairs": 21,
+        "judgePrefersHuman": 12,
+        "coherenceMeasured": 21,
+        "coherencePrefersHuman": 14,
+        "meanJudgeDelta": 2.73,
+        "judgeDetectionRate": 0.5714,
+        "coherenceDetectionRate": 0.6667
+      },
+      {
+        "comparison": "human_vs_degraded_pitch_shift_30",
+        "kind": "pitch_shift",
+        "strength": 0.3,
+        "pairs": 21,
+        "judgePrefersHuman": 21,
+        "coherenceMeasured": 21,
+        "coherencePrefersHuman": 17,
+        "meanJudgeDelta": 14.58,
+        "judgeDetectionRate": 1,
+        "coherenceDetectionRate": 0.8095
+      },
+      {
+        "comparison": "human_vs_degraded_pitch_shift_60",
+        "kind": "pitch_shift",
+        "strength": 0.6,
+        "pairs": 21,
+        "judgePrefersHuman": 21,
+        "coherenceMeasured": 21,
+        "coherencePrefersHuman": 18,
+        "meanJudgeDelta": 28.85,
+        "judgeDetectionRate": 1,
+        "coherenceDetectionRate": 0.8571
+      },
+      {
+        "comparison": "human_vs_degraded_onset_jitter_30",
+        "kind": "onset_jitter",
+        "strength": 0.3,
+        "pairs": 21,
+        "judgePrefersHuman": 11,
+        "coherenceMeasured": 21,
+        "coherencePrefersHuman": 13,
+        "meanJudgeDelta": 2.21,
+        "judgeDetectionRate": 0.5238,
+        "coherenceDetectionRate": 0.619
+      },
+      {
+        "comparison": "human_vs_degraded_note_deletion_50",
+        "kind": "note_deletion",
+        "strength": 0.5,
+        "pairs": 21,
+        "judgePrefersHuman": 21,
+        "coherenceMeasured": 21,
+        "coherencePrefersHuman": 13,
+        "meanJudgeDelta": 16.66,
+        "judgeDetectionRate": 1,
+        "coherenceDetectionRate": 0.619
+      },
+      {
+        "comparison": "human_vs_degraded_random_pitch_30",
+        "kind": "random_pitch",
+        "strength": 0.3,
+        "pairs": 21,
+        "judgePrefersHuman": 21,
+        "coherenceMeasured": 21,
+        "coherencePrefersHuman": 18,
+        "meanJudgeDelta": 12.36,
+        "judgeDetectionRate": 1,
+        "coherenceDetectionRate": 0.8571
+      }
+    ],
+    "pairs": 126,
+    "file": "docs/evidence/listening-benchmark-v2-report.json"
+  },
+  "howToRead": [
+    "after the owner rates, GET /api/listening-sessions/<id>/sensitivity recomputes this report on the real votes",
+    "the interpretation row is chosen by the controls first and the calibration pair second; no cause is named that a control has not isolated",
+    "where proxy and human agree per rung will be readable by putting perComparison here beside the human detection rates"
+  ]
+}

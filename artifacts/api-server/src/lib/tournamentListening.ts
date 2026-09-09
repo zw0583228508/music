@@ -20,6 +20,7 @@
  */
 import { createHash } from "node:crypto";
 import type { BlindListeningPair } from "@workspace/db";
+import { CONTROL_COMPARISON_TYPES } from "./listeningDegradations";
 import { CA2_CONTEXT_SUT, CA2_SUT, CONTEXT_AWARE_SUT, HUMAN_SUT, REFERENCE_SUT } from "./tournamentProviders";
 
 export const TOURNAMENT_LISTENING_VERSION = "1.0" as const;
@@ -46,6 +47,11 @@ export const COMPARISON_TYPES = [
 ] as const;
 
 export type ComparisonType = (typeof COMPARISON_TYPES)[number];
+
+/** Any comparison a session may carry: the five tournament comparisons plus the PR-72 positive controls. */
+export type AnyComparisonType = { id: string; a: string; b: string };
+export const ALL_COMPARISON_TYPES: readonly AnyComparisonType[] = [...COMPARISON_TYPES, ...CONTROL_COMPARISON_TYPES];
+export const comparisonTypeById = (id: string): AnyComparisonType | undefined => ALL_COMPARISON_TYPES.find((t) => t.id === id);
 
 /** The subset of a tournament report entry this module reads. */
 export type TournamentEntryLike = {
@@ -89,11 +95,20 @@ const token = (seed: string) => digest(seed).slice(0, 8);
  */
 export function selectTournamentPairs(
   report: TournamentReportLike,
-  options: { size?: number; salt?: string; isDistinct?: (a: SelectedSide, b: SelectedSide) => boolean } = {},
+  options: {
+    size?: number;
+    salt?: string;
+    isDistinct?: (a: SelectedSide, b: SelectedSide) => boolean;
+    /** PR-72: draw these comparison types instead of the five tournament ones. */
+    types?: readonly AnyComparisonType[];
+    /** PR-72: pairs per comparison id; the remainder of `size` is split evenly over types without a quota. */
+    quotas?: Record<string, number>;
+  } = {},
 ): { pairs: SelectedPair[]; perComparison: Array<{ id: string; a: string; b: string; pairs: number }>; skipped: string[] } {
   const size = Math.max(1, Math.min(60, options.size ?? 50));
   const salt = options.salt ?? report.runId;
   const isDistinct = options.isDistinct ?? (() => true);
+  const types: readonly AnyComparisonType[] = options.types ?? COMPARISON_TYPES;
   const usable = new Map<string, TournamentEntryLike>();
   for (const e of report.entries) {
     if (e.failure || !e.midi || e.judgement.metrics.noteCount <= 0) continue;
@@ -105,10 +120,14 @@ export function selectTournamentPairs(
   const chosen: SelectedPair[] = [];
   const usedCells = new Set<string>();
 
-  const perType = COMPARISON_TYPES.map((type, index) => ({
-    type,
-    quota: Math.floor(size / COMPARISON_TYPES.length) + (index < size % COMPARISON_TYPES.length ? 1 : 0),
-  }));
+  const fixed = options.quotas ?? {};
+  const open = types.filter((t) => fixed[t.id] === undefined);
+  const remaining = Math.max(0, size - types.reduce((s, t) => s + (fixed[t.id] ?? 0), 0));
+  const perType = types.map((type) => {
+    if (fixed[type.id] !== undefined) return { type, quota: Math.max(0, fixed[type.id]) };
+    const index = open.indexOf(type);
+    return { type, quota: Math.floor(remaining / open.length) + (index < remaining % open.length ? 1 : 0) };
+  });
 
   for (const { type, quota } of perType) {
     // Candidate cells for this type, ordered family-round-robin, task-round-robin, seed-rotated.
@@ -157,7 +176,7 @@ export function selectTournamentPairs(
 
   // Shuffle the session order by hash so comparison types are interleaved, not blocked.
   chosen.sort((x, y) => digest(`${salt}:${x.comparison}:${x.taskId}:${x.seed}`).localeCompare(digest(`${salt}:${y.comparison}:${y.taskId}:${y.seed}`)));
-  const perComparison = COMPARISON_TYPES.map((type) => ({ id: type.id, a: type.a, b: type.b, pairs: chosen.filter((p) => p.comparison === type.id).length }));
+  const perComparison = types.map((type) => ({ id: type.id, a: type.a, b: type.b, pairs: chosen.filter((p) => p.comparison === type.id).length }));
   return { pairs: chosen, perComparison, skipped };
 }
 
@@ -227,7 +246,7 @@ export function preferenceRecords(
   for (const vote of votes) {
     const pair = pairs.get(vote.pairId);
     if (!pair?.meta) continue;
-    const type = COMPARISON_TYPES.find((t) => t.id === pair.meta!.comparison);
+    const type = comparisonTypeById(pair.meta.comparison);
     if (!type) continue;
     const sides = [pair.left, pair.right];
     const sideA = sides.find((s) => s.systemUnderTest === type.a);
@@ -281,7 +300,10 @@ export function summariseComparisons(
   primaryQuestion: string,
 ): ComparisonSummary[] {
   const pairs = new Map(session.pairs.map((p) => [p.pairId, p]));
-  return COMPARISON_TYPES.map((type) => {
+  // The five tournament comparisons are always listed; a control comparison only when the session drew it.
+  const present = new Set(session.pairs.map((p) => p.meta?.comparison));
+  const types = ALL_COMPARISON_TYPES.filter((type) => COMPARISON_TYPES.some((t) => t.id === type.id) || present.has(type.id));
+  return types.map((type) => {
     const mine = votes.filter((v) => v.question === primaryQuestion && pairs.get(v.pairId)?.meta?.comparison === type.id);
     const winsFor = (subset: typeof mine, arm: string) => subset.filter((v) => session.keyBySide[v.winnerToken] === arm).length;
     const independent = mine.filter((v) => !v.isOwner);

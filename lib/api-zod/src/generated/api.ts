@@ -21653,7 +21653,13 @@ export const CreateListeningSessionResponse = zod.object({
   "token": zod.string(),
   "systemUnderTest": zod.string()
 }),
-  "questions": zod.array(zod.string())
+  "questions": zod.array(zod.string()),
+  "meta": zod.object({
+  "comparison": zod.string(),
+  "taskId": zod.string(),
+  "seed": zod.number(),
+  "family": zod.string()
+}).optional().describe('Tournament and benchmark sessions only - the comparison, task, seed and family behind a pair. Owner view only; never part of the rater view.')
 })),
   "keyBySide": zod.record(zod.string(), zod.string()).describe('token -> system under test. Owner-only.'),
   "raterPath": zod.string().describe('Studio path to hand a rater'),
@@ -21745,7 +21751,13 @@ export const ListListeningSessionsResponseItem = zod.object({
   "token": zod.string(),
   "systemUnderTest": zod.string()
 }),
-  "questions": zod.array(zod.string())
+  "questions": zod.array(zod.string()),
+  "meta": zod.object({
+  "comparison": zod.string(),
+  "taskId": zod.string(),
+  "seed": zod.number(),
+  "family": zod.string()
+}).optional().describe('Tournament and benchmark sessions only - the comparison, task, seed and family behind a pair. Owner view only; never part of the rater view.')
 })),
   "keyBySide": zod.record(zod.string(), zod.string()).describe('token -> system under test. Owner-only.'),
   "raterPath": zod.string().describe('Studio path to hand a rater'),
@@ -21856,7 +21868,13 @@ export const CreateTournamentListeningSessionResponse = zod.object({
   "token": zod.string(),
   "systemUnderTest": zod.string()
 }),
-  "questions": zod.array(zod.string())
+  "questions": zod.array(zod.string()),
+  "meta": zod.object({
+  "comparison": zod.string(),
+  "taskId": zod.string(),
+  "seed": zod.number(),
+  "family": zod.string()
+}).optional().describe('Tournament and benchmark sessions only - the comparison, task, seed and family behind a pair. Owner view only; never part of the rater view.')
 })),
   "keyBySide": zod.record(zod.string(), zod.string()).describe('token -> system under test. Owner-only.'),
   "raterPath": zod.string().describe('Studio path to hand a rater'),
@@ -21934,6 +21952,193 @@ export const GetListeningPreferencesResponse = zod.object({
   "isOwner": zod.boolean(),
   "createdAt": zod.string()
 }))
+})
+
+
+/**
+ * Draws a 40-60 pair session from a listening benchmark V2 report (positive controls at graded strengths, HUMAN vs REFERENCE, HUMAN vs CA2+CTX, CA2+CTX vs REFERENCE; 16-bar windows and complete sections), renders every side with the named renderer (default LISTENING_SYNTH_V2) into private storage, proves the two sides of every pair share one context byte-for-byte, and opens one session. The rater view names no arm, control, strength, window kind or renderer.
+ * @summary Wave Q PR-72 - open a listening benchmark V2 session with positive controls (owner)
+ */
+export const CreateListeningBenchmarkV2SessionParams = zod.object({
+  "projectId": zod.coerce.string()
+})
+
+export const createListeningBenchmarkV2SessionBodyEvidenceFileMax = 120;
+
+
+export const createListeningBenchmarkV2SessionBodyEvidenceFileRegExp = new RegExp('^[a-z0-9][a-z0-9-]*\\.json$');
+export const createListeningBenchmarkV2SessionBodySizeMin = 10;
+export const createListeningBenchmarkV2SessionBodySizeMax = 60;
+
+export const createListeningBenchmarkV2SessionBodyTitleMax = 200;
+
+
+
+export const CreateListeningBenchmarkV2SessionBody = zod.strictObject({
+  "evidenceFile": zod.string().min(1).max(createListeningBenchmarkV2SessionBodyEvidenceFileMax).regex(createListeningBenchmarkV2SessionBodyEvidenceFileRegExp).describe('Basename of a listening benchmark V2 report under docs\/evidence (e.g. listening-benchmark-v2-report.json)'),
+  "size": zod.number().min(createListeningBenchmarkV2SessionBodySizeMin).max(createListeningBenchmarkV2SessionBodySizeMax).optional().describe('Pairs to draw (default 50)'),
+  "title": zod.string().max(createListeningBenchmarkV2SessionBodyTitleMax).optional(),
+  "renderer": zod.enum(['REFERENCE_SYNTH_V1', 'LISTENING_SYNTH_V2']).optional().describe('Which renderer makes every side (default LISTENING_SYNTH_V2)')
+})
+
+export const CreateListeningBenchmarkV2SessionResponse = zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "title": zod.string(),
+  "status": zod.enum(['open', 'closed']),
+  "challenger": zod.enum(['left', 'right']),
+  "sides": zod.object({
+  "left": zod.object({
+  "label": zod.string(),
+  "generationJobId": zod.string(),
+  "candidateId": zod.string(),
+  "candidateLabel": zod.string(),
+  "pick": zod.enum(['ranked', 'first', 'explicit']),
+  "audioUrl": zod.string()
+}),
+  "right": zod.object({
+  "label": zod.string(),
+  "generationJobId": zod.string(),
+  "candidateId": zod.string(),
+  "candidateLabel": zod.string(),
+  "pick": zod.enum(['ranked', 'first', 'explicit']),
+  "audioUrl": zod.string()
+})
+}),
+  "pairs": zod.array(zod.object({
+  "pairId": zod.string(),
+  "caseId": zod.string(),
+  "left": zod.object({
+  "token": zod.string(),
+  "systemUnderTest": zod.string()
+}),
+  "right": zod.object({
+  "token": zod.string(),
+  "systemUnderTest": zod.string()
+}),
+  "questions": zod.array(zod.string()),
+  "meta": zod.object({
+  "comparison": zod.string(),
+  "taskId": zod.string(),
+  "seed": zod.number(),
+  "family": zod.string()
+}).optional().describe('Tournament and benchmark sessions only - the comparison, task, seed and family behind a pair. Owner view only; never part of the rater view.')
+})),
+  "keyBySide": zod.record(zod.string(), zod.string()).describe('token -> system under test. Owner-only.'),
+  "raterPath": zod.string().describe('Studio path to hand a rater'),
+  "results": zod.object({
+  "version": zod.string(),
+  "primaryQuestion": zod.string().describe('The question the gate reads'),
+  "comparisons": zod.array(zod.object({
+  "comparison": zod.string(),
+  "a": zod.string(),
+  "b": zod.string(),
+  "pairs": zod.number(),
+  "votes": zod.number(),
+  "aWins": zod.number(),
+  "bWins": zod.number(),
+  "aShare": zod.number().nullable(),
+  "ownerVotes": zod.number(),
+  "ownerAWins": zod.number(),
+  "ownerAShare": zod.number().nullable()
+})).describe('Tournament sessions only - per-comparison tallies on the primary question, owner apart'),
+  "raters": zod.number().describe('Distinct raters other than the owner'),
+  "ownerVotesExcluded": zod.number(),
+  "votesCounted": zod.number(),
+  "perQuestion": zod.array(zod.object({
+  "question": zod.string(),
+  "votes": zod.number(),
+  "bySystem": zod.record(zod.string(), zod.number()),
+  "leader": zod.string().nullable()
+})),
+  "elo": zod.array(zod.object({
+  "systemUnderTest": zod.string(),
+  "rating": zod.number(),
+  "comparisons": zod.number()
+})),
+  "gateC": zod.object({
+  "passed": zod.boolean(),
+  "challenger": zod.string(),
+  "incumbent": zod.string(),
+  "releaseVotes": zod.number(),
+  "releaseShare": zod.number().nullable(),
+  "minRaters": zod.number(),
+  "minWinShare": zod.number(),
+  "reason": zod.string()
+})
+}),
+  "createdAt": zod.string(),
+  "closedAt": zod.string().nullable()
+})
+
+
+/**
+ * Per positive-control rung the detection rate with an exact binomial interval and one-sided p, the minimum detectable effect at the session's n, the calibration comparisons, and the gate verdict (insufficient_data / not_sensitive / may_judge_training) with the decision table written before any vote.
+ * @summary Wave Q PR-72 - the session's sensitivity report and gate verdict (owner)
+ */
+export const GetListeningSensitivityParams = zod.object({
+  "sessionId": zod.coerce.string()
+})
+
+export const GetListeningSensitivityResponse = zod.object({
+  "version": zod.string(),
+  "sessionId": zod.string(),
+  "primaryQuestion": zod.string(),
+  "raters": zod.object({
+  "counted": zod.enum(['all', 'owner', 'independent']),
+  "distinct": zod.number(),
+  "ownerVotes": zod.number(),
+  "independentVotes": zod.number()
+}),
+  "votesConsidered": zod.number(),
+  "controls": zod.array(zod.object({
+  "comparison": zod.string(),
+  "kind": zod.string(),
+  "strength": zod.number(),
+  "description": zod.string(),
+  "pairs": zod.number(),
+  "votes": zod.number(),
+  "detected": zod.number(),
+  "detectionRate": zod.number().nullable(),
+  "ci95": zod.array(zod.number()).nullable(),
+  "pOneSidedVsChance": zod.number().nullable(),
+  "aboveChance": zod.boolean(),
+  "gateRole": zod.string().nullable()
+})),
+  "minimumDetectableEffect": zod.object({
+  "atGateRungN": zod.number(),
+  "criticalWins": zod.number().nullable(),
+  "detectionRate": zod.number().nullable(),
+  "note": zod.string()
+}),
+  "calibration": zod.array(zod.object({
+  "comparison": zod.string(),
+  "a": zod.string(),
+  "b": zod.string(),
+  "pairs": zod.number(),
+  "votes": zod.number(),
+  "aWins": zod.number(),
+  "aShare": zod.number().nullable(),
+  "ci95": zod.array(zod.number()).nullable(),
+  "pTwoSidedVsCoinFlip": zod.number().nullable()
+})),
+  "gate": zod.object({
+  "verdict": zod.enum(['insufficient_data', 'not_sensitive', 'may_judge_training']),
+  "rule": zod.string(),
+  "thresholds": zod.record(zod.string(), zod.unknown()),
+  "reasons": zod.array(zod.string())
+}),
+  "decisionTable": zod.array(zod.object({
+  "id": zod.string(),
+  "when": zod.string(),
+  "establishes": zod.string(),
+  "candidateCausesToTest": zod.array(zod.string()),
+  "gate": zod.enum(['insufficient_data', 'not_sensitive', 'may_judge_training'])
+})),
+  "interpretation": zod.object({
+  "row": zod.string().nullable(),
+  "text": zod.string()
+})
 })
 
 
@@ -22076,7 +22281,13 @@ export const GetListeningResultsResponse = zod.object({
   "token": zod.string(),
   "systemUnderTest": zod.string()
 }),
-  "questions": zod.array(zod.string())
+  "questions": zod.array(zod.string()),
+  "meta": zod.object({
+  "comparison": zod.string(),
+  "taskId": zod.string(),
+  "seed": zod.number(),
+  "family": zod.string()
+}).optional().describe('Tournament and benchmark sessions only - the comparison, task, seed and family behind a pair. Owner view only; never part of the rater view.')
 })),
   "keyBySide": zod.record(zod.string(), zod.string()).describe('token -> system under test. Owner-only.'),
   "raterPath": zod.string().describe('Studio path to hand a rater'),
@@ -22168,7 +22379,13 @@ export const CloseListeningSessionResponse = zod.object({
   "token": zod.string(),
   "systemUnderTest": zod.string()
 }),
-  "questions": zod.array(zod.string())
+  "questions": zod.array(zod.string()),
+  "meta": zod.object({
+  "comparison": zod.string(),
+  "taskId": zod.string(),
+  "seed": zod.number(),
+  "family": zod.string()
+}).optional().describe('Tournament and benchmark sessions only - the comparison, task, seed and family behind a pair. Owner view only; never part of the rater view.')
 })),
   "keyBySide": zod.record(zod.string(), zod.string()).describe('token -> system under test. Owner-only.'),
   "raterPath": zod.string().describe('Studio path to hand a rater'),

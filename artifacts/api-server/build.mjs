@@ -52,6 +52,8 @@ async function buildAll() {
     entryPoints: [
       path.resolve(artifactDir, "src/index.ts"),
       path.resolve(artifactDir, "src/export-reconciliation.ts"),
+      // PR-72: the listening render worker thread (a session's DSP off the main loop).
+      path.resolve(artifactDir, "src/listening-render-worker.ts"),
       path.resolve(artifactDir, "src/lib/producerDecisionLedger.test.ts"),
     ],
     platform: "node",

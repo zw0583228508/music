@@ -1,0 +1,445 @@
+{
+  "title": "Listening renderer check: REFERENCE_SYNTH_V1 vs LISTENING_SYNTH_V2 on the same objective probes (Wave Q, PR-72)",
+  "ranAt": "2026-09-09T18:49:15.794Z",
+  "thresholds": {
+    "centroidRatio": 1.15,
+    "attackMs": 25,
+    "decayDb": 6,
+    "drumCentroidRatio": 1.3,
+    "peakCeiling": 0.999,
+    "loudnessSpreadDb": 1,
+    "velocityDb": 6,
+    "pitchCentroidRatio": 1.3,
+    "stereoCorrelation": 0.98,
+    "struckMinLossDb": 6,
+    "sustainedMaxLossDb": 3
+  },
+  "renderers": [
+    {
+      "renderer": "REFERENCE_SYNTH_V1",
+      "version": "1.0.0",
+      "passed": false,
+      "checks": [
+        {
+          "name": "family_voices_distinguishable",
+          "passed": false,
+          "detail": "indistinct pairs: keys/guitar, brass/synth",
+          "measured": {
+            "minPairwiseCentroidRatio": 1.014,
+            "indistinctPairs": 2
+          }
+        },
+        {
+          "name": "struck_and_sustained_envelopes",
+          "passed": false,
+          "detail": "keys -4.63 dB over a held second (must lose ≥ 6); strings -0.25 dB (must lose ≤ 3)",
+          "measured": {
+            "keysDecayDb": -4.63,
+            "stringsDecayDb": -0.25
+          }
+        },
+        {
+          "name": "drum_pieces_distinguishable",
+          "passed": false,
+          "detail": "centroids kick 8694.2 Hz < snare 8982 Hz < closed hat 10103.5 Hz (each ratio ≥ 1.3)",
+          "measured": {
+            "kickHz": 8694.2,
+            "snareHz": 8982,
+            "hatHz": 10103.5,
+            "snareOverKick": 1.03,
+            "hatOverSnare": 1.12
+          }
+        },
+        {
+          "name": "no_clipping",
+          "passed": true,
+          "detail": "peak -1.01 dBFS on a fortissimo five-part ensemble",
+          "measured": {
+            "peakDbfs": -1.01
+          }
+        },
+        {
+          "name": "stereo_image",
+          "passed": false,
+          "detail": "L/R correlation 1.000 (below 0.98 counts as an image)",
+          "measured": {
+            "correlation": 1
+          }
+        },
+        {
+          "name": "loudness_consistent_across_arms",
+          "passed": true,
+          "detail": "RMS spread 0.80 dB over four candidate variants of one context",
+          "measured": {
+            "spreadDb": 0.8
+          }
+        },
+        {
+          "name": "velocity_sensitivity",
+          "passed": true,
+          "detail": "the same brass note 12.31 dB louder at velocity 110 than at 40 (≥ 6 required)",
+          "measured": {
+            "deltaDb": 12.31
+          }
+        },
+        {
+          "name": "pitch_sensitivity",
+          "passed": true,
+          "detail": "brass centroid 428 → 846 Hz an octave up",
+          "measured": {
+            "lowHz": 428.1,
+            "highHz": 845.6
+          }
+        },
+        {
+          "name": "deterministic",
+          "passed": true,
+          "detail": "two renders of the same MIDI are sample-identical",
+          "measured": {}
+        }
+      ],
+      "familyFeatures": [
+        {
+          "family": "keys",
+          "program": 0,
+          "centroidHz": 251.8,
+          "attackMs": 5,
+          "decayDb": -4.63
+        },
+        {
+          "family": "guitar",
+          "program": 25,
+          "centroidHz": 282.9,
+          "attackMs": 5,
+          "decayDb": -4.13
+        },
+        {
+          "family": "bass",
+          "program": 33,
+          "centroidHz": 189.6,
+          "attackMs": 5,
+          "decayDb": -1.17
+        },
+        {
+          "family": "strings",
+          "program": 48,
+          "centroidHz": 340,
+          "attackMs": 85,
+          "decayDb": -0.25
+        },
+        {
+          "family": "brass",
+          "program": 57,
+          "centroidHz": 428.1,
+          "attackMs": 30,
+          "decayDb": -0.2
+        },
+        {
+          "family": "winds",
+          "program": 71,
+          "centroidHz": 344.9,
+          "attackMs": 45,
+          "decayDb": -0.2
+        },
+        {
+          "family": "synth",
+          "program": 81,
+          "centroidHz": 399.5,
+          "attackMs": 20,
+          "decayDb": -0.63
+        }
+      ],
+      "drumFeatures": [
+        {
+          "piece": "kick",
+          "pitch": 36,
+          "centroidHz": 8694.2
+        },
+        {
+          "piece": "snare",
+          "pitch": 38,
+          "centroidHz": 8982
+        },
+        {
+          "piece": "hat_closed",
+          "pitch": 42,
+          "centroidHz": 10103.5
+        },
+        {
+          "piece": "crash",
+          "pitch": 49,
+          "centroidHz": 10089
+        }
+      ],
+      "loudness": [
+        {
+          "variant": "human_line",
+          "rmsDbfs": -17.52,
+          "peakDbfs": -1.01
+        },
+        {
+          "variant": "pitch_shift_60",
+          "rmsDbfs": -17.81,
+          "peakDbfs": -1.01
+        },
+        {
+          "variant": "note_deletion_50",
+          "rmsDbfs": -18.32,
+          "peakDbfs": -1.01
+        },
+        {
+          "variant": "octave_up",
+          "rmsDbfs": -17.6,
+          "peakDbfs": -1.01
+        }
+      ],
+      "thresholds": {
+        "centroidRatio": 1.15,
+        "attackMs": 25,
+        "decayDb": 6,
+        "drumCentroidRatio": 1.3,
+        "peakCeiling": 0.999,
+        "loudnessSpreadDb": 1,
+        "velocityDb": 6,
+        "pitchCentroidRatio": 1.3,
+        "stereoCorrelation": 0.98,
+        "struckMinLossDb": 6,
+        "sustainedMaxLossDb": 3
+      },
+      "checkSeconds": 3.7
+    },
+    {
+      "renderer": "LISTENING_SYNTH_V2",
+      "version": "2.0.0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "family_voices_distinguishable",
+          "passed": true,
+          "detail": "all 21 family pairs differ in centroid, attack or decay",
+          "measured": {
+            "minPairwiseCentroidRatio": 1.004,
+            "indistinctPairs": 0
+          }
+        },
+        {
+          "name": "struck_and_sustained_envelopes",
+          "passed": true,
+          "detail": "keys -8.8 dB over a held second (must lose ≥ 6); strings -2.84 dB (must lose ≤ 3)",
+          "measured": {
+            "keysDecayDb": -8.8,
+            "stringsDecayDb": -2.84
+          }
+        },
+        {
+          "name": "drum_pieces_distinguishable",
+          "passed": true,
+          "detail": "centroids kick 54.4 Hz < snare 2665 Hz < closed hat 12571.1 Hz (each ratio ≥ 1.3)",
+          "measured": {
+            "kickHz": 54.4,
+            "snareHz": 2665,
+            "hatHz": 12571.1,
+            "snareOverKick": 48.99,
+            "hatOverSnare": 4.72
+          }
+        },
+        {
+          "name": "no_clipping",
+          "passed": true,
+          "detail": "peak -0.50 dBFS on a fortissimo five-part ensemble",
+          "measured": {
+            "peakDbfs": -0.5
+          }
+        },
+        {
+          "name": "stereo_image",
+          "passed": true,
+          "detail": "L/R correlation 0.869 (below 0.98 counts as an image)",
+          "measured": {
+            "correlation": 0.8688
+          }
+        },
+        {
+          "name": "loudness_consistent_across_arms",
+          "passed": true,
+          "detail": "RMS spread 0.00 dB over four candidate variants of one context",
+          "measured": {
+            "spreadDb": 0
+          }
+        },
+        {
+          "name": "velocity_sensitivity",
+          "passed": true,
+          "detail": "the same brass note 12.97 dB louder at velocity 110 than at 40 (≥ 6 required)",
+          "measured": {
+            "deltaDb": 12.97
+          }
+        },
+        {
+          "name": "pitch_sensitivity",
+          "passed": true,
+          "detail": "brass centroid 378 → 725 Hz an octave up",
+          "measured": {
+            "lowHz": 378.3,
+            "highHz": 725.2
+          }
+        },
+        {
+          "name": "deterministic",
+          "passed": true,
+          "detail": "two renders of the same MIDI are sample-identical",
+          "measured": {}
+        }
+      ],
+      "familyFeatures": [
+        {
+          "family": "keys",
+          "program": 0,
+          "centroidHz": 296.1,
+          "attackMs": 5,
+          "decayDb": -8.8
+        },
+        {
+          "family": "guitar",
+          "program": 25,
+          "centroidHz": 351.1,
+          "attackMs": 5,
+          "decayDb": -9.59
+        },
+        {
+          "family": "bass",
+          "program": 33,
+          "centroidHz": 182.4,
+          "attackMs": 5,
+          "decayDb": -5.69
+        },
+        {
+          "family": "strings",
+          "program": 48,
+          "centroidHz": 379.9,
+          "attackMs": 85,
+          "decayDb": -2.84
+        },
+        {
+          "family": "brass",
+          "program": 57,
+          "centroidHz": 378.3,
+          "attackMs": 35,
+          "decayDb": 0.04
+        },
+        {
+          "family": "winds",
+          "program": 71,
+          "centroidHz": 314.2,
+          "attackMs": 45,
+          "decayDb": 0
+        },
+        {
+          "family": "synth",
+          "program": 81,
+          "centroidHz": 423.2,
+          "attackMs": 5,
+          "decayDb": -5.33
+        }
+      ],
+      "drumFeatures": [
+        {
+          "piece": "kick",
+          "pitch": 36,
+          "centroidHz": 54.4
+        },
+        {
+          "piece": "snare",
+          "pitch": 38,
+          "centroidHz": 2665
+        },
+        {
+          "piece": "hat_closed",
+          "pitch": 42,
+          "centroidHz": 12571.1
+        },
+        {
+          "piece": "crash",
+          "pitch": 49,
+          "centroidHz": 10570.6
+        }
+      ],
+      "loudness": [
+        {
+          "variant": "human_line",
+          "rmsDbfs": -18,
+          "peakDbfs": -3.14
+        },
+        {
+          "variant": "pitch_shift_60",
+          "rmsDbfs": -18,
+          "peakDbfs": -3.24
+        },
+        {
+          "variant": "note_deletion_50",
+          "rmsDbfs": -18,
+          "peakDbfs": -2.46
+        },
+        {
+          "variant": "octave_up",
+          "rmsDbfs": -18,
+          "peakDbfs": -3.26
+        }
+      ],
+      "thresholds": {
+        "centroidRatio": 1.15,
+        "attackMs": 25,
+        "decayDb": 6,
+        "drumCentroidRatio": 1.3,
+        "peakCeiling": 0.999,
+        "loudnessSpreadDb": 1,
+        "velocityDb": 6,
+        "pitchCentroidRatio": 1.3,
+        "stereoCorrelation": 0.98,
+        "struckMinLossDb": 6,
+        "sustainedMaxLossDb": 3
+      },
+      "checkSeconds": 6.2
+    }
+  ],
+  "realSide": {
+    "file": "docs/evidence/tournament/01cd57ed.mid",
+    "v1": {
+      "renderer": "REFERENCE_SYNTH_V1",
+      "channels": 1,
+      "durationSeconds": 18.053,
+      "bytes": 1592320,
+      "renderSeconds": 0.71,
+      "sha256": "555ae0e3832581d8fb274f9db2295312310c1fa7829316a59d0749404c8b77b6"
+    },
+    "v2": {
+      "renderer": "LISTENING_SYNTH_V2",
+      "channels": 2,
+      "durationSeconds": 18.653,
+      "bytes": 3290436,
+      "renderSeconds": 1.08,
+      "sha256": "80f25f99c2f6f559d4f8a5c25e1d82e0986a9f433a6d6ce8a31add654302bd45",
+      "rmsDbfs": -18,
+      "peakDbfs": -2.86,
+      "normalisation": {
+        "targetRmsDbfs": -18,
+        "peakCeiling": 0.95,
+        "applied": "rms",
+        "gainDb": 4.62
+      }
+    }
+  },
+  "decision": {
+    "rule": "the renderer that passes every check serves the V2 session; if both pass, the one with the larger minimum pairwise family-centroid ratio and a stereo image; if neither, the session is not opened",
+    "chosen": "LISTENING_SYNTH_V2",
+    "v1Failed": [
+      "family_voices_distinguishable",
+      "struck_and_sustained_envelopes",
+      "drum_pieces_distinguishable",
+      "stereo_image"
+    ],
+    "v2Failed": [],
+    "identicalOnEverySide": "one renderer, one candidate gain (x1.35), one normalisation and one reverb for every arm of every pair; the arm is never an input to the renderer",
+    "fluidSynthNotBuilt": "a Modal FluidSynth + GM SoundFont worker was the alternative; not built because the in-process V2 passes the check without a network dependency inside the session-opening route, and no SoundFont licence had been verified. Recorded as the next step if listeners find V2 unmusical."
+  }
+}

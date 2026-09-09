@@ -5,6 +5,7 @@
  * API for the AI Music Production Studio
  * OpenAPI spec version: 0.1.0
  */
+import type { ListeningPairMeta } from './listeningPairMeta';
 import type { ListeningPairSide } from './listeningPairSide';
 
 export interface ListeningPair {
@@ -13,4 +14,5 @@ export interface ListeningPair {
   left: ListeningPairSide;
   right: ListeningPairSide;
   questions: string[];
+  meta?: ListeningPairMeta;
 }
