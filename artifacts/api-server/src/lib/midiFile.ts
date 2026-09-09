@@ -27,6 +27,14 @@ export type MidiNote = {
 
 export type MidiTempo = { tick: number; usPerQuarter: number; bpm: number };
 export type MidiTimeSignature = { tick: number; numerator: number; denominator: number };
+/**
+ * A written key signature (meta 0x59). `fifths` is the sharps (+) / flats (−)
+ * count; `minorFlag` is the file's mode byte, which notation exporters set
+ * to 0 (major) regardless of the actual mode — read it, never trust it.
+ */
+export type MidiKeySignature = { tick: number; fifths: number; minorFlag: boolean };
+/** A marker (meta 0x06) — a rehearsal mark or section label where an exporter wrote one. */
+export type MidiMarker = { tick: number; text: string };
 
 export type ParsedMidi = {
   ticksPerQuarter: number;
@@ -37,6 +45,10 @@ export type ParsedMidi = {
   timeSignatures: MidiTimeSignature[];
   /** Last tick with any event, for bar-count maths. */
   endTick: number;
+  /** Written key signatures, in tick order; absent from MIDI built in memory. */
+  keySignatures?: MidiKeySignature[];
+  /** Markers, in tick order; absent from MIDI built in memory. */
+  markers?: MidiMarker[];
 };
 
 function readVarInt(bytes: Buffer, offset: number): [value: number, next: number] {
@@ -69,6 +81,8 @@ export function parseMidiFile(bytes: Buffer): ParsedMidi {
   const notes: MidiNote[] = [];
   const tempos: MidiTempo[] = [];
   const timeSignatures: MidiTimeSignature[] = [];
+  const keySignatures: MidiKeySignature[] = [];
+  const markers: MidiMarker[] = [];
   let endTick = 0;
   let trackIndex = 0;
   let offset = 8 + headerLength;
@@ -113,8 +127,12 @@ export function parseMidiFile(bytes: Buffer): ParsedMidi {
           tempos.push({ tick, usPerQuarter, bpm: 60_000_000 / usPerQuarter });
         } else if (metaType === 0x58 && length >= 2) {
           timeSignatures.push({ tick, numerator: data[0], denominator: 2 ** data[1] });
+        } else if (metaType === 0x59 && length >= 2) {
+          keySignatures.push({ tick, fifths: data.readInt8(0), minorFlag: data[1] === 1 });
+        } else if (metaType === 0x06 && length > 0) {
+          markers.push({ tick, text: data.toString("latin1") });
         }
-        // Other meta events (track name, key signature, markers) are ignored.
+        // Other meta events (track name, lyrics, text) are ignored.
         continue;
       }
 
@@ -183,6 +201,8 @@ export function parseMidiFile(bytes: Buffer): ParsedMidi {
     tempos: tempos.sort((a, b) => a.tick - b.tick),
     timeSignatures: timeSignatures.sort((a, b) => a.tick - b.tick),
     endTick,
+    keySignatures: keySignatures.sort((a, b) => a.tick - b.tick),
+    markers: markers.sort((a, b) => a.tick - b.tick),
   };
 }
 
