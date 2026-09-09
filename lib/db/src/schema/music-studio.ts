@@ -914,14 +914,30 @@ export type AnalysisDomain =
   | "sections"
   | "instruments";
 
+export type DomainReconciliationCandidate = {
+  value: string | number;
+  /** Summed provider weight (confidence x reliability), clamped to [0, 1]. */
+  score: number;
+  providers: string[];
+  /** Musical relation to the leading candidate (PR-89); absent on the leader. */
+  relationToLeader?: string;
+};
+
 export type DomainReconciliation = {
   domain: AnalysisDomain;
   value: string | number | null;
   confidence: number | null;
   providers: string[];
-  status: "detected" | "low_confidence" | "not_available";
+  /** `not_available` is the disagreement engine's UNKNOWN: no usable evidence. */
+  status: "detected" | "low_confidence" | "contested" | "not_available";
   message: string | null;
   margin: number | null;
+  /** Present when `status` is `contested`: every value with real weight, strongest first. */
+  candidates?: DomainReconciliationCandidate[];
+  /** Relation between the two leading candidates when contested (PR-89). */
+  relation?: string | null;
+  /** What evidence would settle an open question (PR-89). */
+  whatWouldSettleIt?: string | null;
 };
 
 /**
@@ -933,6 +949,17 @@ export type DomainReconciliationReport = {
   domains: Partial<Record<AnalysisDomain, DomainReconciliation>>;
   consensusScore: number;
   contestedDomains: AnalysisDomain[];
+  /** PR-89: the engine's four-way verdict per domain (unknown vs contested vs low_confidence vs detected). */
+  verdicts?: Partial<Record<AnalysisDomain, "detected" | "low_confidence" | "contested" | "unknown">>;
+  engine?: {
+    version: string;
+    thresholds: {
+      contestFloor: number;
+      contestRatio: number;
+      corroborationMargin: number;
+      singleObservationFloor: number;
+    };
+  };
 };
 
 export type SongModelData = SongModelCore & {
@@ -1930,6 +1957,8 @@ export type SongModelFieldCandidate = {
   value: string;
   confidence: number;
   providers: string[];
+  /** Musical relation to the leading candidate (PR-89): half_double_tempo, relative, parallel, ... */
+  relationToLeader?: string;
 };
 export type SongModelFieldStatus = {
   /**
@@ -1944,6 +1973,16 @@ export type SongModelFieldStatus = {
   edited: boolean;
   /** Present when `status` is `contested`: strongest first. */
   candidates?: SongModelFieldCandidate[];
+  /** PR-89: relation between the two leading candidates when contested. */
+  relation?: string | null;
+  /** PR-89: what evidence would settle an open question. */
+  whatWouldSettleIt?: string | null;
+  /**
+   * PR-89: true when the field's map carries a *provisional* value that exists
+   * only because the canonical timeline needs a grid (a contested tempo or
+   * metre). It is not a measurement; the candidates are the record.
+   */
+  provisional?: boolean;
 };
 export type ArrangementGenerationProvenance = {
   jobId: string;

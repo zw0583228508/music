@@ -427,6 +427,23 @@ const suites = {
       // full symbol / inversion-bass / boundary) and key accuracy, with the
       // MIREX related-key credit kept apart from the strict score.
       ["src/lib/harmonyMetrics.test.ts", "harmony-metrics.test.mjs"],
+      // Analysis Engine wave, Stream I (PR-89): the four-way verdict per
+      // domain, the trust report the Brain reads, and the calibration maths.
+      [
+        "src/lib/analysisDisagreement.test.ts",
+        "analysis-disagreement.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/analysisTrust.test.ts",
+        "analysis-trust.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/analysisCalibration.test.ts",
+        "analysis-calibration.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       [
         "src/lib/gpuProviderAttestation.test.ts",
         "gpu-provider-attestation.test.mjs",

@@ -7,6 +7,8 @@
  */
 import type { AnalysisDomain } from './analysisDomain';
 import type { DomainReconciliationReportDomains } from './domainReconciliationReportDomains';
+import type { DomainReconciliationReportEngine } from './domainReconciliationReportEngine';
+import type { DomainReconciliationReportVerdicts } from './domainReconciliationReportVerdicts';
 import type { DomainReconciliationReportVersion } from './domainReconciliationReportVersion';
 
 /**
@@ -21,4 +23,7 @@ export interface DomainReconciliationReport {
      */
   consensusScore: number;
   contestedDomains: AnalysisDomain[];
+  /** PR-89 - the disagreement engine's four-way verdict per domain. */
+  verdicts?: DomainReconciliationReportVerdicts;
+  engine?: DomainReconciliationReportEngine;
 }

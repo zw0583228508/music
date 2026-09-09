@@ -5,6 +5,7 @@
  * API for the AI Music Production Studio
  * OpenAPI spec version: 0.1.0
  */
+import type { AnalysisTrustReport } from './analysisTrustReport';
 import type { BarEvent } from './barEvent';
 import type { BassEvidenceEvent } from './bassEvidenceEvent';
 import type { BeatEvent } from './beatEvent';
@@ -80,6 +81,7 @@ export interface SongModel {
   vocalIntelligence: VocalIntelligence;
   musicalMap?: SongModelMusicalMap;
   reconciliation?: DomainReconciliationReport;
+  trustReport?: AnalysisTrustReport;
   lyrics: LyricEvent[];
   confidenceByField: SongModelConfidenceByField;
   providerProvenance: ProviderProvenance[];

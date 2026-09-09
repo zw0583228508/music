@@ -4827,6 +4827,100 @@ any of it.
   at 115; only listening settles it. `rhythmMetrics.ts` should be merged
   away if Stream H's `analysisMetrics.ts` lands.
 
+- **PR-89** ✅ — `confidence-calibration-and-disagreement-engine` (Analysis
+  Engine wave, Stream I). PR-86 contested one field; this generalises the
+  owner's rule — *the most accurate answer we can prove; UNKNOWN or
+  CONTESTED when we cannot; never pick arbitrarily; never fill the Song
+  Model with invented values* — to every reconciled domain, gives the
+  Arrangement Brain one report to read, and measures the numbers the engine
+  runs on for the first time.
+
+  **What changed.** `analysisDisagreement.ts`: one judgement for tempo,
+  metre, key, chords per bar and sections with four statuses — UNKNOWN (no
+  usable weight), CONTESTED (≥ 2 clusters above floor 0.15 / ratio 0.4, no
+  corroborated leader: `value: null`, candidates carried), LOW_CONFIDENCE
+  (one usable source), DETECTED (two agreeing with margin, or an
+  authoritative source) — and every runner-up candidate carries its
+  **musical relation** to the leader (half/double or 3:2 tempo, 3/4 vs 6/8,
+  2 vs 4 to the bar, relative / parallel / fifth / mediant keys, same-root
+  chords, coarser/finer cuts, or `unrelated`) plus `whatWouldSettleIt`.
+  Thresholds and reliability are injectable parameters; `analysisReconciliation.ts`
+  keeps the PR-86 contract by delegating. A **contested tempo or metre no
+  longer falls through to the local 4/4 sketch**: the field is contested
+  with its candidates, the timeline carries the leader as an explicitly
+  *provisional* grid (`confidence: 0`, `provisional: true`), validation
+  emits `CONTESTED_TEMPO` / `CONTESTED_METER` / `CONTESTED_HARMONY` /
+  `CONTESTED_SECTIONS` warnings (only with ≥ 2 candidates) so the model is
+  flagged and arrangement stays blocked; the producer's confirmation clears
+  candidates and the provisional mark. `analysisTrust.ts`:
+  `analysisTrustReport(model)` — per domain {status, confidence,
+  candidates, relation, whatWouldSettleIt, confirmedByProducer} and a
+  verdict `trusted_automatically | needs_confirmation | not_usable` with
+  `fieldsToConfirm`; computed on every Song Model read (`trustReport`),
+  never stored; `evaluateArrangementEligibility` now names the contested
+  fields, their candidates and what settles them. Spec + orval regenerated
+  (`AnalysisTrustReport`, `DomainReconciliationCandidate`, `verdicts`,
+  `engine`, `relation`, `whatWouldSettleIt`, `provisional` — all additive).
+  Tests: analysisDisagreement 17, analysisTrust 7, analysisCalibration 7,
+  songModelValidation 32 (contested tempo → flagged → blocked with the
+  candidates in the message → confirmed → eligible), reconciliation 9;
+  typecheck green.
+
+  **Calibration** (`analysisCalibration.ts`, `analysisCalibrationCorpus.ts`,
+  `scripts/run-analysis-calibration.mjs`, `docs/evidence/analysis-calibration-live.json`,
+  write-up `docs/model-discovery/disagreement-engine.md`). Two corpora, one
+  tier, never mixed: SYNTHETIC_EXACT_I (8 families × 12, clear or ambiguous
+  by construction in one named way — half/double pulse, 6/8 vs 3/4,
+  relative-key loop, uniform energy — rendered with LISTENING_SYNTH_V2,
+  split 56/40 by id hash) and ANALYSIS_GOLD_V1's 52 SYNTHETIC_EXACT items
+  as an untouched check set. Local analysers on the mix beside note-based
+  observers (keyFromNotes on the score's own notes = an oracle
+  transcription; calibration-only onset tempo, accent metre, novelty
+  sections, per-bar chords). Reliability diagrams + ECE per observer and
+  per domain; floors, ratio and weights grid-searched on train only.
+  **Held-out before → after:** tempo wrong 6/44 → 0, contest-on-clear 0.44 →
+  0, utility −0.10 → 0.36 (gold wrong 16/46 → 2); key contest-on-clear 0.81
+  → 0, utility 0.01 → 1.00 (gold 0.06 → 0.83); metre and sections improved
+  held-out (utility 0 → 0.30, 0.61 → 0.92) but the same points **fail the
+  check set** (gold utility 0.19 → −0.14, 0 → −0.48: they contest half of
+  the clear items). **Found:** the local tempo detector's wrong answers are
+  metrical relatives at a constant 0.78 (15/16 on gold: half or ⅔ — its
+  `+0.5·corr(2·lag)` term prefers the half tempo on any backbeat), so with
+  weight 0.48 it puts a wrong tempo into the model on 35 % of gold; the
+  spectral key detector is right **22 %** of the time at a stated 0.82 and
+  contests the transcription key on 81 % of clear items; `estimateChords`
+  says 0.29 for an 89 % hit rate; the engine's own confidence is
+  under-stated by construction. **Shipped:** thresholds unchanged (no
+  cross-domain move held on the check set) and weights unchanged — the
+  asks (LOCAL key 0.2, LOCAL tempo 0.35) rest on synthetic renders only and
+  would turn the owner's E♭ major / G minor contest into a pick;
+  recommended for the REAL_AUDIO tier instead.
+
+  **The owner's two uploads** (`docs/evidence/analysis-trust-reports-live.json`,
+  computed on read, no re-analysis, Modal $0): both **needs_confirmation**
+  on tempo, metre, key, sections. "ולעורר ליבי" (v4): tempo 64.8
+  low-confidence on the local detector alone — the owner's ≈115 is 1.77×,
+  not a metrical relative, so the detector's usual failure does not explain
+  it; key contested E♭ major (transcription 0.345) vs G minor (spectral
+  0.32), relation **mediant**, settled by cadences and the leading tone;
+  arrangement blocked "until the producer confirms tempo, metre, key,
+  sections" with the candidates named. "שמוליק סוכות - באותה השעה" (v3):
+  tempo 78.1 and key E♭ minor each on one source; blocked by
+  `LOW_SONG_MODEL_CONFIDENCE`.
+
+  **Honest limits.** Calibrated on synthetic renders only; the
+  "transcription" read the score's own notes, so every TRANSCRIPTION_KEY_V1
+  number is an upper bound. Metre, sections and chords were measurable only
+  with calibration-only observers that do not exist in production — on a
+  local install those domains remain a single reading and tempo/metre
+  contests cannot occur today (one tempo observer, an assumed metre); the
+  provisional-grid path is proven by unit test, not a live upload.
+  Contest-on-ambiguous is low under the defaults because the ambiguous
+  families make the observers agree or fall below the floor: the corpus
+  tests the engine's rules, not its ear. Which key the owner's recording is
+  in is still unknown; the spectral detector's 22 % is synthetic evidence
+  against its candidate, not real-audio evidence. Only the studio's Key
+  Map panel reads candidates; no panel reads `trustReport` yet.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

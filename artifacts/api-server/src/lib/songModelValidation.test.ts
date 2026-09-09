@@ -82,6 +82,76 @@ test("a contested key is accepted flagged with an empty key map; a missing key i
   assert.ok(issueCodes(oneCandidate).includes("MISSING_KEY_MAP"));
 });
 
+test("PR-89: a contested tempo rides on a provisional grid, flags the model, and the block names the field, its candidates and what settles it", () => {
+  const contestedTempo = {
+    status: "contested",
+    confidence: null,
+    providers: ["BEAT_THIS", "MADMOM"],
+    message: "Independent analyses disagree: 120 (BEAT_THIS) vs 60 (MADMOM) - half double tempo. Confirm one before it is used.",
+    edited: false,
+    candidates: [
+      { value: "120", confidence: .74, providers: ["BEAT_THIS"] },
+      { value: "60", confidence: .7, providers: ["MADMOM"], relationToLeader: "half_double_tempo" },
+    ],
+    relation: "half_double_tempo",
+    whatWouldSettleIt: "The bar length: a downbeat or metre reading decides.",
+    provisional: true,
+  };
+  const detectedField = { status: "detected", confidence: .9, providers: ["TEST"], message: null, edited: false };
+  const contested = {
+    ...validSongModel,
+    tempoMap: [{ time: 0, bpm: 120, confidence: 0 }],
+    fieldStatus: {
+      ...(validSongModel as { fieldStatus?: object }).fieldStatus,
+      tempo: contestedTempo,
+      meter: detectedField, key: detectedField, melody: detectedField, bass: detectedField,
+      harmony: detectedField, sections: detectedField, energy: detectedField,
+    },
+  };
+  const core = validateSongModelCore(contested);
+  assert.equal(core.success, true);
+  assert.deepEqual(issueCodes(core), ["CONTESTED_TEMPO"]);
+  assert.equal(core.issues[0]!.severity, "warning");
+  const fusion = fuseProviderSongModels([{ provider: "TEST", output: contested, confidence: .8 }]);
+  assert.equal(fusion.accepted, true);
+  if (fusion.accepted) {
+    assert.equal(fusion.model.validation.status, "flagged");
+    // The provisional grid is carried, weighed at zero, and marked as such.
+    assert.equal(fusion.model.tempoMap[0]!.confidence, 0);
+    assert.equal(fusion.model.fieldStatus?.tempo?.provisional, true);
+    const eligibility = evaluateArrangementEligibility(fusion.model, "ready", 0.9);
+    assert.equal(eligibility.eligible, false);
+    if (!eligibility.eligible) {
+      assert.equal(eligibility.code, "SONG_MODEL_FLAGGED");
+      assert.ok(eligibility.message.includes("confirms tempo"), eligibility.message);
+      assert.ok(eligibility.message.includes("120 (BEAT_THIS) vs 60 (MADMOM)"), eligibility.message);
+      assert.ok(eligibility.message.includes("half double tempo"), eligibility.message);
+      assert.ok(eligibility.action.includes("bar length"), eligibility.action);
+      assert.equal(eligibility.trust?.verdict, "needs_confirmation");
+      assert.deepEqual(eligibility.trust?.fieldsToConfirm, ["tempo"]);
+    }
+    // The producer's confirmation settles it: no warning, arrangement eligible, trust report clean.
+    const confirmed = refreshSongModelValidation({
+      ...fusion.model,
+      tempoMap: [{ time: 0, bpm: 60, confidence: 1 }],
+      fieldStatus: {
+        ...fusion.model.fieldStatus!,
+        tempo: { ...contestedTempo, status: "detected", confidence: 1, edited: true, candidates: undefined, provisional: undefined },
+      },
+    });
+    assert.equal(confirmed.validation.status, "accepted");
+    const eligible = evaluateArrangementEligibility(confirmed, "ready", 0.9);
+    assert.equal(eligible.eligible, true);
+    if (eligible.eligible) assert.equal(eligible.trust.verdict, "trusted_automatically");
+  }
+  // The same status with one candidate is not a contest; no warning is emitted for it.
+  const oneCandidate = validateSongModelCore({
+    ...contested,
+    fieldStatus: { ...contested.fieldStatus, tempo: { ...contestedTempo, candidates: contestedTempo.candidates.slice(0, 1) } },
+  });
+  assert.deepEqual(issueCodes(oneCandidate), []);
+});
+
 test("accepts a provider response that satisfies the canonical core contract", () => {
   const result = validateSongModelCore(validSongModel);
   assert.equal(result.success, true);

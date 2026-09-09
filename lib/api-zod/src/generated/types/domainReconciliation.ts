@@ -6,7 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { AnalysisDomain } from './analysisDomain';
-import type { DomainReconciliationCandidatesItem } from './domainReconciliationCandidatesItem';
+import type { DomainReconciliationCandidate } from './domainReconciliationCandidate';
 import type { DomainReconciliationStatus } from './domainReconciliationStatus';
 
 export interface DomainReconciliation {
@@ -22,5 +22,9 @@ export interface DomainReconciliation {
   message: string | null;
   margin: number | null;
   /** Present when status is contested - every value with real weight, strongest first. */
-  candidates?: DomainReconciliationCandidatesItem[];
+  candidates?: DomainReconciliationCandidate[];
+  /** PR-89 - musical relation between the two leading candidates when contested. */
+  relation?: string | null;
+  /** PR-89 - what evidence would settle an open question. */
+  whatWouldSettleIt?: string | null;
 }

@@ -196,6 +196,7 @@ import {
   waitForProjectStorageRaceGate,
 } from "../lib/projectStorageRaceTestHook";
 import { queueProjectSourceAnalysis } from "../lib/sourceAnalyzer";
+import { analysisTrustReport } from "../lib/analysisTrust";
 import { validateSourceFileMetadata } from "../lib/sourceFormats";
 import { interpretCopilotCommand } from "../lib/copilotInterpreter";
 import {
@@ -974,6 +975,11 @@ const songModelResponse = (
     ...model,
     providerProvenance: model.providerProvenance ?? legacyProviderProvenance,
     ...quality,
+    // PR-89: computed on read from fieldStatus (+ reconciliation), never stored.
+    trustReport: analysisTrustReport({
+      fieldStatus: quality.fieldStatus,
+      reconciliation: model.reconciliation ?? null,
+    }),
     providers: row.providers,
     confidence: aggregateSongModelConfidence(quality.fieldStatus),
     createdAt: iso(row.createdAt),
@@ -2067,6 +2073,12 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
       : {
           tempo: {
             ...latest.model.fieldStatus?.tempo,
+            // PR-89: the confirmation settles the contest; its candidates and
+            // the provisional mark do not outlive it.
+            candidates: undefined,
+            relation: null,
+            whatWouldSettleIt: null,
+            provisional: undefined,
             status: "detected" as const,
             // A value the user verified is the truth for this project.
             confidence: 1,
@@ -2080,6 +2092,12 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
       : {
           key: {
             ...latest.model.fieldStatus?.key,
+            // PR-89: the confirmation settles the contest; its candidates and
+            // the provisional mark do not outlive it.
+            candidates: undefined,
+            relation: null,
+            whatWouldSettleIt: null,
+            provisional: undefined,
             status: "detected" as const,
             // A value the user verified is the truth for this project.
             confidence: 1,
@@ -2093,6 +2111,12 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
       : {
           meter: {
             ...latest.model.fieldStatus?.meter,
+            // PR-89: the confirmation settles the contest; its candidates and
+            // the provisional mark do not outlive it.
+            candidates: undefined,
+            relation: null,
+            whatWouldSettleIt: null,
+            provisional: undefined,
             status: "detected" as const,
             // A value the user verified is the truth for this project.
             confidence: 1,
@@ -2106,6 +2130,12 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
       : {
           sections: {
             ...latest.model.fieldStatus?.sections,
+            // PR-89: the confirmation settles the contest; its candidates and
+            // the provisional mark do not outlive it.
+            candidates: undefined,
+            relation: null,
+            whatWouldSettleIt: null,
+            provisional: undefined,
             status: "detected" as const,
             // A value the user verified is the truth for this project.
             confidence: 1,

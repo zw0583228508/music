@@ -1802,7 +1802,7 @@ export const DomainReconciliationStatus = {
   not_available: 'not_available',
 } as const;
 
-export type DomainReconciliationCandidatesItem = {
+export interface DomainReconciliationCandidate {
   value: string | number;
   /**
      * @minimum 0
@@ -1810,7 +1810,9 @@ export type DomainReconciliationCandidatesItem = {
      */
   score: number;
   providers: string[];
-};
+  /** PR-89 - musical relation to the leading candidate; absent on the leader. */
+  relationToLeader?: string;
+}
 
 export interface DomainReconciliation {
   domain: AnalysisDomain;
@@ -1825,10 +1827,41 @@ export interface DomainReconciliation {
   message: string | null;
   margin: number | null;
   /** Present when status is contested - every value with real weight, strongest first. */
-  candidates?: DomainReconciliationCandidatesItem[];
+  candidates?: DomainReconciliationCandidate[];
+  /** PR-89 - musical relation between the two leading candidates when contested. */
+  relation?: string | null;
+  /** PR-89 - what evidence would settle an open question. */
+  whatWouldSettleIt?: string | null;
+}
+
+export type AnalysisVerdictStatus = typeof AnalysisVerdictStatus[keyof typeof AnalysisVerdictStatus];
+
+
+export const AnalysisVerdictStatus = {
+  detected: 'detected',
+  low_confidence: 'low_confidence',
+  contested: 'contested',
+  unknown: 'unknown',
+} as const;
+
+export interface DisagreementThresholds {
+  contestFloor: number;
+  contestRatio: number;
+  corroborationMargin: number;
+  singleObservationFloor: number;
 }
 
 export type DomainReconciliationReportDomains = {[key: string]: DomainReconciliation};
+
+/**
+ * PR-89 - the disagreement engine's four-way verdict per domain.
+ */
+export type DomainReconciliationReportVerdicts = {[key: string]: AnalysisVerdictStatus};
+
+export type DomainReconciliationReportEngine = {
+  version: string;
+  thresholds: DisagreementThresholds;
+};
 
 /**
  * Per-domain provider reconciliation (Analysis Reconciliation V2).
@@ -1842,6 +1875,60 @@ export interface DomainReconciliationReport {
      */
   consensusScore: number;
   contestedDomains: AnalysisDomain[];
+  /** PR-89 - the disagreement engine's four-way verdict per domain. */
+  verdicts?: DomainReconciliationReportVerdicts;
+  engine?: DomainReconciliationReportEngine;
+}
+
+export type AnalysisTrustReportVersion = typeof AnalysisTrustReportVersion[keyof typeof AnalysisTrustReportVersion];
+
+
+export const AnalysisTrustReportVersion = {
+  '10': '1.0',
+} as const;
+
+export type AnalysisTrustReportVerdict = typeof AnalysisTrustReportVerdict[keyof typeof AnalysisTrustReportVerdict];
+
+
+export const AnalysisTrustReportVerdict = {
+  trusted_automatically: 'trusted_automatically',
+  needs_confirmation: 'needs_confirmation',
+  not_usable: 'not_usable',
+} as const;
+
+export interface SongModelFieldCandidate {
+  value: string;
+  confidence: number;
+  providers: string[];
+  /** PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader. */
+  relationToLeader?: string;
+}
+
+/**
+ * PR-89 - one domain of the trust report the Arrangement Brain reads.
+ */
+export interface AnalysisTrustDomain {
+  status: AnalysisVerdictStatus;
+  confidence: number | null;
+  providers: string[];
+  candidates: SongModelFieldCandidate[];
+  relation: string | null;
+  whatWouldSettleIt: string | null;
+  confirmedByProducer: boolean;
+  message: string | null;
+}
+
+export type AnalysisTrustReportDomains = {[key: string]: AnalysisTrustDomain};
+
+/**
+ * PR-89 - computed on read from the Song Model; never stored. Says what the Arrangement Brain may lean on.
+ */
+export interface AnalysisTrustReport {
+  version: AnalysisTrustReportVersion;
+  verdict: AnalysisTrustReportVerdict;
+  domains: AnalysisTrustReportDomains;
+  fieldsToConfirm: string[];
+  reasons: string[];
 }
 
 export interface LyricEvent {
@@ -1884,12 +1971,6 @@ export const SongModelFieldStatusPropertyStatus = {
   not_available: 'not_available',
 } as const;
 
-export interface SongModelFieldCandidate {
-  value: string;
-  confidence: number;
-  providers: string[];
-}
-
 export interface SongModelFieldStatusProperty {
   status: SongModelFieldStatusPropertyStatus;
   /** @nullable */
@@ -1900,6 +1981,12 @@ export interface SongModelFieldStatusProperty {
   edited: boolean;
   /** Present when status is contested — the values independent analyses named, strongest first. */
   candidates?: SongModelFieldCandidate[];
+  /** PR-89 - relation between the two leading candidates when contested. */
+  relation?: string | null;
+  /** PR-89 - what evidence would settle an open question. */
+  whatWouldSettleIt?: string | null;
+  /** PR-89 - the field's map carries a provisional grid value only because the timeline needs one; the candidates are the record. */
+  provisional?: boolean;
 }
 
 export interface SongModelFieldStatus {
@@ -1982,6 +2069,7 @@ export interface SongModel {
   vocalIntelligence: VocalIntelligence;
   musicalMap?: SongModelMusicalMap;
   reconciliation?: DomainReconciliationReport;
+  trustReport?: AnalysisTrustReport;
   lyrics: LyricEvent[];
   confidenceByField: SongModelConfidenceByField;
   providerProvenance: ProviderProvenance[];

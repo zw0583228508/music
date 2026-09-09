@@ -6,7 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type DomainReconciliationCandidatesItem = {
+export interface DomainReconciliationCandidate {
   value: string | number;
   /**
      * @minimum 0
@@ -14,4 +14,6 @@ export type DomainReconciliationCandidatesItem = {
      */
   score: number;
   providers: string[];
-};
+  /** PR-89 - musical relation to the leading candidate; absent on the leader. */
+  relationToLeader?: string;
+}
