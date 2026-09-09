@@ -78,6 +78,12 @@ debug.log
 # Local esbuild test bundles (see docs: focused runner cannot spawn esbuild on Windows)
 .tmp-tests/
 
+# The rendered rhythm test set (Wave ANALYSIS ENGINE, PR-84). Built on demand
+# from the read-only PDMX corpus by scripts/rhythm-tournament-entry.ts; ~180 MB
+# of WAV. The corpus is reproducible from the seeds recorded in the evidence
+# file, so the audio itself is never committed.
+.tmp-rhythm/
+
 # Training datasets, checkpoints and run directories (Wave Q, PR-63). Built
 # from the read-only PDMX corpus by services/composers-assistant-train; only
 # manifests and digests are committed, never examples or weights.

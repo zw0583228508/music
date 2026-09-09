@@ -4713,6 +4713,119 @@ any of it.
   evidence for the test split was recorded by the previous session and
   re-scored here; the dev split and the upload were recorded live in this
   one.
+- **PR-84** ✅ — `rhythm-tournament-and-reconciliation` (Wave ANALYSIS ENGINE,
+  Stream D — tempo / beat / downbeat / metre): a live beat-tracking tournament
+  and, above it, `rhythmEngine.ts` — several trackers in, one reading out,
+  **`agreed` / `contested` / `unknown` per field, never an average, and a
+  metrical-level dispute carried as CONTESTED with both candidates rather than
+  picked**. Worker `services/rhythm-tournament-worker/` on Modal (CPU, 4 cores,
+  one decode per clip handed to every tracker; `/health` imports each tracker
+  at call time; image digest in the evidence, one digest for the whole run):
+  **BEAT_THIS** (ISMIR 2024, MIT code + weights), **MADMOM** (RNN + DBN,
+  `beats_per_bar=[2,3,4,6,7]` so 7/8 is reachable — disclosed), **LIBROSA**
+  (DP, no downbeat model, reports `null`), **BEATNET** (ISMIR 2021);
+  **ALL_IN_ONE did not deploy** (NATTEN wheel index times out from Modal's
+  builder; the NATTEN-free `openmirlab` pins already in
+  `requirements-all-in-one.txt` are the known fix, not applied because the
+  Dockerfile is digested into the evidence). Test set `rhythmCorpus.ts`: 44
+  PDMX scores from the admitted rights subset, four per condition across the
+  owner's eleven conditions, rendered through `REFERENCE_SYNTH_V1` with an
+  *authored* performance (rubato ±22 %, live jitter ±18 ms + 4.5 % drift,
+  swing 1.9:1, 62 / 118 / 146 BPM, a manufactured one-beat anacrusis), so
+  beats, downbeats, tempo and metre are exact by construction — one
+  `quartersToSeconds` map places the notes and the truth, and a test asserts
+  it under rubato. Metrics `rhythmMetrics.ts` at ±70 ms with the two
+  `mir_eval` deviations named (no 5 s trim; greedy matching, precondition
+  asserted). Evidence `docs/evidence/rhythm-tournament-live.json` (44 cases,
+  `providerSummary`, `conditionTable`, `routing`, `reconciliation`, a
+  bare-pickup probe and the owner's recording); doc
+  `docs/model-discovery/rhythm-engine.md`.
+
+  **Per tracker over 44 clips** (beat F / downbeat F / tempo within 4 % without
+  → with octave credit / half-double error rate / metre exact): **BEAT_THIS
+  0.902 / 0.807 / 72.7 → 75.0 % / 2.3 % / 59.1 %**; MADMOM 0.866 / 0.802 /
+  70.5 → 77.3 % / 6.8 % / 59.1 %; LIBROSA 0.837 / — / 72.7 → 77.3 % / 4.5 % /
+  —; BEATNET 0.778 / 0.663 / 61.4 → 77.3 % / 15.9 % / 59.1 %; reconciled
+  0.860 / 0.791 / 65.9 → 75.0 % / 9.1 % / 61.4 %. Steady pop, live band,
+  swing, pickup-with-kit and fast dance are ≥ 0.99 beat F for everyone;
+  classical without a kit is 0.09–0.52; rubato 0.42–0.76 (BEAT_THIS leads by
+  0.175 — the **only decisive margin** of eleven; the other ten rows are
+  inside the noise of four clips). **BEATNET double-times every ballad,
+  BEAT_THIS one in four.** `rhythmRouting.ts` carries the per-condition
+  table with margins and a `decisive` flag, and a licence gate that returns
+  the best *routable* provider and reports the blocked leader beside it:
+  **madmom's model files are CC BY-NC-SA 4.0** (its LICENSE splits code from
+  data) — it may be measured, it may not be routed to. Recommendation: lead
+  with BEAT_THIS everywhere (within noise where it does not lead, the only
+  shippable downbeat tracker, decisive on rubato) with LIBROSA as the cheap
+  second opinion the engine needs to detect a level dispute.
+
+  **The engine, and the finding that shaped it.** On all four ballads the
+  audio lean (onset coverage → autocorrelation → salience → a named 120 BPM
+  prior) adopted the **125** grid over the true 62 — the double-time grid
+  "explains" the hats — so a reconciler that picked would have been silently
+  wrong 4/4; the reconciled beat F is 0.660 there and 0.860 overall against
+  BEAT_THIS's 0.902. The rule taken is PR-86's: the `tempo` field is
+  **`contested` with `candidates`** (each level verbatim from its provider,
+  lean first) whenever more than one metrical level was offered; the lean
+  supplies beat *positions* only. A tempo with no beat grid
+  (`tempoOnlyObservation`, which is what `LOCAL_SIGNAL_ANALYZER_V1` is) can
+  name a level and become a candidate, never corroborate positions; two grids
+  at the *same* level that fail to line up are positional dissent, not a
+  second tempo. Families named per case: `half_double_tempo` 8,
+  `beat_grid_mismatch` 6, `triple_duple_meter` 5 (3/4 vs 6/8 counted from
+  each provider's own bars), `drift` 3 (agreement horizon), `pickup_phase` 1
+  (constant beat rotation); contested fields over 44: tempo 19, downbeats
+  14, meter 11, beatGrid 10. Bare-pickup probe (kit removed): downbeat F
+  0.32–0.34 for all three downbeat trackers, `downbeats` contested 3/4 —
+  without percussion nobody finds an anacrusis, and the engine says so.
+
+  **The owner's recording, ולעורר ליבי** (project `d519492a…`, source
+  `3108652e…`, the original 10.5 MB upload, 259.7 s, one 162 s round trip, no
+  ground truth, not scored). Before this ran the Song Model (v4) said **64.8
+  BPM at confidence 0.374** (`LOCAL_SIGNAL_ANALYZER_V1`, `low_confidence`,
+  4/4 assumed) and the owner says **~115**. Live: **BEAT_THIS 130.43, MADMOM
+  130.43, BEATNET 130.43, LIBROSA 129.20** — the same level in every 30 s
+  window of the song, 4/4 from three trackers, BEAT_THIS and MADMOM placing
+  the bar lines together (137–138 downbeats). The platform's 64.8 is
+  **0.497 ×** that grid: the half level. The owner's 115 is in **no metrical
+  relation** to any reading (1.13 ×, 13 % off). What the engine carries:
+  **CONTESTED tempo, candidates 130.4348 BPM (BEAT_THIS/BEATNET/MADMOM) vs
+  64.8 BPM (LOCAL_SIGNAL_ANALYZER_V1) — no pick, no average**; meter agreed
+  4/4; downbeats agreed; beatGrid contested (LIBROSA's 129.2 grid does not
+  line up over four minutes; MADMOM/BEATNET first separate at 43.98 s).
+  Under PR-86's rule this file reaches the producer with two `Use …` choices,
+  not with 64.8 at low confidence.
+
+  Tests: `rhythmEngine.test.ts` (31: verbatim grids across conflicting pairs,
+  120-vs-60 never 90, both candidates carried and contested even when the
+  lean is decisive, the owner's shape — four grids at 130.4 + 64.8 with no
+  grid → CONTESTED both carried, same-level drift is dissent not a candidate,
+  tempo-only corroboration / dissent / alone, pickup rotation, 3/4-vs-6/8,
+  horizon, lone tracker never agreed), `rhythmMetrics.test.ts` (20),
+  `rhythmCorpus.test.ts` (20, the audio-equals-truth invariant under rubato,
+  swing and anacrusis), `rhythmRouting.test.ts` (7, madmom never handed out
+  as a route however well it scored); registered in
+  `run-focused-api-tests.mjs`; `pnpm run typecheck` green. Spend: Modal CPU
+  only, 49 worker calls, 854 s of summed inference, ~20 container-minutes,
+  well under $1 (not read from the dashboard).
+
+  **Honest limits.** One synthetic tier (a small offline synth: clean onsets,
+  no room, no vocal — absolute F-measures are optimistic and the ranking is
+  what to read) plus one real file with no ground truth (tracker agreement is
+  not correctness). Four clips per condition cannot separate providers below
+  ~0.05 F, and ten of eleven routing rows sit inside that. The engine's lean
+  is measurably wrong on ballads and the reconciled beat F is below the best
+  single tracker; the contested carry is the response and the heuristics were
+  deliberately not re-tuned on the test set — the closure is a
+  producer-confirmed level, and the studio surface for a contested *tempo*
+  (PR-86's `Use …` buttons) is not built here. Reference metres include
+  degenerate PDMX signatures (36/8, 1/4, 1/8), so metre accuracy is partly a
+  floor of the test set. ALL_IN_ONE is unmeasured. The drift horizon is the
+  first 70 ms separation, not a permanent one. The owner's 115 is neither
+  confirmed nor refuted — five readings agree on 130.4 or its half and none is
+  at 115; only listening settles it. `rhythmMetrics.ts` should be merged
+  away if Stream H's `analysisMetrics.ts` lands.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 

@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "worker": "rhythm-tournament-worker",
+  "purpose": "Run every installable beat/downbeat/tempo/meter tracker on identical audio so a disagreement is about the music, not about resampling.",
+  "analysisSampleRate": 22050,
+  "providers": {
+    "BEAT_THIS": {
+      "package": "beat_this",
+      "version": "1.1.0",
+      "sourceRepository": "https://github.com/CPJKU/beat_this",
+      "sourceCommit": "b95c8ab0c58c2d9fcfd40508ae8dffbc05ac4f5c",
+      "licence": "MIT (code), MIT (weights)",
+      "commercialUse": "permitted",
+      "checkpoint": "/var/lib/rhythm/final0.ckpt",
+      "checkpointUrl": "https://cloud.cp.jku.at/public.php/dav/files/7ik4RrBKTS273gp/final0.ckpt",
+      "checkpointSha256": "8c328b45f59d8dd3dff219253ff6a8d6482be57d0133a29140e2febbf8eb8331",
+      "paper": "Foscarin et al., 'Beat this! Accurate beat tracking without DBN postprocessing', ISMIR 2024"
+    },
+    "MADMOM": {
+      "package": "madmom",
+      "version": "0.17.dev0",
+      "sourceRepository": "https://github.com/CPJKU/madmom",
+      "licence": "BSD-2-Clause (code), CC BY-NC-SA 4.0 (models and data files)",
+      "commercialUse": "BLOCKED for the shipped models. madmom's own LICENSE splits the package: the source is BSD-2-Clause and commercially usable, but the pre-trained model files this worker loads (RNNDownBeatProcessor) are CC BY-NC-SA 4.0 and explicitly require written permission from Gerhard Widmer before inclusion in a commercial product. Treated here as a measurement-only contender: it may be benchmarked, and it may NOT be routed to in a shipped product without that permission.",
+      "paper": "Böck et al., 'madmom: a new Python Audio and Music Signal Processing Library', ACM MM 2016"
+    },
+    "LIBROSA": {
+      "package": "librosa",
+      "version": ">=0.10",
+      "sourceRepository": "https://github.com/librosa/librosa",
+      "licence": "ISC",
+      "commercialUse": "permitted",
+      "note": "Dynamic-programming beat tracker with no downbeat model at all; reports downbeats as null rather than guessing. Included as the honest floor.",
+      "paper": "Ellis, 'Beat Tracking by Dynamic Programming', J. New Music Research 2007"
+    },
+    "BEATNET": {
+      "package": "BeatNet",
+      "version": "1.1.0",
+      "sourceRepository": "https://github.com/mjhydri/BeatNet",
+      "licence": "CC-BY-4.0 (repository)",
+      "commercialUse": "permitted for BeatNet itself, but it imports madmom at runtime and therefore inherits madmom's model restriction wherever a madmom model file is loaded.",
+      "paper": "Heydari et al., 'BeatNet: CRNN and Particle Filtering for Online Joint Beat, Downbeat and Meter Tracking', ISMIR 2021"
+    },
+    "ALL_IN_ONE": {
+      "package": "allin1",
+      "version": "1.1.0",
+      "sourceRepository": "https://github.com/mir-aidj/all-in-one",
+      "licence": "MIT",
+      "commercialUse": "permitted (Demucs weights it pulls are MIT; the htdemucs bag is CC-BY-NC for some variants — check before routing)",
+      "note": "Requires NATTEN, which compiles against torch. Optional layer in the image: if it is absent the worker says so instead of pretending.",
+      "paper": "Kim & Nam, 'All-In-One Metrical And Functional Structure Analysis With Neighborhood Attentions', WASPAA 2023"
+    }
+  },
+  "consideredAndRejected": [
+    {
+      "name": "skip_that_beat",
+      "url": "https://github.com/giovana-morais/skip_that_beat",
+      "venue": "LAMIR 2024 / ISMIR LBD 2024",
+      "reason": "Publishes a training-time augmentation for underrepresented time signatures (2/4, 3/4) and the training code, not a released inference checkpoint. Directly relevant to the odd-metre condition, but there is no model to run."
+    },
+    {
+      "name": "BEAST",
+      "url": "https://arxiv.org/abs/2312.17156",
+      "venue": "ICASSP 2024",
+      "reason": "Online/streaming beat tracker. The platform's analysis path is offline, where a streaming transformer is a handicap, not an advantage."
+    },
+    {
+      "name": "Beat Transformer",
+      "url": "https://github.com/zhaojw1998/Beat-Transformer",
+      "venue": "ISMIR 2022",
+      "reason": "Checkpoint is distributed via a Google Drive link with no published digest; a weight we cannot verify is a weight we do not deploy."
+    }
+  ]
+}
