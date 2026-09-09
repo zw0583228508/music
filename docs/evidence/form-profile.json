@@ -1,0 +1,499 @@
+{
+  "title": "Form profile of admitted PDMX works — unsupervised segmentation (Wave Q — Workstream J)",
+  "ranAt": "2026-09-09T14:47:44.369Z",
+  "finishedAt": "2026-09-09T14:48:37.398Z",
+  "method": {
+    "segmentation": "FORM_SEGMENTATION_v1",
+    "barFeatures": "duration-weighted pitch-class histogram, onset-position histogram (16 bins), per-track sounding on/off, onset density, register mean and spread",
+    "boundaries": "Foote checkerboard novelty over the bar self-similarity matrix (cosine), kernel half-width 4 bars, peaks ≥ mean + 0.5σ, ≥ 4 bars apart; exact adjacent repeats split by periodicity (lag ≥ 8 bars)",
+    "labels": "aligned-diagonal similarity to every earlier section, ≥ 0.9 same letter, ≥ max(0.78, piece p70) variant (A')",
+    "repeats": "repeatedSectionShare from labels; diagonalRepeatShare from ≥ 4-bar runs with bar similarity ≥ 0.92 on any diagonal",
+    "introOutro": "first/last section with a unique letter that is thinner than the piece median (density < 0.7× or fewer active tracks) or ≤ 4 bars",
+    "motifs": "four-note skyline cells (intervals + rhythm ratios, buildMotifMemory's key) quoted from earlier sections",
+    "thresholds": "reasoned defaults inspected on real scores, not fitted to labelled forms"
+  },
+  "rightsBasis": {
+    "recordId": "15571083",
+    "datasetDigest": "48db5562b1495bae926812c9078c02c598d7aec3bf827bf5c10297b2ca50dbfe",
+    "rightsDigest": "97b7c795b37de988ae89d864732d9df4b3ba4c5151a422fca3d14548aa933fc7",
+    "admittedWorks": 222856,
+    "subset": "no_license_conflict ∩ our gate"
+  },
+  "sample": {
+    "admittedFiles": 222820,
+    "scanned": 6557,
+    "parseFailed": 0,
+    "tooShort": 557,
+    "minBars": 16,
+    "maxBars": 512,
+    "analysed": 6000,
+    "multitrack": 1553,
+    "multitrackShare": 0.2588,
+    "multiFamily": 528,
+    "multiFamilyShare": 0.088,
+    "worksWithRealMeterChange": 3615,
+    "msPerWork": {
+      "n": 6000,
+      "mean": 4.6843,
+      "p10": 1,
+      "p25": 1,
+      "median": 2,
+      "p75": 3,
+      "p90": 8,
+      "max": 387
+    },
+    "note": "multitrack = ≥ 2 (file track, channel) pairs, so a two-staff piano counts; multiFamily = ≥ 2 instrument families, PR-53's arranger-task definition"
+  },
+  "size": {
+    "bars": {
+      "n": 6000,
+      "mean": 43.2167,
+      "p10": 17,
+      "p25": 20,
+      "median": 33,
+      "p75": 45,
+      "p90": 79,
+      "max": 512
+    },
+    "tracks": {
+      "n": 6000,
+      "mean": 1.7915,
+      "p10": 1,
+      "p25": 1,
+      "median": 1,
+      "p75": 2,
+      "p90": 3,
+      "max": 70
+    },
+    "families": {
+      "n": 6000,
+      "mean": 1.178,
+      "p10": 1,
+      "p25": 1,
+      "median": 1,
+      "p75": 1,
+      "p90": 1,
+      "max": 12
+    }
+  },
+  "form": {
+    "sectionsPerWork": {
+      "n": 6000,
+      "mean": 5.3112,
+      "p10": 2,
+      "p25": 3,
+      "median": 4,
+      "p75": 6,
+      "p90": 10,
+      "max": 48
+    },
+    "sectionsPerWorkHistogram": {
+      "1": 116,
+      "2": 1179,
+      "3": 1031,
+      "4": 1255,
+      "5": 749,
+      "6": 472,
+      "7": 214,
+      "8": 196,
+      "9": 139,
+      "10": 115,
+      "11": 90,
+      "12": 96,
+      "13": 64,
+      "14": 53,
+      "15": 28,
+      "16": 32,
+      "17": 19,
+      "18": 16,
+      "19": 17,
+      "20": 119
+    },
+    "sectionBars": {
+      "n": 31867,
+      "mean": 8.1369,
+      "p10": 4,
+      "p25": 5,
+      "median": 8,
+      "p75": 9,
+      "p90": 12,
+      "max": 93
+    },
+    "sectionBarsHistogram": {
+      "4": 5583,
+      "5": 3476,
+      "6": 3229,
+      "7": 2981,
+      "8": 5613,
+      "9": 3453,
+      "10": 2309,
+      "11": 1263,
+      "12": 781,
+      "13": 433,
+      "14": 412,
+      "15": 418,
+      "16": 338,
+      "17": 426,
+      "18": 287,
+      "19": 233,
+      "20": 101,
+      "21": 76,
+      "22": 51,
+      "23": 35,
+      "24": 52,
+      "25": 61,
+      "26": 39,
+      "27": 27,
+      "28": 17,
+      "29": 15,
+      "30": 17,
+      "31": 12,
+      "32": 17,
+      "33": 14,
+      "34": 16,
+      "35": 6,
+      "36": 12,
+      "37": 7,
+      "38": 5,
+      "39": 3,
+      "40": 49
+    },
+    "distinctLabels": {
+      "n": 6000,
+      "mean": 3.9828,
+      "p10": 2,
+      "p25": 2,
+      "median": 3,
+      "p75": 5,
+      "p90": 7,
+      "max": 48
+    },
+    "distinctLabelsHistogram": {
+      "1": 346,
+      "2": 1488,
+      "3": 1521,
+      "4": 1124,
+      "5": 583,
+      "6": 282,
+      "7": 170,
+      "8": 131,
+      "9": 92,
+      "10": 65,
+      "11": 49,
+      "12": 149
+    },
+    "repeatedSectionShare": {
+      "n": 6000,
+      "mean": 0.3082,
+      "p10": 0,
+      "p25": 0,
+      "median": 0.1778,
+      "p75": 0.5556,
+      "p90": 0.8472,
+      "max": 1
+    },
+    "worksWithAnyRepeat": 0.5153,
+    "diagonalRepeatShare": {
+      "n": 6000,
+      "mean": 0.7093,
+      "p10": 0,
+      "p25": 0.5,
+      "median": 0.9167,
+      "p75": 1,
+      "p90": 1,
+      "max": 1
+    },
+    "worksWithAnyDiagonalRepeat": 0.86,
+    "introLikeShare": 0.0967,
+    "outroLikeShare": 0.0973,
+    "bothIntroAndOutroShare": 0.018,
+    "topFormStrings": [
+      {
+        "form": "A B",
+        "count": 996,
+        "share": 0.166
+      },
+      {
+        "form": "A B C",
+        "count": 785,
+        "share": 0.1308
+      },
+      {
+        "form": "A B C D",
+        "count": 528,
+        "share": 0.088
+      },
+      {
+        "form": "A B C D E",
+        "count": 263,
+        "share": 0.0438
+      },
+      {
+        "form": "A B C C",
+        "count": 188,
+        "share": 0.0313
+      },
+      {
+        "form": "A A",
+        "count": 154,
+        "share": 0.0257
+      },
+      {
+        "form": "A B B",
+        "count": 119,
+        "share": 0.0198
+      },
+      {
+        "form": "A",
+        "count": 116,
+        "share": 0.0193
+      },
+      {
+        "form": "A B C B",
+        "count": 110,
+        "share": 0.0183
+      },
+      {
+        "form": "A B C D E F",
+        "count": 93,
+        "share": 0.0155
+      },
+      {
+        "form": "A A B C",
+        "count": 84,
+        "share": 0.014
+      },
+      {
+        "form": "A A B",
+        "count": 72,
+        "share": 0.012
+      },
+      {
+        "form": "A B C D D",
+        "count": 68,
+        "share": 0.0113
+      },
+      {
+        "form": "A A B C D",
+        "count": 63,
+        "share": 0.0105
+      },
+      {
+        "form": "A B B B",
+        "count": 61,
+        "share": 0.0102
+      },
+      {
+        "form": "A B C D C D",
+        "count": 60,
+        "share": 0.01
+      },
+      {
+        "form": "A A B B",
+        "count": 59,
+        "share": 0.0098
+      },
+      {
+        "form": "A B C B C",
+        "count": 55,
+        "share": 0.0092
+      },
+      {
+        "form": "A B C D C",
+        "count": 53,
+        "share": 0.0088
+      },
+      {
+        "form": "A B C D E F G H I J K L",
+        "count": 39,
+        "share": 0.0065
+      },
+      {
+        "form": "A B B' B",
+        "count": 35,
+        "share": 0.0058
+      },
+      {
+        "form": "A B C D E F G",
+        "count": 32,
+        "share": 0.0053
+      },
+      {
+        "form": "A A B C B C",
+        "count": 30,
+        "share": 0.005
+      },
+      {
+        "form": "A A'",
+        "count": 29,
+        "share": 0.0048
+      },
+      {
+        "form": "A B C B D",
+        "count": 27,
+        "share": 0.0045
+      }
+    ]
+  },
+  "motifs": {
+    "crossSectionRecurrence": {
+      "n": 5884,
+      "mean": 0.8809,
+      "p10": 0.5,
+      "p25": 0.8571,
+      "median": 1,
+      "p75": 1,
+      "p90": 1,
+      "max": 1
+    },
+    "meanQuotedShare": {
+      "n": 5884,
+      "mean": 0.4718,
+      "p10": 0.0732,
+      "p25": 0.2315,
+      "median": 0.5355,
+      "p75": 0.6868,
+      "p90": 0.7765,
+      "max": 1
+    }
+  },
+  "densityArc": {
+    "shapeShare": {
+      "flat": 0.3668,
+      "arch": 0.2903,
+      "rise": 0.2,
+      "fall": 0.1185,
+      "other": 0.0243
+    },
+    "peakPosition": {
+      "n": 5884,
+      "mean": 0.5123,
+      "p10": 0,
+      "p25": 0,
+      "median": 0.5,
+      "p75": 1,
+      "p90": 1,
+      "max": 1
+    },
+    "firstSection": {
+      "n": 5884,
+      "mean": 7.8517,
+      "p10": 3.5,
+      "p25": 4.5333,
+      "median": 6,
+      "p75": 8,
+      "p90": 14,
+      "max": 197.3704
+    },
+    "maxSection": {
+      "n": 5884,
+      "mean": 10.4017,
+      "p10": 4.125,
+      "p25": 5.2857,
+      "median": 7,
+      "p75": 9.8182,
+      "p90": 18.4444,
+      "max": 244.3333
+    },
+    "lastSection": {
+      "n": 5884,
+      "mean": 8.3093,
+      "p10": 3.5,
+      "p25": 4.6667,
+      "median": 6.4,
+      "p75": 8.375,
+      "p90": 14.3077,
+      "max": 206.1739
+    }
+  },
+  "ensembleEvolution": {
+    "worksMeasured": 1498,
+    "shapeShare": {
+      "other": 0.0648,
+      "flat": 0.6789,
+      "rise": 0.1489,
+      "fall": 0.0454,
+      "arch": 0.0621
+    },
+    "boundaryChangeShare": {
+      "n": 1498,
+      "mean": 0.1763,
+      "p10": 0,
+      "p25": 0,
+      "median": 0,
+      "p75": 0.25,
+      "p90": 0.7273,
+      "max": 1
+    },
+    "tracksAddedPerBoundary": {
+      "n": 9505,
+      "mean": 0.4496,
+      "p10": 0,
+      "p25": 0,
+      "median": 0,
+      "p75": 0,
+      "p90": 1,
+      "max": 20
+    },
+    "tracksRemovedPerBoundary": {
+      "n": 9505,
+      "mean": 0.3931,
+      "p10": 0,
+      "p25": 0,
+      "median": 0,
+      "p75": 0,
+      "p90": 1,
+      "max": 26
+    },
+    "boundariesWithAnyChange": 0.2547,
+    "peakPosition": {
+      "n": 1498,
+      "mean": 0.0875,
+      "p10": 0,
+      "p25": 0,
+      "median": 0,
+      "p75": 0,
+      "p90": 0.3333,
+      "max": 1
+    },
+    "activeTracks": {
+      "first": {
+        "n": 1498,
+        "mean": 3.1562,
+        "p10": 2,
+        "p25": 2,
+        "median": 2,
+        "p75": 4,
+        "p90": 5,
+        "max": 28
+      },
+      "max": {
+        "n": 1498,
+        "mean": 3.8271,
+        "p10": 2,
+        "p25": 2,
+        "median": 3,
+        "p75": 4,
+        "p90": 7,
+        "max": 37
+      },
+      "last": {
+        "n": 1498,
+        "mean": 3.5147,
+        "p10": 2,
+        "p25": 2,
+        "median": 2,
+        "p75": 4,
+        "p90": 6,
+        "max": 28
+      }
+    }
+  },
+  "limits": [
+    "unsupervised: no labelled forms exist for PDMX, so boundaries and labels are not validated against ground truth — only against synthetic pieces in formSegmentation.test.ts",
+    "one piece may be over-segmented where texture changes inside a section, or under-segmented where a section change keeps texture, instrumentation and register",
+    "intro/outro are thinness-and-uniqueness heuristics, not detected cadences or fades",
+    "tracks are (file track, channel) pairs; a piano written on two staves counts as two tracks",
+    "works longer than 512 bars are truncated"
+  ]
+}
