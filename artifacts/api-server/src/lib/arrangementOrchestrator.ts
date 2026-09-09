@@ -42,13 +42,17 @@ import { applyPerformance } from "./performanceEngine";
 import { renderArrangementStems, renderStem, type StemRenderOptions } from "./referenceRenderWorker";
 import { abCompareCandidates, critiqueRenderedAudio, type AudioAbResult, type AudioStem } from "./audioCritic";
 import { composeReferencePart, REFERENCE_PART_COMPOSER } from "./referencePartComposer";
+import { upgradePartGenerationRequest, type HarmonyPlanSlot, type StyleGrammarSlot } from "./partGenerationContextV2";
+import { composeWithContext, type ComposePass } from "./contextAwareComposer";
+import { harmonyPlanSlot, solveVoiceLeading } from "./voiceLeading";
 
 export const ORCHESTRATOR_VERSION = "1.0" as const;
 const METHOD = "arrangement-orchestrator/v1";
 
 export type OrchestratorStage =
   | "plan" | "parts" | "candidates" | "compose" | "constraints"
-  | "critique" | "repair" | "perform" | "render" | "audio_critique" | "select";
+  | "critique" | "repair" | "perform" | "render" | "audio_critique" | "select"
+  | "context";
 
 export type StageRecord = {
   stage: OrchestratorStage;
@@ -111,9 +115,60 @@ export type OrchestrateInput = {
    * keeps the planners' own reading of the Song Model.
    */
   plannerHints?: { global?: GlobalPlannerHints; section?: SectionPlannerHints };
+  /**
+   * Wave Q: run each composed part through the context passes (PR-45) — the
+   * vocal's gaps, the sibling parts' actual notes, the solved voicing, the
+   * style grammar's groove.
+   *
+   * Off by default, and deliberately so. The shipped path must not change
+   * because a new capability exists; it changes when the benchmark says the
+   * new path is better. This flag is what lets the two be measured against
+   * each other on the same song, which is the "vs-reference-part-composer"
+   * level Wave Q binds every release to.
+   */
+  contextAware?: boolean;
+  /** Q-02. Absent leaves the grammar slot explicitly empty rather than guessed. */
+  styleGrammar?: StyleGrammarSlot;
 };
 
 // ---------------------------------------------------------------------------
+
+/**
+ * One voicing plan for the whole arrangement (Q-04), solved from the Song
+ * Model's own chords.
+ *
+ * Solved once and shared by every part rather than per part, because that is
+ * what a voicing plan is: if the piano and the strings each solved their own,
+ * they would not be voicing the same chord. One chord per bar — the first —
+ * since the solver's unit is the bar; a second chord inside a bar is a
+ * harmonic rhythm this plan does not yet express, and pretending otherwise
+ * would put a voicing on a beat that never had one.
+ */
+function harmonyPlanFor(songModel: SongModelData): HarmonyPlanSlot {
+  const bars = songModel.bars ?? [];
+  const chords = songModel.chords ?? [];
+  if (!bars.length || !chords.length) {
+    return {
+      status: "not_available",
+      reason: !chords.length
+        ? "the Song Model has no chords to voice"
+        : "the Song Model has no bars to place voicings on",
+    };
+  }
+  const firstPerBar = new Map<number, string>();
+  for (const chord of chords) {
+    const bar = bars.find((b) => chord.start >= b.start - 1e-6 && chord.start < b.end - 1e-6);
+    if (!bar || firstPerBar.has(bar.bar)) continue;
+    firstPerBar.set(bar.bar, chord.symbol);
+  }
+  const progression = [...firstPerBar.entries()]
+    .sort(([left], [right]) => left - right)
+    .map(([bar, symbol]) => ({ bar, symbol }));
+  if (!progression.length) {
+    return { status: "not_available", reason: "no chord fell inside a bar of this Song Model" };
+  }
+  return harmonyPlanSlot(solveVoiceLeading({ chords: progression }));
+}
 
 /**
  * Deterministically thin/boost a part to match a strategy's density multiplier.
@@ -239,6 +294,21 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     transitions: transitionPlan.transitions,
   };
 
+  // Solved once for the arrangement, not once per part: two parts voicing the
+  // same chord differently are not voicing the same chord.
+  const beatSeconds = 60 / Math.max(1, tempoBpm);
+  const harmonyPlan = input.contextAware ? harmonyPlanFor(songModel) : undefined;
+  const contextPasses: ComposePass[] = [];
+  if (input.contextAware) {
+    record(
+      "context",
+      harmonyPlan?.status === "available" ? "ok" : "skipped",
+      harmonyPlan?.status === "available"
+        ? `voicing plan solved (${harmonyPlan.version})`
+        : `no voicing plan: ${harmonyPlan?.status === "not_available" ? harmonyPlan.reason : "not requested"}`,
+    );
+  }
+
   const composed: OrchestratedCandidate[] = [];
   let totalNotes = 0;
   let totalConstraintErrors = 0;
@@ -251,19 +321,35 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     // constraint engine sees the real simultaneous load (limbs, hands, strings).
     const byTrack = new Map<string, { instrument: string; role: string; notes: MusicalNote[] }>();
     const existing: Array<{ instrument: string; role: string; noteCount: number }> = [];
+    // The same parts again, with their notes. V1 carries only counts, and a
+    // count is not something a later part can arrange against.
+    const siblings: Array<{ instrument: string; role: string; notes: MusicalNote[] }> = [];
     for (const task of partPlan.tasks) {
       const adjustment = candidate.partAdjustments.find((a) => a.taskId === task.id);
       const request = buildPartGenerationRequest(
         songModel, { ...task, seed: adjustment?.seed ?? task.seed }, layers, existing,
       );
       const raw = compose(request);
-      const notes = applyDensity(raw, adjustment?.densityMultiplier ?? 1);
+      let notes = applyDensity(raw, adjustment?.densityMultiplier ?? 1);
+      if (input.contextAware) {
+        const upgraded = upgradePartGenerationRequest(request, {
+          siblings,
+          styleGrammar: input.styleGrammar,
+          harmonyPlan,
+        });
+        const result = composeWithContext(upgraded, notes, { beatSeconds });
+        notes = result.notes;
+        for (const pass of result.passes) {
+          if (pass.changed > 0) contextPasses.push(pass);
+        }
+      }
       if (notes.length === 0) continue;
       const key = task.instrument;
       const entry = byTrack.get(key) ?? { instrument: task.instrument, role: task.role, notes: [] };
       entry.notes.push(...notes);
       byTrack.set(key, entry);
       existing.push({ instrument: task.instrument, role: task.role, noteCount: notes.length });
+      siblings.push({ instrument: task.instrument, role: task.role, notes });
     }
     // Merged parts can now double the same pitch at the same instant; keep the
     // loudest and drop the duplicate rather than asking for a third hand.

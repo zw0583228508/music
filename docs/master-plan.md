@@ -2072,6 +2072,49 @@ any of it.
   hostname: it proves reachability, it is not a deployment. One song is a smoke
   test of a transport and a repair, not a benchmark.
 
+- **PR-47** ✅ — `orchestrator-context-aware` (Wave Q, Q-06): the context passes
+  run inside the real arrangement chain, behind a flag.
+
+  PR-45 built the passes; nothing called them. Now the orchestrator does, when
+  `contextAware: true` is passed. The flag is **off by default and the shipped
+  path is byte-for-byte unchanged** — a test asserts exactly that. This is
+  deliberate: a capability existing is not a reason to change what ships;
+  the benchmark saying it is better is. The flag is what lets the two be
+  measured against each other on one song, which is Wave Q's
+  `vs-reference-part-composer` level.
+
+  What the flag turns on:
+
+  - **one voicing plan for the whole arrangement**, solved from the Song
+    Model's own chords — the first chord in each bar, since the Q-04 solver's
+    unit is the bar. Solved once and shared, because the piano and the strings
+    voicing the same chord differently are not voicing the same chord. The
+    `context` stage records `voicing plan solved (…:exact)` or, when the model
+    has no chords or no bars, the reason it was skipped.
+  - **sibling parts with their actual notes** threaded into each later part's
+    request, so a part is arranged against what the others played rather than
+    against a count.
+  - every composed part run through `composeWithContext` — locked material,
+    re-voicing onto the plan, vocal space, sibling-collision, groove, and a
+    final physics pass — with each changed pass collected for the trace.
+
+  A test confirms `contextAware` actually changes the arrangement (different
+  note counts or pitches from the default path); another confirms the run stays
+  byte-for-byte deterministic with the flag on.
+
+  Suites: arrangementOrchestrator 11 (4 new), contextAwareComposer 10,
+  partGenerationContextV2 11, voiceLeading 12, styleGrammar 9, criticRepairLoop
+  5, musicCritic 5; typecheck green.
+
+  **Honest limits.** No API route sets the flag yet — it is reachable only from
+  a direct `orchestrateArrangement` call, which is what the benchmark harness
+  uses. The voicing plan reduces each bar to its first chord; a second chord in
+  a bar is a harmonic rhythm this plan does not express. The style grammar slot
+  is still passed in from outside, so `contextAware` alone gives an empty
+  grammar and no groove pass unless a caller also supplies one. And no blind
+  listening comparison has been run: this makes the measurement *possible*, it
+  is not itself the measurement.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

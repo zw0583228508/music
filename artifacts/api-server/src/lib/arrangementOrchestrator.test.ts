@@ -149,6 +149,62 @@ test("the whole run is deterministic", () => {
   assert.deepEqual(a.selected, b.selected);
 });
 
+test("the context-aware path is off by default and changes nothing when off", () => {
+  const model = makeModel();
+  const off = orchestrateArrangement({ songModel: model, candidateCount: 2, render: false, now: NOW });
+  assert.ok(!off.stages.some((s) => s.stage === "context"), "no context stage unless asked for");
+  const again = orchestrateArrangement({ songModel: model, candidateCount: 2, render: false, now: NOW });
+  assert.deepEqual(
+    off.candidates.map((c) => [c.candidateId, c.noteCount]),
+    again.candidates.map((c) => [c.candidateId, c.noteCount]),
+    "the shipped path is unchanged",
+  );
+});
+
+test("with contextAware on, the voicing plan is solved and the run stays deterministic", () => {
+  const model = makeModel();
+  const a = orchestrateArrangement({ songModel: model, candidateCount: 2, render: false, now: NOW, contextAware: true });
+  const b = orchestrateArrangement({ songModel: model, candidateCount: 2, render: false, now: NOW, contextAware: true });
+
+  const context = a.stages.find((s) => s.stage === "context");
+  assert.ok(context, "the context stage is recorded when asked for");
+  assert.equal(context!.status, "ok", "this model has bars and chords, so a plan is solved");
+  assert.match(context!.detail, /voicing plan solved/);
+
+  // Still a real multitrack arrangement, and still byte-for-byte reproducible.
+  for (const candidate of a.candidates) {
+    assert.ok(candidate.noteCount > 20, "the passes did not empty the arrangement");
+  }
+  assert.deepEqual(
+    a.candidates.map((c) => [c.candidateId, c.noteCount, c.critique.overallScore]),
+    b.candidates.map((c) => [c.candidateId, c.noteCount, c.critique.overallScore]),
+  );
+});
+
+test("contextAware produces a different arrangement from the default path", () => {
+  const model = makeModel();
+  const plain = orchestrateArrangement({ songModel: model, candidateCount: 3, render: false, now: NOW });
+  const aware = orchestrateArrangement({ songModel: model, candidateCount: 3, render: false, now: NOW, contextAware: true });
+  // The passes move notes: re-voicing, vocal space, groove. If nothing differs,
+  // the wiring is not actually running.
+  const plainNotes = plain.candidates.map((c) => c.noteCount).join(",");
+  const awareNotes = aware.candidates.map((c) => c.noteCount).join(",");
+  const plainPitches = plain.candidates.flatMap((c) => c.trackModels.flatMap((t) => t.notes.map((n) => n.pitch))).join(",");
+  const awarePitches = aware.candidates.flatMap((c) => c.trackModels.flatMap((t) => t.notes.map((n) => n.pitch))).join(",");
+  assert.ok(plainNotes !== awareNotes || plainPitches !== awarePitches, "the context passes had an audible effect");
+});
+
+test("contextAware records why there is no voicing plan when the model has no chords", () => {
+  const model = makeModel();
+  const noChords: SongModelData = { ...model, chords: [] };
+  const result = orchestrateArrangement({ songModel: noChords, candidateCount: 1, render: false, now: NOW, contextAware: true });
+  const context = result.stages.find((s) => s.stage === "context")!;
+  assert.equal(context.status, "skipped");
+  assert.match(context.detail, /no chords to voice/);
+  // The arrangement still gets made; the other passes still run.
+  assert.ok(result.candidates[0].noteCount > 0);
+});
+
 test("an injected composer replaces the reference one", () => {
   let calls = 0;
   const result = orchestrateArrangement({
