@@ -54,6 +54,14 @@ const suites = {
         "style-grammar.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, Q-02: any style description in the world, decomposed into
+      // measurable features, a grammar and arrangement instructions — with no
+      // genre list anywhere on the path.
+      [
+        "src/lib/universalStyle.test.ts",
+        "universal-style.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // Wave Q, Q-04: which octave each voice takes, and how it moves.
       [
         "src/lib/voiceLeading.test.ts",
@@ -73,6 +81,10 @@ const suites = {
         "track-model-contract.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+    ],
+    tests: [
+      // Wave Q, Q-02: the read-only style decomposition route.
+      "tests/style-decompose-route.test.mjs",
     ],
   },
   // Wave Q, Q-00: the contract and the gate in front of the real benchmark

@@ -2685,6 +2685,113 @@ any of it.
   and says so; a non-classical slice, at least one rated session, and the
   measured cost of a LoRA pilot are named as what makes it final.
 
+- **PR-66** ✅ — `universal-style-intelligence` (Wave Q, Q-02 — Workstream I):
+  **a producer can name almost any style in the world, including combinations
+  nobody programmed for, and the system decomposes it into measurable musical
+  features that flow into `StyleGrammar` and arrangement instructions — with no
+  genre list anywhere on the path.** Evidence:
+  `docs/evidence/universal-style-live.json` (93 descriptions: 78 real spanning
+  pop/rock/jazz/funk/soul/R&B/gospel/blues/country/folk/cinematic/orchestral/
+  chamber/baroque/renaissance/minimalism/ambient/EDM/hip-hop/Latin/Caribbean/
+  African/Middle-Eastern/Indian/East- and Southeast-Asian/Balkan/Mediterranean/
+  Celtic/flamenco/worship/musical-theatre/game/big-band, plus 15 novel
+  combinations).
+
+  **What was built.** `universalStyleSchema.ts` — the representation: genre and
+  subgenre as **free tags, never an enum**, era, region/culture, ensemble
+  (instrument → platform family → GM family/program → arrangement role →
+  register), groove (feel, subdivision, swing ratio, syncopation, microtiming),
+  meter with grouping, tempo band and behaviour, drum language, bass language,
+  harmonic language (pitch system as a pitch-class set *or* an interval list in
+  cents, chord vocabulary, harmonic rhythm, cadence habits, functional motion),
+  voicing, melodic language, phrase shape, rhythmic vocabulary, instrument
+  roles, density, register, energy, tension, transitions, production aesthetic.
+  **40 leaf fields**, each carrying value + confidence + `basis`
+  (`user_stated` | `inferred` | `evidence` | `unknown`) + its sources + whether
+  it is a hypothesis + what contested it. A `FIELD_REGISTRY` validates every
+  field, which is also the guard that **no reasoning provider can write notes**:
+  the largest numeric list any field accepts is a twelve-member pitch-class set
+  (asserted in the suite by feeding a 32-note melody to every validator).
+
+  `universalStyleLexicon.ts` — the deterministic recognisers, not a genre
+  database: 133 instruments with GM mappings that say when GM has no patch (an
+  oud is not a nylon guitar), 70 regions/cultures, 18 eras, 43 named grooves
+  whose claims are marked `definitional` or `typical`, ~600 style words, 48
+  pitch systems, modifier and tempo words, and a bilingual stop list.
+  **Non-Western systems are honest or absent**: maqamat carry 24-TET cents and
+  a caveat, ragas say "a raga is not its scale", qeñet name the regional tuning
+  problem, and pélog, dastgāh-e Shur and qeñet Anchihoye are left `null` —
+  "the set is disputed in written sources; left undefined rather than guessed".
+
+  `universalStyleSeed.ts` — **a seed, not a database**: 86 notes describing
+  musical worlds as *measurable claims* with confidences and Grove/monograph
+  references, so evidence synthesis is exercisable without a model. `validateSeed`
+  refuses a note with no source or an instrument the lexicon does not have.
+
+  `universalStyle.ts` — the pipeline: `parseStyleDescription` (tempo numbers,
+  meters with additive grouping, decades in both languages, instruments,
+  regions, eras, named grooves, pitch systems, explicit role assignments —
+  "the oud carries the melody"), one `mergeClaim` rule for every source
+  (a user's word is never overridden; the same value from two sources
+  corroborates; a real disagreement is recorded as `contested` and becomes a
+  question), `synthesiseEvidence` over a pluggable `StyleReasoningProvider`
+  (an LLM one implements the same interface and answers in claims that go
+  through the same merge), `clarificationQuestions` (asks only what is both
+  unknown and consequential), `styleGrammarFromUniversalStyle` →
+  `UniversalGrammarRule[]` in the **same `directive` shape `applyGroove`
+  already consumes**, `arrangementInstructions` (per-role, in the planners'
+  vocabulary: register, density, rhythmic/melodic activity, voicing strategy,
+  articulation family, interaction with the lead, palette with GM programs),
+  and `reconcileWithFingerprint` — the analysed song's `styleFingerprint`
+  against what the producer said, per field, **every conflict a question and
+  never a silent override** (a half/double-time tempo counts as agreement,
+  flagged). Read-only `POST /api/style/decompose` (no table, no schema change,
+  `deterministicOnly` runs the parser with no provider at all).
+
+  **What it resolves today, measured.** Over the 93 descriptions, of 40 fields:
+  the deterministic parser alone resolves **13 %**; after the seed provider
+  **12 % stated or inferred from the text, 29 % from cited seed evidence, and
+  60 % still unknown** (real 61 %, novel 50 % — a novel combination resolves
+  *more*, because two seed worlds apply instead of one). Mean **11.6 grammar
+  rules**, 6.4 instruments and 4.5 clarification questions per description; a
+  usable grammar for every description including all 15 novel ones. Reliably
+  resolved: ensemble 97 %, tags 95 %, chord vocabulary 93 %, drum kit 83 %,
+  drum language 82 %, meter 77 %, tempo 73 %, harmonic rhythm 72 %. Reliably
+  *not*: pitch system unknown in 66 %, swing ratio 86 %, energy 42 %, groove
+  feel 47 %. Mean 1.6 hypotheses per style; 53 of 93 had at least one field two
+  sources disagreed about, and every one became a question rather than a
+  silent choice. Only 2 of 93 descriptions contained a word nothing recognised
+  ("Fela", "zorblax") — both kept verbatim as tags and asked about.
+
+  Suites: universalStyle 26 (including a corpus-wide invariant test —
+  every evidence value names its seed note *and* a reference, every unknown
+  holds null, every non-Western pitch system is a hypothesis with a caveat,
+  every grammar rule has a directive kind, no role instruction names an
+  instrument the ensemble lacks), style-decompose-route 4, styleGrammar 9
+  unchanged; typecheck green. Additive only: nothing in `styleGrammar.ts`,
+  `contextAwareComposer.ts`, the tournament/judge/registry files or `services/`
+  was touched.
+
+  **Honest limits.** **60 % of the representation is unknown after the seed,
+  and that is the honest state, not a bug** — it is the number the reasoning
+  provider exists to move, and every unknown produces no rule and no
+  instruction rather than a default. The seed is **86 worlds against a planet**,
+  and its claims are cited generalisations about traditions, not facts about
+  any recording; where a claim reduces a living practice to a set it is marked
+  a hypothesis and asked about before a composer leans on it. **Nothing here is
+  wired into the arrangement path**: `styleGrammarFromUniversalStyle` produces
+  the Q-02 slot in the right shape, but no caller passes it yet — the
+  orchestrator still derives its grammar from the song's own fingerprint
+  (PR-48/PR-50), and connecting a producer's *stated* style to that path is the
+  next PR. The reasoning-provider interface is proven only against the seed
+  provider and a deliberately rogue test provider; **no LLM provider exists**.
+  Reconciliation is tested against constructed fingerprints, not against a
+  fingerprint derived from a real song in the same run. The corpus is 93
+  descriptions written by one author in the platform's own idiom — real
+  producer phrasing will be messier, and the unrecognised-word rate of 2 % is
+  almost certainly optimistic for that reason.
+
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

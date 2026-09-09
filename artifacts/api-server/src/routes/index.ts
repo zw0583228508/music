@@ -8,6 +8,7 @@ import producerRouter from "./producer";
 import referencesRouter from "./references";
 import listeningRouter from "./listening";
 import clamp3Router from "./clamp3";
+import styleRouter from "./style";
 import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
@@ -24,5 +25,6 @@ router.use(producerRouter);
 router.use(referencesRouter);
 router.use(listeningRouter);
 router.use(clamp3Router);
+router.use(styleRouter);
 
 export default router;
