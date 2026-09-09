@@ -351,11 +351,28 @@ function avoidSiblingCollisions(
 }
 
 /**
+ * One number out of a grammar rule's directive, or NaN when it is not there.
+ *
+ * Checks `kind` before reading the field, so a rule whose directive means
+ * something else contributes nothing rather than the wrong number.
+ */
+function directiveNumber(directive: unknown, kind: string, field: string): number {
+  if (!directive || typeof directive !== "object") return NaN;
+  const record = directive as Record<string, unknown>;
+  if (record.kind !== kind) return NaN;
+  const value = record[field];
+  return typeof value === "number" && Number.isFinite(value) ? value : NaN;
+}
+
+/**
  * Groove from the style grammar: the swing ratio and the push or drag.
  *
  * Only off-beat notes are swung, which is what a swing ratio means; applying it
  * to everything would just shift the whole part late. Microtiming moves every
  * onset, because a player who sits behind the beat sits behind all of it.
+ *
+ * Percussion is included on purpose: the groove is mostly *where the drums sit*,
+ * and a swing that moves the melody but not the hi-hat is not a swing.
  */
 function applyGroove(
   notes: MusicalNote[],
@@ -372,12 +389,11 @@ function applyGroove(
     return { notes, pass: { id: "groove", changed: 0, note: "the grammar has no groove rule to apply" } };
   }
 
-  // The slot carries descriptions rather than directives, so the numbers are
-  // read back from them. A rule that does not parse is skipped, not guessed at.
-  const swingRatio = swing ? Number(/([0-9.]+) swing ratio/.exec(swing.description)?.[1]) : NaN;
-  const offsetMs = microtiming
-    ? Number(/by (\d+) ms/.exec(microtiming.description)?.[1]) * (/ahead/.test(microtiming.description) ? -1 : 1)
-    : NaN;
+  // Read from the directive, which is the machine-readable half of a rule.
+  // An older grammar that carries only prose is skipped rather than parsed:
+  // guessing a swing ratio out of English is how a groove gets misapplied.
+  const swingRatio = directiveNumber(swing?.directive, "swing", "ratio");
+  const offsetMs = directiveNumber(microtiming?.directive, "microtiming", "offsetMs");
 
   let changed = 0;
   const grooved = notes.map((note) => {

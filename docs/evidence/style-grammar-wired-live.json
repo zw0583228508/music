@@ -1,0 +1,42 @@
+{
+  "title": "Q-02 style grammar wired into the arrangement path, and what it actually did (Wave Q)",
+  "date": "2026-09-09",
+  "before": "OrchestrateInput.styleGrammar arrived from callers, every caller left it empty, and the groove pass silently did nothing on every run. PR-48's own honest limit said so.",
+  "change": [
+    "The orchestrator derives the grammar from the song being arranged: deriveStyleFingerprint -> deriveStyleGrammar -> styleGrammarSlot. The song's own behaviour is the best available description of its style.",
+    "An explicit slot from the caller still wins, including an explicit not_available, so the derivation can be suppressed rather than fought.",
+    "StyleGrammarSlot rules now carry a machine-readable `directive` beside the description. The groove pass was reading the swing ratio back out of English prose with a regex — a contract asking to be misread.",
+    "The groove pass reads directives and skips any rule that has none, rather than guessing."
+  ],
+  "provenThePathIsLive": {
+    "contextStageDetail": {
+      "pop-full": "voicing plan solved (HARMONY_PLAN_V1_VOICE_LEADING:exact); style grammar STYLE_GRAMMAR_V1:full with 10 rule(s)",
+      "jazz-full": "voicing plan solved (HARMONY_PLAN_V1_VOICE_LEADING:exact); style grammar STYLE_GRAMMAR_V1:full with 11 rule(s)",
+      "orchestral-midi": "voicing plan solved (HARMONY_PLAN_V1_VOICE_LEADING:exact); style grammar STYLE_GRAMMAR_V1:full with 10 rule(s)"
+    },
+    "meaning": "A real grammar with real rules now reaches every part on the context-aware path. Before this it was an empty slot on every run."
+  },
+  "whatItChangedInTheOutput": {
+    "criticScore": { "baseline": 74.56, "candidate": 73.78, "verdict": "unchanged" },
+    "playabilityErrors": { "baseline": 0, "candidate": 0, "verdict": "unchanged" },
+    "harmonyScore": { "baseline": 58.33, "candidate": 58.33, "verdict": "unchanged" },
+    "noteCount": { "baseline": 576.56, "candidate": 576.44, "verdict": "unchanged" },
+    "summary": "CONTEXT_AWARE_ARRANGER is not measurably better — do not promote",
+    "identicalToTheRunBeforeThisChange": true
+  },
+  "whyTheGrooveChangedNothing": {
+    "finding": "The synthesised corpus is perfectly quantised. Its measured swingRatio is 0.5 and its microtimingMs is 0.",
+    "consequence": "Q-02 drops both as too close to neutral to become instructions — by design, because emitting a weak swing rule from a 0.5 ratio makes every song slightly swung. The 10-11 surviving rules are register, density, harmonic rhythm and the like, which the groove pass does not act on.",
+    "isThisABug": "No. A perfectly quantised song has no groove to imitate, and the correct behaviour is to leave it alone. The unit test 'swing moves the off-beat and leaves the downbeat where it was' proves the pass fires when a real swing directive is present.",
+    "implication": "The groove half of Q-02 cannot be measured on this corpus at all. It needs recorded human performance — Q-00's real corpus — where microtiming and swing are not zero by construction."
+  },
+  "verdict": {
+    "action": "do_not_promote",
+    "reason": "Unchanged. The context-aware path is safe and now fully wired, but still not measurably better on the synthesised corpus."
+  },
+  "honestLimits": [
+    "This makes the grammar reach the composer; it does not make the arrangement better. The A/B numbers are identical to the run before the change.",
+    "The groove pass is unexercised by this corpus. Its correctness rests on a unit test, not on a benchmark run.",
+    "Still no human has judged a blind pair."
+  ]
+}

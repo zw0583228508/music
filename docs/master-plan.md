@@ -2200,6 +2200,48 @@ any of it.
   improvement would plausibly come from. Still the synthesised corpus, and still
   no human has judged a blind pair.
 
+- **PR-50** ✅ — `style-grammar-wired` (Wave Q, Q-02): the grammar reaches the
+  composer instead of arriving empty. Evidence:
+  `docs/evidence/style-grammar-wired-live.json`.
+
+  PR-48's honest limit was that `styleGrammar` came from callers, every caller
+  left it empty, and **the groove pass silently did nothing on every run**. It
+  does not any more.
+
+  - The orchestrator derives the grammar from the song being arranged:
+    `deriveStyleFingerprint → deriveStyleGrammar → styleGrammarSlot`. A song's
+    own behaviour is the best available description of its style. An explicit
+    slot from a caller still wins — including an explicit `not_available`, so
+    the derivation can be suppressed rather than fought.
+  - `StyleGrammarSlot` rules now carry a machine-readable **`directive`** beside
+    the description. The groove pass had been reading the swing ratio back out
+    of English prose with a regex, which is a contract asking to be misread. It
+    now reads directives and **skips a rule that has none rather than guessing**.
+
+  **Proven live:** the `context` stage now reports
+  `style grammar STYLE_GRAMMAR_V1:full with 10 rule(s)` on pop-full, 11 on
+  jazz-full, 10 on orchestral-midi. Before this it was an empty slot every time.
+
+  **And it changed nothing in the output — for a reason worth recording.** The
+  A/B numbers are identical to the previous run. The synthesised corpus is
+  perfectly quantised: measured `swingRatio` 0.5, `microtimingMs` 0. Q-02 drops
+  both as too close to neutral to become instructions, exactly as designed —
+  emitting a weak swing rule from a 0.5 ratio makes every song slightly swung.
+  The 10–11 surviving rules are register, density and harmonic rhythm, which the
+  groove pass does not act on. **A perfectly quantised song has no groove to
+  imitate, and leaving it alone is the correct behaviour.**
+
+  Suites: contextAwareComposer 16 (1 new: a rule without a directive is skipped,
+  not parsed), arrangementOrchestrator 13 (2 new: the grammar is derived; an
+  explicit empty slot suppresses derivation), styleGrammar 9,
+  contextAwareBenchmark 5, partGenerationContextV2 11; typecheck green.
+
+  **Honest limits.** This makes the grammar reach the composer; it does not make
+  the arrangement better — `do_not_promote` is unchanged. **The groove half of
+  Q-02 cannot be measured on this corpus at all**; its correctness rests on a
+  unit test, not a benchmark run. It needs recorded human performance, where
+  microtiming and swing are not zero by construction — which is Q-00.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

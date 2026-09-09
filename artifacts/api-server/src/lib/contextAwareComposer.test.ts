@@ -73,7 +73,15 @@ test("locked time is cleared and the producer's notes come back byte for byte", 
     requestV2({
       lockedMaterial: lockedMaterialFrom([kept], "producer kept the hook"),
       // A grammar and a plan that would otherwise move things.
-      styleGrammar: { status: "available", version: "v:full", rules: [{ id: "microtiming", description: "sit behind the grid by 20 ms", weight: 1 }] },
+      styleGrammar: {
+        status: "available", version: "v:full",
+        rules: [{
+          id: "microtiming",
+          description: "sit behind the grid by 20 ms",
+          weight: 1,
+          directive: { kind: "microtiming", offsetMs: 20 },
+        }],
+      },
     }),
     [note(0, 1, 60), note(1.2, 0.5, 65), note(3, 1, 67)],
   );
@@ -172,7 +180,12 @@ test("swing moves the off-beat and leaves the downbeat where it was", () => {
     requestV2({
       styleGrammar: {
         status: "available", version: "v:full",
-        rules: [{ id: "swing", description: "place off-beat subdivisions at a 0.66 swing ratio", weight: 1 }],
+        rules: [{
+          id: "swing",
+          description: "place off-beat subdivisions at a 0.66 swing ratio",
+          weight: 1,
+          directive: { kind: "swing", ratio: 0.66 },
+        }],
       },
     }),
     [note(0, 0.25, 60), note(0.25, 0.25, 62), note(0.5, 0.25, 64)],
@@ -267,6 +280,23 @@ test("a re-voiced bed thicker than the instrument allows is thinned to its top n
   assert.ok(sounding.length <= 2, `a 2-note instrument cannot sound ${sounding.length} notes at once`);
   assert.ok(sounding.every((n) => n.pitch >= 64), "the lowest of the stack was dropped, the top line kept");
   assert.ok(passOf(result, "hard-constraints").changed >= 2);
+});
+
+test("a groove rule without a directive is skipped, not parsed out of its prose", () => {
+  const result = composeWithContext(
+    requestV2({
+      styleGrammar: {
+        status: "available", version: "v:full",
+        // An older grammar that carries only English. Reading "0.66" back out of
+        // it is exactly the misreading the directive field exists to prevent.
+        rules: [{ id: "swing", description: "place off-beat subdivisions at a 0.66 swing ratio", weight: 1 }],
+      },
+    }),
+    [note(0, 0.25, 60), note(0.25, 0.25, 62)],
+    { beatSeconds: 0.5 },
+  );
+  assert.equal(passOf(result, "groove").changed, 0);
+  assert.deepEqual(result.notes.map((n) => n.start), [0, 0.25], "nothing moved on a guess");
 });
 
 test("a drum is not a pitch: a kick at MIDI 36 is not a unison with a bass note", () => {

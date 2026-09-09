@@ -45,6 +45,8 @@ import { composeReferencePart, REFERENCE_PART_COMPOSER } from "./referencePartCo
 import { upgradePartGenerationRequest, type HarmonyPlanSlot, type StyleGrammarSlot } from "./partGenerationContextV2";
 import { composeWithContext, type ComposePass } from "./contextAwareComposer";
 import { harmonyPlanSlot, solveVoiceLeading } from "./voiceLeading";
+import { deriveStyleGrammar, styleGrammarSlot } from "./styleGrammar";
+import { deriveStyleFingerprint } from "./styleFingerprint";
 
 export const ORCHESTRATOR_VERSION = "1.0" as const;
 const METHOD = "arrangement-orchestrator/v1";
@@ -127,7 +129,12 @@ export type OrchestrateInput = {
    * level Wave Q binds every release to.
    */
   contextAware?: boolean;
-  /** Q-02. Absent leaves the grammar slot explicitly empty rather than guessed. */
+  /**
+   * Q-02. Absent means "derive one from this Song Model" on the context-aware
+   * path — the song's own behaviour is the best available description of its
+   * style, and leaving the slot empty silently disabled the groove pass.
+   * Pass an explicit `not_available` slot to suppress that derivation.
+   */
   styleGrammar?: StyleGrammarSlot;
 };
 
@@ -168,6 +175,39 @@ function harmonyPlanFor(songModel: SongModelData): HarmonyPlanSlot {
     return { status: "not_available", reason: "no chord fell inside a bar of this Song Model" };
   }
   return harmonyPlanSlot(solveVoiceLeading({ chords: progression }));
+}
+
+/**
+ * The style grammar for this song, derived from its own behaviour (Q-02).
+ *
+ * The fingerprint is content-free by construction, so nothing about the song's
+ * actual notes travels into the grammar — only how it behaves. A song with no
+ * strong behaviour yields an empty grammar, and the slot says so rather than
+ * inventing a character the song never had.
+ */
+function styleGrammarFor(
+  songModel: SongModelData,
+  tempoBpm: number,
+  meter: string,
+  sourceId: string,
+): StyleGrammarSlot {
+  try {
+    const fingerprint = deriveStyleFingerprint({
+      // The song being arranged is the reference for its own style.
+      source: { kind: "song_model", id: sourceId, version: null },
+      songModel,
+      tempoBpm,
+      meter,
+    });
+    return styleGrammarSlot(deriveStyleGrammar(fingerprint));
+  } catch (error) {
+    // A fingerprint that cannot be taken is a missing grammar, not a crash in
+    // the middle of an arrangement.
+    return {
+      status: "not_available",
+      reason: `no style fingerprint could be taken: ${error instanceof Error ? error.message : "unknown"}`,
+    };
+  }
 }
 
 /**
@@ -298,14 +338,25 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
   // same chord differently are not voicing the same chord.
   const beatSeconds = 60 / Math.max(1, tempoBpm);
   const harmonyPlan = input.contextAware ? harmonyPlanFor(songModel) : undefined;
+  // The song's own behaviour is the best available description of its style.
+  // Deriving it here is what makes the groove pass run at all; before this the
+  // slot arrived empty from every caller and the pass silently did nothing.
+  const styleGrammar = input.contextAware
+    ? input.styleGrammar ?? styleGrammarFor(songModel, tempoBpm, meter, plan.id)
+    : undefined;
   const contextPasses: ComposePass[] = [];
   if (input.contextAware) {
     record(
       "context",
       harmonyPlan?.status === "available" ? "ok" : "skipped",
-      harmonyPlan?.status === "available"
-        ? `voicing plan solved (${harmonyPlan.version})`
-        : `no voicing plan: ${harmonyPlan?.status === "not_available" ? harmonyPlan.reason : "not requested"}`,
+      [
+        harmonyPlan?.status === "available"
+          ? `voicing plan solved (${harmonyPlan.version})`
+          : `no voicing plan: ${harmonyPlan?.status === "not_available" ? harmonyPlan.reason : "not requested"}`,
+        styleGrammar?.status === "available"
+          ? `style grammar ${styleGrammar.version} with ${styleGrammar.rules.length} rule(s)`
+          : `no style grammar: ${styleGrammar?.status === "not_available" ? styleGrammar.reason : "not requested"}`,
+      ].join("; "),
     );
   }
 
@@ -334,7 +385,7 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
       if (input.contextAware) {
         const upgraded = upgradePartGenerationRequest(request, {
           siblings,
-          styleGrammar: input.styleGrammar,
+          styleGrammar,
           harmonyPlan,
         });
         const result = composeWithContext(upgraded, notes, { beatSeconds });
