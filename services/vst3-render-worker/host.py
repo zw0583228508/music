@@ -15,6 +15,7 @@ import json
 import math
 import os
 import platform
+import re
 import struct
 import sys
 import wave
@@ -102,17 +103,55 @@ class PluginIdentity:
         return {**asdict(self), "identity": self.identity}
 
 
-def load_instrument(path: str | Path, preset_path: str | Path | None = None):
-    """Load a VST3 instrument; returns (plugin, PluginIdentity). Raises if the
-    plugin is not an instrument -- an effect cannot realize a TrackModel."""
+_MULTI_PLUGIN_RE = re.compile(r'contains \d+ plugins.*?following values:\s*(.*)', re.S)
+
+
+def plugin_names_in_error(message: str) -> list[str]:
+    """pedalboard refuses a binary that exports several plugins (sfizz ships
+    `sfizz` and `sfizz-multi` in one file) and lists their names in the
+    error. Parse them so a caller can pick one without guessing."""
+    match = _MULTI_PLUGIN_RE.search(message)
+    if not match:
+        return []
+    return re.findall(r'"([^"]+)"', match.group(1))
+
+
+def _load_plugin_binary(binary: Path, plugin_name: str | None):
     from pedalboard import load_plugin
 
+    if plugin_name:
+        return load_plugin(str(binary), plugin_name=plugin_name)
+    try:
+        return load_plugin(str(binary))
+    except ValueError as error:
+        names = plugin_names_in_error(str(error))
+        if not names:
+            raise
+        # A multi-plugin binary with no name chosen: the first exported plugin
+        # is the vendor's primary one (sfizz before sfizz-multi).
+        return load_plugin(str(binary), plugin_name=names[0])
+
+
+def load_instrument(
+    path: str | Path,
+    preset_path: str | Path | None = None,
+    plugin_name: str | None = None,
+    sfz_path: str | Path | None = None,
+):
+    """Load a VST3 instrument; returns (plugin, PluginIdentity). Raises if the
+    plugin is not an instrument -- an effect cannot realize a TrackModel.
+
+    `plugin_name` selects one plugin from a binary that exports several;
+    `sfz_path` hands an SFZ instrument to a sampler (sfizz) through its
+    component state, since a sampler has no file parameter to automate."""
     binary = resolve_plugin_binary(path)
-    plugin = load_plugin(str(binary))
+    plugin = _load_plugin_binary(binary, plugin_name)
     if not getattr(plugin, "is_instrument", False):
         raise ValueError(f"{binary.name} is not an instrument (category {getattr(plugin, 'category', '?')})")
     if preset_path:
         plugin.load_preset(str(preset_path))
+    if sfz_path:
+        load_sfz(plugin, sfz_path)
     try:
         state = bytes(plugin.raw_state)
     except Exception:  # noqa: BLE001 - some plugins expose no state
@@ -129,6 +168,119 @@ def load_instrument(path: str | Path, preset_path: str | Path | None = None):
         state_sha256=hashlib.sha256(state).hexdigest(),
     )
     return plugin, identity
+
+
+def load_asset_instrument(asset: dict):
+    """Load exactly what a manifest asset describes: the binary, one plugin of
+    a multi-plugin binary (`pluginName`), a `.vstpreset` (`presetPath`) and,
+    for a sampler, the SFZ instrument (`sfzPath`). One asset per library: the
+    same sfizz binary attested once per SFZ file, each with its own smoke."""
+    return load_instrument(
+        asset["path"],
+        asset.get("presetPath"),
+        plugin_name=asset.get("pluginName"),
+        sfz_path=asset.get("sfzPath"),
+    )
+
+
+# --- SFZ instruments through the sampler's component state -----------------------
+#
+# sfizz (and Decent Sampler) load their instrument from a file path kept in the
+# VST3 component state; there is no parameter to set and pedalboard exposes no
+# file-open message. pedalboard's `raw_state` is JUCE's getStateInformation():
+# 'VC2!' + little-endian length + '<VST3PluginState><IComponent>N.base64</IComponent>...'
+# where the base64 is JUCE's own alphabet, LSB-first. sfizz's component state
+# (plugins/vst/SfizzVstState.cpp, version 5) starts with the uint64 version and
+# then the SFZ path as an int32-length-prefixed NUL-terminated string; the rest
+# (volume, voices, tuning, controllers) is left exactly as the plugin wrote it.
+
+_JUCE_B64 = ".ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+"
+_JUCE_MAGIC = b"VC2!"
+
+
+def juce_base64_decode(text: str) -> bytes:
+    size_text, dot, payload = text.partition(".")
+    if not dot or not size_text.isdigit():
+        raise ValueError("not a JUCE base64 block (expected '<size>.<data>')")
+    size = int(size_text)
+    out = bytearray(size)
+    total_bits = size * 8
+    for index, char in enumerate(payload):
+        value = _JUCE_B64.index(char)
+        for bit in range(6):
+            k = index * 6 + bit
+            if k >= total_bits:
+                break
+            if (value >> bit) & 1:
+                out[k >> 3] |= 1 << (k & 7)
+    return bytes(out)
+
+
+def juce_base64_encode(data: bytes) -> str:
+    size = len(data)
+    total_bits = size * 8
+    chars = []
+    for index in range(((size << 3) + 5) // 6):
+        value = 0
+        for bit in range(6):
+            k = index * 6 + bit
+            if k < total_bits and (data[k >> 3] >> (k & 7)) & 1:
+                value |= 1 << bit
+        chars.append(_JUCE_B64[value])
+    return f"{size}." + "".join(chars)
+
+
+def unwrap_component_state(raw: bytes) -> tuple[str, bytes]:
+    """JUCE state blob -> (xml text, decoded IComponent bytes)."""
+    if raw[:4] != _JUCE_MAGIC or len(raw) < 8:
+        raise ValueError("plugin state is not a JUCE VST3PluginState block")
+    (length,) = struct.unpack_from("<I", raw, 4)
+    xml = raw[8:8 + length].rstrip(b"\0").decode("utf-8")
+    match = re.search(r"<IComponent>([^<]*)</IComponent>", xml)
+    if not match:
+        raise ValueError("plugin state carries no IComponent chunk")
+    return xml, juce_base64_decode(match.group(1))
+
+
+def wrap_component_state(xml: str, component: bytes) -> bytes:
+    new_xml = re.sub(r"<IComponent>[^<]*</IComponent>", f"<IComponent>{juce_base64_encode(component)}</IComponent>", xml, count=1)
+    body = new_xml.encode("utf-8") + b"\0"
+    return _JUCE_MAGIC + struct.pack("<I", len(body)) + body
+
+
+def sfizz_state_sfz_path(component: bytes) -> str:
+    """The SFZ path an sfizz component state names ('' when none)."""
+    if len(component) < 13:
+        raise ValueError("sfizz component state is too short")
+    (length,) = struct.unpack_from("<i", component, 8)
+    if length < 1 or 12 + length > len(component):
+        raise ValueError("sfizz component state has a malformed path string")
+    return component[12:12 + length - 1].decode("utf-8")
+
+
+def sfizz_state_with_sfz(component: bytes, sfz_path: str | Path) -> bytes:
+    """Replace the SFZ path in an sfizz component state, keeping everything
+    else byte-for-byte (state version first, then the path)."""
+    (length,) = struct.unpack_from("<i", component, 8)
+    sfizz_state_sfz_path(component)  # validates the layout
+    encoded = str(sfz_path).replace("\\", "/").encode("utf-8")
+    return component[:8] + struct.pack("<i", len(encoded) + 1) + encoded + b"\0" + component[12 + length:]
+
+
+def load_sfz(plugin, sfz_path: str | Path) -> str:
+    """Point a loaded sfizz instance at an SFZ file through its state and
+    confirm the plugin now names that file. sfizz loads it synchronously in
+    freewheeling (offline) mode, which is how pedalboard renders."""
+    target = Path(sfz_path)
+    if not target.is_file():
+        raise FileNotFoundError(f"SFZ instrument {target} is missing")
+    xml, component = unwrap_component_state(bytes(plugin.raw_state))
+    plugin.raw_state = wrap_component_state(xml, sfizz_state_with_sfz(component, target))
+    _, after = unwrap_component_state(bytes(plugin.raw_state))
+    loaded = sfizz_state_sfz_path(after)
+    if Path(loaded) != Path(str(target).replace("\\", "/")):
+        raise RuntimeError(f"sampler did not take the SFZ path (state names {loaded!r})")
+    return loaded
 
 
 # --- rendering -----------------------------------------------------------------
@@ -312,6 +464,13 @@ def verify_one_asset(asset: dict) -> list[str]:
     preset = asset.get("presetPath")
     if preset and not Path(preset).is_file():
         problems.append(f"asset {label}: preset {preset} is missing")
+    sfz = asset.get("sfzPath")
+    if sfz and not Path(sfz).is_file():
+        problems.append(f"asset {label}: SFZ instrument {sfz} is missing")
+    elif sfz and asset.get("sfzSha256"):
+        actual_sfz = sha256_file(Path(sfz))
+        if actual_sfz.lower() != asset["sfzSha256"].lower():
+            problems.append(f"asset {label}: SFZ file digest {actual_sfz[:12]} does not match manifest {asset['sfzSha256'][:12]}")
     return problems
 
 
@@ -334,7 +493,7 @@ def asset_public_fields(asset: dict) -> dict:
     are informational; the routing and sound-selection decisions are the
     API's."""
     public = {key: asset[key] for key in ("id", "identity", "sha256", "licenseOwner", "licenseReference", "rendererIdentity", "rendererSha256")}
-    for hint in ("name", "manufacturer", "families", "roles", "character"):
+    for hint in ("name", "manufacturer", "families", "roles", "character", "library", "sfzSha256"):
         if hint in asset:
             public[hint] = asset[hint]
     return public

@@ -91,7 +91,7 @@ def _load_asset(runtime: Runtime, asset: dict) -> LoadedAsset:
     cached = runtime.loaded.get(asset["id"])
     if cached:
         return cached
-    plugin, identity = host.load_instrument(asset["path"], asset.get("presetPath"))
+    plugin, identity = host.load_asset_instrument(asset)
     if identity.identity != asset["identity"]:
         raise RuntimeError(f"loaded plugin identity {identity.identity} does not match manifest {asset['identity']}")
     entry = LoadedAsset(asset=asset, plugin=plugin, identity=identity)

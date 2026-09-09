@@ -59,7 +59,7 @@ def is_drum_asset(asset: dict) -> bool:
 
 def smoke_asset(asset: dict) -> dict:
     t0 = time.time()
-    plugin, identity = host.load_instrument(asset["path"], asset.get("presetPath"))
+    plugin, identity = host.load_asset_instrument(asset)
     load_seconds = time.time() - t0
     if identity.identity != asset["identity"]:
         raise SystemExit(f"loaded {identity.identity}, manifest says {asset['identity']}")
