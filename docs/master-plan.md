@@ -34,6 +34,56 @@ PerformanceData` — never an audio generator.
 | Quality gate B (musical) | ✅ critics pass, no illegal notes; benchmark `playabilityErrors` back to 0 on every case (PR-33) |
 | Quality gate C (human) | 🟡 **operable, not passed**: the listening room (PR-34) serves blind A/B with votes, Elo and an explicit verdict (≥ 5 independent raters, ≥ 60 % release share); no real listener has rated yet |
 
+## Where the plan stands — 2026-09-09
+
+**Every PR in this plan is merged.** PR-00…PR-35 and PR-U1…PR-U6: the brain,
+generation and critique, sound, end to end, models as tools, production
+quality, the learning system, and Wave U's universal producer intelligence.
+530 unit tests pass, `pnpm run typecheck` is green, and every merged PR left
+live evidence under `docs/evidence/` (20 files).
+
+**What is proven, on this machine, against Neon:**
+
+- **The Definition of Done, on a real upload with no GPU worker** (PR-32):
+  upload → local analysis → the producer verifies the sketch in the Song Model
+  editor (confidence 0.44 → 0.84) → the Arrangement Brain's candidates →
+  selection → Mix Brain → approved revision → mastered STREAMING export → an
+  81.2 MB bundle marked `production-ready`. Every step saved, versioned,
+  editable, repeatable, traceable.
+- **The benchmark** (PR-33): 9 cases × 5 candidates, `playabilityErrors` **0**
+  on every case, criticScore 74.56, harmonyScore 58.33.
+- **A conversation that changes the music** (PR-U1…U6): the producer writes in
+  Hebrew or English; the platform reads it, asks at most two questions that
+  would materially change the arrangement, researches the world it was told
+  about, borrows from a reference only inside the scope it was allowed,
+  executes an edit within locks (553 notes kept verbatim, 532 locked notes
+  verified byte-identical), remembers what is true of the producer across
+  projects, and can say why it did any of it.
+
+**What is not done, stated plainly:**
+
+1. **Nobody has listened.** Gate C is *operable* (PR-34's blind A/B room with
+   votes, Elo and an explicit verdict) and *not passed*: the only "raters" so
+   far are one person on one machine proving the mechanics. The plan's central
+   KPI — how often the new brain beats the previous one in blind human
+   evaluation — has no answer yet.
+2. **The benchmark corpus is synthesised**, not recorded. It is licence-clean,
+   deterministic, and exactly the kind of music this pipeline finds easy. A
+   real recorded corpus will score lower.
+3. **A local install is thin.** With no GPU worker there is no chord, melody
+   or bass provider, so the Brain arranges from tempo, energy and form alone
+   (2 tracks in the DoD run, not an ensemble), and the local analysis is a
+   sketch the producer must correct. Magenta RT2 is deployed on Modal as
+   SHADOW_READY; MIDI-RWKV is BLOCKED_LICENSE.
+4. **`YOUR_ARRANGER_MODEL` is neutral.** The training loop, the benchmark gate
+   and the refusal to promote all work; the platform's two consented events
+   decide nothing, so the learned policy is identical to the reference
+   pipeline and says so.
+5. **Three benchmark numbers remain unearned** — `sectionConsistency` 100 on
+   every case, `candidateDiversity` ≈ 50.4 with almost no spread, `audioScore`
+   87–93 while symbolic sits at 71–77. `harmonyScore` 58 is the honest number
+   and the clearest target.
+
 ## PR progress (merged to `main`)
 
 - **PR-00** (#1) ✅ — local dev harness: filesystem object storage, `/api/dev-login`,
