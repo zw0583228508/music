@@ -36,6 +36,12 @@ const suites = {
         "part-generation-context-v2.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q: the passes that actually consume the Q-02/Q-03/Q-04 context.
+      [
+        "src/lib/contextAwareComposer.test.ts",
+        "context-aware-composer.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // Wave Q, Q-02: statistics turned into instructions a composer can follow.
       [
         "src/lib/styleGrammar.test.ts",
