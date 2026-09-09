@@ -298,6 +298,10 @@ export function styleGrammarSlot(grammar: StyleGrammar): StyleGrammarSlot {
       id: rule.id,
       description: rule.description,
       weight: rule.weight,
+      // The half a pass acts on. Without it the groove pass had to read the
+      // swing ratio back out of English, which is a contract asking to be
+      // misread.
+      directive: rule.directive,
     })),
   };
 }

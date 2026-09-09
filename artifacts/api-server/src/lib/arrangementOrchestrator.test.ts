@@ -194,6 +194,24 @@ test("contextAware produces a different arrangement from the default path", () =
   assert.ok(plainNotes !== awareNotes || plainPitches !== awarePitches, "the context passes had an audible effect");
 });
 
+test("contextAware derives a style grammar from the song instead of leaving the slot empty", () => {
+  const result = orchestrateArrangement({
+    songModel: makeModel(), candidateCount: 1, render: false, now: NOW, contextAware: true,
+  });
+  const context = result.stages.find((s) => s.stage === "context")!;
+  assert.match(context.detail, /style grammar STYLE_GRAMMAR_V1:(full|thin) with \d+ rule\(s\)/,
+    "the song's own behaviour is the description of its style");
+});
+
+test("an explicit empty grammar suppresses the derivation rather than being overridden", () => {
+  const result = orchestrateArrangement({
+    songModel: makeModel(), candidateCount: 1, render: false, now: NOW, contextAware: true,
+    styleGrammar: { status: "not_available", reason: "caller says so" },
+  });
+  const context = result.stages.find((s) => s.stage === "context")!;
+  assert.match(context.detail, /no style grammar: caller says so/);
+});
+
 test("contextAware records why there is no voicing plan when the model has no chords", () => {
   const model = makeModel();
   const noChords: SongModelData = { ...model, chords: [] };

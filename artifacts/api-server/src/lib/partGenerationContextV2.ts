@@ -474,9 +474,26 @@ export function candidateStrategy(seed: number, count = 3): CandidateStrategy {
 // The slots Q-02 and Q-04 will fill
 // ---------------------------------------------------------------------------
 
+/**
+ * A rule as a composer receives it.
+ *
+ * `directive` is the machine-readable half and is what a pass acts on. It was
+ * added because the first version carried only a description, and the groove
+ * pass had to parse the swing ratio back out of English prose — which is a
+ * contract asking to be misread. `description` stays, for a decision ledger and
+ * for anything a human reads.
+ */
+export type StyleGrammarRule = {
+  id: string;
+  description: string;
+  weight: number;
+  /** Absent only for a rule whose directive kind a reader does not know. */
+  directive?: unknown;
+};
+
 export type StyleGrammarSlot =
   | { status: "not_available"; reason: string }
-  | { status: "available"; version: string; rules: Array<{ id: string; description: string; weight: number }> };
+  | { status: "available"; version: string; rules: StyleGrammarRule[] };
 
 export type HarmonyPlanSlot =
   | { status: "not_available"; reason: string }
