@@ -176,6 +176,9 @@ router.get("/listening-sessions/:sessionId", async (req, res): Promise<void> => 
     sessionId: row.id,
     title: row.title,
     status: row.status,
+    kind: row.sides.kind ?? "candidates",
+    // Tournament sessions: the one question every pair must answer. Its text names no arm.
+    primaryQuestion: row.sides.tournament?.primaryQuestion,
     ...raterView(row, req.user.id),
     yourVotes: mine.map((vote) => ({ pairId: vote.pairId, question: vote.question, winnerToken: vote.winnerToken })),
   }));

@@ -5,6 +5,7 @@ import {
   getListListeningSessionsQueryKey,
   useCloseListeningSession,
   useCreateListeningSession,
+  useCreateTournamentListeningSession,
   useListListeningSessions,
   type GenerationCandidate,
   type ListeningSession,
@@ -43,6 +44,13 @@ export function ListeningRoomCard({ projectId, candidates }: { projectId: string
   const invalidate = () => queryClient.invalidateQueries({ queryKey: getListListeningSessionsQueryKey(projectId) });
   const create = useCreateListeningSession({ mutation: { onSuccess: () => { void invalidate(); toast({ title: "Listening session opened", description: "Hand the rater link to people who have not seen the candidates." }); }, onError: (error) => toast({ title: "Could not open the session", description: (error as { message?: string })?.message ?? "Unknown error", variant: "destructive" }) } });
   const close = useCloseListeningSession({ mutation: { onSuccess: () => void invalidate() } });
+  const [evidenceFile, setEvidenceFile] = useState<string>("model-tournament-live.json");
+  const createTournament = useCreateTournamentListeningSession({
+    mutation: {
+      onSuccess: (session) => { void invalidate(); toast({ title: "Tournament session opened", description: `${session.pairs.length} blind pairs, rendered and ready to rate.` }); },
+      onError: (error) => toast({ title: "Could not open the tournament session", description: (error as { message?: string })?.message ?? "Unknown error", variant: "destructive" }),
+    },
+  });
 
   const leftCandidate = audible.find((c) => c.id === leftId);
   const rightCandidate = audible.find((c) => c.id === rightId);
@@ -72,6 +80,22 @@ export function ListeningRoomCard({ projectId, candidates }: { projectId: string
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="flex flex-col gap-2 rounded-md border border-dashed bg-muted/10 p-3 sm:flex-row sm:items-center" data-testid="tournament-listening">
+          <div className="min-w-0 flex-1">
+            <div className="text-xs font-medium">Wave Q tournament pairs</div>
+            <p className="text-xs text-muted-foreground">Draw 50 balanced blind pairs from a tournament report (five comparisons, every instrument family), rendered with the reference synth. One question per pair; your answers save as you go.</p>
+          </div>
+          <Input value={evidenceFile} onChange={(event) => setEvidenceFile(event.target.value)} className="sm:max-w-[260px]" aria-label="Tournament evidence file" />
+          <Button
+            size="sm"
+            disabled={createTournament.isPending || !/^[a-z0-9][a-z0-9-]*\.json$/.test(evidenceFile)}
+            onClick={() => createTournament.mutate({ projectId, data: { evidenceFile, size: 50 } })}
+            data-testid="open-tournament-session"
+          >
+            {createTournament.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Ear className="mr-2 h-4 w-4" />}
+            Load tournament pairs
+          </Button>
+        </div>
         {audible.length < 2 ? (
           <p className="text-xs text-muted-foreground">At least two candidates with a rendered evaluation are needed. Generate candidates first.</p>
         ) : (

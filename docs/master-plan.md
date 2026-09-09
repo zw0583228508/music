@@ -2685,6 +2685,381 @@ any of it.
   and says so; a non-classical slice, at least one rated session, and the
   measured cost of a LoRA pilot are named as what makes it final.
 
+- **PR-64** ✅ — `conditioning-and-training-strategy-study` (Wave Q — Model
+  Discovery, workstreams F + H): **how `PartGenerationRequestV2` should reach a
+  note generator, and which training strategy to follow** — two studies with
+  evidence, one data artefact with tests. Documents:
+  `docs/model-discovery/conditioning-study.md`,
+  `docs/model-discovery/training-strategy.md` (pointers appended to
+  `decision-report.md` §6). Code: `artifacts/api-server/src/lib/conditioningMap.ts`.
+
+  **What was built.** `conditioningMap.ts` enumerates every field of the V2
+  request **from the types** — 201 paths (118 V1, 83 V2; 147 musical, 54
+  provenance) — and classifies each for eight approaches (CA2 as-is,
+  vocabulary extension, structured prefix, side encoder, adapter
+  conditioning, cross-attention, control tokens, post-generation) with one of
+  eight dispositions, each cell naming its mechanism; every field carries how
+  its label would come out of PDMX (`automatic` 67, `proxy` 53, `none` 25,
+  `not_a_label` 56). `completeConditioningMap()` mirrors PR-56's
+  `completeDispositions`: a silent cell is "treated as dropped", never
+  supported; a test walks a fully populated request and fails on any property
+  with no field path. CA2's conditioning surface is data, read from its
+  vendored source: the 1,944-token vocabulary family by family, the **49
+  assigned `;<instruction_k>` ids** (what each measures, how it is computed
+  from the target, where it is placed, how often training carried it), and
+  the slicers. `expressV2InCa2Vocabulary()` turns a V2 request into CA2's own
+  instruction strings with the exact ids `encoding_functions.py` assigns —
+  loose note bounds, density/polyphony/contour/irregularity bins, per-measure
+  loudness from energy and the grammar's arc, `is_not_octave_same`, locked
+  bars unmasked, a chord-tone guide track and a voice track — with an
+  `expressed`/`omitted` account.
+
+  **Findings.** (1) **The platform has never sent CA2 an instruction**: the
+  deployed worker passes empty `track_measure_commands` and `commands_at_end`
+  and pins every masked measure's loudness to level 5, so the 36 tournament
+  inferences were unconditioned infills; PR-56's "received as
+  lowest/highest_note_strict" described the capability, not the wire — and
+  strict bounds meant the *true* extremes in training, so the playable range
+  must go in as **loose** bounds with the clamp kept as a guarantee. (2) CA2
+  has **592 untrained embedding rows already in its vocabulary** (463 spare
+  instruction ids, 129 spare `;I:` ids): vocabulary extension without a
+  resize. (3) By the map, **103 of 147 musical fields (70 %) are expressible
+  with zero new tokens and zero training; 136 (93 %) after a LoRA that
+  teaches spare ids.** (4) Four style-grammar directives are CA2's own
+  measurements (onsets per quarter, step share, notes per bar, register) —
+  a stated refinement of PR-56's "styleGrammar unsupported", pinned by a test.
+  (5) Fields PDMX cannot label — section function, phrase role, song arc,
+  transition devices, aesthetic — need a label source before a token; no
+  approach learns them from PDMX.
+
+  **Recommendations.** *Conditioning:* not vocabulary extension first. Step 1
+  is a **$0 falsifier** — a `+PREFIX` tournament arm on the same 12 tasks × 3
+  seeds with control-accuracy columns (hypothesis: CA2's instruction channel
+  controls density/register/polyphony/contour/energy; falsified by
+  chance-level control accuracy or no movement in playability/proxy → go to a
+  second encoder for sequence fields); step 2 a **LoRA over spare ids**
+  (≤ $120, approval) as the prefix language for role, next-section approach,
+  harmony/voicing guides and motif quotes; the passes stay as the guarantee
+  layer; a side encoder / second encoder only for a measured gap on weights /
+  sequences; real vocabulary extension only if spare ids run out.
+  *Training:* **K — one global foundation + LoRA specialists, with CA2 as the
+  foundation**, reached as LoRA pilot → reward-model v0 on the unrated blind
+  pairs → continued pretraining of CA2 on **all** PDMX (the single-track 91 %
+  is where the non-classical share lives) + re-fine-tune → family LoRAs
+  (strings, brass first) → DPO; from-scratch `ARRANGER_FM` only if that
+  plateaus (≈ 1 B mostly single-track tokens is thin for 300 M; 10–30× the
+  cost before a first benchmark). Distillation/multi-teacher blocked for
+  shipping by `teacherOutputsNeedReview` (only CA2's outputs are clean). All
+  costs priced from Modal list prices with the assumptions stated (6·N·T,
+  30 % MFU; floor vs realistic). **Proposed change to the plan's order:**
+  `ARRANGER_FM_V1` (CA2-derived; `ARRANGER_REMI` stays the dataset/interchange
+  format, CA2's encoding the model vocabulary) → `MUSIC_REWARD_MODEL_V1` v0 →
+  instrument-expert LoRA → DPO → `HARMONY_MODEL_V1` → `PERFORMANCE_MODEL_V2`.
+
+  Suites: conditioningMap 12 (registered in the focused runner); typecheck
+  green (after `tsc --build` of the workspace libs in the worktree).
+
+  **Honest limits.** The 70 % / 93 % figures count fields, not whether the
+  model *follows* them — only the $0 experiment converts expressibility into
+  control, and it has not run. CA2's control accuracy is reported in its
+  paper, not reproduced here. The loose-bound distribution shift (training
+  bounds were within 7 semitones of the truth; ours are wider) is the main
+  risk to the cheapest path. PDMX's token count is an estimate; every cost is
+  order-of-magnitude until the first Modal training job. All tournament
+  evidence is classical; nothing speaks to pop, dance or Mizrahi yet. Sources
+  are cited with arXiv ids in both documents; "measured here", "reported in
+  the literature" and "our estimate" are kept apart.
+- **PR-68** ✅ — `tournament-listening-room` (Wave Q — Workstream A): **the
+  tournament's blind pairs are in the Listening Room, rendered, and rateable.**
+  The proxy judge stops being the only evaluator. Evidence:
+  `docs/evidence/tournament-listening-live.json`.
+
+  **What was built.** `tournamentListening.ts` draws a **balanced, stratified**
+  session from a tournament report: the five comparisons the owner asked for
+  (human vs CA2+CTX, CA2+CTX vs reference, CA2 raw vs CA2+CTX, human vs
+  reference, context-aware vs CA2+CTX), 10 pairs each, round-robin over
+  instrument family and task, seeds rotated, comparison types **interleaved**
+  so the session never reads as blocks, and the A/B orientation decided per
+  pair by hash. `tournamentAudio.ts` renders both sides of a pair through the
+  platform's own `REFERENCE_SYNTH_V1` — every context track plus the held-out
+  part as that arm wrote it, candidate 1.35× forward, peak-normalised — so a
+  rater compares **notes, not sound design**, and the human part gets no
+  acoustic advantage. `routes/listeningTournament.ts` opens the session
+  (owner-only, evidence file by basename, refuses a pair whose two sides render
+  to identical bytes) and exports every vote as a **reward-model preference
+  record**. The rater page became a one-pair-at-a-time flow: one primary
+  question, optional secondary ratings behind a toggle, keyboard A/B and
+  arrows, answers saved as they are given.
+
+  **What ran.** From `model-tournament-live.json`: **50 pairs, 100 renders,
+  3 min 18 s**, session `6d5abb08` at `/listen/6d5abb08-…`; families bass 8,
+  keys 10, strings 6, brass 10, reed 6, organ 10; first pair 48.6 s per side,
+  4.3 MB of WAV, both players loading in the studio. A live `GET` of the rater
+  view contains **no arm name, no task id, no seed, no storage path**. The vote
+  path was proven on a **separate 10-pair smoke session** (so the owner's
+  session stays unrated) by a second local identity: 10 primary votes + 1
+  secondary → 11 counted votes, per-comparison tallies, **11 preference
+  records** with both arms in comparison order and a salted rater pseudonym,
+  and Gate C correctly refusing at one rater.
+
+  **Policy encoded.** Gate C reads **only** the pairs that put the challenger
+  (CA2+CTX) against the incumbent (REFERENCE_PART_COMPOSER); the other four
+  comparisons inform the decision pack and the reward model but do not gate.
+  The owner's own votes are recorded, shown apart, and excluded from the
+  verdict — the owner is the first rater, not the verdict.
+
+  Suites: tournamentListening 5, tournamentAudio 3, blindListening 8 (existing,
+  still green), modelTournament 13; `pnpm run typecheck` green across the API,
+  the studio and both generated clients.
+
+  **Honest limits.** **Nobody has rated the 50-pair session yet** — that is the
+  owner's next action, and one rater is evidence, not a verdict (Gate C needs
+  five and a 60 % share). All 50 pairs are classical PDMX; the non-classical
+  session waits on Workstream B. The renderer is a deterministic synth, fair
+  across arms and not what a producer would ship. Opening a session renders
+  in-process at ~2 s per side: fine for 50 pairs, not for thousands.
+
+- **PR-67** ✅ — `long-form-arrangement-study` (Wave Q — Workstream J,
+  long-form musical intelligence): **whole-song coherence, measured** —
+  the survey, an unsupervised form segmentation run on 6,000 admitted PDMX
+  works, and a coherence metric that catches "pasted windows" on real music.
+  Report: `docs/model-discovery/long-form-study.md`. Evidence:
+  `docs/evidence/form-profile.json`, `docs/evidence/coherence-metric-live.json`.
+
+  **Why.** CA2 sees ≤ 1650 tokens — a handful of measures — and nothing
+  outside its window; the tournament judges 8-bar windows. An arrangement
+  that is twenty good windows is still twenty windows. Before a section-level
+  task can be trained or a multi-window output judged, two things had to
+  exist: a way to say where a score's sections are (PDMX carries no labels)
+  and a number that drops when windows are pasted.
+
+  **Survey** (§2 of the report, every claim cited): hierarchical generation
+  (MusicFrameworks, MELONS, MeloForm, whole-song cascaded diffusion),
+  structure-aware attention (Museformer), compact multitrack tokens (Compound
+  Word, PopMAG/MuMIDI, Multitrack Music Transformer, SymphonyNet), long
+  context (FlashAttention, RoPE/ALiBi/PI/YaRN, Anticipatory MT) and why a
+  `MAX_LEN` increase on a T5 is cheap in code and expensive in meaning
+  (relative-position buckets), memory across windows (Transformer-XL,
+  Compressive, Memorizing, RMT), explicit musical memory (Theme Transformer,
+  MuseCoco attribute prefixes, NotaGen's hierarchical patches, CA2's own
+  per-measure controls). Each rated for what it buys, its cost, CA2-fit vs
+  from-scratch fit, and how it consumes the platform's existing
+  section/phrase/transition plans. §3 covers the owner's section list and the
+  non-pop forms (binary/ternary, sonata, rondo, variations, head–solos–head,
+  EDM build/drop, film cue arcs, through-composed) as plan quantities.
+
+  **Form segmentation** — `formSegmentation.ts` (13 tests): bar features
+  (pitch-class histogram, onset positions, track on/off, density, register) →
+  cosine self-similarity → Foote novelty → boundaries → letters by
+  aligned-diagonal similarity (A / A' / B), plus a segmentation-free diagonal
+  repeat detector, intro/outro heuristics, ensemble and density arcs, and
+  four-note motif recurrence via `buildMotifMemory`'s own cell key. Metre
+  changes honoured; any time unit (MIDI ticks or the platform's seconds).
+  `scripts/profile-form.mjs` ran it on **6,000 admitted works** (rights
+  subset ∩ our gate; 0 parse failures; median 2 ms/work): median **4
+  sections** per work, median section **8 bars** (modes at 4 and 8), 51.5 %
+  of works repeat a section by label and **86 % contain a ≥ 4-bar repeated
+  passage**, 9.7 % open intro-like and 9.7 % close outro-like, density peaks
+  mid-form (arch 29 %, flat 37 %), and — the finding for the data factory —
+  the ensemble changes at only **25.5 % of boundaries** and is *flat* in 68 %
+  of multitrack works: orchestration-driven form is what PDMX's classical
+  share barely contains. 8.8 % of works have ≥ 2 families (PR-53's 9 %, on a
+  new sample), i.e. ≈ 19–20k works × 4 sections of section-level tasks.
+
+  **Coherence metric** — `coherenceMetric.ts` (11 tests): five components —
+  seam artefacts (bar-to-bar jumps in register, density, pitch classes,
+  melodic leap and note cuts *at the 8-bar grid vs elsewhere*, with a 4-bar
+  offset control grid, half ensemble mean / half worst track), harmonic
+  agreement with siblings, instrumentation continuity (re-entries no boundary
+  or ensemble move explains — and a form computed from the same notes may not
+  explain them, or the glitch explains itself), trajectory smoothness + plan
+  adherence, motif recurrence. Calibration set on 100 human works before any
+  synthetic comparison. `scripts/validate-coherence-metric.mjs` scored **400
+  admitted multitrack works** as written, with one track's 8-bar windows
+  shuffled, and with every track's windows shuffled: human **70.6 ± 13.3**
+  vs 62.5 vs 55.8; **paired win rate 91.9 % / 95.4 %** (paired effect size
+  1.07 / 1.40, Cohen's d 0.62 / 1.17); seam component alone 82.6 % / 91.1 %;
+  raw seam excess human +0.10 log₂ vs +0.75 fully pasted (1.7× the jump at
+  window lines). Two components honestly do not separate on these
+  constructions (instrumentation continuity; motif recurrence under ensemble
+  shuffle) and are reported as such, not reweighted. Tournament integration
+  documented (§6.3) — Workstream B's files untouched.
+
+  **Recommendation** (§7): keep the rule-derived plan as the brain and make
+  the generator consume it — CA2's existing density/pitch controls and fixed
+  context notes first (zero training), then plan-prefix tokens and a per-track
+  song memory in the vocabulary-extended fine-tune the decision report already
+  schedules; judge every multi-window candidate on the window score *and* the
+  coherence score against the human anchor; do not chase `MAX_LEN`, do not
+  start a from-scratch hierarchical model before the fine-tune has shown
+  whether a section-aware CA2 transfers. The section-level task is specified
+  (target = one family over one detected section; context = the rest of the
+  piece + a song memory + a plan prefix computed from the human score) and the
+  first experiment is "does a section-aware CA2 stop pasting" on 200 such
+  tasks, three arms, zero training.
+
+  Suites: formSegmentation 13, coherenceMetric 11 (registered in
+  `benchmark-corpus`); partGenerationContextV2 11 unchanged; typecheck green.
+  Additive only: no planner, tournament, judge, registry or `services/` file
+  changed.
+
+  **Honest limits.** Segmentation is unsupervised and unvalidated against
+  labelled forms (none exist for PDMX); `A B C …` strings over-count contrast
+  where a musician would hear A A'. The coherence metric is validated against
+  synthetic damage, not against listeners; the plan adherence of human works
+  is 1.0 by construction (their own densities are the plan). Everything
+  measured is classical/early-music PDMX — pop, dance and Mizrahi form
+  behaviour is described from the literature and the planners, not measured.
+  The section-level task extractor and the first experiment are specified, not
+  run; no model consumed a section-level task. Key relationships across
+  sections are not in the feature set.
+
+- **PR-60** ✅ — `global-tournament` (Wave Q — Workstream B): **the tournament
+  has been run on the wider musical world, not just the concert hall** — 50
+  non-classical PDMX tasks across 17 genre families, all five arms, seeds
+  7/11/13, live CA2 inference. Evidence:
+  `docs/evidence/pdmx-genre-profile.json` (what the cleared corpus actually
+  contains, counted over all 254,077 rows),
+  `docs/evidence/model-tournament-global-live.json` (750 entries),
+  `docs/evidence/model-tournament-global-analysis.json` (the slices), and 1,730
+  files under `docs/evidence/tournament-global/` (840 blind pairs, token-named
+  MIDIs, `context-<task>.mid` per task, rater-facing `pairs.json` with no
+  provider names). `docs/evidence/model-tournament-live.json` and
+  `docs/evidence/tournament/` are untouched.
+
+  **What was built.** `pdmxGenre.ts` — genre families over PDMX's own `genres`,
+  `tags` and `groups` columns: 19 MuseScore genre slugs and ~180 tag/group
+  tokens fold into 20 families, matched **exactly** (so `rock` cannot fire on
+  `rockymountainhigh`), a family is only ever *added* by evidence in the row,
+  and a row with no known label is `unlabelled` — never guessed from its
+  instruments or its title. Latin and musical theatre have **no MuseScore genre
+  slug at all** and can only come from tags; the profile says so. `pdmxCsv.ts`
+  now carries `tags`, `groups` and the `tracks` program list through, all
+  optional. `tournamentSelection.ts` — a pure, deterministic round-robin over
+  **genre family first, target family second**, one task per work, with a
+  per-genre cap and a choice of per-genre or shared family cursor; without
+  genres it reduces to the first tournament's family round-robin, which a test
+  pins. `tournamentBreakdown.ts` — the scorecard quantities recomputed per
+  (slice, arm) for genre, target family and their cross product, plus the best
+  non-human arm per slice; nothing is re-judged. `enumerateTaskSpecs` gained
+  `maxPerProgram`: programs are walked in ascending order, so without it a small
+  `maxPerScore` was filled by the piano and a rock score's guitar, bass and kit
+  never became candidates (default `Infinity` — the first tournament's
+  behaviour). `scripts/profile-pdmx-genres.mjs` counts the corpus;
+  `scripts/summarise-tournament.mjs` slices a report against a baseline;
+  `run-model-tournament.mjs` gained `--genres`, `--exclude-genres`, `--families`,
+  `--max-per-score/-program/-genre`, `--family-cursor`, `--min-drum-pitches`,
+  `--title`, and refuses an unknown family name instead of silently matching
+  nothing. Genre metadata travels into every task record either way.
+
+  **What the profile said** (real counts, reproduced exactly on a second run):
+  222,856 works pass our rights gate ∩ the authors' `no_license_conflict`
+  subset; 25,414 list ≥ 3 tracks. Of those multitrack works **15,847 carry a
+  genre slug, 1,277 only tags, and 8,290 nothing at all**. By primary family:
+  classical 12,222 · film_game 1,497 · folk 788 · rock 732 · pop 578 · jazz 268
+  · religious_worship 170 · wind_band_marching 166 · electronic 165 ·
+  world_traditional 143 · hiphop 115 · rnb_funk_soul 111 · metal 46 · country 36
+  · latin 29 · musical_theatre 18 · **blues 7 · reggae_ska 6**. Kits are a
+  channel-10 fact the table does not record, so drum availability came from
+  parsing the MIDIs (rock 355, film_game 704, folk 80). **Nothing was
+  downloaded**: the families PDMX cannot fill are listed in the profile with
+  their licence class — Lakh/LMD, MetaMIDI, Slakh2100, Wikifonia-derived
+  corpora and MuseScore works outside `no_license_conflict` are **REFUSED**
+  (scraped or withdrawn MIDI of copyrighted songs; the same taint the decision
+  report refuses in Option C); IMSLP/CPDL PD arrangements, Groove MIDI (CC BY
+  4.0, drums only), Nottingham/ABC folk corpora and operator-licensed packs are
+  **POSSIBLE only behind a per-work rights record**, and the packs never in a
+  published evidence directory.
+
+  **What the run said** (4,756 eligible MIDIs all scanned → 13,331 candidate
+  tasks → 50 tasks over 17 genre families and 11 instrument families — drums 5,
+  bass 5, guitar 6, keys 6, organ 5, strings 4, brass 5, reed 6, pipe 5,
+  ensemble 2, synth 1 — 50 distinct works, metres 4/4, 3/4, 2/2, 6/8, 12/8;
+  **750 entries, 0 failures, 150 real CA2 inferences** at 1.8–22.9 s, median
+  5.7 s, 944 s of inference, 19 min 32 s wall clock): HUMAN **94.0** ·
+  REFERENCE 59.3 · CONTEXT_AWARE 56.0 · **CA2 raw 71.9 · CA2+CTX 67.4**. Against
+  the classical run: HUMAN 90.4 → 94.0, REFERENCE 63.0 → 59.3, CONTEXT_AWARE
+  64.6 → **56.0**, CA2 raw 73.0 → 71.9, CA2+CTX 73.5 → **67.4**; playability
+  errors per entry REFERENCE 0.08 → 0.28, CONTEXT_AWARE 0.00 → **1.12**, CA2 raw
+  0.53 → **3.39**, CA2+CTX 0.25 → 2.84. CA2 raw out-scores the reference on
+  **70 %** of cells (it was 69 % on classical) and takes **14 of 17 genre
+  families**; it loses pop, jazz and hiphop, where the source scores are
+  piano-vocal transcriptions and the platform's "chord tones in half the bars"
+  is a reasonable accompaniment. Verdict unchanged and automatic:
+  **`do_not_promote` for both CA2 arms**.
+
+  **The finding that outranks the model question:** on five of the fifty tasks —
+  country/brass, rock/pipe, blues/guitar, latin/bass, world_traditional/guitar —
+  **both `REFERENCE_PART_COMPOSER` and `CONTEXT_AWARE_ARRANGER` emitted zero
+  notes on all three seeds** (30 entries, score 0). That never happened on the
+  classical set. And `CONTEXT_AWARE_ARRANGER` is now **measurably worse than the
+  plain reference** (56.0 vs 59.3) with four times its playability errors,
+  driven by guitar (19.6 mean, 6.67 errors/entry). The context passes are tuned
+  for the concert hall. Second: **+CTX is no longer a free win** — it costs 4.5
+  mean points while removing only 16 % of CA2's errors, and it collapses reed
+  (69.3 → 33.0), musical_theatre (55.3 → 16.6) and wind_band_marching (76.6 →
+  42.1) while still winning bass, organ, drums, ensemble and synth. The hybrid
+  needs to be chosen **per instrument family**, not applied globally. Written
+  up in full as `## 2b. Global / non-classical tournament` in
+  `docs/model-discovery/decision-report.md`, whose §5 pending list is updated.
+
+  Suites: pdmxGenre 7 (new), tournamentSelection 4 (new), tournamentBreakdown 3
+  (new), modelTournament 13, tournamentProviders 5, pdmxCsv 8, and PR-68's
+  tournamentListening 5 / tournamentAudio 3 / blindListening 3 all still green
+  after the merge; `pnpm run typecheck:libs` and the api-server `tsc --noEmit`
+  green.
+
+  **Honest limits.** Fifty windows over seventeen families is **three tasks per
+  family** — enough to see that CA2 transfers and that the platform's composers
+  fall over, not enough to rank two arms inside one genre; every per-genre row
+  in §2b is 9 entries. **Six of the fifty tasks had zero estimated chord
+  coverage** (nine more had 25 %), so their harmony metrics rest on nothing.
+  CA2's error mean is **outlier-driven**: 22 of 750 entries carry more than ten
+  errors, and the drums mean of 14.27 is *one* entry (359 notes into an 8-bar
+  pop drum window, 196 errors) — 14 of 15 drum entries had none; the judge's
+  playability penalty saturates at −60, so the error mean describes the tail and
+  not the score. **The 840 blind pairs are written and nobody has rated one.**
+  PDMX is a **notation** corpus — its "pop" is mostly a MuseScore piano-vocal
+  transcription, so the pop/dance/Mizrahi *production* question (grooves, synth
+  layers, sound design) is still untouched, and genre labels here name the
+  **song**, not the arrangement. Only one synth task and two ensemble tasks
+  survived the rules, so those rows are anecdotes. **For Workstream C, not
+  fixed here:** the zero-note reference/context-aware outputs above are a
+  composer bug in `musicEngines.ts`/the planners, not a judge bug; and
+  `judgeSuspect` fired on 19 of 150 cells (35 entries), which is a standing
+  request to re-examine the proxy on drum kits and on parts the constraint
+  engine ranges by GM family.
+
+- **PR-69** ✅ — `decision-pack` (Wave Q — the approval gate): **the eighteen
+  answers the owner requires before any training job over $25**, in one
+  document: `docs/model-discovery/decision-pack.md`. Every line is either a
+  measured number with its evidence file or is marked PENDING with the
+  workstream that owes it.
+
+  **Status: INCOMPLETE — approval is deliberately not requested.** Seven items
+  are missing, and **six of them cost no money**: the owner's 50 blind ratings
+  (Workstream A, machinery finished and proven), judge false-positive rates
+  (C), a second foundation proven live (D), the **$0** prefix experiment that
+  PR-64 showed could reorder the whole plan, the **$0** per-family
+  context-pass switch that PR-60's numbers demand, and the full-corpus dataset
+  figures (G). The seventh — training infrastructure with a tiny overfit (E) —
+  costs about $5.
+
+  **What the pack already settles from measurement:** CA2 wins 14 of 17 genre
+  families outside classical (PR-60), so the "classical-only prior" worry is
+  smaller than the decision report assumed; our own rule-based composers emit
+  **zero notes on 5 of 50 non-classical tasks** and `CONTEXT_AWARE_ARRANGER`
+  is now *worse* than the plain reference outside the concert hall (56.0 vs
+  59.3); and **+CTX is no longer a free win** — it costs CA2 4.5 mean points
+  while removing only 16 % of its errors, so the hybrid must be chosen per
+  instrument family. The recommended first steps are therefore both free: send
+  CA2 the control instructions the worker has never sent it, and make the
+  context passes a per-family decision.
+
+  **Honest limits.** The pack is a synthesis, not new measurement: it adds no
+  run of its own. Its §1, §4, §5, §8 and §9 are incomplete by design and say
+  so. It will be rebuilt as each workstream lands.
+
 - **PR-61** ✅ — `judge-calibration` (Wave Q — Model Discovery, Workstreams C and
   K): **the playability judge was calibrated on 30,570 real human PDMX windows
   before any promotion gate is allowed to rest on it**, and the per-instrument

@@ -84,6 +84,11 @@ export type TournamentReport = {
     id: string; workId: string; targetFamily: string; targetInst: number;
     barStart: number; barEnd: number; tempoBpm: number; meter: string;
     contextFamilies: string[]; humanNotes: number; chordCoverage: number; limits: string[];
+    /** Present only when the task carried PDMX genre metadata (the global tournament). */
+    genre?: string;
+    genreFamilies?: string[];
+    genreSource?: "genres" | "tags" | "none";
+    tags?: string[];
   }>;
   entries: TournamentEntry[];
   scorecards: ProviderScorecard[];
@@ -270,6 +275,7 @@ export async function runModelTournament(options: {
       barStart: t.barStart, barEnd: t.barEnd, tempoBpm: t.tempoBpm, meter: `${t.meter.numerator}/${t.meter.denominator}`,
       contextFamilies: [...new Set(t.contextTracks.map((c) => c.family))], humanNotes: t.humanTarget.length,
       chordCoverage: t.chordCoverage.share, limits: t.limits,
+      ...(t.genre ? { genre: t.genre.primary, genreFamilies: t.genre.families, genreSource: t.genre.source, tags: t.genre.tags } : {}),
     })),
     entries,
     scorecards,

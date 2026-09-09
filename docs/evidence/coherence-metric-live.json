@@ -1,0 +1,861 @@
+{
+  "title": "Whole-song coherence metric — human works vs synthetic pasted windows, on real PDMX music (Wave Q — Workstream J)",
+  "ranAt": "2026-09-09T14:43:31.937Z",
+  "finishedAt": "2026-09-09T14:44:57.767Z",
+  "metric": {
+    "version": "COHERENCE_METRIC_v1",
+    "windowBars": 8,
+    "weights": {
+      "seamArtefacts": 0.35,
+      "harmonicAgreement": 0.2,
+      "instrumentationContinuity": 0.15,
+      "trajectorySmoothness": 0.15,
+      "motifRecurrence": 0.15
+    },
+    "calibration": {
+      "seamExcessAtZero": 1.5,
+      "overlapAtZero": 0.15,
+      "overlapAtFull": 0.55,
+      "roughnessAtZero": 2,
+      "quotedShareAtFull": 0.25,
+      "minAbsenceBars": 2
+    },
+    "segmentation": "FORM_SEGMENTATION_v1"
+  },
+  "rightsBasis": {
+    "recordId": "15571083",
+    "datasetDigest": "48db5562b1495bae926812c9078c02c598d7aec3bf827bf5c10297b2ca50dbfe",
+    "rightsDigest": "97b7c795b37de988ae89d864732d9df4b3ba4c5151a422fca3d14548aa933fc7",
+    "admittedWorks": 222856,
+    "subset": "no_license_conflict ∩ our gate"
+  },
+  "sample": {
+    "admittedFiles": 222820,
+    "scanned": 4632,
+    "parseFailed": 0,
+    "skipped": 4232,
+    "minTracks": 3,
+    "minBars": 32,
+    "maxBars": 512,
+    "works": 400,
+    "seedBase": 17
+  },
+  "conditions": {
+    "HUMAN": "the work as written",
+    "TRACK_SHUFFLE": "the busiest pitched track's 8-bar windows permuted (notes cut at their new window's end), every other part untouched",
+    "ENSEMBLE_SHUFFLE": "every track's 8-bar windows permuted by the same permutation",
+    "plan": "every condition is scored against the HUMAN work's own section densities as the plan; HUMAN plan adherence is 1.0 by construction"
+  },
+  "distributions": {
+    "HUMAN": {
+      "score": {
+        "n": 400,
+        "mean": 70.605,
+        "sd": 13.254,
+        "p10": 53.27,
+        "median": 71.4,
+        "p90": 88.01
+      },
+      "components": {
+        "seamArtefacts": {
+          "n": 399,
+          "mean": 71.788,
+          "sd": 31.828,
+          "p10": 4.88,
+          "median": 83.32,
+          "p90": 100
+        },
+        "harmonicAgreement": {
+          "n": 400,
+          "mean": 50.695,
+          "sd": 24.717,
+          "p10": 20.32,
+          "median": 48.31,
+          "p90": 87.32
+        },
+        "instrumentationContinuity": {
+          "n": 400,
+          "mean": 81.894,
+          "sd": 28.357,
+          "p10": 43.75,
+          "median": 98.75,
+          "p90": 100
+        },
+        "trajectorySmoothness": {
+          "n": 400,
+          "mean": 81.971,
+          "sd": 6.027,
+          "p10": 76.14,
+          "median": 82.08,
+          "p90": 88.39
+        },
+        "motifRecurrence": {
+          "n": 397,
+          "mean": 71.849,
+          "sd": 35.038,
+          "p10": 13.88,
+          "median": 96.12,
+          "p90": 100
+        }
+      },
+      "raw": {
+        "seamExcess": {
+          "n": 399,
+          "mean": 0.097,
+          "sd": 0.65,
+          "p10": -0.468,
+          "median": 0.0434,
+          "p90": 0.7069
+        },
+        "worstExcess": {
+          "n": 399,
+          "mean": 0.98,
+          "sd": 1.607,
+          "p10": 0.0131,
+          "median": 0.4646,
+          "p90": 2.2753
+        },
+        "seamStatistics": {
+          "register": {
+            "n": 400,
+            "mean": 0.076,
+            "sd": 0.533,
+            "p10": -0.4314,
+            "median": 0.0631,
+            "p90": 0.6654
+          },
+          "density": {
+            "n": 400,
+            "mean": 0.145,
+            "sd": 0.733,
+            "p10": -0.4755,
+            "median": 0.1153,
+            "p90": 0.985
+          },
+          "pitchClasses": {
+            "n": 400,
+            "mean": 0.035,
+            "sd": 0.369,
+            "p10": -0.265,
+            "median": 0.0331,
+            "p90": 0.357
+          },
+          "leap": {
+            "n": 400,
+            "mean": 0.045,
+            "sd": 0.588,
+            "p10": -0.4244,
+            "median": 0.0431,
+            "p90": 0.6333
+          },
+          "cut": {
+            "n": 155,
+            "mean": 0.042,
+            "sd": 0.266,
+            "p10": -0.2134,
+            "median": 0.0075,
+            "p90": 0.2825
+          }
+        },
+        "meanOverlap": {
+          "n": 400,
+          "mean": 0.411,
+          "sd": 0.129,
+          "p10": 0.2646,
+          "median": 0.3996,
+          "p90": 0.5631
+        },
+        "worstOverlap": {
+          "n": 400,
+          "mean": 0.307,
+          "sd": 0.125,
+          "p10": 0.18,
+          "median": 0.2902,
+          "p90": 0.4629
+        },
+        "unexplainedReentries": {
+          "n": 400,
+          "mean": 1.715,
+          "sd": 2.777,
+          "p10": 0,
+          "median": 1,
+          "p90": 5
+        },
+        "planSpearman": {
+          "n": 390,
+          "mean": 1,
+          "sd": 0,
+          "p10": 1,
+          "median": 1,
+          "p90": 1
+        },
+        "meanQuotedShare": {
+          "n": 397,
+          "mean": 0.292,
+          "sd": 0.225,
+          "p10": 0.0347,
+          "median": 0.2403,
+          "p90": 0.6178
+        }
+      }
+    },
+    "TRACK_SHUFFLE": {
+      "score": {
+        "n": 400,
+        "mean": 62.546,
+        "sd": 12.565,
+        "p10": 45.82,
+        "median": 62.54,
+        "p90": 78.82
+      },
+      "components": {
+        "seamArtefacts": {
+          "n": 400,
+          "mean": 62.197,
+          "sd": 31.593,
+          "p10": 0,
+          "median": 70,
+          "p90": 99.53
+        },
+        "harmonicAgreement": {
+          "n": 400,
+          "mean": 43.498,
+          "sd": 21.307,
+          "p10": 18.36,
+          "median": 40.39,
+          "p90": 73.76
+        },
+        "instrumentationContinuity": {
+          "n": 400,
+          "mean": 79.655,
+          "sd": 28.436,
+          "p10": 36.36,
+          "median": 93.94,
+          "p90": 100
+        },
+        "trajectorySmoothness": {
+          "n": 400,
+          "mean": 76.439,
+          "sd": 8.375,
+          "p10": 65.86,
+          "median": 77.99,
+          "p90": 84.78
+        },
+        "motifRecurrence": {
+          "n": 399,
+          "mean": 57.712,
+          "sd": 35.346,
+          "p10": 9.32,
+          "median": 57.52,
+          "p90": 100
+        }
+      },
+      "raw": {
+        "seamExcess": {
+          "n": 400,
+          "mean": 0.217,
+          "sd": 0.643,
+          "p10": -0.3051,
+          "median": 0.1402,
+          "p90": 0.8359
+        },
+        "worstExcess": {
+          "n": 400,
+          "mean": 1.24,
+          "sd": 1.588,
+          "p10": 0.2165,
+          "median": 0.7473,
+          "p90": 2.6435
+        },
+        "seamStatistics": {
+          "register": {
+            "n": 400,
+            "mean": 0.223,
+            "sd": 0.516,
+            "p10": -0.2711,
+            "median": 0.1914,
+            "p90": 0.7773
+          },
+          "density": {
+            "n": 400,
+            "mean": 0.322,
+            "sd": 0.624,
+            "p10": -0.2461,
+            "median": 0.256,
+            "p90": 1.0383
+          },
+          "pitchClasses": {
+            "n": 400,
+            "mean": 0.069,
+            "sd": 0.352,
+            "p10": -0.1867,
+            "median": 0.0575,
+            "p90": 0.3715
+          },
+          "leap": {
+            "n": 400,
+            "mean": 0.238,
+            "sd": 0.518,
+            "p10": -0.2707,
+            "median": 0.194,
+            "p90": 0.8348
+          },
+          "cut": {
+            "n": 155,
+            "mean": 0.062,
+            "sd": 0.257,
+            "p10": -0.1357,
+            "median": 0.0172,
+            "p90": 0.2825
+          }
+        },
+        "meanOverlap": {
+          "n": 400,
+          "mean": 0.376,
+          "sd": 0.112,
+          "p10": 0.25,
+          "median": 0.3592,
+          "p90": 0.5205
+        },
+        "worstOverlap": {
+          "n": 400,
+          "mean": 0.276,
+          "sd": 0.097,
+          "p10": 0.1692,
+          "median": 0.2657,
+          "p90": 0.3938
+        },
+        "unexplainedReentries": {
+          "n": 400,
+          "mean": 2.203,
+          "sd": 3.364,
+          "p10": 0,
+          "median": 1,
+          "p90": 6
+        },
+        "planSpearman": {
+          "n": 390,
+          "mean": 0.81,
+          "sd": 0.241,
+          "p10": 0.5,
+          "median": 0.8929,
+          "p90": 1
+        },
+        "meanQuotedShare": {
+          "n": 399,
+          "mean": 0.185,
+          "sd": 0.161,
+          "p10": 0.0233,
+          "median": 0.1438,
+          "p90": 0.3971
+        }
+      }
+    },
+    "ENSEMBLE_SHUFFLE": {
+      "score": {
+        "n": 400,
+        "mean": 55.814,
+        "sd": 11.931,
+        "p10": 41.68,
+        "median": 54.71,
+        "p90": 71.72
+      },
+      "components": {
+        "seamArtefacts": {
+          "n": 399,
+          "mean": 39.328,
+          "sd": 31.033,
+          "p10": 0,
+          "median": 42.44,
+          "p90": 78.74
+        },
+        "harmonicAgreement": {
+          "n": 400,
+          "mean": 50.558,
+          "sd": 24.712,
+          "p10": 20.09,
+          "median": 48.31,
+          "p90": 87.31
+        },
+        "instrumentationContinuity": {
+          "n": 400,
+          "mean": 80.185,
+          "sd": 28.144,
+          "p10": 40,
+          "median": 93.33,
+          "p90": 100
+        },
+        "trajectorySmoothness": {
+          "n": 400,
+          "mean": 59.74,
+          "sd": 11.044,
+          "p10": 44.47,
+          "median": 60.48,
+          "p90": 73.6
+        },
+        "motifRecurrence": {
+          "n": 400,
+          "mean": 72.976,
+          "sd": 33.924,
+          "p10": 17.32,
+          "median": 100,
+          "p90": 100
+        }
+      },
+      "raw": {
+        "seamExcess": {
+          "n": 399,
+          "mean": 0.746,
+          "sd": 0.756,
+          "p10": 0.1109,
+          "median": 0.6189,
+          "p90": 1.5304
+        },
+        "worstExcess": {
+          "n": 399,
+          "mean": 1.805,
+          "sd": 1.95,
+          "p10": 0.4744,
+          "median": 1.1452,
+          "p90": 3.8771
+        },
+        "seamStatistics": {
+          "register": {
+            "n": 400,
+            "mean": 0.609,
+            "sd": 0.574,
+            "p10": 0.0055,
+            "median": 0.5722,
+            "p90": 1.2307
+          },
+          "density": {
+            "n": 400,
+            "mean": 0.774,
+            "sd": 0.649,
+            "p10": 0.1049,
+            "median": 0.7381,
+            "p90": 1.5941
+          },
+          "pitchClasses": {
+            "n": 400,
+            "mean": 0.171,
+            "sd": 0.354,
+            "p10": -0.1926,
+            "median": 0.1402,
+            "p90": 0.5692
+          },
+          "leap": {
+            "n": 400,
+            "mean": 0.655,
+            "sd": 0.581,
+            "p10": 0.0995,
+            "median": 0.6661,
+            "p90": 1.2188
+          },
+          "cut": {
+            "n": 155,
+            "mean": 0.221,
+            "sd": 0.296,
+            "p10": 0,
+            "median": 0.1466,
+            "p90": 0.499
+          }
+        },
+        "meanOverlap": {
+          "n": 400,
+          "mean": 0.41,
+          "sd": 0.129,
+          "p10": 0.2637,
+          "median": 0.4,
+          "p90": 0.5631
+        },
+        "worstOverlap": {
+          "n": 400,
+          "mean": 0.306,
+          "sd": 0.124,
+          "p10": 0.1796,
+          "median": 0.2892,
+          "p90": 0.4629
+        },
+        "unexplainedReentries": {
+          "n": 400,
+          "mean": 2.175,
+          "sd": 3.164,
+          "p10": 0,
+          "median": 1,
+          "p90": 6
+        },
+        "planSpearman": {
+          "n": 390,
+          "mean": 0.116,
+          "sd": 0.42,
+          "p10": -0.4104,
+          "median": 0.1351,
+          "p90": 0.6853
+        },
+        "meanQuotedShare": {
+          "n": 400,
+          "mean": 0.29,
+          "sd": 0.211,
+          "p10": 0.0433,
+          "median": 0.2511,
+          "p90": 0.5941
+        }
+      }
+    }
+  },
+  "separation": {
+    "TRACK_SHUFFLE": {
+      "overall": {
+        "pairs": 400,
+        "pairedWinRate": 0.9187,
+        "meanHuman": 70.605,
+        "meanSynthetic": 62.546,
+        "meanDifference": 8.059,
+        "pairedEffectSize": 1.069,
+        "cohensD": 0.624,
+        "midpointCut": 66.575,
+        "midpointAccuracy": 0.6175
+      },
+      "components": {
+        "seamArtefacts": {
+          "pairs": 399,
+          "pairedWinRate": 0.8258,
+          "meanHuman": 71.788,
+          "meanSynthetic": 62.319,
+          "meanDifference": 9.47,
+          "pairedEffectSize": 0.613,
+          "cohensD": 0.299,
+          "midpointCut": 67.054,
+          "midpointAccuracy": 0.5664
+        },
+        "harmonicAgreement": {
+          "pairs": 400,
+          "pairedWinRate": 0.79,
+          "meanHuman": 50.695,
+          "meanSynthetic": 43.498,
+          "meanDifference": 7.197,
+          "pairedEffectSize": 0.698,
+          "cohensD": 0.312,
+          "midpointCut": 47.097,
+          "midpointAccuracy": 0.5637
+        },
+        "instrumentationContinuity": {
+          "pairs": 400,
+          "pairedWinRate": 0.57,
+          "meanHuman": 81.894,
+          "meanSynthetic": 79.656,
+          "meanDifference": 2.239,
+          "pairedEffectSize": 0.168,
+          "cohensD": 0.079,
+          "midpointCut": 80.775,
+          "midpointAccuracy": 0.5313
+        },
+        "trajectorySmoothness": {
+          "pairs": 400,
+          "pairedWinRate": 0.9263,
+          "meanHuman": 81.971,
+          "meanSynthetic": 76.439,
+          "meanDifference": 5.532,
+          "pairedEffectSize": 0.881,
+          "cohensD": 0.758,
+          "midpointCut": 79.205,
+          "midpointAccuracy": 0.6587
+        },
+        "motifRecurrence": {
+          "pairs": 397,
+          "pairedWinRate": 0.7103,
+          "meanHuman": 71.849,
+          "meanSynthetic": 57.706,
+          "meanDifference": 14.142,
+          "pairedEffectSize": 0.556,
+          "cohensD": 0.402,
+          "midpointCut": 64.778,
+          "midpointAccuracy": 0.5932
+        }
+      },
+      "rawSeamExcess": {
+        "pairs": 399,
+        "pairedWinRate": 0.8835,
+        "meanHuman": -0.097,
+        "meanSynthetic": -0.214,
+        "meanDifference": 0.117,
+        "pairedEffectSize": 0.656,
+        "cohensD": 0.181,
+        "midpointCut": -0.156,
+        "midpointAccuracy": 0.5551
+      },
+      "rawWorstExcess": {
+        "pairs": 399,
+        "pairedWinRate": 0.7456,
+        "meanHuman": -0.98,
+        "meanSynthetic": -1.24,
+        "meanDifference": 0.261,
+        "pairedEffectSize": 0.534,
+        "cohensD": 0.163,
+        "midpointCut": -1.11,
+        "midpointAccuracy": 0.5439
+      }
+    },
+    "ENSEMBLE_SHUFFLE": {
+      "overall": {
+        "pairs": 400,
+        "pairedWinRate": 0.9537,
+        "meanHuman": 70.605,
+        "meanSynthetic": 55.814,
+        "meanDifference": 14.791,
+        "pairedEffectSize": 1.402,
+        "cohensD": 1.173,
+        "midpointCut": 63.209,
+        "midpointAccuracy": 0.7238
+      },
+      "components": {
+        "seamArtefacts": {
+          "pairs": 398,
+          "pairedWinRate": 0.9108,
+          "meanHuman": 71.89,
+          "meanSynthetic": 39.314,
+          "meanDifference": 32.576,
+          "pairedEffectSize": 1.198,
+          "cohensD": 1.036,
+          "midpointCut": 55.602,
+          "midpointAccuracy": 0.7073
+        },
+        "harmonicAgreement": {
+          "pairs": 400,
+          "pairedWinRate": 0.62,
+          "meanHuman": 50.695,
+          "meanSynthetic": 50.558,
+          "meanDifference": 0.137,
+          "pairedEffectSize": 0.288,
+          "cohensD": 0.006,
+          "midpointCut": 50.627,
+          "midpointAccuracy": 0.5
+        },
+        "instrumentationContinuity": {
+          "pairs": 400,
+          "pairedWinRate": 0.4587,
+          "meanHuman": 81.894,
+          "meanSynthetic": 80.185,
+          "meanDifference": 1.71,
+          "pairedEffectSize": 0.063,
+          "cohensD": 0.061,
+          "midpointCut": 81.039,
+          "midpointAccuracy": 0.5238
+        },
+        "trajectorySmoothness": {
+          "pairs": 400,
+          "pairedWinRate": 0.9812,
+          "meanHuman": 81.971,
+          "meanSynthetic": 59.74,
+          "meanDifference": 22.23,
+          "pairedEffectSize": 2.015,
+          "cohensD": 2.499,
+          "midpointCut": 70.856,
+          "midpointAccuracy": 0.9038
+        },
+        "motifRecurrence": {
+          "pairs": 397,
+          "pairedWinRate": 0.4786,
+          "meanHuman": 71.849,
+          "meanSynthetic": 73.201,
+          "meanDifference": -1.352,
+          "pairedEffectSize": -0.082,
+          "cohensD": -0.039,
+          "midpointCut": 72.525,
+          "midpointAccuracy": 0.4975
+        }
+      },
+      "rawSeamExcess": {
+        "pairs": 398,
+        "pairedWinRate": 0.9485,
+        "meanHuman": -0.097,
+        "meanSynthetic": -0.747,
+        "meanDifference": 0.65,
+        "pairedEffectSize": 1.088,
+        "cohensD": 0.922,
+        "midpointCut": -0.422,
+        "midpointAccuracy": 0.7538
+      },
+      "rawWorstExcess": {
+        "pairs": 398,
+        "pairedWinRate": 0.9234,
+        "meanHuman": -0.978,
+        "meanSynthetic": -1.806,
+        "meanDifference": 0.828,
+        "pairedEffectSize": 0.733,
+        "cohensD": 0.463,
+        "midpointCut": -1.392,
+        "midpointAccuracy": 0.6131
+      }
+    }
+  },
+  "shuffledFamilies": {
+    "keys": 137,
+    "brass": 29,
+    "bass": 8,
+    "reed": 37,
+    "ensemble": 60,
+    "strings": 49,
+    "organ": 17,
+    "chromatic_perc": 9,
+    "pipe": 35,
+    "guitar": 14,
+    "percussive": 1,
+    "synth": 2,
+    "ethnic": 2
+  },
+  "examples": [
+    {
+      "workId": "QmZipHwd6Lc816rdURAUziNSzFsryPasY1frPxtk5Jzwtt",
+      "tracks": 11,
+      "bars": 42,
+      "form": "A B C D E F",
+      "shuffledTrack": "keys",
+      "scores": {
+        "HUMAN": 82.08,
+        "TRACK_SHUFFLE": 77.56,
+        "ENSEMBLE_SHUFFLE": 48.88
+      }
+    },
+    {
+      "workId": "Qmd8QanRnQEBr8uFy4TpXpRtrMbdtW4W194SjRjFPpZ6Fi",
+      "tracks": 12,
+      "bars": 36,
+      "form": "A B C",
+      "shuffledTrack": "brass",
+      "scores": {
+        "HUMAN": 61.91,
+        "TRACK_SHUFFLE": 59.03,
+        "ENSEMBLE_SHUFFLE": 57.74
+      }
+    },
+    {
+      "workId": "QmVSLoKUGb72pajnbUdQna4fozvBdtYXzpQaq7TtkqLuxy",
+      "tracks": 10,
+      "bars": 143,
+      "form": "A B C D C D E F G H D C D E I F G J K",
+      "shuffledTrack": "bass",
+      "scores": {
+        "HUMAN": 58.47,
+        "TRACK_SHUFFLE": 57.08,
+        "ENSEMBLE_SHUFFLE": 56.82
+      }
+    },
+    {
+      "workId": "QmXRZDpmtVANVrKRWvid45c6jj5g9B8pg3QVNZKdaYDQn6",
+      "tracks": 13,
+      "bars": 121,
+      "form": "A B C C D E F F G H E' E E' I",
+      "shuffledTrack": "keys",
+      "scores": {
+        "HUMAN": 88.6,
+        "TRACK_SHUFFLE": 77.2,
+        "ENSEMBLE_SHUFFLE": 58.16
+      }
+    },
+    {
+      "workId": "QmfEVh6W4TTP79w3hNGuheCmFG1tr5RQEo5X4iU8b9Kcu6",
+      "tracks": 7,
+      "bars": 71,
+      "form": "A B C D B' B C E F",
+      "shuffledTrack": "keys",
+      "scores": {
+        "HUMAN": 72.28,
+        "TRACK_SHUFFLE": 66.48,
+        "ENSEMBLE_SHUFFLE": 63.44
+      }
+    },
+    {
+      "workId": "QmVQGp8MMMfRz3K5YQvwj6Yq1vaYL9TJmxJYxFpqsVSywD",
+      "tracks": 35,
+      "bars": 134,
+      "form": "A B B' C D E A' F G H C D E A' C' I J K",
+      "shuffledTrack": "reed",
+      "scores": {
+        "HUMAN": 82.92,
+        "TRACK_SHUFFLE": 78.06,
+        "ENSEMBLE_SHUFFLE": 56.74
+      }
+    },
+    {
+      "workId": "Qma9ek9zZB9zeFKzYCbdiVnTp15vaz3yqpy9Tap3AeyEGa",
+      "tracks": 33,
+      "bars": 404,
+      "form": "A B C C' C D E E F F' F F' F G H I H' J K C' C D F' L M L' N D' O P N' Q R S T U V W X Y Z",
+      "shuffledTrack": "keys",
+      "scores": {
+        "HUMAN": 62.73,
+        "TRACK_SHUFFLE": 61.82,
+        "ENSEMBLE_SHUFFLE": 45.54
+      }
+    },
+    {
+      "workId": "QmT6UG2MALVrZHyo6Ybg7ofHow2ubJM6xrsq8Rp8tzXdrr",
+      "tracks": 5,
+      "bars": 106,
+      "form": "A A' A B C B' D E C' F B' G H I",
+      "shuffledTrack": "bass",
+      "scores": {
+        "HUMAN": 59.17,
+        "TRACK_SHUFFLE": 55.73,
+        "ENSEMBLE_SHUFFLE": 52.34
+      }
+    },
+    {
+      "workId": "QmXjQgvQqqba95GYyuKqAGMfT9VKgrVFVhu7tcyASYkeqy",
+      "tracks": 6,
+      "bars": 48,
+      "form": "A B C D B C' E",
+      "shuffledTrack": "keys",
+      "scores": {
+        "HUMAN": 82.21,
+        "TRACK_SHUFFLE": 73.26,
+        "ENSEMBLE_SHUFFLE": 64.58
+      }
+    },
+    {
+      "workId": "QmT5fbj2c9NKtf3XyNxW9fajxZxdWTB1YERwd7R87wbaX5",
+      "tracks": 5,
+      "bars": 102,
+      "form": "A B C D E F G H",
+      "shuffledTrack": "reed",
+      "scores": {
+        "HUMAN": 67.58,
+        "TRACK_SHUFFLE": 58.7,
+        "ENSEMBLE_SHUFFLE": 57.94
+      }
+    },
+    {
+      "workId": "QmWNgrnrqvGxPHcCAiJoVPPJVjFZg6BKnRZKrxoKhUjBA9",
+      "tracks": 6,
+      "bars": 32,
+      "form": "A B C",
+      "shuffledTrack": "brass",
+      "scores": {
+        "HUMAN": 45.76,
+        "TRACK_SHUFFLE": 47.6,
+        "ENSEMBLE_SHUFFLE": 41.29
+      }
+    },
+    {
+      "workId": "QmbBHi6MGLqysJYU6wQuFbDYH7VVEDjjHZYSfn2xxmGd6g",
+      "tracks": 9,
+      "bars": 195,
+      "form": "A B B B' C D E C' F G B' H I I D' C' J",
+      "shuffledTrack": "keys",
+      "scores": {
+        "HUMAN": 83.47,
+        "TRACK_SHUFFLE": 77.97,
+        "ENSEMBLE_SHUFFLE": 62.71
+      }
+    }
+  ],
+  "limits": [
+    "the synthetic constructions break order and continuity; they do not simulate a generator that never restates a motif, so motifRecurrence is not expected to separate here and is reported as measured",
+    "instrumentationContinuity with an internally computed form is explained only by ensemble movement; with the human form given (HUMAN condition) boundaries also explain — the two conditions are not on identical footing for that component",
+    "HUMAN plan adherence is 1.0 by construction (the plan is the human's own section densities); the trajectory separation measures detection of departure from a given plan",
+    "human works are classical/early-music PDMX scores (the cleared multitrack share); nothing here is pop, dance or Mizrahi",
+    "the metric is a proxy: no listener has rated any of these pieces for coherence"
+  ]
+}
