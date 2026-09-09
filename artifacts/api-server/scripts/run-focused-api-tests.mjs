@@ -270,6 +270,19 @@ const suites = {
         "tournament-rescore.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // PR-78: planning supervision — the human's section-level plan from a
+      // whole score, its quality gate, and the comparison with the platform's
+      // own planners run on the same score.
+      [
+        "src/lib/planningSupervision.test.ts",
+        "planning-supervision.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/planningSupervisionAgreement.test.ts",
+        "planning-supervision-agreement.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [
