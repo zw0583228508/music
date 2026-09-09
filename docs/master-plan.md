@@ -2477,6 +2477,37 @@ any of it.
   says not to expect it to. Its deep context is 512 numeric instructions — no
   slot for section, phrase, harmony plan or style grammar.
 
+- **PR-56** ✅ — `symbolic-generation-provider` (Wave Q — Model Discovery, item
+  10): the canonical adapter contract every external note-writing model must
+  enter through, and the first projection — Composer's Assistant 2 — stated
+  before any adapter runs.
+
+  `SymbolicGenerationProvider` takes a projection of `PartGenerationRequestV2`
+  and returns `MusicalNote[]` **plus an account**: which fields the model
+  `received` (and as what token), which it `approximated` (and what was lost),
+  which are `unsupported` (and why), what was `enforced` after generation, and
+  a plain-words `informationLoss` derived from those dispositions so the prose
+  can never disagree with the data. **Every one of the 20 V2 context fields must
+  be accounted for; a field an adapter forgets is treated as dropped, not as
+  supported** — a test pins that. This is the mechanism that stops a model from
+  being presented as "supporting StyleGrammar" by silently discarding it.
+
+  **CA2's projection, from its own source:** *received* — sibling tracks'
+  notes, per-track GM instrument, strict range, the seed; *approximated* —
+  polyphony as a density bin, soft constraints as step/leap/density bins, chords
+  only as whatever the context tracks imply, the section as a bare measure
+  window, locks at whole-cell granularity; *unsupported* — **styleGrammar,
+  harmonyPlan, vocalAttentionMap, motifMemory, previous/next section, role,
+  phrases, the brief.** The deep context V2 exists to carry has no CA2 token,
+  which is why the Q-04 plan, the vocal-space pass, the polyphony ceiling and
+  the locks are listed as post-generation enforcements, not inputs.
+
+  Suites: symbolicGenerationProvider 5; typecheck green.
+
+  **Honest limits.** This is the contract and one projection. **No adapter has
+  generated a note; no inference has run.** The projection will be checked
+  against a real CA2 run before any tournament result is reported.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

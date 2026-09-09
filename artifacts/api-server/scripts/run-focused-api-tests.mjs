@@ -115,6 +115,14 @@ const suites = {
       // Wave Q, Model Discovery: the registry enforces the three-layer licence
       // discipline; nothing ships on an unread licence or uncleared works.
       ["src/lib/globalModelRegistry.test.ts", "global-model-registry.test.mjs"],
+      // Wave Q, Model Discovery: the canonical adapter contract — every model
+      // accounts for what it received, what it cannot take, and what was
+      // enforced afterwards. A field an adapter forgets counts as dropped.
+      [
+        "src/lib/symbolicGenerationProvider.test.ts",
+        "symbolic-generation-provider.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [
