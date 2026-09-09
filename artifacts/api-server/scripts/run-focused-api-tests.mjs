@@ -129,8 +129,6 @@ const suites = {
       // budget guard mirror (fails closed above $25; H100 refused).
       ["src/lib/trainingManifest.test.ts", "training-manifest.test.mjs"],
       ["src/lib/trainingBudgetGuard.test.ts", "training-budget-guard.test.mjs"],
-        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
-      ],
       // Wave Q, Q-05 data factory (PR-65): the extended Tier B task types over
       // one cell representation, near-duplicate groups for the split, and the
       // per-work corpus profile the foundation decision reads.
