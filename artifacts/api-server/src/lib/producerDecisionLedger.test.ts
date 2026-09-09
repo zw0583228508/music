@@ -137,7 +137,9 @@ describe("calibrated candidate ranking", () => {
       status: complete ? "evaluated" : "rendering", providerScore: 0, error: null,
       renderArtifactIds: ["audio"], artifacts: [{ id: "audio", type: "AUDIO_TRACK", url: "safe" }, { id: "report", type: "QUALITY_REPORT", url: "safe" }],
       qualityReport: { score: quality, checks: { silence: 1, clipping: 1, notePlayability: 1, timing: 1, sectionCoverage: 1, lineage: 1 }, weights: { silence: 1, clipping: 1, notePlayability: 1, timing: 1, sectionCoverage: 1, lineage: 1 }, strengths: [], weaknesses: [], warnings: [], evaluatedAt: new Date().toISOString(), renderArtifactIds: ["audio"], lineageComplete: true },
-      musicCritic: { score: critic, dimensions: Object.fromEntries(["vocalFit", "harmony", "development", "contrastAndTransitions", "registerCollisions", "playability", "repetition", "styleAndControlAdherence"].map((key) => [key, dimension])) },
+      // These are the eight v1 dimensions; a report without `version` is read as
+      // the newer critic and must carry every V2 dimension, so say which it is.
+      musicCritic: { version: "music-critic-v1", score: critic, dimensions: Object.fromEntries(["vocalFit", "harmony", "development", "contrastAndTransitions", "registerCollisions", "playability", "repetition", "styleAndControlAdherence"].map((key) => [key, dimension])) },
       audioCritic: null,
     } as never;
   };
