@@ -1,0 +1,107 @@
+{
+  "title": "Composer's Assistant 2 — three-layer licence audit from primary sources (Wave Q, Model Discovery)",
+  "date": "2026-09-09",
+  "model": {
+    "id": "COMPOSERS_ASSISTANT_2",
+    "author": "Martin E. Malandro",
+    "repository": "https://github.com/m-malandro/composers-assistant-REAPER",
+    "release": "v2.1.0, published 2024-10-09T20:16:01Z",
+    "paper": "https://arxiv.org/abs/2407.14700 (CA2); ISMIR 2023 for CA1"
+  },
+  "primarySourcesRead": {
+    "LICENSE": {
+      "how": "GitHub contents API, raw, 1075 bytes",
+      "verbatimHead": "MIT License\n\nCopyright (c) 2023 Martin E. Malandro\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software …",
+      "spdx": "MIT (also reported by the GitHub licence API)"
+    },
+    "disclaimer.txt": {
+      "how": "GitHub contents API, raw, 1005 bytes",
+      "verbatim": "We claim no rights to the outputs you generate with the models we've distributed. Model outputs are yours to do with as you wish, provided that they do not violate the copyright of any other person or entity.\n\nThese models were trained on a set of MIDI files marked as being in the public domain, available under a CC0 license (or otherwise freely available to use without attribution), available under a CC-BY license, or which we had permission from the MIDI file authors to use for training. (See the acknowledgments.)\n\nThere is a chance (albeit, in our opinion, a very small one) that the models we've distributed may output copyrighted musical information, even if such information was not present in the training dataset for the models. You use the models at your own risk. If you release any model outputs, then you are personally responsible for ensuring that such model outputs do not contain any musical information whose copyright is held by another person or entity. See also the License."
+    },
+    "acknowledgments.html": {
+      "how": "GitHub contents API, raw, 375,504 bytes; tags stripped, 161,755 characters of text analysed",
+      "openingVerbatim": "We would like to thank the many contributors who granted us permission to use their MIDI files in the training dataset for this project: Anonymous contributors Santtu Pesonen Augustus Knezevich Bernd Krueger François Faucher Henry Howey HetzlersFakebook (http://hetzlersfakebook.com/) Jim Paterson of Music Files Ltd for the use of midi files from www.mfiles.co.uk The Josquin Research Project (josquin.stanford.edu) Jürg Hochweber lutemusic.org Marc Lamberg Souperion Weed (wussu.com) Our training dataset also contained MIDI files from: Alain Naigeon … guitarloot.org.uk Paul Butler … In all cases we only used the allowable MIDI files from each website. Our training dataset also contained the CocoChorales dataset (copyright Yusong Wu) under a Creative Commons Attribution 4.0 International (CC-BY 4.0) license. … Our training dataset also contained the following files from The Mutopia Project under various CC-BY licenses:",
+      "linkedDomainCounts": {
+        "www.mutopiaproject.org": 2451,
+        "www.bibliotecamusica.it": 58,
+        "perlkonig.com": 29,
+        "nicolas.sceaux.free.fr": 20,
+        "creativecommons.org": 9,
+        "ssb22.user.srcf.net": 9,
+        "www.cis.nctu.edu.tw": 4,
+        "hetzlersfakebook.com": 2,
+        "others (1 each)": "mfiles.co.uk, josquin.stanford.edu, lutemusic.org, wussu.com, anaigeon.free.fr, guitarloot.org.uk, crab.rutgers.edu, lukewys.github.io, markvdb.be, fuz.su, grigoriliev.com, fuw.edu.pl"
+      },
+      "mutopiaComposerRows": 237,
+      "composerDeathYearRange": "1546–2016",
+      "composersDiedAfter1926": 18
+    },
+    "modelZip": {
+      "file": "CA.v2.1.0.small.model.optional.download.zip, 201,092,169 bytes",
+      "contents": ["model/config.json (785 B)", "model/generation_config.json (194 B)", "model/pytorch_model.bin (215,745,913 B)", "optimizer/optimizer_state_dict.txt", "instructions.txt"],
+      "separateLicenceInside": false,
+      "config": {
+        "architectures": ["T5ForConditionalGeneration"],
+        "num_layers": 10, "num_decoder_layers": 10, "d_model": 384, "d_ff": 1536, "num_heads": 8, "d_kv": 48,
+        "feed_forward_proj": "gated-gelu", "relative_attention_num_buckets": 4096, "relative_attention_max_distance": 4096,
+        "vocab_size": 1944, "torch_dtype": "float32", "transformers_version": "4.31.0"
+      },
+      "derivedParameterCount": "~54M (215,745,913 bytes / 4 bytes per fp32 weight)",
+      "note": "instructions.txt: 'By default, Composer's Assistant v2.1.0 ships with the large model' — the large model lives in the 683 MB main zip (below)."
+    },
+    "mainZip": {
+      "file": "composers.assistant.v.2.1.0.zip, 716,231,513 bytes",
+      "inZipLicence": {
+        "path": "Scripts/composers_assistant_v2/license.txt",
+        "verbatimHead": "MIT LICENSE\n\nCopyright 2023, 2024 (The authors)\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction …",
+        "note": "A second MIT text shipped beside the models; consistent with the repository LICENSE. No contrary term."
+      },
+      "largeModel": {
+        "path": "Scripts/composers_assistant_v2/models_permuted_labels/unjoined/infill/finetuned_epoch_49_0/model/",
+        "pytorch_model.bin bytes": 769602209,
+        "config": {
+          "architectures": ["T5ForConditionalGeneration"],
+          "num_layers": 16, "num_decoder_layers": 16, "d_model": 576, "d_ff": 2304, "num_heads": 12, "d_kv": 48,
+          "feed_forward_proj": "gated-gelu", "relative_attention_num_buckets": 4096, "relative_attention_max_distance": 4096,
+          "vocab_size": 1944, "torch_dtype": "float32", "transformers_version": "4.31.0"
+        },
+        "derivedParameterCount": "~192M (769,602,209 / 4)"
+      },
+      "pythonSource": [
+        "composers_assistant_nn_server.py — standalone XML-RPC wrapper: T5ForConditionalGeneration.from_pretrained(...).generate(top_p=0.85, do_sample, encoder_no_repeat_ngram_size, max_new_tokens=2*1650*len_mult), up to 9 retries at rising temperature; no REAPER dependency in this path",
+        "encoding_functions.py — encode_midisongbymeasure_with_masks(S, mask_locations=[(track_i, measure_i)], measure_slice, track_measure_commands={(t,m): ';<instruction_k>…'}, explicit_rhythmic_conditioning_locations, velocity_overrides, …) → (input_str, labels_str)",
+        "unjoined_vocab_tokenizer.py + spm_train_functions.get_user_defined_symbols — the 1944-token vocabulary, reproduced exactly: 1,299 user-defined + 645 unjoined = 1,944 = config.vocab_size",
+        "preprocessing_functions.py — load_and_clean_midisongbymeasure_from_midi_path(p, quantize); simplified drum map; near-equal track removal",
+        "midisong.py (100 KB) — MidiSong / MidiSongByMeasure / Track, quantize (8,6) = 24 steps/quarter, time-signature cleanup",
+        "dedupe_and_filter_midi_files_functions.py — the author's own MIDI near-duplicate filter (relevant to the PDMX near-dup gap)",
+        "constants.py — FINETUNE_TASK = 'infill' only; MAX_LEN = 1650; 258-instrument table with per-instrument acceptable note ranges; control slice thresholds"
+      ],
+      "whyTheInputContractMatters": "mask_locations = (target track, every measure in the window) is literally the Tier B arranger task: given the rest of the arrangement, write this part. CA2's fine-tuned objective is our objective."
+    },
+    "pinnedChecksumsSha256": {
+      "composers.assistant.v.2.1.0.zip": "2a17d0b12f17a5fc85f8d54c441e9a2d68b53e828115083942709aa676fac0b0",
+      "CA.v2.1.0.small.model.optional.download.zip": "2d41b078f33d12638ad705289dcd0c606a16d2544f48f839df2881836d1dc6c4",
+      "large pytorch_model.bin (finetuned_epoch_49_0)": "297bccb173b4497a3c3b6007422506dced88fd9f99f5c8a18481dedd9667d530",
+      "note": "These are the values the Modal image and the adapter must verify before loading. A mismatch is not the model."
+    }
+  },
+  "threeLayerVerdict": {
+    "code": "MIT — verified_primary_source",
+    "weights": "MIT via the repository LICENSE that disclaimer.txt references; no separate or contrary licence in the model zip; no rights claimed on outputs — verified_primary_source",
+    "trainingData": "PD-by-age classical (Mutopia dominant, JRP), synthetic CocoChorales (CC-BY 4.0), composer/arranger-released CC-BY, and explicitly permitted contributor files — verified_primary_source",
+    "underlyingWorksCleared": "yes, for the dominant share, with two named residuals",
+    "classification": "SHIP_CLEARED — the public evidence supports commercial use. This is not legal sign-off."
+  },
+  "residualsNamed": [
+    "18 of 237 Mutopia composer rows carry post-1926 death dates; PD-by-age does not apply to them and the basis is the composer's/arranger's own CC-BY release on Mutopia.",
+    "HetzlersFakebook contributed files under permission; fake books are jazz-standard lead sheets, some still in copyright. Share is tiny (2 links of ~2,500) and the author states only 'allowable' files were used, but it is the one contributor whose repertoire is not PD by nature.",
+    "'Marked as being in the public domain' relies on the source sites' marking — the same structural reliance PDMX had before its no_license_conflict filter. Mutopia's curation is stricter than MuseScore's, which is why this is treated as cleared rather than unknown."
+  ],
+  "whyThisMattersForTheFromScratchDecision": "This is the first candidate that is simultaneously (a) our exact task — multi-track MIDI infilling with fine-grained controls, (b) a standard HF T5 that runs without REAPER, and (c) trained on a corpus where the underlying works are cleared by age or by synthesis. Its weakness is exactly the corpus's strength: it has learned classical/early idiom and almost nothing else, and PDMX (also mostly classical solo) would not broaden that. The tournament will show whether its infilling competence transfers to pop/Mizrahi arrangement; the corpus says not to expect it to.",
+  "honestLimits": [
+    "No inference has been run. liveInferenceProven remains false.",
+    "Large-model parameter count not yet read.",
+    "The ~54M small model is specialist scale, not a 200–350M foundation.",
+    "SHIP_CLEARED here means the public evidence supports commercial use; a lawyer has not reviewed it."
+  ]
+}

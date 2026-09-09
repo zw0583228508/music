@@ -2426,6 +2426,57 @@ any of it.
   in the registry has been run.** `liveInferenceProven` is false on all of
   them and a test asserts it. This is the map, not the tournament.
 
+- **PR-55** ✅ — `ca2-primary-source-audit` (Wave Q — Model Discovery, phase 2
+  step 1): Composer's Assistant 2 promoted to **`SHIP_CLEARED`** on primary
+  sources. Evidence: `docs/evidence/model-composers-assistant-2-audit.json`.
+
+  The one entry the registry now allows to ship, and the reason is the reading,
+  not the label. Read verbatim: the repository **LICENSE** (MIT, © 2023 Martin
+  E. Malandro); **disclaimer.txt** — models trained on MIDI "marked as being in
+  the public domain, available under a CC0 license …, available under a CC-BY
+  license, or which we had permission from the MIDI file authors to use", and
+  "We claim no rights to the outputs you generate"; **acknowledgments.html**
+  (375 KB) — **2,451 Mutopia Project links** (PD classical, 237 composer rows),
+  **CocoChorales** (synthetic, CC-BY 4.0), the Josquin Research Project, and
+  named permitted contributors; a **second in-release `license.txt`** (MIT,
+  © 2023–2024) beside the models; and both model zips listed to confirm no
+  contrary licence. That is three layers, each from a primary source, with the
+  underlying works cleared by age, by synthesis, or by the composer's own
+  release. **Two residuals are named, not hidden:** 18 of 237 Mutopia rows have
+  post-1926 death dates (basis is the composer's CC-BY release, not PD-by-age),
+  and HetzlersFakebook (2 of ~2,500 links) is a jazz fake-book site.
+
+  **What the model actually is.** A standard HF `T5ForConditionalGeneration`.
+  Large (default): 16+16 layers, d_model 576, d_ff 2304, 12 heads —
+  769,602,209 bytes fp32 → **~192M parameters**, squarely in the foundation
+  band. Small: 10+10, d_model 384, ~54M. Vocabulary **exactly 1,944 tokens**,
+  reproduced from the source: per-track `;I:0–257` instrument, `;N:` note-on,
+  `;d:` duration, `;D:` drum, `;w:` wait, BPM and loudness levels, 256 T5
+  span-mask sentinels, and **512 control instructions** (onset density,
+  pitch-class count, step/leap histogram, irregularity, rhythmic conditioning).
+  Grid 24 steps per quarter. `MAX_LEN` 1650. Only the `infill` task is
+  fine-tuned.
+
+  **Why it matters for the from-scratch question.** The inference entry point is
+  `encode_midisongbymeasure_with_masks(S, mask_locations=[(track, measure)…])`
+  → `T5.generate` → decode. **`mask_locations` = (target track, every measure
+  in the window) is literally the Tier B arranger task** — CA2's fine-tuned
+  objective is our objective. It runs standalone (the XML-RPC server has no
+  REAPER dependency); only the request-string builder must be reimplemented.
+
+  Pinned: main zip `2a17d0b1…`, small zip `2d41b078…`, large
+  `pytorch_model.bin` `297bccb1…` (sha256). Suites: globalModelRegistry 13 (the
+  "ships nothing" test deliberately became "exactly one ships, and only on
+  primary sources"); typecheck green.
+
+  **Honest limits.** `SHIP_CLEARED` means the public evidence supports
+  commercial use; **a lawyer has not reviewed it.** `liveInferenceProven` is
+  still **false** — no inference has run. The corpus is overwhelmingly
+  classical/early music; whether its infilling competence transfers to pop or
+  Mizrahi arrangement is exactly what the tournament must show, and the corpus
+  says not to expect it to. Its deep context is 512 numeric instructions — no
+  slot for section, phrase, harmony plan or style grammar.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

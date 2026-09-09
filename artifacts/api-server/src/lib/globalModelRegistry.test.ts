@@ -86,11 +86,23 @@ test("teacher outputs from non-cleared models are flagged for legal review befor
 // The real registry obeys the discipline
 // ---------------------------------------------------------------------------
 
-test("the first-pass registry ships nothing: every external entry still has an unread layer", () => {
-  // This is the honest state of the audit on 2026-09-09. When a row is
-  // promoted to SHIP_CLEARED it must be because a primary source was read,
-  // and this assertion must be updated deliberately, not silently.
-  assert.deepEqual(shippable(GLOBAL_MODEL_REGISTRY).map((e) => e.id), []);
+test("exactly one entry is SHIP_CLEARED, and only because every layer was read from a primary source", () => {
+  // Deliberately updated on 2026-09-09 from "ships nothing". Composer's
+  // Assistant 2 was promoted after reading, verbatim, the repository LICENSE
+  // (MIT), disclaimer.txt (models under that licence, no rights claimed on
+  // outputs, training on PD/CC0/CC-BY/permitted MIDI) and acknowledgments.html
+  // (2,451 Mutopia links, CocoChorales CC-BY-4.0, JRP, named contributors), and
+  // confirming the model zip carries no contrary licence. Its two named
+  // residuals live in knownLimitations. Any further promotion must add a name
+  // here with the same kind of reason.
+  assert.deepEqual(shippable(GLOBAL_MODEL_REGISTRY).map((e) => e.id), ["COMPOSERS_ASSISTANT_2"]);
+  const ca = GLOBAL_MODEL_REGISTRY.find((e) => e.id === "COMPOSERS_ASSISTANT_2")!;
+  for (const layer of [ca.codeLicense, ca.weightsLicense, ca.trainingData]) {
+    assert.equal(layer.confidence, "verified_primary_source");
+    assert.ok(layer.source && layer.stated, "a shipped entry cites a source for every layer");
+  }
+  assert.equal(ca.trainingData.underlyingWorksCleared, "yes");
+  assert.ok(ca.knownLimitations.some((l) => /Residual/.test(l)), "the residual risks are named, not hidden");
 });
 
 test("nothing in the registry claims live inference: no model has been run here yet", () => {
@@ -113,8 +125,9 @@ test("the known non-commercial models are classified as such, not as review-pend
   assert.equal(byId.get("ANTICIPATORY_MUSIC_TRANSFORMER"), "RESEARCH_ONLY", "Lakh MIDI: permissive licence, uncleared works");
 });
 
-test("the strongest lead is still only LEGAL_REVIEW_REQUIRED until its files are read", () => {
-  const ca = GLOBAL_MODEL_REGISTRY.find((e) => e.id === "COMPOSERS_ASSISTANT_2")!;
-  assert.equal(classify(ca), "LEGAL_REVIEW_REQUIRED");
-  assert.match(explainClassification(ca), /weights licence/);
+test("the other permissively-labelled foundations stay LEGAL_REVIEW_REQUIRED: their corpora are undisclosed", () => {
+  const byId = new Map(GLOBAL_MODEL_REGISTRY.map((e) => [e.id, classify(e)]));
+  for (const id of ["MUPT", "NOTAGEN", "CLAMP3", "GETMUSIC"]) {
+    assert.equal(byId.get(id), "LEGAL_REVIEW_REQUIRED", `${id}: MIT/Apache on weights is not provenance`);
+  }
 });
