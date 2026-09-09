@@ -140,6 +140,18 @@ const suites = {
       // Wave Q, tournament task preparation: chords estimated per bar from the
       // notes every provider is given, or no chord where the bar has none.
       ["src/lib/chordsFromNotes.test.ts", "chords-from-notes.test.mjs"],
+      // Wave Q, Model Discovery: the tournament — task from a real score, the
+      // part judge, the runner, the blind sheet; and the arms, with CA2 mocked.
+      [
+        "src/lib/modelTournament.test.ts",
+        "model-tournament.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/tournamentProviders.test.ts",
+        "tournament-providers.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [

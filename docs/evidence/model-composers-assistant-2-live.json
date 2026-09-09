@@ -78,7 +78,7 @@
     "whatIsNot": "Quality. One collapse in four at temperature 1.0; weak-to-moderate harmonic tracking against the context; heavy bar-to-bar repetition. These are single samples read by eye. The judgment belongs to the tournament — N seeds per task, the platform's hard constraints, the music critic and, for the finalists, blind listening.",
     "domainCaveat": "Runs 1–2 are brass-ensemble and baroque-ensemble scores — the model's home repertoire. Nothing here says anything about pop, dance or Mizrahi arrangement, which the training corpus does not contain."
   },
-  "benchmarkResult": "none yet — the tournament has not been run",
+  "benchmarkResult": "first live tournament 2026-09-09 (docs/evidence/model-tournament-live.json): CA2 raw 73.0 / CA2+CTX 73.5 mean vs REFERENCE 63.0, CONTEXT_AWARE 64.6, HUMAN 90.4 on 12 classical PDMX tasks × 3 seeds; do_not_promote (more playability errors than the reference); blind pairs written, unrated",
   "classification": "SHIP_CLEARED · FOUNDATION_CANDIDATE · liveInferenceProven: true",
   "cloudDeployment": "docs/evidence/model-composers-assistant-2-cloud.json — the Modal worker, proven over HTTPS on 2026-09-09 (401 without the dedicated token; two real infills, 48 and 39 notes)",
   "nextStep": "run the per-task tournament (HUMAN_ORIGIN_REFERENCE vs REFERENCE_PART_COMPOSER vs CONTEXT_AWARE_ARRANGER vs COMPOSERS_ASSISTANT_2) on PDMX Tier B tasks with N seeds, then blind pairs into the Listening Room."

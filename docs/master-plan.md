@@ -2618,6 +2618,73 @@ any of it.
   against labelled real music; its confidence is capped at 0.85 for that
   reason.
 
+- **PR-59** ✅ — `model-tournament` (Wave Q — Model Discovery, items 13–15, 25,
+  27): **the model tournament exists and has run live on real PDMX tasks
+  against the deployed CA2 worker**, and the **decision report** is in front
+  of the owner. Evidence: `docs/evidence/model-tournament-live.json` (180
+  entries) + 445 files under `docs/evidence/tournament/` (token-named MIDIs per
+  blind side, `context-<task>.mid` per task, rater-facing `pairs.json` with no
+  provider names) + `docs/model-discovery/decision-report.md`.
+
+  **What was built.** `tournamentTask.ts` — a task from a real score: the
+  held-out part named by **GM program** (what CA2 masks after its own track
+  cleaning), an 8-bar window, every other track as context, chords estimated
+  from the context alone (never from the target), and refusals instead of
+  half-tasks: < 8 target notes, target or context silent in half the bars, or
+  a metre change in the file (the first live run returned a whole CA2 part
+  outside the window because "measure 216" meant different things to two
+  parsers). `partJudge.ts` — one proxy score for every arm: the real
+  constraint engine, range (with a GM-program table where the platform's
+  family definition is the wrong instrument — a human tuba part scored 20 for
+  playing where tubas play), chord-tone share around 0.6, bar coverage,
+  density and interval shape *vs the human part as anchor*, verbatim bar
+  repetition, semitone clashes with the context, single-pitch collapse.
+  `tournamentSongModel.ts` — the Song Model the platform would have produced
+  for these bars, so `REFERENCE_PART_COMPOSER` and `CONTEXT_AWARE_ARRANGER`
+  run through the real planners. `tournamentProviders.ts` — five arms:
+  HUMAN_ORIGIN_REFERENCE, REFERENCE, CONTEXT_AWARE (siblings + Q-04 harmony
+  plan + Q-02 grammar, the `contextAware` path exactly), COMPOSERS_ASSISTANT_2
+  raw and **+CTX** (same inference, then the platform passes).
+  `modelTournament.ts` — scorecards, win rates vs reference and vs human,
+  `judgeSuspect` (a machine above the human = distrust the judge there), a
+  **two-valued recommendation that can never say "promote"**, and the blind
+  sheet. `scripts/run-model-tournament.mjs` — rights basis → deterministic
+  sample → tasks round-robin over families → live run → MIDIs + report.
+
+  **What the live run said** (12 tasks, seeds 7/11/13, 36 real CA2 calls,
+  0 failures): HUMAN 90.4 · REFERENCE 63.0 · CONTEXT_AWARE 64.6 · **CA2 raw
+  73.0 · CA2+CTX 73.5**. CA2+CTX out-scores the reference on **72 %** of
+  cells and wins bass/keys/organ/reed outright, loses strings and brass, and
+  makes **three times** the reference's playability errors (0.25 vs 0.08 per
+  entry; raw 0.53) — so the runner's verdict is **do_not_promote** for both
+  arms, exactly as designed. The platform's own composers are *playable and
+  thin* (chord-tone share 1.00, coverage 0.49: 2–4 notes for an eight-bar
+  wind part); CA2 is *full and riskier* (coverage 0.90). The +CTX passes halve
+  CA2's errors without changing its score. Nobody beats the human anchor except
+  on 7 judge-suspect cells.
+
+  **Decision report** (`docs/model-discovery/decision-report.md`, Options
+  A–E priced): start from CA2 — **Option D now** (CA2+CTX in the shadow route,
+  which is what shipped in PR-58), **Option B as the first training** (a LoRA
+  pilot ≤ $120 on PDMX multitrack tasks, judged by this tournament; then a
+  vocabulary-extended fine-tune for chord/role/section tokens), **Option A
+  only if B plateaus** below the reference on blind pairs; **no Option C**
+  (NC/Lakh teachers) without counsel. Nothing trains before the owner has read
+  it.
+
+  Suites: modelTournament 13, tournamentProviders 5 (CA2 mocked at the HTTP
+  boundary), chordsFromNotes 8; typecheck green.
+
+  **Honest limits.** The judge is a proxy and the human anchor exposed two
+  of its blind spots on the way (instrument ranges, metre changes); the
+  **216 blind pairs are written and nobody has rated one**. All twelve tasks
+  are classical/early-music scores — that is what PDMX's cleared multitrack
+  share is — so the pop/dance/Mizrahi question is untouched. Three runs were
+  made: run 1 (task rule v0) found the two judge bugs; run 2 was stopped when
+  the fixes landed; run 3 is the record. The decision report is a **draft v1**
+  and says so; a non-classical slice, at least one rated session, and the
+  measured cost of a LoRA pilot are named as what makes it final.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

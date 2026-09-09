@@ -151,7 +151,7 @@ export type OrchestrateInput = {
  * harmonic rhythm this plan does not yet express, and pretending otherwise
  * would put a voicing on a beat that never had one.
  */
-function harmonyPlanFor(songModel: SongModelData): HarmonyPlanSlot {
+export function harmonyPlanFor(songModel: SongModelData): HarmonyPlanSlot {
   const bars = songModel.bars ?? [];
   const chords = songModel.chords ?? [];
   if (!bars.length || !chords.length) {
@@ -185,7 +185,7 @@ function harmonyPlanFor(songModel: SongModelData): HarmonyPlanSlot {
  * strong behaviour yields an empty grammar, and the slot says so rather than
  * inventing a character the song never had.
  */
-function styleGrammarFor(
+export function styleGrammarFor(
   songModel: SongModelData,
   tempoBpm: number,
   meter: string,
