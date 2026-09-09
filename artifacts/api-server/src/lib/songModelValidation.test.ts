@@ -26,6 +26,62 @@ import {
 const issueCodes = (result: { issues: Array<{ code: string }> }) =>
   result.issues.map((item) => item.code);
 
+test("a contested key is accepted flagged with an empty key map; a missing key is still rejected", () => {
+  const contestedKey = {
+    status: "contested",
+    confidence: null,
+    providers: ["LOCAL_SIGNAL_ANALYZER_V1", "TRANSCRIPTION_KEY_V1"],
+    message: "Independent analyses disagree: Eb major vs G minor.",
+    edited: false,
+    candidates: [
+      { value: "Eb major", confidence: .35, providers: ["TRANSCRIPTION_KEY_V1"] },
+      { value: "G minor", confidence: .27, providers: ["LOCAL_SIGNAL_ANALYZER_V1"] },
+    ],
+  };
+  const contested = {
+    ...validSongModel,
+    keyMap: [],
+    fieldStatus: { ...(validSongModel as { fieldStatus?: object }).fieldStatus, key: contestedKey },
+  };
+  const core = validateSongModelCore(contested);
+  assert.equal(core.success, true);
+  assert.deepEqual(issueCodes(core), ["CONTESTED_KEY"]);
+  assert.equal(core.issues[0]!.severity, "warning");
+
+  // Through fusion the model is accepted, flagged — so arrangement stays blocked
+  // until a producer confirms a key, and the candidates ride along untouched.
+  const fusion = fuseProviderSongModels([{ provider: "TEST", output: contested, confidence: .8 }]);
+  assert.equal(fusion.accepted, true);
+  if (fusion.accepted) {
+    assert.equal(fusion.model.validation.status, "flagged");
+    assert.deepEqual(fusion.model.keyMap, []);
+    assert.equal(fusion.model.fieldStatus?.key?.status, "contested");
+    assert.equal(fusion.model.fieldStatus?.key?.candidates?.length, 2);
+    const eligibility = evaluateArrangementEligibility(fusion.model, "ready", 0.9);
+    assert.equal(eligibility.eligible, false);
+    if (!eligibility.eligible) assert.equal(eligibility.code, "SONG_MODEL_FLAGGED");
+    // Confirming a key is an ordinary correction; the refreshed model carries no warning.
+    const confirmed = refreshSongModelValidation({
+      ...fusion.model,
+      keyMap: [{ time: 0, key: "G minor", confidence: 1 }],
+      fieldStatus: { ...fusion.model.fieldStatus!, key: { ...contestedKey, status: "detected", confidence: 1, edited: true } },
+    });
+    assert.equal(confirmed.validation.status, "accepted");
+  }
+
+  // The same empty key map with no contest is still a missing analysis.
+  const missing = validateSongModelCore({ ...validSongModel, keyMap: [] });
+  assert.equal(missing.success, false);
+  assert.ok(issueCodes(missing).includes("MISSING_KEY_MAP"));
+  // A contest that names only one value is not a contest.
+  const oneCandidate = validateSongModelCore({
+    ...contested,
+    fieldStatus: { ...contested.fieldStatus, key: { ...contestedKey, candidates: contestedKey.candidates.slice(0, 1) } },
+  });
+  assert.equal(oneCandidate.success, false);
+  assert.ok(issueCodes(oneCandidate).includes("MISSING_KEY_MAP"));
+});
+
 test("accepts a provider response that satisfies the canonical core contract", () => {
   const result = validateSongModelCore(validSongModel);
   assert.equal(result.success, true);

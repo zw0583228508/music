@@ -327,12 +327,39 @@ function validateAudio(value: unknown, issues: MutableIssue[]): void {
   }
 }
 
+/**
+ * The candidates a contested field carries, or null when the field is not
+ * contested. A field is only contested when it says so *and* names at least
+ * two values: a bare status with nothing to choose between is not a contest.
+ */
+function contestedCandidates(input: Record<string, unknown>, field: string): unknown[] | null {
+  if (!isRecord(input.fieldStatus)) return null;
+  const status = input.fieldStatus[field];
+  if (!isRecord(status) || status.status !== "contested") return null;
+  return Array.isArray(status.candidates) && status.candidates.length >= 2 ? status.candidates : null;
+}
+
 function validateTimedEvents(
   value: unknown,
   name: "tempoMap" | "keyMap",
   issues: MutableIssue[],
+  options: { contested?: unknown[] | null } = {},
 ): void {
   if (!Array.isArray(value) || value.length === 0) {
+    if (name === "keyMap" && options.contested) {
+      // Two analyses named different keys with comparable weight. An empty
+      // key map is then the honest record, not a missing one: the model is
+      // accepted flagged, arrangement stays blocked, and the producer's
+      // confirmation (a correction) clears the flag. Compare an empty key map
+      // with no contest below, which is still a missing analysis.
+      issues.push(issue(
+        "CONTESTED_KEY",
+        "warning",
+        name,
+        `Key is contested between ${options.contested.length} independent analyses; confirm one before arranging.`,
+      ));
+      return;
+    }
     issues.push(issue(
       `MISSING_${name === "tempoMap" ? "TEMPO" : "KEY"}_MAP`,
       "error",
@@ -1044,7 +1071,7 @@ export function validateSongModelCore(input: unknown): ValidationResult<SongMode
     : undefined;
   validateTimedEvents(input.tempoMap, "tempoMap", issues);
   validateMeterMap(input.meterMap, issues);
-  validateTimedEvents(input.keyMap, "keyMap", issues);
+  validateTimedEvents(input.keyMap, "keyMap", issues, { contested: contestedCandidates(input, "key") });
   validateMelody(input.melody, duration, issues);
   validateBassEvidence(input.bass, duration, issues);
   validateChords(input.chords, duration, issues);

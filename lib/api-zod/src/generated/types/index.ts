@@ -599,6 +599,7 @@ export * from './songModelContractVersion';
 export * from './songModelCorrection';
 export * from './songModelCorrectionFieldsItem';
 export * from './songModelCorrectionInput';
+export * from './songModelFieldCandidate';
 export * from './songModelFieldStatus';
 export * from './songModelFieldStatusProperty';
 export * from './songModelFieldStatusPropertyStatus';

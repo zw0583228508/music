@@ -38,7 +38,11 @@ export function sectionsDiffer(model: Pick<SongModelData, "sections">, sections:
  * confirm a `low_confidence` estimate.
  */
 export function correctionFields(model: Pick<SongModelData, "tempoMap" | "keyMap" | "meterMap" | "sections" | "fieldStatus">, correction: CorrectionInput): CorrectionField[] {
-  const lowConfidence = (field: CorrectionField) => model.fieldStatus?.[STATUS_FIELD[field]]?.status === "low_confidence";
+  // A confirmed value touches the field when it settles an estimate or a contest, even if it repeats the estimate.
+  const lowConfidence = (field: CorrectionField) => {
+    const status = model.fieldStatus?.[STATUS_FIELD[field]]?.status;
+    return status === "low_confidence" || status === "contested";
+  };
   const touched: CorrectionField[] = [];
   if (correction.bpm !== undefined && (correction.bpm !== model.tempoMap[0]?.bpm || lowConfidence("bpm"))) touched.push("bpm");
   if (correction.key !== undefined && (correction.key !== model.keyMap[0]?.key || lowConfidence("key"))) touched.push("key");

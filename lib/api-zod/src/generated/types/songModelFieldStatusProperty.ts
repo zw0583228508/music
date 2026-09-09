@@ -5,6 +5,7 @@
  * API for the AI Music Production Studio
  * OpenAPI spec version: 0.1.0
  */
+import type { SongModelFieldCandidate } from './songModelFieldCandidate';
 import type { SongModelFieldStatusPropertyStatus } from './songModelFieldStatusPropertyStatus';
 
 export interface SongModelFieldStatusProperty {
@@ -15,4 +16,6 @@ export interface SongModelFieldStatusProperty {
   /** @nullable */
   message: string | null;
   edited: boolean;
+  /** Present when status is contested — the values independent analyses named, strongest first. */
+  candidates?: SongModelFieldCandidate[];
 }

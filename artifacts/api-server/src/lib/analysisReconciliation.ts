@@ -21,14 +21,38 @@ export type AnalysisObservation<T> = {
   confidence?: number;
 };
 
+/** One value the evidence named, with the weight behind it and who said it. */
+export type ReconciliationCandidate<T> = {
+  value: T;
+  /** Summed provider weight (confidence × reliability), clamped to [0, 1]. */
+  score: number;
+  providers: string[];
+};
+
 export type ReconciliationResult<T> = {
   value: T | null;
   confidence: number | null;
   providers: string[];
-  status: "detected" | "low_confidence" | "not_available";
+  /**
+   * `contested`: two or more independent observations each carry real weight
+   * and none wins by a usable margin. The value stays null — choosing the
+   * heavier one would be an invention dressed as a measurement — and the
+   * candidates are carried so a person can confirm one.
+   */
+  status: "detected" | "low_confidence" | "contested" | "not_available";
   message: string | null;
   margin: number | null;
+  /** Every value with real weight, strongest first; empty unless `contested`. */
+  candidates: ReconciliationCandidate<T>[];
 };
+
+/**
+ * A losing value counts as a contestant when it carries at least this much
+ * weight and at least this fraction of the winner's; below that it is noise
+ * beside a single usable observation, not a second opinion.
+ */
+const CONTEST_FLOOR = .15;
+const CONTEST_RATIO = .4;
 
 /** Domains compared with a numeric tolerance rather than exact equality. */
 const NUMERIC_TOLERANCE_DOMAINS = new Set<AnalysisDomain>(["tempo", "downbeats"]);
@@ -83,6 +107,7 @@ export function reconcileAnalysisField<T extends number | string>(
     return {
       value: null, confidence: null, providers: [], status: "not_available",
       message: "No usable independent provider evidence was returned.", margin: null,
+      candidates: [],
     };
   }
 
@@ -120,10 +145,28 @@ export function reconcileAnalysisField<T extends number | string>(
     (!runnerUp || margin >= .12);
 
   if (!corroborated && !usableSingleObservation) {
+    const contestants = scored.filter((cluster) =>
+      cluster.score >= Math.max(CONTEST_FLOOR, winner.score * CONTEST_RATIO));
+    if (contestants.length >= 2) {
+      const candidates = contestants.map((cluster) => ({
+        value: cluster.value,
+        score: round(clamp(cluster.score)),
+        providers: cluster.observations.map((item) => item.provider).sort(),
+      }));
+      return {
+        value: null, confidence: null, providers: [], status: "contested",
+        message: `Independent analyses disagree: ${candidates
+          .map((item) => `${String(item.value)} (${item.providers.join(", ")})`)
+          .join(" vs ")}. Confirm one before it is used.`,
+        margin,
+        candidates,
+      };
+    }
     return {
       value: null, confidence: null, providers: [], status: "not_available",
       message: "Provider evidence disagreed without a sufficient reconciliation margin.",
       margin,
+      candidates: [],
     };
   }
   return {
@@ -134,6 +177,7 @@ export function reconcileAnalysisField<T extends number | string>(
     message: corroborated ? null :
       "Only one independent provider supports this value; review before arranging.",
     margin,
+    candidates: [],
   };
 }
 // ---------------------------------------------------------------------------

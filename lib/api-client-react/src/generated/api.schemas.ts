@@ -1866,9 +1866,16 @@ export type SongModelFieldStatusPropertyStatus = typeof SongModelFieldStatusProp
 export const SongModelFieldStatusPropertyStatus = {
   detected: 'detected',
   low_confidence: 'low_confidence',
+  contested: 'contested',
   failed: 'failed',
   not_available: 'not_available',
 } as const;
+
+export interface SongModelFieldCandidate {
+  value: string;
+  confidence: number;
+  providers: string[];
+}
 
 export interface SongModelFieldStatusProperty {
   status: SongModelFieldStatusPropertyStatus;
@@ -1878,6 +1885,8 @@ export interface SongModelFieldStatusProperty {
   /** @nullable */
   message: string | null;
   edited: boolean;
+  /** Present when status is contested — the values independent analyses named, strongest first. */
+  candidates?: SongModelFieldCandidate[];
 }
 
 export interface SongModelFieldStatus {

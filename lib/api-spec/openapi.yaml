@@ -3526,13 +3526,22 @@ components:
         attempts: { type: number, minimum: 0 }
         errorCode: { type: string }
         errorMessage: { type: string }
+    SongModelFieldCandidate:
+      type: object
+      required: [value, confidence, providers]
+      properties:
+        value: { type: string }
+        confidence: { type: number }
+        providers:
+          type: array
+          items: { type: string }
     SongModelFieldStatusProperty:
       type: object
       required: [status, confidence, providers, message, edited]
       properties:
         status:
           type: string
-          enum: [detected, low_confidence, failed, not_available]
+          enum: [detected, low_confidence, contested, failed, not_available]
         confidence:
           type: ["number", "null"]
         providers:
@@ -3542,6 +3551,10 @@ components:
           type: ["string", "null"]
         edited:
           type: boolean
+        candidates:
+          description: Present when status is contested — the values independent analyses named, strongest first.
+          type: array
+          items: { $ref: "#/components/schemas/SongModelFieldCandidate" }
     SongModelFieldStatus:
       type: object
       required: [tempo, meter, key, melody, bass, harmony, sections, energy]
