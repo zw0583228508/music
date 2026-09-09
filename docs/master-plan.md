@@ -3549,6 +3549,41 @@ any of it.
   independent raters. All 12 source tasks are classical; the 840 non-classical
   pairs are unrated. No secondary rating was given. Approval for training is
   **still not requested**, and this is why.
+- **PR-75** ✅ — `dominant-metre-grid` (Wave Q, Q-05 — the defect PR-65 found):
+  **the tokenizer grid now follows the metre in force for most of the piece,
+  not the first one written.** `arrangerRemi.ts` gains `dominantTimeSignature()`
+  (coverage in ticks; a tie keeps the earlier metre) and `toGridNotes()` cuts
+  bars on it, with the grid origin placed so a pickup bar fills bar 0 from the
+  right and every written downbeat stays a grid downbeat. The grid reports
+  `gridOriginTick`, `pickupBar` and `metreChanges`; the round-trip result
+  carries the last two.
+
+  **Why it mattered.** PR-65 measured that the first metre is not the dominant
+  one in 103,469 of 222,820 works (46 %) — almost always an anacrusis a notation
+  editor exported as its own metre (1/4 then 4/4). Every 8-bar window cut from
+  those works started one beat early, so window boundaries never fell on bar
+  lines, and the whole piece was tokenised under an approximated 1/4 grid.
+
+  **Re-proved, not assumed.** Round trip on the same 8,000-file sample as
+  PR-52: **7,997 / 7,997 lossless modulo grid**, 0 dropped, 0 spurious —
+  unchanged — and the new counters say the change touched **3,638 files with
+  a pickup bar (45.5 %) and 4,739 with metre changes (59 %)**. Tier B
+  extraction on the same 5,000-work sample: the same 449 works yield 3,527
+  tasks (−50, windows shifted) carrying **251,244 target notes, +7.0 %** —
+  windows that start on real downbeats contain fuller bars; the work-level
+  split stays leak-free and the rights proof verifies; the tokenizer version
+  is unchanged because the vocabulary is unchanged.
+
+  Suites: arrangerRemi 15 (+3: pickup score, single-metre score untouched,
+  pickup round trip), arrangerTaskExtraction 9; typecheck green.
+
+  **Honest limits.** The grid follows one metre for the whole piece; a work
+  that genuinely alternates metres is still cut on the dominant one and says so
+  (`metreChanges`). `judgeCalibration.ts` and `tournamentTask.ts` still read
+  the first signature — the tournament refuses multi-metre files outright, so
+  it is unaffected; the calibration windows were cut the old way and would need
+  an 11-minute re-run to be strictly comparable. The CA2 LoRA dataset builder
+  (PR-63) uses CA2's own encoder, not this grid.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
