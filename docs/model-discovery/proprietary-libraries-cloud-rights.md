@@ -71,10 +71,11 @@ licence was not fetched.
 | 22 | MT Power Drum Kit 2 | `PRIVATE_VM_GREY` (**none** — EULA only inside the installer) | `MULTI_USER_SERVICE_FORBIDDEN` (none — policy default) | download page: "By downloading, you agree to the EULA"; the EULA link is a JavaScript action, the legal page is an imprint |
 | 23 | Steinberg HALion Sonic / Groove Agent SE content with Cubase 14 | `PRIVATE_VM_GREY` (medium) | `MULTI_USER_SERVICE_FORBIDDEN` (high) | §2.3 single-user licence, activations "on a limited number of computers" (help centre: three, simultaneously); §2.2 samples only inside "a live or recorded performance"; servers/VMs not addressed |
 
-**Counts.** Private VM: 5 rows `PERMITTED` (Spitfire ×3 counted once → ISW,
-Fracture, ProjectSAM, VSL, Spitfire), 0 `FORBIDDEN`, the rest `GREY` — three of
-them GREY only because the licence could not be fetched (SSD5 Free, Decent
-Sampler plugin, MT Power). Multi-user: nothing `PERMITTED`; five vendors name a
+**Counts.** Private VM: `PERMITTED` for five vendors (Impact Soundworks,
+Fracture Sounds, ProjectSAM, VSL, Spitfire — whose three free products share
+one EULA), `FORBIDDEN` for none, `GREY` for the rest — three of them GREY only
+because the licence could not be fetched (SSD5 Free, Decent Sampler plugin,
+MT Power). Multi-user: nothing `PERMITTED`; five vendors name a
 licence path (NI, OT, Sonuscore, Fracture, VSL); the rest forbid it or are
 silent (silent = forbidden by platform policy).
 

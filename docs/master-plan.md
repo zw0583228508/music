@@ -5139,6 +5139,102 @@ any of it.
   weight or threshold changed; the fixes named in the report (an UNKNOWN
   model instead of a failure, one structure witness, a row for the
   chord-derived key, one tempo-level rule) are proposals, not code.
+
+- **PR-95** ✅ — `proprietary-libraries-cloud-rights-and-vm-runbook` (CLOUD-VM
+  stream, research + scripts, $0, nothing provisioned). The owner wants the
+  free-but-proprietary libraries of `free-sound-libraries.md` (Kontakt Player
+  libraries, Spitfire, SINE, Soundpaint, Ample, SSD5 Free, Decent Sampler /
+  Pianobook, VSL BBO Free Basics, MT Power, the Steinberg content with his
+  Cubase 14) usable *in the cloud* for his own private single-user use, and
+  needs to know what changes when others use the platform. Two deliverables.
+
+  **Clause table** (`docs/model-discovery/proprietary-libraries-cloud-rights.md`,
+  evidence `docs/evidence/proprietary-libraries-cloud-rights.json`): 23 rows /
+  22 products, every quote verbatim (≤ 25 words) from the vendor's own page
+  fetched 2026-09-10, six topics per product (machines, licensee-only,
+  server/VM/cloud, third-party/network, commercial, transfer), two verdicts
+  with confidence and the clause each rests on. **Private single-user VM:**
+  `PERMITTED` for Impact Soundworks ("as many computer systems as he or she
+  has access to"), VSL ("one or more computers … used only by the licensee"),
+  Fracture (3 computers, sole user), ProjectSAM (3 systems, sole user),
+  Spitfire (2 devices); `FORBIDDEN` for none; `GREY` for the rest — NI,
+  Orchestral Tools, Sonuscore, Steinberg (silent on servers/VMs), Sonixinema /
+  8Dio-Soundpaint (computers "owned … by you"), Emergence ("personal
+  devices"), Ample (computers must "belong to the same owner"; and §5 makes
+  free products "Demo Software" for evaluation unless Ample says otherwise —
+  unresolved), Audio Imperia (the closest to a prohibition: "one local hard
+  drive", cloud "for backup purposes only", "does not allow you to upload to
+  shared servers"), and three GREY only because the licence is unpublished or
+  installer-only (MT Power, SSD5 Free, Decent Sampler plugin). **Multi-user
+  deployment:** nothing `PERMITTED`; NI, OT, Sonuscore, Fracture, VSL name a
+  licence path (`NEEDS_COMMERCIAL_LICENCE`); every other product forbids it
+  in terms or is silent (silent = forbidden by platform policy, labelled as
+  such). Two cross-cutting findings: **AI-training prohibitions** (Soundpaint,
+  VSL, OT, Sonuscore, Fracture, Audio Imperia) mean renders through these
+  libraries must never enter a reward-model / LoRA dataset (proposal:
+  `trainingUse: forbidden` on the worker manifest, refused by
+  `datasetRightsProof.ts` — not implemented); and **activation seats are
+  consumed by VM lifecycle**, which makes "deactivate before delete; snapshot
+  instead of re-create" a licence rule, not a cost tip. Six one-line vendor
+  questions would settle the GREY rows.
+
+  **Runbook** (`docs/model-discovery/windows-render-vm-runbook.md`,
+  `services/vst3-render-worker/cloud/{bootstrap-vm.ps1,verify-vm.ps1,README.md}`):
+  three providers with in-country regions and list prices read 2026-09-10 —
+  Azure `israelcentral` from the Retail Prices API (D4s_v5 Windows $0.408/h ≈
+  $298/month, D8s_v5 $0.816/h, B4s_v2 $0.21/h, Spot D4s_v5 $0.075/h; E20
+  512 GB $46.08/month, E30 1 TB $92.16, snapshots $0.06/GB), AWS
+  `il-central-1` from the pricing page's own JSON dated 2026-09-09
+  (m6i.xlarge Windows $0.4087/h, m6i.2xlarge $0.8174/h; EBS gp3 not captured),
+  Kamatera Tel Aviv (Windows Server and **Windows 11 Desktop** images with
+  licences included, per-minute billing, from $10/month; target-spec price
+  behind a JS calculator, not captured); Hetzner rejected (no Windows images,
+  BYOL). A priced month: ≈ $149 at 8 h/day on Azure D4s_v5 + 512 GB +
+  snapshot. Topology: **no public inbound port** — Tailscale when the API is
+  on the owner's PC (worker binds to the Tailscale IPv4, one firewall rule from
+  100.64.0.0/10, RDP over the tailnet, provider NSG with zero inbound rules),
+  Cloudflare Tunnel when the API runs elsewhere (worker on 127.0.0.1, 401
+  without the bearer token; a Cloudflare Access second lock needs two extra
+  headers `renderRemoteInstrument` does not send yet). `bootstrap-vm.ps1`:
+  data disk, winget (Python 3.11, Git, NSSM, overlay) with a manual fallback
+  for Server images without winget, clone, venv, asset dirs,
+  `VST3_RENDER_TOKEN` **prompted** (`Read-Host -AsSecureString`, DPAPI
+  LocalMachine blob, ACL SYSTEM+Administrators, unprotected in-process by a
+  generated launcher — never a parameter, never printed), NSSM service or
+  at-startup SYSTEM task, `-WhatIf` throughout. `verify-vm.ps1`: service,
+  listener never on 0.0.0.0, no unrestricted firewall rule, Tailscale Running,
+  401 without token, `healthy`/`provider` with it, `host.sha256`, and **every
+  manifest asset** attested (`smokeEvidence.passed`, `nativeHostAttested`) —
+  an asset missing from `/health` is a FAIL, not a quiet omission; exit 1,
+  `-Json` for evidence. Owner's manual steps on the VM (Native Access,
+  Spitfire App, SINE, iLok, Steinberg Activation Manager sign-ins; content to
+  the data disk; `discover.py` → `make_manifest.py --append` with the clause
+  as `--license-reference` → `smoke.py` → `verify-vm.ps1`), eight
+  cost-control rules, and a "what changes for multi-user" section pointing at
+  the clause table and Q-13 (two catalogues: private VM vs public open-licence
+  Tier CLOUD on Modal).
+
+  **Honest limits.** Not executed: no account, no VM, no provider CLI call;
+  both scripts pass PSParser and `Language.Parser` and nothing more. Quotes
+  were extracted through a fetch-and-summarise tool or a browser pane and
+  checked against the returned text, but a fragment can be accurate and still
+  miss a qualifier elsewhere on the page — read the full page before acting;
+  three licences (MT Power, SSD5 Free, Decent Sampler plugin) exist only inside
+  installers and were not read at all, and in-installer EULAs of the others
+  were not accepted or read either. Whether Native Access, the Spitfire App,
+  SINE and iLok run on **Windows Server** (the pay-as-you-go image on
+  Azure/AWS) was not verified — the runbook makes it the trial-hour test and
+  names Kamatera's Windows 11 image as the fallback. Prices are list prices
+  from public endpoints; the first invoice is the proof; AWS EBS for
+  il-central-1 and Kamatera's target-spec figure were not captured; latency
+  from Israel was not measured (in-country regions is the only claim).
+  Content instruments (Kontakt Player, HALion Sonic, Groove Agent SE) still
+  need a `.vstpreset` per instrument and the repository has no VM-side tool
+  to make one — until it exists they smoke-fail and are not offered. The NI
+  device count differs between the EULA (three) and the support article
+  (two); the Spitfire LABS domain now redirects to Splice and LABS-specific
+  terms were not found. This is a clause table, not legal advice.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
