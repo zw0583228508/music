@@ -121,6 +121,9 @@ const suites = {
         "src/lib/analysisReconciliation.test.ts",
         "analysis-reconciliation.test.mjs",
       ],
+      // Wave Q, Q-01: the key a real recording's transcription implies, which
+      // is what lets a full song reach a Song Model with no key provider.
+      ["src/lib/keyFromNotes.test.ts", "key-from-notes.test.mjs"],
       [
         "src/lib/gpuProviderAttestation.test.ts",
         "gpu-provider-attestation.test.mjs",

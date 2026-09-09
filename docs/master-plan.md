@@ -2002,6 +2002,76 @@ any of it.
   has been run: **nothing here is yet evidence that the output is better**, only
   that the decisions are made and reported.
 
+- **PR-46** ✅ — `full-song-basic-pitch` (Wave Q, Q-01): a real recording reaches
+  a cloud transcription worker and comes back, and the Song Model survives it.
+
+  The owner stood up a Cloudflare tunnel pointing **only** at PR-41's asset
+  surface on :5010. The API stayed on localhost, so `/api/dev-login` was never
+  exposed. Evidence: `docs/evidence/basic-pitch-full-song-live.json`.
+
+  **What is now proven, on a real 3.5-minute recording already in the repo**
+  (`services/beat-this-worker/fixtures/real-audio-source.mp3`, not synthesised):
+
+  - the tunnel reaches the asset surface and nothing else — an unleased token
+    comes back as the same bodyless 404 every refusal gets;
+  - `analysis_asset_served` names the object and **9,199,873 bytes**, matching
+    the uploaded file exactly;
+  - the Modal worker wrote `/tmp/music-ai-psncejb2/source.mp3` and ran the
+    model — it has no other route to this machine, so it fetched through the
+    lease;
+  - `POST /analyze -> 200 OK` after 39.0 s of execution on the first fetch;
+  - **1876 note events** at provider confidence 0.473, with `BASIC_PITCH` /
+    `ready` / `0.4.0` in `providerProvenance`;
+  - the Song Model persisted: key **A minor**, 215 beats, 53 bars, 7 sections.
+
+  **Three repairs the run forced, none of them a bypass.**
+
+  1. *The analysis died at 68% before any note could be stored*, on "Key
+     analysis is required". The only key provider is ESSENTIA, unconfigured
+     here, and the local spectral detector returns **null** on a real mix —
+     drums, bass harmonics and reverb smear the spectrum until no pitch class
+     clears its thresholds. `keyFromNotes.ts` estimates the key from the
+     transcribed notes instead, by Krumhansl-Kessler profile correlation over
+     the duration-weighted pitch-class distribution. A transcription answers
+     this better than a spectrum because the notes are already found. It
+     **refuses** below 12 notes or 4 distinct pitch classes — a key invented
+     from a drone is worse than no key, because the rest of the pipeline would
+     trust it — and its confidence is capped at 0.75 so a dedicated key model
+     always outranks it.
+  2. *It still failed.* `reconcileAnalysisField` admits a single observation
+     only at `confidence × reliability ≥ 0.32`, and the new estimator was
+     absent from the reliability table, taking the 0.35 unknown default.
+     Registered at `key: 0.5` — above the local spectral baseline's 0.45,
+     below ESSENTIA's 0.82. **The 0.32 admission threshold was not touched.**
+  3. *A rejected Song Model discarded the evidence explaining the rejection.*
+     `song_model_rejected` now logs the issues, every provider's status and
+     error, the transcription counts and each key candidate. That is what
+     turned "Key analysis is required" into a diagnosis.
+
+  **What was refused, and stays refused.** `melodyNotes` is **0** despite 1876
+  events. `fuseCanonicalNotes` admits a lone provider only above
+  `SOLE_PROVIDER_CONFIDENCE` (0.85) on `note × result × reliability`; at an
+  aggregate 0.473 no note can reach it, and dense polyphonic clusters trip the
+  ambiguity rule as well. **This is correct.** Basic Pitch on a full mix returns
+  every instrument at once — a polyphonic transcription of a mix is not a
+  melodic line, and storing it as "the melody" would be false. The threshold was
+  **not lowered**. What would fix it properly is a separated vocal or lead stem
+  (Demucs / BS-RoFormer, neither configured here) or a second independent
+  transcription provider to corroborate. The melody field now says exactly that
+  instead of the old, untrue "No transcription provider returned a melodic
+  line".
+
+  Suites: keyFromNotes 9 (registered in `analysis-providers`),
+  analysisReconciliation 6, providerReliability 5, analysisProviders 31;
+  typecheck green.
+
+  **Honest limits.** Melody, bass and chords are all 0 in this Song Model. The
+  key is `low_confidence` on one supporting provider — usable evidence, not a
+  verified fact. The 60.6 BPM comes from the local structure fallback, not a
+  beat tracker. The tunnel is an operator-run quick tunnel with a rotating
+  hostname: it proves reachability, it is not a deployment. One song is a smoke
+  test of a transport and a repair, not a benchmark.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

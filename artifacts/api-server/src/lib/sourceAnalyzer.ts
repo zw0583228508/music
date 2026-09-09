@@ -48,6 +48,13 @@ import { recordSheetSageCapacityRejection } from "./sheetSageCapacityAlerts";
 import { buildMeterAwareEvidence, createCanonicalTimeline } from "./canonicalTimeline";
 import { formatHostErrorMessage } from "./hostErrorDiagnostics";
 import { fingerprintPendingReferences } from "./referenceIntelligenceDbStore";
+import { keyFromNotes, keyFromNotesRefusal } from "./keyFromNotes";
+
+/**
+ * A key inferred from transcribed notes, named so it can never be mistaken for
+ * a dedicated key model in the provenance record.
+ */
+const TRANSCRIPTION_KEY_PROVIDER = "TRANSCRIPTION_KEY_V1";
 
 export { isEffectivelySilent };
 
@@ -1483,6 +1490,23 @@ export async function analyzeProjectSource(
           value: providerResults.structure.meter,
           confidence: providerResults.structure.confidence,
         }] : []);
+    // Every transcribed note from every provider that returned one. Pooled
+    // rather than fused, because a key is a distribution: more notes make the
+    // estimate better even when two providers disagree about one of them.
+    const transcribedNotes = midi
+      ? []
+      : providerResults.transcriptions.flatMap((result) => result.notes);
+    const transcribedEventCount = transcribedNotes.length;
+    const transcribedProviders = providerResults.transcriptions
+      .filter((result) => result.notes.length)
+      .map((result) => result.providerId);
+    const transcribedKey = transcribedNotes.length ? keyFromNotes(transcribedNotes) : null;
+    const transcribedKeyRefusal = transcribedKey
+      ? null
+      : transcribedNotes.length
+        ? keyFromNotesRefusal(transcribedNotes)
+        : "no provider returned any transcribed notes";
+
     const keyReconciliation = midi
       ? null
       : reconcileAnalysisField("key", [
@@ -1495,6 +1519,18 @@ export async function analyzeProjectSource(
             provider: "LOCAL_SIGNAL_ANALYZER_V1",
             value: keyDetection.key,
             confidence: keyDetection.confidence,
+          }] : []),
+          // A real mixed recording usually defeats the spectral detector above:
+          // drums, bass harmonics and reverb smear the spectrum until no pitch
+          // class stands out, it returns nothing, and the Song Model fails for
+          // want of a key before a single transcribed note is stored. A
+          // transcription answers the question better, because the notes are
+          // already found. Confidence is capped below a dedicated key model's,
+          // so a real key provider always wins this reconciliation.
+          ...(transcribedKey ? [{
+            provider: TRANSCRIPTION_KEY_PROVIDER,
+            value: transcribedKey.key,
+            confidence: transcribedKey.confidence,
           }] : []),
         ]);
     if (!midi && providerResults.structure) {
@@ -1602,7 +1638,14 @@ export async function analyzeProjectSource(
         status: melody.length ? "detected" : "not_available",
         confidence: confidenceByField.melody || null,
         providers: melody.length ? melodyProviders : [],
-        message: melody.length ? null : "No transcription provider returned a melodic line.",
+        // "No provider returned a line" and "a provider returned 1876 events,
+        // none of which met the bar for canon" are different facts, and only
+        // the second tells anyone what to do next.
+        message: melody.length
+          ? null
+          : transcribedEventCount
+            ? `${transcribedEventCount} transcribed event(s) from ${transcribedProviders.join(", ")} did not meet the canonical melody threshold; a single transcription provider on a full mix is not a melodic line. Separate a vocal or lead stem first, or configure a second transcription provider.`
+            : "No transcription provider returned a melodic line.",
         edited: false,
       },
       bass: {
@@ -1734,6 +1777,13 @@ export async function analyzeProjectSource(
                   confidence: keyDetection.confidence,
                 }]
               : []),
+            ...(transcribedKey
+              ? [{
+                  provider: TRANSCRIPTION_KEY_PROVIDER,
+                  value: transcribedKey.key,
+                  confidence: transcribedKey.confidence,
+                }]
+              : []),
           ],
           sections: providerResults.structure
             ? [{
@@ -1807,6 +1857,25 @@ export async function analyzeProjectSource(
           version: "1.0.0",
           status: midi ? "ready" as const : "fallback" as const,
         },
+        // Recorded whether it produced a key or refused to. A key inferred from
+        // a transcription must be visible as such, and a refusal must say why
+        // rather than leaving an unexplained gap in the evidence.
+        ...(midi ? [] : [transcribedKey
+          ? {
+              capability: "key_analysis" as const,
+              provider: TRANSCRIPTION_KEY_PROVIDER,
+              version: "1.0.0",
+              status: "fallback" as const,
+              detail: `${transcribedKey.key} from ${transcribedKey.notesUsed} transcribed note(s) over ${transcribedKey.pitchClassesUsed} pitch class(es); correlation ${transcribedKey.correlation}, margin ${transcribedKey.margin}`,
+            }
+          : {
+              capability: "key_analysis" as const,
+              provider: TRANSCRIPTION_KEY_PROVIDER,
+              version: "1.0.0",
+              status: "unavailable" as const,
+              errorCode: "insufficient-transcription",
+              errorMessage: transcribedKeyRefusal ?? "no transcribed notes",
+            }]),
         ...(midi
           ? [{
               capability: "structure",
@@ -1850,6 +1919,38 @@ export async function analyzeProjectSource(
       confidence: candidateConfidence,
     }]);
     if (!fusion.accepted) {
+      // A rejected model is discarded along with every provider result that
+      // explains why it was rejected. Logging the provenance first is the
+      // difference between "key analysis is required" and knowing which
+      // provider was asked, what it answered, and what that left missing.
+      logger.warn({
+        sourceId,
+        issues: fusion.issues.map((item) => item.message),
+        providers: providerResults.provenance.map((entry) => ({
+          capability: entry.capability,
+          provider: entry.provider,
+          status: entry.status,
+          version: entry.version,
+          errorCode: entry.errorCode ?? null,
+          errorMessage: entry.errorMessage ?? null,
+        })),
+        transcriptions: providerResults.transcriptions.map((result) => ({
+          provider: result.providerId,
+          notes: result.notes.length,
+          confidence: result.confidence,
+        })),
+        keyCandidates: {
+          providerEvidence: providerResults.keyEvidence.length,
+          localSignal: keyDetection?.key ?? null,
+          fromTranscription: transcribedKey
+            ? { key: transcribedKey.key, confidence: transcribedKey.confidence, correlation: transcribedKey.correlation, margin: transcribedKey.margin }
+            : null,
+          transcriptionRefusal: transcribedKeyRefusal,
+          reconciliation: keyReconciliation
+            ? { value: keyReconciliation.value, status: keyReconciliation.status, confidence: keyReconciliation.confidence, message: keyReconciliation.message }
+            : null,
+        },
+      }, "song_model_rejected");
       throw new Error(
         `Analysis providers returned an invalid Song Model. ${
           fusion.issues.map((item) => item.message).join(" ")

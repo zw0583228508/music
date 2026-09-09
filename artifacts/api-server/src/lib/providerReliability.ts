@@ -93,6 +93,15 @@ export const PROVIDER_RELIABILITY: Record<string, ProviderReliabilityProfile> = 
     note: "HPCP + librosa chroma; key support.",
     domains: { key: 0.7, chords: 0.5 },
   },
+  TRANSCRIPTION_KEY_V1: {
+    provider: "TRANSCRIPTION_KEY_V1",
+    note:
+      "Krumhansl-Kessler profile correlation over transcribed notes. Above the " +
+      "local spectral baseline, because the notes are already found rather than " +
+      "guessed from a smeared spectrum; well below a dedicated key model, which " +
+      "is what it must never be mistaken for.",
+    domains: { key: 0.5 },
+  },
   SHEETSAGE: {
     provider: "SHEETSAGE",
     note: "Lead-sheet melody + chords + timing.",
