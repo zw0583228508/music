@@ -383,6 +383,29 @@ const suites = {
         "src/lib/analysisReconciliation.test.ts",
         "analysis-reconciliation.test.mjs",
       ],
+      // Wave ANALYSIS ENGINE, PR-84: the rhythm engine. Several beat trackers
+      // in, one reading out, with a status per field — and, above all, no
+      // averaging of 120 and 60 into a 90 that neither tracker offered.
+      ["src/lib/rhythmEngine.test.ts", "rhythm-engine.test.mjs"],
+      // The metrics the tournament is scored with: beat and downbeat F-measure
+      // at ±70 ms, octave-tolerant tempo error, metre, and boundary drift.
+      ["src/lib/rhythmMetrics.test.ts", "rhythm-metrics.test.mjs"],
+      // The condition-labelled test set, and the invariant it rests on: the
+      // audio and the ground truth come from one tempo map, so no annotation
+      // step can disagree with the sound.
+      [
+        "src/lib/rhythmCorpus.test.ts",
+        "rhythm-corpus.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // Which tracker leads which condition, as measured — and the licence
+      // gate that keeps madmom's non-commercial models out of a shipped route
+      // however well they scored.
+      [
+        "src/lib/rhythmRouting.test.ts",
+        "rhythm-routing.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // Wave Q, Q-01: the key a real recording's transcription implies, which
       // is what lets a full song reach a Song Model with no key provider.
       ["src/lib/keyFromNotes.test.ts", "key-from-notes.test.mjs"],
