@@ -2685,6 +2685,56 @@ any of it.
   and says so; a non-classical slice, at least one rated session, and the
   measured cost of a LoRA pilot are named as what makes it final.
 
+- **PR-68** ✅ — `tournament-listening-room` (Wave Q — Workstream A): **the
+  tournament's blind pairs are in the Listening Room, rendered, and rateable.**
+  The proxy judge stops being the only evaluator. Evidence:
+  `docs/evidence/tournament-listening-live.json`.
+
+  **What was built.** `tournamentListening.ts` draws a **balanced, stratified**
+  session from a tournament report: the five comparisons the owner asked for
+  (human vs CA2+CTX, CA2+CTX vs reference, CA2 raw vs CA2+CTX, human vs
+  reference, context-aware vs CA2+CTX), 10 pairs each, round-robin over
+  instrument family and task, seeds rotated, comparison types **interleaved**
+  so the session never reads as blocks, and the A/B orientation decided per
+  pair by hash. `tournamentAudio.ts` renders both sides of a pair through the
+  platform's own `REFERENCE_SYNTH_V1` — every context track plus the held-out
+  part as that arm wrote it, candidate 1.35× forward, peak-normalised — so a
+  rater compares **notes, not sound design**, and the human part gets no
+  acoustic advantage. `routes/listeningTournament.ts` opens the session
+  (owner-only, evidence file by basename, refuses a pair whose two sides render
+  to identical bytes) and exports every vote as a **reward-model preference
+  record**. The rater page became a one-pair-at-a-time flow: one primary
+  question, optional secondary ratings behind a toggle, keyboard A/B and
+  arrows, answers saved as they are given.
+
+  **What ran.** From `model-tournament-live.json`: **50 pairs, 100 renders,
+  3 min 18 s**, session `6d5abb08` at `/listen/6d5abb08-…`; families bass 8,
+  keys 10, strings 6, brass 10, reed 6, organ 10; first pair 48.6 s per side,
+  4.3 MB of WAV, both players loading in the studio. A live `GET` of the rater
+  view contains **no arm name, no task id, no seed, no storage path**. The vote
+  path was proven on a **separate 10-pair smoke session** (so the owner's
+  session stays unrated) by a second local identity: 10 primary votes + 1
+  secondary → 11 counted votes, per-comparison tallies, **11 preference
+  records** with both arms in comparison order and a salted rater pseudonym,
+  and Gate C correctly refusing at one rater.
+
+  **Policy encoded.** Gate C reads **only** the pairs that put the challenger
+  (CA2+CTX) against the incumbent (REFERENCE_PART_COMPOSER); the other four
+  comparisons inform the decision pack and the reward model but do not gate.
+  The owner's own votes are recorded, shown apart, and excluded from the
+  verdict — the owner is the first rater, not the verdict.
+
+  Suites: tournamentListening 5, tournamentAudio 3, blindListening 8 (existing,
+  still green), modelTournament 13; `pnpm run typecheck` green across the API,
+  the studio and both generated clients.
+
+  **Honest limits.** **Nobody has rated the 50-pair session yet** — that is the
+  owner's next action, and one rater is evidence, not a verdict (Gate C needs
+  five and a 60 % share). All 50 pairs are classical PDMX; the non-classical
+  session waits on Workstream B. The renderer is a deterministic synth, fair
+  across arms and not what a producer would ship. Opening a session renders
+  in-process at ~2 s per side: fine for 50 pairs, not for thousands.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

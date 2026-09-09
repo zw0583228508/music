@@ -152,6 +152,18 @@ const suites = {
         "tournament-providers.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, Workstream A: tournament pairs into the Listening Room — balanced
+      // draw, per-token audio, owner-apart tallies, reward-model preference records.
+      [
+        "src/lib/tournamentListening.test.ts",
+        "tournament-listening.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/tournamentAudio.test.ts",
+        "tournament-audio.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [
