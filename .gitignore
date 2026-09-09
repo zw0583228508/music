@@ -77,3 +77,6 @@ debug.log
 
 # Local esbuild test bundles (see docs: focused runner cannot spawn esbuild on Windows)
 .tmp-tests/
+
+# Workstream worktree marker: a local signal that dependencies are installed.
+.deps-ready
