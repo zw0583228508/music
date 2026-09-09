@@ -145,13 +145,54 @@ Heavy neural generation uses the separate contract documented in
 
 ## Native renderer provisioning
 
-`bootstrap_sfizz_vsco2.py` provisions the exact public sfizz `1.2.3` source and
-the CC0 VSCO2 CE SFZ branch under `/var/lib/music-ai/assets/sfz`. It records the
-source revisions plus deterministic file count, byte count, and tree hashes.
-It does not claim readiness or activate the bytes. Set
-`MUSIC_AI_SFIZZ_INSTRUMENT` to an reviewed library-relative SFZ, approve the
-exact host identity/checksum, and use the normal stage/activate lifecycle. The
-three-render smoke remains the only route to `SFIZZ_VSCO2_CE` readiness.
+`bootstrap_sfizz_vsco2.py` provisions the exact public sfizz `1.2.3` source
+(built from commit `4e70dc0b`) and the CC0-1.0 VSCO 2 CE SFZ branch (commit
+`6dd651d5`) under `/var/lib/music-ai/assets/sfz`. By default it downloads only
+the subset the instrument map needs (`vsco2-ce-subset.json`: 250 files,
+525 MB out of the branch's 3,273 files / 3.2 GB) straight from the pinned
+commit and verifies every file's git blob SHA-1 and size against that
+manifest, which was derived from the commit's git tree; `--full` clones the
+whole branch. It records the source revisions, the LICENSE hash and the
+deterministic file count, byte count and tree hash in
+`provision-evidence.json`. It does not claim readiness or activate the bytes.
+
+`operator_activate_sfizz_vsco2.py` (PR-92) is the operator step that runs the
+lifecycle end to end, in process, in order: provision, build the host
+reproducibly (`native_hosts/build_host.py` normalises sources to LF and stamps
+the ZIP epoch, so the checksum is the same on every machine), refuse unless the
+host's SHA-256 is the one approved in `approved_native_hosts.json`, stage
+through `_stage_asset_candidate` (the three-render canonical smoke), activate
+through `_activate_asset_candidate` (atomic manifest), render every
+instrument-map entry once, require `renderer_health` to be healthy, and write
+the whole record to `.readiness/sfizz-vsco2-operator.json`. The Dockerfile
+runs it at image build time, so a container that starts already holds an
+activated, smoked VSCO 2 CE asset; the build tools leave in the same layer.
+
+### The instrument map (no default, no silent stand-in)
+
+`MUSIC_AI_SFIZZ_INSTRUMENT_MAP` (inline JSON or a file path; the image sets
+`/app/sfizz_instrument_map.json`) is the one place that decides which VSCO 2 CE
+instrument may play a platform track. It is an ordered list of entries, each
+matching exactly one of `nameKeyword` (substring of the track's instrument
+name), `instrumentId` (`instrumentDefinition.id`) or `family`
+(`instrumentDefinition.family`); the first match wins. Both the worker
+(`/render`, before any native process) and the host (`sfizz_instrument_map.py`
+is bundled into the zipapp) resolve every track through it. A track that
+matches no entry is refused with `422` and a reason that names its family and
+the served families; the platform keeps its preview synth for that stem with
+that reason. Entries whose instrument is not what the platform family means
+carry a `standIn` sentence that the render echoes. Health publishes the map
+(`instrumentMap`, `servedFamilies`, `instrumentMapSha256`) and is unhealthy
+when any mapped SFZ is missing from the active library or when
+`sfizz_render` no longer hashes to its provision evidence (`nativeToolchain`).
+
+Served today: `keys` (Upright Piano), `strings` (Violin Section sustain;
+`cello` id and name -> Cello Section; `bass` id -> Solo Contrabass pizzicato,
+a declared stand-in), `brass` (French Horn; `trumpet` / `trombone` names ->
+Trumpet / Tenor Trombone). Not served, with the reason in the map: `drums`
+(orchestral percussion is not a pop kit), `guitar`, `voice`, `synth`. The
+legacy single-instrument `MUSIC_AI_SFIZZ_INSTRUMENT` variable is gone: it
+would have played every family on one instrument.
 
 `native_hosts/pedalboard_vst3_host.py` is the offline VST3 TrackModel host and
 `native_hosts/sfizz_track_model_host.py` adapts TrackModel MIDI events to the

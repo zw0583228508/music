@@ -1,0 +1,1528 @@
+{
+  "repository": "https://github.com/sgossner/VSCO-2-CE",
+  "branch": "SFZ",
+  "commit": "6dd651d55dde97fd4028699be9d4481f26917891",
+  "treeSha1": "6dd651d55dde97fd4028699be9d4481f26917891",
+  "license": "CC0-1.0",
+  "fullTree": {
+    "files": 3273,
+    "bytes": 3238104343
+  },
+  "subset": {
+    "files": 250,
+    "bytes": 525383792
+  },
+  "instruments": [
+    "TrumpetSusVib.sfz",
+    "TromboneSus.sfz",
+    "CelloEnsSusVib.sfz",
+    "ContrabassPizz.sfz",
+    "CelloEnsSusVib.sfz",
+    "ViolinEnsSusVib.sfz",
+    "ViolinEnsSusVib.sfz",
+    "FHornSus.sfz",
+    "UprightPiano.sfz"
+  ],
+  "files": [
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_A#1_v1_1.wav",
+      "bytes": 2417592,
+      "gitBlobSha1": "573db456092f7eff6af7245819f162828f749e10",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_A#1_v2_1.wav",
+      "bytes": 2740036,
+      "gitBlobSha1": "62c15504278f9c2dfaa0006530d34a5a3d92ecb0",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_A#1_v3_1.wav",
+      "bytes": 1829064,
+      "gitBlobSha1": "8fe919bf02a81284083f9a356db56591ffbb5e31",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_A0_v1_1.wav",
+      "bytes": 947196,
+      "gitBlobSha1": "bec79afe2bde69ed445c52da977b83e31cc81ed7",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_A2_v1_1.wav",
+      "bytes": 2672192,
+      "gitBlobSha1": "d358aadfb3bb1e0f28ab742d96f5418dc750057b",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_A2_v2_1.wav",
+      "bytes": 2542000,
+      "gitBlobSha1": "5ea35c7b0bf50d85195ba726380e611817f4ba9a",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_A2_v3_1.wav",
+      "bytes": 1305440,
+      "gitBlobSha1": "d4088d29905d60944c524d443f66c55035301e47",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_C1_v1_1.wav",
+      "bytes": 1093856,
+      "gitBlobSha1": "eed8f32ab91afd3381e42d0a5d0ad1d2beccbd11",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_C1_v2_1.wav",
+      "bytes": 807756,
+      "gitBlobSha1": "48ea1921e88607d0aea8aece16be6bc2456f6a4e",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_C1_v3_1.wav",
+      "bytes": 704216,
+      "gitBlobSha1": "3503c90afff58abd64db51f24e7f0ffc02954e3d",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_C3_v1_1.wav",
+      "bytes": 2519448,
+      "gitBlobSha1": "e53d2d03f0902c9f3a6add7c6bf51122bcc7d573",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_C3_v2_1.wav",
+      "bytes": 2240888,
+      "gitBlobSha1": "9f89dc248404a1a1e0240035ac5fa55c89e9c9cd",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_C3_v3_1.wav",
+      "bytes": 2114316,
+      "gitBlobSha1": "69e3187ccc4d4338931d412a9f50978ca576db5c",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_C3_v4_1.wav",
+      "bytes": 1761688,
+      "gitBlobSha1": "98bc7d3d4709c8d7a240a1f39c615bef3af7e5b0",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_D#1_v1_1.wav",
+      "bytes": 1425196,
+      "gitBlobSha1": "238de6f129810744e89a22c414daf926e1b55a37",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_D#1_v2_1.wav",
+      "bytes": 970468,
+      "gitBlobSha1": "20c33d3ffb3bf369e30359e3eb8b8ac7548adda3",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_D#1_v3_1.wav",
+      "bytes": 927292,
+      "gitBlobSha1": "db97debcf24dfa898ce069d9b21b5bbea371e552",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_D2_v1_1.wav",
+      "bytes": 2500360,
+      "gitBlobSha1": "e63cadc76d2b3e56ee26ad558e52fd633cc8c4b1",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_D2_v2_1.wav",
+      "bytes": 2583372,
+      "gitBlobSha1": "665f09cf0fe70efdcec1d93b064d5a5a32d6ebe0",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_D2_v3_1.wav",
+      "bytes": 1746204,
+      "gitBlobSha1": "aec5cfdb8e2532338f69f6726c77c1d8e5044f0d",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_D2_v4_1.wav",
+      "bytes": 1166236,
+      "gitBlobSha1": "e61e2d828400580fd267e5af934eee65e62d21b7",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_D4_v1_1.wav",
+      "bytes": 1445100,
+      "gitBlobSha1": "0d13acd769ecdfc234c416fe859a4eda9aac2f22",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_F2_v1_1.wav",
+      "bytes": 2163124,
+      "gitBlobSha1": "90c68f7833a7aa2325dea7159aad8af4c9b13a76",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_F2_v2_1.wav",
+      "bytes": 2558276,
+      "gitBlobSha1": "37655b24ac23b96a47a6bb75c091bedef6913632",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_F2_v3_1.wav",
+      "bytes": 1692688,
+      "gitBlobSha1": "af9345753c5b31083a3e344dd7bbf6c978de59c3",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_F4_v1_1.wav",
+      "bytes": 1477536,
+      "gitBlobSha1": "3061198e82995900230e9ddde1138a076d8dca9f",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_G1_v1_1.wav",
+      "bytes": 2038728,
+      "gitBlobSha1": "587133d2ed466473bd29438555973d9e75c3285a",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_G1_v2_1.wav",
+      "bytes": 1300556,
+      "gitBlobSha1": "e09ff9550c6ed4b660baeaba5497040ca7add35e",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/F Horn/sus/MOHorn_sus_G1_v3_1.wav",
+      "bytes": 941656,
+      "gitBlobSha1": "e824ccfe9f9b0a33e31151cec90e838dc769d949",
+      "role": "sample of FHornSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_A#0_v1_1.wav",
+      "bytes": 847440,
+      "gitBlobSha1": "adf430c94439820bb8876f7208b8f1756eb101c4",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_A#0_v2_1.wav",
+      "bytes": 735596,
+      "gitBlobSha1": "e81b27ce12cc7921533136f7c822ad66bde17b48",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_A#1_v1_1.wav",
+      "bytes": 3153736,
+      "gitBlobSha1": "bebc48d3e9e0a15c375bfb331d8c0034d2bf3d52",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_A#1_v2_1.wav",
+      "bytes": 1658240,
+      "gitBlobSha1": "bfed422b95827132a8cd27cdf5f6bc3073dbc293",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_A#1_v3_1.wav",
+      "bytes": 930872,
+      "gitBlobSha1": "52f58161c3944d30fb5598144697650b29224947",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_C#1_v1_1.wav",
+      "bytes": 1313124,
+      "gitBlobSha1": "ecf7830fd218e877e6c761ba755e57c3cad81ac5",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_C#1_v2_1.wav",
+      "bytes": 790124,
+      "gitBlobSha1": "232b246c39891a738c246a41685a2ed5a7c7470d",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_C#3_v1_1.wav",
+      "bytes": 3507148,
+      "gitBlobSha1": "4388462bb1234613e754ad798404cc6b3e0fa792",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_C#3_v2_1.wav",
+      "bytes": 1899776,
+      "gitBlobSha1": "8e546c8995c15c63c856099030ae45c5abbc8924",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_C#3_v3_1.wav",
+      "bytes": 1373392,
+      "gitBlobSha1": "dfb869ad2e91b4fca51c017c7517c1bbf9958ce6",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_C3_v1_1.wav",
+      "bytes": 3920128,
+      "gitBlobSha1": "b61096af88a303b6acc983e8a6aa22c83f3a8233",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_C3_v2_1.wav",
+      "bytes": 1612016,
+      "gitBlobSha1": "dbb030c2fdcfddf56ec0cbd1cc9cc2c03eb3aa33",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_C3_v3_1.wav",
+      "bytes": 1351140,
+      "gitBlobSha1": "a91b32be153b69d65c46f5be1e38310c70353661",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_D#1_v1_1.wav",
+      "bytes": 2080020,
+      "gitBlobSha1": "3ada83e7586270bb31bd388a0c8236adcc4aa5a4",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_D#1_v2_1.wav",
+      "bytes": 1166532,
+      "gitBlobSha1": "1ed2a84fb7bb34ab7cb80dd9e60adedf3e544a2b",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_D#1_v3_1.wav",
+      "bytes": 881860,
+      "gitBlobSha1": "f40c52cd3f82d755429815e79e1541554ea5b48d",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_D#3_v1_1.wav",
+      "bytes": 4283492,
+      "gitBlobSha1": "a40cbae87dab599f03cce9319cfcdac5b90293d7",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_D#3_v2_1.wav",
+      "bytes": 2429760,
+      "gitBlobSha1": "f328088a8745a2c01d1d39c78db9a65599f86bca",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_D#3_v3_1.wav",
+      "bytes": 1239208,
+      "gitBlobSha1": "cb97ac413666687d63624c704e832b4196e0ddd6",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_D2_v1_1.wav",
+      "bytes": 2733168,
+      "gitBlobSha1": "2721e50862bd57ada8245162917fc048e03b061a",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_D2_v2_1.wav",
+      "bytes": 1733144,
+      "gitBlobSha1": "879dbfba0ad741de2c7b34688ce7a6c763b54da2",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_D2_v3_1.wav",
+      "bytes": 1162132,
+      "gitBlobSha1": "eef36ce79c6497eacde16aca18edbfbd0418e837",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_F1_v1_1.wav",
+      "bytes": 2281664,
+      "gitBlobSha1": "c9214a98d0743da8a396db3fdfa3c9cbdd07b5ce",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_F1_v2_1.wav",
+      "bytes": 1400820,
+      "gitBlobSha1": "baabbbd2f72b8e34259cef60bde4b6c2f1fd554c",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_F1_v3_1.wav",
+      "bytes": 1197948,
+      "gitBlobSha1": "81a07a374fad649fb6d2589cea8756b0af3fc8f2",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_F2_v1_1.wav",
+      "bytes": 3612792,
+      "gitBlobSha1": "7f98be760c0092deabe3026562d783b6473772bf",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_F2_v2_1.wav",
+      "bytes": 1752628,
+      "gitBlobSha1": "34359f397938e10a675d5906f21cd90392cad15b",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_F2_v3_1.wav",
+      "bytes": 1107668,
+      "gitBlobSha1": "f6c1025383f62db27083c3cb78d5046d748ada4c",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_F3_v1_1.wav",
+      "bytes": 4557044,
+      "gitBlobSha1": "4c6cd39dc8a64bf7517308616a6390cce1e190e5",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_F3_v2_1.wav",
+      "bytes": 2127892,
+      "gitBlobSha1": "aad935618350cdffb0af783043d3b63e00b6092a",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Tenor Trombone/sus/tenortbn_sus_F3_v3_1.wav",
+      "bytes": 1299872,
+      "gitBlobSha1": "c6164474bad88e9d7718358a669ba076d825fff7",
+      "role": "sample of TromboneSus.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_A#3_v1_rr1.wav",
+      "bytes": 1122252,
+      "gitBlobSha1": "95a9cfcd1d74f641464840f7db150bc4e6050970",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_A#3_v2_rr1.wav",
+      "bytes": 926408,
+      "gitBlobSha1": "165691debf78d3fc3135a8c20a36cb00244fe604",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_A2_v1_rr1.wav",
+      "bytes": 825976,
+      "gitBlobSha1": "469357481da1f36ef27f7da01e2e28afffaf451a",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_A2_v2_rr1.wav",
+      "bytes": 764780,
+      "gitBlobSha1": "c1426b74117537c0d900ee0f1a50abe9f80b826d",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_A4_v1_rr1.wav",
+      "bytes": 1249260,
+      "gitBlobSha1": "51b9d3469da022896d379bd65931b5bb8aac8807",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_A4_v2_rr1.wav",
+      "bytes": 960964,
+      "gitBlobSha1": "b114ad315de41c67c290cf1fd94e6b7bbc30ba8e",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_C3_v1_rr1.wav",
+      "bytes": 811752,
+      "gitBlobSha1": "c824ff5e042cf2c032a471af74873e9ded31c3c7",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_C3_v2_rr1.wav",
+      "bytes": 824692,
+      "gitBlobSha1": "316ddd83d62f71464691f55e695c9911baa74fde",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_C5_v1_rr1.wav",
+      "bytes": 1094804,
+      "gitBlobSha1": "a25b35a4a77babd99940089f0a27177e411ee1e6",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_C5_v2_rr1.wav",
+      "bytes": 1307068,
+      "gitBlobSha1": "3647dd075a81747d559061dc15a0617e68c592da",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_D#3_v1_rr1.wav",
+      "bytes": 1209520,
+      "gitBlobSha1": "42505ac38151f9c9d1079b2a265c3dfcfcb86b17",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_D#3_v2_rr1.wav",
+      "bytes": 875568,
+      "gitBlobSha1": "02b6e138b28395422cf5e17ed63b274dc6e11b20",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_D4_v1_rr1.wav",
+      "bytes": 994124,
+      "gitBlobSha1": "add78913445e51e8e02b0bb4c24811c0cc5cb44a",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_D4_v2_rr1.wav",
+      "bytes": 912916,
+      "gitBlobSha1": "471319f79fe64718967d3692c5b353b79aff2d81",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_F2_v1_rr1.wav",
+      "bytes": 757128,
+      "gitBlobSha1": "a5856816674701e7ebb4e2044c28a9b27dd097a1",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_F2_v2_rr1.wav",
+      "bytes": 1048748,
+      "gitBlobSha1": "a743ef5eb3b3363767d3c0d101a08ba698575b43",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_F3_v1_rr1.wav",
+      "bytes": 977788,
+      "gitBlobSha1": "e5ec4e1cf7446cc9bdc1503b808f95e29c641130",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_F3_v2_rr1.wav",
+      "bytes": 805084,
+      "gitBlobSha1": "8d59a188e8e978e02aea926b0473af239cd72476",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_F4_v1_rr1.wav",
+      "bytes": 1007616,
+      "gitBlobSha1": "7862ff26859605c3889416416edbbaca7fd5b1b7",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_F4_v2_rr1.wav",
+      "bytes": 990092,
+      "gitBlobSha1": "7efbcf69d646e70f8ea35df190235b4ad85290eb",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_G3_v1_rr1.wav",
+      "bytes": 1269840,
+      "gitBlobSha1": "e7a06d5a23c4294d347f2048a49d595873e37b98",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "Brass/Trumpet/susvib/Sum_SHTrumpet_susvib_G3_v2_rr1.wav",
+      "bytes": 854568,
+      "gitBlobSha1": "5fd67b87a2480ec65e1f5645147f47b516afee73",
+      "role": "sample of TrumpetSusVib.sfz"
+    },
+    {
+      "path": "CelloEnsSusVib.sfz",
+      "bytes": 2933,
+      "gitBlobSha1": "9b34afd020314d1bfa01d5578c9b30aae9cdc603",
+      "role": "instrument"
+    },
+    {
+      "path": "ContrabassPizz.sfz",
+      "bytes": 4696,
+      "gitBlobSha1": "b5a986aeb14818e1187de7ef7777d02c102c88d2",
+      "role": "instrument"
+    },
+    {
+      "path": "FHornSus.sfz",
+      "bytes": 3250,
+      "gitBlobSha1": "8bf03e466eab3294d607b9056a229e0c9970a8d5",
+      "role": "instrument"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_000.wav",
+      "bytes": 4105066,
+      "gitBlobSha1": "3b4e10ccdd8a06971564b1d936f2516a761e7f6f",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_002.wav",
+      "bytes": 4109632,
+      "gitBlobSha1": "42f56b6b301fdeddce7f7076e34c4f5a03e0fea4",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_004.wav",
+      "bytes": 4128814,
+      "gitBlobSha1": "7cb8841df46d247a0ed9a33976277902595359a6",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_006.wav",
+      "bytes": 4063450,
+      "gitBlobSha1": "10e0e1c3ec485c50bf12f7e2400e8aa9364f2bc9",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_008.wav",
+      "bytes": 5470924,
+      "gitBlobSha1": "cb2e89a7749fc4b979512aa5da883059cd3f6ad7",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_010.wav",
+      "bytes": 5770636,
+      "gitBlobSha1": "2b3b3f25903ed087eb334d985a0b25f4bbd510d4",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_012.wav",
+      "bytes": 3870382,
+      "gitBlobSha1": "5942615eb10199382e44c0e052ebb7885b167f53",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_014.wav",
+      "bytes": 2270980,
+      "gitBlobSha1": "30127aa63c8342a363b9a13b8052a3428d3bb046",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_016.wav",
+      "bytes": 3546940,
+      "gitBlobSha1": "480e9d56f8cfaefde9be4a7f9bde2b01ac3d100f",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_018.wav",
+      "bytes": 3002200,
+      "gitBlobSha1": "90745e10b1d8774db29a9817a218277102cd998b",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_020.wav",
+      "bytes": 3134164,
+      "gitBlobSha1": "084b3f131592beecd311b309e6c5f42190653f4f",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_022.wav",
+      "bytes": 4126858,
+      "gitBlobSha1": "a4238a2d033e560225a1b3d9d3fa1eef9c21ac50",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_024.wav",
+      "bytes": 2222998,
+      "gitBlobSha1": "6350b1cf0a614fe0920ad212e807d4575fcf71bd",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_026.wav",
+      "bytes": 3558112,
+      "gitBlobSha1": "9a6cd6b879752f747e136ee001e7f1b78b40dc9c",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_028.wav",
+      "bytes": 1935304,
+      "gitBlobSha1": "c371f48ff5e5a675a0d91d0e7060e79322adfc2e",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_030.wav",
+      "bytes": 3120676,
+      "gitBlobSha1": "91b0fa42ec94ba1cbda1c466ae0614a59ae927e6",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_032.wav",
+      "bytes": 1746142,
+      "gitBlobSha1": "8ac49b49803f59cf0a712261a9e06a54edd2e6eb",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_034.wav",
+      "bytes": 1303534,
+      "gitBlobSha1": "629c13e5725eda851b051c525d6fe53ad5226a66",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_036.wav",
+      "bytes": 1304218,
+      "gitBlobSha1": "ba909286b3eefe713c484953a12bb4b2b201d4ad",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_038.wav",
+      "bytes": 915352,
+      "gitBlobSha1": "18a8573978f46906530206c2b54e35750d007b70",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_040.wav",
+      "bytes": 642772,
+      "gitBlobSha1": "a11b447a61033b762cf757a0c3001ca99dfb1ecb",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_042.wav",
+      "bytes": 571294,
+      "gitBlobSha1": "b875022548b6281012e78434a784b418b67ded12",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn1_rr1_044.wav",
+      "bytes": 377608,
+      "gitBlobSha1": "b38476be1ca8cf4571d7ae71b2c562692ddc37d3",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_000.wav",
+      "bytes": 4500238,
+      "gitBlobSha1": "6506b03a6d64c8c9b6d0050d6217bf0e65f6e364",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_002.wav",
+      "bytes": 6074254,
+      "gitBlobSha1": "a038b982ae1dacdb01c7e7168ae32675d32caa6d",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_004.wav",
+      "bytes": 5625058,
+      "gitBlobSha1": "00abb8cca2df2b97fd3d945c4fdef29259081e17",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_006.wav",
+      "bytes": 4936726,
+      "gitBlobSha1": "fe626910074423b0c2d9165c18468d52b2e50d2c",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_008.wav",
+      "bytes": 6862312,
+      "gitBlobSha1": "ab13066d1f089f86fed417c7b887d6104e573574",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_010.wav",
+      "bytes": 7572904,
+      "gitBlobSha1": "4e6a1acfd958682e1f3dc2ba9d42b33b73de0a98",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_012.wav",
+      "bytes": 6306106,
+      "gitBlobSha1": "fd035ea95dc49897c9be8627b8124b73c56221db",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_014.wav",
+      "bytes": 6180628,
+      "gitBlobSha1": "2f341c6fca30ac8a6ae977cf97e93538f6c1e75b",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_016.wav",
+      "bytes": 4643212,
+      "gitBlobSha1": "a2fc6927cb562424c17b213e4cb47353d65e9cc5",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_018.wav",
+      "bytes": 5748202,
+      "gitBlobSha1": "c8da939be405e5f6dd7b13b99aedfef76d5c56aa",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_020.wav",
+      "bytes": 4346848,
+      "gitBlobSha1": "e6027651b23024f343a8eb7823f32b49742a35fe",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_022.wav",
+      "bytes": 4476550,
+      "gitBlobSha1": "521353ee671854c74478c330df9195d17261193c",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_024.wav",
+      "bytes": 3204940,
+      "gitBlobSha1": "77f7bc50e751c377f8e3db7c88c14861395d1288",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_026.wav",
+      "bytes": 2656870,
+      "gitBlobSha1": "946de9950a88c228d6f764e6789efb7d0147cffa",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_028.wav",
+      "bytes": 3008866,
+      "gitBlobSha1": "3a9f1381ca8a1a35ac4acdbf0d954e6aeb507dea",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_030.wav",
+      "bytes": 3144364,
+      "gitBlobSha1": "bbc718ed37a516d761b10c4ededd14243b2ba64f",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_032.wav",
+      "bytes": 2888572,
+      "gitBlobSha1": "e49d0ae70c0419e9e7dfa1a6ae94acd2731b4291",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_034.wav",
+      "bytes": 2605408,
+      "gitBlobSha1": "48078281fd0dd839c18f0eaec19f90fb97223a35",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_036.wav",
+      "bytes": 2254930,
+      "gitBlobSha1": "b539c687d7f6055868ea1e3b4bac868a8ed18e21",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_038.wav",
+      "bytes": 1425370,
+      "gitBlobSha1": "8e410d3c45ec1dce8ff6d7ef1ffd4a2640b2a12f",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_040.wav",
+      "bytes": 667948,
+      "gitBlobSha1": "7bc2a9a79148886286c946ce155b6651020ec5f7",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_042.wav",
+      "bytes": 633034,
+      "gitBlobSha1": "e4a96a87b47956e4d7db505b756f1f148394c30c",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn2_rr1_044.wav",
+      "bytes": 581164,
+      "gitBlobSha1": "6a629d05c65f076b4b01602b67392d9f3b699261",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_000.wav",
+      "bytes": 6918652,
+      "gitBlobSha1": "27d53546a018acfdfd0c178bf44f0d6656d029a8",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_002.wav",
+      "bytes": 6462502,
+      "gitBlobSha1": "a24be261484daddfc8d1f59e9c4cffe3c5664af6",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_004.wav",
+      "bytes": 6156106,
+      "gitBlobSha1": "d996ff2f2dca27156d735ff799564caabb742027",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_006.wav",
+      "bytes": 6210712,
+      "gitBlobSha1": "54bc5bb4bc2c81e278e50b2541d5a5fb9ff65766",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_008.wav",
+      "bytes": 7063150,
+      "gitBlobSha1": "83838d0d84e6d96598b75f443ed221ec3cb3bbb0",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_010.wav",
+      "bytes": 6946702,
+      "gitBlobSha1": "250458c14cb7a095de719efdbd2728bdc3f5e9ed",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_012.wav",
+      "bytes": 6153220,
+      "gitBlobSha1": "e0c5fec5cc73ee8c2532c34e3385c0f5a5a3c4e0",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_014.wav",
+      "bytes": 5030746,
+      "gitBlobSha1": "8a860137884587939f37e8ee874081b0f535b155",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_016.wav",
+      "bytes": 5759260,
+      "gitBlobSha1": "48282e602945bd593f5c7d59b7ae7d1c98ca3b73",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_018.wav",
+      "bytes": 5608348,
+      "gitBlobSha1": "399fff7fadc9ca2c167e09dea39c2af0f8b2c386",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_020.wav",
+      "bytes": 5212972,
+      "gitBlobSha1": "ce3179aa6ec23de9ecd80dc5cffe2a2519ed916b",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_022.wav",
+      "bytes": 4898926,
+      "gitBlobSha1": "28ddbc265f8666c5032994cbb89dca46ff8c89a0",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_024.wav",
+      "bytes": 4721116,
+      "gitBlobSha1": "f223d77b03f9ea0874ccdf9fd5d75349e0d76391",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_026.wav",
+      "bytes": 3849658,
+      "gitBlobSha1": "09d29d228fdd4b1761a82f31f303e31e846bc8b0",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_028.wav",
+      "bytes": 2854090,
+      "gitBlobSha1": "cf1c463a5bcd85150d3ffd737a8a544d0c70c5a8",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_030.wav",
+      "bytes": 3738850,
+      "gitBlobSha1": "f782f10cef31ce25f78d4307aad0e81109a272c0",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_032.wav",
+      "bytes": 3372646,
+      "gitBlobSha1": "df159dfb166f8c52f3765fd1803c773f37f658df",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_034.wav",
+      "bytes": 2808244,
+      "gitBlobSha1": "4ccc1d8ab98069d20c38b0197a5e80853becb415",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_036.wav",
+      "bytes": 1487410,
+      "gitBlobSha1": "3eb2377f6868155b5161eab2fc013d626440e7e4",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_038.wav",
+      "bytes": 927712,
+      "gitBlobSha1": "6d513d818874be2b46a1e3d59de78af080f5ed29",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_040.wav",
+      "bytes": 725854,
+      "gitBlobSha1": "0b836190186e816eca5c9b0bbc3cdbd3a7fd416e",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_042.wav",
+      "bytes": 472108,
+      "gitBlobSha1": "c0a670664148ec327664f9525b32c7b445bc029e",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "Keys/Upright Piano/Player_dyn3_rr1_044.wav",
+      "bytes": 615094,
+      "gitBlobSha1": "8941d2933abd39db561777213c47eeb393d6c0ab",
+      "role": "sample of UprightPiano.sfz"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 6555,
+      "gitBlobSha1": "670154e3538863b2d9891fd5483160fbdfc89164",
+      "role": "licence and readme of the pinned tree"
+    },
+    {
+      "path": "README.md",
+      "bytes": 445,
+      "gitBlobSha1": "3ea77a463213d8ad9b9121b291728f6ecac177c6",
+      "role": "licence and readme of the pinned tree"
+    },
+    {
+      "path": "Readme.txt",
+      "bytes": 1883,
+      "gitBlobSha1": "b7a1941bcb77561148bd6abea2dfceb6e2edf9c2",
+      "role": "licence and readme of the pinned tree"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_A2_v1_1.wav",
+      "bytes": 2336738,
+      "gitBlobSha1": "76df6b474aff133b2ac9d96bf2466cb6fd865c72",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_A2_v3_1.wav",
+      "bytes": 3082676,
+      "gitBlobSha1": "ad696c6ad3cbacb37b6d9cf4f26da4a54521e7ce",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_B1_v1_1.wav",
+      "bytes": 2372492,
+      "gitBlobSha1": "d6a4a2d1a688c6ccb4e1e1a56b878c9c93df468b",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_B1_v3_1.wav",
+      "bytes": 3372962,
+      "gitBlobSha1": "56c81412c60a2b04b8556dfa26a7e0127357c5cb",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_B3_v1_1.wav",
+      "bytes": 1690082,
+      "gitBlobSha1": "16d846690d7c4d385f3cfc8f1fe25873d6bd5b01",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_B3_v3_1.wav",
+      "bytes": 2865086,
+      "gitBlobSha1": "3b1685e657db57bd71c979da8c2d9d35d2d0d197",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_C1_v1_1.wav",
+      "bytes": 2347376,
+      "gitBlobSha1": "ff87d1ae488d87189f33a0d18550d3bcde012f3d",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_C1_v3_1.wav",
+      "bytes": 3335948,
+      "gitBlobSha1": "d3820a6d57daf9a202a000bff0fa082a3f77acf6",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_C3_v1_1.wav",
+      "bytes": 2444174,
+      "gitBlobSha1": "73ccb5dc2cc2a07926a1c41aa3c5621b19f420bf",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_C3_v3_1.wav",
+      "bytes": 3019394,
+      "gitBlobSha1": "a192845091cb8e669c72d3ff4a88eb1c5968e626",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_D2_v1_1.wav",
+      "bytes": 2550956,
+      "gitBlobSha1": "8076f809d4f6a8057f3835e12d22751a25e39252",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_D2_v3_1.wav",
+      "bytes": 3291368,
+      "gitBlobSha1": "fdb46242bb68876ad275b9b8ed10c4b8508b9292",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_D4_v1_1.wav",
+      "bytes": 2153228,
+      "gitBlobSha1": "e1125afc13def9b43e4612cdcebd11b99fce20cc",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_D4_v3_1.wav",
+      "bytes": 2801210,
+      "gitBlobSha1": "9189549dab9d3e0928fc7e42f94c04d66d28c52b",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_E1_v1_1.wav",
+      "bytes": 2468348,
+      "gitBlobSha1": "fcd27d29a8c0d520539cef6aad659bf9006ae730",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_E1_v1_2.wav",
+      "bytes": 2439512,
+      "gitBlobSha1": "d5756d400ce67b25c332e04061dd9f32dc89d283",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_E1_v3_1.wav",
+      "bytes": 3080426,
+      "gitBlobSha1": "666f0d1ba1a76133c12c9859222c1c7094b613cf",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_E3_v1_1.wav",
+      "bytes": 2456672,
+      "gitBlobSha1": "63f4d6df3a25fb95f417b5d45b5f8bf6a11107bf",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_E3_v3_1.wav",
+      "bytes": 3278270,
+      "gitBlobSha1": "7711cb67795d692b0d732eb8fd234c41d5980f42",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_F2_v1_1.wav",
+      "bytes": 2186012,
+      "gitBlobSha1": "78f52c49ddc8a357657d92b05cd89f15beb6c717",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_F2_v3_1.wav",
+      "bytes": 3062696,
+      "gitBlobSha1": "a384e84a342ab9be12ca55b92c845a3c351b75bf",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_F4_v1_1.wav",
+      "bytes": 1922948,
+      "gitBlobSha1": "7f39cccecb392eaa0ff4c94e3607dc2294458a30",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_F4_v3_1.wav",
+      "bytes": 2726342,
+      "gitBlobSha1": "074f12a91124e13ea0e4fb34d9ecbe7279ec0806",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_G1_v1_1.wav",
+      "bytes": 2161700,
+      "gitBlobSha1": "42a2731d11a4749c3026f0618e21a8c9370c2024",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_G1_v3_1.wav",
+      "bytes": 3370496,
+      "gitBlobSha1": "35971538059e18b8f38cdc556630967777a0a0d5",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_G3_v1_1.wav",
+      "bytes": 2431598,
+      "gitBlobSha1": "7880157fbb8e57fb0b7a694b8569701bc0d942ea",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Cello Section/susvib/susvib_G3_v3_1.wav",
+      "bytes": 3335768,
+      "gitBlobSha1": "732d0c80596fdfc593f55b5a24f65c07cd3191cd",
+      "role": "sample of CelloEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_A#0_v1_rr1.wav",
+      "bytes": 344328,
+      "gitBlobSha1": "6b42c2b752ac8aa098fa512b1c068229036f9d55",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_A#0_v1_rr2.wav",
+      "bytes": 326372,
+      "gitBlobSha1": "74b090dd2b40841aa3657f35859ae5810ed3344e",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_A#0_v3_rr1.wav",
+      "bytes": 417360,
+      "gitBlobSha1": "b5525c15a77e1871feb42f70cc17a6650aee4355",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_A#0_v3_rr2.wav",
+      "bytes": 458396,
+      "gitBlobSha1": "3bcb6e93918b0e8355867acfcaca87106e421b23",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_A1_v1_rr1.wav",
+      "bytes": 623260,
+      "gitBlobSha1": "311a5027a127715530f1e723a21f7927d280d493",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_A1_v1_rr2.wav",
+      "bytes": 485472,
+      "gitBlobSha1": "4ccbcc407cdc07f124f6523d50778d8e77ac2aad",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_B2_v1_rr1.wav",
+      "bytes": 417472,
+      "gitBlobSha1": "c5bfef7aaa68a98928f172b8572711ea6ce8975d",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_B2_v1_rr2.wav",
+      "bytes": 332204,
+      "gitBlobSha1": "a36c908d3b8b07d9ecc0107d465ab391160e3c79",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C#2_v1_rr1.wav",
+      "bytes": 513824,
+      "gitBlobSha1": "16b7ca596182a49fe693b81ed925df8d2fc1be59",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C#2_v1_rr2.wav",
+      "bytes": 498308,
+      "gitBlobSha1": "1538275fda063011eae150b531752b410186c2b6",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C1_v1_rr1.wav",
+      "bytes": 270720,
+      "gitBlobSha1": "46a4f947083669e7281be98b16c89b434529ea9e",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C1_v1_rr2.wav",
+      "bytes": 405984,
+      "gitBlobSha1": "aa16603fb7d318a87c47abf01e3ea321cdc78418",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C1_v3_rr1.wav",
+      "bytes": 400396,
+      "gitBlobSha1": "eb8c1aa8049e386288b71b7678098352a0c8f037",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C1_v3_rr2.wav",
+      "bytes": 384920,
+      "gitBlobSha1": "974926b4eda1088bb5c7865de6712acc7803d304",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_D1_v1_rr1.wav",
+      "bytes": 856252,
+      "gitBlobSha1": "623693ad1479a3e1da230fe62b8d012406412d86",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_D1_v1_rr2.wav",
+      "bytes": 1062672,
+      "gitBlobSha1": "6b66446765a55ddcad2fbfdf3b47fdc6737bc540",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E0_v1_rr1.wav",
+      "bytes": 423964,
+      "gitBlobSha1": "8e025f9d9f072fd42a12ff27bad023f95016203f",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E0_v1_rr2.wav",
+      "bytes": 412812,
+      "gitBlobSha1": "548f3bf22840c6477487df248e1a2d6417ad7175",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E0_v3_rr1.wav",
+      "bytes": 901744,
+      "gitBlobSha1": "3258f6728cacc74c5ad6addadaa8a61cbb9d57cd",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E0_v3_rr2.wav",
+      "bytes": 908620,
+      "gitBlobSha1": "92da6c6d93f06c950cbf8ebd737947cc8cd02769",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E1_v1_rr1.wav",
+      "bytes": 294356,
+      "gitBlobSha1": "da8962289a777507e94094c6dde7131916ca1b64",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E1_v1_rr2.wav",
+      "bytes": 315292,
+      "gitBlobSha1": "3326b2b4ae5a4bc6156e7ec8ce5adaca94e867e5",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E1_v3_rr1.wav",
+      "bytes": 518876,
+      "gitBlobSha1": "1cada4277b16b2eb8b240d4a6da4bbd3aca989a0",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E1_v3_rr2.wav",
+      "bytes": 445256,
+      "gitBlobSha1": "9033e53e840a4ca791ff0ae57bd1f171bc5a310c",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E2_v1_rr1.wav",
+      "bytes": 438040,
+      "gitBlobSha1": "ba882653db7ef6fcebc5dc0e373707cdca944e62",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E2_v1_rr2.wav",
+      "bytes": 595380,
+      "gitBlobSha1": "0d330f46bca35ae676072455ab09bc1391ffdff7",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_F#0_v1_rr1.wav",
+      "bytes": 256360,
+      "gitBlobSha1": "4578fd1b4f56290dc35ee453105e487efb3c5c67",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_F#0_v1_rr2.wav",
+      "bytes": 297240,
+      "gitBlobSha1": "d0a056d068a5c9e2b9e1ddbf1f309c80e617dc9f",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_F#0_v3_rr1.wav",
+      "bytes": 828940,
+      "gitBlobSha1": "4e6933681d86ea908000d9319e01db9858b499e1",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_F#0_v3_rr2.wav",
+      "bytes": 910664,
+      "gitBlobSha1": "09b455dcad902b0c725168f405e5635c580ed3f2",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_F#1_v1_rr1.wav",
+      "bytes": 868632,
+      "gitBlobSha1": "757d0487bc7ad3461aac13cdce1999fabb3952b3",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_F#1_v1_rr2.wav",
+      "bytes": 1036836,
+      "gitBlobSha1": "9a7f711fd6039b0ba71e6061edfb7de9d7102a8a",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G#1_v1_rr1.wav",
+      "bytes": 601752,
+      "gitBlobSha1": "1b3774619e9ae958177bc6bd4429d32fbef0c0c8",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G#1_v1_rr2.wav",
+      "bytes": 537212,
+      "gitBlobSha1": "51b5c8bbabf1760a072fc557652fb84bcaf827d8",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G#2_v1_rr1.wav",
+      "bytes": 376048,
+      "gitBlobSha1": "b32004f92c141a30ba5e314dd0cc1d2687b92856",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G#2_v1_rr2.wav",
+      "bytes": 273224,
+      "gitBlobSha1": "425eaabaf3d12ea8da780056e5e1a7ee4ddbde80",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G0_v1_rr1.wav",
+      "bytes": 169640,
+      "gitBlobSha1": "45d11b0a0545d59407f740b938461b205e8c91cb",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G0_v1_rr2.wav",
+      "bytes": 240624,
+      "gitBlobSha1": "968cf37ef77070e116c8f665d0242af1287530fc",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G0_v3_rr1.wav",
+      "bytes": 636880,
+      "gitBlobSha1": "219542998cac263bb0b5bd03ab02fd6bbdcb3d21",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G0_v3_rr2.wav",
+      "bytes": 713924,
+      "gitBlobSha1": "09b63873d4e3070f2d0c513f69cb827ed83911c0",
+      "role": "sample of ContrabassPizz.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_A2_v1.wav",
+      "bytes": 1979216,
+      "gitBlobSha1": "b86c2e7000da2a80466196acca2ddbdf6cf83fe8",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_A2_v2.wav",
+      "bytes": 2231504,
+      "gitBlobSha1": "5960b46c4678a146834594031d0bba1048855102",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_A3_v1.wav",
+      "bytes": 1890316,
+      "gitBlobSha1": "ec84b89a4b93ecdc7e23d0c023b897b6f151bca7",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_A3_v2.wav",
+      "bytes": 1671704,
+      "gitBlobSha1": "401653718e521b65712da594a53d22184f4a207a",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_B2_v1.wav",
+      "bytes": 2314360,
+      "gitBlobSha1": "c2bdf89eed02c0e7fbb11b52799ac62276787ff8",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_B2_v2.wav",
+      "bytes": 2373380,
+      "gitBlobSha1": "4f54ea9180f4c11ec3d0e92f556003be59cb0f0c",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_B4_v1.wav",
+      "bytes": 2056964,
+      "gitBlobSha1": "8e22cb66ba5bccb4df68decf98139b3008733e8a",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_B4_v2.wav",
+      "bytes": 1923744,
+      "gitBlobSha1": "598c11bd6fb25e33c599836428e03336ad5a5031",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_C4_v1.wav",
+      "bytes": 2063320,
+      "gitBlobSha1": "6d81fcafba04ca992a8b85665a56e60337929ce0",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_C4_v2.wav",
+      "bytes": 2017512,
+      "gitBlobSha1": "1c8e05059b270f870342a03e19b93882d6dd1e1b",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_D3_v1.wav",
+      "bytes": 2061808,
+      "gitBlobSha1": "e47f9a53d487475fb049039ca7846e11c1ff830a",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_D3_v2.wav",
+      "bytes": 2457908,
+      "gitBlobSha1": "31143ae1a31ddd57baa38b3e79a4415b108a0007",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_D5_v1.wav",
+      "bytes": 2116352,
+      "gitBlobSha1": "fa455a7f8fe8c5c00b36c8e131bbc340204ae1c8",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_D5_v2.wav",
+      "bytes": 1976276,
+      "gitBlobSha1": "804a72a49c07eed754e377b354f8e54a4805476d",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_E4_v1.wav",
+      "bytes": 2315540,
+      "gitBlobSha1": "838b43d3c9e763898817869d411ab26463b7464f",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_E4_v2.wav",
+      "bytes": 1702620,
+      "gitBlobSha1": "2c33cc296b9b3654fd08fc9e9887042eabee738d",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_F#3_v1.wav",
+      "bytes": 1585612,
+      "gitBlobSha1": "996ca7e6b1d9541d2f2fd7f53ba88294693893e7",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_F#3_v2.wav",
+      "bytes": 1720800,
+      "gitBlobSha1": "33a19df9d89a5dbb174b9f72e6ae79a07327b2b6",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_G2_v1.wav",
+      "bytes": 2341712,
+      "gitBlobSha1": "e2de84e8b912dbfb8df3efe7b8ee241e2bcfa027",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_G2_v2.wav",
+      "bytes": 2681324,
+      "gitBlobSha1": "b7693eb5c9d104fc01e130ee2552dac546ee85f7",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_G4_v1.wav",
+      "bytes": 2330236,
+      "gitBlobSha1": "81d3994ebbf467cbbc88bb2d2ad0dd94d96e7e04",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "Strings/Violin Section/susVib/VlnEns_susVib_G4_v2.wav",
+      "bytes": 2150136,
+      "gitBlobSha1": "c36674326c6d0b6ae8bf5d20b52b6ddd005719bb",
+      "role": "sample of ViolinEnsSusVib.sfz"
+    },
+    {
+      "path": "TromboneSus.sfz",
+      "bytes": 3550,
+      "gitBlobSha1": "b109b4135b0658d8003a986c51f7c5b4d55f786b",
+      "role": "instrument"
+    },
+    {
+      "path": "TrumpetSusVib.sfz",
+      "bytes": 2808,
+      "gitBlobSha1": "c57891b0b7a6747ed7d862fa7fde9ef5ca744a1b",
+      "role": "instrument"
+    },
+    {
+      "path": "UprightPiano.sfz",
+      "bytes": 7614,
+      "gitBlobSha1": "21418f4149e61a098c21ce34d6fec0c4ef1838b0",
+      "role": "instrument"
+    },
+    {
+      "path": "ViolinEnsSusVib.sfz",
+      "bytes": 2538,
+      "gitBlobSha1": "07f05f5ad2cccb0d19b1902bc67ffa49cf15bc68",
+      "role": "instrument"
+    }
+  ]
+}

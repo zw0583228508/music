@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "library": "VSCO 2 CE, SFZ branch 6dd651d55dde97fd4028699be9d4481f26917891 (CC0-1.0)",
+  "note": "Ordered, explicit. The first entry whose match holds wins; a track that matches no entry is refused by the host and by /render, never rendered with a stand-in it was not mapped to. Entries with standIn say so out loud: the platform family is not the instrument VSCO 2 CE has, and the export labels the stem with that text.",
+  "entries": [
+    {
+      "match": { "nameKeyword": "trumpet" },
+      "sfz": "TrumpetSusVib.sfz",
+      "instrument": "VSCO 2 CE Trumpet, sustain vibrato",
+      "keyRange": [52, 84]
+    },
+    {
+      "match": { "nameKeyword": "trombone" },
+      "sfz": "TromboneSus.sfz",
+      "instrument": "VSCO 2 CE Tenor Trombone, sustain",
+      "keyRange": [34, 65]
+    },
+    {
+      "match": { "nameKeyword": "cello" },
+      "sfz": "CelloEnsSusVib.sfz",
+      "instrument": "VSCO 2 CE Cello Section, sustain vibrato",
+      "keyRange": [36, 77]
+    },
+    {
+      "match": { "instrumentId": "bass" },
+      "sfz": "ContrabassPizz.sfz",
+      "instrument": "VSCO 2 CE Solo Contrabass, pizzicato",
+      "keyRange": [24, 60],
+      "standIn": "The platform's bass is an electric or upright bass line (finger, pick, slap); VSCO 2 CE has no bass guitar, so it is played on a pizzicato contrabass."
+    },
+    {
+      "match": { "instrumentId": "cello" },
+      "sfz": "CelloEnsSusVib.sfz",
+      "instrument": "VSCO 2 CE Cello Section, sustain vibrato",
+      "keyRange": [36, 77]
+    },
+    {
+      "match": { "instrumentId": "strings" },
+      "sfz": "ViolinEnsSusVib.sfz",
+      "instrument": "VSCO 2 CE Violin Section, sustain vibrato",
+      "keyRange": [55, 86]
+    },
+    {
+      "match": { "family": "strings" },
+      "sfz": "ViolinEnsSusVib.sfz",
+      "instrument": "VSCO 2 CE Violin Section, sustain vibrato",
+      "keyRange": [55, 86]
+    },
+    {
+      "match": { "family": "brass" },
+      "sfz": "FHornSus.sfz",
+      "instrument": "VSCO 2 CE French Horn, sustain",
+      "keyRange": [33, 77]
+    },
+    {
+      "match": { "family": "keys" },
+      "sfz": "UprightPiano.sfz",
+      "instrument": "VSCO 2 CE Upright Piano",
+      "keyRange": [21, 108]
+    }
+  ],
+  "unserved": {
+    "drums": "VSCO 2 CE has orchestral percussion only (GM-StylePerc maps timpani, snare and cymbals onto GM notes); a pop kit with hi-hats is not in the library, so drums keep the preview synth rather than a wrong instrument.",
+    "guitar": "No guitar in VSCO 2 CE (the harp is not a guitar).",
+    "voice": "No choir or voice in the Community Edition.",
+    "synth": "No synthesizer patches in an orchestral sample library."
+  }
+}

@@ -22,6 +22,7 @@ import type {
   StyleGrammar,
 } from "@workspace/db";
 import { createHash } from "node:crypto";
+import type { SfizzInstrumentMap, SfizzWorkerState } from "./nativeRendererRouting";
 import { CANONICAL_PPQ, createCanonicalTimeline } from "./canonicalTimeline";
 import { deriveGlobalArrangementPlan, type GlobalPlannerHints } from "./globalArrangementPlanner";
 import { deriveSectionPhrasePlan, type SectionPlannerHints } from "./sectionPhrasePlanner";
@@ -3542,17 +3543,79 @@ export class LocalExpressiveRenderer {
   }
 }
 
+/**
+ * Where the sfizz/VSCO 2 CE renderer lives (PR-92). The licensed-instrument
+ * worker (`MUSIC_AI_WORKER_URL` + `MUSIC_AI_WORKER_TOKEN`) hosts it beside
+ * Basic Pitch; the renderer-specific `SFIZZ_RENDER_API_URL` / `_TOKEN` pair
+ * stays as the fallback for a separate deployment.
+ */
+export function sfizzWorkerConfig(): { endpoint: string; token?: string } | null {
+  const endpoint = [process.env.MUSIC_AI_WORKER_URL, process.env.SFIZZ_RENDER_API_URL]
+    .find((value): value is string => Boolean(value?.trim()));
+  if (!endpoint) return null;
+  const token = process.env.MUSIC_AI_WORKER_URL?.trim()
+    ? process.env.MUSIC_AI_WORKER_TOKEN ?? process.env.SFIZZ_RENDER_API_TOKEN
+    : process.env.SFIZZ_RENDER_API_TOKEN ?? process.env.MUSIC_AI_WORKER_TOKEN;
+  return { endpoint: endpoint.trim(), ...(token ? { token } : {}) };
+}
+
 export class SfzRenderer {
   readonly providerId = "SFIZZ_VSCO2_CE";
 
   isConfigured(): boolean {
-    return Boolean(process.env.SFIZZ_RENDER_API_URL);
+    return sfizzWorkerConfig() !== null;
   }
 
-  assertConfigured(): void {
-    if (!this.isConfigured()) {
+  assertConfigured(): { endpoint: string; token?: string } {
+    const config = sfizzWorkerConfig();
+    if (!config) {
       throw new Error("sfizz/VSCO renderer is not configured");
     }
+    return config;
+  }
+
+  /** The worker's attestation, including the instrument map it routes by (cached 30 s). */
+  async health(): Promise<RendererHealth> {
+    const config = this.assertConfigured();
+    return fetchRendererHealth(
+      config.endpoint,
+      { "Content-Type": "application/json", ...(config.token ? { Authorization: `Bearer ${config.token}` } : {}) },
+      this.providerId,
+    );
+  }
+
+  /**
+   * What routing needs to know before a single track is sent: configured,
+   * healthy with an attested default asset, and the map it serves families by.
+   */
+  async workerState(): Promise<SfizzWorkerState> {
+    if (!this.isConfigured()) return { configured: false };
+    let health: RendererHealth;
+    try {
+      health = await this.health();
+    } catch (error) {
+      return { configured: true, healthy: false, reason: error instanceof Error ? error.message : String(error) };
+    }
+    if (
+      health.healthy !== true ||
+      health.provider !== this.providerId ||
+      health.contractVersion !== "1.0" ||
+      health.runtimeReady !== true ||
+      health.smokeTested !== true ||
+      !attestedPair(health.asset, health.smokeEvidence)
+    ) {
+      return {
+        configured: true,
+        healthy: false,
+        reason: (health as { reason?: string }).reason ?? "the worker reports no healthy attested SFZ asset",
+      };
+    }
+    const map = health.instrumentMap;
+    return {
+      configured: true,
+      healthy: true,
+      map: map && Array.isArray(map.entries) ? map : null,
+    };
   }
 
   async render(track: TrackModel, sampleRate: number, durationSeconds: number): Promise<Float32Array> {
@@ -3564,16 +3627,17 @@ export class SfzRenderer {
     sampleRate: number,
     durationSeconds: number,
   ): Promise<NativeRenderResult> {
-    this.assertConfigured();
+    const config = this.assertConfigured();
     return renderRemoteInstrument({
-      endpoint: process.env.SFIZZ_RENDER_API_URL!,
-      token: process.env.SFIZZ_RENDER_API_TOKEN,
+      endpoint: config.endpoint,
+      token: config.token,
       provider: this.providerId,
       track,
       sampleRate,
       durationSeconds,
       // The worker resolves the selected licensed library from its private
-      // asset manifest. Never send a private filesystem path over the wire.
+      // asset manifest and the instrument from its published map. Never send
+      // a private filesystem path over the wire.
       parameters: {},
     });
   }
@@ -3826,6 +3890,14 @@ export type RendererHealth = {
   smokeEvidence?: RendererSmokeFields;
   /** Every attested instrument the worker offers, each with its own evidence. */
   assets?: Array<RendererAssetFields & { smokeEvidence?: RendererSmokeFields }>;
+  /** SFIZZ_VSCO2_CE (PR-92): the ordered map the worker routes families by, and the families it serves whole. */
+  instrumentMap?: SfizzInstrumentMap;
+  servedFamilies?: string[];
+  instrumentMapSha256?: string;
+  /** SFIZZ_VSCO2_CE: pinned sfizz commit / binary hash and the VSCO 2 CE commit, licence and tree hash. */
+  nativeToolchain?: Record<string, unknown>;
+  /** Why an unhealthy worker is unhealthy, in the worker's words. */
+  reason?: string;
 };
 
 export type AttestedRendererAsset = Required<RendererAssetIdentityFields> & RendererAssetHints;

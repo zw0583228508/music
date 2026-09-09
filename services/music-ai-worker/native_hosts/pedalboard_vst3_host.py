@@ -10,7 +10,7 @@ import soundfile as sf
 from pedalboard import load_plugin
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import load_request, midi_events, parser, write_attestation
+from common import host_path, load_request, midi_events, parser, write_attestation
 
 
 def main() -> None:
@@ -32,7 +32,7 @@ def main() -> None:
     if audio.shape[1] < frames:
         audio = np.pad(audio, ((0, 0), (0, frames - audio.shape[1])))
     sf.write(args.output, audio[:, :frames].T, args.sample_rate, subtype="PCM_16")
-    write_attestation("vst3", args, track, args.plugin, Path(__file__).resolve())
+    write_attestation("vst3", args, track, args.plugin, host_path(__file__))
 
 
 if __name__ == "__main__":

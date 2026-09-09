@@ -68,6 +68,14 @@ const suites = {
         "voice-leading.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // PR-92 (SOUND-1): which attested native renderer may play a track, by
+      // the sfizz worker's published instrument map; unserved families fall
+      // back with the reason, never to a wrong instrument.
+      [
+        "src/lib/nativeRendererRouting.test.ts",
+        "native-renderer-routing.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       ["src/lib/candidateRanking.test.ts", "candidate-ranking.test.mjs"],
       ["src/lib/candidateQuality.test.ts", "candidate-quality.test.mjs"],
       ["src/lib/candidateRepair.test.ts", "candidate-repair.test.mjs"],

@@ -1,0 +1,15 @@
+[
+  {
+    "kind": "sfz",
+    "identity": "music-ai-worker sfizz TrackModel host / PR-92",
+    "sha256": "d950a0d0fd25c4eb2d44c681c48ba5a914f9988c8976ec83e8fb68a7b3f8aee3",
+    "sources": [
+      "native_hosts/sfizz_track_model_host.py",
+      "native_hosts/common.py",
+      "sfizz_instrument_map.py"
+    ],
+    "builtBy": "native_hosts/build_host.py sfz (reproducible zipapp: LF sources, ZIP epoch timestamps, stored members)",
+    "approvedBy": "PR-92 review (SOUND-1); re-approved after common.host_path (the zipapp hashes itself, not its __main__ member); tests/test_sfizz_renderer.py refuses a registry that drifts from the committed sources",
+    "approvedAt": "2026-09-10"
+  }
+]

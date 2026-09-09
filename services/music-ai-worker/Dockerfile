@@ -1,4 +1,5 @@
-# The CPU analysis worker, built for Spotify Basic Pitch (Apache-2.0) only.
+# The CPU worker: Spotify Basic Pitch (Apache-2.0) analysis and, since PR-92,
+# the sfizz 1.2.3 + VSCO 2 Community Edition (CC0-1.0) instrument renderer.
 # Demucs shares this worker's code but needs Torch and a downloaded checkpoint,
 # so it is deliberately absent here: `/health?provider=DEMUCS` will report
 # unhealthy in this image rather than pretend. Basic Pitch's package, its
@@ -43,20 +44,44 @@ RUN pip install --upgrade pip \
 COPY services/music-ai-worker/*.py /app/
 COPY services/music-ai-worker/model_manifest.json /app/
 COPY services/music-ai-worker/*.json /app/
+COPY services/music-ai-worker/native_hosts /app/native_hosts
 COPY services/music-ai-worker/tests /app/tests
 # `modal_config.image_evidence()` digests this file at container start, so the
 # image must carry the recipe that produced it.
 COPY services/music-ai-worker/Dockerfile /app/
 
+# SFIZZ_VSCO2_CE (PR-92). The operator step runs the worker's own native-asset
+# lifecycle at build time: sfizz 1.2.3 is built from its pinned commit, the
+# VSCO 2 CE subset is downloaded from its pinned commit and verified file by
+# file against `vsco2-ce-subset.json`, the TrackModel host is built
+# reproducibly and must hash to the entry a human approved in
+# `approved_native_hosts.json`, the library is staged through
+# `_stage_asset_candidate` (three-render canonical smoke), activated through
+# `_activate_asset_candidate` (atomic manifest), and every instrument-map
+# entry is rendered once. A container that starts is therefore a container
+# whose VSCO 2 CE piano, strings and brass have already produced audio from a
+# TrackModel. The build tools leave in the same layer; the staged, attested
+# library and the `sfizz_render` binary stay.
+ENV MUSIC_AI_ASSET_ROOT=/var/lib/music-ai/assets \
+    MUSIC_AI_SFIZZ_INSTRUMENT_MAP=/app/sfizz_instrument_map.json \
+    SFIZZ_RENDER_BINARY=/var/lib/music-ai/assets/bin/sfizz_render
+RUN apt-get update && apt-get install -y --no-install-recommends git cmake g++ make pkg-config \
+    && MUSIC_AI_WORKER_TOKEN=build-time-smoke python /app/operator_activate_sfizz_vsco2.py \
+         --evidence /app/.readiness/sfizz-vsco2-operator.json \
+    && apt-get purge -y --auto-remove git cmake g++ make pkg-config \
+    && rm -rf /var/lib/apt/lists/* /root/.cache
+
 # The real smoke runs at build time: it verifies the pinned package tree, the
 # pinned checkpoint tree and the pinned runtime versions, then actually
 # transcribes a tone through both the TensorFlow SavedModel and the ONNX
-# checkpoint, and writes the readiness marker `/health` reads. A container that
+# checkpoint, re-runs the sfizz three-render smoke against the activated
+# asset, and writes the readiness marker `/health` reads. A container that
 # starts is therefore a container whose Basic Pitch checkpoint produced notes.
 #
 # The worker's full unit suite is deliberately NOT run here: it also covers
-# Demucs (Torch), the VST3 and sfizz native hosts and the licensed-asset paths,
-# none of which this Basic-Pitch-only image installs. Those suites run in the
+# Demucs (Torch) and the VST3 host, which this image does not install. The
+# sfizz suite can be run inside the built image with
+# `modal run modal_app.py::unit_tests`; the full suite runs in the
 # repository's own test job against the full environment.
 RUN MUSIC_AI_WORKER_TOKEN=build-time-smoke python /app/smoke_test.py
 
