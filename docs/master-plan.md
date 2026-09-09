@@ -2685,6 +2685,101 @@ any of it.
   and says so; a non-classical slice, at least one rated session, and the
   measured cost of a LoRA pilot are named as what makes it final.
 
+- **PR-67** ✅ — `long-form-arrangement-study` (Wave Q — Workstream J,
+  long-form musical intelligence): **whole-song coherence, measured** —
+  the survey, an unsupervised form segmentation run on 6,000 admitted PDMX
+  works, and a coherence metric that catches "pasted windows" on real music.
+  Report: `docs/model-discovery/long-form-study.md`. Evidence:
+  `docs/evidence/form-profile.json`, `docs/evidence/coherence-metric-live.json`.
+
+  **Why.** CA2 sees ≤ 1650 tokens — a handful of measures — and nothing
+  outside its window; the tournament judges 8-bar windows. An arrangement
+  that is twenty good windows is still twenty windows. Before a section-level
+  task can be trained or a multi-window output judged, two things had to
+  exist: a way to say where a score's sections are (PDMX carries no labels)
+  and a number that drops when windows are pasted.
+
+  **Survey** (§2 of the report, every claim cited): hierarchical generation
+  (MusicFrameworks, MELONS, MeloForm, whole-song cascaded diffusion),
+  structure-aware attention (Museformer), compact multitrack tokens (Compound
+  Word, PopMAG/MuMIDI, Multitrack Music Transformer, SymphonyNet), long
+  context (FlashAttention, RoPE/ALiBi/PI/YaRN, Anticipatory MT) and why a
+  `MAX_LEN` increase on a T5 is cheap in code and expensive in meaning
+  (relative-position buckets), memory across windows (Transformer-XL,
+  Compressive, Memorizing, RMT), explicit musical memory (Theme Transformer,
+  MuseCoco attribute prefixes, NotaGen's hierarchical patches, CA2's own
+  per-measure controls). Each rated for what it buys, its cost, CA2-fit vs
+  from-scratch fit, and how it consumes the platform's existing
+  section/phrase/transition plans. §3 covers the owner's section list and the
+  non-pop forms (binary/ternary, sonata, rondo, variations, head–solos–head,
+  EDM build/drop, film cue arcs, through-composed) as plan quantities.
+
+  **Form segmentation** — `formSegmentation.ts` (13 tests): bar features
+  (pitch-class histogram, onset positions, track on/off, density, register) →
+  cosine self-similarity → Foote novelty → boundaries → letters by
+  aligned-diagonal similarity (A / A' / B), plus a segmentation-free diagonal
+  repeat detector, intro/outro heuristics, ensemble and density arcs, and
+  four-note motif recurrence via `buildMotifMemory`'s own cell key. Metre
+  changes honoured; any time unit (MIDI ticks or the platform's seconds).
+  `scripts/profile-form.mjs` ran it on **6,000 admitted works** (rights
+  subset ∩ our gate; 0 parse failures; median 2 ms/work): median **4
+  sections** per work, median section **8 bars** (modes at 4 and 8), 51.5 %
+  of works repeat a section by label and **86 % contain a ≥ 4-bar repeated
+  passage**, 9.7 % open intro-like and 9.7 % close outro-like, density peaks
+  mid-form (arch 29 %, flat 37 %), and — the finding for the data factory —
+  the ensemble changes at only **25.5 % of boundaries** and is *flat* in 68 %
+  of multitrack works: orchestration-driven form is what PDMX's classical
+  share barely contains. 8.8 % of works have ≥ 2 families (PR-53's 9 %, on a
+  new sample), i.e. ≈ 19–20k works × 4 sections of section-level tasks.
+
+  **Coherence metric** — `coherenceMetric.ts` (11 tests): five components —
+  seam artefacts (bar-to-bar jumps in register, density, pitch classes,
+  melodic leap and note cuts *at the 8-bar grid vs elsewhere*, with a 4-bar
+  offset control grid, half ensemble mean / half worst track), harmonic
+  agreement with siblings, instrumentation continuity (re-entries no boundary
+  or ensemble move explains — and a form computed from the same notes may not
+  explain them, or the glitch explains itself), trajectory smoothness + plan
+  adherence, motif recurrence. Calibration set on 100 human works before any
+  synthetic comparison. `scripts/validate-coherence-metric.mjs` scored **400
+  admitted multitrack works** as written, with one track's 8-bar windows
+  shuffled, and with every track's windows shuffled: human **70.6 ± 13.3**
+  vs 62.5 vs 55.8; **paired win rate 91.9 % / 95.4 %** (paired effect size
+  1.07 / 1.40, Cohen's d 0.62 / 1.17); seam component alone 82.6 % / 91.1 %;
+  raw seam excess human +0.10 log₂ vs +0.75 fully pasted (1.7× the jump at
+  window lines). Two components honestly do not separate on these
+  constructions (instrumentation continuity; motif recurrence under ensemble
+  shuffle) and are reported as such, not reweighted. Tournament integration
+  documented (§6.3) — Workstream B's files untouched.
+
+  **Recommendation** (§7): keep the rule-derived plan as the brain and make
+  the generator consume it — CA2's existing density/pitch controls and fixed
+  context notes first (zero training), then plan-prefix tokens and a per-track
+  song memory in the vocabulary-extended fine-tune the decision report already
+  schedules; judge every multi-window candidate on the window score *and* the
+  coherence score against the human anchor; do not chase `MAX_LEN`, do not
+  start a from-scratch hierarchical model before the fine-tune has shown
+  whether a section-aware CA2 transfers. The section-level task is specified
+  (target = one family over one detected section; context = the rest of the
+  piece + a song memory + a plan prefix computed from the human score) and the
+  first experiment is "does a section-aware CA2 stop pasting" on 200 such
+  tasks, three arms, zero training.
+
+  Suites: formSegmentation 13, coherenceMetric 11 (registered in
+  `benchmark-corpus`); partGenerationContextV2 11 unchanged; typecheck green.
+  Additive only: no planner, tournament, judge, registry or `services/` file
+  changed.
+
+  **Honest limits.** Segmentation is unsupervised and unvalidated against
+  labelled forms (none exist for PDMX); `A B C …` strings over-count contrast
+  where a musician would hear A A'. The coherence metric is validated against
+  synthetic damage, not against listeners; the plan adherence of human works
+  is 1.0 by construction (their own densities are the plan). Everything
+  measured is classical/early-music PDMX — pop, dance and Mizrahi form
+  behaviour is described from the literature and the planners, not measured.
+  The section-level task extractor and the first experiment are specified, not
+  run; no model consumed a section-level task. Key relationships across
+  sections are not in the feature set.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
