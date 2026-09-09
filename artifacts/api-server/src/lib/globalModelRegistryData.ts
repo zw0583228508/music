@@ -30,7 +30,7 @@ export const GLOBAL_MODEL_REGISTRY: ModelEntry[] = [
     releaseDate: "2024-07",
     revision: "v2.1.0 (released 2024-10-09; small model files dated 2024-06-28)",
     parameterCount:
-      "large (default shipped): ~192M (pytorch_model.bin 769,602,209 bytes fp32 ÷ 4); small: ~54M (215,745,913 bytes ÷ 4)",
+      "large (default shipped): 192,368,256 (measured by model.num_parameters() at load; 769,602,209 bytes fp32); small: ~54M (215,745,913 bytes ÷ 4)",
     architecture:
       "T5ForConditionalGeneration. Large: 16 encoder + 16 decoder layers, d_model 576, d_ff 2304, 12 heads, d_kv 48. Small: 10+10, d_model 384, d_ff 1536, 8 heads. Both gated-GELU, relative attention (4096 buckets / max distance 4096), fp32, transformers 4.31.0 — read from each model/config.json.",
     representation:
@@ -87,9 +87,11 @@ export const GLOBAL_MODEL_REGISTRY: ModelEntry[] = [
       "Inference path is a plain XML-RPC wrapper around transformers T5ForConditionalGeneration.generate() (top-p 0.85, encoder_no_repeat_ngram_size, up to 9 re-tries at rising temperature) — runs without REAPER, but the request string is built by REAPER-side code that the adapter must reimplement from encode_midisongbymeasure_with_masks().",
       "Only the 'infill' task is fine-tuned (constants.py: FINETUNE_TASK = 'infill'; 'the plan is to add additional tasks over time').",
       "Instrument vocabulary is 258 GM-ish programs per track (finer than ARRANGER_REMI's 15 families) but there is no section, phrase, harmony-plan or style-grammar token — the deep context of PartGenerationRequestV2 has no slot to enter except the 512 numeric control instructions.",
+      "Observed in four real PDMX runs (CPU, 6.5–15.3 s each): one repetition collapse in four at temperature 1.0 (64 notes on a single pitch — the case CA2's own nine-retry loop exists for); the other three produced idiomatic-register, rhythmically plausible parts, one with genuine four-voice polyphony. Harmonic tracking against the context tracks is weak to moderate, and measure-to-measure repetition is high (one trumpet run repeats its bar verbatim). Single-sample quality is not a verdict; the tournament with N seeds and the platform critics is.",
     ],
     auditConfidence: "verified_primary_source",
-    liveInferenceProven: false,
+    liveInferenceProven: true,
+    liveEvidence: "docs/evidence/model-composers-assistant-2-live.json",
   },
   {
     id: "MIDI_GPT",

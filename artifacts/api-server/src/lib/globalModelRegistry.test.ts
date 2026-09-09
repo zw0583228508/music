@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import test from "node:test";
 import {
   classify,
@@ -105,8 +107,26 @@ test("exactly one entry is SHIP_CLEARED, and only because every layer was read f
   assert.ok(ca.knownLimitations.some((l) => /Residual/.test(l)), "the residual risks are named, not hidden");
 });
 
-test("nothing in the registry claims live inference: no model has been run here yet", () => {
-  assert.deepEqual(provenLive(GLOBAL_MODEL_REGISTRY).map((e) => e.id), []);
+test("exactly one entry claims live inference, and its evidence file exists on disk", () => {
+  // Deliberately updated on 2026-09-09 from "nothing claims live inference".
+  // Composer's Assistant 2 ran four real infills on real PDMX MIDI on this
+  // machine (CPU): real input, real T5 inference, real notes, evidence written.
+  // Any further promotion must add a name here AND a file the walk-up below finds.
+  const live = provenLive(GLOBAL_MODEL_REGISTRY);
+  assert.deepEqual(live.map((e) => e.id), ["COMPOSERS_ASSISTANT_2"]);
+  for (const entry of live) {
+    assert.ok(entry.liveEvidence, `${entry.id}: a live claim must point at an evidence file`);
+    // Walk up from the working directory to the repo root (the suite runs from a
+    // bundle in a temp directory), then check the file is really there.
+    let directory = process.cwd();
+    let found = false;
+    for (let up = 0; up < 8 && !found; up += 1) {
+      const candidate = resolve(directory, entry.liveEvidence!);
+      if (existsSync(candidate) && existsSync(resolve(directory, "pnpm-workspace.yaml"))) found = true;
+      directory = dirname(directory);
+    }
+    assert.ok(found, `${entry.id}: ${entry.liveEvidence} does not exist — a live claim with no file is a claim`);
+  }
 });
 
 test("every registry row records a classification a reader can act on", () => {

@@ -121,6 +121,12 @@ export type ModelEntry = {
   auditConfidence: AuditConfidence;
   /** Set only once real inference has run here. Never set from a paper. */
   liveInferenceProven: boolean;
+  /**
+   * Repo-relative path of the `docs/evidence/model-<name>-live.json` that
+   * proves it. Required whenever `liveInferenceProven` is true; a live claim
+   * with no file behind it is a claim, and the test refuses it.
+   */
+  liveEvidence?: string;
 };
 
 // ---------------------------------------------------------------------------

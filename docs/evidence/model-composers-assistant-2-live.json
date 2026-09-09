@@ -1,0 +1,84 @@
+{
+  "title": "Composer's Assistant 2 — real inference on real PDMX MIDI (Wave Q — Model Discovery, item 23)",
+  "date": "2026-09-09",
+  "definitionOfDone": "real musical input → real model inference → real symbolic output. Four runs, four passes. Not a health check, not a checkpoint download, not an import.",
+  "model": {
+    "id": "COMPOSERS_ASSISTANT_2",
+    "revision": "v2.1.0 — large unjoined infill model, finetuned_epoch_49_0",
+    "pytorch_model.bin sha256": "297bccb173b4497a3c3b6007422506dced88fd9f99f5c8a18481dedd9667d530",
+    "checksumVerifiedBeforeEveryLoad": true,
+    "architecture": "T5ForConditionalGeneration, 16+16 layers, d_model 576, d_ff 2304, 12 heads, fp32",
+    "measuredParameters": 192368256,
+    "vocabulary": 1944,
+    "licenseAudit": "docs/evidence/model-composers-assistant-2-audit.json — SHIP_CLEARED on primary sources (code MIT, weights MIT, training data PD/CC0/CC-BY/permitted; Mutopia-dominated). Not lawyer-reviewed.",
+    "trainingProvenance": "disclaimer.txt + acknowledgments.html: Mutopia Project (2,451 links), CocoChorales (synthetic, CC-BY 4.0), Josquin Research Project, named permitted contributors"
+  },
+  "environment": {
+    "where": "this Windows machine, CPU only — no GPU was used or needed",
+    "python": "3.11.9 (venv C:\\ca2v; the Modal image pins 3.10 per the release's declared support)",
+    "torch": "2.0.1+cpu",
+    "transformers": "4.31.0 (as pinned by the model's own config.json)",
+    "tokenizers": "0.13.3",
+    "numpy": "1.26.4",
+    "miditoolkit": "1.0.1",
+    "portion": "2.6.2",
+    "modelLoadSeconds": "2.3–6.6 (770 MB fp32 from local disk)",
+    "runner": "the release's own midisong / encoding_functions / unjoined_vocab_tokenizer / preprocessing_functions vendored at the pinned zip; decode reimplemented from rpr_ca_functions without REAPER — the same implementation shipped in services/composers-assistant-worker/ca2_infer.py"
+  },
+  "task": "infill: mask every measure of one track over an 8-measure window; the model receives every other track as context and writes the held-out track. mask_locations = (target track, each measure) — identical to the platform's Tier B arranger task.",
+  "runs": [
+    {
+      "run": "1",
+      "input": "PDMX Qma11MhFz64u8wRiW1cTZ5VJ4zTQWbYbVHDnMGafAFoaN6.mid — brass ensemble: trumpet(56) 314 notes, trombone(57) 278, tuba(58) 421, horn(60) 313, drums 484; 64 measures",
+      "heldOut": "tuba (track 2), measures 1–9, 64 human notes on two pitches (E2/B1 = 40/35) in a steady eighth-note pulse following the harmony",
+      "seed": 7, "temperature": 1.0, "topP": 0.85,
+      "inputTokens": 343, "inferenceSeconds": 6.5, "outputTokens": 137,
+      "generated": { "notes": 64, "pitchRange": [49, 49], "measuresWithNotes": 8 },
+      "reading": "Correct role and density (a bass-register pulse, exactly 64 notes) but every note is C#3 (49): above the tuba's register and unmoved by the trumpet/trombone context, which audibly changes chord. A repetition collapse — the case CA2's own nine-retry rising-temperature loop exists for.",
+      "artifacts": ["docs/evidence/ca2-live/run1-tuba-seed7-T1.0.mid", "docs/evidence/ca2-live/smoke_out-nn_output.txt"]
+    },
+    {
+      "run": "1b",
+      "input": "same file, same tuba task, same window",
+      "seed": 13, "temperature": 1.15, "topP": 0.85,
+      "inputTokens": 343, "inferenceSeconds": 8.92, "outputTokens": 99,
+      "generated": { "notes": 37, "pitchRange": [52, 59], "measuresWithNotes": 8 },
+      "reading": "A moving bass line (E3–B3: 59, 56, 54, 52) mixing quarters and eighths — a real part, sparser than the human's 64 notes and a fifth higher than the human's register. The single-pitch result of run 1 was a sampling event, not a systematic failure.",
+      "artifacts": ["docs/evidence/ca2-live/run1b-tuba-seed13-T1.15.mid", "docs/evidence/ca2-live/smoke_out1b-nn_output.txt"]
+    },
+    {
+      "run": "1c",
+      "input": "same file; trumpet (track 0, the melodic lead) held out instead, measures 1–9, 48 human notes",
+      "seed": 7, "temperature": 1.0, "topP": 0.85,
+      "inputTokens": 375, "inferenceSeconds": 15.3, "outputTokens": 147,
+      "generated": { "notes": 60, "pitchRange": [64, 75], "measuresWithNotes": 8 },
+      "reading": "Correct trumpet register (E4–D#5) and a real melodic figure — 71/73/68 in sixteenths and eighths — but the same bar is emitted verbatim for every measure (the <extra_id_0> and <extra_id_1> strings are identical). Idiom yes, development no.",
+      "artifacts": ["docs/evidence/ca2-live/run1c-trumpet-seed7-T1.0.mid", "docs/evidence/ca2-live/smoke_out1c-nn_output.txt"]
+    },
+    {
+      "run": "2",
+      "input": "PDMX QmYR43wBQC3gRc8a5KUjKQMnCYxFLnefChbWdVbaCPHmAE.mid — 9-track baroque ensemble: piano(0) 715 notes, harpsichord(6) 1580, violin(40) ×2, cello(42), string ensemble(48) ×4; 270 measures",
+      "heldOut": "harpsichord (track 1), measures 151–159, 101 human notes",
+      "seed": 11, "temperature": 1.0, "topP": 0.85,
+      "inputTokens": 905, "inferenceSeconds": 28.67, "outputTokens": 280,
+      "generated": { "notes": 149, "pitchRange": [38, 83], "measuresWithNotes": 8 },
+      "reading": "Genuine four-voice polyphony — simultaneous 50/69/74/78 on the downbeat, then 61/69/76/81 — across a 38–83 range: a continuo-style keyboard realisation, which is exactly what a harpsichord does in this repertoire. The richest of the four outputs, on the repertoire the model was trained on.",
+      "artifacts": ["docs/evidence/ca2-live/run2-seed11-T1.0.mid", "docs/evidence/ca2-live/smoke_out2-nn_output.txt"]
+    }
+  ],
+  "failuresOnTheWay": [
+    {
+      "failure": "ModuleNotFoundError: portion — the second real file crashed in preprocessing_functions._equality_measure, which lazily imports the `portion` interval library only when two tracks share an instrument.",
+      "whyItMatters": "The first file (five distinct instruments) never reached that code, and a synthetic three-instrument smoke never would either. The Modal image would have built green and failed on real music.",
+      "fix": "portion==2.6.2 pinned in the Dockerfile with a build-time version assertion, and recorded in model_manifest.json."
+    }
+  ],
+  "qualityReading": {
+    "whatIsProven": "The pinned weights load, verify, and produce notes from real multitrack MIDI in 6.5–28.7 s on CPU, with register and rhythmic idiom appropriate to the held-out instrument, and real polyphony where the part calls for it.",
+    "whatIsNot": "Quality. One collapse in four at temperature 1.0; weak-to-moderate harmonic tracking against the context; heavy bar-to-bar repetition. These are single samples read by eye. The judgment belongs to the tournament — N seeds per task, the platform's hard constraints, the music critic and, for the finalists, blind listening.",
+    "domainCaveat": "Runs 1–2 are brass-ensemble and baroque-ensemble scores — the model's home repertoire. Nothing here says anything about pop, dance or Mizrahi arrangement, which the training corpus does not contain."
+  },
+  "benchmarkResult": "none yet — the tournament has not been run",
+  "classification": "SHIP_CLEARED · FOUNDATION_CANDIDATE · liveInferenceProven: true",
+  "nextStep": "deploy services/composers-assistant-worker to Modal (pinned image, build-time smoke) and enter it in the per-task tournament against REFERENCE_PART_COMPOSER and CONTEXT_AWARE_ARRANGER on PDMX Tier B tasks."
+}

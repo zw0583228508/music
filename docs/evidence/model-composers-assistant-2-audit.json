@@ -65,7 +65,9 @@
           "feed_forward_proj": "gated-gelu", "relative_attention_num_buckets": 4096, "relative_attention_max_distance": 4096,
           "vocab_size": 1944, "torch_dtype": "float32", "transformers_version": "4.31.0"
         },
-        "derivedParameterCount": "~192M (769,602,209 / 4)"
+        "derivedParameterCount": "~192M (769,602,209 / 4)",
+        "measuredParameters": 192368256,
+        "measuredHow": "model.num_parameters() after from_pretrained, in the live runs recorded in model-composers-assistant-2-live.json"
       },
       "pythonSource": [
         "composers_assistant_nn_server.py — standalone XML-RPC wrapper: T5ForConditionalGeneration.from_pretrained(...).generate(top_p=0.85, do_sample, encoder_no_repeat_ngram_size, max_new_tokens=2*1650*len_mult), up to 9 retries at rising temperature; no REAPER dependency in this path",

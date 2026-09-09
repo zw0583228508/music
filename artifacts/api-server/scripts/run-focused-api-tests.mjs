@@ -123,6 +123,13 @@ const suites = {
         "symbolic-generation-provider.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, Model Discovery: the platform half of the CA2 adapter —
+      // worker notes to MusicalNote[] plus the account, refusing unverified weights.
+      [
+        "src/lib/ca2ResultAdapter.test.ts",
+        "ca2-result-adapter.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [
