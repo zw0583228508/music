@@ -105,6 +105,9 @@ const suites = {
         "pdmx-csv.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, Q-05: the tokenizer the arranger model trains on, and the
+      // round-trip proof the training plan gates on.
+      ["src/lib/arrangerRemi.test.ts", "arranger-remi.test.mjs"],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [

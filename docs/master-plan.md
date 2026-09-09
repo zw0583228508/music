@@ -2294,6 +2294,51 @@ any of it.
   recorded audio and no professional human arrangement** — those are
   `HUMAN_ORIGIN_REFERENCE` and `PROFESSIONAL_HUMAN_GOLD`, still to be sourced.
 
+- **PR-52** ✅ — `arranger-remi-tokenizer` (Wave Q, Q-05): the tokenizer the
+  arranger model trains on, and **the round-trip proof the training plan gates
+  on**. Evidence: `docs/evidence/tokenizer-roundtrip-live.json`.
+
+  `midiFile.ts` is a minimal SMF reader/writer — format 0 and 1, note on/off,
+  program change, tempo, time signature — that also writes deterministic SMF
+  back out, for the round-trip. `arrangerRemi.ts` is a REMI-style tokenizer with
+  what an **arranger** needs and a melody model does not: `Track_<family>` opens
+  each instrument's events (15 GM families), and `Tempo_<bin>` / `TimeSig_<n>/<d>`
+  are in the stream. 386-token vocabulary, grid of 12 steps per quarter,
+  `vocabularyVersion()` a digest recorded on every training run.
+
+  **The proof.** 8,000 randomly sampled real PDMX MIDI files (fixed seed, so
+  reproducible), 0 parse failures, 7,997 with notes:
+
+  - **all 7,997 lossless modulo grid**;
+  - across **3,663,115 notes**, `noteDropShare` 0 and `noteSpuriousShare` 0 —
+    not one note lost, not one invented;
+  - `exactGridMatchShare` and `fullMatchShare` both **1.0** — every note
+    round-trips matching family, bar, position, pitch, velocity bin and duration
+    bin;
+  - the only change is timing: mean onset snap **0.0012 of a quarter** (~0.6 ms
+    at 120 BPM), never more than half a grid step, which is the grid doing
+    exactly what it is for.
+
+  **A bug the real data caught.** Real scores carry metres the vocabulary did
+  not — the first run threw on `TimeSig_1/4`. `normaliseTimeSig` folds any metre
+  onto the nearest representable one by bar length; the result carries a
+  `timeSigApproximated` flag. **3,423 of 7,997 (43%)** had their metre folded —
+  their notes still round-trip losslessly, only the bar-length label is
+  approximate, and a training run can weight or exclude them on the flag.
+
+  Suites: arrangerRemi 12 (parser, writer, vocabulary, family map, bins,
+  grid-snap accounting, truncated-stream tolerance, an odd real metre,
+  SMF→tokens→SMF end to end); typecheck green.
+
+  **Honest limits.** This proves the tokenizer **preserves the notes**; it does
+  not prove the tokenization is good **for learning** — only a trained model
+  shows that. 43% of files had an approximated metre. The 12-step grid discards
+  genuine rubato/swing microtiming (correct for a symbolic arranger, wrong for a
+  groove model; PDMX is notated scores so it does not bite here). Percussion is
+  one `drums` family. **No model has been trained** — this is gate 1 of 5
+  (tokenizer round-trip → dataset rights proof → tiny overfit → pilot →
+  benchmark).
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
