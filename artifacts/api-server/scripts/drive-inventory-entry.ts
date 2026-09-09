@@ -84,12 +84,16 @@ export function observationFromScan(folder: ScanFolder): FolderObservation {
 
 export type NestedProduct = { folder: string; vendor: string; product: string; host: string; ruleId: string };
 
-/** Sub-folders that name a different vendor product than their parent (a folder that bundles several). */
+/**
+ * Sub-folders and top-level files that name a different vendor product than
+ * their parent (a folder that bundles several). Archive names count: a
+ * `Toontrack-….zip` inside a Spectrasonics folder is a second product.
+ */
 export function nestedProducts(folder: ScanFolder, parentRuleId: string | null): NestedProduct[] {
   const seen = new Map<string, NestedProduct>();
-  const candidates = [...folder.topLevel.filter((t) => t.isDir).map((t) => t.name), ...folder.subDirsDepth2];
+  const candidates = [...folder.topLevel.map((t) => t.name), ...folder.subDirsDepth2, ...folder.archives.map((a) => a.rel)];
   for (const name of candidates) {
-    const leaf = name.split(/[\\/]/).pop() ?? name;
+    const leaf = (name.split(/[\\/]/).pop() ?? name).replace(/\.(rar|zip|7z|iso|torrent)$/i, "").replace(/\.part\d+$/i, "");
     const rule = matchVendorRule(leaf);
     if (!rule || rule.id === parentRuleId) continue;
     if (!seen.has(rule.id)) seen.set(rule.id, { folder: name, vendor: rule.vendor, product: rule.product, host: rule.host, ruleId: rule.id });

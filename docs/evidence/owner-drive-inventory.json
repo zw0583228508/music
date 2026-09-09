@@ -1,6 +1,6 @@
 {
   "title": "Owner drive D: — read-only inventory and rights triage (PR-96, owner-drive-inventory)",
-  "ranAt": "2026-09-09T23:33:51.598Z",
+  "ranAt": "2026-09-09T23:44:06.229Z",
   "readOnly": {
     "statement": "Nothing was extracted, installed, executed, copied or opened. The scan listed names, sizes and dates only (Get-ChildItem -Recurse -File). No archive was listed with 7z; part numbering comes from file names.",
     "toolsRun": [
@@ -340,46 +340,52 @@
   },
   "histogram": {
     "byRightsClass": {
-      "THIRD_PARTY_COMMERCIAL": 64,
-      "THIRD_PARTY_PACK": 13,
-      "OWNER_RECORDED_CANDIDATE": 2,
-      "UNKNOWN": 23
+      "THIRD_PARTY_COMMERCIAL": 74,
+      "THIRD_PARTY_PACK": 26,
+      "OWNER_RECORDED_CANDIDATE": 0,
+      "UNKNOWN": 2
     },
     "bytesByRightsClass": {
-      "THIRD_PARTY_COMMERCIAL": 2608632266210,
-      "THIRD_PARTY_PACK": 223880226730,
-      "OWNER_RECORDED_CANDIDATE": 4583939917,
-      "UNKNOWN": 232624544661
+      "THIRD_PARTY_COMMERCIAL": 2767917746169,
+      "THIRD_PARTY_PACK": 298021641263,
+      "OWNER_RECORDED_CANDIDATE": 0,
+      "UNKNOWN": 3781590086
     },
     "hostRequired": {
-      "RAW_WAV_MIDI": 15,
+      "RAW_WAV_MIDI": 25,
       "ABLETON_LIVE": 3,
-      "KONTAKT_UNKNOWN_TIER": 21,
+      "KONTAKT_PLAYER": 32,
+      "KONTAKT_UNKNOWN_TIER": 4,
       "ARTURIA_V_COLLECTION_OR_PIGMENTS": 5,
-      "KONTAKT_PLAYER": 15,
-      "HALION_SONIC": 2,
+      "HALION_SONIC": 3,
+      "KONTAKT_FULL": 6,
       "EZDRUMMER": 1,
-      "STEINBERG_HOST_UNSPECIFIED": 3,
-      "HALION_7": 1,
+      "HALION_7": 2,
       "INITIAL_AUDIO_HEAT_UP": 1,
-      "KONTAKT_FULL": 2,
-      "UNKNOWN": 23,
+      "SPECTRASONICS_STEAM": 6,
+      "SAMPLETANK_4": 2,
       "NEXUS_3": 1,
       "OUTPUT_PLUGIN": 2,
-      "SAMPLETANK_4": 1,
       "SUPERIOR_DRUMMER_3": 1,
       "GROOVE_AGENT_5": 2,
+      "STEINBERG_HOST_UNSPECIFIED": 1,
       "THE_GRAND_3": 1,
+      "UNKNOWN": 2,
       "UVI_FALCON": 1,
       "VOCALOID_EDITOR": 1
     },
     "middleEastern": {
       "core": [
+        "Akki Plugs Virtual Bouzouki.part1",
+        "Baklava Sounds Orient Express KONTAKT.part1",
         "Ethno World 6.part01",
         "Middle East.part1",
+        "Sonokinetic  Sultan Strings.part1",
+        "Strezov Sampling - Darbuka X3M.part1",
         "World Percussion 2.0.part01"
       ],
       "useful": [
+        "Acou6tics.part1",
         "Arturia Augmented Sound Banks Bundle 2024.8.part2",
         "Arturia KB Piano V-Collection 2024.8.part1",
         "Arturia Sound Banks Bundle 2024.1.part01",
@@ -389,37 +395,58 @@
         "Cinesamples.CineBrass.PRO.KONTAKT.part01",
         "Content HALion Sonic 3.part01",
         "Dave Parkinson Trance Essentials Volume 2.part1",
+        "Evolution Hollowbody Blues.part1",
+        "Evolution Rock Standard.part1",
+        "Evolution Steel Strings.part1",
         "EZDrummer.part01",
+        "HALion 6.part01",
         "HALion_7_Complete_Content.part01",
+        "HALion_Sonic_Selection_Content.part1",
         "Ilya Efimov - Total Guitar Bundle.part1",
         "Impact Soundworks  Pearl Concert Grand.part01",
+        "Keyscape - 12.part1",
         "Kontakt Factory Library 2 1.0.4.part01",
         "Midilatino – Platinum Mega Pack.part01",
         "MidiLatino Reggaeton Update 2021.part1",
         "MidiLatino Worldwide Reggaeton.part1",
+        "Native Instruments - Session Guitarist.part1",
         "Native Instruments  Session Strings Pro 2.part01",
+        "Native Instruments The Gentleman.part1",
         "Nexus 3.part01",
+        "Noire Library.part1",
         "psy trance assentials samples packs.part1",
         "SampleTank 4 Sound Content.part001",
+        "Session Guitarist - Acoustic Sunburst Deluxe Library.part01",
+        "Session Guitarist - Picked Acoustic Library.part1",
+        "Session Guitarist - Strummed Acoustic 2 Library.part1",
+        "Session Guitarist - Strummed Acoustic Library.part1",
+        "Session Guitarist Electric Vintage Library.part1",
         "Session Strings 2.part1Session Strings 2.part1",
+        "Session_Horns_Library",
         "SL-SuperiorDrummer3.part001",
+        "Sonic Extensions - Nylon Sky.part1",
+        "Sonic Extensions - Seismic Shock.part1",
+        "Sonic Extensions - Unclean Machine.part1",
+        "Sonic Extensions - Undercurrent.part1",
+        "Sounds of KSHMR Vol 4 Complete Edition.part1",
         "Spitfire Audio - Albion NEO.part01",
+        "Spitfire Audio - Spitfire Solo Violin.part1",
+        "Spitfire_Audio_Spitfire_Solo_Violin",
         "Steinberg Groove Agent SE 5 Content.part1",
         "Steinberg Groove Agent.5 Content.part01",
         "Steinberg Verve Felt Piano Content for halion sonic se.part1",
+        "Studio_Drummer.part1",
         "The Grand 3.part01",
         "TomorrowLand - Elixir Of EDM.part01",
         "Urban Singh Music The Producer Pack 2023 Wav.part01",
-        "Yamaha  Vocaloid ALL Libraries.part01",
-        "Zenhiser - Psyche Psytrance.part1"
+        "Yamaha  Vocaloid ALL Libraries.part01"
       ]
     },
     "cubase14PlayerAndSubsetIncluded": [
       "Content HALion Sonic 3.part01",
+      "HALion 6.part01",
       "HALion_7_Complete_Content.part01",
-      "Steinberg Groove Agent SE 5 Content.part1",
       "Steinberg Groove Agent.5 Content.part01",
-      "Steinberg PadShop 2 CONTENT.part1",
       "Steinberg Verve Felt Piano Content for halion sonic se.part1"
     ],
     "aiTrainingForbiddenByVendor": [
@@ -428,42 +455,28 @@
       "Cymatics Infinity Production Suite.part01",
       "EZDrummer.part01",
       "SL-SuperiorDrummer3.part001",
+      "Sounds of KSHMR Vol 4 Complete Edition.part1",
       "Splice Sounds  of KSHMR 1-2-3.part1",
       "Splice Sounds.part1"
     ],
     "archiveSetsWithGaps": 1,
-    "notOpenedFiles": 84
+    "notOpenedFiles": 26
   },
-  "ownerRecordedCandidates": [
-    "[Futurephonic] Foundations - By Virtual Light & Scorb",
-    "Mike Shiver Essentials Volume 2.part1"
-  ],
+  "ownerRecordedCandidates": [],
   "unknown": [
-    "MP2 Sound Content.part01",
-    "Oversampled - CYBERPACK 2077 - Sample Pack.part1",
-    "Oversampled - Ultimate Future Bass Toolkit.part1",
-    "Paramount Motion - Odeon Cinematic Sound Effects Pack.part1",
-    "Pro Sound Effects Cinematic Winds WAV.part1",
-    "SAGE.part01",
-    "Scarbee Pre Bass Amped v1.1.0.part1",
-    "Sonic Extensions - Nylon Sky.part1",
-    "Sonic Extensions - Seismic Shock.part1",
-    "Sonic Extensions - Unclean Machine.part1",
-    "Sonic Extensions - Undercurrent.part1",
-    "Sonokinetic  Sultan Strings.part1",
-    "Soundiron_Axe_Machina.part01",
-    "Sounds of KSHMR Vol 4 Complete Edition.part1",
-    "Strezov Sampling - Darbuka X3M.part1",
-    "Studio_Drummer.part1",
-    "Swing! Library.part01",
     "UmanskyBass.part1",
-    "Unison Beatmaker Blueprint.part1",
-    "Zenhiser - Deep Tribal Vocal Stems.part1",
-    "Zenhiser - Orbital.part1",
-    "Zenhiser Dubstep Clash.part1",
-    "Zenhiser Sparkle Drum & Bass.part1"
+    "Spitfire"
   ],
-  "nestedProducts": [],
+  "nestedProducts": [
+    {
+      "parent": "SAGE.part01",
+      "folder": "Toontrack-Stories-SDX-SOUNDBANK-269384.zip",
+      "vendor": "Toontrack",
+      "product": "Toontrack sound library (SDX expansion or unidentified title)",
+      "host": "SUPERIOR_DRUMMER_3",
+      "ruleId": "toontrack-generic"
+    }
+  ],
   "rootLooseFiles": [
     {
       "name": ".dropbox.device",
@@ -512,38 +525,6 @@
     {
       "folder": "Arturia.Pigments.Sound.Banks.Bundle.2024.8.part1",
       "name": "Arturia.Pigments.Sound.Banks.Bundle.2024.8\\Arturia Pigments Sound Banks Bundle 2024.8 CE.exe"
-    },
-    {
-      "folder": "Cymatics - MAYHEM Ultimate Trap Collection + Bonuses.part01",
-      "name": "Cymatics - MAYHEM Ultimate Trap Collection + Bonuses\\Cymatics - MAYHEM Ultimate Trap Collection + Bonuses\\Cymatics - ANARCHY MIDI Collection\\Cymatics - Dispatch MIDI - F# Min.mid"
-    },
-    {
-      "folder": "Cymatics GENERATIONS 2 + Bonus Wav Midi.part01",
-      "name": "Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics - Pristine One Shot Collection (Standard Edition)\\Plucks\\._Cymatics - Legends - Moog Memorymoog - PLUCK Crack - C.wav"
-    },
-    {
-      "folder": "Cymatics GENERATIONS 2 + Bonus Wav Midi.part01",
-      "name": "Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics - Pristine One Shot Collection (Standard Edition)\\Plucks\\._Cymatics - Legends - Moog Sub Phatty - PLUCK Snap Crackle High - C.wav"
-    },
-    {
-      "folder": "Cymatics GENERATIONS 2 + Bonus Wav Midi.part01",
-      "name": "Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics - Pristine One Shot Collection (Standard Edition)\\Plucks\\._Cymatics - Legends - Moog Sub Phatty - PLUCK Snap Crackle Low - C.wav"
-    },
-    {
-      "folder": "Cymatics GENERATIONS 2 + Bonus Wav Midi.part01",
-      "name": "Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics - Pristine One Shot Collection (Standard Edition)\\Plucks\\Cymatics - Legends - Moog Memorymoog - PLUCK Crack - C.wav"
-    },
-    {
-      "folder": "Cymatics GENERATIONS 2 + Bonus Wav Midi.part01",
-      "name": "Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics - Pristine One Shot Collection (Standard Edition)\\Plucks\\Cymatics - Legends - Moog Sub Phatty - PLUCK Snap Crackle High - C.wav"
-    },
-    {
-      "folder": "Cymatics GENERATIONS 2 + Bonus Wav Midi.part01",
-      "name": "Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics - Pristine One Shot Collection (Standard Edition)\\Plucks\\Cymatics - Legends - Moog Sub Phatty - PLUCK Snap Crackle Low - C.wav"
-    },
-    {
-      "folder": "Cymatics Infinity Production Suite.part01",
-      "name": "Cymatics Infinity Production Suite\\Cymatics Infinity Production Suite\\Cymatics - Infinity Melody Collection - Afrobeat Stems and MIDI Pt 1\\Cymatics - Botswana - 102 BPM A Min\\Cymatics - Botswana - 102 BPM A Min Crackle.wav"
     },
     {
       "folder": "EZDrummer.part01",
@@ -602,208 +583,8 @@
       "name": "update_nexus_library_location.exe"
     },
     {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\NKS\\XP Artist Series Klaas\\.previews\\LD Summer Crackle.nksf.ogg"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\NKS\\XP EDM Leads\\.previews\\LD Activator.nksf.ogg"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\NKS\\XP Freaky Machines\\.previews\\FX Pitch Patch.nksf.ogg"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\NKS\\XP HandsUp-Electro Bass 3\\.previews\\BA Crackzer.nksf.ogg"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\NKS\\XP HandsUp-Electro Bass 3\\.previews\\BR Crackbass.nksf.ogg"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\NKS\\XP Hollywood Synth Edition 3\\.previews\\AT Strange Crackle Atmo.nksf.ogg"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\NKS\\XP K-Pop\\.previews\\LD Party Cracker.nksf.ogg"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\NKS\\XP Kamui 2\\.previews\\SY Nutcracker.nksf.ogg"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\NKS\\XP Rauschwerk 3\\.previews\\SQ 70s Patch.nksf.ogg"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\NKS\\XP Reggaeton 2\\.previews\\VO Cracker.nksf.ogg"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\NKS\\XP Twerk\\.previews\\BA Crackboy 808.nksf.ogg"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\NKS\\N5 Factory Presets\\.previews\\SQ Activate 135BPM.nksf.ogg"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Presets\\XP Artist Series Klaas\\LD Summer Crackle.fxp"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Presets\\XP EDM Leads\\LD Activator.fxp"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Presets\\XP Freaky Machines\\FX Pitch Patch.fxp"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Presets\\XP HandsUp-Electro Bass 3\\BA Crackzer.fxp"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Presets\\XP HandsUp-Electro Bass 3\\BR Crackbass.fxp"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Presets\\XP Hollywood Synth Edition 3\\AT Strange Crackle Atmo.fxp"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Presets\\XP K-Pop\\LD Party Cracker.fxp"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Presets\\XP Kamui 2\\SY Nutcracker.fxp"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Presets\\XP Rauschwerk 3\\SQ 70s Patch.fxp"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Presets\\XP Reggaeton 2\\VO Cracker.fxp"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Presets\\XP Twerk\\BA Crackboy 808.fxp"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Presets\\N5 Factory Presets\\SQ Activate 135BPM.fxp"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Samples\\XpCrnk2\\FB Laughing Patch.nxs"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Samples\\XpEDML\\LD Activator.nxs"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Samples\\XpMinH2\\Reactivation.nxs"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Samples\\XpMoo\\vinylcrackle.nxs"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Samples\\XpRgg2\\VO Cracker.nxs"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Samples\\XpTwrk\\BA Crackboy 808.nxs"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Samples\\XpXm16\\vinylcrackle.nxs"
-    },
-    {
-      "folder": "Nexus 3.part01",
-      "name": "Nexus 3\\Nexus 3\\Samples\\XpXm18\\LD Activator.nxs"
-    },
-    {
       "folder": "Nucleus.part01",
       "name": "Nucleus\\Nucleus\\Nucleus 1.1.0 Setup PC.exe"
-    },
-    {
-      "folder": "Output Essential Engines.part01",
-      "name": "Output Essential Engines\\REV\\Data\\Instruments\\12 Aggressive\\21 Crackle Tension.nka"
-    },
-    {
-      "folder": "Output Essential Engines.part01",
-      "name": "Output Essential Engines\\REV\\Data\\Timed Instruments\\12 Aggressive\\21 Crackle Tension.nka"
-    },
-    {
-      "folder": "Output Essential Engines.part01",
-      "name": "Output Essential Engines\\REV\\Snapshots\\REV - Instruments\\12. Aggressive\\Crackle Tension.nksn"
-    },
-    {
-      "folder": "Output Essential Engines.part01",
-      "name": "Output Essential Engines\\REV\\Snapshots\\REV - Instruments\\12. Aggressive\\.previews\\Crackle Tension.nksn.ogg"
-    },
-    {
-      "folder": "Output Essential Engines.part01",
-      "name": "Output Essential Engines\\REV\\Snapshots\\REV - Timed Instruments\\12. Aggressive\\Crackle Tension TI.nksn"
-    },
-    {
-      "folder": "Output Essential Engines.part01",
-      "name": "Output Essential Engines\\REV\\Snapshots\\REV - Timed Instruments\\12. Aggressive\\.previews\\Crackle Tension TI.nksn.ogg"
-    },
-    {
-      "folder": "Oversampled - Ultimate Future Bass Toolkit.part1",
-      "name": "Oversampled - Ultimate Future Bass Toolkit\\Oversampled - Ultimate Future Bass Toolkit\\FXs\\Ambiences\\Oversampled_UFBT_ambience_crackle.wav"
-    },
-    {
-      "folder": "Paramount Motion - Odeon Cinematic Sound Effects Pack.part1",
-      "name": "Paramount Motion - Odeon Cinematic Sound Effects Pack\\Paramount Motion - Odeon Cinematic Sound Effects Pack\\ODEON Sound Effects\\Humans\\ChewCrackersMouth.wav"
-    },
-    {
-      "folder": "Paramount Motion - Odeon Cinematic Sound Effects Pack.part1",
-      "name": "Paramount Motion - Odeon Cinematic Sound Effects Pack\\Paramount Motion - Odeon Cinematic Sound Effects Pack\\ODEON Sound Effects\\Technology\\RecordPlayerCrackle.wav"
-    },
-    {
-      "folder": "Paramount Motion - Odeon Cinematic Sound Effects Pack.part1",
-      "name": "Paramount Motion - Odeon Cinematic Sound Effects Pack\\Paramount Motion - Odeon Cinematic Sound Effects Pack\\ODEON Sound Effects\\Weather\\IceCrack.wav"
-    },
-    {
-      "folder": "Paramount Motion - Odeon Cinematic Sound Effects Pack.part1",
-      "name": "Paramount Motion - Odeon Cinematic Sound Effects Pack\\Paramount Motion - Odeon Cinematic Sound Effects Pack\\ODEON Sound Effects\\Weather\\IceCrack2.wav"
-    },
-    {
-      "folder": "Paramount Motion - Odeon Cinematic Sound Effects Pack.part1",
-      "name": "Paramount Motion - Odeon Cinematic Sound Effects Pack\\Paramount Motion - Odeon Cinematic Sound Effects Pack\\ODEON Sound Effects\\Weather\\IceCrackLong.wav"
-    },
-    {
-      "folder": "Paramount Motion - Odeon Cinematic Sound Effects Pack.part1",
-      "name": "Paramount Motion - Odeon Cinematic Sound Effects Pack\\Paramount Motion - Odeon Cinematic Sound Effects Pack\\ODEON Sound Effects\\Weather\\ThunderCrackRoll.wav"
-    },
-    {
-      "folder": "PML Premium Bundle.part1",
-      "name": "PML Premium Bundle\\PML Premium Bundle\\Sample Packs 2\\PML - Dark Textures & Soundscapes\\Industrial\\PML.DTS - Cracked Fan.wav"
-    },
-    {
-      "folder": "PML Premium Bundle.part1",
-      "name": "PML Premium Bundle\\PML Premium Bundle\\Sample Packs 2\\PML - Dark Textures & Soundscapes\\Organic\\PML.DTS - Crack Pot.wav"
-    },
-    {
-      "folder": "PML Premium Bundle.part1",
-      "name": "PML Premium Bundle\\PML Premium Bundle\\Sample Packs 2\\PML - Dark Textures & Soundscapes\\Organic\\PML.DTS - Crackler.wav"
-    },
-    {
-      "folder": "PML Premium Bundle.part1",
-      "name": "PML Premium Bundle\\PML Premium Bundle\\Sample Packs 2\\PML - MINI V3 - Melodic Techno Sound Pack\\4 Drum Samples\\Loops\\PML-MT-Loop-05-Crackles.wav"
-    },
-    {
-      "folder": "PML Premium Bundle.part1",
-      "name": "PML Premium Bundle\\PML Premium Bundle\\Sample Packs 2\\PML - MINI V3 - Melodic Techno Sound Pack\\4 Drum Samples\\Loops\\PML-MT-Loop-06-Crackles Loop + Mixed White.wav"
     },
     {
       "folder": "Scarbee Pre Bass Amped v1.1.0.part1",
@@ -823,12 +604,12 @@
       "folder": "[Futurephonic] Foundations - By Virtual Light & Scorb",
       "path": "D:\\פלאגינים\\[Futurephonic] Foundations - By Virtual Light & Scorb",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Sample-pack / SFX publisher (named in the folder)",
+      "product": "Commercial sample or sound-effects pack",
       "version": null,
       "hostRequired": "RAW_WAV_MIDI",
-      "hostNote": "Raw audio / MIDI only, no vendor format, no vendor document, no archive.",
-      "hostConfidence": "format_inference",
+      "hostNote": "Raw WAV / MIDI / presets / stems; any sampler or DAW.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".aif",
         ".wav"
@@ -841,24 +622,27 @@
         "anyGaps": false,
         "note": "No archive files observed."
       },
-      "rightsClass": "OWNER_RECORDED_CANDIDATE",
-      "decidedBy": "raw audio only",
+      "rightsClass": "THIRD_PARTY_PACK",
+      "decidedBy": "vendor rule pack-generic-publishers",
       "relevance": {
-        "families": [],
+        "families": [
+          "drums",
+          "loops",
+          "melodic_loops",
+          "sfx"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "none (raw files)",
-        "account": "the owner's own confirmation",
+        "vendorApp": "Vendor account download after purchase",
+        "account": "The publisher's (or marketplace's) account with the pack purchased",
         "cubase14": "not_applicable",
-        "instruction": "The owner confirms in writing that every file in the folder is his own recording (or names the session it came from); only then does the OWNER-SAMPLES pipeline ingest it. The archives on the drive play no part."
+        "instruction": "Only samples the owner downloaded from the publisher's own account under his own licence may be used, under that pack's terms; the copies on this drive are not that proof. Nothing is rendered in the cloud until the pack licence is read."
       },
-      "cloudRendering": "OWNER_DECISION_AFTER_CONFIRMATION",
-      "aiTraining": "owner_decision_after_confirmation",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
-      "flags": [
-        "owner_confirmation_required"
-      ],
+      "flags": [],
       "index": 1,
       "oldestWrite": "2020-04-01T15:14:30.0000000Z",
       "newestWrite": "2020-04-02T21:35:00.0000000Z",
@@ -970,7 +754,9 @@
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
-      "flags": [],
+      "flags": [
+        "archive_derived_folder_name"
+      ],
       "index": 2,
       "oldestWrite": "2023-06-12T19:52:24.0000000Z",
       "newestWrite": "2023-06-12T20:00:08.0000000Z",
@@ -1064,7 +850,9 @@
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
-      "flags": [],
+      "flags": [
+        "archive_derived_folder_name"
+      ],
       "index": 3,
       "oldestWrite": "2024-03-05T19:21:10.0000000Z",
       "newestWrite": "2024-03-05T19:29:46.0000000Z",
@@ -1121,12 +909,12 @@
       "folder": "Acou6tics.part1",
       "path": "D:\\פלאגינים\\Acou6tics.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Vir2 Instruments (Big Fish Audio)",
+      "product": "Acou6tics",
       "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".nicnt",
         ".nka",
@@ -1146,22 +934,26 @@
         "note": "No archive files observed."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nicnt",
+      "decidedBy": "vendor rule vir2-acou6tics",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "guitar",
+          "nylon_guitar",
+          "world_plucked"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Native Access",
+        "account": "Big Fish Audio / Vir2 account → serial in Native Access",
+        "cubase14": "not_included",
+        "instruction": "Install through Native Access signed in to the owner's Big Fish Audio / Vir2 account → serial in Native Access; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name"
+        "archive_derived_folder_name"
       ],
       "index": 4,
       "oldestWrite": "2013-09-13T05:39:50.0000000Z",
@@ -1221,12 +1013,12 @@
       "folder": "Akki Plugs Virtual Bouzouki.part1",
       "path": "D:\\פלאגינים\\Akki Plugs Virtual Bouzouki.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Akki Plugs",
+      "product": "Virtual Bouzouki",
       "version": null,
       "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostNote": "Kontakt; whether the free Player accepts it was not established from a primary source (small vendors usually require the full Kontakt).",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".nkc",
         ".nki",
@@ -1242,22 +1034,25 @@
         "note": "No archive files observed."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nkc",
+      "decidedBy": "vendor rule akki-virtual-bouzouki",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "world_plucked",
+          "bouzouki"
+        ],
+        "middleEastern": "core"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Vendor account download after purchase",
+        "account": "Akki Plugs purchase + the matching Kontakt licence",
+        "cubase14": "not_included",
+        "instruction": "Install through Vendor account download after purchase signed in to the owner's Akki Plugs purchase + the matching Kontakt licence; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name"
+        "archive_derived_folder_name"
       ],
       "index": 5,
       "oldestWrite": "2009-10-08T14:31:18.0000000Z",
@@ -1321,7 +1116,7 @@
       "source": "scan",
       "vendor": "Arturia",
       "product": "Sound banks for V Collection / Pigments / Analog Lab",
-      "version": null,
+      "version": "2024.8",
       "hostRequired": "ARTURIA_V_COLLECTION_OR_PIGMENTS",
       "hostNote": "Arturia instruments (V Collection, Pigments, Analog Lab); banks install per instrument.",
       "hostConfidence": "product_knowledge",
@@ -1360,7 +1155,8 @@
         "Arturia Augmented Sound Banks Bundle 2024.8\\Arturia Augmented Sound Banks Bundle 2024.8\\Arturia Augmented Sound Banks Bundle 2024.8 CE.exe"
       ],
       "flags": [
-        "installer_or_activator_like_names_present_not_opened"
+        "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name"
       ],
       "index": 6,
       "oldestWrite": "2024-08-23T09:22:32.0000000Z",
@@ -1403,7 +1199,7 @@
       "source": "scan",
       "vendor": "Arturia",
       "product": "Sound banks for V Collection / Pigments / Analog Lab",
-      "version": null,
+      "version": "2024.8",
       "hostRequired": "ARTURIA_V_COLLECTION_OR_PIGMENTS",
       "hostNote": "Arturia instruments (V Collection, Pigments, Analog Lab); banks install per instrument.",
       "hostConfidence": "product_knowledge",
@@ -1444,7 +1240,8 @@
         "Arturia KB Piano V-Collection 2024.8\\Arturia KB & Piano V-Collection 2024.8 CE.exe"
       ],
       "flags": [
-        "installer_or_activator_like_names_present_not_opened"
+        "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name"
       ],
       "index": 7,
       "oldestWrite": "2022-05-01T18:04:32.0000000Z",
@@ -1500,7 +1297,7 @@
       "source": "scan",
       "vendor": "Arturia",
       "product": "Sound banks for V Collection / Pigments / Analog Lab",
-      "version": null,
+      "version": "2024.1",
       "hostRequired": "ARTURIA_V_COLLECTION_OR_PIGMENTS",
       "hostNote": "Arturia instruments (V Collection, Pigments, Analog Lab); banks install per instrument.",
       "hostConfidence": "product_knowledge",
@@ -1543,7 +1340,8 @@
         "Arturia Sound Banks Bundle 2024.1\\Arturia.Synth.Sound.Banks.Bundle.2024.1\\Arturia Synth V-Collection Sound Banks Bundle 2024.1 CE.exe"
       ],
       "flags": [
-        "installer_or_activator_like_names_present_not_opened"
+        "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name"
       ],
       "index": 8,
       "oldestWrite": "2024-01-25T22:00:44.0000000Z",
@@ -1605,7 +1403,7 @@
       "source": "scan",
       "vendor": "Arturia",
       "product": "Sound banks for V Collection / Pigments / Analog Lab",
-      "version": null,
+      "version": "2024.10",
       "hostRequired": "ARTURIA_V_COLLECTION_OR_PIGMENTS",
       "hostNote": "Arturia instruments (V Collection, Pigments, Analog Lab); banks install per instrument.",
       "hostConfidence": "product_knowledge",
@@ -1644,7 +1442,8 @@
         "Arturia Sound Banks Bundle 2024.10\\Arturia Sound Banks Bundle 2024.10\\Arturia Pigments Sound Banks Bundle 2024.10 CE.exe"
       ],
       "flags": [
-        "installer_or_activator_like_names_present_not_opened"
+        "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name"
       ],
       "index": 9,
       "oldestWrite": "2024-10-20T13:40:44.0000000Z",
@@ -1699,7 +1498,7 @@
       "source": "scan",
       "vendor": "Arturia",
       "product": "Sound banks for V Collection / Pigments / Analog Lab",
-      "version": null,
+      "version": "2024.8",
       "hostRequired": "ARTURIA_V_COLLECTION_OR_PIGMENTS",
       "hostNote": "Arturia instruments (V Collection, Pigments, Analog Lab); banks install per instrument.",
       "hostConfidence": "product_knowledge",
@@ -1738,7 +1537,8 @@
         "Arturia.Pigments.Sound.Banks.Bundle.2024.8\\Arturia Pigments Sound Banks Bundle 2024.8 CE.exe"
       ],
       "flags": [
-        "installer_or_activator_like_names_present_not_opened"
+        "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name"
       ],
       "index": 10,
       "oldestWrite": "2024-08-23T09:58:52.0000000Z",
@@ -1791,12 +1591,12 @@
       "folder": "Audiomodern -Opacity II.part1",
       "path": "D:\\פלאגינים\\Audiomodern -Opacity II.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Audiomodern",
+      "product": "Opacity II",
       "version": null,
       "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostNote": "Kontakt; Player compatibility not established from a primary source.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".nicnt",
         ".nkc",
@@ -1830,22 +1630,25 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nicnt",
+      "decidedBy": "vendor rule audiomodern",
       "relevance": {
-        "families": [],
+        "families": [
+          "texture",
+          "synth_pad"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Vendor account download after purchase",
+        "account": "Audiomodern account + the matching Kontakt licence",
+        "cubase14": "not_included",
+        "instruction": "Install through Vendor account download after purchase signed in to the owner's Audiomodern account + the matching Kontakt licence; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 11,
@@ -1909,12 +1712,12 @@
       "folder": "Baklava Sounds Orient Express KONTAKT.part1",
       "path": "D:\\פלאגינים\\Baklava Sounds Orient Express KONTAKT.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Baklava Sounds",
+      "product": "Orient Express",
       "version": null,
       "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostNote": "Kontakt library of Turkish / Anatolian instruments; Player compatibility not established from a primary source.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".ncpr",
         ".nicnt",
@@ -1949,22 +1752,26 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nicnt",
+      "decidedBy": "vendor rule baklava-orient-express",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "world_plucked",
+          "world_winds",
+          "percussion"
+        ],
+        "middleEastern": "core"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Vendor account download after purchase",
+        "account": "Baklava Sounds purchase + the matching Kontakt licence",
+        "cubase14": "not_included",
+        "instruction": "Install through Vendor account download after purchase signed in to the owner's Baklava Sounds purchase + the matching Kontakt licence; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 12,
@@ -2093,6 +1900,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 13,
@@ -2161,11 +1969,11 @@
       "folder": "Best Service - TO Strings of Winter.part1",
       "path": "D:\\פלאגינים\\Best Service - TO Strings of Winter.part1",
       "source": "scan",
-      "vendor": "Best Service",
-      "product": "Best Service library (product not identified)",
+      "vendor": "Best Service / Sonuscore",
+      "product": "The Orchestra: Strings of Winter",
       "version": null,
       "hostRequired": "KONTAKT_PLAYER",
-      "hostNote": "Kontakt Player-compatible or Best Service Engine, per product.",
+      "hostNote": "Kontakt Player-compatible.",
       "hostConfidence": "product_knowledge",
       "formats": [
         ".nicnt",
@@ -2202,21 +2010,24 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor rule best-service-generic",
+      "decidedBy": "vendor rule best-service-strings-of-winter",
       "relevance": {
-        "families": [],
+        "families": [
+          "strings"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
         "vendorApp": "Native Access",
-        "account": "Best Service account",
+        "account": "Best Service account → serial in Native Access",
         "cubase14": "not_included",
-        "instruction": "Install through Native Access signed in to the owner's Best Service account; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
+        "instruction": "Install through Native Access signed in to the owner's Best Service account → serial in Native Access; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 14,
@@ -2358,6 +2169,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 15,
@@ -2440,7 +2252,7 @@
       "source": "scan",
       "vendor": "Cinesamples",
       "product": "Cinesamples library (product not identified)",
-      "version": null,
+      "version": "2",
       "hostRequired": "KONTAKT_PLAYER",
       "hostNote": "Kontakt Player-compatible.",
       "hostConfidence": "product_knowledge",
@@ -2494,6 +2306,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 16,
@@ -2620,6 +2433,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 17,
@@ -2691,7 +2505,7 @@
       "source": "scan",
       "vendor": "Steinberg",
       "product": "HALion Sonic 3 content",
-      "version": null,
+      "version": "3",
       "hostRequired": "HALION_SONIC",
       "hostNote": "HALion Sonic (3, or 7 as included with Cubase 14). Sonic 3's purchasable content sets are separate licences; the factory 'Selection' content ships with Cubase.",
       "hostConfidence": "product_knowledge",
@@ -2751,6 +2565,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "formats_suggest_STEINBERG_HOST_UNSPECIFIED_beside_HALION_SONIC",
         "archive_last_part_unverified"
       ],
@@ -2878,11 +2693,9 @@
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
       "aiTraining": "forbidden_by_vendor_terms",
-      "notOpened": [
-        "Cymatics - MAYHEM Ultimate Trap Collection + Bonuses\\Cymatics - MAYHEM Ultimate Trap Collection + Bonuses\\Cymatics - ANARCHY MIDI Collection\\Cymatics - Dispatch MIDI - F# Min.mid"
-      ],
+      "notOpened": [],
       "flags": [
-        "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 19,
@@ -3414,16 +3227,9 @@
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
       "aiTraining": "forbidden_by_vendor_terms",
-      "notOpened": [
-        "Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics - Pristine One Shot Collection (Standard Edition)\\Plucks\\._Cymatics - Legends - Moog Memorymoog - PLUCK Crack - C.wav",
-        "Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics - Pristine One Shot Collection (Standard Edition)\\Plucks\\._Cymatics - Legends - Moog Sub Phatty - PLUCK Snap Crackle High - C.wav",
-        "Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics - Pristine One Shot Collection (Standard Edition)\\Plucks\\._Cymatics - Legends - Moog Sub Phatty - PLUCK Snap Crackle Low - C.wav",
-        "Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics - Pristine One Shot Collection (Standard Edition)\\Plucks\\Cymatics - Legends - Moog Memorymoog - PLUCK Crack - C.wav",
-        "Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics - Pristine One Shot Collection (Standard Edition)\\Plucks\\Cymatics - Legends - Moog Sub Phatty - PLUCK Snap Crackle High - C.wav",
-        "Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics GENERATIONS 2 + Bonus Wav Midi\\Cymatics - Pristine One Shot Collection (Standard Edition)\\Plucks\\Cymatics - Legends - Moog Sub Phatty - PLUCK Snap Crackle Low - C.wav"
-      ],
+      "notOpened": [],
       "flags": [
-        "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 20,
@@ -3585,11 +3391,9 @@
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
       "aiTraining": "forbidden_by_vendor_terms",
-      "notOpened": [
-        "Cymatics Infinity Production Suite\\Cymatics Infinity Production Suite\\Cymatics - Infinity Melody Collection - Afrobeat Stems and MIDI Pt 1\\Cymatics - Botswana - 102 BPM A Min\\Cymatics - Botswana - 102 BPM A Min Crackle.wav"
-      ],
+      "notOpened": [],
       "flags": [
-        "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 21,
@@ -3700,7 +3504,7 @@
       "source": "scan",
       "vendor": "Sample-pack publisher",
       "product": "Commercial sample pack (publisher named in the folder)",
-      "version": null,
+      "version": "2",
       "hostRequired": "RAW_WAV_MIDI",
       "hostNote": "Raw WAV / MIDI; any sampler or DAW.",
       "hostConfidence": "product_knowledge",
@@ -3757,6 +3561,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 22,
@@ -3867,7 +3672,7 @@
       "source": "scan",
       "vendor": "Best Service",
       "product": "Ethno World 6 (Complete or Instruments)",
-      "version": null,
+      "version": "6",
       "hostRequired": "KONTAKT_PLAYER",
       "hostNote": "Kontakt Player-compatible. Oud, saz, bouzouki, kanun, santur, ney, duduk, zurna, darbuka, riq, bendir, and vocal phrases.",
       "hostConfidence": "product_knowledge",
@@ -3932,6 +3737,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 23,
@@ -4010,12 +3816,12 @@
       "folder": "Evolution Hollowbody Blues.part1",
       "path": "D:\\פלאגינים\\Evolution Hollowbody Blues.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Orange Tree Samples",
+      "product": "Evolution guitar series (Steel Strings / Hollowbody Blues / Rock Standard …)",
       "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostRequired": "KONTAKT_FULL",
+      "hostNote": "Orange Tree Samples' Evolution libraries require the full version of Kontakt.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".mid",
         ".mp3",
@@ -4051,22 +3857,25 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nicnt",
+      "decidedBy": "vendor rule orange-tree-evolution",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "guitar",
+          "nylon_guitar"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Vendor account download after purchase",
+        "account": "Orange Tree Samples account + a Kontakt (full) licence",
+        "cubase14": "not_included",
+        "instruction": "Install through Vendor account download after purchase signed in to the owner's Orange Tree Samples account + a Kontakt (full) licence; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 24,
@@ -4130,12 +3939,12 @@
       "folder": "Evolution Rock Standard.part1",
       "path": "D:\\פלאגינים\\Evolution Rock Standard.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Orange Tree Samples",
+      "product": "Evolution guitar series (Steel Strings / Hollowbody Blues / Rock Standard …)",
       "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostRequired": "KONTAKT_FULL",
+      "hostNote": "Orange Tree Samples' Evolution libraries require the full version of Kontakt.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".mid",
         ".mp3",
@@ -4189,22 +3998,25 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nicnt",
+      "decidedBy": "vendor rule orange-tree-evolution",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "guitar",
+          "nylon_guitar"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Vendor account download after purchase",
+        "account": "Orange Tree Samples account + a Kontakt (full) licence",
+        "cubase14": "not_included",
+        "instruction": "Install through Vendor account download after purchase signed in to the owner's Orange Tree Samples account + a Kontakt (full) licence; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 25,
@@ -4272,12 +4084,12 @@
       "folder": "Evolution Steel Strings.part1",
       "path": "D:\\פלאגינים\\Evolution Steel Strings.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Orange Tree Samples",
+      "product": "Evolution guitar series (Steel Strings / Hollowbody Blues / Rock Standard …)",
       "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostRequired": "KONTAKT_FULL",
+      "hostNote": "Orange Tree Samples' Evolution libraries require the full version of Kontakt.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".mid",
         ".mp3",
@@ -4312,22 +4124,25 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nicnt",
+      "decidedBy": "vendor rule orange-tree-evolution",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "guitar",
+          "nylon_guitar"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Vendor account download after purchase",
+        "account": "Orange Tree Samples account + a Kontakt (full) licence",
+        "cubase14": "not_included",
+        "instruction": "Install through Vendor account download after purchase signed in to the owner's Orange Tree Samples account + a Kontakt (full) licence; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 26,
@@ -4475,6 +4290,7 @@
       ],
       "flags": [
         "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 27,
@@ -4559,12 +4375,12 @@
       "folder": "HALion 6.part01",
       "path": "D:\\פלאגינים\\HALion 6.part01",
       "source": "scan",
-      "vendor": null,
-      "product": null,
-      "version": null,
-      "hostRequired": "STEINBERG_HOST_UNSPECIFIED",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "vendor": "Steinberg",
+      "product": "HALion 6 (content)",
+      "version": "6",
+      "hostRequired": "HALION_7",
+      "hostNote": "HALion 6 content; a HALion 6/7 licence is required (HALion 6 upgrades to 7). Cubase 14 includes only HALion Sonic 7 and its factory content.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".msi",
         ".vstsound"
@@ -4578,19 +4394,25 @@
         "note": "No archive files observed."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .vstsound",
+      "decidedBy": "vendor rule steinberg-halion6",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "keys",
+          "synth_pad",
+          "synth_lead",
+          "strings",
+          "world"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Steinberg Download Assistant + Steinberg Activation Manager",
+        "account": "Steinberg ID with a HALion 6 or 7 licence",
+        "cubase14": "player_and_subset_included",
+        "instruction": "Install through Steinberg Download Assistant + Steinberg Activation Manager signed in to the owner's Steinberg ID with a HALion 6 or 7 licence; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cubase 14 already includes the player and its factory content — use that; the extra content set needs its own licence. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [
         "HALion 6\\HALion 6\\VST Sound\\Generic_Lower_Latency_ASIO_Driver_64bit.msi",
         "HALion 6\\HALion 6\\VST Sound\\HALionSonic_2_Content.msi",
@@ -4602,7 +4424,8 @@
       ],
       "flags": [
         "installer_or_activator_like_names_present_not_opened",
-        "vendor_not_identified_from_name"
+        "archive_derived_folder_name",
+        "formats_suggest_STEINBERG_HOST_UNSPECIFIED_beside_HALION_7"
       ],
       "index": 28,
       "oldestWrite": "2018-03-13T14:16:56.0000000Z",
@@ -4701,6 +4524,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "formats_suggest_STEINBERG_HOST_UNSPECIFIED_beside_HALION_7"
       ],
       "index": 29,
@@ -4759,12 +4583,12 @@
       "folder": "HALion_Sonic_Selection_Content.part1",
       "path": "D:\\פלאגינים\\HALion_Sonic_Selection_Content.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Steinberg",
+      "product": "HALion Sonic Selection content (the Cubase factory set)",
       "version": null,
-      "hostRequired": "STEINBERG_HOST_UNSPECIFIED",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostRequired": "HALION_SONIC",
+      "hostNote": "HALion Sonic 7 — the player and this content ship with Cubase 14.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".iso",
         ".rar",
@@ -4791,22 +4615,27 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .vstsound",
+      "decidedBy": "vendor rule steinberg-halion-sonic-selection",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "keys",
+          "synth_pad",
+          "world"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Steinberg Download Assistant + Steinberg Activation Manager",
+        "account": "Steinberg ID with the Cubase 14 licence (already the owner's)",
+        "cubase14": "included",
+        "instruction": "Install through Steinberg Download Assistant + Steinberg Activation Manager signed in to the owner's Steinberg ID with the Cubase 14 licence (already the owner's); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Already included in Cubase 14. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name",
+        "archive_derived_folder_name",
+        "formats_suggest_STEINBERG_HOST_UNSPECIFIED_beside_HALION_SONIC",
         "archive_last_part_unverified"
       ],
       "index": 30,
@@ -4927,6 +4756,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 31,
@@ -4996,12 +4826,12 @@
       "folder": "Heavyocity - Vocalise 2.part1",
       "path": "D:\\פלאגינים\\Heavyocity - Vocalise 2.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
-      "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "vendor": "Heavyocity",
+      "product": "Vocalise 2",
+      "version": "2",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible (NKS).",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".nicnt",
         ".nka",
@@ -5034,22 +4864,25 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nicnt",
+      "decidedBy": "vendor rule heavyocity",
       "relevance": {
-        "families": [],
+        "families": [
+          "vocal_phrases",
+          "texture"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Native Access",
+        "account": "Heavyocity account → serial in Native Access",
+        "cubase14": "not_included",
+        "instruction": "Install through Native Access signed in to the owner's Heavyocity account → serial in Native Access; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 32,
@@ -5170,6 +5003,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 33,
@@ -5322,6 +5156,7 @@
       ],
       "flags": [
         "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 34,
@@ -5505,6 +5340,7 @@
       ],
       "flags": [
         "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 35,
@@ -5587,12 +5423,12 @@
       "folder": "Keyscape - 12.part1",
       "path": "D:\\פלאגינים\\Keyscape - 12.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
-      "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "vendor": "Spectrasonics",
+      "product": "Keyscape",
+      "version": "12",
+      "hostRequired": "SPECTRASONICS_STEAM",
+      "hostNote": "Keyscape runs only in Spectrasonics' own plugin (STEAM engine). Spectrasonics has never released it for Kontakt: Keyscape in Kontakt formats is an unofficial conversion and cannot be a licensed copy in any form.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".nkc",
         ".nkg",
@@ -5625,22 +5461,26 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nkc",
+      "decidedBy": "vendor rule spectrasonics-keyscape",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "keys",
+          "electric_piano"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Spectrasonics account (Techshop download / Spectrasonics installer)",
+        "account": "Spectrasonics user account with a Keyscape licence",
+        "cubase14": "not_included",
+        "instruction": "Install through Spectrasonics account (Techshop download / Spectrasonics installer) signed in to the owner's Spectrasonics user account with a Keyscape licence; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name",
+        "archive_derived_folder_name",
+        "formats_suggest_KONTAKT_UNKNOWN_TIER_beside_SPECTRASONICS_STEAM",
         "archive_last_part_unverified"
       ],
       "index": 36,
@@ -5776,6 +5616,7 @@
       ],
       "flags": [
         "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 37,
@@ -5916,6 +5757,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 38,
@@ -6034,6 +5876,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 39,
@@ -6143,7 +5986,7 @@
       "source": "scan",
       "vendor": "Sample-pack publisher",
       "product": "Commercial sample pack (publisher named in the folder)",
-      "version": null,
+      "version": "2021",
       "hostRequired": "RAW_WAV_MIDI",
       "hostNote": "Raw WAV / MIDI; any sampler or DAW.",
       "hostConfidence": "product_knowledge",
@@ -6195,6 +6038,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 40,
@@ -6354,6 +6198,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 41,
@@ -6460,12 +6305,12 @@
       "folder": "Mike Shiver Essentials Volume 2.part1",
       "path": "D:\\פלאגינים\\Mike Shiver Essentials Volume 2.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
-      "version": null,
+      "vendor": "Sample-pack / SFX publisher (named in the folder)",
+      "product": "Commercial sample or sound-effects pack",
+      "version": "2",
       "hostRequired": "RAW_WAV_MIDI",
-      "hostNote": "Raw audio / MIDI only, no vendor format, no vendor document, no archive.",
-      "hostConfidence": "format_inference",
+      "hostNote": "Raw WAV / MIDI / presets / stems; any sampler or DAW.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".mid",
         ".wav"
@@ -6478,23 +6323,28 @@
         "anyGaps": false,
         "note": "No archive files observed."
       },
-      "rightsClass": "OWNER_RECORDED_CANDIDATE",
-      "decidedBy": "raw audio only",
+      "rightsClass": "THIRD_PARTY_PACK",
+      "decidedBy": "vendor rule pack-generic-publishers",
       "relevance": {
-        "families": [],
+        "families": [
+          "drums",
+          "loops",
+          "melodic_loops",
+          "sfx"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "none (raw files)",
-        "account": "the owner's own confirmation",
+        "vendorApp": "Vendor account download after purchase",
+        "account": "The publisher's (or marketplace's) account with the pack purchased",
         "cubase14": "not_applicable",
-        "instruction": "The owner confirms in writing that every file in the folder is his own recording (or names the session it came from); only then does the OWNER-SAMPLES pipeline ingest it. The archives on the drive play no part."
+        "instruction": "Only samples the owner downloaded from the publisher's own account under his own licence may be used, under that pack's terms; the copies on this drive are not that proof. Nothing is rendered in the cloud until the pack licence is read."
       },
-      "cloudRendering": "OWNER_DECISION_AFTER_CONFIRMATION",
-      "aiTraining": "owner_decision_after_confirmation",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "owner_confirmation_required"
+        "archive_derived_folder_name"
       ],
       "index": 42,
       "oldestWrite": "2016-11-28T10:06:06.0000000Z",
@@ -6598,12 +6448,12 @@
       "folder": "MP2 Sound Content.part01",
       "path": "D:\\פלאגינים\\MP2 Sound Content.part01",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "IK Multimedia",
+      "product": "Miroslav Philharmonik 2 sound content (identification of 'MP2' inferred from size and IK naming — unconfirmed)",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "SAMPLETANK_4",
+      "hostNote": "Miroslav Philharmonik 2 plugin (or SampleTank 4, which loads its content).",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".iso"
       ],
@@ -6615,23 +6465,28 @@
         "anyGaps": false,
         "note": "No archive files observed."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_COMMERCIAL",
+      "decidedBy": "vendor rule ik-miroslav-philharmonik-2",
       "relevance": {
-        "families": [],
+        "families": [
+          "strings",
+          "brass",
+          "woodwinds",
+          "percussion"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "vendorApp": "IK Product Manager",
+        "account": "IK Multimedia account with a Miroslav Philharmonik 2 licence",
+        "cubase14": "not_included",
+        "instruction": "Install through IK Product Manager signed in to the owner's IK Multimedia account with a Miroslav Philharmonik 2 licence; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed"
+        "archive_derived_folder_name"
       ],
       "index": 43,
       "oldestWrite": "2023-01-20T19:27:00.0000000Z",
@@ -6663,10 +6518,10 @@
       "path": "D:\\פלאגינים\\Native Instruments - Session Guitarist.part1",
       "source": "scan",
       "vendor": "Native Instruments",
-      "product": "NI library (product not identified)",
+      "product": "Session Guitarist (Strummed Acoustic 1/2, Picked Acoustic, Acoustic Sunburst Deluxe, Electric Vintage)",
       "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Kontakt; Player vs full depends on the product.",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible (NI's own libraries).",
       "hostConfidence": "product_knowledge",
       "formats": [
         ".nicnt",
@@ -6689,21 +6544,26 @@
         "note": "No archive files observed."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor rule ni-generic",
+      "decidedBy": "vendor rule ni-session-guitarist",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "guitar",
+          "nylon_guitar"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
         "vendorApp": "Native Access",
-        "account": "Native Instruments account",
+        "account": "Native Instruments account with each Session Guitarist title licensed (or Komplete)",
         "cubase14": "not_included",
-        "instruction": "Install through Native Access signed in to the owner's Native Instruments account; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
+        "instruction": "Install through Native Access signed in to the owner's Native Instruments account with each Session Guitarist title licensed (or Komplete); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
-      "flags": [],
+      "flags": [
+        "archive_derived_folder_name"
+      ],
       "index": 44,
       "oldestWrite": "2021-05-28T09:05:36.0000000Z",
       "newestWrite": "2021-06-05T22:58:18.0000000Z",
@@ -6769,7 +6629,7 @@
       "source": "scan",
       "vendor": "Native Instruments",
       "product": "Session Strings Pro 2",
-      "version": null,
+      "version": "2",
       "hostRequired": "KONTAKT_PLAYER",
       "hostNote": "Kontakt Player-compatible (NI's own library).",
       "hostConfidence": "product_knowledge",
@@ -6839,6 +6699,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 45,
@@ -6922,10 +6783,10 @@
       "path": "D:\\פלאגינים\\Native Instruments The Gentleman.part1",
       "source": "scan",
       "vendor": "Native Instruments",
-      "product": "NI library (product not identified)",
+      "product": "The Gentleman (upright piano)",
       "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Kontakt; Player vs full depends on the product.",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible.",
       "hostConfidence": "product_knowledge",
       "formats": [
         ".exe",
@@ -6954,16 +6815,18 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor rule ni-generic",
+      "decidedBy": "vendor rule ni-the-gentleman",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "keys"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
         "vendorApp": "Native Access",
-        "account": "Native Instruments account",
+        "account": "Native Instruments account with The Gentleman (or Komplete)",
         "cubase14": "not_included",
-        "instruction": "Install through Native Access signed in to the owner's Native Instruments account; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
+        "instruction": "Install through Native Access signed in to the owner's Native Instruments account with The Gentleman (or Komplete); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
       "aiTraining": "not_permitted_until_eula_read",
@@ -6972,6 +6835,7 @@
       ],
       "flags": [
         "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 46,
@@ -7031,7 +6895,7 @@
       "source": "scan",
       "vendor": "reFX",
       "product": "Nexus 3 (+ expansions)",
-      "version": null,
+      "version": "3",
       "hostRequired": "NEXUS_3",
       "hostNote": "reFX Nexus 3 plugin; .nxs files are its factory / expansion content.",
       "hostConfidence": "product_knowledge",
@@ -7077,42 +6941,11 @@
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [
-        "update_nexus_library_location.exe",
-        "Nexus 3\\Nexus 3\\NKS\\XP Artist Series Klaas\\.previews\\LD Summer Crackle.nksf.ogg",
-        "Nexus 3\\Nexus 3\\NKS\\XP EDM Leads\\.previews\\LD Activator.nksf.ogg",
-        "Nexus 3\\Nexus 3\\NKS\\XP Freaky Machines\\.previews\\FX Pitch Patch.nksf.ogg",
-        "Nexus 3\\Nexus 3\\NKS\\XP HandsUp-Electro Bass 3\\.previews\\BA Crackzer.nksf.ogg",
-        "Nexus 3\\Nexus 3\\NKS\\XP HandsUp-Electro Bass 3\\.previews\\BR Crackbass.nksf.ogg",
-        "Nexus 3\\Nexus 3\\NKS\\XP Hollywood Synth Edition 3\\.previews\\AT Strange Crackle Atmo.nksf.ogg",
-        "Nexus 3\\Nexus 3\\NKS\\XP K-Pop\\.previews\\LD Party Cracker.nksf.ogg",
-        "Nexus 3\\Nexus 3\\NKS\\XP Kamui 2\\.previews\\SY Nutcracker.nksf.ogg",
-        "Nexus 3\\Nexus 3\\NKS\\XP Rauschwerk 3\\.previews\\SQ 70s Patch.nksf.ogg",
-        "Nexus 3\\Nexus 3\\NKS\\XP Reggaeton 2\\.previews\\VO Cracker.nksf.ogg",
-        "Nexus 3\\Nexus 3\\NKS\\XP Twerk\\.previews\\BA Crackboy 808.nksf.ogg",
-        "Nexus 3\\Nexus 3\\NKS\\N5 Factory Presets\\.previews\\SQ Activate 135BPM.nksf.ogg",
-        "Nexus 3\\Nexus 3\\Presets\\XP Artist Series Klaas\\LD Summer Crackle.fxp",
-        "Nexus 3\\Nexus 3\\Presets\\XP EDM Leads\\LD Activator.fxp",
-        "Nexus 3\\Nexus 3\\Presets\\XP Freaky Machines\\FX Pitch Patch.fxp",
-        "Nexus 3\\Nexus 3\\Presets\\XP HandsUp-Electro Bass 3\\BA Crackzer.fxp",
-        "Nexus 3\\Nexus 3\\Presets\\XP HandsUp-Electro Bass 3\\BR Crackbass.fxp",
-        "Nexus 3\\Nexus 3\\Presets\\XP Hollywood Synth Edition 3\\AT Strange Crackle Atmo.fxp",
-        "Nexus 3\\Nexus 3\\Presets\\XP K-Pop\\LD Party Cracker.fxp",
-        "Nexus 3\\Nexus 3\\Presets\\XP Kamui 2\\SY Nutcracker.fxp",
-        "Nexus 3\\Nexus 3\\Presets\\XP Rauschwerk 3\\SQ 70s Patch.fxp",
-        "Nexus 3\\Nexus 3\\Presets\\XP Reggaeton 2\\VO Cracker.fxp",
-        "Nexus 3\\Nexus 3\\Presets\\XP Twerk\\BA Crackboy 808.fxp",
-        "Nexus 3\\Nexus 3\\Presets\\N5 Factory Presets\\SQ Activate 135BPM.fxp",
-        "Nexus 3\\Nexus 3\\Samples\\XpCrnk2\\FB Laughing Patch.nxs",
-        "Nexus 3\\Nexus 3\\Samples\\XpEDML\\LD Activator.nxs",
-        "Nexus 3\\Nexus 3\\Samples\\XpMinH2\\Reactivation.nxs",
-        "Nexus 3\\Nexus 3\\Samples\\XpMoo\\vinylcrackle.nxs",
-        "Nexus 3\\Nexus 3\\Samples\\XpRgg2\\VO Cracker.nxs",
-        "Nexus 3\\Nexus 3\\Samples\\XpTwrk\\BA Crackboy 808.nxs",
-        "Nexus 3\\Nexus 3\\Samples\\XpXm16\\vinylcrackle.nxs",
-        "Nexus 3\\Nexus 3\\Samples\\XpXm18\\LD Activator.nxs"
+        "update_nexus_library_location.exe"
       ],
       "flags": [
-        "installer_or_activator_like_names_present_not_opened"
+        "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name"
       ],
       "index": 47,
       "oldestWrite": "2016-01-31T16:25:50.0000000Z",
@@ -7171,12 +7004,12 @@
       "folder": "Noire Library.part1",
       "path": "D:\\פלאגינים\\Noire Library.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Native Instruments",
+      "product": "Noire (Nils Frahm piano)",
       "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".nicnt",
         ".nkc",
@@ -7197,22 +7030,24 @@
         "note": "No archive files observed."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nicnt",
+      "decidedBy": "vendor rule ni-noire",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "keys"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Native Access",
+        "account": "Native Instruments account with Noire (or Komplete)",
+        "cubase14": "not_included",
+        "instruction": "Install through Native Access signed in to the owner's Native Instruments account with Noire (or Komplete); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name"
+        "archive_derived_folder_name"
       ],
       "index": 48,
       "oldestWrite": "2020-05-24T07:20:10.0000000Z",
@@ -7342,6 +7177,7 @@
       ],
       "flags": [
         "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 49,
@@ -7506,16 +7342,9 @@
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
       "aiTraining": "not_permitted_until_eula_read",
-      "notOpened": [
-        "Output Essential Engines\\REV\\Data\\Instruments\\12 Aggressive\\21 Crackle Tension.nka",
-        "Output Essential Engines\\REV\\Data\\Timed Instruments\\12 Aggressive\\21 Crackle Tension.nka",
-        "Output Essential Engines\\REV\\Snapshots\\REV - Instruments\\12. Aggressive\\Crackle Tension.nksn",
-        "Output Essential Engines\\REV\\Snapshots\\REV - Instruments\\12. Aggressive\\.previews\\Crackle Tension.nksn.ogg",
-        "Output Essential Engines\\REV\\Snapshots\\REV - Timed Instruments\\12. Aggressive\\Crackle Tension TI.nksn",
-        "Output Essential Engines\\REV\\Snapshots\\REV - Timed Instruments\\12. Aggressive\\.previews\\Crackle Tension TI.nksn.ogg"
-      ],
+      "notOpened": [],
       "flags": [
-        "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name",
         "formats_suggest_KONTAKT_UNKNOWN_TIER_beside_OUTPUT_PLUGIN",
         "archive_last_part_unverified"
       ],
@@ -7696,6 +7525,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "formats_suggest_KONTAKT_UNKNOWN_TIER_beside_OUTPUT_PLUGIN",
         "archive_last_part_unverified"
       ],
@@ -7774,12 +7604,12 @@
       "folder": "Oversampled - CYBERPACK 2077 - Sample Pack.part1",
       "path": "D:\\פלאגינים\\Oversampled - CYBERPACK 2077 - Sample Pack.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Sample-pack / SFX publisher (named in the folder)",
+      "product": "Commercial sample or sound-effects pack",
       "version": "2077",
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "RAW_WAV_MIDI",
+      "hostNote": "Raw WAV / MIDI / presets / stems; any sampler or DAW.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".mid",
         ".rar",
@@ -7805,23 +7635,28 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_PACK",
+      "decidedBy": "vendor rule pack-generic-publishers",
       "relevance": {
-        "families": [],
+        "families": [
+          "drums",
+          "loops",
+          "melodic_loops",
+          "sfx"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
+        "vendorApp": "Vendor account download after purchase",
+        "account": "The publisher's (or marketplace's) account with the pack purchased",
         "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "instruction": "Only samples the owner downloaded from the publisher's own account under his own licence may be used, under that pack's terms; the copies on this drive are not that proof. Nothing is rendered in the cloud until the pack licence is read."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 52,
@@ -7928,12 +7763,12 @@
       "folder": "Oversampled - Ultimate Future Bass Toolkit.part1",
       "path": "D:\\פלאגינים\\Oversampled - Ultimate Future Bass Toolkit.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Sample-pack / SFX publisher (named in the folder)",
+      "product": "Commercial sample or sound-effects pack",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "RAW_WAV_MIDI",
+      "hostNote": "Raw WAV / MIDI / presets / stems; any sampler or DAW.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".mid",
         ".rar",
@@ -7959,26 +7794,28 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_PACK",
+      "decidedBy": "vendor rule pack-generic-publishers",
       "relevance": {
-        "families": [],
+        "families": [
+          "drums",
+          "loops",
+          "melodic_loops",
+          "sfx"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
+        "vendorApp": "Vendor account download after purchase",
+        "account": "The publisher's (or marketplace's) account with the pack purchased",
         "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "instruction": "Only samples the owner downloaded from the publisher's own account under his own licence may be used, under that pack's terms; the copies on this drive are not that proof. Nothing is rendered in the cloud until the pack licence is read."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
-      "notOpened": [
-        "Oversampled - Ultimate Future Bass Toolkit\\Oversampled - Ultimate Future Bass Toolkit\\FXs\\Ambiences\\Oversampled_UFBT_ambience_crackle.wav"
-      ],
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
+      "notOpened": [],
       "flags": [
-        "installer_or_activator_like_names_present_not_opened",
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 53,
@@ -8085,12 +7922,12 @@
       "folder": "Paramount Motion - Odeon Cinematic Sound Effects Pack.part1",
       "path": "D:\\פלאגינים\\Paramount Motion - Odeon Cinematic Sound Effects Pack.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Sample-pack / SFX publisher (named in the folder)",
+      "product": "Commercial sample or sound-effects pack",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "RAW_WAV_MIDI",
+      "hostNote": "Raw WAV / MIDI / presets / stems; any sampler or DAW.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".mp3",
         ".mp4",
@@ -8118,31 +7955,28 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_PACK",
+      "decidedBy": "vendor rule pack-generic-publishers",
       "relevance": {
-        "families": [],
+        "families": [
+          "drums",
+          "loops",
+          "melodic_loops",
+          "sfx"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
+        "vendorApp": "Vendor account download after purchase",
+        "account": "The publisher's (or marketplace's) account with the pack purchased",
         "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "instruction": "Only samples the owner downloaded from the publisher's own account under his own licence may be used, under that pack's terms; the copies on this drive are not that proof. Nothing is rendered in the cloud until the pack licence is read."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
-      "notOpened": [
-        "Paramount Motion - Odeon Cinematic Sound Effects Pack\\Paramount Motion - Odeon Cinematic Sound Effects Pack\\ODEON Sound Effects\\Humans\\ChewCrackersMouth.wav",
-        "Paramount Motion - Odeon Cinematic Sound Effects Pack\\Paramount Motion - Odeon Cinematic Sound Effects Pack\\ODEON Sound Effects\\Technology\\RecordPlayerCrackle.wav",
-        "Paramount Motion - Odeon Cinematic Sound Effects Pack\\Paramount Motion - Odeon Cinematic Sound Effects Pack\\ODEON Sound Effects\\Weather\\IceCrack.wav",
-        "Paramount Motion - Odeon Cinematic Sound Effects Pack\\Paramount Motion - Odeon Cinematic Sound Effects Pack\\ODEON Sound Effects\\Weather\\IceCrack2.wav",
-        "Paramount Motion - Odeon Cinematic Sound Effects Pack\\Paramount Motion - Odeon Cinematic Sound Effects Pack\\ODEON Sound Effects\\Weather\\IceCrackLong.wav",
-        "Paramount Motion - Odeon Cinematic Sound Effects Pack\\Paramount Motion - Odeon Cinematic Sound Effects Pack\\ODEON Sound Effects\\Weather\\ThunderCrackRoll.wav"
-      ],
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
+      "notOpened": [],
       "flags": [
-        "installer_or_activator_like_names_present_not_opened",
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 54,
@@ -8250,12 +8084,12 @@
       "folder": "PML Premium Bundle.part1",
       "path": "D:\\פלאגינים\\PML Premium Bundle.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Production Music Live (PML)",
+      "product": "PML Premium Bundle (Ableton templates, presets, samples, courses)",
       "version": null,
       "hostRequired": "ABLETON_LIVE",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostNote": "Ableton Live project templates + presets + WAV; the DAW here is Cubase 14.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".adg",
         ".alc",
@@ -8294,30 +8128,27 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .adg",
+      "rightsClass": "THIRD_PARTY_PACK",
+      "decidedBy": "vendor rule pack-pml",
       "relevance": {
-        "families": [],
+        "families": [
+          "loops",
+          "synth_pad",
+          "drums"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
+        "vendorApp": "Vendor account download after purchase",
+        "account": "PML account with the bundle purchased",
         "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "instruction": "Only samples the owner downloaded from the publisher's own account under his own licence may be used, under that pack's terms; the copies on this drive are not that proof. Nothing is rendered in the cloud until the pack licence is read."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
-      "notOpened": [
-        "PML Premium Bundle\\PML Premium Bundle\\Sample Packs 2\\PML - Dark Textures & Soundscapes\\Industrial\\PML.DTS - Cracked Fan.wav",
-        "PML Premium Bundle\\PML Premium Bundle\\Sample Packs 2\\PML - Dark Textures & Soundscapes\\Organic\\PML.DTS - Crack Pot.wav",
-        "PML Premium Bundle\\PML Premium Bundle\\Sample Packs 2\\PML - Dark Textures & Soundscapes\\Organic\\PML.DTS - Crackler.wav",
-        "PML Premium Bundle\\PML Premium Bundle\\Sample Packs 2\\PML - MINI V3 - Melodic Techno Sound Pack\\4 Drum Samples\\Loops\\PML-MT-Loop-05-Crackles.wav",
-        "PML Premium Bundle\\PML Premium Bundle\\Sample Packs 2\\PML - MINI V3 - Melodic Techno Sound Pack\\4 Drum Samples\\Loops\\PML-MT-Loop-06-Crackles Loop + Mixed White.wav"
-      ],
+      "aiTraining": "not_permitted_until_eula_read",
+      "notOpened": [],
       "flags": [
-        "installer_or_activator_like_names_present_not_opened",
-        "vendor_not_identified_from_name",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 55,
@@ -8427,12 +8258,12 @@
       "folder": "Pro Sound Effects Cinematic Winds WAV.part1",
       "path": "D:\\פלאגינים\\Pro Sound Effects Cinematic Winds WAV.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Sample-pack / SFX publisher (named in the folder)",
+      "product": "Commercial sample or sound-effects pack",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "RAW_WAV_MIDI",
+      "hostNote": "Raw WAV / MIDI / presets / stems; any sampler or DAW.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar",
         ".wav"
@@ -8457,23 +8288,28 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_PACK",
+      "decidedBy": "vendor rule pack-generic-publishers",
       "relevance": {
-        "families": [],
+        "families": [
+          "drums",
+          "loops",
+          "melodic_loops",
+          "sfx"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
+        "vendorApp": "Vendor account download after purchase",
+        "account": "The publisher's (or marketplace's) account with the pack purchased",
         "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "instruction": "Only samples the owner downloaded from the publisher's own account under his own licence may be used, under that pack's terms; the copies on this drive are not that proof. Nothing is rendered in the cloud until the pack licence is read."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 56,
@@ -8654,6 +8490,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 57,
@@ -8816,6 +8653,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "formats_suggest_KONTAKT_UNKNOWN_TIER_beside_RAW_WAV_MIDI",
         "archive_last_part_unverified"
       ],
@@ -8935,12 +8773,12 @@
       "folder": "SAGE.part01",
       "path": "D:\\פלאגינים\\SAGE.part01",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Spectrasonics",
+      "product": "Stylus RMX (SAGE core library)",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "SPECTRASONICS_STEAM",
+      "hostNote": "Stylus RMX's SAGE engine content; Spectrasonics-only.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar",
         ".rtf",
@@ -9010,23 +8848,26 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_COMMERCIAL",
+      "decidedBy": "vendor rule spectrasonics-sage",
       "relevance": {
-        "families": [],
+        "families": [
+          "drums",
+          "loops"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "vendorApp": "Spectrasonics account (Techshop download / Spectrasonics installer)",
+        "account": "Spectrasonics account with a Stylus RMX licence",
+        "cubase14": "not_included",
+        "instruction": "Install through Spectrasonics account (Techshop download / Spectrasonics installer) signed in to the owner's Spectrasonics account with a Stylus RMX licence; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 59,
@@ -9086,7 +8927,15 @@
         "sample": [],
         "topDirs": []
       },
-      "nestedProducts": [],
+      "nestedProducts": [
+        {
+          "folder": "Toontrack-Stories-SDX-SOUNDBANK-269384.zip",
+          "vendor": "Toontrack",
+          "product": "Toontrack sound library (SDX expansion or unidentified title)",
+          "host": "SUPERIOR_DRUMMER_3",
+          "ruleId": "toontrack-generic"
+        }
+      ],
       "docsSeen": [
         "SAGE\\מדריך.rtf"
       ],
@@ -9195,6 +9044,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 60,
@@ -9277,12 +9127,12 @@
       "folder": "Scarbee Pre Bass Amped v1.1.0.part1",
       "path": "D:\\פלאגינים\\Scarbee Pre Bass Amped v1.1.0.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
-      "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "vendor": "Native Instruments (Scarbee)",
+      "product": "Scarbee Pre-Bass Amped",
+      "version": "1.1.0",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible (NI-published Scarbee series).",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".exe",
         ".pkg",
@@ -9312,26 +9162,28 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_COMMERCIAL",
+      "decidedBy": "vendor rule ni-scarbee",
       "relevance": {
-        "families": [],
+        "families": [
+          "bass"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "vendorApp": "Native Access",
+        "account": "Native Instruments account with the Scarbee title (or Komplete)",
+        "cubase14": "not_included",
+        "instruction": "Install through Native Access signed in to the owner's Native Instruments account with the Scarbee title (or Komplete); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [
         "Scarbee Pre Bass Amped v1.1.0\\Scarbee Pre-Bass Amped 1.1.0 Setup PC.exe"
       ],
       "flags": [
         "installer_or_activator_like_names_present_not_opened",
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 61,
@@ -9396,12 +9248,12 @@
       "folder": "Session Guitarist - Acoustic Sunburst Deluxe Library.part01",
       "path": "D:\\פלאגינים\\Session Guitarist - Acoustic Sunburst Deluxe Library.part01",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Native Instruments",
+      "product": "Session Guitarist (Strummed Acoustic 1/2, Picked Acoustic, Acoustic Sunburst Deluxe, Electric Vintage)",
       "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible (NI's own libraries).",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".mid",
         ".nicnt",
@@ -9447,22 +9299,25 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nicnt",
+      "decidedBy": "vendor rule ni-session-guitarist",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "guitar",
+          "nylon_guitar"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Native Access",
+        "account": "Native Instruments account with each Session Guitarist title licensed (or Komplete)",
+        "cubase14": "not_included",
+        "instruction": "Install through Native Access signed in to the owner's Native Instruments account with each Session Guitarist title licensed (or Komplete); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 62,
@@ -9536,12 +9391,12 @@
       "folder": "Session Guitarist - Picked Acoustic Library.part1",
       "path": "D:\\פלאגינים\\Session Guitarist - Picked Acoustic Library.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Native Instruments",
+      "product": "Session Guitarist (Strummed Acoustic 1/2, Picked Acoustic, Acoustic Sunburst Deluxe, Electric Vintage)",
       "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible (NI's own libraries).",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".nicnt",
         ".nka",
@@ -9577,22 +9432,25 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nicnt",
+      "decidedBy": "vendor rule ni-session-guitarist",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "guitar",
+          "nylon_guitar"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Native Access",
+        "account": "Native Instruments account with each Session Guitarist title licensed (or Komplete)",
+        "cubase14": "not_included",
+        "instruction": "Install through Native Access signed in to the owner's Native Instruments account with each Session Guitarist title licensed (or Komplete); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 63,
@@ -9662,12 +9520,12 @@
       "folder": "Session Guitarist - Strummed Acoustic 2 Library.part1",
       "path": "D:\\פלאגינים\\Session Guitarist - Strummed Acoustic 2 Library.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Native Instruments",
+      "product": "Session Guitarist (Strummed Acoustic 1/2, Picked Acoustic, Acoustic Sunburst Deluxe, Electric Vintage)",
       "version": "2",
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible (NI's own libraries).",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".nicnt",
         ".nka",
@@ -9704,22 +9562,25 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nicnt",
+      "decidedBy": "vendor rule ni-session-guitarist",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "guitar",
+          "nylon_guitar"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Native Access",
+        "account": "Native Instruments account with each Session Guitarist title licensed (or Komplete)",
+        "cubase14": "not_included",
+        "instruction": "Install through Native Access signed in to the owner's Native Instruments account with each Session Guitarist title licensed (or Komplete); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 64,
@@ -9788,12 +9649,12 @@
       "folder": "Session Guitarist - Strummed Acoustic Library.part1",
       "path": "D:\\פלאגינים\\Session Guitarist - Strummed Acoustic Library.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Native Instruments",
+      "product": "Session Guitarist (Strummed Acoustic 1/2, Picked Acoustic, Acoustic Sunburst Deluxe, Electric Vintage)",
       "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible (NI's own libraries).",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".nicnt",
         ".nka",
@@ -9829,22 +9690,25 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nicnt",
+      "decidedBy": "vendor rule ni-session-guitarist",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "guitar",
+          "nylon_guitar"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Native Access",
+        "account": "Native Instruments account with each Session Guitarist title licensed (or Komplete)",
+        "cubase14": "not_included",
+        "instruction": "Install through Native Access signed in to the owner's Native Instruments account with each Session Guitarist title licensed (or Komplete); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 65,
@@ -9912,12 +9776,12 @@
       "folder": "Session Guitarist Electric Vintage Library.part1",
       "path": "D:\\פלאגינים\\Session Guitarist Electric Vintage Library.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Native Instruments",
+      "product": "Session Guitarist (Strummed Acoustic 1/2, Picked Acoustic, Acoustic Sunburst Deluxe, Electric Vintage)",
       "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible (NI's own libraries).",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".nicnt",
         ".nka",
@@ -9939,22 +9803,25 @@
         "note": "No archive files observed."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nicnt",
+      "decidedBy": "vendor rule ni-session-guitarist",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "guitar",
+          "nylon_guitar"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Native Access",
+        "account": "Native Instruments account with each Session Guitarist title licensed (or Komplete)",
+        "cubase14": "not_included",
+        "instruction": "Install through Native Access signed in to the owner's Native Instruments account with each Session Guitarist title licensed (or Komplete); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "vendor_not_identified_from_name"
+        "archive_derived_folder_name"
       ],
       "index": 66,
       "oldestWrite": "2021-03-03T21:17:58.0000000Z",
@@ -10020,7 +9887,7 @@
       "source": "scan",
       "vendor": "Native Instruments",
       "product": "Session Strings Pro 2",
-      "version": null,
+      "version": "2",
       "hostRequired": "KONTAKT_PLAYER",
       "hostNote": "Kontakt Player-compatible (NI's own library).",
       "hostConfidence": "product_knowledge",
@@ -10078,6 +9945,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 67,
@@ -10144,12 +10012,12 @@
       "folder": "Session_Horns_Library",
       "path": "D:\\פלאגינים\\Session_Horns_Library",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Native Instruments",
+      "product": "Session Horns",
       "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Vendor container format present; the vendor is not identified from the folder name.",
-      "hostConfidence": "format_inference",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".nicnt",
         ".nkc",
@@ -10168,23 +10036,23 @@
         "note": "No archive files observed."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor format .nicnt",
+      "decidedBy": "vendor rule ni-session-horns",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "brass"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Identify the vendor; then the vendor app / account rule applies."
+        "vendorApp": "Native Access",
+        "account": "Native Instruments account with Session Horns (or Komplete)",
+        "cubase14": "not_included",
+        "instruction": "Install through Native Access signed in to the owner's Native Instruments account with Session Horns (or Komplete); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
-      "aiTraining": "undecided",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
-      "flags": [
-        "vendor_not_identified_from_name"
-      ],
+      "flags": [],
       "index": 68,
       "oldestWrite": "2019-02-24T08:11:16.0000000Z",
       "newestWrite": "2024-12-17T03:38:44.0000000Z",
@@ -10389,6 +10257,7 @@
       "aiTraining": "forbidden_by_vendor_terms",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 69,
@@ -10471,12 +10340,12 @@
       "folder": "Sonic Extensions - Nylon Sky.part1",
       "path": "D:\\פלאגינים\\Sonic Extensions - Nylon Sky.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Spectrasonics",
+      "product": "Sonic Extensions for Omnisphere 2 (Nylon Sky / Seismic Shock / Unclean Machine / Undercurrent)",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "SPECTRASONICS_STEAM",
+      "hostNote": "Omnisphere 2 (STEAM engine); each Sonic Extension is a separate licence.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         "(none)",
         ".alt",
@@ -10513,26 +10382,31 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_COMMERCIAL",
+      "decidedBy": "vendor rule spectrasonics-sonic-extensions",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "nylon_guitar",
+          "synth_pad",
+          "synth_lead",
+          "texture"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "vendorApp": "Spectrasonics account (Techshop download / Spectrasonics installer)",
+        "account": "Spectrasonics account with Omnisphere 2 and each Sonic Extension licensed",
+        "cubase14": "not_included",
+        "instruction": "Install through Spectrasonics account (Techshop download / Spectrasonics installer) signed in to the owner's Spectrasonics account with Omnisphere 2 and each Sonic Extension licensed; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [
         "Sonic Extensions - Nylon Sky\\Windows\\Nylon Sky Installer.exe"
       ],
       "flags": [
         "installer_or_activator_like_names_present_not_opened",
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 70,
@@ -10599,12 +10473,12 @@
       "folder": "Sonic Extensions - Seismic Shock.part1",
       "path": "D:\\פלאגינים\\Sonic Extensions - Seismic Shock.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Spectrasonics",
+      "product": "Sonic Extensions for Omnisphere 2 (Nylon Sky / Seismic Shock / Unclean Machine / Undercurrent)",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "SPECTRASONICS_STEAM",
+      "hostNote": "Omnisphere 2 (STEAM engine); each Sonic Extension is a separate licence.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
       ],
@@ -10628,23 +10502,28 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_COMMERCIAL",
+      "decidedBy": "vendor rule spectrasonics-sonic-extensions",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "nylon_guitar",
+          "synth_pad",
+          "synth_lead",
+          "texture"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "vendorApp": "Spectrasonics account (Techshop download / Spectrasonics installer)",
+        "account": "Spectrasonics account with Omnisphere 2 and each Sonic Extension licensed",
+        "cubase14": "not_included",
+        "instruction": "Install through Spectrasonics account (Techshop download / Spectrasonics installer) signed in to the owner's Spectrasonics account with Omnisphere 2 and each Sonic Extension licensed; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 71,
@@ -10682,12 +10561,12 @@
       "folder": "Sonic Extensions - Unclean Machine.part1",
       "path": "D:\\פלאגינים\\Sonic Extensions - Unclean Machine.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Spectrasonics",
+      "product": "Sonic Extensions for Omnisphere 2 (Nylon Sky / Seismic Shock / Unclean Machine / Undercurrent)",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "SPECTRASONICS_STEAM",
+      "hostNote": "Omnisphere 2 (STEAM engine); each Sonic Extension is a separate licence.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
       ],
@@ -10711,23 +10590,28 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_COMMERCIAL",
+      "decidedBy": "vendor rule spectrasonics-sonic-extensions",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "nylon_guitar",
+          "synth_pad",
+          "synth_lead",
+          "texture"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "vendorApp": "Spectrasonics account (Techshop download / Spectrasonics installer)",
+        "account": "Spectrasonics account with Omnisphere 2 and each Sonic Extension licensed",
+        "cubase14": "not_included",
+        "instruction": "Install through Spectrasonics account (Techshop download / Spectrasonics installer) signed in to the owner's Spectrasonics account with Omnisphere 2 and each Sonic Extension licensed; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 72,
@@ -10765,12 +10649,12 @@
       "folder": "Sonic Extensions - Undercurrent.part1",
       "path": "D:\\פלאגינים\\Sonic Extensions - Undercurrent.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Spectrasonics",
+      "product": "Sonic Extensions for Omnisphere 2 (Nylon Sky / Seismic Shock / Unclean Machine / Undercurrent)",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "SPECTRASONICS_STEAM",
+      "hostNote": "Omnisphere 2 (STEAM engine); each Sonic Extension is a separate licence.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
       ],
@@ -10796,23 +10680,28 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_COMMERCIAL",
+      "decidedBy": "vendor rule spectrasonics-sonic-extensions",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "nylon_guitar",
+          "synth_pad",
+          "synth_lead",
+          "texture"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "vendorApp": "Spectrasonics account (Techshop download / Spectrasonics installer)",
+        "account": "Spectrasonics account with Omnisphere 2 and each Sonic Extension licensed",
+        "cubase14": "not_included",
+        "instruction": "Install through Spectrasonics account (Techshop download / Spectrasonics installer) signed in to the owner's Spectrasonics account with Omnisphere 2 and each Sonic Extension licensed; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 73,
@@ -10862,12 +10751,12 @@
       "folder": "Sonokinetic  Sultan Strings.part1",
       "path": "D:\\פלאגינים\\Sonokinetic  Sultan Strings.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Sonokinetic",
+      "product": "Sultan Strings",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible (Sonokinetic releases are Player/NKS). A Middle-Eastern string orchestra with phrases and legato in maqam-friendly tunings.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
       ],
@@ -10891,23 +10780,26 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_COMMERCIAL",
+      "decidedBy": "vendor rule sonokinetic-sultan-strings",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "strings",
+          "world_bowed"
+        ],
+        "middleEastern": "core"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "vendorApp": "Native Access",
+        "account": "Sonokinetic account → serial in Native Access",
+        "cubase14": "not_included",
+        "instruction": "Install through Native Access signed in to the owner's Sonokinetic account → serial in Native Access; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 74,
@@ -10945,12 +10837,12 @@
       "folder": "Soundiron_Axe_Machina.part01",
       "path": "D:\\פלאגינים\\Soundiron_Axe_Machina.part01",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Soundiron",
+      "product": "Axe Machina",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "KONTAKT_UNKNOWN_TIER",
+      "hostNote": "Kontakt; Soundiron sells both Player and full-Kontakt titles — not established for this one.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
       ],
@@ -10981,23 +10873,26 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_COMMERCIAL",
+      "decidedBy": "vendor rule soundiron",
       "relevance": {
-        "families": [],
+        "families": [
+          "guitar",
+          "synth_lead"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "vendorApp": "Vendor account download after purchase",
+        "account": "Soundiron account (+ Native Access when the title is a Player library)",
+        "cubase14": "not_included",
+        "instruction": "Install through Vendor account download after purchase signed in to the owner's Soundiron account (+ Native Access when the title is a Player library); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 75,
@@ -11061,12 +10956,12 @@
       "folder": "Sounds of KSHMR Vol 4 Complete Edition.part1",
       "path": "D:\\פלאגינים\\Sounds of KSHMR Vol 4 Complete Edition.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Splice / Dharma Worldwide",
+      "product": "Sounds of KSHMR (vol. 1–4)",
       "version": "4",
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "RAW_WAV_MIDI",
+      "hostNote": "Raw WAV / MIDI / presets.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
       ],
@@ -11091,23 +10986,28 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_PACK",
+      "decidedBy": "vendor rule pack-kshmr",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "drums",
+          "loops",
+          "melodic_loops",
+          "world_plucked"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
+        "vendorApp": "Vendor account download after purchase",
+        "account": "Splice subscription (vol. 1–3) or Dharma Worldwide purchase (vol. 4)",
         "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "instruction": "Only samples the owner downloaded from the publisher's own account under his own licence may be used, under that pack's terms; the copies on this drive are not that proof. Nothing is rendered in the cloud until the pack licence is read. AI training on this material is forbidden by the vendor."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "forbidden_by_vendor_terms",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 76,
@@ -11237,6 +11137,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 77,
@@ -11322,10 +11223,10 @@
       "path": "D:\\פלאגינים\\Spitfire Audio - Spitfire Solo Violin.part1",
       "source": "scan",
       "vendor": "Spitfire Audio",
-      "product": "Spitfire library (product not identified)",
+      "product": "Spitfire Solo Violin",
       "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Kontakt Player or the Spitfire plugin, per product.",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible (NKS); serial from the Spitfire account, installed through Native Access.",
       "hostConfidence": "product_knowledge",
       "formats": [
         ".nicnt",
@@ -11359,23 +11260,25 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor rule spitfire-generic",
+      "decidedBy": "vendor rule spitfire-solo-violin",
       "relevance": {
         "families": [
-          "strings"
+          "strings",
+          "solo_violin"
         ],
-        "middleEastern": "none"
+        "middleEastern": "useful"
       },
       "legitimatePath": {
         "vendorApp": "Spitfire Audio App",
-        "account": "Spitfire Audio account",
+        "account": "Spitfire Audio account with Spitfire Solo Violin → serial registered in Native Access",
         "cubase14": "not_included",
-        "instruction": "Install through Spitfire Audio App signed in to the owner's Spitfire Audio account; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
+        "instruction": "Install through Spitfire Audio App signed in to the owner's Spitfire Audio account with Spitfire Solo Violin → serial registered in Native Access; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 78,
@@ -11440,10 +11343,10 @@
       "path": "D:\\פלאגינים\\Spitfire_Audio_Spitfire_Solo_Violin",
       "source": "scan",
       "vendor": "Spitfire Audio",
-      "product": "Spitfire library (product not identified)",
+      "product": "Spitfire Solo Violin",
       "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Kontakt Player or the Spitfire plugin, per product.",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible (NKS); serial from the Spitfire account, installed through Native Access.",
       "hostConfidence": "product_knowledge",
       "formats": [
         ".nicnt",
@@ -11463,18 +11366,19 @@
         "note": "No archive files observed."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor rule spitfire-generic",
+      "decidedBy": "vendor rule spitfire-solo-violin",
       "relevance": {
         "families": [
-          "strings"
+          "strings",
+          "solo_violin"
         ],
-        "middleEastern": "none"
+        "middleEastern": "useful"
       },
       "legitimatePath": {
         "vendorApp": "Spitfire Audio App",
-        "account": "Spitfire Audio account",
+        "account": "Spitfire Audio account with Spitfire Solo Violin → serial registered in Native Access",
         "cubase14": "not_included",
-        "instruction": "Install through Spitfire Audio App signed in to the owner's Spitfire Audio account; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
+        "instruction": "Install through Spitfire Audio App signed in to the owner's Spitfire Audio account with Spitfire Solo Violin → serial registered in Native Access; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
       "aiTraining": "not_permitted_until_eula_read",
@@ -11590,6 +11494,7 @@
       "aiTraining": "forbidden_by_vendor_terms",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 80,
@@ -11685,6 +11590,7 @@
       "aiTraining": "forbidden_by_vendor_terms",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 81,
@@ -11743,10 +11649,10 @@
       "path": "D:\\פלאגינים\\Steinberg Groove Agent SE 5 Content.part1",
       "source": "scan",
       "vendor": "Steinberg",
-      "product": "Groove Agent 5 content",
+      "product": "Groove Agent SE 5 content",
       "version": "5",
       "hostRequired": "GROOVE_AGENT_5",
-      "hostNote": "Groove Agent 5 (full). Cubase 14 includes Groove Agent SE 5 with its own kits; the full Groove Agent 5 content needs a Groove Agent 5 licence.",
+      "hostNote": "Groove Agent SE 5 — the player and this content ship with Cubase 14.",
       "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
@@ -11772,7 +11678,7 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor rule steinberg-groove-agent",
+      "decidedBy": "vendor rule steinberg-groove-agent-se",
       "relevance": {
         "families": [
           "drums",
@@ -11782,14 +11688,15 @@
       },
       "legitimatePath": {
         "vendorApp": "Steinberg Download Assistant + Steinberg Activation Manager",
-        "account": "Steinberg ID with a Groove Agent 5 licence (Cubase 14 = SE only)",
-        "cubase14": "player_and_subset_included",
-        "instruction": "Install through Steinberg Download Assistant + Steinberg Activation Manager signed in to the owner's Steinberg ID with a Groove Agent 5 licence (Cubase 14 = SE only); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cubase 14 already includes the player and its factory content — use that; the extra content set needs its own licence. Cloud rendering: forbidden pending the vendor EULA."
+        "account": "Steinberg ID with the Cubase 14 licence (already the owner's)",
+        "cubase14": "included",
+        "instruction": "Install through Steinberg Download Assistant + Steinberg Activation Manager signed in to the owner's Steinberg ID with the Cubase 14 licence (already the owner's); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Already included in Cubase 14. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 82,
@@ -11829,7 +11736,7 @@
       "source": "scan",
       "vendor": "Steinberg",
       "product": "Groove Agent 5 content",
-      "version": null,
+      "version": "5",
       "hostRequired": "GROOVE_AGENT_5",
       "hostNote": "Groove Agent 5 (full). Cubase 14 includes Groove Agent SE 5 with its own kits; the full Groove Agent 5 content needs a Groove Agent 5 licence.",
       "hostConfidence": "product_knowledge",
@@ -11887,6 +11794,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 83,
@@ -11959,10 +11867,10 @@
       "path": "D:\\פלאגינים\\Steinberg PadShop 2 CONTENT.part1",
       "source": "scan",
       "vendor": "Steinberg",
-      "product": "Steinberg content (product not identified)",
+      "product": "PadShop 2 content",
       "version": "2",
       "hostRequired": "STEINBERG_HOST_UNSPECIFIED",
-      "hostNote": "A Steinberg host; which one depends on the product.",
+      "hostNote": "PadShop 2 — included in Cubase 14 (Pro/Artist) with its factory content.",
       "hostConfidence": "product_knowledge",
       "formats": [
         ".exe",
@@ -11991,16 +11899,19 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor rule steinberg-generic",
+      "decidedBy": "vendor rule steinberg-padshop",
       "relevance": {
-        "families": [],
+        "families": [
+          "synth_pad",
+          "texture"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
         "vendorApp": "Steinberg Download Assistant + Steinberg Activation Manager",
-        "account": "Steinberg ID",
-        "cubase14": "player_and_subset_included",
-        "instruction": "Install through Steinberg Download Assistant + Steinberg Activation Manager signed in to the owner's Steinberg ID; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cubase 14 already includes the player and its factory content — use that; the extra content set needs its own licence. Cloud rendering: forbidden pending the vendor EULA."
+        "account": "Steinberg ID with the Cubase 14 licence (already the owner's)",
+        "cubase14": "included",
+        "instruction": "Install through Steinberg Download Assistant + Steinberg Activation Manager signed in to the owner's Steinberg ID with the Cubase 14 licence (already the owner's); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Already included in Cubase 14. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
       "aiTraining": "not_permitted_until_eula_read",
@@ -12009,6 +11920,7 @@
       ],
       "flags": [
         "installer_or_activator_like_names_present_not_opened",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 84,
@@ -12071,10 +11983,10 @@
       "path": "D:\\פלאגינים\\Steinberg Verve Felt Piano Content for halion sonic se.part1",
       "source": "scan",
       "vendor": "Steinberg",
-      "product": "HALion Sonic 3 content",
+      "product": "Verve (felt piano, HALion Sonic content)",
       "version": null,
       "hostRequired": "HALION_SONIC",
-      "hostNote": "HALion Sonic (3, or 7 as included with Cubase 14). Sonic 3's purchasable content sets are separate licences; the factory 'Selection' content ships with Cubase.",
+      "hostNote": "HALion Sonic instrument; Verve is included in Cubase Pro 12 and later — the owner's Cubase 14 edition decides (Pro: included; Artist/Elements: separate purchase).",
       "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
@@ -12103,25 +12015,24 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor rule steinberg-halion-sonic",
+      "decidedBy": "vendor rule steinberg-verve",
       "relevance": {
         "families": [
-          "keys",
-          "synth_pad",
-          "world"
+          "keys"
         ],
         "middleEastern": "useful"
       },
       "legitimatePath": {
         "vendorApp": "Steinberg Download Assistant + Steinberg Activation Manager",
-        "account": "Steinberg ID (Cubase 14 licence covers HALion Sonic 7 + its factory content; extra content sets need their own licence)",
+        "account": "Steinberg ID with Cubase 14 Pro (included) or a Verve licence",
         "cubase14": "player_and_subset_included",
-        "instruction": "Install through Steinberg Download Assistant + Steinberg Activation Manager signed in to the owner's Steinberg ID (Cubase 14 licence covers HALion Sonic 7 + its factory content; extra content sets need their own licence); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cubase 14 already includes the player and its factory content — use that; the extra content set needs its own licence. Cloud rendering: forbidden pending the vendor EULA."
+        "instruction": "Install through Steinberg Download Assistant + Steinberg Activation Manager signed in to the owner's Steinberg ID with Cubase 14 Pro (included) or a Verve licence; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cubase 14 already includes the player and its factory content — use that; the extra content set needs its own licence. Cloud rendering: forbidden pending the vendor EULA."
       },
       "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 85,
@@ -12177,12 +12088,12 @@
       "folder": "Strezov Sampling - Darbuka X3M.part1",
       "path": "D:\\פלאגינים\\Strezov Sampling - Darbuka X3M.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Strezov Sampling",
+      "product": "Darbuka X3M",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "KONTAKT_FULL",
+      "hostNote": "Strezov's X3M series states the full version of Kontakt as a requirement (not Player) — verify on the product page before buying.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
       ],
@@ -12208,23 +12119,25 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_COMMERCIAL",
+      "decidedBy": "vendor rule strezov-darbuka",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "percussion"
+        ],
+        "middleEastern": "core"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "vendorApp": "Vendor account download after purchase",
+        "account": "Strezov Sampling account + a Kontakt (full) licence",
+        "cubase14": "not_included",
+        "instruction": "Install through Vendor account download after purchase signed in to the owner's Strezov Sampling account + a Kontakt (full) licence; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 86,
@@ -12274,12 +12187,12 @@
       "folder": "Studio_Drummer.part1",
       "path": "D:\\פלאגינים\\Studio_Drummer.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Native Instruments",
+      "product": "Studio Drummer",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
       ],
@@ -12305,23 +12218,25 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_COMMERCIAL",
+      "decidedBy": "vendor rule ni-studio-drummer",
       "relevance": {
-        "families": [],
-        "middleEastern": "none"
+        "families": [
+          "drums"
+        ],
+        "middleEastern": "useful"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "vendorApp": "Native Access",
+        "account": "Native Instruments account with Studio Drummer (or Komplete)",
+        "cubase14": "not_included",
+        "instruction": "Install through Native Access signed in to the owner's Native Instruments account with Studio Drummer (or Komplete); the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 87,
@@ -12371,12 +12286,12 @@
       "folder": "Swing! Library.part01",
       "path": "D:\\פלאגינים\\Swing! Library.part01",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "ProjectSAM",
+      "product": "Swing!",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "KONTAKT_PLAYER",
+      "hostNote": "Kontakt Player-compatible.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
       ],
@@ -12407,23 +12322,28 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_COMMERCIAL",
+      "decidedBy": "vendor rule projectsam-swing",
       "relevance": {
-        "families": [],
+        "families": [
+          "brass",
+          "woodwinds",
+          "drums",
+          "keys"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
-        "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "vendorApp": "Native Access",
+        "account": "ProjectSAM account → serial in Native Access",
+        "cubase14": "not_included",
+        "instruction": "Install through Native Access signed in to the owner's ProjectSAM account → serial in Native Access; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 88,
@@ -12489,7 +12409,7 @@
       "source": "scan",
       "vendor": "Steinberg",
       "product": "The Grand 3",
-      "version": null,
+      "version": "3",
       "hostRequired": "THE_GRAND_3",
       "hostNote": "The Grand 3 is discontinued and stayed on the legacy eLicenser; it was never moved to Steinberg Licensing and is not part of Cubase 14.",
       "hostConfidence": "product_knowledge",
@@ -12545,6 +12465,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 89,
@@ -12673,6 +12594,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 90,
@@ -12785,6 +12707,7 @@
       "aiTraining": "undecided",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archives_not_listed",
         "archive_last_part_unverified"
       ],
@@ -12823,12 +12746,12 @@
       "folder": "Unison Beatmaker Blueprint.part1",
       "path": "D:\\פלאגינים\\Unison Beatmaker Blueprint.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Sample-pack / SFX publisher (named in the folder)",
+      "product": "Commercial sample or sound-effects pack",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "RAW_WAV_MIDI",
+      "hostNote": "Raw WAV / MIDI / presets / stems; any sampler or DAW.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
       ],
@@ -12853,23 +12776,28 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_PACK",
+      "decidedBy": "vendor rule pack-generic-publishers",
       "relevance": {
-        "families": [],
+        "families": [
+          "drums",
+          "loops",
+          "melodic_loops",
+          "sfx"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
+        "vendorApp": "Vendor account download after purchase",
+        "account": "The publisher's (or marketplace's) account with the pack purchased",
         "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "instruction": "Only samples the owner downloaded from the publisher's own account under his own licence may be used, under that pack's terms; the copies on this drive are not that proof. Nothing is rendered in the cloud until the pack licence is read."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 92,
@@ -12982,6 +12910,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 93,
@@ -13054,7 +12983,7 @@
       "source": "scan",
       "vendor": "UVI",
       "product": "Falcon 2 (+ factory content)",
-      "version": null,
+      "version": "2",
       "hostRequired": "UVI_FALCON",
       "hostNote": "UVI Falcon 2 (iLok-protected). Falcon expansions also run in the free UVI Workstation only when sold as such.",
       "hostConfidence": "product_knowledge",
@@ -13164,6 +13093,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_numbering_has_gaps"
       ],
       "index": 94,
@@ -13248,7 +13178,7 @@
       "source": "scan",
       "vendor": "Evolution Series",
       "product": "World Percussion 2.0",
-      "version": null,
+      "version": "2.0",
       "hostRequired": "KONTAKT_PLAYER",
       "hostNote": "Kontakt Player-compatible (NKS). Darbuka, riq, frame drums, tabla, taiko, Latin and African percussion.",
       "hostConfidence": "product_knowledge",
@@ -13310,6 +13240,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 95,
@@ -13472,6 +13403,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 96,
@@ -13554,12 +13486,12 @@
       "folder": "Zenhiser - Deep Tribal Vocal Stems.part1",
       "path": "D:\\פלאגינים\\Zenhiser - Deep Tribal Vocal Stems.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Sample-pack / SFX publisher (named in the folder)",
+      "product": "Commercial sample or sound-effects pack",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "RAW_WAV_MIDI",
+      "hostNote": "Raw WAV / MIDI / presets / stems; any sampler or DAW.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
       ],
@@ -13583,23 +13515,28 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_PACK",
+      "decidedBy": "vendor rule pack-generic-publishers",
       "relevance": {
-        "families": [],
+        "families": [
+          "drums",
+          "loops",
+          "melodic_loops",
+          "sfx"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
+        "vendorApp": "Vendor account download after purchase",
+        "account": "The publisher's (or marketplace's) account with the pack purchased",
         "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "instruction": "Only samples the owner downloaded from the publisher's own account under his own licence may be used, under that pack's terms; the copies on this drive are not that proof. Nothing is rendered in the cloud until the pack licence is read."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 97,
@@ -13637,12 +13574,12 @@
       "folder": "Zenhiser - Orbital.part1",
       "path": "D:\\פלאגינים\\Zenhiser - Orbital.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Sample-pack / SFX publisher (named in the folder)",
+      "product": "Commercial sample or sound-effects pack",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "RAW_WAV_MIDI",
+      "hostNote": "Raw WAV / MIDI / presets / stems; any sampler or DAW.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
       ],
@@ -13666,23 +13603,28 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_PACK",
+      "decidedBy": "vendor rule pack-generic-publishers",
       "relevance": {
-        "families": [],
+        "families": [
+          "drums",
+          "loops",
+          "melodic_loops",
+          "sfx"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
+        "vendorApp": "Vendor account download after purchase",
+        "account": "The publisher's (or marketplace's) account with the pack purchased",
         "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "instruction": "Only samples the owner downloaded from the publisher's own account under his own licence may be used, under that pack's terms; the copies on this drive are not that proof. Nothing is rendered in the cloud until the pack licence is read."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 98,
@@ -13720,11 +13662,11 @@
       "folder": "Zenhiser - Psyche Psytrance.part1",
       "path": "D:\\פלאגינים\\Zenhiser - Psyche Psytrance.part1",
       "source": "scan",
-      "vendor": "Sample-pack publisher",
-      "product": "Commercial sample pack (publisher named in the folder)",
+      "vendor": "Sample-pack / SFX publisher (named in the folder)",
+      "product": "Commercial sample or sound-effects pack",
       "version": null,
       "hostRequired": "RAW_WAV_MIDI",
-      "hostNote": "Raw WAV / MIDI; any sampler or DAW.",
+      "hostNote": "Raw WAV / MIDI / presets / stems; any sampler or DAW.",
       "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
@@ -13750,18 +13692,19 @@
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
       "rightsClass": "THIRD_PARTY_PACK",
-      "decidedBy": "vendor rule pack-mizrahi-latin",
+      "decidedBy": "vendor rule pack-generic-publishers",
       "relevance": {
         "families": [
           "drums",
           "loops",
-          "melodic_loops"
+          "melodic_loops",
+          "sfx"
         ],
-        "middleEastern": "useful"
+        "middleEastern": "none"
       },
       "legitimatePath": {
         "vendorApp": "Vendor account download after purchase",
-        "account": "The publisher's or the marketplace's account with the pack purchased",
+        "account": "The publisher's (or marketplace's) account with the pack purchased",
         "cubase14": "not_applicable",
         "instruction": "Only samples the owner downloaded from the publisher's own account under his own licence may be used, under that pack's terms; the copies on this drive are not that proof. Nothing is rendered in the cloud until the pack licence is read."
       },
@@ -13769,6 +13712,7 @@
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 99,
@@ -13806,12 +13750,12 @@
       "folder": "Zenhiser Dubstep Clash.part1",
       "path": "D:\\פלאגינים\\Zenhiser Dubstep Clash.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Sample-pack / SFX publisher (named in the folder)",
+      "product": "Commercial sample or sound-effects pack",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "RAW_WAV_MIDI",
+      "hostNote": "Raw WAV / MIDI / presets / stems; any sampler or DAW.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
       ],
@@ -13835,23 +13779,28 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_PACK",
+      "decidedBy": "vendor rule pack-generic-publishers",
       "relevance": {
-        "families": [],
+        "families": [
+          "drums",
+          "loops",
+          "melodic_loops",
+          "sfx"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
+        "vendorApp": "Vendor account download after purchase",
+        "account": "The publisher's (or marketplace's) account with the pack purchased",
         "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "instruction": "Only samples the owner downloaded from the publisher's own account under his own licence may be used, under that pack's terms; the copies on this drive are not that proof. Nothing is rendered in the cloud until the pack licence is read."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 100,
@@ -13889,12 +13838,12 @@
       "folder": "Zenhiser Sparkle Drum & Bass.part1",
       "path": "D:\\פלאגינים\\Zenhiser Sparkle Drum & Bass.part1",
       "source": "scan",
-      "vendor": null,
-      "product": null,
+      "vendor": "Sample-pack / SFX publisher (named in the folder)",
+      "product": "Commercial sample or sound-effects pack",
       "version": null,
-      "hostRequired": "UNKNOWN",
-      "hostNote": "Archives whose contents were not listed; an owner's session is not normally shipped as split archives.",
-      "hostConfidence": "none",
+      "hostRequired": "RAW_WAV_MIDI",
+      "hostNote": "Raw WAV / MIDI / presets / stems; any sampler or DAW.",
+      "hostConfidence": "product_knowledge",
       "formats": [
         ".rar"
       ],
@@ -13918,23 +13867,28 @@
         "anyGaps": false,
         "note": "Part numbering contiguous from names; whether the last part is the last is unknown without a `7z l` listing."
       },
-      "rightsClass": "UNKNOWN",
-      "decidedBy": "unlisted archives",
+      "rightsClass": "THIRD_PARTY_PACK",
+      "decidedBy": "vendor rule pack-generic-publishers",
       "relevance": {
-        "families": [],
+        "families": [
+          "drums",
+          "loops",
+          "melodic_loops",
+          "sfx"
+        ],
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "unknown",
-        "account": "unknown until the vendor is identified",
+        "vendorApp": "Vendor account download after purchase",
+        "account": "The publisher's (or marketplace's) account with the pack purchased",
         "cubase14": "not_applicable",
-        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
+        "instruction": "Only samples the owner downloaded from the publisher's own account under his own licence may be used, under that pack's terms; the copies on this drive are not that proof. Nothing is rendered in the cloud until the pack licence is read."
       },
-      "cloudRendering": "UNDECIDED",
-      "aiTraining": "undecided",
+      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
       "flags": [
-        "archives_not_listed",
+        "archive_derived_folder_name",
         "archive_last_part_unverified"
       ],
       "index": 101,
@@ -13972,12 +13926,12 @@
       "folder": "Spitfire",
       "path": "D:\\Spitfire",
       "source": "scan",
-      "vendor": "Spitfire Audio",
-      "product": "Spitfire library (product not identified)",
+      "vendor": null,
+      "product": null,
       "version": null,
-      "hostRequired": "KONTAKT_UNKNOWN_TIER",
-      "hostNote": "Kontakt Player or the Spitfire plugin, per product.",
-      "hostConfidence": "product_knowledge",
+      "hostRequired": "UNKNOWN",
+      "hostNote": "Empty folder.",
+      "hostConfidence": "none",
       "formats": [],
       "bytes": 0,
       "files": 0,
@@ -13987,8 +13941,8 @@
         "anyGaps": false,
         "note": "No archive files observed."
       },
-      "rightsClass": "THIRD_PARTY_COMMERCIAL",
-      "decidedBy": "vendor rule spitfire-generic",
+      "rightsClass": "UNKNOWN",
+      "decidedBy": "empty folder",
       "relevance": {
         "families": [
           "strings"
@@ -13996,15 +13950,17 @@
         "middleEastern": "none"
       },
       "legitimatePath": {
-        "vendorApp": "Spitfire Audio App",
-        "account": "Spitfire Audio account",
-        "cubase14": "not_included",
-        "instruction": "Install through Spitfire Audio App signed in to the owner's Spitfire Audio account; the vendor app downloads and authorises the library on the owner's machine (PR-21 local render worker). The archives on this drive are not part of that path: with a licence they are unnecessary, without one nothing may be used. Cloud rendering: forbidden pending the vendor EULA."
+        "vendorApp": "unknown",
+        "account": "unknown until the vendor is identified",
+        "cubase14": "not_applicable",
+        "instruction": "Not classifiable from names and formats. The owner identifies the folder (his own session, or a product and its vendor); until then it is not used."
       },
-      "cloudRendering": "FORBIDDEN_PENDING_VENDOR_EULA",
+      "cloudRendering": "UNDECIDED",
       "aiTraining": "not_permitted_until_eula_read",
       "notOpened": [],
-      "flags": [],
+      "flags": [
+        "empty_folder"
+      ],
       "index": 102,
       "oldestWrite": null,
       "newestWrite": null,

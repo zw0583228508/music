@@ -5235,6 +5235,89 @@ any of it.
   (two); the Spitfire LABS domain now redirects to Splice and LABS-specific
   terms were not found. This is a clause table, not legal advice.
 
+- **PR-96** ✅ — `owner-drive-inventory` (Stream D-INVENTORY: **what is
+  actually on the drive the owner calls "samples I personally recorded", and
+  under which rights class does each folder fall?**). A read-only catalogue of
+  `D:\פלאגינים` (Transcend StoreJet 4 TB, exFAT) — names, sizes and dates only;
+  nothing extracted, installed, executed, copied or opened — with a pure
+  classifier applying the platform's rights rules to every folder.
+
+  **What was built.** `driveInventoryTriage.ts` — vendor-name and
+  vendor-format rules (Kontakt `.nkx/.nki/.nicnt`, Nexus `.nxs`, Steinberg
+  `.vstsound`, Toontrack `.obw`, Ableton `.alp/.adg`, UVI `.ufs` …) mapping a
+  folder to vendor, product, host (Kontakt Player vs full stated per rule, with
+  `hostConfidence`), the vendor app + account that legitimately installs it,
+  Cubase 14 coverage, Middle-Eastern relevance and a rights class; archive
+  part-numbering analysis (contiguous is never "complete"); an
+  `OWNER_RECORDED_CANDIDATE` heuristic that fires only on raw audio / DAW
+  sessions with no vendor signal and never on a folder named after an archive
+  part; installer / activator-like names listed as not opened. 13 tests.
+  `scan-owner-drive.ps1` (PowerShell, `Get-ChildItem -Recurse -File`, per
+  folder, incremental) + `build-owner-drive-inventory.mjs` produce
+  `docs/evidence/owner-drive-inventory.json`; write-up
+  `docs/model-discovery/owner-drive-inventory.md`.
+
+  **Numbers.** 102 top-level folders (101 + an empty `D:\Spitfire` created
+  during the task), **203,927 files, 3.07 TB**. Rights histogram:
+  **`THIRD_PARTY_COMMERCIAL` 74 folders / 2,768 GB; `THIRD_PARTY_PACK` 26 /
+  298 GB; `OWNER_RECORDED_CANDIDATE` 0; `UNKNOWN` 2 / 3.8 GB** (`UmanskyBass`,
+  the empty `Spitfire`). 87 multi-part archive sets (815 part files) in 81
+  folders; **`UVI FALCON 2` is missing part 20 of 64**; every other set is
+  contiguous with its last part unverified. Formats: `.rar` 1,608 GB, `.nkx`
+  548 GB, `.nxs` 185 GB, `.iso` 149 GB, `.wav` 54,448 files / 136 GB. Hosts:
+  Kontakt Player 31, full Kontakt 6, tier-unestablished 5, raw WAV/MIDI 25,
+  Spectrasonics 6, Arturia 5, Steinberg 8, plus SD3, EZdrummer, Nexus 3,
+  Falcon, SampleTank 4, Output, Vocaloid, Ableton, Heat Up. AI training
+  forbidden by the vendor's own terms on 8 folders (Toontrack × 2, Cymatics ×
+  3, Splice × 3). 26 installer-like files + the root
+  `Activation_03-01 3_57.activate` listed, not opened.
+
+  **Findings.** (1) The folder names are not made up: they are the products'
+  names with the archive-part suffix kept (98 of 102). The two folders the
+  first pass called owner candidates (`[Futurephonic] Foundations`, `Mike
+  Shiver Essentials`) are trance sample packs whose publishers were not yet in
+  the rules — hence the archive-derived-name guard. (2) **Zero owner
+  recordings**: the OWNER-SAMPLES pipeline has no input on this drive; the
+  owner's sessions, if they exist, are elsewhere. (3) Middle-Eastern core
+  products present, each with a legitimate path: NI **Middle East**, **Ethno
+  World 6**, **World Percussion 2.0**, Sonokinetic **Sultan Strings** (all
+  Kontakt Player via Native Access + the vendor account), Strezov **Darbuka
+  X3M** (full Kontakt), Akki **Virtual Bouzouki** and Baklava **Orient
+  Express** (Kontakt, tier unestablished); useful around them: Session Strings
+  Pro 2 / Session Strings 2, Spitfire Solo Violin, Albion NEO, Chris Hein
+  Ensemble Strings, Session Horns, Session Guitarist × 6, Ilya Efimov and
+  Orange Tree guitars (full Kontakt), Sonic Extensions Nylon Sky, the pianos
+  (Pearl, Noire, The Gentleman), Nexus 3, Arturia banks, SD3 / EZdrummer. (4)
+  **Cubase 14 already includes** `HALion_Sonic_Selection_Content`, `Groove
+  Agent SE 5 Content` and `PadShop 2 CONTENT` (install from Steinberg Download
+  Assistant under the Cubase licence; Verve with Cubase Pro); HALion 7 / HALion
+  6 / HALion Sonic 3 content / Groove Agent 5 full need their own licences;
+  The Grand 3 is discontinued (legacy eLicenser) and not in Cubase 14. (5)
+  `Keyscape` is present in Kontakt formats — a product Spectrasonics never
+  released for Kontakt, so an unofficial conversion; `SAGE` bundles Stylus RMX
+  with three Toontrack SDX zips and a `.torrent` (names only). (6) The drive
+  **left the system for ~4 minutes mid-task** (USB disk started 02:01:43,
+  absent 02:19–02:25) — a live USB disk is not a pipeline source.
+
+  **The rule, restated.** A vendor library is usable only through the vendor's
+  own host, activated in the owner's own vendor account on his machine (Native
+  Access, Steinberg Download Assistant + Activation Manager, Toontrack Product
+  Manager, reFX Cloud, UVI Portal, IK Product Manager, Spitfire App, Arturia
+  Software Center, Spectrasonics, Vocaloid); with a licence the archives are
+  unnecessary, without one nothing may be used. Cloud rendering of any of it is
+  forbidden pending the vendor EULA (Stream CLOUD-VM).
+
+  **Honest limits.** Host tiers come from product knowledge, not from vendor
+  pages read here (`hostConfidence` says so on every rule; five Kontakt titles
+  are marked tier-unestablished). Archives were not listed (`7z l` exists and
+  was deliberately not run): part numbering says contiguous, never complete.
+  `MP2 Sound Content` = Miroslav Philharmonik 2 is inferred; `UmanskyBass` is
+  unidentified. A names-only scan could miss an owner's file nested inside a
+  vendor folder — path samples and per-folder WAV histograms are in the
+  evidence for spot checks, and none looked like a take. Middle-Eastern
+  "core / useful" is a musical judgement encoded in rules. This is a catalogue
+  under the platform's rules, not a legal opinion, and it says nothing about
+  how the material was obtained.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

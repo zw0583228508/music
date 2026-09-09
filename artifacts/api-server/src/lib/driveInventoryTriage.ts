@@ -66,6 +66,7 @@ export type HostRequirement =
   | "SAMPLETANK_4"
   | "OUTPUT_PLUGIN"
   | "INITIAL_AUDIO_HEAT_UP"
+  | "SPECTRASONICS_STEAM"
   | "STEINBERG_HOST_UNSPECIFIED"
   | "RAW_WAV_MIDI"
   | "UNKNOWN";
@@ -85,6 +86,7 @@ export type VendorApp =
   | "VOCALOID SHOP account + VOCALOID editor"
   | "Output Hub / Output account"
   | "Initial Audio account"
+  | "Spectrasonics account (Techshop download / Spectrasonics installer)"
   | "Vendor account download after purchase"
   | "none (raw files)"
   | "unknown";
@@ -169,6 +171,14 @@ export const VENDOR_RULES: readonly VendorRule[] = [
     cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
     families: ["drums"], aiTraining: "forbidden_by_vendor_terms", hostConfidence: "product_knowledge",
   },
+  {
+    id: "toontrack-generic", match: /toontrack|\bSDX\b/i,
+    vendor: "Toontrack", product: "Toontrack sound library (SDX expansion or unidentified title)", host: "SUPERIOR_DRUMMER_3",
+    hostNote: "An SDX is a Superior Drummer 3 expansion; EZX titles go to EZdrummer.",
+    vendorApp: "Toontrack Product Manager", account: "Toontrack account with the title licensed",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
+    families: ["drums"], aiTraining: "forbidden_by_vendor_terms", hostConfidence: "product_knowledge",
+  },
   // --- reFX ----------------------------------------------------------------
   {
     id: "refx-nexus", match: /\bnexus\s*[2-5]?\b/i,
@@ -193,6 +203,23 @@ export const VENDOR_RULES: readonly VendorRule[] = [
     cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "none", families: [], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge" },
   // --- Steinberg -----------------------------------------------------------
   {
+    id: "steinberg-halion-sonic-selection", match: /halion[\s_-]*sonic[\s_-]*selection/i,
+    vendor: "Steinberg", product: "HALion Sonic Selection content (the Cubase factory set)", host: "HALION_SONIC",
+    hostNote: "HALion Sonic 7 — the player and this content ship with Cubase 14.",
+    vendorApp: "Steinberg Download Assistant + Steinberg Activation Manager", account: "Steinberg ID with the Cubase 14 licence (already the owner's)",
+    cubase14: "included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
+    families: ["keys", "synth_pad", "world"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+    note: "Install from Steinberg Download Assistant under the Cubase 14 licence; the archive copy is pointless.",
+  },
+  {
+    id: "steinberg-halion6", match: /halion[\s_-]*6\b/i,
+    vendor: "Steinberg", product: "HALion 6 (content)", host: "HALION_7",
+    hostNote: "HALion 6 content; a HALion 6/7 licence is required (HALion 6 upgrades to 7). Cubase 14 includes only HALion Sonic 7 and its factory content.",
+    vendorApp: "Steinberg Download Assistant + Steinberg Activation Manager", account: "Steinberg ID with a HALion 6 or 7 licence",
+    cubase14: "player_and_subset_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
+    families: ["keys", "synth_pad", "synth_lead", "strings", "world"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  {
     id: "steinberg-halion7", match: /halion[\s_-]*7|halion[\s_-]*complete/i,
     vendor: "Steinberg", product: "HALion 7 — complete content", host: "HALION_7",
     hostNote: "HALion 7 (full sampler). Cubase 14 Pro ships HALion Sonic 7 (the player) with its own content, not the HALion 7 full-content set.",
@@ -202,12 +229,36 @@ export const VENDOR_RULES: readonly VendorRule[] = [
     note: "The owner owns Cubase 14: HALion Sonic 7 and its factory content are already his; HALion 7 content (.vstsound) needs a HALion 7 licence.",
   },
   {
-    id: "steinberg-halion-sonic", match: /halion\s*sonic/i,
+    id: "steinberg-halion-sonic", match: /^(?!.*\bverve\b).*halion\s*sonic/i,
     vendor: "Steinberg", product: "HALion Sonic 3 content", host: "HALION_SONIC",
     hostNote: "HALion Sonic (3, or 7 as included with Cubase 14). Sonic 3's purchasable content sets are separate licences; the factory 'Selection' content ships with Cubase.",
     vendorApp: "Steinberg Download Assistant + Steinberg Activation Manager", account: "Steinberg ID (Cubase 14 licence covers HALion Sonic 7 + its factory content; extra content sets need their own licence)",
     cubase14: "player_and_subset_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
     families: ["keys", "synth_pad", "world"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  {
+    id: "steinberg-groove-agent-se", match: /groove\s*agent\s*se\b/i,
+    vendor: "Steinberg", product: "Groove Agent SE 5 content", host: "GROOVE_AGENT_5",
+    hostNote: "Groove Agent SE 5 — the player and this content ship with Cubase 14.",
+    vendorApp: "Steinberg Download Assistant + Steinberg Activation Manager", account: "Steinberg ID with the Cubase 14 licence (already the owner's)",
+    cubase14: "included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
+    families: ["drums", "percussion"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  {
+    id: "steinberg-padshop", match: /pad\s*shop/i,
+    vendor: "Steinberg", product: "PadShop 2 content", host: "STEINBERG_HOST_UNSPECIFIED",
+    hostNote: "PadShop 2 — included in Cubase 14 (Pro/Artist) with its factory content.",
+    vendorApp: "Steinberg Download Assistant + Steinberg Activation Manager", account: "Steinberg ID with the Cubase 14 licence (already the owner's)",
+    cubase14: "included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "none",
+    families: ["synth_pad", "texture"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  {
+    id: "steinberg-verve", match: /\bverve\b/i,
+    vendor: "Steinberg", product: "Verve (felt piano, HALion Sonic content)", host: "HALION_SONIC",
+    hostNote: "HALion Sonic instrument; Verve is included in Cubase Pro 12 and later — the owner's Cubase 14 edition decides (Pro: included; Artist/Elements: separate purchase).",
+    vendorApp: "Steinberg Download Assistant + Steinberg Activation Manager", account: "Steinberg ID with Cubase 14 Pro (included) or a Verve licence",
+    cubase14: "player_and_subset_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
+    families: ["keys"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
   },
   {
     id: "steinberg-groove-agent", match: /groove\s*agent/i,
@@ -256,6 +307,50 @@ export const VENDOR_RULES: readonly VendorRule[] = [
     families: ["keys", "strings", "world", "percussion", "synth_pad"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
     note: "Contains a World section (incl. Middle-Eastern instruments) — the full Kontakt licence also unlocks TAQSIM Free (free-sound-libraries.md).",
   },
+  {
+    id: "ni-session-guitarist", match: /session\s*guitarist/i,
+    vendor: "Native Instruments", product: "Session Guitarist (Strummed Acoustic 1/2, Picked Acoustic, Acoustic Sunburst Deluxe, Electric Vintage)", host: "KONTAKT_PLAYER",
+    hostNote: "Kontakt Player-compatible (NI's own libraries).", vendorApp: NI, account: "Native Instruments account with each Session Guitarist title licensed (or Komplete)",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
+    families: ["guitar", "nylon_guitar"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+    note: "Strummed / picked acoustic patterns are a Mizrahi-pop rhythm-guitar staple.",
+  },
+  {
+    id: "ni-session-horns", match: /session[\s_]*horns/i,
+    vendor: "Native Instruments", product: "Session Horns", host: "KONTAKT_PLAYER",
+    hostNote: "Kontakt Player-compatible.", vendorApp: NI, account: "Native Instruments account with Session Horns (or Komplete)",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
+    families: ["brass"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+    note: "Pop horn section — the Mizrahi brass riff lives closer to this than to CineBrass.",
+  },
+  {
+    id: "ni-studio-drummer", match: /studio[\s_]*drummer/i,
+    vendor: "Native Instruments", product: "Studio Drummer", host: "KONTAKT_PLAYER",
+    hostNote: "Kontakt Player-compatible.", vendorApp: NI, account: "Native Instruments account with Studio Drummer (or Komplete)",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
+    families: ["drums"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  {
+    id: "ni-scarbee", match: /scarbee/i,
+    vendor: "Native Instruments (Scarbee)", product: "Scarbee Pre-Bass Amped", host: "KONTAKT_PLAYER",
+    hostNote: "Kontakt Player-compatible (NI-published Scarbee series).", vendorApp: NI, account: "Native Instruments account with the Scarbee title (or Komplete)",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "none",
+    families: ["bass"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  {
+    id: "ni-noire", match: /\bnoire\b/i,
+    vendor: "Native Instruments", product: "Noire (Nils Frahm piano)", host: "KONTAKT_PLAYER",
+    hostNote: "Kontakt Player-compatible.", vendorApp: NI, account: "Native Instruments account with Noire (or Komplete)",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
+    families: ["keys"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  {
+    id: "ni-the-gentleman", match: /the\s*gentleman/i,
+    vendor: "Native Instruments", product: "The Gentleman (upright piano)", host: "KONTAKT_PLAYER",
+    hostNote: "Kontakt Player-compatible.", vendorApp: NI, account: "Native Instruments account with The Gentleman (or Komplete)",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
+    families: ["keys"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
   { id: "ni-generic", match: /native\s*instruments|\bkomplete\b|^NI[\s_-]/i, vendor: "Native Instruments", product: "NI library (product not identified)", host: "KONTAKT_UNKNOWN_TIER",
     hostNote: "Kontakt; Player vs full depends on the product.", vendorApp: NI, account: "Native Instruments account",
     cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "none", families: [], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge" },
@@ -268,6 +363,15 @@ export const VENDOR_RULES: readonly VendorRule[] = [
     cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
     families: ["strings", "woodwinds", "brass", "synth_pad"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
     note: "Chamber-sized strings — a natural fit for the intimate Mizrahi ballad string bed.",
+  },
+  {
+    id: "spitfire-solo-violin", match: /solo[\s_]*violin/i,
+    vendor: "Spitfire Audio", product: "Spitfire Solo Violin", host: "KONTAKT_PLAYER",
+    hostNote: "Kontakt Player-compatible (NKS); serial from the Spitfire account, installed through Native Access.",
+    vendorApp: "Spitfire Audio App", account: "Spitfire Audio account with Spitfire Solo Violin → serial registered in Native Access",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
+    families: ["strings", "solo_violin"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+    note: "The solo violin is the signature Mizrahi lead voice; this is a Western classical instrument, useful not core.",
   },
   { id: "spitfire-generic", match: /spitfire/i, vendor: "Spitfire Audio", product: "Spitfire library (product not identified)", host: "KONTAKT_UNKNOWN_TIER",
     hostNote: "Kontakt Player or the Spitfire plugin, per product.", vendorApp: "Spitfire Audio App", account: "Spitfire Audio account",
@@ -289,6 +393,13 @@ export const VENDOR_RULES: readonly VendorRule[] = [
   {
     id: "projectsam-swing-more", match: /swing\s*more/i,
     vendor: "ProjectSAM", product: "Swing More!", host: "KONTAKT_PLAYER",
+    hostNote: "Kontakt Player-compatible.", vendorApp: NI, account: "ProjectSAM account → serial in Native Access",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "none",
+    families: ["brass", "woodwinds", "drums", "keys"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  {
+    id: "projectsam-swing", match: /^swing!|swing!\s*library/i,
+    vendor: "ProjectSAM", product: "Swing!", host: "KONTAKT_PLAYER",
     hostNote: "Kontakt Player-compatible.", vendorApp: NI, account: "ProjectSAM account → serial in Native Access",
     cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "none",
     families: ["brass", "woodwinds", "drums", "keys"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
@@ -323,6 +434,13 @@ export const VENDOR_RULES: readonly VendorRule[] = [
     families: ["world_plucked", "world_winds", "world_bowed", "percussion", "vocal_phrases"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
   },
   {
+    id: "best-service-strings-of-winter", match: /strings\s*of\s*winter/i,
+    vendor: "Best Service / Sonuscore", product: "The Orchestra: Strings of Winter", host: "KONTAKT_PLAYER",
+    hostNote: "Kontakt Player-compatible.", vendorApp: NI, account: "Best Service account → serial in Native Access",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "none",
+    families: ["strings"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  {
     id: "best-service-the-orchestra", match: /the\s*orchestra\s*(complete)?/i,
     vendor: "Best Service / Sonuscore", product: "The Orchestra Complete", host: "KONTAKT_PLAYER",
     hostNote: "Kontakt Player-compatible.", vendorApp: NI, account: "Best Service account → serial in Native Access",
@@ -350,6 +468,116 @@ export const VENDOR_RULES: readonly VendorRule[] = [
     vendorApp: NI, account: "Evolution Series account → serial in Native Access",
     cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "core",
     families: ["percussion"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  // --- Middle-Eastern specialist libraries ----------------------------------
+  {
+    id: "sonokinetic-sultan-strings", match: /sultan\s*strings/i,
+    vendor: "Sonokinetic", product: "Sultan Strings", host: "KONTAKT_PLAYER",
+    hostNote: "Kontakt Player-compatible (Sonokinetic releases are Player/NKS). A Middle-Eastern string orchestra with phrases and legato in maqam-friendly tunings.",
+    vendorApp: NI, account: "Sonokinetic account → serial in Native Access",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "core",
+    families: ["strings", "world_bowed"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+    note: "The closest commercial match to the Mizrahi string-section sound; nothing in the free catalogue (free-sound-libraries.md) covers it.",
+  },
+  { id: "sonokinetic-generic", match: /sonokinetic/i, vendor: "Sonokinetic", product: "Sonokinetic library (product not identified)", host: "KONTAKT_PLAYER",
+    hostNote: "Kontakt Player-compatible.", vendorApp: NI, account: "Sonokinetic account → serial in Native Access",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful", families: [], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge" },
+  {
+    id: "strezov-darbuka", match: /darbuka\s*x3m|strezov/i,
+    vendor: "Strezov Sampling", product: "Darbuka X3M", host: "KONTAKT_FULL",
+    hostNote: "Strezov's X3M series states the full version of Kontakt as a requirement (not Player) — verify on the product page before buying.",
+    vendorApp: "Vendor account download after purchase", account: "Strezov Sampling account + a Kontakt (full) licence",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "core",
+    families: ["percussion"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+    note: "Deep-sampled darbuka ensemble — the core Mizrahi percussion voice.",
+  },
+  {
+    id: "akki-virtual-bouzouki", match: /akki\s*plugs|virtual\s*bouzouki/i,
+    vendor: "Akki Plugs", product: "Virtual Bouzouki", host: "KONTAKT_UNKNOWN_TIER",
+    hostNote: "Kontakt; whether the free Player accepts it was not established from a primary source (small vendors usually require the full Kontakt).",
+    vendorApp: "Vendor account download after purchase", account: "Akki Plugs purchase + the matching Kontakt licence",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "core",
+    families: ["world_plucked", "bouzouki"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+    note: "Bouzouki is central to the Greek-Israeli side of Mizrahi music.",
+  },
+  {
+    id: "baklava-orient-express", match: /baklava\s*sounds|orient\s*express/i,
+    vendor: "Baklava Sounds", product: "Orient Express", host: "KONTAKT_UNKNOWN_TIER",
+    hostNote: "Kontakt library of Turkish / Anatolian instruments; Player compatibility not established from a primary source.",
+    vendorApp: "Vendor account download after purchase", account: "Baklava Sounds purchase + the matching Kontakt licence",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "core",
+    families: ["world_plucked", "world_winds", "percussion"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  // --- Other Kontakt developers ---------------------------------------------
+  {
+    id: "orange-tree-evolution", match: /evolution\s*(steel|hollowbody|rock|electric|acoustic|modern|infinity|dracus|mandolin|jumbo|songwriter|flatpick|stratosphere|rick|banjo|classical|strawberry|bluegrass|nylon)/i,
+    vendor: "Orange Tree Samples", product: "Evolution guitar series (Steel Strings / Hollowbody Blues / Rock Standard …)", host: "KONTAKT_FULL",
+    hostNote: "Orange Tree Samples' Evolution libraries require the full version of Kontakt.",
+    vendorApp: "Vendor account download after purchase", account: "Orange Tree Samples account + a Kontakt (full) licence",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
+    families: ["guitar", "nylon_guitar"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  {
+    id: "vir2-acou6tics", match: /acou6tics|\bvir2\b/i,
+    vendor: "Vir2 Instruments (Big Fish Audio)", product: "Acou6tics", host: "KONTAKT_PLAYER",
+    hostNote: "Kontakt Player-compatible.", vendorApp: NI, account: "Big Fish Audio / Vir2 account → serial in Native Access",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
+    families: ["guitar", "nylon_guitar", "world_plucked"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  {
+    id: "heavyocity", match: /heavyocity|vocalise/i,
+    vendor: "Heavyocity", product: "Vocalise 2", host: "KONTAKT_PLAYER",
+    hostNote: "Kontakt Player-compatible (NKS).", vendorApp: NI, account: "Heavyocity account → serial in Native Access",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "none",
+    families: ["vocal_phrases", "texture"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  {
+    id: "audiomodern", match: /audiomodern|opacity\s*ii/i,
+    vendor: "Audiomodern", product: "Opacity II", host: "KONTAKT_UNKNOWN_TIER",
+    hostNote: "Kontakt; Player compatibility not established from a primary source.", vendorApp: "Vendor account download after purchase", account: "Audiomodern account + the matching Kontakt licence",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "none",
+    families: ["texture", "synth_pad"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  {
+    id: "soundiron", match: /soundiron/i,
+    vendor: "Soundiron", product: "Axe Machina", host: "KONTAKT_UNKNOWN_TIER",
+    hostNote: "Kontakt; Soundiron sells both Player and full-Kontakt titles — not established for this one.", vendorApp: "Vendor account download after purchase", account: "Soundiron account (+ Native Access when the title is a Player library)",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "none",
+    families: ["guitar", "synth_lead"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  // --- Spectrasonics -----------------------------------------------------------
+  {
+    id: "spectrasonics-keyscape", match: /keyscape/i,
+    vendor: "Spectrasonics", product: "Keyscape", host: "SPECTRASONICS_STEAM",
+    hostNote: "Keyscape runs only in Spectrasonics' own plugin (STEAM engine). Spectrasonics has never released it for Kontakt: Keyscape in Kontakt formats is an unofficial conversion and cannot be a licensed copy in any form.",
+    vendorApp: "Spectrasonics account (Techshop download / Spectrasonics installer)", account: "Spectrasonics user account with a Keyscape licence",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
+    families: ["keys", "electric_piano"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  {
+    id: "spectrasonics-sonic-extensions", match: /sonic\s*extensions/i,
+    vendor: "Spectrasonics", product: "Sonic Extensions for Omnisphere 2 (Nylon Sky / Seismic Shock / Unclean Machine / Undercurrent)", host: "SPECTRASONICS_STEAM",
+    hostNote: "Omnisphere 2 (STEAM engine); each Sonic Extension is a separate licence.",
+    vendorApp: "Spectrasonics account (Techshop download / Spectrasonics installer)", account: "Spectrasonics account with Omnisphere 2 and each Sonic Extension licensed",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "useful",
+    families: ["nylon_guitar", "synth_pad", "synth_lead", "texture"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+    note: "Nylon Sky is a nylon-guitar extension — the Mizrahi nylon voice; the other three are sound-design.",
+  },
+  {
+    id: "spectrasonics-sage", match: /^SAGE\b|stylus\s*rmx/i,
+    vendor: "Spectrasonics", product: "Stylus RMX (SAGE core library)", host: "SPECTRASONICS_STEAM",
+    hostNote: "Stylus RMX's SAGE engine content; Spectrasonics-only.",
+    vendorApp: "Spectrasonics account (Techshop download / Spectrasonics installer)", account: "Spectrasonics account with a Stylus RMX licence",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "none",
+    families: ["drums", "loops"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  // --- IK Multimedia (Philharmonik) ---------------------------------------------
+  {
+    id: "ik-miroslav-philharmonik-2", match: /^MP2\b|miroslav\s*philharmonik/i,
+    vendor: "IK Multimedia", product: "Miroslav Philharmonik 2 sound content (identification of 'MP2' inferred from size and IK naming — unconfirmed)", host: "SAMPLETANK_4",
+    hostNote: "Miroslav Philharmonik 2 plugin (or SampleTank 4, which loads its content).", vendorApp: "IK Product Manager", account: "IK Multimedia account with a Miroslav Philharmonik 2 licence",
+    cubase14: "not_included", rightsClass: "THIRD_PARTY_COMMERCIAL", middleEastern: "none",
+    families: ["strings", "brass", "woodwinds", "percussion"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
   },
   {
     id: "ilya-efimov-total-guitar", match: /ilya\s*efimov/i,
@@ -434,6 +662,29 @@ export const VENDOR_RULES: readonly VendorRule[] = [
     families: ["drums", "loops"], aiTraining: "forbidden_by_vendor_terms", hostConfidence: "product_knowledge",
   },
   {
+    id: "pack-pml", match: /\bPML\b|production\s*music\s*live/i,
+    vendor: "Production Music Live (PML)", product: "PML Premium Bundle (Ableton templates, presets, samples, courses)", host: "ABLETON_LIVE",
+    hostNote: "Ableton Live project templates + presets + WAV; the DAW here is Cubase 14.", vendorApp: "Vendor account download after purchase", account: "PML account with the bundle purchased",
+    cubase14: "not_applicable", rightsClass: "THIRD_PARTY_PACK", middleEastern: "none",
+    families: ["loops", "synth_pad", "drums"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+  },
+  {
+    id: "pack-kshmr", match: /kshmr/i,
+    vendor: "Splice / Dharma Worldwide", product: "Sounds of KSHMR (vol. 1–4)", host: "RAW_WAV_MIDI",
+    hostNote: "Raw WAV / MIDI / presets.", vendorApp: "Vendor account download after purchase", account: "Splice subscription (vol. 1–3) or Dharma Worldwide purchase (vol. 4)",
+    cubase14: "not_applicable", rightsClass: "THIRD_PARTY_PACK", middleEastern: "useful",
+    families: ["drums", "loops", "melodic_loops", "world_plucked"], aiTraining: "forbidden_by_vendor_terms", hostConfidence: "product_knowledge",
+    note: "KSHMR packs are rich in Indian / Middle-Eastern colour; Splice's terms forbid AI training.",
+  },
+  {
+    id: "pack-generic-publishers", match: /zenhiser|oversampled|futurephonic|mike\s*shiver|unison\s*(audio|beatmaker)|paramount\s*motion|pro\s*sound\s*effects|\bsound\s*effects\s*pack\b|sonic\s*academy|\bADSR\b|\bBFA\b|big\s*fish\s*audio|singomakers|function\s*loops|hy2rogen|freshly\s*squeezed|toolroom|\bKSHMR\b/i,
+    vendor: "Sample-pack / SFX publisher (named in the folder)", product: "Commercial sample or sound-effects pack", host: "RAW_WAV_MIDI",
+    hostNote: "Raw WAV / MIDI / presets / stems; any sampler or DAW.", vendorApp: "Vendor account download after purchase", account: "The publisher's (or marketplace's) account with the pack purchased",
+    cubase14: "not_applicable", rightsClass: "THIRD_PARTY_PACK", middleEastern: "none",
+    families: ["drums", "loops", "melodic_loops", "sfx"], aiTraining: "not_permitted_until_eula_read", hostConfidence: "product_knowledge",
+    note: "Zenhiser, Oversampled, Futurephonic, Mike Shiver, Unison, Paramount Motion, Pro Sound Effects: pack terms unread here — not permitted until read.",
+  },
+  {
     id: "pack-mizrahi-latin", match: /urban\s*singh|midilatino|dave\s*parkinson|tomorrowland|psy[\s-]*trance|goa\s*trance|\bloopmasters\b|sample\s*magic|vengeance|\bproducer\s*loops\b|black\s*octopus|ghosthack|\bw\.?a\.?\s*production\b/i,
     vendor: "Sample-pack publisher", product: "Commercial sample pack (publisher named in the folder)", host: "RAW_WAV_MIDI",
     hostNote: "Raw WAV / MIDI; any sampler or DAW.", vendorApp: "Vendor account download after purchase", account: "The publisher's or the marketplace's account with the pack purchased",
@@ -470,7 +721,23 @@ const PACK_NAME_PATTERN = /\b(sample\s*pack|drum\s*kit|one[\s-]*shots?|loops?\s*
 
 export const VENDOR_DOC_PATTERN = /readme|licen[cs]e|eula|terms|manual|\.nfo$|install(ation)?\s*(guide|notes)|copyright/i;
 /** Names that look like installers, activators, keygens. Listed, never opened. */
-export const NOT_OPENED_PATTERN = /keygen|crack|patch(er)?\b|activat|r2r\b|\.exe$|\.dll$|\.bat$|\.cmd$|\.msi$|\.reg$/i;
+export const NOT_OPENED_PATTERN = /\.(exe|dll|bat|cmd|msi|reg|pkg|torrent|activate|iso|dmg)$/i;
+const NOT_OPENED_KEYWORDS = /keygen|crack(ed)?\b|\bpatcher\b|activat(or|ion)|\br2r\b|\bteam\s*(air|v\.?r)\b/i;
+const MUSICAL_PAYLOAD = /\.(wav|aif|aiff|flac|ogg|mp3|mid|midi|nki|nkm|nkx|nkc|nkr|nka|nksn|nksf|ncw|nxs|nxp|fxp|fxb|vstpreset|vstsound|ufs|obw|alp|adg|adv|st4|png|jpg|pdf)$/i;
+/**
+ * Installer / activator / keygen-looking names: listed, never opened. An
+ * executable or disk image counts by extension; a keyword ("crack", "keygen",
+ * "activator") counts only when the file is not a musical payload — sample
+ * names like "LD Activator.nksf.ogg" or "Summer Crackle.wav" are music.
+ */
+export function isNotOpenedName(name: string): boolean {
+  const leaf = name.replace(/\\/g, "/").split("/").pop() ?? name;
+  if (NOT_OPENED_PATTERN.test(leaf)) return true;
+  if (MUSICAL_PAYLOAD.test(leaf)) return false;
+  return NOT_OPENED_KEYWORDS.test(leaf);
+}
+/** A folder named after an archive part (`X.part01`) is an extraction target, not a session the owner recorded. */
+export const ARCHIVE_DERIVED_NAME = /\.part\d+(\.rar)?$/i;
 
 // ---------------------------------------------------------------------------
 // Archive part numbering
@@ -573,7 +840,8 @@ export type TriageRow = {
 };
 
 const versionFrom = (name: string): string | null => {
-  const m = name.match(/(?:^|[\s_-])v?(\d+(?:\.\d+)?)(?=$|[\s_\-)])/i);
+  const stem = name.replace(/\.part\d+.*$/i, "").replace(/\s*(content|library|kontakt|wav|complete\s*edition)\s*$/i, "");
+  const m = stem.match(/(?:^|[\s_.-])v?(\d+(?:\.\d+){0,2})(?=$|[\s_\-)])/i);
   return m ? m[1] : null;
 };
 
@@ -628,7 +896,7 @@ export function triageFolder(obs: FolderObservation): TriageRow {
   const anyGaps = sets.some((s) => s.completeness === "gaps");
   const partFiles = sets.reduce((n, s) => n + s.parts.length, 0);
   const docs = (obs.docNames ?? []).filter((d) => VENDOR_DOC_PATTERN.test(d));
-  const notOpened = [...(obs.suspiciousNames ?? [])].filter((n) => NOT_OPENED_PATTERN.test(n));
+  const notOpened = [...(obs.suspiciousNames ?? [])].filter(isNotOpenedName);
   if (notOpened.length) flags.push("installer_or_activator_like_names_present_not_opened");
 
   const rule = matchVendorRule(obs.name);
@@ -640,7 +908,13 @@ export function triageFolder(obs: FolderObservation): TriageRow {
   let hostConfidence: TriageRow["hostConfidence"];
   let decidedBy: string;
 
-  if (rule) {
+  const archiveDerivedName = ARCHIVE_DERIVED_NAME.test(obs.name);
+  if (archiveDerivedName) flags.push("archive_derived_folder_name");
+
+  if (obs.files === 0) {
+    rights = "UNKNOWN"; host = "UNKNOWN"; hostNote = "Empty folder."; hostConfidence = "none"; decidedBy = "empty folder";
+    flags.push("empty_folder");
+  } else if (rule) {
     rights = rule.rightsClass;
     host = rule.host;
     hostNote = rule.hostNote;
@@ -676,6 +950,10 @@ export function triageFolder(obs: FolderObservation): TriageRow {
       hostNote = docs.length ? "Raw files, but a readme / licence file is present — somebody published this." : "Raw files under a sample-pack naming convention.";
       hostConfidence = "format_inference"; decidedBy = docs.length ? "vendor-style documents present" : "pack naming convention";
       flags.push(docs.length ? "vendor_documents_present" : "pack_naming_convention");
+    } else if (archiveDerivedName) {
+      rights = "UNKNOWN"; host = "RAW_WAV_MIDI";
+      hostNote = "Raw files, but the folder is named after an archive part — an extracted download, not a session.";
+      hostConfidence = "format_inference"; decidedBy = "archive-derived folder name";
     } else if (daw || (audio.byCount + midi.byCount >= 0.9 && (audio.byBytes === null || audio.byBytes >= 0.9))) {
       rights = "OWNER_RECORDED_CANDIDATE"; host = "RAW_WAV_MIDI";
       hostNote = daw ? "DAW session files beside raw audio — the shape of the owner's own work." : "Raw audio / MIDI only, no vendor format, no vendor document, no archive.";
@@ -693,16 +971,17 @@ export function triageFolder(obs: FolderObservation): TriageRow {
   if (anyGaps) flags.push("archive_numbering_has_gaps");
   if (sets.length && !anyGaps) flags.push("archive_last_part_unverified");
 
-  const vendorApp: VendorApp = rule ? rule.vendorApp : rights === "OWNER_RECORDED_CANDIDATE" ? "none (raw files)" : "unknown";
-  const account = rule ? rule.account : rights === "OWNER_RECORDED_CANDIDATE" ? "the owner's own confirmation" : "unknown until the vendor is identified";
-  const cubase14: Cubase14Coverage = rule ? rule.cubase14 : "not_applicable";
+  const effectiveRule = rights === "UNKNOWN" && decidedBy === "empty folder" ? null : rule;
+  const vendorApp: VendorApp = effectiveRule ? effectiveRule.vendorApp : rights === "OWNER_RECORDED_CANDIDATE" ? "none (raw files)" : "unknown";
+  const account = effectiveRule ? effectiveRule.account : rights === "OWNER_RECORDED_CANDIDATE" ? "the owner's own confirmation" : "unknown until the vendor is identified";
+  const cubase14: Cubase14Coverage = effectiveRule ? effectiveRule.cubase14 : "not_applicable";
 
   return {
     folder: obs.name,
     path: obs.path ?? null,
     source: obs.source,
-    vendor: rule ? rule.vendor : null,
-    product: rule ? rule.product : null,
+    vendor: effectiveRule ? effectiveRule.vendor : null,
+    product: effectiveRule ? effectiveRule.product : null,
     version: versionFrom(obs.name),
     hostRequired: host,
     hostNote,
