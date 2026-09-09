@@ -160,6 +160,20 @@ const suites = {
         "tournament-providers.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, Model Discovery (PR-61): the playability judge calibrated on
+      // real human parts — windows, evidence-based classification, gate verdicts.
+      [
+        "src/lib/judgeCalibration.test.ts",
+        "judge-calibration.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // Wave Q, Model Discovery (PR-61): the per-family × arm scorecard and the
+      // oracle-router reading behind the "global + expert adapters" question.
+      [
+        "src/lib/instrumentScorecard.test.ts",
+        "instrument-scorecard.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // Wave Q, Workstream J (long-form): unsupervised form segmentation of a
       // whole score, and the whole-song coherence metric with its synthetic
       // "pasted windows" constructions.

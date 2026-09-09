@@ -10,7 +10,10 @@
  * What it measures, and why each is a proxy and not a listener:
  *
  *  - playabilityErrors      the platform's physical constraint engine (real).
- *  - rangeShare             notes inside the instrument's playable range.
+ *  - rangeShare             notes inside the instrument's playable range (the
+ *                           extreme of anything under the GM program).
+ *  - registerShare          notes inside the idiomatic register (the named
+ *                           instrument's standard range) — softer than range.
  *  - chordToneShare         time on chord tones of the shared chords. A
  *                           passing tone is not a mistake, so this is scored
  *                           around 0.6, not 1.0.
@@ -34,12 +37,20 @@
  * reports that case as `judgeSuspect`.
  */
 import type { MusicalNote } from "@workspace/db";
-import { checkInstrumentConstraints } from "./musicalConstraints";
+import { checkInstrumentConstraints, type ConstraintNote, type ConstraintViolation } from "./musicalConstraints";
 import { getInstrumentDefinition } from "./musicEngines";
+import { GM_REFERENCE, gmReference } from "./instrumentReference";
 import type { EstimatedChord } from "./chordsFromNotes";
 import type { TournamentTask } from "./tournamentTask";
 
-export const PART_JUDGE_VERSION = "1.0" as const;
+/**
+ * 1.1 (PR-61, judge calibration on 30,570 human PDMX windows): range is the
+ * extreme of anything exported under the GM program, not one instrument's
+ * textbook range; the idiomatic register is a separate, softer metric; the
+ * engine is told the program's polyphony and leap ceilings; drums have no
+ * pitch range. See docs/model-discovery/judge-calibration.md.
+ */
+export const PART_JUDGE_VERSION = "1.1" as const;
 
 /** ARRANGER_REMI family → the platform instrument the judge and the composers use for it. */
 export const PLATFORM_INSTRUMENT: Record<string, { instrument: string; family: string; role: string }> = {
@@ -58,33 +69,35 @@ export const PLATFORM_INSTRUMENT: Record<string, { instrument: string; family: s
 };
 
 /**
- * Playable ranges by GM program where the platform's family definition is
- * the wrong instrument. The platform knows "brass" as 40–82 — a trumpet — so
- * the first live run scored a human tuba part at 20 for playing where tubas
- * play. Physics, not an answer key: nothing here comes from the human part.
+ * Playable range by GM program: the floor and ceiling of anything commonly
+ * exported under the program (`GM_REFERENCE[p].range.ext`). The 1.0 table
+ * held one textbook instrument per program and the calibration measured what
+ * that cost on human parts: 38 % of "flute" windows below the C flute's
+ * floor (alto and bass flutes), tubas playing 61–65 (and euphoniums above),
+ * bass clarinets under the clarinet program, and no entry at all for choirs,
+ * timpani, harp and string sections — which then fell to the platform's
+ * violin-shaped "strings" (55–103). Physics, not an answer key: nothing here
+ * comes from a human part's notes; every entry is an instrument's range.
  */
-export const GM_RANGE: Record<number, { min: number; max: number; name: string }> = {
-  32: { min: 28, max: 67, name: "acoustic bass" }, 33: { min: 28, max: 67, name: "electric bass" },
-  34: { min: 28, max: 67, name: "electric bass (pick)" }, 35: { min: 28, max: 67, name: "fretless bass" },
-  36: { min: 28, max: 67, name: "slap bass" }, 37: { min: 28, max: 67, name: "slap bass" },
-  38: { min: 24, max: 72, name: "synth bass" }, 39: { min: 24, max: 72, name: "synth bass" },
-  40: { min: 55, max: 103, name: "violin" }, 41: { min: 48, max: 91, name: "viola" },
-  42: { min: 36, max: 81, name: "cello" }, 43: { min: 28, max: 64, name: "contrabass" },
-  56: { min: 52, max: 84, name: "trumpet" }, 57: { min: 34, max: 74, name: "trombone" },
-  58: { min: 26, max: 60, name: "tuba" }, 59: { min: 52, max: 84, name: "muted trumpet" },
-  60: { min: 34, max: 77, name: "french horn" }, 61: { min: 34, max: 84, name: "brass section" },
-  64: { min: 56, max: 88, name: "soprano sax" }, 65: { min: 49, max: 81, name: "alto sax" },
-  66: { min: 44, max: 76, name: "tenor sax" }, 67: { min: 36, max: 69, name: "baritone sax" },
-  68: { min: 58, max: 91, name: "oboe" }, 69: { min: 52, max: 81, name: "english horn" },
-  70: { min: 34, max: 75, name: "bassoon" }, 71: { min: 50, max: 94, name: "clarinet" },
-  72: { min: 74, max: 108, name: "piccolo" }, 73: { min: 60, max: 96, name: "flute" },
-  74: { min: 60, max: 96, name: "recorder" }, 75: { min: 60, max: 96, name: "pan flute" },
-};
+export const GM_RANGE: Record<number, { min: number; max: number; name: string }> = Object.fromEntries(
+  Object.entries(GM_REFERENCE)
+    .filter(([, r]) => r.range !== null)
+    .map(([p, r]) => [Number(p), { min: r.range!.ext[0], max: r.range!.ext[1], name: r.name }]),
+);
+
+/** The instrument's idiomatic register (`range.std`): where the part is expected to live, not where it may. */
+export const IDIOMATIC_RANGE: Record<number, { min: number; max: number; name: string }> = Object.fromEntries(
+  Object.entries(GM_REFERENCE)
+    .filter(([, r]) => r.range !== null)
+    .map(([p, r]) => [Number(p), { min: r.range!.std[0], max: r.range!.std[1], name: r.name }]),
+);
 
 export type PartMetrics = {
   noteCount: number;
   playabilityErrors: number;
   rangeShare: number | null;
+  /** Share of notes inside the instrument's idiomatic register (null: drums, or no reference for the program). */
+  registerShare: number | null;
   chordToneShare: number | null;
   coverage: number;
   densityLogRatio: number | null;
@@ -109,6 +122,8 @@ export const WEIGHTS = {
   playabilityErrorPenalty: 12,
   playabilityPenaltyCap: 60,
   rangePenalty: 30,
+  /** Outside the idiomatic register but inside the playable range: a softer finding than a wrong note. */
+  registerPenalty: 10,
   harmonyCentre: 0.6,
   harmonyGain: 40,
   harmonyMin: -20,
@@ -224,41 +239,93 @@ export function contextClashShare(notes: readonly MusicalNote[], task: Tournamen
   return total > 0 ? r4(clash / total) : null;
 }
 
-/**
- * Judge one part. `notes` may be empty — that is a real, scored outcome
- * (zero), not an error.
- */
-export function judgePart(task: TournamentTask, notes: readonly MusicalNote[]): PartJudgement {
-  const findings: string[] = [];
-  const platform = PLATFORM_INSTRUMENT[task.targetFamily] ?? PLATFORM_INSTRUMENT.keys;
-  const isDrums = task.targetFamily === "drums";
-  const inWindow = notes.filter((n) => n.start < task.window.end - 1e-6 && n.start + n.duration > task.window.start + 1e-6);
+export type PlayabilityInput = {
+  /** GM program of the part (128 = drums). */
+  targetInst: number;
+  /** ARRANGER_REMI family of the part. */
+  targetFamily: string;
+  tempoBpm: number;
+  notes: readonly ConstraintNote[];
+};
 
+export type PlayabilityVerdict = {
+  platform: { instrument: string; family: string; role: string };
+  /** The range the judge held the part to, and where it came from. */
+  range: { min: number; max: number } | null;
+  rangeSource: "gm_table" | "definition" | "none";
+  /** Engine violations, every severity. Range verdicts are removed when the GM table overrode the range. */
+  violations: ConstraintViolation[];
+  /** Notes outside `range` — each is one playability error. */
+  outsideRange: ConstraintNote[];
+  playabilityErrors: number;
+  rangeShare: number | null;
+  registerShare: number | null;
+};
+
+/**
+ * The physical half of the judge, on its own so the calibration can run it
+ * over real human parts and so `judgePart` cannot drift from what was
+ * calibrated. Pure; identical for every provider.
+ */
+export function judgePlayability(input: PlayabilityInput): PlayabilityVerdict {
+  const platform = PLATFORM_INSTRUMENT[input.targetFamily] ?? PLATFORM_INSTRUMENT.keys;
+  const isDrums = input.targetFamily === "drums";
+  const reference = gmReference(input.targetInst);
   const constraint = checkInstrumentConstraints({
     family: platform.family,
     instrument: platform.instrument,
     role: platform.role,
-    tempoBpm: task.tempoBpm,
-    notes: inWindow.map((n) => ({ id: n.id, start: n.start, duration: n.duration, pitch: n.pitch, velocity: n.velocity })),
+    tempoBpm: input.tempoBpm,
+    notes: input.notes.map((n) => ({ id: n.id, start: n.start, duration: n.duration, pitch: n.pitch, velocity: n.velocity })),
+    // The engine knows the platform instrument; the task knows the GM program.
+    // A brass section is not a trumpet and a slap bass is not a bowed bass:
+    // the program's own ceilings bound polyphony and leaps.
+    polyphonyCeiling: reference?.polyphony.ext,
+    leapCeiling: reference?.leap.ext,
   });
-  const gmRange = GM_RANGE[task.targetInst] ?? null;
+  // A drum kit addresses kit pieces, not a pitch range: the 1.0 judge fell
+  // back to the platform kit map (35–81) and flagged GM2 kit pieces.
+  const gmRange = isDrums ? null : GM_RANGE[input.targetInst] ?? null;
   let range: { min: number; max: number } | null = gmRange;
-  if (!range) {
+  let rangeSource: PlayabilityVerdict["rangeSource"] = gmRange ? "gm_table" : "none";
+  if (!range && !isDrums) {
     try {
       range = getInstrumentDefinition(platform.instrument, platform.role).playableRange;
+      rangeSource = "definition";
     } catch {
       range = null;
     }
   }
   // With a GM override the engine's range verdicts are for the wrong
   // instrument; keep its physical rules and take range from the override.
-  const outsideRange = range ? inWindow.filter((n) => n.pitch < range!.min || n.pitch > range!.max).length : 0;
-  const playabilityErrors = gmRange
-    ? constraint.violations.filter((v) => v.severity === "error" && !/range/.test(v.code)).length + outsideRange
-    : constraint.violations.filter((v) => v.severity === "error").length;
-  const rangeShare = range && inWindow.length
-    ? r4(inWindow.filter((n) => n.pitch >= range!.min && n.pitch <= range!.max).length / inWindow.length)
+  const violations = gmRange || isDrums ? constraint.violations.filter((v) => !/range/.test(v.code)) : constraint.violations;
+  const outsideRange = gmRange && range ? input.notes.filter((n) => n.pitch < range!.min || n.pitch > range!.max) : [];
+  const playabilityErrors = violations.filter((v) => v.severity === "error").length + outsideRange.length;
+  const rangeShare = range && input.notes.length
+    ? r4(input.notes.filter((n) => n.pitch >= range!.min && n.pitch <= range!.max).length / input.notes.length)
     : null;
+  const idiomatic = isDrums ? null : IDIOMATIC_RANGE[input.targetInst] ?? null;
+  const registerShare = idiomatic && input.notes.length
+    ? r4(input.notes.filter((n) => n.pitch >= idiomatic.min && n.pitch <= idiomatic.max).length / input.notes.length)
+    : null;
+  return { platform, range, rangeSource, violations, outsideRange, playabilityErrors, rangeShare, registerShare };
+}
+
+/**
+ * Judge one part. `notes` may be empty — that is a real, scored outcome
+ * (zero), not an error.
+ */
+export function judgePart(task: TournamentTask, notes: readonly MusicalNote[]): PartJudgement {
+  const findings: string[] = [];
+  const isDrums = task.targetFamily === "drums";
+  const inWindow = notes.filter((n) => n.start < task.window.end - 1e-6 && n.start + n.duration > task.window.start + 1e-6);
+
+  const { playabilityErrors, rangeShare, registerShare } = judgePlayability({
+    targetInst: task.targetInst,
+    targetFamily: task.targetFamily,
+    tempoBpm: task.tempoBpm,
+    notes: inWindow,
+  });
 
   const chordTone = isDrums ? null : chordToneShare(inWindow, task.chords);
   const barsPlayed = task.bars.filter((b) => inWindow.some((n) => n.start >= b.start - 1e-6 && n.start < b.end - 1e-6)).length;
@@ -280,6 +347,7 @@ export function judgePart(task: TournamentTask, notes: readonly MusicalNote[]): 
     noteCount: inWindow.length,
     playabilityErrors,
     rangeShare,
+    registerShare,
     chordToneShare: chordTone,
     coverage,
     densityLogRatio,
@@ -301,6 +369,10 @@ export function judgePart(task: TournamentTask, notes: readonly MusicalNote[]): 
   if (rangeShare !== null && rangeShare < 1) {
     const p = r2(WEIGHTS.rangePenalty * (1 - rangeShare));
     score -= p; findings.push(`${Math.round((1 - rangeShare) * 100)}% of notes outside the playable range: −${p}`);
+  }
+  if (registerShare !== null && registerShare < 1) {
+    const p = r2(WEIGHTS.registerPenalty * (1 - registerShare));
+    score -= p; findings.push(`${Math.round((1 - registerShare) * 100)}% of notes outside the idiomatic register: −${p}`);
   }
   if (chordTone !== null) {
     const p = r2(clamp((chordTone - WEIGHTS.harmonyCentre) * WEIGHTS.harmonyGain, WEIGHTS.harmonyMin, WEIGHTS.harmonyMax));
