@@ -28,48 +28,67 @@ export const GLOBAL_MODEL_REGISTRY: ModelEntry[] = [
     huggingFace: null,
     paper: "https://arxiv.org/abs/2407.14700",
     releaseDate: "2024-07",
-    revision: null,
-    parameterCount: "unverified (T5-like; CA1 was ~60M)",
-    architecture: "T5-style encoder-decoder",
-    representation: "custom multi-track MIDI event tokens with span masking",
-    contextLength: "unverified",
+    revision: "v2.1.0 (released 2024-10-09; small model files dated 2024-06-28)",
+    parameterCount:
+      "large (default shipped): ~192M (pytorch_model.bin 769,602,209 bytes fp32 ÷ 4); small: ~54M (215,745,913 bytes ÷ 4)",
+    architecture:
+      "T5ForConditionalGeneration. Large: 16 encoder + 16 decoder layers, d_model 576, d_ff 2304, 12 heads, d_kv 48. Small: 10+10, d_model 384, d_ff 1536, 8 heads. Both gated-GELU, relative attention (4096 buckets / max distance 4096), fp32, transformers 4.31.0 — read from each model/config.json.",
+    representation:
+      "'unjoined' event vocabulary, exactly 1944 tokens (reproduced from spm_train_functions.get_user_defined_symbols + UnjoinedTokenizer): ;I:0–257 instrument per track, ;R:1–63 repeated-instrument index, ;N:0–127 note-on, ;d:0–192 duration, ;D:0–127 drum hit, ;w:1–192 wait, ;L:1–192 length, ;B:0–7 BPM level, ;M:0–7 loudness level (ppp–fff, one per measure head), ;<extra_id_0..255> T5 span-mask sentinels for infilling, ;<mono>/;<poly>, and ;<instruction_0..511> — 512 control instructions (onset density horizontal/vertical, pitch-class count, pitch-histogram step/leap, onset irregularity, density diversity, rhythmic conditioning). Grid QUANTIZE=(8,6) → 24 steps per quarter, 8-quarter max note length.",
+    contextLength: "MAX_LEN 1650 tokens per request (constants.py); relative attention to 4096",
     capabilities: [
       "multitrack_arrangement", "track_completion", "infilling",
       "controllable_generation", "instrument_specific",
     ],
     checkpointAvailable: true,
     checkpointNotes:
-      "Pretrained and finetuned models shipped with the REAPER release (v2.1.0). Sizes not yet read.",
+      "v2.1.0 assets: composers.assistant.v.2.1.0.zip (683 MB, includes the large model + Python source), CA.v2.1.0.small.model.optional.download.zip (192 MB: model/config.json, model/pytorch_model.bin, generation_config.json, instructions.txt — no separate licence file inside).",
     codeLicense: {
-      stated: "MIT",
-      source: "https://github.com/m-malandro/composers-assistant-REAPER (repository licence)",
-      confidence: "secondary",
+      stated: "MIT License, Copyright (c) 2023 Martin E. Malandro",
+      source: "repository LICENSE file, read verbatim via the GitHub contents API",
+      confidence: "verified_primary_source",
     },
     weightsLicense: {
-      stated: null,
-      source: null,
-      confidence: "unknown",
+      // No separate licence ships with the model. disclaimer.txt says "See also
+      // the License", i.e. the repository MIT licence, and adds that the author
+      // claims no rights to outputs.
+      stated:
+        "MIT — the repository LICENSE, and a second in-release Scripts/composers_assistant_v2/license.txt (\"MIT LICENSE, Copyright 2023, 2024 (The authors)\") shipped beside the models; disclaimer.txt: \"We claim no rights to the outputs you generate with the models we've distributed.\"",
+      source: "repository LICENSE + in-zip license.txt + disclaimer.txt, all read verbatim; both model zips listed",
+      confidence: "verified_primary_source",
     },
     trainingData: {
-      stated: "public domain and permissively-licensed MIDI files",
-      source: "project README, quoted in the ISMIR 2023 paper and the repository",
-      confidence: "secondary",
-      datasets: ["public-domain and permissively-licensed MIDI (composition not published as a named set)"],
-      // The claim is exactly the right one; it has not yet been read from the
-      // repository's own licence/acknowledgements files.
-      underlyingWorksCleared: "unknown",
+      stated:
+        "\"These models were trained on a set of MIDI files marked as being in the public domain, available under a CC0 license (or otherwise freely available to use without attribution), available under a CC-BY license, or which we had permission from the MIDI file authors to use for training.\" — disclaimer.txt",
+      source: "disclaimer.txt + acknowledgments.html (375 KB source list), both read verbatim",
+      confidence: "verified_primary_source",
+      datasets: [
+        "The Mutopia Project (2,451 links; 237 composer rows) — PD classical compositions, CC-BY/CC0/PD typesetting",
+        "CocoChorales (Yusong Wu, CC-BY 4.0) — synthetic Bach-style chorales, no underlying work",
+        "The Josquin Research Project (josquin.stanford.edu) — Renaissance polyphony, PD",
+        "Named contributors who granted permission (Santtu Pesonen, Augustus Knezevich, Bernd Krueger, François Faucher, Henry Howey, HetzlersFakebook, mfiles.co.uk, lutemusic.org, wussu.com, Alain Naigeon, guitarloot.org.uk, Paul Butler, anonymous)",
+      ],
+      // The dominant share is PD-by-age classical, a synthetic set, and
+      // composer-released CC-BY. Two named residuals are recorded under
+      // knownLimitations rather than hidden in this boolean.
+      underlyingWorksCleared: "yes",
     },
-    statedRestriction: null,
+    statedRestriction:
+      "Author's own residual-risk clause: \"There is a chance (albeit, in our opinion, a very small one) that the models we've distributed may output copyrighted musical information … You use the models at your own risk.\" Not a commercial restriction.",
     roles: ["FOUNDATION_CANDIDATE", "FINE_TUNE_CANDIDATE", "SPECIALIST", "TEACHER_MODEL"],
     expectedRole:
-      "The strongest lead for a shippable foundation: multi-track MIDI infilling with fine-grained controls is our exact task, and it is the only candidate found so far that claims deliberately clean training-data provenance.",
+      "The leading shippable foundation candidate, now on primary-source evidence: multi-track MIDI infilling with fine-grained controls is our exact task, it is a standard HF T5 that runs standalone, and it is the only candidate whose training corpus is dominated by works that are public domain by age.",
     integrationComplexity: "medium",
     knownLimitations: [
-      "Parameter count, context length and checkpoint licence all still unread.",
-      "Built around a REAPER workflow; the model itself needs extracting from that.",
-      "Trained on a permissive-MIDI corpus of unpublished composition — the size and stylistic coverage are unknown.",
+      "Residual 1: 18 of 237 Mutopia composer rows have post-1926 death dates — those rows rest on the composer's/arranger's own CC-BY release, not on PD-by-age.",
+      "Residual 2: HetzlersFakebook (2 links of ~2,500) is a fake-book site; fake books carry jazz-standard lead sheets, some still in copyright. The author states only 'allowable' files were used.",
+      "Corpus is overwhelmingly classical/early music; pop, rock, dance and Hebrew/Mizrahi idioms are essentially absent — a fine-tune on PDMX would not fix that either.",
+      "The tokenizer and MIDI→string encoder (midisong.py 100 KB, encoding_functions.py, unjoined_vocab_tokenizer.py, spm_train_functions.py, preprocessing_functions.py) ship as loose Python in the release, not a package; the adapter must vendor them at the pinned revision.",
+      "Inference path is a plain XML-RPC wrapper around transformers T5ForConditionalGeneration.generate() (top-p 0.85, encoder_no_repeat_ngram_size, up to 9 re-tries at rising temperature) — runs without REAPER, but the request string is built by REAPER-side code that the adapter must reimplement from encode_midisongbymeasure_with_masks().",
+      "Only the 'infill' task is fine-tuned (constants.py: FINETUNE_TASK = 'infill'; 'the plan is to add additional tasks over time').",
+      "Instrument vocabulary is 258 GM-ish programs per track (finer than ARRANGER_REMI's 15 families) but there is no section, phrase, harmony-plan or style-grammar token — the deep context of PartGenerationRequestV2 has no slot to enter except the 512 numeric control instructions.",
     ],
-    auditConfidence: "secondary",
+    auditConfidence: "verified_primary_source",
     liveInferenceProven: false,
   },
   {
