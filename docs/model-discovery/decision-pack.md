@@ -75,6 +75,31 @@ now precedes any pilot.**
 Runner verdict: `do_not_promote` for both CA2 arms — better mean, three times
 the playability errors. Wins bass/keys/organ/reed; loses strings and brass.
 
+**Under judge 1.1 (PR-73, `docs/evidence/model-tournament-live.rescored-judge-1.1.json`).**
+The same 180 parts re-judged under the calibrated judge — $0, nothing
+regenerated; tasks rebuilt exactly 12/12, entries recovered 180/180 (0
+refused), blind sheet identical token for token. The 1.0 table above is kept
+because the change *is* the finding.
+
+| arm | mean 1.0 → 1.1 | play err/entry 1.0 → 1.1 | wins vs REFERENCE 1.0 → 1.1 | verdict 1.0 → 1.1 |
+| --- | --- | --- | --- | --- |
+| HUMAN_ORIGIN_REFERENCE | 90.4 → **96.4** | 0.50 → **0.00** | 92 % → 100 % | — |
+| REFERENCE_PART_COMPOSER | 63.0 → 62.7 | 0.08 → 0.08 | — | — |
+| CONTEXT_AWARE_ARRANGER | 64.6 → 64.6 | 0.00 → 0.00 | 25 % → 25 % | — |
+| COMPOSERS_ASSISTANT_2 raw | 73.0 → **76.4** | 0.53 → **0.00** | 69 % → **72 %** | do_not_promote → **run_blind_evaluation** |
+| COMPOSERS_ASSISTANT_2+CTX | 73.5 → **76.5** | 0.25 → **0.00** | 72 % → **75 %** | do_not_promote → **run_blind_evaluation** |
+
+Runner verdict under 1.1: **`run_blind_evaluation` for both CA2 arms** —
+out-scores the reference on 72–75 % of cells with no more playability errors.
+The 1.0 verdict rested on errors the calibration showed to be the judge's:
+brass alone moved the human part 65.1 → 95.1 and CA2 raw 51.2 → 69.0.
+`judgeSuspect` 7 → 4 cells of 36. Nine CA2 entries (5 %) lost overlapping
+same-pitch notes in MIDI recovery; on the 28 cells recovered exactly the
+picture is the same (CA2 70.6 → 75.7, CA2+CTX 69.8 → 73.7, errors → 0.00).
+The proxy under 1.1 agrees with the owner's blind pick on **26 of 50** rated
+pairs (52 %; 27 of 50 under 1.0) — a fact at n = 50, one rater, not a verdict.
+Details: `decision-report.md` §2d.
+
 ## 3. Global / non-classical tournament
 
 **MEASURED.** `docs/evidence/model-tournament-global-live.json` (PR-60).
@@ -119,6 +144,38 @@ metal 46 · country 36 · latin 29 · musical theatre 18 · blues 7 · reggae 6;
 **8,290 multitrack works carry no genre label at all**. Nine candidate extra
 sources are listed with licence class; Lakh, MetaMIDI, Slakh, Wikifonia and
 out-of-subset MuseScore are **REFUSED** on rights. Nothing was downloaded.
+
+**Under judge 1.1 (PR-73, `docs/evidence/model-tournament-global-live.rescored-judge-1.1.json`).**
+The same 750 parts re-judged under the calibrated judge — $0, nothing
+regenerated; tasks rebuilt exactly 50/50, entries recovered 750/750 (0
+refused; 30 empty platform outputs judged as empty), blind sheet identical.
+The 1.0 table above is kept because the change *is* the finding.
+
+| arm | mean 1.0 → 1.1 | play err/entry 1.0 → 1.1 | wins vs REFERENCE 1.0 → 1.1 | verdict 1.0 → 1.1 |
+| --- | --- | --- | --- | --- |
+| HUMAN_ORIGIN_REFERENCE | 94.0 → 94.2 | 0.12 → **0.04** | 94 % → 96 % | — |
+| REFERENCE_PART_COMPOSER | 59.3 → 58.0 | 0.28 → 0.34 | — | — |
+| CONTEXT_AWARE_ARRANGER | 56.0 → 55.9 | 1.12 → 0.56 | 8 % → 10 % | — |
+| COMPOSERS_ASSISTANT_2 raw | 71.9 → **77.8** | 3.39 → **0.17** | 70 % → **81 %** | do_not_promote → **run_blind_evaluation** |
+| COMPOSERS_ASSISTANT_2+CTX | 67.4 → **76.1** | 2.84 → **0.33** | 63 % → **77 %** | do_not_promote → **run_blind_evaluation** |
+
+Runner verdict under 1.1: **`run_blind_evaluation` for both CA2 arms**. What
+the calibration changed in the three findings above: (1) CA2 now out-scores
+the reference in **16 of 17** genre families (pop and hip-hop change hands;
+jazz stays with the reference); (2) unchanged — the platform arms still emit
+zero notes on 5 of 50 tasks; (3) the +CTX collapses were mostly the old judge
+(reed 33.0 → 68.6, musical theatre 16.6 → 44.5, wind band 42.1 → 62.4), but
+**+CTX now costs 1.7 mean points and 4 win-points against raw** (76.1 vs 77.8;
+77 % vs 81 %), so "hybrid per family" stands and "+CTX by default" does not.
+`judgeSuspect` **19 → 20 cells** of 150 — those did not go away. 43 entries
+(5.7 %, 37 of them CA2 arms) lost overlapping same-pitch notes in MIDI
+recovery and one brass task lost a sub-millisecond onset to the tick grid
+(−16 on six platform entries, a recovery artefact, not the judge); on the
+102 cells recovered exactly: CA2 72.4 → 76.2, CA2+CTX 64.5 → 75.5, errors
+1.35 → 0.20 and 3.23 → 0.18, wins 74 % → 81 % and 64 % → 78 %. One hip-hop
+task under GM 53 (voice) now penalises the *human* part (96 → 65) — the 1.1
+choir range's known residual. 24 of 300 CA2 entries still carry a 1.1
+playability error (75 in all). Details: `decision-report.md` §2d.
 
 ## 4. Judge calibration
 

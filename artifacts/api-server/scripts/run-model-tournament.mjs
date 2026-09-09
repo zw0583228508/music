@@ -220,32 +220,11 @@ const report = await lib.runModelTournament({
 });
 
 // --- 5. MIDI for the record and for the raters ------------------------------
+// The entry-MIDI contract (context tracks, then the candidate as the last
+// track, 480 ticks per quarter at the task tempo) lives in tournamentRescore.ts
+// so the re-scorer reads exactly what this writes.
 mkdirSync(midiDir, { recursive: true });
-const TPQ = 480;
-const midiFor = (task, candidateNotes) => {
-  const ticks = (seconds) => Math.round(seconds * (task.tempoBpm / 60) * TPQ);
-  const notes = [];
-  task.contextTracks.forEach((ctx, i) => {
-    const channel = ctx.isPercussion ? 9 : (i % 15 >= 9 ? (i % 15) + 1 : i % 15);
-    for (const n of ctx.notes) {
-      if (n.start >= task.window.end || n.start + n.duration <= task.window.start) continue;
-      notes.push({ track: i, channel, program: ctx.isPercussion ? 0 : ctx.program, isPercussion: ctx.isPercussion, pitch: n.pitch, velocity: n.velocity,
-        startTick: ticks(Math.max(0, n.start - task.window.start)), endTick: ticks(Math.min(task.window.end, n.start + n.duration) - task.window.start) });
-    }
-  });
-  const drums = task.targetInst === lib.DRUMS_PROGRAM;
-  const candTrack = task.contextTracks.length;
-  for (const n of candidateNotes) {
-    if (n.start >= task.window.end || n.start + n.duration <= task.window.start) continue;
-    notes.push({ track: candTrack, channel: drums ? 9 : 15, program: drums ? 0 : task.targetInst, isPercussion: drums, pitch: n.pitch, velocity: n.velocity,
-      startTick: ticks(Math.max(0, n.start - task.window.start)), endTick: ticks(Math.min(task.window.end, n.start + n.duration) - task.window.start) });
-  }
-  return lib.writeMidiFile({
-    ticksPerQuarter: TPQ, notes,
-    tempos: [{ tick: 0, usPerQuarter: Math.round(60e6 / task.tempoBpm), bpm: task.tempoBpm }],
-    timeSignatures: [{ tick: 0, numerator: task.meter.numerator, denominator: task.meter.denominator }],
-  });
-};
+const midiFor = (task, candidateNotes) => lib.writeEntryMidi(task, candidateNotes);
 const taskById = new Map(tasks.map((t) => [t.id, t]));
 const entryByKey = new Map(report.entries.map((e) => [e.key, e]));
 const entryMidi = {};
@@ -289,6 +268,11 @@ const evidence = {
 };
 mkdirSync(dirname(outPath), { recursive: true });
 writeFileSync(outPath, `${JSON.stringify(evidence, null, 2)}\n`);
+// Every entry's notes, exactly as judged, beside the report: a later judge
+// version re-scores this run from here and never has to recover notes from
+// the MIDIs (PR-73).
+const sidecarPath = outPath.replace(/\.json$/, ".notes.json");
+writeFileSync(sidecarPath, `${JSON.stringify(lib.buildNotesSidecar(report, startedAt), null, 2)}\n`);
 
 console.log("\n=== scorecards ===");
 for (const s of report.scorecards) {
@@ -299,3 +283,4 @@ for (const r of report.recommendations) console.log(`${r.providerId}: ${r.action
 console.log(`\njudgeSuspect cells: ${new Set(report.judgeSuspect.map((s) => `${s.taskId}:${s.seed}`)).size} of ${tasks.length * seeds.length}`);
 console.log(`blind pairs: ${report.blindSheet.pairs.length} → ${midiDir}`);
 console.log(`report → ${outPath}`);
+console.log(`notes sidecar → ${sidecarPath}`);

@@ -243,6 +243,14 @@ const suites = {
         "dev-auth.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Re-scoring a judged tournament under the current judge: the runner's
+      // entry-MIDI contract, strict note recovery, the notes sidecar, the
+      // deltas, and the proxy-vs-human agreement count (PR-73).
+      [
+        "src/lib/tournamentRescore.test.ts",
+        "tournament-rescore.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [

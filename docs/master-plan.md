@@ -3549,6 +3549,77 @@ any of it.
   independent raters. All 12 source tasks are classical; the 840 non-classical
   pairs are unrated. No secondary rating was given. Approval for training is
   **still not requested**, and this is why.
+- **PR-73** ✅ — `tournament-rescore-judge-1-1` (Wave Q, Model Discovery —
+  both live tournaments re-scored under the calibrated judge, $0, no
+  inference): `tournamentRescore.ts` + `scripts/rescore-tournament.mjs`
+  rebuild every task **exactly** from the report's own record and the PDMX
+  file (62/62; the task id is a hash of the spec, so a match proves it),
+  recover every entry's notes from the token-named entry MIDI under the
+  runner's own track contract — now single-sourced as `writeEntryMidi()` and
+  used by the runner — **refusing, not guessing**, when a file's layout does
+  not match (0 refused of 930), re-judge with the frozen `partJudge` 1.1 and
+  recompute scorecards, `judgeSuspect`, recommendations and the blind sheet
+  with `modelTournament.ts`'s own functions. Evidence:
+  `docs/evidence/model-tournament-live.rescored-judge-1.1.json` and
+  `model-tournament-global-live.rescored-judge-1.1.json` (each carries
+  `judgeVersion`, the source `runId`, the per-arm 1.0 → 1.1 delta table,
+  per-family and per-genre × arm deltas, the entries that moved most with the
+  findings that vanished, the recovery statistics, and — classical — the
+  proxy-vs-human agreement on the owner's session). The report shape now
+  carries `judgeVersion` and the runner persists a token-keyed notes sidecar
+  (`<report>.notes.json`), so no future re-score recovers anything.
+
+  **Recovery, verified, not trusted.** Judge-invariant metrics come back
+  identical for 171/180 and 654/720 entries; the human arm round-trips to the
+  identical score 36/36 and 147/150; both blind sheets are identical token
+  for token. What could not be recovered is named: **9 classical and 43 global
+  entries lost overlapping same-pitch notes** (a note-on while the same pitch
+  still sounds is ambiguous in a MIDI stream) and **one brass task lost a
+  0.05 ms onset to the tick grid** (−16 on six platform entries; the
+  deterministic reference regenerates to the stored score, so it is the
+  grid). Timing drift is worth 0.00 points to the CA2 arms and −0.36 to the
+  platform arms; every table is therefore also given on the cells recovered
+  exactly (28/36, 102/150), with the same picture.
+
+  **The finding.** Classical: HUMAN 90.4 → 96.4, CA2 raw 73.0 → 76.4, CA2+CTX
+  73.5 → 76.5, playability errors 0.50/0.53/0.25 → **0.00**, wins vs
+  reference 69/72 % → 72/75 %; `judgeSuspect` 7 → 4 cells. Global: CA2 raw
+  71.9 → 77.8 (errors 3.39 → 0.17, wins 70 → 81 %), CA2+CTX 67.4 → 76.1 (2.84
+  → 0.33, 63 → 77 %), platform arms ±1; `judgeSuspect` 19 → 20 cells — those
+  did not go away. **The runner's verdict is now `run_blind_evaluation` for
+  both CA2 arms in both tournaments**, because both conditions of its rule
+  hold: it out-scores the reference on 72–81 % of cells *and* no longer makes
+  more playability errors than it. The 1.0 `do_not_promote` was the judge's
+  false positives. +CTX is no longer a proxy win (level on classical, −1.7 on
+  global); "hybrid per family" stands. CA2 beats the reference in 16 of 17
+  genre families (was 14). Written into `decision-report.md` §2d and
+  `decision-pack.md` §2/§3 as appended "under judge 1.1" tables — the 1.0
+  tables stay, because the change is the finding.
+
+  **Proxy vs the human, as a fact.** On the owner's 50 rated pairs (the
+  database holds 50 primary votes; PR-71 counted 49 at its snapshot) the
+  proxy under 1.1 picks the side the owner picked on **26 of 50 (52 %, 1
+  tie)**; under 1.0 it was 27 of 50. Per comparison 4–6 of 10. One rater,
+  n = 50: agreement at coin-flip level, not a verdict on the proxy.
+
+  Tests: `tournamentRescore.test.ts` (10: the MIDI contract round-trips note
+  for note and judgement for judgement, clipping included; every layout
+  refusal; exact task rebuild; a same-judge re-score reproduces the runner's
+  report byte for byte; deltas, verdict change and movers under a pretend
+  older judge; sidecar preferred to MIDI; refusals listed, not scored; the
+  agreement count). `modelTournament.test.ts` still green with the additive
+  `judgeVersion` and the extracted `judgeSuspectFor`. `pnpm run typecheck`
+  green.
+
+  **Honest limits.** `run_blind_evaluation` is the runner's stronger of two
+  allowed answers and it points at a room that has already answered once
+  with a coin flip; nothing is promoted. 52 lossy entries and one grid
+  artefact are in the all-cells numbers, flagged per entry; the exact-cells
+  tables exist for that reason. The GM 53 hip-hop task shows judge 1.1's own
+  residual (a human part at 96 → 65). Judge 1.1 is frozen here, not
+  re-validated by this PR. Gate C is unpassed and the human-vs-reference
+  5–5 is untouched by any judge; approval for training is not requested.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

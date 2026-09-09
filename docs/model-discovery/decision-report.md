@@ -231,6 +231,186 @@ operator-licensed MIDI packs (private benchmark only, never a published evidence
 directory). **The recommendation is to fix the platform's silent composers and to
 fine-tune on what PDMX already has before acquiring anything new.**
 
+## 2d. Both tournaments under judge 1.1 — from `docs/evidence/model-tournament-live.rescored-judge-1.1.json` and `model-tournament-global-live.rescored-judge-1.1.json` (2026-09-09, PR-73)
+
+§2 and §2b were judged by `partJudge` **1.0**, whose playability rules PR-61
+measured at **26.6 % false positives on real human parts**. Both tournaments'
+`do_not_promote` verdicts rested on exactly those rules ("makes more
+playability errors"). This section re-judges the **same 930 parts** under
+judge **1.1** — $0, no inference, nothing regenerated — and reports what moved.
+The judge was frozen for the measurement (`partJudge.ts`,
+`musicalConstraints.ts`, `instrumentReference.ts` untouched) and nothing was
+tuned; the verdict is whatever the runner's own `recommend()` says.
+
+**Method** (`tournamentRescore.ts`, `scripts/rescore-tournament.mjs`). Every
+task is rebuilt from the report's own record (work, target program, bars) and
+the PDMX file, and accepted only when the rebuilt id (a hash of the spec),
+tempo, metre, human note count and chord coverage all equal the record's:
+**62 of 62**. Every entry's notes are recovered from the token-named MIDI the
+runner wrote for the raters, under the runner's own track contract (context
+tracks first, the candidate last, 480 ticks per quarter at the task tempo) —
+a file whose layout does not match is refused, never guessed at (**0 refused**);
+the human arm's notes are the rebuilt task's own `humanTarget`, which is what
+that provider returns, with its MIDI read back only as a check. Scorecards,
+`judgeSuspect`, recommendations and the blind sheet are recomputed with the
+tournament's own functions. Recovery is checked three ways: the
+judge-invariant metrics (note count, coverage, chord-tone share, density,
+repetition, interval shape, clashes) must come back identical — **171/180**
+classical, **654/720** global; the human round trip re-judges to the identical
+score in **36/36** and **147/150**; and the rebuilt blind sheet is the original
+**token for token** in both runs.
+
+**What recovery could not do, stated before the numbers.** A note that starts
+while the same pitch is still sounding on the same track is ambiguous in a
+MIDI note-on/off stream, and the parser keeps the later one: **9 classical
+entries** (CA2 raw 3, CA2+CTX 6) and **43 global entries** (CA2 raw 8, CA2+CTX
+29, and both platform arms on one drum task) came back with fewer notes than
+were judged — drum kits and dense keyboard parts, mostly. They are scored on
+what the file holds and flagged; the part of their delta that is recovery
+rather than judge cannot be split. Separately, the runner's tick grid cannot
+hold a sub-millisecond offset: on one global brass task the reference's last
+note sat 0.05 ms *before* a bar line and judge 1.0 counted it under the
+previous bar's chord; on the grid it sits on the line and the chord term
+vanishes (−16 on six platform entries; regenerating the deterministic
+reference reproduces the stored 76 exactly, so this is the grid, not the
+judge). Net effect of timing drift on the arm means: **0.00 for both CA2
+arms**, −0.36 for the two platform arms, global run only. Every table below is
+therefore read twice: on all cells, and on the cells where every arm's part
+came back exactly (**28 of 36** classical, **102 of 150** global) — the judge's
+effect alone. From PR-73 on, the runner writes a notes sidecar
+(`<report>.notes.json`, token-keyed) and stamps `judgeVersion` on the report,
+so no future re-score recovers anything.
+
+### Classical — 12 tasks × 3 seeds, run `4fac41bee93e`
+
+| Arm | mean 1.0 → 1.1 | playability err/entry | wins vs REFERENCE | wins vs HUMAN | runner's verdict 1.0 → 1.1 |
+| --- | --- | --- | --- | --- | --- |
+| HUMAN_ORIGIN_REFERENCE | 90.4 → **96.4** (+6.0) | 0.50 → **0.00** | 92 % → 100 % | — | — |
+| REFERENCE_PART_COMPOSER | 63.0 → 62.7 (−0.2) | 0.08 → 0.08 | — | 8 % → 0 % | — |
+| CONTEXT_AWARE_ARRANGER | 64.6 → 64.6 (0.0) | 0.00 → 0.00 | 25 % → 25 % | 8 % → 0 % | — |
+| COMPOSERS_ASSISTANT_2 | 73.0 → **76.4** (+3.4) | 0.53 → **0.00** | 69 % → **72 %** | 17 % → 11 % | do_not_promote → **run_blind_evaluation** |
+| COMPOSERS_ASSISTANT_2+CTX | 73.5 → **76.5** (+3.0) | 0.25 → **0.00** | 72 % → **75 %** | 19 % → 11 % | do_not_promote → **run_blind_evaluation** |
+
+Exact cells only (28 of 36): HUMAN 88.7 → 96.4 · REFERENCE 60.9 → 60.6 ·
+CONTEXT_AWARE 63.4 → 63.4 · CA2 70.6 → 75.7 (errors 0.68 → 0.00, wins vs
+reference 68 % → 71 %) · CA2+CTX 69.8 → 73.7 (0.32 → 0.00, 68 % → 71 %). The
+same picture.
+
+Per family (mean 1.0 → 1.1; playability errors where they changed):
+
+| family | HUMAN | REFERENCE | CONTEXT_AWARE | CA2 raw | CA2+CTX |
+| --- | --- | --- | --- | --- | --- |
+| bass | 88.0 → 88.0 | 45.2 → 45.2 | 45.2 → 45.2 | **79.8 → 79.8** | **79.8 → 79.8** |
+| keys | 100.0 → 100.0 | 66.4 → 66.4 | 64.3 → 64.3 | **76.3 → 76.3** | 76.1 → 76.1 |
+| organ | 100.0 → 100.0 | 65.6 → 65.6 | 69.2 → 69.2 | 85.0 → 82.0 | **88.9 → 88.7** |
+| reed | 94.0 → 99.9 (0.5 → 0 err) | 66.3 → 65.0 (0.5 err stays) | 76.0 → 76.0 | **87.6 → 93.6** (0.5 → 0) | 87.0 → 93.0 (0.5 → 0) |
+| strings | 95.2 → 95.2 | **67.4 → 67.4** | 66.0 → 66.0 | 58.1 → 58.1 | 56.2 → 56.5 |
+| brass | 65.1 → **95.1** (2.5 → 0 err) | 66.8 → 66.8 | 66.8 → 66.8 | 51.2 → **69.0** (2.67 → 0) | 53.0 → 65.2 (1.0 → 0) |
+
+Brass is the family the old judge misread most: the human part gained 30
+points, CA2 raw 18. Under 1.1 CA2 raw edges the reference on brass (69.0 vs
+66.8) and CA2+CTX still loses it; strings is still the reference's. Organ is
+the one family where CA2 fell (85.0 → 82.0): no errors either way, the new
+idiomatic-register term. The reference's reed error (0.5/entry) is the
+platform's own and survives the calibration — the only playability error
+left on the classical set. `judgeSuspect`: **7 → 4 cells** of 36 (19 → 8
+entries): one bass task (GM 34) on all three seeds, where both CA2 arms score
+84.8 / 80.5 against the human's 79.0, and one strings task on one seed (93.3 vs
+90.5). The nine-note tuba part that led the 1.0 list is gone — its human line
+drew five errors from 1.0 and none from 1.1 (30.3 → 90.3 on every seed, the
+largest movers in the run), and the CA2 raw entry on the same task went
+0.0 → 58.5 (12 phantom errors).
+
+### Global / non-classical — 50 tasks × 3 seeds, 17 genre families, run `2a836f5b6ac2`
+
+| Arm | mean 1.0 → 1.1 | playability err/entry | wins vs REFERENCE | wins vs HUMAN | runner's verdict 1.0 → 1.1 |
+| --- | --- | --- | --- | --- | --- |
+| HUMAN_ORIGIN_REFERENCE | 94.0 → 94.2 (+0.2) | 0.12 → **0.04** | 94 % → 96 % | — | — |
+| REFERENCE_PART_COMPOSER | 59.3 → 58.0 (−1.3) | 0.28 → 0.34 | — | 4 % → 2 % | — |
+| CONTEXT_AWARE_ARRANGER | 56.0 → 55.9 (−0.1) | 1.12 → 0.56 | 8 % → 10 % | 4 % → 2 % | — |
+| COMPOSERS_ASSISTANT_2 | 71.9 → **77.8** (+5.9) | 3.39 → **0.17** | 70 % → **81 %** | 7 % → 8 % | do_not_promote → **run_blind_evaluation** |
+| COMPOSERS_ASSISTANT_2+CTX | 67.4 → **76.1** (+8.7) | 2.84 → **0.33** | 63 % → **77 %** | 9 % → 11 % | do_not_promote → **run_blind_evaluation** |
+
+Exact cells only (102 of 150): HUMAN 93.3 → 94.3 · REFERENCE 55.9 → 55.9
+(0.41 → 0.44 err) · CONTEXT_AWARE 52.3 → 53.7 (1.32 → 0.72) · CA2 72.4 → 76.2
+(1.35 → 0.20, wins vs reference 74 % → 81 %) · CA2+CTX 64.5 → 75.5 (3.23 →
+0.18, 64 % → 78 %). The lossy and grid-affected cells do not carry the result.
+
+Per family (mean 1.0 → 1.1; errors in brackets where they changed):
+
+| family | n | HUMAN | REFERENCE | CONTEXT_AWARE | CA2 raw | CA2+CTX |
+| --- | --- | --- | --- | --- | --- | --- |
+| drums | 5 | 93.3 → 93.3 | 77.1 → 74.2 | 77.1 → 74.2 | 68.9 → 74.9 (14.3 → 0.2) | **77.2 → 77.7** |
+| bass | 5 | 98.8 → 98.8 | 54.8 → 54.8 | 57.1 → 57.1 | 62.2 → 73.7 (5.3 → 1.1) | **74.1 → 77.3** |
+| guitar | 6 | 97.1 → 97.1 | 42.1 → 42.1 | 19.6 → 29.6 (6.7 → 1.5) | 59.5 → 68.8 (6.3 → 0) | **59.0 → 71.3** (9.7 → 0.6) |
+| keys | 6 | 98.5 → 98.5 | 70.3 → 70.3 | 63.0 → 63.0 | **75.6 → 75.6** | 72.1 → 73.7 |
+| organ | 5 | 92.6 → 92.6 | 71.2 → 71.2 | 69.3 → 68.8 | 80.5 → 80.5 | **86.4 → 85.6** |
+| strings | 4 | 98.4 → 98.4 | 50.5 → 50.5 (2.5 → 2.75) | 53.8 → 53.8 | **74.6 → 79.5** | 70.3 → 70.4 |
+| brass | 5 | 89.3 → 89.3 | 52.2 → 49.0 | 52.2 → 49.0 | **78.5 → 88.4** (4.3 → 0) | 63.9 → 79.5 (2.1 → 0.3) |
+| reed | 6 | 89.2 → 93.9 (0.8 → 0) | 68.0 → 68.0 | 68.0 → 68.0 | **69.3 → 77.5** | 33.0 → 68.6 (10.1 → 0.8) |
+| pipe | 5 | 89.4 → 91.8 | 39.7 → 39.7 (0.8 stays) | 39.7 → 39.7 | **82.0 → 85.0** | 71.5 → 85.0 (1.2 → 0) |
+| ensemble | 2 | 94.4 → 79.0 (0 → 1.0) | 74.7 → 57.7 (0 → 1.0) | 74.7 → 58.6 | **61.7 → 71.6** | 75.9 → 64.4 (0 → 1.2) |
+| synth | 1 | 91.2 → 91.2 | 54.7 → 54.7 | 54.7 → 54.7 | 87.3 → 87.3 | **88.5 → 88.2** |
+
+Per genre, CA2 (either arm) out-scores the reference in **16 of 17 families**
+under 1.1, from 14 of 17: pop (76.2 vs 79.6) and hip-hop (64.0 vs 82.7) change
+hands to CA2, jazz stays with the reference (82.8 vs 74.1 / 69.4). The +CTX
+collapses §2b named — reed 33.0, musical theatre 16.6, wind band 42.1 — were
+mostly the old judge: reed 33.0 → 68.6, musical theatre 16.6 → 44.5, wind band
+42.1 → 62.4. `judgeSuspect`: **19 → 20 cells** of 150 (35 → 35 entries, CA2+CTX
+17, CA2 raw 12, the platform arms 3 each) over ten tasks — drums/pop,
+drums/reggae, brass/country, brass/musical theatre, pipe/pop, reed/hip-hop,
+strings/film, ensemble/hip-hop, synth/world, organ/worship. Those cells did not
+go away with the calibration, and the recommendation text carries the
+suspect share as before.
+
+**Not everything went up, and the exceptions are the judge's residual.**
+One hip-hop task written under GM 53 (voice "oohs", 180 BPM) now draws 2
+errors and a 17 % out-of-range finding **on the human part** (96 → 65 on every
+seed) and sinks every arm on it: the 1.1 choir range is narrower than the 1.0
+family fallback, which PR-61 named as a ≤ 2.7 % warning-class residual, and
+this task is it. The reference's strings errors rose 2.5 → 2.75 per entry and
+its pipe errors (0.8) and keys errors stayed: those are the platform's own
+parts, judged stricter, not looser. The entries that rose most are all
+phantom-error reversals: an alto-sax (GM 65) CA2+CTX part at 26 → 100 on
+every seed — 1.0 put 89 % of its notes outside the *playable* range (41
+errors, −86.67); 1.1 keeps them inside the extended range and outside the
+*idiomatic register* (−8.89), and the chord-tone bonus then clamps the score
+at 100 — a bass part 10.9 → 79.3 (35 errors), a brass part 0 → 66.7 (33
+errors). 24 of the 300 CA2 entries still carry a
+1.1 playability error (75 errors in all, reed 19, bass 18, keys 12, guitar 10,
+ensemble 9) against 0 of 72 on the classical set.
+
+### Reading, honestly
+
+- **The runner's verdict is now `run_blind_evaluation` for both CA2 arms in
+  both tournaments**, because both conditions of the rule hold: CA2 out-scores
+  the reference on 72–81 % of cells *and* no longer makes more playability
+  errors than it (0.00–0.33 vs 0.08–0.34). The 1.0 `do_not_promote` verdicts
+  were the judge's false positives, as PR-61 predicted and this measures.
+  Nothing here promotes anything: `run_blind_evaluation` is the runner's
+  stronger of two allowed answers, and it points at the Listening Room.
+- **It points at a room that has already answered once.** The proxy's pick
+  under judge 1.1 agrees with the owner's blind pick on **26 of 50** rated
+  pairs (52 %; 1 tie, 23 disagreements) — under judge 1.0 it was 27 of 50
+  (54 %). By comparison: CA2+CTX vs REFERENCE 5/10, CA2 raw vs CA2+CTX 4/10
+  (1 tie), CONTEXT_AWARE vs CA2+CTX 6/10, HUMAN vs CA2+CTX 6/10, HUMAN vs
+  REFERENCE 5/10. One rater, n = 50, so this is a fact about agreement at
+  this size and not a verdict on the proxy; but nothing in the calibration
+  moved it, because the calibration changed the *level* of scores far more
+  than the *order* within a pair. (The database holds 50 primary votes; PR-71
+  reported 49 at its snapshot — the fiftieth was cast at 18:09:39 Z.)
+- **+CTX is no longer a win on the proxy.** On the classical set the two CA2
+  arms are now level (76.5 vs 76.4); on the global set +CTX costs 1.7 points
+  (76.1 vs 77.8) and wins fewer cells (77 % vs 81 %). Its 1.0 advantage on the
+  classical set was mostly the removal of errors that were not errors. It
+  still wins drums, bass, guitar and organ by family; raw wins brass, reed,
+  strings and ensemble. §2b's "choose the hybrid per family" stands; "+CTX by
+  default" does not.
+- **What this does not change.** The Listening Room decides and Gate C is
+  unpassed. The human-vs-reference 5–5 of PR-71 — the experiment that cannot
+  yet tell a composer from a rule engine — is untouched by any judge. Approval
+  for training is not requested by this section.
 ## 3. The options, honestly priced
 
 GPU prices used: Modal on-demand, 2026-09 list — A10G ≈ $1.10/h, L40S ≈ $1.95/h,
