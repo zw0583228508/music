@@ -1,0 +1,164 @@
+{
+  "title": "Benchmark playabilityErrors drift (0 -> 4.33) — root cause and re-grounding",
+  "systemUnderTest": "REFERENCE_PIPELINE",
+  "corpusSize": 9,
+  "rootCause": "Post-performance constraint re-check (PR-W1) counted excess_polyphony on the benchmark's two MIDI cases: the Performance Engine lengthens bowed strings (x1.08) so the tails of a four-voice chord still ring at the next chord's onset beyond the 30 ms legato tolerance; the constraint engine then sees 5-6 notes against the strings ceiling of 4. Composition errors were 0 on every candidate; every error was introduced by performance. The engine only clamped monophonic instruments (ceiling 1).",
+  "fix": "performanceEngine.clampPolyphony: the declared polyphony ceiling survives humanisation for every instrument — at each onset, held notes beyond the ceiling are released to end 1 ms inside the legato tolerance (earliest-started first), the same definition of 'sounding together' the constraint engine and the provider contract validator use.",
+  "aggregateBefore": {
+    "criticScore": 74.56,
+    "audioScore": null,
+    "playabilityErrors": 4.33,
+    "harmonyScore": 58.33,
+    "sectionConsistency": 100,
+    "candidateDiversity": 50.4,
+    "renderFailures": null,
+    "noteCount": 576.56,
+    "latencyMs": 130.11
+  },
+  "aggregateAfter": {
+    "criticScore": 74.56,
+    "audioScore": null,
+    "playabilityErrors": 0,
+    "harmonyScore": 58.33,
+    "sectionConsistency": 100,
+    "candidateDiversity": 50.4,
+    "renderFailures": null,
+    "noteCount": 576.56,
+    "latencyMs": 127.11
+  },
+  "casesBefore": {
+    "pop-full": {
+      "inputType": "full_song",
+      "playabilityErrors": 0,
+      "criticScore": 77,
+      "noteCount": 636,
+      "selectedStrategy": "conservative"
+    },
+    "ballad-piano-vocal": {
+      "inputType": "piano_vocal",
+      "playabilityErrors": 0,
+      "criticScore": 76,
+      "noteCount": 429,
+      "selectedStrategy": "conservative"
+    },
+    "rock-full": {
+      "inputType": "full_song",
+      "playabilityErrors": 0,
+      "criticScore": 76,
+      "noteCount": 821,
+      "selectedStrategy": "conservative"
+    },
+    "dance-full": {
+      "inputType": "full_song",
+      "playabilityErrors": 0,
+      "criticScore": 75,
+      "noteCount": 915,
+      "selectedStrategy": "conservative"
+    },
+    "acoustic-demo": {
+      "inputType": "rough_demo",
+      "playabilityErrors": 0,
+      "criticScore": 74,
+      "noteCount": 489,
+      "selectedStrategy": "conservative"
+    },
+    "orchestral-midi": {
+      "inputType": "midi",
+      "playabilityErrors": 26,
+      "criticScore": 71,
+      "noteCount": 281,
+      "selectedStrategy": "sparse"
+    },
+    "ethnic-vocal": {
+      "inputType": "vocal_only",
+      "playabilityErrors": 0,
+      "criticScore": 72,
+      "noteCount": 413,
+      "selectedStrategy": "conservative"
+    },
+    "jazz-full": {
+      "inputType": "full_song",
+      "playabilityErrors": 0,
+      "criticScore": 77,
+      "noteCount": 930,
+      "selectedStrategy": "conservative"
+    },
+    "cinematic-midi": {
+      "inputType": "midi",
+      "playabilityErrors": 13,
+      "criticScore": 73,
+      "noteCount": 275,
+      "selectedStrategy": "sparse"
+    }
+  },
+  "casesAfter": {
+    "pop-full": {
+      "inputType": "full_song",
+      "playabilityErrors": 0,
+      "criticScore": 77,
+      "noteCount": 636,
+      "selectedStrategy": "conservative"
+    },
+    "ballad-piano-vocal": {
+      "inputType": "piano_vocal",
+      "playabilityErrors": 0,
+      "criticScore": 76,
+      "noteCount": 429,
+      "selectedStrategy": "conservative"
+    },
+    "rock-full": {
+      "inputType": "full_song",
+      "playabilityErrors": 0,
+      "criticScore": 76,
+      "noteCount": 821,
+      "selectedStrategy": "conservative"
+    },
+    "dance-full": {
+      "inputType": "full_song",
+      "playabilityErrors": 0,
+      "criticScore": 75,
+      "noteCount": 915,
+      "selectedStrategy": "conservative"
+    },
+    "acoustic-demo": {
+      "inputType": "rough_demo",
+      "playabilityErrors": 0,
+      "criticScore": 74,
+      "noteCount": 489,
+      "selectedStrategy": "conservative"
+    },
+    "orchestral-midi": {
+      "inputType": "midi",
+      "playabilityErrors": 0,
+      "criticScore": 71,
+      "noteCount": 281,
+      "selectedStrategy": "sparse"
+    },
+    "ethnic-vocal": {
+      "inputType": "vocal_only",
+      "playabilityErrors": 0,
+      "criticScore": 72,
+      "noteCount": 413,
+      "selectedStrategy": "conservative"
+    },
+    "jazz-full": {
+      "inputType": "full_song",
+      "playabilityErrors": 0,
+      "criticScore": 77,
+      "noteCount": 930,
+      "selectedStrategy": "conservative"
+    },
+    "cinematic-midi": {
+      "inputType": "midi",
+      "playabilityErrors": 0,
+      "criticScore": 73,
+      "noteCount": 275,
+      "selectedStrategy": "sparse"
+    }
+  },
+  "observations": [
+    "criticScore, harmonyScore, sectionConsistency, candidateDiversity and noteCount are unchanged: the critic judges the composition, the clamp only shortens tails after it.",
+    "The PR-18 baseline value of 0 is re-grounded, now with the post-performance check included in the metric.",
+    "Nobody has listened; the released tails are 29 ms overlaps instead of 80 ms overlaps on chord changes, which a listener may or may not notice."
+  ]
+}

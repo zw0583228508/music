@@ -149,6 +149,37 @@ const FAMILY_PROFILES: Record<string, FamilyProfile> = {
 };
 const profileFor = (family: string): FamilyProfile => FAMILY_PROFILES[family] ?? FAMILY_PROFILES.keys;
 
+/**
+ * Shorten held notes so that no more than `ceiling` notes sound at any onset.
+ * "Sounding" follows `simultaneousClusters` in musicalConstraints: a note
+ * counts at onset t when it started at or before t and ends after
+ * t + LEGATO_TOLERANCE_SECONDS. Mutates `notes` in place (by replacement).
+ */
+export function clampPolyphony(notes: MusicalNote[], ceiling: number): number {
+  notes.sort((a, b) => a.start - b.start || a.pitch - b.pitch);
+  const onsets = [...new Set(notes.map((note) => Math.round(note.start * 1000)))].sort((a, b) => a - b);
+  let released = 0;
+  for (const onsetMs of onsets) {
+    const onset = onsetMs / 1000;
+    const startingHere = notes.filter((note) => Math.round(note.start * 1000) === onsetMs).length;
+    const held = notes
+      .map((note, index) => ({ note, index }))
+      .filter(({ note }) => Math.round(note.start * 1000) < onsetMs && note.start + note.duration > onset + LEGATO_TOLERANCE_SECONDS)
+      .sort((a, b) => a.note.start - b.note.start || a.note.pitch - b.note.pitch);
+    const excess = held.length + startingHere - ceiling;
+    if (excess <= 0) continue;
+    for (const { note, index } of held.slice(0, Math.min(excess, held.length))) {
+      // One millisecond inside the tolerance: "ends after t + tolerance" is a
+      // strict comparison on floats, and an end that lands on it by rounding
+      // would still count as sounding.
+      const limit = onset + LEGATO_TOLERANCE_SECONDS - 0.001 - note.start;
+      notes[index] = { ...note, duration: Number(Math.max(0.02, limit).toFixed(4)) };
+      released += 1;
+    }
+  }
+  return released;
+}
+
 /** Roles that drive vs. float. */
 const ROLE_FEEL_MS: Partial<Record<InstrumentArrangementRole, number>> = {
   GROOVE: -3, BASS: -2, FOUNDATION: -2, OSTINATO: -1,
@@ -566,17 +597,17 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
     ? offsets.reduce((s, v) => s + (v - meanOffset) ** 2, 0) / offsets.length
     : 0;
 
-  if (input.maxSimultaneousNotes === 1) {
-    // Monophonic instrument: a humanised tail may lap the next onset by the
-    // legato tolerance and no more. Same rule the constraint engine and the
-    // provider contract validator apply, so what is performed still passes.
-    notes.sort((a, b) => a.start - b.start || a.pitch - b.pitch);
-    for (let index = 0; index + 1 < notes.length; index += 1) {
-      const limit = notes[index + 1].start + LEGATO_TOLERANCE_SECONDS - notes[index].start;
-      if (notes[index].duration > limit) {
-        notes[index] = { ...notes[index], duration: Number(Math.max(0.02, limit).toFixed(4)) };
-      }
-    }
+  if (input.maxSimultaneousNotes && input.maxSimultaneousNotes >= 1) {
+    // The instrument's polyphony ceiling survives humanisation. Legato
+    // lengthening (bowed strings ×1.08, a harmonic bed ×1.06) lets the tails of
+    // one chord lap the next; at a ceiling of 1 that is the monophony rule, at
+    // 4 it is a string quartet whose fifth and sixth "voices" are the previous
+    // chord still ringing. Same definition of "sounding together" as the
+    // constraint engine and the provider contract validator (a note sounds at
+    // an onset when it ends more than the legato tolerance after it), so what
+    // is performed still passes the check the composition passed. The
+    // earliest-started held notes are released first, down to the tolerance.
+    clampPolyphony(notes, input.maxSimultaneousNotes);
   }
 
   return {

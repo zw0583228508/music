@@ -225,6 +225,33 @@ test("a bass placed laid back arrives after one anticipated, and sustained lengt
   for (let i = 0; i + 1 < sorted.length; i += 1) assert.ok(sorted[i].start + sorted[i].duration - sorted[i + 1].start <= 0.03 + 1e-6);
 });
 
+test("a polyphony ceiling survives legato lengthening: a bowed 4-voice chord sequence never sounds 5 notes together", () => {
+  // Four-voice chords every half bar, each voice written to its full length,
+  // exactly what the composer produced for the benchmark's orchestral cases.
+  // Bowed strings lengthen ×1.08, so without a clamp the previous chord's
+  // tails still ring at the next onset and the constraint engine counts 5–6.
+  const chords: MusicalNote[] = [];
+  for (let i = 0; i < 8; i += 1) {
+    for (const [v, pitch] of [55, 62, 67, 71].entries()) {
+      chords.push({ id: `c${i}v${v}`, start: i * 1.0, duration: 1.0, pitch: pitch + (i % 2) * 2, velocity: 80 });
+    }
+  }
+  const sounding = (notes: MusicalNote[], t: number) =>
+    notes.filter((n) => n.start <= t + 1e-6 && n.start + n.duration > t + 0.03).length;
+  const performed = applyPerformance({
+    ...base, instrument: "strings", family: "strings", role: "CLIMAX_LAYER", notes: chords, maxSimultaneousNotes: 4,
+  });
+  const onsets = [...new Set(performed.notes.map((n) => Number(n.start.toFixed(3))))];
+  for (const t of onsets) assert.ok(sounding(performed.notes, t) <= 4, `${sounding(performed.notes, t)} notes sound at ${t}s`);
+  assert.equal(performed.notes.length, chords.length, "nothing is dropped, only released early");
+  // Without a declared ceiling the legato overlap is kept: that is the bowed sound.
+  const free = applyPerformance({ ...base, instrument: "strings", family: "strings", role: "CLIMAX_LAYER", notes: chords });
+  assert.ok(onsets.some((t) => sounding(free.notes, t) > 4) || free.notes.some((n) => n.duration > 1.0), "legato lengthening is real");
+  // A ceiling above the written polyphony changes nothing.
+  const roomy = applyPerformance({ ...base, instrument: "strings", family: "strings", role: "CLIMAX_LAYER", notes: chords, maxSimultaneousNotes: 8 });
+  assert.deepEqual(roomy.notes, free.notes);
+});
+
 test("performanceStyleFromProfile carries only evidenced dimensions, with provenance", () => {
   const profile = {
     version: "1.0", derivedAt: "", inputsDigestSha256: "", method: "t", exclusions: [], conflicts: [], sources: [], confidence: 0.5,
