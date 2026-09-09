@@ -1,0 +1,57 @@
+{
+  "title": "vs-reference-part-composer: context passes measured against the reference composer (Wave Q)",
+  "date": "2026-09-09",
+  "method": "arrangement-benchmark/v1 run twice on the identical synthesised corpus, one flag apart (contextAware off vs on)",
+  "systemsUnderTest": {
+    "baseline": "REFERENCE_PART_COMPOSER",
+    "candidate": "CONTEXT_AWARE_ARRANGER (PR-45 passes + PR-47 orchestrator wiring)"
+  },
+  "corpus": "synthesised",
+  "corpusNote": "PR-18's synthesised corpus — the kind of music this pipeline finds easy. A small improvement here is weak evidence; a regression here is strong evidence. Q-00's real corpus is where a real verdict comes from.",
+  "aggregate": {
+    "criticScore": { "baseline": 74.56, "candidate": 74.0, "delta": -0.56, "verdict": "unchanged" },
+    "playabilityErrors": { "baseline": 0, "candidate": 6.89, "delta": 6.89, "verdict": "regressed" },
+    "harmonyScore": { "baseline": 58.33, "candidate": 58.33, "delta": 0, "verdict": "unchanged" },
+    "sectionConsistency": { "baseline": 100, "candidate": 100, "delta": 0, "verdict": "unchanged" },
+    "candidateDiversity": { "baseline": 50.4, "candidate": 50.4, "delta": 0, "verdict": "unchanged" },
+    "noteCount": { "baseline": 576.56, "candidate": 595.0, "delta": 18.44, "verdict": "improved (not a quality metric)" },
+    "latencyMs": { "baseline": 5, "candidate": 5, "delta": 0, "verdict": "unchanged" },
+    "audioScore": null,
+    "renderFailures": null
+  },
+  "perCase": [
+    { "caseId": "pop-full", "critic": "77 -> 76", "playability": "0 -> 0" },
+    { "caseId": "ballad-piano-vocal", "critic": "76 -> 76", "playability": "0 -> 0" },
+    { "caseId": "rock-full", "critic": "76 -> 76", "playability": "0 -> 0" },
+    { "caseId": "dance-full", "critic": "75 -> 74", "playability": "0 -> 0" },
+    { "caseId": "acoustic-demo", "critic": "74 -> 73", "playability": "0 -> 0" },
+    { "caseId": "orchestral-midi", "critic": "71 -> 70", "playability": "0 -> 62", "note": "the one case that regresses" },
+    { "caseId": "ethnic-vocal", "critic": "72 -> 72", "playability": "0 -> 0" },
+    { "caseId": "jazz-full", "critic": "77 -> 77", "playability": "0 -> 0" },
+    { "caseId": "cinematic-midi", "critic": "73 -> 72", "playability": "0 -> 0" }
+  ],
+  "verdict": {
+    "beatsBaseline": false,
+    "summary": "CONTEXT_AWARE_ARRANGER regresses playabilityErrors — do not promote",
+    "recommendation": {
+      "action": "do_not_promote",
+      "reason": "CONTEXT_AWARE_ARRANGER regresses playabilityErrors on the synthesised corpus; a regression here is strong evidence. The contextAware flag stays off."
+    }
+  },
+  "whatWasFoundAndFixedFirst": {
+    "firstRun": "criticScore 74.56 -> 47.22, playabilityErrors 0 -> 66.11. The harmony re-voicing pass was re-voicing every part — including basslines and drum-adjacent parts — onto an inner voice of a four-part SATB chord, dragging basslines up into piano register where they were then clamped and collided.",
+    "fix": "applyHarmonyPlan now re-voices only harmonic-bed roles (pads, sustained keys, string beds, comping); a bassline, drum part or lead line keeps its own octave and contour. Same-pitch unisons the re-voicing still creates within one bed part are collapsed. enforceHardConstraints now also thins a chord thicker than the instrument's maxSimultaneousNotes, keeping the top line.",
+    "afterFix": "8 of 9 cases at playability 0 and critic within ~1 point of baseline; only orchestral-midi still regresses (0 -> 62)."
+  },
+  "remainingRegression": {
+    "case": "orchestral-midi",
+    "likelyCause": "Two string/brass section-role parts for the same instrument each emit a legal narrow voicing, then both re-voice toward the same shared plan and merge into a chord past the section instrument's simultaneity limit. The per-part polyphony guard runs before the orchestrator merges parts by instrument, so it cannot see the combined load.",
+    "properFix": "Apply the polyphony ceiling after the per-instrument merge, or share one bed voicing across all section-role parts of an instrument rather than re-voicing each. Not done here: forcing this case green by tuning a threshold would be gaming the gate the plan exists to respect."
+  },
+  "honestLimits": [
+    "The verdict is do_not_promote. The context passes are not yet better than the reference composer, even on the easy corpus.",
+    "criticScore is the pipeline grading itself — a proxy, not a listener. buildBlindComparisonSheet produced 9 anonymised pairs from these two runs; no human has judged them.",
+    "The style grammar slot was empty in this run, so the groove pass never ran. This measures the voicing plan and the arranging passes, not Q-02's groove.",
+    "One corpus, synthesised. This is the measurement infrastructure working and returning a negative result, which is a result."
+  ]
+}
