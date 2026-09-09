@@ -19,6 +19,16 @@ const suites = {
   "music-engines": {
     bundles: [
       ["tests/music-engines.test.ts", "music-engines.test.mjs"],
+      [
+        "src/lib/performanceEngine.test.ts",
+        "performance-engine.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/blindListening.test.ts",
+        "blind-listening.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       ["src/lib/candidateRanking.test.ts", "candidate-ranking.test.mjs"],
       ["src/lib/candidateQuality.test.ts", "candidate-quality.test.mjs"],
       ["src/lib/candidateRepair.test.ts", "candidate-repair.test.mjs"],
@@ -38,6 +48,16 @@ const suites = {
     bundles: [
       ["src/lib/songModelValidation.test.ts", "song-model-validation.test.mjs"],
       ["src/lib/canonicalTimeline.test.ts", "canonical-timeline.test.mjs"],
+      [
+        "src/lib/songModelCorrection.test.ts",
+        "song-model-correction.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/localStructureAnalysis.test.ts",
+        "local-structure-analysis.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
     ],
   },
   "analysis-providers": {

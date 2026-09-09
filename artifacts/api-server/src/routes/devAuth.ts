@@ -41,13 +41,32 @@ const DEV_USER = {
 
 const router: IRouter = Router();
 
-async function startDevSession(res: Response): Promise<SessionData["user"]> {
+/**
+ * Extra local identities (PR-34): a blind listening session needs raters who
+ * are not the owner. Only with `DEV_AUTH_ALLOW_IDENTITIES=true`, on top of the
+ * hard gates above, may a caller name the local user it signs in as; ids are
+ * prefixed so they can never collide with a real account.
+ */
+function requestedIdentity(body: unknown): typeof DEV_USER | null {
+  if (process.env.DEV_AUTH_ALLOW_IDENTITIES !== "true" || !body || typeof body !== "object") return null;
+  const { userId, email, firstName } = body as { userId?: unknown; email?: unknown; firstName?: unknown };
+  if (typeof userId !== "string" || !/^[a-z0-9][a-z0-9-]{0,40}$/i.test(userId)) return null;
+  return {
+    id: `dev-identity-${userId}`,
+    email: typeof email === "string" && email.includes("@") ? email : `${userId}@localhost`,
+    firstName: typeof firstName === "string" && firstName ? firstName : userId,
+    lastName: "Local",
+    profileImageUrl: null,
+  };
+}
+
+async function startDevSession(res: Response, identity: typeof DEV_USER = DEV_USER): Promise<SessionData["user"]> {
   const [user] = await db
     .insert(usersTable)
-    .values(DEV_USER)
+    .values(identity)
     .onConflictDoUpdate({
       target: usersTable.id,
-      set: { email: DEV_USER.email, updatedAt: new Date() },
+      set: { email: identity.email, updatedAt: new Date() },
     })
     .returning();
 
@@ -91,8 +110,8 @@ router.get("/dev-login", async (req: Request, res: Response) => {
 });
 
 // Programmatic sign-in for scripts/tests.
-router.post("/dev-login", async (_req: Request, res: Response) => {
-  const user = await startDevSession(res);
+router.post("/dev-login", async (req: Request, res: Response) => {
+  const user = await startDevSession(res, requestedIdentity(req.body) ?? DEV_USER);
   res.json({ user });
 });
 

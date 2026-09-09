@@ -106,6 +106,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { ExportRenderEvidence, type RenderEvidence } from "@/components/studio/export-render-evidence";
 import { ProducerChat } from "@/components/studio/producer-chat";
+import { ListeningRoomCard } from "@/components/studio/listening-room-card";
 import {
   Dialog,
   DialogContent,
@@ -1819,6 +1820,10 @@ export default function ProjectWorkspace() {
             <TabsContent value="candidates" className="flex-1 m-0 p-6 min-h-0 overflow-auto">
                <div className="max-w-3xl mx-auto">
                  <h2 className="text-xl font-bold mb-6">Generated Candidates</h2>
+                  {/* Gate C lives with the candidates it compares; sessions outlive the page's current job. */}
+                  <div className="mb-6">
+                    <ListeningRoomCard projectId={projectId} candidates={generationCandidates} />
+                  </div>
                   {generationJob && generationRunning ? (
                     <div className="space-y-4">
                     <Card>

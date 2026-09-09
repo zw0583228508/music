@@ -28,6 +28,8 @@ tags:
     description: Conversational intake, the production brief and the persistent producer chat (Wave U)
   - name: references
     description: Reference tracks per project - named or uploaded, with the copy scope the user allowed; only the content-free PR-27 fingerprint is ever read (Wave U, PR-U4)
+  - name: listening
+    description: Gate C - blind listening sessions. Two arrangements of the same song, served to human raters as anonymised A/B audio with the PR-18 questions; Elo and an explicit gate verdict (PR-34)
 paths:
   /healthz:
     get:
@@ -1286,6 +1288,176 @@ paths:
                   keyBySide:
                     type: object
                     additionalProperties: { type: string }
+  /projects/{projectId}/listening-sessions:
+    post:
+      operationId: createListeningSession
+      tags: [listening]
+      summary: Gate C - open a blind listening session between two candidates of this project
+      description: Each side stands for a system under test (label) and resolves to one generation candidate with a rendered evaluation audio - explicitly by id, or the ranked winner / the first candidate of a generation job. Raters never see the labels.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateListeningSessionInput"
+      responses:
+        "201":
+          description: Session created (owner view, includes the token key)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListeningSession"
+        "400":
+          description: Invalid request, equal labels, or both sides resolving to the same candidate
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: A side's candidate has no rendered audio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    get:
+      operationId: listListeningSessions
+      tags: [listening]
+      summary: Gate C - the project's listening sessions with their current results (owner)
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Sessions, newest first
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ListeningSession"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /listening-sessions/{sessionId}:
+    get:
+      operationId: getListeningSession
+      tags: [listening]
+      summary: Gate C - the rater view of a session (anonymised A/B, no system names)
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Pairs with tokens and audio, the A/B order decided per rater, plus this rater's own votes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListeningRaterView"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /listening-sessions/{sessionId}/votes:
+    post:
+      operationId: submitListeningVotes
+      tags: [listening]
+      summary: Gate C - record this rater's votes (one per question per pair; re-voting replaces)
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitListeningVotesInput"
+      responses:
+        "200":
+          description: Votes recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListeningVotesResult"
+        "400":
+          description: A vote names an unknown pair, question or token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: The session is closed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /listening-sessions/{sessionId}/audio/{token}:
+    get:
+      operationId: streamListeningAudio
+      tags: [listening]
+      summary: Gate C - the audio behind one anonymised token (so a rater's URL names no candidate)
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: token
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The side's evaluation render
+          content:
+            audio/wav:
+              schema:
+                type: string
+                format: binary
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /listening-sessions/{sessionId}/results:
+    get:
+      operationId: getListeningResults
+      tags: [listening]
+      summary: Gate C - results, Elo and the gate verdict, with the token key (owner)
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Owner view with results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListeningSession"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /listening-sessions/{sessionId}/close:
+    post:
+      operationId: closeListeningSession
+      tags: [listening]
+      summary: Gate C - close a session to further votes (owner)
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Closed session with final results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListeningSession"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /personal-arrangement-profile:
     get:
       operationId: listPersonalArrangementProfiles
@@ -4601,6 +4773,184 @@ components:
               distance: { type: number }
               summary: { type: string }
         headline: { type: array, items: { type: string } }
+    ListeningSideInput:
+      type: object
+      required: [label]
+      properties:
+        label:
+          type: string
+          minLength: 1
+          maxLength: 120
+          description: The system under test this side stands for. Never shown to raters.
+        candidateId: { type: string, minLength: 1, maxLength: 200 }
+        generationJobId: { type: string, minLength: 1, maxLength: 200 }
+        pick:
+          type: string
+          enum: [ranked, first]
+          description: With generationJobId - the ranked winner (default) or the first candidate the provider produced.
+    CreateListeningSessionInput:
+      type: object
+      required: [left, right]
+      properties:
+        title: { type: string, maxLength: 200 }
+        challenger:
+          type: string
+          enum: [left, right]
+          description: The side that has to win (default right).
+        left: { $ref: "#/components/schemas/ListeningSideInput" }
+        right: { $ref: "#/components/schemas/ListeningSideInput" }
+    ListeningSessionSide:
+      type: object
+      required: [label, generationJobId, candidateId, candidateLabel, pick, audioUrl]
+      properties:
+        label: { type: string }
+        generationJobId: { type: string }
+        candidateId: { type: string }
+        candidateLabel: { type: string }
+        pick: { type: string, enum: [ranked, first, explicit] }
+        audioUrl: { type: string }
+    ListeningPairSide:
+      type: object
+      required: [token, systemUnderTest]
+      properties:
+        token: { type: string }
+        systemUnderTest: { type: string }
+    ListeningPair:
+      type: object
+      required: [pairId, caseId, left, right, questions]
+      properties:
+        pairId: { type: string }
+        caseId: { type: string }
+        left: { $ref: "#/components/schemas/ListeningPairSide" }
+        right: { $ref: "#/components/schemas/ListeningPairSide" }
+        questions:
+          type: array
+          items: { type: string }
+    ListeningQuestionResult:
+      type: object
+      required: [question, votes, bySystem, leader]
+      properties:
+        question: { type: string }
+        votes: { type: number }
+        bySystem:
+          type: object
+          additionalProperties: { type: number }
+        leader: { type: string, nullable: true }
+    EloRating:
+      type: object
+      required: [systemUnderTest, rating, comparisons]
+      properties:
+        systemUnderTest: { type: string }
+        rating: { type: number }
+        comparisons: { type: number }
+    ListeningGateC:
+      type: object
+      required: [passed, challenger, incumbent, releaseVotes, releaseShare, minRaters, minWinShare, reason]
+      properties:
+        passed: { type: boolean }
+        challenger: { type: string }
+        incumbent: { type: string }
+        releaseVotes: { type: number }
+        releaseShare: { type: number, nullable: true }
+        minRaters: { type: number }
+        minWinShare: { type: number }
+        reason: { type: string }
+    ListeningResults:
+      type: object
+      required: [version, raters, ownerVotesExcluded, votesCounted, perQuestion, elo, gateC]
+      properties:
+        version: { type: string }
+        raters: { type: number, description: Distinct raters other than the owner }
+        ownerVotesExcluded: { type: number }
+        votesCounted: { type: number }
+        perQuestion:
+          type: array
+          items: { $ref: "#/components/schemas/ListeningQuestionResult" }
+        elo:
+          type: array
+          items: { $ref: "#/components/schemas/EloRating" }
+        gateC: { $ref: "#/components/schemas/ListeningGateC" }
+    ListeningSession:
+      type: object
+      required: [id, projectId, title, status, challenger, sides, pairs, keyBySide, raterPath, results, createdAt, closedAt]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        title: { type: string }
+        status: { type: string, enum: [open, closed] }
+        challenger: { type: string, enum: [left, right] }
+        sides:
+          type: object
+          required: [left, right]
+          properties:
+            left: { $ref: "#/components/schemas/ListeningSessionSide" }
+            right: { $ref: "#/components/schemas/ListeningSessionSide" }
+        pairs:
+          type: array
+          items: { $ref: "#/components/schemas/ListeningPair" }
+        keyBySide:
+          type: object
+          additionalProperties: { type: string }
+          description: token -> system under test. Owner-only.
+        raterPath: { type: string, description: Studio path to hand a rater }
+        results: { $ref: "#/components/schemas/ListeningResults" }
+        createdAt: { type: string }
+        closedAt: { type: string, nullable: true }
+    ListeningRaterSide:
+      type: object
+      required: [token, audioUrl]
+      properties:
+        token: { type: string }
+        audioUrl: { type: string }
+    ListeningRaterPair:
+      type: object
+      required: [pairId, caseId, questions, a, b]
+      properties:
+        pairId: { type: string }
+        caseId: { type: string }
+        questions:
+          type: array
+          items: { type: string }
+        a: { $ref: "#/components/schemas/ListeningRaterSide" }
+        b: { $ref: "#/components/schemas/ListeningRaterSide" }
+    ListeningVoteInput:
+      type: object
+      required: [pairId, question, winnerToken]
+      properties:
+        pairId: { type: string, minLength: 1, maxLength: 200 }
+        question: { type: string, minLength: 1, maxLength: 200 }
+        winnerToken: { type: string, minLength: 1, maxLength: 64 }
+    ListeningRaterView:
+      type: object
+      required: [sessionId, title, status, pairs, yourVotes]
+      properties:
+        sessionId: { type: string }
+        title: { type: string }
+        status: { type: string, enum: [open, closed] }
+        pairs:
+          type: array
+          items: { $ref: "#/components/schemas/ListeningRaterPair" }
+        yourVotes:
+          type: array
+          items: { $ref: "#/components/schemas/ListeningVoteInput" }
+    SubmitListeningVotesInput:
+      type: object
+      required: [votes]
+      properties:
+        votes:
+          type: array
+          minItems: 1
+          maxItems: 60
+          items: { $ref: "#/components/schemas/ListeningVoteInput" }
+    ListeningVotesResult:
+      type: object
+      required: [recorded, countsTowardVerdict, yourVotes]
+      properties:
+        recorded: { type: number }
+        countsTowardVerdict: { type: boolean, description: False for the owner's own votes }
+        yourVotes:
+          type: array
+          items: { $ref: "#/components/schemas/ListeningVoteInput" }
     MixPlanInput:
       type: object
       required: [arrangementId]
