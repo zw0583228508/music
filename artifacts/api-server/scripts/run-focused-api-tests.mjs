@@ -112,6 +112,11 @@ const suites = {
       // work) and Tier B (arranger tasks extracted from each score).
       ["src/lib/datasetRightsProof.test.ts", "dataset-rights-proof.test.mjs"],
       ["src/lib/arrangerTaskExtraction.test.ts", "arranger-task-extraction.test.mjs"],
+      // Wave Q, PR-63: the CA2 LoRA training infrastructure's platform half —
+      // the dataset manifest verifier (rights proof per example) and the
+      // budget guard mirror (fails closed above $25; H100 refused).
+      ["src/lib/trainingManifest.test.ts", "training-manifest.test.mjs"],
+      ["src/lib/trainingBudgetGuard.test.ts", "training-budget-guard.test.mjs"],
       // Wave Q, Model Discovery: the registry enforces the three-layer licence
       // discipline; nothing ships on an unread licence or uncleared works.
       ["src/lib/globalModelRegistry.test.ts", "global-model-registry.test.mjs"],

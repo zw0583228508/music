@@ -2685,6 +2685,104 @@ any of it.
   and says so; a non-classical slice, at least one rated session, and the
   measured cost of a LoRA pilot are named as what makes it final.
 
+- **PR-63** ✅ — `ca2-lora-infrastructure` (Wave Q — Model Discovery, the
+  decision report's Option B): **the CA2 LoRA training infrastructure exists
+  and a real training run has gone through all of it end to end — and it is
+  explicitly not a pilot.** Evidence: `docs/evidence/ca2-lora-smoke.json`
+  (the whole experiment record, the guard's decision log, the dataset
+  manifest and rights proof, both phase logs, the export records, the Modal
+  preflight). Service: `services/composers-assistant-train/`.
+
+  **What was built.** `build_dataset.py` — admitted PDMX works → CA2-format
+  infill examples through **CA2's own** loader and encoder
+  (`preprocessing_functions.load_and_clean_midisongbymeasure_from_midi_path`,
+  `encoding_functions.encode_midisongbymeasure_with_masks`,
+  `nn_training_functions.val_test_infill_encode`), so the LoRA sees exactly
+  what the pretrained model saw; the task shape is the tournament's (one
+  target track × N consecutive measures masked, every other track as
+  context); byte-hash plus CA2's own 12-transposition onset-chromagram
+  dedupe; anything over `MAX_LEN` is **dropped, never truncated** — a
+  truncated target teaches the model to stop early. `training_manifest.py`
+  + `src/lib/trainingManifest.ts` — a deterministic manifest (dataset /
+  examples / split / rights digests, tokenizer version, counts per split,
+  per target instrument and per conditioning variant) and the platform's
+  re-derivation of it: it rebuilds the **work-level** 90/5/5 split
+  (`sha256(workId)[:8] % 100`, the same rule as `extract-arranger-tasks.mjs`),
+  re-runs the leak check and the token ceilings, and hands the provenance to
+  `buildDatasetRightsProof`, so training gates on the same proof the
+  arranger pipeline gates on. `train_lora.py` — T5 from the **sha-verified**
+  checkpoint, PEFT LoRA, CA2's padding rule, AdamW + warmup/linear schedule,
+  gradient clipping with per-step norms, non-finite and running-mean
+  divergence aborts, validation every N steps, early stopping, checkpoints
+  (adapter + optimizer + step + RNG + wall-time ledger) with sha256s, resume,
+  deterministic seeding, hard wall-time stop, and an `experiment.json`
+  carrying every field the plan asks for with `benchmarkResult: null`.
+  `budget_guard.py` + its TS mirror `src/lib/trainingBudgetGuard.ts` —
+  cost from GPU × max wall time before anything is uploaded or launched.
+  `modal_train.py` — the app on the worker's pins plus CUDA torch and PEFT,
+  a persistent volume, **one function per allowed GPU and no function at all
+  for H100**, each with a deploy-time hard `timeout` derived from the cap.
+  `export_checkpoint.py` / `eval_hooks.py` — a checkpoint becomes servable
+  weights, and the tournament contract is fixed in code: the exact runner
+  command against a **second** endpoint, and a `record_benchmark_result()`
+  that refuses to attribute a report unless that endpoint verifiably served
+  this export.
+
+  **The guard is the point, and it fails closed.** Caps are constants, not
+  arguments: **$25** hard, **$5** for a smoke, which additionally may not
+  exceed 20 GPU-minutes. Above the hard cap only a per-run owner token
+  passes — `sha256(CA2_TRAINING_APPROVAL:<runId>:<cents>:<secret>)`, whose
+  secret this repository and this workstream **do not hold** — and a token
+  offered where the secret cannot be verified is refused rather than
+  trusted. H100/H200/B200/B300 are refused **regardless of any token**, and
+  unknown hardware is refused because it cannot be priced. Demonstrated, in
+  the evidence and in both test suites: A10G 20 min smoke $0.59 allowed;
+  A10G 8 h pilot $14.16 allowed; A10G 30 min smoke **refused** (over the
+  smoke's minutes); A100-80GB 12 h $42.25 **refused**, and still refused
+  with a token when no owner secret is present; T4 24 h $27.19 **refused**;
+  H100 1 h $5.33 **refused** by policy; GB300 **refused** as unpriceable.
+  No decision → no training: `assert_allowed` is the first thing the
+  trainer runs, before the checkpoint is even opened.
+
+  **What actually ran** (the only run permitted, and it is a path proof):
+  256 examples from **128 admitted works**, every one traced to the PDMX
+  admitted ∩ `no_license_conflict` intersection (`examplesUntraceable: 0`);
+  **200 LoRA steps on CPU, in two launches** — steps 1–100, stop on request
+  after writing `checkpoints/step-100`, then a **resume** from that
+  directory to step 200, with optimizer, step, RNG, batch order and the
+  wall-time ledger all restored from the checkpoint and nothing supplied by
+  hand. 1467 s wall, **$0**, 0 paid GPU minutes. Loss on the 32-example
+  overfit subset: mean of the first ten steps 0.477 → mean of the last ten
+  0.227, validation 0.448 → 0.133, no non-finite gradients in 200 steps.
+  The Modal app was deployed and preflighted on these exact sources — the
+  image rebuilt from the release zip, ran all 50 unit tests **inside the
+  container**, and verified the pinned checkpoint there — and
+  `export_checkpoint.py` was run for real: the merged export reloads as a
+  plain `T5ForConditionalGeneration` and generates.
+
+  Suites: python `unittest` 50 (guard case table, collator, manifest +
+  split rule + rights refusal, trainer gates, wall-time ledger, eval hooks,
+  Modal shape), the same 50 re-run inside the training image at build time;
+  TS trainingManifest 7, trainingBudgetGuard 7 (the guard's case table is
+  shared between the two languages); typecheck green.
+
+  **Honest limits.** This is **infrastructure, not a pilot, and it makes no
+  musical claim.** The loss decrease is *memorisation of 32 examples* — the
+  never-trained held-out 14 stayed flat (0.478 → 0.476) and that curve is
+  recorded next to the other so the two can never be confused. No GPU
+  training run has been launched, so the pilot's cost is still what the
+  decision report lists as pending. The smoke used 4-measure windows capped
+  at 512 tokens so CPU steps stay in seconds; its 256-example dataset is a
+  fixture for the path, not a sample of anything. No second endpoint was
+  deployed and the tournament has judged nothing: `benchmarkResult` is
+  null, by design, until a checkpoint is served and judged. Three trainer
+  faults were found by running the thing rather than by reading it — a
+  relative `--resume` resolved inside the vendored CA2 tree (importing it
+  `chdir`s), wall time restarting at zero on resume, and a checkpoint not
+  listing itself — all three fixed, tested, and the entire smoke re-run
+  from step 0 afterwards so every number above came out of the committed
+  code.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
