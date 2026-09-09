@@ -1,0 +1,3314 @@
+{
+  "title": "MUSIC_REWARD_MODEL_V0 — a pretrained music-quality critic from synthetic preference pairs, and the gates that decide what it may do (Wave Q, PR-77)",
+  "ranAt": "2026-09-09T19:06:26.854Z",
+  "finishedAt": "2026-09-09T19:11:09.606Z",
+  "gitSha": "5e7345b4b3b19d442eb11765fa29be2ad981d88a",
+  "whatThisIs": "A pairwise logistic critic over hand-crafted features (judge 1.1 without its human-anchored metrics, COHERENCE_METRIC_v1, and candidate-in-context statistics), trained to prefer a human part over a musically corrupted copy of it. It is a pretrained critic, not the truth: the trap is that it learns the corruption generator. Gates (b), (d) and (e) exist to expose that; rewardModelGate() decides; the loss does not. Whatever passes may rank or filter candidates and may never be a training target.",
+  "data": {
+    "pairsDir": ".corpus-data/preference-pairs (git-ignored)",
+    "manifest": {
+      "file": "docs/evidence/preference-pairs-manifest.json",
+      "pairsSha256": "eb1a1e35bca1979277dd57bb9b2977c03b1dc2e0f3442b4c4d28cfdc18edef97",
+      "tasksSha256": "ee46252ba8046c2bb823c1db3642275248de8645cdfe184f20a04df9d16c8151",
+      "works": {
+        "train": 5384,
+        "val": 309,
+        "test": 307
+      },
+      "tasks": {
+        "train": {
+          "window": 10529,
+          "section": 4655
+        },
+        "val": {
+          "window": 605,
+          "section": 257
+        },
+        "test": {
+          "window": 600,
+          "section": 261
+        }
+      },
+      "pairs": {
+        "train": 160748,
+        "val": 9199,
+        "test": 42143,
+        "all": 212090
+      },
+      "corruptionSeed": 77
+    },
+    "pairsSha256Read": "eb1a1e35bca1979277dd57bb9b2977c03b1dc2e0f3442b4c4d28cfdc18edef97",
+    "counts": {
+      "tasks": 16907,
+      "pairs": 212090,
+      "train": 160748,
+      "val": 9199,
+      "test": 42143,
+      "testInDistribution": 31764,
+      "testHeldOut": 10379
+    },
+    "trainingFamilies": [
+      "pitch_shift_in_key",
+      "pitch_shift_out_of_key",
+      "chord_tone_to_non_chord_tone",
+      "octave_displacement",
+      "leap_injection",
+      "onset_jitter",
+      "quantisation_coarsening",
+      "density_thinning",
+      "density_doubling",
+      "bar_copy_repetition",
+      "phrase_shift",
+      "cross_part_clash",
+      "role_inversion",
+      "dynamics_flattening"
+    ],
+    "heldOutFamilies": [
+      "parallel_doubling",
+      "syncopation_removal",
+      "motif_destruction",
+      "duration_overhang",
+      "section_swap"
+    ],
+    "heldOutFamiliesLeakedIntoTraining": 0
+  },
+  "features": {
+    "version": "REWARD_FEATURES_v0",
+    "digest": "65a0ba4d8a9dd551",
+    "count": 52,
+    "excludedHumanAnchoredJudgeMetrics": [
+      "densityLogRatio",
+      "intervalDistance",
+      "score"
+    ],
+    "manifest": [
+      {
+        "name": "j_playabilityErrors",
+        "group": "judge",
+        "description": "judge 1.1 playability errors (constraint engine + GM range), capped at 20"
+      },
+      {
+        "name": "j_rangeShare",
+        "group": "judge",
+        "description": "share of notes inside the GM program's playable range (1 when unmeasurable)"
+      },
+      {
+        "name": "j_registerShare",
+        "group": "judge",
+        "description": "share of notes inside the idiomatic register (1 when unmeasurable)"
+      },
+      {
+        "name": "j_chordToneShare",
+        "group": "judge",
+        "description": "duration-weighted share of time on tones of the shared estimated chords (0.6 when unmeasurable)"
+      },
+      {
+        "name": "j_chordMeasured",
+        "group": "judge",
+        "description": "1 when chord-tone share could be measured"
+      },
+      {
+        "name": "j_coverage",
+        "group": "judge",
+        "description": "share of bars in which the part plays"
+      },
+      {
+        "name": "j_barRepetitionShare",
+        "group": "judge",
+        "description": "share of bars identical to the previous bar"
+      },
+      {
+        "name": "j_contextClashShare",
+        "group": "judge",
+        "description": "share of sounding time a semitone from a sounding context note"
+      },
+      {
+        "name": "j_distinctPitchesLog",
+        "group": "judge",
+        "description": "log1p of distinct pitches"
+      },
+      {
+        "name": "j_singlePitch",
+        "group": "judge",
+        "description": "1 when ≥ 8 notes share one pitch (repetition collapse)"
+      },
+      {
+        "name": "c_score",
+        "group": "coherence",
+        "description": "COHERENCE_METRIC_v1 composite on context + candidate over the window (50 when unmeasurable)"
+      },
+      {
+        "name": "c_measured",
+        "group": "coherence",
+        "description": "1 when the composite could be measured"
+      },
+      {
+        "name": "c_harmonicMeanOverlap",
+        "group": "coherence",
+        "description": "mean pitch-class overlap between tracks per bar"
+      },
+      {
+        "name": "c_candidateOverlap",
+        "group": "coherence",
+        "description": "the candidate track's harmonic overlap with the ensemble"
+      },
+      {
+        "name": "c_worstOverlap",
+        "group": "coherence",
+        "description": "least agreeing track's overlap"
+      },
+      {
+        "name": "c_candidateSeamExcess",
+        "group": "coherence",
+        "description": "the candidate track's seam excess on a 4-bar grid (0 when unmeasurable)"
+      },
+      {
+        "name": "c_continuityUnexplained",
+        "group": "coherence",
+        "description": "unexplained re-entries in the ensemble"
+      },
+      {
+        "name": "c_registerRoughness",
+        "group": "coherence",
+        "description": "bar-to-bar register roughness of the ensemble"
+      },
+      {
+        "name": "c_densityRoughness",
+        "group": "coherence",
+        "description": "bar-to-bar density roughness of the ensemble"
+      },
+      {
+        "name": "c_motifQuotedShare",
+        "group": "coherence",
+        "description": "mean quoted share of four-note cells across sections (0 when one section)"
+      },
+      {
+        "name": "s_keyShare",
+        "group": "stats",
+        "description": "duration-weighted share of notes in the context's key scale (1 when no key)"
+      },
+      {
+        "name": "s_keyMeasured",
+        "group": "stats",
+        "description": "1 when the context yielded a key"
+      },
+      {
+        "name": "s_stepShare",
+        "group": "stats",
+        "description": "share of successive line intervals ≤ 2 semitones"
+      },
+      {
+        "name": "s_leapShare",
+        "group": "stats",
+        "description": "share of successive line intervals > 7 semitones"
+      },
+      {
+        "name": "s_bigLeapShare",
+        "group": "stats",
+        "description": "share of successive line intervals > 12 semitones"
+      },
+      {
+        "name": "s_meanAbsInterval",
+        "group": "stats",
+        "description": "mean |interval| of the line, semitones"
+      },
+      {
+        "name": "s_directionChangeRate",
+        "group": "stats",
+        "description": "share of consecutive interval pairs that change direction"
+      },
+      {
+        "name": "s_repeatedPitchShare",
+        "group": "stats",
+        "description": "share of successive line notes with the same pitch"
+      },
+      {
+        "name": "s_parallelPerfectShare",
+        "group": "stats",
+        "description": "share of line motions that move in parallel with a context line while at a unison/octave/fifth"
+      },
+      {
+        "name": "s_registerOffset",
+        "group": "stats",
+        "description": "(candidate mean pitch − pitched context mean pitch) / 12"
+      },
+      {
+        "name": "s_aboveTopShare",
+        "group": "stats",
+        "description": "share of notes above every context note sounding at their onset"
+      },
+      {
+        "name": "s_belowBottomShare",
+        "group": "stats",
+        "description": "share of notes below every context note sounding at their onset"
+      },
+      {
+        "name": "s_pitchStd",
+        "group": "stats",
+        "description": "pitch standard deviation, semitones"
+      },
+      {
+        "name": "s_gridOffset",
+        "group": "stats",
+        "description": "mean distance of onsets from the nearest 16th, in beats"
+      },
+      {
+        "name": "s_onBeatShare",
+        "group": "stats",
+        "description": "share of onsets within 1/16 beat of a beat"
+      },
+      {
+        "name": "s_offBeatShare",
+        "group": "stats",
+        "description": "share of onsets on off-beat 8ths or 16ths"
+      },
+      {
+        "name": "s_onsetsPerBarLog",
+        "group": "stats",
+        "description": "log1p of distinct onsets per bar"
+      },
+      {
+        "name": "s_onsetsPerBarCV",
+        "group": "stats",
+        "description": "coefficient of variation of onsets per bar"
+      },
+      {
+        "name": "s_densityVsContext",
+        "group": "stats",
+        "description": "log2 of candidate onsets per bar over the mean pitched context track's"
+      },
+      {
+        "name": "s_meanDurationBeatsLog",
+        "group": "stats",
+        "description": "log1p of the mean note duration in beats"
+      },
+      {
+        "name": "s_overhangShare",
+        "group": "stats",
+        "description": "share of notes that sound across an estimated chord change"
+      },
+      {
+        "name": "s_chordChangeHitShare",
+        "group": "stats",
+        "description": "share of chord changes with a candidate onset within 1/8 beat"
+      },
+      {
+        "name": "s_motifRecurrence",
+        "group": "stats",
+        "description": "share of four-note interval+rhythm cells that recur inside the part"
+      },
+      {
+        "name": "s_barContinuity",
+        "group": "stats",
+        "description": "mean cosine between consecutive bars' pitch-class/position vectors"
+      },
+      {
+        "name": "s_midpointJump",
+        "group": "stats",
+        "description": "bar-vector jump at the window's midpoint minus the mean jump elsewhere"
+      },
+      {
+        "name": "s_velocityStd",
+        "group": "stats",
+        "description": "velocity standard deviation / 127"
+      },
+      {
+        "name": "s_downbeatAccent",
+        "group": "stats",
+        "description": "(mean velocity on downbeats − mean velocity elsewhere) / 127"
+      },
+      {
+        "name": "s_phraseStartOnBarShare",
+        "group": "stats",
+        "description": "share of phrase starts (after ≥ 1 beat of rest) within 1/8 beat of a bar line"
+      },
+      {
+        "name": "s_restShare",
+        "group": "stats",
+        "description": "share of the window in which the part is silent"
+      },
+      {
+        "name": "s_pcEntropy",
+        "group": "stats",
+        "description": "entropy of the pitch-class distribution, bits"
+      },
+      {
+        "name": "s_emptyBarShare",
+        "group": "stats",
+        "description": "share of bars with no onset"
+      },
+      {
+        "name": "s_noteCountLog",
+        "group": "stats",
+        "description": "log1p of the note count"
+      }
+    ]
+  },
+  "model": {
+    "version": "MUSIC_REWARD_MODEL_V0",
+    "kind": "logistic regression on standardised feature differences, no bias (antisymmetric), full-batch Adam, deterministic",
+    "hyper": {
+      "l2": 0.001,
+      "lr": 0.05,
+      "epochs": 400
+    },
+    "trainSeconds": 50.7,
+    "finalLoss": 0.124687,
+    "seeds": {
+      "corruption": 77,
+      "training": "none — full-batch, no sampling, no shuffling"
+    },
+    "featureNames": [
+      "j_playabilityErrors",
+      "j_rangeShare",
+      "j_registerShare",
+      "j_chordToneShare",
+      "j_chordMeasured",
+      "j_coverage",
+      "j_barRepetitionShare",
+      "j_contextClashShare",
+      "j_distinctPitchesLog",
+      "j_singlePitch",
+      "c_score",
+      "c_measured",
+      "c_harmonicMeanOverlap",
+      "c_candidateOverlap",
+      "c_worstOverlap",
+      "c_candidateSeamExcess",
+      "c_continuityUnexplained",
+      "c_registerRoughness",
+      "c_densityRoughness",
+      "c_motifQuotedShare",
+      "s_keyShare",
+      "s_keyMeasured",
+      "s_stepShare",
+      "s_leapShare",
+      "s_bigLeapShare",
+      "s_meanAbsInterval",
+      "s_directionChangeRate",
+      "s_repeatedPitchShare",
+      "s_parallelPerfectShare",
+      "s_registerOffset",
+      "s_aboveTopShare",
+      "s_belowBottomShare",
+      "s_pitchStd",
+      "s_gridOffset",
+      "s_onBeatShare",
+      "s_offBeatShare",
+      "s_onsetsPerBarLog",
+      "s_onsetsPerBarCV",
+      "s_densityVsContext",
+      "s_meanDurationBeatsLog",
+      "s_overhangShare",
+      "s_chordChangeHitShare",
+      "s_motifRecurrence",
+      "s_barContinuity",
+      "s_midpointJump",
+      "s_velocityStd",
+      "s_downbeatAccent",
+      "s_phraseStartOnBarShare",
+      "s_restShare",
+      "s_pcEntropy",
+      "s_emptyBarShare",
+      "s_noteCountLog"
+    ],
+    "scale": [
+      3.66043822,
+      0.16708647,
+      0.18668756,
+      0.16855751,
+      0.07005485,
+      0.07651386,
+      0.23342117,
+      0.10479642,
+      0.31280078,
+      0.08016684,
+      6.11236343,
+      1,
+      0.04730739,
+      0.07910487,
+      0.05846588,
+      0.42943847,
+      0.1316843,
+      0.17096503,
+      0.13177369,
+      0.06743515,
+      0.10868058,
+      1,
+      0.18206294,
+      0.11456442,
+      0.04917785,
+      1.55914787,
+      0.22612896,
+      0.16631407,
+      0.23270323,
+      0.89922306,
+      0.23344768,
+      0.22179702,
+      1.5300761,
+      0.01003555,
+      0.16822972,
+      0.13694318,
+      0.29364961,
+      0.16519457,
+      0.58860333,
+      0.08813191,
+      0.04016977,
+      0.22241675,
+      0.29076921,
+      0.15143025,
+      0.16621696,
+      0.01252833,
+      0.02157359,
+      0.29848684,
+      0.16174377,
+      0.38336342,
+      0.07651386,
+      0.35694244
+    ],
+    "weights": [
+      -0.43166871,
+      0.21876507,
+      0.43850957,
+      1.24549311,
+      0.02328771,
+      0.25825392,
+      -0.54805614,
+      -2.2877326,
+      -0.52743193,
+      -0.14635259,
+      0.06602746,
+      0,
+      0.27803101,
+      0.46670271,
+      -0.12665209,
+      0.06581201,
+      -0.13495259,
+      -0.02629226,
+      -0.07593535,
+      0.11518327,
+      0.61321232,
+      0,
+      1.08100812,
+      -0.49712237,
+      0.04602853,
+      -0.04332956,
+      -0.19193099,
+      -1.05771516,
+      1.25727663,
+      -0.11447143,
+      -0.58470986,
+      -0.67969489,
+      -1.1766151,
+      -0.90438381,
+      0.12483362,
+      0.07911879,
+      -0.74027353,
+      0.78168231,
+      0.68358781,
+      1.28681234,
+      -0.78169041,
+      -0.03673661,
+      1.09278114,
+      -1.17941406,
+      0.0685103,
+      0.9288659,
+      0.01541295,
+      0.37549625,
+      -2.82974897,
+      0.60091298,
+      -0.25825392,
+      0.51676102
+    ],
+    "weightsByMagnitude": [
+      {
+        "name": "s_restShare",
+        "group": "stats",
+        "weight": -2.82974897,
+        "scale": 0.16174377
+      },
+      {
+        "name": "j_contextClashShare",
+        "group": "judge",
+        "weight": -2.2877326,
+        "scale": 0.10479642
+      },
+      {
+        "name": "s_meanDurationBeatsLog",
+        "group": "stats",
+        "weight": 1.28681234,
+        "scale": 0.08813191
+      },
+      {
+        "name": "s_parallelPerfectShare",
+        "group": "stats",
+        "weight": 1.25727663,
+        "scale": 0.23270323
+      },
+      {
+        "name": "j_chordToneShare",
+        "group": "judge",
+        "weight": 1.24549311,
+        "scale": 0.16855751
+      },
+      {
+        "name": "s_barContinuity",
+        "group": "stats",
+        "weight": -1.17941406,
+        "scale": 0.15143025
+      },
+      {
+        "name": "s_pitchStd",
+        "group": "stats",
+        "weight": -1.1766151,
+        "scale": 1.5300761
+      },
+      {
+        "name": "s_motifRecurrence",
+        "group": "stats",
+        "weight": 1.09278114,
+        "scale": 0.29076921
+      },
+      {
+        "name": "s_stepShare",
+        "group": "stats",
+        "weight": 1.08100812,
+        "scale": 0.18206294
+      },
+      {
+        "name": "s_repeatedPitchShare",
+        "group": "stats",
+        "weight": -1.05771516,
+        "scale": 0.16631407
+      },
+      {
+        "name": "s_velocityStd",
+        "group": "stats",
+        "weight": 0.9288659,
+        "scale": 0.01252833
+      },
+      {
+        "name": "s_gridOffset",
+        "group": "stats",
+        "weight": -0.90438381,
+        "scale": 0.01003555
+      },
+      {
+        "name": "s_overhangShare",
+        "group": "stats",
+        "weight": -0.78169041,
+        "scale": 0.04016977
+      },
+      {
+        "name": "s_onsetsPerBarCV",
+        "group": "stats",
+        "weight": 0.78168231,
+        "scale": 0.16519457
+      },
+      {
+        "name": "s_onsetsPerBarLog",
+        "group": "stats",
+        "weight": -0.74027353,
+        "scale": 0.29364961
+      },
+      {
+        "name": "s_densityVsContext",
+        "group": "stats",
+        "weight": 0.68358781,
+        "scale": 0.58860333
+      },
+      {
+        "name": "s_belowBottomShare",
+        "group": "stats",
+        "weight": -0.67969489,
+        "scale": 0.22179702
+      },
+      {
+        "name": "s_keyShare",
+        "group": "stats",
+        "weight": 0.61321232,
+        "scale": 0.10868058
+      },
+      {
+        "name": "s_pcEntropy",
+        "group": "stats",
+        "weight": 0.60091298,
+        "scale": 0.38336342
+      },
+      {
+        "name": "s_aboveTopShare",
+        "group": "stats",
+        "weight": -0.58470986,
+        "scale": 0.23344768
+      },
+      {
+        "name": "j_barRepetitionShare",
+        "group": "judge",
+        "weight": -0.54805614,
+        "scale": 0.23342117
+      },
+      {
+        "name": "j_distinctPitchesLog",
+        "group": "judge",
+        "weight": -0.52743193,
+        "scale": 0.31280078
+      },
+      {
+        "name": "s_noteCountLog",
+        "group": "stats",
+        "weight": 0.51676102,
+        "scale": 0.35694244
+      },
+      {
+        "name": "s_leapShare",
+        "group": "stats",
+        "weight": -0.49712237,
+        "scale": 0.11456442
+      },
+      {
+        "name": "c_candidateOverlap",
+        "group": "coherence",
+        "weight": 0.46670271,
+        "scale": 0.07910487
+      },
+      {
+        "name": "j_registerShare",
+        "group": "judge",
+        "weight": 0.43850957,
+        "scale": 0.18668756
+      },
+      {
+        "name": "j_playabilityErrors",
+        "group": "judge",
+        "weight": -0.43166871,
+        "scale": 3.66043822
+      },
+      {
+        "name": "s_phraseStartOnBarShare",
+        "group": "stats",
+        "weight": 0.37549625,
+        "scale": 0.29848684
+      },
+      {
+        "name": "c_harmonicMeanOverlap",
+        "group": "coherence",
+        "weight": 0.27803101,
+        "scale": 0.04730739
+      },
+      {
+        "name": "j_coverage",
+        "group": "judge",
+        "weight": 0.25825392,
+        "scale": 0.07651386
+      },
+      {
+        "name": "s_emptyBarShare",
+        "group": "stats",
+        "weight": -0.25825392,
+        "scale": 0.07651386
+      },
+      {
+        "name": "j_rangeShare",
+        "group": "judge",
+        "weight": 0.21876507,
+        "scale": 0.16708647
+      },
+      {
+        "name": "s_directionChangeRate",
+        "group": "stats",
+        "weight": -0.19193099,
+        "scale": 0.22612896
+      },
+      {
+        "name": "j_singlePitch",
+        "group": "judge",
+        "weight": -0.14635259,
+        "scale": 0.08016684
+      },
+      {
+        "name": "c_continuityUnexplained",
+        "group": "coherence",
+        "weight": -0.13495259,
+        "scale": 0.1316843
+      },
+      {
+        "name": "c_worstOverlap",
+        "group": "coherence",
+        "weight": -0.12665209,
+        "scale": 0.05846588
+      },
+      {
+        "name": "s_onBeatShare",
+        "group": "stats",
+        "weight": 0.12483362,
+        "scale": 0.16822972
+      },
+      {
+        "name": "c_motifQuotedShare",
+        "group": "coherence",
+        "weight": 0.11518327,
+        "scale": 0.06743515
+      },
+      {
+        "name": "s_registerOffset",
+        "group": "stats",
+        "weight": -0.11447143,
+        "scale": 0.89922306
+      },
+      {
+        "name": "s_offBeatShare",
+        "group": "stats",
+        "weight": 0.07911879,
+        "scale": 0.13694318
+      },
+      {
+        "name": "c_densityRoughness",
+        "group": "coherence",
+        "weight": -0.07593535,
+        "scale": 0.13177369
+      },
+      {
+        "name": "s_midpointJump",
+        "group": "stats",
+        "weight": 0.0685103,
+        "scale": 0.16621696
+      },
+      {
+        "name": "c_score",
+        "group": "coherence",
+        "weight": 0.06602746,
+        "scale": 6.11236343
+      },
+      {
+        "name": "c_candidateSeamExcess",
+        "group": "coherence",
+        "weight": 0.06581201,
+        "scale": 0.42943847
+      },
+      {
+        "name": "s_bigLeapShare",
+        "group": "stats",
+        "weight": 0.04602853,
+        "scale": 0.04917785
+      },
+      {
+        "name": "s_meanAbsInterval",
+        "group": "stats",
+        "weight": -0.04332956,
+        "scale": 1.55914787
+      },
+      {
+        "name": "s_chordChangeHitShare",
+        "group": "stats",
+        "weight": -0.03673661,
+        "scale": 0.22241675
+      },
+      {
+        "name": "c_registerRoughness",
+        "group": "coherence",
+        "weight": -0.02629226,
+        "scale": 0.17096503
+      },
+      {
+        "name": "j_chordMeasured",
+        "group": "judge",
+        "weight": 0.02328771,
+        "scale": 0.07005485
+      },
+      {
+        "name": "s_downbeatAccent",
+        "group": "stats",
+        "weight": 0.01541295,
+        "scale": 0.02157359
+      },
+      {
+        "name": "c_measured",
+        "group": "coherence",
+        "weight": 0,
+        "scale": 1
+      },
+      {
+        "name": "s_keyMeasured",
+        "group": "stats",
+        "weight": 0,
+        "scale": 1
+      }
+    ]
+  },
+  "gates": {
+    "a_inDistribution": {
+      "overall": {
+        "n": 31764,
+        "correct": 30583,
+        "accuracy": 0.9628,
+        "meanP": 0.9274
+      },
+      "byCell": {
+        "bar_copy_repetition": {
+          "1": {
+            "n": 824,
+            "correct": 756,
+            "accuracy": 0.9175,
+            "meanP": 0.8546
+          },
+          "2": {
+            "n": 842,
+            "correct": 780,
+            "accuracy": 0.9264,
+            "meanP": 0.8984
+          },
+          "3": {
+            "n": 848,
+            "correct": 803,
+            "accuracy": 0.9469,
+            "meanP": 0.9334
+          },
+          "all": {
+            "n": 2514,
+            "correct": 2339,
+            "accuracy": 0.9304,
+            "meanP": 0.8958
+          }
+        },
+        "chord_tone_to_non_chord_tone": {
+          "1": {
+            "n": 732,
+            "correct": 719,
+            "accuracy": 0.9822,
+            "meanP": 0.8636
+          },
+          "2": {
+            "n": 732,
+            "correct": 728,
+            "accuracy": 0.9945,
+            "meanP": 0.9515
+          },
+          "3": {
+            "n": 732,
+            "correct": 731,
+            "accuracy": 0.9986,
+            "meanP": 0.9862
+          },
+          "all": {
+            "n": 2196,
+            "correct": 2178,
+            "accuracy": 0.9918,
+            "meanP": 0.9338
+          }
+        },
+        "cross_part_clash": {
+          "1": {
+            "n": 775,
+            "correct": 773,
+            "accuracy": 0.9974,
+            "meanP": 0.969
+          },
+          "2": {
+            "n": 776,
+            "correct": 776,
+            "accuracy": 1,
+            "meanP": 0.9953
+          },
+          "3": {
+            "n": 775,
+            "correct": 775,
+            "accuracy": 1,
+            "meanP": 0.9997
+          },
+          "all": {
+            "n": 2326,
+            "correct": 2324,
+            "accuracy": 0.9991,
+            "meanP": 0.988
+          }
+        },
+        "density_doubling": {
+          "1": {
+            "n": 846,
+            "correct": 793,
+            "accuracy": 0.9374,
+            "meanP": 0.837
+          },
+          "2": {
+            "n": 846,
+            "correct": 818,
+            "accuracy": 0.9669,
+            "meanP": 0.9063
+          },
+          "3": {
+            "n": 846,
+            "correct": 826,
+            "accuracy": 0.9764,
+            "meanP": 0.9278
+          },
+          "all": {
+            "n": 2538,
+            "correct": 2437,
+            "accuracy": 0.9602,
+            "meanP": 0.8904
+          }
+        },
+        "density_thinning": {
+          "1": {
+            "n": 861,
+            "correct": 828,
+            "accuracy": 0.9617,
+            "meanP": 0.9346
+          },
+          "2": {
+            "n": 861,
+            "correct": 849,
+            "accuracy": 0.9861,
+            "meanP": 0.9765
+          },
+          "3": {
+            "n": 861,
+            "correct": 854,
+            "accuracy": 0.9919,
+            "meanP": 0.99
+          },
+          "all": {
+            "n": 2583,
+            "correct": 2531,
+            "accuracy": 0.9799,
+            "meanP": 0.967
+          }
+        },
+        "dynamics_flattening": {
+          "1": {
+            "n": 223,
+            "correct": 223,
+            "accuracy": 1,
+            "meanP": 0.9226
+          },
+          "2": {
+            "n": 223,
+            "correct": 223,
+            "accuracy": 1,
+            "meanP": 0.9775
+          },
+          "3": {
+            "n": 223,
+            "correct": 126,
+            "accuracy": 0.565,
+            "meanP": 0.5424
+          },
+          "all": {
+            "n": 669,
+            "correct": 572,
+            "accuracy": 0.855,
+            "meanP": 0.8141
+          }
+        },
+        "leap_injection": {
+          "1": {
+            "n": 761,
+            "correct": 749,
+            "accuracy": 0.9842,
+            "meanP": 0.9263
+          },
+          "2": {
+            "n": 761,
+            "correct": 758,
+            "accuracy": 0.9961,
+            "meanP": 0.9675
+          },
+          "3": {
+            "n": 761,
+            "correct": 758,
+            "accuracy": 0.9961,
+            "meanP": 0.9851
+          },
+          "all": {
+            "n": 2283,
+            "correct": 2265,
+            "accuracy": 0.9921,
+            "meanP": 0.9596
+          }
+        },
+        "octave_displacement": {
+          "1": {
+            "n": 765,
+            "correct": 745,
+            "accuracy": 0.9739,
+            "meanP": 0.9133
+          },
+          "2": {
+            "n": 777,
+            "correct": 750,
+            "accuracy": 0.9653,
+            "meanP": 0.9191
+          },
+          "3": {
+            "n": 780,
+            "correct": 767,
+            "accuracy": 0.9833,
+            "meanP": 0.9769
+          },
+          "all": {
+            "n": 2322,
+            "correct": 2262,
+            "accuracy": 0.9742,
+            "meanP": 0.9366
+          }
+        },
+        "onset_jitter": {
+          "1": {
+            "n": 860,
+            "correct": 843,
+            "accuracy": 0.9802,
+            "meanP": 0.9053
+          },
+          "2": {
+            "n": 861,
+            "correct": 860,
+            "accuracy": 0.9988,
+            "meanP": 0.9843
+          },
+          "3": {
+            "n": 861,
+            "correct": 858,
+            "accuracy": 0.9965,
+            "meanP": 0.9943
+          },
+          "all": {
+            "n": 2582,
+            "correct": 2561,
+            "accuracy": 0.9919,
+            "meanP": 0.9613
+          }
+        },
+        "phrase_shift": {
+          "1": {
+            "n": 859,
+            "correct": 794,
+            "accuracy": 0.9243,
+            "meanP": 0.8874
+          },
+          "2": {
+            "n": 855,
+            "correct": 798,
+            "accuracy": 0.9333,
+            "meanP": 0.9083
+          },
+          "3": {
+            "n": 859,
+            "correct": 801,
+            "accuracy": 0.9325,
+            "meanP": 0.9069
+          },
+          "all": {
+            "n": 2573,
+            "correct": 2393,
+            "accuracy": 0.93,
+            "meanP": 0.9009
+          }
+        },
+        "pitch_shift_in_key": {
+          "1": {
+            "n": 778,
+            "correct": 732,
+            "accuracy": 0.9409,
+            "meanP": 0.8471
+          },
+          "2": {
+            "n": 778,
+            "correct": 753,
+            "accuracy": 0.9679,
+            "meanP": 0.9376
+          },
+          "3": {
+            "n": 778,
+            "correct": 765,
+            "accuracy": 0.9833,
+            "meanP": 0.9703
+          },
+          "all": {
+            "n": 2334,
+            "correct": 2250,
+            "accuracy": 0.964,
+            "meanP": 0.9183
+          }
+        },
+        "pitch_shift_out_of_key": {
+          "1": {
+            "n": 771,
+            "correct": 749,
+            "accuracy": 0.9715,
+            "meanP": 0.8614
+          },
+          "2": {
+            "n": 778,
+            "correct": 772,
+            "accuracy": 0.9923,
+            "meanP": 0.9661
+          },
+          "3": {
+            "n": 780,
+            "correct": 778,
+            "accuracy": 0.9974,
+            "meanP": 0.9938
+          },
+          "all": {
+            "n": 2329,
+            "correct": 2299,
+            "accuracy": 0.9871,
+            "meanP": 0.9407
+          }
+        },
+        "quantisation_coarsening": {
+          "1": {
+            "n": 710,
+            "correct": 662,
+            "accuracy": 0.9324,
+            "meanP": 0.8926
+          },
+          "2": {
+            "n": 846,
+            "correct": 823,
+            "accuracy": 0.9728,
+            "meanP": 0.9609
+          },
+          "3": {
+            "n": 856,
+            "correct": 847,
+            "accuracy": 0.9895,
+            "meanP": 0.9876
+          },
+          "all": {
+            "n": 2412,
+            "correct": 2332,
+            "accuracy": 0.9668,
+            "meanP": 0.9503
+          }
+        },
+        "role_inversion": {
+          "1": {
+            "n": 778,
+            "correct": 599,
+            "accuracy": 0.7699,
+            "meanP": 0.7181
+          },
+          "2": {
+            "n": 731,
+            "correct": 679,
+            "accuracy": 0.9289,
+            "meanP": 0.8792
+          },
+          "3": {
+            "n": 594,
+            "correct": 562,
+            "accuracy": 0.9461,
+            "meanP": 0.9463
+          },
+          "all": {
+            "n": 2103,
+            "correct": 1840,
+            "accuracy": 0.8749,
+            "meanP": 0.8386
+          }
+        }
+      },
+      "byKind": {
+        "window": {
+          "inDistribution": {
+            "n": 22034,
+            "correct": 21216,
+            "accuracy": 0.9629,
+            "meanP": 0.926
+          },
+          "heldOut": {
+            "n": 7102,
+            "correct": 4671,
+            "accuracy": 0.6577,
+            "meanP": 0.629
+          }
+        },
+        "section": {
+          "inDistribution": {
+            "n": 9730,
+            "correct": 9367,
+            "accuracy": 0.9627,
+            "meanP": 0.9306
+          },
+          "heldOut": {
+            "n": 3277,
+            "correct": 2163,
+            "accuracy": 0.6601,
+            "meanP": 0.6291
+          }
+        }
+      },
+      "byTargetFamily": {
+        "bass": {
+          "inDistribution": {
+            "n": 642,
+            "correct": 624,
+            "accuracy": 0.972,
+            "meanP": 0.9322
+          },
+          "heldOut": {
+            "n": 214,
+            "correct": 154,
+            "accuracy": 0.7196,
+            "meanP": 0.6878
+          }
+        },
+        "brass": {
+          "inDistribution": {
+            "n": 2935,
+            "correct": 2865,
+            "accuracy": 0.9761,
+            "meanP": 0.9515
+          },
+          "heldOut": {
+            "n": 929,
+            "correct": 658,
+            "accuracy": 0.7083,
+            "meanP": 0.6784
+          }
+        },
+        "drums": {
+          "inDistribution": {
+            "n": 1455,
+            "correct": 1259,
+            "accuracy": 0.8653,
+            "meanP": 0.8187
+          },
+          "heldOut": {
+            "n": 404,
+            "correct": 281,
+            "accuracy": 0.6955,
+            "meanP": 0.659
+          }
+        },
+        "ensemble": {
+          "inDistribution": {
+            "n": 1512,
+            "correct": 1469,
+            "accuracy": 0.9716,
+            "meanP": 0.9369
+          },
+          "heldOut": {
+            "n": 471,
+            "correct": 324,
+            "accuracy": 0.6879,
+            "meanP": 0.6562
+          }
+        },
+        "guitar": {
+          "inDistribution": {
+            "n": 757,
+            "correct": 740,
+            "accuracy": 0.9775,
+            "meanP": 0.9352
+          },
+          "heldOut": {
+            "n": 281,
+            "correct": 182,
+            "accuracy": 0.6477,
+            "meanP": 0.6068
+          }
+        },
+        "keys": {
+          "inDistribution": {
+            "n": 10183,
+            "correct": 9807,
+            "accuracy": 0.9631,
+            "meanP": 0.9257
+          },
+          "heldOut": {
+            "n": 3393,
+            "correct": 2141,
+            "accuracy": 0.631,
+            "meanP": 0.6016
+          }
+        },
+        "organ": {
+          "inDistribution": {
+            "n": 1092,
+            "correct": 1064,
+            "accuracy": 0.9744,
+            "meanP": 0.9402
+          },
+          "heldOut": {
+            "n": 359,
+            "correct": 251,
+            "accuracy": 0.6992,
+            "meanP": 0.6835
+          }
+        },
+        "pipe": {
+          "inDistribution": {
+            "n": 3035,
+            "correct": 2950,
+            "accuracy": 0.972,
+            "meanP": 0.9376
+          },
+          "heldOut": {
+            "n": 997,
+            "correct": 656,
+            "accuracy": 0.658,
+            "meanP": 0.631
+          }
+        },
+        "reed": {
+          "inDistribution": {
+            "n": 2896,
+            "correct": 2819,
+            "accuracy": 0.9734,
+            "meanP": 0.9409
+          },
+          "heldOut": {
+            "n": 939,
+            "correct": 647,
+            "accuracy": 0.689,
+            "meanP": 0.6668
+          }
+        },
+        "strings": {
+          "inDistribution": {
+            "n": 3850,
+            "correct": 3715,
+            "accuracy": 0.9649,
+            "meanP": 0.9297
+          },
+          "heldOut": {
+            "n": 1269,
+            "correct": 888,
+            "accuracy": 0.6998,
+            "meanP": 0.6744
+          }
+        },
+        "synth": {
+          "inDistribution": {
+            "n": 3407,
+            "correct": 3271,
+            "accuracy": 0.9601,
+            "meanP": 0.9243
+          },
+          "heldOut": {
+            "n": 1123,
+            "correct": 652,
+            "accuracy": 0.5806,
+            "meanP": 0.5416
+          }
+        }
+      }
+    },
+    "b_heldOutFamilies": {
+      "overall": {
+        "n": 10379,
+        "correct": 6834,
+        "accuracy": 0.6584,
+        "meanP": 0.6291
+      },
+      "byCell": {
+        "duration_overhang": {
+          "1": {
+            "n": 679,
+            "correct": 278,
+            "accuracy": 0.4094,
+            "meanP": 0.3979
+          },
+          "2": {
+            "n": 679,
+            "correct": 260,
+            "accuracy": 0.3829,
+            "meanP": 0.3788
+          },
+          "3": {
+            "n": 679,
+            "correct": 241,
+            "accuracy": 0.3549,
+            "meanP": 0.3607
+          },
+          "all": {
+            "n": 2037,
+            "correct": 779,
+            "accuracy": 0.3824,
+            "meanP": 0.3791
+          }
+        },
+        "motif_destruction": {
+          "1": {
+            "n": 528,
+            "correct": 489,
+            "accuracy": 0.9261,
+            "meanP": 0.8457
+          },
+          "2": {
+            "n": 527,
+            "correct": 491,
+            "accuracy": 0.9317,
+            "meanP": 0.8616
+          },
+          "3": {
+            "n": 528,
+            "correct": 489,
+            "accuracy": 0.9261,
+            "meanP": 0.8704
+          },
+          "all": {
+            "n": 1583,
+            "correct": 1469,
+            "accuracy": 0.928,
+            "meanP": 0.8592
+          }
+        },
+        "parallel_doubling": {
+          "1": {
+            "n": 746,
+            "correct": 181,
+            "accuracy": 0.2426,
+            "meanP": 0.2605
+          },
+          "2": {
+            "n": 754,
+            "correct": 159,
+            "accuracy": 0.2109,
+            "meanP": 0.2217
+          },
+          "3": {
+            "n": 757,
+            "correct": 169,
+            "accuracy": 0.2232,
+            "meanP": 0.222
+          },
+          "all": {
+            "n": 2257,
+            "correct": 509,
+            "accuracy": 0.2255,
+            "meanP": 0.2346
+          }
+        },
+        "section_swap": {
+          "1": {
+            "n": 811,
+            "correct": 693,
+            "accuracy": 0.8545,
+            "meanP": 0.8029
+          },
+          "2": {
+            "n": 822,
+            "correct": 713,
+            "accuracy": 0.8674,
+            "meanP": 0.8362
+          },
+          "3": {
+            "n": 850,
+            "correct": 787,
+            "accuracy": 0.9259,
+            "meanP": 0.8935
+          },
+          "all": {
+            "n": 2483,
+            "correct": 2193,
+            "accuracy": 0.8832,
+            "meanP": 0.845
+          }
+        },
+        "syncopation_removal": {
+          "1": {
+            "n": 673,
+            "correct": 619,
+            "accuracy": 0.9198,
+            "meanP": 0.8292
+          },
+          "2": {
+            "n": 673,
+            "correct": 635,
+            "accuracy": 0.9435,
+            "meanP": 0.8945
+          },
+          "3": {
+            "n": 673,
+            "correct": 630,
+            "accuracy": 0.9361,
+            "meanP": 0.9052
+          },
+          "all": {
+            "n": 2019,
+            "correct": 1884,
+            "accuracy": 0.9331,
+            "meanP": 0.8763
+          }
+        }
+      }
+    },
+    "c_calibration": {
+      "all": {
+        "bySeverity": {
+          "1": 0.8145,
+          "2": 0.866,
+          "3": 0.8811
+        },
+        "monotone": true
+      },
+      "inDistribution": {
+        "bySeverity": {
+          "1": 0.8789,
+          "2": 0.9433,
+          "3": 0.9599
+        },
+        "monotone": true
+      },
+      "heldOut": {
+        "bySeverity": {
+          "1": 0.6169,
+          "2": 0.6274,
+          "3": 0.6427
+        },
+        "monotone": true
+      },
+      "perFamily": {
+        "bar_copy_repetition": {
+          "bySeverity": {
+            "1": 0.8546,
+            "2": 0.8984,
+            "3": 0.9334
+          },
+          "monotone": true,
+          "heldOut": false
+        },
+        "chord_tone_to_non_chord_tone": {
+          "bySeverity": {
+            "1": 0.8636,
+            "2": 0.9515,
+            "3": 0.9862
+          },
+          "monotone": true,
+          "heldOut": false
+        },
+        "cross_part_clash": {
+          "bySeverity": {
+            "1": 0.969,
+            "2": 0.9953,
+            "3": 0.9997
+          },
+          "monotone": true,
+          "heldOut": false
+        },
+        "density_doubling": {
+          "bySeverity": {
+            "1": 0.837,
+            "2": 0.9063,
+            "3": 0.9278
+          },
+          "monotone": true,
+          "heldOut": false
+        },
+        "density_thinning": {
+          "bySeverity": {
+            "1": 0.9346,
+            "2": 0.9765,
+            "3": 0.99
+          },
+          "monotone": true,
+          "heldOut": false
+        },
+        "duration_overhang": {
+          "bySeverity": {
+            "1": 0.3979,
+            "2": 0.3788,
+            "3": 0.3607
+          },
+          "monotone": false,
+          "heldOut": true
+        },
+        "dynamics_flattening": {
+          "bySeverity": {
+            "1": 0.9226,
+            "2": 0.9775,
+            "3": 0.5424
+          },
+          "monotone": false,
+          "heldOut": false
+        },
+        "leap_injection": {
+          "bySeverity": {
+            "1": 0.9263,
+            "2": 0.9675,
+            "3": 0.9851
+          },
+          "monotone": true,
+          "heldOut": false
+        },
+        "motif_destruction": {
+          "bySeverity": {
+            "1": 0.8457,
+            "2": 0.8616,
+            "3": 0.8704
+          },
+          "monotone": true,
+          "heldOut": true
+        },
+        "octave_displacement": {
+          "bySeverity": {
+            "1": 0.9133,
+            "2": 0.9191,
+            "3": 0.9769
+          },
+          "monotone": true,
+          "heldOut": false
+        },
+        "onset_jitter": {
+          "bySeverity": {
+            "1": 0.9053,
+            "2": 0.9843,
+            "3": 0.9943
+          },
+          "monotone": true,
+          "heldOut": false
+        },
+        "parallel_doubling": {
+          "bySeverity": {
+            "1": 0.2605,
+            "2": 0.2217,
+            "3": 0.222
+          },
+          "monotone": false,
+          "heldOut": true
+        },
+        "phrase_shift": {
+          "bySeverity": {
+            "1": 0.8874,
+            "2": 0.9083,
+            "3": 0.9069
+          },
+          "monotone": false,
+          "heldOut": false
+        },
+        "pitch_shift_in_key": {
+          "bySeverity": {
+            "1": 0.8471,
+            "2": 0.9376,
+            "3": 0.9703
+          },
+          "monotone": true,
+          "heldOut": false
+        },
+        "pitch_shift_out_of_key": {
+          "bySeverity": {
+            "1": 0.8614,
+            "2": 0.9661,
+            "3": 0.9938
+          },
+          "monotone": true,
+          "heldOut": false
+        },
+        "quantisation_coarsening": {
+          "bySeverity": {
+            "1": 0.8926,
+            "2": 0.9609,
+            "3": 0.9876
+          },
+          "monotone": true,
+          "heldOut": false
+        },
+        "role_inversion": {
+          "bySeverity": {
+            "1": 0.7181,
+            "2": 0.8792,
+            "3": 0.9463
+          },
+          "monotone": true,
+          "heldOut": false
+        },
+        "section_swap": {
+          "bySeverity": {
+            "1": 0.8029,
+            "2": 0.8362,
+            "3": 0.8935
+          },
+          "monotone": true,
+          "heldOut": true
+        },
+        "syncopation_removal": {
+          "bySeverity": {
+            "1": 0.8292,
+            "2": 0.8945,
+            "3": 0.9052
+          },
+          "monotone": true,
+          "heldOut": true
+        }
+      },
+      "familiesMonotone": 15,
+      "familiesMeasured": 19
+    },
+    "d_humanVsAi": {
+      "perReport": {
+        "classical": {
+          "arms": [
+            {
+              "arm": "COMPOSERS_ASSISTANT_2",
+              "cells": 36,
+              "humanWins": 18,
+              "humanWinShare": 0.5,
+              "meanPHuman": 0.4874,
+              "meanMargin": 0.522,
+              "byFamily": {
+                "bass": {
+                  "cells": 6,
+                  "humanWins": 0,
+                  "meanPHuman": 0.0013
+                },
+                "keys": {
+                  "cells": 6,
+                  "humanWins": 4,
+                  "meanPHuman": 0.668
+                },
+                "strings": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.5542
+                },
+                "brass": {
+                  "cells": 6,
+                  "humanWins": 6,
+                  "meanPHuman": 0.9191
+                },
+                "reed": {
+                  "cells": 6,
+                  "humanWins": 2,
+                  "meanPHuman": 0.2795
+                },
+                "organ": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.5019
+                }
+              }
+            },
+            {
+              "arm": "COMPOSERS_ASSISTANT_2+CTX",
+              "cells": 36,
+              "humanWins": 23,
+              "humanWinShare": 0.6389,
+              "meanPHuman": 0.646,
+              "meanMargin": 3.3738,
+              "byFamily": {
+                "bass": {
+                  "cells": 6,
+                  "humanWins": 0,
+                  "meanPHuman": 0.0013
+                },
+                "keys": {
+                  "cells": 6,
+                  "humanWins": 5,
+                  "meanPHuman": 0.8518
+                },
+                "strings": {
+                  "cells": 6,
+                  "humanWins": 4,
+                  "meanPHuman": 0.6812
+                },
+                "brass": {
+                  "cells": 6,
+                  "humanWins": 6,
+                  "meanPHuman": 0.999
+                },
+                "reed": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.5327
+                },
+                "organ": {
+                  "cells": 6,
+                  "humanWins": 5,
+                  "meanPHuman": 0.8098
+                }
+              }
+            },
+            {
+              "arm": "CONTEXT_AWARE_ARRANGER",
+              "cells": 36,
+              "humanWins": 15,
+              "humanWinShare": 0.4167,
+              "meanPHuman": 0.4599,
+              "meanMargin": 4.7149,
+              "byFamily": {
+                "bass": {
+                  "cells": 6,
+                  "humanWins": 0,
+                  "meanPHuman": 0.0118
+                },
+                "keys": {
+                  "cells": 6,
+                  "humanWins": 0,
+                  "meanPHuman": 0.0108
+                },
+                "strings": {
+                  "cells": 6,
+                  "humanWins": 0,
+                  "meanPHuman": 0.2382
+                },
+                "brass": {
+                  "cells": 6,
+                  "humanWins": 6,
+                  "meanPHuman": 1
+                },
+                "reed": {
+                  "cells": 6,
+                  "humanWins": 6,
+                  "meanPHuman": 0.9943
+                },
+                "organ": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.5045
+                }
+              }
+            },
+            {
+              "arm": "REFERENCE_PART_COMPOSER",
+              "cells": 36,
+              "humanWins": 15,
+              "humanWinShare": 0.4167,
+              "meanPHuman": 0.425,
+              "meanMargin": 2.9302,
+              "byFamily": {
+                "bass": {
+                  "cells": 6,
+                  "humanWins": 0,
+                  "meanPHuman": 0.0118
+                },
+                "keys": {
+                  "cells": 6,
+                  "humanWins": 0,
+                  "meanPHuman": 0.0081
+                },
+                "strings": {
+                  "cells": 6,
+                  "humanWins": 0,
+                  "meanPHuman": 0.034
+                },
+                "brass": {
+                  "cells": 6,
+                  "humanWins": 6,
+                  "meanPHuman": 1
+                },
+                "reed": {
+                  "cells": 6,
+                  "humanWins": 6,
+                  "meanPHuman": 0.9943
+                },
+                "organ": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.5022
+                }
+              }
+            }
+          ],
+          "humanAboveEveryArm": false
+        },
+        "global": {
+          "arms": [
+            {
+              "arm": "COMPOSERS_ASSISTANT_2",
+              "cells": 150,
+              "humanWins": 60,
+              "humanWinShare": 0.4,
+              "meanPHuman": 0.4214,
+              "meanMargin": -0.0867,
+              "byFamily": {
+                "drums": {
+                  "cells": 15,
+                  "humanWins": 9,
+                  "meanPHuman": 0.5736
+                },
+                "bass": {
+                  "cells": 15,
+                  "humanWins": 8,
+                  "meanPHuman": 0.5291
+                },
+                "guitar": {
+                  "cells": 18,
+                  "humanWins": 13,
+                  "meanPHuman": 0.7314
+                },
+                "keys": {
+                  "cells": 18,
+                  "humanWins": 7,
+                  "meanPHuman": 0.4052
+                },
+                "organ": {
+                  "cells": 15,
+                  "humanWins": 6,
+                  "meanPHuman": 0.4098
+                },
+                "strings": {
+                  "cells": 12,
+                  "humanWins": 6,
+                  "meanPHuman": 0.5411
+                },
+                "brass": {
+                  "cells": 15,
+                  "humanWins": 2,
+                  "meanPHuman": 0.1425
+                },
+                "reed": {
+                  "cells": 18,
+                  "humanWins": 4,
+                  "meanPHuman": 0.3267
+                },
+                "pipe": {
+                  "cells": 15,
+                  "humanWins": 2,
+                  "meanPHuman": 0.1691
+                },
+                "ensemble": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.5018
+                },
+                "synth": {
+                  "cells": 3,
+                  "humanWins": 0,
+                  "meanPHuman": 0
+                }
+              }
+            },
+            {
+              "arm": "COMPOSERS_ASSISTANT_2+CTX",
+              "cells": 150,
+              "humanWins": 103,
+              "humanWinShare": 0.6867,
+              "meanPHuman": 0.6534,
+              "meanMargin": 4.6469,
+              "byFamily": {
+                "drums": {
+                  "cells": 15,
+                  "humanWins": 9,
+                  "meanPHuman": 0.5606
+                },
+                "bass": {
+                  "cells": 15,
+                  "humanWins": 11,
+                  "meanPHuman": 0.7095
+                },
+                "guitar": {
+                  "cells": 18,
+                  "humanWins": 13,
+                  "meanPHuman": 0.7408
+                },
+                "keys": {
+                  "cells": 18,
+                  "humanWins": 13,
+                  "meanPHuman": 0.6503
+                },
+                "organ": {
+                  "cells": 15,
+                  "humanWins": 10,
+                  "meanPHuman": 0.6597
+                },
+                "strings": {
+                  "cells": 12,
+                  "humanWins": 12,
+                  "meanPHuman": 0.9205
+                },
+                "brass": {
+                  "cells": 15,
+                  "humanWins": 10,
+                  "meanPHuman": 0.6659
+                },
+                "reed": {
+                  "cells": 18,
+                  "humanWins": 13,
+                  "meanPHuman": 0.6825
+                },
+                "pipe": {
+                  "cells": 15,
+                  "humanWins": 9,
+                  "meanPHuman": 0.4799
+                },
+                "ensemble": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.5845
+                },
+                "synth": {
+                  "cells": 3,
+                  "humanWins": 0,
+                  "meanPHuman": 0.0002
+                }
+              }
+            },
+            {
+              "arm": "CONTEXT_AWARE_ARRANGER",
+              "cells": 135,
+              "humanWins": 84,
+              "humanWinShare": 0.6222,
+              "meanPHuman": 0.6069,
+              "meanMargin": 4.7089,
+              "byFamily": {
+                "drums": {
+                  "cells": 15,
+                  "humanWins": 6,
+                  "meanPHuman": 0.4557
+                },
+                "bass": {
+                  "cells": 12,
+                  "humanWins": 6,
+                  "meanPHuman": 0.5881
+                },
+                "guitar": {
+                  "cells": 12,
+                  "humanWins": 12,
+                  "meanPHuman": 0.9985
+                },
+                "keys": {
+                  "cells": 18,
+                  "humanWins": 3,
+                  "meanPHuman": 0.115
+                },
+                "organ": {
+                  "cells": 15,
+                  "humanWins": 6,
+                  "meanPHuman": 0.3941
+                },
+                "strings": {
+                  "cells": 12,
+                  "humanWins": 9,
+                  "meanPHuman": 0.7492
+                },
+                "reed": {
+                  "cells": 18,
+                  "humanWins": 18,
+                  "meanPHuman": 0.8412
+                },
+                "pipe": {
+                  "cells": 12,
+                  "humanWins": 9,
+                  "meanPHuman": 0.8349
+                },
+                "ensemble": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.5434
+                },
+                "brass": {
+                  "cells": 12,
+                  "humanWins": 12,
+                  "meanPHuman": 0.889
+                },
+                "synth": {
+                  "cells": 3,
+                  "humanWins": 0,
+                  "meanPHuman": 0.0005
+                }
+              }
+            },
+            {
+              "arm": "REFERENCE_PART_COMPOSER",
+              "cells": 135,
+              "humanWins": 84,
+              "humanWinShare": 0.6222,
+              "meanPHuman": 0.6042,
+              "meanMargin": 3.3506,
+              "byFamily": {
+                "drums": {
+                  "cells": 15,
+                  "humanWins": 9,
+                  "meanPHuman": 0.6013
+                },
+                "bass": {
+                  "cells": 12,
+                  "humanWins": 6,
+                  "meanPHuman": 0.4994
+                },
+                "guitar": {
+                  "cells": 12,
+                  "humanWins": 12,
+                  "meanPHuman": 0.9967
+                },
+                "keys": {
+                  "cells": 18,
+                  "humanWins": 3,
+                  "meanPHuman": 0.1594
+                },
+                "organ": {
+                  "cells": 15,
+                  "humanWins": 3,
+                  "meanPHuman": 0.2176
+                },
+                "strings": {
+                  "cells": 12,
+                  "humanWins": 9,
+                  "meanPHuman": 0.7491
+                },
+                "reed": {
+                  "cells": 18,
+                  "humanWins": 18,
+                  "meanPHuman": 0.8412
+                },
+                "pipe": {
+                  "cells": 12,
+                  "humanWins": 9,
+                  "meanPHuman": 0.75
+                },
+                "ensemble": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.5651
+                },
+                "brass": {
+                  "cells": 12,
+                  "humanWins": 12,
+                  "meanPHuman": 0.9955
+                },
+                "synth": {
+                  "cells": 3,
+                  "humanWins": 0,
+                  "meanPHuman": 0.0002
+                }
+              }
+            }
+          ],
+          "humanAboveEveryArm": false
+        },
+        "challenger": {
+          "arms": [
+            {
+              "arm": "ANTICIPATORY_MUSIC_TRANSFORMER",
+              "cells": 28,
+              "humanWins": 19,
+              "humanWinShare": 0.6786,
+              "meanPHuman": 0.6896,
+              "meanMargin": 7.2183,
+              "byFamily": {
+                "bass": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.4908
+                },
+                "strings": {
+                  "cells": 5,
+                  "humanWins": 5,
+                  "meanPHuman": 0.9766
+                },
+                "brass": {
+                  "cells": 4,
+                  "humanWins": 3,
+                  "meanPHuman": 0.7565
+                },
+                "reed": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.515
+                },
+                "organ": {
+                  "cells": 4,
+                  "humanWins": 2,
+                  "meanPHuman": 0.5912
+                },
+                "keys": {
+                  "cells": 3,
+                  "humanWins": 3,
+                  "meanPHuman": 1
+                }
+              }
+            },
+            {
+              "arm": "ANTICIPATORY_MUSIC_TRANSFORMER+CTX",
+              "cells": 28,
+              "humanWins": 23,
+              "humanWinShare": 0.8214,
+              "meanPHuman": 0.8069,
+              "meanMargin": 10.2292,
+              "byFamily": {
+                "bass": {
+                  "cells": 6,
+                  "humanWins": 4,
+                  "meanPHuman": 0.6664
+                },
+                "strings": {
+                  "cells": 5,
+                  "humanWins": 5,
+                  "meanPHuman": 0.9361
+                },
+                "brass": {
+                  "cells": 4,
+                  "humanWins": 3,
+                  "meanPHuman": 0.8199
+                },
+                "reed": {
+                  "cells": 6,
+                  "humanWins": 4,
+                  "meanPHuman": 0.6393
+                },
+                "organ": {
+                  "cells": 4,
+                  "humanWins": 4,
+                  "meanPHuman": 0.9499
+                },
+                "keys": {
+                  "cells": 3,
+                  "humanWins": 3,
+                  "meanPHuman": 1
+                }
+              }
+            },
+            {
+              "arm": "COMPOSERS_ASSISTANT_2",
+              "cells": 36,
+              "humanWins": 19,
+              "humanWinShare": 0.5278,
+              "meanPHuman": 0.5112,
+              "meanMargin": 0.8535,
+              "byFamily": {
+                "bass": {
+                  "cells": 6,
+                  "humanWins": 1,
+                  "meanPHuman": 0.1678
+                },
+                "keys": {
+                  "cells": 6,
+                  "humanWins": 4,
+                  "meanPHuman": 0.668
+                },
+                "strings": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.5306
+                },
+                "brass": {
+                  "cells": 6,
+                  "humanWins": 6,
+                  "meanPHuman": 0.9191
+                },
+                "reed": {
+                  "cells": 6,
+                  "humanWins": 2,
+                  "meanPHuman": 0.2795
+                },
+                "organ": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.5019
+                }
+              }
+            },
+            {
+              "arm": "COMPOSERS_ASSISTANT_2+CTX",
+              "cells": 36,
+              "humanWins": 24,
+              "humanWinShare": 0.6667,
+              "meanPHuman": 0.6639,
+              "meanMargin": 3.6162,
+              "byFamily": {
+                "bass": {
+                  "cells": 6,
+                  "humanWins": 1,
+                  "meanPHuman": 0.1678
+                },
+                "keys": {
+                  "cells": 6,
+                  "humanWins": 5,
+                  "meanPHuman": 0.8518
+                },
+                "strings": {
+                  "cells": 6,
+                  "humanWins": 4,
+                  "meanPHuman": 0.6224
+                },
+                "brass": {
+                  "cells": 6,
+                  "humanWins": 6,
+                  "meanPHuman": 0.999
+                },
+                "reed": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.5327
+                },
+                "organ": {
+                  "cells": 6,
+                  "humanWins": 5,
+                  "meanPHuman": 0.8098
+                }
+              }
+            },
+            {
+              "arm": "CONTEXT_AWARE_ARRANGER",
+              "cells": 36,
+              "humanWins": 15,
+              "humanWinShare": 0.4167,
+              "meanPHuman": 0.4599,
+              "meanMargin": 4.7149,
+              "byFamily": {
+                "bass": {
+                  "cells": 6,
+                  "humanWins": 0,
+                  "meanPHuman": 0.0118
+                },
+                "keys": {
+                  "cells": 6,
+                  "humanWins": 0,
+                  "meanPHuman": 0.0108
+                },
+                "strings": {
+                  "cells": 6,
+                  "humanWins": 0,
+                  "meanPHuman": 0.2382
+                },
+                "brass": {
+                  "cells": 6,
+                  "humanWins": 6,
+                  "meanPHuman": 1
+                },
+                "reed": {
+                  "cells": 6,
+                  "humanWins": 6,
+                  "meanPHuman": 0.9943
+                },
+                "organ": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.5045
+                }
+              }
+            },
+            {
+              "arm": "REFERENCE_PART_COMPOSER",
+              "cells": 36,
+              "humanWins": 15,
+              "humanWinShare": 0.4167,
+              "meanPHuman": 0.425,
+              "meanMargin": 2.9302,
+              "byFamily": {
+                "bass": {
+                  "cells": 6,
+                  "humanWins": 0,
+                  "meanPHuman": 0.0118
+                },
+                "keys": {
+                  "cells": 6,
+                  "humanWins": 0,
+                  "meanPHuman": 0.0081
+                },
+                "strings": {
+                  "cells": 6,
+                  "humanWins": 0,
+                  "meanPHuman": 0.034
+                },
+                "brass": {
+                  "cells": 6,
+                  "humanWins": 6,
+                  "meanPHuman": 1
+                },
+                "reed": {
+                  "cells": 6,
+                  "humanWins": 6,
+                  "meanPHuman": 0.9943
+                },
+                "organ": {
+                  "cells": 6,
+                  "humanWins": 3,
+                  "meanPHuman": 0.5022
+                }
+              }
+            }
+          ],
+          "humanAboveEveryArm": false
+        }
+      },
+      "humanAboveEveryArm": false,
+      "entriesFeaturised": 1136,
+      "entriesFailed": 0,
+      "entryFailures": [],
+      "note": "each arm's cells are the (task, seed) cells where both the human part and the arm have an entry MIDI; score = w · (f / scale); P = sigmoid(human − arm). The challenger report re-runs the classical arms on the same tasks, so its incumbent rows are not independent of the classical report."
+    },
+    "e_ownerAgreement": {
+      "n": 50,
+      "agree": 24,
+      "rate": 0.48,
+      "pTwoSided": 0.8877,
+      "skipped": 0,
+      "byComparison": {
+        "ca2ctx_vs_reference": {
+          "n": 10,
+          "agree": 5
+        },
+        "contextaware_vs_ca2ctx": {
+          "n": 10,
+          "agree": 5
+        },
+        "ca2raw_vs_ca2ctx": {
+          "n": 10,
+          "agree": 5
+        },
+        "human_vs_reference": {
+          "n": 10,
+          "agree": 3
+        },
+        "human_vs_ca2ctx": {
+          "n": 10,
+          "agree": 6
+        }
+      },
+      "votes": 50,
+      "source": {
+        "file": "C:/Users/4928~1/AppData/Local/Temp/claude/C--Users-------/898d17e9-51b5-4a84-b3ba-bb97431b84fc/scratchpad/owner-prefs.json",
+        "sessionId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8",
+        "route": "GET /api/listening-sessions/6d5abb08-71bb-4de2-8416-1fc4032c31c8/preferences (owner only)"
+      },
+      "note": "one rater, the owner, blind; the 49 primary-question votes of session 6d5abb08. Agreement here is with a critic, not truth; expect it to be weak — the owner's own comparisons were not distinguishable from a coin flip (human-blind-ratings-live.json).",
+      "records": [
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:3",
+          "comparison": "ca2ctx_vs_reference",
+          "family": "brass",
+          "entryA": "9f26dc8d0bf5:7:COMPOSERS_ASSISTANT_2+CTX",
+          "entryB": "9f26dc8d0bf5:7:REFERENCE_PART_COMPOSER",
+          "winner": "REFERENCE_PART_COMPOSER",
+          "criticScoreA": 23.768947736096194,
+          "criticScoreB": 3.8165483954891477
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:4",
+          "comparison": "contextaware_vs_ca2ctx",
+          "family": "organ",
+          "entryA": "9e705b16d135:13:CONTEXT_AWARE_ARRANGER",
+          "entryB": "9e705b16d135:13:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 29.926774510916907,
+          "criticScoreB": 35.43721724016918
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:5",
+          "comparison": "ca2raw_vs_ca2ctx",
+          "family": "keys",
+          "entryA": "c2fd134de308:7:COMPOSERS_ASSISTANT_2",
+          "entryB": "c2fd134de308:7:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2",
+          "criticScoreA": 33.294862566840145,
+          "criticScoreB": 29.75169240024475
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:6",
+          "comparison": "human_vs_reference",
+          "family": "keys",
+          "entryA": "af667dec200f:13:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "af667dec200f:13:REFERENCE_PART_COMPOSER",
+          "winner": "HUMAN_ORIGIN_REFERENCE",
+          "criticScoreA": 23.914439599221716,
+          "criticScoreB": 40.522001472591796
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:7",
+          "comparison": "human_vs_ca2ctx",
+          "family": "bass",
+          "entryA": "d088dd70fa63:7:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "d088dd70fa63:7:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "HUMAN_ORIGIN_REFERENCE",
+          "criticScoreA": 25.15162208040151,
+          "criticScoreB": 16.540822949495517
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:9",
+          "comparison": "human_vs_ca2ctx",
+          "family": "organ",
+          "entryA": "9e705b16d135:13:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "9e705b16d135:13:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "HUMAN_ORIGIN_REFERENCE",
+          "criticScoreA": 40.57279614289103,
+          "criticScoreB": 35.43721724016918
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:10",
+          "comparison": "human_vs_ca2ctx",
+          "family": "brass",
+          "entryA": "91379d724a16:7:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "91379d724a16:7:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 28.78301539790808,
+          "criticScoreB": 23.647716259521992
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:11",
+          "comparison": "contextaware_vs_ca2ctx",
+          "family": "bass",
+          "entryA": "2bc4da9836dd:13:CONTEXT_AWARE_ARRANGER",
+          "entryB": "2bc4da9836dd:13:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 13.846814180763154,
+          "criticScoreB": 28.72459788149562
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:8",
+          "comparison": "contextaware_vs_ca2ctx",
+          "family": "organ",
+          "entryA": "f0cc63700904:7:CONTEXT_AWARE_ARRANGER",
+          "entryB": "f0cc63700904:7:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 33.129180653037224,
+          "criticScoreB": 22.1541300889116
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:12",
+          "comparison": "ca2raw_vs_ca2ctx",
+          "family": "organ",
+          "entryA": "9e705b16d135:11:COMPOSERS_ASSISTANT_2",
+          "entryB": "9e705b16d135:11:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 44.99237809487232,
+          "criticScoreB": 38.70772956676491
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:13",
+          "comparison": "human_vs_reference",
+          "family": "bass",
+          "entryA": "2bc4da9836dd:7:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "2bc4da9836dd:7:REFERENCE_PART_COMPOSER",
+          "winner": "HUMAN_ORIGIN_REFERENCE",
+          "criticScoreA": 10.116119529382596,
+          "criticScoreB": 13.846814180763154
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:14",
+          "comparison": "ca2raw_vs_ca2ctx",
+          "family": "keys",
+          "entryA": "af667dec200f:13:COMPOSERS_ASSISTANT_2",
+          "entryB": "af667dec200f:13:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2",
+          "criticScoreA": 22.438589337729972,
+          "criticScoreB": 18.1713499229662
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:15",
+          "comparison": "contextaware_vs_ca2ctx",
+          "family": "bass",
+          "entryA": "d088dd70fa63:7:CONTEXT_AWARE_ARRANGER",
+          "entryB": "d088dd70fa63:7:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "CONTEXT_AWARE_ARRANGER",
+          "criticScoreA": 34.34963813230921,
+          "criticScoreB": 16.540822949495517
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:16",
+          "comparison": "ca2ctx_vs_reference",
+          "family": "organ",
+          "entryA": "f0cc63700904:11:COMPOSERS_ASSISTANT_2+CTX",
+          "entryB": "f0cc63700904:11:REFERENCE_PART_COMPOSER",
+          "winner": "REFERENCE_PART_COMPOSER",
+          "criticScoreA": 22.1541300889116,
+          "criticScoreB": 33.86299548213844
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:17",
+          "comparison": "human_vs_ca2ctx",
+          "family": "keys",
+          "entryA": "c2fd134de308:7:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "c2fd134de308:7:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "HUMAN_ORIGIN_REFERENCE",
+          "criticScoreA": 33.27123856851546,
+          "criticScoreB": 29.75169240024475
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:18",
+          "comparison": "human_vs_ca2ctx",
+          "family": "strings",
+          "entryA": "2be4a261fe20:13:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "2be4a261fe20:13:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 27.594329740003683,
+          "criticScoreB": 14.918636846383077
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:19",
+          "comparison": "ca2ctx_vs_reference",
+          "family": "reed",
+          "entryA": "33f92e298617:11:COMPOSERS_ASSISTANT_2+CTX",
+          "entryB": "33f92e298617:11:REFERENCE_PART_COMPOSER",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 36.30557968841616,
+          "criticScoreB": 18.92215208235045
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:20",
+          "comparison": "human_vs_ca2ctx",
+          "family": "reed",
+          "entryA": "33f92e298617:11:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "33f92e298617:11:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 35.16035287114663,
+          "criticScoreB": 36.30557968841616
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:21",
+          "comparison": "human_vs_reference",
+          "family": "organ",
+          "entryA": "9e705b16d135:13:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "9e705b16d135:13:REFERENCE_PART_COMPOSER",
+          "winner": "HUMAN_ORIGIN_REFERENCE",
+          "criticScoreA": 40.57279614289103,
+          "criticScoreB": 26.95405330603046
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:22",
+          "comparison": "ca2ctx_vs_reference",
+          "family": "organ",
+          "entryA": "9e705b16d135:7:COMPOSERS_ASSISTANT_2+CTX",
+          "entryB": "9e705b16d135:7:REFERENCE_PART_COMPOSER",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 45.957690357544955,
+          "criticScoreB": 26.95405330603046
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:23",
+          "comparison": "ca2raw_vs_ca2ctx",
+          "family": "reed",
+          "entryA": "4f8a56a74acd:7:COMPOSERS_ASSISTANT_2",
+          "entryB": "4f8a56a74acd:7:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 28.670509224607724,
+          "criticScoreB": 18.957261373832747
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:24",
+          "comparison": "contextaware_vs_ca2ctx",
+          "family": "brass",
+          "entryA": "91379d724a16:11:CONTEXT_AWARE_ARRANGER",
+          "entryB": "91379d724a16:11:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "CONTEXT_AWARE_ARRANGER",
+          "criticScoreA": 18.975584041260102,
+          "criticScoreB": 17.110625915061792
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:25",
+          "comparison": "human_vs_reference",
+          "family": "keys",
+          "entryA": "c2fd134de308:7:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "c2fd134de308:7:REFERENCE_PART_COMPOSER",
+          "winner": "HUMAN_ORIGIN_REFERENCE",
+          "criticScoreA": 33.27123856851546,
+          "criticScoreB": 37.38223351929796
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:26",
+          "comparison": "ca2raw_vs_ca2ctx",
+          "family": "brass",
+          "entryA": "9f26dc8d0bf5:7:COMPOSERS_ASSISTANT_2",
+          "entryB": "9f26dc8d0bf5:7:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2",
+          "criticScoreA": 27.658514371011783,
+          "criticScoreB": 23.768947736096194
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:27",
+          "comparison": "ca2ctx_vs_reference",
+          "family": "keys",
+          "entryA": "af667dec200f:13:COMPOSERS_ASSISTANT_2+CTX",
+          "entryB": "af667dec200f:13:REFERENCE_PART_COMPOSER",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 18.1713499229662,
+          "criticScoreB": 40.522001472591796
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:28",
+          "comparison": "human_vs_reference",
+          "family": "brass",
+          "entryA": "9f26dc8d0bf5:7:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "9f26dc8d0bf5:7:REFERENCE_PART_COMPOSER",
+          "winner": "REFERENCE_PART_COMPOSER",
+          "criticScoreA": 40.95864195035083,
+          "criticScoreB": 3.8165483954891477
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:29",
+          "comparison": "ca2raw_vs_ca2ctx",
+          "family": "reed",
+          "entryA": "33f92e298617:11:COMPOSERS_ASSISTANT_2",
+          "entryB": "33f92e298617:11:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 37.32632431753702,
+          "criticScoreB": 36.30557968841616
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:30",
+          "comparison": "contextaware_vs_ca2ctx",
+          "family": "keys",
+          "entryA": "af667dec200f:11:CONTEXT_AWARE_ARRANGER",
+          "entryB": "af667dec200f:11:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 28.752242784084302,
+          "criticScoreB": 21.65415443389667
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:31",
+          "comparison": "contextaware_vs_ca2ctx",
+          "family": "reed",
+          "entryA": "33f92e298617:11:CONTEXT_AWARE_ARRANGER",
+          "entryB": "33f92e298617:11:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "CONTEXT_AWARE_ARRANGER",
+          "criticScoreA": 10.809311247093923,
+          "criticScoreB": 36.30557968841616
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:32",
+          "comparison": "human_vs_reference",
+          "family": "bass",
+          "entryA": "d088dd70fa63:11:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "d088dd70fa63:11:REFERENCE_PART_COMPOSER",
+          "winner": "REFERENCE_PART_COMPOSER",
+          "criticScoreA": 25.15162208040151,
+          "criticScoreB": 34.34963813230921
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:33",
+          "comparison": "human_vs_reference",
+          "family": "brass",
+          "entryA": "91379d724a16:13:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "91379d724a16:13:REFERENCE_PART_COMPOSER",
+          "winner": "REFERENCE_PART_COMPOSER",
+          "criticScoreA": 28.78301539790808,
+          "criticScoreB": 18.975584041260102
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:34",
+          "comparison": "ca2ctx_vs_reference",
+          "family": "bass",
+          "entryA": "2bc4da9836dd:13:COMPOSERS_ASSISTANT_2+CTX",
+          "entryB": "2bc4da9836dd:13:REFERENCE_PART_COMPOSER",
+          "winner": "REFERENCE_PART_COMPOSER",
+          "criticScoreA": 28.72459788149562,
+          "criticScoreB": 13.846814180763154
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:35",
+          "comparison": "ca2raw_vs_ca2ctx",
+          "family": "organ",
+          "entryA": "f0cc63700904:11:COMPOSERS_ASSISTANT_2",
+          "entryB": "f0cc63700904:11:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 23.38234397887379,
+          "criticScoreB": 22.1541300889116
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:36",
+          "comparison": "ca2raw_vs_ca2ctx",
+          "family": "strings",
+          "entryA": "2be4a261fe20:13:COMPOSERS_ASSISTANT_2",
+          "entryB": "2be4a261fe20:13:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 15.350375311565935,
+          "criticScoreB": 14.918636846383077
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:37",
+          "comparison": "human_vs_ca2ctx",
+          "family": "bass",
+          "entryA": "2bc4da9836dd:13:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "2bc4da9836dd:13:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "HUMAN_ORIGIN_REFERENCE",
+          "criticScoreA": 10.116119529382596,
+          "criticScoreB": 28.72459788149562
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:38",
+          "comparison": "human_vs_reference",
+          "family": "organ",
+          "entryA": "f0cc63700904:7:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "f0cc63700904:7:REFERENCE_PART_COMPOSER",
+          "winner": "HUMAN_ORIGIN_REFERENCE",
+          "criticScoreA": 28.431663612503733,
+          "criticScoreB": 33.86299548213844
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:39",
+          "comparison": "ca2ctx_vs_reference",
+          "family": "keys",
+          "entryA": "c2fd134de308:7:COMPOSERS_ASSISTANT_2+CTX",
+          "entryB": "c2fd134de308:7:REFERENCE_PART_COMPOSER",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 29.75169240024475,
+          "criticScoreB": 37.38223351929796
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:40",
+          "comparison": "ca2raw_vs_ca2ctx",
+          "family": "strings",
+          "entryA": "2ffeb9f31e80:7:COMPOSERS_ASSISTANT_2",
+          "entryB": "2ffeb9f31e80:7:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2",
+          "criticScoreA": 27.67596514264615,
+          "criticScoreB": 29.726809921177498
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:41",
+          "comparison": "human_vs_ca2ctx",
+          "family": "brass",
+          "entryA": "9f26dc8d0bf5:11:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "9f26dc8d0bf5:11:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "HUMAN_ORIGIN_REFERENCE",
+          "criticScoreA": 40.95864195035083,
+          "criticScoreB": 11.519498560542889
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:42",
+          "comparison": "ca2ctx_vs_reference",
+          "family": "strings",
+          "entryA": "2be4a261fe20:7:COMPOSERS_ASSISTANT_2+CTX",
+          "entryB": "2be4a261fe20:7:REFERENCE_PART_COMPOSER",
+          "winner": "REFERENCE_PART_COMPOSER",
+          "criticScoreA": 11.517261415141617,
+          "criticScoreB": 30.496190234890037
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:43",
+          "comparison": "human_vs_reference",
+          "family": "reed",
+          "entryA": "33f92e298617:13:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "33f92e298617:13:REFERENCE_PART_COMPOSER",
+          "winner": "REFERENCE_PART_COMPOSER",
+          "criticScoreA": 35.16035287114663,
+          "criticScoreB": 18.92215208235045
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:44",
+          "comparison": "human_vs_ca2ctx",
+          "family": "keys",
+          "entryA": "af667dec200f:13:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "af667dec200f:13:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "HUMAN_ORIGIN_REFERENCE",
+          "criticScoreA": 23.914439599221716,
+          "criticScoreB": 18.1713499229662
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:45",
+          "comparison": "human_vs_ca2ctx",
+          "family": "organ",
+          "entryA": "f0cc63700904:7:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "f0cc63700904:7:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "HUMAN_ORIGIN_REFERENCE",
+          "criticScoreA": 28.431663612503733,
+          "criticScoreB": 22.1541300889116
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:46",
+          "comparison": "ca2raw_vs_ca2ctx",
+          "family": "brass",
+          "entryA": "91379d724a16:13:COMPOSERS_ASSISTANT_2",
+          "entryB": "91379d724a16:13:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2",
+          "criticScoreA": 21.816198186733132,
+          "criticScoreB": 19.90742657413838
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:47",
+          "comparison": "contextaware_vs_ca2ctx",
+          "family": "keys",
+          "entryA": "c2fd134de308:13:CONTEXT_AWARE_ARRANGER",
+          "entryB": "c2fd134de308:13:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 37.54729105297175,
+          "criticScoreB": 34.4026637793446
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:48",
+          "comparison": "contextaware_vs_ca2ctx",
+          "family": "brass",
+          "entryA": "9f26dc8d0bf5:13:CONTEXT_AWARE_ARRANGER",
+          "entryB": "9f26dc8d0bf5:13:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 1.9011382150885843,
+          "criticScoreB": 17.680579114311087
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:49",
+          "comparison": "human_vs_reference",
+          "family": "strings",
+          "entryA": "2be4a261fe20:11:HUMAN_ORIGIN_REFERENCE",
+          "entryB": "2be4a261fe20:11:REFERENCE_PART_COMPOSER",
+          "winner": "REFERENCE_PART_COMPOSER",
+          "criticScoreA": 27.594329740003683,
+          "criticScoreB": 30.496190234890037
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:50",
+          "comparison": "ca2ctx_vs_reference",
+          "family": "bass",
+          "entryA": "d088dd70fa63:7:COMPOSERS_ASSISTANT_2+CTX",
+          "entryB": "d088dd70fa63:7:REFERENCE_PART_COMPOSER",
+          "winner": "REFERENCE_PART_COMPOSER",
+          "criticScoreA": 16.540822949495517,
+          "criticScoreB": 34.34963813230921
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:1",
+          "comparison": "contextaware_vs_ca2ctx",
+          "family": "strings",
+          "entryA": "2be4a261fe20:11:CONTEXT_AWARE_ARRANGER",
+          "entryB": "2be4a261fe20:11:COMPOSERS_ASSISTANT_2+CTX",
+          "winner": "COMPOSERS_ASSISTANT_2+CTX",
+          "criticScoreA": 32.47538929302346,
+          "criticScoreB": 9.008912462483988
+        },
+        {
+          "pairId": "6d5abb08-71bb-4de2-8416-1fc4032c31c8:2",
+          "comparison": "ca2ctx_vs_reference",
+          "family": "brass",
+          "entryA": "91379d724a16:13:COMPOSERS_ASSISTANT_2+CTX",
+          "entryB": "91379d724a16:13:REFERENCE_PART_COMPOSER",
+          "winner": "REFERENCE_PART_COMPOSER",
+          "criticScoreA": 19.90742657413838,
+          "criticScoreB": 18.975584041260102
+        }
+      ]
+    },
+    "f_ablations": {
+      "without_judge": {
+        "groups": [
+          "coherence",
+          "stats"
+        ],
+        "trainSeconds": 64.8,
+        "finalLoss": 0.183057,
+        "inDistributionAccuracy": 0.9442,
+        "heldOutFamilyAccuracy": 0.6138,
+        "heldOutByFamily": {
+          "duration_overhang": 0.349,
+          "motif_destruction": 0.8749,
+          "parallel_doubling": 0.1976,
+          "section_swap": 0.7805,
+          "syncopation_removal": 0.9366
+        },
+        "calibrationMonotone": true,
+        "calibration": {
+          "1": 0.7755,
+          "2": 0.826,
+          "3": 0.8481
+        },
+        "humanAboveEveryArm": false,
+        "humanWinShareByArm": {
+          "classical": {
+            "COMPOSERS_ASSISTANT_2": 0.4167,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.6389,
+            "CONTEXT_AWARE_ARRANGER": 0.5,
+            "REFERENCE_PART_COMPOSER": 0.4167
+          },
+          "global": {
+            "COMPOSERS_ASSISTANT_2": 0.3933,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.62,
+            "CONTEXT_AWARE_ARRANGER": 0.6,
+            "REFERENCE_PART_COMPOSER": 0.5556
+          },
+          "challenger": {
+            "ANTICIPATORY_MUSIC_TRANSFORMER": 0.6786,
+            "ANTICIPATORY_MUSIC_TRANSFORMER+CTX": 0.8571,
+            "COMPOSERS_ASSISTANT_2": 0.4444,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.6389,
+            "CONTEXT_AWARE_ARRANGER": 0.5,
+            "REFERENCE_PART_COMPOSER": 0.4167
+          }
+        },
+        "ownerAgreement": {
+          "n": 50,
+          "agree": 24,
+          "rate": 0.48,
+          "pTwoSided": 0.8877
+        }
+      },
+      "without_coherence": {
+        "groups": [
+          "judge",
+          "stats"
+        ],
+        "trainSeconds": 39.5,
+        "finalLoss": 0.127583,
+        "inDistributionAccuracy": 0.9623,
+        "heldOutFamilyAccuracy": 0.6614,
+        "heldOutByFamily": {
+          "duration_overhang": 0.3746,
+          "motif_destruction": 0.9362,
+          "parallel_doubling": 0.2463,
+          "section_swap": 0.878,
+          "syncopation_removal": 0.9331
+        },
+        "calibrationMonotone": true,
+        "calibration": {
+          "1": 0.8137,
+          "2": 0.8657,
+          "3": 0.8812
+        },
+        "humanAboveEveryArm": false,
+        "humanWinShareByArm": {
+          "classical": {
+            "COMPOSERS_ASSISTANT_2": 0.4722,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.6667,
+            "CONTEXT_AWARE_ARRANGER": 0.4167,
+            "REFERENCE_PART_COMPOSER": 0.4167
+          },
+          "global": {
+            "COMPOSERS_ASSISTANT_2": 0.4067,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.68,
+            "CONTEXT_AWARE_ARRANGER": 0.6444,
+            "REFERENCE_PART_COMPOSER": 0.6444
+          },
+          "challenger": {
+            "ANTICIPATORY_MUSIC_TRANSFORMER": 0.7143,
+            "ANTICIPATORY_MUSIC_TRANSFORMER+CTX": 0.8214,
+            "COMPOSERS_ASSISTANT_2": 0.5,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.6944,
+            "CONTEXT_AWARE_ARRANGER": 0.4167,
+            "REFERENCE_PART_COMPOSER": 0.4167
+          }
+        },
+        "ownerAgreement": {
+          "n": 50,
+          "agree": 23,
+          "rate": 0.46,
+          "pTwoSided": 0.6718
+        }
+      },
+      "without_stats": {
+        "groups": [
+          "judge",
+          "coherence"
+        ],
+        "trainSeconds": 34.5,
+        "finalLoss": 0.375764,
+        "inDistributionAccuracy": 0.8137,
+        "heldOutFamilyAccuracy": 0.6853,
+        "heldOutByFamily": {
+          "duration_overhang": 0.864,
+          "motif_destruction": 0.88,
+          "parallel_doubling": 0.2446,
+          "section_swap": 0.8546,
+          "syncopation_removal": 0.6369
+        },
+        "calibrationMonotone": true,
+        "calibration": {
+          "1": 0.6727,
+          "2": 0.7327,
+          "3": 0.7686
+        },
+        "humanAboveEveryArm": false,
+        "humanWinShareByArm": {
+          "classical": {
+            "COMPOSERS_ASSISTANT_2": 0.3889,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.3611,
+            "CONTEXT_AWARE_ARRANGER": 0.75,
+            "REFERENCE_PART_COMPOSER": 0.6667
+          },
+          "global": {
+            "COMPOSERS_ASSISTANT_2": 0.3667,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.48,
+            "CONTEXT_AWARE_ARRANGER": 0.7111,
+            "REFERENCE_PART_COMPOSER": 0.7111
+          },
+          "challenger": {
+            "ANTICIPATORY_MUSIC_TRANSFORMER": 0.6071,
+            "ANTICIPATORY_MUSIC_TRANSFORMER+CTX": 0.6786,
+            "COMPOSERS_ASSISTANT_2": 0.4167,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.3889,
+            "CONTEXT_AWARE_ARRANGER": 0.75,
+            "REFERENCE_PART_COMPOSER": 0.6667
+          }
+        },
+        "ownerAgreement": {
+          "n": 50,
+          "agree": 27,
+          "rate": 0.54,
+          "pTwoSided": 0.6718
+        }
+      },
+      "judge_only": {
+        "groups": [
+          "judge"
+        ],
+        "trainSeconds": 20.6,
+        "finalLoss": 0.402762,
+        "inDistributionAccuracy": 0.7503,
+        "heldOutFamilyAccuracy": 0.6875,
+        "heldOutByFamily": {
+          "duration_overhang": 0.893,
+          "motif_destruction": 0.8566,
+          "parallel_doubling": 0.3496,
+          "section_swap": 0.7966,
+          "syncopation_removal": 0.5914
+        },
+        "calibrationMonotone": true,
+        "calibration": {
+          "1": 0.663,
+          "2": 0.7251,
+          "3": 0.7639
+        },
+        "humanAboveEveryArm": false,
+        "humanWinShareByArm": {
+          "classical": {
+            "COMPOSERS_ASSISTANT_2": 0.2778,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.2778,
+            "CONTEXT_AWARE_ARRANGER": 0.5833,
+            "REFERENCE_PART_COMPOSER": 0.5833
+          },
+          "global": {
+            "COMPOSERS_ASSISTANT_2": 0.3667,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.4067,
+            "CONTEXT_AWARE_ARRANGER": 0.6889,
+            "REFERENCE_PART_COMPOSER": 0.6444
+          },
+          "challenger": {
+            "ANTICIPATORY_MUSIC_TRANSFORMER": 0.7143,
+            "ANTICIPATORY_MUSIC_TRANSFORMER+CTX": 0.75,
+            "COMPOSERS_ASSISTANT_2": 0.2778,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.2778,
+            "CONTEXT_AWARE_ARRANGER": 0.5833,
+            "REFERENCE_PART_COMPOSER": 0.5833
+          }
+        },
+        "ownerAgreement": {
+          "n": 49,
+          "agree": 26,
+          "rate": 0.5306,
+          "pTwoSided": 0.7754
+        }
+      },
+      "coherence_only": {
+        "groups": [
+          "coherence"
+        ],
+        "trainSeconds": 16.2,
+        "finalLoss": 0.557183,
+        "inDistributionAccuracy": 0.6885,
+        "heldOutFamilyAccuracy": 0.5326,
+        "heldOutByFamily": {
+          "duration_overhang": 0.5449,
+          "motif_destruction": 0.6677,
+          "parallel_doubling": 0.1941,
+          "section_swap": 0.7455,
+          "syncopation_removal": 0.531
+        },
+        "calibrationMonotone": true,
+        "calibration": {
+          "1": 0.553,
+          "2": 0.5906,
+          "3": 0.6224
+        },
+        "humanAboveEveryArm": false,
+        "humanWinShareByArm": {
+          "classical": {
+            "COMPOSERS_ASSISTANT_2": 0.4722,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.4444,
+            "CONTEXT_AWARE_ARRANGER": 0.6667,
+            "REFERENCE_PART_COMPOSER": 0.6667
+          },
+          "global": {
+            "COMPOSERS_ASSISTANT_2": 0.44,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.5,
+            "CONTEXT_AWARE_ARRANGER": 0.5333,
+            "REFERENCE_PART_COMPOSER": 0.5333
+          },
+          "challenger": {
+            "ANTICIPATORY_MUSIC_TRANSFORMER": 0.6071,
+            "ANTICIPATORY_MUSIC_TRANSFORMER+CTX": 0.5714,
+            "COMPOSERS_ASSISTANT_2": 0.4722,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.4444,
+            "CONTEXT_AWARE_ARRANGER": 0.6667,
+            "REFERENCE_PART_COMPOSER": 0.6667
+          }
+        },
+        "ownerAgreement": {
+          "n": 50,
+          "agree": 27,
+          "rate": 0.54,
+          "pTwoSided": 0.6718
+        }
+      },
+      "stats_only": {
+        "groups": [
+          "stats"
+        ],
+        "trainSeconds": 26.5,
+        "finalLoss": 0.206251,
+        "inDistributionAccuracy": 0.931,
+        "heldOutFamilyAccuracy": 0.6069,
+        "heldOutByFamily": {
+          "duration_overhang": 0.3775,
+          "motif_destruction": 0.8806,
+          "parallel_doubling": 0.2127,
+          "section_swap": 0.7141,
+          "syncopation_removal": 0.9326
+        },
+        "calibrationMonotone": true,
+        "calibration": {
+          "1": 0.7643,
+          "2": 0.8115,
+          "3": 0.8344
+        },
+        "humanAboveEveryArm": false,
+        "humanWinShareByArm": {
+          "classical": {
+            "COMPOSERS_ASSISTANT_2": 0.4722,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.6389,
+            "CONTEXT_AWARE_ARRANGER": 0.5833,
+            "REFERENCE_PART_COMPOSER": 0.5833
+          },
+          "global": {
+            "COMPOSERS_ASSISTANT_2": 0.4,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.64,
+            "CONTEXT_AWARE_ARRANGER": 0.6889,
+            "REFERENCE_PART_COMPOSER": 0.6667
+          },
+          "challenger": {
+            "ANTICIPATORY_MUSIC_TRANSFORMER": 0.6786,
+            "ANTICIPATORY_MUSIC_TRANSFORMER+CTX": 0.7857,
+            "COMPOSERS_ASSISTANT_2": 0.5,
+            "COMPOSERS_ASSISTANT_2+CTX": 0.6389,
+            "CONTEXT_AWARE_ARRANGER": 0.5833,
+            "REFERENCE_PART_COMPOSER": 0.5833
+          }
+        },
+        "ownerAgreement": {
+          "n": 50,
+          "agree": 24,
+          "rate": 0.48,
+          "pTwoSided": 0.8877
+        }
+      }
+    },
+    "trainAccuracy": {
+      "n": 160748,
+      "correct": 154880,
+      "accuracy": 0.9635,
+      "meanP": 0.9285
+    },
+    "valAccuracy": {
+      "n": 9199,
+      "correct": 8870,
+      "accuracy": 0.9642,
+      "meanP": 0.928
+    }
+  },
+  "gate": {
+    "version": "MUSIC_REWARD_MODEL_V0",
+    "passed": false,
+    "allowedUses": [],
+    "forbiddenUses": [
+      "training_target"
+    ],
+    "reasons": [
+      "held-out-family accuracy 0.6584 < 0.8: the critic does not generalise past the families it trained on",
+      "the human part is not ranked above every machine arm on the tournament pairs"
+    ],
+    "thresholds": {
+      "heldOutFamilyAccuracy": 0.8
+    }
+  },
+  "timing": {
+    "trainSeconds": 50.7,
+    "tournamentSeconds": 18.8,
+    "wallSeconds": 282.7
+  },
+  "honestLimits": [
+    "The critic is trained on synthetic corruptions of human parts. Every accuracy in (a)–(c) is accuracy at telling a human part from a damaged copy of itself; none of it is a measure of musical quality between two real candidates.",
+    "Gate (b) held-out families are still corruptions built by the same author with the same primitives; generalising to them is evidence against generator recognition, not proof of musical judgement.",
+    "Gate (d) compares the human's own part against machine parts on the tournament tasks, scored by the critic alone; nobody listened here. Playability, coverage and range features favour the human part for reasons a listener may not share.",
+    "Gate (e) is one rater, 49 votes, on comparisons that were themselves not distinguishable from a coin flip. Weak agreement is expected and says little either way.",
+    "PDMX velocities are mostly flat, so dynamics_flattening rarely applies and the critic learns almost nothing about dynamics.",
+    "Features are hand-crafted; nothing here models taste, originality, feel, emotional arc or style authenticity. Human preference must add those."
+  ]
+}

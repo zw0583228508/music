@@ -1,0 +1,654 @@
+{
+  "title": "Synthetic preference pairs for MUSIC_REWARD_MODEL_V0 (Wave Q, PR-77)",
+  "ranAt": "2026-09-09T19:00:00.071Z",
+  "finishedAt": "2026-09-09T19:05:59.371Z",
+  "gitSha": "5e7345b4b3b19d442eb11765fa29be2ad981d88a",
+  "versions": {
+    "corruptions": "SYMBOLIC_CORRUPTIONS_v1",
+    "features": "REWARD_FEATURES_v0",
+    "featureDigest": "65a0ba4d8a9dd551",
+    "judge": "1.1",
+    "coherence": "COHERENCE_METRIC_v1",
+    "tokenizerVocabulary": "ARRANGER_REMI_v1_3cfd16b3_386"
+  },
+  "rightsBasis": {
+    "recordId": "15571083",
+    "doi": "10.5281/zenodo.15571083",
+    "datasetDigest": "48db5562b1495bae926812c9078c02c598d7aec3bf827bf5c10297b2ca50dbfe",
+    "rightsDigest": "97b7c795b37de988ae89d864732d9df4b3ba4c5151a422fca3d14548aa933fc7",
+    "subset": "no_license_conflict ∩ our gate",
+    "admittedWorks": 222856
+  },
+  "sampling": {
+    "rule": "admitted works with a MIDI file, in SHA-256 order of the work id; PDMX.csv n_tracks ≥ 2 as a pre-filter; the first --works whose MIDI is multitrack (≥ 2 pitched families, or one plus drums)",
+    "csvRows": 254077,
+    "admittedWithFile": 222820,
+    "prefilteredByCsvTracks": 39975,
+    "scanned": 16000,
+    "scanParseFailed": 0,
+    "scanFailures": [],
+    "worksWanted": 6000,
+    "worksKept": 6000,
+    "seed": 77,
+    "windowTasksPerWork": 2,
+    "sectionTasksPerWork": 1,
+    "trainFamiliesPerTask": 4,
+    "windowBars": 8,
+    "sectionBars": {
+      "min": 8,
+      "max": 32
+    },
+    "metreGrid": "dominant metre (PR-75): one time signature per work, grid origin at the dominant metre's first bar",
+    "worksWithMetreChanges": 1684,
+    "worksWithPickupBar": 770
+  },
+  "split": {
+    "rule": "hashSplit 90/5/5 on the work id, made group-aware over near-duplicate groups (threshold 0.5) so a group lands on one side",
+    "nearDuplicateGroups": 107,
+    "worksInGroups": 255,
+    "movedByGroup": 30,
+    "works": {
+      "train": 5384,
+      "val": 309,
+      "test": 307
+    },
+    "worksWithTasks": {
+      "train": 5315,
+      "val": 304,
+      "test": 304
+    },
+    "tasks": {
+      "train": {
+        "window": 10529,
+        "section": 4655
+      },
+      "val": {
+        "window": 605,
+        "section": 257
+      },
+      "test": {
+        "window": 600,
+        "section": 261
+      }
+    },
+    "familyPolicy": {
+      "trainAndVal": [
+        "pitch_shift_in_key",
+        "pitch_shift_out_of_key",
+        "chord_tone_to_non_chord_tone",
+        "octave_displacement",
+        "leap_injection",
+        "onset_jitter",
+        "quantisation_coarsening",
+        "density_thinning",
+        "density_doubling",
+        "bar_copy_repetition",
+        "phrase_shift",
+        "cross_part_clash",
+        "role_inversion",
+        "dynamics_flattening"
+      ],
+      "test": [
+        "pitch_shift_in_key",
+        "pitch_shift_out_of_key",
+        "chord_tone_to_non_chord_tone",
+        "octave_displacement",
+        "leap_injection",
+        "parallel_doubling",
+        "onset_jitter",
+        "quantisation_coarsening",
+        "syncopation_removal",
+        "density_thinning",
+        "density_doubling",
+        "bar_copy_repetition",
+        "phrase_shift",
+        "motif_destruction",
+        "cross_part_clash",
+        "role_inversion",
+        "section_swap",
+        "dynamics_flattening",
+        "duration_overhang"
+      ]
+    }
+  },
+  "heldOutFamilies": [
+    "parallel_doubling",
+    "syncopation_removal",
+    "motif_destruction",
+    "duration_overhang",
+    "section_swap"
+  ],
+  "heldOutFamiliesLeakedIntoTraining": [],
+  "families": {
+    "pitch_shift_in_key": {
+      "heldOut": false,
+      "breaks": "melodic_line",
+      "train": {
+        "1": 3886,
+        "2": 3886,
+        "3": 3886,
+        "all": 11658
+      },
+      "val": {
+        "1": 244,
+        "2": 244,
+        "3": 244,
+        "all": 732
+      },
+      "test": {
+        "1": 778,
+        "2": 778,
+        "3": 778,
+        "all": 2334
+      },
+      "notApplicable": {
+        "the family reads pitch or harmony; a drum-kit part has neither": 1392,
+        "the corruption left the part unchanged": 57
+      }
+    },
+    "pitch_shift_out_of_key": {
+      "heldOut": false,
+      "breaks": "harmony",
+      "train": {
+        "1": 3881,
+        "2": 3939,
+        "3": 3948,
+        "all": 11768
+      },
+      "val": {
+        "1": 236,
+        "2": 238,
+        "3": 239,
+        "all": 713
+      },
+      "test": {
+        "1": 771,
+        "2": 778,
+        "3": 780,
+        "all": 2329
+      },
+      "notApplicable": {
+        "the family reads pitch or harmony; a drum-kit part has neither": 1371,
+        "the corruption left the part unchanged": 91
+      }
+    },
+    "chord_tone_to_non_chord_tone": {
+      "heldOut": false,
+      "breaks": "harmony",
+      "train": {
+        "1": 3810,
+        "2": 3810,
+        "3": 3810,
+        "all": 11430
+      },
+      "val": {
+        "1": 213,
+        "2": 213,
+        "3": 213,
+        "all": 639
+      },
+      "test": {
+        "1": 732,
+        "2": 732,
+        "3": 732,
+        "all": 2196
+      },
+      "notApplicable": {
+        "no estimated chords in the window": 777,
+        "the family reads pitch or harmony; a drum-kit part has neither": 1401,
+        "the part never sits on a chord tone": 156,
+        "the corruption left the part unchanged": 18
+      }
+    },
+    "octave_displacement": {
+      "heldOut": false,
+      "breaks": "register",
+      "train": {
+        "1": 3872,
+        "2": 3941,
+        "3": 3954,
+        "all": 11767
+      },
+      "val": {
+        "1": 217,
+        "2": 218,
+        "3": 218,
+        "all": 653
+      },
+      "test": {
+        "1": 765,
+        "2": 777,
+        "3": 780,
+        "all": 2322
+      },
+      "notApplicable": {
+        "the family reads pitch or harmony; a drum-kit part has neither": 1347,
+        "the corruption left the part unchanged": 114
+      }
+    },
+    "leap_injection": {
+      "heldOut": false,
+      "breaks": "voice_leading",
+      "train": {
+        "1": 3813,
+        "2": 3813,
+        "3": 3813,
+        "all": 11439
+      },
+      "val": {
+        "1": 208,
+        "2": 208,
+        "3": 208,
+        "all": 624
+      },
+      "test": {
+        "1": 761,
+        "2": 761,
+        "3": 761,
+        "all": 2283
+      },
+      "notApplicable": {
+        "the family reads pitch or harmony; a drum-kit part has neither": 1275,
+        "fewer than two stepwise motions to break": 369,
+        "the corruption left the part unchanged": 63
+      }
+    },
+    "parallel_doubling": {
+      "heldOut": true,
+      "breaks": "voice_leading",
+      "train": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "all": 0
+      },
+      "val": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "all": 0
+      },
+      "test": {
+        "1": 746,
+        "2": 754,
+        "3": 757,
+        "all": 2257
+      },
+      "notApplicable": {
+        "the family reads pitch or harmony; a drum-kit part has neither": 243,
+        "the corruption left the part unchanged": 77,
+        "no pitched context line to double": 6
+      }
+    },
+    "onset_jitter": {
+      "heldOut": false,
+      "breaks": "rhythm",
+      "train": {
+        "1": 4324,
+        "2": 4324,
+        "3": 4325,
+        "all": 12973
+      },
+      "val": {
+        "1": 270,
+        "2": 270,
+        "3": 270,
+        "all": 810
+      },
+      "test": {
+        "1": 860,
+        "2": 861,
+        "3": 861,
+        "all": 2582
+      },
+      "notApplicable": {
+        "the corruption left the part unchanged": 3
+      }
+    },
+    "quantisation_coarsening": {
+      "heldOut": false,
+      "breaks": "rhythm",
+      "train": {
+        "1": 3540,
+        "2": 4238,
+        "3": 4287,
+        "all": 12065
+      },
+      "val": {
+        "1": 216,
+        "2": 244,
+        "3": 248,
+        "all": 708
+      },
+      "test": {
+        "1": 710,
+        "2": 846,
+        "3": 856,
+        "all": 2412
+      },
+      "notApplicable": {
+        "the part already sits on the coarse grid": 1120
+      }
+    },
+    "syncopation_removal": {
+      "heldOut": true,
+      "breaks": "rhythm",
+      "train": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "all": 0
+      },
+      "val": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "all": 0
+      },
+      "test": {
+        "1": 673,
+        "2": 673,
+        "3": 673,
+        "all": 2019
+      },
+      "notApplicable": {
+        "fewer than two off-beat onsets: nothing syncopated to remove": 564
+      }
+    },
+    "density_thinning": {
+      "heldOut": false,
+      "breaks": "density",
+      "train": {
+        "1": 4401,
+        "2": 4401,
+        "3": 4401,
+        "all": 13203
+      },
+      "val": {
+        "1": 236,
+        "2": 236,
+        "3": 236,
+        "all": 708
+      },
+      "test": {
+        "1": 861,
+        "2": 861,
+        "3": 861,
+        "all": 2583
+      },
+      "notApplicable": {}
+    },
+    "density_doubling": {
+      "heldOut": false,
+      "breaks": "density",
+      "train": {
+        "1": 4276,
+        "2": 4276,
+        "3": 4276,
+        "all": 12828
+      },
+      "val": {
+        "1": 221,
+        "2": 221,
+        "3": 221,
+        "all": 663
+      },
+      "test": {
+        "1": 846,
+        "2": 846,
+        "3": 846,
+        "all": 2538
+      },
+      "notApplicable": {
+        "no note long enough to subdivide": 213
+      }
+    },
+    "bar_copy_repetition": {
+      "heldOut": false,
+      "breaks": "development",
+      "train": {
+        "1": 4122,
+        "2": 4224,
+        "3": 4248,
+        "all": 12594
+      },
+      "val": {
+        "1": 253,
+        "2": 257,
+        "3": 260,
+        "all": 770
+      },
+      "test": {
+        "1": 824,
+        "2": 842,
+        "3": 848,
+        "all": 2514
+      },
+      "notApplicable": {
+        "the corruption left the part unchanged": 427
+      }
+    },
+    "phrase_shift": {
+      "heldOut": false,
+      "breaks": "phrase",
+      "train": {
+        "1": 4476,
+        "2": 4460,
+        "3": 4469,
+        "all": 13405
+      },
+      "val": {
+        "1": 236,
+        "2": 234,
+        "3": 236,
+        "all": 706
+      },
+      "test": {
+        "1": 859,
+        "2": 855,
+        "3": 859,
+        "all": 2573
+      },
+      "notApplicable": {
+        "the corruption left the part unchanged": 92
+      }
+    },
+    "motif_destruction": {
+      "heldOut": true,
+      "breaks": "motif",
+      "train": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "all": 0
+      },
+      "val": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "all": 0
+      },
+      "test": {
+        "1": 528,
+        "2": 527,
+        "3": 528,
+        "all": 1583
+      },
+      "notApplicable": {
+        "no four-note cell recurs: no motif to destroy": 744,
+        "the family reads pitch or harmony; a drum-kit part has neither": 243,
+        "too short a line to carry a motif": 12,
+        "the corruption left the part unchanged": 1
+      }
+    },
+    "cross_part_clash": {
+      "heldOut": false,
+      "breaks": "consonance",
+      "train": {
+        "1": 3891,
+        "2": 3898,
+        "3": 3898,
+        "all": 11687
+      },
+      "val": {
+        "1": 213,
+        "2": 213,
+        "3": 213,
+        "all": 639
+      },
+      "test": {
+        "1": 775,
+        "2": 776,
+        "3": 775,
+        "all": 2326
+      },
+      "notApplicable": {
+        "the family reads pitch or harmony; a drum-kit part has neither": 1386,
+        "no context note sounds at any onset of the part": 81,
+        "the corruption left the part unchanged": 9
+      }
+    },
+    "role_inversion": {
+      "heldOut": false,
+      "breaks": "instrumentation_role",
+      "train": {
+        "1": 4002,
+        "2": 3845,
+        "3": 3282,
+        "all": 11129
+      },
+      "val": {
+        "1": 243,
+        "2": 235,
+        "3": 206,
+        "all": 684
+      },
+      "test": {
+        "1": 778,
+        "2": 731,
+        "3": 594,
+        "all": 2103
+      },
+      "notApplicable": {
+        "the family reads pitch or harmony; a drum-kit part has neither": 1350,
+        "the inverted register leaves the MIDI range": 1156,
+        "no pitched context to invert against": 57
+      }
+    },
+    "section_swap": {
+      "heldOut": true,
+      "breaks": "continuity",
+      "train": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "all": 0
+      },
+      "val": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "all": 0
+      },
+      "test": {
+        "1": 811,
+        "2": 822,
+        "3": 850,
+        "all": 2483
+      },
+      "notApplicable": {
+        "the corruption left the part unchanged": 100
+      }
+    },
+    "dynamics_flattening": {
+      "heldOut": false,
+      "breaks": "dynamics",
+      "train": {
+        "1": 934,
+        "2": 934,
+        "3": 934,
+        "all": 2802
+      },
+      "val": {
+        "1": 50,
+        "2": 50,
+        "3": 50,
+        "all": 150
+      },
+      "test": {
+        "1": 223,
+        "2": 223,
+        "3": 223,
+        "all": 669
+      },
+      "notApplicable": {
+        "the part has no dynamics to flatten (velocity std ≤ n)": 12678
+      }
+    },
+    "duration_overhang": {
+      "heldOut": true,
+      "breaks": "harmonic_rhythm",
+      "train": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "all": 0
+      },
+      "val": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "all": 0
+      },
+      "test": {
+        "1": 679,
+        "2": 679,
+        "3": 679,
+        "all": 2037
+      },
+      "notApplicable": {
+        "fewer than two estimated chords: no harmonic rhythm to blur": 300,
+        "the family reads pitch or harmony; a drum-kit part has neither": 243,
+        "no note ends before a chord change": 3
+      }
+    }
+  },
+  "pairs": {
+    "train": 160748,
+    "val": 9199,
+    "test": 42143,
+    "all": 212090
+  },
+  "taskRefusals": {
+    "the other parts play n note(s) in n of n bars; a task needs at least n context n": 86,
+    "the target part plays n note(s) in the window; fewer than n is not a part to wri": 2536,
+    "no other part plays in the window; there is nothing to arrange against": 93,
+    "the target part plays in n of n bars; a part must sound in at least half the win": 623
+  },
+  "buildParseFailed": 0,
+  "buildFailures": [],
+  "sectionBarsDistribution": {
+    "n": 5173,
+    "min": 8,
+    "p50": 11,
+    "max": 32
+  },
+  "outputs": {
+    "directory": ".corpus-data/preference-pairs (git-ignored; features and ids only, no MIDI)",
+    "tasks": {
+      "file": "tasks.ndjson",
+      "sha256": "ee46252ba8046c2bb823c1db3642275248de8645cdfe184f20a04df9d16c8151"
+    },
+    "pairs": {
+      "file": "pairs.ndjson",
+      "sha256": "eb1a1e35bca1979277dd57bb9b2977c03b1dc2e0f3442b4c4d28cfdc18edef97"
+    }
+  },
+  "timing": {
+    "scanSeconds": 27,
+    "buildSeconds": 203.6,
+    "workerCpuSeconds": 1923.4,
+    "wallSeconds": 359.9,
+    "workers": 10
+  }
+}
