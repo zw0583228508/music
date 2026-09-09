@@ -34,3 +34,14 @@ screenshots
 docs
 artifacts/music-studio
 artifacts/mockup-sandbox
+
+# Training data, checkpoints and run records (PR-63): datasets are built from
+# other people's works and live only on the training volume; runs carry
+# optimizer state. Neither belongs in a build context.
+.training-data
+.pdmx-data
+.corpus-data
+.tmp-tests
+services/composers-assistant-train/runs
+services/composers-assistant-train/exports
+services/composers-assistant-train/.smoke

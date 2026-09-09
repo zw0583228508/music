@@ -4,12 +4,25 @@
  *   node scripts/run-model-tournament.mjs [--sample 10] [--seeds 7,11,13] [--window 8]
  *        [--scan 1500] [--target .pdmx-data] [--out docs/evidence/model-tournament-live.json]
  *        [--midi-dir docs/evidence/tournament] [--no-ca2]
+ *        [--genres pop,rock,…] [--exclude-genres classical,…] [--families drums,bass,…]
+ *        [--max-per-score 2] [--max-per-program N] [--max-per-genre N] [--title "…"]
  *
  * Arms: HUMAN_ORIGIN_REFERENCE, REFERENCE_PART_COMPOSER, CONTEXT_AWARE_ARRANGER,
  * COMPOSERS_ASSISTANT_2 (real inference on the deployed Modal worker) and
  * COMPOSERS_ASSISTANT_2+CTX. Tasks are drawn only from works admitted by both
  * our rights gate and the authors' no_license_conflict subset. The report keeps
  * the provider key; the rater-facing `pairs.json` beside the MIDIs does not.
+ *
+ * Genre targeting (the global tournament): `--genres` keeps works whose PDMX
+ * genre/tag labels fall in the listed families, `--exclude-genres` drops works
+ * carrying any listed family, `--families` restricts the held-out part to the
+ * named instrument targets (drums, bass, guitar, piano/keys, organ, synth,
+ * strings, brass, woodwinds, percussion, ensemble). With either genre flag the
+ * sample is drawn round-robin over genre family first and target family second,
+ * every judgeable part of a score is a candidate (one window per program), and
+ * works the table lists with fewer than three tracks are skipped before parsing.
+ * Without them, sampling is exactly the first tournament's. Genre metadata
+ * travels into every task record either way.
  *
  * The CA2 endpoint and its dedicated token are read from the environment, or
  * from the git-ignored .env.local when absent. Neither is ever printed.
@@ -50,6 +63,34 @@ const target = resolve(repoRoot, flag("target", ".pdmx-data"));
 const outPath = resolve(repoRoot, flag("out", "docs/evidence/model-tournament-live.json"));
 const midiDir = resolve(repoRoot, flag("midi-dir", "docs/evidence/tournament"));
 const useCa2 = !has("no-ca2");
+const list = (name) => flag(name, "").split(",").map((s) => s.trim()).filter(Boolean);
+const genreInclude = list("genres");
+const genreExclude = list("exclude-genres");
+for (const name of [...genreInclude, ...genreExclude]) {
+  const refusal = lib.genreFamilyRefusal(name);
+  if (refusal) { console.error(refusal); process.exit(2); }
+}
+const genreMode = genreInclude.length > 0 || genreExclude.length > 0;
+const targetsArg = list("families");
+const targets = targetsArg.length ? lib.expandInstrumentTargets(targetsArg) : { families: null };
+if ("refusal" in targets) { console.error(targets.refusal); process.exit(2); }
+const DEFAULT_FAMILY_ORDER = ["bass", "keys", "strings", "brass", "guitar", "drums", "reed", "pipe", "organ", "ensemble", "synth"];
+// Rhythm section first when the run is about the wider musical world.
+const GLOBAL_FAMILY_ORDER = ["drums", "bass", "guitar", "keys", "synth", "organ", "strings", "brass", "reed", "pipe", "ensemble"];
+const FAMILY_ORDER = targets.families ?? (genreMode ? GLOBAL_FAMILY_ORDER : DEFAULT_FAMILY_ORDER);
+const maxPerScore = Number(flag("max-per-score", genreMode ? "12" : "2"));
+const maxPerProgram = flag("max-per-program", null) !== null ? Number(flag("max-per-program")) : genreMode ? 1 : Infinity;
+const maxPerGenre = flag("max-per-genre", null) !== null ? Number(flag("max-per-genre")) : Infinity;
+const familyCursor = flag("family-cursor", "per-genre");
+if (!["per-genre", "shared"].includes(familyCursor)) { console.error(`--family-cursor must be per-genre or shared`); process.exit(2); }
+// A drum target with one pitch is a single percussion staff (a snare line, a
+// tambourine), not a kit part; every generator writes a kit, and the judge's
+// collapse rule caps the human staff at 20. Genre-targeted runs require a kit.
+const minDrumPitches = Number(flag("min-drum-pitches", genreMode ? "2" : "1"));
+const minCsvTracks = genreMode ? 3 : 0;
+const title = flag("title", genreMode
+  ? "Global / non-classical model tournament — real PDMX tasks across genre families, real inference (Wave Q — Model Discovery, global tournament)"
+  : "Model tournament — real PDMX tasks, real inference (Wave Q — Model Discovery, items 13–15, 25)");
 
 // --- 0. environment: the CA2 endpoint, from env or .env.local, never printed --
 if (useCa2) {
@@ -71,13 +112,19 @@ if (useCa2) {
 // --- 1. rights basis ---------------------------------------------------------
 console.log("reading rights basis…");
 const ourAdmitted = new Set();
+const genreById = new Map(); // every admitted row's genre reading; the CSV pass is one pass either way
+const csvTracksById = new Map();
 const csvLines = createInterface({ input: createReadStream(join(target, "PDMX.csv"), { encoding: "utf8" }), crlfDelay: Infinity });
 let index = null;
 for await (const line of csvLines) {
   if (index === null) { index = lib.csvHeaderIndex(line); continue; }
   if (!line.trim()) continue;
   const row = lib.csvRowToMetadataRow(lib.parseCsvLine(line), index);
-  if (row && lib.pdmxRefusalReason(row) === null) ourAdmitted.add(row.id);
+  if (row && lib.pdmxRefusalReason(row) === null) {
+    ourAdmitted.add(row.id);
+    genreById.set(row.id, lib.classifyPdmxGenre({ genres: row.genres, tags: row.tags, groups: row.groups }));
+    csvTracksById.set(row.id, row.n_tracks ?? 0);
+  }
 }
 const authorsAdmitted = new Set(
   readFileSync(join(target, "subset_paths/no_license_conflict.txt"), "utf8").split(/\r?\n/)
@@ -86,6 +133,13 @@ const authorsAdmitted = new Set(
 const admitted = new Set([...ourAdmitted].filter((id) => authorsAdmitted.has(id)));
 const manifest = JSON.parse(readFileSync(join(target, "acquisition-manifest.json"), "utf8"));
 console.log(` admitted works: ${admitted.size}`);
+const genreFilter = { include: genreInclude, exclude: genreExclude };
+const eligible = (id) => {
+  if (!admitted.has(id)) return false;
+  if (!genreMode) return true;
+  if ((csvTracksById.get(id) ?? 0) < minCsvTracks) return false;
+  return lib.matchesGenreFilter(genreById.get(id), genreFilter);
+};
 
 // --- 2. candidate tasks from a deterministic sample of admitted scores -------
 function* walk(dir) {
@@ -97,15 +151,15 @@ function* walk(dir) {
 }
 let seed = 0x5eed1234;
 const rand = () => { seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; return (seed >>> 0) / 0xffffffff; };
-const allFiles = [...walk(join(target, "mid"))].filter((f) => admitted.has(lib.pdmxIdFromPath(f)));
+const allFiles = [...walk(join(target, "mid"))].filter((f) => eligible(lib.pdmxIdFromPath(f)));
 const scan = [];
 for (let i = 0; i < allFiles.length; i += 1) {
   if (scan.length < scanSize) scan.push(allFiles[i]);
   else { const j = Math.floor(rand() * (i + 1)); if (j < scanSize) scan[j] = allFiles[i]; }
 }
-console.log(`${allFiles.length} admitted MIDI files; scanning ${scan.length} for tasks…`);
+console.log(`${allFiles.length} ${genreMode ? "eligible" : "admitted"} MIDI files${genreMode ? ` (genres ${genreInclude.join(",") || "any"}; excluding ${genreExclude.join(",") || "none"}; table tracks ≥ ${minCsvTracks})` : ""}; scanning ${scan.length} for tasks…`);
 
-const candidates = []; // { spec, file, midi }
+const candidates = []; // { spec, file, midi, family, genre, workId }
 let parseFailed = 0;
 for (const file of scan) {
   let midi;
@@ -114,48 +168,29 @@ for (const file of scan) {
   const programs = new Set(midi.notes.map((n) => (n.isPercussion ? lib.DRUMS_PROGRAM : n.program)));
   if (programs.size < 3) continue;
   const workId = lib.pdmxIdFromPath(file);
-  for (const spec of lib.enumerateTaskSpecs(midi, workId, { windowBars, maxPerScore: 2 })) {
-    candidates.push({ spec, file, midi });
+  for (const spec of lib.enumerateTaskSpecs(midi, workId, { windowBars, maxPerScore, maxPerProgram })) {
+    const built = lib.buildTournamentTask(midi, spec);
+    if ("refusal" in built) continue;
+    if (built.targetFamily === "drums" && new Set(built.humanTarget.map((n) => n.pitch)).size < minDrumPitches) continue;
+    candidates.push({ spec, file, midi, workId, family: built.targetFamily, genre: genreMode ? genreById.get(workId)?.primary ?? "unlabelled" : undefined });
   }
 }
 console.log(` ${candidates.length} candidate tasks from ${scan.length - parseFailed} parsed scores (${parseFailed} unparseable)`);
 
-// Round-robin over target families so one family cannot fill the sample.
-const FAMILY_ORDER = ["bass", "keys", "strings", "brass", "guitar", "drums", "reed", "pipe", "organ", "ensemble", "synth"];
-const familyOfSpec = (c) => {
-  const built = lib.buildTournamentTask(c.midi, c.spec);
-  return "refusal" in built ? null : built.targetFamily;
-};
-const byFamily = new Map();
-for (const c of candidates) {
-  const fam = familyOfSpec(c);
-  if (!fam) continue;
-  byFamily.set(fam, [...(byFamily.get(fam) ?? []), c]);
-}
-const chosen = [];
-const usedWorks = new Set();
-let round = 0;
-while (chosen.length < sampleSize && round < 50) {
-  let any = false;
-  for (const fam of FAMILY_ORDER) {
-    const pool = byFamily.get(fam) ?? [];
-    const next = pool.find((c) => !usedWorks.has(c.spec.workId) && !chosen.includes(c));
-    if (!next) continue;
-    chosen.push(next); usedWorks.add(next.spec.workId); any = true;
-    if (chosen.length >= sampleSize) break;
-  }
-  if (!any) break;
-  round += 1;
-}
+// Round-robin over genre family (when targeted) and target family, one task per
+// work, so neither one genre nor one instrument can fill the sample.
+const chosen = lib.selectRoundRobin(candidates, { sampleSize, familyOrder: FAMILY_ORDER, genreOrder: genreInclude, maxPerGenre, familyCursor });
 const tasks = [];
 const fileByWorkId = new Map();
 for (const c of chosen) {
   const task = lib.buildTournamentTask(c.midi, c.spec);
   if ("refusal" in task) continue;
+  const genre = genreById.get(task.workId);
+  if (genre) task.genre = genre;
   tasks.push(task);
   fileByWorkId.set(task.workId, c.file);
 }
-console.log(`${tasks.length} tasks: ${tasks.map((t) => `${t.targetFamily}(${t.targetInst})@${t.barStart}`).join(", ")}`);
+console.log(`${tasks.length} tasks: ${tasks.map((t) => `${t.genre?.primary ? `${t.genre.primary}/` : ""}${t.targetFamily}(${t.targetInst})@${t.barStart}`).join(", ")}`);
 
 // --- 3. providers -----------------------------------------------------------
 const providers = [lib.humanProvider, lib.referenceProvider, lib.contextAwareProvider];
@@ -233,11 +268,19 @@ writeFileSync(join(midiDir, "pairs.json"), `${JSON.stringify({
 
 // --- 6. report ---------------------------------------------------------------
 const evidence = {
-  title: "Model tournament — real PDMX tasks, real inference (Wave Q — Model Discovery, items 13–15, 25)",
+  title,
   ranAt: startedAt.toISOString(),
   finishedAt: new Date().toISOString(),
   rightsBasis: { recordId: manifest.recordId, datasetDigest: manifest.datasetDigest, rightsDigest: manifest.rightsDigest, admittedWorks: admitted.size, subset: "no_license_conflict ∩ our gate" },
-  sampling: { scanned: scan.length, parseFailed, candidateTasks: candidates.length, tasks: tasks.length, windowBars, seeds, familyRoundRobin: FAMILY_ORDER },
+  sampling: {
+    scanned: scan.length, parseFailed, candidateTasks: candidates.length, tasks: tasks.length, windowBars, seeds, familyRoundRobin: FAMILY_ORDER,
+    ...(genreMode ? {
+      genreFilter, instrumentTargets: targetsArg.length ? targetsArg : null, eligibleWorks: allFiles.length, minCsvTracks, maxPerScore, maxPerProgram,
+      maxPerGenre: Number.isFinite(maxPerGenre) ? maxPerGenre : null, familyCursor, minDrumPitches,
+      candidateProfile: lib.selectionProfile(candidates),
+      chosenProfile: lib.selectionProfile(chosen),
+    } : {}),
+  },
   ca2: useCa2 ? { endpointConfigured: true, health: { healthy: health.healthy, modelBinVerified: health.modelBinVerified, release: health.release, python: health.runtime?.python, torch: health.runtime?.torch, imageEvidence: health.imageEvidence } } : { endpointConfigured: false, note: "--no-ca2: platform arms only" },
   report: {
     ...report,

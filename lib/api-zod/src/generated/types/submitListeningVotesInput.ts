@@ -10,7 +10,7 @@ import type { ListeningVoteInput } from './listeningVoteInput';
 export interface SubmitListeningVotesInput {
   /**
      * @minItems 1
-     * @maxItems 60
+     * @maxItems 600
      */
   votes: ListeningVoteInput[];
 }

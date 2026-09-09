@@ -26,6 +26,7 @@ import type { MusicalNote } from "@workspace/db";
 import { familyOf } from "./arrangerRemi";
 import { chordCoverage, estimateChords, type BarSpan, type EstimatedChord } from "./chordsFromNotes";
 import type { MidiNote, ParsedMidi } from "./midiFile";
+import type { PdmxGenre } from "./pdmxGenre";
 
 export const TOURNAMENT_TASK_VERSION = "1.0" as const;
 
@@ -77,6 +78,12 @@ export type TournamentTask = {
   chordCoverage: ReturnType<typeof chordCoverage>;
   /** Facts about the source a reader must know before trusting a number. */
   limits: string[];
+  /**
+   * What the source score *is*, from PDMX's genre/tag columns — attached by the
+   * caller that read the table, absent when nobody did. Informational: no
+   * provider reads it, and the judge does not.
+   */
+  genre?: PdmxGenre;
 };
 
 export type TaskSpec = {
@@ -256,10 +263,15 @@ export function buildTournamentTask(
 export function enumerateTaskSpecs(
   midi: ParsedMidi,
   workId: string,
-  options: { windowBars?: number; maxPerScore?: number } = {},
+  options: { windowBars?: number; maxPerScore?: number; maxPerProgram?: number } = {},
 ): TaskSpec[] {
   const windowBars = options.windowBars ?? 8;
   const maxPerScore = options.maxPerScore ?? 4;
+  // Programs are walked in ascending order, so without a per-program cap a
+  // small `maxPerScore` is filled by the piano (program 0) and a rock score's
+  // guitar, bass and kit never become candidates. The default keeps the first
+  // tournament's behaviour; a genre-targeted run sets this to 1.
+  const maxPerProgram = options.maxPerProgram ?? Infinity;
   const programs = new Map<number, number>();
   for (const note of midi.notes) {
     const program = note.isPercussion ? DRUMS_PROGRAM : note.program;
@@ -276,10 +288,14 @@ export function enumerateTaskSpecs(
   for (const program of orderedPrograms) {
     const family = program === DRUMS_PROGRAM ? "drums" : familyOf({ program, isPercussion: false });
     if (!TARGET_FAMILIES.includes(family)) continue;
-    for (let barStart = 0; barStart + windowBars <= totalBars; barStart += windowBars) {
+    let forProgram = 0;
+    for (let barStart = 0; barStart + windowBars <= totalBars && forProgram < maxPerProgram; barStart += windowBars) {
       if (specs.length >= maxPerScore) return specs;
       const spec = { workId, targetInst: program, barStart, windowBars };
-      if (taskRefusal(midi, spec) === null) specs.push(spec);
+      if (taskRefusal(midi, spec) === null) {
+        specs.push(spec);
+        forProgram += 1;
+      }
     }
   }
   return specs;

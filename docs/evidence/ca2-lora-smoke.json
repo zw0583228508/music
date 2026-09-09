@@ -1,0 +1,2393 @@
+{
+  "title": "CA2 LoRA training infrastructure — tiny smoke through the budget guard (Wave Q — Model Discovery, PR-63)",
+  "date": "2026-09-09",
+  "whatThisIs": "A path proof: a real dataset built from admitted PDMX works by CA2's own encoder, a real LoRA fine-tune of the pinned CA2 checkpoint on a tiny overfit subset, a checkpoint written and resumed from, and every gate (rights proof, checksum, budget guard) exercised for real. It is NOT a pilot: no musical claim is made, no tournament was run on the result, and the loss decrease shown is memorisation of 32 examples, which is exactly what the owner's 'tiny overfit test' gate asks for.",
+  "definitionOfDone": {
+    "datasetBuiltFromAdmittedWorksByCa2Encoder": true,
+    "rightsProofVerifiedPerExample": true,
+    "baseCheckpointShaVerifiedBeforeLoad": true,
+    "budgetGuardDecisionCarried": true,
+    "lossDecreasedOnOverfitSubset": true,
+    "resumedFromCheckpointOnce": true,
+    "checkpointHashesRecorded": true,
+    "paidGpuMinutes": 0.0,
+    "isPilot": false
+  },
+  "run": {
+    "runId": "ca2-lora-smoke",
+    "status": "completed",
+    "device": "cpu",
+    "gpu": null,
+    "stepsCompleted": 200,
+    "stepsRequested": 200,
+    "epochsSeen": 12,
+    "batchSize": 2,
+    "effectiveBatchSize": 2,
+    "trainExamples": 32,
+    "overfitSubset": 32,
+    "lossFirstStep": 0.707988,
+    "lossLastStep": 0.500953,
+    "lossMeanFirst10": 0.4770519000000001,
+    "lossMeanLast10": 0.22691530000000001,
+    "validation": [
+      {
+        "step": 0,
+        "loss": 0.448084,
+        "t": 74.4
+      },
+      {
+        "step": 25,
+        "loss": 0.411961,
+        "t": 379.8
+      },
+      {
+        "step": 50,
+        "loss": 0.354911,
+        "t": 543.1
+      },
+      {
+        "step": 75,
+        "loss": 0.286238,
+        "t": 669.4
+      },
+      {
+        "step": 100,
+        "loss": 0.231921,
+        "t": 776.7
+      },
+      {
+        "step": 125,
+        "loss": 0.191146,
+        "t": 131.6
+      },
+      {
+        "step": 150,
+        "loss": 0.156342,
+        "t": 307.8
+      },
+      {
+        "step": 175,
+        "loss": 0.139075,
+        "t": 485.6
+      },
+      {
+        "step": 200,
+        "loss": 0.13335,
+        "t": 672.2
+      }
+    ],
+    "validationIs": "the training subset (overfit test)",
+    "heldOutValidation": [
+      {
+        "step": 0,
+        "loss": 0.478136,
+        "t": 92.1
+      },
+      {
+        "step": 25,
+        "loss": 0.475455,
+        "t": 389.3
+      },
+      {
+        "step": 50,
+        "loss": 0.470822,
+        "t": 552.6
+      },
+      {
+        "step": 75,
+        "loss": 0.47019,
+        "t": 676.5
+      },
+      {
+        "step": 100,
+        "loss": 0.471717,
+        "t": 783.2
+      },
+      {
+        "step": 125,
+        "loss": 0.470923,
+        "t": 141.6
+      },
+      {
+        "step": 150,
+        "loss": 0.473472,
+        "t": 319.4
+      },
+      {
+        "step": 175,
+        "loss": 0.475586,
+        "t": 499.0
+      },
+      {
+        "step": 200,
+        "loss": 0.476105,
+        "t": 683.7
+      }
+    ],
+    "gradientStats": {
+      "count": 200,
+      "mean": 0.48922221653163434,
+      "max": 4.184510707855225,
+      "min": 0.07993791252374649,
+      "nonFinite": 0
+    },
+    "wallTimeSeconds": 1467.3,
+    "gpuHours": 0.0,
+    "estimatedCostUsd": 0.0,
+    "costNote": "local CPU run: $0",
+    "resumedFrom": {
+      "checkpoint": "C:\\Users\\וינריך\\Downloads\\ai-music-platform\\ws-e-lora-infra\\services\\composers-assistant-train\\runs\\ca2-lora-smoke\\checkpoints\\step-100",
+      "step": 100,
+      "adapterSha256": {
+        "adapter_config.json": "976a8b88fc3870c464aacc94960ed597e0d9992364e4157eb4ba1768401a3026",
+        "adapter_model.bin": "889fd8ad07cf0685e453ef535d58c151eb1252970a8ab506a7efff818555c642"
+      },
+      "trainingStateSha256": "1d35d1d754c3c0220895319a6ec1902bb9f497005984c697d6a887449b36eeac",
+      "priorWallSeconds": 783.2,
+      "priorWallSecondsSource": "checkpoint state"
+    },
+    "events": [
+      {
+        "at": "2026-09-09T17:29:06.484454+00:00",
+        "event": "resume",
+        "step": 100,
+        "priorWallSeconds": 783.2
+      },
+      {
+        "at": "2026-09-09T17:40:25.875948+00:00",
+        "event": "completed",
+        "reason": null
+      }
+    ],
+    "checkpoints": [
+      {
+        "tag": "step-50",
+        "step": 50,
+        "path": "C:\\Users\\וינריך\\Downloads\\ai-music-platform\\ws-e-lora-infra\\services\\composers-assistant-train\\runs\\ca2-lora-smoke\\checkpoints\\step-50",
+        "savedAt": "2026-09-09T17:23:41.012842+00:00",
+        "adapterSha256": {
+          "adapter_config.json": "976a8b88fc3870c464aacc94960ed597e0d9992364e4157eb4ba1768401a3026",
+          "adapter_model.bin": "e173fc2b64931dc111aaf95f99255d40b79a7f3ca995b291bcc34639f13bf0a7"
+        },
+        "trainingStateSha256": "6bd84d1e2671d3f56c2a87744a3ac807cdf7f7380d6f2f9c94de587cade8238d"
+      },
+      {
+        "tag": "step-100",
+        "step": 100,
+        "path": "C:\\Users\\וינריך\\Downloads\\ai-music-platform\\ws-e-lora-infra\\services\\composers-assistant-train\\runs\\ca2-lora-smoke\\checkpoints\\step-100",
+        "savedAt": "2026-09-09T17:27:31.567177+00:00",
+        "adapterSha256": {
+          "adapter_config.json": "976a8b88fc3870c464aacc94960ed597e0d9992364e4157eb4ba1768401a3026",
+          "adapter_model.bin": "889fd8ad07cf0685e453ef535d58c151eb1252970a8ab506a7efff818555c642"
+        },
+        "trainingStateSha256": "1d35d1d754c3c0220895319a6ec1902bb9f497005984c697d6a887449b36eeac"
+      },
+      {
+        "tag": "step-150",
+        "step": 150,
+        "path": "C:\\Users\\וינריך\\Downloads\\ai-music-platform\\ws-e-lora-infra\\services\\composers-assistant-train\\runs\\ca2-lora-smoke\\checkpoints\\step-150",
+        "savedAt": "2026-09-09T17:34:21.226220+00:00",
+        "adapterSha256": {
+          "adapter_config.json": "e6d08831191a16b20fb2318f468e04deb464f3e65eafa29c1b9e5d9058d0f882",
+          "adapter_model.bin": "1d1e30bca7d49df620a8a6542bca0928c1f434875fc7249ca9cae8b83217b928"
+        },
+        "trainingStateSha256": "86e684485d8815598e926bd1413bfc638bbcb92434d7978f4f98cacd96eded1a"
+      },
+      {
+        "tag": "step-200",
+        "step": 200,
+        "path": "C:\\Users\\וינריך\\Downloads\\ai-music-platform\\ws-e-lora-infra\\services\\composers-assistant-train\\runs\\ca2-lora-smoke\\checkpoints\\step-200",
+        "savedAt": "2026-09-09T17:40:25.582137+00:00",
+        "adapterSha256": {
+          "adapter_config.json": "e6d08831191a16b20fb2318f468e04deb464f3e65eafa29c1b9e5d9058d0f882",
+          "adapter_model.bin": "b331a54f2770366e4ff5d34fef67197daa62a2d51df22b98d0b558e68812fbd2"
+        },
+        "trainingStateSha256": "7623f80979ca073e085ac55b08fe83fa10303d432e518a19aa0a8b3fd85af684"
+      }
+    ]
+  },
+  "experiment": {
+    "version": "CA2_LORA_EXPERIMENT_v1",
+    "runId": "ca2-lora-smoke",
+    "status": "completed",
+    "startedAt": "2026-09-09T17:15:18.535768+00:00",
+    "launchStartedAt": "2026-09-09T17:29:06.484454+00:00",
+    "updatedAt": "2026-09-09T17:40:25.875948+00:00",
+    "gitSha": "6032aa5a2d978ef0a6431856255205d1ce08fc80",
+    "baseModelRevision": "composers-assistant-REAPER v2.1.0; large unjoined infill finetuned_epoch_49_0; bin sha256 297bccb173b4497a3c3b6007422506dced88fd9f99f5c8a18481dedd9667d530",
+    "baseModel": {
+      "modelDir": "C:\\Users\\וינריך\\AppData\\Local\\Temp\\claude\\C--Users-------\\898d17e9-51b5-4a84-b3ba-bb97431b84fc\\scratchpad\\ca2\\Scripts\\composers_assistant_v2\\models_permuted_labels\\unjoined\\infill\\finetuned_epoch_49_0\\model",
+      "binSha256": "297bccb173b4497a3c3b6007422506dced88fd9f99f5c8a18481dedd9667d530",
+      "binVerified": true,
+      "configSha256": "c4c92d3e48092c6f2767675260ee5def0f7dcf774c6da981fd8c4321c561063b",
+      "configVerified": true
+    },
+    "datasetDigest": "2c91d426e243277347bf290306664389d938ee4d44037b46b1a728d8047c8ef2",
+    "splitDigest": "9d7f4eb5328e41f55cdda6903b3eb10cbcb4345dda4438c839b84686544d6786",
+    "examplesDigest": "c8dc8d937d00b5f15ac9d0574bb8bdc4417e867ced03524a0d1b4ab8f7243e59",
+    "tokenizerVersion": "CA2_UNJOINED_v2.1.0_285d28b7_1944",
+    "rightsProofDigest": "e44289ef1a9f646b373527c1296b940982acb068bb38938e5591f971c3a1702c",
+    "rightsBasis": {
+      "version": "TRAINING_RIGHTS_BASIS_v1",
+      "basisDigest": "b17179324288e4160043533b0263759cba1bc588f0cbedac0a68a500ce3c2f46",
+      "datasetDigest": "48db5562b1495bae926812c9078c02c598d7aec3bf827bf5c10297b2ca50dbfe",
+      "rightsDigest": "97b7c795b37de988ae89d864732d9df4b3ba4c5151a422fca3d14548aa933fc7",
+      "source": {
+        "recordId": "15571083",
+        "doi": "10.5281/zenodo.15571083",
+        "subset": "no_license_conflict"
+      },
+      "admittedWorkCount": 222856
+    },
+    "dataset": {
+      "dir": "C:\\Users\\וינריך\\Downloads\\ai-music-platform\\ws-e-lora-infra\\.training-data\\smoke",
+      "train": 32,
+      "val": 32,
+      "overfitSubset": 32,
+      "counts": {
+        "examples": 256,
+        "works": 128,
+        "perSplit": {
+          "train": {
+            "examples": 236,
+            "works": 118,
+            "inputTokens": 41757,
+            "labelTokens": 9921
+          },
+          "val": {
+            "examples": 14,
+            "works": 7,
+            "inputTokens": 2343,
+            "labelTokens": 610
+          },
+          "test": {
+            "examples": 6,
+            "works": 3,
+            "inputTokens": 1805,
+            "labelTokens": 279
+          }
+        },
+        "perTargetInstrument": {
+          "0": 92,
+          "1": 1,
+          "11": 3,
+          "12": 2,
+          "13": 1,
+          "17": 2,
+          "19": 1,
+          "22": 1,
+          "24": 6,
+          "25": 1,
+          "33": 2,
+          "34": 4,
+          "40": 7,
+          "41": 1,
+          "42": 5,
+          "43": 4,
+          "45": 1,
+          "47": 2,
+          "48": 7,
+          "52": 41,
+          "56": 4,
+          "57": 6,
+          "58": 2,
+          "60": 2,
+          "65": 3,
+          "66": 1,
+          "67": 3,
+          "68": 3,
+          "70": 3,
+          "71": 7,
+          "73": 25,
+          "91": 3,
+          "128": 10
+        },
+        "perVariant": {
+          "plain": 128,
+          "ranges": 128
+        }
+      }
+    },
+    "modelConfig": {
+      "architectures": [
+        "T5ForConditionalGeneration"
+      ],
+      "num_layers": 16,
+      "num_decoder_layers": 16,
+      "d_model": 576,
+      "d_ff": 2304,
+      "num_heads": 12,
+      "d_kv": 48,
+      "vocab_size": 1944,
+      "dropout_rate": 0.1,
+      "feed_forward_proj": "gated-gelu"
+    },
+    "loraConfig": {
+      "r": 8,
+      "alpha": 16,
+      "dropout": 0.05,
+      "targetModules": [
+        "q",
+        "k",
+        "v",
+        "o"
+      ],
+      "trainableParams": 1769472,
+      "allParams": 194137728
+    },
+    "randomSeed": 7,
+    "device": "cpu",
+    "gpu": null,
+    "gpuPriced": "CPU",
+    "framework": {
+      "python": "3.11.9",
+      "torch": "2.0.1+cpu",
+      "transformers": "4.31.0",
+      "peft": "0.6.2",
+      "numpy": "1.26.4",
+      "platform": "Windows-10-10.0.26200-SP0"
+    },
+    "optimizer": {
+      "name": "AdamW",
+      "lr": 0.0003,
+      "schedule": "linear",
+      "warmup": 10,
+      "weightDecay": 0.0,
+      "clipNorm": 1.0
+    },
+    "steps": {
+      "requested": 200,
+      "completed": 200,
+      "epochsSeen": 12
+    },
+    "batchSize": 2,
+    "gradAccum": 1,
+    "effectiveBatchSize": 2,
+    "lossCurve": [
+      {
+        "step": 1,
+        "loss": 0.707988,
+        "lr": 2.9999999999999997e-05,
+        "labelTokens": 133,
+        "t": 103.2
+      },
+      {
+        "step": 2,
+        "loss": 0.200045,
+        "lr": 5.9999999999999995e-05,
+        "labelTokens": 57,
+        "t": 113.8
+      },
+      {
+        "step": 3,
+        "loss": 0.84194,
+        "lr": 8.999999999999999e-05,
+        "labelTokens": 99,
+        "t": 120.5
+      },
+      {
+        "step": 4,
+        "loss": 0.523088,
+        "lr": 0.00011999999999999999,
+        "labelTokens": 60,
+        "t": 126.8
+      },
+      {
+        "step": 5,
+        "loss": 0.449492,
+        "lr": 0.00015,
+        "labelTokens": 83,
+        "t": 145.5
+      },
+      {
+        "step": 6,
+        "loss": 0.289266,
+        "lr": 0.00017999999999999998,
+        "labelTokens": 54,
+        "t": 151.6
+      },
+      {
+        "step": 7,
+        "loss": 0.365696,
+        "lr": 0.00020999999999999998,
+        "labelTokens": 74,
+        "t": 165.4
+      },
+      {
+        "step": 8,
+        "loss": 0.665673,
+        "lr": 0.00023999999999999998,
+        "labelTokens": 86,
+        "t": 188.4
+      },
+      {
+        "step": 9,
+        "loss": 0.314808,
+        "lr": 0.00026999999999999995,
+        "labelTokens": 64,
+        "t": 210.3
+      },
+      {
+        "step": 10,
+        "loss": 0.412523,
+        "lr": 0.0003,
+        "labelTokens": 88,
+        "t": 235.2
+      },
+      {
+        "step": 11,
+        "loss": 0.226152,
+        "lr": 0.0003,
+        "labelTokens": 121,
+        "t": 248.2
+      },
+      {
+        "step": 12,
+        "loss": 1.526386,
+        "lr": 0.00029842105263157894,
+        "labelTokens": 107,
+        "t": 256.8
+      },
+      {
+        "step": 13,
+        "loss": 0.435861,
+        "lr": 0.00029684210526315785,
+        "labelTokens": 43,
+        "t": 260.3
+      },
+      {
+        "step": 14,
+        "loss": 1.312941,
+        "lr": 0.0002952631578947368,
+        "labelTokens": 103,
+        "t": 268.6
+      },
+      {
+        "step": 15,
+        "loss": 0.779636,
+        "lr": 0.0002936842105263158,
+        "labelTokens": 101,
+        "t": 285.3
+      },
+      {
+        "step": 16,
+        "loss": 0.17122,
+        "lr": 0.0002921052631578947,
+        "labelTokens": 75,
+        "t": 292.3
+      },
+      {
+        "step": 17,
+        "loss": 0.854974,
+        "lr": 0.00029052631578947366,
+        "labelTokens": 108,
+        "t": 295.7
+      },
+      {
+        "step": 18,
+        "loss": 0.329421,
+        "lr": 0.00028894736842105263,
+        "labelTokens": 105,
+        "t": 306.2
+      },
+      {
+        "step": 19,
+        "loss": 0.142617,
+        "lr": 0.00028736842105263154,
+        "labelTokens": 75,
+        "t": 313.5
+      },
+      {
+        "step": 20,
+        "loss": 0.541327,
+        "lr": 0.0002857894736842105,
+        "labelTokens": 92,
+        "t": 327.1
+      },
+      {
+        "step": 21,
+        "loss": 0.523541,
+        "lr": 0.00028421052631578947,
+        "labelTokens": 96,
+        "t": 335.7
+      },
+      {
+        "step": 22,
+        "loss": 0.406165,
+        "lr": 0.0002826315789473684,
+        "labelTokens": 67,
+        "t": 345.3
+      },
+      {
+        "step": 23,
+        "loss": 0.797987,
+        "lr": 0.00028105263157894735,
+        "labelTokens": 122,
+        "t": 352.9
+      },
+      {
+        "step": 24,
+        "loss": 0.141292,
+        "lr": 0.0002794736842105263,
+        "labelTokens": 27,
+        "t": 364.8
+      },
+      {
+        "step": 25,
+        "loss": 0.526212,
+        "lr": 0.00027789473684210523,
+        "labelTokens": 53,
+        "t": 369.4
+      },
+      {
+        "step": 26,
+        "loss": 0.051626,
+        "lr": 0.0002763157894736842,
+        "labelTokens": 85,
+        "t": 400.6
+      },
+      {
+        "step": 27,
+        "loss": 0.980588,
+        "lr": 0.0002747368421052631,
+        "labelTokens": 54,
+        "t": 405.9
+      },
+      {
+        "step": 28,
+        "loss": 0.956128,
+        "lr": 0.00027315789473684207,
+        "labelTokens": 133,
+        "t": 413.2
+      },
+      {
+        "step": 29,
+        "loss": 1.131307,
+        "lr": 0.00027157894736842104,
+        "labelTokens": 67,
+        "t": 418.4
+      },
+      {
+        "step": 30,
+        "loss": 0.500997,
+        "lr": 0.00027,
+        "labelTokens": 60,
+        "t": 426.5
+      },
+      {
+        "step": 31,
+        "loss": 0.281181,
+        "lr": 0.0002684210526315789,
+        "labelTokens": 95,
+        "t": 433.1
+      },
+      {
+        "step": 32,
+        "loss": 0.773908,
+        "lr": 0.0002668421052631579,
+        "labelTokens": 109,
+        "t": 437.9
+      },
+      {
+        "step": 33,
+        "loss": 0.221148,
+        "lr": 0.0002652631578947368,
+        "labelTokens": 81,
+        "t": 443.4
+      },
+      {
+        "step": 34,
+        "loss": 0.581377,
+        "lr": 0.00026368421052631576,
+        "labelTokens": 134,
+        "t": 449.2
+      },
+      {
+        "step": 35,
+        "loss": 0.706476,
+        "lr": 0.0002621052631578947,
+        "labelTokens": 51,
+        "t": 452.9
+      },
+      {
+        "step": 36,
+        "loss": 0.352965,
+        "lr": 0.0002605263157894737,
+        "labelTokens": 89,
+        "t": 460.6
+      },
+      {
+        "step": 37,
+        "loss": 0.738942,
+        "lr": 0.0002589473684210526,
+        "labelTokens": 115,
+        "t": 465.4
+      },
+      {
+        "step": 38,
+        "loss": 0.173794,
+        "lr": 0.00025736842105263157,
+        "labelTokens": 90,
+        "t": 472.0
+      },
+      {
+        "step": 39,
+        "loss": 0.343721,
+        "lr": 0.0002557894736842105,
+        "labelTokens": 54,
+        "t": 475.8
+      },
+      {
+        "step": 40,
+        "loss": 0.61791,
+        "lr": 0.00025421052631578945,
+        "labelTokens": 48,
+        "t": 481.6
+      },
+      {
+        "step": 41,
+        "loss": 0.609734,
+        "lr": 0.00025263157894736836,
+        "labelTokens": 136,
+        "t": 490.5
+      },
+      {
+        "step": 42,
+        "loss": 0.598009,
+        "lr": 0.0002510526315789473,
+        "labelTokens": 154,
+        "t": 495.5
+      },
+      {
+        "step": 43,
+        "loss": 0.569823,
+        "lr": 0.0002494736842105263,
+        "labelTokens": 87,
+        "t": 502.6
+      },
+      {
+        "step": 44,
+        "loss": 0.015027,
+        "lr": 0.00024789473684210526,
+        "labelTokens": 47,
+        "t": 506.5
+      },
+      {
+        "step": 45,
+        "loss": 0.850814,
+        "lr": 0.00024631578947368417,
+        "labelTokens": 26,
+        "t": 508.5
+      },
+      {
+        "step": 46,
+        "loss": 0.696324,
+        "lr": 0.00024473684210526314,
+        "labelTokens": 60,
+        "t": 511.2
+      },
+      {
+        "step": 47,
+        "loss": 0.639602,
+        "lr": 0.00024315789473684207,
+        "labelTokens": 118,
+        "t": 516.5
+      },
+      {
+        "step": 48,
+        "loss": 0.964263,
+        "lr": 0.00024157894736842104,
+        "labelTokens": 58,
+        "t": 521.6
+      },
+      {
+        "step": 49,
+        "loss": 0.165497,
+        "lr": 0.00023999999999999998,
+        "labelTokens": 73,
+        "t": 527.3
+      },
+      {
+        "step": 50,
+        "loss": 0.271864,
+        "lr": 0.00023842105263157895,
+        "labelTokens": 84,
+        "t": 532.3
+      },
+      {
+        "step": 51,
+        "loss": 0.20216,
+        "lr": 0.00023684210526315788,
+        "labelTokens": 42,
+        "t": 559.0
+      },
+      {
+        "step": 52,
+        "loss": 0.991097,
+        "lr": 0.00023526315789473682,
+        "labelTokens": 51,
+        "t": 562.3
+      },
+      {
+        "step": 53,
+        "loss": 1.450311,
+        "lr": 0.00023368421052631576,
+        "labelTokens": 42,
+        "t": 564.0
+      },
+      {
+        "step": 54,
+        "loss": 0.358413,
+        "lr": 0.0002321052631578947,
+        "labelTokens": 67,
+        "t": 567.3
+      },
+      {
+        "step": 55,
+        "loss": 0.839436,
+        "lr": 0.00023052631578947364,
+        "labelTokens": 100,
+        "t": 569.7
+      },
+      {
+        "step": 56,
+        "loss": 0.521802,
+        "lr": 0.00022894736842105263,
+        "labelTokens": 115,
+        "t": 576.8
+      },
+      {
+        "step": 57,
+        "loss": 0.411098,
+        "lr": 0.00022736842105263157,
+        "labelTokens": 151,
+        "t": 584.5
+      },
+      {
+        "step": 58,
+        "loss": 0.220022,
+        "lr": 0.0002257894736842105,
+        "labelTokens": 40,
+        "t": 586.1
+      },
+      {
+        "step": 59,
+        "loss": 0.369255,
+        "lr": 0.00022421052631578945,
+        "labelTokens": 83,
+        "t": 593.2
+      },
+      {
+        "step": 60,
+        "loss": 0.80993,
+        "lr": 0.0002226315789473684,
+        "labelTokens": 91,
+        "t": 599.6
+      },
+      {
+        "step": 61,
+        "loss": 0.630175,
+        "lr": 0.00022105263157894738,
+        "labelTokens": 132,
+        "t": 607.7
+      },
+      {
+        "step": 62,
+        "loss": 0.149364,
+        "lr": 0.00021947368421052632,
+        "labelTokens": 68,
+        "t": 610.6
+      },
+      {
+        "step": 63,
+        "loss": 0.123455,
+        "lr": 0.00021789473684210526,
+        "labelTokens": 117,
+        "t": 615.4
+      },
+      {
+        "step": 64,
+        "loss": 0.868116,
+        "lr": 0.0002163157894736842,
+        "labelTokens": 92,
+        "t": 618.9
+      },
+      {
+        "step": 65,
+        "loss": 0.380517,
+        "lr": 0.00021473684210526314,
+        "labelTokens": 127,
+        "t": 623.4
+      },
+      {
+        "step": 66,
+        "loss": 0.469834,
+        "lr": 0.00021315789473684208,
+        "labelTokens": 49,
+        "t": 625.2
+      },
+      {
+        "step": 67,
+        "loss": 0.059815,
+        "lr": 0.00021157894736842102,
+        "labelTokens": 45,
+        "t": 629.0
+      },
+      {
+        "step": 68,
+        "loss": 1.381395,
+        "lr": 0.00020999999999999998,
+        "labelTokens": 42,
+        "t": 630.9
+      },
+      {
+        "step": 69,
+        "loss": 0.918769,
+        "lr": 0.00020842105263157892,
+        "labelTokens": 157,
+        "t": 635.2
+      },
+      {
+        "step": 70,
+        "loss": 0.418202,
+        "lr": 0.00020684210526315786,
+        "labelTokens": 166,
+        "t": 640.7
+      },
+      {
+        "step": 71,
+        "loss": 0.088984,
+        "lr": 0.00020526315789473683,
+        "labelTokens": 102,
+        "t": 646.9
+      },
+      {
+        "step": 72,
+        "loss": 0.129257,
+        "lr": 0.00020368421052631576,
+        "labelTokens": 75,
+        "t": 650.8
+      },
+      {
+        "step": 73,
+        "loss": 0.521255,
+        "lr": 0.0002021052631578947,
+        "labelTokens": 52,
+        "t": 653.4
+      },
+      {
+        "step": 74,
+        "loss": 0.19593,
+        "lr": 0.0002005263157894737,
+        "labelTokens": 106,
+        "t": 658.2
+      },
+      {
+        "step": 75,
+        "loss": 1.016517,
+        "lr": 0.00019894736842105264,
+        "labelTokens": 58,
+        "t": 660.5
+      },
+      {
+        "step": 76,
+        "loss": 0.538449,
+        "lr": 0.00019736842105263157,
+        "labelTokens": 25,
+        "t": 681.8
+      },
+      {
+        "step": 77,
+        "loss": 0.078647,
+        "lr": 0.0001957894736842105,
+        "labelTokens": 39,
+        "t": 683.4
+      },
+      {
+        "step": 78,
+        "loss": 0.49114,
+        "lr": 0.00019421052631578945,
+        "labelTokens": 97,
+        "t": 688.7
+      },
+      {
+        "step": 79,
+        "loss": 0.235423,
+        "lr": 0.0001926315789473684,
+        "labelTokens": 57,
+        "t": 691.0
+      },
+      {
+        "step": 80,
+        "loss": 0.644257,
+        "lr": 0.00019105263157894736,
+        "labelTokens": 151,
+        "t": 696.0
+      },
+      {
+        "step": 81,
+        "loss": 0.48313,
+        "lr": 0.0001894736842105263,
+        "labelTokens": 46,
+        "t": 698.2
+      },
+      {
+        "step": 82,
+        "loss": 0.720678,
+        "lr": 0.00018789473684210524,
+        "labelTokens": 39,
+        "t": 701.6
+      },
+      {
+        "step": 83,
+        "loss": 0.699798,
+        "lr": 0.00018631578947368417,
+        "labelTokens": 138,
+        "t": 705.7
+      },
+      {
+        "step": 84,
+        "loss": 0.08629,
+        "lr": 0.00018473684210526314,
+        "labelTokens": 118,
+        "t": 710.2
+      },
+      {
+        "step": 85,
+        "loss": 0.203554,
+        "lr": 0.00018315789473684208,
+        "labelTokens": 48,
+        "t": 711.9
+      },
+      {
+        "step": 86,
+        "loss": 0.761535,
+        "lr": 0.00018157894736842105,
+        "labelTokens": 98,
+        "t": 715.3
+      },
+      {
+        "step": 87,
+        "loss": 0.817548,
+        "lr": 0.00017999999999999998,
+        "labelTokens": 112,
+        "t": 717.4
+      },
+      {
+        "step": 88,
+        "loss": 0.682008,
+        "lr": 0.00017842105263157895,
+        "labelTokens": 98,
+        "t": 721.2
+      },
+      {
+        "step": 89,
+        "loss": 0.58629,
+        "lr": 0.0001768421052631579,
+        "labelTokens": 101,
+        "t": 727.4
+      },
+      {
+        "step": 90,
+        "loss": 0.192844,
+        "lr": 0.00017526315789473683,
+        "labelTokens": 62,
+        "t": 732.1
+      },
+      {
+        "step": 91,
+        "loss": 0.227882,
+        "lr": 0.0001736842105263158,
+        "labelTokens": 63,
+        "t": 734.3
+      },
+      {
+        "step": 92,
+        "loss": 0.227294,
+        "lr": 0.00017210526315789473,
+        "labelTokens": 85,
+        "t": 738.8
+      },
+      {
+        "step": 93,
+        "loss": 0.258446,
+        "lr": 0.00017052631578947367,
+        "labelTokens": 105,
+        "t": 742.9
+      },
+      {
+        "step": 94,
+        "loss": 0.177465,
+        "lr": 0.0001689473684210526,
+        "labelTokens": 78,
+        "t": 747.0
+      },
+      {
+        "step": 95,
+        "loss": 0.328673,
+        "lr": 0.00016736842105263155,
+        "labelTokens": 89,
+        "t": 752.6
+      },
+      {
+        "step": 96,
+        "loss": 0.089223,
+        "lr": 0.0001657894736842105,
+        "labelTokens": 68,
+        "t": 754.8
+      },
+      {
+        "step": 97,
+        "loss": 0.254963,
+        "lr": 0.00016421052631578943,
+        "labelTokens": 54,
+        "t": 756.8
+      },
+      {
+        "step": 98,
+        "loss": 0.466705,
+        "lr": 0.00016263157894736842,
+        "labelTokens": 175,
+        "t": 762.0
+      },
+      {
+        "step": 99,
+        "loss": 0.154632,
+        "lr": 0.00016105263157894736,
+        "labelTokens": 124,
+        "t": 766.2
+      },
+      {
+        "step": 100,
+        "loss": 0.373196,
+        "lr": 0.0001594736842105263,
+        "labelTokens": 62,
+        "t": 768.5
+      },
+      {
+        "step": 101,
+        "loss": 0.139233,
+        "lr": 0.00015789473684210527,
+        "labelTokens": 51,
+        "t": 6.3
+      },
+      {
+        "step": 102,
+        "loss": 0.403548,
+        "lr": 0.0001563157894736842,
+        "labelTokens": 75,
+        "t": 9.8
+      },
+      {
+        "step": 103,
+        "loss": 0.077017,
+        "lr": 0.00015473684210526317,
+        "labelTokens": 59,
+        "t": 12.8
+      },
+      {
+        "step": 104,
+        "loss": 0.528425,
+        "lr": 0.0001531578947368421,
+        "labelTokens": 102,
+        "t": 15.9
+      },
+      {
+        "step": 105,
+        "loss": 0.092453,
+        "lr": 0.00015157894736842105,
+        "labelTokens": 43,
+        "t": 17.5
+      },
+      {
+        "step": 106,
+        "loss": 0.81598,
+        "lr": 0.00015,
+        "labelTokens": 82,
+        "t": 23.4
+      },
+      {
+        "step": 107,
+        "loss": 0.400994,
+        "lr": 0.00014842105263157893,
+        "labelTokens": 81,
+        "t": 31.1
+      },
+      {
+        "step": 108,
+        "loss": 0.44542,
+        "lr": 0.00014684210526315786,
+        "labelTokens": 141,
+        "t": 35.4
+      },
+      {
+        "step": 109,
+        "loss": 0.507377,
+        "lr": 0.0001452631578947368,
+        "labelTokens": 109,
+        "t": 39.0
+      },
+      {
+        "step": 110,
+        "loss": 0.175752,
+        "lr": 0.0001436842105263158,
+        "labelTokens": 68,
+        "t": 43.9
+      },
+      {
+        "step": 111,
+        "loss": 0.906361,
+        "lr": 0.00014210526315789474,
+        "labelTokens": 52,
+        "t": 46.2
+      },
+      {
+        "step": 112,
+        "loss": 0.181154,
+        "lr": 0.00014052631578947367,
+        "labelTokens": 70,
+        "t": 50.3
+      },
+      {
+        "step": 113,
+        "loss": 0.174618,
+        "lr": 0.00013894736842105261,
+        "labelTokens": 89,
+        "t": 54.6
+      },
+      {
+        "step": 114,
+        "loss": 0.096342,
+        "lr": 0.00013736842105263155,
+        "labelTokens": 33,
+        "t": 60.1
+      },
+      {
+        "step": 115,
+        "loss": 0.285434,
+        "lr": 0.0001357894736842105,
+        "labelTokens": 65,
+        "t": 65.8
+      },
+      {
+        "step": 116,
+        "loss": 0.076741,
+        "lr": 0.00013421052631578946,
+        "labelTokens": 42,
+        "t": 71.1
+      },
+      {
+        "step": 117,
+        "loss": 0.420913,
+        "lr": 0.00013263157894736842,
+        "labelTokens": 61,
+        "t": 76.3
+      },
+      {
+        "step": 118,
+        "loss": 0.129851,
+        "lr": 0.00013105263157894736,
+        "labelTokens": 111,
+        "t": 83.5
+      },
+      {
+        "step": 119,
+        "loss": 0.429493,
+        "lr": 0.0001294736842105263,
+        "labelTokens": 88,
+        "t": 87.5
+      },
+      {
+        "step": 120,
+        "loss": 0.716579,
+        "lr": 0.00012789473684210524,
+        "labelTokens": 67,
+        "t": 91.0
+      },
+      {
+        "step": 121,
+        "loss": 0.065673,
+        "lr": 0.00012631578947368418,
+        "labelTokens": 111,
+        "t": 97.7
+      },
+      {
+        "step": 122,
+        "loss": 0.312539,
+        "lr": 0.00012473684210526315,
+        "labelTokens": 81,
+        "t": 105.9
+      },
+      {
+        "step": 123,
+        "loss": 0.33242,
+        "lr": 0.0001231578947368421,
+        "labelTokens": 62,
+        "t": 108.6
+      },
+      {
+        "step": 124,
+        "loss": 0.594032,
+        "lr": 0.00012157894736842105,
+        "labelTokens": 196,
+        "t": 114.8
+      },
+      {
+        "step": 125,
+        "loss": 0.182756,
+        "lr": 0.00011999999999999999,
+        "labelTokens": 49,
+        "t": 118.0
+      },
+      {
+        "step": 126,
+        "loss": 0.232271,
+        "lr": 0.00011842105263157894,
+        "labelTokens": 48,
+        "t": 145.0
+      },
+      {
+        "step": 127,
+        "loss": 0.514919,
+        "lr": 0.00011684210526315788,
+        "labelTokens": 134,
+        "t": 151.7
+      },
+      {
+        "step": 128,
+        "loss": 0.549227,
+        "lr": 0.00011526315789473682,
+        "labelTokens": 111,
+        "t": 155.5
+      },
+      {
+        "step": 129,
+        "loss": 0.14528,
+        "lr": 0.00011368421052631577,
+        "labelTokens": 54,
+        "t": 158.7
+      },
+      {
+        "step": 130,
+        "loss": 0.412064,
+        "lr": 0.00011210526315789474,
+        "labelTokens": 38,
+        "t": 162.0
+      },
+      {
+        "step": 131,
+        "loss": 0.278302,
+        "lr": 0.00011052631578947369,
+        "labelTokens": 127,
+        "t": 168.2
+      },
+      {
+        "step": 132,
+        "loss": 0.0916,
+        "lr": 0.00010894736842105263,
+        "labelTokens": 102,
+        "t": 174.8
+      },
+      {
+        "step": 133,
+        "loss": 0.458531,
+        "lr": 0.00010736842105263157,
+        "labelTokens": 38,
+        "t": 182.5
+      },
+      {
+        "step": 134,
+        "loss": 0.240055,
+        "lr": 0.00010578947368421051,
+        "labelTokens": 76,
+        "t": 189.2
+      },
+      {
+        "step": 135,
+        "loss": 0.734943,
+        "lr": 0.00010421052631578946,
+        "labelTokens": 89,
+        "t": 195.1
+      },
+      {
+        "step": 136,
+        "loss": 0.426533,
+        "lr": 0.0001026315789473684,
+        "labelTokens": 175,
+        "t": 204.5
+      },
+      {
+        "step": 137,
+        "loss": 0.15649,
+        "lr": 0.00010105263157894738,
+        "labelTokens": 73,
+        "t": 209.7
+      },
+      {
+        "step": 138,
+        "loss": 0.358835,
+        "lr": 9.947368421052632e-05,
+        "labelTokens": 58,
+        "t": 216.6
+      },
+      {
+        "step": 139,
+        "loss": 0.228472,
+        "lr": 9.789473684210526e-05,
+        "labelTokens": 81,
+        "t": 223.9
+      },
+      {
+        "step": 140,
+        "loss": 0.418503,
+        "lr": 9.63157894736842e-05,
+        "labelTokens": 125,
+        "t": 228.6
+      },
+      {
+        "step": 141,
+        "loss": 0.436473,
+        "lr": 9.473684210526315e-05,
+        "labelTokens": 100,
+        "t": 235.1
+      },
+      {
+        "step": 142,
+        "loss": 0.22487,
+        "lr": 9.315789473684209e-05,
+        "labelTokens": 89,
+        "t": 246.2
+      },
+      {
+        "step": 143,
+        "loss": 0.716328,
+        "lr": 9.157894736842103e-05,
+        "labelTokens": 61,
+        "t": 250.2
+      },
+      {
+        "step": 144,
+        "loss": 0.060693,
+        "lr": 9e-05,
+        "labelTokens": 62,
+        "t": 254.6
+      },
+      {
+        "step": 145,
+        "loss": 0.032595,
+        "lr": 8.842105263157894e-05,
+        "labelTokens": 54,
+        "t": 258.4
+      },
+      {
+        "step": 146,
+        "loss": 0.11288,
+        "lr": 8.68421052631579e-05,
+        "labelTokens": 78,
+        "t": 265.4
+      },
+      {
+        "step": 147,
+        "loss": 0.299045,
+        "lr": 8.526315789473684e-05,
+        "labelTokens": 65,
+        "t": 274.8
+      },
+      {
+        "step": 148,
+        "loss": 0.277942,
+        "lr": 8.368421052631578e-05,
+        "labelTokens": 50,
+        "t": 278.2
+      },
+      {
+        "step": 149,
+        "loss": 0.300467,
+        "lr": 8.210526315789471e-05,
+        "labelTokens": 103,
+        "t": 283.1
+      },
+      {
+        "step": 150,
+        "loss": 0.314282,
+        "lr": 8.052631578947367e-05,
+        "labelTokens": 81,
+        "t": 293.0
+      },
+      {
+        "step": 151,
+        "loss": 0.164963,
+        "lr": 7.894736842105263e-05,
+        "labelTokens": 45,
+        "t": 325.2
+      },
+      {
+        "step": 152,
+        "loss": 0.482135,
+        "lr": 7.736842105263159e-05,
+        "labelTokens": 102,
+        "t": 328.6
+      },
+      {
+        "step": 153,
+        "loss": 0.478578,
+        "lr": 7.578947368421052e-05,
+        "labelTokens": 149,
+        "t": 335.3
+      },
+      {
+        "step": 154,
+        "loss": 0.799586,
+        "lr": 7.421052631578946e-05,
+        "labelTokens": 61,
+        "t": 339.0
+      },
+      {
+        "step": 155,
+        "loss": 0.088961,
+        "lr": 7.26315789473684e-05,
+        "labelTokens": 109,
+        "t": 346.0
+      },
+      {
+        "step": 156,
+        "loss": 0.355146,
+        "lr": 7.105263157894735e-05,
+        "labelTokens": 54,
+        "t": 351.2
+      },
+      {
+        "step": 157,
+        "loss": 0.408448,
+        "lr": 6.947368421052632e-05,
+        "labelTokens": 123,
+        "t": 357.2
+      },
+      {
+        "step": 158,
+        "loss": 0.54369,
+        "lr": 6.789473684210527e-05,
+        "labelTokens": 123,
+        "t": 367.0
+      },
+      {
+        "step": 159,
+        "loss": 0.111922,
+        "lr": 6.631578947368421e-05,
+        "labelTokens": 73,
+        "t": 372.0
+      },
+      {
+        "step": 160,
+        "loss": 0.13809,
+        "lr": 6.473684210526315e-05,
+        "labelTokens": 78,
+        "t": 379.9
+      },
+      {
+        "step": 161,
+        "loss": 0.08079,
+        "lr": 6.315789473684209e-05,
+        "labelTokens": 62,
+        "t": 384.0
+      },
+      {
+        "step": 162,
+        "loss": 0.740091,
+        "lr": 6.157894736842104e-05,
+        "labelTokens": 148,
+        "t": 389.0
+      },
+      {
+        "step": 163,
+        "loss": 0.129267,
+        "lr": 5.999999999999998e-05,
+        "labelTokens": 111,
+        "t": 395.4
+      },
+      {
+        "step": 164,
+        "loss": 0.576402,
+        "lr": 5.8421052631578954e-05,
+        "labelTokens": 117,
+        "t": 404.5
+      },
+      {
+        "step": 165,
+        "loss": 0.300295,
+        "lr": 5.68421052631579e-05,
+        "labelTokens": 92,
+        "t": 415.6
+      },
+      {
+        "step": 166,
+        "loss": 0.131172,
+        "lr": 5.5263157894736845e-05,
+        "labelTokens": 43,
+        "t": 418.7
+      },
+      {
+        "step": 167,
+        "loss": 0.038085,
+        "lr": 5.3684210526315784e-05,
+        "labelTokens": 85,
+        "t": 426.7
+      },
+      {
+        "step": 168,
+        "loss": 0.190924,
+        "lr": 5.210526315789473e-05,
+        "labelTokens": 45,
+        "t": 432.1
+      },
+      {
+        "step": 169,
+        "loss": 0.391414,
+        "lr": 5.052631578947367e-05,
+        "labelTokens": 162,
+        "t": 436.3
+      },
+      {
+        "step": 170,
+        "loss": 0.083563,
+        "lr": 4.8947368421052615e-05,
+        "labelTokens": 93,
+        "t": 447.1
+      },
+      {
+        "step": 171,
+        "loss": 0.338167,
+        "lr": 4.736842105263159e-05,
+        "labelTokens": 40,
+        "t": 450.5
+      },
+      {
+        "step": 172,
+        "loss": 0.062668,
+        "lr": 4.578947368421053e-05,
+        "labelTokens": 43,
+        "t": 453.8
+      },
+      {
+        "step": 173,
+        "loss": 0.148273,
+        "lr": 4.421052631578947e-05,
+        "labelTokens": 85,
+        "t": 461.3
+      },
+      {
+        "step": 174,
+        "loss": 0.138311,
+        "lr": 4.263157894736842e-05,
+        "labelTokens": 46,
+        "t": 464.4
+      },
+      {
+        "step": 175,
+        "loss": 0.500951,
+        "lr": 4.105263157894736e-05,
+        "labelTokens": 111,
+        "t": 471.0
+      },
+      {
+        "step": 176,
+        "loss": 0.283567,
+        "lr": 3.94736842105263e-05,
+        "labelTokens": 65,
+        "t": 505.7
+      },
+      {
+        "step": 177,
+        "loss": 0.048837,
+        "lr": 3.789473684210524e-05,
+        "labelTokens": 113,
+        "t": 515.6
+      },
+      {
+        "step": 178,
+        "loss": 0.501074,
+        "lr": 3.631578947368422e-05,
+        "labelTokens": 154,
+        "t": 521.7
+      },
+      {
+        "step": 179,
+        "loss": 0.81472,
+        "lr": 3.473684210526316e-05,
+        "labelTokens": 63,
+        "t": 525.6
+      },
+      {
+        "step": 180,
+        "loss": 0.179774,
+        "lr": 3.3157894736842106e-05,
+        "labelTokens": 60,
+        "t": 529.3
+      },
+      {
+        "step": 181,
+        "loss": 0.676262,
+        "lr": 3.1578947368421045e-05,
+        "labelTokens": 91,
+        "t": 535.8
+      },
+      {
+        "step": 182,
+        "loss": 0.235024,
+        "lr": 2.999999999999999e-05,
+        "labelTokens": 83,
+        "t": 544.9
+      },
+      {
+        "step": 183,
+        "loss": 0.192857,
+        "lr": 2.8421052631578933e-05,
+        "labelTokens": 59,
+        "t": 550.4
+      },
+      {
+        "step": 184,
+        "loss": 0.059492,
+        "lr": 2.6842105263157875e-05,
+        "labelTokens": 33,
+        "t": 559.1
+      },
+      {
+        "step": 185,
+        "loss": 0.144854,
+        "lr": 2.526315789473685e-05,
+        "labelTokens": 48,
+        "t": 563.0
+      },
+      {
+        "step": 186,
+        "loss": 0.222018,
+        "lr": 2.3684210526315794e-05,
+        "labelTokens": 75,
+        "t": 570.1
+      },
+      {
+        "step": 187,
+        "loss": 0.176885,
+        "lr": 2.2105263157894736e-05,
+        "labelTokens": 53,
+        "t": 577.4
+      },
+      {
+        "step": 188,
+        "loss": 0.402308,
+        "lr": 2.052631578947368e-05,
+        "labelTokens": 160,
+        "t": 583.6
+      },
+      {
+        "step": 189,
+        "loss": 0.06275,
+        "lr": 1.894736842105262e-05,
+        "labelTokens": 73,
+        "t": 590.1
+      },
+      {
+        "step": 190,
+        "loss": 0.149118,
+        "lr": 1.7368421052631563e-05,
+        "labelTokens": 63,
+        "t": 594.1
+      },
+      {
+        "step": 191,
+        "loss": 0.054254,
+        "lr": 1.578947368421054e-05,
+        "labelTokens": 52,
+        "t": 597.6
+      },
+      {
+        "step": 192,
+        "loss": 0.285393,
+        "lr": 1.4210526315789483e-05,
+        "labelTokens": 168,
+        "t": 604.5
+      },
+      {
+        "step": 193,
+        "loss": 0.224432,
+        "lr": 1.2631578947368426e-05,
+        "labelTokens": 98,
+        "t": 613.8
+      },
+      {
+        "step": 194,
+        "loss": 0.099626,
+        "lr": 1.1052631578947368e-05,
+        "labelTokens": 62,
+        "t": 621.2
+      },
+      {
+        "step": 195,
+        "loss": 0.233626,
+        "lr": 9.47368421052631e-06,
+        "labelTokens": 83,
+        "t": 627.9
+      },
+      {
+        "step": 196,
+        "loss": 0.026474,
+        "lr": 7.894736842105254e-06,
+        "labelTokens": 36,
+        "t": 636.2
+      },
+      {
+        "step": 197,
+        "loss": 0.125557,
+        "lr": 6.315789473684196e-06,
+        "labelTokens": 79,
+        "t": 642.4
+      },
+      {
+        "step": 198,
+        "loss": 0.67666,
+        "lr": 4.736842105263172e-06,
+        "labelTokens": 91,
+        "t": 649.4
+      },
+      {
+        "step": 199,
+        "loss": 0.042178,
+        "lr": 3.157894736842115e-06,
+        "labelTokens": 45,
+        "t": 653.2
+      },
+      {
+        "step": 200,
+        "loss": 0.500953,
+        "lr": 1.5789473684210575e-06,
+        "labelTokens": 40,
+        "t": 656.8
+      }
+    ],
+    "validationLoss": [
+      {
+        "step": 0,
+        "loss": 0.448084,
+        "t": 74.4
+      },
+      {
+        "step": 25,
+        "loss": 0.411961,
+        "t": 379.8
+      },
+      {
+        "step": 50,
+        "loss": 0.354911,
+        "t": 543.1
+      },
+      {
+        "step": 75,
+        "loss": 0.286238,
+        "t": 669.4
+      },
+      {
+        "step": 100,
+        "loss": 0.231921,
+        "t": 776.7
+      },
+      {
+        "step": 125,
+        "loss": 0.191146,
+        "t": 131.6
+      },
+      {
+        "step": 150,
+        "loss": 0.156342,
+        "t": 307.8
+      },
+      {
+        "step": 175,
+        "loss": 0.139075,
+        "t": 485.6
+      },
+      {
+        "step": 200,
+        "loss": 0.13335,
+        "t": 672.2
+      }
+    ],
+    "bestValidationLoss": 0.13334970478899777,
+    "bestValidationStep": 200,
+    "validationIs": "the training subset (overfit test)",
+    "heldOutValidationLoss": [
+      {
+        "step": 0,
+        "loss": 0.478136,
+        "t": 92.1
+      },
+      {
+        "step": 25,
+        "loss": 0.475455,
+        "t": 389.3
+      },
+      {
+        "step": 50,
+        "loss": 0.470822,
+        "t": 552.6
+      },
+      {
+        "step": 75,
+        "loss": 0.47019,
+        "t": 676.5
+      },
+      {
+        "step": 100,
+        "loss": 0.471717,
+        "t": 783.2
+      },
+      {
+        "step": 125,
+        "loss": 0.470923,
+        "t": 141.6
+      },
+      {
+        "step": 150,
+        "loss": 0.473472,
+        "t": 319.4
+      },
+      {
+        "step": 175,
+        "loss": 0.475586,
+        "t": 499.0
+      },
+      {
+        "step": 200,
+        "loss": 0.476105,
+        "t": 683.7
+      }
+    ],
+    "loss": {
+      "initial": 0.7079879641532898,
+      "final": 0.500953,
+      "min": 0.015027,
+      "meanFirst10": 0.4770519000000001,
+      "meanLast10": 0.22691530000000001
+    },
+    "gradientStats": {
+      "count": 200,
+      "mean": 0.48922221653163434,
+      "max": 4.184510707855225,
+      "min": 0.07993791252374649,
+      "nonFinite": 0
+    },
+    "wallTimeSeconds": 1467.3,
+    "wallTimeSecondsThisLaunch": 684.1,
+    "launches": [
+      {
+        "startedAt": "2026-09-09T17:15:18.535768+00:00",
+        "resumedFromStep": 0,
+        "stepsThisLaunch": 100,
+        "wallSeconds": 783.2
+      },
+      {
+        "startedAt": "2026-09-09T17:29:06.484454+00:00",
+        "resumedFromStep": 100,
+        "stepsThisLaunch": 100,
+        "wallSeconds": 684.1
+      }
+    ],
+    "gpuHours": 0.0,
+    "estimatedCostUsd": 0.0,
+    "costNote": "local CPU run: $0",
+    "budgetDecision": {
+      "version": "TRAINING_BUDGET_DECISION_v1",
+      "runId": "ca2-lora-smoke",
+      "mode": "smoke",
+      "capUsd": 5.0,
+      "hardCapUsd": 25.0,
+      "estimate": {
+        "gpu": "CPU",
+        "gpuKnown": true,
+        "gpuUsdPerHour": 0.0,
+        "maxWallMinutes": 90.0,
+        "cpuCores": 4.0,
+        "memoryGiB": 16.0,
+        "hours": 1.5,
+        "gpuUsd": 0.0,
+        "cpuUsd": 0.283,
+        "memoryUsd": 0.1918,
+        "rawUsd": 0.4747,
+        "safetyMultiplier": 1.25,
+        "estimatedUsd": 0.5934,
+        "pricingAsOf": "2026-09-09",
+        "pricingSource": "https://modal.com/pricing (on-demand, per-second rates × 3600)"
+      },
+      "allowed": true,
+      "reason": "estimated $0.5934 <= cap $5.00 (smoke)",
+      "approvalUsed": false,
+      "decidedAt": "2026-09-09T17:14:14.999344+00:00"
+    },
+    "maxWallMinutes": 90.0,
+    "checkpoints": [
+      {
+        "tag": "step-50",
+        "step": 50,
+        "path": "C:\\Users\\וינריך\\Downloads\\ai-music-platform\\ws-e-lora-infra\\services\\composers-assistant-train\\runs\\ca2-lora-smoke\\checkpoints\\step-50",
+        "savedAt": "2026-09-09T17:23:41.012842+00:00",
+        "adapterSha256": {
+          "adapter_config.json": "976a8b88fc3870c464aacc94960ed597e0d9992364e4157eb4ba1768401a3026",
+          "adapter_model.bin": "e173fc2b64931dc111aaf95f99255d40b79a7f3ca995b291bcc34639f13bf0a7"
+        },
+        "trainingStateSha256": "6bd84d1e2671d3f56c2a87744a3ac807cdf7f7380d6f2f9c94de587cade8238d"
+      },
+      {
+        "tag": "step-100",
+        "step": 100,
+        "path": "C:\\Users\\וינריך\\Downloads\\ai-music-platform\\ws-e-lora-infra\\services\\composers-assistant-train\\runs\\ca2-lora-smoke\\checkpoints\\step-100",
+        "savedAt": "2026-09-09T17:27:31.567177+00:00",
+        "adapterSha256": {
+          "adapter_config.json": "976a8b88fc3870c464aacc94960ed597e0d9992364e4157eb4ba1768401a3026",
+          "adapter_model.bin": "889fd8ad07cf0685e453ef535d58c151eb1252970a8ab506a7efff818555c642"
+        },
+        "trainingStateSha256": "1d35d1d754c3c0220895319a6ec1902bb9f497005984c697d6a887449b36eeac"
+      },
+      {
+        "tag": "step-150",
+        "step": 150,
+        "path": "C:\\Users\\וינריך\\Downloads\\ai-music-platform\\ws-e-lora-infra\\services\\composers-assistant-train\\runs\\ca2-lora-smoke\\checkpoints\\step-150",
+        "savedAt": "2026-09-09T17:34:21.226220+00:00",
+        "adapterSha256": {
+          "adapter_config.json": "e6d08831191a16b20fb2318f468e04deb464f3e65eafa29c1b9e5d9058d0f882",
+          "adapter_model.bin": "1d1e30bca7d49df620a8a6542bca0928c1f434875fc7249ca9cae8b83217b928"
+        },
+        "trainingStateSha256": "86e684485d8815598e926bd1413bfc638bbcb92434d7978f4f98cacd96eded1a"
+      },
+      {
+        "tag": "step-200",
+        "step": 200,
+        "path": "C:\\Users\\וינריך\\Downloads\\ai-music-platform\\ws-e-lora-infra\\services\\composers-assistant-train\\runs\\ca2-lora-smoke\\checkpoints\\step-200",
+        "savedAt": "2026-09-09T17:40:25.582137+00:00",
+        "adapterSha256": {
+          "adapter_config.json": "e6d08831191a16b20fb2318f468e04deb464f3e65eafa29c1b9e5d9058d0f882",
+          "adapter_model.bin": "b331a54f2770366e4ff5d34fef67197daa62a2d51df22b98d0b558e68812fbd2"
+        },
+        "trainingStateSha256": "7623f80979ca073e085ac55b08fe83fa10303d432e518a19aa0a8b3fd85af684"
+      }
+    ],
+    "resumedFrom": {
+      "checkpoint": "C:\\Users\\וינריך\\Downloads\\ai-music-platform\\ws-e-lora-infra\\services\\composers-assistant-train\\runs\\ca2-lora-smoke\\checkpoints\\step-100",
+      "step": 100,
+      "adapterSha256": {
+        "adapter_config.json": "976a8b88fc3870c464aacc94960ed597e0d9992364e4157eb4ba1768401a3026",
+        "adapter_model.bin": "889fd8ad07cf0685e453ef535d58c151eb1252970a8ab506a7efff818555c642"
+      },
+      "trainingStateSha256": "1d35d1d754c3c0220895319a6ec1902bb9f497005984c697d6a887449b36eeac",
+      "priorWallSeconds": 783.2,
+      "priorWallSecondsSource": "checkpoint state"
+    },
+    "events": [
+      {
+        "at": "2026-09-09T17:29:06.484454+00:00",
+        "event": "resume",
+        "step": 100,
+        "priorWallSeconds": 783.2
+      },
+      {
+        "at": "2026-09-09T17:40:25.875948+00:00",
+        "event": "completed",
+        "reason": null
+      }
+    ],
+    "benchmarkResult": null,
+    "benchmarkHow": "export_checkpoint.py → deploy as a second CA2 worker endpoint → scripts/run-model-tournament.mjs with COMPOSERS_ASSISTANT_2_API_URL → eval_hooks.record_benchmark_result",
+    "stopReason": null
+  },
+  "budgetGuard": {
+    "decisionForThisRun": {
+      "version": "TRAINING_BUDGET_DECISION_v1",
+      "runId": "ca2-lora-smoke",
+      "mode": "smoke",
+      "capUsd": 5.0,
+      "hardCapUsd": 25.0,
+      "estimate": {
+        "gpu": "CPU",
+        "gpuKnown": true,
+        "gpuUsdPerHour": 0.0,
+        "maxWallMinutes": 90.0,
+        "cpuCores": 4.0,
+        "memoryGiB": 16.0,
+        "hours": 1.5,
+        "gpuUsd": 0.0,
+        "cpuUsd": 0.283,
+        "memoryUsd": 0.1918,
+        "rawUsd": 0.4747,
+        "safetyMultiplier": 1.25,
+        "estimatedUsd": 0.5934,
+        "pricingAsOf": "2026-09-09",
+        "pricingSource": "https://modal.com/pricing (on-demand, per-second rates × 3600)"
+      },
+      "allowed": true,
+      "reason": "estimated $0.5934 <= cap $5.00 (smoke)",
+      "approvalUsed": false,
+      "decidedAt": "2026-09-09T17:14:14.999344+00:00"
+    },
+    "refusalsDemonstrated": [
+      {
+        "runId": "demo-h100",
+        "gpu": "H100",
+        "maxWallMinutes": 30.0,
+        "mode": "pilot",
+        "estimatedUsd": 2.6666,
+        "allowed": false,
+        "reason": "GPU H100 is refused by policy (no approval token overrides this); allowed: CPU, T4, L4, A10G, L40S, A100-40GB, A100-80GB"
+      },
+      {
+        "runId": "demo-a100-12h",
+        "gpu": "A100-80GB",
+        "maxWallMinutes": 720.0,
+        "mode": "pilot",
+        "estimatedUsd": 42.2472,
+        "allowed": false,
+        "reason": "estimated $42.2472 exceeds the hard cap $25.00; refused without --approved-by-owner <token>"
+      },
+      {
+        "runId": "demo-a100-12h",
+        "gpu": "A100-80GB",
+        "maxWallMinutes": 720.0,
+        "mode": "pilot",
+        "estimatedUsd": 42.2472,
+        "allowed": false,
+        "reason": "an approval token was given but CA2_TRAINING_OWNER_SECRET is not set in this environment, so it cannot be verified; refused (fail closed)"
+      },
+      {
+        "runId": "demo-smoke-30min",
+        "gpu": "A10G",
+        "maxWallMinutes": 30.0,
+        "mode": "smoke",
+        "estimatedUsd": 0.8853,
+        "allowed": false,
+        "reason": "a smoke on A10G may run at most 20 minutes; got 30.0"
+      },
+      {
+        "runId": "demo-b200",
+        "gpu": "B200",
+        "maxWallMinutes": 10.0,
+        "mode": "pilot",
+        "estimatedUsd": 1.368,
+        "allowed": false,
+        "reason": "GPU B200 is refused by policy (no approval token overrides this); allowed: CPU, T4, L4, A10G, L40S, A100-40GB, A100-80GB"
+      }
+    ],
+    "allowedExamples": [
+      {
+        "runId": "demo-a10g-20min",
+        "gpu": "A10G",
+        "maxWallMinutes": 20.0,
+        "mode": "smoke",
+        "estimatedUsd": 0.5902,
+        "allowed": true
+      },
+      {
+        "runId": "demo-a10g-8h",
+        "gpu": "A10G",
+        "maxWallMinutes": 480.0,
+        "mode": "pilot",
+        "estimatedUsd": 14.1648,
+        "allowed": true
+      }
+    ],
+    "constants": {
+      "hardCapUsd": 25.0,
+      "smokeCapUsd": 5.0,
+      "smokeMaxWallMinutesGpu": 20,
+      "smokeMaxWallMinutesCpu": 90,
+      "allowedGpus": [
+        "CPU",
+        "T4",
+        "L4",
+        "A10G",
+        "L40S",
+        "A100-40GB",
+        "A100-80GB"
+      ],
+      "refusedGpus": [
+        "RTX-PRO-6000",
+        "H100",
+        "H200",
+        "B200",
+        "B300"
+      ],
+      "safetyMultiplier": 1.25,
+      "pricingAsOf": "2026-09-09",
+      "pricingSource": "https://modal.com/pricing (on-demand, per-second rates × 3600)",
+      "gpuUsdPerHour": {
+        "T4": 0.59,
+        "L4": 0.8,
+        "A10G": 1.1,
+        "L40S": 1.95,
+        "A100-40GB": 2.1,
+        "A100-80GB": 2.5,
+        "RTX-PRO-6000": 3.03,
+        "H100": 3.95,
+        "H200": 4.54,
+        "B200": 6.25,
+        "B300": 7.1
+      }
+    },
+    "ownerApproval": "a token sha256(CA2_TRAINING_APPROVAL:<runId>:<cents>:<owner secret>) verified against CA2_TRAINING_OWNER_SECRET, which this repository and this workstream do not hold; H100 and above are refused regardless"
+  },
+  "dataset": {
+    "manifest": {
+      "version": "CA2_TRAINING_MANIFEST_v1",
+      "builtAt": "2026-09-09T14:31:37.757943+00:00",
+      "task": "infill",
+      "tokenizerVersion": "CA2_UNJOINED_v2.1.0_285d28b7_1944",
+      "ca2": {
+        "release": "v2.1.0",
+        "releaseZipSha256": "2a17d0b12f17a5fc85f8d54c441e9a2d68b53e828115083942709aa676fac0b0",
+        "vendoredSourceSha256": "691de1fb3b4916ed4efd63a9dd7bca947bf65c5779dc30f4bd0519f038f6cb21",
+        "tokenizerMode": "unjoined_include_note_duration_commands",
+        "vocabSize": 1944,
+        "vocabSha256": "285d28b7d95f393b60cfa8d556edd69b798c884d392e27083ca3ae92a53b5cc5",
+        "maxLen": 1650,
+        "quantize": [
+          8,
+          6
+        ],
+        "finetuneTask": "infill",
+        "encoder": "encoding_functions.encode_midisongbymeasure_with_masks / nn_training_functions.val_test_infill_encode",
+        "loader": "preprocessing_functions.load_and_clean_midisongbymeasure_from_midi_path"
+      },
+      "datasetDigest": "2c91d426e243277347bf290306664389d938ee4d44037b46b1a728d8047c8ef2",
+      "examplesDigest": "c8dc8d937d00b5f15ac9d0574bb8bdc4417e867ced03524a0d1b4ab8f7243e59",
+      "splitDigest": "9d7f4eb5328e41f55cdda6903b3eb10cbcb4345dda4438c839b84686544d6786",
+      "rightsBasis": {
+        "version": "TRAINING_RIGHTS_BASIS_v1",
+        "basisDigest": "b17179324288e4160043533b0263759cba1bc588f0cbedac0a68a500ce3c2f46",
+        "datasetDigest": "48db5562b1495bae926812c9078c02c598d7aec3bf827bf5c10297b2ca50dbfe",
+        "rightsDigest": "97b7c795b37de988ae89d864732d9df4b3ba4c5151a422fca3d14548aa933fc7",
+        "source": {
+          "recordId": "15571083",
+          "doi": "10.5281/zenodo.15571083",
+          "subset": "no_license_conflict"
+        },
+        "admittedWorkCount": 222856
+      },
+      "splitRule": "work-level: int(sha256(workId).hex[:8], 16) % 100 -> <90 train, <95 val, else test",
+      "maxLen": 1650,
+      "maxInputTokensSeen": 512,
+      "maxLabelTokensSeen": 261,
+      "counts": {
+        "examples": 256,
+        "works": 128,
+        "perSplit": {
+          "train": {
+            "examples": 236,
+            "works": 118,
+            "inputTokens": 41757,
+            "labelTokens": 9921
+          },
+          "val": {
+            "examples": 14,
+            "works": 7,
+            "inputTokens": 2343,
+            "labelTokens": 610
+          },
+          "test": {
+            "examples": 6,
+            "works": 3,
+            "inputTokens": 1805,
+            "labelTokens": 279
+          }
+        },
+        "perTargetInstrument": {
+          "0": 92,
+          "1": 1,
+          "11": 3,
+          "12": 2,
+          "13": 1,
+          "17": 2,
+          "19": 1,
+          "22": 1,
+          "24": 6,
+          "25": 1,
+          "33": 2,
+          "34": 4,
+          "40": 7,
+          "41": 1,
+          "42": 5,
+          "43": 4,
+          "45": 1,
+          "47": 2,
+          "48": 7,
+          "52": 41,
+          "56": 4,
+          "57": 6,
+          "58": 2,
+          "60": 2,
+          "65": 3,
+          "66": 1,
+          "67": 3,
+          "68": 3,
+          "70": 3,
+          "71": 7,
+          "73": 25,
+          "91": 3,
+          "128": 10
+        },
+        "perVariant": {
+          "plain": 128,
+          "ranges": 128
+        }
+      },
+      "workLevelSplitLeak": false,
+      "dedupe": {
+        "method": "sha256 of file bytes + CA2 dedupe_and_filter_midi_files_functions onset-chromagram string over 12 transpositions (sha256 each); CA2's in-file near-equal track removal (_equality_measure, threshold 0.9) runs inside the loader",
+        "duplicateBytes": 0,
+        "duplicateNearEqual": 0,
+        "prefilteredSinglePart": 647,
+        "loadNone": 0,
+        "loadErrors": 0,
+        "skippedSingleTrackAfterClean": 4,
+        "skippedTooSmall": 1,
+        "skippedNoWindow": 0,
+        "skippedDegenerate": 0,
+        "skippedOverMaxLen": 0,
+        "skippedOverBuilderCap": 44,
+        "skippedUnk": 0,
+        "encodeErrors": 0
+      },
+      "builder": {
+        "script": "services/composers-assistant-train/build_dataset.py",
+        "seed": 7,
+        "window": 4,
+        "perWork": 2,
+        "variants": [
+          "plain",
+          "ranges",
+          "full"
+        ],
+        "maxTokens": 512,
+        "scan": 3000,
+        "minMidiTracks": 3,
+        "maxExamples": 256,
+        "maxWorks": 0,
+        "admittedFilesInCorpus": 222820,
+        "filesConsidered": 133,
+        "worksUsed": 128,
+        "secondsToBuild": 141.0,
+        "taskShape": "one target track x N consecutive measures masked (tournament shape); mask order ascending by measure, extra_id from 0"
+      },
+      "shards": {
+        "train": {
+          "file": "train.jsonl",
+          "examples": 236,
+          "sha256": "4564ab93e9e85fbec67fb12296c7391e87b4ec41835100b6592c5a150127c398",
+          "bytes": 613197
+        },
+        "val": {
+          "file": "val.jsonl",
+          "examples": 14,
+          "sha256": "b36be9c5eb0202710b1016dfbafb90e8f68c49494f5146155e2b67703445deb6",
+          "bytes": 35234
+        },
+        "test": {
+          "file": "test.jsonl",
+          "examples": 6,
+          "sha256": "3fe97f2cccf0fc70e72d63ac3fc403b846fde1b2896022552b5fd6391beed921",
+          "bytes": 23196
+        }
+      },
+      "provenanceEntries": 256
+    },
+    "rightsProof": {
+      "version": "CA2_TRAINING_RIGHTS_PROOF_RECORD_v1",
+      "verifiedAt": "2026-09-09T14:32:42.983Z",
+      "ok": true,
+      "problems": [],
+      "datasetDigest": "2c91d426e243277347bf290306664389d938ee4d44037b46b1a728d8047c8ef2",
+      "proof": {
+        "version": "DATASET_RIGHTS_PROOF_v1",
+        "tokenizerVersion": "CA2_UNJOINED_v2.1.0_285d28b7_1944",
+        "datasetDigest": "48db5562b1495bae926812c9078c02c598d7aec3bf827bf5c10297b2ca50dbfe",
+        "rightsDigest": "97b7c795b37de988ae89d864732d9df4b3ba4c5151a422fca3d14548aa933fc7",
+        "source": {
+          "recordId": "15571083",
+          "doi": "10.5281/zenodo.15571083",
+          "subset": "no_license_conflict"
+        },
+        "admittedWorkCount": 222856,
+        "examplesChecked": 256,
+        "distinctWorksInTraining": 128,
+        "examplesTracedToAdmittedWork": 256,
+        "examplesInAuthorsExcluded": 0,
+        "examplesUntraceable": 0,
+        "verified": true,
+        "proofDigest": "e44289ef1a9f646b373527c1296b940982acb068bb38938e5591f971c3a1702c"
+      }
+    }
+  },
+  "phaseLogs": {
+    "phase1-stdout.txt": "[2026-09-09T17:14:28.334657+00:00] budget guard: allowed — estimated $0.5934 <= cap $5.00 (smoke)\n[2026-09-09T17:14:30.334345+00:00] base model verified: 297bccb173b4497a… config verified=True\n[2026-09-09T17:14:30.724988+00:00] dataset verified: 2c91d426e2432773… rights proof e44289ef1a9f646b… (256 examples traced)\n[2026-09-09T17:15:11.807026+00:00] train 32 examples, val 32 examples (the training subset — overfit test), held-out 14, device cpu\n[2026-09-09T17:15:18.533768+00:00] LoRA r=8 alpha=16 targets=['q', 'k', 'v', 'o']: 1,769,472 trainable of 194,137,728 (0.911 %)\n[2026-09-09T17:15:42.675396+00:00] validation before training: 0.4481\n[2026-09-09T17:16:00.362393+00:00] held-out (14 never-trained examples) at step 0: 0.4781\n[2026-09-09T17:16:11.508735+00:00] step 1/200 loss 0.7080 lr 3.00e-05 gradNorm 0.306 (133 label tokens)\n[2026-09-09T17:16:53.809120+00:00] step 5/200 loss 0.4495 lr 1.50e-04 gradNorm 0.384 (83 label tokens)\n[2026-09-09T17:18:23.558869+00:00] step 10/200 loss 0.4125 lr 3.00e-04 gradNorm 0.394 (88 label tokens)\n[2026-09-09T17:19:13.573622+00:00] step 15/200 loss 0.7796 lr 2.94e-04 gradNorm 0.431 (101 label tokens)\n[2026-09-09T17:19:55.430578+00:00] step 20/200 loss 0.5413 lr 2.86e-04 gradNorm 0.425 (92 label tokens)\n[2026-09-09T17:20:37.663439+00:00] step 25/200 loss 0.5262 lr 2.78e-04 gradNorm 0.503 (53 label tokens)\n[2026-09-09T17:20:48.127647+00:00] validation at step 25: 0.4120 (best 0.4120 @ 25)\n[2026-09-09T17:20:57.577346+00:00] held-out (14 never-trained examples) at step 25: 0.4755\n[2026-09-09T17:21:34.858484+00:00] step 30/200 loss 0.5010 lr 2.70e-04 gradNorm 0.318 (60 label tokens)\n[2026-09-09T17:22:01.193526+00:00] step 35/200 loss 0.7065 lr 2.62e-04 gradNorm 0.465 (51 label tokens)\n[2026-09-09T17:22:29.933382+00:00] step 40/200 loss 0.6179 lr 2.54e-04 gradNorm 0.629 (48 label tokens)\n[2026-09-09T17:22:56.790386+00:00] step 45/200 loss 0.8508 lr 2.46e-04 gradNorm 0.663 (26 label tokens)\n[2026-09-09T17:23:20.608785+00:00] step 50/200 loss 0.2719 lr 2.38e-04 gradNorm 0.306 (84 label tokens)\n[2026-09-09T17:23:31.457236+00:00] validation at step 50: 0.3549 (best 0.3549 @ 50)\n[2026-09-09T17:23:40.947749+00:00] held-out (14 never-trained examples) at step 50: 0.4708\n[2026-09-09T17:23:41.174348+00:00] checkpoint step-50: adapter 976a8b88fc38…\n[2026-09-09T17:23:57.979233+00:00] step 55/200 loss 0.8394 lr 2.31e-04 gradNorm 0.498 (100 label tokens)\n[2026-09-09T17:24:27.928645+00:00] step 60/200 loss 0.8099 lr 2.23e-04 gradNorm 0.551 (91 label tokens)\n[2026-09-09T17:24:51.672068+00:00] step 65/200 loss 0.3805 lr 2.15e-04 gradNorm 0.413 (127 label tokens)\n[2026-09-09T17:25:09.006496+00:00] step 70/200 loss 0.4182 lr 2.07e-04 gradNorm 0.390 (166 label tokens)\n[2026-09-09T17:25:28.843508+00:00] step 75/200 loss 1.0165 lr 1.99e-04 gradNorm 0.908 (58 label tokens)\n[2026-09-09T17:25:37.757058+00:00] validation at step 75: 0.2862 (best 0.2862 @ 75)\n[2026-09-09T17:25:44.826232+00:00] held-out (14 never-trained examples) at step 75: 0.4702\n[2026-09-09T17:26:04.318457+00:00] step 80/200 loss 0.6443 lr 1.91e-04 gradNorm 0.417 (151 label tokens)\n[2026-09-09T17:26:20.251163+00:00] step 85/200 loss 0.2036 lr 1.83e-04 gradNorm 0.404 (48 label tokens)\n[2026-09-09T17:26:40.368379+00:00] step 90/200 loss 0.1928 lr 1.75e-04 gradNorm 0.424 (62 label tokens)\n[2026-09-09T17:27:00.942079+00:00] step 95/200 loss 0.3287 lr 1.67e-04 gradNorm 0.549 (89 label tokens)\n[2026-09-09T17:27:16.765915+00:00] step 100/200 loss 0.3732 lr 1.59e-04 gradNorm 0.467 (62 label tokens)\n[2026-09-09T17:27:25.016178+00:00] validation at step 100: 0.2319 (best 0.2319 @ 100)\n[2026-09-09T17:27:31.542117+00:00] held-out (14 never-trained examples) at step 100: 0.4717\n[2026-09-09T17:27:31.700264+00:00] checkpoint step-100: adapter 976a8b88fc38…\n[2026-09-09T17:27:31.731821+00:00] paused: 100 steps in 783 s — stopped on request after step 100 (resume proof)\n",
+    "phase2-stdout.txt": "[2026-09-09T17:29:01.812713+00:00] budget guard: allowed — estimated $0.5934 <= cap $5.00 (smoke)\n[2026-09-09T17:29:02.272778+00:00] base model verified: 297bccb173b4497a… config verified=True\n[2026-09-09T17:29:02.288452+00:00] dataset verified: 2c91d426e2432773… rights proof e44289ef1a9f646b… (256 examples traced)\n[2026-09-09T17:29:04.994190+00:00] train 32 examples, val 32 examples (the training subset — overfit test), held-out 14, device cpu\n[2026-09-09T17:29:06.379548+00:00] LoRA r=8 alpha=16 targets=['q', 'k', 'v', 'o']: 1,769,472 trainable of 194,137,728 (0.911 %)\n[2026-09-09T17:29:06.484454+00:00] resumed from C:\\Users\\וינריך\\Downloads\\ai-music-platform\\ws-e-lora-infra\\services\\composers-assistant-train\\runs\\ca2-lora-smoke\\checkpoints\\step-100 at step 100 (783.2 s already spent on this run)\n[2026-09-09T17:29:19.297713+00:00] step 105/200 loss 0.0925 lr 1.52e-04 gradNorm 0.331 (43 label tokens)\n[2026-09-09T17:29:45.724606+00:00] step 110/200 loss 0.1758 lr 1.44e-04 gradNorm 0.420 (68 label tokens)\n[2026-09-09T17:30:07.596587+00:00] step 115/200 loss 0.2854 lr 1.36e-04 gradNorm 0.569 (65 label tokens)\n[2026-09-09T17:30:32.846146+00:00] step 120/200 loss 0.7166 lr 1.28e-04 gradNorm 0.715 (67 label tokens)\n[2026-09-09T17:30:59.826946+00:00] step 125/200 loss 0.1828 lr 1.20e-04 gradNorm 0.512 (49 label tokens)\n[2026-09-09T17:31:13.455708+00:00] validation at step 125: 0.1911 (best 0.1911 @ 125)\n[2026-09-09T17:31:23.447060+00:00] held-out (14 never-trained examples) at step 125: 0.4709\n[2026-09-09T17:31:43.767212+00:00] step 130/200 loss 0.4121 lr 1.12e-04 gradNorm 0.705 (38 label tokens)\n[2026-09-09T17:32:16.944754+00:00] step 135/200 loss 0.7349 lr 1.04e-04 gradNorm 0.597 (89 label tokens)\n[2026-09-09T17:32:50.450884+00:00] step 140/200 loss 0.4185 lr 9.63e-05 gradNorm 0.497 (125 label tokens)\n[2026-09-09T17:33:20.217368+00:00] step 145/200 loss 0.0326 lr 8.84e-05 gradNorm 0.138 (54 label tokens)\n[2026-09-09T17:33:54.824005+00:00] step 150/200 loss 0.3143 lr 8.05e-05 gradNorm 0.453 (81 label tokens)\n[2026-09-09T17:34:09.598301+00:00] validation at step 150: 0.1563 (best 0.1563 @ 150)\n[2026-09-09T17:34:21.180260+00:00] held-out (14 never-trained examples) at step 150: 0.4735\n[2026-09-09T17:34:21.424776+00:00] checkpoint step-150: adapter e6d08831191a…\n[2026-09-09T17:34:47.811372+00:00] step 155/200 loss 0.0890 lr 7.26e-05 gradNorm 0.222 (109 label tokens)\n[2026-09-09T17:35:21.707468+00:00] step 160/200 loss 0.1381 lr 6.47e-05 gradNorm 0.426 (78 label tokens)\n[2026-09-09T17:35:57.454189+00:00] step 165/200 loss 0.3003 lr 5.68e-05 gradNorm 0.465 (92 label tokens)\n[2026-09-09T17:36:28.879951+00:00] step 170/200 loss 0.0836 lr 4.89e-05 gradNorm 0.292 (93 label tokens)\n[2026-09-09T17:36:52.816649+00:00] step 175/200 loss 0.5010 lr 4.11e-05 gradNorm 0.738 (111 label tokens)\n[2026-09-09T17:37:07.377393+00:00] validation at step 175: 0.1391 (best 0.1391 @ 175)\n[2026-09-09T17:37:20.810259+00:00] held-out (14 never-trained examples) at step 175: 0.4756\n[2026-09-09T17:37:51.121180+00:00] step 180/200 loss 0.1798 lr 3.32e-05 gradNorm 0.512 (60 label tokens)\n[2026-09-09T17:38:24.822130+00:00] step 185/200 loss 0.1449 lr 2.53e-05 gradNorm 0.599 (48 label tokens)\n[2026-09-09T17:38:55.876949+00:00] step 190/200 loss 0.1491 lr 1.74e-05 gradNorm 0.447 (63 label tokens)\n[2026-09-09T17:39:29.751174+00:00] step 195/200 loss 0.2336 lr 9.47e-06 gradNorm 0.464 (83 label tokens)\n[2026-09-09T17:39:58.592401+00:00] step 200/200 loss 0.5010 lr 1.58e-06 gradNorm 1.206 (40 label tokens)\n[2026-09-09T17:40:14.002285+00:00] validation at step 200: 0.1333 (best 0.1333 @ 200)\n[2026-09-09T17:40:25.522681+00:00] held-out (14 never-trained examples) at step 200: 0.4761\n[2026-09-09T17:40:25.816390+00:00] checkpoint step-200: adapter e6d08831191a…\n[2026-09-09T17:40:25.914586+00:00] completed: 200 steps in 684 s\n"
+  },
+  "exports": [
+    {
+      "mode": "merged",
+      "checkpoint": "C:\\Users\\וינריך\\Downloads\\ai-music-platform\\ws-e-lora-infra\\services\\composers-assistant-train\\runs\\ca2-lora-smoke\\checkpoints\\step-200",
+      "modelBinSha256": "d458d25cea345707e692be125cb2949642d9f6a9b04a71521e9c88cbb91d5408",
+      "files": {
+        "config.json": "2f7d11005c7f66a853d6d2eb2edb75ac2b7f0e127b129a72ae9e5d68d12407d7",
+        "generation_config.json": "10488761ef1dcaff1bd1dcbe4828324862cbfd46411313f0f93aebcf95bf779b",
+        "pytorch_model.bin": "d458d25cea345707e692be125cb2949642d9f6a9b04a71521e9c88cbb91d5408"
+      },
+      "adapterSha256": {
+        "adapter_config.json": "e6d08831191a16b20fb2318f468e04deb464f3e65eafa29c1b9e5d9058d0f882",
+        "adapter_model.bin": "b331a54f2770366e4ff5d34fef67197daa62a2d51df22b98d0b558e68812fbd2"
+      },
+      "baseModelRevision": "composers-assistant-REAPER v2.1.0; large unjoined infill finetuned_epoch_49_0; bin sha256 297bccb173b4497a3c3b6007422506dced88fd9f99f5c8a18481dedd9667d530",
+      "exportedAt": "2026-09-09T17:41:57.377145+00:00",
+      "servingNote": "Deploy as a SECOND worker endpoint (never over the pinned one): CA2_MODEL_DIR=<this model dir> and LARGE_MODEL_BIN_SHA256=<modelBinSha256> in that deployment's identity, then run scripts/run-model-tournament.mjs with COMPOSERS_ASSISTANT_2_API_URL pointing at it."
+    },
+    {
+      "mode": "adapter",
+      "checkpoint": "C:\\Users\\וינריך\\Downloads\\ai-music-platform\\ws-e-lora-infra\\services\\composers-assistant-train\\runs\\ca2-lora-smoke\\checkpoints\\step-200",
+      "modelBinSha256": null,
+      "files": {
+        "adapter_config.json": "e6d08831191a16b20fb2318f468e04deb464f3e65eafa29c1b9e5d9058d0f882",
+        "adapter_model.bin": "b331a54f2770366e4ff5d34fef67197daa62a2d51df22b98d0b558e68812fbd2"
+      },
+      "adapterSha256": {
+        "adapter_config.json": "e6d08831191a16b20fb2318f468e04deb464f3e65eafa29c1b9e5d9058d0f882",
+        "adapter_model.bin": "b331a54f2770366e4ff5d34fef67197daa62a2d51df22b98d0b558e68812fbd2"
+      },
+      "baseModelRevision": "composers-assistant-REAPER v2.1.0; large unjoined infill finetuned_epoch_49_0; bin sha256 297bccb173b4497a3c3b6007422506dced88fd9f99f5c8a18481dedd9667d530",
+      "exportedAt": "2026-09-09T17:42:13.470757+00:00",
+      "servingNote": "Deploy as a SECOND worker endpoint (never over the pinned one): CA2_MODEL_DIR=<this model dir> and LARGE_MODEL_BIN_SHA256=<modelBinSha256> in that deployment's identity, then run scripts/run-model-tournament.mjs with COMPOSERS_ASSISTANT_2_API_URL pointing at it."
+    }
+  ],
+  "modalPreflight": {
+    "baseModel": {
+      "modelDir": "/app/vendor/composers_assistant_v2/models_permuted_labels/unjoined/infill/finetuned_epoch_49_0/model",
+      "binSha256": "297bccb173b4497a3c3b6007422506dced88fd9f99f5c8a18481dedd9667d530",
+      "binVerified": true,
+      "configSha256": "c4c92d3e48092c6f2767675260ee5def0f7dcf774c6da981fd8c4321c561063b",
+      "configVerified": true
+    },
+    "tokenizerVersion": "CA2_UNJOINED_v2.1.0_285d28b7_1944",
+    "datasets": [],
+    "runs": [],
+    "torch": "2.0.1+cu118",
+    "cuda": false,
+    "imageEvidence": "sha256:5da90e1aa2c43c2154b40abe2c2d0062a3212782703c91801af7e42690956883"
+  },
+  "tests": "python unittest 50 (guard/collator/manifest/split/trainer gates/wall-time ledger/eval hooks/Modal shape), and the same 50 re-run inside the Modal image at build time; TS: trainingManifest 7, trainingBudgetGuard 7; tsc -p artifacts/api-server --noEmit green",
+  "runNotes": [
+    "Two launches, no hand-held state: phase 1 ran steps 1-100 and stopped on request after writing checkpoint step-100; phase 2 resumed from that directory and ran to 200. The wall-time ledger (783.2 s + 684.1 s = 1467.3 s) came out of the checkpoint, not off the command line.",
+    "Earlier launches of the same dataset were made while the trainer was still being fixed (a relative --resume was resolved inside the vendored CA2 tree, because importing it chdirs; wall time restarted at zero on resume; a checkpoint did not list itself). Those runs were discarded and the whole smoke was re-run from step 0 with the shipped code, so every number here was produced by the committed trainer.",
+    "export_checkpoint.py was run for real on checkpoints/step-200 in both modes. The merged directory reloads as a plain T5ForConditionalGeneration (forward loss 0.146109 on two val rows; generate() returns 52 tokens over the 1944-token vocabulary), which is what a second worker endpoint would serve. No endpoint was deployed and no tournament was run.",
+    "The Modal app was deployed and preflighted on the committed sources: the image rebuilt from the release zip (sha checked), ran all 50 unit tests inside the container, and verified the pinned checkpoint at /app/vendor. modalPreflight.imageEvidence below equals modal_train_config.image_evidence() over the committed files, so the container that passed those tests is the one these sources describe. No GPU function was invoked."
+  ],
+  "honestLimits": [
+    "CPU only, 32 training examples, 4-measure windows capped at 512 input tokens: a proof that the path works, not a measurement of anything musical.",
+    "The Modal GPU function was deployed and preflighted (image built, checkpoint verified inside it, volume reachable) but no GPU training run was launched: the one permitted smoke ran locally at $0.",
+    "The loss decrease is memorisation of the overfit subset; the held-out curve on 14 never-trained examples is recorded so nobody mistakes the former for generalisation.",
+    "The tournament has not been run on any checkpoint from this run; benchmarkResult is null by design until a checkpoint is exported, served on a second endpoint and judged."
+  ]
+}

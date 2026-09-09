@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-09-09T10:47:46.128Z",
+  "ranAt": "2026-09-09T18:15:56.042Z",
   "tokenizerVersion": "ARRANGER_REMI_v1_3cfd16b3_386",
   "admittedWorks": 222856,
   "sample": {
@@ -13,44 +13,45 @@
   "splits": {
     "train": {
       "works": 411,
-      "tasks": 3269,
-      "targetNotes": 212105
+      "tasks": 3223,
+      "targetNotes": 227105
     },
     "val": {
       "works": 16,
-      "tasks": 138,
-      "targetNotes": 9237
+      "tasks": 136,
+      "targetNotes": 9886
     },
     "test": {
       "works": 22,
-      "tasks": 170,
-      "targetNotes": 13412
+      "tasks": 168,
+      "targetNotes": 14253
     }
   },
   "workLevelSplitLeak": false,
   "tasksByTargetFamily": {
-    "drums": 731,
-    "brass": 288,
-    "keys": 1399,
-    "synth": 150,
-    "bass": 51,
-    "ensemble": 93,
-    "reed": 106,
-    "pipe": 101,
-    "organ": 118,
-    "strings": 350,
-    "chromatic_perc": 101,
-    "guitar": 88,
+    "drums": 707,
+    "brass": 278,
+    "keys": 1359,
+    "synth": 148,
+    "bass": 49,
+    "ensemble": 100,
+    "reed": 125,
+    "pipe": 111,
+    "organ": 130,
+    "strings": 340,
+    "chromatic_perc": 94,
+    "guitar": 85,
     "percussive": 1
   },
   "tasksByContextFamilyCount": {
-    "1": 1919,
-    "2": 717,
-    "3": 453,
-    "4": 262,
-    "5": 141,
+    "1": 1885,
+    "2": 688,
+    "3": 456,
+    "4": 264,
+    "5": 144,
     "6": 72,
-    "7": 13
+    "7": 17,
+    "8": 1
   },
   "datasetRightsProof": {
     "version": "DATASET_RIGHTS_PROOF_v1",
@@ -63,9 +64,9 @@
       "subset": "no_license_conflict"
     },
     "admittedWorkCount": 222856,
-    "examplesChecked": 3577,
+    "examplesChecked": 3527,
     "distinctWorksInTraining": 449,
-    "examplesTracedToAdmittedWork": 3577,
+    "examplesTracedToAdmittedWork": 3527,
     "examplesInAuthorsExcluded": 0,
     "examplesUntraceable": 0,
     "sampleTrace": [
@@ -75,52 +76,52 @@
         "index": 0
       },
       {
-        "workId": "QmWs4CsGML6kYT6mDohDB3Vzf1EYPp3diHajohitvHZDMU",
+        "workId": "QmW43omMfGQV7V4fwhgXnhPT6wFHV1wTDDCfjdpvBYhs5Z",
         "shard": "train",
-        "index": 345
+        "index": 340
       },
       {
-        "workId": "QmToHNC5fUeZhYF7RsyMxif7PQUbTGH4ZhYRVatZMUPu2x",
+        "workId": "QmfDSqHUKU8qy6nvxHcfz5uTwD7TV6xk1ww4a4aukmBnvg",
         "shard": "train",
-        "index": 638
+        "index": 628
       },
       {
-        "workId": "QmbWjohLCLLw4keB9YuM4hf1ptMw1TMHCTspW2j2NmpcWW",
+        "workId": "QmYHQVamanPCHvbxGcwdHd7tdjnaZVPPmBRNfJ9qwTmcXn",
         "shard": "train",
-        "index": 963
+        "index": 948
       },
       {
-        "workId": "QmYR43wBQC3gRc8a5KUjKQMnCYxFLnefChbWdVbaCPHmAE",
+        "workId": "QmUSLB4BzZJPfByrkVEachyhHVBhg7RhhdecydfTucVsa9",
         "shard": "train",
-        "index": 1290
+        "index": 1272
       },
       {
         "workId": "QmSaigi4vfbcCDjV9mT1RbGnq39KFSZgM1LERXgSi3ktBn",
         "shard": "train",
-        "index": 1607
+        "index": 1584
       },
       {
-        "workId": "QmUnM67ya7mx3NXPZXeMKhsN5uWF3HHgiFM6VDp8xvT3Zt",
+        "workId": "QmedXbg3wYuJiLaE9LJrHnM5sn3Q9YJvMT1wr3iCb6cRzb",
         "shard": "train",
-        "index": 1932
+        "index": 1904
       },
       {
-        "workId": "QmeXp3wuEo3otUoFTB9FvYDNs8jsR6ScyUibKofbfRHrvH",
+        "workId": "QmbhbpupKCnN7bdKLhG2UK5vFnwF7oTnHj2ts3XCgBcz7q",
         "shard": "train",
-        "index": 2239
+        "index": 2208
       },
       {
-        "workId": "QmathC87FPf1j7fxC8A27BqpYumKgmuZEtnzZGGkDymun5",
+        "workId": "QmQem65kSmnk3EyxHcRxqKvZ5aAB15iS3CMbhuDjT7wu97",
         "shard": "train",
-        "index": 2596
+        "index": 2560
       },
       {
         "workId": "QmVoKrgBQcPE7esc31XkGSxWasEiU65HuW2wJwRMqgXCQs",
         "shard": "train",
-        "index": 2931
+        "index": 2890
       }
     ],
     "verified": true,
-    "proofDigest": "3bbc10fe455db5b1ef81371499a56522d4c15ef1cef15f1fcf3436eebdbb4d6d"
+    "proofDigest": "15a27572185eabd5b080f317b9d7df1220031884e73fb7258eeaac59970caca3"
   }
 }
