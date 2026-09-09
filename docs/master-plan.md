@@ -2156,6 +2156,50 @@ any of it.
   yet better than the reference composer, and the proper next step is the
   per-instrument merge fix plus Q-00's real corpus, not promotion.
 
+- **PR-49** ✅ — `context-aware-regression-fixed` (Wave Q): PR-48's open
+  regression diagnosed and closed. Evidence:
+  `docs/evidence/context-aware-regression-fixed.json`.
+
+  **It was never polyphony.** PR-48 assumed excess polyphony after the
+  per-instrument merge and two fixes aimed at that changed nothing, because
+  nothing was over the ceiling. A probe that dumped the bass notes under five
+  seconds on both paths ended the guessing in one line: the note at 0.78 s went
+  from pitch 42 to pitch 54. The errors were `impossible_leap` — 21-semitone
+  leaps against a 12-semitone bass limit.
+
+  Three real bugs behind it:
+
+  1. **A hi-hat at MIDI 42 was treated as a unison with a bass note at MIDI 42**,
+     so `avoidSiblingCollisions` shoved the bass up an octave and tore the line.
+     A percussion "pitch" is a mapping to a drum, not a note; it cannot be in
+     unison with anything. Percussion is now excluded on both sides.
+  2. **The exclusion did not fire**, because the pattern was `/\b(drum|…)\b/`
+     and the instrument is named `drums`. `\bdrum\b` does not match "drums".
+     One missing plural silently disabled the whole guard. Both this pattern and
+     the harmony-bed instrument pattern now match on substrings — "strings",
+     "drums" and "keys" are how instruments are actually named.
+  3. **`yieldToVocal` could tear a line by itself**: it drops a crowding note an
+     octave per note, so dropping one note of a stepwise line and leaving its
+     neighbours makes the line leap an octave. A drop that would exceed the
+     instrument's `maxLeap` against an immediate neighbour is now refused and
+     the note ducks by velocity instead. Staying out of the singer's way is
+     never worth breaking the line.
+
+  **Measured, before and after:** `playabilityErrors` 0 → 6.89 became 0 → **0**,
+  with every case at the baseline's zero. The verdict moved from
+  "regresses playabilityErrors — do not promote" to "**is not measurably better
+  — do not promote**".
+
+  Suites: contextAwareComposer 15 (3 new, one per bug), contextAwareBenchmark 5,
+  arrangementOrchestrator 11; typecheck green.
+
+  **Honest limits.** This closes a regression; it does not produce an
+  improvement. `criticScore` moved 74.56 → 73.78, inside tolerance, which is not
+  a win. The flag stays off. The style grammar slot is still empty on this path,
+  so the groove pass never ran — wiring it is the next step and is where an
+  improvement would plausibly come from. Still the synthesised corpus, and still
+  no human has judged a blind pair.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

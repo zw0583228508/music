@@ -71,13 +71,16 @@ const LEAD_ROLES = new Set(["LEAD", "MELODY", "COUNTER_MELODY", "SOLO"]);
 const HARMONY_BED_ROLES = new Set([
   "HARMONY", "RHYTHMIC_HARMONY", "SUSTAINED_HARMONY", "PAD", "OSTINATO", "ARPEGGIO", "COMP",
 ]);
-const HARMONY_BED_INSTRUMENTS = /\b(pad|string|strings|keys?|piano|organ|synth|choir|rhodes)\b/i;
+// Substring rather than word-boundary matching, deliberately: "strings",
+// "drums" and "keys" are how instruments are actually named, and `\bdrum\b`
+// silently misses every one of them.
+const HARMONY_BED_INSTRUMENTS = /(pad|string|key|piano|organ|synth|choir|rhodes|ensemble)/i;
 
 function isHarmonyBed(request: PartGenerationRequestV2): boolean {
   const role = String(request.role).toUpperCase();
   if (LEAD_ROLES.has(role)) return false;
-  if (/\b(BASS|DRUM|KICK|SNARE|PERC)\b/.test(role)) return false;
-  if (/\b(bass|drum|kick|snare|perc|tom|hat|cymbal)\b/i.test(request.instrument)) return false;
+  if (/(BASS|DRUM|KICK|SNARE|PERC)/.test(role)) return false;
+  if (/(bass|drum|kick|snare|perc|tom|hi-?hat|cymbal)/i.test(request.instrument)) return false;
   return HARMONY_BED_ROLES.has(role) || HARMONY_BED_INSTRUMENTS.test(request.instrument);
 }
 
@@ -206,6 +209,13 @@ function applyHarmonyPlan(
  * The note drops an octave if the instrument can still play it there, and only
  * loses velocity when it cannot — moving is musical, ducking is a compromise.
  * Lead parts are exempt: a counter-melody is supposed to be heard.
+ *
+ * The octave drop is applied **per note**, which means it can tear a line in
+ * half: drop one note of a bassline and leave its neighbour, and the line now
+ * leaps an octave further than it did. The benchmark caught exactly that —
+ * 21-semitone leaps in a bass part whose limit is 12. So a move that would
+ * create a leap the instrument cannot play is refused, and the note ducks
+ * instead. Staying out of the way is never worth breaking the line.
  */
 function yieldToVocal(
   notes: MusicalNote[],
@@ -222,8 +232,18 @@ function yieldToVocal(
   const low = map.register.min - VOCAL_CROWDING_SEMITONES;
   const high = map.register.max + VOCAL_CROWDING_SEMITONES;
   const range = request.constraints.playableRange;
+  const maxLeap = request.constraints.maxLeap;
   let moved = 0;
   let ducked = 0;
+  let refused = 0;
+
+  // Melodic neighbours, so a move can be judged against the line it belongs to.
+  const ordered = [...notes].sort((a, b) => a.start - b.start);
+  const indexOfNote = new Map(ordered.map((note, index) => [note, index]));
+  const duck = (note: MusicalNote): MusicalNote => ({
+    ...note,
+    velocity: Math.max(1, note.velocity - YIELD_VELOCITY),
+  });
 
   const adjusted = notes.map((note) => {
     const crowds = note.pitch >= low && note.pitch <= high;
@@ -231,12 +251,25 @@ function yieldToVocal(
     // Only while the voice is actually sounding. A gap is the part's to use.
     if (!map.occupied.some((block) => overlaps(note, block))) return note;
     const down = note.pitch - 12;
-    if (down >= range.min) {
-      moved += 1;
-      return { ...note, pitch: down };
+    if (down < range.min) {
+      ducked += 1;
+      return duck(note);
     }
-    ducked += 1;
-    return { ...note, velocity: Math.max(1, note.velocity - YIELD_VELOCITY) };
+    // Would dropping this note alone break the line it sits in?
+    const index = indexOfNote.get(note) ?? -1;
+    const previous = index > 0 ? ordered[index - 1] : null;
+    const next = index >= 0 && index + 1 < ordered.length ? ordered[index + 1] : null;
+    const breaksLine = maxLeap > 0 && [previous, next].some((neighbour) =>
+      neighbour !== null &&
+      Math.abs(neighbour.pitch - note.pitch) <= maxLeap &&
+      Math.abs(neighbour.pitch - down) > maxLeap);
+    if (breaksLine) {
+      refused += 1;
+      ducked += 1;
+      return duck(note);
+    }
+    moved += 1;
+    return { ...note, pitch: down };
   });
 
   return {
@@ -245,25 +278,50 @@ function yieldToVocal(
       id: "vocal-space",
       changed: moved + ducked,
       note: moved + ducked
-        ? `${moved} note(s) dropped an octave out of the vocal's register, ${ducked} ducked where the instrument could not move`
+        ? `${moved} note(s) dropped an octave out of the vocal's register, ${ducked} ducked where the instrument could not move` +
+          (refused ? ` (${refused} of them because dropping would have torn the line)` : "")
         : "no note crowded the vocal",
     },
   };
 }
 
 /**
+ * A drum's "pitch" is a mapping to a drum, not a note. It cannot be in unison.
+ * Plurals matter here: `\bdrum\b` does not match "drums", and that single
+ * missing `s` is what let a hi-hat at MIDI 42 shove a bass note to 54.
+ */
+const PERCUSSION =
+  /(drum|kick|snare|perc|tom|hi-?hat|cymbal|ride|crash|clap|shaker|tambourine|conga|bongo|timpani)/i;
+
+const isPercussion = (part: { instrument: string; role: string }): boolean =>
+  PERCUSSION.test(part.instrument) || PERCUSSION.test(part.role);
+
+/**
  * Two parts playing the same pitch at the same instant are one part with a
  * thicker tone. Sometimes that is wanted; in an arrangement being built part by
  * part it is almost always an accident, and it wastes a voice that could have
  * been doing something else.
+ *
+ * Percussion is excluded on both sides. A kick drum is MIDI 36 and so is a low
+ * C on the bass, but they are not in unison — one is a pitch and the other is a
+ * name for a drum. The benchmark caught this as 21-semitone leaps in a bassline
+ * that had been octave-shifted away from the kick.
  */
 function avoidSiblingCollisions(
   notes: MusicalNote[],
   request: PartGenerationRequestV2,
 ): { notes: MusicalNote[]; pass: ComposePass } {
-  const siblingNotes = request.siblingParts.flatMap((part) => part.notes);
+  if (isPercussion({ instrument: request.instrument, role: String(request.role) })) {
+    return {
+      notes,
+      pass: { id: "sibling-collision", changed: 0, note: "a percussion part has no pitch to collide with" },
+    };
+  }
+  const siblingNotes = request.siblingParts
+    .filter((part) => !isPercussion(part))
+    .flatMap((part) => part.notes);
   if (!siblingNotes.length) {
-    return { notes, pass: { id: "sibling-collision", changed: 0, note: "no sibling part has notes here" } };
+    return { notes, pass: { id: "sibling-collision", changed: 0, note: "no pitched sibling part has notes here" } };
   }
   const range = request.constraints.playableRange;
   let changed = 0;

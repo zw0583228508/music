@@ -269,6 +269,74 @@ test("a re-voiced bed thicker than the instrument allows is thinned to its top n
   assert.ok(passOf(result, "hard-constraints").changed >= 2);
 });
 
+test("a drum is not a pitch: a kick at MIDI 36 is not a unison with a bass note", () => {
+  const drums = {
+    instrument: "drums", role: "CLIMAX_LAYER",
+    notes: [note(0, 0.2, 36), note(0.5, 0.1, 42)],
+    noteCount: 2, register: { min: 36, max: 42, median: 39 }, onsets: [0, 0.5], occupancy: 0.1,
+  };
+  const bass = composeWithContext(
+    requestV2({
+      instrument: "bass", role: "BASS" as PartGenerationRequestV2["role"],
+      siblingParts: [drums] as PartGenerationRequestV2["siblingParts"],
+    }),
+    [note(0, 0.5, 36), note(0.5, 0.5, 42)],
+  );
+  assert.equal(passOf(bass, "sibling-collision").changed, 0);
+  assert.deepEqual(bass.notes.map((n) => n.pitch), [36, 42], "the bassline is untouched");
+
+  // The same instrument named in the plural must still be recognised. "drums"
+  // does not match /\bdrum\b/, and that missing 's' shoved a bassline an octave.
+  const pluralOnly = composeWithContext(
+    requestV2({
+      instrument: "bass", role: "BASS" as PartGenerationRequestV2["role"],
+      siblingParts: [{ ...drums, instrument: "drums", role: "PERCUSSION" }] as PartGenerationRequestV2["siblingParts"],
+    }),
+    [note(0, 0.5, 36)],
+  );
+  assert.equal(pluralOnly.notes[0].pitch, 36);
+});
+
+test("a pitched sibling still collides, so the exclusion is percussion-only", () => {
+  const guitar = {
+    instrument: "guitar", role: "HARMONY",
+    notes: [note(0, 1, 60)],
+    noteCount: 1, register: { min: 60, max: 60, median: 60 }, onsets: [0], occupancy: 1,
+  };
+  const result = composeWithContext(
+    requestV2({ siblingParts: [guitar] as PartGenerationRequestV2["siblingParts"] }),
+    [note(0, 1, 60)],
+  );
+  assert.equal(passOf(result, "sibling-collision").changed, 1);
+  assert.notEqual(result.notes[0].pitch, 60);
+});
+
+test("staying out of the vocal's way never tears the line it belongs to", () => {
+  // A stepwise line inside the vocal's register. Dropping one note an octave
+  // would leave a 12-semitone gap on both sides of it — more than this
+  // instrument's 5-semitone leap limit.
+  const result = composeWithContext(
+    requestV2({
+      instrument: "cello", role: "HARMONY" as PartGenerationRequestV2["role"],
+      vocalAttentionMap: {
+        status: "vocal", occupied: [{ start: 1, end: 2 }], gaps: [], fillWindows: [],
+        register: { min: 60, max: 72, median: 66 }, occupancy: 1, dense: true,
+      },
+      constraints: {
+        playableRange: { min: 36, max: 84 }, comfortableRange: { min: 40, max: 80 },
+        maxLeap: 5, maxSimultaneousNotes: 2, minNoteDuration: 0.05, physicalRules: [],
+      } as PartGenerationRequestV2["constraints"],
+    }),
+    [note(0, 1, 62), note(1, 1, 64), note(2, 1, 65)],
+  );
+  const pitches = result.notes.map((n) => n.pitch);
+  assert.deepEqual(pitches, [62, 64, 65], "no note moved, because moving one would break the line");
+  assert.match(passOf(result, "vocal-space").note, /torn the line/);
+  // It still yielded — by volume, which is the compromise available.
+  const middle = result.notes.find((n) => n.start === 1)!;
+  assert.equal(middle.velocity, 90 - YIELD_VELOCITY);
+});
+
 test("what the context changed is reportable, decision by decision", () => {
   const result = composeWithContext(
     requestV2({
