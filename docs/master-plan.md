@@ -1946,6 +1946,62 @@ any of it.
   calibrate them, and it is not built. A grammar still describes one reference:
   nothing here generalises across a genre.
 
+- **PR-45** ✅ — `context-aware-composer` (Wave Q, first step of Q-06): the code
+  that actually consumes Q-02, Q-03 and Q-04.
+
+  PR-42, PR-43 and PR-44 each ended with the same honest note: nothing consumes
+  it. This is what consumes it. It takes a part that has already been written —
+  by the reference composer, by a model provider, by anything — and applies the
+  decisions the V2 context makes possible. Passes rather than a new generator,
+  so the existing composers are not rebuilt, a provider's output gets the same
+  arranging judgement as a local one, and **every pass reports what it changed**,
+  so an audible difference traces to a decision instead of to "the model".
+
+  - **locked-material** — nothing is written into time the producer locked, and
+    the locked notes are restored **byte for byte after every other pass**. A
+    lock is a promise about bytes, not about intent.
+  - **harmony-plan** — sustained chord tones are re-voiced onto the Q-04
+    solution, to the nearest planned pitch sharing their pitch class, and never
+    by more than an octave: a re-voicing that moves further is a different part,
+    not a better voicing of this one. This is what makes the solver audible.
+  - **vocal-space** — an accompaniment note sounding inside the singer's
+    register **while the singer is singing** is the commonest way an arrangement
+    buries its own lead. It drops an octave if the instrument can still play it
+    there and only loses velocity when it cannot: moving is musical, ducking is
+    a compromise. A note in one of the vocal's gaps is left alone — the gap is
+    the part's to use — and a lead role is exempt, because a counter-melody is
+    supposed to be heard.
+  - **sibling-collision** — two parts on the same pitch at the same instant are
+    one part with a thicker tone. Being built part by part, that is almost
+    always an accident, and it wastes a voice.
+  - **groove** — the grammar's swing ratio moves **only the off-beat**, which is
+    what a swing ratio means; applying it to everything would just shift the
+    part late. Microtiming moves every onset, because a player who sits behind
+    the beat sits behind all of it.
+  - **hard-constraints** — the last word belongs to physics. An earlier pass may
+    have moved a note out of range, and a part nobody can play is not an
+    improvement on one that was merely unremarkable.
+
+  Order is deliberate and documented: locked first and never touched again,
+  pitch before collision judgement, time after every pass that decides which
+  notes exist, physics last.
+
+  Suites: contextAwareComposer 10, registered in the `music-engines` group;
+  typecheck green. With an empty context every pass reports **why** it did
+  nothing and the part comes back identical — a context that is absent must not
+  silently rewrite a part.
+
+  **Honest limits.** The orchestrator does not call this yet: it is not wired
+  into `composeParts`, so the shipped path still produces exactly what it did
+  before. The groove pass reads the swing ratio and the millisecond offset back
+  out of the rule descriptions, because the Q-02 slot type carries descriptions
+  rather than directives; a rule that does not parse is skipped rather than
+  guessed at, but the slot type is the thing that should change. Bars are mapped
+  onto the part's own extent, since the request carries no other clock — a part
+  that does not span its section will map them imprecisely. No listening test
+  has been run: **nothing here is yet evidence that the output is better**, only
+  that the decisions are made and reported.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
