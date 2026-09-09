@@ -1,11 +1,17 @@
 # DECISION PACK — the eighteen answers required before any paid training
 
 **Status: INCOMPLETE — approval is not requested on this version.**
-Rebuilt 2026-09-09 after PR-60…PR-79 and the owner's first 50 blind ratings.
-**The headline of this rebuild:** under the calibrated judge both tournaments
-now say `run_blind_evaluation` for CA2 — and the same rebuild shows the proxy
-agrees with the owner's actual picks **26 of 50 times (52 %)**. The proxy is
-pointing at a room whose answers it cannot predict.
+Rebuilt 2026-09-10 after PR-74 — the last of the four experiments the owner
+named (judge-1.1 rescore, CA2 prefix, per-family routing, second live
+foundation) is now measured.
+**The headline of this rebuild:** all four experiments are done and none of
+them changed the answer. The prefix works as a control channel and costs the
+proxy 13.7 points; routing by family is worth +0.75 held-out; the second
+foundation lost; the rescore flipped verdicts to `run_blind_evaluation`. And
+the proxy still agrees with the owner's picks **26 of 50 times (52 %)**.
+**One item remains, and it is the only one that can move this pack: the
+owner's 50 votes in Listening Benchmark V2 (PR-72), whose sensitivity report
+decides whether any listening result may judge training at all.**
 
 This is the single document the owner asked for before any training job over
 $25. It answers the eighteen points in order. Every line is either a
@@ -377,17 +383,23 @@ Order of work under the gates (PR-64 §3), each step gated by the previous:
 
 | step | what | cost | approval |
 | --- | --- | --- | --- |
-| **0** | **prefix experiment — send CA2 its own instructions; no training** | **$0** | none needed |
-| 0b | per-family context-pass switch, from the two tournaments | $0 | none needed |
-| 1 | LoRA pilot with the prefix language, ~20 k tasks | $40–120 | **required** |
-| 2 | reward-model bootstrap from rated blind pairs | $0–20 | Gate C raters |
-| 3 | continued pretraining on all admitted PDMX + re-fine-tune | $400–1,200 | required, after 1 |
+| ~~0~~ | ~~prefix experiment — send CA2 its own instructions; no training~~ — **done, PR-74: the channel works, the proxy drops 13.7** | **$0** | — |
+| ~~0b~~ | ~~per-family context-pass switch, from the two tournaments~~ — **done, PR-74: +0.75 held-out, sign unstable per family** | $0 | — |
+| 1 | LoRA pilot with the prefix language, ~20 k tasks — *the prefix result is the argument for it: CA2 can follow a request but was never trained to write well under one* | $40–120 | **required; not requested here** |
+| 2 | reward-model bootstrap from rated blind pairs — **V0 from synthetic degradations failed its gates (PR-77: held-out families 0.658, two below chance; 24/50 with the owner)**; only rated human pairs can seed it | $0–20 | Gate C raters |
+| 3 | continued pretraining on all admitted PDMX + re-fine-tune — **there is no second source to add (PR-76: 66 sources audited, zero rights-clear for any produced style)** | $400–1,200 | required, after 1 |
 | 4 | family specialists (strings, brass, then pop/jazz/hip-hop) | $10–40 each | pilot gate |
 | 5 | DPO on the global LoRA with the reward model | $50–200 | benchmark |
 | 6 | from scratch — only if 3 plateaus on the non-classical slice | $1.5–5 k | owner's decision |
 
-**Steps 0 and 0b are free and have not been run.** They may change everything
-below them, which is why this pack does not yet request approval for step 1.
+**Steps 0 and 0b have been run (PR-74) and they did not remove the reason
+this pack withholds step 1.** What they showed: the instruction channel is
+real, so a LoRA has something to teach *to* — but every number that says the
+prefix "costs 13.7" or routing "gains 0.75" comes from a judge that predicts
+the owner's ear at chance. Step 1 is requested only after item 9 shows a
+listening experiment that can tell a human part from a damaged copy; if it
+cannot, the pilot has no judge, and the next $0 work is the benchmark, not the
+LoRA.
 
 ## 12. Exact GPU
 
@@ -468,13 +480,13 @@ Either way the pilot buys a decision, which is what a pilot is for.
 | ~~6~~ | ~~full-corpus dataset numbers~~ — **done: 19,588 independent multitrack works, 1.02 M arrangement tasks** | G | — |
 | ~~7~~ | ~~training infrastructure + tiny overfit~~ — **done: 200 CPU steps, resume proven, guard fails closed, $0** | E | — |
 | ~~3~~ | ~~a second foundation proven live~~ — **done: AMT ran live and lost 39.5 vs 71.5; CA2 remains the only cleared foundation** | D | — |
-| 4 | the **$0** prefix experiment | F follow-up | §11 step 0 |
-| 5 | the **$0** per-family context-pass switch | C/K | §10 |
+| ~~4~~ | ~~the **$0** prefix experiment~~ — **done (PR-74): CA2 obeys its instruction channel (bounds 96 % vs 75 %, onset density 72 % vs 28 %, pitch-class count 45 % vs 3 %) and obeying costs the proxy 76.1 → 62.4; the loss is the *request* where isolated; `do_not_promote`, one-kind ablation next** | — | — |
+| ~~5~~ | ~~the **$0** per-family context-pass switch~~ — **done (PR-74): learned ON bass/drums/guitar/organ, OFF the rest; held-out raw 71.88 → routed 72.29 (+0.41; +0.75 over always-on), oracle 73.92; the rule's sign reversed on 5 of 10 families; `run_blind_evaluation`, no policy shipped** | — | — |
 | ~~8~~ | ~~re-score both tournaments under judge 1.1~~ — **done (PR-73): both verdicts flip to `run_blind_evaluation`; playability errors → 0.00–0.33 per entry; CA2 wins 16 of 17 genre families; +CTX is no longer a proxy win** | — | — |
 | **9** | **Listening Benchmark V2** — positive controls at graded strengths, HUMAN vs REFERENCE calibration, identical rendering, longer passages, a sensitivity report that must pass before the benchmark may judge training | new, $0 + listening time | §1, §15.6 |
 
-Six of seven cleared today by measurement. Items 4–5 and 9 remain, and
-**none costs money**.
+Eight of nine cleared by measurement. **Item 9 alone remains**, and it costs
+no money — it costs the owner fifty listens (`/listen/00b41a7f-8b37-4895-89d7-53b5a394e89e`).
 
 **And one new fact outranks them all.** The rescore measured the proxy against
 the owner's 50 real votes: **26/50 agreement (52 %)** — chance. Per
