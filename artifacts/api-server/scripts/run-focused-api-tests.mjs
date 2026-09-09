@@ -135,6 +135,11 @@ const suites = {
       ["src/lib/producerIntelligence/openAiIntentModel.test.ts", "pi-openai-intent-model.test.mjs"],
       ["src/lib/referenceIntelligence.test.ts", "reference-intelligence.test.mjs"],
       [
+        "src/lib/producerMemory.test.ts",
+        "producer-memory.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
         "src/lib/scopedRegeneration.test.ts",
         "scoped-regeneration.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],

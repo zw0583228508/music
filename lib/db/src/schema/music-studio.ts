@@ -4031,6 +4031,54 @@ export const musicProducerBriefDecisionsTable = pgTable(
 );
 
 // ---------------------------------------------------------------------------
+// Wave U — PR-U6: producer memory. A standing rule the producer chose to keep
+// across projects ("never high strings", "leave the second chorus for the
+// singer"). Only ever the owner's OWN stated decisions — never a learned
+// inference (that is PR-30's personal profile, which sits at `default`
+// provenance below everything). A rule is promoted from one project's brief
+// decision, applied at the intake of every later project as a `stated`
+// decision marked `producer_memory:<id>`, and revocable; revoking it leaves
+// the briefs it already shaped untouched, exactly like superseding a decision.
+// ---------------------------------------------------------------------------
+
+export type ProducerMemoryStatus = "active" | "revoked";
+
+export type ProducerMemoryRule = {
+  id: string;
+  /** The producer's own words, carried verbatim from the decision. */
+  statement: string;
+  topic: ProducerDecisionTopic;
+  scope: ProducerDecisionScope;
+  strength: "hard" | "soft";
+  dimension?: StyleDimensionName;
+  value?: StyleDimensionValue;
+  /** Re-applied when a later project's brief is compiled. */
+  delta: BriefDelta;
+  /** The project, brief and decision that stated it. */
+  source: { projectId: string; briefId: string; decisionId: string };
+  createdAt: string;
+};
+
+export const musicProducerMemoryTable = pgTable(
+  "music_producer_memory",
+  {
+    id: text("id").primaryKey(),
+    ownerId: text("owner_id").notNull(),
+    rule: jsonb("rule").$type<ProducerMemoryRule>().notNull(),
+    /** Kept as columns as well so a project's deletion is visible in the row. */
+    sourceProjectId: text("source_project_id"),
+    sourceDecisionId: text("source_decision_id").notNull(),
+    status: text("status").$type<ProducerMemoryStatus>().notNull().default("active"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    revokedAt: timestamp("revoked_at", { withTimezone: true }),
+  },
+  (table) => [
+    index("music_producer_memory_owner_idx").on(table.ownerId, table.createdAt),
+    uniqueIndex("music_producer_memory_decision_unique").on(table.ownerId, table.sourceDecisionId),
+  ],
+);
+
+// ---------------------------------------------------------------------------
 // Gate C — PR-34: blind listening sessions. Two arrangements of the same song
 // (two generation candidates the owner picks, each standing for a system under
 // test), served to human raters as anonymised A/B audio with the PR-18

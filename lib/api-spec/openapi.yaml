@@ -1308,6 +1308,99 @@ paths:
                   keyBySide:
                     type: object
                     additionalProperties: { type: string }
+  /projects/{projectId}/producer/explain:
+    post:
+      operationId: explainProducerDecision
+      tags: [producer]
+      summary: Wave U - why is this here? Answered from the stored plan, the brief and the last edit; records nothing
+      description: Point at a track, a section or the climax, or ask in words. Deterministic - no model is called.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExplainRequestInput"
+      responses:
+        "200":
+          description: The explanation with its evidence chain
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExplainResult"
+        "400":
+          description: Neither a target nor a question was given
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: The project has no production brief yet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /producer-memory:
+    get:
+      operationId: listProducerMemory
+      tags: [producer]
+      summary: Wave U - the owner's standing rules across projects, newest first (revoked ones included)
+      responses:
+        "200":
+          description: Standing rules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProducerMemoryRecord"
+    post:
+      operationId: rememberProducerDecision
+      tags: [producer]
+      summary: Wave U - keep one of this project's decisions as a standing rule for every later project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RememberDecisionInput"
+      responses:
+        "201":
+          description: The standing rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProducerMemoryRecord"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: The decision is not the producer's own statement, is already a rule, or belongs to this song only
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /producer-memory/{ruleId}:
+    delete:
+      operationId: revokeProducerMemory
+      tags: [producer]
+      summary: Wave U - stop a standing rule applying to new projects (briefs it already shaped are untouched)
+      parameters:
+        - name: ruleId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The revoked rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProducerMemoryRecord"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /projects/{projectId}/listening-sessions:
     post:
       operationId: createListeningSession
@@ -4897,6 +4990,81 @@ components:
               distance: { type: number }
               summary: { type: string }
         headline: { type: array, items: { type: string } }
+    ExplainTarget:
+      type: object
+      required: [kind]
+      properties:
+        kind:
+          type: string
+          enum: [instrument, track, section, climax]
+        name: { type: string, maxLength: 120 }
+        sectionName: { type: string, maxLength: 120 }
+    ExplainRequestInput:
+      type: object
+      properties:
+        target: { $ref: "#/components/schemas/ExplainTarget" }
+        question: { type: string, maxLength: 500 }
+    ExplainEvidence:
+      type: object
+      required: [source, ref, detail]
+      properties:
+        source: { type: string }
+        ref: { type: string }
+        detail: { type: string }
+    ExplainResult:
+      type: object
+      required: [question, planSource, answered, answer, evidence, confidence]
+      properties:
+        question: { type: string, description: The question actually answered (built from the target when one was given) }
+        planSource:
+          type: string
+          enum: [arrangement, derived, none]
+        answered: { type: boolean }
+        answer: { type: string }
+        evidence:
+          type: array
+          items: { $ref: "#/components/schemas/ExplainEvidence" }
+        confidence: { type: number }
+    RememberDecisionInput:
+      type: object
+      required: [projectId, decisionId]
+      properties:
+        projectId: { type: string, minLength: 1, maxLength: 200 }
+        decisionId: { type: string, minLength: 1, maxLength: 200 }
+    ProducerMemoryRule:
+      type: object
+      required: [id, statement, topic, scope, strength, delta, source, createdAt]
+      properties:
+        id: { type: string }
+        statement: { type: string, description: The producer's own words }
+        topic: { type: string }
+        scope:
+          type: object
+          additionalProperties: true
+        strength: { type: string, enum: [hard, soft] }
+        dimension: { type: string }
+        value: {}
+        delta:
+          type: object
+          additionalProperties: true
+        source:
+          type: object
+          required: [projectId, briefId, decisionId]
+          properties:
+            projectId: { type: string }
+            briefId: { type: string }
+            decisionId: { type: string }
+        createdAt: { type: string }
+    ProducerMemoryRecord:
+      type: object
+      required: [id, rule, status, sourceProjectId, createdAt, revokedAt]
+      properties:
+        id: { type: string }
+        rule: { $ref: "#/components/schemas/ProducerMemoryRule" }
+        status: { type: string, enum: [active, revoked] }
+        sourceProjectId: { type: string, nullable: true }
+        createdAt: { type: string }
+        revokedAt: { type: string, nullable: true }
     ListeningSideInput:
       type: object
       required: [label]

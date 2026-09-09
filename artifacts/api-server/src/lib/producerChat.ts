@@ -42,6 +42,7 @@ import type {
   ProducerChatTurnStructured,
   ProducerDecisionScope,
   ProducerDecisionTopic,
+  ProducerMemoryRule,
   ProductionBrief,
   ReferenceCopyScope,
   ReferenceTrackKind,
@@ -53,13 +54,19 @@ import type {
 } from "@workspace/db";
 import { deriveOrchestrationBudget } from "./orchestrationBudget";
 import { personalKnowledgeSource } from "./personalProfile";
+import {
+  describeMemoryApplied,
+  isMemorySourceRef,
+  memoryCompileInputs,
+  memoryDecisionsIn,
+} from "./producerMemory";
 import { deriveTransitionPlan } from "./transitionEngine";
 import { activeDecisions, compileProductionBrief } from "./producerIntelligence/briefCompiler";
 import { applyBriefToPlans } from "./producerIntelligence/briefToPlanner";
 import { planClarifications } from "./producerIntelligence/clarification";
 import { generateArrangementConcepts } from "./producerIntelligence/conceptGenerator";
 import { interpretEditRequest, type EditPlanContext } from "./producerIntelligence/editPlan";
-import { explainDecision, type ExplainContext } from "./producerIntelligence/explain";
+import { explainDecision, questionForTarget, type ExplainContext, type ExplainTarget } from "./producerIntelligence/explain";
 import {
   extractUserIntent,
   extractUserIntentSync,
@@ -156,6 +163,8 @@ export type ProducerChatStore = ReferenceStore & {
   loadLatestArrangementPlan(projectId: string): Promise<ArrangementPlan | null>;
   /** PR-U5: the project owner's *active* personal profile (PR-30), a `default`-provenance knowledge source; null when none. */
   loadPersonalDefaults(projectId: string): Promise<{ id: string; profile: PersonalizedArrangementProfile } | null>;
+  /** PR-U6: the project owner's active standing rules, oldest first; empty when none. */
+  loadProducerMemory(projectId: string): Promise<ProducerMemoryRule[]>;
   /** Run `fn` atomically where the backend can; the in-memory store just calls it. */
   transaction<T>(fn: (store: ProducerChatStore) => Promise<T>): Promise<T>;
 };
@@ -432,6 +441,8 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
       references: IntakeReference[];
       answers: ClarificationAnswer[];
       newDeltas: BriefDelta[];
+      /** Source ref per new delta (PR-U6 marks a standing rule's delta). */
+      newDeltaSourceRefs?: Array<string | undefined>;
       /** Decision ids the new deltas explicitly supersede (API supersede). */
       supersedes?: string[];
       /** Decision rows whose deltas must not be applied any more. */
@@ -495,13 +506,22 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
     const decisionRows = await tx.listDecisions(projectId);
     const excluded = new Set(input.excludeRowIds ?? []);
     const activeRows = decisionRows.filter((r) => !r.supersededBy && !excluded.has(r.id));
+    const activeDeltaRows = activeRows.filter((r) => !!r.delta);
     const deltas = [
-      ...activeRows.map((r) => r.delta).filter((d): d is BriefDelta => !!d),
+      ...activeDeltaRows.map((r) => r.delta as BriefDelta),
       ...input.newDeltas,
+    ];
+    // PR-U6: a decision a standing rule produced keeps naming that rule on
+    // every later version, so the brief, the explanation and the studio all
+    // show where it came from rather than "delta:3".
+    const deltaSourceRefs: Array<string | undefined> = [
+      ...activeDeltaRows.map((r) => r.decision.sourceRefs.find(isMemorySourceRef)),
+      ...(input.newDeltaSourceRefs ?? []),
     ];
     const compiled = compileProductionBrief(intent, profile, songModel?.model, input.answers, {
       now: at,
       deltas,
+      deltaSourceRefs,
       decisions: decisionRows.map((r) => r.decision),
     });
     const briefRecordId = input.briefRecordId ?? newId();
@@ -552,6 +572,8 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
         context: {
           globalPlan: plan.globalPlan, sectionPlan: plan.sectionPlan,
           orchestrationBudget: plan.orchestrationBudget, transitionPlan: plan.transitionPlan, brief,
+          // PR-U6: how this version came to be, when it came from an edit (PR-U5).
+          ...(plan.regeneration ? { regeneration: plan.regeneration } : {}),
         },
         source: "arrangement",
       };
@@ -634,13 +656,26 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
   ): Promise<ProducerTurnOutcome> {
     const previous = await tx.currentBrief(projectId);
     const cumulative = previous ? `${previous.intent.rawText}\n${text.trim()}` : text.trim();
+    // PR-U6: the owner's standing rules enter at the project's first brief, as
+    // ordinary `stated` decisions marked with the rule that produced them.
+    // From version 2 they travel as decision rows like any other decision, so
+    // anything said here supersedes them in the usual way.
+    const memoryRules = previous ? [] : await tx.loadProducerMemory(projectId);
+    const memoryInputs = memoryCompileInputs(memoryRules);
     const compiled = await compileVersion(tx, projectId, {
       previous, text: cumulative,
       references: [...providedReferences(previous?.intent), ...references],
-      answers: previous?.answers ?? [], newDeltas: [],
+      answers: previous?.answers ?? [],
+      newDeltas: memoryInputs.deltas,
+      newDeltaSourceRefs: memoryInputs.deltaSourceRefs,
     });
     const record = await persistVersion(tx, compiled, previous);
     const referenceSentence = describeReferenceContributions(compiled.referenceContributions);
+    // Announced on the turn they enter, not on every later one: from version 2
+    // they are ordinary decisions the brief already lists.
+    const memorySentence = memoryRules.length
+      ? describeMemoryApplied(memoryDecisionsIn(compiled.record.brief.producerDecisions, memoryRules))
+      : null;
     const reply = [
       describeUnderstanding({
         intent: compiled.record.intent, profile: compiled.record.styleProfile, brief: compiled.record.brief,
@@ -648,6 +683,7 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
         ...(previous ? { delta: compiled.delta } : {}),
       }),
       ...(referenceSentence ? [referenceSentence] : []),
+      ...(memorySentence ? [memorySentence] : []),
     ].join(" ");
     const [userTurn, producerTurn] = turnPair(projectId, record.id, text, reply, {
       kind, briefVersion: record.version, intentDelta: compiled.delta, clarifications: compiled.questions,
@@ -1044,6 +1080,23 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
       return store.listTurns(projectId, { limit, ...(page.before ? { before: page.before } : {}) });
     },
 
+    /**
+     * PR-U6: "why is this here?" asked by pointing at a track, a section or the
+     * climax in the studio. The same `explainDecision` the chat uses, over the
+     * same plan; it records nothing, so a producer can ask freely.
+     */
+    async explain(projectId: string, input: { target?: ExplainTarget; question?: string }): Promise<{ explanation: PlanExplanation; planSource: PlanSource; question: string }> {
+      const question = input.question?.trim() || (input.target ? questionForTarget(input.target) : "");
+      if (!question) throw new ProducerChatError(400, "Ask a question, or point at a track, a section or the climax");
+      return store.transaction(async (tx) => {
+        const brief = await tx.currentBrief(projectId);
+        if (!brief) throw new ProducerChatError(409, "No production brief yet — start with intake");
+        const songModel = await tx.loadSongModel(projectId);
+        const { context, source } = await planContextFor(tx, projectId, brief.brief, songModel?.model);
+        return { explanation: explainDecision(context, question), planSource: source, question };
+      });
+    },
+
     async supersedeDecision(projectId: string, decisionId: string, replacement: SupersedeDecisionInput): Promise<ProducerTurnOutcome> {
       if (!replacement.statement.trim()) throw new ProducerChatError(400, "A replacement decision needs a statement");
       return store.transaction(async (tx) => {
@@ -1090,6 +1143,8 @@ export type InMemoryProducerChatSeed = InMemoryReferenceSeed & {
   arrangementPlan?: ArrangementPlan | null;
   /** PR-U5: the owner's active personal profile, when the test wants one. */
   personalDefaults?: { id: string; profile: PersonalizedArrangementProfile } | null;
+  /** PR-U6: the owner's active standing rules, as the store would return them. */
+  producerMemory?: ProducerMemoryRule[];
 };
 
 export type InMemoryProducerChatStore = ProducerChatStore & {
@@ -1133,6 +1188,7 @@ export function createInMemoryProducerChatStore(seed: InMemoryProducerChatSeed =
     async loadSongModel() { return seed.songModel ?? null; },
     async loadLatestArrangementPlan() { return seed.arrangementPlan ?? null; },
     async loadPersonalDefaults() { return seed.personalDefaults ?? null; },
+    async loadProducerMemory() { return seed.producerMemory ?? []; },
     async transaction(fn) { return fn(self); },
   };
   return self;

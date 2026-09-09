@@ -18,7 +18,44 @@ import { instrumentFamily, lookupWord } from "./vocabulary";
 
 export type ExplainContext = Pick<ArrangementPlan, "globalPlan" | "sectionPlan" | "orchestrationBudget" | "transitionPlan"> & {
   brief?: ProductionBrief;
+  /** PR-U6: present when this version came from a chat edit applied within locks (PR-U5). */
+  regeneration?: ArrangementPlan["regeneration"];
 };
+
+/**
+ * What the studio points at (PR-U6): a track, a section or a named instrument.
+ * Turned into the same question the chat would have asked, so one code path
+ * answers "why is there a clarinet here?" however it was asked.
+ */
+export type ExplainTarget =
+  | { kind: "instrument"; name: string; sectionName?: string }
+  | { kind: "track"; name: string; sectionName?: string }
+  | { kind: "section"; name: string }
+  | { kind: "climax" };
+
+export function questionForTarget(target: ExplainTarget): string {
+  switch (target.kind) {
+    case "climax":
+      return "why is the climax there?";
+    case "section":
+      return `why is ${target.name} like that?`;
+    default:
+      return target.sectionName
+        ? `why is there ${target.name} in ${target.sectionName}?`
+        : `why is there ${target.name}?`;
+  }
+}
+
+/** Where a brief decision came from, in words, for the evidence line. */
+function decisionOrigin(sourceRefs: readonly string[]): string | null {
+  for (const ref of sourceRefs) {
+    if (ref.startsWith("producer_memory:")) return "your standing rule";
+    if (ref.startsWith("reference:")) return `the reference you allowed (${ref})`;
+    if (ref.startsWith("research:")) return `researched world knowledge (${ref})`;
+    if (ref.startsWith("personal-profile:")) return "your learned defaults";
+  }
+  return null;
+}
 
 const FAMILY_ALIASES: Record<string, string> = { synths: "synth", pad: "pads", piano: "keys", vocal: "vocals" };
 const canonical = (family: string): string => FAMILY_ALIASES[family] ?? family;
@@ -92,7 +129,14 @@ export function explainDecision(plan: ExplainContext, question: string): PlanExp
         const mentions = (d.scope.kind === "track" && canonical(d.scope.instrument) === family) ||
           (typeof d.value === "string" && canonical(d.value) === family) ||
           (Array.isArray(d.value) && d.value.map(canonical).includes(family));
-        if (mentions) evidence.push({ source: "brief.producerDecisions", ref: d.id, detail: `${d.strength} ${d.topic}: ${d.statement} (${d.provenance})` });
+        if (!mentions) continue;
+        const origin = decisionOrigin(d.sourceRefs);
+        evidence.push({
+          source: "brief.producerDecisions",
+          ref: d.id,
+          detail: `${d.strength} ${d.topic}: ${d.statement} (${d.provenance}${origin ? `, from ${origin}` : ""})`,
+        });
+        if (origin) lines.push(`That decision comes from ${origin}: "${d.statement}".`);
       }
     }
 
@@ -157,6 +201,29 @@ export function explainDecision(plan: ExplainContext, question: string): PlanExp
     } else {
       evidence.push({ source: "globalPlan.climax", ref: "(none)", detail: "no climax candidate in the musical map" });
       lines.push("No climax is planned: the musical map produced no climax candidate.");
+    }
+  }
+
+  // --- how this version came to be (PR-U5's regeneration, PR-U6) -----------------------
+  if (plan.regeneration) {
+    const report = plan.regeneration;
+    const touched = family
+      ? report.changed.instruments.map(canonical).includes(family)
+      : sectionNames.length
+        ? report.changed.sections.some((s) => sectionNames.includes(s))
+        : true;
+    const preserved = family && report.preserved.instruments.map(canonical).includes(family);
+    if (touched || preserved) {
+      evidence.push({
+        source: "plan.regeneration",
+        ref: report.editTurnId,
+        detail: `"${report.editText}" (${report.editIntent}): regenerated ${report.changed.instruments.join(", ") || "nothing"} in ${report.changed.sections.join(", ") || "no section"}; preserved ${report.preserved.instruments.join(", ") || "nothing"}; ${report.replacedNotes} note(s) replaced, ${report.keptNotes} kept; locks honoured ${report.locksHonoured}`,
+      });
+      if (preserved) {
+        lines.push(`Your edit "${report.editText}" did not rewrite it: ${family} was preserved, and ${report.verification.checkedLockedNotes} locked note(s) were verified byte-identical.`);
+      } else if (touched) {
+        lines.push(`Your edit "${report.editText}" rewrote it: ${report.replacedNotes} note(s) replaced in ${report.changed.sections.join(", ")}, ${report.keptNotes} kept verbatim.`);
+      }
     }
   }
 

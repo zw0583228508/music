@@ -107,6 +107,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ExportRenderEvidence, type RenderEvidence } from "@/components/studio/export-render-evidence";
 import { ProducerChat } from "@/components/studio/producer-chat";
 import { ListeningRoomCard } from "@/components/studio/listening-room-card";
+import { WhyPanel } from "@/components/studio/why-panel";
 import {
   Dialog,
   DialogContent,
@@ -1821,7 +1822,16 @@ export default function ProjectWorkspace() {
                <div className="max-w-3xl mx-auto">
                  <h2 className="text-xl font-bold mb-6">Generated Candidates</h2>
                   {/* Gate C lives with the candidates it compares; sessions outlive the page's current job. */}
-                  <div className="mb-6">
+                  <div className="mb-6 space-y-4">
+                    {/* PR-U6: why is this here? — from the plan, the brief and the last edit. */}
+                    <WhyPanel
+                      projectId={projectId}
+                      instruments={[
+                        ...((generationCandidates.find((c) => c.status === "selected") ?? generationCandidates[0])?.plan.tracks ?? []).map((track) => track.name),
+                        ...(tracks ?? []).map((track) => track.trackModel?.instrument ?? track.name),
+                      ]}
+                      sections={(songModel?.sections ?? []).map((section) => ({ name: section.name }))}
+                    />
                     <ListeningRoomCard projectId={projectId} candidates={generationCandidates} />
                   </div>
                   {generationJob && generationRunning ? (
