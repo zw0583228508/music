@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { NextFunction, Request, Response } from "express";
-import { devAuthEnabled } from "../lib/devAuthPolicy";
+import { DEV_AUTH_PATHS, devAuthEnabled } from "../lib/devAuthPolicy";
 import { requireLocalRequest } from "../lib/localAccess";
 
 /** Set env for one case and always put it back. */
@@ -96,4 +96,17 @@ test("a tunnel or reverse proxy on this machine cannot relay a stranger in", () 
   const result = call("127.0.0.1", { "x-forwarded-for": "203.0.113.7" });
   assert.equal(result.nexted, false);
   assert.equal(result.statusCode, 404);
+});
+
+test("the studio's own dev proxy, relaying a browser on this machine, passes", () => {
+  const result = call("127.0.0.1", { "x-forwarded-for": "127.0.0.1", "x-forwarded-host": "localhost:5173" });
+  assert.equal(result.nexted, true);
+  assert.equal(result.statusCode, 0);
+});
+
+test("the gate is mounted on the dev-auth paths only", () => {
+  // The router sits at the API root; a bare router.use(gate) would run the
+  // loopback check on every request passing through. The mount list is the
+  // policy module's, so a route added elsewhere cannot widen it by accident.
+  assert.deepEqual([...DEV_AUTH_PATHS], ["/dev-login", "/dev-logout"]);
 });

@@ -41,6 +41,7 @@ import {
 // this module's database, logger and Express imports. Re-exported so existing
 // callers (routes/index.ts, routes/auth.ts) keep importing it from here.
 export { devAuthEnabled } from "../lib/devAuthPolicy";
+import { DEV_AUTH_PATHS } from "../lib/devAuthPolicy";
 
 const DEV_USER = {
   id: process.env.DEV_AUTH_USER_ID ?? "dev-local-user",
@@ -54,11 +55,14 @@ const router: IRouter = Router();
 
 /**
  * Every route below mints or destroys a session with no credentials, so every
- * route below is loopback-only. Applied as router-level middleware rather than
- * per handler: a route added later inherits the gate instead of forgetting it.
+ * route below is loopback-only. The gate is mounted on the dev-auth paths
+ * only: this router sits at the API root, so a bare `router.use(gate)` would
+ * have run the loopback check on every request that merely passed through —
+ * which it briefly did (`/projects` was refused for "no peer address").
  * The gate itself lives in `lib/localAccess.ts`; the logger is passed in.
  */
 router.use(
+  [...DEV_AUTH_PATHS],
   requireLocalRequest((refusal, path) =>
     logger.warn({ refusal, path }, "dev_auth_refused_non_local_request"),
   ),

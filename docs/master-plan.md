@@ -3685,6 +3685,49 @@ any of it.
   `sha256:b0494f63…`, the image that produced every number above; the correct
   figure is in the same response as `request.otherInstrumentEventsGiven`.
 
+- **PR-79** ✅ — `studio-hotfix-providers-enum-and-local-gate` (found by the
+  owner uploading a real recording): three faults behind one "Key analysis
+  is required" screen, each fixed at its cause.
+
+  1. **`/api/music-providers` returned 500 on every studio page.** PR-58 added
+  `COMPOSERS_ASSISTANT_2` to `musicProviderIds` but not to the OpenAPI
+  `MusicProviderId` enum, so the response schema rejected the catalogue it
+  had just built. The enum (five occurrences) now carries it; clients
+  regenerated; typecheck green.
+  2. **The PR-70 loopback gate refused the studio's own dev proxy and leaked
+  onto every route.** Vite forwards `/api` on the same machine and names the
+  browser in `x-forwarded-for`; the gate treated any forwarding header as a
+  relay. It now reads the addresses a relay names and requires *every one*
+  to be loopback — the studio proxy passes, a tunnel carrying a public
+  caller is still refused, an unreadable address is refused, and
+  `x-forwarded-host` (a host name, not a caller) is no longer consulted.
+  And `router.use(gate)` on a root-mounted router had run the check on
+  every request passing through — `/projects` was refused for "no peer
+  address" — so the gate is mounted on `DEV_AUTH_PATHS` only, exported from
+  the pure policy module. localAccess 8 + devAuth 8 = 16 tests.
+  3. **The Cloudflare quick tunnel from the morning had died**, so the Basic
+  Pitch worker's fetch of the leased audio got an error page → HTTP 400 →
+  no transcription → no key. A fresh quick tunnel to **:5010 only** was
+  opened and `.env.local`'s `ANALYSIS_ASSET_BASE_URL` updated (never
+  printed). Quick tunnels are ephemeral by design; a named tunnel is the
+  durable answer and is not set up.
+
+  **Proof on the owner's file.** After the restart, `POST
+  …/sources/…/retry` → 202; the lease was served to the Modal worker; Basic
+  Pitch returned its notes; the attempt reached `complete` and the source is
+  `ready` with a Song Model — the same file that had failed twice at 68 %.
+
+  **Honest limits.** A second recording uploaded the same evening still
+  failed, and for a different reason that is *not* fixed here: the local
+  spectral detector read **G minor**, the transcription key (Krumhansl-Kessler
+  over 1,769 Basic Pitch notes) read **E♭ major** (0.69, margin 0.16), and the
+  reconciliation refused to pick between two disagreeing observations — as
+  designed. The design is right for a gate and wrong for a producer: the
+  whole upload fails, "Retry" is deterministic and cannot help, and the
+  message names no way out. Next: carry a *contested* key in the Song Model
+  with both candidates and let the producer confirm one — the clarification
+  pattern, not a lowered threshold. The tunnel is a quick tunnel again and
+  will die again.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
