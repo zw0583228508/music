@@ -61,8 +61,15 @@ export type PdmxMetadataRow = {
 const isNoConflict = (value: PdmxMetadataRow["license_conflict"]): boolean =>
   value === false || value === 0 || value === "False" || value === "false" || value === "0";
 
-/** Public-domain claims this platform accepts from PDMX metadata. */
-const PUBLIC_DOMAIN = /^(public\s*domain|pd|cc0|creativecommons\.org\/publicdomain)/i;
+/**
+ * Public-domain claims this platform accepts from PDMX metadata.
+ *
+ * `cc-zero` is here because the real table spells CC0 that way, and the first
+ * run against it refused 262 valid CC0 dedications over a hyphen. The
+ * cross-check against the authors' own subset flag is what caught it — which is
+ * the reason that cross-check exists.
+ */
+const PUBLIC_DOMAIN = /^(public\s*domain|publicdomain|pd|cc[-_ ]?0|cc[-_ ]?zero|creativecommons\.org\/publicdomain)/i;
 
 /** Why this row may not become a corpus entry, or null when it may. */
 export function pdmxRefusalReason(row: PdmxMetadataRow): string | null {
@@ -131,7 +138,10 @@ export function pdmxToCorpusEntries(
       refused.push({ id: row.id ?? "(no id)", reason });
       continue;
     }
-    const meter = row.time_signature?.trim() || "4/4";
+    // PDMX.csv carries no time signature — meter lives in the MIDI. Defaulting
+    // to 4/4 would be true of most of the dataset and false for exactly the
+    // entries a meter-balanced corpus needs, so an unread meter says so.
+    const meter = row.time_signature?.trim() || "unknown";
     entries.push({
       id: `pdmx-${row.id}`,
       title: row.title?.trim() || `PDMX ${row.id}`,

@@ -95,6 +95,16 @@ const suites = {
         "pdmx-ingest.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, Q-05 Tier A: pulling the dataset, and refusing to when the
+      // terms it was reviewed under have changed.
+      ["src/lib/pdmxAcquisition.test.ts", "pdmx-acquisition.test.mjs"],
+      // Wave Q, Q-05 Tier A: reading the real 62-column PDMX.csv onto the
+      // shape the rights gate reads.
+      [
+        "src/lib/pdmxCsv.test.ts",
+        "pdmx-csv.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [

@@ -1,0 +1,67 @@
+{
+  "ranAt": "2026-09-09T10:24:54.459Z",
+  "csv": "C:\\Users\\וינריך\\Downloads\\ai-music-platform\\AI-Music-Production-Platform-main\\.pdmx-data\\PDMX.csv",
+  "rowsRead": 254077,
+  "unreadableRows": 0,
+  "admitted": 222856,
+  "admittedShare": 0.8771,
+  "refusalsByReason": [
+    {
+      "reason": "is outside the no_license_conflict subset",
+      "count": 31221
+    }
+  ],
+  "subsetAgreement": {
+    "agree": 254077,
+    "we_admit_they_exclude": 0,
+    "we_exclude_they_admit": 0
+  },
+  "disagreementSamples": [],
+  "admittedSamples": [
+    {
+      "id": "QmbbhLwwmuKqA9MC1ULhojEMGxnxDobsZPJEo69N8nbgTw",
+      "title": "Helvic Head",
+      "license": "publicdomain",
+      "tempo": null,
+      "tracks": 1,
+      "effectivePitchClasses": 5.55,
+      "midiPath": "./mid/1/11/QmbbhLwwmuKqA9MC1ULhojEMGxnxDobsZPJEo69N8nbgTw.mid"
+    },
+    {
+      "id": "Qmbbh58jD1ZLT1vevNsnyEZkexnx2USTFz6FSHX3KUiAzC",
+      "title": "The Lady On The Island",
+      "license": "publicdomain",
+      "tempo": 120,
+      "tracks": 1,
+      "effectivePitchClasses": 5.79,
+      "midiPath": "./mid/1/11/Qmbbh58jD1ZLT1vevNsnyEZkexnx2USTFz6FSHX3KUiAzC.mid"
+    },
+    {
+      "id": "Qmbbmnu3Eg81nQ3WHnBFrAj5gsr3D13ysSQkBNcxWLTFHu",
+      "title": "JOHN ROY STEWART. a Strathspey.",
+      "license": "publicdomain",
+      "tempo": 32.8,
+      "tracks": 1,
+      "effectivePitchClasses": 5.57,
+      "midiPath": "./mid/1/11/Qmbbmnu3Eg81nQ3WHnBFrAj5gsr3D13ysSQkBNcxWLTFHu.mid"
+    },
+    {
+      "id": "QmbbMfooxpp22GzyuYhezebYmaeff5ksWYcxxZXmJpdwWw",
+      "title": "Oddfellows Holiday. HS.09",
+      "license": "publicdomain",
+      "tempo": null,
+      "tracks": 1,
+      "effectivePitchClasses": 5.66,
+      "midiPath": "./mid/1/11/QmbbMfooxpp22GzyuYhezebYmaeff5ksWYcxxZXmJpdwWw.mid"
+    },
+    {
+      "id": "Qmbbp9arXoEvT9FRiwYiRRuEm6gHv9VVZgPhpiu37FNVxv",
+      "title": "Roslyn Castle",
+      "license": "publicdomain",
+      "tempo": 164.7,
+      "tracks": 1,
+      "effectivePitchClasses": 2.59,
+      "midiPath": "./mid/1/11/Qmbbp9arXoEvT9FRiwYiRRuEm6gHv9VVZgPhpiu37FNVxv.mid"
+    }
+  ]
+}

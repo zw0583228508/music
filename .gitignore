@@ -67,3 +67,10 @@ attached_assets/
 
 # Plugin hosts write this into the working directory
 debug.log
+
+# Third-party research datasets fetched by the acquisition pipelines (Wave Q,
+# Q-05). Hundreds of megabytes of other people's data: never a file, never an
+# LFS pointer. pdmxAcquisition.targetDirectoryRefusal refuses any target that
+# is not listed here.
+.pdmx-data/
+.corpus-data/
