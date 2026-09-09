@@ -18,7 +18,26 @@ export interface SessionData {
 
 let oidcConfig: client.Configuration | null = null;
 
+/**
+ * True when the OIDC client is actually configured. A local checkout has no
+ * `REPL_ID`, and discovery with an empty client id throws deep inside
+ * openid-client (`"clientId" must be a non-empty string`) — an opaque 500 on
+ * every sign-in. Callers ask this first and choose an honest response.
+ */
+export function oidcConfigured(): boolean {
+  return typeof process.env.REPL_ID === 'string' && process.env.REPL_ID.trim().length > 0;
+}
+
+/** Thrown instead of openid-client's TypeError when there is nothing to discover. */
+export class OidcNotConfiguredError extends Error {
+  constructor() {
+    super('OIDC is not configured: REPL_ID is unset, so there is no client id to discover with.');
+    this.name = 'OidcNotConfiguredError';
+  }
+}
+
 export async function getOidcConfig(): Promise<client.Configuration> {
+  if (!oidcConfigured()) throw new OidcNotConfiguredError();
   if (!oidcConfig) {
     oidcConfig = await client.discovery(
       new URL(ISSUER_URL),

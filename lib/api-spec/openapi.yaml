@@ -1453,6 +1453,54 @@ paths:
                   $ref: "#/components/schemas/ListeningSession"
         "404":
           $ref: "#/components/responses/NotFound"
+  /projects/{projectId}/listening-sessions/tournament:
+    post:
+      operationId: createTournamentListeningSession
+      tags: [listening]
+      summary: Wave Q - open a blind session of 40-60 tournament pairs (owner)
+      description: Draws a balanced, stratified sample of pairs from a tournament evidence report (five comparison types, spread over instrument families and tasks, A/B orientation by hash), renders every side with the reference renderer into private storage, and opens one session with a primary preference question and optional secondary ratings. The rater view names no arm, seed, task or incumbent.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTournamentListeningSessionInput"
+      responses:
+        "201":
+          description: Session created (owner view, includes the token key)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListeningSession"
+        "400":
+          description: Unknown evidence file, unreadable report, or no drawable pairs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /listening-sessions/{sessionId}/preferences:
+    get:
+      operationId: getListeningPreferences
+      tags: [listening]
+      summary: Wave Q - the session's votes as reward-model preference records (owner)
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: One record per vote, arms in comparison order, rater pseudonymised
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListeningPreferences"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /listening-sessions/{sessionId}:
     get:
       operationId: getListeningSession
@@ -5091,6 +5139,62 @@ components:
           description: The side that has to win (default right).
         left: { $ref: "#/components/schemas/ListeningSideInput" }
         right: { $ref: "#/components/schemas/ListeningSideInput" }
+    CreateTournamentListeningSessionInput:
+      type: object
+      required: [evidenceFile]
+      properties:
+        evidenceFile:
+          type: string
+          minLength: 1
+          maxLength: 120
+          pattern: '^[a-z0-9][a-z0-9-]*\.json$'
+          description: Basename of a tournament report under docs/evidence (e.g. model-tournament-live.json)
+        size: { type: number, minimum: 10, maximum: 60, description: Pairs to draw (default 50) }
+        title: { type: string, maxLength: 200 }
+    ListeningComparisonSummary:
+      type: object
+      required: [comparison, a, b, pairs, votes, aWins, bWins, aShare, ownerVotes, ownerAWins, ownerAShare]
+      properties:
+        comparison: { type: string }
+        a: { type: string }
+        b: { type: string }
+        pairs: { type: number }
+        votes: { type: number }
+        aWins: { type: number }
+        bWins: { type: number }
+        aShare: { type: number, nullable: true }
+        ownerVotes: { type: number }
+        ownerAWins: { type: number }
+        ownerAShare: { type: number, nullable: true }
+    ListeningPreferenceRecord:
+      type: object
+      required: [version, sessionId, pairId, comparison, taskId, seed, family, question, providerA, providerB, entryA, entryB, winner, loser, rater, isOwner, createdAt]
+      properties:
+        version: { type: string }
+        sessionId: { type: string }
+        pairId: { type: string }
+        comparison: { type: string }
+        taskId: { type: string }
+        seed: { type: number }
+        family: { type: string }
+        question: { type: string }
+        providerA: { type: string }
+        providerB: { type: string }
+        entryA: { type: string }
+        entryB: { type: string }
+        winner: { type: string }
+        loser: { type: string }
+        rater: { type: string, description: Salted pseudonym, never the rater id }
+        isOwner: { type: boolean }
+        createdAt: { type: string }
+    ListeningPreferences:
+      type: object
+      required: [sessionId, records]
+      properties:
+        sessionId: { type: string }
+        records:
+          type: array
+          items: { $ref: "#/components/schemas/ListeningPreferenceRecord" }
     ListeningSessionSide:
       type: object
       required: [label, generationJobId, candidateId, candidateLabel, pick, audioUrl]
@@ -5149,9 +5253,14 @@ components:
         reason: { type: string }
     ListeningResults:
       type: object
-      required: [version, raters, ownerVotesExcluded, votesCounted, perQuestion, elo, gateC]
+      required: [version, raters, ownerVotesExcluded, votesCounted, perQuestion, elo, primaryQuestion, comparisons, gateC]
       properties:
         version: { type: string }
+        primaryQuestion: { type: string, description: The question the gate reads }
+        comparisons:
+          type: array
+          description: Tournament sessions only - per-comparison tallies on the primary question, owner apart
+          items: { $ref: "#/components/schemas/ListeningComparisonSummary" }
         raters: { type: number, description: Distinct raters other than the owner }
         ownerVotesExcluded: { type: number }
         votesCounted: { type: number }
@@ -5217,6 +5326,8 @@ components:
       required: [sessionId, title, status, pairs, yourVotes]
       properties:
         sessionId: { type: string }
+        kind: { type: string, enum: [candidates, tournament] }
+        primaryQuestion: { type: string, description: Tournament sessions - the one question every pair must answer }
         title: { type: string }
         status: { type: string, enum: [open, closed] }
         pairs:
@@ -5232,7 +5343,7 @@ components:
         votes:
           type: array
           minItems: 1
-          maxItems: 60
+          maxItems: 600
           items: { $ref: "#/components/schemas/ListeningVoteInput" }
     ListeningVotesResult:
       type: object

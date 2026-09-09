@@ -1,0 +1,198 @@
+{
+  "title": "Tournament pairs in the Listening Room — the first human blind session (Wave Q, Workstream A)",
+  "date": "2026-09-09",
+  "definitionOfDone": "a real balanced session, drawn from a real tournament report, rendered to real audio, opened through the real API, served to a real browser, and rated end to end by a real HTTP client. Not a fixture.",
+  "session": {
+    "id": "6d5abb08-71bb-4de2-8416-1fc4032c31c8",
+    "title": "Wave Q blind session 1 - tournament pairs (classical PDMX)",
+    "raterPath": "/listen/6d5abb08-71bb-4de2-8416-1fc4032c31c8",
+    "studioUrl": "http://localhost:5173/listen/6d5abb08-71bb-4de2-8416-1fc4032c31c8",
+    "source": "docs/evidence/model-tournament-live.json (runId 4fac41bee93e, 12 classical PDMX tasks x 3 seeds x 5 arms)",
+    "pairs": 50,
+    "perComparison": [
+      {
+        "comparison": "human_vs_ca2ctx",
+        "a": "HUMAN_ORIGIN_REFERENCE",
+        "b": "COMPOSERS_ASSISTANT_2+CTX",
+        "pairs": 10
+      },
+      {
+        "comparison": "ca2ctx_vs_reference",
+        "a": "COMPOSERS_ASSISTANT_2+CTX",
+        "b": "REFERENCE_PART_COMPOSER",
+        "pairs": 10
+      },
+      {
+        "comparison": "ca2raw_vs_ca2ctx",
+        "a": "COMPOSERS_ASSISTANT_2",
+        "b": "COMPOSERS_ASSISTANT_2+CTX",
+        "pairs": 10
+      },
+      {
+        "comparison": "human_vs_reference",
+        "a": "HUMAN_ORIGIN_REFERENCE",
+        "b": "REFERENCE_PART_COMPOSER",
+        "pairs": 10
+      },
+      {
+        "comparison": "contextaware_vs_ca2ctx",
+        "a": "CONTEXT_AWARE_ARRANGER",
+        "b": "COMPOSERS_ASSISTANT_2+CTX",
+        "pairs": 10
+      }
+    ],
+    "pairsByFamily": {
+      "strings": 6,
+      "brass": 10,
+      "organ": 10,
+      "keys": 10,
+      "bass": 8,
+      "reed": 6
+    },
+    "primaryQuestion": "Overall: which version do you prefer?",
+    "secondaryQuestions": 8,
+    "openSeconds": 197.8,
+    "rendersWritten": 100,
+    "audioBytesFirstSide": 4286476,
+    "audioSecondsFirstPair": 48.6
+  },
+  "blindness": {
+    "raterViewContains": "position, instrument family, two token-addressed audio URLs, the questions",
+    "checkedAndAbsent": [
+      "arm names (HUMAN_ORIGIN_REFERENCE / REFERENCE_PART_COMPOSER / CONTEXT_AWARE_ARRANGER / COMPOSERS_ASSISTANT_2 / +CTX)",
+      "task ids",
+      "seeds",
+      "storage paths",
+      "candidate ids"
+    ],
+    "orientation": "A/B side decided per pair by hash of (session, cell); the comparison's first arm is on the left in 22 of 50 pairs",
+    "verifiedBy": [
+      "the tournamentListening suite's leak test over eight rater ids",
+      "a live GET of the rater view (all four leak probes false)"
+    ]
+  },
+  "votePathProof": {
+    "note": "run on a separate 10-pair smoke session so the owner's 50-pair session stays unrated",
+    "sessionId": "c422b1a8-0f29-4d5f-aadc-75c56666591f",
+    "rater": "a second local identity, not the owner",
+    "pairsRated": 10,
+    "secondaryRatingsRecorded": 1,
+    "votesCounted": 11,
+    "independentRaters": 1,
+    "gateC": {
+      "passed": false,
+      "challenger": "COMPOSERS_ASSISTANT_2+CTX",
+      "incumbent": "REFERENCE_PART_COMPOSER",
+      "releaseVotes": 2,
+      "releaseShare": 1,
+      "minRaters": 5,
+      "minWinShare": 0.6,
+      "reason": "1 independent rater(s) so far; Gate C needs at least 5."
+    },
+    "comparisonTallies": [
+      {
+        "comparison": "human_vs_ca2ctx",
+        "a": "HUMAN_ORIGIN_REFERENCE",
+        "b": "COMPOSERS_ASSISTANT_2+CTX",
+        "pairs": 2,
+        "votes": 2,
+        "aWins": 1,
+        "bWins": 1,
+        "aShare": 0.5,
+        "ownerVotes": 0,
+        "ownerAWins": 0,
+        "ownerAShare": null
+      },
+      {
+        "comparison": "ca2ctx_vs_reference",
+        "a": "COMPOSERS_ASSISTANT_2+CTX",
+        "b": "REFERENCE_PART_COMPOSER",
+        "pairs": 2,
+        "votes": 2,
+        "aWins": 2,
+        "bWins": 0,
+        "aShare": 1,
+        "ownerVotes": 0,
+        "ownerAWins": 0,
+        "ownerAShare": null
+      },
+      {
+        "comparison": "ca2raw_vs_ca2ctx",
+        "a": "COMPOSERS_ASSISTANT_2",
+        "b": "COMPOSERS_ASSISTANT_2+CTX",
+        "pairs": 2,
+        "votes": 2,
+        "aWins": 0,
+        "bWins": 2,
+        "aShare": 0,
+        "ownerVotes": 0,
+        "ownerAWins": 0,
+        "ownerAShare": null
+      },
+      {
+        "comparison": "human_vs_reference",
+        "a": "HUMAN_ORIGIN_REFERENCE",
+        "b": "REFERENCE_PART_COMPOSER",
+        "pairs": 2,
+        "votes": 2,
+        "aWins": 1,
+        "bWins": 1,
+        "aShare": 0.5,
+        "ownerVotes": 0,
+        "ownerAWins": 0,
+        "ownerAShare": null
+      },
+      {
+        "comparison": "contextaware_vs_ca2ctx",
+        "a": "CONTEXT_AWARE_ARRANGER",
+        "b": "COMPOSERS_ASSISTANT_2+CTX",
+        "pairs": 2,
+        "votes": 2,
+        "aWins": 2,
+        "bWins": 0,
+        "aShare": 1,
+        "ownerVotes": 0,
+        "ownerAWins": 0,
+        "ownerAShare": null
+      }
+    ],
+    "preferenceRecords": 11,
+    "raterIdLeakedIntoExport": false,
+    "sampleRecord": {
+      "version": "1.0",
+      "sessionId": "c422b1a8-0f29-4d5f-aadc-75c56666591f",
+      "pairId": "c422b1a8-0f29-4d5f-aadc-75c56666591f:1",
+      "comparison": "contextaware_vs_ca2ctx",
+      "taskId": "2bc4da9836dd",
+      "seed": 7,
+      "family": "bass",
+      "question": "Overall: which version do you prefer?",
+      "providerA": "CONTEXT_AWARE_ARRANGER",
+      "providerB": "COMPOSERS_ASSISTANT_2+CTX",
+      "entryA": "2bc4da9836dd:7:CONTEXT_AWARE_ARRANGER",
+      "entryB": "2bc4da9836dd:7:COMPOSERS_ASSISTANT_2+CTX",
+      "winner": "CONTEXT_AWARE_ARRANGER",
+      "loser": "COMPOSERS_ASSISTANT_2+CTX",
+      "rater": "4a832d2557bb3cc5",
+      "isOwner": false,
+      "createdAt": "2026-09-09T14:44:10.946Z"
+    }
+  },
+  "howAPairSounds": "both sides of a pair are the same passage: every context track plus the held-out part written by that arm, rendered by the platform's own REFERENCE_SYNTH_V1 (deterministic, one voice per family), candidate 1.35x forward, peak-normalised to -1 dBFS. Same renderer for the human part and for every model, so a rater compares notes and not sound design.",
+  "gatePolicy": {
+    "challenger": "COMPOSERS_ASSISTANT_2+CTX",
+    "incumbent": "REFERENCE_PART_COMPOSER",
+    "onlyGatePairsCount": "Gate C reads only the pairs that put the challenger against the incumbent; the other four comparisons inform the decision pack and the reward model",
+    "ownerVotes": "recorded, shown apart, excluded from the verdict — the owner is the first rater, not the verdict",
+    "minRaters": 5,
+    "minWinShare": 0.6
+  },
+  "rewardModelData": "every vote is exported as a preference record (comparison, task, seed, family, both arms in comparison order, both tournament entry keys, winner, loser, salted rater pseudonym) — the shape a pairwise preference loss consumes. GET /api/listening-sessions/<id>/preferences, owner only.",
+  "honestLimits": [
+    "Nobody has rated the 50-pair session yet. The owner is the first rater; Gate C needs five independent raters and a 60 % release share, so one person's session is evidence, not a verdict.",
+    "All 50 pairs come from the classical PDMX tournament. The non-classical session waits on that tournament (Workstream B).",
+    "The renderer is a deterministic synth, not a sampled orchestra. It is fair across arms and it is not what a producer would ship.",
+    "Opening the session took 3 min 18 s for 100 renders (~2 s each, single-threaded, in-process). Fine for 50 pairs, not for thousands.",
+    "The smoke session's tallies come from one client alternating A/B on purpose; they say the plumbing works, nothing about quality."
+  ]
+}

@@ -383,10 +383,21 @@ const directiveMappings = (id: string) => ({
   controls: { dynamics: 1, expression: 11, articulation: 32 },
 });
 
+/** Words in an instrument's own name that settle its family; the role is consulted only when none is present. */
+const FAMILY_WORDS = ["drum", "percussion", "bass", "violin", "cello", "string", "horn", "brass", "trumpet", "guitar", "pad", "synth"];
+
 export function getInstrumentDefinition(instrument: string, role = ""): InstrumentDefinition {
   const id = instrument.toLowerCase().replace(/[^a-z0-9]+/g, "_");
-  const normalized = `${id} ${role.toLowerCase()}`;
-  if (normalized.includes("drum") || normalized.includes("percussion") || normalized.includes("rhythm")) {
+  // PR-61: the role used to be matched with the same weight as the name, so a
+  // guitar in the RHYTHMIC_HARMONY role became a drum kit (range 35-81, four
+  // voices): 6.5 % of human guitar windows out of range and every five- or
+  // six-string chord an error. The name decides when it names a family, and
+  // "rhythm" means a kit only when the name names nothing else.
+  const namesFamily = FAMILY_WORDS.some((word) => id.includes(word));
+  const normalized = namesFamily ? id : `${id} ${role.toLowerCase()}`;
+  const kitByRhythm = normalized.includes("rhythm") &&
+    !FAMILY_WORDS.some((word) => word !== "drum" && word !== "percussion" && id.includes(word));
+  if (normalized.includes("drum") || normalized.includes("percussion") || kitByRhythm) {
     return {
       id: "drums",
       family: "drums",
