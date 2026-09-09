@@ -3912,6 +3912,84 @@ any of it.
   plan-prefix tokens, no model has consumed one of these plans. A plan carries
   no producer intent, no lyrics and no "why", and it never will: those are not
   in a score.
+- **PR-76** ✅ — `data-acquisition-plan` (Wave Q — data acquisition for the
+  styles PDMX cannot supply): **sixty-six sources audited on three licence
+  layers from primary sources, nothing downloaded, and the answer to PR-65's
+  "a second source is required" is that there is no second source to
+  download.** Evidence: `docs/model-discovery/data-acquisition-plan.md` (the
+  decision document, per style family, ranked plan, the Mizrahi/Israeli
+  chapter, the bottom line) and `docs/evidence/data-source-registry.json`
+  (every source with its three layers, URL and date read, classification,
+  yield estimate, and the cleared yield per style family).
+
+  **What was built.** `dataSourceRegistry.ts` — the dataset sibling of the
+  model registry: `classifyDataSource()` reads the compilation licence, the
+  per-work licence and the underlying works (are the *compositions and
+  recordings* cleared for commercial training?) and returns
+  `TRAIN_CLEARED` only when all three were read from a primary source and
+  none is restrictive; non-commercial wording **or an explicit AI-training
+  ban** anywhere → `BLOCKED_LICENSE`; uncleared works → `RESEARCH_ONLY`
+  (the Lakh case); unread → `LEGAL_REVIEW_REQUIRED`. `shippable()`,
+  `trainableCommercially()`, `researchUsable()`, `unreadLicences()`;
+  `estimateTaskYield()` converts a source's *claimed* size into tasks at
+  PR-65's measured PDMX rates (65.30 per multitrack work, 49.41 of them
+  arrangement types, 9.73 per melody work, 0 for drums-only, stems and
+  theory) and refuses to invent a number for an unknown size;
+  `summariseRegistry()` credits PDMX with its *measured* per-family counts
+  rather than the whole corpus. Every entry is `acquisition: "NOT_FETCHED"`.
+  `dataSourceRegistryData.ts` carries the 66 rows;
+  `scripts/export-data-source-registry.mjs` serialises them.
+
+  **What was found.** 7 `TRAIN_CLEARED` (PDMX, Groove MIDI + E-GMD, Radif,
+  OpenScore Lieder, Mutopia, OnAir stems), 14 `RESEARCH_ONLY`, 24
+  `LEGAL_REVIEW_REQUIRED`, 21 `BLOCKED_LICENSE`; 19 sources with every layer
+  read, 47 with at least one unread; 0 fetched. **Cleared arrangement tasks
+  per target family: pop ≈ 21,600, rock ≈ 30,600, R&B ≈ 4,150, hip-hop
+  ≈ 4,700, EDM ≈ 6,200 — all of them PDMX notation, measured (PR-65) — and
+  zero for Mizrahi/Israeli, Jewish diaspora, maqam ensemble, Indian, East and
+  Southeast Asian, Balkan, flamenco, Latin and reggae/afrobeat.** Every
+  open pop multitrack corpus is Lakh-derived or NC (Lakh, MetaMIDI, Slakh,
+  MidiCaps, GigaMIDI, Los Angeles, POP909, DadaGP). **The MIDI-pack market
+  has banned training in writing**: Toontrack's EULA of 2026-06-22, Splice's
+  Terms of Use and Loopmasters' licence each forbid using their MIDI as AI
+  training material, so PR-60's "operator-licensed packs" route is closed;
+  The Session's tune data carries a "no Large Language Models" clause.
+  **SymbTr** (2,200 Turkish makam scores) is CC BY-NC-SA — the one
+  relicensing ask worth making for the Middle-Eastern family. Groove MIDI's
+  afrobeat/reggae/latin/"middleeastern" grooves are the only cleared
+  production-style material for those families, and drums yield no
+  arrangement task. **Mizrahi/Israeli: nothing rights-clear exists in the
+  open** — cover MIDI for singers is doubly uncleared (programmer + ACUM
+  composition), Zemereshet is private-use-only, NLI's piyut recordings are
+  audio with unread terms; the plan is first party (the owner's own
+  sessions, with every imported pack listed because Splice/Toontrack content
+  inside an owner's song still carries the ban), then producers' *existing*
+  catalogues as `HUMAN_ORIGIN_REFERENCE` — the owner's no-hiring rule
+  distinguished from licensing what already exists — then ACUM for
+  compositions; the per-work rights record is specified field by field. The
+  Israeli MoJ opinion of 2022-12-18 (ML training likely fair use) is
+  recorded as context, not as a licence.
+
+  Suites: dataSourceRegistry 18 (classifier rules; no source trainable on an
+  unread licence; NC or AI-ban anywhere blocks; nothing fetched; the seven
+  cleared ids pinned; the zero-yield families pinned; only PDMX may claim
+  measured numbers); typecheck green.
+
+  **Honest limits.** Sixty-six sources found by English-language search — a
+  Hebrew/Arabic/Turkish/Hindi/Chinese pass is owed, especially for Israeli
+  producers' communities. Thirteen pages refused the audit (403/404/504/TLS:
+  CPDL, Hooktheory terms, Loopmasters, Cymatics, Groove Monkee, TONAS, NLI
+  terms, Geerdes, Hit Trax, and four Zenodo records) and are recorded as
+  unread with the URL tried; three blocks (Loopmasters, Jingju, IRMA) rest on
+  secondary wording, in the conservative direction. Yields for non-PDMX
+  sources are claimed sizes × PDMX rates — upper bounds, with multitrack
+  share, duplication and metre quality unknown because nothing was
+  downloaded. No prices are given where none is published (producer
+  catalogues, brokers, ACUM). The regex classifier is blunt by design: a row
+  that quotes a ban to deny it will block and must be reworded, not the
+  regex loosened. The decision pack §8–§9 was not edited; the lead's rebuild
+  should carry "no second source to download". Nothing here is legal
+  advice.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 

@@ -1,0 +1,4639 @@
+{
+  "title": "Data-source registry — every symbolic and stem source audited for the styles PDMX cannot supply (Wave Q, PR-76)",
+  "ranAt": "2026-09-09T18:59:29.034Z",
+  "auditDate": "2026-09-09",
+  "method": {
+    "classification": "classifyDataSource (dataSourceRegistry.ts): non-commercial or AI-training-ban wording in any of the three layers or the stated restriction → BLOCKED_LICENSE; underlying works not cleared → RESEARCH_ONLY; any layer unread or works unknown → LEGAL_REVIEW_REQUIRED; else TRAIN_CLEARED. Derived, never stored.",
+    "yield": "estimateTaskYield: a work yields tasks at PR-65's measured PDMX rate for its ensemble shape (65.30 per multitrack work, of which 49.41 arrangement tasks; 9.73 per solo/melody work; 0 for drums-only, audio stems and theory). Sizes are the sources' claims unless measured=true.",
+    "fetched": "nothing — every entry is NOT_FETCHED"
+  },
+  "pdmxTaskRates": {
+    "source": "docs/evidence/corpus-profile.json (PR-65)",
+    "multitrackWorks": 20638,
+    "multitrackTasks": 1347597,
+    "multitrackArrangementTasks": 1019817,
+    "soloWorks": 202131,
+    "soloTasks": 1966370,
+    "perMultitrackWork": 65.29687954259134,
+    "arrangementPerMultitrackWork": 49.41452660141486,
+    "perSoloWork": 9.728196070864934
+  },
+  "summary": {
+    "total": 66,
+    "byClass": {
+      "TRAIN_CLEARED": 7,
+      "RESEARCH_ONLY": 14,
+      "LEGAL_REVIEW_REQUIRED": 24,
+      "BLOCKED_LICENSE": 21
+    },
+    "sourcesRead": 19,
+    "sourcesUnread": 47,
+    "notFetched": 66,
+    "clearedYieldByStyle": {
+      "contemporary_pop": {
+        "sources": 3,
+        "measuredSources": 1,
+        "estimatedSources": 2,
+        "totalTasks": 49110,
+        "arrangementTasks": 21594
+      },
+      "rock": {
+        "sources": 3,
+        "measuredSources": 1,
+        "estimatedSources": 2,
+        "totalTasks": 87263,
+        "arrangementTasks": 30588
+      },
+      "rnb_soul": {
+        "sources": 3,
+        "measuredSources": 1,
+        "estimatedSources": 2,
+        "totalTasks": 9592,
+        "arrangementTasks": 4151
+      },
+      "hiphop": {
+        "sources": 4,
+        "measuredSources": 1,
+        "estimatedSources": 3,
+        "totalTasks": 6637,
+        "arrangementTasks": 4694
+      },
+      "edm_house_techno": {
+        "sources": 4,
+        "measuredSources": 1,
+        "estimatedSources": 3,
+        "totalTasks": 14815,
+        "arrangementTasks": 6177
+      },
+      "latin": {
+        "sources": 2,
+        "measuredSources": 0,
+        "estimatedSources": 2,
+        "totalTasks": 0,
+        "arrangementTasks": 0
+      },
+      "reggae_afrobeat": {
+        "sources": 2,
+        "measuredSources": 0,
+        "estimatedSources": 2,
+        "totalTasks": 0,
+        "arrangementTasks": 0
+      },
+      "middle_eastern_maqam": {
+        "sources": 2,
+        "measuredSources": 0,
+        "estimatedSources": 2,
+        "totalTasks": 2218,
+        "arrangementTasks": 0
+      },
+      "mizrahi_israeli": {
+        "sources": 0,
+        "measuredSources": 0,
+        "estimatedSources": 0,
+        "totalTasks": 0,
+        "arrangementTasks": 0
+      },
+      "jewish_diaspora": {
+        "sources": 0,
+        "measuredSources": 0,
+        "estimatedSources": 0,
+        "totalTasks": 0,
+        "arrangementTasks": 0
+      },
+      "indian": {
+        "sources": 0,
+        "measuredSources": 0,
+        "estimatedSources": 0,
+        "totalTasks": 0,
+        "arrangementTasks": 0
+      },
+      "east_asian": {
+        "sources": 0,
+        "measuredSources": 0,
+        "estimatedSources": 0,
+        "totalTasks": 0,
+        "arrangementTasks": 0
+      },
+      "southeast_asian": {
+        "sources": 0,
+        "measuredSources": 0,
+        "estimatedSources": 0,
+        "totalTasks": 0,
+        "arrangementTasks": 0
+      },
+      "balkan": {
+        "sources": 0,
+        "measuredSources": 0,
+        "estimatedSources": 0,
+        "totalTasks": 0,
+        "arrangementTasks": 0
+      },
+      "flamenco": {
+        "sources": 0,
+        "measuredSources": 0,
+        "estimatedSources": 0,
+        "totalTasks": 0,
+        "arrangementTasks": 0
+      },
+      "film_game": {
+        "sources": 1,
+        "measuredSources": 1,
+        "estimatedSources": 0,
+        "totalTasks": 90240,
+        "arrangementTasks": 38593
+      },
+      "western_folk": {
+        "sources": 3,
+        "measuredSources": 1,
+        "estimatedSources": 2,
+        "totalTasks": 100923,
+        "arrangementTasks": 35084
+      },
+      "jazz_blues": {
+        "sources": 2,
+        "measuredSources": 1,
+        "estimatedSources": 1,
+        "totalTasks": 21945,
+        "arrangementTasks": 7511
+      },
+      "classical_early": {
+        "sources": 3,
+        "measuredSources": 1,
+        "estimatedSources": 2,
+        "totalTasks": 878747,
+        "arrangementTasks": 511440
+      }
+    },
+    "stylesWithoutClearedArrangementData": [
+      "latin",
+      "reggae_afrobeat",
+      "middle_eastern_maqam",
+      "mizrahi_israeli",
+      "jewish_diaspora",
+      "indian",
+      "east_asian",
+      "southeast_asian",
+      "balkan",
+      "flamenco"
+    ],
+    "styleFamilies": [
+      "contemporary_pop",
+      "rock",
+      "rnb_soul",
+      "hiphop",
+      "edm_house_techno",
+      "latin",
+      "reggae_afrobeat",
+      "middle_eastern_maqam",
+      "mizrahi_israeli",
+      "jewish_diaspora",
+      "indian",
+      "east_asian",
+      "southeast_asian",
+      "balkan",
+      "flamenco",
+      "film_game",
+      "western_folk",
+      "jazz_blues",
+      "classical_early"
+    ]
+  },
+  "pr60Candidates": [
+    {
+      "id": "LAKH_MIDI",
+      "classification": "RESEARCH_ONLY"
+    },
+    {
+      "id": "METAMIDI",
+      "classification": "RESEARCH_ONLY"
+    },
+    {
+      "id": "SLAKH2100",
+      "classification": "RESEARCH_ONLY"
+    },
+    {
+      "id": "WIKIFONIA",
+      "classification": "RESEARCH_ONLY"
+    },
+    {
+      "id": "IMSLP_PD_CC0_SUBSET",
+      "classification": "LEGAL_REVIEW_REQUIRED"
+    },
+    {
+      "id": "CPDL",
+      "classification": "LEGAL_REVIEW_REQUIRED"
+    },
+    {
+      "id": "GROOVE_MIDI_DATASET",
+      "classification": "TRAIN_CLEARED"
+    },
+    {
+      "id": "NOTTINGHAM_MUSIC_DATABASE",
+      "classification": "LEGAL_REVIEW_REQUIRED"
+    },
+    {
+      "id": "TOONTRACK_MIDI_PACKS",
+      "classification": "BLOCKED_LICENSE"
+    }
+  ],
+  "sources": [
+    {
+      "id": "PDMX_NO_LICENSE_CONFLICT",
+      "name": "PDMX — no_license_conflict subset",
+      "kind": "open_dataset",
+      "classification": "TRAIN_CLEARED",
+      "why": "PDMX — no_license_conflict subset: compilation, per-work and underlying-works layers are each verified from a primary source and none is restrictive.",
+      "allLayersRead": true,
+      "formats": [
+        "musicxml",
+        "midi"
+      ],
+      "ensemble": "mixed",
+      "styles": [
+        "classical_early",
+        "western_folk",
+        "film_game",
+        "contemporary_pop",
+        "rock",
+        "jazz_blues",
+        "edm_house_techno",
+        "rnb_soul",
+        "hiphop"
+      ],
+      "regions": [
+        "global (MuseScore uploads)"
+      ],
+      "claimedSize": {
+        "works": 222820,
+        "claim": "222,856 admitted rows, 222,820 with a MIDI file; 20,638 multitrack works, 19,588 independent after near-duplicate collapse (PR-65, measured on every file)",
+        "measured": true
+      },
+      "yieldEstimate": {
+        "totalTasks": 3314463,
+        "arrangementTasks": 1019817,
+        "assumption": "222820 claimed works, 9 % assumed multitrack (a claim), PDMX rates for each share"
+      },
+      "cost": {
+        "model": "free",
+        "note": "already acquired under PR-51; 469 MB verified against Zenodo md5"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "cc-by-4.0 (Zenodo record licence) — covers the compilation, not the works inside it",
+          "source": "Zenodo record 15571083 via the public API, recorded in docs/evidence/pdmx-acquisition-live.json (PR-51)",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "PDMX.csv `license` column, public domain / CC0 / cc-zero per row, admitted only when the authors' `license_conflict` flag is clear — read on all 254,077 rows",
+          "source": "PDMX.csv + subset/no_license_conflict.txt, pdmxIngest.ts PUBLIC_DOMAIN gate (PR-51)",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "The uploader's public-domain / CC0 dedication on MuseScore, cross-checked by the authors against the file's own metadata; rows where the two disagree are excluded",
+          "source": "PDMX paper (arXiv 2409.10831) and the subset flag, applied per row in PR-51",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "yes",
+          "basis": "cc_release_by_author"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "exists: work id, licence string, license_conflict flag, authors' subset membership, dataset and rights digests (datasetRightsProof.ts)"
+      ],
+      "knownLimitations": [
+        "Residual: an uploader can dedicate an arrangement of a copyrighted song as public domain; PDMX verifies the metadata agreement, not the composition rights. PR-60 found the corpus's 'pop' is largely piano-vocal transcription — this residual is what that is.",
+        "3,197 labelled non-classical multitrack works, 0 Mizrahi/Israeli (PR-65). This is the gap the rest of this registry exists to fill."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://zenodo.org/records/15571083"
+    },
+    {
+      "id": "GROOVE_MIDI_DATASET",
+      "name": "Groove MIDI Dataset (GMD)",
+      "kind": "open_dataset",
+      "classification": "TRAIN_CLEARED",
+      "why": "Groove MIDI Dataset (GMD): compilation, per-work and underlying-works layers are each verified from a primary source and none is restrictive.",
+      "allLayersRead": true,
+      "formats": [
+        "midi",
+        "audio_mix"
+      ],
+      "ensemble": "drums_only",
+      "styles": [
+        "reggae_afrobeat",
+        "latin",
+        "middle_eastern_maqam",
+        "hiphop",
+        "edm_house_techno",
+        "rnb_soul",
+        "rock",
+        "contemporary_pop",
+        "jazz_blues",
+        "western_folk"
+      ],
+      "regions": [
+        "USA (studio); genre labels afrobeat, afrocuban, highlife, latin, middleeastern, reggae, hiphop, dance, funk, gospel, soul, punk, rock, pop, jazz, blues, country, neworleans"
+      ],
+      "claimedSize": {
+        "works": 1150,
+        "claim": "1,150 MIDI files, 13.6 hours, ~22,000 measures, 445,494 hits, 10 drummers (dataset page)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 0,
+        "arrangementTasks": 0,
+        "assumption": "drums only: no harmonic context, no arrangement task; usable as a groove prior, not as a task source"
+      },
+      "cost": {
+        "model": "free",
+        "note": "direct download"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "Creative Commons Attribution 4.0 International (CC BY 4.0), made available by Google LLC",
+          "source": "https://magenta.tensorflow.org/datasets/groove",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "uniform — one licence for the whole release; no per-file variation",
+          "source": "https://magenta.tensorflow.org/datasets/groove",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "Performances recorded by Google on a Roland TD-11 by ten drummers, 'more than 80% of duration coming from hired professionals', following a metronome — original performances, no transcribed works",
+          "source": "https://magenta.tensorflow.org/datasets/groove",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "yes",
+          "basis": "commissioned_original"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "file id, drummer id, genre label, CC BY 4.0 attribution string, release version"
+      ],
+      "knownLimitations": [
+        "Drums only: no pitched context, so it cannot form an arrangement task by itself. Its value is as a groove prior (the afrobeat/reggae/latin/middleeastern grooves are the only cleared production-style material in this whole registry).",
+        "Genre labels are the drummers' own session labels — 'middleeastern' is a Western studio drummer's idea of it, not a darbuka player's."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://magenta.tensorflow.org/datasets/groove"
+    },
+    {
+      "id": "EXPANDED_GROOVE_MIDI",
+      "name": "Expanded Groove MIDI Dataset (E-GMD)",
+      "kind": "open_dataset",
+      "classification": "TRAIN_CLEARED",
+      "why": "Expanded Groove MIDI Dataset (E-GMD): compilation, per-work and underlying-works layers are each verified from a primary source and none is restrictive.",
+      "allLayersRead": true,
+      "formats": [
+        "midi",
+        "audio_mix"
+      ],
+      "ensemble": "drums_only",
+      "styles": [
+        "reggae_afrobeat",
+        "latin",
+        "hiphop",
+        "edm_house_techno",
+        "rnb_soul",
+        "rock",
+        "contemporary_pop"
+      ],
+      "regions": [
+        "USA (studio)"
+      ],
+      "claimedSize": {
+        "works": 1059,
+        "claim": "1,059 unique sequences × 43 kits = 45,537 sequences, 444.5 hours of audio; MIDI-only 103 MB (dataset page)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 0,
+        "arrangementTasks": 0,
+        "assumption": "drums only: no harmonic context, no arrangement task; usable as a groove prior, not as a task source"
+      },
+      "cost": {
+        "model": "free",
+        "note": "direct download; 90 GB with audio"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "Creative Commons Attribution 4.0 International (CC BY 4.0), Google LLC",
+          "source": "https://magenta.tensorflow.org/datasets/e-gmd",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "uniform — one licence for the whole release",
+          "source": "https://magenta.tensorflow.org/datasets/e-gmd",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "Re-recordings of the GMD sequences on a Roland TD-17 across 43 kits — the same commissioned performances",
+          "source": "https://magenta.tensorflow.org/datasets/e-gmd",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "yes",
+          "basis": "commissioned_original"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "as GMD; the MIDI is the same 1,059 sequences, so it adds audio, not works"
+      ],
+      "knownLimitations": [
+        "Symbolically a duplicate of GMD; its 43 kit renderings matter for audio models, not for the arranger."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://magenta.tensorflow.org/datasets/e-gmd"
+    },
+    {
+      "id": "RADIF_CORPUS",
+      "name": "Radif Corpus (Mīrzā ʿAbdollāh radif, Iranian classical)",
+      "kind": "open_dataset",
+      "classification": "TRAIN_CLEARED",
+      "why": "Radif Corpus (Mīrzā ʿAbdollāh radif, Iranian classical): compilation, per-work and underlying-works layers are each verified from a primary source and none is restrictive.",
+      "allLayersRead": true,
+      "formats": [
+        "midi",
+        "musicxml"
+      ],
+      "ensemble": "melody_only",
+      "styles": [
+        "middle_eastern_maqam"
+      ],
+      "regions": [
+        "Iran (dastgāh system — a neighbour of Arabic/Turkish maqam, not the same system)"
+      ],
+      "claimedSize": {
+        "works": 228,
+        "claim": "228 non-metric gūshehs, 43,441 notes, ~281 minutes; MIDI, CSV and MusicXML (paper)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 2218,
+        "arrangementTasks": 0,
+        "assumption": "228 claimed works × PDMX solo rate (9.73 per work); melody_only yields no arrangement task — nothing to hide"
+      },
+      "cost": {
+        "model": "free",
+        "note": "Zenodo download"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "'All materials are released under a CC-BY 4.0 license, allowing for reuse and adaptation with proper credit.'",
+          "source": "https://arxiv.org/html/2507.10456v1 (full text); Zenodo record 15742125 answered 504 on the day",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "uniform — one licence statement for all materials",
+          "source": "https://arxiv.org/html/2507.10456v1",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "Mīrzā ʿAbdollāh's radif (d. 1918), transcribed from Dariush Talai's edition 'Radif Analysis' — the repertoire is traditional and public domain by age",
+          "source": "https://arxiv.org/html/2507.10456v1",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "yes",
+          "basis": "public_domain_by_age"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "gūsheh id, dastgāh, CC BY attribution, note that the transcription derives from Talai's edition (residual: edition rights, see limitations)"
+      ],
+      "knownLimitations": [
+        "Residual: Talai's edition is a modern copyrighted book; the dataset authors' CC BY release covers their transcription, and the underlying repertoire is PD by age — the edition's own typographic/editorial rights are a residual to note, not a block.",
+        "Monophonic and non-metric: zero arrangement tasks. Its use is a modal/melodic prior for the Middle-Eastern family, not production material.",
+        "Dastgāh is not maqam: related interval theory, different repertoire and practice."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://arxiv.org/html/2507.10456v1"
+    },
+    {
+      "id": "OPENSCORE_LIEDER",
+      "name": "OpenScore Lieder Corpus",
+      "kind": "open_dataset",
+      "classification": "TRAIN_CLEARED",
+      "why": "OpenScore Lieder Corpus: compilation, per-work and underlying-works layers are each verified from a primary source and none is restrictive.",
+      "allLayersRead": true,
+      "formats": [
+        "musicxml"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "classical_early"
+      ],
+      "regions": [
+        "19th-century Europe"
+      ],
+      "claimedSize": {
+        "works": 1200,
+        "claim": "over 1,200 songs by more than 100 composers (README)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 78356,
+        "arrangementTasks": 59297,
+        "assumption": "1200 claimed works × PDMX multitrack rates (65.30 tasks, 49.41 arrangement tasks per work)"
+      },
+      "cost": {
+        "model": "free",
+        "note": "GitHub clone"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "'These scores are released under Creative Commons Zero (CC0).'",
+          "source": "https://github.com/OpenScore/Lieder",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "uniform — every score CC0 (README)",
+          "source": "https://github.com/OpenScore/Lieder",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "'collection of songs by 19th century composers' — public domain by age",
+          "source": "https://github.com/OpenScore/Lieder",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "yes",
+          "basis": "public_domain_by_age"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "work id, composer death year ≤ 1955 (Israel: life + 70), CC0 marker"
+      ],
+      "knownLimitations": [
+        "Voice + piano: two families, so it is multitrack to the extractor, but the arrangement it teaches is 19th-century accompaniment.",
+        "Hosted on MuseScore, so a large share is very probably already inside PDMX; the overlap is unmeasured.",
+        "Not a target style. Listed because it is cleared, not because it helps the pop/Mizrahi gap."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/OpenScore/Lieder"
+    },
+    {
+      "id": "MUTOPIA",
+      "name": "The Mutopia Project",
+      "kind": "public_domain_archive",
+      "classification": "TRAIN_CLEARED",
+      "why": "The Mutopia Project: compilation, per-work and underlying-works layers are each verified from a primary source and none is restrictive.",
+      "allLayersRead": true,
+      "formats": [
+        "lilypond",
+        "midi"
+      ],
+      "ensemble": "mixed",
+      "styles": [
+        "classical_early",
+        "western_folk"
+      ],
+      "regions": [
+        "Europe (classical), some traditional"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "count not read in this audit; CA2's acknowledgments list 2,451 Mutopia links (globalModelRegistryData.ts)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "site download / git"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "Per piece, one of: Creative Commons Attribution-ShareAlike (4.0/3.0/2.5/2.0/1.0), Creative Commons Attribution (4.0/3.0/2.5), or Public Domain — each stated to permit commercial use",
+          "source": "https://www.mutopiaproject.org/legal.html",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "the licence is declared in each piece's header per the legal page; per-piece values must be read at ingest",
+          "source": "https://www.mutopiaproject.org/legal.html",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "Overwhelmingly composers dead > 70 years; modern contributions are CC-released by their own authors (CA2's residual 1: 18 of 237 composer rows with post-1926 deaths)",
+          "source": "https://www.mutopiaproject.org/legal.html + globalModelRegistryData.ts CA2 audit",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "yes",
+          "basis": "public_domain_by_age"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "piece id, header licence string, composer death year, typesetter attribution (CC-BY requires it), share-alike flag"
+      ],
+      "knownLimitations": [
+        "Multitrack share unknown; classical chamber and orchestral works exist but were not counted. Yield therefore unknown.",
+        "CA2 was trained on it, so as training data for a CA2 fine-tune it adds little new."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://www.mutopiaproject.org/legal.html"
+    },
+    {
+      "id": "ONAIR_MUSIC_STEMS",
+      "name": "OnAir Music Dataset (royalty-free stems)",
+      "kind": "open_dataset",
+      "classification": "TRAIN_CLEARED",
+      "why": "OnAir Music Dataset (royalty-free stems): compilation, per-work and underlying-works layers are each verified from a primary source and none is restrictive.",
+      "allLayersRead": true,
+      "formats": [
+        "audio_stems"
+      ],
+      "ensemble": "audio_stems",
+      "styles": [
+        "hiphop",
+        "edm_house_techno"
+      ],
+      "regions": [
+        "Canada (lo-fi / electronic)"
+      ],
+      "claimedSize": {
+        "works": 11,
+        "claim": "11 tracks in v4 (README)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 0,
+        "arrangementTasks": 0,
+        "assumption": "audio stems: zero symbolic tasks until transcribed, and a transcription is not the human's notes"
+      },
+      "cost": {
+        "model": "free",
+        "note": "GitHub release"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "Creative Commons Attribution Share Alike 4.0 International — stated for both the audio and the dataset",
+          "source": "https://github.com/sevagh/OnAir-Music-Dataset",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "uniform — all tracks under the same licence (README)",
+          "source": "https://github.com/sevagh/OnAir-Music-Dataset",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "the OnAir project's own royalty-free songs, released by their creators",
+          "source": "https://github.com/sevagh/OnAir-Music-Dataset",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "yes",
+          "basis": "cc_release_by_author"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "track id, CC BY-SA attribution, share-alike propagation note"
+      ],
+      "knownLimitations": [
+        "Eleven songs of audio: cleared and irrelevant at this size. Listed to show what a cleared stem source looks like — and that audio stems yield zero symbolic tasks until transcribed.",
+        "CC BY-SA share-alike on training data is an open legal question for model weights; counsel before relying on any SA source."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/sevagh/OnAir-Music-Dataset"
+    },
+    {
+      "id": "LAKH_MIDI",
+      "name": "Lakh MIDI Dataset (LMD)",
+      "kind": "open_dataset",
+      "classification": "RESEARCH_ONLY",
+      "why": "Lakh MIDI Dataset (LMD): the licences are permissive but the underlying works are not cleared (copyrighted_transcription). Usable as benchmark or research material; never as training data for a shipped model.",
+      "allLayersRead": false,
+      "formats": [
+        "midi"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "contemporary_pop",
+        "rock",
+        "rnb_soul",
+        "hiphop",
+        "edm_house_techno",
+        "latin",
+        "jazz_blues",
+        "film_game"
+      ],
+      "regions": [
+        "global, scraped"
+      ],
+      "claimedSize": {
+        "works": 176581,
+        "claim": "176,581 unique MIDI files, 45,129 matched to the Million Song Dataset (project page)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 11530188,
+        "arrangementTasks": 8725667,
+        "assumption": "176581 claimed works × PDMX multitrack rates (65.30 tasks, 49.41 arrangement tasks per work)"
+      },
+      "cost": {
+        "model": "free",
+        "note": "refused on rights (PR-60), not on cost"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "'The Lakh MIDI Dataset is distributed with a CC-BY 4.0 license'",
+          "source": "https://colinraffel.com/projects/lmd/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — no per-file licence exists — 'scraped from publicly-available sources on the internet'",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "'a transcription of the song' — MIDI transcriptions of commercial recordings, scraped; the compilation licence does not reach the songs",
+          "source": "https://colinraffel.com/projects/lmd/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "cannot be built: no work-level provenance exists"
+      ],
+      "knownLimitations": [
+        "The structural problem of the field (decision-pack §7): the best pop multitrack corpus is uncleared. Benchmark use only, and outputs of Lakh-trained teachers go through teacherOutputsNeedReview."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://colinraffel.com/projects/lmd/"
+    },
+    {
+      "id": "SLAKH2100",
+      "name": "Slakh2100",
+      "kind": "open_dataset",
+      "classification": "RESEARCH_ONLY",
+      "why": "Slakh2100: the licences are permissive but the underlying works are not cleared (copyrighted_transcription). Usable as benchmark or research material; never as training data for a shipped model.",
+      "allLayersRead": false,
+      "formats": [
+        "audio_stems",
+        "midi"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "contemporary_pop",
+        "rock",
+        "edm_house_techno"
+      ],
+      "regions": [
+        "global (Lakh-derived)"
+      ],
+      "claimedSize": {
+        "works": 2100,
+        "claim": "2,100 tracks, 145 hours, 187 instrument patches (Zenodo record)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 137123,
+        "arrangementTasks": 103771,
+        "assumption": "2100 claimed works × PDMX multitrack rates (65.30 tasks, 49.41 arrangement tasks per work)"
+      },
+      "cost": {
+        "model": "free",
+        "note": "Zenodo"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "cc-by-4.0 (Zenodo licence id)",
+          "source": "https://zenodo.org/api/records/4599666",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none — inherited from Lakh",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "'synthesized from the Lakh MIDI Dataset v0.1' — the same uncleared transcriptions, rendered",
+          "source": "https://zenodo.org/api/records/4599666",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "cannot be built: Lakh provenance"
+      ],
+      "knownLimitations": [
+        "A rendering does not launder a transcription."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://zenodo.org/records/4599666"
+    },
+    {
+      "id": "METAMIDI",
+      "name": "MetaMIDI Dataset (MMD)",
+      "kind": "open_dataset",
+      "classification": "RESEARCH_ONLY",
+      "why": "MetaMIDI Dataset (MMD): the licences are permissive but the underlying works are not cleared (copyrighted_transcription). Usable as benchmark or research material; never as training data for a shipped model.",
+      "allLayersRead": false,
+      "formats": [
+        "midi"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "contemporary_pop",
+        "rock",
+        "rnb_soul",
+        "hiphop",
+        "edm_house_techno",
+        "latin",
+        "jazz_blues"
+      ],
+      "regions": [
+        "global, scraped"
+      ],
+      "claimedSize": {
+        "works": 436631,
+        "claim": "436,631 MIDI files; 237,236 linked to Spotify (README)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 28510642,
+        "arrangementTasks": 21575914,
+        "assumption": "436631 claimed works × PDMX multitrack rates (65.30 tasks, 49.41 arrangement tasks per work)"
+      },
+      "cost": {
+        "model": "unavailable",
+        "note": "research-project request only"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "No open licence; restricted Zenodo access on a request form: name, institutional affiliation, research project, and 'an acknowledgement that they will not share nor distribute the dataset'",
+          "source": "https://github.com/jeffreyjohnens/MetaMIDIDataset",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none — 'Scraped artist + title metadata for 221,504 MIDIs'",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "scraped MIDI matched to commercial recordings (Spotify, MusicBrainz ids)",
+          "source": "https://github.com/jeffreyjohnens/MetaMIDIDataset",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": "access only for a named research project; no sharing or distribution",
+      "rightsRecordNeeds": [
+        "cannot be built"
+      ],
+      "knownLimitations": [
+        "GigaMIDI and MIDI-RWKV inherit this provenance (model registry)."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/jeffreyjohnens/MetaMIDIDataset"
+    },
+    {
+      "id": "MIDICAPS",
+      "name": "MidiCaps",
+      "kind": "open_dataset",
+      "classification": "RESEARCH_ONLY",
+      "why": "MidiCaps: the licences are permissive but the underlying works are not cleared (copyrighted_transcription). Usable as benchmark or research material; never as training data for a shipped model.",
+      "allLayersRead": false,
+      "formats": [
+        "midi"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "contemporary_pop",
+        "rock",
+        "edm_house_techno"
+      ],
+      "regions": [
+        "global (Lakh-derived)"
+      ],
+      "claimedSize": {
+        "works": 168385,
+        "claim": "168,385 MIDI files with text captions (dataset card)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 10995015,
+        "arrangementTasks": 8320665,
+        "assumption": "168385 claimed works × PDMX multitrack rates (65.30 tasks, 49.41 arrangement tasks per work)"
+      },
+      "cost": {
+        "model": "free",
+        "note": "Hugging Face"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "CC-BY-SA-4.0 (dataset card)",
+          "source": "https://huggingface.co/datasets/amaai-lab/MidiCaps/blob/main/README.md",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none — 'The original MIDI files originate from the Lakh MIDI Dataset'",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "Lakh MIDI underneath",
+          "source": "https://huggingface.co/datasets/amaai-lab/MidiCaps/blob/main/README.md",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "cannot be built: Lakh provenance"
+      ],
+      "knownLimitations": [
+        "The captions are new work; the notes are Lakh's."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://huggingface.co/datasets/amaai-lab/MidiCaps"
+    },
+    {
+      "id": "POP909",
+      "name": "POP909",
+      "kind": "open_dataset",
+      "classification": "RESEARCH_ONLY",
+      "why": "POP909: the licences are permissive but the underlying works are not cleared (copyrighted_transcription). Usable as benchmark or research material; never as training data for a shipped model.",
+      "allLayersRead": false,
+      "formats": [
+        "midi"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "contemporary_pop",
+        "east_asian"
+      ],
+      "regions": [
+        "China (Mandarin pop)"
+      ],
+      "claimedSize": {
+        "works": 909,
+        "claim": "909 songs — MELODY, BRIDGE and PIANO tracks (README; the count is from the paper title, secondary)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 59355,
+        "arrangementTasks": 44918,
+        "assumption": "909 claimed works × PDMX multitrack rates (65.30 tasks, 49.41 arrangement tasks per work)"
+      },
+      "cost": {
+        "model": "free",
+        "note": "GitHub"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "MIT licence badge on the repository (the README does not separately license the MIDI)",
+          "source": "https://github.com/music-x-lab/POP909-Dataset",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "piano arrangements of 909 commercial Chinese pop songs by professional musicians (ISMIR 2020 paper, not read in this audit)",
+          "source": "arXiv 2008.07142 (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "cannot be built without the songs' publishers"
+      ],
+      "knownLimitations": [
+        "The best multitrack pop-arrangement dataset in the field is transcriptions of copyrighted songs. Benchmark only."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/music-x-lab/POP909-Dataset"
+    },
+    {
+      "id": "NES_MDB",
+      "name": "NES Music Database (NES-MDB)",
+      "kind": "open_dataset",
+      "classification": "RESEARCH_ONLY",
+      "why": "NES Music Database (NES-MDB): the licences are permissive but the underlying works are not cleared (copyrighted_transcription). Usable as benchmark or research material; never as training data for a shipped model.",
+      "allLayersRead": false,
+      "formats": [
+        "midi"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "film_game"
+      ],
+      "regions": [
+        "Japan/USA (NES games, 1980s–90s)"
+      ],
+      "claimedSize": {
+        "works": 5278,
+        "claim": "5,278 songs from 397 NES games, 296 composers (README)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 344637,
+        "arrangementTasks": 260810,
+        "assumption": "5278 claimed works × PDMX multitrack rates (65.30 tasks, 49.41 arrangement tasks per work)"
+      },
+      "cost": {
+        "model": "free",
+        "note": "GitHub"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "MIT licence badge (README)",
+          "source": "https://github.com/chrisdonahue/nesmdb",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "parsed from 'assembly code of NES games' — commercial game soundtracks still in copyright",
+          "source": "https://github.com/chrisdonahue/nesmdb",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "cannot be built without the games' publishers"
+      ],
+      "knownLimitations": [
+        "Four monophonic voices: a genuine multitrack arrangement corpus for chiptune, and uncleared."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/chrisdonahue/nesmdb"
+    },
+    {
+      "id": "VGMIDI",
+      "name": "VGMIDI",
+      "kind": "open_dataset",
+      "classification": "RESEARCH_ONLY",
+      "why": "VGMIDI: the licences are permissive but the underlying works are not cleared (copyrighted_transcription). Usable as benchmark or research material; never as training data for a shipped model.",
+      "allLayersRead": false,
+      "formats": [
+        "midi"
+      ],
+      "ensemble": "solo",
+      "styles": [
+        "film_game"
+      ],
+      "regions": [
+        "global (video game soundtracks)"
+      ],
+      "claimedSize": {
+        "works": 4050,
+        "claim": "200 labelled + 3,850 unlabelled piano arrangements of video game soundtracks (README)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 39399,
+        "arrangementTasks": 0,
+        "assumption": "4050 claimed works × PDMX solo rate (9.73 per work); solo yields no arrangement task — nothing to hide"
+      },
+      "cost": {
+        "model": "free",
+        "note": "GitHub"
+      },
+      "layers": {
+        "compilation": {
+          "stated": null,
+          "source": "not read — https://github.com/lucasnfe/vgmidi — no licence stated",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "'piano arrangements of video game soundtracks'",
+          "source": "https://github.com/lucasnfe/vgmidi",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "cannot be built"
+      ],
+      "knownLimitations": [
+        "Solo piano; no arrangement tasks even if it were cleared."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/lucasnfe/vgmidi"
+    },
+    {
+      "id": "YM2413_MDB",
+      "name": "YM2413-MDB",
+      "kind": "open_dataset",
+      "classification": "RESEARCH_ONLY",
+      "why": "YM2413-MDB: the licences are permissive but the underlying works are not cleared (copyrighted_transcription). Usable as benchmark or research material; never as training data for a shipped model.",
+      "allLayersRead": false,
+      "formats": [
+        "midi",
+        "audio_mix"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "film_game"
+      ],
+      "regions": [
+        "Japan (Sega / MSX games, 1980s)"
+      ],
+      "claimedSize": {
+        "works": 669,
+        "claim": "669 audio and MIDI files from Sega and MSX games (README)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 43684,
+        "arrangementTasks": 33058,
+        "assumption": "669 claimed works × PDMX multitrack rates (65.30 tasks, 49.41 arrangement tasks per work)"
+      },
+      "cost": {
+        "model": "free",
+        "note": "GitHub"
+      },
+      "layers": {
+        "compilation": {
+          "stated": null,
+          "source": "not read — https://github.com/jech2/YM2413-MDB — README states no licence; the paper says CC BY 4.0 (secondary)",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "'music from Sega and MSX PC games in the 80s'",
+          "source": "https://github.com/jech2/YM2413-MDB",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "cannot be built"
+      ],
+      "knownLimitations": [
+        "Emotion labels are new work; the music is the games'."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/jech2/YM2413-MDB"
+    },
+    {
+      "id": "DADAGP",
+      "name": "DadaGP",
+      "kind": "open_dataset",
+      "classification": "RESEARCH_ONLY",
+      "why": "DadaGP: the licences are permissive but the underlying works are not cleared (copyrighted_transcription). Usable as benchmark or research material; never as training data for a shipped model.",
+      "allLayersRead": false,
+      "formats": [
+        "guitarpro"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "rock",
+        "contemporary_pop"
+      ],
+      "regions": [
+        "global (GuitarPro tab community)"
+      ],
+      "claimedSize": {
+        "works": 26181,
+        "claim": "26,181 GuitarPro song scores, 739 genres (paper, secondary)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 1709538,
+        "arrangementTasks": 1293722,
+        "assumption": "26181 claimed works × PDMX multitrack rates (65.30 tasks, 49.41 arrangement tasks per work)"
+      },
+      "cost": {
+        "model": "unavailable",
+        "note": "request to the authors"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "no licence found; the paper discusses the ethics of the tabs' copyright",
+          "source": "ISMIR 2021 paper via search (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none — community tabs",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "user-made tabs of commercial rock/metal songs",
+          "source": "ISMIR 2021 paper (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "cannot be built"
+      ],
+      "knownLimitations": [
+        "The only large multitrack band-arrangement symbolic corpus for rock, and uncleared."
+      ],
+      "auditConfidence": "secondary",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://archives.ismir.net/ismir2021/paper/000076.pdf"
+    },
+    {
+      "id": "HOOKTHEORY_THEORYTAB",
+      "name": "Hooktheory TheoryTab database",
+      "kind": "community_archive",
+      "classification": "RESEARCH_ONLY",
+      "why": "Hooktheory TheoryTab database: the licences are permissive but the underlying works are not cleared (copyrighted_transcription). Usable as benchmark or research material; never as training data for a shipped model.",
+      "allLayersRead": false,
+      "formats": [
+        "midi"
+      ],
+      "ensemble": "melody_plus_chords",
+      "styles": [
+        "contemporary_pop",
+        "rock",
+        "edm_house_techno",
+        "film_game"
+      ],
+      "regions": [
+        "global (community transcriptions of popular songs)"
+      ],
+      "claimedSize": {
+        "works": 40000,
+        "claim": "over 40,000 chord and melody analyses (site, secondary)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 389128,
+        "arrangementTasks": 0,
+        "assumption": "40000 claimed works × PDMX solo rate (9.73 per work); melody_plus_chords yields no arrangement task — nothing to hide"
+      },
+      "cost": {
+        "model": "negotiate",
+        "note": "written data licence from Hooktheory; would still not clear the songs"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "Terms of Service: no copying, scraping, bulk download, text-and-data mining or redistribution of the TheoryTab database without a written data licence (terms page answered 403; wording from search index)",
+          "source": "https://www.hooktheory.com/terms (403 on the day; secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none — crowd-sourced",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "transcriptions of copyrighted popular songs",
+          "source": "https://www.hooktheory.com/theorytab/about (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": "no text-and-data mining or bulk download without a written data licence",
+      "rightsRecordNeeds": [
+        "cannot be built without the songs' publishers"
+      ],
+      "knownLimitations": [
+        "Lead-sheet level (melody + Roman-numeral chords): no arrangement task even if cleared."
+      ],
+      "auditConfidence": "secondary",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://www.hooktheory.com/terms"
+    },
+    {
+      "id": "WIKIFONIA",
+      "name": "Wikifonia lead-sheet archive",
+      "kind": "community_archive",
+      "classification": "RESEARCH_ONLY",
+      "why": "Wikifonia lead-sheet archive: the licences are permissive but the underlying works are not cleared (copyrighted_transcription). Usable as benchmark or research material; never as training data for a shipped model.",
+      "allLayersRead": false,
+      "formats": [
+        "musicxml"
+      ],
+      "ensemble": "melody_plus_chords",
+      "styles": [
+        "contemporary_pop",
+        "jazz_blues"
+      ],
+      "regions": [
+        "global"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "the domain now resolves to a domain-sale page; no count",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "unavailable",
+        "note": "offline"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "site gone — wikifonia.org is a domain-marketplace page",
+          "source": "http://www.wikifonia.org/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "lead sheets of copyrighted songs, withdrawn after publisher pressure",
+          "source": "PR-60 decision-report (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "cannot be built"
+      ],
+      "knownLimitations": [
+        "Copies circulate as research mirrors; PR-60 refused them and this audit agrees."
+      ],
+      "auditConfidence": "secondary",
+      "acquisition": "NOT_FETCHED",
+      "url": "http://www.wikifonia.org/"
+    },
+    {
+      "id": "MULTTIPOP",
+      "name": "MulTTiPop",
+      "kind": "open_dataset",
+      "classification": "RESEARCH_ONLY",
+      "why": "MulTTiPop: the licences are permissive but the underlying works are not cleared (copyrighted_transcription). Usable as benchmark or research material; never as training data for a shipped model.",
+      "allLayersRead": false,
+      "formats": [
+        "midi",
+        "audio_mix"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "contemporary_pop"
+      ],
+      "regions": [
+        "USA (pop 1930s–2000s)"
+      ],
+      "claimedSize": {
+        "works": 572,
+        "claim": "572 segments, 3.5 hours, multitrack MIDI aligned to commercial pop audio (abstract, secondary)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 37350,
+        "arrangementTasks": 28265,
+        "assumption": "572 claimed works × PDMX multitrack rates (65.30 tasks, 49.41 arrangement tasks per work)"
+      },
+      "cost": {
+        "model": "free",
+        "note": "project site"
+      },
+      "layers": {
+        "compilation": {
+          "stated": null,
+          "source": "not read — https://arxiv.org/abs/2607.08756 — licence not stated in the abstract",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "aligned to 'commercial pop audio'",
+          "source": "arXiv 2607.08756 abstract (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "cannot be built"
+      ],
+      "knownLimitations": [
+        "A transcription benchmark, not a training source."
+      ],
+      "auditConfidence": "secondary",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://arxiv.org/abs/2607.08756"
+    },
+    {
+      "id": "COMMERCIAL_COVER_MIDI_PUBLISHERS",
+      "name": "Commercial cover-MIDI publishers (Geerdes, Hit Trax and peers)",
+      "kind": "commercial_catalogue",
+      "classification": "RESEARCH_ONLY",
+      "why": "Commercial cover-MIDI publishers (Geerdes, Hit Trax and peers): the licences are permissive but the underlying works are not cleared (copyrighted_transcription). Usable as benchmark or research material; never as training data for a shipped model.",
+      "allLayersRead": false,
+      "formats": [
+        "midi"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "contemporary_pop",
+        "rock",
+        "rnb_soul",
+        "latin",
+        "jazz_blues"
+      ],
+      "regions": [
+        "Germany, Australia — international pop repertoire"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "tens of thousands of titles each (not read; both sites refused the connection on the day)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "negotiate",
+        "note": "a training licence would need the publisher AND each composition's rights-holder"
+      },
+      "layers": {
+        "compilation": {
+          "stated": null,
+          "source": "not read — https://www.geerdes.com/en/faq (ECONNREFUSED); https://www.hittrax.com.au/licensing (TLS error)",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — per-title licence for performance use, not read",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "professionally programmed MIDI of copyrighted songs, sold under performance/backing-track licences that clear the composition for performance, not for derivative databases",
+          "source": "industry practice; the publishers' pages were not read (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "publisher licence naming ML training as a permitted use; per-title composition clearance via the relevant society"
+      ],
+      "knownLimitations": [
+        "The closest thing to 'production-style multitrack MIDI of real pop songs' that exists commercially, and doubly uncleared."
+      ],
+      "auditConfidence": "secondary",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://www.geerdes.com/"
+    },
+    {
+      "id": "ISRAELI_COVER_MIDI_MARKET",
+      "name": "Israeli wedding-band / singer MIDI and playback market",
+      "kind": "commercial_catalogue",
+      "classification": "RESEARCH_ONLY",
+      "why": "Israeli wedding-band / singer MIDI and playback market: the licences are permissive but the underlying works are not cleared (copyrighted_transcription). Usable as benchmark or research material; never as training data for a shipped model.",
+      "allLayersRead": false,
+      "formats": [
+        "midi",
+        "audio_stems"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "mizrahi_israeli",
+        "contemporary_pop"
+      ],
+      "regions": [
+        "Israel"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "no catalogue with a count was found; the Hebrew pages found point to scraped international free-MIDI sites or to classical MIDI",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "negotiate",
+        "note": "programmer licence + ACUM/publisher clearance per song; no price basis exists"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "u-music.co.il's Hebrew MIDI page recommends BitMidi, Midiworld, FreeMidi.org — scraped sites — and states no licence; dycom-il.com carries a copyright notice covering its (classical/choral) MIDI files",
+          "source": "https://www.u-music.co.il/post/midi-files; http://dycom-il.com/midi.html",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — no vendor terms for Mizrahi cover MIDI were located",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "cover MIDI of ACUM-administered songs: the programmer's rights and the composition's rights are both required, and neither is granted for ML training by a playback purchase",
+          "source": "https://www.acum.org.il/en/ (which rights ACUM administers)",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "programmer assignment naming ML training; composition clearance per song (ACUM member or publisher); recording rights are not involved for MIDI"
+      ],
+      "knownLimitations": [
+        "Nothing found is a dataset. The Mizrahi MIDI that exists is made for singers' backing tracks and lives on hard drives, not in catalogues with terms.",
+        "This is the route that would actually teach Mizrahi production — and it is the most expensive to clear per work."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://www.u-music.co.il/post/midi-files"
+    },
+    {
+      "id": "GIGAMIDI",
+      "name": "GigaMIDI",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "GigaMIDI: an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": false,
+      "formats": [
+        "midi"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "contemporary_pop",
+        "rock",
+        "edm_house_techno",
+        "hiphop",
+        "jazz_blues",
+        "classical_early"
+      ],
+      "regions": [
+        "global, aggregated (MetaMIDI, Lakh, XMIDI, …)"
+      ],
+      "claimedSize": {
+        "works": 2136218,
+        "claim": "2,136,218 unique MIDI files (dataset card)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 139488369,
+        "arrangementTasks": 105560201,
+        "assumption": "2136218 claimed works × PDMX multitrack rates (65.30 tasks, 49.41 arrangement tasks per work)"
+      },
+      "cost": {
+        "model": "free",
+        "note": "gated Hugging Face access"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0); collected and distributed under Fair Dealing provisions of the Canadian Copyright Act",
+          "source": "https://huggingface.co/datasets/Metacreation/GigaMIDI",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "aggregates MetaMIDI, Lakh, XMIDI, top-MAGD, MASD",
+          "source": "https://huggingface.co/datasets/Metacreation/GigaMIDI",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": "'You agree to use the GigaMIDI dataset only for non-commercial research or education'",
+      "rightsRecordNeeds": [
+        "cannot be built"
+      ],
+      "knownLimitations": [
+        "Already blocks MIDI-RWKV and MIDI-LLM in the model registry."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://huggingface.co/datasets/Metacreation/GigaMIDI"
+    },
+    {
+      "id": "MAESTRO",
+      "name": "MAESTRO v3",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "MAESTRO v3: an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": true,
+      "formats": [
+        "midi",
+        "audio_mix"
+      ],
+      "ensemble": "solo",
+      "styles": [
+        "classical_early"
+      ],
+      "regions": [
+        "International Piano-e-Competition"
+      ],
+      "claimedSize": {
+        "works": 1276,
+        "claim": "~1,276 performances, ~200 hours (dataset page)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 12413,
+        "arrangementTasks": 0,
+        "assumption": "1276 claimed works × PDMX solo rate (9.73 per work); solo yields no arrangement task — nothing to hide"
+      },
+      "cost": {
+        "model": "free",
+        "note": "direct download"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "Creative Commons Attribution Non-Commercial Share-Alike 4.0 (CC BY-NC-SA 4.0)",
+          "source": "https://magenta.tensorflow.org/datasets/maestro",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "uniform — one licence for the release",
+          "source": "https://magenta.tensorflow.org/datasets/maestro",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "17th–early-20th-century repertoire",
+          "source": "https://magenta.tensorflow.org/datasets/maestro",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "yes",
+          "basis": "public_domain_by_age"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "blocked before a record matters"
+      ],
+      "knownLimitations": [
+        "Cleared works, NC compilation: the licence blocks, not the music."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://magenta.tensorflow.org/datasets/maestro"
+    },
+    {
+      "id": "ARIA_MIDI",
+      "name": "Aria-MIDI",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "Aria-MIDI: an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": false,
+      "formats": [
+        "midi"
+      ],
+      "ensemble": "solo",
+      "styles": [
+        "classical_early",
+        "jazz_blues",
+        "contemporary_pop"
+      ],
+      "regions": [
+        "global (solo-piano recordings)"
+      ],
+      "claimedSize": {
+        "works": 1186253,
+        "claim": "1,186,253 MIDI files (dataset card)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 11540102,
+        "arrangementTasks": 0,
+        "assumption": "1186253 claimed works × PDMX solo rate (9.73 per work); solo yields no arrangement task — nothing to hide"
+      },
+      "cost": {
+        "model": "free",
+        "note": "Hugging Face"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "CC-BY-NC-SA 4.0",
+          "source": "https://huggingface.co/datasets/loubb/aria-midi",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "'created by transcribing publicly available solo-piano audio recordings'",
+          "source": "https://huggingface.co/datasets/loubb/aria-midi",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "cannot be built"
+      ],
+      "knownLimitations": [
+        "Blocks the Aria model in the model registry."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://huggingface.co/datasets/loubb/aria-midi"
+    },
+    {
+      "id": "LOS_ANGELES_MIDI",
+      "name": "Los Angeles MIDI Dataset (and the Tegridy / Monster MIDI collections)",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "Los Angeles MIDI Dataset (and the Tegridy / Monster MIDI collections): an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": false,
+      "formats": [
+        "midi"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "contemporary_pop",
+        "rock",
+        "edm_house_techno",
+        "film_game",
+        "classical_early"
+      ],
+      "regions": [
+        "global, scraped"
+      ],
+      "claimedSize": {
+        "works": 404714,
+        "claim": "404,714 MIDIs in v4.0 (dataset card); Tegridy and Monster are further collections by the same author",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 26426561,
+        "arrangementTasks": 19998751,
+        "assumption": "404714 claimed works × PDMX multitrack rates (65.30 tasks, 49.41 arrangement tasks per work)"
+      },
+      "cost": {
+        "model": "free",
+        "note": "Hugging Face"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "cc-by-nc-sa-4.0 (dataset card); Tegridy collections CC BY-NC-SA (search, secondary)",
+          "source": "https://huggingface.co/datasets/projectlosangeles/Los-Angeles-MIDI-Dataset",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none — 'MIDI scrape'",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "scraped; sources not disclosed",
+          "source": "https://huggingface.co/datasets/projectlosangeles/Los-Angeles-MIDI-Dataset",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "cannot be built"
+      ],
+      "knownLimitations": [],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://huggingface.co/datasets/projectlosangeles/Los-Angeles-MIDI-Dataset"
+    },
+    {
+      "id": "SYMBTR",
+      "name": "SymbTr — Turkish makam symbolic collection",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "SymbTr — Turkish makam symbolic collection: an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": true,
+      "formats": [
+        "musicxml",
+        "midi"
+      ],
+      "ensemble": "melody_only",
+      "styles": [
+        "middle_eastern_maqam"
+      ],
+      "regions": [
+        "Turkey (Ottoman/Turkish makam)"
+      ],
+      "claimedSize": {
+        "works": 2200,
+        "claim": "2,200 pieces, 155 makams, 88 usuls, 56 forms, ~865,000 notes (README)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 21402,
+        "arrangementTasks": 0,
+        "assumption": "2200 claimed works × PDMX solo rate (9.73 per work); melody_only yields no arrangement task — nothing to hide"
+      },
+      "cost": {
+        "model": "negotiate",
+        "note": "MTG would have to relicense; the NC is theirs to lift"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International",
+          "source": "https://github.com/MTG/SymbTr",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "uniform — one licence for the collection",
+          "source": "https://github.com/MTG/SymbTr",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "'scores are selected from reliable sources'; many are classical Ottoman works PD by age, some 20th-century composers are not — no per-work statement",
+          "source": "https://github.com/MTG/SymbTr",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "traditional_unattributed"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "blocked before a record matters; if relicensed: composer death year per piece, makam, usul"
+      ],
+      "knownLimitations": [
+        "The best makam-adjacent symbolic corpus in existence, and NC. Turkish makam shares the modal world of Arabic maqam and of much Mizrahi repertoire; a relicensing conversation with MTG is the single highest-value negotiation for the Middle-Eastern family.",
+        "Monophonic scores: modal/melodic prior only, no arrangement tasks."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/MTG/SymbTr"
+    },
+    {
+      "id": "SARAGA",
+      "name": "Saraga (Carnatic + Hindustani)",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "Saraga (Carnatic + Hindustani): an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": true,
+      "formats": [
+        "audio_stems"
+      ],
+      "ensemble": "audio_stems",
+      "styles": [
+        "indian"
+      ],
+      "regions": [
+        "India"
+      ],
+      "claimedSize": {
+        "works": 357,
+        "claim": "249 Carnatic recordings (52.7 h) + 108 Hindustani (43.6 h) (companion site)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 0,
+        "arrangementTasks": 0,
+        "assumption": "audio stems: zero symbolic tasks until transcribed, and a transcription is not the human's notes"
+      },
+      "cost": {
+        "model": "free",
+        "note": "NC"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "data (audio, annotations): Creative Commons Attribution-NonCommercial 4.0 International; code: AGPL-3.0",
+          "source": "https://raw.githubusercontent.com/MTG/saraga/master/LICENSE.md",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "uniform — one data licence",
+          "source": "https://raw.githubusercontent.com/MTG/saraga/master/LICENSE.md",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "concert recordings with artist permission for research",
+          "source": "https://mtg.github.io/saraga/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "blocked"
+      ],
+      "knownLimitations": [
+        "Audio with multitrack stems and no notation: even relicensed it yields no symbolic task."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/MTG/saraga"
+    },
+    {
+      "id": "CARNATIC_VARNAM",
+      "name": "Carnatic Varnam Dataset",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "Carnatic Varnam Dataset: an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": true,
+      "formats": [
+        "audio_mix",
+        "esac"
+      ],
+      "ensemble": "melody_only",
+      "styles": [
+        "indian"
+      ],
+      "regions": [
+        "India (Carnatic)"
+      ],
+      "claimedSize": {
+        "works": 28,
+        "claim": "28 solo vocal recordings with taala annotations and machine-readable swara notation (site)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 272,
+        "arrangementTasks": 0,
+        "assumption": "28 claimed works × PDMX solo rate (9.73 per work); melody_only yields no arrangement task — nothing to hide"
+      },
+      "cost": {
+        "model": "free",
+        "note": "NC"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "CC BY-NC-ND 3.0 ES ('All content is licensed under a Creative Commons License … unless otherwise specified')",
+          "source": "https://compmusic.upf.edu/carnatic-varnam-dataset",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "uniform — site-wide licence",
+          "source": "https://compmusic.upf.edu/carnatic-varnam-dataset",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "varnams are traditional compositions, mostly by composers dead > 70 years; performers' rights in the recordings not addressed",
+          "source": "https://compmusic.upf.edu/carnatic-varnam-dataset",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "traditional_unattributed"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "blocked"
+      ],
+      "knownLimitations": [
+        "The only machine-readable Indian notation this audit found, 28 items, NC-ND."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://compmusic.upf.edu/carnatic-varnam-dataset"
+    },
+    {
+      "id": "JINGJU_SCORES",
+      "name": "Jingju Music Scores Collection (Beijing opera)",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "Jingju Music Scores Collection (Beijing opera): an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": false,
+      "formats": [
+        "musicxml"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "east_asian"
+      ],
+      "regions": [
+        "China (jingju)"
+      ],
+      "claimedSize": {
+        "works": 108,
+        "claim": "108 MusicXML scores, 1,084 melodic lines, each with a separate jinghu accompaniment staff (search summary of the record, secondary)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 7052,
+        "arrangementTasks": 5337,
+        "assumption": "108 claimed works × PDMX multitrack rates (65.30 tasks, 49.41 arrangement tasks per work)"
+      },
+      "cost": {
+        "model": "free",
+        "note": "Zenodo"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "the Zenodo record answered 504 on the day; the CompMusic site's default is CC BY-NC-ND 3.0 ES 'unless otherwise specified'",
+          "source": "https://compmusic.upf.edu/datasets footer (read) + https://zenodo.org/records/3233843 (not read)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — https://zenodo.org/records/3233843",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "transnotated from printed jianpu editions of traditional arias",
+          "source": "search summary (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "unknown",
+          "basis": "traditional_unattributed"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "the record's own licence; the printed editions' rights"
+      ],
+      "knownLimitations": [
+        "Voice + jinghu: a real two-part traditional arrangement corpus, tiny, and on the MTG site default it is NC. The record itself must be read before that verdict is final."
+      ],
+      "auditConfidence": "secondary",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://zenodo.org/records/3233843"
+    },
+    {
+      "id": "MEERTENS_TUNE_COLLECTIONS",
+      "name": "Meertens Tune Collections (MTC-ANN, MTC-FS-INST)",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "Meertens Tune Collections (MTC-ANN, MTC-FS-INST): an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": true,
+      "formats": [
+        "kern",
+        "midi"
+      ],
+      "ensemble": "melody_only",
+      "styles": [
+        "western_folk"
+      ],
+      "regions": [
+        "Netherlands"
+      ],
+      "claimedSize": {
+        "works": 18360,
+        "claim": "MTC-ANN 360 + MTC-FS-INST ~18,000 melodies (README)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 178610,
+        "arrangementTasks": 0,
+        "assumption": "18360 claimed works × PDMX solo rate (9.73 per work); melody_only yields no arrangement task — nothing to hide"
+      },
+      "cost": {
+        "model": "free",
+        "note": "NC"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported",
+          "source": "https://raw.githubusercontent.com/pvankranenburg/MTCFeatures/master/LICENCE_Data",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "uniform — one data licence",
+          "source": "https://raw.githubusercontent.com/pvankranenburg/MTCFeatures/master/LICENCE_Data",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "Dutch folk songs from historical sources",
+          "source": "https://github.com/pvankranenburg/MTCFeatures",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "yes",
+          "basis": "traditional_unattributed"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "blocked"
+      ],
+      "knownLimitations": [],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/pvankranenburg/MTCFeatures"
+    },
+    {
+      "id": "BACH_370_CHORALES_HUMDRUM",
+      "name": "Bach 370 chorales (craigsapp Humdrum edition)",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "Bach 370 chorales (craigsapp Humdrum edition): an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": true,
+      "formats": [
+        "kern"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "classical_early"
+      ],
+      "regions": [
+        "Germany"
+      ],
+      "claimedSize": {
+        "works": 370,
+        "claim": "370 chorales",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 24160,
+        "arrangementTasks": 18283,
+        "assumption": "370 claimed works × PDMX multitrack rates (65.30 tasks, 49.41 arrangement tasks per work)"
+      },
+      "cost": {
+        "model": "free",
+        "note": "NC"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) on the digital edition",
+          "source": "https://raw.githubusercontent.com/craigsapp/bach-370-chorales/master/LICENSE.txt",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "uniform — one licence for the edition",
+          "source": "https://raw.githubusercontent.com/craigsapp/bach-370-chorales/master/LICENSE.txt",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "J. S. Bach",
+          "source": "https://github.com/craigsapp/bach-370-chorales",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "yes",
+          "basis": "public_domain_by_age"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "blocked; PDMX and Mutopia carry the same chorales under open terms"
+      ],
+      "knownLimitations": [
+        "Recorded as the read example of the KernScores pattern: PD music, NC edition. The KernScores entry below stays unread because every collection there has its own terms."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/craigsapp/bach-370-chorales"
+    },
+    {
+      "id": "THESESSION_DATA",
+      "name": "The Session — tune data dump",
+      "kind": "community_archive",
+      "classification": "BLOCKED_LICENSE",
+      "why": "The Session — tune data dump: an explicit ban on AI/ML training on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": false,
+      "formats": [
+        "abc"
+      ],
+      "ensemble": "melody_only",
+      "styles": [
+        "western_folk"
+      ],
+      "regions": [
+        "Ireland, Scotland, and the diaspora"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "count not read; tens of thousands of tune settings (secondary)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "blocked by the LLM clause"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "ODC Open Database License (ODbL) — commercial use permitted, share-alike; and, at the top of LICENSE.md: 'You may not use, adapt, modify, or process the material in any way with Large Language Models' (accessibility exception)",
+          "source": "https://raw.githubusercontent.com/adactio/TheSession-data/main/LICENSE.md",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — ODbL covers the database, 'not … rights in individual Contents'; per-tune rights are the contributors'",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "mostly traditional tunes; members also post their own compositions",
+          "source": "https://raw.githubusercontent.com/adactio/TheSession-data/main/LICENSE.md",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "traditional_unattributed"
+        }
+      },
+      "statedRestriction": "may not process the material in any way with Large Language Models",
+      "rightsRecordNeeds": [
+        "blocked"
+      ],
+      "knownLimitations": [
+        "Whether a symbolic-music transformer is a 'Large Language Model' is arguable; the publisher's intent is not. Treated as a ban."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/adactio/TheSession-data"
+    },
+    {
+      "id": "ZEMERESHET",
+      "name": "Zemereshet (זמרשת) — early Hebrew song archive",
+      "kind": "community_archive",
+      "classification": "BLOCKED_LICENSE",
+      "why": "Zemereshet (זמרשת) — early Hebrew song archive: an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": false,
+      "formats": [
+        "pdf_notation",
+        "audio_mix"
+      ],
+      "ensemble": "melody_only",
+      "styles": [
+        "mizrahi_israeli",
+        "jewish_diaspora"
+      ],
+      "regions": [
+        "Israel / pre-state Yishuv (Shirei Eretz Yisrael, not Mizrahi)"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "thousands of songs (site; no count read)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "negotiate",
+        "note": "the site's terms block; PD-by-age songs could be re-transcribed from PD sources, per composer"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "'published on the site with the courtesy of rights holders and Zemereshet and are intended for private, non-commercial use only'; site states recordings through 1966 are public domain in Israel and works otherwise protected 70 years after the author's death",
+          "source": "https://www.zemereshet.co.il/ (terms, Hebrew)",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — per-song rights sit with composers/estates; the site publishes by courtesy",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "composers of the 1880s–1948 repertoire; many died after 1955, so PD status is per composer",
+          "source": "https://www.zemereshet.co.il/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "public_domain_by_age"
+        }
+      },
+      "statedRestriction": "private, non-commercial use only; no copying without written permission of Zemereshet and the rights holders",
+      "rightsRecordNeeds": [
+        "composer and lyricist death years (≤ 1955 → PD in Israel); source edition; Zemereshet's own written permission if its files are used"
+      ],
+      "knownLimitations": [
+        "This is Israeli song, not Mizrahi music, and it is melody with lyrics — sheet music, not production.",
+        "Its one durable gift is the rule it states: Israeli PD = author dead 70 years; recordings through 1966 PD."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://www.zemereshet.co.il/"
+    },
+    {
+      "id": "DIGITAL_ARABIC_MAQAM_ARCHIVE",
+      "name": "Digital Arabic Maqām Archive (diarmaqar.net)",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "Digital Arabic Maqām Archive (diarmaqar.net): an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": true,
+      "formats": [
+        "theory_only"
+      ],
+      "ensemble": "none",
+      "styles": [
+        "middle_eastern_maqam"
+      ],
+      "regions": [
+        "Arab world (theory sources over nine centuries)"
+      ],
+      "claimedSize": {
+        "works": 0,
+        "claim": "tuning systems, ajnās, maqāmāt, suyūr, intiqālāt — theory, no repertoire (site)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 0,
+        "arrangementTasks": 0,
+        "assumption": "no works (theory data, a rights route, or an offline site)"
+      },
+      "cost": {
+        "model": "free",
+        "note": "public JSON API; NC"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "Licensed under CC BY-NC-SA 4.0",
+          "source": "https://diarmaqar.net/en",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "uniform — one licence",
+          "source": "https://diarmaqar.net/en",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "theory data, no works",
+          "source": "https://diarmaqar.net/en",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "yes",
+          "basis": "not_applicable"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "blocked; and it carries no works anyway"
+      ],
+      "knownLimitations": [
+        "Useful as a reference for the universal-style module's maqam pitch systems (PR-66 already has 48 systems); not a training source and NC."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://diarmaqar.net/en"
+    },
+    {
+      "id": "IRMA_IRANIAN",
+      "name": "IRMA — Iranian classical audio-MIDI corpus",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "IRMA — Iranian classical audio-MIDI corpus: an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": false,
+      "formats": [
+        "midi",
+        "audio_mix"
+      ],
+      "ensemble": "melody_only",
+      "styles": [
+        "middle_eastern_maqam"
+      ],
+      "regions": [
+        "Iran"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "count not read",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "NC"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "symbolic and analytical components under CC BY-NC 4.0 (search snippet of the paper)",
+          "source": "arXiv 2508.19876 (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — not read",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "Iranian classical performances",
+          "source": "arXiv 2508.19876 (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "unknown",
+          "basis": "traditional_unattributed"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "blocked on the stated NC; the paper should be read if that changes"
+      ],
+      "knownLimitations": [],
+      "auditConfidence": "secondary",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://arxiv.org/pdf/2508.19876"
+    },
+    {
+      "id": "CHORDONOMICON",
+      "name": "Chordonomicon",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "Chordonomicon: an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": false,
+      "formats": [
+        "theory_only"
+      ],
+      "ensemble": "melody_plus_chords",
+      "styles": [
+        "contemporary_pop",
+        "rock"
+      ],
+      "regions": [
+        "global (user-submitted chord sheets)"
+      ],
+      "claimedSize": {
+        "works": 679807,
+        "claim": "679,807 rows of chord progressions (dataset viewer)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 6613296,
+        "arrangementTasks": 0,
+        "assumption": "679807 claimed works × PDMX solo rate (9.73 per work); melody_plus_chords yields no arrangement task — nothing to hide"
+      },
+      "cost": {
+        "model": "free",
+        "note": "NC"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "cc-by-nc-4.0",
+          "source": "https://huggingface.co/datasets/ailsntua/Chordonomicon",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "chord progressions of copyrighted songs from a guitar-tab site (paper, secondary)",
+          "source": "arXiv 2410.22046 (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "blocked"
+      ],
+      "knownLimitations": [
+        "Chords only, no melody or notes: not an arrangement source in any case."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://huggingface.co/datasets/ailsntua/Chordonomicon"
+    },
+    {
+      "id": "MUSDB18",
+      "name": "MUSDB18 / MUSDB18-HQ",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "MUSDB18 / MUSDB18-HQ: an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": true,
+      "formats": [
+        "audio_stems"
+      ],
+      "ensemble": "audio_stems",
+      "styles": [
+        "contemporary_pop",
+        "rock",
+        "hiphop",
+        "edm_house_techno"
+      ],
+      "regions": [
+        "global"
+      ],
+      "claimedSize": {
+        "works": 150,
+        "claim": "150 full tracks, ~10 hours, 4 stems (site)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 0,
+        "arrangementTasks": 0,
+        "assumption": "audio stems: zero symbolic tasks until transcribed, and a transcription is not the human's notes"
+      },
+      "cost": {
+        "model": "free",
+        "note": "Zenodo request"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "'the tracks can only be used for academic purposes'; per-track licences listed (46 MedleyDB tracks CC BY-NC-SA 4.0, 100 from the Mixing Secrets library, 2 Native Instruments, 2 Easton Ellises CC BY-NC-SA 3.0)",
+          "source": "https://sigsep.github.io/datasets/musdb.html",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "per-track list published; every source is NC or educational-only",
+          "source": "https://sigsep.github.io/datasets/musdb.html",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "original songs by their artists, licensed to the dataset for academic use",
+          "source": "https://sigsep.github.io/datasets/musdb.html",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "no",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": "academic purposes only",
+      "rightsRecordNeeds": [
+        "blocked"
+      ],
+      "knownLimitations": [
+        "The reference stem dataset of the separation field; academic only."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://sigsep.github.io/datasets/musdb.html"
+    },
+    {
+      "id": "MOISESDB",
+      "name": "MoisesDB",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "MoisesDB: an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": true,
+      "formats": [
+        "audio_stems"
+      ],
+      "ensemble": "audio_stems",
+      "styles": [
+        "contemporary_pop",
+        "rock",
+        "rnb_soul",
+        "hiphop",
+        "latin"
+      ],
+      "regions": [
+        "global"
+      ],
+      "claimedSize": {
+        "works": 240,
+        "claim": "240 tracks (paper, secondary; README gives no count)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 0,
+        "arrangementTasks": 0,
+        "assumption": "audio stems: zero symbolic tasks until transcribed, and a transcription is not the human's notes"
+      },
+      "cost": {
+        "model": "free",
+        "note": "NC"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "'MoisesDB is distributed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0)'",
+          "source": "https://github.com/moises-ai/moises-db",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "uniform — one licence",
+          "source": "https://github.com/moises-ai/moises-db",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "songs by artists who licensed them to Moises for the dataset",
+          "source": "https://github.com/moises-ai/moises-db",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "blocked"
+      ],
+      "knownLimitations": [],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/moises-ai/moises-db"
+    },
+    {
+      "id": "MEDLEYDB",
+      "name": "MedleyDB 1.0 / 2.0",
+      "kind": "open_dataset",
+      "classification": "BLOCKED_LICENSE",
+      "why": "MedleyDB 1.0 / 2.0: an explicit non-commercial term on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": false,
+      "formats": [
+        "audio_stems"
+      ],
+      "ensemble": "audio_stems",
+      "styles": [
+        "contemporary_pop",
+        "rock",
+        "jazz_blues",
+        "classical_early",
+        "western_folk",
+        "hiphop"
+      ],
+      "regions": [
+        "USA"
+      ],
+      "claimedSize": {
+        "works": 196,
+        "claim": "122 multitracks (1.0), 196 total with 2.0 (site)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 0,
+        "arrangementTasks": 0,
+        "assumption": "audio stems: zero symbolic tasks until transcribed, and a transcription is not the human's notes"
+      },
+      "cost": {
+        "model": "free",
+        "note": "Zenodo request; NC"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "CC BY-NC-SA 4.0 — stated on the MUSDB18 page for the 46 MedleyDB tracks it includes; MedleyDB's own page says 'royalty-free' and names no licence",
+          "source": "https://sigsep.github.io/datasets/musdb.html + https://medleydb.weebly.com/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — per-track metadata on Zenodo, request-gated",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "original songs by participating artists",
+          "source": "https://medleydb.weebly.com/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "blocked"
+      ],
+      "knownLimitations": [],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://medleydb.weebly.com/"
+    },
+    {
+      "id": "SPLICE_SOUNDS",
+      "name": "Splice Sounds (samples, loops, MIDI)",
+      "kind": "commercial_pack",
+      "classification": "BLOCKED_LICENSE",
+      "why": "Splice Sounds (samples, loops, MIDI): an explicit ban on AI/ML training on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": true,
+      "formats": [
+        "midi",
+        "audio_stems"
+      ],
+      "ensemble": "melody_plus_chords",
+      "styles": [
+        "edm_house_techno",
+        "hiphop",
+        "contemporary_pop",
+        "rnb_soul",
+        "latin",
+        "reggae_afrobeat",
+        "middle_eastern_maqam"
+      ],
+      "regions": [
+        "global marketplace"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "millions of sounds (marketing); MIDI packs are a fraction",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "one_time",
+        "note": "credits — irrelevant, the AI clause blocks"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "perpetual right to use Sounds 'in combination with other sounds in music productions to create new recordings'; 'you may not… use the Sounds or portions of Sounds… as source or training material for generative or other types of artificial intelligence models'; no redistribution except inside a New Recording",
+          "source": "https://splice.com/terms",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "uniform — one Terms of Use for all Sounds",
+          "source": "https://splice.com/terms",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "content licensed to Splice by its producers for the Sounds licence",
+          "source": "https://splice.com/terms",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "yes",
+          "basis": "cc_release_by_author"
+        }
+      },
+      "statedRestriction": "may not use the Sounds as source or training material for generative or other types of artificial intelligence models",
+      "rightsRecordNeeds": [
+        "blocked"
+      ],
+      "knownLimitations": [
+        "The one marketplace with Middle-Eastern / Mizrahi-flavoured production MIDI packs at scale, and it bans exactly our use."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://splice.com/terms"
+    },
+    {
+      "id": "TOONTRACK_MIDI_PACKS",
+      "name": "Toontrack MIDI packs (EZdrummer, EZkeys, EZbass)",
+      "kind": "commercial_pack",
+      "classification": "BLOCKED_LICENSE",
+      "why": "Toontrack MIDI packs (EZdrummer, EZkeys, EZbass): an explicit ban on AI/ML training on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": true,
+      "formats": [
+        "midi"
+      ],
+      "ensemble": "mixed",
+      "styles": [
+        "rock",
+        "contemporary_pop",
+        "hiphop",
+        "edm_house_techno",
+        "rnb_soul",
+        "latin",
+        "reggae_afrobeat",
+        "jazz_blues",
+        "western_folk"
+      ],
+      "regions": [
+        "Sweden (studio-played packs by named session players)"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "hundreds of packs, thousands of grooves each (catalogue, not counted)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "one_time",
+        "note": "irrelevant; blocked"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "EULA effective 2026-06-22, §6: prohibited to 'use any Product or Product Component, in whole or in part, including any sounds, MIDI files, or presets related thereto, as a source to develop or train any artificial intelligence technology'; use permitted 'only in the context of creating musical arrangements, recordings of arrangements, audiovisual works, video games and live performances'",
+          "source": "https://www.toontrack.com/end-user-license-agreement/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "uniform — one EULA per product; 'Product' includes MIDI packs",
+          "source": "https://www.toontrack.com/end-user-license-agreement/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "original grooves played by hired drummers/pianists/bassists for Toontrack",
+          "source": "https://www.toontrack.com/end-user-license-agreement/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "yes",
+          "basis": "commissioned_original"
+        }
+      },
+      "statedRestriction": "may not use any MIDI file as a source to develop or train any artificial intelligence technology",
+      "rightsRecordNeeds": [
+        "blocked; a bespoke licence from Toontrack naming ML training would be the only route"
+      ],
+      "knownLimitations": [
+        "Musically the closest cleared-by-construction source to what the arranger must write (played drums, bass, keys in production styles). Its EULA changed in 2026 to forbid exactly this."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://www.toontrack.com/end-user-license-agreement/"
+    },
+    {
+      "id": "LOOPMASTERS_LOOPCLOUD",
+      "name": "Loopmasters / Loopcloud sample and MIDI packs",
+      "kind": "commercial_pack",
+      "classification": "BLOCKED_LICENSE",
+      "why": "Loopmasters / Loopcloud sample and MIDI packs: an explicit ban on AI/ML training on the compilation, the works, or the publisher's own terms. Extracting tasks from it would not remove it.",
+      "allLayersRead": false,
+      "formats": [
+        "midi",
+        "audio_stems"
+      ],
+      "ensemble": "melody_plus_chords",
+      "styles": [
+        "edm_house_techno",
+        "hiphop",
+        "contemporary_pop",
+        "reggae_afrobeat",
+        "latin"
+      ],
+      "regions": [
+        "UK marketplace"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "not counted",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "one_time",
+        "note": "irrelevant; blocked"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "licence prohibits using any Loopmasters or Loopcloud product 'for the purpose of training, developing or enhancing any content generated by AI systems, machine learning models or any similar technology' (help-centre article; the page answered 403 to this audit, wording from the search index)",
+          "source": "https://help.loopmasters.com/hc/en-us/articles/27012699080348-Loopmasters-License-Agreement (403; secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — per-label licences (e.g. Big Fish Audio) exist and were not read",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "producer-made content licensed to Loopmasters",
+          "source": "search (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "yes",
+          "basis": "cc_release_by_author"
+        }
+      },
+      "statedRestriction": "prohibited for the purpose of training, developing or enhancing AI systems or machine learning models",
+      "rightsRecordNeeds": [
+        "blocked"
+      ],
+      "knownLimitations": [
+        "Blocked on a secondary reading of an explicit ban — the conservative direction. Reading the page would not change the verdict."
+      ],
+      "auditConfidence": "secondary",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://help.loopmasters.com/hc/en-us/articles/27012699080348-Loopmasters-License-Agreement"
+    },
+    {
+      "id": "IMSLP_PD_CC0_SUBSET",
+      "name": "IMSLP — public-domain / CC0 works (incl. the TiMauzi imslp-midi-cc0-1.0 crawl)",
+      "kind": "public_domain_archive",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "IMSLP — public-domain / CC0 works (incl. the TiMauzi imslp-midi-cc0-1.0 crawl): unresolved — underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": true,
+      "formats": [
+        "midi",
+        "musicxml",
+        "pdf_notation"
+      ],
+      "ensemble": "mixed",
+      "styles": [
+        "classical_early",
+        "latin",
+        "western_folk",
+        "jewish_diaspora"
+      ],
+      "regions": [
+        "global; PD Latin (Nazareth d. 1934, Villoldo d. 1919, Gardel d. 1935) and early Jewish/Hebrew art song exist per work"
+      ],
+      "claimedSize": {
+        "works": 1113,
+        "claim": "1,113 MIDI entries in the CC0/PD crawl of 2024-07 (dataset card); IMSLP itself hosts far more, mostly PDF",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "mixed ensemble with unknown multitrack share; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "per-work check is the cost"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "Licensing policy: contributor options CC0, CC BY, CC BY-SA, Performance-Restricted variants; the commercially-restrictive CC variants are 'deprecated and their use is strongly discouraged'; NoDerivs no longer allowed; PD by country rule (US pre-1931; EU/Israel life + 70; Canada life + 50 pre-1972 deaths)",
+          "source": "https://imslp.org/wiki/IMSLP:Creative_Commons_and_Performance_Restricted_licenses + https://imslp.org/wiki/IMSLP:Copyright_Made_Simple",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": "per-file licence tag on IMSLP; the HF crawl kept only 'public domain and cc0-1.0'",
+          "source": "https://huggingface.co/datasets/TiMauzi/imslp-midi-cc0-1.0",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "underlyingWorks": {
+          "stated": "PD status is per country; the crawl includes 'Modern (231)' and 'Early 20th century (28)' entries whose composers may not be dead 70 years — the Israeli rule — so each work needs a death-year check",
+          "source": "https://huggingface.co/datasets/TiMauzi/imslp-midi-cc0-1.0",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "public_domain_by_age"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "IMSLP work id, file licence tag (CC0/PD only), composer AND arranger death years ≤ 1955, country-of-PD rule applied, the MIDI's own uploader licence"
+      ],
+      "knownLimitations": [
+        "Mostly PDF; the MIDI/MusicXML minority is what the crawl found. Multitrack share unknown.",
+        "Not a target style except for PD Latin salon repertoire and the odd Ottoman/Jewish art song; both need a per-work search, none found counted."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://imslp.org/wiki/IMSLP:Creative_Commons_and_Performance_Restricted_licenses"
+    },
+    {
+      "id": "CPDL",
+      "name": "Choral Public Domain Library (CPDL)",
+      "kind": "public_domain_archive",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "Choral Public Domain Library (CPDL): unresolved — compilation licence, per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "musicxml",
+        "midi",
+        "pdf_notation"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "classical_early"
+      ],
+      "regions": [
+        "Europe (choral)"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "tens of thousands of choral editions (not read; every CPDL page answered 403)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "download"
+      },
+      "layers": {
+        "compilation": {
+          "stated": null,
+          "source": "not read — https://www.cpdl.org/wiki/index.php/ChoralWiki:CPDL (403), ChoralWiki:CPDL_License (403), ChoralWiki:Copyright (403)",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — per-edition licence (CPDL licence, CC variants incl. NC, Personal) — not read",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": null,
+          "source": "not read — PD by age for most; contemporary editions and compositions exist",
+          "readOn": null,
+          "confidence": "unknown",
+          "cleared": "unknown",
+          "basis": "public_domain_by_age"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "edition licence string, composer death year, editor's licence"
+      ],
+      "knownLimitations": [
+        "Choral SATB is multitrack to the extractor but not a target style."
+      ],
+      "auditConfidence": "unknown",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://www.cpdl.org/wiki/index.php/ChoralWiki:CPDL"
+    },
+    {
+      "id": "BM_DATASET",
+      "name": "BMdataset (Baroque LilyPond)",
+      "kind": "open_dataset",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "BMdataset (Baroque LilyPond): unresolved — compilation licence, per-work licence. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "lilypond"
+      ],
+      "ensemble": "mixed",
+      "styles": [
+        "classical_early"
+      ],
+      "regions": [
+        "Europe (Baroque)"
+      ],
+      "claimedSize": {
+        "works": 393,
+        "claim": "393 LilyPond scores, 2,646 movements, transcribed from Baroque manuscripts (abstract)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "mixed ensemble with unknown multitrack share; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "likely; unread"
+      },
+      "layers": {
+        "compilation": {
+          "stated": null,
+          "source": "not read — the arXiv page shows the paper's CC BY 4.0, not the dataset's; the data licence was not read",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — not read",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "Baroque manuscripts",
+          "source": "https://arxiv.org/abs/2604.10628",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "yes",
+          "basis": "public_domain_by_age"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "data licence; transcriber attribution"
+      ],
+      "knownLimitations": [
+        "Not a target style."
+      ],
+      "auditConfidence": "secondary",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://arxiv.org/abs/2604.10628"
+    },
+    {
+      "id": "KERNSCORES_HUMDRUM_DATA",
+      "name": "KernScores / humdrum-data (per-collection licences)",
+      "kind": "public_domain_archive",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "KernScores / humdrum-data (per-collection licences): unresolved — per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "kern"
+      ],
+      "ensemble": "mixed",
+      "styles": [
+        "classical_early",
+        "western_folk",
+        "east_asian"
+      ],
+      "regions": [
+        "Europe; Essen (Germany, Poland, China); Native American songs (Densmore); child ballads"
+      ],
+      "claimedSize": {
+        "works": 26490,
+        "claim": "26,490 files, 18.4 M notes (humdrum-data README); kern.ccarh.org states 108,703 files",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "mixed ensemble with unknown multitrack share; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "git"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "no umbrella licence: each collection's README and the files' YEC/YEM reference records carry the terms",
+          "source": "https://github.com/humdrum-tools/humdrum-data",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — per collection; only bach-370-chorales was read (NC — see its own entry)",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "PD composers and traditional song for the most part",
+          "source": "https://github.com/humdrum-tools/humdrum-data",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "public_domain_by_age"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "collection README licence, YEC/YEM records per file, composer death year"
+      ],
+      "knownLimitations": [
+        "The one read collection is NC; expect the same for other craigsapp editions. Essen's China sub-collection (~2,000 Han folk melodies) is the only East-Asian symbolic material this audit found that could be PD — melody only."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/humdrum-tools/humdrum-data"
+    },
+    {
+      "id": "ESSEN_FOLKSONG_ESAC",
+      "name": "Essen Folksong Collection (EsAC)",
+      "kind": "public_domain_archive",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "Essen Folksong Collection (EsAC): unresolved — compilation licence, per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "esac",
+        "kern",
+        "midi"
+      ],
+      "ensemble": "melody_only",
+      "styles": [
+        "western_folk",
+        "east_asian",
+        "balkan"
+      ],
+      "regions": [
+        "Germany, Poland, China; minor European collections"
+      ],
+      "claimedSize": {
+        "works": 20000,
+        "claim": "'20.000 songs and instrumental melodies, mostly from Germany, Poland and China' (site)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 194564,
+        "arrangementTasks": 0,
+        "assumption": "20000 claimed works × PDMX solo rate (9.73 per work); melody_only yields no arrangement task — nothing to hide"
+      },
+      "cost": {
+        "model": "free",
+        "note": "download; terms unknown"
+      },
+      "layers": {
+        "compilation": {
+          "stated": null,
+          "source": "not read — https://www.esac-data.org/ — no licence or terms stated on the site",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "traditional folk melodies from printed collections; the encodings are the Essen project's",
+          "source": "https://www.esac-data.org/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "traditional_unattributed"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "a written statement from esac-data.org on reuse; per-collection printed source and its date"
+      ],
+      "knownLimitations": [
+        "Melody only: zero arrangement tasks. The Balkan share is 'minor collections' — not counted."
+      ],
+      "auditConfidence": "unknown",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://www.esac-data.org/"
+    },
+    {
+      "id": "NOTTINGHAM_MUSIC_DATABASE",
+      "name": "Nottingham Music Database (ABC)",
+      "kind": "public_domain_archive",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "Nottingham Music Database (ABC): unresolved — per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "abc"
+      ],
+      "ensemble": "melody_plus_chords",
+      "styles": [
+        "western_folk"
+      ],
+      "regions": [
+        "Britain, USA"
+      ],
+      "claimedSize": {
+        "works": 1018,
+        "claim": "≈1,018 tunes across jigs, hornpipes, reels, waltzes, Ashover (abc.sourceforge.net index)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 9903,
+        "arrangementTasks": 0,
+        "assumption": "1018 claimed works × PDMX solo rate (9.73 per work); melody_plus_chords yields no arrangement task — nothing to hide"
+      },
+      "cost": {
+        "model": "free",
+        "note": "download; terms unknown"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "no general licence stated; for the Ashover set 'the IPR associated with the original NMD format collection reside with Mick Peat'",
+          "source": "https://abc.sourceforge.net/NMD/ + https://ifdo.ca/~seymour/nottingham/nottingham.html",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "traditional dance tunes",
+          "source": "https://ifdo.ca/~seymour/nottingham/nottingham.html",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "traditional_unattributed"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "written permission from the compiler's estate or the ABC editors; tune provenance"
+      ],
+      "knownLimitations": [
+        "Melody + chord symbols: needs an arrangement step to become a task, and PR-60 said so."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://abc.sourceforge.net/NMD/"
+    },
+    {
+      "id": "KLEZMER_ABC_JC",
+      "name": "JC's ABC Klezmer tunes (trillian.mit.edu)",
+      "kind": "community_archive",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "JC's ABC Klezmer tunes (trillian.mit.edu): unresolved — per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "abc"
+      ],
+      "ensemble": "melody_only",
+      "styles": [
+        "jewish_diaspora",
+        "balkan"
+      ],
+      "regions": [
+        "Eastern-European Jewish; some Balkan/Romanian tunes 'that fit the style'"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "hundreds of ABC files (index listing; not counted)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "ask the compiler"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "no licence or copyright statement; 'The files here are used by the folks that I play klezmer music with'",
+          "source": "http://trillian.mit.edu/~jc/music/abc/Klezmer/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "traditional bulgars, freylekhs, khosidls, horas, niguns — mostly PD by age, some 20th-century composed tunes",
+          "source": "http://trillian.mit.edu/~jc/music/abc/Klezmer/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "traditional_unattributed"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "compiler's written permission; per-tune composer where known"
+      ],
+      "knownLimitations": [
+        "Melody only; no arrangement task. The closest thing to a Jewish-diaspora symbolic corpus that exists in the open."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "http://trillian.mit.edu/~jc/music/abc/Klezmer/"
+    },
+    {
+      "id": "JEWISH_MIDI_UCI",
+      "name": "Jewish MIDI files (Dan Hirschberg, UC Irvine)",
+      "kind": "community_archive",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "Jewish MIDI files (Dan Hirschberg, UC Irvine): unresolved — per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "midi"
+      ],
+      "ensemble": "mixed",
+      "styles": [
+        "jewish_diaspora",
+        "mizrahi_israeli"
+      ],
+      "regions": [
+        "USA (holiday songs, Hatikva, Hava Nagila, Yerushalayim Shel Zahav)"
+      ],
+      "claimedSize": {
+        "works": 30,
+        "claim": "≈30 MIDI files, last modified 1998 (page)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "mixed ensemble with unknown multitrack share; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "negligible size"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "no licence or usage statement",
+          "source": "https://ics.uci.edu/~dan/midi/jewish/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "mixed: traditional (Dayenu, Maoz Tsur) and copyrighted (Yerushalayim Shel Zahav — Naomi Shemer, d. 2004)",
+          "source": "https://ics.uci.edu/~dan/midi/jewish/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "traditional_unattributed"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "per-song composer and death year; author's permission"
+      ],
+      "knownLimitations": [
+        "Thirty files. Listed because the search for Israeli MIDI returns it, and to show what 'Israeli' material in the open looks like."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://ics.uci.edu/~dan/midi/jewish/"
+    },
+    {
+      "id": "NLI_PIYUT_SNUNIT",
+      "name": "National Library of Israel — Piyut and Tefillah site (Snunit) and music collections",
+      "kind": "public_domain_archive",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "National Library of Israel — Piyut and Tefillah site (Snunit) and music collections: unresolved — compilation licence, per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "audio_mix"
+      ],
+      "ensemble": "audio_stems",
+      "styles": [
+        "mizrahi_israeli",
+        "jewish_diaspora",
+        "middle_eastern_maqam"
+      ],
+      "regions": [
+        "Israel; Moroccan, Iraqi, Yemenite, Syrian, Persian, Ashkenazi traditions"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "thousands of piyut recordings (site; not counted)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "negotiate",
+        "note": "NLI licensing desk"
+      },
+      "layers": {
+        "compilation": {
+          "stated": null,
+          "source": "not read — https://www.nli.org.il/en/terms-of-use (403)",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — per-item rights statements on the catalogue, not read",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "liturgical melodies, largely traditional; the recordings carry performers' and producers' rights",
+          "source": "search (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "unknown",
+          "basis": "traditional_unattributed"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "NLI item rights statement; performer consent; melody provenance (traditional vs composed); a transcription step — there is no notation"
+      ],
+      "knownLimitations": [
+        "Audio, not notation: yields no symbolic task without transcription — and it is monophonic singing, not production.",
+        "The maqam-based melodic language of Mizrahi music lives here. A negotiated research-then-commercial licence with NLI is the one institutional route this audit found for authentic Middle-Eastern Jewish melody."
+      ],
+      "auditConfidence": "unknown",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://www.nli.org.il/en/discover/music/jewish-music/piyut"
+    },
+    {
+      "id": "ACUM_RIGHTS_ROUTE",
+      "name": "ACUM (Israeli authors', composers' and publishers' society) — licensing route",
+      "kind": "rights_route",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "ACUM (Israeli authors', composers' and publishers' society) — licensing route: unresolved — per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "theory_only"
+      ],
+      "ensemble": "none",
+      "styles": [
+        "mizrahi_israeli",
+        "contemporary_pop"
+      ],
+      "regions": [
+        "Israel"
+      ],
+      "claimedSize": {
+        "works": 0,
+        "claim": "not a dataset: the body that licenses Israeli compositions (10,000+ members, 98 affiliated societies)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 0,
+        "arrangementTasks": 0,
+        "assumption": "no works (theory data, a rights route, or an offline site)"
+      },
+      "cost": {
+        "model": "negotiate",
+        "note": "no published tariff for ML training; a bespoke licence category would have to be created"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "administers performance, mechanical/reproduction and synchronisation rights; no AI/ML or data-mining licence is offered on the site",
+          "source": "https://www.acum.org.il/en/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — per-work clearance would be per member/publisher",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "the compositions themselves; ACUM does not hold MIDI or recordings",
+          "source": "https://www.acum.org.il/en/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "owner_or_assigned_rights"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "ACUM licence naming ML training and derivative-model use; per-work list with ISWC; publisher co-signature where applicable"
+      ],
+      "knownLimitations": [
+        "Context, not licence: the Israeli Ministry of Justice opinion of 2022-12-18 finds ML training on copyrighted works likely permitted as fair use under Israeli law, excluding datasets built to compete with a single author and outputs that reproduce the works. An opinion, not a statute, and it does not clear a MIDI programmer's rights or a foreign publisher's — it lowers, it does not remove, the need for a licence."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://www.acum.org.il/en/"
+    },
+    {
+      "id": "OWNER_OWN_PRODUCTIONS",
+      "name": "First party — the owner's own productions (DAW sessions, stems, MIDI)",
+      "kind": "first_party",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "First party — the owner's own productions (DAW sessions, stems, MIDI): unresolved — compilation licence, per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "midi",
+        "audio_stems"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "mizrahi_israeli",
+        "contemporary_pop"
+      ],
+      "regions": [
+        "Israel"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "not inventoried",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "already owned; the cost is the inventory and the per-session declaration"
+      },
+      "layers": {
+        "compilation": {
+          "stated": null,
+          "source": "not read — no document yet: an internal rights declaration is the licence",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — per session: co-writers, samples, session musicians, label agreements",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": null,
+          "source": "not read — own compositions where solely authored; co-written or label-owned works need consent",
+          "readOn": null,
+          "confidence": "unknown",
+          "cleared": "unknown",
+          "basis": "owner_or_assigned_rights"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "session id and title; every author and their share; publisher/label if any; every sample or loop with its licence (Splice/Toontrack content inside a session is NOT cleared for training even though the song is); session musicians' consent; whether the MIDI is the owner's own performance",
+        "tier: HUMAN_ORIGIN_REFERENCE; PROFESSIONAL_HUMAN_GOLD only with evidence of release/credits"
+      ],
+      "knownLimitations": [
+        "The only Mizrahi/Israeli *production* multitrack this audit can name that could be cleared this month. Size unknown until inventoried.",
+        "Sessions built on third-party packs carry those packs' AI bans into the training set; the record must list every imported loop."
+      ],
+      "auditConfidence": "unknown",
+      "acquisition": "NOT_FETCHED",
+      "url": null
+    },
+    {
+      "id": "PRODUCER_CATALOGUE_LICENCE",
+      "name": "First party — producers' existing catalogues licensed as HUMAN_ORIGIN_REFERENCE",
+      "kind": "first_party",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "First party — producers' existing catalogues licensed as HUMAN_ORIGIN_REFERENCE: unresolved — compilation licence, per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "midi",
+        "audio_stems"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "mizrahi_israeli",
+        "middle_eastern_maqam",
+        "contemporary_pop",
+        "hiphop",
+        "edm_house_techno"
+      ],
+      "regions": [
+        "Israel, Middle East"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "per negotiation",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "negotiate",
+        "note": "per-catalogue licence fee or revenue share; no price basis in this audit"
+      },
+      "layers": {
+        "compilation": {
+          "stated": null,
+          "source": "not read — no contract exists yet",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — per work: producer's rights (arrangement/MIDI/stems) AND composition rights",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": null,
+          "source": "not read — cleared only where the producer is also the composer, or the composer signs",
+          "readOn": null,
+          "confidence": "unknown",
+          "cleared": "unknown",
+          "basis": "owner_or_assigned_rights"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "written licence naming 'training of machine-learning models and commercial use of derived models' as permitted; work list with authors and ISWC/ISRC; producer's warranty that stems contain no third-party packs with AI bans (or a list of them); tier HUMAN_ORIGIN_REFERENCE; PROFESSIONAL_HUMAN_GOLD only with release evidence"
+      ],
+      "knownLimitations": [
+        "The owner's rule distinguishes this from hiring: nobody is paid to write the model's targets; a producer's *existing* catalogue — made for its own release — is licensed as human-origin reference. A commissioned production made to order for training would cross that line and is not proposed."
+      ],
+      "auditConfidence": "unknown",
+      "acquisition": "NOT_FETCHED",
+      "url": null
+    },
+    {
+      "id": "LICENSED_TRAINING_DATA_BROKERS",
+      "name": "Licensed training-data brokers (Rightsify GCX, Musical AI, Soundverse partner program)",
+      "kind": "commercial_catalogue",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "Licensed training-data brokers (Rightsify GCX, Musical AI, Soundverse partner program): unresolved — per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "audio_stems",
+        "audio_mix"
+      ],
+      "ensemble": "audio_stems",
+      "styles": [
+        "contemporary_pop",
+        "edm_house_techno",
+        "hiphop",
+        "latin",
+        "reggae_afrobeat",
+        "film_game"
+      ],
+      "regions": [
+        "global production-music catalogues"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "'human-curated, ethically sourced music data'; no counts, formats or prices on the page",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "negotiate",
+        "note": "enterprise pricing; audio-first"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "marketing page only: 'License Premium Datasets', contact form; no terms published",
+          "source": "https://rightsify.com/gcx/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — per-asset documentation is promised, not shown",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "production-music libraries and independent artists who opted in (industry reporting)",
+          "source": "search (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "unknown",
+          "basis": "owner_or_assigned_rights"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "licence naming symbolic derivation (transcription) and commercial model use; per-asset provenance; whether MIDI/stems are included at all"
+      ],
+      "knownLimitations": [
+        "Audio catalogues built for audio models; nothing found says they hold MIDI. For an arranger they would need transcription, which is not the human's notes."
+      ],
+      "auditConfidence": "secondary",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://rightsify.com/gcx/"
+    },
+    {
+      "id": "CYMATICS_MIDI",
+      "name": "Cymatics MIDI and sample packs",
+      "kind": "commercial_pack",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "Cymatics MIDI and sample packs: unresolved — per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "midi",
+        "audio_stems"
+      ],
+      "ensemble": "melody_plus_chords",
+      "styles": [
+        "edm_house_techno",
+        "hiphop",
+        "contemporary_pop",
+        "rnb_soul"
+      ],
+      "regions": [
+        "USA marketplace"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "not counted",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "one_time",
+        "note": "pack price; a training licence would be a separate ask"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "the licence page is a request form that emails the agreement; the text is not on the page",
+          "source": "https://cymatics.fm/pages/free-sample-packs-license-agreement",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — per-pack agreement, delivered by email",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "'100% royalty free' for use in the buyer's own music; no clause about model training was seen in third-party copies of the agreement — a use-in-compositions licence is not a training licence",
+          "source": "search (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "unknown",
+          "basis": "cc_release_by_author"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "the emailed agreement, read; written extension to ML training"
+      ],
+      "knownLimitations": [
+        "Royalty-free ≠ trainable. Until an agreement text naming training is read, unknown."
+      ],
+      "auditConfidence": "secondary",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://cymatics.fm/pages/free-sample-packs-license-agreement"
+    },
+    {
+      "id": "GROOVE_MONKEE_MIDI",
+      "name": "Groove Monkee MIDI drum packs",
+      "kind": "commercial_pack",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "Groove Monkee MIDI drum packs: unresolved — compilation licence, per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "midi"
+      ],
+      "ensemble": "drums_only",
+      "styles": [
+        "rock",
+        "contemporary_pop",
+        "latin",
+        "reggae_afrobeat",
+        "hiphop",
+        "jazz_blues"
+      ],
+      "regions": [
+        "USA"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "not counted",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "one_time",
+        "note": "pack price"
+      },
+      "layers": {
+        "compilation": {
+          "stated": null,
+          "source": "not read — https://groovemonkee.com/pages/license (404)",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — not read",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": null,
+          "source": "not read — played grooves by the vendor's drummers",
+          "readOn": null,
+          "confidence": "unknown",
+          "cleared": "unknown",
+          "basis": "commissioned_original"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "licence text; ML clause"
+      ],
+      "knownLimitations": [
+        "Drums only: no arrangement task even if cleared."
+      ],
+      "auditConfidence": "unknown",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://groovemonkee.com/pages/license"
+    },
+    {
+      "id": "XMIDI",
+      "name": "XMIDI",
+      "kind": "open_dataset",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "XMIDI: unresolved — per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "midi"
+      ],
+      "ensemble": "mixed",
+      "styles": [
+        "contemporary_pop",
+        "rock",
+        "edm_house_techno",
+        "classical_early"
+      ],
+      "regions": [
+        "global"
+      ],
+      "claimedSize": {
+        "works": 108023,
+        "claim": "108,023 MIDI files with emotion and genre labels (README)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "mixed ensemble with unknown multitrack share; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "GitHub"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "no licence stated anywhere in the repository",
+          "source": "https://github.com/xmusic-project/XMIDI_Dataset",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — none",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "sources of the MIDI not stated",
+          "source": "https://github.com/xmusic-project/XMIDI_Dataset",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "user_uploads_unverified"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "a licence; per-file provenance — neither exists"
+      ],
+      "knownLimitations": [
+        "GigaMIDI aggregates it, which suggests scraped provenance; unproven either way."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/xmusic-project/XMIDI_Dataset"
+    },
+    {
+      "id": "ARAB_ANDALUSIAN_CORPUS",
+      "name": "Arab-Andalusian music corpus (MTG, MusicXML transcriptions)",
+      "kind": "open_dataset",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "Arab-Andalusian music corpus (MTG, MusicXML transcriptions): unresolved — per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "musicxml",
+        "audio_mix"
+      ],
+      "ensemble": "melody_only",
+      "styles": [
+        "middle_eastern_maqam"
+      ],
+      "regions": [
+        "Morocco (nawba repertoire)"
+      ],
+      "claimedSize": {
+        "works": 164,
+        "claim": "164 concert recordings with MusicXML transcriptions, >125 hours (search summary, secondary); the repo gives no count",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 1595,
+        "arrangementTasks": 0,
+        "assumption": "164 claimed works × PDMX solo rate (9.73 per work); melody_only yields no arrangement task — nothing to hide"
+      },
+      "cost": {
+        "model": "free",
+        "note": "Zenodo; MTG site default is NC"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "no licence stated in the repository; the Zenodo record answered 504",
+          "source": "https://github.com/MTG/arab-andalusian-music",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — https://zenodo.org/records/1291776",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "transcriptions of traditional nawba performances; performers' rights in the recordings not addressed",
+          "source": "https://github.com/MTG/arab-andalusian-music",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "traditional_unattributed"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "the Zenodo record licence; MTG's written position on commercial use"
+      ],
+      "knownLimitations": [
+        "Monophonic maqam-family melody with mizan (rhythmic cycle) annotations — a modal prior, not production."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://github.com/MTG/arab-andalusian-music"
+    },
+    {
+      "id": "TONAS_FLAMENCO",
+      "name": "TONAS (flamenco a cappella transcriptions) and COFLA",
+      "kind": "open_dataset",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "TONAS (flamenco a cappella transcriptions) and COFLA: unresolved — compilation licence, per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "midi",
+        "audio_mix"
+      ],
+      "ensemble": "melody_only",
+      "styles": [
+        "flamenco"
+      ],
+      "regions": [
+        "Andalusia"
+      ],
+      "claimedSize": {
+        "works": 72,
+        "claim": "72 a cappella excerpts with manual note transcriptions (secondary)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 700,
+        "arrangementTasks": 0,
+        "assumption": "72 claimed works × PDMX solo rate (9.73 per work); melody_only yields no arrangement task — nothing to hide"
+      },
+      "cost": {
+        "model": "free",
+        "note": "MTG; expect NC"
+      },
+      "layers": {
+        "compilation": {
+          "stated": null,
+          "source": "not read — https://www.upf.edu/web/mtg/tonas (403)",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — not read",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "commercial flamenco recordings, transcribed",
+          "source": "arXiv 1510.04029 (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "unknown",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "licence; recording rights"
+      ],
+      "knownLimitations": [
+        "Sung melody only. No flamenco guitar or palmas symbolic source was found in the open."
+      ],
+      "auditConfidence": "unknown",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://www.upf.edu/web/mtg/tonas"
+    },
+    {
+      "id": "JAVANESE_GAMELAN_NOTATION",
+      "name": "Notation of Javanese Gamelan dataset (Mendeley Data)",
+      "kind": "open_dataset",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "Notation of Javanese Gamelan dataset (Mendeley Data): unresolved — per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "pdf_notation"
+      ],
+      "ensemble": "multitrack",
+      "styles": [
+        "southeast_asian"
+      ],
+      "regions": [
+        "Java, Indonesia"
+      ],
+      "claimedSize": {
+        "works": 35,
+        "claim": "35 gendhing in 7 structures, notation for balungan, peking, bonang, kenong/kethuk/kempul/gong (article)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": 2285,
+        "arrangementTasks": 1730,
+        "assumption": "35 claimed works × PDMX multitrack rates (65.30 tasks, 49.41 arrangement tasks per work)"
+      },
+      "cost": {
+        "model": "free",
+        "note": "Mendeley Data"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "the Data in Brief article is CC BY 4.0; the Mendeley dataset's own licence was not read",
+          "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10885543/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — https://data.mendeley.com/datasets/dvrscpc6vc/1",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "traditional gendhing",
+          "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10885543/",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "traditional_unattributed"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "dataset licence; an OCR/encoding step from PDF kepatihan notation"
+      ],
+      "knownLimitations": [
+        "PDF, not machine-readable; 35 pieces. Genuinely multi-part, and the only Southeast-Asian ensemble notation found."
+      ],
+      "auditConfidence": "secondary",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://data.mendeley.com/datasets/dvrscpc6vc/1"
+    },
+    {
+      "id": "CCMUSIC_CHINESE",
+      "name": "CCMusic database (Chinese music, audio)",
+      "kind": "open_dataset",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "CCMusic database (Chinese music, audio): unresolved — compilation licence, per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "audio_mix"
+      ],
+      "ensemble": "audio_stems",
+      "styles": [
+        "east_asian"
+      ],
+      "regions": [
+        "China"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "six datasets (instruments, mode, singing); no symbolic note-level data (TISMIR paper, secondary)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "Zenodo"
+      },
+      "layers": {
+        "compilation": {
+          "stated": null,
+          "source": "not read — https://zenodo.org/records/5676893 (not fetched)",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — not read",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "recorded by conservatory teams, 'no commodity copyright problem' (paper)",
+          "source": "TISMIR 10.5334/tismir.194 (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "unknown",
+          "basis": "commissioned_original"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "record licence"
+      ],
+      "knownLimitations": [
+        "Audio; no symbolic representation — the paper says so itself."
+      ],
+      "auditConfidence": "secondary",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://zenodo.org/records/5676893"
+    },
+    {
+      "id": "CHORO_SONGBOOK_CORPUS",
+      "name": "Choro Songbook Corpus",
+      "kind": "open_dataset",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "Choro Songbook Corpus: unresolved — compilation licence, per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "musicxml"
+      ],
+      "ensemble": "melody_plus_chords",
+      "styles": [
+        "latin"
+      ],
+      "regions": [
+        "Brazil"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "count not read (the record answered 504 on the day)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "Zenodo"
+      },
+      "layers": {
+        "compilation": {
+          "stated": null,
+          "source": "not read — https://zenodo.org/records/1442765 (504)",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — not read",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "choro repertoire, much of it by composers dead > 70 years (Nazareth d. 1934, Pixinguinha d. 1973 is not)",
+          "source": "general knowledge (secondary)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "unknown",
+          "basis": "public_domain_by_age"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "record licence; per-tune composer death year; the songbook edition's rights"
+      ],
+      "knownLimitations": [
+        "Lead sheets: an arrangement step is needed before any task."
+      ],
+      "auditConfidence": "unknown",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://zenodo.org/records/1442765"
+    },
+    {
+      "id": "MIRTRACKS",
+      "name": "MIRTracks (royalty-free multitrack audio)",
+      "kind": "open_dataset",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "MIRTracks (royalty-free multitrack audio): unresolved — per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "audio_stems"
+      ],
+      "ensemble": "audio_stems",
+      "styles": [
+        "rock",
+        "edm_house_techno",
+        "contemporary_pop"
+      ],
+      "regions": [
+        "global"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "240 hours of royalty-free multitrack audio; song count not stated",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "unknown host"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "Creative Commons Attribution 4.0 International (the paper's statement)",
+          "source": "https://www.sciltp.com/journals/tai/articles/2510001943",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — the underlying library and its per-track terms are not named on the page",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "'royalty-free' — source library not stated",
+          "source": "https://www.sciltp.com/journals/tai/articles/2510001943",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "user_uploads_unverified"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "the source library's licence; per-track provenance"
+      ],
+      "knownLimitations": [
+        "'Royalty-free' is a business term, not a licence; and it is audio."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://www.sciltp.com/journals/tai/articles/2510001943"
+    },
+    {
+      "id": "CCMIXTER_STEMS",
+      "name": "ccMixter stems and samples (per-track CC)",
+      "kind": "community_archive",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "ccMixter stems and samples (per-track CC): unresolved — per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "audio_stems"
+      ],
+      "ensemble": "audio_stems",
+      "styles": [
+        "contemporary_pop",
+        "hiphop",
+        "edm_house_techno",
+        "rock"
+      ],
+      "regions": [
+        "global community"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "tens of thousands of uploads (not counted)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "per-track filter"
+      },
+      "layers": {
+        "compilation": {
+          "stated": "every upload carries a CC licence 'marked clearly'; many uploads restrict commercial use, 'many other tracks… allow… commercial use of samples'; no clause about model training",
+          "source": "https://ccmixter.org/isitlegal + http://dig.ccmixter.org/free",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — per track — must be read per upload; commercially-restricted tracks excluded",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "user uploads; the site does not verify authorship",
+          "source": "https://ccmixter.org/isitlegal",
+          "readOn": "2026-09-09",
+          "confidence": "verified_primary_source",
+          "cleared": "unknown",
+          "basis": "user_uploads_unverified"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "track id, CC licence (BY or CC0 only), uploader, remix lineage (a remix of an NC source is NC)"
+      ],
+      "knownLimitations": [
+        "Audio stems; the CC BY subset is real but the remix lineage makes per-track review slow."
+      ],
+      "auditConfidence": "verified_primary_source",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://ccmixter.org/isitlegal"
+    },
+    {
+      "id": "CAMBRIDGE_MT_MIXING_SECRETS",
+      "name": "Cambridge-MT 'Mixing Secrets' multitrack library",
+      "kind": "community_archive",
+      "classification": "LEGAL_REVIEW_REQUIRED",
+      "why": "Cambridge-MT 'Mixing Secrets' multitrack library: unresolved — compilation licence, per-work licence, underlying-works provenance. Not trainable until each is read from a primary source and a per-work rights record exists.",
+      "allLayersRead": false,
+      "formats": [
+        "audio_stems"
+      ],
+      "ensemble": "audio_stems",
+      "styles": [
+        "rock",
+        "contemporary_pop",
+        "rnb_soul",
+        "hiphop",
+        "edm_house_techno",
+        "jazz_blues",
+        "western_folk"
+      ],
+      "regions": [
+        "global"
+      ],
+      "claimedSize": {
+        "works": null,
+        "claim": "hundreds of multitracks (not counted; page answered 403)",
+        "measured": false
+      },
+      "yieldEstimate": {
+        "totalTasks": null,
+        "arrangementTasks": null,
+        "assumption": "claimed size unknown; no estimate"
+      },
+      "cost": {
+        "model": "free",
+        "note": "educational"
+      },
+      "layers": {
+        "compilation": {
+          "stated": null,
+          "source": "not read — https://cambridge-mt.com/ms/mtk/ (403); known to be 'for educational purposes' (secondary)",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "perWork": {
+          "stated": null,
+          "source": "not read — per artist; not read",
+          "readOn": null,
+          "confidence": "unknown"
+        },
+        "underlyingWorks": {
+          "stated": "artists' own songs, contributed for mixing practice",
+          "source": "MUSDB18 page: 100 tracks 'originally from The Mixing Secrets Free Multitrack Download Library' (secondary for the terms)",
+          "readOn": "2026-09-09",
+          "confidence": "secondary",
+          "cleared": "unknown",
+          "basis": "copyrighted_transcription"
+        }
+      },
+      "statedRestriction": null,
+      "rightsRecordNeeds": [
+        "the library's terms; per-artist consent"
+      ],
+      "knownLimitations": [
+        "Expected to be education-only once read; audio in any case."
+      ],
+      "auditConfidence": "unknown",
+      "acquisition": "NOT_FETCHED",
+      "url": "https://cambridge-mt.com/ms/mtk/"
+    }
+  ]
+}

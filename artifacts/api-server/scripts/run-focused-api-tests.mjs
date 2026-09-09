@@ -283,6 +283,14 @@ const suites = {
         "planning-supervision-agreement.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, PR-76: the data-source registry — three licence layers per
+      // source, non-commercial or AI-ban anywhere blocks, unread means legal
+      // review, and nothing is fetched.
+      [
+        "src/lib/dataSourceRegistry.test.ts",
+        "data-source-registry.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [
