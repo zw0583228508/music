@@ -10143,6 +10143,2466 @@ export const CreateArrangementResponse = zod.object({
 
 
 /**
+ * PR-U5. The list endpoint returns summaries; this returns the persisted
+ * `plan` (with the brief it was planned from and, for a chat edit applied
+ * within locks, the `regeneration` report) and the `trackModels`, so a
+ * version can be inspected and two versions compared note for note.
+ * @summary One arrangement version in full - its plan, TrackModels, lineage and parameters
+ */
+export const GetArrangementParams = zod.object({
+  "arrangementId": zod.coerce.string()
+})
+
+export const getArrangementResponseSectionsItemChordsItemInversionMin = 0;
+export const getArrangementResponseSectionsItemChordsItemInversionMax = 3;
+
+export const getArrangementResponseSectionsItemAutomationItemValueMin = 0;
+export const getArrangementResponseSectionsItemAutomationItemValueMax = 1;
+
+export const getArrangementResponseSectionsItemMidiNotesItemPitchMin = 0;
+export const getArrangementResponseSectionsItemMidiNotesItemPitchMax = 127;
+
+export const getArrangementResponseSectionsItemMidiNotesItemStartMin = 0;
+
+export const getArrangementResponseSectionsItemMidiNotesItemDurationMin = 0.0625;
+
+export const getArrangementResponseSectionsItemMidiNotesItemVelocityMax = 127;
+
+export const getArrangementResponseSectionsItemCcItemMin = 0;
+export const getArrangementResponseSectionsItemCcItemMax = 127;
+
+export const getArrangementResponseSectionsItemMidiTracksNotesItemPitchMin = 0;
+export const getArrangementResponseSectionsItemMidiTracksNotesItemPitchMax = 127;
+
+export const getArrangementResponseSectionsItemMidiTracksNotesItemStartMin = 0;
+
+export const getArrangementResponseSectionsItemMidiTracksNotesItemDurationMin = 0.0625;
+
+export const getArrangementResponseSectionsItemMidiTracksNotesItemVelocityMax = 127;
+
+export const getArrangementResponseSectionsItemMidiTracksCcItemMin = 0;
+export const getArrangementResponseSectionsItemMidiTracksCcItemMax = 127;
+
+export const getArrangementResponseSectionsItemTransposeSemitonesMin = -24;
+export const getArrangementResponseSectionsItemTransposeSemitonesMax = 24;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationArtifactsItemArtifactSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const getArrangementResponseGenerationProvenanceOneEvaluationQualityReportOneScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationQualityReportOneScoreMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneScoreMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneCoverageAvailableDimensionsMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneCoverageAvailableDimensionsMax = 8;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsVocalFitScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsVocalFitScoreMax = 1;
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsVocalFitFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsHarmonyScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsHarmonyScoreMax = 1;
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsHarmonyFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsDevelopmentScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsDevelopmentScoreMax = 1;
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsDevelopmentFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsContrastAndTransitionsScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsContrastAndTransitionsScoreMax = 1;
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsContrastAndTransitionsFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsRegisterCollisionsScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsRegisterCollisionsScoreMax = 1;
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsRegisterCollisionsFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsPlayabilityScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsPlayabilityScoreMax = 1;
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsPlayabilityFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsRepetitionScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsRepetitionScoreMax = 1;
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsRepetitionFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsStyleAndControlAdherenceScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsStyleAndControlAdherenceScoreMax = 1;
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsStyleAndControlAdherenceFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoScoreMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoCoverageAvailableDimensionsMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoCoverageAvailableDimensionsMax = 17;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalFitScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalFitScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalFitFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalFitFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalFitFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsHarmonyScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsHarmonyScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsHarmonyFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsHarmonyFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsHarmonyFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDevelopmentScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDevelopmentScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDevelopmentFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDevelopmentFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDevelopmentFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsContrastAndTransitionsScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsContrastAndTransitionsScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsContrastAndTransitionsFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsContrastAndTransitionsFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsContrastAndTransitionsFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRegisterCollisionsScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRegisterCollisionsScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRegisterCollisionsFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRegisterCollisionsFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRegisterCollisionsFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPlayabilityScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPlayabilityScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPlayabilityFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPlayabilityFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPlayabilityFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRepetitionScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRepetitionScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRepetitionFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRepetitionFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRepetitionFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsStyleAndControlAdherenceScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsStyleAndControlAdherenceScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsStyleAndControlAdherenceFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsStyleAndControlAdherenceFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsStyleAndControlAdherenceFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsMotifContinuityAndDevelopmentScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsMotifContinuityAndDevelopmentScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsMotifContinuityAndDevelopmentFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsMotifContinuityAndDevelopmentFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsMotifContinuityAndDevelopmentFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPhraseIntentScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPhraseIntentScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPhraseIntentFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPhraseIntentFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPhraseIntentFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalInteractionScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalInteractionScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalInteractionFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalInteractionFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalInteractionFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRoleDuplicationScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRoleDuplicationScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRoleDuplicationFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRoleDuplicationFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRoleDuplicationFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsOrchestralBalanceScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsOrchestralBalanceScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsOrchestralBalanceFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsOrchestralBalanceFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsOrchestralBalanceFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsGrooveCoordinationScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsGrooveCoordinationScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsGrooveCoordinationFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsGrooveCoordinationFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsGrooveCoordinationFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVoiceLeadingScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVoiceLeadingScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVoiceLeadingFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVoiceLeadingFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVoiceLeadingFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsCountermelodyShapeScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsCountermelodyShapeScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsCountermelodyShapeFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsCountermelodyShapeFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsCountermelodyShapeFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDramaticTrajectoryScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDramaticTrajectoryScoreMax = 1;
+
+
+
+
+
+
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDramaticTrajectoryFindingsItemEvidenceReferencesItemSummaryMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDramaticTrajectoryFindingsItemEvidenceReferencesMax = 8;
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDramaticTrajectoryFindingsItemMusicalReasonMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneScoreMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneCoverageAvailableDimensionsMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneCoverageAvailableDimensionsMax = 7;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneEvidenceOneArtifactSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsVocalFitScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsVocalFitScoreMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsVocalFitFindingsItemStartSecondsMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsVocalFitFindingsItemEndSecondsMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsVocalFitFindingsItemConfidenceMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsVocalFitFindingsItemConfidenceMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsVocalFitFindingsItemRecommendationMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsMaskingScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsMaskingScoreMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsMaskingFindingsItemStartSecondsMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsMaskingFindingsItemEndSecondsMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsMaskingFindingsItemConfidenceMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsMaskingFindingsItemConfidenceMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsMaskingFindingsItemRecommendationMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsBalanceScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsBalanceScoreMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsBalanceFindingsItemStartSecondsMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsBalanceFindingsItemEndSecondsMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsBalanceFindingsItemConfidenceMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsBalanceFindingsItemConfidenceMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsBalanceFindingsItemRecommendationMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsDynamicsScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsDynamicsScoreMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsDynamicsFindingsItemStartSecondsMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsDynamicsFindingsItemEndSecondsMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsDynamicsFindingsItemConfidenceMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsDynamicsFindingsItemConfidenceMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsDynamicsFindingsItemRecommendationMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsArtifactsAndDistortionScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsArtifactsAndDistortionScoreMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsArtifactsAndDistortionFindingsItemStartSecondsMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsArtifactsAndDistortionFindingsItemEndSecondsMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsArtifactsAndDistortionFindingsItemConfidenceMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsArtifactsAndDistortionFindingsItemConfidenceMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsArtifactsAndDistortionFindingsItemRecommendationMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsTransitionsScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsTransitionsScoreMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsTransitionsFindingsItemStartSecondsMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsTransitionsFindingsItemEndSecondsMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsTransitionsFindingsItemConfidenceMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsTransitionsFindingsItemConfidenceMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsTransitionsFindingsItemRecommendationMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsRepetitionScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsRepetitionScoreMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsRepetitionFindingsItemStartSecondsMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsRepetitionFindingsItemEndSecondsMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsRepetitionFindingsItemConfidenceMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsRepetitionFindingsItemConfidenceMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsRepetitionFindingsItemRecommendationMax = 2000;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationStrategyIndexMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationStrategyBaseSeedMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationStrategyBaseSeedMax = 2147483647;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationStrategySeedMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationStrategySeedMax = 2147483647;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationRepairSeedMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationRepairSeedMax = 2147483647;
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMax = 1;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin = 0;
+export const getArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax = 1;
+
+export const getArrangementResponsePlanOneSectionsItemTrackDirectivesRhythmicActivityMin = 0;
+export const getArrangementResponsePlanOneSectionsItemTrackDirectivesRhythmicActivityMax = 1;
+
+export const getArrangementResponsePlanOneSectionsItemTrackDirectivesHarmonicActivityMin = 0;
+export const getArrangementResponsePlanOneSectionsItemTrackDirectivesHarmonicActivityMax = 1;
+
+export const getArrangementResponsePlanOneSectionsItemTrackDirectivesDynamicTargetMin = 0;
+export const getArrangementResponsePlanOneSectionsItemTrackDirectivesDynamicTargetMax = 1;
+
+export const getArrangementResponsePlanOneSectionsItemTrackDirectivesEntryBarMin = 0;
+
+export const getArrangementResponsePlanOneSectionsItemTrackDirectivesEntryBeatMin = 0;
+
+export const getArrangementResponsePlanOneSectionsItemTrackDirectivesEntryDurationBeatsExclusiveMin = 0;
+
+export const getArrangementResponsePlanOneSectionsItemTrackDirectivesExitBarMin = 0;
+
+export const getArrangementResponsePlanOneSectionsItemTrackDirectivesExitBeatMin = 0;
+
+export const getArrangementResponsePlanOneSectionsItemTrackDirectivesExitDurationBeatsExclusiveMin = 0;
+
+export const getArrangementResponsePlanOneStyleGrammarEvidenceSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+export const getArrangementResponsePlanOneHierarchySectionsItemTargetEnergyMin = 0;
+export const getArrangementResponsePlanOneHierarchySectionsItemTargetEnergyMax = 1;
+
+export const getArrangementResponsePlanOneHierarchySectionsItemTargetDensityMin = 0;
+export const getArrangementResponsePlanOneHierarchySectionsItemTargetDensityMax = 1;
+
+
+
+export const getArrangementResponsePlanOneHierarchyPhrasesItemConfidenceMin = 0;
+export const getArrangementResponsePlanOneHierarchyPhrasesItemConfidenceMax = 1;
+
+
+export const getArrangementResponsePlanOneGlobalPlanInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const getArrangementResponsePlanOneGlobalPlanConfidenceMin = 0;
+export const getArrangementResponsePlanOneGlobalPlanConfidenceMax = 1;
+
+
+
+
+export const getArrangementResponsePlanOneGlobalPlanSectionTargetsItemEnergyMin = 0;
+export const getArrangementResponsePlanOneGlobalPlanSectionTargetsItemEnergyMax = 1;
+
+export const getArrangementResponsePlanOneGlobalPlanSectionTargetsItemDensityMin = 0;
+export const getArrangementResponsePlanOneGlobalPlanSectionTargetsItemDensityMax = 1;
+
+export const getArrangementResponsePlanOneGlobalPlanSectionTargetsItemTensionMin = 0;
+export const getArrangementResponsePlanOneGlobalPlanSectionTargetsItemTensionMax = 1;
+
+export const getArrangementResponsePlanOneGlobalPlanSectionTargetsItemNoveltyVsPreviousMin = 0;
+export const getArrangementResponsePlanOneGlobalPlanSectionTargetsItemNoveltyVsPreviousMax = 1;
+
+
+export const getArrangementResponsePlanOneGlobalPlanClimaxEnergyMin = 0;
+export const getArrangementResponsePlanOneGlobalPlanClimaxEnergyMax = 1;
+
+
+export const getArrangementResponsePlanOneGlobalPlanSecondaryClimaxEnergyMin = 0;
+export const getArrangementResponsePlanOneGlobalPlanSecondaryClimaxEnergyMax = 1;
+
+export const getArrangementResponsePlanOneGlobalPlanHarmonicComplexityMin = 0;
+export const getArrangementResponsePlanOneGlobalPlanHarmonicComplexityMax = 1;
+
+export const getArrangementResponsePlanOneGlobalPlanRhythmicComplexityMin = 0;
+export const getArrangementResponsePlanOneGlobalPlanRhythmicComplexityMax = 1;
+
+export const getArrangementResponsePlanOneSectionPlanInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+export const getArrangementResponsePlanOneSectionPlanSectionsItemEnergyMin = 0;
+export const getArrangementResponsePlanOneSectionPlanSectionsItemEnergyMax = 1;
+
+export const getArrangementResponsePlanOneSectionPlanSectionsItemDensityMin = 0;
+export const getArrangementResponsePlanOneSectionPlanSectionsItemDensityMax = 1;
+
+export const getArrangementResponsePlanOneSectionPlanSectionsItemTensionMin = 0;
+export const getArrangementResponsePlanOneSectionPlanSectionsItemTensionMax = 1;
+
+export const getArrangementResponsePlanOneSectionPlanSectionsItemRegisterDistributionMinOne = 0;
+export const getArrangementResponsePlanOneSectionPlanSectionsItemRegisterDistributionMaxOne = 1;
+
+export const getArrangementResponsePlanOneSectionPlanSectionsItemRhythmicActivityMin = 0;
+export const getArrangementResponsePlanOneSectionPlanSectionsItemRhythmicActivityMax = 1;
+
+export const getArrangementResponsePlanOneSectionPlanSectionsItemMelodicActivityMin = 0;
+export const getArrangementResponsePlanOneSectionPlanSectionsItemMelodicActivityMax = 1;
+
+export const getArrangementResponsePlanOneSectionPlanSectionsItemHarmonicActivityMin = 0;
+export const getArrangementResponsePlanOneSectionPlanSectionsItemHarmonicActivityMax = 1;
+
+export const getArrangementResponsePlanOneSectionPlanSectionsItemNoveltyRelativeToPreviousSectionMin = 0;
+export const getArrangementResponsePlanOneSectionPlanSectionsItemNoveltyRelativeToPreviousSectionMax = 1;
+
+
+
+export const getArrangementResponsePlanOneSectionPlanPhrasesItemEnergyTargetMin = 0;
+export const getArrangementResponsePlanOneSectionPlanPhrasesItemEnergyTargetMax = 1;
+
+export const getArrangementResponsePlanOneSectionPlanRoleAssignmentsItemDensityMin = 0;
+export const getArrangementResponsePlanOneSectionPlanRoleAssignmentsItemDensityMax = 1;
+
+export const getArrangementResponsePlanOneSectionPlanRoleAssignmentsItemRhythmicActivityMin = 0;
+export const getArrangementResponsePlanOneSectionPlanRoleAssignmentsItemRhythmicActivityMax = 1;
+
+export const getArrangementResponsePlanOneSectionPlanRoleAssignmentsItemMelodicActivityMin = 0;
+export const getArrangementResponsePlanOneSectionPlanRoleAssignmentsItemMelodicActivityMax = 1;
+
+
+
+export const getArrangementResponsePlanOneOrchestrationBudgetInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemVocalAttentionMin = 0;
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemVocalAttentionMax = 1;
+
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsTotalDensityMin = 0;
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsTotalDensityMax = 1;
+
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsMelodicMin = 0;
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsMelodicMax = 1;
+
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsRhythmicMin = 0;
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsRhythmicMax = 1;
+
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsHarmonicMin = 0;
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsHarmonicMax = 1;
+
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsRegisterMin = 0;
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsRegisterMax = 1;
+
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsSpectralMin = 0;
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsSpectralMax = 1;
+
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsAttentionMin = 0;
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsAttentionMax = 1;
+
+export const getArrangementResponsePlanOneOrchestrationBudgetWindowsItemInstrumentAdjustmentsItemDensityMultiplierMin = 0;
+
+
+
+export const getArrangementResponsePlanOneOrchestrationBudgetRegisterOccupancyItemOccupancyMinOne = 0;
+export const getArrangementResponsePlanOneOrchestrationBudgetRegisterOccupancyItemOccupancyMaxOne = 1;
+
+export const getArrangementResponsePlanOneTransitionPlanInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+export const getArrangementResponsePlanOneTransitionPlanTransitionsItemApproachBarsMin = 0;
+
+export const getArrangementResponsePlanOneTransitionPlanTransitionsItemStrengthMin = 0;
+export const getArrangementResponsePlanOneTransitionPlanTransitionsItemStrengthMax = 1;
+
+
+
+export const getArrangementResponsePlanOneTransitionPlanTransitionsItemDevicesItemIntensityMin = 0;
+export const getArrangementResponsePlanOneTransitionPlanTransitionsItemDevicesItemIntensityMax = 1;
+
+export const getArrangementResponsePlanOnePartComposerPlanInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+export const getArrangementResponsePlanOnePartComposerPlanTasksItemSeedMin = 0;
+
+export const getArrangementResponsePlanOneCandidateGenerationPlanInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const getArrangementResponsePlanOneCandidateGenerationPlanBaseSeedMin = 0;
+
+export const getArrangementResponsePlanOneCandidateGenerationPlanCandidatesItemSeedMin = 0;
+
+export const getArrangementResponsePlanOneCandidateGenerationPlanCandidatesItemPartAdjustmentsItemDensityMultiplierMin = 0;
+
+export const getArrangementResponsePlanOneCandidateGenerationPlanCandidatesItemPartAdjustmentsItemSeedMin = 0;
+
+
+export const getArrangementResponsePlanOneGenerationPreferenceOneCalibrationVersionMultipleOf = 1;
+
+export const getArrangementResponsePlanOneGenerationPreferenceOneHeldOutAgreementMin = 0;
+export const getArrangementResponsePlanOneGenerationPreferenceOneHeldOutAgreementMax = 1;
+
+export const getArrangementResponsePlanOneGenerationPreferenceOneBaselineAgreementMin = 0;
+export const getArrangementResponsePlanOneGenerationPreferenceOneBaselineAgreementMax = 1;
+
+export const getArrangementResponsePlanOneGenerationPreferenceOneHeldOutExamplesMin = 5;
+export const getArrangementResponsePlanOneGenerationPreferenceOneHeldOutExamplesMultipleOf = 1;
+
+export const getArrangementResponsePlanOneGenerationPreferenceOneEvaluationSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const getArrangementResponsePlanOneGenerationPreferenceOneEvidenceSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const getArrangementResponsePlanOneGenerationPreferenceOneEffectsOrchestrationDensityMin = -0.35;
+export const getArrangementResponsePlanOneGenerationPreferenceOneEffectsOrchestrationDensityMax = 0.35;
+
+export const getArrangementResponsePlanOneGenerationPreferenceOneEffectsResponseFrequencyMin = 0.25;
+export const getArrangementResponsePlanOneGenerationPreferenceOneEffectsResponseFrequencyMax = 0.75;
+
+export const getArrangementResponsePlanOneGenerationPreferenceOneEffectsTransitionIntensityMin = 0.25;
+export const getArrangementResponsePlanOneGenerationPreferenceOneEffectsTransitionIntensityMax = 0.75;
+
+export const getArrangementResponsePlanOneProductionBriefDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+
+
+
+
+export const getArrangementResponsePlanOneRegenerationKeptNotesMin = 0;
+
+export const getArrangementResponsePlanOneRegenerationReplacedNotesMin = 0;
+
+
+
+export const getArrangementResponsePlanOneRegenerationChangedBarRangesItemReplacedNotesMin = 0;
+
+export const getArrangementResponsePlanOneRegenerationPreservedNotesMin = 0;
+
+export const getArrangementResponsePlanOneRegenerationVerificationCheckedLockedNotesMin = 0;
+
+export const getArrangementResponsePlanOneRegenerationIdenticalReplacedNotesMin = 0;
+
+export const getArrangementResponsePlanOneRegenerationCandidatesItemConstraintErrorsMin = 0;
+
+export const getArrangementResponsePlanOneRegenerationCandidatesItemViolationsMin = 0;
+
+export const getArrangementResponsePlanOneRegenerationCandidatesItemReplacedNotesMin = 0;
+
+export const getArrangementResponsePlanOneRegenerationCandidatesItemIdenticalReplacedNotesMin = 0;
+
+export const getArrangementResponsePlanOneRegenerationDurationMsMin = 0;
+
+export const getArrangementResponseTrackModelsItemArticulationsItemTimeMin = 0;
+
+export const getArrangementResponseTrackModelsItemArticulationsItemKeyswitchMin = 0;
+export const getArrangementResponseTrackModelsItemArticulationsItemKeyswitchMax = 127;
+
+export const getArrangementResponseTrackModelsItemArticulationsItemIntensityMin = 0;
+export const getArrangementResponseTrackModelsItemArticulationsItemIntensityMax = 1;
+
+export const getArrangementResponseTrackModelsItemDirectiveRhythmicActivityMin = 0;
+export const getArrangementResponseTrackModelsItemDirectiveRhythmicActivityMax = 1;
+
+export const getArrangementResponseTrackModelsItemDirectiveHarmonicActivityMin = 0;
+export const getArrangementResponseTrackModelsItemDirectiveHarmonicActivityMax = 1;
+
+export const getArrangementResponseTrackModelsItemDirectiveDynamicTargetMin = 0;
+export const getArrangementResponseTrackModelsItemDirectiveDynamicTargetMax = 1;
+
+export const getArrangementResponseTrackModelsItemDirectiveEntryBarMin = 0;
+
+export const getArrangementResponseTrackModelsItemDirectiveEntryBeatMin = 0;
+
+export const getArrangementResponseTrackModelsItemDirectiveEntryDurationBeatsExclusiveMin = 0;
+
+export const getArrangementResponseTrackModelsItemDirectiveExitBarMin = 0;
+
+export const getArrangementResponseTrackModelsItemDirectiveExitBeatMin = 0;
+
+export const getArrangementResponseTrackModelsItemDirectiveExitDurationBeatsExclusiveMin = 0;
+
+
+
+export const getArrangementResponseTrackModelsItemAppliedDirectivesItemStartMin = 0;
+
+export const getArrangementResponseTrackModelsItemAppliedDirectivesItemEndMin = 0;
+
+export const getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveRhythmicActivityMin = 0;
+export const getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveRhythmicActivityMax = 1;
+
+export const getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveHarmonicActivityMin = 0;
+export const getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveHarmonicActivityMax = 1;
+
+export const getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveDynamicTargetMin = 0;
+export const getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveDynamicTargetMax = 1;
+
+export const getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveEntryBarMin = 0;
+
+export const getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveEntryBeatMin = 0;
+
+export const getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveEntryDurationBeatsExclusiveMin = 0;
+
+export const getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveExitBarMin = 0;
+
+export const getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveExitBeatMin = 0;
+
+export const getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveExitDurationBeatsExclusiveMin = 0;
+
+export const getArrangementResponseTrackModelsItemMappingMidiChannelMax = 16;
+
+export const getArrangementResponseTrackModelsItemMappingProgramMin = 0;
+export const getArrangementResponseTrackModelsItemMappingProgramMax = 127;
+
+export const getArrangementResponseTrackModelsItemPerformanceEvidenceCanonicalTimelineSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const getArrangementResponseTrackModelsItemPerformanceEvidencePerformedMaterialSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const getArrangementResponseTrackModelsItemHarmonyEvidenceSelectedMotionMin = 0;
+
+export const getArrangementResponseTrackModelsItemHarmonyEvidenceBaselineMotionMin = 0;
+
+export const getArrangementResponseTrackModelsItemHarmonyEvidenceMaximumLeapMin = 0;
+
+export const getArrangementResponseTrackModelsItemHarmonyEvidenceResolutionObligationsMin = 0;
+
+
+
+export const GetArrangementResponse = zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "name": zod.string(),
+  "style": zod.string(),
+  "mode": zod.enum(['QUICK_ARRANGE', 'STUDIO', 'PRO_SCORE']),
+  "version": zod.number(),
+  "status": zod.enum(['draft', 'generating', 'ready']),
+  "harmonyComplexity": zod.number(),
+  "energy": zod.number(),
+  "density": zod.number(),
+  "orchestraSize": zod.number(),
+  "rhythmIntensity": zod.number(),
+  "sections": zod.array(zod.object({
+  "name": zod.string(),
+  "energy": zod.number(),
+  "density": zod.number(),
+  "tracks": zod.array(zod.string()),
+  "startBar": zod.number().optional(),
+  "endBar": zod.number().optional(),
+  "chords": zod.array(zod.object({
+  "id": zod.string(),
+  "startBeat": zod.number(),
+  "durationBeats": zod.number(),
+  "symbol": zod.string(),
+  "quality": zod.enum(['major', 'minor', 'dominant', 'suspended', 'diminished']),
+  "inversion": zod.number().min(getArrangementResponseSectionsItemChordsItemInversionMin).max(getArrangementResponseSectionsItemChordsItemInversionMax),
+  "bass": zod.string().optional()
+})).optional(),
+  "markers": zod.array(zod.object({
+  "id": zod.string(),
+  "bar": zod.number(),
+  "label": zod.string(),
+  "color": zod.string()
+})).optional(),
+  "automation": zod.array(zod.object({
+  "bar": zod.number(),
+  "value": zod.number().min(getArrangementResponseSectionsItemAutomationItemValueMin).max(getArrangementResponseSectionsItemAutomationItemValueMax)
+})).optional(),
+  "midiNotes": zod.array(zod.object({
+  "id": zod.string(),
+  "pitch": zod.number().min(getArrangementResponseSectionsItemMidiNotesItemPitchMin).max(getArrangementResponseSectionsItemMidiNotesItemPitchMax),
+  "start": zod.number().min(getArrangementResponseSectionsItemMidiNotesItemStartMin),
+  "duration": zod.number().min(getArrangementResponseSectionsItemMidiNotesItemDurationMin),
+  "velocity": zod.number().min(1).max(getArrangementResponseSectionsItemMidiNotesItemVelocityMax),
+  "articulation": zod.enum(['sustain', 'staccato', 'accent', 'ghost'])
+})).optional(),
+  "cc": zod.array(zod.number().min(getArrangementResponseSectionsItemCcItemMin).max(getArrangementResponseSectionsItemCcItemMax)).optional(),
+  "midiTracks": zod.record(zod.string(), zod.object({
+  "notes": zod.array(zod.object({
+  "id": zod.string(),
+  "pitch": zod.number().min(getArrangementResponseSectionsItemMidiTracksNotesItemPitchMin).max(getArrangementResponseSectionsItemMidiTracksNotesItemPitchMax),
+  "start": zod.number().min(getArrangementResponseSectionsItemMidiTracksNotesItemStartMin),
+  "duration": zod.number().min(getArrangementResponseSectionsItemMidiTracksNotesItemDurationMin),
+  "velocity": zod.number().min(1).max(getArrangementResponseSectionsItemMidiTracksNotesItemVelocityMax),
+  "articulation": zod.enum(['sustain', 'staccato', 'accent', 'ghost'])
+})),
+  "cc": zod.array(zod.number().min(getArrangementResponseSectionsItemMidiTracksCcItemMin).max(getArrangementResponseSectionsItemMidiTracksCcItemMax))
+})).optional(),
+  "transposeSemitones": zod.number().min(getArrangementResponseSectionsItemTransposeSemitonesMin).max(getArrangementResponseSectionsItemTransposeSemitonesMax).optional()
+})),
+  "generationProvider": zod.string().nullable(),
+  "candidates": zod.array(zod.object({
+  "id": zod.string(),
+  "label": zod.string(),
+  "score": zod.number(),
+  "summary": zod.string(),
+  "provider": zod.string()
+})),
+  "selectedCandidateId": zod.string().nullable(),
+  "sourceGenerationJobId": zod.string().nullish(),
+  "sourceCandidateId": zod.string().nullish(),
+  "generationProvenance": zod.union([zod.object({
+  "jobId": zod.string(),
+  "candidateId": zod.string(),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
+  "modelVersion": zod.string(),
+  "reportedModelVersion": zod.string().nullish(),
+  "providerRequestId": zod.string().nullish(),
+  "songModelVersion": zod.number().nullish(),
+  "seed": zod.number(),
+  "parameters": zod.record(zod.string(), zod.unknown()),
+  "parentArtifactIds": zod.array(zod.string()),
+  "evaluation": zod.object({
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated']),
+  "providerScore": zod.number(),
+  "renderArtifactIds": zod.array(zod.string()),
+  "artifacts": zod.array(zod.object({
+  "id": zod.string(),
+  "type": zod.enum(['AUDIO_TRACK', 'MIDI', 'QUALITY_REPORT']),
+  "label": zod.string(),
+  "url": zod.string(),
+  "artifactSha256": zod.string().regex(getArrangementResponseGenerationProvenanceOneEvaluationArtifactsItemArtifactSha256RegExp).optional().describe('SHA-256 of the exact stored artifact bytes; absent on historical rows.')
+})),
+  "qualityReport": zod.union([zod.object({
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationQualityReportOneScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationQualityReportOneScoreMax),
+  "checks": zod.record(zod.string(), zod.number()),
+  "weights": zod.record(zod.string(), zod.number()),
+  "strengths": zod.array(zod.string()),
+  "weaknesses": zod.array(zod.string()),
+  "warnings": zod.array(zod.string()),
+  "evaluatedAt": zod.string(),
+  "renderArtifactIds": zod.array(zod.string()),
+  "lineageComplete": zod.boolean()
+}),zod.null()]),
+  "musicCritic": zod.union([zod.union([zod.object({
+  "version": zod.enum(['music-critic-v1']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneScoreMax),
+  "coverage": zod.object({
+  "availableDimensions": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneCoverageAvailableDimensionsMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneCoverageAvailableDimensionsMax),
+  "totalDimensions": zod.literal(8),
+  "sparse": zod.boolean().describe('True when fewer than half of the critic dimensions have available evidence.')
+}).describe('Producer-safe summary of how broadly the aggregate score is supported.'),
+  "dimensions": zod.object({
+  "vocalFit": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsVocalFitScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsVocalFitScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsVocalFitFindingsItemMusicalReasonMax)
+}))
+}),
+  "harmony": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsHarmonyScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsHarmonyScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsHarmonyFindingsItemMusicalReasonMax)
+}))
+}),
+  "development": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsDevelopmentScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsDevelopmentScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsDevelopmentFindingsItemMusicalReasonMax)
+}))
+}),
+  "contrastAndTransitions": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsContrastAndTransitionsScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsContrastAndTransitionsScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsContrastAndTransitionsFindingsItemMusicalReasonMax)
+}))
+}),
+  "registerCollisions": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsRegisterCollisionsScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsRegisterCollisionsScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsRegisterCollisionsFindingsItemMusicalReasonMax)
+}))
+}),
+  "playability": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsPlayabilityScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsPlayabilityScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsPlayabilityFindingsItemMusicalReasonMax)
+}))
+}),
+  "repetition": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsRepetitionScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsRepetitionScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsRepetitionFindingsItemMusicalReasonMax)
+}))
+}),
+  "styleAndControlAdherence": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsStyleAndControlAdherenceScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsStyleAndControlAdherenceScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneOneDimensionsStyleAndControlAdherenceFindingsItemMusicalReasonMax)
+}))
+})
+})
+}),zod.object({
+  "version": zod.enum(['music-critic-v2']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoScoreMax),
+  "coverage": zod.object({
+  "availableDimensions": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoCoverageAvailableDimensionsMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoCoverageAvailableDimensionsMax),
+  "totalDimensions": zod.literal(17),
+  "sparse": zod.boolean()
+}),
+  "dimensions": zod.object({
+  "vocalFit": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalFitScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalFitScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalFitFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalFitFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalFitFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "harmony": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsHarmonyScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsHarmonyScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsHarmonyFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsHarmonyFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsHarmonyFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "development": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDevelopmentScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDevelopmentScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDevelopmentFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDevelopmentFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDevelopmentFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "contrastAndTransitions": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsContrastAndTransitionsScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsContrastAndTransitionsScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsContrastAndTransitionsFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsContrastAndTransitionsFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsContrastAndTransitionsFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "registerCollisions": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRegisterCollisionsScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRegisterCollisionsScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRegisterCollisionsFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRegisterCollisionsFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRegisterCollisionsFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "playability": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPlayabilityScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPlayabilityScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPlayabilityFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPlayabilityFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPlayabilityFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "repetition": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRepetitionScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRepetitionScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRepetitionFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRepetitionFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRepetitionFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "styleAndControlAdherence": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsStyleAndControlAdherenceScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsStyleAndControlAdherenceScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsStyleAndControlAdherenceFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsStyleAndControlAdherenceFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsStyleAndControlAdherenceFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "motifContinuityAndDevelopment": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsMotifContinuityAndDevelopmentScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsMotifContinuityAndDevelopmentScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsMotifContinuityAndDevelopmentFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsMotifContinuityAndDevelopmentFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsMotifContinuityAndDevelopmentFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "phraseIntent": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPhraseIntentScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPhraseIntentScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPhraseIntentFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPhraseIntentFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsPhraseIntentFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "vocalInteraction": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalInteractionScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalInteractionScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalInteractionFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalInteractionFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVocalInteractionFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "roleDuplication": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRoleDuplicationScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRoleDuplicationScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRoleDuplicationFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRoleDuplicationFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsRoleDuplicationFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "orchestralBalance": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsOrchestralBalanceScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsOrchestralBalanceScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsOrchestralBalanceFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsOrchestralBalanceFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsOrchestralBalanceFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "grooveCoordination": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsGrooveCoordinationScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsGrooveCoordinationScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsGrooveCoordinationFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsGrooveCoordinationFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsGrooveCoordinationFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "voiceLeading": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVoiceLeadingScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVoiceLeadingScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVoiceLeadingFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVoiceLeadingFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsVoiceLeadingFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "countermelodyShape": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsCountermelodyShapeScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsCountermelodyShapeScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsCountermelodyShapeFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsCountermelodyShapeFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsCountermelodyShapeFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+}),
+  "dramaticTrajectory": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDramaticTrajectoryScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDramaticTrajectoryScoreMax).nullable(),
+  "evidence": zod.array(zod.object({
+  "source": zod.enum(['vocal_activity', 'harmony_decisions', 'section_plan', 'track_notes', 'instrument_constraints', 'style_and_directives', 'composition_intelligence', 'rhythm_evidence']),
+  "summary": zod.string(),
+  "observations": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()]))
+})),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string().min(1),
+  "affectedSections": zod.array(zod.string().min(1)).min(1),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string().min(1)).min(1),
+  "affectedRoles": zod.array(zod.string().min(1)),
+  "canonicalScope": zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1)
+}),
+  "evidenceReferences": zod.array(zod.object({
+  "source": zod.string(),
+  "summary": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDramaticTrajectoryFindingsItemEvidenceReferencesItemSummaryMax)
+})).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDramaticTrajectoryFindingsItemEvidenceReferencesMax),
+  "permissibleRepairOperations": zod.array(zod.enum(['adjust_notes', 'adjust_rhythm', 'adjust_register', 'adjust_dynamics', 'adjust_voicing', 'adjust_directive'])).min(1),
+  "musicalReason": zod.string().min(1).max(getArrangementResponseGenerationProvenanceOneEvaluationMusicCriticOneTwoDimensionsDramaticTrajectoryFindingsItemMusicalReasonMax)
+})).describe('Deterministically ordered, non-overlapping server-authored scopes eligible for individual bounded repair.')
+})
+})
+})]),zod.null()]),
+  "audioCritic": zod.union([zod.object({
+  "version": zod.literal("perceptual-audio-critic-v1"),
+  "status": zod.enum(['available', 'unavailable', 'failed', 'insufficient']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneScoreMax).nullable(),
+  "coverage": zod.object({
+  "availableDimensions": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneCoverageAvailableDimensionsMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneCoverageAvailableDimensionsMax),
+  "totalDimensions": zod.literal(7),
+  "sufficient": zod.boolean()
+}),
+  "evidence": zod.union([zod.object({
+  "artifactId": zod.string(),
+  "artifactSha256": zod.string().regex(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneEvidenceOneArtifactSha256RegExp),
+  "sampleRate": zod.number().min(1),
+  "analyzerVersion": zod.string()
+}).describe('Privacy-bounded evidence derived only from the rendered PCM and its artifact lineage; it contains no samples, waveform, or private source URL.'),zod.null()]),
+  "dimensions": zod.object({
+  "vocalFit": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsVocalFitScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsVocalFitScoreMax).nullable(),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string(),
+  "startSeconds": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsVocalFitFindingsItemStartSecondsMin),
+  "endSeconds": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsVocalFitFindingsItemEndSecondsMin),
+  "affectedTrackIds": zod.array(zod.string()).optional(),
+  "confidence": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsVocalFitFindingsItemConfidenceMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsVocalFitFindingsItemConfidenceMax),
+  "provenance": zod.enum(['rendered_pcm']),
+  "recommendation": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsVocalFitFindingsItemRecommendationMax)
+}))
+}),
+  "masking": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsMaskingScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsMaskingScoreMax).nullable(),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string(),
+  "startSeconds": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsMaskingFindingsItemStartSecondsMin),
+  "endSeconds": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsMaskingFindingsItemEndSecondsMin),
+  "affectedTrackIds": zod.array(zod.string()).optional(),
+  "confidence": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsMaskingFindingsItemConfidenceMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsMaskingFindingsItemConfidenceMax),
+  "provenance": zod.enum(['rendered_pcm']),
+  "recommendation": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsMaskingFindingsItemRecommendationMax)
+}))
+}),
+  "balance": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsBalanceScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsBalanceScoreMax).nullable(),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string(),
+  "startSeconds": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsBalanceFindingsItemStartSecondsMin),
+  "endSeconds": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsBalanceFindingsItemEndSecondsMin),
+  "affectedTrackIds": zod.array(zod.string()).optional(),
+  "confidence": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsBalanceFindingsItemConfidenceMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsBalanceFindingsItemConfidenceMax),
+  "provenance": zod.enum(['rendered_pcm']),
+  "recommendation": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsBalanceFindingsItemRecommendationMax)
+}))
+}),
+  "dynamics": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsDynamicsScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsDynamicsScoreMax).nullable(),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string(),
+  "startSeconds": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsDynamicsFindingsItemStartSecondsMin),
+  "endSeconds": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsDynamicsFindingsItemEndSecondsMin),
+  "affectedTrackIds": zod.array(zod.string()).optional(),
+  "confidence": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsDynamicsFindingsItemConfidenceMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsDynamicsFindingsItemConfidenceMax),
+  "provenance": zod.enum(['rendered_pcm']),
+  "recommendation": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsDynamicsFindingsItemRecommendationMax)
+}))
+}),
+  "artifactsAndDistortion": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsArtifactsAndDistortionScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsArtifactsAndDistortionScoreMax).nullable(),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string(),
+  "startSeconds": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsArtifactsAndDistortionFindingsItemStartSecondsMin),
+  "endSeconds": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsArtifactsAndDistortionFindingsItemEndSecondsMin),
+  "affectedTrackIds": zod.array(zod.string()).optional(),
+  "confidence": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsArtifactsAndDistortionFindingsItemConfidenceMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsArtifactsAndDistortionFindingsItemConfidenceMax),
+  "provenance": zod.enum(['rendered_pcm']),
+  "recommendation": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsArtifactsAndDistortionFindingsItemRecommendationMax)
+}))
+}),
+  "transitions": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsTransitionsScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsTransitionsScoreMax).nullable(),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string(),
+  "startSeconds": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsTransitionsFindingsItemStartSecondsMin),
+  "endSeconds": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsTransitionsFindingsItemEndSecondsMin),
+  "affectedTrackIds": zod.array(zod.string()).optional(),
+  "confidence": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsTransitionsFindingsItemConfidenceMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsTransitionsFindingsItemConfidenceMax),
+  "provenance": zod.enum(['rendered_pcm']),
+  "recommendation": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsTransitionsFindingsItemRecommendationMax)
+}))
+}),
+  "repetition": zod.object({
+  "status": zod.enum(['available', 'unavailable', 'failed']),
+  "score": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsRepetitionScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsRepetitionScoreMax).nullable(),
+  "explanation": zod.string(),
+  "findings": zod.array(zod.object({
+  "id": zod.string(),
+  "startSeconds": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsRepetitionFindingsItemStartSecondsMin),
+  "endSeconds": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsRepetitionFindingsItemEndSecondsMin),
+  "affectedTrackIds": zod.array(zod.string()).optional(),
+  "confidence": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsRepetitionFindingsItemConfidenceMin).max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsRepetitionFindingsItemConfidenceMax),
+  "provenance": zod.enum(['rendered_pcm']),
+  "recommendation": zod.string().max(getArrangementResponseGenerationProvenanceOneEvaluationAudioCriticOneDimensionsRepetitionFindingsItemRecommendationMax)
+}))
+})
+})
+}).describe('Deterministic perceptual analysis of rendered PCM. An unavailable, failed, or insufficient report must not be used as positive release evidence.'),zod.null()]),
+  "error": zod.string().nullable(),
+  "strategy": zod.object({
+  "name": zod.enum(['sparse', 'balanced', 'rhythmic', 'harmonic', 'orchestral']),
+  "index": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationStrategyIndexMin),
+  "baseSeed": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationStrategyBaseSeedMin).max(getArrangementResponseGenerationProvenanceOneEvaluationStrategyBaseSeedMax),
+  "seed": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationStrategySeedMin).max(getArrangementResponseGenerationProvenanceOneEvaluationStrategySeedMax)
+}).optional(),
+  "diversity": zod.object({
+  "comparedToCandidateId": zod.string().nullable(),
+  "distance": zod.number().nullable(),
+  "threshold": zod.literal(0.25),
+  "rejected": zod.boolean(),
+  "reason": zod.enum(['baseline_retained', 'near_duplicate', 'sufficiently_distinct'])
+}).optional(),
+  "repair": zod.object({
+  "sourceCandidateId": zod.string(),
+  "sourceCandidateLabel": zod.string().optional().describe('Display-safe parent label persisted independently of the historical source job.'),
+  "findingId": zod.string(),
+  "seed": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationRepairSeedMin).max(getArrangementResponseGenerationProvenanceOneEvaluationRepairSeedMax),
+  "attempt": zod.number().min(1),
+  "maxAttempts": zod.number().min(1),
+  "scope": zod.object({
+  "affectedSections": zod.array(zod.string()),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "affectedTrackIds": zod.array(zod.string())
+}),
+  "musicalReason": zod.string(),
+  "outsideScopePreserved": zod.boolean(),
+  "changedScopes": zod.array(zod.object({
+  "level": zod.enum(['song', 'section', 'phrase', 'bar', 'event']),
+  "id": zod.string()
+})),
+  "sourceQualityScore": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMax),
+  "repairedQualityScore": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax).nullable(),
+  "improved": zod.boolean()
+}).optional()
+})
+}),zod.null()]).optional(),
+  "createdAt": zod.string(),
+  "plan": zod.union([zod.object({
+  "id": zod.string(),
+  "version": zod.number(),
+  "sections": zod.array(zod.object({
+  "section": zod.string(),
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "energy": zod.number(),
+  "density": zod.number(),
+  "tracks": zod.record(zod.string(), zod.string()),
+  "operations": zod.array(zod.string()),
+  "activeTracks": zod.array(zod.string()).optional().describe('Explicit track ids active in this section.'),
+  "trackDirectives": zod.record(zod.string(), zod.object({
+  "role": zod.string().optional(),
+  "musicalFunction": zod.enum(['foundation', 'pulse', 'groove', 'harmonic_support', 'texture', 'countermelody', 'hook', 'response', 'lift', 'transition', 'accent', 'doubling', 'pad']).optional(),
+  "register": zod.string().optional(),
+  "rhythmicActivity": zod.number().min(getArrangementResponsePlanOneSectionsItemTrackDirectivesRhythmicActivityMin).max(getArrangementResponsePlanOneSectionsItemTrackDirectivesRhythmicActivityMax).optional(),
+  "harmonicActivity": zod.number().min(getArrangementResponsePlanOneSectionsItemTrackDirectivesHarmonicActivityMin).max(getArrangementResponsePlanOneSectionsItemTrackDirectivesHarmonicActivityMax).optional(),
+  "dynamicTarget": zod.number().min(getArrangementResponsePlanOneSectionsItemTrackDirectivesDynamicTargetMin).max(getArrangementResponsePlanOneSectionsItemTrackDirectivesDynamicTargetMax).optional(),
+  "articulationFamily": zod.string().optional(),
+  "entry": zod.object({
+  "bar": zod.number().min(getArrangementResponsePlanOneSectionsItemTrackDirectivesEntryBarMin).optional(),
+  "beat": zod.number().min(getArrangementResponsePlanOneSectionsItemTrackDirectivesEntryBeatMin).optional(),
+  "mode": zod.string().optional(),
+  "durationBeats": zod.number().gt(getArrangementResponsePlanOneSectionsItemTrackDirectivesEntryDurationBeatsExclusiveMin).optional()
+}).optional(),
+  "exit": zod.object({
+  "bar": zod.number().min(getArrangementResponsePlanOneSectionsItemTrackDirectivesExitBarMin).optional(),
+  "beat": zod.number().min(getArrangementResponsePlanOneSectionsItemTrackDirectivesExitBeatMin).optional(),
+  "mode": zod.string().optional(),
+  "durationBeats": zod.number().gt(getArrangementResponsePlanOneSectionsItemTrackDirectivesExitDurationBeatsExclusiveMin).optional()
+}).optional(),
+  "transition": zod.string().optional(),
+  "fill": zod.boolean().optional(),
+  "handoffFromTrackId": zod.string().optional(),
+  "doublingTrackId": zod.string().optional()
+})).optional().describe('Per-track orchestration intent indexed by track id.')
+})),
+  "style": zod.object({
+  "genre": zod.string(),
+  "subgenre": zod.string(),
+  "era": zod.string(),
+  "tempoCharacter": zod.enum(['laid_back', 'steady', 'driving', 'rubato']),
+  "rhythm": zod.record(zod.string(), zod.unknown()),
+  "harmony": zod.record(zod.string(), zod.unknown()),
+  "instrumentation": zod.record(zod.string(), zod.unknown()),
+  "orchestration": zod.record(zod.string(), zod.unknown()),
+  "production": zod.record(zod.string(), zod.unknown()),
+  "dynamics": zod.record(zod.string(), zod.unknown()),
+  "grammar": zod.object({
+  "version": zod.literal("1.0"),
+  "evidenceSha256": zod.string().regex(getArrangementResponsePlanOneStyleGrammarEvidenceSha256RegExp),
+  "vocabulary": zod.object({
+  "groove": zod.enum(['straight', 'swung', 'syncopated', 'four_on_floor']),
+  "voicing": zod.enum(['close', 'open', 'drop_two', 'quartal', 'wide']),
+  "articulation": zod.enum(['legato', 'tight', 'accented', 'pulsed']),
+  "instrumentation": zod.enum(['acoustic', 'electronic', 'hybrid', 'orchestral']),
+  "phraseBehavior": zod.enum(['call_response', 'continuous', 'sparse_answers', 'motivic']),
+  "fills": zod.enum(['none', 'cadential', 'frequent', 'sectional']),
+  "transitions": zod.enum(['hard_cut', 'thin_build', 'riser', 'orchestral_swell']),
+  "development": zod.enum(['repetition', 'additive', 'transformative', 'dynamic_arc'])
+})
+}).optional()
+}),
+  "songModelVersion": zod.number(),
+  "parameters": zod.record(zod.string(), zod.unknown()),
+  "provenance": zod.object({
+  "model": zod.string(),
+  "version": zod.string(),
+  "parameters": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()])),
+  "parentIds": zod.array(zod.string()),
+  "createdBy": zod.string()
+}),
+  "hierarchy": zod.object({
+  "version": zod.literal("1.0"),
+  "status": zod.enum(['applied', 'no_op']),
+  "reason": zod.string().nullable(),
+  "precedence": zod.tuple([zod.literal("song"),
+zod.literal("section"),
+zod.literal("phrase"),
+zod.literal("bar"),
+zod.literal("event")]),
+  "song": zod.object({
+  "id": zod.string(),
+  "intent": zod.enum(['development_arc', 'preserve_observed_form']),
+  "climaxSectionId": zod.string().nullable()
+}),
+  "sections": zod.array(zod.object({
+  "id": zod.string(),
+  "sourceSection": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'outro', 'neutral']),
+  "development": zod.enum(['initial', 'development', 'reprise', 'neutral']),
+  "targetEnergy": zod.number().min(getArrangementResponsePlanOneHierarchySectionsItemTargetEnergyMin).max(getArrangementResponsePlanOneHierarchySectionsItemTargetEnergyMax),
+  "targetDensity": zod.number().min(getArrangementResponsePlanOneHierarchySectionsItemTargetDensityMin).max(getArrangementResponsePlanOneHierarchySectionsItemTargetDensityMax),
+  "phraseIds": zod.array(zod.string()),
+  "barIds": zod.array(zod.string())
+})),
+  "phrases": zod.array(zod.object({
+  "id": zod.string(),
+  "sectionId": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "confidence": zod.number().min(getArrangementResponsePlanOneHierarchyPhrasesItemConfidenceMin).max(getArrangementResponsePlanOneHierarchyPhrasesItemConfidenceMax),
+  "intent": zod.literal("protect_vocal_phrase")
+})),
+  "bars": zod.array(zod.object({
+  "id": zod.string(),
+  "sectionId": zod.string(),
+  "bar": zod.number().min(1),
+  "meter": zod.string(),
+  "phraseIds": zod.array(zod.string()),
+  "vocalSpace": zod.enum(['occupied', 'available', 'unknown'])
+})),
+  "events": zod.array(zod.object({
+  "id": zod.string(),
+  "sectionId": zod.string(),
+  "barId": zod.string(),
+  "trackId": zod.string(),
+  "intent": zod.enum(['support_vocal', 'use_vocal_space', 'follow_section']),
+  "source": zod.enum(['section', 'vocal_phrase', 'vocal_space'])
+}))
+}),
+  "globalPlan": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(getArrangementResponsePlanOneGlobalPlanInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "confidence": zod.number().min(getArrangementResponsePlanOneGlobalPlanConfidenceMin).max(getArrangementResponsePlanOneGlobalPlanConfidenceMax),
+  "style": zod.string(),
+  "substyle": zod.string().nullable(),
+  "instrumentPalette": zod.array(zod.object({
+  "role": zod.string(),
+  "priority": zod.number().min(1),
+  "rationale": zod.string()
+})),
+  "sectionTargets": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "energy": zod.number().min(getArrangementResponsePlanOneGlobalPlanSectionTargetsItemEnergyMin).max(getArrangementResponsePlanOneGlobalPlanSectionTargetsItemEnergyMax),
+  "density": zod.number().min(getArrangementResponsePlanOneGlobalPlanSectionTargetsItemDensityMin).max(getArrangementResponsePlanOneGlobalPlanSectionTargetsItemDensityMax),
+  "tension": zod.number().min(getArrangementResponsePlanOneGlobalPlanSectionTargetsItemTensionMin).max(getArrangementResponsePlanOneGlobalPlanSectionTargetsItemTensionMax),
+  "role": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'neutral']),
+  "noveltyVsPrevious": zod.number().min(getArrangementResponsePlanOneGlobalPlanSectionTargetsItemNoveltyVsPreviousMin).max(getArrangementResponsePlanOneGlobalPlanSectionTargetsItemNoveltyVsPreviousMax)
+})),
+  "climax": zod.object({
+  "sectionName": zod.string(),
+  "atBar": zod.number().min(1),
+  "energy": zod.number().min(getArrangementResponsePlanOneGlobalPlanClimaxEnergyMin).max(getArrangementResponsePlanOneGlobalPlanClimaxEnergyMax)
+}).nullable(),
+  "secondaryClimax": zod.object({
+  "sectionName": zod.string(),
+  "atBar": zod.number().min(1),
+  "energy": zod.number().min(getArrangementResponsePlanOneGlobalPlanSecondaryClimaxEnergyMin).max(getArrangementResponsePlanOneGlobalPlanSecondaryClimaxEnergyMax)
+}).nullable(),
+  "grooveStrategy": zod.enum(['steady_pulse', 'syncopated', 'swing', 'half_time_feel', 'four_on_floor', 'rubato']),
+  "orchestrationStrategy": zod.enum(['layered_build', 'call_and_response', 'wave_dynamics', 'static_bed', 'sparse_to_full']),
+  "motifStrategy": zod.enum(['recurring_hook', 'developing_motif', 'through_composed']),
+  "contrastStrategy": zod.enum(['dynamic_contrast', 'textural_contrast', 'harmonic_contrast', 'register_contrast', 'minimal_contrast']),
+  "harmonicComplexity": zod.number().min(getArrangementResponsePlanOneGlobalPlanHarmonicComplexityMin).max(getArrangementResponsePlanOneGlobalPlanHarmonicComplexityMax),
+  "rhythmicComplexity": zod.number().min(getArrangementResponsePlanOneGlobalPlanRhythmicComplexityMin).max(getArrangementResponsePlanOneGlobalPlanRhythmicComplexityMax),
+  "productionAesthetic": zod.enum(['intimate', 'polished_pop', 'cinematic', 'raw_band', 'electronic', 'orchestral'])
+}).optional().describe('Whole-song arrangement direction (PR-04), derived before section planning.'),
+  "sectionPlan": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(getArrangementResponsePlanOneSectionPlanInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "sections": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'neutral']),
+  "energy": zod.number().min(getArrangementResponsePlanOneSectionPlanSectionsItemEnergyMin).max(getArrangementResponsePlanOneSectionPlanSectionsItemEnergyMax),
+  "density": zod.number().min(getArrangementResponsePlanOneSectionPlanSectionsItemDensityMin).max(getArrangementResponsePlanOneSectionPlanSectionsItemDensityMax),
+  "tension": zod.number().min(getArrangementResponsePlanOneSectionPlanSectionsItemTensionMin).max(getArrangementResponsePlanOneSectionPlanSectionsItemTensionMax),
+  "groove": zod.string(),
+  "activeInstrumentFamilies": zod.array(zod.string()),
+  "inactiveInstrumentFamilies": zod.array(zod.string()),
+  "leadRole": zod.string(),
+  "supportingRoles": zod.array(zod.string()),
+  "registerDistribution": zod.record(zod.string(), zod.number().min(getArrangementResponsePlanOneSectionPlanSectionsItemRegisterDistributionMinOne).max(getArrangementResponsePlanOneSectionPlanSectionsItemRegisterDistributionMaxOne)),
+  "rhythmicActivity": zod.number().min(getArrangementResponsePlanOneSectionPlanSectionsItemRhythmicActivityMin).max(getArrangementResponsePlanOneSectionPlanSectionsItemRhythmicActivityMax),
+  "melodicActivity": zod.number().min(getArrangementResponsePlanOneSectionPlanSectionsItemMelodicActivityMin).max(getArrangementResponsePlanOneSectionPlanSectionsItemMelodicActivityMax),
+  "harmonicActivity": zod.number().min(getArrangementResponsePlanOneSectionPlanSectionsItemHarmonicActivityMin).max(getArrangementResponsePlanOneSectionPlanSectionsItemHarmonicActivityMax),
+  "transitionIn": zod.string(),
+  "transitionOut": zod.string(),
+  "noveltyRelativeToPreviousSection": zod.number().min(getArrangementResponsePlanOneSectionPlanSectionsItemNoveltyRelativeToPreviousSectionMin).max(getArrangementResponsePlanOneSectionPlanSectionsItemNoveltyRelativeToPreviousSectionMax)
+})),
+  "phrases": zod.array(zod.object({
+  "id": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "role": zod.enum(['opening', 'development', 'response', 'cadence', 'pickup', 'fill']),
+  "energyTarget": zod.number().min(getArrangementResponsePlanOneSectionPlanPhrasesItemEnergyTargetMin).max(getArrangementResponsePlanOneSectionPlanPhrasesItemEnergyTargetMax),
+  "entersFamilies": zod.array(zod.string()),
+  "leavesFamilies": zod.array(zod.string())
+})),
+  "roleAssignments": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "instrument": zod.string(),
+  "role": zod.enum(['LEAD', 'FOUNDATION', 'BASS', 'GROOVE', 'RHYTHMIC_HARMONY', 'HARMONIC_BED', 'OSTINATO', 'COUNTER_MELODY', 'CALL_RESPONSE', 'ACCENT', 'PAD', 'FILL', 'TRANSITION', 'CLIMAX_LAYER']),
+  "register": zod.enum(['low', 'low_mid', 'mid', 'upper_mid', 'high']),
+  "density": zod.number().min(getArrangementResponsePlanOneSectionPlanRoleAssignmentsItemDensityMin).max(getArrangementResponsePlanOneSectionPlanRoleAssignmentsItemDensityMax),
+  "rhythmicActivity": zod.number().min(getArrangementResponsePlanOneSectionPlanRoleAssignmentsItemRhythmicActivityMin).max(getArrangementResponsePlanOneSectionPlanRoleAssignmentsItemRhythmicActivityMax),
+  "melodicActivity": zod.number().min(getArrangementResponsePlanOneSectionPlanRoleAssignmentsItemMelodicActivityMin).max(getArrangementResponsePlanOneSectionPlanRoleAssignmentsItemMelodicActivityMax),
+  "voicingStrategy": zod.enum(['open', 'close', 'unison', 'spread', 'drone', 'percussive']),
+  "articulationFamily": zod.enum(['legato', 'staccato', 'sustain', 'pluck', 'percussive', 'mixed']),
+  "dynamicShape": zod.string(),
+  "interactionWithLead": zod.enum(['avoid', 'support', 'answer', 'double', 'independent']),
+  "entryBar": zod.number().min(1),
+  "exitBar": zod.number().min(1)
+}))
+}).optional().describe('Section \/ phrase \/ instrument-role plan (PR-05).'),
+  "orchestrationBudget": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(getArrangementResponsePlanOneOrchestrationBudgetInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "windows": zod.array(zod.object({
+  "id": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "vocalAttention": zod.number().min(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemVocalAttentionMin).max(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemVocalAttentionMax),
+  "budgets": zod.object({
+  "totalDensity": zod.number().min(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsTotalDensityMin).max(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsTotalDensityMax),
+  "melodic": zod.number().min(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsMelodicMin).max(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsMelodicMax),
+  "rhythmic": zod.number().min(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsRhythmicMin).max(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsRhythmicMax),
+  "harmonic": zod.number().min(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsHarmonicMin).max(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsHarmonicMax),
+  "register": zod.number().min(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsRegisterMin).max(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsRegisterMax),
+  "spectral": zod.number().min(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsSpectralMin).max(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsSpectralMax),
+  "attention": zod.number().min(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsAttentionMin).max(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemBudgetsAttentionMax)
+}),
+  "instrumentAdjustments": zod.array(zod.object({
+  "instrument": zod.string(),
+  "densityMultiplier": zod.number().min(getArrangementResponsePlanOneOrchestrationBudgetWindowsItemInstrumentAdjustmentsItemDensityMultiplierMin),
+  "registerShift": zod.number(),
+  "note": zod.string()
+}))
+})),
+  "registerOccupancy": zod.array(zod.object({
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "occupancy": zod.record(zod.string(), zod.number().min(getArrangementResponsePlanOneOrchestrationBudgetRegisterOccupancyItemOccupancyMinOne).max(getArrangementResponsePlanOneOrchestrationBudgetRegisterOccupancyItemOccupancyMaxOne)),
+  "overcrowdedBands": zod.array(zod.enum(['low', 'low_mid', 'mid', 'upper_mid', 'high'])),
+  "resolutions": zod.array(zod.object({
+  "instrument": zod.string(),
+  "action": zod.enum(['drop_octave', 'raise_octave', 'simplify', 'thin_voicing']),
+  "band": zod.enum(['low', 'low_mid', 'mid', 'upper_mid', 'high'])
+}))
+}))
+}).optional().describe('Orchestration Budget Engine (PR-06) — per-moment density\/attention budgets + register occupancy.'),
+  "transitionPlan": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(getArrangementResponsePlanOneTransitionPlanInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "transitions": zod.array(zod.object({
+  "id": zod.string(),
+  "fromSection": zod.string(),
+  "toSection": zod.string(),
+  "atBar": zod.number().min(1),
+  "approachBars": zod.number().min(getArrangementResponsePlanOneTransitionPlanTransitionsItemApproachBarsMin),
+  "kind": zod.enum(['build', 'drop', 'continue', 'break']),
+  "strength": zod.number().min(getArrangementResponsePlanOneTransitionPlanTransitionsItemStrengthMin).max(getArrangementResponsePlanOneTransitionPlanTransitionsItemStrengthMax),
+  "harmonicApproach": zod.enum(['dominant_prep', 'plagal', 'chromatic', 'static', 'none']),
+  "vocalSafe": zod.boolean(),
+  "devices": zod.array(zod.object({
+  "device": zod.enum(['drum_fill', 'bass_pickup', 'keys_pickup', 'guitar_pickup', 'string_run', 'brass_push', 'cymbal_swell', 'cymbal_choke', 'break', 'stop', 'anticipation', 'turnaround', 'riser', 'reverse', 'build_up', 'breakdown', 'ending_hit', 'ritardando']),
+  "instrument": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "intensity": zod.number().min(getArrangementResponsePlanOneTransitionPlanTransitionsItemDevicesItemIntensityMin).max(getArrangementResponsePlanOneTransitionPlanTransitionsItemDevicesItemIntensityMax),
+  "rationale": zod.string()
+}))
+}))
+}).optional().describe('Transition Engine (PR-08) — planned devices per section boundary.'),
+  "partComposerPlan": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(getArrangementResponsePlanOnePartComposerPlanInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "tasks": zod.array(zod.object({
+  "id": zod.string(),
+  "task": zod.enum(['DRUMS', 'PERCUSSION', 'BASS', 'PIANO', 'KEYS', 'ACOUSTIC_GUITAR', 'ELECTRIC_GUITAR', 'STRINGS', 'BRASS', 'WOODWINDS', 'PAD', 'OSTINATO', 'COUNTER_MELODY', 'CALL_RESPONSE', 'FILL', 'TRANSITION', 'INTRO', 'ENDING']),
+  "sectionName": zod.string(),
+  "instrument": zod.string(),
+  "role": zod.enum(['LEAD', 'FOUNDATION', 'BASS', 'GROOVE', 'RHYTHMIC_HARMONY', 'HARMONIC_BED', 'OSTINATO', 'COUNTER_MELODY', 'CALL_RESPONSE', 'ACCENT', 'PAD', 'FILL', 'TRANSITION', 'CLIMAX_LAYER']),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "seed": zod.number().min(getArrangementResponsePlanOnePartComposerPlanTasksItemSeedMin),
+  "dependsOn": zod.array(zod.string())
+}))
+}).optional().describe('Part Composer contract (PR-09) — compact index of parts to compose.'),
+  "candidateGenerationPlan": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(getArrangementResponsePlanOneCandidateGenerationPlanInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "baseSeed": zod.number().min(getArrangementResponsePlanOneCandidateGenerationPlanBaseSeedMin),
+  "candidates": zod.array(zod.object({
+  "candidateId": zod.string(),
+  "label": zod.string(),
+  "strategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "seed": zod.number().min(getArrangementResponsePlanOneCandidateGenerationPlanCandidatesItemSeedMin),
+  "parameters": zod.record(zod.string(), zod.number()),
+  "partAdjustments": zod.array(zod.object({
+  "taskId": zod.string(),
+  "densityMultiplier": zod.number().min(getArrangementResponsePlanOneCandidateGenerationPlanCandidatesItemPartAdjustmentsItemDensityMultiplierMin),
+  "seed": zod.number().min(getArrangementResponsePlanOneCandidateGenerationPlanCandidatesItemPartAdjustmentsItemSeedMin),
+  "note": zod.string()
+}))
+}))
+}).optional().describe('Deliberate candidate-generation strategies (PR-10).'),
+  "compositionIntelligence": zod.object({
+  "version": zod.enum(['1.0', '2.0']),
+  "mode": zod.enum(['legacy', 'reasoning_core']),
+  "precedence": zod.array(zod.string()),
+  "seed": zod.number(),
+  "evidenceSha256": zod.string(),
+  "songIntent": zod.enum(['preserve_observed_form', 'develop_observed_form']),
+  "tensionRelease": zod.array(zod.record(zod.string(), zod.unknown())),
+  "phrases": zod.array(zod.record(zod.string(), zod.unknown())),
+  "instrumentRoles": zod.array(zod.record(zod.string(), zod.unknown())),
+  "orchestrationAssignments": zod.array(zod.object({
+  "sectionId": zod.string(),
+  "phraseId": zod.string(),
+  "trackId": zod.string(),
+  "role": zod.enum(['foundation', 'pulse', 'groove', 'harmonic_support', 'texture', 'countermelody', 'hook', 'response', 'lift', 'transition', 'accent', 'doubling', 'pad']),
+  "register": zod.enum(['low', 'middle', 'high']),
+  "handoffFromTrackId": zod.string().nullable(),
+  "doublingTrackId": zod.string().nullable()
+})).optional()
+}).optional(),
+  "generationPreference": zod.union([zod.object({
+  "contractVersion": zod.literal("1.0"),
+  "calibrationId": zod.string().min(1),
+  "calibrationVersion": zod.number().min(1).multipleOf(getArrangementResponsePlanOneGenerationPreferenceOneCalibrationVersionMultipleOf),
+  "heldOutAgreement": zod.number().min(getArrangementResponsePlanOneGenerationPreferenceOneHeldOutAgreementMin).max(getArrangementResponsePlanOneGenerationPreferenceOneHeldOutAgreementMax),
+  "baselineAgreement": zod.number().min(getArrangementResponsePlanOneGenerationPreferenceOneBaselineAgreementMin).max(getArrangementResponsePlanOneGenerationPreferenceOneBaselineAgreementMax),
+  "heldOutExamples": zod.number().min(getArrangementResponsePlanOneGenerationPreferenceOneHeldOutExamplesMin).multipleOf(getArrangementResponsePlanOneGenerationPreferenceOneHeldOutExamplesMultipleOf),
+  "evaluationSha256": zod.string().regex(getArrangementResponsePlanOneGenerationPreferenceOneEvaluationSha256RegExp),
+  "evidenceSha256": zod.string().regex(getArrangementResponsePlanOneGenerationPreferenceOneEvidenceSha256RegExp),
+  "effects": zod.object({
+  "orchestrationDensity": zod.number().min(getArrangementResponsePlanOneGenerationPreferenceOneEffectsOrchestrationDensityMin).max(getArrangementResponsePlanOneGenerationPreferenceOneEffectsOrchestrationDensityMax),
+  "responseFrequency": zod.number().min(getArrangementResponsePlanOneGenerationPreferenceOneEffectsResponseFrequencyMin).max(getArrangementResponsePlanOneGenerationPreferenceOneEffectsResponseFrequencyMax),
+  "roleEmphasis": zod.enum(['foundation', 'pulse', 'harmony', 'counterline', 'texture']),
+  "voicingCharacter": zod.enum(['close', 'open', 'wide']),
+  "development": zod.enum(['restrained', 'balanced', 'progressive']),
+  "transitionIntensity": zod.number().min(getArrangementResponsePlanOneGenerationPreferenceOneEffectsTransitionIntensityMin).max(getArrangementResponsePlanOneGenerationPreferenceOneEffectsTransitionIntensityMax)
+})
+}),zod.null()]).optional(),
+  "productionBriefId": zod.string().optional().describe('Wave U - the ProductionBrief this plan was planned from; absent without a brief'),
+  "productionBriefDigestSha256": zod.string().regex(getArrangementResponsePlanOneProductionBriefDigestSha256RegExp).optional(),
+  "regeneration": zod.object({
+  "version": zod.enum(['1.0']),
+  "method": zod.string(),
+  "requested": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "blockedByLock": zod.array(zod.object({
+  "scope": zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+}),
+  "lockId": zod.string()
+})),
+  "regenerated": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "keptNotes": zod.number().min(getArrangementResponsePlanOneRegenerationKeptNotesMin),
+  "replacedNotes": zod.number().min(getArrangementResponsePlanOneRegenerationReplacedNotesMin),
+  "locksHonoured": zod.boolean(),
+  "editTurnId": zod.string(),
+  "editIntent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "editText": zod.string(),
+  "parentArrangementId": zod.string(),
+  "parentArrangementVersion": zod.number(),
+  "songModelVersion": zod.number(),
+  "productionBriefId": zod.string().nullable(),
+  "productionBriefDigestSha256": zod.string().nullable(),
+  "locks": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "unmatchedFamilies": zod.array(zod.string()),
+  "changed": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "barRanges": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "replacedNotes": zod.number().min(getArrangementResponsePlanOneRegenerationChangedBarRangesItemReplacedNotesMin)
+}))
+}),
+  "preserved": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "notes": zod.number().min(getArrangementResponsePlanOneRegenerationPreservedNotesMin)
+}),
+  "verification": zod.object({
+  "honoured": zod.boolean(),
+  "violations": zod.array(zod.string()),
+  "checkedLockedNotes": zod.number().min(getArrangementResponsePlanOneRegenerationVerificationCheckedLockedNotesMin)
+}),
+  "identicalReplacedNotes": zod.number().min(getArrangementResponsePlanOneRegenerationIdenticalReplacedNotesMin).describe('Of the accepted candidate\'s replaced notes'),
+  "candidates": zod.array(zod.object({
+  "candidateId": zod.string(),
+  "label": zod.string(),
+  "strategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "seed": zod.number(),
+  "feasible": zod.boolean(),
+  "score": zod.number(),
+  "constraintErrors": zod.number().min(getArrangementResponsePlanOneRegenerationCandidatesItemConstraintErrorsMin),
+  "locksHonoured": zod.boolean(),
+  "violations": zod.number().min(getArrangementResponsePlanOneRegenerationCandidatesItemViolationsMin),
+  "replacedNotes": zod.number().min(getArrangementResponsePlanOneRegenerationCandidatesItemReplacedNotesMin),
+  "identicalReplacedNotes": zod.number().min(getArrangementResponsePlanOneRegenerationCandidatesItemIdenticalReplacedNotesMin).describe('Replaced notes identical (id and content) to what was there - a deterministic composer writing the same part again'),
+  "selected": zod.boolean()
+}).describe('One Arrangement Brain candidate as it fared once merged into the previous version (PR-U5).')),
+  "selectedCandidateId": zod.string(),
+  "plannerHintEvidence": zod.array(zod.string()),
+  "warnings": zod.array(zod.string()),
+  "durationMs": zod.number().min(getArrangementResponsePlanOneRegenerationDurationMsMin)
+}).optional().describe('A chat edit applied to the arrangement (PR-U5): the PR-17 partial-regeneration\nreport plus what the producer needs to check the promise - what was requested,\nwhat the locks allowed and blocked, which tracks \/ sections \/ bar ranges changed,\nwhat was preserved verbatim, how the locks were verified, and how the candidates\nwere ranked before one was accepted.\n')
+}),zod.null()]),
+  "trackModels": zod.array(zod.object({
+  "id": zod.string(),
+  "instrument": zod.string(),
+  "instrumentDefinition": zod.object({
+  "id": zod.string(),
+  "family": zod.enum(['keys', 'strings', 'brass', 'drums', 'guitar', 'voice', 'synth']),
+  "playableRange": zod.object({
+  "min": zod.number(),
+  "max": zod.number()
+}),
+  "comfortableRange": zod.object({
+  "min": zod.number(),
+  "max": zod.number()
+}),
+  "registers": zod.array(zod.object({
+  "name": zod.string(),
+  "min": zod.number(),
+  "max": zod.number(),
+  "character": zod.string()
+})),
+  "polyphonic": zod.boolean(),
+  "maxVoices": zod.number(),
+  "articulations": zod.array(zod.string()),
+  "constraints": zod.object({
+  "maxLeap": zod.number(),
+  "minNoteDuration": zod.number(),
+  "maxSimultaneousNotes": zod.number(),
+  "breathSeconds": zod.number().optional(),
+  "strings": zod.number().optional(),
+  "frets": zod.number().optional(),
+  "hands": zod.number().optional(),
+  "feet": zod.number().optional()
+}),
+  "controls": zod.object({
+  "dynamics": zod.array(zod.number()),
+  "expression": zod.array(zod.number()),
+  "sustain": zod.number().optional(),
+  "pitchBend": zod.boolean(),
+  "aftertouch": zod.boolean()
+}),
+  "directiveMappings": zod.object({
+  "registers": zod.record(zod.string(), zod.object({
+  "min": zod.number(),
+  "max": zod.number()
+})).optional(),
+  "articulationFamilies": zod.record(zod.string(), zod.array(zod.string())).optional(),
+  "dynamicTargets": zod.record(zod.string(), zod.number()).optional(),
+  "controls": zod.record(zod.string(), zod.number()).optional()
+}).optional()
+}),
+  "role": zod.string(),
+  "notes": zod.array(zod.object({
+  "id": zod.string(),
+  "start": zod.number(),
+  "duration": zod.number(),
+  "pitch": zod.number(),
+  "velocity": zod.number(),
+  "channel": zod.number().optional(),
+  "voice": zod.string().optional()
+})),
+  "cc": zod.array(zod.object({
+  "controller": zod.number(),
+  "time": zod.number(),
+  "value": zod.number(),
+  "channel": zod.number().optional()
+})),
+  "articulations": zod.array(zod.object({
+  "time": zod.number().min(getArrangementResponseTrackModelsItemArticulationsItemTimeMin),
+  "name": zod.string(),
+  "keyswitch": zod.number().min(getArrangementResponseTrackModelsItemArticulationsItemKeyswitchMin).max(getArrangementResponseTrackModelsItemArticulationsItemKeyswitchMax).optional(),
+  "intensity": zod.number().min(getArrangementResponseTrackModelsItemArticulationsItemIntensityMin).max(getArrangementResponseTrackModelsItemArticulationsItemIntensityMax).optional()
+}).describe('Canonical TrackModel articulation as emitted by the Performance Engine (seconds + articulation name from the instrument definition). Distinct from the tick-based ArticulationEvent used by TrackPerformance.')),
+  "automation": zod.array(zod.object({
+  "parameter": zod.string(),
+  "time": zod.number(),
+  "value": zod.number()
+})),
+  "source": zod.string(),
+  "version": zod.number(),
+  "provenance": zod.object({
+  "model": zod.string(),
+  "version": zod.string(),
+  "parameters": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()])),
+  "parentIds": zod.array(zod.string()),
+  "createdBy": zod.string()
+}),
+  "directive": zod.object({
+  "role": zod.string().optional(),
+  "musicalFunction": zod.enum(['foundation', 'pulse', 'groove', 'harmonic_support', 'texture', 'countermelody', 'hook', 'response', 'lift', 'transition', 'accent', 'doubling', 'pad']).optional(),
+  "register": zod.string().optional(),
+  "rhythmicActivity": zod.number().min(getArrangementResponseTrackModelsItemDirectiveRhythmicActivityMin).max(getArrangementResponseTrackModelsItemDirectiveRhythmicActivityMax).optional(),
+  "harmonicActivity": zod.number().min(getArrangementResponseTrackModelsItemDirectiveHarmonicActivityMin).max(getArrangementResponseTrackModelsItemDirectiveHarmonicActivityMax).optional(),
+  "dynamicTarget": zod.number().min(getArrangementResponseTrackModelsItemDirectiveDynamicTargetMin).max(getArrangementResponseTrackModelsItemDirectiveDynamicTargetMax).optional(),
+  "articulationFamily": zod.string().optional(),
+  "entry": zod.object({
+  "bar": zod.number().min(getArrangementResponseTrackModelsItemDirectiveEntryBarMin).optional(),
+  "beat": zod.number().min(getArrangementResponseTrackModelsItemDirectiveEntryBeatMin).optional(),
+  "mode": zod.string().optional(),
+  "durationBeats": zod.number().gt(getArrangementResponseTrackModelsItemDirectiveEntryDurationBeatsExclusiveMin).optional()
+}).optional(),
+  "exit": zod.object({
+  "bar": zod.number().min(getArrangementResponseTrackModelsItemDirectiveExitBarMin).optional(),
+  "beat": zod.number().min(getArrangementResponseTrackModelsItemDirectiveExitBeatMin).optional(),
+  "mode": zod.string().optional(),
+  "durationBeats": zod.number().gt(getArrangementResponseTrackModelsItemDirectiveExitDurationBeatsExclusiveMin).optional()
+}).optional(),
+  "transition": zod.string().optional(),
+  "fill": zod.boolean().optional(),
+  "handoffFromTrackId": zod.string().optional(),
+  "doublingTrackId": zod.string().optional()
+}).optional(),
+  "appliedDirectives": zod.array(zod.object({
+  "section": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "start": zod.number().min(getArrangementResponseTrackModelsItemAppliedDirectivesItemStartMin),
+  "end": zod.number().min(getArrangementResponseTrackModelsItemAppliedDirectivesItemEndMin),
+  "directive": zod.object({
+  "role": zod.string().optional(),
+  "musicalFunction": zod.enum(['foundation', 'pulse', 'groove', 'harmonic_support', 'texture', 'countermelody', 'hook', 'response', 'lift', 'transition', 'accent', 'doubling', 'pad']).optional(),
+  "register": zod.string().optional(),
+  "rhythmicActivity": zod.number().min(getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveRhythmicActivityMin).max(getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveRhythmicActivityMax).optional(),
+  "harmonicActivity": zod.number().min(getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveHarmonicActivityMin).max(getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveHarmonicActivityMax).optional(),
+  "dynamicTarget": zod.number().min(getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveDynamicTargetMin).max(getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveDynamicTargetMax).optional(),
+  "articulationFamily": zod.string().optional(),
+  "entry": zod.object({
+  "bar": zod.number().min(getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveEntryBarMin).optional(),
+  "beat": zod.number().min(getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveEntryBeatMin).optional(),
+  "mode": zod.string().optional(),
+  "durationBeats": zod.number().gt(getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveEntryDurationBeatsExclusiveMin).optional()
+}).optional(),
+  "exit": zod.object({
+  "bar": zod.number().min(getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveExitBarMin).optional(),
+  "beat": zod.number().min(getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveExitBeatMin).optional(),
+  "mode": zod.string().optional(),
+  "durationBeats": zod.number().gt(getArrangementResponseTrackModelsItemAppliedDirectivesItemDirectiveExitDurationBeatsExclusiveMin).optional()
+}).optional(),
+  "transition": zod.string().optional(),
+  "fill": zod.boolean().optional(),
+  "handoffFromTrackId": zod.string().optional(),
+  "doublingTrackId": zod.string().optional()
+})
+})).optional(),
+  "mapping": zod.object({
+  "midiChannel": zod.number().min(1).max(getArrangementResponseTrackModelsItemMappingMidiChannelMax).optional(),
+  "program": zod.number().min(getArrangementResponseTrackModelsItemMappingProgramMin).max(getArrangementResponseTrackModelsItemMappingProgramMax).optional(),
+  "articulationMap": zod.record(zod.string(), zod.union([zod.string(),zod.number()])).optional(),
+  "controlMap": zod.record(zod.string(), zod.number()).optional()
+}).optional(),
+  "performanceEvidence": zod.object({
+  "version": zod.enum(['1.0']),
+  "seed": zod.number(),
+  "instrumentFamily": zod.enum(['keys', 'strings', 'brass', 'drums', 'guitar', 'voice', 'synth']),
+  "articulationProfile": zod.string(),
+  "timingProfile": zod.string(),
+  "dynamicsProfile": zod.string(),
+  "canonicalTimelineSha256": zod.string().regex(getArrangementResponseTrackModelsItemPerformanceEvidenceCanonicalTimelineSha256RegExp),
+  "phraseIds": zod.array(zod.string()),
+  "sectionRanges": zod.array(zod.object({
+  "section": zod.string(),
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "start": zod.number(),
+  "end": zod.number()
+})),
+  "playability": zod.object({
+  "valid": zod.boolean(),
+  "checkedNotes": zod.number(),
+  "violations": zod.array(zod.string())
+}),
+  "performedMaterialSha256": zod.string().regex(getArrangementResponseTrackModelsItemPerformanceEvidencePerformedMaterialSha256RegExp)
+}).optional(),
+  "harmonyEvidence": zod.object({
+  "version": zod.enum(['2.0']),
+  "mode": zod.enum(['advanced_voicing', 'phrase_countermelody']),
+  "selectedMotion": zod.number().min(getArrangementResponseTrackModelsItemHarmonyEvidenceSelectedMotionMin).optional(),
+  "baselineMotion": zod.number().min(getArrangementResponseTrackModelsItemHarmonyEvidenceBaselineMotionMin).optional(),
+  "maximumLeap": zod.number().min(getArrangementResponseTrackModelsItemHarmonyEvidenceMaximumLeapMin).optional(),
+  "motifRefs": zod.array(zod.string()).optional(),
+  "resolutionObligations": zod.number().min(getArrangementResponseTrackModelsItemHarmonyEvidenceResolutionObligationsMin).optional(),
+  "melodyEvidencePreserved": zod.boolean(),
+  "bassEvidencePreserved": zod.boolean()
+}).optional()
+})),
+  "parentArrangementId": zod.string().nullable(),
+  "songModelVersion": zod.number().nullable(),
+  "seed": zod.number().nullish(),
+  "modelVersion": zod.string().nullish(),
+  "parameters": zod.record(zod.string(), zod.unknown()),
+  "provenance": zod.union([zod.object({
+  "model": zod.string(),
+  "version": zod.string(),
+  "parameters": zod.record(zod.string(), zod.union([zod.string(),zod.number(),zod.boolean()])),
+  "parentIds": zod.array(zod.string()),
+  "createdBy": zod.string()
+}),zod.null()])
+}).describe('An arrangement version with everything the summary omits (PR-U5) - the `Arrangement` fields plus plan, TrackModels, lineage and parameters. Kept flat because the zod generator cannot compose a top-level allOf.')
+
+
+/**
  * @summary Update arrangement controls
  */
 export const UpdateArrangementParams = zod.object({
@@ -19852,6 +22312,36 @@ export const runProducerIntakeResponseExplanationConfidenceMin = 0;
 export const runProducerIntakeResponseExplanationConfidenceMax = 1;
 
 
+
+
+
+
+
+export const runProducerIntakeResponseRegenerationKeptNotesMin = 0;
+
+export const runProducerIntakeResponseRegenerationReplacedNotesMin = 0;
+
+
+
+export const runProducerIntakeResponseRegenerationChangedBarRangesItemReplacedNotesMin = 0;
+
+export const runProducerIntakeResponseRegenerationPreservedNotesMin = 0;
+
+export const runProducerIntakeResponseRegenerationVerificationCheckedLockedNotesMin = 0;
+
+export const runProducerIntakeResponseRegenerationIdenticalReplacedNotesMin = 0;
+
+export const runProducerIntakeResponseRegenerationCandidatesItemConstraintErrorsMin = 0;
+
+export const runProducerIntakeResponseRegenerationCandidatesItemViolationsMin = 0;
+
+export const runProducerIntakeResponseRegenerationCandidatesItemReplacedNotesMin = 0;
+
+export const runProducerIntakeResponseRegenerationCandidatesItemIdenticalReplacedNotesMin = 0;
+
+export const runProducerIntakeResponseRegenerationDurationMsMin = 0;
+
+
 export const runProducerIntakeResponseStateBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
 export const runProducerIntakeResponseStateBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
 export const runProducerIntakeResponseStateBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
@@ -19923,7 +22413,7 @@ export const runProducerIntakeResponseStateConceptsBriefDigestSha256RegExp = new
 
 
 export const RunProducerIntakeResponse = zod.object({
-  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference']),
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference', 'regeneration']),
   "turnId": zod.string().describe('The persisted user turn'),
   "producerTurnId": zod.string(),
   "understanding": zod.string().describe('The producer\'s reply - a reading of the request'),
@@ -20106,7 +22596,7 @@ export const RunProducerIntakeResponse = zod.object({
   "rationale": zod.string(),
   "evidence": zod.array(zod.string()),
   "confidence": zod.number().min(runProducerIntakeResponseEditPlanConfidenceMin).max(runProducerIntakeResponseEditPlanConfidenceMax)
-}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned by the chat; executed by `POST ...\/producer\/turns\/{turnId}\/apply` (PR-U5).'),
   "explanation": zod.object({
   "answered": zod.boolean(),
   "answer": zod.string(),
@@ -20117,6 +22607,101 @@ export const RunProducerIntakeResponse = zod.object({
 })),
   "confidence": zod.number().min(runProducerIntakeResponseExplanationConfidenceMin).max(runProducerIntakeResponseExplanationConfidenceMax)
 }).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
+  "regeneration": zod.object({
+  "version": zod.enum(['1.0']),
+  "method": zod.string(),
+  "requested": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "blockedByLock": zod.array(zod.object({
+  "scope": zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+}),
+  "lockId": zod.string()
+})),
+  "regenerated": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "keptNotes": zod.number().min(runProducerIntakeResponseRegenerationKeptNotesMin),
+  "replacedNotes": zod.number().min(runProducerIntakeResponseRegenerationReplacedNotesMin),
+  "locksHonoured": zod.boolean(),
+  "editTurnId": zod.string(),
+  "editIntent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "editText": zod.string(),
+  "parentArrangementId": zod.string(),
+  "parentArrangementVersion": zod.number(),
+  "songModelVersion": zod.number(),
+  "productionBriefId": zod.string().nullable(),
+  "productionBriefDigestSha256": zod.string().nullable(),
+  "locks": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "unmatchedFamilies": zod.array(zod.string()),
+  "changed": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "barRanges": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "replacedNotes": zod.number().min(runProducerIntakeResponseRegenerationChangedBarRangesItemReplacedNotesMin)
+}))
+}),
+  "preserved": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "notes": zod.number().min(runProducerIntakeResponseRegenerationPreservedNotesMin)
+}),
+  "verification": zod.object({
+  "honoured": zod.boolean(),
+  "violations": zod.array(zod.string()),
+  "checkedLockedNotes": zod.number().min(runProducerIntakeResponseRegenerationVerificationCheckedLockedNotesMin)
+}),
+  "identicalReplacedNotes": zod.number().min(runProducerIntakeResponseRegenerationIdenticalReplacedNotesMin).describe('Of the accepted candidate\'s replaced notes'),
+  "candidates": zod.array(zod.object({
+  "candidateId": zod.string(),
+  "label": zod.string(),
+  "strategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "seed": zod.number(),
+  "feasible": zod.boolean(),
+  "score": zod.number(),
+  "constraintErrors": zod.number().min(runProducerIntakeResponseRegenerationCandidatesItemConstraintErrorsMin),
+  "locksHonoured": zod.boolean(),
+  "violations": zod.number().min(runProducerIntakeResponseRegenerationCandidatesItemViolationsMin),
+  "replacedNotes": zod.number().min(runProducerIntakeResponseRegenerationCandidatesItemReplacedNotesMin),
+  "identicalReplacedNotes": zod.number().min(runProducerIntakeResponseRegenerationCandidatesItemIdenticalReplacedNotesMin).describe('Replaced notes identical (id and content) to what was there - a deterministic composer writing the same part again'),
+  "selected": zod.boolean()
+}).describe('One Arrangement Brain candidate as it fared once merged into the previous version (PR-U5).')),
+  "selectedCandidateId": zod.string(),
+  "plannerHintEvidence": zod.array(zod.string()),
+  "warnings": zod.array(zod.string()),
+  "durationMs": zod.number().min(runProducerIntakeResponseRegenerationDurationMsMin)
+}).optional().describe('A chat edit applied to the arrangement (PR-U5): the PR-17 partial-regeneration\nreport plus what the producer needs to check the promise - what was requested,\nwhat the locks allowed and blocked, which tracks \/ sections \/ bar ranges changed,\nwhat was preserved verbatim, how the locks were verified, and how the candidates\nwere ranked before one was accepted.\n'),
+  "arrangementId": zod.string().optional().describe('PR-U5 - present on a regeneration turn'),
+  "arrangementVersion": zod.number().optional(),
   "state": zod.object({
   "briefRecordId": zod.string(),
   "version": zod.number().min(1),
@@ -20521,6 +23106,36 @@ export const answerProducerClarificationsResponseExplanationConfidenceMin = 0;
 export const answerProducerClarificationsResponseExplanationConfidenceMax = 1;
 
 
+
+
+
+
+
+export const answerProducerClarificationsResponseRegenerationKeptNotesMin = 0;
+
+export const answerProducerClarificationsResponseRegenerationReplacedNotesMin = 0;
+
+
+
+export const answerProducerClarificationsResponseRegenerationChangedBarRangesItemReplacedNotesMin = 0;
+
+export const answerProducerClarificationsResponseRegenerationPreservedNotesMin = 0;
+
+export const answerProducerClarificationsResponseRegenerationVerificationCheckedLockedNotesMin = 0;
+
+export const answerProducerClarificationsResponseRegenerationIdenticalReplacedNotesMin = 0;
+
+export const answerProducerClarificationsResponseRegenerationCandidatesItemConstraintErrorsMin = 0;
+
+export const answerProducerClarificationsResponseRegenerationCandidatesItemViolationsMin = 0;
+
+export const answerProducerClarificationsResponseRegenerationCandidatesItemReplacedNotesMin = 0;
+
+export const answerProducerClarificationsResponseRegenerationCandidatesItemIdenticalReplacedNotesMin = 0;
+
+export const answerProducerClarificationsResponseRegenerationDurationMsMin = 0;
+
+
 export const answerProducerClarificationsResponseStateBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
 export const answerProducerClarificationsResponseStateBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
 export const answerProducerClarificationsResponseStateBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
@@ -20592,7 +23207,7 @@ export const answerProducerClarificationsResponseStateConceptsBriefDigestSha256R
 
 
 export const AnswerProducerClarificationsResponse = zod.object({
-  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference']),
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference', 'regeneration']),
   "turnId": zod.string().describe('The persisted user turn'),
   "producerTurnId": zod.string(),
   "understanding": zod.string().describe('The producer\'s reply - a reading of the request'),
@@ -20775,7 +23390,7 @@ export const AnswerProducerClarificationsResponse = zod.object({
   "rationale": zod.string(),
   "evidence": zod.array(zod.string()),
   "confidence": zod.number().min(answerProducerClarificationsResponseEditPlanConfidenceMin).max(answerProducerClarificationsResponseEditPlanConfidenceMax)
-}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned by the chat; executed by `POST ...\/producer\/turns\/{turnId}\/apply` (PR-U5).'),
   "explanation": zod.object({
   "answered": zod.boolean(),
   "answer": zod.string(),
@@ -20786,6 +23401,101 @@ export const AnswerProducerClarificationsResponse = zod.object({
 })),
   "confidence": zod.number().min(answerProducerClarificationsResponseExplanationConfidenceMin).max(answerProducerClarificationsResponseExplanationConfidenceMax)
 }).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
+  "regeneration": zod.object({
+  "version": zod.enum(['1.0']),
+  "method": zod.string(),
+  "requested": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "blockedByLock": zod.array(zod.object({
+  "scope": zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+}),
+  "lockId": zod.string()
+})),
+  "regenerated": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "keptNotes": zod.number().min(answerProducerClarificationsResponseRegenerationKeptNotesMin),
+  "replacedNotes": zod.number().min(answerProducerClarificationsResponseRegenerationReplacedNotesMin),
+  "locksHonoured": zod.boolean(),
+  "editTurnId": zod.string(),
+  "editIntent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "editText": zod.string(),
+  "parentArrangementId": zod.string(),
+  "parentArrangementVersion": zod.number(),
+  "songModelVersion": zod.number(),
+  "productionBriefId": zod.string().nullable(),
+  "productionBriefDigestSha256": zod.string().nullable(),
+  "locks": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "unmatchedFamilies": zod.array(zod.string()),
+  "changed": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "barRanges": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "replacedNotes": zod.number().min(answerProducerClarificationsResponseRegenerationChangedBarRangesItemReplacedNotesMin)
+}))
+}),
+  "preserved": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "notes": zod.number().min(answerProducerClarificationsResponseRegenerationPreservedNotesMin)
+}),
+  "verification": zod.object({
+  "honoured": zod.boolean(),
+  "violations": zod.array(zod.string()),
+  "checkedLockedNotes": zod.number().min(answerProducerClarificationsResponseRegenerationVerificationCheckedLockedNotesMin)
+}),
+  "identicalReplacedNotes": zod.number().min(answerProducerClarificationsResponseRegenerationIdenticalReplacedNotesMin).describe('Of the accepted candidate\'s replaced notes'),
+  "candidates": zod.array(zod.object({
+  "candidateId": zod.string(),
+  "label": zod.string(),
+  "strategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "seed": zod.number(),
+  "feasible": zod.boolean(),
+  "score": zod.number(),
+  "constraintErrors": zod.number().min(answerProducerClarificationsResponseRegenerationCandidatesItemConstraintErrorsMin),
+  "locksHonoured": zod.boolean(),
+  "violations": zod.number().min(answerProducerClarificationsResponseRegenerationCandidatesItemViolationsMin),
+  "replacedNotes": zod.number().min(answerProducerClarificationsResponseRegenerationCandidatesItemReplacedNotesMin),
+  "identicalReplacedNotes": zod.number().min(answerProducerClarificationsResponseRegenerationCandidatesItemIdenticalReplacedNotesMin).describe('Replaced notes identical (id and content) to what was there - a deterministic composer writing the same part again'),
+  "selected": zod.boolean()
+}).describe('One Arrangement Brain candidate as it fared once merged into the previous version (PR-U5).')),
+  "selectedCandidateId": zod.string(),
+  "plannerHintEvidence": zod.array(zod.string()),
+  "warnings": zod.array(zod.string()),
+  "durationMs": zod.number().min(answerProducerClarificationsResponseRegenerationDurationMsMin)
+}).optional().describe('A chat edit applied to the arrangement (PR-U5): the PR-17 partial-regeneration\nreport plus what the producer needs to check the promise - what was requested,\nwhat the locks allowed and blocked, which tracks \/ sections \/ bar ranges changed,\nwhat was preserved verbatim, how the locks were verified, and how the candidates\nwere ranked before one was accepted.\n'),
+  "arrangementId": zod.string().optional().describe('PR-U5 - present on a regeneration turn'),
+  "arrangementVersion": zod.number().optional(),
   "state": zod.object({
   "briefRecordId": zod.string(),
   "version": zod.number().min(1),
@@ -21526,7 +24236,8 @@ export const GetProducerBriefResponse = zod.object({
  * plan's own evidence. An edit request ("the last chorus is too busy",
  * "no strings in the whole song") becomes a structured EditPlan and durable,
  * scoped decisions on the brief. Anything else refines the intake. Both
- * turns are persisted; nothing is regenerated here.
+ * turns are persisted; nothing is regenerated here - apply the edit turn
+ * with `POST .../producer/turns/{turnId}/apply` (PR-U5).
  * @summary Send a message to the producer
  */
 export const SendProducerChatParams = zod.object({
@@ -21590,6 +24301,36 @@ export const sendProducerChatResponseEditPlanConfidenceMax = 1;
 
 export const sendProducerChatResponseExplanationConfidenceMin = 0;
 export const sendProducerChatResponseExplanationConfidenceMax = 1;
+
+
+
+
+
+
+
+export const sendProducerChatResponseRegenerationKeptNotesMin = 0;
+
+export const sendProducerChatResponseRegenerationReplacedNotesMin = 0;
+
+
+
+export const sendProducerChatResponseRegenerationChangedBarRangesItemReplacedNotesMin = 0;
+
+export const sendProducerChatResponseRegenerationPreservedNotesMin = 0;
+
+export const sendProducerChatResponseRegenerationVerificationCheckedLockedNotesMin = 0;
+
+export const sendProducerChatResponseRegenerationIdenticalReplacedNotesMin = 0;
+
+export const sendProducerChatResponseRegenerationCandidatesItemConstraintErrorsMin = 0;
+
+export const sendProducerChatResponseRegenerationCandidatesItemViolationsMin = 0;
+
+export const sendProducerChatResponseRegenerationCandidatesItemReplacedNotesMin = 0;
+
+export const sendProducerChatResponseRegenerationCandidatesItemIdenticalReplacedNotesMin = 0;
+
+export const sendProducerChatResponseRegenerationDurationMsMin = 0;
 
 
 export const sendProducerChatResponseStateBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
@@ -21663,7 +24404,7 @@ export const sendProducerChatResponseStateConceptsBriefDigestSha256RegExp = new 
 
 
 export const SendProducerChatResponse = zod.object({
-  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference']),
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference', 'regeneration']),
   "turnId": zod.string().describe('The persisted user turn'),
   "producerTurnId": zod.string(),
   "understanding": zod.string().describe('The producer\'s reply - a reading of the request'),
@@ -21846,7 +24587,7 @@ export const SendProducerChatResponse = zod.object({
   "rationale": zod.string(),
   "evidence": zod.array(zod.string()),
   "confidence": zod.number().min(sendProducerChatResponseEditPlanConfidenceMin).max(sendProducerChatResponseEditPlanConfidenceMax)
-}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned by the chat; executed by `POST ...\/producer\/turns\/{turnId}\/apply` (PR-U5).'),
   "explanation": zod.object({
   "answered": zod.boolean(),
   "answer": zod.string(),
@@ -21857,6 +24598,101 @@ export const SendProducerChatResponse = zod.object({
 })),
   "confidence": zod.number().min(sendProducerChatResponseExplanationConfidenceMin).max(sendProducerChatResponseExplanationConfidenceMax)
 }).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
+  "regeneration": zod.object({
+  "version": zod.enum(['1.0']),
+  "method": zod.string(),
+  "requested": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "blockedByLock": zod.array(zod.object({
+  "scope": zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+}),
+  "lockId": zod.string()
+})),
+  "regenerated": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "keptNotes": zod.number().min(sendProducerChatResponseRegenerationKeptNotesMin),
+  "replacedNotes": zod.number().min(sendProducerChatResponseRegenerationReplacedNotesMin),
+  "locksHonoured": zod.boolean(),
+  "editTurnId": zod.string(),
+  "editIntent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "editText": zod.string(),
+  "parentArrangementId": zod.string(),
+  "parentArrangementVersion": zod.number(),
+  "songModelVersion": zod.number(),
+  "productionBriefId": zod.string().nullable(),
+  "productionBriefDigestSha256": zod.string().nullable(),
+  "locks": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "unmatchedFamilies": zod.array(zod.string()),
+  "changed": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "barRanges": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "replacedNotes": zod.number().min(sendProducerChatResponseRegenerationChangedBarRangesItemReplacedNotesMin)
+}))
+}),
+  "preserved": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "notes": zod.number().min(sendProducerChatResponseRegenerationPreservedNotesMin)
+}),
+  "verification": zod.object({
+  "honoured": zod.boolean(),
+  "violations": zod.array(zod.string()),
+  "checkedLockedNotes": zod.number().min(sendProducerChatResponseRegenerationVerificationCheckedLockedNotesMin)
+}),
+  "identicalReplacedNotes": zod.number().min(sendProducerChatResponseRegenerationIdenticalReplacedNotesMin).describe('Of the accepted candidate\'s replaced notes'),
+  "candidates": zod.array(zod.object({
+  "candidateId": zod.string(),
+  "label": zod.string(),
+  "strategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "seed": zod.number(),
+  "feasible": zod.boolean(),
+  "score": zod.number(),
+  "constraintErrors": zod.number().min(sendProducerChatResponseRegenerationCandidatesItemConstraintErrorsMin),
+  "locksHonoured": zod.boolean(),
+  "violations": zod.number().min(sendProducerChatResponseRegenerationCandidatesItemViolationsMin),
+  "replacedNotes": zod.number().min(sendProducerChatResponseRegenerationCandidatesItemReplacedNotesMin),
+  "identicalReplacedNotes": zod.number().min(sendProducerChatResponseRegenerationCandidatesItemIdenticalReplacedNotesMin).describe('Replaced notes identical (id and content) to what was there - a deterministic composer writing the same part again'),
+  "selected": zod.boolean()
+}).describe('One Arrangement Brain candidate as it fared once merged into the previous version (PR-U5).')),
+  "selectedCandidateId": zod.string(),
+  "plannerHintEvidence": zod.array(zod.string()),
+  "warnings": zod.array(zod.string()),
+  "durationMs": zod.number().min(sendProducerChatResponseRegenerationDurationMsMin)
+}).optional().describe('A chat edit applied to the arrangement (PR-U5): the PR-17 partial-regeneration\nreport plus what the producer needs to check the promise - what was requested,\nwhat the locks allowed and blocked, which tracks \/ sections \/ bar ranges changed,\nwhat was preserved verbatim, how the locks were verified, and how the candidates\nwere ranked before one was accepted.\n'),
+  "arrangementId": zod.string().optional().describe('PR-U5 - present on a regeneration turn'),
+  "arrangementVersion": zod.number().optional(),
   "state": zod.object({
   "briefRecordId": zod.string(),
   "version": zod.number().min(1),
@@ -22220,6 +25056,36 @@ export const listProducerTurnsResponseTurnsItemStructuredOneExplanationConfidenc
 
 
 
+
+
+
+
+export const listProducerTurnsResponseTurnsItemStructuredOneRegenerationKeptNotesMin = 0;
+
+export const listProducerTurnsResponseTurnsItemStructuredOneRegenerationReplacedNotesMin = 0;
+
+
+
+export const listProducerTurnsResponseTurnsItemStructuredOneRegenerationChangedBarRangesItemReplacedNotesMin = 0;
+
+export const listProducerTurnsResponseTurnsItemStructuredOneRegenerationPreservedNotesMin = 0;
+
+export const listProducerTurnsResponseTurnsItemStructuredOneRegenerationVerificationCheckedLockedNotesMin = 0;
+
+export const listProducerTurnsResponseTurnsItemStructuredOneRegenerationIdenticalReplacedNotesMin = 0;
+
+export const listProducerTurnsResponseTurnsItemStructuredOneRegenerationCandidatesItemConstraintErrorsMin = 0;
+
+export const listProducerTurnsResponseTurnsItemStructuredOneRegenerationCandidatesItemViolationsMin = 0;
+
+export const listProducerTurnsResponseTurnsItemStructuredOneRegenerationCandidatesItemReplacedNotesMin = 0;
+
+export const listProducerTurnsResponseTurnsItemStructuredOneRegenerationCandidatesItemIdenticalReplacedNotesMin = 0;
+
+export const listProducerTurnsResponseTurnsItemStructuredOneRegenerationDurationMsMin = 0;
+
+
+
 export const ListProducerTurnsResponse = zod.object({
   "turns": zod.array(zod.object({
   "id": zod.string(),
@@ -22228,7 +25094,7 @@ export const ListProducerTurnsResponse = zod.object({
   "role": zod.enum(['user', 'producer']),
   "text": zod.string(),
   "structured": zod.union([zod.object({
-  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference']),
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference', 'regeneration']),
   "briefVersion": zod.number().nullable(),
   "intentDelta": zod.object({
   "inferences": zod.array(zod.object({
@@ -22345,7 +25211,7 @@ export const ListProducerTurnsResponse = zod.object({
   "rationale": zod.string(),
   "evidence": zod.array(zod.string()),
   "confidence": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneEditPlanConfidenceMin).max(listProducerTurnsResponseTurnsItemStructuredOneEditPlanConfidenceMax)
-}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned by the chat; executed by `POST ...\/producer\/turns\/{turnId}\/apply` (PR-U5).'),
   "decisionIds": zod.array(zod.string()).optional(),
   "explanation": zod.object({
   "answered": zod.boolean(),
@@ -22359,7 +25225,102 @@ export const ListProducerTurnsResponse = zod.object({
 }).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
   "planSource": zod.enum(['arrangement', 'derived', 'none']).optional(),
   "intentMethod": zod.string().optional(),
-  "referenceIds": zod.array(zod.string()).optional().describe('PR-U4 - the reference rows this turn touched')
+  "referenceIds": zod.array(zod.string()).optional().describe('PR-U4 - the reference rows this turn touched'),
+  "regeneration": zod.object({
+  "version": zod.enum(['1.0']),
+  "method": zod.string(),
+  "requested": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "blockedByLock": zod.array(zod.object({
+  "scope": zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+}),
+  "lockId": zod.string()
+})),
+  "regenerated": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "keptNotes": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneRegenerationKeptNotesMin),
+  "replacedNotes": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneRegenerationReplacedNotesMin),
+  "locksHonoured": zod.boolean(),
+  "editTurnId": zod.string(),
+  "editIntent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "editText": zod.string(),
+  "parentArrangementId": zod.string(),
+  "parentArrangementVersion": zod.number(),
+  "songModelVersion": zod.number(),
+  "productionBriefId": zod.string().nullable(),
+  "productionBriefDigestSha256": zod.string().nullable(),
+  "locks": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "unmatchedFamilies": zod.array(zod.string()),
+  "changed": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "barRanges": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "replacedNotes": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneRegenerationChangedBarRangesItemReplacedNotesMin)
+}))
+}),
+  "preserved": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "notes": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneRegenerationPreservedNotesMin)
+}),
+  "verification": zod.object({
+  "honoured": zod.boolean(),
+  "violations": zod.array(zod.string()),
+  "checkedLockedNotes": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneRegenerationVerificationCheckedLockedNotesMin)
+}),
+  "identicalReplacedNotes": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneRegenerationIdenticalReplacedNotesMin).describe('Of the accepted candidate\'s replaced notes'),
+  "candidates": zod.array(zod.object({
+  "candidateId": zod.string(),
+  "label": zod.string(),
+  "strategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "seed": zod.number(),
+  "feasible": zod.boolean(),
+  "score": zod.number(),
+  "constraintErrors": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneRegenerationCandidatesItemConstraintErrorsMin),
+  "locksHonoured": zod.boolean(),
+  "violations": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneRegenerationCandidatesItemViolationsMin),
+  "replacedNotes": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneRegenerationCandidatesItemReplacedNotesMin),
+  "identicalReplacedNotes": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneRegenerationCandidatesItemIdenticalReplacedNotesMin).describe('Replaced notes identical (id and content) to what was there - a deterministic composer writing the same part again'),
+  "selected": zod.boolean()
+}).describe('One Arrangement Brain candidate as it fared once merged into the previous version (PR-U5).')),
+  "selectedCandidateId": zod.string(),
+  "plannerHintEvidence": zod.array(zod.string()),
+  "warnings": zod.array(zod.string()),
+  "durationMs": zod.number().min(listProducerTurnsResponseTurnsItemStructuredOneRegenerationDurationMsMin)
+}).optional().describe('A chat edit applied to the arrangement (PR-U5): the PR-17 partial-regeneration\nreport plus what the producer needs to check the promise - what was requested,\nwhat the locks allowed and blocked, which tracks \/ sections \/ bar ranges changed,\nwhat was preserved verbatim, how the locks were verified, and how the candidates\nwere ranked before one was accepted.\n'),
+  "arrangementId": zod.string().optional().describe('PR-U5 - the arrangement version a regeneration turn produced'),
+  "arrangementVersion": zod.number().optional()
 }).describe('What a producer turn did to the musical state.'),zod.null()]),
   "createdAt": zod.coerce.date()
 })),
@@ -22402,6 +25363,36 @@ export const listProducerTurnsBeforeResponseTurnsItemStructuredOneExplanationCon
 
 
 
+
+
+
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationKeptNotesMin = 0;
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationReplacedNotesMin = 0;
+
+
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationChangedBarRangesItemReplacedNotesMin = 0;
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationPreservedNotesMin = 0;
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationVerificationCheckedLockedNotesMin = 0;
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationIdenticalReplacedNotesMin = 0;
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationCandidatesItemConstraintErrorsMin = 0;
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationCandidatesItemViolationsMin = 0;
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationCandidatesItemReplacedNotesMin = 0;
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationCandidatesItemIdenticalReplacedNotesMin = 0;
+
+export const listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationDurationMsMin = 0;
+
+
+
 export const ListProducerTurnsBeforeResponse = zod.object({
   "turns": zod.array(zod.object({
   "id": zod.string(),
@@ -22410,7 +25401,7 @@ export const ListProducerTurnsBeforeResponse = zod.object({
   "role": zod.enum(['user', 'producer']),
   "text": zod.string(),
   "structured": zod.union([zod.object({
-  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference']),
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference', 'regeneration']),
   "briefVersion": zod.number().nullable(),
   "intentDelta": zod.object({
   "inferences": zod.array(zod.object({
@@ -22527,7 +25518,7 @@ export const ListProducerTurnsBeforeResponse = zod.object({
   "rationale": zod.string(),
   "evidence": zod.array(zod.string()),
   "confidence": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneEditPlanConfidenceMin).max(listProducerTurnsBeforeResponseTurnsItemStructuredOneEditPlanConfidenceMax)
-}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned by the chat; executed by `POST ...\/producer\/turns\/{turnId}\/apply` (PR-U5).'),
   "decisionIds": zod.array(zod.string()).optional(),
   "explanation": zod.object({
   "answered": zod.boolean(),
@@ -22541,7 +25532,102 @@ export const ListProducerTurnsBeforeResponse = zod.object({
 }).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
   "planSource": zod.enum(['arrangement', 'derived', 'none']).optional(),
   "intentMethod": zod.string().optional(),
-  "referenceIds": zod.array(zod.string()).optional().describe('PR-U4 - the reference rows this turn touched')
+  "referenceIds": zod.array(zod.string()).optional().describe('PR-U4 - the reference rows this turn touched'),
+  "regeneration": zod.object({
+  "version": zod.enum(['1.0']),
+  "method": zod.string(),
+  "requested": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "blockedByLock": zod.array(zod.object({
+  "scope": zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+}),
+  "lockId": zod.string()
+})),
+  "regenerated": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "keptNotes": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationKeptNotesMin),
+  "replacedNotes": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationReplacedNotesMin),
+  "locksHonoured": zod.boolean(),
+  "editTurnId": zod.string(),
+  "editIntent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "editText": zod.string(),
+  "parentArrangementId": zod.string(),
+  "parentArrangementVersion": zod.number(),
+  "songModelVersion": zod.number(),
+  "productionBriefId": zod.string().nullable(),
+  "productionBriefDigestSha256": zod.string().nullable(),
+  "locks": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "unmatchedFamilies": zod.array(zod.string()),
+  "changed": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "barRanges": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "replacedNotes": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationChangedBarRangesItemReplacedNotesMin)
+}))
+}),
+  "preserved": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "notes": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationPreservedNotesMin)
+}),
+  "verification": zod.object({
+  "honoured": zod.boolean(),
+  "violations": zod.array(zod.string()),
+  "checkedLockedNotes": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationVerificationCheckedLockedNotesMin)
+}),
+  "identicalReplacedNotes": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationIdenticalReplacedNotesMin).describe('Of the accepted candidate\'s replaced notes'),
+  "candidates": zod.array(zod.object({
+  "candidateId": zod.string(),
+  "label": zod.string(),
+  "strategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "seed": zod.number(),
+  "feasible": zod.boolean(),
+  "score": zod.number(),
+  "constraintErrors": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationCandidatesItemConstraintErrorsMin),
+  "locksHonoured": zod.boolean(),
+  "violations": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationCandidatesItemViolationsMin),
+  "replacedNotes": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationCandidatesItemReplacedNotesMin),
+  "identicalReplacedNotes": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationCandidatesItemIdenticalReplacedNotesMin).describe('Replaced notes identical (id and content) to what was there - a deterministic composer writing the same part again'),
+  "selected": zod.boolean()
+}).describe('One Arrangement Brain candidate as it fared once merged into the previous version (PR-U5).')),
+  "selectedCandidateId": zod.string(),
+  "plannerHintEvidence": zod.array(zod.string()),
+  "warnings": zod.array(zod.string()),
+  "durationMs": zod.number().min(listProducerTurnsBeforeResponseTurnsItemStructuredOneRegenerationDurationMsMin)
+}).optional().describe('A chat edit applied to the arrangement (PR-U5): the PR-17 partial-regeneration\nreport plus what the producer needs to check the promise - what was requested,\nwhat the locks allowed and blocked, which tracks \/ sections \/ bar ranges changed,\nwhat was preserved verbatim, how the locks were verified, and how the candidates\nwere ranked before one was accepted.\n'),
+  "arrangementId": zod.string().optional().describe('PR-U5 - the arrangement version a regeneration turn produced'),
+  "arrangementVersion": zod.number().optional()
 }).describe('What a producer turn did to the musical state.'),zod.null()]),
   "createdAt": zod.coerce.date()
 })),
@@ -22633,6 +25719,36 @@ export const supersedeProducerDecisionResponseExplanationConfidenceMin = 0;
 export const supersedeProducerDecisionResponseExplanationConfidenceMax = 1;
 
 
+
+
+
+
+
+export const supersedeProducerDecisionResponseRegenerationKeptNotesMin = 0;
+
+export const supersedeProducerDecisionResponseRegenerationReplacedNotesMin = 0;
+
+
+
+export const supersedeProducerDecisionResponseRegenerationChangedBarRangesItemReplacedNotesMin = 0;
+
+export const supersedeProducerDecisionResponseRegenerationPreservedNotesMin = 0;
+
+export const supersedeProducerDecisionResponseRegenerationVerificationCheckedLockedNotesMin = 0;
+
+export const supersedeProducerDecisionResponseRegenerationIdenticalReplacedNotesMin = 0;
+
+export const supersedeProducerDecisionResponseRegenerationCandidatesItemConstraintErrorsMin = 0;
+
+export const supersedeProducerDecisionResponseRegenerationCandidatesItemViolationsMin = 0;
+
+export const supersedeProducerDecisionResponseRegenerationCandidatesItemReplacedNotesMin = 0;
+
+export const supersedeProducerDecisionResponseRegenerationCandidatesItemIdenticalReplacedNotesMin = 0;
+
+export const supersedeProducerDecisionResponseRegenerationDurationMsMin = 0;
+
+
 export const supersedeProducerDecisionResponseStateBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
 export const supersedeProducerDecisionResponseStateBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
 export const supersedeProducerDecisionResponseStateBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
@@ -22704,7 +25820,7 @@ export const supersedeProducerDecisionResponseStateConceptsBriefDigestSha256RegE
 
 
 export const SupersedeProducerDecisionResponse = zod.object({
-  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference']),
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference', 'regeneration']),
   "turnId": zod.string().describe('The persisted user turn'),
   "producerTurnId": zod.string(),
   "understanding": zod.string().describe('The producer\'s reply - a reading of the request'),
@@ -22887,7 +26003,7 @@ export const SupersedeProducerDecisionResponse = zod.object({
   "rationale": zod.string(),
   "evidence": zod.array(zod.string()),
   "confidence": zod.number().min(supersedeProducerDecisionResponseEditPlanConfidenceMin).max(supersedeProducerDecisionResponseEditPlanConfidenceMax)
-}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned by the chat; executed by `POST ...\/producer\/turns\/{turnId}\/apply` (PR-U5).'),
   "explanation": zod.object({
   "answered": zod.boolean(),
   "answer": zod.string(),
@@ -22898,6 +26014,101 @@ export const SupersedeProducerDecisionResponse = zod.object({
 })),
   "confidence": zod.number().min(supersedeProducerDecisionResponseExplanationConfidenceMin).max(supersedeProducerDecisionResponseExplanationConfidenceMax)
 }).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
+  "regeneration": zod.object({
+  "version": zod.enum(['1.0']),
+  "method": zod.string(),
+  "requested": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "blockedByLock": zod.array(zod.object({
+  "scope": zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+}),
+  "lockId": zod.string()
+})),
+  "regenerated": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "keptNotes": zod.number().min(supersedeProducerDecisionResponseRegenerationKeptNotesMin),
+  "replacedNotes": zod.number().min(supersedeProducerDecisionResponseRegenerationReplacedNotesMin),
+  "locksHonoured": zod.boolean(),
+  "editTurnId": zod.string(),
+  "editIntent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "editText": zod.string(),
+  "parentArrangementId": zod.string(),
+  "parentArrangementVersion": zod.number(),
+  "songModelVersion": zod.number(),
+  "productionBriefId": zod.string().nullable(),
+  "productionBriefDigestSha256": zod.string().nullable(),
+  "locks": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "unmatchedFamilies": zod.array(zod.string()),
+  "changed": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "barRanges": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "replacedNotes": zod.number().min(supersedeProducerDecisionResponseRegenerationChangedBarRangesItemReplacedNotesMin)
+}))
+}),
+  "preserved": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "notes": zod.number().min(supersedeProducerDecisionResponseRegenerationPreservedNotesMin)
+}),
+  "verification": zod.object({
+  "honoured": zod.boolean(),
+  "violations": zod.array(zod.string()),
+  "checkedLockedNotes": zod.number().min(supersedeProducerDecisionResponseRegenerationVerificationCheckedLockedNotesMin)
+}),
+  "identicalReplacedNotes": zod.number().min(supersedeProducerDecisionResponseRegenerationIdenticalReplacedNotesMin).describe('Of the accepted candidate\'s replaced notes'),
+  "candidates": zod.array(zod.object({
+  "candidateId": zod.string(),
+  "label": zod.string(),
+  "strategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "seed": zod.number(),
+  "feasible": zod.boolean(),
+  "score": zod.number(),
+  "constraintErrors": zod.number().min(supersedeProducerDecisionResponseRegenerationCandidatesItemConstraintErrorsMin),
+  "locksHonoured": zod.boolean(),
+  "violations": zod.number().min(supersedeProducerDecisionResponseRegenerationCandidatesItemViolationsMin),
+  "replacedNotes": zod.number().min(supersedeProducerDecisionResponseRegenerationCandidatesItemReplacedNotesMin),
+  "identicalReplacedNotes": zod.number().min(supersedeProducerDecisionResponseRegenerationCandidatesItemIdenticalReplacedNotesMin).describe('Replaced notes identical (id and content) to what was there - a deterministic composer writing the same part again'),
+  "selected": zod.boolean()
+}).describe('One Arrangement Brain candidate as it fared once merged into the previous version (PR-U5).')),
+  "selectedCandidateId": zod.string(),
+  "plannerHintEvidence": zod.array(zod.string()),
+  "warnings": zod.array(zod.string()),
+  "durationMs": zod.number().min(supersedeProducerDecisionResponseRegenerationDurationMsMin)
+}).optional().describe('A chat edit applied to the arrangement (PR-U5): the PR-17 partial-regeneration\nreport plus what the producer needs to check the promise - what was requested,\nwhat the locks allowed and blocked, which tracks \/ sections \/ bar ranges changed,\nwhat was preserved verbatim, how the locks were verified, and how the candidates\nwere ranked before one was accepted.\n'),
+  "arrangementId": zod.string().optional().describe('PR-U5 - present on a regeneration turn'),
+  "arrangementVersion": zod.number().optional(),
   "state": zod.object({
   "briefRecordId": zod.string(),
   "version": zod.number().min(1),
@@ -23228,6 +26439,803 @@ export const SupersedeProducerDecisionResponse = zod.object({
 
 
 /**
+ * PR-U5. The producer turn's EditPlan (locks to preserve, scopes to
+ * regenerate) is executed against the project's latest arrangement with
+ * persisted TrackModels: the Arrangement Brain composes at least three
+ * whole-song candidates with the current brief's planner hints and
+ * performance style; each is merged into the previous version over the
+ * allowed scopes only, its locked material verified byte for byte, and
+ * the merged result critiqued; the best candidate that honours the locks
+ * is accepted and persisted as a new arrangement version. Synchronous —
+ * the brain is CPU-only and model-free (a few seconds). The reply is a
+ * `regeneration` turn carrying the `ScopedRegenerationReport`.
+ * @summary Apply an edit turn's EditPlan to the arrangement, within its locks
+ */
+export const ApplyProducerEditParams = zod.object({
+  "projectId": zod.coerce.string(),
+  "turnId": zod.coerce.string()
+})
+
+export const applyProducerEditBodyCandidatesMin = 3;
+export const applyProducerEditBodyCandidatesMax = 5;
+
+
+
+export const ApplyProducerEditBody = zod.strictObject({
+  "candidates": zod.number().min(applyProducerEditBodyCandidatesMin).max(applyProducerEditBodyCandidatesMax).optional().describe('How many Arrangement Brain candidates to rank before accepting one (default 3')
+}).describe('Options for applying an edit turn (PR-U5). Empty body is fine.')
+
+export const applyProducerEditResponseBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const applyProducerEditResponseBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const applyProducerEditResponseBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const applyProducerEditResponseBriefDimensionDecisionsItemConfidenceMin = 0;
+export const applyProducerEditResponseBriefDimensionDecisionsItemConfidenceMax = 1;
+
+export const applyProducerEditResponseBriefSectionIntentionsItemEnergyBiasConfidenceMin = 0;
+export const applyProducerEditResponseBriefSectionIntentionsItemEnergyBiasConfidenceMax = 1;
+
+export const applyProducerEditResponseBriefSectionIntentionsItemDensityBiasConfidenceMin = 0;
+export const applyProducerEditResponseBriefSectionIntentionsItemDensityBiasConfidenceMax = 1;
+
+export const applyProducerEditResponseBriefSectionIntentionsItemClimaxConfidenceMin = 0;
+export const applyProducerEditResponseBriefSectionIntentionsItemClimaxConfidenceMax = 1;
+
+export const applyProducerEditResponseBriefSectionIntentionsItemCharacterItemConfidenceMin = 0;
+export const applyProducerEditResponseBriefSectionIntentionsItemCharacterItemConfidenceMax = 1;
+
+
+export const applyProducerEditResponseBriefVocalSpaceConfidenceMin = 0;
+export const applyProducerEditResponseBriefVocalSpaceConfidenceMax = 1;
+
+export const applyProducerEditResponseBriefInstrumentationHierarchyItemConfidenceMin = 0;
+export const applyProducerEditResponseBriefInstrumentationHierarchyItemConfidenceMax = 1;
+
+export const applyProducerEditResponseBriefProductionAestheticDescriptorsItemConfidenceMin = 0;
+export const applyProducerEditResponseBriefProductionAestheticDescriptorsItemConfidenceMax = 1;
+
+export const applyProducerEditResponseBriefProducerDecisionsItemConfidenceMin = 0;
+export const applyProducerEditResponseBriefProducerDecisionsItemConfidenceMax = 1;
+
+export const applyProducerEditResponseBriefConfidenceMin = 0;
+export const applyProducerEditResponseBriefConfidenceMax = 1;
+
+export const applyProducerEditResponseClarificationsItemInformationGainMin = 0;
+export const applyProducerEditResponseClarificationsItemInformationGainMax = 1;
+
+export const applyProducerEditResponseEditPlanInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+
+
+
+
+export const applyProducerEditResponseEditPlanConfidenceMin = 0;
+export const applyProducerEditResponseEditPlanConfidenceMax = 1;
+
+export const applyProducerEditResponseExplanationConfidenceMin = 0;
+export const applyProducerEditResponseExplanationConfidenceMax = 1;
+
+
+
+
+
+
+
+export const applyProducerEditResponseRegenerationKeptNotesMin = 0;
+
+export const applyProducerEditResponseRegenerationReplacedNotesMin = 0;
+
+
+
+export const applyProducerEditResponseRegenerationChangedBarRangesItemReplacedNotesMin = 0;
+
+export const applyProducerEditResponseRegenerationPreservedNotesMin = 0;
+
+export const applyProducerEditResponseRegenerationVerificationCheckedLockedNotesMin = 0;
+
+export const applyProducerEditResponseRegenerationIdenticalReplacedNotesMin = 0;
+
+export const applyProducerEditResponseRegenerationCandidatesItemConstraintErrorsMin = 0;
+
+export const applyProducerEditResponseRegenerationCandidatesItemViolationsMin = 0;
+
+export const applyProducerEditResponseRegenerationCandidatesItemReplacedNotesMin = 0;
+
+export const applyProducerEditResponseRegenerationCandidatesItemIdenticalReplacedNotesMin = 0;
+
+export const applyProducerEditResponseRegenerationDurationMsMin = 0;
+
+
+export const applyProducerEditResponseStateBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const applyProducerEditResponseStateBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const applyProducerEditResponseStateBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const applyProducerEditResponseStateBriefDimensionDecisionsItemConfidenceMin = 0;
+export const applyProducerEditResponseStateBriefDimensionDecisionsItemConfidenceMax = 1;
+
+export const applyProducerEditResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMin = 0;
+export const applyProducerEditResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMax = 1;
+
+export const applyProducerEditResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMin = 0;
+export const applyProducerEditResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMax = 1;
+
+export const applyProducerEditResponseStateBriefSectionIntentionsItemClimaxConfidenceMin = 0;
+export const applyProducerEditResponseStateBriefSectionIntentionsItemClimaxConfidenceMax = 1;
+
+export const applyProducerEditResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMin = 0;
+export const applyProducerEditResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMax = 1;
+
+
+export const applyProducerEditResponseStateBriefVocalSpaceConfidenceMin = 0;
+export const applyProducerEditResponseStateBriefVocalSpaceConfidenceMax = 1;
+
+export const applyProducerEditResponseStateBriefInstrumentationHierarchyItemConfidenceMin = 0;
+export const applyProducerEditResponseStateBriefInstrumentationHierarchyItemConfidenceMax = 1;
+
+export const applyProducerEditResponseStateBriefProductionAestheticDescriptorsItemConfidenceMin = 0;
+export const applyProducerEditResponseStateBriefProductionAestheticDescriptorsItemConfidenceMax = 1;
+
+export const applyProducerEditResponseStateBriefProducerDecisionsItemConfidenceMin = 0;
+export const applyProducerEditResponseStateBriefProducerDecisionsItemConfidenceMax = 1;
+
+export const applyProducerEditResponseStateBriefConfidenceMin = 0;
+export const applyProducerEditResponseStateBriefConfidenceMax = 1;
+
+export const applyProducerEditResponseStateIntentInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const applyProducerEditResponseStateIntentInferencesItemConfidenceMin = 0;
+export const applyProducerEditResponseStateIntentInferencesItemConfidenceMax = 1;
+
+
+
+export const applyProducerEditResponseStateIntentConstraintsItemConfidenceMin = 0;
+export const applyProducerEditResponseStateIntentConstraintsItemConfidenceMax = 1;
+
+
+export const applyProducerEditResponseStateIntentConfidenceMin = 0;
+export const applyProducerEditResponseStateIntentConfidenceMax = 1;
+
+export const applyProducerEditResponseStateStyleProfileInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const applyProducerEditResponseStateStyleProfileDimensionsConfidenceMin = 0;
+export const applyProducerEditResponseStateStyleProfileDimensionsConfidenceMax = 1;
+
+export const applyProducerEditResponseStateStyleProfileConfidenceMin = 0;
+export const applyProducerEditResponseStateStyleProfileConfidenceMax = 1;
+
+export const applyProducerEditResponseStateStyleProfileResearchCandidatesItemConfidenceMin = 0;
+export const applyProducerEditResponseStateStyleProfileResearchCandidatesItemConfidenceMax = 1;
+
+export const applyProducerEditResponseStateStyleProfileResearchDiscardedItemConfidenceMin = 0;
+export const applyProducerEditResponseStateStyleProfileResearchDiscardedItemConfidenceMax = 1;
+
+export const applyProducerEditResponseStateClarificationsItemInformationGainMin = 0;
+export const applyProducerEditResponseStateClarificationsItemInformationGainMax = 1;
+
+export const applyProducerEditResponseStateDecisionsItemDecisionConfidenceMin = 0;
+export const applyProducerEditResponseStateDecisionsItemDecisionConfidenceMax = 1;
+
+export const applyProducerEditResponseStateConceptsInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+export const applyProducerEditResponseStateConceptsBriefDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
+
+
+export const ApplyProducerEditResponse = zod.object({
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference', 'regeneration']),
+  "turnId": zod.string().describe('The persisted user turn'),
+  "producerTurnId": zod.string(),
+  "understanding": zod.string().describe('The producer\'s reply - a reading of the request'),
+  "brief": zod.object({
+  "version": zod.enum(['1.0']),
+  "id": zod.string(),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(applyProducerEditResponseBriefInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "intentDigestSha256": zod.string().regex(applyProducerEditResponseBriefIntentDigestSha256RegExp),
+  "styleProfileDigestSha256": zod.string().regex(applyProducerEditResponseBriefStyleProfileDigestSha256RegExp),
+  "sectionNames": zod.array(zod.string()),
+  "dimensionDecisions": zod.array(zod.object({
+  "dimension": zod.string(),
+  "disposition": zod.enum(['adopt', 'modify', 'reject']),
+  "styleValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "briefValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "rationale": zod.string(),
+  "decidedBy": zod.enum(['style_profile', 'constraint', 'answer', 'producer']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(applyProducerEditResponseBriefDimensionDecisionsItemConfidenceMin).max(applyProducerEditResponseBriefDimensionDecisionsItemConfidenceMax)
+})),
+  "sectionIntentions": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'neutral']),
+  "energyBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(applyProducerEditResponseBriefSectionIntentionsItemEnergyBiasConfidenceMin).max(applyProducerEditResponseBriefSectionIntentionsItemEnergyBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "densityBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(applyProducerEditResponseBriefSectionIntentionsItemDensityBiasConfidenceMin).max(applyProducerEditResponseBriefSectionIntentionsItemDensityBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "instrumentation": zod.object({
+  "add": zod.array(zod.string()),
+  "remove": zod.array(zod.string()),
+  "feature": zod.array(zod.string())
+}).optional(),
+  "climax": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(applyProducerEditResponseBriefSectionIntentionsItemClimaxConfidenceMin).max(applyProducerEditResponseBriefSectionIntentionsItemClimaxConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "character": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(applyProducerEditResponseBriefSectionIntentionsItemCharacterItemConfidenceMin).max(applyProducerEditResponseBriefSectionIntentionsItemCharacterItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "decisionIds": zod.array(zod.string())
+})),
+  "unresolvedSectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "vocalSpace": zod.object({
+  "underLead": zod.enum(['open', 'moderate', 'tight']),
+  "gapFill": zod.enum(['none', 'sparse', 'active']),
+  "counterMelodyAllowed": zod.boolean(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(applyProducerEditResponseBriefVocalSpaceConfidenceMin).max(applyProducerEditResponseBriefVocalSpaceConfidenceMax),
+  "rationale": zod.string()
+}),
+  "instrumentation": zod.object({
+  "hierarchy": zod.array(zod.object({
+  "family": zod.string(),
+  "tier": zod.enum(['foundation', 'core', 'colour', 'feature']),
+  "rationale": zod.string(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(applyProducerEditResponseBriefInstrumentationHierarchyItemConfidenceMin).max(applyProducerEditResponseBriefInstrumentationHierarchyItemConfidenceMax)
+})),
+  "excludedFamilies": zod.array(zod.string())
+}),
+  "productionAesthetic": zod.object({
+  "descriptors": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(applyProducerEditResponseBriefProductionAestheticDescriptorsItemConfidenceMin).max(applyProducerEditResponseBriefProductionAestheticDescriptorsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "plannerAesthetic": zod.enum(['raw_band', 'polished_pop', 'cinematic', 'orchestral', 'electronic', 'intimate']).optional()
+}),
+  "producerDecisions": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(applyProducerEditResponseBriefProducerDecisionsItemConfidenceMin).max(applyProducerEditResponseBriefProducerDecisionsItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).')),
+  "openQuestionIds": zod.array(zod.string()),
+  "answeredQuestionIds": zod.array(zod.string()),
+  "confidence": zod.number().min(applyProducerEditResponseBriefConfidenceMin).max(applyProducerEditResponseBriefConfidenceMax)
+}).describe('Layer 3 - how THIS song realises the style; the single source of truth the planners read.'),
+  "clarifications": zod.array(zod.object({
+  "id": zod.string(),
+  "question": zod.string(),
+  "questionHe": zod.string().optional(),
+  "informationGain": zod.number().min(applyProducerEditResponseClarificationsItemInformationGainMin).max(applyProducerEditResponseClarificationsItemInformationGainMax),
+  "settlesDimensions": zod.array(zod.string()),
+  "trigger": zod.object({
+  "reason": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+}),
+  "options": zod.array(zod.object({
+  "id": zod.string(),
+  "label": zod.string(),
+  "labelHe": zod.string().optional(),
+  "description": zod.string(),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'))
+})),
+  "allowFreeText": zod.boolean()
+}).describe('A question worth asking now - its answer materially changes the arrangement.')),
+  "editPlan": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(applyProducerEditResponseEditPlanInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "rawText": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional()
+}),
+  "intent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "preserve": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "modify": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.')),
+  "rationale": zod.string(),
+  "evidence": zod.array(zod.string()),
+  "confidence": zod.number().min(applyProducerEditResponseEditPlanConfidenceMin).max(applyProducerEditResponseEditPlanConfidenceMax)
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned by the chat; executed by `POST ...\/producer\/turns\/{turnId}\/apply` (PR-U5).'),
+  "explanation": zod.object({
+  "answered": zod.boolean(),
+  "answer": zod.string(),
+  "evidence": zod.array(zod.object({
+  "source": zod.string(),
+  "ref": zod.string(),
+  "detail": zod.string()
+})),
+  "confidence": zod.number().min(applyProducerEditResponseExplanationConfidenceMin).max(applyProducerEditResponseExplanationConfidenceMax)
+}).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
+  "regeneration": zod.object({
+  "version": zod.enum(['1.0']),
+  "method": zod.string(),
+  "requested": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "blockedByLock": zod.array(zod.object({
+  "scope": zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+}),
+  "lockId": zod.string()
+})),
+  "regenerated": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "keptNotes": zod.number().min(applyProducerEditResponseRegenerationKeptNotesMin),
+  "replacedNotes": zod.number().min(applyProducerEditResponseRegenerationReplacedNotesMin),
+  "locksHonoured": zod.boolean(),
+  "editTurnId": zod.string(),
+  "editIntent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "editText": zod.string(),
+  "parentArrangementId": zod.string(),
+  "parentArrangementVersion": zod.number(),
+  "songModelVersion": zod.number(),
+  "productionBriefId": zod.string().nullable(),
+  "productionBriefDigestSha256": zod.string().nullable(),
+  "locks": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "unmatchedFamilies": zod.array(zod.string()),
+  "changed": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "barRanges": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "replacedNotes": zod.number().min(applyProducerEditResponseRegenerationChangedBarRangesItemReplacedNotesMin)
+}))
+}),
+  "preserved": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "notes": zod.number().min(applyProducerEditResponseRegenerationPreservedNotesMin)
+}),
+  "verification": zod.object({
+  "honoured": zod.boolean(),
+  "violations": zod.array(zod.string()),
+  "checkedLockedNotes": zod.number().min(applyProducerEditResponseRegenerationVerificationCheckedLockedNotesMin)
+}),
+  "identicalReplacedNotes": zod.number().min(applyProducerEditResponseRegenerationIdenticalReplacedNotesMin).describe('Of the accepted candidate\'s replaced notes'),
+  "candidates": zod.array(zod.object({
+  "candidateId": zod.string(),
+  "label": zod.string(),
+  "strategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "seed": zod.number(),
+  "feasible": zod.boolean(),
+  "score": zod.number(),
+  "constraintErrors": zod.number().min(applyProducerEditResponseRegenerationCandidatesItemConstraintErrorsMin),
+  "locksHonoured": zod.boolean(),
+  "violations": zod.number().min(applyProducerEditResponseRegenerationCandidatesItemViolationsMin),
+  "replacedNotes": zod.number().min(applyProducerEditResponseRegenerationCandidatesItemReplacedNotesMin),
+  "identicalReplacedNotes": zod.number().min(applyProducerEditResponseRegenerationCandidatesItemIdenticalReplacedNotesMin).describe('Replaced notes identical (id and content) to what was there - a deterministic composer writing the same part again'),
+  "selected": zod.boolean()
+}).describe('One Arrangement Brain candidate as it fared once merged into the previous version (PR-U5).')),
+  "selectedCandidateId": zod.string(),
+  "plannerHintEvidence": zod.array(zod.string()),
+  "warnings": zod.array(zod.string()),
+  "durationMs": zod.number().min(applyProducerEditResponseRegenerationDurationMsMin)
+}).optional().describe('A chat edit applied to the arrangement (PR-U5): the PR-17 partial-regeneration\nreport plus what the producer needs to check the promise - what was requested,\nwhat the locks allowed and blocked, which tracks \/ sections \/ bar ranges changed,\nwhat was preserved verbatim, how the locks were verified, and how the candidates\nwere ranked before one was accepted.\n'),
+  "arrangementId": zod.string().optional().describe('PR-U5 - present on a regeneration turn'),
+  "arrangementVersion": zod.number().optional(),
+  "state": zod.object({
+  "briefRecordId": zod.string(),
+  "version": zod.number().min(1),
+  "brief": zod.object({
+  "version": zod.enum(['1.0']),
+  "id": zod.string(),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(applyProducerEditResponseStateBriefInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "intentDigestSha256": zod.string().regex(applyProducerEditResponseStateBriefIntentDigestSha256RegExp),
+  "styleProfileDigestSha256": zod.string().regex(applyProducerEditResponseStateBriefStyleProfileDigestSha256RegExp),
+  "sectionNames": zod.array(zod.string()),
+  "dimensionDecisions": zod.array(zod.object({
+  "dimension": zod.string(),
+  "disposition": zod.enum(['adopt', 'modify', 'reject']),
+  "styleValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "briefValue": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "rationale": zod.string(),
+  "decidedBy": zod.enum(['style_profile', 'constraint', 'answer', 'producer']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(applyProducerEditResponseStateBriefDimensionDecisionsItemConfidenceMin).max(applyProducerEditResponseStateBriefDimensionDecisionsItemConfidenceMax)
+})),
+  "sectionIntentions": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'neutral']),
+  "energyBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(applyProducerEditResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMin).max(applyProducerEditResponseStateBriefSectionIntentionsItemEnergyBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "densityBias": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(applyProducerEditResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMin).max(applyProducerEditResponseStateBriefSectionIntentionsItemDensityBiasConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "instrumentation": zod.object({
+  "add": zod.array(zod.string()),
+  "remove": zod.array(zod.string()),
+  "feature": zod.array(zod.string())
+}).optional(),
+  "climax": zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(applyProducerEditResponseStateBriefSectionIntentionsItemClimaxConfidenceMin).max(applyProducerEditResponseStateBriefSectionIntentionsItemClimaxConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+}).optional(),
+  "character": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(applyProducerEditResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMin).max(applyProducerEditResponseStateBriefSectionIntentionsItemCharacterItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "decisionIds": zod.array(zod.string())
+})),
+  "unresolvedSectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "vocalSpace": zod.object({
+  "underLead": zod.enum(['open', 'moderate', 'tight']),
+  "gapFill": zod.enum(['none', 'sparse', 'active']),
+  "counterMelodyAllowed": zod.boolean(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(applyProducerEditResponseStateBriefVocalSpaceConfidenceMin).max(applyProducerEditResponseStateBriefVocalSpaceConfidenceMax),
+  "rationale": zod.string()
+}),
+  "instrumentation": zod.object({
+  "hierarchy": zod.array(zod.object({
+  "family": zod.string(),
+  "tier": zod.enum(['foundation', 'core', 'colour', 'feature']),
+  "rationale": zod.string(),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(applyProducerEditResponseStateBriefInstrumentationHierarchyItemConfidenceMin).max(applyProducerEditResponseStateBriefInstrumentationHierarchyItemConfidenceMax)
+})),
+  "excludedFamilies": zod.array(zod.string())
+}),
+  "productionAesthetic": zod.object({
+  "descriptors": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(applyProducerEditResponseStateBriefProductionAestheticDescriptorsItemConfidenceMin).max(applyProducerEditResponseStateBriefProductionAestheticDescriptorsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "plannerAesthetic": zod.enum(['raw_band', 'polished_pop', 'cinematic', 'orchestral', 'electronic', 'intimate']).optional()
+}),
+  "producerDecisions": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(applyProducerEditResponseStateBriefProducerDecisionsItemConfidenceMin).max(applyProducerEditResponseStateBriefProducerDecisionsItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).')),
+  "openQuestionIds": zod.array(zod.string()),
+  "answeredQuestionIds": zod.array(zod.string()),
+  "confidence": zod.number().min(applyProducerEditResponseStateBriefConfidenceMin).max(applyProducerEditResponseStateBriefConfidenceMax)
+}).describe('Layer 3 - how THIS song realises the style; the single source of truth the planners read.'),
+  "intent": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(applyProducerEditResponseStateIntentInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "rawText": zod.string(),
+  "language": zod.enum(['he', 'en', 'mixed', 'unknown']),
+  "inferences": zod.array(zod.object({
+  "id": zod.string(),
+  "slot": zod.enum(['mood', 'energy', 'density', 'era', 'tradition', 'genre_word', 'scene', 'instrument', 'ensemble_size', 'tempo_feel', 'tempo_bpm', 'production_feel', 'vocal_treatment']),
+  "value": zod.string(),
+  "confidence": zod.number().min(applyProducerEditResponseStateIntentInferencesItemConfidenceMin).max(applyProducerEditResponseStateIntentInferencesItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "evidence": zod.array(zod.string()),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+})
+})),
+  "constraints": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['avoid', 'limit', 'require', 'keep']),
+  "subject": zod.string(),
+  "statement": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}).optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "confidence": zod.number().min(applyProducerEditResponseStateIntentConstraintsItemConfidenceMin).max(applyProducerEditResponseStateIntentConstraintsItemConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched'])
+})),
+  "references": zod.array(zod.object({
+  "id": zod.string(),
+  "kind": zod.enum(['song', 'artist', 'recording', 'playlist', 'description']),
+  "label": zod.string(),
+  "aspect": zod.string().optional(),
+  "evidence": zod.string().optional()
+})),
+  "sectionRequests": zod.array(zod.object({
+  "id": zod.string(),
+  "section": zod.object({
+  "function": zod.enum(['intro', 'verse', 'prechorus', 'chorus', 'bridge', 'breakdown', 'outro', 'instrumental', 'unknown']),
+  "ordinal": zod.union([zod.number().min(1),zod.enum(['last', 'all'])]),
+  "sectionName": zod.string().optional()
+}),
+  "text": zod.string(),
+  "inferenceIds": zod.array(zod.string()),
+  "constraintIds": zod.array(zod.string())
+})),
+  "unresolvedTerms": zod.array(zod.string()),
+  "confidence": zod.number().min(applyProducerEditResponseStateIntentConfidenceMin).max(applyProducerEditResponseStateIntentConfidenceMax)
+}).describe('Layer 1 - what the user said and what was read out of it; every item quotes verbatim evidence.'),
+  "styleProfile": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(applyProducerEditResponseStateStyleProfileInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "dimensions": zod.record(zod.string(), zod.object({
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(applyProducerEditResponseStateStyleProfileDimensionsConfidenceMin).max(applyProducerEditResponseStateStyleProfileDimensionsConfidenceMax),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "sourceRefs": zod.array(zod.string()).optional()
+})),
+  "exclusions": zod.array(zod.object({
+  "dimension": zod.string().optional(),
+  "value": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+})),
+  "conflicts": zod.array(zod.object({
+  "dimension": zod.string(),
+  "values": zod.array(zod.string())
+})),
+  "sources": zod.array(zod.string()),
+  "confidence": zod.number().min(applyProducerEditResponseStateStyleProfileConfidenceMin).max(applyProducerEditResponseStateStyleProfileConfidenceMax),
+  "research": zod.object({
+  "method": zod.string(),
+  "world": zod.array(zod.string()),
+  "providers": zod.array(zod.string()),
+  "candidates": zod.array(zod.object({
+  "dimension": zod.string(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(applyProducerEditResponseStateStyleProfileResearchCandidatesItemConfidenceMin).max(applyProducerEditResponseStateStyleProfileResearchCandidatesItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "rationale": zod.string()
+}).describe('A research finding that did not become a dimension value (PR-U3).')),
+  "discarded": zod.array(zod.object({
+  "dimension": zod.string(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "confidence": zod.number().min(applyProducerEditResponseStateStyleProfileResearchDiscardedItemConfidenceMin).max(applyProducerEditResponseStateStyleProfileResearchDiscardedItemConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "rationale": zod.string(),
+  "reason": zod.string()
+}).describe('A research finding that never surfaces, with the reason.'))
+}).optional().describe('What per-project style research contributed to a profile (PR-U3): the providers consulted, the findings gated into clarification questions (0.4 <= confidence < 0.7; they never populate a dimension) and the findings discarded with a reason. Researched dimension values themselves are in `dimensions` with provenance `researched`. Absent when no world was named.')
+}).describe('Layer 2 - independent dimensions of the musical world; only dimensions with evidence are present.'),
+  "clarifications": zod.array(zod.object({
+  "id": zod.string(),
+  "question": zod.string(),
+  "questionHe": zod.string().optional(),
+  "informationGain": zod.number().min(applyProducerEditResponseStateClarificationsItemInformationGainMin).max(applyProducerEditResponseStateClarificationsItemInformationGainMax),
+  "settlesDimensions": zod.array(zod.string()),
+  "trigger": zod.object({
+  "reason": zod.string(),
+  "sourceRefs": zod.array(zod.string())
+}),
+  "options": zod.array(zod.object({
+  "id": zod.string(),
+  "label": zod.string(),
+  "labelHe": zod.string().optional(),
+  "description": zod.string(),
+  "briefDeltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'))
+})),
+  "allowFreeText": zod.boolean()
+}).describe('A question worth asking now - its answer materially changes the arrangement.')),
+  "decisions": zod.array(zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "briefId": zod.string(),
+  "decisionId": zod.string(),
+  "decision": zod.object({
+  "id": zod.string(),
+  "scope": zod.object({
+  "kind": zod.enum(['global', 'section', 'phrase', 'track']),
+  "sectionName": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "instrument": zod.string().optional()
+}),
+  "topic": zod.enum(['energy', 'density', 'instrumentation', 'climax', 'ornamentation', 'vocal_space', 'groove', 'harmony', 'aesthetic', 'structure', 'style_dimension', 'reference', 'other']),
+  "statement": zod.string(),
+  "dimension": zod.string().optional(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]).optional(),
+  "strength": zod.enum(['hard', 'soft']),
+  "provenance": zod.enum(['stated', 'inferred', 'default', 'researched']),
+  "confidence": zod.number().min(applyProducerEditResponseStateDecisionsItemDecisionConfidenceMin).max(applyProducerEditResponseStateDecisionsItemDecisionConfidenceMax),
+  "sourceRefs": zod.array(zod.string()),
+  "supersedes": zod.array(zod.string()),
+  "createdBy": zod.enum(['intake', 'clarification', 'chat', 'producer', 'system']),
+  "createdAt": zod.coerce.date()
+}).describe('A durable, scoped arrangement decision inside a ProductionBrief (distinct from the learning ledger\'s ProducerDecision).'),
+  "delta": zod.union([zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.'),zod.null()]),
+  "supersededBy": zod.string().nullable(),
+  "createdAt": zod.coerce.date()
+}).describe('A durable chat decision row; superseded rows keep `supersededBy`.')),
+  "concepts": zod.object({
+  "version": zod.enum(['1.0']),
+  "derivedAt": zod.coerce.date(),
+  "inputsDigestSha256": zod.string().regex(applyProducerEditResponseStateConceptsInputsDigestSha256RegExp),
+  "method": zod.string(),
+  "briefId": zod.string(),
+  "briefDigestSha256": zod.string().regex(applyProducerEditResponseStateConceptsBriefDigestSha256RegExp),
+  "concepts": zod.array(zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "thesis": zod.string(),
+  "deltas": zod.array(zod.object({
+  "kind": zod.enum(['set_dimension', 'exclude_value', 'section_intention', 'instrumentation', 'vocal_space', 'decision']),
+  "rationale": zod.string()
+}).describe('A concrete change to a ProductionBrief (set_dimension \/ exclude_value \/ section_intention \/ instrumentation \/ vocal_space \/ decision). The shape depends on `kind`; see lib\/db `BriefDelta`.')),
+  "differsIn": zod.array(zod.string()),
+  "candidateStrategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "contrastsWith": zod.array(zod.object({
+  "conceptId": zod.string(),
+  "dimensions": zod.array(zod.string())
+}))
+}))
+}).describe('Exactly three deliberately different directions for the same brief, before any note.'),
+  "songModelVersion": zod.number().nullable(),
+  "planSource": zod.enum(['arrangement', 'derived', 'none']).describe('arrangement = the latest stored ArrangementPlan; derived = planned from the Song Model with the brief\'s hints; none = no Song Model yet'),
+  "references": zod.array(zod.object({
+  "id": zod.string(),
+  "projectId": zod.string(),
+  "ownerId": zod.string().nullable(),
+  "kind": zod.enum(['uploaded_audio', 'named']),
+  "label": zod.string(),
+  "sourceId": zod.string().nullable().describe('One of the owner\'s own uploads (music_project_sources); null for a named reference'),
+  "songModelVersion": zod.number().nullable(),
+  "fingerprintId": zod.string().nullable().describe('The music_style_fingerprints row (sourceKind reference_upload) - the only thing learning may read'),
+  "allowedScopes": zod.array(zod.enum(['groove', 'sound', 'arrangement', 'mood']).describe('What a reference may lend the brief (PR-U4). `sound` is empty until audio features exist (PR-27 is symbolic).')),
+  "rightsNote": zod.string().nullable().describe('The user\'s own statement of what this is; required for an uploaded reference, never assumed'),
+  "contributes": zod.array(zod.string()).optional().describe('Dimensions of the current profile that cite this reference\'s fingerprint (won or corroborated)'),
+  "withheld": zod.array(zod.object({
+  "dimension": zod.string(),
+  "value": zod.union([zod.string(),zod.number(),zod.array(zod.string())]),
+  "reason": zod.string()
+})).optional().describe('Fingerprint values inside the allowed scopes not offered because the user\'s own words decide otherwise'),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+}).describe('PR-U4 - a named or uploaded reference. Only its content-free PR-27 fingerprint is ever read; a named reference has none and stays a label with a scope and a rights note.')).describe('PR-U4 - the project\'s references with what each lends this brief version'),
+  "createdAt": zod.coerce.date()
+}).describe('The current brief version with everything the studio shows around it.')
+})
+
+
+/**
  * @summary The project's references with what each lends the current brief
  */
 export const ListProjectReferencesParams = zod.object({
@@ -23336,6 +27344,36 @@ export const createProjectReferenceResponseTurnEditPlanConfidenceMax = 1;
 
 export const createProjectReferenceResponseTurnExplanationConfidenceMin = 0;
 export const createProjectReferenceResponseTurnExplanationConfidenceMax = 1;
+
+
+
+
+
+
+
+export const createProjectReferenceResponseTurnRegenerationKeptNotesMin = 0;
+
+export const createProjectReferenceResponseTurnRegenerationReplacedNotesMin = 0;
+
+
+
+export const createProjectReferenceResponseTurnRegenerationChangedBarRangesItemReplacedNotesMin = 0;
+
+export const createProjectReferenceResponseTurnRegenerationPreservedNotesMin = 0;
+
+export const createProjectReferenceResponseTurnRegenerationVerificationCheckedLockedNotesMin = 0;
+
+export const createProjectReferenceResponseTurnRegenerationIdenticalReplacedNotesMin = 0;
+
+export const createProjectReferenceResponseTurnRegenerationCandidatesItemConstraintErrorsMin = 0;
+
+export const createProjectReferenceResponseTurnRegenerationCandidatesItemViolationsMin = 0;
+
+export const createProjectReferenceResponseTurnRegenerationCandidatesItemReplacedNotesMin = 0;
+
+export const createProjectReferenceResponseTurnRegenerationCandidatesItemIdenticalReplacedNotesMin = 0;
+
+export const createProjectReferenceResponseTurnRegenerationDurationMsMin = 0;
 
 
 export const createProjectReferenceResponseTurnStateBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
@@ -23454,7 +27492,7 @@ export const CreateProjectReferenceResponse = zod.object({
   "fingerprint": zod.record(zod.string(), zod.unknown())
 }).optional(),
   "turn": zod.object({
-  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference']),
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference', 'regeneration']),
   "turnId": zod.string().describe('The persisted user turn'),
   "producerTurnId": zod.string(),
   "understanding": zod.string().describe('The producer\'s reply - a reading of the request'),
@@ -23637,7 +27675,7 @@ export const CreateProjectReferenceResponse = zod.object({
   "rationale": zod.string(),
   "evidence": zod.array(zod.string()),
   "confidence": zod.number().min(createProjectReferenceResponseTurnEditPlanConfidenceMin).max(createProjectReferenceResponseTurnEditPlanConfidenceMax)
-}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned by the chat; executed by `POST ...\/producer\/turns\/{turnId}\/apply` (PR-U5).'),
   "explanation": zod.object({
   "answered": zod.boolean(),
   "answer": zod.string(),
@@ -23648,6 +27686,101 @@ export const CreateProjectReferenceResponse = zod.object({
 })),
   "confidence": zod.number().min(createProjectReferenceResponseTurnExplanationConfidenceMin).max(createProjectReferenceResponseTurnExplanationConfidenceMax)
 }).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
+  "regeneration": zod.object({
+  "version": zod.enum(['1.0']),
+  "method": zod.string(),
+  "requested": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "blockedByLock": zod.array(zod.object({
+  "scope": zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+}),
+  "lockId": zod.string()
+})),
+  "regenerated": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "keptNotes": zod.number().min(createProjectReferenceResponseTurnRegenerationKeptNotesMin),
+  "replacedNotes": zod.number().min(createProjectReferenceResponseTurnRegenerationReplacedNotesMin),
+  "locksHonoured": zod.boolean(),
+  "editTurnId": zod.string(),
+  "editIntent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "editText": zod.string(),
+  "parentArrangementId": zod.string(),
+  "parentArrangementVersion": zod.number(),
+  "songModelVersion": zod.number(),
+  "productionBriefId": zod.string().nullable(),
+  "productionBriefDigestSha256": zod.string().nullable(),
+  "locks": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "unmatchedFamilies": zod.array(zod.string()),
+  "changed": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "barRanges": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "replacedNotes": zod.number().min(createProjectReferenceResponseTurnRegenerationChangedBarRangesItemReplacedNotesMin)
+}))
+}),
+  "preserved": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "notes": zod.number().min(createProjectReferenceResponseTurnRegenerationPreservedNotesMin)
+}),
+  "verification": zod.object({
+  "honoured": zod.boolean(),
+  "violations": zod.array(zod.string()),
+  "checkedLockedNotes": zod.number().min(createProjectReferenceResponseTurnRegenerationVerificationCheckedLockedNotesMin)
+}),
+  "identicalReplacedNotes": zod.number().min(createProjectReferenceResponseTurnRegenerationIdenticalReplacedNotesMin).describe('Of the accepted candidate\'s replaced notes'),
+  "candidates": zod.array(zod.object({
+  "candidateId": zod.string(),
+  "label": zod.string(),
+  "strategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "seed": zod.number(),
+  "feasible": zod.boolean(),
+  "score": zod.number(),
+  "constraintErrors": zod.number().min(createProjectReferenceResponseTurnRegenerationCandidatesItemConstraintErrorsMin),
+  "locksHonoured": zod.boolean(),
+  "violations": zod.number().min(createProjectReferenceResponseTurnRegenerationCandidatesItemViolationsMin),
+  "replacedNotes": zod.number().min(createProjectReferenceResponseTurnRegenerationCandidatesItemReplacedNotesMin),
+  "identicalReplacedNotes": zod.number().min(createProjectReferenceResponseTurnRegenerationCandidatesItemIdenticalReplacedNotesMin).describe('Replaced notes identical (id and content) to what was there - a deterministic composer writing the same part again'),
+  "selected": zod.boolean()
+}).describe('One Arrangement Brain candidate as it fared once merged into the previous version (PR-U5).')),
+  "selectedCandidateId": zod.string(),
+  "plannerHintEvidence": zod.array(zod.string()),
+  "warnings": zod.array(zod.string()),
+  "durationMs": zod.number().min(createProjectReferenceResponseTurnRegenerationDurationMsMin)
+}).optional().describe('A chat edit applied to the arrangement (PR-U5): the PR-17 partial-regeneration\nreport plus what the producer needs to check the promise - what was requested,\nwhat the locks allowed and blocked, which tracks \/ sections \/ bar ranges changed,\nwhat was preserved verbatim, how the locks were verified, and how the candidates\nwere ranked before one was accepted.\n'),
+  "arrangementId": zod.string().optional().describe('PR-U5 - present on a regeneration turn'),
+  "arrangementVersion": zod.number().optional(),
   "state": zod.object({
   "briefRecordId": zod.string(),
   "version": zod.number().min(1),
@@ -24052,6 +28185,36 @@ export const updateProjectReferenceResponseTurnExplanationConfidenceMin = 0;
 export const updateProjectReferenceResponseTurnExplanationConfidenceMax = 1;
 
 
+
+
+
+
+
+export const updateProjectReferenceResponseTurnRegenerationKeptNotesMin = 0;
+
+export const updateProjectReferenceResponseTurnRegenerationReplacedNotesMin = 0;
+
+
+
+export const updateProjectReferenceResponseTurnRegenerationChangedBarRangesItemReplacedNotesMin = 0;
+
+export const updateProjectReferenceResponseTurnRegenerationPreservedNotesMin = 0;
+
+export const updateProjectReferenceResponseTurnRegenerationVerificationCheckedLockedNotesMin = 0;
+
+export const updateProjectReferenceResponseTurnRegenerationIdenticalReplacedNotesMin = 0;
+
+export const updateProjectReferenceResponseTurnRegenerationCandidatesItemConstraintErrorsMin = 0;
+
+export const updateProjectReferenceResponseTurnRegenerationCandidatesItemViolationsMin = 0;
+
+export const updateProjectReferenceResponseTurnRegenerationCandidatesItemReplacedNotesMin = 0;
+
+export const updateProjectReferenceResponseTurnRegenerationCandidatesItemIdenticalReplacedNotesMin = 0;
+
+export const updateProjectReferenceResponseTurnRegenerationDurationMsMin = 0;
+
+
 export const updateProjectReferenceResponseTurnStateBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
 export const updateProjectReferenceResponseTurnStateBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
 export const updateProjectReferenceResponseTurnStateBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
@@ -24168,7 +28331,7 @@ export const UpdateProjectReferenceResponse = zod.object({
   "fingerprint": zod.record(zod.string(), zod.unknown())
 }).optional(),
   "turn": zod.object({
-  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference']),
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference', 'regeneration']),
   "turnId": zod.string().describe('The persisted user turn'),
   "producerTurnId": zod.string(),
   "understanding": zod.string().describe('The producer\'s reply - a reading of the request'),
@@ -24351,7 +28514,7 @@ export const UpdateProjectReferenceResponse = zod.object({
   "rationale": zod.string(),
   "evidence": zod.array(zod.string()),
   "confidence": zod.number().min(updateProjectReferenceResponseTurnEditPlanConfidenceMin).max(updateProjectReferenceResponseTurnEditPlanConfidenceMax)
-}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned by the chat; executed by `POST ...\/producer\/turns\/{turnId}\/apply` (PR-U5).'),
   "explanation": zod.object({
   "answered": zod.boolean(),
   "answer": zod.string(),
@@ -24362,6 +28525,101 @@ export const UpdateProjectReferenceResponse = zod.object({
 })),
   "confidence": zod.number().min(updateProjectReferenceResponseTurnExplanationConfidenceMin).max(updateProjectReferenceResponseTurnExplanationConfidenceMax)
 }).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
+  "regeneration": zod.object({
+  "version": zod.enum(['1.0']),
+  "method": zod.string(),
+  "requested": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "blockedByLock": zod.array(zod.object({
+  "scope": zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+}),
+  "lockId": zod.string()
+})),
+  "regenerated": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "keptNotes": zod.number().min(updateProjectReferenceResponseTurnRegenerationKeptNotesMin),
+  "replacedNotes": zod.number().min(updateProjectReferenceResponseTurnRegenerationReplacedNotesMin),
+  "locksHonoured": zod.boolean(),
+  "editTurnId": zod.string(),
+  "editIntent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "editText": zod.string(),
+  "parentArrangementId": zod.string(),
+  "parentArrangementVersion": zod.number(),
+  "songModelVersion": zod.number(),
+  "productionBriefId": zod.string().nullable(),
+  "productionBriefDigestSha256": zod.string().nullable(),
+  "locks": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "unmatchedFamilies": zod.array(zod.string()),
+  "changed": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "barRanges": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "replacedNotes": zod.number().min(updateProjectReferenceResponseTurnRegenerationChangedBarRangesItemReplacedNotesMin)
+}))
+}),
+  "preserved": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "notes": zod.number().min(updateProjectReferenceResponseTurnRegenerationPreservedNotesMin)
+}),
+  "verification": zod.object({
+  "honoured": zod.boolean(),
+  "violations": zod.array(zod.string()),
+  "checkedLockedNotes": zod.number().min(updateProjectReferenceResponseTurnRegenerationVerificationCheckedLockedNotesMin)
+}),
+  "identicalReplacedNotes": zod.number().min(updateProjectReferenceResponseTurnRegenerationIdenticalReplacedNotesMin).describe('Of the accepted candidate\'s replaced notes'),
+  "candidates": zod.array(zod.object({
+  "candidateId": zod.string(),
+  "label": zod.string(),
+  "strategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "seed": zod.number(),
+  "feasible": zod.boolean(),
+  "score": zod.number(),
+  "constraintErrors": zod.number().min(updateProjectReferenceResponseTurnRegenerationCandidatesItemConstraintErrorsMin),
+  "locksHonoured": zod.boolean(),
+  "violations": zod.number().min(updateProjectReferenceResponseTurnRegenerationCandidatesItemViolationsMin),
+  "replacedNotes": zod.number().min(updateProjectReferenceResponseTurnRegenerationCandidatesItemReplacedNotesMin),
+  "identicalReplacedNotes": zod.number().min(updateProjectReferenceResponseTurnRegenerationCandidatesItemIdenticalReplacedNotesMin).describe('Replaced notes identical (id and content) to what was there - a deterministic composer writing the same part again'),
+  "selected": zod.boolean()
+}).describe('One Arrangement Brain candidate as it fared once merged into the previous version (PR-U5).')),
+  "selectedCandidateId": zod.string(),
+  "plannerHintEvidence": zod.array(zod.string()),
+  "warnings": zod.array(zod.string()),
+  "durationMs": zod.number().min(updateProjectReferenceResponseTurnRegenerationDurationMsMin)
+}).optional().describe('A chat edit applied to the arrangement (PR-U5): the PR-17 partial-regeneration\nreport plus what the producer needs to check the promise - what was requested,\nwhat the locks allowed and blocked, which tracks \/ sections \/ bar ranges changed,\nwhat was preserved verbatim, how the locks were verified, and how the candidates\nwere ranked before one was accepted.\n'),
+  "arrangementId": zod.string().optional().describe('PR-U5 - present on a regeneration turn'),
+  "arrangementVersion": zod.number().optional(),
   "state": zod.object({
   "briefRecordId": zod.string(),
   "version": zod.number().min(1),
@@ -24752,6 +29010,36 @@ export const deleteProjectReferenceResponseTurnExplanationConfidenceMin = 0;
 export const deleteProjectReferenceResponseTurnExplanationConfidenceMax = 1;
 
 
+
+
+
+
+
+export const deleteProjectReferenceResponseTurnRegenerationKeptNotesMin = 0;
+
+export const deleteProjectReferenceResponseTurnRegenerationReplacedNotesMin = 0;
+
+
+
+export const deleteProjectReferenceResponseTurnRegenerationChangedBarRangesItemReplacedNotesMin = 0;
+
+export const deleteProjectReferenceResponseTurnRegenerationPreservedNotesMin = 0;
+
+export const deleteProjectReferenceResponseTurnRegenerationVerificationCheckedLockedNotesMin = 0;
+
+export const deleteProjectReferenceResponseTurnRegenerationIdenticalReplacedNotesMin = 0;
+
+export const deleteProjectReferenceResponseTurnRegenerationCandidatesItemConstraintErrorsMin = 0;
+
+export const deleteProjectReferenceResponseTurnRegenerationCandidatesItemViolationsMin = 0;
+
+export const deleteProjectReferenceResponseTurnRegenerationCandidatesItemReplacedNotesMin = 0;
+
+export const deleteProjectReferenceResponseTurnRegenerationCandidatesItemIdenticalReplacedNotesMin = 0;
+
+export const deleteProjectReferenceResponseTurnRegenerationDurationMsMin = 0;
+
+
 export const deleteProjectReferenceResponseTurnStateBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
 export const deleteProjectReferenceResponseTurnStateBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
 export const deleteProjectReferenceResponseTurnStateBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
@@ -24868,7 +29156,7 @@ export const DeleteProjectReferenceResponse = zod.object({
   "fingerprint": zod.record(zod.string(), zod.unknown())
 }).optional(),
   "turn": zod.object({
-  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference']),
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference', 'regeneration']),
   "turnId": zod.string().describe('The persisted user turn'),
   "producerTurnId": zod.string(),
   "understanding": zod.string().describe('The producer\'s reply - a reading of the request'),
@@ -25051,7 +29339,7 @@ export const DeleteProjectReferenceResponse = zod.object({
   "rationale": zod.string(),
   "evidence": zod.array(zod.string()),
   "confidence": zod.number().min(deleteProjectReferenceResponseTurnEditPlanConfidenceMin).max(deleteProjectReferenceResponseTurnEditPlanConfidenceMax)
-}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned by the chat; executed by `POST ...\/producer\/turns\/{turnId}\/apply` (PR-U5).'),
   "explanation": zod.object({
   "answered": zod.boolean(),
   "answer": zod.string(),
@@ -25062,6 +29350,101 @@ export const DeleteProjectReferenceResponse = zod.object({
 })),
   "confidence": zod.number().min(deleteProjectReferenceResponseTurnExplanationConfidenceMin).max(deleteProjectReferenceResponseTurnExplanationConfidenceMax)
 }).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
+  "regeneration": zod.object({
+  "version": zod.enum(['1.0']),
+  "method": zod.string(),
+  "requested": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "blockedByLock": zod.array(zod.object({
+  "scope": zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+}),
+  "lockId": zod.string()
+})),
+  "regenerated": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "keptNotes": zod.number().min(deleteProjectReferenceResponseTurnRegenerationKeptNotesMin),
+  "replacedNotes": zod.number().min(deleteProjectReferenceResponseTurnRegenerationReplacedNotesMin),
+  "locksHonoured": zod.boolean(),
+  "editTurnId": zod.string(),
+  "editIntent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "editText": zod.string(),
+  "parentArrangementId": zod.string(),
+  "parentArrangementVersion": zod.number(),
+  "songModelVersion": zod.number(),
+  "productionBriefId": zod.string().nullable(),
+  "productionBriefDigestSha256": zod.string().nullable(),
+  "locks": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "unmatchedFamilies": zod.array(zod.string()),
+  "changed": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "barRanges": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "replacedNotes": zod.number().min(deleteProjectReferenceResponseTurnRegenerationChangedBarRangesItemReplacedNotesMin)
+}))
+}),
+  "preserved": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "notes": zod.number().min(deleteProjectReferenceResponseTurnRegenerationPreservedNotesMin)
+}),
+  "verification": zod.object({
+  "honoured": zod.boolean(),
+  "violations": zod.array(zod.string()),
+  "checkedLockedNotes": zod.number().min(deleteProjectReferenceResponseTurnRegenerationVerificationCheckedLockedNotesMin)
+}),
+  "identicalReplacedNotes": zod.number().min(deleteProjectReferenceResponseTurnRegenerationIdenticalReplacedNotesMin).describe('Of the accepted candidate\'s replaced notes'),
+  "candidates": zod.array(zod.object({
+  "candidateId": zod.string(),
+  "label": zod.string(),
+  "strategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "seed": zod.number(),
+  "feasible": zod.boolean(),
+  "score": zod.number(),
+  "constraintErrors": zod.number().min(deleteProjectReferenceResponseTurnRegenerationCandidatesItemConstraintErrorsMin),
+  "locksHonoured": zod.boolean(),
+  "violations": zod.number().min(deleteProjectReferenceResponseTurnRegenerationCandidatesItemViolationsMin),
+  "replacedNotes": zod.number().min(deleteProjectReferenceResponseTurnRegenerationCandidatesItemReplacedNotesMin),
+  "identicalReplacedNotes": zod.number().min(deleteProjectReferenceResponseTurnRegenerationCandidatesItemIdenticalReplacedNotesMin).describe('Replaced notes identical (id and content) to what was there - a deterministic composer writing the same part again'),
+  "selected": zod.boolean()
+}).describe('One Arrangement Brain candidate as it fared once merged into the previous version (PR-U5).')),
+  "selectedCandidateId": zod.string(),
+  "plannerHintEvidence": zod.array(zod.string()),
+  "warnings": zod.array(zod.string()),
+  "durationMs": zod.number().min(deleteProjectReferenceResponseTurnRegenerationDurationMsMin)
+}).optional().describe('A chat edit applied to the arrangement (PR-U5): the PR-17 partial-regeneration\nreport plus what the producer needs to check the promise - what was requested,\nwhat the locks allowed and blocked, which tracks \/ sections \/ bar ranges changed,\nwhat was preserved verbatim, how the locks were verified, and how the candidates\nwere ranked before one was accepted.\n'),
+  "arrangementId": zod.string().optional().describe('PR-U5 - present on a regeneration turn'),
+  "arrangementVersion": zod.number().optional(),
   "state": zod.object({
   "briefRecordId": zod.string(),
   "version": zod.number().min(1),
@@ -25452,6 +29835,36 @@ export const fingerprintProjectReferenceResponseTurnExplanationConfidenceMin = 0
 export const fingerprintProjectReferenceResponseTurnExplanationConfidenceMax = 1;
 
 
+
+
+
+
+
+export const fingerprintProjectReferenceResponseTurnRegenerationKeptNotesMin = 0;
+
+export const fingerprintProjectReferenceResponseTurnRegenerationReplacedNotesMin = 0;
+
+
+
+export const fingerprintProjectReferenceResponseTurnRegenerationChangedBarRangesItemReplacedNotesMin = 0;
+
+export const fingerprintProjectReferenceResponseTurnRegenerationPreservedNotesMin = 0;
+
+export const fingerprintProjectReferenceResponseTurnRegenerationVerificationCheckedLockedNotesMin = 0;
+
+export const fingerprintProjectReferenceResponseTurnRegenerationIdenticalReplacedNotesMin = 0;
+
+export const fingerprintProjectReferenceResponseTurnRegenerationCandidatesItemConstraintErrorsMin = 0;
+
+export const fingerprintProjectReferenceResponseTurnRegenerationCandidatesItemViolationsMin = 0;
+
+export const fingerprintProjectReferenceResponseTurnRegenerationCandidatesItemReplacedNotesMin = 0;
+
+export const fingerprintProjectReferenceResponseTurnRegenerationCandidatesItemIdenticalReplacedNotesMin = 0;
+
+export const fingerprintProjectReferenceResponseTurnRegenerationDurationMsMin = 0;
+
+
 export const fingerprintProjectReferenceResponseTurnStateBriefInputsDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
 export const fingerprintProjectReferenceResponseTurnStateBriefIntentDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
 export const fingerprintProjectReferenceResponseTurnStateBriefStyleProfileDigestSha256RegExp = new RegExp('^[a-f0-9]{64}$');
@@ -25568,7 +29981,7 @@ export const FingerprintProjectReferenceResponse = zod.object({
   "fingerprint": zod.record(zod.string(), zod.unknown())
 }).optional(),
   "turn": zod.object({
-  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference']),
+  "kind": zod.enum(['intake', 'answers', 'refinement', 'edit', 'explanation', 'supersede', 'reference', 'regeneration']),
   "turnId": zod.string().describe('The persisted user turn'),
   "producerTurnId": zod.string(),
   "understanding": zod.string().describe('The producer\'s reply - a reading of the request'),
@@ -25751,7 +30164,7 @@ export const FingerprintProjectReferenceResponse = zod.object({
   "rationale": zod.string(),
   "evidence": zod.array(zod.string()),
   "confidence": zod.number().min(fingerprintProjectReferenceResponseTurnEditPlanConfidenceMin).max(fingerprintProjectReferenceResponseTurnEditPlanConfidenceMax)
-}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned, not executed, in PR-U2.'),
+}).optional().describe('A chat edit request mapped onto the PR-17 lock \/ regeneration scopes. Returned by the chat; executed by `POST ...\/producer\/turns\/{turnId}\/apply` (PR-U5).'),
   "explanation": zod.object({
   "answered": zod.boolean(),
   "answer": zod.string(),
@@ -25762,6 +30175,101 @@ export const FingerprintProjectReferenceResponse = zod.object({
 })),
   "confidence": zod.number().min(fingerprintProjectReferenceResponseTurnExplanationConfidenceMin).max(fingerprintProjectReferenceResponseTurnExplanationConfidenceMax)
 }).optional().describe('An answer to \"why is X here?\" built only from the plan\'s own data.'),
+  "regeneration": zod.object({
+  "version": zod.enum(['1.0']),
+  "method": zod.string(),
+  "requested": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "blockedByLock": zod.array(zod.object({
+  "scope": zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+}),
+  "lockId": zod.string()
+})),
+  "regenerated": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "reason": zod.string()
+})),
+  "keptNotes": zod.number().min(fingerprintProjectReferenceResponseTurnRegenerationKeptNotesMin),
+  "replacedNotes": zod.number().min(fingerprintProjectReferenceResponseTurnRegenerationReplacedNotesMin),
+  "locksHonoured": zod.boolean(),
+  "editTurnId": zod.string(),
+  "editIntent": zod.enum(['reduce_density', 'raise_density', 'lower_energy', 'raise_energy', 'raise_climax', 'change_ornamentation', 'add_instrument', 'remove_instrument', 'feature_instrument', 'regenerate_part', 'change_groove', 'change_harmony', 'change_aesthetic', 'keep', 'unclear']),
+  "editText": zod.string(),
+  "parentArrangementId": zod.string(),
+  "parentArrangementVersion": zod.number(),
+  "songModelVersion": zod.number(),
+  "productionBriefId": zod.string().nullable(),
+  "productionBriefDigestSha256": zod.string().nullable(),
+  "locks": zod.array(zod.object({
+  "id": zod.string(),
+  "scope": zod.enum(['global', 'section', 'track', 'phrase', 'event']),
+  "sectionName": zod.string().optional(),
+  "instrument": zod.string().optional(),
+  "trackId": zod.string().optional(),
+  "phraseId": zod.string().optional(),
+  "startBar": zod.number().min(1).optional(),
+  "endBar": zod.number().min(1).optional(),
+  "noteIds": zod.array(zod.string()).optional(),
+  "reason": zod.string().optional(),
+  "createdAt": zod.coerce.date()
+})),
+  "unmatchedFamilies": zod.array(zod.string()),
+  "changed": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "barRanges": zod.array(zod.object({
+  "instrument": zod.string(),
+  "sectionName": zod.string(),
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "replacedNotes": zod.number().min(fingerprintProjectReferenceResponseTurnRegenerationChangedBarRangesItemReplacedNotesMin)
+}))
+}),
+  "preserved": zod.object({
+  "instruments": zod.array(zod.string()),
+  "sections": zod.array(zod.string()),
+  "notes": zod.number().min(fingerprintProjectReferenceResponseTurnRegenerationPreservedNotesMin)
+}),
+  "verification": zod.object({
+  "honoured": zod.boolean(),
+  "violations": zod.array(zod.string()),
+  "checkedLockedNotes": zod.number().min(fingerprintProjectReferenceResponseTurnRegenerationVerificationCheckedLockedNotesMin)
+}),
+  "identicalReplacedNotes": zod.number().min(fingerprintProjectReferenceResponseTurnRegenerationIdenticalReplacedNotesMin).describe('Of the accepted candidate\'s replaced notes'),
+  "candidates": zod.array(zod.object({
+  "candidateId": zod.string(),
+  "label": zod.string(),
+  "strategy": zod.enum(['conservative', 'rhythmic', 'melodic', 'sparse', 'adventurous']),
+  "seed": zod.number(),
+  "feasible": zod.boolean(),
+  "score": zod.number(),
+  "constraintErrors": zod.number().min(fingerprintProjectReferenceResponseTurnRegenerationCandidatesItemConstraintErrorsMin),
+  "locksHonoured": zod.boolean(),
+  "violations": zod.number().min(fingerprintProjectReferenceResponseTurnRegenerationCandidatesItemViolationsMin),
+  "replacedNotes": zod.number().min(fingerprintProjectReferenceResponseTurnRegenerationCandidatesItemReplacedNotesMin),
+  "identicalReplacedNotes": zod.number().min(fingerprintProjectReferenceResponseTurnRegenerationCandidatesItemIdenticalReplacedNotesMin).describe('Replaced notes identical (id and content) to what was there - a deterministic composer writing the same part again'),
+  "selected": zod.boolean()
+}).describe('One Arrangement Brain candidate as it fared once merged into the previous version (PR-U5).')),
+  "selectedCandidateId": zod.string(),
+  "plannerHintEvidence": zod.array(zod.string()),
+  "warnings": zod.array(zod.string()),
+  "durationMs": zod.number().min(fingerprintProjectReferenceResponseTurnRegenerationDurationMsMin)
+}).optional().describe('A chat edit applied to the arrangement (PR-U5): the PR-17 partial-regeneration\nreport plus what the producer needs to check the promise - what was requested,\nwhat the locks allowed and blocked, which tracks \/ sections \/ bar ranges changed,\nwhat was preserved verbatim, how the locks were verified, and how the candidates\nwere ranked before one was accepted.\n'),
+  "arrangementId": zod.string().optional().describe('PR-U5 - present on a regeneration turn'),
+  "arrangementVersion": zod.number().optional(),
   "state": zod.object({
   "briefRecordId": zod.string(),
   "version": zod.number().min(1),

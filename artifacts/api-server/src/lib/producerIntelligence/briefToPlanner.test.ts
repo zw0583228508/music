@@ -3,7 +3,7 @@ import test from "node:test";
 import { deriveGlobalArrangementPlan, globalPlanInputsDigest } from "../globalArrangementPlanner";
 import { deriveSectionPhrasePlan, sectionPhrasePlanInputsDigest } from "../sectionPhrasePlanner";
 import { compileProductionBrief } from "./briefCompiler";
-import { applyBriefToPlans, briefPlannerHints } from "./briefToPlanner";
+import { applyBriefToPlans, briefPlannerHints, plannerHintsForJob, stampBriefOnPlan } from "./briefToPlanner";
 import { extractUserIntentSync } from "./intentExtraction";
 import { resolveStyleProfile } from "./styleResolution";
 import { FIXED_NOW, makeTestSongModel } from "./testSongModel";
@@ -25,6 +25,21 @@ test("an empty brief produces no hints and byte-identical plans", () => {
   assert.deepEqual(applied.sectionPlan, deriveSectionPhrasePlan(model, applied.globalPlan, { now: FIXED_NOW }));
   assert.equal(applied.planRef.productionBriefId, brief.id);
   assert.equal(applied.planRef.productionBriefDigestSha256, brief.inputsDigestSha256);
+});
+
+test("a plan is stamped with the brief it came from; a job carries the brief's hints as plain JSON (PR-U5)", () => {
+  const brief = briefFor("not too busy");
+  const plan = { id: "p", version: 1 } as { id: string; version: number; productionBriefId?: string; productionBriefDigestSha256?: string };
+  const stamped = stampBriefOnPlan(plan, brief);
+  assert.equal(stamped.productionBriefId, brief.id);
+  assert.equal(stamped.productionBriefDigestSha256, brief.inputsDigestSha256);
+  assert.equal(stamped.id, "p");
+  assert.equal(plan.productionBriefId, undefined, "the input is not mutated");
+  assert.deepEqual(stampBriefOnPlan(plan, { productionBriefId: "b", productionBriefDigestSha256: "d" }), { id: "p", version: 1, productionBriefId: "b", productionBriefDigestSha256: "d" });
+  const hints = plannerHintsForJob(brief);
+  assert.ok(hints && hints.section.activeFamilyBias! < 0, "'not too busy' thins the texture");
+  assert.deepEqual(JSON.parse(JSON.stringify(hints)), hints, "plain JSON, as a job row stores it");
+  assert.equal(plannerHintsForJob(briefFor("")), null, "an empty brief adds no hints to a job");
 });
 
 test("digests stay byte-identical without hints and change with them", () => {

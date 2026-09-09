@@ -135,6 +135,29 @@ test("a StyleProfile in the parameters shapes the performance (PR-23); without o
   assert.equal(junk.candidates[0].parameters["performanceEngineVersion"], "1.0");
 });
 
+test("a brief's planner hints and reference in the parameters reach the brain and are echoed on every candidate (PR-U5)", async () => {
+  const provider = new LocalArrangementOrchestratorProvider();
+  const plain = await provider.generate(generationInput(1));
+  assert.equal(plain.candidates[0].parameters["productionBriefId"], undefined);
+  const sectionDensityBias = Object.fromEntries(songModel.sections.map((s) => [s.name, 0.6]));
+  const briefed = await provider.generate({
+    ...generationInput(1),
+    parameters: {
+      productionBriefId: "brief-1", productionBriefDigestSha256: "a".repeat(64),
+      plannerHints: { global: { sectionDensityBias }, section: { activeFamilyBias: -1 } },
+    },
+  });
+  assert.equal(briefed.candidates[0].parameters["productionBriefId"], "brief-1");
+  assert.equal(briefed.candidates[0].parameters["productionBriefDigestSha256"], "a".repeat(64));
+  assert.equal(briefed.candidates[0].parameters["briefPlannerHints"], true);
+  const notesOf = (r: typeof plain) => r.candidates[0].trackModels!.reduce((s, t) => s + t.notes.length, 0);
+  assert.ok(notesOf(briefed) < notesOf(plain), `a thinner brief writes fewer notes (${notesOf(briefed)} vs ${notesOf(plain)})`);
+  // Junk hints are ignored, not trusted; a reference without a digest is not a reference.
+  const junk = await provider.generate({ ...generationInput(1), parameters: { plannerHints: "thin please", productionBriefId: "brief-1" } });
+  assert.equal(notesOf(junk), notesOf(plain));
+  assert.equal(junk.candidates[0].parameters["productionBriefId"], undefined);
+});
+
 test("it refuses an incomplete Song Model rather than arranging silence", async () => {
   const provider = new LocalArrangementOrchestratorProvider();
   await assert.rejects(

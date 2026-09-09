@@ -21,6 +21,7 @@ import type {
   StyleProfile,
   StyleProfileDimensions,
 } from "@workspace/db";
+import type { StyleKnowledgeFinding, StyleKnowledgeSource } from "./producerIntelligence/styleResolution";
 
 export const PERSONAL_PROFILE_METHOD = "personal-arrangement-profile/v1";
 const MIN_SUPPORT = 5;
@@ -174,6 +175,19 @@ export function personalStyleProfile(profile: PersonalizedArrangementProfile, pr
   };
 }
 
-// NOTE for PR-U5: exposing the profile as a StyleKnowledgeSource needs the
-// StyleKnowledgeFinding contract widened to carry `default` provenance —
-// personal defaults must sit *below* inferred readings, not beside them.
+/**
+ * The profile as a knowledge source for the brief pipeline (PR-U5). Every
+ * finding is `default` provenance — the lowest rung of the resolver's merge
+ * order — so anything the user states, research finds or their words imply
+ * through the vocabulary outranks it whatever its confidence. Source id
+ * `personal:<profile id>`, the same string the dimensions cite.
+ */
+export function personalKnowledgeSource(profile: PersonalizedArrangementProfile, profileId: string): StyleKnowledgeSource {
+  const id = `personal:${profileId}`;
+  const findings: StyleKnowledgeFinding[] = [];
+  for (const [name, dim] of Object.entries(profile.dimensions) as Array<[StyleDimensionName, StyleProfileDimensions[StyleDimensionName]]>) {
+    if (!dim) continue;
+    findings.push({ dimension: name, value: dim.value, confidence: dim.confidence, provenance: "default", sourceRefs: [id] });
+  }
+  return { id, lookup: () => findings };
+}

@@ -23,8 +23,8 @@ import type {
 } from "@workspace/db";
 import { createHash } from "node:crypto";
 import { CANONICAL_PPQ, createCanonicalTimeline } from "./canonicalTimeline";
-import { deriveGlobalArrangementPlan } from "./globalArrangementPlanner";
-import { deriveSectionPhrasePlan } from "./sectionPhrasePlanner";
+import { deriveGlobalArrangementPlan, type GlobalPlannerHints } from "./globalArrangementPlanner";
+import { deriveSectionPhrasePlan, type SectionPlannerHints } from "./sectionPhrasePlanner";
 import { deriveOrchestrationBudget } from "./orchestrationBudget";
 import { deriveTransitionPlan } from "./transitionEngine";
 import { buildPartComposerPlan } from "./partComposer";
@@ -1620,6 +1620,8 @@ export function createArrangementPlan(input: {
   arrangementBrain?: ArrangementBrain;
   compositionVersion?: CompositionIntelligenceVersion;
   generationPreference?: GenerationPreferenceSnapshot | null;
+  /** PR-U5: a ProductionBrief's biases for the embedded planning layers; absent keeps the planners' own reading. */
+  plannerHints?: { global?: GlobalPlannerHints; section?: SectionPlannerHints };
 }): ArrangementPlan {
   const orchestrationPlan = createArrangementPlanWithOrchestration(input);
   const stylePlan = createArrangementPlanWithStyle(input);
@@ -1686,16 +1688,21 @@ export function createArrangementPlan(input: {
         generationPreferenceEvidenceSha256: input.generationPreference?.evidenceSha256 ?? "none",
       },
     },
-    ...planningLayers(input.songModel),
+    ...planningLayers(input.songModel, input.plannerHints),
     generationPreference: input.generationPreference ?? null,
   };
 }
 
 /**
  * PR-04/PR-05 planning layers: one whole-song direction and its section /
- * phrase / instrument-role breakdown, both derived before any note.
+ * phrase / instrument-role breakdown, both derived before any note. Brief
+ * hints (PR-U5) are part of the input: the same Song Model and hints give the
+ * same layers, and their digests change with the hints.
  */
-function planningLayers(songModel: SongModelData): {
+function planningLayers(
+  songModel: SongModelData,
+  hints?: { global?: GlobalPlannerHints; section?: SectionPlannerHints },
+): {
   globalPlan: ReturnType<typeof deriveGlobalArrangementPlan>;
   sectionPlan: ReturnType<typeof deriveSectionPhrasePlan>;
   orchestrationBudget: ReturnType<typeof deriveOrchestrationBudget>;
@@ -1707,8 +1714,8 @@ function planningLayers(songModel: SongModelData): {
   // so the embedded planning layers use a fixed timestamp; staleness is tracked
   // by their `inputsDigestSha256`, not `derivedAt`.
   const now = new Date(0);
-  const globalPlan = deriveGlobalArrangementPlan(songModel, { now });
-  const sectionPlan = deriveSectionPhrasePlan(songModel, globalPlan, { now });
+  const globalPlan = deriveGlobalArrangementPlan(songModel, { now, hints: hints?.global });
+  const sectionPlan = deriveSectionPhrasePlan(songModel, globalPlan, { now, hints: hints?.section });
   const transitionPlan = deriveTransitionPlan(songModel, globalPlan, sectionPlan, { now });
   const partComposerPlan = buildPartComposerPlan(
     songModel, globalPlan, sectionPlan, transitionPlan.transitions, { now },

@@ -24,6 +24,7 @@ import type {
   AnalysisInput,
   AnalysisJob,
   Arrangement,
+  ArrangementDetail,
   ArrangementInput,
   ArrangementRevision,
   ArrangementUpdate,
@@ -81,6 +82,7 @@ import type {
   ProducerDecision,
   ProducerDecisionInput,
   ProducerDecisionSupersedeInput,
+  ProducerEditApplyInput,
   ProducerIntakeInput,
   ProducerPreferences,
   ProducerPreferencesInput,
@@ -2324,6 +2326,87 @@ export const useCreateArrangement = <TError = ErrorType<unknown>,
       > => {
       return useMutation(getCreateArrangementMutationOptions(options));
     }
+
+export const getGetArrangementUrl = (arrangementId: string,) => {
+
+
+
+
+  return `/api/arrangements/${arrangementId}`
+}
+
+/**
+ * PR-U5. The list endpoint returns summaries; this returns the persisted
+ * `plan` (with the brief it was planned from and, for a chat edit applied
+ * within locks, the `regeneration` report) and the `trackModels`, so a
+ * version can be inspected and two versions compared note for note.
+ * @summary One arrangement version in full - its plan, TrackModels, lineage and parameters
+ */
+export const getArrangement = async (arrangementId: string, options?: Parameters<typeof customFetch>[1]): Promise<ArrangementDetail> => {
+
+  return customFetch<ArrangementDetail>(getGetArrangementUrl(arrangementId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetArrangementQueryKey = (arrangementId: string,) => {
+    return [
+    `/api/arrangements/${arrangementId}`
+    ] as const;
+    }
+
+
+export const getGetArrangementQueryOptions = <TData = Awaited<ReturnType<typeof getArrangement>>, TError = ErrorType<NotFoundResponse>>(arrangementId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getArrangement>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetArrangementQueryKey(arrangementId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getArrangement>>> = ({ signal }) => getArrangement(arrangementId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: arrangementId !== null && arrangementId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getArrangement>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetArrangementQueryResult = NonNullable<Awaited<ReturnType<typeof getArrangement>>>
+export type GetArrangementQueryError = ErrorType<NotFoundResponse>
+
+
+/**
+ * @summary One arrangement version in full - its plan, TrackModels, lineage and parameters
+ */
+
+export function useGetArrangement<TData = Awaited<ReturnType<typeof getArrangement>>, TError = ErrorType<NotFoundResponse>>(
+ arrangementId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getArrangement>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetArrangementQueryOptions(arrangementId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getUpdateArrangementUrl = (arrangementId: string,) => {
 
@@ -6873,7 +6956,8 @@ export const getSendProducerChatUrl = (projectId: string,) => {
  * plan's own evidence. An edit request ("the last chorus is too busy",
  * "no strings in the whole song") becomes a structured EditPlan and durable,
  * scoped decisions on the brief. Anything else refines the intake. Both
- * turns are persisted; nothing is regenerated here.
+ * turns are persisted; nothing is regenerated here - apply the edit turn
+ * with `POST .../producer/turns/{turnId}/apply` (PR-U5).
  * @summary Send a message to the producer
  */
 export const sendProducerChat = async (projectId: string,
@@ -7170,6 +7254,90 @@ export const useSupersedeProducerDecision = <TError = ErrorType<NotFoundResponse
         TContext
       > => {
       return useMutation(getSupersedeProducerDecisionMutationOptions(options));
+    }
+
+export const getApplyProducerEditUrl = (projectId: string,
+    turnId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/producer/turns/${turnId}/apply`
+}
+
+/**
+ * PR-U5. The producer turn's EditPlan (locks to preserve, scopes to
+ * regenerate) is executed against the project's latest arrangement with
+ * persisted TrackModels: the Arrangement Brain composes at least three
+ * whole-song candidates with the current brief's planner hints and
+ * performance style; each is merged into the previous version over the
+ * allowed scopes only, its locked material verified byte for byte, and
+ * the merged result critiqued; the best candidate that honours the locks
+ * is accepted and persisted as a new arrangement version. Synchronous —
+ * the brain is CPU-only and model-free (a few seconds). The reply is a
+ * `regeneration` turn carrying the `ScopedRegenerationReport`.
+ * @summary Apply an edit turn's EditPlan to the arrangement, within its locks
+ */
+export const applyProducerEdit = async (projectId: string,
+    turnId: string,
+    producerEditApplyInput?: ProducerEditApplyInput, options?: Parameters<typeof customFetch>[1]): Promise<ProducerTurnResult> => {
+
+  return customFetch<ProducerTurnResult>(getApplyProducerEditUrl(projectId,turnId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(producerEditApplyInput)
+  }
+);}
+
+
+
+
+
+export const getApplyProducerEditMutationOptions = <TError = ErrorType<void | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof applyProducerEdit>>, TError,{projectId: string;turnId: string;data?: BodyType<ProducerEditApplyInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof applyProducerEdit>>, TError,{projectId: string;turnId: string;data?: BodyType<ProducerEditApplyInput>}, TContext> => {
+
+const mutationKey = ['applyProducerEdit'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof applyProducerEdit>>, {projectId: string;turnId: string;data?: BodyType<ProducerEditApplyInput>}> = (props) => {
+          const {projectId,turnId,data} = props ?? {};
+
+          return  applyProducerEdit(projectId,turnId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ApplyProducerEditMutationResult = NonNullable<Awaited<ReturnType<typeof applyProducerEdit>>>
+    export type ApplyProducerEditMutationBody = BodyType<ProducerEditApplyInput> | undefined
+    export type ApplyProducerEditMutationError = ErrorType<void | NotFoundResponse>
+
+    /**
+ * @summary Apply an edit turn's EditPlan to the arrangement, within its locks
+ */
+export const useApplyProducerEdit = <TError = ErrorType<void | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof applyProducerEdit>>, TError,{projectId: string;turnId: string;data?: BodyType<ProducerEditApplyInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof applyProducerEdit>>,
+        TError,
+        {projectId: string;turnId: string;data?: BodyType<ProducerEditApplyInput>},
+        TContext
+      > => {
+      return useMutation(getApplyProducerEditMutationOptions(options));
     }
 
 export const getListProjectReferencesUrl = (projectId: string,) => {

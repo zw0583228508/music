@@ -28,6 +28,26 @@ function readStyleProfile(parameters: GenerationParameters | undefined): StylePr
   const profile = candidate as Partial<StyleProfile>;
   return profile.dimensions && typeof profile.dimensions === "object" ? (profile as StyleProfile) : null;
 }
+
+/**
+ * PR-U5: a brief's planner hints travel in `parameters.plannerHints` as
+ * `{ global?, section? }` (what `briefPlannerHints` derives). Junk is ignored.
+ */
+function readPlannerHints(parameters: GenerationParameters | undefined): OrchestrateInput["plannerHints"] | null {
+  const candidate = parameters?.plannerHints;
+  if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) return null;
+  const hints = candidate as { global?: unknown; section?: unknown };
+  const global = hints.global && typeof hints.global === "object" && !Array.isArray(hints.global) ? hints.global as NonNullable<OrchestrateInput["plannerHints"]>["global"] : undefined;
+  const section = hints.section && typeof hints.section === "object" && !Array.isArray(hints.section) ? hints.section as NonNullable<OrchestrateInput["plannerHints"]>["section"] : undefined;
+  return global || section ? { ...(global ? { global } : {}), ...(section ? { section } : {}) } : null;
+}
+
+/** The brief reference a job carries in its parameters (PR-U5), when it does. */
+function readBriefRef(parameters: GenerationParameters | undefined): { productionBriefId: string; productionBriefDigestSha256: string } | null {
+  const id = parameters?.productionBriefId;
+  const digest = parameters?.productionBriefDigestSha256;
+  return typeof id === "string" && id && typeof digest === "string" && digest ? { productionBriefId: id, productionBriefDigestSha256: digest } : null;
+}
 import type {
   MusicGenerationProvider,
   ProviderCandidate,
@@ -164,7 +184,13 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
     // performance is V1, byte for byte.
     const styleProfile = readStyleProfile(input.parameters);
     const performanceStyle = styleProfile ? performanceStyleFromProfile(styleProfile) : undefined;
+    // PR-U5: the project's brief reaches the planners the same way — as
+    // hints in the parameters — so an ordinary Generate run plans from the
+    // brief, not only a chat regeneration.
+    const briefHints = readPlannerHints(input.parameters);
+    const briefRef = readBriefRef(input.parameters);
     const overrides = await this.orchestrateOverrides(input, songModel);
+    const policyHints = overrides.orchestrate?.plannerHints;
     const result = orchestrateArrangement({
       songModel,
       candidateCount: input.candidates,
@@ -175,6 +201,13 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
       performanceStyle: performanceStyle
         ? { ...(overrides.orchestrate?.performanceStyle ?? {}), ...performanceStyle }
         : overrides.orchestrate?.performanceStyle,
+      // Likewise the brief's planner hints outrank a policy's, field by field.
+      plannerHints: briefHints
+        ? {
+            global: { ...(policyHints?.global ?? {}), ...(briefHints.global ?? {}) },
+            section: { ...(policyHints?.section ?? {}), ...(briefHints.section ?? {}) },
+          }
+        : policyHints,
     });
     if (signal?.aborted) throw new Error("Arrangement generation was cancelled");
     await onProgress?.({ progress: 60, stage: "composed" });
@@ -245,6 +278,7 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
           traceable: result.traceable,
           performanceEngineVersion: performanceStyle || overrides.orchestrate?.performanceStyle ? "2.0" : "1.0",
           ...(overrides.parameters ?? {}),
+          ...(briefRef ? { ...briefRef, briefPlannerHints: briefHints !== null } : {}),
           ...(performanceStyle?.sources?.length
             ? { performanceStyleInputs: performanceStyle.sources.map((s) => `${s.dimension}=${s.value} (${s.provenance})`) }
             : {}),

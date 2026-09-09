@@ -10,6 +10,7 @@
  * grounded in the user's own words; research findings never become one.
  */
 import type {
+  ArrangementPlan,
   GlobalArrangementPlan,
   ProducerBriefDecision,
   ProductionBrief,
@@ -149,6 +150,31 @@ export function briefPlannerHints(brief: ProductionBrief): BriefPlannerHints {
   return { global, section, evidence };
 }
 
+/** The reference an ArrangementPlan carries to the brief it was planned from. */
+export type BriefPlanRef = { productionBriefId: string; productionBriefDigestSha256: string };
+
+export const briefPlanRef = (brief: Pick<ProductionBrief, "id" | "inputsDigestSha256">): BriefPlanRef =>
+  ({ productionBriefId: brief.id, productionBriefDigestSha256: brief.inputsDigestSha256 });
+
+/**
+ * Stamp the brief on a plan (PR-U5): every plan produced for a project with a
+ * current brief says which brief version it came from, whatever path built it
+ * (a generation job's `materializeCandidate`, a chat regeneration, a derived plan).
+ */
+export function stampBriefOnPlan<T extends Pick<ArrangementPlan, "productionBriefId" | "productionBriefDigestSha256">>(
+  plan: T,
+  brief: Pick<ProductionBrief, "id" | "inputsDigestSha256"> | BriefPlanRef,
+): T {
+  const ref = "productionBriefId" in brief ? brief : briefPlanRef(brief);
+  return { ...plan, productionBriefId: ref.productionBriefId, productionBriefDigestSha256: ref.productionBriefDigestSha256 };
+}
+
+/** Hints as a generation job carries them in `parameters.plannerHints` (a plain JSON object). */
+export function plannerHintsForJob(brief: ProductionBrief): { global: GlobalPlannerHints; section: SectionPlannerHints } | null {
+  const hints = briefPlannerHints(brief);
+  return Object.keys(hints.global).length || Object.keys(hints.section).length ? { global: hints.global, section: hints.section } : null;
+}
+
 /**
  * Run the existing planners with the brief's hints. Returns the plans plus the
  * reference to stamp on the ArrangementPlan (`productionBriefId` /
@@ -171,6 +197,6 @@ export function applyBriefToPlans(
     globalPlan,
     sectionPlan,
     hints,
-    planRef: { productionBriefId: brief.id, productionBriefDigestSha256: brief.inputsDigestSha256 },
+    planRef: briefPlanRef(brief),
   };
 }

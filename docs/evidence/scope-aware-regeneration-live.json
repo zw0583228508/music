@@ -1,0 +1,717 @@
+{
+  "kind": "live-scope-aware-regeneration-pr-u5",
+  "ranAt": "2026-09-09T00:49:41.802Z",
+  "apiBase": "http://127.0.0.1:5001",
+  "note": "PR-U5 live check on a Neon-backed local API (PORT 5001) from the pr-u5-scope-aware-regeneration worktree, dev-login, against the dev project that already had a Song Model, a brief and orchestrator arrangements from earlier PRs. No OpenAI key is configured and PRODUCER_LLM is unset: every edit was read by the deterministic PR-U1 extractor; NO language model was exercised anywhere. The Arrangement Brain (ARRANGEMENT_ORCHESTRATOR, CPU, in-process) composed the candidates. Client-side checks recompute bars from the Song Model's own bar times and compare the persisted TrackModels of consecutive versions byte for byte; they do not trust the server's report. Nobody listened to the result.",
+  "llmExercised": false,
+  "allStatusesAsExpected": true,
+  "unexpected": [],
+  "steps": [
+    {
+      "method": "GET",
+      "path": "/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/brief",
+      "status": 401,
+      "ms": 27
+    },
+    {
+      "method": "POST",
+      "path": "/dev-login",
+      "status": 200,
+      "ms": 1402
+    },
+    {
+      "method": "GET",
+      "path": "/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/brief",
+      "status": 200,
+      "ms": 1947
+    },
+    {
+      "method": "GET",
+      "path": "/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/song-model",
+      "status": 200,
+      "ms": 2364
+    },
+    {
+      "method": "GET",
+      "path": "/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/arrangements",
+      "status": 200,
+      "ms": 1756
+    },
+    {
+      "method": "GET",
+      "path": "/arrangements/c6358b55-76c3-400d-b934-f07e5ab6241a",
+      "status": 200,
+      "ms": 1781
+    },
+    {
+      "method": "POST",
+      "path": "/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/chat",
+      "status": 200,
+      "ms": 3768
+    },
+    {
+      "method": "POST",
+      "path": "/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/turns/pc-mttdrfn4-fmjnogtb/apply",
+      "status": 200,
+      "ms": 5763
+    },
+    {
+      "method": "GET",
+      "path": "/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/arrangements",
+      "status": 200,
+      "ms": 1784
+    },
+    {
+      "method": "GET",
+      "path": "/arrangements/0eacd594-31e8-4293-a3d1-fc891f1c5627",
+      "status": 200,
+      "ms": 1418
+    },
+    {
+      "method": "POST",
+      "path": "/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/chat",
+      "status": 200,
+      "ms": 3795
+    },
+    {
+      "method": "POST",
+      "path": "/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/turns/pc-mttdrfn4-pqtd8iy4/apply",
+      "status": 400,
+      "ms": 879
+    },
+    {
+      "method": "POST",
+      "path": "/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/turns/no-such-turn/apply",
+      "status": 404,
+      "ms": 872
+    },
+    {
+      "method": "POST",
+      "path": "/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/chat",
+      "status": 200,
+      "ms": 3404
+    },
+    {
+      "method": "POST",
+      "path": "/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/turns/pc-mttdrtgp-rqwt71k8/apply",
+      "status": 409,
+      "ms": 870
+    },
+    {
+      "method": "POST",
+      "path": "/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/turns/pc-mttdrfn4-fmjnogtb/apply",
+      "status": 400,
+      "ms": 179
+    },
+    {
+      "method": "POST",
+      "path": "/projects/00000000-0000-0000-0000-000000000000/producer/turns/pc-mttdrfn4-fmjnogtb/apply",
+      "status": 404,
+      "ms": 352
+    },
+    {
+      "method": "POST",
+      "path": "/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/turns/pc-mttdrfn4-fmjnogtb/apply",
+      "status": 401,
+      "ms": 3
+    },
+    {
+      "method": "GET",
+      "path": "/projects/0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2/producer/turns",
+      "status": 200,
+      "ms": 536
+    },
+    {
+      "method": "POST",
+      "path": "/arrangements/0eacd594-31e8-4293-a3d1-fc891f1c5627/generate",
+      "status": 202,
+      "ms": 7305
+    },
+    {
+      "method": "GET",
+      "path": "/generation-jobs/1943b85f-4e49-4080-80f7-5da743ec3c57",
+      "status": 200,
+      "ms": 2029
+    },
+    {
+      "method": "GET",
+      "path": "/generation-jobs/1943b85f-4e49-4080-80f7-5da743ec3c57",
+      "status": 200,
+      "ms": 1092
+    },
+    {
+      "method": "GET",
+      "path": "/generation-jobs/1943b85f-4e49-4080-80f7-5da743ec3c57/candidates",
+      "status": 200,
+      "ms": 2273
+    },
+    {
+      "method": "POST",
+      "path": "/generation-candidates/1536fa9c-26fe-4db9-85d1-e8d4078137a2/select",
+      "status": 200,
+      "ms": 6440
+    },
+    {
+      "method": "GET",
+      "path": "/arrangements/2a01f0aa-0dfc-42a0-8262-2566b3003364",
+      "status": 200,
+      "ms": 1776
+    },
+    {
+      "method": "GET",
+      "path": "/arrangements/00000000-0000-0000-0000-000000000000",
+      "status": 404,
+      "ms": 354
+    }
+  ],
+  "findings": {
+    "projectId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2",
+    "anonymous401": true,
+    "userId": "dev-local-user",
+    "briefBefore": {
+      "version": 10,
+      "briefId": "brief-ed91c5608015",
+      "digest": "ed91c560801542f9492578716a2eadcbc8ed68de64ace111aa6dd9eaf9dfe0ba",
+      "planSource": "arrangement",
+      "sources": [
+        "universal-vocabulary/v1",
+        "curated-world-notes/v1"
+      ]
+    },
+    "songModel": {
+      "version": 1,
+      "bars": 40,
+      "sections": [
+        [
+          "Intro",
+          1,
+          4
+        ],
+        [
+          "Verse",
+          5,
+          12
+        ],
+        [
+          "Chorus",
+          13,
+          20
+        ],
+        [
+          "Verse 2",
+          21,
+          28
+        ],
+        [
+          "Chorus 2",
+          29,
+          36
+        ],
+        [
+          "Outro",
+          37,
+          40
+        ]
+      ]
+    },
+    "detailEndpointKeys": [
+      "id",
+      "projectId",
+      "name",
+      "style",
+      "mode",
+      "version",
+      "status",
+      "harmonyComplexity",
+      "energy",
+      "density",
+      "orchestraSize",
+      "rhythmIntensity",
+      "sections",
+      "generationProvider",
+      "candidates",
+      "selectedCandidateId",
+      "sourceGenerationJobId",
+      "sourceCandidateId",
+      "generationProvenance",
+      "createdAt",
+      "plan",
+      "trackModels",
+      "parentArrangementId",
+      "songModelVersion",
+      "seed",
+      "modelVersion",
+      "parameters",
+      "provenance"
+    ],
+    "arrangementBefore": {
+      "id": "c6358b55-76c3-400d-b934-f07e5ab6241a",
+      "version": 6,
+      "name": "Brain E2E · A · conservative · A · conservative · edit v5 · A · conservative",
+      "tracks": [
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--drums-groove",
+          "instrument": "drums",
+          "role": "GROOVE",
+          "notes": 532,
+          "version": 1,
+          "performedMaterialSha256": "2fcccd95a101a5eeffbab410576d2646f2627bdb2e03fe36d08811d1148ccef5"
+        },
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--bass-bass",
+          "instrument": "bass",
+          "role": "BASS",
+          "notes": 137,
+          "version": 2,
+          "performedMaterialSha256": "61a83a55a72f1b57434fb791cfc51c005363748db232532324976bcd4a770cc5"
+        },
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--ensemble-transition",
+          "instrument": "ensemble",
+          "role": "TRANSITION",
+          "notes": 21,
+          "version": 3,
+          "performedMaterialSha256": "bb85baa8139d9c81e869b238be397c2c9280b122f77dae0afb5cb5fe9c1009c7"
+        }
+      ],
+      "notes": 690,
+      "planProductionBriefId": "brief-ed91c5608015",
+      "arrangementsInProject": 6
+    },
+    "edit1": {
+      "kind": "edit",
+      "producerTurnId": "pc-mttdrfn4-fmjnogtb",
+      "intent": "regenerate_part",
+      "scope": {
+        "kind": "track",
+        "instrument": "bass"
+      },
+      "locks": 2,
+      "scopes": 6,
+      "reply": "regenerate part on bass: 6 regeneration scope(s), 2 lock(s). Evidence: \"keep the drums\", \"regenerate the bass\". No durable decision was recorded from this; the plan above is what a regeneration would do. Nothing is regenerated from chat yet — the plan is returned for the next arrangement."
+    },
+    "apply1": {
+      "kind": "regeneration",
+      "arrangementId": "0eacd594-31e8-4293-a3d1-fc891f1c5627",
+      "arrangementVersion": 7,
+      "reply": "Applied \"keep the drums, regenerate the bass\" → arrangement v7 (from v6). Regenerated bass in Chorus, Chorus 2, Intro, Outro, Verse, Verse 2 (bars 1–40): 137 note(s) replaced, 553 kept verbatim. drums, ensemble untouched. No requested scope was blocked by a lock. Locks verified: 532 locked note(s) byte-identical. 3 candidates ranked (conservative 72, melodic 72, adventurous 72); \"A · conservative\" accepted. The brief shaped the planners (3 hint(s)). No track of this arrangement plays keys; those parts of the edit had nothing to act on.",
+      "report": {
+        "method": "scope-aware-regeneration/v1",
+        "requested": 6,
+        "regenerated": 6,
+        "blockedByLock": 0,
+        "keptNotes": 553,
+        "replacedNotes": 137,
+        "locksHonoured": true,
+        "verification": {
+          "honoured": true,
+          "violations": [],
+          "checkedLockedNotes": 532
+        },
+        "changed": {
+          "instruments": [
+            "bass"
+          ],
+          "sections": [
+            "Chorus",
+            "Chorus 2",
+            "Intro",
+            "Outro",
+            "Verse",
+            "Verse 2"
+          ],
+          "barRanges": [
+            {
+              "instrument": "bass",
+              "sectionName": "Intro",
+              "startBar": 1,
+              "endBar": 4,
+              "replacedNotes": 3
+            },
+            {
+              "instrument": "bass",
+              "sectionName": "Verse",
+              "startBar": 5,
+              "endBar": 12,
+              "replacedNotes": 30
+            },
+            {
+              "instrument": "bass",
+              "sectionName": "Chorus",
+              "startBar": 13,
+              "endBar": 20,
+              "replacedNotes": 30
+            },
+            {
+              "instrument": "bass",
+              "sectionName": "Verse 2",
+              "startBar": 21,
+              "endBar": 28,
+              "replacedNotes": 30
+            },
+            {
+              "instrument": "bass",
+              "sectionName": "Chorus 2",
+              "startBar": 29,
+              "endBar": 36,
+              "replacedNotes": 30
+            },
+            {
+              "instrument": "bass",
+              "sectionName": "Outro",
+              "startBar": 37,
+              "endBar": 40,
+              "replacedNotes": 14
+            }
+          ]
+        },
+        "preserved": {
+          "instruments": [
+            "drums",
+            "ensemble"
+          ],
+          "sections": [],
+          "notes": 553
+        },
+        "candidates": [
+          {
+            "candidateId": "cand-A",
+            "label": "A · conservative",
+            "strategy": "conservative",
+            "seed": 3112314406,
+            "feasible": true,
+            "score": 72,
+            "constraintErrors": 0,
+            "locksHonoured": true,
+            "violations": 0,
+            "replacedNotes": 137,
+            "selected": true
+          },
+          {
+            "candidateId": "cand-B",
+            "label": "C · melodic",
+            "strategy": "melodic",
+            "seed": 298103695,
+            "feasible": true,
+            "score": 72,
+            "constraintErrors": 0,
+            "locksHonoured": true,
+            "violations": 0,
+            "replacedNotes": 146,
+            "selected": false
+          },
+          {
+            "candidateId": "cand-C",
+            "label": "E · adventurous",
+            "strategy": "adventurous",
+            "seed": 1974639925,
+            "feasible": true,
+            "score": 72,
+            "constraintErrors": 0,
+            "locksHonoured": true,
+            "violations": 0,
+            "replacedNotes": 146,
+            "selected": false
+          }
+        ],
+        "selectedCandidateId": "cand-A",
+        "unmatchedFamilies": [
+          "keys"
+        ],
+        "locks": [
+          {
+            "id": "lock-1:drums",
+            "scope": "track",
+            "instrument": "drums",
+            "sectionName": null
+          },
+          {
+            "id": "lock-2",
+            "scope": "track",
+            "instrument": "keys",
+            "sectionName": null
+          }
+        ],
+        "plannerHintEvidence": [
+          "Chorus 2: density bias -0.35 (stated) → ×0.878",
+          "Chorus 2: families +[strings] -[]",
+          "palette -strings (excluded)"
+        ],
+        "productionBriefId": "brief-4f0856bbcca6",
+        "songModelVersion": 1,
+        "parentArrangementVersion": 6,
+        "warnings": [
+          "No track of this arrangement plays keys; those parts of the edit had nothing to act on."
+        ],
+        "durationMs": 163
+      }
+    },
+    "listAfter1": [
+      {
+        "id": "0eacd594-31e8-4293-a3d1-fc891f1c5627",
+        "version": 7,
+        "name": "Brain E2E · A · conservative · A · conservative · edit v5 · A · conservative · edit v7",
+        "status": "ready"
+      }
+    ],
+    "arrangementAfter1": {
+      "id": "0eacd594-31e8-4293-a3d1-fc891f1c5627",
+      "version": 7,
+      "name": "Brain E2E · A · conservative · A · conservative · edit v5 · A · conservative · edit v7",
+      "parentArrangementId": "c6358b55-76c3-400d-b934-f07e5ab6241a",
+      "status": "ready",
+      "generationProvider": null,
+      "tracks": [
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--drums-groove",
+          "instrument": "drums",
+          "role": "GROOVE",
+          "notes": 532,
+          "version": 1,
+          "performedMaterialSha256": "2fcccd95a101a5eeffbab410576d2646f2627bdb2e03fe36d08811d1148ccef5"
+        },
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--bass-bass",
+          "instrument": "bass",
+          "role": "BASS",
+          "notes": 137,
+          "version": 3,
+          "performedMaterialSha256": "61a83a55a72f1b57434fb791cfc51c005363748db232532324976bcd4a770cc5"
+        },
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--ensemble-transition",
+          "instrument": "ensemble",
+          "role": "TRANSITION",
+          "notes": 21,
+          "version": 3,
+          "performedMaterialSha256": "bb85baa8139d9c81e869b238be397c2c9280b122f77dae0afb5cb5fe9c1009c7"
+        }
+      ],
+      "notes": 690,
+      "plan": {
+        "version": 7,
+        "productionBriefId": "brief-4f0856bbcca6",
+        "productionBriefDigestSha256": "4f0856bbcca6abb1e9967019f6d2f46482f32f6364acfd34995881dd98082099",
+        "regenerationEditTurnId": "pc-mttdrfn4-fmjnogtb",
+        "createdBy": "scope-aware-regeneration/v1"
+      },
+      "parameters": {
+        "productionBriefId": "brief-4f0856bbcca6",
+        "regenerationIntent": "regenerate_part",
+        "regenerationMethod": "scope-aware-regeneration/v1",
+        "regenerationOfTurnId": "pc-mttdrfn4-fmjnogtb",
+        "regenerationKeptNotes": 553,
+        "productionBriefVersion": 11,
+        "regenerationLocksHonoured": true,
+        "regenerationReplacedNotes": 137,
+        "regenerationSelectedCandidate": "cand-A"
+      },
+      "provenance": {
+        "model": "scope-aware-regeneration/v1",
+        "version": "1.0",
+        "parameters": {
+          "productionBriefId": "brief-4f0856bbcca6",
+          "regenerationIntent": "regenerate_part",
+          "regenerationMethod": "scope-aware-regeneration/v1",
+          "regenerationOfTurnId": "pc-mttdrfn4-fmjnogtb",
+          "regenerationKeptNotes": 553,
+          "productionBriefVersion": 11,
+          "regenerationLocksHonoured": true,
+          "regenerationReplacedNotes": 137,
+          "regenerationSelectedCandidate": "cand-A"
+        },
+        "parentIds": [
+          "c6358b55-76c3-400d-b934-f07e5ab6241a"
+        ],
+        "createdBy": "scope-aware-regeneration/v1"
+      },
+      "clientSideCheck": [
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--drums-groove",
+          "instrument": "drums",
+          "wholeTrackIdentical": true,
+          "notesOutsideAllowedIdentical": true,
+          "notesOutsideAllowed": 532,
+          "notesInsideAllowed": 0,
+          "oldNotesSurvivingInsideAllowed": 0,
+          "notesBefore": 532,
+          "notesAfter": 532
+        },
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--bass-bass",
+          "instrument": "bass",
+          "wholeTrackIdentical": false,
+          "notesOutsideAllowedIdentical": true,
+          "notesOutsideAllowed": 0,
+          "notesInsideAllowed": 137,
+          "oldNotesSurvivingInsideAllowed": 137,
+          "notesBefore": 137,
+          "notesAfter": 137
+        },
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--ensemble-transition",
+          "instrument": "ensemble",
+          "wholeTrackIdentical": true,
+          "notesOutsideAllowedIdentical": true,
+          "notesOutsideAllowed": 21,
+          "notesInsideAllowed": 0,
+          "oldNotesSurvivingInsideAllowed": 0,
+          "notesBefore": 21,
+          "notesAfter": 21
+        }
+      ]
+    },
+    "edit2": {
+      "kind": "refinement",
+      "producerTurnId": "pc-mttdrphp-d9m3ugw1",
+      "briefVersion": 12,
+      "reply": "Added to the brief (v12): section wishes: scene yeshiva for the verse 1, production feel wide for the last chorus, instrument strings for the last chorus and \"עמוס מדי\" for the last chorus. Per section — Verse: scene yeshiva; Chorus 2: wide, feature strings, edit: \"only in the last chorus bring in strings\" and edit: \"הפזמון האחרון עמוס מדי\". Excluded from the palette: strings.\n\nTwo things would change the arrangement materially: אילו משפחות כלים מובילות את העיבוד? (a) keys, vocals, strings, bass, drums (b) guitar, vocals, keys, bass, drums כמה לקשט את המנגינה — סלסולים בסגנון קרעכץ ודריידלעך כמו בניגון, או קו נקי יותר? (a) בינוני — קרעכץ בסופי משפט, דריידלעך על צלילים ארוכים"
+    },
+    "failureModes": {
+      "userTurn": {
+        "status": 400,
+        "error": "Turn \"pc-mttdrfn4-pqtd8iy4\" is not an edit turn with an EditPlan — only edit turns can be applied"
+      },
+      "unknownTurn": {
+        "status": 404,
+        "error": "No producer turn \"no-such-turn\" in this project"
+      },
+      "keepOnly": {
+        "intent": "keep",
+        "status": 409,
+        "error": "Nothing to regenerate: the edit \"keep the drums\" was read as \"keep\" with 0 regeneration scope(s)"
+      },
+      "candidatesOutOfRange": {
+        "status": 400
+      },
+      "foreignProject": {
+        "status": 404
+      },
+      "anonymous": {
+        "status": 401
+      },
+      "unknownArrangementDetail": {
+        "status": 404
+      }
+    },
+    "transcript": {
+      "turns": 44,
+      "regenerationTurns": [
+        {
+          "id": "pc-mttdlxnn-wk4s2eht",
+          "arrangementVersion": 4,
+          "editTurnId": "pc-mttdltf8-e8cck4kd",
+          "locksHonoured": true,
+          "text": "Applied \"keep the drums, regenerate the bass\" → arrangement v4 (from v3). Regenerated bass in Chorus, Chorus 2, Intro, Outro, Verse, Verse 2 (bars 1–40): 137 no"
+        },
+        {
+          "id": "pc-mttdm6oc-6qwz0hn9",
+          "arrangementVersion": 5,
+          "editTurnId": "pc-mttdm2xl-9rar6la0",
+          "locksHonoured": true,
+          "text": "Applied \"הפזמון האחרון עמוס מדי\" → arrangement v5 (from v4). Regenerated bass, drums, ensemble in Chorus 2 (bars 29–36): 138 note(s) replaced, 552 kept verbatim"
+        },
+        {
+          "id": "pc-mttdrjnn-vlls7m0e",
+          "arrangementVersion": 7,
+          "editTurnId": "pc-mttdrfn4-fmjnogtb",
+          "locksHonoured": true,
+          "text": "Applied \"keep the drums, regenerate the bass\" → arrangement v7 (from v6). Regenerated bass in Chorus, Chorus 2, Intro, Outro, Verse, Verse 2 (bars 1–40): 137 no"
+        }
+      ]
+    },
+    "generate": {
+      "jobId": "1943b85f-4e49-4080-80f7-5da743ec3c57",
+      "status": "queued",
+      "provider": "ARRANGEMENT_ORCHESTRATOR",
+      "parameters": {
+        "productionBriefId": "brief-310c25f959f4",
+        "productionBriefDigestSha256": "310c25f959f41c7e0e5f3a2b1eddad7138ad547bd8f0fa956597b30f341c59f3",
+        "productionBriefVersion": 13,
+        "plannerHints": {
+          "global": {
+            "paletteRemove": [
+              "strings"
+            ],
+            "sectionDensityBias": {
+              "Chorus 2": 0.755
+            }
+          },
+          "section": {
+            "sectionFamilies": {
+              "Chorus 2": {
+                "add": [
+                  "strings"
+                ]
+              }
+            }
+          }
+        },
+        "styleProfileSource": "brief",
+        "styleProfileSources": [
+          "universal-vocabulary/v1",
+          "curated-world-notes/v1"
+        ]
+      },
+      "finalStatus": "succeeded",
+      "error": null,
+      "stage": "insufficient_diversity",
+      "candidates": [
+        {
+          "id": "1536fa9c-26fe-4db9-85d1-e8d4078137a2",
+          "rank": 1,
+          "label": "A · conservative",
+          "status": "validated",
+          "score": 0.7182577002728864,
+          "productionBriefId": "brief-310c25f959f4",
+          "briefPlannerHints": true,
+          "performanceEngineVersion": "2.0",
+          "performanceStyleInputs": [
+            "bassAttackPosition=sustained (researched)",
+            "fillFrequency=rare (researched)"
+          ]
+        },
+        {
+          "id": "676ba394-631b-4f6e-a0d6-319c53e5be45",
+          "rank": null,
+          "label": "C · melodic",
+          "status": "diversity_rejected",
+          "score": 0.7174308293160873,
+          "productionBriefId": "brief-310c25f959f4",
+          "briefPlannerHints": true,
+          "performanceEngineVersion": "2.0",
+          "performanceStyleInputs": [
+            "bassAttackPosition=sustained (researched)",
+            "fillFrequency=rare (researched)"
+          ]
+        },
+        {
+          "id": "13584647-648e-4311-aa52-96ff9e2d8fc1",
+          "rank": null,
+          "label": "E · adventurous",
+          "status": "diversity_rejected",
+          "score": 0.7161382342685566,
+          "productionBriefId": "brief-310c25f959f4",
+          "briefPlannerHints": true,
+          "performanceEngineVersion": "2.0",
+          "performanceStyleInputs": [
+            "bassAttackPosition=sustained (researched)",
+            "fillFrequency=rare (researched)"
+          ]
+        }
+      ],
+      "selected": {
+        "arrangementId": "2a01f0aa-0dfc-42a0-8262-2566b3003364",
+        "version": 8,
+        "parentArrangementId": "0eacd594-31e8-4293-a3d1-fc891f1c5627",
+        "planProductionBriefId": "brief-310c25f959f4",
+        "planProductionBriefDigestSha256": "310c25f959f41c7e0e5f3a2b1eddad7138ad547bd8f0fa956597b30f341c59f3",
+        "planRegeneration": null,
+        "globalPlanDigest": "3e025881e0bd4515b5f831832f79e41e12613bc7f1bf5528cc1b74e155e4024e",
+        "previousPlanGlobalDigest": "30d4e43d2f763fa23c82bce333fdb1cd5e6195ecd253de4e7aacc6e3e1385284",
+        "planStampMatchesJobBrief": true,
+        "globalPlanChangedByBriefHints": true
+      }
+    }
+  }
+}

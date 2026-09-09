@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { PreferenceEvent } from "@workspace/db";
 import { FEATURE_NAMES } from "./preferenceEvents";
-import { derivePersonalProfile, personalStyleProfile } from "./personalProfile";
+import { derivePersonalProfile, personalKnowledgeSource, personalStyleProfile } from "./personalProfile";
 
 function features(overrides: Record<string, number>): Record<string, number> {
   const f: Record<string, number> = {};
@@ -70,6 +70,21 @@ test("the profile becomes a StyleProfile the generation path understands", () =>
   assert.deepEqual(style.sources, ["personal:pap-1"]);
   assert.deepEqual(style.dimensions.swingRatio!.sourceRefs, ["personal:pap-1"]);
   assert.ok(style.confidence > 0 && style.confidence <= 0.6);
+});
+
+test("the profile is a knowledge source for the brief pipeline, every finding at `default` provenance (PR-U5)", () => {
+  const profile = derivePersonalProfile(events(10), { now: new Date(0) });
+  const source = personalKnowledgeSource(profile, "pap-1");
+  assert.equal(source.id, "personal:pap-1");
+  const findings = source.lookup({ intent: {} as never, terms: [] });
+  assert.equal(findings.length, Object.keys(profile.dimensions).length);
+  assert.ok(findings.length >= 3);
+  for (const finding of findings) {
+    assert.equal(finding.provenance, "default");
+    assert.deepEqual(finding.sourceRefs, ["personal:pap-1"]);
+    assert.ok(finding.confidence > 0 && finding.confidence <= 0.6);
+  }
+  assert.equal(findings.find((f) => f.dimension === "swingRatio")?.value, profile.dimensions.swingRatio!.value);
 });
 
 test("derivation is deterministic", () => {

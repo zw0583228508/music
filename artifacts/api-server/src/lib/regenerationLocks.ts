@@ -123,15 +123,36 @@ export function resolveRegenerationScopes(
 // Merge
 // ---------------------------------------------------------------------------
 
-type BarGeometry = { barSeconds: number; originSeconds: number };
+/**
+ * How seconds map to bars. `barStarts[i]` is the start of bar i+1 when the
+ * Song Model carries explicit bar times (PR-U5: exact under tempo drift);
+ * otherwise the linear `originSeconds + (bar - 1) * barSeconds` is used.
+ */
+export type BarGeometry = { barSeconds: number; originSeconds: number; barStarts?: number[] };
 
-const barOf = (seconds: number, g: BarGeometry): number =>
-  Math.floor((seconds - g.originSeconds) / g.barSeconds) + 1;
+export const barOf = (seconds: number, g: BarGeometry): number => {
+  const starts = g.barStarts;
+  if (starts && starts.length) {
+    if (seconds < starts[0]) return Math.floor((seconds - starts[0]) / g.barSeconds) + 1;
+    let lo = 0;
+    let hi = starts.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1;
+      if (starts[mid] <= seconds) lo = mid; else hi = mid - 1;
+    }
+    // Past the last known bar the linear rate continues.
+    return lo === starts.length - 1
+      ? lo + 1 + Math.floor((seconds - starts[lo]) / g.barSeconds)
+      : lo + 1;
+  }
+  return Math.floor((seconds - g.originSeconds) / g.barSeconds) + 1;
+};
 
 /**
  * Merge a freshly generated arrangement into the previous one, honouring locks:
  * inside an allowed scope the new notes win; everywhere else the previous notes
- * are carried over untouched.
+ * are carried over untouched. Control and articulation events are split by bar
+ * the same way, so a locked bar keeps its own expression data too.
  */
 export function applyPartialRegeneration(input: {
   previous: TrackModel[];
@@ -149,6 +170,11 @@ export function applyPartialRegeneration(input: {
   const inAllowedScope = (instrument: string, bar: number): boolean =>
     allowed.some((scope) =>
       scope.instrument === instrument && bar >= scope.startBar && bar <= scope.endBar);
+  const splitEvents = <E extends { time: number }>(instrument: string, previousEvents: E[], nextEvents: E[] | undefined): E[] => {
+    const kept = previousEvents.filter((e) => !inAllowedScope(instrument, barOf(e.time, geometry)));
+    const fresh = (nextEvents ?? []).filter((e) => inAllowedScope(instrument, barOf(e.time, geometry)));
+    return [...kept, ...fresh].sort((a, b) => a.time - b.time);
+  };
 
   for (const track of previous) {
     const replacement = byInstrument.get(track.instrument);
@@ -164,15 +190,19 @@ export function applyPartialRegeneration(input: {
       : [];
     keptNotes += kept.length;
     replacedNotes += fresh.length;
+    const touched = fresh.length > 0 || kept.length !== track.notes.length;
 
-    out.push({
-      ...track,
-      notes: [...kept, ...fresh].sort((a, b) => a.start - b.start || a.pitch - b.pitch),
-      // Control/articulation data follows the notes it belongs to.
-      cc: replacement && fresh.length ? replacement.cc : track.cc,
-      articulations: replacement && fresh.length ? replacement.articulations : track.articulations,
-      version: track.version + (fresh.length ? 1 : 0),
-    });
+    out.push(touched
+      ? {
+          ...track,
+          notes: [...kept, ...fresh].sort((a, b) => a.start - b.start || a.pitch - b.pitch),
+          // Control/articulation data follows the bars it belongs to.
+          cc: splitEvents(track.instrument, track.cc, replacement?.cc),
+          articulations: splitEvents(track.instrument, track.articulations, replacement?.articulations),
+          version: track.version + 1,
+        }
+      // Untouched tracks are the same object: byte-identical by construction.
+      : track);
   }
 
   // Instruments that only exist in the new arrangement are additive — they can

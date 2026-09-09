@@ -13,6 +13,8 @@ import {
   musicProducerBriefDecisionsTable,
   musicProducerChatTurnsTable,
   musicProductionBriefsTable,
+  musicProjectsTable,
+  personalArrangementProfilesTable,
   songModelsTable,
 } from "@workspace/db";
 import type {
@@ -141,6 +143,16 @@ export function createProducerChatDbStore(executor: Executor = db): ProducerChat
         .orderBy(desc(arrangementsTable.createdAt), desc(sql`${arrangementsTable.version}`))
         .limit(1);
       return row?.plan ?? null;
+    },
+
+    async loadPersonalDefaults(projectId) {
+      const [row] = await executor
+        .select({ id: personalArrangementProfilesTable.id, profile: personalArrangementProfilesTable.profile })
+        .from(personalArrangementProfilesTable)
+        .innerJoin(musicProjectsTable, eq(musicProjectsTable.ownerId, personalArrangementProfilesTable.ownerId))
+        .where(and(eq(musicProjectsTable.id, projectId), eq(personalArrangementProfilesTable.active, true)))
+        .limit(1);
+      return row ? { id: row.id, profile: row.profile } : null;
     },
 
     async transaction(fn) {

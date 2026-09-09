@@ -15,6 +15,7 @@ import type { GenerationPreferenceSnapshot } from './generationPreferenceSnapsho
 import type { GlobalArrangementPlan } from './globalArrangementPlan';
 import type { OrchestrationBudgetPlan } from './orchestrationBudgetPlan';
 import type { PartComposerPlan } from './partComposerPlan';
+import type { ScopedRegenerationReport } from './scopedRegenerationReport';
 import type { SectionPhrasePlan } from './sectionPhrasePlan';
 import type { StyleSpec } from './styleSpec';
 import type { TransitionPlanSet } from './transitionPlanSet';
@@ -36,4 +37,9 @@ export interface ArrangementPlan {
   candidateGenerationPlan?: CandidateGenerationPlan;
   compositionIntelligence?: CompositionIntelligencePlan;
   generationPreference?: GenerationPreferenceSnapshot | null;
+  /** Wave U - the ProductionBrief this plan was planned from; absent without a brief */
+  productionBriefId?: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  productionBriefDigestSha256?: string;
+  regeneration?: ScopedRegenerationReport;
 }

@@ -412,6 +412,37 @@ test("without a Song Model the intake still works: section wishes are kept unres
   assert.ok(finalChorus?.character.some((c) => c.value === "cinematic"));
 });
 
+test("the owner's personal defaults (PR-30) enter the brief last: below what the words imply, filling only what nothing else says (PR-U5)", async () => {
+  const personalDefaults = {
+    id: "pap-1",
+    profile: {
+      version: "1.0" as const, method: "personal-arrangement-profile/v1", derivedAt: FIXED_NOW.toISOString(), inputsDigestSha256: "1".repeat(64),
+      support: { events: 10, pairwise: 10, preferredSubjects: 10, dispreferredSubjects: 10 },
+      dimensions: {
+        tempoBehavior: { value: "fast" as const, confidence: 0.6, provenance: "default" as const, sourceRefs: ["personal:profile"] },
+        swingRatio: { value: 0.62, confidence: 0.5, provenance: "default" as const, sourceRefs: ["personal:profile"] },
+      },
+      evidence: [], undecided: [],
+    },
+  };
+  const store = createInMemoryProducerChatStore({ songModel: { version: 1, model: makeTestSongModel() }, personalDefaults });
+  const service = createProducerChatService(store, { now: clock(), newId: ids(), researchAgent: null });
+  const outcome = await service.intake(PROJECT, { text: "a ballad" });
+  const profile = outcome.state.styleProfile;
+  assert.deepEqual(profile.sources, ["universal-vocabulary/v1", "personal:pap-1"]);
+  assert.equal(profile.dimensions.tempoBehavior?.value, "slow", "'ballad' implies slow through the vocabulary; the owner's fast default loses");
+  assert.equal(profile.dimensions.tempoBehavior?.provenance, "inferred");
+  assert.equal(profile.dimensions.swingRatio?.value, 0.62, "nothing was said about swing: the default fills it");
+  assert.equal(profile.dimensions.swingRatio?.provenance, "default");
+  assert.deepEqual(profile.dimensions.swingRatio?.sourceRefs, ["personal:pap-1"]);
+  const decision = outcome.state.brief.dimensionDecisions.find((d) => d.dimension === "swingRatio");
+  assert.equal(decision?.provenance, "default");
+  // Without an active profile the sources are exactly PR-U4's.
+  const plain = await createProducerChatService(createInMemoryProducerChatStore({ songModel: { version: 1, model: makeTestSongModel() } }), { now: clock(), newId: ids(), researchAgent: null }).intake(PROJECT, { text: "a ballad" });
+  assert.deepEqual(plain.state.styleProfile.sources, ["universal-vocabulary/v1"]);
+  assert.equal(plain.state.styleProfile.dimensions.swingRatio, undefined);
+});
+
 test("classification: questions, edits and refinements", () => {
   const model = makeTestSongModel();
   const intent = (text: string) => extractUserIntentSync(text, { now: FIXED_NOW });

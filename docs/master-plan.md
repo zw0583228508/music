@@ -29,7 +29,7 @@ PerformanceData` — never an audio generator.
 | Wave 5 (models as tools) | ✅ Magenta RT2 live on Modal as SHADOW_READY; MIDI-RWKV BLOCKED_LICENSE |
 | Wave 6 (production quality) | ✅ merged (PR-21…PR-26): VST3 worker, routing, performance V2, sound selection, mix brain, mastering (BS.1770 meter) |
 | Wave 7 (learning system) | ✅ merged (PR-27…PR-31): fingerprint, preference events, pairwise critic, personal defaults, training loop with benchmark gate |
-| Wave U (universal producer intelligence) | 🟡 U1–U3 merged; U4 in progress; U5–U6 planned |
+| Wave U (universal producer intelligence) | 🟡 U1–U5 merged; U6 planned |
 | Quality gate A (technical) | ✅ every merged PR carries tests, typecheck, live evidence under `docs/evidence/`; **Definition of Done passed end to end on a real upload, local providers only (PR-32)** |
 | Quality gate B (musical) | ✅ critics pass, no illegal notes; benchmark `playabilityErrors` back to 0 on every case (PR-33) |
 | Quality gate C (human) | 🟡 **operable, not passed**: the listening room (PR-34) serves blind A/B with votes, Elo and an explicit verdict (≥ 5 independent raters, ≥ 60 % release share); no real listener has rated yet |
@@ -752,11 +752,11 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   consistent choices → swing / register / harmonic-rhythm / dynamics defaults
   with evidence; a 50/50 direction stays undecided; deterministic.
 
-  **Honest limits.** Not yet a knowledge source for the brief pipeline (the
-  `StyleKnowledgeFinding` contract carries only inferred | researched
-  provenance; personal defaults must sit *below* inferred — PR-U5). Learns
-  only what the fingerprint expresses. Nobody has enough events for a real
-  profile yet.
+  **Honest limits.** ~~Not yet a knowledge source for the brief pipeline~~ —
+  done in PR-U5: `StyleKnowledgeFinding` now carries `default` provenance and
+  `personalKnowledgeSource` feeds the active profile into every brief
+  compile, below inferred (tested). Learns only what the fingerprint
+  expresses. Nobody has enough events for a real profile yet.
 
 - **PR-31** ✅ — `arranger-training-pipeline` → **`YOUR_ARRANGER_MODEL`**.
   The moat is the loop, in code: every consented choice becomes
@@ -986,8 +986,7 @@ existing `ArrangementPlan`:
   yet measured against the benchmark's `candidateDiversity`. Nobody has
   listened to anything a brief produced.
 
-- **PR-U2** `conversational-intake-api` — implemented on branch
-  `pr-u2-producer-chat-api`, awaiting review and merge. The conversation is
+- **PR-U2** (#29) ✅ — `conversational-intake-api`. The conversation is
   the front door. The user writes freely (Hebrew or
   English, references optional); the producer replies with a one-paragraph
   reading built only from the extracted intent / profile / brief (every phrase
@@ -1096,8 +1095,7 @@ existing `ArrangementPlan`:
   choosable; references are labels, not fingerprints (PR-U4); nothing flows
   into `createArrangementPlan` or regeneration (PR-U5); no producer memory
   across projects (PR-U6). Nobody has listened to anything a brief produced.
-- **PR-U3** `dynamic-style-research-agent` — implemented on branch
-  `pr-u3-style-research-agent`, awaiting review and merge. The seam PR-U1
+- **PR-U3** (#35) ✅ — `dynamic-style-research-agent`. The seam PR-U1
   left is now used: the world the user *named* (tradition / genre / scene /
   era / ensemble, plus a stated production word such as "cinematic") is
   researched per project, and what comes back is gated before it can touch
@@ -1265,8 +1263,7 @@ existing `ArrangementPlan`:
   the `research` summary is in the API but not rendered. Concepts,
   references (PR-U4), regeneration (PR-U5) and producer memory (PR-U6) are
   untouched. Nobody has listened to anything a brief produced.
-- **PR-U4** `reference-intelligence` — implemented on branch
-  `pr-u4-reference-intelligence`, awaiting review and merge. A style
+- **PR-U4** (#38) ✅ — `reference-intelligence`. A style
   fingerprint per reference (abstract features only, never content — the
   PR-27 rule) and an allowed-to-copy scope (groove / sound / arrangement /
   mood) wired to the `reference_aspect` clarification.
@@ -1430,9 +1427,55 @@ existing `ArrangementPlan`:
   behaviour). The brief still does not flow into `createArrangementPlan` or
   regeneration (PR-U5); no producer memory across projects (PR-U6). Nobody
   has listened to anything a brief produced.
-- **PR-U5** `chat-scope-aware-regeneration` — `EditPlan` → the PR-17 lock set +
-  regeneration scopes + brief deltas, executed through the orchestrator with a
-  `PartialRegenerationReport`; the brief stamped on every `ArrangementPlan`.
+- **PR-U5** ✅ — `chat-scope-aware-regeneration`. PR-U2 ended with "nothing
+  regenerates: the EditPlan is returned for PR-U5". It executes now. A chat
+  edit turn's `EditPlan` (locks to preserve, scopes to regenerate, on the
+  PR-17 vocabulary) is resolved against **this** arrangement's own tracks,
+  the Brain composes ≥ 3 whole-song candidates with the current brief's
+  planner hints and performance style, **every** candidate is merged into the
+  previous version over the allowed scopes only (`applyPartialRegeneration`),
+  its locked material verified byte for byte (`verifyLocksHonoured`), and the
+  *merged* result critiqued and constraint-checked — the plan's "never accept
+  the first candidate" rule applied to an edit. The best merged candidate that
+  honours the locks becomes a new arrangement version carrying a
+  `ScopedRegenerationReport`.
+
+  `scopedRegeneration.ts` (store-agnostic, injectable orchestrator so the
+  logic is tested without the real brain) + `scopedRegenerationDbStore.ts`;
+  `POST /projects/{id}/producer/turns/{turnId}/apply` and `GET
+  /arrangements/{id}` (`routes/producer.ts` / `routes/studio.ts`); "Apply to
+  arrangement" and the report rendered in `producer-chat.tsx`. Two seams the
+  plan asked for are now closed: the **brief reaches every generation job**
+  and the brain through `parameters.plannerHints` (`arrangementGeneration.ts`,
+  `arrangementOrchestratorProvider.ts`), and **every `ArrangementPlan` is
+  stamped** with `productionBriefId` / `productionBriefDigestSha256`.
+  `StyleKnowledgeFinding` gained `default` provenance, so PR-30's personal
+  defaults can finally register as a knowledge source *below* `inferred`.
+
+  **Proven live** (`docs/evidence/scope-aware-regeneration-live.json`, 26
+  requests, 0 unexpected statuses, no LLM): "keep the drums, regenerate the
+  bass" → arrangement **v7 from v6**, 137 bass notes replaced across all six
+  sections (bars 1–40), **553 kept verbatim**, 532 locked notes verified
+  byte-identical, 0 scopes blocked, 3 candidates ranked (72/72/72) and "A ·
+  conservative" accepted; the Hebrew edit "הפזמון האחרון עמוס מדי" regenerated
+  bass, drums and ensemble **in Chorus 2 only** (bars 29–36, 138 replaced /
+  552 kept). Refusals: a non-edit turn 400, an unknown turn 404, a "keep"-only
+  edit 409 with its reason, out-of-range candidate count 400, a foreign
+  project 404, anonymous 401. A subsequent full generation carried the brief
+  (`productionBriefVersion` 13, `plannerHints` `paletteRemove: [strings]` and
+  `Chorus 2` density 0.755 + `sectionFamilies.add: [strings]`) into all three
+  candidates at performance engine 2.0. Suites: scopedRegeneration 11,
+  producerChat 17, regenerationLocks 10, orchestrator provider 8,
+  personalProfile 6, briefToPlanner 9, styleResolution 11, editPlan 8;
+  typecheck green.
+
+  **Honest limits.** Regeneration composes the whole song and keeps only the
+  allowed scopes — cheap here (CPU, ~7 s) but wasteful, and a section-scoped
+  edit still pays for a full composition. The three candidates scored
+  identically on this project (72/72/72), so the ranking's tie-breaks did the
+  choosing, not the critic — the same flat-diversity finding as PR-18.
+  Instrument families the arrangement does not play are reported as
+  unmatched, not synthesised. Nobody has listened to a regenerated version.
 - **PR-U6** `producer-memory-explainability` — durable producer memory across
   projects (rights-cleared, the PR-28 rule) and `explainDecision` surfaced in
   the studio: "why is there a clarinet here?" answered from the plan.
@@ -1536,6 +1579,7 @@ fabricate candidates when workers are offline.
 | Producer conversation (Wave U, PR-U2) | `routes/producer.ts` (`/projects/{id}/producer/*`), `src/lib/producerChat.ts` (store-agnostic logic) + `producerChatDbStore.ts`; tables `music_production_briefs` / `music_producer_chat_turns` / `music_producer_brief_decisions`; studio drawer `components/studio/producer-chat.tsx` |
 | Style research agent (Wave U, PR-U3) | `src/lib/producerIntelligence/styleResearch.ts` — `ResearchKnowledgeProvider` (curated seed notes; OpenAI only when `PRODUCER_LLM=openai`), the closed `RESEARCH_VOCABULARY`, gating into researched dimensions / questions / discards, `WORLD_VOCABULARY` wording; `StyleProfile.research` summary in `lib/db` + OpenAPI; evidence `docs/evidence/style-research-live.json` |
 | Reference intelligence (Wave U, PR-U4) | `src/lib/referenceIntelligence.ts` (store-agnostic: scopes, rows ↔ intent, `referenceKnowledge` into the resolver, closeness explanations) + `referenceIntelligenceDbStore.ts` (Drizzle; `fingerprintPendingReferences` analysis hook); `routes/references.ts` (`/projects/{id}/references/*`); table `music_reference_tracks`; PR-27's `styleFingerprint.ts` is the only thing read from a reference; References section in `components/studio/producer-chat.tsx`; evidence `docs/evidence/reference-intelligence-live.json` |
+| Scope-aware regeneration (Wave U, PR-U5) | `src/lib/scopedRegeneration.ts` (store-agnostic: EditPlan → this arrangement's tracks, PR-17 merge + verify per candidate, ranking, `ScopedRegenerationReport`, the service) + `scopedRegenerationDbStore.ts`; `POST /projects/{id}/producer/turns/{turnId}/apply` and `GET /arrangements/{id}` in `routes/producer.ts` / `routes/studio.ts`; the brief into every generation job in `arrangementGeneration.ts` (`queueArrangementGeneration`, `materializeCandidate`) and into the brain via `parameters.plannerHints` (`arrangementOrchestratorProvider.ts`); "Apply to arrangement" + report in `components/studio/producer-chat.tsx`; evidence `docs/evidence/scope-aware-regeneration-live.json` |
 
 Every PR below is an **extension** of the above unless noted.
 

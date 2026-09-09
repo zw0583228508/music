@@ -34,6 +34,7 @@ import type {
   EditPlan,
   FingerprintComparison,
   IntentReference,
+  PersonalizedArrangementProfile,
   PlanExplanation,
   ProducerBriefDecision,
   ProducerChatTurnKind,
@@ -51,6 +52,7 @@ import type {
   UserIntent,
 } from "@workspace/db";
 import { deriveOrchestrationBudget } from "./orchestrationBudget";
+import { personalKnowledgeSource } from "./personalProfile";
 import { deriveTransitionPlan } from "./transitionEngine";
 import { activeDecisions, compileProductionBrief } from "./producerIntelligence/briefCompiler";
 import { applyBriefToPlans } from "./producerIntelligence/briefToPlanner";
@@ -152,6 +154,8 @@ export type ProducerChatStore = ReferenceStore & {
   markSuperseded(projectId: string, rowId: string, supersededBy: string): Promise<void>;
   loadSongModel(projectId: string): Promise<{ version: number; model: SongModelData } | null>;
   loadLatestArrangementPlan(projectId: string): Promise<ArrangementPlan | null>;
+  /** PR-U5: the project owner's *active* personal profile (PR-30), a `default`-provenance knowledge source; null when none. */
+  loadPersonalDefaults(projectId: string): Promise<{ id: string; profile: PersonalizedArrangementProfile } | null>;
   /** Run `fn` atomically where the backend can; the in-memory store just calls it. */
   transaction<T>(fn: (store: ProducerChatStore) => Promise<T>): Promise<T>;
 };
@@ -463,7 +467,17 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
     // What the fingerprints may lend, inside the allowed scopes only, as
     // `inferred` sources next to the vocabulary — below stated and researched.
     const knowledge = referenceKnowledge(rows, fingerprints, intent);
-    const baseOptions = { now: at, knowledge: [UNIVERSAL_VOCABULARY_SOURCE, ...knowledge.sources] };
+    // PR-U5: the owner's active personal defaults (PR-30) are the last source,
+    // at `default` provenance — below everything the words, a reference or
+    // research say; they only fill dimensions nothing else populates.
+    const personal = await tx.loadPersonalDefaults(projectId);
+    const baseOptions = {
+      now: at,
+      knowledge: [
+        UNIVERSAL_VOCABULARY_SOURCE, ...knowledge.sources,
+        ...(personal ? [personalKnowledgeSource(personal.profile, personal.id)] : []),
+      ],
+    };
     // Research is async and runs first; the profile is then resolved with
     // its gated findings pre-fetched (PR-U1's documented path). A world an
     // answer settled (e.g. the communal-singing ensemble) — in an earlier
@@ -1074,6 +1088,8 @@ export type ProducerChatService = ReturnType<typeof createProducerChatService>;
 export type InMemoryProducerChatSeed = InMemoryReferenceSeed & {
   songModel?: { version: number; model: SongModelData } | null;
   arrangementPlan?: ArrangementPlan | null;
+  /** PR-U5: the owner's active personal profile, when the test wants one. */
+  personalDefaults?: { id: string; profile: PersonalizedArrangementProfile } | null;
 };
 
 export type InMemoryProducerChatStore = ProducerChatStore & {
@@ -1116,6 +1132,7 @@ export function createInMemoryProducerChatStore(seed: InMemoryProducerChatSeed =
     },
     async loadSongModel() { return seed.songModel ?? null; },
     async loadLatestArrangementPlan() { return seed.arrangementPlan ?? null; },
+    async loadPersonalDefaults() { return seed.personalDefaults ?? null; },
     async transaction(fn) { return fn(self); },
   };
   return self;

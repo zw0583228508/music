@@ -2,10 +2,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   getGetProducerBriefQueryKey,
+  getListArrangementsQueryKey,
   getListProducerTurnsQueryKey,
   getListProjectReferencesQueryKey,
   getListProjectSourcesQueryKey,
   useAnswerProducerClarifications,
+  useApplyProducerEdit,
   useCompareProjectReference,
   useCreateProjectReference,
   useDeleteProjectReference,
@@ -26,6 +28,7 @@ import {
   type ReferenceCopyScope,
   type ReferenceMutationResult,
   type ReferenceTrack,
+  type ScopedRegenerationReport,
 } from "@workspace/api-client-react";
 import {
   Ban,
@@ -37,6 +40,8 @@ import {
   MessageSquareText,
   Music4,
   Plus,
+  Lock,
+  Play,
   Send,
   ShieldCheck,
   Sparkles,
@@ -91,7 +96,59 @@ function activeDecisions(brief: ProductionBrief): ProducerBriefDecision[] {
   return brief.producerDecisions.filter((d) => !superseded.has(d.id));
 }
 
-function TurnBubble({ turn }: { turn: ProducerChatTurn }) {
+/** An edit turn the producer can execute: it read an intent and drew at least one regeneration scope. */
+function applicableEdit(structured: ProducerChatTurn["structured"]): boolean {
+  const plan = structured?.kind === "edit" ? structured.editPlan : undefined;
+  return Boolean(plan && plan.intent !== "unclear" && plan.intent !== "keep" && plan.modify.length > 0);
+}
+
+const barSpan = (ranges: ScopedRegenerationReport["changed"]["barRanges"]): string => {
+  if (!ranges.length) return "no bars";
+  const lo = Math.min(...ranges.map((r) => r.startBar));
+  const hi = Math.max(...ranges.map((r) => r.endBar));
+  return lo === hi ? `bar ${lo}` : `bars ${lo}–${hi}`;
+};
+
+/**
+ * PR-U5: what applying an edit did — requested / allowed / blocked / changed /
+ * preserved / verified — in the producer's turn, so the promise can be checked.
+ */
+function RegenerationReport({ report, arrangementVersion }: { report: ScopedRegenerationReport; arrangementVersion?: number }) {
+  const blockedScopes = [...new Set(report.blockedByLock.map((b) => `${b.scope.instrument} · ${b.scope.sectionName}`))];
+  const selected = report.candidates.find((c) => c.selected);
+  const row = (label: string, value: React.ReactNode, tone?: "ok" | "warn") => (
+    <div className="flex gap-2">
+      <span className="w-20 shrink-0 text-[10px] uppercase tracking-wider text-muted-foreground">{label}</span>
+      <span className={cn("min-w-0 flex-1", tone === "ok" && "text-emerald-700", tone === "warn" && "text-amber-700")}>{value}</span>
+    </div>
+  );
+  return (
+    <div className="mt-2 space-y-1 rounded-md border bg-background/60 p-2 text-[11px]" data-testid="regeneration-report">
+      <div className="flex flex-wrap items-center gap-1">
+        <Badge variant="secondary" className="h-5 text-[10px]">arrangement v{arrangementVersion ?? "?"} ← v{report.parentArrangementVersion}</Badge>
+        <Badge variant="outline" className="h-5 text-[10px]">{report.editIntent.replace(/_/g, " ")}</Badge>
+        <Badge variant="outline" className="h-5 text-[10px]">{report.durationMs} ms</Badge>
+      </div>
+      {row("requested", `${report.requested.length} scope(s): ${[...new Set(report.requested.map((s) => s.instrument))].join(", ") || "none"}`)}
+      {row("allowed", `${report.regenerated.length} scope(s), ${barSpan(report.regenerated.map((s) => ({ ...s, replacedNotes: 0 })))}`)}
+      {row("blocked", blockedScopes.length ? `${blockedScopes.join("; ")} (by ${[...new Set(report.blockedByLock.map((b) => b.lockId))].join(", ")})` : "nothing", blockedScopes.length ? "warn" : undefined)}
+      {row("changed", report.changed.instruments.length
+        ? `${report.changed.instruments.join(", ")} in ${report.changed.sections.join(", ")} (${barSpan(report.changed.barRanges)}) · ${report.replacedNotes} note(s) replaced`
+        : "nothing")}
+      {row("preserved", `${report.preserved.instruments.join(", ") || "no whole track"}; ${report.preserved.sections.join(", ") || "no whole section"} · ${report.keptNotes} note(s) kept verbatim`)}
+      {row("verified", report.verification.honoured
+        ? <><Lock className="mr-1 inline h-3 w-3" />{report.verification.checkedLockedNotes} locked note(s) byte-identical · {report.locks.length} lock(s)</>
+        : `FAILED: ${report.verification.violations.length} violation(s)`, report.verification.honoured ? "ok" : "warn")}
+      {row("candidates", `${report.candidates.map((c) => `${c.strategy} ${Math.round(c.score)}${c.feasible ? "" : " ✗"}${c.locksHonoured ? "" : " locks✗"}`).join(" · ")} → "${selected?.label ?? report.selectedCandidateId}"`)}
+      {report.productionBriefId
+        ? row("brief", `${report.plannerHintEvidence.length} planner hint(s) from the brief`)
+        : row("brief", "none — the planners read the Song Model alone", "warn")}
+      {report.warnings.map((w) => <p key={w} className="text-amber-700">{w}</p>)}
+    </div>
+  );
+}
+
+function TurnBubble({ turn, onApply, applying }: { turn: ProducerChatTurn; onApply?: (turn: ProducerChatTurn) => void; applying?: boolean }) {
   const producer = turn.role === "producer";
   const structured = turn.structured;
   const rtl = HEBREW.test(turn.text) && !producer;
@@ -140,7 +197,24 @@ function TurnBubble({ turn }: { turn: ProducerChatTurn }) {
           {structured.planSource && (
             <Badge variant="outline" className="h-5 text-[10px]">plan: {structured.planSource}</Badge>
           )}
+          {onApply && applicableEdit(structured) && (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="ml-auto h-6 px-2 text-[10px]"
+              disabled={applying}
+              title="Regenerate only this edit's scopes through the Arrangement Brain; everything the plan locks is carried over byte for byte"
+              onClick={() => onApply(turn)}
+              data-testid="producer-apply-edit"
+            >
+              {applying ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Play className="mr-1 h-3 w-3" />} Apply to arrangement
+            </Button>
+          )}
         </div>
+      )}
+      {producer && structured?.regeneration && (
+        <RegenerationReport report={structured.regeneration} arrangementVersion={structured.arrangementVersion} />
       )}
     </div>
   );
@@ -565,10 +639,11 @@ export function ProducerChat({ projectId, onBriefChanged }: ProducerChatProps) {
   const intake = useRunProducerIntake();
   const chat = useSendProducerChat();
   const answer = useAnswerProducerClarifications();
+  const apply = useApplyProducerEdit();
 
   const hasBrief = Boolean(briefQuery.data);
   const state = briefQuery.data;
-  const pending = intake.isPending || chat.isPending || answer.isPending;
+  const pending = intake.isPending || chat.isPending || answer.isPending || apply.isPending;
 
   const turns = useMemo(() => {
     const server = turnsQuery.data?.turns ?? [];
@@ -597,6 +672,7 @@ export function ProducerChat({ projectId, onBriefChanged }: ProducerChatProps) {
           kind: result.kind, briefVersion: result.state.version,
           ...(result.editPlan ? { editPlan: result.editPlan } : {}),
           ...(result.explanation ? { explanation: result.explanation } : {}),
+          ...(result.regeneration ? { regeneration: result.regeneration, arrangementId: result.arrangementId, arrangementVersion: result.arrangementVersion } : {}),
           planSource: result.state.planSource,
         },
         createdAt: now,
@@ -604,8 +680,17 @@ export function ProducerChat({ projectId, onBriefChanged }: ProducerChatProps) {
     ]);
     queryClient.setQueryData(getGetProducerBriefQueryKey(projectId), result.state);
     void queryClient.invalidateQueries({ queryKey: getListProducerTurnsQueryKey(projectId) });
+    // PR-U5: a regeneration is a new arrangement version; the workspace lists it.
+    if (result.regeneration) void queryClient.invalidateQueries({ queryKey: getListArrangementsQueryKey(projectId) });
     onBriefChanged?.(result.state);
     setLastError(null);
+  };
+
+  /** PR-U5: execute an edit turn's plan within its locks; the reply is a `regeneration` turn with the report. */
+  const applyEdit = (turn: ProducerChatTurn) => {
+    if (pending) return;
+    const text = turn.structured?.editPlan?.rawText ?? turn.text;
+    apply.mutate({ projectId, turnId: turn.id, data: {} }, { onSuccess: (r) => settle(r, `apply: "${text}"`), onError: fail });
   };
 
   const fail = (error: unknown) => {
@@ -672,10 +757,10 @@ export function ProducerChat({ projectId, onBriefChanged }: ProducerChatProps) {
         )}
 
         <div className="space-y-3 p-4 text-sm">
-          {turns.map((turn) => <TurnBubble key={turn.id} turn={turn} />)}
+          {turns.map((turn) => <TurnBubble key={turn.id} turn={turn} onApply={applyEdit} applying={apply.isPending} />)}
           {pending && (
             <div className="flex items-center gap-2 rounded-lg rounded-tl-none bg-muted p-3 text-muted-foreground">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" /> Reading…
+              <Loader2 className="h-3.5 w-3.5 animate-spin" /> {apply.isPending ? "Regenerating within the locks…" : "Reading…"}
             </div>
           )}
           {lastError && (
@@ -735,7 +820,7 @@ export function ProducerChat({ projectId, onBriefChanged }: ProducerChatProps) {
           }}
         />
         <div className="mt-2 flex items-center justify-between">
-          <span className="text-[10px] text-muted-foreground">Ctrl/⌘+Enter to send · nothing is regenerated from chat yet</span>
+          <span className="text-[10px] text-muted-foreground">Ctrl/⌘+Enter to send · an edit regenerates only when you apply it</span>
           <Button type="submit" size="sm" disabled={!draft.trim() || pending} data-testid="producer-chat-send">
             <Send className="mr-1.5 h-3.5 w-3.5" /> {hasBrief ? "Send" : "Start"}
           </Button>
