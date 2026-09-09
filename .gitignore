@@ -85,3 +85,7 @@ debug.log
 services/composers-assistant-train/runs/
 services/composers-assistant-train/exports/
 services/composers-assistant-train/.smoke/
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+# Workstream worktree marker: a local signal that dependencies are installed.
+.deps-ready

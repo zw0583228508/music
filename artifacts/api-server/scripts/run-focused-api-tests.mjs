@@ -54,6 +54,14 @@ const suites = {
         "style-grammar.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, Q-02: any style description in the world, decomposed into
+      // measurable features, a grammar and arrangement instructions — with no
+      // genre list anywhere on the path.
+      [
+        "src/lib/universalStyle.test.ts",
+        "universal-style.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // Wave Q, Q-04: which octave each voice takes, and how it moves.
       [
         "src/lib/voiceLeading.test.ts",
@@ -73,6 +81,10 @@ const suites = {
         "track-model-contract.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+    ],
+    tests: [
+      // Wave Q, Q-02: the read-only style decomposition route.
+      "tests/style-decompose-route.test.mjs",
     ],
   },
   // Wave Q, Q-00: the contract and the gate in front of the real benchmark
@@ -117,6 +129,14 @@ const suites = {
       // budget guard mirror (fails closed above $25; H100 refused).
       ["src/lib/trainingManifest.test.ts", "training-manifest.test.mjs"],
       ["src/lib/trainingBudgetGuard.test.ts", "training-budget-guard.test.mjs"],
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // Wave Q, Q-05 data factory (PR-65): the extended Tier B task types over
+      // one cell representation, near-duplicate groups for the split, and the
+      // per-work corpus profile the foundation decision reads.
+      ["src/lib/arrangerTaskTypes.test.ts", "arranger-task-types.test.mjs"],
+      ["src/lib/nearDuplicate.test.ts", "near-duplicate.test.mjs"],
+      ["src/lib/corpusProfile.test.ts", "corpus-profile.test.mjs"],
       // Wave Q, Model Discovery: the registry enforces the three-layer licence
       // discipline; nothing ships on an unread licence or uncleared works.
       ["src/lib/globalModelRegistry.test.ts", "global-model-registry.test.mjs"],
@@ -145,6 +165,14 @@ const suites = {
       // Wave Q, tournament task preparation: chords estimated per bar from the
       // notes every provider is given, or no chord where the bar has none.
       ["src/lib/chordsFromNotes.test.ts", "chords-from-notes.test.mjs"],
+      // Wave Q, PR-64 conditioning study: every V2 field classified for every
+      // conditioning approach (a silent cell is a dropped field), CA2's
+      // instruction surface as data, and the zero-new-token prefix expression.
+      [
+        "src/lib/conditioningMap.test.ts",
+        "conditioning-map.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // Wave Q, Model Discovery: the tournament — task from a real score, the
       // part judge, the runner, the blind sheet; and the arms, with CA2 mocked.
       [
@@ -155,6 +183,66 @@ const suites = {
       [
         "src/lib/tournamentProviders.test.ts",
         "tournament-providers.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // Wave Q, Model Discovery (PR-61): the playability judge calibrated on
+      // real human parts — windows, evidence-based classification, gate verdicts.
+      [
+        "src/lib/judgeCalibration.test.ts",
+        "judge-calibration.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // Wave Q, Model Discovery (PR-61): the per-family × arm scorecard and the
+      // oracle-router reading behind the "global + expert adapters" question.
+      [
+        "src/lib/instrumentScorecard.test.ts",
+        "instrument-scorecard.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // Wave Q, Workstream J (long-form): unsupervised form segmentation of a
+      // whole score, and the whole-song coherence metric with its synthetic
+      // "pasted windows" constructions.
+      [
+        "src/lib/formSegmentation.test.ts",
+        "form-segmentation.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/coherenceMetric.test.ts",
+        "coherence-metric.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // Wave Q, Workstream A: tournament pairs into the Listening Room — balanced
+      // draw, per-token audio, owner-apart tallies, reward-model preference records.
+      [
+        "src/lib/tournamentListening.test.ts",
+        "tournament-listening.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/tournamentAudio.test.ts",
+        "tournament-audio.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // Wave Q, Model Discovery (global tournament): genre families from PDMX's
+      // genre/tag columns, genre-major task selection, per-slice breakdowns.
+      [
+        "src/lib/pdmxGenre.test.ts",
+        "pdmx-genre.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      ["src/lib/tournamentSelection.test.ts", "tournament-selection.test.mjs"],
+      [
+        "src/lib/tournamentBreakdown.test.ts",
+        "tournament-breakdown.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // PR-70: the localhost-only gate in front of the development sign-in, and
+      // the policy that decides whether it may exist at all.
+      ["src/lib/localAccess.test.ts", "local-access.test.mjs"],
+      [
+        "src/routes/devAuth.test.ts",
+        "dev-auth.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
       // The transport a cloud analysis worker is allowed to reach, and the
