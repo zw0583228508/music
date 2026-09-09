@@ -49,6 +49,8 @@ import {
   CorrectProjectSongModelBody,
   CorrectProjectSongModelParams,
   CorrectProjectSongModelResponse,
+  GetArrangementParams,
+  GetArrangementResponse,
   ListArrangementRevisionsParams,
   ListArrangementRevisionsResponse,
   ListArrangementsParams,
@@ -2298,6 +2300,32 @@ router.get("/projects/:projectId/arrangements", async (req, res): Promise<void> 
   }
   const arrangements = await db.select().from(arrangementsTable).where(eq(arrangementsTable.projectId, params.data.projectId)).orderBy(desc(arrangementsTable.version));
   res.json(ListArrangementsResponse.parse(arrangements.map(arrangementResponse)));
+});
+
+/** PR-U5: one version in full — plan (brief stamp, regeneration report), TrackModels, lineage. Owner only; anyone else sees a 404. */
+router.get("/arrangements/:arrangementId", async (req, res): Promise<void> => {
+  const params = GetArrangementParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+  const [arrangement] = await db
+    .select()
+    .from(arrangementsTable)
+    .where(eq(arrangementsTable.id, params.data.arrangementId))
+    .limit(1);
+  const [project] = arrangement
+    ? await db
+        .select({ ownerId: musicProjectsTable.ownerId })
+        .from(musicProjectsTable)
+        .where(eq(musicProjectsTable.id, arrangement.projectId))
+        .limit(1)
+    : [];
+  if (!arrangement || !project || project.ownerId !== req.user!.id) {
+    res.status(404).json({ error: "Arrangement not found" });
+    return;
+  }
+  res.json(GetArrangementResponse.parse(arrangementResponse(arrangement)));
 });
 
 router.post("/projects/:projectId/arrangements", async (req, res): Promise<void> => {

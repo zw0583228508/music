@@ -99,6 +99,31 @@ import { activePairwiseCritic } from "./pairwiseCriticStore";
 import { personalStyleProfile } from "./personalProfile";
 import { activePersonalProfile } from "./personalProfileStore";
 import { candidateEvidenceScore } from "./candidateRanking";
+import { createProducerChatDbStore } from "./producerChatDbStore";
+import { briefPlanRef, plannerHintsForJob, stampBriefOnPlan, type BriefPlanRef } from "./producerIntelligence/briefToPlanner";
+import type { GlobalPlannerHints } from "./globalArrangementPlanner";
+import type { SectionPlannerHints } from "./sectionPhrasePlanner";
+
+/**
+ * PR-U5: the brief a generation job was queued with, as its parameters carry
+ * it — the reference every plan is stamped with and the planner hints the
+ * embedded planning layers read. Absent when the project had no brief.
+ */
+export function briefFromJobParameters(parameters: GenerationParameters | null | undefined): {
+  ref: BriefPlanRef | null;
+  plannerHints: { global?: GlobalPlannerHints; section?: SectionPlannerHints } | undefined;
+} {
+  const id = parameters?.productionBriefId;
+  const digest = parameters?.productionBriefDigestSha256;
+  const ref = typeof id === "string" && id && typeof digest === "string" && digest
+    ? { productionBriefId: id, productionBriefDigestSha256: digest }
+    : null;
+  const raw = parameters?.plannerHints;
+  const plannerHints = raw && typeof raw === "object" && !Array.isArray(raw)
+    ? raw as { global?: GlobalPlannerHints; section?: SectionPlannerHints }
+    : undefined;
+  return { ref, plannerHints };
+}
 
 const sha256 = (value: string | Buffer): string =>
   createHash("sha256").update(value).digest("hex");
@@ -316,6 +341,9 @@ type CandidateMaterializationInput = {
   };
   generationPreference?: import("@workspace/db").GenerationPreferenceSnapshot | null;
   trackModelsMaterialized?: boolean;
+  /** PR-U5: the brief the job carries; stamped on the plan and read by its planning layers. */
+  productionBrief?: BriefPlanRef | null;
+  plannerHints?: { global?: GlobalPlannerHints; section?: SectionPlannerHints };
 };
 
 function materializeCandidate(input: CandidateMaterializationInput): {
@@ -361,7 +389,7 @@ function materializeCandidate(input: CandidateMaterializationInput): {
     },
     compositionVersion: "2.0",
   });
-  const generatedPlan = createArrangementPlan({
+  const plannedWithoutBrief = createArrangementPlan({
     arrangementId: input.candidateId,
     version: input.version,
     songModel,
@@ -372,7 +400,12 @@ function materializeCandidate(input: CandidateMaterializationInput): {
     arrangementBrain,
     compositionVersion: "2.0",
     generationPreference,
+    ...(input.plannerHints ? { plannerHints: input.plannerHints } : {}),
   });
+  // PR-U5: every plan produced for a project with a current brief says so.
+  const generatedPlan = input.productionBrief
+    ? stampBriefOnPlan(plannedWithoutBrief, input.productionBrief)
+    : plannedWithoutBrief;
   const providerSections = new Map(
     candidate.plan.sections.map((section) => [section.name.toLowerCase(), section]),
   );
@@ -747,18 +780,32 @@ export async function queueArrangementGeneration(
     throw new Error(`${operation} requires a project-owned source audio artifact`);
   }
   const sourceArtifactId = sourceArtifact?.id ?? requestedSourceArtifactId;
+  // PR-U5: the project's current ProductionBrief is part of every generation
+  // request — its id and digest (stamped on every plan), its planner hints
+  // (read by the embedded planning layers and by the Arrangement Brain) and,
+  // when the request brings no StyleProfile of its own, its resolved profile.
+  const briefRecord = await createProducerChatDbStore().currentBrief(arrangement.projectId);
+  const briefHints = briefRecord ? plannerHintsForJob(briefRecord.brief) : null;
   // PR-30: the owner's active personal profile supplies default style
-  // dimensions when the request carries no StyleProfile of its own (a brief
-  // always wins). The provider reads `parameters.styleProfile` (PR-23/24).
-  const personalProfile = input.parameters?.styleProfile ? null : await activePersonalProfile(ownerId);
+  // dimensions when neither the request nor a brief carries a StyleProfile
+  // (a brief always wins). The provider reads `parameters.styleProfile` (PR-23/24).
+  const personalProfile = input.parameters?.styleProfile || briefRecord ? null : await activePersonalProfile(ownerId);
   const normalizedParameters: GenerationParameters = {
     ...(input.parameters ?? {}),
     ...(operation ? { operation } : {}),
     ...(sourceArtifactId ? { sourceArtifactId } : {}),
     ...(instrument ? { instrument } : {}),
     ...(region ? { region } : {}),
+    ...(briefRecord
+      ? {
+          ...briefPlanRef(briefRecord.brief),
+          productionBriefVersion: briefRecord.version,
+          ...(briefHints ? { plannerHints: briefHints } : {}),
+          ...(input.parameters?.styleProfile ? {} : { styleProfile: briefRecord.styleProfile, styleProfileSource: "brief" }),
+        }
+      : {}),
     ...(personalProfile
-      ? { styleProfile: personalStyleProfile(personalProfile.profile, personalProfile.id), personalProfileId: personalProfile.id, personalProfileVersion: personalProfile.version }
+      ? { styleProfile: personalStyleProfile(personalProfile.profile, personalProfile.id), personalProfileId: personalProfile.id, personalProfileVersion: personalProfile.version, styleProfileSource: "personal_profile" }
       : {}),
     generationPreference,
   };
@@ -1217,6 +1264,7 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
     }
     const providerCandidates = result.candidates;
     const materializesEnsemble = provider.definition.materializesTrackModels === true;
+    const jobBrief = briefFromJobParameters(job.parameters);
     if (materializesEnsemble) {
       await ensureEnsembleTracks(job.projectId, providerCandidates);
     }
@@ -1328,6 +1376,8 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
           // performed (the in-process Arrangement Brain) must not have the
           // legacy modulation and composition passes re-applied over them.
           trackModelsMaterialized: provider.definition.materializesTrackModels === true,
+          productionBrief: jobBrief.ref,
+          ...(jobBrief.plannerHints ? { plannerHints: jobBrief.plannerHints } : {}),
         });
         const bounded = snapshot.repair
           ? applyBoundedRepair({

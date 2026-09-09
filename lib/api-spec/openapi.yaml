@@ -596,6 +596,26 @@ paths:
               schema:
                 $ref: "#/components/schemas/Arrangement"
   /arrangements/{arrangementId}:
+    get:
+      operationId: getArrangement
+      tags: [arrangements]
+      summary: One arrangement version in full - its plan, TrackModels, lineage and parameters
+      description: |
+        PR-U5. The list endpoint returns summaries; this returns the persisted
+        `plan` (with the brief it was planned from and, for a chat edit applied
+        within locks, the `regeneration` report) and the `trackModels`, so a
+        version can be inspected and two versions compared note for note.
+      parameters:
+        - $ref: "#/components/parameters/ArrangementId"
+      responses:
+        "200":
+          description: The arrangement version
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArrangementDetail"
+        "404":
+          $ref: "#/components/responses/NotFound"
     patch:
       operationId: updateArrangement
       tags: [arrangements]
@@ -1717,7 +1737,8 @@ paths:
         plan's own evidence. An edit request ("the last chorus is too busy",
         "no strings in the whole song") becomes a structured EditPlan and durable,
         scoped decisions on the brief. Anything else refines the intake. Both
-        turns are persisted; nothing is regenerated here.
+        turns are persisted; nothing is regenerated here - apply the edit turn
+        with `POST .../producer/turns/{turnId}/apply` (PR-U5).
       parameters:
         - $ref: "#/components/parameters/ProjectId"
       requestBody:
@@ -1803,6 +1824,47 @@ paths:
           $ref: "#/components/responses/NotFound"
         "409":
           description: No brief yet, or the replacement produced no decision
+  /projects/{projectId}/producer/turns/{turnId}/apply:
+    post:
+      operationId: applyProducerEdit
+      tags: [producer]
+      summary: Apply an edit turn's EditPlan to the arrangement, within its locks
+      description: |
+        PR-U5. The producer turn's EditPlan (locks to preserve, scopes to
+        regenerate) is executed against the project's latest arrangement with
+        persisted TrackModels: the Arrangement Brain composes at least three
+        whole-song candidates with the current brief's planner hints and
+        performance style; each is merged into the previous version over the
+        allowed scopes only, its locked material verified byte for byte, and
+        the merged result critiqued; the best candidate that honours the locks
+        is accepted and persisted as a new arrangement version. Synchronous —
+        the brain is CPU-only and model-free (a few seconds). The reply is a
+        `regeneration` turn carrying the `ScopedRegenerationReport`.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - name: turnId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProducerEditApplyInput"
+      responses:
+        "200":
+          description: The regeneration turn, with the report and the new arrangement version
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProducerTurnResult"
+        "400":
+          description: The turn is not an edit turn with an EditPlan
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Nothing to regenerate (unclear edit, no arrangement with TrackModels, no Song Model, every scope locked, or no candidate honoured the locks)
   /projects/{projectId}/references:
     get:
       operationId: listProjectReferences
@@ -3714,6 +3776,68 @@ components:
             - $ref: "#/components/schemas/GenerationProvenance"
             - { type: "null" }
         createdAt: { type: string }
+    ArrangementDetail:
+      type: object
+      description: An arrangement version with everything the summary omits (PR-U5) - the `Arrangement` fields plus plan, TrackModels, lineage and parameters. Kept flat because the zod generator cannot compose a top-level allOf.
+      required: [id, projectId, name, style, mode, version, status, harmonyComplexity, energy, density, orchestraSize, rhythmIntensity, sections, generationProvider, candidates, selectedCandidateId, createdAt, plan, trackModels, parentArrangementId, songModelVersion, parameters, provenance]
+      properties:
+        id: { type: string }
+        projectId: { type: string }
+        name: { type: string }
+        style: { type: string }
+        mode:
+          type: string
+          enum: [QUICK_ARRANGE, STUDIO, PRO_SCORE]
+        version: { type: number }
+        status:
+          type: string
+          enum: [draft, generating, ready]
+        harmonyComplexity: { type: number }
+        energy: { type: number }
+        density: { type: number }
+        orchestraSize: { type: number }
+        rhythmIntensity: { type: number }
+        sections:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArrangementSection"
+        generationProvider: { type: ["string", "null"] }
+        candidates:
+          type: array
+          items:
+            $ref: "#/components/schemas/Candidate"
+        selectedCandidateId: { type: ["string", "null"] }
+        sourceGenerationJobId:
+          type: [string, "null"]
+        sourceCandidateId:
+          type: [string, "null"]
+        generationProvenance:
+          oneOf:
+            - $ref: "#/components/schemas/GenerationProvenance"
+            - { type: "null" }
+        createdAt: { type: string }
+        plan:
+          oneOf:
+            - $ref: "#/components/schemas/ArrangementPlan"
+            - { type: "null" }
+        trackModels:
+          type: array
+          items: { $ref: "#/components/schemas/TrackModel" }
+        parentArrangementId:
+          type: [string, "null"]
+        songModelVersion:
+          type: [number, "null"]
+        seed:
+          type: [number, "null"]
+        modelVersion:
+          type: [string, "null"]
+        parameters:
+          type: object
+          additionalProperties: true
+        provenance:
+          oneOf:
+            - $ref: "#/components/schemas/ArtifactProvenance"
+            - { type: "null" }
     ArrangementRevisionSummary:
       type: object
       required: [affectedSections, affectedTracks, trackMembershipChanges, chordChanges, noteChanges, ccChanges, conductorControls, candidateSelectionChanged]
@@ -5507,12 +5631,12 @@ components:
         subgenre: { type: string }
         era: { type: string }
         tempoCharacter: { type: string, enum: [laid_back, steady, driving, rubato] }
-        rhythm: { type: object }
-        harmony: { type: object }
-        instrumentation: { type: object }
-        orchestration: { type: object }
-        production: { type: object }
-        dynamics: { type: object }
+        rhythm: { type: object, additionalProperties: true }
+        harmony: { type: object, additionalProperties: true }
+        instrumentation: { type: object, additionalProperties: true }
+        orchestration: { type: object, additionalProperties: true }
+        production: { type: object, additionalProperties: true }
+        dynamics: { type: object, additionalProperties: true }
         grammar: { $ref: "#/components/schemas/StyleGrammar" }
     ArrangementPlanSection:
       type: object
@@ -5668,13 +5792,13 @@ components:
         songIntent: { type: string, enum: [preserve_observed_form, develop_observed_form] }
         tensionRelease:
           type: array
-          items: { type: object }
+          items: { type: object, additionalProperties: true }
         phrases:
           type: array
-          items: { type: object }
+          items: { type: object, additionalProperties: true }
         instrumentRoles:
           type: array
-          items: { type: object }
+          items: { type: object, additionalProperties: true }
         orchestrationAssignments:
           type: array
           items: { $ref: "#/components/schemas/OrchestrationAssignment" }
@@ -5755,7 +5879,7 @@ components:
         sections: { type: array, items: { $ref: "#/components/schemas/ArrangementPlanSection" } }
         style: { $ref: "#/components/schemas/StyleSpec" }
         songModelVersion: { type: number }
-        parameters: { type: object }
+        parameters: { type: object, additionalProperties: true }
         provenance: { $ref: "#/components/schemas/ArtifactProvenance" }
         hierarchy: { $ref: "#/components/schemas/ArrangementHierarchy" }
         globalPlan: { $ref: "#/components/schemas/GlobalArrangementPlan" }
@@ -5769,6 +5893,9 @@ components:
           oneOf:
             - { $ref: "#/components/schemas/GenerationPreferenceSnapshot" }
             - { type: "null" }
+        productionBriefId: { type: string, description: Wave U - the ProductionBrief this plan was planned from; absent without a brief }
+        productionBriefDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        regeneration: { $ref: "#/components/schemas/ScopedRegenerationReport" }
     GlobalArrangementPlan:
       type: object
       description: Whole-song arrangement direction (PR-04), derived before section planning.
@@ -6085,6 +6212,99 @@ components:
         keptNotes: { type: number, minimum: 0 }
         replacedNotes: { type: number, minimum: 0 }
         locksHonoured: { type: boolean }
+    ScopedRegenerationCandidate:
+      type: object
+      description: One Arrangement Brain candidate as it fared once merged into the previous version (PR-U5).
+      required: [candidateId, label, strategy, seed, feasible, score, constraintErrors, locksHonoured, violations, replacedNotes, identicalReplacedNotes, selected]
+      properties:
+        candidateId: { type: string }
+        label: { type: string }
+        strategy: { $ref: "#/components/schemas/CandidateStrategyId" }
+        seed: { type: number }
+        feasible: { type: boolean }
+        score: { type: number }
+        constraintErrors: { type: number, minimum: 0 }
+        locksHonoured: { type: boolean }
+        violations: { type: number, minimum: 0 }
+        replacedNotes: { type: number, minimum: 0 }
+        identicalReplacedNotes: { type: number, minimum: 0, description: Replaced notes identical (id and content) to what was there - a deterministic composer writing the same part again }
+        selected: { type: boolean }
+    ScopedRegenerationReport:
+      type: object
+      description: |
+        A chat edit applied to the arrangement (PR-U5): the PR-17 partial-regeneration
+        report plus what the producer needs to check the promise - what was requested,
+        what the locks allowed and blocked, which tracks / sections / bar ranges changed,
+        what was preserved verbatim, how the locks were verified, and how the candidates
+        were ranked before one was accepted.
+      required: [version, method, requested, blockedByLock, regenerated, keptNotes, replacedNotes, locksHonoured, editTurnId, editIntent, editText, parentArrangementId, parentArrangementVersion, songModelVersion, productionBriefId, productionBriefDigestSha256, locks, unmatchedFamilies, changed, preserved, verification, identicalReplacedNotes, candidates, selectedCandidateId, plannerHintEvidence, warnings, durationMs]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        method: { type: string }
+        requested: { type: array, items: { $ref: "#/components/schemas/RegenerationScope" } }
+        blockedByLock:
+          type: array
+          items:
+            type: object
+            required: [scope, lockId]
+            properties:
+              scope: { $ref: "#/components/schemas/RegenerationScope" }
+              lockId: { type: string }
+        regenerated: { type: array, items: { $ref: "#/components/schemas/RegenerationScope" } }
+        keptNotes: { type: number, minimum: 0 }
+        replacedNotes: { type: number, minimum: 0 }
+        locksHonoured: { type: boolean }
+        editTurnId: { type: string }
+        editIntent:
+          type: string
+          enum: [reduce_density, raise_density, lower_energy, raise_energy, raise_climax, change_ornamentation, add_instrument, remove_instrument, feature_instrument, regenerate_part, change_groove, change_harmony, change_aesthetic, keep, unclear]
+        editText: { type: string }
+        parentArrangementId: { type: string }
+        parentArrangementVersion: { type: number }
+        songModelVersion: { type: number }
+        productionBriefId:
+          type: [string, "null"]
+        productionBriefDigestSha256:
+          type: [string, "null"]
+        locks: { type: array, items: { $ref: "#/components/schemas/ArrangementLock" } }
+        unmatchedFamilies: { type: array, items: { type: string } }
+        changed:
+          type: object
+          required: [instruments, sections, barRanges]
+          properties:
+            instruments: { type: array, items: { type: string } }
+            sections: { type: array, items: { type: string } }
+            barRanges:
+              type: array
+              items:
+                type: object
+                required: [instrument, sectionName, startBar, endBar, replacedNotes]
+                properties:
+                  instrument: { type: string }
+                  sectionName: { type: string }
+                  startBar: { type: number }
+                  endBar: { type: number }
+                  replacedNotes: { type: number, minimum: 0 }
+        preserved:
+          type: object
+          required: [instruments, sections, notes]
+          properties:
+            instruments: { type: array, items: { type: string } }
+            sections: { type: array, items: { type: string } }
+            notes: { type: number, minimum: 0 }
+        verification:
+          type: object
+          required: [honoured, violations, checkedLockedNotes]
+          properties:
+            honoured: { type: boolean }
+            violations: { type: array, items: { type: string } }
+            checkedLockedNotes: { type: number, minimum: 0 }
+        identicalReplacedNotes: { type: number, minimum: 0, description: Of the accepted candidate's replaced notes, how many reproduce the previous material exactly }
+        candidates: { type: array, items: { $ref: "#/components/schemas/ScopedRegenerationCandidate" } }
+        selectedCandidateId: { type: string }
+        plannerHintEvidence: { type: array, items: { type: string } }
+        warnings: { type: array, items: { type: string } }
+        durationMs: { type: number, minimum: 0 }
     AudioCritiqueDimension:
       type: string
       enum: [balance, masking, harshness, mud, lowEndConflict, transientQuality, stereoDistribution, dynamicMovement, instrumentRealism, spectralCrowding]
@@ -6640,7 +6860,7 @@ components:
         concepts: { type: array, items: { $ref: "#/components/schemas/ArrangementConcept" } }
     EditPlan:
       type: object
-      description: A chat edit request mapped onto the PR-17 lock / regeneration scopes. Returned, not executed, in PR-U2.
+      description: A chat edit request mapped onto the PR-17 lock / regeneration scopes. Returned by the chat; executed by `POST .../producer/turns/{turnId}/apply` (PR-U5).
       required: [version, derivedAt, inputsDigestSha256, method, rawText, scope, intent, preserve, modify, briefDeltas, rationale, evidence, confidence]
       properties:
         version: { type: string, enum: ["1.0"] }
@@ -6686,7 +6906,7 @@ components:
         confidence: { type: number, minimum: 0, maximum: 1 }
     ProducerChatTurnKind:
       type: string
-      enum: [intake, answers, refinement, edit, explanation, supersede, reference]
+      enum: [intake, answers, refinement, edit, explanation, supersede, reference, regeneration]
     ClarificationAnswer:
       type: object
       required: [questionId]
@@ -6718,6 +6938,9 @@ components:
         planSource: { type: string, enum: [arrangement, derived, none] }
         intentMethod: { type: string }
         referenceIds: { type: array, items: { type: string }, description: PR-U4 - the reference rows this turn touched }
+        regeneration: { $ref: "#/components/schemas/ScopedRegenerationReport" }
+        arrangementId: { type: string, description: PR-U5 - the arrangement version a regeneration turn produced }
+        arrangementVersion: { type: number }
     ProducerChatTurn:
       type: object
       required: [id, projectId, briefId, role, text, structured, createdAt]
@@ -6794,7 +7017,15 @@ components:
         clarifications: { type: array, items: { $ref: "#/components/schemas/ClarificationQuestion" } }
         editPlan: { $ref: "#/components/schemas/EditPlan" }
         explanation: { $ref: "#/components/schemas/PlanExplanation" }
+        regeneration: { $ref: "#/components/schemas/ScopedRegenerationReport" }
+        arrangementId: { type: string, description: PR-U5 - present on a regeneration turn }
+        arrangementVersion: { type: number }
         state: { $ref: "#/components/schemas/ProducerBriefState" }
+    ProducerEditApplyInput:
+      type: object
+      description: Options for applying an edit turn (PR-U5). Empty body is fine.
+      properties:
+        candidates: { type: number, minimum: 3, maximum: 5, description: How many Arrangement Brain candidates to rank before accepting one (default 3, never fewer) }
     ProducerIntakeInput:
       type: object
       required: [text]

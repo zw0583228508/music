@@ -12,6 +12,7 @@ import type { PlanExplanation } from './planExplanation';
 import type { ProducerChatTurnKind } from './producerChatTurnKind';
 import type { ProducerChatTurnStructuredIntentDelta } from './producerChatTurnStructuredIntentDelta';
 import type { ProducerChatTurnStructuredPlanSource } from './producerChatTurnStructuredPlanSource';
+import type { ScopedRegenerationReport } from './scopedRegenerationReport';
 
 /**
  * What a producer turn did to the musical state.
@@ -30,4 +31,8 @@ export interface ProducerChatTurnStructured {
   intentMethod?: string;
   /** PR-U4 - the reference rows this turn touched */
   referenceIds?: string[];
+  regeneration?: ScopedRegenerationReport;
+  /** PR-U5 - the arrangement version a regeneration turn produced */
+  arrangementId?: string;
+  arrangementVersion?: number;
 }

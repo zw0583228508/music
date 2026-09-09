@@ -11,6 +11,7 @@ import type { PlanExplanation } from './planExplanation';
 import type { ProducerBriefState } from './producerBriefState';
 import type { ProducerChatTurnKind } from './producerChatTurnKind';
 import type { ProductionBrief } from './productionBrief';
+import type { ScopedRegenerationReport } from './scopedRegenerationReport';
 
 export interface ProducerTurnResult {
   kind: ProducerChatTurnKind;
@@ -23,5 +24,9 @@ export interface ProducerTurnResult {
   clarifications: ClarificationQuestion[];
   editPlan?: EditPlan;
   explanation?: PlanExplanation;
+  regeneration?: ScopedRegenerationReport;
+  /** PR-U5 - present on a regeneration turn */
+  arrangementId?: string;
+  arrangementVersion?: number;
   state: ProducerBriefState;
 }

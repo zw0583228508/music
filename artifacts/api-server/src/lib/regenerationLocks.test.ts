@@ -3,6 +3,7 @@ import test from "node:test";
 import type { ArrangementLockSet, MusicalNote, TrackModel } from "@workspace/db";
 import {
   applyPartialRegeneration,
+  barOf,
   findLock,
   isLocked,
   planPartialRegeneration,
@@ -141,6 +142,43 @@ test("a new instrument may only enter where regeneration was allowed", () => {
   const merged = applyPartialRegeneration({ previous, next, allowed, geometry: GEOMETRY });
   const strings = merged.trackModels.find((t) => t.instrument === "strings")!;
   assert.deepEqual(strings.notes.map((n) => n.id), ["s6"], "strings only enter in the chorus");
+});
+
+test("explicit bar times map seconds to bars exactly under tempo drift; the linear grid is the fallback (PR-U5)", () => {
+  const drifting = { barSeconds: 2.5, originSeconds: 0, barStarts: [0, 2, 4.5, 7] };
+  assert.equal(barOf(0, drifting), 1);
+  assert.equal(barOf(1.99, drifting), 1);
+  assert.equal(barOf(2, drifting), 2);
+  assert.equal(barOf(4.6, drifting), 3);
+  assert.equal(barOf(6.99, drifting), 3);
+  assert.equal(barOf(7, drifting), 4);
+  assert.equal(barOf(9.5, drifting), 5, "past the last known bar the linear rate continues");
+  assert.equal(barOf(-0.1, drifting), 0, "before the first bar counts down");
+  assert.equal(barOf(4.6, GEOMETRY), 3, "the linear grid: 2 s per bar from 0");
+});
+
+test("control and articulation events split by bar like the notes: a locked bar keeps its own expression data (PR-U5)", () => {
+  const previous = [{
+    ...track("piano", [note("p1", 1, 60), note("p3", 3, 64)]),
+    cc: [{ controller: 11, time: 0.5, value: 60 }, { controller: 11, time: 4.5, value: 90 }],
+    articulations: [{ time: 2.1, name: "legato" }, { time: 6.1, name: "staccato" }],
+  }];
+  const next = [{
+    ...track("piano", [note("n3", 3, 70), note("n4", 4, 72)]),
+    cc: [{ controller: 11, time: 0.6, value: 10 }, { controller: 11, time: 4.6, value: 20 }, { controller: 11, time: 6.6, value: 30 }],
+    articulations: [{ time: 0.2, name: "legato" }, { time: 6.2, name: "marcato" }],
+  }];
+  const { allowed } = resolveRegenerationScopes(
+    [{ instrument: "piano", sectionName: "Verse", startBar: 3, endBar: 4, reason: "test" }], undefined,
+  );
+  const merged = applyPartialRegeneration({ previous, next, allowed, geometry: GEOMETRY }).trackModels[0];
+  assert.deepEqual(merged.notes.map((n) => n.id), ["p1", "n3", "n4"]);
+  assert.deepEqual(merged.cc.map((c) => [c.time, c.value]), [[0.5, 60], [4.6, 20], [6.6, 30]], "bar 1's expression is the old one; bars 3–4 take the new");
+  assert.deepEqual(merged.articulations.map((a) => [a.time, a.name]), [[2.1, "legato"], [6.2, "marcato"]]);
+  assert.equal(merged.version, 2);
+  // An untouched track is the same object, not a copy.
+  const untouched = applyPartialRegeneration({ previous, next, allowed: [], geometry: GEOMETRY }).trackModels[0];
+  assert.equal(untouched, previous[0]);
 });
 
 test("verification catches a merge that silently dropped a locked note", () => {

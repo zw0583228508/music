@@ -2819,6 +2819,69 @@ export type PartialRegenerationReport = {
   locksHonoured: boolean;
 };
 
+/** One orchestrator candidate as it fared in a scoped regeneration (PR-U5). */
+export type ScopedRegenerationCandidate = {
+  candidateId: string;
+  label: string;
+  strategy: CandidateStrategyId;
+  seed: number;
+  /** The merged arrangement passed the critic's hard rules. */
+  feasible: boolean;
+  /** Critic score of the merged arrangement (0..100). */
+  score: number;
+  /** Playability errors in the merged arrangement. */
+  constraintErrors: number;
+  locksHonoured: boolean;
+  violations: number;
+  replacedNotes: number;
+  /** Replaced notes that are identical (id and content) to what was there: a deterministic composer writing the same part again. */
+  identicalReplacedNotes: number;
+  selected: boolean;
+};
+
+/**
+ * A chat edit applied to the arrangement (PR-U5): the PR-17 report plus what
+ * the producer needs to check the promise — which tracks / sections / bar
+ * ranges changed, what was preserved verbatim, how the locks were verified,
+ * and how the candidates were ranked before one was accepted.
+ */
+export type ScopedRegenerationReport = PartialRegenerationReport & {
+  /** The producer turn whose EditPlan was applied. */
+  editTurnId: string;
+  editIntent: EditPlanIntent;
+  editText: string;
+  parentArrangementId: string;
+  parentArrangementVersion: number;
+  songModelVersion: number;
+  productionBriefId: string | null;
+  productionBriefDigestSha256: string | null;
+  /** The lock set actually applied, resolved to this arrangement's tracks. */
+  locks: ArrangementLock[];
+  /** Families the EditPlan named that no track of this arrangement carries. */
+  unmatchedFamilies: string[];
+  changed: {
+    instruments: string[];
+    sections: string[];
+    barRanges: Array<{ instrument: string; sectionName: string; startBar: number; endBar: number; replacedNotes: number }>;
+  };
+  preserved: {
+    /** Tracks carried over byte-identical (no allowed scope touched them). */
+    instruments: string[];
+    /** Sections no allowed scope touched. */
+    sections: string[];
+    notes: number;
+  };
+  verification: { honoured: boolean; violations: string[]; checkedLockedNotes: number };
+  /** Of the accepted candidate's replaced notes, how many reproduce the previous material exactly. */
+  identicalReplacedNotes: number;
+  candidates: ScopedRegenerationCandidate[];
+  selectedCandidateId: string;
+  /** One line per planner hint the brief contributed. */
+  plannerHintEvidence: string[];
+  warnings: string[];
+  durationMs: number;
+};
+
 // ---------------------------------------------------------------------------
 // Wave U — Universal Producer Intelligence (PR-U1): contracts.
 //
@@ -3522,6 +3585,8 @@ export type ArrangementPlan = {
   /** The ProductionBrief this plan was planned from (Wave U); absent without a brief. */
   productionBriefId?: string;
   productionBriefDigestSha256?: string;
+  /** Present when this version came from a chat edit applied within locks (PR-U5). */
+  regeneration?: ScopedRegenerationReport;
 };
 
 export type MusicalNote = {
@@ -3865,7 +3930,9 @@ export type ProducerChatTurnRole = "user" | "producer";
 export type ProducerChatTurnKind =
   | "intake" | "answers" | "refinement" | "edit" | "explanation" | "supersede"
   /** PR-U4: a reference was added, rescoped, fingerprinted or removed, and the brief recompiled. */
-  | "reference";
+  | "reference"
+  /** PR-U5: an edit turn's EditPlan was applied to the arrangement within its locks. */
+  | "regeneration";
 
 /** What a producer turn did to the musical state, in machine-readable form. */
 export type ProducerChatTurnStructured = {
@@ -3890,6 +3957,11 @@ export type ProducerChatTurnStructured = {
   intentMethod?: string;
   /** PR-U4: the reference rows a turn touched (added / rescoped / fingerprinted / removed / compared). */
   referenceIds?: string[];
+  /** PR-U5: what applying an edit turn did to the arrangement. */
+  regeneration?: ScopedRegenerationReport;
+  /** PR-U5: the arrangement version a regeneration turn produced. */
+  arrangementId?: string;
+  arrangementVersion?: number;
 };
 
 export const musicProductionBriefsTable = pgTable(

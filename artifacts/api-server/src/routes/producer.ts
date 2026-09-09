@@ -6,6 +6,7 @@
  *   GET  /projects/:projectId/producer/brief
  *   POST /projects/:projectId/producer/chat
  *   GET  /projects/:projectId/producer/turns
+ *   POST /projects/:projectId/producer/turns/:turnId/apply   (PR-U5)
  *   POST /projects/:projectId/producer/decisions/:decisionId/supersede
  *
  * Auth and ownership follow `routes/studio.ts`: every route needs a session,
@@ -17,6 +18,9 @@ import {
   AnswerProducerClarificationsBody,
   AnswerProducerClarificationsParams,
   AnswerProducerClarificationsResponse,
+  ApplyProducerEditBody,
+  ApplyProducerEditParams,
+  ApplyProducerEditResponse,
   GetProducerBriefParams,
   GetProducerBriefResponse,
   ListProducerTurnsBeforeParams,
@@ -46,8 +50,17 @@ import {
 import { createProducerChatDbStore } from "../lib/producerChatDbStore";
 import { openAiIntentModelSelected, selectIntentLanguageModel } from "../lib/producerIntelligence/openAiIntentModel";
 import { createStyleResearchAgent, selectResearchProviders } from "../lib/producerIntelligence/styleResearch";
+import { createScopedRegenerationService, type ScopedRegenerationService } from "../lib/scopedRegeneration";
+import { createScopedRegenerationDbStore } from "../lib/scopedRegenerationDbStore";
 
 const router: IRouter = Router();
+
+let regeneration: ScopedRegenerationService | null = null;
+/** PR-U5: applies an edit turn's EditPlan through the Arrangement Brain, within its locks. */
+function regenerationService(): ScopedRegenerationService {
+  if (!regeneration) regeneration = createScopedRegenerationService(createScopedRegenerationDbStore());
+  return regeneration;
+}
 
 let service: ProducerChatService | null = null;
 /** Shared with `routes/references.ts` (PR-U4) so a reference change recompiles through the same service. */
@@ -224,6 +237,51 @@ router.get("/projects/:projectId/producer/turns/before/:turnId", async (req, res
     hasMore: page.hasMore,
     oldestTurnId: page.turns[0]?.id ?? null,
   }));
+});
+
+router.post("/projects/:projectId/producer/turns/:turnId/apply", async (req, res): Promise<void> => {
+  const params = ApplyProducerEditParams.safeParse(req.params);
+  const body = ApplyProducerEditBody.safeParse(req.body ?? {});
+  if (!params.success || !body.success) {
+    res.status(400).json({ error: params.success ? body.error!.message : params.error.message });
+    return;
+  }
+  if (!(await ownedProject(req, res, params.data.projectId))) return;
+  try {
+    const started = Date.now();
+    const outcome = await regenerationService().apply(params.data.projectId, params.data.turnId, {
+      ...(body.data.candidates !== undefined ? { candidates: body.data.candidates } : {}),
+    });
+    // The state is read after the transaction committed; the brief itself did not change.
+    const state = await producerService().state(params.data.projectId);
+    if (!state) {
+      res.status(409).json({ error: "No production brief yet — start with intake" });
+      return;
+    }
+    logger.info(
+      {
+        projectId: params.data.projectId, editTurnId: params.data.turnId, arrangementId: outcome.arrangement.id,
+        arrangementVersion: outcome.arrangement.version, replacedNotes: outcome.report.replacedNotes,
+        keptNotes: outcome.report.keptNotes, locksHonoured: outcome.report.locksHonoured,
+        selected: outcome.report.selectedCandidateId, durationMs: Date.now() - started,
+      },
+      "producer_edit_applied",
+    );
+    res.json(ApplyProducerEditResponse.parse({
+      kind: "regeneration",
+      turnId: outcome.turnId,
+      producerTurnId: outcome.producerTurnId,
+      understanding: outcome.reply,
+      brief: state.brief,
+      clarifications: state.clarifications,
+      regeneration: outcome.report,
+      arrangementId: outcome.arrangement.id,
+      arrangementVersion: outcome.arrangement.version,
+      state: statePayload(state),
+    }));
+  } catch (error) {
+    sendError(res, error);
+  }
 });
 
 router.post("/projects/:projectId/producer/decisions/:decisionId/supersede", async (req, res): Promise<void> => {

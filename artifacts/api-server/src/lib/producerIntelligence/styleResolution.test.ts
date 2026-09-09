@@ -72,6 +72,29 @@ test("researched findings never outrank stated intent, but do outrank vocabulary
   assert.deepEqual(profile.sources, [UNIVERSAL_VOCABULARY_SOURCE.id, "fake-research/v1"]);
 });
 
+test("a `default` finding never outranks an inferred one, however confident; it only fills what nothing else populates (PR-U5)", () => {
+  const defaults: StyleKnowledgeSource = {
+    id: "personal:pap-1",
+    lookup: () => [
+      // The vocabulary infers tempoBehavior=slow from "ballad" at 0.7 × the inference confidence — far below 0.99.
+      { dimension: "tempoBehavior", value: "fast", confidence: 0.99, provenance: "default", sourceRefs: ["personal:pap-1"] },
+      { dimension: "swingRatio", value: 0.62, confidence: 0.4, provenance: "default", sourceRefs: ["personal:pap-1"] },
+    ],
+  };
+  const profile = profileOf("a ballad", { knowledge: [UNIVERSAL_VOCABULARY_SOURCE, defaults] });
+  assert.equal(profile.dimensions.tempoBehavior?.value, "slow", "the inferred reading wins over the confident default");
+  assert.equal(profile.dimensions.tempoBehavior?.provenance, "inferred");
+  assert.ok(profile.conflicts.find((c) => c.dimension === "tempoBehavior")?.values.includes("fast"), "the disagreement is recorded");
+  assert.equal(profile.dimensions.swingRatio?.value, 0.62, "an untouched dimension takes the default");
+  assert.equal(profile.dimensions.swingRatio?.provenance, "default");
+  assert.deepEqual(profile.dimensions.swingRatio?.sourceRefs, ["personal:pap-1"]);
+  assert.deepEqual(profile.sources, [UNIVERSAL_VOCABULARY_SOURCE.id, "personal:pap-1"]);
+  // Stated beats default too, whatever the confidence.
+  const stated = profileOf("cinematic", { knowledge: [UNIVERSAL_VOCABULARY_SOURCE, { id: "d", lookup: () => [{ dimension: "soundAesthetic", value: "lo_fi", confidence: 1, provenance: "default", sourceRefs: ["d"] }] }] });
+  assert.equal(stated.dimensions.soundAesthetic?.value, "cinematic");
+  assert.equal(stated.dimensions.soundAesthetic?.provenance, "stated");
+});
+
 test("pre-fetched findings (an async research agent) are merged the same way", () => {
   const profile = profileOf("80s", {
     findings: [{ dimension: "productionSchool", value: "gated_reverb_pop", confidence: 0.7, provenance: "researched", sourceRefs: ["research:x"] }],

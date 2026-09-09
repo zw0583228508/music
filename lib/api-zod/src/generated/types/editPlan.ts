@@ -13,7 +13,7 @@ import type { EditPlanVersion } from './editPlanVersion';
 import type { RegenerationScope } from './regenerationScope';
 
 /**
- * A chat edit request mapped onto the PR-17 lock / regeneration scopes. Returned, not executed, in PR-U2.
+ * A chat edit request mapped onto the PR-17 lock / regeneration scopes. Returned by the chat; executed by `POST .../producer/turns/{turnId}/apply` (PR-U5).
  */
 export interface EditPlan {
   version: EditPlanVersion;

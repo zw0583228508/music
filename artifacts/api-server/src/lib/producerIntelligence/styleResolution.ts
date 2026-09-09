@@ -40,8 +40,13 @@ export type StyleKnowledgeFinding = {
   value: StyleDimensionValue;
   /** 0..1 */
   confidence: number;
-  provenance: "inferred" | "researched";
-  /** Evidence ids: `vocab:<rule>`, `research:<source>` ... */
+  /**
+   * `inferred` (the vocabulary, a reference fingerprint), `researched` (PR-U3),
+   * or `default` (PR-U5: the owner's personal defaults, PR-30) — the lowest
+   * rung, outranked by every inferred reading whatever its confidence.
+   */
+  provenance: "inferred" | "researched" | "default";
+  /** Evidence ids: `vocab:<rule>`, `research:<source>`, `personal:<profile id>` ... */
   sourceRefs: string[];
 };
 

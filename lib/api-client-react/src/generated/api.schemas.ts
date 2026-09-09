@@ -3525,6 +3525,1430 @@ export interface ArrangementUpdate {
   sections?: ArrangementSection[];
 }
 
+export type ArrangementDetailMode = typeof ArrangementDetailMode[keyof typeof ArrangementDetailMode];
+
+
+export const ArrangementDetailMode = {
+  QUICK_ARRANGE: 'QUICK_ARRANGE',
+  STUDIO: 'STUDIO',
+  PRO_SCORE: 'PRO_SCORE',
+} as const;
+
+export type ArrangementDetailStatus = typeof ArrangementDetailStatus[keyof typeof ArrangementDetailStatus];
+
+
+export const ArrangementDetailStatus = {
+  draft: 'draft',
+  generating: 'generating',
+  ready: 'ready',
+} as const;
+
+export type ArrangementDetailParameters = { [key: string]: unknown };
+
+export type ArrangementPlanSectionTracks = {[key: string]: string};
+
+/**
+ * Per-track orchestration intent indexed by track id.
+ */
+export type ArrangementPlanSectionTrackDirectives = {[key: string]: TrackDirective};
+
+export interface ArrangementPlanSection {
+  section: string;
+  startBar: number;
+  endBar: number;
+  energy: number;
+  density: number;
+  tracks: ArrangementPlanSectionTracks;
+  operations: string[];
+  /** Explicit track ids active in this section. */
+  activeTracks?: string[];
+  /** Per-track orchestration intent indexed by track id. */
+  trackDirectives?: ArrangementPlanSectionTrackDirectives;
+}
+
+export type StyleSpecTempoCharacter = typeof StyleSpecTempoCharacter[keyof typeof StyleSpecTempoCharacter];
+
+
+export const StyleSpecTempoCharacter = {
+  laid_back: 'laid_back',
+  steady: 'steady',
+  driving: 'driving',
+  rubato: 'rubato',
+} as const;
+
+export type StyleGrammarVocabularyGroove = typeof StyleGrammarVocabularyGroove[keyof typeof StyleGrammarVocabularyGroove];
+
+
+export const StyleGrammarVocabularyGroove = {
+  straight: 'straight',
+  swung: 'swung',
+  syncopated: 'syncopated',
+  four_on_floor: 'four_on_floor',
+} as const;
+
+export type StyleGrammarVocabularyVoicing = typeof StyleGrammarVocabularyVoicing[keyof typeof StyleGrammarVocabularyVoicing];
+
+
+export const StyleGrammarVocabularyVoicing = {
+  close: 'close',
+  open: 'open',
+  drop_two: 'drop_two',
+  quartal: 'quartal',
+  wide: 'wide',
+} as const;
+
+export type StyleGrammarVocabularyArticulation = typeof StyleGrammarVocabularyArticulation[keyof typeof StyleGrammarVocabularyArticulation];
+
+
+export const StyleGrammarVocabularyArticulation = {
+  legato: 'legato',
+  tight: 'tight',
+  accented: 'accented',
+  pulsed: 'pulsed',
+} as const;
+
+export type StyleGrammarVocabularyInstrumentation = typeof StyleGrammarVocabularyInstrumentation[keyof typeof StyleGrammarVocabularyInstrumentation];
+
+
+export const StyleGrammarVocabularyInstrumentation = {
+  acoustic: 'acoustic',
+  electronic: 'electronic',
+  hybrid: 'hybrid',
+  orchestral: 'orchestral',
+} as const;
+
+export type StyleGrammarVocabularyPhraseBehavior = typeof StyleGrammarVocabularyPhraseBehavior[keyof typeof StyleGrammarVocabularyPhraseBehavior];
+
+
+export const StyleGrammarVocabularyPhraseBehavior = {
+  call_response: 'call_response',
+  continuous: 'continuous',
+  sparse_answers: 'sparse_answers',
+  motivic: 'motivic',
+} as const;
+
+export type StyleGrammarVocabularyFills = typeof StyleGrammarVocabularyFills[keyof typeof StyleGrammarVocabularyFills];
+
+
+export const StyleGrammarVocabularyFills = {
+  none: 'none',
+  cadential: 'cadential',
+  frequent: 'frequent',
+  sectional: 'sectional',
+} as const;
+
+export type StyleGrammarVocabularyTransitions = typeof StyleGrammarVocabularyTransitions[keyof typeof StyleGrammarVocabularyTransitions];
+
+
+export const StyleGrammarVocabularyTransitions = {
+  hard_cut: 'hard_cut',
+  thin_build: 'thin_build',
+  riser: 'riser',
+  orchestral_swell: 'orchestral_swell',
+} as const;
+
+export type StyleGrammarVocabularyDevelopment = typeof StyleGrammarVocabularyDevelopment[keyof typeof StyleGrammarVocabularyDevelopment];
+
+
+export const StyleGrammarVocabularyDevelopment = {
+  repetition: 'repetition',
+  additive: 'additive',
+  transformative: 'transformative',
+  dynamic_arc: 'dynamic_arc',
+} as const;
+
+export type StyleGrammarVocabulary = {
+  groove: StyleGrammarVocabularyGroove;
+  voicing: StyleGrammarVocabularyVoicing;
+  articulation: StyleGrammarVocabularyArticulation;
+  instrumentation: StyleGrammarVocabularyInstrumentation;
+  phraseBehavior: StyleGrammarVocabularyPhraseBehavior;
+  fills: StyleGrammarVocabularyFills;
+  transitions: StyleGrammarVocabularyTransitions;
+  development: StyleGrammarVocabularyDevelopment;
+};
+
+export interface StyleGrammar {
+  version: '1.0';
+  /** @pattern ^[a-f0-9]{64}$ */
+  evidenceSha256: string;
+  vocabulary: StyleGrammarVocabulary;
+}
+
+export type StyleSpecRhythm = { [key: string]: unknown };
+
+export type StyleSpecHarmony = { [key: string]: unknown };
+
+export type StyleSpecInstrumentation = { [key: string]: unknown };
+
+export type StyleSpecOrchestration = { [key: string]: unknown };
+
+export type StyleSpecProduction = { [key: string]: unknown };
+
+export type StyleSpecDynamics = { [key: string]: unknown };
+
+export interface StyleSpec {
+  genre: string;
+  subgenre: string;
+  era: string;
+  tempoCharacter: StyleSpecTempoCharacter;
+  rhythm: StyleSpecRhythm;
+  harmony: StyleSpecHarmony;
+  instrumentation: StyleSpecInstrumentation;
+  orchestration: StyleSpecOrchestration;
+  production: StyleSpecProduction;
+  dynamics: StyleSpecDynamics;
+  grammar?: StyleGrammar;
+}
+
+export type ArrangementHierarchyStatus = typeof ArrangementHierarchyStatus[keyof typeof ArrangementHierarchyStatus];
+
+
+export const ArrangementHierarchyStatus = {
+  applied: 'applied',
+  no_op: 'no_op',
+} as const;
+
+export type ArrangementHierarchySongIntent = typeof ArrangementHierarchySongIntent[keyof typeof ArrangementHierarchySongIntent];
+
+
+export const ArrangementHierarchySongIntent = {
+  development_arc: 'development_arc',
+  preserve_observed_form: 'preserve_observed_form',
+} as const;
+
+export type ArrangementHierarchySectionsItemFunction = typeof ArrangementHierarchySectionsItemFunction[keyof typeof ArrangementHierarchySectionsItemFunction];
+
+
+export const ArrangementHierarchySectionsItemFunction = {
+  intro: 'intro',
+  verse: 'verse',
+  prechorus: 'prechorus',
+  chorus: 'chorus',
+  bridge: 'bridge',
+  outro: 'outro',
+  neutral: 'neutral',
+} as const;
+
+export type ArrangementHierarchySectionsItemDevelopment = typeof ArrangementHierarchySectionsItemDevelopment[keyof typeof ArrangementHierarchySectionsItemDevelopment];
+
+
+export const ArrangementHierarchySectionsItemDevelopment = {
+  initial: 'initial',
+  development: 'development',
+  reprise: 'reprise',
+  neutral: 'neutral',
+} as const;
+
+export type ArrangementHierarchyBarsItemVocalSpace = typeof ArrangementHierarchyBarsItemVocalSpace[keyof typeof ArrangementHierarchyBarsItemVocalSpace];
+
+
+export const ArrangementHierarchyBarsItemVocalSpace = {
+  occupied: 'occupied',
+  available: 'available',
+  unknown: 'unknown',
+} as const;
+
+export type ArrangementHierarchyEventsItemIntent = typeof ArrangementHierarchyEventsItemIntent[keyof typeof ArrangementHierarchyEventsItemIntent];
+
+
+export const ArrangementHierarchyEventsItemIntent = {
+  support_vocal: 'support_vocal',
+  use_vocal_space: 'use_vocal_space',
+  follow_section: 'follow_section',
+} as const;
+
+export type ArrangementHierarchyEventsItemSource = typeof ArrangementHierarchyEventsItemSource[keyof typeof ArrangementHierarchyEventsItemSource];
+
+
+export const ArrangementHierarchyEventsItemSource = {
+  section: 'section',
+  vocal_phrase: 'vocal_phrase',
+  vocal_space: 'vocal_space',
+} as const;
+
+export type ArrangementHierarchySong = {
+  id: string;
+  intent: ArrangementHierarchySongIntent;
+  /** @nullable */
+  climaxSectionId: string | null;
+};
+
+export type ArrangementHierarchySectionsItem = {
+  id: string;
+  sourceSection: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  function: ArrangementHierarchySectionsItemFunction;
+  development: ArrangementHierarchySectionsItemDevelopment;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  targetEnergy: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  targetDensity: number;
+  phraseIds: string[];
+  barIds: string[];
+};
+
+export type ArrangementHierarchyPhrasesItem = {
+  id: string;
+  sectionId: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+  intent: 'protect_vocal_phrase';
+};
+
+export type ArrangementHierarchyBarsItem = {
+  id: string;
+  sectionId: string;
+  /** @minimum 1 */
+  bar: number;
+  meter: string;
+  phraseIds: string[];
+  vocalSpace: ArrangementHierarchyBarsItemVocalSpace;
+};
+
+export type ArrangementHierarchyEventsItem = {
+  id: string;
+  sectionId: string;
+  barId: string;
+  trackId: string;
+  intent: ArrangementHierarchyEventsItemIntent;
+  source: ArrangementHierarchyEventsItemSource;
+};
+
+export interface ArrangementHierarchy {
+  version: '1.0';
+  status: ArrangementHierarchyStatus;
+  /** @nullable */
+  reason: string | null;
+  /**
+     * @minItems 5
+     * @maxItems 5
+     */
+  precedence: ['song', 'section', 'phrase', 'bar', 'event'];
+  song: ArrangementHierarchySong;
+  sections: ArrangementHierarchySectionsItem[];
+  phrases: ArrangementHierarchyPhrasesItem[];
+  bars: ArrangementHierarchyBarsItem[];
+  events: ArrangementHierarchyEventsItem[];
+}
+
+export type GlobalArrangementPlanVersion = typeof GlobalArrangementPlanVersion[keyof typeof GlobalArrangementPlanVersion];
+
+
+export const GlobalArrangementPlanVersion = {
+  '10': '1.0',
+} as const;
+
+export type GlobalArrangementPlanSectionTargetsItemRole = typeof GlobalArrangementPlanSectionTargetsItemRole[keyof typeof GlobalArrangementPlanSectionTargetsItemRole];
+
+
+export const GlobalArrangementPlanSectionTargetsItemRole = {
+  intro: 'intro',
+  verse: 'verse',
+  prechorus: 'prechorus',
+  chorus: 'chorus',
+  bridge: 'bridge',
+  breakdown: 'breakdown',
+  outro: 'outro',
+  instrumental: 'instrumental',
+  neutral: 'neutral',
+} as const;
+
+export type GlobalArrangementPlanGrooveStrategy = typeof GlobalArrangementPlanGrooveStrategy[keyof typeof GlobalArrangementPlanGrooveStrategy];
+
+
+export const GlobalArrangementPlanGrooveStrategy = {
+  steady_pulse: 'steady_pulse',
+  syncopated: 'syncopated',
+  swing: 'swing',
+  half_time_feel: 'half_time_feel',
+  four_on_floor: 'four_on_floor',
+  rubato: 'rubato',
+} as const;
+
+export type GlobalArrangementPlanOrchestrationStrategy = typeof GlobalArrangementPlanOrchestrationStrategy[keyof typeof GlobalArrangementPlanOrchestrationStrategy];
+
+
+export const GlobalArrangementPlanOrchestrationStrategy = {
+  layered_build: 'layered_build',
+  call_and_response: 'call_and_response',
+  wave_dynamics: 'wave_dynamics',
+  static_bed: 'static_bed',
+  sparse_to_full: 'sparse_to_full',
+} as const;
+
+export type GlobalArrangementPlanMotifStrategy = typeof GlobalArrangementPlanMotifStrategy[keyof typeof GlobalArrangementPlanMotifStrategy];
+
+
+export const GlobalArrangementPlanMotifStrategy = {
+  recurring_hook: 'recurring_hook',
+  developing_motif: 'developing_motif',
+  through_composed: 'through_composed',
+} as const;
+
+export type GlobalArrangementPlanContrastStrategy = typeof GlobalArrangementPlanContrastStrategy[keyof typeof GlobalArrangementPlanContrastStrategy];
+
+
+export const GlobalArrangementPlanContrastStrategy = {
+  dynamic_contrast: 'dynamic_contrast',
+  textural_contrast: 'textural_contrast',
+  harmonic_contrast: 'harmonic_contrast',
+  register_contrast: 'register_contrast',
+  minimal_contrast: 'minimal_contrast',
+} as const;
+
+export type GlobalArrangementPlanProductionAesthetic = typeof GlobalArrangementPlanProductionAesthetic[keyof typeof GlobalArrangementPlanProductionAesthetic];
+
+
+export const GlobalArrangementPlanProductionAesthetic = {
+  intimate: 'intimate',
+  polished_pop: 'polished_pop',
+  cinematic: 'cinematic',
+  raw_band: 'raw_band',
+  electronic: 'electronic',
+  orchestral: 'orchestral',
+} as const;
+
+export type GlobalArrangementPlanInstrumentPaletteItem = {
+  role: string;
+  /** @minimum 1 */
+  priority: number;
+  rationale: string;
+};
+
+export type GlobalArrangementPlanSectionTargetsItem = {
+  sectionName: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  energy: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  density: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  tension: number;
+  role: GlobalArrangementPlanSectionTargetsItemRole;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  noveltyVsPrevious: number;
+};
+
+export type GlobalArrangementPlanClimax = {
+  sectionName: string;
+  /** @minimum 1 */
+  atBar: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  energy: number;
+} | null;
+
+export type GlobalArrangementPlanSecondaryClimax = {
+  sectionName: string;
+  /** @minimum 1 */
+  atBar: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  energy: number;
+} | null;
+
+/**
+ * Whole-song arrangement direction (PR-04), derived before section planning.
+ */
+export interface GlobalArrangementPlan {
+  version: GlobalArrangementPlanVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  confidence: number;
+  style: string;
+  substyle: string | null;
+  instrumentPalette: GlobalArrangementPlanInstrumentPaletteItem[];
+  sectionTargets: GlobalArrangementPlanSectionTargetsItem[];
+  climax: GlobalArrangementPlanClimax;
+  secondaryClimax: GlobalArrangementPlanSecondaryClimax;
+  grooveStrategy: GlobalArrangementPlanGrooveStrategy;
+  orchestrationStrategy: GlobalArrangementPlanOrchestrationStrategy;
+  motifStrategy: GlobalArrangementPlanMotifStrategy;
+  contrastStrategy: GlobalArrangementPlanContrastStrategy;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  harmonicComplexity: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  rhythmicComplexity: number;
+  productionAesthetic: GlobalArrangementPlanProductionAesthetic;
+}
+
+export type SectionPhrasePlanVersion = typeof SectionPhrasePlanVersion[keyof typeof SectionPhrasePlanVersion];
+
+
+export const SectionPhrasePlanVersion = {
+  '10': '1.0',
+} as const;
+
+export type SectionPlanFunction = typeof SectionPlanFunction[keyof typeof SectionPlanFunction];
+
+
+export const SectionPlanFunction = {
+  intro: 'intro',
+  verse: 'verse',
+  prechorus: 'prechorus',
+  chorus: 'chorus',
+  bridge: 'bridge',
+  breakdown: 'breakdown',
+  outro: 'outro',
+  instrumental: 'instrumental',
+  neutral: 'neutral',
+} as const;
+
+export type SectionPlanRegisterDistribution = {[key: string]: number};
+
+export interface SectionPlan {
+  sectionName: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  function: SectionPlanFunction;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  energy: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  density: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  tension: number;
+  groove: string;
+  activeInstrumentFamilies: string[];
+  inactiveInstrumentFamilies: string[];
+  leadRole: string;
+  supportingRoles: string[];
+  registerDistribution: SectionPlanRegisterDistribution;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  rhythmicActivity: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  melodicActivity: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  harmonicActivity: number;
+  transitionIn: string;
+  transitionOut: string;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  noveltyRelativeToPreviousSection: number;
+}
+
+export type PhrasePlanRole = typeof PhrasePlanRole[keyof typeof PhrasePlanRole];
+
+
+export const PhrasePlanRole = {
+  opening: 'opening',
+  development: 'development',
+  response: 'response',
+  cadence: 'cadence',
+  pickup: 'pickup',
+  fill: 'fill',
+} as const;
+
+export interface PhrasePlan {
+  id: string;
+  sectionName: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  role: PhrasePlanRole;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  energyTarget: number;
+  entersFamilies: string[];
+  leavesFamilies: string[];
+}
+
+export type InstrumentArrangementRole = typeof InstrumentArrangementRole[keyof typeof InstrumentArrangementRole];
+
+
+export const InstrumentArrangementRole = {
+  LEAD: 'LEAD',
+  FOUNDATION: 'FOUNDATION',
+  BASS: 'BASS',
+  GROOVE: 'GROOVE',
+  RHYTHMIC_HARMONY: 'RHYTHMIC_HARMONY',
+  HARMONIC_BED: 'HARMONIC_BED',
+  OSTINATO: 'OSTINATO',
+  COUNTER_MELODY: 'COUNTER_MELODY',
+  CALL_RESPONSE: 'CALL_RESPONSE',
+  ACCENT: 'ACCENT',
+  PAD: 'PAD',
+  FILL: 'FILL',
+  TRANSITION: 'TRANSITION',
+  CLIMAX_LAYER: 'CLIMAX_LAYER',
+} as const;
+
+export type RegisterBand = typeof RegisterBand[keyof typeof RegisterBand];
+
+
+export const RegisterBand = {
+  low: 'low',
+  low_mid: 'low_mid',
+  mid: 'mid',
+  upper_mid: 'upper_mid',
+  high: 'high',
+} as const;
+
+export type InstrumentRoleAssignmentVoicingStrategy = typeof InstrumentRoleAssignmentVoicingStrategy[keyof typeof InstrumentRoleAssignmentVoicingStrategy];
+
+
+export const InstrumentRoleAssignmentVoicingStrategy = {
+  open: 'open',
+  close: 'close',
+  unison: 'unison',
+  spread: 'spread',
+  drone: 'drone',
+  percussive: 'percussive',
+} as const;
+
+export type InstrumentRoleAssignmentArticulationFamily = typeof InstrumentRoleAssignmentArticulationFamily[keyof typeof InstrumentRoleAssignmentArticulationFamily];
+
+
+export const InstrumentRoleAssignmentArticulationFamily = {
+  legato: 'legato',
+  staccato: 'staccato',
+  sustain: 'sustain',
+  pluck: 'pluck',
+  percussive: 'percussive',
+  mixed: 'mixed',
+} as const;
+
+export type InstrumentRoleAssignmentInteractionWithLead = typeof InstrumentRoleAssignmentInteractionWithLead[keyof typeof InstrumentRoleAssignmentInteractionWithLead];
+
+
+export const InstrumentRoleAssignmentInteractionWithLead = {
+  avoid: 'avoid',
+  support: 'support',
+  answer: 'answer',
+  double: 'double',
+  independent: 'independent',
+} as const;
+
+export interface InstrumentRoleAssignment {
+  sectionName: string;
+  instrument: string;
+  role: InstrumentArrangementRole;
+  register: RegisterBand;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  density: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  rhythmicActivity: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  melodicActivity: number;
+  voicingStrategy: InstrumentRoleAssignmentVoicingStrategy;
+  articulationFamily: InstrumentRoleAssignmentArticulationFamily;
+  dynamicShape: string;
+  interactionWithLead: InstrumentRoleAssignmentInteractionWithLead;
+  /** @minimum 1 */
+  entryBar: number;
+  /** @minimum 1 */
+  exitBar: number;
+}
+
+/**
+ * Section / phrase / instrument-role plan (PR-05).
+ */
+export interface SectionPhrasePlan {
+  version: SectionPhrasePlanVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  sections: SectionPlan[];
+  phrases: PhrasePlan[];
+  roleAssignments: InstrumentRoleAssignment[];
+}
+
+export type OrchestrationBudgetPlanVersion = typeof OrchestrationBudgetPlanVersion[keyof typeof OrchestrationBudgetPlanVersion];
+
+
+export const OrchestrationBudgetPlanVersion = {
+  '10': '1.0',
+} as const;
+
+export interface OrchestrationInstrumentAdjustment {
+  instrument: string;
+  /** @minimum 0 */
+  densityMultiplier: number;
+  registerShift: number;
+  note: string;
+}
+
+export type OrchestrationBudgetWindowBudgets = {
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  totalDensity: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  melodic: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  rhythmic: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  harmonic: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  register: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  spectral: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  attention: number;
+};
+
+export interface OrchestrationBudgetWindow {
+  id: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  vocalAttention: number;
+  budgets: OrchestrationBudgetWindowBudgets;
+  instrumentAdjustments: OrchestrationInstrumentAdjustment[];
+}
+
+export type RegisterOccupancySpanResolutionsItemAction = typeof RegisterOccupancySpanResolutionsItemAction[keyof typeof RegisterOccupancySpanResolutionsItemAction];
+
+
+export const RegisterOccupancySpanResolutionsItemAction = {
+  drop_octave: 'drop_octave',
+  raise_octave: 'raise_octave',
+  simplify: 'simplify',
+  thin_voicing: 'thin_voicing',
+} as const;
+
+export type RegisterOccupancySpanOccupancy = {[key: string]: number};
+
+export type RegisterOccupancySpanResolutionsItem = {
+  instrument: string;
+  action: RegisterOccupancySpanResolutionsItemAction;
+  band: RegisterBand;
+};
+
+export interface RegisterOccupancySpan {
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  occupancy: RegisterOccupancySpanOccupancy;
+  overcrowdedBands: RegisterBand[];
+  resolutions: RegisterOccupancySpanResolutionsItem[];
+}
+
+/**
+ * Orchestration Budget Engine (PR-06) — per-moment density/attention budgets + register occupancy.
+ */
+export interface OrchestrationBudgetPlan {
+  version: OrchestrationBudgetPlanVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  windows: OrchestrationBudgetWindow[];
+  registerOccupancy: RegisterOccupancySpan[];
+}
+
+export type TransitionPlanSetVersion = typeof TransitionPlanSetVersion[keyof typeof TransitionPlanSetVersion];
+
+
+export const TransitionPlanSetVersion = {
+  '10': '1.0',
+} as const;
+
+export type TransitionPlanKind = typeof TransitionPlanKind[keyof typeof TransitionPlanKind];
+
+
+export const TransitionPlanKind = {
+  build: 'build',
+  drop: 'drop',
+  continue: 'continue',
+  break: 'break',
+} as const;
+
+export type TransitionPlanHarmonicApproach = typeof TransitionPlanHarmonicApproach[keyof typeof TransitionPlanHarmonicApproach];
+
+
+export const TransitionPlanHarmonicApproach = {
+  dominant_prep: 'dominant_prep',
+  plagal: 'plagal',
+  chromatic: 'chromatic',
+  static: 'static',
+  none: 'none',
+} as const;
+
+export type TransitionDevice = typeof TransitionDevice[keyof typeof TransitionDevice];
+
+
+export const TransitionDevice = {
+  drum_fill: 'drum_fill',
+  bass_pickup: 'bass_pickup',
+  keys_pickup: 'keys_pickup',
+  guitar_pickup: 'guitar_pickup',
+  string_run: 'string_run',
+  brass_push: 'brass_push',
+  cymbal_swell: 'cymbal_swell',
+  cymbal_choke: 'cymbal_choke',
+  break: 'break',
+  stop: 'stop',
+  anticipation: 'anticipation',
+  turnaround: 'turnaround',
+  riser: 'riser',
+  reverse: 'reverse',
+  build_up: 'build_up',
+  breakdown: 'breakdown',
+  ending_hit: 'ending_hit',
+  ritardando: 'ritardando',
+} as const;
+
+export interface TransitionDevicePlan {
+  device: TransitionDevice;
+  instrument: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  intensity: number;
+  rationale: string;
+}
+
+export interface TransitionPlan {
+  id: string;
+  fromSection: string;
+  toSection: string;
+  /** @minimum 1 */
+  atBar: number;
+  /** @minimum 0 */
+  approachBars: number;
+  kind: TransitionPlanKind;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  strength: number;
+  harmonicApproach: TransitionPlanHarmonicApproach;
+  vocalSafe: boolean;
+  devices: TransitionDevicePlan[];
+}
+
+/**
+ * Transition Engine (PR-08) — planned devices per section boundary.
+ */
+export interface TransitionPlanSet {
+  version: TransitionPlanSetVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  transitions: TransitionPlan[];
+}
+
+export type PartComposerPlanVersion = typeof PartComposerPlanVersion[keyof typeof PartComposerPlanVersion];
+
+
+export const PartComposerPlanVersion = {
+  '10': '1.0',
+} as const;
+
+export type PartTask = typeof PartTask[keyof typeof PartTask];
+
+
+export const PartTask = {
+  DRUMS: 'DRUMS',
+  PERCUSSION: 'PERCUSSION',
+  BASS: 'BASS',
+  PIANO: 'PIANO',
+  KEYS: 'KEYS',
+  ACOUSTIC_GUITAR: 'ACOUSTIC_GUITAR',
+  ELECTRIC_GUITAR: 'ELECTRIC_GUITAR',
+  STRINGS: 'STRINGS',
+  BRASS: 'BRASS',
+  WOODWINDS: 'WOODWINDS',
+  PAD: 'PAD',
+  OSTINATO: 'OSTINATO',
+  COUNTER_MELODY: 'COUNTER_MELODY',
+  CALL_RESPONSE: 'CALL_RESPONSE',
+  FILL: 'FILL',
+  TRANSITION: 'TRANSITION',
+  INTRO: 'INTRO',
+  ENDING: 'ENDING',
+} as const;
+
+export type PartComposerPlanTasksItem = {
+  id: string;
+  task: PartTask;
+  sectionName: string;
+  instrument: string;
+  role: InstrumentArrangementRole;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  /** @minimum 0 */
+  seed: number;
+  dependsOn: string[];
+};
+
+/**
+ * Part Composer contract (PR-09) — compact index of parts to compose.
+ */
+export interface PartComposerPlan {
+  version: PartComposerPlanVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  tasks: PartComposerPlanTasksItem[];
+}
+
+export type CandidateGenerationPlanVersion = typeof CandidateGenerationPlanVersion[keyof typeof CandidateGenerationPlanVersion];
+
+
+export const CandidateGenerationPlanVersion = {
+  '10': '1.0',
+} as const;
+
+export type CandidateStrategyId = typeof CandidateStrategyId[keyof typeof CandidateStrategyId];
+
+
+export const CandidateStrategyId = {
+  conservative: 'conservative',
+  rhythmic: 'rhythmic',
+  melodic: 'melodic',
+  sparse: 'sparse',
+  adventurous: 'adventurous',
+} as const;
+
+export type CandidateGenerationPlanCandidatesItemParameters = {[key: string]: number};
+
+export type CandidateGenerationPlanCandidatesItemPartAdjustmentsItem = {
+  taskId: string;
+  /** @minimum 0 */
+  densityMultiplier: number;
+  /** @minimum 0 */
+  seed: number;
+  note: string;
+};
+
+export type CandidateGenerationPlanCandidatesItem = {
+  candidateId: string;
+  label: string;
+  strategy: CandidateStrategyId;
+  /** @minimum 0 */
+  seed: number;
+  parameters: CandidateGenerationPlanCandidatesItemParameters;
+  partAdjustments: CandidateGenerationPlanCandidatesItemPartAdjustmentsItem[];
+};
+
+/**
+ * Deliberate candidate-generation strategies (PR-10).
+ */
+export interface CandidateGenerationPlan {
+  version: CandidateGenerationPlanVersion;
+  derivedAt: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  inputsDigestSha256: string;
+  method: string;
+  /** @minimum 0 */
+  baseSeed: number;
+  candidates: CandidateGenerationPlanCandidatesItem[];
+}
+
+export type CompositionIntelligencePlanVersion = typeof CompositionIntelligencePlanVersion[keyof typeof CompositionIntelligencePlanVersion];
+
+
+export const CompositionIntelligencePlanVersion = {
+  '10': '1.0',
+  '20': '2.0',
+} as const;
+
+export type CompositionIntelligencePlanMode = typeof CompositionIntelligencePlanMode[keyof typeof CompositionIntelligencePlanMode];
+
+
+export const CompositionIntelligencePlanMode = {
+  legacy: 'legacy',
+  reasoning_core: 'reasoning_core',
+} as const;
+
+export type CompositionIntelligencePlanSongIntent = typeof CompositionIntelligencePlanSongIntent[keyof typeof CompositionIntelligencePlanSongIntent];
+
+
+export const CompositionIntelligencePlanSongIntent = {
+  preserve_observed_form: 'preserve_observed_form',
+  develop_observed_form: 'develop_observed_form',
+} as const;
+
+export type OrchestrationAssignmentRole = typeof OrchestrationAssignmentRole[keyof typeof OrchestrationAssignmentRole];
+
+
+export const OrchestrationAssignmentRole = {
+  foundation: 'foundation',
+  pulse: 'pulse',
+  groove: 'groove',
+  harmonic_support: 'harmonic_support',
+  texture: 'texture',
+  countermelody: 'countermelody',
+  hook: 'hook',
+  response: 'response',
+  lift: 'lift',
+  transition: 'transition',
+  accent: 'accent',
+  doubling: 'doubling',
+  pad: 'pad',
+} as const;
+
+export type OrchestrationAssignmentRegister = typeof OrchestrationAssignmentRegister[keyof typeof OrchestrationAssignmentRegister];
+
+
+export const OrchestrationAssignmentRegister = {
+  low: 'low',
+  middle: 'middle',
+  high: 'high',
+} as const;
+
+export interface OrchestrationAssignment {
+  sectionId: string;
+  phraseId: string;
+  trackId: string;
+  role: OrchestrationAssignmentRole;
+  register: OrchestrationAssignmentRegister;
+  /** @nullable */
+  handoffFromTrackId: string | null;
+  /** @nullable */
+  doublingTrackId: string | null;
+}
+
+export type CompositionIntelligencePlanTensionReleaseItem = { [key: string]: unknown };
+
+export type CompositionIntelligencePlanPhrasesItem = { [key: string]: unknown };
+
+export type CompositionIntelligencePlanInstrumentRolesItem = { [key: string]: unknown };
+
+export interface CompositionIntelligencePlan {
+  version: CompositionIntelligencePlanVersion;
+  mode: CompositionIntelligencePlanMode;
+  precedence: string[];
+  seed: number;
+  evidenceSha256: string;
+  songIntent: CompositionIntelligencePlanSongIntent;
+  tensionRelease: CompositionIntelligencePlanTensionReleaseItem[];
+  phrases: CompositionIntelligencePlanPhrasesItem[];
+  instrumentRoles: CompositionIntelligencePlanInstrumentRolesItem[];
+  orchestrationAssignments?: OrchestrationAssignment[];
+}
+
+export type GenerationPreferenceEffectsRoleEmphasis = typeof GenerationPreferenceEffectsRoleEmphasis[keyof typeof GenerationPreferenceEffectsRoleEmphasis];
+
+
+export const GenerationPreferenceEffectsRoleEmphasis = {
+  foundation: 'foundation',
+  pulse: 'pulse',
+  harmony: 'harmony',
+  counterline: 'counterline',
+  texture: 'texture',
+} as const;
+
+export type GenerationPreferenceEffectsVoicingCharacter = typeof GenerationPreferenceEffectsVoicingCharacter[keyof typeof GenerationPreferenceEffectsVoicingCharacter];
+
+
+export const GenerationPreferenceEffectsVoicingCharacter = {
+  close: 'close',
+  open: 'open',
+  wide: 'wide',
+} as const;
+
+export type GenerationPreferenceEffectsDevelopment = typeof GenerationPreferenceEffectsDevelopment[keyof typeof GenerationPreferenceEffectsDevelopment];
+
+
+export const GenerationPreferenceEffectsDevelopment = {
+  restrained: 'restrained',
+  balanced: 'balanced',
+  progressive: 'progressive',
+} as const;
+
+export interface GenerationPreferenceEffects {
+  /**
+     * @minimum -0.35
+     * @maximum 0.35
+     */
+  orchestrationDensity: number;
+  /**
+     * @minimum 0.25
+     * @maximum 0.75
+     */
+  responseFrequency: number;
+  roleEmphasis: GenerationPreferenceEffectsRoleEmphasis;
+  voicingCharacter: GenerationPreferenceEffectsVoicingCharacter;
+  development: GenerationPreferenceEffectsDevelopment;
+  /**
+     * @minimum 0.25
+     * @maximum 0.75
+     */
+  transitionIntensity: number;
+}
+
+export interface GenerationPreferenceSnapshot {
+  contractVersion: '1.0';
+  /** @minLength 1 */
+  calibrationId: string;
+  /** @minimum 1 */
+  calibrationVersion: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  heldOutAgreement: number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  baselineAgreement: number;
+  /** @minimum 5 */
+  heldOutExamples: number;
+  /** @pattern ^[a-f0-9]{64}$ */
+  evaluationSha256: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  evidenceSha256: string;
+  effects: GenerationPreferenceEffects;
+}
+
+export type ScopedRegenerationReportVersion = typeof ScopedRegenerationReportVersion[keyof typeof ScopedRegenerationReportVersion];
+
+
+export const ScopedRegenerationReportVersion = {
+  '10': '1.0',
+} as const;
+
+export interface RegenerationScope {
+  instrument: string;
+  sectionName: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  reason: string;
+}
+
+export type ScopedRegenerationReportEditIntent = typeof ScopedRegenerationReportEditIntent[keyof typeof ScopedRegenerationReportEditIntent];
+
+
+export const ScopedRegenerationReportEditIntent = {
+  reduce_density: 'reduce_density',
+  raise_density: 'raise_density',
+  lower_energy: 'lower_energy',
+  raise_energy: 'raise_energy',
+  raise_climax: 'raise_climax',
+  change_ornamentation: 'change_ornamentation',
+  add_instrument: 'add_instrument',
+  remove_instrument: 'remove_instrument',
+  feature_instrument: 'feature_instrument',
+  regenerate_part: 'regenerate_part',
+  change_groove: 'change_groove',
+  change_harmony: 'change_harmony',
+  change_aesthetic: 'change_aesthetic',
+  keep: 'keep',
+  unclear: 'unclear',
+} as const;
+
+export type LockScope = typeof LockScope[keyof typeof LockScope];
+
+
+export const LockScope = {
+  global: 'global',
+  section: 'section',
+  track: 'track',
+  phrase: 'phrase',
+  event: 'event',
+} as const;
+
+export interface ArrangementLock {
+  id: string;
+  scope: LockScope;
+  sectionName?: string;
+  instrument?: string;
+  trackId?: string;
+  phraseId?: string;
+  /** @minimum 1 */
+  startBar?: number;
+  /** @minimum 1 */
+  endBar?: number;
+  noteIds?: string[];
+  reason?: string;
+  createdAt: string;
+}
+
+/**
+ * One Arrangement Brain candidate as it fared once merged into the previous version (PR-U5).
+ */
+export interface ScopedRegenerationCandidate {
+  candidateId: string;
+  label: string;
+  strategy: CandidateStrategyId;
+  seed: number;
+  feasible: boolean;
+  score: number;
+  /** @minimum 0 */
+  constraintErrors: number;
+  locksHonoured: boolean;
+  /** @minimum 0 */
+  violations: number;
+  /** @minimum 0 */
+  replacedNotes: number;
+  /**
+     * Replaced notes identical (id and content) to what was there - a deterministic composer writing the same part again
+     * @minimum 0
+     */
+  identicalReplacedNotes: number;
+  selected: boolean;
+}
+
+export type ScopedRegenerationReportBlockedByLockItem = {
+  scope: RegenerationScope;
+  lockId: string;
+};
+
+export type ScopedRegenerationReportChangedBarRangesItem = {
+  instrument: string;
+  sectionName: string;
+  startBar: number;
+  endBar: number;
+  /** @minimum 0 */
+  replacedNotes: number;
+};
+
+export type ScopedRegenerationReportChanged = {
+  instruments: string[];
+  sections: string[];
+  barRanges: ScopedRegenerationReportChangedBarRangesItem[];
+};
+
+export type ScopedRegenerationReportPreserved = {
+  instruments: string[];
+  sections: string[];
+  /** @minimum 0 */
+  notes: number;
+};
+
+export type ScopedRegenerationReportVerification = {
+  honoured: boolean;
+  violations: string[];
+  /** @minimum 0 */
+  checkedLockedNotes: number;
+};
+
+/**
+ * A chat edit applied to the arrangement (PR-U5): the PR-17 partial-regeneration
+ * report plus what the producer needs to check the promise - what was requested,
+ * what the locks allowed and blocked, which tracks / sections / bar ranges changed,
+ * what was preserved verbatim, how the locks were verified, and how the candidates
+ * were ranked before one was accepted.
+ */
+export interface ScopedRegenerationReport {
+  version: ScopedRegenerationReportVersion;
+  method: string;
+  requested: RegenerationScope[];
+  blockedByLock: ScopedRegenerationReportBlockedByLockItem[];
+  regenerated: RegenerationScope[];
+  /** @minimum 0 */
+  keptNotes: number;
+  /** @minimum 0 */
+  replacedNotes: number;
+  locksHonoured: boolean;
+  editTurnId: string;
+  editIntent: ScopedRegenerationReportEditIntent;
+  editText: string;
+  parentArrangementId: string;
+  parentArrangementVersion: number;
+  songModelVersion: number;
+  /** @nullable */
+  productionBriefId: string | null;
+  /** @nullable */
+  productionBriefDigestSha256: string | null;
+  locks: ArrangementLock[];
+  unmatchedFamilies: string[];
+  changed: ScopedRegenerationReportChanged;
+  preserved: ScopedRegenerationReportPreserved;
+  verification: ScopedRegenerationReportVerification;
+  /**
+     * Of the accepted candidate's replaced notes
+     * @minimum 0
+     */
+  identicalReplacedNotes: number;
+  candidates: ScopedRegenerationCandidate[];
+  selectedCandidateId: string;
+  plannerHintEvidence: string[];
+  warnings: string[];
+  /** @minimum 0 */
+  durationMs: number;
+}
+
+export type ArrangementPlanParameters = { [key: string]: unknown };
+
+export interface ArrangementPlan {
+  id: string;
+  version: number;
+  sections: ArrangementPlanSection[];
+  style: StyleSpec;
+  songModelVersion: number;
+  parameters: ArrangementPlanParameters;
+  provenance: ArtifactProvenance;
+  hierarchy: ArrangementHierarchy;
+  globalPlan?: GlobalArrangementPlan;
+  sectionPlan?: SectionPhrasePlan;
+  orchestrationBudget?: OrchestrationBudgetPlan;
+  transitionPlan?: TransitionPlanSet;
+  partComposerPlan?: PartComposerPlan;
+  candidateGenerationPlan?: CandidateGenerationPlan;
+  compositionIntelligence?: CompositionIntelligencePlan;
+  generationPreference?: GenerationPreferenceSnapshot | null;
+  /** Wave U - the ProductionBrief this plan was planned from; absent without a brief */
+  productionBriefId?: string;
+  /** @pattern ^[a-f0-9]{64}$ */
+  productionBriefDigestSha256?: string;
+  regeneration?: ScopedRegenerationReport;
+}
+
+/**
+ * An arrangement version with everything the summary omits (PR-U5) - the `Arrangement` fields plus plan, TrackModels, lineage and parameters. Kept flat because the zod generator cannot compose a top-level allOf.
+ */
+export interface ArrangementDetail {
+  id: string;
+  projectId: string;
+  name: string;
+  style: string;
+  mode: ArrangementDetailMode;
+  version: number;
+  status: ArrangementDetailStatus;
+  harmonyComplexity: number;
+  energy: number;
+  density: number;
+  orchestraSize: number;
+  rhythmIntensity: number;
+  sections: ArrangementSection[];
+  /** @nullable */
+  generationProvider: string | null;
+  candidates: Candidate[];
+  /** @nullable */
+  selectedCandidateId: string | null;
+  /** @nullable */
+  sourceGenerationJobId?: string | null;
+  /** @nullable */
+  sourceCandidateId?: string | null;
+  generationProvenance?: GenerationProvenance | null;
+  createdAt: string;
+  plan: ArrangementPlan | null;
+  trackModels: TrackModel[];
+  /** @nullable */
+  parentArrangementId: string | null;
+  /** @nullable */
+  songModelVersion: number | null;
+  /** @nullable */
+  seed?: number | null;
+  /** @nullable */
+  modelVersion?: string | null;
+  parameters: ArrangementDetailParameters;
+  provenance: ArtifactProvenance | null;
+}
+
 export interface ArrangementRevisionSummary {
   affectedSections: string[];
   affectedTracks: string[];
@@ -4995,1220 +6419,6 @@ export interface CopilotResult {
   interpreter: CopilotResultInterpreter;
 }
 
-export type StyleGrammarVocabularyGroove = typeof StyleGrammarVocabularyGroove[keyof typeof StyleGrammarVocabularyGroove];
-
-
-export const StyleGrammarVocabularyGroove = {
-  straight: 'straight',
-  swung: 'swung',
-  syncopated: 'syncopated',
-  four_on_floor: 'four_on_floor',
-} as const;
-
-export type StyleGrammarVocabularyVoicing = typeof StyleGrammarVocabularyVoicing[keyof typeof StyleGrammarVocabularyVoicing];
-
-
-export const StyleGrammarVocabularyVoicing = {
-  close: 'close',
-  open: 'open',
-  drop_two: 'drop_two',
-  quartal: 'quartal',
-  wide: 'wide',
-} as const;
-
-export type StyleGrammarVocabularyArticulation = typeof StyleGrammarVocabularyArticulation[keyof typeof StyleGrammarVocabularyArticulation];
-
-
-export const StyleGrammarVocabularyArticulation = {
-  legato: 'legato',
-  tight: 'tight',
-  accented: 'accented',
-  pulsed: 'pulsed',
-} as const;
-
-export type StyleGrammarVocabularyInstrumentation = typeof StyleGrammarVocabularyInstrumentation[keyof typeof StyleGrammarVocabularyInstrumentation];
-
-
-export const StyleGrammarVocabularyInstrumentation = {
-  acoustic: 'acoustic',
-  electronic: 'electronic',
-  hybrid: 'hybrid',
-  orchestral: 'orchestral',
-} as const;
-
-export type StyleGrammarVocabularyPhraseBehavior = typeof StyleGrammarVocabularyPhraseBehavior[keyof typeof StyleGrammarVocabularyPhraseBehavior];
-
-
-export const StyleGrammarVocabularyPhraseBehavior = {
-  call_response: 'call_response',
-  continuous: 'continuous',
-  sparse_answers: 'sparse_answers',
-  motivic: 'motivic',
-} as const;
-
-export type StyleGrammarVocabularyFills = typeof StyleGrammarVocabularyFills[keyof typeof StyleGrammarVocabularyFills];
-
-
-export const StyleGrammarVocabularyFills = {
-  none: 'none',
-  cadential: 'cadential',
-  frequent: 'frequent',
-  sectional: 'sectional',
-} as const;
-
-export type StyleGrammarVocabularyTransitions = typeof StyleGrammarVocabularyTransitions[keyof typeof StyleGrammarVocabularyTransitions];
-
-
-export const StyleGrammarVocabularyTransitions = {
-  hard_cut: 'hard_cut',
-  thin_build: 'thin_build',
-  riser: 'riser',
-  orchestral_swell: 'orchestral_swell',
-} as const;
-
-export type StyleGrammarVocabularyDevelopment = typeof StyleGrammarVocabularyDevelopment[keyof typeof StyleGrammarVocabularyDevelopment];
-
-
-export const StyleGrammarVocabularyDevelopment = {
-  repetition: 'repetition',
-  additive: 'additive',
-  transformative: 'transformative',
-  dynamic_arc: 'dynamic_arc',
-} as const;
-
-export type StyleGrammarVocabulary = {
-  groove: StyleGrammarVocabularyGroove;
-  voicing: StyleGrammarVocabularyVoicing;
-  articulation: StyleGrammarVocabularyArticulation;
-  instrumentation: StyleGrammarVocabularyInstrumentation;
-  phraseBehavior: StyleGrammarVocabularyPhraseBehavior;
-  fills: StyleGrammarVocabularyFills;
-  transitions: StyleGrammarVocabularyTransitions;
-  development: StyleGrammarVocabularyDevelopment;
-};
-
-export interface StyleGrammar {
-  version: '1.0';
-  /** @pattern ^[a-f0-9]{64}$ */
-  evidenceSha256: string;
-  vocabulary: StyleGrammarVocabulary;
-}
-
-export type StyleSpecTempoCharacter = typeof StyleSpecTempoCharacter[keyof typeof StyleSpecTempoCharacter];
-
-
-export const StyleSpecTempoCharacter = {
-  laid_back: 'laid_back',
-  steady: 'steady',
-  driving: 'driving',
-  rubato: 'rubato',
-} as const;
-
-export type StyleSpecRhythm = { [key: string]: unknown };
-
-export type StyleSpecHarmony = { [key: string]: unknown };
-
-export type StyleSpecInstrumentation = { [key: string]: unknown };
-
-export type StyleSpecOrchestration = { [key: string]: unknown };
-
-export type StyleSpecProduction = { [key: string]: unknown };
-
-export type StyleSpecDynamics = { [key: string]: unknown };
-
-export interface StyleSpec {
-  genre: string;
-  subgenre: string;
-  era: string;
-  tempoCharacter: StyleSpecTempoCharacter;
-  rhythm: StyleSpecRhythm;
-  harmony: StyleSpecHarmony;
-  instrumentation: StyleSpecInstrumentation;
-  orchestration: StyleSpecOrchestration;
-  production: StyleSpecProduction;
-  dynamics: StyleSpecDynamics;
-  grammar?: StyleGrammar;
-}
-
-export type ArrangementPlanSectionTracks = {[key: string]: string};
-
-/**
- * Per-track orchestration intent indexed by track id.
- */
-export type ArrangementPlanSectionTrackDirectives = {[key: string]: TrackDirective};
-
-export interface ArrangementPlanSection {
-  section: string;
-  startBar: number;
-  endBar: number;
-  energy: number;
-  density: number;
-  tracks: ArrangementPlanSectionTracks;
-  operations: string[];
-  /** Explicit track ids active in this section. */
-  activeTracks?: string[];
-  /** Per-track orchestration intent indexed by track id. */
-  trackDirectives?: ArrangementPlanSectionTrackDirectives;
-}
-
-export type ArrangementHierarchyStatus = typeof ArrangementHierarchyStatus[keyof typeof ArrangementHierarchyStatus];
-
-
-export const ArrangementHierarchyStatus = {
-  applied: 'applied',
-  no_op: 'no_op',
-} as const;
-
-export type ArrangementHierarchySongIntent = typeof ArrangementHierarchySongIntent[keyof typeof ArrangementHierarchySongIntent];
-
-
-export const ArrangementHierarchySongIntent = {
-  development_arc: 'development_arc',
-  preserve_observed_form: 'preserve_observed_form',
-} as const;
-
-export type ArrangementHierarchySong = {
-  id: string;
-  intent: ArrangementHierarchySongIntent;
-  /** @nullable */
-  climaxSectionId: string | null;
-};
-
-export type ArrangementHierarchySectionsItemFunction = typeof ArrangementHierarchySectionsItemFunction[keyof typeof ArrangementHierarchySectionsItemFunction];
-
-
-export const ArrangementHierarchySectionsItemFunction = {
-  intro: 'intro',
-  verse: 'verse',
-  prechorus: 'prechorus',
-  chorus: 'chorus',
-  bridge: 'bridge',
-  outro: 'outro',
-  neutral: 'neutral',
-} as const;
-
-export type ArrangementHierarchySectionsItemDevelopment = typeof ArrangementHierarchySectionsItemDevelopment[keyof typeof ArrangementHierarchySectionsItemDevelopment];
-
-
-export const ArrangementHierarchySectionsItemDevelopment = {
-  initial: 'initial',
-  development: 'development',
-  reprise: 'reprise',
-  neutral: 'neutral',
-} as const;
-
-export type ArrangementHierarchySectionsItem = {
-  id: string;
-  sourceSection: string;
-  /** @minimum 1 */
-  startBar: number;
-  /** @minimum 1 */
-  endBar: number;
-  function: ArrangementHierarchySectionsItemFunction;
-  development: ArrangementHierarchySectionsItemDevelopment;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  targetEnergy: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  targetDensity: number;
-  phraseIds: string[];
-  barIds: string[];
-};
-
-export type ArrangementHierarchyPhrasesItem = {
-  id: string;
-  sectionId: string;
-  /** @minimum 1 */
-  startBar: number;
-  /** @minimum 1 */
-  endBar: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  confidence: number;
-  intent: 'protect_vocal_phrase';
-};
-
-export type ArrangementHierarchyBarsItemVocalSpace = typeof ArrangementHierarchyBarsItemVocalSpace[keyof typeof ArrangementHierarchyBarsItemVocalSpace];
-
-
-export const ArrangementHierarchyBarsItemVocalSpace = {
-  occupied: 'occupied',
-  available: 'available',
-  unknown: 'unknown',
-} as const;
-
-export type ArrangementHierarchyBarsItem = {
-  id: string;
-  sectionId: string;
-  /** @minimum 1 */
-  bar: number;
-  meter: string;
-  phraseIds: string[];
-  vocalSpace: ArrangementHierarchyBarsItemVocalSpace;
-};
-
-export type ArrangementHierarchyEventsItemIntent = typeof ArrangementHierarchyEventsItemIntent[keyof typeof ArrangementHierarchyEventsItemIntent];
-
-
-export const ArrangementHierarchyEventsItemIntent = {
-  support_vocal: 'support_vocal',
-  use_vocal_space: 'use_vocal_space',
-  follow_section: 'follow_section',
-} as const;
-
-export type ArrangementHierarchyEventsItemSource = typeof ArrangementHierarchyEventsItemSource[keyof typeof ArrangementHierarchyEventsItemSource];
-
-
-export const ArrangementHierarchyEventsItemSource = {
-  section: 'section',
-  vocal_phrase: 'vocal_phrase',
-  vocal_space: 'vocal_space',
-} as const;
-
-export type ArrangementHierarchyEventsItem = {
-  id: string;
-  sectionId: string;
-  barId: string;
-  trackId: string;
-  intent: ArrangementHierarchyEventsItemIntent;
-  source: ArrangementHierarchyEventsItemSource;
-};
-
-export interface ArrangementHierarchy {
-  version: '1.0';
-  status: ArrangementHierarchyStatus;
-  /** @nullable */
-  reason: string | null;
-  /**
-     * @minItems 5
-     * @maxItems 5
-     */
-  precedence: ['song', 'section', 'phrase', 'bar', 'event'];
-  song: ArrangementHierarchySong;
-  sections: ArrangementHierarchySectionsItem[];
-  phrases: ArrangementHierarchyPhrasesItem[];
-  bars: ArrangementHierarchyBarsItem[];
-  events: ArrangementHierarchyEventsItem[];
-}
-
-export type OrchestrationAssignmentRole = typeof OrchestrationAssignmentRole[keyof typeof OrchestrationAssignmentRole];
-
-
-export const OrchestrationAssignmentRole = {
-  foundation: 'foundation',
-  pulse: 'pulse',
-  groove: 'groove',
-  harmonic_support: 'harmonic_support',
-  texture: 'texture',
-  countermelody: 'countermelody',
-  hook: 'hook',
-  response: 'response',
-  lift: 'lift',
-  transition: 'transition',
-  accent: 'accent',
-  doubling: 'doubling',
-  pad: 'pad',
-} as const;
-
-export type OrchestrationAssignmentRegister = typeof OrchestrationAssignmentRegister[keyof typeof OrchestrationAssignmentRegister];
-
-
-export const OrchestrationAssignmentRegister = {
-  low: 'low',
-  middle: 'middle',
-  high: 'high',
-} as const;
-
-export interface OrchestrationAssignment {
-  sectionId: string;
-  phraseId: string;
-  trackId: string;
-  role: OrchestrationAssignmentRole;
-  register: OrchestrationAssignmentRegister;
-  /** @nullable */
-  handoffFromTrackId: string | null;
-  /** @nullable */
-  doublingTrackId: string | null;
-}
-
-export type CompositionIntelligencePlanVersion = typeof CompositionIntelligencePlanVersion[keyof typeof CompositionIntelligencePlanVersion];
-
-
-export const CompositionIntelligencePlanVersion = {
-  '10': '1.0',
-  '20': '2.0',
-} as const;
-
-export type CompositionIntelligencePlanMode = typeof CompositionIntelligencePlanMode[keyof typeof CompositionIntelligencePlanMode];
-
-
-export const CompositionIntelligencePlanMode = {
-  legacy: 'legacy',
-  reasoning_core: 'reasoning_core',
-} as const;
-
-export type CompositionIntelligencePlanSongIntent = typeof CompositionIntelligencePlanSongIntent[keyof typeof CompositionIntelligencePlanSongIntent];
-
-
-export const CompositionIntelligencePlanSongIntent = {
-  preserve_observed_form: 'preserve_observed_form',
-  develop_observed_form: 'develop_observed_form',
-} as const;
-
-export type CompositionIntelligencePlanTensionReleaseItem = { [key: string]: unknown };
-
-export type CompositionIntelligencePlanPhrasesItem = { [key: string]: unknown };
-
-export type CompositionIntelligencePlanInstrumentRolesItem = { [key: string]: unknown };
-
-export interface CompositionIntelligencePlan {
-  version: CompositionIntelligencePlanVersion;
-  mode: CompositionIntelligencePlanMode;
-  precedence: string[];
-  seed: number;
-  evidenceSha256: string;
-  songIntent: CompositionIntelligencePlanSongIntent;
-  tensionRelease: CompositionIntelligencePlanTensionReleaseItem[];
-  phrases: CompositionIntelligencePlanPhrasesItem[];
-  instrumentRoles: CompositionIntelligencePlanInstrumentRolesItem[];
-  orchestrationAssignments?: OrchestrationAssignment[];
-}
-
-export type GenerationPreferenceEffectsRoleEmphasis = typeof GenerationPreferenceEffectsRoleEmphasis[keyof typeof GenerationPreferenceEffectsRoleEmphasis];
-
-
-export const GenerationPreferenceEffectsRoleEmphasis = {
-  foundation: 'foundation',
-  pulse: 'pulse',
-  harmony: 'harmony',
-  counterline: 'counterline',
-  texture: 'texture',
-} as const;
-
-export type GenerationPreferenceEffectsVoicingCharacter = typeof GenerationPreferenceEffectsVoicingCharacter[keyof typeof GenerationPreferenceEffectsVoicingCharacter];
-
-
-export const GenerationPreferenceEffectsVoicingCharacter = {
-  close: 'close',
-  open: 'open',
-  wide: 'wide',
-} as const;
-
-export type GenerationPreferenceEffectsDevelopment = typeof GenerationPreferenceEffectsDevelopment[keyof typeof GenerationPreferenceEffectsDevelopment];
-
-
-export const GenerationPreferenceEffectsDevelopment = {
-  restrained: 'restrained',
-  balanced: 'balanced',
-  progressive: 'progressive',
-} as const;
-
-export interface GenerationPreferenceEffects {
-  /**
-     * @minimum -0.35
-     * @maximum 0.35
-     */
-  orchestrationDensity: number;
-  /**
-     * @minimum 0.25
-     * @maximum 0.75
-     */
-  responseFrequency: number;
-  roleEmphasis: GenerationPreferenceEffectsRoleEmphasis;
-  voicingCharacter: GenerationPreferenceEffectsVoicingCharacter;
-  development: GenerationPreferenceEffectsDevelopment;
-  /**
-     * @minimum 0.25
-     * @maximum 0.75
-     */
-  transitionIntensity: number;
-}
-
-export interface GenerationPreferenceSnapshot {
-  contractVersion: '1.0';
-  /** @minLength 1 */
-  calibrationId: string;
-  /** @minimum 1 */
-  calibrationVersion: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  heldOutAgreement: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  baselineAgreement: number;
-  /** @minimum 5 */
-  heldOutExamples: number;
-  /** @pattern ^[a-f0-9]{64}$ */
-  evaluationSha256: string;
-  /** @pattern ^[a-f0-9]{64}$ */
-  evidenceSha256: string;
-  effects: GenerationPreferenceEffects;
-}
-
-export type ArrangementPlanParameters = { [key: string]: unknown };
-
-export type GlobalArrangementPlanVersion = typeof GlobalArrangementPlanVersion[keyof typeof GlobalArrangementPlanVersion];
-
-
-export const GlobalArrangementPlanVersion = {
-  '10': '1.0',
-} as const;
-
-export type GlobalArrangementPlanSectionTargetsItemRole = typeof GlobalArrangementPlanSectionTargetsItemRole[keyof typeof GlobalArrangementPlanSectionTargetsItemRole];
-
-
-export const GlobalArrangementPlanSectionTargetsItemRole = {
-  intro: 'intro',
-  verse: 'verse',
-  prechorus: 'prechorus',
-  chorus: 'chorus',
-  bridge: 'bridge',
-  breakdown: 'breakdown',
-  outro: 'outro',
-  instrumental: 'instrumental',
-  neutral: 'neutral',
-} as const;
-
-export type GlobalArrangementPlanGrooveStrategy = typeof GlobalArrangementPlanGrooveStrategy[keyof typeof GlobalArrangementPlanGrooveStrategy];
-
-
-export const GlobalArrangementPlanGrooveStrategy = {
-  steady_pulse: 'steady_pulse',
-  syncopated: 'syncopated',
-  swing: 'swing',
-  half_time_feel: 'half_time_feel',
-  four_on_floor: 'four_on_floor',
-  rubato: 'rubato',
-} as const;
-
-export type GlobalArrangementPlanOrchestrationStrategy = typeof GlobalArrangementPlanOrchestrationStrategy[keyof typeof GlobalArrangementPlanOrchestrationStrategy];
-
-
-export const GlobalArrangementPlanOrchestrationStrategy = {
-  layered_build: 'layered_build',
-  call_and_response: 'call_and_response',
-  wave_dynamics: 'wave_dynamics',
-  static_bed: 'static_bed',
-  sparse_to_full: 'sparse_to_full',
-} as const;
-
-export type GlobalArrangementPlanMotifStrategy = typeof GlobalArrangementPlanMotifStrategy[keyof typeof GlobalArrangementPlanMotifStrategy];
-
-
-export const GlobalArrangementPlanMotifStrategy = {
-  recurring_hook: 'recurring_hook',
-  developing_motif: 'developing_motif',
-  through_composed: 'through_composed',
-} as const;
-
-export type GlobalArrangementPlanContrastStrategy = typeof GlobalArrangementPlanContrastStrategy[keyof typeof GlobalArrangementPlanContrastStrategy];
-
-
-export const GlobalArrangementPlanContrastStrategy = {
-  dynamic_contrast: 'dynamic_contrast',
-  textural_contrast: 'textural_contrast',
-  harmonic_contrast: 'harmonic_contrast',
-  register_contrast: 'register_contrast',
-  minimal_contrast: 'minimal_contrast',
-} as const;
-
-export type GlobalArrangementPlanProductionAesthetic = typeof GlobalArrangementPlanProductionAesthetic[keyof typeof GlobalArrangementPlanProductionAesthetic];
-
-
-export const GlobalArrangementPlanProductionAesthetic = {
-  intimate: 'intimate',
-  polished_pop: 'polished_pop',
-  cinematic: 'cinematic',
-  raw_band: 'raw_band',
-  electronic: 'electronic',
-  orchestral: 'orchestral',
-} as const;
-
-export type GlobalArrangementPlanInstrumentPaletteItem = {
-  role: string;
-  /** @minimum 1 */
-  priority: number;
-  rationale: string;
-};
-
-export type GlobalArrangementPlanSectionTargetsItem = {
-  sectionName: string;
-  /** @minimum 1 */
-  startBar: number;
-  /** @minimum 1 */
-  endBar: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  energy: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  density: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  tension: number;
-  role: GlobalArrangementPlanSectionTargetsItemRole;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  noveltyVsPrevious: number;
-};
-
-export type GlobalArrangementPlanClimax = {
-  sectionName: string;
-  /** @minimum 1 */
-  atBar: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  energy: number;
-} | null;
-
-export type GlobalArrangementPlanSecondaryClimax = {
-  sectionName: string;
-  /** @minimum 1 */
-  atBar: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  energy: number;
-} | null;
-
-/**
- * Whole-song arrangement direction (PR-04), derived before section planning.
- */
-export interface GlobalArrangementPlan {
-  version: GlobalArrangementPlanVersion;
-  derivedAt: string;
-  /** @pattern ^[a-f0-9]{64}$ */
-  inputsDigestSha256: string;
-  method: string;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  confidence: number;
-  style: string;
-  substyle: string | null;
-  instrumentPalette: GlobalArrangementPlanInstrumentPaletteItem[];
-  sectionTargets: GlobalArrangementPlanSectionTargetsItem[];
-  climax: GlobalArrangementPlanClimax;
-  secondaryClimax: GlobalArrangementPlanSecondaryClimax;
-  grooveStrategy: GlobalArrangementPlanGrooveStrategy;
-  orchestrationStrategy: GlobalArrangementPlanOrchestrationStrategy;
-  motifStrategy: GlobalArrangementPlanMotifStrategy;
-  contrastStrategy: GlobalArrangementPlanContrastStrategy;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  harmonicComplexity: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  rhythmicComplexity: number;
-  productionAesthetic: GlobalArrangementPlanProductionAesthetic;
-}
-
-export type SectionPhrasePlanVersion = typeof SectionPhrasePlanVersion[keyof typeof SectionPhrasePlanVersion];
-
-
-export const SectionPhrasePlanVersion = {
-  '10': '1.0',
-} as const;
-
-export type SectionPlanFunction = typeof SectionPlanFunction[keyof typeof SectionPlanFunction];
-
-
-export const SectionPlanFunction = {
-  intro: 'intro',
-  verse: 'verse',
-  prechorus: 'prechorus',
-  chorus: 'chorus',
-  bridge: 'bridge',
-  breakdown: 'breakdown',
-  outro: 'outro',
-  instrumental: 'instrumental',
-  neutral: 'neutral',
-} as const;
-
-export type SectionPlanRegisterDistribution = {[key: string]: number};
-
-export interface SectionPlan {
-  sectionName: string;
-  /** @minimum 1 */
-  startBar: number;
-  /** @minimum 1 */
-  endBar: number;
-  function: SectionPlanFunction;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  energy: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  density: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  tension: number;
-  groove: string;
-  activeInstrumentFamilies: string[];
-  inactiveInstrumentFamilies: string[];
-  leadRole: string;
-  supportingRoles: string[];
-  registerDistribution: SectionPlanRegisterDistribution;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  rhythmicActivity: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  melodicActivity: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  harmonicActivity: number;
-  transitionIn: string;
-  transitionOut: string;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  noveltyRelativeToPreviousSection: number;
-}
-
-export type PhrasePlanRole = typeof PhrasePlanRole[keyof typeof PhrasePlanRole];
-
-
-export const PhrasePlanRole = {
-  opening: 'opening',
-  development: 'development',
-  response: 'response',
-  cadence: 'cadence',
-  pickup: 'pickup',
-  fill: 'fill',
-} as const;
-
-export interface PhrasePlan {
-  id: string;
-  sectionName: string;
-  /** @minimum 1 */
-  startBar: number;
-  /** @minimum 1 */
-  endBar: number;
-  role: PhrasePlanRole;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  energyTarget: number;
-  entersFamilies: string[];
-  leavesFamilies: string[];
-}
-
-export type InstrumentArrangementRole = typeof InstrumentArrangementRole[keyof typeof InstrumentArrangementRole];
-
-
-export const InstrumentArrangementRole = {
-  LEAD: 'LEAD',
-  FOUNDATION: 'FOUNDATION',
-  BASS: 'BASS',
-  GROOVE: 'GROOVE',
-  RHYTHMIC_HARMONY: 'RHYTHMIC_HARMONY',
-  HARMONIC_BED: 'HARMONIC_BED',
-  OSTINATO: 'OSTINATO',
-  COUNTER_MELODY: 'COUNTER_MELODY',
-  CALL_RESPONSE: 'CALL_RESPONSE',
-  ACCENT: 'ACCENT',
-  PAD: 'PAD',
-  FILL: 'FILL',
-  TRANSITION: 'TRANSITION',
-  CLIMAX_LAYER: 'CLIMAX_LAYER',
-} as const;
-
-export type RegisterBand = typeof RegisterBand[keyof typeof RegisterBand];
-
-
-export const RegisterBand = {
-  low: 'low',
-  low_mid: 'low_mid',
-  mid: 'mid',
-  upper_mid: 'upper_mid',
-  high: 'high',
-} as const;
-
-export type InstrumentRoleAssignmentVoicingStrategy = typeof InstrumentRoleAssignmentVoicingStrategy[keyof typeof InstrumentRoleAssignmentVoicingStrategy];
-
-
-export const InstrumentRoleAssignmentVoicingStrategy = {
-  open: 'open',
-  close: 'close',
-  unison: 'unison',
-  spread: 'spread',
-  drone: 'drone',
-  percussive: 'percussive',
-} as const;
-
-export type InstrumentRoleAssignmentArticulationFamily = typeof InstrumentRoleAssignmentArticulationFamily[keyof typeof InstrumentRoleAssignmentArticulationFamily];
-
-
-export const InstrumentRoleAssignmentArticulationFamily = {
-  legato: 'legato',
-  staccato: 'staccato',
-  sustain: 'sustain',
-  pluck: 'pluck',
-  percussive: 'percussive',
-  mixed: 'mixed',
-} as const;
-
-export type InstrumentRoleAssignmentInteractionWithLead = typeof InstrumentRoleAssignmentInteractionWithLead[keyof typeof InstrumentRoleAssignmentInteractionWithLead];
-
-
-export const InstrumentRoleAssignmentInteractionWithLead = {
-  avoid: 'avoid',
-  support: 'support',
-  answer: 'answer',
-  double: 'double',
-  independent: 'independent',
-} as const;
-
-export interface InstrumentRoleAssignment {
-  sectionName: string;
-  instrument: string;
-  role: InstrumentArrangementRole;
-  register: RegisterBand;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  density: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  rhythmicActivity: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  melodicActivity: number;
-  voicingStrategy: InstrumentRoleAssignmentVoicingStrategy;
-  articulationFamily: InstrumentRoleAssignmentArticulationFamily;
-  dynamicShape: string;
-  interactionWithLead: InstrumentRoleAssignmentInteractionWithLead;
-  /** @minimum 1 */
-  entryBar: number;
-  /** @minimum 1 */
-  exitBar: number;
-}
-
-/**
- * Section / phrase / instrument-role plan (PR-05).
- */
-export interface SectionPhrasePlan {
-  version: SectionPhrasePlanVersion;
-  derivedAt: string;
-  /** @pattern ^[a-f0-9]{64}$ */
-  inputsDigestSha256: string;
-  method: string;
-  sections: SectionPlan[];
-  phrases: PhrasePlan[];
-  roleAssignments: InstrumentRoleAssignment[];
-}
-
-export type OrchestrationBudgetPlanVersion = typeof OrchestrationBudgetPlanVersion[keyof typeof OrchestrationBudgetPlanVersion];
-
-
-export const OrchestrationBudgetPlanVersion = {
-  '10': '1.0',
-} as const;
-
-export interface OrchestrationInstrumentAdjustment {
-  instrument: string;
-  /** @minimum 0 */
-  densityMultiplier: number;
-  registerShift: number;
-  note: string;
-}
-
-export type OrchestrationBudgetWindowBudgets = {
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  totalDensity: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  melodic: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  rhythmic: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  harmonic: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  register: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  spectral: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  attention: number;
-};
-
-export interface OrchestrationBudgetWindow {
-  id: string;
-  /** @minimum 1 */
-  startBar: number;
-  /** @minimum 1 */
-  endBar: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  vocalAttention: number;
-  budgets: OrchestrationBudgetWindowBudgets;
-  instrumentAdjustments: OrchestrationInstrumentAdjustment[];
-}
-
-export type RegisterOccupancySpanResolutionsItemAction = typeof RegisterOccupancySpanResolutionsItemAction[keyof typeof RegisterOccupancySpanResolutionsItemAction];
-
-
-export const RegisterOccupancySpanResolutionsItemAction = {
-  drop_octave: 'drop_octave',
-  raise_octave: 'raise_octave',
-  simplify: 'simplify',
-  thin_voicing: 'thin_voicing',
-} as const;
-
-export type RegisterOccupancySpanOccupancy = {[key: string]: number};
-
-export type RegisterOccupancySpanResolutionsItem = {
-  instrument: string;
-  action: RegisterOccupancySpanResolutionsItemAction;
-  band: RegisterBand;
-};
-
-export interface RegisterOccupancySpan {
-  /** @minimum 1 */
-  startBar: number;
-  /** @minimum 1 */
-  endBar: number;
-  occupancy: RegisterOccupancySpanOccupancy;
-  overcrowdedBands: RegisterBand[];
-  resolutions: RegisterOccupancySpanResolutionsItem[];
-}
-
-/**
- * Orchestration Budget Engine (PR-06) — per-moment density/attention budgets + register occupancy.
- */
-export interface OrchestrationBudgetPlan {
-  version: OrchestrationBudgetPlanVersion;
-  derivedAt: string;
-  /** @pattern ^[a-f0-9]{64}$ */
-  inputsDigestSha256: string;
-  method: string;
-  windows: OrchestrationBudgetWindow[];
-  registerOccupancy: RegisterOccupancySpan[];
-}
-
-export type TransitionPlanSetVersion = typeof TransitionPlanSetVersion[keyof typeof TransitionPlanSetVersion];
-
-
-export const TransitionPlanSetVersion = {
-  '10': '1.0',
-} as const;
-
-export type TransitionPlanKind = typeof TransitionPlanKind[keyof typeof TransitionPlanKind];
-
-
-export const TransitionPlanKind = {
-  build: 'build',
-  drop: 'drop',
-  continue: 'continue',
-  break: 'break',
-} as const;
-
-export type TransitionPlanHarmonicApproach = typeof TransitionPlanHarmonicApproach[keyof typeof TransitionPlanHarmonicApproach];
-
-
-export const TransitionPlanHarmonicApproach = {
-  dominant_prep: 'dominant_prep',
-  plagal: 'plagal',
-  chromatic: 'chromatic',
-  static: 'static',
-  none: 'none',
-} as const;
-
-export type TransitionDevice = typeof TransitionDevice[keyof typeof TransitionDevice];
-
-
-export const TransitionDevice = {
-  drum_fill: 'drum_fill',
-  bass_pickup: 'bass_pickup',
-  keys_pickup: 'keys_pickup',
-  guitar_pickup: 'guitar_pickup',
-  string_run: 'string_run',
-  brass_push: 'brass_push',
-  cymbal_swell: 'cymbal_swell',
-  cymbal_choke: 'cymbal_choke',
-  break: 'break',
-  stop: 'stop',
-  anticipation: 'anticipation',
-  turnaround: 'turnaround',
-  riser: 'riser',
-  reverse: 'reverse',
-  build_up: 'build_up',
-  breakdown: 'breakdown',
-  ending_hit: 'ending_hit',
-  ritardando: 'ritardando',
-} as const;
-
-export interface TransitionDevicePlan {
-  device: TransitionDevice;
-  instrument: string;
-  /** @minimum 1 */
-  startBar: number;
-  /** @minimum 1 */
-  endBar: number;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  intensity: number;
-  rationale: string;
-}
-
-export interface TransitionPlan {
-  id: string;
-  fromSection: string;
-  toSection: string;
-  /** @minimum 1 */
-  atBar: number;
-  /** @minimum 0 */
-  approachBars: number;
-  kind: TransitionPlanKind;
-  /**
-     * @minimum 0
-     * @maximum 1
-     */
-  strength: number;
-  harmonicApproach: TransitionPlanHarmonicApproach;
-  vocalSafe: boolean;
-  devices: TransitionDevicePlan[];
-}
-
-/**
- * Transition Engine (PR-08) — planned devices per section boundary.
- */
-export interface TransitionPlanSet {
-  version: TransitionPlanSetVersion;
-  derivedAt: string;
-  /** @pattern ^[a-f0-9]{64}$ */
-  inputsDigestSha256: string;
-  method: string;
-  transitions: TransitionPlan[];
-}
-
-export type PartComposerPlanVersion = typeof PartComposerPlanVersion[keyof typeof PartComposerPlanVersion];
-
-
-export const PartComposerPlanVersion = {
-  '10': '1.0',
-} as const;
-
-export type PartTask = typeof PartTask[keyof typeof PartTask];
-
-
-export const PartTask = {
-  DRUMS: 'DRUMS',
-  PERCUSSION: 'PERCUSSION',
-  BASS: 'BASS',
-  PIANO: 'PIANO',
-  KEYS: 'KEYS',
-  ACOUSTIC_GUITAR: 'ACOUSTIC_GUITAR',
-  ELECTRIC_GUITAR: 'ELECTRIC_GUITAR',
-  STRINGS: 'STRINGS',
-  BRASS: 'BRASS',
-  WOODWINDS: 'WOODWINDS',
-  PAD: 'PAD',
-  OSTINATO: 'OSTINATO',
-  COUNTER_MELODY: 'COUNTER_MELODY',
-  CALL_RESPONSE: 'CALL_RESPONSE',
-  FILL: 'FILL',
-  TRANSITION: 'TRANSITION',
-  INTRO: 'INTRO',
-  ENDING: 'ENDING',
-} as const;
-
-export type PartComposerPlanTasksItem = {
-  id: string;
-  task: PartTask;
-  sectionName: string;
-  instrument: string;
-  role: InstrumentArrangementRole;
-  /** @minimum 1 */
-  startBar: number;
-  /** @minimum 1 */
-  endBar: number;
-  /** @minimum 0 */
-  seed: number;
-  dependsOn: string[];
-};
-
-/**
- * Part Composer contract (PR-09) — compact index of parts to compose.
- */
-export interface PartComposerPlan {
-  version: PartComposerPlanVersion;
-  derivedAt: string;
-  /** @pattern ^[a-f0-9]{64}$ */
-  inputsDigestSha256: string;
-  method: string;
-  tasks: PartComposerPlanTasksItem[];
-}
-
-export type CandidateGenerationPlanVersion = typeof CandidateGenerationPlanVersion[keyof typeof CandidateGenerationPlanVersion];
-
-
-export const CandidateGenerationPlanVersion = {
-  '10': '1.0',
-} as const;
-
-export type CandidateStrategyId = typeof CandidateStrategyId[keyof typeof CandidateStrategyId];
-
-
-export const CandidateStrategyId = {
-  conservative: 'conservative',
-  rhythmic: 'rhythmic',
-  melodic: 'melodic',
-  sparse: 'sparse',
-  adventurous: 'adventurous',
-} as const;
-
-export type CandidateGenerationPlanCandidatesItemParameters = {[key: string]: number};
-
-export type CandidateGenerationPlanCandidatesItemPartAdjustmentsItem = {
-  taskId: string;
-  /** @minimum 0 */
-  densityMultiplier: number;
-  /** @minimum 0 */
-  seed: number;
-  note: string;
-};
-
-export type CandidateGenerationPlanCandidatesItem = {
-  candidateId: string;
-  label: string;
-  strategy: CandidateStrategyId;
-  /** @minimum 0 */
-  seed: number;
-  parameters: CandidateGenerationPlanCandidatesItemParameters;
-  partAdjustments: CandidateGenerationPlanCandidatesItemPartAdjustmentsItem[];
-};
-
-/**
- * Deliberate candidate-generation strategies (PR-10).
- */
-export interface CandidateGenerationPlan {
-  version: CandidateGenerationPlanVersion;
-  derivedAt: string;
-  /** @pattern ^[a-f0-9]{64}$ */
-  inputsDigestSha256: string;
-  method: string;
-  /** @minimum 0 */
-  baseSeed: number;
-  candidates: CandidateGenerationPlanCandidatesItem[];
-}
-
-export interface ArrangementPlan {
-  id: string;
-  version: number;
-  sections: ArrangementPlanSection[];
-  style: StyleSpec;
-  songModelVersion: number;
-  parameters: ArrangementPlanParameters;
-  provenance: ArtifactProvenance;
-  hierarchy: ArrangementHierarchy;
-  globalPlan?: GlobalArrangementPlan;
-  sectionPlan?: SectionPhrasePlan;
-  orchestrationBudget?: OrchestrationBudgetPlan;
-  transitionPlan?: TransitionPlanSet;
-  partComposerPlan?: PartComposerPlan;
-  candidateGenerationPlan?: CandidateGenerationPlan;
-  compositionIntelligence?: CompositionIntelligencePlan;
-  generationPreference?: GenerationPreferenceSnapshot | null;
-}
-
-export type LockScope = typeof LockScope[keyof typeof LockScope];
-
-
-export const LockScope = {
-  global: 'global',
-  section: 'section',
-  track: 'track',
-  phrase: 'phrase',
-  event: 'event',
-} as const;
-
-export interface ArrangementLock {
-  id: string;
-  scope: LockScope;
-  sectionName?: string;
-  instrument?: string;
-  trackId?: string;
-  phraseId?: string;
-  /** @minimum 1 */
-  startBar?: number;
-  /** @minimum 1 */
-  endBar?: number;
-  noteIds?: string[];
-  reason?: string;
-  createdAt: string;
-}
-
 export type ArrangementLockSetVersion = typeof ArrangementLockSetVersion[keyof typeof ArrangementLockSetVersion];
 
 
@@ -6219,16 +6429,6 @@ export const ArrangementLockSetVersion = {
 export interface ArrangementLockSet {
   version: ArrangementLockSetVersion;
   locks: ArrangementLock[];
-}
-
-export interface RegenerationScope {
-  instrument: string;
-  sectionName: string;
-  /** @minimum 1 */
-  startBar: number;
-  /** @minimum 1 */
-  endBar: number;
-  reason: string;
 }
 
 export type PartialRegenerationReportVersion = typeof PartialRegenerationReportVersion[keyof typeof PartialRegenerationReportVersion];
@@ -7238,7 +7438,7 @@ export const EditPlanIntent = {
 } as const;
 
 /**
- * A chat edit request mapped onto the PR-17 lock / regeneration scopes. Returned, not executed, in PR-U2.
+ * A chat edit request mapped onto the PR-17 lock / regeneration scopes. Returned by the chat; executed by `POST .../producer/turns/{turnId}/apply` (PR-U5).
  */
 export interface EditPlan {
   version: EditPlanVersion;
@@ -7292,6 +7492,7 @@ export const ProducerChatTurnKind = {
   explanation: 'explanation',
   supersede: 'supersede',
   reference: 'reference',
+  regeneration: 'regeneration',
 } as const;
 
 export interface ClarificationAnswer {
@@ -7333,6 +7534,10 @@ export interface ProducerChatTurnStructured {
   intentMethod?: string;
   /** PR-U4 - the reference rows this turn touched */
   referenceIds?: string[];
+  regeneration?: ScopedRegenerationReport;
+  /** PR-U5 - the arrangement version a regeneration turn produced */
+  arrangementId?: string;
+  arrangementVersion?: number;
 }
 
 export type ProducerChatTurnRole = typeof ProducerChatTurnRole[keyof typeof ProducerChatTurnRole];
@@ -7484,7 +7689,23 @@ export interface ProducerTurnResult {
   clarifications: ClarificationQuestion[];
   editPlan?: EditPlan;
   explanation?: PlanExplanation;
+  regeneration?: ScopedRegenerationReport;
+  /** PR-U5 - present on a regeneration turn */
+  arrangementId?: string;
+  arrangementVersion?: number;
   state: ProducerBriefState;
+}
+
+/**
+ * Options for applying an edit turn (PR-U5). Empty body is fine.
+ */
+export interface ProducerEditApplyInput {
+  /**
+     * How many Arrangement Brain candidates to rank before accepting one (default 3
+     * @minimum 3
+     * @maximum 5
+     */
+  candidates?: number;
 }
 
 export type ProducerIntakeInputReferencesItemKind = typeof ProducerIntakeInputReferencesItemKind[keyof typeof ProducerIntakeInputReferencesItemKind];
