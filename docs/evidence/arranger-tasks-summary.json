@@ -1,0 +1,126 @@
+{
+  "ranAt": "2026-09-09T10:47:46.128Z",
+  "tokenizerVersion": "ARRANGER_REMI_v1_3cfd16b3_386",
+  "admittedWorks": 222856,
+  "sample": {
+    "requested": 5000,
+    "files": 5000,
+    "parsed": 5000,
+    "parseFailed": 0,
+    "yieldedTasks": 449
+  },
+  "malformedTasksRejected": 0,
+  "splits": {
+    "train": {
+      "works": 411,
+      "tasks": 3269,
+      "targetNotes": 212105
+    },
+    "val": {
+      "works": 16,
+      "tasks": 138,
+      "targetNotes": 9237
+    },
+    "test": {
+      "works": 22,
+      "tasks": 170,
+      "targetNotes": 13412
+    }
+  },
+  "workLevelSplitLeak": false,
+  "tasksByTargetFamily": {
+    "drums": 731,
+    "brass": 288,
+    "keys": 1399,
+    "synth": 150,
+    "bass": 51,
+    "ensemble": 93,
+    "reed": 106,
+    "pipe": 101,
+    "organ": 118,
+    "strings": 350,
+    "chromatic_perc": 101,
+    "guitar": 88,
+    "percussive": 1
+  },
+  "tasksByContextFamilyCount": {
+    "1": 1919,
+    "2": 717,
+    "3": 453,
+    "4": 262,
+    "5": 141,
+    "6": 72,
+    "7": 13
+  },
+  "datasetRightsProof": {
+    "version": "DATASET_RIGHTS_PROOF_v1",
+    "tokenizerVersion": "ARRANGER_REMI_v1_3cfd16b3_386",
+    "datasetDigest": "48db5562b1495bae926812c9078c02c598d7aec3bf827bf5c10297b2ca50dbfe",
+    "rightsDigest": "97b7c795b37de988ae89d864732d9df4b3ba4c5151a422fca3d14548aa933fc7",
+    "source": {
+      "recordId": "15571083",
+      "doi": "10.5281/zenodo.15571083",
+      "subset": "no_license_conflict"
+    },
+    "admittedWorkCount": 222856,
+    "examplesChecked": 3577,
+    "distinctWorksInTraining": 449,
+    "examplesTracedToAdmittedWork": 3577,
+    "examplesInAuthorsExcluded": 0,
+    "examplesUntraceable": 0,
+    "sampleTrace": [
+      {
+        "workId": "Qma11MhFz64u8wRiW1cTZ5VJ4zTQWbYbVHDnMGafAFoaN6",
+        "shard": "train",
+        "index": 0
+      },
+      {
+        "workId": "QmWs4CsGML6kYT6mDohDB3Vzf1EYPp3diHajohitvHZDMU",
+        "shard": "train",
+        "index": 345
+      },
+      {
+        "workId": "QmToHNC5fUeZhYF7RsyMxif7PQUbTGH4ZhYRVatZMUPu2x",
+        "shard": "train",
+        "index": 638
+      },
+      {
+        "workId": "QmbWjohLCLLw4keB9YuM4hf1ptMw1TMHCTspW2j2NmpcWW",
+        "shard": "train",
+        "index": 963
+      },
+      {
+        "workId": "QmYR43wBQC3gRc8a5KUjKQMnCYxFLnefChbWdVbaCPHmAE",
+        "shard": "train",
+        "index": 1290
+      },
+      {
+        "workId": "QmSaigi4vfbcCDjV9mT1RbGnq39KFSZgM1LERXgSi3ktBn",
+        "shard": "train",
+        "index": 1607
+      },
+      {
+        "workId": "QmUnM67ya7mx3NXPZXeMKhsN5uWF3HHgiFM6VDp8xvT3Zt",
+        "shard": "train",
+        "index": 1932
+      },
+      {
+        "workId": "QmeXp3wuEo3otUoFTB9FvYDNs8jsR6ScyUibKofbfRHrvH",
+        "shard": "train",
+        "index": 2239
+      },
+      {
+        "workId": "QmathC87FPf1j7fxC8A27BqpYumKgmuZEtnzZGGkDymun5",
+        "shard": "train",
+        "index": 2596
+      },
+      {
+        "workId": "QmVoKrgBQcPE7esc31XkGSxWasEiU65HuW2wJwRMqgXCQs",
+        "shard": "train",
+        "index": 2931
+      }
+    ],
+    "verified": true,
+    "proofDigest": "3bbc10fe455db5b1ef81371499a56522d4c15ef1cef15f1fcf3436eebdbb4d6d"
+  }
+}
