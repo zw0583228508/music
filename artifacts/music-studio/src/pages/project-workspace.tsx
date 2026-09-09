@@ -83,6 +83,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import type { SongModelFieldStatusProperty } from "@workspace/api-client-react";
 import { SourceImport } from "@/components/studio/source-import";
 import { SongModelInspector } from "@/components/studio/song-model-inspector";
 import { ArrangerEditor } from "@/components/studio/arranger-editor";
@@ -1134,20 +1135,11 @@ export default function ProjectWorkspace() {
 
         {/* Global stats */}
         <div className="hidden md:flex items-center gap-6 bg-muted/30 px-6 py-1.5 rounded-full border shadow-inner text-sm font-mono text-foreground font-medium">
-          <div className="flex items-center gap-2">
-            <span className="text-muted-foreground text-xs uppercase">BPM</span>
-            {project.bpm || analysis?.bpm || "--"}
-          </div>
+          <HeaderStat label="BPM" value={project.bpm || analysis?.bpm || null} status={songModel?.fieldStatus?.tempo} testId="header-bpm" />
           <div className="w-1 h-1 rounded-full bg-border" />
-          <div className="flex items-center gap-2">
-            <span className="text-muted-foreground text-xs uppercase">Key</span>
-            {project.key || analysis?.key || "--"}
-          </div>
+          <HeaderStat label="Key" value={project.key || analysis?.key || null} status={songModel?.fieldStatus?.key} testId="header-key" />
           <div className="w-1 h-1 rounded-full bg-border" />
-          <div className="flex items-center gap-2">
-            <span className="text-muted-foreground text-xs uppercase">Time</span>
-            {analysis?.meter || "—"}
-          </div>
+          <HeaderStat label="Time" value={analysis?.meter || null} status={songModel?.fieldStatus?.meter} testId="header-meter" />
         </div>
 
         <div className="order-3 flex w-full min-w-0 flex-wrap items-center gap-x-2 gap-y-1 md:order-none md:w-auto md:flex-nowrap">
@@ -2639,4 +2631,44 @@ function parseDuration(value: string | undefined): number {
   if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
   if (parts.length === 2) return parts[0] * 60 + parts[1];
   return parts[0] || 0;
+}
+
+/**
+ * One header stat with the Song Model's word on how much to trust it. A
+ * number the analyzer only sketched (`low_confidence`) is shown with a mark
+ * and the analyzer's own message; a field two analyses disagree on
+ * (`contested`) shows no value at all, because the model carries none; a
+ * value the producer verified is marked as such. A bare number in the
+ * header used to read as a fact — the owner's 64.8 BPM sketch did.
+ */
+function HeaderStat({
+  label,
+  value,
+  status,
+  testId,
+}: {
+  label: string;
+  value: string | number | null;
+  status?: SongModelFieldStatusProperty;
+  testId: string;
+}) {
+  const state = status?.status;
+  const edited = status?.edited === true;
+  const contested = !edited && state === "contested";
+  const sketched = !edited && state === "low_confidence";
+  const missing = value === null || value === "" || value === "—" || value === "--";
+  const shown = contested ? "contested" : missing ? "—" : String(value);
+  const title = edited
+    ? `${label}: verified by you`
+    : status?.message
+      ? `${label}: ${status.message}`
+      : undefined;
+  return (
+    <div className="flex items-center gap-2" title={title} data-testid={testId} data-status={edited ? "edited" : state ?? "unknown"}>
+      <span className="text-muted-foreground text-xs uppercase">{label}</span>
+      <span className={cn(contested || sketched ? "text-amber-700" : undefined)}>{shown}</span>
+      {edited && <span className="text-[10px] text-violet-700" aria-label="verified">✓</span>}
+      {sketched && <span className="text-[10px] text-amber-700" aria-label="low confidence">?</span>}
+    </div>
+  );
 }

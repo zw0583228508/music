@@ -4290,6 +4290,32 @@ any of it.
   streams' ephemeral Modal apps were visible during the audit and are not
   counted.
 
+- **PR-91** ✅ — `workspace-header-shows-trust` (the owner, looking at
+  "ולעורר ליבי": "the key stays empty and the BPM is nowhere near right —
+  it should be around 115 and it gave 64.8. What's the story?"). The story,
+  read off the Song Model: tempo `low_confidence` 0.374 from
+  `LOCAL_SIGNAL_ANALYZER_V1` alone ("estimated locally from the onset
+  envelope; no provider corroborated it"), metre `low_confidence` 0.3 (4/4
+  assumed), key `contested` (PR-86). Every rhythm provider the analyzer
+  schedules — BEAT_THIS, MADMOM, ALL_IN_ONE — is `not-configured` on that
+  file, and PR-80 proved why: their recorded origins answer 404. The
+  workspace header, though, printed **BPM 64.8 · KEY — · TIME 4/4** as if
+  each were a fact.
+
+  **What changed.** The three header stats now read `fieldStatus`: a
+  `low_confidence` value is shown amber with a `?` and the analyzer's own
+  message as its tooltip; a `contested` field shows the word *contested*
+  and no value (the model carries none); a user-verified value shows ✓.
+  Verified in the browser on the owner's project: `BPM 64.8 ?`,
+  `KEY contested`, `TIME 4/4 ?`, each with the right message. Studio
+  typecheck green. No API change.
+
+  **Honest limits.** This changes what the header *says*, not what the
+  analyzer *knows*: 64.8 is still the only tempo the platform can produce
+  for that file until a rhythm provider is redeployed and benchmarked
+  (Stream D). The owner's ~115 is recorded as an unverified owner claim in
+  ANALYSIS_GOLD_V1's annotation template, not as truth. The mobile header
+  (hidden below `md`) is unchanged.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
