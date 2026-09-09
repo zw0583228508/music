@@ -30,7 +30,7 @@ PerformanceData` — never an audio generator.
 | Wave 6 (production quality) | ✅ merged (PR-21…PR-26): VST3 worker, routing, performance V2, sound selection, mix brain, mastering (BS.1770 meter) |
 | Wave 7 (learning system) | ✅ merged (PR-27…PR-31): fingerprint, preference events, pairwise critic, personal defaults, training loop with benchmark gate |
 | Wave U (universal producer intelligence) | ✅ **complete** — U1…U6 merged: contracts, conversation, research, references, scope-aware regeneration, memory + explainability |
-| Wave Q (world-class musical intelligence) | 🟡 **the plan of record** — Q-01 in progress (MOSS runtime, Basic Pitch endpoint); Q-00 and Q-02…Q-15 planned |
+| Wave Q (world-class musical intelligence) | 🟡 **the plan of record** — Q-00 seam built, corpus empty (0 of 100 songs); Q-01 partial (MOSS blocked on TorchCodec 0.9, Basic Pitch endpoint live but unreachable from a local API); Q-02…Q-15 planned |
 | Quality gate A (technical) | ✅ every merged PR carries tests, typecheck, live evidence under `docs/evidence/`; **Definition of Done passed end to end on a real upload, local providers only (PR-32)** |
 | Quality gate B (musical) | ✅ critics pass, no illegal notes; benchmark `playabilityErrors` back to 0 on every case (PR-33) |
 | Quality gate C (human) | 🟡 **operable, not passed**: the listening room (PR-34) serves blind A/B with votes, Elo and an explicit verdict (≥ 5 independent raters, ≥ 60 % release share); no real listener has rated yet |
@@ -1690,6 +1690,41 @@ any of it.
   (Demucs → Basic Pitch per stem) is better and needs a Demucs endpoint.
   Nobody has listened to an arrangement built on transcribed notes, because
   none has been built yet.
+
+- **PR-39** ✅ — `real-corpus-benchmark` (Wave Q, **Q-00**): the seam for
+  measuring against real music, and the refusal to pretend one exists.
+
+  `benchmarkCorpusPlan.ts` is the corpus contract. Rights **fail closed per
+  work**: an entry needs a commercial-use basis with something to check it
+  against, naming the work itself — a dataset's own licence is not proof of
+  rights in the works inside it — and a human gold arrangement is a separate
+  work needing its own basis. Coverage is **measured, not assumed**:
+  `corpusCoverage` reports what the corpus spans across input type, tempo,
+  meter, feel, harmonic complexity, density, ensemble size, idiom and
+  production against Q-00's required spread, and a value carried by fewer than
+  three songs counts as an anecdote rather than coverage. The suite's central
+  case is that a hundred identical 4/4 straight pop songs meet the count and
+  are still **not** a measure.
+
+  `realCorpusBenchmark.ts` is the runner's seam. `planRealBenchmark` says what
+  could be measured today and what stops it being a result; a cleared song with
+  no uploaded source is a plan, not a measurable song, and a song whose
+  analysis produced no Song Model is reported rather than skipped. The three
+  benchmark levels Wave Q binds every release to are named in code —
+  `vs-reference-part-composer`, `vs-production-model`, `vs-human-gold` — so a
+  run cannot be reported against the wrong one, and each says why it cannot run
+  yet. One human gold arrangement is refused as an anecdote, not accepted as a
+  north star.
+
+  **The corpus is empty and says so**: `"The benchmark corpus is not a measure
+  yet — songs: 0 of 100…"`. PR-18's synthesised corpus stays exactly where it
+  is, keeps guarding regressions, and is never merged with this one: a
+  synthesised number and a real number are not the same number. Suites:
+  benchmarkCorpusPlan 4, realCorpusBenchmark 4; typecheck green.
+
+  **What this does not do.** It sources no music and clears no rights. Filling
+  the corpus is a data decision — which songs, and on what basis each may be
+  used — and that is the owner's, not the code's.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
