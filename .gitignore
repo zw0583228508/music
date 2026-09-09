@@ -78,5 +78,14 @@ debug.log
 # Local esbuild test bundles (see docs: focused runner cannot spawn esbuild on Windows)
 .tmp-tests/
 
+# Training datasets, checkpoints and run directories (Wave Q, PR-63). Built
+# from the read-only PDMX corpus by services/composers-assistant-train; only
+# manifests and digests are committed, never examples or weights.
+.training-data/
+services/composers-assistant-train/runs/
+services/composers-assistant-train/exports/
+services/composers-assistant-train/.smoke/
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
 # Workstream worktree marker: a local signal that dependencies are installed.
 .deps-ready
