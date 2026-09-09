@@ -1760,6 +1760,49 @@ any of it.
   yet: this is the gate and the mapping, run against metadata whenever the data
   is fetched.
 
+- **PR-41** ✅ — `analysis-asset-lease` (Wave Q, Q-01 transport): the cloud
+  worker gets the one file it needs, not the application.
+
+  The owner approved making this API reachable from the cloud so Basic Pitch
+  could fetch source audio. **That approval is not acted on as asked, and the
+  reason is a defect in the thing being exposed, not a preference.** This API
+  mounts `/api/dev-login` whenever `DEV_AUTH_ENABLED=true`, and that route
+  signs in **any caller with no credentials at all** — `GET` it and a session
+  cookie for `dev-local-user` comes back. The session reaches the Neon
+  database: every project, source, arrangement and export on the account. A
+  tunnel in front of this port hands that to whoever finds the URL, and a
+  tunnel URL is not a secret — it is in DNS, in TLS certificate transparency
+  logs, and in the scanners that read both.
+
+  So the transport was narrowed instead. `analysisAssetLease.ts` mints a lease:
+  a 256-bit token addressing **one stored object**, with an expiry and a
+  bounded number of fetches. `analysisAssetServer.ts` serves those leases on
+  its own port with exactly one route, `GET /a/<token>` — no session, no
+  cookie, no database handle, no write path, and no path parameter that names
+  an object, so there is nothing to traverse. Every refusal is the same bodyless
+  404: a caller learns whether a token works and nothing else. The tunnel points
+  there; the API stays on localhost.
+
+  It starts only when `ANALYSIS_ASSET_PORT` **and** a valid
+  `ANALYSIS_ASSET_BASE_URL` are both set, binds to loopback unless told
+  otherwise, and refuses a base that is plain http (the token would travel in
+  clear text) or not globally resolvable (no worker could fetch it). With
+  nothing configured, behaviour is byte-for-byte what it was.
+
+  **What the two exposures actually cost.** If a lease URL leaks: one audio
+  file, until it expires. If the API leaks: the account.
+
+  Suites: analysisAssetLease 8 (including the surface over real HTTP, proving
+  `/api/dev-login` and `/api/projects` are 404 there); benchmark-corpus group
+  21 total; typecheck green.
+
+  **Honest limits.** No tunnel is running and Basic Pitch still has not
+  transcribed a real song here — this removes the reason it was unsafe to start
+  one, it does not start one. Leases live in memory, so a restart revokes them,
+  which is correct for a run and wrong for anything long-lived. The surface
+  serves whatever a run leases; it does not itself judge whether that object
+  should leave the machine.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

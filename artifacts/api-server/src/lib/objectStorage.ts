@@ -5,6 +5,13 @@ import type { Readable } from "node:stream";
 import { Storage, type File } from "@google-cloud/storage";
 import { waitForProjectStorageRaceGate } from "./projectStorageRaceTestHook";
 import { createLocalStorage } from "./localObjectStore";
+import {
+  analysisAssetBase,
+  createLeaseStore,
+  leaseUrl,
+  mintLease,
+  type LeaseStore,
+} from "./analysisAssetLease";
 
 const REPLIT_SIDECAR_ENDPOINT = "http://127.0.0.1:1106";
 
@@ -37,6 +44,29 @@ export const objectStorageClient: Storage = USE_LOCAL_OBJECT_STORAGE
       },
       projectId: "",
     });
+
+/**
+ * Leases minted for cloud analysis workers. Held here because this is where a
+ * read URL is created; served by `analysisAssetServer.ts`, which can reach
+ * nothing that was not leased into this store.
+ */
+export const analysisLeaseStore: LeaseStore = createLeaseStore();
+
+/** Streams one stored object for the asset surface. Read-only by construction. */
+export async function readStoredObject(
+  bucketName: string,
+  objectName: string,
+): Promise<{ stream: Readable; contentType?: string; size?: number } | null> {
+  const file = objectStorageClient.bucket(bucketName).file(objectName);
+  const [exists] = await file.exists();
+  if (!exists) return null;
+  const [metadata] = await file.getMetadata();
+  return {
+    stream: file.createReadStream(),
+    contentType: typeof metadata.contentType === "string" ? metadata.contentType : undefined,
+    size: metadata.size === undefined ? undefined : Number(metadata.size),
+  };
+}
 
 function parseObjectPath(path: string): {
   bucketName: string;
@@ -86,6 +116,16 @@ async function signObjectUrl(
   expiresAt = new Date(Date.now() + 15 * 60 * 1000),
 ): Promise<string> {
   if (USE_LOCAL_OBJECT_STORAGE) {
+    if (method === "GET") {
+      // A cloud analysis worker cannot fetch a localhost URL, and must not be
+      // handed the API instead: `/api/dev-login` would come with it. When an
+      // asset base is configured, lease this one object and nothing else.
+      const configured = analysisAssetBase();
+      if ("base" in configured) {
+        const lease = mintLease(analysisLeaseStore, { bucketName, objectName });
+        return leaseUrl(configured.base, lease.token);
+      }
+    }
     // Dev only: model workers run offline locally, so no external service
     // dereferences this URL. Return a same-origin path the API can serve.
     const base = process.env.PUBLIC_BASE_URL?.replace(/\/$/, "") ?? "";
