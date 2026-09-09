@@ -50,6 +50,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ProducerMemoryCard } from "@/components/studio/producer-memory-card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
@@ -802,6 +803,13 @@ export function ProducerChat({ projectId, onBriefChanged }: ProducerChatProps) {
               <CheckCircle2 className="h-3.5 w-3.5" /> Production brief
             </div>
             <BriefSummary state={state} />
+          </div>
+        )}
+
+        {/* PR-U6: the standing rules that travel with the producer, not the song. */}
+        {state && (
+          <div className="border-t p-4">
+            <ProducerMemoryCard projectId={projectId} decisions={activeDecisions(state.brief)} />
           </div>
         )}
       </ScrollArea>

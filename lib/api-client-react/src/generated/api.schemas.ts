@@ -5879,6 +5879,117 @@ export interface FingerprintComparison {
   headline: string[];
 }
 
+export type ExplainTargetKind = typeof ExplainTargetKind[keyof typeof ExplainTargetKind];
+
+
+export const ExplainTargetKind = {
+  instrument: 'instrument',
+  track: 'track',
+  section: 'section',
+  climax: 'climax',
+} as const;
+
+export interface ExplainTarget {
+  kind: ExplainTargetKind;
+  /** @maxLength 120 */
+  name?: string;
+  /** @maxLength 120 */
+  sectionName?: string;
+}
+
+export interface ExplainRequestInput {
+  target?: ExplainTarget;
+  /** @maxLength 500 */
+  question?: string;
+}
+
+export interface ExplainEvidence {
+  source: string;
+  ref: string;
+  detail: string;
+}
+
+export type ExplainResultPlanSource = typeof ExplainResultPlanSource[keyof typeof ExplainResultPlanSource];
+
+
+export const ExplainResultPlanSource = {
+  arrangement: 'arrangement',
+  derived: 'derived',
+  none: 'none',
+} as const;
+
+export interface ExplainResult {
+  /** The question actually answered (built from the target when one was given) */
+  question: string;
+  planSource: ExplainResultPlanSource;
+  answered: boolean;
+  answer: string;
+  evidence: ExplainEvidence[];
+  confidence: number;
+}
+
+export interface RememberDecisionInput {
+  /**
+     * @minLength 1
+     * @maxLength 200
+     */
+  projectId: string;
+  /**
+     * @minLength 1
+     * @maxLength 200
+     */
+  decisionId: string;
+}
+
+export type ProducerMemoryRuleScope = { [key: string]: unknown };
+
+export type ProducerMemoryRuleStrength = typeof ProducerMemoryRuleStrength[keyof typeof ProducerMemoryRuleStrength];
+
+
+export const ProducerMemoryRuleStrength = {
+  hard: 'hard',
+  soft: 'soft',
+} as const;
+
+export type ProducerMemoryRuleDelta = { [key: string]: unknown };
+
+export type ProducerMemoryRuleSource = {
+  projectId: string;
+  briefId: string;
+  decisionId: string;
+};
+
+export interface ProducerMemoryRule {
+  id: string;
+  /** The producer's own words */
+  statement: string;
+  topic: string;
+  scope: ProducerMemoryRuleScope;
+  strength: ProducerMemoryRuleStrength;
+  dimension?: string;
+  value?: unknown;
+  delta: ProducerMemoryRuleDelta;
+  source: ProducerMemoryRuleSource;
+  createdAt: string;
+}
+
+export type ProducerMemoryRecordStatus = typeof ProducerMemoryRecordStatus[keyof typeof ProducerMemoryRecordStatus];
+
+
+export const ProducerMemoryRecordStatus = {
+  active: 'active',
+  revoked: 'revoked',
+} as const;
+
+export interface ProducerMemoryRecord {
+  id: string;
+  rule: ProducerMemoryRule;
+  status: ProducerMemoryRecordStatus;
+  sourceProjectId: string | null;
+  createdAt: string;
+  revokedAt: string | null;
+}
+
 /**
  * With generationJobId - the ranked winner (default) or the first candidate the provider produced.
  */

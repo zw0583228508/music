@@ -443,6 +443,58 @@ test("the owner's personal defaults (PR-30) enter the brief last: below what the
   assert.equal(plain.state.styleProfile.dimensions.swingRatio, undefined);
 });
 
+test("a standing rule (PR-U6) enters a new project at intake as a stated decision that names the rule, and this project can override it", async () => {
+  const producerMemory = [{
+    id: "mem-1",
+    statement: "no high strings, ever",
+    topic: "instrumentation" as const,
+    scope: { kind: "global" as const },
+    strength: "hard" as const,
+    delta: { kind: "instrumentation" as const, remove: ["strings"], rationale: "no high strings, ever" },
+    source: { projectId: "other-project", briefId: "brief-x", decisionId: "dec-x" },
+    createdAt: FIXED_NOW.toISOString(),
+  }];
+  const store = createInMemoryProducerChatStore({ songModel: { version: 1, model: makeTestSongModel() }, producerMemory });
+  const service = createProducerChatService(store, { now: clock(), newId: ids(), researchAgent: null });
+  const outcome = await service.intake(PROJECT, { text: "a warm ballad" });
+  const decisions = activeDecisions(outcome.state.brief);
+  const remembered = decisions.find((d) => d.sourceRefs.includes("producer_memory:mem-1"));
+  assert.ok(remembered, `no decision named the rule: ${decisions.map((d) => d.sourceRefs.join("+")).join(" | ")}`);
+  assert.equal(remembered!.provenance, "stated", "a rule is the producer's own statement, so it outranks research and inference");
+  assert.equal(remembered!.createdBy, "producer");
+  assert.match(outcome.reply, /standing rule "no high strings, ever" was applied to this project/);
+  assert.match(outcome.reply, /say otherwise here and this project will follow what you say/);
+  assert.ok(outcome.state.brief.instrumentation.excludedFamilies.includes("strings"), "the rule reached the brief, not just the transcript");
+
+  // Version 2 keeps the attribution: it travels as a decision row, not as "delta:0".
+  const second = await service.intake(PROJECT, { text: "and make the chorus wide" });
+  const still = activeDecisions(second.state.brief).find((d) => d.sourceRefs.includes("producer_memory:mem-1"));
+  assert.ok(still, "the rule still names itself on later versions");
+  assert.ok(!/standing rule/.test(second.reply), "and it is announced once, not on every turn");
+
+  // A project without the rule is unaffected.
+  const other = await createProducerChatService(createInMemoryProducerChatStore({ songModel: { version: 1, model: makeTestSongModel() } }), { now: clock(), newId: ids(), researchAgent: null }).intake("project-2", { text: "a warm ballad" });
+  assert.ok(!activeDecisions(other.state.brief).some((d) => d.sourceRefs.some((r) => r.startsWith("producer_memory:"))));
+});
+
+test("explain (PR-U6) answers a pointed target from the plan and records nothing", async () => {
+  const { store, service } = setup();
+  await service.intake(PROJECT, { text: "a warm ballad with strings" });
+  const turnsBefore = (await store.listTurns(PROJECT, { limit: 100 })).turns.length;
+  const pointed = await service.explain(PROJECT, { target: { kind: "instrument", name: "strings" } });
+  assert.equal(pointed.question, "why is there strings?");
+  assert.equal(pointed.planSource, "derived", "no arrangement yet: the plan is derived from the brief");
+  assert.equal(typeof pointed.explanation.answered, "boolean");
+  const typed = await service.explain(PROJECT, { question: "why is there strings?" });
+  assert.deepEqual(typed.explanation, pointed.explanation, "pointing and typing take the same path");
+  assert.equal((await store.listTurns(PROJECT, { limit: 100 })).turns.length, turnsBefore, "asking why writes no turn");
+  await assert.rejects(service.explain(PROJECT, {}), (e: unknown) => e instanceof ProducerChatError && e.status === 400);
+  await assert.rejects(
+    createProducerChatService(createInMemoryProducerChatStore({}), { now: clock(), newId: ids() }).explain("nope", { question: "why?" }),
+    (e: unknown) => e instanceof ProducerChatError && e.status === 409,
+  );
+});
+
 test("classification: questions, edits and refinements", () => {
   const model = makeTestSongModel();
   const intent = (text: string) => extractUserIntentSync(text, { now: FIXED_NOW });

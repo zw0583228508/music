@@ -49,8 +49,13 @@ export type CompileBriefOptions = {
   now?: Date;
   /** Durable decisions carried from earlier turns; newer ones supersede them. */
   decisions?: ProducerBriefDecision[];
-  /** Extra deltas: a chosen concept, an accepted edit plan. */
+  /** Extra deltas: a chosen concept, an accepted edit plan, a standing rule. */
   deltas?: BriefDelta[];
+  /**
+   * Source ref per extra delta, same index (default `delta:<i>`). PR-U6 passes
+   * `producer_memory:<ruleId>` so a decision a standing rule produced names it.
+   */
+  deltaSourceRefs?: Array<string | undefined>;
   briefId?: string;
   clarification?: ClarificationOptions;
 };
@@ -602,7 +607,7 @@ export function compileProductionBrief(
     const deltas = option ? option.briefDeltas : applied.deltas.filter((d) => d.kind === "decision" && d.rationale === `free-text answer to ${question.id}`);
     for (const delta of deltas) applyDelta(state, delta, "clarification", ref);
   }
-  (options.deltas ?? []).forEach((delta, i) => applyDelta(state, delta, "producer", `delta:${i}`));
+  (options.deltas ?? []).forEach((delta, i) => applyDelta(state, delta, "producer", options.deltaSourceRefs?.[i] ?? `delta:${i}`));
 
   // 4. Carried decisions; supersede by key, newest wins.
   for (const carried of options.decisions ?? []) {

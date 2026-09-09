@@ -40,6 +40,8 @@ import type {
   ErasePreferenceEvents200,
   ErasePreferenceEventsParams,
   Error,
+  ExplainRequestInput,
+  ExplainResult,
   ExportInput,
   ExportPackage,
   FingerprintComparison,
@@ -84,6 +86,7 @@ import type {
   ProducerDecisionSupersedeInput,
   ProducerEditApplyInput,
   ProducerIntakeInput,
+  ProducerMemoryRecord,
   ProducerPreferences,
   ProducerPreferencesInput,
   ProducerTurnPage,
@@ -101,6 +104,7 @@ import type {
   ReferenceTrackInput,
   ReferenceTrackPatchInput,
   RegisterSourceInput,
+  RememberDecisionInput,
   RestoreArrangementRevisionInput,
   SongModel,
   SongModelCorrectionInput,
@@ -5239,6 +5243,298 @@ export function useGetArrangerModelBlindSheet<TData = Awaited<ReturnType<typeof 
 
 
 
+
+export const getExplainProducerDecisionUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/producer/explain`
+}
+
+/**
+ * Point at a track, a section or the climax, or ask in words. Deterministic - no model is called.
+ * @summary Wave U - why is this here? Answered from the stored plan, the brief and the last edit; records nothing
+ */
+export const explainProducerDecision = async (projectId: string,
+    explainRequestInput: ExplainRequestInput, options?: Parameters<typeof customFetch>[1]): Promise<ExplainResult> => {
+
+  return customFetch<ExplainResult>(getExplainProducerDecisionUrl(projectId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(explainRequestInput)
+  }
+);}
+
+
+
+
+
+export const getExplainProducerDecisionMutationOptions = <TError = ErrorType<Error | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof explainProducerDecision>>, TError,{projectId: string;data: BodyType<ExplainRequestInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof explainProducerDecision>>, TError,{projectId: string;data: BodyType<ExplainRequestInput>}, TContext> => {
+
+const mutationKey = ['explainProducerDecision'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof explainProducerDecision>>, {projectId: string;data: BodyType<ExplainRequestInput>}> = (props) => {
+          const {projectId,data} = props ?? {};
+
+          return  explainProducerDecision(projectId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ExplainProducerDecisionMutationResult = NonNullable<Awaited<ReturnType<typeof explainProducerDecision>>>
+    export type ExplainProducerDecisionMutationBody = BodyType<ExplainRequestInput>
+    export type ExplainProducerDecisionMutationError = ErrorType<Error | NotFoundResponse>
+
+    /**
+ * @summary Wave U - why is this here? Answered from the stored plan, the brief and the last edit; records nothing
+ */
+export const useExplainProducerDecision = <TError = ErrorType<Error | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof explainProducerDecision>>, TError,{projectId: string;data: BodyType<ExplainRequestInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof explainProducerDecision>>,
+        TError,
+        {projectId: string;data: BodyType<ExplainRequestInput>},
+        TContext
+      > => {
+      return useMutation(getExplainProducerDecisionMutationOptions(options));
+    }
+
+export const getListProducerMemoryUrl = () => {
+
+
+
+
+  return `/api/producer-memory`
+}
+
+/**
+ * @summary Wave U - the owner's standing rules across projects, newest first (revoked ones included)
+ */
+export const listProducerMemory = async ( options?: Parameters<typeof customFetch>[1]): Promise<ProducerMemoryRecord[]> => {
+
+  return customFetch<ProducerMemoryRecord[]>(getListProducerMemoryUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListProducerMemoryQueryKey = () => {
+    return [
+    `/api/producer-memory`
+    ] as const;
+    }
+
+
+export const getListProducerMemoryQueryOptions = <TData = Awaited<ReturnType<typeof listProducerMemory>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProducerMemory>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListProducerMemoryQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listProducerMemory>>> = ({ signal }) => listProducerMemory({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listProducerMemory>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListProducerMemoryQueryResult = NonNullable<Awaited<ReturnType<typeof listProducerMemory>>>
+export type ListProducerMemoryQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Wave U - the owner's standing rules across projects, newest first (revoked ones included)
+ */
+
+export function useListProducerMemory<TData = Awaited<ReturnType<typeof listProducerMemory>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProducerMemory>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListProducerMemoryQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getRememberProducerDecisionUrl = () => {
+
+
+
+
+  return `/api/producer-memory`
+}
+
+/**
+ * @summary Wave U - keep one of this project's decisions as a standing rule for every later project
+ */
+export const rememberProducerDecision = async (rememberDecisionInput: RememberDecisionInput, options?: Parameters<typeof customFetch>[1]): Promise<ProducerMemoryRecord> => {
+
+  return customFetch<ProducerMemoryRecord>(getRememberProducerDecisionUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(rememberDecisionInput)
+  }
+);}
+
+
+
+
+
+export const getRememberProducerDecisionMutationOptions = <TError = ErrorType<NotFoundResponse | Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof rememberProducerDecision>>, TError,{data: BodyType<RememberDecisionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof rememberProducerDecision>>, TError,{data: BodyType<RememberDecisionInput>}, TContext> => {
+
+const mutationKey = ['rememberProducerDecision'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof rememberProducerDecision>>, {data: BodyType<RememberDecisionInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  rememberProducerDecision(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RememberProducerDecisionMutationResult = NonNullable<Awaited<ReturnType<typeof rememberProducerDecision>>>
+    export type RememberProducerDecisionMutationBody = BodyType<RememberDecisionInput>
+    export type RememberProducerDecisionMutationError = ErrorType<NotFoundResponse | Error>
+
+    /**
+ * @summary Wave U - keep one of this project's decisions as a standing rule for every later project
+ */
+export const useRememberProducerDecision = <TError = ErrorType<NotFoundResponse | Error>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof rememberProducerDecision>>, TError,{data: BodyType<RememberDecisionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof rememberProducerDecision>>,
+        TError,
+        {data: BodyType<RememberDecisionInput>},
+        TContext
+      > => {
+      return useMutation(getRememberProducerDecisionMutationOptions(options));
+    }
+
+export const getRevokeProducerMemoryUrl = (ruleId: string,) => {
+
+
+
+
+  return `/api/producer-memory/${ruleId}`
+}
+
+/**
+ * @summary Wave U - stop a standing rule applying to new projects (briefs it already shaped are untouched)
+ */
+export const revokeProducerMemory = async (ruleId: string, options?: Parameters<typeof customFetch>[1]): Promise<ProducerMemoryRecord> => {
+
+  return customFetch<ProducerMemoryRecord>(getRevokeProducerMemoryUrl(ruleId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getRevokeProducerMemoryMutationOptions = <TError = ErrorType<NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof revokeProducerMemory>>, TError,{ruleId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof revokeProducerMemory>>, TError,{ruleId: string}, TContext> => {
+
+const mutationKey = ['revokeProducerMemory'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof revokeProducerMemory>>, {ruleId: string}> = (props) => {
+          const {ruleId} = props ?? {};
+
+          return  revokeProducerMemory(ruleId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RevokeProducerMemoryMutationResult = NonNullable<Awaited<ReturnType<typeof revokeProducerMemory>>>
+
+    export type RevokeProducerMemoryMutationError = ErrorType<NotFoundResponse>
+
+    /**
+ * @summary Wave U - stop a standing rule applying to new projects (briefs it already shaped are untouched)
+ */
+export const useRevokeProducerMemory = <TError = ErrorType<NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof revokeProducerMemory>>, TError,{ruleId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof revokeProducerMemory>>,
+        TError,
+        {ruleId: string},
+        TContext
+      > => {
+      return useMutation(getRevokeProducerMemoryMutationOptions(options));
+    }
 
 export const getCreateListeningSessionUrl = (projectId: string,) => {
 

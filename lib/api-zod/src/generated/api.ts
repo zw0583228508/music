@@ -21439,6 +21439,145 @@ export const GetArrangerModelBlindSheetResponse = zod.object({
 
 
 /**
+ * Point at a track, a section or the climax, or ask in words. Deterministic - no model is called.
+ * @summary Wave U - why is this here? Answered from the stored plan, the brief and the last edit; records nothing
+ */
+export const ExplainProducerDecisionParams = zod.object({
+  "projectId": zod.coerce.string()
+})
+
+export const explainProducerDecisionBodyTargetNameMax = 120;
+
+export const explainProducerDecisionBodyTargetSectionNameMax = 120;
+
+export const explainProducerDecisionBodyQuestionMax = 500;
+
+
+
+export const ExplainProducerDecisionBody = zod.strictObject({
+  "target": zod.strictObject({
+  "kind": zod.enum(['instrument', 'track', 'section', 'climax']),
+  "name": zod.string().max(explainProducerDecisionBodyTargetNameMax).optional(),
+  "sectionName": zod.string().max(explainProducerDecisionBodyTargetSectionNameMax).optional()
+}).optional(),
+  "question": zod.string().max(explainProducerDecisionBodyQuestionMax).optional()
+})
+
+export const ExplainProducerDecisionResponse = zod.object({
+  "question": zod.string().describe('The question actually answered (built from the target when one was given)'),
+  "planSource": zod.enum(['arrangement', 'derived', 'none']),
+  "answered": zod.boolean(),
+  "answer": zod.string(),
+  "evidence": zod.array(zod.object({
+  "source": zod.string(),
+  "ref": zod.string(),
+  "detail": zod.string()
+})),
+  "confidence": zod.number()
+})
+
+
+/**
+ * @summary Wave U - the owner's standing rules across projects, newest first (revoked ones included)
+ */
+export const ListProducerMemoryResponseItem = zod.object({
+  "id": zod.string(),
+  "rule": zod.object({
+  "id": zod.string(),
+  "statement": zod.string().describe('The producer\'s own words'),
+  "topic": zod.string(),
+  "scope": zod.record(zod.string(), zod.unknown()),
+  "strength": zod.enum(['hard', 'soft']),
+  "dimension": zod.string().optional(),
+  "value": zod.unknown().optional(),
+  "delta": zod.record(zod.string(), zod.unknown()),
+  "source": zod.object({
+  "projectId": zod.string(),
+  "briefId": zod.string(),
+  "decisionId": zod.string()
+}),
+  "createdAt": zod.string()
+}),
+  "status": zod.enum(['active', 'revoked']),
+  "sourceProjectId": zod.string().nullable(),
+  "createdAt": zod.string(),
+  "revokedAt": zod.string().nullable()
+})
+export const ListProducerMemoryResponse = zod.array(ListProducerMemoryResponseItem)
+
+
+/**
+ * @summary Wave U - keep one of this project's decisions as a standing rule for every later project
+ */
+export const rememberProducerDecisionBodyProjectIdMax = 200;
+
+export const rememberProducerDecisionBodyDecisionIdMax = 200;
+
+
+
+export const RememberProducerDecisionBody = zod.strictObject({
+  "projectId": zod.string().min(1).max(rememberProducerDecisionBodyProjectIdMax),
+  "decisionId": zod.string().min(1).max(rememberProducerDecisionBodyDecisionIdMax)
+})
+
+export const RememberProducerDecisionResponse = zod.object({
+  "id": zod.string(),
+  "rule": zod.object({
+  "id": zod.string(),
+  "statement": zod.string().describe('The producer\'s own words'),
+  "topic": zod.string(),
+  "scope": zod.record(zod.string(), zod.unknown()),
+  "strength": zod.enum(['hard', 'soft']),
+  "dimension": zod.string().optional(),
+  "value": zod.unknown().optional(),
+  "delta": zod.record(zod.string(), zod.unknown()),
+  "source": zod.object({
+  "projectId": zod.string(),
+  "briefId": zod.string(),
+  "decisionId": zod.string()
+}),
+  "createdAt": zod.string()
+}),
+  "status": zod.enum(['active', 'revoked']),
+  "sourceProjectId": zod.string().nullable(),
+  "createdAt": zod.string(),
+  "revokedAt": zod.string().nullable()
+})
+
+
+/**
+ * @summary Wave U - stop a standing rule applying to new projects (briefs it already shaped are untouched)
+ */
+export const RevokeProducerMemoryParams = zod.object({
+  "ruleId": zod.coerce.string()
+})
+
+export const RevokeProducerMemoryResponse = zod.object({
+  "id": zod.string(),
+  "rule": zod.object({
+  "id": zod.string(),
+  "statement": zod.string().describe('The producer\'s own words'),
+  "topic": zod.string(),
+  "scope": zod.record(zod.string(), zod.unknown()),
+  "strength": zod.enum(['hard', 'soft']),
+  "dimension": zod.string().optional(),
+  "value": zod.unknown().optional(),
+  "delta": zod.record(zod.string(), zod.unknown()),
+  "source": zod.object({
+  "projectId": zod.string(),
+  "briefId": zod.string(),
+  "decisionId": zod.string()
+}),
+  "createdAt": zod.string()
+}),
+  "status": zod.enum(['active', 'revoked']),
+  "sourceProjectId": zod.string().nullable(),
+  "createdAt": zod.string(),
+  "revokedAt": zod.string().nullable()
+})
+
+
+/**
  * Each side stands for a system under test (label) and resolves to one generation candidate with a rendered evaluation audio - explicitly by id, or the ranked winner / the first candidate of a generation job. Raters never see the labels.
  * @summary Gate C - open a blind listening session between two candidates of this project
  */

@@ -1,0 +1,240 @@
+{
+  "title": "Producer memory + explainability — live (PR-U6)",
+  "path": "project A intake -> keep a stated decision as a standing rule -> project B intake inherits it as a stated decision naming the rule -> this project overrides it -> explain by target / in words / in Hebrew / section / climax -> revoke -> project C unaffected, project B untouched",
+  "ids": {
+    "projectA": "25048b6b-fd7c-4720-8d46-7af884e6afc3",
+    "projectB": "0c2c096b-1707-48c8-a5dd-5e0fdafbaf9b",
+    "projectC": "0a03d3c4-d963-47a1-bc90-fadc2747eabc",
+    "ruleId": "e97e7388-1c2d-40fe-a007-552ba0797bf9"
+  },
+  "steps": [
+    {
+      "step": "signed in",
+      "user": "dev-local-user"
+    },
+    {
+      "step": "memory cleared before the run",
+      "had": 2
+    },
+    {
+      "step": "project A intake",
+      "projectId": "25048b6b-fd7c-4720-8d46-7af884e6afc3",
+      "briefVersion": 1,
+      "statedDecisions": [
+        [
+          "dec-6dc1a11392ce",
+          "instrumentation",
+          "no strings — \"no strings\""
+        ],
+        [
+          "dec-6f5217676678",
+          "aesthetic",
+          "mood: warm"
+        ],
+        [
+          "dec-ea8bfa57a1db",
+          "instrumentation",
+          "feature keys (piano)"
+        ],
+        [
+          "dec-07654e7afa3d",
+          "instrumentation",
+          "feature winds (clarinet)"
+        ]
+      ]
+    },
+    {
+      "step": "decision kept as a standing rule",
+      "ruleId": "e97e7388-1c2d-40fe-a007-552ba0797bf9",
+      "statement": "no strings — \"no strings\"",
+      "topic": "instrumentation",
+      "strength": "hard",
+      "delta": {
+        "kind": "decision",
+        "scope": {
+          "kind": "global"
+        },
+        "topic": "instrumentation",
+        "value": "strings",
+        "strength": "hard",
+        "rationale": "no strings — \"no strings\"",
+        "statement": "no strings — \"no strings\""
+      },
+      "source": {
+        "projectId": "25048b6b-fd7c-4720-8d46-7af884e6afc3",
+        "briefId": "pc-mttf01kj-r3cklfo4",
+        "decisionId": "dec-6dc1a11392ce"
+      }
+    },
+    {
+      "step": "keeping the same decision twice is refused",
+      "status": 409,
+      "error": "\"no strings — \"no strings\"\" is already a standing rule"
+    },
+    {
+      "step": "unknown decision refused",
+      "status": 404
+    },
+    {
+      "step": "project B intake inherits the rule",
+      "projectId": "0c2c096b-1707-48c8-a5dd-5e0fdafbaf9b",
+      "reply": "read it. \"an upbeat pop song with a big chorus\" is kept for when the song is analysed; there is no Song Model to place it on yet. Your standing rule \"no strings — \"no strings\"\" was applied to this project; revoke it in producer memory, or say otherwise here and this project will follow what you say.",
+      "applied": [
+        [
+          "dec-91a494228b86",
+          "stated",
+          "producer",
+          "no strings — \"no strings\"",
+          [
+            "producer_memory:e97e7388-1c2d-40fe-a007-552ba0797bf9"
+          ]
+        ]
+      ],
+      "excludedFamilies": []
+    },
+    {
+      "step": "this project overrides the rule",
+      "status": 200,
+      "kind": "refinement",
+      "reply": "Added to the brief (v2): section wishes: genre word pop for the chorus, density dense for the chorus, energy high for the chorus and instrument strings for the last chorus. \"an upbeat pop song with a big chorus\" and \"actually bring strings into the last chorus\" is kept for when the song is analysed;"
+    },
+    {
+      "step": "explain by pointing at an instrument",
+      "status": 200,
+      "question": "why is there strings?",
+      "planSource": "none",
+      "answered": true,
+      "answer": "That decision comes from your standing rule: \"no strings — \"no strings\"\".",
+      "evidence": [
+        [
+          "brief.producerDecisions",
+          "dec-91a494228b86"
+        ]
+      ]
+    },
+    {
+      "step": "explain in words takes the same path",
+      "status": 200,
+      "sameEvidence": true,
+      "answered": true
+    },
+    {
+      "step": "explain in Hebrew",
+      "status": 200,
+      "answered": true,
+      "answer": "That decision comes from your standing rule: \"no strings — \"no strings\"\"."
+    },
+    {
+      "step": "explain a section",
+      "status": 200,
+      "question": "why is Chorus like that?",
+      "answered": false,
+      "answer": "I can't explain that from the plan: the plan has no global or section plan to read."
+    },
+    {
+      "step": "explain the climax",
+      "status": 200,
+      "answered": false,
+      "answer": "I can't explain that from the plan: the plan has no global or section plan to read."
+    },
+    {
+      "step": "explain with neither target nor question is refused",
+      "status": 400,
+      "error": "Ask a question, or point at a track, a section or the climax"
+    },
+    {
+      "step": "explain against a stored arrangement plan",
+      "status": 200,
+      "planSource": "arrangement",
+      "answered": true,
+      "answer": "drums is planned as groove in Intro; groove in Verse; groove in Chorus; groove in Verse 2; climax layer in Chorus 2; groove in Outro. It is in the palette because it is present in the source stems. The orchestration budget adjusts it in 12 window(s) around the vocal.",
+      "evidence": [
+        [
+          "sectionPlan.roleAssignments",
+          "Intro/drums",
+          "role GROOVE, register low_mid, density 0.5, melodic 0.05, interaction with lead: independent, bars 1–4"
+        ],
+        [
+          "sectionPlan.roleAssignments",
+          "Verse/drums",
+          "role GROOVE, register low_mid, density 0.59, melodic 0.05, interaction with lead: independent, bars 5–12"
+        ],
+        [
+          "sectionPlan.roleAssignments",
+          "Chorus/drums",
+          "role GROOVE, register low_mid, density 0.78, melodic 0.05, interaction with lead: independent, bars 13–20"
+        ],
+        [
+          "sectionPlan.roleAssignments",
+          "Verse 2/drums",
+          "role GROOVE, register low_mid, density 0.61, melodic 0.05, interaction with lead: independent, bars 21–28"
+        ],
+        [
+          "sectionPlan.roleAssignments",
+          "Chorus 2/drums",
+          "role CLIMAX_LAYER, register low_mid, density 0.92, melodic 0.45, interaction with lead: independent, bars 29–36"
+        ],
+        [
+          "sectionPlan.roleAssignments",
+          "Outro/drums",
+          "role GROOVE, register low_mid, density 0.53, melodic 0.05, interaction with lead: independent, bars 37–40"
+        ],
+        [
+          "globalPlan.instrumentPalette",
+          "drums",
+          "priority 1: present in the source stems"
+        ],
+        [
+          "orchestrationBudget.windows",
+          "phrase-Intro-1",
+          "bars 1–2: vocal attention 0.55, density ×1, register shift 0 — foundation — unchanged"
+        ]
+      ]
+    },
+    {
+      "step": "explain what the last edit rewrote (PR-U5 regeneration)",
+      "status": 200,
+      "answered": true,
+      "answer": "bass is planned as bass in Intro; bass in Verse; bass in Chorus; bass in Verse 2; bass in Chorus 2; bass in Outro. It is in the palette because it is present in the source stems. The orchestration budget adjusts it in 12 window(s) around the vocal.",
+      "regenerationEvidence": []
+    },
+    {
+      "step": "rule revoked",
+      "status": 200,
+      "ruleStatus": "revoked",
+      "revokedAt": "2026-09-09T01:23:58.727Z"
+    },
+    {
+      "step": "a project created after the revocation does not inherit it",
+      "projectId": "0a03d3c4-d963-47a1-bc90-fadc2747eabc",
+      "inherited": 0
+    },
+    {
+      "step": "the brief the rule already shaped is untouched",
+      "projectId": "0c2c096b-1707-48c8-a5dd-5e0fdafbaf9b",
+      "stillPresent": 1
+    },
+    {
+      "step": "memory lists the revoked rule for the record",
+      "rows": [
+        [
+          "e97e7388",
+          "revoked",
+          "no strings — \"no strings\""
+        ],
+        [
+          "09b3a445",
+          "revoked",
+          "feature strings (strings)"
+        ]
+      ]
+    }
+  ],
+  "observations": [
+    "A standing rule is only ever the producer's own stated decision: an inferred one is refused with its reason, and so is keeping the same decision twice.",
+    "In a later project the rule arrives as a `stated` decision whose sourceRef is producer_memory:<id>, so it outranks research and inference but is visible and can be overridden by anything said in that project.",
+    "Revoking stops later projects inheriting it and leaves the briefs it already shaped exactly as they were; the revoked row stays listed for the record.",
+    "Explanations are assembled from the stored plan, the brief and the last edit; no model is called on this path.",
+    "The endpoint explains the project's LATEST plan. The dev project's latest arrangement (v8) came from a full generation, not from PR-U5's edit, so no plan.regeneration evidence appears in this run; the regeneration lines are covered by the unit suite. A version-scoped explanation is not implemented."
+  ]
+}

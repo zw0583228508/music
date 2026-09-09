@@ -14,6 +14,7 @@ import {
   musicProducerChatTurnsTable,
   musicProductionBriefsTable,
   musicProjectsTable,
+  musicProducerMemoryTable,
   personalArrangementProfilesTable,
   songModelsTable,
 } from "@workspace/db";
@@ -153,6 +154,17 @@ export function createProducerChatDbStore(executor: Executor = db): ProducerChat
         .where(and(eq(musicProjectsTable.id, projectId), eq(personalArrangementProfilesTable.active, true)))
         .limit(1);
       return row ? { id: row.id, profile: row.profile } : null;
+    },
+
+    /** PR-U6: the project owner's active standing rules, oldest first. */
+    async loadProducerMemory(projectId) {
+      const rows = await executor
+        .select({ rule: musicProducerMemoryTable.rule })
+        .from(musicProducerMemoryTable)
+        .innerJoin(musicProjectsTable, eq(musicProjectsTable.ownerId, musicProducerMemoryTable.ownerId))
+        .where(and(eq(musicProjectsTable.id, projectId), eq(musicProducerMemoryTable.status, "active")))
+        .orderBy(musicProducerMemoryTable.createdAt);
+      return rows.map((row) => row.rule);
     },
 
     async transaction(fn) {

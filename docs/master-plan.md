@@ -29,7 +29,7 @@ PerformanceData` — never an audio generator.
 | Wave 5 (models as tools) | ✅ Magenta RT2 live on Modal as SHADOW_READY; MIDI-RWKV BLOCKED_LICENSE |
 | Wave 6 (production quality) | ✅ merged (PR-21…PR-26): VST3 worker, routing, performance V2, sound selection, mix brain, mastering (BS.1770 meter) |
 | Wave 7 (learning system) | ✅ merged (PR-27…PR-31): fingerprint, preference events, pairwise critic, personal defaults, training loop with benchmark gate |
-| Wave U (universal producer intelligence) | 🟡 U1–U5 merged; U6 planned |
+| Wave U (universal producer intelligence) | ✅ **complete** — U1…U6 merged: contracts, conversation, research, references, scope-aware regeneration, memory + explainability |
 | Quality gate A (technical) | ✅ every merged PR carries tests, typecheck, live evidence under `docs/evidence/`; **Definition of Done passed end to end on a real upload, local providers only (PR-32)** |
 | Quality gate B (musical) | ✅ critics pass, no illegal notes; benchmark `playabilityErrors` back to 0 on every case (PR-33) |
 | Quality gate C (human) | 🟡 **operable, not passed**: the listening room (PR-34) serves blind A/B with votes, Elo and an explicit verdict (≥ 5 independent raters, ≥ 60 % release share); no real listener has rated yet |
@@ -1479,6 +1479,78 @@ existing `ArrangementPlan`:
 - **PR-U6** `producer-memory-explainability` — durable producer memory across
   projects (rights-cleared, the PR-28 rule) and `explainDecision` surfaced in
   the studio: "why is there a clarinet here?" answered from the plan.
+
+- **PR-U6** ✅ — `producer-memory-explainability`. Wave U's last layer, and
+  the two things a producer asks of a collaborator: *remember what I told you*
+  and *tell me why you did that*.
+
+  **Producer memory across projects.** A statement that is true of the
+  producer rather than of one song ("no strings", "leave the last chorus for
+  the singer") can be kept as a **standing rule**: `music_producer_memory`,
+  promoted from a brief decision, listed, revocable. Three rules keep it
+  honest — only the producer's **own stated** decisions may be kept (an
+  inferred or researched one is refused *with its reason*; what the platform
+  learned stays at PR-30's `default` provenance, below everything); a rule is
+  **visible wherever it acts**, entering a later project's intake as an
+  ordinary `stated` decision whose sourceRef is `producer_memory:<id>`, so
+  anything said in that project supersedes it in the usual way; and revoking
+  is **never retroactive** — later projects stop inheriting it, the briefs it
+  already shaped are untouched, and the revoked row stays listed for the
+  record. `producerMemory.ts` is pure and tested; `deltaForDecision` carries a
+  decision the intake read out of the text (which has no stored delta) as a
+  `decision` delta that reproduces it exactly.
+
+  **Explainability, surfaced.** `POST /projects/{id}/producer/explain` takes a
+  structured target — a track, an instrument, a section or the climax — or a
+  question in words, and answers with PR-U1's `explainDecision` over the
+  stored plan, the brief and the last edit. Pointing and typing take the same
+  path (`questionForTarget`, tested by comparing the evidence). Two additions
+  to `explain.ts`: a decision's **origin** is named ("that decision comes from
+  your standing rule / the reference you allowed / researched world
+  knowledge"), and a version that came from PR-U5's regeneration explains
+  **what the edit rewrote and what it preserved** ("your edit … did not
+  rewrite it: drums was preserved, and 532 locked note(s) were verified
+  byte-identical"). The studio gets a **Why is this here?** panel in the
+  Candidates tab and a **Producer memory** card in the producer chat. Nothing
+  is recorded by asking, and no model is called on any of it.
+
+  **Proven live** (`docs/evidence/producer-memory-explainability-live.json`):
+  project A's stated decision "no strings" kept as a rule (carried as a
+  `decision` delta, hard strength); keeping it twice 409 with its reason, an
+  unknown decision 404; project B's fresh intake inherits it as a `stated`
+  decision naming `producer_memory:<id>`, and the chat announces it once and
+  invites the producer to override it — which the next turn does; explain by
+  pointing, in words and in Hebrew take the same path; against the dev
+  project's stored plan it answers from six role assignments, the palette
+  rationale and twelve orchestration-budget windows (`planSource:
+  arrangement`); revoking leaves project B's brief untouched and a project
+  created afterwards inherits nothing. Suites: producerMemory 5, producerChat
+  19 (+2), explain 9 (+3), briefCompiler 11, scopedRegeneration 12; typecheck
+  green.
+
+  **Found on the way.** PR-U5's `identicalReplacedNotes` counted "was this note
+  rewritten?" by object identity, which reads 0 when a deterministic composer
+  hands back the very objects it was given — exactly the case the metric
+  exists for. It now counts by scope, the same rule the merge used; the
+  suite's own flat-composer test proves it (12/12).
+
+  **Honest limits.** The explain endpoint reads the project's **latest** plan;
+  a version-scoped explanation ("why is this here in v7?") is not implemented,
+  so the regeneration lines were exercised by the suites rather than by the
+  live run (the dev project's latest version came from a full generation).
+  A standing rule is re-applied at the *first* brief of a later project; a
+  project that already has a brief when the rule is created does not pick it
+  up. Rules are the owner's own words, so they inherit PR-U1's reading of
+  them — "no high strings" is read as "no high" plus "strings" and the rule
+  keeps whichever decision the producer chose. Nobody has listened to
+  anything a standing rule shaped.
+
+**Wave U complete** (PR-U1…PR-U6): contracts → conversation → research →
+references → scope-aware regeneration → memory and explainability. The
+producer talks; the platform reads, asks at most two questions, researches the
+world it was told about, borrows only what it was allowed to borrow, edits
+within locks, remembers what is true of the producer, and can say why it did
+any of it.
 
 ## Benchmark baseline — the number every later change is judged against
 

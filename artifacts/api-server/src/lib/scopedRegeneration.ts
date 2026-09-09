@@ -231,14 +231,20 @@ export function mergeCandidateIntoArrangement(input: {
   // A deterministic composer given the same plan writes the same part: count
   // the fresh notes that merely reproduce what they replaced, so the ranking
   // and the report can tell a real change from a re-performance of the same one.
-  const previousNoteObjects = new Set(input.previous.flatMap((t) => t.notes));
-  const previousByKey = new Map(input.previous.flatMap((t) => t.notes.map((n) => [`${t.instrument} ${n.id}`, JSON.stringify(n)] as const)));
+  // A note counts as *replaced* exactly when it lies inside an allowed scope —
+  // the rule `applyPartialRegeneration` merged by. Object identity is not that
+  // rule: a deterministic composer may hand back the very objects it was given,
+  // and those notes were still rewritten, identically.
+  const noteKey = (instrument: string, id: string) => `${instrument}\u0000${id}`;
+  const previousByKey = new Map(input.previous.flatMap((t) => t.notes.map((n) => [noteKey(t.instrument, n.id), JSON.stringify(n)] as const)));
+  const inAllowedScope = (instrument: string, bar: number): boolean =>
+    input.allowed.some((scope) => scope.instrument === instrument && bar >= scope.startBar && bar <= scope.endBar);
   let identicalReplacedNotes = 0;
   for (const track of trackModels) {
     if (previousObjects.has(track)) continue;
     for (const note of track.notes) {
-      if (previousNoteObjects.has(note)) continue;
-      if (previousByKey.get(`${track.instrument} ${note.id}`) === JSON.stringify(note)) identicalReplacedNotes += 1;
+      if (!inAllowedScope(track.instrument, barOf(note.start, input.geometry))) continue;
+      if (previousByKey.get(noteKey(track.instrument, note.id)) === JSON.stringify(note)) identicalReplacedNotes += 1;
     }
   }
   const critique = critiqueArrangement({ songModel: input.songModel, plan: input.plan, trackModels });

@@ -18,6 +18,14 @@ import {
   AnswerProducerClarificationsBody,
   AnswerProducerClarificationsParams,
   AnswerProducerClarificationsResponse,
+  ExplainProducerDecisionBody,
+  ExplainProducerDecisionParams,
+  ExplainProducerDecisionResponse,
+  ListProducerMemoryResponse,
+  RememberProducerDecisionBody,
+  RememberProducerDecisionResponse,
+  RevokeProducerMemoryParams,
+  RevokeProducerMemoryResponse,
   ApplyProducerEditBody,
   ApplyProducerEditParams,
   ApplyProducerEditResponse,
@@ -48,6 +56,8 @@ import {
   type ProducerTurnOutcome,
 } from "../lib/producerChat";
 import { createProducerChatDbStore } from "../lib/producerChatDbStore";
+import { ProducerMemoryError } from "../lib/producerMemory";
+import { listProducerMemory, rememberDecision, revokeProducerMemory } from "../lib/producerMemoryStore";
 import { openAiIntentModelSelected, selectIntentLanguageModel } from "../lib/producerIntelligence/openAiIntentModel";
 import { createStyleResearchAgent, selectResearchProviders } from "../lib/producerIntelligence/styleResearch";
 import { createScopedRegenerationService, type ScopedRegenerationService } from "../lib/scopedRegeneration";
@@ -107,7 +117,7 @@ async function ownedProject(req: Request, res: Response, projectId: string): Pro
 }
 
 function sendError(res: Response, error: unknown): void {
-  if (error instanceof ProducerChatError) {
+  if (error instanceof ProducerChatError || error instanceof ProducerMemoryError) {
     res.status(error.status).json({ error: error.message });
     return;
   }
@@ -307,6 +317,93 @@ router.post("/projects/:projectId/producer/decisions/:decisionId/supersede", asy
             : { kind: "track", instrument: scope.instrument ?? "", ...(scope.sectionName ? { sectionName: scope.sectionName } : {}) },
     });
     res.json(SupersedeProducerDecisionResponse.parse(turnPayload(outcome)));
+  } catch (error) {
+    sendError(res, error);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// PR-U6: explainability and producer memory
+// ---------------------------------------------------------------------------
+
+router.post("/projects/:projectId/producer/explain", async (req, res): Promise<void> => {
+  const params = ExplainProducerDecisionParams.safeParse(req.params);
+  const body = ExplainProducerDecisionBody.safeParse(req.body);
+  if (!params.success || !body.success) {
+    res.status(400).json({ error: params.success ? body.error!.message : params.error.message });
+    return;
+  }
+  if (!(await ownedProject(req, res, params.data.projectId))) return;
+  const { target, question } = body.data;
+  if (target && target.kind !== "climax" && !target.name?.trim()) {
+    res.status(400).json({ error: `A ${target.kind} target needs the name to explain` });
+    return;
+  }
+  try {
+    const outcome = await producerService().explain(params.data.projectId, {
+      ...(question ? { question } : {}),
+      ...(target
+        ? {
+            target: target.kind === "climax"
+              ? { kind: "climax" as const }
+              : target.kind === "section"
+                ? { kind: "section" as const, name: target.name! }
+                : { kind: target.kind, name: target.name!, ...(target.sectionName ? { sectionName: target.sectionName } : {}) },
+          }
+        : {}),
+    });
+    res.json(ExplainProducerDecisionResponse.parse({
+      question: outcome.question,
+      planSource: outcome.planSource,
+      ...outcome.explanation,
+    }));
+  } catch (error) {
+    sendError(res, error);
+  }
+});
+
+router.get("/producer-memory", async (req, res): Promise<void> => {
+  if (!req.isAuthenticated()) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  res.json(ListProducerMemoryResponse.parse(await listProducerMemory(req.user.id)));
+});
+
+router.post("/producer-memory", async (req, res): Promise<void> => {
+  if (!req.isAuthenticated()) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  const body = RememberProducerDecisionBody.safeParse(req.body);
+  if (!body.success) {
+    res.status(400).json({ error: body.error.message });
+    return;
+  }
+  try {
+    const rule = await rememberDecision({
+      ownerId: req.user.id,
+      projectId: body.data.projectId,
+      decisionId: body.data.decisionId,
+    });
+    res.status(201).json(RememberProducerDecisionResponse.parse(rule));
+  } catch (error) {
+    sendError(res, error);
+  }
+});
+
+router.delete("/producer-memory/:ruleId", async (req, res): Promise<void> => {
+  if (!req.isAuthenticated()) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  const params = RevokeProducerMemoryParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+  try {
+    res.json(RevokeProducerMemoryResponse.parse(await revokeProducerMemory(req.user.id, params.data.ruleId)));
   } catch (error) {
     sendError(res, error);
   }
