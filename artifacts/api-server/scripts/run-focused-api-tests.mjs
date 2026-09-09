@@ -29,6 +29,13 @@ const suites = {
         "blind-listening.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, Q-03: the context a part composer needs to arrange rather than
+      // just to be correct — sibling notes, the vocal's gaps, the song's motifs.
+      [
+        "src/lib/partGenerationContextV2.test.ts",
+        "part-generation-context-v2.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       ["src/lib/candidateRanking.test.ts", "candidate-ranking.test.mjs"],
       ["src/lib/candidateQuality.test.ts", "candidate-quality.test.mjs"],
       ["src/lib/candidateRepair.test.ts", "candidate-repair.test.mjs"],
