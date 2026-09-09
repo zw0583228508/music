@@ -2685,6 +2685,106 @@ any of it.
   and says so; a non-classical slice, at least one rated session, and the
   measured cost of a LoRA pilot are named as what makes it final.
 
+- **PR-62** ✅ — `model-discovery-round-2` (Wave Q — Model Discovery, round 2):
+  **the second global sweep, and a real challenger in the tournament — which
+  lost.** Evidence: `docs/model-discovery/discovery-round-2.md` (21 models
+  audited, ranked table + per-model scorecards),
+  `docs/evidence/model-anticipatory-music-transformer-live.json`,
+  `docs/evidence/model-tournament-challenger-live.json` (252 entries) + 328
+  blind-pair MIDIs under `docs/evidence/tournament-challenger/`, raw probe and
+  decode-sweep output under `docs/evidence/amt-live/`, and
+  `docs/model-discovery/decision-report.md` §2c.
+
+  **The sweep.** 21 symbolic models audited from primary sources (13 new since
+  the first pass): MuPT, NotaGen/-X, REMI-z arrangers, CLaMP 3, GETMusic,
+  Anticipatory MT, SymphonyNet, MelodyT5, Pianist Transformer, MetaScore,
+  MIDI-GPT, FIGARO, MuseCoco, ChatMusician, plus 2025–26 arrivals (Moonbeam,
+  MIDI-RWKV, MIDI-LLM, Aria, PhraseLDM, EMT, Structured Multi-Track
+  Accompaniment Arrangement); four audio models recorded as deliberately out
+  of scope. **Nothing was promoted: CA2 is still the only `SHIP_CLEARED` row.**
+  Every permissive label sits on an uncleared, non-commercial or undisclosed
+  corpus. Four models moved to `BLOCKED_LICENSE` on primary sources
+  (MIDI-GPT `CC-BY-NC-4.0` weights, MIDI-RWKV and MIDI-LLM on GigaMIDI's Fair
+  Dealing terms, Aria on `CC-BY-NC-SA-4.0` Aria-MIDI). No layer was assumed;
+  an unread one is `LEGAL_REVIEW_REQUIRED`.
+
+  **The challenger, proven live.** `services/anticipatory-worker/` — the
+  Anticipatory Music Transformer (`stanford-crfm/music-large-800k`, 780M
+  GPT-2, Apache-2.0 code and weights over Lakh + MetaMIDI + FMA transcripts +
+  450k transcribed commercial records → **`RESEARCH_ONLY`**, a shadow
+  challenger that can never route to a user). Pinned image, checksum-verified
+  3.1 GB checkpoint, five upstream module shas re-hashed at build, at load and
+  on every `/health`, dedicated bearer token, GPU build smoke as the image's
+  last step. On the same PDMX brass score and the same two windows as the CA2
+  cloud evidence: **tuba 88 notes (14 pitches, 28–42), trumpet 104 notes
+  (5 pitches, 59–68), 270 and 318 forward passes, 22.7 s and 35.0 s on an
+  A10G, nothing off-target.**
+
+  **Four deploys of failure before that, all recorded.** The task does not
+  come out of this model by masking. Put the whole band in the event prompt
+  and it answers `REST` (4 rests, 0 notes); ban `REST` and it re-emits at one
+  onset forever (400 notes at the cap, 48 of them the same pitch at 0.13 s);
+  a four-way decode sweep showed the mask was the cause, not the tuning
+  (48–124 notes stacked on a single onset in every combination), and unmasked
+  it wrote 9–26 events with **none** for the held-out instrument. The fix is
+  upstream's own accompaniment framing, inverted: **the event stream is the
+  held-out part's own line, the controls are every other instrument.** Then
+  88 notes over 53 onsets across all eight bars. `mask_instrument`,
+  `allow_rest` and `forbid_duplicate` survive as request switches, reported
+  per call and carried into the account, so the evidence shows what each does.
+
+  **The tournament said no.** Same 12 tasks, programs, windows and seeds
+  7/11/13 as PR-59, all five incumbent arms plus both AMT arms, 36 real AMT
+  inferences: HUMAN 90.4 · REFERENCE 63.0 · CONTEXT_AWARE 64.6 · CA2 71.5 ·
+  **CA2+CTX 71.8** · **AMT 39.5 · AMT+CTX 43.3**. Last place overall and in
+  every one of the six families, **8.09 playability errors per entry** (16×
+  CA2, 100× the reference; two bass cells carry 93 and 71), 3 outright
+  failures, 5 zero-note cells, 3 that ran to the event cap, and 6× CA2's cost
+  on a GPU where CA2 is a CPU job. `do_not_promote` for all four model arms.
+  The one genuinely new finding is about **us**: the platform's context passes
+  cut AMT's playability errors by **79 %** (8.09 → 1.70) against half for CA2
+  — the worse the generator, the more the passes carry.
+
+  **What was built.** `anticipatoryProjection.ts` (every V2 field's
+  disposition, PR-56's contract — `instrument` is *approximated*, because the
+  part it writes follows from our stream split and not from any token it
+  read), `anticipatoryResultAdapter.ts` (refuses any other checkpoint,
+  revision or provider; names the decode rule in force on every run),
+  `anticipatoryClient.ts` (`ANTICIPATORY_MT_API_URL` + a **dedicated**
+  `ANTICIPATORY_MT_API_TOKEN`, https only — the shared worker token and CA2's
+  token are both refused), `tournamentChallengers.ts` (`createAmtProviders`,
+  two arms over one shared inference per (task, seed)) and
+  `scripts/run-challenger-tournament.mjs`, which rebuilds a previous run's
+  tasks from the same PDMX files and **verifies the task ids match** before
+  running. Workstream B's tournament core is reused unchanged.
+
+  Suites: globalModelRegistry 16, anticipatoryResultAdapter 8,
+  anticipatoryClient 5, tournamentChallengers 3 (worker mocked at the HTTP
+  boundary); typecheck green.
+
+  **Cost.** One A10G, inference only, no training, `max_containers` 1,
+  `timeout` 1200 s: ≈ 55 min of container time across six deploys, two live
+  probes, three decode sweeps and the tournament — ≈ $1.10–1.30 at Modal's
+  published rate (derived from measured seconds, not an invoice). Inside the
+  $10 ceiling.
+
+  **Honest limits.** The comparison is between two *harnesses* as much as two
+  models: AMT has no instrument conditioning at all, CA2 is told which track
+  and which bars, and a better harness might buy AMT points (not 28 of them).
+  The three failed cells are an unfixed interop gap — the `anticipation`
+  package's MIDI front-end resolves GM programs differently from the
+  platform's parser, so `hold out program 0` named a part that did not exist
+  inside the worker. The incumbents' means moved slightly from PR-59 (CA2
+  73.0 → 71.5) on identical tasks and seeds, because CPU sampling is not
+  bit-reproducible — the reason the tournament runs three seeds. All twelve
+  tasks are still classical/early-music, so **nothing here speaks to pop,
+  dance or Mizrahi arrangement**. The 328 new blind pairs are written and
+  **nobody has rated one**. A diagnostic counter in the worker
+  (`controlEventsFromOtherInstruments`) reports the wrong quantity and was
+  deliberately left alone so the committed source keeps hashing to
+  `sha256:b0494f63…`, the image that produced every number above; the correct
+  figure is in the same response as `request.otherInstrumentEventsGiven`.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

@@ -1,0 +1,524 @@
+{
+  "title": "Anticipatory Music Transformer — the isolated Modal worker, proven over HTTPS on real PDMX MIDI (Wave Q — Model Discovery, round 2)",
+  "date": "2026-09-09",
+  "definitionOfDone": "real musical input → real model inference → real symbolic output, through the deployed endpoint the platform's client would use. Nothing here promotes the model: it is RESEARCH_ONLY in the Global Model Registry and a SHADOW_CHALLENGER at most.",
+  "classification": {
+    "verdict": "RESEARCH_ONLY",
+    "why": "code Apache-2.0 and weights apache-2.0, both read from primary sources; the corpus (Lakh MIDI + MetaMIDI + FMA transcripts + 450k transcribed commercial records, from the model card) is not cleared at the level of the underlying works. Proven live is not proven shippable, and the two facts are recorded separately on purpose.",
+    "permittedHere": "benchmark and shadow-challenger inference only; never routed to a user; outputs reviewed, never trained on without counsel."
+  },
+  "deployment": {
+    "app": "anticipatory-worker",
+    "endpoint": "https://windot100--anticipatory-worker-endpoint.modal.run",
+    "modalDashboard": "https://modal.com/apps/windot100/main/deployed/anticipatory-worker",
+    "image": "modal.Image.from_dockerfile(services/anticipatory-worker/Dockerfile) — python:3.10-slim-bookworm, torch 2.1.2+cu121, transformers 4.32.1, mido 1.2.10, numpy<2; anticipation @ af373979…; checkpoint fetched at the pinned revision and sha256sum -c'd in the image",
+    "buildTimeSmoke": "the image only exists because a real infill on a synthesised three-instrument MIDI produced notes for a held-out bass during the build, on an A10G (3.1 GB of fp32 weights do not fit a default build container, so the real smoke runs as Image.run_function(gpu='A10G') — the image's last build step). The unmasked decode is run alongside the gate and recorded in the marker, because that is the configuration the evidence shows failing.",
+    "resources": "gpu=A10G, cpu=2.0, memory=12288 MB, timeout 1200 s, max_containers 1, scaledown_window 120 s — the workstream's budget guard, inference only, no training",
+    "secrets": "music-ai-worker-runtime (shared runtime), then anticipatory-worker-token (dedicated MUSIC_AI_WORKER_TOKEN) attached second so it wins; no token is printed anywhere",
+    "imageEvidence": "sha256:b0494f63d4ffef8e185c6f26d97c65be34bd8e329c5ef832199f73358f2cfa1e",
+    "deployLog": "six deploys. (1) failed at the code gate: the five anticipation module shas had been taken from a Windows checkout git had CRLF-converted, and the container installs LF files — they now come from the git blobs. (2) failed at the build smoke: the note-slot mask left REST unmasked, so with every other track handed to the model as an anticipated control it sampled 4 rests and 0 notes. (3) built, and the first live probe on real PDMX MIDI returned 400 notes at the event cap, 48 of them the same pitch at the same 0.13 s onset — banning REST had removed the model's only way of saying 'not here' and future_logits still permitted the same onset. (4) added the mask_instrument switch and proved by sweep that masking was the cause, not the tuning: unmasked the model wrote 9-26 events and none for the held-out instrument. (5) the real fix — the event stream split by instrument rather than by time (the held-out part's own line as events, every other instrument as anticipated controls, which is upstream's accompaniment framing inverted). (6) the request defaults flipped to the configuration the sweep chose. App deployed in 356.9 s."
+  },
+  "pins": {
+    "code": {
+      "commit": "af37397922665a0fb8d474d7988b0f3755a38d45",
+      "committedAt": "2024-03-18T10:09:15-05:00",
+      "install": "pip install git+https://github.com/jthickstun/anticipation.git@af37397922665a0fb8d474d7988b0f3755a38d45",
+      "moduleSha256": {
+        "config.py": "5765aecff71fe107108d14c02cdc675dbf5a12538d287eab349fb71d373f2f3c",
+        "convert.py": "3383f80572bf2e4b85672936a490effe4f1b669ea79b49e6ebd3bacb7dc6f3b6",
+        "ops.py": "929a6da4d86e7ecfa3255fb1ee7524600509ed0f885c8473b64233a46c9d1f78",
+        "sample.py": "17d98e828a5687cea623570d085828e91a978fe38bb949270467c8027d920718",
+        "vocab.py": "a8d6c1b376e0be396a1185e3e9bb74891851400da06d9c5c9d29bd835c0368c7"
+      },
+      "moduleSha256Note": "sha256 of the git blobs at the commit (LF). The first image build failed because the shas had been taken from a CRLF-converted Windows checkout; these are from `git cat-file -p HEAD:anticipation/<file>`.",
+      "note": "Only sampling/conversion helpers are imported (ops, sample.safe_logits/future_logits/instr_logits/nucleus, convert.midi_to_events). The sampling loop itself is re-implemented in amt_infer.generate_instrument with an instrument mask and an event cap; it is otherwise sample.generate line for line.",
+      "instrumentMaskNote": "The mask leaves alive only the held-out instrument's 128 pitches in the note slot — REST included in what it bans. The second failed build proved why: with every other track given as an anticipated control the event stream is empty, so the unconstrained model sampled 4 rests and 0 notes. This is constrained decoding, not an instruction the model read."
+    },
+    "model": {
+      "huggingFace": "stanford-crfm/music-large-800k",
+      "revision": "e206a88d4658661c2757573eae724d5b27213824",
+      "file": "model.safetensors",
+      "bytes": 3120598456,
+      "safetensorsSha256": "83fb8b9546eacce77a90bb10006b3f569ba342361dce046d078cf2429975e09f",
+      "configSha256": "2ece2a78b4d9b48aca5dbc36e15779520e540ddec7eedf524dcdfa276b9a5046",
+      "architecture": "GPT2LMHeadModel, 36 layers, n_embd 1280, 20 heads, n_positions 1024, gelu_new, scale_attn_by_inverse_layer_idx, fp32",
+      "vocabSize": 55028,
+      "representation": "arrival-time events: (onset 10 ms, duration 10 ms, instrument*128+pitch); controls in a parallel token block; DELTA 5 s anticipation; 341 events per 1024-token context"
+    },
+    "reVerifiedInContainer": {
+      "modelSafetensorsVerified": true,
+      "vocabVerified": true,
+      "codeVerified": true,
+      "runtimePinned": true,
+      "parametersMeasured": 780139520
+    }
+  },
+  "input": {
+    "file": "PDMX Qma11MhFz64u8wRiW1cTZ5VJ4zTQWbYbVHDnMGafAFoaN6.mid (no_license_conflict; CC-BY-4.0 compilation, Zenodo 11455368)",
+    "sha256": "5b53b53c5f6c5b1eb03007cf7a52f43bc1443fd876ff3b41f5a54c24eb5afc7b",
+    "bytes": 22318,
+    "content": "brass ensemble — trumpet(56), trombone(57), tuba(58), horn(60), drums; 64 measures; the same file, the same two held-out programs and the same two windows as the CA2 cloud evidence, so the two workers are comparable note for note",
+    "sourceBpm": 120
+  },
+  "health": {
+    "unauthenticatedCold": {
+      "status": 401,
+      "seconds": 6.92,
+      "reading": "401 — the gate is on in the cloud"
+    },
+    "authenticatedCold": {
+      "status": 200,
+      "seconds": 30.42
+    },
+    "unauthenticatedWarm": {
+      "status": 401,
+      "seconds": 0.38
+    },
+    "authenticatedWarm": {
+      "status": 200,
+      "seconds": 0.69
+    },
+    "body": {
+      "provider": "ANTICIPATORY_MUSIC_TRANSFORMER",
+      "model": "stanford-crfm/music-large-800k",
+      "revision": "e206a88d4658661c2757573eae724d5b27213824",
+      "modelSafetensorsSha256Expected": "83fb8b9546eacce77a90bb10006b3f569ba342361dce046d078cf2429975e09f",
+      "modelSafetensorsVerified": true,
+      "configSha256Verified": true,
+      "config": {
+        "architectures": [
+          "GPT2LMHeadModel"
+        ],
+        "n_layer": 36,
+        "n_embd": 1280,
+        "n_head": 20,
+        "n_positions": 1024,
+        "vocab_size": 55030,
+        "transformers_version": "4.32.1",
+        "model_type": "gpt2"
+      },
+      "code": {
+        "commit": "af37397922665a0fb8d474d7988b0f3755a38d45",
+        "verified": true
+      },
+      "vocabSize": 55028,
+      "vocabVerified": true,
+      "runtime": {
+        "python": "3.10.21",
+        "torch": "2.1.2+cu121",
+        "transformers": "4.32.1",
+        "cuda": true,
+        "device": "NVIDIA A10G"
+      },
+      "runtimePinned": true,
+      "licence": {
+        "code": "Apache-2.0 (repository LICENSE.txt, read verbatim)",
+        "weights": "Apache-2.0 (Hugging Face model card front matter, read verbatim)",
+        "trainingData": "Lakh MIDI + MetaMIDI + FMA transcripts + 450k transcribed commercial records (model card) — underlying works not cleared",
+        "classification": "RESEARCH_ONLY — shadow challenger / benchmark; never routed to users; outputs reviewed, never trained on without counsel"
+      },
+      "healthy": true,
+      "imageEvidence": "sha256:b0494f63d4ffef8e185c6f26d97c65be34bd8e329c5ef832199f73358f2cfa1e"
+    }
+  },
+  "runs": [
+    {
+      "label": "tuba",
+      "params": {
+        "label": "tuba",
+        "targetInst": 58,
+        "startMeasure": 0,
+        "nMeasures": 8,
+        "seed": 13,
+        "topP": 0.98,
+        "maxEvents": 400
+      },
+      "httpSeconds": 33.11,
+      "task": {
+        "kind": "infill: given every other instrument, write the held-out instrument over the window",
+        "targetInst": 58,
+        "measureSlice": [
+          0,
+          8
+        ],
+        "windowSeconds": [
+          0,
+          16
+        ],
+        "heldOutHumanNotes": 56,
+        "contextNotesInWindow": 155
+      },
+      "request": {
+        "shiftSeconds": 0,
+        "localWindowSeconds": [
+          0,
+          16
+        ],
+        "targetOwnLineGiven": 33,
+        "otherInstrumentEventsGiven": 251,
+        "historySeconds": 20,
+        "lookaheadSeconds": 8
+      },
+      "inference": {
+        "seconds": 22.74,
+        "mode": "anticipate",
+        "promptEvents": 0,
+        "promptEventsNote": "the held-out instrument's own notes before the window; rests padding it are not counted",
+        "controlEvents": 284,
+        "controlEventsFromOtherInstruments": 284,
+        "controlEventsFromTargetAfterWindow": 33,
+        "promptTokens": 0,
+        "historyTruncatedToMarkovWindow": false,
+        "forwardPasses": 270,
+        "maxContext": 957,
+        "generatedEvents": 88,
+        "restEvents": 1,
+        "duplicatesBlocked": 35,
+        "allowRest": true,
+        "forbidDuplicate": true,
+        "maskInstrument": true,
+        "truncatedByEventCap": false,
+        "device": "cuda:0",
+        "topP": 0.98,
+        "parameters": 780139520
+      },
+      "output": {
+        "generatedNotes": 88,
+        "offTargetEventsDropped": 0,
+        "measuresWithNotes": 8,
+        "pitchRange": [
+          28,
+          42
+        ],
+        "distinctPitches": 14,
+        "firstNotes": [
+          {
+            "measure": 0,
+            "pitch": 39,
+            "startSec": 0,
+            "endSec": 0.06,
+            "startQn": 0,
+            "endQn": 0.12,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 0,
+            "pitch": 38,
+            "startSec": 0.06,
+            "endSec": 0.12,
+            "startQn": 0.12,
+            "endQn": 0.24,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 0,
+            "pitch": 37,
+            "startSec": 0.12,
+            "endSec": 0.18,
+            "startQn": 0.24,
+            "endQn": 0.36,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 0,
+            "pitch": 36,
+            "startSec": 0.19,
+            "endSec": 0.25,
+            "startQn": 0.38,
+            "endQn": 0.5,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 0,
+            "pitch": 35,
+            "startSec": 0.25,
+            "endSec": 0.31,
+            "startQn": 0.5,
+            "endQn": 0.62,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 0,
+            "pitch": 34,
+            "startSec": 0.31,
+            "endSec": 0.37,
+            "startQn": 0.62,
+            "endQn": 0.74,
+            "velocity": 80,
+            "isDrum": false
+          }
+        ]
+      },
+      "account": {
+        "received": [
+          "siblingParts.notes (the other instruments inside the window, as anticipated controls; before and after it, as prompt and later controls)",
+          "instrument (the held-out GM program, enforced by an instrument mask on the note slot)",
+          "candidateStrategy.seed (torch.manual_seed before sampling)"
+        ],
+        "approximated": [
+          "section → bare bar window in seconds under the file's first tempo and first time signature",
+          "tracks sharing a GM program are one instrument to this model — the held-out part is the program, not the track",
+          "velocity: the model has no velocity token; every generated note is emitted at a constant velocity",
+          "tempo changes inside the file are flattened to the first tempo so bar numbers mean the same thing to every provider",
+          "hardConstraints.polyphony / range → none sent (enforce after)"
+        ],
+        "unsupported": [
+          "styleGrammar",
+          "harmonyPlan",
+          "vocalAttentionMap",
+          "motifMemory",
+          "previousSectionSummary",
+          "nextSectionIntent",
+          "role",
+          "phrases",
+          "productionBriefRef",
+          "songModel.chords (no harmony token; chords are implicit in the control notes)"
+        ],
+        "enforcedHere": [
+          "instrument mask on the note slot: only the held-out GM program can be sampled",
+          "REST kept available — the model's only way of saying 'not here'",
+          "repeat of a pitch already written at the same onset banned",
+          "event cap 400 (notes + rests)"
+        ],
+        "note": "No musical constraint is applied inside the worker; the platform's contextAwareComposer passes do that so every provider is judged after the same enforcement."
+      },
+      "definitionOfDone": {
+        "realMusicalInput": true,
+        "realModelInference": true,
+        "realSymbolicOutput": true,
+        "verdict": "PASS"
+      },
+      "imageEvidence": "sha256:b0494f63d4ffef8e185c6f26d97c65be34bd8e329c5ef832199f73358f2cfa1e"
+    },
+    {
+      "label": "trumpet",
+      "params": {
+        "label": "trumpet",
+        "targetInst": 56,
+        "startMeasure": 1,
+        "nMeasures": 8,
+        "seed": 7,
+        "topP": 0.98,
+        "maxEvents": 400
+      },
+      "httpSeconds": 36.78,
+      "task": {
+        "kind": "infill: given every other instrument, write the held-out instrument over the window",
+        "targetInst": 56,
+        "measureSlice": [
+          1,
+          9
+        ],
+        "windowSeconds": [
+          2,
+          18
+        ],
+        "heldOutHumanNotes": 48,
+        "contextNotesInWindow": 159
+      },
+      "request": {
+        "shiftSeconds": 0,
+        "localWindowSeconds": [
+          2,
+          18
+        ],
+        "targetOwnLineGiven": 25,
+        "otherInstrumentEventsGiven": 301,
+        "historySeconds": 20,
+        "lookaheadSeconds": 8
+      },
+      "inference": {
+        "seconds": 34.97,
+        "mode": "anticipate",
+        "promptEvents": 0,
+        "promptEventsNote": "the held-out instrument's own notes before the window; rests padding it are not counted",
+        "controlEvents": 326,
+        "controlEventsFromOtherInstruments": 265,
+        "controlEventsFromTargetAfterWindow": 25,
+        "promptTokens": 3,
+        "historyTruncatedToMarkovWindow": false,
+        "forwardPasses": 318,
+        "maxContext": 1020,
+        "generatedEvents": 104,
+        "restEvents": 1,
+        "duplicatesBlocked": 96,
+        "allowRest": true,
+        "forbidDuplicate": true,
+        "maskInstrument": true,
+        "truncatedByEventCap": false,
+        "device": "cuda:0",
+        "topP": 0.98,
+        "parameters": 780139520
+      },
+      "output": {
+        "generatedNotes": 104,
+        "offTargetEventsDropped": 0,
+        "measuresWithNotes": 8,
+        "pitchRange": [
+          59,
+          68
+        ],
+        "distinctPitches": 5,
+        "firstNotes": [
+          {
+            "measure": 1,
+            "pitch": 59,
+            "startSec": 2.5,
+            "endSec": 2.75,
+            "startQn": 5,
+            "endQn": 5.5,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 1,
+            "pitch": 64,
+            "startSec": 2.5,
+            "endSec": 2.75,
+            "startQn": 5,
+            "endQn": 5.5,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 1,
+            "pitch": 68,
+            "startSec": 2.5,
+            "endSec": 2.75,
+            "startQn": 5,
+            "endQn": 5.5,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 1,
+            "pitch": 59,
+            "startSec": 2.75,
+            "endSec": 3.25,
+            "startQn": 5.5,
+            "endQn": 6.5,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 1,
+            "pitch": 64,
+            "startSec": 2.75,
+            "endSec": 3,
+            "startQn": 5.5,
+            "endQn": 6,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 1,
+            "pitch": 66,
+            "startSec": 2.75,
+            "endSec": 3.25,
+            "startQn": 5.5,
+            "endQn": 6.5,
+            "velocity": 80,
+            "isDrum": false
+          }
+        ]
+      },
+      "account": {
+        "received": [
+          "siblingParts.notes (the other instruments inside the window, as anticipated controls; before and after it, as prompt and later controls)",
+          "instrument (the held-out GM program, enforced by an instrument mask on the note slot)",
+          "candidateStrategy.seed (torch.manual_seed before sampling)"
+        ],
+        "approximated": [
+          "section → bare bar window in seconds under the file's first tempo and first time signature",
+          "tracks sharing a GM program are one instrument to this model — the held-out part is the program, not the track",
+          "velocity: the model has no velocity token; every generated note is emitted at a constant velocity",
+          "tempo changes inside the file are flattened to the first tempo so bar numbers mean the same thing to every provider",
+          "hardConstraints.polyphony / range → none sent (enforce after)"
+        ],
+        "unsupported": [
+          "styleGrammar",
+          "harmonyPlan",
+          "vocalAttentionMap",
+          "motifMemory",
+          "previousSectionSummary",
+          "nextSectionIntent",
+          "role",
+          "phrases",
+          "productionBriefRef",
+          "songModel.chords (no harmony token; chords are implicit in the control notes)"
+        ],
+        "enforcedHere": [
+          "instrument mask on the note slot: only the held-out GM program can be sampled",
+          "REST kept available — the model's only way of saying 'not here'",
+          "repeat of a pitch already written at the same onset banned",
+          "event cap 400 (notes + rests)"
+        ],
+        "note": "No musical constraint is applied inside the worker; the platform's contextAwareComposer passes do that so every provider is judged after the same enforcement."
+      },
+      "definitionOfDone": {
+        "realMusicalInput": true,
+        "realModelInference": true,
+        "realSymbolicOutput": true,
+        "verdict": "PASS"
+      },
+      "imageEvidence": "sha256:b0494f63d4ffef8e185c6f26d97c65be34bd8e329c5ef832199f73358f2cfa1e"
+    }
+  ],
+  "decodeSweep": {
+    "file": "docs/evidence/amt-live/decode-sweep-inst58-bar0-seed13.json",
+    "reading": "on the deployed image (event stream split by instrument), the two decode switches barely matter — 88 / 88 / 89 notes across (rest, dedupe) combinations, 53-54 distinct onsets, deepest stack 2, nothing off-target. Only the instrument mask matters, and it matters absolutely: unmasked, the model returns 0 notes for the held-out instrument and 57 events for the others, every one of which is already an anticipated control. Before the stream split the same mask produced 48-124 notes stacked on a single onset. Both sweeps are in the evidence."
+  },
+  "coldStart": {
+    "firstProbe": "cold: unauthenticated /health 6.92 s (401 — the gate is on in the cloud), authenticated /health 30.42 s (3.1 GB of fp32 onto the A10G plus a sha256 of the same 3.1 GB)",
+    "warm": "0.38 s unauthenticated, 0.69 s authenticated; infills 33.11 s / 36.78 s HTTP for 22.74 s / 34.97 s of inference",
+    "note": "the upstream sampler keeps no KV cache: 270 and 318 forward passes over a context reaching 957 and 1020 tokens, for 88 and 104 notes. This is a GPU job where CA2 is a CPU job, and roughly 6x CA2's wall clock per task."
+  },
+  "cost": {
+    "gpu": "A10G (24 GB) only. No H100, no training, no fine-tuning, no second GPU type.",
+    "guards": "timeout 1200 s, max_containers 1, scaledown_window 120 s, cpu 2.0, memory 12288 MB — the workstream's budget guard, applied to every function in modal_config.py",
+    "measuredInferenceSeconds": {
+      "liveProbe": "57.71 s over two infills (22.74 + 34.97), plus a 30.42 s cold /health that loads 3.1 GB of fp32 onto the GPU and sha256s the same 3.1 GB",
+      "decodeSweeps": "three sweeps of four configurations each on the same real task: 120.4 s, 76.6 s and 80.4 s of inference",
+      "firstLiveProbe (superseded image)": "332.29 s over two infills that both ran to the 400-event cap — the degenerate decode this round found and fixed",
+      "challengerTournament": "761.7 s of AMT inference across 33 of 36 cells (3 failed before inference), min 1.31 s, median 9.56 s, max 157.73 s; 16 min 10 s wall clock end to end",
+      "buildTimeSmokes": "six image builds, each ending in a real GPU smoke (identity gate + two infills on a synthesised MIDI) of roughly 60-90 s of A10G"
+    },
+    "estimatedSpend": "≈ 55 minutes of A10G container time across the whole workstream (measured inference seconds plus container start-up and the 120 s scaledown window after each burst), ≈ $1.10-$1.30 at Modal's published A10G rate plus the 2 vCPU / 12 GB surcharge, plus CPU-only image-build time for six builds. This is derived from measured seconds and the published rate; it is not read off a Modal invoice. Well inside the ≤ $10 ceiling for this stream.",
+    "note": "Every second above is measured wall clock reported by the container, not an estimate of what it should have been. The dollar figure is the only estimated number here and is labelled as such."
+  },
+  "qualityReading": {
+    "tuba, bars 0-8, seed 13": "88 notes (the human wrote 56), 14 distinct pitches spanning 28-42, all eight bars covered, nothing off-target. But the pitches are 28,29,30,...,40,42 — chromatic — and the onsets fall every 0.06 s, a 32nd-note grid at 120 BPM. This is a dense chromatic run inside the tuba's register, not a tuba part. Register: right. Rhythm and harmony: wrong.",
+    "trumpet, bars 1-9, seed 7": "104 notes (the human wrote 48) over 40 distinct onsets, 5 distinct pitches (59 x32, 63 x20, 64 x20, 66 x24, 68 x8) spanning 59-68 — a correct trumpet register and a much more structured output than the tuba, but a five-note ostinato repeated for eight bars rather than a written line.",
+    "verdict": "Real musical input, real inference on the pinned checkpoint, real symbolic output for the held-out instrument, on our own infrastructure: the definition of done is met and the numbers are above. The *music* is not good, and the tournament (docs/evidence/model-tournament-challenger-live.json) is where that is measured rather than asserted. The register is consistently right, which is what the anticipated controls buy; the rhythmic grid and the harmony are not, which is what having no chord, no metre and no range token costs."
+  },
+  "definitionOfDoneVerdict": "tuba: PASS (88 notes); trumpet: PASS (104 notes)",
+  "platformWiring": {
+    "client": "artifacts/api-server/src/lib/anticipatoryClient.ts — ANTICIPATORY_MT_API_URL + a dedicated ANTICIPATORY_MT_API_TOKEN, https only; neither the shared worker token nor CA2's token is accepted",
+    "projection": "artifacts/api-server/src/lib/anticipatoryProjection.ts — every PartGenerationRequestV2 field's disposition, declared before any adapter runs (PR-56's contract)",
+    "adapter": "artifacts/api-server/src/lib/anticipatoryResultAdapter.ts — refuses any other checkpoint, revision or provider; applies no musical constraint (the platform's context passes do that for every arm alike)",
+    "tournament": "artifacts/api-server/src/lib/tournamentChallengers.ts — createAmtProviders(): ANTICIPATORY_MUSIC_TRANSFORMER and ANTICIPATORY_MUSIC_TRANSFORMER+CTX over one shared inference per (task, seed); scripts/run-challenger-tournament.mjs reuses Workstream B's core unchanged",
+    "catalogue": "none. RESEARCH_ONLY has no route: the model is not in MUSIC_PROVIDERS and cannot be reached from a user-facing path.",
+    "targetAddressing": "target_inst (GM program 0–127, 128 = drums) + start_measure/n_measures — the same addressing the tournament task and the CA2 worker use, so all three hold out the same part"
+  },
+  "tournament": {
+    "file": "docs/evidence/model-tournament-challenger-live.json",
+    "runId": "8f0416a708fe",
+    "reading": "the same 12 real PDMX tasks, the same held-out programs and windows and the same seeds 7/11/13 as the first live run, with both AMT arms added: ANTICIPATORY_MUSIC_TRANSFORMER 39.47 mean, +CTX 43.26, against CA2's 71.47 / 71.81 and the reference's 62.95. Last place in every target family. This file proves the deployment; that one measures the music."
+  },
+  "honestLimits": [
+    "Two runs on one classical brass score prove the deployment and the contract, not quality. The tournament's 12 tasks x 3 seeds are the quality measurement, and the challenger loses there — see docs/evidence/model-tournament-challenger-live.json.",
+    "The model has no instrument conditioning of any kind. It writes the held-out part only because our harness puts every other part in the anticipated-control stream and masks the note slot; unmasked it writes the other instruments and returns nothing for the held-out one. CA2, by contrast, is told which track and which bars. Any comparison between them is a comparison of two harnesses as much as of two models.",
+    "The instrument mask is constrained decoding, not conditioning. It is recorded per run in the account (`maskInstrument`), and the sweep that chose it is in the evidence, precisely so it is never mistaken for something the model understood.",
+    "Velocity is not modelled: every generated note is emitted at a constant 80. Track identity is not modelled: tracks sharing a GM program are one instrument to this model.",
+    "The tempo map is flattened to the file's first tempo and a file that changes metre is refused, so bar numbers mean the same thing to every arm. Files that need either are out of scope for this worker.",
+    "The vocabulary's clock is 100 s and its context 341 events; the window is translated under a 20 s history and 8 s lookahead, and in dense scores the model sees only the last ~340 events. Nothing here has been tested near those limits.",
+    "RESEARCH_ONLY, and no run in this file changes that. The corpus (Lakh + MetaMIDI + FMA transcripts + 450k transcribed commercial records) is not cleared at the level of the underlying works. Proven live is not proven shippable. There is no MUSIC_PROVIDERS entry and no route.",
+    "The probe script is scratch, not a platform surface (the same choice as the CA2 cloud evidence). The committed path is the client, tested against a mock, plus the tournament runner.",
+    "Known defect in a diagnostic counter, left in place so the committed worker source stays byte-identical to the image that produced every number here (modal_config.image_evidence() over the committed files = the imageEvidence recorded above). `inference.controlEventsFromOtherInstruments` reports the controls left *unconsumed* by ops.anticipate, not the number given: `controls` is rebound by that call before the stats dict is built. The correct figure is already in the same response under `request.otherInstrumentEventsGiven` (251 for the tuba task, 301 for the trumpet task); read that one. Fixing the label means a new image, and re-deploying to correct a redundant counter would have broken the chain between this evidence and the source, which is worth more."
+  ]
+}

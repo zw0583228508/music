@@ -1,0 +1,412 @@
+{
+  "midiSha256": "5b53b53c5f6c5b1eb03007cf7a52f43bc1443fd876ff3b41f5a54c24eb5afc7b",
+  "midiBytes": 22318,
+  "health": {
+    "provider": "ANTICIPATORY_MUSIC_TRANSFORMER",
+    "model": "stanford-crfm/music-large-800k",
+    "revision": "e206a88d4658661c2757573eae724d5b27213824",
+    "modelSafetensorsSha256Expected": "83fb8b9546eacce77a90bb10006b3f569ba342361dce046d078cf2429975e09f",
+    "modelSafetensorsVerified": true,
+    "configSha256Verified": true,
+    "config": {
+      "architectures": [
+        "GPT2LMHeadModel"
+      ],
+      "n_layer": 36,
+      "n_embd": 1280,
+      "n_head": 20,
+      "n_positions": 1024,
+      "vocab_size": 55030,
+      "transformers_version": "4.32.1",
+      "model_type": "gpt2"
+    },
+    "code": {
+      "commit": "af37397922665a0fb8d474d7988b0f3755a38d45",
+      "verified": true
+    },
+    "vocabSize": 55028,
+    "vocabVerified": true,
+    "runtime": {
+      "python": "3.10.21",
+      "torch": "2.1.2+cu121",
+      "transformers": "4.32.1",
+      "cuda": true,
+      "device": "NVIDIA A10G"
+    },
+    "runtimePinned": true,
+    "licence": {
+      "code": "Apache-2.0 (repository LICENSE.txt, read verbatim)",
+      "weights": "Apache-2.0 (Hugging Face model card front matter, read verbatim)",
+      "trainingData": "Lakh MIDI + MetaMIDI + FMA transcripts + 450k transcribed commercial records (model card) — underlying works not cleared",
+      "classification": "RESEARCH_ONLY — shadow challenger / benchmark; never routed to users; outputs reviewed, never trained on without counsel"
+    },
+    "healthy": true,
+    "imageEvidence": "sha256:b0494f63d4ffef8e185c6f26d97c65be34bd8e329c5ef832199f73358f2cfa1e"
+  },
+  "probes": {
+    "unauthenticatedCold": {
+      "status": 401,
+      "seconds": 6.92
+    },
+    "authenticatedCold": {
+      "status": 200,
+      "seconds": 30.42
+    },
+    "authenticatedWarm": {
+      "status": 200,
+      "seconds": 0.69
+    },
+    "unauthenticatedWarm": {
+      "status": 401,
+      "seconds": 0.38
+    }
+  },
+  "runs": [
+    {
+      "label": "tuba",
+      "params": {
+        "label": "tuba",
+        "targetInst": 58,
+        "startMeasure": 0,
+        "nMeasures": 8,
+        "seed": 13,
+        "topP": 0.98,
+        "maxEvents": 400
+      },
+      "httpSeconds": 33.11,
+      "task": {
+        "kind": "infill: given every other instrument, write the held-out instrument over the window",
+        "targetInst": 58,
+        "measureSlice": [
+          0,
+          8
+        ],
+        "windowSeconds": [
+          0,
+          16
+        ],
+        "heldOutHumanNotes": 56,
+        "contextNotesInWindow": 155
+      },
+      "request": {
+        "shiftSeconds": 0,
+        "localWindowSeconds": [
+          0,
+          16
+        ],
+        "targetOwnLineGiven": 33,
+        "otherInstrumentEventsGiven": 251,
+        "historySeconds": 20,
+        "lookaheadSeconds": 8
+      },
+      "inference": {
+        "seconds": 22.74,
+        "mode": "anticipate",
+        "promptEvents": 0,
+        "promptEventsNote": "the held-out instrument's own notes before the window; rests padding it are not counted",
+        "controlEvents": 284,
+        "controlEventsFromOtherInstruments": 284,
+        "controlEventsFromTargetAfterWindow": 33,
+        "promptTokens": 0,
+        "historyTruncatedToMarkovWindow": false,
+        "forwardPasses": 270,
+        "maxContext": 957,
+        "generatedEvents": 88,
+        "restEvents": 1,
+        "duplicatesBlocked": 35,
+        "allowRest": true,
+        "forbidDuplicate": true,
+        "maskInstrument": true,
+        "truncatedByEventCap": false,
+        "device": "cuda:0",
+        "topP": 0.98,
+        "parameters": 780139520
+      },
+      "output": {
+        "generatedNotes": 88,
+        "offTargetEventsDropped": 0,
+        "measuresWithNotes": 8,
+        "pitchRange": [
+          28,
+          42
+        ],
+        "distinctPitches": 14,
+        "firstNotes": [
+          {
+            "measure": 0,
+            "pitch": 39,
+            "startSec": 0,
+            "endSec": 0.06,
+            "startQn": 0,
+            "endQn": 0.12,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 0,
+            "pitch": 38,
+            "startSec": 0.06,
+            "endSec": 0.12,
+            "startQn": 0.12,
+            "endQn": 0.24,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 0,
+            "pitch": 37,
+            "startSec": 0.12,
+            "endSec": 0.18,
+            "startQn": 0.24,
+            "endQn": 0.36,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 0,
+            "pitch": 36,
+            "startSec": 0.19,
+            "endSec": 0.25,
+            "startQn": 0.38,
+            "endQn": 0.5,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 0,
+            "pitch": 35,
+            "startSec": 0.25,
+            "endSec": 0.31,
+            "startQn": 0.5,
+            "endQn": 0.62,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 0,
+            "pitch": 34,
+            "startSec": 0.31,
+            "endSec": 0.37,
+            "startQn": 0.62,
+            "endQn": 0.74,
+            "velocity": 80,
+            "isDrum": false
+          }
+        ]
+      },
+      "account": {
+        "received": [
+          "siblingParts.notes (the other instruments inside the window, as anticipated controls; before and after it, as prompt and later controls)",
+          "instrument (the held-out GM program, enforced by an instrument mask on the note slot)",
+          "candidateStrategy.seed (torch.manual_seed before sampling)"
+        ],
+        "approximated": [
+          "section → bare bar window in seconds under the file's first tempo and first time signature",
+          "tracks sharing a GM program are one instrument to this model — the held-out part is the program, not the track",
+          "velocity: the model has no velocity token; every generated note is emitted at a constant velocity",
+          "tempo changes inside the file are flattened to the first tempo so bar numbers mean the same thing to every provider",
+          "hardConstraints.polyphony / range → none sent (enforce after)"
+        ],
+        "unsupported": [
+          "styleGrammar",
+          "harmonyPlan",
+          "vocalAttentionMap",
+          "motifMemory",
+          "previousSectionSummary",
+          "nextSectionIntent",
+          "role",
+          "phrases",
+          "productionBriefRef",
+          "songModel.chords (no harmony token; chords are implicit in the control notes)"
+        ],
+        "enforcedHere": [
+          "instrument mask on the note slot: only the held-out GM program can be sampled",
+          "REST kept available — the model's only way of saying 'not here'",
+          "repeat of a pitch already written at the same onset banned",
+          "event cap 400 (notes + rests)"
+        ],
+        "note": "No musical constraint is applied inside the worker; the platform's contextAwareComposer passes do that so every provider is judged after the same enforcement."
+      },
+      "definitionOfDone": {
+        "realMusicalInput": true,
+        "realModelInference": true,
+        "realSymbolicOutput": true,
+        "verdict": "PASS"
+      },
+      "imageEvidence": "sha256:b0494f63d4ffef8e185c6f26d97c65be34bd8e329c5ef832199f73358f2cfa1e"
+    },
+    {
+      "label": "trumpet",
+      "params": {
+        "label": "trumpet",
+        "targetInst": 56,
+        "startMeasure": 1,
+        "nMeasures": 8,
+        "seed": 7,
+        "topP": 0.98,
+        "maxEvents": 400
+      },
+      "httpSeconds": 36.78,
+      "task": {
+        "kind": "infill: given every other instrument, write the held-out instrument over the window",
+        "targetInst": 56,
+        "measureSlice": [
+          1,
+          9
+        ],
+        "windowSeconds": [
+          2,
+          18
+        ],
+        "heldOutHumanNotes": 48,
+        "contextNotesInWindow": 159
+      },
+      "request": {
+        "shiftSeconds": 0,
+        "localWindowSeconds": [
+          2,
+          18
+        ],
+        "targetOwnLineGiven": 25,
+        "otherInstrumentEventsGiven": 301,
+        "historySeconds": 20,
+        "lookaheadSeconds": 8
+      },
+      "inference": {
+        "seconds": 34.97,
+        "mode": "anticipate",
+        "promptEvents": 0,
+        "promptEventsNote": "the held-out instrument's own notes before the window; rests padding it are not counted",
+        "controlEvents": 326,
+        "controlEventsFromOtherInstruments": 265,
+        "controlEventsFromTargetAfterWindow": 25,
+        "promptTokens": 3,
+        "historyTruncatedToMarkovWindow": false,
+        "forwardPasses": 318,
+        "maxContext": 1020,
+        "generatedEvents": 104,
+        "restEvents": 1,
+        "duplicatesBlocked": 96,
+        "allowRest": true,
+        "forbidDuplicate": true,
+        "maskInstrument": true,
+        "truncatedByEventCap": false,
+        "device": "cuda:0",
+        "topP": 0.98,
+        "parameters": 780139520
+      },
+      "output": {
+        "generatedNotes": 104,
+        "offTargetEventsDropped": 0,
+        "measuresWithNotes": 8,
+        "pitchRange": [
+          59,
+          68
+        ],
+        "distinctPitches": 5,
+        "firstNotes": [
+          {
+            "measure": 1,
+            "pitch": 59,
+            "startSec": 2.5,
+            "endSec": 2.75,
+            "startQn": 5,
+            "endQn": 5.5,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 1,
+            "pitch": 64,
+            "startSec": 2.5,
+            "endSec": 2.75,
+            "startQn": 5,
+            "endQn": 5.5,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 1,
+            "pitch": 68,
+            "startSec": 2.5,
+            "endSec": 2.75,
+            "startQn": 5,
+            "endQn": 5.5,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 1,
+            "pitch": 59,
+            "startSec": 2.75,
+            "endSec": 3.25,
+            "startQn": 5.5,
+            "endQn": 6.5,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 1,
+            "pitch": 64,
+            "startSec": 2.75,
+            "endSec": 3,
+            "startQn": 5.5,
+            "endQn": 6,
+            "velocity": 80,
+            "isDrum": false
+          },
+          {
+            "measure": 1,
+            "pitch": 66,
+            "startSec": 2.75,
+            "endSec": 3.25,
+            "startQn": 5.5,
+            "endQn": 6.5,
+            "velocity": 80,
+            "isDrum": false
+          }
+        ]
+      },
+      "account": {
+        "received": [
+          "siblingParts.notes (the other instruments inside the window, as anticipated controls; before and after it, as prompt and later controls)",
+          "instrument (the held-out GM program, enforced by an instrument mask on the note slot)",
+          "candidateStrategy.seed (torch.manual_seed before sampling)"
+        ],
+        "approximated": [
+          "section → bare bar window in seconds under the file's first tempo and first time signature",
+          "tracks sharing a GM program are one instrument to this model — the held-out part is the program, not the track",
+          "velocity: the model has no velocity token; every generated note is emitted at a constant velocity",
+          "tempo changes inside the file are flattened to the first tempo so bar numbers mean the same thing to every provider",
+          "hardConstraints.polyphony / range → none sent (enforce after)"
+        ],
+        "unsupported": [
+          "styleGrammar",
+          "harmonyPlan",
+          "vocalAttentionMap",
+          "motifMemory",
+          "previousSectionSummary",
+          "nextSectionIntent",
+          "role",
+          "phrases",
+          "productionBriefRef",
+          "songModel.chords (no harmony token; chords are implicit in the control notes)"
+        ],
+        "enforcedHere": [
+          "instrument mask on the note slot: only the held-out GM program can be sampled",
+          "REST kept available — the model's only way of saying 'not here'",
+          "repeat of a pitch already written at the same onset banned",
+          "event cap 400 (notes + rests)"
+        ],
+        "note": "No musical constraint is applied inside the worker; the platform's contextAwareComposer passes do that so every provider is judged after the same enforcement."
+      },
+      "definitionOfDone": {
+        "realMusicalInput": true,
+        "realModelInference": true,
+        "realSymbolicOutput": true,
+        "verdict": "PASS"
+      },
+      "imageEvidence": "sha256:b0494f63d4ffef8e185c6f26d97c65be34bd8e329c5ef832199f73358f2cfa1e"
+    }
+  ]
+}

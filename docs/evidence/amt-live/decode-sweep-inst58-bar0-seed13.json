@@ -1,0 +1,438 @@
+{
+  "note": "The same real PDMX task under four decode configurations, on the deployed image whose event stream is split by instrument (the held-out part's own line as events, every other instrument as anticipated controls). Row 1 is the tournament arm's setting. Row 4 is the unmasked control: the model has no instrument conditioning, so it writes the other instruments and returns nothing for the held-out one. The earlier sweep, before the stream split, is the one where masking made it stack 48-124 notes on a single onset.",
+  "task": {
+    "midi": "Qma11MhFz64u8wRiW1cTZ5VJ4zTQWbYbVHDnMGafAFoaN6.mid",
+    "targetInst": 58,
+    "startMeasure": 0,
+    "nMeasures": 8,
+    "seed": 13,
+    "topP": 0.98,
+    "maxEvents": 400
+  },
+  "results": [
+    {
+      "combo": {
+        "mask_instrument": true,
+        "allow_rest": true,
+        "forbid_duplicate": true
+      },
+      "httpSeconds": 24.09,
+      "inference": {
+        "seconds": 22.3,
+        "mode": "anticipate",
+        "promptEvents": 0,
+        "promptEventsNote": "the held-out instrument's own notes before the window; rests padding it are not counted",
+        "controlEvents": 284,
+        "controlEventsFromOtherInstruments": 284,
+        "controlEventsFromTargetAfterWindow": 33,
+        "promptTokens": 0,
+        "historyTruncatedToMarkovWindow": false,
+        "forwardPasses": 270,
+        "maxContext": 957,
+        "generatedEvents": 88,
+        "restEvents": 1,
+        "duplicatesBlocked": 35,
+        "allowRest": true,
+        "forbidDuplicate": true,
+        "maskInstrument": true,
+        "truncatedByEventCap": false,
+        "device": "cuda:0",
+        "topP": 0.98,
+        "parameters": 780139520
+      },
+      "heldOutHumanNotes": 56,
+      "contextNotesInWindow": 155,
+      "generatedNotes": 88,
+      "offTargetEventsDropped": 0,
+      "distinctPitches": 14,
+      "pitchRange": [
+        28,
+        42
+      ],
+      "distinctOnsets": 53,
+      "maxNotesAtOneOnset": 2,
+      "exactDuplicates": 0,
+      "measuresWithNotes": 8,
+      "verdict": "PASS",
+      "firstNotes": [
+        {
+          "measure": 0,
+          "pitch": 39,
+          "startSec": 0,
+          "endSec": 0.06,
+          "startQn": 0,
+          "endQn": 0.12,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 38,
+          "startSec": 0.06,
+          "endSec": 0.12,
+          "startQn": 0.12,
+          "endQn": 0.24,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 37,
+          "startSec": 0.12,
+          "endSec": 0.18,
+          "startQn": 0.24,
+          "endQn": 0.36,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 36,
+          "startSec": 0.19,
+          "endSec": 0.25,
+          "startQn": 0.38,
+          "endQn": 0.5,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 35,
+          "startSec": 0.25,
+          "endSec": 0.31,
+          "startQn": 0.5,
+          "endQn": 0.62,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 34,
+          "startSec": 0.31,
+          "endSec": 0.37,
+          "startQn": 0.62,
+          "endQn": 0.74,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 33,
+          "startSec": 0.38,
+          "endSec": 0.44,
+          "startQn": 0.76,
+          "endQn": 0.88,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 32,
+          "startSec": 0.44,
+          "endSec": 0.5,
+          "startQn": 0.88,
+          "endQn": 1,
+          "velocity": 80,
+          "isDrum": false
+        }
+      ]
+    },
+    {
+      "combo": {
+        "mask_instrument": true,
+        "allow_rest": true,
+        "forbid_duplicate": false
+      },
+      "httpSeconds": 23.82,
+      "inference": {
+        "seconds": 22.2,
+        "mode": "anticipate",
+        "promptEvents": 0,
+        "promptEventsNote": "the held-out instrument's own notes before the window; rests padding it are not counted",
+        "controlEvents": 284,
+        "controlEventsFromOtherInstruments": 284,
+        "controlEventsFromTargetAfterWindow": 33,
+        "promptTokens": 0,
+        "historyTruncatedToMarkovWindow": false,
+        "forwardPasses": 270,
+        "maxContext": 957,
+        "generatedEvents": 88,
+        "restEvents": 1,
+        "duplicatesBlocked": 0,
+        "allowRest": true,
+        "forbidDuplicate": false,
+        "maskInstrument": true,
+        "truncatedByEventCap": false,
+        "device": "cuda:0",
+        "topP": 0.98,
+        "parameters": 780139520
+      },
+      "heldOutHumanNotes": 56,
+      "contextNotesInWindow": 155,
+      "generatedNotes": 88,
+      "offTargetEventsDropped": 0,
+      "distinctPitches": 14,
+      "pitchRange": [
+        28,
+        42
+      ],
+      "distinctOnsets": 53,
+      "maxNotesAtOneOnset": 2,
+      "exactDuplicates": 0,
+      "measuresWithNotes": 8,
+      "verdict": "PASS",
+      "firstNotes": [
+        {
+          "measure": 0,
+          "pitch": 39,
+          "startSec": 0,
+          "endSec": 0.06,
+          "startQn": 0,
+          "endQn": 0.12,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 38,
+          "startSec": 0.06,
+          "endSec": 0.12,
+          "startQn": 0.12,
+          "endQn": 0.24,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 37,
+          "startSec": 0.12,
+          "endSec": 0.18,
+          "startQn": 0.24,
+          "endQn": 0.36,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 36,
+          "startSec": 0.19,
+          "endSec": 0.25,
+          "startQn": 0.38,
+          "endQn": 0.5,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 35,
+          "startSec": 0.25,
+          "endSec": 0.31,
+          "startQn": 0.5,
+          "endQn": 0.62,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 34,
+          "startSec": 0.31,
+          "endSec": 0.37,
+          "startQn": 0.62,
+          "endQn": 0.74,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 33,
+          "startSec": 0.38,
+          "endSec": 0.44,
+          "startQn": 0.76,
+          "endQn": 0.88,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 32,
+          "startSec": 0.44,
+          "endSec": 0.5,
+          "startQn": 0.88,
+          "endQn": 1,
+          "velocity": 80,
+          "isDrum": false
+        }
+      ]
+    },
+    {
+      "combo": {
+        "mask_instrument": true,
+        "allow_rest": false,
+        "forbid_duplicate": true
+      },
+      "httpSeconds": 23.81,
+      "inference": {
+        "seconds": 22.2,
+        "mode": "anticipate",
+        "promptEvents": 0,
+        "promptEventsNote": "the held-out instrument's own notes before the window; rests padding it are not counted",
+        "controlEvents": 284,
+        "controlEventsFromOtherInstruments": 284,
+        "controlEventsFromTargetAfterWindow": 33,
+        "promptTokens": 0,
+        "historyTruncatedToMarkovWindow": false,
+        "forwardPasses": 270,
+        "maxContext": 957,
+        "generatedEvents": 89,
+        "restEvents": 0,
+        "duplicatesBlocked": 35,
+        "allowRest": false,
+        "forbidDuplicate": true,
+        "maskInstrument": true,
+        "truncatedByEventCap": false,
+        "device": "cuda:0",
+        "topP": 0.98,
+        "parameters": 780139520
+      },
+      "heldOutHumanNotes": 56,
+      "contextNotesInWindow": 155,
+      "generatedNotes": 89,
+      "offTargetEventsDropped": 0,
+      "distinctPitches": 14,
+      "pitchRange": [
+        28,
+        42
+      ],
+      "distinctOnsets": 54,
+      "maxNotesAtOneOnset": 2,
+      "exactDuplicates": 0,
+      "measuresWithNotes": 8,
+      "verdict": "PASS",
+      "firstNotes": [
+        {
+          "measure": 0,
+          "pitch": 39,
+          "startSec": 0,
+          "endSec": 0.06,
+          "startQn": 0,
+          "endQn": 0.12,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 38,
+          "startSec": 0.06,
+          "endSec": 0.12,
+          "startQn": 0.12,
+          "endQn": 0.24,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 37,
+          "startSec": 0.12,
+          "endSec": 0.18,
+          "startQn": 0.24,
+          "endQn": 0.36,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 36,
+          "startSec": 0.19,
+          "endSec": 0.25,
+          "startQn": 0.38,
+          "endQn": 0.5,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 35,
+          "startSec": 0.25,
+          "endSec": 0.31,
+          "startQn": 0.5,
+          "endQn": 0.62,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 34,
+          "startSec": 0.31,
+          "endSec": 0.37,
+          "startQn": 0.62,
+          "endQn": 0.74,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 33,
+          "startSec": 0.38,
+          "endSec": 0.44,
+          "startQn": 0.76,
+          "endQn": 0.88,
+          "velocity": 80,
+          "isDrum": false
+        },
+        {
+          "measure": 0,
+          "pitch": 32,
+          "startSec": 0.44,
+          "endSec": 0.5,
+          "startQn": 0.88,
+          "endQn": 1,
+          "velocity": 80,
+          "isDrum": false
+        }
+      ]
+    },
+    {
+      "combo": {
+        "mask_instrument": false,
+        "allow_rest": true,
+        "forbid_duplicate": true
+      },
+      "httpSeconds": 15.18,
+      "inference": {
+        "seconds": 13.7,
+        "mode": "anticipate",
+        "promptEvents": 0,
+        "promptEventsNote": "the held-out instrument's own notes before the window; rests padding it are not counted",
+        "controlEvents": 284,
+        "controlEventsFromOtherInstruments": 284,
+        "controlEventsFromTargetAfterWindow": 33,
+        "promptTokens": 0,
+        "historyTruncatedToMarkovWindow": false,
+        "forwardPasses": 186,
+        "maxContext": 873,
+        "generatedEvents": 57,
+        "restEvents": 4,
+        "duplicatesBlocked": 0,
+        "allowRest": true,
+        "forbidDuplicate": true,
+        "maskInstrument": false,
+        "truncatedByEventCap": false,
+        "device": "cuda:0",
+        "topP": 0.98,
+        "parameters": 780139520
+      },
+      "heldOutHumanNotes": 56,
+      "contextNotesInWindow": 155,
+      "generatedNotes": 0,
+      "offTargetEventsDropped": 57,
+      "distinctPitches": 0,
+      "pitchRange": null,
+      "distinctOnsets": 0,
+      "maxNotesAtOneOnset": 0,
+      "exactDuplicates": 0,
+      "measuresWithNotes": 0,
+      "verdict": "FAIL: model produced no notes for the held-out instrument",
+      "firstNotes": []
+    }
+  ]
+}

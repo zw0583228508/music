@@ -1,0 +1,59 @@
+{
+  "provider": "ANTICIPATORY_MUSIC_TRANSFORMER",
+  "family": "Anticipation",
+  "authors": "John Thickstun, David Hall, Chris Donahue, Percy Liang (Stanford CRFM)",
+  "paper": "https://arxiv.org/abs/2306.08620",
+  "sourceRepository": "https://github.com/jthickstun/anticipation",
+  "code": {
+    "commit": "af37397922665a0fb8d474d7988b0f3755a38d45",
+    "committedAt": "2024-03-18T10:09:15-05:00",
+    "install": "pip install git+https://github.com/jthickstun/anticipation.git@af37397922665a0fb8d474d7988b0f3755a38d45",
+    "moduleSha256": {
+      "config.py": "5765aecff71fe107108d14c02cdc675dbf5a12538d287eab349fb71d373f2f3c",
+      "convert.py": "3383f80572bf2e4b85672936a490effe4f1b669ea79b49e6ebd3bacb7dc6f3b6",
+      "ops.py": "929a6da4d86e7ecfa3255fb1ee7524600509ed0f885c8473b64233a46c9d1f78",
+      "sample.py": "17d98e828a5687cea623570d085828e91a978fe38bb949270467c8027d920718",
+      "vocab.py": "a8d6c1b376e0be396a1185e3e9bb74891851400da06d9c5c9d29bd835c0368c7"
+    },
+    "moduleSha256Note": "sha256 of the git blobs at the commit (LF). The first image build failed because the shas had been taken from a CRLF-converted Windows checkout; these are from `git cat-file -p HEAD:anticipation/<file>`.",
+    "note": "Only sampling/conversion helpers are imported (ops, sample.safe_logits/future_logits/instr_logits/nucleus, convert.midi_to_events). The sampling loop itself is re-implemented in amt_infer.generate_instrument with an instrument mask and an event cap; it is otherwise sample.generate line for line.",
+    "instrumentMaskNote": "The mask leaves alive only the held-out instrument's 128 pitches in the note slot — REST included in what it bans. The second failed build proved why: with every other track given as an anticipated control the event stream is empty, so the unconstrained model sampled 4 rests and 0 notes. This is constrained decoding, not an instruction the model read."
+  },
+  "model": {
+    "huggingFace": "stanford-crfm/music-large-800k",
+    "revision": "e206a88d4658661c2757573eae724d5b27213824",
+    "lastModified": "2024-03-13T22:27:38Z",
+    "file": "model.safetensors",
+    "bytes": 3120598456,
+    "safetensorsSha256": "83fb8b9546eacce77a90bb10006b3f569ba342361dce046d078cf2429975e09f",
+    "safetensorsSha256Source": "Hugging Face LFS pointer (raw/main/model.safetensors), re-verified by sha256sum at image build and by /health",
+    "configSha256": "2ece2a78b4d9b48aca5dbc36e15779520e540ddec7eedf524dcdfa276b9a5046",
+    "readmeSha256": "276146c810dc229fcac8cb23a32ae5038f4ced41f3d958237cf62715447b8bc8",
+    "architecture": "GPT2LMHeadModel, 36 layers, n_embd 1280, 20 heads, n_positions 1024, gelu_new, scale_attn_by_inverse_layer_idx, fp32",
+    "parameters": "780M (model card); measured at load and recorded in docs/evidence/model-anticipatory-music-transformer-live.json",
+    "vocabSize": 55028,
+    "vocabNote": "anticipation.vocab.VOCAB_SIZE = 55028; the checkpoint's embedding has 55030 rows; sample.safe_logits masks everything from SPECIAL_OFFSET (55025) up, so the two extra rows are never sampled",
+    "representation": "arrival-time events: (onset 10 ms, duration 10 ms, instrument*128+pitch); controls in a parallel token block; DELTA 5 s anticipation; 341 events per 1024-token context",
+    "alternatives": {
+      "stanford-crfm/music-medium-800k": "360M, Lakh MIDI only, pytorch_model.bin sha256 7af65dbabb2f6b7df9df03c2ea5b1909b74043591ba578fb663d80fcf82241ad (1,438,866,529 bytes), revision 93b6eb7e09bad33be6cb2ebd50ce5279cbfde7f6",
+      "stanford-crfm/music-small-800k": "128M, Lakh MIDI only, pytorch_model.bin sha256 45af5006d529a19af3654c729192c072f3aeb9e7e13e9eaf92c19bfd7c87e4d8 (512,433,185 bytes), revision fa800530aa1126dd6b58b38f3bdb8fcec9c9d4f5"
+    }
+  },
+  "runtime": {
+    "python": "3.10",
+    "torch": "2.1.2+cu121",
+    "transformers": "4.32.1 (the checkpoint's config.json transformers_version)",
+    "mido": "1.2.10 (the upstream requirements pin)",
+    "numpy": "<2",
+    "gpu": "A10G on Modal; the upstream sampler has no KV cache and re-reads up to 1024 tokens per sampled token"
+  },
+  "licence": {
+    "codeLicense": { "stated": "Apache-2.0", "file": "LICENSE.txt (repository, read verbatim via clone and the GitHub licence API)" },
+    "weightsLicense": { "stated": "apache-2.0", "file": "README.md front matter of stanford-crfm/music-large-800k (read verbatim; sha256 276146c8…)" },
+    "trainingData": {
+      "stated": "\"trained for 800k steps on arrival-time encoded music from the Lakh MIDI dataset, MetaMidi dataset, and transcripts of the FMA audio dataset and 450k commercial music records (transcribed using Google Magenta's ISMIR 2022 music transcription model)\" — model card",
+      "underlyingWorksCleared": "no — Lakh is web-scraped MIDI of copyrighted recordings (CC-BY-4.0 covers the compilation only); the 450k commercial records are by definition copyrighted works"
+    },
+    "classification": "RESEARCH_ONLY — shadow challenger and benchmark; never routed to users; outputs reviewed and never used as training data without counsel"
+  }
+}
