@@ -5001,6 +5001,61 @@ any of it.
   design choices for Stream I to calibrate. The evidence field is unit-tested
   and typechecked but was not observed on a live analysis, and no studio panel
   reads it yet. Pairwise F rewards flat labelling and is not label quality.
+- **PR-82** ✅ — `separation-tournament-downstream` (Analysis Engine wave, Stream
+  B): Demucs (htdemucs_ft) vs BS-RoFormer (ZFTurbo 4-stem, viperx vocal) vs
+  Mel-Band RoFormer (KJ), judged by what the platform gets out of each stem —
+  notes, chords, beats — never by SDR, always against the full mix (`NONE`)
+  and, on the gold tier, against the true stems through the same path
+  (`TRUE_STEMS`, the downstream ceiling). Nothing promoted, nothing routed.
+
+  Four isolated Modal images (`services/separation-tournament-worker/`, one L4
+  web endpoint per arm, sha256-pinned weights re-hashed on every `/health`,
+  build-time GPU smoke, dedicated bearer secret). `separationTournament.ts`
+  (28 tests, suite `separation-tournament`): exact truth from an
+  ANALYSIS_GOLD_V1 item or a PDMX window, mir_eval-style note / beat
+  F-measure, time-weighted chord accuracy against exact segments, paired
+  ranking with ties as ties, refusals when tiers mix, truth is missing or the
+  baseline is absent. Runner `scripts/run-separation-tournament.mjs`; evidence
+  `docs/evidence/separation-tournament-live.json` + `separation-tournament/cells.json`;
+  table and verdicts in `docs/model-discovery/separation-tournament.md`.
+
+  **Test set.** All 52 ANALYSIS_GOLD_V1 `SYNTHETIC_EXACT` items (9 with a synth
+  lead, 27 with bass, 24 with exact chords, 35 "plain"), 20 PDMX windows on a
+  second synth, the owner's two uploads without truth. Downstream = the live
+  Basic Pitch worker, `chordsFromNotes`, the local tempo grid.
+
+  **Per stem.** *Bass:* **HTDEMUCS_FT** — onset+pitch F1 0.158 → **0.774**
+  (+0.616, n = 27), +0.334 on the PDMX render, above the true-stem ceiling
+  (0.697); BS-RoFormer 4-stem second on both tiers. *Harmony → chords:* the
+  four-stem arms reach the ceiling — BS_ROFORMER_4STEM 0.458 ≈ TRUE_STEMS 0.456
+  ≈ HTDEMUCS_FT 0.454 vs NONE 0.400 on exact maj/min (n = 24); the mix with
+  the drums removed helps on both tiers (+0.072 / +0.039) while the "other"
+  stem alone loses on the PDMX render; the chord path itself caps at 0.46–0.50.
+  *Lead / vocal:* **UNKNOWN** — on a synth lead every vocal stem is empty
+  (0.000–0.116 vs the mix 0.237, the true lead 0.934); the corpus has no voice,
+  so this is a null about the corpus. *Drums:* **no verdict** — the positive
+  control fails (the true drum stem scores 0.330 beat F vs the mix 0.577; the
+  estimator refuses on 48 % of true drum stems) and the two tiers flip order;
+  the local beat path cannot judge drum separation. Latency 5.5 / 7.9 / 11.6 /
+  5.8 s per 58 s track on an L4, $0.003–0.005 per track. Spend ≈ $2.49 of $15.
+
+  **Licences.** BS_ROFORMER stays `LICENSE_BLOCKED` in `musicProviders.ts`
+  (checkpoint-owner rights unverified; the block is on routing / shipping);
+  its evaluation here is recorded as RESEARCH_ONLY in an isolated, unroutable
+  worker. The ZFTurbo 4-stem weights (MUSDB18-HQ) and Demucs (MUSDB18-HQ +
+  internal songs) are RESEARCH_ONLY under the registry's rule; the Mel-Band
+  checkpoint has no retained licence. No `*_API_URL` set; PR-80's DEMUCS 500
+  in `music-ai-worker` is unchanged.
+
+  **Honest limits.** Synthetic audio from two of our own synths and no voice
+  anywhere; the positive control exists on the gold tier only; exact chord
+  truth on 24 items, the rest scored against the platform's own reading; one
+  transcriber and one beat path — another of either could reorder the arms;
+  n = 9 leads and 24 chord items are small, and only the bass margin is large
+  enough to survive that; the real tier measures agreement between arms, not
+  accuracy; no arm is SHIP_CLEARED; 28 of 52 gold items were re-scored from the
+  runner's processed copy after the gold worktree was removed mid-stream.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

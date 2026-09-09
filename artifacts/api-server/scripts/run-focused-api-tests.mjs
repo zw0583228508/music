@@ -241,6 +241,14 @@ const suites = {
         "tournament-audio.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, analysis engine (PR-82): separators judged by downstream
+      // accuracy per stem — exact truth from a score, note/beat/chord metrics,
+      // paired ranking against the no-separation baseline, and the refusals.
+      [
+        "src/lib/separationTournament.test.ts",
+        "separation-tournament.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // Wave Q, Model Discovery (global tournament): genre families from PDMX's
       // genre/tag columns, genre-major task selection, per-slice breakdowns.
       [
