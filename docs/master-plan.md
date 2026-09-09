@@ -5318,6 +5318,116 @@ any of it.
   "core / useful" is a musical judgement encoded in rules. This is a catalogue
   under the platform's rules, not a legal opinion, and it says nothing about
   how the material was obtained.
+
+- **PR-92** ✅ — `sfizz-vsco2-live-render` (stream SOUND-1). PR-80's audit
+  said it plainly: only Basic Pitch is live; every instrument stem in every
+  export is the preview synth, and `SFIZZ_VSCO2_CE` is catalogue prose with a
+  404 origin. This PR makes that renderer real on the platform's own
+  infrastructure, with the same fail-closed rules the plan demands of every
+  provider, and records the first A/B between the synth and a sampled
+  instrument. Write-up `docs/model-discovery/production-floor.md`, evidence
+  `docs/evidence/sfizz-vsco2-live.json`.
+
+  **What is live.** `services/music-ai-worker` (the Basic Pitch image, Modal,
+  CPU only) now builds sfizz 1.2.3 from its pinned commit and provisions the
+  VSCO 2 Community Edition platform subset (CC0-1.0, 250 files / 525 MB out
+  of the 3.2 GB branch, every file verified by git blob SHA-1 and size
+  against the pinned commit `6dd651d5`) **at image build time**, through the
+  worker's own lifecycle run in process by `operator_activate_sfizz_vsco2.py`:
+  build the host zipapp reproducibly (LF sources, ZIP epoch, stored members),
+  refuse unless its SHA-256 is the one a human approved in
+  `approved_native_hosts.json`, stage through `_stage_asset_candidate` (the
+  three-render canonical smoke), activate through `_activate_asset_candidate`
+  (atomic manifest), render every instrument-map entry once, require
+  `renderer_health` healthy. `/health?provider=SFIZZ_VSCO2_CE` on
+  `windot100--music-ai-worker-endpoint.modal.run`: 401 without the bearer,
+  with it `healthy`, asset `vsco2-ce-sfz-6dd651d-platform-subset-v1` (tree
+  sha256 `ae31f58e…`, LICENSE sha256 recorded, first line "CC0 1.0
+  Universal"), host `d950a0d0…`, `sfizz_render` pinned to its provision
+  evidence, the retained smoke (`4086ff96…` / `d83653b1…` / `d7ea436a…`,
+  peak 0.021), and the **instrument map published whole** (`instrumentMap`,
+  `servedFamilies: keys, strings, brass`, `instrumentMapSha256`). Health is
+  unhealthy when any mapped SFZ is missing from the active library or the
+  binary no longer hashes to the evidence. Worker tests
+  `tests/test_sfizz_renderer.py` — 17/17 inside the deployed image (`modal
+  run … unit_tests`), 9 + 8 POSIX-only skips on Windows.
+
+  **The instrument map — no default, no silent stand-in.**
+  `sfizz_instrument_map.json` is ordered and explicit (`nameKeyword` /
+  `instrumentId` / `family`, first match wins); the worker resolves it before
+  any native process and the host (which bundles the same module) resolves it
+  again; the platform (`nativeRendererRouting.ts`, 10 tests against the
+  committed map) resolves it a third time before a request leaves. Served:
+  **keys** (Upright Piano), **strings** (Violin Section; `cello` → Cello
+  Section; `bass` → Solo Contrabass pizzicato, a **declared stand-in** whose
+  sentence travels with the render and the stem), **brass** (French Horn;
+  `trumpet` / `trombone` names → Trumpet / Tenor Trombone). Not served, with
+  the reason in the map and on the stem: **drums** (orchestral percussion is
+  not a pop kit), **guitar**, **voice**, **synth**. An unserved family on the
+  wire is refused **422** with the family and the served list — proven live.
+  The legacy `MUSIC_AI_SFIZZ_INSTRUMENT` (one SFZ for every family) is gone.
+
+  **Real renders, through the platform's client.** `scripts/prove-sfizz-live.mjs`
+  rendered the dev project's arrangement `4da143de…` through
+  `SfzRenderer.renderAttested → renderRemoteInstrument` (every echoed digest
+  verified before audio is accepted): bass → Contrabass pizz, 81 s in 7.6 s,
+  peak 0.054; ensemble → Upright Piano, 81 s in 6.1 s, peak 0.082; drums
+  never sent, reason recorded. Cold health 7.2 s, cached 30 s.
+
+  **Export policy (`exportEngine.ts`).** One health round trip per export;
+  `decideNativeRoute` per track (`PEDALBOARD_VST3` first for a family it
+  lists, `SFIZZ_VSCO2_CE` for a track its map serves, every skipped renderer
+  keeps its reason); a premium-routing refusal is final for the VST3 worker
+  and falls through to the next attested renderer, whose selection is
+  labelled after the refusal; a native stem is kept only when its own
+  attestation holds and a rejected stem falls back **alone**; the master is
+  `production-ready` only when every stem is native — otherwise a **labelled
+  mixed preview** whose provenance lists every native render. `SfzRenderer`
+  reads `MUSIC_AI_WORKER_URL` + `MUSIC_AI_WORKER_TOKEN` (the
+  licensed-instrument worker), `SFIZZ_RENDER_API_URL/_TOKEN` as the fallback;
+  `RendererHealth` carries `instrumentMap` / `servedFamilies` /
+  `nativeToolchain`; the catalogue entry names the real licences.
+
+  **The A/B (`scripts/sound-ab.mjs`).** The same arrangement, approved
+  revision `1f644436…`, exported twice through `POST /projects/{id}/export`
+  on an API at `PORT=5020` — A without a worker, B with the two env names in
+  its process. B: bass and ensemble **`SFIZZ_VSCO2_CE licensed-native`** with
+  attestation, drums synth with both reasons (pedalboard refused the
+  unattested `retrologue-2.4.0` rule; sfizz does not serve drums), master
+  `preview-only`. Stems −24.2 / −18.7 LUFS (synth) vs −45.2 / −39.0 LUFS
+  (VSCO); premasters −23.74 vs −32.58 LUFS. The export masters are identical
+  by design (the export ships the producer-approved WAV), so the pair was
+  built from each premaster through `masteringEngine.ts` 2.0 / STREAMING:
+  −14.06 vs −16.26 LUFS at −1 dBTP (B hit the ceiling after +18.6 dB).
+  Registered on project `0bd4bff8…` as `MASTER` artifacts
+  `sound-ab-pr92-a-f7846937` / `sound-ab-pr92-b-43e67586` and blind session
+  **`cd279fa0-2de1-4356-a793-b2577b734f9f`** (`/listen/cd279fa0-…`, key in
+  the evidence). Modal spend for the stream: well under $1, CPU only.
+
+  **Found on the way.** Both native hosts hashed `Path(__file__)` for their
+  `rendererSha256`; inside the checksum-bound zipapp the worker actually
+  executes that is `<archive>/__main__.py`, not a file, so **no native host
+  could ever have passed the staging smoke** — the previous agent's second
+  image build died there with the host's stderr swallowed. Fixed
+  (`native_hosts/common.host_path()`, stderr now logged), host re-approved.
+
+  **Honest limits.** An orchestral palette: keys, strings (stand-in bass)
+  and brass only; a pop arrangement is always a mixed preview on this
+  renderer alone, and a drum kit as a second attested asset is the one
+  addition that would let the three-track arrangement go fully native. The
+  VSCO instruments are ~20 LU quieter than the synth at the same velocities
+  and CC 11 — the map has no per-instrument trim yet, which is why B's master
+  fell 2.2 LU short. Nobody has listened: the pair is registered, the owner's
+  vote is the next step, and the smoke proves audibility and sensitivity, not
+  musicality. The pedalboard fall-through and per-stem rejection are proven
+  by the live export, not by a unit test of `exportEngine.ts` (which has
+  none). `sfizz_render` is not bit-reproducible between builds (the binary
+  hash differs per image; the host, library and map hashes do not). The A/B
+  was exported on the first live image; the final redeploy changed only a
+  worker test file and the proof was re-run on it. `.env.local`'s premium
+  routing table still names an unattested VST3 asset, so that refusal
+  appears on every stem until the table or the worker changes.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

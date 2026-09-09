@@ -7,6 +7,8 @@
 import { createHash, randomUUID } from "node:crypto";
 import type { BlindListeningPair, BlindListeningSides } from "@workspace/db";
 import { measureLoudness, measureTruePeakDbtp, linearToDb } from "../src/lib/loudness";
+import { encodeWav } from "../src/lib/exportEngine";
+import { MASTERING_ENGINE_VERSION, masterAudio, masteringProfile, type MasteringReport } from "../src/lib/masteringEngine";
 
 // The platform's own render path, for `scripts/prove-sfizz-live.mjs`: a real
 // TrackModel through `SfzRenderer.renderAttested` -> `renderRemoteInstrument`.
@@ -83,6 +85,24 @@ export function measureWav(buffer: Buffer): WavMeasurement {
     bytes: buffer.length,
     method: "BS.1770-4",
   };
+}
+
+/**
+ * The A/B pair is built from each export's premaster mix (`mix/full_mix.wav`),
+ * not from `mix/master.wav`: the export's master is, by design, the exact WAV
+ * the producer approved (exportJobs substitutes it), so it is identical on
+ * both sides and says nothing about the stems. Each premaster goes through the
+ * platform's own mastering engine with the same profile, so the listener
+ * compares instruments at the same integrated loudness, not two levels.
+ */
+export function masterPremaster(premasterWav: Buffer, profileId = "STREAMING"): {
+  wav: Buffer; report: MasteringReport; engineVersion: string; raw: WavMeasurement; mastered: WavMeasurement;
+} {
+  const { sampleRate, channels, samples } = decodePcm16(premasterWav);
+  if (sampleRate !== 44100 || channels !== 2) throw new Error(`premaster must be 44.1 kHz stereo (got ${sampleRate} Hz, ${channels} ch)`);
+  const { master, report } = masterAudio(samples, masteringProfile(profileId), { sampleRate });
+  const wav = encodeWav(master);
+  return { wav, report, engineVersion: MASTERING_ENGINE_VERSION, raw: measureWav(premasterWav), mastered: measureWav(wav) };
 }
 
 export type SoundAbSide = {

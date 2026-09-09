@@ -94,6 +94,12 @@ export type NativeRouteDecision = {
   candidates: NativeRouteCandidate[];
   /** Why no candidate exists (or why sfizz was skipped when only pedalboard remains). */
   reason: string | null;
+  /**
+   * Every renderer that was *not* made a candidate, with its reason - even
+   * when another renderer is. If every candidate then fails, the stem's
+   * fallback must still say why the others never applied.
+   */
+  skipped: string[];
 };
 
 /**
@@ -138,7 +144,7 @@ export function decideNativeRoute(input: {
   } else if (!candidates.length) {
     reasons.unshift(`The configured PEDALBOARD_VST3 worker does not list family '${family}'.`);
   }
-  return { candidates, reason: candidates.length ? null : reasons.join(" ") };
+  return { candidates, reason: candidates.length ? null : reasons.join(" "), skipped: reasons };
 }
 
 /** The family coverage table the evidence and the production-floor doc print. */

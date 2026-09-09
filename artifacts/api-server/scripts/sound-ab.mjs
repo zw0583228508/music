@@ -20,7 +20,6 @@
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { tmpdir } from "node:os";
 import { rm } from "node:fs/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { inflateRawSync } from "node:zlib";
@@ -52,7 +51,10 @@ function loadEnvLocal() {
 
 async function loadLibrary() {
   const esbuild = await import("esbuild");
-  const bundlePath = join(tmpdir(), `sound-ab-${process.pid}.mjs`);
+  // Beside api-server/node_modules, not in the OS tmpdir: the bundle keeps @google-cloud/*
+  // external and node must be able to resolve it from there.
+  mkdirSync(resolve(here, "..", ".tmp-tests"), { recursive: true });
+  const bundlePath = resolve(here, "..", ".tmp-tests", `sound-ab-${process.pid}.mjs`);
   await esbuild.build({
     entryPoints: [resolve(here, "./sound-ab-entry.ts")],
     outfile: bundlePath, bundle: true, platform: "node", format: "esm", logLevel: "error",
@@ -105,20 +107,41 @@ async function runExport() {
   const login = await api(base, "/api/dev-login", { method: "POST", body: "{}" });
   if (!login.ok) throw new Error(`dev-login failed: HTTP ${login.status}`);
   const cookie = (login.headers.getSetCookie?.() ?? [login.headers.get("set-cookie")]).filter(Boolean).map((c) => c.split(";")[0]).join("; ");
-  const idempotencyKey = `sound-ab:${label}:${Date.now()}`;
   const startedAt = Date.now();
-  const created = await api(base, `/api/projects/${projectId}/export`, {
-    method: "POST",
-    body: JSON.stringify({ arrangementId, approvedRevisionId: revisionId, idempotencyKey, includeStems: true, includeMidi: true, includeMix: true, includeMetadata: true, masterProfile: "STREAMING" }),
-  }, cookie);
-  const job = await created.json();
-  if (!created.ok) throw new Error(`export request failed: HTTP ${created.status} ${JSON.stringify(job)}`);
+  // `--job <id>` resumes a job this script already created (a poll that lost
+  // its socket while the API was busy rendering must not cost a second export).
+  const existingJobId = flag("job");
+  const idempotencyKey = existingJobId ? null : `sound-ab:${label}:${Date.now()}`;
+  let job;
+  if (existingJobId) {
+    const fetched = await api(base, `/api/production-jobs/${existingJobId}`, {}, cookie);
+    job = await fetched.json();
+    if (!fetched.ok) throw new Error(`job lookup failed: HTTP ${fetched.status} ${JSON.stringify(job)}`);
+  } else {
+    const created = await api(base, `/api/projects/${projectId}/export`, {
+      method: "POST",
+      body: JSON.stringify({ arrangementId, approvedRevisionId: revisionId, idempotencyKey, includeStems: true, includeMidi: true, includeMix: true, includeMetadata: true, masterProfile: "STREAMING" }),
+    }, cookie);
+    job = await created.json();
+    if (!created.ok) throw new Error(`export request failed: HTTP ${created.status} ${JSON.stringify(job)}`);
+  }
   log("export job", job.id, "status", job.status);
   let current = job;
+  let pollFailures = 0;
   while (!["succeeded", "failed", "cancelled"].includes(current.status)) {
     await new Promise((resolveSleep) => setTimeout(resolveSleep, 3000));
-    const polled = await api(base, `/api/production-jobs/${job.id}`, {}, cookie);
-    current = await polled.json();
+    try {
+      const polled = await api(base, `/api/production-jobs/${job.id}`, {}, cookie);
+      current = await polled.json();
+      pollFailures = 0;
+    } catch (error) {
+      // The API renders the export on its own event loop; a poll can lose its
+      // socket while a long stem renders. The job is durable, so keep polling.
+      pollFailures += 1;
+      log("   poll failed", pollFailures, error instanceof Error ? error.message : String(error));
+      if (pollFailures > 20) throw error;
+      continue;
+    }
     log("  ", current.status, current.stage ?? "", current.progress ?? "");
   }
   const elapsedMs = Date.now() - startedAt;
@@ -185,18 +208,28 @@ async function runRegister() {
   const ownerId = flag("owner", process.env.DEV_AUTH_USER_ID ?? "dev-local-user");
   if (!projectId || !flag("a") || !flag("b")) throw new Error("register needs --project --a <dir> --b <dir>");
   const lib = await loadLibrary();
+  const profile = flag("profile", "STREAMING");
   const side = (dir) => {
     const record = JSON.parse(readFileSync(join(dir, "export.json"), "utf8"));
-    const masterWav = readFileSync(join(dir, "mix__master.wav"));
+    // The premaster mix carries the stems as rendered; the export's master is
+    // the producer-approved WAV on both sides (see masterPremaster).
+    const premaster = readFileSync(join(dir, "mix__full_mix.wav"));
+    const mastered = lib.masterPremaster(premaster, profile);
+    writeFileSync(join(dir, "ab-master.wav"), mastered.wav);
+    writeFileSync(join(dir, "ab-master.json"), JSON.stringify({ profile, engineVersion: mastered.engineVersion, report: mastered.report, raw: mastered.raw, mastered: mastered.mastered }, null, 2) + "\n");
     const native = record.stems.filter((s) => s.rendererStatus === "licensed-native");
     return {
       label: record.label,
-      masterWav,
-      measurement: lib.measureWav(masterWav),
-      description: `${record.label}: ${record.stems.map((s) => `${s.instrument}=${s.renderer}`).join(", ")}`,
+      masterWav: mastered.wav,
+      measurement: mastered.mastered,
+      description: `${record.label}: ${record.stems.map((s) => `${s.instrument}=${s.renderer}`).join(", ")}; premaster ${mastered.raw.integratedLufs} LUFS -> ${profile} ${mastered.mastered.integratedLufs} LUFS`,
       technicalMetadata: {
         exportArtifactId: record.exportArtifactId,
         jobId: record.jobId,
+        source: "mix/full_mix.wav mastered by masteringEngine " + mastered.engineVersion + " (" + profile + ")",
+        premasterIntegratedLufs: mastered.raw.integratedLufs,
+        premasterTruePeakDbtp: mastered.raw.truePeakDbtp,
+        premasterSha256: mastered.raw.sha256,
         nativeStems: native.length,
         stems: record.stems.length,
         renderers: record.stems.map((s) => `${s.instrument}:${s.renderer}`).join(";"),

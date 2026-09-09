@@ -98,6 +98,22 @@ test("routing: pedalboard keeps first place for a family it lists; sfizz follows
   });
   assert.deepEqual(decision.candidates.map((candidate) => candidate.renderer), ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"]);
   assert.equal(decision.reason, null);
+  assert.deepEqual(decision.skipped, []);
+});
+
+test("routing: a renderer that is not a candidate keeps its reason even when another renderer is", () => {
+  // Pedalboard lists every family, sfizz does not serve drums: pedalboard is the
+  // only candidate, and if it fails the stem must still say why sfizz never applied.
+  const decision = decideNativeRoute({
+    track: track("drums", "drums", "drums"),
+    pedalboardConfigured: true,
+    pedalboardFamilies: ["keys", "strings", "brass", "drums", "guitar", "voice", "synth"],
+    sfizz: healthySfizz,
+  });
+  assert.deepEqual(decision.candidates.map((candidate) => candidate.renderer), ["PEDALBOARD_VST3"]);
+  assert.equal(decision.reason, null);
+  assert.equal(decision.skipped.length, 1);
+  assert.match(decision.skipped[0], /SFIZZ_VSCO2_CE has no approved instrument for family 'drums'/);
 });
 
 test("routing: an unconfigured or unhealthy sfizz worker is a reason, not a candidate", () => {

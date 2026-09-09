@@ -71,11 +71,17 @@ p.add_argument("--samplerate", type=int); p.add_argument("--use-eot", action="st
 a = p.parse_args()
 midi = mido.MidiFile(a.midi)
 events, now, notes, last = [], 0.0, [], 0.0
+expression = 1.0
 for message in midi.tracks[0]:
     now += message.time / 2000.0
     last = now
+    # CC 11 (expression) scales the tone like the real instrument would, so
+    # the worker's canonical smoke (pitch variant, expression variant) sees
+    # three distinct outputs from this stand-in as it does from sfizz.
+    if message.type == "control_change" and message.control == 11:
+        expression = max(message.value, 1) / 127
     if message.type == "note_on" and message.velocity > 0:
-        notes.append((now, message.note, message.velocity))
+        notes.append((now, message.note, message.velocity * expression))
     if message.type == "note_off":
         notes.append((now, message.note, 0))
 gain = {{}}

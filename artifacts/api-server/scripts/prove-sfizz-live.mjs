@@ -19,8 +19,7 @@
  * printed; the endpoint host is recorded, the token is not.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
-import { tmpdir } from "node:os";
+import { dirname, resolve } from "node:path";
 import { rm } from "node:fs/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -44,7 +43,10 @@ for (const rawLine of existsSync(resolve(repoRoot, ".env.local")) ? readFileSync
 if (!process.env.MUSIC_AI_WORKER_URL) throw new Error("MUSIC_AI_WORKER_URL is required in the process environment");
 
 const esbuild = await import("esbuild");
-const bundlePath = join(tmpdir(), `prove-sfizz-${process.pid}.mjs`);
+// Beside api-server/node_modules, not in the OS tmpdir: the bundle keeps @google-cloud/*
+// external and node must be able to resolve it from there.
+mkdirSync(resolve(here, "..", ".tmp-tests"), { recursive: true });
+const bundlePath = resolve(here, "..", ".tmp-tests", `prove-sfizz-${process.pid}.mjs`);
 await esbuild.build({
   entryPoints: [resolve(here, "./sound-ab-entry.ts")],
   outfile: bundlePath, bundle: true, platform: "node", format: "esm", logLevel: "error",

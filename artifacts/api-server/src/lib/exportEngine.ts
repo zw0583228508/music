@@ -780,7 +780,11 @@ export async function renderArrangementExport(input: {
           // with a different instrument than the operator named would be wrong
           // audio presented as right.
           if (resolved.source === "refused") {
-            return { ...fallback(`Premium instrument routing: ${resolved.reason}.`), soundSelection };
+            // PR-92: the refusal is final for PEDALBOARD_VST3 - but it says
+            // nothing about the next attested renderer, which serves the track
+            // under its own published map and labels the stem with it.
+            failures.push(`PEDALBOARD_VST3: premium instrument routing refused (${resolved.reason})`);
+            continue;
           }
           assetId = resolved.assetId ?? undefined;
         }
@@ -790,7 +794,8 @@ export async function renderArrangementExport(input: {
           soundSelection = {
             assetId: candidate.sfz,
             source: "sfizz-instrument-map",
-            reason: `${Object.entries(candidate.matchedBy).map(([key, value]) => `${key}=${value}`).join(",")} -> ${candidate.instrument}`
+            reason: (failures.length ? `after ${failures.join("; ")}: ` : "")
+              + `${Object.entries(candidate.matchedBy).map(([key, value]) => `${key}=${value}`).join(",")} -> ${candidate.instrument}`
               + (candidate.standIn ? ` (stand-in: ${candidate.standIn})` : ""),
           };
         }
@@ -840,7 +845,7 @@ export async function renderArrangementExport(input: {
           ...(soundSelection ? { soundSelection } : {}),
         };
       }
-      return fallback(`The licensed native renderer was unavailable or failed attestation (${failures.join("; ")}).`);
+      return fallback(`The licensed native renderer was unavailable or failed attestation (${[...failures, ...route.skipped].join("; ")}).`);
     }));
   const trackEvidenceFailures = (track: RenderedTrack): string[] => {
     const evidence = track.trackModel.performanceEvidence;
