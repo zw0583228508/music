@@ -2242,6 +2242,58 @@ any of it.
   unit test, not a benchmark run. It needs recorded human performance, where
   microtiming and swing are not zero by construction — which is Q-00.
 
+- **PR-51** ✅ — `pdmx-acquisition` (Wave Q, Q-05 Tier A): the dataset pulled
+  from Zenodo, verified, and run through the rights gate on the real 254,077-row
+  table. Evidence: `docs/evidence/pdmx-acquisition-live.json`.
+
+  **Acquisition.** `acquire-pdmx.mjs` fetches the official release through the
+  Zenodo API with an identifying User-Agent (Zenodo 403s anonymous clients),
+  takes **only the 3 files this platform reads** — PDMX.csv, subset_paths,
+  mid.tar.gz, 469 MB — and skips the other 13.9 GB (the 9.6 GB of rendered PDFs,
+  the authors' JSON encoding, the compressed MusicXML) each **with its reason
+  named**. Every file is checked against the md5 Zenodo publishes; a mismatch
+  deletes the file and stops. The raw archive lands only in `.pdmx-data/`,
+  git-ignored, and `targetDirectoryRefusal` refuses any target that is not.
+  `acquisitionRefusalReason` **fails closed**: an embargoed or relicensed record
+  downloads nothing.
+
+  **Reading the real table.** `pdmxCsv.ts` maps one of the 62 columns onto the
+  `PdmxMetadataRow` the gate reads. It invents nothing the table lacks: no time
+  signature (meter lives in the MIDI, so an unread meter is `unknown`, not a
+  fabricated 4/4), and `n_pitch_classes` is `2 ** pitch_class_entropy` — the
+  honest translation of the quantity the table actually measures.
+
+  **The run.** 254,077 rows read, **222,856 admitted** — the exact
+  `no_license_conflict` count the plan cites — and **31,221 refused** (12.29%),
+  the exact MuseScore metadata discrepancy the PDMX paper reports. Our licence
+  reading and the authors' published subset flag **agree on every one of the
+  254,077 rows**, in both directions: our gate is never more permissive than
+  theirs.
+
+  **Three bugs the real data caught:**
+
+  1. The public-domain pattern knew `cc0` but not `cc-zero`, the spelling PDMX
+     uses — the first run refused 262 valid CC0 dedications over a hyphen. The
+     cross-check flagged them as `we_exclude_they_admit`, which is why the
+     cross-check exists.
+  2. Tempo derived as `beats/seconds×60` produced 396 and 640 BPM on real rows.
+     A derived tempo outside 30–300 BPM is now dropped, so the corpus is not
+     tempo-banded by an artefact.
+  3. `pdmxIngest` defaulted an unread meter to 4/4; it is now `unknown`.
+
+  Suites: pdmxAcquisition 11, pdmxCsv 8, pdmxIngest 5, benchmarkCorpusPlan 4;
+  typecheck green. The .gitignore-coverage test reads the real `.gitignore`.
+
+  **Honest limits.** This is **Tier A only** — licensed human-origin symbolic
+  music. Tiers B–E (task extraction, teacher ensemble, rejection sampling,
+  bounded self-play, real producer preference) are not built. 222,856 works are
+  **admissible**; none is in any corpus yet — the MIDI archive is downloaded and
+  verified but not extracted or tokenised. Attributes from the CSV alone (tempo
+  band, density, ensemble size) are real but partial until the MIDI is parsed.
+  PDMX fills the `midi` slice and the training backbone; it provides **no
+  recorded audio and no professional human arrangement** — those are
+  `HUMAN_ORIGIN_REFERENCE` and `PROFESSIONAL_HUMAN_GOLD`, still to be sourced.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

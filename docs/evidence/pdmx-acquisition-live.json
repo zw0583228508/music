@@ -1,0 +1,80 @@
+{
+  "title": "PDMX pulled from Zenodo, verified, and run through the rights gate — live (Wave Q, Q-05 Tier A)",
+  "date": "2026-09-09",
+  "record": {
+    "id": "15571083",
+    "doi": "10.5281/zenodo.15571083",
+    "title": "PDMX: A Large-Scale Public Domain MusicXML Dataset for Symbolic Music Processing",
+    "creators": "Long, Phillip; Novack, Zachary; McAuley, Julian; Berg-Kirkpatrick, Taylor",
+    "accessRight": "open",
+    "recordLicense": "cc-by-4.0",
+    "recordLicenseNote": "Covers the dataset compilation, NOT the works inside it. The works are claimed public domain on MuseScore; per-work admission is decided by pdmxIngest.ts on the no_license_conflict subset."
+  },
+  "acquisition": {
+    "how": "zenodo.org/api/records/15571083 via the official API, with an identifying User-Agent (Zenodo 403s anonymous clients)",
+    "fetched": [
+      { "key": "PDMX.csv", "bytes": 225399738, "md5": "30392ccf38bb63ce70e7afae70f9c88c", "seconds": 15.5 },
+      { "key": "subset_paths.tar.gz", "bytes": 29258714, "md5": "092eee416ece8060f77d08575b94a43d", "seconds": 11.5 },
+      { "key": "mid.tar.gz", "bytes": 214395208, "md5": "d920a21b2fcd99a56d9c381b39debbb2", "seconds": 26.2 }
+    ],
+    "fetchedTotalBytes": 469053660,
+    "skipped": [
+      { "key": "pdf.tar.gz", "bytes": 9622000000, "reason": "rendered sheet-music images; nothing in this platform reads a PDF" },
+      { "key": "data.tar.gz", "bytes": 2238000000, "reason": "the authors' own JSON encoding; superseded by our own parsing of the MIDI" },
+      { "key": "mxl.tar.gz", "bytes": 1894000000, "reason": "compressed MusicXML; the MIDI carries what the tokenizer needs" },
+      { "key": "metadata.tar.gz", "bytes": 159000000, "reason": "per-song descriptive metadata; PDMX.csv carries the fields the rights gate reads" }
+    ],
+    "skippedTotalBytes": 13913000000,
+    "everyFileVerified": "against the md5 Zenodo publishes for it; a mismatch deletes the file and stops",
+    "datasetDigest": "48db5562b1495bae926812c9078c02c598d7aec3bf827bf5c10297b2ca50dbfe",
+    "rightsDigest": "97b7c795b37de988ae89d864732d9df4b3ba4c5151a422fca3d14548aa933fc7",
+    "rawDataInGit": false,
+    "rawDataLocation": ".pdmx-data/ (git-ignored; targetDirectoryRefusal enforces this before any download)"
+  },
+  "rightsGateOverTheRealTable": {
+    "rowsRead": 254077,
+    "unreadableRows": 0,
+    "admitted": 222856,
+    "admittedShare": 0.8771,
+    "refusalsByReason": [
+      { "reason": "is outside the no_license_conflict subset", "count": 31221 }
+    ],
+    "crossCheckAgainstAuthorsSubsetFlag": {
+      "agree": 254077,
+      "we_admit_they_exclude": 0,
+      "we_exclude_they_admit": 0,
+      "meaning": "Our licence reading (from license_conflict + the licence statement) and the authors' published subset:no_license_conflict flag agree on every one of 254,077 rows. Our gate is never more permissive than theirs."
+    }
+  },
+  "twoNumbersThatMatchTheLiterature": {
+    "admitted": "222,856 — the exact no_license_conflict count the PDMX plan of record cites",
+    "refused": "31,221 (12.29%) — the exact discrepancy the PDMX paper reports between MuseScore's public copyright metadata and the files' internal metadata"
+  },
+  "bugsTheRealDataCaught": [
+    {
+      "bug": "The public-domain pattern knew `cc0` but not `cc-zero`, the spelling PDMX actually uses. The first 2000-row run refused 262 valid CC0 dedications over a hyphen.",
+      "howFound": "The cross-check flagged 262 rows as we_exclude_they_admit — our gate rejecting works the authors' own subset admits.",
+      "fix": "PUBLIC_DOMAIN now matches cc-zero / cc_zero / cc 0 as well as cc0."
+    },
+    {
+      "bug": "Tempo was derived as beats/seconds*60. Real rows in the table divide out to 396 and 640 BPM — whatever `song_length.beats` counts there, it is not the notated pulse.",
+      "fix": "A derived tempo outside 30-300 BPM is dropped rather than trusted, so the corpus is not tempo-banded by an artefact."
+    },
+    {
+      "bug": "PDMX.csv carries no time signature; meter lives in the MIDI. pdmxIngest defaulted an unread meter to 4/4.",
+      "fix": "An unread meter is now `unknown` — true of the entries a meter-balanced corpus most needs, where a silent 4/4 would be a fabrication. `n_pitch_classes` is derived as 2**pitch_class_entropy, the honest translation of the quantity the table measures."
+    }
+  ],
+  "suites": {
+    "pdmxAcquisition": 11,
+    "pdmxCsv": 8,
+    "pdmxIngest": 5,
+    "note": "typecheck green; the .gitignore-coverage test reads the real .gitignore, not a copy of its expected contents"
+  },
+  "honestLimits": [
+    "This is Tier A of the five-tier Data Factory: licensed human-origin symbolic music. Tiers B-E (task extraction, teacher ensemble, rejection sampling, bounded self-play, real producer preference) are not built.",
+    "222,856 works are ADMISSIBLE. None is in any corpus yet — the MIDI archive is downloaded and verified but not extracted or tokenised.",
+    "Meter and full harmonic detail need the MIDI parsed, which is the next step. Attributes derived from the CSV alone (tempo band, density, ensemble size, effective pitch classes) are real but partial.",
+    "PDMX fills the `midi` slice of the benchmark corpus and the training backbone. It does not fill the recorded-audio slices or provide a single professional human arrangement — those are HUMAN_ORIGIN_REFERENCE and PROFESSIONAL_HUMAN_GOLD, still to be sourced."
+  ]
+}
