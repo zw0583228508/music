@@ -4749,7 +4749,8 @@ export const GetProjectSongModelResponse = zod.object({
   "corroborationMargin": zod.number(),
   "singleObservationFloor": zod.number()
 })
-}).optional()
+}).optional(),
+  "structure": zod.record(zod.string(), zod.unknown()).optional().describe('Structure evidence (PR-87) - every independent section reading of the analysed window and their reconciliation (corroborated \/ lone boundaries, contested regions). Additive; the default sections path is unchanged.')
 }).optional().describe('Per-domain provider reconciliation (Analysis Reconciliation V2).'),
   "trustReport": zod.object({
   "version": zod.enum(['1.0']),
@@ -7025,7 +7026,8 @@ export const CorrectProjectSongModelResponse = zod.object({
   "corroborationMargin": zod.number(),
   "singleObservationFloor": zod.number()
 })
-}).optional()
+}).optional(),
+  "structure": zod.record(zod.string(), zod.unknown()).optional().describe('Structure evidence (PR-87) - every independent section reading of the analysed window and their reconciliation (corroborated \/ lone boundaries, contested regions). Additive; the default sections path is unchanged.')
 }).optional().describe('Per-domain provider reconciliation (Analysis Reconciliation V2).'),
   "trustReport": zod.object({
   "version": zod.enum(['1.0']),

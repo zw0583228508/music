@@ -1864,6 +1864,11 @@ export type DomainReconciliationReportEngine = {
 };
 
 /**
+ * Structure evidence (PR-87) - every independent section reading of the analysed window and their reconciliation (corroborated / lone boundaries, contested regions). Additive; the default sections path is unchanged.
+ */
+export type DomainReconciliationReportStructure = { [key: string]: unknown };
+
+/**
  * Per-domain provider reconciliation (Analysis Reconciliation V2).
  */
 export interface DomainReconciliationReport {
@@ -1878,6 +1883,8 @@ export interface DomainReconciliationReport {
   /** PR-89 - the disagreement engine's four-way verdict per domain. */
   verdicts?: DomainReconciliationReportVerdicts;
   engine?: DomainReconciliationReportEngine;
+  /** Structure evidence (PR-87) - every independent section reading of the analysed window and their reconciliation (corroborated / lone boundaries, contested regions). Additive; the default sections path is unchanged. */
+  structure?: DomainReconciliationReportStructure;
 }
 
 export type AnalysisTrustReportVersion = typeof AnalysisTrustReportVersion[keyof typeof AnalysisTrustReportVersion];

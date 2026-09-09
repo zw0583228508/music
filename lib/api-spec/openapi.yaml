@@ -3267,6 +3267,10 @@ components:
           properties:
             version: { type: string }
             thresholds: { $ref: "#/components/schemas/DisagreementThresholds" }
+        structure:
+          type: object
+          description: Structure evidence (PR-87) - every independent section reading of the analysed window and their reconciliation (corroborated / lone boundaries, contested regions). Additive; the default sections path is unchanged.
+          additionalProperties: true
     AnalysisTrustDomain:
       type: object
       description: PR-89 - one domain of the trust report the Arrangement Brain reads.

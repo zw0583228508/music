@@ -202,6 +202,7 @@ export * from './domainReconciliationCandidate';
 export * from './domainReconciliationReport';
 export * from './domainReconciliationReportDomains';
 export * from './domainReconciliationReportEngine';
+export * from './domainReconciliationReportStructure';
 export * from './domainReconciliationReportVerdicts';
 export * from './domainReconciliationReportVersion';
 export * from './domainReconciliationStatus';

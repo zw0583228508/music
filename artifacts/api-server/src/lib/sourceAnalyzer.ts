@@ -28,6 +28,13 @@ import {
 } from "./analysisProviders";
 import { deriveLocalStructure, detectTempoEvidence as detectLocalTempoEvidence, type LocalStructure } from "./localStructureAnalysis";
 import { detectKeyEvidence } from "./localKeyAnalysis";
+import {
+  buildStructureEvidence,
+  readingFromBarSections,
+  structureEvidenceEnabled,
+  type StructureEvidence,
+  type StructureReading,
+} from "./structureTournament";
 import { fuseProviderSongModels } from "./songModelValidation";
 import {
   type ReconciliationResult,
@@ -1613,6 +1620,36 @@ export async function analyzeProjectSource(
         sections = localStructure.sections;
       }
     }
+    // Structure evidence (PR-87): the local SSM segmenter beside whatever
+    // structure reading is already in hand, reconciled — corroborated / lone
+    // boundaries and contested regions. Additive: `sections` above are still
+    // chosen by the default path; this records what the candidates said.
+    // It can never fail an analysis.
+    let structureEvidence: StructureEvidence | null = null;
+    if (!midi && samples.length && structureEvidenceEnabled()) {
+      try {
+        const readings = [
+          providerResults.structure
+            ? readingFromBarSections(providerResults.structure.providerId, providerResults.structure.sections, providerResults.structure.bars, providerResults.structure.confidence)
+            : null,
+          localStructure
+            ? readingFromBarSections(localStructure.provider, localStructure.sections, localStructure.bars, localStructure.confidence)
+            : null,
+        ].filter((reading): reading is StructureReading => reading !== null);
+        structureEvidence = buildStructureEvidence({ samples, sampleRate: decodeRate, windowStartSeconds: analysisStartSeconds, readings });
+        logger.info({
+          sourceId,
+          status: structureEvidence.status,
+          providers: structureEvidence.readings.map((reading) => reading.provider),
+          corroborated: structureEvidence.boundaries.filter((boundary) => boundary.status === "corroborated").length,
+          lone: structureEvidence.boundaries.filter((boundary) => boundary.status === "lone").length,
+          contested: structureEvidence.contested.length,
+        }, "song_model_structure_evidence");
+      } catch (error) {
+        logger.warn({ sourceId, error: error instanceof Error ? error.message : String(error) }, "song_model_structure_evidence_failed");
+        structureEvidence = null;
+      }
+    }
     key = midi?.keyMap.length ? midi.key : keyReconciliation?.value ?? "—";
     const melody = midi?.melody ??
       fuseCanonicalNotes(providerResults.transcriptions);
@@ -1908,7 +1945,9 @@ export async function analyzeProjectSource(
       vocalIntelligence,
       lyrics,
       confidenceByField,
-      ...(domainReconciliation ? { reconciliation: domainReconciliation } : {}),
+      ...(domainReconciliation
+        ? { reconciliation: structureEvidence ? { ...domainReconciliation, structure: structureEvidence } : domainReconciliation }
+        : {}),
       providerProvenance: [
         {
           capability: "preprocessing",
