@@ -299,6 +299,13 @@ const suites = {
         "data-source-registry.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // PR-96: the owner's drive D: triaged read-only — vendor name / vendor
+      // format → host + rights class; raw takes are only ever a candidate.
+      [
+        "src/lib/driveInventoryTriage.test.ts",
+        "drive-inventory-triage.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // Wave Q, PR-77: musical corruptions of one part in its ensemble, and
       // the pretrained critic trained on them with the gates that expose the
       // trap (a critic that learns the corruption generator, not music).
