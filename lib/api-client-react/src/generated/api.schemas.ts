@@ -6042,6 +6042,64 @@ export interface CreateListeningSessionInput {
   right: ListeningSideInput;
 }
 
+export interface CreateTournamentListeningSessionInput {
+  /**
+     * Basename of a tournament report under docs/evidence (e.g. model-tournament-live.json)
+     * @minLength 1
+     * @maxLength 120
+     * @pattern ^[a-z0-9][a-z0-9-]*\.json$
+     */
+  evidenceFile: string;
+  /**
+     * Pairs to draw (default 50)
+     * @minimum 10
+     * @maximum 60
+     */
+  size?: number;
+  /** @maxLength 200 */
+  title?: string;
+}
+
+export interface ListeningComparisonSummary {
+  comparison: string;
+  a: string;
+  b: string;
+  pairs: number;
+  votes: number;
+  aWins: number;
+  bWins: number;
+  aShare: number | null;
+  ownerVotes: number;
+  ownerAWins: number;
+  ownerAShare: number | null;
+}
+
+export interface ListeningPreferenceRecord {
+  version: string;
+  sessionId: string;
+  pairId: string;
+  comparison: string;
+  taskId: string;
+  seed: number;
+  family: string;
+  question: string;
+  providerA: string;
+  providerB: string;
+  entryA: string;
+  entryB: string;
+  winner: string;
+  loser: string;
+  /** Salted pseudonym */
+  rater: string;
+  isOwner: boolean;
+  createdAt: string;
+}
+
+export interface ListeningPreferences {
+  sessionId: string;
+  records: ListeningPreferenceRecord[];
+}
+
 export type ListeningSessionSidePick = typeof ListeningSessionSidePick[keyof typeof ListeningSessionSidePick];
 
 
@@ -6101,6 +6159,10 @@ export interface ListeningGateC {
 
 export interface ListeningResults {
   version: string;
+  /** The question the gate reads */
+  primaryQuestion: string;
+  /** Tournament sessions only - per-comparison tallies on the primary question, owner apart */
+  comparisons: ListeningComparisonSummary[];
   /** Distinct raters other than the owner */
   raters: number;
   ownerVotesExcluded: number;
@@ -6184,6 +6246,14 @@ export interface ListeningVoteInput {
   winnerToken: string;
 }
 
+export type ListeningRaterViewKind = typeof ListeningRaterViewKind[keyof typeof ListeningRaterViewKind];
+
+
+export const ListeningRaterViewKind = {
+  candidates: 'candidates',
+  tournament: 'tournament',
+} as const;
+
 export type ListeningRaterViewStatus = typeof ListeningRaterViewStatus[keyof typeof ListeningRaterViewStatus];
 
 
@@ -6194,6 +6264,9 @@ export const ListeningRaterViewStatus = {
 
 export interface ListeningRaterView {
   sessionId: string;
+  kind?: ListeningRaterViewKind;
+  /** Tournament sessions - the one question every pair must answer */
+  primaryQuestion?: string;
   title: string;
   status: ListeningRaterViewStatus;
   pairs: ListeningRaterPair[];
@@ -6203,7 +6276,7 @@ export interface ListeningRaterView {
 export interface SubmitListeningVotesInput {
   /**
      * @minItems 1
-     * @maxItems 60
+     * @maxItems 600
      */
   votes: ListeningVoteInput[];
 }

@@ -106,6 +106,11 @@ export type PdmxCsvRow = PdmxMetadataRow & {
   /** The authors' own subset membership, kept separate from our reading of it. */
   inNoLicenseConflictSubset?: boolean;
   composer?: string;
+  /** Uploader tags and community groups, hyphen-joined as published; read when the column exists, never required. */
+  tags?: string;
+  groups?: string;
+  /** GM programs per track as published (`0-25-33`); the table does not mark the drum kit. */
+  trackPrograms?: number[];
 };
 
 /**
@@ -165,6 +170,9 @@ export function csvRowToMetadataRow(
     midiPath,
     inNoLicenseConflictSubset: text(at("subset:no_license_conflict"))?.toLowerCase() === "true",
     composer: text(at("composer_name")),
+    tags: text(at("tags")),
+    groups: text(at("groups")),
+    trackPrograms: text(at("tracks"))?.split("-").map(Number).filter((n) => Number.isInteger(n) && n >= 0),
   };
 }
 

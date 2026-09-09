@@ -1,0 +1,1278 @@
+{
+  "title": "Instrument scorecard — per family × arm, from the tournament evidence (Wave Q — Model Discovery, Workstream K)",
+  "ranAt": "2026-09-09T16:56:30.889Z",
+  "inputs": [
+    {
+      "path": "docs/evidence/model-tournament-live.json",
+      "runId": "4fac41bee93e",
+      "ranAt": "2026-09-09T12:58:46.729Z",
+      "entries": 180
+    }
+  ],
+  "midiRecovery": {
+    "resolved": 180,
+    "missing": 0,
+    "ambiguous": 18,
+    "note": "candidate pitches recovered from the token-named entry MIDIs by program + note count; 'ambiguous' = fell back to the last track carrying the program"
+  },
+  "scorecard": {
+    "version": "1.0",
+    "sources": [
+      "docs/evidence/model-tournament-live.json (run 4fac41bee93e, 180 entries)"
+    ],
+    "entries": 180,
+    "families": [
+      {
+        "family": "bass",
+        "tasks": 2,
+        "programs": [
+          34,
+          39
+        ],
+        "arms": [
+          {
+            "providerId": "HUMAN_ORIGIN_REFERENCE",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 88.01,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.8231,
+            "coverage": 0.75,
+            "densityLogRatio": 0,
+            "densityDistance": 0,
+            "barRepetitionShare": 0.5178,
+            "contextClashShare": 0.1407,
+            "collapseRate": 0,
+            "meanNoteCount": 49.5,
+            "winRateVsHuman": null,
+            "winRateVsReference": 1,
+            "vsHuman": {
+              "meanScore": 0,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0,
+              "coverage": 0,
+              "barRepetitionShare": 0,
+              "contextClashShare": 0
+            },
+            "strengths": [],
+            "weaknesses": []
+          },
+          {
+            "providerId": "REFERENCE_PART_COMPOSER",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 45.22,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 1,
+            "coverage": 0.5625,
+            "densityLogRatio": -2.6294,
+            "densityDistance": 2.6294,
+            "barRepetitionShare": 0.2857,
+            "contextClashShare": 0.1571,
+            "collapseRate": 0,
+            "meanNoteCount": 7.5,
+            "winRateVsHuman": 0,
+            "winRateVsReference": null,
+            "vsHuman": {
+              "meanScore": -42.79,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.1769,
+              "coverage": -0.1875,
+              "barRepetitionShare": -0.2321,
+              "contextClashShare": 0.0164
+            },
+            "strengths": [
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range"
+            ],
+            "weaknesses": [
+              "thin: plays in 56% of bars",
+              "density 2.63 octave(s) from the human part (sparser)",
+              "chord tones only (1): no passing or neighbour tones",
+              "16% of sounding time a semitone from the context"
+            ]
+          },
+          {
+            "providerId": "CONTEXT_AWARE_ARRANGER",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 45.22,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 1,
+            "coverage": 0.5625,
+            "densityLogRatio": -2.6294,
+            "densityDistance": 2.6294,
+            "barRepetitionShare": 0.2857,
+            "contextClashShare": 0.1571,
+            "collapseRate": 0,
+            "meanNoteCount": 7.5,
+            "winRateVsHuman": 0,
+            "winRateVsReference": 0,
+            "vsHuman": {
+              "meanScore": -42.79,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.1769,
+              "coverage": -0.1875,
+              "barRepetitionShare": -0.2321,
+              "contextClashShare": 0.0164
+            },
+            "strengths": [
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range"
+            ],
+            "weaknesses": [
+              "thin: plays in 56% of bars",
+              "density 2.63 octave(s) from the human part (sparser)",
+              "chord tones only (1): no passing or neighbour tones",
+              "16% of sounding time a semitone from the context"
+            ]
+          },
+          {
+            "providerId": "COMPOSERS_ASSISTANT_2",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 79.75,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.7931,
+            "coverage": 1,
+            "densityLogRatio": 0.3286,
+            "densityDistance": 0.5331,
+            "barRepetitionShare": 0.7143,
+            "contextClashShare": 0.0428,
+            "collapseRate": 0,
+            "meanNoteCount": 58.67,
+            "winRateVsHuman": 0.5,
+            "winRateVsReference": 1,
+            "vsHuman": {
+              "meanScore": -8.26,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": -0.03,
+              "coverage": 0.25,
+              "barRepetitionShare": 0.1965,
+              "contextClashShare": -0.0979
+            },
+            "strengths": [
+              "highest proxy score among the 4 machine arms (79.75)",
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range",
+              "full: plays in 100% of bars",
+              "chord-tone share 0.7931 ≈ human 0.8231"
+            ],
+            "weaknesses": [
+              "71% of bars repeat the previous bar verbatim",
+              "out-scores the human on 50% of cells — distrust the judge here (judgeSuspect)"
+            ]
+          },
+          {
+            "providerId": "COMPOSERS_ASSISTANT_2+CTX",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 79.75,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.7931,
+            "coverage": 1,
+            "densityLogRatio": 0.3286,
+            "densityDistance": 0.5331,
+            "barRepetitionShare": 0.7143,
+            "contextClashShare": 0.0428,
+            "collapseRate": 0,
+            "meanNoteCount": 58.67,
+            "winRateVsHuman": 0.5,
+            "winRateVsReference": 1,
+            "vsHuman": {
+              "meanScore": -8.26,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": -0.03,
+              "coverage": 0.25,
+              "barRepetitionShare": 0.1965,
+              "contextClashShare": -0.0979
+            },
+            "strengths": [
+              "highest proxy score among the 4 machine arms (79.75)",
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range",
+              "full: plays in 100% of bars",
+              "chord-tone share 0.7931 ≈ human 0.8231"
+            ],
+            "weaknesses": [
+              "71% of bars repeat the previous bar verbatim",
+              "out-scores the human on 50% of cells — distrust the judge here (judgeSuspect)"
+            ]
+          }
+        ],
+        "bestMachineArm": {
+          "providerId": "COMPOSERS_ASSISTANT_2",
+          "meanScore": 79.75,
+          "marginOverNext": 0
+        }
+      },
+      {
+        "family": "brass",
+        "tasks": 2,
+        "programs": [
+          57,
+          58
+        ],
+        "arms": [
+          {
+            "providerId": "HUMAN_ORIGIN_REFERENCE",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 65.13,
+            "playabilityErrorsPerEntry": 2.5,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.8125,
+            "coverage": 0.8125,
+            "densityLogRatio": 0,
+            "densityDistance": 0,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0.0412,
+            "collapseRate": 0,
+            "meanNoteCount": 14,
+            "winRateVsHuman": null,
+            "winRateVsReference": 0.5,
+            "vsHuman": {
+              "meanScore": 0,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0,
+              "coverage": 0,
+              "barRepetitionShare": 0,
+              "contextClashShare": 0
+            },
+            "strengths": [],
+            "weaknesses": []
+          },
+          {
+            "providerId": "REFERENCE_PART_COMPOSER",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 66.85,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 1,
+            "coverage": 0.375,
+            "densityLogRatio": -1.9165,
+            "densityDistance": 1.9165,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0.2075,
+            "collapseRate": 0,
+            "meanNoteCount": 3,
+            "winRateVsHuman": 0.5,
+            "winRateVsReference": null,
+            "vsHuman": {
+              "meanScore": 1.72,
+              "playabilityErrorsPerEntry": -2.5,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.1875,
+              "coverage": -0.4375,
+              "barRepetitionShare": 0,
+              "contextClashShare": 0.1663
+            },
+            "strengths": [
+              "highest proxy score among the 4 machine arms (66.85)",
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range"
+            ],
+            "weaknesses": [
+              "thin: plays in 38% of bars",
+              "density 1.92 octave(s) from the human part (sparser)",
+              "chord tones only (1): no passing or neighbour tones",
+              "21% of sounding time a semitone from the context",
+              "out-scores the human on 50% of cells — distrust the judge here (judgeSuspect)"
+            ]
+          },
+          {
+            "providerId": "CONTEXT_AWARE_ARRANGER",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 66.85,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 1,
+            "coverage": 0.375,
+            "densityLogRatio": -1.9165,
+            "densityDistance": 1.9165,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0.2075,
+            "collapseRate": 0,
+            "meanNoteCount": 3,
+            "winRateVsHuman": 0.5,
+            "winRateVsReference": 0,
+            "vsHuman": {
+              "meanScore": 1.72,
+              "playabilityErrorsPerEntry": -2.5,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.1875,
+              "coverage": -0.4375,
+              "barRepetitionShare": 0,
+              "contextClashShare": 0.1663
+            },
+            "strengths": [
+              "highest proxy score among the 4 machine arms (66.85)",
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range"
+            ],
+            "weaknesses": [
+              "thin: plays in 38% of bars",
+              "density 1.92 octave(s) from the human part (sparser)",
+              "chord tones only (1): no passing or neighbour tones",
+              "21% of sounding time a semitone from the context",
+              "out-scores the human on 50% of cells — distrust the judge here (judgeSuspect)"
+            ]
+          },
+          {
+            "providerId": "COMPOSERS_ASSISTANT_2",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 51.21,
+            "playabilityErrorsPerEntry": 2.67,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.5434,
+            "coverage": 1,
+            "densityLogRatio": 1.1815,
+            "densityDistance": 1.2335,
+            "barRepetitionShare": 0.0714,
+            "contextClashShare": 0.139,
+            "collapseRate": 0,
+            "meanNoteCount": 30.5,
+            "winRateVsHuman": 0.3333,
+            "winRateVsReference": 0.3333,
+            "vsHuman": {
+              "meanScore": -13.92,
+              "playabilityErrorsPerEntry": 0.17,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": -0.2691,
+              "coverage": 0.1875,
+              "barRepetitionShare": 0.0714,
+              "contextClashShare": 0.0978
+            },
+            "strengths": [
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range",
+              "full: plays in 100% of bars"
+            ],
+            "weaknesses": [
+              "lowest proxy score among the 4 machine arms (51.21)",
+              "density 1.23 octave(s) from the human part (denser)",
+              "14% of sounding time a semitone from the context"
+            ]
+          },
+          {
+            "providerId": "COMPOSERS_ASSISTANT_2+CTX",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 53,
+            "playabilityErrorsPerEntry": 1,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 0.9912,
+            "idiomaticRegisterShare": 0.9912,
+            "chordToneShare": 0.4737,
+            "coverage": 1,
+            "densityLogRatio": 1.1815,
+            "densityDistance": 1.2335,
+            "barRepetitionShare": 0.0714,
+            "contextClashShare": 0.1477,
+            "collapseRate": 0,
+            "meanNoteCount": 27.83,
+            "winRateVsHuman": 0.5,
+            "winRateVsReference": 0.3333,
+            "vsHuman": {
+              "meanScore": -12.13,
+              "playabilityErrorsPerEntry": -1.5,
+              "idiomaticRegisterShare": -0.0088,
+              "chordToneShare": -0.3388,
+              "coverage": 0.1875,
+              "barRepetitionShare": 0.0714,
+              "contextClashShare": 0.1065
+            },
+            "strengths": [
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 99% of notes inside the instrument's standard range",
+              "full: plays in 100% of bars"
+            ],
+            "weaknesses": [
+              "density 1.23 octave(s) from the human part (denser)",
+              "15% of sounding time a semitone from the context",
+              "out-scores the human on 50% of cells — distrust the judge here (judgeSuspect)"
+            ]
+          }
+        ],
+        "bestMachineArm": {
+          "providerId": "REFERENCE_PART_COMPOSER",
+          "meanScore": 66.85,
+          "marginOverNext": 0
+        }
+      },
+      {
+        "family": "keys",
+        "tasks": 2,
+        "programs": [
+          0
+        ],
+        "arms": [
+          {
+            "providerId": "HUMAN_ORIGIN_REFERENCE",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 100,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.7262,
+            "coverage": 1,
+            "densityLogRatio": 0,
+            "densityDistance": 0,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0.0291,
+            "collapseRate": 0,
+            "meanNoteCount": 79.5,
+            "winRateVsHuman": null,
+            "winRateVsReference": 1,
+            "vsHuman": {
+              "meanScore": 0,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0,
+              "coverage": 0,
+              "barRepetitionShare": 0,
+              "contextClashShare": 0
+            },
+            "strengths": [],
+            "weaknesses": []
+          },
+          {
+            "providerId": "REFERENCE_PART_COMPOSER",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 66.38,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 1,
+            "coverage": 0.5625,
+            "densityLogRatio": -3.1753,
+            "densityDistance": 3.1753,
+            "barRepetitionShare": 0.1666,
+            "contextClashShare": 0.0469,
+            "collapseRate": 0,
+            "meanNoteCount": 15,
+            "winRateVsHuman": 0,
+            "winRateVsReference": null,
+            "vsHuman": {
+              "meanScore": -33.62,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.2738,
+              "coverage": -0.4375,
+              "barRepetitionShare": 0.1666,
+              "contextClashShare": 0.0178
+            },
+            "strengths": [
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range"
+            ],
+            "weaknesses": [
+              "thin: plays in 56% of bars",
+              "density 3.18 octave(s) from the human part (sparser)",
+              "chord tones only (1): no passing or neighbour tones"
+            ]
+          },
+          {
+            "providerId": "CONTEXT_AWARE_ARRANGER",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 64.27,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.9285,
+            "coverage": 0.5625,
+            "densityLogRatio": -3.1753,
+            "densityDistance": 3.1753,
+            "barRepetitionShare": 0.0833,
+            "contextClashShare": 0.0406,
+            "collapseRate": 0,
+            "meanNoteCount": 14.5,
+            "winRateVsHuman": 0,
+            "winRateVsReference": 0.5,
+            "vsHuman": {
+              "meanScore": -35.73,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.2023,
+              "coverage": -0.4375,
+              "barRepetitionShare": 0.0833,
+              "contextClashShare": 0.0115
+            },
+            "strengths": [
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range"
+            ],
+            "weaknesses": [
+              "lowest proxy score among the 4 machine arms (64.27)",
+              "thin: plays in 56% of bars",
+              "density 3.18 octave(s) from the human part (sparser)"
+            ]
+          },
+          {
+            "providerId": "COMPOSERS_ASSISTANT_2",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 76.27,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.7917,
+            "coverage": 0.75,
+            "densityLogRatio": -0.3801,
+            "densityDistance": 0.6643,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0.0162,
+            "collapseRate": 0,
+            "meanNoteCount": 50.83,
+            "winRateVsHuman": 0,
+            "winRateVsReference": 0.5,
+            "vsHuman": {
+              "meanScore": -23.73,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.0655,
+              "coverage": -0.25,
+              "barRepetitionShare": 0,
+              "contextClashShare": -0.0129
+            },
+            "strengths": [
+              "highest proxy score among the 4 machine arms (76.27)",
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range",
+              "chord-tone share 0.7917 ≈ human 0.7262",
+              "clean against the context (2% clash)"
+            ],
+            "weaknesses": []
+          },
+          {
+            "providerId": "COMPOSERS_ASSISTANT_2+CTX",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 76.12,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.8222,
+            "coverage": 0.75,
+            "densityLogRatio": -0.3801,
+            "densityDistance": 0.6643,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0.0561,
+            "collapseRate": 0,
+            "meanNoteCount": 48.5,
+            "winRateVsHuman": 0,
+            "winRateVsReference": 0.5,
+            "vsHuman": {
+              "meanScore": -23.88,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.096,
+              "coverage": -0.25,
+              "barRepetitionShare": 0,
+              "contextClashShare": 0.027
+            },
+            "strengths": [
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range",
+              "chord-tone share 0.8222 ≈ human 0.7262"
+            ],
+            "weaknesses": []
+          }
+        ],
+        "bestMachineArm": {
+          "providerId": "COMPOSERS_ASSISTANT_2",
+          "meanScore": 76.27,
+          "marginOverNext": 0.15
+        }
+      },
+      {
+        "family": "organ",
+        "tasks": 2,
+        "programs": [
+          19,
+          23
+        ],
+        "arms": [
+          {
+            "providerId": "HUMAN_ORIGIN_REFERENCE",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 100,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.8084,
+            "coverage": 1,
+            "densityLogRatio": 0,
+            "densityDistance": 0,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0.0496,
+            "collapseRate": 0,
+            "meanNoteCount": 23,
+            "winRateVsHuman": null,
+            "winRateVsReference": 1,
+            "vsHuman": {
+              "meanScore": 0,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0,
+              "coverage": 0,
+              "barRepetitionShare": 0,
+              "contextClashShare": 0
+            },
+            "strengths": [],
+            "weaknesses": []
+          },
+          {
+            "providerId": "REFERENCE_PART_COMPOSER",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 65.58,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 1,
+            "coverage": 0.625,
+            "densityLogRatio": -1.661,
+            "densityDistance": 1.661,
+            "barRepetitionShare": 0.2857,
+            "contextClashShare": 0.0762,
+            "collapseRate": 0,
+            "meanNoteCount": 17,
+            "winRateVsHuman": 0,
+            "winRateVsReference": null,
+            "vsHuman": {
+              "meanScore": -34.42,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.1916,
+              "coverage": -0.375,
+              "barRepetitionShare": 0.2857,
+              "contextClashShare": 0.0266
+            },
+            "strengths": [
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range"
+            ],
+            "weaknesses": [
+              "lowest proxy score among the 4 machine arms (65.58)",
+              "density 1.66 octave(s) from the human part (sparser)",
+              "chord tones only (1): no passing or neighbour tones"
+            ]
+          },
+          {
+            "providerId": "CONTEXT_AWARE_ARRANGER",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 69.15,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 1,
+            "coverage": 0.625,
+            "densityLogRatio": -1.661,
+            "densityDistance": 1.661,
+            "barRepetitionShare": 0.1429,
+            "contextClashShare": 0.0762,
+            "collapseRate": 0,
+            "meanNoteCount": 17,
+            "winRateVsHuman": 0,
+            "winRateVsReference": 0.5,
+            "vsHuman": {
+              "meanScore": -30.85,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.1916,
+              "coverage": -0.375,
+              "barRepetitionShare": 0.1429,
+              "contextClashShare": 0.0266
+            },
+            "strengths": [
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range"
+            ],
+            "weaknesses": [
+              "density 1.66 octave(s) from the human part (sparser)",
+              "chord tones only (1): no passing or neighbour tones"
+            ]
+          },
+          {
+            "providerId": "COMPOSERS_ASSISTANT_2",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 85.05,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.9532,
+            "coverage": 1,
+            "densityLogRatio": -0.7498,
+            "densityDistance": 0.7498,
+            "barRepetitionShare": 0.1667,
+            "contextClashShare": 0.0065,
+            "collapseRate": 0,
+            "meanNoteCount": 8.67,
+            "winRateVsHuman": 0,
+            "winRateVsReference": 1,
+            "vsHuman": {
+              "meanScore": -14.95,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.1448,
+              "coverage": 0,
+              "barRepetitionShare": 0.1667,
+              "contextClashShare": -0.0431
+            },
+            "strengths": [
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range",
+              "full: plays in 100% of bars",
+              "clean against the context (1% clash)"
+            ],
+            "weaknesses": []
+          },
+          {
+            "providerId": "COMPOSERS_ASSISTANT_2+CTX",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 88.94,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.9532,
+            "coverage": 1,
+            "densityLogRatio": -0.7498,
+            "densityDistance": 0.7498,
+            "barRepetitionShare": 0.1667,
+            "contextClashShare": 0.0065,
+            "collapseRate": 0,
+            "meanNoteCount": 8.67,
+            "winRateVsHuman": 0,
+            "winRateVsReference": 1,
+            "vsHuman": {
+              "meanScore": -11.06,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.1448,
+              "coverage": 0,
+              "barRepetitionShare": 0.1667,
+              "contextClashShare": -0.0431
+            },
+            "strengths": [
+              "highest proxy score among the 4 machine arms (88.94)",
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range",
+              "full: plays in 100% of bars",
+              "clean against the context (1% clash)"
+            ],
+            "weaknesses": []
+          }
+        ],
+        "bestMachineArm": {
+          "providerId": "COMPOSERS_ASSISTANT_2+CTX",
+          "meanScore": 88.94,
+          "marginOverNext": 3.89
+        }
+      },
+      {
+        "family": "reed",
+        "tasks": 2,
+        "programs": [
+          64,
+          65
+        ],
+        "arms": [
+          {
+            "providerId": "HUMAN_ORIGIN_REFERENCE",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 94.03,
+            "playabilityErrorsPerEntry": 0.5,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.671,
+            "coverage": 0.9375,
+            "densityLogRatio": 0,
+            "densityDistance": 0,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0.0104,
+            "collapseRate": 0,
+            "meanNoteCount": 34.5,
+            "winRateVsHuman": null,
+            "winRateVsReference": 1,
+            "vsHuman": {
+              "meanScore": 0,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0,
+              "coverage": 0,
+              "barRepetitionShare": 0,
+              "contextClashShare": 0
+            },
+            "strengths": [],
+            "weaknesses": []
+          },
+          {
+            "providerId": "REFERENCE_PART_COMPOSER",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 66.25,
+            "playabilityErrorsPerEntry": 0.5,
+            "playabilityErrorsCalibrated": 0.5,
+            "playableRangeShare": 0.875,
+            "idiomaticRegisterShare": 0.875,
+            "chordToneShare": 1,
+            "coverage": 0.5,
+            "densityLogRatio": -2.9886,
+            "densityDistance": 2.9886,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0,
+            "collapseRate": 0,
+            "meanNoteCount": 4,
+            "winRateVsHuman": 0,
+            "winRateVsReference": null,
+            "vsHuman": {
+              "meanScore": -27.78,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": -0.125,
+              "chordToneShare": 0.329,
+              "coverage": -0.4375,
+              "barRepetitionShare": 0,
+              "contextClashShare": -0.0104
+            },
+            "strengths": [
+              "clean against the context (0% clash)"
+            ],
+            "weaknesses": [
+              "lowest proxy score among the 4 machine arms (66.25)",
+              "unplayable notes: 0.5 errors per entry (calibrated judge)",
+              "most playability errors of the 4 machine arms",
+              "thin: plays in 50% of bars",
+              "density 2.99 octave(s) from the human part (sparser)",
+              "chord tones only (1): no passing or neighbour tones"
+            ]
+          },
+          {
+            "providerId": "CONTEXT_AWARE_ARRANGER",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 76,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 1,
+            "coverage": 0.5,
+            "densityLogRatio": -2.9886,
+            "densityDistance": 2.9886,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0,
+            "collapseRate": 0,
+            "meanNoteCount": 4,
+            "winRateVsHuman": 0,
+            "winRateVsReference": 0.5,
+            "vsHuman": {
+              "meanScore": -18.03,
+              "playabilityErrorsPerEntry": -0.5,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.329,
+              "coverage": -0.4375,
+              "barRepetitionShare": 0,
+              "contextClashShare": -0.0104
+            },
+            "strengths": [
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range",
+              "clean against the context (0% clash)"
+            ],
+            "weaknesses": [
+              "thin: plays in 50% of bars",
+              "density 2.99 octave(s) from the human part (sparser)",
+              "chord tones only (1): no passing or neighbour tones"
+            ]
+          },
+          {
+            "providerId": "COMPOSERS_ASSISTANT_2",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 87.6,
+            "playabilityErrorsPerEntry": 0.5,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.864,
+            "coverage": 1,
+            "densityLogRatio": -0.4499,
+            "densityDistance": 0.7943,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0.0318,
+            "collapseRate": 0,
+            "meanNoteCount": 23.67,
+            "winRateVsHuman": 0,
+            "winRateVsReference": 1,
+            "vsHuman": {
+              "meanScore": -6.43,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.193,
+              "coverage": 0.0625,
+              "barRepetitionShare": 0,
+              "contextClashShare": 0.0214
+            },
+            "strengths": [
+              "highest proxy score among the 4 machine arms (87.6)",
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range",
+              "full: plays in 100% of bars"
+            ],
+            "weaknesses": []
+          },
+          {
+            "providerId": "COMPOSERS_ASSISTANT_2+CTX",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 87.05,
+            "playabilityErrorsPerEntry": 0.5,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.864,
+            "coverage": 1,
+            "densityLogRatio": -0.4499,
+            "densityDistance": 0.7943,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0.0318,
+            "collapseRate": 0,
+            "meanNoteCount": 23.67,
+            "winRateVsHuman": 0,
+            "winRateVsReference": 1,
+            "vsHuman": {
+              "meanScore": -6.98,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.193,
+              "coverage": 0.0625,
+              "barRepetitionShare": 0,
+              "contextClashShare": 0.0214
+            },
+            "strengths": [
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range",
+              "full: plays in 100% of bars"
+            ],
+            "weaknesses": []
+          }
+        ],
+        "bestMachineArm": {
+          "providerId": "COMPOSERS_ASSISTANT_2",
+          "meanScore": 87.6,
+          "marginOverNext": 0.55
+        }
+      },
+      {
+        "family": "strings",
+        "tasks": 2,
+        "programs": [
+          40
+        ],
+        "arms": [
+          {
+            "providerId": "HUMAN_ORIGIN_REFERENCE",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 95.23,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.8808,
+            "coverage": 0.75,
+            "densityLogRatio": 0,
+            "densityDistance": 0,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0.0621,
+            "collapseRate": 0,
+            "meanNoteCount": 37,
+            "winRateVsHuman": null,
+            "winRateVsReference": 1,
+            "vsHuman": {
+              "meanScore": 0,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0,
+              "coverage": 0,
+              "barRepetitionShare": 0,
+              "contextClashShare": 0
+            },
+            "strengths": [],
+            "weaknesses": []
+          },
+          {
+            "providerId": "REFERENCE_PART_COMPOSER",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 67.43,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 1,
+            "coverage": 0.3125,
+            "densityLogRatio": -4.1832,
+            "densityDistance": 4.1832,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0.0356,
+            "collapseRate": 0,
+            "meanNoteCount": 8.5,
+            "winRateVsHuman": 0,
+            "winRateVsReference": null,
+            "vsHuman": {
+              "meanScore": -27.8,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.1192,
+              "coverage": -0.4375,
+              "barRepetitionShare": 0,
+              "contextClashShare": -0.0265
+            },
+            "strengths": [
+              "highest proxy score among the 4 machine arms (67.43)",
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range"
+            ],
+            "weaknesses": [
+              "thin: plays in 31% of bars",
+              "density 4.18 octave(s) from the human part (sparser)",
+              "chord tones only (1): no passing or neighbour tones"
+            ]
+          },
+          {
+            "providerId": "CONTEXT_AWARE_ARRANGER",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 66,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.9643,
+            "coverage": 0.3125,
+            "densityLogRatio": -4.1832,
+            "densityDistance": 4.1832,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0.0356,
+            "collapseRate": 0,
+            "meanNoteCount": 8.5,
+            "winRateVsHuman": 0,
+            "winRateVsReference": 0,
+            "vsHuman": {
+              "meanScore": -29.23,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": 0.0835,
+              "coverage": -0.4375,
+              "barRepetitionShare": 0,
+              "contextClashShare": -0.0265
+            },
+            "strengths": [
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range",
+              "chord-tone share 0.9643 ≈ human 0.8808"
+            ],
+            "weaknesses": [
+              "thin: plays in 31% of bars",
+              "density 4.18 octave(s) from the human part (sparser)"
+            ]
+          },
+          {
+            "providerId": "COMPOSERS_ASSISTANT_2",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 58.06,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.7087,
+            "coverage": 0.625,
+            "densityLogRatio": -0.2839,
+            "densityDistance": 1.5097,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0.115,
+            "collapseRate": 0,
+            "meanNoteCount": 55.83,
+            "winRateVsHuman": 0.1667,
+            "winRateVsReference": 0.3333,
+            "vsHuman": {
+              "meanScore": -37.17,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": -0.1721,
+              "coverage": -0.125,
+              "barRepetitionShare": 0,
+              "contextClashShare": 0.0529
+            },
+            "strengths": [
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range"
+            ],
+            "weaknesses": [
+              "density 1.51 octave(s) from the human part (sparser)",
+              "12% of sounding time a semitone from the context"
+            ]
+          },
+          {
+            "providerId": "COMPOSERS_ASSISTANT_2+CTX",
+            "entries": 6,
+            "failures": 0,
+            "meanScore": 56.16,
+            "playabilityErrorsPerEntry": 0,
+            "playabilityErrorsCalibrated": 0,
+            "playableRangeShare": 1,
+            "idiomaticRegisterShare": 1,
+            "chordToneShare": 0.7475,
+            "coverage": 0.625,
+            "densityLogRatio": -0.2839,
+            "densityDistance": 1.5097,
+            "barRepetitionShare": 0,
+            "contextClashShare": 0.1488,
+            "collapseRate": 0,
+            "meanNoteCount": 55.83,
+            "winRateVsHuman": 0.1667,
+            "winRateVsReference": 0.5,
+            "vsHuman": {
+              "meanScore": -39.07,
+              "playabilityErrorsPerEntry": 0,
+              "idiomaticRegisterShare": 0,
+              "chordToneShare": -0.1333,
+              "coverage": -0.125,
+              "barRepetitionShare": 0,
+              "contextClashShare": 0.0867
+            },
+            "strengths": [
+              "playable: 0 errors per entry (calibrated judge)",
+              "idiomatic register: 100% of notes inside the instrument's standard range"
+            ],
+            "weaknesses": [
+              "lowest proxy score among the 4 machine arms (56.16)",
+              "density 1.51 octave(s) from the human part (sparser)",
+              "15% of sounding time a semitone from the context"
+            ]
+          }
+        ],
+        "bestMachineArm": {
+          "providerId": "REFERENCE_PART_COMPOSER",
+          "meanScore": 67.43,
+          "marginOverNext": 1.43
+        }
+      }
+    ],
+    "design": {
+      "machineArms": [
+        "REFERENCE_PART_COMPOSER",
+        "CONTEXT_AWARE_ARRANGER",
+        "COMPOSERS_ASSISTANT_2",
+        "COMPOSERS_ASSISTANT_2+CTX"
+      ],
+      "armMeanOverFamilies": {
+        "REFERENCE_PART_COMPOSER": 62.95,
+        "CONTEXT_AWARE_ARRANGER": 64.58,
+        "COMPOSERS_ASSISTANT_2": 72.99,
+        "COMPOSERS_ASSISTANT_2+CTX": 73.5
+      },
+      "bestSingleArm": {
+        "providerId": "COMPOSERS_ASSISTANT_2+CTX",
+        "meanOverFamilies": 73.5
+      },
+      "oraclePerFamilyMean": 77.81,
+      "routerGainPoints": 4.31,
+      "familiesWhereBestDiffers": [
+        {
+          "family": "brass",
+          "bestArm": "REFERENCE_PART_COMPOSER",
+          "bestScore": 66.85,
+          "singleArmScore": 53,
+          "gain": 13.85
+        },
+        {
+          "family": "keys",
+          "bestArm": "COMPOSERS_ASSISTANT_2",
+          "bestScore": 76.27,
+          "singleArmScore": 76.12,
+          "gain": 0.15
+        },
+        {
+          "family": "reed",
+          "bestArm": "COMPOSERS_ASSISTANT_2",
+          "bestScore": 87.6,
+          "singleArmScore": 87.05,
+          "gain": 0.55
+        },
+        {
+          "family": "strings",
+          "bestArm": "REFERENCE_PART_COMPOSER",
+          "bestScore": 67.43,
+          "singleArmScore": 56.16,
+          "gain": 11.27
+        }
+      ],
+      "playability": {
+        "bestSingleArm": "CONTEXT_AWARE_ARRANGER",
+        "singleArmErrors": 0,
+        "oracleErrors": 0,
+        "routerGainErrors": 0
+      },
+      "caveats": [
+        "6 families, 2–2 tasks each: a per-family mean rests on 6–6 entries; differences of a few points are within task-to-task spread.",
+        "The proxy judge decides these numbers; the blind pairs are unrated. A family the judge misreads (see judge-calibration) misreads every arm alike, so the ranking within a family is steadier than the absolute level.",
+        "The oracle router picks the best arm per family with hindsight on the same tasks — an upper bound on what expert adapters could add, not a measurement of any adapter."
+      ]
+    }
+  }
+}

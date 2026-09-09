@@ -6,11 +6,15 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { ListeningRaterPair } from './listeningRaterPair';
+import type { ListeningRaterViewKind } from './listeningRaterViewKind';
 import type { ListeningRaterViewStatus } from './listeningRaterViewStatus';
 import type { ListeningVoteInput } from './listeningVoteInput';
 
 export interface ListeningRaterView {
   sessionId: string;
+  kind?: ListeningRaterViewKind;
+  /** Tournament sessions - the one question every pair must answer */
+  primaryQuestion?: string;
   title: string;
   status: ListeningRaterViewStatus;
   pairs: ListeningRaterPair[];

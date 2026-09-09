@@ -36,6 +36,7 @@ import type {
   CopilotInput,
   CopilotResult,
   CreateListeningSessionInput,
+  CreateTournamentListeningSessionInput,
   Dashboard,
   ErasePreferenceEvents200,
   ErasePreferenceEventsParams,
@@ -58,6 +59,7 @@ import type {
   ListPreferenceTrainingRows200,
   ListPreferenceTrainingRowsParams,
   ListProducerDecisionsParams,
+  ListeningPreferences,
   ListeningRaterView,
   ListeningSession,
   ListeningVotesResult,
@@ -5674,6 +5676,156 @@ export function useListListeningSessions<TData = Awaited<ReturnType<typeof listL
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getListListeningSessionsQueryOptions(projectId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateTournamentListeningSessionUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/listening-sessions/tournament`
+}
+
+/**
+ * Draws a balanced, stratified sample of pairs from a tournament evidence report (five comparison types, spread over instrument families and tasks, A/B orientation by hash), renders every side with the reference renderer into private storage, and opens one session with a primary preference question and optional secondary ratings. The rater view names no arm, seed, task or incumbent.
+ * @summary Wave Q - open a blind session of 40-60 tournament pairs (owner)
+ */
+export const createTournamentListeningSession = async (projectId: string,
+    createTournamentListeningSessionInput: CreateTournamentListeningSessionInput, options?: Parameters<typeof customFetch>[1]): Promise<ListeningSession> => {
+
+  return customFetch<ListeningSession>(getCreateTournamentListeningSessionUrl(projectId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createTournamentListeningSessionInput)
+  }
+);}
+
+
+
+
+
+export const getCreateTournamentListeningSessionMutationOptions = <TError = ErrorType<Error | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTournamentListeningSession>>, TError,{projectId: string;data: BodyType<CreateTournamentListeningSessionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createTournamentListeningSession>>, TError,{projectId: string;data: BodyType<CreateTournamentListeningSessionInput>}, TContext> => {
+
+const mutationKey = ['createTournamentListeningSession'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createTournamentListeningSession>>, {projectId: string;data: BodyType<CreateTournamentListeningSessionInput>}> = (props) => {
+          const {projectId,data} = props ?? {};
+
+          return  createTournamentListeningSession(projectId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateTournamentListeningSessionMutationResult = NonNullable<Awaited<ReturnType<typeof createTournamentListeningSession>>>
+    export type CreateTournamentListeningSessionMutationBody = BodyType<CreateTournamentListeningSessionInput>
+    export type CreateTournamentListeningSessionMutationError = ErrorType<Error | NotFoundResponse>
+
+    /**
+ * @summary Wave Q - open a blind session of 40-60 tournament pairs (owner)
+ */
+export const useCreateTournamentListeningSession = <TError = ErrorType<Error | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTournamentListeningSession>>, TError,{projectId: string;data: BodyType<CreateTournamentListeningSessionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createTournamentListeningSession>>,
+        TError,
+        {projectId: string;data: BodyType<CreateTournamentListeningSessionInput>},
+        TContext
+      > => {
+      return useMutation(getCreateTournamentListeningSessionMutationOptions(options));
+    }
+
+export const getGetListeningPreferencesUrl = (sessionId: string,) => {
+
+
+
+
+  return `/api/listening-sessions/${sessionId}/preferences`
+}
+
+/**
+ * @summary Wave Q - the session's votes as reward-model preference records (owner)
+ */
+export const getListeningPreferences = async (sessionId: string, options?: Parameters<typeof customFetch>[1]): Promise<ListeningPreferences> => {
+
+  return customFetch<ListeningPreferences>(getGetListeningPreferencesUrl(sessionId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetListeningPreferencesQueryKey = (sessionId: string,) => {
+    return [
+    `/api/listening-sessions/${sessionId}/preferences`
+    ] as const;
+    }
+
+
+export const getGetListeningPreferencesQueryOptions = <TData = Awaited<ReturnType<typeof getListeningPreferences>>, TError = ErrorType<NotFoundResponse>>(sessionId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getListeningPreferences>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetListeningPreferencesQueryKey(sessionId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getListeningPreferences>>> = ({ signal }) => getListeningPreferences(sessionId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: sessionId !== null && sessionId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getListeningPreferences>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetListeningPreferencesQueryResult = NonNullable<Awaited<ReturnType<typeof getListeningPreferences>>>
+export type GetListeningPreferencesQueryError = ErrorType<NotFoundResponse>
+
+
+/**
+ * @summary Wave Q - the session's votes as reward-model preference records (owner)
+ */
+
+export function useGetListeningPreferences<TData = Awaited<ReturnType<typeof getListeningPreferences>>, TError = ErrorType<NotFoundResponse>>(
+ sessionId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getListeningPreferences>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetListeningPreferencesQueryOptions(sessionId,options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

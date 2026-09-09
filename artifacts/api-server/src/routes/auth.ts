@@ -15,10 +15,14 @@ import {
   getOidcConfig,
   getSessionId,
   ISSUER_URL,
+  oidcConfigured,
   SESSION_COOKIE,
   SESSION_TTL,
   type SessionData,
 } from '../lib/auth';
+import { localAccessRefusal } from '../lib/localAccess';
+import { devAuthEnabled } from './devAuth';
+import { logger } from '../lib/logger';
 
 const OIDC_COOKIE_TTL = 10 * 60 * 1000;
 
@@ -130,7 +134,41 @@ router.get('/auth/user', (req: Request, res: Response) => {
   );
 });
 
+/**
+ * When OIDC is not configured (a local checkout has no `REPL_ID`), `/api/login`
+ * used to reach openid-client with an empty client id and throw
+ * `"clientId" must be a non-empty string` — a 500 on every sign-in, and the
+ * reason a local Listening Room link could not be opened.
+ *
+ * The honest answers are: hand a *local* developer to the development sign-in
+ * that already exists, and tell everyone else plainly that this deployment has
+ * no identity provider. Both gates of `devAuthEnabled()` still apply
+ * (`NODE_ENV !== "production"`, `DEV_AUTH_ENABLED`), plus the loopback gate —
+ * so this branch cannot exist in production and cannot be reached remotely.
+ * It grants nothing `/api/dev-login` does not already grant; it only stops the
+ * crash and points the browser at the door that is open.
+ */
+function handleUnconfiguredOidc(req: Request, res: Response, returnTo: string): void {
+  const refusal = localAccessRefusal(req);
+  if (devAuthEnabled() && refusal === null) {
+    logger.warn('OIDC is not configured; redirecting this loopback request to the development sign-in');
+    res.redirect(`/api/dev-login?returnTo=${encodeURIComponent(returnTo)}`);
+    return;
+  }
+  logger.error(
+    { devAuth: devAuthEnabled(), localRefusal: refusal },
+    'OIDC is not configured and this request may not use the development sign-in',
+  );
+  res
+    .status(503)
+    .json({ error: 'This deployment has no identity provider configured (REPL_ID is unset).' });
+}
+
 router.get('/login', async (req: Request, res: Response) => {
+  if (!oidcConfigured()) {
+    handleUnconfiguredOidc(req, res, getSafeReturnTo(req.query.returnTo));
+    return;
+  }
   const config = await getOidcConfig();
   const callbackUrl = `${getOrigin(req)}/api/callback`;
 

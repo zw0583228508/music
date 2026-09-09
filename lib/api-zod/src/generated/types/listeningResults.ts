@@ -6,11 +6,16 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { EloRating } from './eloRating';
+import type { ListeningComparisonSummary } from './listeningComparisonSummary';
 import type { ListeningGateC } from './listeningGateC';
 import type { ListeningQuestionResult } from './listeningQuestionResult';
 
 export interface ListeningResults {
   version: string;
+  /** The question the gate reads */
+  primaryQuestion: string;
+  /** Tournament sessions only - per-comparison tallies on the primary question, owner apart */
+  comparisons: ListeningComparisonSummary[];
   /** Distinct raters other than the owner */
   raters: number;
   ownerVotesExcluded: number;
