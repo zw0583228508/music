@@ -140,6 +140,14 @@ const suites = {
       // Wave Q, tournament task preparation: chords estimated per bar from the
       // notes every provider is given, or no chord where the bar has none.
       ["src/lib/chordsFromNotes.test.ts", "chords-from-notes.test.mjs"],
+      // Wave Q, PR-64 conditioning study: every V2 field classified for every
+      // conditioning approach (a silent cell is a dropped field), CA2's
+      // instruction surface as data, and the zero-new-token prefix expression.
+      [
+        "src/lib/conditioningMap.test.ts",
+        "conditioning-map.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // Wave Q, Model Discovery: the tournament — task from a real score, the
       // part judge, the runner, the blind sheet; and the arms, with CA2 mocked.
       [
@@ -163,6 +171,18 @@ const suites = {
       [
         "src/lib/coherenceMetric.test.ts",
         "coherence-metric.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // Wave Q, Workstream A: tournament pairs into the Listening Room — balanced
+      // draw, per-token audio, owner-apart tallies, reward-model preference records.
+      [
+        "src/lib/tournamentListening.test.ts",
+        "tournament-listening.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/tournamentAudio.test.ts",
+        "tournament-audio.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
       // The transport a cloud analysis worker is allowed to reach, and the

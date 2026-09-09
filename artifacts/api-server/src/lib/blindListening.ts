@@ -17,6 +17,7 @@
 import { createHash } from "node:crypto";
 import type { BlindListeningPair, BlindListeningSides } from "@workspace/db";
 import { BLIND_QUESTIONS, updateEloRatings, type BlindVote, type EloRating } from "./arrangementBenchmark";
+import { summariseComparisons, type ComparisonSummary } from "./tournamentListening";
 
 export const LISTENING_ROOM_VERSION = "1.0" as const;
 /** Gate C is a human verdict; below this many independent raters it is an anecdote. */
@@ -52,6 +53,10 @@ export type ListeningResults = {
   votesCounted: number;
   perQuestion: Array<{ question: string; votes: number; bySystem: Record<string, number>; leader: string | null }>;
   elo: EloRating[];
+  /** The question the gate reads: PR-18's release question, or a tournament session's primary question. */
+  primaryQuestion: string;
+  /** Tournament sessions only: per-comparison tallies, independent raters and the owner apart. */
+  comparisons: ComparisonSummary[];
   gateC: {
     passed: boolean;
     challenger: string;
@@ -92,6 +97,10 @@ export const listeningAudioPath = (sessionId: string, token: string) => `/api/li
 
 /** The stored render behind a token, or null for a token that is not a side of this session. */
 export function audioUrlForToken(session: ListeningSessionLike, token: string): string | null {
+  // Tournament sessions: every token has its own render.
+  const own = session.sides.audioByToken?.[token];
+  if (own) return own;
+  if (session.sides.kind === "tournament") return null;
   for (const pair of session.pairs) {
     if (pair.left.token === token) return session.sides.left.audioUrl;
     if (pair.right.token === token) return session.sides.right.audioUrl;
@@ -147,7 +156,14 @@ export function sessionResults(session: ListeningSessionLike, votes: ListeningVo
   const raters = new Set(counted.map((vote) => vote.raterId)).size;
   const systemOf = (winnerToken: string) => session.keyBySide[winnerToken] ?? null;
 
-  const perQuestion = BLIND_QUESTIONS.map((question) => {
+  // The questions are the pairs' own: the six PR-18 questions on a candidate
+  // session, the tournament's primary + secondary questions on a tournament one.
+  const questions = session.pairs.length
+    ? [...new Set(session.pairs.flatMap((pair) => pair.questions))]
+    : [...BLIND_QUESTIONS];
+  const releaseQuestion = session.sides.tournament?.primaryQuestion ?? RELEASE_QUESTION;
+
+  const perQuestion = questions.map((question) => {
     const bySystem: Record<string, number> = {};
     let total = 0;
     for (const vote of counted) {
@@ -167,9 +183,19 @@ export function sessionResults(session: ListeningSessionLike, votes: ListeningVo
 
   const challenger = session.sides[session.sides.challenger].label;
   const incumbent = session.sides[session.sides.challenger === "left" ? "right" : "left"].label;
-  const release = perQuestion.find((entry) => entry.question === RELEASE_QUESTION);
-  const releaseVotes = release?.votes ?? 0;
-  const challengerWins = release?.bySystem[challenger] ?? 0;
+  // On a tournament session only the pairs that put the challenger against the
+  // incumbent decide the gate; the other comparisons inform, they do not gate.
+  const gatePairs = new Set(
+    session.pairs
+      .filter((pair) => {
+        const arms = [pair.left.systemUnderTest, pair.right.systemUnderTest];
+        return session.sides.kind !== "tournament" || (arms.includes(challenger) && arms.includes(incumbent));
+      })
+      .map((pair) => pair.pairId),
+  );
+  const releaseCounted = counted.filter((vote) => vote.question === releaseQuestion && gatePairs.has(vote.pairId));
+  const releaseVotes = releaseCounted.length;
+  const challengerWins = releaseCounted.filter((vote) => systemOf(vote.winnerToken) === challenger).length;
   const releaseShare = releaseVotes ? round(challengerWins / releaseVotes) : null;
   const percent = (value: number) => `${Math.round(value * 100)} %`;
   let reason: string;
@@ -177,7 +203,7 @@ export function sessionResults(session: ListeningSessionLike, votes: ListeningVo
   if (raters < GATE_C_MIN_RATERS) {
     reason = `${raters} independent rater(s) so far; Gate C needs at least ${GATE_C_MIN_RATERS}.`;
   } else if (releaseShare === null) {
-    reason = `No one has answered "${RELEASE_QUESTION}" yet.`;
+    reason = `No one has answered "${releaseQuestion}" yet.`;
   } else if (releaseShare < GATE_C_MIN_WIN_SHARE) {
     reason = `${challenger} won ${percent(releaseShare)} of ${releaseVotes} release votes; Gate C needs ${percent(GATE_C_MIN_WIN_SHARE)}.`;
   } else {
@@ -192,6 +218,10 @@ export function sessionResults(session: ListeningSessionLike, votes: ListeningVo
     votesCounted: counted.length,
     perQuestion,
     elo,
+    primaryQuestion: releaseQuestion,
+    comparisons: session.sides.kind === "tournament"
+      ? summariseComparisons(session, votes.map((vote) => ({ ...vote, isOwner: vote.isOwner || vote.raterId === session.ownerId })), releaseQuestion)
+      : [],
     gateC: {
       passed,
       challenger,

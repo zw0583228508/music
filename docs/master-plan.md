@@ -2685,6 +2685,140 @@ any of it.
   and says so; a non-classical slice, at least one rated session, and the
   measured cost of a LoRA pilot are named as what makes it final.
 
+- **PR-64** ✅ — `conditioning-and-training-strategy-study` (Wave Q — Model
+  Discovery, workstreams F + H): **how `PartGenerationRequestV2` should reach a
+  note generator, and which training strategy to follow** — two studies with
+  evidence, one data artefact with tests. Documents:
+  `docs/model-discovery/conditioning-study.md`,
+  `docs/model-discovery/training-strategy.md` (pointers appended to
+  `decision-report.md` §6). Code: `artifacts/api-server/src/lib/conditioningMap.ts`.
+
+  **What was built.** `conditioningMap.ts` enumerates every field of the V2
+  request **from the types** — 201 paths (118 V1, 83 V2; 147 musical, 54
+  provenance) — and classifies each for eight approaches (CA2 as-is,
+  vocabulary extension, structured prefix, side encoder, adapter
+  conditioning, cross-attention, control tokens, post-generation) with one of
+  eight dispositions, each cell naming its mechanism; every field carries how
+  its label would come out of PDMX (`automatic` 67, `proxy` 53, `none` 25,
+  `not_a_label` 56). `completeConditioningMap()` mirrors PR-56's
+  `completeDispositions`: a silent cell is "treated as dropped", never
+  supported; a test walks a fully populated request and fails on any property
+  with no field path. CA2's conditioning surface is data, read from its
+  vendored source: the 1,944-token vocabulary family by family, the **49
+  assigned `;<instruction_k>` ids** (what each measures, how it is computed
+  from the target, where it is placed, how often training carried it), and
+  the slicers. `expressV2InCa2Vocabulary()` turns a V2 request into CA2's own
+  instruction strings with the exact ids `encoding_functions.py` assigns —
+  loose note bounds, density/polyphony/contour/irregularity bins, per-measure
+  loudness from energy and the grammar's arc, `is_not_octave_same`, locked
+  bars unmasked, a chord-tone guide track and a voice track — with an
+  `expressed`/`omitted` account.
+
+  **Findings.** (1) **The platform has never sent CA2 an instruction**: the
+  deployed worker passes empty `track_measure_commands` and `commands_at_end`
+  and pins every masked measure's loudness to level 5, so the 36 tournament
+  inferences were unconditioned infills; PR-56's "received as
+  lowest/highest_note_strict" described the capability, not the wire — and
+  strict bounds meant the *true* extremes in training, so the playable range
+  must go in as **loose** bounds with the clamp kept as a guarantee. (2) CA2
+  has **592 untrained embedding rows already in its vocabulary** (463 spare
+  instruction ids, 129 spare `;I:` ids): vocabulary extension without a
+  resize. (3) By the map, **103 of 147 musical fields (70 %) are expressible
+  with zero new tokens and zero training; 136 (93 %) after a LoRA that
+  teaches spare ids.** (4) Four style-grammar directives are CA2's own
+  measurements (onsets per quarter, step share, notes per bar, register) —
+  a stated refinement of PR-56's "styleGrammar unsupported", pinned by a test.
+  (5) Fields PDMX cannot label — section function, phrase role, song arc,
+  transition devices, aesthetic — need a label source before a token; no
+  approach learns them from PDMX.
+
+  **Recommendations.** *Conditioning:* not vocabulary extension first. Step 1
+  is a **$0 falsifier** — a `+PREFIX` tournament arm on the same 12 tasks × 3
+  seeds with control-accuracy columns (hypothesis: CA2's instruction channel
+  controls density/register/polyphony/contour/energy; falsified by
+  chance-level control accuracy or no movement in playability/proxy → go to a
+  second encoder for sequence fields); step 2 a **LoRA over spare ids**
+  (≤ $120, approval) as the prefix language for role, next-section approach,
+  harmony/voicing guides and motif quotes; the passes stay as the guarantee
+  layer; a side encoder / second encoder only for a measured gap on weights /
+  sequences; real vocabulary extension only if spare ids run out.
+  *Training:* **K — one global foundation + LoRA specialists, with CA2 as the
+  foundation**, reached as LoRA pilot → reward-model v0 on the unrated blind
+  pairs → continued pretraining of CA2 on **all** PDMX (the single-track 91 %
+  is where the non-classical share lives) + re-fine-tune → family LoRAs
+  (strings, brass first) → DPO; from-scratch `ARRANGER_FM` only if that
+  plateaus (≈ 1 B mostly single-track tokens is thin for 300 M; 10–30× the
+  cost before a first benchmark). Distillation/multi-teacher blocked for
+  shipping by `teacherOutputsNeedReview` (only CA2's outputs are clean). All
+  costs priced from Modal list prices with the assumptions stated (6·N·T,
+  30 % MFU; floor vs realistic). **Proposed change to the plan's order:**
+  `ARRANGER_FM_V1` (CA2-derived; `ARRANGER_REMI` stays the dataset/interchange
+  format, CA2's encoding the model vocabulary) → `MUSIC_REWARD_MODEL_V1` v0 →
+  instrument-expert LoRA → DPO → `HARMONY_MODEL_V1` → `PERFORMANCE_MODEL_V2`.
+
+  Suites: conditioningMap 12 (registered in the focused runner); typecheck
+  green (after `tsc --build` of the workspace libs in the worktree).
+
+  **Honest limits.** The 70 % / 93 % figures count fields, not whether the
+  model *follows* them — only the $0 experiment converts expressibility into
+  control, and it has not run. CA2's control accuracy is reported in its
+  paper, not reproduced here. The loose-bound distribution shift (training
+  bounds were within 7 semitones of the truth; ours are wider) is the main
+  risk to the cheapest path. PDMX's token count is an estimate; every cost is
+  order-of-magnitude until the first Modal training job. All tournament
+  evidence is classical; nothing speaks to pop, dance or Mizrahi yet. Sources
+  are cited with arXiv ids in both documents; "measured here", "reported in
+  the literature" and "our estimate" are kept apart.
+- **PR-68** ✅ — `tournament-listening-room` (Wave Q — Workstream A): **the
+  tournament's blind pairs are in the Listening Room, rendered, and rateable.**
+  The proxy judge stops being the only evaluator. Evidence:
+  `docs/evidence/tournament-listening-live.json`.
+
+  **What was built.** `tournamentListening.ts` draws a **balanced, stratified**
+  session from a tournament report: the five comparisons the owner asked for
+  (human vs CA2+CTX, CA2+CTX vs reference, CA2 raw vs CA2+CTX, human vs
+  reference, context-aware vs CA2+CTX), 10 pairs each, round-robin over
+  instrument family and task, seeds rotated, comparison types **interleaved**
+  so the session never reads as blocks, and the A/B orientation decided per
+  pair by hash. `tournamentAudio.ts` renders both sides of a pair through the
+  platform's own `REFERENCE_SYNTH_V1` — every context track plus the held-out
+  part as that arm wrote it, candidate 1.35× forward, peak-normalised — so a
+  rater compares **notes, not sound design**, and the human part gets no
+  acoustic advantage. `routes/listeningTournament.ts` opens the session
+  (owner-only, evidence file by basename, refuses a pair whose two sides render
+  to identical bytes) and exports every vote as a **reward-model preference
+  record**. The rater page became a one-pair-at-a-time flow: one primary
+  question, optional secondary ratings behind a toggle, keyboard A/B and
+  arrows, answers saved as they are given.
+
+  **What ran.** From `model-tournament-live.json`: **50 pairs, 100 renders,
+  3 min 18 s**, session `6d5abb08` at `/listen/6d5abb08-…`; families bass 8,
+  keys 10, strings 6, brass 10, reed 6, organ 10; first pair 48.6 s per side,
+  4.3 MB of WAV, both players loading in the studio. A live `GET` of the rater
+  view contains **no arm name, no task id, no seed, no storage path**. The vote
+  path was proven on a **separate 10-pair smoke session** (so the owner's
+  session stays unrated) by a second local identity: 10 primary votes + 1
+  secondary → 11 counted votes, per-comparison tallies, **11 preference
+  records** with both arms in comparison order and a salted rater pseudonym,
+  and Gate C correctly refusing at one rater.
+
+  **Policy encoded.** Gate C reads **only** the pairs that put the challenger
+  (CA2+CTX) against the incumbent (REFERENCE_PART_COMPOSER); the other four
+  comparisons inform the decision pack and the reward model but do not gate.
+  The owner's own votes are recorded, shown apart, and excluded from the
+  verdict — the owner is the first rater, not the verdict.
+
+  Suites: tournamentListening 5, tournamentAudio 3, blindListening 8 (existing,
+  still green), modelTournament 13; `pnpm run typecheck` green across the API,
+  the studio and both generated clients.
+
+  **Honest limits.** **Nobody has rated the 50-pair session yet** — that is the
+  owner's next action, and one rater is evidence, not a verdict (Gate C needs
+  five and a 60 % share). All 50 pairs are classical PDMX; the non-classical
+  session waits on Workstream B. The renderer is a deterministic synth, fair
+  across arms and not what a producer would ship. Opening a session renders
+  in-process at ~2 s per side: fine for 50 pairs, not for thousands.
+
 - **PR-67** ✅ — `long-form-arrangement-study` (Wave Q — Workstream J,
   long-form musical intelligence): **whole-song coherence, measured** —
   the survey, an unsupervised form segmentation run on 6,000 admitted PDMX

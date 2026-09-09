@@ -4105,6 +4105,25 @@ export type BlindListeningSides = {
   right: BlindListeningSide;
   /** Which side has to win: the plan's KPI is "the new brain beats the previous one". */
   challenger: "left" | "right";
+  /**
+   * Wave Q tournament sessions (PR-68): many pairs from one tournament report,
+   * each side its own render. `audioByToken` maps a pair token to its stored
+   * render; `left`/`right` above then only name the incumbent and challenger
+   * arms the gate is about. Absent on the original two-candidate sessions.
+   */
+  kind?: "candidates" | "tournament";
+  audioByToken?: Record<string, string>;
+  tournament?: {
+    runId: string;
+    evidenceFile: string;
+    /** The one question every pair must answer; the gate and the owner's preference read it. */
+    primaryQuestion: string;
+    secondaryQuestions: string[];
+    /** Which comparison types were drawn, and how many pairs each. */
+    comparisons: Array<{ id: string; a: string; b: string; pairs: number }>;
+    /** token → tournament entry key (task:seed:provider). Owner-only. */
+    entryByToken: Record<string, string>;
+  };
 };
 
 /** Same shape as the benchmark's `BlindPair` (arrangementBenchmark.ts). */
@@ -4114,6 +4133,8 @@ export type BlindListeningPair = {
   left: { token: string; systemUnderTest: string };
   right: { token: string; systemUnderTest: string };
   questions: string[];
+  /** Tournament sessions: the comparison type, task, seed and target family behind this pair. Owner-only. */
+  meta?: { comparison: string; taskId: string; seed: number; family: string };
 };
 
 export type BlindListeningSessionStatus = "open" | "closed";
