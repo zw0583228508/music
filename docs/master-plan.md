@@ -3030,6 +3030,35 @@ any of it.
   request to re-examine the proxy on drum kits and on parts the constraint
   engine ranges by GM family.
 
+- **PR-69** ✅ — `decision-pack` (Wave Q — the approval gate): **the eighteen
+  answers the owner requires before any training job over $25**, in one
+  document: `docs/model-discovery/decision-pack.md`. Every line is either a
+  measured number with its evidence file or is marked PENDING with the
+  workstream that owes it.
+
+  **Status: INCOMPLETE — approval is deliberately not requested.** Seven items
+  are missing, and **six of them cost no money**: the owner's 50 blind ratings
+  (Workstream A, machinery finished and proven), judge false-positive rates
+  (C), a second foundation proven live (D), the **$0** prefix experiment that
+  PR-64 showed could reorder the whole plan, the **$0** per-family
+  context-pass switch that PR-60's numbers demand, and the full-corpus dataset
+  figures (G). The seventh — training infrastructure with a tiny overfit (E) —
+  costs about $5.
+
+  **What the pack already settles from measurement:** CA2 wins 14 of 17 genre
+  families outside classical (PR-60), so the "classical-only prior" worry is
+  smaller than the decision report assumed; our own rule-based composers emit
+  **zero notes on 5 of 50 non-classical tasks** and `CONTEXT_AWARE_ARRANGER`
+  is now *worse* than the plain reference outside the concert hall (56.0 vs
+  59.3); and **+CTX is no longer a free win** — it costs CA2 4.5 mean points
+  while removing only 16 % of its errors, so the hybrid must be chosen per
+  instrument family. The recommended first steps are therefore both free: send
+  CA2 the control instructions the worker has never sent it, and make the
+  context passes a per-family decision.
+
+  **Honest limits.** The pack is a synthesis, not new measurement: it adds no
+  run of its own. Its §1, §4, §5, §8 and §9 are incomplete by design and say
+  so. It will be rebuilt as each workstream lands.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
