@@ -244,6 +244,40 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   reference synth's. A structure/harmony provider on a GPU worker replaces the
   sketch and fills the ensemble. Nobody has listened.
 
+- **PR-33** ✅ — `performance-polyphony-clamp`: the benchmark's
+  `playabilityErrors` drift (0 → 4.33), found by PR-31, run to ground. Every
+  error sat on the two MIDI cases (`orchestral-midi` 26, `cinematic-midi` 13),
+  every one was `excess_polyphony` on the `strings` CLIMAX_LAYER track, and
+  every one was introduced **after** composition: the composition check was
+  clean on all 45 candidates. The Performance Engine lengthens bowed strings
+  (×1.08) so the tails of a four-voice chord still ring at the next chord's
+  onset beyond the 30 ms legato tolerance, and the post-performance re-check
+  PR-W1 added — correctly — counts five or six notes against a ceiling of four.
+  The engine only ever clamped monophonic instruments.
+
+  `clampPolyphony(notes, ceiling)` in `performanceEngine.ts`: the declared
+  polyphony ceiling survives humanisation for every instrument. At each onset
+  the held notes beyond the ceiling are released to end one millisecond inside
+  the tolerance, earliest-started first — the same definition of "sounding
+  together" the constraint engine and the provider contract validator use, so
+  what is performed still passes the check the composition passed. Nothing is
+  dropped; a ceiling above the written polyphony changes nothing; the monophony
+  rule is the ceiling-1 case of the same function.
+
+  **Re-grounded** (`docs/evidence/benchmark-playability-drift.json`): 9 cases ×
+  5 candidates, `playabilityErrors` **0** on every case; criticScore 74.56,
+  harmonyScore 58.33, sectionConsistency 100, candidateDiversity 50.40,
+  noteCount 576.56 — all identical to the run before the fix, because the
+  critic judges the composition and the clamp only shortens tails after it.
+  Suites: performanceEngine 20 (+1), orchestrator 7, provider 7, benchmark 7,
+  training pipeline 5; typecheck green.
+
+  **Honest limits.** A 29 ms overlap on a chord change instead of an 80 ms
+  one is a real change to the bowed sound that nobody has listened to. The
+  clamp treats a `strings` track written as one four-voice instrument; a
+  divisi section (role matching section / ensemble / pad / bed) is exempt in
+  the constraint engine and therefore untouched here.
+
 ## Wave 6 — production quality
 
 - **PR-21** (#23) ✅ — `vst3-render-worker`: the API's `PEDALBOARD_VST3` renderer, made
@@ -1342,7 +1376,7 @@ Recorded 2026-09-08, `REFERENCE_PIPELINE`, 9 cases, 5 candidates each:
 | harmonyScore | 58.33 | 58.33 |
 | sectionConsistency | 100 | 100 |
 | candidateDiversity | 50.40 | 50.40 |
-| playabilityErrors | **0** | 0 |
+| playabilityErrors | **0** (re-verified after PR-33, post-performance check included) | 0 |
 | audioScore | not measured | **91.11** |
 | noteCount (mean) | 576.6 | 576.6 |
 | latency (mean) | 51 ms | 28.3 s |
