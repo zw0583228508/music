@@ -3990,6 +3990,82 @@ any of it.
   regex loosened. The decision pack §8–§9 was not edited; the lead's rebuild
   should carry "no second source to download". Nothing here is legal
   advice.
+- **PR-77** ✅ — `music-reward-model-v0` (Wave Q — `MUSIC_REWARD_MODEL_V0`, the
+  RM0 workstream): **a critic trained on synthetic preference pairs, and the
+  adversarial tests that gate it — the gate failed, and the failure is the
+  finding.** Evidence: `docs/evidence/preference-pairs-manifest.json`,
+  `docs/evidence/music-reward-model-v0.json`; report:
+  `docs/model-discovery/reward-model-v0.md`.
+
+  **What was built.** `symbolicCorruptions.ts` — 19 *musical* corruption
+  families (in-key and out-of-key shifts, chord-tone swaps, octave
+  displacement, leap injection, parallel doubling, onset jitter, quantisation
+  coarsening, syncopation removal, thinning, doubling, bar copying, phrase
+  shift, motif destruction, cross-part clash, role inversion, section swap,
+  dynamics flattening, duration overhang), each naming the property it
+  breaks, three graded severities, deterministic in a seed, applied to one
+  part inside its real ensemble; a family that finds nothing to damage says
+  so and no pair is made; pitch families are not applied to a drum kit.
+  `scripts/build-preference-pairs.mjs` — 6,000 admitted multitrack works on
+  the dominant-metre grid (PR-75), eight-bar windows **and** whole sections
+  from `formSegmentation`, a group-aware 90/5/5 work-level split, and a
+  **family-level hold-out: five families exist only in test.** 212,090
+  pairs (160,748 / 9,199 / 42,143), 16,907 tasks, 360 s wall, no MIDI in
+  git. `rewardModelV0.ts` — 52 features (judge 1.1 *without* its
+  human-anchored `densityLogRatio` / `intervalDistance` / `score`, which in a
+  preference pair would be the answer key; COHERENCE_METRIC_v1; 32
+  candidate-in-context statistics), a bias-free pairwise logistic critic
+  (P(A ≻ B) + P(B ≻ A) = 1 by construction, full-batch, deterministic), the
+  six gate helpers and `rewardModelGate()`: ranking/filtering only if
+  held-out-family accuracy ≥ 0.8, calibration monotone and Human > every AI
+  arm; never a training target. `scripts/train-reward-model-v0.mjs` runs
+  every gate and writes the evidence.
+
+  **What the run said.** (a) in-distribution test accuracy **0.963** (every
+  training family ≥ 0.93 except role inversion 0.875 and dynamics 0.855 —
+  inverted accents 0.565). (b) **held-out families 0.658 — below the 0.80
+  gate.** Syncopation removal 0.933, motif destruction 0.928, section swap
+  0.883 generalise; **duration overhang 0.382 and parallel doubling 0.226
+  are below chance: the critic prefers the damaged part.** The weights say
+  why: `s_meanDurationBeatsLog` +1.29 and `s_parallelPerfectShare` +1.26 —
+  in training the human part is always the one with longer notes and more
+  doublings because the training corruptions only ever break those. That is
+  the decision pack's trap, in a legible form. (c) calibration 0.815 → 0.866
+  → 0.881, monotone (15 of 19 families). (d) Human-vs-AI on 1,136 tournament
+  entries, no corruption anywhere: the human beats CA2+CTX (23/36 classical,
+  103/150 global) and both AMT arms (19/28, 23/28), ties raw CA2, and
+  **loses to the platform's own REFERENCE and CONTEXT_AWARE composers 15/36
+  — 0/6 on bass, keys and strings** — the largest weight is `s_restShare`
+  −2.83, and the platform composers never rest. (e) the owner's 50 blind
+  votes: **24 agree, 0.48, two-sided p 0.89** — a coin flip, as expected.
+  (f) ablations: the statistics carry in-distribution accuracy (0.931 alone,
+  0.814 without) and are what anti-generalises (overhang 0.38 → 0.86 without
+  them); the judge alone is weakest in distribution (0.750) and best out of
+  it (0.688); coherence adds nothing on eight-bar windows. No configuration
+  passes (b) or (d). **`rewardModelGate()` → FAIL; V0 may not rank, filter,
+  or train anything.** What it is: a regression harness — the library, the
+  hold-out protocol and the Human-vs-AI test run in five minutes against
+  the next critic.
+
+  Suites: symbolicCorruptions 19, rewardModelV0 14 (registered in
+  `scripts/run-focused-api-tests.mjs`); typecheck green. Additive only:
+  `partJudge.ts`, `coherenceMetric.ts`, the tournament and listening files
+  are untouched.
+
+  **Honest limits.** (1) Every accuracy in (a)–(c) is at telling a human
+  part from a damaged copy of itself, never between two real candidates.
+  (2) The held-out families are corruptions by the same author with the
+  same primitives; passing them would have been evidence against generator
+  recognition, not proof of judgement — and they were not passed. (3) Gate
+  (d) is the critic's opinion of MIDI; nobody listened, and the platform
+  composers' wins are partly the rest-share weight. (4) Gate (e) is one
+  rater on comparisons that were themselves a coin flip; the ratings
+  document's 49 votes are 50 in the live session. (5) PDMX velocities are
+  flat, so dynamics flattening applied to 18 % of parts and the critic knows
+  almost nothing about dynamics. (6) The 6,000 works are the first in
+  SHA order with CSV `n_tracks ≥ 2`, 16 % of the corpus's multitrack works,
+  and every one is PDMX — nothing here speaks to produced pop, dance or
+  Mizrahi arrangement.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 

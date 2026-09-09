@@ -291,6 +291,19 @@ const suites = {
         "data-source-registry.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, PR-77: musical corruptions of one part in its ensemble, and
+      // the pretrained critic trained on them with the gates that expose the
+      // trap (a critic that learns the corruption generator, not music).
+      [
+        "src/lib/symbolicCorruptions.test.ts",
+        "symbolic-corruptions.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/rewardModelV0.test.ts",
+        "reward-model-v0.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [
