@@ -4123,6 +4123,20 @@ export type BlindListeningSides = {
     comparisons: Array<{ id: string; a: string; b: string; pairs: number }>;
     /** token → tournament entry key (task:seed:provider). Owner-only. */
     entryByToken: Record<string, string>;
+    /**
+     * PR-72 listening benchmark V2: which renderer made the audio, the
+     * composition the session was drawn with, how many pairs of each window
+     * kind, and the context-identity proof. Absent on PR-68 sessions.
+     * Owner-only.
+     */
+    benchmarkV2?: {
+      benchmarkVersion: string;
+      renderer: string;
+      rendererVersion: string;
+      quotas: Record<string, number>;
+      byWindowKind: Record<string, number>;
+      contextIdentity: { pairsChecked: number; identical: boolean };
+    };
   };
 };
 

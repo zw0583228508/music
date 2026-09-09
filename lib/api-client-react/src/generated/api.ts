@@ -35,6 +35,7 @@ import type {
   CandidateRepairInput,
   CopilotInput,
   CopilotResult,
+  CreateListeningBenchmarkV2SessionInput,
   CreateListeningSessionInput,
   CreateTournamentListeningSessionInput,
   Dashboard,
@@ -61,6 +62,7 @@ import type {
   ListProducerDecisionsParams,
   ListeningPreferences,
   ListeningRaterView,
+  ListeningSensitivityReport,
   ListeningSession,
   ListeningVotesResult,
   LogoutBrowserSessionParams,
@@ -5826,6 +5828,157 @@ export function useGetListeningPreferences<TData = Awaited<ReturnType<typeof get
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetListeningPreferencesQueryOptions(sessionId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getCreateListeningBenchmarkV2SessionUrl = (projectId: string,) => {
+
+
+
+
+  return `/api/projects/${projectId}/listening-sessions/benchmark-v2`
+}
+
+/**
+ * Draws a 40-60 pair session from a listening benchmark V2 report (positive controls at graded strengths, HUMAN vs REFERENCE, HUMAN vs CA2+CTX, CA2+CTX vs REFERENCE; 16-bar windows and complete sections), renders every side with the named renderer (default LISTENING_SYNTH_V2) into private storage, proves the two sides of every pair share one context byte-for-byte, and opens one session. The rater view names no arm, control, strength, window kind or renderer.
+ * @summary Wave Q PR-72 - open a listening benchmark V2 session with positive controls (owner)
+ */
+export const createListeningBenchmarkV2Session = async (projectId: string,
+    createListeningBenchmarkV2SessionInput: CreateListeningBenchmarkV2SessionInput, options?: Parameters<typeof customFetch>[1]): Promise<ListeningSession> => {
+
+  return customFetch<ListeningSession>(getCreateListeningBenchmarkV2SessionUrl(projectId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createListeningBenchmarkV2SessionInput)
+  }
+);}
+
+
+
+
+
+export const getCreateListeningBenchmarkV2SessionMutationOptions = <TError = ErrorType<Error | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createListeningBenchmarkV2Session>>, TError,{projectId: string;data: BodyType<CreateListeningBenchmarkV2SessionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createListeningBenchmarkV2Session>>, TError,{projectId: string;data: BodyType<CreateListeningBenchmarkV2SessionInput>}, TContext> => {
+
+const mutationKey = ['createListeningBenchmarkV2Session'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createListeningBenchmarkV2Session>>, {projectId: string;data: BodyType<CreateListeningBenchmarkV2SessionInput>}> = (props) => {
+          const {projectId,data} = props ?? {};
+
+          return  createListeningBenchmarkV2Session(projectId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateListeningBenchmarkV2SessionMutationResult = NonNullable<Awaited<ReturnType<typeof createListeningBenchmarkV2Session>>>
+    export type CreateListeningBenchmarkV2SessionMutationBody = BodyType<CreateListeningBenchmarkV2SessionInput>
+    export type CreateListeningBenchmarkV2SessionMutationError = ErrorType<Error | NotFoundResponse>
+
+    /**
+ * @summary Wave Q PR-72 - open a listening benchmark V2 session with positive controls (owner)
+ */
+export const useCreateListeningBenchmarkV2Session = <TError = ErrorType<Error | NotFoundResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createListeningBenchmarkV2Session>>, TError,{projectId: string;data: BodyType<CreateListeningBenchmarkV2SessionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createListeningBenchmarkV2Session>>,
+        TError,
+        {projectId: string;data: BodyType<CreateListeningBenchmarkV2SessionInput>},
+        TContext
+      > => {
+      return useMutation(getCreateListeningBenchmarkV2SessionMutationOptions(options));
+    }
+
+export const getGetListeningSensitivityUrl = (sessionId: string,) => {
+
+
+
+
+  return `/api/listening-sessions/${sessionId}/sensitivity`
+}
+
+/**
+ * Per positive-control rung the detection rate with an exact binomial interval and one-sided p, the minimum detectable effect at the session's n, the calibration comparisons, and the gate verdict (insufficient_data / not_sensitive / may_judge_training) with the decision table written before any vote.
+ * @summary Wave Q PR-72 - the session's sensitivity report and gate verdict (owner)
+ */
+export const getListeningSensitivity = async (sessionId: string, options?: Parameters<typeof customFetch>[1]): Promise<ListeningSensitivityReport> => {
+
+  return customFetch<ListeningSensitivityReport>(getGetListeningSensitivityUrl(sessionId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetListeningSensitivityQueryKey = (sessionId: string,) => {
+    return [
+    `/api/listening-sessions/${sessionId}/sensitivity`
+    ] as const;
+    }
+
+
+export const getGetListeningSensitivityQueryOptions = <TData = Awaited<ReturnType<typeof getListeningSensitivity>>, TError = ErrorType<NotFoundResponse>>(sessionId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getListeningSensitivity>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetListeningSensitivityQueryKey(sessionId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getListeningSensitivity>>> = ({ signal }) => getListeningSensitivity(sessionId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: sessionId !== null && sessionId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getListeningSensitivity>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetListeningSensitivityQueryResult = NonNullable<Awaited<ReturnType<typeof getListeningSensitivity>>>
+export type GetListeningSensitivityQueryError = ErrorType<NotFoundResponse>
+
+
+/**
+ * @summary Wave Q PR-72 - the session's sensitivity report and gate verdict (owner)
+ */
+
+export function useGetListeningSensitivity<TData = Awaited<ReturnType<typeof getListeningSensitivity>>, TError = ErrorType<NotFoundResponse>>(
+ sessionId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getListeningSensitivity>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetListeningSensitivityQueryOptions(sessionId,options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

@@ -4067,6 +4067,121 @@ any of it.
   and every one is PDMX — nothing here speaks to produced pop, dance or
   Mizrahi arrangement.
 
+- **PR-72** ✅ — `listening-benchmark-v2` (Wave Q — the listening experiment
+  that must prove its own sensitivity before it may judge anything; decision
+  pack §1, §15.6, "still missing" item 9): **positive controls, a longer
+  passage, a better neutral renderer chosen by an objective check, a
+  context-identity proof, a pre-registered sensitivity gate, and the V2
+  session opened for the owner to rate — unrated.**
+
+  **What was built.** `listeningDegradations.ts` — six control arms derived
+  from the human part itself, deterministic by hash: pitch_shift at 10 / 30 /
+  60 % of notes (±1–2 semitones, graded: the 10 % set is inside the 30 % set
+  inside the 60 % set), onset_jitter 30 % (0.10–0.33 beat), note_deletion
+  50 %, random_pitch 30 % (inside the part's own register); the context is
+  spliced through **byte-for-byte**, only the candidate MTrk chunk is
+  re-encoded. `listeningSideMidi.ts` — the side writer as a library plus
+  `contextDigest` / `proveContextIdentity` (sha256 over the division, the
+  tempo/metre track and every context chunk, never the candidate).
+  `listeningRendererV2.ts` — `LISTENING_SYNTH_V2@2.0.0`: struck and sustained
+  envelopes per family with key-tracked decay and faster upper partials, a
+  30 dB velocity curve with velocity-dependent brightness, a stereo stage
+  (family seats, keys spread by register, a drum kit with kick / snare /
+  hats / toms / cymbals in their places), a Schroeder reverb, and RMS
+  normalisation to −18 dBFS with a 0.95 peak ceiling — identical on every
+  side, the arm is never an input; `rendererCheck` is the objective check
+  (nine items, thresholds in `CHECK_THRESHOLDS`) and `tournamentAudio.ts`
+  gained a `renderer` option with V1 the default. `listeningBenchmarkV2.ts` —
+  the composition, stated in advance for 50 pairs: pitch 60 % ×10, 30 % ×10,
+  10 % ×4, jitter ×3, deletion ×3, random ×3, HUMAN vs REFERENCE ×8, HUMAN vs
+  CA2+CTX ×5, CA2+CTX vs REFERENCE ×4 (largest-remainder for 40–60);
+  `selectTournamentPairs` took `types` + `quotas` additively; `raterLeakProbes`
+  is the one list the leak test and the live probe both read.
+  `listeningSensitivity.ts` — per rung the detection rate with a
+  Clopper–Pearson 95 % interval and an exact one-sided p, the minimum
+  detectable effect at the session's n, the calibration comparisons, and the
+  gate: **`may_judge_training` only when pitch_shift 60 % is detected at
+  ≥ 90 % and pitch_shift 30 % beats chance with one-sided exact p < 0.05, each
+  on ≥ 8 votes** (`SENSITIVITY_GATE`); fewer votes → `insufficient_data`; a
+  missed threshold → `not_sensitive`; a five-row decision table written before
+  any vote names what each outcome establishes and which causes remain
+  candidates. Routes `POST /projects/:id/listening-sessions/benchmark-v2` and
+  `GET /listening-sessions/:id/sensitivity`; `run-listening-benchmark-v2.mjs`
+  (the report), `check-listening-renderer.mjs`, `open-listening-benchmark-v2.mjs`;
+  the session's DSP now runs on a worker thread (`listening-render-worker.ts`)
+  because minutes of synchronous rendering on the main loop let Neon drop the
+  pool's idle clients and the process died — and `lib/db` now handles the
+  pool's `error` event instead of crashing on it.
+
+  **What the run said.** Renderer check (`listening-renderer-v2-check.json`,
+  same probes, same thresholds): **V2 9/9; V1 5/9** — V1 fails family
+  distinctness (keys/guitar, brass/synth), struck-vs-sustained envelopes
+  (keys lose 4.6 dB over a held second, 6 required), drum pieces (kick
+  centroid 8.7 kHz ≈ snare ≈ hat) and the stereo image (mono); V2: 21/21
+  family pairs distinct (min harmonic-centroid ratio recorded), keys −8.8 dB /
+  strings −2.8 dB, kick 54 Hz < snare 2.7 kHz < hat 12.6 kHz, L/R correlation
+  0.87, RMS spread 0.00 dB across four candidate variants of one context,
+  velocity +13 dB, octave +92 % centroid, deterministic. So V2 serves the
+  session — by the numbers, not by taste. The V2 report
+  (`listening-benchmark-v2-report.json`): the 12 classical PDMX works of the
+  first tournament → **21 longer passages** (12 × 16 bars, 9 complete form
+  sections of 8–21 bars chosen by `formSegmentation`; a section outside 8–24
+  bars is recorded and skipped, never trimmed); **CA2 ran at every length**
+  (largest encoded input 1,232 of MAX_LEN 1,650 — no arm had to be excluded;
+  one CA2-raw section side voided for writing no note in the window);
+  **context identity proven on all 21 tasks**: every arm and every control of a
+  task shares one context digest, equal to the context-only file; 126 control
+  pairs, 126/126 note-level lossless (108 byte-stable: the source spelled
+  overlapping same-pitch notes differently from our writer, which the renderer
+  never hears). Proxy side on the 126 control pairs: judge 1.1 prefers the
+  human on 21/21 at pitch 30 % and 60 %, deletion and random pitch, but only
+  12/21 at pitch 10 % and 11/21 at jitter 30 %; the coherence metric 18/21 at
+  pitch 60 %, 13–14/21 at the weak rungs. **Live session
+  `00b41a7f-8b37-4895-89d7-53b5a394e89e`** on project `0bd4bff8…`: 50 pairs
+  (exactly the stated quotas: pitch 60 % ×10, 30 % ×10, 10 % ×4, jitter ×3, deletion ×3, random ×3, HUMAN vs REFERENCE ×8, HUMAN vs CA2+CTX ×5, CA2+CTX vs REFERENCE ×4; 26 complete sections and 24 sixteen-bar windows; families bass 12, brass 12, keys 11, organ 8, reed 4, strings 3), opened in 316 s through the
+  real API on :5001 (the client's fetch timed out at 300 s while the server finished on its worker thread; verified by id), every side stereo 44.1 kHz (the renderer's signature),
+  both audio URLs of pair 1 streamed by a non-owner identity (200 audio/wav, 4.4 MB and 25.2 s each),
+  **0 of 42 leak probes found** in the owner's view and in a second
+  identity's view, the per-rater flip observed, **0 votes**; the audio objects were copied into the main checkout's local store and the owner's :5000 server served them (200 audio/wav). Sensitivity
+  before any vote: `insufficient_data` (every rung at 0 votes, MDE undefined);
+  on the owner's PR-71 session as the worked example: `insufficient_data`,
+  "no control pairs" — the 5–5 there is confirmed unreadable, as the framing
+  correction said (that session now holds 50 owner votes: the fiftieth pair,
+  CONTEXT_AWARE vs CA2+CTX, was answered after PR-71, making it 3–7).
+
+  **The decision table, in advance.** Strongest rung not detected → the
+  pipeline flattens; nothing on the session is readable; candidate causes to
+  test (not named): renderer, excerpt length, mix, listening conditions.
+  Strongest detected, 30 % not above chance → gross damage only; a 50/50
+  HUMAN vs REFERENCE means the gap is below a 30 % pitch shift at this length.
+  Both rungs detected and HUMAN vs REFERENCE ≈ 50/50 → the experiment is
+  sensitive and the reference is genuinely competitive at this length; the
+  PR-71 5–5 was about the composers. Both detected and the human preferred →
+  the anchor holds; the session may judge training.
+
+  Suites: listeningDegradations 4, listeningSideMidi 3, listeningRendererV2 5
+  (the objective check runs inside the suite on both renderers),
+  listeningBenchmarkV2 4 (leak test over eight raters and every probe),
+  listeningSensitivity 4 (the binomial arithmetic against known values, the
+  PR-71 worked example, the pre-vote report, every gate branch); existing
+  tournamentListening 5, tournamentAudio 3, blindListening 3 and
+  referenceRenderWorker 7 unchanged and green; typecheck green.
+
+  **Honest limits.** Nobody has rated the V2 session; the gate says
+  `insufficient_data` and will until the owner sits down, and one rater's
+  verdict is about this rater. A full sitting is ~76 minutes of audio if
+  every side is heard once (mean passage 46 s; the longest 96 s), longer than
+  PR-71's; the rater may stop early and the report reads what exists. The
+  renderer was chosen by an objective check, not by a listener: if the owner
+  finds V2 unmusical, the check was measuring the wrong things, and the Modal
+  FluidSynth + SoundFont route (not built; no licence verified) is the next
+  candidate. All passages are classical PDMX; no non-classical control exists
+  yet. The proxy side is recorded so the human report can later say where
+  proxy and listener agree, but that comparison has not been made. The
+  sensitivity report counts every rater's primary votes by default (owner
+  included) because the owner is the intended rater here; Gate C's
+  five-independent-rater rule is untouched and unmet. CA2 seeds are not
+  reproducible across machines (PR-58), so the CA2 sides are one sample each.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

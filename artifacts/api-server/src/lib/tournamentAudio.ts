@@ -11,8 +11,9 @@
 import { createHash } from "node:crypto";
 import type { MusicalNote } from "@workspace/db";
 import { familyOf } from "./arrangerRemi";
+import { LISTENING_RENDERER_V2, renderTournamentSideV2 } from "./listeningRendererV2";
 import { parseMidiFile, type ParsedMidi } from "./midiFile";
-import { encodeWavPcm, renderStem } from "./referenceRenderWorker";
+import { REFERENCE_RENDERER, REFERENCE_RENDERER_VERSION, encodeWavPcm, renderStem } from "./referenceRenderWorker";
 
 export const TOURNAMENT_AUDIO_SAMPLE_RATE = 44_100;
 /** The channel the runner assigns the candidate part; informational — the writer folds channels, so the track order decides. */
@@ -43,15 +44,32 @@ export type TournamentSideRender = {
   tracks: number;
   notes: number;
   candidateNotes: number;
+  /** Which renderer made the WAV (PR-72: the V1 default or LISTENING_SYNTH_V2), and its channel count. */
+  renderer: string;
+  rendererVersion: string;
+  channels: 1 | 2;
 };
+
+/** The renderers a listening session may name. V1 stays the default so every existing caller is unchanged. */
+export const TOURNAMENT_RENDERERS = [REFERENCE_RENDERER, LISTENING_RENDERER_V2] as const;
+export type TournamentRenderer = (typeof TOURNAMENT_RENDERERS)[number];
+export const DEFAULT_TOURNAMENT_RENDERER: TournamentRenderer = REFERENCE_RENDERER;
 
 function secondsPerTick(midi: ParsedMidi): number {
   const bpm = midi.tempos[0]?.bpm ?? 120;
   return 60 / (bpm * midi.ticksPerQuarter);
 }
 
-/** Render one side's MIDI to a mixed mono WAV. Pure and deterministic. */
-export function renderTournamentSide(midiBytes: Buffer): TournamentSideRender {
+/**
+ * Render one side's MIDI. Pure and deterministic. The default is the V1
+ * mono reference synth; `renderer: LISTENING_SYNTH_V2` renders the same
+ * notes with the V2 stereo listening renderer (PR-72).
+ */
+export function renderTournamentSide(midiBytes: Buffer, options: { renderer?: TournamentRenderer } = {}): TournamentSideRender {
+  if (options.renderer === LISTENING_RENDERER_V2) {
+    const v2 = renderTournamentSideV2(midiBytes);
+    return { wav: v2.wav, sha256: v2.sha256, durationSeconds: v2.durationSeconds, tracks: v2.tracks, notes: v2.notes, candidateNotes: v2.candidateNotes, renderer: v2.renderer, rendererVersion: v2.rendererVersion, channels: 2 };
+  }
   const midi = parseMidiFile(midiBytes);
   const spt = secondsPerTick(midi);
   // The runner writes the candidate as the last track (the writer keeps track
@@ -103,5 +121,23 @@ export function renderTournamentSide(midiBytes: Buffer): TournamentSideRender {
     tracks: groups.size,
     notes: midi.notes.length,
     candidateNotes,
+    renderer: REFERENCE_RENDERER,
+    rendererVersion: REFERENCE_RENDERER_VERSION,
+    channels: 1,
+  };
+}
+
+/** REFERENCE_SYNTH_V1 behind the V2 check's adapter interface: mono, duplicated to both channels. */
+export function v1RendererAdapter(): { id: string; version: string; render: (midi: Buffer) => { left: Float32Array; right: Float32Array; sampleRate: number } } {
+  return {
+    id: REFERENCE_RENDERER,
+    version: REFERENCE_RENDERER_VERSION,
+    render: (midi) => {
+      const { wav } = renderTournamentSide(midi);
+      const frames = (wav.length - 44) / 2;
+      const left = new Float32Array(frames);
+      for (let i = 0; i < frames; i += 1) left[i] = wav.readInt16LE(44 + i * 2) / 32_768;
+      return { left, right: left, sampleRate: TOURNAMENT_AUDIO_SAMPLE_RATE };
+    },
   };
 }

@@ -1501,6 +1501,55 @@ paths:
                 $ref: "#/components/schemas/ListeningPreferences"
         "404":
           $ref: "#/components/responses/NotFound"
+  /projects/{projectId}/listening-sessions/benchmark-v2:
+    post:
+      operationId: createListeningBenchmarkV2Session
+      tags: [listening]
+      summary: Wave Q PR-72 - open a listening benchmark V2 session with positive controls (owner)
+      description: Draws a 40-60 pair session from a listening benchmark V2 report (positive controls at graded strengths, HUMAN vs REFERENCE, HUMAN vs CA2+CTX, CA2+CTX vs REFERENCE; 16-bar windows and complete sections), renders every side with the named renderer (default LISTENING_SYNTH_V2) into private storage, proves the two sides of every pair share one context byte-for-byte, and opens one session. The rater view names no arm, control, strength, window kind or renderer.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateListeningBenchmarkV2SessionInput"
+      responses:
+        "201":
+          description: Session created (owner view, includes the token key)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListeningSession"
+        "400":
+          description: Unknown evidence file, unreadable report, a pair whose sides do not share a context, or no drawable pairs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /listening-sessions/{sessionId}/sensitivity:
+    get:
+      operationId: getListeningSensitivity
+      tags: [listening]
+      summary: Wave Q PR-72 - the session's sensitivity report and gate verdict (owner)
+      description: Per positive-control rung the detection rate with an exact binomial interval and one-sided p, the minimum detectable effect at the session's n, the calibration comparisons, and the gate verdict (insufficient_data / not_sensitive / may_judge_training) with the decision table written before any vote.
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The sensitivity report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListeningSensitivityReport"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /listening-sessions/{sessionId}:
     get:
       operationId: getListeningSession
@@ -5151,6 +5200,119 @@ components:
           description: Basename of a tournament report under docs/evidence (e.g. model-tournament-live.json)
         size: { type: number, minimum: 10, maximum: 60, description: Pairs to draw (default 50) }
         title: { type: string, maxLength: 200 }
+    CreateListeningBenchmarkV2SessionInput:
+      type: object
+      required: [evidenceFile]
+      properties:
+        evidenceFile:
+          type: string
+          minLength: 1
+          maxLength: 120
+          pattern: '^[a-z0-9][a-z0-9-]*\.json$'
+          description: Basename of a listening benchmark V2 report under docs/evidence (e.g. listening-benchmark-v2-report.json)
+        size: { type: number, minimum: 10, maximum: 60, description: Pairs to draw (default 50) }
+        title: { type: string, maxLength: 200 }
+        renderer:
+          type: string
+          enum: [REFERENCE_SYNTH_V1, LISTENING_SYNTH_V2]
+          description: Which renderer makes every side (default LISTENING_SYNTH_V2)
+    ListeningSensitivityControl:
+      type: object
+      required: [comparison, kind, strength, description, pairs, votes, detected, detectionRate, ci95, pOneSidedVsChance, aboveChance, gateRole]
+      properties:
+        comparison: { type: string }
+        kind: { type: string }
+        strength: { type: number }
+        description: { type: string }
+        pairs: { type: number }
+        votes: { type: number }
+        detected: { type: number }
+        detectionRate: { type: number, nullable: true }
+        ci95:
+          type: array
+          items: { type: number }
+          nullable: true
+        pOneSidedVsChance: { type: number, nullable: true }
+        aboveChance: { type: boolean }
+        gateRole: { type: string, nullable: true }
+    ListeningSensitivityCalibration:
+      type: object
+      required: [comparison, a, b, pairs, votes, aWins, aShare, ci95, pTwoSidedVsCoinFlip]
+      properties:
+        comparison: { type: string }
+        a: { type: string }
+        b: { type: string }
+        pairs: { type: number }
+        votes: { type: number }
+        aWins: { type: number }
+        aShare: { type: number, nullable: true }
+        ci95:
+          type: array
+          items: { type: number }
+          nullable: true
+        pTwoSidedVsCoinFlip: { type: number, nullable: true }
+    ListeningDecisionRow:
+      type: object
+      required: [id, when, establishes, candidateCausesToTest, gate]
+      properties:
+        id: { type: string }
+        when: { type: string }
+        establishes: { type: string }
+        candidateCausesToTest:
+          type: array
+          items: { type: string }
+        gate: { type: string, enum: [insufficient_data, not_sensitive, may_judge_training] }
+    ListeningSensitivityReport:
+      type: object
+      required: [version, sessionId, primaryQuestion, raters, votesConsidered, controls, minimumDetectableEffect, calibration, gate, decisionTable, interpretation]
+      properties:
+        version: { type: string }
+        sessionId: { type: string }
+        primaryQuestion: { type: string }
+        raters:
+          type: object
+          required: [counted, distinct, ownerVotes, independentVotes]
+          properties:
+            counted: { type: string, enum: [all, owner, independent] }
+            distinct: { type: number }
+            ownerVotes: { type: number }
+            independentVotes: { type: number }
+        votesConsidered: { type: number }
+        controls:
+          type: array
+          items: { $ref: "#/components/schemas/ListeningSensitivityControl" }
+        minimumDetectableEffect:
+          type: object
+          required: [atGateRungN, criticalWins, detectionRate, note]
+          properties:
+            atGateRungN: { type: number }
+            criticalWins: { type: number, nullable: true }
+            detectionRate: { type: number, nullable: true }
+            note: { type: string }
+        calibration:
+          type: array
+          items: { $ref: "#/components/schemas/ListeningSensitivityCalibration" }
+        gate:
+          type: object
+          required: [verdict, rule, thresholds, reasons]
+          properties:
+            verdict: { type: string, enum: [insufficient_data, not_sensitive, may_judge_training] }
+            rule: { type: string }
+            thresholds:
+              type: object
+              additionalProperties: true
+            reasons:
+              type: array
+              items: { type: string }
+        decisionTable:
+          type: array
+          items: { $ref: "#/components/schemas/ListeningDecisionRow" }
+        interpretation:
+          type: object
+          required: [row, text]
+          properties:
+            row: { type: string, nullable: true }
+            text: { type: string }
     ListeningComparisonSummary:
       type: object
       required: [comparison, a, b, pairs, votes, aWins, bWins, aShare, ownerVotes, ownerAWins, ownerAShare]
@@ -5211,6 +5373,15 @@ components:
       properties:
         token: { type: string }
         systemUnderTest: { type: string }
+    ListeningPairMeta:
+      type: object
+      description: Tournament and benchmark sessions only - the comparison, task, seed and family behind a pair. Owner view only; never part of the rater view.
+      required: [comparison, taskId, seed, family]
+      properties:
+        comparison: { type: string }
+        taskId: { type: string }
+        seed: { type: number }
+        family: { type: string }
     ListeningPair:
       type: object
       required: [pairId, caseId, left, right, questions]
@@ -5222,6 +5393,7 @@ components:
         questions:
           type: array
           items: { type: string }
+        meta: { $ref: "#/components/schemas/ListeningPairMeta" }
     ListeningQuestionResult:
       type: object
       required: [question, votes, bySystem, leader]

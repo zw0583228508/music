@@ -8,6 +8,7 @@ import producerRouter from "./producer";
 import referencesRouter from "./references";
 import listeningRouter from "./listening";
 import listeningTournamentRouter from "./listeningTournament";
+import listeningBenchmarkV2Router from "./listeningBenchmarkV2";
 import clamp3Router from "./clamp3";
 import styleRouter from "./style";
 import { logger } from "../lib/logger";
@@ -26,6 +27,7 @@ router.use(producerRouter);
 router.use(referencesRouter);
 router.use(listeningRouter);
 router.use(listeningTournamentRouter);
+router.use(listeningBenchmarkV2Router);
 router.use(clamp3Router);
 router.use(styleRouter);
 

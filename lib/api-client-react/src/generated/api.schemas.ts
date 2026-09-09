@@ -6065,6 +6065,141 @@ export interface CreateTournamentListeningSessionInput {
   title?: string;
 }
 
+/**
+ * Which renderer makes every side (default LISTENING_SYNTH_V2)
+ */
+export type CreateListeningBenchmarkV2SessionInputRenderer = typeof CreateListeningBenchmarkV2SessionInputRenderer[keyof typeof CreateListeningBenchmarkV2SessionInputRenderer];
+
+
+export const CreateListeningBenchmarkV2SessionInputRenderer = {
+  REFERENCE_SYNTH_V1: 'REFERENCE_SYNTH_V1',
+  LISTENING_SYNTH_V2: 'LISTENING_SYNTH_V2',
+} as const;
+
+export interface CreateListeningBenchmarkV2SessionInput {
+  /**
+     * Basename of a listening benchmark V2 report under docs/evidence (e.g. listening-benchmark-v2-report.json)
+     * @minLength 1
+     * @maxLength 120
+     * @pattern ^[a-z0-9][a-z0-9-]*\.json$
+     */
+  evidenceFile: string;
+  /**
+     * Pairs to draw (default 50)
+     * @minimum 10
+     * @maximum 60
+     */
+  size?: number;
+  /** @maxLength 200 */
+  title?: string;
+  /** Which renderer makes every side (default LISTENING_SYNTH_V2) */
+  renderer?: CreateListeningBenchmarkV2SessionInputRenderer;
+}
+
+export interface ListeningSensitivityControl {
+  comparison: string;
+  kind: string;
+  strength: number;
+  description: string;
+  pairs: number;
+  votes: number;
+  detected: number;
+  detectionRate: number | null;
+  ci95: number[] | null;
+  pOneSidedVsChance: number | null;
+  aboveChance: boolean;
+  gateRole: string | null;
+}
+
+export interface ListeningSensitivityCalibration {
+  comparison: string;
+  a: string;
+  b: string;
+  pairs: number;
+  votes: number;
+  aWins: number;
+  aShare: number | null;
+  ci95: number[] | null;
+  pTwoSidedVsCoinFlip: number | null;
+}
+
+export type ListeningDecisionRowGate = typeof ListeningDecisionRowGate[keyof typeof ListeningDecisionRowGate];
+
+
+export const ListeningDecisionRowGate = {
+  insufficient_data: 'insufficient_data',
+  not_sensitive: 'not_sensitive',
+  may_judge_training: 'may_judge_training',
+} as const;
+
+export interface ListeningDecisionRow {
+  id: string;
+  when: string;
+  establishes: string;
+  candidateCausesToTest: string[];
+  gate: ListeningDecisionRowGate;
+}
+
+export type ListeningSensitivityReportRatersCounted = typeof ListeningSensitivityReportRatersCounted[keyof typeof ListeningSensitivityReportRatersCounted];
+
+
+export const ListeningSensitivityReportRatersCounted = {
+  all: 'all',
+  owner: 'owner',
+  independent: 'independent',
+} as const;
+
+export type ListeningSensitivityReportRaters = {
+  counted: ListeningSensitivityReportRatersCounted;
+  distinct: number;
+  ownerVotes: number;
+  independentVotes: number;
+};
+
+export type ListeningSensitivityReportMinimumDetectableEffect = {
+  atGateRungN: number;
+  criticalWins: number | null;
+  detectionRate: number | null;
+  note: string;
+};
+
+export type ListeningSensitivityReportGateVerdict = typeof ListeningSensitivityReportGateVerdict[keyof typeof ListeningSensitivityReportGateVerdict];
+
+
+export const ListeningSensitivityReportGateVerdict = {
+  insufficient_data: 'insufficient_data',
+  not_sensitive: 'not_sensitive',
+  may_judge_training: 'may_judge_training',
+} as const;
+
+export type ListeningSensitivityReportGateThresholds = { [key: string]: unknown };
+
+export type ListeningSensitivityReportGate = {
+  verdict: ListeningSensitivityReportGateVerdict;
+  rule: string;
+  thresholds: ListeningSensitivityReportGateThresholds;
+  reasons: string[];
+};
+
+export type ListeningSensitivityReportInterpretation = {
+  row: string | null;
+  text: string;
+};
+
+export interface ListeningSensitivityReport {
+  version: string;
+  sessionId: string;
+  primaryQuestion: string;
+  raters: ListeningSensitivityReportRaters;
+  votesConsidered: number;
+  controls: ListeningSensitivityControl[];
+  minimumDetectableEffect: ListeningSensitivityReportMinimumDetectableEffect;
+  calibration: ListeningSensitivityCalibration[];
+  gate: ListeningSensitivityReportGate;
+  decisionTable: ListeningDecisionRow[];
+  interpretation: ListeningSensitivityReportInterpretation;
+}
+
 export interface ListeningComparisonSummary {
   comparison: string;
   a: string;
@@ -6128,12 +6263,23 @@ export interface ListeningPairSide {
   systemUnderTest: string;
 }
 
+/**
+ * Tournament and benchmark sessions only - the comparison, task, seed and family behind a pair. Owner view only; never part of the rater view.
+ */
+export interface ListeningPairMeta {
+  comparison: string;
+  taskId: string;
+  seed: number;
+  family: string;
+}
+
 export interface ListeningPair {
   pairId: string;
   caseId: string;
   left: ListeningPairSide;
   right: ListeningPairSide;
   questions: string[];
+  meta?: ListeningPairMeta;
 }
 
 export type ListeningQuestionResultBySystem = {[key: string]: number};

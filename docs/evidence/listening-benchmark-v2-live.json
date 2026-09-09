@@ -1,0 +1,506 @@
+{
+  "title": "Listening benchmark V2 - the session the owner rates, opened through the real API (Wave Q, PR-72)",
+  "date": "2026-09-09",
+  "definitionOfDone": "a real V2 session drawn from the real V2 report, every side rendered by LISTENING_SYNTH_V2 into private storage, opened through the real API on a real database, its rater view probed for every secret, its audio streamed by a non-owner identity, its sensitivity report computed before any vote. Not rated: the owner rates.",
+  "api": "http://localhost:5001",
+  "session": {
+    "id": "00b41a7f-8b37-4895-89d7-53b5a394e89e",
+    "title": "Wave Q listening benchmark V2 - blind session 1",
+    "raterPath": "/listen/00b41a7f-8b37-4895-89d7-53b5a394e89e",
+    "studioUrl": "http://localhost:5173/listen/00b41a7f-8b37-4895-89d7-53b5a394e89e",
+    "source": "docs/evidence/listening-benchmark-v2-report.json (runId 9ec747d37e4a; 21 passages on the 12 classical PDMX works of run 4fac41bee93e)",
+    "pairs": 50,
+    "openSeconds": "316 s server-side (22:10:39 to 22:15:55): 56 distinct renders, 2,598.8 s of audio, on the worker thread; the client's fetch gave up at its 300 s headers timeout while the server finished, so the session was verified by id (open-listening-benchmark-v2.mjs --session), and the script now posts over node:http with no timeout",
+    "perComparison": {
+      "human_vs_reference": 8,
+      "ca2ctx_vs_reference": 4,
+      "human_vs_degraded_random_pitch_30": 3,
+      "human_vs_degraded_pitch_shift_30": 10,
+      "human_vs_degraded_pitch_shift_10": 4,
+      "human_vs_degraded_onset_jitter_30": 3,
+      "human_vs_ca2ctx": 5,
+      "human_vs_degraded_pitch_shift_60": 10,
+      "human_vs_degraded_note_deletion_50": 3
+    },
+    "perWindowKind": {
+      "section": 26,
+      "bars16": 24
+    },
+    "perFamily": {
+      "organ": 8,
+      "bass": 12,
+      "keys": 11,
+      "brass": 12,
+      "strings": 3,
+      "reed": 4
+    },
+    "listeningMinutesIfEverySideIsHeardOnce": 76.4,
+    "primaryQuestion": "Overall: which version do you prefer?",
+    "votesAtOpen": 0,
+    "ownerVotesAtOpen": 0
+  },
+  "renderer": {
+    "requested": "LISTENING_SYNTH_V2 (route default)",
+    "provenByAudioHeader": "stereo 44.1 kHz on both sides of pair 1 - LISTENING_SYNTH_V2 (REFERENCE_SYNTH_V1 is mono)",
+    "identity": "LISTENING_SYNTH_V2@2.0.0",
+    "objectiveCheck": {
+      "file": "docs/evidence/listening-renderer-v2-check.json",
+      "chosen": "LISTENING_SYNTH_V2",
+      "v1Failed": [
+        "family_voices_distinguishable",
+        "struck_and_sustained_envelopes",
+        "drum_pieces_distinguishable",
+        "stereo_image"
+      ],
+      "v2Failed": []
+    },
+    "sameOnEverySide": "one renderer, one candidate gain (x1.35), one RMS target (-18 dBFS, 0.95 peak ceiling), one reverb; the arm is not an input"
+  },
+  "contextIdentity": {
+    "inReport": {
+      "tasks": 21,
+      "allIdentical": true,
+      "rule": "every side of a task (all arms and all controls) must share the tempo/metre track and every context track byte-for-byte, and equal the context-only file"
+    },
+    "atOpen": "the route recomputed contextDigest on both sides of every drawn pair before rendering and would have refused the session on a mismatch; it opened",
+    "pairsChecked": 50
+  },
+  "lengths": {
+    "rule": "a section is drawn only when complete and 8-24 bars long; a shorter window is never presented as a section",
+    "armsPerLength": "HUMAN, REFERENCE, CONTEXT_AWARE at every length; CA2 and CA2+CTX wherever the worker's encoded input stayed within MAX_LEN 1650 - which here was every passage",
+    "ca2InputTokens": [
+      {
+        "cell": "18cd0f7df9cc:7",
+        "inputTokens": 668,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "668e45e4820d:7",
+        "inputTokens": 1232,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "866c83df331f:7",
+        "inputTokens": 423,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "6a64250a6918:7",
+        "inputTokens": 329,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "303254fdca88:7",
+        "inputTokens": 968,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "f83f48d4be99:7",
+        "inputTokens": 761,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "855edda78942:7",
+        "inputTokens": 441,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "8af2cbbb4ac1:7",
+        "inputTokens": 602,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "0308e92f7deb:7",
+        "inputTokens": 424,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "955c063111b6:7",
+        "inputTokens": 493,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "3be8f43cb98f:7",
+        "inputTokens": 838,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "f4cb1a856363:7",
+        "inputTokens": 966,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "cdb90ab7da24:7",
+        "inputTokens": 423,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "982679ce9cee:7",
+        "inputTokens": 139,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "f4e48ddbbb00:7",
+        "inputTokens": 256,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "e543b2d71e25:7",
+        "inputTokens": 399,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "eb323cefdcfc:7",
+        "inputTokens": 803,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "a628953ffbbe:7",
+        "inputTokens": 335,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "7e88390b257a:7",
+        "inputTokens": 495,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "6b9ee9b03072:7",
+        "inputTokens": 325,
+        "maxLen": 1650,
+        "warning": null
+      },
+      {
+        "cell": "ad4404f86bed:7",
+        "inputTokens": 310,
+        "maxLen": 1650,
+        "warning": null
+      }
+    ],
+    "passages": [
+      {
+        "taskId": "18cd0f7df9cc",
+        "family": "bass",
+        "windowKind": "section",
+        "bars": 8,
+        "seconds": 32,
+        "section": "B bars 4-12",
+        "armsNotRun": []
+      },
+      {
+        "taskId": "668e45e4820d",
+        "family": "bass",
+        "windowKind": "bars16",
+        "bars": 16,
+        "seconds": 64,
+        "section": null,
+        "armsNotRun": []
+      },
+      {
+        "taskId": "866c83df331f",
+        "family": "keys",
+        "windowKind": "section",
+        "bars": 17,
+        "seconds": 81.6,
+        "section": "B bars 4-21",
+        "armsNotRun": []
+      },
+      {
+        "taskId": "6a64250a6918",
+        "family": "keys",
+        "windowKind": "bars16",
+        "bars": 16,
+        "seconds": 76.8,
+        "section": null,
+        "armsNotRun": []
+      },
+      {
+        "taskId": "303254fdca88",
+        "family": "strings",
+        "windowKind": "section",
+        "bars": 20,
+        "seconds": 72.7,
+        "section": "B bars 4-24",
+        "armsNotRun": []
+      },
+      {
+        "taskId": "f83f48d4be99",
+        "family": "strings",
+        "windowKind": "bars16",
+        "bars": 16,
+        "seconds": 58.2,
+        "section": null,
+        "armsNotRun": []
+      },
+      {
+        "taskId": "855edda78942",
+        "family": "brass",
+        "windowKind": "bars16",
+        "bars": 16,
+        "seconds": 49.2,
+        "section": null,
+        "armsNotRun": []
+      },
+      {
+        "taskId": "8af2cbbb4ac1",
+        "family": "reed",
+        "windowKind": "section",
+        "bars": 21,
+        "seconds": 31.5,
+        "section": "C bars 9-30",
+        "armsNotRun": []
+      },
+      {
+        "taskId": "0308e92f7deb",
+        "family": "reed",
+        "windowKind": "bars16",
+        "bars": 16,
+        "seconds": 24,
+        "section": null,
+        "armsNotRun": []
+      },
+      {
+        "taskId": "955c063111b6",
+        "family": "organ",
+        "windowKind": "bars16",
+        "bars": 16,
+        "seconds": 47.4,
+        "section": null,
+        "armsNotRun": []
+      },
+      {
+        "taskId": "3be8f43cb98f",
+        "family": "bass",
+        "windowKind": "section",
+        "bars": 14,
+        "seconds": 30.5,
+        "section": "A bars 0-14",
+        "armsNotRun": []
+      },
+      {
+        "taskId": "f4cb1a856363",
+        "family": "bass",
+        "windowKind": "bars16",
+        "bars": 16,
+        "seconds": 34.9,
+        "section": null,
+        "armsNotRun": []
+      },
+      {
+        "taskId": "cdb90ab7da24",
+        "family": "keys",
+        "windowKind": "bars16",
+        "bars": 16,
+        "seconds": 24,
+        "section": null,
+        "armsNotRun": []
+      },
+      {
+        "taskId": "982679ce9cee",
+        "family": "strings",
+        "windowKind": "section",
+        "bars": 10,
+        "seconds": 60,
+        "section": "B bars 6-16",
+        "armsNotRun": []
+      },
+      {
+        "taskId": "f4e48ddbbb00",
+        "family": "strings",
+        "windowKind": "bars16",
+        "bars": 16,
+        "seconds": 96,
+        "section": null,
+        "armsNotRun": []
+      },
+      {
+        "taskId": "e543b2d71e25",
+        "family": "brass",
+        "windowKind": "section",
+        "bars": 8,
+        "seconds": 20.2,
+        "section": "B bars 10-18",
+        "armsNotRun": []
+      },
+      {
+        "taskId": "eb323cefdcfc",
+        "family": "brass",
+        "windowKind": "bars16",
+        "bars": 16,
+        "seconds": 40.4,
+        "section": null,
+        "armsNotRun": []
+      },
+      {
+        "taskId": "a628953ffbbe",
+        "family": "reed",
+        "windowKind": "section",
+        "bars": 11,
+        "seconds": 32.2,
+        "section": "A bars 0-11",
+        "armsNotRun": []
+      },
+      {
+        "taskId": "7e88390b257a",
+        "family": "reed",
+        "windowKind": "bars16",
+        "bars": 16,
+        "seconds": 46.8,
+        "section": null,
+        "armsNotRun": []
+      },
+      {
+        "taskId": "6b9ee9b03072",
+        "family": "organ",
+        "windowKind": "section",
+        "bars": 16,
+        "seconds": 24,
+        "section": "B bars 7-23",
+        "armsNotRun": []
+      },
+      {
+        "taskId": "ad4404f86bed",
+        "family": "organ",
+        "windowKind": "bars16",
+        "bars": 16,
+        "seconds": 24,
+        "section": null,
+        "armsNotRun": []
+      }
+    ]
+  },
+  "blindness": {
+    "raterViewContains": "session title, status, position and instrument family, two token-addressed audio URLs, the questions, this rater's own votes",
+    "probes": [
+      "HUMAN_ORIGIN_REFERENCE",
+      "REFERENCE_PART_COMPOSER",
+      "CONTEXT_AWARE_ARRANGER",
+      "COMPOSERS_ASSISTANT_2",
+      "COMPOSERS_ASSISTANT_2+CTX",
+      "HUMAN_DEGRADED",
+      "degraded",
+      "control",
+      "pitch_shift",
+      "pitch_shift",
+      "pitch_shift",
+      "onset_jitter",
+      "note_deletion",
+      "random_pitch",
+      "HUMAN_DEGRADED:pitch_shift:10",
+      "HUMAN_DEGRADED:pitch_shift:30",
+      "HUMAN_DEGRADED:pitch_shift:60",
+      "HUMAN_DEGRADED:onset_jitter:30",
+      "HUMAN_DEGRADED:note_deletion:50",
+      "HUMAN_DEGRADED:random_pitch:30",
+      "_10",
+      "_30",
+      "_60",
+      "_30",
+      "_50",
+      "_30",
+      "strength",
+      "pitch_shift",
+      "jitter",
+      "deletion",
+      "random",
+      "bars16",
+      "section",
+      "windowKind",
+      "LISTENING_SYNTH_V2",
+      "REFERENCE_SYNTH",
+      "renderer",
+      "taskId",
+      "seed",
+      "/exports/",
+      "comparison",
+      "meta"
+    ],
+    "ownerView": {
+      "bytes": 32140,
+      "probes": 42,
+      "found": []
+    },
+    "nonOwnerRaterView": {
+      "bytes": 32140,
+      "probes": 42,
+      "found": []
+    },
+    "perRaterFlip": "the owner and the second identity see different A/B orders on at least one pair",
+    "verifiedBy": [
+      "listeningBenchmarkV2 suite leak test over eight rater ids",
+      "this live GET as owner and as a second identity"
+    ]
+  },
+  "audio": [
+    {
+      "side": "a",
+      "url": "/api/listening-sessions/00b41a7f-8b37-4895-89d7-53b5a394e89e/audio/502b1927",
+      "status": 200,
+      "contentType": "audio/wav",
+      "contentLength": 4445148,
+      "bytes": 4445148,
+      "riff": "RIFF",
+      "wave": "WAVE",
+      "channels": 2,
+      "sampleRate": 44100,
+      "bitsPerSample": 16,
+      "seconds": 25.2
+    },
+    {
+      "side": "b",
+      "url": "/api/listening-sessions/00b41a7f-8b37-4895-89d7-53b5a394e89e/audio/c4d3904f",
+      "status": 200,
+      "contentType": "audio/wav",
+      "contentLength": 4445148,
+      "bytes": 4445148,
+      "riff": "RIFF",
+      "wave": "WAVE",
+      "channels": 2,
+      "sampleRate": 44100,
+      "bitsPerSample": 16,
+      "seconds": 25.2
+    }
+  ],
+  "preVoteSensitivity": {
+    "verdict": "insufficient_data",
+    "reasons": [
+      "strongest rung has 0 vote(s) and moderate rung 0; each needs at least 8"
+    ],
+    "file": "docs/evidence/listening-benchmark-v2-sensitivity.json"
+  },
+  "notRated": "no vote was cast by this script or any automation; the owner rates. The two identities used here voted on nothing.",
+  "honestLimits": [
+    "one session, one rater expected (the owner); Gate C's five independent raters are a separate requirement",
+    "all passages come from the 12 classical PDMX works of the first tournament; the non-classical slice is not represented",
+    "a full sitting is 76 minutes of audio if every side is heard once; the rater may stop early and the report reads whatever exists",
+    "the renderer is the platform's improved in-process synth, chosen by the objective check, not by a listener"
+  ],
+  "audioObjects": {
+    "note": "MUSIC_OBJECT_STORAGE_DRIVER=local resolves LOCAL_OBJECT_STORAGE_DIR relative to the API's working directory, so the :5001 worktree server wrote the session's 56 WAVs (112 objects, 438 MB) under the worktree's store. They were copied, unchanged, into the main checkout's store under the same relative path, and the owner's :5000 server then served pair 1 side A: 200 audio/wav 4,445,148 bytes. Re-opening the session on :5000 after merge would render the same bytes (deterministic renderer).",
+    "servedBy5000": {
+      "url": "/api/listening-sessions/00b41a7f-8b37-4895-89d7-53b5a394e89e/audio/c4d3904f",
+      "status": 200,
+      "contentType": "audio/wav",
+      "bytes": 4445148
+    }
+  }
+}

@@ -304,6 +304,35 @@ const suites = {
         "reward-model-v0.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // PR-72: listening benchmark V2 - positive controls, the side-MIDI writer
+      // with its context-identity proof, the V2 listening renderer and its
+      // objective check, the session composition + leak test, the sensitivity
+      // report and gate.
+      [
+        "src/lib/listeningDegradations.test.ts",
+        "listening-degradations.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/listeningSideMidi.test.ts",
+        "listening-side-midi.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/listeningRendererV2.test.ts",
+        "listening-renderer-v2.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/listeningBenchmarkV2.test.ts",
+        "listening-benchmark-v2.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/listeningSensitivity.test.ts",
+        "listening-sensitivity.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [

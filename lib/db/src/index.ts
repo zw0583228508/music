@@ -11,6 +11,12 @@ if (!process.env.DATABASE_URL) {
 }
 
 export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// An idle client the server drops (Neon closes idle connections) emits
+// 'error' on the pool; with no listener that is an uncaught exception and
+// the process dies. Log it; the pool replaces the client on the next query.
+pool.on("error", (error) => {
+  console.error(`[db] idle client error: ${error instanceof Error ? error.message : String(error)}`);
+});
 export const db = drizzle(pool, { schema });
 
 export function createIsolatedDatabase() {
