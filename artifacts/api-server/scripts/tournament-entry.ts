@@ -3,6 +3,7 @@ export { parseMidiFile, writeMidiFile } from "../src/lib/midiFile";
 export { familyOf } from "../src/lib/arrangerRemi";
 export { buildTournamentTask, enumerateTaskSpecs, DRUMS_PROGRAM, TARGET_FAMILIES } from "../src/lib/tournamentTask";
 export { runModelTournament } from "../src/lib/modelTournament";
+export { buildNotesSidecar, writeEntryMidi } from "../src/lib/tournamentRescore";
 export {
   humanProvider, referenceProvider, contextAwareProvider, createCa2Providers,
   HUMAN_SUT, REFERENCE_SUT, CONTEXT_AWARE_SUT, CA2_SUT, CA2_CONTEXT_SUT,

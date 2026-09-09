@@ -18,7 +18,7 @@
  */
 import { createHash } from "node:crypto";
 import type { MusicalNote } from "@workspace/db";
-import { judgePart, type PartJudgement } from "./partJudge";
+import { judgePart, PART_JUDGE_VERSION, type PartJudgement } from "./partJudge";
 import type { ProviderAccount } from "./symbolicGenerationProvider";
 import { HUMAN_SUT, REFERENCE_SUT, type TournamentProvider } from "./tournamentProviders";
 import type { TournamentTask } from "./tournamentTask";
@@ -77,6 +77,13 @@ export type TournamentReport = {
   version: typeof MODEL_TOURNAMENT_VERSION;
   method: string;
   runId: string;
+  /**
+   * The `partJudge` version every `judgement` in this report was produced by.
+   * A report's scores are only comparable with another's under the same judge
+   * (the first two live runs were judged by 1.0 and re-scored under 1.1 by
+   * `tournamentRescore.ts`). Absent on reports written before this field.
+   */
+  judgeVersion?: string;
   ranAt: string;
   corpus: "pdmx" | "synthesised";
   seeds: number[];
@@ -177,6 +184,20 @@ export function buildTournamentBlindSheet(entries: readonly TournamentEntry[]): 
   return { pairs, keyByToken };
 }
 
+/**
+ * Cells on which a machine out-scored the human part. The judge is a proxy,
+ * and a proxy that ranks a machine above the composer is a proxy to distrust
+ * on that cell; the runner and the re-scorer (`tournamentRescore.ts`) both
+ * read it off the entries with this one function.
+ */
+export function judgeSuspectFor(entries: readonly TournamentEntry[]): TournamentReport["judgeSuspect"] {
+  const humanByCell = new Map(entries.filter((e) => e.providerId === HUMAN_SUT).map((e) => [`${e.taskId}:${e.seed}`, e.judgement.score]));
+  return entries
+    .filter((e) => e.providerId !== HUMAN_SUT && !e.failure)
+    .filter((e) => (humanByCell.get(`${e.taskId}:${e.seed}`) ?? Infinity) < e.judgement.score)
+    .map((e) => ({ taskId: e.taskId, seed: e.seed, providerId: e.providerId, machine: e.judgement.score, human: humanByCell.get(`${e.taskId}:${e.seed}`)! }));
+}
+
 /** The two-valued verdict per model provider. Never "promote". */
 export function recommend(scorecards: readonly ProviderScorecard[], judgeSuspectCount: number, cells: number): TournamentRecommendation[] {
   const reference = scorecards.find((s) => s.providerId === REFERENCE_SUT);
@@ -254,11 +275,7 @@ export async function runModelTournament(options: {
   }
 
   const scorecards = options.providers.map((p) => scorecardFor(p.id, p.kind, entries));
-  const humanByCell = new Map(entries.filter((e) => e.providerId === HUMAN_SUT).map((e) => [`${e.taskId}:${e.seed}`, e.judgement.score]));
-  const judgeSuspect = entries
-    .filter((e) => e.providerId !== HUMAN_SUT && !e.failure)
-    .filter((e) => (humanByCell.get(`${e.taskId}:${e.seed}`) ?? Infinity) < e.judgement.score)
-    .map((e) => ({ taskId: e.taskId, seed: e.seed, providerId: e.providerId, machine: e.judgement.score, human: humanByCell.get(`${e.taskId}:${e.seed}`)! }));
+  const judgeSuspect = judgeSuspectFor(entries);
   const cells = options.tasks.length * seeds.length;
 
   return {
@@ -267,6 +284,7 @@ export async function runModelTournament(options: {
     runId: createHash("sha256")
       .update(`${options.tasks.map((t) => t.id).join(",")}|${seeds.join(",")}|${options.providers.map((p) => p.id).join(",")}`)
       .digest("hex").slice(0, 12),
+    judgeVersion: PART_JUDGE_VERSION,
     ranAt: now.toISOString(),
     corpus: options.corpus ?? "pdmx",
     seeds,
