@@ -1,0 +1,1689 @@
+{
+  "ranAt": "2026-09-09T17:09:32.730Z",
+  "profileVersion": "CORPUS_PROFILE_v1",
+  "tokenizerVersion": "ARRANGER_REMI_v1_3cfd16b3_386",
+  "source": {
+    "recordId": "15571083",
+    "doi": "10.5281/zenodo.15571083",
+    "datasetDigest": "48db5562b1495bae926812c9078c02c598d7aec3bf827bf5c10297b2ca50dbfe",
+    "rightsDigest": "97b7c795b37de988ae89d864732d9df4b3ba4c5151a422fca3d14548aa933fc7",
+    "subset": "no_license_conflict"
+  },
+  "rightsBasis": {
+    "csvRows": 254077,
+    "ourAdmitted": 222856,
+    "authorsAdmitted": 222856,
+    "admitted": 222856
+  },
+  "files": {
+    "midiFilesOnDisk": 254035,
+    "admittedWithFile": 222820,
+    "admittedWithoutFile": 36
+  },
+  "run": {
+    "sample": {
+      "requested": "all",
+      "method": "full pass over every admitted file"
+    },
+    "profiled": 222820,
+    "parseFailed": 0,
+    "parseFailureSamples": [],
+    "workers": 10,
+    "profilingSeconds": 473.8,
+    "filesPerSecond": 470.3,
+    "workerCpuSeconds": 4657.8,
+    "dedupSeconds": 24,
+    "wallSeconds": 578.1
+  },
+  "definitions": {
+    "multitrack": "≥ 2 pitched ARRANGER_REMI families, or ≥ 1 pitched family + drums; two piano-hand tracks are one family (solo)",
+    "barCount": "last note's bar + 1 on the tokenizer grid, first metre, capped at 512 bars",
+    "harmony": "chordsFromNotes per bar over pitched notes; distinct symbols and change rate over named bars",
+    "phrase": "per pitched family, a run ends at a rest ≥ 1 quarter; median run length in beats",
+    "genreFamily": "first token of the CSV genres field, folded; NA → unknown",
+    "taskTypes": "arrangerTaskTypes.ts; every target is the human's own notes; counts are uncapped per (work, type) with non-overlapping windows; totalCapped applies `cap` per (work, type)",
+    "nearDuplicate": "bar-bigram shingles (family, eighth-note onset, pitch class), MinHash 64, LSH 16×4, threshold 0.5; exact = SHA-256 of the grid note stream ignoring velocity and tempo"
+  },
+  "csvCrossCheck": {
+    "nTracksVsParsed": {
+      "same": 189895,
+      "differ": 32925
+    }
+  },
+  "aggregate": {
+    "works": 222820,
+    "byEnsemble": {
+      "empty": 51,
+      "solo": 202131,
+      "multitrack": 20638
+    },
+    "familyPresence": {
+      "all": {
+        "keys": 198554,
+        "brass": 7513,
+        "pipe": 9270,
+        "strings": 9030,
+        "guitar": 3365,
+        "synth": 4075,
+        "organ": 3412,
+        "drums": 5590,
+        "ensemble": 9248,
+        "reed": 7285,
+        "bass": 2976,
+        "chromatic_perc": 2026,
+        "percussive": 156,
+        "ethnic": 251,
+        "sfx": 24
+      },
+      "multitrack": {
+        "keys": 14712,
+        "synth": 4036,
+        "organ": 2392,
+        "pipe": 6199,
+        "strings": 6366,
+        "drums": 5007,
+        "guitar": 2294,
+        "ensemble": 3220,
+        "brass": 5512,
+        "reed": 5913,
+        "bass": 2745,
+        "chromatic_perc": 1878,
+        "percussive": 142,
+        "ethnic": 205,
+        "sfx": 23
+      }
+    },
+    "ensembles": {
+      "distinct": 1414,
+      "effective": 97.2,
+      "top": {
+        "keys+synth": 3333,
+        "keys+strings": 1605,
+        "keys+ensemble": 1441,
+        "keys+pipe": 1222,
+        "keys+organ": 757,
+        "brass+reed": 634,
+        "keys+reed": 409,
+        "brass+reed+pipe": 367,
+        "keys+organ+pipe": 366,
+        "strings+pipe": 339,
+        "drums+brass+reed+pipe": 328,
+        "reed+pipe": 291,
+        "keys+guitar": 264,
+        "drums+keys": 216,
+        "strings+brass+reed+pipe": 197,
+        "keys+brass": 196,
+        "keys+strings+pipe": 193,
+        "organ+brass": 175,
+        "keys+strings+ensemble": 161,
+        "drums+chromatic_perc+strings+brass+reed+pipe": 135,
+        "keys+organ+ensemble": 127,
+        "drums+brass+reed": 121,
+        "keys+strings+brass+reed+pipe": 120,
+        "drums+brass": 117,
+        "drums+keys+chromatic_perc+strings+brass+reed+pipe": 112,
+        "drums+strings+brass+reed+pipe": 112,
+        "keys+chromatic_perc": 111,
+        "drums+keys+bass+brass+reed": 107,
+        "strings+reed": 103,
+        "drums+keys+guitar+bass+brass+reed": 101,
+        "drums+chromatic_perc+brass+reed+pipe": 94,
+        "drums+keys+strings+brass+reed+pipe": 92,
+        "drums+keys+bass": 91,
+        "strings+ensemble": 84,
+        "drums+chromatic_perc": 77,
+        "strings+reed+pipe": 76,
+        "drums+keys+strings": 75,
+        "guitar+strings": 72,
+        "bass+strings": 70,
+        "guitar+pipe": 69
+      }
+    },
+    "programsPerWork": {
+      "n": 222820,
+      "min": 0,
+      "p10": 1,
+      "p50": 1,
+      "p90": 2,
+      "max": 29,
+      "mean": 1.315
+    },
+    "familiesPerWork": {
+      "all": {
+        "n": 222820,
+        "min": 0,
+        "p10": 1,
+        "p50": 1,
+        "p90": 1,
+        "max": 12,
+        "mean": 1.179
+      },
+      "multitrack": {
+        "n": 20638,
+        "min": 2,
+        "p10": 2,
+        "p50": 2,
+        "p90": 5,
+        "max": 12,
+        "mean": 2.938
+      }
+    },
+    "trackCount": {
+      "all": {
+        "n": 222820,
+        "min": 0,
+        "p10": 1,
+        "p50": 1,
+        "p90": 3,
+        "max": 66,
+        "mean": 1.788
+      },
+      "multitrack": {
+        "n": 20638,
+        "min": 1,
+        "p10": 2,
+        "p50": 4,
+        "p90": 13,
+        "max": 66,
+        "mean": 6.116
+      }
+    },
+    "barCount": {
+      "all": {
+        "n": 222820,
+        "min": 0,
+        "p10": 16,
+        "p50": 43,
+        "p90": 103,
+        "max": 512,
+        "mean": 55.977
+      },
+      "multitrack": {
+        "n": 20638,
+        "min": 1,
+        "p10": 16,
+        "p50": 52,
+        "p90": 161,
+        "max": 512,
+        "mean": 75.927
+      },
+      "multitrackHistogram": {
+        "8-15": 1811,
+        "16-31": 4836,
+        "128-255": 2463,
+        "32-63": 5060,
+        "64-127": 5541,
+        "<8": 137,
+        "256+": 790
+      }
+    },
+    "meters": {
+      "top": {
+        "4/4": 92679,
+        "3/4": 58361,
+        "1/8": 57673,
+        "1/4": 46755,
+        "6/8": 42186,
+        "2/4": 39450,
+        "2/2": 27754,
+        "5/8": 26261,
+        "7/8": 21671,
+        "3/8": 18542,
+        "9/8": 8318,
+        "6/4": 5764,
+        "5/4": 5000,
+        "3/2": 3981,
+        "2/8": 3574,
+        "12/8": 2944,
+        "4/2": 2711,
+        "1/2": 2222,
+        "8/4": 1833,
+        "4/8": 1788
+      },
+      "dominantTop": {
+        "4/4": 87488,
+        "6/8": 39561,
+        "2/2": 25972,
+        "2/4": 24259,
+        "3/4": 23527,
+        "9/8": 4322,
+        "6/4": 3788,
+        "3/2": 2555,
+        "3/8": 2261,
+        "4/2": 1972,
+        "12/8": 1964,
+        "24/8": 454,
+        "1/2": 414,
+        "7/8": 402,
+        "2/1": 373,
+        "9/4": 336,
+        "5/4": 286,
+        "8/4": 275,
+        "235/4": 211,
+        "8/8": 123
+      },
+      "dominantMultitrackTop": {
+        "4/4": 12656,
+        "3/4": 2775,
+        "6/8": 1121,
+        "2/4": 999,
+        "2/2": 911,
+        "4/2": 410,
+        "3/2": 325,
+        "12/8": 276,
+        "6/4": 248,
+        "3/8": 155,
+        "2/1": 148,
+        "9/8": 130,
+        "5/4": 60,
+        "14/4": 52,
+        "7/8": 41,
+        "8/4": 35,
+        "16/4": 34,
+        "18/4": 27,
+        "3/1": 24,
+        "4/8": 22
+      },
+      "worksWithMeterChange": 131345,
+      "worksWithPickupBar": 97691,
+      "worksWhereFirstMeterIsNotDominant": 103469,
+      "worksWithApproximatedMeter": 96660
+    },
+    "tempos": {
+      "histogram": {
+        "120-139": 154842,
+        "80-99": 12796,
+        "60-79": 9045,
+        "140-159": 6659,
+        "160-199": 11526,
+        "<60": 4486,
+        "100-119": 17252,
+        "200+": 6214
+      },
+      "worksWithTempoChange": 19749
+    },
+    "keys": {
+      "top": {
+        "G major": 48484,
+        "D major": 45356,
+        "A major": 20972,
+        "C major": 16215,
+        "F major": 14191,
+        "E minor": 12459,
+        "A minor": 11015,
+        "B♭ major": 9367,
+        "D minor": 8419,
+        "G minor": 6942,
+        "B minor": 5634,
+        "E♭ major": 5198,
+        "E major": 3361,
+        "A♭ major": 3307,
+        "C minor": 2743,
+        "F♯ minor": 2538,
+        "F minor": 1352,
+        "C♯ major": 1139,
+        "C♯ minor": 760,
+        "B major": 620,
+        "B♭ minor": 553,
+        "E♭ minor": 388,
+        "F♯ major": 383,
+        "A♭ minor": 308
+      },
+      "worksWithoutKey": 1116,
+      "major": 168593,
+      "minor": 53111
+    },
+    "harmony": {
+      "distinctChords": {
+        "all": {
+          "n": 222820,
+          "min": 0,
+          "p10": 2,
+          "p50": 4,
+          "p90": 9,
+          "max": 72,
+          "mean": 5.173
+        },
+        "multitrack": {
+          "n": 20638,
+          "min": 0,
+          "p10": 3,
+          "p50": 7,
+          "p90": 18,
+          "max": 62,
+          "mean": 9.079
+        }
+      },
+      "chordChangeRate": {
+        "all": {
+          "n": 214649,
+          "min": 0,
+          "p10": 0.333,
+          "p50": 0.778,
+          "p90": 1,
+          "max": 1,
+          "mean": 0.713
+        },
+        "multitrack": {
+          "n": 20389,
+          "min": 0,
+          "p10": 0.515,
+          "p50": 0.818,
+          "p90": 1,
+          "max": 1,
+          "mean": 0.776
+        }
+      },
+      "namedShare": {
+        "n": 222769,
+        "min": 0,
+        "p10": 0.116,
+        "p50": 0.333,
+        "p90": 0.64,
+        "max": 1,
+        "mean": 0.357
+      }
+    },
+    "densityByFamily": {
+      "drums": {
+        "n": 5589,
+        "min": 0,
+        "p10": 1.58,
+        "p50": 8.18,
+        "p90": 20.36,
+        "max": 368.61,
+        "mean": 10.374
+      },
+      "keys": {
+        "n": 198554,
+        "min": 0.01,
+        "p10": 2.15,
+        "p50": 4,
+        "p90": 11.65,
+        "max": 619.52,
+        "mean": 5.663
+      },
+      "chromatic_perc": {
+        "n": 2026,
+        "min": 0,
+        "p10": 0.43,
+        "p50": 3.88,
+        "p90": 18.81,
+        "max": 270.55,
+        "mean": 7.712
+      },
+      "organ": {
+        "n": 3412,
+        "min": 0,
+        "p10": 1.84,
+        "p50": 4.22,
+        "p90": 10.87,
+        "max": 49.13,
+        "mean": 5.545
+      },
+      "guitar": {
+        "n": 3365,
+        "min": 0,
+        "p10": 1.96,
+        "p50": 6.33,
+        "p90": 17.81,
+        "max": 162.05,
+        "mean": 8.792
+      },
+      "bass": {
+        "n": 2976,
+        "min": 0,
+        "p10": 0.95,
+        "p50": 3.56,
+        "p90": 8.11,
+        "max": 48,
+        "mean": 4.332
+      },
+      "strings": {
+        "n": 9029,
+        "min": 0.01,
+        "p10": 1.8,
+        "p50": 6.12,
+        "p90": 19.06,
+        "max": 244.24,
+        "mean": 8.968
+      },
+      "ensemble": {
+        "n": 9247,
+        "min": 0.02,
+        "p10": 2.18,
+        "p50": 7.5,
+        "p90": 15.15,
+        "max": 77.37,
+        "mean": 8.249
+      },
+      "brass": {
+        "n": 7513,
+        "min": 0.01,
+        "p10": 1.37,
+        "p50": 5.92,
+        "p90": 19.23,
+        "max": 496.48,
+        "mean": 8.672
+      },
+      "reed": {
+        "n": 7285,
+        "min": 0.02,
+        "p10": 1.79,
+        "p50": 5.8,
+        "p90": 17.09,
+        "max": 169.88,
+        "mean": 8.188
+      },
+      "pipe": {
+        "n": 9270,
+        "min": 0.01,
+        "p10": 1.61,
+        "p50": 5.06,
+        "p90": 12.08,
+        "max": 73.85,
+        "mean": 6.168
+      },
+      "synth": {
+        "n": 4075,
+        "min": 0.01,
+        "p10": 2.25,
+        "p50": 4,
+        "p90": 8.17,
+        "max": 64.57,
+        "mean": 4.931
+      },
+      "ethnic": {
+        "n": 251,
+        "min": 0.07,
+        "p10": 0.68,
+        "p50": 3.91,
+        "p90": 10.2,
+        "max": 59.44,
+        "mean": 5.031
+      },
+      "percussive": {
+        "n": 156,
+        "min": 0.01,
+        "p10": 0.07,
+        "p50": 2.15,
+        "p90": 13.18,
+        "max": 146.34,
+        "mean": 5.563
+      },
+      "sfx": {
+        "n": 24,
+        "min": 0.01,
+        "p10": 0.01,
+        "p50": 0.8,
+        "p90": 14.44,
+        "max": 52,
+        "mean": 5.596
+      }
+    },
+    "phraseMedianBeats": {
+      "all": {
+        "n": 222186,
+        "min": 0.08,
+        "p10": 16,
+        "p50": 72,
+        "p90": 160,
+        "max": 3408,
+        "mean": 91.252
+      },
+      "multitrack": {
+        "n": 20638,
+        "min": 0.08,
+        "p10": 3,
+        "p50": 23.96,
+        "p90": 98,
+        "max": 1219.92,
+        "mean": 44.923
+      },
+      "melody": {
+        "n": 19889,
+        "min": 0.08,
+        "p10": 4.5,
+        "p50": 35.5,
+        "p90": 160,
+        "max": 2140,
+        "mean": 67.052
+      }
+    },
+    "melodyFamily": {
+      "keys": 6085,
+      "pipe": 3555,
+      "strings": 2488,
+      "reed": 1717,
+      "ensemble": 1689,
+      "brass": 946,
+      "organ": 1615,
+      "chromatic_perc": 843,
+      "guitar": 568,
+      "synth": 254,
+      "bass": 65,
+      "ethnic": 43,
+      "sfx": 2,
+      "percussive": 19
+    },
+    "tokenCount": {
+      "all": {
+        "n": 222820,
+        "min": 4,
+        "p10": 390,
+        "p50": 858,
+        "p90": 3033,
+        "max": 189572,
+        "mean": 1780.569
+      },
+      "multitrack": {
+        "n": 20638,
+        "min": 63,
+        "p10": 768,
+        "p50": 3470,
+        "p90": 17693,
+        "max": 189572,
+        "mean": 7328.243
+      },
+      "multitrackUnder": {
+        "1024": 3737,
+        "2048": 7466,
+        "4096": 11270,
+        "8192": 15479
+      }
+    },
+    "genres": {
+      "byFamily": {
+        "classical": 42103,
+        "unknown": 164347,
+        "folk": 9632,
+        "rock": 1571,
+        "soundtrack": 2233,
+        "electronic": 385,
+        "religious": 308,
+        "hiphop": 168,
+        "pop": 1109,
+        "other": 45,
+        "rnb_funk_soul": 150,
+        "world": 252,
+        "jazz_blues": 435,
+        "country": 82
+      },
+      "multitrackByFamily": {
+        "classical": 9150,
+        "unknown": 8291,
+        "soundtrack": 781,
+        "rock": 619,
+        "folk": 683,
+        "jazz_blues": 152,
+        "pop": 437,
+        "world": 100,
+        "rnb_funk_soul": 84,
+        "hiphop": 95,
+        "electronic": 125,
+        "religious": 75,
+        "other": 19,
+        "country": 27
+      },
+      "rawTop": {
+        "NA": 164347,
+        "classical": 41387,
+        "folk": 9619,
+        "soundtrack": 2210,
+        "rock": 877,
+        "pop": 624,
+        "classical-soundtrack": 510,
+        "religiousmusic": 305,
+        "jazz": 274,
+        "electronic": 233,
+        "rock-pop": 192,
+        "rbfunksoul": 150,
+        "worldmusic": 148,
+        "pop-rbfunksoul": 144,
+        "hiphop": 128,
+        "rock-folk": 128,
+        "jazz-classical": 92,
+        "classical-experimental": 90,
+        "classical-folk": 86,
+        "metal": 79,
+        "pop-soundtrack": 74,
+        "rock-electronic": 65,
+        "electronic-classical": 63,
+        "electronic-soundtrack": 58,
+        "country": 53,
+        "pop-jazz": 53,
+        "pop-electronic": 50,
+        "rock-soundtrack": 50,
+        "pop-folk": 38,
+        "rock-metal": 35
+      }
+    },
+    "tasks": {
+      "byType": {
+        "masked_bars": 631535,
+        "phrase_continuation": 843179,
+        "section_continuation": 295012,
+        "introduction": 213329,
+        "outro": 208622,
+        "transition": 57500,
+        "density_transformation": 44973,
+        "masked_track": 474708,
+        "accompaniment": 151988,
+        "track_completion": 216449,
+        "whole_form": 39136,
+        "orchestration": 19051,
+        "arrangement_reduction": 19051,
+        "arrangement_expansion": 55786,
+        "texture_development": 27043,
+        "motif_continuation": 16605
+      },
+      "worksYieldingByType": {
+        "masked_bars": 200587,
+        "phrase_continuation": 208384,
+        "section_continuation": 156898,
+        "introduction": 213329,
+        "outro": 208622,
+        "transition": 27529,
+        "density_transformation": 17243,
+        "masked_track": 20320,
+        "accompaniment": 19618,
+        "track_completion": 18645,
+        "whole_form": 14986,
+        "orchestration": 3140,
+        "arrangement_reduction": 3140,
+        "arrangement_expansion": 4944,
+        "texture_development": 7696,
+        "motif_continuation": 7015
+      },
+      "byTypeAndFamily": {
+        "masked_bars": {
+          "keys": 536833,
+          "brass": 32291,
+          "pipe": 36848,
+          "strings": 45152,
+          "guitar": 13405,
+          "organ": 10616,
+          "reed": 34913,
+          "drums": 24713,
+          "ensemble": 29895,
+          "synth": 5243,
+          "bass": 14639,
+          "chromatic_perc": 7239,
+          "ethnic": 938,
+          "percussive": 495,
+          "sfx": 32
+        },
+        "phrase_continuation": {
+          "keys": 714460,
+          "brass": 43762,
+          "pipe": 50240,
+          "strings": 60917,
+          "guitar": 18177,
+          "organ": 14422,
+          "reed": 47175,
+          "drums": 33520,
+          "ensemble": 40821,
+          "bass": 19839,
+          "synth": 7024,
+          "chromatic_perc": 9774,
+          "percussive": 650,
+          "ethnic": 1260,
+          "sfx": 46
+        },
+        "section_continuation": {
+          "keys": 252921,
+          "brass": 16341,
+          "pipe": 18372,
+          "strings": 21927,
+          "guitar": 6505,
+          "drums": 12244,
+          "ensemble": 13718,
+          "reed": 17265,
+          "bass": 7183,
+          "chromatic_perc": 3957,
+          "organ": 4713,
+          "synth": 1565,
+          "percussive": 288,
+          "ethnic": 471,
+          "sfx": 19
+        },
+        "introduction": {
+          "keys": 190114,
+          "brass": 5874,
+          "pipe": 7727,
+          "guitar": 2742,
+          "organ": 2934,
+          "strings": 7710,
+          "reed": 5973,
+          "ensemble": 7812,
+          "drums": 4094,
+          "bass": 2225,
+          "synth": 3308,
+          "chromatic_perc": 1381,
+          "ethnic": 178,
+          "percussive": 83,
+          "sfx": 16
+        },
+        "outro": {
+          "keys": 186325,
+          "brass": 6569,
+          "pipe": 8106,
+          "strings": 8108,
+          "guitar": 2914,
+          "organ": 2770,
+          "drums": 4620,
+          "ensemble": 7999,
+          "reed": 6483,
+          "synth": 2929,
+          "bass": 2535,
+          "chromatic_perc": 1519,
+          "percussive": 94,
+          "ethnic": 203,
+          "sfx": 17
+        },
+        "transition": {
+          "brass": 12673,
+          "pipe": 11273,
+          "strings": 14945,
+          "guitar": 4007,
+          "keys": 33458,
+          "reed": 13554,
+          "drums": 10565,
+          "organ": 2680,
+          "bass": 6123,
+          "chromatic_perc": 3478,
+          "ensemble": 6997,
+          "percussive": 204,
+          "synth": 1209,
+          "ethnic": 335,
+          "sfx": 11
+        },
+        "density_transformation": {
+          "brass": 5672,
+          "pipe": 5908,
+          "strings": 9128,
+          "keys": 26656,
+          "ensemble": 4763,
+          "organ": 1543,
+          "drums": 2322,
+          "reed": 5622,
+          "bass": 1351,
+          "guitar": 1349,
+          "chromatic_perc": 967,
+          "synth": 235,
+          "ethnic": 82,
+          "percussive": 60
+        },
+        "masked_track": {
+          "keys": 103121,
+          "synth": 11208,
+          "organ": 18328,
+          "pipe": 52059,
+          "strings": 62080,
+          "drums": 44960,
+          "guitar": 18448,
+          "ensemble": 23215,
+          "brass": 46279,
+          "reed": 55452,
+          "bass": 25595,
+          "chromatic_perc": 11720,
+          "ethnic": 1511,
+          "percussive": 682,
+          "sfx": 50
+        },
+        "accompaniment": {
+          "synth": 9125,
+          "organ": 5943,
+          "keys": 68768,
+          "drums": 37860,
+          "guitar": 13180,
+          "reed": 36373,
+          "pipe": 21832,
+          "ensemble": 10984,
+          "brass": 37122,
+          "strings": 34274,
+          "bass": 23305,
+          "percussive": 679,
+          "chromatic_perc": 5601,
+          "ethnic": 1100,
+          "sfx": 78
+        },
+        "track_completion": {
+          "organ": 8391,
+          "pipe": 22403,
+          "keys": 49689,
+          "strings": 29971,
+          "drums": 20318,
+          "guitar": 8346,
+          "brass": 19997,
+          "reed": 25007,
+          "ensemble": 10402,
+          "synth": 4563,
+          "bass": 11539,
+          "chromatic_perc": 4859,
+          "ethnic": 661,
+          "percussive": 281,
+          "sfx": 22
+        },
+        "whole_form": {
+          "organ": 1598,
+          "pipe": 3779,
+          "drums": 3057,
+          "keys": 10323,
+          "guitar": 1476,
+          "strings": 4037,
+          "brass": 3326,
+          "reed": 3850,
+          "ensemble": 2195,
+          "synth": 2743,
+          "bass": 1728,
+          "chromatic_perc": 866,
+          "ethnic": 103,
+          "percussive": 47,
+          "sfx": 8
+        },
+        "orchestration": {
+          "drums": 9619,
+          "organ": 2074,
+          "guitar": 4911,
+          "strings": 9006,
+          "ensemble": 3340,
+          "brass": 7123,
+          "pipe": 6333,
+          "bass": 8035,
+          "reed": 8206,
+          "percussive": 180,
+          "chromatic_perc": 2694,
+          "synth": 1523,
+          "ethnic": 370,
+          "sfx": 28
+        },
+        "arrangement_reduction": {
+          "keys": 19051
+        },
+        "arrangement_expansion": {
+          "strings": 11274,
+          "pipe": 24823,
+          "drums": 36608,
+          "reed": 20280,
+          "ensemble": 6276,
+          "brass": 21409,
+          "guitar": 7160,
+          "keys": 10104,
+          "chromatic_perc": 8139,
+          "percussive": 551,
+          "organ": 2026,
+          "synth": 2927,
+          "ethnic": 879,
+          "sfx": 69
+        },
+        "texture_development": {
+          "drums": 11970,
+          "guitar": 4305,
+          "strings": 13931,
+          "reed": 14454,
+          "pipe": 11714,
+          "keys": 15244,
+          "organ": 2714,
+          "brass": 13352,
+          "bass": 6880,
+          "chromatic_perc": 3980,
+          "ensemble": 4496,
+          "percussive": 229,
+          "synth": 1357,
+          "ethnic": 380,
+          "sfx": 30
+        },
+        "motif_continuation": {
+          "strings": 1853,
+          "ensemble": 890,
+          "keys": 4054,
+          "brass": 1016,
+          "organ": 925,
+          "reed": 1498,
+          "pipe": 3325,
+          "guitar": 1010,
+          "chromatic_perc": 1142,
+          "bass": 232,
+          "synth": 504,
+          "ethnic": 75,
+          "percussive": 81
+        }
+      },
+      "byGenreFamily": {
+        "classical": 800391,
+        "unknown": 2112944,
+        "folk": 97827,
+        "rock": 87263,
+        "soundtrack": 90240,
+        "electronic": 14815,
+        "religious": 5780,
+        "pop": 49110,
+        "other": 1901,
+        "rnb_funk_soul": 9592,
+        "world": 12426,
+        "jazz_blues": 21945,
+        "hiphop": 6637,
+        "country": 3096
+      },
+      "byTypeAndGenreFamily": {
+        "masked_bars": {
+          "classical": 121515,
+          "unknown": 457413,
+          "folk": 21399,
+          "rock": 8696,
+          "soundtrack": 9160,
+          "electronic": 1706,
+          "religious": 764,
+          "pop": 5438,
+          "other": 180,
+          "rnb_funk_soul": 689,
+          "world": 1359,
+          "jazz_blues": 2350,
+          "hiphop": 567,
+          "country": 299
+        },
+        "phrase_continuation": {
+          "classical": 163601,
+          "unknown": 608616,
+          "folk": 28753,
+          "rock": 11714,
+          "soundtrack": 12445,
+          "electronic": 2314,
+          "religious": 1040,
+          "pop": 7370,
+          "other": 238,
+          "rnb_funk_soul": 932,
+          "world": 1809,
+          "jazz_blues": 3172,
+          "hiphop": 774,
+          "country": 401
+        },
+        "section_continuation": {
+          "classical": 50718,
+          "unknown": 219932,
+          "folk": 9951,
+          "rock": 4063,
+          "soundtrack": 4217,
+          "electronic": 775,
+          "pop": 2508,
+          "rnb_funk_soul": 322,
+          "world": 633,
+          "jazz_blues": 1115,
+          "hiphop": 249,
+          "religious": 309,
+          "country": 137,
+          "other": 83
+        },
+        "introduction": {
+          "classical": 40218,
+          "unknown": 157925,
+          "folk": 8827,
+          "soundtrack": 2124,
+          "electronic": 356,
+          "religious": 285,
+          "pop": 1062,
+          "other": 44,
+          "rock": 1475,
+          "world": 230,
+          "jazz_blues": 413,
+          "hiphop": 154,
+          "rnb_funk_soul": 136,
+          "country": 80
+        },
+        "outro": {
+          "classical": 38396,
+          "unknown": 155478,
+          "folk": 8352,
+          "rock": 1500,
+          "soundtrack": 2108,
+          "electronic": 354,
+          "religious": 281,
+          "pop": 1086,
+          "other": 44,
+          "rnb_funk_soul": 142,
+          "world": 239,
+          "jazz_blues": 408,
+          "hiphop": 153,
+          "country": 81
+        },
+        "transition": {
+          "unknown": 29829,
+          "rock": 2514,
+          "soundtrack": 2768,
+          "electronic": 491,
+          "classical": 18125,
+          "rnb_funk_soul": 234,
+          "folk": 881,
+          "jazz_blues": 488,
+          "hiphop": 195,
+          "pop": 1402,
+          "world": 325,
+          "religious": 113,
+          "other": 61,
+          "country": 74
+        },
+        "density_transformation": {
+          "unknown": 20661,
+          "rock": 1575,
+          "electronic": 343,
+          "classical": 18364,
+          "soundtrack": 1635,
+          "folk": 676,
+          "jazz_blues": 248,
+          "pop": 917,
+          "world": 188,
+          "religious": 111,
+          "hiphop": 107,
+          "rnb_funk_soul": 90,
+          "other": 24,
+          "country": 34
+        },
+        "masked_track": {
+          "classical": 164138,
+          "unknown": 213894,
+          "soundtrack": 26181,
+          "rock": 26223,
+          "folk": 8662,
+          "jazz_blues": 6382,
+          "pop": 13648,
+          "world": 3608,
+          "rnb_funk_soul": 3249,
+          "hiphop": 1974,
+          "electronic": 3902,
+          "religious": 1307,
+          "other": 574,
+          "country": 966
+        },
+        "accompaniment": {
+          "classical": 65483,
+          "unknown": 61372,
+          "soundtrack": 6364,
+          "rock": 6252,
+          "folk": 3023,
+          "jazz_blues": 1552,
+          "pop": 3710,
+          "world": 1129,
+          "rnb_funk_soul": 728,
+          "hiphop": 565,
+          "religious": 444,
+          "electronic": 997,
+          "other": 160,
+          "country": 209
+        },
+        "track_completion": {
+          "unknown": 96211,
+          "classical": 76767,
+          "soundtrack": 11503,
+          "rock": 11964,
+          "folk": 3883,
+          "jazz_blues": 2895,
+          "pop": 6202,
+          "world": 1686,
+          "rnb_funk_soul": 1465,
+          "hiphop": 865,
+          "electronic": 1743,
+          "religious": 589,
+          "other": 251,
+          "country": 425
+        },
+        "whole_form": {
+          "unknown": 17424,
+          "soundtrack": 1808,
+          "classical": 14601,
+          "rock": 1418,
+          "folk": 1124,
+          "world": 184,
+          "pop": 1167,
+          "rnb_funk_soul": 245,
+          "jazz_blues": 350,
+          "hiphop": 261,
+          "electronic": 312,
+          "religious": 145,
+          "other": 38,
+          "country": 59
+        },
+        "orchestration": {
+          "unknown": 10536,
+          "classical": 3347,
+          "jazz_blues": 412,
+          "folk": 346,
+          "soundtrack": 1353,
+          "rnb_funk_soul": 242,
+          "pop": 743,
+          "rock": 1462,
+          "world": 138,
+          "hiphop": 85,
+          "other": 35,
+          "electronic": 230,
+          "religious": 67,
+          "country": 55
+        },
+        "arrangement_reduction": {
+          "unknown": 10536,
+          "classical": 3347,
+          "jazz_blues": 412,
+          "folk": 346,
+          "soundtrack": 1353,
+          "rnb_funk_soul": 242,
+          "pop": 743,
+          "rock": 1462,
+          "world": 138,
+          "hiphop": 85,
+          "other": 35,
+          "electronic": 230,
+          "religious": 67,
+          "country": 55
+        },
+        "arrangement_expansion": {
+          "unknown": 30827,
+          "soundtrack": 4548,
+          "classical": 10189,
+          "rock": 4257,
+          "jazz_blues": 1087,
+          "folk": 854,
+          "world": 410,
+          "rnb_funk_soul": 534,
+          "pop": 1809,
+          "hiphop": 301,
+          "electronic": 631,
+          "other": 68,
+          "country": 149,
+          "religious": 122
+        },
+        "texture_development": {
+          "unknown": 13405,
+          "soundtrack": 1700,
+          "classical": 7925,
+          "rock": 1552,
+          "jazz_blues": 400,
+          "folk": 414,
+          "pop": 743,
+          "rnb_funk_soul": 194,
+          "hiphop": 127,
+          "world": 178,
+          "electronic": 225,
+          "other": 40,
+          "religious": 83,
+          "country": 57
+        },
+        "motif_continuation": {
+          "unknown": 8885,
+          "classical": 3657,
+          "soundtrack": 973,
+          "rock": 1136,
+          "jazz_blues": 261,
+          "pop": 562,
+          "world": 172,
+          "folk": 336,
+          "rnb_funk_soul": 148,
+          "hiphop": 175,
+          "electronic": 206,
+          "other": 26,
+          "religious": 53,
+          "country": 15
+        }
+      },
+      "byEnsemble": {
+        "empty": 0,
+        "solo": 1966370,
+        "multitrack": 1347597
+      },
+      "byTypeAndEnsemble": {
+        "masked_bars": {
+          "empty": 0,
+          "solo": 543144,
+          "multitrack": 88391
+        },
+        "phrase_continuation": {
+          "empty": 0,
+          "solo": 723352,
+          "multitrack": 119827
+        },
+        "section_continuation": {
+          "empty": 0,
+          "solo": 255981,
+          "multitrack": 39031
+        },
+        "introduction": {
+          "empty": 0,
+          "solo": 193829,
+          "multitrack": 19500
+        },
+        "outro": {
+          "empty": 0,
+          "solo": 190033,
+          "multitrack": 18589
+        },
+        "transition": {
+          "empty": 0,
+          "solo": 28082,
+          "multitrack": 29418
+        },
+        "density_transformation": {
+          "empty": 0,
+          "solo": 31949,
+          "multitrack": 13024
+        },
+        "masked_track": {
+          "empty": 0,
+          "solo": 0,
+          "multitrack": 474708
+        },
+        "accompaniment": {
+          "empty": 0,
+          "solo": 0,
+          "multitrack": 151988
+        },
+        "track_completion": {
+          "empty": 0,
+          "solo": 0,
+          "multitrack": 216449
+        },
+        "whole_form": {
+          "empty": 0,
+          "solo": 0,
+          "multitrack": 39136
+        },
+        "orchestration": {
+          "empty": 0,
+          "solo": 0,
+          "multitrack": 19051
+        },
+        "arrangement_reduction": {
+          "empty": 0,
+          "solo": 0,
+          "multitrack": 19051
+        },
+        "arrangement_expansion": {
+          "empty": 0,
+          "solo": 0,
+          "multitrack": 55786
+        },
+        "texture_development": {
+          "empty": 0,
+          "solo": 0,
+          "multitrack": 27043
+        },
+        "motif_continuation": {
+          "empty": 0,
+          "solo": 0,
+          "multitrack": 16605
+        }
+      },
+      "worksYieldingByEnsemble": {
+        "empty": 0,
+        "solo": 195279,
+        "multitrack": 20484
+      },
+      "total": 3313967,
+      "totalCapped": 2155379,
+      "cap": 4,
+      "worksYieldingAny": 215763
+    }
+  },
+  "wellformedness": {
+    "every": 25,
+    "capPerTypeChecked": 2,
+    "byType": {
+      "masked_track": {
+        "ok": 4469,
+        "malformed": 0,
+        "reasons": {}
+      },
+      "track_completion": {
+        "ok": 3584,
+        "malformed": 0,
+        "reasons": {}
+      },
+      "masked_bars": {
+        "ok": 1283,
+        "malformed": 0,
+        "reasons": {}
+      },
+      "phrase_continuation": {
+        "ok": 1392,
+        "malformed": 0,
+        "reasons": {}
+      },
+      "section_continuation": {
+        "ok": 886,
+        "malformed": 0,
+        "reasons": {}
+      },
+      "transition": {
+        "ok": 655,
+        "malformed": 0,
+        "reasons": {}
+      },
+      "outro": {
+        "ok": 737,
+        "malformed": 0,
+        "reasons": {}
+      },
+      "density_transformation": {
+        "ok": 288,
+        "malformed": 0,
+        "reasons": {}
+      },
+      "whole_form": {
+        "ok": 1566,
+        "malformed": 0,
+        "reasons": {}
+      },
+      "introduction": {
+        "ok": 773,
+        "malformed": 0,
+        "reasons": {}
+      },
+      "accompaniment": {
+        "ok": 1492,
+        "malformed": 0,
+        "reasons": {}
+      },
+      "texture_development": {
+        "ok": 505,
+        "malformed": 0,
+        "reasons": {}
+      },
+      "motif_continuation": {
+        "ok": 414,
+        "malformed": 0,
+        "reasons": {}
+      },
+      "orchestration": {
+        "ok": 253,
+        "malformed": 0,
+        "reasons": {}
+      },
+      "arrangement_reduction": {
+        "ok": 253,
+        "malformed": 0,
+        "reasons": {}
+      },
+      "arrangement_expansion": {
+        "ok": 404,
+        "malformed": 0,
+        "reasons": {}
+      }
+    }
+  },
+  "nearDuplicates": {
+    "threshold": 0.5,
+    "works": 222820,
+    "worksIndexed": 221369,
+    "exactDuplicateGroups": 31529,
+    "worksInExactGroups": 75028,
+    "candidatePairs": 144586,
+    "nearPairs": 61885,
+    "groups": 34187,
+    "worksInGroups": 96801,
+    "distinctWorks": 160206,
+    "groupSizeHistogram": {
+      "2": 21207,
+      "3": 6812,
+      "4": 2898,
+      "5": 1352,
+      "6": 739,
+      "7": 435,
+      "8": 233,
+      "9": 148,
+      "10+": 363
+    },
+    "largestGroups": [
+      {
+        "size": 54,
+        "sample": [
+          "QmNUCayv2xCC9UXu2ytG7VQzHqUq3V4vRbAg8iPBqbQcVh",
+          "QmNjYk1LMqnMh3v8FMniG49ahBnuNBm4UdWSESzuhazqQ7",
+          "QmP4GbPZnM9RWKqxy1S8ZQE5vs41SWsfyJ2hX5qLc9qWKS"
+        ]
+      },
+      {
+        "size": 50,
+        "sample": [
+          "QmNdTYxDri5QhWJmyF725x8jN6iuir6VV9R8frCjZqnJe4",
+          "QmPRRxCQFB4Qd2xnxx3DztmxsXuJQ9GeaXzL7yRcdmbVDM",
+          "QmPxfz1QUuNnZPuC3XbRMdKrAj2EtWT9ZFxKw8WxBaE8Ct"
+        ]
+      },
+      {
+        "size": 50,
+        "sample": [
+          "QmP1SqJobwzhn2YRBUyuxxvyXfpSaj2KofDX6V6FP6PCkj",
+          "QmP2DpXTzAfdqAgVZypjNyRPmxbrHPtGqQ2zgjtkJyq8MT",
+          "QmP4CHu9Y8SBPhTL8iUAFsABtLv5R3zYD14wo6Vaij33Tq"
+        ]
+      },
+      {
+        "size": 44,
+        "sample": [
+          "QmPB9JRFudJzXTNDQjyMPgAHhymKYTbXy8HS1sur9nBfxH",
+          "QmPr32qZTpeA1nJh6t3q6fgJBEZhU6DJiZ4TVWUTkEXVZd",
+          "QmQhPoVDBo5Famgj7YU8BrrQ2wxi7DxbuUVsYYRo3zP1mX"
+        ]
+      },
+      {
+        "size": 38,
+        "sample": [
+          "QmNfhXcan8iNdr4Y9wpshExTxzAqhsA77TbCQbLczZcaB8",
+          "QmNj2GeorJ51BzetsSqqERdKRkTVn6Md3Jy5wVoTD67xSU",
+          "QmNraN3t4dMSdKfku9WA64cvt6MGGABrr12a53DosWEGjs"
+        ]
+      }
+    ],
+    "multitrack": {
+      "works": 20638,
+      "inGroups": 1720,
+      "groupsTouchingMultitrack": 672,
+      "distinct": 19590
+    },
+    "validation": {
+      "method": "Ground truth from PDMX.csv metadata: two admitted works are the same song when their normalised (song_name | composer_name) digests are equal, taken from title groups of size 2..5. `declared` = those pairs (same song; possibly a genuinely different arrangement, so recall here is a LOWER bound). `strict` = the same pairs that also share a small PDMX version group — the closest the table gets to same-arrangement. `random` = pairs with different titles and different version groups. shareAtOrAbove is the share of pairs with both signatures whose estimated Jaccard clears each threshold: recall on declared/strict, false-positive rate on random.",
+      "columnsNotUsedAsGroundTruth": "PDMX's best_path / best_arrangement / best_unique_arrangement columns each collapse tens of thousands of unrelated admitted rows onto one pointer (largest admitted groups: 51,549 / 50,346 / 50,137), and only ~53 % of their size-2..5 groups share a song title, so they cannot serve as duplicate ground truth. They are still reported for reference.",
+      "declared": {
+        "pairs": 46943,
+        "bothIndexed": 46526,
+        "exactEqual": 19716,
+        "groupedAtRunThreshold": 25224,
+        "atOrAbove": {
+          "0.3": 27118,
+          "0.4": 26155,
+          "0.5": 25189,
+          "0.6": 24067,
+          "0.7": 23283,
+          "0.8": 22378,
+          "0.9": 21484
+        },
+        "shareAtOrAbove": {
+          "0.3": 0.5829,
+          "0.4": 0.5622,
+          "0.5": 0.5414,
+          "0.6": 0.5173,
+          "0.7": 0.5004,
+          "0.8": 0.481,
+          "0.9": 0.4618
+        },
+        "groupedShare": 0.5373
+      },
+      "strict": {
+        "pairs": 5679,
+        "bothIndexed": 5600,
+        "exactEqual": 4429,
+        "groupedAtRunThreshold": 4888,
+        "atOrAbove": {
+          "0.3": 4918,
+          "0.4": 4876,
+          "0.5": 4830,
+          "0.6": 4776,
+          "0.7": 4727,
+          "0.8": 4675,
+          "0.9": 4595
+        },
+        "shareAtOrAbove": {
+          "0.3": 0.8782,
+          "0.4": 0.8707,
+          "0.5": 0.8625,
+          "0.6": 0.8529,
+          "0.7": 0.8441,
+          "0.8": 0.8348,
+          "0.9": 0.8205
+        },
+        "groupedShare": 0.8607
+      },
+      "random": {
+        "pairs": 60000,
+        "bothIndexed": 60000,
+        "exactEqual": 0,
+        "groupedAtRunThreshold": 0,
+        "atOrAbove": {
+          "0.3": 0,
+          "0.4": 0,
+          "0.5": 0,
+          "0.6": 0,
+          "0.7": 0,
+          "0.8": 0,
+          "0.9": 0
+        },
+        "shareAtOrAbove": {
+          "0.3": 0,
+          "0.4": 0,
+          "0.5": 0,
+          "0.6": 0,
+          "0.7": 0,
+          "0.8": 0,
+          "0.9": 0
+        },
+        "groupedShare": 0
+      },
+      "titleGroups": {
+        "groups": 133491,
+        "groupsOfTwoToFive": 29395,
+        "largestGroup": 276,
+        "worksWithoutTitle": 54
+      },
+      "pdmxVersionGroups": {
+        "groups": 77555,
+        "groupsOfTwoToFive": 10626,
+        "largestGroup": 50137
+      },
+      "pdmxDeduplicatedFlagCount": 77321
+    },
+    "groupsFile": ".corpus-data/corpus-profile/near-duplicate-groups.json (git-ignored)"
+  },
+  "splits": {
+    "rule": "hashSplit(workId) 90/5/5; a duplicate group takes the split of its smallest member",
+    "movedByGroup": 11542,
+    "groupsCrossingSplitsBeforeGrouping": 8275,
+    "groupsCrossingSplitsAfterGrouping": 0,
+    "bySplit": {
+      "train": {
+        "works": 200545,
+        "multitrackWorks": 18555,
+        "tasks": 2984721,
+        "tasksCapped": 1940197,
+        "tasksByType": {
+          "masked_bars": 569041,
+          "phrase_continuation": 759772,
+          "section_continuation": 265889,
+          "introduction": 191981,
+          "outro": 187784,
+          "transition": 51774,
+          "density_transformation": 40540,
+          "masked_track": 427247,
+          "accompaniment": 137359,
+          "track_completion": 194894,
+          "whole_form": 35112,
+          "orchestration": 17039,
+          "arrangement_reduction": 17039,
+          "arrangement_expansion": 49958,
+          "texture_development": 24358,
+          "motif_continuation": 14934
+        }
+      },
+      "val": {
+        "works": 11354,
+        "multitrackWorks": 1036,
+        "tasks": 166683,
+        "tasksCapped": 108668,
+        "tasksByType": {
+          "masked_bars": 31772,
+          "phrase_continuation": 42286,
+          "section_continuation": 14687,
+          "introduction": 10882,
+          "outro": 10586,
+          "masked_track": 24026,
+          "track_completion": 10887,
+          "accompaniment": 7324,
+          "whole_form": 2025,
+          "transition": 2842,
+          "density_transformation": 2221,
+          "arrangement_expansion": 2883,
+          "texture_development": 1318,
+          "motif_continuation": 850,
+          "orchestration": 1047,
+          "arrangement_reduction": 1047
+        }
+      },
+      "test": {
+        "works": 10921,
+        "multitrackWorks": 1047,
+        "tasks": 162563,
+        "tasksCapped": 106514,
+        "tasksByType": {
+          "masked_bars": 30722,
+          "phrase_continuation": 41121,
+          "section_continuation": 14436,
+          "introduction": 10466,
+          "outro": 10252,
+          "transition": 2884,
+          "density_transformation": 2212,
+          "masked_track": 23435,
+          "track_completion": 10668,
+          "accompaniment": 7305,
+          "motif_continuation": 821,
+          "whole_form": 1999,
+          "orchestration": 965,
+          "arrangement_reduction": 965,
+          "arrangement_expansion": 2945,
+          "texture_development": 1367
+        }
+      }
+    }
+  },
+  "tasksAfterDedup": {
+    "total": 2688993,
+    "totalCapped": 1630222,
+    "byType": {
+      "masked_bars": 464860,
+      "phrase_continuation": 622119,
+      "section_continuation": 213460,
+      "introduction": 152337,
+      "outro": 148532,
+      "transition": 53427,
+      "density_transformation": 41664,
+      "masked_track": 462190,
+      "track_completion": 210816,
+      "accompaniment": 147151,
+      "whole_form": 37784,
+      "orchestration": 18605,
+      "arrangement_reduction": 18605,
+      "arrangement_expansion": 54860,
+      "texture_development": 26381,
+      "motif_continuation": 16202
+    },
+    "byEnsemble": {
+      "empty": 0,
+      "solo": 1378845,
+      "multitrack": 1310148
+    },
+    "worksByEnsemble": {
+      "empty": 2,
+      "solo": 140616,
+      "multitrack": 19588
+    }
+  },
+  "outputs": {
+    "works": ".corpus-data/corpus-profile/works.ndjson (git-ignored, one WorkProfile per line)"
+  }
+}

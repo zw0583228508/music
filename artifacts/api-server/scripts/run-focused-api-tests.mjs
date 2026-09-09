@@ -112,6 +112,12 @@ const suites = {
       // work) and Tier B (arranger tasks extracted from each score).
       ["src/lib/datasetRightsProof.test.ts", "dataset-rights-proof.test.mjs"],
       ["src/lib/arrangerTaskExtraction.test.ts", "arranger-task-extraction.test.mjs"],
+      // Wave Q, Q-05 data factory (PR-65): the extended Tier B task types over
+      // one cell representation, near-duplicate groups for the split, and the
+      // per-work corpus profile the foundation decision reads.
+      ["src/lib/arrangerTaskTypes.test.ts", "arranger-task-types.test.mjs"],
+      ["src/lib/nearDuplicate.test.ts", "near-duplicate.test.mjs"],
+      ["src/lib/corpusProfile.test.ts", "corpus-profile.test.mjs"],
       // Wave Q, Model Discovery: the registry enforces the three-layer licence
       // discipline; nothing ships on an unread licence or uncleared works.
       ["src/lib/globalModelRegistry.test.ts", "global-model-registry.test.mjs"],

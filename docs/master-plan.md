@@ -2685,6 +2685,114 @@ any of it.
   and says so; a non-classical slice, at least one rated session, and the
   measured cost of a LoRA pilot are named as what makes it final.
 
+- **PR-65** ✅ — `data-factory-corpus-profile` (Wave Q, Q-05 — data factory:
+  corpus quality, extended Tier B task types, deduplication). Evidence:
+  `docs/evidence/corpus-profile.json`; report:
+  `docs/model-discovery/corpus-profile.md`.
+
+  **The corpus is now measured, not sampled.** `scripts/profile-corpus.mjs`
+  profiled **every admitted PDMX file — 222,820 of 222,820, 0 parse
+  failures** — in 474 s over 10 worker threads (470 files/s, 4,658
+  worker-CPU-seconds; 578 s wall). One `WorkProfile` per work goes to the
+  git-ignored `.corpus-data/corpus-profile/works.ndjson`; only the aggregate is
+  evidence. The pass was run twice from a clean bundle and the two evidence
+  documents are **identical field-for-field apart from `ranAt` and the timing
+  block**. No sampling was needed and none was used, so every number below has
+  n = 222,820.
+
+  **`corpusProfile.ts`** — per work: track count, distinct GM programs,
+  ARRANGER_REMI families, solo/multitrack/empty, bars, every metre plus the
+  *dominant* one and a pickup-bar detector, tempi, `keyFromNotes`, harmonic
+  complexity via `chordsFromNotes` (distinct symbols, chord-change rate, share
+  of bars named at all), note density per family, a rest-delimited phrase
+  proxy, the melody family, token count, the CSV's genre/tag columns folded
+  onto a genre family, a content fingerprint, and the uncapped count of every
+  Tier B task type the score offers — plus the aggregation, which reports the
+  task pool split by ensemble class so solo supply is never mistaken for
+  arrangement supply.
+
+  **`arrangerTaskTypes.ts`** — the extended Tier B set over **one**
+  representation: a task is two disjoint sets of *cells* (bar, family), the
+  context and the target, and **the target is always the human's own notes**;
+  a score that does not satisfy a type's rule yields nothing for that type.
+  Sixteen types: `masked_track`, `track_completion`, `masked_bars`,
+  `phrase_continuation`, `section_continuation` (16 → 16 bars),
+  `introduction`, `transition`, `outro`, `accompaniment`, `orchestration`,
+  `arrangement_reduction`, `arrangement_expansion`, `texture_development`,
+  `motif_continuation`, `density_transformation`, `whole_form`. Shared rules:
+  ≥ 8 target notes sounding in ≥ half the target bars, the same for the
+  context, cells never shared, windows of one type never overlapping.
+  `extendedTaskIsWellFormed` materialises the token slices and checks that the
+  target detokenizes to exactly the notes claimed, that no target cell leaks
+  into the context and that no context note falls outside its regions.
+  **`arrangerTaskExtraction.ts` is untouched** — this is additive, and its
+  own suite still passes unchanged.
+
+  **`nearDuplicate.ts`** — `fingerprintMidi(parsedMidi, workId)` (SHA-256 of
+  the grid note stream ignoring velocity and tempo, plus bar-bigram shingles of
+  (family, eighth-note onset, pitch class) → MinHash-64),
+  `nearDuplicateGroups(fingerprints)` (LSH 16×4, Jaccard ≥ 0.5,
+  union-find) and `assignSplitsWithGroups` — the split rule any dataset
+  builder can call.
+
+  **What the corpus is.** **20,638 multitrack works (9.26 %)**, 202,131 solo,
+  51 empty — PR-53's 9 % confirmed on the whole corpus. The median multitrack
+  work is a **duo** (families p50 2, p90 5; tracks p50 4; bars p50 52). 1,414
+  distinct ensembles but an effective count of 97.2; the commonest is
+  `keys + synth` (3,333), largely a notation artefact. Bass appears in 2,745
+  multitrack works and guitar in 2,294, against keys' 14,712 — PR-53's "bass
+  and guitar thin" with numbers on it. 74 % of works carry no genre;
+  **3,197 labelled non-classical multitrack works exist and none is labelled
+  Mizrahi or Israeli**, so PR-59's open pop/dance question is a property of the
+  corpus, not a gap in that experiment.
+
+  **What it can teach.** **3,313,967 tasks** across the sixteen types from
+  215,763 works — **1,347,597 from multitrack works** (20,484 of 20,638 yield
+  at least one), 1,966,370 from solo scores; **1,019,817** from the nine types
+  that require an arrangement to exist; **39,136 whole-form tasks** from 14,986
+  works. Capped at 4 per (work, type): 2,155,379. Target balance over the
+  multitrack-only types is far better than the original single type — keys
+  20.1 %, then strings 166k, reed 165k, drums 164k, brass 150k, pipe 146k.
+  **18,954 tasks were materialised into tokens and checked; 0 malformed**,
+  across all sixteen types.
+
+  **Duplicates.** **31,529 exact groups holding 75,028 works (33.7 %)**;
+  including near-duplicates, **34,187 groups holding 96,801 works (43.4 %)**
+  → **160,206 distinct works**. Multitrack works are far cleaner: only 8.3 %
+  sit in a group, and **19,588 independent multitrack works** survive.
+  Validated against PDMX metadata: at threshold 0.5 the measure recovers
+  **86.3 %** of pairs the metadata calls the same arrangement, 54.1 % of pairs
+  that merely share a song title and composer (the rest being real
+  re-arrangements it should *not* group), and **0 false positives in 60,000
+  random pairs at every threshold from 0.3 to 0.9**. **The split leak PR-53
+  named as an open risk is closed**: 8,275 duplicate groups would have
+  straddled the 90/5/5 hash split; after `assignSplitsWithGroups` **0 do**, at
+  the cost of moving 11,542 works.
+
+  Decision report §1's data row is updated with these numbers and cites this
+  evidence.
+
+  Suites: arrangerTaskTypes 16, nearDuplicate 8, corpusProfile 9 (registered in
+  `scripts/run-focused-api-tests.mjs`); arrangerTaskExtraction unchanged and
+  green; typecheck green.
+
+  **Honest limits.** (1) **The tokenizer grid uses each file's *first* metre,
+  and for 103,469 works (46 %) that is not the dominant one** — usually an
+  anacrusis exported as a one-bar metre change (97,691 works); 96,660 needed
+  metre approximation. Bar indices in those works are shifted and every window
+  cut from them is cut in the wrong place. This is the largest data-quality
+  defect found, it lives in `arrangerRemi.ts`, and **nothing here corrects for
+  it** — the numbers are what the current tokenizer sees. (2) The phrase
+  figure is a *breathing* proxy (rest-delimited runs, median 24 beats for
+  multitrack works), not phrase length. (3) Chords are named in only a third of
+  bars at the median, so any chord conditioning must treat "no chord" as a
+  value. (4) Near-duplicate detection is **pitch-exact**: a transposed
+  re-arrangement is not grouped, and 1,451 works are too short to index. (5)
+  Duplicate grouping is transitive, which is right for a split but inflates the
+  largest groups. (6) **No task was written to disk as training data** — these
+  are supply counts; balancing, capping and shard writing are the next PR, and
+  **no model has consumed one of these tasks**.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
