@@ -1,0 +1,157 @@
+{
+  "title": "Basic Pitch on a real FULL_SONG, end to end through a public lease — live (Wave Q, Q-01)",
+  "date": "2026-09-09",
+  "path": "real mp3 already in the repo -> upload -> lease minted -> Cloudflare tunnel -> Modal Basic Pitch -> Song Model",
+  "ids": {
+    "projectId": "1ae91c77-aea3-4b7d-8f9f-86ae88972fa3",
+    "sourceId": "70dbbb1c-faf1-47e0-9646-83e828028d43"
+  },
+  "song": {
+    "file": "services/beat-this-worker/fixtures/real-audio-source.mp3",
+    "note": "A real recording already in the repository, used by the beat-this worker's isolation tests. Not synthesised.",
+    "bytes": 9199873,
+    "durationSeconds": 212.4572,
+    "sampleRate": 44100,
+    "channels": 2
+  },
+  "transport": {
+    "apiPort": 5000,
+    "apiBinding": "the API itself was never exposed; /api/dev-login stayed on localhost",
+    "assetSurfacePort": 5010,
+    "assetSurfaceBinding": "127.0.0.1, reached only through the operator's Cloudflare tunnel",
+    "publicBase": "https://goat-jewellery-eagle-worthy.trycloudflare.com",
+    "tunnelReachabilityCheck": {
+      "request": "GET /a/<43 'a' characters>",
+      "status": 404,
+      "body": "not found",
+      "meaning": "the tunnel reaches this asset surface and nothing else; an unleased token is refused with the same bodyless 404 as every other refusal"
+    }
+  },
+  "steps": [
+    {
+      "step": "1. asset surface listening",
+      "log": [
+        "[09:19:07.742] INFO (28004): analysis_asset_surface_listening",
+        "    port: 5010",
+        "    base: \"https://goat-jewellery-eagle-worthy.trycloudflare.com\""
+      ]
+    },
+    {
+      "step": "2. lease minted and served to the cloud worker",
+      "log": [
+        "[09:19:27.856] INFO (28004): analysis_asset_served",
+        "    objectName: \"private/uploads/085bc42c-dbe2-4187-b9ae-69661cb40842\"",
+        "    bytes: 9199873"
+      ],
+      "meaning": "The byte count matches the uploaded mp3 exactly. One object left this machine, addressed by a 256-bit single-use token; no API route was exposed."
+    },
+    {
+      "step": "3. the Modal worker downloaded the audio and ran real inference",
+      "workerLog": [
+        "Predicting MIDI for /tmp/music-ai-psncejb2/source.mp3...",
+        "INFO:     172.20.8.2:46200 - \"POST /analyze HTTP/1.1\" 200 OK",
+        "   POST /analyze -> 200 OK  (duration: 7.31 s, execution: 7.18 s)"
+      ],
+      "earlierRunSameDay": "POST /analyze -> 200 OK (duration: 39.1 s, execution: 39.0 s) on the first fetch of this file, before the result was cached",
+      "meaning": "The worker wrote the file into its own /tmp and ran the model. It could only have obtained the audio through the lease URL: it has no other route to this machine."
+    },
+    {
+      "step": "4. Basic Pitch returned note events",
+      "providerProvenance": {
+        "capability": "transcription",
+        "provider": "BASIC_PITCH",
+        "version": "0.4.0",
+        "status": "ready",
+        "attempts": 1
+      },
+      "noteEvents": 1876,
+      "providerConfidence": 0.473193412849199,
+      "meaning": "Real inference on a real recording, not a health check."
+    },
+    {
+      "step": "5. Song Model persisted",
+      "status": "ready",
+      "httpStatus": 200,
+      "version": 1,
+      "key": "A minor",
+      "bpm": 60.6,
+      "meter": "4/4",
+      "counts": {
+        "melodyNotes": 0,
+        "bassNotes": 0,
+        "chords": 0,
+        "beats": 215,
+        "bars": 53,
+        "sections": 7
+      }
+    },
+    {
+      "step": "6. what the transcription actually contributed",
+      "keyProvenance": [
+        {
+          "capability": "key_analysis",
+          "provider": "LOCAL_SIGNAL_ANALYZER_V1",
+          "version": "1.0.0",
+          "status": "fallback"
+        },
+        {
+          "capability": "key_analysis",
+          "provider": "TRANSCRIPTION_KEY_V1",
+          "version": "1.0.0",
+          "status": "fallback"
+        }
+      ],
+      "fieldStatusKey": {
+        "status": "low_confidence",
+        "confidence": 0.375,
+        "providers": ["TRANSCRIPTION_KEY_V1"],
+        "message": "Only one independent provider supports this value; review before arranging."
+      },
+      "meaning": "The key in this Song Model was derived from Basic Pitch's 1876 note events by Krumhansl-Kessler profile correlation. It is marked low_confidence with one supporting provider, which is what it is."
+    },
+    {
+      "step": "7. what the transcription did NOT become",
+      "fieldStatusMelody": {
+        "status": "not_available",
+        "confidence": 0.473193412849199,
+        "providers": [],
+        "message": "1876 transcribed event(s) from BASIC_PITCH did not meet the canonical melody threshold; a single transcription provider on a full mix is not a melodic line. Separate a vocal or lead stem first, or configure a second transcription provider."
+      },
+      "meaning": "No gate was lowered to make this run look better. See 'refusedByDesign' below."
+    }
+  ],
+  "refusedByDesign": {
+    "what": "melodyNotes is 0 even though 1876 note events came back.",
+    "why": "fuseCanonicalNotes admits a lone transcription provider only when note.confidence x result.confidence x providerReliability reaches SOLE_PROVIDER_CONFIDENCE (0.85). Basic Pitch's aggregate confidence on this full mix was 0.473, so no single note can reach the bar, and dense polyphonic clusters additionally trip the ambiguity rule.",
+    "isThisABug": "No. Basic Pitch on a full mix returns every instrument's notes at once. That is a polyphonic transcription of a mix, not a melodic line, and calling it 'the melody' would be false. The gate is doing its job.",
+    "whatWouldFixItProperly": "Separate a vocal or lead stem first (Demucs / BS-RoFormer, neither configured on this machine) and transcribe that, or configure a second independent transcription provider so the two corroborate. Both are capability work, not threshold work.",
+    "whatWasNotDone": "SOLE_PROVIDER_CONFIDENCE was not lowered. No validation, SSRF, auth or licence gate was bypassed or weakened anywhere in this run."
+  },
+  "fixesThisRunRequired": [
+    {
+      "problem": "The analysis failed at 68% with 'Analysis providers returned an invalid Song Model. Key analysis is required.' — before any transcribed note could be stored.",
+      "cause": "The only key provider is ESSENTIA, which is not configured here. The local spectral key detector returns null on a real mixed recording: drums, bass harmonics and reverb smear the spectrum until no pitch class clears its peak-share and separation thresholds.",
+      "fix": "keyFromNotes.ts — Krumhansl-Kessler profile correlation over the duration-weighted pitch-class distribution of the transcribed notes. It refuses rather than guesses below 12 notes or 4 distinct pitch classes, and its confidence is capped at 0.75 so a dedicated key model always outranks it."
+    },
+    {
+      "problem": "With the estimator wired in, the analysis still failed for want of a key.",
+      "cause": "reconcileAnalysisField admits a single observation only when confidence x providerReliability >= 0.32. TRANSCRIPTION_KEY_V1 was absent from the reliability table and took the 0.35 unknown-provider default, so it could never clear the bar.",
+      "fix": "Registered TRANSCRIPTION_KEY_V1 at key: 0.5 — above the local spectral baseline (0.45), because the notes are already found rather than guessed from a smeared spectrum, and well below ESSENTIA (0.82), which is what it must never be mistaken for. The 0.32 admission threshold was not changed."
+    },
+    {
+      "problem": "A rejected Song Model discarded every provider result that explained why it was rejected.",
+      "fix": "song_model_rejected now logs the issues, every provider's status and error, the transcription counts, and each key candidate with its confidence. This is what turned 'Key analysis is required' into a diagnosis."
+    },
+    {
+      "problem": "The melody field reported 'No transcription provider returned a melodic line' when a provider had returned 1876 events that were refused as canon.",
+      "fix": "The message now says how many events came back, from which provider, why they were refused, and what would fix it."
+    }
+  ],
+  "honestLimits": [
+    "melodyNotes, bassNotes and chords are all 0. Basic Pitch alone on a full mix cannot fill them, and this run does not pretend otherwise.",
+    "The key is low_confidence with a single supporting provider. It is usable evidence, not a verified fact.",
+    "bpm 60.6 comes from the local structure fallback, not from a beat tracker; BEAT_THIS and MADMOM are not configured here.",
+    "The tunnel is an operator-run Cloudflare quick tunnel with a rotating hostname. It proves reachability; it is not a deployment.",
+    "One song. This is a smoke test of a transport and a repair, not a benchmark."
+  ]
+}
