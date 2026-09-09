@@ -1900,6 +1900,52 @@ any of it.
   orchestrator does not build a harmony plan, so no arrangement in the repo
   sounds different because of this PR.
 
+- **PR-44** ✅ — `style-grammar` (Wave Q, Q-02): measurements turned into
+  instructions, with the strength each one has earned.
+
+  A fingerprint (PR-27) says how a reference *behaves* — swings at 0.62, chords
+  change every bar, the melody moves stepwise in four-beat phrases. Those are
+  measurements, and a composer cannot act on a measurement. Turning one into an
+  instruction with a weight is where the judgement lives, and three rules govern
+  it because the obvious implementation gets each one wrong.
+
+  **A neutral measurement produces no rule.** A swing ratio of 0.51 is a
+  straight feel measured with noise, not a subtle swing; emitting a
+  weak-but-present swing rule from it makes every song slightly swung. A push of
+  six milliseconds is grid noise, not a feel. Sitting mid is where music sits by
+  default. Such measurements are dropped and **listed in `omitted`**, so the
+  silence is visible rather than accidental — a neutral reference produces an
+  empty grammar and eleven recorded reasons.
+
+  **Weight follows distance from neutral.** A full triplet swing is not a weak
+  suggestion and comes back above 0.9; a mildly swung reference produces a rule
+  other considerations may override. Rules are returned strongest first, so a
+  composer under pressure keeps the top of the list.
+
+  **Thin evidence weakens every rule at once.** Under 45 seconds or two
+  sections, a fingerprint describes a passage rather than a style: every weight
+  is scaled down and the basis says why. Even a full reference records that it is
+  **one reference, not a genre**.
+
+  `styleGrammarSlot()` fills the Q-02 slot PR-42 declared, and an empty grammar
+  fills it with the reason rather than with nothing: "no measurement was far
+  enough from neutral" is a finding, and a composer told that writes plainly
+  instead of hunting for a character that was never there. The version string
+  carries `:thin` or `:full`.
+
+  Content-free by construction — it reads only statistics, so it cannot carry a
+  note, chord, lyric or sample out of the reference.
+
+  Suites: styleGrammar 9, registered in the `music-engines` group; typecheck
+  green.
+
+  **Honest limits.** Nothing consumes the grammar yet; no composer reads its
+  directives, so no arrangement sounds different because of this PR. The
+  thresholds (0.12 swing span, 8 ms microtiming floor, the neutral points) are
+  reasoned defaults, **not fitted to data** — the Q-00 corpus is what would
+  calibrate them, and it is not built. A grammar still describes one reference:
+  nothing here generalises across a genre.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

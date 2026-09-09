@@ -36,6 +36,12 @@ const suites = {
         "part-generation-context-v2.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, Q-02: statistics turned into instructions a composer can follow.
+      [
+        "src/lib/styleGrammar.test.ts",
+        "style-grammar.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // Wave Q, Q-04: which octave each voice takes, and how it moves.
       [
         "src/lib/voiceLeading.test.ts",
