@@ -1854,6 +1854,52 @@ any of it.
   `upgradePartGenerationRequest` must be called with the sibling parts by
   whoever holds them; the orchestrator does not pass them yet.
 
+- **PR-43** ✅ — `voice-leading` (Wave Q, Q-04): which octave each voice takes,
+  and how it moves.
+
+  Choosing chord tones is not arranging. Choosing the octave and the motion is.
+  Two arrangements can share every chord symbol and every instrument and sound a
+  century apart entirely because of this, and nothing in the repo decided it
+  before this PR.
+
+  **Hard constraints reject; soft costs trade.** Out of range, voices crossed,
+  upper voices spaced beyond an octave, a pitch that is not in the chord, or a
+  slash chord's bass ignored — a voicing with any of these is not scored, it is
+  not a candidate. Total motion, parallel fifths and octaves, leaps beyond a
+  fifth, direct perfect intervals in the outer voices, doubling the third or the
+  seventh, and common tones thrown away are weighted and traded. A parallel
+  fifth costs more than any single step could save, because it is the thing the
+  writing is trying to avoid rather than a slightly worse option.
+
+  **The search is exact, and where it stops being exact it says so.** Every soft
+  cost depends on one chord and the one before it, so the objective is a chain
+  and dynamic programming over the candidate voicings gives the global optimum —
+  in `chords × candidates²` rather than `candidates^chords`. A test builds a
+  progression that returns home and asserts the solver never loses to a greedy
+  pass, which is the whole point: greedy takes the cheapest step into chord 2
+  and pays for it at chord 5. When a chord admits more candidates than the cap,
+  the result reports `optimality: "beam"` and names the capped bar, and the
+  harmony-plan version string carries `:exact` or `:beam` so a beam result
+  cannot be read as a proof.
+
+  An unsolvable progression names the bar and the reason — usually a voice range
+  that cannot hold the chord at all — instead of returning nothing.
+  `harmonyPlanSlot()` fills the Q-04 slot that PR-42 declared, and fills it with
+  the reason on failure: a composer told why there is no plan can still write,
+  one handed an empty plan cannot tell it from "play nothing".
+
+  Suites: voiceLeading 12, registered in the `music-engines` group; typecheck
+  green.
+
+  **Honest limits.** This is a chain solver, not a constraint solver. A rule
+  spanning non-adjacent chords — "no voice may sit on the same pitch four times
+  in this phrase" — is outside a chain objective and is **not** supported; the
+  Wave Q plan named OR-Tools CP-SAT for that, and no CP-SAT is present or
+  claimed. Key-dependent rules (leading-tone resolution, modal mixture) are not
+  implemented: no key is passed in. Nothing calls the solver yet — the
+  orchestrator does not build a harmony plan, so no arrangement in the repo
+  sounds different because of this PR.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

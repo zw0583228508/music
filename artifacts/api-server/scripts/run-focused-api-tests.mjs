@@ -36,6 +36,12 @@ const suites = {
         "part-generation-context-v2.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, Q-04: which octave each voice takes, and how it moves.
+      [
+        "src/lib/voiceLeading.test.ts",
+        "voice-leading.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       ["src/lib/candidateRanking.test.ts", "candidate-ranking.test.mjs"],
       ["src/lib/candidateQuality.test.ts", "candidate-quality.test.mjs"],
       ["src/lib/candidateRepair.test.ts", "candidate-repair.test.mjs"],
