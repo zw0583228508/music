@@ -28,6 +28,12 @@ smoke_volume = modal.Volume.from_name(SMOKE_VOLUME_NAME, create_if_missing=True)
 
 @app.function(
     image=image,
+    # The runtime being validated is a CUDA runtime: Torch is the cu128 build and
+    # so is TorchCodec, whose native ops library links CUDA libraries at load
+    # time. Validating it on a CPU-only container tested an environment MOSS
+    # never serves in. A T4 is the cheapest CUDA container that answers the
+    # question honestly; no model is downloaded or run here.
+    gpu="T4",
     volumes={SMOKE_MOUNT: smoke_volume},
     env=worker_environment(),
     timeout=1800,

@@ -13,11 +13,11 @@
     "cuda": "12.8",
     "torch": "2.9.1+cu128",
     "torchaudio": "2.9.1+cu128",
-    "torchcodec": "0.8.0",
+    "torchcodec": "0.8.0+cu128",
     "torchcodec_wheel": {
-      "variant": "cpu",
-      "filename": "torchcodec-0.8.0-cp312-cp312-manylinux_2_28_x86_64.whl",
-      "sha256": "2ec2e874dfb6fbf9bbeb792bea56317529636e78db175f56aad1e4efd6e12502"
+      "variant": "cu128",
+      "filename": "torchcodec-0.8.0+cu128-cp312-cp312-manylinux_2_28_x86_64.whl",
+      "sha256": "c0195d81784f48c0d9d265c0d72324a65e1cd1e70c8213b95b4ff483493621ab"
     },
     "transformers": "4.57.1",
     "accelerate": "1.12.0",
@@ -55,7 +55,9 @@
     "bytes": 4027752,
     "sha256": "460f18e2333b27d6aff92cf2dc8181232a34ef5d08212ae74240f1ca93561540"
   },
-  "license": {"name": "Apache-2.0"},
+  "license": {
+    "name": "Apache-2.0"
+  },
   "models": {
     "MOSS_MUSIC_INSTRUCT": {
       "repository": "OpenMOSS-Team/MOSS-Music-8B-Instruct",

@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "providerFamily": "MOSS_MUSIC",
   "classification": "BLOCKED_UPSTREAM",
-  "observedAt": "2026-09-07",
+  "observedAt": "2026-09-09",
   "source": {
     "repository": "OpenMOSS/MOSS-Music",
     "revision": "ad107c7ddaa06de168a0dfbc18d3e1e6a40c0e5e",
@@ -18,11 +18,11 @@
     "cuda": "12.8",
     "torch": "2.9.1+cu128",
     "torchaudio": "2.9.1+cu128",
-    "torchcodec": "0.8.0",
+    "torchcodec": "0.8.0+cu128",
     "torchcodecWheel": {
-      "variant": "cpu",
-      "filename": "torchcodec-0.8.0-cp312-cp312-manylinux_2_28_x86_64.whl",
-      "sha256": "2ec2e874dfb6fbf9bbeb792bea56317529636e78db175f56aad1e4efd6e12502"
+      "variant": "cu128",
+      "filename": "torchcodec-0.8.0+cu128-cp312-cp312-manylinux_2_28_x86_64.whl",
+      "sha256": "c0195d81784f48c0d9d265c0d72324a65e1cd1e70c8213b95b4ff483493621ab"
     },
     "ffmpeg": "7.1.1",
     "transformers": "4.57.1",
@@ -41,17 +41,18 @@
     "imageBuilt": true,
     "verifyFunctionCreated": true,
     "verifyFunctionExecuted": true,
-    "nativePreflightLocation": "remote-verify-function",
+    "nativePreflightLocation": "remote-verify-function-on-t4-gpu",
     "dependencyResolutionPassed": true,
     "pipCheckPassed": true,
     "pipCheckOutput": "No broken requirements found.",
     "mediaPreflightPassed": false,
-    "failureStage": "torchcodec-native-load",
-    "failingLibrary": "libtorchcodec_custom_ops7.so",
-    "evidenceFile": "release-evidence/modal-compatibility-failure.json",
+    "failureStage": "torchcodec-version-incompatible-with-torch",
+    "failingLibrary": "libtorchcodec",
+    "evidenceFile": "release-evidence/torchcodec-diagnosis.json",
     "transcriptFile": "release-evidence/modal-compatibility-failure.txt",
     "transcriptSha256": "ee392504688ce175bf67143d73b785993929632ccf62cea0c4c48984016b9828",
-    "fullModalRunLogSha256": "86a595e68f576110b9d0272acb12983a45d9a70cd7b0d89b616680b598baa097"
+    "fullModalRunLogSha256": "86a595e68f576110b9d0272acb12983a45d9a70cd7b0d89b616680b598baa097",
+    "verifiedOnGpu": true
   },
   "providers": {
     "MOSS_MUSIC_INSTRUCT": {
@@ -77,7 +78,7 @@
         "apiConnected": false
       },
       "blockers": [
-        "The official TorchCodec 0.8.0 CPU wheel reaches libtorchcodec_custom_ops7.so but cannot load it with the pinned Torch 2.9.1+cu128 and FFmpeg 7.1.1 runtime; required WAV/MP3 media preflight is therefore incomplete."
+        "TorchCodec 0.8.0 cannot load against Torch 2.9.1+cu128. TorchCodec itself now names the cause: \"Could not load libtorchcodec ... The PyTorch version (2.9.1+cu128) is not compatible with this version of TorchCodec.\" Three earlier suspicions were eliminated first: the wheel variant (the CPU build was replaced by the CUDA-matched build of the same version), the wheel-provenance comparison (a local version is served percent-encoded and could never match), and the test environment (media decode was being validated on a CPU-only container, which is not a runtime MOSS serves in; it now runs on a GPU). The resolution is the runtime upgrade upstream already requires - MOSS-Music's own pyproject pins TorchCodec 0.9.* - and that is Wave Q's Q-01, not a wheel change."
       ]
     },
     "MOSS_MUSIC_THINKING": {
@@ -103,8 +104,11 @@
         "apiConnected": false
       },
       "blockers": [
-        "The official TorchCodec 0.8.0 CPU wheel reaches libtorchcodec_custom_ops7.so but cannot load it with the pinned Torch 2.9.1+cu128 and FFmpeg 7.1.1 runtime; required WAV/MP3 media preflight is therefore incomplete."
+        "TorchCodec 0.8.0 cannot load against Torch 2.9.1+cu128. TorchCodec itself now names the cause: \"Could not load libtorchcodec ... The PyTorch version (2.9.1+cu128) is not compatible with this version of TorchCodec.\" Three earlier suspicions were eliminated first: the wheel variant (the CPU build was replaced by the CUDA-matched build of the same version), the wheel-provenance comparison (a local version is served percent-encoded and could never match), and the test environment (media decode was being validated on a CPU-only container, which is not a runtime MOSS serves in; it now runs on a GPU). The resolution is the runtime upgrade upstream already requires - MOSS-Music's own pyproject pins TorchCodec 0.9.* - and that is Wave Q's Q-01, not a wheel change."
       ]
     }
-  }
+  },
+  "blockers": [
+    "TorchCodec 0.8.0 cannot load against Torch 2.9.1+cu128. TorchCodec itself now names the cause: \"Could not load libtorchcodec ... The PyTorch version (2.9.1+cu128) is not compatible with this version of TorchCodec.\" Three earlier suspicions were eliminated first: the wheel variant (the CPU build was replaced by the CUDA-matched build of the same version), the wheel-provenance comparison (a local version is served percent-encoded and could never match), and the test environment (media decode was being validated on a CPU-only container, which is not a runtime MOSS serves in; it now runs on a GPU). The resolution is the runtime upgrade upstream already requires - MOSS-Music's own pyproject pins TorchCodec 0.9.* - and that is Wave Q's Q-01, not a wheel change."
+  ]
 }

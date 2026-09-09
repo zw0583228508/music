@@ -1,0 +1,35 @@
+{
+  "title": "MOSS-Music: what blocks the media preflight, proven",
+  "observedAt": "2026-09-09",
+  "method": "Four Modal compatibility runs, each eliminating one hypothesis; the fourth printed TorchCodec's own diagnosis.",
+  "runs": [
+    {
+      "change": "TorchCodec CPU wheel replaced with the CUDA-matched build of the same version (0.8.0+cu128, pinned by URL and SHA-256).",
+      "reason": "TorchCodec's native ops library links against the libtorch it was built for; a CPU build is the wrong artifact for a cu128 runtime.",
+      "result": "The image built and the wheel installed; the run then failed on the wheel-provenance comparison, not on the import."
+    },
+    {
+      "change": "compatibility.py decodes the recorded wheel URL before comparing it.",
+      "reason": "A local version (+cu128) is served percent-encoded, so the previous comparison could never match any CUDA wheel.",
+      "result": "The comparison passed and the media preflight ran for the first time."
+    },
+    {
+      "change": "The compatibility verify runs on a T4 GPU container.",
+      "reason": "The runtime under validation is a CUDA runtime; validating media decode on a CPU-only container tested an environment MOSS never serves in.",
+      "result": "Still failed, and the preflight reported only that it had failed."
+    },
+    {
+      "change": "preflight.py names the exception class and its message, with absolute paths redacted.",
+      "reason": "A preflight that says only \"it failed\" cannot be fixed; the original blocker had been recorded for two days on that basis.",
+      "result": "TorchCodec printed: 'Could not load libtorchcodec. Likely causes: 1. FFmpeg is not properly installed ... 2. The PyTorch version (2.9.1+cu128) is not compatible with this version of TorchCodec.'"
+    }
+  ],
+  "conclusion": "FFmpeg 7.1.1 is installed from conda-forge with its shared libraries on LD_LIBRARY_PATH, and the FFmpeg-7 core library was reached in the very first run, so cause 1 is excluded. The remaining cause is the one TorchCodec names with the exact Torch version: TorchCodec 0.8.0 does not support Torch 2.9.1. MOSS-Music upstream already requires TorchCodec 0.9.*; the SGLang branch's 0.8.0 pin is what this worker followed.",
+  "resolution": "Q-01: move the worker to the upstream runtime (TorchCodec 0.9.*), then re-run this same verify.",
+  "notDone": [
+    "No model weights were downloaded.",
+    "No inference was run.",
+    "No endpoint was deployed and no promotion was signed.",
+    "Both MOSS providers remain BLOCKED_UPSTREAM and stay out of provider routing."
+  ]
+}
