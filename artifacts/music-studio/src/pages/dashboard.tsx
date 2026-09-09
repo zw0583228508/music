@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty";
+import { LearningPanel } from "@/components/studio/learning-panel";
 
 export default function Dashboard() {
   const { data: dashboard, isLoading, error } = useGetDashboard();
@@ -203,6 +204,8 @@ export default function Dashboard() {
             </Link>
           </div>
         </Card>
+
+        <LearningPanel />
       </div>
     </div>
   );
