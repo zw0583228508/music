@@ -387,6 +387,10 @@ const suites = {
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
       ["src/lib/clamp3Attestation.test.ts", "clamp3-attestation.test.mjs"],
+      // PR-80: the provider audit ladder — a rung needs its proof, cumulatively,
+      // and proof for an unclaimed rung is refused — checked against the
+      // committed live audit in docs/evidence.
+      ["src/lib/analysisProviderAudit.test.ts", "analysis-provider-audit.test.mjs"],
     ],
   },
   "gpu-promotion": {

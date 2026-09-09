@@ -1,0 +1,1079 @@
+{
+  "title": "Analysis providers: what is actually live — audited with real probes (PR-80)",
+  "date": "2026-09-09",
+  "auditedAt": "2026-09-09T19:41:34.305Z",
+  "ladder": [
+    "MANIFEST_ONLY",
+    "CODE_WIRED",
+    "DEPLOYED",
+    "LIVE_SMOKE",
+    "BENCHMARKED",
+    "PROMOTED"
+  ],
+  "ladderRule": "A rung is claimed only when its proof fields and every lower rung's proof fields are present; proof for an unclaimed rung must live under `historical` (validated by artifacts/api-server/src/lib/analysisProviderAudit.ts).",
+  "method": {
+    "modalProfile": "music-platform",
+    "modalAppListAtAudit": [
+      "deployed: magenta-rt2-worker, music-ai-worker (ap-jQ03IAgtGYp7hCLLsGfali), composers-assistant-worker, anticipatory-worker, rhythm-tournament-worker",
+      "ephemeral (other streams of this wave, not evidence): yourmt3-worker, harmony-acr-worker ×2, transcription-baseline-worker",
+      "no beat-this, music-mir, sheetsage, mt3/mr-mt3/your-mt3, all-in-one, bs-roformer, clamp3 or moss app is deployed"
+    ],
+    "healthProbes": "authenticated GET /health?provider=<id> on the one configured endpoint (.env.local: BASIC_PITCH_API_URL, host never printed); unauthenticated GET /health on every *.modal.run origin recorded anywhere in services/, docs/ and artifacts/api-server/src",
+    "liveSmoke": "one real POST per reachable provider on the PR-46 fixture through the platform's own lease surface (127.0.0.1:5012) behind an operator Cloudflare quick tunnel; the API itself was never exposed and no DB was involved",
+    "envNotEdited": true
+  },
+  "reachability": [
+    {
+      "origin": "https://windot100--ace-step-isolated.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 841
+    },
+    {
+      "origin": "https://windot100--all-in-one-isolated.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 563
+    },
+    {
+      "origin": "https://windot100--anticipatory-worker-endpoint.modal.run",
+      "httpStatus": 401,
+      "latencyMs": 5993
+    },
+    {
+      "origin": "https://windot100--anyaccomp-rename-drill.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 645
+    },
+    {
+      "origin": "https://windot100--beat-this.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 578
+    },
+    {
+      "origin": "https://windot100--bs-roformer-isolated.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 672
+    },
+    {
+      "origin": "https://windot100--composers-assistant-worker-endpoint.modal.run",
+      "httpStatus": 401,
+      "latencyMs": 552
+    },
+    {
+      "origin": "https://windot100--diffrhythm2-worker-endpoint.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 560
+    },
+    {
+      "origin": "https://windot100--magenta-rt2-worker-endpoint.modal.run",
+      "httpStatus": 200,
+      "latencyMs": 6754
+    },
+    {
+      "origin": "https://windot100--mr-mt3.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 602
+    },
+    {
+      "origin": "https://windot100--mt3-isolated.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 576
+    },
+    {
+      "origin": "https://windot100--music-clamp3-worker-api.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 594
+    },
+    {
+      "origin": "https://windot100--music-mir-essentia.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 562
+    },
+    {
+      "origin": "https://windot100--music-mir.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 586
+    },
+    {
+      "origin": "https://windot100--sheetsage.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 608
+    },
+    {
+      "origin": "https://windot100--stable-audio3.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 615
+    },
+    {
+      "origin": "https://windot100--your-mt3.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 597
+    },
+    {
+      "origin": "https://workspace--ace-step.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 653
+    },
+    {
+      "origin": "https://workspace--all-in-one.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 662
+    },
+    {
+      "origin": "https://workspace--beat-this-candidate.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 764
+    },
+    {
+      "origin": "https://workspace--beat-this.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 559
+    },
+    {
+      "origin": "https://workspace--bs-roformer.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 609
+    },
+    {
+      "origin": "https://workspace--mt3.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 584
+    },
+    {
+      "origin": "https://workspace--music-ai-gpu-worker-ace-step.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 562
+    },
+    {
+      "origin": "https://workspace--music-ai-gpu-worker-bs-roformer.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 571
+    },
+    {
+      "origin": "https://workspace--sheetsage-candidate.modal.run",
+      "httpStatus": 404,
+      "latencyMs": 563
+    }
+  ],
+  "reachabilityLegend": {
+    "200": "alive, unauthenticated health (magenta-rt2 only)",
+    "401": "alive, bearer auth fails closed",
+    "404": "torn down (modal-http: no such app)"
+  },
+  "liveRun": {
+    "transport": {
+      "assetSurfacePort": 5012,
+      "assetSurfaceBinding": "127.0.0.1",
+      "tunnel": "https://direct-quarters-apparently-forever.trycloudflare.com",
+      "workerHostRedacted": "https://<redacted>.modal.run",
+      "leaseModule": "artifacts/api-server/src/lib/analysisAssetServer.ts + analysisAssetLease.ts, bundled verbatim with esbuild",
+      "tunnelReachabilityCheck": {
+        "request": "GET /a/<43 'a' characters>",
+        "status": 404,
+        "body": "not found",
+        "latencyMs": 988
+      }
+    },
+    "fixture": {
+      "path": "services/beat-this-worker/fixtures/real-audio-source.mp3",
+      "bytes": 9199873,
+      "sha256": "ae58781b9d3ac4b6e57aaf94a146cb04565ea1b4cc58cc99cdc41cb507274749"
+    },
+    "BASIC_PITCH": {
+      "health": {
+        "httpStatus": 200,
+        "latencyMs": 2752,
+        "modalFunctionCallId": "fc-01M23V195FGS9VJGDJZFANGJMH",
+        "status": "ok",
+        "modelVersion": "0.4.0",
+        "checksum": "b74344cd0c58261dae0cd52050d85ab6f901a5e219f27046ab4640673bba1046",
+        "sourceRevision": "9991303bba609a3b93089d13ec80d1d495083596",
+        "license": "Apache-2.0",
+        "packageTreeSha256": "89cfb8516927e3bc536da99139ddb4ad7ce79dc833e29df33e5bca27ccef116c",
+        "inferenceBackend": "tensorflow-saved-model",
+        "runtimePackages": {
+          "tensorflow": "2.14.0",
+          "numpy": "1.26.4",
+          "librosa": "0.11.0",
+          "resampy": "0.4.2",
+          "pretty-midi": "0.2.11.post0"
+        },
+        "device": "cpu"
+      },
+      "request": {
+        "method": "POST",
+        "path": "/analyze",
+        "body": {
+          "provider": "BASIC_PITCH",
+          "sourceUrl": "https://direct-quarters-apparently-forever.trycloudflare.com/a/<lease-token>",
+          "sourceType": "FULL_SONG",
+          "durationSeconds": 212.4572
+        }
+      },
+      "response": {
+        "httpStatus": 200,
+        "latencyMs": 13861,
+        "modalFunctionCallId": "fc-01M23V1BT1KEPNZHXDVTRDZGZE",
+        "responseBytes": 206537,
+        "responseSha256": "430eddbf98ab77b2aeed0fef7a0df11f28fa12536fe70018f4f038e9d51650b7",
+        "contractVersion": "1.0",
+        "provider": "BASIC_PITCH",
+        "version": "0.4.0",
+        "confidence": 0.473193412849199,
+        "noteCount": 1876,
+        "pitchRange": [
+          26,
+          86
+        ],
+        "firstNotes": [
+          {
+            "start": 0.19736961451247165,
+            "end": 0.8591383219954648,
+            "pitch": 45,
+            "velocity": 90,
+            "confidence": 0.7112559676170349
+          },
+          {
+            "start": 0.23219954648526078,
+            "end": 0.8823582766439909,
+            "pitch": 84,
+            "velocity": 95,
+            "confidence": 0.748104453086853
+          },
+          {
+            "start": 0.5224489795918368,
+            "end": 0.8359183673469388,
+            "pitch": 52,
+            "velocity": 77,
+            "confidence": 0.608336865901947
+          },
+          {
+            "start": 0.8591383219954648,
+            "end": 1.1377777777777778,
+            "pitch": 57,
+            "velocity": 58,
+            "confidence": 0.4537178575992584
+          },
+          {
+            "start": 0.8591383219954648,
+            "end": 1.1609977324263039,
+            "pitch": 52,
+            "velocity": 56,
+            "confidence": 0.4399245083332062
+          }
+        ],
+        "lastNoteEnd": 211.19387120181406,
+        "error": null
+      }
+    },
+    "DEMUCS": {
+      "health": {
+        "httpStatus": 500,
+        "latencyMs": 606,
+        "modalFunctionCallId": "fc-01M23V1SBC6XVP6QXYFN80K1HH",
+        "payload": {
+          "rawTextPrefix": "Internal Server Error"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "path": "/separate",
+        "body": {
+          "provider": "DEMUCS",
+          "sourceUrl": "https://direct-quarters-apparently-forever.trycloudflare.com/a/<lease-token>",
+          "sourceType": "FULL_SONG",
+          "durationSeconds": 212.4572
+        }
+      },
+      "response": {
+        "httpStatus": 500,
+        "latencyMs": 377,
+        "modalFunctionCallId": "fc-01M23V1SMFE3ZBF5XNT1K49EA0",
+        "responseBytes": 21,
+        "payload": {
+          "rawTextPrefix": "Internal Server Error"
+        }
+      }
+    },
+    "assetSurfaceEvents": [
+      {
+        "at": "2026-09-09T19:41:35.146Z",
+        "kind": "refused",
+        "reason": "unknown"
+      },
+      {
+        "at": "2026-09-09T19:41:44.867Z",
+        "kind": "served",
+        "bucketName": "fixture",
+        "objectName": "real-audio-source.mp3",
+        "bytes": 9199873
+      }
+    ],
+    "leasesRevokedAtClose": 2,
+    "otherProbesOnTheSameWorker": [
+      {
+        "provider": "PEDALBOARD_BUILTIN",
+        "httpStatus": 200,
+        "modelVersion": "0.9.24",
+        "note": "a renderer, not an analysis provider; listed because it shares the worker"
+      }
+    ]
+  },
+  "budget": {
+    "capUsd": 10,
+    "spentUsdEstimate": 0.03,
+    "basis": "≈3 min of one 4 vCPU / 8 GiB Modal CPU container (cold start + 5 health probes + 1 analyze + 2 refused DEMUCS calls) at list price; no GPU was started, nothing was deployed, nothing was trained"
+  },
+  "firstParty": {
+    "note": "Not providers on the ladder — in-process engines that fill the Song Model when nothing above answers. Listed so the table cannot be read as 'the platform analyses nothing'.",
+    "engines": [
+      {
+        "id": "LOCAL_SIGNAL_ANALYZER_V1",
+        "runs": "always (FFmpeg + local extraction)",
+        "defaultInFusion": "yes — reconcileAnalysisField(tempo/key/meter) and the local structure fallback in sourceAnalyzer.ts",
+        "reliability": "tempo 0.48, key 0.45, deliberately low",
+        "benchmarked": "no truth-set evidence file"
+      },
+      {
+        "id": "TRANSCRIPTION_KEY_V1",
+        "runs": "when any transcription returned notes (keyFromNotes.ts)",
+        "defaultInFusion": "yes — key reconciliation, capped at 0.75 confidence, reliability 0.5",
+        "benchmarked": "no; PR-46 recorded one A minor on one song"
+      }
+    ]
+  },
+  "summary": {
+    "liveToday": [
+      "BASIC_PITCH (LIVE_SMOKE)"
+    ],
+    "codeWiredButNoEndpoint": [
+      "DEMUCS",
+      "BS_ROFORMER",
+      "ALL_IN_ONE",
+      "BEAT_THIS",
+      "MADMOM",
+      "ESSENTIA",
+      "CHROMA",
+      "TORCHCREPE",
+      "PYLOUDNORM",
+      "MT3",
+      "MR_MT3",
+      "YOUR_MT3",
+      "SHEETSAGE",
+      "BASS",
+      "CLAMP3"
+    ],
+    "manifestOnly": [
+      "MOSS_MUSIC_INSTRUCT",
+      "MOSS_MUSIC_THINKING",
+      "SONGFORMER"
+    ],
+    "benchmarked": [],
+    "promoted": [],
+    "oneSentence": "Of the fifteen named analysis providers, one answers a real request today; the rest are adapters pointing at endpoints that were torn down after 2026-09-06 or never existed, and none has ever been scored against a truth set."
+  },
+  "providers": [
+    {
+      "id": "BASIC_PITCH",
+      "family": "cpu-analysis (services/music-ai-worker)",
+      "capabilities": [
+        "transcription"
+      ],
+      "rung": "LIVE_SMOKE",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/musicProviders.ts",
+          "symbol": "MUSIC_PROVIDERS[id=BASIC_PITCH]; analysisProviderManifest.ts VERIFIED_LOCAL_ANALYSIS_PROVIDERS.BASIC_PITCH (0.4.0, b74344cd…)"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/analysisProviders.ts parseTranscription(\"BASIC_PITCH\") via requestProvider() -> POST /analyze",
+          "scheduledIn": "artifacts/api-server/src/lib/analysisProviders.ts runAnalysisProviders() schedule(\"BASIC_PITCH\",\"transcription\") when wantsBasicPitch || isFullMix",
+          "typecheck": "green"
+        },
+        "deployed": {
+          "modalApp": "music-ai-worker",
+          "modalAppId": "ap-jQ03IAgtGYp7hCLLsGfali",
+          "endpointEnv": "BASIC_PITCH_API_URL (host redacted; a *.modal.run web endpoint)",
+          "health": {
+            "httpStatus": 200,
+            "status": "ok",
+            "modelVersion": "0.4.0",
+            "checksum": "b74344cd0c58261dae0cd52050d85ab6f901a5e219f27046ab4640673bba1046",
+            "requestId": "fc-01M23TW8PCFAH2S747B0T4MZX0",
+            "latencyMs": 741,
+            "probedAt": "2026-09-09T19:38:51.675Z"
+          },
+          "healthIdentity": {
+            "sourceRevision": "9991303bba609a3b93089d13ec80d1d495083596",
+            "license": "Apache-2.0",
+            "packageTreeSha256": "89cfb8516927e3bc536da99139ddb4ad7ce79dc833e29df33e5bca27ccef116c",
+            "inferenceBackend": "tensorflow-saved-model",
+            "runtimePackages": {
+              "tensorflow": "2.14.0",
+              "numpy": "1.26.4",
+              "librosa": "0.11.0",
+              "resampy": "0.4.2",
+              "pretty-midi": "0.2.11.post0"
+            },
+            "device": "cpu",
+            "unauthenticatedProbe": 401
+          }
+        },
+        "liveSmoke": {
+          "fixture": {
+            "path": "services/beat-this-worker/fixtures/real-audio-source.mp3",
+            "bytes": 9199873,
+            "sha256": "ae58781b9d3ac4b6e57aaf94a146cb04565ea1b4cc58cc99cdc41cb507274749"
+          },
+          "requestId": "fc-01M23V1BT1KEPNZHXDVTRDZGZE",
+          "latencyMs": 13861,
+          "outputBytes": 206537,
+          "outputSummary": "1876 note events, MIDI pitch 26–86, provider confidence 0.4732, contractVersion 1.0, last note ends at 211.19 s of 9199873 bytes / 212.46 s",
+          "outputSha256": "430eddbf98ab77b2aeed0fef7a0df11f28fa12536fe70018f4f038e9d51650b7",
+          "modelVersion": "0.4.0",
+          "checksum": "b74344cd0c58261dae0cd52050d85ab6f901a5e219f27046ab4640673bba1046",
+          "costUsd": 0.01,
+          "costBasis": "upper-bound estimate: one 4 vCPU / 8 GiB Modal CPU container, ~17 s billed for health + analyze at list price; Modal does not meter per request",
+          "smokedAt": "2026-09-09T19:41:34.305Z",
+          "evidence": "docs/evidence/analysis-provider-audit-live.json#liveRun",
+          "transport": {
+            "leaseSurface": "analysisAssetServer.ts + analysisAssetLease.ts bundled verbatim, bound to 127.0.0.1:5012, exposed by an operator Cloudflare quick tunnel",
+            "tunnelReachabilityCheck": {
+              "request": "GET /a/<43 'a' characters>",
+              "status": 404,
+              "body": "not found",
+              "latencyMs": 988
+            },
+            "assetSurfaceEvents": [
+              {
+                "at": "2026-09-09T19:41:35.146Z",
+                "kind": "refused",
+                "reason": "unknown"
+              },
+              {
+                "at": "2026-09-09T19:41:44.867Z",
+                "kind": "served",
+                "bucketName": "fixture",
+                "objectName": "real-audio-source.mp3",
+                "bytes": 9199873
+              }
+            ],
+            "meaning": "one served fetch of exactly 9,199,873 bytes = the fixture; the worker has no other route to this machine"
+          },
+          "agreesWithPr46": "yes: PR-46 recorded 1876 note events at confidence 0.473 on the same file"
+        }
+      },
+      "whatWouldMoveItUp": "BENCHMARKED needs a note-level truth set (onset/pitch F1 via mir_eval) on licensed audio with aligned MIDI; no such evidence file exists in docs/evidence. Fusion already consumes it by default (fuseCanonicalNotes, melody reliability 1.0), so PROMOTED would follow a benchmark automatically — the ladder is cumulative, so it is not claimed first.",
+      "costUsd": 0.01,
+      "latencyMs": 13861,
+      "notes": [
+        "The only analysis provider with a live endpoint on this machine today.",
+        "A first authenticated /health hit a cold start and timed out at 60 s (probe at 2026-09-09T19:38:06.552Z); the retry answered in 741 ms, and the smoke's own pre-flight health took 2752 ms (fc-01M23V195FGS9VJGDJZFANGJMH).",
+        "On a full mix it returns every instrument's notes at once; the analyzer's ambiguity gate refuses to call that a melody, so a Song Model still shows melodyNotes 0 (PR-46). Stem-first transcription needs a separation endpoint, and none is live."
+      ],
+      "nextRung": "BENCHMARKED"
+    },
+    {
+      "id": "DEMUCS",
+      "family": "cpu-analysis (services/music-ai-worker, Torch image not built)",
+      "capabilities": [
+        "separation"
+      ],
+      "rung": "CODE_WIRED",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/musicProviders.ts",
+          "symbol": "MUSIC_PROVIDERS[id=DEMUCS]; analysisProviderManifest.ts VERIFIED_LOCAL_ANALYSIS_PROVIDERS.DEMUCS (4.0.1, 8726e21a…)"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/analysisProviders.ts parseSeparation(\"DEMUCS\") via providerAction()=\"separate\"",
+          "scheduledIn": "artifacts/api-server/src/lib/analysisProviders.ts runAnalysisProviders() schedule(separationProvider,\"separation\") — DEMUCS when DEMUCS_API_URL is set, else BS_ROFORMER",
+          "typecheck": "green"
+        }
+      },
+      "liveNegative": {
+        "endpointEnv": "DEMUCS_API_URL is unset; the only worker that names DEMUCS is music-ai-worker (BASIC_PITCH_API_URL)",
+        "health": {
+          "httpStatus": 500,
+          "requestId": "fc-01M23TW9GF83N6BRN7SNEVBDF4",
+          "latencyMs": 642,
+          "body": "Internal Server Error",
+          "probedAt": "2026-09-09T19:38:52.447Z"
+        },
+        "separate": {
+          "httpStatus": 500,
+          "requestId": "fc-01M23V1SMFE3ZBF5XNT1K49EA0",
+          "latencyMs": 377,
+          "body": "Internal Server Error"
+        },
+        "workerTraceback": "File /app/app.py line 1405 in separate -> health(\"DEMUCS\") -> line 1317 `import torch` -> ModuleNotFoundError: No module named 'torch'",
+        "leaseFetched": false,
+        "dockerfile": "services/music-ai-worker/Dockerfile: 'Demucs ... is deliberately absent here'"
+      },
+      "whatWouldMoveItUp": "Build and deploy a Torch image with the htdemucs checkpoint pinned to model_manifest.json's checkpoint_sha256, set DEMUCS_API_URL, and record an authenticated /health that returns the 4.0.1 / 8726e21a… identity. Separately, /health?provider=DEMUCS should answer an unhealthy JSON body instead of a 500 traceback (the Dockerfile promises the former).",
+      "costUsd": 0.001,
+      "latencyMs": "UNKNOWN",
+      "notes": [
+        "Never deployed: PR-37 records that no DEMUCS_API_URL ever existed. There is no historical smoke to cite.",
+        "Preferred separation provider in code; without it the analyzer falls through to BS_ROFORMER, which is licence-blocked, so separation never runs today."
+      ],
+      "nextRung": "DEPLOYED"
+    },
+    {
+      "id": "BS_ROFORMER",
+      "family": "gpu-analysis (services/music-ai-gpu-worker, Dockerfile.bs-roformer)",
+      "capabilities": [
+        "separation"
+      ],
+      "rung": "CODE_WIRED",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/musicProviders.ts",
+          "symbol": "MUSIC_PROVIDERS[id=BS_ROFORMER] (status hard 'unavailable'); LICENSE_BLOCKED_PROVIDER_IDS; VERIFIED_GPU_ANALYSIS_PROVIDERS.BS_ROFORMER"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/analysisProviders.ts parseSeparation(\"BS_ROFORMER\")",
+          "scheduledIn": "artifacts/api-server/src/lib/analysisProviders.ts runAnalysisProviders() fallback separation provider — but configuredAnalysisProviderEndpoint() returns null for every LICENSE_BLOCKED id, so the request is never made",
+          "typecheck": "green"
+        }
+      },
+      "historical": {
+        "deploymentStopped": "services/music-ai-gpu-worker/release-evidence/bs-roformer/deployment-stopped-v1.json (ap-q64PXgdTqUnxFZB6oXGyrX, stopped 2026-09-06T18:49:44Z, post-stop 404)",
+        "today": {
+          "endpointOrigin": "https://windot100--bs-roformer-isolated.modal.run",
+          "probedAt": "2026-09-09T19:38:06.552Z",
+          "httpStatus": 404,
+          "meaning": "the historical endpoint no longer answers; the app is absent from `modal app list` under MODAL_PROFILE=music-platform"
+        }
+      },
+      "whatWouldMoveItUp": "Nothing operational: BLOCKED_LICENSE (the MIT label belongs to an unofficial wrapper, not the checkpoint owner). A retained redistribution / commercial-use grant from the checkpoint owner would have to exist before any endpoint may be configured.",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [
+        "Also the only admissible bass-stem source for the BASS composite, which is therefore unreachable too."
+      ],
+      "nextRung": "DEPLOYED"
+    },
+    {
+      "id": "ALL_IN_ONE",
+      "family": "gpu-analysis (services/music-ai-gpu-worker, Dockerfile.all-in-one)",
+      "capabilities": [
+        "structure",
+        "tempo",
+        "downbeats",
+        "meter",
+        "sections"
+      ],
+      "rung": "CODE_WIRED",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/musicProviders.ts",
+          "symbol": "MUSIC_PROVIDERS[id=ALL_IN_ONE]; VERIFIED_GPU_ANALYSIS_PROVIDERS.ALL_IN_ONE (all-in-one-infer-3.1.0)"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/analysisProviders.ts parseStructure()",
+          "scheduledIn": "artifacts/api-server/src/lib/analysisProviders.ts runAnalysisProviders() schedule(\"ALL_IN_ONE\",\"structure\") on every full mix",
+          "typecheck": "green"
+        }
+      },
+      "historical": {
+        "installationStatus": "services/music-ai-gpu-worker/installation-status.json: RESEARCH_READY (CC-BY-NC-SA-4.0 Harmonix weights), ap-FhVzhxulVURrVlCsAmr2EB v2",
+        "liveHealth": "release-evidence/all-in-one/live-health.json: status ready, checksum 4b8d00db…",
+        "today": {
+          "endpointOrigin": "https://windot100--all-in-one-isolated.modal.run",
+          "probedAt": "2026-09-09T19:38:06.552Z",
+          "httpStatus": 404,
+          "meaning": "the historical endpoint no longer answers; the app is absent from `modal app list` under MODAL_PROFILE=music-platform"
+        }
+      },
+      "whatWouldMoveItUp": "Redeploy services/music-ai-gpu-worker (Dockerfile.all-in-one) under the music-platform profile, set ALL_IN_ONE_API_URL, and supply a promotion bundle whose modalAppId/endpointOrigin match the new deployment (requiresGpuPromotionRecord() re-attests before every POST).",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [
+        "Highest structure/tempo reliability in providerReliability.ts (sections 0.86, tempo 0.84), and absent — which is why bpm in PR-46 came from the local fallback."
+      ],
+      "nextRung": "DEPLOYED"
+    },
+    {
+      "id": "BEAT_THIS",
+      "family": "gpu-analysis (services/beat-this-worker)",
+      "capabilities": [
+        "tempo",
+        "downbeats",
+        "meter"
+      ],
+      "rung": "CODE_WIRED",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/analysisProviderManifest.ts",
+          "symbol": "VERIFIED_GPU_ANALYSIS_PROVIDERS.BEAT_THIS (1.1.0); providerReliability.ts BEAT_THIS; beatThisPromotion.generated.ts (signed bundle)"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/analysisProviders.ts parseBeatThis()",
+          "scheduledIn": "artifacts/api-server/src/lib/analysisProviders.ts runAnalysisProviders() schedule(\"BEAT_THIS\",\"primary_beat_tracking\") on every full mix",
+          "typecheck": "green"
+        }
+      },
+      "historical": {
+        "installationStatus": "services/beat-this-worker/installation-status.json: READY, live health 2026-09-06T09:12:00Z, ap-PQ5CqhaR31JiEloxyPn8La v5, gpuReady",
+        "realSmoke": {
+          "sourceSha256": "ae58781b9d3ac4b6e57aaf94a146cb04565ea1b4cc58cc99cdc41cb507274749",
+          "note": "the same fixture this audit used",
+          "beatCount": 92,
+          "downbeatCount": 16,
+          "confidence": 0.945024
+        },
+        "promotionBundle": "artifacts/api-server/src/lib/beatThisPromotion.generated.ts pins endpointOrigin https://windot100--beat-this.modal.run and that app id — a redeploy needs a re-signed bundle",
+        "today": {
+          "endpointOrigin": "https://windot100--beat-this.modal.run",
+          "probedAt": "2026-09-09T19:38:06.552Z",
+          "httpStatus": 404,
+          "meaning": "the historical endpoint no longer answers; the app is absent from `modal app list` under MODAL_PROFILE=music-platform",
+          "candidate": 404
+        }
+      },
+      "whatWouldMoveItUp": "Redeploy services/beat-this-worker/modal_app.py (volume beat-this-models-smoke-v1 and secret beat-this-deployment still exist), set MUSIC_PROVIDER_BEAT_THIS_URL, re-sign the promotion bundle for the new app id/origin, and record a fresh authenticated /health.",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [
+        "The 92-beat smoke is real but belongs to a deployment that no longer answers, so it is recorded as historical and lifts nothing.",
+        "Not in the MUSIC_PROVIDERS catalogue at all: it is scheduled by the analyzer and typed in the manifest, but /api/music-providers never lists it."
+      ],
+      "nextRung": "DEPLOYED"
+    },
+    {
+      "id": "MADMOM",
+      "family": "cpu MIR evidence (services/music-mir-worker)",
+      "capabilities": [
+        "tempo",
+        "downbeats"
+      ],
+      "rung": "CODE_WIRED",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/analysisProviderManifest.ts",
+          "symbol": "VERIFIED_MIR_IDENTITIES.MADMOM (exact package/runtime/smoke identity); artifacts/api-server/src/lib/musicProviders.ts MUSIC_PROVIDERS[id=MADMOM]"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/analysisProviders.ts parseMadmom() + adaptProviderPayload(); re-attested before every POST",
+          "scheduledIn": "artifacts/api-server/src/lib/analysisProviders.ts runAnalysisProviders() schedule(\"MADMOM\",\"rhythm_evidence\") on every full mix",
+          "typecheck": "green"
+        }
+      },
+      "historical": {
+        "releaseAttestation": "services/music-mir-worker/release-attestation.json: v5 deployed 2026-09-06T12:19:41Z (ap-gRyb2A2JLpBCcqnOci0vH5), realInference true; installation-status RESEARCH_READY: CC-BY-NC-SA-4.0 model assets (commercialUse false in the manifest)",
+        "today": {
+          "endpointOrigin": "https://windot100--music-mir.modal.run",
+          "probedAt": "2026-09-09T19:38:06.552Z",
+          "httpStatus": 404,
+          "meaning": "the historical endpoint no longer answers; the app is absent from `modal app list` under MODAL_PROFILE=music-platform"
+        }
+      },
+      "whatWouldMoveItUp": "Redeploy services/music-mir-worker/modal_app.py (app music-mir-worker; volumes music-mir-py311-models-smoke / music-mir-py314-models-smoke still exist), set MUSIC_MIR_API_URL and MUSIC_MIR_ESSENTIA_API_URL, and record a fresh authenticated /health that passes attestAnalysisProviderHealth's exact-identity check.",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [
+        "MUSIC_MIR_API_URL is unset on this machine; the adapter's endpoint resolution returns null and the analyzer records not-configured provenance.",
+        "Licence limits commercial routing regardless of rung."
+      ],
+      "nextRung": "DEPLOYED"
+    },
+    {
+      "id": "ESSENTIA",
+      "family": "cpu MIR evidence (services/music-mir-worker)",
+      "capabilities": [
+        "key"
+      ],
+      "rung": "CODE_WIRED",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/analysisProviderManifest.ts",
+          "symbol": "VERIFIED_MIR_IDENTITIES.ESSENTIA (exact package/runtime/smoke identity); artifacts/api-server/src/lib/musicProviders.ts MUSIC_PROVIDERS[id=ESSENTIA]"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/analysisProviders.ts parseEssentia() + adaptProviderPayload(); re-attested before every POST",
+          "scheduledIn": "artifacts/api-server/src/lib/analysisProviders.ts runAnalysisProviders() schedule(\"ESSENTIA\",\"key_evidence\") on every full mix",
+          "typecheck": "green"
+        }
+      },
+      "historical": {
+        "releaseAttestation": "services/music-mir-worker/release-attestation.json: v5 deployed 2026-09-06T12:19:41Z (ap-gRyb2A2JLpBCcqnOci0vH5), realInference true; installation-status READY (AGPL-3.0-only, obligations retained)",
+        "today": {
+          "endpointOrigin": "https://windot100--music-mir-essentia.modal.run",
+          "probedAt": "2026-09-09T19:38:06.552Z",
+          "httpStatus": 404,
+          "meaning": "the historical endpoint no longer answers; the app is absent from `modal app list` under MODAL_PROFILE=music-platform"
+        }
+      },
+      "whatWouldMoveItUp": "Redeploy services/music-mir-worker/modal_app.py (app music-mir-worker; volumes music-mir-py311-models-smoke / music-mir-py314-models-smoke still exist), set MUSIC_MIR_API_URL and MUSIC_MIR_ESSENTIA_API_URL, and record a fresh authenticated /health that passes attestAnalysisProviderHealth's exact-identity check.",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [
+        "MUSIC_MIR_ESSENTIA_API_URL is unset on this machine; the adapter's endpoint resolution returns null and the analyzer records not-configured provenance."
+      ],
+      "nextRung": "DEPLOYED"
+    },
+    {
+      "id": "CHROMA",
+      "family": "cpu MIR evidence (services/music-mir-worker)",
+      "capabilities": [
+        "harmony"
+      ],
+      "rung": "CODE_WIRED",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/analysisProviderManifest.ts",
+          "symbol": "VERIFIED_MIR_IDENTITIES.CHROMA (exact package/runtime/smoke identity); artifacts/api-server/src/lib/musicProviders.ts MUSIC_PROVIDERS[id=CHROMA]"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/analysisProviders.ts parseMirChroma() + adaptProviderPayload(); re-attested before every POST",
+          "scheduledIn": "artifacts/api-server/src/lib/analysisProviders.ts runAnalysisProviders() schedule(\"CHROMA\",\"harmony_evidence\") on every full mix",
+          "typecheck": "green"
+        }
+      },
+      "historical": {
+        "releaseAttestation": "services/music-mir-worker/release-attestation.json: v5 deployed 2026-09-06T12:19:41Z (ap-gRyb2A2JLpBCcqnOci0vH5), realInference true; installation-status READY (AGPL-3.0-only + ISC)",
+        "today": {
+          "endpointOrigin": "https://windot100--music-mir-essentia.modal.run",
+          "probedAt": "2026-09-09T19:38:06.552Z",
+          "httpStatus": 404,
+          "meaning": "the historical endpoint no longer answers; the app is absent from `modal app list` under MODAL_PROFILE=music-platform"
+        }
+      },
+      "whatWouldMoveItUp": "Redeploy services/music-mir-worker/modal_app.py (app music-mir-worker; volumes music-mir-py311-models-smoke / music-mir-py314-models-smoke still exist), set MUSIC_MIR_API_URL and MUSIC_MIR_ESSENTIA_API_URL, and record a fresh authenticated /health that passes attestAnalysisProviderHealth's exact-identity check.",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [
+        "MUSIC_MIR_ESSENTIA_API_URL is unset on this machine; the adapter's endpoint resolution returns null and the analyzer records not-configured provenance."
+      ],
+      "nextRung": "DEPLOYED"
+    },
+    {
+      "id": "TORCHCREPE",
+      "family": "cpu MIR evidence (services/music-mir-worker)",
+      "capabilities": [
+        "pitch"
+      ],
+      "rung": "CODE_WIRED",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/analysisProviderManifest.ts",
+          "symbol": "VERIFIED_MIR_IDENTITIES.TORCHCREPE (exact package/runtime/smoke identity); artifacts/api-server/src/lib/musicProviders.ts MUSIC_PROVIDERS[id=TORCHCREPE]"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/analysisProviders.ts parseTorchCrepe() + adaptProviderPayload(); re-attested before every POST",
+          "scheduledIn": "artifacts/api-server/src/lib/analysisProviders.ts runAnalysisProviders() schedule(\"TORCHCREPE\",\"pitch_evidence\") for VOCAL_ONLY / SOLO_INSTRUMENT only",
+          "typecheck": "green"
+        }
+      },
+      "historical": {
+        "releaseAttestation": "services/music-mir-worker/release-attestation.json: v5 deployed 2026-09-06T12:19:41Z (ap-gRyb2A2JLpBCcqnOci0vH5), realInference true; installation-status READY (MIT)",
+        "today": {
+          "endpointOrigin": "https://windot100--music-mir.modal.run",
+          "probedAt": "2026-09-09T19:38:06.552Z",
+          "httpStatus": 404,
+          "meaning": "the historical endpoint no longer answers; the app is absent from `modal app list` under MODAL_PROFILE=music-platform"
+        }
+      },
+      "whatWouldMoveItUp": "Redeploy services/music-mir-worker/modal_app.py (app music-mir-worker; volumes music-mir-py311-models-smoke / music-mir-py314-models-smoke still exist), set MUSIC_MIR_API_URL and MUSIC_MIR_ESSENTIA_API_URL, and record a fresh authenticated /health that passes attestAnalysisProviderHealth's exact-identity check.",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [
+        "MUSIC_MIR_API_URL is unset on this machine; the adapter's endpoint resolution returns null and the analyzer records not-configured provenance."
+      ],
+      "nextRung": "DEPLOYED"
+    },
+    {
+      "id": "PYLOUDNORM",
+      "family": "cpu MIR evidence (services/music-mir-worker)",
+      "capabilities": [
+        "loudness"
+      ],
+      "rung": "CODE_WIRED",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/analysisProviderManifest.ts",
+          "symbol": "VERIFIED_MIR_IDENTITIES.PYLOUDNORM (exact package/runtime/smoke identity); artifacts/api-server/src/lib/musicProviders.ts MUSIC_PROVIDERS[id=PYLOUDNORM]"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/analysisProviders.ts parseLoudness() + adaptProviderPayload(); re-attested before every POST",
+          "scheduledIn": "artifacts/api-server/src/lib/analysisProviders.ts runAnalysisProviders() schedule(\"PYLOUDNORM\",\"loudness\") on every full mix",
+          "typecheck": "green"
+        }
+      },
+      "historical": {
+        "releaseAttestation": "services/music-mir-worker/release-attestation.json: v5 deployed 2026-09-06T12:19:41Z (ap-gRyb2A2JLpBCcqnOci0vH5), realInference true; installation-status READY (MIT)",
+        "today": {
+          "endpointOrigin": "https://windot100--music-mir.modal.run",
+          "probedAt": "2026-09-09T19:38:06.552Z",
+          "httpStatus": 404,
+          "meaning": "the historical endpoint no longer answers; the app is absent from `modal app list` under MODAL_PROFILE=music-platform"
+        }
+      },
+      "whatWouldMoveItUp": "Redeploy services/music-mir-worker/modal_app.py (app music-mir-worker; volumes music-mir-py311-models-smoke / music-mir-py314-models-smoke still exist), set MUSIC_MIR_API_URL and MUSIC_MIR_ESSENTIA_API_URL, and record a fresh authenticated /health that passes attestAnalysisProviderHealth's exact-identity check.",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [
+        "MUSIC_MIR_API_URL is unset on this machine; the adapter's endpoint resolution returns null and the analyzer records not-configured provenance.",
+        "docs/evidence/loudness-meter-crosscheck.json (PR-26) ran the pyloudnorm library locally as a reference for the TypeScript BS.1770 meter — a library run, not this provider endpoint, so it is not a smoke of this provider."
+      ],
+      "nextRung": "DEPLOYED"
+    },
+    {
+      "id": "MT3",
+      "family": "gpu-analysis (services/music-ai-gpu-worker, Dockerfile.mt3)",
+      "capabilities": [
+        "transcription"
+      ],
+      "rung": "CODE_WIRED",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/musicProviders.ts",
+          "symbol": "MUSIC_PROVIDERS[id=MT3]; VERIFIED_GPU_ANALYSIS_PROVIDERS.MT3 (mt3-pytorch-multitrack)"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/analysisProviders.ts parseTranscription(\"MT3\"); signed promotion record required",
+          "scheduledIn": "artifacts/api-server/src/lib/analysisProviders.ts runAnalysisProviders() schedule(\"MT3\",\"transcription\") on every full mix",
+          "typecheck": "green"
+        }
+      },
+      "historical": {
+        "smokeProof": "services/music-ai-gpu-worker/smoke_proofs/mt3-l4.json: 48 notes on cuda, checkpoint 33f6bc4c…, checkpointLicense NOASSERTION",
+        "liveHealth": "release-evidence/mt3/live-health.json: status ready (ap-lvAeuMMr5wZmhTaq5F62NG v3)",
+        "today": {
+          "endpointOrigin": "https://windot100--mt3-isolated.modal.run",
+          "probedAt": "2026-09-09T19:38:06.552Z",
+          "httpStatus": 404,
+          "meaning": "the historical endpoint no longer answers; the app is absent from `modal app list` under MODAL_PROFILE=music-platform"
+        }
+      },
+      "whatWouldMoveItUp": "Redeploy services/music-ai-gpu-worker (Dockerfile.mt3) under the music-platform profile, set MT3_API_URL, and supply a promotion bundle whose modalAppId/endpointOrigin match the new deployment (requiresGpuPromotionRecord() re-attests before every POST). The converted checkpoint's NOASSERTION licence is a separate blocker for anything beyond research.",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [],
+      "nextRung": "DEPLOYED"
+    },
+    {
+      "id": "MR_MT3",
+      "family": "gpu-analysis (services/music-ai-gpu-worker, Dockerfile.mr-mt3)",
+      "capabilities": [
+        "transcription"
+      ],
+      "rung": "CODE_WIRED",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/musicProviders.ts",
+          "symbol": "MUSIC_PROVIDERS[id=MR_MT3] (MIT checkpoint pinned by SHA); VERIFIED_GPU_ANALYSIS_PROVIDERS.MR_MT3"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/analysisProviders.ts parseTranscription(\"MR_MT3\")",
+          "scheduledIn": "artifacts/api-server/src/lib/analysisProviders.ts runAnalysisProviders() schedule(\"MR_MT3\",\"transcription\") on every full mix",
+          "typecheck": "green"
+        }
+      },
+      "historical": {
+        "installationStatus": "services/music-ai-gpu-worker/installation-status.json: READY (ap-GT4db0tsUM3p0u4NpG5oQT)",
+        "today": {
+          "endpointOrigin": "https://windot100--mr-mt3.modal.run",
+          "probedAt": "2026-09-09T19:38:06.552Z",
+          "httpStatus": 404,
+          "meaning": "the historical endpoint no longer answers; the app is absent from `modal app list` under MODAL_PROFILE=music-platform"
+        }
+      },
+      "whatWouldMoveItUp": "Redeploy services/music-ai-gpu-worker (Dockerfile.mr-mt3) under the music-platform profile, set MR_MT3_API_URL, and supply a promotion bundle whose modalAppId/endpointOrigin match the new deployment (requiresGpuPromotionRecord() re-attests before every POST).",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [],
+      "nextRung": "DEPLOYED"
+    },
+    {
+      "id": "YOUR_MT3",
+      "family": "gpu-analysis (services/music-ai-gpu-worker, Dockerfile.your-mt3)",
+      "capabilities": [
+        "transcription"
+      ],
+      "rung": "CODE_WIRED",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/musicProviders.ts",
+          "symbol": "MUSIC_PROVIDERS[id=YOUR_MT3] (status hard 'unavailable'); VERIFIED_GPU_ANALYSIS_PROVIDERS.YOUR_MT3"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/analysisProviders.ts parseTranscription(\"YOUR_MT3\")",
+          "scheduledIn": "artifacts/api-server/src/lib/analysisProviders.ts runAnalysisProviders() schedule(\"YOUR_MT3\",\"transcription\") on every full mix",
+          "typecheck": "green"
+        }
+      },
+      "historical": {
+        "installationStatus": "services/music-ai-gpu-worker/installation-status.json: READY (ap-MuuGJr7JiUmveSddBDAt5i v6)",
+        "today": {
+          "endpointOrigin": "https://windot100--your-mt3.modal.run",
+          "probedAt": "2026-09-09T19:38:06.552Z",
+          "httpStatus": 404,
+          "meaning": "the historical endpoint no longer answers; the app is absent from `modal app list` under MODAL_PROFILE=music-platform"
+        }
+      },
+      "whatWouldMoveItUp": "Redeploy services/music-ai-gpu-worker (Dockerfile.your-mt3) under the music-platform profile, set YOUR_MT3_API_URL, and supply a promotion bundle whose modalAppId/endpointOrigin match the new deployment (requiresGpuPromotionRecord() re-attests before every POST). The catalogue also hard-codes 'unavailable' until the mutable upstream artifact hash is independently reviewed.",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [
+        "`modal app list` at audit time showed an ephemeral `yourmt3-worker` app (ap-AxCcGaBoFYRfYoPsu2HmD2) from another stream of this wave; an ephemeral run is not a deployment and is not evidence here."
+      ],
+      "nextRung": "DEPLOYED"
+    },
+    {
+      "id": "SHEETSAGE",
+      "family": "gpu-analysis (services/sheetsage-worker)",
+      "capabilities": [
+        "melody",
+        "harmony",
+        "timing"
+      ],
+      "rung": "CODE_WIRED",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/musicProviders.ts",
+          "symbol": "MUSIC_PROVIDERS[id=SHEETSAGE]; analysisProviderManifest.ts SHEETSAGE_IDENTITY (0.2.1)"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/analysisProviders.ts parseSheetSage() + openSheetSageSource() (streams the audio body)",
+          "scheduledIn": "artifacts/api-server/src/lib/analysisProviders.ts runAnalysisProviders() schedule(\"SHEETSAGE\",\"harmony\") on every full mix — gated by SHEETSAGE_LICENSE_AUTHORIZED=true, which is unset",
+          "typecheck": "green"
+        }
+      },
+      "historical": {
+        "releaseAttestation": "services/sheetsage-worker/release-attestation.json: RESEARCH_READY, production v9 ap-O2XJ9oafmw55jD38VdbKjN deployed 2026-09-06T07:34:55Z, signed persistent smoke realInference true",
+        "today": {
+          "endpointOrigin": "https://windot100--sheetsage.modal.run",
+          "probedAt": "2026-09-09T19:38:06.552Z",
+          "httpStatus": 404,
+          "meaning": "the historical endpoint no longer answers; the app is absent from `modal app list` under MODAL_PROFILE=music-platform"
+        }
+      },
+      "whatWouldMoveItUp": "Redeploy services/sheetsage-worker (volumes sheetsage-models-v1 / sheetsage-smoke-v1 and the non-commercial secret exist), set SHEETSAGE_API_URL and SHEETSAGE_LICENSE_AUTHORIZED=true for research use only, record a fresh authenticated /health. CC-BY-NC-SA weights forbid commercial routing at any rung.",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [],
+      "nextRung": "DEPLOYED"
+    },
+    {
+      "id": "MOSS_MUSIC_INSTRUCT",
+      "family": "gpu semantic reasoning (services/moss-music-worker)",
+      "capabilities": [
+        "musical_semantic_reasoning"
+      ],
+      "rung": "MANIFEST_ONLY",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/musicProviders.ts",
+          "symbol": "MUSIC_PROVIDERS[id=MOSS_MUSIC_INSTRUCT] (BLOCKED_UPSTREAM note); analysisProviderManifest.ts VERIFIED_MOSS_MUSIC_IDENTITY; musicProviders.ts verifyAnalysisProviderHealth()"
+        }
+      },
+      "whatWouldMoveItUp": "CODE_WIRED needs an analysis request adapter: only the health-attestation contract exists — runAnalysisProviders() never schedules MOSS and no parse function consumes its output. Upstream must also clear the TorchCodec 0.8.0 preflight failure recorded in services/moss-music-worker/release-evidence/modal-compatibility-failure.json before any endpoint can exist.",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [
+        "Output is defined as MUSICAL_SEMANTIC_REASONING only and never canonical analysis truth, so even a live endpoint would not enter fusion."
+      ],
+      "nextRung": "CODE_WIRED"
+    },
+    {
+      "id": "MOSS_MUSIC_THINKING",
+      "family": "gpu semantic reasoning (services/moss-music-worker)",
+      "capabilities": [
+        "musical_semantic_reasoning"
+      ],
+      "rung": "MANIFEST_ONLY",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/musicProviders.ts",
+          "symbol": "MUSIC_PROVIDERS[id=MOSS_MUSIC_THINKING] (BLOCKED_UPSTREAM note); analysisProviderManifest.ts VERIFIED_MOSS_MUSIC_IDENTITY; musicProviders.ts verifyAnalysisProviderHealth()"
+        }
+      },
+      "whatWouldMoveItUp": "CODE_WIRED needs an analysis request adapter: only the health-attestation contract exists — runAnalysisProviders() never schedules MOSS and no parse function consumes its output. Upstream must also clear the TorchCodec 0.8.0 preflight failure recorded in services/moss-music-worker/release-evidence/modal-compatibility-failure.json before any endpoint can exist.",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [
+        "Output is defined as MUSICAL_SEMANTIC_REASONING only and never canonical analysis truth, so even a live endpoint would not enter fusion."
+      ],
+      "nextRung": "CODE_WIRED"
+    },
+    {
+      "id": "BASS",
+      "family": "composite (TORCHCREPE + BASIC_PITCH on a BS_ROFORMER bass stem)",
+      "capabilities": [
+        "bass"
+      ],
+      "rung": "CODE_WIRED",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/musicProviders.ts",
+          "symbol": "MUSIC_PROVIDERS[id=BASS]; providerReliability.ts BASS (bass 0.9)"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/analysisProviders.ts analyzeVerifiedBassStem() -> fuseVerifiedBassEvidence()",
+          "scheduledIn": "artifacts/api-server/src/lib/sourceAnalyzer.ts bass phase — only when a verified BS_ROFORMER bass stem exists; full-mix fallback is forbidden",
+          "typecheck": "green"
+        }
+      },
+      "whatWouldMoveItUp": "Unreachable by construction while BS_ROFORMER is licence-blocked (no admissible stem) and TORCHCREPE has no endpoint. There is no BASS worker; BASS_API_URL names nothing in services/.",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [],
+      "nextRung": "DEPLOYED"
+    },
+    {
+      "id": "CLAMP3",
+      "family": "gpu similarity (services/clamp3-worker)",
+      "capabilities": [
+        "cross_modal_similarity"
+      ],
+      "rung": "CODE_WIRED",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/musicProviders.ts",
+          "symbol": "MUSIC_PROVIDERS[id=CLAMP3] (RESEARCH_ONLY)"
+        },
+        "codeWired": {
+          "adapter": "artifacts/api-server/src/lib/clamp3Attestation.ts",
+          "scheduledIn": null,
+          "typecheck": "green"
+        }
+      },
+      "historical": {
+        "installationStatus": "services/clamp3-worker/installation-status.json: RESEARCH_READY",
+        "today": {
+          "endpointOrigin": "https://windot100--music-clamp3-worker-api.modal.run",
+          "probedAt": "2026-09-09T19:38:06.552Z",
+          "httpStatus": 404,
+          "meaning": "the historical endpoint no longer answers; the app is absent from `modal app list` under MODAL_PROFILE=music-platform"
+        }
+      },
+      "whatWouldMoveItUp": "Redeploy services/clamp3-worker (volume music-clamp3-assets-v1 exists) and set CLAMP3_API_URL. Not an analysis-fusion provider: it never enters a Song Model.",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [
+        "Non-commercial (CC-BY-NC-4.0 raw-audio dependency)."
+      ],
+      "nextRung": "DEPLOYED"
+    },
+    {
+      "id": "SONGFORMER",
+      "family": "structure segmentation (services/songformer-worker)",
+      "capabilities": [
+        "sections"
+      ],
+      "rung": "MANIFEST_ONLY",
+      "proof": {
+        "manifest": {
+          "file": "artifacts/api-server/src/lib/providerReliability.ts",
+          "symbol": "PROVIDER_RELIABILITY.SONGFORMER (sections 0.82) — the only place the API names it"
+        }
+      },
+      "whatWouldMoveItUp": "CODE_WIRED needs an adapter and a schedule call; none exists. services/songformer-worker/installation-status.json is BLOCKED_LICENSE with the Modal app stopped, so the licence must be resolved first.",
+      "costUsd": 0,
+      "latencyMs": "UNKNOWN",
+      "notes": [],
+      "nextRung": "CODE_WIRED"
+    }
+  ]
+}
