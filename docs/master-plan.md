@@ -4235,6 +4235,61 @@ any of it.
   the candidates so far. Melody on this recording is still `not_available`
   (a full-mix transcription is not a melodic line) — unchanged here. Quick
   tunnels remain ephemeral; a named tunnel is still not set up.
+- **PR-80** ✅ — `analysis-provider-live-audit` (Analysis Engine wave, Stream
+  A): every analysis provider the platform names, placed on one rung of a
+  six-step ladder with the proof for that rung — and nothing higher.
+
+  Ladder: `MANIFEST_ONLY` → `CODE_WIRED` → `DEPLOYED` → `LIVE_SMOKE` →
+  `BENCHMARKED` → `PROMOTED`, cumulative: a rung needs its own proof fields and
+  every lower rung's, proof for an unclaimed rung is refused, and evidence
+  that was true once and is not now lives under `historical` and lifts
+  nothing. `analysisProviderAudit.ts` types the ladder and validates the
+  evidence; its suite (10 tests, in `analysis-providers`) checks the
+  committed file. Evidence `docs/evidence/analysis-provider-audit-live.json`,
+  table and limits in `docs/model-discovery/analysis-provider-audit.md`.
+
+  **What the probes found.** `modal app list` under `music-platform` holds
+  one analysis worker: `music-ai-worker` (Basic Pitch). Every other analysis
+  origin recorded in the repository — `music-mir`, `music-mir-essentia`,
+  `beat-this`, `sheetsage`, `mt3-isolated`, `mr-mt3`, `your-mt3`,
+  `all-in-one-isolated`, `bs-roformer-isolated`, `music-clamp3-worker-api` —
+  answers **404** from `modal-http` today; their volumes and secrets still
+  exist, so the `READY` classifications in `services/*/installation-status.json`
+  describe 2026-09-06 deployments that are gone.
+
+  **Live.** `BASIC_PITCH` → **LIVE_SMOKE**: authenticated `/health` 200 with
+  the exact identity the manifest pins (0.4.0, checkpoint `b74344cd…`, source
+  `9991303b…`, Apache-2.0; 401 without the token), then one real
+  `POST /analyze` on the PR-46 fixture through the platform's own lease surface
+  on :5012 behind an operator quick tunnel (one served fetch, exactly
+  9,199,873 bytes): **200 in 13.9 s**, `fc-01M23V1BT1KEPNZHXDVTRDZGZE`,
+  206,537 B, **1,876 notes**, confidence 0.473 — the same count PR-46 recorded.
+
+  **Not live.** `DEMUCS` → CODE_WIRED: `DEMUCS_API_URL` is unset and the only
+  worker naming it is built without Torch — `/health?provider=DEMUCS` and
+  `/separate` both **500** (`import torch` → `ModuleNotFoundError` at
+  `app.py:1317`), the lease never fetched. `BS_ROFORMER`, `ALL_IN_ONE`,
+  `BEAT_THIS`, `MADMOM`, `ESSENTIA`, `CHROMA`, `TORCHCREPE`, `PYLOUDNORM`,
+  `MT3`, `MR_MT3`, `YOUR_MT3`, `SHEETSAGE`, `BASS`, `CLAMP3` → CODE_WIRED
+  (adapters exist and typecheck; no endpoint answers). `MOSS_MUSIC_INSTRUCT`,
+  `MOSS_MUSIC_THINKING`, `SONGFORMER` → MANIFEST_ONLY (no request adapter).
+  Histogram: 1 / 15 / 3 / 0 / 0 / 0. **Nothing is BENCHMARKED**, so nothing is
+  PROMOTED, although eleven providers are scheduled by default in
+  `runAnalysisProviders()` — default-in-code is not proven-better. Spend
+  ≈ $0.03 of Modal (one CPU container, ~3 min); no GPU, no deploy, no training.
+
+  **Honest limits.** One fixture, one run: a smoke of transport and identity,
+  not of quality — 1,876 notes on a full mix is a polyphonic dump the analyzer
+  rightly refuses to call a melody. A 404 proves the recorded origin is gone,
+  not that nobody redeployed under another name; `modal app list` is the
+  strongest statement available. The DEMUCS 500 is also a worker bug (health
+  should answer `unhealthy`, as its Dockerfile promises). Costs are list-price
+  estimates. The lease surface was the platform's module bundled verbatim but
+  driven by a script, so this proves the worker and the transport, not the
+  API's job runner (PR-46/PR-79 proved that path on the same file). Other
+  streams' ephemeral Modal apps were visible during the audit and are not
+  counted.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
