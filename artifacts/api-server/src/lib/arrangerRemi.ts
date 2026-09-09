@@ -218,6 +218,41 @@ export function normaliseTimeSig(numerator: number, denominator: number): {
   return { numerator: best[0], denominator: best[1], approximated: true };
 }
 
+/**
+ * The metre the grid is cut on: the signature in force for the most ticks,
+ * not the first one written.
+ *
+ * PR-65 measured the difference on the whole admitted corpus: the first
+ * signature is not the dominant one in **103,469 of 222,820 works (46 %)** —
+ * almost always a pickup bar that a notation editor exported as its own
+ * metre (1/4 then 4/4). Cutting eight-bar windows on that first metre put
+ * every window boundary of those works in the wrong place. `firstTick` is
+ * where the dominant metre begins; anything before it is the anacrusis.
+ */
+export function dominantTimeSignature(
+  midi: Pick<ParsedMidi, "timeSignatures" | "ticksPerQuarter" | "endTick">,
+): { numerator: number; denominator: number; firstTick: number; changes: number } {
+  const sigs = [...midi.timeSignatures].sort((a, b) => a.tick - b.tick);
+  if (!sigs.length) return { numerator: 4, denominator: 4, firstTick: 0, changes: 0 };
+  const covered = new Map<string, { ticks: number; firstTick: number; numerator: number; denominator: number }>();
+  let changes = 0;
+  for (let i = 0; i < sigs.length; i += 1) {
+    const s = sigs[i];
+    const next = sigs[i + 1]?.tick ?? Math.max(midi.endTick, s.tick);
+    const label = `${s.numerator}/${s.denominator}`;
+    if (i > 0 && (sigs[i - 1].numerator !== s.numerator || sigs[i - 1].denominator !== s.denominator)) changes += 1;
+    const entry = covered.get(label) ?? { ticks: 0, firstTick: s.tick, numerator: s.numerator, denominator: s.denominator };
+    entry.ticks += Math.max(0, next - s.tick);
+    covered.set(label, entry);
+  }
+  let best = covered.get(`${sigs[0].numerator}/${sigs[0].denominator}`)!;
+  for (const entry of covered.values()) {
+    // Strictly more coverage wins; a tie keeps the earlier metre.
+    if (entry.ticks > best.ticks) best = entry;
+  }
+  return { numerator: best.numerator, denominator: best.denominator, firstTick: best.firstTick, changes };
+}
+
 /** Snap a ParsedMidi to the grid, without tokenizing yet — shared by both directions. */
 export function toGridNotes(midi: ParsedMidi, options: TokenizeOptions = {}): {
   notes: GridNote[];
@@ -226,16 +261,31 @@ export function toGridNotes(midi: ParsedMidi, options: TokenizeOptions = {}): {
   tempoBin: number;
   barCount: number;
   stepsPerBarValue: number;
+  /** Tick of grid step 0. Non-zero when a pickup precedes the dominant metre: the pickup fills bar 0 from the right. */
+  gridOriginTick: number;
+  /** True when notes sound before the dominant metre begins (an anacrusis). */
+  pickupBar: boolean;
+  /** How many times the written metre changes; the grid follows the dominant one throughout. */
+  metreChanges: number;
 } {
   const ticksPerStep = midi.ticksPerQuarter / STEPS_PER_QUARTER;
-  const raw = midi.timeSignatures[0] ?? { numerator: 4, denominator: 4 };
-  const ts = normaliseTimeSig(raw.numerator, raw.denominator);
+  const dominant = dominantTimeSignature(midi);
+  const ts = normaliseTimeSig(dominant.numerator, dominant.denominator);
   const perBar = stepsPerBar(ts.numerator, ts.denominator);
   const tempoBin = tempoToBin(midi.tempos[0]?.bpm ?? 120);
 
+  // Grid origin: where the dominant metre starts. If notes precede it (a
+  // pickup), pad whole bars to the left so the pickup lands at the end of bar 0
+  // and every later downbeat stays a downbeat — the way a score numbers it.
+  const perBarTicks = perBar * ticksPerStep;
+  const earliestTick = midi.notes.length ? Math.min(...midi.notes.map((n) => n.startTick)) : dominant.firstTick;
+  const pickupBar = earliestTick < dominant.firstTick;
+  const padBars = pickupBar ? Math.ceil((dominant.firstTick - earliestTick) / perBarTicks) : 0;
+  const gridOriginTick = Math.round(dominant.firstTick - padBars * perBarTicks);
+
   const snapped: GridNote[] = [];
   for (const note of midi.notes) {
-    const startStep = Math.round(note.startTick / ticksPerStep);
+    const startStep = Math.round((note.startTick - gridOriginTick) / ticksPerStep);
     const durationSteps = Math.max(1, Math.round((note.endTick - note.startTick) / ticksPerStep));
     const bar = Math.floor(startStep / perBar);
     if (options.maxBars && bar >= options.maxBars) continue;
@@ -266,6 +316,9 @@ export function toGridNotes(midi: ParsedMidi, options: TokenizeOptions = {}): {
     tempoBin,
     barCount,
     stepsPerBarValue: perBar,
+    gridOriginTick,
+    pickupBar,
+    metreChanges: dominant.changes,
   };
 }
 
@@ -476,6 +529,10 @@ export type RoundTripResult = {
   onsetErrorQuartersMax: number;
   /** True when the file's metre is not one the vocabulary carries directly. */
   timeSigApproximated: boolean;
+  /** True when a pickup precedes the dominant metre and the grid was shifted to keep downbeats on bar lines. */
+  pickupBar: boolean;
+  /** Written metre changes in the file; the grid follows the dominant metre. */
+  metreChanges: number;
   /** True when every considered note survives at grid resolution and nothing is invented. */
   lossless_modulo_grid: boolean;
 };
@@ -529,7 +586,7 @@ export function roundTrip(midi: ParsedMidi, options: TokenizeOptions = {}): Roun
   const consideredOriginalTicks = midi.notes
     .map((n) => n.startTick)
     .filter((startTick) => {
-      const bar = Math.floor(Math.round(startTick / ticksPerStep) / grid.stepsPerBarValue);
+      const bar = Math.floor(Math.round((startTick - grid.gridOriginTick) / ticksPerStep) / grid.stepsPerBarValue);
       return !options.maxBars || bar < options.maxBars;
     });
   for (const startTick of consideredOriginalTicks) {
@@ -555,6 +612,8 @@ export function roundTrip(midi: ParsedMidi, options: TokenizeOptions = {}): Roun
       : 0,
     onsetErrorQuartersMax: Number(onsetErrorMax.toFixed(5)),
     timeSigApproximated: grid.timeSigApproximated,
+    pickupBar: grid.pickupBar,
+    metreChanges: grid.metreChanges,
     lossless_modulo_grid: dropped === 0 && spurious === 0,
   };
 }

@@ -3549,6 +3549,186 @@ any of it.
   independent raters. All 12 source tasks are classical; the 840 non-classical
   pairs are unrated. No secondary rating was given. Approval for training is
   **still not requested**, and this is why.
+- **PR-75** ✅ — `dominant-metre-grid` (Wave Q, Q-05 — the defect PR-65 found):
+  **the tokenizer grid now follows the metre in force for most of the piece,
+  not the first one written.** `arrangerRemi.ts` gains `dominantTimeSignature()`
+  (coverage in ticks; a tie keeps the earlier metre) and `toGridNotes()` cuts
+  bars on it, with the grid origin placed so a pickup bar fills bar 0 from the
+  right and every written downbeat stays a grid downbeat. The grid reports
+  `gridOriginTick`, `pickupBar` and `metreChanges`; the round-trip result
+  carries the last two.
+
+  **Why it mattered.** PR-65 measured that the first metre is not the dominant
+  one in 103,469 of 222,820 works (46 %) — almost always an anacrusis a notation
+  editor exported as its own metre (1/4 then 4/4). Every 8-bar window cut from
+  those works started one beat early, so window boundaries never fell on bar
+  lines, and the whole piece was tokenised under an approximated 1/4 grid.
+
+  **Re-proved, not assumed.** Round trip on the same 8,000-file sample as
+  PR-52: **7,997 / 7,997 lossless modulo grid**, 0 dropped, 0 spurious —
+  unchanged — and the new counters say the change touched **3,638 files with
+  a pickup bar (45.5 %) and 4,739 with metre changes (59 %)**. Tier B
+  extraction on the same 5,000-work sample: the same 449 works yield 3,527
+  tasks (−50, windows shifted) carrying **251,244 target notes, +7.0 %** —
+  windows that start on real downbeats contain fuller bars; the work-level
+  split stays leak-free and the rights proof verifies; the tokenizer version
+  is unchanged because the vocabulary is unchanged.
+
+  Suites: arrangerRemi 15 (+3: pickup score, single-metre score untouched,
+  pickup round trip), arrangerTaskExtraction 9; typecheck green.
+
+  **Honest limits.** The grid follows one metre for the whole piece; a work
+  that genuinely alternates metres is still cut on the dominant one and says so
+  (`metreChanges`). `judgeCalibration.ts` and `tournamentTask.ts` still read
+  the first signature — the tournament refuses multi-metre files outright, so
+  it is unaffected; the calibration windows were cut the old way and would need
+  an 11-minute re-run to be strictly comparable. The CA2 LoRA dataset builder
+  (PR-63) uses CA2's own encoder, not this grid.
+
+- **PR-62** ✅ — `model-discovery-round-2` (Wave Q — Model Discovery, round 2):
+  **the second global sweep, and a real challenger in the tournament — which
+  lost.** Evidence: `docs/model-discovery/discovery-round-2.md` (21 models
+  audited, ranked table + per-model scorecards),
+  `docs/evidence/model-anticipatory-music-transformer-live.json`,
+  `docs/evidence/model-tournament-challenger-live.json` (252 entries) + 328
+  blind-pair MIDIs under `docs/evidence/tournament-challenger/`, raw probe and
+  decode-sweep output under `docs/evidence/amt-live/`, and
+  `docs/model-discovery/decision-report.md` §2c.
+
+  **The sweep.** 21 symbolic models audited from primary sources (13 new since
+  the first pass): MuPT, NotaGen/-X, REMI-z arrangers, CLaMP 3, GETMusic,
+  Anticipatory MT, SymphonyNet, MelodyT5, Pianist Transformer, MetaScore,
+  MIDI-GPT, FIGARO, MuseCoco, ChatMusician, plus 2025–26 arrivals (Moonbeam,
+  MIDI-RWKV, MIDI-LLM, Aria, PhraseLDM, EMT, Structured Multi-Track
+  Accompaniment Arrangement); four audio models recorded as deliberately out
+  of scope. **Nothing was promoted: CA2 is still the only `SHIP_CLEARED` row.**
+  Every permissive label sits on an uncleared, non-commercial or undisclosed
+  corpus. Four models moved to `BLOCKED_LICENSE` on primary sources
+  (MIDI-GPT `CC-BY-NC-4.0` weights, MIDI-RWKV and MIDI-LLM on GigaMIDI's Fair
+  Dealing terms, Aria on `CC-BY-NC-SA-4.0` Aria-MIDI). No layer was assumed;
+  an unread one is `LEGAL_REVIEW_REQUIRED`.
+
+  **The challenger, proven live.** `services/anticipatory-worker/` — the
+  Anticipatory Music Transformer (`stanford-crfm/music-large-800k`, 780M
+  GPT-2, Apache-2.0 code and weights over Lakh + MetaMIDI + FMA transcripts +
+  450k transcribed commercial records → **`RESEARCH_ONLY`**, a shadow
+  challenger that can never route to a user). Pinned image, checksum-verified
+  3.1 GB checkpoint, five upstream module shas re-hashed at build, at load and
+  on every `/health`, dedicated bearer token, GPU build smoke as the image's
+  last step. On the same PDMX brass score and the same two windows as the CA2
+  cloud evidence: **tuba 88 notes (14 pitches, 28–42), trumpet 104 notes
+  (5 pitches, 59–68), 270 and 318 forward passes, 22.7 s and 35.0 s on an
+  A10G, nothing off-target.**
+
+  **Four deploys of failure before that, all recorded.** The task does not
+  come out of this model by masking. Put the whole band in the event prompt
+  and it answers `REST` (4 rests, 0 notes); ban `REST` and it re-emits at one
+  onset forever (400 notes at the cap, 48 of them the same pitch at 0.13 s);
+  a four-way decode sweep showed the mask was the cause, not the tuning
+  (48–124 notes stacked on a single onset in every combination), and unmasked
+  it wrote 9–26 events with **none** for the held-out instrument. The fix is
+  upstream's own accompaniment framing, inverted: **the event stream is the
+  held-out part's own line, the controls are every other instrument.** Then
+  88 notes over 53 onsets across all eight bars. `mask_instrument`,
+  `allow_rest` and `forbid_duplicate` survive as request switches, reported
+  per call and carried into the account, so the evidence shows what each does.
+
+  **The tournament said no.** Same 12 tasks, programs, windows and seeds
+  7/11/13 as PR-59, all five incumbent arms plus both AMT arms, 36 real AMT
+  inferences: HUMAN 90.4 · REFERENCE 63.0 · CONTEXT_AWARE 64.6 · CA2 71.5 ·
+  **CA2+CTX 71.8** · **AMT 39.5 · AMT+CTX 43.3**. Last place overall and in
+  every one of the six families, **8.09 playability errors per entry** (16×
+  CA2, 100× the reference; two bass cells carry 93 and 71), 3 outright
+  failures, 5 zero-note cells, 3 that ran to the event cap, and 6× CA2's cost
+  on a GPU where CA2 is a CPU job. `do_not_promote` for all four model arms.
+  The one genuinely new finding is about **us**: the platform's context passes
+  cut AMT's playability errors by **79 %** (8.09 → 1.70) against half for CA2
+  — the worse the generator, the more the passes carry.
+
+  **What was built.** `anticipatoryProjection.ts` (every V2 field's
+  disposition, PR-56's contract — `instrument` is *approximated*, because the
+  part it writes follows from our stream split and not from any token it
+  read), `anticipatoryResultAdapter.ts` (refuses any other checkpoint,
+  revision or provider; names the decode rule in force on every run),
+  `anticipatoryClient.ts` (`ANTICIPATORY_MT_API_URL` + a **dedicated**
+  `ANTICIPATORY_MT_API_TOKEN`, https only — the shared worker token and CA2's
+  token are both refused), `tournamentChallengers.ts` (`createAmtProviders`,
+  two arms over one shared inference per (task, seed)) and
+  `scripts/run-challenger-tournament.mjs`, which rebuilds a previous run's
+  tasks from the same PDMX files and **verifies the task ids match** before
+  running. Workstream B's tournament core is reused unchanged.
+
+  Suites: globalModelRegistry 16, anticipatoryResultAdapter 8,
+  anticipatoryClient 5, tournamentChallengers 3 (worker mocked at the HTTP
+  boundary); typecheck green.
+
+  **Cost.** One A10G, inference only, no training, `max_containers` 1,
+  `timeout` 1200 s: ≈ 55 min of container time across six deploys, two live
+  probes, three decode sweeps and the tournament — ≈ $1.10–1.30 at Modal's
+  published rate (derived from measured seconds, not an invoice). Inside the
+  $10 ceiling.
+
+  **Honest limits.** The comparison is between two *harnesses* as much as two
+  models: AMT has no instrument conditioning at all, CA2 is told which track
+  and which bars, and a better harness might buy AMT points (not 28 of them).
+  The three failed cells are an unfixed interop gap — the `anticipation`
+  package's MIDI front-end resolves GM programs differently from the
+  platform's parser, so `hold out program 0` named a part that did not exist
+  inside the worker. The incumbents' means moved slightly from PR-59 (CA2
+  73.0 → 71.5) on identical tasks and seeds, because CPU sampling is not
+  bit-reproducible — the reason the tournament runs three seeds. All twelve
+  tasks are still classical/early-music, so **nothing here speaks to pop,
+  dance or Mizrahi arrangement**. The 328 new blind pairs are written and
+  **nobody has rated one**. A diagnostic counter in the worker
+  (`controlEventsFromOtherInstruments`) reports the wrong quantity and was
+  deliberately left alone so the committed source keeps hashing to
+  `sha256:b0494f63…`, the image that produced every number above; the correct
+  figure is in the same response as `request.otherInstrumentEventsGiven`.
+
+- **PR-79** ✅ — `studio-hotfix-providers-enum-and-local-gate` (found by the
+  owner uploading a real recording): three faults behind one "Key analysis
+  is required" screen, each fixed at its cause.
+
+  1. **`/api/music-providers` returned 500 on every studio page.** PR-58 added
+  `COMPOSERS_ASSISTANT_2` to `musicProviderIds` but not to the OpenAPI
+  `MusicProviderId` enum, so the response schema rejected the catalogue it
+  had just built. The enum (five occurrences) now carries it; clients
+  regenerated; typecheck green.
+  2. **The PR-70 loopback gate refused the studio's own dev proxy and leaked
+  onto every route.** Vite forwards `/api` on the same machine and names the
+  browser in `x-forwarded-for`; the gate treated any forwarding header as a
+  relay. It now reads the addresses a relay names and requires *every one*
+  to be loopback — the studio proxy passes, a tunnel carrying a public
+  caller is still refused, an unreadable address is refused, and
+  `x-forwarded-host` (a host name, not a caller) is no longer consulted.
+  And `router.use(gate)` on a root-mounted router had run the check on
+  every request passing through — `/projects` was refused for "no peer
+  address" — so the gate is mounted on `DEV_AUTH_PATHS` only, exported from
+  the pure policy module. localAccess 8 + devAuth 8 = 16 tests.
+  3. **The Cloudflare quick tunnel from the morning had died**, so the Basic
+  Pitch worker's fetch of the leased audio got an error page → HTTP 400 →
+  no transcription → no key. A fresh quick tunnel to **:5010 only** was
+  opened and `.env.local`'s `ANALYSIS_ASSET_BASE_URL` updated (never
+  printed). Quick tunnels are ephemeral by design; a named tunnel is the
+  durable answer and is not set up.
+
+  **Proof on the owner's file.** After the restart, `POST
+  …/sources/…/retry` → 202; the lease was served to the Modal worker; Basic
+  Pitch returned its notes; the attempt reached `complete` and the source is
+  `ready` with a Song Model — the same file that had failed twice at 68 %.
+
+  **Honest limits.** A second recording uploaded the same evening still
+  failed, and for a different reason that is *not* fixed here: the local
+  spectral detector read **G minor**, the transcription key (Krumhansl-Kessler
+  over 1,769 Basic Pitch notes) read **E♭ major** (0.69, margin 0.16), and the
+  reconciliation refused to pick between two disagreeing observations — as
+  designed. The design is right for a gate and wrong for a producer: the
+  whole upload fails, "Retry" is deterministic and cannot help, and the
+  message names no way out. Next: carry a *contested* key in the Song Model
+  with both candidates and let the producer confirm one — the clarification
+  pattern, not a lowered threshold. The tunnel is a quick tunnel again and
+  will die again.
+
 - **PR-73** ✅ — `tournament-rescore-judge-1-1` (Wave Q, Model Discovery —
   both live tournaments re-scored under the calibrated judge, $0, no
   inference): `tournamentRescore.ts` + `scripts/rescore-tournament.mjs`

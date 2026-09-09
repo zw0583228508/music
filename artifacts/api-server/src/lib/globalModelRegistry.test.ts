@@ -10,7 +10,7 @@ import {
   teacherOutputsNeedReview,
   type ModelEntry,
 } from "./globalModelRegistry";
-import { GLOBAL_MODEL_REGISTRY } from "./globalModelRegistryData";
+import { AUDITED_OUT_OF_SCOPE, GLOBAL_MODEL_REGISTRY } from "./globalModelRegistryData";
 
 const verified = (stated: string) => ({ stated, source: "LICENSE file", confidence: "verified_primary_source" as const });
 
@@ -88,6 +88,16 @@ test("teacher outputs from non-cleared models are flagged for legal review befor
 // The real registry obeys the discipline
 // ---------------------------------------------------------------------------
 
+/** Walk up from the working directory to the repo root (the suite runs from a bundle in a temp directory). */
+function repoFileExists(relativePath: string): boolean {
+  let directory = process.cwd();
+  for (let up = 0; up < 8; up += 1) {
+    if (existsSync(resolve(directory, relativePath)) && existsSync(resolve(directory, "pnpm-workspace.yaml"))) return true;
+    directory = dirname(directory);
+  }
+  return false;
+}
+
 test("exactly one entry is SHIP_CLEARED, and only because every layer was read from a primary source", () => {
   // Deliberately updated on 2026-09-09 from "ships nothing". Composer's
   // Assistant 2 was promoted after reading, verbatim, the repository LICENSE
@@ -95,7 +105,9 @@ test("exactly one entry is SHIP_CLEARED, and only because every layer was read f
   // outputs, training on PD/CC0/CC-BY/permitted MIDI) and acknowledgments.html
   // (2,451 Mutopia links, CocoChorales CC-BY-4.0, JRP, named contributors), and
   // confirming the model zip carries no contrary licence. Its two named
-  // residuals live in knownLimitations. Any further promotion must add a name
+  // residuals live in knownLimitations. Round 2 audited thirteen more models
+  // from primary sources and promoted none: every permissive label sits on an
+  // uncleared, NC or undisclosed corpus. Any further promotion must add a name
   // here with the same kind of reason.
   assert.deepEqual(shippable(GLOBAL_MODEL_REGISTRY).map((e) => e.id), ["COMPOSERS_ASSISTANT_2"]);
   const ca = GLOBAL_MODEL_REGISTRY.find((e) => e.id === "COMPOSERS_ASSISTANT_2")!;
@@ -107,47 +119,79 @@ test("exactly one entry is SHIP_CLEARED, and only because every layer was read f
   assert.ok(ca.knownLimitations.some((l) => /Residual/.test(l)), "the residual risks are named, not hidden");
 });
 
-test("exactly one entry claims live inference, and its evidence file exists on disk", () => {
-  // Deliberately updated on 2026-09-09 from "nothing claims live inference".
-  // Composer's Assistant 2 ran four real infills on real PDMX MIDI on this
-  // machine (CPU): real input, real T5 inference, real notes, evidence written.
-  // Any further promotion must add a name here AND a file the walk-up below finds.
+test("exactly two entries claim live inference, and each evidence file exists on disk", () => {
+  // Deliberately updated on 2026-09-09 (round 2) from "exactly one". The
+  // Anticipatory Music Transformer ran real infills on real PDMX MIDI on the
+  // deployed Modal worker (A10G): real input, real GPT-2 inference, real notes,
+  // evidence written. It stays RESEARCH_ONLY — proven live is not proven
+  // shippable, and the two facts are recorded separately on purpose.
+  // Any further promotion must add a name here AND a file the walk-up finds.
   const live = provenLive(GLOBAL_MODEL_REGISTRY);
-  assert.deepEqual(live.map((e) => e.id), ["COMPOSERS_ASSISTANT_2"]);
+  assert.deepEqual(live.map((e) => e.id), ["COMPOSERS_ASSISTANT_2", "ANTICIPATORY_MUSIC_TRANSFORMER"]);
   for (const entry of live) {
     assert.ok(entry.liveEvidence, `${entry.id}: a live claim must point at an evidence file`);
-    // Walk up from the working directory to the repo root (the suite runs from a
-    // bundle in a temp directory), then check the file is really there.
-    let directory = process.cwd();
-    let found = false;
-    for (let up = 0; up < 8 && !found; up += 1) {
-      const candidate = resolve(directory, entry.liveEvidence!);
-      if (existsSync(candidate) && existsSync(resolve(directory, "pnpm-workspace.yaml"))) found = true;
-      directory = dirname(directory);
-    }
-    assert.ok(found, `${entry.id}: ${entry.liveEvidence} does not exist — a live claim with no file is a claim`);
+    assert.ok(repoFileExists(entry.liveEvidence!), `${entry.id}: ${entry.liveEvidence} does not exist — a live claim with no file is a claim`);
   }
+  assert.equal(classify(live[1]), "RESEARCH_ONLY", "live is not the same as shippable");
 });
 
 test("every registry row records a classification a reader can act on", () => {
+  const ids = new Set<string>();
   for (const e of GLOBAL_MODEL_REGISTRY) {
+    assert.ok(!ids.has(e.id), `${e.id} appears twice`);
+    ids.add(e.id);
     const verdict = classify(e);
     assert.ok(["SHIP_CLEARED", "RESEARCH_ONLY", "LEGAL_REVIEW_REQUIRED", "BLOCKED_LICENSE"].includes(verdict));
     assert.ok(explainClassification(e).length > 20, `${e.id} explains itself`);
     assert.ok(e.roles.length > 0, `${e.id} has an expected role`);
     assert.ok(e.knownLimitations.length > 0, `${e.id} names at least one limitation`);
+    // A "verified" layer must say where it was read.
+    for (const layer of [e.codeLicense, e.weightsLicense, e.trainingData]) {
+      if (layer.confidence === "verified_primary_source") assert.ok(layer.source && layer.stated, `${e.id}: a verified layer cites its source`);
+    }
   }
+  assert.ok(GLOBAL_MODEL_REGISTRY.length >= 21, `round 2 audited at least 21 models, found ${GLOBAL_MODEL_REGISTRY.length}`);
 });
 
 test("the known non-commercial models are classified as such, not as review-pending", () => {
   const byId = new Map(GLOBAL_MODEL_REGISTRY.map((e) => [e.id, classify(e)]));
   assert.equal(byId.get("MIDI_GPT"), "BLOCKED_LICENSE", "CC-BY-NC weights on Fair-Dealing data");
-  assert.equal(byId.get("ANTICIPATORY_MUSIC_TRANSFORMER"), "RESEARCH_ONLY", "Lakh MIDI: permissive licence, uncleared works");
+  assert.equal(byId.get("MIDI_RWKV"), "BLOCKED_LICENSE", "GigaMIDI: Fair Dealing, non-commercial");
+  assert.equal(byId.get("MIDI_LLM"), "BLOCKED_LICENSE", "GigaMIDI component; Llama licence besides");
+  assert.equal(byId.get("ARIA"), "BLOCKED_LICENSE", "Apache weights over CC-BY-NC-SA transcriptions");
 });
 
-test("the other permissively-labelled foundations stay LEGAL_REVIEW_REQUIRED: their corpora are undisclosed", () => {
+test("permissive licences over uncleared works are RESEARCH_ONLY: shadow challengers and references, never weights", () => {
   const byId = new Map(GLOBAL_MODEL_REGISTRY.map((e) => [e.id, classify(e)]));
-  for (const id of ["MUPT", "NOTAGEN", "CLAMP3", "GETMUSIC"]) {
+  assert.equal(byId.get("ANTICIPATORY_MUSIC_TRANSFORMER"), "RESEARCH_ONLY", "Lakh + MetaMIDI + transcribed commercial records under Apache-2.0");
+  assert.equal(byId.get("FIGARO"), "RESEARCH_ONLY", "Lakh under MIT");
+  assert.equal(byId.get("STRUCTURED_ARRANGEMENT"), "RESEARCH_ONLY", "LMD + Slakh");
+  assert.equal(byId.get("GETMUSIC"), "RESEARCH_ONLY", "the publisher states crawled pop music and withholds the set");
+  const amt = GLOBAL_MODEL_REGISTRY.find((e) => e.id === "ANTICIPATORY_MUSIC_TRANSFORMER")!;
+  assert.ok(!amt.roles.includes("FOUNDATION_CANDIDATE") && !amt.roles.includes("FINE_TUNE_CANDIDATE"), "a RESEARCH_ONLY model is never a foundation or fine-tune candidate");
+  assert.ok(teacherOutputsNeedReview(GLOBAL_MODEL_REGISTRY).some((e) => e.id === "ANTICIPATORY_MUSIC_TRANSFORMER"), "its outputs go to review before any student trains on them");
+});
+
+test("the permissively-labelled foundations with undisclosed corpora stay LEGAL_REVIEW_REQUIRED", () => {
+  const byId = new Map(GLOBAL_MODEL_REGISTRY.map((e) => [e.id, classify(e)]));
+  for (const id of [
+    "MUPT", "NOTAGEN", "CLAMP3", "MOONBEAM", "REMI_Z_ARRANGER", "MUSECOCO", "SYMPHONYNET",
+    "CHATMUSICIAN", "MELODYT5", "PIANIST_TRANSFORMER", "METASCORE_TRANSFORMER", "PHRASELDM", "EQUIVARIANT_MUSIC_TRANSFORMER",
+  ]) {
     assert.equal(byId.get(id), "LEGAL_REVIEW_REQUIRED", `${id}: MIT/Apache on weights is not provenance`);
   }
+});
+
+test("the round-2 shadow challenger is pinned to what its worker verifies", () => {
+  const amt = GLOBAL_MODEL_REGISTRY.find((e) => e.id === "ANTICIPATORY_MUSIC_TRANSFORMER")!;
+  assert.match(amt.revision ?? "", /af37397922665a0fb8d474d7988b0f3755a38d45/, "code commit");
+  assert.match(amt.revision ?? "", /e206a88d4658661c2757573eae724d5b27213824/, "checkpoint revision");
+  assert.match(amt.revision ?? "", /83fb8b9546eacce77a90bb10006b3f569ba342361dce046d078cf2429975e09f/, "safetensors sha256");
+  assert.equal(amt.roles.includes("SHADOW_CHALLENGER"), true);
+  assert.ok(repoFileExists("services/anticipatory-worker/model_manifest.json"));
+});
+
+test("audio models were audited and deliberately kept out of the symbolic registry", () => {
+  assert.ok(AUDITED_OUT_OF_SCOPE.includes("STAGE"));
+  for (const id of AUDITED_OUT_OF_SCOPE) assert.ok(!GLOBAL_MODEL_REGISTRY.some((e) => e.id === id), `${id} must not have a row`);
 });

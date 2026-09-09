@@ -57,13 +57,29 @@ test("a remote peer is refused whatever it claims in headers", () => {
 test("a loopback peer that relayed someone else's request is refused", () => {
   // A reverse proxy or tunnel on the same box: the peer is local, the caller is not.
   for (const header of FORWARDING_HEADERS) {
-    const relayed = req("127.0.0.1", { [header]: "203.0.113.7" });
+    const value = header === "forwarded" ? "for=203.0.113.7;proto=https" : "203.0.113.7";
+    const relayed = req("127.0.0.1", { [header]: value });
     assert.equal(isLocalRequest(relayed), false, header);
     assert.match(localAccessRefusal(relayed) ?? "", new RegExp(header));
   }
+  // A public address anywhere in a chain is enough to refuse.
+  assert.equal(isLocalRequest(req("127.0.0.1", { "x-forwarded-for": "127.0.0.1, 203.0.113.7" })), false);
+  assert.equal(isLocalRequest(req("127.0.0.1", { "x-forwarded-for": "10.0.0.5" })), false);
+  // An address we cannot read is not local.
+  assert.equal(isLocalRequest(req("127.0.0.1", { "x-forwarded-for": "localhost" })), false);
+  assert.equal(isLocalRequest(req("127.0.0.1", { forwarded: "by=proxy;proto=https" })), false);
   // An empty forwarding header is not a relay.
   assert.equal(localAccessRefusal(req("127.0.0.1", { "x-forwarded-for": "  " })), null);
   assert.equal(localAccessRefusal(req("127.0.0.1", { "x-forwarded-for": [] })), null);
+});
+
+test("a local proxy relaying a local browser is allowed: the studio's Vite dev server", () => {
+  // Vite on :5173 proxies /api to :5000 on the same machine and names the browser's loopback address.
+  assert.equal(localAccessRefusal(req("127.0.0.1", { "x-forwarded-for": "127.0.0.1" })), null);
+  assert.equal(localAccessRefusal(req("::1", { "x-forwarded-for": "::1", "x-forwarded-host": "localhost:5173" })), null);
+  assert.equal(localAccessRefusal(req("127.0.0.1", { "x-forwarded-for": "::ffff:127.0.0.1, 127.0.0.1" })), null);
+  assert.equal(localAccessRefusal(req("127.0.0.1", { forwarded: 'for="[::1]:5173";proto=http' })), null);
+  assert.equal(localAccessRefusal(req("127.0.0.1", { "x-real-ip": "127.0.0.1:61234" })), null);
 });
 
 test("a request with no peer address at all is refused, not assumed local", () => {

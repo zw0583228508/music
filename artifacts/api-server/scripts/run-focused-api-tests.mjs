@@ -183,6 +183,25 @@ const suites = {
         "tournament-providers.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, Model Discovery round 2: the Anticipatory Music Transformer
+      // shadow challenger — projection + result adapter (refusing any other
+      // checkpoint), the dedicated-token https client, and the two tournament
+      // arms with the worker mocked at the HTTP boundary.
+      [
+        "src/lib/anticipatoryResultAdapter.test.ts",
+        "anticipatory-result-adapter.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/anticipatoryClient.test.ts",
+        "anticipatory-client.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/tournamentChallengers.test.ts",
+        "tournament-challengers.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // Wave Q, Model Discovery (PR-61): the playability judge calibrated on
       // real human parts — windows, evidence-based classification, gate verdicts.
       [

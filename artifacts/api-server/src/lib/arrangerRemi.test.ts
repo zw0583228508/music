@@ -17,9 +17,11 @@ import {
   normaliseTimeSig,
   roundTrip,
   stepsPerBar,
+  toGridNotes,
   tokenize,
   velocityToBin,
   vocabularyVersion,
+  dominantTimeSignature,
 } from "./arrangerRemi";
 
 const TPQ = 480;
@@ -201,4 +203,70 @@ test("the full pipeline survives a real Standard MIDI File written by our own wr
   const rebuilt = detokenizedToMidi(detokenize(tokenize(reparsed)));
   const finalBytes = writeMidiFile(rebuilt);
   assert.equal(parseMidiFile(finalBytes).notes.length, result.roundTripNotes);
+});
+
+// ---------------------------------------------------------------------------
+// PR-75: the grid follows the dominant metre, not the first written one
+// ---------------------------------------------------------------------------
+
+/** A one-beat pickup exported as its own 1/4 metre, then 4/4 for the piece. */
+function pickupScore() {
+  const TPQ = 480;
+  const notes = [
+    // the anacrusis: one quarter before the first downbeat
+    { track: 1, channel: 0, program: 0, isPercussion: false, pitch: 67, velocity: 80, startTick: 0, endTick: TPQ },
+  ];
+  for (let bar = 0; bar < 4; bar += 1) {
+    for (let beat = 0; beat < 4; beat += 1) {
+      const at = TPQ + bar * 4 * TPQ + beat * TPQ;
+      notes.push({ track: 1, channel: 0, program: 0, isPercussion: false, pitch: 60 + beat, velocity: 80, startTick: at, endTick: at + TPQ - 20 });
+      notes.push({ track: 2, channel: 1, program: 33, isPercussion: false, pitch: 36, velocity: 80, startTick: at, endTick: at + TPQ });
+    }
+  }
+  return {
+    ticksPerQuarter: TPQ, format: 1, trackCount: 3, notes,
+    tempos: [{ tick: 0, usPerQuarter: 500_000, bpm: 120 }],
+    timeSignatures: [{ tick: 0, numerator: 1, denominator: 4 }, { tick: TPQ, numerator: 4, denominator: 4 }],
+    endTick: TPQ + 16 * TPQ,
+  };
+}
+
+test("the dominant metre wins over a pickup bar written as its own metre", () => {
+  const midi = pickupScore();
+  const dominant = dominantTimeSignature(midi);
+  assert.deepEqual({ n: dominant.numerator, d: dominant.denominator }, { n: 4, d: 4 });
+  assert.equal(dominant.firstTick, 480);
+  assert.equal(dominant.changes, 1);
+  const grid = toGridNotes(midi);
+  assert.deepEqual(grid.timeSig, { numerator: 4, denominator: 4 });
+  assert.equal(grid.timeSigApproximated, false, "4/4 is in the vocabulary; the old code approximated 1/4 for the whole piece");
+  assert.equal(grid.pickupBar, true);
+  assert.equal(grid.metreChanges, 1);
+  // The pickup fills bar 0 from the right; every written downbeat is a grid downbeat.
+  const pickup = grid.notes.find((n) => n.pitch === 67)!;
+  assert.equal(pickup.bar, 0);
+  assert.equal(pickup.position, grid.stepsPerBarValue - STEPS_PER_QUARTER);
+  const downbeats = grid.notes.filter((n) => n.pitch === 60);
+  assert.equal(downbeats.length, 4);
+  assert.ok(downbeats.every((n) => n.position === 0), "written downbeats land on position 0");
+  assert.deepEqual(downbeats.map((n) => n.bar), [1, 2, 3, 4]);
+  assert.equal(grid.barCount, 5);
+});
+
+test("a single-metre score is untouched by the dominant-metre rule", () => {
+  const midi = pickupScore();
+  midi.timeSignatures = [{ tick: 0, numerator: 4, denominator: 4 }];
+  const grid = toGridNotes(midi);
+  assert.equal(grid.gridOriginTick, 0);
+  assert.equal(grid.pickupBar, false);
+  assert.equal(grid.metreChanges, 0);
+  assert.equal(grid.notes.find((n) => n.pitch === 67)!.bar, 0);
+});
+
+test("a pickup score still round-trips losslessly modulo the grid", () => {
+  const result = roundTrip(pickupScore());
+  assert.equal(result.lossless_modulo_grid, true, JSON.stringify(result));
+  assert.equal(result.pickupBar, true);
+  assert.equal(result.droppedNotes, 0);
+  assert.equal(result.spuriousNotes, 0);
 });

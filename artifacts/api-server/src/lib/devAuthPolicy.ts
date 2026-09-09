@@ -14,6 +14,9 @@
  * A third gate applies per request and lives in `localAccess.ts`: the caller
  * must be on this machine.
  */
+/** The only paths the development sign-in router answers; the loopback gate is mounted on exactly these. */
+export const DEV_AUTH_PATHS = ["/dev-login", "/dev-logout"] as const;
+
 export function devAuthEnabled(): boolean {
   return (
     process.env.NODE_ENV !== "production" &&

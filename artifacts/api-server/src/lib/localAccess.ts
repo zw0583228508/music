@@ -14,22 +14,31 @@
  * not. Everything here reads the socket, so no header can make a remote
  * request look local — that is the whole point of the file.
  *
- * A forwarding header on a request that *is* from loopback is also refused:
- * a local reverse proxy relaying a public request is exactly the case this
- * gate exists to stop, and no legitimate local development request carries one.
+ * A forwarding header on a request that *is* from loopback is read, not
+ * ignored: every address it names must itself be loopback. That admits the
+ * one legitimate local relay — the studio's Vite dev proxy on the same
+ * machine forwarding a browser on the same machine — and still refuses a
+ * tunnel or reverse proxy relaying a public caller, because that hop writes
+ * the caller's public address into the header. An unparsable or empty-valued
+ * forwarding header is refused: an address we cannot read is not local.
  */
 import type { NextFunction, Request, Response } from "express";
 
 /** The addresses that mean "this machine". IPv6 loopback, IPv4 loopback, and IPv4-mapped IPv6. */
 export const LOOPBACK_ADDRESSES: readonly string[] = ["::1", "127.0.0.1", "::ffff:127.0.0.1"];
 
-/** Headers that mean the request was relayed; their presence disqualifies a loopback peer. */
+/**
+ * Headers in which a relay names the caller's address. Every address they
+ * name must be loopback. `x-forwarded-host` is deliberately absent: it names
+ * the host the client asked for, not the client, so it says nothing about
+ * where the caller is.
+ */
 export const FORWARDING_HEADERS: readonly string[] = [
   "x-forwarded-for",
-  "x-forwarded-host",
   "x-real-ip",
   "forwarded",
   "cf-connecting-ip",
+  "true-client-ip",
 ];
 
 const normalise = (address: string): string => {
@@ -62,12 +71,40 @@ export function localAccessRefusal(req: LocalAccessRequest): string | null {
   const peer = req.socket?.remoteAddress ?? null;
   if (!peer) return "the request has no peer address";
   if (!isLoopbackAddress(peer)) return `peer ${peer} is not loopback`;
-  const relayed = FORWARDING_HEADERS.find((header) => {
-    const value = req.headers?.[header];
-    return typeof value === "string" ? value.trim().length > 0 : Array.isArray(value) && value.length > 0;
-  });
-  if (relayed) return `request carries ${relayed}: it was relayed, so the loopback peer is a proxy, not the caller`;
+  for (const header of FORWARDING_HEADERS) {
+    const raw = req.headers?.[header];
+    const values = (Array.isArray(raw) ? raw : raw === undefined ? [] : [raw])
+      .flatMap((v) => String(v).split(","))
+      .map((v) => v.trim())
+      .filter((v) => v.length > 0);
+    if (!values.length) continue;
+    const relayedFrom = values.map(forwardedAddress).find((address) => !isLoopbackAddress(address));
+    if (relayedFrom !== undefined) {
+      return `request carries ${header} naming ${relayedFrom || "an unreadable address"}: a relay brought in a caller that is not this machine`;
+    }
+  }
   return null;
+}
+
+/**
+ * The address inside one forwarding-header element. `Forwarded` (RFC 7239)
+ * carries `for=203.0.113.7` / `for="[::1]:5173"`; the X- headers carry a bare
+ * address, sometimes with a port. Anything else comes back as "" and is
+ * refused by the caller.
+ */
+function forwardedAddress(element: string): string {
+  let value = element;
+  const forParam = /(?:^|;)\s*for=([^;]+)/i.exec(element);
+  if (forParam) value = forParam[1].trim();
+  value = value.replace(/^"|"$/g, "");
+  if (value.startsWith("[")) {
+    const end = value.indexOf("]");
+    return end > 0 ? value.slice(1, end) : "";
+  }
+  // IPv4 with a port, or a bare IPv6/IPv4 address.
+  const ipv4WithPort = /^(\d{1,3}(?:\.\d{1,3}){3}):\d+$/.exec(value);
+  if (ipv4WithPort) return ipv4WithPort[1];
+  return /^[0-9a-f.:]+$/i.test(value) ? value : "";
 }
 
 /** True when this request came from the machine itself, unrelayed. */

@@ -1,0 +1,42 @@
+{
+  "provider": "ANTICIPATORY_MUSIC_TRANSFORMER",
+  "model": "stanford-crfm/music-large-800k",
+  "revision": "e206a88d4658661c2757573eae724d5b27213824",
+  "modelSafetensorsSha256Expected": "83fb8b9546eacce77a90bb10006b3f569ba342361dce046d078cf2429975e09f",
+  "modelSafetensorsVerified": true,
+  "configSha256Verified": true,
+  "config": {
+    "architectures": [
+      "GPT2LMHeadModel"
+    ],
+    "n_layer": 36,
+    "n_embd": 1280,
+    "n_head": 20,
+    "n_positions": 1024,
+    "vocab_size": 55030,
+    "transformers_version": "4.32.1",
+    "model_type": "gpt2"
+  },
+  "code": {
+    "commit": "af37397922665a0fb8d474d7988b0f3755a38d45",
+    "verified": true
+  },
+  "vocabSize": 55028,
+  "vocabVerified": true,
+  "runtime": {
+    "python": "3.10.21",
+    "torch": "2.1.2+cu121",
+    "transformers": "4.32.1",
+    "cuda": true,
+    "device": "NVIDIA A10G"
+  },
+  "runtimePinned": true,
+  "licence": {
+    "code": "Apache-2.0 (repository LICENSE.txt, read verbatim)",
+    "weights": "Apache-2.0 (Hugging Face model card front matter, read verbatim)",
+    "trainingData": "Lakh MIDI + MetaMIDI + FMA transcripts + 450k transcribed commercial records (model card) — underlying works not cleared",
+    "classification": "RESEARCH_ONLY — shadow challenger / benchmark; never routed to users; outputs reviewed, never trained on without counsel"
+  },
+  "healthy": true,
+  "imageEvidence": "sha256:b0494f63d4ffef8e185c6f26d97c65be34bd8e329c5ef832199f73358f2cfa1e"
+}
