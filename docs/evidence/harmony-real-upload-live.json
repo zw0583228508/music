@@ -1,0 +1,1619 @@
+{
+  "title": "Harmony engine on the owner's real upload (PR-85, ANALYSIS ENGINE wave, stream E)",
+  "ranAt": "2026-09-09T22:03:00.689Z",
+  "source": {
+    "stem": "owner-3108652e",
+    "durationSeconds": 259.7198,
+    "sampleRate": 22050,
+    "decodedAs": "mono 22.05 kHz 16-bit WAV from the platform's analysis proxy (FLAC)"
+  },
+  "providerEvidence": {
+    "path": "/.tmp-harmony/real/providers.json",
+    "recordedAt": "2026-09-09T21:54:04.147Z",
+    "versions": {
+      "torch": "2.2.2+cpu",
+      "librosa": "0.10.2.post1",
+      "numpy": "1.26.4",
+      "scipy": "1.11.4",
+      "soundfile": "0.12.1",
+      "btc_commit": "2682317be668032e6e4b269ded36adaa2ad57df0"
+    },
+    "timings": {
+      "BTC_MAJMIN": 24.579,
+      "BTC_LARGE_VOCA": 2.028,
+      "CHROMA_CQT": 0.826,
+      "BASS_PYIN": 9.861,
+      "BEATS": 18.762,
+      "total": 58.279
+    },
+    "errors": {},
+    "counts": {
+      "btcMajMin": 155,
+      "btcLargeVoca": 150,
+      "chromaFrames": 2797,
+      "bassNotes": 910,
+      "beats": 543,
+      "tempoBpm": 129.1992
+    },
+    "rawTopChords": {
+      "BTC_MAJMIN": [
+        {
+          "symbol": "G:min",
+          "seconds": 56.76
+        },
+        {
+          "symbol": "C:min",
+          "seconds": 36.57
+        },
+        {
+          "symbol": "G#:min",
+          "seconds": 26.67
+        },
+        {
+          "symbol": "C#:min",
+          "seconds": 18.33
+        },
+        {
+          "symbol": "D#",
+          "seconds": 16.76
+        },
+        {
+          "symbol": "F#",
+          "seconds": 12.69
+        },
+        {
+          "symbol": "D#:min",
+          "seconds": 12.13
+        },
+        {
+          "symbol": "A#",
+          "seconds": 11.67
+        }
+      ],
+      "BTC_LARGE_VOCA": [
+        {
+          "symbol": "G:min",
+          "seconds": 62.04
+        },
+        {
+          "symbol": "C:min",
+          "seconds": 37.78
+        },
+        {
+          "symbol": "G#:min",
+          "seconds": 25.28
+        },
+        {
+          "symbol": "C#:min",
+          "seconds": 18.52
+        },
+        {
+          "symbol": "D#",
+          "seconds": 14.91
+        },
+        {
+          "symbol": "A#",
+          "seconds": 12.31
+        },
+        {
+          "symbol": "F#",
+          "seconds": 11.67
+        },
+        {
+          "symbol": "D#:min",
+          "seconds": 10.93
+        }
+      ]
+    },
+    "workerKey": {
+      "key": "G",
+      "scale": "minor",
+      "confidence": 0.7382,
+      "margin": 0.43796
+    },
+    "btcDerivedKey": {
+      "key": "G minor",
+      "confidence": 0.648,
+      "margin": 0.0489
+    }
+  },
+  "keyObservationsGiven": [
+    {
+      "provider": "TRANSCRIPTION_KEY_V1",
+      "key": "Eb major",
+      "confidence": 0.69,
+      "note": "From the platform's Song Model for source 3108652e (PR-86 live record, 2026-09-09): Krumhansl-Kessler over the BASIC_PITCH full-mix transcription; reconciled score 0.345 = 0.69 x reliability 0.5"
+    },
+    {
+      "provider": "LOCAL_SIGNAL_ANALYZER_V1",
+      "key": "G minor",
+      "confidence": 0.711,
+      "note": "From the platform's Song Model for source 3108652e (PR-86 live record, 2026-09-09): spectral peak detector; reconciled score 0.32 = 0.711 x reliability 0.45"
+    },
+    {
+      "provider": "CHROMA",
+      "key": "G minor",
+      "confidence": 0.7382,
+      "note": "Krumhansl-Kessler over librosa CQT chroma of the whole upload (harmony-acr-worker)"
+    },
+    {
+      "provider": "SHEETSAGE",
+      "key": "G minor",
+      "confidence": 0.648,
+      "note": "Krumhansl-Kessler over BTC's own large-vocabulary chord sequence"
+    }
+  ],
+  "engine": {
+    "version": "1.0",
+    "providersUsed": [
+      "BASS",
+      "CHROMA",
+      "LOCAL_SIGNAL_ANALYZER_V1",
+      "SHEETSAGE",
+      "TRANSCRIPTION_KEY_V1"
+    ],
+    "coverage": {
+      "coveredSeconds": 249.743,
+      "analysedSeconds": 259.72,
+      "share": 0.9616,
+      "meanConfidence": 0.876
+    },
+    "chords": 220,
+    "abstained": 67,
+    "smoothing": {
+      "rule": "A segment merges into its neighbour only when it is shorter than minHarmonicUnitSeconds AND either it keeps its neighbour's root (a flicker of extension or bass, not a chord change) OR its decision margin is below 0.07. Equal labels always join. A short segment with a strong margin and a new root is kept, so a fast chord change is never erased.",
+      "minHarmonicUnitSeconds": 0.232,
+      "joinedSameLabel": 867,
+      "mergedWeakShort": 0,
+      "mergedSameRootFlicker": 823,
+      "protectedShortChanges": 20
+    },
+    "topChords": [
+      {
+        "symbol": "Gm",
+        "seconds": 44.15
+      },
+      {
+        "symbol": "Cm",
+        "seconds": 32.6
+      },
+      {
+        "symbol": "Abm",
+        "seconds": 19.65
+      },
+      {
+        "symbol": "C#m/E",
+        "seconds": 15.04
+      },
+      {
+        "symbol": "Eb",
+        "seconds": 9.78
+      },
+      {
+        "symbol": "Bbm",
+        "seconds": 8.33
+      },
+      {
+        "symbol": "GmMaj7",
+        "seconds": 7.86
+      },
+      {
+        "symbol": "F#",
+        "seconds": 7.65
+      },
+      {
+        "symbol": "Bb",
+        "seconds": 7.58
+      },
+      {
+        "symbol": "F",
+        "seconds": 6.86
+      },
+      {
+        "symbol": "Ebm",
+        "seconds": 6.75
+      },
+      {
+        "symbol": "E",
+        "seconds": 6.25
+      }
+    ],
+    "romanNumerals": [
+      {
+        "numeral": "i",
+        "seconds": 83.82
+      },
+      {
+        "numeral": "iv",
+        "seconds": 22.76
+      },
+      {
+        "numeral": "IV",
+        "seconds": 15.9
+      },
+      {
+        "numeral": "v",
+        "seconds": 12.86
+      },
+      {
+        "numeral": "I",
+        "seconds": 11.79
+      },
+      {
+        "numeral": "i6",
+        "seconds": 11.09
+      },
+      {
+        "numeral": "vi",
+        "seconds": 9.91
+      },
+      {
+        "numeral": "bVII",
+        "seconds": 9.71
+      },
+      {
+        "numeral": "V",
+        "seconds": 8.27
+      },
+      {
+        "numeral": "vii",
+        "seconds": 6.79
+      }
+    ],
+    "inversions": {
+      "chordsWithSlash": 11,
+      "secondsWithSlash": 20.03,
+      "bassUnknownSeconds": 64.2
+    },
+    "key": {
+      "global": {
+        "status": "agreed",
+        "key": "G minor",
+        "tonic": 7,
+        "mode": "minor",
+        "confidence": 0.514,
+        "margin": 0.718,
+        "candidates": [
+          {
+            "key": "G minor",
+            "tonic": 7,
+            "mode": "minor",
+            "score": 1.063,
+            "supporters": [
+              {
+                "provider": "LOCAL_SIGNAL_ANALYZER_V1",
+                "confidence": 0.711,
+                "reliability": 0.45,
+                "note": "From the platform's Song Model for source 3108652e (PR-86 live record, 2026-09-09): spectral peak detector; reconciled score 0.32 = 0.711 x reliability 0.45"
+              },
+              {
+                "provider": "CHROMA",
+                "confidence": 0.738,
+                "reliability": 0.7,
+                "note": "Krumhansl-Kessler over librosa CQT chroma of the whole upload (harmony-acr-worker)"
+              },
+              {
+                "provider": "SHEETSAGE",
+                "confidence": 0.648,
+                "reliability": 0.35,
+                "note": "Krumhansl-Kessler over BTC's own large-vocabulary chord sequence"
+              }
+            ],
+            "pitchClassEvidence": [
+              0.0786,
+              0.0834,
+              0.0851,
+              0.0844,
+              0.0727,
+              0.0798,
+              0.0915,
+              0.1067,
+              0.0941,
+              0.0811,
+              0.0772,
+              0.0655
+            ]
+          },
+          {
+            "key": "E♭ major",
+            "tonic": 3,
+            "mode": "major",
+            "score": 0.345,
+            "supporters": [
+              {
+                "provider": "TRANSCRIPTION_KEY_V1",
+                "confidence": 0.69,
+                "reliability": 0.5,
+                "note": "From the platform's Song Model for source 3108652e (PR-86 live record, 2026-09-09): Krumhansl-Kessler over the BASIC_PITCH full-mix transcription; reconciled score 0.345 = 0.69 x reliability 0.5"
+              }
+            ],
+            "pitchClassEvidence": null
+          }
+        ],
+        "message": null
+      },
+      "window": {
+        "seconds": 8,
+        "hopSeconds": 2,
+        "source": "fixed"
+      },
+      "timelineShare": [
+        {
+          "key": "G minor",
+          "seconds": 70,
+          "share": 0.27
+        },
+        {
+          "key": "C major",
+          "seconds": 40,
+          "share": 0.154
+        },
+        {
+          "key": "C♯ minor",
+          "seconds": 30,
+          "share": 0.116
+        },
+        {
+          "key": "E major",
+          "seconds": 28,
+          "share": 0.108
+        },
+        {
+          "key": "E minor",
+          "seconds": 14,
+          "share": 0.054
+        },
+        {
+          "key": "A♭ minor",
+          "seconds": 14,
+          "share": 0.054
+        },
+        {
+          "key": "C♯ major",
+          "seconds": 14,
+          "share": 0.054
+        },
+        {
+          "key": "G major",
+          "seconds": 8,
+          "share": 0.031
+        },
+        {
+          "key": "E♭ major",
+          "seconds": 8,
+          "share": 0.031
+        },
+        {
+          "key": "F minor",
+          "seconds": 8,
+          "share": 0.031
+        },
+        {
+          "key": "E♭ minor",
+          "seconds": 6,
+          "share": 0.023
+        },
+        {
+          "key": "F major",
+          "seconds": 5.72,
+          "share": 0.022
+        },
+        {
+          "key": "D minor",
+          "seconds": 4,
+          "share": 0.015
+        },
+        {
+          "key": "D major",
+          "seconds": 4,
+          "share": 0.015
+        },
+        {
+          "key": "C minor",
+          "seconds": 2,
+          "share": 0.008
+        },
+        {
+          "key": "B major",
+          "seconds": 2,
+          "share": 0.008
+        },
+        {
+          "key": "A♭ major",
+          "seconds": 2,
+          "share": 0.008
+        }
+      ],
+      "segments": [
+        {
+          "start": 0,
+          "end": 14,
+          "key": "G minor",
+          "confidence": 0.778,
+          "margin": 0.2283,
+          "runnerUp": "G major"
+        },
+        {
+          "start": 14,
+          "end": 16,
+          "key": "G major",
+          "confidence": 0.521,
+          "margin": 0.0426,
+          "runnerUp": "C major"
+        },
+        {
+          "start": 16,
+          "end": 20,
+          "key": "C major",
+          "confidence": 0.623,
+          "margin": 0.1632,
+          "runnerUp": "G major"
+        },
+        {
+          "start": 20,
+          "end": 28,
+          "key": "G minor",
+          "confidence": 0.671,
+          "margin": 0.2878,
+          "runnerUp": "G major"
+        },
+        {
+          "start": 28,
+          "end": 30,
+          "key": "G major",
+          "confidence": 0.509,
+          "margin": 0.0494,
+          "runnerUp": "G minor"
+        },
+        {
+          "start": 30,
+          "end": 36,
+          "key": "C major",
+          "confidence": 0.584,
+          "margin": 0.1141,
+          "runnerUp": "G major"
+        },
+        {
+          "start": 36,
+          "end": 58,
+          "key": "G minor",
+          "confidence": 0.77,
+          "margin": 0.2992,
+          "runnerUp": "G major"
+        },
+        {
+          "start": 58,
+          "end": 60,
+          "key": "E♭ major",
+          "confidence": 0.598,
+          "margin": 0.0892,
+          "runnerUp": "B♭ major"
+        },
+        {
+          "start": 60,
+          "end": 62,
+          "key": "C minor",
+          "confidence": 0.519,
+          "margin": 0.0045,
+          "runnerUp": "B♭ major"
+        },
+        {
+          "start": 62,
+          "end": 66,
+          "key": "D minor",
+          "confidence": 0.577,
+          "margin": 0.1129,
+          "runnerUp": "B♭ major"
+        },
+        {
+          "start": 66,
+          "end": 70,
+          "key": "D major",
+          "confidence": 0.612,
+          "margin": 0.1255,
+          "runnerUp": "G major"
+        },
+        {
+          "start": 70,
+          "end": 76,
+          "key": "E minor",
+          "confidence": 0.649,
+          "margin": 0.3254,
+          "runnerUp": "G major"
+        },
+        {
+          "start": 76,
+          "end": 80,
+          "key": "C major",
+          "confidence": 0.672,
+          "margin": 0.2754,
+          "runnerUp": "E minor"
+        },
+        {
+          "start": 80,
+          "end": 86,
+          "key": "G minor",
+          "confidence": 0.587,
+          "margin": 0.1268,
+          "runnerUp": "G major"
+        },
+        {
+          "start": 86,
+          "end": 88,
+          "key": "G major",
+          "confidence": 0.502,
+          "margin": 0.0231,
+          "runnerUp": "G minor"
+        },
+        {
+          "start": 88,
+          "end": 94,
+          "key": "C major",
+          "confidence": 0.579,
+          "margin": 0.1058,
+          "runnerUp": "C minor"
+        },
+        {
+          "start": 94,
+          "end": 104,
+          "key": "G minor",
+          "confidence": 0.834,
+          "margin": 0.5217,
+          "runnerUp": "G major"
+        },
+        {
+          "start": 104,
+          "end": 108,
+          "key": "C major",
+          "confidence": 0.607,
+          "margin": 0.1777,
+          "runnerUp": "G minor"
+        },
+        {
+          "start": 108,
+          "end": 112,
+          "key": "F minor",
+          "confidence": 0.61,
+          "margin": 0.1773,
+          "runnerUp": "F major"
+        },
+        {
+          "start": 112,
+          "end": 118,
+          "key": "C major",
+          "confidence": 0.672,
+          "margin": 0.3448,
+          "runnerUp": "F major"
+        },
+        {
+          "start": 118,
+          "end": 124,
+          "key": "E minor",
+          "confidence": 0.578,
+          "margin": 0.255,
+          "runnerUp": "C major"
+        },
+        {
+          "start": 124,
+          "end": 134,
+          "key": "C major",
+          "confidence": 0.836,
+          "margin": 0.4627,
+          "runnerUp": "E minor"
+        },
+        {
+          "start": 134,
+          "end": 136,
+          "key": "E minor",
+          "confidence": 0.467,
+          "margin": 0.0296,
+          "runnerUp": "C major"
+        },
+        {
+          "start": 136,
+          "end": 138,
+          "key": "G major",
+          "confidence": 0.562,
+          "margin": 0.0086,
+          "runnerUp": "G minor"
+        },
+        {
+          "start": 138,
+          "end": 148,
+          "key": "G minor",
+          "confidence": 0.771,
+          "margin": 0.303,
+          "runnerUp": "G major"
+        },
+        {
+          "start": 148,
+          "end": 150,
+          "key": "A♭ minor",
+          "confidence": 0.495,
+          "margin": 0.0184,
+          "runnerUp": "A♭ major"
+        },
+        {
+          "start": 150,
+          "end": 158,
+          "key": "E major",
+          "confidence": 0.703,
+          "margin": 0.2116,
+          "runnerUp": "C♯ minor"
+        },
+        {
+          "start": 158,
+          "end": 160,
+          "key": "C♯ minor",
+          "confidence": 0.67,
+          "margin": 0.155,
+          "runnerUp": "E major"
+        },
+        {
+          "start": 160,
+          "end": 168,
+          "key": "A♭ minor",
+          "confidence": 0.716,
+          "margin": 0.1745,
+          "runnerUp": "A♭ major"
+        },
+        {
+          "start": 168,
+          "end": 178,
+          "key": "C♯ minor",
+          "confidence": 0.85,
+          "margin": 0.4551,
+          "runnerUp": "E major"
+        },
+        {
+          "start": 178,
+          "end": 182,
+          "key": "A♭ minor",
+          "confidence": 0.757,
+          "margin": 0.1685,
+          "runnerUp": "E major"
+        },
+        {
+          "start": 182,
+          "end": 184,
+          "key": "E major",
+          "confidence": 0.653,
+          "margin": 0.0694,
+          "runnerUp": "C♯ minor"
+        },
+        {
+          "start": 184,
+          "end": 188,
+          "key": "C♯ minor",
+          "confidence": 0.603,
+          "margin": 0.0633,
+          "runnerUp": "E major"
+        },
+        {
+          "start": 188,
+          "end": 190,
+          "key": "E major",
+          "confidence": 0.51,
+          "margin": 0.0082,
+          "runnerUp": "C♯ minor"
+        },
+        {
+          "start": 190,
+          "end": 192,
+          "key": "B major",
+          "confidence": 0.605,
+          "margin": 0.1594,
+          "runnerUp": "E major"
+        },
+        {
+          "start": 192,
+          "end": 200,
+          "key": "C♯ minor",
+          "confidence": 0.68,
+          "margin": 0.1511,
+          "runnerUp": "E major"
+        },
+        {
+          "start": 200,
+          "end": 208,
+          "key": "E major",
+          "confidence": 0.704,
+          "margin": 0.2014,
+          "runnerUp": "C♯ minor"
+        },
+        {
+          "start": 208,
+          "end": 214,
+          "key": "C♯ minor",
+          "confidence": 0.726,
+          "margin": 0.229,
+          "runnerUp": "E major"
+        },
+        {
+          "start": 214,
+          "end": 222,
+          "key": "E major",
+          "confidence": 0.646,
+          "margin": 0.1338,
+          "runnerUp": "C♯ minor"
+        },
+        {
+          "start": 222,
+          "end": 228,
+          "key": "C♯ major",
+          "confidence": 0.568,
+          "margin": 0.1268,
+          "runnerUp": "A♭ major"
+        },
+        {
+          "start": 228,
+          "end": 230,
+          "key": "E♭ major",
+          "confidence": 0.45,
+          "margin": 0.0089,
+          "runnerUp": "E♭ minor"
+        },
+        {
+          "start": 230,
+          "end": 232,
+          "key": "E♭ minor",
+          "confidence": 0.539,
+          "margin": 0.1343,
+          "runnerUp": "A♭ minor"
+        },
+        {
+          "start": 232,
+          "end": 234,
+          "key": "A♭ major",
+          "confidence": 0.518,
+          "margin": 0.0502,
+          "runnerUp": "E♭ major"
+        },
+        {
+          "start": 234,
+          "end": 242,
+          "key": "C♯ major",
+          "confidence": 0.701,
+          "margin": 0.3134,
+          "runnerUp": "A♭ major"
+        },
+        {
+          "start": 242,
+          "end": 244,
+          "key": "E♭ major",
+          "confidence": 0.457,
+          "margin": 0.0072,
+          "runnerUp": "E♭ minor"
+        },
+        {
+          "start": 244,
+          "end": 248,
+          "key": "E♭ minor",
+          "confidence": 0.567,
+          "margin": 0.1688,
+          "runnerUp": "E♭ major"
+        },
+        {
+          "start": 248,
+          "end": 250,
+          "key": "E♭ major",
+          "confidence": 0.636,
+          "margin": 0.2016,
+          "runnerUp": "E♭ minor"
+        },
+        {
+          "start": 250,
+          "end": 254,
+          "key": "F minor",
+          "confidence": 0.686,
+          "margin": 0.2321,
+          "runnerUp": "C♯ major"
+        },
+        {
+          "start": 254,
+          "end": 259.72,
+          "key": "F major",
+          "confidence": 0.607,
+          "margin": 0.0921,
+          "runnerUp": "F minor"
+        }
+      ],
+      "changes": [
+        {
+          "at": 14,
+          "from": "G minor",
+          "to": "G major",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "G major is short but G minor never returns (C major follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 16,
+          "from": "G major",
+          "to": "C major",
+          "kind": "modulation",
+          "durationSeconds": 4,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "C major is short but G major never returns (G minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 20,
+          "from": "C major",
+          "to": "G minor",
+          "kind": "modulation",
+          "durationSeconds": 8,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "G minor holds for ? bar(s), at or over the 4-bar floor, so it is a new centre and not a passing tonicization."
+        },
+        {
+          "at": 28,
+          "from": "G minor",
+          "to": "G major",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "G major is short but G minor never returns (C major follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 30,
+          "from": "G major",
+          "to": "C major",
+          "kind": "modulation",
+          "durationSeconds": 6,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "C major is short but G major never returns (G minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 36,
+          "from": "C major",
+          "to": "G minor",
+          "kind": "modulation",
+          "durationSeconds": 22,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "G minor holds for ? bar(s), at or over the 4-bar floor, so it is a new centre and not a passing tonicization."
+        },
+        {
+          "at": 58,
+          "from": "G minor",
+          "to": "E♭ major",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "E♭ major is short but G minor never returns (C minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 60,
+          "from": "E♭ major",
+          "to": "C minor",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "C minor is short but E♭ major never returns (D minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 62,
+          "from": "C minor",
+          "to": "D minor",
+          "kind": "modulation",
+          "durationSeconds": 4,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "D minor is short but C minor never returns (D major follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 66,
+          "from": "D minor",
+          "to": "D major",
+          "kind": "modulation",
+          "durationSeconds": 4,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "D major is short but D minor never returns (E minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 70,
+          "from": "D major",
+          "to": "E minor",
+          "kind": "modulation",
+          "durationSeconds": 6,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "E minor is short but D major never returns (C major follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 76,
+          "from": "E minor",
+          "to": "C major",
+          "kind": "modulation",
+          "durationSeconds": 4,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "C major is short but E minor never returns (G minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 80,
+          "from": "C major",
+          "to": "G minor",
+          "kind": "modulation",
+          "durationSeconds": 6,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "G minor is short but C major never returns (G major follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 86,
+          "from": "G minor",
+          "to": "G major",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "G major is short but G minor never returns (C major follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 88,
+          "from": "G major",
+          "to": "C major",
+          "kind": "modulation",
+          "durationSeconds": 6,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "C major is short but G major never returns (G minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 94,
+          "from": "C major",
+          "to": "G minor",
+          "kind": "modulation",
+          "durationSeconds": 10,
+          "bars": null,
+          "returnsToPrevious": true,
+          "reason": "G minor holds for ? bar(s), at or over the 4-bar floor, so it is a new centre and not a passing tonicization."
+        },
+        {
+          "at": 104,
+          "from": "G minor",
+          "to": "C major",
+          "kind": "modulation",
+          "durationSeconds": 4,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "C major is short but G minor never returns (F minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 108,
+          "from": "C major",
+          "to": "F minor",
+          "kind": "tonicization",
+          "durationSeconds": 4,
+          "bars": null,
+          "returnsToPrevious": true,
+          "reason": "F minor holds for ? bar(s) — under the 4-bar modulation floor — and C major returns after it."
+        },
+        {
+          "at": 112,
+          "from": "F minor",
+          "to": "C major",
+          "kind": "modulation",
+          "durationSeconds": 6,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "C major is short but F minor never returns (E minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 118,
+          "from": "C major",
+          "to": "E minor",
+          "kind": "tonicization",
+          "durationSeconds": 6,
+          "bars": null,
+          "returnsToPrevious": true,
+          "reason": "E minor holds for ? bar(s) — under the 4-bar modulation floor — and C major returns after it."
+        },
+        {
+          "at": 124,
+          "from": "E minor",
+          "to": "C major",
+          "kind": "modulation",
+          "durationSeconds": 10,
+          "bars": null,
+          "returnsToPrevious": true,
+          "reason": "C major holds for ? bar(s), at or over the 4-bar floor, so it is a new centre and not a passing tonicization."
+        },
+        {
+          "at": 134,
+          "from": "C major",
+          "to": "E minor",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "E minor is short but C major never returns (G major follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 136,
+          "from": "E minor",
+          "to": "G major",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "G major is short but E minor never returns (G minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 138,
+          "from": "G major",
+          "to": "G minor",
+          "kind": "modulation",
+          "durationSeconds": 10,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "G minor holds for ? bar(s), at or over the 4-bar floor, so it is a new centre and not a passing tonicization."
+        },
+        {
+          "at": 148,
+          "from": "G minor",
+          "to": "A♭ minor",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "A♭ minor is short but G minor never returns (E major follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 150,
+          "from": "A♭ minor",
+          "to": "E major",
+          "kind": "modulation",
+          "durationSeconds": 8,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "E major holds for ? bar(s), at or over the 4-bar floor, so it is a new centre and not a passing tonicization."
+        },
+        {
+          "at": 158,
+          "from": "E major",
+          "to": "C♯ minor",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "C♯ minor is short but E major never returns (A♭ minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 160,
+          "from": "C♯ minor",
+          "to": "A♭ minor",
+          "kind": "modulation",
+          "durationSeconds": 8,
+          "bars": null,
+          "returnsToPrevious": true,
+          "reason": "A♭ minor holds for ? bar(s), at or over the 4-bar floor, so it is a new centre and not a passing tonicization."
+        },
+        {
+          "at": 168,
+          "from": "A♭ minor",
+          "to": "C♯ minor",
+          "kind": "modulation",
+          "durationSeconds": 10,
+          "bars": null,
+          "returnsToPrevious": true,
+          "reason": "C♯ minor holds for ? bar(s), at or over the 4-bar floor, so it is a new centre and not a passing tonicization."
+        },
+        {
+          "at": 178,
+          "from": "C♯ minor",
+          "to": "A♭ minor",
+          "kind": "modulation",
+          "durationSeconds": 4,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "A♭ minor is short but C♯ minor never returns (E major follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 182,
+          "from": "A♭ minor",
+          "to": "E major",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "E major is short but A♭ minor never returns (C♯ minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 184,
+          "from": "E major",
+          "to": "C♯ minor",
+          "kind": "tonicization",
+          "durationSeconds": 4,
+          "bars": null,
+          "returnsToPrevious": true,
+          "reason": "C♯ minor holds for ? bar(s) — under the 4-bar modulation floor — and E major returns after it."
+        },
+        {
+          "at": 188,
+          "from": "C♯ minor",
+          "to": "E major",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "E major is short but C♯ minor never returns (B major follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 190,
+          "from": "E major",
+          "to": "B major",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "B major is short but E major never returns (C♯ minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 192,
+          "from": "B major",
+          "to": "C♯ minor",
+          "kind": "modulation",
+          "durationSeconds": 8,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "C♯ minor holds for ? bar(s), at or over the 4-bar floor, so it is a new centre and not a passing tonicization."
+        },
+        {
+          "at": 200,
+          "from": "C♯ minor",
+          "to": "E major",
+          "kind": "modulation",
+          "durationSeconds": 8,
+          "bars": null,
+          "returnsToPrevious": true,
+          "reason": "E major holds for ? bar(s), at or over the 4-bar floor, so it is a new centre and not a passing tonicization."
+        },
+        {
+          "at": 208,
+          "from": "E major",
+          "to": "C♯ minor",
+          "kind": "tonicization",
+          "durationSeconds": 6,
+          "bars": null,
+          "returnsToPrevious": true,
+          "reason": "C♯ minor holds for ? bar(s) — under the 4-bar modulation floor — and E major returns after it."
+        },
+        {
+          "at": 214,
+          "from": "C♯ minor",
+          "to": "E major",
+          "kind": "modulation",
+          "durationSeconds": 8,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "E major holds for ? bar(s), at or over the 4-bar floor, so it is a new centre and not a passing tonicization."
+        },
+        {
+          "at": 222,
+          "from": "E major",
+          "to": "C♯ major",
+          "kind": "modulation",
+          "durationSeconds": 6,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "C♯ major is short but E major never returns (E♭ major follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 228,
+          "from": "C♯ major",
+          "to": "E♭ major",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "E♭ major is short but C♯ major never returns (E♭ minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 230,
+          "from": "E♭ major",
+          "to": "E♭ minor",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "E♭ minor is short but E♭ major never returns (A♭ major follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 232,
+          "from": "E♭ minor",
+          "to": "A♭ major",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "A♭ major is short but E♭ minor never returns (C♯ major follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 234,
+          "from": "A♭ major",
+          "to": "C♯ major",
+          "kind": "modulation",
+          "durationSeconds": 8,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "C♯ major holds for ? bar(s), at or over the 4-bar floor, so it is a new centre and not a passing tonicization."
+        },
+        {
+          "at": 242,
+          "from": "C♯ major",
+          "to": "E♭ major",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "E♭ major is short but C♯ major never returns (E♭ minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 244,
+          "from": "E♭ major",
+          "to": "E♭ minor",
+          "kind": "tonicization",
+          "durationSeconds": 4,
+          "bars": null,
+          "returnsToPrevious": true,
+          "reason": "E♭ minor holds for ? bar(s) — under the 4-bar modulation floor — and E♭ major returns after it."
+        },
+        {
+          "at": 248,
+          "from": "E♭ minor",
+          "to": "E♭ major",
+          "kind": "modulation",
+          "durationSeconds": 2,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "E♭ major is short but E♭ minor never returns (F minor follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 250,
+          "from": "E♭ major",
+          "to": "F minor",
+          "kind": "modulation",
+          "durationSeconds": 4,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "F minor is short but E♭ major never returns (F major follows), so it reads as a step in a modulation rather than a tonicization."
+        },
+        {
+          "at": 254,
+          "from": "F minor",
+          "to": "F major",
+          "kind": "unclear",
+          "durationSeconds": 5.72,
+          "bars": null,
+          "returnsToPrevious": false,
+          "reason": "F major is short (? bar(s)) and the piece ends before F minor could return, so tonicization and modulation are not separable here."
+        }
+      ]
+    },
+    "firstChords": [
+      {
+        "start": 0.302,
+        "end": 0.766,
+        "symbol": "D",
+        "confidence": 0.763,
+        "margin": 0.1861,
+        "romanNumeral": "V",
+        "supporting": []
+      },
+      {
+        "start": 0.833,
+        "end": 7.802,
+        "symbol": "Gm",
+        "confidence": 0.9,
+        "margin": 0.9642,
+        "romanNumeral": "i",
+        "supporting": [
+          "CHROMA",
+          "SHEETSAGE"
+        ]
+      },
+      {
+        "start": 7.802,
+        "end": 8.243,
+        "symbol": "Gm9",
+        "confidence": 0.9,
+        "margin": 0.9144,
+        "romanNumeral": "i",
+        "supporting": [
+          "CHROMA",
+          "SHEETSAGE"
+        ]
+      },
+      {
+        "start": 8.243,
+        "end": 13.982,
+        "symbol": "Gm",
+        "confidence": 0.9,
+        "margin": 0.9331,
+        "romanNumeral": "i",
+        "supporting": [
+          "CHROMA",
+          "SHEETSAGE"
+        ]
+      },
+      {
+        "start": 13.982,
+        "end": 21.386,
+        "symbol": "Cm",
+        "confidence": 0.9,
+        "margin": 0.9275,
+        "romanNumeral": "iv",
+        "supporting": [
+          "CHROMA",
+          "SHEETSAGE"
+        ]
+      },
+      {
+        "start": 21.386,
+        "end": 22.105,
+        "symbol": "Bb6",
+        "confidence": 0.9,
+        "margin": 0.9067,
+        "romanNumeral": "bIII",
+        "supporting": [
+          "CHROMA",
+          "SHEETSAGE"
+        ]
+      },
+      {
+        "start": 22.105,
+        "end": 23.241,
+        "symbol": "A",
+        "confidence": 0.9,
+        "margin": 0.8888,
+        "romanNumeral": "II",
+        "supporting": [
+          "SHEETSAGE"
+        ]
+      },
+      {
+        "start": 23.241,
+        "end": 26.122,
+        "symbol": "Gm",
+        "confidence": 0.9,
+        "margin": 0.9358,
+        "romanNumeral": "i",
+        "supporting": [
+          "CHROMA",
+          "SHEETSAGE"
+        ]
+      },
+      {
+        "start": 26.122,
+        "end": 28.677,
+        "symbol": "GmMaj7",
+        "confidence": 0.9,
+        "margin": 0.9367,
+        "romanNumeral": "i",
+        "supporting": [
+          "CHROMA",
+          "SHEETSAGE"
+        ]
+      },
+      {
+        "start": 28.677,
+        "end": 29.002,
+        "symbol": "Cm6",
+        "confidence": 0.9,
+        "margin": 0.9038,
+        "romanNumeral": "iv",
+        "supporting": [
+          "CHROMA",
+          "SHEETSAGE"
+        ]
+      },
+      {
+        "start": 29.002,
+        "end": 30,
+        "symbol": "Cm",
+        "confidence": 0.9,
+        "margin": 0.9111,
+        "romanNumeral": "iv",
+        "supporting": [
+          "CHROMA",
+          "SHEETSAGE"
+        ]
+      },
+      {
+        "start": 30,
+        "end": 31.018,
+        "symbol": "G",
+        "confidence": 0.9,
+        "margin": 0.9329,
+        "romanNumeral": "V",
+        "supporting": [
+          "CHROMA"
+        ]
+      },
+      {
+        "start": 31.018,
+        "end": 32.229,
+        "symbol": "Bm6",
+        "confidence": 0.9,
+        "margin": 0.9009,
+        "romanNumeral": "vii",
+        "supporting": [
+          "CHROMA"
+        ]
+      },
+      {
+        "start": 32.229,
+        "end": 36.111,
+        "symbol": "Bm",
+        "confidence": 0.9,
+        "margin": 0.8967,
+        "romanNumeral": "vii",
+        "supporting": [
+          "CHROMA"
+        ]
+      },
+      {
+        "start": 36.111,
+        "end": 37.57,
+        "symbol": "Gm",
+        "confidence": 0.9,
+        "margin": 0.934,
+        "romanNumeral": "i",
+        "supporting": [
+          "CHROMA",
+          "SHEETSAGE"
+        ]
+      },
+      {
+        "start": 37.57,
+        "end": 38.499,
+        "symbol": "Gm9",
+        "confidence": 0.9,
+        "margin": 0.9312,
+        "romanNumeral": "i",
+        "supporting": [
+          "CHROMA",
+          "SHEETSAGE"
+        ]
+      }
+    ],
+    "abstentionReasons": [
+      {
+        "reason": "root X (as …) beat root Y by only N, under the N margin: a guess, not a reading",
+        "count": 9,
+        "seconds": 2.14
+      },
+      {
+        "reason": "FmMajN and FmajN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 6,
+        "seconds": 1.35
+      },
+      {
+        "reason": "FmajN and FmMajN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 6,
+        "seconds": 1.12
+      },
+      {
+        "reason": "Gm and GsusN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 7,
+        "seconds": 0.86
+      },
+      {
+        "reason": "GsusN and Gm are N apart and disagree about the third: major or minor is not a detail",
+        "count": 5,
+        "seconds": 0.6
+      },
+      {
+        "reason": "AbsusN and Abm are N apart and disagree about the third: major or minor is not a detail",
+        "count": 5,
+        "seconds": 0.51
+      },
+      {
+        "reason": "AbmN and AbsusN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 2,
+        "seconds": 0.4
+      },
+      {
+        "reason": "CmN and CsusN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 2,
+        "seconds": 0.28
+      },
+      {
+        "reason": "Cm and CaddN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 1,
+        "seconds": 0.28
+      },
+      {
+        "reason": "D and Dm are N apart and disagree about the third: major or minor is not a detail",
+        "count": 1,
+        "seconds": 0.28
+      },
+      {
+        "reason": "AmajN and AmMajN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 1,
+        "seconds": 0.28
+      },
+      {
+        "reason": "AbsusN and AbmN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 2,
+        "seconds": 0.23
+      },
+      {
+        "reason": "Abm and AbsusN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 2,
+        "seconds": 0.23
+      },
+      {
+        "reason": "GmN and GsusN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 2,
+        "seconds": 0.17
+      },
+      {
+        "reason": "CmN and CN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 1,
+        "seconds": 0.16
+      },
+      {
+        "reason": "CsusN and CmN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 1,
+        "seconds": 0.16
+      },
+      {
+        "reason": "EmajN and EmMajN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 3,
+        "seconds": 0.15
+      },
+      {
+        "reason": "CsusN and Cm are N apart and disagree about the third: major or minor is not a detail",
+        "count": 2,
+        "seconds": 0.14
+      },
+      {
+        "reason": "F#majN and F#mMajN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 1,
+        "seconds": 0.14
+      },
+      {
+        "reason": "GsusN and GmN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 2,
+        "seconds": 0.11
+      },
+      {
+        "reason": "C#mN and C#susN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 1,
+        "seconds": 0.09
+      },
+      {
+        "reason": "C#addN and C#mN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 2,
+        "seconds": 0.09
+      },
+      {
+        "reason": "GmMajN and GmajN are N apart and disagree about the third: major or minor is not a detail",
+        "count": 1,
+        "seconds": 0.07
+      },
+      {
+        "reason": "Ebm/Bb and EbaddN/Bb are N apart and disagree about the third: major or minor is not a detail",
+        "count": 1,
+        "seconds": 0.07
+      },
+      {
+        "reason": "FsusN and Fm are N apart and disagree about the third: major or minor is not a detail",
+        "count": 1,
+        "seconds": 0.07
+      }
+    ]
+  }
+}

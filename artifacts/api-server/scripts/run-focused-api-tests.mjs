@@ -395,6 +395,15 @@ const suites = {
         "analysis-gold-synthetic.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // ANALYSIS ENGINE, PR-85: the harmony engine — chord model + bass stem +
+      // melody + chroma + key context fused per segment, the stated smoothing
+      // rule that does not erase a fast chord change, and keyReconciliation's
+      // agreed / contested / unknown contract.
+      ["src/lib/harmonyEngine.test.ts", "harmony-engine.test.mjs"],
+      // ANALYSIS ENGINE, PR-85: time-weighted chord metrics (root / majmin /
+      // full symbol / inversion-bass / boundary) and key accuracy, with the
+      // MIREX related-key credit kept apart from the strict score.
+      ["src/lib/harmonyMetrics.test.ts", "harmony-metrics.test.mjs"],
       [
         "src/lib/gpuProviderAttestation.test.ts",
         "gpu-provider-attestation.test.mjs",
