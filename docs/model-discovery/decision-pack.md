@@ -1,8 +1,8 @@
 # DECISION PACK — the eighteen answers required before any paid training
 
 **Status: INCOMPLETE — approval is not requested on this version.**
-Rebuilt 2026-09-09 after PR-60/61/63/64/65/66/67/68/70 and the owner's first
-49 blind ratings.
+Rebuilt 2026-09-09 after PR-60/61/62/63/64/65/66/67/68/70/75 and the owner's
+first 49 blind ratings.
 
 This is the single document the owner asked for before any training job over
 $25. It answers the eighteen points in order. Every line is either a
@@ -155,13 +155,32 @@ remain `ambiguous_case`; only the physical half of the judge is calibrated;
 
 ## 5. Foundation-model tournament
 
-**PENDING — Workstream D.** A challenger with a real Modal worker on the same
-12 classical tasks → `docs/evidence/model-tournament-challenger-live.json`.
+**MEASURED.** `docs/evidence/model-tournament-challenger-live.json` (PR-62).
+The Anticipatory Music Transformer (`music-large-800k`, 780 M, Apache-2.0
+code, Lakh-trained → `RESEARCH_ONLY`, benchmark arm only) was deployed as an
+isolated Modal worker (A10G, inference only, ≈ $1.20) and run on the same 12
+tasks, seeds and windows as PR-59: 252 entries, 36 real inferences.
 
-Known (PR-54/55): CA2 is the only `SHIP_CLEARED` symbolic model on primary
-sources. MuPT, NotaGen, CLaMP 3, GETMusic are `LEGAL_REVIEW_REQUIRED`;
-Anticipatory MT is `RESEARCH_ONLY` (Lakh); MIDI-GPT is `BLOCKED_LICENSE` (NC).
-**No alternative has produced a note on our infrastructure.**
+| arm | mean | play err/entry | fails | vs REFERENCE |
+| --- | --- | --- | --- | --- |
+| HUMAN | 90.4 | 0.50 | 0 | 92 % |
+| REFERENCE | 63.0 | 0.08 | 0 | — |
+| CA2 / CA2+CTX | 71.5 / **71.8** | 0.53 / 0.25 | 0 | 67 / 69 % |
+| **AMT / AMT+CTX** | **39.5 / 43.3** | 8.09 / 1.70 | 3 | 31 / 36 % |
+
+**The challenger lost — last in every instrument family.** Four failed
+deploys established that infilling a held-out part does not come out of AMT by
+masking; the working framing is its own accompaniment mode inverted. The one
+new fact is about the platform: the context passes cut AMT's playability
+errors by 79 % against half for CA2 — the worse the generator, the more the
+brain carries. Caveat carried honestly: this compares two harnesses as much as
+two models (AMT has no instrument conditioning), and the playability column is
+still judge 1.0 — the rescore (item 8) applies here too.
+
+Round-2 discovery audited **21 symbolic models (13 new); nothing was promoted.
+CA2 remains the only `SHIP_CLEARED` row.** New `BLOCKED_LICENSE`: MIDI-LLM,
+Aria (Apache weights over CC-BY-NC-SA data). MetaScore's PD/CC split is the
+one unexplored lead toward a second cleared multitrack foundation.
 
 ## 6. CA2 strengths and weaknesses
 
@@ -189,11 +208,14 @@ tokens and zero training**; 93 % after a LoRA over the 592 spare ids.
 
 ## 7. Strongest alternative foundation
 
-**PENDING — Workstream D** for a live comparison. On paper: MuPT (largest
-permissively-labelled symbolic foundation; ABC representation is a poor
-structural fit), REMI-z arrangers (our exact problem, weights unlocated),
-Anticipatory MT (cleanest infilling-with-control formulation; benchmark only),
-NotaGen (recipe reference; classical). **None is licence-clean and proven live.**
+**MEASURED, and there is none yet.** The only alternative proven live (AMT)
+scored 39.5 against CA2's 71.5 on identical tasks and cannot ship (Lakh). On
+paper the remaining candidates are MuPT (ABC representation, poor structural
+fit, corpus unread), REMI-z (weights unlocated), NotaGen (classical, recipe
+reference) and MetaScore (the PD/CC split unexplored) — all
+`LEGAL_REVIEW_REQUIRED`. **No candidate is both licence-clean and proven
+live except CA2.** The from-scratch option (§3 A) is therefore the only
+alternative that does not depend on someone else's corpus.
 
 ## 8. Real usable dataset size
 
@@ -351,13 +373,13 @@ Either way the pilot buys a decision, which is what a pilot is for.
 | ~~2~~ | ~~judge false-positive rates~~ — **done: 26.6 % → 1.6 %; the tournament verdict is void** | C | — |
 | ~~6~~ | ~~full-corpus dataset numbers~~ — **done: 19,588 independent multitrack works, 1.02 M arrangement tasks** | G | — |
 | ~~7~~ | ~~training infrastructure + tiny overfit~~ — **done: 200 CPU steps, resume proven, guard fails closed, $0** | E | — |
-| 3 | a second foundation proven live | D (running) | §5, §7 |
+| ~~3~~ | ~~a second foundation proven live~~ — **done: AMT ran live and lost 39.5 vs 71.5; CA2 remains the only cleared foundation** | D | — |
 | 4 | the **$0** prefix experiment | F follow-up | §11 step 0 |
 | 5 | the **$0** per-family context-pass switch | C/K | §10 |
 | **8** | **re-score both tournaments under judge 1.1** — the `do_not_promote` verdicts rest on false positives | new, $0 | §2, §3 |
 | **9** | **Listening Benchmark V2** — positive controls at graded strengths, HUMAN vs REFERENCE calibration, identical rendering, longer passages, a sensitivity report that must pass before the benchmark may judge training | new, $0 + listening time | §1, §15.6 |
 
-Four of seven cleared today by measurement. Items 3–5 and 8–9 remain, and
+Five of seven cleared today by measurement. Items 4–5 and 8–9 remain, and
 **none costs money**. The owner's standing instruction: **no paid LoRA until
 this pack is rebuilt after all four experiments — the judge-1.1 rescore, the
 CA2 prefix arm, per-family context routing, and the second live foundation —
