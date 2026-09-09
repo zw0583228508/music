@@ -160,6 +160,19 @@ const suites = {
         "tournament-providers.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, Workstream J (long-form): unsupervised form segmentation of a
+      // whole score, and the whole-song coherence metric with its synthetic
+      // "pasted windows" constructions.
+      [
+        "src/lib/formSegmentation.test.ts",
+        "form-segmentation.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/coherenceMetric.test.ts",
+        "coherence-metric.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // Wave Q, Workstream A: tournament pairs into the Listening Room — balanced
       // draw, per-token audio, owner-apart tallies, reward-model preference records.
       [
