@@ -1,0 +1,219 @@
+{
+  "title": "First human blind ratings — the owner on 49 tournament pairs (Wave Q, Workstream A)",
+  "date": "2026-09-09",
+  "definitionOfDone": "a real person, blind to every arm, rated real rendered audio through the real Listening Room. Not a fixture, not a simulation.",
+  "session": {
+    "id": "6d5abb08-71bb-4de2-8416-1fc4032c31c8",
+    "source": "docs/evidence/model-tournament-live.json (12 classical PDMX tasks x 3 seeds)",
+    "pairsOffered": 50,
+    "primaryQuestionAnswered": 49,
+    "secondaryAnswered": 0,
+    "rater": "the platform owner, blind to arm, seed, task and orientation",
+    "startedClean": "two votes cast by earlier automation were deleted before the session (PR-70)"
+  },
+  "comparisons": [
+    {
+      "comparison": "human_vs_ca2ctx",
+      "a": "HUMAN_ORIGIN_REFERENCE",
+      "b": "COMPOSERS_ASSISTANT_2+CTX",
+      "aWins": 7,
+      "bWins": 3,
+      "n": 10,
+      "aShare": 0.7,
+      "pTwoSidedVsCoinFlip": 0.3438,
+      "byFamily": {
+        "bass": {
+          "a": 2,
+          "b": 0
+        },
+        "brass": {
+          "a": 1,
+          "b": 1
+        },
+        "keys": {
+          "a": 2,
+          "b": 0
+        },
+        "organ": {
+          "a": 2,
+          "b": 0
+        },
+        "reed": {
+          "a": 0,
+          "b": 1
+        },
+        "strings": {
+          "a": 0,
+          "b": 1
+        }
+      }
+    },
+    {
+      "comparison": "ca2ctx_vs_reference",
+      "a": "COMPOSERS_ASSISTANT_2+CTX",
+      "b": "REFERENCE_PART_COMPOSER",
+      "aWins": 4,
+      "bWins": 6,
+      "n": 10,
+      "aShare": 0.4,
+      "pTwoSidedVsCoinFlip": 0.7539,
+      "byFamily": {
+        "bass": {
+          "a": 0,
+          "b": 2
+        },
+        "brass": {
+          "a": 0,
+          "b": 2
+        },
+        "keys": {
+          "a": 2,
+          "b": 0
+        },
+        "organ": {
+          "a": 1,
+          "b": 1
+        },
+        "reed": {
+          "a": 1,
+          "b": 0
+        },
+        "strings": {
+          "a": 0,
+          "b": 1
+        }
+      }
+    },
+    {
+      "comparison": "ca2raw_vs_ca2ctx",
+      "a": "COMPOSERS_ASSISTANT_2",
+      "b": "COMPOSERS_ASSISTANT_2+CTX",
+      "aWins": 5,
+      "bWins": 5,
+      "n": 10,
+      "aShare": 0.5,
+      "pTwoSidedVsCoinFlip": 1.0,
+      "byFamily": {
+        "brass": {
+          "a": 2,
+          "b": 0
+        },
+        "keys": {
+          "a": 2,
+          "b": 0
+        },
+        "organ": {
+          "a": 0,
+          "b": 2
+        },
+        "reed": {
+          "a": 0,
+          "b": 2
+        },
+        "strings": {
+          "a": 1,
+          "b": 1
+        }
+      }
+    },
+    {
+      "comparison": "human_vs_reference",
+      "a": "HUMAN_ORIGIN_REFERENCE",
+      "b": "REFERENCE_PART_COMPOSER",
+      "aWins": 5,
+      "bWins": 5,
+      "n": 10,
+      "aShare": 0.5,
+      "pTwoSidedVsCoinFlip": 1.0,
+      "byFamily": {
+        "bass": {
+          "a": 1,
+          "b": 1
+        },
+        "brass": {
+          "a": 0,
+          "b": 2
+        },
+        "keys": {
+          "a": 2,
+          "b": 0
+        },
+        "organ": {
+          "a": 2,
+          "b": 0
+        },
+        "reed": {
+          "a": 0,
+          "b": 1
+        },
+        "strings": {
+          "a": 0,
+          "b": 1
+        }
+      }
+    },
+    {
+      "comparison": "contextaware_vs_ca2ctx",
+      "a": "CONTEXT_AWARE_ARRANGER",
+      "b": "COMPOSERS_ASSISTANT_2+CTX",
+      "aWins": 3,
+      "bWins": 6,
+      "n": 9,
+      "aShare": 0.3333,
+      "pTwoSidedVsCoinFlip": 0.5078,
+      "byFamily": {
+        "bass": {
+          "a": 1,
+          "b": 1
+        },
+        "brass": {
+          "a": 1,
+          "b": 1
+        },
+        "keys": {
+          "a": 0,
+          "b": 2
+        },
+        "organ": {
+          "a": 0,
+          "b": 2
+        },
+        "reed": {
+          "a": 1,
+          "b": 0
+        }
+      }
+    }
+  ],
+  "gateC": {
+    "passed": false,
+    "reason": "0 independent rater(s) so far; Gate C needs at least 5.",
+    "note": "the owner is the session owner, so these 49 votes are recorded and excluded from the Gate C verdict by design. Gate C needs five independent raters."
+  },
+  "reading": {
+    "headline": "Not one of the five comparisons is distinguishable from a coin flip. Every two-sided p is >= 0.34 at n = 9-10 with a single rater. This session establishes no ranking, and was never large enough to.",
+    "whatItDoesEstablish": [
+      "The proxy judge’s central claim is not reproduced by a listener. The tournament scored COMPOSERS_ASSISTANT_2+CTX above REFERENCE_PART_COMPOSER on 72 % of cells; the listener preferred REFERENCE 6-4. The direction reversed. Not significant either way — which is precisely the point: the 72 % was never evidence about a human.",
+      "The context passes are inaudible here: CA2 raw vs CA2+CTX split 5-5. On the proxy the passes halved playability errors; a listener did not hear a difference in these windows.",
+      "The human anchor did not separate from the platform’s rule-based composer: HUMAN vs REFERENCE split 5-5. Against CA2+CTX the human took 7 of 10."
+    ],
+    "theMethodologicalFinding": "HUMAN vs REFERENCE at 5-5 is the result that matters most, and it is about the experiment rather than the composers. If real human parts are not audibly better than a deterministic rule-based part, this rendering is flattening what distinguishes them: one 8-bar window, every arm through the same reference synth, the candidate mixed forward, no performance and no production. Until the experiment can separate a human from a rule engine, it cannot be trusted to separate a trained model from an untrained one.",
+    "doNotConclude": [
+      "that CA2+CTX is worse than the reference — 6-4 at n=10 is noise",
+      "that the context passes are useless — 5-5 at n=10 is noise",
+      "that the human anchor is not better — 5-5 at n=10 is noise, and the 7-3 against CA2+CTX points the other way"
+    ]
+  },
+  "consequencesForThePlan": [
+    "Gate C remains unpassed and unattempted: five independent raters are still required, and the owner cannot be one of them.",
+    "The decision pack’s success criterion 6 (increased human blind preference) cannot be measured at this sensitivity. Fixing the experiment now costs nothing and is a precondition for judging any training run.",
+    "Concretely: longer excerpts (a section, not eight bars), more pairs per comparison, several raters, and a rendering that does not flatten performance."
+  ],
+  "honestLimits": [
+    "One rater. The owner. n = 9-10 per comparison. No result here is significant.",
+    "All 12 source tasks are classical/early music; the 840 non-classical pairs from PR-60 are unrated.",
+    "Secondary ratings were not used: the rater answered the primary question only, which is what the UX was designed to encourage.",
+    "One pair of fifty was left unanswered (contextaware_vs_ca2ctx, n = 9).",
+    "The renderer is the platform’s deterministic reference synth. It is identical for every arm, which makes the comparison fair and the absolute impression poor."
+  ]
+}

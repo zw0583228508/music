@@ -3510,6 +3510,45 @@ any of it.
   from step 0 afterwards so every number above came out of the committed
   code.
 
+- **PR-71** ✅ — `first-human-blind-ratings` (Wave Q, Workstream A — the
+  owner's 49 ratings, and the decision pack rebuilt on every workstream that
+  landed today): **the first human preference data in the project**, in
+  `docs/evidence/human-blind-ratings-live.json`, and `decision-pack.md`
+  rebuilt with PR-60/61/63/64/65/66/67/68/70.
+
+  **What the owner's ratings said** (one rater, blind to arm/seed/task/side,
+  49 of 50 pairs, primary question only): HUMAN vs CA2+CTX **7–3**; CA2+CTX
+  vs REFERENCE **4–6**; CA2 raw vs CA2+CTX 5–5; HUMAN vs REFERENCE 5–5;
+  CONTEXT_AWARE vs CA2+CTX 3–6. **Not one comparison is distinguishable from
+  a coin flip** — every two-sided p ≥ 0.34 at n = 9–10. The session
+  establishes no ranking and was never large enough to.
+
+  **What it does establish.** The proxy judge's central claim — CA2+CTX
+  beats REFERENCE on 72 % of cells — is **not reproduced** by a listener,
+  who leaned the other way. The context passes, which halved playability
+  errors on the proxy, were **inaudible** (5–5). And **HUMAN vs REFERENCE at
+  5–5 is the result that matters most**: if real human parts are not audibly
+  better than a rule-based part, the experiment — one 8-bar window, one
+  reference synth, no performance — is flattening what distinguishes them.
+  Until it can separate a human from a rule engine, it cannot separate a
+  trained model from an untrained one. That is now the critical path.
+
+  **The decision pack after today.** Four of its seven missing items are
+  cleared by measurement, not spending: the ratings (A); the judge
+  calibration (C: 26.6 % → 1.6 % false positives, and **the tournament's
+  `do_not_promote` verdict is void** — every playability error vanishes
+  under judge 1.1 except one, the platform's own); the full-corpus numbers
+  (G: 19,588 independent multitrack works, 1.02 M arrangement tasks, 46 % of
+  works with a wrong-metre grid); and the training infrastructure (E: 200
+  CPU steps, resume proven, guard fails closed, $0). Two new $0 items are
+  added: re-score both tournaments under judge 1.1, and a listening
+  experiment sensitive enough to tell a human from a rule engine.
+
+  **Honest limits.** One rater, the owner, n ≤ 10 per comparison; owner
+  votes are excluded from Gate C by design and Gate C still needs five
+  independent raters. All 12 source tasks are classical; the 840 non-classical
+  pairs are unrated. No secondary rating was given. Approval for training is
+  **still not requested**, and this is why.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
