@@ -52,6 +52,20 @@ export type Ca2WorkerResult = {
   };
   inference?: { seconds: number; outputTokens: number; device: string };
   output?: { generatedNotes: number; notes: Ca2WorkerNote[] };
+  /** The worker's own account; `instructions` echoes what it applied and refused (PR-74). */
+  account?: {
+    received?: string[];
+    instructions?: {
+      commandsAtEnd: string;
+      trackMeasureCommands: string;
+      loudnessLevels: number[];
+      loudnessSource: string;
+      applied: Array<{ id: number; name: string; bin?: number; note?: number; placement: string; token: string }>;
+      refused: Array<{ item: unknown; why: string }>;
+    };
+    [key: string]: unknown;
+  };
+  request?: { inputTokens?: number; inputSha256?: string; instructionsSent?: boolean; [key: string]: unknown };
   /** From `/health`, forwarded by the caller. */
   identity?: { modelBinVerified?: boolean; modelBinSha256Expected?: string; release?: string };
   definitionOfDone?: { realSymbolicOutput: boolean; verdict: string };

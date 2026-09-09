@@ -4536,6 +4536,91 @@ any of it.
   notes inline. Determinism was shown on this machine only. One predictor has
   been scored; no tournament has run and the corpus has not yet caught a wrong
   decision.
+- **PR-74** ✅ — `ca2-prefix-and-family-routing` (Wave Q — Model Discovery,
+  experiments A + B of the conditioning study): **Composer's Assistant 2 was sent
+  its own instructions for the first time, and it obeys them; a per-family
+  context-routing rule was learned from the evidence and evaluated on a held-out
+  sample.** Evidence: `docs/evidence/model-tournament-arms-live.json` (merged:
+  246 cells, 1,968 entries, 0 failures, with a `verification` block) +
+  `docs/evidence/tournament-arms/` (per-set reports with PR-73 notes sidecars,
+  2,826 blind pairs as token-named MIDIs, rater-facing `pairs.json`,
+  `rescore-check.json`), `docs/evidence/ca2-prefix-live.json` (the worker's
+  `instructions` field proven live on the deployed endpoint, plus the local
+  byte-identity check), `docs/evidence/context-routing-rule.json` (the learned
+  rule, its inputs, every decision); write-up in
+  `docs/model-discovery/decision-report.md` §2e.
+
+  **What was built.** Worker: `POST /infill` takes an optional `instructions`
+  JSON (at-end ids, per-cell ids, `;M:` level per masked measure), rendered by
+  the release's own `instruction_str`, re-ordered to the fine-tuning builder's
+  order, validated (ids the model saw, one per kind, bounds carry a pitch) and
+  **echoed back as applied / refused** in `account.instructions`; the field
+  absent = the PR-58 request byte for byte (`request.inputSha256`); the
+  build-time smoke now also performs an instructed infill; README +
+  `model_manifest.json` document it; redeployed (`imageEvidence
+  sha256:08f00c63…`). Platform: `composersAssistantClient` gains `instructions`
+  (additive); **`tournamentArms.ts`** — `COMPOSERS_ASSISTANT_2+PREFIX` /
+  `+PREFIX+CTX` (one inference, instructions from `expressV2InCa2Vocabulary()`
+  unchanged, account lists expressed / omitted / not-sent-on-wire /
+  worker-applied / worker-refused) and `+CTX(routed)` (the raw arm's own
+  inference, passes per family by the rule); **`controlAccuracy.ts`** — CA2's
+  measurements re-implemented on its 24-click grid (`_horiz_note_onset_density`,
+  `_vert…`, pitch-class average, chord-distance step/leap shares, the author's
+  `score_4` irregularity, density diversity, octave collapse) so every output is
+  checked against every instruction sent, with loudness declared unmeasurable
+  rather than invented; **`contextRouting.ts`** — the rule *learned* per family
+  from the judge-1.1 rescored tournaments (ON iff ≥ 6 cells and mean(+CTX − raw)
+  > 0, else the pooled default), with `heldOutRefusal()` as the circularity
+  guard. Scripts: `scripts/run-arms-tournament.mjs` (+ `arms-entry.ts`; replays
+  a report's tasks exactly or draws a fresh held-out sample excluding named
+  works; writes the per-family, control-accuracy and routing tables),
+  `learn-context-routing.mjs`, `prove-ca2-prefix.mjs`, `summarise-arms.mjs`. No
+  tournament core file, judge or registry file was edited.
+
+  **What the runs said** (three sets, seeds 7/11/13, judge 1.1, 492 real CA2
+  inferences, ≈ 3,540 s of `cpu=4` container time — under $1 at the list price,
+  CPU only). *A — CA2 obeys.* Pooled hit rates, instructed vs the same model
+  unasked: lowest bound **96 % vs 75 %**, highest bound **93 % vs 68 %**, onset
+  density **72 % vs 28 %**, vertical density **76 % vs 47 %**, pitch-class count
+  **45 % vs 3 %**, step probability **41 % vs 17 %**, octave independence **81 %
+  vs 47 %**; irregularity unchanged (13 % vs 12 %). *And obeying costs the
+  proxy:* raw 76.1 → +PREFIX **62.4** (−13.7, wins 76 / loses 160 cells),
+  playability errors 0.42 → 3.25, twice the notes. Where the loss is isolated it
+  is the request: the map sends the platform family's register, the judge checks
+  the GM program's — a contrabass asked for 70–91 played 70–91 (294, 96 and 86
+  errors, score 0 on three cells), saxophones asked for 36–96 wrote 37–52
+  (score 0), drums given `;D:` bounds kept to one drum (score 20 on four cells),
+  a tuba asked for 48–74 moved from 28–33 to 52–64 and dropped from 100 to 76.
+  Both prefix arms: `do_not_promote` everywhere. *B — routing.* Rule: on for
+  bass, drums, guitar, organ; off for brass, ensemble, keys, pipe, reed, strings;
+  synth default (off). **Held-out (20 tasks, 20 works outside both learning
+  sets):** raw 71.88, always-on 71.54, **routed 72.29** (+0.41 / +0.75),
+  per-family oracle 73.92; the sign held on bass, drums, brass, strings, tied on
+  reed, and reversed on ensemble (0.7), keys (6.5), organ (6.1) on 6 cells each
+  and guitar (3.8), pipe (2.2) on 3 cells each; errors 0.10 like always-on;
+  `run_blind_evaluation` on all three sets. In-sample: classical 77.88 vs 77.23
+  raw, global 79.44 vs 77.59.
+
+  Suites: controlAccuracy 10, contextRouting 6 (one re-derives the committed
+  rule from its named sources), tournamentArms 5 (worker mocked at HTTP; the
+  routed arm proven to reuse the raw arm's cached inference); typecheck green.
+
+  **Honest limits.** Proxy only — 2,826 new blind pairs, none rated. The prefix
+  experiment tests the instruction *channel* with the map's requests as they
+  are (guide tracks not sent; loudness has no realised value; several requests
+  are proxies) — the register bug it exposed is in the map's source of range,
+  and the non-error losses (organ, brass) are not isolated to one instruction;
+  a one-kind-at-a-time ablation is the next $0 run. The routing gain is under a
+  point on 60 held-out cells, captures a fifth of the oracle, and half of the
+  family decisions reversed sign on the held-out draw — a measured improvement,
+  not a policy. The sets were launched more than once into the same directories
+  (the branch was fast-forwarded to main mid-run and the rule re-learned); the
+  runner skips existing token MIDIs, so every entry MIDI was re-rendered from
+  its sidecar afterwards (0 / 6 / 9 files differed) and PR-73's re-scorer
+  reproduces every scorecard from the sidecars exactly and the CA2 arms within
+  ±0.94 points from the MIDIs alone (`rescore-check.json`). Spend is estimated
+  from container time, not read from the billing page. The evidence directory is
+  ≈ 27 MB of MIDI plus ≈ 33 MB of reports and sidecars.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 

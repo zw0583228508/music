@@ -42,6 +42,24 @@ export type Ca2InfillParams = {
   maxNewTokens?: number;
   temperature?: number;
   topP?: number;
+  /**
+   * CA2's own control channel (PR-74): instruction ids for the masked track's
+   * at-end block and per masked cell, plus a `;M:` loudness level per masked
+   * measure. Sent as the worker's JSON `instructions` field; the worker
+   * renders, validates and echoes what it applied in `account.instructions`.
+   * Absent = the worker's historical request, byte for byte.
+   */
+  instructions?: Ca2WireInstructions;
+};
+
+/** One instruction on the wire: a CA2 instruction id (1–48) and, for a note bound, the pitch. */
+export type Ca2WireInstruction = { id: number; note?: number };
+
+export type Ca2WireInstructions = {
+  atEnd?: Ca2WireInstruction[];
+  perCell?: Ca2WireInstruction[];
+  /** One level 0–7 per masked measure, or a single level for all. */
+  loudness?: number | number[];
 };
 
 export type Ca2Health = {
@@ -144,6 +162,7 @@ export async function ca2Infill(
   for (const [name, value] of fields) {
     if (value !== undefined) form.append(name, String(value));
   }
+  if (params.instructions) form.append("instructions", JSON.stringify(params.instructions));
   const started = Date.now();
   const response = await fetchImpl(`${endpoint.baseUrl}/infill`, {
     method: "POST",

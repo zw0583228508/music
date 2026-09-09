@@ -57,6 +57,14 @@ def main() -> int:
         return 2
     # Hold out the keys track: given bass + drums, write the keys.
     result = ca2_infer.infill(str(midi), target_track=None, start_measure=0, n_measures=8, seed=int(os.environ.get("CA2_SMOKE_SEED", "7")), max_new_tokens=600)
+    # PR-74: the same infill with CA2's own instructions — a mono line inside
+    # C2..C5 at the model's own density bin 2, loudness level 3 — proves the
+    # instruction path renders, encodes and decodes inside the image.
+    instructed = ca2_infer.infill(
+        str(midi), target_track=None, start_measure=0, n_measures=8, seed=int(os.environ.get("CA2_SMOKE_SEED", "7")), max_new_tokens=600,
+        instructions={"atEnd": [{"id": 7}, {"id": 3}, {"id": 48, "note": 36}, {"id": 47, "note": 72}], "perCell": [39], "loudness": 3},
+    )
+    plan = (instructed.get("account") or {}).get("instructions") or {}
     marker = {
         "identity": {k: ident[k] for k in ("release", "modelBinVerified", "vocabVerified", "runtimePinned", "runtime")},
         "task": result.get("task"),
@@ -64,12 +72,24 @@ def main() -> int:
         "output": {k: v for k, v in (result.get("output") or {}).items() if k != "notes"},
         "definitionOfDone": result.get("definitionOfDone"),
         "failure": result.get("failure"),
+        "instructed": {
+            "applied": [a.get("token") for a in plan.get("applied", [])],
+            "refused": plan.get("refused"),
+            "loudnessLevels": plan.get("loudnessLevels"),
+            "inputTail": (instructed.get("request") or {}).get("inputTail"),
+            "output": {k: v for k, v in (instructed.get("output") or {}).items() if k != "notes"},
+            "definitionOfDone": instructed.get("definitionOfDone"),
+            "failure": instructed.get("failure"),
+        },
     }
     out = Path(os.environ.get("CA2_SMOKE_MARKER", "/app/smoke-marker.json"))
     out.write_text(json.dumps(marker, indent=2))
     print(json.dumps(marker, indent=2))
     dod = result.get("definitionOfDone") or {}
-    return 0 if dod.get("realSymbolicOutput") else 3
+    dod_instructed = instructed.get("definitionOfDone") or {}
+    if plan.get("refused"):
+        return 4  # the smoke's instructions are all trained ids; a refusal is a worker bug
+    return 0 if dod.get("realSymbolicOutput") and dod_instructed.get("realSymbolicOutput") else 3
 
 
 if __name__ == "__main__":

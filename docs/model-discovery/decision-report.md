@@ -502,6 +502,188 @@ ensemble 9) against 0 of 72 on the classical set.
   unpassed. The human-vs-reference 5–5 of PR-71 — the experiment that cannot
   yet tell a composer from a rule engine — is untouched by any judge. Approval
   for training is not requested by this section.
+
+## 2e. Prefix and routing arms — from `docs/evidence/model-tournament-arms-live.json` (PR-74, 2026-09-09)
+
+Two $0 experiments the conditioning study (§2.4 of `conditioning-study.md`) asked
+for, run as tournament arms next to the five existing ones, judged by the same
+`partJudge` 1.1, on three task sets: the **12 classical tasks** of §2 replayed
+(same works, programs, windows; task ids identical), the **50 global tasks** of
+§2b replayed, and a **fresh held-out sample of 20 tasks from 20 works outside
+both** — drawn with the global runner's round-robin over genre and family,
+`rngSeed 0x5eed7474`, 62 learning-set works excluded, 16 genre labels. 246 cells,
+1,968 entries, **0 failures**, 492 real CA2 inferences (≈ 3,540 s of `cpu=4`
+container time, CPU only; the deploy rebuilt the image once). Per-set reports and
+the token-named MIDIs: `docs/evidence/tournament-arms/<set>-live.json` +
+`<set>/`, with PR-73's notes sidecar beside each report and
+`rescore-check.json` (PR-73's re-scorer over every set, twice — see the limits).
+
+### A. `COMPOSERS_ASSISTANT_2+PREFIX` — does CA2 obey its own instructions?
+
+**What was sent.** The worker gained an optional `instructions` field (ids
+1–39 / 45–48, rendered by the release's own `instruction_str`, re-ordered to the
+fine-tuning builder's order, one per kind, bounds with a pitch, `;M:` per masked
+measure; anything else refused and *listed*). With the field absent the encoder
+input is **byte-identical** to the PR-58 request (checked locally against the
+old call; `docs/evidence/ca2-prefix-live.json`). The arm sends exactly what
+`expressV2InCa2Vocabulary(v2)` (PR-64) emits for the task — loose register
+bounds from `comfortableRange ∩ playableRange`, an onset-density bin from the
+grammar's `onset-density` rule (204 of 246 cells) or the planner's
+`section.density` (42), a vertical-density bin from the role, a pitch-class bin
+for bed roles, a step-probability bin, an irregularity bin, `is_not_octave_same`
+on every masked cell of a pitched target (222 of 246 cells) and per-bar loudness
+from `section.energy`. Nothing was tuned; the guide tracks the map proposed were
+not sent (the worker takes the score as-is). `+PREFIX+CTX` is the same inference
+plus the context passes.
+
+**Control accuracy — the falsifier.** Every arm's output is re-measured with
+CA2's own definitions (`controlAccuracy.ts`, 24 clicks per quarter) against the
+bins the +PREFIX request carried in that cell; only the two prefix arms were
+asked, the others are the no-instruction baseline. Pooled over the 246 cells:
+
+| instruction kind | CA2+PREFIX (asked) | CA2 raw (not asked) | HUMAN part (not asked) |
+| --- | --- | --- | --- |
+| lowest_note_loose | **96 %** (237/246) | 75 % | 70 % |
+| highest_note_loose | **93 %** (229/246) | 68 % | 70 % |
+| horiz_note_onset_density | **72 %** (177/246) | 28 % | 29 % |
+| vert_note_onset_density | **76 %** (169/222) | 47 % | 43 % |
+| vert_note_onset_n_pitch_classes | **45 %** (53/117) | 3 % | 5 % |
+| pitch_step_prob | **41 %** (84/204) | 17 % | 21 % |
+| is_not_octave_same | **81 %** (177/219) | 47 % | 51 % |
+| horiz_note_onset_irregularity | 13 % (29/219) | 12 % | 27 % |
+| loudness (;M:) | not measurable — CA2 emits no velocities | — | — |
+
+**CA2 obeys.** On every instruction kind except irregularity (the author's own
+"in need of refinement" measurement, and one whose requested bin came from a
+syncopation ratio standing in for it) the instructed arm lands in the requested
+bin two to fifteen times as often as the same model unasked, and far more often
+than the human part does — the human satisfies the density request 29 % of the
+time, which says the *request* is usually not what a human would have written.
+The instruction channel the platform never used is a working control channel.
+
+**And obeying costs the proxy.** Pooled: CA2 raw 76.1 → **CA2+PREFIX 62.4**
+(−13.7; prefix wins 76 cells, loses 160, ties 10), playability errors 0.42 →
+3.25 per entry, notes per part 55 → 102 (the human writes 40). Per set: classical
+77.2 → 66.6, global 77.6 → 62.2, held-out 71.9 → 60.5. Per family (pooled,
+Δ prefix − raw): bass **+2.2**, drums −2.7, keys −7.9, guitar −8.2, brass −10.4,
+organ −11.9, ensemble −18.7, reed −22.3, pipe −26.3, strings −38.7. The errors
+sit in strings (24.8 per entry), pipe (5.0), reed (2.3) and guitar (1.6); bass,
+brass, keys, organ and synth make none. `+PREFIX+CTX` recovers little (63.2).
+Both prefix arms get `do_not_promote` on every set.
+
+**Where the loss is isolated, it is the request, not the model.** The worst
+families are register requests the model carried out faithfully. Strings (GM
+43, contrabass, musical theatre): the map sent `lowest_note_loose 70` /
+`highest 91` — the violin-shaped *strings* instrument's range — and the model
+complied on all three seeds (74–89, 80–91, 70–82), every note above a
+contrabass: 294, 96 and 86 playability errors, score 0 on three cells that
+scored 49–78 unasked. Reed (GM 65, alto saxophone, classical): bounds 36–96,
+the platform's generic *winds* range; the model wrote at 38–52 and 37–76, below
+the instrument's floor — 8 and 15 errors, score 0 on two of three seeds where
+the unasked model scored 90–94. Drums: the bounds go out as `;D:` bounds, which
+for a drum track is a drum-*set* restriction, and on four cells the model kept
+to one drum (36–36, 44–44, 52–52, 55–55; 8–36 hits) — single-pitch collapse,
+score 20, against 74–89 unasked. The live proof shows the same mechanism on a
+tuba (GM 58): unasked 28–33, asked with the *brass* range 48–74 → 52–64,
+obeyed, and the judge drops from 100 to 76. The map takes register from the
+platform's family instrument; the judge (since PR-61) takes it from the GM
+program. The channel is effective enough to make a wrong request expensive.
+Where no error is involved (organ −11.9 and brass −10.4 with 0 errors; three
+times the notes on organ, twice on brass) the loss is *not* isolated: the
+instructed parts are denser and further from the human's density and interval
+shape, but which instruction drives that would need a one-kind-at-a-time
+ablation — the next $0 experiment, not a conclusion here.
+
+**What this changes in the study's recommendation (§6 of `conditioning-study.md`).**
+Experiment 1's hypothesis — "the instruction surface is a usable control
+channel" — is **confirmed** on register, density, polyphony, pitch-class count,
+step probability and octave independence, and **not** confirmed for
+irregularity; the hypothesis' success criterion "proxy ≥ raw's" is **falsified**
+as the map stands. The reading is (b)/(c) of §6, not (a): do not skip to a
+second encoder because the channel failed — it did not; fix the *requests*
+(GM-program register, no pitch bounds on drums, a density target the human
+distribution supports) and re-run before any LoRA spends money.
+
+### B. `COMPOSERS_ASSISTANT_2+CTX(routed)` — the passes as a per-family decision
+
+**The rule is learned, not written** (`contextRouting.ts`,
+`docs/evidence/context-routing-rule.json`): per target family, over every
+(task, seed) cell of the two earlier tournaments *as re-scored under judge 1.1*
+(`*.rescored-judge-1.1.json`, PR-73 — the same judge as this run), the passes are
+ON iff the family has ≥ 6 cells and mean(score(+CTX) − score(raw)) > 0, OFF iff
+≥ 6 cells and ≤ 0, else the pooled default (the sign of the mean over all 186
+cells: −1.37 → off). Result: **on** for bass (+2.6, 21 cells), drums (+2.8, 15),
+guitar (+2.4, 18), organ (+5.6, 21); **off** for brass (−7.4), ensemble (−7.2,
+6 cells), keys (−1.4), pipe (−0.02), reed (−6.8), strings (−6.6); synth (3 cells)
+takes the default. `contextRouting.test.ts` re-derives the committed file from
+the two sources it names.
+
+**Circularity guard.** The classical and global rows below are the rule's own
+learning sets and are shown only to check it reproduces its inputs; **the held-out
+row is the evaluation** — 20 tasks from 20 works that appear in neither learning
+tournament (`heldOutRefusal()` enforces it, and the runner prints the check).
+
+| set | sample | CA2 raw | CA2+CTX always | **CA2+CTX(routed)** | routed − raw | routed − always | per-family oracle |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| classical (12 × 3) | in-sample | 77.23 | 76.64 | **77.88** | +0.65 | +1.24 | 77.88 |
+| global (50 × 3) | in-sample | 77.59 | 76.27 | **79.44** | +1.85 | +3.17 | 79.46 |
+| **held-out (20 × 3)** | **held out** | 71.88 | 71.54 | **72.29** | **+0.41** | **+0.75** | 73.92 |
+
+Held-out per family: the rule's sign held on bass (+2.0 for on), drums (+6.7),
+brass (+1.7 for off) and strings (+13.3 for off); reed was a tie; and it was
+reversed on ensemble (off, cost 0.7), keys (off, cost 6.5), organ (on, cost 6.1),
+guitar (on, cost 3.8, 3 cells) and pipe (off, cost 2.2, 3 cells). Playability:
+routed 0.10 errors per entry against raw 0.52, the same as always-on. Verdict
+from `recommend`: `run_blind_evaluation` on all three sets (out-scores the
+reference on 68–81 % of cells with no more errors); the raw arm gets
+`do_not_promote` on global for its errors (0.48 against the reference's 0.34).
+
+**Reading, honestly.** Routing beats both fixed policies on the held-out sample,
+but by less than a point, on 60 cells, and it captures about a fifth of what a
+per-family oracle would (73.92). Half of its ten family decisions have the
+opposite sign on the held-out draw — two of them on 3 cells and one by under a
+point, but keys and organ reversed by six points on 6 cells each. The gain
+survives because the families it got right (drums, strings) moved more than the
+ones it got wrong. With judge 1.1 the +CTX effect is small everywhere except
+where the passes clamp a wrong register (strings, brass, reed), so the rule is
+mostly learning "where does the clamp help", and 15–24 learning cells per family
+did not fix the sign for half of them. It is a real, measured, held-out
+improvement; it is not yet a routing policy to ship, and the Listening Room has
+still heard none of it.
+
+### Honest limits of §2e
+
+- Proxy only. 2,826 new blind pairs are written under
+  `docs/evidence/tournament-arms/`; nobody has rated one. `judgeSuspect` flags
+  5 of 36, 20 of 150 and 8 of 60 cells.
+- The prefix experiment tests the *instruction channel*, not the whole prefix
+  design: the harmony/melody guide tracks were not sent, loudness has no
+  realised value, and several requests are proxies of the fields they stand for.
+- Cross-machine CPU sampling is not reproducible; raw and +PREFIX are different
+  draws as well as different requests. The routed arm shares the raw arm's draw
+  exactly, so its comparison is paired.
+- Sample sizes per family are 3–30 cells; nothing here separates two arms
+  inside one family with confidence.
+- Provenance: while these runs were in flight the branch was fast-forwarded to
+  main (PR-73 landed) and the routing rule was re-learned from the judge-1.1
+  files, so every set was launched more than once into the same directory. The
+  runner skips a token-named MIDI that already exists, and the tokens are
+  deterministic hashes, so a directory can hold a superseded draw under a
+  current name. Every entry MIDI was therefore re-rendered from its run's notes
+  sidecar afterwards (classical 0 files changed, global 6, held-out 9 — the
+  rest were already byte-identical), and PR-73's re-scorer was run over each
+  set twice (`rescore-check.json`): from the sidecar it reproduces every
+  scorecard and blind sheet exactly (288 / 1,200 / 480 entries); from the MIDIs
+  alone the platform arms are exact except the global tick-grid artefact PR-73
+  found (−0.62 on the two platform arms, 21 entries), the CA2 arms are within
+  ±0.94 points over all cells (27 / 106 / 34 entries lost overlapping
+  same-pitch notes, as PR-73 found) and exact on the exactly-recovered cells
+  (20/36, 74/150, 35/60). The sidecar is the record.
+- Spend: ≈ 3,540 s of `cpu=4` inference in the reports of record and about
+  3.5 container-hours including the superseded launches — under $1 at the list
+  CPU price, no GPU; estimated from container time, not read from the billing
+  page.
+
 ## 3. The options, honestly priced
 
 GPU prices used: Modal on-demand, 2026-09 list — A10G ≈ $1.10/h, L40S ≈ $1.95/h,
