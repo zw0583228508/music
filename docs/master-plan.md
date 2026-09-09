@@ -1726,6 +1726,40 @@ any of it.
   the corpus is a data decision — which songs, and on what basis each may be
   used — and that is the owner's, not the code's.
 
+- **PR-40** ✅ — `pdmx-ingest` (Wave Q, Q-00 / Q-05 Tier A): PDMX admitted on
+  the owner's approval, under the subset its own authors recommend.
+
+  `pdmxIngest.ts` reads PDMX metadata rows and admits **only** the
+  `no_license_conflict` subset — the rows where the public copyright data and
+  the file's internal metadata agree. Anything but an explicit `false` on that
+  flag is treated as a conflict: an absent flag is not consent. Inside the
+  subset a row still has to carry a public-domain statement and a URL to check
+  it against, and the rights basis names **the work** (`"A niggun (PDMX 0001,
+  no_license_conflict)"`), never the dataset — because a dataset's licence is
+  not proof of rights in the works inside it. Every refusal is returned with
+  its reason; a corpus that silently drops rows cannot be audited.
+
+  Coverage attributes are **derived from published metadata, never invented**:
+  tempo band from tempo, harmonic complexity from pitch-class count, density
+  from notes per bar, ensemble size from track count, compound feel from 6/8,
+  9/8 and 12/8 (3/4 is triple, not compound), non-western idiom only from a
+  named tradition. Production is left `acoustic` because a score carries no
+  production and guessing one would be a lie about the data. `selectSpread`
+  walks attribute buckets round-robin, so a corpus drawn from PDMX is not 90 %
+  4/4 piano scores just because the dataset is.
+
+  **What PDMX is and is not, enforced by a test.** It is the training backbone
+  (Q-05 Tier A) and the **`midi` slice** of the benchmark corpus. It is not the
+  recorded-audio slices: 200 admitted PDMX rows still leave `full_song`,
+  `piano_vocal` and `vocal_only` missing and zero human gold arrangements, and
+  `corpusCoverage` says so. Scores do not substitute for recordings.
+
+  Suites: pdmxIngest 5, registered in the focused runner; typecheck green.
+
+  **Not done.** The archive is not downloaded and no entry is in the corpus
+  yet: this is the gate and the mapping, run against metadata whenever the data
+  is fetched.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

@@ -59,6 +59,11 @@ const suites = {
         "real-corpus-benchmark.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      [
+        "src/lib/pdmxIngest.test.ts",
+        "pdmx-ingest.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
     ],
   },
   validation: {
