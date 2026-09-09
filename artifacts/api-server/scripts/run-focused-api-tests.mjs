@@ -44,6 +44,23 @@ const suites = {
       ],
     ],
   },
+  // Wave Q, Q-00: the contract and the gate in front of the real benchmark
+  // corpus. No music here — these prove the corpus refuses to call itself a
+  // measure before it is one.
+  "benchmark-corpus": {
+    bundles: [
+      [
+        "src/lib/benchmarkCorpusPlan.test.ts",
+        "benchmark-corpus-plan.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/realCorpusBenchmark.test.ts",
+        "real-corpus-benchmark.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+    ],
+  },
   validation: {
     bundles: [
       ["src/lib/songModelValidation.test.ts", "song-model-validation.test.mjs"],
