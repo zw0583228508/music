@@ -27,6 +27,7 @@ import type {
   ProducerBriefDecision,
   ProducerMemoryRule,
 } from "@workspace/db";
+import { phrases, type ProducerLanguage } from "./producerIntelligence/producerLanguage";
 
 export const PRODUCER_MEMORY_VERSION = "1.0" as const;
 export const MEMORY_SOURCE_PREFIX = "producer_memory:";
@@ -153,9 +154,13 @@ export function memoryDecisionsIn(
   return found;
 }
 
-/** One sentence for the chat: what the producer's memory did to this brief. */
-export function describeMemoryApplied(applied: ReadonlyArray<{ rule: ProducerMemoryRule | null; ruleId: string }>): string | null {
+/** One sentence for the chat, in the producer's language: what their memory did to this brief. */
+export function describeMemoryApplied(
+  applied: ReadonlyArray<{ rule: ProducerMemoryRule | null; ruleId: string }>,
+  language: ProducerLanguage = "en",
+): string | null {
   if (!applied.length) return null;
-  const statements = applied.map(({ rule, ruleId }) => `"${rule?.statement ?? ruleId}"`);
-  return `Your standing rule${applied.length === 1 ? "" : "s"} ${statements.join(", ")} ${applied.length === 1 ? "was" : "were"} applied to this project; revoke ${applied.length === 1 ? "it" : "them"} in producer memory, or say otherwise here and this project will follow what you say.`;
+  const P = phrases(language);
+  const statements = P.list(applied.map(({ rule, ruleId }) => `"${rule?.statement ?? ruleId}"`));
+  return P.standingRulesApplied(statements, applied.length);
 }

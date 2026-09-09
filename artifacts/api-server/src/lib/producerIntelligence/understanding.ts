@@ -16,6 +16,7 @@ import type {
   UserIntent,
 } from "@workspace/db";
 import { activeDecisions } from "./briefCompiler";
+import { phrases, type ProducerLanguage } from "./producerLanguage";
 import { instrumentFamily } from "./vocabulary";
 
 export type IntentDelta = {
@@ -47,11 +48,9 @@ export function intentDelta(previous: UserIntent | null, next: UserIntent): Inte
   };
 }
 
-const quote = (s: string): string => `"${s.trim()}"`;
-const list = (items: string[]): string =>
-  items.length <= 1 ? items.join("") : `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
-
-function worldPhrase(intent: UserIntent, profile: StyleProfile): string | null {
+function worldPhrase(intent: UserIntent, profile: StyleProfile, language: ProducerLanguage): string | null {
+  const { list } = phrases(language);
+  const P = phrases(language);
   const d = profile.dimensions;
   const pick = (name: keyof StyleProfile["dimensions"]): string | null => {
     const dim = d[name];
@@ -64,15 +63,15 @@ function worldPhrase(intent: UserIntent, profile: StyleProfile): string | null {
   const ensemble = pick("ensembleType");
   const words = [era, tradition, genre].filter((w): w is string => !!w);
   const parts: string[] = [];
-  if (words.length) parts.push(`a ${words.join(" ")}`);
-  if (scene) parts.push(`${scene} scene`);
-  if (ensemble) parts.push(`${ensemble.replace(/_/g, " ")} ensemble`);
+  if (words.length) parts.push(P.worldPrefix(words.join(" ")));
+  if (scene) parts.push(P.sceneSuffix(scene));
+  if (ensemble) parts.push(P.ensembleSuffix(ensemble.replace(/_/g, " ")));
   const feels = intent.inferences
     .filter((i) => i.scope.kind === "global" && (i.slot === "production_feel" || i.slot === "mood") && i.provenance === "stated")
     .map((i) => i.value.replace(/_/g, " "));
-  if (feels.length) parts.push(`feel: ${list([...new Set(feels)])}`);
+  if (feels.length) parts.push(P.feelPrefix(list([...new Set(feels)])));
   const tempo = intent.inferences.find((i) => i.scope.kind === "global" && (i.slot === "tempo_bpm" || i.slot === "tempo_feel"));
-  if (tempo) parts.push(tempo.slot === "tempo_bpm" ? `${tempo.value} bpm` : `${tempo.value} tempo`);
+  if (tempo) parts.push(tempo.slot === "tempo_bpm" ? P.bpm(tempo.value) : P.tempoFeel(tempo.value));
   return parts.length ? parts.join(", ") : null;
 }
 
@@ -81,24 +80,30 @@ function worldPhrase(intent: UserIntent, profile: StyleProfile): string | null {
  * provenance `researched`, named with their providers. Each is a brief
  * decision, so the sentence still says nothing the data does not contain.
  */
-function researchPhrase(profile: StyleProfile): string | null {
+function researchPhrase(profile: StyleProfile, language: ProducerLanguage): string | null {
+  const { list } = phrases(language);
   const researched = (Object.entries(profile.dimensions) as Array<[string, StyleProfile["dimensions"][keyof StyleProfile["dimensions"]]]>)
     .filter((entry): entry is [string, NonNullable<typeof entry[1]>] => entry[1]?.provenance === "researched")
     .map(([name, dim]) => `${name.replace(/([A-Z])/g, " $1").toLowerCase()} ${Array.isArray(dim.value) ? dim.value.join("/") : String(dim.value).replace(/_/g, " ")}`);
   if (!researched.length || !profile.research) return null;
-  return `From what is known of ${profile.research.world.join(", ").replace(/\b\w+=/g, "")} (${profile.research.providers.join(", ")}): ${list(researched)} — marked researched in the brief, below anything you said`;
+  return phrases(language).researchSentence(
+    profile.research.world.join(", ").replace(/\b\w+=/g, ""),
+    profile.research.providers.join(", "),
+    list(researched),
+  );
 }
 
-function constraintPhrase(constraints: IntentConstraint[]): string | null {
+function constraintPhrase(constraints: IntentConstraint[], language: ProducerLanguage): string | null {
+  const { list, quote, constraintVerb } = phrases(language);
   const global = constraints.filter((c) => c.scope.kind === "global");
   if (!global.length) return null;
-  const verb: Record<IntentConstraint["kind"], string> = { avoid: "ruled out", limit: "keep in check", keep: "keep", require: "must have" };
   const grouped = new Map<string, string[]>();
-  for (const c of global) grouped.set(verb[c.kind], [...(grouped.get(verb[c.kind]) ?? []), `${c.subject} (${quote(c.statement)})`]);
+  for (const c of global) grouped.set(constraintVerb(c.kind), [...(grouped.get(constraintVerb(c.kind)) ?? []), `${c.subject} (${quote(c.statement)})`]);
   return [...grouped].map(([v, items]) => `${v}: ${list(items)}`).join("; ");
 }
 
-function instrumentsPhrase(inferences: IntentInference[]): string | null {
+function instrumentsPhrase(inferences: IntentInference[], language: ProducerLanguage): string | null {
+  const { list, instrumentsNamed } = phrases(language);
   const named = inferences.filter((i) => i.slot === "instrument" && i.scope.kind === "global");
   if (!named.length) return null;
   const seen = new Set<string>();
@@ -108,10 +113,11 @@ function instrumentsPhrase(inferences: IntentInference[]): string | null {
     const label = family === i.value ? family : `${i.value} → ${family}`;
     if (!seen.has(label)) { seen.add(label); items.push(label); }
   }
-  return `instruments named: ${list(items)}`;
+  return instrumentsNamed(list(items));
 }
 
-function sectionPhrase(brief: ProductionBrief): string | null {
+function sectionPhrase(brief: ProductionBrief, language: ProducerLanguage): string | null {
+  const { list } = phrases(language);
   const decisions = new Map(activeDecisions(brief).map((d) => [d.id, d] as const));
   const lines: string[] = [];
   for (const intention of brief.sectionIntentions) {
@@ -125,9 +131,10 @@ function sectionPhrase(brief: ProductionBrief): string | null {
   return lines.length ? lines.join("; ") : null;
 }
 
-function referencePhrase(references: IntentReference[]): string | null {
+function referencePhrase(references: IntentReference[], language: ProducerLanguage): string | null {
+  const { list, referencesNamed } = phrases(language);
   if (!references.length) return null;
-  return `references: ${list(references.map((r) => `${r.label}${r.aspect ? ` (${r.aspect})` : ""}`))}`;
+  return referencesNamed(list(references.map((r) => `${r.label}${r.aspect ? ` (${r.aspect})` : ""}`)));
 }
 
 function sectionRefLabel(scope: IntentInference["scope"]): string {
@@ -158,6 +165,10 @@ export type UnderstandingInput = {
 /** The producer's reading. First paragraph: what was understood; second: the questions. */
 export function describeUnderstanding(input: UnderstandingInput): string {
   const { intent, profile, brief, questions, hasSongModel, delta } = input;
+  // Answer in the language the producer wrote in. PR-U1 detected it already.
+  const language = intent.language;
+  const P = phrases(language);
+  const { list, quote } = P;
   const sentences: string[] = [];
   const nothingRead = !intent.inferences.length && !intent.constraints.length && !intent.references.length;
 
@@ -166,9 +177,9 @@ export function describeUnderstanding(input: UnderstandingInput): string {
     const world = delta.inferences.filter((i) => i.scope.kind === "global" && i.provenance === "stated")
       .map((i) => `${i.slot.replace(/_/g, " ")} ${i.value.replace(/_/g, " ")} (${quote(i.evidence[0] ?? "")})`);
     if (world.length) added.push(list(world));
-    const constraints = constraintPhrase(delta.constraints);
+    const constraints = constraintPhrase(delta.constraints, language);
     if (constraints) added.push(constraints);
-    const refs = referencePhrase(delta.references);
+    const refs = referencePhrase(delta.references, language);
     if (refs) added.push(refs);
     const sectionWishes = [
       ...delta.inferences.filter((i) => i.scope.kind === "section")
@@ -176,54 +187,50 @@ export function describeUnderstanding(input: UnderstandingInput): string {
       ...delta.constraints.filter((c) => c.scope.kind === "section")
         .map((c) => `${quote(c.statement)} for the ${sectionRefLabel(c.scope)}`),
     ];
-    if (sectionWishes.length) added.push(`section wishes: ${list([...new Set(sectionWishes)])}`);
+    if (sectionWishes.length) added.push(P.sectionWishes(list([...new Set(sectionWishes)])));
     if (!added.length) {
-      sentences.push("I could not read a new musical direction from that, so the brief is unchanged.");
-      if (delta.unresolvedTerms.length) sentences.push(`I did not understand ${list(delta.unresolvedTerms.map(quote))}.`);
-      sentences.push("Tell me about the feel, an era, artists or songs, or the instruments you hear, and I will fold it in.");
+      sentences.push(P.nothingNewRead);
+      if (delta.unresolvedTerms.length) sentences.push(P.didNotUnderstand(list(delta.unresolvedTerms.map(quote))));
+      sentences.push(P.tellMeMore);
       return sentences.join(" ");
     }
-    sentences.push(`Added to the brief (v${input.version}): ${added.join("; ")}.`);
+    sentences.push(P.addedToBrief(input.version, added.join("; ")));
   } else if (nothingRead) {
-    sentences.push("I could not read a musical direction from that yet.");
-    if (intent.unresolvedTerms.length) sentences.push(`I did not understand ${list(intent.unresolvedTerms.map(quote))}.`);
-    sentences.push("Tell me how you want the arrangement to feel — write however is comfortable, mention artists, songs or eras, or upload a reference.");
+    sentences.push(P.noDirectionYet);
+    if (intent.unresolvedTerms.length) sentences.push(P.didNotUnderstand(list(intent.unresolvedTerms.map(quote))));
+    sentences.push(P.tellMeHow);
     return sentences.join(" ");
   } else {
-    const world = worldPhrase(intent, profile);
-    sentences.push(world ? `Here is how I read it: ${world}.` : "Here is how I read it.");
-    const constraints = constraintPhrase(intent.constraints);
-    if (constraints) sentences.push(`Boundaries — ${constraints}.`);
-    const instruments = instrumentsPhrase(intent.inferences);
+    sentences.push(P.hereIsHowIReadIt(worldPhrase(intent, profile, language)));
+    const constraints = constraintPhrase(intent.constraints, language);
+    if (constraints) sentences.push(P.boundaries(constraints));
+    const instruments = instrumentsPhrase(intent.inferences, language);
     if (instruments) sentences.push(`${instruments[0].toUpperCase()}${instruments.slice(1)}.`);
-    const refs = referencePhrase(intent.references);
+    const refs = referencePhrase(intent.references, language);
     if (refs) sentences.push(`${refs[0].toUpperCase()}${refs.slice(1)}.`);
-    const research = researchPhrase(profile);
+    const research = researchPhrase(profile, language);
     if (research) sentences.push(`${research}.`);
   }
 
-  const sections = sectionPhrase(brief);
-  if (sections) sentences.push(`Per section — ${sections}.`);
+  const sections = sectionPhrase(brief, language);
+  if (sections) sentences.push(P.perSection(sections));
   if (brief.unresolvedSectionRequests.length) {
     const wishes = brief.unresolvedSectionRequests.map((r) => quote(r.text));
     sentences.push(hasSongModel
-      ? `I could not place ${list(wishes)} on this song's sections (${brief.sectionNames.join(", ") || "none"}); it is kept, not guessed.`
-      : `${list(wishes)} is kept for when the song is analysed; there is no Song Model to place it on yet.`);
+      ? P.couldNotPlace(list(wishes), brief.sectionNames.join(", ") || "none")
+      : P.keptForAnalysis(list(wishes)));
   }
   if (brief.instrumentation.excludedFamilies.length) {
-    sentences.push(`Excluded from the palette: ${list(brief.instrumentation.excludedFamilies)}.`);
+    sentences.push(P.excludedFromPalette(list(brief.instrumentation.excludedFamilies)));
   }
   if (intent.unresolvedTerms.length && !delta) {
-    sentences.push(`I did not understand ${list(intent.unresolvedTerms.map(quote))} — say it another way and I will pick it up.`);
+    sentences.push(P.didNotUnderstandSayAgain(list(intent.unresolvedTerms.map(quote))));
   }
   if (brief.productionAesthetic.plannerAesthetic) {
-    sentences.push(`Production aesthetic for the planners: ${brief.productionAesthetic.plannerAesthetic.replace(/_/g, " ")}.`);
+    sentences.push(P.productionAesthetic(brief.productionAesthetic.plannerAesthetic.replace(/_/g, " ")));
   }
 
   const paragraph = sentences.join(" ");
   if (!questions.length) return paragraph;
-  const lead = questions.length === 1
-    ? "One thing would change the arrangement materially:"
-    : "Two things would change the arrangement materially:";
-  return `${paragraph}\n\n${lead} ${questions.map((q) => questionText(q, intent.language)).join(" ")}`;
+  return `${paragraph}\n\n${P.questionsLead(questions.length)} ${questions.map((q) => questionText(q, language)).join(" ")}`;
 }

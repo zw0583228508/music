@@ -121,9 +121,19 @@ test("intake persists brief v1 and both turns, and replies with a reading the us
   assert.ok(profile.research!.discarded.some((d) => d.dimension === "instrumentationHierarchy"));
   assert.ok(outcome.state.clarifications.length >= 1 && outcome.state.clarifications.length <= 2);
   assert.ok(outcome.state.clarifications.every((q) => q.id.startsWith("research_") && q.questionHe));
-  assert.match(outcome.reply, /From what is known of hasidic, ballad, modern \(curated-world-notes\/v1\)/);
+  // The producer wrote Hebrew, so the reading is Hebrew (PR-36); the researched
+  // world and its provider are still named exactly.
+  assert.match(outcome.reply, /ממה שידוע על hasidic, ballad, modern \(curated-world-notes\/v1\)/);
+  assert.match(outcome.reply, /מסומן בבריף כמחקר, מתחת לכל מה שאמרת/);
+  assert.match(outcome.reply, /^כך קראתי את זה: /);
   assert.match(outcome.reply, /קרעכץ ודריידלעך/, "the Hebrew question uses the tradition's own words");
-  assert.match(outcome.reply, /marked researched in the brief, below anything you said/);
+  // The same sentence in English when the producer writes English.
+  const english = await createProducerChatService(
+    createInMemoryProducerChatStore({ songModel: { version: 1, model: makeTestSongModel() } }),
+    { now: clock(), newId: ids() },
+  ).intake("project-en", { text: "a modern hasidic ballad, not too poppy, piano and flute" });
+  assert.match(english.reply, /marked researched in the brief, below anything you said/);
+  assert.match(english.reply, /^Here is how I read it: /);
 });
 
 test("research is optional: with the agent off, the intake is PR-U2's exactly", async () => {

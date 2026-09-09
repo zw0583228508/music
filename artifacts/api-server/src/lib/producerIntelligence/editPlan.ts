@@ -22,6 +22,7 @@ import type {
 } from "@workspace/db";
 import { planPartialRegeneration, type ProducerIntent } from "../regenerationLocks";
 import { resolveSectionRef, type SectionLike } from "./briefCompiler";
+import { phrases, replyLanguage } from "./producerLanguage";
 import { extractUserIntentSync } from "./intentExtraction";
 import { instrumentFamily, lookupWord } from "./vocabulary";
 
@@ -225,14 +226,24 @@ export function interpretEditRequest(
       break;
   }
 
-  const scopeText = scope.kind === "global" ? "the whole arrangement"
-    : scope.kind === "section" ? `section "${scope.sectionName}"`
-      : scope.kind === "track" ? `${scope.instrument}${scope.sectionName ? ` in "${scope.sectionName}"` : ""}`
-        : `bars ${scope.startBar}–${scope.endBar}${scope.instrument ? ` of ${scope.instrument}` : ""}`;
+  // The rationale is what the producer reads, so it is written in their language
+  // (PR-36); the words it quotes are theirs and are never translated.
+  const P = phrases(replyLanguage(text));
+  const scopeText = scope.kind === "global" ? P.editScopeWholeArrangement
+    : scope.kind === "section" ? P.editScopeSection(scope.sectionName ?? "")
+      : scope.kind === "track" ? P.scopeTrack(scope.instrument ?? "", scope.sectionName ?? null)
+        : P.editScopeBars(scope.startBar ?? 0, scope.endBar ?? 0, scope.instrument ?? null);
   const unresolvedSection = sectionRef && !sectionNames.length;
   const rationale = editIntent === "unclear"
-    ? `Could not map "${text.trim()}" onto an arrangement change; nothing is regenerated.`
-    : `${editIntent.replace(/_/g, " ")} on ${scopeText}: ${requested.length} regeneration scope(s), ${locks.locks.length} lock(s)${unresolvedSection ? `; the requested ${sectionRef!.function} could not be matched to a section of this song` : ""}. Evidence: ${evidence.map((e) => `"${e}"`).join(", ") || "none"}.`;
+    ? P.editUnclear(text.trim())
+    : P.editRationale(
+        P.editIntentName(editIntent),
+        scopeText,
+        requested.length,
+        locks.locks.length,
+        unresolvedSection ? sectionRef!.function : null,
+        evidence.map((e) => `"${e}"`).join(", ") || P.evidenceNone,
+      );
   const confidence = editIntent === "unclear" ? 0.2 : unresolvedSection ? 0.45 : sectionRef || focusFamily ? 0.85 : 0.65;
 
   return {

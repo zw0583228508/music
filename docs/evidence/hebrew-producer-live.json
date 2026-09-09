@@ -1,0 +1,55 @@
+{
+  "title": "The producer answers in the producer's language — live (PR-36)",
+  "path": "Hebrew intake -> Hebrew reading and Hebrew clarification questions -> Hebrew refinement -> Hebrew 'why' answered in Hebrew; the same in English on a second project",
+  "ids": {
+    "hebrewProject": "7b9bb802-205a-403e-b82d-7ebb95188d3a",
+    "englishProject": "57a1944b-26ab-4345-b7ef-d6d0410b79d2"
+  },
+  "steps": [
+    {
+      "step": "Hebrew intake answered in Hebrew",
+      "projectId": "7b9bb802-205a-403e-b82d-7ebb95188d3a",
+      "hebrewCharacters": 336,
+      "opensWith": "כך קראתי את זה: modern hasidic ballad, טמפו slow. גבולות — נ",
+      "questions": [
+        "כמה לקשט את המנגינה — סלסולים בסגנון קרעכץ ודריידלעך כמו בניגון, או קו",
+        "איך המשפטים נסגרים (קדנצות)?"
+      ]
+    },
+    {
+      "step": "Hebrew refinement",
+      "status": 200,
+      "kind": "edit",
+      "reply": "להסיר כלי על כל העיבוד: 0 תחומי רג׳נרציה, 0 נעילות. ראיות: \"בלי מיתרים\". כלל קבוע לכל השיר: edit: \"בלי מיתרים גבוהים בכל השיר\". הבריף עודכן לגרסה 2. עדיין לא בוצעה רג׳נרציה מהצ׳אט — התוכנית מוחזרת לעיבוד הבא."
+    },
+    {
+      "step": "Hebrew question answered in Hebrew",
+      "status": 200,
+      "answered": false,
+      "answer": "אני לא יכול להסביר את זה מהתוכנית: אין בתוכנית תוכנית-על או תוכנית חלקים לקרוא.",
+      "hebrewInAnswer": true
+    },
+    {
+      "step": "English intake answered in English",
+      "projectId": "57a1944b-26ab-4345-b7ef-d6d0410b79d2",
+      "hebrewCharacters": 0,
+      "opensWith": "Here is how I read it: a modern hasidic ballad, slow tempo. ",
+      "questions": [
+        "How ornamented should the melody be — krekhts and dreydlekh-style turn",
+        "How should phrases cadence?"
+      ]
+    },
+    {
+      "step": "English question answered in English",
+      "status": 200,
+      "answered": false,
+      "answer": "I can't explain that from the plan: the plan has no global or section plan to read.",
+      "hebrewInAnswer": false
+    }
+  ],
+  "observations": [
+    "Language is decided per turn from what the producer wrote, which PR-U1 already detected; nothing is configured and no model translates.",
+    "Section names, instrument families, dimension names and the producer's own quoted words stay exactly as they are inside a Hebrew sentence: translating them would misreport the data.",
+    "The clarification questions were already bilingual (PR-U1/PR-U3); this run shows the surrounding reading, the refusals and the explanations in the same language."
+  ]
+}
