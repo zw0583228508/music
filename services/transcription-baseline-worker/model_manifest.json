@@ -1,0 +1,39 @@
+{
+  "provider": "BASIC_PITCH",
+  "role": "incumbent",
+  "why": "The sweep's question is 'is there a transcription model meaningfully better than what we have'. What this platform HAS is Basic Pitch — per docs/model-discovery/README.md it is the only external transcription model ever proven live on this infrastructure (PR-37, PR-46). MT3 is catalogued and has never run here, so it is the plan's baseline, not the incumbent. Both are worth a number; this image measures the one that is actually in production.",
+  "basic_pitch": {
+    "package": "basic-pitch",
+    "version": "0.4.0",
+    "pinSource": "services/music-ai-worker/model_manifest.json — the same version the production analysis worker reviews, so the incumbent measured here is the incumbent that runs",
+    "sourceRepository": "https://github.com/spotify/basic-pitch",
+    "sourceRevision": "9991303bba609a3b93089d13ec80d1d495083596",
+    "packageArtifactSha256": "738adb503aae7fdfc7d1e1511aa0ce35052315f260a19531ef4c356708425db0",
+    "checkpoint": "saved_models/icassp_2022/nmp",
+    "checkpointKind": "tensorflow-saved-model",
+    "checkpointTreeSha256": "b74344cd0c58261dae0cd52050d85ab6f901a5e219f27046ab4640673bba1046",
+    "onnxCheckpointSha256": "2c3c1d144bfa61ad236e92e169c13535c880469a12a047d4e73451f2c059a0ec",
+    "paper": "https://arxiv.org/abs/2203.09893",
+    "architecture": "small CNN over harmonic-stacked CQT; frame, onset and contour heads",
+    "capability": "polyphonic pitch only — one instrument-agnostic note stream",
+    "capabilityNote": "Basic Pitch predicts no instrument and no drum flag. It is not a multi-instrument transcriber and was never claimed to be. Scoring it on instrument-aware F1 is therefore scoring it on a task it does not perform; the sweep reports that number for completeness and reports the pitch-only number next to it as the fair comparison. Its notes are assigned GM program 0 because the platform has to put them somewhere, and that choice — not a model prediction — is what the instrument-aware number is measuring."
+  },
+  "runtime": {
+    "python": "3.10",
+    "tensorflow": "2.14.0",
+    "numpy": "1.26.4",
+    "librosa": "0.11.0",
+    "resampy": "0.4.2",
+    "pretty-midi": "0.2.11.post0",
+    "gpu": "none — a small CNN on CPU; a GPU would buy nothing and cost budget"
+  },
+  "licence": {
+    "codeLicense": { "stated": "Apache-2.0", "source": "github.com/spotify/basic-pitch LICENSE, sha256 929c910bae2152fa87199a5d0660e09263419b7eee6d4b301d05ee2aaf211c37 as recorded by services/music-ai-worker" },
+    "weightsLicense": { "stated": "Apache-2.0", "source": "shipped inside the Apache-2.0 package; no separate weights licence is asserted" },
+    "trainingData": {
+      "stated": "MAESTRO, GuitarSet, MedleyDB, Slakh, iKala and a Spotify-internal set (per the ICASSP 2022 paper)",
+      "underlyingWorksCleared": "not audited by this stream"
+    },
+    "classification": "already routed in this platform — this manifest changes nothing about that; it exists so the incumbent's number has a pinned provenance"
+  }
+}

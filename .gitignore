@@ -89,3 +89,7 @@ services/composers-assistant-train/.smoke/
       ],
 # Workstream worktree marker: a local signal that dependencies are installed.
 .deps-ready
+
+# PR-83 (stream C): transcription sweep scratch — worker token, rendered WAVs,
+# raw worker output. The gold set and the scored evidence live in docs/evidence/.
+.amt-bench/

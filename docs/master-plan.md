@@ -4316,6 +4316,146 @@ any of it.
   (Stream D). The owner's ~115 is recorded as an unverified owner claim in
   ANALYSIS_GOLD_V1's annotation template, not as truth. The mobile header
   (hidden below `md`) is unchanged.
+- **PR-83** ✅ — `amt-sota-sweep` (Wave ANALYSIS ENGINE — stream C): **is there
+  a transcription model meaningfully better than what we have?** The owner
+  pointed at the 2025 AMT Challenge — MIROS ≈ 0.60, YourMT3+ just behind, MT3
+  ≈ 0.39 — and said MT3 must not be kept merely because it is in the plan.
+  **Answer: yes at instrument attribution, no at finding notes.** Nothing is
+  promoted; routing is unchanged.
+
+  **The leaderboard, read from primary sources rather than quoted.**
+  ai4musicians.org for the rules, [arXiv:2603.27528](https://arxiv.org/abs/2603.27528)
+  for Table 1: MIROS **0.5998**, YourMT3-YPTF-MoE-M **0.5938**, YourMT3-YPTF-S
+  0.5581, YourMT3-P 0.3947, **MT3 baseline 0.3932**, YourMT3-YPTF-SP-V 0.3305,
+  then six systems from 0.3199 to 0.0634; 76 newly composed pieces of ~20 s, at
+  most 3 instruments, onset ±50 ms. Three things the framing did not contain:
+  **MIROS beats the runner-up by 0.006 F1 (1 %)** and is itself *"the YourMT3+
+  encoder–decoder framework"* with MusicFM swapped in; **its own F-measure
+  falls 0.7193 → 0.4367** from one instrument to three; and **no MIROS
+  checkpoint is published** — Hugging Face searched, nothing there. So the best
+  system anyone outside Osnabrück can run is the runner-up.
+
+  **What we actually have is not MT3.** Per this repo's own audit MT3 has never
+  run here; **Basic Pitch** is the only external transcription model ever
+  proven live on this infrastructure (PR-37/46), so it was measured at exactly
+  the version production runs (`basic-pitch==0.4.0`, pinned from
+  `services/music-ai-worker/model_manifest.json`).
+
+  **Our benchmark, not theirs.** Stream H's gold set had not landed on
+  `origin/main` (`13aa6a3`), so `SYNTHETIC_EXACT` was built here: 12 admitted
+  PDMX multitrack works, one per genre family, chosen round-robin from 254,077
+  rows, first 30 s each rendered through `REFERENCE_SYNTH_V1` so the MIDI **is**
+  the truth — **4,050 reference notes, 346 s, 15 instrument classes**
+  (`docs/evidence/amt-benchmark-gold-v1.json`, sha256 `b642bd08…`). Metric
+  (`amtBenchmark.ts`): onset ±50 ms, mir_eval's offset rule, **maximum
+  bipartite matching** (Kuhn) not greedy nearest-onset, instrument-aware = same
+  drum flag and same GM family. The scorer refuses unless each worker's
+  reported audio sha256 matches the gold clip.
+
+  | model | challenge | instr. F1 | +offset | pitch-only | clips won | cost |
+  | --- | --- | ---: | ---: | ---: | ---: | ---: |
+  | YourMT3 `YMT3+` | unmapped | **0.2703** | **0.1309** | 0.4940 | **6/12** | $0.013 |
+  | YourMT3 `YPTF+Single` | 3rd (0.5581) | 0.2596 | 0.1045 | 0.5478 | 4/12 | $0.013 |
+  | YourMT3 `YPTF.MoE+Multi` | **2nd (0.5938)** | 0.2414 | 0.1153 | 0.5060 | 2/12 | $0.009 |
+  | Basic Pitch 0.4.0 (incumbent) | — | 0.1751 | 0.0848 | **0.5711** | **0/12** | $0.003 |
+
+  **The leaderboard's ordering inverts on our audio.** The variant that leads
+  here is the plainest and smallest — `YMT3+`, a T5 on mel at **45.7 M
+  parameters** — while the Perceiver-TF/MoE encoder that placed 2nd came last,
+  at **twice the checkpoint size**. Ranking by the published table would have
+  picked the worst of the three. Confidence, stated separately: **strong** that
+  every YourMT3 variant beats the incumbent on instrument-aware micro F1
+  (per clip against Basic Pitch: `YMT3+` 12 of 12, `YPTF+Single` 11 with one
+  tie at 0.000, `YPTF.MoE+Multi` 10 with one tie and **one loss** — musical
+  theatre 0.3276 vs 0.3291; precision *up* 0.12 for all three, so not bought
+  with false notes); **suggestive only** on the ordering within the family
+  (0.029 apart, 12 clips cannot settle it).
+
+  **What 0.27 actually means.** Not "27 % of a transcription" — three
+  instrument families read well and nine read as piano. Bass F1 0.416, reed
+  0.417, keys 0.593; **strings (598 notes) reach 0.010 at best, and brass,
+  organ, ethnic, chromatic perc and synth score 0.000 for every model**, and
+  guitar — the largest
+  class at 861 notes — reaches 0.153 at best. Those notes are absorbed into
+  `keys`, which is over-emitted 1.6–1.9×. Meanwhile **every challenger finds
+  fewer notes than the incumbent** (pitch-only recall 0.489 → 0.448 at best).
+  Neither side dominates, and the per-genre range within one model (0.02–0.79)
+  is an order of magnitude wider than the gap between models.
+
+  **Licences, three layers, one contradiction.** YourMT3 **weights are
+  apache-2.0**; its **code licence is contradictory** — GitHub `LICENSE` says
+  GPL-3.0, the HF Space that actually carries the code says `apache-2.0`, and
+  the source headers say Apache-2.0 — and its corpora (Slakh2100, RWC-Pop,
+  MIR-ST500 …) are mixed and partly research-only: `LEGAL_REVIEW_REQUIRED`.
+  **MuScriptor** (2026, 1.4 B, the strongest-sounding newcomer) is **CC BY-NC
+  4.0 on its weights** per all three model cards — the arXiv HTML says CC BY 4.0
+  and the cards say NC, and for weights the card governs — so `BLOCKED_LICENSE`
+  and no budget spent. And **the MT3 PyTorch port the challenge itself linked
+  carries no licence file at all**; `gudgud96/MR-MT3` (MIT) is used instead.
+  MIROS and MuScriptor are now on `research-watchlist.json` with a re-check
+  condition each.
+
+  **Code.** `amtBenchmark.ts` (metric + benchmark builder, 17 tests),
+  `yourMt3Client.ts` (dedicated token; refuses the shared one and plain HTTP off
+  localhost), `yourMt3ResultAdapter.ts` (22 tests) — refuses output that does
+  not verify as the audited checkpoint; **refuses to silently drop the
+  instrument** (the melody shape has no program field, so notes stay grouped
+  per class and the loss is listed, not hidden); `toTranscriptionAnalysisResult()`
+  makes "analysisProviders-compatible" a compile-time fact; and
+  `proposeYourMt3Registration()` returns `routing: "no_change"` with a blocker
+  list, pinned by a test that routing does not change **even when every blocker
+  is satisfied**. Its `defaultVariant` is `YPTF+Single` — the measured choice,
+  also pinned, so a later edit cannot revert to the published ranking. Three
+  worker services; the two images that built (`yourmt3-worker`,
+  `transcription-baseline-worker`) verify their checkpoints / pinned version
+  at image build, and the MT3 Dockerfile pins both sha256s but never built.
+  `pnpm run typecheck` green; 39 new tests registered under `analysis-providers`.
+
+  **Recommendation: add `YPTF+Single` as a shadow arm, keep Basic Pitch routed,
+  fund a real-audio tier before promoting anything.** The shape that fits the
+  evidence is *both* — Basic Pitch for note recall, YourMT3 for instrument
+  attribution, reconciled — a design proposal, not a result, not built here.
+
+  **Honest limits.** (1) **One tier, and it is the weak one**: exact labels,
+  unreal timbre, out of distribution for every model measured — the brief's
+  assumption that synthetic is "easier" is wrong for transcription. Absolute
+  F1s are floors; only the ranking transfers. (2) The first sweep looped three
+  variants in one container and **two produced unusable numbers**: upstream's
+  `update_config` mutates a module-level `model_cfg`, so `YPTF+Single` died on
+  a latent-array shape mismatch and **`YMT3+` loaded silently and returned 0
+  notes on all 12 clips** — upstream loads with `strict=False`, so a mismatched
+  checkpoint runs as random weights without complaint. `YMT3+` is the variant
+  that went on to score **highest of all four**; a run that trusted that
+  container would have published "0.000" and buried it. Those blocks are
+  dropped rather than scored; the loader now refuses a second variant per
+  process and the sweep fans out one container per variant — and the guard
+  fired for real when Modal reused a warm container. (3) **MT3 did not run** —
+  four image builds, four distinct failures (ResolutionImpossible; `crepe`
+  needing `pkg_resources`; `PIP_CONSTRAINT` not reaching the build env;
+  `tflite-support` needing `pybind11` once isolation was off), because MT3's
+  PyTorch path still imports `t5.data`, `seqio`, `ddsp` and `tensorflow` at
+  module scope for one integer and one ABC. Patching those two symbols out
+  would build in minutes and would measure *our fork of MT3*, so it was
+  refused. (4) 12 clips of 30 s separates a challenger from the incumbent at
+  0.07–0.10 apart, **cannot** order three variants 0.03 apart, and **cannot**
+  support a per-genre claim. (5) Basic Pitch's instrument-aware column measures
+  the adapter's placeholder, not a prediction — it predicts no instrument at
+  all. (6) The web endpoint was never deployed: the client is unit-tested
+  against a stubbed fetch and the numbers came through the batch entrypoint on
+  the same image and the same inference function, so the **HTTP path is
+  unproven**. (7) Costs are computed from measured seconds at Modal's published
+  rates, not read off an invoice: the four scored runs sum to **$0.0373**, the
+  overheads (9 image builds, two GPU smokes, the ~343 s contaminated sweep) are
+  estimates recorded in `amt-sota-live.json` → `spend`. (8) The
+  `YPTF.MoE+Multi` container reported `NVIDIA A10`, not `A10G` like the other
+  two; priced at the A10G rate, and one more reason the within-family order is
+  only suggestive. (9) Nothing this stream launched is still running: every
+  Modal app was an ephemeral `modal run` and `modal app list` (2026-09-10)
+  shows all of them `stopped`; nothing was deployed, nothing to stop. (10) The
+  first draft of the sweep doc claimed "all 12 clips" for every variant; the
+  session that wrote it died, and the recount from the evidence holds only
+  for `YMT3+` — corrected in the doc and here.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

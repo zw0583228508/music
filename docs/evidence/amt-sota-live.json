@@ -1,0 +1,2007 @@
+{
+  "title": "Is there a transcription model meaningfully better than what we have? — live (PR-83)",
+  "measuredAt": "2026-09-09T20:04:46.900Z",
+  "question": "The 2025 AMT Challenge ranks MIROS 0.5998 and YourMT3-YPTF-MoE-M 0.5938 above an MT3 baseline of 0.3932. Those are their numbers on their audio. This file is ours, on ours.",
+  "benchmark": {
+    "goldFile": "amt-benchmark-gold.json",
+    "tier": "SYNTHETIC_EXACT",
+    "clips": 12,
+    "totalNotes": 4050,
+    "totalSeconds": 346.4,
+    "honesty": [
+      "Ground truth is exact: the reference notes are the same array handed to the synth, so there is no alignment and no annotator.",
+      "Timbre is NOT real. REFERENCE_SYNTH_V1 is band-limited oscillators plus filtered noise; every model measured here was trained on sampled or recorded instruments, so this audio is out of distribution for all of them.",
+      "Therefore absolute F1 on this tier is a floor, not a production estimate. What transfers is the RANKING, and only because every model is given the byte-identical WAV (sha256 recorded per clip).",
+      "This tier cannot answer 'how good will this be on a user's recording'. Answering that needs real audio with human-verified notes, which this stream did not have and did not fabricate."
+    ],
+    "metric": {
+      "onsetToleranceSeconds": 0.05,
+      "offsetRule": "later of 50 ms or 20 % of the reference note's duration (mir_eval default; the 2025 AMT Challenge's rule)",
+      "instrumentAware": "match requires the same drum flag and the same GM family (arrangerRemi.familyOf), not the same GM program number",
+      "matching": "maximum bipartite matching (Kuhn), as mir_eval.transcription does it"
+    },
+    "renderer": {
+      "name": "REFERENCE_SYNTH_V1",
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16
+    },
+    "source": {
+      "dataset": "PDMX",
+      "record": "https://zenodo.org/records/15571083",
+      "subset": "no_license_conflict",
+      "rights": "Per-work public-domain admission by pdmxIngest.pdmxRefusalReason; the dataset's CC-BY-4.0 covers the compilation, not the works."
+    }
+  },
+  "incumbent": "BASIC_PITCH",
+  "models": [
+    {
+      "model": "YMT3+",
+      "rawFile": "yourmt3-ymt3p-raw.json",
+      "identity": {
+        "provider": "YOUR_MT3",
+        "family": "YourMT3+",
+        "codeRevision": "5e66c1ea173a8186e0d20432b841d3180cc015b5",
+        "codeSource": "huggingface space mimbres/YourMT3",
+        "modelRepo": "mimbres/YourMT3",
+        "modelRevision": "e45ebd70398682d54b7bb1901a5216e18f3b1824",
+        "imageEvidence": null,
+        "licence": "LEGAL_REVIEW_REQUIRED — measured and benchmarked; not routed to users, and not promotable until the code-licence conflict is resolved and the training-corpus terms are read.",
+        "checkpoints": {
+          "verified": true,
+          "checkpoints": {
+            "YPTF.MoE+Multi": {
+              "variant": "YPTF.MoE+Multi",
+              "verified": true,
+              "sha256": "7427055b51c3c8c86f6a35493cf0741d8db29186052055b59193590a82e6ec01",
+              "sha256Expected": "7427055b51c3c8c86f6a35493cf0741d8db29186052055b59193590a82e6ec01",
+              "bytes": 758957292
+            },
+            "YPTF+Single": {
+              "variant": "YPTF+Single",
+              "verified": true,
+              "sha256": "507ff129bf68f65b3b3439368706fc413523fc729d994e4da2c3f50860b05dde",
+              "sha256Expected": "507ff129bf68f65b3b3439368706fc413523fc729d994e4da2c3f50860b05dde",
+              "bytes": 361050039
+            },
+            "YMT3+": {
+              "variant": "YMT3+",
+              "verified": true,
+              "sha256": "76673d4289aae1a66984b3fee59157d484cda8fdf9b56279251b137321d448e6",
+              "sha256Expected": "76673d4289aae1a66984b3fee59157d484cda8fdf9b56279251b137321d448e6",
+              "bytes": 542707465
+            }
+          }
+        },
+        "runtime": {
+          "python": "3.10.21",
+          "torch": "2.4.1+cu121",
+          "cuda": true,
+          "device": "cuda",
+          "gpuName": "NVIDIA A10G"
+        }
+      },
+      "clipsScored": 12,
+      "clipsFailed": 0,
+      "failures": [],
+      "inferenceSecondsSum": 27.02,
+      "wallClockSeconds": 41.924,
+      "cost": {
+        "gpu": "A10G",
+        "inferenceSeconds": 27.02,
+        "containerWallSeconds": 41.92,
+        "costUsd": 0.0128,
+        "checkpointBytes": 542707465,
+        "parameters": "45.7M (measured at load)"
+      },
+      "f1": {
+        "instrumentAwareOnset": 0.2703,
+        "instrumentAwareOnsetOffset": 0.1309,
+        "pitchOnlyOnset": 0.494
+      },
+      "micro": {
+        "instrument_onset": {
+          "mode": "instrument_onset",
+          "precision": 0.3332,
+          "recall": 0.2274,
+          "f1": 0.2703,
+          "matched": 921,
+          "referenceNotes": 4050,
+          "estimateNotes": 2764
+        },
+        "instrument_onset_offset": {
+          "mode": "instrument_onset_offset",
+          "precision": 0.1614,
+          "recall": 0.1101,
+          "f1": 0.1309,
+          "matched": 446,
+          "referenceNotes": 4050,
+          "estimateNotes": 2764
+        },
+        "onset": {
+          "mode": "onset",
+          "precision": 0.6089,
+          "recall": 0.4156,
+          "f1": 0.494,
+          "matched": 1683,
+          "referenceNotes": 4050,
+          "estimateNotes": 2764
+        }
+      },
+      "macroF1": {
+        "instrument_onset": 0.3022,
+        "instrument_onset_offset": 0.1686,
+        "onset": 0.5717
+      },
+      "perInstrument": [
+        {
+          "instrumentClass": "bass",
+          "mode": "instrument_onset",
+          "precision": 0.5621,
+          "recall": 0.3299,
+          "f1": 0.4158,
+          "matched": 95,
+          "referenceNotes": 288,
+          "estimateNotes": 169
+        },
+        {
+          "instrumentClass": "brass",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 120,
+          "estimateNotes": 3
+        },
+        {
+          "instrumentClass": "chromatic_perc",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 100,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "drums",
+          "mode": "instrument_onset",
+          "precision": 0.0784,
+          "recall": 0.1072,
+          "f1": 0.0905,
+          "matched": 67,
+          "referenceNotes": 625,
+          "estimateNotes": 855
+        },
+        {
+          "instrumentClass": "ensemble",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 28,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "ethnic",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 113,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "guitar",
+          "mode": "instrument_onset",
+          "precision": 0.3739,
+          "recall": 0.0964,
+          "f1": 0.1533,
+          "matched": 83,
+          "referenceNotes": 861,
+          "estimateNotes": 222
+        },
+        {
+          "instrumentClass": "keys",
+          "mode": "instrument_onset",
+          "precision": 0.4795,
+          "recall": 0.7778,
+          "f1": 0.5932,
+          "matched": 560,
+          "referenceNotes": 720,
+          "estimateNotes": 1168
+        },
+        {
+          "instrumentClass": "organ",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 80,
+          "estimateNotes": 19
+        },
+        {
+          "instrumentClass": "percussive",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 3,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "pipe",
+          "mode": "instrument_onset",
+          "precision": 0.4286,
+          "recall": 0.0324,
+          "f1": 0.0603,
+          "matched": 6,
+          "referenceNotes": 185,
+          "estimateNotes": 14
+        },
+        {
+          "instrumentClass": "reed",
+          "mode": "instrument_onset",
+          "precision": 0.4332,
+          "recall": 0.4023,
+          "f1": 0.4172,
+          "matched": 107,
+          "referenceNotes": 266,
+          "estimateNotes": 247
+        },
+        {
+          "instrumentClass": "sfx",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 1,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "strings",
+          "mode": "instrument_onset",
+          "precision": 0.2727,
+          "recall": 0.005,
+          "f1": 0.0099,
+          "matched": 3,
+          "referenceNotes": 598,
+          "estimateNotes": 11
+        },
+        {
+          "instrumentClass": "synth",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 62,
+          "estimateNotes": 56
+        }
+      ],
+      "perGenre": [
+        {
+          "genreFamily": "blues",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.7707,
+          "recall": 0.8013,
+          "f1": 0.7857,
+          "matched": 121,
+          "referenceNotes": 151,
+          "estimateNotes": 157
+        },
+        {
+          "genreFamily": "country",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.18,
+          "recall": 0.1401,
+          "f1": 0.1575,
+          "matched": 36,
+          "referenceNotes": 257,
+          "estimateNotes": 200
+        },
+        {
+          "genreFamily": "electronic",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.694,
+          "recall": 0.6331,
+          "f1": 0.6621,
+          "matched": 195,
+          "referenceNotes": 308,
+          "estimateNotes": 281
+        },
+        {
+          "genreFamily": "experimental_other",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.6216,
+          "recall": 0.5897,
+          "f1": 0.6053,
+          "matched": 69,
+          "referenceNotes": 117,
+          "estimateNotes": 111
+        },
+        {
+          "genreFamily": "film_game",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.7619,
+          "recall": 0.2437,
+          "f1": 0.3692,
+          "matched": 48,
+          "referenceNotes": 197,
+          "estimateNotes": 63
+        },
+        {
+          "genreFamily": "folk",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.0189,
+          "recall": 0.014,
+          "f1": 0.0161,
+          "matched": 4,
+          "referenceNotes": 286,
+          "estimateNotes": 212
+        },
+        {
+          "genreFamily": "jazz",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.0395,
+          "recall": 0.0346,
+          "f1": 0.0369,
+          "matched": 15,
+          "referenceNotes": 433,
+          "estimateNotes": 380
+        },
+        {
+          "genreFamily": "latin",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.0774,
+          "recall": 0.0923,
+          "f1": 0.0842,
+          "matched": 25,
+          "referenceNotes": 271,
+          "estimateNotes": 323
+        },
+        {
+          "genreFamily": "metal",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.4036,
+          "recall": 0.2005,
+          "f1": 0.2679,
+          "matched": 178,
+          "referenceNotes": 888,
+          "estimateNotes": 441
+        },
+        {
+          "genreFamily": "musical_theatre",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.786,
+          "recall": 0.2153,
+          "f1": 0.338,
+          "matched": 180,
+          "referenceNotes": 836,
+          "estimateNotes": 229
+        },
+        {
+          "genreFamily": "pop",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.1266,
+          "recall": 0.1543,
+          "f1": 0.1391,
+          "matched": 29,
+          "referenceNotes": 188,
+          "estimateNotes": 229
+        },
+        {
+          "genreFamily": "reggae_ska",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.1522,
+          "recall": 0.178,
+          "f1": 0.1641,
+          "matched": 21,
+          "referenceNotes": 118,
+          "estimateNotes": 138
+        }
+      ],
+      "perClip": [
+        {
+          "clipId": "pdmx-QmbbFDYPegpM",
+          "genreFamily": "folk",
+          "onsetF1": 0.0161,
+          "onsetOffsetF1": 0.008,
+          "pitchOnlyF1": 0.7631
+        },
+        {
+          "clipId": "pdmx-QmbbHHfesYFD",
+          "genreFamily": "pop",
+          "onsetF1": 0.1391,
+          "onsetOffsetF1": 0.0671,
+          "pitchOnlyF1": 0.5468
+        },
+        {
+          "clipId": "pdmx-QmbbMvWurS3k",
+          "genreFamily": "film_game",
+          "onsetF1": 0.3692,
+          "onsetOffsetF1": 0.2154,
+          "pitchOnlyF1": 0.4692
+        },
+        {
+          "clipId": "pdmx-QmbbZj83yXGg",
+          "genreFamily": "jazz",
+          "onsetF1": 0.0369,
+          "onsetOffsetF1": 0.0369,
+          "pitchOnlyF1": 0.0787
+        },
+        {
+          "clipId": "pdmx-QmbheawKRA29",
+          "genreFamily": "electronic",
+          "onsetF1": 0.6621,
+          "onsetOffsetF1": 0.1902,
+          "pitchOnlyF1": 0.7708
+        },
+        {
+          "clipId": "pdmx-QmbLxE1mBzND",
+          "genreFamily": "latin",
+          "onsetF1": 0.0842,
+          "onsetOffsetF1": 0.0471,
+          "pitchOnlyF1": 0.3737
+        },
+        {
+          "clipId": "pdmx-QmbMXUcn5K4Y",
+          "genreFamily": "musical_theatre",
+          "onsetF1": 0.338,
+          "onsetOffsetF1": 0.0958,
+          "pitchOnlyF1": 0.3812
+        },
+        {
+          "clipId": "pdmx-QmbnHXnASEdY",
+          "genreFamily": "blues",
+          "onsetF1": 0.7857,
+          "onsetOffsetF1": 0.5195,
+          "pitchOnlyF1": 0.8117
+        },
+        {
+          "clipId": "pdmx-QmbqAoh5tyqs",
+          "genreFamily": "experimental_other",
+          "onsetF1": 0.6053,
+          "onsetOffsetF1": 0.5,
+          "pitchOnlyF1": 0.9035
+        },
+        {
+          "clipId": "pdmx-QmbwnWBK5FE5",
+          "genreFamily": "metal",
+          "onsetF1": 0.2679,
+          "onsetOffsetF1": 0.1415,
+          "pitchOnlyF1": 0.3883
+        },
+        {
+          "clipId": "pdmx-QmbWS4kqQcoX",
+          "genreFamily": "country",
+          "onsetF1": 0.1575,
+          "onsetOffsetF1": 0.0919,
+          "pitchOnlyF1": 0.8271
+        },
+        {
+          "clipId": "pdmx-QmPnCySgcM4t",
+          "genreFamily": "reggae_ska",
+          "onsetF1": 0.1641,
+          "onsetOffsetF1": 0.1094,
+          "pitchOnlyF1": 0.5469
+        }
+      ]
+    },
+    {
+      "model": "YPTF+Single",
+      "rawFile": "yourmt3-single-raw.json",
+      "identity": {
+        "provider": "YOUR_MT3",
+        "family": "YourMT3+",
+        "codeRevision": "5e66c1ea173a8186e0d20432b841d3180cc015b5",
+        "codeSource": "huggingface space mimbres/YourMT3",
+        "modelRepo": "mimbres/YourMT3",
+        "modelRevision": "e45ebd70398682d54b7bb1901a5216e18f3b1824",
+        "imageEvidence": null,
+        "licence": "LEGAL_REVIEW_REQUIRED — measured and benchmarked; not routed to users, and not promotable until the code-licence conflict is resolved and the training-corpus terms are read.",
+        "checkpoints": {
+          "verified": true,
+          "checkpoints": {
+            "YPTF.MoE+Multi": {
+              "variant": "YPTF.MoE+Multi",
+              "verified": true,
+              "sha256": "7427055b51c3c8c86f6a35493cf0741d8db29186052055b59193590a82e6ec01",
+              "sha256Expected": "7427055b51c3c8c86f6a35493cf0741d8db29186052055b59193590a82e6ec01",
+              "bytes": 758957292
+            },
+            "YPTF+Single": {
+              "variant": "YPTF+Single",
+              "verified": true,
+              "sha256": "507ff129bf68f65b3b3439368706fc413523fc729d994e4da2c3f50860b05dde",
+              "sha256Expected": "507ff129bf68f65b3b3439368706fc413523fc729d994e4da2c3f50860b05dde",
+              "bytes": 361050039
+            },
+            "YMT3+": {
+              "variant": "YMT3+",
+              "verified": true,
+              "sha256": "76673d4289aae1a66984b3fee59157d484cda8fdf9b56279251b137321d448e6",
+              "sha256Expected": "76673d4289aae1a66984b3fee59157d484cda8fdf9b56279251b137321d448e6",
+              "bytes": 542707465
+            }
+          }
+        },
+        "runtime": {
+          "python": "3.10.21",
+          "torch": "2.4.1+cu121",
+          "cuda": true,
+          "device": "cuda",
+          "gpuName": "NVIDIA A10G"
+        }
+      },
+      "clipsScored": 12,
+      "clipsFailed": 0,
+      "failures": [],
+      "inferenceSecondsSum": 26.36,
+      "wallClockSeconds": 41.341,
+      "cost": {
+        "gpu": "A10G",
+        "inferenceSeconds": 26.36,
+        "containerWallSeconds": 41.34,
+        "costUsd": 0.0127,
+        "checkpointBytes": 361050039,
+        "parameters": "30.4M (measured at load; sweep2-run.log)"
+      },
+      "f1": {
+        "instrumentAwareOnset": 0.2596,
+        "instrumentAwareOnsetOffset": 0.1045,
+        "pitchOnlyOnset": 0.5478
+      },
+      "micro": {
+        "instrument_onset": {
+          "mode": "instrument_onset",
+          "precision": 0.3344,
+          "recall": 0.2121,
+          "f1": 0.2596,
+          "matched": 859,
+          "referenceNotes": 4050,
+          "estimateNotes": 2569
+        },
+        "instrument_onset_offset": {
+          "mode": "instrument_onset_offset",
+          "precision": 0.1347,
+          "recall": 0.0854,
+          "f1": 0.1045,
+          "matched": 346,
+          "referenceNotes": 4050,
+          "estimateNotes": 2569
+        },
+        "onset": {
+          "mode": "onset",
+          "precision": 0.7057,
+          "recall": 0.4477,
+          "f1": 0.5478,
+          "matched": 1813,
+          "referenceNotes": 4050,
+          "estimateNotes": 2569
+        }
+      },
+      "macroF1": {
+        "instrument_onset": 0.2977,
+        "instrument_onset_offset": 0.1437,
+        "onset": 0.6167
+      },
+      "perInstrument": [
+        {
+          "instrumentClass": "bass",
+          "mode": "instrument_onset",
+          "precision": 0.407,
+          "recall": 0.2813,
+          "f1": 0.3326,
+          "matched": 81,
+          "referenceNotes": 288,
+          "estimateNotes": 199
+        },
+        {
+          "instrumentClass": "brass",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 120,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "chromatic_perc",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 100,
+          "estimateNotes": 43
+        },
+        {
+          "instrumentClass": "drums",
+          "mode": "instrument_onset",
+          "precision": 0.0778,
+          "recall": 0.0752,
+          "f1": 0.0765,
+          "matched": 47,
+          "referenceNotes": 625,
+          "estimateNotes": 604
+        },
+        {
+          "instrumentClass": "ensemble",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 28,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "ethnic",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 113,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "guitar",
+          "mode": "instrument_onset",
+          "precision": 0.7778,
+          "recall": 0.0081,
+          "f1": 0.0161,
+          "matched": 7,
+          "referenceNotes": 861,
+          "estimateNotes": 9
+        },
+        {
+          "instrumentClass": "keys",
+          "mode": "instrument_onset",
+          "precision": 0.4477,
+          "recall": 0.85,
+          "f1": 0.5865,
+          "matched": 612,
+          "referenceNotes": 720,
+          "estimateNotes": 1367
+        },
+        {
+          "instrumentClass": "organ",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 80,
+          "estimateNotes": 6
+        },
+        {
+          "instrumentClass": "percussive",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 3,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "pipe",
+          "mode": "instrument_onset",
+          "precision": 0.3784,
+          "recall": 0.0757,
+          "f1": 0.1261,
+          "matched": 14,
+          "referenceNotes": 185,
+          "estimateNotes": 37
+        },
+        {
+          "instrumentClass": "reed",
+          "mode": "instrument_onset",
+          "precision": 0.4242,
+          "recall": 0.3684,
+          "f1": 0.3944,
+          "matched": 98,
+          "referenceNotes": 266,
+          "estimateNotes": 231
+        },
+        {
+          "instrumentClass": "sfx",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 1,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "strings",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 598,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "synth",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 62,
+          "estimateNotes": 73
+        }
+      ],
+      "perGenre": [
+        {
+          "genreFamily": "blues",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.8039,
+          "recall": 0.8146,
+          "f1": 0.8092,
+          "matched": 123,
+          "referenceNotes": 151,
+          "estimateNotes": 153
+        },
+        {
+          "genreFamily": "country",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.1066,
+          "recall": 0.0817,
+          "f1": 0.0925,
+          "matched": 21,
+          "referenceNotes": 257,
+          "estimateNotes": 197
+        },
+        {
+          "genreFamily": "electronic",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.6784,
+          "recall": 0.6234,
+          "f1": 0.6497,
+          "matched": 192,
+          "referenceNotes": 308,
+          "estimateNotes": 283
+        },
+        {
+          "genreFamily": "experimental_other",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.5833,
+          "recall": 0.5983,
+          "f1": 0.5907,
+          "matched": 70,
+          "referenceNotes": 117,
+          "estimateNotes": 120
+        },
+        {
+          "genreFamily": "film_game",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.6627,
+          "recall": 0.2792,
+          "f1": 0.3929,
+          "matched": 55,
+          "referenceNotes": 197,
+          "estimateNotes": 83
+        },
+        {
+          "genreFamily": "folk",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 286,
+          "estimateNotes": 203
+        },
+        {
+          "genreFamily": "jazz",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.0348,
+          "recall": 0.0254,
+          "f1": 0.0294,
+          "matched": 11,
+          "referenceNotes": 433,
+          "estimateNotes": 316
+        },
+        {
+          "genreFamily": "latin",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.0355,
+          "recall": 0.0443,
+          "f1": 0.0394,
+          "matched": 12,
+          "referenceNotes": 271,
+          "estimateNotes": 338
+        },
+        {
+          "genreFamily": "metal",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.3251,
+          "recall": 0.134,
+          "f1": 0.1898,
+          "matched": 119,
+          "referenceNotes": 888,
+          "estimateNotes": 366
+        },
+        {
+          "genreFamily": "musical_theatre",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.7117,
+          "recall": 0.2392,
+          "f1": 0.3581,
+          "matched": 200,
+          "referenceNotes": 836,
+          "estimateNotes": 281
+        },
+        {
+          "genreFamily": "pop",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.25,
+          "recall": 0.1755,
+          "f1": 0.2062,
+          "matched": 33,
+          "referenceNotes": 188,
+          "estimateNotes": 132
+        },
+        {
+          "genreFamily": "reggae_ska",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.2371,
+          "recall": 0.1949,
+          "f1": 0.214,
+          "matched": 23,
+          "referenceNotes": 118,
+          "estimateNotes": 97
+        }
+      ],
+      "perClip": [
+        {
+          "clipId": "pdmx-QmbbFDYPegpM",
+          "genreFamily": "folk",
+          "onsetF1": 0,
+          "onsetOffsetF1": 0,
+          "pitchOnlyF1": 0.7894
+        },
+        {
+          "clipId": "pdmx-QmbbHHfesYFD",
+          "genreFamily": "pop",
+          "onsetF1": 0.2062,
+          "onsetOffsetF1": 0.0875,
+          "pitchOnlyF1": 0.7562
+        },
+        {
+          "clipId": "pdmx-QmbbMvWurS3k",
+          "genreFamily": "film_game",
+          "onsetF1": 0.3929,
+          "onsetOffsetF1": 0.1929,
+          "pitchOnlyF1": 0.4643
+        },
+        {
+          "clipId": "pdmx-QmbbZj83yXGg",
+          "genreFamily": "jazz",
+          "onsetF1": 0.0294,
+          "onsetOffsetF1": 0.024,
+          "pitchOnlyF1": 0.2644
+        },
+        {
+          "clipId": "pdmx-QmbheawKRA29",
+          "genreFamily": "electronic",
+          "onsetF1": 0.6497,
+          "onsetOffsetF1": 0.1929,
+          "pitchOnlyF1": 0.7716
+        },
+        {
+          "clipId": "pdmx-QmbLxE1mBzND",
+          "genreFamily": "latin",
+          "onsetF1": 0.0394,
+          "onsetOffsetF1": 0.0296,
+          "pitchOnlyF1": 0.3941
+        },
+        {
+          "clipId": "pdmx-QmbMXUcn5K4Y",
+          "genreFamily": "musical_theatre",
+          "onsetF1": 0.3581,
+          "onsetOffsetF1": 0.0931,
+          "pitchOnlyF1": 0.462
+        },
+        {
+          "clipId": "pdmx-QmbnHXnASEdY",
+          "genreFamily": "blues",
+          "onsetF1": 0.8092,
+          "onsetOffsetF1": 0.5789,
+          "pitchOnlyF1": 0.8092
+        },
+        {
+          "clipId": "pdmx-QmbqAoh5tyqs",
+          "genreFamily": "experimental_other",
+          "onsetF1": 0.5907,
+          "onsetOffsetF1": 0.3376,
+          "pitchOnlyF1": 0.8861
+        },
+        {
+          "clipId": "pdmx-QmbwnWBK5FE5",
+          "genreFamily": "metal",
+          "onsetF1": 0.1898,
+          "onsetOffsetF1": 0.0431,
+          "pitchOnlyF1": 0.3987
+        },
+        {
+          "clipId": "pdmx-QmbWS4kqQcoX",
+          "genreFamily": "country",
+          "onsetF1": 0.0925,
+          "onsetOffsetF1": 0.0617,
+          "pitchOnlyF1": 0.837
+        },
+        {
+          "clipId": "pdmx-QmPnCySgcM4t",
+          "genreFamily": "reggae_ska",
+          "onsetF1": 0.214,
+          "onsetOffsetF1": 0.0837,
+          "pitchOnlyF1": 0.5674
+        }
+      ]
+    },
+    {
+      "model": "YPTF.MoE+Multi",
+      "rawFile": "yourmt3-moe-raw.json",
+      "identity": {
+        "provider": "YOUR_MT3",
+        "family": "YourMT3+",
+        "codeRevision": "5e66c1ea173a8186e0d20432b841d3180cc015b5",
+        "codeSource": "huggingface space mimbres/YourMT3",
+        "modelRepo": "mimbres/YourMT3",
+        "modelRevision": "e45ebd70398682d54b7bb1901a5216e18f3b1824",
+        "imageEvidence": null,
+        "licence": "LEGAL_REVIEW_REQUIRED — measured and benchmarked; not routed to users, and not promotable until the code-licence conflict is resolved and the training-corpus terms are read.",
+        "checkpoints": {
+          "verified": true,
+          "checkpoints": {
+            "YPTF.MoE+Multi": {
+              "variant": "YPTF.MoE+Multi",
+              "verified": true,
+              "sha256": "7427055b51c3c8c86f6a35493cf0741d8db29186052055b59193590a82e6ec01",
+              "sha256Expected": "7427055b51c3c8c86f6a35493cf0741d8db29186052055b59193590a82e6ec01",
+              "bytes": 758957292
+            },
+            "YPTF+Single": {
+              "variant": "YPTF+Single",
+              "verified": true,
+              "sha256": "507ff129bf68f65b3b3439368706fc413523fc729d994e4da2c3f50860b05dde",
+              "sha256Expected": "507ff129bf68f65b3b3439368706fc413523fc729d994e4da2c3f50860b05dde",
+              "bytes": 361050039
+            },
+            "YMT3+": {
+              "variant": "YMT3+",
+              "verified": true,
+              "sha256": "76673d4289aae1a66984b3fee59157d484cda8fdf9b56279251b137321d448e6",
+              "sha256Expected": "76673d4289aae1a66984b3fee59157d484cda8fdf9b56279251b137321d448e6",
+              "bytes": 542707465
+            }
+          }
+        },
+        "runtime": {
+          "python": "3.10.21",
+          "torch": "2.4.1+cu121",
+          "cuda": true,
+          "device": "cuda",
+          "gpuName": "NVIDIA A10"
+        }
+      },
+      "clipsScored": 12,
+      "clipsFailed": 0,
+      "failures": [],
+      "inferenceSecondsSum": 21.79,
+      "wallClockSeconds": 29.982,
+      "cost": {
+        "gpu": "A10G",
+        "inferenceSeconds": 21.79,
+        "containerWallSeconds": 29.98,
+        "costUsd": 0.0092,
+        "checkpointBytes": 758957292,
+        "parameters": "47.1M (measured at load; sweep-run.log)",
+        "deviceNote": "priced at the A10G rate; the container's torch.cuda.get_device_name() reported 'NVIDIA A10' (identity.runtime.gpuName), not 'NVIDIA A10G' as the other two YourMT3 runs did"
+      },
+      "f1": {
+        "instrumentAwareOnset": 0.2414,
+        "instrumentAwareOnsetOffset": 0.1153,
+        "pitchOnlyOnset": 0.506
+      },
+      "micro": {
+        "instrument_onset": {
+          "mode": "instrument_onset",
+          "precision": 0.3319,
+          "recall": 0.1896,
+          "f1": 0.2414,
+          "matched": 768,
+          "referenceNotes": 4050,
+          "estimateNotes": 2314
+        },
+        "instrument_onset_offset": {
+          "mode": "instrument_onset_offset",
+          "precision": 0.1586,
+          "recall": 0.0906,
+          "f1": 0.1153,
+          "matched": 367,
+          "referenceNotes": 4050,
+          "estimateNotes": 2314
+        },
+        "onset": {
+          "mode": "onset",
+          "precision": 0.6958,
+          "recall": 0.3975,
+          "f1": 0.506,
+          "matched": 1610,
+          "referenceNotes": 4050,
+          "estimateNotes": 2314
+        }
+      },
+      "macroF1": {
+        "instrument_onset": 0.2708,
+        "instrument_onset_offset": 0.152,
+        "onset": 0.5646
+      },
+      "perInstrument": [
+        {
+          "instrumentClass": "bass",
+          "mode": "instrument_onset",
+          "precision": 0.6923,
+          "recall": 0.1875,
+          "f1": 0.2951,
+          "matched": 54,
+          "referenceNotes": 288,
+          "estimateNotes": 78
+        },
+        {
+          "instrumentClass": "brass",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 120,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "chromatic_perc",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 100,
+          "estimateNotes": 41
+        },
+        {
+          "instrumentClass": "drums",
+          "mode": "instrument_onset",
+          "precision": 0.1308,
+          "recall": 0.1168,
+          "f1": 0.1234,
+          "matched": 73,
+          "referenceNotes": 625,
+          "estimateNotes": 558
+        },
+        {
+          "instrumentClass": "ensemble",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 28,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "ethnic",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 113,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "guitar",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 861,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "keys",
+          "mode": "instrument_onset",
+          "precision": 0.4103,
+          "recall": 0.7847,
+          "f1": 0.5389,
+          "matched": 565,
+          "referenceNotes": 720,
+          "estimateNotes": 1377
+        },
+        {
+          "instrumentClass": "organ",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 80,
+          "estimateNotes": 10
+        },
+        {
+          "instrumentClass": "percussive",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 3,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "pipe",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 185,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "reed",
+          "mode": "instrument_onset",
+          "precision": 0.322,
+          "recall": 0.2857,
+          "f1": 0.3028,
+          "matched": 76,
+          "referenceNotes": 266,
+          "estimateNotes": 236
+        },
+        {
+          "instrumentClass": "sfx",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 1,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "strings",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 598,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "synth",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 62,
+          "estimateNotes": 14
+        }
+      ],
+      "perGenre": [
+        {
+          "genreFamily": "blues",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.7554,
+          "recall": 0.6954,
+          "f1": 0.7241,
+          "matched": 105,
+          "referenceNotes": 151,
+          "estimateNotes": 139
+        },
+        {
+          "genreFamily": "country",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.0498,
+          "recall": 0.0389,
+          "f1": 0.0437,
+          "matched": 10,
+          "referenceNotes": 257,
+          "estimateNotes": 201
+        },
+        {
+          "genreFamily": "electronic",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.6484,
+          "recall": 0.5747,
+          "f1": 0.6093,
+          "matched": 177,
+          "referenceNotes": 308,
+          "estimateNotes": 273
+        },
+        {
+          "genreFamily": "experimental_other",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.6226,
+          "recall": 0.5641,
+          "f1": 0.5919,
+          "matched": 66,
+          "referenceNotes": 117,
+          "estimateNotes": 106
+        },
+        {
+          "genreFamily": "film_game",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.3736,
+          "recall": 0.1726,
+          "f1": 0.2361,
+          "matched": 34,
+          "referenceNotes": 197,
+          "estimateNotes": 91
+        },
+        {
+          "genreFamily": "folk",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 286,
+          "estimateNotes": 204
+        },
+        {
+          "genreFamily": "jazz",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.1127,
+          "recall": 0.0739,
+          "f1": 0.0893,
+          "matched": 32,
+          "referenceNotes": 433,
+          "estimateNotes": 284
+        },
+        {
+          "genreFamily": "latin",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.0767,
+          "recall": 0.0812,
+          "f1": 0.0789,
+          "matched": 22,
+          "referenceNotes": 271,
+          "estimateNotes": 287
+        },
+        {
+          "genreFamily": "metal",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.3187,
+          "recall": 0.1149,
+          "f1": 0.1689,
+          "matched": 102,
+          "referenceNotes": 888,
+          "estimateNotes": 320
+        },
+        {
+          "genreFamily": "musical_theatre",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.8221,
+          "recall": 0.2045,
+          "f1": 0.3276,
+          "matched": 171,
+          "referenceNotes": 836,
+          "estimateNotes": 208
+        },
+        {
+          "genreFamily": "pop",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.3444,
+          "recall": 0.1649,
+          "f1": 0.223,
+          "matched": 31,
+          "referenceNotes": 188,
+          "estimateNotes": 90
+        },
+        {
+          "genreFamily": "reggae_ska",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.1622,
+          "recall": 0.1525,
+          "f1": 0.1572,
+          "matched": 18,
+          "referenceNotes": 118,
+          "estimateNotes": 111
+        }
+      ],
+      "perClip": [
+        {
+          "clipId": "pdmx-QmbbFDYPegpM",
+          "genreFamily": "folk",
+          "onsetF1": 0,
+          "onsetOffsetF1": 0,
+          "pitchOnlyF1": 0.7796
+        },
+        {
+          "clipId": "pdmx-QmbbHHfesYFD",
+          "genreFamily": "pop",
+          "onsetF1": 0.223,
+          "onsetOffsetF1": 0.1007,
+          "pitchOnlyF1": 0.5827
+        },
+        {
+          "clipId": "pdmx-QmbbMvWurS3k",
+          "genreFamily": "film_game",
+          "onsetF1": 0.2361,
+          "onsetOffsetF1": 0.1597,
+          "pitchOnlyF1": 0.2569
+        },
+        {
+          "clipId": "pdmx-QmbbZj83yXGg",
+          "genreFamily": "jazz",
+          "onsetF1": 0.0893,
+          "onsetOffsetF1": 0.0893,
+          "pitchOnlyF1": 0.3431
+        },
+        {
+          "clipId": "pdmx-QmbheawKRA29",
+          "genreFamily": "electronic",
+          "onsetF1": 0.6093,
+          "onsetOffsetF1": 0.1962,
+          "pitchOnlyF1": 0.6816
+        },
+        {
+          "clipId": "pdmx-QmbLxE1mBzND",
+          "genreFamily": "latin",
+          "onsetF1": 0.0789,
+          "onsetOffsetF1": 0.0645,
+          "pitchOnlyF1": 0.4803
+        },
+        {
+          "clipId": "pdmx-QmbMXUcn5K4Y",
+          "genreFamily": "musical_theatre",
+          "onsetF1": 0.3276,
+          "onsetOffsetF1": 0.0824,
+          "pitchOnlyF1": 0.3716
+        },
+        {
+          "clipId": "pdmx-QmbnHXnASEdY",
+          "genreFamily": "blues",
+          "onsetF1": 0.7241,
+          "onsetOffsetF1": 0.5517,
+          "pitchOnlyF1": 0.7931
+        },
+        {
+          "clipId": "pdmx-QmbqAoh5tyqs",
+          "genreFamily": "experimental_other",
+          "onsetF1": 0.5919,
+          "onsetOffsetF1": 0.4126,
+          "pitchOnlyF1": 0.9148
+        },
+        {
+          "clipId": "pdmx-QmbwnWBK5FE5",
+          "genreFamily": "metal",
+          "onsetF1": 0.1689,
+          "onsetOffsetF1": 0.0662,
+          "pitchOnlyF1": 0.3311
+        },
+        {
+          "clipId": "pdmx-QmbWS4kqQcoX",
+          "genreFamily": "country",
+          "onsetF1": 0.0437,
+          "onsetOffsetF1": 0.0218,
+          "pitchOnlyF1": 0.8122
+        },
+        {
+          "clipId": "pdmx-QmPnCySgcM4t",
+          "genreFamily": "reggae_ska",
+          "onsetF1": 0.1572,
+          "onsetOffsetF1": 0.0786,
+          "pitchOnlyF1": 0.4279
+        }
+      ]
+    },
+    {
+      "model": "BASIC_PITCH",
+      "rawFile": "baseline-raw.json",
+      "identity": {
+        "provider": "BASIC_PITCH",
+        "role": "incumbent",
+        "imageEvidence": null,
+        "instrumentPredicted": false,
+        "licence": "Apache-2.0",
+        "runtime": {
+          "python": "3.10.21",
+          "basic-pitch": "0.4.0",
+          "tensorflow": "2.14.0",
+          "numpy": "1.26.4",
+          "librosa": "0.11.0"
+        },
+        "versionMatchesManifest": true
+      },
+      "clipsScored": 12,
+      "clipsFailed": 0,
+      "failures": [],
+      "inferenceSecondsSum": 42.09,
+      "wallClockSeconds": 49.795,
+      "cost": {
+        "gpu": "none (4 CPU cores)",
+        "inferenceSeconds": 42.09,
+        "containerWallSeconds": 49.8,
+        "costUsd": 0.0026
+      },
+      "f1": {
+        "instrumentAwareOnset": 0.1751,
+        "instrumentAwareOnsetOffset": 0.0848,
+        "pitchOnlyOnset": 0.5711
+      },
+      "micro": {
+        "instrument_onset": {
+          "mode": "instrument_onset",
+          "precision": 0.2105,
+          "recall": 0.1499,
+          "f1": 0.1751,
+          "matched": 607,
+          "referenceNotes": 4050,
+          "estimateNotes": 2884
+        },
+        "instrument_onset_offset": {
+          "mode": "instrument_onset_offset",
+          "precision": 0.1019,
+          "recall": 0.0726,
+          "f1": 0.0848,
+          "matched": 294,
+          "referenceNotes": 4050,
+          "estimateNotes": 2884
+        },
+        "onset": {
+          "mode": "onset",
+          "precision": 0.6865,
+          "recall": 0.4889,
+          "f1": 0.5711,
+          "matched": 1980,
+          "referenceNotes": 4050,
+          "estimateNotes": 2884
+        }
+      },
+      "macroF1": {
+        "instrument_onset": 0.1646,
+        "instrument_onset_offset": 0.0864,
+        "onset": 0.6282
+      },
+      "perInstrument": [
+        {
+          "instrumentClass": "bass",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 288,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "brass",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 120,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "chromatic_perc",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 100,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "drums",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 625,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "ensemble",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 28,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "ethnic",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 113,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "guitar",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 861,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "keys",
+          "mode": "instrument_onset",
+          "precision": 0.2105,
+          "recall": 0.8431,
+          "f1": 0.3368,
+          "matched": 607,
+          "referenceNotes": 720,
+          "estimateNotes": 2884
+        },
+        {
+          "instrumentClass": "organ",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 80,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "percussive",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 3,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "pipe",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 185,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "reed",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 266,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "sfx",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 1,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "strings",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 598,
+          "estimateNotes": 0
+        },
+        {
+          "instrumentClass": "synth",
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 62,
+          "estimateNotes": 0
+        }
+      ],
+      "perGenre": [
+        {
+          "genreFamily": "blues",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.3063,
+          "recall": 0.5762,
+          "f1": 0.4,
+          "matched": 87,
+          "referenceNotes": 151,
+          "estimateNotes": 284
+        },
+        {
+          "genreFamily": "country",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.0117,
+          "recall": 0.0156,
+          "f1": 0.0134,
+          "matched": 4,
+          "referenceNotes": 257,
+          "estimateNotes": 342
+        },
+        {
+          "genreFamily": "electronic",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.5633,
+          "recall": 0.5487,
+          "f1": 0.5559,
+          "matched": 169,
+          "referenceNotes": 308,
+          "estimateNotes": 300
+        },
+        {
+          "genreFamily": "experimental_other",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.4681,
+          "recall": 0.5641,
+          "f1": 0.5116,
+          "matched": 66,
+          "referenceNotes": 117,
+          "estimateNotes": 141
+        },
+        {
+          "genreFamily": "film_game",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 197,
+          "estimateNotes": 111
+        },
+        {
+          "genreFamily": "folk",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 286,
+          "estimateNotes": 322
+        },
+        {
+          "genreFamily": "jazz",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 433,
+          "estimateNotes": 226
+        },
+        {
+          "genreFamily": "latin",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 271,
+          "estimateNotes": 321
+        },
+        {
+          "genreFamily": "metal",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.3322,
+          "recall": 0.1104,
+          "f1": 0.1657,
+          "matched": 98,
+          "referenceNotes": 888,
+          "estimateNotes": 295
+        },
+        {
+          "genreFamily": "musical_theatre",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0.663,
+          "recall": 0.2189,
+          "f1": 0.3291,
+          "matched": 183,
+          "referenceNotes": 836,
+          "estimateNotes": 276
+        },
+        {
+          "genreFamily": "pop",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 188,
+          "estimateNotes": 159
+        },
+        {
+          "genreFamily": "reggae_ska",
+          "clips": 1,
+          "mode": "instrument_onset",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0,
+          "matched": 0,
+          "referenceNotes": 118,
+          "estimateNotes": 107
+        }
+      ],
+      "perClip": [
+        {
+          "clipId": "pdmx-QmbbFDYPegpM",
+          "genreFamily": "folk",
+          "onsetF1": 0,
+          "onsetOffsetF1": 0,
+          "pitchOnlyF1": 0.7171
+        },
+        {
+          "clipId": "pdmx-QmbbHHfesYFD",
+          "genreFamily": "pop",
+          "onsetF1": 0,
+          "onsetOffsetF1": 0,
+          "pitchOnlyF1": 0.8242
+        },
+        {
+          "clipId": "pdmx-QmbbMvWurS3k",
+          "genreFamily": "film_game",
+          "onsetF1": 0,
+          "onsetOffsetF1": 0,
+          "pitchOnlyF1": 0.7143
+        },
+        {
+          "clipId": "pdmx-QmbbZj83yXGg",
+          "genreFamily": "jazz",
+          "onsetF1": 0,
+          "onsetOffsetF1": 0,
+          "pitchOnlyF1": 0.5675
+        },
+        {
+          "clipId": "pdmx-QmbheawKRA29",
+          "genreFamily": "electronic",
+          "onsetF1": 0.5559,
+          "onsetOffsetF1": 0.1546,
+          "pitchOnlyF1": 0.648
+        },
+        {
+          "clipId": "pdmx-QmbLxE1mBzND",
+          "genreFamily": "latin",
+          "onsetF1": 0,
+          "onsetOffsetF1": 0,
+          "pitchOnlyF1": 0.4764
+        },
+        {
+          "clipId": "pdmx-QmbMXUcn5K4Y",
+          "genreFamily": "musical_theatre",
+          "onsetF1": 0.3291,
+          "onsetOffsetF1": 0.1277,
+          "pitchOnlyF1": 0.3849
+        },
+        {
+          "clipId": "pdmx-QmbnHXnASEdY",
+          "genreFamily": "blues",
+          "onsetF1": 0.4,
+          "onsetOffsetF1": 0.377,
+          "pitchOnlyF1": 0.6391
+        },
+        {
+          "clipId": "pdmx-QmbqAoh5tyqs",
+          "genreFamily": "experimental_other",
+          "onsetF1": 0.5116,
+          "onsetOffsetF1": 0.2791,
+          "pitchOnlyF1": 0.7519
+        },
+        {
+          "clipId": "pdmx-QmbwnWBK5FE5",
+          "genreFamily": "metal",
+          "onsetF1": 0.1657,
+          "onsetOffsetF1": 0.0981,
+          "pitchOnlyF1": 0.4396
+        },
+        {
+          "clipId": "pdmx-QmbWS4kqQcoX",
+          "genreFamily": "country",
+          "onsetF1": 0.0134,
+          "onsetOffsetF1": 0,
+          "pitchOnlyF1": 0.6377
+        },
+        {
+          "clipId": "pdmx-QmPnCySgcM4t",
+          "genreFamily": "reggae_ska",
+          "onsetF1": 0,
+          "onsetOffsetF1": 0,
+          "pitchOnlyF1": 0.7378
+        }
+      ]
+    }
+  ],
+  "verdicts": [
+    {
+      "challenger": "YPTF.MoE+Multi",
+      "verdict": "better",
+      "reasons": [
+        "instrument-aware onset F1 0.1751 → 0.2414 (+0.0663) with precision +0.1214"
+      ]
+    },
+    {
+      "challenger": "YPTF+Single",
+      "verdict": "better",
+      "reasons": [
+        "instrument-aware onset F1 0.1751 → 0.2596 (+0.0845) with precision +0.1239"
+      ]
+    },
+    {
+      "challenger": "YMT3+",
+      "verdict": "better",
+      "reasons": [
+        "instrument-aware onset F1 0.1751 → 0.2703 (+0.0952) with precision +0.1227"
+      ]
+    }
+  ],
+  "caveats": [
+    "Every model was given the byte-identical WAV; the scorer refuses if a worker's reported audio sha256 does not match the gold clip.",
+    "SYNTHETIC_EXACT is not real audio. Absolute F1 here is a floor for every model, and the ranking is the transferable part.",
+    "Basic Pitch predicts no instrument at all. Its instrument-aware F1 measures a placeholder GM program the adapter assigns, not a prediction; the pitch-only column is its fair number.",
+    "Nothing in this file promotes anything. Routing is unchanged."
+  ],
+  "spend": {
+    "method": "Container wall-clock seconds measured inside the run, priced at Modal's published rates (A10G $0.000306/s; CPU core $0.0000131/core/s, 4 cores). Computed, not read off an invoice. Image builds are additional and are accounted separately below.",
+    "rates": {
+      "A10G_per_second": 0.000306,
+      "cpu_core_per_second": 0.0000131,
+      "source": "https://modal.com/pricing"
+    },
+    "perScoredRun": {
+      "YMT3+": 0.0128,
+      "YPTF+Single": 0.0127,
+      "YPTF.MoE+Multi": 0.0092,
+      "BASIC_PITCH": 0.0026
+    },
+    "scoredRunsTotalUsd": 0.0373,
+    "overheadNotMeasuredPerModel": {
+      "imageBuilds": "9 builds across 3 worker services (5 yourmt3, 4 mt3-baseline). Mostly CPU build containers; two yourmt3 builds ran a GPU smoke on A10G (~3 min each).",
+      "contaminatedRun": "The first yourmt3 sweep spent ~343 s of A10G on YPTF+Single (12 load failures) and YMT3+ (12 clips at 0 notes) before the config-leak guard existed. ~$0.10, and it bought the diagnosis.",
+      "estimatedTotalUsd": "well under the $25 ceiling; the authoritative figure is the Modal dashboard for workspace windot100"
+    },
+    "invoice": "not read; computed from measured seconds. The authoritative figure is the Modal dashboard for workspace windot100."
+  },
+  "runs": [
+    {
+      "modalApp": "ap-t7Cc6wEhipTkbLfHyGJHzT",
+      "service": "transcription-baseline-worker",
+      "what": "Basic Pitch 0.4.0 on 12 clips (CPU, 4 cores)",
+      "scored": true,
+      "rawFile": "baseline-raw.json"
+    },
+    {
+      "modalApp": "ap-pcD0bAS7QjFStQAFXrZWwD",
+      "service": "yourmt3-worker",
+      "what": "first sweep: three variants looped in ONE container, before the config-leak guard existed",
+      "scored": "YPTF.MoE+Multi only (built first, so its config was clean; 47.1M parameters)",
+      "rawFile": "yourmt3-moe-raw.json",
+      "dropped": [
+        {
+          "variant": "YPTF+Single",
+          "outcome": "load failed on all 12 clips",
+          "error": "size mismatch for encoder.latent_array.latents: checkpoint [24, 128], current model [26, 128] (the leaked -nl 26 from YPTF.MoE+Multi)"
+        },
+        {
+          "variant": "YMT3+",
+          "outcome": "loaded silently under the leaked config (strict=False) at 47.1M parameters — 45.7M when built clean — and returned 0 notes on all 12 clips; NOT scored"
+        }
+      ],
+      "a10gSecondsApprox": 343,
+      "costUsdApprox": 0.1,
+      "diagnosis": "upstream model.init_train.update_config mutates a module-level model_cfg; ymt3_infer.load_model now refuses a second variant per process and modal_app.sweep fans out one container per variant"
+    },
+    {
+      "modalApp": "ap-KVrOIJKoeULIpKg1UijY6s",
+      "service": "yourmt3-worker",
+      "what": "second sweep: one container per variant",
+      "scored": "YPTF+Single (30.4M parameters)",
+      "rawFile": "yourmt3-single-raw.json",
+      "dropped": [
+        {
+          "variant": "YMT3+",
+          "outcome": "the guard fired on all 12 clips: Modal reused the warm YPTF+Single container for the second .remote() call, so the refusal is the guard working, not a model failure"
+        }
+      ]
+    },
+    {
+      "modalApp": "ap-i560BMGCHvbAj41b3rQejV",
+      "service": "yourmt3-worker",
+      "what": "third sweep: YMT3+ alone in its own invocation (45.7M parameters)",
+      "scored": true,
+      "rawFile": "yourmt3-ymt3p-raw.json"
+    },
+    {
+      "modalApp": "ap-XBkwIljyiMuh9SsSlD5dyc",
+      "service": "mt3-baseline-worker",
+      "what": "fourth and last MT3 image build attempt (--no-build-isolation): crepe built, tflite-support failed for want of pybind11; ImageBuildError",
+      "scored": false,
+      "checkpointsVerified": false,
+      "note": "the Dockerfile pins both checkpoint sha256s from the HF LFS pointers and checks them, but no MT3 image ever built, so nothing was verified in a container"
+    }
+  ],
+  "modalState": {
+    "checkedAt": "2026-09-10",
+    "deployedByThisStream": "none — every app above was an ephemeral `modal run`; the yourmt3-worker web endpoint was never deployed",
+    "running": "none — `modal app list` shows every yourmt3-worker and mt3-baseline-worker app in state stopped; nothing to stop"
+  }
+}

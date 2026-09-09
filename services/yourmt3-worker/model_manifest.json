@@ -1,0 +1,95 @@
+{
+  "provider": "YOUR_MT3",
+  "family": "YourMT3+",
+  "authors": "Sungkyun Chang, Emmanouil Benetos, Holger Kirchhoff, Simon Dixon (QMUL / Huawei)",
+  "paper": "https://arxiv.org/abs/2407.04822",
+  "venue": "IEEE MLSP 2024",
+  "sourceRepository": "https://github.com/mimbres/YourMT3",
+  "sourceRepositoryNote": "The GitHub repository's default branch contains only LICENSE and README.md at commit 8a4fbcabdf660f9f06bcb6f12bbf00d9b3139b98 (2024-11-29); the README points at a pre-release issue comment for code. The runnable YourMT3+ code is published in the Hugging Face Space, which is what this image pins.",
+  "code": {
+    "huggingFaceSpace": "mimbres/YourMT3",
+    "revision": "5e66c1ea173a8186e0d20432b841d3180cc015b5",
+    "subtree": "amt/src",
+    "install": "huggingface_hub.snapshot_download(repo_id='mimbres/YourMT3', repo_type='space', revision='5e66c1ea…', allow_patterns=['amt/src/**'])",
+    "note": "Only inference is used: model.init_train.initialize_trainer/update_config to rebuild the config the checkpoint was trained under, utils.task_manager.TaskManager for the tokenizer, model.ymt3.YourMT3 for the network, and utils.event2note + utils.note2event to turn tokens into Note dataclasses. No training path, no dataset path and no YouTube path is imported.",
+    "outputNote": "ymt3_infer reads model.task_manager's decoded Note dataclasses directly (is_drum, program, onset, offset, pitch, velocity) instead of writing a MIDI file and parsing it back. A MIDI round trip would quantise onsets to ticks and lose exactly the millisecond resolution the benchmark grades on."
+  },
+  "model": {
+    "huggingFace": "mimbres/YourMT3",
+    "repoType": "model",
+    "revision": "e45ebd70398682d54b7bb1901a5216e18f3b1824",
+    "lastModified": "2025-06-23T13:17:49Z",
+    "sha256Source": "Hugging Face LFS pointer (X-Linked-ETag on resolve/<revision>/<path>), re-verified by sha256sum at image build and by /health",
+    "variants": {
+      "YPTF.MoE+Multi": {
+        "checkpoint": "logs/2024/mc13_256_g4_all_v7_mt3f_sqr_rms_moe_wf4_n8k2_silu_rope_rp_b80_ps2/checkpoints/model.ckpt",
+        "bytes": 758957292,
+        "sha256": "7427055b51c3c8c86f6a35493cf0741d8db29186052055b59193590a82e6ec01",
+        "expId": "mc13_256_g4_all_v7_mt3f_sqr_rms_moe_wf4_n8k2_silu_rope_rp_b80_ps2@model.ckpt",
+        "args": ["-p", "2024", "-tk", "mc13_full_plus_256", "-dec", "multi-t5", "-nl", "26", "-enc", "perceiver-tf", "-sqr", "1", "-ff", "moe", "-wf", "4", "-nmoe", "8", "-kmoe", "2", "-act", "silu", "-epe", "rope", "-rp", "1", "-ac", "spec", "-hop", "300", "-atc", "1"],
+        "argsSource": "app.py of the pinned Space, branch model_name == 'YPTF.MoE+Multi (PS)'",
+        "architecture": "Perceiver-TF encoder with Mixture-of-Experts FFN (top-2 of 8), RoPE, spectral cross-attention; multi-channel T5-small decoder over 13 instrument groups",
+        "challengeRank": "2nd of 14 in the 2025 AMT Challenge as 'YourMT3-YPTF-MoE-M', F1 0.5938 (winner MIROS 0.5998; MT3 baseline 0.3932)"
+      },
+      "YPTF+Single": {
+        "checkpoint": "logs/2024/ptf_all_cross_rebal5_mirst_xk2_edr005_attend_c_full_plus_b100/checkpoints/model.ckpt",
+        "bytes": 361050039,
+        "sha256": "507ff129bf68f65b3b3439368706fc413523fc729d994e4da2c3f50860b05dde",
+        "expId": "ptf_all_cross_rebal5_mirst_xk2_edr005_attend_c_full_plus_b100@model.ckpt",
+        "args": ["-p", "2024", "-enc", "perceiver-tf", "-ac", "spec", "-hop", "300", "-atc", "1"],
+        "argsSource": "app.py of the pinned Space, branch model_name == 'YPTF+Single (noPS)'",
+        "architecture": "Perceiver-TF encoder, single-channel T5-small decoder",
+        "challengeRank": "3rd of 14 as 'YourMT3-YPTF-S', F1 0.5581"
+      },
+      "YMT3+": {
+        "checkpoint": "logs/2024/notask_all_cross_v6_xk2_amp0811_gm_ext_plus_nops_b72/checkpoints/model.ckpt",
+        "bytes": 542707465,
+        "sha256": "76673d4289aae1a66984b3fee59157d484cda8fdf9b56279251b137321d448e6",
+        "expId": "notask_all_cross_v6_xk2_amp0811_gm_ext_plus_nops_b72@model.ckpt",
+        "args": ["-p", "2024"],
+        "argsSource": "app.py of the pinned Space, branch model_name == 'YMT3+'",
+        "architecture": "T5 encoder/decoder on mel spectrogram — the MT3-shaped member of the family",
+        "challengeRankNote": "Not identified with a leaderboard row. The challenge table lists 'YourMT3-P' (0.3947) and 'YourMT3-YPTF-SP-V' (0.3305); neither name maps unambiguously onto a published checkpoint, so no rank is claimed for this variant."
+      }
+    },
+    "alsoPublished": {
+      "logs/2024/mc13_256_g4_all_v7_mt3f_sqr_rms_moe_wf4_n8k2_silu_rope_rp_b36_nops/checkpoints/last.ckpt": {
+        "bytes": 561544628,
+        "sha256": "ae38e415c79efd5592dcb9b658cdb99ddb11d4c4e1eaa364cab04a052473fc25",
+        "note": "'YPTF.MoE+Multi (noPS)' — the Space's own default. Not loaded here; the PS variant is the one the challenge row corresponds to."
+      },
+      "logs/2024/mc13_256_all_cross_v6_xk5_amp0811_edr005_attend_c_full_plus_2psn_nl26_sb_b26r_800k/checkpoints/model.ckpt": {
+        "bytes": 541553263,
+        "sha256": "f7ed46a7c61244bd35485143a791b3cf46515ef96239793845ae8e4084865130",
+        "note": "'YPTF+Multi (PS)'. Not loaded here."
+      }
+    },
+    "inputFormat": "mono audio resampled to the checkpoint's sample rate (16 kHz), sliced into fixed input_frames segments and batched",
+    "outputFormat": "Note dataclasses: is_drum, program (GM 0-127 after the checkpoint's midi_output_inverse_vocab), onset/offset in seconds, pitch, velocity"
+  },
+  "runtime": {
+    "python": "3.10",
+    "torch": "2.4.1+cu121",
+    "transformers": "4.45.1 (the Space's own requirements pin)",
+    "numpy": "1.26.4 (the Space's own requirements pin)",
+    "lightning": ">=2.2.1 (imported for the trainer/config plumbing the checkpoint was saved under)",
+    "gpu": "A10G on Modal"
+  },
+  "licence": {
+    "codeLicense": {
+      "stated": "GPL-3.0",
+      "source": "github.com/mimbres/YourMT3 LICENSE, confirmed via the GitHub licence API (spdx_id GPL-3.0)",
+      "conflictNote": "The Hugging Face Space that actually carries the code declares `license: apache-2.0` in its card, and the source files themselves carry Apache-2.0 headers ('Copyright 2024 The YourMT3 Authors ... Licensed under the Apache License, Version 2.0'). Three statements, two answers. UNRESOLVED — counsel must decide before any distribution of this code. It does not block *measuring* the model, which is what this worker does."
+    },
+    "weightsLicense": {
+      "stated": "apache-2.0",
+      "source": "cardData.license of the mimbres/YourMT3 model repository (HF API, revision e45ebd70…)"
+    },
+    "trainingData": {
+      "stated": "YourMT3 dataset — Slakh2100, MusicNet, MAESTRO, GuitarSet, ENST-Drums, EGMD, MIR-ST500, RWC-Pop, URMP, IDMT-SMT-Bass, CMedia, MIR-1K (per the paper's dataset table and the repository's preprocess/ scripts)",
+      "underlyingWorksCleared": "no — the constituent corpora carry different terms and several (RWC-Pop, MIR-ST500, ENST-Drums) are research-use-only or licensed per-institution. The Apache-2.0 on the weights is the authors' grant over the weights; it is not a clearance of the recordings they were trained on.",
+      "practicalNote": "A transcription model is used here to read a user's own audio, not to generate anything resembling its training data. That is a materially weaker exposure than a generative model trained on the same corpora — but it is a legal judgement, not an engineering one, and this manifest does not make it."
+    },
+    "classification": "LEGAL_REVIEW_REQUIRED — measured and benchmarked; not routed to users, and not promotable until the code-licence conflict is resolved and the training-corpus terms are read."
+  }
+}
