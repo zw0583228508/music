@@ -191,6 +191,7 @@ export * from './critiqueFindingSeverity';
 export * from './critiqueRecommendedRepair';
 export * from './dashboard';
 export * from './domainReconciliation';
+export * from './domainReconciliationCandidatesItem';
 export * from './domainReconciliationReport';
 export * from './domainReconciliationReportDomains';
 export * from './domainReconciliationReportVersion';

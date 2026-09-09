@@ -3622,6 +3622,9 @@ export const getProjectSongModelResponseMusicalMapArrangementSpaceWindowsItemCoo
 export const getProjectSongModelResponseReconciliationDomainsConfidenceMin = 0;
 export const getProjectSongModelResponseReconciliationDomainsConfidenceMax = 1;
 
+export const getProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMin = 0;
+export const getProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMax = 1;
+
 export const getProjectSongModelResponseReconciliationConsensusScoreMin = 0;
 export const getProjectSongModelResponseReconciliationConsensusScoreMax = 1;
 
@@ -4723,9 +4726,14 @@ export const GetProjectSongModelResponse = zod.object({
   "value": zod.union([zod.string(),zod.number()]).nullable(),
   "confidence": zod.number().min(getProjectSongModelResponseReconciliationDomainsConfidenceMin).max(getProjectSongModelResponseReconciliationDomainsConfidenceMax).nullable(),
   "providers": zod.array(zod.string()),
-  "status": zod.enum(['detected', 'low_confidence', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'not_available']),
   "message": zod.string().nullable(),
-  "margin": zod.number().nullable()
+  "margin": zod.number().nullable(),
+  "candidates": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number()]),
+  "score": zod.number().min(getProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMin).max(getProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMax),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested - every value with real weight, strongest first.')
 })),
   "consensusScore": zod.number().min(getProjectSongModelResponseReconciliationConsensusScoreMin).max(getProjectSongModelResponseReconciliationConsensusScoreMax),
   "contestedDomains": zod.array(zod.enum(['tempo', 'downbeats', 'meter', 'key', 'chords', 'melody', 'bass', 'sections', 'instruments']))
@@ -5823,6 +5831,9 @@ export const correctProjectSongModelResponseMusicalMapArrangementSpaceWindowsIte
 
 export const correctProjectSongModelResponseReconciliationDomainsConfidenceMin = 0;
 export const correctProjectSongModelResponseReconciliationDomainsConfidenceMax = 1;
+
+export const correctProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMin = 0;
+export const correctProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMax = 1;
 
 export const correctProjectSongModelResponseReconciliationConsensusScoreMin = 0;
 export const correctProjectSongModelResponseReconciliationConsensusScoreMax = 1;
@@ -6925,9 +6936,14 @@ export const CorrectProjectSongModelResponse = zod.object({
   "value": zod.union([zod.string(),zod.number()]).nullable(),
   "confidence": zod.number().min(correctProjectSongModelResponseReconciliationDomainsConfidenceMin).max(correctProjectSongModelResponseReconciliationDomainsConfidenceMax).nullable(),
   "providers": zod.array(zod.string()),
-  "status": zod.enum(['detected', 'low_confidence', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'not_available']),
   "message": zod.string().nullable(),
-  "margin": zod.number().nullable()
+  "margin": zod.number().nullable(),
+  "candidates": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number()]),
+  "score": zod.number().min(correctProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMin).max(correctProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMax),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested - every value with real weight, strongest first.')
 })),
   "consensusScore": zod.number().min(correctProjectSongModelResponseReconciliationConsensusScoreMin).max(correctProjectSongModelResponseReconciliationConsensusScoreMax),
   "contestedDomains": zod.array(zod.enum(['tempo', 'downbeats', 'meter', 'key', 'chords', 'melody', 'bass', 'sections', 'instruments']))

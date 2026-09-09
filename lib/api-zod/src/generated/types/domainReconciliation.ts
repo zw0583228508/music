@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { AnalysisDomain } from './analysisDomain';
+import type { DomainReconciliationCandidatesItem } from './domainReconciliationCandidatesItem';
 import type { DomainReconciliationStatus } from './domainReconciliationStatus';
 
 export interface DomainReconciliation {
@@ -20,4 +21,6 @@ export interface DomainReconciliation {
   status: DomainReconciliationStatus;
   message: string | null;
   margin: number | null;
+  /** Present when status is contested - every value with real weight, strongest first. */
+  candidates?: DomainReconciliationCandidatesItem[];
 }

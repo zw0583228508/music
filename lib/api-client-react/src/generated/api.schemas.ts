@@ -1798,8 +1798,19 @@ export type DomainReconciliationStatus = typeof DomainReconciliationStatus[keyof
 export const DomainReconciliationStatus = {
   detected: 'detected',
   low_confidence: 'low_confidence',
+  contested: 'contested',
   not_available: 'not_available',
 } as const;
+
+export type DomainReconciliationCandidatesItem = {
+  value: string | number;
+  /**
+     * @minimum 0
+     * @maximum 1
+     */
+  score: number;
+  providers: string[];
+};
 
 export interface DomainReconciliation {
   domain: AnalysisDomain;
@@ -1813,6 +1824,8 @@ export interface DomainReconciliation {
   status: DomainReconciliationStatus;
   message: string | null;
   margin: number | null;
+  /** Present when status is contested - every value with real weight, strongest first. */
+  candidates?: DomainReconciliationCandidatesItem[];
 }
 
 export type DomainReconciliationReportDomains = {[key: string]: DomainReconciliation};

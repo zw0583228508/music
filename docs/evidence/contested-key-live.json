@@ -1,0 +1,80 @@
+{
+  "id": "contested-key-live",
+  "pr": "PR-86",
+  "recordedAt": "2026-09-09T22:25:00+03:00",
+  "question": "When two independent analyses name different keys with comparable weight, does the upload survive with the contest recorded, and can the producer settle it?",
+  "trigger": {
+    "projectId": "d519492a-e299-4401-9cb4-f8618902fc0a",
+    "sourceId": "3108652e-975d-44fd-9bd6-16ac77357922",
+    "file": "מענדי וויס, חיים פולק, מקהלת מלכות - ולעורר ליבי.mp3",
+    "before": {
+      "status": "failed",
+      "progress": 68,
+      "error": "Analysis providers returned an invalid Song Model. Key analysis is required.",
+      "attemptsWithThisError": 3,
+      "cause": "reconcileAnalysisField('key') returned not_available (margin 0.025) for LOCAL_SIGNAL_ANALYZER_V1 = G minor vs TRANSCRIPTION_KEY_V1 = E-flat major; an empty keyMap is a MISSING_KEY_MAP error; fuseProviderSongModels rejected the whole model."
+    }
+  },
+  "afterFix": {
+    "retry": { "http": 202, "at": "2026-09-09T22:21:30+03:00" },
+    "analyzerLog": {
+      "event": "song_model_key_contested",
+      "candidates": [
+        { "value": "Eb major", "score": 0.345, "providers": ["TRANSCRIPTION_KEY_V1"] },
+        { "value": "G minor", "score": 0.32, "providers": ["LOCAL_SIGNAL_ANALYZER_V1"] }
+      ],
+      "accepted": true
+    },
+    "source": { "status": "ready", "progress": 100, "reachedAt": "2026-09-09T22:22:14+03:00" },
+    "songModel": {
+      "version": 4,
+      "validation": { "status": "flagged", "issues": [{ "code": "CONTESTED_KEY", "severity": "warning" }] },
+      "keyMap": [],
+      "fieldStatus.key": {
+        "status": "contested",
+        "confidence": null,
+        "providers": ["LOCAL_SIGNAL_ANALYZER_V1", "TRANSCRIPTION_KEY_V1"],
+        "message": "Independent analyses disagree: Eb major (TRANSCRIPTION_KEY_V1) vs G minor (LOCAL_SIGNAL_ANALYZER_V1). Confirm one before it is used.",
+        "candidates": [
+          { "value": "Eb major", "confidence": 0.345, "providers": ["TRANSCRIPTION_KEY_V1"] },
+          { "value": "G minor", "confidence": 0.32, "providers": ["LOCAL_SIGNAL_ANALYZER_V1"] }
+        ]
+      },
+      "reconciliation.domains.key": { "status": "contested", "value": null, "margin": 0.025, "candidates": 2 },
+      "tempoMap[0]": { "bpm": 64.8, "confidence": 0.374 },
+      "meterMap[0]": { "meter": "4/4", "confidence": 0.3 },
+      "melody": { "status": "not_available", "notes": 0, "reason": "1769 transcribed events from BASIC_PITCH on the full mix did not meet the canonical melody threshold (pre-existing, unchanged)" },
+      "chords": 0,
+      "sections": 6
+    },
+    "studio": {
+      "url": "http://localhost:5173/projects/d519492a-e299-4401-9cb4-f8618902fc0a",
+      "verifiedInBrowser": true,
+      "keyMapBadge": "key: Contested",
+      "contestedPanelText": "Independent analyses disagree on the key. The Song Model carries no key until you confirm one; arranging stays blocked until then.",
+      "confirmButtons": ["Use Eb major", "Use G minor"],
+      "confirmedByLead": false,
+      "note": "The choice is the owner's; the lead did not press either button. The confirm path is the existing correction route (a typed key and a clicked candidate take the same path), covered by the validation test."
+    }
+  },
+  "firstServeFailure": {
+    "what": "GET /projects/:id/song-model returned 500 (ZodError) on the first rebuilt API: the DomainReconciliation status enum in the OpenAPI response schema did not include 'contested'.",
+    "fix": "enum widened + optional candidates on DomainReconciliation; orval regenerated; second build served the model."
+  },
+  "operational": {
+    "assetSurface": "the lead's API had to run its analysis-asset surface on :5011 behind a second Cloudflare quick tunnel, because a stream worktree's API held :5010 and the lease store is in-memory (a lease minted by one process is unknown to another) — the first retry failed with BASIC_PITCH HTTP 400 for exactly that reason",
+    "envOverride": "ANALYSIS_ASSET_PORT and ANALYSIS_ASSET_BASE_URL set in the process environment; .env.local untouched (dev-local does not override existing env)"
+  },
+  "tests": {
+    "analysisReconciliation.test.ts": 9,
+    "songModelValidation.test.ts": 31,
+    "songModelCorrection.test.ts": 4,
+    "typecheck": "green (monorepo)"
+  },
+  "honestLimits": [
+    "Neither candidate has been confirmed; which key the recording is actually in is unknown to this evidence. Eb major and G minor share Eb, G and Bb — the recording may sit in either, or modulate.",
+    "The contest threshold (CONTEST_FLOOR 0.15, CONTEST_RATIO 0.4 of the winner's weight) is a design choice, not a calibrated one; Stream E's harmony engine is the place it gets measured.",
+    "A flagged model blocks arrangement until confirmed; nothing downstream reads the candidates yet except the studio panel.",
+    "Melody remains not_available on this recording — a full-mix transcription is not a melodic line; that is unchanged by this PR."
+  ]
+}

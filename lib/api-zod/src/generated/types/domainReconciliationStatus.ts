@@ -12,5 +12,6 @@ export type DomainReconciliationStatus = typeof DomainReconciliationStatus[keyof
 export const DomainReconciliationStatus = {
   detected: 'detected',
   low_confidence: 'low_confidence',
+  contested: 'contested',
   not_available: 'not_available',
 } as const;
