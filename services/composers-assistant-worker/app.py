@@ -51,6 +51,9 @@ async def infill(
     _: None = Depends(_require_token),
     midi: UploadFile = File(...),
     target_track: int | None = Form(None),
+    # GM program 0–127, or 128 for drums. Resolved after CA2's cleaning, so a
+    # tournament can name the same part across providers that parse differently.
+    target_inst: int | None = Form(None),
     start_measure: int | None = Form(None),
     n_measures: int = Form(8),
     seed: int = Form(7),
@@ -67,8 +70,10 @@ async def infill(
         path = tmp / "input.mid"
         with path.open("wb") as f:
             shutil.copyfileobj(midi.file, f)
+        if target_inst is not None and not (0 <= target_inst <= 128):
+            raise HTTPException(400, "target_inst must be a GM program 0..127, or 128 for drums")
         result = ca2_infer.infill(
-            str(path), target_track=target_track, start_measure=start_measure,
+            str(path), target_track=target_track, target_inst=target_inst, start_measure=start_measure,
             n_measures=n_measures, seed=seed, max_new_tokens=max_new_tokens,
             temperature=temperature, top_p=top_p,
         )

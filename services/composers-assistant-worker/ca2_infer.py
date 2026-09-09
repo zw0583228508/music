@@ -141,6 +141,7 @@ def _vel(qn_in_measure: float, low: int = 105, high: int = 115) -> int:
 def infill(
     midi_path: str,
     target_track: int | None = None,
+    target_inst: int | None = None,
     start_measure: int | None = None,
     n_measures: int = 8,
     seed: int = 7,
@@ -150,6 +151,12 @@ def infill(
 ) -> dict[str, Any]:
     """
     Real musical input -> real inference -> real symbolic output.
+
+    The target may be named by post-clean track index (`target_track`) or, for
+    a tournament that must address the same part across providers that parse
+    MIDI differently, by GM program (`target_inst`, 0–127; 128 = drums). CA2
+    removes near-equal tracks and re-sorts by instrument and average pitch, so
+    an index from another parser means nothing here; a program does.
 
     Returns notes in quarter-note time plus the account of what the model was
     given, what it was not, and what happened, so a caller can never mistake
@@ -175,9 +182,20 @@ def infill(
     if len(tracks) < 2:
         return {**out, "failure": "fewer than 2 tracks after cleaning: no context to infill against"}
 
+    if target_track is None and target_inst is not None:
+        # Resolve by program after CA2's own cleaning; several tracks may share
+        # a program (four string-ensemble tracks in a real score), so take the
+        # one with the most notes — the part, not a doubling.
+        matches = [t for t in tracks if (t["isDrum"] and target_inst == 128) or (not t["isDrum"] and t["inst"] == target_inst)]
+        if not matches:
+            return {**out, "failure": f"no track with GM program {target_inst} survived CA2 cleaning; present: {sorted({t['inst'] for t in tracks})}"}
+        target_track = max(matches, key=lambda t: t["noteOns"])["index"]
+        out["targetResolvedBy"] = {"target_inst": target_inst, "candidates": [t["index"] for t in matches]}
     if target_track is None:
         pitched = [t for t in tracks if not t["isDrum"]] or tracks
         target_track = max(pitched, key=lambda t: t["noteOns"])["index"]
+    if target_track < 0 or target_track >= len(tracks):
+        return {**out, "failure": f"target_track {target_track} out of range 0..{len(tracks) - 1}"}
     if start_measure is None:
         best, best_c = 0, -1
         for st in range(0, max(1, n_measures_total - n_measures + 1)):

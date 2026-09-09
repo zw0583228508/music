@@ -1,0 +1,246 @@
+{
+  "title": "Composer's Assistant 2 — the isolated Modal worker, proven over HTTPS (Wave Q — Model Discovery, items 11–12 and 23)",
+  "date": "2026-09-09",
+  "definitionOfDone": "real musical input → real model inference → real symbolic output, through the deployed endpoint that the platform will call, not on a developer machine. Two calls, two passes.",
+  "deployment": {
+    "app": "composers-assistant-worker",
+    "endpoint": "https://windot100--composers-assistant-worker-endpoint.modal.run",
+    "modalDashboard": "https://modal.com/apps/windot100/main/deployed/composers-assistant-worker",
+    "image": "modal.Image.from_dockerfile(services/composers-assistant-worker/Dockerfile) — python:3.10-slim, torch 2.0.1+cpu, transformers 4.31.0, tokenizers 0.13.3, numpy<2, miditoolkit 1.0.1, portion 2.6.2; release zip sha256-verified at build; only *.py + licence files + the large model unpacked",
+    "buildTimeSmoke": "the image only exists because a real infill on a synthesised three-track MIDI produced notes during the build (128 notes over 8 measures, 12.45 s, verdict PASS in the first build log; repeated on the target_inst rebuild)",
+    "resources": "cpu=4, memory=8192 MB, no GPU (a 192M fp32 T5 infilling eight bars is a CPU job), timeout 1800 s, max_containers 2, scaledown_window 300 s",
+    "secrets": "music-ai-worker-runtime (shared runtime), then composers-assistant-worker-token (dedicated MUSIC_AI_WORKER_TOKEN, generated randomly on this machine, written to the git-ignored .env.local as COMPOSERS_ASSISTANT_2_API_TOKEN and to the Modal secret, never printed; rotated 2026-09-09)",
+    "imageEvidence": "sha256:f7689a101a77f26a652c1d53175078b829465a4df461452f15ec3609973b8b21",
+    "deployLog": "two deploys: the first built the image in 82.83 s after the pip/curl/smoke layers (App deployed in 126.756 s); the second, adding target_inst, rebuilt and re-smoked in 91.23 s"
+  },
+  "howProven": "a Modal function (scratch script, not committed) holding only the endpoint secret called the public URL exactly as the platform will: GET /health without a token, GET /health with it, then POST /infill twice with a real PDMX MIDI uploaded from this machine. The bearer token never left Modal or reached a terminal.",
+  "input": {
+    "file": "PDMX Qma11MhFz64u8wRiW1cTZ5VJ4zTQWbYbVHDnMGafAFoaN6.mid (no_license_conflict; CC-BY-4.0 compilation, Zenodo 15571083)",
+    "bytes": 22318,
+    "content": "brass ensemble — trumpet(56), trombone(57), tuba(58), horn(60), drums; 64 measures; the same file as runs 1/1b/1c of the local proof",
+    "sourceBpm": 120
+  },
+  "health": {
+    "unauthenticated": {
+      "status": 401,
+      "seconds": 0.32,
+      "coldStartSeconds": 7.65,
+      "reading": "401 — the gate is on in the cloud"
+    },
+    "authenticated": {
+      "status": 200,
+      "seconds": 1.09,
+      "coldStartSeconds": 11.89
+    },
+    "body": {
+      "provider": "COMPOSERS_ASSISTANT_2",
+      "release": "v2.1.0",
+      "releaseZipSha256": "2a17d0b12f17a5fc85f8d54c441e9a2d68b53e828115083942709aa676fac0b0",
+      "modelBinSha256Expected": "297bccb173b4497a3c3b6007422506dced88fd9f99f5c8a18481dedd9667d530",
+      "modelBinVerified": true,
+      "vocabSize": 1944,
+      "vocabVerified": true,
+      "runtime": {
+        "python": "3.10.21",
+        "torch": "2.0.1+cpu",
+        "transformers": "4.31.0",
+        "cuda": false
+      },
+      "runtimePinned": true,
+      "licence": {
+        "code": "MIT (repository LICENSE)",
+        "weights": "MIT (in-release license.txt; no rights claimed on outputs per disclaimer.txt)",
+        "trainingData": "PD/CC0/CC-BY/permitted MIDI per disclaimer.txt; Mutopia-dominated per acknowledgments.html",
+        "classification": "SHIP_CLEARED (public evidence; not lawyer-reviewed)"
+      },
+      "healthy": true,
+      "imageEvidence": "sha256:f7689a101a77f26a652c1d53175078b829465a4df461452f15ec3609973b8b21",
+      "config": {
+        "architectures": [
+          "T5ForConditionalGeneration"
+        ],
+        "num_layers": 16,
+        "num_decoder_layers": 16,
+        "d_model": 576,
+        "d_ff": 2304,
+        "num_heads": 12,
+        "vocab_size": 1944,
+        "torch_dtype": "float32",
+        "transformers_version": "4.31.0"
+      }
+    }
+  },
+  "runs": [
+    {
+      "file": "docs/evidence/ca2-cloud/cloud-inst58-seed13-T1.15.mid",
+      "sha256": "7deb8c784f7beafe989841362e3258e50d0f25564bcf4a83bf7f212de9a35e6c",
+      "params": {
+        "target_inst": 58,
+        "start_measure": 0,
+        "n_measures": 8,
+        "seed": 13,
+        "temperature": 1.15
+      },
+      "httpSeconds": 8.41,
+      "inference": {
+        "seconds": 7.88,
+        "outputTokens": 129,
+        "device": "cpu"
+      },
+      "task": {
+        "kind": "infill: given every other track, write the target track over the window",
+        "targetTrack": 2,
+        "targetInst": 58,
+        "measureSlice": [
+          0,
+          8
+        ],
+        "maskLocations": 8,
+        "heldOutHumanNotes": 56
+      },
+      "targetResolvedBy": {
+        "target_inst": 58,
+        "candidates": [
+          2
+        ]
+      },
+      "account": {
+        "received": [
+          "siblingParts.notes (unmasked tracks)",
+          "instrument (;I:)",
+          "candidateStrategy.seed"
+        ],
+        "approximated": [
+          "section → bare measure window",
+          "hardConstraints.polyphony → none sent (enforce after)",
+          "lockedMaterial → whole-cell masks"
+        ],
+        "unsupported": [
+          "styleGrammar",
+          "harmonyPlan",
+          "vocalAttentionMap",
+          "motifMemory",
+          "previousSectionSummary",
+          "nextSectionIntent",
+          "role",
+          "phrases",
+          "productionBriefRef"
+        ],
+        "enforcedHere": [],
+        "note": "No post-generation constraint is applied inside the worker; the platform's contextAwareComposer passes do that so every provider is judged after the same enforcement."
+      },
+      "output": {
+        "generatedNotes": 48,
+        "distinctPitches": 4,
+        "pitchRange": [
+          39,
+          44
+        ],
+        "measuresWithNotes": 8
+      },
+      "definitionOfDone": {
+        "realMusicalInput": true,
+        "realModelInference": true,
+        "realSymbolicOutput": true,
+        "verdict": "PASS"
+      },
+      "imageEvidence": "sha256:f7689a101a77f26a652c1d53175078b829465a4df461452f15ec3609973b8b21"
+    },
+    {
+      "file": "docs/evidence/ca2-cloud/cloud-inst56-seed7-T1.mid",
+      "sha256": "4d64d9be89ff5982a0b3638e96ca24e25a001d082f9206dfda3ae48f8995e9cb",
+      "params": {
+        "target_inst": 56,
+        "start_measure": 1,
+        "n_measures": 8,
+        "seed": 7
+      },
+      "httpSeconds": 6.29,
+      "inference": {
+        "seconds": 5.78,
+        "outputTokens": 96,
+        "device": "cpu"
+      },
+      "task": {
+        "kind": "infill: given every other track, write the target track over the window",
+        "targetTrack": 0,
+        "targetInst": 56,
+        "measureSlice": [
+          1,
+          9
+        ],
+        "maskLocations": 8,
+        "heldOutHumanNotes": 48
+      },
+      "targetResolvedBy": {
+        "target_inst": 56,
+        "candidates": [
+          0
+        ]
+      },
+      "account": {
+        "received": [
+          "siblingParts.notes (unmasked tracks)",
+          "instrument (;I:)",
+          "candidateStrategy.seed"
+        ],
+        "approximated": [
+          "section → bare measure window",
+          "hardConstraints.polyphony → none sent (enforce after)",
+          "lockedMaterial → whole-cell masks"
+        ],
+        "unsupported": [
+          "styleGrammar",
+          "harmonyPlan",
+          "vocalAttentionMap",
+          "motifMemory",
+          "previousSectionSummary",
+          "nextSectionIntent",
+          "role",
+          "phrases",
+          "productionBriefRef"
+        ],
+        "enforcedHere": [],
+        "note": "No post-generation constraint is applied inside the worker; the platform's contextAwareComposer passes do that so every provider is judged after the same enforcement."
+      },
+      "output": {
+        "generatedNotes": 39,
+        "distinctPitches": 7,
+        "pitchRange": [
+          57,
+          71
+        ],
+        "measuresWithNotes": 8
+      },
+      "definitionOfDone": {
+        "realMusicalInput": true,
+        "realModelInference": true,
+        "realSymbolicOutput": true,
+        "verdict": "PASS"
+      },
+      "imageEvidence": "sha256:f7689a101a77f26a652c1d53175078b829465a4df461452f15ec3609973b8b21"
+    }
+  ],
+  "coldStart": {
+    "firstProbe": "the first probe hit a cold container: unauthenticated /health 7.65 s, authenticated /health 11.89 s (770 MB fp32 weights loaded and sha-verified), infills 8.55 s and 5.98 s HTTP (3.88 s / 5.42 s inference)",
+    "secondProbe": "warm: 0.32 s / 1.09 s, infills 8.41 s / 6.29 s HTTP (7.88 s / 5.78 s inference)",
+    "note": "the two probes sampled different outputs for the same seeds (71 vs 129 output tokens for the tuba task) — CPU T5 sampling on a different host is not bit-reproducible across machines; the seed fixes the stream on one machine, not across them. Recorded, not hidden."
+  },
+  "qualityReading": {
+    "tuba, seed 13, T 1.15": "48 notes, 4 distinct pitches (39–44), every measure covered; a slow bass part in a low tuba register, harmonically static — the same character as local run 1b, not a collapse (a collapse is one pitch).",
+    "trumpet, seed 7, T 1.0": "39 notes, 7 distinct pitches, correct trumpet register; a repeating 64/59 figure — the bar-to-bar repetition the local proof already noted.",
+    "verdict": "Real inference, real notes, real account. Quality is a tournament question, not a probe question."
+  },
+  "definitionOfDoneVerdict": "PASS — 48 notes, 39 notes",
+  "platformWiring": {
+    "client": "artifacts/api-server/src/lib/composersAssistantClient.ts — COMPOSERS_ASSISTANT_2_API_URL + dedicated COMPOSERS_ASSISTANT_2_API_TOKEN (the shared MUSIC_AI_WORKER_TOKEN is refused by design); https required; identity from /health attached to every infill result so ca2ResultRefusal judges against what the container verified",
+    "catalogue": "MUSIC_PROVIDERS entry COMPOSERS_ASSISTANT_2, SHADOW_ONLY — configured in this environment, still unavailable for routing; the shadow-routing test proves configuration cannot promote it",
+    "targetAddressing": "worker gained target_inst (GM program 0–127, 128 = drums) resolved after CA2's own track cleaning, so a tournament can name the same part across providers that parse MIDI differently; both cloud runs used it (resolved to CA2 tracks 2 and 0)"
+  },
+  "honestLimits": [
+    "CPU only; no GPU figure exists for this model and none is needed at this size.",
+    "Two calls on one classical brass score. This proves the deployment and the wire contract, not musical quality.",
+    "Cross-machine seed reproducibility does not hold (see coldStart.note); the tournament must therefore run N seeds per task and never compare single samples.",
+    "The scratch probe script that made these calls is not committed (it holds nothing secret, but it is not a platform surface); the committed path is composersAssistantClient.ts, tested against a mock and used by the tournament runner next."
+  ]
+}

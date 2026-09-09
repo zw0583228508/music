@@ -2562,6 +2562,62 @@ any of it.
   worker applies no post-generation constraint by design — the platform passes
   do that, so every provider is judged after the same enforcement.
 
+- **PR-58** ✅ — `ca2-modal-deploy-and-wiring` (Wave Q — Model Discovery, items
+  11–12 and 23): **the Composer's Assistant 2 worker is deployed on Modal and
+  proven over HTTPS**, and the platform can now call it. Evidence:
+  `docs/evidence/model-composers-assistant-2-cloud.json` (+ the two generated
+  MIDIs under `docs/evidence/ca2-cloud/`).
+
+  **What ran.** `modal deploy` built the pinned image (python:3.10-slim, torch
+  2.0.1 CPU, transformers 4.31.0, tokenizers 0.13.3, numpy<2, miditoolkit
+  1.0.1, portion 2.6.2; release zip sha-verified; only the source files,
+  licence files and the large model unpacked) and the build only succeeded
+  because its **build-time real infill produced 128 notes** (12.45 s). A
+  Modal-side probe holding only the endpoint secret then called the public
+  URL as the platform will: `GET /health` without a token → **401**; with it →
+  **200**, `modelBinVerified: true`, python 3.10.21, `healthy: true`; two
+  `POST /infill` on the real PDMX brass score → **48 notes** (tuba, GM 58,
+  seed 13, T 1.15; 7.88 s inference) and **39 notes** (trumpet, GM 56, seed 7;
+  5.78 s). Cold start ≈ 12 s for health (770 MB fp32 load + sha check); warm
+  ≈ 1 s. CPU only — a GPU is not value at 192M parameters.
+
+  **What changed on the wire.** The worker gained `target_inst` (GM program,
+  128 = drums), resolved *after* CA2's own track cleaning and re-sorting, so
+  the tournament can name the same part across providers that parse MIDI
+  differently; both cloud runs used it and the response records
+  `targetResolvedBy`. The endpoint token was **rotated**: generated locally,
+  written to the git-ignored `.env.local` (`COMPOSERS_ASSISTANT_2_API_TOKEN`)
+  and to the Modal secret in one command, never printed.
+
+  **Platform side.** `composersAssistantClient.ts` — `COMPOSERS_ASSISTANT_2_API_URL`
+  + a **dedicated** token (the shared `MUSIC_AI_WORKER_TOKEN` is refused by
+  design: one provider, one credential, one blast radius); https required;
+  `/health`'s identity is attached to every infill result so
+  `ca2ResultRefusal` judges against what the running container verified.
+  `MUSIC_PROVIDERS` gained `COMPOSERS_ASSISTANT_2` as **SHADOW_ONLY** — the
+  quality gate, not a rights gate: it is configured in this environment and
+  the shadow-routing test proves configuration cannot promote it.
+  `chordsFromNotes.ts` — per-bar duration-weighted pitch-class templates with
+  a margin threshold and *no chord where the bar does not support one*; it is
+  tournament task preparation (PDMX carries no chord symbols, and every
+  provider must be handed the same harmony) and the step PR-46's real analysis
+  was missing (`chords: 0` after 1,876 Basic Pitch notes).
+
+  Suites: composersAssistantClient 4, musicProviders.shadowRouting 5 (+1 for
+  CA2), chordsFromNotes 8, globalModelRegistry 13, ca2ResultAdapter 6,
+  arrangerModelProvider green; typecheck green.
+
+  **Honest limits.** Two calls on one classical brass score prove the
+  deployment and the contract, not quality. **The same seed sampled different
+  output on the Modal host than locally** (71 vs 129 tokens for the same tuba
+  task) — CPU T5 sampling is not bit-reproducible across machines, so the
+  tournament must run N seeds and never compare single samples. The probe
+  script is scratch, not a platform surface; the committed path is the client,
+  tested against a mock, and the tournament runner is the next PR. Chord
+  estimation is unit-tested on held triads and progressions, not yet measured
+  against labelled real music; its confidence is capped at 0.85 for that
+  reason.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
