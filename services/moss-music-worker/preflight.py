@@ -116,9 +116,15 @@ def run_preflight() -> dict[str, object]:
             },
         }
     except Exception as exc:
-        # Do not leak dynamic loader paths or arbitrary package diagnostics.
+        # Name the failure without leaking dynamic loader paths: the exception
+        # class and its message with every absolute path replaced. Without this
+        # a failing preflight said only "it failed", which is not enough to fix
+        # an upstream runtime.
+        import re as _re
+        redacted = _re.sub(r"(/[\w.+-]+)+/", "<path>/", str(exc))[:1600]
         raise RuntimeError(
-            "MOSS media preflight failed: native WAV/MP3 decode, resampling, or tensor creation failed"
+            "MOSS media preflight failed: native WAV/MP3 decode, resampling, or tensor creation failed "
+            f"({type(exc).__name__}: {redacted})"
         ) from exc
 
 if __name__ == "__main__":

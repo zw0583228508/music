@@ -17,8 +17,13 @@ RUN /opt/moss-venv/bin/pip install --upgrade pip \
        torch==2.9.1+cu128 torchaudio==2.9.1+cu128 \
        transformers==4.57.1 accelerate==1.12.0 \
     && /opt/moss-venv/bin/pip install \
-       "https://files.pythonhosted.org/packages/f6/fd/eec92c82545038a90ffd24e3626bb3a85f7d51577b04819c1c753d380a9b/torchcodec-0.8.0-cp312-cp312-manylinux_2_28_x86_64.whl#sha256=2ec2e874dfb6fbf9bbeb792bea56317529636e78db175f56aad1e4efd6e12502" \
+       "https://download.pytorch.org/whl/cu128/torchcodec-0.8.0%2Bcu128-cp312-cp312-manylinux_2_28_x86_64.whl#sha256=c0195d81784f48c0d9d265c0d72324a65e1cd1e70c8213b95b4ff483493621ab" \
     && /opt/moss-venv/bin/pip install -r /tmp/requirements.txt
+# TorchCodec's native ops library links against the libtorch it was built for.
+# PyPI's plain `torchcodec-0.8.0` wheel is the CPU build; with Torch 2.9.1+cu128
+# installed, its libtorchcodec_custom_ops7.so reaches the loader and fails
+# (the 2026-09-07 BLOCKED_UPSTREAM evidence). The CUDA-matched build of the same
+# TorchCodec version is the fix, so the SGLang branch's 0.8.0 pin still holds.
 # Detached source is an immutable build input, never a serving download. Install
 # the base package, not MOSS-Music's local torch-runtime extra: that extra pins
 # TorchCodec 0.9.*, while the official moss-audio SGLang branch pins 0.8.0.
@@ -35,7 +40,7 @@ RUN git clone https://github.com/OpenMOSS/sglang.git /opt/moss-sglang \
     && test "$(git -C /opt/moss-sglang rev-parse HEAD)" = "c28a945853c7fee357f55d976b8abce51874bd94" \
     && /opt/moss-venv/bin/pip install -e "/opt/moss-sglang/python[all]" \
     && /opt/moss-venv/bin/pip check \
-    && /opt/moss-venv/bin/python -c "import torch, torchaudio; import importlib.metadata as m; assert torch.__version__ == '2.9.1+cu128'; assert torchaudio.__version__ == '2.9.1+cu128'; assert m.version('torchcodec') == '0.8.0'; assert m.version('transformers') == '4.57.1'; assert m.version('huggingface-hub') == '0.36.2'; assert m.version('gradio') == '5.44.1'; assert m.version('pydantic') == '2.11.10'; assert m.version('fastapi') == '0.115.12'; assert m.version('nvidia-cudnn-cu12') == '9.10.2.21'"
+    && /opt/moss-venv/bin/python -c "import torch, torchaudio; import importlib.metadata as m; assert torch.__version__ == '2.9.1+cu128'; assert torchaudio.__version__ == '2.9.1+cu128'; assert m.version('torchcodec') == '0.8.0+cu128'; assert m.version('transformers') == '4.57.1'; assert m.version('huggingface-hub') == '0.36.2'; assert m.version('gradio') == '5.44.1'; assert m.version('pydantic') == '2.11.10'; assert m.version('fastapi') == '0.115.12'; assert m.version('nvidia-cudnn-cu12') == '9.10.2.21'"
 COPY services/moss-music-worker/*.py /app/
 COPY services/moss-music-worker/model_manifest.json services/moss-music-worker/license_manifest.json /app/
 COPY services/moss-music-worker/Dockerfile services/moss-music-worker/requirements.txt /app/

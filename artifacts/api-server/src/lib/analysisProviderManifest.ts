@@ -74,7 +74,7 @@ const VERIFIED_MOSS_MUSIC_IDENTITY = {
     cuda: "12.8",
     torch: "2.9.1+cu128",
     torchaudio: "2.9.1+cu128",
-    torchcodec: "0.8.0",
+    torchcodec: "0.8.0+cu128",
     transformers: "4.57.1",
     accelerate: "1.12.0",
     huggingfaceHub: "0.36.2",

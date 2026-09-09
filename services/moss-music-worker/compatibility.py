@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+from urllib.parse import unquote
 
 from preflight import run_preflight
 
@@ -39,11 +40,11 @@ def _torchcodec_wheel_evidence() -> dict[str, str]:
             if archive_hash.startswith("sha256=")
             else None
         )
-    if (
-        archive_sha256 != reviewed["sha256"]
-        or not direct_url.get("url", "").endswith(reviewed["filename"])
-    ):
-        raise RuntimeError("installed TorchCodec wheel differs from the reviewed CPU artifact")
+    # A wheel with a local version ("+cu128") is served percent-encoded, so the
+    # recorded URL must be decoded before it can be compared with the filename.
+    recorded_url = unquote(direct_url.get("url", ""))
+    if archive_sha256 != reviewed["sha256"] or not recorded_url.endswith(reviewed["filename"]):
+        raise RuntimeError("installed TorchCodec wheel differs from the reviewed artifact")
     return {
         "variant": reviewed["variant"],
         "filename": reviewed["filename"],
