@@ -1,0 +1,56 @@
+{
+  "provider": "COMPOSERS_ASSISTANT_2",
+  "family": "Composer's Assistant",
+  "author": "Martin E. Malandro",
+  "sourceRepository": "https://github.com/m-malandro/composers-assistant-REAPER",
+  "release": {
+    "tag": "v2.1.0",
+    "publishedAt": "2024-10-09T20:16:01Z",
+    "asset": "composers.assistant.v.2.1.0.zip",
+    "assetUrl": "https://github.com/m-malandro/composers-assistant-REAPER/releases/download/v2.1.0/composers.assistant.v.2.1.0.zip",
+    "assetBytes": 716231513,
+    "assetSha256": "2a17d0b12f17a5fc85f8d54c441e9a2d68b53e828115083942709aa676fac0b0"
+  },
+  "model": {
+    "variant": "large — unjoined infill, finetuned_epoch_49_0 (the default the release ships)",
+    "pathInRelease": "Scripts/composers_assistant_v2/models_permuted_labels/unjoined/infill/finetuned_epoch_49_0/model/",
+    "binBytes": 769602209,
+    "binSha256": "297bccb173b4497a3c3b6007422506dced88fd9f99f5c8a18481dedd9667d530",
+    "configSha256": "c4c92d3e48092c6f2767675260ee5def0f7dcf774c6da981fd8c4321c561063b",
+    "architecture": "T5ForConditionalGeneration, 16+16 layers, d_model 576, d_ff 2304, 12 heads, d_kv 48, gated-GELU, relative attention 4096/4096, fp32",
+    "parameters": 192368256,
+    "parametersSource": "model.num_parameters() at load (four real runs, 2026-09-09); the bytes/4 estimate was 192.4M",
+    "vocabSize": 1944,
+    "tokenizer": "unjoined_include_note_duration_commands (UnjoinedTokenizer), 24 steps per quarter",
+    "maxLen": 1650,
+    "fineTunedTask": "infill"
+  },
+  "vendoredSource": {
+    "files": 30,
+    "combinedSha256": "691de1fb3b4916ed4efd63a9dd7bca947bf65c5779dc30f4bd0519f038f6cb21",
+    "note": "sha256 over the concatenation of the 30 Scripts/composers_assistant_v2/*.py files in sorted order, as extracted from the pinned zip"
+  },
+  "runtime": {
+    "python": "3.10",
+    "torch": "2.0.1+cpu",
+    "transformers": "4.31.0",
+    "tokenizers": "0.13.3",
+    "numpy": "<2",
+    "miditoolkit": "1.0.1",
+    "portion": "2.6.2 — lazily imported by preprocessing_functions._equality_measure when two tracks share an instrument; missing it fails real multi-instrument files while a synthetic smoke passes",
+    "sentencepiece": "not installed — only the joined/SPM model needs it; this image ships the unjoined model",
+    "reaper_python": "not installed — imported only by the REAPER-facing scripts, none of which is on this worker's import path"
+  },
+  "licence": {
+    "codeLicense": { "stated": "MIT", "file": "LICENSE (repository)", "sha256": "3908b67ba8ee96d08aff7954184f3a895da9e91281cf0d93cd0fc53919c55af7" },
+    "weightsLicense": { "stated": "MIT", "file": "Scripts/composers_assistant_v2/license.txt (in release)", "sha256": "b8dd1a0dadb0b35a75a902139182bbacd84e1bca0af880a7fa9dd2b4d1c42b21" },
+    "disclaimer": { "file": "disclaimer.txt", "sha256": "a8c17c2294d182de97eb93f8af23af2ceeaf1400056caaa68aaf2133188f7749", "quote": "We claim no rights to the outputs you generate with the models we've distributed." },
+    "trainingProvenance": { "file": "acknowledgments.html", "sha256": "0b690ace331dfe73d0423ac4390ffbd0f8c24e8cb6debfc7100de1b90255974b", "summary": "Mutopia Project (2,451 links, PD classical), CocoChorales (synthetic, CC-BY 4.0), Josquin Research Project, named permitted contributors" },
+    "classification": "SHIP_CLEARED — public evidence supports commercial use; not lawyer-reviewed",
+    "residuals": [
+      "18 of 237 Mutopia composer rows have post-1926 death dates (basis: composer's own CC-BY release)",
+      "HetzlersFakebook (2 of ~2,500 links) is a jazz fake-book site"
+    ],
+    "audit": "docs/evidence/model-composers-assistant-2-audit.json"
+  }
+}

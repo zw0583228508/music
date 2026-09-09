@@ -2508,6 +2508,60 @@ any of it.
   generated a note; no inference has run.** The projection will be checked
   against a real CA2 run before any tournament result is reported.
 
+- **PR-57** ✅ — `ca2-live-inference` (Wave Q — Model Discovery, phase 2 step 2):
+  **Composer's Assistant 2 proven live** — real PDMX MIDI in, real T5 inference,
+  real notes out, four runs, four passes. Evidence:
+  `docs/evidence/model-composers-assistant-2-live.json` (+ the four generated
+  MIDIs and raw model outputs under `docs/evidence/ca2-live/`).
+
+  **What ran.** The pinned large model (192,368,256 parameters, measured; sha
+  `297bccb1…` verified before every load) on CPU, on two real PDMX scores:
+  a brass ensemble (trumpet/trombone/tuba/horn/drums, 64 measures) and a
+  9-track baroque ensemble (piano, harpsichord, two violins, cello, four string
+  ensembles, 270 measures). Task: mask one track over 8 measures, give the
+  model every other track, write the held-out part — **the platform's own Tier
+  B task**. 6.5–28.7 s per run.
+
+  **What came out, honestly.** Run 1 (tuba, seed 7, T 1.0): 64 notes on a
+  single pitch — a **repetition collapse**, the case CA2's own nine-retry loop
+  exists for. Run 1b (same task, seed 13, T 1.15): a moving 37-note bass line
+  — so the collapse was a sampling event, not systematic. Run 1c (trumpet held
+  out): correct register, a real 71/73/68 melodic figure, **repeated verbatim
+  every bar**. Run 2 (harpsichord in the baroque score): **149 notes with
+  genuine four-voice polyphony** — a continuo-style realisation, the right thing
+  for the instrument. Reading: idiomatic register and rhythm, real polyphony
+  where the part wants it, weak-to-moderate harmonic tracking, heavy
+  bar-to-bar repetition, one collapse in four. **Single samples read by eye are
+  not a verdict; the tournament is.**
+
+  **Shipped with it.** `services/composers-assistant-worker/` — an isolated
+  Modal worker on the proven Basic Pitch pattern: Dockerfile pinned to Python
+  3.10, torch 2.0.1 CPU, transformers 4.31.0 (the model's own config),
+  tokenizers 0.13.3, miditoolkit 1.0.1, **portion 2.6.2**; the release zip
+  fetched and sha-verified at build; only the 30 source files and the large
+  model kept; a **build-time smoke that performs a real infill** on a
+  synthesised three-track MIDI — a container that starts is a container whose
+  model produced notes; `/health` re-verifies the bin sha and the 1,944-token
+  vocabulary on every call. `ca2ResultAdapter.ts` is the platform half: worker
+  notes (quarter-note time) → `MusicalNote[]` in seconds + the PR-56 account,
+  refusing any result from unverified weights, and naming a single-pitch output
+  as a collapse in its diagnostics.
+
+  **A real-input failure a synthetic smoke would never catch.** The second
+  file crashed on `ModuleNotFoundError: portion` — lazily imported only when
+  two tracks share an instrument. Pinned and asserted in the image.
+
+  Suites: globalModelRegistry 13 (the "nothing claims live inference" test
+  deliberately became "exactly one does, and its evidence file exists on
+  disk"), ca2ResultAdapter 6, symbolicGenerationProvider 5; typecheck green.
+
+  **Honest limits.** Not deployed to Modal yet — the image is written, not
+  built. No benchmark result: the tournament has not run. Both test scores are
+  the model's home repertoire (classical ensemble); **nothing here speaks to
+  pop, dance or Mizrahi arrangement**, which its corpus does not contain. The
+  worker applies no post-generation constraint by design — the platform passes
+  do that, so every provider is judged after the same enforcement.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
