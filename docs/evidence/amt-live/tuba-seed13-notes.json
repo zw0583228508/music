@@ -1,0 +1,950 @@
+{
+  "params": {
+    "label": "tuba",
+    "targetInst": 58,
+    "startMeasure": 0,
+    "nMeasures": 8,
+    "seed": 13,
+    "topP": 0.98,
+    "maxEvents": 400
+  },
+  "task": {
+    "kind": "infill: given every other instrument, write the held-out instrument over the window",
+    "targetInst": 58,
+    "measureSlice": [
+      0,
+      8
+    ],
+    "windowSeconds": [
+      0,
+      16
+    ],
+    "heldOutHumanNotes": 56,
+    "contextNotesInWindow": 155
+  },
+  "request": {
+    "shiftSeconds": 0,
+    "localWindowSeconds": [
+      0,
+      16
+    ],
+    "targetOwnLineGiven": 33,
+    "otherInstrumentEventsGiven": 251,
+    "historySeconds": 20,
+    "lookaheadSeconds": 8
+  },
+  "inference": {
+    "seconds": 22.74,
+    "mode": "anticipate",
+    "promptEvents": 0,
+    "promptEventsNote": "the held-out instrument's own notes before the window; rests padding it are not counted",
+    "controlEvents": 284,
+    "controlEventsFromOtherInstruments": 284,
+    "controlEventsFromTargetAfterWindow": 33,
+    "promptTokens": 0,
+    "historyTruncatedToMarkovWindow": false,
+    "forwardPasses": 270,
+    "maxContext": 957,
+    "generatedEvents": 88,
+    "restEvents": 1,
+    "duplicatesBlocked": 35,
+    "allowRest": true,
+    "forbidDuplicate": true,
+    "maskInstrument": true,
+    "truncatedByEventCap": false,
+    "device": "cuda:0",
+    "topP": 0.98,
+    "parameters": 780139520
+  },
+  "output": {
+    "generatedNotes": 88,
+    "offTargetEventsDropped": 0,
+    "measuresWithNotes": 8,
+    "pitchRange": [
+      28,
+      42
+    ],
+    "notes": [
+      {
+        "measure": 0,
+        "pitch": 39,
+        "startSec": 0,
+        "endSec": 0.06,
+        "startQn": 0,
+        "endQn": 0.12,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 38,
+        "startSec": 0.06,
+        "endSec": 0.12,
+        "startQn": 0.12,
+        "endQn": 0.24,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 37,
+        "startSec": 0.12,
+        "endSec": 0.18,
+        "startQn": 0.24,
+        "endQn": 0.36,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 36,
+        "startSec": 0.19,
+        "endSec": 0.25,
+        "startQn": 0.38,
+        "endQn": 0.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 35,
+        "startSec": 0.25,
+        "endSec": 0.31,
+        "startQn": 0.5,
+        "endQn": 0.62,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 34,
+        "startSec": 0.31,
+        "endSec": 0.37,
+        "startQn": 0.62,
+        "endQn": 0.74,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 33,
+        "startSec": 0.38,
+        "endSec": 0.44,
+        "startQn": 0.76,
+        "endQn": 0.88,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 32,
+        "startSec": 0.44,
+        "endSec": 0.5,
+        "startQn": 0.88,
+        "endQn": 1,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 31,
+        "startSec": 0.5,
+        "endSec": 0.56,
+        "startQn": 1,
+        "endQn": 1.12,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 30,
+        "startSec": 0.56,
+        "endSec": 0.62,
+        "startQn": 1.12,
+        "endQn": 1.24,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 29,
+        "startSec": 0.62,
+        "endSec": 0.68,
+        "startQn": 1.24,
+        "endQn": 1.36,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 28,
+        "startSec": 0.69,
+        "endSec": 0.75,
+        "startQn": 1.38,
+        "endQn": 1.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 28,
+        "startSec": 0.75,
+        "endSec": 0.81,
+        "startQn": 1.5,
+        "endQn": 1.62,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 28,
+        "startSec": 0.81,
+        "endSec": 0.87,
+        "startQn": 1.62,
+        "endQn": 1.74,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 28,
+        "startSec": 0.88,
+        "endSec": 0.94,
+        "startQn": 1.76,
+        "endQn": 1.88,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 28,
+        "startSec": 0.94,
+        "endSec": 1,
+        "startQn": 1.88,
+        "endQn": 2,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 28,
+        "startSec": 1,
+        "endSec": 1.25,
+        "startQn": 2,
+        "endQn": 2.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 28,
+        "startSec": 1.25,
+        "endSec": 1.5,
+        "startQn": 2.5,
+        "endQn": 3,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 32,
+        "startSec": 1.25,
+        "endSec": 1.75,
+        "startQn": 2.5,
+        "endQn": 3.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 28,
+        "startSec": 1.5,
+        "endSec": 1.75,
+        "startQn": 3,
+        "endQn": 3.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 28,
+        "startSec": 1.75,
+        "endSec": 2,
+        "startQn": 3.5,
+        "endQn": 4,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 0,
+        "pitch": 35,
+        "startSec": 1.75,
+        "endSec": 2,
+        "startQn": 3.5,
+        "endQn": 4,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 1,
+        "pitch": 35,
+        "startSec": 2,
+        "endSec": 2.25,
+        "startQn": 4,
+        "endQn": 4.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 1,
+        "pitch": 40,
+        "startSec": 2,
+        "endSec": 2.25,
+        "startQn": 4,
+        "endQn": 4.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 1,
+        "pitch": 35,
+        "startSec": 2.25,
+        "endSec": 2.5,
+        "startQn": 4.5,
+        "endQn": 5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 1,
+        "pitch": 40,
+        "startSec": 2.25,
+        "endSec": 2.5,
+        "startQn": 4.5,
+        "endQn": 5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 1,
+        "pitch": 35,
+        "startSec": 2.75,
+        "endSec": 3.5,
+        "startQn": 5.5,
+        "endQn": 7,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 1,
+        "pitch": 42,
+        "startSec": 2.75,
+        "endSec": 3.5,
+        "startQn": 5.5,
+        "endQn": 7,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 1,
+        "pitch": 35,
+        "startSec": 3.5,
+        "endSec": 3.75,
+        "startQn": 7,
+        "endQn": 7.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 1,
+        "pitch": 42,
+        "startSec": 3.5,
+        "endSec": 3.75,
+        "startQn": 7,
+        "endQn": 7.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 1,
+        "pitch": 35,
+        "startSec": 3.75,
+        "endSec": 4,
+        "startQn": 7.5,
+        "endQn": 8,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 1,
+        "pitch": 42,
+        "startSec": 3.75,
+        "endSec": 4,
+        "startQn": 7.5,
+        "endQn": 8,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 2,
+        "pitch": 35,
+        "startSec": 4,
+        "endSec": 4.25,
+        "startQn": 8,
+        "endQn": 8.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 2,
+        "pitch": 40,
+        "startSec": 4,
+        "endSec": 4.25,
+        "startQn": 8,
+        "endQn": 8.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 2,
+        "pitch": 35,
+        "startSec": 4.25,
+        "endSec": 4.5,
+        "startQn": 8.5,
+        "endQn": 9,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 2,
+        "pitch": 40,
+        "startSec": 4.25,
+        "endSec": 4.5,
+        "startQn": 8.5,
+        "endQn": 9,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 2,
+        "pitch": 35,
+        "startSec": 4.75,
+        "endSec": 5.5,
+        "startQn": 9.5,
+        "endQn": 11,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 2,
+        "pitch": 42,
+        "startSec": 4.75,
+        "endSec": 5.5,
+        "startQn": 9.5,
+        "endQn": 11,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 2,
+        "pitch": 35,
+        "startSec": 5.5,
+        "endSec": 5.75,
+        "startQn": 11,
+        "endQn": 11.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 2,
+        "pitch": 42,
+        "startSec": 5.5,
+        "endSec": 5.75,
+        "startQn": 11,
+        "endQn": 11.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 2,
+        "pitch": 35,
+        "startSec": 5.75,
+        "endSec": 6,
+        "startQn": 11.5,
+        "endQn": 12,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 2,
+        "pitch": 42,
+        "startSec": 5.75,
+        "endSec": 6,
+        "startQn": 11.5,
+        "endQn": 12,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 3,
+        "pitch": 35,
+        "startSec": 6,
+        "endSec": 6.25,
+        "startQn": 12,
+        "endQn": 12.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 3,
+        "pitch": 39,
+        "startSec": 6,
+        "endSec": 6.25,
+        "startQn": 12,
+        "endQn": 12.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 3,
+        "pitch": 35,
+        "startSec": 6.25,
+        "endSec": 6.5,
+        "startQn": 12.5,
+        "endQn": 13,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 3,
+        "pitch": 39,
+        "startSec": 6.25,
+        "endSec": 6.5,
+        "startQn": 12.5,
+        "endQn": 13,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 3,
+        "pitch": 35,
+        "startSec": 6.75,
+        "endSec": 7.5,
+        "startQn": 13.5,
+        "endQn": 15,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 3,
+        "pitch": 40,
+        "startSec": 6.75,
+        "endSec": 7.5,
+        "startQn": 13.5,
+        "endQn": 15,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 3,
+        "pitch": 35,
+        "startSec": 7.5,
+        "endSec": 7.75,
+        "startQn": 15,
+        "endQn": 15.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 3,
+        "pitch": 40,
+        "startSec": 7.5,
+        "endSec": 7.75,
+        "startQn": 15,
+        "endQn": 15.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 3,
+        "pitch": 35,
+        "startSec": 7.75,
+        "endSec": 8,
+        "startQn": 15.5,
+        "endQn": 16,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 3,
+        "pitch": 40,
+        "startSec": 7.75,
+        "endSec": 8,
+        "startQn": 15.5,
+        "endQn": 16,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 4,
+        "pitch": 35,
+        "startSec": 8,
+        "endSec": 8.25,
+        "startQn": 16,
+        "endQn": 16.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 4,
+        "pitch": 39,
+        "startSec": 8,
+        "endSec": 8.25,
+        "startQn": 16,
+        "endQn": 16.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 4,
+        "pitch": 35,
+        "startSec": 8.25,
+        "endSec": 8.5,
+        "startQn": 16.5,
+        "endQn": 17,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 4,
+        "pitch": 39,
+        "startSec": 8.25,
+        "endSec": 8.5,
+        "startQn": 16.5,
+        "endQn": 17,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 4,
+        "pitch": 35,
+        "startSec": 8.75,
+        "endSec": 9.5,
+        "startQn": 17.5,
+        "endQn": 19,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 4,
+        "pitch": 39,
+        "startSec": 8.75,
+        "endSec": 9.5,
+        "startQn": 17.5,
+        "endQn": 19,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 4,
+        "pitch": 35,
+        "startSec": 9.5,
+        "endSec": 9.75,
+        "startQn": 19,
+        "endQn": 19.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 4,
+        "pitch": 39,
+        "startSec": 9.5,
+        "endSec": 9.75,
+        "startQn": 19,
+        "endQn": 19.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 4,
+        "pitch": 35,
+        "startSec": 9.75,
+        "endSec": 10,
+        "startQn": 19.5,
+        "endQn": 20,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 4,
+        "pitch": 39,
+        "startSec": 9.75,
+        "endSec": 10,
+        "startQn": 19.5,
+        "endQn": 20,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 5,
+        "pitch": 35,
+        "startSec": 10,
+        "endSec": 10.25,
+        "startQn": 20,
+        "endQn": 20.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 5,
+        "pitch": 40,
+        "startSec": 10,
+        "endSec": 10.25,
+        "startQn": 20,
+        "endQn": 20.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 5,
+        "pitch": 35,
+        "startSec": 10.25,
+        "endSec": 10.5,
+        "startQn": 20.5,
+        "endQn": 21,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 5,
+        "pitch": 40,
+        "startSec": 10.25,
+        "endSec": 10.5,
+        "startQn": 20.5,
+        "endQn": 21,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 5,
+        "pitch": 35,
+        "startSec": 10.75,
+        "endSec": 11.5,
+        "startQn": 21.5,
+        "endQn": 23,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 5,
+        "pitch": 42,
+        "startSec": 10.75,
+        "endSec": 11.5,
+        "startQn": 21.5,
+        "endQn": 23,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 5,
+        "pitch": 35,
+        "startSec": 11.5,
+        "endSec": 11.75,
+        "startQn": 23,
+        "endQn": 23.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 5,
+        "pitch": 42,
+        "startSec": 11.5,
+        "endSec": 11.75,
+        "startQn": 23,
+        "endQn": 23.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 5,
+        "pitch": 35,
+        "startSec": 11.75,
+        "endSec": 12,
+        "startQn": 23.5,
+        "endQn": 24,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 5,
+        "pitch": 42,
+        "startSec": 11.75,
+        "endSec": 12,
+        "startQn": 23.5,
+        "endQn": 24,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 6,
+        "pitch": 35,
+        "startSec": 12,
+        "endSec": 12.25,
+        "startQn": 24,
+        "endQn": 24.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 6,
+        "pitch": 40,
+        "startSec": 12,
+        "endSec": 12.25,
+        "startQn": 24,
+        "endQn": 24.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 6,
+        "pitch": 35,
+        "startSec": 12.25,
+        "endSec": 12.5,
+        "startQn": 24.5,
+        "endQn": 25,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 6,
+        "pitch": 40,
+        "startSec": 12.25,
+        "endSec": 12.5,
+        "startQn": 24.5,
+        "endQn": 25,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 6,
+        "pitch": 35,
+        "startSec": 12.75,
+        "endSec": 13.5,
+        "startQn": 25.5,
+        "endQn": 27,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 6,
+        "pitch": 42,
+        "startSec": 12.75,
+        "endSec": 13.5,
+        "startQn": 25.5,
+        "endQn": 27,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 6,
+        "pitch": 35,
+        "startSec": 13.5,
+        "endSec": 13.75,
+        "startQn": 27,
+        "endQn": 27.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 6,
+        "pitch": 42,
+        "startSec": 13.5,
+        "endSec": 13.75,
+        "startQn": 27,
+        "endQn": 27.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 6,
+        "pitch": 35,
+        "startSec": 13.75,
+        "endSec": 14,
+        "startQn": 27.5,
+        "endQn": 28,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 6,
+        "pitch": 42,
+        "startSec": 13.75,
+        "endSec": 14,
+        "startQn": 27.5,
+        "endQn": 28,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 7,
+        "pitch": 35,
+        "startSec": 14,
+        "endSec": 14.25,
+        "startQn": 28,
+        "endQn": 28.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 7,
+        "pitch": 39,
+        "startSec": 14,
+        "endSec": 14.25,
+        "startQn": 28,
+        "endQn": 28.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 7,
+        "pitch": 35,
+        "startSec": 14.25,
+        "endSec": 14.5,
+        "startQn": 28.5,
+        "endQn": 29,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 7,
+        "pitch": 39,
+        "startSec": 14.25,
+        "endSec": 14.5,
+        "startQn": 28.5,
+        "endQn": 29,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 7,
+        "pitch": 35,
+        "startSec": 14.75,
+        "endSec": 15.75,
+        "startQn": 29.5,
+        "endQn": 31.5,
+        "velocity": 80,
+        "isDrum": false
+      },
+      {
+        "measure": 7,
+        "pitch": 40,
+        "startSec": 14.75,
+        "endSec": 15.75,
+        "startQn": 29.5,
+        "endQn": 31.5,
+        "velocity": 80,
+        "isDrum": false
+      }
+    ]
+  }
+}
