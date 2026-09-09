@@ -1,0 +1,47 @@
+{
+  "title": "ARRANGER_REMI tokenizer round-trip proof over real PDMX MIDI (Wave Q, Q-05)",
+  "date": "2026-09-09",
+  "gate": "The training plan's first gate: no full training before the tokenizer is proven lossless modulo the grid on real data.",
+  "vocabulary": {
+    "version": "ARRANGER_REMI_v1_3cfd16b3_386",
+    "size": 386,
+    "shape": "REMI-style metrical events, plus per-track structure an arranger needs: Track_<family> opens each instrument's events; Tempo_<bin> and TimeSig_<n>/<d> are in the stream.",
+    "grid": "12 steps per quarter — resolves 16ths and 8th-triplets",
+    "note": "Lossy by quantization and by nothing else. Onset and duration snap to the grid; pitch, track family and bar index are exact."
+  },
+  "run": {
+    "corpus": ".pdmx-data/mid — 254,035 MIDI files extracted from mid.tar.gz (verified md5)",
+    "sample": 8000,
+    "sampling": "reservoir sample with a fixed seed, so the run is reproducible",
+    "parsed": 8000,
+    "parseFailures": 0,
+    "filesEmpty": 3,
+    "filesWithNotes": 7997,
+    "notesConsidered": 3663115
+  },
+  "result": {
+    "filesLosslessModuloGrid": 7997,
+    "filesLosslessShare": 1.0,
+    "noteDropShare": 0,
+    "noteSpuriousShare": 0,
+    "exactGridMatchShare": 1.0,
+    "fullMatchShare": 1.0,
+    "onsetSnapErrorQuartersMean": 0.001231,
+    "onsetSnapErrorQuartersMax": 0.04167,
+    "gridStepQuarters": 0.083333,
+    "meanTokensPerFile": 1958,
+    "reading": "Across 3,663,115 notes in 7,997 real scores, not one note was dropped and not one was invented. Every note round-tripped matching family, bar, position, pitch, velocity bin and duration bin. The only change is timing: a mean snap of 0.0012 of a quarter note (~0.6 ms at 120 BPM), never more than half a grid step, which is the grid doing exactly what it is for."
+  },
+  "bugTheRealDataCaught": {
+    "bug": "Real PDMX scores carry time signatures the vocabulary did not: the first run threw on TimeSig_1/4.",
+    "fix": "normaliseTimeSig folds any metre onto the nearest representable one by bar length, and the round-trip result carries a timeSigApproximated flag.",
+    "howOften": "3,423 of 7,997 files (43%) had their metre folded — mostly /8 and /2 variants and odd metres. Their notes still round-trip losslessly; only the bar-length label is approximate."
+  },
+  "honestLimits": [
+    "This proves the tokenizer preserves the notes. It does not prove the tokenization is good FOR LEARNING — that only the trained model can show.",
+    "43% of files had their time signature approximated. A model trained on this sees a slightly wrong bar length for those; the flag lets a training run weight or exclude them.",
+    "The grid is 12 steps per quarter. Genuinely rubato or heavily swung human performance would lose its microtiming here — which is correct for a symbolic arranger and wrong for a groove model. PDMX is notated scores, so this is not a concern for this corpus.",
+    "Percussion is mapped to a single 'drums' family. The specific drum voice (kick vs snare vs hat) survives as its MIDI pitch, but the tokenizer does not model a kit's structure.",
+    "No model has been trained. This is gate 1 of 5 (tokenizer round-trip -> dataset rights proof -> tiny overfit -> pilot -> benchmark)."
+  ]
+}
