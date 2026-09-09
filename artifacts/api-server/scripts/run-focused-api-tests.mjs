@@ -212,6 +212,14 @@ const suites = {
         "tournament-breakdown.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // PR-70: the localhost-only gate in front of the development sign-in, and
+      // the policy that decides whether it may exist at all.
+      ["src/lib/localAccess.test.ts", "local-access.test.mjs"],
+      [
+        "src/routes/devAuth.test.ts",
+        "dev-auth.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [
