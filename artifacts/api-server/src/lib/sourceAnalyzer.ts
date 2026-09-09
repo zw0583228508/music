@@ -1629,10 +1629,21 @@ export async function analyzeProjectSource(
         status: midi?.keyMap.length ? "detected" : keyReconciliation?.status ?? "not_available",
         confidence: confidenceByField.key || null,
         providers: midi?.keyMap.length ? ["STANDARD_MIDI"] :
-          keyReconciliation?.providers ?? [],
+          keyReconciliation?.status === "contested"
+            ? [...new Set(keyReconciliation.candidates.flatMap((item) => item.providers))].sort()
+            : keyReconciliation?.providers ?? [],
         message: midi?.keyMap.length ? null : keyReconciliation?.message ??
           "No unambiguous tonal center was detected.",
         edited: false,
+        // A contested key is carried as its candidates, never as the heavier
+        // guess: the key map stays empty until a producer confirms one.
+        ...(keyReconciliation?.status === "contested" ? {
+          candidates: keyReconciliation.candidates.map((item) => ({
+            value: String(item.value),
+            confidence: item.score,
+            providers: item.providers,
+          })),
+        } : {}),
       },
       melody: {
         status: melody.length ? "detected" : "not_available",
@@ -1918,6 +1929,13 @@ export async function analyzeProjectSource(
       output: candidate,
       confidence: candidateConfidence,
     }]);
+    if (keyReconciliation?.status === "contested") {
+      logger.info({
+        sourceId,
+        candidates: keyReconciliation.candidates,
+        accepted: fusion.accepted,
+      }, "song_model_key_contested");
+    }
     if (!fusion.accepted) {
       // A rejected model is discarded along with every provider result that
       // explains why it was rejected. Logging the provenance first is the

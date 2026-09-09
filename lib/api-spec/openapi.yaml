@@ -3200,9 +3200,22 @@ components:
             - type: number
         confidence: { type: number, nullable: true, minimum: 0, maximum: 1 }
         providers: { type: array, items: { type: string } }
-        status: { type: string, enum: [detected, low_confidence, not_available] }
+        status: { type: string, enum: [detected, low_confidence, contested, not_available] }
         message: { type: string, nullable: true }
         margin: { type: number, nullable: true }
+        candidates:
+          description: Present when status is contested - every value with real weight, strongest first.
+          type: array
+          items:
+            type: object
+            required: [value, score, providers]
+            properties:
+              value:
+                oneOf:
+                  - type: string
+                  - type: number
+              score: { type: number, minimum: 0, maximum: 1 }
+              providers: { type: array, items: { type: string } }
     DomainReconciliationReport:
       type: object
       description: Per-domain provider reconciliation (Analysis Reconciliation V2).
@@ -3526,13 +3539,22 @@ components:
         attempts: { type: number, minimum: 0 }
         errorCode: { type: string }
         errorMessage: { type: string }
+    SongModelFieldCandidate:
+      type: object
+      required: [value, confidence, providers]
+      properties:
+        value: { type: string }
+        confidence: { type: number }
+        providers:
+          type: array
+          items: { type: string }
     SongModelFieldStatusProperty:
       type: object
       required: [status, confidence, providers, message, edited]
       properties:
         status:
           type: string
-          enum: [detected, low_confidence, failed, not_available]
+          enum: [detected, low_confidence, contested, failed, not_available]
         confidence:
           type: ["number", "null"]
         providers:
@@ -3542,6 +3564,10 @@ components:
           type: ["string", "null"]
         edited:
           type: boolean
+        candidates:
+          description: Present when status is contested — the values independent analyses named, strongest first.
+          type: array
+          items: { $ref: "#/components/schemas/SongModelFieldCandidate" }
     SongModelFieldStatus:
       type: object
       required: [tempo, meter, key, melody, bass, harmony, sections, energy]

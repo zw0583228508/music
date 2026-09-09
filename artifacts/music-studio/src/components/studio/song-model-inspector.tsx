@@ -254,6 +254,25 @@ export function SongModelInspector({ projectId }: SongModelInspectorProps) {
     });
   };
 
+  // A contested key is settled by the producer, not by the heavier guess: the
+  // chosen candidate goes through the same correction path as a typed key.
+  const confirmKeyCandidate = (value: string) => {
+    if (!model) return;
+    setCorrectionError(null);
+    setCorrectionNotice(null);
+    correctModel.mutate({ projectId, data: { baseVersion: model.version, key: value } }, {
+      onSuccess: (corrected) => {
+        queryClient.setQueryData(getGetProjectSongModelQueryKey(projectId), corrected);
+        setKey(corrected.keyMap[0]?.key ?? "");
+        setCorrectionNotice(`Confirmed key ${value} — saved Song Model v${corrected.version}.`);
+        void queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+      },
+      onError: (error) => {
+        setCorrectionError(error instanceof Error ? error.message : "Could not confirm the key.");
+      },
+    });
+  };
+
   if (isLoading || sourcesLoading || jobsLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-full p-8 text-muted-foreground space-y-4">
@@ -278,6 +297,7 @@ export function SongModelInspector({ projectId }: SongModelInspectorProps) {
 
   const warningFields = Object.entries(model.fieldStatus).filter(([, value]) =>
     value.status === "low_confidence" ||
+    value.status === "contested" ||
     value.status === "failed" ||
     value.status === "not_available"
   );
@@ -994,6 +1014,36 @@ export function SongModelInspector({ projectId }: SongModelInspectorProps) {
                      ))}
                    </TableBody>
                  </Table>
+               ) : model.fieldStatus.key.status === "contested" && model.fieldStatus.key.candidates?.length ? (
+                  <div className="p-4 space-y-3" data-testid="key-contested">
+                    <p className="text-xs text-amber-700">
+                      Independent analyses disagree on the key. The Song Model carries no key until you confirm one; arranging stays blocked until then.
+                    </p>
+                    <div className="space-y-2">
+                      {model.fieldStatus.key.candidates.map((candidate) => (
+                        <div key={candidate.value} className="flex items-center justify-between gap-3 rounded-md border px-3 py-2" data-testid={`key-candidate-${candidate.value.replace(/\s+/g, "-")}`}>
+                          <div className="min-w-0">
+                            <div className="font-semibold text-sm text-primary">{candidate.value}</div>
+                            <div className="text-[11px] text-muted-foreground font-mono truncate">
+                              {candidate.providers.join(", ")} · weight {Math.round(candidate.confidence * 100)}%
+                            </div>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={correctModel.isPending}
+                            onClick={() => confirmKeyCandidate(candidate.value)}
+                            data-testid={`button-confirm-key-${candidate.value.replace(/\s+/g, "-")}`}
+                          >
+                            Use {candidate.value}
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      Neither of these? Type the key under Corrections and save.
+                    </p>
+                  </div>
                ) : (
                   <div className="p-8 text-center text-sm text-muted-foreground italic" data-testid="text-no-key">
                     {fieldEmptyMessage(model.fieldStatus.key, "No key events were detected.")}
@@ -1517,14 +1567,16 @@ function FieldStatusBadge({
       ? "Detected"
       : status === "low_confidence"
         ? "Low confidence"
-        : status === "failed"
-          ? "Failed"
-          : "Not available";
+        : status === "contested"
+          ? "Contested"
+          : status === "failed"
+            ? "Failed"
+            : "Not available";
   const className = value?.edited
     ? "border-violet-500/30 bg-violet-500/10 text-violet-700"
     : status === "detected"
       ? "border-sky-500/30 bg-sky-500/10 text-sky-700"
-      : status === "low_confidence"
+      : status === "low_confidence" || status === "contested"
         ? "border-amber-500/30 bg-amber-500/10 text-amber-700"
         : "border-red-500/30 bg-red-500/10 text-red-700";
   const providers = value?.providers.length ? value.providers.join(", ") : "No provider";

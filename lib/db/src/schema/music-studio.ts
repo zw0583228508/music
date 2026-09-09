@@ -1925,12 +1925,25 @@ export type ChordHarmonyEvent = {
   bassSupportEvidence?: ChordBassSupportEvidence[];
   coordinates?: CanonicalTimeRange;
 };
+/** One value independent analyses named for a contested field. */
+export type SongModelFieldCandidate = {
+  value: string;
+  confidence: number;
+  providers: string[];
+};
 export type SongModelFieldStatus = {
-  status: "detected" | "low_confidence" | "failed" | "not_available";
+  /**
+   * `contested`: independent analyses named different values with comparable
+   * weight. The field's own map stays empty rather than carrying an arbitrary
+   * pick; `candidates` holds what was named so a producer can confirm one.
+   */
+  status: "detected" | "low_confidence" | "contested" | "failed" | "not_available";
   confidence: number | null;
   providers: string[];
   message: string | null;
   edited: boolean;
+  /** Present when `status` is `contested`: strongest first. */
+  candidates?: SongModelFieldCandidate[];
 };
 export type ArrangementGenerationProvenance = {
   jobId: string;

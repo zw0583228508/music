@@ -26,14 +26,55 @@ test("does not count repeated evidence from one provider as corroboration", () =
   assert.deepEqual(result.providers, ["ESSENTIA"]);
 });
 
-test("abstains when competing meter evidence has no usable margin", () => {
+test("marks competing meter evidence contested, carrying both candidates and no value", () => {
   const result = reconcileAnalysisField("meter", [
     { provider: "ALL_IN_ONE", value: "4/4", confidence: .94 },
     { provider: "STANDARD_MIDI", value: "3/4", confidence: .8 },
   ]);
   assert.equal(result.value, null);
+  assert.equal(result.status, "contested");
+  assert.deepEqual(result.providers, []);
+  assert.deepEqual(result.candidates.map((item) => item.value).sort(), ["3/4", "4/4"]);
+  assert.deepEqual(
+    Object.fromEntries(result.candidates.map((item) => [item.value, item.providers])),
+    { "4/4": ["ALL_IN_ONE"], "3/4": ["STANDARD_MIDI"] },
+  );
+  // Strongest first.
+  assert.ok(result.candidates[0]!.score >= result.candidates[1]!.score);
+  assert.ok(result.candidates.every((item) => item.score > 0 && item.score <= 1));
+  assert.ok(result.message?.includes("disagree"));
+});
+
+test("the owner's second upload: spectral G minor vs transcription E-flat major is contested, not rejected", () => {
+  // The real failure of 2026-09-09: LOCAL_SIGNAL_ANALYZER_V1 and the key read
+  // off 1,769 transcribed notes disagreed, and the whole Song Model was refused.
+  const result = reconcileAnalysisField("key", [
+    { provider: "LOCAL_SIGNAL_ANALYZER_V1", value: "G minor", confidence: .6 },
+    { provider: "TRANSCRIPTION_KEY_V1", value: "E♭ major", confidence: .69 },
+  ]);
+  assert.equal(result.status, "contested");
+  assert.equal(result.value, null);
+  assert.deepEqual(result.candidates.map((item) => item.value).sort(), ["Eb major", "G minor"]);
+  // Strongest first, and neither candidate is promoted to the value.
+  assert.ok(result.candidates[0]!.score >= result.candidates[1]!.score);
+});
+
+test("a single usable observation beside noise is low confidence, not a contest", () => {
+  const result = reconcileAnalysisField("key", [
+    { provider: "ESSENTIA", value: "D major", confidence: .95 },
+    { provider: "LOCAL_SIGNAL_ANALYZER_V1", value: "A major", confidence: .1 },
+  ]);
+  assert.notEqual(result.status, "contested");
+  assert.deepEqual(result.candidates, []);
+});
+
+test("two weak observations that disagree stay not available: nothing worth choosing between", () => {
+  const result = reconcileAnalysisField("key", [
+    { provider: "LOCAL_SIGNAL_ANALYZER_V1", value: "G minor", confidence: .2 },
+    { provider: "TRANSCRIPTION_KEY_V1", value: "E♭ major", confidence: .2 },
+  ]);
   assert.equal(result.status, "not_available");
-  assert.ok(result.message?.includes("disagreed"));
+  assert.deepEqual(result.candidates, []);
 });
 
 test("normalizes key aliases before clustering", () => {

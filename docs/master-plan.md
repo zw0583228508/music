@@ -4182,6 +4182,59 @@ any of it.
   included) because the owner is the intended rater here; Gate C's
   five-independent-rater rule is untouched and unmet. CA2 seeds are not
   reproducible across machines (PR-58), so the CA2 sides are one sample each.
+- **PR-86** ✅ — `contested-key-clarification` (the owner's second upload,
+  three times failed at 68 % with "Key analysis is required"): a key that
+  two independent analyses disagree on is now *carried as a contest*, not
+  refused. This is the Analysis-Engine principle applied to one field: when
+  two observations with comparable weight disagree, do not pick one, do not
+  invent a value, say CONTESTED and carry both.
+
+  **What changed.** `reconcileAnalysisField` gains a fourth status,
+  `contested`: two or more clusters each above a floor (0.15 absolute, 0.4 of
+  the winner's weight) and no usable margin → `value: null` plus
+  `candidates` (value, summed weight, providers), strongest first. One usable
+  observation beside noise is still `low_confidence`; two weak ones are still
+  `not_available`. The Song Model's `fieldStatus.key` carries the status and
+  the candidates (`SongModelFieldCandidate`, spec + orval regenerated, and
+  the `DomainReconciliation` enum widened — the first rebuilt API returned
+  500 on GET song-model until it was); the key map stays **empty**;
+  validation emits `CONTESTED_KEY` as a *warning* instead of the
+  `MISSING_KEY_MAP` error only when the status says contested *and* names
+  ≥ 2 candidates — so the model is accepted **flagged**, arrangement stays
+  blocked by `SONG_MODEL_FLAGGED`, and the producer's confirmation goes
+  through the existing correction route (a clicked candidate and a typed key
+  take the same path; `correctionFields` treats contested like
+  low_confidence so confirming counts as a change). The studio's Key Map
+  panel shows a **Contested** badge, the disagreement, and one `Use …`
+  button per candidate. Tests: analysisReconciliation 9 (incl. the owner's
+  exact case, spectral G minor vs transcription E♭ major), songModelValidation
+  31 (contested → flagged → blocked → confirmed → accepted; empty key map
+  without a contest still rejected; a one-candidate "contest" still
+  rejected), songModelCorrection 4; typecheck green.
+
+  **Proof on the owner's file** (`docs/evidence/contested-key-live.json`):
+  retry → 202; `song_model_key_contested` with E♭ major 0.345 vs G minor
+  0.32; source **ready** at 100 %; Song Model v4 `flagged` with one
+  `CONTESTED_KEY` warning, `keyMap: []`, both candidates in
+  `fieldStatus.key`; the studio's Harmony Map rendered the Contested badge
+  and the two buttons in a real browser. Neither button was pressed — the
+  key is the owner's to confirm.
+
+  **Found on the way.** The analysis-asset lease store is in-memory, so a
+  lease minted by one API process is unknown to another: while a stream
+  worktree's API held :5010, the main API's first retry got BASIC_PITCH HTTP
+  400 (the worker fetched the lease from the wrong process). The main API
+  now runs its surface on :5011 behind a second quick tunnel via process env
+  (`ANALYSIS_ASSET_PORT`, `ANALYSIS_ASSET_BASE_URL`; `.env.local` untouched).
+
+  **Honest limits.** Which key the recording is in is still unknown — E♭
+  major and G minor share three notes and the piece may sit in either or
+  move. The contest thresholds are design choices, not calibrated ones;
+  Stream E's harmony engine and Stream I's disagreement engine are where
+  they get measured against ANALYSIS_GOLD_V1. Only the studio panel reads
+  the candidates so far. Melody on this recording is still `not_available`
+  (a full-mix transcription is not a melodic line) — unchanged here. Quick
+  tunnels remain ephemeral; a named tunnel is still not set up.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

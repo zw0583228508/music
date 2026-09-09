@@ -12,6 +12,7 @@ export type SongModelFieldStatusPropertyStatus = typeof SongModelFieldStatusProp
 export const SongModelFieldStatusPropertyStatus = {
   detected: 'detected',
   low_confidence: 'low_confidence',
+  contested: 'contested',
   failed: 'failed',
   not_available: 'not_available',
 } as const;

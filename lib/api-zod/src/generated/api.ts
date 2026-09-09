@@ -3622,6 +3622,9 @@ export const getProjectSongModelResponseMusicalMapArrangementSpaceWindowsItemCoo
 export const getProjectSongModelResponseReconciliationDomainsConfidenceMin = 0;
 export const getProjectSongModelResponseReconciliationDomainsConfidenceMax = 1;
 
+export const getProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMin = 0;
+export const getProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMax = 1;
+
 export const getProjectSongModelResponseReconciliationConsensusScoreMin = 0;
 export const getProjectSongModelResponseReconciliationConsensusScoreMax = 1;
 
@@ -4723,9 +4726,14 @@ export const GetProjectSongModelResponse = zod.object({
   "value": zod.union([zod.string(),zod.number()]).nullable(),
   "confidence": zod.number().min(getProjectSongModelResponseReconciliationDomainsConfidenceMin).max(getProjectSongModelResponseReconciliationDomainsConfidenceMax).nullable(),
   "providers": zod.array(zod.string()),
-  "status": zod.enum(['detected', 'low_confidence', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'not_available']),
   "message": zod.string().nullable(),
-  "margin": zod.number().nullable()
+  "margin": zod.number().nullable(),
+  "candidates": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number()]),
+  "score": zod.number().min(getProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMin).max(getProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMax),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested - every value with real weight, strongest first.')
 })),
   "consensusScore": zod.number().min(getProjectSongModelResponseReconciliationConsensusScoreMin).max(getProjectSongModelResponseReconciliationConsensusScoreMax),
   "contestedDomains": zod.array(zod.enum(['tempo', 'downbeats', 'meter', 'key', 'chords', 'melody', 'bass', 'sections', 'instruments']))
@@ -4810,60 +4818,100 @@ export const GetProjectSongModelResponse = zod.object({
 }),zod.null()]).optional().describe('pyloudnorm evidence. samplePeak is linear sample peak, not true peak.'),
   "fieldStatus": zod.object({
   "tempo": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 }),
   "meter": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 }),
   "key": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 }),
   "melody": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 }),
   "bass": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 }),
   "harmony": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 }),
   "sections": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 }),
   "energy": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 })
 }),
   "provenance": zod.object({
@@ -5783,6 +5831,9 @@ export const correctProjectSongModelResponseMusicalMapArrangementSpaceWindowsIte
 
 export const correctProjectSongModelResponseReconciliationDomainsConfidenceMin = 0;
 export const correctProjectSongModelResponseReconciliationDomainsConfidenceMax = 1;
+
+export const correctProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMin = 0;
+export const correctProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMax = 1;
 
 export const correctProjectSongModelResponseReconciliationConsensusScoreMin = 0;
 export const correctProjectSongModelResponseReconciliationConsensusScoreMax = 1;
@@ -6885,9 +6936,14 @@ export const CorrectProjectSongModelResponse = zod.object({
   "value": zod.union([zod.string(),zod.number()]).nullable(),
   "confidence": zod.number().min(correctProjectSongModelResponseReconciliationDomainsConfidenceMin).max(correctProjectSongModelResponseReconciliationDomainsConfidenceMax).nullable(),
   "providers": zod.array(zod.string()),
-  "status": zod.enum(['detected', 'low_confidence', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'not_available']),
   "message": zod.string().nullable(),
-  "margin": zod.number().nullable()
+  "margin": zod.number().nullable(),
+  "candidates": zod.array(zod.object({
+  "value": zod.union([zod.string(),zod.number()]),
+  "score": zod.number().min(correctProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMin).max(correctProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMax),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested - every value with real weight, strongest first.')
 })),
   "consensusScore": zod.number().min(correctProjectSongModelResponseReconciliationConsensusScoreMin).max(correctProjectSongModelResponseReconciliationConsensusScoreMax),
   "contestedDomains": zod.array(zod.enum(['tempo', 'downbeats', 'meter', 'key', 'chords', 'melody', 'bass', 'sections', 'instruments']))
@@ -6972,60 +7028,100 @@ export const CorrectProjectSongModelResponse = zod.object({
 }),zod.null()]).optional().describe('pyloudnorm evidence. samplePeak is linear sample peak, not true peak.'),
   "fieldStatus": zod.object({
   "tempo": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 }),
   "meter": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 }),
   "key": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 }),
   "melody": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 }),
   "bass": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 }),
   "harmony": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 }),
   "sections": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 }),
   "energy": zod.object({
-  "status": zod.enum(['detected', 'low_confidence', 'failed', 'not_available']),
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
   "confidence": zod.number().nullable(),
   "providers": zod.array(zod.string()),
   "message": zod.string().nullable(),
-  "edited": zod.boolean()
+  "edited": zod.boolean(),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string())
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
 })
 }),
   "provenance": zod.object({
