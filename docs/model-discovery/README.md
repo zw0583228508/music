@@ -145,5 +145,15 @@ existing multitrack foundation.** The tournament decides; this is the prior.
 4. **Real inference**, in value/risk order: ✅ CA2 (four local runs + two cloud runs on real PDMX MIDI) → Anticipatory MT → MIDI-GPT → MuPT → CLaMP 3.
 5. ✅ **Tournament** on per-task suites against `REFERENCE_PART_COMPOSER` and `CONTEXT_AWARE_ARRANGER`, with blind pairs for the Listening Room — PR-59, first live run in `docs/evidence/model-tournament-live.json` (12 classical PDMX tasks; CA2+CTX 73.5 vs reference 63.0 on the proxy, more playability errors → `do_not_promote`; 216 blind pairs written, none rated). Still to run: a non-classical slice; drums/guitar/synth targets; MIDI-GPT / AMT as shadow challengers.
 6. ✅ (draft v1) **Decision report** — [`decision-report.md`](decision-report.md): Options A–E priced; recommendation start from CA2 (D now, B as first training, A only if B plateaus, no C without counsel).
+7. ✅ **Calibrate the judge before any gate rests on it** — PR-61,
+   [`judge-calibration.md`](judge-calibration.md): the playability judge run
+   over 30,570 human PDMX windows, every violation classified by evidence,
+   per code × family false-positive rates and which constraints may be hard
+   gates. **This retires step 5's playability finding**: re-judged, the live
+   tournament's playability errors were almost all judge false positives (see
+   [`instrument-scorecard.md`](instrument-scorecard.md)), so `do_not_promote`
+   for CA2 now rests on harmony, register and repetition, not on playability.
+   The per-family × arm scorecard in the same PR prices "global arranger +
+   instrument-expert adapters" against one model for everything.
 
 No training run of any size starts before step 6 is in front of the owner.

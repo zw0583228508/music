@@ -2685,6 +2685,97 @@ any of it.
   and says so; a non-classical slice, at least one rated session, and the
   measured cost of a LoRA pilot are named as what makes it final.
 
+- **PR-61** ✅ — `judge-calibration` (Wave Q — Model Discovery, Workstreams C and
+  K): **the playability judge was calibrated on 30,570 real human PDMX windows
+  before any promotion gate is allowed to rest on it**, and the per-instrument
+  scorecard prices "global arranger + instrument-expert adapters" against one
+  model for everything. Evidence: `docs/evidence/judge-calibration.json`
+  (before **and** after, 102 full cases) + `docs/evidence/instrument-scorecard.json`
+  + `docs/model-discovery/judge-calibration.md` +
+  `docs/model-discovery/instrument-scorecard.md` (+ the machine-written
+  `instrument-scorecard.tables.md`).
+
+  **The problem.** In PR-59's live tournament `HUMAN_ORIGIN_REFERENCE` — the
+  composer's own part — drew playability errors. Measured over the corpus, judge
+  1.0 flagged **26.6 % of all human windows** (8,129 / 30,570; 2.22 errors per
+  window). A gate on that judge would have refused a quarter of real music.
+
+  **What was built.** `judgeCalibration.ts` — human windows from any score under
+  the tournament's own target rules, every violation recorded with code,
+  severity, GM program, family, platform instrument, notes, tempo and metre, and
+  then **classified by evidence** (nine classes; where only an ear can decide it
+  says `ambiguous_case` and keeps the case), plus per code × family
+  false-positive rates and gate verdicts from stated thresholds (≤ 1 % hard
+  gate, ≤ 5 % warning, above that wrong for the family).
+  `instrumentReference.ts` — standard *and* extended range, polyphony, leap,
+  section flag and breath capacity per GM program, compiled from orchestration
+  references and deliberately independent of the judge's own tables, so the
+  judge can be measured against it. `scripts/calibrate-judge.mjs` — rights basis
+  → deterministic 2,000-work sample → windows → before/after report.
+  `instrumentScorecard.ts` + `scripts/instrument-scorecard.mjs` — the tournament
+  entries cut per family × arm, with the idiomatic register recovered from the
+  entry MIDIs and playability **re-judged** under the calibrated judge.
+
+  **Eleven judge fixes, each forced by measured cases** (`partJudge.ts`,
+  `musicalConstraints.ts`, `musicEngines.ts`): the GM range table rebuilt from
+  the reference (16,612 of 16,788 ensemble range errors were **choirs held to a
+  violin's range**; 12,153 "flute" notes in 39–59 are alto/bass flutes); the
+  idiomatic register split from the playable range as a softer −10; **drums have
+  no pitch range** (the kit map flagged GM2 kit pieces); the program's own
+  polyphony/leap ceilings passed to the engine; 2–4 notes on a one-voice
+  wind/brass part demoted to a divisi **warning** (4,825 of 4,827 flags); the
+  breath rule split — **4,771 of 4,772** "breath violations" were phrases of
+  separate attacks, which score MIDI writes at full value; leaps between two
+  voices and on kit pieces ignored (46 of 83 keys, 304 drums); guitar/bass
+  fingering rewritten from pitch spread to real fingerability (**1,664 of 1,670**
+  flagged human guitar chords are fingerable in standard tuning); pitches no
+  string can reach excluded from fingering (they are range facts: 216 of 220
+  bass cases); five kit voices at one instant a **warning** (all 224 flags had
+  exactly five); and an instrument's *name*, not its role, settling its family
+  (**a guitar in `RHYTHMIC_HARMONY` was judged as a drum kit**).
+
+  **After: 496 / 30,570 human windows flagged (1.6 %), 0.117 errors per window**,
+  range penalty 13.8 % → 1.4 %, and errors classified as judge/mapping/register
+  errors **41,914 → 3**. `out_of_range` is hard-gateable for keys, ensemble,
+  organ, guitar, brass and reed; a **warning only** for bass, strings and tuned
+  percussion; **disabled for the pipe family** (10.7 %, and the evidence says the
+  corpus is octave-displaced, not the flutes). `unrealistic_repetition` fires on
+  **68–89 % of human windows in every family** and must never gate anything.
+  Of the 3,585 surviving errors, 2,999 are export artefacts — almost all a whole
+  part written exactly one octave from the program's sounding pitch, which the
+  classifier now proves per window.
+
+  **Workstream K.** Per family × arm on the live tournament: CA2 spans **51.2
+  (brass) to 87.6 (reed)** — one model is not uniformly good — and a per-family
+  oracle router would gain **+4.31 points** over the best single arm (CA2+CTX
+  73.50 → 77.81), but **25.1 of the 25.8 points come from two families** (brass,
+  strings) where the winner is the platform's *thin* composer (coverage 0.31–0.38,
+  1.9–4.2 octaves under the human's density). So the honest reading is: the
+  per-family differences are real and family-shaped (CA2 fails **harmonically**
+  on brass/strings, chord-tone 0.47–0.54, clash 0.12–0.21), but nothing here
+  measures an adapter, and the router number is an upper bound with hindsight.
+  **And PR-59's playability finding does not survive:** re-judged under the
+  calibrated judge, every playability error in the live tournament vanishes
+  except one — the platform's own `REFERENCE_PART_COMPOSER` writing below the
+  soprano sax's floor. `do_not_promote` for CA2 now rests on harmony, register
+  and repetition, not on playability.
+
+  Suites: judgeCalibration 14, instrumentScorecard 8, musicalConstraints 11,
+  modelTournament 13, tournamentProviders 5; typecheck green.
+
+  **Honest limits.** The reference physics is compiled from orchestration
+  references, not measured — the judge is measured against it, it is not ground
+  truth. **Nobody has listened to one of these 30,570 windows**; 564 surviving
+  errors are explicitly `ambiguous_case`. Human parts are score exports, so
+  breath and overlap facts describe notation, not performance. Only the physical
+  half of the judge is calibrated: harmony, density and coverage need the
+  tournament's context and are untested on this population. The scorecard rests
+  on **6 entries per family × arm** from 12 classical tasks — differences under
+  ~5 points are task-to-task noise, and drums, guitar, pipe and synth never
+  appear. One hole is left open by the fingering fix (a guitar note at 33–34 is
+  checked by nothing), and 15 percussive / 20 ethnic / 5 SFX tracks were skipped
+  because the judge has no mapping for them at all.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
