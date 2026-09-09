@@ -197,17 +197,23 @@
       "The context passes are inaudible here: CA2 raw vs CA2+CTX split 5-5. On the proxy the passes halved playability errors; a listener did not hear a difference in these windows.",
       "The human anchor did not separate from the platform’s rule-based composer: HUMAN vs REFERENCE split 5-5. Against CA2+CTX the human took 7 of 10."
     ],
-    "theMethodologicalFinding": "HUMAN vs REFERENCE at 5-5 is the result that matters most, and it is about the experiment rather than the composers. If real human parts are not audibly better than a deterministic rule-based part, this rendering is flattening what distinguishes them: one 8-bar window, every arm through the same reference synth, the candidate mixed forward, no performance and no production. Until the experiment can separate a human from a rule engine, it cannot be trusted to separate a trained model from an untrained one.",
+    "theMethodologicalFinding": "HUMAN vs REFERENCE at 5-5 is the result that matters most. It proves one thing only: this listening experiment has not demonstrated sensitivity - it has not shown it can detect a quality difference known to exist. It does NOT say why. Candidate causes, each to be isolated by a control before it may be named: the rendering (one reference synth, no performance), the excerpt length (one 8-bar window), the mix (candidate forward), or the reference genuinely being competitive at this length. Owner's correction 2026-09-09: test the cause, don't assume it.",
     "doNotConclude": [
       "that CA2+CTX is worse than the reference — 6-4 at n=10 is noise",
       "that the context passes are useless — 5-5 at n=10 is noise",
       "that the human anchor is not better — 5-5 at n=10 is noise, and the 7-3 against CA2+CTX points the other way"
+    ],
+    "candidateCausesToTest": [
+      "rendering: one deterministic reference synth, no performance layer - control: same pairs through a better neutral renderer",
+      "excerpt length: one 8-bar window - control: 16-bar windows and complete sections",
+      "mix: the candidate part mixed forward x1.35 - control: identical mix on both sides, verified byte-identical context",
+      "the reference is genuinely competitive on 8 bars - control: HUMAN vs deliberately degraded HUMAN at graded strengths; if those are detected while HUMAN vs REFERENCE stays 50/50, this is the reading"
     ]
   },
   "consequencesForThePlan": [
     "Gate C remains unpassed and unattempted: five independent raters are still required, and the owner cannot be one of them.",
     "The decision pack’s success criterion 6 (increased human blind preference) cannot be measured at this sensitivity. Fixing the experiment now costs nothing and is a precondition for judging any training run.",
-    "Concretely: longer excerpts (a section, not eight bars), more pairs per comparison, several raters, and a rendering that does not flatten performance."
+    "Listening Benchmark V2: positive controls (HUMAN vs degraded copies at graded strengths), HUMAN vs REFERENCE as calibration, identical rendering on both sides, longer passages, randomized blind A/B, and a sensitivity report. The benchmark may judge training only after that report shows it detects known quality differences."
   ],
   "honestLimits": [
     "One rater. The owner. n = 9-10 per comparison. No result here is significant.",

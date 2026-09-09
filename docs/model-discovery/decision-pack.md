@@ -33,12 +33,16 @@ What it *does* establish:
   evidence about a human.
 - **The context passes are inaudible here** (5–5) though on the proxy they
   halved playability errors.
-- **HUMAN vs REFERENCE at 5–5 is the result that matters most, and it is
-  about the experiment.** If real human parts are not audibly better than a
-  rule-based part, this rendering — one 8-bar window, one reference synth, no
-  performance — is flattening what distinguishes them. Until the experiment
-  can separate a human from a rule engine, it cannot be trusted to separate
-  a trained model from an untrained one.
+- **HUMAN vs REFERENCE at 5–5 is the result that matters most.** It proves
+  one thing only: **this listening experiment has not demonstrated
+  sensitivity** — it has not shown it can detect a quality difference we know
+  exists. It does *not* say why. Candidate causes, each to be isolated by a
+  control before it may be named: the rendering (one reference synth, no
+  performance), the excerpt length (one 8-bar window), the mix (candidate
+  forward), or the reference genuinely being competitive at this length.
+  Until the experiment separates a human from a known-degraded copy of that
+  human, it cannot be trusted to separate a trained model from an untrained
+  one. (Owner's correction, 2026-09-09: test the cause, don't assume it.)
 
 Below are the pre-rating facts about the session, kept for the record.
 
@@ -53,11 +57,13 @@ Below are the pre-rating facts about the session, kept for the record.
 | Gate C | ≥ 5 independent raters and ≥ 60 % release share; the owner's votes are recorded and **excluded** from the verdict by design | `blindListening.ts` |
 
 **Consequence:** the owner's ratings falsified one proxy claim (CA2+CTX >
-REFERENCE) and exposed that the listening experiment is not yet sensitive
-enough to judge a training run. Gate C still needs five independent raters
-and the owner cannot be one. **Fixing the experiment — longer excerpts, more
-pairs, several raters, a rendering that keeps performance — costs nothing and
-now precedes any pilot.**
+REFERENCE) and showed the listening experiment has not demonstrated the
+sensitivity a training gate needs. Gate C still needs five independent raters
+and the owner cannot be one. **Listening Benchmark V2 — positive controls
+(HUMAN vs deliberately degraded copies at graded strengths), HUMAN vs
+REFERENCE as calibration, identical rendering on both sides, longer passages,
+and a sensitivity report — now precedes any pilot. A quality test may gate
+training only after it proves it detects known quality differences.**
 
 ## 2. Current classical tournament
 
@@ -349,9 +355,10 @@ Either way the pilot buys a decision, which is what a pilot is for.
 | 4 | the **$0** prefix experiment | F follow-up | §11 step 0 |
 | 5 | the **$0** per-family context-pass switch | C/K | §10 |
 | **8** | **re-score both tournaments under judge 1.1** — the `do_not_promote` verdicts rest on false positives | new, $0 | §2, §3 |
-| **9** | **a listening experiment that separates a human part from a rule-based one** — longer excerpts, more pairs, several raters, performance kept | new, $0 + listening time | §1, §15.6 |
+| **9** | **Listening Benchmark V2** — positive controls at graded strengths, HUMAN vs REFERENCE calibration, identical rendering, longer passages, a sensitivity report that must pass before the benchmark may judge training | new, $0 + listening time | §1, §15.6 |
 
 Four of seven cleared today by measurement. Items 3–5 and 8–9 remain, and
-**none costs money**. Item 9 is now the critical path: a pilot judged by an
-experiment that cannot tell a human from a rule engine would be judged by
-noise.
+**none costs money**. The owner's standing instruction: **no paid LoRA until
+this pack is rebuilt after all four experiments — the judge-1.1 rescore, the
+CA2 prefix arm, per-family context routing, and the second live foundation —
+and Listening Benchmark V2 has passed its own sensitivity report.**
