@@ -1,0 +1,292 @@
+{
+  "_evidence": {
+    "kind": "licence-clause-survey-and-vm-price-survey",
+    "pr": "PR-95",
+    "slug": "proprietary-libraries-cloud-rights-and-vm-runbook",
+    "date": "2026-09-10",
+    "method": "Official vendor licence pages fetched on the vendor domain (WebFetch, or read in a browser pane where the site returns 403 to non-browser fetchers); verbatim quotes <= 25 words checked against the returned text. Provider prices read from public pricing endpoints (Azure Retail Prices API; the JSON the AWS EC2 pricing page loads; Kamatera's calculator page). Nothing was accepted, installed, provisioned or paid for.",
+    "notLegalAdvice": true,
+    "executed": false,
+    "moneySpentUsd": 0,
+    "accountsCreated": 0,
+    "verdictScheme": {
+      "privateVm": ["PRIVATE_VM_PERMITTED", "PRIVATE_VM_GREY", "PRIVATE_VM_FORBIDDEN"],
+      "multiUser": ["MULTI_USER_SERVICE_FORBIDDEN", "NEEDS_COMMERCIAL_LICENCE", "PERMITTED"],
+      "policy": "Silence is never read as permission. Where a licence is silent on multi-user service the platform records MULTI_USER_SERVICE_FORBIDDEN as its own policy default (confidence low), not as a reading of the text."
+    },
+    "writeUp": "docs/model-discovery/proprietary-libraries-cloud-rights.md",
+    "runbook": "docs/model-discovery/windows-render-vm-runbook.md",
+    "scripts": [
+      "services/vst3-render-worker/cloud/bootstrap-vm.ps1",
+      "services/vst3-render-worker/cloud/verify-vm.ps1"
+    ]
+  },
+  "products": [
+    {
+      "vendor": "Native Instruments",
+      "product": "Kontakt 8 Player + Komplete Start (Native Access)",
+      "sources": [
+        {"url": "https://www.native-instruments.com/pages/end-user-license-agreement", "fetched": "2026-09-10", "version": "Latest Version 2026-07-01", "status": "fetched"},
+        {"url": "https://support.native-instruments.com/support/solutions/articles/69000879152-on-how-many-computers-can-i-activate-my-native-instruments-product-", "fetched": "2026-09-10", "status": "fetched"}
+      ],
+      "machines": "Licensee may install and personally use the licensed software on three devices (EULA 3.3); support article: two computers (three for Maschine and Komplete)",
+      "serverVmCloud": "NOT ADDRESSED",
+      "thirdParty": "The Products may not be used on a network by multiple users, unless each user possesses a license.",
+      "privateVm": {"verdict": "PRIVATE_VM_GREY", "confidence": "medium", "clause": "EULA 3.3 device count; servers/VMs not addressed"},
+      "multiUser": {"verdict": "NEEDS_COMMERCIAL_LICENCE", "confidence": "high", "clause": "EULA 3.3 'unless each user possesses a license'"}
+    },
+    {
+      "vendor": "Spitfire Audio",
+      "product": "SSO Discover / BBC SO Discover / LABS",
+      "sources": [
+        {"url": "https://www.spitfireaudio.com/en-us/pages/spitfire-audio-end-user-license-agreement", "fetched": "2026-09-10", "version": "undated", "status": "fetched"},
+        {"url": "https://labs.spitfireaudio.com/", "fetched": "2026-09-10", "status": "301 to https://splice.com/instrument"}
+      ],
+      "machines": "download (on not more than two devices concurrently) and use the Products (s.5)",
+      "serverVmCloud": "NOT ADDRESSED",
+      "thirdParty": "must not be shared with or given or transferred to any third party (s.6); may not ... time share any Product(s) (s.8)",
+      "privateVm": {"verdict": "PRIVATE_VM_PERMITTED", "confidence": "medium", "clause": "s.5 two devices, no ownership/location condition"},
+      "multiUser": {"verdict": "MULTI_USER_SERVICE_FORBIDDEN", "confidence": "high", "clause": "s.5/s.6/s.8"}
+    },
+    {
+      "vendor": "Orchestral Tools",
+      "product": "SINE / Berlin Free Orchestra / Layers",
+      "sources": [
+        {"url": "https://www.orchestraltools.com/legal/license-agreement", "fetched": "2026-09-10", "version": "Last revised 20 November 2023", "status": "fetched"},
+        {"url": "https://www.orchestraltools.com/legal/terms", "fetched": "2026-09-10", "version": "Last updated December 5, 2024", "status": "fetched"}
+      ],
+      "machines": "NOT ADDRESSED",
+      "serverVmCloud": "T&C 8.2 forbids use as 'application service providing or as software as a service' without consent",
+      "aiTraining": "T&C 9: training of artificial intelligence is hereby reserved and is not permitted without our consent.",
+      "privateVm": {"verdict": "PRIVATE_VM_GREY", "confidence": "medium", "clause": "no device/location clause; SaaS prohibition not triggered by single-user use"},
+      "multiUser": {"verdict": "NEEDS_COMMERCIAL_LICENCE", "confidence": "high", "clause": "T&C 8.2 'without consent'"}
+    },
+    {
+      "vendor": "Audio Imperia",
+      "product": "GLADE",
+      "sources": [{"url": "https://www.audioimperia.com/license-agreement/", "fetched": "2026-09-10", "version": "Updated November 25, 2024", "status": "fetched"}],
+      "machines": "You may transfer the licensed audio files to one local hard drive and also make one additional backup copy.",
+      "serverVmCloud": "Cloud storage is permitted for backup purposes only if access is restricted to the licensed user. This license does not allow you to upload to shared servers.",
+      "aiTraining": "shall not use the licensed products ... with generative AI or ML models ... without prior written consent",
+      "privateVm": {"verdict": "PRIVATE_VM_GREY", "confidence": "medium", "clause": "'one local hard drive' / cloud 'for backup purposes only' - closest to a prohibition in the set; ask the vendor"},
+      "multiUser": {"verdict": "MULTI_USER_SERVICE_FORBIDDEN", "confidence": "high", "clause": "'available to you only'; 'shared servers'"}
+    },
+    {
+      "vendor": "Sonuscore",
+      "product": "LUX Orchestral Strings Elements / The Orchestra Elements",
+      "sources": [{"url": "https://www.sonuscore.com/terms-condition/", "fetched": "2026-09-10", "version": "undated", "status": "fetched"}],
+      "machines": "NOT ADDRESSED",
+      "serverVmCloud": "NOT ADDRESSED",
+      "aiTraining": "No usage of the Content ... for the purpose of training, improving, or developing any Neural Networks (NN), Artificial Intelligence (AI) or Machine Learning (ML) models",
+      "privateVm": {"verdict": "PRIVATE_VM_GREY", "confidence": "medium", "clause": "s.2 one single user; silent on machines/servers"},
+      "multiUser": {"verdict": "NEEDS_COMMERCIAL_LICENCE", "confidence": "high", "clause": "s.2 'multiuser license, please contact us'"}
+    },
+    {
+      "vendor": "Impact Soundworks",
+      "product": "Tokyo Scoring Strings Free / Shreddage 3 Stratus Free",
+      "sources": [{"url": "https://impactsoundworks.com/combined-license-agreement-privacy-policy/", "fetched": "2026-09-10", "version": "Updated December 4, 2014", "status": "fetched"}],
+      "machines": "The licensee (primary user) MAY install the Product on as many computer systems as he or she has access to.",
+      "serverVmCloud": "NOT ADDRESSED",
+      "privateVm": {"verdict": "PRIVATE_VM_PERMITTED", "confidence": "high", "clause": "'as many computer systems as he or she has access to'"},
+      "multiUser": {"verdict": "MULTI_USER_SERVICE_FORBIDDEN", "confidence": "high", "clause": "'ONLY the licensee may use the Product. No other users are authorized.'"}
+    },
+    {
+      "vendor": "Sonixinema",
+      "product": "Origins",
+      "sources": [{"url": "https://www.sonixinema.com/pages/licensing-agreement", "fetched": "2026-09-10", "version": "undated", "status": "fetched"}],
+      "machines": "up to two (2) separate computers, which computers shall be owned and used by you exclusively",
+      "serverVmCloud": "NOT ADDRESSED",
+      "privateVm": {"verdict": "PRIVATE_VM_GREY", "confidence": "medium", "clause": "'owned' - a rented VM is used exclusively but not owned"},
+      "multiUser": {"verdict": "MULTI_USER_SERVICE_FORBIDDEN", "confidence": "high", "clause": "'granted only to a single user'"}
+    },
+    {
+      "vendor": "Fracture Sounds",
+      "product": "Blueprint",
+      "sources": [{"url": "https://fracturesounds.com/terms-conditions/", "fetched": "2026-09-10", "version": "Last updated: 24th September 2025", "status": "read in browser (403 to fetchers)"}],
+      "machines": "You may install the software on up to three computers, provided you are the sole user.",
+      "serverVmCloud": "NOT ADDRESSED",
+      "aiTraining": "prohibited: Use our products to train AI models, machine learning systems, or similar technologies without express written permission",
+      "privateVm": {"verdict": "PRIVATE_VM_PERMITTED", "confidence": "medium", "clause": "s.2 three computers, sole user; inherits NI row for Kontakt Player"},
+      "multiUser": {"verdict": "NEEDS_COMMERCIAL_LICENCE", "confidence": "high", "clause": "s.2 'multi-user ... please contact us'"}
+    },
+    {
+      "vendor": "Emergence Audio",
+      "product": "Infinite Collection",
+      "sources": [{"url": "https://emergenceaudio.com/end-user-license-agreement/", "fetched": "2026-09-10", "version": "Effective July 12th, 2024", "status": "fetched"}],
+      "machines": "(on up to two personal devices, simultaneously)",
+      "serverVmCloud": "NOT ADDRESSED",
+      "privateVm": {"verdict": "PRIVATE_VM_GREY", "confidence": "medium", "clause": "'personal devices' undefined"},
+      "multiUser": {"verdict": "MULTI_USER_SERVICE_FORBIDDEN", "confidence": "high", "clause": "s.1 'a single user'"}
+    },
+    {
+      "vendor": "ProjectSAM",
+      "product": "The Free Orchestra",
+      "sources": [{"url": "https://projectsam.com/end-user-license-agreement-eula-for-the-free-orchestra/", "fetched": "2026-09-10", "version": "undated", "status": "fetched"}],
+      "machines": "MAXIMUM OF 3 (THREE) computer systems or samplers, as long as you are the SOLE USER",
+      "serverVmCloud": "NOT ADDRESSED",
+      "privateVm": {"verdict": "PRIVATE_VM_PERMITTED", "confidence": "medium", "clause": "s.1 three systems, sole user"},
+      "multiUser": {"verdict": "MULTI_USER_SERVICE_FORBIDDEN", "confidence": "high", "clause": "s.1 'a single user only'"}
+    },
+    {
+      "vendor": "Ample Sound",
+      "product": "Ample Guitar M Lite II / Ample Bass P Lite II",
+      "sources": [{"url": "https://www.amplesound.net/en/EULA-Ample.pdf", "fetched": "2026-09-10", "version": "undated PDF, 13 pages", "status": "fetched (text extracted locally)"}],
+      "machines": "one computer or on more than one computer only if these computers form a single production unit ... and belong to the same owner (s.2)",
+      "serverVmCloud": "s.3: You may not permit third parties to benefit from the use or functionality of a Product or any part thereof through a timesharing, service bureau or other arrangement.",
+      "freeProducts": "s.5: Products that are provided without charge are 'Demo Software' ... may only be used for the purpose of demonstration, test or evaluation, except where Ample expressly provides otherwise",
+      "privateVm": {"verdict": "PRIVATE_VM_GREY", "confidence": "medium", "clause": "s.2 'belong to the same owner'; s.4 transfers 'to a computer or computers you own'; s.5 Demo Software question unresolved"},
+      "multiUser": {"verdict": "MULTI_USER_SERVICE_FORBIDDEN", "confidence": "high", "clause": "s.3 timesharing / service bureau"}
+    },
+    {
+      "vendor": "Steven Slate Drums",
+      "product": "SSD5.5 Free",
+      "sources": [
+        {"url": "https://support.stevenslatedrums.com/hc/en-us/articles/360033680113-SSD5-5-Frequently-Asked-Questions", "fetched": "2026-09-10", "version": "2019-07-27", "status": "read in browser"},
+        {"url": "https://stevenslatedrums.com/", "fetched": "2026-09-10", "status": "footer: privacy + return policy only; no EULA"},
+        {"url": "https://stevenslateaudio.com/", "fetched": "2026-09-10", "status": "no EULA link"},
+        {"url": "https://slatedigital.com/terms-of-service/", "fetched": "2026-09-10", "status": "fetched; Audiotonix General Terms of Use; applicability to SSD not addressed"}
+      ],
+      "machines": "Three iLok Licenses are provided with the purchase of SSD5.; iLok Cloud: Currently no.",
+      "serverVmCloud": "SSD EULA unfetched; Audiotonix s.6 (if it applies) forbids 'on a service bureau basis, on a time-sharing basis, as a part of a hosted service'",
+      "privateVm": {"verdict": "PRIVATE_VM_GREY", "confidence": "none", "clause": "SSD5 Free EULA is shown only in the installer; not fetched"},
+      "multiUser": {"verdict": "MULTI_USER_SERVICE_FORBIDDEN", "confidence": "low", "clause": "policy default; high if the Audiotonix terms govern"}
+    },
+    {
+      "vendor": "Soundpaint (8Dio Productions LLC)",
+      "product": "Free engine + free instruments",
+      "sources": [
+        {"url": "https://soundpaint.com/pages/terms-conditions", "fetched": "2026-09-10", "status": "read in browser; website terms + s.14 AI clause"},
+        {"url": "https://soundpaint.com/pages/free-engine-v2", "fetched": "2026-09-10", "status": "no licence text"},
+        {"url": "https://8dio.com/pages/licensing-agreement", "fetched": "2026-09-10", "status": "fetched; does not name Soundpaint"}
+      ],
+      "machines": "8Dio: up to two (2) separate computers, which computers shall be owned and used by you exclusively",
+      "serverVmCloud": "NOT ADDRESSED",
+      "aiTraining": "soundpaint.com s.14: use of any instruments, samples or audio content ... for the intention of training ... AI Systems is expressly and categorically forbidden",
+      "privateVm": {"verdict": "PRIVATE_VM_GREY", "confidence": "low", "clause": "only product licence found is 8Dio's ('owned ... by you'); applicability uncertain"},
+      "multiUser": {"verdict": "MULTI_USER_SERVICE_FORBIDDEN", "confidence": "medium", "clause": "8Dio 'granted only to a single user'"}
+    },
+    {
+      "vendor": "Decent Samples (Decidedly, LLC)",
+      "product": "Decent Sampler plugin",
+      "sources": [
+        {"url": "https://www.decentsamples.com/qa/27/what-license-is-decent-sampler-under", "fetched": "2026-09-10", "status": "read in browser; plugin licence question unanswered since 2022-03-27"}
+      ],
+      "machines": "NOT ADDRESSED",
+      "serverVmCloud": "NOT ADDRESSED",
+      "privateVm": {"verdict": "PRIVATE_VM_GREY", "confidence": "none", "clause": "no published plugin EULA"},
+      "multiUser": {"verdict": "MULTI_USER_SERVICE_FORBIDDEN", "confidence": "low", "clause": "policy default"}
+    },
+    {
+      "vendor": "Decent Samples libraries + Pianobook",
+      "product": "Decent Samples libraries; Pianobook packs (sampled: Expressive Duduk, Complexe)",
+      "sources": [
+        {"url": "https://www.decentsamples.com/decent-samples-end-user-license-agreement/", "fetched": "2026-09-10", "status": "read in browser"},
+        {"url": "https://www.pianobook.co.uk/terms-conditions/", "fetched": "2026-09-10", "version": "Updated 25th April 2022", "status": "fetched"},
+        {"url": "https://www.pianobook.co.uk/faq/are-pianobook-sample-packs-royalty-free-or-free-for-commercial-use/", "fetched": "2026-09-10", "status": "fetched"},
+        {"url": "https://www.pianobook.co.uk/packs/expressive-duduk/", "fetched": "2026-09-10", "status": "fetched; no per-pack licence field"},
+        {"url": "https://www.pianobook.co.uk/packs/complexe/", "fetched": "2026-09-10", "status": "fetched; no per-pack licence field"}
+      ],
+      "machines": "NOT ADDRESSED",
+      "serverVmCloud": "NOT ADDRESSED",
+      "privateVm": {"verdict": "PRIVATE_VM_GREY", "confidence": "medium", "clause": "silent on machines/servers; Pianobook 'solely for your own personal use'"},
+      "multiUser": {"verdict": "MULTI_USER_SERVICE_FORBIDDEN", "confidence": "high (Pianobook) / low (Decent Samples, policy default)", "clause": "Pianobook s.6; Decent silent"}
+    },
+    {
+      "vendor": "Vienna Symphonic Library",
+      "product": "Big Bang Orchestra Free Basics",
+      "sources": [{"url": "https://www.vsl.co.at/legals/license", "fetched": "2026-09-10", "version": "August 26, 2026", "status": "fetched"}],
+      "machines": "(a) install the Software on one or more computers, (b) transfer the Software from one computer to another provided that it is used only by the licensee",
+      "serverVmCloud": "network clause only: may not install ... on a network for use by multiple users, unless each user has purchased a license",
+      "aiTraining": "use of the Software for the development, training, or enhancement of artificial intelligence systems ... is strictly prohibited",
+      "privateVm": {"verdict": "PRIVATE_VM_PERMITTED", "confidence": "medium-high", "clause": "'one or more computers ... used only by the licensee'"},
+      "multiUser": {"verdict": "NEEDS_COMMERCIAL_LICENCE", "confidence": "high", "clause": "'unless each user has purchased a license'"}
+    },
+    {
+      "vendor": "Manda Audio",
+      "product": "MT Power Drum Kit 2",
+      "sources": [
+        {"url": "https://www.powerdrumkit.com/download76187.php", "fetched": "2026-09-10", "status": "fetched; 'By downloading, you agree to the EULA'; EULA link is javascript:;"},
+        {"url": "https://www.powerdrumkit.com/legal-notice.php", "fetched": "2026-09-10", "status": "fetched; imprint only"},
+        {"url": "https://www.powerdrumkit.com/", "fetched": "2026-09-10", "status": "fetched; no licence text"}
+      ],
+      "machines": "NOT FETCHED",
+      "serverVmCloud": "NOT FETCHED",
+      "privateVm": {"verdict": "PRIVATE_VM_GREY", "confidence": "none", "clause": "EULA only inside the installer"},
+      "multiUser": {"verdict": "MULTI_USER_SERVICE_FORBIDDEN", "confidence": "none", "clause": "policy default"}
+    },
+    {
+      "vendor": "Steinberg",
+      "product": "HALion Sonic / Groove Agent SE content bundled with Cubase 14",
+      "sources": [
+        {"url": "https://download.steinberg.net/legal/eula/EULA_English.html", "fetched": "2026-09-10", "version": "undated", "status": "fetched"},
+        {"url": "https://helpcenter.steinberg.de/hc/en-us/articles/4412568514706-Steinberg-Activation-Manager-Activation-Limit-Reached-No-seats", "fetched": "2026-09-10", "status": "read in browser"}
+      ],
+      "machines": "activate the software only on a limited number of computers (EULA 2.3); help centre: on up to three computers simultaneously",
+      "serverVmCloud": "NOT ADDRESSED",
+      "content": "samples licensed ... only for use in the creation of a live or recorded performance that includes the licensed samples (2.2); may not be included ... in any sample library product",
+      "privateVm": {"verdict": "PRIVATE_VM_GREY", "confidence": "medium", "clause": "single-user licence, three activations; servers/VMs not addressed; content plays only inside the licensed plugins"},
+      "multiUser": {"verdict": "MULTI_USER_SERVICE_FORBIDDEN", "confidence": "high", "clause": "2.3 'must only be used by a single user'"}
+    }
+  ],
+  "crossCutting": {
+    "aiTrainingProhibitions": ["Soundpaint s.14", "VSL", "Orchestral Tools T&C 9", "Sonuscore s.5", "Fracture Sounds s.3", "Audio Imperia"],
+    "platformRule": "Audio rendered through these libraries must not enter MUSIC_REWARD_MODEL_*, LoRA or any other training set; proposal: trainingUse=forbidden on the worker asset manifest, copied into render evidence and refused by datasetRightsProof.ts (not implemented in PR-95).",
+    "activationSeats": "Device counts are per machine; VM deletion without deactivation burns a seat (NI 2-3, Spitfire 2, Sonixinema/8Dio 2, Emergence 2, Fracture 3, ProjectSAM 3, Steinberg 3, SSD5 3 iLok)."
+  },
+  "providers": {
+    "azure": {
+      "region": "israelcentral",
+      "source": "https://prices.azure.com/api/retail/prices (armRegionName eq 'israelcentral', priceType Consumption)",
+      "fetched": "2026-09-10",
+      "currency": "USD",
+      "vmHourly": {
+        "Standard_D4s_v5": {"vcpu": 4, "ramGb": 16, "windows": 0.408, "linux": 0.224, "windowsSpot": 0.075398, "effectiveStartDate": "2024-02-01"},
+        "Standard_D8s_v5": {"vcpu": 8, "ramGb": 32, "windows": 0.816, "linux": 0.448, "windowsSpot": 0.150797, "effectiveStartDate": "2024-02-01"},
+        "Standard_B4s_v2": {"vcpu": 4, "ramGb": 16, "windows": 0.21, "linux": 0.192, "windowsSpot": 0.189, "effectiveStartDate": "2024-01-01"},
+        "Standard_B8s_v2": {"vcpu": 8, "ramGb": 32, "windows": 0.42, "linux": 0.383, "windowsSpot": 0.378, "effectiveStartDate": "2024-01-01"}
+      },
+      "disksMonthly": {"E20_512GB_StandardSSD": 46.08, "E30_1TB_StandardSSD": 92.16, "P20_512GB_PremiumSSD": 79.872, "P30_1TB_PremiumSSD": 147.456, "snapshotStandardPerGb": 0.06, "snapshotPremiumPerGb": 0.144, "effectiveStartDate": "2023-08-15"},
+      "startStop": "az vm start / az vm deallocate; per-VM Auto-shutdown (learn.microsoft.com/azure/virtual-machines/auto-shutdown-vm, updated 2026-06-24)",
+      "windowsClientImages": "Visual Studio subscription or multitenant hosting rights required (learn.microsoft.com/azure/virtual-machines/windows/client-images, updated 2025-11-20)",
+      "latencyFromIsrael": "in-country region; not measured"
+    },
+    "aws": {
+      "region": "il-central-1 (Israel, Tel Aviv)",
+      "source": "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/ec2/USD/current/ec2-ondemand-without-sec-sel/Israel%20(Tel%20Aviv)/Windows/index.json",
+      "publicationDate": "2026-09-09T16:49:38Z",
+      "fetched": "2026-09-10",
+      "currency": "USD",
+      "windowsHourly": {"m6i.xlarge": 0.4087, "m7i.xlarge": 0.4199, "r6i.xlarge": 0.4801, "t3.2xlarge": 0.5306, "m5.xlarge": 0.409, "m6i.2xlarge": 0.8174, "m7i.2xlarge": 0.8399, "m5.2xlarge": 0.817},
+      "frankfurtReference": {"m7i.2xlarge": 0.851},
+      "ebsGp3": "NOT FETCHED for il-central-1 (JS-rendered page; illustrative $0.08/GB-month on aws.amazon.com/ebs/pricing/)",
+      "startStop": "aws ec2 stop-instances / start-instances; Instance Scheduler on AWS or EventBridge+Lambda (docs.aws.amazon.com/AWSEC2/latest/UserGuide/Stop_Start.html)",
+      "latencyFromIsrael": "in-country region; not measured"
+    },
+    "kamatera": {
+      "region": "Israel, Tel Aviv",
+      "source": "https://www.kamatera.com/pricing/",
+      "fetched": "2026-09-10 (browser)",
+      "windowsImages": ["Windows Server 2016/2019/2022/2025 Standard and Datacenter", "Windows Desktop 10", "Windows Desktop 11"],
+      "licences": "Includes cost of licenses",
+      "billing": "Hourly servers are billed by the minute",
+      "minimalConfigMonthlyUsd": 10.0,
+      "minimalConfigHourlyUsd": 0.014,
+      "extraStoragePerGbMonthUsd": 0.05,
+      "targetSpecPrice": "NOT CAPTURED (JavaScript calculator with hidden dropdowns)",
+      "latencyFromIsrael": "in-country data centre; not measured"
+    },
+    "notChosen": {
+      "hetzner": "no Windows images; manual ISO install with the customer's own licence (docs.hetzner.com/cloud/servers/windows-on-cloud, read 2026-09-10); prices JS-rendered, not captured",
+      "paperspace": "machines pricing page 404 on 2026-09-10; docs stub has no numbers",
+      "vultr_ovh_contabo": "prices behind JS toggles or outside the band; no Israel region"
+    }
+  },
+  "runbook": {
+    "executed": false,
+    "scriptsSyntaxChecked": "Windows PowerShell 5.1 PSParser.Tokenize + Language.Parser.ParseFile, 2026-09-10: bootstrap-vm.ps1 1883 tokens / 0 errors; verify-vm.ps1 1644 tokens / 0 errors",
+    "productRowsNote": "The write-up has 23 rows (22 products; Spitfire's three free products share one EULA and are grouped here, as are Decent Samples libraries + Pianobook). This file has 18 product objects.",
+    "topology": "Tailscale (API on the owner's PC) or Cloudflare Tunnel (API elsewhere); worker binds to the Tailscale IPv4 or 127.0.0.1; one firewall rule TCP 8022 from 100.64.0.0/10; no public inbound port",
+    "tokenHandling": "prompted with Read-Host -AsSecureString, DPAPI LocalMachine blob, ACL SYSTEM+Administrators, unprotected in-process by the launcher; never printed",
+    "openGap": "content instruments need a .vstpreset per instrument; no VM-side preset tool exists in the repository"
+  }
+}
