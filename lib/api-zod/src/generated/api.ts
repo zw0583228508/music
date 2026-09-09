@@ -1323,7 +1323,7 @@ export const GetProjectResponse = zod.object({
   "generationProvenance": zod.union([zod.object({
   "jobId": zod.string(),
   "candidateId": zod.string(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'COMPOSERS_ASSISTANT_2', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "reportedModelVersion": zod.string().nullish(),
   "providerRequestId": zod.string().nullish(),
@@ -7787,7 +7787,7 @@ export const ListArrangementsResponseItem = zod.object({
   "generationProvenance": zod.union([zod.object({
   "jobId": zod.string(),
   "candidateId": zod.string(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'COMPOSERS_ASSISTANT_2', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "reportedModelVersion": zod.string().nullish(),
   "providerRequestId": zod.string().nullish(),
@@ -9312,7 +9312,7 @@ export const CreateArrangementResponse = zod.object({
   "generationProvenance": zod.union([zod.object({
   "jobId": zod.string(),
   "candidateId": zod.string(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'COMPOSERS_ASSISTANT_2', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "reportedModelVersion": zod.string().nullish(),
   "providerRequestId": zod.string().nullish(),
@@ -11125,7 +11125,7 @@ export const GetArrangementResponse = zod.object({
   "generationProvenance": zod.union([zod.object({
   "jobId": zod.string(),
   "candidateId": zod.string(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'COMPOSERS_ASSISTANT_2', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "reportedModelVersion": zod.string().nullish(),
   "providerRequestId": zod.string().nullish(),
@@ -13393,7 +13393,7 @@ export const UpdateArrangementResponse = zod.object({
   "generationProvenance": zod.union([zod.object({
   "jobId": zod.string(),
   "candidateId": zod.string(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'COMPOSERS_ASSISTANT_2', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "reportedModelVersion": zod.string().nullish(),
   "providerRequestId": zod.string().nullish(),
@@ -15039,7 +15039,7 @@ export const RestoreArrangementRevisionResponse = zod.object({
   "generationProvenance": zod.union([zod.object({
   "jobId": zod.string(),
   "candidateId": zod.string(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'COMPOSERS_ASSISTANT_2', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "reportedModelVersion": zod.string().nullish(),
   "providerRequestId": zod.string().nullish(),
@@ -15906,7 +15906,7 @@ export const GenerateArrangementBody = zod.strictObject({
   "end": zod.number().gt(generateArrangementBodyRegionEndExclusiveMin),
   "crossfadeSeconds": zod.number().min(generateArrangementBodyRegionCrossfadeSecondsMin).max(generateArrangementBodyRegionCrossfadeSecondsMax).default(generateArrangementBodyRegionCrossfadeSecondsDefault)
 }).optional(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']).optional(),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'COMPOSERS_ASSISTANT_2', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']).optional(),
   "task": zod.enum(['SEPARATION', 'TRANSCRIPTION', 'ACCOMPANIMENT', 'ORCHESTRATION', 'ARRANGEMENT']).optional(),
   "hardware": zod.enum(['AUTO', 'CPU', 'GPU']).optional(),
   "speed": zod.enum(['FAST', 'BALANCED', 'QUALITY']).optional(),
@@ -15931,7 +15931,7 @@ export const GenerateArrangementResponse = zod.object({
   "arrangementId": zod.string(),
   "task": zod.enum(['SEPARATION', 'TRANSCRIPTION', 'ACCOMPANIMENT', 'ORCHESTRATION', 'ARRANGEMENT']),
   "status": zod.enum(['queued', 'running', 'cancel_requested', 'cancelled', 'succeeded', 'failed']),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'COMPOSERS_ASSISTANT_2', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "providerRuntime": zod.union([zod.object({
   "availability": zod.enum(['ready', 'configured', 'unavailable']),
@@ -16001,7 +16001,7 @@ export const GetGenerationJobResponse = zod.object({
   "arrangementId": zod.string(),
   "task": zod.enum(['SEPARATION', 'TRANSCRIPTION', 'ACCOMPANIMENT', 'ORCHESTRATION', 'ARRANGEMENT']),
   "status": zod.enum(['queued', 'running', 'cancel_requested', 'cancelled', 'succeeded', 'failed']),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'COMPOSERS_ASSISTANT_2', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "providerRuntime": zod.union([zod.object({
   "availability": zod.enum(['ready', 'configured', 'unavailable']),
@@ -16071,7 +16071,7 @@ export const CancelGenerationJobResponse = zod.object({
   "arrangementId": zod.string(),
   "task": zod.enum(['SEPARATION', 'TRANSCRIPTION', 'ACCOMPANIMENT', 'ORCHESTRATION', 'ARRANGEMENT']),
   "status": zod.enum(['queued', 'running', 'cancel_requested', 'cancelled', 'succeeded', 'failed']),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'COMPOSERS_ASSISTANT_2', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "providerRuntime": zod.union([zod.object({
   "availability": zod.enum(['ready', 'configured', 'unavailable']),
@@ -16141,7 +16141,7 @@ export const RetryGenerationJobResponse = zod.object({
   "arrangementId": zod.string(),
   "task": zod.enum(['SEPARATION', 'TRANSCRIPTION', 'ACCOMPANIMENT', 'ORCHESTRATION', 'ARRANGEMENT']),
   "status": zod.enum(['queued', 'running', 'cancel_requested', 'cancelled', 'succeeded', 'failed']),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'COMPOSERS_ASSISTANT_2', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "providerRuntime": zod.union([zod.object({
   "availability": zod.enum(['ready', 'configured', 'unavailable']),
@@ -16889,7 +16889,7 @@ export const listGenerationCandidatesResponseEvaluationRepairRepairedQualityScor
 export const ListGenerationCandidatesResponseItem = zod.object({
   "id": zod.string(),
   "jobId": zod.string(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'COMPOSERS_ASSISTANT_2', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "reportedModelVersion": zod.string().nullish(),
   "providerRequestId": zod.string().nullish(),
@@ -18680,7 +18680,7 @@ export const SelectGenerationCandidateResponse = zod.object({
   "generationProvenance": zod.union([zod.object({
   "jobId": zod.string(),
   "candidateId": zod.string(),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'COMPOSERS_ASSISTANT_2', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "reportedModelVersion": zod.string().nullish(),
   "providerRequestId": zod.string().nullish(),
@@ -19595,7 +19595,7 @@ export const RepairGenerationCandidateResponse = zod.object({
   "arrangementId": zod.string(),
   "task": zod.enum(['SEPARATION', 'TRANSCRIPTION', 'ACCOMPANIMENT', 'ORCHESTRATION', 'ARRANGEMENT']),
   "status": zod.enum(['queued', 'running', 'cancel_requested', 'cancelled', 'succeeded', 'failed']),
-  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
+  "provider": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'COMPOSERS_ASSISTANT_2', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "modelVersion": zod.string(),
   "providerRuntime": zod.union([zod.object({
   "availability": zod.enum(['ready', 'configured', 'unavailable']),
@@ -19650,7 +19650,7 @@ export const listGenerationProvidersResponseRuntimeProvenanceOneSourceImageDiges
 
 
 export const ListGenerationProvidersResponseItem = zod.object({
-  "id": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
+  "id": zod.enum(['BS_ROFORMER', 'ALL_IN_ONE', 'MT3', 'BASIC_PITCH', 'ACE_STEP', 'MUSICGEN', 'ANYACCOMP', 'LADA_BAND', 'HAFM', 'SYMPHONYGEN', 'METEOR', 'MIDI_SAG', 'MUSE_CONTROL_LITE', 'STABLE_AUDIO_3_SMALL_MUSIC', 'STABLE_AUDIO_3_MEDIUM', 'MAGENTA_RT2', 'MIDI_RWKV', 'COMPOSERS_ASSISTANT_2', 'ARRANGEMENT_ORCHESTRATOR', 'YOUR_ARRANGER_MODEL']),
   "name": zod.string(),
   "modelVersion": zod.string(),
   "tasks": zod.array(zod.enum(['SEPARATION', 'TRANSCRIPTION', 'ACCOMPANIMENT', 'ORCHESTRATION', 'ARRANGEMENT'])),
