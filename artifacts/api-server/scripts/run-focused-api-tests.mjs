@@ -164,6 +164,19 @@ const suites = {
         "tournament-audio.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, Model Discovery (global tournament): genre families from PDMX's
+      // genre/tag columns, genre-major task selection, per-slice breakdowns.
+      [
+        "src/lib/pdmxGenre.test.ts",
+        "pdmx-genre.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      ["src/lib/tournamentSelection.test.ts", "tournament-selection.test.mjs"],
+      [
+        "src/lib/tournamentBreakdown.test.ts",
+        "tournament-breakdown.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [

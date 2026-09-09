@@ -2735,6 +2735,122 @@ any of it.
   across arms and not what a producer would ship. Opening a session renders
   in-process at ~2 s per side: fine for 50 pairs, not for thousands.
 
+- **PR-60** ✅ — `global-tournament` (Wave Q — Workstream B): **the tournament
+  has been run on the wider musical world, not just the concert hall** — 50
+  non-classical PDMX tasks across 17 genre families, all five arms, seeds
+  7/11/13, live CA2 inference. Evidence:
+  `docs/evidence/pdmx-genre-profile.json` (what the cleared corpus actually
+  contains, counted over all 254,077 rows),
+  `docs/evidence/model-tournament-global-live.json` (750 entries),
+  `docs/evidence/model-tournament-global-analysis.json` (the slices), and 1,730
+  files under `docs/evidence/tournament-global/` (840 blind pairs, token-named
+  MIDIs, `context-<task>.mid` per task, rater-facing `pairs.json` with no
+  provider names). `docs/evidence/model-tournament-live.json` and
+  `docs/evidence/tournament/` are untouched.
+
+  **What was built.** `pdmxGenre.ts` — genre families over PDMX's own `genres`,
+  `tags` and `groups` columns: 19 MuseScore genre slugs and ~180 tag/group
+  tokens fold into 20 families, matched **exactly** (so `rock` cannot fire on
+  `rockymountainhigh`), a family is only ever *added* by evidence in the row,
+  and a row with no known label is `unlabelled` — never guessed from its
+  instruments or its title. Latin and musical theatre have **no MuseScore genre
+  slug at all** and can only come from tags; the profile says so. `pdmxCsv.ts`
+  now carries `tags`, `groups` and the `tracks` program list through, all
+  optional. `tournamentSelection.ts` — a pure, deterministic round-robin over
+  **genre family first, target family second**, one task per work, with a
+  per-genre cap and a choice of per-genre or shared family cursor; without
+  genres it reduces to the first tournament's family round-robin, which a test
+  pins. `tournamentBreakdown.ts` — the scorecard quantities recomputed per
+  (slice, arm) for genre, target family and their cross product, plus the best
+  non-human arm per slice; nothing is re-judged. `enumerateTaskSpecs` gained
+  `maxPerProgram`: programs are walked in ascending order, so without it a small
+  `maxPerScore` was filled by the piano and a rock score's guitar, bass and kit
+  never became candidates (default `Infinity` — the first tournament's
+  behaviour). `scripts/profile-pdmx-genres.mjs` counts the corpus;
+  `scripts/summarise-tournament.mjs` slices a report against a baseline;
+  `run-model-tournament.mjs` gained `--genres`, `--exclude-genres`, `--families`,
+  `--max-per-score/-program/-genre`, `--family-cursor`, `--min-drum-pitches`,
+  `--title`, and refuses an unknown family name instead of silently matching
+  nothing. Genre metadata travels into every task record either way.
+
+  **What the profile said** (real counts, reproduced exactly on a second run):
+  222,856 works pass our rights gate ∩ the authors' `no_license_conflict`
+  subset; 25,414 list ≥ 3 tracks. Of those multitrack works **15,847 carry a
+  genre slug, 1,277 only tags, and 8,290 nothing at all**. By primary family:
+  classical 12,222 · film_game 1,497 · folk 788 · rock 732 · pop 578 · jazz 268
+  · religious_worship 170 · wind_band_marching 166 · electronic 165 ·
+  world_traditional 143 · hiphop 115 · rnb_funk_soul 111 · metal 46 · country 36
+  · latin 29 · musical_theatre 18 · **blues 7 · reggae_ska 6**. Kits are a
+  channel-10 fact the table does not record, so drum availability came from
+  parsing the MIDIs (rock 355, film_game 704, folk 80). **Nothing was
+  downloaded**: the families PDMX cannot fill are listed in the profile with
+  their licence class — Lakh/LMD, MetaMIDI, Slakh2100, Wikifonia-derived
+  corpora and MuseScore works outside `no_license_conflict` are **REFUSED**
+  (scraped or withdrawn MIDI of copyrighted songs; the same taint the decision
+  report refuses in Option C); IMSLP/CPDL PD arrangements, Groove MIDI (CC BY
+  4.0, drums only), Nottingham/ABC folk corpora and operator-licensed packs are
+  **POSSIBLE only behind a per-work rights record**, and the packs never in a
+  published evidence directory.
+
+  **What the run said** (4,756 eligible MIDIs all scanned → 13,331 candidate
+  tasks → 50 tasks over 17 genre families and 11 instrument families — drums 5,
+  bass 5, guitar 6, keys 6, organ 5, strings 4, brass 5, reed 6, pipe 5,
+  ensemble 2, synth 1 — 50 distinct works, metres 4/4, 3/4, 2/2, 6/8, 12/8;
+  **750 entries, 0 failures, 150 real CA2 inferences** at 1.8–22.9 s, median
+  5.7 s, 944 s of inference, 19 min 32 s wall clock): HUMAN **94.0** ·
+  REFERENCE 59.3 · CONTEXT_AWARE 56.0 · **CA2 raw 71.9 · CA2+CTX 67.4**. Against
+  the classical run: HUMAN 90.4 → 94.0, REFERENCE 63.0 → 59.3, CONTEXT_AWARE
+  64.6 → **56.0**, CA2 raw 73.0 → 71.9, CA2+CTX 73.5 → **67.4**; playability
+  errors per entry REFERENCE 0.08 → 0.28, CONTEXT_AWARE 0.00 → **1.12**, CA2 raw
+  0.53 → **3.39**, CA2+CTX 0.25 → 2.84. CA2 raw out-scores the reference on
+  **70 %** of cells (it was 69 % on classical) and takes **14 of 17 genre
+  families**; it loses pop, jazz and hiphop, where the source scores are
+  piano-vocal transcriptions and the platform's "chord tones in half the bars"
+  is a reasonable accompaniment. Verdict unchanged and automatic:
+  **`do_not_promote` for both CA2 arms**.
+
+  **The finding that outranks the model question:** on five of the fifty tasks —
+  country/brass, rock/pipe, blues/guitar, latin/bass, world_traditional/guitar —
+  **both `REFERENCE_PART_COMPOSER` and `CONTEXT_AWARE_ARRANGER` emitted zero
+  notes on all three seeds** (30 entries, score 0). That never happened on the
+  classical set. And `CONTEXT_AWARE_ARRANGER` is now **measurably worse than the
+  plain reference** (56.0 vs 59.3) with four times its playability errors,
+  driven by guitar (19.6 mean, 6.67 errors/entry). The context passes are tuned
+  for the concert hall. Second: **+CTX is no longer a free win** — it costs 4.5
+  mean points while removing only 16 % of CA2's errors, and it collapses reed
+  (69.3 → 33.0), musical_theatre (55.3 → 16.6) and wind_band_marching (76.6 →
+  42.1) while still winning bass, organ, drums, ensemble and synth. The hybrid
+  needs to be chosen **per instrument family**, not applied globally. Written
+  up in full as `## 2b. Global / non-classical tournament` in
+  `docs/model-discovery/decision-report.md`, whose §5 pending list is updated.
+
+  Suites: pdmxGenre 7 (new), tournamentSelection 4 (new), tournamentBreakdown 3
+  (new), modelTournament 13, tournamentProviders 5, pdmxCsv 8, and PR-68's
+  tournamentListening 5 / tournamentAudio 3 / blindListening 3 all still green
+  after the merge; `pnpm run typecheck:libs` and the api-server `tsc --noEmit`
+  green.
+
+  **Honest limits.** Fifty windows over seventeen families is **three tasks per
+  family** — enough to see that CA2 transfers and that the platform's composers
+  fall over, not enough to rank two arms inside one genre; every per-genre row
+  in §2b is 9 entries. **Six of the fifty tasks had zero estimated chord
+  coverage** (nine more had 25 %), so their harmony metrics rest on nothing.
+  CA2's error mean is **outlier-driven**: 22 of 750 entries carry more than ten
+  errors, and the drums mean of 14.27 is *one* entry (359 notes into an 8-bar
+  pop drum window, 196 errors) — 14 of 15 drum entries had none; the judge's
+  playability penalty saturates at −60, so the error mean describes the tail and
+  not the score. **The 840 blind pairs are written and nobody has rated one.**
+  PDMX is a **notation** corpus — its "pop" is mostly a MuseScore piano-vocal
+  transcription, so the pop/dance/Mizrahi *production* question (grooves, synth
+  layers, sound design) is still untouched, and genre labels here name the
+  **song**, not the arrangement. Only one synth task and two ensemble tasks
+  survived the rules, so those rows are anecdotes. **For Workstream C, not
+  fixed here:** the zero-note reference/context-aware outputs above are a
+  composer bug in `musicEngines.ts`/the planners, not a judge bug; and
+  `judgeSuspect` fired on 19 of 150 cells (35 entries), which is a standing
+  request to re-examine the proxy on drum kits and on parts the constraint
+  engine ranges by GM family.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
