@@ -179,7 +179,7 @@ test("pins both MOSS semantic providers to exact runtime and retained evidence",
       cuda: "12.8",
       torch: "2.9.1+cu128",
       torchaudio: "2.9.1+cu128",
-      torchcodec: "0.8.0",
+      torchcodec: "0.8.0+cu128",
       transformers: "4.57.1",
       accelerate: "1.12.0",
       huggingfaceHub: "0.36.2",
@@ -1065,6 +1065,9 @@ test("keeps absent providers explicit without fabricating analysis results", asy
         "MR_MT3",
         "YOUR_MT3",
         "BS_ROFORMER",
+        // PR-37: a full song is transcribed too, so an absent Basic Pitch is
+        // now reported as absent instead of silently never asked.
+        "BASIC_PITCH",
         "SHEETSAGE",
         "CHROMA",
         "MADMOM",

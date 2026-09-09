@@ -2430,10 +2430,21 @@ export async function runAnalysisProviders(
     );
   }
   if (wantsBasicPitch) {
+    // A single-instrument or vocal source is monophonic enough for a pitch
+    // tracker as well; a full mix is not, so TorchCrepe stays out of it.
     schedule("TORCHCREPE", "pitch_evidence",
       (payload) => parseTorchCrepe(payload, input.durationSeconds,
         input.sourceType === "VOCAL_ONLY" ? "lead_vocal" : "solo_instrument"),
       (result) => pitchEvidence.push(result));
+  }
+  if (wantsBasicPitch || isFullMix) {
+    // PR-37: a full song used to get no note transcription at all — Basic Pitch
+    // ran only on VOCAL_ONLY and SOLO_INSTRUMENT sources, which is why an
+    // uploaded song reached the Arrangement Brain with no melody and no bass.
+    // Basic Pitch is instrument-agnostic and polyphonic; on a mix it reports
+    // the notes it is confident about, and reconciliation weighs it against
+    // whatever else answered. Stem-by-stem transcription (Demucs → Basic Pitch
+    // per stem, which upstream recommends) is the next step, not this one.
     schedule(
       "BASIC_PITCH",
       "transcription",

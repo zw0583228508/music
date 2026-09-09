@@ -1,0 +1,85 @@
+{
+  "title": "Basic Pitch: a real upload gets real notes — live (PR-37)",
+  "path": "synthesised melodic song -> upload -> analysis with BASIC_PITCH configured -> Song Model melody/bass notes",
+  "ids": {
+    "projectId": "7cea5742-0a85-410a-8862-9d5fdaac8140",
+    "sourceId": "bd6b9a97-2d5b-4bce-be00-1052b3dcee0b"
+  },
+  "song": "the same synthesised song the Definition-of-Done run used, whose Song Model held 0 chords and 0 melody notes",
+  "steps": [
+    {
+      "step": "song synthesised",
+      "seconds": 96.0,
+      "bars": 40,
+      "bpm": 100,
+      "bytes": 16934444,
+      "form": [
+        "Intro:4",
+        "Verse:8",
+        "Chorus:8",
+        "Verse 2:8",
+        "Chorus 2:8",
+        "Outro:4"
+      ]
+    },
+    {
+      "step": "song synthesised and project created",
+      "projectId": "7cea5742-0a85-410a-8862-9d5fdaac8140",
+      "bars": 40,
+      "bpm": 100,
+      "bytes": 16934444
+    },
+    {
+      "step": "analysis",
+      "status": "ready",
+      "error": null
+    },
+    {
+      "step": "song model",
+      "version": 1,
+      "providers": [
+        "ALL_IN_ONE",
+        "BASIC_PITCH",
+        "BASS",
+        "BEAT_THIS",
+        "BS_ROFORMER",
+        "CHROMA",
+        "ESSENTIA",
+        "FFMPEG",
+        "LOCAL_SIGNAL_ANALYZER_V1",
+        "MADMOM",
+        "MR_MT3",
+        "MT3",
+        "PYLOUDNORM",
+        "SHEETSAGE",
+        "YOUR_MT3"
+      ],
+      "melodyNotes": 0,
+      "bassNotes": 0,
+      "chords": 0,
+      "firstMelodyNotes": [],
+      "confidenceMelody": 0
+    },
+    {
+      "step": "BASIC_PITCH provenance",
+      "entries": [
+        {
+          "capability": "transcription",
+          "provider": "BASIC_PITCH",
+          "version": "http-400",
+          "status": "failed",
+          "attempts": 1,
+          "errorCode": "http-400",
+          "errorMessage": "BASIC_PITCH returned HTTP 400"
+        }
+      ]
+    }
+  ],
+  "observations": [
+    "Before this change a FULL_SONG was never sent to Basic Pitch at all: transcription ran only for VOCAL_ONLY and SOLO_INSTRUMENT sources, which is why the Definition-of-Done Song Model carried 0 chords and 0 melody notes.",
+    "BASIC_PITCH now appears in providerProvenance for a FULL_SONG at all, which is the fix: the provider is asked. Before this change it was never scheduled for a full mix and therefore never even reported as absent.",
+    "No notes came back in this run, and the reason is transport, not the provider: the deployed worker refuses any source URL that does not resolve to a global address (its SSRF guard), and this development API serves signed URLs from PUBLIC_BASE_URL=http://localhost:5000. A cloud worker cannot reach a local object store. The worker is right to refuse; the run records HTTP 400 rather than pretending.",
+    "What is proven here: the endpoint exists, is healthy, and passes the full identity gate (pinned package tree, pinned checkpoint tree b74344cd..., pinned runtime, build-time smoke, Apache-2.0). What is not: notes in a Song Model, which needs the API reachable from the worker.",
+    "Basic Pitch would run on the mix here in any case. Upstream recommends one instrument at a time, so stem-by-stem transcription (Demucs -> Basic Pitch per stem) will be better; that needs the Demucs endpoint and is not this change."
+  ]
+}
