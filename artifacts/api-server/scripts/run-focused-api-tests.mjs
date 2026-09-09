@@ -112,6 +112,9 @@ const suites = {
       // work) and Tier B (arranger tasks extracted from each score).
       ["src/lib/datasetRightsProof.test.ts", "dataset-rights-proof.test.mjs"],
       ["src/lib/arrangerTaskExtraction.test.ts", "arranger-task-extraction.test.mjs"],
+      // Wave Q, Model Discovery: the registry enforces the three-layer licence
+      // discipline; nothing ships on an unread licence or uncleared works.
+      ["src/lib/globalModelRegistry.test.ts", "global-model-registry.test.mjs"],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [
