@@ -143,7 +143,7 @@ existing multitrack foundation.** The tournament decides; this is the prior.
 2. ✅ Build the **Canonical Adapter Layer** — `SymbolicGenerationProvider` over a projection of `PartGenerationRequestV2`, reporting what each model received, what it could not, what was enforced post-generation, and information loss — PR-56.
 3. Modal image per family (pinned Python/CUDA/Torch/Transformers/revision/checksum). One image per family; no shared runtime. ✅ CA2: `services/composers-assistant-worker`, deployed and proven over HTTPS (PR-57/58, `docs/evidence/model-composers-assistant-2-cloud.json`).
 4. **Real inference**, in value/risk order: ✅ CA2 (four local runs + two cloud runs on real PDMX MIDI) → Anticipatory MT → MIDI-GPT → MuPT → CLaMP 3.
-5. **Tournament** on the per-task suites (bass completion, drum completion, keys accompaniment, strings, brass, full arrangement, infilling, …) against `REFERENCE_PART_COMPOSER` and `CONTEXT_AWARE_ARRANGER`, with blind pairs into the Listening Room.
-6. **Decision report** — Options A–E with quality ceiling, legal risk, GPU cost, engineering cost, data requirements, controllability, deployment complexity.
+5. ✅ **Tournament** on per-task suites against `REFERENCE_PART_COMPOSER` and `CONTEXT_AWARE_ARRANGER`, with blind pairs for the Listening Room — PR-59, first live run in `docs/evidence/model-tournament-live.json` (12 classical PDMX tasks; CA2+CTX 73.5 vs reference 63.0 on the proxy, more playability errors → `do_not_promote`; 216 blind pairs written, none rated). Still to run: a non-classical slice; drums/guitar/synth targets; MIDI-GPT / AMT as shadow challengers.
+6. ✅ (draft v1) **Decision report** — [`decision-report.md`](decision-report.md): Options A–E priced; recommendation start from CA2 (D now, B as first training, A only if B plateaus, no C without counsel).
 
 No training run of any size starts before step 6 is in front of the owner.
