@@ -1,0 +1,391 @@
+{
+  "title": "Context routing rule — should the platform's context passes run after Composer's Assistant 2, per instrument family? Learned from the tournament evidence, not hand-written (Wave Q — Model Discovery, PR-74)",
+  "learnedAt": "2026-09-09T18:58:59.419Z",
+  "judge": "partJudge 1.1; every source report states judgeVersion 1.1",
+  "circularityGuard": "This rule is learned on the tasks named in `learnedFrom`. It must be evaluated on a held-out sample of tasks from different works; `heldOutRefusal()` enforces that and every evaluation table says which sample it used.",
+  "version": "1.0",
+  "method": "per family: ON iff cells ≥ 6 and mean(score(COMPOSERS_ASSISTANT_2+CTX) − score(COMPOSERS_ASSISTANT_2)) > 0; OFF iff cells ≥ 6 and mean ≤ 0; otherwise the pooled default (sign of the mean over all cells). Failures are cells scored 0, as the tournament scores them.",
+  "rawArm": "COMPOSERS_ASSISTANT_2",
+  "ctxArm": "COMPOSERS_ASSISTANT_2+CTX",
+  "minCells": 6,
+  "learnedFrom": [
+    {
+      "source": "docs/evidence/model-tournament-live.rescored-judge-1.1.json",
+      "runId": "4fac41bee93e",
+      "tasks": 12,
+      "cells": 36,
+      "taskIds": [
+        "d088dd70fa63",
+        "af667dec200f",
+        "2ffeb9f31e80",
+        "91379d724a16",
+        "4f8a56a74acd",
+        "9e705b16d135",
+        "2bc4da9836dd",
+        "c2fd134de308",
+        "2be4a261fe20",
+        "9f26dc8d0bf5",
+        "33f92e298617",
+        "f0cc63700904"
+      ],
+      "workIds": [
+        "QmSkJZx8dUJJTWYzuJaCSBuvERNEpJVy6DMw6F5zuXoVMY",
+        "QmZbJx4Utyv1KNTSowiwfiTXjNbkFrmpiJqiupkuKwzqdy",
+        "Qmdz6o41KSd1fVVBSt5ZeCKnd9BAbibLL7DEkGw4HeS3eX",
+        "QmUeMxaCbfQm7LTRPruopP8ixYRDojtRHJ8q5SFRQ1qM6G",
+        "QmReRFTGpAoz8p5kPq7WEfaMUbxngxErHDKcvCBEwkuQLP",
+        "QmaqCGzbn3ULx8qd1tjBJ9NoRNNYQHsGWXdJDZ61JzYtzR",
+        "QmUJGQdm7iiPTE6xX4DrR3Z13YSRKK5ULX6i3vr8iZxwCr",
+        "QmRjibSinfVz16xTgqnq4EPza8mrMFTLbqzwJL9wbUJ2io",
+        "QmcDdXq54QgHd3E5e6PXTH6bpe5GLqsTxuvQ7eHteGPUzm",
+        "QmaogLCs2WhXCuJKogH558zJE51JeNXxQ4C7RejKmwPnev",
+        "QmR4eZvF6dkmTtWRjPjJxHqsLTRiAJJQ1qWw65UmSJ2wHc",
+        "QmWKFRxvyKFJbD39VSWG75zGuvQiCFtLwTnQWyrPiobcej"
+      ]
+    },
+    {
+      "source": "docs/evidence/model-tournament-global-live.rescored-judge-1.1.json",
+      "runId": "2a836f5b6ac2",
+      "tasks": 50,
+      "cells": 150,
+      "taskIds": [
+        "12a6b3dd028f",
+        "a66081ed1bcc",
+        "1a2ab2912e5b",
+        "992a1f9a69a2",
+        "8aa52574a06b",
+        "872a20f6f593",
+        "4e72d729f5dc",
+        "bad8397c5bbf",
+        "ff798466c88c",
+        "bba984fb1864",
+        "8bf8f44344f5",
+        "7b77b54c40fd",
+        "16c910adcd32",
+        "bd1358fdf57f",
+        "c22d601bcd54",
+        "a554a4f27f8b",
+        "a86b6a172514",
+        "5bb85b07145a",
+        "d1953f0c11b7",
+        "74a5b2f87b21",
+        "abfc49e7835f",
+        "90237ce10fb0",
+        "36f95c8af26e",
+        "eb4275eddfda",
+        "91813e87459a",
+        "4a77dee8bf10",
+        "c5a2067875df",
+        "d377e63c3685",
+        "27efb8d2ce37",
+        "a84de3c66978",
+        "e8ff992071b9",
+        "22d27d73ef08",
+        "8def8ae71c3e",
+        "be08c68baa7e",
+        "a636d868cd78",
+        "2b9a06d8355a",
+        "c2574866d5c6",
+        "12470c79b87f",
+        "c161e67b8a71",
+        "afd05f112e72",
+        "8db5d45454c9",
+        "57a6d455def0",
+        "e92b9c0394ae",
+        "7f74542c3725",
+        "9a1a51418bd5",
+        "730836069ba3",
+        "f5a8da1a0d0e",
+        "f173402f0236",
+        "f7d92d346436",
+        "6c814b949efa"
+      ],
+      "workIds": [
+        "QmaCJHoZ3Un2y3r9vWYYAuxFjNgQSmYcLvmztgFDh4SK6E",
+        "QmadLHGjpgNtPRMuTtuiHDeEMQ4xqp5dBKebzDigWiWMs3",
+        "QmShENbwkZFu1WzVmUfschPHEAVVmm83mxcaBNr3GqBbam",
+        "QmacuG15tfzWWXG7SNHuHpXL7RjEMPURsTNnppD6ALETtH",
+        "QmXvjrdeMJSXdqjVGKu9y22dDAxeYtrZMUX7G5k8PbG8kX",
+        "QmaetaqYGz3UfazAh9AULVNpaxnP62CskUZWfG37g8Q2bW",
+        "Qmbk6poUxa9V7SzhLzd4P223SiqVsMGS7mPD4VVPjBrj69",
+        "Qma17QDkQeaFVTi6vAj46MqWbztfC5fHn4m64fatBoNNvW",
+        "Qma1c7LuqVV8Jyw1GmBnwdqKZPeoNTahvqbNkYZqQhMwN2",
+        "QmbqqfxB2FW85LZJLL7HwSxbaSSMWC4oqioxXfKF7GFhzQ",
+        "QmarK8WuALDnUkYx44Nrk5Knx4bMsmh1m8Jduyz3R1V9PD",
+        "QmPnCySgcM4ttvYZsDwbgUSdJ9NgnQED5X9FnG8JtoXqXb",
+        "QmbLxE1mBzNDKUUfCE7m3MdrWPXRbVNbXBwHk2m95A4U4z",
+        "QmassW1LM1SqYqu6jnexbafnq2q5BEwVQiT6w79SrxVCvS",
+        "QmaxCMVTUnP27mT65k76NYKsVy9Eev7nAYskQ17mcidUkS",
+        "QmdRTNCGVUhi7wa7cGC1vynEHxbo5rupUehZ4GQuJqkH4N",
+        "QmaAJQvJnwF4yghG8p3s5gzvrKYkJG23atgk8Hdg8dkopa",
+        "QmaCHVw1Uoj5ot5ciMpYCj2ffGga8PsJAzq94mfx7PUXW3",
+        "QmahFMNjxfieADi4t4iM3nCBgr3L2Jymjm8e2wJjczogPF",
+        "QmTqqMaBHWUp9D5UZyBQLQEKH7uivDdctjuz4RftniwCUi",
+        "Qma4X9oCvTBVazSqVsqZ7j8YLH5ouhEnzkEQRPDgM14Gsa",
+        "QmVhzZ2ztvhYNK8mQmM1vkGxdNCcEGApUvhQPU6c9cn6gK",
+        "QmaLyZRXXjfypokZs1VXcjrCyU7huPwxKj1DetTLLn2dzY",
+        "QmSj6ei4HACHGvcbAXCaV8evjAHdgaqyrTdwJdKZCsCsz3",
+        "QmacY5xSh18WXR348MvKWuvzpuAfRqe8ieh6m8gpNQbyNr",
+        "Qma3KDfPJTb2ybD5UBqm5JAuSzYoBaGRqN8gogjMF53J9w",
+        "QmanYWjTEPXebCvngzAdXN3vojzCtRmLKyLGMov4U82HwX",
+        "Qman4NnnDCm9dg9t4uzexYFhsTeiqRqG2wUJHMByfzY84q",
+        "Qmd6suAZHfFCEQvjhNoAcd7CGStM1HiGicz7yPkXvPF5qb",
+        "QmcERhYvQKb8YejShMvqqQRLmUgdcV6nWpogf3j1BFSj8Y",
+        "QmaxnwxSTa3JMZNAFwY8j1fzFKYFPZYsWcAiQrNvWd9hRU",
+        "QmbuxgCLicDNZhBAFRUN83FnS13caK5St3DbmRmiTnbyFi",
+        "QmWu1GKEdGjxwwV9ePmmSbmUN4y5cmYMpMkXJK2EUxVh1J",
+        "QmabLFxpikYVjcZXgubR9kVaJN6ctKXYSYnWYMpBsWubN5",
+        "Qma2qXH7BTNA9mf19TPCYLmsP5sZBDxJ3SzdNi7oQVdqyT",
+        "QmaKwt5BEXk6w6dGXkDd3PYox35UikxR8NqJXqqG4Vs1d9",
+        "QmT8HvwNzoxRoJCfjipR4pqLvmsauu6kyVe7gSMEGGj9bw",
+        "QmaLgzzfoz52P4ANXCHsSEX64RbxbFhwPCKhHympzBgye9",
+        "QmdR8JT7qjszfGL9ivGsbCKx9UgnNvfiPAWkKwBhdPJs2L",
+        "QmasDRy7rFCGZmvQtNxAW2AgRT8iCveUw1JDjW3gBn9gNm",
+        "QmZvjxouMK4Puvr4VHHkToA8i6UsNdg6Ssc4nJTjTu7KoX",
+        "QmaCz64M1bUYrs6qWUkrQHCnCR6rHgm41JRQVW9aUXsXCA",
+        "QmaGSbbadetKUxXVTcFYk9QaqRGQyi2KRtWmckqBD2Z1dK",
+        "QmaPWhAxxRc8s16bjJVeEGEKEvKWKzNqg7W2qakbByRrL4",
+        "QmVCMwJFL9Q67AL1TyeBGTLbu2a5uHnpiFivsBr339Tymr",
+        "QmeuGpDFNwqhaKhtUNuCQdcxiq2TwT1S1f3Rr2H685XJXj",
+        "QmcrhgHJ1afsZqYVKUNjh6dnnYD8kv4rvgknX5UpNaeAyG",
+        "QmNwf6GRbingp8jNGB7BgyPZ8nhWWvLjF1jZzEXUF4LxvQ",
+        "QmbaPnp5ffQMNGPJh7cF5pTU3ewYpAhJ3i3EfooSny54jW",
+        "QmZAqZ5sWmk1bVXiTQsW2kBQhKWJfbN7jDAT9C7abGqSxU"
+      ]
+    }
+  ],
+  "default": {
+    "decision": "off",
+    "pooledCells": 186,
+    "pooledMeanDelta": -1.3712,
+    "basis": "sign of the mean delta over all 186 cells (-1.3712); used for families with fewer than 6 cells"
+  },
+  "families": {
+    "bass": {
+      "learned": "on",
+      "applied": "on",
+      "basis": "21 cells ≥ 6; mean(+CTX − raw) = 2.5529 → on",
+      "evidence": {
+        "family": "bass",
+        "cells": 21,
+        "tasks": 7,
+        "meanDelta": 2.5529,
+        "ctxWins": 2,
+        "rawWins": 4,
+        "ties": 15,
+        "meanRawScore": 75.4195,
+        "meanCtxScore": 77.9724,
+        "meanPlayabilityDelta": -0.6667,
+        "sources": [
+          "docs/evidence/model-tournament-live.rescored-judge-1.1.json",
+          "docs/evidence/model-tournament-global-live.rescored-judge-1.1.json"
+        ]
+      }
+    },
+    "brass": {
+      "learned": "off",
+      "applied": "off",
+      "basis": "21 cells ≥ 6; mean(+CTX − raw) = -7.4195 → off",
+      "evidence": {
+        "family": "brass",
+        "cells": 21,
+        "tasks": 7,
+        "meanDelta": -7.4195,
+        "ctxWins": 2,
+        "rawWins": 12,
+        "ties": 7,
+        "meanRawScore": 82.8329,
+        "meanCtxScore": 75.4133,
+        "meanPlayabilityDelta": 0.1905,
+        "sources": [
+          "docs/evidence/model-tournament-live.rescored-judge-1.1.json",
+          "docs/evidence/model-tournament-global-live.rescored-judge-1.1.json"
+        ]
+      }
+    },
+    "drums": {
+      "learned": "on",
+      "applied": "on",
+      "basis": "15 cells ≥ 6; mean(+CTX − raw) = 2.8373 → on",
+      "evidence": {
+        "family": "drums",
+        "cells": 15,
+        "tasks": 5,
+        "meanDelta": 2.8373,
+        "ctxWins": 2,
+        "rawWins": 0,
+        "ties": 13,
+        "meanRawScore": 74.8853,
+        "meanCtxScore": 77.7227,
+        "meanPlayabilityDelta": -0.2,
+        "sources": [
+          "docs/evidence/model-tournament-global-live.rescored-judge-1.1.json"
+        ]
+      }
+    },
+    "ensemble": {
+      "learned": "off",
+      "applied": "off",
+      "basis": "6 cells ≥ 6; mean(+CTX − raw) = -7.225 → off",
+      "evidence": {
+        "family": "ensemble",
+        "cells": 6,
+        "tasks": 2,
+        "meanDelta": -7.225,
+        "ctxWins": 3,
+        "rawWins": 3,
+        "ties": 0,
+        "meanRawScore": 71.6,
+        "meanCtxScore": 64.375,
+        "meanPlayabilityDelta": 0.8333,
+        "sources": [
+          "docs/evidence/model-tournament-global-live.rescored-judge-1.1.json"
+        ]
+      }
+    },
+    "guitar": {
+      "learned": "on",
+      "applied": "on",
+      "basis": "18 cells ≥ 6; mean(+CTX − raw) = 2.4239 → on",
+      "evidence": {
+        "family": "guitar",
+        "cells": 18,
+        "tasks": 6,
+        "meanDelta": 2.4239,
+        "ctxWins": 12,
+        "rawWins": 5,
+        "ties": 1,
+        "meanRawScore": 68.8439,
+        "meanCtxScore": 71.2678,
+        "meanPlayabilityDelta": 0.5556,
+        "sources": [
+          "docs/evidence/model-tournament-global-live.rescored-judge-1.1.json"
+        ]
+      }
+    },
+    "keys": {
+      "learned": "off",
+      "applied": "off",
+      "basis": "24 cells ≥ 6; mean(+CTX − raw) = -1.425 → off",
+      "evidence": {
+        "family": "keys",
+        "cells": 24,
+        "tasks": 8,
+        "meanDelta": -1.425,
+        "ctxWins": 12,
+        "rawWins": 12,
+        "ties": 0,
+        "meanRawScore": 75.735,
+        "meanCtxScore": 74.31,
+        "meanPlayabilityDelta": 0.5,
+        "sources": [
+          "docs/evidence/model-tournament-live.rescored-judge-1.1.json",
+          "docs/evidence/model-tournament-global-live.rescored-judge-1.1.json"
+        ]
+      }
+    },
+    "organ": {
+      "learned": "on",
+      "applied": "on",
+      "basis": "21 cells ≥ 6; mean(+CTX − raw) = 5.6057 → on",
+      "evidence": {
+        "family": "organ",
+        "cells": 21,
+        "tasks": 7,
+        "meanDelta": 5.6057,
+        "ctxWins": 11,
+        "rawWins": 4,
+        "ties": 6,
+        "meanRawScore": 80.8886,
+        "meanCtxScore": 86.4943,
+        "meanPlayabilityDelta": 0,
+        "sources": [
+          "docs/evidence/model-tournament-live.rescored-judge-1.1.json",
+          "docs/evidence/model-tournament-global-live.rescored-judge-1.1.json"
+        ]
+      }
+    },
+    "pipe": {
+      "learned": "off",
+      "applied": "off",
+      "basis": "15 cells ≥ 6; mean(+CTX − raw) = -0.02 → off",
+      "evidence": {
+        "family": "pipe",
+        "cells": 15,
+        "tasks": 5,
+        "meanDelta": -0.02,
+        "ctxWins": 1,
+        "rawWins": 1,
+        "ties": 13,
+        "meanRawScore": 84.982,
+        "meanCtxScore": 84.962,
+        "meanPlayabilityDelta": 0,
+        "sources": [
+          "docs/evidence/model-tournament-global-live.rescored-judge-1.1.json"
+        ]
+      }
+    },
+    "reed": {
+      "learned": "off",
+      "applied": "off",
+      "basis": "24 cells ≥ 6; mean(+CTX − raw) = -6.8008 → off",
+      "evidence": {
+        "family": "reed",
+        "cells": 24,
+        "tasks": 8,
+        "meanDelta": -6.8008,
+        "ctxWins": 2,
+        "rawWins": 16,
+        "ties": 6,
+        "meanRawScore": 81.5267,
+        "meanCtxScore": 74.7258,
+        "meanPlayabilityDelta": 0.4583,
+        "sources": [
+          "docs/evidence/model-tournament-live.rescored-judge-1.1.json",
+          "docs/evidence/model-tournament-global-live.rescored-judge-1.1.json"
+        ]
+      }
+    },
+    "strings": {
+      "learned": "off",
+      "applied": "off",
+      "basis": "18 cells ≥ 6; mean(+CTX − raw) = -6.5617 → off",
+      "evidence": {
+        "family": "strings",
+        "cells": 18,
+        "tasks": 6,
+        "meanDelta": -6.5617,
+        "ctxWins": 8,
+        "rawWins": 10,
+        "ties": 0,
+        "meanRawScore": 72.3589,
+        "meanCtxScore": 65.7972,
+        "meanPlayabilityDelta": 0,
+        "sources": [
+          "docs/evidence/model-tournament-live.rescored-judge-1.1.json",
+          "docs/evidence/model-tournament-global-live.rescored-judge-1.1.json"
+        ]
+      }
+    },
+    "synth": {
+      "learned": "default",
+      "applied": "off",
+      "basis": "3 cells < 6; pooled default off (pooled mean delta -1.3712)",
+      "evidence": {
+        "family": "synth",
+        "cells": 3,
+        "tasks": 1,
+        "meanDelta": 0.8067,
+        "ctxWins": 1,
+        "rawWins": 2,
+        "ties": 0,
+        "meanRawScore": 87.3433,
+        "meanCtxScore": 88.15,
+        "meanPlayabilityDelta": 0,
+        "sources": [
+          "docs/evidence/model-tournament-global-live.rescored-judge-1.1.json"
+        ]
+      }
+    }
+  }
+}

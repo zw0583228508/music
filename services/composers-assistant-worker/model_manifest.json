@@ -23,7 +23,16 @@
     "vocabSize": 1944,
     "tokenizer": "unjoined_include_note_duration_commands (UnjoinedTokenizer), 24 steps per quarter",
     "maxLen": 1650,
-    "fineTunedTask": "infill"
+    "fineTunedTask": "infill",
+    "instructionChannel": {
+      "since": "PR-74",
+      "field": "POST /infill form field `instructions` (JSON: atEnd / perCell / loudness)",
+      "accepted": "ids 1–39 and 45–48 (the 49 ids _build_measurement_and_encoding_instruction_to_instruction_dict assigns, minus the encoder-owned 0 and 40–44); one per kind; bounds carry a pitch; ;M: level 0–7 per masked measure",
+      "rendering": "encoding_functions.instruction_str, re-ordered to the order of nn_training_functions._build_finetune_train_data_infill (vert density, n pitch classes, horiz density, diversity, irregularity, step, leap, strict bounds, loose bounds)",
+      "placement": "atEnd → commands_at_end[target track]; perCell → track_measure_commands[(target track, measure)] for every masked measure; loudness → velocity_overrides = DYNAMICS_DEFAULTS[level]",
+      "default": "field absent → empty commands and level 5 on every masked measure: byte-identical to the PR-58 request (request.inputSha256 is reported)",
+      "refusals": "listed in account.instructions.refused, never silently dropped"
+    }
   },
   "vendoredSource": {
     "files": 30,

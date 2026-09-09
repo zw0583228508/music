@@ -333,6 +333,24 @@ const suites = {
         "listening-sensitivity.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // PR-74: CA2's own instruction channel measured (control accuracy), the
+      // per-family context-routing rule learned from evidence, and the
+      // tournament arms that carry them.
+      [
+        "src/lib/controlAccuracy.test.ts",
+        "control-accuracy.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/contextRouting.test.ts",
+        "context-routing.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/tournamentArms.test.ts",
+        "tournament-arms.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [

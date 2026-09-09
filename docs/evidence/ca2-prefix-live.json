@@ -1,0 +1,663 @@
+{
+  "title": "Composer's Assistant 2 worker — the `instructions` field proven live on the deployed Modal endpoint (Wave Q — Model Discovery, PR-74)",
+  "ranAt": "2026-09-09T18:36:36.769Z",
+  "endpoint": {
+    "app": "composers-assistant-worker",
+    "health": {
+      "healthy": true,
+      "modelBinVerified": true,
+      "release": "v2.1.0",
+      "python": "3.10.21",
+      "torch": "2.0.1+cpu",
+      "transformers": "4.31.0",
+      "imageEvidence": "sha256:08f00c63a27e3cae726986335ca47767040d3f1875fd71943b2a85201d151db0"
+    }
+  },
+  "input": {
+    "workId": "Qma11MhFz64u8wRiW1cTZ5VJ4zTQWbYbVHDnMGafAFoaN6",
+    "file": "PDMX Qma11MhFz64u8wRiW1cTZ5VJ4zTQWbYbVHDnMGafAFoaN6.mid (no_license_conflict ∩ our gate)",
+    "bytes": 22318,
+    "targetInst": 58,
+    "targetFamily": "brass",
+    "barStart": 8,
+    "windowBars": 8,
+    "tempoBpm": 120,
+    "meter": "4/4",
+    "contextFamilies": [
+      "drums",
+      "brass"
+    ],
+    "humanNotes": 64,
+    "seed": 7
+  },
+  "prefix": {
+    "derivedBy": "expressV2InCa2Vocabulary(platformRequestFor(task, seed).v2) → wireFromExpression — the exact path the +PREFIX arm takes",
+    "wire": {
+      "atEnd": [
+        {
+          "id": 48,
+          "note": 48
+        },
+        {
+          "id": 47,
+          "note": 74
+        },
+        {
+          "id": 3
+        },
+        {
+          "id": 7
+        },
+        {
+          "id": 17
+        },
+        {
+          "id": 34
+        }
+      ],
+      "perCell": [
+        {
+          "id": 39
+        }
+      ],
+      "loudness": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ]
+    },
+    "expressed": [
+      {
+        "field": "constraints.comfortableRange ∩ playableRange",
+        "as": "lowest/highest_note_loose 48–74"
+      },
+      {
+        "field": "styleGrammar.rules[onset-density]",
+        "as": "horiz_note_onset_density bin 2"
+      },
+      {
+        "field": "role + constraints.maxSimultaneousNotes",
+        "as": "vert_note_onset_density bin 0 (an average the model aims at, not a ceiling)"
+      },
+      {
+        "field": "styleGrammar.rules[stepwise-motion]",
+        "as": "pitch_step_prob bin 5"
+      },
+      {
+        "field": "styleGrammar.rules[syncopation]",
+        "as": "horiz_note_onset_irregularity bin 3 — a different measurement standing in for syncopation"
+      },
+      {
+        "field": "siblingParts[].notes (independence)",
+        "as": "is_not_octave_same on every masked cell"
+      },
+      {
+        "field": "section.energy",
+        "as": "per-measure ;M: level (replacing the worker's fixed level 5)"
+      },
+      {
+        "field": "context.currentBars.chords",
+        "as": "a string-ensemble (;I:48) guide track of block chord tones — harmony as a sibling, which the model may double"
+      },
+      {
+        "field": "context.currentBars.melody / vocalAttentionMap.occupied",
+        "as": "a voice-oohs (;I:53) context track; the gaps are the track's rests"
+      }
+    ],
+    "omitted": [
+      {
+        "field": "vocalAttentionMap.register",
+        "why": "capping under the vocal would leave less than an octave; left to the vocal-space pass"
+      },
+      {
+        "field": "constraints.playableRange (as a hard wall)",
+        "why": "strict bounds were trained as the part's true extremes; the wall stays a post-generation clamp"
+      },
+      {
+        "field": "styleGrammar.rules[phrase-length]",
+        "why": "no CA2 instruction measures it; groove rules stay with the groove pass"
+      },
+      {
+        "field": "styleGrammar.rules[harmonic-rhythm]",
+        "why": "no CA2 instruction measures it; groove rules stay with the groove pass"
+      },
+      {
+        "field": "styleGrammar.rules[functional-motion]",
+        "why": "no CA2 instruction measures it; groove rules stay with the groove pass"
+      },
+      {
+        "field": "section.function",
+        "why": "no token in the released vocabulary carries it; a spare id would need fine-tuning"
+      },
+      {
+        "field": "section.tension",
+        "why": "no token in the released vocabulary carries it; a spare id would need fine-tuning"
+      },
+      {
+        "field": "phrases[].role",
+        "why": "no token in the released vocabulary carries it; a spare id would need fine-tuning"
+      },
+      {
+        "field": "globalPlan.sectionTargets",
+        "why": "no token in the released vocabulary carries it; a spare id would need fine-tuning"
+      },
+      {
+        "field": "motifMemory[]",
+        "why": "no token in the released vocabulary carries it; a spare id would need fine-tuning"
+      },
+      {
+        "field": "previousSectionSummary.sectionName",
+        "why": "no token in the released vocabulary carries it; a spare id would need fine-tuning"
+      },
+      {
+        "field": "nextSectionIntent.sectionName",
+        "why": "no token in the released vocabulary carries it; a spare id would need fine-tuning"
+      },
+      {
+        "field": "productionBriefRef",
+        "why": "no token in the released vocabulary carries it; a spare id would need fine-tuning"
+      },
+      {
+        "field": "harmonyPlan.voicings[] (as voicings)",
+        "why": "no token in the released vocabulary carries it; a spare id would need fine-tuning"
+      },
+      {
+        "field": "transitions[].devices[]",
+        "why": "no token in the released vocabulary carries it; a spare id would need fine-tuning"
+      }
+    ],
+    "notSentOnWire": [
+      {
+        "field": "guideTracks (harmony, vocal)",
+        "why": "the worker takes the MIDI as-is; adding a synthetic guide track means rewriting the score, which this arm does not do"
+      },
+      {
+        "field": "contextBars",
+        "why": "the worker's measure_slice is the task window; the neighbouring bars are not widened into the slice"
+      }
+    ]
+  },
+  "requests": [
+    {
+      "label": "without-instructions",
+      "request": {
+        "inputTokens": 474,
+        "inputSha256": "d378076a06f686d9d65eb97df1f6ecbd015f31eef813d51bfb97e62adbee641f",
+        "instructionsSent": false,
+        "inputTail": "4;w:12;N:52;w:12;N:54;w:12;N:56;I:58;<extra_id_7>;I:60;d:12;N:62;w:12;N:63;w:12;N:66;w:12;d:24;N:59;w:24;d:12;N:68;w:12;N:66;w:12;N:63;I:128;D:36;w:24;D:38;w:12;D:38;w:12;D:36;w:12;D:36;w:12;D:38;D:57"
+      },
+      "workerAccount": {
+        "received": [
+          "siblingParts.notes (unmasked tracks)",
+          "instrument (;I:)",
+          "candidateStrategy.seed"
+        ],
+        "instructions": {
+          "commandsAtEnd": "",
+          "trackMeasureCommands": "",
+          "loudnessLevels": [
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5
+          ],
+          "loudnessSource": "default level 5 (no `instructions` field)",
+          "applied": [],
+          "refused": []
+        }
+      },
+      "inference": {
+        "seconds": 5.36,
+        "outputTokens": 137,
+        "device": "cpu",
+        "outputHead": ";<extra_id_0>;d:12;N:32;w:12;N:32;w:12;N:32;w:12;N:32;w:12;N:32;w:12;N:32;w:12;N:32;w:12;N:32;<extra_id_1>;d:12;N:33;w:12;N:33;w:12;N:33;w:12;N:33;w:12;N:33;w:12;N:33;w:12;N:33;w:12;N:33;<extra_id_2>;"
+      },
+      "httpSeconds": 6.31,
+      "output": {
+        "generatedNotes": 64,
+        "measuresWithNotes": 8,
+        "pitchRange": [
+          28,
+          33
+        ]
+      },
+      "judge": {
+        "version": "1.1",
+        "score": 100,
+        "playabilityErrors": 0,
+        "coverage": 1,
+        "chordToneShare": 0.9375
+      },
+      "controlsAgainstThePrefixInstructions": [
+        {
+          "kind": "lowest_note_loose",
+          "requested": 48,
+          "realisedRaw": 28,
+          "realised": 28,
+          "hit": false,
+          "distance": -20,
+          "note": "realised lowest pitch must not fall below the bound"
+        },
+        {
+          "kind": "highest_note_loose",
+          "requested": 74,
+          "realisedRaw": 33,
+          "realised": 33,
+          "hit": true,
+          "distance": 0,
+          "note": "realised highest pitch must not rise above the bound"
+        },
+        {
+          "kind": "horiz_note_onset_density",
+          "requested": 2,
+          "realisedRaw": 2,
+          "realised": 3,
+          "hit": false,
+          "distance": 1,
+          "note": "onsets per quarter over the bars that have onsets"
+        },
+        {
+          "kind": "vert_note_onset_density",
+          "requested": 0,
+          "realisedRaw": 1,
+          "realised": 0,
+          "hit": true,
+          "distance": 0,
+          "note": "notes per onset"
+        },
+        {
+          "kind": "pitch_step_prob",
+          "requested": 5,
+          "realisedRaw": 0.0794,
+          "realised": 1,
+          "hit": false,
+          "distance": -4,
+          "note": "share of chord-to-chord moves of at most 2 semitones"
+        },
+        {
+          "kind": "horiz_note_onset_irregularity",
+          "requested": 3,
+          "realisedRaw": 0.0156,
+          "realised": 1,
+          "hit": false,
+          "distance": -2,
+          "note": "1 − max autocorrelation of the onset vector (the author's score_4)"
+        },
+        {
+          "kind": "is_not_octave_same",
+          "requested": 1,
+          "realisedRaw": 0,
+          "realised": 1,
+          "hit": true,
+          "distance": 0,
+          "note": "share of played bars that are an octave-class copy of a context track (0 = obeyed)"
+        },
+        {
+          "kind": "loudness",
+          "requested": 3,
+          "realisedRaw": null,
+          "realised": null,
+          "hit": null,
+          "distance": null,
+          "note": "not measurable: CA2 emits no velocities; the worker assigns metrical-accent velocities to every decoded note"
+        }
+      ],
+      "realised": {
+        "horiz": 2,
+        "vert": 1,
+        "pitchClasses": 1,
+        "step": 0.07936507936507936,
+        "leap": 0.047619047619047616,
+        "irregularity": 0.015624999999999889,
+        "diversity": 0,
+        "lowest": 28,
+        "highest": 33,
+        "octaveCollapseShare": 0
+      },
+      "definitionOfDone": {
+        "realMusicalInput": true,
+        "realModelInference": true,
+        "realSymbolicOutput": true,
+        "verdict": "PASS"
+      },
+      "imageEvidence": "sha256:08f00c63a27e3cae726986335ca47767040d3f1875fd71943b2a85201d151db0"
+    },
+    {
+      "label": "with-instructions",
+      "request": {
+        "inputTokens": 492,
+        "inputSha256": "22e25f67dbcee515468e8a20face94a97b646aeac3264c772ff378d3ae3af6fb",
+        "instructionsSent": true,
+        "inputTail": ":63;I:128;D:36;w:24;D:38;w:12;D:38;w:12;D:36;w:12;D:36;w:12;D:38;D:57;<instruction_0>;I:58;<instruction_7>;<instruction_3>;<instruction_34>;<instruction_17>;<instruction_48>;N:48;<instruction_47>;N:74"
+      },
+      "workerAccount": {
+        "received": [
+          "siblingParts.notes (unmasked tracks)",
+          "instrument (;I:)",
+          "candidateStrategy.seed",
+          "instructions (highest_note_loose, horiz_note_onset_density, horiz_note_onset_irregularity, is_not_octave_same, lowest_note_loose, pitch_step_prob, vert_note_onset_density)",
+          "loudness (;M: per masked measure)"
+        ],
+        "instructions": {
+          "commandsAtEnd": ";<instruction_7>;<instruction_3>;<instruction_34>;<instruction_17>;<instruction_48>;N:48;<instruction_47>;N:74",
+          "trackMeasureCommands": ";<instruction_39>",
+          "loudnessLevels": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "loudnessSource": "caller ;M: levels → DYNAMICS_DEFAULTS velocities",
+          "applied": [
+            {
+              "id": 48,
+              "name": "lowest_note_loose",
+              "note": 48,
+              "placement": "atEnd",
+              "token": ";<instruction_48>;N:48"
+            },
+            {
+              "id": 47,
+              "name": "highest_note_loose",
+              "note": 74,
+              "placement": "atEnd",
+              "token": ";<instruction_47>;N:74"
+            },
+            {
+              "id": 3,
+              "name": "horiz_note_onset_density",
+              "bin": 2,
+              "placement": "atEnd",
+              "token": ";<instruction_3>"
+            },
+            {
+              "id": 7,
+              "name": "vert_note_onset_density",
+              "bin": 0,
+              "placement": "atEnd",
+              "token": ";<instruction_7>"
+            },
+            {
+              "id": 17,
+              "name": "pitch_step_prob",
+              "bin": 5,
+              "placement": "atEnd",
+              "token": ";<instruction_17>"
+            },
+            {
+              "id": 34,
+              "name": "horiz_note_onset_irregularity",
+              "bin": 3,
+              "placement": "atEnd",
+              "token": ";<instruction_34>"
+            },
+            {
+              "id": 39,
+              "name": "is_not_octave_same",
+              "bin": 1,
+              "placement": "perCell",
+              "token": ";<instruction_39>"
+            }
+          ],
+          "refused": [],
+          "order": "at-end and per-cell tokens re-ordered to the fine-tuning builder's order (nn_training_functions / rpr_ca_functions)"
+        }
+      },
+      "inference": {
+        "seconds": 4.32,
+        "outputTokens": 122,
+        "device": "cpu",
+        "outputHead": ";<extra_id_0>;d:60;N:56;w:60;d:12;N:57;w:12;N:56;w:12;N:54;<extra_id_1>;d:12;N:52;w:12;d:24;N:61;w:24;d:12;N:59;w:12;d:24;N:57;w:24;d:12;N:56;w:12;N:54;<extra_id_2>;d:12;N:56;w:12;d:24;N:59;w:24;d:12;"
+      },
+      "httpSeconds": 5.13,
+      "output": {
+        "generatedNotes": 45,
+        "measuresWithNotes": 8,
+        "pitchRange": [
+          52,
+          64
+        ]
+      },
+      "judge": {
+        "version": "1.1",
+        "score": 76.17,
+        "playabilityErrors": 0,
+        "coverage": 1,
+        "chordToneShare": 0.875
+      },
+      "controlsAgainstThePrefixInstructions": [
+        {
+          "kind": "lowest_note_loose",
+          "requested": 48,
+          "realisedRaw": 52,
+          "realised": 52,
+          "hit": true,
+          "distance": 0,
+          "note": "realised lowest pitch must not fall below the bound"
+        },
+        {
+          "kind": "highest_note_loose",
+          "requested": 74,
+          "realisedRaw": 64,
+          "realised": 64,
+          "hit": true,
+          "distance": 0,
+          "note": "realised highest pitch must not rise above the bound"
+        },
+        {
+          "kind": "horiz_note_onset_density",
+          "requested": 2,
+          "realisedRaw": 1.4063,
+          "realised": 2,
+          "hit": true,
+          "distance": 0,
+          "note": "onsets per quarter over the bars that have onsets"
+        },
+        {
+          "kind": "vert_note_onset_density",
+          "requested": 0,
+          "realisedRaw": 1,
+          "realised": 0,
+          "hit": true,
+          "distance": 0,
+          "note": "notes per onset"
+        },
+        {
+          "kind": "pitch_step_prob",
+          "requested": 5,
+          "realisedRaw": 0.8636,
+          "realised": 5,
+          "hit": true,
+          "distance": 0,
+          "note": "share of chord-to-chord moves of at most 2 semitones"
+        },
+        {
+          "kind": "horiz_note_onset_irregularity",
+          "requested": 3,
+          "realisedRaw": 0.3036,
+          "realised": 2,
+          "hit": false,
+          "distance": -1,
+          "note": "1 − max autocorrelation of the onset vector (the author's score_4)"
+        },
+        {
+          "kind": "is_not_octave_same",
+          "requested": 1,
+          "realisedRaw": 0.125,
+          "realised": 0,
+          "hit": false,
+          "distance": 0.125,
+          "note": "share of played bars that are an octave-class copy of a context track (0 = obeyed)"
+        },
+        {
+          "kind": "loudness",
+          "requested": 3,
+          "realisedRaw": null,
+          "realised": null,
+          "hit": null,
+          "distance": null,
+          "note": "not measurable: CA2 emits no velocities; the worker assigns metrical-accent velocities to every decoded note"
+        }
+      ],
+      "realised": {
+        "horiz": 1.40625,
+        "vert": 1,
+        "pitchClasses": 1,
+        "step": 0.8636363636363636,
+        "leap": 0.13636363636363635,
+        "irregularity": 0.3035846011987091,
+        "diversity": 0,
+        "lowest": 52,
+        "highest": 64,
+        "octaveCollapseShare": 0.125
+      },
+      "definitionOfDone": {
+        "realMusicalInput": true,
+        "realModelInference": true,
+        "realSymbolicOutput": true,
+        "verdict": "PASS"
+      },
+      "imageEvidence": "sha256:08f00c63a27e3cae726986335ca47767040d3f1875fd71943b2a85201d151db0"
+    }
+  ],
+  "byteIdentity": {
+    "claim": "with the field absent the encoder input is byte-identical to the PR-58 worker's",
+    "localCheck": {
+      "midi": "Qma11MhFz64u8wRiW1cTZ5VJ4zTQWbYbVHDnMGafAFoaN6.mid",
+      "targetTrack": 4,
+      "measureSlice": [
+        8,
+        16
+      ],
+      "defaultPathByteIdentical": true,
+      "defaultInputSha256": "a3381416b0a63d96d57dc9514dc1543ef4b79427352bff96d03f83506988f6e0",
+      "defaultTokens": 507,
+      "withInstructions": {
+        "commandsAtEnd": ";<instruction_7>;<instruction_3>;<instruction_31>;<instruction_13>;<instruction_48>;N:36;<instruction_47>;N:72",
+        "trackMeasureCommands": ";<instruction_39>",
+        "loudnessLevels": [
+          3,
+          3,
+          3,
+          4,
+          4,
+          5,
+          5,
+          6
+        ],
+        "applied": [
+          [
+            "lowest_note_loose",
+            36
+          ],
+          [
+            "highest_note_loose",
+            72
+          ],
+          [
+            "horiz_note_onset_density",
+            2
+          ],
+          [
+            "vert_note_onset_density",
+            0
+          ],
+          [
+            "pitch_step_prob",
+            1
+          ],
+          [
+            "horiz_note_onset_irregularity",
+            0
+          ],
+          [
+            "is_not_octave_same",
+            1
+          ]
+        ],
+        "refused": [
+          [
+            {
+              "id": 3
+            },
+            "a second horiz_note_onset_density under `atEnd`; one per kind"
+          ],
+          [
+            {
+              "id": 99
+            },
+            "id 99 is a spare id the released fine-tune never saw; sending it would be noise"
+          ],
+          [
+            0,
+            "id 0 is owned by the encoder (separator / rhythmic conditioning), not a caller instruction"
+          ],
+          [
+            41,
+            "id 41 is owned by the encoder (separator / rhythmic conditioning), not a caller instruction"
+          ],
+          [
+            {
+              "id": 45
+            },
+            "highest_note_strict needs a `note` 0..127"
+          ],
+          [
+            "not-a-token",
+            "string is not an encoded instruction token"
+          ],
+          [
+            {
+              "id": 39
+            },
+            "is_not_octave_same is a per-cell instruction in training; not accepted under `atEnd`"
+          ],
+          [
+            {
+              "id": 3
+            },
+            "horiz_note_onset_density is an at-end instruction in training; not accepted under `perCell`"
+          ]
+        ],
+        "tokens": 525,
+        "inputTail": "instruction_39>;<extra_id_7>;<instruction_0>;I:128;<instruction_7>;<instruction_3>;<instruction_31>;<instruction_13>;<instruction_48>;N:36;<instruction_47>;N:72",
+        "measureHeads": [
+          ";M:3;B:5;L:9",
+          ";M:4;B:5;L:9",
+          ";M:5;B:5;L:9",
+          ";M:6;B:5;L:9"
+        ],
+        "perCellInsertedCount": 8,
+        "atEndSeparatorPresent": true
+      },
+      "loudnessWrongLength": [
+        {
+          "item": [
+            1,
+            2
+          ],
+          "why": "loudness must be an int or a list of 8 ints (one per masked measure)"
+        }
+      ],
+      "drumBoundRendersD": ";<instruction_48>;D:36"
+    },
+    "liveNote": "the deployed worker reports request.inputSha256 for both calls above; the two differ exactly by the instruction tokens (compare inputTail)."
+  },
+  "honestLimits": [
+    "One score, one window, one seed: this proves the field works end to end on the deployed image, not that the model obeys it — the tournament's control-accuracy tables are that measurement.",
+    "Sampling is stochastic on CPU; the two outputs differ by seed-independent sampling as well as by the instructions."
+  ]
+}

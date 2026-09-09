@@ -8,8 +8,11 @@ Two routes, both bearer-authenticated:
                    `healthy` is computed, never asserted.
   POST /infill   — multipart: `midi` (Standard MIDI File), optional form fields
                    target_track, start_measure, n_measures, seed,
-                   max_new_tokens, temperature, top_p. Returns the notes and
-                   the account of what the model received and did not.
+                   max_new_tokens, temperature, top_p, and `instructions`
+                   (JSON: CA2's own instruction ids + loudness levels, PR-74).
+                   Returns the notes and the account of what the model
+                   received — including which instructions were applied and
+                   which were refused — and did not.
 
 Nothing here marks the provider READY in the platform catalogue; that is the
 catalogue's decision after real evidence, and the SSRF/rights gates live on the
@@ -17,6 +20,7 @@ platform side. This worker only refuses to run weights it cannot verify.
 """
 from __future__ import annotations
 
+import json
 import os
 import shutil
 import tempfile
@@ -60,11 +64,25 @@ async def infill(
     max_new_tokens: int = Form(1200),
     temperature: float = Form(1.0),
     top_p: float = Form(0.85),
+    # PR-74: CA2's own control channel. A JSON object
+    #   {"atEnd": [ids | {"id","note"} | tokens], "perCell": [...], "loudness": int | [int × n_measures]}
+    # rendered by the release's own instruction_str and validated (ids 1–48 the
+    # model saw, one per kind, bounds carry a pitch); what was applied and what
+    # was refused is echoed in `account.instructions`. Absent = unchanged input.
+    instructions: str | None = Form(None),
 ) -> dict:
     if n_measures < 1 or n_measures > 32:
         raise HTTPException(400, "n_measures must be 1..32")
     if max_new_tokens < 16 or max_new_tokens > 4000:
         raise HTTPException(400, "max_new_tokens must be 16..4000")
+    instruction_spec = None
+    if instructions is not None and instructions.strip():
+        try:
+            instruction_spec = json.loads(instructions)
+        except json.JSONDecodeError as error:
+            raise HTTPException(400, f"instructions must be a JSON object: {error.msg}")
+        if not isinstance(instruction_spec, dict):
+            raise HTTPException(400, "instructions must be a JSON object with atEnd / perCell / loudness")
     tmp = Path(tempfile.mkdtemp(prefix="ca2-"))
     try:
         path = tmp / "input.mid"
@@ -75,7 +93,7 @@ async def infill(
         result = ca2_infer.infill(
             str(path), target_track=target_track, target_inst=target_inst, start_measure=start_measure,
             n_measures=n_measures, seed=seed, max_new_tokens=max_new_tokens,
-            temperature=temperature, top_p=top_p,
+            temperature=temperature, top_p=top_p, instructions=instruction_spec,
         )
         result["imageEvidence"] = os.environ.get("MUSIC_AI_IMAGE_EVIDENCE")
         return result

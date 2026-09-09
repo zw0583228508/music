@@ -1,0 +1,5623 @@
+{
+  "version": "1.0",
+  "runId": "9a58dcf37313",
+  "note": "Rater-facing sheet: tokens only. The provider key lives in the tournament report, not here.",
+  "pairs": [
+    {
+      "pairId": "b0556a318e10",
+      "taskId": "2bc4da9836dd",
+      "seed": 11,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "560410ba.mid",
+      "right": "b88e89d8.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "1e79ea8c5f44",
+      "taskId": "2bc4da9836dd",
+      "seed": 11,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "01cd57ed.mid",
+      "right": "50da8239.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "42054af4e0cb",
+      "taskId": "2bc4da9836dd",
+      "seed": 11,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "a0274207.mid",
+      "right": "9deadf1b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e2b8f2ffadbb",
+      "taskId": "2bc4da9836dd",
+      "seed": 11,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "1c6d5fa5.mid",
+      "right": "36374979.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ece1d93722eb",
+      "taskId": "2bc4da9836dd",
+      "seed": 11,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "fb5cd92e.mid",
+      "right": "0f60cdb1.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d74869b2e5a7",
+      "taskId": "2bc4da9836dd",
+      "seed": 11,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "66c72ee3.mid",
+      "right": "dee40f70.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "58fbdeb15f59",
+      "taskId": "2bc4da9836dd",
+      "seed": 11,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "03fbfa83.mid",
+      "right": "0fafe3c4.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "55abe3aa58f5",
+      "taskId": "2bc4da9836dd",
+      "seed": 11,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "efe05dc7.mid",
+      "right": "c13b8deb.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "9d03a1023a56",
+      "taskId": "2bc4da9836dd",
+      "seed": 11,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "d7505dd7.mid",
+      "right": "c4a31bf9.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "7158757bd9bc",
+      "taskId": "2bc4da9836dd",
+      "seed": 11,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "242d2753.mid",
+      "right": "25747636.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "33ea6b88da9b",
+      "taskId": "2bc4da9836dd",
+      "seed": 11,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "31e0957a.mid",
+      "right": "2ac6f6c1.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "dcbd5382cc0e",
+      "taskId": "2bc4da9836dd",
+      "seed": 11,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "b73be705.mid",
+      "right": "9d2029f5.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "97e66f379225",
+      "taskId": "2bc4da9836dd",
+      "seed": 13,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "7cfde668.mid",
+      "right": "91f1e331.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "88bbce025164",
+      "taskId": "2bc4da9836dd",
+      "seed": 13,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "0d6dab9a.mid",
+      "right": "8e59401c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a58b78cad9a4",
+      "taskId": "2bc4da9836dd",
+      "seed": 13,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "7957e895.mid",
+      "right": "0f7c3612.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "2dc76a6420d0",
+      "taskId": "2bc4da9836dd",
+      "seed": 13,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "5b056062.mid",
+      "right": "197d3586.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "01c708158d0d",
+      "taskId": "2bc4da9836dd",
+      "seed": 13,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "077e8088.mid",
+      "right": "31f76c26.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "dd2faf36312b",
+      "taskId": "2bc4da9836dd",
+      "seed": 13,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "cd66a7d3.mid",
+      "right": "336f8c8d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a98a5d7ccadc",
+      "taskId": "2bc4da9836dd",
+      "seed": 13,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "53caf34a.mid",
+      "right": "2ac0b097.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c2aa0ef8d61a",
+      "taskId": "2bc4da9836dd",
+      "seed": 13,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "c9ab5132.mid",
+      "right": "42265d07.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "46d564f97cfb",
+      "taskId": "2bc4da9836dd",
+      "seed": 13,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "11013e23.mid",
+      "right": "ee989118.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "1ad807aab88a",
+      "taskId": "2bc4da9836dd",
+      "seed": 13,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "c2b8b07a.mid",
+      "right": "d27196ff.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "915798b2e9d3",
+      "taskId": "2bc4da9836dd",
+      "seed": 13,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "82756e7c.mid",
+      "right": "6dddd181.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "677c4b3fec35",
+      "taskId": "2bc4da9836dd",
+      "seed": 13,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "1cd0d798.mid",
+      "right": "0f09e090.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "709c4714e9d1",
+      "taskId": "2bc4da9836dd",
+      "seed": 7,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "07c2ba39.mid",
+      "right": "3c687c06.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e265b45aecc5",
+      "taskId": "2bc4da9836dd",
+      "seed": 7,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "9292d11e.mid",
+      "right": "c04d07d8.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "dafb70d2904e",
+      "taskId": "2bc4da9836dd",
+      "seed": 7,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "cb17e36a.mid",
+      "right": "fd5d85b6.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "319302e42a7f",
+      "taskId": "2bc4da9836dd",
+      "seed": 7,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "49993aad.mid",
+      "right": "4e006a3e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d32727eff8df",
+      "taskId": "2bc4da9836dd",
+      "seed": 7,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "2c1427e7.mid",
+      "right": "e782ac77.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "93c7c431bb31",
+      "taskId": "2bc4da9836dd",
+      "seed": 7,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "f4d752e1.mid",
+      "right": "d4563ca8.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "2f1ccd3a113e",
+      "taskId": "2bc4da9836dd",
+      "seed": 7,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "37e6fcc7.mid",
+      "right": "ce836a68.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b36a04bb0ba6",
+      "taskId": "2bc4da9836dd",
+      "seed": 7,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "7d44084b.mid",
+      "right": "88824cdb.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "bc9da38db0a1",
+      "taskId": "2bc4da9836dd",
+      "seed": 7,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "9773c110.mid",
+      "right": "81c7ad65.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a2d013501875",
+      "taskId": "2bc4da9836dd",
+      "seed": 7,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "e563abaf.mid",
+      "right": "6bbcf9b0.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0abae69bc153",
+      "taskId": "2bc4da9836dd",
+      "seed": 7,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "2c8cab51.mid",
+      "right": "bff04931.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b92235920b19",
+      "taskId": "2bc4da9836dd",
+      "seed": 7,
+      "context": "context-2bc4da9836dd.mid",
+      "left": "a140b35d.mid",
+      "right": "20afd8b2.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "345e39595ed6",
+      "taskId": "2be4a261fe20",
+      "seed": 11,
+      "context": "context-2be4a261fe20.mid",
+      "left": "e2b626ae.mid",
+      "right": "9b9843ca.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "cc693c235b1d",
+      "taskId": "2be4a261fe20",
+      "seed": 11,
+      "context": "context-2be4a261fe20.mid",
+      "left": "38bbb45a.mid",
+      "right": "bbffd6f5.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "29d83a95c6ab",
+      "taskId": "2be4a261fe20",
+      "seed": 11,
+      "context": "context-2be4a261fe20.mid",
+      "left": "2291a6ef.mid",
+      "right": "926a1e24.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "9dac4d04bcaa",
+      "taskId": "2be4a261fe20",
+      "seed": 11,
+      "context": "context-2be4a261fe20.mid",
+      "left": "87e66b7b.mid",
+      "right": "6e2ca681.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a1e37b04e015",
+      "taskId": "2be4a261fe20",
+      "seed": 11,
+      "context": "context-2be4a261fe20.mid",
+      "left": "8461ff1f.mid",
+      "right": "03340ae1.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "7a5a581c2bcf",
+      "taskId": "2be4a261fe20",
+      "seed": 11,
+      "context": "context-2be4a261fe20.mid",
+      "left": "b9bba40e.mid",
+      "right": "ff22aa01.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "916dda9c0c3b",
+      "taskId": "2be4a261fe20",
+      "seed": 11,
+      "context": "context-2be4a261fe20.mid",
+      "left": "32bd88b2.mid",
+      "right": "8553d95f.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0d659ef3b1c9",
+      "taskId": "2be4a261fe20",
+      "seed": 11,
+      "context": "context-2be4a261fe20.mid",
+      "left": "9e0e71e9.mid",
+      "right": "8fd09629.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c4efd294c83b",
+      "taskId": "2be4a261fe20",
+      "seed": 11,
+      "context": "context-2be4a261fe20.mid",
+      "left": "65e2736c.mid",
+      "right": "c3b197b4.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b87116e20b76",
+      "taskId": "2be4a261fe20",
+      "seed": 11,
+      "context": "context-2be4a261fe20.mid",
+      "left": "378d81f3.mid",
+      "right": "3e2b35a6.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "951c23896b34",
+      "taskId": "2be4a261fe20",
+      "seed": 11,
+      "context": "context-2be4a261fe20.mid",
+      "left": "798d4144.mid",
+      "right": "ce422cbe.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "cfa6bed8c51a",
+      "taskId": "2be4a261fe20",
+      "seed": 11,
+      "context": "context-2be4a261fe20.mid",
+      "left": "b284569d.mid",
+      "right": "c66f52b9.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0faa82061744",
+      "taskId": "2be4a261fe20",
+      "seed": 13,
+      "context": "context-2be4a261fe20.mid",
+      "left": "0731ebf4.mid",
+      "right": "c94bc654.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "7d444d96c439",
+      "taskId": "2be4a261fe20",
+      "seed": 13,
+      "context": "context-2be4a261fe20.mid",
+      "left": "0dfd3e4f.mid",
+      "right": "4372cfc8.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d0674bf26743",
+      "taskId": "2be4a261fe20",
+      "seed": 13,
+      "context": "context-2be4a261fe20.mid",
+      "left": "53a80e1a.mid",
+      "right": "de5234af.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e6044bb184f8",
+      "taskId": "2be4a261fe20",
+      "seed": 13,
+      "context": "context-2be4a261fe20.mid",
+      "left": "8d6ba0d2.mid",
+      "right": "7b44371f.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c1b7a87e369e",
+      "taskId": "2be4a261fe20",
+      "seed": 13,
+      "context": "context-2be4a261fe20.mid",
+      "left": "3344f5cc.mid",
+      "right": "53388cdd.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "fb946d0abea4",
+      "taskId": "2be4a261fe20",
+      "seed": 13,
+      "context": "context-2be4a261fe20.mid",
+      "left": "2dccc99b.mid",
+      "right": "43264b65.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e9bcb581a6a8",
+      "taskId": "2be4a261fe20",
+      "seed": 13,
+      "context": "context-2be4a261fe20.mid",
+      "left": "3ba00096.mid",
+      "right": "144510b6.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e083480ad700",
+      "taskId": "2be4a261fe20",
+      "seed": 13,
+      "context": "context-2be4a261fe20.mid",
+      "left": "67b04311.mid",
+      "right": "4cc4fb46.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "31cb60848ae9",
+      "taskId": "2be4a261fe20",
+      "seed": 13,
+      "context": "context-2be4a261fe20.mid",
+      "left": "87cdecdf.mid",
+      "right": "d8c5ab36.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "2a87ea3fdb1f",
+      "taskId": "2be4a261fe20",
+      "seed": 13,
+      "context": "context-2be4a261fe20.mid",
+      "left": "25e06dc4.mid",
+      "right": "ad61f4ea.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "73b9aeb25e94",
+      "taskId": "2be4a261fe20",
+      "seed": 13,
+      "context": "context-2be4a261fe20.mid",
+      "left": "fab2bb11.mid",
+      "right": "9bcaa8b0.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "bec0db4c1125",
+      "taskId": "2be4a261fe20",
+      "seed": 13,
+      "context": "context-2be4a261fe20.mid",
+      "left": "376cb89c.mid",
+      "right": "425a8107.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "4018c94ec102",
+      "taskId": "2be4a261fe20",
+      "seed": 7,
+      "context": "context-2be4a261fe20.mid",
+      "left": "ba66390c.mid",
+      "right": "57fdf3d8.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d4c957c45b74",
+      "taskId": "2be4a261fe20",
+      "seed": 7,
+      "context": "context-2be4a261fe20.mid",
+      "left": "061babee.mid",
+      "right": "5d92bddf.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "94c9962607ef",
+      "taskId": "2be4a261fe20",
+      "seed": 7,
+      "context": "context-2be4a261fe20.mid",
+      "left": "ce2c8d3d.mid",
+      "right": "b072064d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "eab687d07213",
+      "taskId": "2be4a261fe20",
+      "seed": 7,
+      "context": "context-2be4a261fe20.mid",
+      "left": "d20b828e.mid",
+      "right": "ba106af9.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "bd911367be19",
+      "taskId": "2be4a261fe20",
+      "seed": 7,
+      "context": "context-2be4a261fe20.mid",
+      "left": "cc89a6c3.mid",
+      "right": "ee0878d8.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "73ade34dd868",
+      "taskId": "2be4a261fe20",
+      "seed": 7,
+      "context": "context-2be4a261fe20.mid",
+      "left": "19b15b45.mid",
+      "right": "d315a7bc.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "769c502cdf55",
+      "taskId": "2be4a261fe20",
+      "seed": 7,
+      "context": "context-2be4a261fe20.mid",
+      "left": "4e484ed9.mid",
+      "right": "1d469f81.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "df62cf71c5ee",
+      "taskId": "2be4a261fe20",
+      "seed": 7,
+      "context": "context-2be4a261fe20.mid",
+      "left": "bad86dd1.mid",
+      "right": "359e6291.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "8b7edd923e86",
+      "taskId": "2be4a261fe20",
+      "seed": 7,
+      "context": "context-2be4a261fe20.mid",
+      "left": "28bbdd47.mid",
+      "right": "51ba8a9a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "124c86d84718",
+      "taskId": "2be4a261fe20",
+      "seed": 7,
+      "context": "context-2be4a261fe20.mid",
+      "left": "54c6763b.mid",
+      "right": "eb5d8e5c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "3f4a20718672",
+      "taskId": "2be4a261fe20",
+      "seed": 7,
+      "context": "context-2be4a261fe20.mid",
+      "left": "72f84159.mid",
+      "right": "be29f2b3.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "1185fdcefbdc",
+      "taskId": "2be4a261fe20",
+      "seed": 7,
+      "context": "context-2be4a261fe20.mid",
+      "left": "60665855.mid",
+      "right": "cd8ed530.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "63366bf993c4",
+      "taskId": "2ffeb9f31e80",
+      "seed": 11,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "c0bd8d77.mid",
+      "right": "ddc7ec92.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b974f3c4e9dd",
+      "taskId": "2ffeb9f31e80",
+      "seed": 11,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "4066eab7.mid",
+      "right": "7d23bdc4.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "f85d664631e1",
+      "taskId": "2ffeb9f31e80",
+      "seed": 11,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "e0e2b951.mid",
+      "right": "137f98e4.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ca32a9bd0477",
+      "taskId": "2ffeb9f31e80",
+      "seed": 11,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "cf6c5703.mid",
+      "right": "9f302f8d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b88c8302ae78",
+      "taskId": "2ffeb9f31e80",
+      "seed": 11,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "4136931b.mid",
+      "right": "b8a54891.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a401ea9eb1cc",
+      "taskId": "2ffeb9f31e80",
+      "seed": 11,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "a16ca667.mid",
+      "right": "b812188d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "fb8ef504b4e0",
+      "taskId": "2ffeb9f31e80",
+      "seed": 11,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "c648b687.mid",
+      "right": "eceeb191.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "8a75990ed239",
+      "taskId": "2ffeb9f31e80",
+      "seed": 11,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "1c4b2aa6.mid",
+      "right": "f526b964.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c8864589417e",
+      "taskId": "2ffeb9f31e80",
+      "seed": 11,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "b6bdb79c.mid",
+      "right": "f8a68501.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "daffac40c402",
+      "taskId": "2ffeb9f31e80",
+      "seed": 11,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "21691e4a.mid",
+      "right": "c5be3bf0.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "81a23f21c436",
+      "taskId": "2ffeb9f31e80",
+      "seed": 11,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "5bca7ea3.mid",
+      "right": "90f18edf.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "6a8134a79746",
+      "taskId": "2ffeb9f31e80",
+      "seed": 11,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "30e7e161.mid",
+      "right": "15db74f4.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "20f900f6a72b",
+      "taskId": "2ffeb9f31e80",
+      "seed": 13,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "dca3fc6f.mid",
+      "right": "be8ec954.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "80f28574f377",
+      "taskId": "2ffeb9f31e80",
+      "seed": 13,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "8df42f0b.mid",
+      "right": "520c2686.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "96254c60c8e7",
+      "taskId": "2ffeb9f31e80",
+      "seed": 13,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "892b673b.mid",
+      "right": "831e14fc.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a1a446ad725f",
+      "taskId": "2ffeb9f31e80",
+      "seed": 13,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "568e3682.mid",
+      "right": "5197a6c2.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "490a71743e35",
+      "taskId": "2ffeb9f31e80",
+      "seed": 13,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "6b507451.mid",
+      "right": "8a245122.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "efa54197452a",
+      "taskId": "2ffeb9f31e80",
+      "seed": 13,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "1124c1de.mid",
+      "right": "2215155d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d62f21e256e1",
+      "taskId": "2ffeb9f31e80",
+      "seed": 13,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "087e2364.mid",
+      "right": "af8d3538.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d2fa6fd1d8f8",
+      "taskId": "2ffeb9f31e80",
+      "seed": 13,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "43e5d76e.mid",
+      "right": "9931af21.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "1578a8670299",
+      "taskId": "2ffeb9f31e80",
+      "seed": 13,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "3584037e.mid",
+      "right": "f6e6180f.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "9ed89d11c0b8",
+      "taskId": "2ffeb9f31e80",
+      "seed": 13,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "f4c662d6.mid",
+      "right": "7a5ae70a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "fc46417c900b",
+      "taskId": "2ffeb9f31e80",
+      "seed": 13,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "a7df5539.mid",
+      "right": "c199e09d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "9028a4a6412a",
+      "taskId": "2ffeb9f31e80",
+      "seed": 13,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "f37d36eb.mid",
+      "right": "6434d796.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "85c9f67b3755",
+      "taskId": "2ffeb9f31e80",
+      "seed": 7,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "28e45019.mid",
+      "right": "840d14e3.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a3272d7f2cf5",
+      "taskId": "2ffeb9f31e80",
+      "seed": 7,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "3b647f16.mid",
+      "right": "c69fd204.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "828cb165529d",
+      "taskId": "2ffeb9f31e80",
+      "seed": 7,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "58a1ff2e.mid",
+      "right": "8d01bb1a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "502b082cb534",
+      "taskId": "2ffeb9f31e80",
+      "seed": 7,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "64edfc6f.mid",
+      "right": "2dcc366b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "130e752ab77e",
+      "taskId": "2ffeb9f31e80",
+      "seed": 7,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "0f6231c5.mid",
+      "right": "da8115fc.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "66cbdc414feb",
+      "taskId": "2ffeb9f31e80",
+      "seed": 7,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "ce2598f2.mid",
+      "right": "3db1e888.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ba2e726decbc",
+      "taskId": "2ffeb9f31e80",
+      "seed": 7,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "2253aeb2.mid",
+      "right": "b6877b41.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "4655ccf9e9a2",
+      "taskId": "2ffeb9f31e80",
+      "seed": 7,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "af2793fa.mid",
+      "right": "3c6480c6.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0caba9158670",
+      "taskId": "2ffeb9f31e80",
+      "seed": 7,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "b692b49d.mid",
+      "right": "d72792a2.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "9b0eba698fbf",
+      "taskId": "2ffeb9f31e80",
+      "seed": 7,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "c72ee748.mid",
+      "right": "44a7b968.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c111c7470e56",
+      "taskId": "2ffeb9f31e80",
+      "seed": 7,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "9fd83247.mid",
+      "right": "7c4ec370.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "5db77eee0251",
+      "taskId": "2ffeb9f31e80",
+      "seed": 7,
+      "context": "context-2ffeb9f31e80.mid",
+      "left": "dd5486b3.mid",
+      "right": "fb8c1dc3.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "53a516dd9fce",
+      "taskId": "33f92e298617",
+      "seed": 11,
+      "context": "context-33f92e298617.mid",
+      "left": "4f55a453.mid",
+      "right": "0639f0b2.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "22df117a5bc2",
+      "taskId": "33f92e298617",
+      "seed": 11,
+      "context": "context-33f92e298617.mid",
+      "left": "324d7b19.mid",
+      "right": "e2408b83.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "99634973b48d",
+      "taskId": "33f92e298617",
+      "seed": 11,
+      "context": "context-33f92e298617.mid",
+      "left": "d54b05be.mid",
+      "right": "8ef3a640.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e51a5e141de7",
+      "taskId": "33f92e298617",
+      "seed": 11,
+      "context": "context-33f92e298617.mid",
+      "left": "d07667be.mid",
+      "right": "a543edc0.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "356ba222f106",
+      "taskId": "33f92e298617",
+      "seed": 11,
+      "context": "context-33f92e298617.mid",
+      "left": "e2ef002b.mid",
+      "right": "3032de34.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a779ef1f7338",
+      "taskId": "33f92e298617",
+      "seed": 11,
+      "context": "context-33f92e298617.mid",
+      "left": "fc4bcbfa.mid",
+      "right": "c63cc1b1.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0f7171651ac9",
+      "taskId": "33f92e298617",
+      "seed": 11,
+      "context": "context-33f92e298617.mid",
+      "left": "823cd697.mid",
+      "right": "7c5cdb66.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "9a522c3f3406",
+      "taskId": "33f92e298617",
+      "seed": 11,
+      "context": "context-33f92e298617.mid",
+      "left": "3656e653.mid",
+      "right": "4ed8ae00.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "68b53018b8a6",
+      "taskId": "33f92e298617",
+      "seed": 11,
+      "context": "context-33f92e298617.mid",
+      "left": "2fe62d93.mid",
+      "right": "381b7373.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "99e348ee5bb6",
+      "taskId": "33f92e298617",
+      "seed": 11,
+      "context": "context-33f92e298617.mid",
+      "left": "ff4c58a1.mid",
+      "right": "fff7dd0b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "5f8ea733d3c2",
+      "taskId": "33f92e298617",
+      "seed": 11,
+      "context": "context-33f92e298617.mid",
+      "left": "9efa1007.mid",
+      "right": "5931ef64.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "eba0cadc1fc5",
+      "taskId": "33f92e298617",
+      "seed": 11,
+      "context": "context-33f92e298617.mid",
+      "left": "1472b99c.mid",
+      "right": "7183494e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "563cf9a44d01",
+      "taskId": "33f92e298617",
+      "seed": 13,
+      "context": "context-33f92e298617.mid",
+      "left": "cf8b6ca2.mid",
+      "right": "ff00081d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "7f7ef053cf25",
+      "taskId": "33f92e298617",
+      "seed": 13,
+      "context": "context-33f92e298617.mid",
+      "left": "f0550d51.mid",
+      "right": "f0883505.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "cd5ec1d05f25",
+      "taskId": "33f92e298617",
+      "seed": 13,
+      "context": "context-33f92e298617.mid",
+      "left": "906fc037.mid",
+      "right": "3cb180f4.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c56f426b3aba",
+      "taskId": "33f92e298617",
+      "seed": 13,
+      "context": "context-33f92e298617.mid",
+      "left": "e3ab987c.mid",
+      "right": "e14afd2c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "acbc11257b01",
+      "taskId": "33f92e298617",
+      "seed": 13,
+      "context": "context-33f92e298617.mid",
+      "left": "c281328c.mid",
+      "right": "60a4aff8.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "760108766654",
+      "taskId": "33f92e298617",
+      "seed": 13,
+      "context": "context-33f92e298617.mid",
+      "left": "7228f4c0.mid",
+      "right": "e65a33ce.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "4de46f41b498",
+      "taskId": "33f92e298617",
+      "seed": 13,
+      "context": "context-33f92e298617.mid",
+      "left": "3580ddd9.mid",
+      "right": "2c7fc88b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "1d7a812c36aa",
+      "taskId": "33f92e298617",
+      "seed": 13,
+      "context": "context-33f92e298617.mid",
+      "left": "7674bc85.mid",
+      "right": "ca3fcbd0.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "8b178c0689d1",
+      "taskId": "33f92e298617",
+      "seed": 13,
+      "context": "context-33f92e298617.mid",
+      "left": "d132e761.mid",
+      "right": "7efe706d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "3a0b09952c91",
+      "taskId": "33f92e298617",
+      "seed": 13,
+      "context": "context-33f92e298617.mid",
+      "left": "e7071071.mid",
+      "right": "4b72396a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "49f9723a4c38",
+      "taskId": "33f92e298617",
+      "seed": 13,
+      "context": "context-33f92e298617.mid",
+      "left": "7ef56d3a.mid",
+      "right": "c1d43568.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "3a272837e301",
+      "taskId": "33f92e298617",
+      "seed": 13,
+      "context": "context-33f92e298617.mid",
+      "left": "8aa8e587.mid",
+      "right": "c026c604.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "83d1ef5c3467",
+      "taskId": "33f92e298617",
+      "seed": 7,
+      "context": "context-33f92e298617.mid",
+      "left": "38dd5b36.mid",
+      "right": "984154e2.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "3fc2c54de65e",
+      "taskId": "33f92e298617",
+      "seed": 7,
+      "context": "context-33f92e298617.mid",
+      "left": "7d96ded7.mid",
+      "right": "49f6d369.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "64055b0fe614",
+      "taskId": "33f92e298617",
+      "seed": 7,
+      "context": "context-33f92e298617.mid",
+      "left": "8af6e9e6.mid",
+      "right": "ea26fc6f.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "6d1d0b25d8e1",
+      "taskId": "33f92e298617",
+      "seed": 7,
+      "context": "context-33f92e298617.mid",
+      "left": "41b91369.mid",
+      "right": "405652e1.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "fb8091f00a42",
+      "taskId": "33f92e298617",
+      "seed": 7,
+      "context": "context-33f92e298617.mid",
+      "left": "961ae6b2.mid",
+      "right": "77bd9f28.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "893a1a195cf0",
+      "taskId": "33f92e298617",
+      "seed": 7,
+      "context": "context-33f92e298617.mid",
+      "left": "ecf5460e.mid",
+      "right": "1f9ad76a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e3d411d9c77e",
+      "taskId": "33f92e298617",
+      "seed": 7,
+      "context": "context-33f92e298617.mid",
+      "left": "5e081676.mid",
+      "right": "c253d747.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c5c898b88f92",
+      "taskId": "33f92e298617",
+      "seed": 7,
+      "context": "context-33f92e298617.mid",
+      "left": "ffa5dc4d.mid",
+      "right": "ebce4b2b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "fe2636094b29",
+      "taskId": "33f92e298617",
+      "seed": 7,
+      "context": "context-33f92e298617.mid",
+      "left": "917c138c.mid",
+      "right": "de111ad1.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "80b72b3d5c37",
+      "taskId": "33f92e298617",
+      "seed": 7,
+      "context": "context-33f92e298617.mid",
+      "left": "3e2e0b86.mid",
+      "right": "55fde6fb.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a440df0879f6",
+      "taskId": "33f92e298617",
+      "seed": 7,
+      "context": "context-33f92e298617.mid",
+      "left": "aa39365c.mid",
+      "right": "e03f3388.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e8aac380c023",
+      "taskId": "33f92e298617",
+      "seed": 7,
+      "context": "context-33f92e298617.mid",
+      "left": "a36b44b6.mid",
+      "right": "2dfc5417.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "3e22746fd7b0",
+      "taskId": "4f8a56a74acd",
+      "seed": 11,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "fe33edea.mid",
+      "right": "da15f059.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "04c56c9640f1",
+      "taskId": "4f8a56a74acd",
+      "seed": 11,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "7743f139.mid",
+      "right": "e3c55f2e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "38ac5c94435c",
+      "taskId": "4f8a56a74acd",
+      "seed": 11,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "60e53c21.mid",
+      "right": "764b8a5d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "785c50279ce8",
+      "taskId": "4f8a56a74acd",
+      "seed": 11,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "8eb33876.mid",
+      "right": "25c7393e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "307f489b8b2b",
+      "taskId": "4f8a56a74acd",
+      "seed": 11,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "69ac45c2.mid",
+      "right": "e53fc3f2.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "2aff903e6bf3",
+      "taskId": "4f8a56a74acd",
+      "seed": 11,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "e5001df8.mid",
+      "right": "ecead9b5.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "da07b6c25dbc",
+      "taskId": "4f8a56a74acd",
+      "seed": 11,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "183d7239.mid",
+      "right": "231f3575.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0affbdeb5332",
+      "taskId": "4f8a56a74acd",
+      "seed": 11,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "429aba9c.mid",
+      "right": "758ece6d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "6eba3d92bfa9",
+      "taskId": "4f8a56a74acd",
+      "seed": 11,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "894446be.mid",
+      "right": "ca0b81d6.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "83d9bb5ce4af",
+      "taskId": "4f8a56a74acd",
+      "seed": 11,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "2a2ceea8.mid",
+      "right": "bfb9abe4.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d83abdb116b9",
+      "taskId": "4f8a56a74acd",
+      "seed": 11,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "843746da.mid",
+      "right": "b609bc08.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "720eff0ad03e",
+      "taskId": "4f8a56a74acd",
+      "seed": 11,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "61f87ace.mid",
+      "right": "86fe166a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "01987866a0ed",
+      "taskId": "4f8a56a74acd",
+      "seed": 13,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "d2a88a91.mid",
+      "right": "43b03278.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0309c74fe1ff",
+      "taskId": "4f8a56a74acd",
+      "seed": 13,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "c4a159de.mid",
+      "right": "28484cea.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "02f9484cccff",
+      "taskId": "4f8a56a74acd",
+      "seed": 13,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "45075edb.mid",
+      "right": "43a3337b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "5468e6a91ace",
+      "taskId": "4f8a56a74acd",
+      "seed": 13,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "8a835808.mid",
+      "right": "08bdc788.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a239038e943c",
+      "taskId": "4f8a56a74acd",
+      "seed": 13,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "6e685709.mid",
+      "right": "bf99e547.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0d7e4d998d66",
+      "taskId": "4f8a56a74acd",
+      "seed": 13,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "69528081.mid",
+      "right": "2fe53329.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b1bee7774b11",
+      "taskId": "4f8a56a74acd",
+      "seed": 13,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "1a48785c.mid",
+      "right": "44c82981.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "3b6ce2d1d631",
+      "taskId": "4f8a56a74acd",
+      "seed": 13,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "4ac2ad66.mid",
+      "right": "fdabd3de.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "65fe999fd7f7",
+      "taskId": "4f8a56a74acd",
+      "seed": 13,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "3db67b7d.mid",
+      "right": "d488c070.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "78b71c7427ad",
+      "taskId": "4f8a56a74acd",
+      "seed": 13,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "285c7c9e.mid",
+      "right": "70fb9f3a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "4b1031323ce5",
+      "taskId": "4f8a56a74acd",
+      "seed": 13,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "773fa9e9.mid",
+      "right": "3ab01a24.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e86dd00adacd",
+      "taskId": "4f8a56a74acd",
+      "seed": 13,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "1b4b6d6a.mid",
+      "right": "e7a8c91b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d1354fde2679",
+      "taskId": "4f8a56a74acd",
+      "seed": 7,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "d9554ef0.mid",
+      "right": "6da95f0c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "6798c83f498d",
+      "taskId": "4f8a56a74acd",
+      "seed": 7,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "f70de234.mid",
+      "right": "62cf543c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "1b6635d76b4c",
+      "taskId": "4f8a56a74acd",
+      "seed": 7,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "c20d6c16.mid",
+      "right": "f39e7445.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "10fab923404e",
+      "taskId": "4f8a56a74acd",
+      "seed": 7,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "c0617318.mid",
+      "right": "a331a16f.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "24f43426a5a9",
+      "taskId": "4f8a56a74acd",
+      "seed": 7,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "3d51e5d6.mid",
+      "right": "1512ab3b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0b1b806bbf18",
+      "taskId": "4f8a56a74acd",
+      "seed": 7,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "54b02df1.mid",
+      "right": "fcc96fc1.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "7662def10379",
+      "taskId": "4f8a56a74acd",
+      "seed": 7,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "0a46947c.mid",
+      "right": "5e787e46.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b3018c84dbb4",
+      "taskId": "4f8a56a74acd",
+      "seed": 7,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "fdf2226e.mid",
+      "right": "24e47947.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a19e409ba796",
+      "taskId": "4f8a56a74acd",
+      "seed": 7,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "b3defc67.mid",
+      "right": "1cff963c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "3d87642a3b64",
+      "taskId": "4f8a56a74acd",
+      "seed": 7,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "f9b20c4d.mid",
+      "right": "ab339dcb.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "1b1bfebabf48",
+      "taskId": "4f8a56a74acd",
+      "seed": 7,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "dfc12066.mid",
+      "right": "0d81664e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "bd304b9cef7d",
+      "taskId": "4f8a56a74acd",
+      "seed": 7,
+      "context": "context-4f8a56a74acd.mid",
+      "left": "35ee1f28.mid",
+      "right": "e062a2b3.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "cfbbecfeaada",
+      "taskId": "91379d724a16",
+      "seed": 11,
+      "context": "context-91379d724a16.mid",
+      "left": "16385e30.mid",
+      "right": "d14494c0.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "1c95b9016b59",
+      "taskId": "91379d724a16",
+      "seed": 11,
+      "context": "context-91379d724a16.mid",
+      "left": "f65c3593.mid",
+      "right": "3d97060d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "be5e9688302f",
+      "taskId": "91379d724a16",
+      "seed": 11,
+      "context": "context-91379d724a16.mid",
+      "left": "d3e5e4a6.mid",
+      "right": "ff27ae47.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b0c7567b46e2",
+      "taskId": "91379d724a16",
+      "seed": 11,
+      "context": "context-91379d724a16.mid",
+      "left": "8c820877.mid",
+      "right": "2b9be65a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b0c589c14aed",
+      "taskId": "91379d724a16",
+      "seed": 11,
+      "context": "context-91379d724a16.mid",
+      "left": "f12d8ba9.mid",
+      "right": "e950490a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c8deff25645b",
+      "taskId": "91379d724a16",
+      "seed": 11,
+      "context": "context-91379d724a16.mid",
+      "left": "f40450b8.mid",
+      "right": "9f2564aa.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "54d292c0b0ca",
+      "taskId": "91379d724a16",
+      "seed": 11,
+      "context": "context-91379d724a16.mid",
+      "left": "961fa2e8.mid",
+      "right": "d5bf89d9.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "102aa6937240",
+      "taskId": "91379d724a16",
+      "seed": 11,
+      "context": "context-91379d724a16.mid",
+      "left": "fdcdabf2.mid",
+      "right": "d7e5bcb9.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ca54b9fa1ce9",
+      "taskId": "91379d724a16",
+      "seed": 11,
+      "context": "context-91379d724a16.mid",
+      "left": "39115854.mid",
+      "right": "b057ada4.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "07874d43a0e1",
+      "taskId": "91379d724a16",
+      "seed": 11,
+      "context": "context-91379d724a16.mid",
+      "left": "f9eeeb41.mid",
+      "right": "99ba2dff.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e128e24a925b",
+      "taskId": "91379d724a16",
+      "seed": 11,
+      "context": "context-91379d724a16.mid",
+      "left": "efe65ae6.mid",
+      "right": "8a841db7.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "065c171df3b8",
+      "taskId": "91379d724a16",
+      "seed": 11,
+      "context": "context-91379d724a16.mid",
+      "left": "4b1f5268.mid",
+      "right": "66677399.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ee33fc997126",
+      "taskId": "91379d724a16",
+      "seed": 13,
+      "context": "context-91379d724a16.mid",
+      "left": "5e0e6480.mid",
+      "right": "a73202f3.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ba165827f011",
+      "taskId": "91379d724a16",
+      "seed": 13,
+      "context": "context-91379d724a16.mid",
+      "left": "63e7600c.mid",
+      "right": "8eb5a3ee.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e30de959b307",
+      "taskId": "91379d724a16",
+      "seed": 13,
+      "context": "context-91379d724a16.mid",
+      "left": "3831baf5.mid",
+      "right": "d26c66a2.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "70eb45ef0d15",
+      "taskId": "91379d724a16",
+      "seed": 13,
+      "context": "context-91379d724a16.mid",
+      "left": "0b75d09c.mid",
+      "right": "977a636e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "f4e6cc718f99",
+      "taskId": "91379d724a16",
+      "seed": 13,
+      "context": "context-91379d724a16.mid",
+      "left": "f3f4d7b3.mid",
+      "right": "942cf15d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "cc199a0dd937",
+      "taskId": "91379d724a16",
+      "seed": 13,
+      "context": "context-91379d724a16.mid",
+      "left": "35283a3f.mid",
+      "right": "09433b9b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "4a0b4f75671b",
+      "taskId": "91379d724a16",
+      "seed": 13,
+      "context": "context-91379d724a16.mid",
+      "left": "e97df784.mid",
+      "right": "b3a27ba5.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "7fea03699764",
+      "taskId": "91379d724a16",
+      "seed": 13,
+      "context": "context-91379d724a16.mid",
+      "left": "d01e6ed9.mid",
+      "right": "c49cadcc.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b8ea575ca9d4",
+      "taskId": "91379d724a16",
+      "seed": 13,
+      "context": "context-91379d724a16.mid",
+      "left": "1bcd6a45.mid",
+      "right": "8218ff1a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "4f3d60c277a1",
+      "taskId": "91379d724a16",
+      "seed": 13,
+      "context": "context-91379d724a16.mid",
+      "left": "bc05c4ca.mid",
+      "right": "a75a0338.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "1131a4f16da9",
+      "taskId": "91379d724a16",
+      "seed": 13,
+      "context": "context-91379d724a16.mid",
+      "left": "72bbe8f4.mid",
+      "right": "7b396076.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "7081a3323eab",
+      "taskId": "91379d724a16",
+      "seed": 13,
+      "context": "context-91379d724a16.mid",
+      "left": "a5087a49.mid",
+      "right": "1025e41c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "da471cb183bd",
+      "taskId": "91379d724a16",
+      "seed": 7,
+      "context": "context-91379d724a16.mid",
+      "left": "cb9e6f25.mid",
+      "right": "03b56766.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "8ef4965d0b08",
+      "taskId": "91379d724a16",
+      "seed": 7,
+      "context": "context-91379d724a16.mid",
+      "left": "14a7f555.mid",
+      "right": "59e6567d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "1325ba8cf3bd",
+      "taskId": "91379d724a16",
+      "seed": 7,
+      "context": "context-91379d724a16.mid",
+      "left": "ee38db64.mid",
+      "right": "6b806f68.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b5e5c3f44112",
+      "taskId": "91379d724a16",
+      "seed": 7,
+      "context": "context-91379d724a16.mid",
+      "left": "8299cb94.mid",
+      "right": "90169563.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "336658c065dc",
+      "taskId": "91379d724a16",
+      "seed": 7,
+      "context": "context-91379d724a16.mid",
+      "left": "76639ae9.mid",
+      "right": "2e63dd1f.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "bd1c81d55227",
+      "taskId": "91379d724a16",
+      "seed": 7,
+      "context": "context-91379d724a16.mid",
+      "left": "2955633f.mid",
+      "right": "8689c4bb.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "9ae541eff162",
+      "taskId": "91379d724a16",
+      "seed": 7,
+      "context": "context-91379d724a16.mid",
+      "left": "23e42be8.mid",
+      "right": "8b5bcccc.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b5b8969085c2",
+      "taskId": "91379d724a16",
+      "seed": 7,
+      "context": "context-91379d724a16.mid",
+      "left": "8dc98b01.mid",
+      "right": "27e7c18e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "6d718c74b84b",
+      "taskId": "91379d724a16",
+      "seed": 7,
+      "context": "context-91379d724a16.mid",
+      "left": "1ff71169.mid",
+      "right": "a60c1251.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e5a08da405be",
+      "taskId": "91379d724a16",
+      "seed": 7,
+      "context": "context-91379d724a16.mid",
+      "left": "9dd52629.mid",
+      "right": "d134430f.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "48f62d4753aa",
+      "taskId": "91379d724a16",
+      "seed": 7,
+      "context": "context-91379d724a16.mid",
+      "left": "8098352e.mid",
+      "right": "50b6e3a5.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0688141131c1",
+      "taskId": "91379d724a16",
+      "seed": 7,
+      "context": "context-91379d724a16.mid",
+      "left": "bfd8631f.mid",
+      "right": "849ccc1b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "bce8c3f67a1e",
+      "taskId": "9e705b16d135",
+      "seed": 11,
+      "context": "context-9e705b16d135.mid",
+      "left": "5d3327a6.mid",
+      "right": "9a348c88.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "21f79961a97b",
+      "taskId": "9e705b16d135",
+      "seed": 11,
+      "context": "context-9e705b16d135.mid",
+      "left": "d802443a.mid",
+      "right": "1733863d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "3179fe4f394b",
+      "taskId": "9e705b16d135",
+      "seed": 11,
+      "context": "context-9e705b16d135.mid",
+      "left": "73ccceb3.mid",
+      "right": "80126762.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "30182e2a2c45",
+      "taskId": "9e705b16d135",
+      "seed": 11,
+      "context": "context-9e705b16d135.mid",
+      "left": "68896079.mid",
+      "right": "c3a7ffee.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "2ef185a11b67",
+      "taskId": "9e705b16d135",
+      "seed": 11,
+      "context": "context-9e705b16d135.mid",
+      "left": "d3f5a37d.mid",
+      "right": "998c61f7.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c259d01f5599",
+      "taskId": "9e705b16d135",
+      "seed": 11,
+      "context": "context-9e705b16d135.mid",
+      "left": "1d57b6f3.mid",
+      "right": "6c879203.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "50ad598e7e3b",
+      "taskId": "9e705b16d135",
+      "seed": 11,
+      "context": "context-9e705b16d135.mid",
+      "left": "1c4c0b48.mid",
+      "right": "d7e2dd03.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "77f68ebc8468",
+      "taskId": "9e705b16d135",
+      "seed": 11,
+      "context": "context-9e705b16d135.mid",
+      "left": "ce496f52.mid",
+      "right": "534de3e3.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "9cda72a6e314",
+      "taskId": "9e705b16d135",
+      "seed": 11,
+      "context": "context-9e705b16d135.mid",
+      "left": "d01aac9e.mid",
+      "right": "d0303198.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ecfe3590c0ac",
+      "taskId": "9e705b16d135",
+      "seed": 11,
+      "context": "context-9e705b16d135.mid",
+      "left": "90620f79.mid",
+      "right": "2845d324.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a75e47424912",
+      "taskId": "9e705b16d135",
+      "seed": 11,
+      "context": "context-9e705b16d135.mid",
+      "left": "a53274f0.mid",
+      "right": "a6e13410.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0e78dfc508e0",
+      "taskId": "9e705b16d135",
+      "seed": 11,
+      "context": "context-9e705b16d135.mid",
+      "left": "e3f7aa9c.mid",
+      "right": "d326b1fa.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "8021a31b3f44",
+      "taskId": "9e705b16d135",
+      "seed": 13,
+      "context": "context-9e705b16d135.mid",
+      "left": "def4f728.mid",
+      "right": "e0c14de6.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ab9fe08e2d52",
+      "taskId": "9e705b16d135",
+      "seed": 13,
+      "context": "context-9e705b16d135.mid",
+      "left": "7d9849e2.mid",
+      "right": "d5a68671.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "141cac13ef71",
+      "taskId": "9e705b16d135",
+      "seed": 13,
+      "context": "context-9e705b16d135.mid",
+      "left": "263bf6d6.mid",
+      "right": "9bb33d06.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "898733658acb",
+      "taskId": "9e705b16d135",
+      "seed": 13,
+      "context": "context-9e705b16d135.mid",
+      "left": "2930b0f7.mid",
+      "right": "db2cffa9.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "9eabda5bc183",
+      "taskId": "9e705b16d135",
+      "seed": 13,
+      "context": "context-9e705b16d135.mid",
+      "left": "08bb410c.mid",
+      "right": "b8980fe9.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c1bbf52c6c4e",
+      "taskId": "9e705b16d135",
+      "seed": 13,
+      "context": "context-9e705b16d135.mid",
+      "left": "2a93cfc3.mid",
+      "right": "db598e81.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "6c035103ec2b",
+      "taskId": "9e705b16d135",
+      "seed": 13,
+      "context": "context-9e705b16d135.mid",
+      "left": "7f7747e5.mid",
+      "right": "63c5ba3c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "4f45d786ae61",
+      "taskId": "9e705b16d135",
+      "seed": 13,
+      "context": "context-9e705b16d135.mid",
+      "left": "b01e9094.mid",
+      "right": "485f3c81.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "bf0b4a41ec48",
+      "taskId": "9e705b16d135",
+      "seed": 13,
+      "context": "context-9e705b16d135.mid",
+      "left": "1c0ad45f.mid",
+      "right": "8c7ff983.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "89a3e5b26ad0",
+      "taskId": "9e705b16d135",
+      "seed": 13,
+      "context": "context-9e705b16d135.mid",
+      "left": "2d94e181.mid",
+      "right": "a0b4cf2b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "1f57908737fe",
+      "taskId": "9e705b16d135",
+      "seed": 13,
+      "context": "context-9e705b16d135.mid",
+      "left": "9703fb9a.mid",
+      "right": "c30262cd.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "2847270a221c",
+      "taskId": "9e705b16d135",
+      "seed": 13,
+      "context": "context-9e705b16d135.mid",
+      "left": "a77396d8.mid",
+      "right": "0b20c4b9.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c0801ad9a8c1",
+      "taskId": "9e705b16d135",
+      "seed": 7,
+      "context": "context-9e705b16d135.mid",
+      "left": "50169f07.mid",
+      "right": "c2128d6c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "4bddc1a98909",
+      "taskId": "9e705b16d135",
+      "seed": 7,
+      "context": "context-9e705b16d135.mid",
+      "left": "e7d4cbd4.mid",
+      "right": "6171e862.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "f103cf019c9e",
+      "taskId": "9e705b16d135",
+      "seed": 7,
+      "context": "context-9e705b16d135.mid",
+      "left": "881bb435.mid",
+      "right": "b7d894de.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "67a514629c70",
+      "taskId": "9e705b16d135",
+      "seed": 7,
+      "context": "context-9e705b16d135.mid",
+      "left": "f76d3c5e.mid",
+      "right": "f6157df9.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "22e79bc3d674",
+      "taskId": "9e705b16d135",
+      "seed": 7,
+      "context": "context-9e705b16d135.mid",
+      "left": "aa6893b8.mid",
+      "right": "eff8df2c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "024f1dccf7cc",
+      "taskId": "9e705b16d135",
+      "seed": 7,
+      "context": "context-9e705b16d135.mid",
+      "left": "5e8f2de1.mid",
+      "right": "6153d9d7.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "181d8cf64158",
+      "taskId": "9e705b16d135",
+      "seed": 7,
+      "context": "context-9e705b16d135.mid",
+      "left": "40fc9ac7.mid",
+      "right": "31cf79c2.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0ae14b42357e",
+      "taskId": "9e705b16d135",
+      "seed": 7,
+      "context": "context-9e705b16d135.mid",
+      "left": "5d823637.mid",
+      "right": "3e4dc3c0.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ab26f8e0eef1",
+      "taskId": "9e705b16d135",
+      "seed": 7,
+      "context": "context-9e705b16d135.mid",
+      "left": "9f23f7fc.mid",
+      "right": "d9d3100e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a8e5b30ef7a8",
+      "taskId": "9e705b16d135",
+      "seed": 7,
+      "context": "context-9e705b16d135.mid",
+      "left": "028dbaf0.mid",
+      "right": "33369f0a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ea0dbefd6e48",
+      "taskId": "9e705b16d135",
+      "seed": 7,
+      "context": "context-9e705b16d135.mid",
+      "left": "63ad7de9.mid",
+      "right": "58234670.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "8609e44f6cef",
+      "taskId": "9e705b16d135",
+      "seed": 7,
+      "context": "context-9e705b16d135.mid",
+      "left": "d5a7fa6d.mid",
+      "right": "ecf09fff.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a8578063b15a",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 11,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "8856b26e.mid",
+      "right": "a139667a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "296a0fdb9a06",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 11,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "3aa53b2b.mid",
+      "right": "0be7688c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "50149a075830",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 11,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "8842a75b.mid",
+      "right": "cc748209.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "3dd3c4925bb9",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 11,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "df966dc7.mid",
+      "right": "d7d17a71.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "f8397267d1bd",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 11,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "289f3240.mid",
+      "right": "e02b868e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e8ea2915b38d",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 11,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "b23658ef.mid",
+      "right": "1ca35c41.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "efb6d66c8798",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 11,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "13560370.mid",
+      "right": "d148fbc1.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "11af49e58430",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 11,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "2ee46c39.mid",
+      "right": "3661bbb4.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ed4caf3077ec",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 11,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "389d3bc7.mid",
+      "right": "803dfb9c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "149ea67f18e7",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 11,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "a884bf3c.mid",
+      "right": "88412401.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "485f1a416585",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 11,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "efe4d770.mid",
+      "right": "e40a7a4f.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a2af2ee6d433",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 11,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "4f51c545.mid",
+      "right": "c60dffdf.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "2c61dbdd547e",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 13,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "4794f869.mid",
+      "right": "fcb0fb7b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ab5f5b8b8d11",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 13,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "f23a7836.mid",
+      "right": "e819fd29.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "86301127f8fa",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 13,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "79665b93.mid",
+      "right": "7465d06d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "bcb6fa2158cd",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 13,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "8e8f439f.mid",
+      "right": "62913046.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d8468221d124",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 13,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "41f92e7d.mid",
+      "right": "f14135c4.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "bf040615a46f",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 13,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "57a37709.mid",
+      "right": "4b824df2.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "46d4bbf7f11a",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 13,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "0cbb080e.mid",
+      "right": "cfed9760.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "68b17ee3ea02",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 13,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "2c6997c6.mid",
+      "right": "96b75ee3.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "df5b8f15f72e",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 13,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "b881012f.mid",
+      "right": "a99ab3ba.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "7204051cc467",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 13,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "b374875e.mid",
+      "right": "d79094d9.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "4b28377ad7f0",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 13,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "3cdad670.mid",
+      "right": "7daceed9.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "18c88fc1c545",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 13,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "fe87ffe7.mid",
+      "right": "e50f2da3.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "936af1be00dd",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 7,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "b2f4ca5b.mid",
+      "right": "3d59e30b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b9a9f7c63bfd",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 7,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "80df92d2.mid",
+      "right": "ad80071a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "1ddc9c2e9241",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 7,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "7bff1e31.mid",
+      "right": "a29d0ac8.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ba54ba541a62",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 7,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "00124b90.mid",
+      "right": "c6d605ec.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "fc39efc0e7cb",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 7,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "1cf9bffb.mid",
+      "right": "a109c677.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "20a766727248",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 7,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "19d55a8e.mid",
+      "right": "c2822f13.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "31b588b26f23",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 7,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "57c52ec2.mid",
+      "right": "5c402ac4.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d782aea986b4",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 7,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "87695f77.mid",
+      "right": "fe8e6d43.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "7d57921209d1",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 7,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "7bb97478.mid",
+      "right": "308e58f3.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b8f003fe8ceb",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 7,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "cdcec39d.mid",
+      "right": "2b17d6c2.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "df01980af999",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 7,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "7425744e.mid",
+      "right": "db3bac32.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ae1a1a3089c9",
+      "taskId": "9f26dc8d0bf5",
+      "seed": 7,
+      "context": "context-9f26dc8d0bf5.mid",
+      "left": "b973040b.mid",
+      "right": "991adb75.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e0d5771f6e82",
+      "taskId": "af667dec200f",
+      "seed": 11,
+      "context": "context-af667dec200f.mid",
+      "left": "82c8487f.mid",
+      "right": "e95a9a1c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0156ebaa7871",
+      "taskId": "af667dec200f",
+      "seed": 11,
+      "context": "context-af667dec200f.mid",
+      "left": "b4a0107f.mid",
+      "right": "f78b0388.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "33e63771829f",
+      "taskId": "af667dec200f",
+      "seed": 11,
+      "context": "context-af667dec200f.mid",
+      "left": "eb85d841.mid",
+      "right": "d21c8c3b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "56bbe0dc0c2e",
+      "taskId": "af667dec200f",
+      "seed": 11,
+      "context": "context-af667dec200f.mid",
+      "left": "6a3a61a0.mid",
+      "right": "0b22d522.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ccbd6276d61b",
+      "taskId": "af667dec200f",
+      "seed": 11,
+      "context": "context-af667dec200f.mid",
+      "left": "41da5bbe.mid",
+      "right": "a7494506.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "72bc9819327b",
+      "taskId": "af667dec200f",
+      "seed": 11,
+      "context": "context-af667dec200f.mid",
+      "left": "286c3685.mid",
+      "right": "90ab3736.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "9196978c80ac",
+      "taskId": "af667dec200f",
+      "seed": 11,
+      "context": "context-af667dec200f.mid",
+      "left": "a86b0ffe.mid",
+      "right": "ce43bd58.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "560dceea74b1",
+      "taskId": "af667dec200f",
+      "seed": 11,
+      "context": "context-af667dec200f.mid",
+      "left": "087e8b45.mid",
+      "right": "4698ab6b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b1673764e046",
+      "taskId": "af667dec200f",
+      "seed": 11,
+      "context": "context-af667dec200f.mid",
+      "left": "f3e4b2a0.mid",
+      "right": "ad8df1e0.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "20f58b0a7ab3",
+      "taskId": "af667dec200f",
+      "seed": 11,
+      "context": "context-af667dec200f.mid",
+      "left": "4ca5c522.mid",
+      "right": "17dec058.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "f682f3df9b46",
+      "taskId": "af667dec200f",
+      "seed": 11,
+      "context": "context-af667dec200f.mid",
+      "left": "b3bcb062.mid",
+      "right": "cb9ef761.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "7513e7b68385",
+      "taskId": "af667dec200f",
+      "seed": 11,
+      "context": "context-af667dec200f.mid",
+      "left": "edae6fb4.mid",
+      "right": "98b9a4c9.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "9723066fa8f5",
+      "taskId": "af667dec200f",
+      "seed": 13,
+      "context": "context-af667dec200f.mid",
+      "left": "d606ef1e.mid",
+      "right": "34bb2bb7.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "8bcb234e9c75",
+      "taskId": "af667dec200f",
+      "seed": 13,
+      "context": "context-af667dec200f.mid",
+      "left": "e9697c5c.mid",
+      "right": "63e83956.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "994822a38405",
+      "taskId": "af667dec200f",
+      "seed": 13,
+      "context": "context-af667dec200f.mid",
+      "left": "24359d4a.mid",
+      "right": "ac6b47d6.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "380a9e2505af",
+      "taskId": "af667dec200f",
+      "seed": 13,
+      "context": "context-af667dec200f.mid",
+      "left": "e1fa6abe.mid",
+      "right": "ca86a50f.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0503df28eee9",
+      "taskId": "af667dec200f",
+      "seed": 13,
+      "context": "context-af667dec200f.mid",
+      "left": "429d2b79.mid",
+      "right": "cdcc7c2a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "11a3a7504847",
+      "taskId": "af667dec200f",
+      "seed": 13,
+      "context": "context-af667dec200f.mid",
+      "left": "6ffe0e13.mid",
+      "right": "5ca52015.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "8d5e54c93cee",
+      "taskId": "af667dec200f",
+      "seed": 13,
+      "context": "context-af667dec200f.mid",
+      "left": "11cad3bf.mid",
+      "right": "39d7bb7c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "5ed7355f58d2",
+      "taskId": "af667dec200f",
+      "seed": 13,
+      "context": "context-af667dec200f.mid",
+      "left": "b351f2b1.mid",
+      "right": "105c8abe.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "44d10047c3eb",
+      "taskId": "af667dec200f",
+      "seed": 13,
+      "context": "context-af667dec200f.mid",
+      "left": "3840fdbd.mid",
+      "right": "cacde595.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "355b7c258eb4",
+      "taskId": "af667dec200f",
+      "seed": 13,
+      "context": "context-af667dec200f.mid",
+      "left": "af32c583.mid",
+      "right": "a62fd53d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "7b935e52ba91",
+      "taskId": "af667dec200f",
+      "seed": 13,
+      "context": "context-af667dec200f.mid",
+      "left": "94d21c4c.mid",
+      "right": "5220cd35.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d6cb6930975e",
+      "taskId": "af667dec200f",
+      "seed": 13,
+      "context": "context-af667dec200f.mid",
+      "left": "876b953f.mid",
+      "right": "0e30282b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d5f06c6c2da9",
+      "taskId": "af667dec200f",
+      "seed": 7,
+      "context": "context-af667dec200f.mid",
+      "left": "5ebf5f23.mid",
+      "right": "547df96b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "f1963465314a",
+      "taskId": "af667dec200f",
+      "seed": 7,
+      "context": "context-af667dec200f.mid",
+      "left": "a8b0792d.mid",
+      "right": "89ff54da.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "2fa72f91d6a5",
+      "taskId": "af667dec200f",
+      "seed": 7,
+      "context": "context-af667dec200f.mid",
+      "left": "733beb60.mid",
+      "right": "465b4779.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a8219349fb0c",
+      "taskId": "af667dec200f",
+      "seed": 7,
+      "context": "context-af667dec200f.mid",
+      "left": "ae550ab1.mid",
+      "right": "dde4f24a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "f01773eacc1e",
+      "taskId": "af667dec200f",
+      "seed": 7,
+      "context": "context-af667dec200f.mid",
+      "left": "8fd3fbf9.mid",
+      "right": "4d742965.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c77aed1feb72",
+      "taskId": "af667dec200f",
+      "seed": 7,
+      "context": "context-af667dec200f.mid",
+      "left": "e1e5e1e3.mid",
+      "right": "ccad0f41.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c9a62c97ce57",
+      "taskId": "af667dec200f",
+      "seed": 7,
+      "context": "context-af667dec200f.mid",
+      "left": "fc2ac1a8.mid",
+      "right": "d2f53ddb.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ca31fed7c641",
+      "taskId": "af667dec200f",
+      "seed": 7,
+      "context": "context-af667dec200f.mid",
+      "left": "8084c008.mid",
+      "right": "0fe486eb.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "707d4c190b30",
+      "taskId": "af667dec200f",
+      "seed": 7,
+      "context": "context-af667dec200f.mid",
+      "left": "970f5046.mid",
+      "right": "95cab50e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "3f2d00806eb4",
+      "taskId": "af667dec200f",
+      "seed": 7,
+      "context": "context-af667dec200f.mid",
+      "left": "2116adc5.mid",
+      "right": "42e644d6.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a2afd964b2ff",
+      "taskId": "af667dec200f",
+      "seed": 7,
+      "context": "context-af667dec200f.mid",
+      "left": "b4c6143b.mid",
+      "right": "1630d87e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ec94995ee48b",
+      "taskId": "af667dec200f",
+      "seed": 7,
+      "context": "context-af667dec200f.mid",
+      "left": "6e26619c.mid",
+      "right": "bcd0607f.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "10a7ba3803db",
+      "taskId": "c2fd134de308",
+      "seed": 11,
+      "context": "context-c2fd134de308.mid",
+      "left": "330d6b80.mid",
+      "right": "be68e76d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "322a6ec1fab2",
+      "taskId": "c2fd134de308",
+      "seed": 11,
+      "context": "context-c2fd134de308.mid",
+      "left": "eab77cda.mid",
+      "right": "56499b33.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "60e0afb8c4eb",
+      "taskId": "c2fd134de308",
+      "seed": 11,
+      "context": "context-c2fd134de308.mid",
+      "left": "4a457bc8.mid",
+      "right": "db8e16ac.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "1a7361801fa2",
+      "taskId": "c2fd134de308",
+      "seed": 11,
+      "context": "context-c2fd134de308.mid",
+      "left": "abd3dd84.mid",
+      "right": "664bf391.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "6d234602cfb1",
+      "taskId": "c2fd134de308",
+      "seed": 11,
+      "context": "context-c2fd134de308.mid",
+      "left": "abc3b503.mid",
+      "right": "cb7767c8.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "bba4d5e396d3",
+      "taskId": "c2fd134de308",
+      "seed": 11,
+      "context": "context-c2fd134de308.mid",
+      "left": "1417400b.mid",
+      "right": "001f8a3b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "5937d77206a7",
+      "taskId": "c2fd134de308",
+      "seed": 11,
+      "context": "context-c2fd134de308.mid",
+      "left": "1d49a1a7.mid",
+      "right": "11948899.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "81a403715836",
+      "taskId": "c2fd134de308",
+      "seed": 11,
+      "context": "context-c2fd134de308.mid",
+      "left": "24992713.mid",
+      "right": "28093242.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "4df94cfaeb72",
+      "taskId": "c2fd134de308",
+      "seed": 11,
+      "context": "context-c2fd134de308.mid",
+      "left": "94da0436.mid",
+      "right": "436f1583.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "3829e65a929e",
+      "taskId": "c2fd134de308",
+      "seed": 11,
+      "context": "context-c2fd134de308.mid",
+      "left": "f7945ba5.mid",
+      "right": "d266dbcf.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "1807342ab6b6",
+      "taskId": "c2fd134de308",
+      "seed": 11,
+      "context": "context-c2fd134de308.mid",
+      "left": "a99a9339.mid",
+      "right": "58010872.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d5e16bdff491",
+      "taskId": "c2fd134de308",
+      "seed": 11,
+      "context": "context-c2fd134de308.mid",
+      "left": "59da7577.mid",
+      "right": "d1f17786.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c88a836c84bf",
+      "taskId": "c2fd134de308",
+      "seed": 13,
+      "context": "context-c2fd134de308.mid",
+      "left": "02f98462.mid",
+      "right": "c2143c08.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "4ed8fcddfeda",
+      "taskId": "c2fd134de308",
+      "seed": 13,
+      "context": "context-c2fd134de308.mid",
+      "left": "eed86e14.mid",
+      "right": "d22dd01b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a71c0bc733b5",
+      "taskId": "c2fd134de308",
+      "seed": 13,
+      "context": "context-c2fd134de308.mid",
+      "left": "51cd80cf.mid",
+      "right": "b36f346f.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "823120a54d44",
+      "taskId": "c2fd134de308",
+      "seed": 13,
+      "context": "context-c2fd134de308.mid",
+      "left": "a5c113e8.mid",
+      "right": "98636e3e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "519a033d1663",
+      "taskId": "c2fd134de308",
+      "seed": 13,
+      "context": "context-c2fd134de308.mid",
+      "left": "805bb1f5.mid",
+      "right": "adc2389f.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e3404257cf1a",
+      "taskId": "c2fd134de308",
+      "seed": 13,
+      "context": "context-c2fd134de308.mid",
+      "left": "f60fd625.mid",
+      "right": "df11eeec.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "af92e3ffc1a1",
+      "taskId": "c2fd134de308",
+      "seed": 13,
+      "context": "context-c2fd134de308.mid",
+      "left": "a2e3f6b5.mid",
+      "right": "f639fbfc.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "619936db9ca5",
+      "taskId": "c2fd134de308",
+      "seed": 13,
+      "context": "context-c2fd134de308.mid",
+      "left": "f4f1984c.mid",
+      "right": "5e5b4de1.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "aa9c22e97433",
+      "taskId": "c2fd134de308",
+      "seed": 13,
+      "context": "context-c2fd134de308.mid",
+      "left": "1655a9bc.mid",
+      "right": "1529f17b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "4fcf55d8e382",
+      "taskId": "c2fd134de308",
+      "seed": 13,
+      "context": "context-c2fd134de308.mid",
+      "left": "b5e5cbc4.mid",
+      "right": "81e28301.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "9aa2d0901b64",
+      "taskId": "c2fd134de308",
+      "seed": 13,
+      "context": "context-c2fd134de308.mid",
+      "left": "1b7f6c08.mid",
+      "right": "3fd1e5ec.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e8e074c2498c",
+      "taskId": "c2fd134de308",
+      "seed": 13,
+      "context": "context-c2fd134de308.mid",
+      "left": "6a4cba24.mid",
+      "right": "47daf302.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b929c8e355bb",
+      "taskId": "c2fd134de308",
+      "seed": 7,
+      "context": "context-c2fd134de308.mid",
+      "left": "8e3f58dc.mid",
+      "right": "d90d5f68.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "2132e8ddbc29",
+      "taskId": "c2fd134de308",
+      "seed": 7,
+      "context": "context-c2fd134de308.mid",
+      "left": "d09f4405.mid",
+      "right": "9a537459.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "5a86e3cf1af2",
+      "taskId": "c2fd134de308",
+      "seed": 7,
+      "context": "context-c2fd134de308.mid",
+      "left": "26dc3834.mid",
+      "right": "364c19d6.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d49145fce7da",
+      "taskId": "c2fd134de308",
+      "seed": 7,
+      "context": "context-c2fd134de308.mid",
+      "left": "93f9254c.mid",
+      "right": "26914f49.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "6a717ea5caf0",
+      "taskId": "c2fd134de308",
+      "seed": 7,
+      "context": "context-c2fd134de308.mid",
+      "left": "646fdb12.mid",
+      "right": "7f13029a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e44c24bb34f5",
+      "taskId": "c2fd134de308",
+      "seed": 7,
+      "context": "context-c2fd134de308.mid",
+      "left": "b811496a.mid",
+      "right": "b765ccfe.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e49a4a292622",
+      "taskId": "c2fd134de308",
+      "seed": 7,
+      "context": "context-c2fd134de308.mid",
+      "left": "6644ee1f.mid",
+      "right": "85f0b2e2.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "86441cbf4257",
+      "taskId": "c2fd134de308",
+      "seed": 7,
+      "context": "context-c2fd134de308.mid",
+      "left": "8661cb5c.mid",
+      "right": "1c6ec397.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "8d91057d4a35",
+      "taskId": "c2fd134de308",
+      "seed": 7,
+      "context": "context-c2fd134de308.mid",
+      "left": "8ec283ac.mid",
+      "right": "43825a88.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "6e6b76538b3c",
+      "taskId": "c2fd134de308",
+      "seed": 7,
+      "context": "context-c2fd134de308.mid",
+      "left": "f2c11533.mid",
+      "right": "b3990ba7.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b475e66c3ebd",
+      "taskId": "c2fd134de308",
+      "seed": 7,
+      "context": "context-c2fd134de308.mid",
+      "left": "c0ef40cd.mid",
+      "right": "4e018e71.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "629036c3fb7a",
+      "taskId": "c2fd134de308",
+      "seed": 7,
+      "context": "context-c2fd134de308.mid",
+      "left": "5ca89bbe.mid",
+      "right": "4b11fae4.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ca3a5f05436a",
+      "taskId": "d088dd70fa63",
+      "seed": 11,
+      "context": "context-d088dd70fa63.mid",
+      "left": "ab6ec11a.mid",
+      "right": "1f33d196.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "42fcfbe2e432",
+      "taskId": "d088dd70fa63",
+      "seed": 11,
+      "context": "context-d088dd70fa63.mid",
+      "left": "29d1f288.mid",
+      "right": "af81da96.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "503b01253f65",
+      "taskId": "d088dd70fa63",
+      "seed": 11,
+      "context": "context-d088dd70fa63.mid",
+      "left": "fc069bd6.mid",
+      "right": "fdd56f22.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "353062639f29",
+      "taskId": "d088dd70fa63",
+      "seed": 11,
+      "context": "context-d088dd70fa63.mid",
+      "left": "a3d39b06.mid",
+      "right": "f5e4d496.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a86e95f31502",
+      "taskId": "d088dd70fa63",
+      "seed": 11,
+      "context": "context-d088dd70fa63.mid",
+      "left": "84833055.mid",
+      "right": "06f6321a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c678b8ee9112",
+      "taskId": "d088dd70fa63",
+      "seed": 11,
+      "context": "context-d088dd70fa63.mid",
+      "left": "0e982445.mid",
+      "right": "375264e6.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "31dc7a93a9ed",
+      "taskId": "d088dd70fa63",
+      "seed": 11,
+      "context": "context-d088dd70fa63.mid",
+      "left": "c14de587.mid",
+      "right": "99ed5ad0.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "30765a68e57b",
+      "taskId": "d088dd70fa63",
+      "seed": 11,
+      "context": "context-d088dd70fa63.mid",
+      "left": "ad3b9b0e.mid",
+      "right": "92d3029e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "8c9e2cf906a3",
+      "taskId": "d088dd70fa63",
+      "seed": 11,
+      "context": "context-d088dd70fa63.mid",
+      "left": "1d3714a2.mid",
+      "right": "67551fbb.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "262111690549",
+      "taskId": "d088dd70fa63",
+      "seed": 11,
+      "context": "context-d088dd70fa63.mid",
+      "left": "275bd6bf.mid",
+      "right": "89dca49a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "927791de4892",
+      "taskId": "d088dd70fa63",
+      "seed": 11,
+      "context": "context-d088dd70fa63.mid",
+      "left": "c6970810.mid",
+      "right": "58e840b0.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "87d59c56cd9e",
+      "taskId": "d088dd70fa63",
+      "seed": 11,
+      "context": "context-d088dd70fa63.mid",
+      "left": "99792226.mid",
+      "right": "7a46e77a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e637cd6c3ecf",
+      "taskId": "d088dd70fa63",
+      "seed": 13,
+      "context": "context-d088dd70fa63.mid",
+      "left": "500bd1f8.mid",
+      "right": "5d69e6a8.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "32fd81930295",
+      "taskId": "d088dd70fa63",
+      "seed": 13,
+      "context": "context-d088dd70fa63.mid",
+      "left": "f63d1969.mid",
+      "right": "098551bd.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a4789c2ca0bc",
+      "taskId": "d088dd70fa63",
+      "seed": 13,
+      "context": "context-d088dd70fa63.mid",
+      "left": "b8add2fb.mid",
+      "right": "9b156ef8.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "606633a1105d",
+      "taskId": "d088dd70fa63",
+      "seed": 13,
+      "context": "context-d088dd70fa63.mid",
+      "left": "7a2c2ac9.mid",
+      "right": "1763485a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0c14d3ac1631",
+      "taskId": "d088dd70fa63",
+      "seed": 13,
+      "context": "context-d088dd70fa63.mid",
+      "left": "1939cd11.mid",
+      "right": "dcb285ad.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "9ba59ec2e21a",
+      "taskId": "d088dd70fa63",
+      "seed": 13,
+      "context": "context-d088dd70fa63.mid",
+      "left": "d2c30f7f.mid",
+      "right": "294d17ed.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "7e9422d9ecae",
+      "taskId": "d088dd70fa63",
+      "seed": 13,
+      "context": "context-d088dd70fa63.mid",
+      "left": "eb3ecac8.mid",
+      "right": "10449c95.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "85e51989ea3a",
+      "taskId": "d088dd70fa63",
+      "seed": 13,
+      "context": "context-d088dd70fa63.mid",
+      "left": "cdab436b.mid",
+      "right": "fc30cb04.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "619a6246def2",
+      "taskId": "d088dd70fa63",
+      "seed": 13,
+      "context": "context-d088dd70fa63.mid",
+      "left": "c31a6eb8.mid",
+      "right": "a9a2a112.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "9dd4df77fa80",
+      "taskId": "d088dd70fa63",
+      "seed": 13,
+      "context": "context-d088dd70fa63.mid",
+      "left": "1baa05bb.mid",
+      "right": "6a421daf.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "212b19fab608",
+      "taskId": "d088dd70fa63",
+      "seed": 13,
+      "context": "context-d088dd70fa63.mid",
+      "left": "38c2e91a.mid",
+      "right": "8657364f.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c26c08d63a92",
+      "taskId": "d088dd70fa63",
+      "seed": 13,
+      "context": "context-d088dd70fa63.mid",
+      "left": "ec8be8d7.mid",
+      "right": "7109e08d.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "6e056657a2cd",
+      "taskId": "d088dd70fa63",
+      "seed": 7,
+      "context": "context-d088dd70fa63.mid",
+      "left": "a0d37471.mid",
+      "right": "49ebfb46.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "5fc64a30794a",
+      "taskId": "d088dd70fa63",
+      "seed": 7,
+      "context": "context-d088dd70fa63.mid",
+      "left": "4f9c55b8.mid",
+      "right": "68a16c71.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "7ad9831876df",
+      "taskId": "d088dd70fa63",
+      "seed": 7,
+      "context": "context-d088dd70fa63.mid",
+      "left": "181e1d32.mid",
+      "right": "56da72cf.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "fa83ed705496",
+      "taskId": "d088dd70fa63",
+      "seed": 7,
+      "context": "context-d088dd70fa63.mid",
+      "left": "058cbab1.mid",
+      "right": "691fb60b.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "2221c9060422",
+      "taskId": "d088dd70fa63",
+      "seed": 7,
+      "context": "context-d088dd70fa63.mid",
+      "left": "e01b36e0.mid",
+      "right": "0670d7f2.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "a9d99cf4a7b5",
+      "taskId": "d088dd70fa63",
+      "seed": 7,
+      "context": "context-d088dd70fa63.mid",
+      "left": "9c88f843.mid",
+      "right": "643c0f1e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "f2d1a0f6f606",
+      "taskId": "d088dd70fa63",
+      "seed": 7,
+      "context": "context-d088dd70fa63.mid",
+      "left": "5e0e3516.mid",
+      "right": "141a65d2.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "f2cf972c927f",
+      "taskId": "d088dd70fa63",
+      "seed": 7,
+      "context": "context-d088dd70fa63.mid",
+      "left": "e7454d31.mid",
+      "right": "23d37015.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "966868c4606e",
+      "taskId": "d088dd70fa63",
+      "seed": 7,
+      "context": "context-d088dd70fa63.mid",
+      "left": "1a95bf45.mid",
+      "right": "eb9c420f.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "63d0d839a864",
+      "taskId": "d088dd70fa63",
+      "seed": 7,
+      "context": "context-d088dd70fa63.mid",
+      "left": "9bad3977.mid",
+      "right": "5a7f5a87.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "db99050be88d",
+      "taskId": "d088dd70fa63",
+      "seed": 7,
+      "context": "context-d088dd70fa63.mid",
+      "left": "8111a5ed.mid",
+      "right": "c032e606.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0417f0b011ed",
+      "taskId": "d088dd70fa63",
+      "seed": 7,
+      "context": "context-d088dd70fa63.mid",
+      "left": "d1057c4a.mid",
+      "right": "7b3eb76a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "6bfc9df14948",
+      "taskId": "f0cc63700904",
+      "seed": 11,
+      "context": "context-f0cc63700904.mid",
+      "left": "3c4972dc.mid",
+      "right": "cafa5f27.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "db8695787bdb",
+      "taskId": "f0cc63700904",
+      "seed": 11,
+      "context": "context-f0cc63700904.mid",
+      "left": "2aec6570.mid",
+      "right": "df4ef977.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "68e34784207c",
+      "taskId": "f0cc63700904",
+      "seed": 11,
+      "context": "context-f0cc63700904.mid",
+      "left": "276cc156.mid",
+      "right": "529b1e29.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0a2b223b26b0",
+      "taskId": "f0cc63700904",
+      "seed": 11,
+      "context": "context-f0cc63700904.mid",
+      "left": "0893dee7.mid",
+      "right": "24644f7c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b2eb030f8c9e",
+      "taskId": "f0cc63700904",
+      "seed": 11,
+      "context": "context-f0cc63700904.mid",
+      "left": "bb112efd.mid",
+      "right": "06b67560.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e53034607c32",
+      "taskId": "f0cc63700904",
+      "seed": 11,
+      "context": "context-f0cc63700904.mid",
+      "left": "01fea123.mid",
+      "right": "33fb5176.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "f2c1c7b3a3d7",
+      "taskId": "f0cc63700904",
+      "seed": 11,
+      "context": "context-f0cc63700904.mid",
+      "left": "56470b96.mid",
+      "right": "9c0052c6.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "594416ed52e3",
+      "taskId": "f0cc63700904",
+      "seed": 11,
+      "context": "context-f0cc63700904.mid",
+      "left": "9fd61137.mid",
+      "right": "875a6181.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "af5928530423",
+      "taskId": "f0cc63700904",
+      "seed": 11,
+      "context": "context-f0cc63700904.mid",
+      "left": "14d848ff.mid",
+      "right": "efed9691.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "80bc3c577c0a",
+      "taskId": "f0cc63700904",
+      "seed": 11,
+      "context": "context-f0cc63700904.mid",
+      "left": "c9adfa4f.mid",
+      "right": "71430c66.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "4f940f910708",
+      "taskId": "f0cc63700904",
+      "seed": 11,
+      "context": "context-f0cc63700904.mid",
+      "left": "679599d9.mid",
+      "right": "98ac01a1.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "25bd00cf258c",
+      "taskId": "f0cc63700904",
+      "seed": 11,
+      "context": "context-f0cc63700904.mid",
+      "left": "e0ed8944.mid",
+      "right": "c2d0588c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "6c24507f14c0",
+      "taskId": "f0cc63700904",
+      "seed": 13,
+      "context": "context-f0cc63700904.mid",
+      "left": "8fa42dee.mid",
+      "right": "c79621d3.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "939612ae37e2",
+      "taskId": "f0cc63700904",
+      "seed": 13,
+      "context": "context-f0cc63700904.mid",
+      "left": "7c080e28.mid",
+      "right": "dff023a0.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "36a1bf7d5520",
+      "taskId": "f0cc63700904",
+      "seed": 13,
+      "context": "context-f0cc63700904.mid",
+      "left": "ab4d91f9.mid",
+      "right": "319f4e73.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "fe4c92cf6c16",
+      "taskId": "f0cc63700904",
+      "seed": 13,
+      "context": "context-f0cc63700904.mid",
+      "left": "e404f23b.mid",
+      "right": "203cb9b1.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "4a5d426f65b6",
+      "taskId": "f0cc63700904",
+      "seed": 13,
+      "context": "context-f0cc63700904.mid",
+      "left": "19eb89ea.mid",
+      "right": "3d13b125.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "c47a03d8f0f9",
+      "taskId": "f0cc63700904",
+      "seed": 13,
+      "context": "context-f0cc63700904.mid",
+      "left": "ccb04e0a.mid",
+      "right": "931e0e15.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ac9b8583eba6",
+      "taskId": "f0cc63700904",
+      "seed": 13,
+      "context": "context-f0cc63700904.mid",
+      "left": "c9bbbf9f.mid",
+      "right": "04e83b35.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d94db3a47856",
+      "taskId": "f0cc63700904",
+      "seed": 13,
+      "context": "context-f0cc63700904.mid",
+      "left": "5f9ecdfa.mid",
+      "right": "6a940536.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "5ac55ea9f74c",
+      "taskId": "f0cc63700904",
+      "seed": 13,
+      "context": "context-f0cc63700904.mid",
+      "left": "656a07f4.mid",
+      "right": "bb195408.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "0e456bc80b00",
+      "taskId": "f0cc63700904",
+      "seed": 13,
+      "context": "context-f0cc63700904.mid",
+      "left": "6f8a41a1.mid",
+      "right": "6af15ba4.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "3b22b4105818",
+      "taskId": "f0cc63700904",
+      "seed": 13,
+      "context": "context-f0cc63700904.mid",
+      "left": "69ab64fa.mid",
+      "right": "404f1a55.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "dcef58c0ac8b",
+      "taskId": "f0cc63700904",
+      "seed": 13,
+      "context": "context-f0cc63700904.mid",
+      "left": "b6d6aa8e.mid",
+      "right": "d4cad87c.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "b85f53f9db39",
+      "taskId": "f0cc63700904",
+      "seed": 7,
+      "context": "context-f0cc63700904.mid",
+      "left": "a005a329.mid",
+      "right": "bf857c6a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "f45f9f850fff",
+      "taskId": "f0cc63700904",
+      "seed": 7,
+      "context": "context-f0cc63700904.mid",
+      "left": "116c3c97.mid",
+      "right": "f068f49a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "ecd9742767dd",
+      "taskId": "f0cc63700904",
+      "seed": 7,
+      "context": "context-f0cc63700904.mid",
+      "left": "f838a474.mid",
+      "right": "4457713e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "d2b8a894c423",
+      "taskId": "f0cc63700904",
+      "seed": 7,
+      "context": "context-f0cc63700904.mid",
+      "left": "2478af73.mid",
+      "right": "51af5707.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "8dc88e3646dc",
+      "taskId": "f0cc63700904",
+      "seed": 7,
+      "context": "context-f0cc63700904.mid",
+      "left": "83276fa7.mid",
+      "right": "fda287cb.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "98ec24a03445",
+      "taskId": "f0cc63700904",
+      "seed": 7,
+      "context": "context-f0cc63700904.mid",
+      "left": "66ae9e9c.mid",
+      "right": "75473c70.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "e5f1628aa261",
+      "taskId": "f0cc63700904",
+      "seed": 7,
+      "context": "context-f0cc63700904.mid",
+      "left": "b0f36ce8.mid",
+      "right": "fd594cd4.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "249ee4d4b3f5",
+      "taskId": "f0cc63700904",
+      "seed": 7,
+      "context": "context-f0cc63700904.mid",
+      "left": "10376780.mid",
+      "right": "f27a32c4.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "13a9b8e9c33d",
+      "taskId": "f0cc63700904",
+      "seed": 7,
+      "context": "context-f0cc63700904.mid",
+      "left": "5ab44a5e.mid",
+      "right": "4379c617.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "281e874f94bc",
+      "taskId": "f0cc63700904",
+      "seed": 7,
+      "context": "context-f0cc63700904.mid",
+      "left": "3997fe87.mid",
+      "right": "2e8b888a.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "107735b1e19b",
+      "taskId": "f0cc63700904",
+      "seed": 7,
+      "context": "context-f0cc63700904.mid",
+      "left": "62c53174.mid",
+      "right": "929f08be.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    },
+    {
+      "pairId": "f2feb1505442",
+      "taskId": "f0cc63700904",
+      "seed": 7,
+      "context": "context-f0cc63700904.mid",
+      "left": "e58d022f.mid",
+      "right": "945b917e.mid",
+      "questions": [
+        "Which part sounds like a professional wrote it?",
+        "Which part fits the other instruments better?",
+        "Which part would you keep in the arrangement?"
+      ]
+    }
+  ]
+}
