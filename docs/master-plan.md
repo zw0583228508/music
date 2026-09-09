@@ -4621,6 +4621,98 @@ any of it.
   ±0.94 points from the MIDIs alone (`rescore-check.json`). Spend is estimated
   from container time, not read from the billing page. The evidence directory is
   ≈ 27 MB of MIDI plus ≈ 33 MB of reports and sidecars.
+- **PR-85** ✅ — `harmony-chord-key-engine` (ANALYSIS ENGINE wave, stream E —
+  chords with inversions, and a key that may be contested):
+  `harmonyEngine.ts` fuses chord-model opinions (weighted by
+  `providerReliability.ts`), a bass track, melody, chroma and the local key
+  per segment into root / quality / bass / inversion / roman numeral with
+  confidence, margin and alternates; `keyReconciliation()` returns **agreed /
+  contested (both candidates, their relation, the discriminating pitch
+  classes) / unknown** — the same vocabulary PR-86 put into
+  `analysisReconciliation.ts`, built to be rebased onto it, not to replace
+  it; a tonal-centre timeline with tonicization vs modulation; a smoothing
+  rule stated in the result. `harmonyGold.ts` reads an **exact** chord,
+  inversion and key reference out of a MIDI's own sounding notes and
+  key-signature events (a span whose pitch-class set is not exactly one
+  template is excluded, never guessed). `harmonyMetrics.ts` scores by time,
+  MIREX-style — root, maj/min, full symbol, **inversion-bass on its own**,
+  boundary F1, key strict with the related-key credit reported apart — and
+  never counts an abstention as correct or drops it.
+  `services/harmony-acr-worker` (Modal, cpu, **RESEARCH_ONLY**: BTC ISMIR-2019
+  major/minor + 170-class vocabularies, MIT code, weights trained on
+  unlicensed commercial audio; Chordino/autochord GPL-via-Vamp, madmom and
+  Sheet Sage NC, Essentia AGPL audited and not deployed). Full write-up in
+  `docs/model-discovery/harmony-engine.md`.
+
+  **The tournament** (`scripts/harmony-tournament.mjs`): PDMX works admitted
+  by both rights gates, 772 scanned, 48 with an exact reference, **12 test +
+  12 disjoint dev works** rendered with `REFERENCE_SYNTH_V1` (block chords
+  only, oscillators, no room — optimistic on purpose, comparisons valid,
+  absolute numbers not). Test split, scored once with defaults, time-weighted
+  on the reference: BTC major/minor raw root **0.786** / maj-min 0.775 / full
+  symbol 0.472 / inversions 0 / boundary F1 0.492; BTC large-voca raw 0.774 /
+  0.770 / 0.483 / 0 / 0.472; chroma-only engine 0.630 (coverage 0.79);
+  **ENSEMBLE 0.773 / 0.770 / 0.489 / 0.046 / 0.481**, coverage 0.998, 11.7 s of
+  false inversions. **The ensemble does not beat the chord model on the root
+  (−0.014 vs the best arm, −0.001 on dev); it ties it, adds +0.017 (+0.019 dev)
+  on the full symbol, and is the only arm that names an inversion at all.**
+  Where the previous session left it: root 0.611 at coverage 0.797. Two
+  changes, both chosen on the dev split (`docs/evidence/harmony-tournament-dev-sweep.json`):
+  the root is decided under a provider-dominant weighting (sweep 0.5 → 1.0:
+  root 0.8229 → 0.8272, refused 13.7 s → 6 s, plateau from **0.85**; the best
+  single model 0.8279 is never beaten) and quality/bass under the balanced
+  one; and a short segment that keeps its neighbour's root joins as a flicker
+  instead of being protected as a chord change (dev boundary F1 0.298 →
+  0.446, full symbol 0.578 → 0.587). Two diagnostics say why the root cannot
+  move: the two BTC vocabularies agree on 93 % of the time and are right there
+  85 % (81 % test), the ensemble the same; on the 7 % split time chroma and
+  the bass track pick no better than the better model. And the pYIN
+  bass-over-mix names the reference bass on **27 % (dev) / 18 % (test)** of
+  the inverted time and the *root* on 41–45 % — inversions are bounded by
+  that witness; a separated bass stem (stream B) is the fix, not a fusion
+  rule. C / Am/C / C6 / F/C over the same bass are told apart on clean
+  evidence, with `Am7/C` recorded as the identical-set alternate of `C6` and
+  `bassUnknown` when no bass sounded (tests).
+
+  **Key.** Strict 0.667 test / 0.5 dev for every arm — the worker's two key
+  witnesses (Krumhansl over chroma, Krumhansl over BTC's chords) read the same
+  audio and agree even when wrong; every miss is a relative minor or the
+  dominant; MIREX-weighted 0.742 / 0.70 kept apart. The contested path never
+  fired on synthetic audio (0/24). **The owner's upload** (`3108652e…`,
+  `docs/evidence/harmony-real-upload-live.json`): today's Song Model says
+  contested E♭ major 0.345 vs G minor 0.32; with the worker's chroma key (G
+  minor 0.74) and BTC's implied key (G minor 0.65) added, the engine says
+  **agreed G minor**, 1.063 from three witnesses vs 0.345, margin 0.718; the
+  chords agree (`Gm` 44 s, `Cm` 33 s, `i` 84 s, `iv` 23 s, both BTC
+  vocabularies' top chord `G:min`), and the timeline shows ~58 s in C♯
+  minor / E major that a global contest cannot express. Nobody has checked
+  those chords.
+
+  Tests: `harmonyEngine.test.ts` (34: parsing dialects, the four C-bass
+  cases, no-bass honesty, key context choosing between two readings of one
+  set, abstention with reasons, a bass note alone is not a chord, the walking
+  bass absorbed without a seventh or a slash, the smoothing rule incl. C|F|C|G
+  at 140 BPM kept and the same-root flicker joined, provider-dominant root vs
+  a split, quality coin-toss reducing to the triad, key relations and
+  discriminators, agreed/contested/unknown incl. the live G-minor-vs-E♭
+  defect, timeline tonicization vs modulation, roman numerals);
+  `harmonyMetrics.test.ts` (16). Registered in `run-focused-api-tests.mjs`.
+  `pnpm run typecheck` green. Modal ≈ $0.25 this session (estimated from
+  container-seconds; the cap was $10); all three `harmony-acr-worker` apps
+  were ephemeral and show `stopped` — nothing left running.
+
+  **Honest limits.** Synthetic block-chord audio only; no accuracy here is
+  one to quote for a record. The ensemble ties the chord model on the root
+  and its inversion witness is wrong more often than right — the stream's
+  headline capability is demonstrated on clean evidence and not on audio.
+  The key numbers come from two witnesses that are not independent; the G
+  minor on the owner's upload is corroboration, not truth, and no human has
+  listened. The timeline's tonicization/modulation kinds are labelled, not
+  validated (48 changes in four minutes on the upload). Not wired into
+  `sourceAnalyzer.ts`; BTC is RESEARCH_ONLY and cannot ship. Provider
+  evidence for the test split was recorded by the previous session and
+  re-scored here; the dev split and the upload were recorded live in this
+  one.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 

@@ -1,0 +1,621 @@
+{
+  "title": "Harmony engine - development split: the root-weight sweep, the two diagnostics, and the smoothing change (PR-85, stream E)",
+  "builtAt": "2026-09-09T22:04:49.246Z",
+  "purpose": "Every engine constant chosen in PR-85 was chosen here, on twelve works disjoint from the test split, by the same selection rule (harmony-tournament.mjs --split dev). The test split was scored once afterwards with the engine's defaults (docs/evidence/harmony-tournament-live.json).",
+  "split": {
+    "kind": "dev",
+    "clips": 12,
+    "ids": [
+      "QmeMsbincB2JXTfEtGtNpzekMTffYNNLdpsKQQPBWS8apm",
+      "QmZTb3kJxe9ULUftqtzhrB849qMHHQWqu7Zdv3So3nkDiX",
+      "QmWK1bbaFXu5MTYf4KKysyEQYT5FhPykkspM2UQxA183oJ",
+      "QmZtx1Y3urGNzpJxYNMKuW71i41uWtF7zcXbH893bjis9t",
+      "QmUfvSguzqVcqMBzr3NXD9CyyndNN87hgP3HMUW5LSJfkH",
+      "QmZCt87QqhqmKqsFsLZrxmSEJNvL9VsDM59hxihyN6k2i8",
+      "QmPjyyNySMyUXQ5UDG7dYesZzg4aiMPZZT1xPzeHkhS5sm",
+      "QmdQj8KFvMPXHYyHifEK1nKKCZxXPi5GBAUBwunMz4WE3o",
+      "QmTXXsydkMgxWiWGsjRFE4hR1JEonpxWv9VSkDgufmR3wQ",
+      "QmNgzdQJt5mU7AVfewfRTWWjmcwcNZfmWVxuqWwJ1sefdH",
+      "QmZbXuNDBSHGFb7cBBQu7VqchGRUaqjXnbiMgf5uoUAN36",
+      "QmQjvUUZeVKU96cgHmPkYPJwv8JZVST4SExg7Ey3ZHHA3u"
+    ],
+    "heldOutTestIds": [
+      "QmZSGeVJFnMTYMu27s87nMyL6pWKMJr5ezK3ytWV9HNMDi",
+      "QmdxspjTBfxU7BJnh7WfnJk8A4i6qUgzHZg2fj9jSeHu18",
+      "QmVV9gSRH7xd1KXebCVcRY2pBdduqjNmgcvW7JGFrR6aHF",
+      "QmfTC17xsMyEnXmf9iKEoAMzDRuS3t6mnFn6VFe9LcvMPU",
+      "QmSoVzzcCxtvNvZnomPGsPzL7x6sxNSCAxSZzhbRhFa1GC",
+      "QmaSrcMqbye3vw9gwoU5My9tAvmscfVB1hAX5QvNes29qf",
+      "QmdGPiee9JcLgjPEB6bsZrekNnXnZBJCQW5KFFNLJSW9ou",
+      "QmVMj6HtAmJCiCVU8Qu159wwKkA5gghYrDC1z6PKqQ5SsX",
+      "QmSN1FBXEcc1o4aU9Yq7EKY5kHKTbT4okLtqE8DDfwCvEk",
+      "QmdfxRT9QSYn3fyxxtyjqCusR4aRRxconDXtWZDEk4kKZa",
+      "QmTBLqzAisLKUvi11roZrF5W2uaxqnoKa89y5sqqmPzaaY",
+      "QmaGbYP6aMfMicvAXDLMUqiCro4Ci3deXdcyC1F3CumSUb"
+    ],
+    "providerEvidence": {
+      "path": "/.tmp-harmony/dev/providers.json",
+      "recordedAt": "2026-09-09T21:52:36.152Z",
+      "reusedFromEarlierRun": true
+    },
+    "corpus": {
+      "source": "PDMX",
+      "subset": "no_license_conflict ∩ our rights gate, n_tracks ≥ 2",
+      "csvRows": 254077,
+      "ourAdmitted": 222856,
+      "subsetCandidates": 39975,
+      "scanned": 772,
+      "parseFailed": 0,
+      "missingFiles": 0,
+      "withExactReference": 48,
+      "chosen": 12,
+      "clipSeconds": 90,
+      "selectionBias": "Works were kept only when their harmony is stated in sustained block chords, because that is the only way the chord, its inversion and the key are exact rather than inferred. That excludes arpeggiated, contrapuntal and heavily ornamented writing, which is harder for every system here. The absolute numbers are therefore optimistic; the comparisons between arms are not."
+    }
+  },
+  "rootProviderWeightSweep": {
+    "question": "How much of the root decision should the chord models carry? 0.5 is the balanced fusion the engine started with; 1.0 makes the root the models' call outright, with chroma, bass and melody deciding only where the two models split.",
+    "rule": "Primary metric rootOnReference; pick the smallest weight within 0.001 of the best (the start of the plateau).",
+    "engineStateDuringSweep": "before the same-root flicker join (it does not touch the root decision)",
+    "bestSingleArmRootOnReference": {
+      "BTC_LARGE_VOCA_RAW": 0.8279,
+      "BTC_MAJMIN_RAW": 0.8146
+    },
+    "rows": [
+      {
+        "rootProviderWeight": 0.5,
+        "coverage": 0.9882,
+        "rootOnReference": 0.8229,
+        "rootOnCovered": 0.8326,
+        "majMinOnReference": 0.8209,
+        "fullSymbolOnReference": 0.5776,
+        "inversionBassOnReference": 0.1161,
+        "falseInversionSeconds": 11.434,
+        "boundaryF1": 0.3035,
+        "ensembleRefusedSeconds": 13.73
+      },
+      {
+        "rootProviderWeight": 0.65,
+        "coverage": 0.9937,
+        "rootOnReference": 0.8253,
+        "rootOnCovered": 0.8305,
+        "majMinOnReference": 0.8233,
+        "fullSymbolOnReference": 0.5781,
+        "inversionBassOnReference": 0.1195,
+        "falseInversionSeconds": 11.414,
+        "boundaryF1": 0.3034,
+        "ensembleRefusedSeconds": 12.02
+      },
+      {
+        "rootProviderWeight": 0.75,
+        "coverage": 0.9965,
+        "rootOnReference": 0.8268,
+        "rootOnCovered": 0.8297,
+        "majMinOnReference": 0.8248,
+        "fullSymbolOnReference": 0.5784,
+        "inversionBassOnReference": 0.1189,
+        "falseInversionSeconds": 12.295,
+        "boundaryF1": 0.3001,
+        "ensembleRefusedSeconds": 7.58
+      },
+      {
+        "rootProviderWeight": 0.85,
+        "coverage": 0.9982,
+        "rootOnReference": 0.827,
+        "rootOnCovered": 0.8286,
+        "majMinOnReference": 0.825,
+        "fullSymbolOnReference": 0.578,
+        "inversionBassOnReference": 0.1189,
+        "falseInversionSeconds": 12.462,
+        "boundaryF1": 0.2978,
+        "ensembleRefusedSeconds": 6
+      },
+      {
+        "rootProviderWeight": 0.95,
+        "coverage": 0.9981,
+        "rootOnReference": 0.827,
+        "rootOnCovered": 0.8287,
+        "majMinOnReference": 0.825,
+        "fullSymbolOnReference": 0.578,
+        "inversionBassOnReference": 0.1189,
+        "falseInversionSeconds": 12.462,
+        "boundaryF1": 0.2978,
+        "ensembleRefusedSeconds": 5.72
+      },
+      {
+        "rootProviderWeight": 1,
+        "coverage": 0.9981,
+        "rootOnReference": 0.8272,
+        "rootOnCovered": 0.8288,
+        "majMinOnReference": 0.8252,
+        "fullSymbolOnReference": 0.578,
+        "inversionBassOnReference": 0.1189,
+        "falseInversionSeconds": 12.462,
+        "boundaryF1": 0.2984,
+        "ensembleRefusedSeconds": 7.77
+      }
+    ],
+    "chosen": 0.85,
+    "finding": "Root accuracy rises monotonically with the weight and plateaus from 0.85 (0.8270 -> 0.8272 at 1.0); refused time falls from 13.7 s to 6 s. At no weight does the ensemble beat the best single model on the root (0.8279): it ties it. The weight buys coverage, not a better root."
+  },
+  "providerAgreement": {
+    "question": "Where could an ensemble add anything on the root at all?",
+    "measured": {
+      "unanimousShare": 0.9335,
+      "unanimousSeconds": 511.35,
+      "splitSeconds": 36.41,
+      "onUnanimous": {
+        "majminRoot": 0.854,
+        "largeVocaRoot": 0.854,
+        "ensembleRoot": 0.8528,
+        "ensembleCoverage": 0.9988
+      },
+      "onSplit": {
+        "majminRoot": 0.316,
+        "largeVocaRoot": 0.4748,
+        "ensembleRoot": 0.4734,
+        "ensembleCoverage": 0.9973
+      }
+    },
+    "finding": "The two BTC vocabularies name the same root on 93.4 % of the reference time and are right there 85.4 % of the time; the ensemble is right there 85.3 %. On the 6.6 % where they split, the large vocabulary is right 47.5 %, the major/minor one 31.6 %, and the ensemble 47.3 % - chroma and the bass tracker do not choose better than the better model."
+  },
+  "bassTracker": {
+    "question": "Is the pYIN bass track a usable witness to the inversion?",
+    "measured": {
+      "trackedShare": 0.9078,
+      "bassRightOnTracked": 0.6538,
+      "rootHeardOnTracked": 0.694,
+      "inverted": {
+        "referenceSeconds": 154.38,
+        "trackedShare": 0.8842,
+        "bassRightOnTracked": 0.2683,
+        "rootHeardOnTracked": 0.4149
+      }
+    },
+    "finding": "Where the reference bass is not the root (154 s of 548), the tracked heaviest pitch class equals the reference bass on 26.8 % of the tracked time and equals the root on 41.5 %: the low-passed mix hears the chord's root more often than its bass. Inversion accuracy (11.5-11.9 %) and the false inversions (10.7-12.5 s) are both bounded by this witness. A separated bass stem is the fix; this stream does not have one."
+  },
+  "sameRootFlickerJoin": {
+    "question": "The ensemble segments at every bass onset and protects any short segment with a strong margin, so a seventh that sounds for 70 ms becomes its own chord and a boundary. Is a short segment that keeps its neighbour's root a chord change?",
+    "change": "A segment shorter than minHarmonicUnitSeconds that keeps a neighbour's root joins that neighbour whatever its margin (backward first, forward when only the next chord shares the root). Protection now applies to root changes only.",
+    "at": {
+      "rootProviderWeight": 0.85
+    },
+    "before": {
+      "BTC_MAJMIN_RAW": {
+        "coverage": 0.9963,
+        "rootOnReference": 0.8146,
+        "majMinOnReference": 0.8073,
+        "fullSymbolOnReference": 0.552,
+        "inversionBassOnReference": 0,
+        "falseInversionSeconds": 0,
+        "boundaryF1": 0.5095,
+        "boundaryPrecision": 0.4129,
+        "boundaryRecall": 0.7055,
+        "keyStrict": null,
+        "keyMirexWeighted": null
+      },
+      "BTC_LARGE_VOCA_RAW": {
+        "coverage": 1,
+        "rootOnReference": 0.8279,
+        "majMinOnReference": 0.8247,
+        "fullSymbolOnReference": 0.5675,
+        "inversionBassOnReference": 0,
+        "falseInversionSeconds": 0,
+        "boundaryF1": 0.4483,
+        "boundaryPrecision": 0.3347,
+        "boundaryRecall": 0.7158,
+        "keyStrict": null,
+        "keyMirexWeighted": null
+      },
+      "CHROMA_ONLY": {
+        "coverage": 0.813,
+        "rootOnReference": 0.6893,
+        "majMinOnReference": 0.6868,
+        "fullSymbolOnReference": 0.2,
+        "inversionBassOnReference": 0,
+        "falseInversionSeconds": 0,
+        "boundaryF1": 0.3657,
+        "boundaryPrecision": 0.2578,
+        "boundaryRecall": 0.6702,
+        "keyStrict": 0.5,
+        "keyMirexWeighted": 0.7
+      },
+      "CHROMA_PLUS_BASS": {
+        "coverage": 0.8825,
+        "rootOnReference": 0.6645,
+        "majMinOnReference": 0.6601,
+        "fullSymbolOnReference": 0.2988,
+        "inversionBassOnReference": 0.0593,
+        "falseInversionSeconds": 6.917,
+        "boundaryF1": 0.322,
+        "boundaryPrecision": 0.2066,
+        "boundaryRecall": 0.7697,
+        "keyStrict": 0.5,
+        "keyMirexWeighted": 0.7
+      },
+      "BTC_MAJMIN": {
+        "coverage": 0.9966,
+        "rootOnReference": 0.8154,
+        "majMinOnReference": 0.8081,
+        "fullSymbolOnReference": 0.5525,
+        "inversionBassOnReference": 0,
+        "falseInversionSeconds": 0,
+        "boundaryF1": 0.5095,
+        "boundaryPrecision": 0.4129,
+        "boundaryRecall": 0.7055,
+        "keyStrict": 0.5,
+        "keyMirexWeighted": 0.7
+      },
+      "BTC_LARGE_VOCA": {
+        "coverage": 1,
+        "rootOnReference": 0.8285,
+        "majMinOnReference": 0.8253,
+        "fullSymbolOnReference": 0.5494,
+        "inversionBassOnReference": 0,
+        "falseInversionSeconds": 0,
+        "boundaryF1": 0.488,
+        "boundaryPrecision": 0.3863,
+        "boundaryRecall": 0.6913,
+        "keyStrict": 0.5,
+        "keyMirexWeighted": 0.7
+      },
+      "ENSEMBLE": {
+        "coverage": 0.9982,
+        "rootOnReference": 0.827,
+        "majMinOnReference": 0.825,
+        "fullSymbolOnReference": 0.578,
+        "inversionBassOnReference": 0.1189,
+        "falseInversionSeconds": 12.462,
+        "boundaryF1": 0.2978,
+        "boundaryPrecision": 0.1836,
+        "boundaryRecall": 0.8298,
+        "keyStrict": 0.5,
+        "keyMirexWeighted": 0.7
+      }
+    },
+    "after": {
+      "BTC_MAJMIN_RAW": {
+        "coverage": 0.9963,
+        "rootOnReference": 0.8146,
+        "majMinOnReference": 0.8073,
+        "fullSymbolOnReference": 0.552,
+        "inversionBassOnReference": 0,
+        "falseInversionSeconds": 0,
+        "boundaryF1": 0.5095,
+        "boundaryPrecision": 0.4129,
+        "boundaryRecall": 0.7055,
+        "keyStrict": null,
+        "keyMirexWeighted": null
+      },
+      "BTC_LARGE_VOCA_RAW": {
+        "coverage": 1,
+        "rootOnReference": 0.8279,
+        "majMinOnReference": 0.8247,
+        "fullSymbolOnReference": 0.5675,
+        "inversionBassOnReference": 0,
+        "falseInversionSeconds": 0,
+        "boundaryF1": 0.4483,
+        "boundaryPrecision": 0.3347,
+        "boundaryRecall": 0.7158,
+        "keyStrict": null,
+        "keyMirexWeighted": null
+      },
+      "CHROMA_ONLY": {
+        "coverage": 0.813,
+        "rootOnReference": 0.6902,
+        "majMinOnReference": 0.688,
+        "fullSymbolOnReference": 0.2007,
+        "inversionBassOnReference": 0,
+        "falseInversionSeconds": 0,
+        "boundaryF1": 0.3771,
+        "boundaryPrecision": 0.2743,
+        "boundaryRecall": 0.6424,
+        "keyStrict": 0.5,
+        "keyMirexWeighted": 0.7
+      },
+      "CHROMA_PLUS_BASS": {
+        "coverage": 0.8647,
+        "rootOnReference": 0.6644,
+        "majMinOnReference": 0.6591,
+        "fullSymbolOnReference": 0.3022,
+        "inversionBassOnReference": 0.058,
+        "falseInversionSeconds": 6.512,
+        "boundaryF1": 0.3664,
+        "boundaryPrecision": 0.251,
+        "boundaryRecall": 0.7121,
+        "keyStrict": 0.5,
+        "keyMirexWeighted": 0.7
+      },
+      "BTC_MAJMIN": {
+        "coverage": 0.9966,
+        "rootOnReference": 0.8154,
+        "majMinOnReference": 0.8078,
+        "fullSymbolOnReference": 0.5524,
+        "inversionBassOnReference": 0,
+        "falseInversionSeconds": 0,
+        "boundaryF1": 0.5089,
+        "boundaryPrecision": 0.4122,
+        "boundaryRecall": 0.7034,
+        "keyStrict": 0.5,
+        "keyMirexWeighted": 0.7
+      },
+      "BTC_LARGE_VOCA": {
+        "coverage": 1,
+        "rootOnReference": 0.8285,
+        "majMinOnReference": 0.8254,
+        "fullSymbolOnReference": 0.5494,
+        "inversionBassOnReference": 0,
+        "falseInversionSeconds": 0,
+        "boundaryF1": 0.49,
+        "boundaryPrecision": 0.3885,
+        "boundaryRecall": 0.6913,
+        "keyStrict": 0.5,
+        "keyMirexWeighted": 0.7
+      },
+      "ENSEMBLE": {
+        "coverage": 0.9982,
+        "rootOnReference": 0.827,
+        "majMinOnReference": 0.8239,
+        "fullSymbolOnReference": 0.5868,
+        "inversionBassOnReference": 0.1148,
+        "falseInversionSeconds": 10.681,
+        "boundaryF1": 0.4459,
+        "boundaryPrecision": 0.3209,
+        "boundaryRecall": 0.7679,
+        "keyStrict": 0.5,
+        "keyMirexWeighted": 0.7
+      }
+    },
+    "finding": "ENSEMBLE boundary F1 0.298 -> 0.446 (precision 0.18 -> 0.32, recall 0.83 -> 0.77), full symbol 0.578 -> 0.587, false inversions 12.5 s -> 10.7 s, root unchanged at 0.827. The raw provider arms are untouched by construction."
+  },
+  "keyOnDev": {
+    "strict": 0.5,
+    "mirexWeighted": 0.7,
+    "statuses": {
+      "agreed": 12
+    },
+    "perClip": [
+      {
+        "id": "QmeMsbincB2JXTfEtGtNpzekMTffYNNLdpsKQQPBWS8apm",
+        "reference": "C♯ major",
+        "ensemble": "C♯ major",
+        "chromaKrumhansl": {
+          "total": 1,
+          "strict": 1,
+          "mode": 1,
+          "tonic": 1,
+          "mirexWeighted": 1,
+          "breakdown": {
+            "exact": 1,
+            "fifth": 0,
+            "relative": 0,
+            "parallel": 0,
+            "other": 0,
+            "abstained": 0
+          }
+        }
+      },
+      {
+        "id": "QmZTb3kJxe9ULUftqtzhrB849qMHHQWqu7Zdv3So3nkDiX",
+        "reference": "C major",
+        "ensemble": "G major",
+        "chromaKrumhansl": {
+          "total": 1,
+          "strict": 0,
+          "mode": 1,
+          "tonic": 0,
+          "mirexWeighted": 0.5,
+          "breakdown": {
+            "exact": 0,
+            "fifth": 1,
+            "relative": 0,
+            "parallel": 0,
+            "other": 0,
+            "abstained": 0
+          }
+        }
+      },
+      {
+        "id": "QmWK1bbaFXu5MTYf4KKysyEQYT5FhPykkspM2UQxA183oJ",
+        "reference": "A♭ major",
+        "ensemble": "F minor",
+        "chromaKrumhansl": {
+          "total": 1,
+          "strict": 0,
+          "mode": 0,
+          "tonic": 0,
+          "mirexWeighted": 0.3,
+          "breakdown": {
+            "exact": 0,
+            "fifth": 0,
+            "relative": 1,
+            "parallel": 0,
+            "other": 0,
+            "abstained": 0
+          }
+        }
+      },
+      {
+        "id": "QmZtx1Y3urGNzpJxYNMKuW71i41uWtF7zcXbH893bjis9t",
+        "reference": "B♭ major",
+        "ensemble": "B♭ major",
+        "chromaKrumhansl": {
+          "total": 1,
+          "strict": 1,
+          "mode": 1,
+          "tonic": 1,
+          "mirexWeighted": 1,
+          "breakdown": {
+            "exact": 1,
+            "fifth": 0,
+            "relative": 0,
+            "parallel": 0,
+            "other": 0,
+            "abstained": 0
+          }
+        }
+      },
+      {
+        "id": "QmUfvSguzqVcqMBzr3NXD9CyyndNN87hgP3HMUW5LSJfkH",
+        "reference": "C major",
+        "ensemble": "G major",
+        "chromaKrumhansl": {
+          "total": 1,
+          "strict": 0,
+          "mode": 1,
+          "tonic": 0,
+          "mirexWeighted": 0.5,
+          "breakdown": {
+            "exact": 0,
+            "fifth": 1,
+            "relative": 0,
+            "parallel": 0,
+            "other": 0,
+            "abstained": 0
+          }
+        }
+      },
+      {
+        "id": "QmZCt87QqhqmKqsFsLZrxmSEJNvL9VsDM59hxihyN6k2i8",
+        "reference": "C major",
+        "ensemble": "C major",
+        "chromaKrumhansl": {
+          "total": 1,
+          "strict": 1,
+          "mode": 1,
+          "tonic": 1,
+          "mirexWeighted": 1,
+          "breakdown": {
+            "exact": 1,
+            "fifth": 0,
+            "relative": 0,
+            "parallel": 0,
+            "other": 0,
+            "abstained": 0
+          }
+        }
+      },
+      {
+        "id": "QmPjyyNySMyUXQ5UDG7dYesZzg4aiMPZZT1xPzeHkhS5sm",
+        "reference": "C major",
+        "ensemble": "G major",
+        "chromaKrumhansl": {
+          "total": 1,
+          "strict": 0,
+          "mode": 1,
+          "tonic": 0,
+          "mirexWeighted": 0.5,
+          "breakdown": {
+            "exact": 0,
+            "fifth": 1,
+            "relative": 0,
+            "parallel": 0,
+            "other": 0,
+            "abstained": 0
+          }
+        }
+      },
+      {
+        "id": "QmdQj8KFvMPXHYyHifEK1nKKCZxXPi5GBAUBwunMz4WE3o",
+        "reference": "G major",
+        "ensemble": "G major",
+        "chromaKrumhansl": {
+          "total": 1,
+          "strict": 1,
+          "mode": 1,
+          "tonic": 1,
+          "mirexWeighted": 1,
+          "breakdown": {
+            "exact": 1,
+            "fifth": 0,
+            "relative": 0,
+            "parallel": 0,
+            "other": 0,
+            "abstained": 0
+          }
+        }
+      },
+      {
+        "id": "QmTXXsydkMgxWiWGsjRFE4hR1JEonpxWv9VSkDgufmR3wQ",
+        "reference": "G major",
+        "ensemble": "G major",
+        "chromaKrumhansl": {
+          "total": 1,
+          "strict": 1,
+          "mode": 1,
+          "tonic": 1,
+          "mirexWeighted": 1,
+          "breakdown": {
+            "exact": 1,
+            "fifth": 0,
+            "relative": 0,
+            "parallel": 0,
+            "other": 0,
+            "abstained": 0
+          }
+        }
+      },
+      {
+        "id": "QmNgzdQJt5mU7AVfewfRTWWjmcwcNZfmWVxuqWwJ1sefdH",
+        "reference": "F major",
+        "ensemble": "D minor",
+        "chromaKrumhansl": {
+          "total": 1,
+          "strict": 0,
+          "mode": 0,
+          "tonic": 0,
+          "mirexWeighted": 0.3,
+          "breakdown": {
+            "exact": 0,
+            "fifth": 0,
+            "relative": 1,
+            "parallel": 0,
+            "other": 0,
+            "abstained": 0
+          }
+        }
+      },
+      {
+        "id": "QmZbXuNDBSHGFb7cBBQu7VqchGRUaqjXnbiMgf5uoUAN36",
+        "reference": "G major",
+        "ensemble": "G major",
+        "chromaKrumhansl": {
+          "total": 1,
+          "strict": 1,
+          "mode": 1,
+          "tonic": 1,
+          "mirexWeighted": 1,
+          "breakdown": {
+            "exact": 1,
+            "fifth": 0,
+            "relative": 0,
+            "parallel": 0,
+            "other": 0,
+            "abstained": 0
+          }
+        }
+      },
+      {
+        "id": "QmQjvUUZeVKU96cgHmPkYPJwv8JZVST4SExg7Ey3ZHHA3u",
+        "reference": "C major",
+        "ensemble": "A minor",
+        "chromaKrumhansl": {
+          "total": 1,
+          "strict": 0,
+          "mode": 0,
+          "tonic": 0,
+          "mirexWeighted": 0.3,
+          "breakdown": {
+            "exact": 0,
+            "fifth": 0,
+            "relative": 1,
+            "parallel": 0,
+            "other": 0,
+            "abstained": 0
+          }
+        }
+      }
+    ],
+    "finding": "Six of twelve dev keys are wrong, every miss a relative minor or the dominant; every case is 'agreed' because the two key witnesses in the worker (Krumhansl over chroma, Krumhansl over BTC's chords) read the same audio and tend to agree. The contested path never fired on synthetic audio; it fired on the owner's upload only because two platform witnesses were added."
+  }
+}
