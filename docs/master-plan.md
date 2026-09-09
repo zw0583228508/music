@@ -30,6 +30,7 @@ PerformanceData` — never an audio generator.
 | Wave 6 (production quality) | ✅ merged (PR-21…PR-26): VST3 worker, routing, performance V2, sound selection, mix brain, mastering (BS.1770 meter) |
 | Wave 7 (learning system) | ✅ merged (PR-27…PR-31): fingerprint, preference events, pairwise critic, personal defaults, training loop with benchmark gate |
 | Wave U (universal producer intelligence) | ✅ **complete** — U1…U6 merged: contracts, conversation, research, references, scope-aware regeneration, memory + explainability |
+| Wave Q (world-class musical intelligence) | 🟡 **the plan of record** — Q-01 in progress (MOSS runtime, Basic Pitch endpoint); Q-00 and Q-02…Q-15 planned |
 | Quality gate A (technical) | ✅ every merged PR carries tests, typecheck, live evidence under `docs/evidence/`; **Definition of Done passed end to end on a real upload, local providers only (PR-32)** |
 | Quality gate B (musical) | ✅ critics pass, no illegal notes; benchmark `playabilityErrors` back to 0 on every case (PR-33) |
 | Quality gate C (human) | 🟡 **operable, not passed**: the listening room (PR-34) serves blind A/B with votes, Elo and an explicit verdict (≥ 5 independent raters, ≥ 60 % release share); no real listener has rated yet |
@@ -1641,6 +1642,155 @@ any of it.
   section names stay in Latin script by design. Hebrew is detected per turn by
   script, so a Hebrew speaker writing one English sentence is answered in
   English for that turn.
+
+## Wave Q — World-Class Musical Intelligence (the plan of record)
+
+Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
+platform that **arranges correctly**. Wave Q's whole purpose is to make it
+**write music a professional would sign**. Two standing rules govern it:
+
+1. **Do not rebuild, and do not collect models.** The orchestrator already
+   accepts an injected `composeParts`, so a stronger composer replaces the
+   reference one without touching planning, constraints, critique, repair,
+   performance, rendering or revision. **A new model enters only if it fills a
+   capability nothing covers, or beats the incumbent on the benchmark.**
+2. **The IP is musical decision-making.** Do not build another separator, beat
+   tracker, pitch tracker, generic transcription model, general LLM,
+   text-to-audio model or mastering model. Those exist and are good.
+
+### The sixteen stages the finished system runs
+
+understand → analyze → discuss → research → style grammar → plan → harmonize →
+compose → specialize → critique/repair → perform → render → listen →
+mix/master → talk/revise → learn.
+
+Everything from *discuss* to *revise* exists in some form today; Wave Q deepens
+*analyze*, *research*, *harmonize*, *compose*, *specialize* and *learn*.
+
+### The models this platform builds itself
+
+| model | role | priority |
+|---|---|---|
+| `ARRANGER_FM_V1` | writes the notes of every part | 🔴 critical |
+| Instrument expert adapters | idiomatic writing per family | 🔴 critical |
+| `MUSIC_REWARD_MODEL_V1` | learns human taste, ranks candidates | 🔴 critical |
+| `HARMONY_MODEL_V1` | reharmonization proposals | 🟠 high |
+| `PERFORMANCE_MODEL_V2` | expressive residuals over written MIDI | 🟠 high |
+| `MIX_REWARD_MODEL`, `AUDIO_REWARD_MODEL` | mix and audio preference | 🟡 later |
+
+`YOUR_ARRANGER_MODEL` (PR-31) is not deleted: it becomes `ARRANGER_FM` plus a
+per-producer adapter, memory and personal preferences — a personalisation layer
+**on** a strong brain, never instead of one.
+
+### Data: an autonomous factory, not a commission
+
+The owner's explicit decision (2026-09-09): **no arrangers are hired to write a
+training corpus.** Licensed human-origin symbolic music plus the platform's own
+machinery produces the data. Humans are needed for exactly one thing that
+cannot be synthesised — **blind preference**.
+
+- **Tier A — licensed human music.** PDMX's `no_license_conflict` subset
+  (222,856 works whose external and internal metadata agree on public domain)
+  is the backbone; every other corpus passes a rights audit first. A dataset's
+  own licence is *not* proof of rights in the works inside it, and anything
+  non-commercial (MAESTRO's CC BY-NC-SA, GigaMIDI-derived weights) stays out of
+  the commercial path, exactly as the repo already blocks MIDI-RWKV.
+- **Tier B — tasks extracted from that music.** One score becomes dozens of
+  supervised examples: remove the bass and ask for it, remove bars 17–24,
+  remove an instrument, ask for the intro, the cadence, the inner voices, the
+  development of a verse into a chorus.
+- **Tier C — teacher-ensemble augmentation.** Harmony Brain, MOSS reasoning,
+  the reference composer and previous `ARRANGER_FM` versions generate variants
+  around a *human anchor*, filtered by rejection sampling: hard constraints,
+  the harmony critic, voice-leading, StyleGrammar compliance, instrument idiom,
+  vocal space and diversity. Of 32 candidates perhaps 3 survive.
+- **Tier D — self-play**, with the human corpus always retained. Training
+  repeatedly on model output without enough of the original distribution
+  causes model collapse; synthetic data is augmentation, never replacement.
+- **Tier E — real producer preference** from the product itself: which
+  candidate was selected, which edit was accepted, what was undone.
+
+Every training example keeps its rights basis, exactly as PR-28's preference
+events do.
+
+### The order of work
+
+- **Q-00 — a real benchmark corpus.** At least 100 rights-cleared songs across
+  vocal-only, piano-vocal, full song and MIDI; slow and fast, straight and
+  swung, simple and complex harmony, 3/4, 4/4 and 6/8, sparse and dense,
+  western and non-western, small and large ensembles — and a **human gold
+  arrangement** for 30–50 of them. *Nothing is trained before there is a
+  measure.* Today's corpus is synthesised and flatters the pipeline.
+- **Q-01 — MOSS-Music in production.** Move the worker to the upstream runtime,
+  stand up `MOSS_MUSIC_INSTRUCT` (routine analysis) and `MOSS_MUSIC_THINKING`
+  (only when providers disagree, harmony or structure is ambiguous, the style
+  needs deeper reasoning, or the producer asks). MOSS **never writes to the
+  Song Model**: it returns `MusicAnalysisEvidence` (finding, confidence, bar
+  range, dimension, reason, provider, model version) and Analysis
+  Reconciliation decides.
+- **Q-02 — universal live research → `StyleGrammar`.** Not a StyleProfile: a
+  grammar with groove, bass, harmony, piano, strings, brass, melodic,
+  arrangement, performance and sound sections, every value carrying
+  confidence, provenance and source refs.
+- **Q-03 — `PartGenerationRequest` V2.** `existingParts` currently carries
+  instrument, role and a note count. A piano cannot voice against a cello it
+  cannot see. V2 adds the StyleGrammar, the arrangement harmony plan, the vocal
+  attention map, motif memory, **sibling parts' actual notes**, the previous
+  section's summary, the next section's intent, hard constraints, soft
+  preferences, locked material, the candidate strategy and the brief reference.
+- **Q-04 — Harmony Brain V2.** A new `ArrangementHarmonyPlan` that never
+  overwrites the source harmony (source ≠ arrangement), proposing inversions,
+  slash chords, extensions, altered and secondary dominants, modal interchange,
+  passing diminished, pedal points, tonicization and reharmonization — then a
+  `VoiceLeadingOptimizer` (OR-Tools CP-SAT) turning proposals into playable
+  voicings under hard ranges, leaps, polyphony and physical limits, optimising
+  movement, common tones, contrary motion, spacing, doubling and vocal
+  clearance. ML proposes, the solver optimises, the critic judges.
+- **Q-05 — the autonomous musical data factory** (rights ledger, dataset
+  manifests and versions, training examples, model lineage; Tiers A–E above).
+- **Q-06 — `ARRANGER_REMI_V1`.** MidiTok + Symusic, a private tokenizer
+  carrying bar, position, pitch, duration, velocity, instrument, role, chord
+  root/quality/extension/inversion, section and its function, phrase, energy,
+  density, tension, articulation, CC, pedal, motif id, style dimension and
+  value, and the candidate strategy. Round-trip must be lossless for everything
+  the platform supports.
+- **Q-07 — dataset builder**: part infill, section infill, track completion,
+  transition, reharmonization and style-rewrite datasets.
+- **Q-08 — `ARRANGER_FM_V1`.** An encoder–decoder transformer of **200–350M
+  parameters**, not billions: symbolic music is dense. It writes notes, CC and
+  articulations from the V2 request and nothing else — no audio, no mastering,
+  no analysis. It enters through `composeParts` as a **shadow** provider; the
+  reference composer stays default and becomes the baseline.
+- **Q-09 — instrument experts** as LoRA adapters on one shared model: drums,
+  bass, keys and strings first, then guitar, brass, winds, percussion.
+- **Q-10 — candidate intelligence V2.** Five real design theses (intimate,
+  rhythm-driven, orchestral, modern, hybrid), not a density multiplier.
+- **Q-11 — `MUSIC_REWARD_MODEL_V1`** trained on the listening room's pairwise
+  choices, scoring harmony, voice leading, groove, style authenticity,
+  phrasing, development, idiom, vocal space, arc, climax, contrast,
+  transitions, playability, originality and coherence.
+- **Q-12 — `PERFORMANCE_MODEL_V2`**: timing, velocity, duration, CC,
+  articulation and pedal residuals over written MIDI.
+- **Q-13 — premium audio**: ACE-Step 1.5 XL (SFT for quality, Base for
+  creative operations, Turbo for preview) and Magenta RT2 Base into shadow, and
+  a licensed instrument catalogue whose every asset passes a cloud-rendering
+  rights review.
+- **Q-14 — the listen/repair loop**: compose → perform → render → listen →
+  diagnose → repair → re-render, not critique on MIDI alone.
+- **Q-15 — Gate D, professional musical quality.** Gate C (5 raters, 60 %) is a
+  development gate. A major arranger release faces 30–50 songs, at least 10
+  independent musicians, blind, one renderer, one loudness, no model names, and
+  the owner does not vote — scored separately for musicality, arrangement,
+  harmony, groove, instrument writing, style, development, emotion, production
+  usability and overall preference.
+
+### The three benchmarks every release answers
+
+1. New model vs the **reference part composer** — must win by a wide margin.
+2. New version vs the **current production model** — > 60 % blind preference
+   before promotion.
+3. AI arrangement vs a **human gold arrangement** — the north star. Not to be
+   won on day one, but always measured.
 
 ## Benchmark baseline — the number every later change is judged against
 
