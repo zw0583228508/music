@@ -152,14 +152,15 @@ function RegenerationReport({ report, arrangementVersion }: { report: ScopedRege
 function TurnBubble({ turn, onApply, applying }: { turn: ProducerChatTurn; onApply?: (turn: ProducerChatTurn) => void; applying?: boolean }) {
   const producer = turn.role === "producer";
   const structured = turn.structured;
-  const rtl = HEBREW.test(turn.text) && !producer;
   return (
     <div
       className={cn(
         "rounded-lg p-3 text-sm whitespace-pre-wrap break-words",
         producer ? "bg-muted rounded-tl-none" : "bg-primary text-primary-foreground rounded-tr-none ml-6",
       )}
-      dir={rtl ? "rtl" : undefined}
+      // The producer answers in the language the user wrote in (PR-36), so the
+      // direction follows the text itself rather than the role.
+      dir="auto"
       data-testid={`producer-turn-${turn.role}`}
     >
       {turn.text}

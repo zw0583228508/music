@@ -13,6 +13,7 @@ import type {
   ProductionBrief,
 } from "@workspace/db";
 import { activeDecisions, resolveSectionRef, type SectionLike } from "./briefCompiler";
+import { phrases, replyLanguage, type ProducerLanguage } from "./producerLanguage";
 import { extractUserIntentSync } from "./intentExtraction";
 import { instrumentFamily, lookupWord } from "./vocabulary";
 
@@ -46,13 +47,14 @@ export function questionForTarget(target: ExplainTarget): string {
   }
 }
 
-/** Where a brief decision came from, in words, for the evidence line. */
-function decisionOrigin(sourceRefs: readonly string[]): string | null {
+/** Where a brief decision came from, in the producer's words and language. */
+function decisionOrigin(sourceRefs: readonly string[], language: ProducerLanguage): string | null {
+  const P = phrases(language);
   for (const ref of sourceRefs) {
-    if (ref.startsWith("producer_memory:")) return "your standing rule";
-    if (ref.startsWith("reference:")) return `the reference you allowed (${ref})`;
-    if (ref.startsWith("research:")) return `researched world knowledge (${ref})`;
-    if (ref.startsWith("personal-profile:")) return "your learned defaults";
+    if (ref.startsWith("producer_memory:")) return P.originStandingRule;
+    if (ref.startsWith("reference:")) return P.originReference(ref);
+    if (ref.startsWith("research:")) return P.originResearch(ref);
+    if (ref.startsWith("personal-profile:")) return P.originPersonalDefaults;
   }
   return null;
 }
@@ -73,6 +75,9 @@ function fmt(value: number): string {
 
 export function explainDecision(plan: ExplainContext, question: string): PlanExplanation {
   const intent = extractUserIntentSync(question);
+  // Answer in the language the question was asked in.
+  const language = replyLanguage(question);
+  const P = phrases(language);
   const sections: SectionLike[] = (plan.globalPlan?.sectionTargets ?? [])
     .map((t) => ({ name: t.sectionName, startBar: t.startBar, endBar: t.endBar }));
   const sectionRef = intent.sectionRequests[0]?.section;
@@ -130,13 +135,13 @@ export function explainDecision(plan: ExplainContext, question: string): PlanExp
           (typeof d.value === "string" && canonical(d.value) === family) ||
           (Array.isArray(d.value) && d.value.map(canonical).includes(family));
         if (!mentions) continue;
-        const origin = decisionOrigin(d.sourceRefs);
+        const origin = decisionOrigin(d.sourceRefs, language);
         evidence.push({
           source: "brief.producerDecisions",
           ref: d.id,
           detail: `${d.strength} ${d.topic}: ${d.statement} (${d.provenance}${origin ? `, from ${origin}` : ""})`,
         });
-        if (origin) lines.push(`That decision comes from ${origin}: "${d.statement}".`);
+        if (origin) lines.push(P.decisionOriginLine(origin, d.statement));
       }
     }
 
@@ -159,7 +164,7 @@ export function explainDecision(plan: ExplainContext, question: string): PlanExp
         // is not an explanation to give confidently; it is a fact to report
         // with the palette as evidence.
         evidence.push({ source: "globalPlan.instrumentPalette", ref: "(all)", detail: `palette: ${plan.globalPlan.instrumentPalette.map((p) => p.role).join(", ")}` });
-        presuppositionFailure = `${family} is not in this plan's palette at all (palette: ${plan.globalPlan.instrumentPalette.map((p) => p.role).join(", ")})`;
+        presuppositionFailure = P.reasonNotInPalette(family, plan.globalPlan.instrumentPalette.map((p) => p.role).join(", "));
       }
     }
   }
@@ -220,9 +225,9 @@ export function explainDecision(plan: ExplainContext, question: string): PlanExp
         detail: `"${report.editText}" (${report.editIntent}): regenerated ${report.changed.instruments.join(", ") || "nothing"} in ${report.changed.sections.join(", ") || "no section"}; preserved ${report.preserved.instruments.join(", ") || "nothing"}; ${report.replacedNotes} note(s) replaced, ${report.keptNotes} kept; locks honoured ${report.locksHonoured}`,
       });
       if (preserved) {
-        lines.push(`Your edit "${report.editText}" did not rewrite it: ${family} was preserved, and ${report.verification.checkedLockedNotes} locked note(s) were verified byte-identical.`);
+        lines.push(P.editPreservedIt(report.editText, family, report.verification.checkedLockedNotes));
       } else if (touched) {
-        lines.push(`Your edit "${report.editText}" rewrote it: ${report.replacedNotes} note(s) replaced in ${report.changed.sections.join(", ")}, ${report.keptNotes} kept verbatim.`);
+        lines.push(P.editRewroteIt(report.editText, report.replacedNotes, report.changed.sections.join(", "), report.keptNotes));
       }
     }
   }
@@ -230,17 +235,17 @@ export function explainDecision(plan: ExplainContext, question: string): PlanExp
   const answered = lines.length > 0;
   if (!answered) {
     const missing = !plan.globalPlan && !plan.sectionPlan
-      ? "the plan has no global or section plan to read"
+      ? P.reasonNoPlan
       : presuppositionFailure
         ? presuppositionFailure
         : family || sectionNames.length
-        ? `the plan holds no evidence about ${family ?? ""}${family && sectionNames.length ? " in " : ""}${sectionNames.join(", ")}`
+        ? P.reasonNoEvidenceAbout(`${family ?? ""}${family && sectionNames.length ? " in " : ""}${sectionNames.join(", ")}`)
         : sectionRef
-          ? `no ${sectionRef.function} section exists in this plan (sections: ${sections.map((s) => s.name).join(", ") || "none"})`
-          : "the question names no instrument, section or climax the plan could be asked about";
+          ? P.reasonNoSuchSection(sectionRef.function, sections.map((s) => s.name).join(", ") || P.sectionsNone)
+          : P.reasonNothingAsked;
     return {
       answered: false,
-      answer: `I can't explain that from the plan: ${missing}.`,
+      answer: P.cannotExplain(missing),
       evidence,
       confidence: 0,
     };

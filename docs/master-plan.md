@@ -1602,6 +1602,46 @@ world it was told about, borrows only what it was allowed to borrow, edits
 within locks, remembers what is true of the producer, and can say why it did
 any of it.
 
+- **PR-36** ✅ — `hebrew-producer`: the producer is answered in the language
+  the producer writes. The owner works in Hebrew, and the front door was
+  half-Hebrew: PR-U1 detected the language of every turn and PR-U1/PR-U3's
+  clarification questions already carried Hebrew wording, but everything
+  around them — the reading of the brief, the edit rationale, the refusals,
+  the explanations, the standing-rule notice — was English.
+
+  `producerIntelligence/producerLanguage.ts`: one phrase table, two languages,
+  every producer-facing sentence a template over data the caller already
+  holds. No model translates anything, and a Hebrew reply can say nothing an
+  English one could not. Hebrew's vav joins with a maqaf before a Latin word,
+  a digit or a quote ("piano ו-flute"), which is how Hebrew writes foreign
+  words — and instrument families, section names and the producer's quoted
+  words are exactly that, so it is the common case. Those words stay as they
+  are: translating "Chorus 2" would misreport the data. Threaded through
+  `understanding.ts` (the whole reading), `editPlan.ts` (the rationale and its
+  twelve edit intents), `explain.ts` (origin lines, regeneration lines and
+  every refusal reason), `producerChat.ts` (the edit reply and its scopes) and
+  `producerMemory.ts` (the standing-rule notice). In the studio a chat bubble
+  now takes its direction from its own text (`dir="auto"`) instead of from the
+  role — the producer's replies are Hebrew now, so hard-coding them left-to-
+  right was wrong.
+
+  **Proven live** (`docs/evidence/hebrew-producer-live.json`): the owner's own
+  Hebrew intake comes back as a Hebrew reading (336 Hebrew characters, opening
+  "כך קראתי את זה") with Hebrew clarification questions; "בלי מיתרים גבוהים בכל
+  השיר" is answered "להסיר כלי על כל העיבוד: 0 תחומי רג׳נרציה, 0 נעילות…
+  הבריף עודכן לגרסה 2"; "למה יש פסנתר בפזמון?" is refused in Hebrew with the
+  Hebrew reason. The same three turns in English on a second project return
+  English with no Hebrew character in the reading. Suites: producerLanguage 3,
+  producerChat 19, editPlan 8, explain 9, producerMemory 5, scopedRegeneration
+  12; typecheck green.
+
+  **Honest limits.** This is the producer conversation, not the whole studio:
+  the surrounding UI (tab labels, buttons, the mix and export panels) is still
+  English, and only its chat text flips direction. Dimension names, roles and
+  section names stay in Latin script by design. Hebrew is detected per turn by
+  script, so a Hebrew speaker writing one English sentence is answered in
+  English for that turn.
+
 ## Benchmark baseline — the number every later change is judged against
 
 `pnpm --filter @workspace/api-server run benchmark` (add `-- --render` for audio).

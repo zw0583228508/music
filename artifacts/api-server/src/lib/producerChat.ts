@@ -54,6 +54,7 @@ import type {
 } from "@workspace/db";
 import { deriveOrchestrationBudget } from "./orchestrationBudget";
 import { personalKnowledgeSource } from "./personalProfile";
+import { phrases } from "./producerIntelligence/producerLanguage";
 import {
   describeMemoryApplied,
   isMemorySourceRef,
@@ -674,7 +675,10 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
     // Announced on the turn they enter, not on every later one: from version 2
     // they are ordinary decisions the brief already lists.
     const memorySentence = memoryRules.length
-      ? describeMemoryApplied(memoryDecisionsIn(compiled.record.brief.producerDecisions, memoryRules))
+      ? describeMemoryApplied(
+          memoryDecisionsIn(compiled.record.brief.producerDecisions, memoryRules),
+          compiled.record.intent.language,
+        )
       : null;
     const reply = [
       describeUnderstanding({
@@ -924,17 +928,20 @@ export function createProducerChatService(store: ProducerChatStore, options: Pro
         }
         const record = await persistVersion(tx, compiled, previous);
         const recorded = compiled.newDecisions.map((r) => r.decision);
+        // The producer reads this in their own language (PR-36); the edit plan's
+        // own rationale quotes their words and stays as it is.
+        const EP = phrases(compiled.record.intent.language);
         const describeScope = (scope: ProducerDecisionScope): string =>
-          scope.kind === "global" ? "the whole song"
+          scope.kind === "global" ? EP.scopeWholeSong
             : scope.kind === "section" ? `"${scope.sectionName}"`
-              : scope.kind === "track" ? `${scope.instrument}${scope.sectionName ? ` in "${scope.sectionName}"` : ""}`
-                : `phrase ${scope.phraseId}`;
-        const ruleLines = recorded.map((d) => `${d.strength === "hard" ? "Standing rule" : "Preference"} for ${describeScope(d.scope)}: ${d.statement}${d.supersedes.length ? ` (replaces ${d.supersedes.length} earlier decision${d.supersedes.length > 1 ? "s" : ""})` : ""}.`);
+              : scope.kind === "track" ? EP.scopeTrack(scope.instrument, scope.sectionName ?? null)
+                : EP.scopePhrase(scope.phraseId);
+        const ruleLines = recorded.map((d) => EP.standingRuleFor(d.strength, describeScope(d.scope), d.statement, d.supersedes.length));
         const reply = [
           editPlan.rationale,
           ...ruleLines,
-          recorded.length ? `Brief updated to v${record.version}.` : "No durable decision was recorded from this; the plan above is what a regeneration would do.",
-          "Nothing is regenerated from chat yet — the plan is returned for the next arrangement.",
+          recorded.length ? EP.briefUpdated(record.version) : EP.noDurableDecision,
+          EP.nothingRegeneratedYet,
         ].join(" ");
         const [userTurn, producerTurn] = turnPair(projectId, record.id, text, reply, {
           kind: "edit", briefVersion: record.version, editPlan, decisionIds: recorded.map((d) => d.id), planSource: source,
