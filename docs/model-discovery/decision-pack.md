@@ -277,6 +277,40 @@ on/off switch for the context passes**, which today are applied globally.
 Fixing the context passes outside classical is a Workstream C/K item and costs
 no GPU.
 
+## 10b. The corrected thesis, and the three floors (owner's review, 2026-09-09)
+
+The first blind session could **not measure** the note-level gap reliably
+(short windows, one reference synth, no performance, n ≤ 10). That is not
+evidence that the gap is absent. The thesis this plan now works under:
+
+> **The final gap is certainly not *only* in 8-bar note generation. Long-form
+> planning, performance and sound are probably larger gaps — but note quality
+> has not been measured reliably, so it is not "solved".**
+
+Consequences, each a gate rather than a claim:
+
+- **Three floors, measured separately and never conflated:** composition
+  (what is written), performance (how it is played), production (how it
+  sounds). Listening Benchmark V2 must be able to hold two floors fixed while
+  varying the third.
+- **Planner ≠ note generator.** A whole-song planner emits per-section
+  intent (instrumentation, density, register, energy, tension, motif return,
+  entries/exits); the note generator writes under it. The 39,136 whole-form
+  tasks are raw material for *planning supervision extracted with quality
+  filters* — not a training set as-is.
+- **`MUSIC_REWARD_MODEL_V0` from synthetic degradations is a pretrained
+  critic, not the truth.** Trap: it learns the corruption generator. Before
+  it ranks anything it must pass: many musical corruption families at graded
+  severities; work-level split; **corruption families held out of training
+  entirely**; a Human-vs-AI test with no synthetic corruption; agreement with
+  the owner's 49 ratings and further human ratings. Humans define the top of
+  the scale.
+- **PDMX alone cannot reach produced pop/dance/Mizrahi.** Before acquiring
+  anything, map which knowledge is missing: symbolic arrangement, performance,
+  audio/stems, style metadata, professional whole-song arrangements, human
+  preference — and buy only what closes a measured gap. The final bar is
+  `PROFESSIONAL_HUMAN_GOLD`, not PDMX human-origin.
+
 ## 11. Recommended training strategy
 
 Order of work under the gates (PR-64 §3), each step gated by the previous:
