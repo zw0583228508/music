@@ -1,8 +1,11 @@
 # DECISION PACK — the eighteen answers required before any paid training
 
 **Status: INCOMPLETE — approval is not requested on this version.**
-Rebuilt 2026-09-09 after PR-60/61/62/63/64/65/66/67/68/70/75 and the owner's
-first 49 blind ratings.
+Rebuilt 2026-09-09 after PR-60…PR-79 and the owner's first 50 blind ratings.
+**The headline of this rebuild:** under the calibrated judge both tournaments
+now say `run_blind_evaluation` for CA2 — and the same rebuild shows the proxy
+agrees with the owner's actual picks **26 of 50 times (52 %)**. The proxy is
+pointing at a room whose answers it cannot predict.
 
 This is the single document the owner asked for before any training job over
 $25. It answers the eighteen points in order. Every line is either a
@@ -467,11 +470,23 @@ Either way the pilot buys a decision, which is what a pilot is for.
 | ~~3~~ | ~~a second foundation proven live~~ — **done: AMT ran live and lost 39.5 vs 71.5; CA2 remains the only cleared foundation** | D | — |
 | 4 | the **$0** prefix experiment | F follow-up | §11 step 0 |
 | 5 | the **$0** per-family context-pass switch | C/K | §10 |
-| **8** | **re-score both tournaments under judge 1.1** — the `do_not_promote` verdicts rest on false positives | new, $0 | §2, §3 |
+| ~~8~~ | ~~re-score both tournaments under judge 1.1~~ — **done (PR-73): both verdicts flip to `run_blind_evaluation`; playability errors → 0.00–0.33 per entry; CA2 wins 16 of 17 genre families; +CTX is no longer a proxy win** | — | — |
 | **9** | **Listening Benchmark V2** — positive controls at graded strengths, HUMAN vs REFERENCE calibration, identical rendering, longer passages, a sensitivity report that must pass before the benchmark may judge training | new, $0 + listening time | §1, §15.6 |
 
-Five of seven cleared today by measurement. Items 4–5 and 8–9 remain, and
-**none costs money**. The owner's standing instruction: **no paid LoRA until
+Six of seven cleared today by measurement. Items 4–5 and 9 remain, and
+**none costs money**.
+
+**And one new fact outranks them all.** The rescore measured the proxy against
+the owner's 50 real votes: **26/50 agreement (52 %)** — chance. Per
+comparison 5/10, 4/10, 6/10, 6/10, 5/10. Every tournament number in this pack
+is produced by a judge with **no demonstrated ability to predict the one
+signal the plan says decides**. That does not make the tournament worthless —
+it ranks arms consistently and catches real defects — but it does mean
+**item 9 (a listening benchmark that proves its own sensitivity) is not one
+of several remaining items; it is the item everything else waits on.** Until a
+listening experiment can separate a human part from a known-degraded copy,
+neither the judge nor the room can tell us whether a trained model is better,
+and a pilot judged by either would be judged by noise. The owner's standing instruction: **no paid LoRA until
 this pack is rebuilt after all four experiments — the judge-1.1 rescore, the
 CA2 prefix arm, per-family context routing, and the second live foundation —
 and Listening Benchmark V2 has passed its own sensitivity report.**
