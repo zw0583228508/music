@@ -1,0 +1,81 @@
+{
+  "title": "Learning panel — Wave 7 in the studio, live (PR-35)",
+  "steps": [
+    {
+      "step": "consent controls",
+      "status": 200,
+      "learningEnabled": true,
+      "inferredBehaviorEnabled": true,
+      "updatedAt": "2026-09-09T00:42:29.181Z"
+    },
+    {
+      "step": "memory",
+      "status": 200,
+      "events": 4,
+      "kinds": [
+        "pairwise",
+        "rating"
+      ],
+      "rightsBases": [
+        "platform_generated"
+      ]
+    },
+    {
+      "step": "pairwise critic versions",
+      "status": 200,
+      "versions": []
+    },
+    {
+      "step": "train pairwise critic (the panel's Train button)",
+      "status": 200,
+      "outcome": "insufficient",
+      "reason": "need at least 8 training and 4 held-out pairs (mirrored); have 4 and 2 from 4 event(s)",
+      "events": 4,
+      "trainingPairs": 4
+    },
+    {
+      "step": "personal defaults",
+      "status": 200,
+      "versions": [
+        [
+          1,
+          false,
+          {
+            "events": 2,
+            "pairwise": 1,
+            "preferredSubjects": 2,
+            "dispreferredSubjects": 1
+          },
+          0,
+          8
+        ]
+      ],
+      "firstUndecided": {
+        "dimension": "swingRatio",
+        "reason": "only 2 preferred subject(s); 5 needed"
+      }
+    },
+    {
+      "step": "YOUR_ARRANGER_MODEL versions",
+      "status": 200,
+      "versions": [
+        [
+          1,
+          "candidate",
+          true,
+          false,
+          "the data decided nothing: the policy equals the reference pipeline, so there is nothing to promote"
+        ]
+      ]
+    },
+    {
+      "step": "promote a version that did not beat the baseline (the panel disables this; the API refuses it too)",
+      "status": 409,
+      "error": "This version did not beat the reference pipeline on the benchmark: the data decided nothing: the policy equals the reference pipeline, so there is nothing to promote"
+    }
+  ],
+  "observations": [
+    "The dashboard panel reads exactly these five endpoints and offers exactly the API's own actions; no client-side rule is looser than the server's (a version that did not beat its baseline has a disabled Promote button, and the API refuses it regardless).",
+    "The data on this box is thin: a handful of consented events, a personal profile with nothing decided, a neutral arranger policy. The panel says so rather than pretending otherwise."
+  ]
+}

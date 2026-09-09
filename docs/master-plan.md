@@ -328,6 +328,28 @@ sectionPlan + orchestrationBudget + transitionPlan, all derived before a note.
   excerpts, no rater instructions beyond the questions, no anonymity against
   an owner who also rates (their votes are excluded, not hidden).
 
+- **PR-35** ✅ — `learning-panel`: Wave 7 was API-only; a producer could not
+  see, control or use what the platform learned from them without `curl`. The
+  dashboard now carries **Producer memory**: consent controls (learn from my
+  choices / also from what I do), the size and recency of the memory with a
+  two-step erase, the pairwise critic's versions (held-out vs baseline
+  accuracy, promotable + reason; Train / Promote / Retire), the personal
+  defaults (support, decided vs undecided dimensions with the reason for the
+  first undecided one; Derive / Activate / Deactivate) and
+  `YOUR_ARRANGER_MODEL` (status, neutral, beats-baseline, verdict; Train +
+  benchmark / Promote / Retire). Every button calls the API's own action and
+  is disabled exactly where the API refuses — no client rule is looser than
+  the server's. Verified in the browser against the live dashboard
+  (`docs/evidence/learning-panel-live.json`): 4 consented events, a personal
+  profile with 0 decided / 8 undecided ("swingRatio: only 2 preferred
+  subject(s); 5 needed"), arranger policy v1 neutral and not promotable, a
+  Train round-trip answering "insufficient" with its reason.
+
+  **Honest limits.** A read-and-control surface over thin data: on this box
+  nothing has been learned that changes an arrangement, and the panel says
+  so. It does not visualise fingerprints or explain a specific decision (that
+  is PR-U6's `explainDecision`).
+
 ## Wave 6 — production quality
 
 - **PR-21** (#23) ✅ — `vst3-render-worker`: the API's `PEDALBOARD_VST3` renderer, made
