@@ -9,11 +9,24 @@
  * Hard gates (all required):
  *   - `NODE_ENV !== "production"`
  *   - `DEV_AUTH_ENABLED === "true"`
- * The router is not even mounted unless both hold, so there is no production
- * code path into it.
+ *   - the request comes from **loopback, unrelayed** (PR-70)
+ *
+ * The router is not even mounted unless the first two hold, so there is no
+ * production code path into it. The third is checked per request, because
+ * mounting says *when* this exists and not *who* may reach it: a development
+ * build on an open port, or a tunnel pointed at the API, would otherwise hand
+ * a full owner session to anyone who found it. The peer address comes from the
+ * socket, never from a header, so no `X-Forwarded-For` can forge it — see
+ * `lib/localAccess.ts`.
+ *
+ * A refused request gets a flat 404: a remote caller should not learn that a
+ * development sign-in exists here at all.
  */
 import { db, usersTable } from "@workspace/db";
 import { Router, type IRouter, type Request, type Response } from "express";
+
+import { requireLocalRequest } from "../lib/localAccess";
+import { logger } from "../lib/logger";
 
 import {
   createSession,
@@ -24,12 +37,10 @@ import {
   type SessionData,
 } from "../lib/auth";
 
-export function devAuthEnabled(): boolean {
-  return (
-    process.env.NODE_ENV !== "production" &&
-    process.env.DEV_AUTH_ENABLED === "true"
-  );
-}
+// The policy lives in lib/devAuthPolicy.ts so it can be read and tested without
+// this module's database, logger and Express imports. Re-exported so existing
+// callers (routes/index.ts, routes/auth.ts) keep importing it from here.
+export { devAuthEnabled } from "../lib/devAuthPolicy";
 
 const DEV_USER = {
   id: process.env.DEV_AUTH_USER_ID ?? "dev-local-user",
@@ -40,6 +51,18 @@ const DEV_USER = {
 };
 
 const router: IRouter = Router();
+
+/**
+ * Every route below mints or destroys a session with no credentials, so every
+ * route below is loopback-only. Applied as router-level middleware rather than
+ * per handler: a route added later inherits the gate instead of forgetting it.
+ * The gate itself lives in `lib/localAccess.ts`; the logger is passed in.
+ */
+router.use(
+  requireLocalRequest((refusal, path) =>
+    logger.warn({ refusal, path }, "dev_auth_refused_non_local_request"),
+  ),
+);
 
 /**
  * Extra local identities (PR-34): a blind listening session needs raters who

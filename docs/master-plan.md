@@ -3059,6 +3059,49 @@ any of it.
   **Honest limits.** The pack is a synthesis, not new measurement: it adds no
   run of its own. Its §1, §4, §5, §8 and §9 are incomplete by design and say
   so. It will be rebuilt as each workstream lands.
+- **PR-70** ✅ — `localhost-only-dev-auth` (Wave Q, Workstream A — unblocking the
+  owner's ratings): **the local sign-in path, fixed and hardened.** Opening the
+  Listening Room link on a local checkout crashed with
+  `TypeError: "clientId" must be a non-empty string` — `GET /api/login` called
+  openid-client with `process.env.REPL_ID!` on a machine that has no `REPL_ID`,
+  so every sign-in was a 500 and Workstream A's whole point (human ratings) was
+  unreachable.
+
+  **Three changes, none of which weakens production.**
+  `lib/auth.ts` gains `oidcConfigured()` and throws a named
+  `OidcNotConfiguredError` instead of an opaque TypeError.
+  `routes/auth.ts` answers honestly when there is no identity provider: a
+  **loopback** request in development is redirected to the development sign-in
+  that already existed; everyone else gets a flat **503** naming the cause.
+  `lib/localAccess.ts` (new) adds the gate the development sign-in never had —
+  it mints a full owner session with no credentials, and its only gates were
+  `NODE_ENV` and `DEV_AUTH_ENABLED`, which say *when* it exists, not *who* may
+  reach it. Now every dev-auth route requires an **unrelayed loopback peer**,
+  read from `req.socket.remoteAddress` — never from a header, so no
+  `X-Forwarded-For` can forge it — and a relayed request from a local tunnel or
+  reverse proxy is refused too. Refusals return a flat **404**: a remote caller
+  does not learn that a development sign-in is mounted. `lib/devAuthPolicy.ts`
+  (new) holds the mount policy as a pure function so it is readable and
+  testable without a database, a logger or Express.
+
+  **Proved on the running server, not only in tests.** `GET /api/login` →
+  302 to `/api/dev-login` → a real session (`/api/auth/user` 200); the same
+  request carrying `X-Forwarded-For: 203.0.113.7` → **503**, and
+  `POST /api/dev-login` with that header → **404**; the studio proxy path
+  redirects the same way; and the browser reaches the A/B screen with both
+  audio elements at `readyState 4`, 48.6 s, no error.
+
+  Suites: localAccess 6, devAuth 7 — 13 new tests covering production,
+  remote peers, IPv4-mapped IPv6, docker-bridge and LAN addresses, header
+  spoofing and local relays. Typecheck green.
+
+  **Honest limits.** The gate reads the TCP peer, so a deployment that
+  legitimately sits behind a trusted local proxy would have to opt in
+  explicitly — nothing does that today, and inventing the opt-in before there
+  is a caller would be the bypass this PR exists to prevent. Two votes cast by
+  earlier automation on the owner's 50-pair session were deleted so the first
+  human ratings start from zero; that deletion is recorded here rather than
+  left to be discovered in the data.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
