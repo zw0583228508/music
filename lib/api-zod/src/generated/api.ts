@@ -4732,12 +4732,46 @@ export const GetProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.union([zod.string(),zod.number()]),
   "score": zod.number().min(getProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMin).max(getProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMax),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested - every value with real weight, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate; absent on the leader.')
+})).optional().describe('Present when status is contested - every value with real weight, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - musical relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.')
 })),
   "consensusScore": zod.number().min(getProjectSongModelResponseReconciliationConsensusScoreMin).max(getProjectSongModelResponseReconciliationConsensusScoreMax),
-  "contestedDomains": zod.array(zod.enum(['tempo', 'downbeats', 'meter', 'key', 'chords', 'melody', 'bass', 'sections', 'instruments']))
+  "contestedDomains": zod.array(zod.enum(['tempo', 'downbeats', 'meter', 'key', 'chords', 'melody', 'bass', 'sections', 'instruments'])),
+  "verdicts": zod.record(zod.string(), zod.enum(['detected', 'low_confidence', 'contested', 'unknown'])).optional().describe('PR-89 - the disagreement engine\'s four-way verdict per domain.'),
+  "engine": zod.object({
+  "version": zod.string(),
+  "thresholds": zod.object({
+  "contestFloor": zod.number(),
+  "contestRatio": zod.number(),
+  "corroborationMargin": zod.number(),
+  "singleObservationFloor": zod.number()
+})
+}).optional()
 }).optional().describe('Per-domain provider reconciliation (Analysis Reconciliation V2).'),
+  "trustReport": zod.object({
+  "version": zod.enum(['1.0']),
+  "verdict": zod.enum(['trusted_automatically', 'needs_confirmation', 'not_usable']),
+  "domains": zod.record(zod.string(), zod.object({
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'unknown']),
+  "confidence": zod.number().nullable(),
+  "providers": zod.array(zod.string()),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})),
+  "relation": zod.string().nullable(),
+  "whatWouldSettleIt": zod.string().nullable(),
+  "confirmedByProducer": zod.boolean(),
+  "message": zod.string().nullable()
+}).describe('PR-89 - one domain of the trust report the Arrangement Brain reads.')),
+  "fieldsToConfirm": zod.array(zod.string()),
+  "reasons": zod.array(zod.string())
+}).optional().describe('PR-89 - computed on read from the Song Model; never stored. Says what the Arrangement Brain may lean on.'),
   "lyrics": zod.array(zod.object({
   "start": zod.number(),
   "end": zod.number(),
@@ -4826,8 +4860,12 @@ export const GetProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 }),
   "meter": zod.object({
   "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
@@ -4838,8 +4876,12 @@ export const GetProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 }),
   "key": zod.object({
   "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
@@ -4850,8 +4892,12 @@ export const GetProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 }),
   "melody": zod.object({
   "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
@@ -4862,8 +4908,12 @@ export const GetProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 }),
   "bass": zod.object({
   "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
@@ -4874,8 +4924,12 @@ export const GetProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 }),
   "harmony": zod.object({
   "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
@@ -4886,8 +4940,12 @@ export const GetProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 }),
   "sections": zod.object({
   "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
@@ -4898,8 +4956,12 @@ export const GetProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 }),
   "energy": zod.object({
   "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
@@ -4910,8 +4972,12 @@ export const GetProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 })
 }),
   "provenance": zod.object({
@@ -6942,12 +7008,46 @@ export const CorrectProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.union([zod.string(),zod.number()]),
   "score": zod.number().min(correctProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMin).max(correctProjectSongModelResponseReconciliationDomainsCandidatesItemScoreMax),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested - every value with real weight, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate; absent on the leader.')
+})).optional().describe('Present when status is contested - every value with real weight, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - musical relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.')
 })),
   "consensusScore": zod.number().min(correctProjectSongModelResponseReconciliationConsensusScoreMin).max(correctProjectSongModelResponseReconciliationConsensusScoreMax),
-  "contestedDomains": zod.array(zod.enum(['tempo', 'downbeats', 'meter', 'key', 'chords', 'melody', 'bass', 'sections', 'instruments']))
+  "contestedDomains": zod.array(zod.enum(['tempo', 'downbeats', 'meter', 'key', 'chords', 'melody', 'bass', 'sections', 'instruments'])),
+  "verdicts": zod.record(zod.string(), zod.enum(['detected', 'low_confidence', 'contested', 'unknown'])).optional().describe('PR-89 - the disagreement engine\'s four-way verdict per domain.'),
+  "engine": zod.object({
+  "version": zod.string(),
+  "thresholds": zod.object({
+  "contestFloor": zod.number(),
+  "contestRatio": zod.number(),
+  "corroborationMargin": zod.number(),
+  "singleObservationFloor": zod.number()
+})
+}).optional()
 }).optional().describe('Per-domain provider reconciliation (Analysis Reconciliation V2).'),
+  "trustReport": zod.object({
+  "version": zod.enum(['1.0']),
+  "verdict": zod.enum(['trusted_automatically', 'needs_confirmation', 'not_usable']),
+  "domains": zod.record(zod.string(), zod.object({
+  "status": zod.enum(['detected', 'low_confidence', 'contested', 'unknown']),
+  "confidence": zod.number().nullable(),
+  "providers": zod.array(zod.string()),
+  "candidates": zod.array(zod.object({
+  "value": zod.string(),
+  "confidence": zod.number(),
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})),
+  "relation": zod.string().nullable(),
+  "whatWouldSettleIt": zod.string().nullable(),
+  "confirmedByProducer": zod.boolean(),
+  "message": zod.string().nullable()
+}).describe('PR-89 - one domain of the trust report the Arrangement Brain reads.')),
+  "fieldsToConfirm": zod.array(zod.string()),
+  "reasons": zod.array(zod.string())
+}).optional().describe('PR-89 - computed on read from the Song Model; never stored. Says what the Arrangement Brain may lean on.'),
   "lyrics": zod.array(zod.object({
   "start": zod.number(),
   "end": zod.number(),
@@ -7036,8 +7136,12 @@ export const CorrectProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 }),
   "meter": zod.object({
   "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
@@ -7048,8 +7152,12 @@ export const CorrectProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 }),
   "key": zod.object({
   "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
@@ -7060,8 +7168,12 @@ export const CorrectProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 }),
   "melody": zod.object({
   "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
@@ -7072,8 +7184,12 @@ export const CorrectProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 }),
   "bass": zod.object({
   "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
@@ -7084,8 +7200,12 @@ export const CorrectProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 }),
   "harmony": zod.object({
   "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
@@ -7096,8 +7216,12 @@ export const CorrectProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 }),
   "sections": zod.object({
   "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
@@ -7108,8 +7232,12 @@ export const CorrectProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 }),
   "energy": zod.object({
   "status": zod.enum(['detected', 'low_confidence', 'contested', 'failed', 'not_available']),
@@ -7120,8 +7248,12 @@ export const CorrectProjectSongModelResponse = zod.object({
   "candidates": zod.array(zod.object({
   "value": zod.string(),
   "confidence": zod.number(),
-  "providers": zod.array(zod.string())
-})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.')
+  "providers": zod.array(zod.string()),
+  "relationToLeader": zod.string().optional().describe('PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.')
+})).optional().describe('Present when status is contested — the values independent analyses named, strongest first.'),
+  "relation": zod.string().nullish().describe('PR-89 - relation between the two leading candidates when contested.'),
+  "whatWouldSettleIt": zod.string().nullish().describe('PR-89 - what evidence would settle an open question.'),
+  "provisional": zod.boolean().optional().describe('PR-89 - the field\'s map carries a provisional grid value only because the timeline needs one; the candidates are the record.')
 })
 }),
   "provenance": zod.object({

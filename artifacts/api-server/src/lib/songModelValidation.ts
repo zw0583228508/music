@@ -12,6 +12,8 @@ import {
   validateMusicalMapShape,
 } from "./songMusicalMap";
 
+import { analysisTrustReport, describeFieldsToConfirm, type AnalysisTrustReport } from "./analysisTrust";
+
 export const SONG_MODEL_CONTRACT_VERSION = "2.0" as const;
 export const LEGACY_SONG_MODEL_CONTRACT_VERSION = "1.0" as const;
 export const CANONICAL_SONG_MODEL_PPQ = 960 as const;
@@ -337,6 +339,34 @@ function contestedCandidates(input: Record<string, unknown>, field: string): unk
   const status = input.fieldStatus[field];
   if (!isRecord(status) || status.status !== "contested") return null;
   return Array.isArray(status.candidates) && status.candidates.length >= 2 ? status.candidates : null;
+}
+
+/**
+ * PR-89: a contested tempo, metre, harmony or section cut is carried as its
+ * candidates over an explicitly provisional value (the canonical timeline
+ * needs a grid; the chord and section tracks keep the leading reading marked
+ * `provisional`). The warning flags the model so arrangement stays blocked
+ * until a producer confirms one candidate; it is emitted only when the field
+ * says contested *and* names at least two values.
+ */
+const CONTESTED_FIELD_WARNINGS: ReadonlyArray<{ field: string; code: string; path: string; label: string }> = [
+  { field: "tempo", code: "CONTESTED_TEMPO", path: "tempoMap", label: "Tempo" },
+  { field: "meter", code: "CONTESTED_METER", path: "meterMap", label: "Meter" },
+  { field: "harmony", code: "CONTESTED_HARMONY", path: "chords", label: "Harmony" },
+  { field: "sections", code: "CONTESTED_SECTIONS", path: "sections", label: "Section structure" },
+];
+
+function addContestedFieldWarnings(input: Record<string, unknown>, issues: MutableIssue[]): void {
+  for (const entry of CONTESTED_FIELD_WARNINGS) {
+    const candidates = contestedCandidates(input, entry.field);
+    if (!candidates) continue;
+    issues.push(issue(
+      entry.code,
+      "warning",
+      entry.path,
+      `${entry.label} is contested between ${candidates.length} independent analyses; confirm one before arranging.`,
+    ));
+  }
 }
 
 function validateTimedEvents(
@@ -1076,6 +1106,7 @@ export function validateSongModelCore(input: unknown): ValidationResult<SongMode
   validateBassEvidence(input.bass, duration, issues);
   validateChords(input.chords, duration, issues);
   validateSections(input.sections, issues);
+  addContestedFieldWarnings(input, issues);
   if (!Array.isArray(input.energy) || input.energy.length === 0) {
     issues.push(issue("MISSING_ENERGY", "error", "energy", "Energy curve is required."));
   } else if (input.energy.some((value) => !isFiniteNumber(value) || value < 0 || value > 1)) {
@@ -1519,13 +1550,15 @@ export function refreshSongModelValidation(model: SongModelData): SongModelData 
 }
 
 export type ArrangementEligibility =
-  | { eligible: true; model: SongModelData }
+  | { eligible: true; model: SongModelData; trust: AnalysisTrustReport }
   | {
       eligible: false;
       code: string;
       message: string;
       action: string;
       issues: SongModelValidationIssue[];
+      /** PR-89: present when a Song Model exists; names what blocks the Brain. */
+      trust?: AnalysisTrustReport;
     };
 
 export function evaluateArrangementEligibility(
@@ -1552,13 +1585,26 @@ export function evaluateArrangementEligibility(
       issues: validation.issues,
     };
   }
+  const trust = analysisTrustReport(validation.data);
   if (validation.data.validation.status === "flagged") {
+    // PR-89: the reason names the fields, their candidates and what settles
+    // them, so the producer (or the Brain) knows what to confirm rather than
+    // being told to "review the findings".
+    const openReasons = trust.reasons.filter((reason) =>
+      trust.fieldsToConfirm.some((field) => reason.startsWith(field === "meter" ? "metre" : field)));
+    const firstOpen = trust.fieldsToConfirm[0];
+    const settle = firstOpen ? trust.domains[firstOpen].whatWouldSettleIt : null;
     return {
       eligible: false,
       code: "SONG_MODEL_FLAGGED",
-      message: "Arrangement generation is blocked because the selected Song Model contains unresolved musical reliability flags.",
-      action: "Review the flagged tempo, melody, or harmony findings and re-run analysis before arranging.",
+      message: trust.fieldsToConfirm.length
+        ? `Arrangement generation is blocked until the producer confirms ${describeFieldsToConfirm(trust)}: ${openReasons.join("; ")}.`
+        : "Arrangement generation is blocked because the selected Song Model contains unresolved musical reliability flags.",
+      action: trust.fieldsToConfirm.length
+        ? `Confirm ${describeFieldsToConfirm(trust)} in the Song Model editor.${settle ? ` ${settle}` : ""}`
+        : "Review the flagged tempo, melody, or harmony findings and re-run analysis before arranging.",
       issues: validation.data.validation.issues,
+      trust,
     };
   }
   const effectiveConfidence = isFiniteNumber(confidence)
@@ -1578,7 +1624,8 @@ export function evaluateArrangementEligibility(
           isFiniteNumber(effectiveConfidence) ? effectiveConfidence : "invalid"
         }.`,
       )],
+      trust,
     };
   }
-  return { eligible: true, model: validation.data };
+  return { eligible: true, model: validation.data, trust };
 }

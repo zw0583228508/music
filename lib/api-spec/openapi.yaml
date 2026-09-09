@@ -2682,6 +2682,8 @@ components:
           $ref: "#/components/schemas/SongModelMusicalMap"
         reconciliation:
           $ref: "#/components/schemas/DomainReconciliationReport"
+        trustReport:
+          $ref: "#/components/schemas/AnalysisTrustReport"
         lyrics:
           type: array
           items:
@@ -3207,15 +3209,39 @@ components:
           description: Present when status is contested - every value with real weight, strongest first.
           type: array
           items:
-            type: object
-            required: [value, score, providers]
-            properties:
-              value:
-                oneOf:
-                  - type: string
-                  - type: number
-              score: { type: number, minimum: 0, maximum: 1 }
-              providers: { type: array, items: { type: string } }
+            $ref: "#/components/schemas/DomainReconciliationCandidate"
+        relation:
+          description: PR-89 - musical relation between the two leading candidates when contested.
+          type: string
+          nullable: true
+        whatWouldSettleIt:
+          description: PR-89 - what evidence would settle an open question.
+          type: string
+          nullable: true
+    DomainReconciliationCandidate:
+      type: object
+      required: [value, score, providers]
+      properties:
+        value:
+          oneOf:
+            - type: string
+            - type: number
+        score: { type: number, minimum: 0, maximum: 1 }
+        providers: { type: array, items: { type: string } }
+        relationToLeader:
+          description: PR-89 - musical relation to the leading candidate; absent on the leader.
+          type: string
+    AnalysisVerdictStatus:
+      type: string
+      enum: [detected, low_confidence, contested, unknown]
+    DisagreementThresholds:
+      type: object
+      required: [contestFloor, contestRatio, corroborationMargin, singleObservationFloor]
+      properties:
+        contestFloor: { type: number }
+        contestRatio: { type: number }
+        corroborationMargin: { type: number }
+        singleObservationFloor: { type: number }
     DomainReconciliationReport:
       type: object
       description: Per-domain provider reconciliation (Analysis Reconciliation V2).
@@ -3230,6 +3256,51 @@ components:
         contestedDomains:
           type: array
           items: { $ref: "#/components/schemas/AnalysisDomain" }
+        verdicts:
+          description: PR-89 - the disagreement engine's four-way verdict per domain.
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/AnalysisVerdictStatus"
+        engine:
+          type: object
+          required: [version, thresholds]
+          properties:
+            version: { type: string }
+            thresholds: { $ref: "#/components/schemas/DisagreementThresholds" }
+    AnalysisTrustDomain:
+      type: object
+      description: PR-89 - one domain of the trust report the Arrangement Brain reads.
+      required: [status, confidence, providers, candidates, relation, whatWouldSettleIt, confirmedByProducer, message]
+      properties:
+        status: { $ref: "#/components/schemas/AnalysisVerdictStatus" }
+        confidence: { type: number, nullable: true }
+        providers: { type: array, items: { type: string } }
+        candidates:
+          type: array
+          items: { $ref: "#/components/schemas/SongModelFieldCandidate" }
+        relation: { type: string, nullable: true }
+        whatWouldSettleIt: { type: string, nullable: true }
+        confirmedByProducer: { type: boolean }
+        message: { type: string, nullable: true }
+    AnalysisTrustReport:
+      type: object
+      description: PR-89 - computed on read from the Song Model; never stored. Says what the Arrangement Brain may lean on.
+      required: [version, verdict, domains, fieldsToConfirm, reasons]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        verdict:
+          type: string
+          enum: [trusted_automatically, needs_confirmation, not_usable]
+        domains:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/AnalysisTrustDomain"
+        fieldsToConfirm:
+          type: array
+          items: { type: string }
+        reasons:
+          type: array
+          items: { type: string }
     SongModelValidation:
       type: object
       required: [status, issues]
@@ -3548,6 +3619,9 @@ components:
         providers:
           type: array
           items: { type: string }
+        relationToLeader:
+          description: PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader.
+          type: string
     SongModelFieldStatusProperty:
       type: object
       required: [status, confidence, providers, message, edited]
@@ -3568,6 +3642,17 @@ components:
           description: Present when status is contested — the values independent analyses named, strongest first.
           type: array
           items: { $ref: "#/components/schemas/SongModelFieldCandidate" }
+        relation:
+          description: PR-89 - relation between the two leading candidates when contested.
+          type: string
+          nullable: true
+        whatWouldSettleIt:
+          description: PR-89 - what evidence would settle an open question.
+          type: string
+          nullable: true
+        provisional:
+          description: PR-89 - the field's map carries a provisional grid value only because the timeline needs one; the candidates are the record.
+          type: boolean
     SongModelFieldStatus:
       type: object
       required: [tempo, meter, key, melody, bass, harmony, sections, energy]

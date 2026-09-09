@@ -18,4 +18,10 @@ export interface SongModelFieldStatusProperty {
   edited: boolean;
   /** Present when status is contested — the values independent analyses named, strongest first. */
   candidates?: SongModelFieldCandidate[];
+  /** PR-89 - relation between the two leading candidates when contested. */
+  relation?: string | null;
+  /** PR-89 - what evidence would settle an open question. */
+  whatWouldSettleIt?: string | null;
+  /** PR-89 - the field's map carries a provisional grid value only because the timeline needs one; the candidates are the record. */
+  provisional?: boolean;
 }

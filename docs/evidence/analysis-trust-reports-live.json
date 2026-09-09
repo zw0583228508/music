@@ -1,0 +1,315 @@
+{
+  "id": "analysis-trust-reports-live",
+  "pr": "PR-89",
+  "recordedAt": "2026-09-10T22:05:00+03:00",
+  "question": "What does analysisTrustReport() say about the owner's two uploads, computed on read from the stored Song Models (project d519492a-e299-4401-9cb4-f8618902fc0a), and what blocks arrangement?",
+  "how": "Rows read from music_song_models through the worktree's own API build (PORT=5007) and a scratch drizzle script; the report is derived from fieldStatus (+ reconciliation) and is never stored. No re-analysis was run (Modal spend $0).",
+  "uploads": [
+    {
+      "songModelVersion": 3,
+      "sourceId": "22c9d6c1-03ab-4551-912f-ea717fa61a94",
+      "sourceName": "שמוליק סוכות - באותה השעה.mp3",
+      "validation": "accepted",
+      "tempoMap0": {
+        "bpm": 78.1,
+        "time": 0,
+        "confidence": 0.36,
+        "coordinates": {
+          "bar": 1,
+          "beat": 1,
+          "tick": 0,
+          "seconds": 0,
+          "beatInBar": 1,
+          "beatFraction": 0
+        }
+      },
+      "meterMap0": {
+        "bar": 1,
+        "meter": "4/4",
+        "confidence": 0.3,
+        "coordinates": {
+          "bar": 1,
+          "beat": 1,
+          "tick": 0,
+          "seconds": 0,
+          "beatInBar": 1,
+          "beatFraction": 0
+        }
+      },
+      "keyMap": [
+        {
+          "key": "Eb minor",
+          "time": 0,
+          "confidence": 0.365,
+          "coordinates": {
+            "bar": 1,
+            "beat": 1,
+            "tick": 0,
+            "seconds": 0,
+            "beatInBar": 1,
+            "beatFraction": 0
+          }
+        }
+      ],
+      "trustReport": {
+        "version": "1.0",
+        "verdict": "needs_confirmation",
+        "domains": {
+          "tempo": {
+            "status": "low_confidence",
+            "confidence": 0.36,
+            "providers": [
+              "LOCAL_SIGNAL_ANALYZER_V1"
+            ],
+            "candidates": [],
+            "relation": null,
+            "whatWouldSettleIt": "A second independent tempo reading (a beat tracker) agreeing within tolerance, or the producer confirming the value.",
+            "confirmedByProducer": false,
+            "message": "Estimated locally at 78.1 BPM from the onset envelope; no provider corroborated it."
+          },
+          "meter": {
+            "status": "low_confidence",
+            "confidence": 0.3,
+            "providers": [
+              "LOCAL_SIGNAL_ANALYZER_V1"
+            ],
+            "candidates": [],
+            "relation": null,
+            "whatWouldSettleIt": "A downbeat tracker confirming the bar length, or the producer's count.",
+            "confirmedByProducer": false,
+            "message": "4/4 assumed: no structure provider returned a verified meter."
+          },
+          "key": {
+            "status": "low_confidence",
+            "confidence": 0.365,
+            "providers": [
+              "TRANSCRIPTION_KEY_V1"
+            ],
+            "candidates": [],
+            "relation": null,
+            "whatWouldSettleIt": "A second independent key reading, or the producer confirming the tonic and mode.",
+            "confirmedByProducer": false,
+            "message": "Only one independent provider supports this value; review before arranging."
+          },
+          "harmony": {
+            "status": "unknown",
+            "confidence": null,
+            "providers": [],
+            "candidates": [],
+            "relation": null,
+            "whatWouldSettleIt": "No harmony evidence: a chord provider, or a transcription of a harmonic stem.",
+            "confirmedByProducer": false,
+            "message": "No harmony provider returned chord events."
+          },
+          "sections": {
+            "status": "low_confidence",
+            "confidence": 0.35,
+            "providers": [
+              "LOCAL_SIGNAL_ANALYZER_V1"
+            ],
+            "candidates": [],
+            "relation": null,
+            "whatWouldSettleIt": "A structure provider cutting on downbeats, or the producer confirming the boundaries.",
+            "confirmedByProducer": false,
+            "message": "Estimated locally: 78.1 BPM from the onset envelope, 4/4 assumed, 6 section(s) cut where the bar energy changes. No structure provider verified this; treat it as a sketch and correct it in the Song Model editor."
+          },
+          "melody": {
+            "status": "unknown",
+            "confidence": 0.47301360122140057,
+            "providers": [],
+            "candidates": [],
+            "relation": null,
+            "whatWouldSettleIt": "No usable evidence for this domain: configure a provider or enter the value.",
+            "confirmedByProducer": false,
+            "message": "1802 transcribed event(s) from BASIC_PITCH did not meet the canonical melody threshold; a single transcription provider on a full mix is not a melodic line. Separate a vocal or lead stem first, or configure a second transcription provider."
+          },
+          "bass": {
+            "status": "unknown",
+            "confidence": null,
+            "providers": [],
+            "candidates": [],
+            "relation": null,
+            "whatWouldSettleIt": "No usable evidence for this domain: configure a provider or enter the value.",
+            "confirmedByProducer": false,
+            "message": "No bass provider returned observed bass evidence."
+          }
+        },
+        "fieldsToConfirm": [
+          "tempo",
+          "meter",
+          "key",
+          "sections"
+        ],
+        "reasons": [
+          "tempo: low confidence — Estimated locally at 78.1 BPM from the onset envelope; no provider corroborated it.",
+          "metre: low confidence — 4/4 assumed: no structure provider returned a verified meter.",
+          "key: low confidence — Only one independent provider supports this value; review before arranging.",
+          "harmony: unknown — No harmony provider returned chord events.",
+          "sections: low confidence — Estimated locally: 78.1 BPM from the onset envelope, 4/4 assumed, 6 section(s) cut where the bar energy changes. No structure provider verified this; treat it as a sketch and correct it in the Song Model editor.",
+          "melody: unknown — 1802 transcribed event(s) from BASIC_PITCH did not meet the canonical melody threshold; a single transcription provider on a full mix is not a melodic line. Separate a vocal or lead stem first, or configure a second transcription provider.",
+          "bass: unknown — No bass provider returned observed bass evidence."
+        ]
+      },
+      "arrangementEligibility": {
+        "eligible": false,
+        "code": "LOW_SONG_MODEL_CONFIDENCE",
+        "message": "Arrangement generation requires Song Model confidence of at least 0.55.",
+        "action": "Upload a cleaner recording or re-run analysis with another provider."
+      }
+    },
+    {
+      "songModelVersion": 4,
+      "sourceId": "3108652e-975d-44fd-9bd6-16ac77357922",
+      "sourceName": "מענדי וויס, חיים פולק, מקהלת מלכות - ולעורר ליבי.mp3",
+      "validation": "flagged",
+      "tempoMap0": {
+        "bpm": 64.8,
+        "time": 0,
+        "confidence": 0.374,
+        "coordinates": {
+          "bar": 1,
+          "beat": 1,
+          "tick": 0,
+          "seconds": 0,
+          "beatInBar": 1,
+          "beatFraction": 0
+        }
+      },
+      "meterMap0": {
+        "bar": 1,
+        "meter": "4/4",
+        "confidence": 0.3,
+        "coordinates": {
+          "bar": 1,
+          "beat": 1,
+          "tick": 0,
+          "seconds": 0,
+          "beatInBar": 1,
+          "beatFraction": 0
+        }
+      },
+      "keyMap": [],
+      "trustReport": {
+        "version": "1.0",
+        "verdict": "needs_confirmation",
+        "domains": {
+          "tempo": {
+            "status": "low_confidence",
+            "confidence": 0.374,
+            "providers": [
+              "LOCAL_SIGNAL_ANALYZER_V1"
+            ],
+            "candidates": [],
+            "relation": null,
+            "whatWouldSettleIt": "A second independent tempo reading (a beat tracker) agreeing within tolerance, or the producer confirming the value.",
+            "confirmedByProducer": false,
+            "message": "Estimated locally at 64.8 BPM from the onset envelope; no provider corroborated it."
+          },
+          "meter": {
+            "status": "low_confidence",
+            "confidence": 0.3,
+            "providers": [
+              "LOCAL_SIGNAL_ANALYZER_V1"
+            ],
+            "candidates": [],
+            "relation": null,
+            "whatWouldSettleIt": "A downbeat tracker confirming the bar length, or the producer's count.",
+            "confirmedByProducer": false,
+            "message": "4/4 assumed: no structure provider returned a verified meter."
+          },
+          "key": {
+            "status": "contested",
+            "confidence": null,
+            "providers": [
+              "LOCAL_SIGNAL_ANALYZER_V1",
+              "TRANSCRIPTION_KEY_V1"
+            ],
+            "candidates": [
+              {
+                "value": "Eb major",
+                "providers": [
+                  "TRANSCRIPTION_KEY_V1"
+                ],
+                "confidence": 0.345
+              },
+              {
+                "value": "G minor",
+                "providers": [
+                  "LOCAL_SIGNAL_ANALYZER_V1"
+                ],
+                "confidence": 0.32
+              }
+            ],
+            "relation": "mediant",
+            "whatWouldSettleIt": "Cadences and the leading tone: mediant-related keys share a chord but not a tonic; where the phrases resolve settles it.",
+            "confirmedByProducer": false,
+            "message": "Independent analyses disagree: Eb major (TRANSCRIPTION_KEY_V1) vs G minor (LOCAL_SIGNAL_ANALYZER_V1). Confirm one before it is used."
+          },
+          "harmony": {
+            "status": "unknown",
+            "confidence": null,
+            "providers": [],
+            "candidates": [],
+            "relation": null,
+            "whatWouldSettleIt": "No harmony evidence: a chord provider, or a transcription of a harmonic stem.",
+            "confirmedByProducer": false,
+            "message": "No harmony provider returned chord events."
+          },
+          "sections": {
+            "status": "low_confidence",
+            "confidence": 0.35,
+            "providers": [
+              "LOCAL_SIGNAL_ANALYZER_V1"
+            ],
+            "candidates": [],
+            "relation": null,
+            "whatWouldSettleIt": "A structure provider cutting on downbeats, or the producer confirming the boundaries.",
+            "confirmedByProducer": false,
+            "message": "Estimated locally: 64.8 BPM from the onset envelope, 4/4 assumed, 6 section(s) cut where the bar energy changes. No structure provider verified this; treat it as a sketch and correct it in the Song Model editor."
+          },
+          "melody": {
+            "status": "unknown",
+            "confidence": 0.44062877478001145,
+            "providers": [],
+            "candidates": [],
+            "relation": null,
+            "whatWouldSettleIt": "No usable evidence for this domain: configure a provider or enter the value.",
+            "confirmedByProducer": false,
+            "message": "1769 transcribed event(s) from BASIC_PITCH did not meet the canonical melody threshold; a single transcription provider on a full mix is not a melodic line. Separate a vocal or lead stem first, or configure a second transcription provider."
+          },
+          "bass": {
+            "status": "unknown",
+            "confidence": null,
+            "providers": [],
+            "candidates": [],
+            "relation": null,
+            "whatWouldSettleIt": "No usable evidence for this domain: configure a provider or enter the value.",
+            "confirmedByProducer": false,
+            "message": "No bass provider returned observed bass evidence."
+          }
+        },
+        "fieldsToConfirm": [
+          "tempo",
+          "meter",
+          "key",
+          "sections"
+        ],
+        "reasons": [
+          "tempo: low confidence — Estimated locally at 64.8 BPM from the onset envelope; no provider corroborated it.",
+          "metre: low confidence — 4/4 assumed: no structure provider returned a verified meter.",
+          "key: contested — Eb major (TRANSCRIPTION_KEY_V1) vs G minor (LOCAL_SIGNAL_ANALYZER_V1), mediant",
+          "harmony: unknown — No harmony provider returned chord events.",
+          "sections: low confidence — Estimated locally: 64.8 BPM from the onset envelope, 4/4 assumed, 6 section(s) cut where the bar energy changes. No structure provider verified this; treat it as a sketch and correct it in the Song Model editor.",
+          "melody: unknown — 1769 transcribed event(s) from BASIC_PITCH did not meet the canonical melody threshold; a single transcription provider on a full mix is not a melodic line. Separate a vocal or lead stem first, or configure a second transcription provider.",
+          "bass: unknown — No bass provider returned observed bass evidence."
+        ]
+      },
+      "arrangementEligibility": {
+        "eligible": false,
+        "code": "SONG_MODEL_FLAGGED",
+        "message": "Arrangement generation is blocked until the producer confirms tempo, metre, key, sections: tempo: low confidence — Estimated locally at 64.8 BPM from the onset envelope; no provider corroborated it.; metre: low confidence — 4/4 assumed: no structure provider returned a verified meter.; key: contested — Eb major (TRANSCRIPTION_KEY_V1) vs G minor (LOCAL_SIGNAL_ANALYZER_V1), mediant; sections: low confidence — Estimated locally: 64.8 BPM from the onset envelope, 4/4 assumed, 6 section(s) cut where the bar energy changes. No structure provider verified this; treat it as a sketch and correct it in the Song Model editor..",
+        "action": "Confirm tempo, metre, key, sections in the Song Model editor. A second independent tempo reading (a beat tracker) agreeing within tolerance, or the producer confirming the value."
+      }
+    }
+  ]
+}

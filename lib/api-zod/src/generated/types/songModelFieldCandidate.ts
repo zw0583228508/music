@@ -10,4 +10,6 @@ export interface SongModelFieldCandidate {
   value: string;
   confidence: number;
   providers: string[];
+  /** PR-89 - musical relation to the leading candidate (half_double_tempo, relative, parallel, ...); absent on the leader. */
+  relationToLeader?: string;
 }

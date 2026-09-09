@@ -27,8 +27,10 @@ import {
   type SeparationAnalysisResult,
 } from "./analysisProviders";
 import { deriveLocalStructure, detectTempoEvidence as detectLocalTempoEvidence, type LocalStructure } from "./localStructureAnalysis";
+import { detectKeyEvidence } from "./localKeyAnalysis";
 import { fuseProviderSongModels } from "./songModelValidation";
 import {
+  type ReconciliationResult,
   reconcileAnalysisDomains,
   reconcileAnalysisField,
 } from "./analysisReconciliation";
@@ -69,6 +71,34 @@ class AnalysisLeaseLostError extends Error {
   constructor() {
     super("Analysis lease was lost to another worker");
   }
+}
+
+/**
+ * PR-89: the field status a contested domain carries. The candidates are the
+ * record; `provisional` says the field's own map holds a grid value only
+ * because the canonical timeline needs one (tempo, metre) - never a
+ * measurement. `confidence` is null: the model does not vouch for it.
+ */
+function contestedFieldStatus(
+  reconciliation: ReconciliationResult<string | number>,
+  provisionalNote: string | null,
+): SongModelFieldStatus {
+  return {
+    status: "contested",
+    confidence: null,
+    providers: [...new Set(reconciliation.candidates.flatMap((item) => item.providers))].sort(),
+    message: [reconciliation.message, provisionalNote].filter(Boolean).join(" ") || null,
+    edited: false,
+    candidates: reconciliation.candidates.map((item) => ({
+      value: String(item.value),
+      confidence: item.score,
+      providers: item.providers,
+      ...(item.relationToLeader ? { relationToLeader: item.relationToLeader } : {}),
+    })),
+    relation: reconciliation.relation ?? null,
+    whatWouldSettleIt: reconciliation.whatWouldSettleIt ?? null,
+    ...(provisionalNote ? { provisional: true } : {}),
+  };
 }
 
 async function withProjectStorageWrite<T>(
@@ -1538,14 +1568,33 @@ export async function analyzeProjectSource(
       bars = providerResults.structure.bars;
       sections = providerResults.structure.sections;
     }
+    // PR-89: a contested tempo or metre is carried as its candidates, never
+    // narrowed to the heavier guess. The canonical timeline still needs one
+    // grid to place events on, so the strongest candidate serves as an
+    // explicitly *provisional* grid: weighed at zero confidence, marked
+    // `provisional` in the field status, flagged CONTESTED_* by validation
+    // (arrangement stays blocked), and replaced by the producer's confirmation
+    // through the correction route, which re-grids the timeline. Before this
+    // the contest fell through to the local sketch and was reported as the
+    // local analyser's own low-confidence estimate.
+    const tempoContested = tempoReconciliation?.status === "contested";
+    const provisionalBpm = tempoContested
+      ? Number(tempoReconciliation!.candidates[0]?.value) || null
+      : null;
+    const meterContested = meterReconciliation?.status === "contested";
+    const provisionalMeter = meterContested
+      ? String(meterReconciliation!.candidates[0]?.value)
+      : null;
     bpm = midi?.bpm
       ?? providerResults.structure?.tempoMap[0]?.bpm
       ?? tempoReconciliation?.value
+      ?? provisionalBpm
       ?? 0;
     meter = midi?.meterMap.length
       ? midi.meter
       : providerResults.structure?.meterMap[0]?.meter
         ?? meterReconciliation?.value
+        ?? provisionalMeter
         ?? "—";
     // Local structure fallback: with no structure provider (no GPU worker) the
     // Song Model would fail validation and nothing could ever be arranged
@@ -1595,7 +1644,10 @@ export async function analyzeProjectSource(
       : [...new Set(providerResults.transcriptions.map((item) => item.providerId))];
     const harmonyProviders = [...new Set(providerResults.harmony.map((item) => item.providerId))];
     const fieldStatus: Record<SongModelField, SongModelFieldStatus> = {
-      tempo: {
+      tempo: tempoContested ? contestedFieldStatus(
+        tempoReconciliation!,
+        `The timeline carries ${bpm} BPM provisionally so events can be placed; it is not a measurement.`,
+      ) : {
         status: midi ? "detected"
           : tempoReconciliation?.status === "detected" ? "detected"
             : localStructure ? "low_confidence"
@@ -1610,7 +1662,10 @@ export async function analyzeProjectSource(
               : tempoReconciliation?.message ?? "No usable periodic tempo evidence was detected.",
         edited: false,
       },
-      meter: {
+      meter: meterContested ? contestedFieldStatus(
+        meterReconciliation!,
+        `The timeline carries ${meter} provisionally so bars can be counted; it is not a measurement.`,
+      ) : {
         status: midi?.meterMap.length ? "detected"
           : meterReconciliation?.status === "detected" ? "detected"
             : localStructure ? "low_confidence"
@@ -1625,26 +1680,21 @@ export async function analyzeProjectSource(
               : meterReconciliation?.message ?? "No structure provider returned a verified meter.",
         edited: false,
       },
-      key: {
-        status: midi?.keyMap.length ? "detected" : keyReconciliation?.status ?? "not_available",
-        confidence: confidenceByField.key || null,
-        providers: midi?.keyMap.length ? ["STANDARD_MIDI"] :
-          keyReconciliation?.status === "contested"
-            ? [...new Set(keyReconciliation.candidates.flatMap((item) => item.providers))].sort()
-            : keyReconciliation?.providers ?? [],
-        message: midi?.keyMap.length ? null : keyReconciliation?.message ??
-          "No unambiguous tonal center was detected.",
-        edited: false,
-        // A contested key is carried as its candidates, never as the heavier
-        // guess: the key map stays empty until a producer confirms one.
-        ...(keyReconciliation?.status === "contested" ? {
-          candidates: keyReconciliation.candidates.map((item) => ({
-            value: String(item.value),
-            confidence: item.score,
-            providers: item.providers,
-          })),
-        } : {}),
-      },
+      // A contested key is carried as its candidates, never as the heavier
+      // guess: the key map stays empty until a producer confirms one.
+      key: keyReconciliation?.status === "contested" && !midi?.keyMap.length
+        ? contestedFieldStatus(keyReconciliation, null)
+        : {
+          status: midi?.keyMap.length ? "detected" : keyReconciliation?.status ?? "not_available",
+          confidence: confidenceByField.key || null,
+          providers: midi?.keyMap.length ? ["STANDARD_MIDI"] : keyReconciliation?.providers ?? [],
+          message: midi?.keyMap.length ? null : keyReconciliation?.message ??
+            "No unambiguous tonal center was detected.",
+          edited: false,
+          ...(keyReconciliation?.whatWouldSettleIt && !midi?.keyMap.length
+            ? { whatWouldSettleIt: keyReconciliation.whatWouldSettleIt }
+            : {}),
+        },
       melody: {
         status: melody.length ? "detected" : "not_available",
         confidence: confidenceByField.melody || null,
@@ -1712,18 +1762,22 @@ export async function analyzeProjectSource(
         ? providerResults.structure.tempoMap
         : tempoReconciliation?.value !== null && tempoReconciliation?.value !== undefined
           ? [{ time: 0, bpm: tempoReconciliation.value, confidence: tempoReconciliation.confidence ?? 0 }]
-          : localStructure
-            ? [{ time: 0, bpm: localStructure.bpm, confidence: localTempo?.confidence ?? localStructure.confidence }]
-            : [];
+          : tempoContested && provisionalBpm
+            ? [{ time: 0, bpm: provisionalBpm, confidence: 0 }]
+            : localStructure
+              ? [{ time: 0, bpm: localStructure.bpm, confidence: localTempo?.confidence ?? localStructure.confidence }]
+              : [];
     const candidateMeterMap = midi?.meterMap.length
       ? midi.meterMap
       : providerResults.structure?.meterMap.length
         ? providerResults.structure.meterMap
         : meterReconciliation?.value
           ? [{ bar: 1, meter: meterReconciliation.value, confidence: meterReconciliation.confidence ?? 0 }]
-          : localStructure
-            ? [{ bar: 1, meter: localStructure.meter, confidence: localStructure.meterConfidence }]
-            : [];
+          : meterContested && provisionalMeter
+            ? [{ bar: 1, meter: provisionalMeter, confidence: 0 }]
+            : localStructure
+              ? [{ bar: 1, meter: localStructure.meter, confidence: localStructure.meterConfidence }]
+              : [];
     const lyrics: SongModelData["lyrics"] = [];
     const vocalIntelligence = derivePhraseLevelVocalIntelligence(
       vocalEvidence, melody, lyrics, sections, candidateTempoMap, candidateMeterMap, durationSeconds,
@@ -1933,8 +1987,20 @@ export async function analyzeProjectSource(
       logger.info({
         sourceId,
         candidates: keyReconciliation.candidates,
+        relation: keyReconciliation.relation ?? null,
         accepted: fusion.accepted,
       }, "song_model_key_contested");
+    }
+    for (const [domain, reconciliation] of [["tempo", tempoReconciliation], ["meter", meterReconciliation]] as const) {
+      if (reconciliation?.status !== "contested") continue;
+      logger.info({
+        sourceId,
+        domain,
+        candidates: reconciliation.candidates,
+        relation: reconciliation.relation ?? null,
+        provisional: domain === "tempo" ? provisionalBpm : provisionalMeter,
+        accepted: fusion.accepted,
+      }, "song_model_domain_contested");
     }
     if (!fusion.accepted) {
       // A rejected model is discarded along with every provider result that
@@ -2520,42 +2586,4 @@ type MidiModelData = {
   sourceStems: Array<{ role: string; objectPath: string; provider: string; confidence: number }>;
 };
 
-function detectKeyEvidence(
-  samples: Float32Array,
-  sampleRate: number,
-): { key: string; confidence: number } | null {
-  const noteNames = ["C", "C♯", "D", "E♭", "E", "F", "F♯", "G", "A♭", "A", "B♭", "B"];
-  const maxSamples = Math.min(samples.length, sampleRate * 60);
-  if (!maxSamples) return null;
-  let mean = 0;
-  for (let i = 0; i < maxSamples; i += 1) mean += samples[i];
-  mean /= maxSamples;
-  const pitchEnergy = Array.from({ length: 12 }, () => 0);
-  for (let midi = 48; midi <= 71; midi += 1) {
-    const omega = (2 * Math.PI * (440 * 2 ** ((midi - 69) / 12))) / sampleRate;
-    let real = 0;
-    let imaginary = 0;
-    for (let i = 0; i < maxSamples; i += 8) {
-      const centered = samples[i] - mean;
-      real += centered * Math.cos(omega * i);
-      imaginary -= centered * Math.sin(omega * i);
-    }
-    pitchEnergy[midi % 12] += Math.hypot(real, imaginary);
-  }
-  const ranked = [...pitchEnergy].sort((a, b) => b - a);
-  const peak = ranked[0] ?? 0;
-  const runnerUp = ranked[1] ?? 0;
-  const total = pitchEnergy.reduce((sum, value) => sum + value, 0);
-  if (total <= 0 || peak <= 0) return null;
-  const peakShare = peak / total;
-  const separation = (peak - runnerUp) / peak;
-  if (peakShare < 0.1 || separation < 0.04) return null;
-  const root = pitchEnergy.indexOf(peak);
-  const minor = pitchEnergy[(root + 3) % 12] + pitchEnergy[(root + 8) % 12] >
-    pitchEnergy[(root + 4) % 12] + pitchEnergy[(root + 7) % 12];
-  return {
-    key: `${noteNames[root]} ${minor ? "minor" : "major"}`,
-    confidence: Number(Math.min(0.82, 0.35 + peakShare * 1.8 + separation).toFixed(2)),
-  };
-}
 
