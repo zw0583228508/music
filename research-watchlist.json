@@ -1,5 +1,25 @@
 [
   {
+    "provider": "MIROS",
+    "paper": "https://arxiv.org/abs/2603.27528",
+    "repository": null,
+    "weightsAvailable": false,
+    "licenseKnown": false,
+    "status": "BLOCKED_NO_WEIGHTS",
+    "note": "Winner of the 2025 AMT Challenge (F1 0.5998, 0.006 above the runner-up). Music Information Retrieval Osnabrück; extends the YourMT3+ framework with a MusicFM encoder, a recurrent adapter over learned instrument-group embeddings, and parallel T5 decoders with RoPE + FlashAttention. Searched Hugging Face for a checkpoint: nothing published. Re-check if weights appear — it is the one system that beat the checkpoint we can run.",
+    "lastReviewed": "2026-09-09"
+  },
+  {
+    "provider": "MuScriptor",
+    "paper": "https://arxiv.org/abs/2607.08168",
+    "repository": "https://github.com/muscriptor/muscriptor",
+    "weightsAvailable": true,
+    "licenseKnown": true,
+    "status": "BLOCKED_LICENSE",
+    "note": "Code MIT, but weights are CC BY-NC 4.0 on all three sizes (HF org MuScriptor, small/medium/large) — non-commercial, so unusable here. The arXiv HTML states CC BY 4.0; the model cards state cc-by-nc-4.0, and for weights the card governs. Claims large gains over YourMT3+ (onset F1 60.4 vs 32.5) on its own 372-track test set — unverified here by policy, since a paper metric is not evidence. Re-check only if the weights are relicensed.",
+    "lastReviewed": "2026-09-09"
+  },
+  {
     "provider": "S2Accompanist",
     "paper": null,
     "repository": null,

@@ -391,6 +391,20 @@ const suites = {
       // and proof for an unclaimed rung is refused — checked against the
       // committed live audit in docs/evidence.
       ["src/lib/analysisProviderAudit.test.ts", "analysis-provider-audit.test.mjs"],
+      // PR-83 (Wave ANALYSIS ENGINE, stream C): instrument-aware note F1 and
+      // the SYNTHETIC_EXACT benchmark every transcription model is graded on.
+      [
+        "src/lib/amtBenchmark.test.ts",
+        "amt-benchmark.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // PR-83: the YourMT3+ client, its result adapter, and the registration
+      // proposal that deliberately never changes routing.
+      [
+        "src/lib/yourMt3ResultAdapter.test.ts",
+        "yourmt3-result-adapter.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
     ],
   },
   "gpu-promotion": {

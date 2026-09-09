@@ -1,0 +1,50 @@
+{
+  "provider": "MT3",
+  "role": "the plan's baseline",
+  "why": "The 2025 AMT Challenge graded every entrant against MT3 (F1 0.3932) and `docs/model-discovery/README.md` lists MT3 in the provider catalogue as never having run on this infrastructure. This image exists to give MT3 a number on OUR benchmark instead of quoting theirs.",
+  "notOurIncumbent": "MT3 is not what this platform runs. Basic Pitch is (services/transcription-baseline-worker). MT3 is the baseline the field compares to.",
+  "code": {
+    "sourceRepository": "https://github.com/gudgud96/MR-MT3",
+    "commit": "826ea84a933f93cd707d11e91af711f1d19c8d79",
+    "committedAt": "2024-07-12T10:12:08Z",
+    "license": "MIT",
+    "paper": "https://arxiv.org/abs/2403.10024",
+    "why": "MR-MT3's repository vendors the MT3 inference stack (contrib/{spectrograms,vocabularies,note_sequences,event_codec,run_length_encoding}.py, a PyTorch T5) AND ships the ported MT3 weights, so one image can run both the MT3 baseline and MR-MT3 itself. Its `use_tf_spectral_ops=False` path uses a torchaudio mel spectrogram, which is why it is preferred over kunato/mt3-pytorch.",
+    "licenceNoteOnAlternatives": "The challenge's own linked PyTorch baseline (github.com/ojas-chaturvedi/mt3-pytorch, a fork of kunato/mt3-pytorch) carries NO licence file at all — neither repository declares one. That is a real finding: the port the 2025 leaderboard was measured against is unlicensed. MR-MT3 is MIT and is used here instead."
+  },
+  "model": {
+    "huggingFace": "gudgud1014/MR-MT3",
+    "revision": "7bd24c3e1dc26468a6a9354c0a4f174405c9bad8",
+    "cardLicense": "mit",
+    "checkpoints": {
+      "MT3": {
+        "file": "mt3.pth",
+        "bytes": 183672643,
+        "sha256": "b8a3807ed265059abd25ad7f68142c06c35e8f6144dcaa45bd55946a3745398f",
+        "note": "the MT3 weights ported to PyTorch — the baseline"
+      },
+      "MR_MT3": {
+        "file": "slakh_f1_0.65.pth",
+        "bytes": 183637952,
+        "sha256": "a9fc728af2b7e72aa0517c1fe2f4dddb3f01211e7a2da467277593733d6f080b",
+        "note": "MR-MT3 trained on Slakh; the repository's name for it records the Slakh F1 the authors measured, which is THEIR number on THEIR benchmark and is not used here for anything"
+      }
+    },
+    "architecture": "T5 encoder-decoder over a log-mel spectrogram (16 kHz, hop 128, 512 mel bins); MT3 event vocabulary over 128 GM programs plus drums",
+    "inputFormat": "mono 16 kHz audio, split into fixed frame batches",
+    "outputFormat": "note_seq NoteSequence → notes with program and is_drum"
+  },
+  "runtime": {
+    "python": "3.10",
+    "note": "MT3's inference stack is 2022-era: it imports `t5.data`, `seqio`, `ddsp` and `tensorflow` at module scope even on the PyTorch path. The whole TF dependency is pulled in for one integer (t5.data.DEFAULT_EXTRA_IDS) and one abstract base class (seqio.Vocabulary), but it is imported unconditionally, so the image installs it rather than patching upstream code. A patched image would produce a number for OUR FORK of MT3, not for MT3."
+  },
+  "licence": {
+    "codeLicense": { "stated": "MIT", "source": "github.com/gudgud96/MR-MT3 LICENSE via the GitHub licence API" },
+    "weightsLicense": { "stated": "mit", "source": "cardData.license of gudgud1014/MR-MT3" },
+    "trainingData": {
+      "stated": "Slakh2100 (MT3 was trained on Slakh2100, MAESTRO, MusicNet, GuitarSet, URMP and Cerberus4 per the MT3 paper)",
+      "underlyingWorksCleared": "no — Slakh2100 is rendered from the Lakh MIDI dataset, which is web-scraped transcriptions of copyrighted recordings"
+    },
+    "classification": "RESEARCH_ONLY — a benchmark baseline. Never routed."
+  }
+}
