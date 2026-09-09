@@ -130,6 +130,16 @@ const suites = {
         "ca2-result-adapter.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q, Model Discovery: the HTTP client for the deployed CA2 worker —
+      // dedicated token, https only, container identity attached to results.
+      [
+        "src/lib/composersAssistantClient.test.ts",
+        "composers-assistant-client.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // Wave Q, tournament task preparation: chords estimated per bar from the
+      // notes every provider is given, or no chord where the bar has none.
+      ["src/lib/chordsFromNotes.test.ts", "chords-from-notes.test.mjs"],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [

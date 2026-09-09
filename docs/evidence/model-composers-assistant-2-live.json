@@ -80,5 +80,6 @@
   },
   "benchmarkResult": "none yet — the tournament has not been run",
   "classification": "SHIP_CLEARED · FOUNDATION_CANDIDATE · liveInferenceProven: true",
-  "nextStep": "deploy services/composers-assistant-worker to Modal (pinned image, build-time smoke) and enter it in the per-task tournament against REFERENCE_PART_COMPOSER and CONTEXT_AWARE_ARRANGER on PDMX Tier B tasks."
+  "cloudDeployment": "docs/evidence/model-composers-assistant-2-cloud.json — the Modal worker, proven over HTTPS on 2026-09-09 (401 without the dedicated token; two real infills, 48 and 39 notes)",
+  "nextStep": "run the per-task tournament (HUMAN_ORIGIN_REFERENCE vs REFERENCE_PART_COMPOSER vs CONTEXT_AWARE_ARRANGER vs COMPOSERS_ASSISTANT_2) on PDMX Tier B tasks with N seeds, then blind pairs into the Listening Room."
 }

@@ -74,3 +74,6 @@ debug.log
 # is not listed here.
 .pdmx-data/
 .corpus-data/
+
+# Local esbuild test bundles (see docs: focused runner cannot spawn esbuild on Windows)
+.tmp-tests/

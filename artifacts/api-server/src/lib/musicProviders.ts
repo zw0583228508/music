@@ -150,7 +150,11 @@ const UPSTREAM_BLOCKED_PROVIDER_IDS = new Set<string>(["MIDI_SAG"]);
 // reachable only through an explicit shadow comparison. This is a separate gate
 // from the licence gates above on purpose: the reason is quality, not rights,
 // and conflating them would let a licence review silently promote a model.
-const SHADOW_ONLY_PROVIDER_IDS = new Set<string>(["MAGENTA_RT2"]);
+// COMPOSERS_ASSISTANT_2: SHIP_CLEARED on primary sources (MIT code and weights,
+// PD/CC0/CC-BY training data) and proven live on real PDMX MIDI, locally and on
+// Modal. It has not been through the model tournament, so it is requestable for
+// comparison only. See docs/evidence/model-composers-assistant-2-live.json.
+const SHADOW_ONLY_PROVIDER_IDS = new Set<string>(["MAGENTA_RT2", "COMPOSERS_ASSISTANT_2"]);
 
 function providerRoutingAuthorized(providerId: string): boolean {
   return !LICENSE_BLOCKED_PROVIDER_IDS.has(providerId) &&
@@ -405,6 +409,21 @@ export const MUSIC_PROVIDERS: MusicProviderDescriptor[] = [
     license: "Apache-2.0 source; CC-BY-4.0 weights (attribution required)",
     priority: 41,
     notes: "SHADOW_ONLY: symbolic-to-audio realizer, not an arranger. Licence is verified permissive and ungated, so routing is gated on quality rather than rights — it stays out of default routing until it beats the existing pipeline in the PR-18 blind evaluation. Requires MAGENTA_RT2_API_URL. CC-BY-4.0 attribution is attached to every realization by the worker.",
+  },
+  {
+    id: "COMPOSERS_ASSISTANT_2",
+    name: "Composer's Assistant 2",
+    provider: "Martin Malandro",
+    version: "v2.1.0 · large unjoined infill · pytorch_model.bin sha256 297bccb1…",
+    // Multi-track symbolic infilling: given every other track, write the
+    // held-out one. That is the platform's Tier B arranger task exactly.
+    capabilities: ["arrangement"],
+    inputTypes: ["MIDI"],
+    execution: "remote",
+    status: remoteConfigured("COMPOSERS_ASSISTANT_2") ? "configured" : "unavailable",
+    license: "MIT source; MIT weights (in-release license.txt); training data PD/CC0/CC-BY/permitted per disclaimer.txt — SHIP_CLEARED on primary sources, not lawyer-reviewed",
+    priority: 42,
+    notes: "SHADOW_ONLY: the only symbolic arrangement model in the Global Model Registry whose code, weights and training-data provenance all verify from primary sources. Proven live (real PDMX MIDI → real T5 inference → real notes) locally and on Modal; see docs/evidence/model-composers-assistant-2-live.json. It has no token for chords, style grammar, harmony plan, lead voice or role, so its output passes through the platform's context passes after generation. Stays out of default routing until the model tournament and a blind listening comparison say otherwise. Requires COMPOSERS_ASSISTANT_2_API_URL and its own COMPOSERS_ASSISTANT_2_API_TOKEN (the shared worker token is not accepted).",
   },
   {
     id: "HAFM",
@@ -1377,6 +1396,7 @@ export const musicProviderIds = [
   "LADA_BAND",
   "MIDI_RWKV",
   "MAGENTA_RT2",
+  "COMPOSERS_ASSISTANT_2",
   "HAFM",
   "SYMPHONYGEN",
   "METEOR",
@@ -1992,6 +2012,16 @@ export const providerDefinitions: ProviderDefinition[] = [
     hardware: ["GPU"],
     speeds: ["QUALITY"],
     styles: ["pop", "electronic", "acoustic", "cinematic"],
+  },
+  {
+    id: "COMPOSERS_ASSISTANT_2",
+    displayName: "Composer's Assistant 2 (Shadow)",
+    modelVersion: "v2.1.0/297bccb173b4497a3c3b6007422506dced88fd9f99f5c8a18481dedd9667d530",
+    tasks: ["ARRANGEMENT"],
+    // A 192M-parameter fp32 T5 infilling eight bars runs in seconds on CPU.
+    hardware: ["CPU"],
+    speeds: ["BALANCED", "QUALITY"],
+    styles: ["classical", "chamber", "orchestral", "choral", "midi"],
   },
   {
     id: "HAFM",

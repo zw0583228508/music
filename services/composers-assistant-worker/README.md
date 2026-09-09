@@ -22,10 +22,20 @@ external symbolic model the Global Model Registry currently allows to ship
 | Route | Body | Returns |
 | --- | --- | --- |
 | `GET /health` | — | identity gate: pins verified, runtime, licence basis, `healthy` (computed) |
-| `POST /infill` | multipart `midi`; form `target_track?`, `start_measure?`, `n_measures=8`, `seed=7`, `max_new_tokens=1200`, `temperature=1.0`, `top_p=0.85` | notes (quarter-note time), the task, inference timing, and the **account** of what the model received / approximated / could not take |
+| `POST /infill` | multipart `midi`; form `target_inst?` (GM program 0–127, 128 = drums), `target_track?` (post-clean index), `start_measure?`, `n_measures=8`, `seed=7`, `max_new_tokens=1200`, `temperature=1.0`, `top_p=0.85` | notes (quarter-note time), the task, inference timing, `targetResolvedBy` when a program was given, and the **account** of what the model received / approximated / could not take |
+
+Prefer `target_inst`. CA2 removes near-equal tracks and re-sorts by instrument
+and average pitch before it sees anything, so a track index from another
+parser means nothing here; a GM program names the same part everywhere. When
+several tracks share the program the one with the most notes is the target.
 
 Bearer token: `MUSIC_AI_WORKER_TOKEN` (runtime secret, overridden by the
-endpoint secret).
+endpoint secret `composers-assistant-worker-token`, which holds a dedicated
+random token that also lives — as `COMPOSERS_ASSISTANT_2_API_TOKEN` — only in
+the platform's git-ignored `.env.local`).
+
+Deployed 2026-09-09; proof over HTTPS in
+`docs/evidence/model-composers-assistant-2-cloud.json`.
 
 ## Deploy
 

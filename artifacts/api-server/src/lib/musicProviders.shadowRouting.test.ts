@@ -105,6 +105,60 @@ test("shadow status is a quality gate, not a licence gate", () => {
   assert.equal(providerIsShadowOnly("LADA_BAND"), false, "licence blocks are a different mechanism");
 });
 
+test("Composer's Assistant 2 is shadow-only: cleared rights and live proof still do not route it", async () => {
+  // The first symbolic arrangement model whose three licence layers all verify
+  // from primary sources, and the first proven live. Neither fact is a
+  // benchmark result, so the quality gate alone must hold it back.
+  const saved = new Map<string, string | undefined>();
+  for (const [key, value] of Object.entries({
+    COMPOSERS_ASSISTANT_2_API_URL: "https://composers-assistant.example.test",
+    COMPOSERS_ASSISTANT_2_API_TOKEN: "dedicated-token",
+  })) {
+    saved.set(key, process.env[key]);
+    process.env[key] = value;
+  }
+  const originalFetch = globalThis.fetch;
+  let fetchCalls = 0;
+  globalThis.fetch = async () => {
+    fetchCalls += 1;
+    throw new Error("shadow providers must not route");
+  };
+  try {
+    assert.equal(providerIsShadowOnly("COMPOSERS_ASSISTANT_2"), true);
+    const descriptor = MUSIC_PROVIDERS.find((candidate) => candidate.id === "COMPOSERS_ASSISTANT_2");
+    assert.ok(descriptor, "COMPOSERS_ASSISTANT_2 is registered");
+    assert.deepEqual(descriptor.capabilities, ["arrangement"]);
+    assert.match(descriptor.notes, /SHADOW_ONLY/);
+    assert.match(descriptor.notes, /docs\/evidence\/model-composers-assistant-2-live\.json/);
+    assert.match(descriptor.license ?? "", /MIT source; MIT weights/);
+    assert.match(descriptor.license ?? "", /not lawyer-reviewed/);
+    assert.doesNotMatch(descriptor.license ?? "", /BLOCKED|UNVERIFIED|NC/);
+    // The endpoint is configured, and that changes nothing about routing.
+    assert.equal(descriptor.status, "unavailable", "the descriptor's status is evaluated at module load, before this test set the URL");
+
+    await assert.rejects(
+      runArrangementProvider(descriptor, {} as ArrangementProviderInput),
+      ProviderUnavailableError,
+    );
+    const registry = createProviderRegistry();
+    const provider = registry.find((candidate) => candidate.definition.id === "COMPOSERS_ASSISTANT_2");
+    assert.ok(provider);
+    assert.equal(provider.available, false);
+    assert.equal(provider.definition.hardware.includes("CPU"), true, "a 192M fp32 T5 infills eight bars in seconds on CPU");
+    const readiness = await provider.checkHealth(true);
+    assert.equal(readiness.availability, "unavailable");
+    assert.match(readiness.message ?? "", /SHADOW_ONLY/);
+    assert.doesNotMatch(readiness.message ?? "", /BLOCKED_LICENSE/);
+    assert.equal(fetchCalls, 0, "no request left the process");
+  } finally {
+    globalThis.fetch = originalFetch;
+    for (const [key, value] of saved) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
 test("MIT code does not make MIDI-RWKV's weights routable", async () => {
   // The exact trap the plan warned about: a permissive code licence hiding
   // non-commercial weights. The descriptor has to name the real blocker.
