@@ -42,6 +42,12 @@ const suites = {
         "context-aware-composer.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Wave Q: reference composer vs the context passes, on one corpus.
+      [
+        "src/lib/contextAwareBenchmark.test.ts",
+        "context-aware-benchmark.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // Wave Q, Q-02: statistics turned into instructions a composer can follow.
       [
         "src/lib/styleGrammar.test.ts",

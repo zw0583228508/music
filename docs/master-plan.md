@@ -2115,6 +2115,47 @@ any of it.
   listening comparison has been run: this makes the measurement *possible*, it
   is not itself the measurement.
 
+- **PR-48** ✅ — `context-aware-benchmark` (Wave Q, `vs-reference-part-composer`):
+  the context passes measured against the reference composer, and **failing**.
+
+  Wave Q's first rule is that a new path ships when the benchmark says it is
+  better, not when it exists. `contextAwareBenchmark.ts` runs the arrangement
+  benchmark **twice on the identical corpus** — flag off, flag on — and compares.
+  Evidence: `docs/evidence/context-aware-vs-reference-benchmark.json`.
+
+  **The verdict is `do_not_promote`. The `contextAware` flag stays off.**
+
+  - First run: criticScore 74.6 → 47.2, playabilityErrors 0 → 66. The harmony
+    re-voicing pass was pushing **every** part — basslines, drum-adjacent parts —
+    onto an inner voice of a four-part SATB chord, dragging basslines up into
+    piano register to be clamped and collided.
+  - Fix, in `contextAwareComposer.ts`: `applyHarmonyPlan` now re-voices only
+    harmonic-bed roles (pads, sustained keys, string beds, comping); a bassline,
+    drum part or lead keeps its own octave and contour. Unisons the re-voicing
+    still creates within one bed part are collapsed. `enforceHardConstraints`
+    now also thins a chord past the instrument's `maxSimultaneousNotes`, keeping
+    the top line.
+  - After the fix: 8 of 9 cases at playability 0, critic within ~1 point of
+    baseline. **One case, `orchestral-midi`, still regresses (0 → 62)** —
+    section-role parts of one instrument re-voice toward the same plan and merge
+    past the section instrument's simultaneity limit, which the per-part guard
+    cannot see because it runs before the orchestrator's per-instrument merge.
+    Not forced green: tuning a threshold to hide it would game the gate the plan
+    exists to respect.
+
+  Suites: contextAwareBenchmark 5, contextAwareComposer 12 (2 new: a bassline is
+  not re-voiced onto an inner voice; a too-thick bed is thinned to its top),
+  arrangementOrchestrator 11, arrangementBenchmark 7; typecheck green.
+
+  **Honest limits.** `criticScore` is the pipeline grading itself — a proxy, not
+  a listener. The run produced 9 anonymised blind pairs; **no human has judged
+  them**. The style grammar slot was empty, so the groove pass never ran — this
+  measures the voicing plan and the arranging passes, not Q-02's groove. One
+  synthesised corpus. This is the measurement infrastructure working and
+  returning a negative result, which is a result: the context passes are not
+  yet better than the reference composer, and the proper next step is the
+  per-instrument merge fix plus Q-00's real corpus, not promotion.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

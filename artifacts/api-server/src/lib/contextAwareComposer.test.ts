@@ -228,6 +228,47 @@ test("a pass that moves a note out of range is corrected before the part is retu
   assert.equal(passOf(result, "hard-constraints").changed, 1);
 });
 
+test("a bassline is not dragged onto an inner voice of the chord", () => {
+  const plan = {
+    status: "available" as const,
+    version: "HARMONY_PLAN_V1_VOICE_LEADING:exact",
+    voicings: [{ bar: 1, pitches: [48, 55, 64, 72], rationale: "x" }],
+  };
+  const bass = composeWithContext(
+    requestV2({
+      instrument: "bass", role: "BASS" as PartGenerationRequestV2["role"],
+      section: { sectionName: "verse", startBar: 1, endBar: 1 } as PartGenerationRequestV2["section"],
+      harmonyPlan: plan,
+      constraints: {
+        playableRange: { min: 28, max: 60 }, comfortableRange: { min: 28, max: 55 },
+        maxLeap: 12, maxSimultaneousNotes: 1, minNoteDuration: 0.05, physicalRules: [],
+      } as PartGenerationRequestV2["constraints"],
+    }),
+    [note(0, 1, 36), note(1, 1, 36)],
+  );
+  assert.equal(passOf(bass, "harmony-plan").changed, 0, "the bass keeps its octave");
+  assert.match(passOf(bass, "harmony-plan").note, /not a harmonic bed/);
+  assert.deepEqual(bass.notes.map((n) => n.pitch), [36, 36]);
+});
+
+test("a re-voiced bed thicker than the instrument allows is thinned to its top notes", () => {
+  const result = composeWithContext(
+    requestV2({
+      instrument: "strings", role: "HARMONY" as PartGenerationRequestV2["role"],
+      section: { sectionName: "verse", startBar: 1, endBar: 1 } as PartGenerationRequestV2["section"],
+      constraints: {
+        playableRange: { min: 40, max: 96 }, comfortableRange: { min: 48, max: 88 },
+        maxLeap: 12, maxSimultaneousNotes: 2, minNoteDuration: 0.05, physicalRules: [],
+      } as PartGenerationRequestV2["constraints"],
+    }),
+    [note(0, 1, 55), note(0, 1, 60), note(0, 1, 64), note(0, 1, 72)],
+  );
+  const sounding = result.notes.filter((n) => n.start === 0);
+  assert.ok(sounding.length <= 2, `a 2-note instrument cannot sound ${sounding.length} notes at once`);
+  assert.ok(sounding.every((n) => n.pitch >= 64), "the lowest of the stack was dropped, the top line kept");
+  assert.ok(passOf(result, "hard-constraints").changed >= 2);
+});
+
 test("what the context changed is reportable, decision by decision", () => {
   const result = composeWithContext(
     requestV2({

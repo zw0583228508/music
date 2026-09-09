@@ -58,6 +58,29 @@ const pitchClass = (pitch: number): number => ((pitch % 12) + 12) % 12;
 /** A role that carries the song rather than accompanying it. */
 const LEAD_ROLES = new Set(["LEAD", "MELODY", "COUNTER_MELODY", "SOLO"]);
 
+/**
+ * Roles the harmony plan may re-voice. A solved SATB voicing describes the
+ * chordal bed: pads, sustained keys, string beds, comping. It does **not**
+ * describe a bassline (whose octave is a bass decision, not a voice-leading
+ * one), a drum kit (no pitch), or a lead line (whose contour is the point).
+ * Pushing any of those onto an inner voice of a four-part chord is wrong by
+ * construction and was the source of the playability regression the benchmark
+ * caught: basslines dragged up into piano register, then clamped, then
+ * colliding.
+ */
+const HARMONY_BED_ROLES = new Set([
+  "HARMONY", "RHYTHMIC_HARMONY", "SUSTAINED_HARMONY", "PAD", "OSTINATO", "ARPEGGIO", "COMP",
+]);
+const HARMONY_BED_INSTRUMENTS = /\b(pad|string|strings|keys?|piano|organ|synth|choir|rhodes)\b/i;
+
+function isHarmonyBed(request: PartGenerationRequestV2): boolean {
+  const role = String(request.role).toUpperCase();
+  if (LEAD_ROLES.has(role)) return false;
+  if (/\b(BASS|DRUM|KICK|SNARE|PERC)\b/.test(role)) return false;
+  if (/\b(bass|drum|kick|snare|perc|tom|hat|cymbal)\b/i.test(request.instrument)) return false;
+  return HARMONY_BED_ROLES.has(role) || HARMONY_BED_INSTRUMENTS.test(request.instrument);
+}
+
 // ---------------------------------------------------------------------------
 // Passes
 // ---------------------------------------------------------------------------
@@ -103,6 +126,17 @@ function applyHarmonyPlan(
     const reason = plan.status === "not_available" ? plan.reason : "the plan has no voicings";
     return { notes, pass: { id: "harmony-plan", changed: 0, note: `no re-voicing: ${reason}` } };
   }
+  if (!isHarmonyBed(request)) {
+    // A bassline, a drum part or a lead line is not a voice in this chord.
+    return {
+      notes,
+      pass: {
+        id: "harmony-plan",
+        changed: 0,
+        note: `${request.instrument} (${request.role}) is not a harmonic bed; its octave and contour are its own, not the voicing plan's`,
+      },
+    };
+  }
 
   // Bars map onto the section's own window; the request carries no other clock.
   const { startBar, endBar } = request.section;
@@ -133,13 +167,32 @@ function applyHarmonyPlan(
     return { ...note, pitch: best };
   });
 
+  // Re-voicing can push two of a part's own notes onto one pitch at one
+  // instant. That is a unison this part cannot play (one key, one string) and
+  // it reads as excess polyphony downstream — collapse it to the louder note.
+  const collapsed: MusicalNote[] = [];
+  let merged = 0;
+  for (const note of [...revoiced].sort((a, b) => a.start - b.start || a.pitch - b.pitch)) {
+    const clash = collapsed.find(
+      (kept) => kept.pitch === note.pitch && Math.abs(kept.start - note.start) <= COLLISION_SECONDS,
+    );
+    if (clash) {
+      if (note.velocity > clash.velocity) clash.velocity = note.velocity;
+      clash.duration = Math.max(clash.duration, note.duration);
+      merged += 1;
+      continue;
+    }
+    collapsed.push({ ...note });
+  }
+
   return {
-    notes: revoiced,
+    notes: collapsed,
     pass: {
       id: "harmony-plan",
-      changed,
-      note: changed
-        ? `${changed} note(s) re-voiced onto the solved voicing (${plan.version})`
+      changed: changed + merged,
+      note: changed || merged
+        ? `${changed} note(s) re-voiced onto the solved voicing (${plan.version})` +
+          (merged ? `; ${merged} same-pitch unison(s) collapsed` : "")
         : "every note already sat on the solved voicing",
     },
   };
@@ -296,26 +349,53 @@ function applyGroove(
   };
 }
 
+/** Notes sounding at `at`, given a small simultaneity window. */
+function simultaneousAt(notes: readonly MusicalNote[], at: number): MusicalNote[] {
+  return notes.filter((n) => n.start <= at + COLLISION_SECONDS && n.start + n.duration > at + COLLISION_SECONDS);
+}
+
 /**
  * The last word belongs to physics. An earlier pass may have moved a note out
- * of range or under the instrument's minimum duration, and a part nobody can
- * play is not an improvement on one that was merely unremarkable.
+ * of range, under the instrument's minimum duration, or — by clamping several
+ * notes back into a narrow range — into a chord thicker than the instrument
+ * has fingers or strings for. A part nobody can play is not an improvement on
+ * one that was merely unremarkable.
  */
 function enforceHardConstraints(
   notes: MusicalNote[],
   request: PartGenerationRequestV2,
 ): { notes: MusicalNote[]; pass: ComposePass } {
-  const { playableRange, minNoteDuration } = request.constraints;
+  const { playableRange, minNoteDuration, maxSimultaneousNotes } = request.constraints;
   let changed = 0;
-  const safe = notes.map((note) => {
+  let ranged = notes.map((note) => {
     const pitch = Math.max(playableRange.min, Math.min(playableRange.max, note.pitch));
     const duration = Math.max(minNoteDuration, note.duration);
     if (pitch === note.pitch && duration === note.duration) return note;
     changed += 1;
     return { ...note, pitch, duration };
   });
+
+  // Excess polyphony: at each onset, if more notes sound than the instrument
+  // allows, drop the lowest — a re-voiced bed keeps its top, which is the line
+  // a listener follows.
+  if (maxSimultaneousNotes && maxSimultaneousNotes >= 1) {
+    const drop = new Set<MusicalNote>();
+    for (const note of ranged) {
+      const sounding = simultaneousAt(ranged, note.start).filter((n) => !drop.has(n));
+      if (sounding.length <= maxSimultaneousNotes) continue;
+      sounding
+        .sort((a, b) => a.pitch - b.pitch)
+        .slice(0, sounding.length - maxSimultaneousNotes)
+        .forEach((n) => drop.add(n));
+    }
+    if (drop.size) {
+      changed += drop.size;
+      ranged = ranged.filter((n) => !drop.has(n));
+    }
+  }
+
   return {
-    notes: safe,
+    notes: ranged,
     pass: {
       id: "hard-constraints",
       changed,
