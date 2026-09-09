@@ -119,6 +119,24 @@ export type GoldSource =
   | { kind: "composed"; generator: string; spec: string }
   | { kind: "pdmx"; pdmxId: string; midiPath: string; title?: string; composer?: string; license?: string; windowSeconds: number; trimmed: boolean }
   | { kind: "repo_fixture"; path: string; bytes: number; sha256: string; licenceNote: string }
+  /** A public recording fetched for evaluation only (PR-90): the licence and the URL travel with the item; audio stays git-ignored. */
+  | {
+      kind: "public_recording";
+      dataset: string;
+      url: string | null;
+      licence: string;
+      path: string;
+      bytes: number;
+      sha256: string;
+      durationSeconds: number;
+      sampleRate?: number;
+      channels?: number;
+      /** Where each verified truth field came from and how it was produced. */
+      truthSources?: Partial<Record<GoldDomain, { source: string; how: string }>>;
+      /** For a re-upload of the owner's own material: the original rows. */
+      ownerProjectId?: string;
+      ownerSourceId?: string;
+    }
   | {
       kind: "owner_upload";
       projectId: string;

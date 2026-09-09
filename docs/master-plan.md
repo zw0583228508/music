@@ -5056,6 +5056,89 @@ any of it.
   accuracy; no arm is SHIP_CLEARED; 28 of 52 gold items were re-scored from the
   runner's processed copy after the gold worktree was removed mid-stream.
 
+- **PR-90** ✅ — `analysis-end-to-end-real-songs` (Analysis Engine wave,
+  Stream J — the closing stream). The whole engine on **44 real songs** —
+  the owner's two uploads (PROFESSIONAL_REAL_WORLD) + 42 public recordings
+  (REAL_AUDIO: 12 GiantSteps Beatport previews with expert key + crowd-tapped
+  tempo truth, 12 SALAMI Internet-Archive live recordings with two human
+  section annotators, 18 ccMixter CC BY mixes across twelve genres with no
+  truth) — on two paths never merged: **platform** (the real
+  `POST /projects/:id/sources` path on a worktree API, one dedicated dev
+  project per song; Basic Pitch on Modal + local analysers + PR-86/89
+  reconciliation; Song Model + `trustReport` read back) and **engine** (the
+  same bytes through PR-84's `rhythm-tournament-worker` and PR-85's
+  `harmony-acr-worker` plus the platform's own readings, judged by the
+  shipped disagreement engine and `reconcileRhythm`, folded into the same
+  trust report; nothing tuned). Code: `analysisEndToEnd.ts` (pure
+  aggregation, tier refusal, verdict counting; 14 tests, registered) +
+  `scripts/run-analysis-end-to-end.mjs` (`api` / `rhythm` / `harmony` /
+  `report`); evidence `docs/evidence/analysis-end-to-end-live.json` (per-song
+  rows: sha256, licence, per-domain statuses, latencies, spend, engine
+  traces) + `docs/evidence/analysis-real-eval-manifest.json` (ANALYSIS_GOLD_V1
+  manifest, truth only where a public annotation exists; new source kind
+  `public_recording`); write-up **`docs/model-discovery/analysis-engine-report.md`
+  — the final per-domain table of the wave and the closing answer**.
+
+  **Per domain (44 songs; platform det/low/cont/unk → engine).** tempo 0/37/0/7
+  → 40/0/4/0 (LOCAL is a metrical relative of the tracker consensus on 15/34:
+  half 10, 2:3 5); metre 0/37/0/7 → 39/0/5/0 (3/4-vs-6/8 2, compound 1);
+  beats 0/37/0/7 → 6/0/38/0 (the 70 ms agreement-horizon "drift" rule fires
+  on 32); downbeats 0/37/0/7 → 23/0/21/0; key 3/2/**32**/7 → 34/4/6/0 —
+  platform contests: unrelated 10, dominant 8, subdominant 6, parallel 5,
+  relative 2, mediant 1, the spectral detector a candidate in 32/32; chords
+  0 → 24/18/2 (3,011 of 4,171 bars = 72 % corroborated by both BTC
+  vocabularies); melody, bass, separation, loudness unknown 44/44 on both
+  paths; sections 37 low-confidence on the platform → **unknown 44 on the
+  engine** (the energy sketch is below the engine's own floor). **Accuracy
+  where truth exists (12 EDM previews / 12 live songs, tiers never mixed):**
+  tempo platform **0.11** (1/9 exact, 6/9 the half) → engine **0.82** (9/11;
+  one *detected* tempo is the half), MADMOM alone 0.92, BEAT_THIS 0.75; key
+  platform **0.00** (1 scored, 8 contested; LOCAL spectral alone **0/9**,
+  transcription 4/9) → engine **0.56** (5/9, **4 "detected" keys wrong** —
+  chroma key and chord-derived key are the same Krumhansl over the same
+  audio); sections: LOCAL sketch F1 **0.21** at ±3 s vs the human ceiling
+  (annotator 2 vs 1) **0.75**. **Verdicts:** platform trusted 0 /
+  needs_confirmation 37 / not_usable 7 — the analyzer *fails* 7/44 (16 %)
+  songs outright ("Key analysis is required" ×4, "Tempo … Meter … section
+  required" ×3) instead of carrying UNKNOWN; engine trusted **0** /
+  needs_confirmation **44** / not_usable 0, fields to confirm: sections 44,
+  key 10, metre 5, tempo 4, harmony 2. 17 songs have tempo, metre, key and
+  downbeats all detected on the engine path; sections alone block them — and
+  4 of 9 truth-checked detected keys are wrong, so the gate is right. PR-84's
+  level-aware engine calls the tempo CONTESTED on 43/44 where PR-89's
+  weight-based judge resolves 40. Owner's "ולעורר ליבי": platform unchanged
+  (64.8 low, key contested E♭ major / G minor mediant); engine tempo 130.43
+  detected (LOCAL 64.8 = the half, outweighed), key G minor detected on three
+  witnesses, downbeats agreed, 116/136 chord bars corroborated, still
+  `needs_confirmation` (sections); the owner's ≈115 matches no witness.
+  **Latency / cost:** platform 24 s median; rhythm worker 83 s (madmom);
+  harmony 11 s; engine 83 s parallel / 120 s serial; **$1.36 list-price for
+  the run, $0.031/song median** (cap $15). No worker deployed by this stream
+  (PR-84's rhythm worker reused as found, PR-85's batch ephemeral and
+  stopped). **Closing answer:** what still prevents automatic trust is a
+  structure provider and stems that do not exist on main; two local
+  witnesses that either fail the model or contest every key; witness
+  independence and the tempo-level rule unsettled between PR-84 and PR-89;
+  and real-audio truth for three domains on twenty-four songs of two kinds.
+  Typecheck green.
+
+  **Honest limits.** Truth on 12 songs × 3 domains only, from the datasets'
+  own annotation procedures (nobody re-verified here); the owner's uploads
+  have none. Metre, beats, downbeats, chords, melody and bass have **no
+  real-audio accuracy** — their numbers are agreement and coverage. The
+  GiantSteps items are 120 s LOFI EDM previews and the SALAMI items live
+  jam-band recordings, not produced pop. The engine path is an offline
+  composition of workers not wired into `sourceAnalyzer.ts`; platform
+  observations were read back from the stored reconciliation (exact for
+  contested and single-source fields, approximate for corroborated ones);
+  the harmony arms wear PR-85's CHROMA / SHEETSAGE labels and the
+  chord-derived key the default weight 0.35. Two uploads hit a storage race
+  ("Uploaded object was not found") and passed on retry — a defect, not
+  counted. Cost is a list-price estimate; Basic Pitch's share is an upper
+  bound; other streams' workers shared the account. Nothing promoted, no
+  weight or threshold changed; the fixes named in the report (an UNKNOWN
+  model instead of a failure, one structure witness, a row for the
+  chord-derived key, one tempo-level rule) are proposals, not code.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

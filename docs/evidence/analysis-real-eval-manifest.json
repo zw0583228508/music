@@ -1,0 +1,5110 @@
+{
+ "version": "ANALYSIS_GOLD_V1",
+ "builtAt": "2026-09-09T23:18:14.640Z",
+ "items": [
+  {
+   "id": "owner-veorer-libi",
+   "tier": "PROFESSIONAL_REAL_WORLD",
+   "title": "מענדי וויס, חיים פולק, מקהלת מלכות - ולעורר ליבי",
+   "genreFamily": "hasidic_pop",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "OWNER_UPLOAD",
+    "url": null,
+    "licence": "owner's own upload; evaluation only, not redistributed",
+    "path": "owner-veorer-libi.mp3",
+    "bytes": 10531610,
+    "sha256": "e38d6c4e27d9ccf111db5a68e16177d1ad013d7ad86037134be9140c718a3b2c",
+    "durationSeconds": 259.72,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {},
+    "ownerProjectId": "d519492a-e299-4401-9cb4-f8618902fc0a",
+    "ownerSourceId": "3108652e-975d-44fd-9bd6-16ac77357922"
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "The owner's own upload re-run through the platform in a dedicated dev project; no verified truth.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN",
+      "ownerClaim": {
+       "value": 115,
+       "status": "UNVERIFIED_OWNER_CLAIM",
+       "statedOn": "2026-09-09",
+       "note": "the owner says the song is around 115 BPM (recorded by PR-81 and PR-84); not verified against the recording"
+      }
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "owner-beota-hashaa",
+   "tier": "PROFESSIONAL_REAL_WORLD",
+   "title": "שמוליק סוכות - באותה השעה",
+   "genreFamily": "israeli_pop",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "OWNER_UPLOAD",
+    "url": null,
+    "licence": "owner's own upload; evaluation only, not redistributed",
+    "path": "owner-beota-hashaa.mp3",
+    "bytes": 9537791,
+    "sha256": "1aef23b76eac8df7b1bf5a9848e3c051ea840136c566e133fbaee141aa33892b",
+    "durationSeconds": 230.179,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {},
+    "ownerProjectId": "d519492a-e299-4401-9cb4-f8618902fc0a",
+    "ownerSourceId": "22c9d6c1-03ab-4551-912f-ea717fa61a94"
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "The owner's own upload re-run through the platform in a dedicated dev project; no verified truth.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "gs-1234668",
+   "tier": "REAL_AUDIO",
+   "title": "Beatport preview 1234668",
+   "genreFamily": "edm:drum-and-bass",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "GIANTSTEPS_KEY_TEMPO",
+    "url": "https://www.cp.jku.at/datasets/giantsteps/backup/1234668.LOFI.mp3",
+    "licence": "Beatport 2-minute preview mirrored by JKU for the GiantSteps datasets; research/evaluation use only, not redistributed, never trained on",
+    "path": "gs-1234668.mp3",
+    "bytes": 1440391,
+    "sha256": "407c6a203b7bf473b064ceb3c18654bd82782975f04d40cfdd2b43794f0fb2c9",
+    "durationSeconds": 119.993,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "key": {
+      "source": "https://github.com/GiantSteps/giantsteps-key-dataset/blob/master/annotations/key/1234668.LOFI.key",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "source": "https://github.com/GiantSteps/giantsteps-tempo-dataset/blob/master/annotations_v2/tempo/1234668.LOFI.bpm",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": {
+     "bpm": 174,
+     "quarterBpm": 174,
+     "map": [
+      {
+       "time": 0,
+       "bpm": 174
+      }
+     ],
+     "constant": true,
+     "durationSeconds": 119.993
+    },
+    "metre": null,
+    "key": {
+     "tonic": "G",
+     "pitchClass": 7,
+     "mode": "minor"
+    },
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "HUMAN_VERIFIED",
+    "metre": "UNKNOWN",
+    "key": "HUMAN_VERIFIED",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "Two-minute Beatport preview; key from the GiantSteps key set, tempo from the GiantSteps tempo set (annotations_v2); metre, beats, chords, sections UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "key": {
+      "value": "G minor",
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "value": 174,
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "gs-1234669",
+   "tier": "REAL_AUDIO",
+   "title": "Beatport preview 1234669",
+   "genreFamily": "edm:drum-and-bass",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "GIANTSTEPS_KEY_TEMPO",
+    "url": "https://www.cp.jku.at/datasets/giantsteps/backup/1234669.LOFI.mp3",
+    "licence": "Beatport 2-minute preview mirrored by JKU for the GiantSteps datasets; research/evaluation use only, not redistributed, never trained on",
+    "path": "gs-1234669.mp3",
+    "bytes": 1440705,
+    "sha256": "42da35abe6c5927e016980fbf549d0aef5706c3756efce0b1aedcbe61082514c",
+    "durationSeconds": 119.998,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "key": {
+      "source": "https://github.com/GiantSteps/giantsteps-key-dataset/blob/master/annotations/key/1234669.LOFI.key",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "source": "https://github.com/GiantSteps/giantsteps-tempo-dataset/blob/master/annotations_v2/tempo/1234669.LOFI.bpm",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": {
+     "bpm": 174,
+     "quarterBpm": 174,
+     "map": [
+      {
+       "time": 0,
+       "bpm": 174
+      }
+     ],
+     "constant": true,
+     "durationSeconds": 119.998
+    },
+    "metre": null,
+    "key": {
+     "tonic": "G",
+     "pitchClass": 7,
+     "mode": "minor"
+    },
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "HUMAN_VERIFIED",
+    "metre": "UNKNOWN",
+    "key": "HUMAN_VERIFIED",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "Two-minute Beatport preview; key from the GiantSteps key set, tempo from the GiantSteps tempo set (annotations_v2); metre, beats, chords, sections UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "key": {
+      "value": "G minor",
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "value": 174,
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "gs-1234750",
+   "tier": "REAL_AUDIO",
+   "title": "Beatport preview 1234750",
+   "genreFamily": "edm:trance",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "GIANTSTEPS_KEY_TEMPO",
+    "url": "https://www.cp.jku.at/datasets/giantsteps/backup/1234750.LOFI.mp3",
+    "licence": "Beatport 2-minute preview mirrored by JKU for the GiantSteps datasets; research/evaluation use only, not redistributed, never trained on",
+    "path": "gs-1234750.mp3",
+    "bytes": 1440705,
+    "sha256": "e014cb8c75bae9931f2a5ff6da3f251217d68bcef8197466c08c8c3e7d408b28",
+    "durationSeconds": 120.013,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "key": {
+      "source": "https://github.com/GiantSteps/giantsteps-key-dataset/blob/master/annotations/key/1234750.LOFI.key",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "source": "https://github.com/GiantSteps/giantsteps-tempo-dataset/blob/master/annotations_v2/tempo/1234750.LOFI.bpm",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": {
+     "bpm": 142,
+     "quarterBpm": 142,
+     "map": [
+      {
+       "time": 0,
+       "bpm": 142
+      }
+     ],
+     "constant": true,
+     "durationSeconds": 120.013
+    },
+    "metre": null,
+    "key": {
+     "tonic": "D",
+     "pitchClass": 2,
+     "mode": "minor"
+    },
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "HUMAN_VERIFIED",
+    "metre": "UNKNOWN",
+    "key": "HUMAN_VERIFIED",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "Two-minute Beatport preview; key from the GiantSteps key set, tempo from the GiantSteps tempo set (annotations_v2); metre, beats, chords, sections UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "key": {
+      "value": "D minor",
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "value": 142,
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "gs-3317417",
+   "tier": "REAL_AUDIO",
+   "title": "Beatport preview 3317417",
+   "genreFamily": "edm:progressive-house",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "GIANTSTEPS_KEY_TEMPO",
+    "url": "https://www.cp.jku.at/datasets/giantsteps/backup/3317417.LOFI.mp3",
+    "licence": "Beatport 2-minute preview mirrored by JKU for the GiantSteps datasets; research/evaluation use only, not redistributed, never trained on",
+    "path": "gs-3317417.mp3",
+    "bytes": 1442052,
+    "sha256": "124248f32c312c332c2f4a066a5d43c2332c16a733d42830ef411bc895afe59e",
+    "durationSeconds": 120,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "key": {
+      "source": "https://github.com/GiantSteps/giantsteps-key-dataset/blob/master/annotations/key/3317417.LOFI.key",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "source": "https://github.com/GiantSteps/giantsteps-tempo-dataset/blob/master/annotations_v2/tempo/3317417.LOFI.bpm",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": {
+     "bpm": 127,
+     "quarterBpm": 127,
+     "map": [
+      {
+       "time": 0,
+       "bpm": 127
+      }
+     ],
+     "constant": true,
+     "durationSeconds": 120
+    },
+    "metre": null,
+    "key": {
+     "tonic": "G",
+     "pitchClass": 7,
+     "mode": "minor"
+    },
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "HUMAN_VERIFIED",
+    "metre": "UNKNOWN",
+    "key": "HUMAN_VERIFIED",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "Two-minute Beatport preview; key from the GiantSteps key set, tempo from the GiantSteps tempo set (annotations_v2); metre, beats, chords, sections UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "key": {
+      "value": "G minor",
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "value": 127,
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "gs-3349486",
+   "tier": "REAL_AUDIO",
+   "title": "Beatport preview 3349486",
+   "genreFamily": "edm:electronica",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "GIANTSTEPS_KEY_TEMPO",
+    "url": "https://www.cp.jku.at/datasets/giantsteps/backup/3349486.LOFI.mp3",
+    "licence": "Beatport 2-minute preview mirrored by JKU for the GiantSteps datasets; research/evaluation use only, not redistributed, never trained on",
+    "path": "gs-3349486.mp3",
+    "bytes": 1442052,
+    "sha256": "88ff303efa27071b88e05f1af86e90c6ca2043495fc6881f5899119ab6848fd3",
+    "durationSeconds": 120,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "key": {
+      "source": "https://github.com/GiantSteps/giantsteps-key-dataset/blob/master/annotations/key/3349486.LOFI.key",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "source": "https://github.com/GiantSteps/giantsteps-tempo-dataset/blob/master/annotations_v2/tempo/3349486.LOFI.bpm",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": {
+     "bpm": 139,
+     "quarterBpm": 139,
+     "map": [
+      {
+       "time": 0,
+       "bpm": 139
+      }
+     ],
+     "constant": true,
+     "durationSeconds": 120
+    },
+    "metre": null,
+    "key": {
+     "tonic": "F",
+     "pitchClass": 5,
+     "mode": "minor"
+    },
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "HUMAN_VERIFIED",
+    "metre": "UNKNOWN",
+    "key": "HUMAN_VERIFIED",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "Two-minute Beatport preview; key from the GiantSteps key set, tempo from the GiantSteps tempo set (annotations_v2); metre, beats, chords, sections UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "key": {
+      "value": "F minor",
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "value": 139,
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "gs-3480108",
+   "tier": "REAL_AUDIO",
+   "title": "Beatport preview 3480108",
+   "genreFamily": "edm:hard-dance",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "GIANTSTEPS_KEY_TEMPO",
+    "url": "https://www.cp.jku.at/datasets/giantsteps/backup/3480108.LOFI.mp3",
+    "licence": "Beatport 2-minute preview mirrored by JKU for the GiantSteps datasets; research/evaluation use only, not redistributed, never trained on",
+    "path": "gs-3480108.mp3",
+    "bytes": 1442068,
+    "sha256": "442fe5bbdba26844ceb91b298a92ba7c46a5693a2b3c23805cf078f9961b41cf",
+    "durationSeconds": 120,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "key": {
+      "source": "https://github.com/GiantSteps/giantsteps-key-dataset/blob/master/annotations/key/3480108.LOFI.key",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "source": "https://github.com/GiantSteps/giantsteps-tempo-dataset/blob/master/annotations_v2/tempo/3480108.LOFI.bpm",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": {
+     "bpm": 130,
+     "quarterBpm": 130,
+     "map": [
+      {
+       "time": 0,
+       "bpm": 130
+      }
+     ],
+     "constant": true,
+     "durationSeconds": 120
+    },
+    "metre": null,
+    "key": {
+     "tonic": "F#",
+     "pitchClass": 6,
+     "mode": "minor"
+    },
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "HUMAN_VERIFIED",
+    "metre": "UNKNOWN",
+    "key": "HUMAN_VERIFIED",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "Two-minute Beatport preview; key from the GiantSteps key set, tempo from the GiantSteps tempo set (annotations_v2); metre, beats, chords, sections UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "key": {
+      "value": "Gb minor",
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "value": 130,
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "gs-3535112",
+   "tier": "REAL_AUDIO",
+   "title": "Beatport preview 3535112",
+   "genreFamily": "edm:progressive-house",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "GIANTSTEPS_KEY_TEMPO",
+    "url": "https://www.cp.jku.at/datasets/giantsteps/backup/3535112.LOFI.mp3",
+    "licence": "Beatport 2-minute preview mirrored by JKU for the GiantSteps datasets; research/evaluation use only, not redistributed, never trained on",
+    "path": "gs-3535112.mp3",
+    "bytes": 1442052,
+    "sha256": "de28f9f1f30cc8ef80eca5180800b3d5a3aa1c09a6c42d305be1177f5e0e7c8a",
+    "durationSeconds": 120,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "key": {
+      "source": "https://github.com/GiantSteps/giantsteps-key-dataset/blob/master/annotations/key/3535112.LOFI.key",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "source": "https://github.com/GiantSteps/giantsteps-tempo-dataset/blob/master/annotations_v2/tempo/3535112.LOFI.bpm",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": {
+     "bpm": 129,
+     "quarterBpm": 129,
+     "map": [
+      {
+       "time": 0,
+       "bpm": 129
+      }
+     ],
+     "constant": true,
+     "durationSeconds": 120
+    },
+    "metre": null,
+    "key": {
+     "tonic": "Bb",
+     "pitchClass": 10,
+     "mode": "minor"
+    },
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "HUMAN_VERIFIED",
+    "metre": "UNKNOWN",
+    "key": "HUMAN_VERIFIED",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "Two-minute Beatport preview; key from the GiantSteps key set, tempo from the GiantSteps tempo set (annotations_v2); metre, beats, chords, sections UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "key": {
+      "value": "Bb minor",
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "value": 129,
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "gs-3574815",
+   "tier": "REAL_AUDIO",
+   "title": "Beatport preview 3574815",
+   "genreFamily": "edm:dubstep",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "GIANTSTEPS_KEY_TEMPO",
+    "url": "https://www.cp.jku.at/datasets/giantsteps/backup/3574815.LOFI.mp3",
+    "licence": "Beatport 2-minute preview mirrored by JKU for the GiantSteps datasets; research/evaluation use only, not redistributed, never trained on",
+    "path": "gs-3574815.mp3",
+    "bytes": 1442052,
+    "sha256": "6e152f32c346f32c9de6e815c255d6b38349d033a96cf89f1ff2e0bf8636d420",
+    "durationSeconds": 120,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "key": {
+      "source": "https://github.com/GiantSteps/giantsteps-key-dataset/blob/master/annotations/key/3574815.LOFI.key",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "source": "https://github.com/GiantSteps/giantsteps-tempo-dataset/blob/master/annotations_v2/tempo/3574815.LOFI.bpm",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": {
+     "bpm": 139,
+     "quarterBpm": 139,
+     "map": [
+      {
+       "time": 0,
+       "bpm": 139
+      }
+     ],
+     "constant": true,
+     "durationSeconds": 120
+    },
+    "metre": null,
+    "key": {
+     "tonic": "A",
+     "pitchClass": 9,
+     "mode": "minor"
+    },
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "HUMAN_VERIFIED",
+    "metre": "UNKNOWN",
+    "key": "HUMAN_VERIFIED",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "Two-minute Beatport preview; key from the GiantSteps key set, tempo from the GiantSteps tempo set (annotations_v2); metre, beats, chords, sections UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "key": {
+      "value": "A minor",
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "value": 139,
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "gs-3596904",
+   "tier": "REAL_AUDIO",
+   "title": "Beatport preview 3596904",
+   "genreFamily": "edm:electro-house",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "GIANTSTEPS_KEY_TEMPO",
+    "url": "https://www.cp.jku.at/datasets/giantsteps/backup/3596904.LOFI.mp3",
+    "licence": "Beatport 2-minute preview mirrored by JKU for the GiantSteps datasets; research/evaluation use only, not redistributed, never trained on",
+    "path": "gs-3596904.mp3",
+    "bytes": 1442052,
+    "sha256": "f92837d51ad875791cfd2f161325f0e8bbe7047c8f0950e1152682aa3c771c6a",
+    "durationSeconds": 120,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "key": {
+      "source": "https://github.com/GiantSteps/giantsteps-key-dataset/blob/master/annotations/key/3596904.LOFI.key",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "source": "https://github.com/GiantSteps/giantsteps-tempo-dataset/blob/master/annotations_v2/tempo/3596904.LOFI.bpm",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": {
+     "bpm": 129,
+     "quarterBpm": 129,
+     "map": [
+      {
+       "time": 0,
+       "bpm": 129
+      }
+     ],
+     "constant": true,
+     "durationSeconds": 120
+    },
+    "metre": null,
+    "key": {
+     "tonic": "A",
+     "pitchClass": 9,
+     "mode": "major"
+    },
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "HUMAN_VERIFIED",
+    "metre": "UNKNOWN",
+    "key": "HUMAN_VERIFIED",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "Two-minute Beatport preview; key from the GiantSteps key set, tempo from the GiantSteps tempo set (annotations_v2); metre, beats, chords, sections UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "key": {
+      "value": "A major",
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "value": 129,
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "gs-3892740",
+   "tier": "REAL_AUDIO",
+   "title": "Beatport preview 3892740",
+   "genreFamily": "edm:pop rock",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "GIANTSTEPS_KEY_TEMPO",
+    "url": "https://www.cp.jku.at/datasets/giantsteps/backup/3892740.LOFI.mp3",
+    "licence": "Beatport 2-minute preview mirrored by JKU for the GiantSteps datasets; research/evaluation use only, not redistributed, never trained on",
+    "path": "gs-3892740.mp3",
+    "bytes": 1442068,
+    "sha256": "39e07be68d8df454983c3ce6081e3421c2cb2b3b13f33da21428187a06a20397",
+    "durationSeconds": 120,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "key": {
+      "source": "https://github.com/GiantSteps/giantsteps-key-dataset/blob/master/annotations/key/3892740.LOFI.key",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "source": "https://github.com/GiantSteps/giantsteps-tempo-dataset/blob/master/annotations_v2/tempo/3892740.LOFI.bpm",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": {
+     "bpm": 129,
+     "quarterBpm": 129,
+     "map": [
+      {
+       "time": 0,
+       "bpm": 129
+      }
+     ],
+     "constant": true,
+     "durationSeconds": 120
+    },
+    "metre": null,
+    "key": {
+     "tonic": "D",
+     "pitchClass": 2,
+     "mode": "major"
+    },
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "HUMAN_VERIFIED",
+    "metre": "UNKNOWN",
+    "key": "HUMAN_VERIFIED",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "Two-minute Beatport preview; key from the GiantSteps key set, tempo from the GiantSteps tempo set (annotations_v2); metre, beats, chords, sections UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "key": {
+      "value": "D major",
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "value": 129,
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "gs-3980001",
+   "tier": "REAL_AUDIO",
+   "title": "Beatport preview 3980001",
+   "genreFamily": "edm:chill-out",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "GIANTSTEPS_KEY_TEMPO",
+    "url": "https://www.cp.jku.at/datasets/giantsteps/backup/3980001.LOFI.mp3",
+    "licence": "Beatport 2-minute preview mirrored by JKU for the GiantSteps datasets; research/evaluation use only, not redistributed, never trained on",
+    "path": "gs-3980001.mp3",
+    "bytes": 1442068,
+    "sha256": "b67dcafbf082542891241dc979bd66f3399ba411d28590871d4078f5ccbe15c6",
+    "durationSeconds": 120,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "key": {
+      "source": "https://github.com/GiantSteps/giantsteps-key-dataset/blob/master/annotations/key/3980001.LOFI.key",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "source": "https://github.com/GiantSteps/giantsteps-tempo-dataset/blob/master/annotations_v2/tempo/3980001.LOFI.bpm",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": {
+     "bpm": 167,
+     "quarterBpm": 167,
+     "map": [
+      {
+       "time": 0,
+       "bpm": 167
+      }
+     ],
+     "constant": true,
+     "durationSeconds": 120
+    },
+    "metre": null,
+    "key": {
+     "tonic": "D",
+     "pitchClass": 2,
+     "mode": "minor"
+    },
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "HUMAN_VERIFIED",
+    "metre": "UNKNOWN",
+    "key": "HUMAN_VERIFIED",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "Two-minute Beatport preview; key from the GiantSteps key set, tempo from the GiantSteps tempo set (annotations_v2); metre, beats, chords, sections UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "key": {
+      "value": "D minor",
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "value": 167,
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "gs-4014747",
+   "tier": "REAL_AUDIO",
+   "title": "Beatport preview 4014747",
+   "genreFamily": "edm:techno",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "GIANTSTEPS_KEY_TEMPO",
+    "url": "https://www.cp.jku.at/datasets/giantsteps/backup/4014747.LOFI.mp3",
+    "licence": "Beatport 2-minute preview mirrored by JKU for the GiantSteps datasets; research/evaluation use only, not redistributed, never trained on",
+    "path": "gs-4014747.mp3",
+    "bytes": 1442068,
+    "sha256": "a7264c300b30d7f007166b109953c170d1f18af5436684e4420566d79479f682",
+    "durationSeconds": 120,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "key": {
+      "source": "https://github.com/GiantSteps/giantsteps-key-dataset/blob/master/annotations/key/4014747.LOFI.key",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "source": "https://github.com/GiantSteps/giantsteps-tempo-dataset/blob/master/annotations_v2/tempo/4014747.LOFI.bpm",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": {
+     "bpm": 121,
+     "quarterBpm": 121,
+     "map": [
+      {
+       "time": 0,
+       "bpm": 121
+      }
+     ],
+     "constant": true,
+     "durationSeconds": 120
+    },
+    "metre": null,
+    "key": {
+     "tonic": "C",
+     "pitchClass": 0,
+     "mode": "minor"
+    },
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "HUMAN_VERIFIED",
+    "metre": "UNKNOWN",
+    "key": "HUMAN_VERIFIED",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "Two-minute Beatport preview; key from the GiantSteps key set, tempo from the GiantSteps tempo set (annotations_v2); metre, beats, chords, sections UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "key": {
+      "value": "C minor",
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps key dataset: expert-verified key annotations (Knees et al., ISMIR 2015)"
+     },
+     "tempo": {
+      "value": 121,
+      "status": "HUMAN_VERIFIED",
+      "how": "GiantSteps tempo dataset annotations_v2: crowd-tapped tempo, Schreiber & Mueller (ISMIR 2018)"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "salami-960",
+   "tier": "REAL_AUDIO",
+   "title": "Absolute Gruv - Woman Across The River",
+   "genreFamily": "live_recording",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "SALAMI_IA",
+    "url": "https://archive.org/download/ag2008-12-31.WYE.flac16/ag2008-12-31d1t09.WYE.mp3",
+    "licence": "Internet Archive Live Music Archive (etree) recording: artist-permitted free non-commercial trading; evaluation only, not redistributed, never trained on",
+    "path": "salami-960.mp3",
+    "bytes": 7381504,
+    "sha256": "512b9614847ff010008267e14b3ec7adfc4891c5b73cffdf0683ab2ae09aedf4",
+    "durationSeconds": 293.707,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "sections": {
+      "source": "https://github.com/DDMAL/salami-data-public/tree/master/annotations/960/parsed",
+      "how": "SALAMI v2 public annotations, annotators 2 and 7; functions layer; annotator 1 is the reference, annotator 2 the human ceiling"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": [
+     {
+      "start": 0.048979591,
+      "end": 1.499070294,
+      "label": "stage_sounds"
+     },
+     {
+      "start": 1.499070294,
+      "end": 12.904852607,
+      "label": "no_function"
+     },
+     {
+      "start": 12.904852607,
+      "end": 44.391836734,
+      "label": "Head"
+     },
+     {
+      "start": 44.391836734,
+      "end": 76.260068027,
+      "label": "Head"
+     },
+     {
+      "start": 76.260068027,
+      "end": 108.702040816,
+      "label": "Solo"
+     },
+     {
+      "start": 108.702040816,
+      "end": 130.310362811,
+      "label": "Bridge"
+     },
+     {
+      "start": 130.310362811,
+      "end": 162.158526077,
+      "label": "Solo"
+     },
+     {
+      "start": 162.158526077,
+      "end": 244.085646258,
+      "label": "Solo"
+     },
+     {
+      "start": 244.085646258,
+      "end": 270.695238095,
+      "label": "Head"
+     },
+     {
+      "start": 270.695238095,
+      "end": 289.133696145,
+      "label": "Outro"
+     },
+     {
+      "start": 289.133696145,
+      "end": 293.773990929,
+      "label": "applause"
+     },
+     {
+      "start": 293.773990929,
+      "end": 293.776938775,
+      "label": "Silence"
+     }
+    ]
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "HUMAN_VERIFIED"
+   },
+   "notes": "Live recording from the Internet Archive; sections from SALAMI annotator 1 (functions layer); everything else UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "sections": {
+      "value": [
+       {
+        "start": 0.049,
+        "end": 1.499,
+        "label": "stage_sounds"
+       },
+       {
+        "start": 1.499,
+        "end": 12.905,
+        "label": "no_function"
+       },
+       {
+        "start": 12.905,
+        "end": 44.392,
+        "label": "Head"
+       },
+       {
+        "start": 44.392,
+        "end": 76.26,
+        "label": "Head"
+       },
+       {
+        "start": 76.26,
+        "end": 108.702,
+        "label": "Solo"
+       },
+       {
+        "start": 108.702,
+        "end": 130.31,
+        "label": "Bridge"
+       },
+       {
+        "start": 130.31,
+        "end": 162.159,
+        "label": "Solo"
+       },
+       {
+        "start": 162.159,
+        "end": 244.086,
+        "label": "Solo"
+       },
+       {
+        "start": 244.086,
+        "end": 270.695,
+        "label": "Head"
+       },
+       {
+        "start": 270.695,
+        "end": 289.134,
+        "label": "Outro"
+       },
+       {
+        "start": 289.134,
+        "end": 293.774,
+        "label": "applause"
+       },
+       {
+        "start": 293.774,
+        "end": 293.777,
+        "label": "Silence"
+       }
+      ],
+      "status": "HUMAN_VERIFIED",
+      "how": "SALAMI v2 public annotations, annotators 2 and 7; functions layer"
+     },
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "salami-972",
+   "tier": "REAL_AUDIO",
+   "title": "Almost Acoustic Band - High Mountain Girls Can Love*",
+   "genreFamily": "live_recording",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "SALAMI_IA",
+    "url": "https://archive.org/download/aab2004-02-14.shnf/aab2004-02-14d3t06.mp3",
+    "licence": "Internet Archive Live Music Archive (etree) recording: artist-permitted free non-commercial trading; evaluation only, not redistributed, never trained on",
+    "path": "salami-972.mp3",
+    "bytes": 3890688,
+    "sha256": "e5a3688c48956f53b50a422ba1dd2c15d6ff0eaeaf79897f30a62a699ab60794",
+    "durationSeconds": 210.156,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "sections": {
+      "source": "https://github.com/DDMAL/salami-data-public/tree/master/annotations/972/parsed",
+      "how": "SALAMI v2 public annotations, annotators 4 and 8; functions layer; annotator 1 is the reference, annotator 2 the human ceiling"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": [
+     {
+      "start": 0.348299319,
+      "end": 27.090861678,
+      "label": "Intro"
+     },
+     {
+      "start": 27.090861678,
+      "end": 52.428321995,
+      "label": "Verse"
+     },
+     {
+      "start": 52.428321995,
+      "end": 77.252766439,
+      "label": "Solo"
+     },
+     {
+      "start": 77.252766439,
+      "end": 101.982040816,
+      "label": "Verse"
+     },
+     {
+      "start": 101.982040816,
+      "end": 126.048299319,
+      "label": "Solo"
+     },
+     {
+      "start": 126.048299319,
+      "end": 150.140385487,
+      "label": "Solo"
+     },
+     {
+      "start": 150.140385487,
+      "end": 177.72632653,
+      "label": "Verse"
+     },
+     {
+      "start": 177.72632653,
+      "end": 210.255011337,
+      "label": "no_function"
+     }
+    ]
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "HUMAN_VERIFIED"
+   },
+   "notes": "Live recording from the Internet Archive; sections from SALAMI annotator 1 (functions layer); everything else UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "sections": {
+      "value": [
+       {
+        "start": 0.348,
+        "end": 27.091,
+        "label": "Intro"
+       },
+       {
+        "start": 27.091,
+        "end": 52.428,
+        "label": "Verse"
+       },
+       {
+        "start": 52.428,
+        "end": 77.253,
+        "label": "Solo"
+       },
+       {
+        "start": 77.253,
+        "end": 101.982,
+        "label": "Verse"
+       },
+       {
+        "start": 101.982,
+        "end": 126.048,
+        "label": "Solo"
+       },
+       {
+        "start": 126.048,
+        "end": 150.14,
+        "label": "Solo"
+       },
+       {
+        "start": 150.14,
+        "end": 177.726,
+        "label": "Verse"
+       },
+       {
+        "start": 177.726,
+        "end": 210.255,
+        "label": "no_function"
+       }
+      ],
+      "status": "HUMAN_VERIFIED",
+      "how": "SALAMI v2 public annotations, annotators 4 and 8; functions layer"
+     },
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "salami-974",
+   "tier": "REAL_AUDIO",
+   "title": "Anna Troy - Never Been in love",
+   "genreFamily": "live_recording",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "SALAMI_IA",
+    "url": "https://archive.org/download/atroy2004-01-03.at831.shnf/atroy2004-01-03d1t02.mp3",
+    "licence": "Internet Archive Live Music Archive (etree) recording: artist-permitted free non-commercial trading; evaluation only, not redistributed, never trained on",
+    "path": "salami-974.mp3",
+    "bytes": 4527616,
+    "sha256": "29c8dab69653b6d9cd7cfb888cce8f26c23c85ffff925bf2c789b8241fee51b3",
+    "durationSeconds": 217.187,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "sections": {
+      "source": "https://github.com/DDMAL/salami-data-public/tree/master/annotations/974/parsed",
+      "how": "SALAMI v2 public annotations, annotators 5 and 6; functions layer; annotator 1 is the reference, annotator 2 the human ceiling"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": [
+     {
+      "start": 0.162539682,
+      "end": 3.028321995,
+      "label": "Intro"
+     },
+     {
+      "start": 3.028321995,
+      "end": 26.985328798,
+      "label": "Verse"
+     },
+     {
+      "start": 26.985328798,
+      "end": 51.198548752,
+      "label": "Chorus"
+     },
+     {
+      "start": 51.198548752,
+      "end": 63.969931972,
+      "label": "Transition"
+     },
+     {
+      "start": 63.969931972,
+      "end": 87.689478458,
+      "label": "Verse"
+     },
+     {
+      "start": 87.689478458,
+      "end": 111.601768707,
+      "label": "Chorus"
+     },
+     {
+      "start": 111.601768707,
+      "end": 131.598435374,
+      "label": "Transition"
+     },
+     {
+      "start": 131.598435374,
+      "end": 155.475510204,
+      "label": "Verse"
+     },
+     {
+      "start": 155.475510204,
+      "end": 183.465623582,
+      "label": "Chorus"
+     },
+     {
+      "start": 183.465623582,
+      "end": 217.218662131,
+      "label": "no_function"
+     },
+     {
+      "start": 217.218662131,
+      "end": 217.272494331,
+      "label": "Silence"
+     }
+    ]
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "HUMAN_VERIFIED"
+   },
+   "notes": "Live recording from the Internet Archive; sections from SALAMI annotator 1 (functions layer); everything else UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "sections": {
+      "value": [
+       {
+        "start": 0.163,
+        "end": 3.028,
+        "label": "Intro"
+       },
+       {
+        "start": 3.028,
+        "end": 26.985,
+        "label": "Verse"
+       },
+       {
+        "start": 26.985,
+        "end": 51.199,
+        "label": "Chorus"
+       },
+       {
+        "start": 51.199,
+        "end": 63.97,
+        "label": "Transition"
+       },
+       {
+        "start": 63.97,
+        "end": 87.689,
+        "label": "Verse"
+       },
+       {
+        "start": 87.689,
+        "end": 111.602,
+        "label": "Chorus"
+       },
+       {
+        "start": 111.602,
+        "end": 131.598,
+        "label": "Transition"
+       },
+       {
+        "start": 131.598,
+        "end": 155.476,
+        "label": "Verse"
+       },
+       {
+        "start": 155.476,
+        "end": 183.466,
+        "label": "Chorus"
+       },
+       {
+        "start": 183.466,
+        "end": 217.219,
+        "label": "no_function"
+       },
+       {
+        "start": 217.219,
+        "end": 217.272,
+        "label": "Silence"
+       }
+      ],
+      "status": "HUMAN_VERIFIED",
+      "how": "SALAMI v2 public annotations, annotators 5 and 6; functions layer"
+     },
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "salami-976",
+   "tier": "REAL_AUDIO",
+   "title": "Art Matthies - Morning Dew",
+   "genreFamily": "live_recording",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "SALAMI_IA",
+    "url": "https://archive.org/download/ArtMatthies2005-09-03/artmatthies2005-09-03t08.mp3",
+    "licence": "Internet Archive Live Music Archive (etree) recording: artist-permitted free non-commercial trading; evaluation only, not redistributed, never trained on",
+    "path": "salami-976.mp3",
+    "bytes": 5648896,
+    "sha256": "1442a1bdbcb8a126c1c0ca2ad3e9d0c1113c2f53ac3e32206776acf11f6ce252",
+    "durationSeconds": 244.158,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "sections": {
+      "source": "https://github.com/DDMAL/salami-data-public/tree/master/annotations/976/parsed",
+      "how": "SALAMI v2 public annotations, annotators 7 and 8; functions layer; annotator 1 is the reference, annotator 2 the human ceiling"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": [
+     {
+      "start": 0,
+      "end": 14.024852607,
+      "label": "silence"
+     },
+     {
+      "start": 14.024852607,
+      "end": 51.970544217,
+      "label": "Verse"
+     },
+     {
+      "start": 51.970544217,
+      "end": 102.674331065,
+      "label": "Verse"
+     },
+     {
+      "start": 102.674331065,
+      "end": 153.039274376,
+      "label": "Verse"
+     },
+     {
+      "start": 153.039274376,
+      "end": 191.141292517,
+      "label": "Verse"
+     },
+     {
+      "start": 191.141292517,
+      "end": 228.072290249,
+      "label": "Outro"
+     },
+     {
+      "start": 228.072290249,
+      "end": 244.263287981,
+      "label": "no_function"
+     }
+    ]
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "HUMAN_VERIFIED"
+   },
+   "notes": "Live recording from the Internet Archive; sections from SALAMI annotator 1 (functions layer); everything else UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "sections": {
+      "value": [
+       {
+        "start": 0,
+        "end": 14.025,
+        "label": "silence"
+       },
+       {
+        "start": 14.025,
+        "end": 51.971,
+        "label": "Verse"
+       },
+       {
+        "start": 51.971,
+        "end": 102.674,
+        "label": "Verse"
+       },
+       {
+        "start": 102.674,
+        "end": 153.039,
+        "label": "Verse"
+       },
+       {
+        "start": 153.039,
+        "end": 191.141,
+        "label": "Verse"
+       },
+       {
+        "start": 191.141,
+        "end": 228.072,
+        "label": "Outro"
+       },
+       {
+        "start": 228.072,
+        "end": 244.263,
+        "label": "no_function"
+       }
+      ],
+      "status": "HUMAN_VERIFIED",
+      "how": "SALAMI v2 public annotations, annotators 7 and 8; functions layer"
+     },
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "salami-990",
+   "tier": "REAL_AUDIO",
+   "title": "Barry And The Penetrators - COMING DOWN",
+   "genreFamily": "live_recording",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "SALAMI_IA",
+    "url": "https://archive.org/download/batp2004-04-02d1.shnf/batp2004-04-02d1t01.mp3",
+    "licence": "Internet Archive Live Music Archive (etree) recording: artist-permitted free non-commercial trading; evaluation only, not redistributed, never trained on",
+    "path": "salami-990.mp3",
+    "bytes": 4795392,
+    "sha256": "7ace5abc540751a59369fecd1bf897955db9862dd6f63c2334faac2f8b6b1a92",
+    "durationSeconds": 196.693,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "sections": {
+      "source": "https://github.com/DDMAL/salami-data-public/tree/master/annotations/990/parsed",
+      "how": "SALAMI v2 public annotations, annotators 2 and 4; functions layer; annotator 1 is the reference, annotator 2 the human ceiling"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": [
+     {
+      "start": 0.046439909,
+      "end": 48.195419501,
+      "label": "Intro"
+     },
+     {
+      "start": 48.195419501,
+      "end": 117.535532879,
+      "label": "Verse"
+     },
+     {
+      "start": 117.535532879,
+      "end": 132.01632653,
+      "label": "Bridge"
+     },
+     {
+      "start": 132.01632653,
+      "end": 189.739591836,
+      "label": "Verse"
+     },
+     {
+      "start": 189.739591836,
+      "end": 196.790997732,
+      "label": "stage_sounds"
+     },
+     {
+      "start": 196.790997732,
+      "end": 196.793174603,
+      "label": "Silence"
+     }
+    ]
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "HUMAN_VERIFIED"
+   },
+   "notes": "Live recording from the Internet Archive; sections from SALAMI annotator 1 (functions layer); everything else UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "sections": {
+      "value": [
+       {
+        "start": 0.046,
+        "end": 48.195,
+        "label": "Intro"
+       },
+       {
+        "start": 48.195,
+        "end": 117.536,
+        "label": "Verse"
+       },
+       {
+        "start": 117.536,
+        "end": 132.016,
+        "label": "Bridge"
+       },
+       {
+        "start": 132.016,
+        "end": 189.74,
+        "label": "Verse"
+       },
+       {
+        "start": 189.74,
+        "end": 196.791,
+        "label": "stage_sounds"
+       },
+       {
+        "start": 196.791,
+        "end": 196.793,
+        "label": "Silence"
+       }
+      ],
+      "status": "HUMAN_VERIFIED",
+      "how": "SALAMI v2 public annotations, annotators 2 and 4; functions layer"
+     },
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "salami-1006",
+   "tier": "REAL_AUDIO",
+   "title": "Billy Talent - The Navy Song",
+   "genreFamily": "live_recording",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "SALAMI_IA",
+    "url": "https://www.archive.org/download/btalent2007-01-25.aud.flac16/BillyTalent2007-01-25t06.mp3",
+    "licence": "Internet Archive Live Music Archive (etree) recording: artist-permitted free non-commercial trading; evaluation only, not redistributed, never trained on",
+    "path": "salami-1006.mp3",
+    "bytes": 7574118,
+    "sha256": "ed4ac200e2ccee83bf7fadb98cdfa4f10891ac35e238524d29a51803824b1391",
+    "durationSeconds": 258.02,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "sections": {
+      "source": "https://github.com/DDMAL/salami-data-public/tree/master/annotations/1006/parsed",
+      "how": "SALAMI v2 public annotations, annotators 6 and 7; functions layer; annotator 1 is the reference, annotator 2 the human ceiling"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": [
+     {
+      "start": 0.048979591,
+      "end": 13.712222222,
+      "label": "Intro"
+     },
+     {
+      "start": 13.712222222,
+      "end": 27.951111111,
+      "label": "Verse"
+     },
+     {
+      "start": 27.951111111,
+      "end": 34.903265306,
+      "label": "Bridge"
+     },
+     {
+      "start": 34.903265306,
+      "end": 49.182290249,
+      "label": "Verse"
+     },
+     {
+      "start": 49.182290249,
+      "end": 63.062539682,
+      "label": "Bridge"
+     },
+     {
+      "start": 63.062539682,
+      "end": 89.894217687,
+      "label": "Chorus"
+     },
+     {
+      "start": 89.894217687,
+      "end": 96.859478458,
+      "label": "Bridge"
+     },
+     {
+      "start": 96.859478458,
+      "end": 111.048299319,
+      "label": "Verse"
+     },
+     {
+      "start": 111.048299319,
+      "end": 124.906984126,
+      "label": "Bridge"
+     },
+     {
+      "start": 124.906984126,
+      "end": 151.695442176,
+      "label": "Chorus"
+     },
+     {
+      "start": 151.695442176,
+      "end": 158.426916099,
+      "label": "Bridge"
+     },
+     {
+      "start": 158.426916099,
+      "end": 178.659546485,
+      "label": "Chorus"
+     },
+     {
+      "start": 178.659546485,
+      "end": 192.179138321,
+      "label": "Bridge"
+     },
+     {
+      "start": 192.179138321,
+      "end": 218.715079365,
+      "label": "Chorus"
+     },
+     {
+      "start": 218.715079365,
+      "end": 245.259024943,
+      "label": "Chorus"
+     },
+     {
+      "start": 245.259024943,
+      "end": 255.069387755,
+      "label": "Outro"
+     },
+     {
+      "start": 255.069387755,
+      "end": 258.094126984,
+      "label": "no_function"
+     }
+    ]
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "HUMAN_VERIFIED"
+   },
+   "notes": "Live recording from the Internet Archive; sections from SALAMI annotator 1 (functions layer); everything else UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "sections": {
+      "value": [
+       {
+        "start": 0.049,
+        "end": 13.712,
+        "label": "Intro"
+       },
+       {
+        "start": 13.712,
+        "end": 27.951,
+        "label": "Verse"
+       },
+       {
+        "start": 27.951,
+        "end": 34.903,
+        "label": "Bridge"
+       },
+       {
+        "start": 34.903,
+        "end": 49.182,
+        "label": "Verse"
+       },
+       {
+        "start": 49.182,
+        "end": 63.063,
+        "label": "Bridge"
+       },
+       {
+        "start": 63.063,
+        "end": 89.894,
+        "label": "Chorus"
+       },
+       {
+        "start": 89.894,
+        "end": 96.859,
+        "label": "Bridge"
+       },
+       {
+        "start": 96.859,
+        "end": 111.048,
+        "label": "Verse"
+       },
+       {
+        "start": 111.048,
+        "end": 124.907,
+        "label": "Bridge"
+       },
+       {
+        "start": 124.907,
+        "end": 151.695,
+        "label": "Chorus"
+       },
+       {
+        "start": 151.695,
+        "end": 158.427,
+        "label": "Bridge"
+       },
+       {
+        "start": 158.427,
+        "end": 178.66,
+        "label": "Chorus"
+       },
+       {
+        "start": 178.66,
+        "end": 192.179,
+        "label": "Bridge"
+       },
+       {
+        "start": 192.179,
+        "end": 218.715,
+        "label": "Chorus"
+       },
+       {
+        "start": 218.715,
+        "end": 245.259,
+        "label": "Chorus"
+       },
+       {
+        "start": 245.259,
+        "end": 255.069,
+        "label": "Outro"
+       },
+       {
+        "start": 255.069,
+        "end": 258.094,
+        "label": "no_function"
+       }
+      ],
+      "status": "HUMAN_VERIFIED",
+      "how": "SALAMI v2 public annotations, annotators 6 and 7; functions layer"
+     },
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "salami-1022",
+   "tier": "REAL_AUDIO",
+   "title": "Brett Dennen - San Francisco",
+   "genreFamily": "live_recording",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "SALAMI_IA",
+    "url": "https://archive.org/download/bd2009-10-29.at831/bd2009.10.29t03.mp3",
+    "licence": "Internet Archive Live Music Archive (etree) recording: artist-permitted free non-commercial trading; evaluation only, not redistributed, never trained on",
+    "path": "salami-1022.mp3",
+    "bytes": 5360640,
+    "sha256": "624880777af1dd2c9200b502cac560f915f8b71295ba315ceacec8e98ecdd5fa",
+    "durationSeconds": 225.013,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "sections": {
+      "source": "https://github.com/DDMAL/salami-data-public/tree/master/annotations/1022/parsed",
+      "how": "SALAMI v2 public annotations, annotators 4 and 7; functions layer; annotator 1 is the reference, annotator 2 the human ceiling"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": [
+     {
+      "start": 0.043537414,
+      "end": 22.059047619,
+      "label": "Intro"
+     },
+     {
+      "start": 22.059047619,
+      "end": 43.959841269,
+      "label": "Chorus"
+     },
+     {
+      "start": 43.959841269,
+      "end": 69.889977324,
+      "label": "no_function"
+     },
+     {
+      "start": 69.889977324,
+      "end": 91.696507936,
+      "label": "Chorus"
+     },
+     {
+      "start": 91.696507936,
+      "end": 117.485170068,
+      "label": "no_function"
+     },
+     {
+      "start": 117.485170068,
+      "end": 142.122721088,
+      "label": "Bridge"
+     },
+     {
+      "start": 142.122721088,
+      "end": 163.845147392,
+      "label": "Solo"
+     },
+     {
+      "start": 163.845147392,
+      "end": 188.548321995,
+      "label": "no_function"
+     },
+     {
+      "start": 188.548321995,
+      "end": 214.529433106,
+      "label": "Chorus"
+     },
+     {
+      "start": 214.529433106,
+      "end": 225.08526077,
+      "label": "no_function"
+     }
+    ]
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "HUMAN_VERIFIED"
+   },
+   "notes": "Live recording from the Internet Archive; sections from SALAMI annotator 1 (functions layer); everything else UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "sections": {
+      "value": [
+       {
+        "start": 0.044,
+        "end": 22.059,
+        "label": "Intro"
+       },
+       {
+        "start": 22.059,
+        "end": 43.96,
+        "label": "Chorus"
+       },
+       {
+        "start": 43.96,
+        "end": 69.89,
+        "label": "no_function"
+       },
+       {
+        "start": 69.89,
+        "end": 91.697,
+        "label": "Chorus"
+       },
+       {
+        "start": 91.697,
+        "end": 117.485,
+        "label": "no_function"
+       },
+       {
+        "start": 117.485,
+        "end": 142.123,
+        "label": "Bridge"
+       },
+       {
+        "start": 142.123,
+        "end": 163.845,
+        "label": "Solo"
+       },
+       {
+        "start": 163.845,
+        "end": 188.548,
+        "label": "no_function"
+       },
+       {
+        "start": 188.548,
+        "end": 214.529,
+        "label": "Chorus"
+       },
+       {
+        "start": 214.529,
+        "end": 225.085,
+        "label": "no_function"
+       }
+      ],
+      "status": "HUMAN_VERIFIED",
+      "how": "SALAMI v2 public annotations, annotators 4 and 7; functions layer"
+     },
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "salami-1036",
+   "tier": "REAL_AUDIO",
+   "title": "Camper Van Beethoven - take the skinheads bowling",
+   "genreFamily": "live_recording",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "SALAMI_IA",
+    "url": "https://archive.org/download/cvb1987-02-09.flac16/cvb1987-02-09d1t11.mp3",
+    "licence": "Internet Archive Live Music Archive (etree) recording: artist-permitted free non-commercial trading; evaluation only, not redistributed, never trained on",
+    "path": "salami-1036.mp3",
+    "bytes": 4920832,
+    "sha256": "19e32668e7264b8384a5f1b094d1c7d9ae6f1d4de15497dedf36d70f0f54e3f9",
+    "durationSeconds": 199.28,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "sections": {
+      "source": "https://github.com/DDMAL/salami-data-public/tree/master/annotations/1036/parsed",
+      "how": "SALAMI v2 public annotations, annotators 6 and 4; functions layer; annotator 1 is the reference, annotator 2 the human ceiling"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": [
+     {
+      "start": 0.044897959,
+      "end": 3.318049886,
+      "label": "no_function"
+     },
+     {
+      "start": 3.318049886,
+      "end": 17.331043083,
+      "label": "Intro"
+     },
+     {
+      "start": 17.331043083,
+      "end": 44.35478458,
+      "label": "Verse"
+     },
+     {
+      "start": 44.35478458,
+      "end": 57.787936507,
+      "label": "Chorus"
+     },
+     {
+      "start": 57.787936507,
+      "end": 84.658866213,
+      "label": "Verse"
+     },
+     {
+      "start": 84.658866213,
+      "end": 98.05877551,
+      "label": "Chorus"
+     },
+     {
+      "start": 98.05877551,
+      "end": 124.906848072,
+      "label": "Verse"
+     },
+     {
+      "start": 124.906848072,
+      "end": 144.891111111,
+      "label": "Verse"
+     },
+     {
+      "start": 144.891111111,
+      "end": 151.812063492,
+      "label": "Outro"
+     },
+     {
+      "start": 151.812063492,
+      "end": 199.330612244,
+      "label": "no_function"
+     },
+     {
+      "start": 199.330612244,
+      "end": 199.366530612,
+      "label": "Silence"
+     }
+    ]
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "HUMAN_VERIFIED"
+   },
+   "notes": "Live recording from the Internet Archive; sections from SALAMI annotator 1 (functions layer); everything else UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "sections": {
+      "value": [
+       {
+        "start": 0.045,
+        "end": 3.318,
+        "label": "no_function"
+       },
+       {
+        "start": 3.318,
+        "end": 17.331,
+        "label": "Intro"
+       },
+       {
+        "start": 17.331,
+        "end": 44.355,
+        "label": "Verse"
+       },
+       {
+        "start": 44.355,
+        "end": 57.788,
+        "label": "Chorus"
+       },
+       {
+        "start": 57.788,
+        "end": 84.659,
+        "label": "Verse"
+       },
+       {
+        "start": 84.659,
+        "end": 98.059,
+        "label": "Chorus"
+       },
+       {
+        "start": 98.059,
+        "end": 124.907,
+        "label": "Verse"
+       },
+       {
+        "start": 124.907,
+        "end": 144.891,
+        "label": "Verse"
+       },
+       {
+        "start": 144.891,
+        "end": 151.812,
+        "label": "Outro"
+       },
+       {
+        "start": 151.812,
+        "end": 199.331,
+        "label": "no_function"
+       },
+       {
+        "start": 199.331,
+        "end": 199.367,
+        "label": "Silence"
+       }
+      ],
+      "status": "HUMAN_VERIFIED",
+      "how": "SALAMI v2 public annotations, annotators 6 and 4; functions layer"
+     },
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "salami-1054",
+   "tier": "REAL_AUDIO",
+   "title": "Cindy Woolf - You Done Me Wrong",
+   "genreFamily": "live_recording",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "SALAMI_IA",
+    "url": "https://archive.org/download/cindywoolf2006-02-01.shnf/cindywoolf2006-02-01d1t02.mp3",
+    "licence": "Internet Archive Live Music Archive (etree) recording: artist-permitted free non-commercial trading; evaluation only, not redistributed, never trained on",
+    "path": "salami-1054.mp3",
+    "bytes": 4420608,
+    "sha256": "fe4c1c587c19d11e6bddf5e81fd20504329041435632d9d14614102179007f7d",
+    "durationSeconds": 179.45,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "sections": {
+      "source": "https://github.com/DDMAL/salami-data-public/tree/master/annotations/1054/parsed",
+      "how": "SALAMI v2 public annotations, annotators 4 and 6; functions layer; annotator 1 is the reference, annotator 2 the human ceiling"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": [
+     {
+      "start": 0.045714285,
+      "end": 8.679591836,
+      "label": "Intro"
+     },
+     {
+      "start": 8.679591836,
+      "end": 28.805714285,
+      "label": "Verse"
+     },
+     {
+      "start": 28.805714285,
+      "end": 39.110680272,
+      "label": "Chorus"
+     },
+     {
+      "start": 39.110680272,
+      "end": 48.911428571,
+      "label": "post-chorus"
+     },
+     {
+      "start": 48.911428571,
+      "end": 68.955668934,
+      "label": "Interlude"
+     },
+     {
+      "start": 68.955668934,
+      "end": 88.902131519,
+      "label": "Verse"
+     },
+     {
+      "start": 88.902131519,
+      "end": 99.075714285,
+      "label": "Chorus"
+     },
+     {
+      "start": 99.075714285,
+      "end": 108.780385487,
+      "label": "post-chorus"
+     },
+     {
+      "start": 108.780385487,
+      "end": 128.125532879,
+      "label": "Solo"
+     },
+     {
+      "start": 128.125532879,
+      "end": 138.158004535,
+      "label": "Chorus"
+     },
+     {
+      "start": 138.158004535,
+      "end": 148.053106575,
+      "label": "post-chorus"
+     },
+     {
+      "start": 148.053106575,
+      "end": 159.304671201,
+      "label": "Outro"
+     },
+     {
+      "start": 159.304671201,
+      "end": 179.562131519,
+      "label": "no_function"
+     }
+    ]
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "HUMAN_VERIFIED"
+   },
+   "notes": "Live recording from the Internet Archive; sections from SALAMI annotator 1 (functions layer); everything else UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "sections": {
+      "value": [
+       {
+        "start": 0.046,
+        "end": 8.68,
+        "label": "Intro"
+       },
+       {
+        "start": 8.68,
+        "end": 28.806,
+        "label": "Verse"
+       },
+       {
+        "start": 28.806,
+        "end": 39.111,
+        "label": "Chorus"
+       },
+       {
+        "start": 39.111,
+        "end": 48.911,
+        "label": "post-chorus"
+       },
+       {
+        "start": 48.911,
+        "end": 68.956,
+        "label": "Interlude"
+       },
+       {
+        "start": 68.956,
+        "end": 88.902,
+        "label": "Verse"
+       },
+       {
+        "start": 88.902,
+        "end": 99.076,
+        "label": "Chorus"
+       },
+       {
+        "start": 99.076,
+        "end": 108.78,
+        "label": "post-chorus"
+       },
+       {
+        "start": 108.78,
+        "end": 128.126,
+        "label": "Solo"
+       },
+       {
+        "start": 128.126,
+        "end": 138.158,
+        "label": "Chorus"
+       },
+       {
+        "start": 138.158,
+        "end": 148.053,
+        "label": "post-chorus"
+       },
+       {
+        "start": 148.053,
+        "end": 159.305,
+        "label": "Outro"
+       },
+       {
+        "start": 159.305,
+        "end": 179.562,
+        "label": "no_function"
+       }
+      ],
+      "status": "HUMAN_VERIFIED",
+      "how": "SALAMI v2 public annotations, annotators 4 and 6; functions layer"
+     },
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "salami-1106",
+   "tier": "REAL_AUDIO",
+   "title": "Erez Perelman - Prelude 1 by Villa Lobos with Flamenco intro",
+   "genreFamily": "live_recording",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "SALAMI_IA",
+    "url": "https://archive.org/download/erez2006-01-12.at831.flac16/erez2006-01-12t03.mp3",
+    "licence": "Internet Archive Live Music Archive (etree) recording: artist-permitted free non-commercial trading; evaluation only, not redistributed, never trained on",
+    "path": "salami-1106.mp3",
+    "bytes": 2801664,
+    "sha256": "836f88eeec67af4859fe4fc740dfe63a4196fa690d000bf5959bd36281f26d24",
+    "durationSeconds": 182.648,
+    "sampleRate": 22050,
+    "channels": 2,
+    "truthSources": {
+     "sections": {
+      "source": "https://github.com/DDMAL/salami-data-public/tree/master/annotations/1106/parsed",
+      "how": "SALAMI v2 public annotations, annotators 4 and 7; functions layer; annotator 1 is the reference, annotator 2 the human ceiling"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": [
+     {
+      "start": 0.078367346,
+      "end": 58.11292517,
+      "label": "Intro"
+     },
+     {
+      "start": 58.11292517,
+      "end": 117.921587301,
+      "label": "Main_Theme"
+     },
+     {
+      "start": 117.921587301,
+      "end": 141.988752834,
+      "label": "Main_Theme"
+     },
+     {
+      "start": 141.988752834,
+      "end": 171.816145124,
+      "label": "Outro"
+     },
+     {
+      "start": 171.816145124,
+      "end": 182.783219954,
+      "label": "no_function"
+     }
+    ]
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "HUMAN_VERIFIED"
+   },
+   "notes": "Live recording from the Internet Archive; sections from SALAMI annotator 1 (functions layer); everything else UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "sections": {
+      "value": [
+       {
+        "start": 0.078,
+        "end": 58.113,
+        "label": "Intro"
+       },
+       {
+        "start": 58.113,
+        "end": 117.922,
+        "label": "Main_Theme"
+       },
+       {
+        "start": 117.922,
+        "end": 141.989,
+        "label": "Main_Theme"
+       },
+       {
+        "start": 141.989,
+        "end": 171.816,
+        "label": "Outro"
+       },
+       {
+        "start": 171.816,
+        "end": 182.783,
+        "label": "no_function"
+       }
+      ],
+      "status": "HUMAN_VERIFIED",
+      "how": "SALAMI v2 public annotations, annotators 4 and 7; functions layer"
+     },
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "salami-1156",
+   "tier": "REAL_AUDIO",
+   "title": "Hank Williams III - Life of Sin",
+   "genreFamily": "live_recording",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "SALAMI_IA",
+    "url": "https://archive.org/download/hw3-2004-02-20.aud.flacf/hw3-20040220-aud-d2t02.mp3",
+    "licence": "Internet Archive Live Music Archive (etree) recording: artist-permitted free non-commercial trading; evaluation only, not redistributed, never trained on",
+    "path": "salami-1156.mp3",
+    "bytes": 4678656,
+    "sha256": "77f3b38eedbcfd4834081986c339dae15df77340f07e674a6ef119c5b1847f4c",
+    "durationSeconds": 187.493,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "sections": {
+      "source": "https://github.com/DDMAL/salami-data-public/tree/master/annotations/1156/parsed",
+      "how": "SALAMI v2 public annotations, annotators 2 and 7; functions layer; annotator 1 is the reference, annotator 2 the human ceiling"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": [
+     {
+      "start": 0.040816326,
+      "end": 5.485714285,
+      "label": "stage_sounds"
+     },
+     {
+      "start": 5.485714285,
+      "end": 21.039070294,
+      "label": "Verse"
+     },
+     {
+      "start": 21.039070294,
+      "end": 31.226666666,
+      "label": "Solo"
+     },
+     {
+      "start": 31.226666666,
+      "end": 46.383628117,
+      "label": "Verse"
+     },
+     {
+      "start": 46.383628117,
+      "end": 70.903628117,
+      "label": "Solo"
+     },
+     {
+      "start": 70.903628117,
+      "end": 118.971428571,
+      "label": "Bridge"
+     },
+     {
+      "start": 118.971428571,
+      "end": 127.269319727,
+      "label": "break"
+     },
+     {
+      "start": 127.269319727,
+      "end": 138.961315192,
+      "label": "Instrumental"
+     },
+     {
+      "start": 138.961315192,
+      "end": 149.541519274,
+      "label": "Verse"
+     },
+     {
+      "start": 149.541519274,
+      "end": 175.056938775,
+      "label": "Solo"
+     },
+     {
+      "start": 175.056938775,
+      "end": 177.18170068,
+      "label": "Outro"
+     },
+     {
+      "start": 177.18170068,
+      "end": 187.546122448,
+      "label": "applause"
+     },
+     {
+      "start": 187.546122448,
+      "end": 187.562086167,
+      "label": "Silence"
+     }
+    ]
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "HUMAN_VERIFIED"
+   },
+   "notes": "Live recording from the Internet Archive; sections from SALAMI annotator 1 (functions layer); everything else UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "sections": {
+      "value": [
+       {
+        "start": 0.041,
+        "end": 5.486,
+        "label": "stage_sounds"
+       },
+       {
+        "start": 5.486,
+        "end": 21.039,
+        "label": "Verse"
+       },
+       {
+        "start": 21.039,
+        "end": 31.227,
+        "label": "Solo"
+       },
+       {
+        "start": 31.227,
+        "end": 46.384,
+        "label": "Verse"
+       },
+       {
+        "start": 46.384,
+        "end": 70.904,
+        "label": "Solo"
+       },
+       {
+        "start": 70.904,
+        "end": 118.971,
+        "label": "Bridge"
+       },
+       {
+        "start": 118.971,
+        "end": 127.269,
+        "label": "break"
+       },
+       {
+        "start": 127.269,
+        "end": 138.961,
+        "label": "Instrumental"
+       },
+       {
+        "start": 138.961,
+        "end": 149.542,
+        "label": "Verse"
+       },
+       {
+        "start": 149.542,
+        "end": 175.057,
+        "label": "Solo"
+       },
+       {
+        "start": 175.057,
+        "end": 177.182,
+        "label": "Outro"
+       },
+       {
+        "start": 177.182,
+        "end": 187.546,
+        "label": "applause"
+       },
+       {
+        "start": 187.546,
+        "end": 187.562,
+        "label": "Silence"
+       }
+      ],
+      "status": "HUMAN_VERIFIED",
+      "how": "SALAMI v2 public annotations, annotators 2 and 7; functions layer"
+     },
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-44932",
+   "tier": "REAL_AUDIO",
+   "title": "JeffSpeed68 - Girls like you",
+   "genreFamily": "pop",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/JeffSpeed68/JeffSpeed68_-_Girls_like_you.mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: JeffSpeed68, featuring Thespinwires; page https://ccmixter.org/files/JeffSpeed68/44932",
+    "path": "ccm-44932.mp3",
+    "bytes": 10411408,
+    "sha256": "ce456893c2dc2d7c55b1964f33bfbf1e81306d5f2766a548483b41dcba756200",
+    "durationSeconds": 260.183,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-33036",
+   "tier": "REAL_AUDIO",
+   "title": "Benjamin_Orth - Where You Are Now",
+   "genreFamily": "pop",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/Benjamin_Orth/Benjamin_Orth_-_Where_You_Are_Now.mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: Benjamin_Orth, featuring Wolf Fly; page https://ccmixter.org/files/Benjamin_Orth/33036",
+    "path": "ccm-33036.mp3",
+    "bytes": 5148631,
+    "sha256": "56e989e49e0ff91b74cfd92da19b64a4b82aa477a7b39822803aa538c617d046",
+    "durationSeconds": 194.4,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-50718",
+   "tier": "REAL_AUDIO",
+   "title": "hansatom - Paint the Sky",
+   "genreFamily": "rock",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/hansatom/hansatom_-_Paint_the_Sky.mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: hansatom, featuring Miss Judged; page https://ccmixter.org/files/hansatom/50718",
+    "path": "ccm-50718.mp3",
+    "bytes": 6359710,
+    "sha256": "3e9a8d32658be8b79b5de721f9d8b701ee023020a7adf1a7f307e1e71d3886a6",
+    "durationSeconds": 198.528,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-39205",
+   "tier": "REAL_AUDIO",
+   "title": "mindmapthat - Music Through Love",
+   "genreFamily": "rock",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/mindmapthat/mindmapthat_-_Music_Through_Love.mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: mindmapthat, featuring Admiral Bob; page https://ccmixter.org/files/mindmapthat/39205",
+    "path": "ccm-39205.mp3",
+    "bytes": 4071803,
+    "sha256": "6900630335814d999c65678ddc8fc96db6e68b03c6a94a026729dc27298c8ea2",
+    "durationSeconds": 169.488,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-16626",
+   "tier": "REAL_AUDIO",
+   "title": "grapes - I dunno",
+   "genreFamily": "hip_hop",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/grapes/grapes_-_I_dunno.mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: grapes, featuring J Lang, Morusque; page https://ccmixter.org/files/grapes/16626",
+    "path": "ccm-16626.mp3",
+    "bytes": 4534616,
+    "sha256": "503771de369407f8ee521741b274436d1df07890de09f427d3805847f430b952",
+    "durationSeconds": 165.407,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-15556",
+   "tier": "REAL_AUDIO",
+   "title": "duckett - THIS IS OUR MUSIC (Thruewiddit mix)",
+   "genreFamily": "hip_hop",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/duckett/duckett_-_THIS_IS_OUR_MUSIC_(Thruewiddit_mix).mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: duckett, featuring Forensic, Sol, William Barry,cdala; page https://ccmixter.org/files/duckett/15556",
+    "path": "ccm-15556.mp3",
+    "bytes": 7531669,
+    "sha256": "757b12010106c9189bd74f974c2ef807c9c0f535a448d5884fa8b0e5529f7b58",
+    "durationSeconds": 188.189,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-20579",
+   "tier": "REAL_AUDIO",
+   "title": "Kaer_Trouz - 24 Ton Elephant (ft The.Spirit.Of.Light)",
+   "genreFamily": "jazz",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/Kaer_Trouz/Kaer_Trouz_-_24_Ton_Elephant_(ft_The.Spirit.Of.Light).mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: Kaer_Trouz, featuring The.Spirit.Of.Light; page https://ccmixter.org/files/Kaer_Trouz/20579",
+    "path": "ccm-20579.mp3",
+    "bytes": 6855848,
+    "sha256": "40c7f5884fc9cc315577e79e7d61f851be69494358bf03f4feea65ff29593cb5",
+    "durationSeconds": 252.029,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-31981",
+   "tier": "REAL_AUDIO",
+   "title": "VJ_Memes - Pushin' Daisies",
+   "genreFamily": "jazz",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/VJ_Memes/VJ_Memes_-_Pushin_Daisies.mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: VJ_Memes, featuring Mind Map That; page https://ccmixter.org/files/VJ_Memes/31981",
+    "path": "ccm-31981.mp3",
+    "bytes": 6125759,
+    "sha256": "50550b62a250657bac1d490da8c9c7ff4f59d6471ba9d1818f0702fbe4275acf",
+    "durationSeconds": 306.083,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-46200",
+   "tier": "REAL_AUDIO",
+   "title": "SackJo22 - A Foolish Game -- Vox Harmony Adds",
+   "genreFamily": "folk",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/SackJo22/SackJo22_-_A_Foolish_Game_--_Vox_Harmony_Adds.mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: SackJo22, featuring Snowflake, Admiral Bob; page https://ccmixter.org/files/SackJo22/46200",
+    "path": "ccm-46200.mp3",
+    "bytes": 3191424,
+    "sha256": "a5ca41ead98276a1d4791d3f02143a9ea3fef4ffdbe35d8349ff5c73ac78d479",
+    "durationSeconds": 199.208,
+    "sampleRate": 48000,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-23234",
+   "tier": "REAL_AUDIO",
+   "title": "libraryowl - Wade in the Water",
+   "genreFamily": "folk",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/libraryowl/libraryowl_-_Wade_in_the_Water_5.mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: libraryowl; page https://ccmixter.org/files/libraryowl/23234",
+    "path": "ccm-23234.mp3",
+    "bytes": 2277504,
+    "sha256": "21b8da9fab64b592d1ad3b74f8491c46f85c05390e4c3ca185a8d25cc8bad538",
+    "durationSeconds": 142.088,
+    "sampleRate": 48000,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-14073",
+   "tier": "REAL_AUDIO",
+   "title": "George_Ellinas - Dj Rkod - Pulse (George Ellinas Remix)",
+   "genreFamily": "electronic",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/George_Ellinas/George_Ellinas_-_Dj_Rkod_-_Pulse_(George_Ellinas_Remix).mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: George_Ellinas; page https://ccmixter.org/files/George_Ellinas/14073",
+    "path": "ccm-14073.mp3",
+    "bytes": 7908877,
+    "sha256": "83b5fc36a05848095d907bb608221f2e484d16551842ee4025a5498ac8da4823",
+    "durationSeconds": 197.62,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-22358",
+   "tier": "REAL_AUDIO",
+   "title": "wellman - Wayo Wayo-Summer Edition",
+   "genreFamily": "latin",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/wellman/wellman_-_Wayo_Wayo-Summer_Edition.mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: wellman, featuring JhonBlack, cdk´s synth.; page https://ccmixter.org/files/wellman/22358",
+    "path": "ccm-22358.mp3",
+    "bytes": 3985295,
+    "sha256": "c5b8e6c4663233a2e24d0533d6e019c06e3f2fc15bc8c0c8e4dfe766221f57c2",
+    "durationSeconds": 237.793,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-15820",
+   "tier": "REAL_AUDIO",
+   "title": "Sr_Privado - Estoy Nervioso",
+   "genreFamily": "latin",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/Sr_Privado/Sr_Privado_-_Estoy_Nervioso.mp3",
+    "licence": "Attribution (http://creativecommons.org/licenses/by/2.5/); attribution: Sr_Privado; page https://ccmixter.org/files/Sr_Privado/15820",
+    "path": "ccm-15820.mp3",
+    "bytes": 3327241,
+    "sha256": "56b7d373654e394b009435e2df35c1c1fc80417bfc64c58ae1c170c6bd1dd0ea",
+    "durationSeconds": 139.9,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-31759",
+   "tier": "REAL_AUDIO",
+   "title": "mykleanthony - We the People",
+   "genreFamily": "reggae",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/mykleanthony/mykleanthony_-_We_the_People.mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: mykleanthony, featuring Jeris (VJ_Memes); page https://ccmixter.org/files/mykleanthony/31759",
+    "path": "ccm-31759.mp3",
+    "bytes": 7691329,
+    "sha256": "c572b0d4648aa6a1083a56a53bba68ff940da66d59ec333a41ae0537e62818e6",
+    "durationSeconds": 240.226,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-58253",
+   "tier": "REAL_AUDIO",
+   "title": "tobias_weber - Tracing My Steps",
+   "genreFamily": "country",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/tobias_weber/tobias_weber_-_Tracing_My_Steps_1.mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: tobias_weber, featuring Radioontheshelf; page https://ccmixter.org/files/tobias_weber/58253",
+    "path": "ccm-58253.mp3",
+    "bytes": 8324747,
+    "sha256": "e3ea4124002a2854f17d9d969060017de26b4fcbf7a3ca20f9b18416ead17cd8",
+    "durationSeconds": 208.016,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-67147",
+   "tier": "REAL_AUDIO",
+   "title": "echo_orbit - Time Bomb",
+   "genreFamily": "punk",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/echo_orbit/echo_orbit_-_Time_Bomb.mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: echo_orbit; page https://ccmixter.org/files/echo_orbit/67147",
+    "path": "ccm-67147.mp3",
+    "bytes": 7446144,
+    "sha256": "64a752e53c7fff64ef2857ec6769cbc989c04c42441ac06e275dfd048d3b3846",
+    "durationSeconds": 186.051,
+    "sampleRate": 48000,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-14246",
+   "tier": "REAL_AUDIO",
+   "title": "cdk - Midnight Theme (cdk mix)",
+   "genreFamily": "soul",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/cdk/cdk_-_Midnight_Theme_(cdk_mix).mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: cdk; page https://ccmixter.org/files/cdk/14246",
+    "path": "ccm-14246.mp3",
+    "bytes": 7686313,
+    "sha256": "3d2666124e7198d50424b492fee867f8d711f5bce1428dee5f3c4589dd3c80fc",
+    "durationSeconds": 192.055,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "ccm-23748",
+   "tier": "REAL_AUDIO",
+   "title": "Tenny - White Cube Beat Boxing",
+   "genreFamily": "trip_hop",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "CCMIXTER_CC_BY",
+    "url": "https://ccmixter.org/content/Tenny/Tenny_-_White_Cube_Beat_Boxing.mp3",
+    "licence": "Attribution (3.0) (http://creativecommons.org/licenses/by/3.0/); attribution: Tenny, featuring Sackjo22; page https://ccmixter.org/files/Tenny/23748",
+    "path": "ccm-23748.mp3",
+    "bytes": 4239114,
+    "sha256": "8ac63023efd4e594e678de1e2fe0e7e34c2418dea093e083bdcf6d80138b6038",
+    "durationSeconds": 176.679,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {}
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": null
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "UNKNOWN"
+   },
+   "notes": "CC BY mix from ccMixter; no public annotation: every domain UNKNOWN, so this song measures agreement, contest rate, coverage, latency and cost only.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "sections": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  },
+  {
+   "id": "salami-1110",
+   "tier": "REAL_AUDIO",
+   "title": "Fancy Trash - Hollywood",
+   "genreFamily": "live_recording",
+   "source": {
+    "kind": "public_recording",
+    "dataset": "SALAMI_IA",
+    "url": "https://archive.org/download/fancytrash2005-12-03shn/ft2005-12-03t07.mp3",
+    "licence": "Internet Archive Live Music Archive (etree) recording: artist-permitted free non-commercial trading; evaluation only, not redistributed, never trained on",
+    "path": "salami-1110.mp3",
+    "bytes": 6258176,
+    "sha256": "4cf6136ef9bdbfb30c4d15f1410ff607cd7030ebe360e3c68f43c15846b0e337",
+    "durationSeconds": 266.426,
+    "sampleRate": 44100,
+    "channels": 2,
+    "truthSources": {
+     "sections": {
+      "source": "https://github.com/DDMAL/salami-data-public/tree/master/annotations/1110/parsed",
+      "how": "SALAMI v2 public annotations, annotators 4 and 6; functions layer; annotator 1 is the reference, annotator 2 the human ceiling"
+     }
+    }
+   },
+   "audio": null,
+   "truth": {
+    "tempo": null,
+    "metre": null,
+    "key": null,
+    "keySignature": null,
+    "chords": null,
+    "notes": null,
+    "beats": null,
+    "downbeats": null,
+    "sections": [
+     {
+      "start": 0.050068027,
+      "end": 19.301587301,
+      "label": "no_function"
+     },
+     {
+      "start": 19.301587301,
+      "end": 43.663605442,
+      "label": "Intro"
+     },
+     {
+      "start": 43.663605442,
+      "end": 92.897641723,
+      "label": "Verse"
+     },
+     {
+      "start": 92.897641723,
+      "end": 117.063310657,
+      "label": "Chorus"
+     },
+     {
+      "start": 117.063310657,
+      "end": 141.175736961,
+      "label": "Solo"
+     },
+     {
+      "start": 141.175736961,
+      "end": 190.050997732,
+      "label": "Verse"
+     },
+     {
+      "start": 190.050997732,
+      "end": 232.37,
+      "label": "Chorus"
+     },
+     {
+      "start": 232.37,
+      "end": 266.526621315,
+      "label": "no_function"
+     }
+    ]
+   },
+   "coverage": {
+    "tempo": "UNKNOWN",
+    "metre": "UNKNOWN",
+    "key": "UNKNOWN",
+    "chords": "UNKNOWN",
+    "notes": "UNKNOWN",
+    "beats": "UNKNOWN",
+    "downbeats": "UNKNOWN",
+    "sections": "HUMAN_VERIFIED"
+   },
+   "notes": "Live recording from the Internet Archive; sections from SALAMI annotator 1 (functions layer); everything else UNKNOWN.",
+   "annotationTemplate": {
+    "instructions": "Fill a field only after checking it against the recording; a platform estimate or an owner claim is never truth.",
+    "fields": {
+     "sections": {
+      "value": [
+       {
+        "start": 0.05,
+        "end": 19.302,
+        "label": "no_function"
+       },
+       {
+        "start": 19.302,
+        "end": 43.664,
+        "label": "Intro"
+       },
+       {
+        "start": 43.664,
+        "end": 92.898,
+        "label": "Verse"
+       },
+       {
+        "start": 92.898,
+        "end": 117.063,
+        "label": "Chorus"
+       },
+       {
+        "start": 117.063,
+        "end": 141.176,
+        "label": "Solo"
+       },
+       {
+        "start": 141.176,
+        "end": 190.051,
+        "label": "Verse"
+       },
+       {
+        "start": 190.051,
+        "end": 232.37,
+        "label": "Chorus"
+       },
+       {
+        "start": 232.37,
+        "end": 266.527,
+        "label": "no_function"
+       }
+      ],
+      "status": "HUMAN_VERIFIED",
+      "how": "SALAMI v2 public annotations, annotators 4 and 6; functions layer"
+     },
+     "tempo": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "metre": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "key": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "chords": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "notes": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "beats": {
+      "value": null,
+      "status": "UNKNOWN"
+     },
+     "downbeats": {
+      "value": null,
+      "status": "UNKNOWN"
+     }
+    }
+   }
+  }
+ ]
+}
