@@ -2339,6 +2339,46 @@ any of it.
   (tokenizer round-trip → dataset rights proof → tiny overfit → pilot →
   benchmark).
 
+- **PR-53** ✅ — `arranger-tasks` (Wave Q, Q-05 — Data Factory Tier B + training
+  gate 2). Evidence: `docs/evidence/arranger-tasks-live.json`.
+
+  **Tier B** — `arrangerTaskExtraction.ts` turns one admitted human score into
+  training examples of the form *given the rest of the arrangement, write this
+  one part*. The target is a real human-written track over an 8-bar window; the
+  context is the structure plus every other track. Rules that keep it honest: a
+  single-track score yields nothing, the target must actually play in the
+  window, windows do not overlap within a (score, target) pair, and every
+  example carries its `workId`.
+
+  **Gate 2** — `datasetRightsProof.ts` proves every training example traces to a
+  work admitted by **both** our licence gate and the authors' own
+  `no_license_conflict.txt`. A work ours admits but the authors' subset excludes
+  fails the proof (the conservative direction). `assertTrainingMayProceed()` is
+  the line a training run must print before it starts; it throws otherwise.
+
+  **Run on real data:** 5,000 sampled admitted scores → **3,577 tasks**,
+  work-level 90/5/5 split, **no leak**, 0 malformed. The rights proof
+  **verifies**: 3,577/3,577 examples traced, 0 untraceable, proof digest
+  `3bbc10fe…`.
+
+  **The finding that matters.** Only **9%** of PDMX scores yield an arranger
+  task — the other 91% are single-track or under eight bars. **PDMX is
+  overwhelmingly solo piano and solo-instrument sheet music, not multitrack
+  arrangements.** At 222,856 works that is roughly 20k multitrack scores and on
+  the order of 150–200k training examples, weighted toward keys and drums as
+  targets with bass and guitar thin. This is direct evidence for the
+  from-scratch-vs-foundation question: it strengthens the case for **fine-tuning
+  an existing multitrack foundation on PDMX** over training `ARRANGER_FM` from
+  scratch on PDMX alone. The model-discovery tournament decides.
+
+  Suites: datasetRightsProof 8, arrangerTaskExtraction 9; typecheck green.
+
+  **Honest limits.** 5,000-score sample, not the full corpus. No near-duplicate
+  detection (PDMX has duplicate arrangements of popular pieces; the work-level
+  split stops cross-split leakage, not in-train repetition). The task is 8-bar
+  windowed part-prediction — whole-song form and long-range development are not
+  in this formulation. **No model has consumed a single task.**
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

@@ -1,0 +1,48 @@
+{
+  "title": "Arranger task extraction + dataset rights proof on real admitted PDMX (Wave Q, Q-05 — Tier B + training gate 2)",
+  "date": "2026-09-09",
+  "whatWasRun": "extract-arranger-tasks.mjs over 5,000 randomly sampled PDMX MIDI files that pass BOTH the licence gate and the authors' no_license_conflict.txt, with a work-level train/val/test split (90/5/5 by a hash of the work id).",
+  "taskDefinition": "given the structure plus every track except one, over an 8-bar window, predict the held-out track. The target is a real human-written part; the model learns from human choices, not a teacher's imitation.",
+  "result": {
+    "admittedWorks": 222856,
+    "scoresSampled": 5000,
+    "scoresParsed": 5000,
+    "scoresParseFailed": 0,
+    "scoresYieldingTasks": 449,
+    "yieldRate": 0.09,
+    "totalTasks": 3577,
+    "malformedTasksRejected": 0,
+    "splits": {
+      "train": { "works": 411, "tasks": 3269, "targetNotes": 212105 },
+      "val": { "works": 16, "tasks": 138, "targetNotes": 9237 },
+      "test": { "works": 22, "tasks": 170, "targetNotes": 13412 }
+    },
+    "workLevelSplitLeak": false,
+    "tasksByTargetFamily": { "keys": 1399, "drums": 731, "strings": 350, "brass": 288, "synth": 150, "organ": 118, "reed": 106, "chromatic_perc": 101, "pipe": 101, "ensemble": 93, "guitar": 88, "bass": 51, "percussive": 1 },
+    "tasksByContextFamilyCount": { "1": 1919, "2": 717, "3": 453, "4": 262, "5": 141, "6": 72, "7": 13 }
+  },
+  "datasetRightsProof": {
+    "version": "DATASET_RIGHTS_PROOF_v1",
+    "verified": true,
+    "tokenizerVersion": "ARRANGER_REMI_v1_3cfd16b3_386",
+    "examplesChecked": 3577,
+    "examplesTracedToAdmittedWork": 3577,
+    "examplesInAuthorsExcluded": 0,
+    "examplesUntraceable": 0,
+    "admittedWorkCount": 222856,
+    "proofDigest": "3bbc10fe455db5b1ef81371499a56522d4c15ef1cef15f1fcf3436eebdbb4d6d",
+    "meaning": "Every one of 3,577 training examples traces to a work admitted by both our licence gate and the authors' own subset. assertTrainingMayProceed() passes. A run whose proof does not verify does not start."
+  },
+  "theFindingThatMatters": {
+    "what": "Only 9% of sampled PDMX scores yield an arranger task. The other 91% are single-track or under 8 bars.",
+    "why": "PDMX is overwhelmingly solo piano and solo-instrument sheet music, not multitrack arrangements. A score with one track has no 'rest of the arrangement' to condition on.",
+    "implication": "PDMX at 222,856 works gives roughly 20,000 multitrack scores and — at ~8 tasks each after the cap — on the order of 150,000-200,000 arranger training examples. That is a real corpus but not a large one for a 200-350M model trained from scratch, and it is heavily weighted toward keys and drums as targets, with bass and guitar under-represented.",
+    "consequenceForThePlan": "This is direct evidence for the from-scratch-vs-foundation question the model-discovery mission exists to answer. It strengthens the case for starting from an existing multitrack foundation and fine-tuning on PDMX, rather than training ARRANGER_FM from scratch on PDMX alone. The tournament decides."
+  },
+  "honestLimits": [
+    "5,000-score sample, not the full 222,856. The yield rate and family distribution are estimates; a full pass would firm them up.",
+    "No near-duplicate detection yet. PDMX has known duplicate arrangements of popular pieces; the work-level split protects against leakage between splits but not against the same piece appearing many times within train.",
+    "The task is 8-bar windowed part-prediction. Whole-song form, long-range development and cross-section coherence are not in this task formulation — they need a hierarchical or long-context variant.",
+    "No model has consumed a single one of these tasks. This is the corpus and the rights proof, not a trained model."
+  ]
+}

@@ -108,6 +108,10 @@ const suites = {
       // Wave Q, Q-05: the tokenizer the arranger model trains on, and the
       // round-trip proof the training plan gates on.
       ["src/lib/arrangerRemi.test.ts", "arranger-remi.test.mjs"],
+      // Wave Q, Q-05: training gate 2 (every example traces to an admitted
+      // work) and Tier B (arranger tasks extracted from each score).
+      ["src/lib/datasetRightsProof.test.ts", "dataset-rights-proof.test.mjs"],
+      ["src/lib/arrangerTaskExtraction.test.ts", "arranger-task-extraction.test.mjs"],
       // The transport a cloud analysis worker is allowed to reach, and the
       // routes it is not: exposing the API would expose /api/dev-login.
       [
