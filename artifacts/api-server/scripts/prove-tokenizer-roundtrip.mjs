@@ -74,6 +74,8 @@ let parseFailures = 0;
 let filesEmpty = 0;
 let filesWithNotes = 0;
 let filesApproxTimeSig = 0;
+let filesWithPickup = 0;
+let filesWithMetreChanges = 0;
 let losslessModuloGrid = 0;
 let totalConsidered = 0;
 let totalDropped = 0;
@@ -103,6 +105,8 @@ for (const file of sample) {
 
   const result = roundTrip(midi, { maxBars: 512 });
   if (result.timeSigApproximated) filesApproxTimeSig += 1;
+  if (result.pickupBar) filesWithPickup += 1;
+  if (result.metreChanges > 0) filesWithMetreChanges += 1;
   tokenTotal += tokenize(midi, { maxBars: 512 }).length;
   totalConsidered += result.consideredNotes;
   totalDropped += result.droppedNotes;
@@ -135,6 +139,10 @@ const summary = {
   filesWithApproximatedTimeSig: filesApproxTimeSig,
   notesConsidered: totalConsidered,
   filesLosslessModuloGrid: losslessModuloGrid,
+  // The grid follows the dominant metre (not the first written one) since
+  // PR-75; these two say how many files that decision touched.
+  filesWithPickupBar: filesWithPickup,
+  filesWithMetreChanges,
   // Denominator is files that actually had notes to test.
   filesLosslessShare: filesWithNotes ? Number((losslessModuloGrid / filesWithNotes).toFixed(6)) : 0,
   noteDropShare: totalConsidered ? Number((totalDropped / totalConsidered).toFixed(6)) : 0,
