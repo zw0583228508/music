@@ -2379,6 +2379,53 @@ any of it.
   windowed part-prediction — whole-song form and long-range development are not
   in this formulation. **No model has consumed a single task.**
 
+- **PR-54** ✅ — `global-model-registry` (Wave Q — Model Discovery, phase 1:
+  audit → discovery → licensing matrix → shortlist). Report:
+  `docs/model-discovery/README.md`.
+
+  **The registry enforces the discipline, not just the list.**
+  `globalModelRegistry.ts` classifies every model from three independently
+  audited layers — code licence, weights licence, training-data provenance —
+  and an entry **cannot declare itself shippable**: `classify()` is derived,
+  there is no overriding field, and a test pins that. Rules in order: any
+  explicit non-commercial term → `BLOCKED_LICENSE` (fine-tuning does not remove
+  it); underlying works not cleared → `RESEARCH_ONLY` (the Lakh MIDI case:
+  CC-BY-4.0 on the compilation, copyrighted recordings underneath); any layer
+  unread or only from a secondary source → `LEGAL_REVIEW_REQUIRED`; only then
+  `SHIP_CLEARED`. `teacherOutputsNeedReview()` flags the models whose *outputs*
+  may not be assumed safe as training data.
+
+  **Audit of `main`:** ~30 catalogued providers; **two have ever produced real
+  output here** (Basic Pitch via PR-46, and the first-party engines). No
+  symbolic arrangement model has had real inference proven on this
+  infrastructure. `configured` is a rights state, not a live state.
+
+  **Discovery, first pass (8 entries audited):** Composer's Assistant 2,
+  MIDI-GPT, the REMI-z arranger (NeurIPS 2025, *new*), MuPT, NotaGen/-X,
+  Anticipatory Music Transformer, GETMusic, CLaMP 3. **Nothing is
+  `SHIP_CLEARED`** — every permissively-labelled model has an undisclosed or
+  unread training corpus, and a registry test (`the first-pass registry ships
+  nothing`) pins that until a primary source is read. MIDI-GPT is
+  `BLOCKED_LICENSE` (CC-BY-NC weights on Fair-Dealing GigaMIDI); Anticipatory MT
+  is `RESEARCH_ONLY` (Lakh).
+
+  **Shortlist by value/risk:** (1) **Composer's Assistant 2** — our exact task
+  and the only candidate claiming deliberately clean provenance; weights licence
+  is "in the download" and unread. (2) MuPT as fine-tune/distil source. (3) the
+  REMI-z arranger as the representation to test `ARRANGER_REMI` against. (4)
+  CLaMP 3 C2 as the `MUSIC_REWARD_MODEL_V1` backbone. (5–6) Anticipatory MT and
+  MIDI-GPT as shadow challengers that never ship.
+
+  **Gaps found:** no PDMX-fine-tuned public checkpoint exists; no shippable
+  expressive-performance model; no voice-leading model better than a solver.
+
+  Suites: globalModelRegistry 13; typecheck green.
+
+  **Honest limits.** Every external row is `secondary` or `unknown` confidence —
+  read from papers and model-card summaries, not from LICENSE files. **No model
+  in the registry has been run.** `liveInferenceProven` is false on all of
+  them and a test asserts it. This is the map, not the tournament.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
