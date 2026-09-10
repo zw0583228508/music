@@ -1,0 +1,3923 @@
+{
+  "generatedAt": "2026-09-10T00:00:00.000Z",
+  "versions": {
+    "ledger": "MOTIF_LEDGER_V1",
+    "engine": "MELODIC_ENGINE_V1"
+  },
+  "method": "Symbolic only. 'before' = the pre-B-10 counter-melody figure re-run byte-faithfully on the same requests; 'after' = the melodic engine with one ledger per run. Critics: adversarial boredom and copiedRepeat (B-05b), uncalibrated status as they report it; plus the same statistics computed directly on the melodic tracks (interval-bigram entropy, note-copy share between repeated sections, motion against the chord-root bass, vocal overlap and clearance).",
+  "owner": {
+    "brief": "intimate ballad; piano, soft strings, gentle bass, light percussion; big final chorus",
+    "ledger": {
+      "version": "MOTIF_LEDGER_V1",
+      "status": "inferred",
+      "source": "harmonic_inference",
+      "reason": "no melody evidence: 8 cell(s) inferred from the chord-root motion of 9 section(s)",
+      "digest": "69b9e900c2fc08ce86c073327e507a1be182625072145560ba649ea1e0c3d067",
+      "hook": "motif-6a9e5902",
+      "motifs": [
+        {
+          "id": "motif-6a9e5902",
+          "label": "Motif A",
+          "rank": 0,
+          "intervals": [
+            -4,
+            4,
+            5,
+            -5
+          ],
+          "rhythm": [
+            1,
+            0.11,
+            0.54,
+            0.3
+          ],
+          "spanBeats": 27.78,
+          "contour": "mixed",
+          "origin": {
+            "kind": "harmonic_inference",
+            "sectionName": "Verse 1",
+            "chordSymbols": [
+              "Cm",
+              "Ab",
+              "Cm",
+              "Fm",
+              "Cm"
+            ],
+            "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+          },
+          "sourceStatements": 1,
+          "sourceTransformations": [
+            "repetition"
+          ]
+        },
+        {
+          "id": "motif-5252a754",
+          "label": "Motif B",
+          "rank": 1,
+          "intervals": [
+            5,
+            -5,
+            5,
+            -5
+          ],
+          "rhythm": [
+            1,
+            0.07,
+            0.52,
+            0.18
+          ],
+          "spanBeats": 25.96,
+          "contour": "arch",
+          "origin": {
+            "kind": "harmonic_inference",
+            "sectionName": "Verse 2",
+            "chordSymbols": [
+              "Cm",
+              "F",
+              "Cm",
+              "Fm",
+              "Cm"
+            ],
+            "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+          },
+          "sourceStatements": 1,
+          "sourceTransformations": [
+            "repetition"
+          ]
+        },
+        {
+          "id": "motif-d281a0ce",
+          "label": "Motif C",
+          "rank": 2,
+          "intervals": [
+            5,
+            5,
+            2,
+            -2
+          ],
+          "rhythm": [
+            1,
+            6,
+            2.7,
+            1.1
+          ],
+          "spanBeats": 21.74,
+          "contour": "arch",
+          "origin": {
+            "kind": "harmonic_inference",
+            "sectionName": "Chorus",
+            "chordSymbols": [
+              "G",
+              "Cm",
+              "Fm",
+              "Gm",
+              "Fm"
+            ],
+            "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+          },
+          "sourceStatements": 1,
+          "sourceTransformations": [
+            "repetition"
+          ]
+        },
+        {
+          "id": "motif-23c5e53e",
+          "label": "Motif D",
+          "rank": 3,
+          "intervals": [
+            5,
+            5,
+            -2,
+            2
+          ],
+          "rhythm": [
+            1,
+            2,
+            5.32,
+            1.16
+          ],
+          "spanBeats": 36.23,
+          "contour": "arch",
+          "origin": {
+            "kind": "harmonic_inference",
+            "sectionName": "Chorus 2",
+            "chordSymbols": [
+              "G",
+              "Cm",
+              "Fm",
+              "Eb",
+              "Fm"
+            ],
+            "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+          },
+          "sourceStatements": 1,
+          "sourceTransformations": [
+            "repetition"
+          ]
+        },
+        {
+          "id": "motif-3736cc08",
+          "label": "Motif E",
+          "rank": 4,
+          "intervals": [
+            5,
+            5,
+            -5,
+            5
+          ],
+          "rhythm": [
+            1,
+            4.55,
+            0.45,
+            3
+          ],
+          "spanBeats": 36.23,
+          "contour": "arch",
+          "origin": {
+            "kind": "harmonic_inference",
+            "sectionName": "Verse 3",
+            "chordSymbols": [
+              "G",
+              "Cm",
+              "Fm",
+              "Cm",
+              "Fm"
+            ],
+            "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+          },
+          "sourceStatements": 1,
+          "sourceTransformations": [
+            "repetition"
+          ]
+        },
+        {
+          "id": "motif-405d471b",
+          "label": "Motif F",
+          "rank": 5,
+          "intervals": [
+            -2,
+            2,
+            5,
+            -2
+          ],
+          "rhythm": [
+            1,
+            0.14,
+            0.07,
+            0.64
+          ],
+          "spanBeats": 26.17,
+          "contour": "mixed",
+          "origin": {
+            "kind": "harmonic_inference",
+            "sectionName": "Bridge",
+            "chordSymbols": [
+              "Cm",
+              "Bb",
+              "Cm",
+              "Fm",
+              "Eb"
+            ],
+            "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+          },
+          "sourceStatements": 1,
+          "sourceTransformations": [
+            "repetition"
+          ]
+        },
+        {
+          "id": "motif-911a7301",
+          "label": "Motif G",
+          "rank": 6,
+          "intervals": [
+            5,
+            -5,
+            5,
+            5
+          ],
+          "rhythm": [
+            1,
+            0.28,
+            0.73,
+            1.13
+          ],
+          "spanBeats": 25.16,
+          "contour": "mixed",
+          "origin": {
+            "kind": "harmonic_inference",
+            "sectionName": "Chorus 3",
+            "chordSymbols": [
+              "Cm",
+              "Fm",
+              "Cm",
+              "Fm",
+              "Bbm"
+            ],
+            "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+          },
+          "sourceStatements": 1,
+          "sourceTransformations": [
+            "repetition"
+          ]
+        },
+        {
+          "id": "motif-0e408758",
+          "label": "Motif H",
+          "rank": 7,
+          "intervals": [
+            5,
+            -5,
+            5,
+            -5
+          ],
+          "rhythm": [
+            1,
+            0.46,
+            0.51,
+            0.98
+          ],
+          "spanBeats": 24.36,
+          "contour": "arch",
+          "origin": {
+            "kind": "harmonic_inference",
+            "sectionName": "Outro",
+            "chordSymbols": [
+              "Cm",
+              "Fm",
+              "Cm",
+              "Fm",
+              "C"
+            ],
+            "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+          },
+          "sourceStatements": 1,
+          "sourceTransformations": [
+            "repetition"
+          ]
+        }
+      ],
+      "withheld": [
+        {
+          "motifId": "motif-6a9e5902",
+          "untilSectionName": "Chorus",
+          "untilTensionRole": "arrival",
+          "allowedBefore": [
+            "fragmentation"
+          ],
+          "reason": "the hook (Motif A) is stated in full from \"Chorus\" (arrival); before it only a fragment, so the arrival says something the setup did not"
+        }
+      ],
+      "occurrences": [
+        {
+          "index": 0,
+          "motif": "motif-405d471b",
+          "transformation": "harmonic_adaptation",
+          "intended": "retrograde_inversion",
+          "transposition": 19,
+          "section": "Bridge",
+          "sectionFunction": "bridge",
+          "occurrenceIndex": 0,
+          "bars": [
+            97,
+            104
+          ],
+          "instrument": "strings",
+          "intention": "support",
+          "notes": 5,
+          "recallOf": null,
+          "placement": "part_window",
+          "reason": "the cell sung inside the window (inferred-Bridge); counter-line unit 1: transposition"
+        },
+        {
+          "index": 1,
+          "motif": "motif-6a9e5902",
+          "transformation": "inversion",
+          "intended": "inversion",
+          "transposition": 17,
+          "section": "Bridge",
+          "sectionFunction": "bridge",
+          "occurrenceIndex": 0,
+          "bars": [
+            105,
+            110
+          ],
+          "instrument": "strings",
+          "intention": "support",
+          "notes": 5,
+          "recallOf": null,
+          "placement": "part_window",
+          "reason": "the hook (Motif A); counter-line unit 2: sequence"
+        }
+      ],
+      "notes": []
+    },
+    "productionMelodicTasks": [
+      {
+        "task": "part-Bridge-strings-COUNTER_MELODY",
+        "section": "Bridge",
+        "bars": [
+          97,
+          112
+        ],
+        "instrument": "strings",
+        "before": {
+          "track": "strings",
+          "notes": 2,
+          "motifNotes": 0,
+          "transformations": {},
+          "entropy": {
+            "entropy": null,
+            "intervals": 1,
+            "distinctBigrams": 0
+          },
+          "motionVsBass": {
+            "contrary": 0,
+            "oblique": 1,
+            "similar": 0,
+            "parallel": 0,
+            "pairs": 1,
+            "rate": 1
+          },
+          "overlapsVocal": false,
+          "vocalClearance": null,
+          "copyShares": [
+            {
+              "earlier": "Verse 1",
+              "later": "Verse 2",
+              "share": null,
+              "earlierNotes": 0,
+              "laterNotes": 0
+            },
+            {
+              "earlier": "Verse 1",
+              "later": "Verse 3",
+              "share": null,
+              "earlierNotes": 0,
+              "laterNotes": 0
+            },
+            {
+              "earlier": "Verse 2",
+              "later": "Verse 3",
+              "share": null,
+              "earlierNotes": 0,
+              "laterNotes": 0
+            },
+            {
+              "earlier": "Chorus",
+              "later": "Chorus 2",
+              "share": null,
+              "earlierNotes": 0,
+              "laterNotes": 0
+            },
+            {
+              "earlier": "Chorus",
+              "later": "Chorus 3",
+              "share": null,
+              "earlierNotes": 0,
+              "laterNotes": 0
+            },
+            {
+              "earlier": "Chorus 2",
+              "later": "Chorus 3",
+              "share": null,
+              "earlierNotes": 0,
+              "laterNotes": 0
+            }
+          ]
+        },
+        "after": {
+          "track": "strings",
+          "notes": 5,
+          "motifNotes": 5,
+          "transformations": {
+            "harmonic_adaptation": 3,
+            "inversion": 2
+          },
+          "entropy": {
+            "entropy": 1,
+            "intervals": 4,
+            "distinctBigrams": 3
+          },
+          "motionVsBass": {
+            "contrary": 3,
+            "oblique": 1,
+            "similar": 0,
+            "parallel": 0,
+            "pairs": 4,
+            "rate": 1
+          },
+          "overlapsVocal": false,
+          "vocalClearance": null,
+          "copyShares": [
+            {
+              "earlier": "Verse 1",
+              "later": "Verse 2",
+              "share": null,
+              "earlierNotes": 0,
+              "laterNotes": 0
+            },
+            {
+              "earlier": "Verse 1",
+              "later": "Verse 3",
+              "share": null,
+              "earlierNotes": 0,
+              "laterNotes": 0
+            },
+            {
+              "earlier": "Verse 2",
+              "later": "Verse 3",
+              "share": null,
+              "earlierNotes": 0,
+              "laterNotes": 0
+            },
+            {
+              "earlier": "Chorus",
+              "later": "Chorus 2",
+              "share": null,
+              "earlierNotes": 0,
+              "laterNotes": 0
+            },
+            {
+              "earlier": "Chorus",
+              "later": "Chorus 3",
+              "share": null,
+              "earlierNotes": 0,
+              "laterNotes": 0
+            },
+            {
+              "earlier": "Chorus 2",
+              "later": "Chorus 3",
+              "share": null,
+              "earlierNotes": 0,
+              "laterNotes": 0
+            }
+          ]
+        }
+      }
+    ],
+    "productionPath": {
+      "selected": {
+        "before": true,
+        "after": true
+      },
+      "noteCount": {
+        "before": 1599,
+        "after": 1602
+      },
+      "boredom": {
+        "before": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 1,
+          "onMelodicTracks": 1,
+          "kinds": [
+            {
+              "kind": "rhythm_predictable",
+              "severity": "major",
+              "tracks": [
+                "percussion-fill"
+              ],
+              "bars": [
+                25,
+                128
+              ],
+              "evidence": {
+                "entropyNormalised": 0.0906,
+                "entropyBits": 0.5436,
+                "distinctBarRhythms": 2,
+                "bars": 64
+              }
+            }
+          ]
+        },
+        "after": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 1,
+          "onMelodicTracks": 1,
+          "kinds": [
+            {
+              "kind": "rhythm_predictable",
+              "severity": "major",
+              "tracks": [
+                "percussion-fill"
+              ],
+              "bars": [
+                25,
+                128
+              ],
+              "evidence": {
+                "entropyNormalised": 0.0906,
+                "entropyBits": 0.5436,
+                "distinctBarRhythms": 2,
+                "bars": 64
+              }
+            }
+          ]
+        }
+      },
+      "copiedRepeat": {
+        "before": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 4,
+          "onMelodicTracks": 4,
+          "kinds": [
+            {
+              "kind": "section_note_copy",
+              "severity": "minor",
+              "tracks": [
+                "percussion-fill"
+              ],
+              "bars": [
+                57,
+                72
+              ],
+              "evidence": {
+                "earlierSection": "Chorus",
+                "laterSection": "Chorus 2",
+                "byteMatchShare": 0.0333,
+                "noteMatchShare": 1,
+                "rhythmMatchShare": 1,
+                "notesEarlier": 30,
+                "notesLater": 30,
+                "finalRepeat": false
+              }
+            },
+            {
+              "kind": "section_note_copy",
+              "severity": "major",
+              "tracks": [
+                "drums-groove"
+              ],
+              "bars": [
+                113,
+                128
+              ],
+              "evidence": {
+                "earlierSection": "Chorus 2",
+                "laterSection": "Chorus 3",
+                "byteMatchShare": 0.0433,
+                "noteMatchShare": 0.9952,
+                "rhythmMatchShare": 0.9952,
+                "notesEarlier": 207,
+                "notesLater": 208,
+                "finalRepeat": true
+              }
+            },
+            {
+              "kind": "section_note_copy",
+              "severity": "major",
+              "tracks": [
+                "percussion-fill"
+              ],
+              "bars": [
+                113,
+                128
+              ],
+              "evidence": {
+                "earlierSection": "Chorus",
+                "laterSection": "Chorus 3",
+                "byteMatchShare": 0,
+                "noteMatchShare": 1,
+                "rhythmMatchShare": 1,
+                "notesEarlier": 30,
+                "notesLater": 30,
+                "finalRepeat": true
+              }
+            },
+            {
+              "kind": "section_note_copy",
+              "severity": "major",
+              "tracks": [
+                "percussion-fill"
+              ],
+              "bars": [
+                113,
+                128
+              ],
+              "evidence": {
+                "earlierSection": "Chorus 2",
+                "laterSection": "Chorus 3",
+                "byteMatchShare": 0,
+                "noteMatchShare": 1,
+                "rhythmMatchShare": 1,
+                "notesEarlier": 30,
+                "notesLater": 30,
+                "finalRepeat": true
+              }
+            }
+          ]
+        },
+        "after": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 4,
+          "onMelodicTracks": 4,
+          "kinds": [
+            {
+              "kind": "section_note_copy",
+              "severity": "minor",
+              "tracks": [
+                "percussion-fill"
+              ],
+              "bars": [
+                57,
+                72
+              ],
+              "evidence": {
+                "earlierSection": "Chorus",
+                "laterSection": "Chorus 2",
+                "byteMatchShare": 0.0333,
+                "noteMatchShare": 1,
+                "rhythmMatchShare": 1,
+                "notesEarlier": 30,
+                "notesLater": 30,
+                "finalRepeat": false
+              }
+            },
+            {
+              "kind": "section_note_copy",
+              "severity": "major",
+              "tracks": [
+                "drums-groove"
+              ],
+              "bars": [
+                113,
+                128
+              ],
+              "evidence": {
+                "earlierSection": "Chorus 2",
+                "laterSection": "Chorus 3",
+                "byteMatchShare": 0.0433,
+                "noteMatchShare": 0.9952,
+                "rhythmMatchShare": 0.9952,
+                "notesEarlier": 207,
+                "notesLater": 208,
+                "finalRepeat": true
+              }
+            },
+            {
+              "kind": "section_note_copy",
+              "severity": "major",
+              "tracks": [
+                "percussion-fill"
+              ],
+              "bars": [
+                113,
+                128
+              ],
+              "evidence": {
+                "earlierSection": "Chorus",
+                "laterSection": "Chorus 3",
+                "byteMatchShare": 0,
+                "noteMatchShare": 1,
+                "rhythmMatchShare": 1,
+                "notesEarlier": 30,
+                "notesLater": 30,
+                "finalRepeat": true
+              }
+            },
+            {
+              "kind": "section_note_copy",
+              "severity": "major",
+              "tracks": [
+                "percussion-fill"
+              ],
+              "bars": [
+                113,
+                128
+              ],
+              "evidence": {
+                "earlierSection": "Chorus 2",
+                "laterSection": "Chorus 3",
+                "byteMatchShare": 0,
+                "noteMatchShare": 1,
+                "rhythmMatchShare": 1,
+                "notesEarlier": 30,
+                "notesLater": 30,
+                "finalRepeat": true
+              }
+            }
+          ]
+        }
+      }
+    },
+    "answersHarness": {
+      "note": "the owner's song has no melody evidence (vocal map not_available): answers are placed at phrase ends inferred from the section plan and the motifs are the chord-root cells; both labelled as inference in the ledger",
+      "sungSections": [
+        "Verse 1",
+        "Verse 2",
+        "Chorus",
+        "Chorus 2",
+        "Verse 3",
+        "Bridge",
+        "Chorus 3"
+      ],
+      "before": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 28,
+            "entropy": {
+              "entropy": 0.759,
+              "intervals": 27,
+              "distinctBigrams": 14
+            },
+            "motionRate": 0.9629629629629629,
+            "copyShares": [
+              {
+                "earlier": "Verse 1",
+                "later": "Verse 2",
+                "share": 0,
+                "earlierNotes": 4,
+                "laterNotes": 4
+              },
+              {
+                "earlier": "Verse 1",
+                "later": "Verse 3",
+                "share": 0,
+                "earlierNotes": 4,
+                "laterNotes": 4
+              },
+              {
+                "earlier": "Verse 2",
+                "later": "Verse 3",
+                "share": 0,
+                "earlierNotes": 4,
+                "laterNotes": 4
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 1,
+                "earlierNotes": 4,
+                "laterNotes": 4
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 3",
+                "share": 0,
+                "earlierNotes": 4,
+                "laterNotes": 4
+              },
+              {
+                "earlier": "Chorus 2",
+                "later": "Chorus 3",
+                "share": 0,
+                "earlierNotes": 4,
+                "laterNotes": 4
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 28,
+            "entropy": {
+              "entropy": 0.774,
+              "intervals": 27,
+              "distinctBigrams": 15
+            },
+            "motionRate": 0.9629629629629629,
+            "copyShares": [
+              {
+                "earlier": "Verse 1",
+                "later": "Verse 2",
+                "share": 0,
+                "earlierNotes": 4,
+                "laterNotes": 4
+              },
+              {
+                "earlier": "Verse 1",
+                "later": "Verse 3",
+                "share": 0,
+                "earlierNotes": 4,
+                "laterNotes": 4
+              },
+              {
+                "earlier": "Verse 2",
+                "later": "Verse 3",
+                "share": 0,
+                "earlierNotes": 4,
+                "laterNotes": 4
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 1,
+                "earlierNotes": 4,
+                "laterNotes": 4
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 3",
+                "share": 0,
+                "earlierNotes": 4,
+                "laterNotes": 4
+              },
+              {
+                "earlier": "Chorus 2",
+                "later": "Chorus 3",
+                "share": 0,
+                "earlierNotes": 4,
+                "laterNotes": 4
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "after": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 92,
+            "motifNotes": 92,
+            "transformations": {
+              "retrograde": 5,
+              "fragmentation": 3,
+              "transposition": 10,
+              "harmonic_adaptation": 44,
+              "inversion": 5,
+              "rhythmic_variation": 20,
+              "retrograde_inversion": 5
+            },
+            "entropy": {
+              "entropy": 0.821,
+              "intervals": 91,
+              "distinctBigrams": 55
+            },
+            "motionRate": 0.8977272727272727,
+            "copyShares": [
+              {
+                "earlier": "Verse 1",
+                "later": "Verse 2",
+                "share": 0,
+                "earlierNotes": 13,
+                "laterNotes": 9
+              },
+              {
+                "earlier": "Verse 1",
+                "later": "Verse 3",
+                "share": 0.067,
+                "earlierNotes": 13,
+                "laterNotes": 15
+              },
+              {
+                "earlier": "Verse 2",
+                "later": "Verse 3",
+                "share": 0,
+                "earlierNotes": 9,
+                "laterNotes": 15
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0,
+                "earlierNotes": 20,
+                "laterNotes": 10
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 3",
+                "share": 0,
+                "earlierNotes": 20,
+                "laterNotes": 15
+              },
+              {
+                "earlier": "Chorus 2",
+                "later": "Chorus 3",
+                "share": 0,
+                "earlierNotes": 10,
+                "laterNotes": 15
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 66,
+            "motifNotes": 66,
+            "transformations": {
+              "fragmentation": 20,
+              "rhythmic_variation": 10,
+              "inversion": 20,
+              "harmonic_adaptation": 16
+            },
+            "entropy": {
+              "entropy": 0.637,
+              "intervals": 65,
+              "distinctBigrams": 25
+            },
+            "motionRate": 0.9354838709677419,
+            "copyShares": [
+              {
+                "earlier": "Verse 1",
+                "later": "Verse 2",
+                "share": 0.091,
+                "earlierNotes": 11,
+                "laterNotes": 10
+              },
+              {
+                "earlier": "Verse 1",
+                "later": "Verse 3",
+                "share": 0.2,
+                "earlierNotes": 11,
+                "laterNotes": 15
+              },
+              {
+                "earlier": "Verse 2",
+                "later": "Verse 3",
+                "share": 0,
+                "earlierNotes": 10,
+                "laterNotes": 15
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0.5,
+                "earlierNotes": 6,
+                "laterNotes": 6
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 3",
+                "share": 0.25,
+                "earlierNotes": 6,
+                "laterNotes": 8
+              },
+              {
+                "earlier": "Chorus 2",
+                "later": "Chorus 3",
+                "share": 0.25,
+                "earlierNotes": 6,
+                "laterNotes": 8
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "ledger": {
+        "version": "MOTIF_LEDGER_V1",
+        "status": "inferred",
+        "source": "harmonic_inference",
+        "reason": "no melody evidence: 8 cell(s) inferred from the chord-root motion of 9 section(s)",
+        "digest": "acf4be1cf2b98641812e71c038206a0ef399044e6e0d64004eec926e780f38d8",
+        "hook": "motif-6a9e5902",
+        "motifs": [
+          {
+            "id": "motif-6a9e5902",
+            "label": "Motif A",
+            "rank": 0,
+            "intervals": [
+              -4,
+              4,
+              5,
+              -5
+            ],
+            "rhythm": [
+              1,
+              0.11,
+              0.54,
+              0.3
+            ],
+            "spanBeats": 27.78,
+            "contour": "mixed",
+            "origin": {
+              "kind": "harmonic_inference",
+              "sectionName": "Verse 1",
+              "chordSymbols": [
+                "Cm",
+                "Ab",
+                "Cm",
+                "Fm",
+                "Cm"
+              ],
+              "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+            },
+            "sourceStatements": 1,
+            "sourceTransformations": [
+              "repetition"
+            ]
+          },
+          {
+            "id": "motif-5252a754",
+            "label": "Motif B",
+            "rank": 1,
+            "intervals": [
+              5,
+              -5,
+              5,
+              -5
+            ],
+            "rhythm": [
+              1,
+              0.07,
+              0.52,
+              0.18
+            ],
+            "spanBeats": 25.96,
+            "contour": "arch",
+            "origin": {
+              "kind": "harmonic_inference",
+              "sectionName": "Verse 2",
+              "chordSymbols": [
+                "Cm",
+                "F",
+                "Cm",
+                "Fm",
+                "Cm"
+              ],
+              "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+            },
+            "sourceStatements": 1,
+            "sourceTransformations": [
+              "repetition"
+            ]
+          },
+          {
+            "id": "motif-d281a0ce",
+            "label": "Motif C",
+            "rank": 2,
+            "intervals": [
+              5,
+              5,
+              2,
+              -2
+            ],
+            "rhythm": [
+              1,
+              6,
+              2.7,
+              1.1
+            ],
+            "spanBeats": 21.74,
+            "contour": "arch",
+            "origin": {
+              "kind": "harmonic_inference",
+              "sectionName": "Chorus",
+              "chordSymbols": [
+                "G",
+                "Cm",
+                "Fm",
+                "Gm",
+                "Fm"
+              ],
+              "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+            },
+            "sourceStatements": 1,
+            "sourceTransformations": [
+              "repetition"
+            ]
+          },
+          {
+            "id": "motif-23c5e53e",
+            "label": "Motif D",
+            "rank": 3,
+            "intervals": [
+              5,
+              5,
+              -2,
+              2
+            ],
+            "rhythm": [
+              1,
+              2,
+              5.32,
+              1.16
+            ],
+            "spanBeats": 36.23,
+            "contour": "arch",
+            "origin": {
+              "kind": "harmonic_inference",
+              "sectionName": "Chorus 2",
+              "chordSymbols": [
+                "G",
+                "Cm",
+                "Fm",
+                "Eb",
+                "Fm"
+              ],
+              "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+            },
+            "sourceStatements": 1,
+            "sourceTransformations": [
+              "repetition"
+            ]
+          },
+          {
+            "id": "motif-3736cc08",
+            "label": "Motif E",
+            "rank": 4,
+            "intervals": [
+              5,
+              5,
+              -5,
+              5
+            ],
+            "rhythm": [
+              1,
+              4.55,
+              0.45,
+              3
+            ],
+            "spanBeats": 36.23,
+            "contour": "arch",
+            "origin": {
+              "kind": "harmonic_inference",
+              "sectionName": "Verse 3",
+              "chordSymbols": [
+                "G",
+                "Cm",
+                "Fm",
+                "Cm",
+                "Fm"
+              ],
+              "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+            },
+            "sourceStatements": 1,
+            "sourceTransformations": [
+              "repetition"
+            ]
+          },
+          {
+            "id": "motif-405d471b",
+            "label": "Motif F",
+            "rank": 5,
+            "intervals": [
+              -2,
+              2,
+              5,
+              -2
+            ],
+            "rhythm": [
+              1,
+              0.14,
+              0.07,
+              0.64
+            ],
+            "spanBeats": 26.17,
+            "contour": "mixed",
+            "origin": {
+              "kind": "harmonic_inference",
+              "sectionName": "Bridge",
+              "chordSymbols": [
+                "Cm",
+                "Bb",
+                "Cm",
+                "Fm",
+                "Eb"
+              ],
+              "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+            },
+            "sourceStatements": 1,
+            "sourceTransformations": [
+              "repetition"
+            ]
+          },
+          {
+            "id": "motif-911a7301",
+            "label": "Motif G",
+            "rank": 6,
+            "intervals": [
+              5,
+              -5,
+              5,
+              5
+            ],
+            "rhythm": [
+              1,
+              0.28,
+              0.73,
+              1.13
+            ],
+            "spanBeats": 25.16,
+            "contour": "mixed",
+            "origin": {
+              "kind": "harmonic_inference",
+              "sectionName": "Chorus 3",
+              "chordSymbols": [
+                "Cm",
+                "Fm",
+                "Cm",
+                "Fm",
+                "Bbm"
+              ],
+              "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+            },
+            "sourceStatements": 1,
+            "sourceTransformations": [
+              "repetition"
+            ]
+          },
+          {
+            "id": "motif-0e408758",
+            "label": "Motif H",
+            "rank": 7,
+            "intervals": [
+              5,
+              -5,
+              5,
+              -5
+            ],
+            "rhythm": [
+              1,
+              0.46,
+              0.51,
+              0.98
+            ],
+            "spanBeats": 24.36,
+            "contour": "arch",
+            "origin": {
+              "kind": "harmonic_inference",
+              "sectionName": "Outro",
+              "chordSymbols": [
+                "Cm",
+                "Fm",
+                "Cm",
+                "Fm",
+                "C"
+              ],
+              "reason": "no melody evidence (vocal map not available, melody empty): the cell is the root motion of the section's first chords - an inference, not a heard motif"
+            },
+            "sourceStatements": 1,
+            "sourceTransformations": [
+              "repetition"
+            ]
+          }
+        ],
+        "withheld": [
+          {
+            "motifId": "motif-6a9e5902",
+            "untilSectionName": "Chorus",
+            "untilTensionRole": "arrival",
+            "allowedBefore": [
+              "fragmentation"
+            ],
+            "reason": "the hook (Motif A) is stated in full from \"Chorus\" (arrival); before it only a fragment, so the arrival says something the setup did not"
+          }
+        ],
+        "occurrences": [
+          {
+            "index": 0,
+            "motif": "motif-6a9e5902",
+            "transformation": "retrograde",
+            "intended": "retrograde",
+            "transposition": 15,
+            "section": "Verse 1",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 0,
+            "bars": [
+              3,
+              10
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 5,
+            "recallOf": null,
+            "placement": "part_window",
+            "reason": "the cell sung inside the window (inferred-Verse_1); counter-line unit 1: transposition; withheld until \"Chorus\" -> fragmentation"
+          },
+          {
+            "index": 1,
+            "motif": "motif-6a9e5902",
+            "transformation": "fragmentation",
+            "intended": "fragmentation",
+            "transposition": 15,
+            "section": "Verse 1",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 0,
+            "bars": [
+              11,
+              18
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 3,
+            "recallOf": null,
+            "placement": "part_window",
+            "reason": "the cell sung inside the window (inferred-Verse_1); counter-line unit 2: sequence; withheld until \"Chorus\" -> fragmentation"
+          },
+          {
+            "index": 2,
+            "motif": "motif-5252a754",
+            "transformation": "transposition",
+            "intended": "transposition",
+            "transposition": 15,
+            "section": "Verse 1",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 0,
+            "bars": [
+              19,
+              24
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 5,
+            "recallOf": null,
+            "placement": "part_window",
+            "reason": "the cell sung inside the window (inferred-Verse_2); counter-line unit 3: inversion"
+          },
+          {
+            "index": 3,
+            "motif": "motif-6a9e5902",
+            "transformation": "fragmentation",
+            "intended": "fragmentation",
+            "transposition": 7,
+            "section": "Verse 1",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 0,
+            "bars": [
+              10,
+              10
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 3,
+            "recallOf": null,
+            "placement": "inferred_phrase_end",
+            "reason": "the cell sung inside the window (inferred-Verse_1); the sung cell is mixed: restated on the chord; withheld until \"Chorus\" -> fragmentation"
+          },
+          {
+            "index": 4,
+            "motif": "motif-6a9e5902",
+            "transformation": "fragmentation",
+            "intended": "fragmentation",
+            "transposition": 7,
+            "section": "Verse 1",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 0,
+            "bars": [
+              18,
+              18
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 3,
+            "recallOf": null,
+            "placement": "inferred_phrase_end",
+            "reason": "the hook (Motif A); no sung contour: the cell restated on the chord; withheld until \"Chorus\" -> fragmentation"
+          },
+          {
+            "index": 5,
+            "motif": "motif-5252a754",
+            "transformation": "rhythmic_variation",
+            "intended": "retrograde",
+            "transposition": 7,
+            "section": "Verse 1",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 0,
+            "bars": [
+              24,
+              24
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 5,
+            "recallOf": null,
+            "placement": "inferred_phrase_end",
+            "reason": "the cell sung inside the window (inferred-Verse_2); the sung cell is an arch: the answer comes back the way it went (retrograde)"
+          },
+          {
+            "index": 6,
+            "motif": "motif-5252a754",
+            "transformation": "harmonic_adaptation",
+            "intended": "inversion",
+            "transposition": 15,
+            "section": "Verse 2",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 1,
+            "bars": [
+              25,
+              32
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 5,
+            "recallOf": 2,
+            "placement": "part_window",
+            "reason": "recall of occurrence #2 (Verse 1, strings, transposition) developed as inversion"
+          },
+          {
+            "index": 7,
+            "motif": "motif-5252a754",
+            "transformation": "inversion",
+            "intended": "retrograde_inversion",
+            "transposition": 17,
+            "section": "Verse 2",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 1,
+            "bars": [
+              33,
+              40
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 5,
+            "recallOf": null,
+            "placement": "part_window",
+            "reason": "the phrase that just ended (inferred-Verse_2); counter-line unit 2: inversion"
+          },
+          {
+            "index": 8,
+            "motif": "motif-5252a754",
+            "transformation": "inversion",
+            "intended": "inversion",
+            "transposition": 8,
+            "section": "Verse 2",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 1,
+            "bars": [
+              32,
+              32
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 5,
+            "recallOf": 5,
+            "placement": "inferred_phrase_end",
+            "reason": "recall of occurrence #5 (Verse 1, brass, rhythmic_variation) developed as inversion"
+          },
+          {
+            "index": 9,
+            "motif": "motif-5252a754",
+            "transformation": "harmonic_adaptation",
+            "intended": "inversion",
+            "transposition": 8,
+            "section": "Verse 2",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 1,
+            "bars": [
+              40,
+              40
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 5,
+            "recallOf": 5,
+            "placement": "inferred_phrase_end",
+            "reason": "recall of occurrence #5 (Verse 1, brass, rhythmic_variation) developed as inversion"
+          },
+          {
+            "index": 10,
+            "motif": "motif-d281a0ce",
+            "transformation": "rhythmic_variation",
+            "intended": "sequence",
+            "transposition": 19,
+            "section": "Chorus",
+            "sectionFunction": "chorus",
+            "occurrenceIndex": 0,
+            "bars": [
+              41,
+              48
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 10,
+            "recallOf": null,
+            "placement": "part_window",
+            "reason": "the cell sung inside the window (inferred-Chorus); counter-line unit 1: transposition"
+          },
+          {
+            "index": 11,
+            "motif": "motif-d281a0ce",
+            "transformation": "rhythmic_variation",
+            "intended": "sequence",
+            "transposition": 15,
+            "section": "Chorus",
+            "sectionFunction": "chorus",
+            "occurrenceIndex": 0,
+            "bars": [
+              49,
+              56
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 10,
+            "recallOf": null,
+            "placement": "part_window",
+            "reason": "the phrase that just ended (inferred-Chorus); counter-line unit 2: sequence"
+          },
+          {
+            "index": 12,
+            "motif": "motif-d281a0ce",
+            "transformation": "fragmentation",
+            "intended": "fragmentation",
+            "transposition": 12,
+            "section": "Chorus",
+            "sectionFunction": "chorus",
+            "occurrenceIndex": 0,
+            "bars": [
+              48,
+              48
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 3,
+            "recallOf": null,
+            "placement": "inferred_phrase_end",
+            "reason": "the phrase that just ended (inferred-Chorus); arrival: the instrument confirms the singer's cell (transposed onto the chord)"
+          },
+          {
+            "index": 13,
+            "motif": "motif-23c5e53e",
+            "transformation": "fragmentation",
+            "intended": "fragmentation",
+            "transposition": 12,
+            "section": "Chorus",
+            "sectionFunction": "chorus",
+            "occurrenceIndex": 0,
+            "bars": [
+              56,
+              56
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 3,
+            "recallOf": null,
+            "placement": "inferred_phrase_end",
+            "reason": "the cell sung inside the window (inferred-Chorus_2); arrival: the instrument confirms the singer's cell (transposed onto the chord)"
+          },
+          {
+            "index": 14,
+            "motif": "motif-d281a0ce",
+            "transformation": "harmonic_adaptation",
+            "intended": "inversion",
+            "transposition": 24,
+            "section": "Chorus 2",
+            "sectionFunction": "chorus",
+            "occurrenceIndex": 1,
+            "bars": [
+              57,
+              64
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 5,
+            "recallOf": 11,
+            "placement": "part_window",
+            "reason": "recall of occurrence #11 (Chorus, strings, rhythmic_variation) developed as inversion"
+          },
+          {
+            "index": 15,
+            "motif": "motif-23c5e53e",
+            "transformation": "harmonic_adaptation",
+            "intended": "retrograde",
+            "transposition": 24,
+            "section": "Chorus 2",
+            "sectionFunction": "chorus",
+            "occurrenceIndex": 1,
+            "bars": [
+              65,
+              72
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 5,
+            "recallOf": null,
+            "placement": "part_window",
+            "reason": "the cell sung inside the window (inferred-Chorus_2); counter-line unit 2: inversion"
+          },
+          {
+            "index": 16,
+            "motif": "motif-23c5e53e",
+            "transformation": "harmonic_adaptation",
+            "intended": "fragmentation",
+            "transposition": 12,
+            "section": "Chorus 2",
+            "sectionFunction": "chorus",
+            "occurrenceIndex": 1,
+            "bars": [
+              64,
+              64
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 3,
+            "recallOf": 13,
+            "placement": "inferred_phrase_end",
+            "reason": "recall of occurrence #13 (Chorus, brass, fragmentation) developed as retrograde"
+          },
+          {
+            "index": 17,
+            "motif": "motif-23c5e53e",
+            "transformation": "harmonic_adaptation",
+            "intended": "fragmentation",
+            "transposition": 12,
+            "section": "Chorus 2",
+            "sectionFunction": "chorus",
+            "occurrenceIndex": 1,
+            "bars": [
+              72,
+              72
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 3,
+            "recallOf": 13,
+            "placement": "inferred_phrase_end",
+            "reason": "recall of occurrence #13 (Chorus, brass, fragmentation) developed as retrograde"
+          },
+          {
+            "index": 18,
+            "motif": "motif-5252a754",
+            "transformation": "transposition",
+            "intended": "augmentation",
+            "transposition": 19,
+            "section": "Verse 3",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 2,
+            "bars": [
+              73,
+              80
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 5,
+            "recallOf": 7,
+            "placement": "part_window",
+            "reason": "recall of occurrence #7 (Verse 2, strings, inversion) developed as augmentation"
+          },
+          {
+            "index": 19,
+            "motif": "motif-3736cc08",
+            "transformation": "harmonic_adaptation",
+            "intended": "retrograde_inversion",
+            "transposition": 20,
+            "section": "Verse 3",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 2,
+            "bars": [
+              81,
+              88
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 5,
+            "recallOf": null,
+            "placement": "part_window",
+            "reason": "the cell sung inside the window (inferred-Verse_3); counter-line unit 2: augmentation"
+          },
+          {
+            "index": 20,
+            "motif": "motif-405d471b",
+            "transformation": "harmonic_adaptation",
+            "intended": "inversion",
+            "transposition": 17,
+            "section": "Verse 3",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 2,
+            "bars": [
+              89,
+              96
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 5,
+            "recallOf": null,
+            "placement": "part_window",
+            "reason": "the cell sung inside the window (inferred-Bridge); counter-line unit 3: transposition"
+          },
+          {
+            "index": 21,
+            "motif": "motif-5252a754",
+            "transformation": "inversion",
+            "intended": "inversion",
+            "transposition": 7,
+            "section": "Verse 3",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 2,
+            "bars": [
+              80,
+              80
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 5,
+            "recallOf": 9,
+            "placement": "inferred_phrase_end",
+            "reason": "recall of occurrence #9 (Verse 2, brass, harmonic_adaptation) developed as inversion"
+          },
+          {
+            "index": 22,
+            "motif": "motif-5252a754",
+            "transformation": "inversion",
+            "intended": "inversion",
+            "transposition": 12,
+            "section": "Verse 3",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 2,
+            "bars": [
+              88,
+              88
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 5,
+            "recallOf": 9,
+            "placement": "inferred_phrase_end",
+            "reason": "recall of occurrence #9 (Verse 2, brass, harmonic_adaptation) developed as inversion"
+          },
+          {
+            "index": 23,
+            "motif": "motif-5252a754",
+            "transformation": "inversion",
+            "intended": "inversion",
+            "transposition": 7,
+            "section": "Verse 3",
+            "sectionFunction": "verse",
+            "occurrenceIndex": 2,
+            "bars": [
+              96,
+              96
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 5,
+            "recallOf": 9,
+            "placement": "inferred_phrase_end",
+            "reason": "recall of occurrence #9 (Verse 2, brass, harmonic_adaptation) developed as inversion"
+          },
+          {
+            "index": 24,
+            "motif": "motif-405d471b",
+            "transformation": "harmonic_adaptation",
+            "intended": "retrograde_inversion",
+            "transposition": 19,
+            "section": "Bridge",
+            "sectionFunction": "bridge",
+            "occurrenceIndex": 0,
+            "bars": [
+              97,
+              104
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 5,
+            "recallOf": null,
+            "placement": "part_window",
+            "reason": "the cell sung inside the window (inferred-Bridge); counter-line unit 1: transposition"
+          },
+          {
+            "index": 25,
+            "motif": "motif-911a7301",
+            "transformation": "retrograde_inversion",
+            "intended": "retrograde_inversion",
+            "transposition": 17,
+            "section": "Bridge",
+            "sectionFunction": "bridge",
+            "occurrenceIndex": 0,
+            "bars": [
+              105,
+              112
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 5,
+            "recallOf": null,
+            "placement": "part_window",
+            "reason": "the cell sung inside the window (inferred-Chorus_3); counter-line unit 2: sequence"
+          },
+          {
+            "index": 26,
+            "motif": "motif-6a9e5902",
+            "transformation": "rhythmic_variation",
+            "intended": "transposition",
+            "transposition": 8,
+            "section": "Bridge",
+            "sectionFunction": "bridge",
+            "occurrenceIndex": 0,
+            "bars": [
+              104,
+              104
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 5,
+            "recallOf": null,
+            "placement": "inferred_phrase_end",
+            "reason": "the hook (Motif A); lift: the instrument confirms the singer's cell (transposed onto the chord)"
+          },
+          {
+            "index": 27,
+            "motif": "motif-911a7301",
+            "transformation": "harmonic_adaptation",
+            "intended": "transposition",
+            "transposition": 7,
+            "section": "Bridge",
+            "sectionFunction": "bridge",
+            "occurrenceIndex": 0,
+            "bars": [
+              112,
+              112
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 5,
+            "recallOf": null,
+            "placement": "inferred_phrase_end",
+            "reason": "the cell sung inside the window (inferred-Chorus_3); lift: the instrument confirms the singer's cell (transposed onto the chord)"
+          },
+          {
+            "index": 28,
+            "motif": "motif-23c5e53e",
+            "transformation": "harmonic_adaptation",
+            "intended": "inversion",
+            "transposition": 20,
+            "section": "Chorus 3",
+            "sectionFunction": "chorus",
+            "occurrenceIndex": 2,
+            "bars": [
+              113,
+              120
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 5,
+            "recallOf": 15,
+            "placement": "part_window",
+            "reason": "recall of occurrence #15 (Chorus 2, strings, harmonic_adaptation) developed as inversion"
+          },
+          {
+            "index": 29,
+            "motif": "motif-0e408758",
+            "transformation": "harmonic_adaptation",
+            "intended": "sequence",
+            "transposition": 14,
+            "section": "Chorus 3",
+            "sectionFunction": "chorus",
+            "occurrenceIndex": 2,
+            "bars": [
+              121,
+              128
+            ],
+            "instrument": "strings",
+            "intention": "support",
+            "notes": 10,
+            "recallOf": null,
+            "placement": "part_window",
+            "reason": "the cell sung inside the window (inferred-Outro); counter-line unit 2: augmentation"
+          },
+          {
+            "index": 30,
+            "motif": "motif-23c5e53e",
+            "transformation": "fragmentation",
+            "intended": "fragmentation",
+            "transposition": 7,
+            "section": "Chorus 3",
+            "sectionFunction": "chorus",
+            "occurrenceIndex": 2,
+            "bars": [
+              120,
+              120
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 4,
+            "recallOf": 17,
+            "placement": "inferred_phrase_end",
+            "reason": "recall of occurrence #17 (Chorus 2, brass, harmonic_adaptation) developed as inversion"
+          },
+          {
+            "index": 31,
+            "motif": "motif-23c5e53e",
+            "transformation": "fragmentation",
+            "intended": "fragmentation",
+            "transposition": 12,
+            "section": "Chorus 3",
+            "sectionFunction": "chorus",
+            "occurrenceIndex": 2,
+            "bars": [
+              128,
+              128
+            ],
+            "instrument": "brass",
+            "intention": "response",
+            "notes": 4,
+            "recallOf": 17,
+            "placement": "inferred_phrase_end",
+            "reason": "recall of occurrence #17 (Chorus 2, brass, harmonic_adaptation) developed as inversion"
+          }
+        ],
+        "notes": [
+          "b10-Verse_1-strings-COUNTER_MELODY: the composer's window 3.68-44.16 s runs past the bars in view (3.80-47.96 s; composer bar = numerator x quarter, B-12); the melodic part is limited to what it can see",
+          "b10-Verse_1-brass-CALL_RESPONSE: the composer's window 3.68-44.16 s runs past the bars in view (3.80-47.96 s; composer bar = numerator x quarter, B-12); the melodic part is limited to what it can see",
+          "b10-Verse_1-brass-CALL_RESPONSE: no melody evidence in view - 3 answer window(s) placed at phrase ends inferred from the section plan (bars 3-24); an inference, not a heard gap",
+          "b10-Verse_2-brass-CALL_RESPONSE: no melody evidence in view - 2 answer window(s) placed at phrase ends inferred from the section plan (bars 25-40); an inference, not a heard gap",
+          "b10-Chorus-brass-CALL_RESPONSE: no melody evidence in view - 2 answer window(s) placed at phrase ends inferred from the section plan (bars 41-56); an inference, not a heard gap",
+          "b10-Chorus_2-brass-CALL_RESPONSE: no melody evidence in view - 2 answer window(s) placed at phrase ends inferred from the section plan (bars 57-72); an inference, not a heard gap",
+          "b10-Verse_3-brass-CALL_RESPONSE: no melody evidence in view - 3 answer window(s) placed at phrase ends inferred from the section plan (bars 73-96); an inference, not a heard gap",
+          "b10-Bridge-brass-CALL_RESPONSE: no melody evidence in view - 2 answer window(s) placed at phrase ends inferred from the section plan (bars 97-112); an inference, not a heard gap",
+          "b10-Chorus_3-brass-CALL_RESPONSE: no melody evidence in view - 2 answer window(s) placed at phrase ends inferred from the section plan (bars 113-128); an inference, not a heard gap"
+        ]
+      },
+      "recalls": 13
+    }
+  },
+  "synthetic": [
+    {
+      "id": "pop-full",
+      "tempoBpm": 120,
+      "meter": "4/4",
+      "sungSections": [
+        "Verse",
+        "Chorus",
+        "Verse 2",
+        "Chorus 2"
+      ],
+      "productionTaskKinds": {
+        "DRUMS": 3,
+        "BASS": 6,
+        "KEYS": 6
+      },
+      "productionPathChanged": false,
+      "before": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 64,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.606,
+              "intervals": 63,
+              "distinctBigrams": 13
+            },
+            "motionRate": 0.873015873015873,
+            "overlapsVocal": true,
+            "vocalClearance": 17,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": 1,
+                "earlierNotes": 16,
+                "laterNotes": 16
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 1,
+                "earlierNotes": 16,
+                "laterNotes": 16
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 64,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.628,
+              "intervals": 63,
+              "distinctBigrams": 14
+            },
+            "motionRate": 1,
+            "overlapsVocal": true,
+            "vocalClearance": 0,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": 1,
+                "earlierNotes": 16,
+                "laterNotes": 16
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 1,
+                "earlierNotes": 16,
+                "laterNotes": 16
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 2,
+          "onMelodicTracks": 2,
+          "kinds": [
+            {
+              "kind": "rhythm_predictable",
+              "severity": "minor",
+              "tracks": [
+                "brass"
+              ],
+              "bars": [
+                5,
+                35
+              ],
+              "evidence": {
+                "entropyNormalised": 0,
+                "entropyBits": 0,
+                "distinctBarRhythms": 1,
+                "bars": 16
+              }
+            },
+            {
+              "kind": "rhythm_predictable",
+              "severity": "minor",
+              "tracks": [
+                "strings"
+              ],
+              "bars": [
+                5,
+                35
+              ],
+              "evidence": {
+                "entropyNormalised": 0,
+                "entropyBits": 0,
+                "distinctBarRhythms": 1,
+                "bars": 16
+              }
+            }
+          ]
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 5,
+          "onMelodicTracks": 5,
+          "kinds": [
+            {
+              "kind": "section_byte_copy",
+              "severity": "minor",
+              "tracks": [
+                "brass"
+              ],
+              "bars": [
+                21,
+                28
+              ],
+              "evidence": {
+                "earlierSection": "Verse",
+                "laterSection": "Verse 2",
+                "byteMatchShare": 1,
+                "noteMatchShare": 1,
+                "rhythmMatchShare": 1,
+                "notesEarlier": 16,
+                "notesLater": 16,
+                "finalRepeat": false
+              }
+            },
+            {
+              "kind": "section_byte_copy",
+              "severity": "major",
+              "tracks": [
+                "brass",
+                "strings"
+              ],
+              "bars": [
+                21,
+                28
+              ],
+              "evidence": {
+                "earlierSection": "Verse",
+                "laterSection": "Verse 2",
+                "partsCompared": 2,
+                "partsByteIdentical": 2,
+                "wholeSectionPaste": true
+              }
+            },
+            {
+              "kind": "section_byte_copy",
+              "severity": "minor",
+              "tracks": [
+                "strings"
+              ],
+              "bars": [
+                21,
+                28
+              ],
+              "evidence": {
+                "earlierSection": "Verse",
+                "laterSection": "Verse 2",
+                "byteMatchShare": 1,
+                "noteMatchShare": 1,
+                "rhythmMatchShare": 1,
+                "notesEarlier": 16,
+                "notesLater": 16,
+                "finalRepeat": false
+              }
+            },
+            {
+              "kind": "section_note_copy",
+              "severity": "major",
+              "tracks": [
+                "brass"
+              ],
+              "bars": [
+                29,
+                36
+              ],
+              "evidence": {
+                "earlierSection": "Chorus",
+                "laterSection": "Chorus 2",
+                "byteMatchShare": 0,
+                "noteMatchShare": 1,
+                "rhythmMatchShare": 1,
+                "notesEarlier": 16,
+                "notesLater": 16,
+                "finalRepeat": true
+              }
+            },
+            {
+              "kind": "section_note_copy",
+              "severity": "major",
+              "tracks": [
+                "strings"
+              ],
+              "bars": [
+                29,
+                36
+              ],
+              "evidence": {
+                "earlierSection": "Chorus",
+                "laterSection": "Chorus 2",
+                "byteMatchShare": 0,
+                "noteMatchShare": 1,
+                "rhythmMatchShare": 1,
+                "notesEarlier": 16,
+                "notesLater": 16,
+                "finalRepeat": true
+              }
+            }
+          ]
+        }
+      },
+      "after": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 36,
+            "motifNotes": 36,
+            "transformations": {
+              "harmonic_adaptation": 24,
+              "rhythmic_variation": 12
+            },
+            "entropy": {
+              "entropy": 0.802,
+              "intervals": 35,
+              "distinctBigrams": 21
+            },
+            "motionRate": 0.9705882352941176,
+            "overlapsVocal": true,
+            "vocalClearance": 7,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": 0.167,
+                "earlierNotes": 8,
+                "laterNotes": 12
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0.625,
+                "earlierNotes": 8,
+                "laterNotes": 8
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 60,
+            "motifNotes": 60,
+            "transformations": {
+              "fragmentation": 12,
+              "harmonic_adaptation": 4,
+              "rhythmic_variation": 12,
+              "retrograde": 16,
+              "inversion": 16
+            },
+            "entropy": {
+              "entropy": 0.741,
+              "intervals": 59,
+              "distinctBigrams": 31
+            },
+            "motionRate": 0.9491525423728814,
+            "overlapsVocal": false,
+            "vocalClearance": null,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": 0.125,
+                "earlierNotes": 12,
+                "laterNotes": 16
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0.063,
+                "earlierNotes": 16,
+                "laterNotes": 16
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "ledger": {
+        "status": "available",
+        "source": "melody_notes",
+        "motifs": 1,
+        "hook": "motif-3b1a6404",
+        "occurrences": 24,
+        "recalls": 10,
+        "withheld": [
+          {
+            "motifId": "motif-3b1a6404",
+            "untilSectionName": "Chorus",
+            "untilTensionRole": "arrival",
+            "allowedBefore": [
+              "fragmentation"
+            ],
+            "reason": "the hook (Motif A) is stated in full from \"Chorus\" (arrival); before it only a fragment, so the arrival says something the setup did not"
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "ballad-piano-vocal",
+      "tempoBpm": 68,
+      "meter": "4/4",
+      "sungSections": [
+        "Verse",
+        "Chorus",
+        "Bridge",
+        "Chorus 2"
+      ],
+      "productionTaskKinds": {
+        "DRUMS": 2,
+        "BASS": 4,
+        "KEYS": 4
+      },
+      "productionPathChanged": false,
+      "before": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 52,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.686,
+              "intervals": 51,
+              "distinctBigrams": 15
+            },
+            "motionRate": 0.8823529411764706,
+            "overlapsVocal": true,
+            "vocalClearance": 15,
+            "copyShares": [
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0,
+                "earlierNotes": 16,
+                "laterNotes": 11
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 52,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.683,
+              "intervals": 51,
+              "distinctBigrams": 15
+            },
+            "motionRate": 0.8235294117647058,
+            "overlapsVocal": true,
+            "vocalClearance": 0,
+            "copyShares": [
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0,
+                "earlierNotes": 16,
+                "laterNotes": 11
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "after": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 39,
+            "motifNotes": 39,
+            "transformations": {
+              "rhythmic_variation": 8,
+              "retrograde_inversion": 8,
+              "harmonic_adaptation": 23
+            },
+            "entropy": {
+              "entropy": 0.726,
+              "intervals": 38,
+              "distinctBigrams": 18
+            },
+            "motionRate": 0.9166666666666666,
+            "overlapsVocal": true,
+            "vocalClearance": 7,
+            "copyShares": [
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0,
+                "earlierNotes": 8,
+                "laterNotes": 7
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 52,
+            "motifNotes": 52,
+            "transformations": {
+              "fragmentation": 12,
+              "harmonic_adaptation": 40
+            },
+            "entropy": {
+              "entropy": 0.713,
+              "intervals": 51,
+              "distinctBigrams": 22
+            },
+            "motionRate": 0.9215686274509803,
+            "overlapsVocal": false,
+            "vocalClearance": null,
+            "copyShares": [
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0,
+                "earlierNotes": 16,
+                "laterNotes": 16
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 1,
+          "onMelodicTracks": 1,
+          "kinds": [
+            {
+              "kind": "section_rhythm_copy",
+              "severity": "info",
+              "tracks": [
+                "brass"
+              ],
+              "bars": [
+                21,
+                28
+              ],
+              "evidence": {
+                "earlierSection": "Chorus",
+                "laterSection": "Chorus 2",
+                "byteMatchShare": 0,
+                "noteMatchShare": 0,
+                "rhythmMatchShare": 1,
+                "notesEarlier": 16,
+                "notesLater": 16,
+                "finalRepeat": true
+              }
+            }
+          ]
+        }
+      },
+      "ledger": {
+        "status": "available",
+        "source": "melody_notes",
+        "motifs": 1,
+        "hook": "motif-ad5b1805",
+        "occurrences": 22,
+        "recalls": 5,
+        "withheld": [
+          {
+            "motifId": "motif-ad5b1805",
+            "untilSectionName": "Chorus",
+            "untilTensionRole": "arrival",
+            "allowedBefore": [
+              "fragmentation"
+            ],
+            "reason": "the hook (Motif A) is stated in full from \"Chorus\" (arrival); before it only a fragment, so the arrival says something the setup did not"
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "rock-full",
+      "tempoBpm": 148,
+      "meter": "4/4",
+      "sungSections": [
+        "Verse",
+        "Chorus",
+        "Bridge",
+        "Chorus 2"
+      ],
+      "productionTaskKinds": {
+        "DRUMS": 2,
+        "BASS": 5,
+        "KEYS": 5,
+        "ACOUSTIC_GUITAR": 1
+      },
+      "productionPathChanged": false,
+      "before": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 60,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.578,
+              "intervals": 59,
+              "distinctBigrams": 15
+            },
+            "motionRate": 0.864406779661017,
+            "overlapsVocal": true,
+            "vocalClearance": 9,
+            "copyShares": [
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0.235,
+                "earlierNotes": 17,
+                "laterNotes": 11
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 60,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.619,
+              "intervals": 59,
+              "distinctBigrams": 14
+            },
+            "motionRate": 0.864406779661017,
+            "overlapsVocal": true,
+            "vocalClearance": 0,
+            "copyShares": [
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0.294,
+                "earlierNotes": 17,
+                "laterNotes": 11
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "after": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 58,
+            "motifNotes": 58,
+            "transformations": {
+              "harmonic_adaptation": 58
+            },
+            "entropy": {
+              "entropy": 0.675,
+              "intervals": 57,
+              "distinctBigrams": 20
+            },
+            "motionRate": 0.7818181818181819,
+            "overlapsVocal": true,
+            "vocalClearance": 7,
+            "copyShares": [
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0,
+                "earlierNotes": 16,
+                "laterNotes": 11
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 60,
+            "motifNotes": 60,
+            "transformations": {
+              "fragmentation": 12,
+              "harmonic_adaptation": 32,
+              "inversion": 16
+            },
+            "entropy": {
+              "entropy": 0.694,
+              "intervals": 59,
+              "distinctBigrams": 21
+            },
+            "motionRate": 0.8813559322033898,
+            "overlapsVocal": false,
+            "vocalClearance": null,
+            "copyShares": [
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0.188,
+                "earlierNotes": 16,
+                "laterNotes": 16
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "ledger": {
+        "status": "available",
+        "source": "melody_notes",
+        "motifs": 1,
+        "hook": "motif-94c8e777",
+        "occurrences": 24,
+        "recalls": 5,
+        "withheld": [
+          {
+            "motifId": "motif-94c8e777",
+            "untilSectionName": "Chorus",
+            "untilTensionRole": "arrival",
+            "allowedBefore": [
+              "fragmentation"
+            ],
+            "reason": "the hook (Motif A) is stated in full from \"Chorus\" (arrival); before it only a fragment, so the arrival says something the setup did not"
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "dance-full",
+      "tempoBpm": 126,
+      "meter": "4/4",
+      "sungSections": [
+        "Verse",
+        "Chorus",
+        "Chorus 2"
+      ],
+      "productionTaskKinds": {
+        "DRUMS": 5,
+        "BASS": 5,
+        "KEYS": 2,
+        "PAD": 2
+      },
+      "productionPathChanged": false,
+      "before": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 44,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.726,
+              "intervals": 43,
+              "distinctBigrams": 17
+            },
+            "motionRate": 0.9302325581395349,
+            "overlapsVocal": true,
+            "vocalClearance": 3,
+            "copyShares": [
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0.5,
+                "earlierNotes": 16,
+                "laterNotes": 12
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 44,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.711,
+              "intervals": 43,
+              "distinctBigrams": 17
+            },
+            "motionRate": 0.8837209302325582,
+            "overlapsVocal": true,
+            "vocalClearance": 0,
+            "copyShares": [
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0.5,
+                "earlierNotes": 16,
+                "laterNotes": 12
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "after": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 36,
+            "motifNotes": 36,
+            "transformations": {
+              "harmonic_adaptation": 36
+            },
+            "entropy": {
+              "entropy": 0.892,
+              "intervals": 35,
+              "distinctBigrams": 25
+            },
+            "motionRate": 0.9411764705882353,
+            "overlapsVocal": true,
+            "vocalClearance": 7,
+            "copyShares": [
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0.25,
+                "earlierNotes": 12,
+                "laterNotes": 12
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 44,
+            "motifNotes": 44,
+            "transformations": {
+              "fragmentation": 12,
+              "rhythmic_variation": 16,
+              "harmonic_adaptation": 4,
+              "inversion": 12
+            },
+            "entropy": {
+              "entropy": 0.785,
+              "intervals": 43,
+              "distinctBigrams": 25
+            },
+            "motionRate": 0.9069767441860465,
+            "overlapsVocal": false,
+            "vocalClearance": null,
+            "copyShares": [
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0.063,
+                "earlierNotes": 16,
+                "laterNotes": 16
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "ledger": {
+        "status": "available",
+        "source": "melody_notes",
+        "motifs": 1,
+        "hook": "motif-1449423e",
+        "occurrences": 18,
+        "recalls": 5,
+        "withheld": [
+          {
+            "motifId": "motif-1449423e",
+            "untilSectionName": "Chorus",
+            "untilTensionRole": "arrival",
+            "allowedBefore": [
+              "fragmentation"
+            ],
+            "reason": "the hook (Motif A) is stated in full from \"Chorus\" (arrival); before it only a fragment, so the arrival says something the setup did not"
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "acoustic-demo",
+      "tempoBpm": 92,
+      "meter": "4/4",
+      "sungSections": [
+        "Verse",
+        "Chorus",
+        "Verse 2",
+        "Chorus 2"
+      ],
+      "productionTaskKinds": {
+        "DRUMS": 2,
+        "BASS": 4,
+        "ACOUSTIC_GUITAR": 4
+      },
+      "productionPathChanged": false,
+      "before": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 60,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.66,
+              "intervals": 59,
+              "distinctBigrams": 15
+            },
+            "motionRate": 0.9322033898305084,
+            "overlapsVocal": true,
+            "vocalClearance": 19,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": 0.938,
+                "earlierNotes": 16,
+                "laterNotes": 15
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0.706,
+                "earlierNotes": 17,
+                "laterNotes": 12
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 60,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.657,
+              "intervals": 59,
+              "distinctBigrams": 15
+            },
+            "motionRate": 0.8983050847457628,
+            "overlapsVocal": true,
+            "vocalClearance": 0,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": 0.938,
+                "earlierNotes": 16,
+                "laterNotes": 15
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0.706,
+                "earlierNotes": 17,
+                "laterNotes": 12
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 3,
+          "onMelodicTracks": 3,
+          "kinds": [
+            {
+              "kind": "section_byte_copy",
+              "severity": "minor",
+              "tracks": [
+                "brass"
+              ],
+              "bars": [
+                17,
+                24
+              ],
+              "evidence": {
+                "earlierSection": "Verse",
+                "laterSection": "Verse 2",
+                "byteMatchShare": 1,
+                "noteMatchShare": 1,
+                "rhythmMatchShare": 1,
+                "notesEarlier": 16,
+                "notesLater": 16,
+                "finalRepeat": false
+              }
+            },
+            {
+              "kind": "section_byte_copy",
+              "severity": "major",
+              "tracks": [
+                "brass",
+                "strings"
+              ],
+              "bars": [
+                17,
+                24
+              ],
+              "evidence": {
+                "earlierSection": "Verse",
+                "laterSection": "Verse 2",
+                "partsCompared": 2,
+                "partsByteIdentical": 2,
+                "wholeSectionPaste": true
+              }
+            },
+            {
+              "kind": "section_byte_copy",
+              "severity": "minor",
+              "tracks": [
+                "strings"
+              ],
+              "bars": [
+                17,
+                24
+              ],
+              "evidence": {
+                "earlierSection": "Verse",
+                "laterSection": "Verse 2",
+                "byteMatchShare": 1,
+                "noteMatchShare": 1,
+                "rhythmMatchShare": 1,
+                "notesEarlier": 16,
+                "notesLater": 16,
+                "finalRepeat": false
+              }
+            }
+          ]
+        }
+      },
+      "after": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 31,
+            "motifNotes": 31,
+            "transformations": {
+              "harmonic_adaptation": 15,
+              "retrograde": 8,
+              "inversion": 8
+            },
+            "entropy": {
+              "entropy": 0.833,
+              "intervals": 30,
+              "distinctBigrams": 19
+            },
+            "motionRate": 0.8,
+            "overlapsVocal": true,
+            "vocalClearance": 7,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": 0.5,
+                "earlierNotes": 8,
+                "laterNotes": 7
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0.25,
+                "earlierNotes": 8,
+                "laterNotes": 8
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 60,
+            "motifNotes": 60,
+            "transformations": {
+              "fragmentation": 12,
+              "rhythmic_variation": 12,
+              "harmonic_adaptation": 32,
+              "inversion": 4
+            },
+            "entropy": {
+              "entropy": 0.84,
+              "intervals": 59,
+              "distinctBigrams": 38
+            },
+            "motionRate": 0.8793103448275862,
+            "overlapsVocal": false,
+            "vocalClearance": null,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": 0.188,
+                "earlierNotes": 12,
+                "laterNotes": 16
+              },
+              {
+                "earlier": "Chorus",
+                "later": "Chorus 2",
+                "share": 0.188,
+                "earlierNotes": 16,
+                "laterNotes": 16
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 1,
+          "onMelodicTracks": 1,
+          "kinds": [
+            {
+              "kind": "section_rhythm_copy",
+              "severity": "info",
+              "tracks": [
+                "brass"
+              ],
+              "bars": [
+                25,
+                32
+              ],
+              "evidence": {
+                "earlierSection": "Chorus",
+                "laterSection": "Chorus 2",
+                "byteMatchShare": 0,
+                "noteMatchShare": 0.1875,
+                "rhythmMatchShare": 1,
+                "notesEarlier": 16,
+                "notesLater": 16,
+                "finalRepeat": true
+              }
+            }
+          ]
+        }
+      },
+      "ledger": {
+        "status": "available",
+        "source": "melody_notes",
+        "motifs": 1,
+        "hook": "motif-94c8e777",
+        "occurrences": 24,
+        "recalls": 10,
+        "withheld": [
+          {
+            "motifId": "motif-94c8e777",
+            "untilSectionName": "Chorus",
+            "untilTensionRole": "arrival",
+            "allowedBefore": [
+              "fragmentation"
+            ],
+            "reason": "the hook (Motif A) is stated in full from \"Chorus\" (arrival); before it only a fragment, so the arrival says something the setup did not"
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "orchestral-midi",
+      "tempoBpm": 76,
+      "meter": "3/4",
+      "sungSections": [
+        "Verse",
+        "Chorus"
+      ],
+      "productionTaskKinds": {
+        "DRUMS": 1,
+        "BASS": 2,
+        "OSTINATO": 4,
+        "BRASS": 1,
+        "STRINGS": 1,
+        "PAD": 3
+      },
+      "productionPathChanged": false,
+      "before": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 8,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 1,
+              "intervals": 7,
+              "distinctBigrams": 6
+            },
+            "motionRate": 0.8571428571428571,
+            "overlapsVocal": true,
+            "vocalClearance": 5,
+            "copyShares": []
+          },
+          {
+            "track": "brass",
+            "notes": 8,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.742,
+              "intervals": 7,
+              "distinctBigrams": 4
+            },
+            "motionRate": 0.8571428571428571,
+            "overlapsVocal": true,
+            "vocalClearance": 2,
+            "copyShares": []
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": false,
+          "reasonIfNot": "The form has no repeated section (by name or by role); there is nothing that could have been copied.",
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "after": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 49,
+            "motifNotes": 49,
+            "transformations": {
+              "harmonic_adaptation": 49
+            },
+            "entropy": {
+              "entropy": 0.693,
+              "intervals": 48,
+              "distinctBigrams": 21
+            },
+            "motionRate": 0.9347826086956522,
+            "overlapsVocal": true,
+            "vocalClearance": 8,
+            "copyShares": []
+          },
+          {
+            "track": "brass",
+            "notes": 36,
+            "motifNotes": 36,
+            "transformations": {
+              "harmonic_adaptation": 12,
+              "fragmentation": 24
+            },
+            "entropy": {
+              "entropy": 0.746,
+              "intervals": 35,
+              "distinctBigrams": 18
+            },
+            "motionRate": 0.8285714285714286,
+            "overlapsVocal": false,
+            "vocalClearance": null,
+            "copyShares": []
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": false,
+          "reasonIfNot": "The form has no repeated section (by name or by role); there is nothing that could have been copied.",
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "ledger": {
+        "status": "available",
+        "source": "melody_notes",
+        "motifs": 1,
+        "hook": "motif-a22a4cbd",
+        "occurrences": 18,
+        "recalls": 0,
+        "withheld": [
+          {
+            "motifId": "motif-a22a4cbd",
+            "untilSectionName": "Chorus",
+            "untilTensionRole": "arrival",
+            "allowedBefore": [
+              "fragmentation"
+            ],
+            "reason": "the hook (Motif A) is stated in full from \"Chorus\" (arrival); before it only a fragment, so the arrival says something the setup did not"
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "ethnic-vocal",
+      "tempoBpm": 104,
+      "meter": "7/8",
+      "sungSections": [
+        "Verse",
+        "Chorus",
+        "Verse 2"
+      ],
+      "productionTaskKinds": {
+        "DRUMS": 2,
+        "BASS": 3,
+        "KEYS": 3
+      },
+      "productionPathChanged": false,
+      "before": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 16,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.822,
+              "intervals": 15,
+              "distinctBigrams": 10
+            },
+            "motionRate": 0.9333333333333333,
+            "overlapsVocal": true,
+            "vocalClearance": 20,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": null,
+                "earlierNotes": 16,
+                "laterNotes": 0
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 16,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.822,
+              "intervals": 15,
+              "distinctBigrams": 10
+            },
+            "motionRate": 0.9333333333333333,
+            "overlapsVocal": true,
+            "vocalClearance": 2,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": null,
+                "earlierNotes": 16,
+                "laterNotes": 0
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 3,
+          "onMelodicTracks": 3,
+          "kinds": [
+            {
+              "kind": "no_dynamic_movement",
+              "severity": "minor",
+              "tracks": [
+                "brass"
+              ],
+              "bars": [
+                1,
+                13
+              ],
+              "evidence": {
+                "velocityStd": 0,
+                "velocityMean": 61,
+                "distinctVelocities": 1,
+                "notes": 16
+              }
+            },
+            {
+              "kind": "no_dynamic_movement",
+              "severity": "minor",
+              "tracks": [
+                "strings"
+              ],
+              "bars": [
+                1,
+                13
+              ],
+              "evidence": {
+                "velocityStd": 0,
+                "velocityMean": 61,
+                "distinctVelocities": 1,
+                "notes": 16
+              }
+            },
+            {
+              "kind": "no_dynamic_movement",
+              "severity": "major",
+              "tracks": [
+                "brass",
+                "strings"
+              ],
+              "bars": [
+                1,
+                24
+              ],
+              "evidence": {
+                "sectionMeanVelocityRange": 0,
+                "sections": 2,
+                "notes": 32
+              }
+            }
+          ]
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "after": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 12,
+            "motifNotes": 12,
+            "transformations": {
+              "harmonic_adaptation": 8,
+              "retrograde_inversion": 4
+            },
+            "entropy": {
+              "entropy": 0.94,
+              "intervals": 11,
+              "distinctBigrams": 9
+            },
+            "motionRate": 0.8888888888888888,
+            "overlapsVocal": true,
+            "vocalClearance": 10,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": null,
+                "earlierNotes": 12,
+                "laterNotes": 0
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 15,
+            "motifNotes": 15,
+            "transformations": {
+              "fragmentation": 15
+            },
+            "entropy": {
+              "entropy": 0.759,
+              "intervals": 14,
+              "distinctBigrams": 9
+            },
+            "motionRate": 0.8571428571428571,
+            "overlapsVocal": false,
+            "vocalClearance": null,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": null,
+                "earlierNotes": 15,
+                "laterNotes": 0
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "ledger": {
+        "status": "available",
+        "source": "melody_notes",
+        "motifs": 1,
+        "hook": "motif-cdd191d3",
+        "occurrences": 7,
+        "recalls": 0,
+        "withheld": [
+          {
+            "motifId": "motif-cdd191d3",
+            "untilSectionName": "Chorus",
+            "untilTensionRole": "arrival",
+            "allowedBefore": [
+              "fragmentation"
+            ],
+            "reason": "the hook (Motif A) is stated in full from \"Chorus\" (arrival); before it only a fragment, so the arrival says something the setup did not"
+          }
+        ],
+        "notes": [
+          "b10-Verse-strings-COUNTER_MELODY: the composer's window 0.00-32.31 s runs past the bars in view (0.00-20.19 s; composer bar = numerator x quarter, B-12); the melodic part is limited to what it can see",
+          "b10-Verse-brass-CALL_RESPONSE: the composer's window 0.00-32.31 s runs past the bars in view (0.00-20.19 s; composer bar = numerator x quarter, B-12); the melodic part is limited to what it can see",
+          "b10-Chorus-strings-COUNTER_MELODY: the composer's window 32.31-64.62 s runs past the bars in view (12.12-36.35 s; composer bar = numerator x quarter, B-12); the melodic part is limited to what it can see",
+          "b10-Chorus-brass-CALL_RESPONSE: the composer's window 32.31-64.62 s runs past the bars in view (12.12-36.35 s; composer bar = numerator x quarter, B-12); the melodic part is limited to what it can see",
+          "b10-Verse_2-strings-COUNTER_MELODY: the composer's window 64.62-96.92 s runs past the bars in view (28.27-48.46 s; composer bar = numerator x quarter, B-12); the melodic part is limited to what it can see",
+          "b10-Verse_2-brass-CALL_RESPONSE: the composer's window 64.62-96.92 s runs past the bars in view (28.27-48.46 s; composer bar = numerator x quarter, B-12); the melodic part is limited to what it can see"
+        ]
+      }
+    },
+    {
+      "id": "jazz-full",
+      "tempoBpm": 132,
+      "meter": "4/4",
+      "sungSections": [
+        "Verse",
+        "Chorus",
+        "Verse 2"
+      ],
+      "productionTaskKinds": {
+        "DRUMS": 2,
+        "BASS": 3,
+        "KEYS": 3
+      },
+      "productionPathChanged": false,
+      "before": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 92,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.597,
+              "intervals": 91,
+              "distinctBigrams": 15
+            },
+            "motionRate": 0.8791208791208791,
+            "overlapsVocal": true,
+            "vocalClearance": 14,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": 0.818,
+                "earlierNotes": 33,
+                "laterNotes": 27
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 92,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.557,
+              "intervals": 91,
+              "distinctBigrams": 13
+            },
+            "motionRate": 0.8791208791208791,
+            "overlapsVocal": true,
+            "vocalClearance": 0,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": 0.818,
+                "earlierNotes": 33,
+                "laterNotes": 27
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 2,
+          "onMelodicTracks": 2,
+          "kinds": [
+            {
+              "kind": "rhythm_predictable",
+              "severity": "minor",
+              "tracks": [
+                "brass"
+              ],
+              "bars": [
+                1,
+                45
+              ],
+              "evidence": {
+                "entropyNormalised": 0,
+                "entropyBits": 0,
+                "distinctBarRhythms": 1,
+                "bars": 23
+              }
+            },
+            {
+              "kind": "rhythm_predictable",
+              "severity": "minor",
+              "tracks": [
+                "strings"
+              ],
+              "bars": [
+                1,
+                45
+              ],
+              "evidence": {
+                "entropyNormalised": 0,
+                "entropyBits": 0,
+                "distinctBarRhythms": 1,
+                "bars": 23
+              }
+            }
+          ]
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "after": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 20,
+            "motifNotes": 20,
+            "transformations": {
+              "fragmentation": 6,
+              "augmentation": 7,
+              "harmonic_adaptation": 3,
+              "rhythmic_variation": 4
+            },
+            "entropy": {
+              "entropy": 0.803,
+              "intervals": 19,
+              "distinctBigrams": 12
+            },
+            "motionRate": 0.8947368421052632,
+            "overlapsVocal": true,
+            "vocalClearance": 7,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": 0.143,
+                "earlierNotes": 6,
+                "laterNotes": 7
+              }
+            ]
+          },
+          {
+            "track": "brass",
+            "notes": 88,
+            "motifNotes": 88,
+            "transformations": {
+              "fragmentation": 24,
+              "harmonic_adaptation": 24,
+              "rhythmic_variation": 24,
+              "inversion": 16
+            },
+            "entropy": {
+              "entropy": 0.703,
+              "intervals": 87,
+              "distinctBigrams": 31
+            },
+            "motionRate": 0.8705882352941177,
+            "overlapsVocal": false,
+            "vocalClearance": null,
+            "copyShares": [
+              {
+                "earlier": "Verse",
+                "later": "Verse 2",
+                "share": 0.063,
+                "earlierNotes": 24,
+                "laterNotes": 32
+              }
+            ]
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "ledger": {
+        "status": "available",
+        "source": "melody_notes",
+        "motifs": 1,
+        "hook": "motif-8becb899",
+        "occurrences": 30,
+        "recalls": 9,
+        "withheld": [
+          {
+            "motifId": "motif-8becb899",
+            "untilSectionName": "Chorus",
+            "untilTensionRole": "arrival",
+            "allowedBefore": [
+              "fragmentation"
+            ],
+            "reason": "the hook (Motif A) is stated in full from \"Chorus\" (arrival); before it only a fragment, so the arrival says something the setup did not"
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "id": "cinematic-midi",
+      "tempoBpm": 60,
+      "meter": "4/4",
+      "sungSections": [
+        "Verse",
+        "Chorus"
+      ],
+      "productionTaskKinds": {
+        "DRUMS": 1,
+        "BASS": 4,
+        "PERCUSSION": 1,
+        "KEYS": 4,
+        "BRASS": 1,
+        "STRINGS": 1,
+        "PAD": 2
+      },
+      "productionPathChanged": false,
+      "before": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 8,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.742,
+              "intervals": 7,
+              "distinctBigrams": 4
+            },
+            "motionRate": 1,
+            "overlapsVocal": false,
+            "vocalClearance": null,
+            "copyShares": []
+          },
+          {
+            "track": "brass",
+            "notes": 8,
+            "motifNotes": 0,
+            "transformations": {},
+            "entropy": {
+              "entropy": 0.742,
+              "intervals": 7,
+              "distinctBigrams": 4
+            },
+            "motionRate": 1,
+            "overlapsVocal": false,
+            "vocalClearance": null,
+            "copyShares": []
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": false,
+          "reasonIfNot": "The form has no repeated section (by name or by role); there is nothing that could have been copied.",
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "after": {
+        "tracks": [
+          {
+            "track": "strings",
+            "notes": 19,
+            "motifNotes": 19,
+            "transformations": {
+              "retrograde": 8,
+              "fragmentation": 3,
+              "harmonic_adaptation": 8
+            },
+            "entropy": {
+              "entropy": 0.827,
+              "intervals": 18,
+              "distinctBigrams": 12
+            },
+            "motionRate": 0.9444444444444444,
+            "overlapsVocal": true,
+            "vocalClearance": 8,
+            "copyShares": []
+          },
+          {
+            "track": "brass",
+            "notes": 28,
+            "motifNotes": 28,
+            "transformations": {
+              "fragmentation": 9,
+              "harmonic_adaptation": 15,
+              "rhythmic_variation": 4
+            },
+            "entropy": {
+              "entropy": 0.814,
+              "intervals": 27,
+              "distinctBigrams": 16
+            },
+            "motionRate": 0.8888888888888888,
+            "overlapsVocal": false,
+            "vocalClearance": null,
+            "copyShares": []
+          }
+        ],
+        "boredom": {
+          "applicable": true,
+          "reasonIfNot": null,
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        },
+        "copiedRepeat": {
+          "applicable": false,
+          "reasonIfNot": "The form has no repeated section (by name or by role); there is nothing that could have been copied.",
+          "controlStatus": "uncalibrated",
+          "observations": 0,
+          "onMelodicTracks": 0,
+          "kinds": []
+        }
+      },
+      "ledger": {
+        "status": "available",
+        "source": "melody_notes",
+        "motifs": 1,
+        "hook": "motif-1247d420",
+        "occurrences": 12,
+        "recalls": 0,
+        "withheld": [
+          {
+            "motifId": "motif-1247d420",
+            "untilSectionName": "Chorus",
+            "untilTensionRole": "arrival",
+            "allowedBefore": [
+              "fragmentation"
+            ],
+            "reason": "the hook (Motif A) is stated in full from \"Chorus\" (arrival); before it only a fragment, so the arrival says something the setup did not"
+          }
+        ],
+        "notes": []
+      }
+    }
+  ],
+  "direction": {
+    "entropyUp": 16,
+    "entropyDown": 2,
+    "entropySame": 0,
+    "copyDown": 14,
+    "copyUp": 0,
+    "copySame": 2,
+    "tracksOverlappingVocalBefore": 16,
+    "tracksOverlappingVocalAfter": 9
+  }
+}

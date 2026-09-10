@@ -6881,6 +6881,163 @@ any of it.
   name so the export is right, the constraint and performance layers are not.
   Nothing was rendered or listened to.
 
+### PR-B10 — Brain B-10: a thematic memory that writes
+
+- **PR-B10** ✅ (open; the lead merges) — `brain-b10-motif-engine` (Arrangement
+  & Orchestration Brain, stream B-10, melody / motif specialist). The motif
+  ledgers the repo already computed had no consumer and the only "figure" a
+  generated part carried was the constant `[0, 1, 2, 1]` cell (diagnosis §4,
+  §11). Generation now consumes a ledger and writes into it. Pure TypeScript,
+  no database, nothing rendered.
+
+  **What changed.** New `motifLedger.ts` (+ a delimited B-10 type block in
+  `music-studio.ts`, `MotifTransformation` extended by `transposition`,
+  `inversion`, `retrograde`, `retrograde_inversion`, `fragmentation`,
+  `sequence`, `reharmonisation`, `harmonic_adaptation`): a cell is intervals +
+  inter-onset ratios + span in beats; its id is canonical under transposition,
+  inversion, retrograde and retrograde-inversion (a transformed statement is
+  the same motif; a fragment or a sequence is a new id with a parent link);
+  `classifyTransformation` detects every transformation the ledger tracks
+  (context refines the same cell on another instrument to
+  `orchestral_handoff`, under other harmony to `reharmonisation`). Source
+  motifs come from melody notes at confidence ≥ 0.5, segmented by the musical
+  map's phrase rule, ranked by statement count (rank 0 = the hook); with no
+  melody evidence the cell is **inferred** from a section's chord-root motion
+  and the ledger says so (`status: "inferred"`); with nothing it is `empty`.
+  Every arrangement statement is recorded (transformation detected on the
+  emitted cell, the intended one, transposition, section / function /
+  occurrence, bars, seconds, instrument, task, phrase, intention, notes,
+  `recallOf`, placement, reason); the hook's full statement is **withheld**
+  until the arc's first `arrival` (fragments before). Digest = sha256 of the
+  data. New `melodicEngine.ts`: (a) **answers** in vocal gaps — the cell the
+  singer just sang, mirrored (inversion) after a rising / falling cell,
+  retrograde after an arch, confirmed (transposition) at an `arrival` /
+  `lift`, developed on later statements (augmentation, sequence, then the
+  ring); chord tones on strong beats and at the end, passing tones at most a
+  step from one, a fifth clear of a concurrently sung pitch and above the
+  bass, never over a sung note, a breath after the phrase; the starting pitch
+  is searched for the realisation that keeps the most intervals, and the note
+  is labelled with the relation *detected on what was emitted*
+  (`harmonic_adaptation` when the harmony bent it); a window too short for the
+  cell gets a fragment that varies by statement; (b) **counter-lines** under
+  the voice, phrase unit by unit, choosing among the cell's forms the one with
+  the best contrary / oblique motion against the bass reference (observed bass
+  or the chord roots the reference bass plays), long values, held last note;
+  (c) **instrumental lead lines** stating the hook in the foreground; (d)
+  **recall** — a later statement of the same section function develops what
+  the earlier one said (`developAfter`, `recallOf`, `parentMotifId` on the
+  notes); `activate_counterline` quotes the previous occurrence's answers.
+  Tension role shapes the dynamic (arrival +6 … breath −10). Every emitted note
+  carries `MusicalNote.motif` (id, fingerprint of the emitted cell, parent,
+  transformation, phraseId, intention, evidence sha256, window end). New
+  `composer/melodyParts.ts` (first commit: `writeCounterMelody` relocated
+  verbatim out of `harmonyParts.ts`, golden unchanged): `COUNTER_MELODY` →
+  counter-line, `CALL_RESPONSE` → answers (`writeAnswerPhrases`, also for
+  ACCENT when wired), `writeInstrumentalLead` for instrumental-section LEADs
+  (wiring line below); the ledger is the request's (`request.motifLedger`,
+  one per candidate) or a local one built from the bars in view with the
+  limit recorded; answer placement is a verified vocal gap or, with no melody
+  evidence, the second half of the last bar of each plan phrase
+  (`placement: "inferred_phrase_end"`, ledger note); windows are clipped to
+  the bars the request can see (the composer's bar is numerator × quarter,
+  B-12 — a 7/8 song otherwise answered a singer it could not see); the old
+  figure survives only as `writeLegacyCounterMelodyFigure`, used when the
+  ledger has no motif and labelled with the fallback cell. Seams: `ComposeFrame
+  .push` takes an optional `motif` (2 lines in the thin composer),
+  `PartGenerationRequest.motifLedger?`, `upgradePartGenerationRequest` fills
+  `motifMemory` from the ledger (`Motif` gains id / label / origin /
+  memorySource / arrangementOccurrences / transformationsSeen / withheldUntil).
+  `brainB10Evidence.ts` + `scripts/brain-b10-motif-evidence.mjs` hold
+  `motifLedgerForPlan` (what the orchestrator wiring calls), the byte-faithful
+  pre-B-10 writer as "before", the engine-on harness and the measurements.
+  Tests: `motifLedger.test.ts` (6), `melodicEngine.test.ts` (7),
+  `brainB10Motif.test.ts` (5); B-00 golden, B-01 and composer suites green (8
+  suites, 65 tests); typecheck green. Evidence
+  `docs/evidence/brain-b10-motif-engine.json`.
+
+  **Measured.** Engine controls: on 200 random progressions against a
+  *walking* bass (moves every beat) the counter-line's contrary + oblique
+  rate is ≥ 0.6 on the mean and a line shadowing the bass a tenth above (the
+  positive control) scores ≤ 0.2; answers never overlap a sung note (four
+  gaps per eight bars, all free); with a singer on every beat every concurrent
+  note is ≥ 7 semitones away and ≥ 7 above the bass; a chorus-2 counter-line
+  quotes chorus 1's answer (`recallOf` = its index, a different
+  transformation). **Owner's song** (fixture, brief "intimate ballad…"): no
+  melody evidence → ledger `inferred`, 8 chord-root cells (hook `Motif A`
+  Verse 1 `Cm Ab Cm Fm Cm`, intervals −4 +4 +5 −5), hook withheld until
+  "Chorus" (first arrival). The planners assign exactly one melodic task —
+  strings COUNTER_MELODY in the Bridge: 2 legacy notes → 10 composed notes in
+  two statements (harmonic_adaptation, inversion), every note with motif
+  provenance; **the candidate strategy then thins the counter-line note by
+  note** (`densityMultiplier 0.537`, "counter-melody emphasis": 10 → 5 shipped,
+  every other note — isolated in the test, not assumed) and a later stage moved
+  the first note up an octave; whole-run adversarial findings unchanged
+  (boredom 1 → 1, copiedRepeat 4 → 4, all on percussion / drums); the run stays
+  selectable. Owner answers harness (a strings counter-line + brass answers in
+  every sung section, answers at inferred phrase ends): strings 28 → 92 notes,
+  interval-bigram entropy 0.759 → 0.821, motion vs bass 0.96 → 0.90; brass
+  28 → 66, chorus/chorus-2 copy share 1.0 → 0.5 (0.25 / 0.25 to chorus 3), 13
+  recalls; neither critic fires before or after. **Nine synthetic cases**
+  (engine-on harness, the production plans route no COUNTER_MELODY /
+  CALL_RESPONSE task, so the golden pin is unchanged by construction —
+  verified, not re-pinned for appearance): entropy up on 16 tracks / down on
+  2; note-copy share between repeated sections down on 14 pairs / up on 0; no
+  answer track overlaps the voice after (16 → 9 tracks overlapping = the nine
+  counter-lines under the voice, all ≥ 7 clear); `copiedRepeat`: pop-full 3
+  byte copies + 2 note copies → none, acoustic-demo 3 byte copies → one
+  rhythm copy (info), ballad none → one rhythm copy (info); `boredom`:
+  `rhythm_predictable` on pop / jazz strings + brass → none, ethnic-vocal 3 ×
+  `no_dynamic_movement` → none. Adaptation share (notes whose intervals the
+  harmony bent): 0.07–1.00 per track, highest where the synthetic melody is
+  non-diatonic to its chords (rock, dance strings).
+
+  **Wiring for the lead** (two files not in this stream's set). Orchestrator
+  `composeCandidate`: `const motifLedger = motifLedgerForPlan(songModel,
+  layers.globalPlan, { tempoBpm, meter });` before the task loop and
+  `compose({ ...request, motifLedger })` in it (one ledger per candidate and
+  per repair recomposition). Thin composer: import already changed to
+  `./composer/melodyParts`; for instrumental LEADs add before the `WRITERS`
+  dispatch `if (request.role === "LEAD" && request.section.function ===
+  "instrumental") { writeInstrumentalLead(frame); } else` — and route ACCENT →
+  `writeAnswerPhrases` if the planner's ACCENT is meant as an answer.
+
+  **Critic kinds proposed** (B-05a/B-05b, not implemented here):
+  `motif_never_recalled` (a repeated section function whose melodic part
+  quotes nothing from the earlier statement), `motif_copied_not_developed`
+  (`recallOf` set but the emitted cell is a `repetition`), `answer_over_vocal`
+  (a `response` note overlapping a voiced window), `counterline_parallel_bass`
+  (contrary + oblique < 0.5), `hook_stated_before_arrival` (a full statement in
+  a section the ledger withheld), `motif_statement_thinned` (a motif note group
+  whose ids are not all present in the shipped part).
+
+  **Capability ladder.** Motif ledger — DESIGNED ✓ IMPLEMENTED ✓ INTEGRATED
+  ✓ (local ledger on the production path; threaded ledger through the
+  injectable composer, orchestrator lines above) TESTED ✓ BENCHMARKED ✓
+  (before / after evidence) VALIDATED ON OUTPUT ✗. Answers / counter-lines —
+  IMPLEMENTED ✓ INTEGRATED ✓ for CALL_RESPONSE / COUNTER_MELODY tasks TESTED
+  ✓ (with positive controls) BENCHMARKED ✓. Recall across sections —
+  IMPLEMENTED ✓ TESTED ✓, INTEGRATED-pending (needs the threaded ledger).
+  Instrumental lead — IMPLEMENTED ✓ TESTED ✓, INTEGRATED-pending (one line).
+  Motif metadata on notes — INTEGRATED ✓ on every engine and fallback note.
+  V2 motif memory from the ledger — INTEGRATED ✓ TESTED ✓.
+
+  **Honest limits.** Nothing rendered or listened to. Source motifs need
+  melody evidence; the owner's song has none, so its motifs are chord-root
+  inferences and its answer windows are plan inferences — both labelled, and
+  a real vocal map will change both. The planners assign COUNTER_MELODY /
+  CALL_RESPONSE rarely (once on the owner's song, never on the nine synthetic
+  cases), so the production effect today is one Bridge counter-line; the
+  harness numbers show what the engine does when asked. The candidate
+  strategy's density thinning halves motif statements and a post-composition
+  stage re-registers notes — the labels describe the composed cell, not the
+  shipped one (orchestrator findings, not fixed here). The counter-line
+  respects `partWindow`, unlike the rest of the composer. The bass reference
+  is the chord roots when no bass is observed (sibling parts are not in the
+  V1 request). Adaptation labels are frequent where the harmony and the cell
+  disagree — truthful, but a smarter passing-tone model would keep more of the
+  cell. Critic kinds are proposed, not implemented. Both adversarial critics
+  report `uncalibrated` and are used here as measurements, not gates.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
