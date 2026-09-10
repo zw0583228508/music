@@ -65,10 +65,45 @@ test("same input, same seed: byte-identical TrackModels, plan and selection over
   assert.deepEqual(outcomes.filter((o) => !o.passed).map((o) => o.seed), []);
 });
 
-/** Observed 2026-09-10 on main da21dff; the assertion is unchanged. */
+/**
+ * Refreshed for B-12b at the merge (2026-09-10, branch tip aa20e6e on B-06).
+ * B-12's reason (a keys part resolving to the drum kit) was already stale - the
+ * definition-family invariant passes 24/24 - and the first B-12b reading of it
+ * ("57 findings, all on bass-bass") is stale too.
+ *
+ * Observed now: **4/20 seeds pass**, 58 findings, all `harmony_changed_with_seed`
+ * - 43 on `bass-bass` and **15 on other pitched parts**: `strings-counter_melody`
+ * (6, seeds 611/620), `strings-climax_layer` (3, seed 609),
+ * `guitar-harmonic_bed` (3, seed 612), `winds-climax_layer` (2, seeds 607/610),
+ * `keys-rhythmic_harmony` (1, seed 615).
+ *
+ * The named source is B-02's bass writer: `composer/harmonyParts.ts:248` passes
+ * `frame.seed` into `planBassLine`, and `harmonyPlan/bassLine.ts:329` and `:336`
+ * use `seededUnit(input.seed, ...)` to decide whether an approach tone and a
+ * side-step are written. Approach tones are pitches, so the seed changes a
+ * part's pitch-class content and not only its performance.
+ *
+ * **Is the invariant itself right?** A candidate strategy may differ in harmony
+ * when the difference is a decision; an approach tone drawn from a raw seed is
+ * not a decision, it is noise - nothing about the music says whether this change
+ * wants leading into, only `seededUnit(seed, "approach:i:symbol") < rate`. So
+ * the narrowing worth testing was the generous one: keep only "the chord tones
+ * on the strong beats are identical; ornaments on weak beats may differ". A
+ * control measured exactly that over the 20 seeds - the pitch classes sounding
+ * within a quarter-beat of a bar's downbeat, per track, between the two seeds:
+ *
+ *   pitch-class histogram differs   16/20 seeds
+ *   DOWNBEAT pitch classes differ    7/20 seeds  (605, 607, 608, 609, 611, 615, 620)
+ *
+ * The narrowed invariant would fail on 7 of 20 seeds, so it is not what holds
+ * today either: the seed moves pitches on strong beats, on counter-melodies and
+ * climax layers, not only weak-beat ornaments on the bass. There is no honest
+ * narrowing to make and the invariant is kept whole and recorded failing. The
+ * two lines above are where a fix starts; the strong-beat and non-bass share of
+ * the drift is *not* isolated to them and is named here as not isolated.
+ */
 const KNOWN_FAILURE =
-  "19/20 seeds pass. Seed 609: getInstrumentDefinition('keys', 'RHYTHMIC_HARMONY') resolves to the drum kit (musicEngines.ts getInstrumentDefinition: FAMILY_WORDS has no 'key'/'piano', so the role's 'rhythm' makes a kit), " +
-  "and the kit's four-voice polyphony repair drops the quietest voice - a velocity the seed jittered - so the pitch-class content of a keys part changes with the seed.";
+  "composer/harmonyParts.ts:248 passes frame.seed to planBassLine; harmonyPlan/bassLine.ts:329,336 draw approach tones and side-steps from seededUnit(seed) - 4/20 seeds pass (B-12: 19/20), 58 harmony_changed_with_seed findings: 43 on bass-bass and 15 on strings-counter_melody, strings-climax_layer, guitar-harmonic_bed, winds-climax_layer and keys-rhythmic_harmony (seed 601 onward). Not narrowed to weak-beat ornaments: a control shows the DOWNBEAT pitch classes differ on 7 of the 20 seeds, so those 15 are not accounted for by the two named lines.";
 
 test("different seed: the plan and every part's pitch-class content are unchanged, the performance differs", { todo: KNOWN_FAILURE }, (t) => {
   const outcomes: SeedOutcome[] = [];
@@ -83,15 +118,39 @@ test("different seed: the plan and every part's pitch-class content are unchange
   assert.deepEqual(outcomes.filter((o) => !o.passed).map((o) => `${o.seed}: ${o.violations.slice(0, 3).map((v) => `${v.code}: ${v.detail}`).join(" | ")}`), []);
 });
 
+/**
+ * B-12b at the merge: this control had gone blind, and the control - not the
+ * brain - was what changed. Its injected composer carried its state as
+ * `60 + (calls % 7)`, which is invisible whenever the per-run call count is a
+ * multiple of 7. The brain on this base calls the composer **56 times a run**
+ * (56 % 7 === 0), so run B re-emitted run A's pitches note for note, the
+ * TrackModels were byte-identical, and the control passed while proving nothing.
+ * Isolated by a control of its own: printing the two runs' notes shows
+ * `pitch 61,64,62,...` in both runs and `identical trackModels: true`, with
+ * `composeParts` still honoured (`arrangementOrchestrator.ts:463`) and 56 calls
+ * counted in each run.
+ *
+ * `checkSameSeed` is untouched and no assertion is weakened. The state now also
+ * reaches the notes through their ids, which no modulus can fold back onto
+ * itself, and the control first asserts that the injected composer really was
+ * the one composing and really did emit something different the second time -
+ * so a future change to the call count cannot silently disarm it again.
+ */
 test("negative control: a stateful composer breaks same-seed determinism and the check reports it", () => {
   const { model } = generateSongModel(601, { stems: ["drums", "bass", "keys"], vocals: false });
   let calls = 0;
+  const emitted: string[] = [];
   const stateful = (request: { taskId: string; section: { startBar: number } }): MusicalNote[] => {
     calls += 1;
-    return [{ id: `${request.taskId}-n`, start: (request.section.startBar - 1) * 2, duration: 0.5, pitch: 60 + (calls % 7), velocity: 90 }];
+    const note: MusicalNote = { id: `${request.taskId}-call${calls}`, start: (request.section.startBar - 1) * 2, duration: 0.5, pitch: 60 + (calls % 7), velocity: 90 };
+    emitted.push(`${request.taskId}=${note.id}@${note.pitch}`);
+    return [note];
   };
   const a = runBrain(model, { composeParts: stateful, candidateCount: 2 });
+  const callsInA = calls;
   const b = runBrain(model, { composeParts: stateful, candidateCount: 2 });
+  assert.ok(callsInA > 0 && calls > callsInA, `the injected composer must be the one composing: ${callsInA} call(s) in run A, ${calls - callsInA} in run B`);
+  assert.notDeepEqual(emitted.slice(0, callsInA), emitted.slice(callsInA), "the stateful composer must emit something different the second time, or this control proves nothing");
   assert.ok(checkSameSeed(a, b).some((v) => v.code === "track_models_differ"), "the stateful composer is caught");
 });
 

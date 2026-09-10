@@ -70,9 +70,14 @@ test("controls: random pitches destroy the chord-tone share and drums-only destr
 });
 
 /** Observed 2026-09-10 on main da21dff; the assertion is unchanged. The audit's F1, measured. */
+/**
+ * Re-measured for B-12b on 4c5d967: **4/20 seeds pass** (B-12: 3/20). Nine
+ * merges later the production critic still cannot hear the harmony; R-1a's
+ * P0-3 measured the same thing through the whole job path (a random-pitch
+ * composer is *selected* on six of ten benchmark cases).
+ */
 const KNOWN_FAILURE =
-  "3/20 seeds pass. Playable random pitches (in range, bounded leaps; chord-tone share falls from ~0.9 to ~0.3) move critiqueArrangement by -2..+2 points on 15/20 seeds - the 36-point drop under unconstrained random pitches comes from the playability hard rule, not from hearing the harmony (musicCritic.ts:148-198 grades the source chords, not the notes). " +
-  "A drums-only arrangement outscores the full one on 10/20 seeds (e.g. 81 vs 80).";
+  "musicCritic.ts:148-198 grades the source chords, not the notes - 4/20 seeds pass (B-12: 3/20): playable random pitches (chord-tone share ~0.9 -> ~0.3) leave the score unmoved on 11/20 seeds (seed 1101: 77 vs 77, hard rule passed) and a drums-only arrangement outscores the full one on 10/20";
 
 test("random-pitch mutation lowers the critic's score materially; drums-only does not score higher (20 seeds)", { todo: KNOWN_FAILURE }, (t) => {
   const outcomes: SeedOutcome[] = [];

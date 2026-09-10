@@ -1,121 +1,120 @@
 {
   "case": "rock-full",
+  "repin": {
+    "stream": "B-12b",
+    "date": "2026-09-10",
+    "baseCommit": "4c5d967",
+    "previousPin": "e7b4b89 (PR-B12)",
+    "causes": [
+      "B-03 (1467706): instrument profiles behind getInstrumentDefinition, register plan, shouldRest",
+      "B-05a (043f3cb): sixteen note-level critic dimensions and the control ledger",
+      "B-11 (e3f83da): decision provenance per note group, failure codes with origin",
+      "B-10 (93a6c3b): motif ledger, melodic engine, counter-lines and answers",
+      "B-08 (632a925): benchmark 2.0, baseline snapshots, positive-control ledger",
+      "B-02 (347ab19): one chord parser, bass line planned first, per-role voicing solver, partWindow honoured",
+      "B-04 (30041f5): GroovePlan per section, metre-correct kit/percussion/ostinato, transition devices, agogics",
+      "B-09 (4c5d967): StyleGrammar, knowledge base as data, planner / StyleSpec / PerformanceStyle as projections"
+    ],
+    "note": "Re-pinned by B-12b after reporting the drift; the digests describe output, not quality, and nobody listened to any of it."
+  },
   "orchestratorVersion": "1.0",
   "composer": "REFERENCE_PART_COMPOSER_V1",
   "candidateCount": 3,
-  "planDigest": "371bcb7bc60954e0b24261364ac9b448017b4596fe3a86982c1407199fa0dc3e",
+  "planDigest": "4ffbf634d204166be3d0d2358cf9980295e3667ab243f54b5c327eb21dbc1ad1",
   "candidates": [
     {
       "candidateId": "cand-A",
       "strategy": "conservative",
-      "noteCount": 821,
-      "trackModelsSha256": "d4977ecf13dba92d7da7fd3ff4f84a68333e8e1907f46ffe6ed39a37d0437a29",
+      "noteCount": 564,
+      "trackModelsSha256": "392f3a0b7d2b96629d747f4989bf4d23906b5bdff6d0d0034f2448988811b08a",
       "tracks": [
         {
           "id": "drums-groove",
           "instrument": "drums",
-          "notes": 480,
-          "sha256": "fa9e982905fecfc4bad08cbb76cc42759bb9ea0c7e899d5572bd0fb544e2e2c2"
+          "notes": 215,
+          "sha256": "ee814c3d2176d8967236cc78bc59343524bde40ea5828e657d4433fdb86f7329"
         },
         {
           "id": "bass-bass",
           "instrument": "bass",
-          "notes": 122,
-          "sha256": "759ccdead83073cfbe21a43f1e491541d9958d97af39597c13c8b5af66502239"
+          "notes": 84,
+          "sha256": "22102f2d30e2f508f58bc4f66daf1afa696889a9ccaeab7f967b08c0d6da60ad"
         },
         {
-          "id": "guitar-rhythmic_harmony",
-          "instrument": "guitar",
-          "notes": 250,
-          "sha256": "50142d0ed52eebab41f8232bed7dab7a66bc11071b5718bb444d87bdf46b17bf"
-        },
-        {
-          "id": "keys-harmonic_bed",
+          "id": "keys-rhythmic_harmony",
           "instrument": "keys",
-          "notes": 22,
-          "sha256": "ae9ede4070eba2e64e4285b50dc4d8449c63afb51acf1ac4ef5caa0b592eb364"
+          "notes": 253,
+          "sha256": "0ba4c877be481244c4d055e24e9ebcec3cb52387a7b5c8110463b05ccb5bd9de"
         },
         {
-          "id": "ensemble-transition",
-          "instrument": "ensemble",
-          "notes": 15,
-          "sha256": "e9f6cad2ba3d43d64f402d6b410465ea88de4f71796a02dab09f9d2b43c58f26"
+          "id": "guitar-harmonic_bed",
+          "instrument": "guitar",
+          "notes": 12,
+          "sha256": "d06ee8fb9901a14f598c4be32466eb29dd39af78221e5a939443298c54b88bce"
         }
       ]
     },
     {
       "candidateId": "cand-B",
       "strategy": "melodic",
-      "noteCount": 877,
-      "trackModelsSha256": "1fb556cc8f44c472e4f2bf5924a25099d3d43c1a1f06fb9ea7fca36060c1636f",
+      "noteCount": 600,
+      "trackModelsSha256": "fa7e75aa2e325e4ba8faeccdc733864ed97eec7df56346eb7c69e89e068faf5a",
       "tracks": [
         {
           "id": "drums-groove",
           "instrument": "drums",
-          "notes": 516,
-          "sha256": "b88132a26a51be2251f92fb936eb193a77118f9b3769df51e02f9954b6f7eab2"
+          "notes": 233,
+          "sha256": "6162c6a7628ea7ba0c5f07399e34f9a3c7b47b91fe02165feacc85e4d1754f25"
         },
         {
           "id": "bass-bass",
           "instrument": "bass",
-          "notes": 130,
-          "sha256": "38d95fd4083d5932201e06e2a0c1b28110f456802594e8941a7b527b41088cd0"
+          "notes": 90,
+          "sha256": "7c34cd2b8cc3ea630e20e023d24215fd50c7e3880b46ae5fd5c0756e25eeee79"
         },
         {
-          "id": "guitar-rhythmic_harmony",
-          "instrument": "guitar",
-          "notes": 264,
-          "sha256": "348ce6ca39a3e0d09092c61ac6f8c2ed4637b49ec74a0e5a42d34a3787c8b2c1"
-        },
-        {
-          "id": "keys-harmonic_bed",
+          "id": "keys-rhythmic_harmony",
           "instrument": "keys",
-          "notes": 24,
-          "sha256": "3bbb8d95ecb8e8bfeec3479d49b7773eb59d82c8e81859479056b293a754d588"
+          "notes": 265,
+          "sha256": "e2243ec4fe86b636bf5f01294ddaf013f140c83f3ced0c93ea465254a45f423c"
         },
         {
-          "id": "ensemble-transition",
-          "instrument": "ensemble",
-          "notes": 15,
-          "sha256": "ef44ab04002cb8a1fa8e6387f2c2cfceb8fe4d6b65437c725687b6331772b4d6"
+          "id": "guitar-harmonic_bed",
+          "instrument": "guitar",
+          "notes": 12,
+          "sha256": "23af614543b21d27cefe11dba1f35509758e290c70311e9e5ff22e0230ead719"
         }
       ]
     },
     {
       "candidateId": "cand-C",
       "strategy": "adventurous",
-      "noteCount": 877,
-      "trackModelsSha256": "c648c2474bf3e6aea6c0550ea533cfe7284415d9375bf9c28b63f343b307253a",
+      "noteCount": 602,
+      "trackModelsSha256": "a7a2c65b78f2b225461dbc29de6c13b495f19edcdfb06a8659fabd234ce88c55",
       "tracks": [
         {
           "id": "drums-groove",
           "instrument": "drums",
-          "notes": 516,
-          "sha256": "6a134dc4c8fdf87652d8bcb180914ee73084128ceeb4c6b43324e461ffc8b7c7"
+          "notes": 233,
+          "sha256": "71ff963a0d91a361a7ea29fea7d3b6ffe8ba22de4d53c5c906fe2cc79730b501"
         },
         {
           "id": "bass-bass",
           "instrument": "bass",
-          "notes": 130,
-          "sha256": "bb53eefb705e3c3ef424ee33778ccd1f6a73342cff90ca871d5666c5c2e52656"
+          "notes": 92,
+          "sha256": "a8df51bbc78f06f4aea0a7291b04d2c5753fe0fe91b980e746ddc9944017b918"
         },
         {
-          "id": "guitar-rhythmic_harmony",
-          "instrument": "guitar",
-          "notes": 264,
-          "sha256": "f1da50ab2b5975240de23eeef691b0c41294dd22158cd6ffe0415da2604d3844"
-        },
-        {
-          "id": "keys-harmonic_bed",
+          "id": "keys-rhythmic_harmony",
           "instrument": "keys",
-          "notes": 24,
-          "sha256": "53859255f16b814806f0972ba07d08df1fd51c62109fed41cb84a1585b8eb898"
+          "notes": 265,
+          "sha256": "166f8084a6714acf37fe0850d55db0d849c0162213efadc51a6fcec7e099f836"
         },
         {
-          "id": "ensemble-transition",
-          "instrument": "ensemble",
-          "notes": 15,
-          "sha256": "3b80004f631f87a22169effa6436b9d49a1f632b5c16c94407e2edd4fc04a93d"
+          "id": "guitar-harmonic_bed",
+          "instrument": "guitar",
+          "notes": 12,
+          "sha256": "6918a8ad1d78353133e8f871dc1cead8a03f70f1d6634453e4df25a335192391"
         }
       ]
     }

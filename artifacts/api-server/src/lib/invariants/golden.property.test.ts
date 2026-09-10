@@ -18,8 +18,35 @@ import { validateCanonicalSongModel } from "../songModelValidation";
 import { candidateDigest, runBrain, sha256 } from "./analysis";
 import { recordEvidence } from "./evidence";
 
+/**
+ * Why the digests below differ from the pin they replace. Written into every
+ * fixture whenever `B12_UPDATE_GOLDEN=1` re-pins, so a reader of a golden file
+ * can see which merges moved the notes without going to the tracker; the diff
+ * itself is in `docs/evidence/brain-b12b-invariants.json`.
+ */
+const REPIN = {
+  stream: "B-12b",
+  date: "2026-09-10",
+  baseCommit: "4c5d967",
+  previousPin: "e7b4b89 (PR-B12)",
+  /** Merged between the previous pin and this base; each one changed what the composer writes. */
+  causes: [
+    "B-03 (1467706): instrument profiles behind getInstrumentDefinition, register plan, shouldRest",
+    "B-05a (043f3cb): sixteen note-level critic dimensions and the control ledger",
+    "B-11 (e3f83da): decision provenance per note group, failure codes with origin",
+    "B-10 (93a6c3b): motif ledger, melodic engine, counter-lines and answers",
+    "B-08 (632a925): benchmark 2.0, baseline snapshots, positive-control ledger",
+    "B-02 (347ab19): one chord parser, bass line planned first, per-role voicing solver, partWindow honoured",
+    "B-04 (30041f5): GroovePlan per section, metre-correct kit/percussion/ostinato, transition devices, agogics",
+    "B-09 (4c5d967): StyleGrammar, knowledge base as data, planner / StyleSpec / PerformanceStyle as projections",
+  ],
+  note: "Re-pinned by B-12b after reporting the drift; the digests describe output, not quality, and nobody listened to any of it.",
+};
+
 type Golden = {
   case: string;
+  /** Present from the B-12b re-pin onward; absent in fixtures written before it. */
+  repin?: typeof REPIN;
   orchestratorVersion: string;
   composer: string;
   candidateCount: number;
@@ -47,7 +74,7 @@ function digestFor(caseId: string, model: SongModelData): Golden {
   const result = runBrain(model, { candidateCount: 3 });
   const plan = { ...result.plan, globalPlan: { ...result.plan.globalPlan, derivedAt: 0 }, sectionPlan: { ...result.plan.sectionPlan, derivedAt: 0 }, orchestrationBudget: { ...result.plan.orchestrationBudget, derivedAt: 0 }, transitionPlan: { ...result.plan.transitionPlan, derivedAt: 0 }, partComposerPlan: { ...result.plan.partComposerPlan, derivedAt: 0 }, candidateGenerationPlan: { ...result.plan.candidateGenerationPlan, derivedAt: 0 } };
   return {
-    case: caseId, orchestratorVersion: result.version, composer: result.composer, candidateCount: result.candidates.length,
+    case: caseId, repin: REPIN, orchestratorVersion: result.version, composer: result.composer, candidateCount: result.candidates.length,
     planDigest: sha256(plan), candidates: result.candidates.map(candidateDigest),
   };
 }

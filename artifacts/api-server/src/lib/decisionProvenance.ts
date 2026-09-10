@@ -307,19 +307,11 @@ export function buildCandidateProvenance(input: CandidateProvenanceInput): Candi
   const lastBar = Math.max(1, ...sections.map((s) => s.endBar));
   const byTrack: Record<string, TrackDecisionProvenance> = {};
   const composerDecisions = input.composerRegistry?.decisions() ?? [];
-  const composerLayers = new Set(composerDecisions.map((d) => d.layer));
-  const taggedLayers = new Set<DecisionOriginLayer>();
   for (const track of input.trackModels) {
     const instrument = familyOf(track.instrument);
     const ranges: DecisionProvenanceRange[] = [];
     // Finest grain first: notes tagged by a composing layer.
     const tagged = rangesFromTaggedNotes(track.notes, input.barSeconds);
-    for (const range of tagged) {
-      for (const id of range.decisionIds) {
-        const record = registry.get(id) ?? input.composerRegistry?.get(id);
-        if (record) taggedLayers.add(record.layer);
-      }
-    }
     ranges.push(...tagged.map((range) => ({ ...range, decisionIds: range.decisionIds.filter((id) => registry.has(id) || input.composerRegistry?.has(id)) })).filter((r) => r.decisionIds.length));
     ranges.push(...(input.composerRegistry?.rangesFor(track.instrument) ?? []));
     ranges.push(...(taskRanges.get(instrument) ?? []));
@@ -348,7 +340,17 @@ export function buildCandidateProvenance(input: CandidateProvenanceInput): Candi
     if (wholeTrack.length) ranges.push({ startBar: 1, endBar: lastBar, decisionIds: wholeTrack });
 
     const notRecorded: TrackDecisionProvenance["notRecorded"] = [];
-    const recordedHere = new Set<DecisionOriginLayer>([...taggedLayers, ...composerLayers]);
+    // B-11 is a per-track contract, so "recorded" must be read per track: a layer counts
+    // as recorded for *this* track only when one of this track's own ranges cites a
+    // decision of that layer. Read candidate-wide it leaks: B-06's repair registers
+    // `register:repair_reopened:<candidate>/<pass>` against the pitched parts of one
+    // section, and that single decision used to silence the register entry on every other
+    // track - including a drum kit, which has no register decision of its own and now
+    // named none either (B-12b: `layer_silently_missing` on drums-*/percussion-*, seed
+    // 1805 and 1814). Ids are `<layer>:<kind>:<qualifier>`, the same reading the
+    // provenance invariant uses.
+    const recordedHere = new Set<string>();
+    for (const range of ranges) for (const id of range.decisionIds) recordedHere.add(id.split(":")[0]);
     if (!recordedHere.has("harmony") && !contextIds.some((id) => id.startsWith("harmony:"))) {
       notRecorded.push({ layer: "harmony", reason: `${input.composer} emits no voicing decisions; the voicing of each chord is not recorded (harmony realisation is stream B-02)` });
     }

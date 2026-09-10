@@ -1,85 +1,102 @@
 {
   "case": "ethnic-vocal",
+  "repin": {
+    "stream": "B-12b",
+    "date": "2026-09-10",
+    "baseCommit": "4c5d967",
+    "previousPin": "e7b4b89 (PR-B12)",
+    "causes": [
+      "B-03 (1467706): instrument profiles behind getInstrumentDefinition, register plan, shouldRest",
+      "B-05a (043f3cb): sixteen note-level critic dimensions and the control ledger",
+      "B-11 (e3f83da): decision provenance per note group, failure codes with origin",
+      "B-10 (93a6c3b): motif ledger, melodic engine, counter-lines and answers",
+      "B-08 (632a925): benchmark 2.0, baseline snapshots, positive-control ledger",
+      "B-02 (347ab19): one chord parser, bass line planned first, per-role voicing solver, partWindow honoured",
+      "B-04 (30041f5): GroovePlan per section, metre-correct kit/percussion/ostinato, transition devices, agogics",
+      "B-09 (4c5d967): StyleGrammar, knowledge base as data, planner / StyleSpec / PerformanceStyle as projections"
+    ],
+    "note": "Re-pinned by B-12b after reporting the drift; the digests describe output, not quality, and nobody listened to any of it."
+  },
   "orchestratorVersion": "1.0",
   "composer": "REFERENCE_PART_COMPOSER_V1",
   "candidateCount": 3,
-  "planDigest": "f350e845d79e8c08af4c3aa1b38f2e206df7dc2f7d7dd42956c467540cc46951",
+  "planDigest": "d5aa99ae694b69552bbca24544a2bd0c04ded31d89d10d63db85141e1e1cd67d",
   "candidates": [
     {
       "candidateId": "cand-A",
       "strategy": "conservative",
-      "noteCount": 413,
-      "trackModelsSha256": "7bfd8130f98a33fd1121958d6dd6a735868234aa88cd9c54b572bc552eef92f0",
+      "noteCount": 561,
+      "trackModelsSha256": "000bbad2db9c7ea7c1f9b0a44933dca5abafeab64d7130dc92e59b7423b134b3",
       "tracks": [
         {
           "id": "drums-climax_layer",
           "instrument": "drums",
-          "notes": 447,
-          "sha256": "e6cd01255cb1cdd26518a12f383ea28345276d27e608844279354b2d7e99cf0a"
+          "notes": 109,
+          "sha256": "4441dda2d7e7a393ad03e559b8406f55a6aa42d6d6104f9970013e108be05caa"
         },
         {
           "id": "bass-bass",
           "instrument": "bass",
-          "notes": 4,
-          "sha256": "b71b6258c294f0432644fc8ff09a62abf349027c1b3b0d73d6aecc0495fdd2a2"
+          "notes": 64,
+          "sha256": "663b7e5501e8b233872e51671387a6aaf843e25c4ba75a7e2cbfd6d5c366776e"
         },
         {
-          "id": "ensemble-transition",
-          "instrument": "ensemble",
-          "notes": 6,
-          "sha256": "461116ce2e01b3e790b120083547988a4444c0ed5642cfdd73196fe7bdd9340b"
+          "id": "keys-harmonic_bed",
+          "instrument": "keys",
+          "notes": 388,
+          "sha256": "cb0bd5deef224cca6b095b3a9ef6797115a5d610070287f8b5661168bb0b92fb"
         }
       ]
     },
     {
       "candidateId": "cand-B",
       "strategy": "melodic",
-      "noteCount": 446,
-      "trackModelsSha256": "aef51cbce47a173c446597d93611b6cf981dcfdb93308abbc8ad94a165108b07",
+      "noteCount": 593,
+      "trackModelsSha256": "61f42f056435a12e47f9a217ff15fef89d3c19a70613cf10320e2accd67d9a9d",
       "tracks": [
         {
           "id": "drums-climax_layer",
           "instrument": "drums",
-          "notes": 484,
-          "sha256": "1a78c35b226aeee7de89182ae7bce7ffae1fff4ec7cb3a1844141bb332ae689f"
+          "notes": 117,
+          "sha256": "a05567e1ca27585a15ab102d0fa6fc97577113ba1cb6f7503f80664348c6ed25"
         },
         {
           "id": "bass-bass",
           "instrument": "bass",
-          "notes": 4,
-          "sha256": "0308d0ed04d2c3e477cc362ac167ab1c0ccf3219641dcd465932dc317f8581ed"
+          "notes": 68,
+          "sha256": "bb73369d10db9166e4e3fa79d9f1023f742aed4daae95f22bd8b8ab77036d21d"
         },
         {
-          "id": "ensemble-transition",
-          "instrument": "ensemble",
-          "notes": 6,
-          "sha256": "dd051940ac9074a0fed40211eccd98c78579a32db866f19e5daaa60d911821b6"
+          "id": "keys-harmonic_bed",
+          "instrument": "keys",
+          "notes": 408,
+          "sha256": "97f3043c49f00806f2dab7d58b7314ead2fdde9660b426aa632ba874af7ba633"
         }
       ]
     },
     {
       "candidateId": "cand-C",
       "strategy": "adventurous",
-      "noteCount": 446,
-      "trackModelsSha256": "1f7213891cdc46da1165123736ec3ecf611f533285e513483276f250d9fe3626",
+      "noteCount": 592,
+      "trackModelsSha256": "b673d7d29edabace8a30fa88509c4412fae2a2149a9831b8d25182247a1502f3",
       "tracks": [
         {
           "id": "drums-climax_layer",
           "instrument": "drums",
-          "notes": 484,
-          "sha256": "791be328280650b732020ee8d9e29845098382a08c409d6d3b6ebea4238b491c"
+          "notes": 117,
+          "sha256": "ccc843af89119813aef8424cbf880c0e6e5e30c1d509ee809d83252731a72750"
         },
         {
           "id": "bass-bass",
           "instrument": "bass",
-          "notes": 4,
-          "sha256": "3c084d7981fb222dc8b6f20932e7f580d71ea6c62dede4f3aefd7ea50671878e"
+          "notes": 67,
+          "sha256": "ea3f7d0121f70a9c5de1a5df2ed65b5e0ac21133705358b05169720e8c3abd6f"
         },
         {
-          "id": "ensemble-transition",
-          "instrument": "ensemble",
-          "notes": 6,
-          "sha256": "e6a4a7a24fb78b4d77406d7a8ba64911be4276283eac743fa7ee762a566317a5"
+          "id": "keys-harmonic_bed",
+          "instrument": "keys",
+          "notes": 408,
+          "sha256": "ffe01b467c5fab38b9de836c54871583b337e5b63d2b0ed86f76d3a65e50346e"
         }
       ]
     }

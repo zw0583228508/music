@@ -55,8 +55,24 @@ export function fuzzSongModel(seed: number): { model: SongModelData; degeneratio
 }
 
 /** Observed 2026-09-10 on main da21dff; the assertion is unchanged. */
+/**
+ * Refreshed for B-12b on 4c5d967. Still 194/200, still nothing thrown, and
+ * still `duplicate_note_ids` - but the failing models are different and the
+ * cause is now isolated, not inferred.
+ *
+ * All six failures are models with **duplicate section names**, and grouping
+ * the run by that degeneration separates it cleanly: 6 of the 12 models with
+ * duplicate section names fail, and 0 of the other 188 do. `partComposer.ts:233`
+ * builds a part's task id as `part-${sectionName}-${instrument}-${role}`, so
+ * two sections that share a name share one id namespace, and note ids are
+ * position-based inside it (`referencePartComposer.ts:100` `id(suffix)` over
+ * `composer/harmonyParts.ts:281,288` `c${start.toFixed(2)}-${i}`): any chord
+ * both windows see - a boundary chord carried in `previousBars` - is written
+ * twice with the identical id. Duplicate names are necessary, not sufficient:
+ * the other six such models never have two tasks reach the same chord.
+ */
 const KNOWN_FAILURE =
-  "194/200 pass and nothing throws. 6 models ship duplicate note ids: a chord whose end exceeds the next section's start by a floating-point epsilon is still included in that section's window (referencePartComposer.ts:80-82) and written as a minimum-duration stub of the previous harmony on the downbeat, with the same position-based id as the new chord's voice (referencePartComposer.ts:88-96, 181).";
+  "partComposer.ts:233 names a task after its section, and referencePartComposer.ts:100 + composer/harmonyParts.ts:281,288 make note ids position-based inside that namespace - 194/200 pass and nothing throws; the 6 failures (seeds 2044, 2051, 2071, 2132, 2158, 2175) are all models with duplicate section names (6 of 12 such models fail; 0 of the other 188)";
 
 test("200 random and degenerate Song Models: the brain never throws and never returns a malformed note", { todo: KNOWN_FAILURE }, (t) => {
   const outcomes: SeedOutcome[] = [];

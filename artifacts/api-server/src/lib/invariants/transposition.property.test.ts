@@ -17,10 +17,26 @@ import { generateSongModel, makeRng, transposeSongModel } from "./generators";
 const SEEDS = seedsUpTo(24);
 const describe = (violations: Violation[]) => violations.slice(0, 4).map((v) => `${v.code}: ${v.detail}`).join(" | ");
 
-/** Observed 2026-09-10 on main da21dff; the assertion below is unchanged and will pass when these are fixed. */
+/**
+ * Refreshed for B-12b. B-12's reason named the x/8 bar length and the repair's
+ * pitch tie-break, and recorded that "the raw composer transposes exactly, 0
+ * wrong pitches over 2,289 notes". That is no longer true, and the cause has
+ * moved upstream of everything B-12 measured.
+ *
+ * Observed 2026-09-10 on 4c5d967: **0/24 seeds pass** (B-12: 7/24), 2,945
+ * octave folds and 214 `pitch_not_transposed` findings over 69,686 matched
+ * notes. B-12b's composer-direct probe (`harmony.property.test.ts`) shows the
+ * composer itself no longer transposes: of 15,252 matched composed notes only
+ * 4,572 are the exact +k note. Its isolating control - moving each
+ * instrument's range by the same k - lifts that to 11,945, which places most
+ * of the gap on the voicer's absolute register anchor
+ * (`harmonyPlan/voicings.ts:198-200,210`; `composer/registers.ts:18-30` never
+ * sees the key). The 3,197 notes the control does not explain are not
+ * isolated. The repair's pitch tie-break (`playabilityRepair.ts:139`) still
+ * contributes the `voice_choice_changed` findings.
+ */
 const KNOWN_FAILURE =
-  "7/24 seeds pass. (1) In x/8 metres the composer's bar is numerator x quarter (referencePartComposer.ts:73-78), so intro/ending/transition tasks find no chord in their window and write a literal C-major [0,4,7] (referencePartComposer.ts:266): pitch_not_transposed on every ensemble track of every 6/8 and 7/8 seed. " +
-  "(2) playabilityRepair.ts:139 breaks velocity ties on pitch, so which voice of a legal chord it drops depends on the key: voice_choice_changed on 10 seeds. (3) seed 21: constraint-error count differs (60 vs 54).";
+  "harmonyPlan/voicings.ts:198-200,210 - the voicing solver re-centres every key on the instrument's absolute band, so T_k(song) is not T_k(the parts) - 0/24 seeds pass (B-12: 7/24): 2,945 octave folds, 214 pitch_not_transposed, 154 note_set_changed, 33 voice_choice_changed (playabilityRepair.ts:139) over 69,686 matched notes";
 
 test("transposition by k in -6..+6 transposes every pitched part by k (mod 12 folds counted), keeps rhythm, drums, families, roles and playability", { todo: KNOWN_FAILURE }, (t) => {
   const outcomes: SeedOutcome[] = [];
