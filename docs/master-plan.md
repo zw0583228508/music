@@ -9447,6 +9447,175 @@ cases are byte-identical, and so is every case's section plan.
   `53c0d2e-b07.json` baseline snapshot predates the same rebase and was not
   re-run here.
 
+### PR-B19 — Brain B-19: the critics decide what ships
+
+- **PR-B19** ⏳ — `ws-brain-b19` (Brain program, stream B-19: the release judge
+  wired into selection). The direct answer to R-1a **P0-3** and to B-05c's
+  integration line (2). B-05c built the judge, the release rules and
+  `critics/rank.ts` and wired none of them: selection ran on the conservative
+  score `(musicCritic + audioCritic) / 2`. Measured on the owner's shipped v7a
+  candidate (`candidate7.json`, sha256 `5e1b4cc0…`, candidate
+  `b98779b7-8e16-401a-9503-542e551d6b58`): symbolic 0.773 + PCM 0.8428339631 →
+  **0.807916981558708**, rank 1, `validated`, `isSelectableCandidate` **true**
+  — selected, mixed, mastered and exported, while the brain's own judge refused
+  it. Evidence: `docs/evidence/brain-b19-critics-decide.json` (built by
+  `brainB19Evidence.ts`, asserted by `brainB19CriticsDecide.test.ts`) and
+  `docs/evidence/brain-b19-owner-v7a-selection.json` (built by
+  `artifacts/api-server/verify-b19-selection.ts` off the saved song model and
+  candidate; no database, no network).
+
+  **D1. Where the gate runs, and why there.** `arrangementGeneration.ts` judges
+  every candidate **after** the diversity pass and **before** the ranks are
+  written, on `evaluatedPlan` + the materialized `trackModels` — the notes that
+  would actually ship, not the ones the provider proposed. One call each of
+  `evaluateAllDimensions` + `runAdversarialCritics` + `judge`, then **one**
+  `rankCandidates` over all of them. There is no second ordering rule: the
+  precedence (verdict → blocking → refusals → salience-weighted majors →
+  constructive score → id) stays in `critics/rank.ts`, its result is projected
+  onto the candidate by `criticVerdictsFromRanking`, and
+  `rankEvaluatedCandidates` reads the persisted `rank` — comparing it only when
+  **both** sides carry one, because ordering a judged candidate against an
+  unjudged one on that number would be inventing a decision. The reconciled
+  critic score is now a tie-break behind it.
+
+  **D2. A distinct status, and why not the provider's.** A refused candidate
+  becomes **`critic_judge_refused`**, added in the four places that keep the
+  build honest (the union in `lib/db/src/schema/music-studio.ts`, the OpenAPI
+  enum, the regenerated orval clients, and the exhaustive `satisfies
+  Record<CandidateEvaluationStatus, true>` map in `candidateRanking.test.ts`).
+  It is deliberately **not** `provider_hard_rule_refused`: that status records
+  that *the provider* refused a candidate before returning it, is read off
+  `parameters.arrangementBrain`, and only the in-process Arrangement Brain
+  writes it. The two gates run at different times on different evidence; one
+  name for both would put a provider-gate sentence on a candidate no provider
+  gate ever looked at. `candidateStatusAfterCriticJudge` is written as
+  `candidateStatusAfterProviderGate`'s twin, next to it, so the pair reads as
+  one idea with two instances. Because the status is not `validated`,
+  `hasCompleteQualityEvidence` is false, `isSelectableCandidate` is false, the
+  rank is `null` and `selectGenerationCandidate` returns `null`: a refused
+  candidate cannot be selected by any path.
+
+  **D3. When nothing is releasable, the job says so.** `nothingSelectable` is
+  split into `allEvaluationsFailed` (no candidate produced evidence) and
+  `noReleasableCandidate` (candidates were evaluated and the judge said no).
+  The second is **not** an evaluation failure and is not reported as one: job
+  `errorCode` **`NO_RELEASABLE_CANDIDATE`**, stage `no_releasable_candidate`,
+  `retryable: true`, the arrangement **not** marked ready, and an error naming
+  every refusing observation with its section, its dimension, the release rule
+  that refused it and the repair operators asked for. Each candidate keeps the
+  whole verdict in `evaluation.criticVerdict` (refusals with bars and rule,
+  `topProblems` with `whatToFix`, the gated dimensions, the tie group,
+  `requestedRepairOperations`), and it is public through
+  `publicCandidateEvaluation` — bounded like every other evidence block there,
+  because the reason a producer's candidate did not ship is the producer's.
+
+  **D4. Disagreement survives selection.** The judge keeps contested findings;
+  `criticVerdict.contested` carries every disagreement it left `kept_open`, and
+  a refusal sentence says how many of them the refusal does *not* settle. A
+  releasable verdict with open disagreements stays releasable **and** stays
+  contested — nothing downstream may read the absence of a refusal as
+  agreement. In the same spirit the owner's pairwise preference model (PR-29)
+  may now reorder only candidates inside one **judge tie group**
+  (`rankCandidates`'s own `ties`), so a trained preference can break a tie the
+  critics explicitly could not break and can never overturn one they did.
+
+  **D5. Both controls, on real material.** *Null control* — the nine clean
+  corpus anchors, untouched, through the same judge: **two are releasable**
+  (`acoustic-demo` 0.808, `orchestral-midi` 0.789) and seven are refused, so a
+  refusal below is a measurement of the candidate and not of the gate.
+  *Positive control* — every eligible part of those two anchors revoiced off
+  the chord with the critic harness's own `chord_tone_to_non_chord_tone@3`
+  (the same defect that blocks the owner's Outro; the corruption is the
+  harness's, not this stream's, so the worsening and the detector were not
+  written by one author): **5 of 5 refused**, every one on a blocking
+  `clash_share`, and the conservative score **never fell** — it rose on four
+  (0.808 → 0.823 / 0.816, 0.789 → 0.793 / 0.796) and tied on one (0.789 →
+  0.789 with 112 notes moved off the chord). The old ranking would have shipped
+  the worsened candidate in all five cases; a test asserts that directly by
+  neutralising the verdicts and watching the score alone select `worsened`.
+
+  **D6. The owner's song, before and after.** Through the real selection path
+  on the saved shipped candidate: **before** — 0.807916981558708, rank 1,
+  `validated`, selectable **true**. **after** — `critic_judge_refused`,
+  releasable false, 1 blocking + 6 refusals, selectable **false**, rank `null`,
+  job `NO_RELEASABLE_CANDIDATE`. The six refusals, in the verdict's own words:
+  `clash_share` [blocking] in the **Outro** (harmony,
+  `blocking_from_gated_dimension`, 49 % of the string bed's time clashes) →
+  `revoice_to_chord_tones`; `top_line_above_comfortable_ceiling` [major] ×4 in
+  Verse 2, Chorus 2 and Chorus 3 ×2 (register, `major_on_a_bed`) →
+  `lower_top_voice_to_ceiling`; `arrival_thinner_than_setup` [major] in Verse 3
+  (density, `the_arrival_did_not_arrive`) → `make_the_arrival_arrive`. Fix
+  first: `clash_share`, `off_grid` (strings Verse 2, `requantise_part`),
+  `foundation_gaps` (bass silent in 12 of 24 bars of Verse 3,
+  `fill_foundation_gaps`). Zero disagreements were kept open on this candidate.
+
+  **D7. Hand-off to B-20 (repair operators).** The repair loop is **already**
+  aimed by the judge: `criticRepairLoop.evaluateNotes` builds the verdict and
+  `repairPlanner.buildRepairPlan` takes `input.verdict`, with
+  `priorityOf(observation, verdict)` reading `verdict.ranked` — B-06 did that,
+  and `topProblems` is a three-item projection of the same ordering, so nothing
+  in this stream needed to re-aim it. What is **not** wired is the operator the
+  critic names: `repairPlanner.ts` and `repairExecutor.ts` contain **zero**
+  references to `observation.recommendedRepair`. Across the owner's song and
+  the two control anchors the dimensions ask for **45 distinct operators**
+  (`revoice_to_chord_tones`, `lower_top_voice_to_ceiling`,
+  `fill_foundation_gaps`, `make_the_arrival_arrive`, `requantise_part`,
+  `quantise_harmony_to_the_kit_grid`, `compose_missing_part`,
+  `shorten_or_retie_at_chord_change`, `voice_the_bed`, …) and
+  `repairExecutor.ts` dispatches **11** in a different namespace
+  (`arc.*`, `form.*`, `groove.*`, `orchestration.*`, `register.shift_section_band`,
+  `compose.recompose_part`). The two vocabularies **do not intersect at all**:
+  the planner bridges them by failure code, so a critic's named repair is never
+  executed as named. Every row is in the evidence
+  (`operatorHandoff.rows`: operator → the kinds that ask for it → the
+  dimensions → `executable`), and the file that would implement them is
+  `artifacts/api-server/src/lib/repairExecutor.ts`. **Nothing was implemented
+  here** — repair operators are stream B-20's.
+
+  **Capability ladder.** Judge-gated selection DESIGNED ✓ IMPLEMENTED ✓
+  INTEGRATED ✓ (the production runner calls it; no other path can select)
+  TESTED ✓ (24 tests in `candidateRanking.test.ts`, 4 in
+  `brainB19CriticsDecide.test.ts`, both registered in the new `brain-b19`
+  group) BENCHMARKED ✓ (nine clean anchors as a null control, five worsenings
+  as a positive control) **VALIDATED ON OUTPUT ✓** — on the owner's actual
+  shipped v7a candidate, refused where it was selected. Candidate ranking
+  INTEGRATED ✓ (`rankCandidates`'s order is the persisted order). Repair
+  operators **NOT STARTED** — measured and handed to B-20, not written.
+
+  **Honest limits.** (1) **The gate is strict and the brain is not yet good
+  enough for it.** It passes 2 of 9 clean corpus anchors and refuses the
+  owner's song, so with today's composer most generations will end in
+  `NO_RELEASABLE_CANDIDATE` rather than shipping something mediocre. That is
+  the measurement, not a target, and no threshold was moved to soften it — the
+  release rules are B-05c's, untouched. (2) **One rule dominates**:
+  `major_on_a_bed` on `top_line_above_comfortable_ceiling` refuses all seven of
+  the refused anchors on its own. Whether a bed a little over its comfortable
+  ceiling should refuse a *release* or should be a major finding the repair
+  loop fixes is a judgement for B-05c/B-20; this stream did not settle it and
+  did not quietly re-tune it. (3) A provider candidate with **no symbolic
+  notes** (audio-only) is not judged and therefore not gated: the note-level
+  critics read notes, and refusing it would be a verdict nobody reached —
+  passing it is not a claim that it is good. (4) `composedTrackModels` is not
+  captured on the production path, so `single_voice_bed` reaches the gate as
+  `major`/`compose` rather than `blocking`/`perform` (B-05c's limit 6, still
+  open; it belongs to the orchestrator's compose loop). (5) The judge runs
+  twice per candidate — once for the stored verdict, once inside
+  `rankCandidates`. It is a pure deterministic function of the same reports, so
+  the two agree by construction; it is duplicated *work*, not a duplicated
+  rule. (6) The critic pass adds real time to every generation job (the owner's
+  141-bar arrangement takes ~20 s of dimensions per candidate in the harness);
+  it is not parallelised here. (7) The positive control shows the gate
+  separates worsened from clean on real material; it does **not** show it ranks
+  two genuinely *good* candidates correctly, because the corpus contains no
+  such pair for one song. (8) `conservativeScore` in
+  `brain-b19-critics-decide.json` is the symbolic critic alone (no render in
+  that harness); the owner's before/after uses the row's **real** stored
+  symbolic and PCM scores. (9) The pre-existing failure in
+  `invariants/wiring.property.test.ts` ("removing the groove plan is refused")
+  reproduces identically at base sha `3b9ace3` with this stream's three
+  production files reverted — it is B-13's already-documented stale control and
+  is not touched. (10) Nobody listened to anything.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
