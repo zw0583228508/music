@@ -51,6 +51,7 @@ import type { CriticObservation, Severity } from "./critics/types";
 import type { JudgeVerdict } from "./critics/judge";
 import { codeForKind, FAILURE_TAXONOMY, type FailureCode } from "./critics/failureTaxonomy";
 import { DYNAMIC_MARKINGS, REGISTER_SHIFTABLE_FAMILIES, TEXTURE_LEVELS, canonicalFamily } from "./arrangementArc";
+import { NOTE_REPAIRABLE_KINDS, noteOperationName, noteOperatorForKind, noteOperatorForSpec, type NoteRepairOperator } from "./repair/noteOperators";
 
 export const REPAIR_PLANNER_VERSION = "REPAIR_PLANNER_v1" as const;
 const METHOD = "repair-planner/v1";
@@ -189,7 +190,40 @@ type Group = {
   votes: Array<{ layer: DecisionOriginLayer; weight: number }>;
   primaryCode: ArrangementFailureCode;
   codes: ArrangementFailureCode[];
+  /**
+   * B-20: the group's highest-priority observation that a **note operator**
+   * answers, and that operator. Decided here because this is where the judge's
+   * priorities are in scope; `draftOperation` only reads it.
+   */
+  noteTarget: { observation: CriticObservation; operator: NoteRepairOperator; trackId: string; instrument: string } | null;
 };
+
+/**
+ * The observation of a group a note operator can act on: one that names a
+ * single track (an operator edits one part), whose kind the registry answers,
+ * highest judge priority first, then severity, then id so the choice is
+ * deterministic.
+ */
+function noteTargetOf(
+  members: readonly CriticObservation[],
+  verdict: JudgeVerdict,
+  trackModels: readonly TrackModel[],
+): Group["noteTarget"] {
+  const candidates = members
+    .filter((o) => o.severity !== "info" && o.location.trackIds.length === 1 && NOTE_REPAIRABLE_KINDS.has(o.kind))
+    .map((observation) => ({
+      observation,
+      operator: noteOperatorForKind(observation.kind)!,
+      trackId: observation.location.trackIds[0],
+      instrument: instrumentOfTrack(trackModels, observation.location.trackIds[0]) ?? "",
+    }))
+    .filter((c) => !!c.instrument)
+    .sort((a, b) =>
+      priorityOf(b.observation, verdict) - priorityOf(a.observation, verdict) ||
+      SEVERITY_RANK[b.observation.severity] - SEVERITY_RANK[a.observation.severity] ||
+      a.observation.id.localeCompare(b.observation.id));
+  return candidates[0] ?? null;
+}
 
 function instrumentOfTrack(trackModels: readonly TrackModel[], trackId: string): string | null {
   const track = trackModels.find((t) => t.id === trackId);
@@ -261,6 +295,7 @@ function groupObservations(
       votes,
       primaryCode: codes[0] ?? "INPUT_UNKNOWN",
       codes,
+      noteTarget: noteTargetOf(members, verdict, trackModels),
     });
   }
   return groups.sort((a, b) => b.priority - a.priority || a.key.localeCompare(b.key));
@@ -307,6 +342,16 @@ type OperationDraft = {
   scopeSections?: string[];
   scopeInstruments?: string[];
   reason: string;
+  /** B-20: a note operator edits one part in one window; the scope is the observation's own. */
+  scopeTrackIds?: string[];
+  scopeBars?: { startBar: number; endBar: number };
+  /**
+   * The observations that must disappear for the pass to be accepted. A note
+   * operator repairs exactly the observation it was drafted from, so demanding
+   * every observation of the group's failure code would reject a repair that
+   * did what it said it would.
+   */
+  expectedEffect?: string[];
 };
 
 const BASS_KINDS = new Set(["bass_leaves_chord", "bass_rarely_states_root", "static_bass_no_approach", "bass_sustain_beyond_decay", "bass_and_keys_share_low_octave"]);
@@ -554,13 +599,44 @@ function draftOperation(layer: DecisionOriginLayer, group: Group, sections: Sect
         reason: bass ? "re-plan the bass line of the flagged bars from the harmonic rhythm" : "re-solve the voicings of the flagged bars against the planned bass",
       };
     }
-    case "compose":
+    case "compose": {
+      // B-20: the composer's own layer has exactly one lever that is not a
+      // recompose — edit the notes it wrote. When a critic named an operation
+      // this repo implements (`recommendedRepair.operation`), that operation is
+      // the operation: the critic's vocabulary and the planner's are one.
+      const target = group.noteTarget;
+      if (target) {
+        const observation = target.observation;
+        const section = observation.location.sectionName
+          ?? sections.find((s) => s.startBar <= observation.location.startBar && s.endBar >= observation.location.endBar)?.name
+          ?? first?.name;
+        return {
+          operation: noteOperationName(target.operator.operation),
+          params: {
+            trackId: target.trackId,
+            instrument: target.instrument,
+            observationId: observation.id,
+            kind: observation.kind,
+            ...(section ? { sectionName: section } : {}),
+            startBar: observation.location.startBar,
+            endBar: observation.location.endBar,
+          },
+          leverAvailable: true,
+          scopeSections: section ? [section] : group.sectionNames,
+          scopeInstruments: [target.instrument],
+          scopeTrackIds: [target.trackId],
+          scopeBars: { startBar: observation.location.startBar, endBar: observation.location.endBar },
+          expectedEffect: [observation.id],
+          reason: `${observation.dimension}:${observation.kind} — ${target.operator.describe(target.instrument, section ?? `bars ${observation.location.startBar}-${observation.location.endBar}`)}`,
+        };
+      }
       return {
         operation: "compose.recompose_part",
         params: {},
         leverAvailable: true,
         reason: "the plan states the intent and the notes do not realise it: recompose the part from the plan",
       };
+    }
     default:
       return null;
   }
@@ -667,6 +743,8 @@ function clipScope(scope: RepairOperationScope, limit: RepairOperationScope | nu
  * otherwise have reached, so they stay.
  */
 export const noOpOnFreshNotes = (draft: OperationDraft) => draft.operation === "compose.recompose_part";
+/** B-20: `compose.<critic operation>` — an operation the note-operator registry performs on the notes themselves. */
+export const isNoteOperation = (operation: string) => noteOperatorForSpec(operation) !== null;
 export const NO_OP_ON_FRESH_NOTES_REASON =
   "the only layer named for this group is the composer, and these notes were just composed from this plan: " +
   "recomposing the part would write the same notes. Nothing is attempted, because nothing would change";
@@ -690,12 +768,13 @@ function operationFor(
   const scope: RepairOperationScope = clipScope({
     sections: scopeSections,
     instruments: draft.scopeInstruments ?? group.instruments,
-    trackIds: draft.scopeInstruments ? [] : group.trackIds,
-    startBar: scopedSections.length ? Math.min(...scopedSections.map((s) => s.startBar)) : group.startBar,
-    endBar: scopedSections.length ? Math.max(...scopedSections.map((s) => s.endBar)) : group.endBar,
+    trackIds: draft.scopeTrackIds ?? (draft.scopeInstruments ? [] : group.trackIds),
+    startBar: draft.scopeBars?.startBar ?? (scopedSections.length ? Math.min(...scopedSections.map((s) => s.startBar)) : group.startBar),
+    endBar: draft.scopeBars?.endBar ?? (scopedSections.length ? Math.max(...scopedSections.map((s) => s.endBar)) : group.endBar),
   }, limit);
   if (!scope.sections.length || scope.endBar < scope.startBar) return null;
-  const primaryTargets = group.observations.filter((o) => failureCodeOf(o) === group.primaryCode).map((o) => o.id);
+  const primaryTargets = draft.expectedEffect
+    ?? group.observations.filter((o) => failureCodeOf(o) === group.primaryCode).map((o) => o.id);
   const layerUsed = layer as RepairLayer;
   return {
     layerUsed,
@@ -787,9 +866,11 @@ export function buildRepairPlan(input: RepairPlannerInput): RepairPlan {
   if (input.seeded) {
     const seeded = input.seeded;
     const seededSections = sections.filter((s) => seeded.scope.sections.includes(s.name));
+    const seededObservations = plannable.filter((o) => scopeIntersects(seeded.scope, o) && failureCodeOf(o) === seeded.failureCode);
     const pseudoGroup: Group = {
       key: `seeded|${seeded.id}`,
-      observations: plannable.filter((o) => scopeIntersects(seeded.scope, o) && failureCodeOf(o) === seeded.failureCode),
+      observations: seededObservations,
+      noteTarget: noteTargetOf(seededObservations, input.verdict, input.trackModels),
       sections: seededSections,
       sectionNames: seeded.scope.sections,
       trackIds: seeded.scope.trackIds,
@@ -851,7 +932,13 @@ export function buildRepairPlan(input: RepairPlannerInput): RepairPlan {
     // layer still outranks them.
     const owning = uniq(group.codes.flatMap((code) => (FAILURE_TAXONOMY[code as FailureCode]?.defaultOrigins ?? []) as DecisionOriginLayer[]))
       .filter((layer) => PLANNABLE.has(layer) && layer !== "compose");
-    const order = uniq([refined.layer, ...voted, ...owning, ...(composeNamed ? ["compose" as DecisionOriginLayer] : [])]);
+    // B-20: a group one of whose observations a note operator answers always
+    // reaches the composer's layer, whoever the critics voted for. The vote
+    // says where the defect *came from*; the operator says what can be done
+    // about the notes that are there now, and on a plan layer with no lever
+    // those are not the same question.
+    const composeReachable = composeNamed || group.noteTarget !== null;
+    const order = uniq([refined.layer, ...voted, ...owning, ...(composeReachable ? ["compose" as DecisionOriginLayer] : [])]);
     const deferrable = order.filter((l) => !PLANNABLE.has(l));
     let primary: ReturnType<typeof operationFor> = null;
     let fallback: ReturnType<typeof operationFor> = null;
@@ -859,8 +946,19 @@ export function buildRepairPlan(input: RepairPlannerInput): RepairPlan {
       const op = operationFor(group, layer, sections, input.plan, limit, operations.length, group.key.replace(/[^a-z0-9]+/gi, "_").slice(0, 40), fresh);
       if (!op) continue;
       if (!primary) primary = op;
+      // An operation whose layer has **no lever the composer reads** cannot
+      // change a note: it recomposes the part from a plan it did not edit, and
+      // the deterministic composer writes the part again. It is worth
+      // recording — that is how the missing lever stays on the record — but it
+      // must not outrank an operator that can actually move the notes the
+      // critic flagged. So a note operation takes the primary slot and the
+      // lever-less one becomes the fallback, keeping its evidence.
+      else if (!primary.spec.leverAvailable && isNoteOperation(op.spec.operation)) {
+        fallback = fallback ?? primary;
+        primary = op;
+      }
       else if (!fallback && (op.spec.operation !== primary.spec.operation || op.layerUsed !== primary.layerUsed)) fallback = op;
-      if (primary && fallback) break;
+      if (primary && fallback && primary.spec.leverAvailable) break;
     }
     if (!primary) {
       const onlyNoOps = fresh && order.some((l) => {
@@ -912,8 +1010,35 @@ export function buildRepairPlan(input: RepairPlannerInput): RepairPlan {
 
 /** Does `target` still exist among `after`: same dimension and kind at an overlapping place (ids may shift when a track appears or leaves). */
 export function observationPersists(target: CriticObservation, after: readonly CriticObservation[]): boolean {
-  return after.some((o) =>
+  return matchesOf(target, after).length > 0;
+}
+
+function matchesOf(target: CriticObservation, after: readonly CriticObservation[]): CriticObservation[] {
+  return after.filter((o) =>
     o.dimension === target.dimension && o.kind === target.kind &&
     o.location.startBar <= target.location.endBar && o.location.endBar >= target.location.startBar &&
     (!o.location.trackIds.length || !target.location.trackIds.length || o.location.trackIds.some((t) => target.location.trackIds.includes(t))));
+}
+
+/**
+ * Acceptance (B-20): is the targeted defect **still as bad** after the pass?
+ *
+ * B-06 accepted a pass only when every targeted observation had *disappeared*.
+ * That is the right bar for a plan operation, which either reopens the decision
+ * that caused a finding or does not. It is the wrong bar for an operator that
+ * moves notes against a *measured share*: on the owner's Outro string bed the
+ * revoicing takes `clashShare` from 0.4857 to 0.1302 and `chordToneShare` from
+ * 0.416 to 0.8698 — the judge's blocking count falls from 2 to 1 and its burden
+ * from 602.7 to 482.1 — and the finding survives as a **minor** one, because a
+ * 13 % clash share is still over the harmony critic's 8 % minor threshold. Under
+ * B-06's rule that repair is thrown away and the blocking finding ships.
+ *
+ * So a target counts as remaining only while a finding of the same kind, at the
+ * same place, is still **at least as severe**. A severity that fell is a repair
+ * that worked and did not finish; `verdictWorsened` (unchanged, strict: the
+ * judge's burden may not rise at all) still refuses a pass that bought the
+ * improvement anywhere else in the arrangement.
+ */
+export function observationStillAsBad(target: CriticObservation, after: readonly CriticObservation[]): boolean {
+  return matchesOf(target, after).some((o) => SEVERITY_RANK[o.severity] >= SEVERITY_RANK[target.severity]);
 }

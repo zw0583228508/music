@@ -421,16 +421,31 @@ test("no pass that changed nothing is reported as a repair, and a stage that rep
   }
 });
 
-test("a candidate whose passes were all rejected is byte-identical to the same candidate with the stage switched off", () => {
-  const rejectedOnly = CORPUS_ROWS.filter((row) => row.acceptedPasses === 0);
-  assert.ok(rejectedOnly.length > 0, "no corpus entry rejected every pass, so this control proves nothing");
-  for (const row of rejectedOnly) {
+test("the notes differ from the stage-off control if and only if a pass was accepted", () => {
+  // B-06 stated this control one way round — a candidate that accepted nothing
+  // must be byte-identical to the same run with the stage off. B-20's note
+  // operators accept a pass on every corpus entry, which left that form of the
+  // control with no subject; the invariant it protects is the two-way one, and
+  // it is stronger: a stage that accepted nothing may not have moved a note,
+  // and a stage that accepted a pass must have moved one (an accepted pass that
+  // changed nothing is exactly the defect R-1a P1-4 found).
+  let identical = 0;
+  let different = 0;
+  for (const row of CORPUS_ROWS) {
     const run = runDefect(DEFECT_CORPUS.find((d) => d.id === row.id)!);
-    assert.ok(isDeepStrictEqual(
+    const same = isDeepStrictEqual(
       run.candidate.trackModels.map((t) => [t.id, t.notes]),
       run.control.trackModels.map((t) => [t.id, t.notes]),
-    ), `${row.id}: a stage that accepted nothing still changed the notes`);
+    );
+    if (row.acceptedPasses === 0) {
+      assert.ok(same, `${row.id}: a stage that accepted nothing still changed the notes`);
+      identical += 1;
+    } else {
+      assert.ok(!same, `${row.id}: ${row.acceptedPasses} pass(es) were accepted and no note moved`);
+      different += 1;
+    }
   }
+  assert.ok(identical + different === CORPUS_ROWS.length && different > 0, `${different} of ${CORPUS_ROWS.length} corpus entries had a pass accepted`);
 });
 
 test("every accepted pass named a layer, kept its scope and did not worsen the judge", () => {

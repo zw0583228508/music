@@ -40,7 +40,9 @@ import type {
   TransitionPlanSet,
 } from "@workspace/db";
 import { DYNAMIC_MARKINGS, REGISTER_SHIFTABLE_FAMILIES, TEXTURE_LEVELS, canonicalFamily } from "./arrangementArc";
-import { DecisionRegistry } from "./decisionProvenance";
+import { DecisionRegistry, type RegisterDecisionInput } from "./decisionProvenance";
+import { notesOutsideScopePreserved } from "./candidateRepair";
+import { noteOperatorForSpec, type NoteRepairChange } from "./repair/noteOperators";
 import { deriveGlobalArrangementPlan, type GlobalPlannerHints } from "./globalArrangementPlanner";
 import { deriveSectionPhrasePlan, type SectionPlannerHints } from "./sectionPhrasePlanner";
 import { deriveOrchestrationBudget } from "./orchestrationBudget";
@@ -365,6 +367,92 @@ export function spliceTracks(
     if (notes.length) out.push({ ...fresh, notes, provenance: { ...fresh.provenance, parameters: { ...fresh.provenance.parameters, noteCount: notes.length } } });
   }
   return out;
+}
+
+/** Seconds of one bar range (the window a note operator is allowed to touch). */
+export function barWindow(
+  songModel: SongModelData,
+  startBar: number,
+  endBar: number,
+  timing: { tempoBpm: number; meter: string },
+): TimeWindow {
+  const bars = songModel.bars ?? [];
+  const beats = Number(timing.meter.split("/")[0]) || 4;
+  const barSeconds = (60 / Math.max(1, timing.tempoBpm)) * beats;
+  const first = bars.find((b) => b.bar === startBar);
+  const last = bars.find((b) => b.bar === endBar);
+  return {
+    start: first?.start ?? (startBar - 1) * barSeconds,
+    end: last?.end ?? endBar * barSeconds,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// B-20: note-level operations
+// ---------------------------------------------------------------------------
+
+export type NoteRepairExecution =
+  | {
+      trackModels: TrackModel[];
+      /** The single track the operator edited. */
+      trackId: string;
+      instrument: string;
+      changes: NoteRepairChange[];
+      windows: TimeWindow[];
+      note: string;
+      decision: RegisterDecisionInput;
+      measured: Record<string, number | string>;
+    }
+  | { rejected: string };
+
+/**
+ * Apply a `compose.<critic operation>` operation to the candidate's notes.
+ *
+ * Returns `null` when the spec is not a note operation at all, so a caller can
+ * try the plan-layer path (`applyRepairOperationToPlan`) instead. This is the
+ * whole executor for the note path: the operator edits one part inside the
+ * operation's bar window, and the same byte-equality discipline B-06 applies to
+ * a recompose (`notesOutsideScopePreserved`) verifies that nothing else moved —
+ * an operator that leaks outside its window is rejected, not trusted.
+ */
+export function applyNoteRepairOperation(
+  operation: RepairOperationSpec,
+  ctx: { songModel: SongModelData; plan: ArrangementPlan; timing: { tempoBpm: number; meter: string } },
+  trackModels: readonly TrackModel[],
+): NoteRepairExecution | null {
+  const operator = noteOperatorForSpec(operation.operation);
+  if (!operator) return null;
+  const params = operation.params;
+  const trackId = String(params.trackId ?? operation.scope.trackIds[0] ?? "");
+  if (!trackId) return { rejected: `${operation.operation}: the operation names no track to repair` };
+  const startBar = Number(params.startBar ?? operation.scope.startBar);
+  const endBar = Number(params.endBar ?? operation.scope.endBar);
+  const result = operator.apply({
+    songModel: ctx.songModel,
+    plan: ctx.plan,
+    trackModels,
+    trackId,
+    startBar,
+    endBar,
+    ...(typeof params.sectionName === "string" ? { sectionName: params.sectionName } : {}),
+    tempoBpm: ctx.timing.tempoBpm,
+  });
+  if ("refused" in result) return { rejected: result.refused };
+
+  const next = trackModels.map((t) => (t.id === result.trackId ? { ...t, notes: result.notes } : t));
+  const windows = [barWindow(ctx.songModel, startBar, endBar, ctx.timing)];
+  const preserved = notesOutsideScopePreserved(trackModels, next, { instruments: new Set([result.instrument]), windows });
+  if (!preserved.preserved) return { rejected: `scope violation: ${preserved.violations.join("; ")}` };
+  return {
+    trackModels: next,
+    trackId: result.trackId,
+    instrument: result.instrument,
+    changes: result.changes,
+    windows,
+    note: result.note,
+    decision: result.decision,
+    measured: result.measured,
+  };
 }
 
 /**
