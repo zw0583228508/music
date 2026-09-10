@@ -158,6 +158,31 @@ export const PROVIDER_RELIABILITY: Record<string, ProviderReliabilityProfile> = 
       "evidence is where its competence is actually measured.",
     domains: { sections: 0.45 },
   },
+  MELODY_STEM_PATH_V1: {
+    provider: "MELODY_STEM_PATH_V1",
+    note:
+      "PR-88 specialist melody path: htdemucs melody stem -> Basic Pitch (anchor) + CREPE split at " +
+      "its onsets + pYIN -> fusion. Weight = the measured onset+pitch F1 of the fused line on a clean " +
+      "lead stem, ANALYSIS_GOLD_V1 SYNTHETIC_EXACT, 21 works (0.717; precision 0.905). On htdemucs's " +
+      "`other` stem of an instrumental it is 0.481, and a sung lead is not in the truth set: the " +
+      "weight is the tracker chain's, not a promise about separation. Enters the fusion only behind " +
+      "the MELODY_STEM_PATH_V1 flag (docs/evidence/melody-bass-paths-live.json).",
+    domains: { melody: 0.72 },
+  },
+  BASS_STEM_PATH_V1: {
+    provider: "BASS_STEM_PATH_V1",
+    note:
+      "PR-88 specialist bass path: htdemucs bass stem -> CREPE (anchor) + pYIN + Basic Pitch in the " +
+      "bass register -> octave folding -> fusion; only tracker-confirmed notes are carried. Weight = " +
+      "the fused line's onset+pitch F1 on the separated bass stem, 21 gold works (0.801; carried " +
+      "evidence precision 0.907, octave errors 0.4 %). Measured, not wired into the Song Model's bass field.",
+    domains: { bass: 0.8 },
+  },
+  DEMUCS_HTDEMUCS: {
+    provider: "DEMUCS_HTDEMUCS",
+    note: "htdemucs 4-stem separation inside the melody-bass worker; a stem source, not a note source.",
+    domains: { instruments: 0.85 },
+  },
   LOCAL_SIGNAL_ANALYZER_V1: {
     provider: "LOCAL_SIGNAL_ANALYZER_V1",
     note: "Always-available CPU baseline (FFmpeg + local extraction).",

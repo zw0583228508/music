@@ -584,6 +584,15 @@ const suites = {
       ["src/lib/regenerationLocks.test.ts", "regeneration-locks.test.mjs"],
     ],
   },
+  "melody-bass-paths": {
+    bundles: [
+      [
+        "src/lib/melodyBassPaths.test.ts",
+        "melody-bass-paths.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+    ],
+  },
 };
 
 const supportedPermissionFailureCodes = new Set(["EPERM", "EACCES"]);

@@ -61,7 +61,12 @@ export type StructureAnalysisResult = {
 };
 
 export type TranscriptionAnalysisResult = {
-  providerId: "BASIC_PITCH" | "MT3" | "MR_MT3" | "YOUR_MT3" | "SHEETSAGE";
+  /**
+   * `MELODY_STEM_PATH_V1` is the separated-stem melody path (PR-88): a
+   * monophonic line fused from pitch trackers on a vocal stem, entered as an
+   * additional transcription result behind the `MELODY_STEM_PATH_V1` flag.
+   */
+  providerId: "BASIC_PITCH" | "MT3" | "MR_MT3" | "YOUR_MT3" | "SHEETSAGE" | "MELODY_STEM_PATH_V1";
   version: string;
   notes: MelodyNote[];
   confidence: number;
@@ -1768,6 +1773,13 @@ export function fuseCanonicalNotes(
     MR_MT3: 0.98,
     YOUR_MT3: 0.98,
     SHEETSAGE: 0.92,
+    // Mirrors `PROVIDER_RELIABILITY.MELODY_STEM_PATH_V1.domains.melody`: the
+    // fused line's onset+pitch F1 on a clean lead stem (ANALYSIS_GOLD_V1, 21
+    // works; docs/evidence/melody-bass-paths-live.json). With the result
+    // confidence being the trackers' agreement rate, note x result x 0.72
+    // never reaches the sole-provider floor: the stem path enters canon only
+    // where BASIC_PITCH heard the same note - measured there, not tuned here.
+    MELODY_STEM_PATH_V1: 0.72,
   };
   const TIMING_START_TOLERANCE = 0.03;
   const TIMING_END_TOLERANCE = 0.05;

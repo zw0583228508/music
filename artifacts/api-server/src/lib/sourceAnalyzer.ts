@@ -58,6 +58,7 @@ import { buildMeterAwareEvidence, createCanonicalTimeline } from "./canonicalTim
 import { formatHostErrorMessage } from "./hostErrorDiagnostics";
 import { fingerprintPendingReferences } from "./referenceIntelligenceDbStore";
 import { keyFromNotes, keyFromNotesRefusal } from "./keyFromNotes";
+import { melodyStemPathEnabled, melodyStemPathForAnalysis } from "./melodyBassPaths";
 
 /**
  * A key inferred from transcribed notes, named so it can never be mistaken for
@@ -1387,6 +1388,34 @@ export async function analyzeProjectSource(
       idempotencyKey: job.id,
       onSheetSageCapacityRejection: recordSheetSageCapacityRejection,
     });
+    if (!midi && melodyStemPathEnabled()) {
+      // PR-88: the separated-stem melody path enters as one more transcription
+      // result, behind MELODY_STEM_PATH_V1 only - with the flag unset this
+      // block is never reached and the analysis is exactly what it was. A
+      // fresh lease, because the provider round may have used the first up.
+      // The measured numbers behind it: docs/evidence/melody-bass-paths-live.json.
+      let stemSourceUrl: string | null = null;
+      try {
+        stemSourceUrl = await createSourceDownloadUrl(source.objectPath);
+      } catch {
+        stemSourceUrl = null;
+      }
+      const stemPath = await melodyStemPathForAnalysis({
+        sourceUrl: stemSourceUrl,
+        sourceType: source.sourceType,
+        durationSeconds,
+      });
+      if (stemPath.transcription) providerResults.transcriptions.push(stemPath.transcription);
+      providerResults.provenance.push(...stemPath.provenance);
+      logger.info({
+        sourceId: source.id,
+        status: stemPath.provenance[0]?.status,
+        melodyStem: stemPath.outcome?.melodyStem ?? null,
+        notes: stemPath.transcription?.notes.length ?? 0,
+        agreementRate: stemPath.outcome?.melody?.fusion.stats.agreementRate ?? null,
+        bassEvidenceMeasured: stemPath.bassEvidence.length,
+      }, "MELODY_STEM_PATH_V1 ran beside the provider round");
+    }
     let sourceStems: SongModelData["sourceStems"] =
       midi?.sourceStems.map((stem) => ({
         ...stem,
