@@ -1183,6 +1183,43 @@
     "The role flip that makes a verse a comping part and a chorus a bed is sectionPhrasePlanner.assignRole (B-07's file). B-21 made the writers' realisation of each role musical; it did not change which role a section gets.",
     "Three parallel perfect intervals appear in the composed voicings that were not there before (see findingsForOtherStreams).",
     "The percussion writer's two-sound cell and phrase handover, and the 1.5-beat phrase breath, are this stream's own musical choices written from common practice, not measured from a corpus.",
-    "The decision registry is IMPLEMENTED and TESTED but not INTEGRATED: the orchestrator's default composer lambda does not forward it (see findingsForOtherStreams)."
-  ]
+    "The decision registry is IMPLEMENTED and TESTED but not INTEGRATED: the orchestrator's default composer lambda does not forward it (see findingsForOtherStreams).",
+    "brain-invariants-b12b fails 18 tests at base 3b9ace3 and 18 after B-21, but not the same 18: four are fixed (the silent planned family, harmony_on_the_grid, the section dynamics and one negative control) and four are newly failing (two are controls whose lever B-21 removed, one is the parallel-perfect finding at corpus scale, and one - a scrambled motif cell no longer refused - is UNKNOWN and not claimed).",
+    "brain-invariants (B-12's fuzz/property set) fails at base and after with the same documented, self-annotated causes; it was not re-measured test by test, so this stream cannot say whether any of its counts moved."
+  ],
+  "invariantSuites": {
+    "method": "`brain-invariants-b12b` run twice on this machine: once with the six composer files checked out at base 3b9ace3 and once at this branch's head, everything else identical. The suite is a diagnostic set that runs known failures as failures (PR-B12b: 'an invariant the brain fails today runs as a known failure'), so only the *difference* is evidence about this stream.",
+    "totals": {
+      "base": 18,
+      "after": 18
+    },
+    "fixedByB21": [
+      "every family the plan marks active in a section writes at least one note there, on the no-vocals corpus (24 seeds) - D1",
+      "harmony_on_the_grid: the pitched parts stay on the bar grid when the chord sheet's onsets are not (20 seeds) - D5",
+      "performance_respects_section_dynamics: the shipped velocities order the sections the way the arc ordered them (20 seeds) - D2",
+      "negative controls: a bed reduced to its top voice, a track nudged off the grid, an arc inverted by the velocities, and an arrival emptied are each refused; the untouched output is judged as it is"
+    ],
+    "newlyFailingAfterB21": [
+      {
+        "test": "control for the grid invariant: on a chord sheet that is already on the bar lines the same writers are on the grid",
+        "message": "and moving only the sheet's onsets moves the shipped onsets with them, so the checker is sensitive to exactly the thing the invariant is about",
+        "reading": "the control asserts its own sensitivity by moving the sheet's onsets off the grid and watching the shipped onsets follow. Since B-21's D5 fix `visibleChords` quantises the chord onsets to the writers' grid, so they no longer follow - which is the same change that made the invariant this control guards (`harmony_on_the_grid`) pass. The control needs a lever that survives quantisation; that is B-12b's to redesign, and this stream did not touch it."
+      },
+      {
+        "test": "isolating control: moving each instrument's range by the same k restores most of the composed transposition (24 seeds)",
+        "message": "moving the range restores exact notes (3201 -> 3694)",
+        "reading": "the control shifts `constraints.comfortableRange` by k to show the transposition failure is the solver re-centring on the instrument's band. Since B-21 the register window comes from `instrumentProfile.roleRegisterFor`, a fixed per-role table, so shifting the constraints no longer moves the window and the control's lever is inert. The invariant it guards (`transposition`) was 0/24 at base and is 0/24 after: the underlying defect is unchanged."
+      },
+      {
+        "test": "no parallel perfect fifths / octaves between the bass and a chordal part's top voice under the classical parameters (24 seeds)",
+        "message": "7/24 seeds pass, 35 parallel_perfect_classical over 880 pairs; the suite's own annotation names voiceLeading.ts:310-327 + voicings.ts:222-226 - 'the planned bass is a static unary floor, never a voice in the pairwise parallel cost'",
+        "reading": "the same voicing-solver finding as the three composed parallels on the owner's song, at corpus scale: a structural gap the narrower register windows made cross the threshold. Handed to the harmony stream."
+      },
+      {
+        "test": "negative controls: an answer moved onto a sung note, a re-pitched motif group, and a ledger with its recalls erased are each refused",
+        "message": "a scrambled cell is refused",
+        "reading": "UNKNOWN. The control scrambles a motif cell and expects the ledger check to refuse it; it does not any more. This stream did not isolate the cause and does not claim one - the melodic writers are B-10's and the counter-melody's notes moved because the register window did."
+      }
+    ]
+  }
 }
