@@ -7245,6 +7245,177 @@ Stream B-08 of the Arrangement & Orchestration Brain (`docs/brain/02-diagnosis-a
   symbols containing `maj13`, `11`, `13`, `7sus4`, `5`, `7#9` (previously
   null or wrong) — no stored Song Model in the fixtures carries them.
 
+### PR-B04 — Brain B-04: one groove, shared; transitions that happen
+
+- **PR-B04** ✅ (open; the lead merges) — `ws-brain-b04` (Arrangement &
+  Orchestration Brain, stream B-04, rhythm / groove + transitions). The rhythm
+  section reads one groove per section instead of a fixed 4/4 grid, the
+  eighteen transition devices become gestures per family, and the composer's
+  bar finally has the meter's length. Pure TypeScript, no database, nothing
+  rendered.
+
+  **What changed.** New `groovePlan.ts` (+ a delimited type block in
+  `music-studio.ts`, `ArrangementPlan.groovePlan?`): per section a
+  `GroovePlanSection` — the meter's grouping and accent weights (4/4 keeps
+  1 / 0.68 / 0.82 / 0.68; 3/4 has no secondary accent; 6/8 compound; 5/4 as
+  3+2; 7/8 as 2+2+3, with 3+2+2 / 2+3 as named readings), pulse placement
+  (backbeat / half-time / 2-feel / four-on-the-floor / waltz / compound /
+  additive / rubato) and the kit template it implies, the subdivision capped
+  by a tempo ceiling (16ths only up to 7.5 hat strikes per second, 9 for a
+  programmed kit — no 16ths at 148 BPM), the shared anticipation set (which
+  up-beats bass and comping push, when — every bar / before a chord change /
+  never — and whether the kick joins), the kick/bass relationship (lock /
+  complement / pedal) and the bass onsets it implies, a comping cell for
+  rhythmic comping and one for a bed (whole-note bed / quarter pulses /
+  off-beat chop / arpeggiated 8ths / sparse hits / charleston;
+  `change_comping_subdivision` moves the cell one step and says so), the
+  fills vocabulary per style family and the placements (transition devices,
+  the arc's lifts and arrivals, phrase ends, family entries — never the
+  song's last bar), an *approach* (the last two bars before a build or a
+  lift's arrival open the hats one step and crescendo, so the arrival is
+  prepared in the notes), swing by grammar or by tempo (0.67 / 0.62 / 0.60),
+  the ending (held hit / thin-out), continuity against the previous section
+  with the licence that allowed a change, and a digest. Every value carries
+  `source` and `reason`; the plan is derived from the plan layers only (never
+  a part's seed), so `deriveGroovePlan` (whole song) and
+  `grooveSectionForRequest` (one part request) agree — proved on every
+  section of the nine cases, the owner's song and seven re-metred variants.
+  `composer/frame.ts`: `MeterSpec`, `barTiming` (one denominator unit =
+  60 / BPM × 4 / denominator) and the accent table the composer and the
+  performance engine now share. `composer/rhythmParts.ts`: `writeDrumKit`,
+  `writePercussion`, `writeOstinato` rewritten on the plan (templates per
+  meter, tempo-capped hats, accent-weighted velocities, ghosts only on weak
+  positions nothing else occupies, shared anticipation slots with the pushed
+  downbeat tied by every part, fills from the vocabulary at the placements
+  only, a breath at phrase ends, the arc's `partWindow` honoured, the
+  ending), plus the exports B-02's writers call: `compingRhythmFor(frame)`
+  and `bassRhythmFor(frame)` (onsets with unit, accent, the chord to voice,
+  the anticipated chord on a push, the approach crescendo, the bass figure
+  root / fifth / octave / approach / pedal). New `transitionRealisation.ts`:
+  `realiseDevice` maps each of the 18 devices to a gesture per family or a
+  stated reason it does not apply — `string_run` (scale run to the target
+  chord's top voice over the last pulse), `keys_pickup` / `guitar_pickup`
+  (three scalar notes), `bass_pickup` (stepwise approach), `turnaround` (V,
+  or bVII on a soft minor target, over the second half of the bar),
+  `anticipation` (target chord on the last "and", tied), `brass_push` (two
+  stabs), `cymbal_swell` (crash roll + CC11 ramp), `cymbal_choke`, `break`
+  and `stop` (rest windows and a stab every family observes), `riser`
+  (rising line + CC11 40→127), `reverse` (swell from silence), `build_up`
+  (CC11 crescendo for sustaining families; the kit's snare build and
+  `drum_fill` come from the plan), `breakdown` (kick-only bars, harmony
+  rests, bass plays on), `ending_hit` (the plan's ending), `ritardando`
+  (tempo events + a time warp); `transitionGesturesFor`, `endingGestureFor`,
+  `entryGestureFor`. `composer/transitions.ts`: FILL / TRANSITION tasks play
+  the family's planned gestures (a pickup now leads into the *next* chord),
+  INTRO uses `nextBars.chords[0]` when nothing sits under it, ENDING holds
+  the final chord. `performanceEngine.ts` (accent table, pedal, agogics
+  only): accents per meter in denominator units (6/8 and 7/8 bars have the
+  right length in the engine too), CC64 on chord onsets (given, or read from
+  the part's own chord changes) instead of once per bar, phrase-final
+  lengthening at cadences (delay only, no lengthening — a longer chord broke a
+  guitar fingering), the downbeat after a cadence leans in, a planned
+  ritardando warps every part by the same function of time (`agogics`
+  input), ghost snares on the 16th before the next backbeat and never inside
+  a rest longer than two bars. `referencePartComposer.ts`: two lines
+  (`barTiming` in the frame) — the one edit outside the stream's files, in
+  its own commit. Tests: `groovePlan.test.ts` (13), `rhythmRealisation.test.ts`
+  (10), `transitionRealisation.test.ts` (9), `performanceEngine.b04.test.ts`
+  (6), `brainB04Evidence.test.ts` (4, with two positive controls);
+  `referencePartComposer.test.ts` 5/5 — the 7/8 `todo` is a passing test
+  measured on the notes; the twenty historical performance tests, the B-00 /
+  B-01 chain suites and the benchmark suites green; golden re-pinned with the
+  cause in `recordedAt`; typecheck green. Evidence:
+  `docs/evidence/brain-b04-groove-and-transitions.json` (before = the same
+  measurement module on a pristine `a751796` checkout; regenerate with
+  `artifacts/api-server/scripts/brain-b04-groove-evidence.mjs`).
+
+  **Measured (nine synthetic cases + the owner's song fixture; before → after).**
+  Meter: the 7/8 case had 286 of 376 notes outside their sections (bars read as
+  seven quarters) → 0 of 523, bass and keys now play in all three sections;
+  re-metred variants correct 3/7 → 7/7 — 5/4 was snare 2,4 / kick 1,3 (a 4/4
+  pattern in five) → snare on beat 4 (the 2-group), kick 1 and 3; 6/8 was
+  snare on units 0,2 with 416 notes outside → snare on unit 3, kick 0 and 2;
+  7/8 was snare 2,6 / kick 0,4 → snare 4, kick 0 and 2 (2+2+3). Tempo: hat
+  strikes per second pop 8 → 4, rock 9.9 → 4.95, jazz 8.85 → 4.4, cinematic
+  2 → 1, dance 8.4 = 8.4 (programmed, under 9). Interlocking: kick vs the bass
+  rhythm the plan hands the bass writer 1.00 on all 18 locked sections (min
+  1.00), 1.00 on the 2 complement sections, 0.44 on the 4 pedal sections (by
+  design); a test-local bass written on `bassRhythmFor` locks ≥ 0.9 with the
+  shipped kit on every locked section; the *shipped* kick/bass agreement stays
+  0.619 → 0.617 because the shipped bass is still B-02's writer. Anticipation
+  agreement across kit / bass rhythm / comping rhythm / ostinato 151 / 151
+  planned slots. Adversarial critic on the shipped notes: causality 102.9 →
+  85.1 (pop 11.7 → 7.8, dance 9.3 → 0, ethnic 17.4 → 7.8, jazz 23.4 → 17.2,
+  owner 39.6 → 39.6; ballad 0 → 3.5 and acoustic 0 → 7.8 are
+  `climax_not_prepared` in drum-less lift sections — before, a performance-
+  engine ghost snare four bars into the silence lowered the base velocity and
+  the critic read a rise; that ghost is gone), arbitrariness 280.5 → 70.7
+  (ethnic 199.2 → 0; pop / rock / acoustic 3.5 / 3.3 / 3.0 → 0; owner 71.5 →
+  67.7; orchestral 0 → 3, an ostinato rest read as a mid-phrase exit),
+  machineMade 182.4 → 198.9 (orchestral 33.4 → 23.4 from ostinato rests;
+  ethnic 0 → 26.5 because the keys now play in all sections and their
+  voicing is B-02's; every other case identical); feasible 9 → 10 (ethnic's
+  dropped bass and keys). Positive controls on this stream's own output: the
+  same kit welded to a 16th grid with every rest filled is rejected harder by
+  `machineMade` on 4 / 4 anchors; stripping the kit's fills, crashes, pushes
+  and crescendo raises `causality` on rock-full 1.5 → 9.3 (on the other
+  anchors another part or nothing prepares the lift and the critic rightly
+  stays quiet). Playability repairs: leap folds 13 → 13, polyphony releases
+  86 → 88 (dance-full's keys / pad, +2). Transition gestures realised on the
+  corpus: bass_pickup 47 (bass), cymbal_swell 28 and cymbal_choke 28 (kit),
+  break 28 and ritardando 11 (every family), breakdown 13, build_up 16 (CC11
+  on sustaining families), string_run 10, brass_push 6, keys_pickup 4, riser
+  4, turnaround 2; drum_fill 37 and ending_hit 17 through the plan.
+
+  **Capability ladder.** GroovePlan — DESIGNED ✓ IMPLEMENTED ✓ INTEGRATED ✓
+  (every kit / percussion / ostinato part derives it; not yet persisted on the
+  ArrangementPlan) TESTED ✓ BENCHMARKED ✓ (this evidence) VALIDATED ON OUTPUT
+  ✗. Realisation shared by parts — kit / percussion / ostinato INTEGRATED ✓
+  TESTED ✓; bass and comping rhythm (`bassRhythmFor`, `compingRhythmFor`,
+  `GrooveOnset.crescendo`) IMPLEMENTED ✓ TESTED ✓ INTEGRATED-pending (B-02).
+  Transition devices — 16 of 18 realised per family (2 through the plan);
+  kit gestures INTEGRATED ✓; pitched-family gestures INTEGRATED ✓ only
+  through FILL / TRANSITION tasks (which the B-01 part plan no longer emits)
+  and INTEGRATED-pending in the harmony writers; `ritardando` IMPLEMENTED ✓
+  TESTED ✓ (warp + tempo events) INTEGRATED-pending. Meter correctness —
+  INTEGRATED ✓ TESTED ✓ (composer and engine). Per-meter accents, pedal on
+  chord onsets, agogics — INTEGRATED ✓ TESTED ✓; `chordOnsets` / `agogics`
+  inputs INTEGRATED-pending.
+
+  **The wiring other streams add (one line each).** B-02, `composer/harmonyParts.ts`:
+  `for (const o of bassRhythmFor(frame)) push(o.start, o.duration, pitchFor(o.figure, o.anticipates ?? o.chord), baseVelocity + o.crescendo + (o.figure === "root" ? 8 : -4), ...)`
+  in `writeBassLine`; `for (const o of compingRhythmFor(frame)) voicing(o.anticipates ?? o.chord).forEach((pitch, i) => push(o.start, o.duration, pitch, baseVelocity - 6 - i * 3 + o.crescendo, ...))`
+  in `writeKeysVoicing` / `writeStringBed`; `endingGestureFor(frame)` for the
+  held final chord and `entryGestureFor(frame)` for an arc entry's pickup;
+  `transitionGesturesFor(frame, family).outgoing` for the family's pickups,
+  runs, turnarounds and stabs. B-00 / B-11, `arrangementOrchestrator.ts`:
+  `plan.groovePlan = deriveGroovePlan(songModel, { globalPlan, sectionPlan, transitions: transitionPlan.transitions }, { tempoBpm, meter, now })`;
+  in the `applyPerformance` input `chordOnsets: songModel.chords.map((c) => c.start)`
+  and `agogics:` the `timeWarp`s of the realised `ritardando` gestures.
+
+  **Honest limits.** Nothing rendered or listened to — VALIDATED ON OUTPUT is
+  not claimed. The shipped bass, keys, guitar, strings and pads are still
+  written by B-02's `harmonyParts.ts`, so the shipped kick/bass agreement,
+  the comping anticipations, the approach crescendo in drum-less lifts, the
+  held endings of pitched parts and every pitched transition gesture reach
+  the notes only after the lines above; `climax_not_prepared` remains on five
+  cases whose approach bars have no kit for that reason. `ritardando` can
+  reach the production export only as warped note onsets (the export refuses
+  a tempo map with more than one segment), and only once the orchestrator
+  passes `agogics`. The `ensemble` FILL / TRANSITION / INTRO / ENDING tasks
+  B-01 removed are not re-homed: the per-family writers are the home. On the
+  owner's song the global planner's `four_on_floor` reading of the recording
+  drives the kit in its full sections (bed sections keep a backbeat, pedal
+  bass); the brief's `grooveStrategy` hint (B-01) is the lever, not this
+  stream. The performance engine's own swing pass still swings straight
+  offbeats of unwired parts at 2/3 while the plan's kit swings at its tempo
+  ratio (no case in the corpus swings). Groove rules — pulses per style, the
+  7.5 / 9 strikes-per-second ceilings, swing by tempo, fill vocabularies — are
+  musical judgement written as constants, not fitted to human material. The
+  4 failing tests in `critics/adversarial/adversarial.test.ts` and the 1 in
+  `critics/judge.test.ts` fail identically on `a751796` (B-05b written against
+  pre-B-01 planners); this stream adds none and one of the five now passes.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

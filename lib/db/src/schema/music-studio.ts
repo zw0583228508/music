@@ -3224,6 +3224,117 @@ export type MotifLedgerData = {
 };
 
 /** One humanisation decision, with the musical reasons behind it (PR-14). */
+// ===========================================================================
+// Brain B-04: GroovePlan — one groove per section, realised by drums, bass and
+// comping alike. Every value says where it came from (style / strategy / arc /
+// meter / tempo / operator / transition / phrase / default) and why, so a
+// critic can ask "did the parts agree with the plan?" rather than "did the
+// kick land within 35 ms of the bass?". Positions are in *units of the meter's
+// denominator* counted from the bar's downbeat (4/4: 0..3 quarters, 3.5 = the
+// "and" of 4; 6/8: 0..5 eighths; 7/8: 0..6 eighths).
+// ===========================================================================
+
+export type GrooveSubdivision = "quarters" | "8ths" | "16ths" | "triplets" | "shuffle";
+export type GroovePulse =
+  | "backbeat" | "half_time" | "two_feel" | "four_on_floor" | "waltz" | "compound" | "additive" | "rubato";
+export type GrooveKickBassRelation = "lock" | "complement" | "pedal";
+export type GrooveCompingCell =
+  | "whole_note_bed" | "quarter_pulses" | "off_beat_chop" | "arpeggiated_8ths" | "sparse_hits" | "charleston";
+export type GrooveFillKind =
+  | "tom_run" | "snare_roll" | "kick_snare_16ths" | "crash_only" | "open_hat_lift" | "snare_pickup";
+export type GrooveValueSource =
+  | "style" | "strategy" | "arc" | "meter" | "tempo" | "operator" | "transition" | "phrase" | "continuity" | "default";
+export type GrooveDecision<T> = { value: T; source: GrooveValueSource; reason: string };
+export type GrooveMeterFeel = "simple" | "compound" | "additive";
+
+export type GrooveMeter = {
+  numerator: number;
+  denominator: number;
+  feel: GrooveMeterFeel;
+  /** Beat groups in denominator units, e.g. 4/4 → [1,1,1,1], 6/8 → [3,3], 7/8 → [2,2,3]. */
+  grouping: GrooveDecision<number[]>;
+  /** Unit index of every group start (the pulses a listener taps). */
+  pulses: number[];
+  /** Metrical accent weight (0..1) of every unit in the bar; the downbeat is 1. */
+  accentWeights: number[];
+  unitSeconds: number;
+  barSeconds: number;
+};
+
+export type GrooveAnticipationWhen = "before_chord_change" | "every_bar" | "phrase_ends" | "never";
+
+export type GrooveFillPlacement = {
+  bar: number;
+  kind: GrooveFillKind;
+  /** Units of the bar the fill occupies, counted back from the bar line. */
+  lengthUnits: number;
+  intensity: number;
+  source: GrooveValueSource;
+  reason: string;
+};
+
+export type GroovePlanSection = {
+  sectionName: string;
+  startBar: number;
+  endBar: number;
+  meter: GrooveMeter;
+  pulse: GrooveDecision<GroovePulse>;
+  subdivision: GrooveDecision<GrooveSubdivision>;
+  /** The fastest subdivision the tempo allows a player here (the hats never exceed it). */
+  densityCeiling: GrooveDecision<GrooveSubdivision>;
+  /** Kit template per bar, in units. */
+  kit: {
+    kick: number[];
+    snare: number[];
+    sideStick: number[];
+    /** Hat step in units (0 = pulses only) and the units that get an open hat. */
+    hatStepUnits: number;
+    openHat: number[];
+    /** Weak positions a ghost snare may sit on (never on a kick, snare or anticipation). */
+    ghost: number[];
+    /** Ride instead of closed hats (jazz / swing feel). */
+    ride: boolean;
+  };
+  anticipations: GrooveDecision<{ units: number[]; when: GrooveAnticipationWhen; kickAnticipates: boolean }>;
+  kickBass: GrooveDecision<GrooveKickBassRelation>;
+  /** Bass onsets per bar (before anticipations and chord-change approaches are applied). */
+  bassUnits: number[];
+  comping: {
+    /** The cell a RHYTHMIC_HARMONY / OSTINATO part plays. */
+    rhythmic: GrooveDecision<GrooveCompingCell>;
+    /** The cell a HARMONIC_BED / PAD part plays. */
+    bed: GrooveDecision<GrooveCompingCell>;
+    /** Onsets per bar for each cell, in units. */
+    rhythmicUnits: number[];
+    bedUnits: number[];
+    /** Step of an arpeggiated cell in units (0 when the cell is not arpeggiated). */
+    arpeggioStepUnits: number;
+  };
+  fills: {
+    vocabulary: GrooveDecision<GrooveFillKind[]>;
+    placements: GrooveFillPlacement[];
+  };
+  swing: GrooveDecision<number>;
+  microtimingMs: GrooveDecision<number>;
+  /** How the song's final bar closes when this is the last section; `none` elsewhere. */
+  ending: GrooveDecision<"held_hit" | "thin_out" | "none">;
+  /** The last bars before a build / a lift's arrival: hats one step denser (within the ceiling) and a shared crescendo; null when nothing arrives. */
+  approach: GrooveDecision<{ bars: number; hatStepUnits: number; crescendo: number } | null>;
+  /** Fields that differ from the previous section's groove, each with the licence that allowed the change. */
+  continuity: { changedFromPrevious: string[]; note: string };
+  digest: string;
+};
+
+export type GroovePlan = {
+  version: "1.0";
+  derivedAt: string;
+  inputsDigestSha256: string;
+  method: string;
+  tempoBpm: number;
+  meter: string;
+  sections: GroovePlanSection[];
+};
+
 export type PerformanceDecision = {
   noteId: string;
   timingOffsetMs: number;
@@ -4567,6 +4678,8 @@ export type ArrangementPlan = {
   transitionPlan?: TransitionPlanSet;
   /** Compact index of parts to compose (full request built on demand); absent on historical plans. */
   partComposerPlan?: PartComposerPlan;
+  /** Brain B-04: one groove per section shared by drums, bass and comping; absent on historical plans. */
+  groovePlan?: GroovePlan;
   /** Deliberate candidate-generation strategy set; absent on historical plans. */
   candidateGenerationPlan?: CandidateGenerationPlan;
   /** Absent only on historical persisted plans, which are interpreted as v1. */

@@ -23,6 +23,7 @@ import type {
   StyleProfile,
 } from "@workspace/db";
 import { LEGATO_TOLERANCE_SECONDS } from "./musicalConstraints";
+import { accentWeight, meterOf, type MeterSpec } from "./composer/frame";
 
 export const PERFORMANCE_ENGINE = "PERFORMANCE_ENGINE_V2" as const;
 const MAX_DECISION_SAMPLE = 64;
@@ -111,6 +112,19 @@ export type PerformanceInput = {
    * which the VST3 worker plays as a short lead note.
    */
   articulationMap?: Record<string, string | number>;
+  /**
+   * B-04: absolute seconds of the chord onsets, so the sustain pedal follows
+   * the harmonic rhythm. Absent: the pedal follows the part's own chord
+   * changes (pitch-class set changes between clusters) and the bar lines.
+   */
+  chordOnsets?: number[];
+  /**
+   * B-04: planned agogics from the transition realisation - a ritardando is a
+   * time warp every part receives alike, so the parts slow down together.
+   * Phrase-final lengthening and the lean-in after a cadence need only
+   * `phrases`.
+   */
+  agogics?: Array<{ kind: "ritardando"; start: number; end: number; slowdown: number }>;
 };
 
 export type PerformedTrack = {
@@ -220,16 +234,41 @@ function metricalPosition(
   return { beatInBar, fraction: beat - Math.floor(beat) };
 }
 
-/** Metrical accent weight, 0..1 — downbeat strongest, 16ths weakest. */
-function metricalWeight(beatInBar: number, fraction: number, beatsPerBar: number): number {
-  const onBeat = fraction < 0.06 || fraction > 0.94;
-  if (onBeat) {
-    if (beatInBar === 0) return 1;
-    if (beatsPerBar === 4 && beatInBar === 2) return 0.82;
-    return 0.68;
+/**
+ * Metrical accent weight, 0..1. B-04: the table is per meter and lives in
+ * `composer/frame.ts` (`accentWeight`) so the composer and the performance
+ * engine accent the same positions: 4/4 keeps 1 / 0.68 / 0.82 / 0.68 on the
+ * beats, 0.46 on the off-beat 8ths and 0.34 elsewhere; 3/4 has no secondary
+ * accent; 6/8 accents its two dotted pulses; 5/4 and 7/8 accent their group
+ * starts with the backbeat group strongest.
+ */
+function metricalWeightAt(timeSeconds: number, unitSeconds: number, meter: MeterSpec): number {
+  return accentWeight(meter, timeSeconds / Math.max(1e-6, unitSeconds));
+}
+
+/** Sustain-pedal change points: the bar lines plus the chord onsets (given, or read from the part's own chord changes). */
+function pedalChangePoints(notes: readonly MusicalNote[], chordOnsets: number[] | undefined, barSeconds: number, songEnd: number): number[] {
+  const points = new Set<number>();
+  for (let t = 0; t <= songEnd; t += barSeconds) points.add(Number(t.toFixed(3)));
+  if (chordOnsets && chordOnsets.length) {
+    for (const t of chordOnsets) if (t >= 0 && t <= songEnd) points.add(Number(t.toFixed(3)));
+  } else {
+    // The part's own harmony: a cluster whose pitch-class set differs from the previous cluster's is a change.
+    const sorted = [...notes].sort((a, b) => a.start - b.start || a.pitch - b.pitch);
+    let previous: string | null = null;
+    let index = 0;
+    while (index < sorted.length) {
+      const at = sorted[index].start;
+      const cluster: MusicalNote[] = [];
+      while (index < sorted.length && sorted[index].start - at < 0.03) { cluster.push(sorted[index]); index += 1; }
+      const set = [...new Set(cluster.map((n) => ((n.pitch % 12) + 12) % 12))].sort((a, b) => a - b).join(".");
+      if (previous !== null && set !== previous) points.add(Number(at.toFixed(3)));
+      previous = set;
+    }
   }
-  if (Math.abs(fraction - 0.5) < 0.06) return 0.46;
-  return 0.34;
+  const ordered = [...points].sort((a, b) => a - b);
+  // Two changes within 50 ms are one pedal movement.
+  return ordered.filter((t, i) => i === 0 || t - ordered[i - 1] > 0.05);
 }
 
 /** Phrase arc: rise to ~70% through the phrase, then ease off. */
@@ -265,9 +304,13 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
   // overlaps the next; the finger-bass profile below was unreachable.
   const plucked = /bass/i.test(input.instrument);
   const profile = plucked ? FAMILY_PROFILES.bass : profileFor(family);
-  const beatsPerBar = Number((input.meter ?? "4/4").split("/")[0]) || 4;
+  // B-04: the meter's units and grouping; a bar is numerator x one denominator
+  // unit (6/8 and 7/8 were read as six and seven quarters).
+  const meterSpec: MeterSpec = meterOf(input.meter);
+  const beatsPerBar = meterSpec.numerator;
   const beatSeconds = 60 / Math.max(1, input.tempoBpm);
-  const barSeconds = input.barSeconds ?? beatSeconds * beatsPerBar;
+  const unitSeconds = beatSeconds * (4 / meterSpec.denominator);
+  const barSeconds = input.barSeconds ?? unitSeconds * beatsPerBar;
   const style = input.performanceStyle;
   const v2 = style !== undefined;
   const swing = (input.groove ?? "").includes("swing") || (style?.swingRatio ?? 0.5) > 0.5;
@@ -316,6 +359,46 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
     if (phrase.role === "fill") return 1.05;
     return 1;
   };
+  // B-04 agogics. (1) Phrase-final lengthening: the last quarter of a cadence
+  // phrase's final bar broadens, more for bowed and blown lines than for the
+  // rhythm section. (2) The downbeat that follows a cadence or fill phrase
+  // leans in (a touch early and a touch stronger). (3) A planned ritardando
+  // is a time warp that is a pure function of time, so every part slows
+  // together and the export, which plays absolute seconds, honours it.
+  const AGOGIC_MS: Record<string, number> = { strings: 14, brass: 14, winds: 14, voice: 14, keys: 10, guitar: 10, bass: 6, drums: 2, synth: 2 };
+  const agogicAt = (time: number): { ms: number; reason: string; leanIn: boolean } => {
+    if (!input.phrases?.length || barSeconds <= 0) return { ms: 0, reason: "", leanIn: false };
+    const phrase = phraseAt(time);
+    let ms = 0;
+    let reason = "";
+    if (phrase && phrase.role === "cadence") {
+      const end = phrase.endBar * barSeconds;
+      const from = end - barSeconds * 0.25;
+      if (time >= from - 1e-6) {
+        ms = (AGOGIC_MS[plucked ? "bass" : family] ?? 6) * clamp((time - from) / Math.max(1e-6, end - from), 0, 1);
+        reason = "phrase-final lengthening (cadence)";
+      }
+    }
+    const bar = Math.floor(time / barSeconds + 1e-6) + 1;
+    const atDownbeat = Math.abs(time - (bar - 1) * barSeconds) < 0.02;
+    const leanIn = atDownbeat && !!phrase && phrase.startBar === bar &&
+      input.phrases.some((p) => p.endBar === bar - 1 && (p.role === "cadence" || p.role === "fill"));
+    return { ms, reason, leanIn };
+  };
+  const warpAt = (time: number): { offsetSeconds: number; stretch: number } => {
+    let offsetSeconds = 0;
+    let stretch = 1;
+    for (const event of input.agogics ?? []) {
+      if (event.kind !== "ritardando" || event.end <= event.start) continue;
+      const span = event.end - event.start;
+      if (time <= event.start) continue;
+      if (time >= event.end) { offsetSeconds += span * event.slowdown / 2; continue; }
+      const p = (time - event.start) / span;
+      offsetSeconds += (time - event.start) * (event.slowdown * p) / 2;
+      stretch *= 1 + event.slowdown * p;
+    }
+    return { offsetSeconds, stretch };
+  };
 
   // Group simultaneous notes so chords can be rolled/strummed as one gesture.
   const clusters: MusicalNote[][] = [];
@@ -328,7 +411,7 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
   for (const cluster of clusters) {
     const anchor = cluster[0];
     const { beatInBar, fraction } = metricalPosition(anchor.start, input.tempoBpm, beatsPerBar);
-    const weight = metricalWeight(beatInBar, fraction, beatsPerBar);
+    const weight = metricalWeightAt(anchor.start, unitSeconds, meterSpec);
     const arc = phraseArc(anchor.start, input.phrases, barSeconds);
     const progress = clamp(anchor.start / songEnd, 0, 1);
     const dynamicLevel = dynStart + (dynEnd - dynStart) * progress;
@@ -354,6 +437,11 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
       offsetMs += (1 - arc) * 12;
       reasons.push("rubato phrase breathing");
     }
+    const agogic = agogicAt(anchor.start);
+    if (agogic.ms > 0) { offsetMs += agogic.ms; reasons.push(agogic.reason); }
+    if (agogic.leanIn) { offsetMs -= 6; reasons.push("downbeat after a cadence leans in"); }
+    const warp = warpAt(anchor.start);
+    if (warp.offsetSeconds > 0) reasons.push(`ritardando +${(warp.offsetSeconds * 1000).toFixed(0)}ms`);
     // Tighter on strong beats; looser off the grid.
     const jitterScale = profile.jitterMs * (0.4 + (1 - weight) * 0.9) * microJitterScale;
     const jitter = seededUnit(seed, `${anchor.id}:t`) * jitterScale;
@@ -385,7 +473,7 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
       const gestureMs = spreadMs * (cluster.length > 1 ? order / (cluster.length - 1) : 0);
       // Piano left hand (below C4) leads very slightly.
       const handMs = family === "keys" && note.pitch < 60 ? -4 : 0;
-      const start = Math.max(0, note.start + (offsetMs + gestureMs + handMs) / 1000);
+      const start = Math.max(0, note.start + warp.offsetSeconds + (offsetMs + gestureMs + handMs) / 1000);
 
       // --- velocity ---------------------------------------------------
       const accent = 1 - profile.accentDepth * accentDepthScale * (1 - weight);
@@ -393,6 +481,7 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
       velocity *= rangeFloor + dynamicLevel * rangeSpan;
       velocity *= 0.9 + arc * 0.2;
       velocity *= phraseRoleGain(anchor.start);
+      if (agogic.leanIn) velocity *= 1.04;
       if (family === "drums") {
         // Kick/snare carry the accent; hats sit under them.
         if (note.pitch === 42 || note.pitch === 44 || note.pitch === 46) velocity *= 0.72;
@@ -402,7 +491,9 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
       const performedVelocity = midi(velocity);
 
       // --- length -----------------------------------------------------
-      let duration = note.duration * profile.lengthFactor;
+      // The ritardando stretches durations with the time; phrase-final lengthening delays the onset only (a
+      // longer chord would lap the next one and break a fingering the composition kept legal).
+      let duration = note.duration * profile.lengthFactor * warp.stretch;
       if (plucked && style?.bassAttackPosition === "sustained") duration *= 1.15;
       if (input.role === "PAD" || input.role === "HARMONIC_BED") duration *= 1.06;
       if (input.role === "GROOVE" || family === "drums") duration = Math.min(duration, 0.25);
@@ -426,8 +517,10 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
     const snares = notes.filter((n) => n.pitch === 38).sort((a, b) => a.start - b.start);
     for (let i = 1; i < snares.length; i += 1) {
       const gap = snares[i].start - snares[i - 1].start;
-      if (gap > beatSeconds * 1.4) {
-        const at = snares[i - 1].start + gap / 2;
+      // B-04: no ghost inside a rest longer than two bars (one used to appear four bars into a drum-less section).
+      if (gap > beatSeconds * 1.4 && gap <= barSeconds * 2) {
+        // B-04: a ghost sits on a weak position - the last 16th (x/8: the last 8th) before the next backbeat - not on the beat between the two.
+        const at = snares[i].start - unitSeconds * (meterSpec.denominator >= 8 ? 0.5 : 0.25);
         notes.push({
           id: `${snares[i - 1].id}-ghost`, start: Number(at.toFixed(4)),
           duration: 0.06, pitch: 38, velocity: 26,
@@ -484,12 +577,14 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
     pushArticulation({ time: 0, name: "palm_mute", intensity: 0.4 });
   }
   if (family === "keys") {
-    // Sustain pedal follows the harmonic rhythm, lifted on the beat.
-    for (let t = 0; t <= songEnd; t += beatSeconds * beatsPerBar) {
+    // B-04: the sustain pedal follows the harmonic rhythm - up on every chord
+    // onset (and every bar line), down 30 ms after - instead of once per bar,
+    // which smeared a chord change on beat 3 into the chord before it.
+    for (const t of pedalChangePoints(notes, input.chordOnsets, barSeconds, songEnd)) {
       cc.push({ controller: 64, time: Number(t.toFixed(3)), value: 0 });
       cc.push({ controller: 64, time: Number((t + 0.03).toFixed(3)), value: 100 });
     }
-    ccCurves.push("CC64 sustain pedal per bar");
+    ccCurves.push(input.chordOnsets?.length ? "CC64 sustain pedal on chord onsets" : "CC64 sustain pedal on the part's chord changes and bar lines");
   }
 
   // --- V2: ornaments, fills, articulation language, keyswitches -------------
