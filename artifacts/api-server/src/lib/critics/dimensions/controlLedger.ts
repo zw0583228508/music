@@ -25,9 +25,9 @@ export const CONTROL_LEDGER_VERSION = "B05A_CONTROLS_v2" as const;
 
 export const CONTROL_LEDGER: Record<string, LedgerEntry> = {
   density: { status: "informing", strongestControl: "piano_one_note_per_bar", detectionRate: 1, ci95: [0.5904, 1], n: 7, cleanAnchorBlockingRate: 0 },
-  emotionalArcAndTension: { status: "gated", strongestControl: "swap_climax_with_quietest", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
-  groove: { status: "gated", strongestControl: "erase_boundary_events+realise_boundaries", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
-  harmony: { status: "gated", strongestControl: "chord_tone_to_non_chord_tone@3", detectionRate: 1, ci95: [0.8389, 1], n: 21, cleanAnchorBlockingRate: 0 },
+  emotionalArcAndTension: { status: "gated", strongestControl: "flatten_arc", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
+  groove: { status: "gated", strongestControl: "onset_jitter@3", detectionRate: 0.9355, ci95: [0.7858, 0.9921], n: 31, cleanAnchorBlockingRate: 0 },
+  harmony: { status: "gated", strongestControl: "chord_tone_to_non_chord_tone@3", detectionRate: 1, ci95: [0.8456, 1], n: 22, cleanAnchorBlockingRate: 0 },
   idiomaticity: { status: "informing", strongestControl: "piano_wide_voicing", detectionRate: 1, ci95: [0.5904, 1], n: 7, cleanAnchorBlockingRate: 0 },
   melodyAndCounterline: { status: "gated", strongestControl: "top_line_into_vocal_register", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
   motifRecurrenceAndDevelopment: { status: "informing", strongestControl: "random_pitch", detectionRate: 0.875, ci95: [0.4735, 0.9968], n: 8, cleanAnchorBlockingRate: 0 },
@@ -36,7 +36,7 @@ export const CONTROL_LEDGER: Record<string, LedgerEntry> = {
   playability: { status: "gated", strongestControl: "bass_roots_only_leaps", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
   register: { status: "gated", strongestControl: "role_inversion@3", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
   repetitionVsVariation: { status: "informing", strongestControl: "chorus_copy", detectionRate: 1, ci95: [0.4782, 1], n: 5, cleanAnchorBlockingRate: 0 },
-  rhythmicInteraction: { status: "gated", strongestControl: "parallel_doubling@3", detectionRate: 1, ci95: [0.8389, 1], n: 21, cleanAnchorBlockingRate: 0 },
+  rhythmicInteraction: { status: "gated", strongestControl: "parallel_doubling@3", detectionRate: 1, ci95: [0.8456, 1], n: 22, cleanAnchorBlockingRate: 0 },
   sectionDevelopment: { status: "informing", strongestControl: "chorus_copy+develop_chorus_2", detectionRate: 1, ci95: [0.4782, 1], n: 5, cleanAnchorBlockingRate: 0 },
   transitions: { status: "gated", strongestControl: "erase_boundary_events+realise_boundaries", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
   voiceLeading: { status: "gated", strongestControl: "bass_roots_only_leaps", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },

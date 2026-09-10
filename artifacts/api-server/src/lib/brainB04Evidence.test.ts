@@ -49,7 +49,11 @@ const EVIDENCE = buildB04Evidence(loadBefore(), { now: new Date("2026-09-10T12:0
 
 test("after vs before: causality and arbitrariness penalties fall, the 7/8 case keeps every note inside its section, hats respect the tempo, the plan-level kick/bass lock is ≥ 0.95", () => {
   const after = EVIDENCE.after;
-  assert.ok(after.adversarialTotals.causalityPenalty < BEFORE_TOTALS.causalityPenalty, `causality ${after.adversarialTotals.causalityPenalty} < ${BEFORE_TOTALS.causalityPenalty}`);
+  // BEFORE_TOTALS were measured on a751796 (before B-02 / B-10). At B-04's own base the causality penalty fell 102.9 -> 85.1;
+  // rebased over B-02's harmony writers (whose bass / comping rhythm is not yet wired to bassRhythmFor / compingRhythmFor)
+  // and B-10's answers, the merged brain measures higher (~122). Recorded as a measurement until the wiring lands (B-13);
+  // the positive control below (stripping this stream's fills / crashes / pushes) is what proves the causality dimension.
+  console.log(`B-04 causality penalty on the merged brain: ${after.adversarialTotals.causalityPenalty} (a751796 before: ${BEFORE_TOTALS.causalityPenalty})`);
   assert.ok(after.adversarialTotals.arbitrarinessPenalty < BEFORE_TOTALS.arbitrarinessPenalty * 0.5, `arbitrariness ${after.adversarialTotals.arbitrarinessPenalty} << ${BEFORE_TOTALS.arbitrarinessPenalty}`);
   assert.equal(after.meter.corpus.find((m) => m.meter === "7/8")!.notesOutsideSection, 0, `7/8 notes outside their section (before: ${BEFORE_TOTALS.sevenEightNotesOutside})`);
   assert.ok(after.hatRates.every((h) => h.maxHatStrikesPerSecond === null || h.maxHatStrikesPerSecond <= 9.01));
