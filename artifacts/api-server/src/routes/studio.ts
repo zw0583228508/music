@@ -3567,10 +3567,13 @@ router.post("/projects/:projectId/mix-master-revisions", async (req, res): Promi
     return;
   }
   const controls: MixMasterControls = { tracks: body.data.tracks, master: body.data.master };
-  const renderTracks = tracks.map((track) => ({
-    ...track,
-    volume: controls.tracks[track.id]?.levelDb ?? track.volume,
-  }));
+  // PR-98: the per-track level lives in the controls and is applied once, by
+  // applyMixMasterControls inside the render. Folding it into `volume` as well
+  // applied every fader twice (a +10 dB piano became +20, a -6 dB bass -12):
+  // on the owner's song the approved master lost its bass entirely while the
+  // export's own premaster, rendered with the stored volumes, kept it. The
+  // export ships the approved master, so this is the path that must be right.
+  const renderTracks = tracks;
   const timelineSha256 = canonicalPerformanceTimelineSha256(songModel.model);
   const parentIds = parentArtifacts.filter((artifact) =>
     (artifact.type === "TRACK_MODEL" && artifact.storageUri?.startsWith(`db://music_arrangements/${arrangement.id}/tracks/`)) ||

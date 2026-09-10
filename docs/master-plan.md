@@ -5706,6 +5706,47 @@ any of it.
   the export render still runs on the event loop. Which native renderer
   produced the drone is inferred, not logged — the export records no
   per-stem renderer in its manifest; that logging is owed.
+
+  **The owner listened again — "still nothing, silence and a weak beep".**
+  v3 was not silent: its master measures −15 dB RMS in every 10-second
+  window, but **94.2 % of its energy sits below 150 Hz and 0 % above 2 kHz**
+  — the preview synth (`LocalExpressiveRenderer`) is a sub-bass sine with
+  thin piano blips, inaudible on ordinary speakers. The arrangement was also
+  thin: the stored plan shows the section planner kept **two families
+  everywhere** because the section energy targets are the recording's
+  max-normalised RMS (choruses 0.16–0.19) and `keys` was `LEAD` in every
+  section (vocal map `not_available` → `taskFor("LEAD")` writes nothing
+  outside instrumental sections); the piano that played was the palette entry
+  `mix`, a source-stem hint treated as a family. A fuller brief (v4) then
+  produced a bass leap of 13 semitones and a string bed over four voices and
+  the generation contract refused all three candidates: **`playabilityRepair.ts`**
+  now folds impossible leaps by the octave and releases held voices with the
+  validator's own definitions, in the orchestrator's perform stage, and the
+  stage records how many parts it repaired (6 tests, each verified against
+  `validateCanonicalTrackModels`). v4 rendered through the local sampled
+  worker (:8022) exposed three more defects, each named by the export
+  manifest's per-stem renderer (which is logged after all): the bass fell
+  back to the preview synth because a stale `PREMIUM_INSTRUMENT_ROUTING`
+  named Retrologue; the strings went to a cello ensemble whose range does not
+  reach MIDI 79–91, came back silent and were rejected; and the **revision
+  route applied every fader twice** (`volume = levelDb` *and*
+  `applyMixMasterControls`), so with a producer balance the approved master
+  lost its bass entirely (0.2 % below 150 Hz) while the export's own premaster
+  kept it (42 %) — fixed (single application). **v6, delivered:** all five
+  stems `licensed-native` (Meatbass arco, Salamander Grand, VSCO2 violin
+  ensemble, DRSKit, Salamander), master 47 % / 44 % / 8 % across
+  < 150 Hz / 150 Hz–2 kHz / 2–5 kHz, RMS −24…−16 dB per 10 s window, no
+  silent window; forensic probes kept under `scripts/forensics/`.
+  **Honest limits (v6).** It is still the reference composer: root-position
+  triads, roots in the bass, strings written at MIDI 79–91, no counter-line,
+  chorus 2 = chorus 1; the balance (bass −6, piano +10, strings +12,
+  percussion −12) is the lead's producer decision through the mix controls,
+  not the mix plan's (which put the bass 5 dB above everything); the sound
+  selection brain does not know an asset's playable range; the revision
+  evidence still names no per-stem renderer (the export manifest does); the
+  exported MIDI's GM program numbers are wrong (piano → organ, strings →
+  guitar); no human has judged v6 blind. These are exactly the defects the
+  Arrangement & Orchestration Brain program (`docs/brain/`) now owns.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
