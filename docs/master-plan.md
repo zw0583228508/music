@@ -5428,6 +5428,95 @@ any of it.
   routing table still names an unattested VST3 asset, so that refusal
   appears on every stem until the table or the worker changes.
 
+- **PR-88** ✅ — `melody-bass-specialist-paths` (ANALYSIS ENGINE wave, Stream
+  G — the specialist melody and bass paths the honest gap has named since
+  PR-46: *Basic Pitch on a full mix is not a melodic line*, measured on exact
+  truth and under the platform's own canonical gate before anyone trusts
+  them; the owner's uploads reported, nothing promoted).
+
+  **What was built.** `services/melody-bass-worker` — one isolated CPU image
+  on Modal (dedicated token, 8 containers max): **htdemucs** 4-stem separation
+  + **pYIN**, **CREPE** (torchcrepe full, Viterbi) and **Basic Pitch** (the
+  live worker's ICASSP-2022 checkpoint) on the requested stems in a melody
+  (80–1100 Hz) or bass (32–400 Hz) register, every weight verified against
+  its full sha256 at build and on every `/health`, a synthesised two-part
+  smoke gating the image; it returns *evidence* only (frame f0 + confidence
+  per tracker, Basic Pitch events, per-stem RMS). `melodyBassPaths.ts` holds
+  every musical decision, unit-tested against exact truth (20 tests):
+  segmentation, highest/lowest-line reduction, **onset-informed splitting**
+  (a tracked note cut where Basic Pitch heard a same-pitch onset — the
+  re-articulation no f0 tracker can see), octave repair (folded and
+  glitch-shifted, both counted), fusion across trackers that never averages
+  a disagreement (confirmed ≥ 0.85, contested ≤ 0.4 and recorded, result
+  confidence = agreement rate), scorers (onset 50 ms / +pitch / +offset,
+  voicing, octave-error rate) and `canonicalMelodyAcceptance`, which runs a
+  line through the real `fuseCanonicalNotes` + `validateMelody`, alone and
+  beside the live full-mix result. Runner `run-melody-bass-paths.mjs` (own
+  lease surface :5016 behind a quick tunnel; raw evidence cached so eight
+  fusion variants were judged at no cost). **Flag:** `MELODY_STEM_PATH_V1`
+  makes `analyzeProjectSource` run the path on a fresh lease and push its
+  line as an additional `TranscriptionAnalysisResult` (reliability 0.72 in
+  `providerReliability.ts` + the fusion table; bass 0.80, measured, not
+  wired); unset, nothing changes.
+
+  **Measured (`docs/evidence/melody-bass-paths-live.json`;
+  `docs/model-discovery/melody-bass-paths.md`).** ANALYSIS_GOLD_V1
+  SYNTHETIC_EXACT, 21 composed works with a monophonic lead and a bass (3
+  refused by rule), same audio and judge for every arm. **Melody,
+  onset+pitch F1:** full-mix Basic Pitch events as a melody 0.280 (precision
+  0.169) and **0 canonical notes, `not_available` on 21/21** — the owner's
+  case reproduced; the specialist path on the **true lead stem 0.717**
+  (precision 0.905, octave errors 0.3 %); on htdemucs's `other` stem
+  **0.481**; the register-limited trackers on the *unseparated* mix
+  **0.629** — for an instrumental lead the `other` stem is worse than no
+  separation (it still holds the keys; CREPE's octave-error rate on it is
+  32 %). Basic Pitch anchors the melody in every arm (variant sweep: 0.717 vs
+  0.678 for a CREPE anchor, +0.03 from the onset split, pYIN neutral). **Under
+  the canonical gate** the path admits **0 notes as a sole provider on every
+  arm** (agreement-rate confidence × 0.72 never reaches the 0.85 floor);
+  **beside the live full-mix result `melody: detected` on 21/21**, but the
+  admitted line is sparse and clean — 16–31 % of the true notes at 0.70–0.97
+  precision, bound by the cluster's 50 ms *end* tolerance (offset F1 0.3–0.45
+  everywhere). **Bass, separated stem:** fused **0.801** (precision 0.836,
+  octave errors 0.4 %, agreement 0.83), carried evidence **precision 0.907** /
+  recall 0.745 on 21/21 works; true stem 0.825; trackers on the mix 0.028;
+  the platform's full-mix events read as bass 0.154 — separation is decisive
+  for bass, CREPE anchors, no split (the split buys recall 0.83 for 7 points
+  of precision). Cost: CREPE-full 1.96 s per audio-second per stem on CPU;
+  the gold run ≈ $1.50 of a $10 cap.
+
+  **The owner's two uploads** (PROFESSIONAL_REAL_WORLD, no truth, whole
+  songs): today 1,792 and 1,776 full-mix events → **0 canonical,
+  `not_available`** on both; the separated vocal stem is strong on both
+  (−16.8 / −15.5 dBFS, chosen by the RMS rule); the fused line 705 / 912
+  notes at agreement 0.73 / 0.69 (516 / 626 confirmed by three trackers,
+  111 / 131 contested regions recorded); alone 0 canonical; **beside the
+  full-mix result 179 / 162 notes → `melody: detected`**, validator clean —
+  a sparse skeleton (≈ 0.7 notes/s) of what the trackers heard, whose
+  correctness is the owner's to judge in the Listening Room, not this
+  PR's to claim; bass evidence 137 / 268 confirmed notes (upload 2 folded 110
+  CREPE notes down an octave — flagged). **Found on the way:** the first
+  worker image saved downloads as `source.bin`, and ffmpeg hands an
+  ID3-tagged MP3 under that name to the `bintext` demuxer — every MP3
+  upload would have failed; fixed (extension-less download, MP3 in the
+  build smoke, image `d8579205…`), and the live Basic Pitch worker refuses
+  the platform's own 45–52 MiB FLAC proxies (25 MiB limit). Spend ≈ $2.0 of
+  the $10 cap.
+
+  **Honest limits.** No sung lead exists in the truth set: the `vocals`
+  path the flag actually takes on a real song is measured only on the
+  owner's two uploads, without truth. Defaults (anchor order, split) were
+  chosen on the 21 works they were measured on — no held-out set. The gate
+  is the gate: a sole new provider cannot make a melody `detected` under the
+  0.85 floor with an agreement-rate confidence, and the measured route —
+  agreement with full-mix Basic Pitch — admits about a fifth of the line;
+  widening the end tolerance or counting an in-provider two-tracker
+  agreement as two votes are gate changes for Stream I, with measured
+  consequences, not for this PR. Offsets are weak everywhere (release
+  tails); bass evidence is measured, not carried into the Song Model; the
+  owner's songs were re-encoded to 320 kb/s MP3 because the live Basic Pitch
+  worker refuses the 45–52 MiB FLAC proxies (HTTP 413). Quick tunnel,
+  in-memory leases, CPU containers: a measurement setup, not production.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

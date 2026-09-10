@@ -1,0 +1,57 @@
+{
+  "worker": "melody-bass-worker",
+  "version": "1.0.0",
+  "purpose": "Specialist melody/bass paths (ANALYSIS ENGINE stream G, PR-88): 4-stem separation followed by monophonic pitch tracking on one stem. Returns raw evidence (frames and events); note segmentation, fusion and scoring live in artifacts/api-server/src/lib/melodyBassPaths.ts.",
+  "runtime": {
+    "python": "3.11",
+    "packages": {
+      "torch": "2.2.2",
+      "torchaudio": "2.2.2",
+      "numpy": "1.26.4",
+      "librosa": "0.10.2.post1",
+      "soundfile": "0.12.1",
+      "demucs": "4.0.1",
+      "torchcrepe": "0.0.24",
+      "basic-pitch": "0.4.0",
+      "onnxruntime": "1.17.3",
+      "scipy": "1.11.4",
+      "resampy": "0.4.3",
+      "pretty_midi": "0.2.10",
+      "mir_eval": "0.7"
+    }
+  },
+  "separation": {
+    "model": "htdemucs",
+    "family": "Hybrid Transformer Demucs v4 (Meta, MIT licence)",
+    "checkpoint_file": "955717e8-8726e21a.th",
+    "checkpoint_url": "https://dl.fbaipublicfiles.com/demucs/hybrid_transformer/955717e8-8726e21a.th",
+    "checkpoint_sha256": "8726e21a993978c7ba086d3872e7608d7d5bfca646ca4aca459ffda844faa8b4",
+    "sources": ["drums", "bass", "other", "vocals"],
+    "note": "demucs itself verifies only the first 8 hex characters of the sha256 (the file-name suffix); this worker verifies the full digest at build and on every /health."
+  },
+  "trackers": {
+    "pyin": {
+      "implementation": "librosa.pyin (probabilistic YIN, Mauch & Dixon 2014)",
+      "weights": null,
+      "sample_rate": 22050,
+      "hop_seconds": 0.01
+    },
+    "crepe": {
+      "implementation": "torchcrepe (CREPE, Kim et al. 2018; PyTorch port by Max Morrison, MIT licence)",
+      "capacity": "full",
+      "weights_file": "torchcrepe/assets/full.pth",
+      "weights_sha256": "133225604dedd2e4005f8bbd1bd0a2ec073ba8b7a6cd31ff6d5edbbfa3539986",
+      "tiny_weights_sha256": "d4993eea36ed1a0ad9ac549c740dae5265b049ce72004f00c2f59e01c0be8432",
+      "sample_rate": 16000,
+      "hop_seconds": 0.01,
+      "decoder": "viterbi"
+    },
+    "basic_pitch": {
+      "implementation": "Spotify Basic Pitch 0.4.0 (Apache-2.0), ONNX Runtime backend",
+      "checkpoint": "saved_models/icassp_2022/nmp.onnx",
+      "checkpoint_sha256": "2c3c1d144bfa61ad236e92e169c13535c880469a12a047d4e73451f2c059a0ec",
+      "note": "The same ICASSP-2022 checkpoint the live music-ai-worker attests; here it is run on a separated stem with register limits and its thresholds exposed."
+    }
+  },
+  "licence_position": "All components are permissively licensed (MIT / Apache-2.0). This is an analysis worker: nothing here generates music and nothing here is a product route; it exists so a melody or bass line can be measured before it is trusted."
+}

@@ -540,6 +540,17 @@ function validateMelody(value: unknown, duration: number | undefined, issues: Mu
   });
 }
 
+/**
+ * The melody rules alone, for a candidate line that is not yet inside a Song
+ * Model (PR-88 measures specialist melody paths against exactly this gate).
+ * Same checks, same codes, same severities as the full validator.
+ */
+export function melodyValidationIssues(melody: unknown, durationSeconds?: number): SongModelValidationIssue[] {
+  const issues: MutableIssue[] = [];
+  validateMelody(melody, durationSeconds, issues);
+  return issues;
+}
+
 function validateBassEvidence(value: unknown, duration: number | undefined, issues: MutableIssue[]): void {
   if (value === undefined) return; // legacy models predate optional bass evidence
   if (!Array.isArray(value)) {
