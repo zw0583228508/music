@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { judgeNativeAgainstPreview } from "./nativeRenderGate";
 import { deflateRawSync } from "node:zlib";
 import type {
   ArrangementPlan,
@@ -826,6 +827,15 @@ export async function renderArrangementExport(input: {
         const expectedLength = Math.ceil(SAMPLE_RATE * pipeline.durationSeconds) * CHANNELS;
         if (validateNativeRenderSamples(samples, expectedLength).length) {
           failures.push(`${candidate.renderer}: returned audio that failed validation`);
+          continue;
+        }
+        // PR-98: the shape check above let a stuck plugin voice through on the
+        // owner's first real song (a constant drone, clipped stems). The
+        // preview render of the same notes is the truthful envelope; a native
+        // stem that does not follow it is not this track.
+        const plausibility = judgeNativeAgainstPreview(samples, rendered.samples, { sampleRate: SAMPLE_RATE, channels: CHANNELS });
+        if (!plausibility.ok) {
+          failures.push(`${candidate.renderer}: rejected by the plausibility gate (${plausibility.reasons.join("; ")})`);
           continue;
         }
         const volume = activeTracks.find((track) => track.id === rendered.trackModel.id)?.volume ?? 0;

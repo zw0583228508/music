@@ -44,7 +44,17 @@ export type QueueProductionJobInput = {
 type ProductionJobTransaction =
   Parameters<Parameters<typeof db.transaction>[0]>[0];
 
-const LEASE_MS = 2 * 60_000;
+/**
+ * How long a claimed job stays owned without a heartbeat. The export render
+ * still runs its synthesis synchronously on the API's event loop, so the
+ * 30-second heartbeat timer cannot fire while a long song renders and a
+ * two-minute lease is lost mid-render (seen on a 4:18 song: "Export job lease
+ * was lost" at rendering 25 %). Until that render moves off-thread, the lease
+ * length is an operator knob; the default is unchanged.
+ */
+const LEASE_MS = Number(process.env.PRODUCTION_JOB_LEASE_MS) > 0
+  ? Number(process.env.PRODUCTION_JOB_LEASE_MS)
+  : 2 * 60_000;
 
 const leaseDeadline = (now = new Date()): Date =>
   new Date(now.getTime() + LEASE_MS);

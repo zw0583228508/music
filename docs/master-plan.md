@@ -5645,6 +5645,108 @@ any of it.
   capture is provenance, not a legal opinion; CC-BY-SA renders inherit
   ShareAlike. Still no open-licence oud, kanun, ney or voice.
 
+- **PR-98** ✅ — `producer-chord-sheet-correction` (the owner uploaded his own
+  recording, "רחם נא", and asked for a simple, beautiful arrangement, exported
+  as audio). What the platform alone produced: tempo **64.8** low-confidence
+  (the half level again), key **contested** C major / C minor, **0 chords**,
+  melody not_available, 7 sections on the wrong grid — `needs_confirmation`
+  on four fields. The Arrangement Brain voices nothing without chords, and
+  the correction endpoint accepted only tempo, key, metre and sections.
+
+  **What changed.** `SongModelCorrectionInput.chords` — a producer's chord
+  sheet in seconds, plain or MIREX symbols — goes through the same versioned
+  correction path: parsed by the platform's symbol parser, roman numerals in
+  the key confirmed in the same correction (or the model's), `N`/unparsable
+  lines dropped never guessed, `fieldStatus.harmony` marked user-supplied,
+  `correctionFields` treats a sheet as always touching harmony. Tests 6
+  (songModelCorrection). Also: `PRODUCTION_JOB_LEASE_MS` — the first export
+  of a 4:18 song **lost its two-minute lease at rendering 25 %** because the
+  synchronous render blocks the 30-second heartbeat timer; the lease length
+  is now an operator knob (default unchanged) until the export render moves
+  off-thread as PR-72 did for listening renders.
+
+  **Proof on the owner's song** (`docs/evidence/chord-sheet-correction-live.json`).
+  PR-84's rhythm worker: MADMOM / BEATNET / LIBROSA **130.4 BPM, 4/4**,
+  BEAT_THIS 65.2 (the half). PR-85's harmony worker: Krumhansl **C minor**
+  0.69, BTC `C:min` 118.6 s / `F:min` 92.0 s / `G`. One PATCH — bpm 130.43,
+  key C minor, 4/4, **92 chords** (i, bVI, iv, bVII, V…) — v2 `accepted`,
+  141 bars; sections placed from the roman-numeral / energy layout — v3
+  `accepted`, and **the first Song Model to reach `trusted_automatically`**
+  (every field producer-confirmed). The first generation then chose a
+  drums + bass + transition palette (not the brief) and its export died on
+  the lease; the second run passes `plannerHints` (keys, strings, pads,
+  light percussion; no drums; half-time feel; climax at the last chorus).
+
+  **Then the owner listened — and heard one long drone.** The delivered master
+  had a dead-flat RMS (−16.4 dB every second, including the 3.8 s before the
+  first note), constant chord-tone peaks (C2/F2/G2/C3) and stems at
+  +1.6 dBFS. Forensics: the exported MIDI holds 173 real notes; an
+  independent render of it is music; the *same* route function run offline
+  on the same DB rows and controls produces a dynamic master (−21 → −11 →
+  −17 dB). The only difference was the API's native renderers (local VST3
+  worker :8023 + cloud sfizz): the bounded local synth cannot exceed 0 dBFS,
+  a native render can — so a native stem (most likely Abbey Road One,
+  mis-declared strings/brass by the lead's own manifest entry, with the
+  stuck plugin state SPITFIRE-1 measured) came back as a drone and
+  `validateNativeRenderSamples` (length, finite, not silent, clipping
+  < 0.1 %) let it through. Fixes in this PR: **`nativeRenderGate.ts`** — a
+  native stem must follow the preview render's envelope of the same notes
+  (silent before the first note, silent through rests, dynamics
+  correlated); the test reproduces the owner's drone and rejects it (5
+  tests). **`projectTracks.ts`** — track rows retired by a later arrangement
+  version are muted on selection and never rendered (a stale drums row had
+  blocked the revision and the export). The owner's v3, rendered with the
+  natives off, measures LRA 7.7 LU / −14 LUFS / −1 dBTP and was delivered.
+  **Honest limits.** The chord sheet is BTC's reading, not a human's (0.786
+  root accuracy on synthetic audio); sections are the lead's musical
+  judgement; melody is still not_available so the Brain arranges harmony and
+  form, not around the sung line; `trusted_automatically` means every field
+  was confirmed, not that the analysis was right on its own — v1 was wrong
+  on tempo and contested on key. No studio panel enters a chord sheet yet;
+  the export render still runs on the event loop. Which native renderer
+  produced the drone is inferred, not logged — the export records no
+  per-stem renderer in its manifest; that logging is owed.
+
+  **The owner listened again — "still nothing, silence and a weak beep".**
+  v3 was not silent: its master measures −15 dB RMS in every 10-second
+  window, but **94.2 % of its energy sits below 150 Hz and 0 % above 2 kHz**
+  — the preview synth (`LocalExpressiveRenderer`) is a sub-bass sine with
+  thin piano blips, inaudible on ordinary speakers. The arrangement was also
+  thin: the stored plan shows the section planner kept **two families
+  everywhere** because the section energy targets are the recording's
+  max-normalised RMS (choruses 0.16–0.19) and `keys` was `LEAD` in every
+  section (vocal map `not_available` → `taskFor("LEAD")` writes nothing
+  outside instrumental sections); the piano that played was the palette entry
+  `mix`, a source-stem hint treated as a family. A fuller brief (v4) then
+  produced a bass leap of 13 semitones and a string bed over four voices and
+  the generation contract refused all three candidates: **`playabilityRepair.ts`**
+  now folds impossible leaps by the octave and releases held voices with the
+  validator's own definitions, in the orchestrator's perform stage, and the
+  stage records how many parts it repaired (6 tests, each verified against
+  `validateCanonicalTrackModels`). v4 rendered through the local sampled
+  worker (:8022) exposed three more defects, each named by the export
+  manifest's per-stem renderer (which is logged after all): the bass fell
+  back to the preview synth because a stale `PREMIUM_INSTRUMENT_ROUTING`
+  named Retrologue; the strings went to a cello ensemble whose range does not
+  reach MIDI 79–91, came back silent and were rejected; and the **revision
+  route applied every fader twice** (`volume = levelDb` *and*
+  `applyMixMasterControls`), so with a producer balance the approved master
+  lost its bass entirely (0.2 % below 150 Hz) while the export's own premaster
+  kept it (42 %) — fixed (single application). **v6, delivered:** all five
+  stems `licensed-native` (Meatbass arco, Salamander Grand, VSCO2 violin
+  ensemble, DRSKit, Salamander), master 47 % / 44 % / 8 % across
+  < 150 Hz / 150 Hz–2 kHz / 2–5 kHz, RMS −24…−16 dB per 10 s window, no
+  silent window; forensic probes kept under `scripts/forensics/`.
+  **Honest limits (v6).** It is still the reference composer: root-position
+  triads, roots in the bass, strings written at MIDI 79–91, no counter-line,
+  chorus 2 = chorus 1; the balance (bass −6, piano +10, strings +12,
+  percussion −12) is the lead's producer decision through the mix controls,
+  not the mix plan's (which put the bass 5 dB above everything); the sound
+  selection brain does not know an asset's playable range; the revision
+  evidence still names no per-stem renderer (the export manifest does); the
+  exported MIDI's GM program numbers are wrong (piano → organ, strings →
+  guitar); no human has judged v6 blind. These are exactly the defects the
+  Arrangement & Orchestration Brain program (`docs/brain/`) now owns.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

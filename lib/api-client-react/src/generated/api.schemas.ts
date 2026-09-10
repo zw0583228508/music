@@ -2026,6 +2026,7 @@ export const SongModelCorrectionFieldsItem = {
   key: 'key',
   meter: 'meter',
   sections: 'sections',
+  chords: 'chords',
 } as const;
 
 export interface SongModelCorrection {
@@ -2112,6 +2113,18 @@ export interface SectionCorrection {
   endBar: number;
 }
 
+export interface ChordCorrection {
+  /** @minimum 0 */
+  start: number;
+  /** @minimum 0 */
+  end: number;
+  /**
+     * @minLength 1
+     * @maxLength 24
+     */
+  symbol: string;
+}
+
 export interface SongModelCorrectionInput {
   /** @minimum 1 */
   baseVersion: number;
@@ -2129,6 +2142,12 @@ export interface SongModelCorrectionInput {
   meter?: string;
   /** @minItems 1 */
   sections?: SectionCorrection[];
+  /**
+     * A producer-confirmed chord sheet in seconds. Replaces the model's chords; MIREX (C:min, G:7/B) or plain (Cm, G7/B) symbols; N is silence.
+     * @minItems 1
+     * @maxItems 2000
+     */
+  chords?: ChordCorrection[];
 }
 
 export type AnalysisJobStatus = typeof AnalysisJobStatus[keyof typeof AnalysisJobStatus];

@@ -162,6 +162,7 @@ export * from './canonicalTimeCoordinate';
 export * from './canonicalTimeRange';
 export * from './chordBassSupportEvidence';
 export * from './chordCandidateProvenance';
+export * from './chordCorrection';
 export * from './chordEvent';
 export * from './chordTiming';
 export * from './clarificationAnswer';

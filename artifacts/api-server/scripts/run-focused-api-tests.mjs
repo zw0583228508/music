@@ -395,6 +395,11 @@ const suites = {
   validation: {
     bundles: [
       ["src/lib/songModelValidation.test.ts", "song-model-validation.test.mjs"],
+      // PR-98: project track rows retired by a later arrangement version are not rendered.
+      ["src/lib/projectTracks.test.ts", "project-tracks.test.mjs"],
+      // PR-98: a native stem must follow the preview envelope of the same notes (the drone gate).
+      ["src/lib/nativeRenderGate.test.ts", "native-render-gate.test.mjs"],
+      ["src/lib/playabilityRepair.test.ts", "playability-repair.test.mjs"],
       ["src/lib/canonicalTimeline.test.ts", "canonical-timeline.test.mjs"],
       [
         "src/lib/songModelCorrection.test.ts",

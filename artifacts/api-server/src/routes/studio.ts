@@ -210,7 +210,8 @@ import {
   type ExportBundle,
 } from "../lib/export-pipeline";
 import { deriveMixPlan, mixPlanToControls } from "../lib/mixBrain";
-import { correctionFields, regridTimeline, sectionCountMayChange, verifiedConfidence } from "../lib/songModelCorrection";
+import { correctionFields, regridTimeline, sectionCountMayChange, verifiedConfidence, chordSheetToEvents } from "../lib/songModelCorrection";
+import { arrangementTrackRows } from "../lib/projectTracks";
 import { compareFingerprints, deriveStyleFingerprint } from "../lib/styleFingerprint";
 import { FEATURE_NAMES, recordPreferenceEvent, trainingRows, type PreferenceSubjectInput } from "../lib/preferenceEvents";
 import { DbPreferenceEventStore } from "../lib/preferenceEventsDbStore";
@@ -2144,6 +2145,18 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
             edited: true,
           },
         }),
+    ...(!fields.includes("chords")
+      ? {}
+      : {
+          harmony: {
+            ...latest.model.fieldStatus?.harmony,
+            status: "detected" as const,
+            confidence: 1,
+            providers: ["PRODUCER_CHORD_SHEET"],
+            message: "User-supplied chord sheet; the analyzer's chords remain in provenance.",
+            edited: true,
+          },
+        }),
   };
   const verified = verifiedConfidence(latest.model.confidenceByField, fields);
   const correctedModelBase: SongModelData = {
@@ -2194,6 +2207,18 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
             ...section,
              energy: latest.model.sections[index]?.energy ?? measuredAverageEnergy,
           })),
+        }),
+    // A producer's chord sheet replaces the analyzer's chords outright; the
+    // roman numerals follow the key confirmed in this same correction when
+    // there is one, else the key the model already carries.
+    ...(!fields.includes("chords")
+      ? {}
+      : {
+          chords: chordSheetToEvents(
+            correction.chords!,
+            fields.includes("key") ? correction.key! : latest.model.keyMap[0]?.key,
+            latest.model.audio?.durationSeconds,
+          ),
         }),
   };
   // A verified tempo or meter re-derives the beat/bar grid (PR-32): the grid the
@@ -3503,7 +3528,7 @@ router.post("/projects/:projectId/mix-master-revisions", async (req, res): Promi
     res.status(400).json({ error: "Invalid mix/master revision request" });
     return;
   }
-  const [arrangementRows, projectRows, songModelRows, tracks, parentArtifacts] = await Promise.all([
+  const [arrangementRows, projectRows, songModelRows, projectTrackRows, parentArtifacts] = await Promise.all([
     db.select().from(arrangementsTable).where(and(eq(arrangementsTable.id, body.data.arrangementId), eq(arrangementsTable.projectId, params.data.projectId))).limit(1),
     db.select().from(musicProjectsTable).where(and(
       eq(musicProjectsTable.id, params.data.projectId),
@@ -3526,7 +3551,12 @@ router.post("/projects/:projectId/mix-master-revisions", async (req, res): Promi
     res.status(409).json({ error: "A persisted arrangement, Song Model, plan, style, and TrackModels are required to audition a revision" });
     return;
   }
-  const unknownTrack = Object.keys(body.data.tracks).find((id) => !tracks.some((track) => track.id === id));
+  // Only the rows this arrangement version carries are rendered; a retired
+  // row from an earlier version (see projectTracks.ts) needs no controls and
+  // must not reach the one-to-one TrackModel check.
+  const allProjectTracks = projectTrackRows;
+  const tracks = arrangementTrackRows(allProjectTracks, arrangement.trackModels);
+  const unknownTrack = Object.keys(body.data.tracks).find((id) => !allProjectTracks.some((track) => track.id === id));
   if (unknownTrack) {
     res.status(400).json({ error: `Mix controls reference unknown track ${unknownTrack}` });
     return;
@@ -3537,10 +3567,13 @@ router.post("/projects/:projectId/mix-master-revisions", async (req, res): Promi
     return;
   }
   const controls: MixMasterControls = { tracks: body.data.tracks, master: body.data.master };
-  const renderTracks = tracks.map((track) => ({
-    ...track,
-    volume: controls.tracks[track.id]?.levelDb ?? track.volume,
-  }));
+  // PR-98: the per-track level lives in the controls and is applied once, by
+  // applyMixMasterControls inside the render. Folding it into `volume` as well
+  // applied every fader twice (a +10 dB piano became +20, a -6 dB bass -12):
+  // on the owner's song the approved master lost its bass entirely while the
+  // export's own premaster, rendered with the stored volumes, kept it. The
+  // export ships the approved master, so this is the path that must be right.
+  const renderTracks = tracks;
   const timelineSha256 = canonicalPerformanceTimelineSha256(songModel.model);
   const parentIds = parentArtifacts.filter((artifact) =>
     (artifact.type === "TRACK_MODEL" && artifact.storageUri?.startsWith(`db://music_arrangements/${arrangement.id}/tracks/`)) ||

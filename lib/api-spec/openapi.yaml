@@ -2796,7 +2796,7 @@ components:
           type: array
           items:
             type: string
-            enum: [bpm, key, meter, sections]
+            enum: [bpm, key, meter, sections, chords]
     SongModelContractVersion:
       type: string
       enum: ["1.0", "2.0"]
@@ -3368,6 +3368,20 @@ components:
           minItems: 1
           items:
             $ref: "#/components/schemas/SectionCorrection"
+        chords:
+          description: A producer-confirmed chord sheet in seconds. Replaces the model's chords; MIREX (C:min, G:7/B) or plain (Cm, G7/B) symbols; N is silence.
+          type: array
+          minItems: 1
+          maxItems: 2000
+          items:
+            $ref: "#/components/schemas/ChordCorrection"
+    ChordCorrection:
+      type: object
+      required: [start, end, symbol]
+      properties:
+        start: { type: number, minimum: 0 }
+        end: { type: number, minimum: 0 }
+        symbol: { type: string, minLength: 1, maxLength: 24 }
     SectionCorrection:
       type: object
       required: [name, startBar, endBar]
