@@ -120,7 +120,13 @@ test("the reference part composer produces byte-identical parts to the golden fi
         "and the root-nearest-40 bass; the composer honours partWindow (sustained and rhythmic parts stop at their exit bar); " +
         "chord tones are read through chordSymbols.ts (identical for this corpus's maj / min / 7 / m7 symbols) - so every " +
         "case's composer digest changed and every shipped-note digest with it; the rhythm, transition and counter-melody writers " +
-        "are untouched. A future digest change must again name its cause here.",
+        "are untouched. A future digest change must again name its cause here. " +
+        "RE-PINNED again at the B-04 merge (rebased over B-02, B-03, B-10) (groove + transitions): the composer's bar is now numerator x one " +
+        "denominator unit (the 7/8 case's parts fall inside their sections, so every 7/8 digest changed), the drum kit / percussion / " +
+        "ostinato read the GroovePlan (meter templates, tempo-capped hats, shared anticipations, fills from the vocabulary, the ending), " +
+        "and the performance engine accents per meter, pedals on chord onsets, ghosts on weak positions and broadens cadences - so every " +
+        "shipped-note digest changed; the harmony writers (B-02) are untouched, so a 4/4 case's bass / keys / strings composer digests " +
+        "changed only where the whole-part digest includes the kit. A future digest change must again name its cause here.",
       cases: current,
     }, null, 2)}\n`);
     return;
