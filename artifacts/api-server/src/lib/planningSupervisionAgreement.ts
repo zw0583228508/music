@@ -220,7 +220,12 @@ export function compareWithPlatformPlanners(plan: PlanningSupervision, model: So
       section: human.sectionName,
       human: { energy: human.energy, density: human.density, novelty: human.noveltyRelativeToPreviousSection, families: [...humanSet].sort(), transitionIn: humanTransition },
       platform: {
-        energy: target?.energy ?? 0, density: target?.density ?? 0, novelty: target?.noveltyVsPrevious ?? 0,
+        // The agreement measures the platform's *derivers* against the human
+        // score. Since Brain B-01 a target's `energy` / `density` are the arc's
+        // intent; the measured values ride along as `sourceEnergy` / `sourceDensity`.
+        energy: target?.sourceEnergy ?? target?.energy ?? 0,
+        density: target?.sourceDensity ?? target?.density ?? 0,
+        novelty: target?.noveltyVsPrevious ?? 0,
         families: [...platformSet].sort(), transitionIn: platformTransition,
       },
       familyJaccard: union.size ? round(inter.length / union.size) : 1,

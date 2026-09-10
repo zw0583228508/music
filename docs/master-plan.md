@@ -6127,6 +6127,131 @@ any of it.
   denominator (B-04), `arrangementBenchmark.ts` (three corpus cases now report
   `selected: null`; the aggregate should say so rather than average around it;
   B-08).
+### PR-B01 — Brain B-01: ArrangementArc, form memory, and the silent LEAD
+
+- **PR-B01** ✅ (open; the lead merges) — `brain-b01-arrangement-arc` (Arrangement
+  & Orchestration Brain, stream B-01, music director). The arrangement's arc is
+  now a *decision* the planners read, and the two integration defects that
+  silenced the owner's piano are closed. Pure TypeScript, no database, nothing
+  rendered.
+
+  **What changed.** New `arrangementArc.ts` (+ a delimited type block in
+  `music-studio.ts`): per section an intended dynamic (pp..ff on the 0..1
+  scale the planners call energy), a texture level (solo / duo / bed / full /
+  tutti, a ladder relative to the palette), a tension role (setup / lift /
+  arrival / release / afterglow / breath), family entries and exits as bar
+  offsets *inside* the section, a primary and a secondary climax, the
+  occurrence index of every repeated function, the previous occurrence's
+  summary and the development operator chosen for the repeat (`add_layer`,
+  `raise_register`, `thicken_voicing`, `activate_counterline`,
+  `drop_to_solo_before_last`, `change_comping_subdivision`, or an explicit
+  `identity` with its reason). Derivation order: form function + one of five
+  style templates (`intimate_ballad`, `pop_build`, `band_steady`,
+  `cinematic_swell`, `electronic_drop`), then the brief, then the source
+  recording only as a weak prior (≤ ±0.05 on the level) and as a contrast
+  signal ("the singer is quieter here → leave space"); every value carries
+  `source` (`brief` / `template` / `source_prior` / `default`) and a reason;
+  `UNKNOWN` when there are no sections or no families. `globalArrangementPlanner`
+  (v1.1) derives its section targets from the arc — the measured RMS, onset
+  and tension values ride along as `sourceEnergy` / `sourceDensity` /
+  `sourceTension` — and never lets `mix`, `vocals`, `fx` or `other` stem
+  hints into the palette (`excludedPaletteHints` says why); the climax is the
+  arc's. `sectionPhrasePlanner` (v1.1) takes families, dynamic shape, role
+  density, entries / exits (`entryBar` / `exitBar`,
+  `entersFamilies` / `leavesFamilies` — never a constant `[]`) and the
+  operator's plan-level effects (added family, register band, counter-line
+  and comping roles) from the arc; a section whose vocal map is unavailable is
+  **sung by default** when its function is a sung one, so no accompaniment
+  family is ever promoted to LEAD. `partComposer` (v1.1): a LEAD family in a
+  sung section keeps its harmonic-bed task; `ensemble` intro / ending /
+  transition figures and any family whose definition would silently be the
+  piano (`winds`, `mix`) are excluded with a recorded reason
+  (`PartComposerPlan.decisions`); the request carries `arcIntent`,
+  `formMemory` (occurrence, previous occurrence, operator) and `partWindow`;
+  `silentPlannedFamilyFindings()` is the hard rule "a planned family produced
+  zero notes in a mandatory section" (pure; B-00 wires it). `briefToPlanner`
+  gains real levers — `sectionDynamics`, `sectionDynamicSteps`,
+  `globalDynamicSteps`, `textureLevels`, `textureSteps`, `globalTextureSteps`,
+  `arcTemplate`, `familyPriority`, `climaxSectionName` kept — and the old
+  `sectionEnergyBias` / `sectionDensityBias` / `activeFamilyBias` multipliers
+  stay emitted but touch the source prior only. Fixture
+  `__fixtures__/rachemNaSongModelV3.ts` (the owner's song, slimmed; the
+  re-derived map reproduces the stored v3 section energies within 0.06).
+  Tests: `arrangementArc.test.ts` (12), `brainB01RachemNa.test.ts` (6), plus
+  additions in the planner, part-composer and brief suites; the sixteen
+  affected suites are green; typecheck green. Evidence:
+  `docs/evidence/brain-b01-arrangement-arc.json` (before / after on the
+  owner's fixture and the nine synthetic cases; every constant changed with
+  old → new and why; regenerate with
+  `artifacts/api-server/scripts/brain-b01-arc-evidence.mjs`).
+
+  **Measured on the owner's song** (fixture, brief "intimate ballad; piano,
+  soft strings, gentle bass, light percussion; big final chorus"). Before:
+  palette `drums, percussion, bass, keys, mix, strings`; energy targets = the
+  recording's RMS (Intro 0.007 … Chorus 2 0.316 … Chorus 3 0.139); 2 families
+  everywhere (`drums + bass`), keys LEAD in five sections and silent in all
+  nine; keys wrote 0 notes, the transitions were played by an `ensemble` piano.
+  After: palette `drums, percussion, bass, keys, strings` (`mix` excluded with
+  its reason); template `intimate_ballad` from the brief; Intro pp / bed 3,
+  Verse 1 pp / bed 3, Verse 2 pp / full 4 (`add_layer`: percussion), Chorus
+  mp / full 4, Chorus 2 mp / tutti 5 (`add_layer`: drums), Verse 3 pp / bed 3
+  (`change_comping_subdivision`; the recording is quieter there → space),
+  Bridge mp / bed 3 with a two-bar breath before the final chorus, **Chorus 3 f /
+  tutti 5 — the primary climax (`raise_register`)** although the recording peaks
+  in Chorus 2, Outro pp thinning to keys + bass. Every section ≥ 3 families,
+  keys never LEAD, keys writes 251 / 185 / 29 / 29 / 34 / 182 / 37 / 131 notes
+  in Verse 1 … Outro, strings 45 / 48 / 30 / 30 / 36 / 2 / 39 / 27, the
+  selected candidate is feasible (0 hard-rule findings), critic 71 → 72
+  (without a brief 69 → 72; feasible in both). Synthetic benchmark:
+  playability errors 0 → 0 on all nine cases (the gate), critic mean
+  74.33 → 73.0 — attributed per dimension in the evidence to composer idiom
+  the arc now exposes (tempo-blind 16th hats at density > 0.6 = hundreds of
+  re-strike *warnings*; a per-beat bass against a 1-and-3 kick) and to the
+  plan-level critic's proxies, not designed around.
+
+  **Capability ladder.** ArrangementArc — DESIGNED ✓ IMPLEMENTED ✓
+  INTEGRATED ✓ (global + section planners on the production path) TESTED ✓
+  BENCHMARKED ✓ (this evidence) VALIDATED ON OUTPUT ✗. Brief levers —
+  IMPLEMENTED ✓ INTEGRATED ✓ TESTED ✓. Form memory + operators —
+  IMPLEMENTED ✓ TESTED ✓ at plan level; `add_layer`, `raise_register`,
+  `activate_counterline`, `change_comping_subdivision` reach the notes through
+  families, register bands and roles the composer already reads;
+  `thicken_voicing` and `drop_to_solo_before_last` INTEGRATED-pending (the
+  composer ignores `voicingStrategy` and `partWindow`). Staggered entries /
+  exits — TESTED ✓ at plan level, INTEGRATED-pending at note level (the
+  reference composer writes the whole section). F5 fixes (sung by default, no
+  accompaniment LEAD, bed task, non-family hints, no silent piano) —
+  INTEGRATED ✓ TESTED ✓ on the owner's fixture. Silent-family hard rule —
+  IMPLEMENTED ✓ TESTED ✓ (positive + negative control), orchestrator wiring
+  is B-00's. `formMemory` / `arcIntent` / `partWindow` on the request —
+  INTEGRATED ✓, unread by the composer.
+
+  **Findings for other streams** (exact spots in the evidence). (1)
+  `musicEngines.ts` `FAMILY_WORDS` has no keyboard word, so a keys track whose
+  first task is `RHYTHMIC_HARMONY` becomes the *drum kit* definition (range
+  35–81, four voices; measured: keys constrained as drums on rock-full) — the
+  request side is patched here, the track side needs the one-line fix (B-03).
+  (2) `referencePartComposer.ts` BASS: the last walking step laps into the
+  next chord when a chord's span is not a whole number of beats ("2 notes
+  sound together") — surfaces the moment the bass density reaches 0.4 on real
+  chord timings. (3) The composer's 16th hats are tempo-blind and 90 ms long,
+  so every 16th at ≥ 120 BPM is a re-strike warning. (4) The intro of the
+  owner's song is silent because the chord sheet starts at bar 3. (5) The
+  brief compiler reads "soft strings, gentle bass" as a *global* low-energy
+  decision. One line outside the stream's files was changed:
+  `planningSupervisionAgreement.ts` compares the human score with
+  `sourceEnergy` / `sourceDensity` (the derivers' measurement), as its test
+  demands.
+
+  **Honest limits.** Nothing rendered or listened to — VALIDATED ON OUTPUT is
+  not claimed. The composer does not realise two of the seven operators, the
+  bar windows, `arcIntent` or `formMemory`. The plan-level critic's benchmark
+  mean fell 1.3 points for the reasons above. `rhythmicActivity` /
+  `melodicActivity` / `gapHeavy` in the section planner are still source
+  measurements (labelled, not yet routed through the arc). The `ensemble`
+  figures were removed, not re-homed (per-family device realisation is B-04).
+  The "before" tables were produced by running the `3bf23aa` planners beside
+  the new ones, not from stored production runs.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 

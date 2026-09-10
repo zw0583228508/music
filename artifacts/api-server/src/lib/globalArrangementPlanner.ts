@@ -9,38 +9,56 @@
  *
  * Deterministic and pure. Reads the Canonical Song Model V2 musical map
  * (`songModel.musicalMap`) plus `sections` and `reconciliation`. When the map
- * is missing or stale it is re-derived from the model's evidence. Every field
- * is derived — nothing is invented; low-evidence inputs lower `confidence` and
- * fall back to neutral choices.
+ * is missing or stale it is re-derived from the model's evidence.
+ *
+ * Brain B-01: the section targets (energy / density / tension) are no longer
+ * the source recording's measurements. They come from the `ArrangementArc`
+ * (`arrangementArc.ts`), which is derived from the section functions, the
+ * brief and a style template; the measured values ride along as
+ * `sourceEnergy` / `sourceDensity` / `sourceTension` for the record and act on
+ * the arc only as a weak prior. Source stem hints that are not instrument
+ * families (`mix`, `vocals`, `fx`, `other`) never enter the palette.
  */
 import { createHash } from "node:crypto";
 import type {
+  ArrangementArc,
   GlobalArrangementPlan,
   SongModelData,
   SongModelMusicalMap,
 } from "@workspace/db";
 import { deriveMusicalMap, isMusicalMapStale } from "./songMusicalMap";
+import {
+  arcDensity,
+  arcHintsOf,
+  arcTension,
+  canonicalFamily,
+  deriveArrangementArc,
+  isNonFamilyHint,
+  NON_FAMILY_HINT_REASONS,
+  type ArcHints,
+  type ArrangementArcInput,
+} from "./arrangementArc";
 
-export const GLOBAL_ARRANGEMENT_PLAN_VERSION = "1.0" as const;
-const METHOD = "global-arrangement-planner/v1";
+/** "1.1" since Brain B-01 (arc-derived targets); stored "1.0" plans are stale. */
+export const GLOBAL_ARRANGEMENT_PLAN_VERSION = "1.1" as const;
+const METHOD = "global-arrangement-planner/v1.1-arc";
 
 /**
- * Optional biases from a ProductionBrief (Wave U). Every hint nudges a value
- * the planner derives from the musical map; none replaces the derivation, and
- * a hint that the evidence cannot support (a climax section with no climax
- * candidate, an aesthetic the palette cannot carry) is ignored.
+ * Optional levers from a ProductionBrief (Wave U, extended by Brain B-01).
+ * The arc levers (`sectionDynamics`, `sectionDynamicSteps`, `textureLevels`,
+ * `climaxSectionName`, `arcTemplate`, `familyPriority`, ...) state intent and
+ * are honoured as stated; the palette / aesthetic / groove hints nudge a value
+ * the planner derives from the musical map and are ignored when the evidence
+ * cannot support them. `sectionEnergyBias` is deprecated: it multiplies the
+ * source prior only.
  */
-export type GlobalPlannerHints = {
-  /** Multiplier on the analysed section energy, keyed by section name (1 = unchanged). */
-  sectionEnergyBias?: Record<string, number>;
-  /** Multiplier on the analysed section density, keyed by section name (1 = unchanged). */
+export type GlobalPlannerHints = ArcHints & {
+  /** Multiplier on the analysed section density, keyed by section name (1 = unchanged). Affects `sourceDensity` only. */
   sectionDensityBias?: Record<string, number>;
   /** Families to add to the palette (colour tier unless already present). */
   paletteAdd?: string[];
   /** Families to drop from the palette. */
   paletteRemove?: string[];
-  /** Section whose climax candidate is preferred, when it has one. */
-  climaxSectionName?: string;
   /** Honoured only when the resulting palette can carry it. */
   productionAesthetic?: GlobalArrangementPlan["productionAesthetic"];
   /** Honoured only when the map's rhythm evidence does not contradict it. */
@@ -142,15 +160,27 @@ const ROLE_TIER: Record<string, number> = {
 function buildPalette(
   map: SongModelMusicalMap,
   hints: GlobalPlannerHints = {},
-): GlobalArrangementPlan["instrumentPalette"] {
+): { palette: GlobalArrangementPlan["instrumentPalette"]; excluded: Array<{ hint: string; reason: string }> } {
   const fp = map.styleFingerprint;
-  const roles = new Set(fp.instrumentPaletteHints);
-  const requested = new Set(hints.paletteAdd ?? []);
+  // B-01: a stem hint that is not an instrument family (`mix`, `vocals`, `fx`,
+  // `other`) never becomes one. The owner's v3 run had its full-mix stem in
+  // the palette, resolved to a piano, and playing instead of the keys family.
+  const excluded: Array<{ hint: string; reason: string }> = [];
+  const roles = new Set<string>();
+  for (const hint of fp.instrumentPaletteHints) {
+    if (isNonFamilyHint(hint)) excluded.push({ hint, reason: NON_FAMILY_HINT_REASONS[canonicalFamily(hint)] });
+    else roles.add(hint);
+  }
+  const requested = new Set((hints.paletteAdd ?? []).filter((role) => {
+    if (!isNonFamilyHint(role)) return true;
+    excluded.push({ hint: role, reason: `${NON_FAMILY_HINT_REASONS[canonicalFamily(role)]} (requested by the brief)` });
+    return false;
+  }));
   const removed = new Set(hints.paletteRemove ?? []);
   // The observed stems describe the *source*, not the arrangement to write. A
   // vocal-only or vocal+piano import is exactly the case where the studio has
   // to supply a band, so seed one whenever no instrumental family is present.
-  const instrumental = [...roles].filter((role) => role !== "vocals" && role !== "fx");
+  const instrumental = [...roles];
   if (instrumental.length === 0 || fp.orchestrationSize === "medium" || fp.orchestrationSize === "dense") {
     roles.add("drums");
     roles.add("bass");
@@ -175,7 +205,7 @@ function buildPalette(
     const tierB = ROLE_TIER[b] ?? 3;
     return tierA - tierB || a.localeCompare(b);
   });
-  return ordered.map((role, index) => ({
+  const palette = ordered.map((role, index) => ({
     role,
     priority: index + 1,
     rationale: fp.instrumentPaletteHints.includes(role)
@@ -184,6 +214,7 @@ function buildPalette(
         ? "requested in the production brief"
         : `added for a ${fp.orchestrationSize ?? "medium"} arrangement`,
   }));
+  return { palette, excluded };
 }
 
 function pickGroove(
@@ -347,81 +378,94 @@ export function deriveGlobalArrangementPlan(
     ...map.rhythm.rhythmicDensity.map((s) => s.onsetsPerBar),
   );
 
-  const sectionTargets: GlobalArrangementPlan["sectionTargets"] = sections.map(
-    (section, index) => {
-      const energyFromMap = spanMean(
-        map.energy.energyCurve, (s) => s.energy,
-        section.startBar, section.endBar,
-      );
-      const density = spanMean(
-        map.rhythm.rhythmicDensity, (s) => s.onsetsPerBar / maxOnsets,
-        section.startBar, section.endBar,
-      );
-      const tension = tensionOverSpan(map, {
-        start: barSeconds(section.startBar),
-        end: barSeconds(section.endBar + 1),
-      });
-      const energyBias = hints.sectionEnergyBias?.[section.name] ?? 1;
-      const densityBias = hints.sectionDensityBias?.[section.name] ?? 1;
-      const energy = round3(clamp01((energyFromMap ?? section.energy ?? 0) * energyBias));
-      const previous = index > 0
-        ? {
-            energy: round3(clamp01(sections[index - 1].energy ?? 0)),
-            role: classifySection(sections[index - 1].name),
-          }
-        : null;
-      const role = classifySection(section.name);
-      const novelty = previous
-        ? round3(clamp01(
-            Math.abs(energy - previous.energy) * 0.6 +
-            (role !== previous.role ? 0.4 : 0),
-          ))
-        : 1;
-      return {
-        sectionName: section.name,
-        startBar: section.startBar,
-        endBar: section.endBar,
-        energy,
-        density: round3(clamp01((density ?? energy) * densityBias)),
-        tension: round3(clamp01(tension ?? energy * 0.6)),
-        role,
-        noveltyVsPrevious: novelty,
-      };
-    },
-  );
-
-  const climaxOf = (
-    candidate: SongModelMusicalMap["structure"]["climaxCandidates"][number] | undefined,
-  ): GlobalArrangementPlan["climax"] => {
-    if (!candidate) return null;
-    const section = sections.find(
-      (s) => candidate.atBar >= s.startBar && candidate.atBar <= s.endBar,
+  // --- what the source recording measured (evidence, kept for the record) ---
+  const measured = sections.map((section) => {
+    const energyFromMap = spanMean(
+      map.energy.energyCurve, (s) => s.energy,
+      section.startBar, section.endBar,
     );
-    const target = sectionTargets.find((t) => t.sectionName === section?.name);
+    const density = spanMean(
+      map.rhythm.rhythmicDensity, (s) => s.onsetsPerBar / maxOnsets,
+      section.startBar, section.endBar,
+    );
+    const tension = tensionOverSpan(map, {
+      start: barSeconds(section.startBar),
+      end: barSeconds(section.endBar + 1),
+    });
+    const sourceEnergy = energyFromMap ?? section.energy ?? null;
+    const densityBias = hints.sectionDensityBias?.[section.name] ?? 1;
     return {
-      sectionName: section?.name ?? sectionTargets.at(-1)?.sectionName ?? "Outro",
-      atBar: candidate.atBar,
-      energy: target?.energy ?? round3(clamp01(candidate.score)),
+      sourceEnergy: sourceEnergy === null ? null : round3(clamp01(sourceEnergy)),
+      sourceDensity: density === null ? null : round3(clamp01(density * densityBias)),
+      sourceTension: tension === null ? null : round3(clamp01(tension)),
     };
-  };
-  // A brief's preferred climax section re-ranks the map's own candidates; it
-  // cannot conjure a climax where the evidence found none.
-  const preferredClimaxSection = hints.climaxSectionName
-    ? sections.find((s) => s.name === hints.climaxSectionName)
-    : undefined;
-  const climaxBonus = (candidate: { atBar: number }): number =>
-    preferredClimaxSection &&
-    candidate.atBar >= preferredClimaxSection.startBar &&
-    candidate.atBar <= preferredClimaxSection.endBar
-      ? 0.25
-      : 0;
-  const rankedClimaxes = map.structure.climaxCandidates
-    .slice()
-    .sort((a, b) => (b.score + climaxBonus(b)) - (a.score + climaxBonus(a)));
+  });
 
   const { style, substyle } = pickStyle(map);
+  const { palette: instrumentPalette, excluded: excludedPaletteHints } = buildPalette(map, hints);
+  const productionAesthetic = pickAesthetic(map, style, instrumentPalette, hints.productionAesthetic);
+
+  // --- what the arrangement intends (the decision) ---------------------------
+  const arc = deriveArrangementArc(
+    arcInputFor(
+      sections.map((s) => ({ name: s.name, startBar: s.startBar, endBar: s.endBar, function: classifySection(s.name) })),
+      instrumentPalette,
+      { style, substyle, productionAesthetic },
+      map,
+      measured,
+      hints,
+    ),
+    { now: options.now },
+  );
+
+  const sectionTargets: GlobalArrangementPlan["sectionTargets"] = [];
+  sections.forEach((section, index) => {
+    const role = classifySection(section.name);
+    const arcSection = arc.sections.find((a) => a.sectionName === section.name && a.startBar === section.startBar);
+    const source = measured[index];
+    // Without an arc (no palette families) there is no intent to state; the
+    // source prior is all that is left, and the absent `intendedDynamic`
+    // labels it as such.
+    const energy = arcSection ? arcSection.intendedDynamic.value.level : round3(clamp01(source.sourceEnergy ?? 0));
+    // Novelty compares intended levels (the previous *target*, not the raw
+    // source section energy the 1.0 planner compared against).
+    const previousEnergy = index > 0 ? sectionTargets[index - 1].energy : null;
+    const previousRole = index > 0 ? classifySection(sections[index - 1].name) : null;
+    const novelty = previousEnergy === null
+      ? 1
+      : round3(clamp01(Math.abs(energy - previousEnergy) * 0.6 + (role !== previousRole ? 0.4 : 0)));
+    sectionTargets.push({
+      sectionName: section.name,
+      startBar: section.startBar,
+      endBar: section.endBar,
+      energy,
+      density: arcSection
+        ? arcDensity(arcSection.intendedDynamic.value.level, arcSection.textureLevel.value, arc.template?.id)
+        : round3(clamp01(source.sourceDensity ?? energy)),
+      tension: arcSection
+        ? arcTension(arcSection.tensionRole.value, source.sourceTension)
+        : round3(clamp01(source.sourceTension ?? energy * 0.6)),
+      role,
+      noveltyVsPrevious: novelty,
+      sourceEnergy: source.sourceEnergy,
+      sourceDensity: source.sourceDensity,
+      sourceTension: source.sourceTension,
+      ...(arcSection ? {
+        intendedDynamic: arcSection.intendedDynamic.value.marking,
+        textureLevel: arcSection.textureLevel.value,
+        tensionRole: arcSection.tensionRole.value,
+      } : {}),
+    });
+  });
+
+  // The climax is the arc's decision; `energy` is the intended level there.
+  const climaxOf = (climax: ArrangementArc["primaryClimax"]): GlobalArrangementPlan["climax"] => {
+    if (!climax) return null;
+    const target = sectionTargets.find((t) => t.sectionName === climax.sectionName);
+    return { sectionName: climax.sectionName, atBar: climax.atBar, energy: target?.energy ?? 0 };
+  };
+
   const energies = sectionTargets.map((t) => t.energy);
-  const instrumentPalette = buildPalette(map, hints);
 
   const groupConfidence = (status: string): number =>
     status === "detected" ? 1 : status === "low_confidence" ? 0.5 : 0;
@@ -446,17 +490,70 @@ export function deriveGlobalArrangementPlan(
     style,
     substyle,
     instrumentPalette,
+    ...(excludedPaletteHints.length ? { excludedPaletteHints } : {}),
     sectionTargets,
-    climax: climaxOf(rankedClimaxes[0]),
-    secondaryClimax: climaxOf(rankedClimaxes[1]),
+    climax: climaxOf(arc.primaryClimax),
+    secondaryClimax: climaxOf(arc.secondaryClimax),
+    arc,
     grooveStrategy: pickGroove(map, hints.grooveStrategy),
     orchestrationStrategy: pickOrchestration(energies),
     motifStrategy: pickMotifStrategy(map),
     contrastStrategy: pickContrast(map),
     harmonicComplexity: round3(clamp01(map.styleFingerprint.harmonicComplexity ?? 0.3)),
     rhythmicComplexity: round3(clamp01(map.styleFingerprint.rhythmicComplexity ?? 0.3)),
-    productionAesthetic: pickAesthetic(map, style, instrumentPalette, hints.productionAesthetic),
+    productionAesthetic,
   };
+}
+
+/** The arc's input, assembled from what the global planner knows. */
+function arcInputFor(
+  sections: ArrangementArcInput["sections"],
+  palette: GlobalArrangementPlan["instrumentPalette"],
+  styling: { style: string; substyle: string | null; productionAesthetic: string | null },
+  map: SongModelMusicalMap,
+  measured: Array<{ sourceEnergy: number | null; sourceTension: number | null }>,
+  hints: GlobalPlannerHints | undefined,
+): ArrangementArcInput {
+  return {
+    sections,
+    paletteFamilies: palette.map((p) => p.role),
+    style: styling.style,
+    substyle: styling.substyle,
+    productionAesthetic: styling.productionAesthetic,
+    vocalStatus: map.vocals.status,
+    sourceEnergy: measured.map((m) => m.sourceEnergy),
+    sourceTension: measured.map((m) => m.sourceTension),
+    climaxCandidates: map.structure.climaxCandidates.map((c) => ({ atBar: c.atBar, score: c.score })),
+    ...(arcHintsOf(hints as Record<string, unknown> | undefined) ? { hints: arcHintsOf(hints as Record<string, unknown> | undefined) } : {}),
+  };
+}
+
+/**
+ * The arc for a stored global plan that carries none (a 1.0 plan, or one
+ * built by hand in a test). The plan's own targets stand in for the source
+ * prior - that is what they were - and the hints, when given, are applied.
+ */
+export function arcForGlobalPlan(
+  globalPlan: GlobalArrangementPlan,
+  map: SongModelMusicalMap,
+  hints?: GlobalPlannerHints,
+  options: { now?: Date } = {},
+): ArrangementArc {
+  if (globalPlan.arc && globalPlan.arc.status === "available") return globalPlan.arc;
+  return deriveArrangementArc(
+    arcInputFor(
+      globalPlan.sectionTargets.map((t) => ({ name: t.sectionName, startBar: t.startBar, endBar: t.endBar, function: t.role })),
+      globalPlan.instrumentPalette,
+      { style: globalPlan.style, substyle: globalPlan.substyle, productionAesthetic: globalPlan.productionAesthetic },
+      map,
+      globalPlan.sectionTargets.map((t) => ({
+        sourceEnergy: t.sourceEnergy ?? t.energy,
+        sourceTension: t.sourceTension ?? t.tension,
+      })),
+      hints,
+    ),
+    options,
+  );
 }
 
 /** True when `plan` is absent or was derived from stale evidence. */

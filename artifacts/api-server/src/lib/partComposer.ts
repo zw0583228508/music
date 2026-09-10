@@ -10,16 +10,29 @@
  * `PartGenerationRequest`: the plan layers plus **previous + current + next**
  * bar windows of chords / melody / bass, so a generator never composes a part
  * in isolation.
+ *
+ * Brain B-01: a LEAD family in a sung section keeps its harmonic-bed task
+ * instead of writing nothing; `ensemble` pickups are given to a real family of
+ * the section; a family with no instrument definition is excluded with a
+ * reason rather than silently becoming a piano; and every request carries the
+ * arc's intent and the form memory (occurrence, previous occurrence, operator).
  */
 import { createHash } from "node:crypto";
 import type {
+  ArcDynamicMarking,
+  ArcTensionRole,
+  ArcTextureLevel,
   ChordHarmonyEvent,
+  CritiqueFinding,
   GlobalArrangementPlan,
   InstrumentArrangementRole,
+  MusicalNote,
   OrchestrationBudgetWindow,
   PartComposerPlan,
   PartTask,
   PhrasePlan,
+  PreviousOccurrenceSummary,
+  SectionDevelopmentOperator,
   SectionPhrasePlan,
   SectionPlan,
   SongModelData,
@@ -31,13 +44,27 @@ import { deriveGlobalArrangementPlan } from "./globalArrangementPlanner";
 import { deriveSectionPhrasePlan } from "./sectionPhrasePlanner";
 import { deriveOrchestrationBudget } from "./orchestrationBudget";
 import { deriveTransitionPlan } from "./transitionEngine";
+import { canonicalFamily, isNonFamilyHint, NON_FAMILY_HINT_REASONS } from "./arrangementArc";
 
-export const PART_COMPOSER_PLAN_VERSION = "1.0" as const;
-const METHOD = "part-composer/v1";
+/** "1.1" since Brain B-01 (LEAD-in-sung-section, ensemble / mix resolution). */
+export const PART_COMPOSER_PLAN_VERSION = "1.1" as const;
+const METHOD = "part-composer/v1.1";
 
 // ---------------------------------------------------------------------------
 // role/instrument → task
 // ---------------------------------------------------------------------------
+
+/** The accompaniment task a family plays when it is not leading. */
+function bedTaskFor(instrument: string, style: string): PartTask {
+  const guitar = /electric|dist|lead/i.test(style) ? "ELECTRIC_GUITAR" : "ACOUSTIC_GUITAR";
+  const family = canonicalFamily(instrument);
+  return family === "guitar" ? (guitar as PartTask)
+    : family === "strings" ? "STRINGS"
+    : family === "pads" || family === "synth" ? "PAD"
+    : family === "brass" ? "BRASS"
+    : family === "winds" ? "WOODWINDS"
+    : instrument === "piano" ? "PIANO" : "KEYS";
+}
 
 function taskFor(
   role: InstrumentArrangementRole,
@@ -49,8 +76,11 @@ function taskFor(
   const keysTask = instrument === "piano" ? "PIANO" : "KEYS";
   switch (role) {
     case "LEAD":
-      // A sung lead is not composed here; an instrumental lead is.
-      if (sectionFunction !== "instrumental") return null;
+      // A sung lead is not composed here. An instrumental lead is; and a
+      // family marked LEAD in a sung section (a plan from before B-01, or a
+      // caller's own plan) still plays its harmonic bed rather than nothing -
+      // the owner's piano was silent for whole sections because of this null.
+      if (sectionFunction !== "instrumental") return bedTaskFor(instrument, style);
       return instrument === "strings" ? "STRINGS"
         : instrument === "brass" ? "BRASS"
         : instrument === "winds" ? "WOODWINDS"
@@ -121,6 +151,22 @@ export function partComposerPlanInputsDigest(
     .digest("hex");
 }
 
+/**
+ * A family whose instrument definition is the piano fallback although it is
+ * not a keyboard: writing it would silently put a piano where the plan says
+ * `winds` (or `ensemble`, or `mix`). B-03 owns real profiles; until then such
+ * a part is excluded with its reason, never faked.
+ */
+function lacksDefinition(instrument: string, role: InstrumentArrangementRole): boolean {
+  const family = canonicalFamily(instrument);
+  if (family === "keys") return false;
+  try {
+    return getInstrumentDefinition(instrument, NAMED_FAMILIES.has(family) ? "" : role).id === "piano";
+  } catch {
+    return true;
+  }
+}
+
 export function buildPartComposerPlan(
   songModel: SongModelData,
   globalPlan: GlobalArrangementPlan,
@@ -129,13 +175,56 @@ export function buildPartComposerPlan(
   options: { now?: Date } = {},
 ): PartComposerPlan {
   const tasks: PartComposerPlan["tasks"] = [];
+  const decisions: NonNullable<PartComposerPlan["decisions"]> = [];
   const idsBySectionTier = new Map<string, string[]>();
+  const sectionByName = new Map(sectionPlan.sections.map((s) => [s.sectionName, s]));
+
+  /**
+   * The pre-B-01 plan gave intro chords, ending hits and transition pickups to
+   * an instrument called `ensemble`, which resolved to a piano nobody planned.
+   * Handing the figure to a real family of the section instead put it on top
+   * of that family's own chord at the same instant and broke its polyphony
+   * (measured: the keys track failed the runner's contract). Until stream
+   * B-04 realises transition devices per family, the figure is left out and
+   * the decision is recorded; the drum fill still marks the boundary.
+   */
+  const ensembleCarrier = (id: string, sectionNames: string[]): string | null => {
+    const sectionName = sectionNames[0];
+    const active = sectionByName.get(sectionName)?.activeInstrumentFamilies ?? [];
+    decisions.push({
+      kind: "excluded_no_definition", sectionName, instrument: "ensemble",
+      reason: `${id}: "ensemble" is not an instrument and would resolve to a piano; the families of "${sectionName}" (${active.join(", ") || "none"}) already state the harmony there and cannot also play the figure within their polyphony - left out until transition devices are realised per family (B-04)`,
+    });
+    return null;
+  };
 
   for (const section of sectionPlan.sections) {
     const roles = sectionPlan.roleAssignments.filter((r) => r.sectionName === section.sectionName);
     for (const assignment of roles) {
+      if (isNonFamilyHint(assignment.instrument)) {
+        decisions.push({
+          kind: "excluded_non_family", sectionName: section.sectionName, instrument: assignment.instrument,
+          reason: NON_FAMILY_HINT_REASONS[canonicalFamily(assignment.instrument)],
+        });
+        continue;
+      }
+      if (lacksDefinition(assignment.instrument, assignment.role)) {
+        decisions.push({
+          kind: "excluded_no_definition", sectionName: section.sectionName, instrument: assignment.instrument,
+          reason: `no instrument definition for "${assignment.instrument}": it would silently resolve to a piano (instrument profiles are stream B-03)`,
+        });
+        continue;
+      }
       const task = taskFor(assignment.role, assignment.instrument, section.function, globalPlan.style);
       if (!task) continue;
+      const leadKeptAsBed = assignment.role === "LEAD" && section.function !== "instrumental";
+      const role: InstrumentArrangementRole = leadKeptAsBed ? "HARMONIC_BED" : assignment.role;
+      if (leadKeptAsBed) {
+        decisions.push({
+          kind: "lead_kept_as_bed", sectionName: section.sectionName, instrument: assignment.instrument,
+          reason: `LEAD in a sung section (${section.leadRoleSource ?? "plan"}): the family keeps its ${task} bed task instead of writing nothing`,
+        });
+      }
       const id = `part-${section.sectionName}-${assignment.instrument}-${assignment.role}`
         .replace(/\s+/g, "_");
       const tierKey = `${section.sectionName}:${TASK_TIER[task]}`;
@@ -145,7 +234,7 @@ export function buildPartComposerPlan(
         task,
         sectionName: section.sectionName,
         instrument: assignment.instrument,
-        role: assignment.role,
+        role,
         startBar: assignment.entryBar,
         endBar: assignment.exitBar,
         seed: seedFor(songModel, id),
@@ -154,27 +243,36 @@ export function buildPartComposerPlan(
     }
     if (section.function === "intro") {
       const id = `part-${section.sectionName}-intro`.replace(/\s+/g, "_");
-      tasks.push({
-        id, task: "INTRO", sectionName: section.sectionName, instrument: "ensemble",
-        role: "TRANSITION", startBar: section.startBar, endBar: section.endBar,
-        seed: seedFor(songModel, id), dependsOn: [],
-      });
+      const carrier = ensembleCarrier(id, [section.sectionName]);
+      if (carrier) {
+        tasks.push({
+          id, task: "INTRO", sectionName: section.sectionName, instrument: carrier,
+          role: "TRANSITION", startBar: section.startBar, endBar: section.endBar,
+          seed: seedFor(songModel, id), dependsOn: [],
+        });
+      }
     }
     if (section.function === "outro") {
       const id = `part-${section.sectionName}-ending`.replace(/\s+/g, "_");
-      tasks.push({
-        id, task: "ENDING", sectionName: section.sectionName, instrument: "ensemble",
-        role: "TRANSITION", startBar: section.startBar, endBar: section.endBar,
-        seed: seedFor(songModel, id), dependsOn: [],
-      });
+      const carrier = ensembleCarrier(id, [section.sectionName]);
+      if (carrier) {
+        tasks.push({
+          id, task: "ENDING", sectionName: section.sectionName, instrument: carrier,
+          role: "TRANSITION", startBar: section.startBar, endBar: section.endBar,
+          seed: seedFor(songModel, id), dependsOn: [],
+        });
+      }
     }
   }
 
   for (const transition of transitions) {
     if (transition.devices.length === 0) continue;
     const id = `part-transition-${transition.id}`;
+    // The pickup belongs to a family that is playing where it lands.
+    const carrier = ensembleCarrier(id, [transition.toSection, transition.fromSection]);
+    if (!carrier) continue;
     tasks.push({
-      id, task: "TRANSITION", sectionName: transition.toSection, instrument: "ensemble",
+      id, task: "TRANSITION", sectionName: transition.toSection, instrument: carrier,
       role: "TRANSITION",
       startBar: Math.max(1, transition.atBar - transition.approachBars),
       endBar: transition.atBar,
@@ -205,7 +303,66 @@ export function buildPartComposerPlan(
     inputsDigestSha256: partComposerPlanInputsDigest(songModel, sectionPlan, transitions),
     method: METHOD,
     tasks,
+    ...(decisions.length ? { decisions } : {}),
   };
+}
+
+// ---------------------------------------------------------------------------
+// Hard rule: a planned family that produced no notes in a mandatory section
+// ---------------------------------------------------------------------------
+
+/** Section functions in which a planned family must be heard. */
+const MANDATORY_FUNCTIONS = new Set<SectionPlan["function"]>(["verse", "prechorus", "chorus", "bridge"]);
+
+/**
+ * Pure hard-rule check (Brain B-01): every family the section plan keeps
+ * active in a verse / pre-chorus / chorus / bridge, and for which the part plan
+ * emitted at least one task, must have written at least one note whose onset
+ * falls inside that section. A family the part plan excluded with a reason is
+ * reported as a warning (the plan said so), a tasked family with zero notes as
+ * an error. The orchestrator wiring of this finding belongs to stream B-00;
+ * this function is the rule and its test.
+ */
+export function silentPlannedFamilyFindings(
+  songModel: SongModelData,
+  plan: { sectionPlan: SectionPhrasePlan; partComposerPlan?: PartComposerPlan },
+  trackModels: ReadonlyArray<{ instrument: string; notes: ReadonlyArray<Pick<MusicalNote, "start">> }>,
+): CritiqueFinding[] {
+  const findings: CritiqueFinding[] = [];
+  const totalBars = Math.max(1, plan.sectionPlan.sections.at(-1)?.endBar ?? 1);
+  const tasks = plan.partComposerPlan?.tasks ?? [];
+  const excluded = plan.partComposerPlan?.decisions?.filter((d) => d.kind.startsWith("excluded")) ?? [];
+  for (const section of plan.sectionPlan.sections) {
+    if (!MANDATORY_FUNCTIONS.has(section.function)) continue;
+    const start = barBounds(songModel, section.startBar, totalBars).start;
+    const end = barBounds(songModel, section.endBar, totalBars).end;
+    for (const family of section.activeInstrumentFamilies) {
+      const canonical = canonicalFamily(family);
+      const tasked = tasks.some((t) => t.sectionName === section.sectionName && canonicalFamily(t.instrument) === canonical);
+      const exclusion = excluded.find((d) => d.sectionName === section.sectionName && canonicalFamily(d.instrument) === canonical);
+      if (!tasked) {
+        findings.push({
+          dimension: "hardRule", severity: "warning", sectionName: section.sectionName, instrument: family,
+          startBar: section.startBar, endBar: section.endBar,
+          message: exclusion
+            ? `Planned family "${family}" is excluded from "${section.sectionName}": ${exclusion.reason}.`
+            : `Planned family "${family}" has no part task in "${section.sectionName}".`,
+        });
+        continue;
+      }
+      const notes = trackModels
+        .filter((t) => canonicalFamily(t.instrument) === canonical)
+        .reduce((sum, t) => sum + t.notes.filter((n) => n.start >= start - 1e-6 && n.start < end - 1e-6).length, 0);
+      if (notes === 0) {
+        findings.push({
+          dimension: "hardRule", severity: "error", sectionName: section.sectionName, instrument: family,
+          startBar: section.startBar, endBar: section.endBar,
+          message: `Planned family "${family}" produced zero notes in mandatory section "${section.sectionName}".`,
+        });
+      }
+    }
+  }
+  return findings;
 }
 
 // ---------------------------------------------------------------------------
@@ -245,6 +402,34 @@ export type PartGenerationRequest = {
     maxSimultaneousNotes: number;
     minNoteDuration: number;
     physicalRules: string[];
+  };
+  /**
+   * Brain B-01: the bars this part actually covers (a family may enter after
+   * the section starts or leave before it ends). `section.startBar/endBar`
+   * remain the section's bounds. A composer that ignores this window writes
+   * the whole section - which is what the reference composer still does.
+   */
+  partWindow: { startBar: number; endBar: number };
+  /** Brain B-01: the arc's intent for this section, so a generator can shape rather than fill. */
+  arcIntent: {
+    dynamic: ArcDynamicMarking;
+    /** 0..1 intended level (= `section.energy`). */
+    level: number;
+    texture: ArcTextureLevel;
+    tensionRole: ArcTensionRole;
+  } | null;
+  /**
+   * Brain B-01: form memory. Which statement of this section function this is,
+   * what the previous statement said, and the development operator the arc
+   * chose for this repeat. The reference composer does not realise operators
+   * yet (INTEGRATED-pending); the plan-level effects (added layer, register
+   * band, counter-line / comping roles) already reach it through the roles.
+   */
+  formMemory: {
+    occurrenceIndex: number;
+    occurrenceCount: number;
+    developmentOperator: SectionDevelopmentOperator;
+    previousOccurrenceSummary: PreviousOccurrenceSummary | null;
   };
 };
 
@@ -346,12 +531,41 @@ export function buildPartGenerationRequest(
       minNoteDuration: definition?.constraints.minNoteDuration ?? 0.05,
       physicalRules: PHYSICAL_RULES[definition?.family ?? ""] ?? [],
     },
+    partWindow: {
+      startBar: Math.max(currentStart, Math.min(currentEnd, target.startBar)),
+      endBar: Math.max(currentStart, Math.min(currentEnd, target.endBar)),
+    },
+    arcIntent: section.intendedDynamic && section.textureLevel && section.tensionRole
+      ? {
+          dynamic: section.intendedDynamic,
+          level: section.energy,
+          texture: section.textureLevel,
+          tensionRole: section.tensionRole,
+        }
+      : null,
+    formMemory: {
+      occurrenceIndex: section.occurrenceIndex ?? 0,
+      occurrenceCount: section.occurrenceCount ?? 1,
+      developmentOperator: section.developmentOperator ?? "identity",
+      previousOccurrenceSummary: section.previousOccurrenceSummary ?? null,
+    },
   };
 }
 
+/**
+ * Families whose name settles the instrument on its own. `getInstrumentDefinition`
+ * consults the role only when the name names no family, but its family-word
+ * list has no keyboard word, so "keys" in a RHYTHMIC_HARMONY role resolved to
+ * the *drum kit* (range 35-81, four voices) and the piano part was composed
+ * and constrained as a kit. For a named family the role is withheld here; the
+ * one-line fix in `musicEngines.ts` (`FAMILY_WORDS` + key / piano / organ)
+ * belongs to stream B-03 and is listed in the B-01 report.
+ */
+const NAMED_FAMILIES = new Set(["keys", "guitar", "bass", "drums", "percussion", "strings", "pads", "synth", "brass", "winds"]);
+
 function safeDefinition(instrument: string, role: InstrumentArrangementRole) {
   try {
-    return getInstrumentDefinition(instrument, role);
+    return getInstrumentDefinition(instrument, NAMED_FAMILIES.has(canonicalFamily(instrument)) ? "" : role);
   } catch {
     return null;
   }

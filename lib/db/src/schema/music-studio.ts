@@ -2508,7 +2508,8 @@ export type InstrumentDirectiveMappings = {
  * is written. Every candidate section is planned against this one plan.
  */
 export type GlobalArrangementPlan = {
-  version: "1.0";
+  /** "1.1" since Brain B-01: targets are arc-derived; "1.0" plans are stale. */
+  version: "1.0" | "1.1";
   derivedAt: string;
   inputsDigestSha256: string;
   method: string;
@@ -2516,10 +2517,17 @@ export type GlobalArrangementPlan = {
   style: string;
   substyle: string | null;
   instrumentPalette: Array<{ role: string; priority: number; rationale: string }>;
+  /**
+   * Brain B-01: source stem hints that are not instrument families (`mix`,
+   * `vocals`, `fx`, `other`) never enter the palette; each is recorded here
+   * with the reason instead of silently becoming a piano.
+   */
+  excludedPaletteHints?: Array<{ hint: string; reason: string }>;
   sectionTargets: Array<{
     sectionName: string;
     startBar: number;
     endBar: number;
+    /** Brain B-01: the arc's intended dynamic level (0..1), no longer the source RMS. */
     energy: number;
     density: number;
     tension: number;
@@ -2527,9 +2535,18 @@ export type GlobalArrangementPlan = {
       | "intro" | "verse" | "prechorus" | "chorus" | "bridge"
       | "breakdown" | "outro" | "instrumental" | "neutral";
     noveltyVsPrevious: number;
+    /** Brain B-01: the measured source values, kept for the record (never intent). */
+    sourceEnergy?: number | null;
+    sourceDensity?: number | null;
+    sourceTension?: number | null;
+    intendedDynamic?: ArcDynamicMarking;
+    textureLevel?: ArcTextureLevel;
+    tensionRole?: ArcTensionRole;
   }>;
   climax: { sectionName: string; atBar: number; energy: number } | null;
   secondaryClimax: { sectionName: string; atBar: number; energy: number } | null;
+  /** Brain B-01: the arrangement arc every target above was derived from. */
+  arc?: ArrangementArc;
   grooveStrategy:
     | "steady_pulse" | "syncopated" | "swing" | "half_time_feel"
     | "four_on_floor" | "rubato";
@@ -2605,6 +2622,19 @@ export type SectionPlan = {
   transitionIn: string;
   transitionOut: string;
   noveltyRelativeToPreviousSection: number;
+  // --- Brain B-01: arc intent and form memory carried into every part request ---
+  /** Why `leadRole` is what it is: a detected vocal, the sung-by-default rule, or an instrumental section. */
+  leadRoleSource?: "vocal_map" | "sung_by_default" | "instrumental" | "none";
+  intendedDynamic?: ArcDynamicMarking;
+  textureLevel?: ArcTextureLevel;
+  tensionRole?: ArcTensionRole;
+  /** 0 for the first statement of this section function, 1 for its first repeat, ... */
+  occurrenceIndex?: number;
+  occurrenceCount?: number;
+  developmentOperator?: SectionDevelopmentOperator;
+  previousOccurrenceSummary?: PreviousOccurrenceSummary | null;
+  /** The measured source energy of the section (max-normalised RMS), for the record. */
+  sourceEnergy?: number | null;
 };
 
 export type PhrasePlan = {
@@ -2623,7 +2653,8 @@ export type PhrasePlan = {
  * GlobalArrangementPlan + musical map before any note is written.
  */
 export type SectionPhrasePlan = {
-  version: "1.0";
+  /** "1.1" since Brain B-01: families, entries/exits and dynamics come from the arc. */
+  version: "1.0" | "1.1";
   derivedAt: string;
   inputsDigestSha256: string;
   method: string;
@@ -2730,7 +2761,8 @@ export type PartTask =
  * deterministic seeds so candidate generation (PR-10) is reproducible.
  */
 export type PartComposerPlan = {
-  version: "1.0";
+  /** "1.1" since Brain B-01: LEAD-in-sung-section and `ensemble`/`mix` resolution. */
+  version: "1.0" | "1.1";
   derivedAt: string;
   inputsDigestSha256: string;
   method: string;
@@ -2746,6 +2778,120 @@ export type PartComposerPlan = {
     /** Task ids that must be composed first so this part has its context. */
     dependsOn: string[];
   }>;
+  /**
+   * Brain B-01: every planned part that was substituted or left out, with the
+   * reason. Nothing is dropped silently: a LEAD family in a sung section keeps
+   * its harmonic-bed task, `ensemble` pickups are given to a real family, and a
+   * family with no instrument definition is excluded rather than becoming a
+   * piano.
+   */
+  decisions?: Array<{
+    kind: "lead_kept_as_bed" | "ensemble_resolved" | "excluded_no_definition" | "excluded_non_family";
+    sectionName: string;
+    instrument: string;
+    /** The instrument actually written, when a substitution happened. */
+    resolvedTo?: string;
+    reason: string;
+  }>;
+};
+
+// ===========================================================================
+// Arrangement Arc and form memory (Arrangement Brain, stream B-01)
+//
+// The arc is a *decision* about the arrangement, derived from the section
+// functions, the production brief and a style template. Measurements of the
+// source recording (its RMS curve) may only nudge it as a weak prior or supply
+// a contrast signal, and every value says where it came from.
+// ===========================================================================
+
+export type ArcDynamicMarking = "pp" | "p" | "mp" | "mf" | "f" | "ff";
+export type ArcTextureLevel = "solo" | "duo" | "bed" | "full" | "tutti";
+export type ArcTensionRole = "setup" | "lift" | "arrival" | "release" | "afterglow" | "breath";
+/** Where an arc value came from. `source_prior` marks a nudge by the source recording. */
+export type ArcValueSource = "brief" | "template" | "source_prior" | "default";
+export type ArcDecision<T> = { value: T; source: ArcValueSource; reason: string };
+export type ArcTemplateId =
+  | "intimate_ballad" | "pop_build" | "band_steady" | "cinematic_swell" | "electronic_drop";
+
+/** What a repeat of a section function does that its previous statement did not. */
+export type SectionDevelopmentOperator =
+  | "identity"
+  | "add_layer"
+  | "raise_register"
+  | "thicken_voicing"
+  | "activate_counterline"
+  | "drop_to_solo_before_last"
+  | "change_comping_subdivision";
+
+/** How the source recording behaves here relative to its neighbours (evidence, not intent). */
+export type ArcSourceContrast = "quieter_than_neighbours" | "louder_than_neighbours" | "none" | "unknown";
+
+/** A family entering or leaving inside a section. `barOffset` counts from the section's first bar. */
+export type ArcFamilyEvent = {
+  family: string;
+  /** Entry: first bar the family plays. Exit: first bar it is silent (= bar count when it leaves at the boundary). */
+  barOffset: number;
+  source: ArcValueSource;
+  reason: string;
+};
+
+/** What an earlier occurrence of the same section function stated (form memory). */
+export type PreviousOccurrenceSummary = {
+  sectionName: string;
+  occurrenceIndex: number;
+  families: string[];
+  textureLevel: ArcTextureLevel;
+  dynamicMarking: ArcDynamicMarking;
+  registerBand: RegisterBand;
+  developmentOperator: SectionDevelopmentOperator;
+};
+
+export type ArrangementArcSection = {
+  sectionName: string;
+  startBar: number;
+  endBar: number;
+  function: ArrangementSectionFunction;
+  occurrenceIndex: number;
+  occurrenceCount: number;
+  intendedDynamic: ArcDecision<{ marking: ArcDynamicMarking; level: number }>;
+  textureLevel: ArcDecision<ArcTextureLevel>;
+  tensionRole: ArcDecision<ArcTensionRole>;
+  /** Canonical families active in this section, in the arc's priority order. */
+  activeFamilies: string[];
+  familyEntries: ArcFamilyEvent[];
+  familyExits: ArcFamilyEvent[];
+  developmentOperator: ArcDecision<SectionDevelopmentOperator>;
+  previousOccurrenceSummary: PreviousOccurrenceSummary | null;
+  /** +1 when the operator raises the chordal / melodic families one register band. */
+  registerBandShift: number;
+  /** The source recording's max-normalised RMS over the section, for the record. */
+  sourceEnergy: number | null;
+  sourceContrast: ArcSourceContrast;
+  isPrimaryClimax: boolean;
+  isSecondaryClimax: boolean;
+};
+
+export type ArrangementArcClimax = {
+  sectionName: string;
+  atBar: number;
+  source: ArcValueSource;
+  reason: string;
+};
+
+export type ArrangementArc = {
+  version: "1.0";
+  derivedAt: string;
+  inputsDigestSha256: string;
+  method: string;
+  /** `unknown` when there is nothing to decide (no sections, or no palette families). */
+  status: "available" | "unknown";
+  reason: string | null;
+  template: { id: ArcTemplateId; source: ArcValueSource; reason: string } | null;
+  /** Canonical palette families in the order the arc adds them as the texture grows. */
+  familyOrder: string[];
+  sections: ArrangementArcSection[];
+  primaryClimax: ArrangementArcClimax | null;
+  secondaryClimax: ArrangementArcClimax | null;
 };
 
 /** One humanisation decision, with the musical reasons behind it (PR-14). */

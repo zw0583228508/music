@@ -176,6 +176,58 @@ test("a vocal + single accompaniment source still gets a rhythm section", () => 
   assert.ok(roles.includes("drums") && roles.includes("bass"), "a rhythm section joins it");
 });
 
+test("B-01: section targets are the arc's intent; the recording's RMS rides along as sourceEnergy", () => {
+  const loud = makeModel();
+  const quietEnergy = loud.energy.map((v) => v * 0.2);
+  const quiet = makeModel({ energy: quietEnergy, dynamics: quietEnergy.map((v) => v * 0.9), sections: loud.sections.map((s) => ({ ...s, energy: s.energy * 0.2 })) });
+  const a = deriveGlobalArrangementPlan(loud, { now: FIXED_NOW });
+  const b = deriveGlobalArrangementPlan(quiet, { now: FIXED_NOW });
+  assert.equal(a.version, "1.1");
+  assert.ok(a.arc && a.arc.status === "available");
+  for (const [x, y] of a.sectionTargets.map((t, i) => [t, b.sectionTargets[i]] as const)) {
+    assert.equal(x.intendedDynamic, y.intendedDynamic, `${x.sectionName}: same marking whatever the RMS`);
+    assert.equal(x.textureLevel, y.textureLevel);
+    assert.ok(Math.abs(x.energy - y.energy) <= 0.1 + 1e-9, `${x.sectionName}: the RMS is a weak prior at most`);
+    assert.ok(x.sourceEnergy !== null && x.sourceEnergy !== undefined && y.sourceEnergy !== null && y.sourceEnergy !== undefined);
+    assert.ok(x.sourceEnergy! > y.sourceEnergy!, `${x.sectionName}: the measurement itself is kept`);
+  }
+  // A stored 1.0 plan is stale by version alone.
+  assert.equal(isGlobalPlanStale(loud, { ...a, version: "1.0" }), true);
+});
+
+test("B-01: source stem hints that are not families never enter the palette, and say why", () => {
+  const model = makeModel({
+    stems: [
+      { name: "MIX", role: "MIX", source: "d", channels: 2, confidence: 1 },
+      { name: "vocals", role: "vocals", source: "d", channels: 2, confidence: 0.9 },
+      { name: "fx", role: "fx", source: "d", channels: 2, confidence: 0.9 },
+    ],
+  });
+  const plan = deriveGlobalArrangementPlan(model, { now: FIXED_NOW, hints: { paletteAdd: ["mix", "strings"] } });
+  const roles = plan.instrumentPalette.map((p) => p.role);
+  for (const hint of ["mix", "vocals", "fx"]) assert.ok(!roles.includes(hint), `${hint} is not a family`);
+  assert.ok(roles.includes("strings"), "a real requested family joins");
+  assert.ok(roles.includes("drums") && roles.includes("bass") && roles.includes("keys"), "a band is seeded for a full-mix upload");
+  const excluded = plan.excludedPaletteHints ?? [];
+  assert.ok(excluded.some((e) => e.hint === "mix" && /full-mix/.test(e.reason) && !/requested/.test(e.reason)), "the stem hint (lower-cased by the fingerprint)");
+  assert.ok(excluded.some((e) => e.hint === "mix" && /requested by the brief/.test(e.reason)));
+  assert.ok(excluded.some((e) => e.hint === "vocals"));
+});
+
+test("B-01: the climax is the arc's decision - a brief's named section is honoured, the map's candidate only places the bar", () => {
+  const model = makeModel();
+  const plain = deriveGlobalArrangementPlan(model, { now: FIXED_NOW });
+  assert.equal(plain.climax?.sectionName, "Chorus");
+  assert.equal(plain.arc?.primaryClimax?.source, "template");
+  const hinted = deriveGlobalArrangementPlan(model, { now: FIXED_NOW, hints: { climaxSectionName: "Verse" } });
+  assert.equal(hinted.climax?.sectionName, "Verse");
+  assert.equal(hinted.arc?.primaryClimax?.source, "brief");
+  assert.ok(hinted.climax!.atBar >= 1 && hinted.climax!.atBar <= 8);
+  const verse = hinted.sectionTargets.find((t) => t.sectionName === "Verse")!;
+  const chorus = hinted.sectionTargets.find((t) => t.sectionName === "Chorus")!;
+  assert.ok(verse.energy > chorus.energy, "the named climax is the loudest statement");
+});
+
 test("degrades without a musical map rather than throwing", () => {
   const model = makeModel();
   delete model.musicalMap;
