@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { SongModelData } from "@workspace/db";
-import { correctionFields, regridTimeline, sectionCountMayChange, verifiedConfidence } from "./songModelCorrection";
+import { correctionFields, regridTimeline, sectionCountMayChange, verifiedConfidence, chordSheetToEvents } from "./songModelCorrection";
 import { createCanonicalTimeline } from "./canonicalTimeline";
 
 const status = (s: "detected" | "low_confidence") => ({ status: s, confidence: s === "detected" ? 0.9 : 0.3, providers: ["x"], message: null, edited: false });
@@ -16,6 +16,31 @@ function model(overrides: Partial<Pick<SongModelData, "fieldStatus">> = {}) {
     ...overrides,
   } as unknown as Pick<SongModelData, "tempoMap" | "keyMap" | "meterMap" | "sections" | "fieldStatus">;
 }
+
+test("a producer's chord sheet becomes Song Model chords with roman numerals in the confirmed key", () => {
+  const events = chordSheetToEvents([
+    { start: 0, end: 3.8, symbol: "N" },
+    { start: 3.8, end: 10.4, symbol: "C:min" },
+    { start: 10.4, end: 14.6, symbol: "G#" },
+    { start: 14.6, end: 18.2, symbol: "Fm" },
+    { start: 18.2, end: 24.0, symbol: "G:7/B" },
+    { start: 24.0, end: 24.0, symbol: "C:min" },
+    { start: 30, end: 40, symbol: "C:min" },
+  ], "C minor", 35);
+  assert.deepEqual(events.map((e) => e.symbol), ["Cm", "Ab", "Fm", "G7/B", "Cm"]);
+  assert.deepEqual(events.map((e) => e.roman), ["i", "bVI", "iv", "V76", "i"]);
+  assert.equal(events.at(-1)!.end, 35, "clamped to the audio");
+  assert.ok(events.every((e) => e.confidence === 1 && e.root && e.quality));
+  // Unknown key: numerals are honest question marks, never invented.
+  assert.equal(chordSheetToEvents([{ start: 0, end: 1, symbol: "Cm" }], undefined, 10)[0]!.roman, "?");
+});
+
+test("a supplied chord sheet always touches the harmony field and verifies it", () => {
+  const model = { tempoMap: [{ time: 0, bpm: 100, confidence: 1 }], keyMap: [], meterMap: [{ bar: 1, meter: "4/4", confidence: 1 }], sections: [], fieldStatus: undefined } as never;
+  assert.deepEqual(correctionFields(model, { chords: [{ start: 0, end: 1, symbol: "Cm" }] }), ["chords"]);
+  const verified = verifiedConfidence({ tempo: 0.3, harmony: 0 }, ["chords"]);
+  assert.equal(verified.confidenceByField.harmony, 1);
+});
 
 test("confirming a low-confidence estimate is a correction; re-submitting a verified value is not", () => {
   const sketch = model();

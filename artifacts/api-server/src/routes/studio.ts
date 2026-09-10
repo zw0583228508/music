@@ -210,7 +210,7 @@ import {
   type ExportBundle,
 } from "../lib/export-pipeline";
 import { deriveMixPlan, mixPlanToControls } from "../lib/mixBrain";
-import { correctionFields, regridTimeline, sectionCountMayChange, verifiedConfidence } from "../lib/songModelCorrection";
+import { correctionFields, regridTimeline, sectionCountMayChange, verifiedConfidence, chordSheetToEvents } from "../lib/songModelCorrection";
 import { compareFingerprints, deriveStyleFingerprint } from "../lib/styleFingerprint";
 import { FEATURE_NAMES, recordPreferenceEvent, trainingRows, type PreferenceSubjectInput } from "../lib/preferenceEvents";
 import { DbPreferenceEventStore } from "../lib/preferenceEventsDbStore";
@@ -2144,6 +2144,18 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
             edited: true,
           },
         }),
+    ...(!fields.includes("chords")
+      ? {}
+      : {
+          harmony: {
+            ...latest.model.fieldStatus?.harmony,
+            status: "detected" as const,
+            confidence: 1,
+            providers: ["PRODUCER_CHORD_SHEET"],
+            message: "User-supplied chord sheet; the analyzer's chords remain in provenance.",
+            edited: true,
+          },
+        }),
   };
   const verified = verifiedConfidence(latest.model.confidenceByField, fields);
   const correctedModelBase: SongModelData = {
@@ -2194,6 +2206,18 @@ router.patch("/projects/:projectId/song-model", async (req, res): Promise<void> 
             ...section,
              energy: latest.model.sections[index]?.energy ?? measuredAverageEnergy,
           })),
+        }),
+    // A producer's chord sheet replaces the analyzer's chords outright; the
+    // roman numerals follow the key confirmed in this same correction when
+    // there is one, else the key the model already carries.
+    ...(!fields.includes("chords")
+      ? {}
+      : {
+          chords: chordSheetToEvents(
+            correction.chords!,
+            fields.includes("key") ? correction.key! : latest.model.keyMap[0]?.key,
+            latest.model.audio?.durationSeconds,
+          ),
         }),
   };
   // A verified tempo or meter re-derives the beat/bar grid (PR-32): the grid the

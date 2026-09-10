@@ -1239,7 +1239,7 @@ export type SongModelData = SongModelCore & {
 export type SongModelCorrection = {
   correctedBy: string;
   correctedAt: string;
-  fields: Array<"bpm" | "key" | "meter" | "sections">;
+  fields: Array<"bpm" | "key" | "meter" | "sections" | "chords">;
 };
 
 export type ModelCapability =

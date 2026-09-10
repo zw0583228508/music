@@ -14,4 +14,5 @@ export const SongModelCorrectionFieldsItem = {
   key: 'key',
   meter: 'meter',
   sections: 'sections',
+  chords: 'chords',
 } as const;

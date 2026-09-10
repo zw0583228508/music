@@ -4998,7 +4998,7 @@ export const GetProjectSongModelResponse = zod.object({
   "correction": zod.union([zod.object({
   "correctedBy": zod.string(),
   "correctedAt": zod.string(),
-  "fields": zod.array(zod.enum(['bpm', 'key', 'meter', 'sections']))
+  "fields": zod.array(zod.enum(['bpm', 'key', 'meter', 'sections', 'chords']))
 }),zod.null()]).optional()
 })
 
@@ -5023,6 +5023,14 @@ export const correctProjectSongModelBodySectionsItemNameMax = 120;
 
 
 
+export const correctProjectSongModelBodyChordsItemStartMin = 0;
+
+export const correctProjectSongModelBodyChordsItemEndMin = 0;
+
+export const correctProjectSongModelBodyChordsItemSymbolMax = 24;
+
+export const correctProjectSongModelBodyChordsMax = 2000;
+
 
 
 export const CorrectProjectSongModelBody = zod.strictObject({
@@ -5034,7 +5042,12 @@ export const CorrectProjectSongModelBody = zod.strictObject({
   "name": zod.string().min(1).max(correctProjectSongModelBodySectionsItemNameMax),
   "startBar": zod.number().min(1),
   "endBar": zod.number().min(1)
-})).min(1).optional()
+})).min(1).optional(),
+  "chords": zod.array(zod.strictObject({
+  "start": zod.number().min(correctProjectSongModelBodyChordsItemStartMin),
+  "end": zod.number().min(correctProjectSongModelBodyChordsItemEndMin),
+  "symbol": zod.string().min(1).max(correctProjectSongModelBodyChordsItemSymbolMax)
+})).min(1).max(correctProjectSongModelBodyChordsMax).optional().describe('A producer-confirmed chord sheet in seconds. Replaces the model\'s chords; MIREX (C:min, G:7\/B) or plain (Cm, G7\/B) symbols; N is silence.')
 })
 
 export const correctProjectSongModelResponseFusionConfidenceMin = 0;
@@ -7275,7 +7288,7 @@ export const CorrectProjectSongModelResponse = zod.object({
   "correction": zod.union([zod.object({
   "correctedBy": zod.string(),
   "correctedAt": zod.string(),
-  "fields": zod.array(zod.enum(['bpm', 'key', 'meter', 'sections']))
+  "fields": zod.array(zod.enum(['bpm', 'key', 'meter', 'sections', 'chords']))
 }),zod.null()]).optional()
 })
 

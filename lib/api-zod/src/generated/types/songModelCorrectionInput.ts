@@ -5,6 +5,7 @@
  * API for the AI Music Production Studio
  * OpenAPI spec version: 0.1.0
  */
+import type { ChordCorrection } from './chordCorrection';
 import type { SectionCorrection } from './sectionCorrection';
 
 export interface SongModelCorrectionInput {
@@ -24,4 +25,10 @@ export interface SongModelCorrectionInput {
   meter?: string;
   /** @minItems 1 */
   sections?: SectionCorrection[];
+  /**
+     * A producer-confirmed chord sheet in seconds. Replaces the model's chords; MIREX (C:min, G:7/B) or plain (Cm, G7/B) symbols; N is silence.
+     * @minItems 1
+     * @maxItems 2000
+     */
+  chords?: ChordCorrection[];
 }
