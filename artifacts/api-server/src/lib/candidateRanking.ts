@@ -258,6 +258,41 @@ function renderedAudioEvidenceMatches(evaluation: CandidateEvaluation): boolean 
     }));
 }
 
+/**
+ * R-1a P0-1: a provider that runs its own hard-rule gate (the Arrangement
+ * Brain) labels a candidate it refused `parameters.arrangementBrain.selectable
+ * = false` and returns it anyway, so the reasons are on the record. Nothing
+ * downstream read that flag: a candidate the brain refused could still be
+ * ranked first and selected. The runner asks this before it validates.
+ */
+export function providerHardRuleRefusal(parameters: unknown): { refused: boolean; reason: string | null } {
+  const brain = (parameters as { arrangementBrain?: unknown } | null | undefined)?.arrangementBrain;
+  if (!brain || typeof brain !== "object") return { refused: false, reason: null };
+  const record = brain as { selectable?: unknown; hardRuleFeasible?: unknown; hardRuleReasons?: unknown; summary?: unknown };
+  const refused = record.selectable === false || record.hardRuleFeasible === false;
+  if (!refused) return { refused: false, reason: null };
+  const reasons = Array.isArray(record.hardRuleReasons)
+    ? record.hardRuleReasons.filter((entry): entry is string => typeof entry === "string")
+    : [];
+  return {
+    refused: true,
+    reason: reasons.length
+      ? `the provider's hard-rule gate refused this candidate: ${reasons.join("; ")}`
+      : "the provider's hard-rule gate refused this candidate",
+  };
+}
+
+/** The status a candidate may reach once the provider's own gate is honoured. */
+export function candidateStatusAfterProviderGate(
+  status: string,
+  parameters: unknown,
+): { status: string; reason: string | null } {
+  const refusal = providerHardRuleRefusal(parameters);
+  return refusal.refused && status === "validated"
+    ? { status: "rejected", reason: refusal.reason }
+    : { status, reason: null };
+}
+
 export function isSelectableCandidate(candidate: {
   status: string;
   evaluation: CandidateEvaluation;

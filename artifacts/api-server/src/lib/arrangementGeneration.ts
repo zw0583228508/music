@@ -69,8 +69,7 @@ import {
   hasCompleteQualityEvidence,
   isSelectableCandidate,
   publicCandidateEvaluation,
-  rankEvaluatedCandidates,
-} from "./candidateRanking";
+  rankEvaluatedCandidates, candidateStatusAfterProviderGate } from "./candidateRanking";
 import {
   diversityEvidence,
   fingerprintCandidate,
@@ -1629,6 +1628,15 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
           : "validated";
         if (candidateStatus === "repair_not_improved") {
           evaluation.status = "repair_not_improved";
+        }
+        // R-1a P0-1: a provider with its own hard-rule gate (the Arrangement
+        // Brain) returns a refused candidate labelled, not omitted, so the
+        // reasons survive. Honour that label here: an evaluated candidate the
+        // provider refused is rejected with its reason, never ranked.
+        const providerGate = candidateStatusAfterProviderGate(candidateStatus, candidate.parameters);
+        if (providerGate.status !== candidateStatus) {
+          candidateStatus = providerGate.status;
+          evaluation = { ...evaluation, status: "rejected", error: providerGate.reason ?? evaluation.error };
         }
         const artifactParentIds = [planArtifactId, ...candidateParentIds];
         artifactRows.push({
