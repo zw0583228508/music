@@ -77,7 +77,7 @@ export function composeReferencePart(
   const id = (suffix: string) => `${request.taskId}-${suffix}`;
   const minDur = request.constraints.minNoteDuration;
 
-  const push = (start: number, duration: number, pitch: number, velocity: number, suffix: string) => {
+  const push = (start: number, duration: number, pitch: number, velocity: number, suffix: string, motif?: MusicalNote["motif"]) => {
     if (start < startSeconds - 1e-6 || start >= endSeconds - 1e-6) return;
     notes.push({
       id: id(suffix),
@@ -85,6 +85,7 @@ export function composeReferencePart(
       duration: Number(Math.max(minDur, Math.min(duration, endSeconds - start)).toFixed(4)),
       pitch: Math.max(0, Math.min(127, Math.round(pitch))),
       velocity: Math.max(1, Math.min(127, Math.round(velocity))),
+      ...(motif ? { motif } : {}),
     });
   };
 

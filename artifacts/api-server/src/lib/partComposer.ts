@@ -46,6 +46,7 @@ import { deriveSectionPhrasePlan } from "./sectionPhrasePlanner";
 import { deriveOrchestrationBudget } from "./orchestrationBudget";
 import { deriveTransitionPlan } from "./transitionEngine";
 import { canonicalFamily, isNonFamilyHint, NON_FAMILY_HINT_REASONS } from "./arrangementArc";
+import type { MotifLedger } from "./motifLedger";
 
 /** "1.1" since Brain B-01 (LEAD-in-sung-section, ensemble / mix resolution). */
 export const PART_COMPOSER_PLAN_VERSION = "1.1" as const;
@@ -435,6 +436,14 @@ export type PartGenerationRequest = {
     developmentOperator: SectionDevelopmentOperator;
     previousOccurrenceSummary: PreviousOccurrenceSummary | null;
   };
+  /**
+   * Brain B-10: the arrangement's motif ledger, one per candidate, shared by
+   * every task of that candidate so a later section can recall what an
+   * earlier one stated. Absent (the production default until the orchestrator
+   * threads it), the melodic parts build a local ledger from the bars they
+   * can see and say so; recall across sections then does not happen.
+   */
+  motifLedger?: MotifLedger;
 };
 
 const CONTEXT_BARS = 2;

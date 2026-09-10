@@ -802,6 +802,13 @@ const suites = {
       ["src/lib/gmPrograms.test.ts", "gm-programs.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
     ],
   },
+  "brain-b10": {
+    bundles: [
+      ["src/lib/brainB10Motif.test.ts", "brain-b10-motif.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/melodicEngine.test.ts", "melodic-engine.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/motifLedger.test.ts", "motif-ledger.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
   "brain-invariants": {
     bundles: [
       ["src/lib/invariants/generators.property.test.ts", "b12-generators.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],

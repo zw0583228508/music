@@ -3111,6 +3111,118 @@ export type ArrangementArc = {
   secondaryClimax: ArrangementArcClimax | null;
 };
 
+// ===========================================================================
+// Motif ledger (Arrangement Brain, stream B-10)
+//
+// A thematic memory generation *consumes*: the motifs of the source (the
+// singer's phrase cells) and of the arrangement's own statements, every
+// occurrence with the transformation it applied, where it sits and who played
+// it, and the motifs the arc reserves for a later section. Ids are canonical
+// under transposition, inversion, retrograde and retrograde-inversion, so a
+// transformed cell is recognised as the same motif. Serialisable; the runtime
+// wrapper with `record()` lives in `motifLedger.ts`.
+// ===========================================================================
+
+/** A cell: intervals, inter-onset ratios and the span in beats (so augmentation is visible). */
+export type MotifCell = {
+  /** Semitone steps between consecutive notes; transposition-invariant by construction. */
+  intervals: number[];
+  /** Inter-onset intervals relative to the first one (2 d.p.); tempo-invariant. */
+  rhythm: number[];
+  /** Onset span of the cell in beats (first onset to last onset). */
+  spanBeats: number;
+  contour: "rising" | "falling" | "arch" | "valley" | "flat" | "mixed";
+};
+
+export type MotifOrigin =
+  /** A sung phrase of the source (melody notes with confidence). */
+  | { kind: "source_phrase"; phraseId: string; startSeconds: number; endSeconds: number; noteCount: number; confidence: number }
+  /** No melody evidence: the cell is the root motion of a section's chords. An inference, labelled as one. */
+  | { kind: "harmonic_inference"; sectionName: string; chordSymbols: string[]; reason: string }
+  /** First stated by an instrument of the arrangement (a statement the ledger then remembers). */
+  | { kind: "instrument_statement"; instrument: string; taskId: string; sectionName: string }
+  /** The composer's fixed cell, used only when the ledger is empty; the reason says so. */
+  | { kind: "fallback_cell"; reason: string };
+
+export type MotifSourceOccurrence = {
+  phraseId: string;
+  startSeconds: number;
+  endSeconds: number;
+  firstPitch: number;
+  /** Semitones relative to the motif's first statement. */
+  transposition: number;
+  transformation: MotifTransformation;
+};
+
+export type MotifLedgerEntry = {
+  /** `motif-<8 hex>`, canonical under the four interval forms. */
+  id: string;
+  label: string;
+  /** sha256 (12 hex) of the canonical form; equal for every transformation of the cell. */
+  fingerprint: string;
+  cell: MotifCell;
+  origin: MotifOrigin;
+  sourceOccurrences: MotifSourceOccurrence[];
+  /** 0 = the hook (most stated source motif). */
+  rank: number;
+};
+
+/** One statement by the arrangement, appended by the melodic engine. */
+export type MotifOccurrenceRecord = {
+  index: number;
+  motifId: string;
+  /** The relation detected on the emitted cell (what `MusicalNote.motif.transformation` carries). */
+  transformation: MotifTransformation;
+  /** The transformation the engine set out to apply before chord-tone snapping. */
+  intendedTransformation: MotifTransformation;
+  /** Semitones between the origin's first pitch and this statement's first pitch. */
+  transposition: number;
+  sectionName: string;
+  sectionFunction: string | null;
+  /** Which statement of this section function (0 = first), from the form memory. */
+  occurrenceIndex: number | null;
+  startBar: number;
+  endBar: number;
+  startSeconds: number;
+  endSeconds: number;
+  instrument: string;
+  taskId: string | null;
+  phraseId: string;
+  intention: PhraseIntention;
+  /** The cell as emitted (after the transformation). */
+  cell: MotifCell;
+  noteIds: string[];
+  /** Index of the earlier arrangement occurrence this one develops, if any. */
+  recallOf: number | null;
+  /** How the answer / line was placed: a verified vocal gap, or a phrase end inferred from the plan. */
+  placement: "vocal_gap" | "inferred_phrase_end" | "part_window";
+  reason: string;
+};
+
+export type MotifWithholding = {
+  motifId: string;
+  /** The first section in which the full statement is allowed (null = never withheld). */
+  untilSectionName: string | null;
+  untilTensionRole: ArcTensionRole | null;
+  /** What may be stated before that section (a fragment, typically). */
+  allowedBefore: MotifTransformation[];
+  reason: string;
+};
+
+export type MotifLedgerData = {
+  version: "MOTIF_LEDGER_V1";
+  /** `available` = cells from melody evidence; `inferred` = from the chord structure; `empty` = nothing to state. */
+  status: "available" | "inferred" | "empty";
+  source: "melody_notes" | "harmonic_inference" | "none";
+  reason: string;
+  entries: MotifLedgerEntry[];
+  hookMotifId: string | null;
+  withheld: MotifWithholding[];
+  occurrences: MotifOccurrenceRecord[];
+  /** Decisions and fallbacks, in order (e.g. "no motif for bars 9-12: fixed cell used"). */
+  notes: string[];
+};
+
 /** One humanisation decision, with the musical reasons behind it (PR-14). */
 export type PerformanceDecision = {
   noteId: string;
@@ -4784,7 +4896,19 @@ export type MotifTransformation =
   | "diminution"
   | "register_displacement"
   | "answering_gesture"
-  | "orchestral_handoff";
+  | "orchestral_handoff"
+  // Brain B-10: the transformations the motif ledger detects and the melodic
+  // engine applies. `repetition` = exact, `orchestral_handoff` = the same cell
+  // on another instrument.
+  | "transposition"
+  | "inversion"
+  | "retrograde"
+  | "retrograde_inversion"
+  | "fragmentation"
+  | "sequence"
+  | "reharmonisation"
+  /** The cell's contour kept but its intervals bent to chord tones - the relation to the origin is no longer exact. */
+  | "harmonic_adaptation";
 
 export type GenerationPreferenceSnapshot = {
   contractVersion: "1.0";

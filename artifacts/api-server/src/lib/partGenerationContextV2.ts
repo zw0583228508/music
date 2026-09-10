@@ -34,8 +34,9 @@
  * and default to an explicit "not available". A slot that says it is empty is
  * honest; a missing field would be read as "nothing to say".
  */
-import type { ChordHarmonyEvent, MusicalNote } from "@workspace/db";
+import type { ChordHarmonyEvent, MotifOrigin, MotifTransformation, MusicalNote } from "@workspace/db";
 import type { PartGenerationRequest } from "./partComposer";
+import type { MotifLedger } from "./motifLedger";
 
 export const PART_REQUEST_V2 = "PART_GENERATION_REQUEST_V2" as const;
 
@@ -222,7 +223,41 @@ export type Motif = {
   rhythm: number[];
   occurrences: number;
   firstStart: number;
+  // --- Brain B-10: filled from the motif ledger when one exists -------------
+  /** Canonical ledger id (equal under transposition / inversion / retrograde). */
+  id?: string;
+  label?: string;
+  /** Where the cell came from: a sung phrase, a labelled harmonic inference, an instrument's statement, or the fallback cell. */
+  origin?: MotifOrigin["kind"];
+  /** `ledger` = the arrangement's memory; `current_section_melody` = the pre-B-10 scan of this section's melody. */
+  memorySource?: "ledger" | "current_section_melody";
+  /** How many times the arrangement itself has stated this motif so far, and how. */
+  arrangementOccurrences?: number;
+  transformationsSeen?: MotifTransformation[];
+  /** The section in which the full statement becomes allowed, when the arc withholds it. */
+  withheldUntil?: string | null;
 };
+
+/** Brain B-10: the motif memory a generator should read - the ledger's motifs, most stated first. */
+export function motifMemoryFromLedger(ledger: MotifLedger, limit = 8): Motif[] {
+  return ledger.data.entries.slice(0, limit).map((entry) => {
+    const stated = ledger.data.occurrences.filter((o) => o.motifId === entry.id);
+    const withheld = ledger.data.withheld.find((w) => w.motifId === entry.id);
+    return {
+      intervals: [...entry.cell.intervals],
+      rhythm: [...entry.cell.rhythm],
+      occurrences: entry.sourceOccurrences.length + stated.length,
+      firstStart: entry.sourceOccurrences[0]?.startSeconds ?? stated[0]?.startSeconds ?? 0,
+      id: entry.id,
+      label: entry.label,
+      origin: entry.origin.kind,
+      memorySource: "ledger",
+      arrangementOccurrences: stated.length,
+      transformationsSeen: [...new Set(stated.map((o) => o.transformation))],
+      withheldUntil: withheld ? withheld.untilSectionName ?? (withheld.untilTensionRole ? `first ${withheld.untilTensionRole}` : null) : null,
+    };
+  });
+}
 
 /** Below three notes a cell is an interval, not a motif. */
 const MOTIF_LENGTH = 3;
@@ -553,8 +588,11 @@ export function upgradePartGenerationRequest(
     candidateCount?: number;
     styleGrammar?: StyleGrammarSlot;
     harmonyPlan?: HarmonyPlanSlot;
+    /** Brain B-10: the candidate's motif ledger; when absent the request's own (if threaded) is used. */
+    motifLedger?: MotifLedger;
   } = {},
 ): PartGenerationRequestV2 {
+  const ledger = extras.motifLedger ?? request.motifLedger;
   const current = request.context.currentBars;
   const spans: Array<{ start: number; end: number }> = [
     ...current.chords.map((c) => ({ start: c.start, end: c.end })),
@@ -571,7 +609,9 @@ export function upgradePartGenerationRequest(
     requestVersion: PART_REQUEST_V2,
     siblingParts: (extras.siblings ?? []).map((part) => describeSiblingPart(part, window)),
     vocalAttentionMap: buildVocalAttentionMap(current.melody, window),
-    motifMemory: buildMotifMemory(current.melody),
+    motifMemory: ledger
+      ? motifMemoryFromLedger(ledger)
+      : buildMotifMemory(current.melody).map((m) => ({ ...m, memorySource: "current_section_melody" as const })),
     previousSectionSummary: summarisePreviousSection(request),
     nextSectionIntent: deriveNextSectionIntent(request),
     hardConstraints: hard,
