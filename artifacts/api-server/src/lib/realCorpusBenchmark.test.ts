@@ -51,7 +51,7 @@ function entryFor(id: string, midi: Buffer, admittedBy: "b08-csv-scan" | "tourna
   void genre;
   return {
     id: `pdmx-${id}`, title: id, inputType: "midi",
-    rights: { kind: "public_domain", reference: "https://example.org/licence", work: `${id} (PDMX test)`, clearedAt: "2026-01-01T00:00:00.000Z", commercialUse: true },
+    rights: { kind: "public_domain", reference: "https://example.org/licence", work: `${id} (PDMX test)`, clearedAt: "2026-01-01T00:00:00.000Z", commercialUse: true, composer: "Test Composer", composerDied: 1800 },
     attributes,
     symbolicSource: {
       kind: "pdmx_midi", workId: id, relativePath: `mid/mid/0/0/${id}.mid`, sha256: "0".repeat(64), admittedBy,
@@ -112,13 +112,39 @@ test("a work with two metres is refused rather than measured on the wrong grid",
 test("selection fills the rare values first, prefers already-admitted seeds, and reports what stays short", () => {
   const rock = entryFor("rock", midiFromCase("rock-full"), "tournament-global");
   const waltz = entryFor("waltz", midiFromCase("orchestral-midi"));
-  const pool = [waltz, { ...waltz, id: "pdmx-waltz2" }, { ...waltz, id: "pdmx-waltz3" }, ...Array.from({ length: 6 }, (_, i) => ({ ...rock, id: `pdmx-rock${i}` }))];
+  // Distinct titles: distinct compositions. A second arrangement of the same work is collapsed (tested below).
+  const pool = [waltz, { ...waltz, id: "pdmx-waltz2", title: "waltz 2" }, { ...waltz, id: "pdmx-waltz3", title: "waltz 3" }, ...Array.from({ length: 6 }, (_, i) => ({ ...rock, id: `pdmx-rock${i}`, title: `rock ${i}` }))];
   const { chosen, short } = selectTierH([rock], pool, { max: 6 });
   assert.equal(chosen.length, 6);
+  assert.equal(selectTierH([], [waltz, { ...waltz, id: "pdmx-waltz-again" }], { max: 6 }).chosen.length, 1, "one entry per composition: a second arrangement of the same work adds a task, not coverage");
   assert.equal(chosen.filter((e) => e.attributes.meter === "3/4").length, 3, "the rare metre claims its slots before 4/4 fills the corpus");
   assert.ok(chosen.some((e) => e.id === rock.id), "the seed is kept");
   assert.ok(short.some((s) => s.dimension === "meter" && s.value === "6/8" && s.have === 0), "an unfillable value is reported short, not invented");
   assert.deepEqual(selectTierH([rock], pool, { max: 6 }).chosen.map((e) => e.id), chosen.map((e) => e.id), "deterministic");
+});
+
+test("selection excludes a contested work before any quota is filled, names it with the reason, and leaves the value short rather than filling it", () => {
+  const rock = entryFor("rock", midiFromCase("rock-full"), "tournament-global");
+  const waltz = entryFor("waltz", midiFromCase("orchestral-midi"));
+  const contestedWaltz: CorpusEntry = {
+    ...waltz, id: "pdmx-waltz-contested", title: "A waltz under CC0 by a living composer",
+    rights: { kind: "contested", commercialUse: false, reference: waltz.rights.reference, work: waltz.rights.work, clearedAt: waltz.rights.clearedAt, reason: "the PDMX row names \"Living Composer\", not on the verified public-domain composer list" },
+  };
+  const scoreOnlyWaltz: CorpusEntry = {
+    ...waltz, id: "pdmx-waltz-score-only", title: "A waltz cleared on the score's licence alone",
+    // The type itself refuses a public-domain basis with no composition evidence; the cast builds the shape the old corpus carried.
+    rights: { kind: "public_domain", commercialUse: true, reference: waltz.rights.reference, work: waltz.rights.work, clearedAt: waltz.rights.clearedAt } as unknown as CorpusEntry["rights"],
+  };
+  const contestedSeed: CorpusEntry = { ...rock, id: "pdmx-rock-contested", title: "Pop song", rights: { ...contestedWaltz.rights } };
+  const { chosen, short, excluded } = selectTierH([rock, contestedSeed], [waltz, contestedWaltz, scoreOnlyWaltz, { ...rock, id: "pdmx-rock2", title: "rock 2" }], { max: 6 });
+  assert.ok(!chosen.some((e) => e.rights.kind !== "public_domain"), "nothing contested is chosen");
+  assert.ok(!chosen.some((e) => e.id === scoreOnlyWaltz.id), "a public-domain claim with no composition basis is not chosen either");
+  assert.equal(chosen.filter((e) => e.attributes.meter === "3/4").length, 1, "the two unproven waltzes do not fill the 3/4 quota");
+  assert.ok(short.some((s) => s.dimension === "meter" && s.value === "3/4" && s.have === 1), "the gap is reported, not filled");
+  assert.deepEqual(excluded.map((x) => x.id).sort(), [contestedSeed.id, contestedWaltz.id, scoreOnlyWaltz.id].sort());
+  assert.match(excluded.find((x) => x.id === contestedWaltz.id)!.reason, /is contested: .*Living Composer/);
+  assert.match(excluded.find((x) => x.id === scoreOnlyWaltz.id)!.reason, /score's licence alone/);
+  assert.equal(excluded.find((x) => x.id === contestedSeed.id)!.admittedBy, "tournament-global");
 });
 
 test("Tier H tasks strip one family per task; further stripping thins the context, never the anchor", () => {

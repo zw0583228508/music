@@ -28,6 +28,7 @@ import type {
   CorpusRightsBasis,
   CorpusTempoBand,
 } from "./benchmarkCorpusPlan";
+import { compositionRightsFor } from "./compositionRights";
 
 export const PDMX_SOURCE = {
   name: "PDMX",
@@ -56,6 +57,10 @@ export type PdmxMetadataRow = {
   n_pitch_classes?: number;
   notes_per_bar?: number;
   genres?: string[] | string;
+  /** `composer_name` as the uploader typed it; the composition-rights step reads it. */
+  composer?: string;
+  /** `artist_name`: a composer, a category ("Misc Traditional") or the uploader's handle. */
+  artist?: string;
 };
 
 const isNoConflict = (value: PdmxMetadataRow["license_conflict"]): boolean =>
@@ -109,21 +114,35 @@ const idiom = (genres: PdmxMetadataRow["genres"]): CorpusIdiom => {
   return NON_WESTERN.test(text) ? "non_western" : "western";
 };
 
+/**
+ * The rights basis of one admitted row. Two layers, both required for
+ * `public_domain`: the score through the row's own licence statement (the
+ * uploader's public-domain dedication in the `no_license_conflict` subset)
+ * and the **composition** through `compositionRightsFor` - a composer on the
+ * verified list with a death year inside the term, or a documented
+ * traditional tune. A row whose composition cannot be proven is `contested`,
+ * with the reason; it is never an entry.
+ */
 export function pdmxRightsBasis(row: PdmxMetadataRow, clearedAt: string): CorpusRightsBasis {
-  return {
-    kind: "public_domain",
+  const common = {
     // The work's own licence statement, not PDMX's record page: the dataset's
     // licence is not proof of rights in the works inside it.
     reference: row.url!,
     work: `${row.title?.trim() || row.id} (${PDMX_SOURCE.name} ${row.id}, ${PDMX_SOURCE.subset})`,
     clearedAt,
-    commercialUse: true,
   };
+  const composition = compositionRightsFor({ title: row.title, composer: row.composer, artist: row.artist });
+  if (!composition.ok) {
+    return { ...common, kind: "contested", commercialUse: false, reason: composition.reason };
+  }
+  return { ...common, kind: "public_domain", commercialUse: true, ...composition.basis };
 }
 
 /**
  * Metadata rows to corpus entries. Every refusal is returned with its reason:
- * a corpus that silently drops rows cannot be audited.
+ * a corpus that silently drops rows cannot be audited. A row passes two gates:
+ * the score's licence (`pdmxRefusalReason`) and the composition's
+ * (`pdmxRightsBasis`, `contested` when unproven).
  */
 export function pdmxToCorpusEntries(
   rows: readonly PdmxMetadataRow[],
@@ -138,6 +157,13 @@ export function pdmxToCorpusEntries(
       refused.push({ id: row.id ?? "(no id)", reason });
       continue;
     }
+    const rights = pdmxRightsBasis(row, clearedAt);
+    if (rights.kind === "contested") {
+      // The score is cleared; the composition is not. Refused with the reason,
+      // never silently, and never admitted on the score's licence alone.
+      refused.push({ id: row.id, reason: `${row.id} is contested: ${rights.reason}` });
+      continue;
+    }
     // PDMX.csv carries no time signature — meter lives in the MIDI. Defaulting
     // to 4/4 would be true of most of the dataset and false for exactly the
     // entries a meter-balanced corpus needs, so an unread meter says so.
@@ -147,7 +173,7 @@ export function pdmxToCorpusEntries(
       title: row.title?.trim() || `PDMX ${row.id}`,
       // PDMX holds scores. It fills the corpus's MIDI slice and nothing else.
       inputType: "midi",
-      rights: pdmxRightsBasis(row, clearedAt),
+      rights,
       attributes: {
         tempoBand: tempoBand(row.tempo),
         meter,

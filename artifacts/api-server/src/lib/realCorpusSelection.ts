@@ -16,11 +16,19 @@
  * `MIN_PER_VALUE` from the scan in a stable order. A value the scan cannot
  * fill is left short, and `corpusCoverage` reports it in `gaps[]` — never
  * filled synthetically.
+ *
+ * Rights (the lead's ruling of 2026-09-10): a candidate enters selection only
+ * when its **composition** is proven public domain (`compositionRights.ts`,
+ * through `pdmxRightsBasis`); a candidate whose rights are `contested` is
+ * excluded before any quota is filled and returned in `excluded[]` with its
+ * reason, so the gap it leaves is visible rather than filled by the next
+ * unproven work.
  */
 import { familyOf } from "./arrangerRemi";
 import {
   MIN_PER_VALUE,
   REQUIRED_COVERAGE,
+  admitEntries,
   type CorpusDensity,
   type CorpusEnsemble,
   type CorpusEntry,
@@ -29,12 +37,14 @@ import {
   type CorpusIdiom,
   type CorpusTempoBand,
 } from "./benchmarkCorpusPlan";
+import { VERIFIED_PUBLIC_DOMAIN_TUNES, foldTitle } from "./compositionRights";
 import type { ParsedMidi } from "./midiFile";
 import { classifyPdmxGenre, type PdmxGenre } from "./pdmxGenre";
 import type { PdmxCsvRow } from "./pdmxCsv";
 import { pdmxRightsBasis } from "./pdmxIngest";
 
-export const REAL_CORPUS_SELECTION_VERSION = "1.0" as const;
+/** 2.0: composition rights gate the selection (contested works excluded, never chosen). */
+export const REAL_CORPUS_SELECTION_VERSION = "2.0" as const;
 
 /** Off-beat onsets whose phase sits in the triplet band, over all off-beat onsets, at or above this: swung. */
 export const SWING_RATIO_THRESHOLD = 0.6;
@@ -120,7 +130,15 @@ export function measurePdmxWork(midi: ParsedMidi): MeasuredWork {
   };
 }
 
-const NON_WESTERN = /(klezmer|mizrahi|arab|indian|raga|turkish|balkan|persian|chinese|japanese|gamelan|african|world)/i;
+/**
+ * Idiom words in genre / tag / group text. Bounded by non-letters so that
+ * "arabesque", "indiana" or "youngcomposersoftheworld" do not invent a
+ * non-western work (the first run's bare `world` labelled three Christmas
+ * carols non_western through the tag "joytotheworld"); the PDMX genre
+ * "worldmusic" still counts through `classifyPdmxGenre`'s world_traditional
+ * family. Under-counting is the honest direction here.
+ */
+const NON_WESTERN = /(?<![a-z])(klezmer|mizrahi|arabic|arab|indian|raga|turkish|balkan|persian|chinese|japanese|gamelan|african)(?![a-z])/i;
 
 /** The corpus attributes from a measurement and the CSV row — the same thresholds `pdmxIngest.ts` states. */
 export function attributesFromMeasurement(m: PdmxMeasurement, row: Pick<PdmxCsvRow, "n_pitch_classes" | "genres" | "tags" | "groups">): CorpusEntry["attributes"] & { genre: PdmxGenre } {
@@ -193,25 +211,75 @@ const hash32 = (s: string): number => {
   return h;
 };
 
+export type TierHExclusion = {
+  id: string;
+  title: string;
+  admittedBy: NonNullable<CorpusEntry["symbolicSource"]>["admittedBy"] | null;
+  /** The corpus plan's own refusal — for a contested work, the composition-rights reason. */
+  reason: string;
+};
+
 /**
- * Deterministic quota fill. For every required value below `MIN_PER_VALUE`,
- * rarest value first, candidates that carry it are taken in a stable order —
- * the already-admitted tournament works (seeds) first, then genre-labelled
- * works of 3–8 families and 24–128 bars, then the rest by a hash of the id.
- * Remaining slots up to `max` go to seeds, then to the pool, in the same
- * order. Returns the chosen entries and what stayed short.
+ * Deterministic quota fill. The rights step comes first: every seed and pool
+ * entry goes through `admitEntries`, and a work the corpus plan refuses
+ * (contested composition, or a public-domain claim with no composer / source)
+ * is returned in `excluded[]` and never chosen — the slot it would have taken
+ * stays open for a proven work or stays short. Then, for every required value
+ * below `MIN_PER_VALUE`, rarest value first, candidates that carry it are
+ * taken in a stable order — the already-admitted tournament works (seeds)
+ * first, then genre-labelled works of 3–8 families and 24–128 bars, then the
+ * rest by a hash of the id. Remaining slots up to `max` go to seeds, then to
+ * the pool, in the same order. Returns the chosen entries, what stayed short,
+ * and what was excluded with its reason.
  */
 export function selectTierH(
   seeds: readonly CorpusEntry[],
   pool: readonly CorpusEntry[],
   options: { max?: number; minPerValue?: number } = {},
-): { chosen: CorpusEntry[]; short: Array<{ dimension: string; value: string; have: number }> } {
+): { chosen: CorpusEntry[]; short: Array<{ dimension: string; value: string; have: number }>; excluded: TierHExclusion[] } {
   const max = options.max ?? 40;
   const min = options.minPerValue ?? MIN_PER_VALUE;
   const chosen: CorpusEntry[] = [];
   const seen = new Set<string>();
   const add = (e: CorpusEntry) => { if (!seen.has(e.id) && chosen.length < max) { chosen.push(e); seen.add(e.id); } };
+
+  // Rights first. Nothing below this line sees a work the corpus plan refuses.
+  const excluded: TierHExclusion[] = [];
+  const excludedIds = new Set<string>();
+  const clear = (entries: readonly CorpusEntry[]): CorpusEntry[] => {
+    const { admitted, refused } = admitEntries(entries);
+    for (const r of refused) {
+      if (excludedIds.has(r.id)) continue;
+      excludedIds.add(r.id);
+      const e = entries.find((x) => x.id === r.id)!;
+      excluded.push({ id: e.id, title: e.title, admittedBy: e.symbolicSource?.admittedBy ?? null, reason: r.reason });
+    }
+    return admitted;
+  };
+  seeds = clear(seeds);
+  pool = clear(pool);
   const seedIds = new Set(seeds.map((s) => s.id));
+  // One entry per composition: PDMX holds several arrangements of the same
+  // work (two "Stille Nacht", two "Canon and Gigue" in the first proven-only
+  // run), and a second arrangement adds a task, not coverage. A verified tune
+  // is one composition whatever its arranger's title; otherwise composer +
+  // folded title.
+  const compositionKeys = new Set<string>();
+  const compositionKey = (e: CorpusEntry): string => {
+    const title = foldTitle(e.title);
+    const tune = VERIFIED_PUBLIC_DOMAIN_TUNES.find((t) => t.match.test(title));
+    if (tune) return `tune:${tune.name}`;
+    const who = e.rights.kind === "public_domain" ? (e.rights.composer ?? e.rights.source ?? "") : "";
+    return `${who}::${title}`;
+  };
+  const addOnce = add;
+  const addUnique = (e: CorpusEntry) => {
+    const key = compositionKey(e);
+    if (seen.has(e.id) || compositionKeys.has(key)) return;
+    const before = chosen.length;
+    addOnce(e);
+    if (chosen.length > before) compositionKeys.add(key);
+  };
 
   const readers: Record<string, (e: CorpusEntry) => string> = {
     inputType: (e) => e.inputType,
@@ -248,14 +316,14 @@ export function selectTierH(
     const have = () => chosen.filter((e) => readers[dimension](e) === value).length;
     for (const e of ordered) {
       if (have() >= min || chosen.length >= max) break;
-      if (readers[dimension](e) === value) add(e);
+      if (readers[dimension](e) === value) addUnique(e);
     }
     if (have() < min) short.push({ dimension, value, have: have() });
   }
   // The remaining slots: seeds first (they are already-admitted anchors), then the pool.
   for (const e of ordered) {
     if (chosen.length >= max) break;
-    add(e);
+    addUnique(e);
   }
-  return { chosen, short };
+  return { chosen, short, excluded };
 }

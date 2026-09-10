@@ -7,291 +7,36 @@
  * regenerate; do not edit by hand.
  *
  * Every attribute below was measured from the work's MIDI or read from its
- * PDMX row (see the report's `method`); rights are per work, from the row's
- * own licence statement. Coverage gaps are reported by `corpusCoverage`,
- * never filled synthetically.
+ * PDMX row (see the report's `method`). Rights are per work and two-layered:
+ * the score through the row's own licence statement, the **composition**
+ * through `compositionRights.ts` (a verified composer dead by the cutoff, or
+ * a documented traditional tune) - a work whose composition is unproven is
+ * contested and is not here. Coverage gaps are reported by
+ * `corpusCoverage`, never filled synthetically.
  */
 import type { CorpusEntry } from "./benchmarkCorpusPlan";
 
-export const REAL_CORPUS_TIER_H_GENERATED_AT = "2026-09-10T03:17:23.563Z";
+export const REAL_CORPUS_TIER_H_GENERATED_AT = "2026-09-10T03:59:30.893Z";
+
+/** Contested candidates (composition unproven) at generation time - excluded from this list and from every Tier H aggregate; see the selection report. */
+export const REAL_CORPUS_TIER_H_CONTESTED = 6732;
 
 export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
   {
-    "id": "pdmx-QmaxnwxSTa3JMZNAFwY8j1fzFKYFPZYsWcAiQrNvWd9hRU",
-    "title": "guantanamera",
+    "id": "pdmx-QmYoSb5q8XUyPXGaizifu1QRsVLToY1aCQV5gDrMUa99vw",
+    "title": "Piano Concerto No.21 in C major K.467",
     "inputType": "midi",
     "rights": {
-      "kind": "public_domain",
       "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "guantanamera (PDMX QmaxnwxSTa3JMZNAFwY8j1fzFKYFPZYsWcAiQrNvWd9hRU, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "moderate",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "non_western",
-      "production": "acoustic",
-      "tradition": "world_traditional"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmaxnwxSTa3JMZNAFwY8j1fzFKYFPZYsWcAiQrNvWd9hRU",
-      "relativePath": "mid/mid/0/52/QmaxnwxSTa3JMZNAFwY8j1fzFKYFPZYsWcAiQrNvWd9hRU.mid",
-      "sha256": "68e98b9a0d0de8e6dff93290356bc656a22810b538e63c5c1d06c37eb09266e5",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 103,
-        "tracks": 9,
-        "families": [
-          "bass",
-          "chromatic_perc",
-          "drums",
-          "guitar",
-          "keys"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 120,
-        "tempoChanges": 0,
-        "notesPerBar": 41.23,
-        "swingRatio": 0.0115,
-        "effectivePitchClasses": 7.28
-      },
-      "genre": {
-        "primary": "world_traditional",
-        "families": [
-          "world_traditional"
-        ],
-        "source": "genres"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmNwf6GRbingp8jNGB7BgyPZ8nhWWvLjF1jZzEXUF4LxvQ",
-    "title": "tong hua",
-    "inputType": "midi",
-    "rights": {
+      "work": "Piano Concerto No.21 in C major K.467 (PDMX QmYoSb5q8XUyPXGaizifu1QRsVLToY1aCQV5gDrMUa99vw, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
       "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "tong hua (PDMX QmNwf6GRbingp8jNGB7BgyPZ8nhWWvLjF1jZzEXUF4LxvQ, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "commercialUse": true,
+      "composer": "Wolfgang Amadeus Mozart",
+      "composerDied": 1791
     },
     "attributes": {
       "tempoBand": "slow",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "complex",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "non_western",
-      "production": "acoustic",
-      "tradition": "world_traditional"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmNwf6GRbingp8jNGB7BgyPZ8nhWWvLjF1jZzEXUF4LxvQ",
-      "relativePath": "mid/mid/6/50/QmNwf6GRbingp8jNGB7BgyPZ8nhWWvLjF1jZzEXUF4LxvQ.mid",
-      "sha256": "90ae96a6e48a700d2404f358c3180993e8cd419301b831b7a93c992fd8e3eb7d",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 66,
-        "tracks": 6,
-        "families": [
-          "drums",
-          "keys",
-          "strings",
-          "synth"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 66,
-        "tempoChanges": 0,
-        "notesPerBar": 29.42,
-        "swingRatio": 0.0031,
-        "effectivePitchClasses": 9.7
-      },
-      "genre": {
-        "primary": "world_traditional",
-        "families": [
-          "world_traditional"
-        ],
-        "source": "tags"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmassW1LM1SqYqu6jnexbafnq2q5BEwVQiT6w79SrxVCvS",
-    "title": "Procuro Olvidarte",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "Procuro Olvidarte (PDMX QmassW1LM1SqYqu6jnexbafnq2q5BEwVQiT6w79SrxVCvS, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "slow",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "moderate",
-      "density": "moderate",
-      "ensemble": "small",
-      "idiom": "non_western",
-      "production": "acoustic",
-      "tradition": "world_traditional"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmassW1LM1SqYqu6jnexbafnq2q5BEwVQiT6w79SrxVCvS",
-      "relativePath": "mid/mid/0/42/QmassW1LM1SqYqu6jnexbafnq2q5BEwVQiT6w79SrxVCvS.mid",
-      "sha256": "34ef174d90caeec456cba41f4ec997bd2ab6b3585a2d9284fdfb757b6b5ff721",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 43,
-        "tracks": 4,
-        "families": [
-          "brass",
-          "ensemble",
-          "keys"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 75,
-        "tempoChanges": 1,
-        "notesPerBar": 15.3,
-        "swingRatio": 0.2138,
-        "effectivePitchClasses": 7.28
-      },
-      "genre": {
-        "primary": "world_traditional",
-        "families": [
-          "world_traditional"
-        ],
-        "source": "genres"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmacuG15tfzWWXG7SNHuHpXL7RjEMPURsTNnppD6ALETtH",
-    "title": "Christmas Yee in Three",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "Christmas Yee in Three (PDMX QmacuG15tfzWWXG7SNHuHpXL7RjEMPURsTNnppD6ALETtH, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "fast",
-      "meter": "3/4",
-      "feel": "swung",
-      "harmony": "simple",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmacuG15tfzWWXG7SNHuHpXL7RjEMPURsTNnppD6ALETtH",
-      "relativePath": "mid/mid/0/13/QmacuG15tfzWWXG7SNHuHpXL7RjEMPURsTNnppD6ALETtH.mid",
-      "sha256": "c51e1291e6b26d4d5689ced77abee37fa017e07f9e76f5dd93511080b6026c1d",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 151,
-        "tracks": 7,
-        "families": [
-          "bass",
-          "brass",
-          "drums",
-          "keys",
-          "reed"
-        ],
-        "meter": "3/4",
-        "tempoBpm": 155,
-        "tempoChanges": 0,
-        "notesPerBar": 16.28,
-        "swingRatio": 1,
-        "effectivePitchClasses": 6.9
-      },
-      "genre": {
-        "primary": "jazz",
-        "families": [
-          "jazz"
-        ],
-        "source": "tags"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmaogLCs2WhXCuJKogH558zJE51JeNXxQ4C7RejKmwPnev",
-    "title": "For smart living",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "For smart living (PDMX QmaogLCs2WhXCuJKogH558zJE51JeNXxQ4C7RejKmwPnev, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "8/8",
-      "feel": "swung",
-      "harmony": "simple",
-      "density": "dense",
-      "ensemble": "small",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmaogLCs2WhXCuJKogH558zJE51JeNXxQ4C7RejKmwPnev",
-      "relativePath": "mid/mid/0/35/QmaogLCs2WhXCuJKogH558zJE51JeNXxQ4C7RejKmwPnev.mid",
-      "sha256": "3e9e188d60d092a91e52d7f34b955a32fb7a9fc07810307513281267a8ff6dbf",
-      "admittedBy": "tournament-classical",
-      "measured": {
-        "bars": 81,
-        "tracks": 3,
-        "families": [
-          "brass",
-          "drums",
-          "reed"
-        ],
-        "meter": "8/8",
-        "tempoBpm": 95,
-        "tempoChanges": 0,
-        "notesPerBar": 19.98,
-        "swingRatio": 1,
-        "effectivePitchClasses": 4.45
-      },
-      "genre": {
-        "primary": "unlabelled",
-        "families": [
-          "unlabelled"
-        ],
-        "source": "none"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmaChhKKLYJWXX4nbSyCyNtdEk69GGBQJ6DPA1FcazWyY3",
-    "title": "On the Take",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "On the Take (PDMX QmaChhKKLYJWXX4nbSyCyNtdEk69GGBQJ6DPA1FcazWyY3, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
       "meter": "4/4",
       "feel": "swung",
       "harmony": "complex",
@@ -302,160 +47,53 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     },
     "symbolicSource": {
       "kind": "pdmx_midi",
-      "workId": "QmaChhKKLYJWXX4nbSyCyNtdEk69GGBQJ6DPA1FcazWyY3",
-      "relativePath": "mid/mid/0/14/QmaChhKKLYJWXX4nbSyCyNtdEk69GGBQJ6DPA1FcazWyY3.mid",
-      "sha256": "1c2103beca1ea98dc9effff894b4c267a6d8121fd78f1fa2481d53ddd686c27a",
+      "workId": "QmYoSb5q8XUyPXGaizifu1QRsVLToY1aCQV5gDrMUa99vw",
+      "relativePath": "mid/mid/16/35/QmYoSb5q8XUyPXGaizifu1QRsVLToY1aCQV5gDrMUa99vw.mid",
+      "sha256": "3c780bfd6438095d6b7f968896f0016e4d0a3c5395d6ab09cddc711520f66b3e",
       "admittedBy": "b08-csv-scan",
       "measured": {
-        "bars": 112,
-        "tracks": 11,
+        "bars": 104,
+        "tracks": 16,
         "families": [
           "brass",
-          "drums",
-          "keys",
-          "reed",
-          "synth"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 130,
-        "tempoChanges": 0,
-        "notesPerBar": 42.66,
-        "swingRatio": 0.8338,
-        "effectivePitchClasses": 9.38
-      },
-      "genre": {
-        "primary": "blues",
-        "families": [
-          "blues"
-        ],
-        "source": "tags"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmbuxgCLicDNZhBAFRUN83FnS13caK5St3DbmRmiTnbyFi",
-    "title": "Viva Cristo Rey",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "Viva Cristo Rey (PDMX QmbuxgCLicDNZhBAFRUN83FnS13caK5St3DbmRmiTnbyFi, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "6/8",
-      "feel": "compound",
-      "harmony": "simple",
-      "density": "dense",
-      "ensemble": "small",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmbuxgCLicDNZhBAFRUN83FnS13caK5St3DbmRmiTnbyFi",
-      "relativePath": "mid/mid/1/46/QmbuxgCLicDNZhBAFRUN83FnS13caK5St3DbmRmiTnbyFi.mid",
-      "sha256": "5863b8e2cb5bbcb4eeacdeed156bc0fa374fc548a06a0556e4292ec05515a67d",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 121,
-        "tracks": 5,
-        "families": [
-          "guitar",
-          "keys",
-          "organ",
-          "reed"
-        ],
-        "meter": "6/8",
-        "tempoBpm": 100,
-        "tempoChanges": 0,
-        "notesPerBar": 55.43,
-        "swingRatio": 0,
-        "effectivePitchClasses": 6.45
-      },
-      "genre": {
-        "primary": "religious_worship",
-        "families": [
-          "religious_worship"
-        ],
-        "source": "genres"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmahFMNjxfieADi4t4iM3nCBgr3L2Jymjm8e2wJjczogPF",
-    "title": "Dont Let Me Go",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "Dont Let Me Go (PDMX QmahFMNjxfieADi4t4iM3nCBgr3L2Jymjm8e2wJjczogPF, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "6/8",
-      "feel": "compound",
-      "harmony": "simple",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "non_western",
-      "production": "acoustic",
-      "tradition": "rock"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmahFMNjxfieADi4t4iM3nCBgr3L2Jymjm8e2wJjczogPF",
-      "relativePath": "mid/mid/0/23/QmahFMNjxfieADi4t4iM3nCBgr3L2Jymjm8e2wJjczogPF.mid",
-      "sha256": "47554f82e44a0632d8074d47925c023194a3af40c6d74582765392ba17cbe8d7",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 130,
-        "tracks": 11,
-        "families": [
-          "bass",
-          "brass",
-          "drums",
-          "guitar",
           "keys",
           "pipe",
-          "strings",
-          "synth"
+          "reed",
+          "strings"
         ],
-        "meter": "6/8",
-        "tempoBpm": 100,
-        "tempoChanges": 1,
-        "notesPerBar": 51.66,
-        "swingRatio": 0.0621,
-        "effectivePitchClasses": 6.63
+        "meter": "4/4",
+        "tempoBpm": 63,
+        "tempoChanges": 0,
+        "notesPerBar": 52.44,
+        "swingRatio": 0.8939,
+        "effectivePitchClasses": 9.28
       },
       "genre": {
-        "primary": "rock",
+        "primary": "classical",
         "families": [
-          "rock"
+          "classical"
         ],
         "source": "genres"
       }
     }
   },
   {
-    "id": "pdmx-QmcyP7UNchU4YMGwNp1KhopxYD6CnkkMe3Fs87XEFXMRuM",
-    "title": "earth angel will you be mine",
+    "id": "pdmx-QmRPTQvtBowZ5rcT7BBkmHYspycANuQY2aZFcTp3S9Muym",
+    "title": "Concerto In C MVT2",
     "inputType": "midi",
     "rights": {
-      "kind": "public_domain",
       "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "earth angel will you be mine (PDMX QmcyP7UNchU4YMGwNp1KhopxYD6CnkkMe3Fs87XEFXMRuM, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "work": "Concerto In C MVT2 (PDMX QmRPTQvtBowZ5rcT7BBkmHYspycANuQY2aZFcTp3S9Muym, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Antonio Vivaldi",
+      "composerDied": 1741
     },
     "attributes": {
-      "tempoBand": "medium",
-      "meter": "6/8",
-      "feel": "compound",
+      "tempoBand": "slow",
+      "meter": "3/4",
+      "feel": "swung",
       "harmony": "moderate",
       "density": "dense",
       "ensemble": "large",
@@ -464,26 +102,24 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     },
     "symbolicSource": {
       "kind": "pdmx_midi",
-      "workId": "QmcyP7UNchU4YMGwNp1KhopxYD6CnkkMe3Fs87XEFXMRuM",
-      "relativePath": "mid/mid/2/54/QmcyP7UNchU4YMGwNp1KhopxYD6CnkkMe3Fs87XEFXMRuM.mid",
-      "sha256": "e841238d0a913a196952d102441b239f438b4f7dee640b45281c29781f3e8ebe",
+      "workId": "QmRPTQvtBowZ5rcT7BBkmHYspycANuQY2aZFcTp3S9Muym",
+      "relativePath": "mid/mid/9/37/QmRPTQvtBowZ5rcT7BBkmHYspycANuQY2aZFcTp3S9Muym.mid",
+      "sha256": "404dbf2a5b59ff154e5df83fc32e517822175dd0d99380d291be84d2488fcd03",
       "admittedBy": "b08-csv-scan",
       "measured": {
-        "bars": 37,
+        "bars": 35,
         "tracks": 6,
         "families": [
-          "bass",
-          "drums",
           "guitar",
           "keys",
-          "reed"
+          "strings"
         ],
-        "meter": "6/8",
-        "tempoBpm": 100,
+        "meter": "3/4",
+        "tempoBpm": 50,
         "tempoChanges": 0,
-        "notesPerBar": 42.68,
-        "swingRatio": null,
-        "effectivePitchClasses": 7.53
+        "notesPerBar": 35.09,
+        "swingRatio": 0.7458,
+        "effectivePitchClasses": 8.45
       },
       "genre": {
         "primary": "classical",
@@ -495,20 +131,76 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     }
   },
   {
-    "id": "pdmx-QmaetaqYGz3UfazAh9AULVNpaxnP62CskUZWfG37g8Q2bW",
-    "title": "time in a bottle",
+    "id": "pdmx-QmTa8epLaUjVkEcV7ZzYbazW6fxEgvwLMC5AuG5uqBKyJ6",
+    "title": "Rigoletto",
     "inputType": "midi",
     "rights": {
-      "kind": "public_domain",
       "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "time in a bottle (PDMX QmaetaqYGz3UfazAh9AULVNpaxnP62CskUZWfG37g8Q2bW, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "work": "Rigoletto (PDMX QmTa8epLaUjVkEcV7ZzYbazW6fxEgvwLMC5AuG5uqBKyJ6, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Giuseppe Verdi",
+      "composerDied": 1901
     },
     "attributes": {
-      "tempoBand": "fast",
-      "meter": "3/4",
-      "feel": "straight",
+      "tempoBand": "slow",
+      "meter": "3/8",
+      "feel": "swung",
+      "harmony": "simple",
+      "density": "dense",
+      "ensemble": "large",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmTa8epLaUjVkEcV7ZzYbazW6fxEgvwLMC5AuG5uqBKyJ6",
+      "relativePath": "mid/mid/11/9/QmTa8epLaUjVkEcV7ZzYbazW6fxEgvwLMC5AuG5uqBKyJ6.mid",
+      "sha256": "446ae6d92e692c9bed25ed20e9a5a331363b11cccad49c80892be3722c5864b9",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 91,
+        "tracks": 14,
+        "families": [
+          "brass",
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "3/8",
+        "tempoBpm": 69,
+        "tempoChanges": 45,
+        "notesPerBar": 23.15,
+        "swingRatio": 0.9123,
+        "effectivePitchClasses": 6.35
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmY8KJiDxZhpTwzNqvX15YfzoSD6X9hkAb5eMw8HAvBDsj",
+    "title": "Kleine Orgelmesse or Missa brevis Sancti Joannis de Deo Mass No. 7 in Bb Major",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "work": "Kleine Orgelmesse or Missa brevis Sancti Joannis de Deo Mass No. 7 in Bb Major (PDMX QmY8KJiDxZhpTwzNqvX15YfzoSD6X9hkAb5eMw8HAvBDsj, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Joseph Haydn",
+      "composerDied": 1809
+    },
+    "attributes": {
+      "tempoBand": "slow",
+      "meter": "6/8",
+      "feel": "compound",
       "harmony": "moderate",
       "density": "dense",
       "ensemble": "large",
@@ -517,26 +209,77 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     },
     "symbolicSource": {
       "kind": "pdmx_midi",
-      "workId": "QmaetaqYGz3UfazAh9AULVNpaxnP62CskUZWfG37g8Q2bW",
-      "relativePath": "mid/mid/0/17/QmaetaqYGz3UfazAh9AULVNpaxnP62CskUZWfG37g8Q2bW.mid",
-      "sha256": "7d548020940a19c66fbda035a429e771eaa5eb508aa6195afcdcf09b68b5ceac",
-      "admittedBy": "tournament-global",
+      "workId": "QmY8KJiDxZhpTwzNqvX15YfzoSD6X9hkAb5eMw8HAvBDsj",
+      "relativePath": "mid/mid/16/7/QmY8KJiDxZhpTwzNqvX15YfzoSD6X9hkAb5eMw8HAvBDsj.mid",
+      "sha256": "e664c42645689b5b6362308e6e9ec28e2fde796835ec174204195e494fb699fc",
+      "admittedBy": "b08-csv-scan",
       "measured": {
-        "bars": 93,
-        "tracks": 9,
+        "bars": 30,
+        "tracks": 7,
         "families": [
-          "drums",
           "ensemble",
-          "guitar",
-          "keys",
+          "organ",
           "strings"
         ],
-        "meter": "3/4",
-        "tempoBpm": 140,
-        "tempoChanges": 9,
-        "notesPerBar": 47.45,
+        "meter": "6/8",
+        "tempoBpm": 75,
+        "tempoChanges": 0,
+        "notesPerBar": 26.77,
         "swingRatio": 0,
-        "effectivePitchClasses": 8.41
+        "effectivePitchClasses": 8.49
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmR8F9HZyxGE7yC37FUaDURa4MaBh6bkoHJz3K1AhFzQRr",
+    "title": "Greensleeves",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "work": "Greensleeves (PDMX QmR8F9HZyxGE7yC37FUaDURa4MaBh6bkoHJz3K1AhFzQRr, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "traditional": true,
+      "source": "Greensleeves: English broadside ballad tune, registered 1580 (Stationers' Company)"
+    },
+    "attributes": {
+      "tempoBand": "slow",
+      "meter": "6/8",
+      "feel": "compound",
+      "harmony": "moderate",
+      "density": "moderate",
+      "ensemble": "small",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmR8F9HZyxGE7yC37FUaDURa4MaBh6bkoHJz3K1AhFzQRr",
+      "relativePath": "mid/mid/9/7/QmR8F9HZyxGE7yC37FUaDURa4MaBh6bkoHJz3K1AhFzQRr.mid",
+      "sha256": "d2a7b1e83cd40a0b7e93f72fd33390f1933a20dd6d671f56641b88c2e427730b",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 31,
+        "tracks": 5,
+        "families": [
+          "ensemble",
+          "guitar",
+          "strings"
+        ],
+        "meter": "6/8",
+        "tempoBpm": 70,
+        "tempoChanges": 0,
+        "notesPerBar": 14.03,
+        "swingRatio": 0,
+        "effectivePitchClasses": 7.49
       },
       "genre": {
         "primary": "folk",
@@ -548,15 +291,73 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     }
   },
   {
+    "id": "pdmx-QmZWa9Ewjm3w5cjP9a9gutRT7N58S4EMnBAonBd4iN5oMi",
+    "title": "Sicilienne Op.78",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "work": "Sicilienne Op.78 (PDMX QmZWa9Ewjm3w5cjP9a9gutRT7N58S4EMnBAonBd4iN5oMi, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Gabriel Fauré",
+      "composerDied": 1924
+    },
+    "attributes": {
+      "tempoBand": "slow",
+      "meter": "6/8",
+      "feel": "compound",
+      "harmony": "moderate",
+      "density": "dense",
+      "ensemble": "large",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmZWa9Ewjm3w5cjP9a9gutRT7N58S4EMnBAonBd4iN5oMi",
+      "relativePath": "mid/mid/17/51/QmZWa9Ewjm3w5cjP9a9gutRT7N58S4EMnBAonBd4iN5oMi.mid",
+      "sha256": "d4798e27c9611cbc4dedc64491bda13b226b827f7c59e2182a7674d262d76963",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 89,
+        "tracks": 14,
+        "families": [
+          "bass",
+          "brass",
+          "drums",
+          "guitar",
+          "pipe",
+          "reed"
+        ],
+        "meter": "6/8",
+        "tempoBpm": 75,
+        "tempoChanges": 0,
+        "notesPerBar": 51.8,
+        "swingRatio": 0.9092,
+        "effectivePitchClasses": 8.84
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
     "id": "pdmx-QmacY5xSh18WXR348MvKWuvzpuAfRqe8ieh6m8gpNQbyNr",
     "title": "Silent night - Instrumental flute - flugehorn - violin",
     "inputType": "midi",
     "rights": {
-      "kind": "public_domain",
       "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
       "work": "Silent night - Instrumental flute - flugehorn - violin (PDMX QmacY5xSh18WXR348MvKWuvzpuAfRqe8ieh6m8gpNQbyNr, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Franz Xaver Gruber",
+      "composerDied": 1863
     },
     "attributes": {
       "tempoBand": "medium",
@@ -603,15 +404,70 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     }
   },
   {
+    "id": "pdmx-QmRjibSinfVz16xTgqnq4EPza8mrMFTLbqzwJL9wbUJ2io",
+    "title": "Glorie daÈi lui Dumnezeu!",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "work": "Glorie daÈi lui Dumnezeu! (PDMX QmRjibSinfVz16xTgqnq4EPza8mrMFTLbqzwJL9wbUJ2io, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Dieterich Buxtehude",
+      "composerDied": 1707
+    },
+    "attributes": {
+      "tempoBand": "medium",
+      "meter": "3/4",
+      "feel": "straight",
+      "harmony": "simple",
+      "density": "dense",
+      "ensemble": "small",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmRjibSinfVz16xTgqnq4EPza8mrMFTLbqzwJL9wbUJ2io",
+      "relativePath": "mid/mid/9/26/QmRjibSinfVz16xTgqnq4EPza8mrMFTLbqzwJL9wbUJ2io.mid",
+      "sha256": "32bbc22dad70211e1abc225bcf3fdb83fca71899222071edc43a597f1213eadb",
+      "admittedBy": "tournament-classical",
+      "measured": {
+        "bars": 64,
+        "tracks": 5,
+        "families": [
+          "ensemble",
+          "keys",
+          "pipe"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 120,
+        "tempoChanges": 0,
+        "notesPerBar": 19.38,
+        "swingRatio": 0.0069,
+        "effectivePitchClasses": 6.43
+      },
+      "genre": {
+        "primary": "unlabelled",
+        "families": [
+          "unlabelled"
+        ],
+        "source": "none"
+      }
+    }
+  },
+  {
     "id": "pdmx-QmZpW5y91mNNqfY1ofLXkGQDe31eJfr8FR4JWcpT6qapD1",
     "title": "Symphony No.9 Op.125",
     "inputType": "midi",
     "rights": {
-      "kind": "public_domain",
       "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
       "work": "Symphony No.9 Op.125 (PDMX QmZpW5y91mNNqfY1ofLXkGQDe31eJfr8FR4JWcpT6qapD1, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Ludwig van Beethoven",
+      "composerDied": 1827
     },
     "attributes": {
       "tempoBand": "medium",
@@ -654,99 +510,47 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     }
   },
   {
-    "id": "pdmx-QmYwCRCydYK2Na6mn5mh9AMMb64BwZv5yx1DpigpyKBtLC",
-    "title": "I Can't Breathe",
+    "id": "pdmx-QmP8P1EjQNde6Z8i3ZP8JK9ny9cVPQCC2ThtqpaUcqSato",
+    "title": "Heilig aus der Deutschen Messe",
     "inputType": "midi",
     "rights": {
-      "kind": "public_domain",
       "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "I Can't Breathe (PDMX QmYwCRCydYK2Na6mn5mh9AMMb64BwZv5yx1DpigpyKBtLC, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "work": "Heilig aus der Deutschen Messe (PDMX QmP8P1EjQNde6Z8i3ZP8JK9ny9cVPQCC2ThtqpaUcqSato, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Franz Schubert",
+      "composerDied": 1828
     },
     "attributes": {
       "tempoBand": "slow",
-      "meter": "4/4",
+      "meter": "3/4",
       "feel": "straight",
       "harmony": "simple",
       "density": "sparse",
-      "ensemble": "large",
+      "ensemble": "small",
       "idiom": "western",
       "production": "acoustic"
     },
     "symbolicSource": {
       "kind": "pdmx_midi",
-      "workId": "QmYwCRCydYK2Na6mn5mh9AMMb64BwZv5yx1DpigpyKBtLC",
-      "relativePath": "mid/mid/16/50/QmYwCRCydYK2Na6mn5mh9AMMb64BwZv5yx1DpigpyKBtLC.mid",
-      "sha256": "09521652fbc5a12b2ba16b8e99c71e5cc00de596b8442dc42cd49ab0f15c9bd8",
+      "workId": "QmP8P1EjQNde6Z8i3ZP8JK9ny9cVPQCC2ThtqpaUcqSato",
+      "relativePath": "mid/mid/7/7/QmP8P1EjQNde6Z8i3ZP8JK9ny9cVPQCC2ThtqpaUcqSato.mid",
+      "sha256": "5d3501f98aeba01e11b6ec8154773c603f6e3316726fd8a06e7bd339f988afca",
       "admittedBy": "b08-csv-scan",
       "measured": {
         "bars": 64,
-        "tracks": 7,
+        "tracks": 4,
         "families": [
-          "drums",
-          "keys",
-          "organ",
+          "pipe",
           "strings"
         ],
-        "meter": "4/4",
+        "meter": "3/4",
         "tempoBpm": 72,
         "tempoChanges": 1,
-        "notesPerBar": 5.31,
-        "swingRatio": 0,
-        "effectivePitchClasses": 6.98
-      },
-      "genre": {
-        "primary": "film_game",
-        "families": [
-          "film_game"
-        ],
-        "source": "tags"
-      }
-    }
-  },
-  {
-    "id": "pdmx-Qmf7FdCC3DBZvRLTi39zUniikKvXYdZky7upgtJLUpb9Xa",
-    "title": "Eleven",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "Eleven (PDMX Qmf7FdCC3DBZvRLTi39zUniikKvXYdZky7upgtJLUpb9Xa, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "simple",
-      "density": "sparse",
-      "ensemble": "large",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "Qmf7FdCC3DBZvRLTi39zUniikKvXYdZky7upgtJLUpb9Xa",
-      "relativePath": "mid/mid/5/6/Qmf7FdCC3DBZvRLTi39zUniikKvXYdZky7upgtJLUpb9Xa.mid",
-      "sha256": "ff847fd747e612cf188e68962e5d793036297d7bdf4a793e9e5877de533b85ad",
-      "admittedBy": "b08-csv-scan",
-      "measured": {
-        "bars": 49,
-        "tracks": 10,
-        "families": [
-          "bass",
-          "brass",
-          "chromatic_perc",
-          "keys"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 120,
-        "tempoChanges": 0,
-        "notesPerBar": 5.41,
+        "notesPerBar": 5.72,
         "swingRatio": null,
-        "effectivePitchClasses": 5.64
+        "effectivePitchClasses": 6.94
       },
       "genre": {
         "primary": "classical",
@@ -758,15 +562,176 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     }
   },
   {
-    "id": "pdmx-QmWu1GKEdGjxwwV9ePmmSbmUN4y5cmYMpMkXJK2EUxVh1J",
-    "title": "Mamma Mia!",
+    "id": "pdmx-QmU1nWTKzCtLUFXgt7kZbsm3pJcN7U1E8kKDwKA6nxhMee",
+    "title": "O leggiadr' occhi",
     "inputType": "midi",
     "rights": {
+      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "work": "O leggiadr' occhi (PDMX QmU1nWTKzCtLUFXgt7kZbsm3pJcN7U1E8kKDwKA6nxhMee, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
       "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Sigismondo d'India",
+      "composerDied": 1629
+    },
+    "attributes": {
+      "tempoBand": "slow",
+      "meter": "3/4",
+      "feel": "straight",
+      "harmony": "moderate",
+      "density": "sparse",
+      "ensemble": "small",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmU1nWTKzCtLUFXgt7kZbsm3pJcN7U1E8kKDwKA6nxhMee",
+      "relativePath": "mid/mid/12/0/QmU1nWTKzCtLUFXgt7kZbsm3pJcN7U1E8kKDwKA6nxhMee.mid",
+      "sha256": "a1ce3ad1e21a78ca3791a46f1f2e90de6896cc72ad81e3460eae8ef1ac16921f",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 81,
+        "tracks": 3,
+        "families": [
+          "ensemble",
+          "keys"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 70,
+        "tempoChanges": 1,
+        "notesPerBar": 4.88,
+        "swingRatio": null,
+        "effectivePitchClasses": 7.58
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmY5RQf5HHdJfVA95Dn1bE257cHbefkcqEAFGx8ivkCV59",
+    "title": "Se La Face Ay Pale - Guillaume Dufay",
+    "inputType": "midi",
+    "rights": {
       "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "Mamma Mia! (PDMX QmWu1GKEdGjxwwV9ePmmSbmUN4y5cmYMpMkXJK2EUxVh1J, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "work": "Se La Face Ay Pale - Guillaume Dufay (PDMX QmY5RQf5HHdJfVA95Dn1bE257cHbefkcqEAFGx8ivkCV59, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Guillaume Dufay",
+      "composerDied": 1474
+    },
+    "attributes": {
+      "tempoBand": "fast",
+      "meter": "3/2",
+      "feel": "straight",
+      "harmony": "simple",
+      "density": "moderate",
+      "ensemble": "small",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmY5RQf5HHdJfVA95Dn1bE257cHbefkcqEAFGx8ivkCV59",
+      "relativePath": "mid/mid/16/4/QmY5RQf5HHdJfVA95Dn1bE257cHbefkcqEAFGx8ivkCV59.mid",
+      "sha256": "06980cd73ef9d93e1f3cca46f908f6a67ec7ab2cb12036c61d65db32b35313e4",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 31,
+        "tracks": 5,
+        "families": [
+          "guitar",
+          "keys",
+          "pipe",
+          "reed"
+        ],
+        "meter": "3/2",
+        "tempoBpm": 170,
+        "tempoChanges": 1,
+        "notesPerBar": 13,
+        "swingRatio": 0.0222,
+        "effectivePitchClasses": 6.6
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "tags"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmSTacsYPkj7oA7RtKFuF7GP1hzqxWJfzWD81Uo3pJM2Yg",
+    "title": "Chandos Anthem No. 4: No. 6 - O worship the Lord in the beauty of holiness",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "work": "Chandos Anthem No. 4: No. 6 - O worship the Lord in the beauty of holiness (PDMX QmSTacsYPkj7oA7RtKFuF7GP1hzqxWJfzWD81Uo3pJM2Yg, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "George Frideric Handel",
+      "composerDied": 1759
+    },
+    "attributes": {
+      "tempoBand": "fast",
+      "meter": "3/2",
+      "feel": "straight",
+      "harmony": "moderate",
+      "density": "moderate",
+      "ensemble": "small",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmSTacsYPkj7oA7RtKFuF7GP1hzqxWJfzWD81Uo3pJM2Yg",
+      "relativePath": "mid/mid/10/45/QmSTacsYPkj7oA7RtKFuF7GP1hzqxWJfzWD81Uo3pJM2Yg.mid",
+      "sha256": "6d3890af77bfd051737806a01524c5a31bad88092f17585a88217fa5d6152469",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 84,
+        "tracks": 4,
+        "families": [
+          "keys",
+          "pipe",
+          "reed"
+        ],
+        "meter": "3/2",
+        "tempoBpm": 150,
+        "tempoChanges": 0,
+        "notesPerBar": 11.68,
+        "swingRatio": 0,
+        "effectivePitchClasses": 7.67
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmQiv698z1BpNkRnoFvkZvJQPUPn1aZK8vqsKXVQLoVLqS",
+    "title": "Hungarian Rhapsody No.15 S.244/15",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "work": "Hungarian Rhapsody No.15 S.244/15 (PDMX QmQiv698z1BpNkRnoFvkZvJQPUPn1aZK8vqsKXVQLoVLqS, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Franz Liszt",
+      "composerDied": 1886
     },
     "attributes": {
       "tempoBand": "fast",
@@ -780,82 +745,31 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     },
     "symbolicSource": {
       "kind": "pdmx_midi",
-      "workId": "QmWu1GKEdGjxwwV9ePmmSbmUN4y5cmYMpMkXJK2EUxVh1J",
-      "relativePath": "mid/mid/14/46/QmWu1GKEdGjxwwV9ePmmSbmUN4y5cmYMpMkXJK2EUxVh1J.mid",
-      "sha256": "fce667842c63efae4711e6405b3fd7110a52085b69b6c70fc4f14cec8e3d2542",
-      "admittedBy": "tournament-global",
+      "workId": "QmQiv698z1BpNkRnoFvkZvJQPUPn1aZK8vqsKXVQLoVLqS",
+      "relativePath": "mid/mid/8/25/QmQiv698z1BpNkRnoFvkZvJQPUPn1aZK8vqsKXVQLoVLqS.mid",
+      "sha256": "34e7a1d02a571a73f967b636b1903e135bca8e9b411144f51c8c0807213b7698",
+      "admittedBy": "b08-csv-scan",
       "measured": {
-        "bars": 83,
-        "tracks": 17,
+        "bars": 98,
+        "tracks": 14,
         "families": [
           "brass",
-          "drums",
+          "chromatic_perc",
+          "keys",
           "pipe",
           "reed"
         ],
         "meter": "4/4",
-        "tempoBpm": 140,
-        "tempoChanges": 0,
-        "notesPerBar": 72.67,
-        "swingRatio": 0.0242,
-        "effectivePitchClasses": 9.04
+        "tempoBpm": 144,
+        "tempoChanges": 1,
+        "notesPerBar": 38.99,
+        "swingRatio": 0.0231,
+        "effectivePitchClasses": 9.46
       },
       "genre": {
-        "primary": "musical_theatre",
+        "primary": "classical",
         "families": [
-          "musical_theatre"
-        ],
-        "source": "tags"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmaPWhAxxRc8s16bjJVeEGEKEvKWKzNqg7W2qakbByRrL4",
-    "title": "Pure Cocaine",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "Pure Cocaine (PDMX QmaPWhAxxRc8s16bjJVeEGEKEvKWKzNqg7W2qakbByRrL4, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "slow",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "simple",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmaPWhAxxRc8s16bjJVeEGEKEvKWKzNqg7W2qakbByRrL4",
-      "relativePath": "mid/mid/0/37/QmaPWhAxxRc8s16bjJVeEGEKEvKWKzNqg7W2qakbByRrL4.mid",
-      "sha256": "30f639964d68bec2f3e30bc81849ff6a10162ff2618e657d3ff982e901392d82",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 33,
-        "tracks": 11,
-        "families": [
-          "brass",
-          "pipe",
-          "reed"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 60,
-        "tempoChanges": 0,
-        "notesPerBar": 48.33,
-        "swingRatio": 0.0497,
-        "effectivePitchClasses": 6.29
-      },
-      "genre": {
-        "primary": "hiphop",
-        "families": [
-          "hiphop",
-          "wind_band_marching"
+          "classical"
         ],
         "source": "genres"
       }
@@ -866,11 +780,13 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     "title": "Benedictus uit Messe Solonelle",
     "inputType": "midi",
     "rights": {
-      "kind": "public_domain",
       "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
       "work": "Benedictus uit Messe Solonelle (PDMX QmbaPnp5ffQMNGPJh7cF5pTU3ewYpAhJ3i3EfooSny54jW, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Louis Vierne",
+      "composerDied": 1937
     },
     "attributes": {
       "tempoBand": "medium",
@@ -913,543 +829,17 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     }
   },
   {
-    "id": "pdmx-QmaCJHoZ3Un2y3r9vWYYAuxFjNgQSmYcLvmztgFDh4SK6E",
-    "title": "country roads",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "country roads (PDMX QmaCJHoZ3Un2y3r9vWYYAuxFjNgQSmYcLvmztgFDh4SK6E, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "moderate",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmaCJHoZ3Un2y3r9vWYYAuxFjNgQSmYcLvmztgFDh4SK6E",
-      "relativePath": "mid/mid/0/14/QmaCJHoZ3Un2y3r9vWYYAuxFjNgQSmYcLvmztgFDh4SK6E.mid",
-      "sha256": "dbd43b3c86a4769fcd2dae48e5cb8e9b46e7f0b658d59eb46a9eb4c66fccb870",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 82,
-        "tracks": 10,
-        "families": [
-          "brass",
-          "chromatic_perc",
-          "drums",
-          "ethnic",
-          "keys",
-          "organ",
-          "reed"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 100,
-        "tempoChanges": 23,
-        "notesPerBar": 54.05,
-        "swingRatio": 0,
-        "effectivePitchClasses": 7.53
-      },
-      "genre": {
-        "primary": "pop",
-        "families": [
-          "pop"
-        ],
-        "source": "genres"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmabLFxpikYVjcZXgubR9kVaJN6ctKXYSYnWYMpBsWubN5",
-    "title": "Nipsey Hussle x Victory Lap",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "Nipsey Hussle x Victory Lap (PDMX QmabLFxpikYVjcZXgubR9kVaJN6ctKXYSYnWYMpBsWubN5, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "simple",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmabLFxpikYVjcZXgubR9kVaJN6ctKXYSYnWYMpBsWubN5",
-      "relativePath": "mid/mid/0/11/QmabLFxpikYVjcZXgubR9kVaJN6ctKXYSYnWYMpBsWubN5.mid",
-      "sha256": "f1f8bd04e55872b6f0d6570dfe82c3c583829bad10f557a8c0a66840245f5e8d",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 26,
-        "tracks": 10,
-        "families": [
-          "brass",
-          "pipe",
-          "reed"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 85,
-        "tempoChanges": 0,
-        "notesPerBar": 48.35,
-        "swingRatio": 0.0244,
-        "effectivePitchClasses": 6.27
-      },
-      "genre": {
-        "primary": "wind_band_marching",
-        "families": [
-          "wind_band_marching"
-        ],
-        "source": "tags"
-      }
-    }
-  },
-  {
-    "id": "pdmx-Qma2qXH7BTNA9mf19TPCYLmsP5sZBDxJ3SzdNi7oQVdqyT",
-    "title": "let me down slowly",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "let me down slowly (PDMX Qma2qXH7BTNA9mf19TPCYLmsP5sZBDxJ3SzdNi7oQVdqyT, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "slow",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "simple",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "Qma2qXH7BTNA9mf19TPCYLmsP5sZBDxJ3SzdNi7oQVdqyT",
-      "relativePath": "mid/mid/0/1/Qma2qXH7BTNA9mf19TPCYLmsP5sZBDxJ3SzdNi7oQVdqyT.mid",
-      "sha256": "f385f0472a7ae9f07ffb7e001e8eb130f8bfcabaffd2cd97acfe3ef59882f399",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 52,
-        "tracks": 7,
-        "families": [
-          "bass",
-          "drums",
-          "guitar",
-          "keys",
-          "pipe"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 75,
-        "tempoChanges": 1,
-        "notesPerBar": 41.33,
-        "swingRatio": 0.0077,
-        "effectivePitchClasses": 6.91
-      },
-      "genre": {
-        "primary": "pop",
-        "families": [
-          "pop",
-          "rnb_funk_soul"
-        ],
-        "source": "genres"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmbqqfxB2FW85LZJLL7HwSxbaSSMWC4oqioxXfKF7GFhzQ",
-    "title": "overnight celebrtiy",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "overnight celebrtiy (PDMX QmbqqfxB2FW85LZJLL7HwSxbaSSMWC4oqioxXfKF7GFhzQ, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "fast",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "moderate",
-      "density": "dense",
-      "ensemble": "small",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmbqqfxB2FW85LZJLL7HwSxbaSSMWC4oqioxXfKF7GFhzQ",
-      "relativePath": "mid/mid/1/38/QmbqqfxB2FW85LZJLL7HwSxbaSSMWC4oqioxXfKF7GFhzQ.mid",
-      "sha256": "875585dd88a2250017021905885435c1ed25935fce3117be82588077957c4825",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 43,
-        "tracks": 5,
-        "families": [
-          "bass",
-          "drums",
-          "ensemble",
-          "ethnic",
-          "strings"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 180,
-        "tempoChanges": 2,
-        "notesPerBar": 27.21,
-        "swingRatio": 0,
-        "effectivePitchClasses": 8.98
-      },
-      "genre": {
-        "primary": "hiphop",
-        "families": [
-          "hiphop"
-        ],
-        "source": "genres"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmanYWjTEPXebCvngzAdXN3vojzCtRmLKyLGMov4U82HwX",
-    "title": "Gangsta's Paradise",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "Gangsta's Paradise (PDMX QmanYWjTEPXebCvngzAdXN3vojzCtRmLKyLGMov4U82HwX, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "simple",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmanYWjTEPXebCvngzAdXN3vojzCtRmLKyLGMov4U82HwX",
-      "relativePath": "mid/mid/0/33/QmanYWjTEPXebCvngzAdXN3vojzCtRmLKyLGMov4U82HwX.mid",
-      "sha256": "ba53a87f34c874b88a2f9469705ef5aaab6796b161bb78e69b284ad7dffe1be1",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 36,
-        "tracks": 11,
-        "families": [
-          "brass",
-          "pipe",
-          "reed"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 80,
-        "tempoChanges": 0,
-        "notesPerBar": 41.83,
-        "swingRatio": 0.0208,
-        "effectivePitchClasses": 6.14
-      },
-      "genre": {
-        "primary": "hiphop",
-        "families": [
-          "hiphop"
-        ],
-        "source": "genres"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmeuGpDFNwqhaKhtUNuCQdcxiq2TwT1S1f3Rr2H685XJXj",
-    "title": "i got you babe",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
-      "work": "i got you babe (PDMX QmeuGpDFNwqhaKhtUNuCQdcxiq2TwT1S1f3Rr2H685XJXj, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "12/8",
-      "feel": "compound",
-      "harmony": "moderate",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmeuGpDFNwqhaKhtUNuCQdcxiq2TwT1S1f3Rr2H685XJXj",
-      "relativePath": "mid/mid/4/46/QmeuGpDFNwqhaKhtUNuCQdcxiq2TwT1S1f3Rr2H685XJXj.mid",
-      "sha256": "8e250cb6d03fb8c2a9a0cdc8af9881ab1cf0112ea5c1ed50f8a2614b51b66847",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 39,
-        "tracks": 7,
-        "families": [
-          "brass",
-          "guitar",
-          "keys",
-          "organ",
-          "pipe",
-          "reed"
-        ],
-        "meter": "12/8",
-        "tempoBpm": 120,
-        "tempoChanges": 0,
-        "notesPerBar": 40.44,
-        "swingRatio": null,
-        "effectivePitchClasses": 8.66
-      },
-      "genre": {
-        "primary": "reggae_ska",
-        "families": [
-          "reggae_ska"
-        ],
-        "source": "genres"
-      }
-    }
-  },
-  {
-    "id": "pdmx-Qma4X9oCvTBVazSqVsqZ7j8YLH5ouhEnzkEQRPDgM14Gsa",
-    "title": "cold duck time",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "cold duck time (PDMX Qma4X9oCvTBVazSqVsqZ7j8YLH5ouhEnzkEQRPDgM14Gsa, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "simple",
-      "density": "moderate",
-      "ensemble": "small",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "Qma4X9oCvTBVazSqVsqZ7j8YLH5ouhEnzkEQRPDgM14Gsa",
-      "relativePath": "mid/mid/0/3/Qma4X9oCvTBVazSqVsqZ7j8YLH5ouhEnzkEQRPDgM14Gsa.mid",
-      "sha256": "17e554b89f1928126f840cfdd3b8c9ababe0082156d93b5a7b6904e5aa1c5ba0",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 30,
-        "tracks": 3,
-        "families": [
-          "bass",
-          "brass",
-          "keys"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 124,
-        "tempoChanges": 3,
-        "notesPerBar": 9.67,
-        "swingRatio": 0,
-        "effectivePitchClasses": 5.95
-      },
-      "genre": {
-        "primary": "jazz",
-        "families": [
-          "jazz",
-          "rnb_funk_soul"
-        ],
-        "source": "tags"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmdRTNCGVUhi7wa7cGC1vynEHxbo5rupUehZ4GQuJqkH4N",
-    "title": "Counterpoint/Pie Jesu",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "Counterpoint/Pie Jesu (PDMX QmdRTNCGVUhi7wa7cGC1vynEHxbo5rupUehZ4GQuJqkH4N, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "moderate",
-      "density": "moderate",
-      "ensemble": "small",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmdRTNCGVUhi7wa7cGC1vynEHxbo5rupUehZ4GQuJqkH4N",
-      "relativePath": "mid/mid/3/41/QmdRTNCGVUhi7wa7cGC1vynEHxbo5rupUehZ4GQuJqkH4N.mid",
-      "sha256": "08bf6942344e615fa9888eaf08412bab2348a8909d0cb9dabefef6b8743715fb",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 29,
-        "tracks": 5,
-        "families": [
-          "brass",
-          "ensemble",
-          "reed",
-          "strings"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 76,
-        "tempoChanges": 0,
-        "notesPerBar": 10.79,
-        "swingRatio": 0.0455,
-        "effectivePitchClasses": 7.4
-      },
-      "genre": {
-        "primary": "musical_theatre",
-        "families": [
-          "musical_theatre"
-        ],
-        "source": "tags"
-      }
-    }
-  },
-  {
-    "id": "pdmx-Qma1c7LuqVV8Jyw1GmBnwdqKZPeoNTahvqbNkYZqQhMwN2",
-    "title": "sos",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "sos (PDMX Qma1c7LuqVV8Jyw1GmBnwdqKZPeoNTahvqbNkYZqQhMwN2, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "simple",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "Qma1c7LuqVV8Jyw1GmBnwdqKZPeoNTahvqbNkYZqQhMwN2",
-      "relativePath": "mid/mid/0/0/Qma1c7LuqVV8Jyw1GmBnwdqKZPeoNTahvqbNkYZqQhMwN2.mid",
-      "sha256": "f88c422d4b8f88502b6fc5028e3c5d2a09127e030148032002c02be0f010c995",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 64,
-        "tracks": 9,
-        "families": [
-          "bass",
-          "keys",
-          "pipe",
-          "reed",
-          "strings"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 100,
-        "tempoChanges": 1,
-        "notesPerBar": 40.02,
-        "swingRatio": 0,
-        "effectivePitchClasses": 6.27
-      },
-      "genre": {
-        "primary": "electronic",
-        "families": [
-          "electronic"
-        ],
-        "source": "genres"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmarK8WuALDnUkYx44Nrk5Knx4bMsmh1m8Jduyz3R1V9PD",
-    "title": "them changes",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "them changes (PDMX QmarK8WuALDnUkYx44Nrk5Knx4bMsmh1m8Jduyz3R1V9PD, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "fast",
-      "meter": "2/2",
-      "feel": "straight",
-      "harmony": "moderate",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmarK8WuALDnUkYx44Nrk5Knx4bMsmh1m8Jduyz3R1V9PD",
-      "relativePath": "mid/mid/0/40/QmarK8WuALDnUkYx44Nrk5Knx4bMsmh1m8Jduyz3R1V9PD.mid",
-      "sha256": "b6fe5d320cc0ba22d974bb5dc9715d89ff7fc198a7a4c35a21c15ae4dfb1c9f4",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 124,
-        "tracks": 8,
-        "families": [
-          "bass",
-          "drums",
-          "ensemble",
-          "guitar",
-          "keys"
-        ],
-        "meter": "2/2",
-        "tempoBpm": 160,
-        "tempoChanges": 0,
-        "notesPerBar": 35.52,
-        "swingRatio": 0.0011,
-        "effectivePitchClasses": 8.31
-      },
-      "genre": {
-        "primary": "rnb_funk_soul",
-        "families": [
-          "rnb_funk_soul"
-        ],
-        "source": "genres"
-      }
-    }
-  },
-  {
     "id": "pdmx-QmaxCMVTUnP27mT65k76NYKsVy9Eev7nAYskQ17mcidUkS",
     "title": "Arthur S. Sullivan: Christ is Risen!",
     "inputType": "midi",
     "rights": {
-      "kind": "public_domain",
       "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
       "work": "Arthur S. Sullivan: Christ is Risen! (PDMX QmaxCMVTUnP27mT65k76NYKsVy9Eev7nAYskQ17mcidUkS, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Arthur Sullivan",
+      "composerDied": 1900
     },
     "attributes": {
       "tempoBand": "medium",
@@ -1493,74 +883,75 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     }
   },
   {
-    "id": "pdmx-QmVCMwJFL9Q67AL1TyeBGTLbu2a5uHnpiFivsBr339Tymr",
-    "title": "build me up buttercup",
+    "id": "pdmx-QmUeMxaCbfQm7LTRPruopP8ixYRDojtRHJ8q5SFRQ1qM6G",
+    "title": "Giunto che m'hebb' amor",
     "inputType": "midi",
     "rights": {
+      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "work": "Giunto che m'hebb' amor (PDMX QmUeMxaCbfQm7LTRPruopP8ixYRDojtRHJ8q5SFRQ1qM6G, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
       "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "build me up buttercup (PDMX QmVCMwJFL9Q67AL1TyeBGTLbu2a5uHnpiFivsBr339Tymr, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "commercialUse": true,
+      "composer": "Benedetto Pallavicino",
+      "composerDied": 1601
     },
     "attributes": {
       "tempoBand": "medium",
       "meter": "4/4",
       "feel": "straight",
       "harmony": "moderate",
-      "density": "dense",
-      "ensemble": "large",
+      "density": "moderate",
+      "ensemble": "small",
       "idiom": "western",
       "production": "acoustic"
     },
     "symbolicSource": {
       "kind": "pdmx_midi",
-      "workId": "QmVCMwJFL9Q67AL1TyeBGTLbu2a5uHnpiFivsBr339Tymr",
-      "relativePath": "mid/mid/13/14/QmVCMwJFL9Q67AL1TyeBGTLbu2a5uHnpiFivsBr339Tymr.mid",
-      "sha256": "5957d5fce535c48e756f94a6a3046bacf5ba84ee00dbe534ae972992128fc869",
-      "admittedBy": "tournament-global",
+      "workId": "QmUeMxaCbfQm7LTRPruopP8ixYRDojtRHJ8q5SFRQ1qM6G",
+      "relativePath": "mid/mid/12/17/QmUeMxaCbfQm7LTRPruopP8ixYRDojtRHJ8q5SFRQ1qM6G.mid",
+      "sha256": "aed917cc1c9fac470ba5afc9fc5ad3a33350ca4f0accff7ea6e9cdb1c8c75d8e",
+      "admittedBy": "tournament-classical",
       "measured": {
-        "bars": 79,
-        "tracks": 25,
+        "bars": 80,
+        "tracks": 5,
         "families": [
           "brass",
-          "drums",
-          "pipe",
-          "reed",
-          "strings"
+          "reed"
         ],
         "meter": "4/4",
-        "tempoBpm": 128,
+        "tempoBpm": 78,
         "tempoChanges": 0,
-        "notesPerBar": 73.56,
-        "swingRatio": 0.0652,
-        "effectivePitchClasses": 7.09
+        "notesPerBar": 10.86,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.28
       },
       "genre": {
-        "primary": "rnb_funk_soul",
+        "primary": "classical",
         "families": [
-          "rnb_funk_soul"
+          "classical"
         ],
         "source": "genres"
       }
     }
   },
   {
-    "id": "pdmx-QmdR8JT7qjszfGL9ivGsbCKx9UgnNvfiPAWkKwBhdPJs2L",
-    "title": "Blues bossa sax+guitare+accompagnement",
+    "id": "pdmx-QmRi9oH5ENmQU2NgfFLPQRVhQ7nYYjyzcb5saZ1XJPtmik",
+    "title": "Canon and Gigue in D major P.37",
     "inputType": "midi",
     "rights": {
+      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "work": "Canon and Gigue in D major P.37 (PDMX QmRi9oH5ENmQU2NgfFLPQRVhQ7nYYjyzcb5saZ1XJPtmik, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
       "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
-      "work": "Blues bossa sax+guitare+accompagnement (PDMX QmdR8JT7qjszfGL9ivGsbCKx9UgnNvfiPAWkKwBhdPJs2L, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "commercialUse": true,
+      "composer": "Johann Pachelbel",
+      "composerDied": 1706
     },
     "attributes": {
-      "tempoBand": "medium",
+      "tempoBand": "slow",
       "meter": "4/4",
       "feel": "straight",
-      "harmony": "moderate",
+      "harmony": "simple",
       "density": "dense",
       "ensemble": "large",
       "idiom": "western",
@@ -1568,46 +959,47 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     },
     "symbolicSource": {
       "kind": "pdmx_midi",
-      "workId": "QmdR8JT7qjszfGL9ivGsbCKx9UgnNvfiPAWkKwBhdPJs2L",
-      "relativePath": "mid/mid/3/41/QmdR8JT7qjszfGL9ivGsbCKx9UgnNvfiPAWkKwBhdPJs2L.mid",
-      "sha256": "206d1f1dd666ba1564a1584159ccb59269041ff7fb2780d78a7730001c211d04",
-      "admittedBy": "tournament-global",
+      "workId": "QmRi9oH5ENmQU2NgfFLPQRVhQ7nYYjyzcb5saZ1XJPtmik",
+      "relativePath": "mid/mid/9/25/QmRi9oH5ENmQU2NgfFLPQRVhQ7nYYjyzcb5saZ1XJPtmik.mid",
+      "sha256": "5db8ee09c7ec80f76e3e605edf4b1efc9526ac4a5554c586fb198cab1e6f8d66",
+      "admittedBy": "b08-csv-scan",
       "measured": {
-        "bars": 36,
+        "bars": 53,
         "tracks": 8,
         "families": [
-          "bass",
-          "drums",
           "guitar",
+          "keys",
+          "pipe",
           "reed"
         ],
         "meter": "4/4",
-        "tempoBpm": 120,
-        "tempoChanges": 1,
-        "notesPerBar": 27.64,
-        "swingRatio": 0.1585,
-        "effectivePitchClasses": 7.83
+        "tempoBpm": 70,
+        "tempoChanges": 0,
+        "notesPerBar": 29.38,
+        "swingRatio": 0,
+        "effectivePitchClasses": 6.85
       },
       "genre": {
-        "primary": "blues",
+        "primary": "classical",
         "families": [
-          "blues",
-          "latin"
+          "classical"
         ],
-        "source": "tags"
+        "source": "genres"
       }
     }
   },
   {
-    "id": "pdmx-Qma3KDfPJTb2ybD5UBqm5JAuSzYoBaGRqN8gogjMF53J9w",
-    "title": "sandstorm",
+    "id": "pdmx-QmY6WMtfD8J78NL7m1T8wDDvYg9EP1FUbKpxpoQPEAFyWC",
+    "title": "Parsifal WWV 111",
     "inputType": "midi",
     "rights": {
-      "kind": "public_domain",
       "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "sandstorm (PDMX Qma3KDfPJTb2ybD5UBqm5JAuSzYoBaGRqN8gogjMF53J9w, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "work": "Parsifal WWV 111 (PDMX QmY6WMtfD8J78NL7m1T8wDDvYg9EP1FUbKpxpoQPEAFyWC, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Richard Wagner",
+      "composerDied": 1883
     },
     "attributes": {
       "tempoBand": "medium",
@@ -1621,52 +1013,54 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     },
     "symbolicSource": {
       "kind": "pdmx_midi",
-      "workId": "Qma3KDfPJTb2ybD5UBqm5JAuSzYoBaGRqN8gogjMF53J9w",
-      "relativePath": "mid/mid/0/2/Qma3KDfPJTb2ybD5UBqm5JAuSzYoBaGRqN8gogjMF53J9w.mid",
-      "sha256": "0eb1a555fcc2b0f4232559b242740309f4dd1c6b74fcc8202b9811aa8b619fa8",
-      "admittedBy": "tournament-global",
+      "workId": "QmY6WMtfD8J78NL7m1T8wDDvYg9EP1FUbKpxpoQPEAFyWC",
+      "relativePath": "mid/mid/16/5/QmY6WMtfD8J78NL7m1T8wDDvYg9EP1FUbKpxpoQPEAFyWC.mid",
+      "sha256": "d045df4837933db5669c500afe1829bd1bfdae53e211affae7bac993d2350011",
+      "admittedBy": "b08-csv-scan",
       "measured": {
-        "bars": 65,
-        "tracks": 20,
+        "bars": 68,
+        "tracks": 27,
         "families": [
-          "bass",
           "brass",
-          "drums",
+          "pipe",
           "reed",
           "strings"
         ],
         "meter": "4/4",
-        "tempoBpm": 125,
-        "tempoChanges": 1,
-        "notesPerBar": 54.45,
-        "swingRatio": 0.0009,
-        "effectivePitchClasses": 9.38
+        "tempoBpm": 120,
+        "tempoChanges": 3,
+        "notesPerBar": 64.29,
+        "swingRatio": 0.0392,
+        "effectivePitchClasses": 11.28
       },
       "genre": {
-        "primary": "electronic",
+        "primary": "classical",
         "families": [
-          "electronic"
+          "classical",
+          "religious_worship"
         ],
         "source": "genres"
       }
     }
   },
   {
-    "id": "pdmx-QmSj6ei4HACHGvcbAXCaV8evjAHdgaqyrTdwJdKZCsCsz3",
-    "title": "Take Me Home Country Roads",
+    "id": "pdmx-QmQKhXJ45WEpxojLTX2GcPqwgFkUfDXbGVjG3GtdHfGvQn",
+    "title": "Maurerische Trauermusik K.477/479a",
     "inputType": "midi",
     "rights": {
-      "kind": "public_domain",
       "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "Take Me Home Country Roads (PDMX QmSj6ei4HACHGvcbAXCaV8evjAHdgaqyrTdwJdKZCsCsz3, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "work": "Maurerische Trauermusik K.477/479a (PDMX QmQKhXJ45WEpxojLTX2GcPqwgFkUfDXbGVjG3GtdHfGvQn, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Wolfgang Amadeus Mozart",
+      "composerDied": 1791
     },
     "attributes": {
-      "tempoBand": "fast",
-      "meter": "4/4",
+      "tempoBand": "slow",
+      "meter": "2/2",
       "feel": "straight",
-      "harmony": "simple",
+      "harmony": "moderate",
       "density": "dense",
       "ensemble": "large",
       "idiom": "western",
@@ -1674,47 +1068,46 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     },
     "symbolicSource": {
       "kind": "pdmx_midi",
-      "workId": "QmSj6ei4HACHGvcbAXCaV8evjAHdgaqyrTdwJdKZCsCsz3",
-      "relativePath": "mid/mid/10/26/QmSj6ei4HACHGvcbAXCaV8evjAHdgaqyrTdwJdKZCsCsz3.mid",
-      "sha256": "70d48f4bee4404f72fb3a59d9f3a41558f5711022a070b19a2ca9d630de6f075",
-      "admittedBy": "tournament-global",
+      "workId": "QmQKhXJ45WEpxojLTX2GcPqwgFkUfDXbGVjG3GtdHfGvQn",
+      "relativePath": "mid/mid/8/29/QmQKhXJ45WEpxojLTX2GcPqwgFkUfDXbGVjG3GtdHfGvQn.mid",
+      "sha256": "f3f5dd1e5e01dd2c1183306b8cebfc63afd361c34c1cad53e4f7d06347408dd1",
+      "admittedBy": "b08-csv-scan",
       "measured": {
-        "bars": 123,
-        "tracks": 6,
+        "bars": 70,
+        "tracks": 12,
         "families": [
-          "bass",
           "brass",
-          "drums",
-          "guitar",
-          "organ"
+          "reed",
+          "strings"
         ],
-        "meter": "4/4",
-        "tempoBpm": 166,
+        "meter": "2/2",
+        "tempoBpm": 70,
         "tempoChanges": 3,
-        "notesPerBar": 19.19,
-        "swingRatio": 0.0033,
-        "effectivePitchClasses": 6.83
+        "notesPerBar": 31.26,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.36
       },
       "genre": {
-        "primary": "country",
+        "primary": "classical",
         "families": [
-          "country",
-          "folk"
+          "classical"
         ],
         "source": "genres"
       }
     }
   },
   {
-    "id": "pdmx-QmZAqZ5sWmk1bVXiTQsW2kBQhKWJfbN7jDAT9C7abGqSxU",
-    "title": "Musical Hair: Where do I go (arranged for small R&B band)",
+    "id": "pdmx-QmVub35843rfqDG6a5QWkdikfMyynfsyrYAihB31WJT6Pf",
+    "title": "Sanctus à 12 (1597)",
     "inputType": "midi",
     "rights": {
+      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "work": "Sanctus à 12 (1597) (PDMX QmVub35843rfqDG6a5QWkdikfMyynfsyrYAihB31WJT6Pf, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
       "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "Musical Hair: Where do I go (arranged for small R&B band) (PDMX QmZAqZ5sWmk1bVXiTQsW2kBQhKWJfbN7jDAT9C7abGqSxU, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "commercialUse": true,
+      "composer": "Giovanni Gabrieli",
+      "composerDied": 1612
     },
     "attributes": {
       "tempoBand": "medium",
@@ -1728,268 +1121,52 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     },
     "symbolicSource": {
       "kind": "pdmx_midi",
-      "workId": "QmZAqZ5sWmk1bVXiTQsW2kBQhKWJfbN7jDAT9C7abGqSxU",
-      "relativePath": "mid/mid/17/10/QmZAqZ5sWmk1bVXiTQsW2kBQhKWJfbN7jDAT9C7abGqSxU.mid",
-      "sha256": "0a5e782759199dfabcbbe1f59d569e07aaee286424403b0e5de288a46d365c6b",
-      "admittedBy": "tournament-global",
+      "workId": "QmVub35843rfqDG6a5QWkdikfMyynfsyrYAihB31WJT6Pf",
+      "relativePath": "mid/mid/13/46/QmVub35843rfqDG6a5QWkdikfMyynfsyrYAihB31WJT6Pf.mid",
+      "sha256": "74fc716692bfb1b1b2230d9a21deda8011dcdf384fb68940e5448016f73ee53b",
+      "admittedBy": "b08-csv-scan",
       "measured": {
-        "bars": 65,
-        "tracks": 9,
+        "bars": 51,
+        "tracks": 18,
         "families": [
-          "bass",
-          "ensemble",
-          "guitar",
+          "chromatic_perc",
           "keys",
-          "reed"
+          "strings"
         ],
         "meter": "4/4",
-        "tempoBpm": 120,
+        "tempoBpm": 96,
         "tempoChanges": 0,
-        "notesPerBar": 38.62,
-        "swingRatio": 0.0228,
-        "effectivePitchClasses": 8
+        "notesPerBar": 35.02,
+        "swingRatio": 0,
+        "effectivePitchClasses": 7.81
       },
       "genre": {
-        "primary": "musical_theatre",
+        "primary": "classical",
         "families": [
-          "musical_theatre"
+          "classical"
         ],
-        "source": "tags"
+        "source": "genres"
       }
     }
   },
   {
-    "id": "pdmx-QmTqqMaBHWUp9D5UZyBQLQEKH7uivDdctjuz4RftniwCUi",
-    "title": "sleeping sun",
+    "id": "pdmx-QmPnMysjKyz1GSqYvR4tFgs3TgL5TgVxqsNGr7MPDUhj2C",
+    "title": "Sinfonia in F minor BWV 795",
     "inputType": "midi",
     "rights": {
-      "kind": "public_domain",
       "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "sleeping sun (PDMX QmTqqMaBHWUp9D5UZyBQLQEKH7uivDdctjuz4RftniwCUi, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "work": "Sinfonia in F minor BWV 795 (PDMX QmPnMysjKyz1GSqYvR4tFgs3TgL5TgVxqsNGr7MPDUhj2C, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Johann Sebastian Bach",
+      "composerDied": 1750
     },
     "attributes": {
-      "tempoBand": "medium",
+      "tempoBand": "slow",
       "meter": "4/4",
       "feel": "straight",
       "harmony": "complex",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmTqqMaBHWUp9D5UZyBQLQEKH7uivDdctjuz4RftniwCUi",
-      "relativePath": "mid/mid/11/38/QmTqqMaBHWUp9D5UZyBQLQEKH7uivDdctjuz4RftniwCUi.mid",
-      "sha256": "2be0e5b9cdf327456ad3d0cf36ad0b572a13bdea79d006b445348929a68694c6",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 109,
-        "tracks": 9,
-        "families": [
-          "bass",
-          "chromatic_perc",
-          "drums",
-          "guitar",
-          "pipe",
-          "synth"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 110,
-        "tempoChanges": 0,
-        "notesPerBar": 18.88,
-        "swingRatio": 0.0047,
-        "effectivePitchClasses": 10.11
-      },
-      "genre": {
-        "primary": "metal",
-        "families": [
-          "metal"
-        ],
-        "source": "genres"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmaGSbbadetKUxXVTcFYk9QaqRGQyi2KRtWmckqBD2Z1dK",
-    "title": "i will survive",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "i will survive (PDMX QmaGSbbadetKUxXVTcFYk9QaqRGQyi2KRtWmckqBD2Z1dK, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "moderate",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmaGSbbadetKUxXVTcFYk9QaqRGQyi2KRtWmckqBD2Z1dK",
-      "relativePath": "mid/mid/0/22/QmaGSbbadetKUxXVTcFYk9QaqRGQyi2KRtWmckqBD2Z1dK.mid",
-      "sha256": "d860a157c1638f5589749172b0703635deed8cd5193c9c471e891fcf2dee8072",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 92,
-        "tracks": 11,
-        "families": [
-          "bass",
-          "brass",
-          "drums",
-          "ensemble",
-          "guitar",
-          "keys",
-          "pipe",
-          "reed"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 116,
-        "tempoChanges": 1,
-        "notesPerBar": 54.32,
-        "swingRatio": 0,
-        "effectivePitchClasses": 8.96
-      },
-      "genre": {
-        "primary": "electronic",
-        "families": [
-          "electronic"
-        ],
-        "source": "genres"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmaAJQvJnwF4yghG8p3s5gzvrKYkJG23atgk8Hdg8dkopa",
-    "title": "This Girl - The Kungs for Pep band",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "This Girl - The Kungs for Pep band (PDMX QmaAJQvJnwF4yghG8p3s5gzvrKYkJG23atgk8Hdg8dkopa, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "simple",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmaAJQvJnwF4yghG8p3s5gzvrKYkJG23atgk8Hdg8dkopa",
-      "relativePath": "mid/mid/0/10/QmaAJQvJnwF4yghG8p3s5gzvrKYkJG23atgk8Hdg8dkopa.mid",
-      "sha256": "7ec5a7f6e42c4da66c102a3aea310190feeadd3cee85ef06fb1c01bcc29ffc5e",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 38,
-        "tracks": 13,
-        "families": [
-          "brass",
-          "drums",
-          "pipe",
-          "reed"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 130,
-        "tempoChanges": 0,
-        "notesPerBar": 69.79,
-        "swingRatio": 0.0072,
-        "effectivePitchClasses": 6.97
-      },
-      "genre": {
-        "primary": "wind_band_marching",
-        "families": [
-          "wind_band_marching"
-        ],
-        "source": "tags"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmShENbwkZFu1WzVmUfschPHEAVVmm83mxcaBNr3GqBbam",
-    "title": "amaranth",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
-      "work": "amaranth (PDMX QmShENbwkZFu1WzVmUfschPHEAVVmm83mxcaBNr3GqBbam, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "moderate",
-      "density": "dense",
-      "ensemble": "large",
-      "idiom": "western",
-      "production": "acoustic"
-    },
-    "symbolicSource": {
-      "kind": "pdmx_midi",
-      "workId": "QmShENbwkZFu1WzVmUfschPHEAVVmm83mxcaBNr3GqBbam",
-      "relativePath": "mid/mid/10/23/QmShENbwkZFu1WzVmUfschPHEAVVmm83mxcaBNr3GqBbam.mid",
-      "sha256": "53e81f9ae14d3cbd0b05bb643c40cd5c8abd7beca8e84a15e90ccc545fd7624e",
-      "admittedBy": "tournament-global",
-      "measured": {
-        "bars": 124,
-        "tracks": 9,
-        "families": [
-          "bass",
-          "ensemble",
-          "guitar",
-          "keys",
-          "strings",
-          "synth"
-        ],
-        "meter": "4/4",
-        "tempoBpm": 128,
-        "tempoChanges": 0,
-        "notesPerBar": 35.63,
-        "swingRatio": 0,
-        "effectivePitchClasses": 7.59
-      },
-      "genre": {
-        "primary": "metal",
-        "families": [
-          "metal"
-        ],
-        "source": "genres"
-      }
-    }
-  },
-  {
-    "id": "pdmx-QmUJGQdm7iiPTE6xX4DrR3Z13YSRKK5ULX6i3vr8iZxwCr",
-    "title": "earthbound - onett",
-    "inputType": "midi",
-    "rights": {
-      "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "earthbound - onett (PDMX QmUJGQdm7iiPTE6xX4DrR3Z13YSRKK5ULX6i3vr8iZxwCr, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
-    },
-    "attributes": {
-      "tempoBand": "medium",
-      "meter": "4/4",
-      "feel": "straight",
-      "harmony": "moderate",
       "density": "dense",
       "ensemble": "small",
       "idiom": "western",
@@ -1997,51 +1174,105 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     },
     "symbolicSource": {
       "kind": "pdmx_midi",
-      "workId": "QmUJGQdm7iiPTE6xX4DrR3Z13YSRKK5ULX6i3vr8iZxwCr",
-      "relativePath": "mid/mid/12/27/QmUJGQdm7iiPTE6xX4DrR3Z13YSRKK5ULX6i3vr8iZxwCr.mid",
-      "sha256": "cc4e6060fdea9db3afc1b5ae68907e032e60296b66b63ed2f8df103ecd67a7bf",
-      "admittedBy": "tournament-classical",
+      "workId": "QmPnMysjKyz1GSqYvR4tFgs3TgL5TgVxqsNGr7MPDUhj2C",
+      "relativePath": "mid/mid/7/33/QmPnMysjKyz1GSqYvR4tFgs3TgL5TgVxqsNGr7MPDUhj2C.mid",
+      "sha256": "05a620974901386fc066f6d5cdc89e2c59ce87f2011166c1a675e2784345eade",
+      "admittedBy": "b08-csv-scan",
       "measured": {
-        "bars": 63,
-        "tracks": 5,
+        "bars": 35,
+        "tracks": 3,
         "families": [
-          "bass",
-          "brass",
-          "drums",
-          "ensemble"
+          "pipe",
+          "reed",
+          "strings"
         ],
         "meter": "4/4",
-        "tempoBpm": 110,
-        "tempoChanges": 0,
-        "notesPerBar": 30.05,
-        "swingRatio": 0.025,
-        "effectivePitchClasses": 7.67
+        "tempoBpm": 42,
+        "tempoChanges": 4,
+        "notesPerBar": 19.03,
+        "swingRatio": 0.0073,
+        "effectivePitchClasses": 10.76
       },
       "genre": {
-        "primary": "film_game",
+        "primary": "classical",
         "families": [
-          "film_game"
+          "classical"
         ],
         "source": "genres"
       }
     }
   },
   {
-    "id": "pdmx-QmaCHVw1Uoj5ot5ciMpYCj2ffGga8PsJAzq94mfx7PUXW3",
-    "title": "Señorita",
+    "id": "pdmx-QmdjNEQuyT2BJ7WKuqsqC6fBx8uuEfDYUPNLoV6VCimnoG",
+    "title": "Ave Maria Op. 145",
     "inputType": "midi",
     "rights": {
+      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "work": "Ave Maria Op. 145 (PDMX QmdjNEQuyT2BJ7WKuqsqC6fBx8uuEfDYUPNLoV6VCimnoG, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
       "kind": "public_domain",
-      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "Señorita (PDMX QmaCHVw1Uoj5ot5ciMpYCj2ffGga8PsJAzq94mfx7PUXW3, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "commercialUse": true,
+      "composer": "Camille Saint-Saëns",
+      "composerDied": 1921
     },
     "attributes": {
       "tempoBand": "medium",
+      "meter": "3/4",
+      "feel": "straight",
+      "harmony": "complex",
+      "density": "moderate",
+      "ensemble": "large",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmdjNEQuyT2BJ7WKuqsqC6fBx8uuEfDYUPNLoV6VCimnoG",
+      "relativePath": "mid/mid/3/26/QmdjNEQuyT2BJ7WKuqsqC6fBx8uuEfDYUPNLoV6VCimnoG.mid",
+      "sha256": "84e407a5cfa4e347838306a372023c308c7c474e1da688a28a202f67268547f3",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 77,
+        "tracks": 6,
+        "families": [
+          "ensemble",
+          "keys",
+          "pipe"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 120,
+        "tempoChanges": 0,
+        "notesPerBar": 8.75,
+        "swingRatio": 0,
+        "effectivePitchClasses": 9.55
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmacZvReyzBnUFUNGyNCk7sfmz8mC6w6knAvPqsHDB9RdF",
+    "title": "Repentir",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "work": "Repentir (PDMX QmacZvReyzBnUFUNGyNCk7sfmz8mC6w6knAvPqsHDB9RdF, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Charles Gounod",
+      "composerDied": 1893
+    },
+    "attributes": {
+      "tempoBand": "slow",
       "meter": "4/4",
       "feel": "straight",
-      "harmony": "moderate",
+      "harmony": "complex",
       "density": "dense",
       "ensemble": "large",
       "idiom": "western",
@@ -2049,52 +1280,375 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     },
     "symbolicSource": {
       "kind": "pdmx_midi",
-      "workId": "QmaCHVw1Uoj5ot5ciMpYCj2ffGga8PsJAzq94mfx7PUXW3",
-      "relativePath": "mid/mid/0/14/QmaCHVw1Uoj5ot5ciMpYCj2ffGga8PsJAzq94mfx7PUXW3.mid",
-      "sha256": "9d6356a608ff724e577dc526a44b0ebfd29aaa494b4e54cbc6919d8f70b4a53b",
-      "admittedBy": "tournament-global",
+      "workId": "QmacZvReyzBnUFUNGyNCk7sfmz8mC6w6knAvPqsHDB9RdF",
+      "relativePath": "mid/mid/0/13/QmacZvReyzBnUFUNGyNCk7sfmz8mC6w6knAvPqsHDB9RdF.mid",
+      "sha256": "2e37210173a412b3f07ea312f990070c54894ab07b31d056e41acbe7ec4fe900",
+      "admittedBy": "b08-csv-scan",
       "measured": {
-        "bars": 84,
+        "bars": 92,
+        "tracks": 8,
+        "families": [
+          "brass",
+          "ensemble",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 72,
+        "tempoChanges": 9,
+        "notesPerBar": 51.72,
+        "swingRatio": 0.0527,
+        "effectivePitchClasses": 10.25
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmPSDehUeJySKzfRhGcyeFqV8ket1fRPuS6L11TXtnfryA",
+    "title": "Requiem in D minor K.626",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "work": "Requiem in D minor K.626 (PDMX QmPSDehUeJySKzfRhGcyeFqV8ket1fRPuS6L11TXtnfryA, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Wolfgang Amadeus Mozart",
+      "composerDied": 1791
+    },
+    "attributes": {
+      "tempoBand": "slow",
+      "meter": "4/4",
+      "feel": "straight",
+      "harmony": "complex",
+      "density": "dense",
+      "ensemble": "large",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmPSDehUeJySKzfRhGcyeFqV8ket1fRPuS6L11TXtnfryA",
+      "relativePath": "mid/mid/7/43/QmPSDehUeJySKzfRhGcyeFqV8ket1fRPuS6L11TXtnfryA.mid",
+      "sha256": "84db781fd501d1c144d8fa05b4ff6cf88a207770b9c09369658874f2ce921ad3",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 83,
         "tracks": 18,
         "families": [
           "brass",
-          "drums",
-          "pipe",
-          "reed"
+          "ensemble",
+          "keys",
+          "organ",
+          "reed",
+          "strings"
         ],
         "meter": "4/4",
-        "tempoBpm": 120,
-        "tempoChanges": 0,
-        "notesPerBar": 59.35,
-        "swingRatio": 0.0044,
-        "effectivePitchClasses": 8.12
+        "tempoBpm": 37,
+        "tempoChanges": 7,
+        "notesPerBar": 108.17,
+        "swingRatio": 0,
+        "effectivePitchClasses": 9.94
       },
       "genre": {
-        "primary": "pop",
+        "primary": "classical",
         "families": [
-          "pop",
-          "rnb_funk_soul"
+          "classical"
         ],
         "source": "genres"
       }
     }
   },
   {
-    "id": "pdmx-QmaLyZRXXjfypokZs1VXcjrCyU7huPwxKj1DetTLLn2dzY",
-    "title": "postcards from italy",
+    "id": "pdmx-QmUd76kyxzBGnDj6f4Gdvd1qrPncxUMAp3Qo2G5AGDPmqE",
+    "title": "Romance Op.36",
     "inputType": "midi",
     "rights": {
-      "kind": "public_domain",
       "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "work": "postcards from italy (PDMX QmaLyZRXXjfypokZs1VXcjrCyU7huPwxKj1DetTLLn2dzY, no_license_conflict)",
-      "clearedAt": "2026-09-10T03:17:23.562Z",
-      "commercialUse": true
+      "work": "Romance Op.36 (PDMX QmUd76kyxzBGnDj6f4Gdvd1qrPncxUMAp3Qo2G5AGDPmqE, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Camille Saint-Saëns",
+      "composerDied": 1921
+    },
+    "attributes": {
+      "tempoBand": "medium",
+      "meter": "3/4",
+      "feel": "straight",
+      "harmony": "moderate",
+      "density": "moderate",
+      "ensemble": "large",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmUd76kyxzBGnDj6f4Gdvd1qrPncxUMAp3Qo2G5AGDPmqE",
+      "relativePath": "mid/mid/12/15/QmUd76kyxzBGnDj6f4Gdvd1qrPncxUMAp3Qo2G5AGDPmqE.mid",
+      "sha256": "cf1574616896864cbc43639438d6fd1f70a7ec2779e77789fb65cda3a885b8fd",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 93,
+        "tracks": 12,
+        "families": [
+          "brass",
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 76,
+        "tempoChanges": 17,
+        "notesPerBar": 14.37,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.37
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmYswpCbtf9oM4g58Qj15qWdbjS7CHBMgcS7a4SLiuyTkg",
+    "title": "Laudate pueri Dominum",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "work": "Laudate pueri Dominum (PDMX QmYswpCbtf9oM4g58Qj15qWdbjS7CHBMgcS7a4SLiuyTkg, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Leone Leoni",
+      "composerDied": 1627
     },
     "attributes": {
       "tempoBand": "medium",
       "meter": "4/4",
       "feel": "straight",
       "harmony": "simple",
+      "density": "moderate",
+      "ensemble": "small",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmYswpCbtf9oM4g58Qj15qWdbjS7CHBMgcS7a4SLiuyTkg",
+      "relativePath": "mid/mid/16/42/QmYswpCbtf9oM4g58Qj15qWdbjS7CHBMgcS7a4SLiuyTkg.mid",
+      "sha256": "5b0bef6bb625931ed8cb749a8d16078f045b67f2091d162844d564b967f19c10",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 110,
+        "tracks": 4,
+        "families": [
+          "brass",
+          "keys",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 120,
+        "tempoChanges": 0,
+        "notesPerBar": 6.66,
+        "swingRatio": 0,
+        "effectivePitchClasses": 6.74
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmabLHtHwqSE1MNh6fqJeq5jv3chRXVNzWm3Uub6YU2b3v",
+    "title": "La nuict froide et sombre",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "work": "La nuict froide et sombre (PDMX QmabLHtHwqSE1MNh6fqJeq5jv3chRXVNzWm3Uub6YU2b3v, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Orlando di Lasso",
+      "composerDied": 1594
+    },
+    "attributes": {
+      "tempoBand": "medium",
+      "meter": "4/4",
+      "feel": "straight",
+      "harmony": "moderate",
+      "density": "moderate",
+      "ensemble": "small",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmabLHtHwqSE1MNh6fqJeq5jv3chRXVNzWm3Uub6YU2b3v",
+      "relativePath": "mid/mid/0/11/QmabLHtHwqSE1MNh6fqJeq5jv3chRXVNzWm3Uub6YU2b3v.mid",
+      "sha256": "8e9fa06c12923a0b2925d4df908c1afe5cc0d94ba8b7871142163faf33967a83",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 34,
+        "tracks": 4,
+        "families": [
+          "brass",
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 106,
+        "tempoChanges": 0,
+        "notesPerBar": 12.88,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.94
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmZfbGTDQEsE19m3tsnSiGcm1Z1PCSeQZgRR1fHbRpsNSw",
+    "title": "Ave verum corpus K.618",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "work": "Ave verum corpus K.618 (PDMX QmZfbGTDQEsE19m3tsnSiGcm1Z1PCSeQZgRR1fHbRpsNSw, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Wolfgang Amadeus Mozart",
+      "composerDied": 1791
+    },
+    "attributes": {
+      "tempoBand": "slow",
+      "meter": "4/4",
+      "feel": "straight",
+      "harmony": "moderate",
+      "density": "dense",
+      "ensemble": "large",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmZfbGTDQEsE19m3tsnSiGcm1Z1PCSeQZgRR1fHbRpsNSw",
+      "relativePath": "mid/mid/17/19/QmZfbGTDQEsE19m3tsnSiGcm1Z1PCSeQZgRR1fHbRpsNSw.mid",
+      "sha256": "9c5ad1116b3825fef24f86b15183efb8042e875d0ee74dfb58bd7d746a4cb57f",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 46,
+        "tracks": 8,
+        "families": [
+          "ensemble",
+          "keys",
+          "organ"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 60,
+        "tempoChanges": 1,
+        "notesPerBar": 17.96,
+        "swingRatio": 0.087,
+        "effectivePitchClasses": 8.84
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmVUs32cGZC7fe5RN2AaeWxiJEb9f2ht2EHCBNqa5z1RRM",
+    "title": "Magnificat in E-flat major BWV 243a",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "work": "Magnificat in E-flat major BWV 243a (PDMX QmVUs32cGZC7fe5RN2AaeWxiJEb9f2ht2EHCBNqa5z1RRM, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Johann Sebastian Bach",
+      "composerDied": 1750
+    },
+    "attributes": {
+      "tempoBand": "slow",
+      "meter": "3/8",
+      "feel": "straight",
+      "harmony": "moderate",
+      "density": "dense",
+      "ensemble": "large",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmVUs32cGZC7fe5RN2AaeWxiJEb9f2ht2EHCBNqa5z1RRM",
+      "relativePath": "mid/mid/13/47/QmVUs32cGZC7fe5RN2AaeWxiJEb9f2ht2EHCBNqa5z1RRM.mid",
+      "sha256": "cda4aeb4883670fa76585aa1dc674e3d344fb3be1c210bdbe173725b4c580a08",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 92,
+        "tracks": 6,
+        "families": [
+          "ensemble",
+          "organ",
+          "strings"
+        ],
+        "meter": "3/8",
+        "tempoBpm": 60,
+        "tempoChanges": 0,
+        "notesPerBar": 17.67,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.37
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmNeeCREFpNohPbnUgeuEWdb6PT1jo2DmqxndJD4dkt8GH",
+    "title": "Weihnachtsoratorium BWV 248",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "work": "Weihnachtsoratorium BWV 248 (PDMX QmNeeCREFpNohPbnUgeuEWdb6PT1jo2DmqxndJD4dkt8GH, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Johann Sebastian Bach",
+      "composerDied": 1750
+    },
+    "attributes": {
+      "tempoBand": "slow",
+      "meter": "12/8",
+      "feel": "compound",
+      "harmony": "complex",
       "density": "dense",
       "ensemble": "small",
       "idiom": "western",
@@ -2102,31 +1656,509 @@ export const REAL_CORPUS_TIER_H: CorpusEntry[] = [
     },
     "symbolicSource": {
       "kind": "pdmx_midi",
-      "workId": "QmaLyZRXXjfypokZs1VXcjrCyU7huPwxKj1DetTLLn2dzY",
-      "relativePath": "mid/mid/0/30/QmaLyZRXXjfypokZs1VXcjrCyU7huPwxKj1DetTLLn2dzY.mid",
-      "sha256": "25c8029f3ea7bfddd46d48e19651b49e85a96f3c2bd67a94c425857ae1765499",
-      "admittedBy": "tournament-global",
+      "workId": "QmNeeCREFpNohPbnUgeuEWdb6PT1jo2DmqxndJD4dkt8GH",
+      "relativePath": "mid/mid/6/17/QmNeeCREFpNohPbnUgeuEWdb6PT1jo2DmqxndJD4dkt8GH.mid",
+      "sha256": "7617759deeeca68002400177ed2f8b3c2d06f1cd0bf81460a9ef664af6f3f445",
+      "admittedBy": "b08-csv-scan",
       "measured": {
-        "bars": 100,
-        "tracks": 5,
+        "bars": 63,
+        "tracks": 4,
         "families": [
-          "drums",
-          "guitar",
           "keys",
-          "pipe",
-          "reed"
+          "organ",
+          "strings"
+        ],
+        "meter": "12/8",
+        "tempoBpm": 75,
+        "tempoChanges": 0,
+        "notesPerBar": 33.87,
+        "swingRatio": 0.0073,
+        "effectivePitchClasses": 9.13
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmSkrSgHGjYgtFVKRJMwoXj8qNehF4MFqM3NAcZDfSCWXk",
+    "title": "Pictures at an Exhibition",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "work": "Pictures at an Exhibition (PDMX QmSkrSgHGjYgtFVKRJMwoXj8qNehF4MFqM3NAcZDfSCWXk, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Modest Mussorgsky",
+      "composerDied": 1881
+    },
+    "attributes": {
+      "tempoBand": "slow",
+      "meter": "3/4",
+      "feel": "straight",
+      "harmony": "moderate",
+      "density": "moderate",
+      "ensemble": "large",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmSkrSgHGjYgtFVKRJMwoXj8qNehF4MFqM3NAcZDfSCWXk",
+      "relativePath": "mid/mid/10/28/QmSkrSgHGjYgtFVKRJMwoXj8qNehF4MFqM3NAcZDfSCWXk.mid",
+      "sha256": "5a5e43ac1b816b126f55f4160c867eb00430faec075c0efb951ccf31094d9ff0",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 30,
+        "tracks": 13,
+        "families": [
+          "brass",
+          "reed",
+          "strings"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 53.33,
+        "tempoChanges": 33,
+        "notesPerBar": 7.47,
+        "swingRatio": null,
+        "effectivePitchClasses": 8.93
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmYRN81aYQwTnBC8T29MbuYeEPanGKE1fF7idpSDYcmsW4",
+    "title": "Sospir che dal bel petto",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "work": "Sospir che dal bel petto (PDMX QmYRN81aYQwTnBC8T29MbuYeEPanGKE1fF7idpSDYcmsW4, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Constantijn Huygens",
+      "composerDied": 1687
+    },
+    "attributes": {
+      "tempoBand": "slow",
+      "meter": "4/4",
+      "feel": "straight",
+      "harmony": "moderate",
+      "density": "moderate",
+      "ensemble": "small",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmYRN81aYQwTnBC8T29MbuYeEPanGKE1fF7idpSDYcmsW4",
+      "relativePath": "mid/mid/16/41/QmYRN81aYQwTnBC8T29MbuYeEPanGKE1fF7idpSDYcmsW4.mid",
+      "sha256": "25301e5ca5f897b02e703a68cabb2e7b3d81378bd5ed4007b51e441f625c3914",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 38,
+        "tracks": 4,
+        "families": [
+          "ensemble",
+          "keys",
+          "strings"
         ],
         "meter": "4/4",
+        "tempoBpm": 60,
+        "tempoChanges": 1,
+        "notesPerBar": 15.05,
+        "swingRatio": 0,
+        "effectivePitchClasses": 7.95
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmWQW2UNmevbsAeoWY6cFcswHx3veUXD32gaGFRJuRy6UT",
+    "title": "Symphonie No.1 Op.14",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "work": "Symphonie No.1 Op.14 (PDMX QmWQW2UNmevbsAeoWY6cFcswHx3veUXD32gaGFRJuRy6UT, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Louis Vierne",
+      "composerDied": 1937
+    },
+    "attributes": {
+      "tempoBand": "fast",
+      "meter": "2/2",
+      "feel": "straight",
+      "harmony": "moderate",
+      "density": "dense",
+      "ensemble": "large",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmWQW2UNmevbsAeoWY6cFcswHx3veUXD32gaGFRJuRy6UT",
+      "relativePath": "mid/mid/14/39/QmWQW2UNmevbsAeoWY6cFcswHx3veUXD32gaGFRJuRy6UT.mid",
+      "sha256": "0a08cf1138993ed99176a3a482e97b381c5bc900d851b141b44e0ac808d45783",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 81,
+        "tracks": 12,
+        "families": [
+          "brass",
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "2/2",
+        "tempoBpm": 176,
+        "tempoChanges": 4,
+        "notesPerBar": 107.78,
+        "swingRatio": 0.0655,
+        "effectivePitchClasses": 8.94
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmagNp8uSuDjmqYA4Fdmy5heeqtruuSujihZGHzzHLFveo",
+    "title": "Herr Jesu Christ du höchstes Gut BWV 113",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "work": "Herr Jesu Christ du höchstes Gut BWV 113 (PDMX QmagNp8uSuDjmqYA4Fdmy5heeqtruuSujihZGHzzHLFveo, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Johann Sebastian Bach",
+      "composerDied": 1750
+    },
+    "attributes": {
+      "tempoBand": "medium",
+      "meter": "12/8",
+      "feel": "compound",
+      "harmony": "moderate",
+      "density": "dense",
+      "ensemble": "large",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmagNp8uSuDjmqYA4Fdmy5heeqtruuSujihZGHzzHLFveo",
+      "relativePath": "mid/mid/0/21/QmagNp8uSuDjmqYA4Fdmy5heeqtruuSujihZGHzzHLFveo.mid",
+      "sha256": "04e33042234b63ebc397fc64e01372e62f06298149196488c688458e1d3dfd00",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 48,
+        "tracks": 6,
+        "families": [
+          "brass",
+          "organ",
+          "reed",
+          "strings"
+        ],
+        "meter": "12/8",
         "tempoBpm": 120,
+        "tempoChanges": 18,
+        "notesPerBar": 46.58,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.43
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmaiVgivyKRqDRrVGCBm7RntRAS8ycfhXNZPfisacyq8xB",
+    "title": "Dido and Aeneas Z.626",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "work": "Dido and Aeneas Z.626 (PDMX QmaiVgivyKRqDRrVGCBm7RntRAS8ycfhXNZPfisacyq8xB, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Henry Purcell",
+      "composerDied": 1695
+    },
+    "attributes": {
+      "tempoBand": "medium",
+      "meter": "4/4",
+      "feel": "straight",
+      "harmony": "moderate",
+      "density": "dense",
+      "ensemble": "large",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmaiVgivyKRqDRrVGCBm7RntRAS8ycfhXNZPfisacyq8xB",
+      "relativePath": "mid/mid/0/25/QmaiVgivyKRqDRrVGCBm7RntRAS8ycfhXNZPfisacyq8xB.mid",
+      "sha256": "c8e8c9cdb9d434124302a5bf522b215a90b6e4567e7cf5c9288ee815f89e861e",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 58,
+        "tracks": 6,
+        "families": [
+          "ensemble",
+          "keys",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 85,
+        "tempoChanges": 1,
+        "notesPerBar": 17.57,
+        "swingRatio": 0.0175,
+        "effectivePitchClasses": 8.66
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmbuiKkdzFVTc2nw7gVz27vnKqpxX8wzGJtuJCKVibqXJW",
+    "title": "I was Glad",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "work": "I was Glad (PDMX QmbuiKkdzFVTc2nw7gVz27vnKqpxX8wzGJtuJCKVibqXJW, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Hubert Parry",
+      "composerDied": 1918
+    },
+    "attributes": {
+      "tempoBand": "slow",
+      "meter": "4/4",
+      "feel": "straight",
+      "harmony": "complex",
+      "density": "dense",
+      "ensemble": "large",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmbuiKkdzFVTc2nw7gVz27vnKqpxX8wzGJtuJCKVibqXJW",
+      "relativePath": "mid/mid/1/46/QmbuiKkdzFVTc2nw7gVz27vnKqpxX8wzGJtuJCKVibqXJW.mid",
+      "sha256": "649cfeeea7dccb8a4eb274f43aed41aefc677886c4b3ee890448e0420eaef9ed",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 81,
+        "tracks": 13,
+        "families": [
+          "brass",
+          "ensemble",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 72,
+        "tempoChanges": 7,
+        "notesPerBar": 46.43,
+        "swingRatio": 0,
+        "effectivePitchClasses": 10.04
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmRazo5uaUEZxMyvVRquR2RJgCTFj2NoVdaaRKCvLWUZVT",
+    "title": "Du sollt Gott deinen Herren lieben BWV 77",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "work": "Du sollt Gott deinen Herren lieben BWV 77 (PDMX QmRazo5uaUEZxMyvVRquR2RJgCTFj2NoVdaaRKCvLWUZVT, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Johann Sebastian Bach",
+      "composerDied": 1750
+    },
+    "attributes": {
+      "tempoBand": "slow",
+      "meter": "4/4",
+      "feel": "straight",
+      "harmony": "complex",
+      "density": "dense",
+      "ensemble": "small",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmRazo5uaUEZxMyvVRquR2RJgCTFj2NoVdaaRKCvLWUZVT",
+      "relativePath": "mid/mid/9/9/QmRazo5uaUEZxMyvVRquR2RJgCTFj2NoVdaaRKCvLWUZVT.mid",
+      "sha256": "b00ac710b375ed1e2c5c7509521d1905e41dc5b29ba18e053d96d867c42b0ade",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 65,
+        "tracks": 4,
+        "families": [
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 60,
         "tempoChanges": 0,
-        "notesPerBar": 38.78,
-        "swingRatio": 0.0113,
-        "effectivePitchClasses": 6.75
+        "notesPerBar": 28.38,
+        "swingRatio": 0,
+        "effectivePitchClasses": 9.53
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmUWMUkMcVhUk6DJNQf4LmYnhvpL4Gh3YYebVzc2jHon8g",
+    "title": "Bring a Torch Jeanette Isabella",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "work": "Bring a Torch Jeanette Isabella (PDMX QmUWMUkMcVhUk6DJNQf4LmYnhvpL4Gh3YYebVzc2jHon8g, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "traditional": true,
+      "source": "Bring a Torch, Jeanette, Isabella: Provençal carol, 17th century"
+    },
+    "attributes": {
+      "tempoBand": "medium",
+      "meter": "3/8",
+      "feel": "straight",
+      "harmony": "simple",
+      "density": "moderate",
+      "ensemble": "large",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmUWMUkMcVhUk6DJNQf4LmYnhvpL4Gh3YYebVzc2jHon8g",
+      "relativePath": "mid/mid/12/51/QmUWMUkMcVhUk6DJNQf4LmYnhvpL4Gh3YYebVzc2jHon8g.mid",
+      "sha256": "ac40ee39be8886196aef4ef5163e72a5d7197c3d3db99267fea0fa00bc4e9a08",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 59,
+        "tracks": 6,
+        "families": [
+          "brass",
+          "chromatic_perc",
+          "guitar"
+        ],
+        "meter": "3/8",
+        "tempoBpm": 93,
+        "tempoChanges": 0,
+        "notesPerBar": 7.58,
+        "swingRatio": null,
+        "effectivePitchClasses": 6.34
       },
       "genre": {
         "primary": "folk",
         "families": [
           "folk"
+        ],
+        "source": "genres"
+      }
+    }
+  },
+  {
+    "id": "pdmx-QmSjcutfPijpJPFnCwwpuuVbszjuAFHSg9WFtvMiFZZ8D7",
+    "title": "Psalm 90 - Herr du bist uns're Zuflucht",
+    "inputType": "midi",
+    "rights": {
+      "reference": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "work": "Psalm 90 - Herr du bist uns're Zuflucht (PDMX QmSjcutfPijpJPFnCwwpuuVbszjuAFHSg9WFtvMiFZZ8D7, no_license_conflict)",
+      "clearedAt": "2026-09-10T03:59:30.891Z",
+      "kind": "public_domain",
+      "commercialUse": true,
+      "composer": "Jan Pieterszoon Sweelinck",
+      "composerDied": 1621
+    },
+    "attributes": {
+      "tempoBand": "slow",
+      "meter": "4/4",
+      "feel": "straight",
+      "harmony": "moderate",
+      "density": "dense",
+      "ensemble": "small",
+      "idiom": "western",
+      "production": "acoustic"
+    },
+    "symbolicSource": {
+      "kind": "pdmx_midi",
+      "workId": "QmSjcutfPijpJPFnCwwpuuVbszjuAFHSg9WFtvMiFZZ8D7",
+      "relativePath": "mid/mid/10/26/QmSjcutfPijpJPFnCwwpuuVbszjuAFHSg9WFtvMiFZZ8D7.mid",
+      "sha256": "36e88901b92520304af98960bd7bbb688e99c8449ff136a99a3be14e08bcb9da",
+      "admittedBy": "b08-csv-scan",
+      "measured": {
+        "bars": 29,
+        "tracks": 4,
+        "families": [
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 55,
+        "tempoChanges": 2,
+        "notesPerBar": 16.1,
+        "swingRatio": 0,
+        "effectivePitchClasses": 7.89
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
         ],
         "source": "genres"
       }

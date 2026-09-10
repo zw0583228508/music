@@ -106,6 +106,8 @@ export type PdmxCsvRow = PdmxMetadataRow & {
   /** The authors' own subset membership, kept separate from our reading of it. */
   inNoLicenseConflictSubset?: boolean;
   composer?: string;
+  /** MuseScore's "artist" field as published: a composer, a category ("Misc Traditional") or the uploader's handle. Read when the column exists, never required. */
+  artist?: string;
   /** Uploader tags and community groups, hyphen-joined as published; read when the column exists, never required. */
   tags?: string;
   groups?: string;
@@ -170,6 +172,7 @@ export function csvRowToMetadataRow(
     midiPath,
     inNoLicenseConflictSubset: text(at("subset:no_license_conflict"))?.toLowerCase() === "true",
     composer: text(at("composer_name")),
+    artist: text(at("artist_name")),
     tags: text(at("tags")),
     groups: text(at("groups")),
     trackPrograms: text(at("tracks"))?.split("-").map(Number).filter((n) => Number.isInteger(n) && n >= 0),

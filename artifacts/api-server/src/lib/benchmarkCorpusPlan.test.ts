@@ -4,6 +4,7 @@ import {
   CORPUS_TARGET_HUMAN_GOLD,
   CORPUS_TARGET_SONGS,
   MIN_PER_VALUE,
+  PUBLIC_DOMAIN_DEATH_YEAR_CUTOFF,
   REAL_BENCHMARK_CORPUS,
   admitEntries,
   corpusCoverage,
@@ -12,6 +13,7 @@ import {
   type CorpusEntry,
   type CorpusRightsBasis,
 } from "./benchmarkCorpusPlan";
+import { REAL_CORPUS_TIER_H } from "./realCorpusTierH";
 
 const rights: CorpusRightsBasis = {
   kind: "public_domain",
@@ -19,6 +21,8 @@ const rights: CorpusRightsBasis = {
   work: "Niggun in D minor (trad., arr. unknown, pre-1900)",
   clearedAt: "2026-09-09T00:00:00.000Z",
   commercialUse: true,
+  traditional: true,
+  source: "Hasidic niggun, notated in Idelsohn's Thesaurus (1932) from a 19th-century tradition",
 };
 
 function entry(id: string, over: Partial<CorpusEntry> = {}): CorpusEntry {
@@ -91,12 +95,50 @@ test("a dimension represented by one or two songs is an anecdote, not coverage",
   assert.ok(meter.missing.includes("3/4"), `${MIN_PER_VALUE} songs are required before a value counts`);
 });
 
-test("the real corpus is empty and says so — Q-00 is not done", () => {
-  assert.deepEqual(REAL_BENCHMARK_CORPUS, []);
+test("a public-domain claim clears the composition only with a composer dead by the cutoff or a traditional source; contested is refused with its reason", () => {
+  const base = { reference: "https://example.test/score/9", work: "Some work (PDMX 9, no_license_conflict)", clearedAt: "2026-09-10T00:00:00.000Z" };
+  // The score's licence alone - exactly what the previous Tier H rested on.
+  const scoreOnly = entry("score-only", { rights: { ...base, kind: "public_domain", commercialUse: true } as CorpusRightsBasis });
+  assert.match(corpusRefusalReason(scoreOnly)!, /claims public domain on the score's licence alone/);
+  const late = entry("late", { rights: { ...base, kind: "public_domain", commercialUse: true, composer: "Jean Sibelius", composerDied: 1957 } });
+  assert.match(corpusRefusalReason(late)!, new RegExp(`died in 1957, after the ${PUBLIC_DOMAIN_DEATH_YEAR_CUTOFF} cutoff`));
+  const onTime = entry("on-time", { rights: { ...base, kind: "public_domain", commercialUse: true, composer: "Franz Xaver Gruber", composerDied: 1863 } });
+  assert.equal(corpusRefusalReason(onTime), null);
+  const unsourced = entry("unsourced", { rights: { ...base, kind: "public_domain", commercialUse: true, traditional: true, source: " " } });
+  assert.match(corpusRefusalReason(unsourced)!, /called traditional with no source/);
+  const contested = entry("contested", { rights: { ...base, kind: "contested", commercialUse: false, reason: "the PDMX row names \"ABBA\", not on the verified public-domain composer list" } });
+  assert.match(corpusRefusalReason(contested)!, /is contested: the PDMX row names "ABBA"/);
+  const { admitted, refused } = admitEntries([scoreOnly, late, onTime, unsourced, contested]);
+  assert.deepEqual(admitted.map((e) => e.id), ["on-time"]);
+  assert.equal(refused.length, 4);
+  // A contested entry never counts towards coverage either.
+  assert.equal(corpusCoverage([contested, onTime]).songs, 1);
+});
+
+test("the generated Tier H corpus holds no contested entry and every entry proves its composition", () => {
+  assert.ok(REAL_CORPUS_TIER_H.length > 0, "Tier H is generated (select-real-corpus.mjs)");
+  for (const e of REAL_CORPUS_TIER_H) {
+    assert.notEqual(e.rights.kind, "contested", `${e.title} is contested and must not be in the generated corpus`);
+    assert.equal(e.rights.kind, "public_domain");
+    if (e.rights.kind === "public_domain") {
+      if (e.rights.traditional) assert.ok(e.rights.source?.trim(), `${e.title}: traditional needs a source`);
+      else {
+        assert.ok(e.rights.composer?.trim(), `${e.title}: composer missing`);
+        assert.ok(typeof e.rights.composerDied === "number" && e.rights.composerDied <= PUBLIC_DOMAIN_DEATH_YEAR_CUTOFF, `${e.title}: composer death year ${e.rights.composerDied} is not inside the term`);
+      }
+    }
+    assert.equal(corpusRefusalReason(e), null, `${e.title}: ${corpusRefusalReason(e)}`);
+  }
+  assert.equal(admitEntries(REAL_CORPUS_TIER_H).refused.length, 0);
+  assert.deepEqual(REAL_BENCHMARK_CORPUS.map((e) => e.id), REAL_CORPUS_TIER_H.map((e) => e.id));
+});
+
+test("the real corpus is not a measure yet and says so - Q-00 is not done", () => {
   const coverage = corpusCoverage(REAL_BENCHMARK_CORPUS);
   assert.equal(coverage.ready, false);
-  assert.equal(coverage.songs, 0);
+  assert.equal(coverage.songs, REAL_CORPUS_TIER_H.length);
   assert.equal(coverage.humanGold, 0);
-  assert.ok(coverage.gaps[0].startsWith(`songs: 0 of ${CORPUS_TARGET_SONGS}`));
+  assert.ok(coverage.gaps[0].startsWith(`songs: ${REAL_CORPUS_TIER_H.length} of ${CORPUS_TARGET_SONGS}`));
+  assert.ok(coverage.gaps.some((g) => g.startsWith('inputType "full_song"')), "scores never fill the recorded slices");
   assert.match(describeCoverage(coverage), /^The benchmark corpus is not a measure yet/);
 });

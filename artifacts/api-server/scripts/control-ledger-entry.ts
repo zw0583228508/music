@@ -5,6 +5,9 @@ export { tierPSongs } from "../src/lib/benchmarkTierP";
 export { parseMidiFile } from "../src/lib/midiFile";
 export { buildTournamentTask } from "../src/lib/tournamentTask";
 export { pdmxIdFromPath } from "../src/lib/pdmxCsv";
+export { REAL_CORPUS_TIER_H } from "../src/lib/realCorpusTierH";
+export { admitEntries } from "../src/lib/benchmarkCorpusPlan";
+export { tierHTasksFor } from "../src/lib/realCorpusBenchmark";
 export {
   POSITIVE_CONTROL_LEDGER_VERSION,
   buildPositiveControlLedger,

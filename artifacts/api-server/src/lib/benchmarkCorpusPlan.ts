@@ -17,7 +17,12 @@
  *  - **Fail closed on rights.** An entry without a proven, commercial-use
  *    rights basis is not in the corpus. A dataset's own licence is not proof of
  *    rights in the works inside it, which is why the basis names the work, not
- *    the collection it came from.
+ *    the collection it came from. Since the lead's ruling of 2026-09-10 the
+ *    rule has two layers: an uploader's public-domain statement clears at most
+ *    the score (engraving / arrangement); the **composition** is cleared only
+ *    by a composer who died in or before `PUBLIC_DOMAIN_DEATH_YEAR_CUTOFF`, or
+ *    by a documented traditional / anonymous source (`compositionRights.ts`).
+ *    Anything else is `contested` and never enters the corpus or an aggregate.
  *  - **Coverage is measured, not assumed.** A benchmark that is 80 % 4/4 pop
  *    flatters a pop-shaped pipeline. `corpusCoverage` reports what the corpus
  *    actually spans against Q-00's required spread, and says what is missing.
@@ -35,24 +40,46 @@ export type CorpusEnsemble = "solo" | "small" | "large";
 export type CorpusIdiom = "western" | "non_western";
 export type CorpusProduction = "acoustic" | "electronic" | "hybrid";
 
+/** The year the rights position is stated for. */
+export const RIGHTS_YEAR = 2026;
+/** Life + 70: the term this corpus applies to compositions. */
+export const PUBLIC_DOMAIN_TERM_YEARS = 70;
 /**
- * Why this recording may be used to measure a commercial product. Mirrors the
- * PR-28 rule for learning data: the basis is recorded per work, with the
- * evidence that supports it.
+ * A composer who died in or before this year has been dead for more than
+ * `PUBLIC_DOMAIN_TERM_YEARS` full years at `RIGHTS_YEAR`; the composition is
+ * public domain under life + 70. 2026 - 70 - 1 = 1955.
  */
-export type CorpusRightsBasis = {
-  kind:
-    | "public_domain"
-    | "owned_by_operator"
-    | "licensed_for_evaluation"
-    | "written_permission";
+export const PUBLIC_DOMAIN_DEATH_YEAR_CUTOFF = RIGHTS_YEAR - PUBLIC_DOMAIN_TERM_YEARS - 1;
+
+/**
+ * Why the **composition** (not the score) is public domain. One of two
+ * documented bases; a `public_domain` entry without one is refused.
+ */
+export type PublicDomainComposition =
+  | { composer: string; composerDied: number; traditional?: undefined; source?: undefined }
+  | { traditional: true; source: string; composer?: undefined; composerDied?: undefined };
+
+type RightsCommon = {
   /** Where the claim can be checked: a licence URL, a contract reference, a permission record. */
   reference: string;
   /** The work itself, not the collection it was found in. */
   work: string;
   clearedAt: string;
-  commercialUse: true;
 };
+
+/**
+ * Why this recording may be used to measure a commercial product. Mirrors the
+ * PR-28 rule for learning data: the basis is recorded per work, with the
+ * evidence that supports it. `public_domain` clears two layers - the score
+ * through `reference` (the uploader's own statement) and the composition
+ * through `PublicDomainComposition`. `contested` records a work the corpus
+ * looked at and could not clear, with the reason; it is a valid answer and
+ * never an entry.
+ */
+export type CorpusRightsBasis =
+  | (RightsCommon & { kind: "public_domain"; commercialUse: true } & PublicDomainComposition)
+  | (RightsCommon & { kind: "owned_by_operator" | "licensed_for_evaluation" | "written_permission"; commercialUse: true })
+  | (RightsCommon & { kind: "contested"; commercialUse: false; reason: string });
 
 export type CorpusEntry = {
   id: string;
@@ -141,8 +168,15 @@ export class CorpusRightsError extends Error {
 /** Why this entry may not enter the corpus, or null when it may. */
 export function corpusRefusalReason(entry: CorpusEntry): string | null {
   const { rights } = entry;
+  if (rights?.kind === "contested") {
+    return `"${entry.title}" is contested: ${rights.reason}`;
+  }
   if (!rights || rights.commercialUse !== true) {
     return `"${entry.title}" has no commercial-use rights basis; the benchmark measures a commercial product.`;
+  }
+  if (rights.kind === "public_domain") {
+    const composition = publicDomainCompositionRefusal(entry.title, rights);
+    if (composition) return composition;
   }
   if (!rights.reference?.trim()) {
     return `"${entry.title}" claims ${rights.kind} with nothing to check it against.`;
@@ -155,6 +189,25 @@ export function corpusRefusalReason(entry: CorpusEntry): string | null {
   }
   if (entry.humanGold && entry.humanGold.rights?.commercialUse !== true) {
     return `The human gold arrangement of "${entry.title}" has no commercial-use rights basis of its own.`;
+  }
+  return null;
+}
+
+/**
+ * Why a `public_domain` basis does not clear the composition, or null when it
+ * does. The score's licence (`reference`) is the uploader's; it is not evidence
+ * about the composition, so a basis that carries nothing else is refused.
+ */
+export function publicDomainCompositionRefusal(title: string, rights: Extract<CorpusRightsBasis, { kind: "public_domain" }>): string | null {
+  if (rights.traditional === true) {
+    if (!rights.source?.trim()) return `"${title}" is called traditional with no source: an uploader's label is not proof.`;
+    return null;
+  }
+  if (!rights.composer?.trim() || typeof rights.composerDied !== "number" || !Number.isInteger(rights.composerDied)) {
+    return `"${title}" claims public domain on the score's licence alone; the composition has no composer and death year, and no traditional source. A dataset's or uploader's licence is not proof of rights in the composition.`;
+  }
+  if (rights.composerDied > PUBLIC_DOMAIN_DEATH_YEAR_CUTOFF) {
+    return `"${title}": ${rights.composer} died in ${rights.composerDied}, after the ${PUBLIC_DOMAIN_DEATH_YEAR_CUTOFF} cutoff (life + ${PUBLIC_DOMAIN_TERM_YEARS} as of ${RIGHTS_YEAR}); the composition is not yet public domain.`;
   }
   return null;
 }
@@ -258,11 +311,13 @@ export function describeCoverage(coverage: CorpusCoverage): string {
 }
 
 /**
- * The corpus itself. Tier H (Brain B-08): rights-cleared PDMX multitrack works
- * with measured attributes, selected and generated by
- * `scripts/select-real-corpus.mjs` into `realCorpusTierH.ts`; every gap the
- * required spread still has is reported by `corpusCoverage`, never filled
- * synthetically. PR-18's synthesised corpus stays where it is and keeps
+ * The corpus itself. Tier H (Brain B-08): PDMX multitrack works whose
+ * **composition** is proven public domain (`compositionRights.ts`) and whose
+ * score is the uploader's own public-domain statement, with measured
+ * attributes, selected and generated by `scripts/select-real-corpus.mjs` into
+ * `realCorpusTierH.ts`; contested works are listed in the selection report's
+ * `excluded[]` and never here; every gap the required spread still has is
+ * reported by `corpusCoverage`, never filled synthetically. PR-18's synthesised corpus stays where it is and keeps
  * guarding regressions; it is not this, and the two are never merged. Tier P
  * (the operator's own songs) lives in `benchmarkTierP.ts` and is reported per
  * song, never pooled with this list.
