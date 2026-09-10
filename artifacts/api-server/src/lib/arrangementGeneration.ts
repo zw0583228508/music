@@ -19,6 +19,7 @@ import {
   type AceStepOperation,
   type AceStepRegion,
   type ArrangementPlan,
+  type CandidateCriticVerdict,
   type CandidateEvaluation,
   type CandidateRepairSnapshot,
   type CriticRepairFinding,
@@ -65,11 +66,22 @@ import {
   saveExportObject,
 } from "./objectStorage";
 import {
+  candidateStatusAfterCriticJudge,
+  criticVerdictsFromRanking,
   deployedCalibrationFeatures,
   hasCompleteQualityEvidence,
   isSelectableCandidate,
+  judgeTieGroupOf,
   publicCandidateEvaluation,
   rankEvaluatedCandidates, candidateStatusAfterProviderGate } from "./candidateRanking";
+// Brain B-19: the critics that can hear decide what ships. `evaluateAllDimensions`
+// + `runAdversarialCritics` + `judge` are the same call B-05c's evidence and
+// B-06's repair loop make; `rankCandidates` is the one ordering rule.
+import { evaluateAllDimensions } from "./critics/dimensions";
+import { runAdversarialCritics } from "./critics/adversarial";
+import { judge, judgeContextFromInput, type JudgeVerdict } from "./critics/judge";
+import { rankCandidates, type CandidateReports } from "./critics/rank";
+import type { CriticInput } from "./critics/types";
 import {
   diversityEvidence,
   fingerprintCandidate,
@@ -1861,9 +1873,104 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
         acceptedFingerprints.push({ id: candidate.id, fingerprint: evidence.fingerprint });
       }
     }
+    // -----------------------------------------------------------------------
+    // Brain B-19: the critics decide what ships.
+    //
+    // Until this block existed the selection ran on the conservative score
+    // `(musicCritic + audioCritic) / 2` and the judge was consulted by nobody:
+    // the owner's v7a arrangement carries a *blocking* `clash_share` (the
+    // string bed clashes for 48.6 % of its time in the Outro) and five B-05c
+    // release-rule refusals, and it was selected, mixed, mastered and exported
+    // anyway. The gate runs here, once, after diversity and before the ranks
+    // are written, on the notes that were actually rendered — so it judges what
+    // would ship rather than what was proposed.
+    //
+    // A candidate with no symbolic notes (an audio-only provider result) is not
+    // judged: the note-level critics have nothing to read, and refusing it for
+    // that would be a verdict nobody reached. It keeps its evaluated status and
+    // carries no `criticVerdict`, and the ranking says so by having no opinion.
+    // -----------------------------------------------------------------------
+    const judgedCandidates: CandidateReports[] = [];
+    const judgeVerdicts = new Map<string, JudgeVerdict>();
+    const judgeable = candidateRows.filter((candidate) =>
+      candidate.evaluatedPlan &&
+      candidate.trackModels?.length &&
+      hasCompleteQualityEvidence(candidate.evaluation));
+    for (const [judgeIndex, candidate] of judgeable.entries()) {
+      const criticInput: CriticInput = {
+        songModel: evaluationSongModel,
+        plan: candidate.evaluatedPlan!,
+        trackModels: candidate.trackModels!,
+      };
+      const reports = [...evaluateAllDimensions(criticInput), ...runAdversarialCritics(criticInput)];
+      const context = judgeContextFromInput(criticInput);
+      judgeVerdicts.set(candidate.id, judge(reports, context));
+      judgedCandidates.push({
+        candidateId: candidate.id,
+        reports,
+        context,
+        noteCount: candidate.trackModels!.reduce((total, track) => total + track.notes.length, 0),
+      });
+      // The critic pass is real work — on the owner's 141-bar arrangement the
+      // dimensions take tens of seconds per candidate — and the lease is two
+      // minutes. Without a heartbeat here a long judge run would lose the lease
+      // it already holds and the final transaction would refuse to commit
+      // candidates that were correctly evaluated and correctly judged.
+      await db
+        .update(musicGenerationJobsTable)
+        .set({
+          progress: 92 + Math.round(((judgeIndex + 1) / judgeable.length) * 3),
+          stage: "judging_candidates",
+          heartbeatAt: new Date(),
+          leaseExpiresAt: new Date(Date.now() + leaseDurationMs),
+        })
+        .where(and(
+          eq(musicGenerationJobsTable.id, job.id),
+          eq(musicGenerationJobsTable.workerId, workerId),
+          eq(musicGenerationJobsTable.leaseVersion, leaseVersion),
+          eq(musicGenerationJobsTable.status, "running"),
+        ));
+    }
+    const criticVerdicts = judgedCandidates.length
+      ? criticVerdictsFromRanking(rankCandidates(judgedCandidates), judgeVerdicts)
+      : new Map<string, CandidateCriticVerdict>();
+    for (const candidate of candidateRows) {
+      const criticVerdict = criticVerdicts.get(candidate.id);
+      if (!criticVerdict) continue;
+      candidate.evaluation = { ...candidate.evaluation, criticVerdict };
+      // Only a candidate that reached `validated` can be un-validated here; any
+      // other status already says something truer about it than a refusal would.
+      const judgeGate = candidateStatusAfterCriticJudge(candidate.status ?? "", criticVerdict);
+      if (judgeGate.status === candidate.status) continue;
+      candidate.status = judgeGate.status;
+      candidate.rank = null;
+      candidate.evaluation = {
+        ...candidate.evaluation,
+        status: "critic_judge_refused",
+        error: judgeGate.reason ?? candidate.evaluation.error,
+      };
+    }
     const ranked = rankEvaluatedCandidates(candidateRows);
-    const allEvaluationsFailed = ranked.every((candidate) =>
+    const judgeRefused = ranked.filter((candidate) =>
+      candidate.evaluation.status === "critic_judge_refused");
+    // Nothing may be selected. Two different reasons, kept apart on purpose: a
+    // candidate that produced no evidence *failed*, and a candidate the judge
+    // refused was evaluated successfully and told no. Reporting a refusal as an
+    // evaluation failure would hide the one thing the producer needs to read.
+    const nothingSelectable = ranked.every((candidate) =>
       !hasCompleteQualityEvidence(candidate.evaluation));
+    const noReleasableCandidate = nothingSelectable && judgeRefused.length > 0;
+    const allEvaluationsFailed = nothingSelectable && !noReleasableCandidate;
+    const refusalSummary = judgeRefused.map((candidate) => {
+      const refusals = candidate.evaluation.criticVerdict?.refusals ?? [];
+      const named = refusals.slice(0, 6).map((refusal) =>
+        `${refusal.kind}${refusal.sectionName ? ` in ${refusal.sectionName}` : ` bars ${refusal.startBar}-${refusal.endBar}`} (${refusal.dimension}, ${refusal.rule})`);
+      const rest = refusals.length - named.length;
+      return `${candidate.label}: ${named.join(", ") || "refused with no named observation"}${rest > 0 ? ` and ${rest} more` : ""}`;
+    }).join(" | ");
+    const repairsAskedFor = [...new Set(judgeRefused.flatMap((candidate) =>
+      candidate.evaluation.criticVerdict?.requestedRepairOperations ?? []))].sort();
+    const noReleasableCandidateError = `The release judge refused every candidate, so nothing was selected. ${refusalSummary}. Repairs asked for: ${repairsAskedFor.join(", ") || "none proposed by the critics"}.`;
     const diversityEvaluated = ranked.filter((candidate) =>
       candidate.evaluation.diversity !== undefined);
     const insufficientDiversity = diversityEvaluated.length > 1 &&
@@ -1874,21 +1981,30 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
       const [completed] = await tx
         .update(musicGenerationJobsTable)
         .set({
-          status: allEvaluationsFailed ? "failed" : "succeeded",
+          status: nothingSelectable ? "failed" : "succeeded",
           progress: 100,
           stage: allEvaluationsFailed
             ? "evaluation_failed"
-            : insufficientDiversity
-              ? "insufficient_diversity"
-              : "complete",
+            : noReleasableCandidate
+              ? "no_releasable_candidate"
+              : insufficientDiversity
+                ? "insufficient_diversity"
+                : "complete",
           error: allEvaluationsFailed
             ? "No candidate produced complete render and quality evidence."
-            : null,
+            : noReleasableCandidate
+              ? noReleasableCandidateError
+              : null,
           errorCode: allEvaluationsFailed
             ? "CANDIDATE_EVALUATION_FAILED"
-            : insufficientDiversity
-              ? "INSUFFICIENT_DIVERSITY"
-              : null,
+            : noReleasableCandidate
+              ? "NO_RELEASABLE_CANDIDATE"
+              : insufficientDiversity
+                ? "INSUFFICIENT_DIVERSITY"
+                : null,
+          // A refusal is retryable: the candidates and their verdicts are on
+          // the record, and a repair run or another seed may produce one the
+          // judge passes. An evaluation that produced no evidence is not.
           retryable: !allEvaluationsFailed,
           completedAt: now,
           leaseExpiresAt: null,
@@ -1936,7 +2052,7 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
       await tx
         .update(arrangementsTable)
         .set({
-          status: allEvaluationsFailed
+          status: nothingSelectable
             ? (snapshot.arrangement.status === "ready" ? "ready" : "draft")
             : "ready",
         })
@@ -1946,10 +2062,14 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
         projectId: job.projectId,
         title: allEvaluationsFailed
           ? "Candidate evaluation failed"
-          : "Rendered candidate evaluation completed",
-          detail: insufficientDiversity
-            ? `${provider.definition.displayName} · insufficient_diversity: only the retained baseline is selectable`
-            : `${provider.definition.displayName} · ${ranked.filter((candidate) => candidate.status === "validated").length}/${ranked.length} candidates passed render and quality analysis`,
+          : noReleasableCandidate
+            ? "The critics refused every candidate"
+            : "Rendered candidate evaluation completed",
+          detail: noReleasableCandidate
+            ? `${provider.definition.displayName} · no_releasable_candidate: ${noReleasableCandidateError}`
+            : insufficientDiversity
+              ? `${provider.definition.displayName} · insufficient_diversity: only the retained baseline is selectable`
+              : `${provider.definition.displayName} · ${ranked.filter((candidate) => candidate.status === "validated").length}/${ranked.length} candidates passed render and quality analysis${judgeRefused.length ? `, ${judgeRefused.length} refused by the release judge` : ""}`,
         type: "arrangement",
       });
     });
@@ -2424,9 +2544,22 @@ export async function listGenerationCandidatesForOwner(
     : []);
   if (subjects.length < 2) return ranked;
   const scores = preferenceScores(critic.model, subjects);
+  // B-19: the owner's preference model may only reorder candidates the release
+  // judge could not separate. `tieGroup` is the judge's own answer to "are
+  // these the same?" — an integer shared by a tie group — so two candidates in
+  // different groups are never inside `rerankNearTies`'s tolerance and the
+  // preference cannot overturn a critic. Rows written before the judge was
+  // wired in carry no tie group; there the accessor stays on the reconciled
+  // evidence score PR-29 has always used, rather than mixing two units.
+  const everyRankedCandidateWasJudged = ranked.every((candidate) =>
+    candidate.rank === null || judgeTieGroupOf(candidate.evaluation) !== null);
   const reranked = rerankNearTies(
     ranked,
-    (candidate) => (candidate.rank === null ? null : candidateEvidenceScore(candidate, calibration)),
+    (candidate) => candidate.rank === null
+      ? null
+      : everyRankedCandidateWasJudged
+        ? judgeTieGroupOf(candidate.evaluation)
+        : candidateEvidenceScore(candidate, calibration),
     (candidate) => scores.get(candidate.id) ?? null,
   );
   let nextRank = 1;

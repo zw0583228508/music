@@ -2540,6 +2540,7 @@ export const CandidateEvaluationStatus = {
   repair_not_improved: 'repair_not_improved',
   repair_scope_violated: 'repair_scope_violated',
   provider_hard_rule_refused: 'provider_hard_rule_refused',
+  critic_judge_refused: 'critic_judge_refused',
 } as const;
 
 export type CandidateEvaluationArtifactsItemType = typeof CandidateEvaluationArtifactsItemType[keyof typeof CandidateEvaluationArtifactsItemType];
@@ -2993,6 +2994,104 @@ export interface CandidateRepairEvidence {
   improved: boolean;
 }
 
+export type CandidateCriticVerdictRefusalsItemSeverity = typeof CandidateCriticVerdictRefusalsItemSeverity[keyof typeof CandidateCriticVerdictRefusalsItemSeverity];
+
+
+export const CandidateCriticVerdictRefusalsItemSeverity = {
+  info: 'info',
+  minor: 'minor',
+  major: 'major',
+  blocking: 'blocking',
+} as const;
+
+export type CandidateCriticVerdictTopProblemsItemSeverity = typeof CandidateCriticVerdictTopProblemsItemSeverity[keyof typeof CandidateCriticVerdictTopProblemsItemSeverity];
+
+
+export const CandidateCriticVerdictTopProblemsItemSeverity = {
+  info: 'info',
+  minor: 'minor',
+  major: 'major',
+  blocking: 'blocking',
+} as const;
+
+export type CandidateCriticVerdictRefusalsItem = {
+  observationId: string;
+  dimension: string;
+  kind: string;
+  severity: CandidateCriticVerdictRefusalsItemSeverity;
+  rule: string;
+  detail: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  /** @nullable */
+  sectionName: string | null;
+  /** @nullable */
+  repairOperation: string | null;
+};
+
+export type CandidateCriticVerdictTopProblemsItem = {
+  observationId: string;
+  dimension: string;
+  kind: string;
+  severity: CandidateCriticVerdictTopProblemsItemSeverity;
+  bars: string;
+  /** @nullable */
+  section: string | null;
+  priority: number;
+  whatToFix: string;
+  /** @nullable */
+  repairOperation: string | null;
+};
+
+export type CandidateCriticVerdictContestedItem = {
+  topic: string;
+  /** @minimum 1 */
+  startBar: number;
+  /** @minimum 1 */
+  endBar: number;
+  positions: string[];
+  rationale: string;
+};
+
+/**
+ * Brain B-19: the release judge's decision on this candidate. `releasable` false means the candidate is refused and cannot be selected; `refusals` names each blocking observation with the release rule that refused it, and `topProblems` names the repair operator each asked for. `contested` carries the disagreements the judge deliberately kept open - an empty `refusals` list with a non-empty `contested` list is not agreement.
+ */
+export interface CandidateCriticVerdict {
+  version: string;
+  rankVersion: string;
+  releasable: boolean;
+  reasons: string[];
+  /** @minimum 0 */
+  blockingCount: number;
+  /** @minimum 0 */
+  refusalCount: number;
+  refusals: CandidateCriticVerdictRefusalsItem[];
+  topProblems: CandidateCriticVerdictTopProblemsItem[];
+  contested: CandidateCriticVerdictContestedItem[];
+  /** @minimum 0 */
+  salienceWeightedMajors: number;
+  constructiveScore: number;
+  /** @minimum 1 */
+  rank: number;
+  why: string;
+  tiedWith: string[];
+  /**
+     * First rank of this candidate's tie group; equal for every candidate the ranking could not separate.
+     * @minimum 1
+     */
+  tieGroup: number;
+  /** @nullable */
+  nearIdentical: string | null;
+  gatedDimensions: string[];
+  /** @minimum 0 */
+  dimensionsApplicable: number;
+  /** @minimum 0 */
+  dimensionsTotal: number;
+  requestedRepairOperations: string[];
+}
+
 export type CandidateEvaluationArtifactsItem = {
   id: string;
   type: CandidateEvaluationArtifactsItemType;
@@ -3044,6 +3143,7 @@ export interface CandidateEvaluation {
   strategy?: CandidateEvaluationStrategy;
   diversity?: CandidateEvaluationDiversity;
   repair?: CandidateRepairEvidence;
+  criticVerdict?: CandidateCriticVerdict;
 }
 
 export type GenerationProvenanceParameters = { [key: string]: unknown };

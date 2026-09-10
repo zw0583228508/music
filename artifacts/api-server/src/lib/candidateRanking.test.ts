@@ -1,11 +1,20 @@
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
 import type {
+  CandidateCriticVerdict,
   CandidateEvaluation,
   CandidateEvaluationStatus,
 } from "@workspace/db";
 import { ListGenerationCandidatesResponse } from "@workspace/api-zod";
-import { hasCompleteQualityEvidence, publicCandidateEvaluation } from "./candidateRanking";
+import {
+  candidateEvidenceScore,
+  candidateStatusAfterCriticJudge,
+  criticJudgeRefusal,
+  hasCompleteQualityEvidence,
+  isSelectableCandidate,
+  publicCandidateEvaluation,
+  rankEvaluatedCandidates,
+} from "./candidateRanking";
 
 const supportedStatuses = {
   plan_received: true,
@@ -19,6 +28,7 @@ const supportedStatuses = {
   repair_not_improved: true,
   repair_scope_violated: true,
   provider_hard_rule_refused: true,
+  critic_judge_refused: true,
 } satisfies Record<CandidateEvaluationStatus, true>;
 
 const musicCritic: CandidateEvaluation["musicCritic"] = {
@@ -282,4 +292,230 @@ test("populated v2 critic public serialization excludes observations fingerprint
     repairedCandidateResponse(publicEvaluation),
   ]);
   assert.equal(parsed[0].evaluation.musicCritic?.version, "music-critic-v2");
+});
+// ---------------------------------------------------------------------------
+// Brain B-19: the critics decide what ships.
+//
+// Constructed verdicts here, so one decision path can be exercised at a time.
+// The same paths are driven from real critic output on real arrangements in
+// `brainB19CriticsDecide.test.ts`, where the verdicts are measured rather than
+// written down.
+// ---------------------------------------------------------------------------
+
+const qualityChecks = {
+  silence: 1, clipping: 1, notePlayability: 1, timing: 1, sectionCoverage: 1, lineage: 1,
+};
+
+/** A candidate that has everything the runner asks of it *except* a verdict. */
+function completeEvaluation(over: Record<string, unknown> = {}): CandidateEvaluation {
+  return {
+    status: "evaluated",
+    providerScore: 0.7,
+    renderArtifactIds: ["audio", "midi"],
+    artifacts: [
+      { id: "audio", type: "AUDIO_TRACK", label: "Audio", url: "/audio.wav", artifactSha256: "a".repeat(64) },
+      { id: "midi", type: "MIDI", label: "MIDI", url: "/notes.mid" },
+      { id: "quality", type: "QUALITY_REPORT", label: "Quality", url: "/quality.json" },
+    ],
+    qualityReport: {
+      score: 0.8, checks: qualityChecks, weights: qualityChecks, strengths: [], weaknesses: [], warnings: [],
+      evaluatedAt: "2026-09-10T00:00:00.000Z", renderArtifactIds: ["audio", "midi"], lineageComplete: true,
+    },
+    musicCritic: { ...musicCritic, coverage: { availableDimensions: 0, totalDimensions: 8, sparse: true } },
+    audioCritic: null,
+    error: null,
+    ...over,
+  } as unknown as CandidateEvaluation;
+}
+
+function verdict(over: Partial<CandidateCriticVerdict> = {}): CandidateCriticVerdict {
+  return {
+    version: "CRITIC_JUDGE_v1",
+    rankVersion: "B05C_RANK_v1",
+    releasable: true,
+    reasons: ["no blocking observation from any gated dimension and no release rule refused"],
+    blockingCount: 0,
+    refusalCount: 0,
+    refusals: [],
+    topProblems: [],
+    contested: [],
+    salienceWeightedMajors: 0,
+    constructiveScore: 90,
+    rank: 1,
+    why: "no gated dimension blocks it and no release rule refuses it",
+    tiedWith: [],
+    tieGroup: 1,
+    nearIdentical: null,
+    gatedDimensions: ["harmony", "register"],
+    dimensionsApplicable: 16,
+    dimensionsTotal: 24,
+    requestedRepairOperations: [],
+    ...over,
+  };
+}
+
+const clashRefusal = {
+  observationId: "harmony:clash_share:strings:129-141",
+  dimension: "harmony",
+  kind: "clash_share",
+  severity: "blocking" as const,
+  rule: "blocking_from_gated_dimension",
+  detail: "harmony is gated by measured positive controls and calls this blocking",
+  startBar: 129,
+  endBar: 141,
+  sectionName: "Outro",
+  repairOperation: "harmony.revoice_to_chord",
+};
+
+const refusedVerdict = (over: Partial<CandidateCriticVerdict> = {}) => verdict({
+  releasable: false,
+  blockingCount: 1,
+  refusalCount: 1,
+  refusals: [clashRefusal],
+  requestedRepairOperations: ["harmony.revoice_to_chord"],
+  reasons: ["1 blocking observation(s) from gated dimension(s): harmony:clash_share:strings:129-141"],
+  ...over,
+});
+
+test("B-19: a candidate the judge refuses never reaches validated", () => {
+  const gate = candidateStatusAfterCriticJudge("validated", refusedVerdict());
+  assert.equal(gate.status, "critic_judge_refused");
+  assert.match(gate.reason ?? "", /clash_share \[blocking\] in Outro \(bars 129-141\)/);
+  assert.match(gate.reason ?? "", /refused by blocking_from_gated_dimension/);
+  assert.match(gate.reason ?? "", /Repairs asked for: harmony\.revoice_to_chord\./);
+});
+
+test("B-19: a releasable candidate, and a candidate the judge never judged, are left alone", () => {
+  assert.deepEqual(candidateStatusAfterCriticJudge("validated", verdict()), { status: "validated", reason: null });
+  assert.deepEqual(candidateStatusAfterCriticJudge("validated", undefined), { status: "validated", reason: null });
+  // A status that already says something truer than "refused" is not overwritten.
+  assert.deepEqual(
+    candidateStatusAfterCriticJudge("diversity_rejected", refusedVerdict()),
+    { status: "diversity_rejected", reason: null },
+  );
+});
+
+test("B-19: a refusal says plainly what blocked it and what repair was asked for", () => {
+  const refusal = criticJudgeRefusal(refusedVerdict({
+    refusals: [clashRefusal, {
+      observationId: "register:top_line_above_comfortable_ceiling:strings:113-128",
+      dimension: "register", kind: "top_line_above_comfortable_ceiling", severity: "major",
+      rule: "major_on_a_bed", detail: "register calls the sustained texture wrong",
+      startBar: 113, endBar: 128, sectionName: null, repairOperation: "register.revoice_below_ceiling",
+    }],
+    refusalCount: 2,
+    requestedRepairOperations: ["harmony.revoice_to_chord", "register.revoice_below_ceiling"],
+  }));
+  assert.equal(refusal.refused, true);
+  assert.match(refusal.reason ?? "", /nothing was releasable/);
+  assert.match(refusal.reason ?? "", /top_line_above_comfortable_ceiling \[major\] in bars 113-128/);
+  assert.match(refusal.reason ?? "", /register\.revoice_below_ceiling/);
+});
+
+test("B-19: a CONTESTED verdict is never collapsed into a pass", () => {
+  // The judge keeps disagreements it has no rule for. A refusal carries them
+  // forward rather than reading its own refusal as having settled them.
+  const contested = refusedVerdict({
+    contested: [{
+      topic: "texture density", startBar: 41, endBar: 56,
+      positions: ["density: no_rests", "orchestration: too_sparse"],
+      rationale: "kept open: no resolution rule covers texture density between density and orchestration",
+    }],
+  });
+  assert.match(criticJudgeRefusal(contested).reason ?? "", /1 disagreement\(s\) were kept open and are not resolved by this refusal/);
+  // And a *releasable* verdict with an open disagreement stays releasable and
+  // stays contested: the gate reads `releasable`, and the open disagreement
+  // travels with the candidate for a human to read.
+  const releasableButContested = verdict({ contested: contested.contested });
+  assert.deepEqual(criticJudgeRefusal(releasableButContested), { refused: false, reason: null });
+  assert.equal(publicCandidateEvaluation(
+    completeEvaluation({ criticVerdict: releasableButContested }),
+  ).criticVerdict?.contested.length, 1);
+});
+
+test("B-19 hard case: a releasable candidate ranked below an unreleasable one on the old score wins", () => {
+  // The exact failure this stream exists to close. The refused candidate has
+  // the better conservative score - 0.807 was the owner's v7a number - and the
+  // old ranking selected it. The judge's order now comes first.
+  const refused = {
+    id: "cand-refused",
+    score: 0.807,
+    evaluation: completeEvaluation({
+      musicCritic: { ...musicCritic, score: 0.9 },
+      criticVerdict: refusedVerdict({ rank: 2, tieGroup: 2, why: "cand-releasable is releasable and this one is not" }),
+    }),
+  };
+  const releasable = {
+    id: "cand-releasable",
+    score: 0.61,
+    evaluation: completeEvaluation({
+      musicCritic: { ...musicCritic, score: 0.61 },
+      criticVerdict: verdict({ rank: 1, tieGroup: 1, constructiveScore: 72 }),
+    }),
+  };
+  // The old score alone prefers the refused candidate...
+  assert.ok(candidateEvidenceScore(refused) > candidateEvidenceScore(releasable));
+  // ...and the judge's order overrules it, in both input orders.
+  for (const rows of [[refused, releasable], [releasable, refused]]) {
+    const ranked = rankEvaluatedCandidates(rows);
+    assert.equal(ranked[0].id, "cand-releasable", "the releasable candidate ranks first");
+    assert.equal(ranked[0].rank, 1);
+  }
+});
+
+test("B-19 hard case: when every candidate is refused, nothing is selectable", () => {
+  const rows = ["a", "b", "c"].map((id, index) => ({
+    id: `cand-${id}`,
+    score: 0.8 - index * 0.1,
+    status: "critic_judge_refused",
+    trackModels: [{ id: "t" }],
+    evaluatedPlan: { sections: [] },
+    evaluatedStyleSpec: {},
+    evaluation: completeEvaluation({
+      status: "critic_judge_refused",
+      error: criticJudgeRefusal(refusedVerdict()).reason,
+      criticVerdict: refusedVerdict({ rank: index + 1, tieGroup: index + 1 }),
+    }),
+  }));
+  for (const row of rows) {
+    assert.equal(hasCompleteQualityEvidence(row.evaluation), false, "a refused candidate carries no complete evidence");
+    assert.equal(isSelectableCandidate(row), false, "and cannot be selected");
+    assert.match(row.evaluation.error ?? "", /the release judge refused this candidate/);
+  }
+  // Every rank is null: the runner has nothing to offer, and says so rather
+  // than ranking the least-bad candidate first.
+  assert.deepEqual(rankEvaluatedCandidates(rows).map((row) => row.rank), [null, null, null]);
+});
+
+test("B-19: rows the judge never judged keep the legacy order", () => {
+  // Historical candidates carry no verdict. Ordering a judged candidate against
+  // an unjudged one on the judge's rank would be inventing a decision, so the
+  // reconciled evidence score still decides between them.
+  const legacyHigh = { id: "legacy-high", score: 0.9, evaluation: completeEvaluation({ musicCritic: { ...musicCritic, score: 0.9 } }) };
+  const legacyLow = { id: "legacy-low", score: 0.2, evaluation: completeEvaluation({ musicCritic: { ...musicCritic, score: 0.2 } }) };
+  assert.equal(rankEvaluatedCandidates([legacyLow, legacyHigh])[0].id, "legacy-high");
+  const judgedButWorseLegacy = {
+    id: "judged", score: 0.1,
+    evaluation: completeEvaluation({ musicCritic: { ...musicCritic, score: 0.1 }, criticVerdict: verdict({ rank: 1 }) }),
+  };
+  assert.equal(rankEvaluatedCandidates([judgedButWorseLegacy, legacyHigh])[0].id, "legacy-high",
+    "one verdict does not order a candidate the judge never saw");
+});
+
+test("B-19: the verdict is public, bounded, and parses through the response schema", () => {
+  const evaluation = completeEvaluation({ criticVerdict: refusedVerdict({
+    topProblems: [{
+      observationId: clashRefusal.observationId, dimension: "harmony", kind: "clash_share",
+      severity: "blocking", bars: "129-141", section: "Outro", priority: 1204.5,
+      whatToFix: "harmony.revoice_to_chord (part): move the bed onto chord tones in bars 129-141",
+      repairOperation: "harmony.revoice_to_chord",
+    }],
+  }) });
+  const publicEvaluation = publicCandidateEvaluation(evaluation);
+  assert.equal(publicEvaluation.criticVerdict?.releasable, false);
+  assert.equal(publicEvaluation.criticVerdict?.refusals[0].rule, "blocking_from_gated_dimension");
+  assert.equal(publicEvaluation.criticVerdict?.topProblems[0].repairOperation, "harmony.revoice_to_chord");
+  const parsed = ListGenerationCandidatesResponse.parse([repairedCandidateResponse(publicEvaluation)]);
+  assert.equal(parsed[0].evaluation.criticVerdict?.refusals[0].kind, "clash_share");
+  assert.equal(parsed[0].evaluation.criticVerdict?.tieGroup, 1);
 });

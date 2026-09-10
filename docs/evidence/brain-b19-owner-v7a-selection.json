@@ -1,0 +1,358 @@
+{
+  "version": "B19_OWNER_V7A_SELECTION_v1",
+  "generatedBy": "artifacts/api-server/verify-b19-selection.ts (not committed to the API build; run off files)",
+  "source": {
+    "songModel": "C:/Users/4928~1/AppData/Local/Temp/claude/C--Users-------/898d17e9-51b5-4a84-b3ba-bb97431b84fc/scratchpad/rachem/songmodel-v3.json",
+    "candidate": "C:/Users/4928~1/AppData/Local/Temp/claude/C--Users-------/898d17e9-51b5-4a84-b3ba-bb97431b84fc/scratchpad/rachem/candidate7.json",
+    "candidateSha256": "5e1b4cc0a5a5a592e2c143fbb9f2847241de948c489145f9399d48767ce58e3d",
+    "candidateId": "b98779b7-8e16-401a-9503-542e551d6b58",
+    "jobId": "f8cad206-72a6-453a-8659-292a5a35d5b9",
+    "label": "A · conservative",
+    "provider": "ARRANGEMENT_ORCHESTRATOR",
+    "tracks": [
+      {
+        "instrument": "bass",
+        "role": "BASS",
+        "notes": 199
+      },
+      {
+        "instrument": "percussion",
+        "role": "ACCENT",
+        "notes": 120
+      },
+      {
+        "instrument": "keys",
+        "role": "RHYTHMIC_HARMONY",
+        "notes": 1732
+      },
+      {
+        "instrument": "strings",
+        "role": "HARMONIC_BED",
+        "notes": 181
+      }
+    ]
+  },
+  "before": {
+    "storedScore": 0.807916981558708,
+    "storedRank": 1,
+    "storedStatus": "validated",
+    "musicCriticScore": 0.773,
+    "audioCriticScore": 0.8428339631174158,
+    "reconciled": 0.807916981558708,
+    "hasCompleteQualityEvidence": true,
+    "isSelectable": true,
+    "rankAssigned": 1,
+    "criticVerdictOnTheRow": null
+  },
+  "after": {
+    "status": "critic_judge_refused",
+    "releasable": false,
+    "blockingCount": 1,
+    "refusalCount": 6,
+    "rank": 1,
+    "constructiveScore": 78.7654,
+    "salienceWeightedMajors": 381.4395,
+    "hasCompleteQualityEvidence": false,
+    "isSelectable": false,
+    "rankAssigned": null,
+    "jobOutcome": "failed / NO_RELEASABLE_CANDIDATE / stage no_releasable_candidate / retryable",
+    "refusals": [
+      {
+        "observationId": "harmony:clash_share:ab1833c8-0515-4521-bbc1-323866b7503a--strings-harmonic_bed:129-141",
+        "dimension": "harmony",
+        "kind": "clash_share",
+        "severity": "blocking",
+        "rule": "blocking_from_gated_dimension",
+        "detail": "harmony is gated by measured positive controls and calls this blocking",
+        "startBar": 129,
+        "endBar": 141,
+        "sectionName": "Outro",
+        "repairOperation": "revoice_to_chord_tones"
+      },
+      {
+        "observationId": "register:top_line_above_comfortable_ceiling:ab1833c8-0515-4521-bbc1-323866b7503a--strings-harmonic_bed:25-40",
+        "dimension": "register",
+        "kind": "top_line_above_comfortable_ceiling",
+        "severity": "major",
+        "rule": "major_on_a_bed",
+        "detail": "register calls the sustained texture wrong (top_line_above_comfortable_ceiling); a bed that is wrong is wrong wherever it plays",
+        "startBar": 25,
+        "endBar": 40,
+        "sectionName": "Verse 2",
+        "repairOperation": "lower_top_voice_to_ceiling"
+      },
+      {
+        "observationId": "register:top_line_above_comfortable_ceiling:ab1833c8-0515-4521-bbc1-323866b7503a--strings-harmonic_bed:57-72",
+        "dimension": "register",
+        "kind": "top_line_above_comfortable_ceiling",
+        "severity": "major",
+        "rule": "major_on_a_bed",
+        "detail": "register calls the sustained texture wrong (top_line_above_comfortable_ceiling); a bed that is wrong is wrong wherever it plays",
+        "startBar": 57,
+        "endBar": 72,
+        "sectionName": "Chorus 2",
+        "repairOperation": "lower_top_voice_to_ceiling"
+      },
+      {
+        "observationId": "register:top_line_above_comfortable_ceiling:ab1833c8-0515-4521-bbc1-323866b7503a--keys-rhythmic_harmony:113-128",
+        "dimension": "register",
+        "kind": "top_line_above_comfortable_ceiling",
+        "severity": "major",
+        "rule": "major_on_a_bed",
+        "detail": "register calls the sustained texture wrong (top_line_above_comfortable_ceiling); a bed that is wrong is wrong wherever it plays",
+        "startBar": 113,
+        "endBar": 128,
+        "sectionName": "Chorus 3",
+        "repairOperation": "lower_top_voice_to_ceiling"
+      },
+      {
+        "observationId": "register:top_line_above_comfortable_ceiling:ab1833c8-0515-4521-bbc1-323866b7503a--strings-harmonic_bed:113-128",
+        "dimension": "register",
+        "kind": "top_line_above_comfortable_ceiling",
+        "severity": "major",
+        "rule": "major_on_a_bed",
+        "detail": "register calls the sustained texture wrong (top_line_above_comfortable_ceiling); a bed that is wrong is wrong wherever it plays",
+        "startBar": 113,
+        "endBar": 128,
+        "sectionName": "Chorus 3",
+        "repairOperation": "lower_top_voice_to_ceiling"
+      },
+      {
+        "observationId": "density:arrival_thinner_than_setup:ab1833c8-0515-4521-bbc1-323866b7503a--bass-bass+ab1833c8-0515-4521-bbc1-323866b7503a--keys-rhythmic_harmony:73-96",
+        "dimension": "density",
+        "kind": "arrival_thinner_than_setup",
+        "severity": "major",
+        "rule": "the_arrival_did_not_arrive",
+        "detail": "Verse 3 is planned as an arrival and is smaller than its setup in 2 of onsets, voices and dynamics",
+        "startBar": 73,
+        "endBar": 96,
+        "sectionName": "Verse 3",
+        "repairOperation": "make_the_arrival_arrive"
+      }
+    ],
+    "topProblems": [
+      {
+        "observationId": "harmony:clash_share:ab1833c8-0515-4521-bbc1-323866b7503a--strings-harmonic_bed:129-141",
+        "dimension": "harmony",
+        "kind": "clash_share",
+        "severity": "blocking",
+        "bars": "129-141",
+        "section": "Outro",
+        "priority": 123.1875,
+        "whatToFix": "revoice_to_chord_tones (part): move strings's clashing pitches in Outro onto tones of the sounding chord (49 % of its time clashes)",
+        "repairOperation": "revoice_to_chord_tones"
+      },
+      {
+        "observationId": "groove:off_grid:ab1833c8-0515-4521-bbc1-323866b7503a--strings-harmonic_bed:25-40",
+        "dimension": "groove",
+        "kind": "off_grid",
+        "severity": "major",
+        "bars": "25-40",
+        "section": "Verse 2",
+        "priority": 27.645,
+        "whatToFix": "requantise_part (part): 32 % of strings's onsets in Verse 2 miss the nearest grid line by more than 30 ms (median 21 ms); pass the composed notes (`composedTrackModels`) to say whether the composer or the performance stage put them there",
+        "repairOperation": "requantise_part"
+      },
+      {
+        "observationId": "density:foundation_gaps:ab1833c8-0515-4521-bbc1-323866b7503a--bass-bass:73-96",
+        "dimension": "density",
+        "kind": "foundation_gaps",
+        "severity": "major",
+        "bars": "73-96",
+        "section": "Verse 3",
+        "priority": 24.7,
+        "whatToFix": "fill_foundation_gaps (section): bass has no onset in 12 of 24 bars of Verse 3 although it plays in the section",
+        "repairOperation": "fill_foundation_gaps"
+      }
+    ],
+    "requestedRepairOperations": [
+      "fill_foundation_gaps",
+      "lower_top_voice_to_ceiling",
+      "make_the_arrival_arrive",
+      "requantise_part",
+      "revoice_to_chord_tones"
+    ],
+    "contested": [],
+    "gatedDimensions": [
+      "density",
+      "groove",
+      "harmony",
+      "orchestration",
+      "performanceRealisation",
+      "playability",
+      "register",
+      "voiceLeading"
+    ],
+    "reason": "the release judge refused this candidate — nothing was releasable: clash_share [blocking] in Outro (bars 129-141) — harmony, refused by blocking_from_gated_dimension; top_line_above_comfortable_ceiling [major] in Verse 2 (bars 25-40) — register, refused by major_on_a_bed; top_line_above_comfortable_ceiling [major] in Chorus 2 (bars 57-72) — register, refused by major_on_a_bed; top_line_above_comfortable_ceiling [major] in Chorus 3 (bars 113-128) — register, refused by major_on_a_bed; top_line_above_comfortable_ceiling [major] in Chorus 3 (bars 113-128) — register, refused by major_on_a_bed; arrival_thinner_than_setup [major] in Verse 3 (bars 73-96) — density, refused by the_arrival_did_not_arrive. Repairs asked for: fill_foundation_gaps, lower_top_voice_to_ceiling, make_the_arrival_arrive, requantise_part, revoice_to_chord_tones."
+  },
+  "dimensions": [
+    {
+      "dimension": "harmony",
+      "score": 40,
+      "controlStatus": "gated",
+      "applicable": true,
+      "observations": 13
+    },
+    {
+      "dimension": "voiceLeading",
+      "score": 93.49,
+      "controlStatus": "gated",
+      "applicable": true,
+      "observations": 4
+    },
+    {
+      "dimension": "melodyAndCounterline",
+      "score": 100,
+      "controlStatus": "informing",
+      "applicable": true,
+      "observations": 2
+    },
+    {
+      "dimension": "motifRecurrenceAndDevelopment",
+      "score": 78.94,
+      "controlStatus": "informing",
+      "applicable": true,
+      "observations": 5
+    },
+    {
+      "dimension": "groove",
+      "score": 33.59,
+      "controlStatus": "gated",
+      "applicable": true,
+      "observations": 20
+    },
+    {
+      "dimension": "rhythmicInteraction",
+      "score": 100,
+      "controlStatus": "informing",
+      "applicable": true,
+      "observations": 8
+    },
+    {
+      "dimension": "orchestration",
+      "score": 100,
+      "controlStatus": "gated",
+      "applicable": true,
+      "observations": 9
+    },
+    {
+      "dimension": "idiomaticity",
+      "score": 100,
+      "controlStatus": "informing",
+      "applicable": true,
+      "observations": 4
+    },
+    {
+      "dimension": "register",
+      "score": 66.3,
+      "controlStatus": "gated",
+      "applicable": true,
+      "observations": 14
+    },
+    {
+      "dimension": "density",
+      "score": 50.56,
+      "controlStatus": "gated",
+      "applicable": true,
+      "observations": 20
+    },
+    {
+      "dimension": "transitions",
+      "score": 97.55,
+      "controlStatus": "informing",
+      "applicable": true,
+      "observations": 9
+    },
+    {
+      "dimension": "repetitionVsVariation",
+      "score": 100,
+      "controlStatus": "informing",
+      "applicable": true,
+      "observations": 6
+    },
+    {
+      "dimension": "sectionDevelopment",
+      "score": 94.18,
+      "controlStatus": "demoted",
+      "applicable": true,
+      "observations": 6
+    },
+    {
+      "dimension": "playability",
+      "score": 50.88,
+      "controlStatus": "gated",
+      "applicable": true,
+      "observations": 768
+    },
+    {
+      "dimension": "performanceRealisation",
+      "score": 94.38,
+      "controlStatus": "gated",
+      "applicable": true,
+      "observations": 6
+    },
+    {
+      "dimension": "emotionalArcAndTension",
+      "score": 97.4,
+      "controlStatus": "informing",
+      "applicable": true,
+      "observations": 2
+    },
+    {
+      "dimension": "adversarial.boredom",
+      "score": 90,
+      "controlStatus": "uncalibrated",
+      "applicable": true,
+      "observations": 3
+    },
+    {
+      "dimension": "adversarial.machineMade",
+      "score": 77,
+      "controlStatus": "uncalibrated",
+      "applicable": true,
+      "observations": 3
+    },
+    {
+      "dimension": "adversarial.causality",
+      "score": 75,
+      "controlStatus": "uncalibrated",
+      "applicable": true,
+      "observations": 6
+    },
+    {
+      "dimension": "adversarial.arbitrariness",
+      "score": 77,
+      "controlStatus": "uncalibrated",
+      "applicable": true,
+      "observations": 6
+    },
+    {
+      "dimension": "adversarial.instrumentReality",
+      "score": 93,
+      "controlStatus": "uncalibrated",
+      "applicable": true,
+      "observations": 1
+    },
+    {
+      "dimension": "adversarial.copiedRepeat",
+      "score": 99,
+      "controlStatus": "uncalibrated",
+      "applicable": true,
+      "observations": 1
+    },
+    {
+      "dimension": "adversarial.fighting",
+      "score": 100,
+      "controlStatus": "uncalibrated",
+      "applicable": true,
+      "observations": 0
+    },
+    {
+      "dimension": "adversarial.professionalWouldChange",
+      "score": 78,
+      "controlStatus": "uncalibrated",
+      "applicable": true,
+      "observations": 5
+    }
+  ]
+}

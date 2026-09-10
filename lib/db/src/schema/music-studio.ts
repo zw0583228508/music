@@ -2066,7 +2066,21 @@ export type CandidateEvaluationStatus =
   | "repair_not_improved"
   | "repair_scope_violated"
   /** R-1a P0-1: the provider ran its own hard-rule gate and refused this candidate; the runner never validates it. */
-  | "provider_hard_rule_refused";
+  | "provider_hard_rule_refused"
+  /**
+   * Brain B-19: the platform's own release judge (`critics/judge.ts`) refused
+   * this candidate — a gated dimension called something blocking, or a B-05c
+   * release rule fired. Deliberately **not** folded into
+   * `provider_hard_rule_refused`: that status records that *the provider*
+   * refused a candidate before returning it, on the provider's own hard rules,
+   * and it is read off `parameters.arrangementBrain`, which only the in-process
+   * Arrangement Brain writes. The two gates run at different times, on
+   * different evidence, and either can refuse where the other has nothing to
+   * say. One name for both would make the stored reason a lie about who
+   * refused — and would leave every non-brain provider's candidate carrying a
+   * refusal from a gate that never ran on it.
+   */
+  | "critic_judge_refused";
 export type CandidatePlan = {
   sections: ArrangementSection[];
   tracks?: Array<{
@@ -5114,6 +5128,96 @@ export const musicUsageLedgerTable = pgTable("music_usage_ledger", {
   uniqueIndex("music_usage_ledger_job_unique").on(table.jobId),
 ]);
 
+/**
+ * Brain B-19 — the stored trace of the release judge's decision on one
+ * candidate. It exists so that the refusal is legible after the fact: which
+ * observations blocked, under which named release rule, and which repair
+ * operator each blocking finding asked for. Everything here is produced by
+ * `critics/judge.ts` and `critics/rank.ts`; nothing is re-derived, and no
+ * threshold lives in this type.
+ */
+export type CandidateCriticRefusal = {
+  observationId: string;
+  dimension: string;
+  kind: string;
+  severity: "info" | "minor" | "major" | "blocking";
+  /** The named release rule that refused: `blocking_from_gated_dimension`, `major_on_a_bed`, … */
+  rule: string;
+  detail: string;
+  startBar: number;
+  endBar: number;
+  sectionName: string | null;
+  /** The repair operator the critic asked for, or null when it proposed none. */
+  repairOperation: string | null;
+};
+
+/** One of the three problems the judge says a professional would fix first. */
+export type CandidateCriticProblem = {
+  observationId: string;
+  dimension: string;
+  kind: string;
+  severity: "info" | "minor" | "major" | "blocking";
+  bars: string;
+  section: string | null;
+  priority: number;
+  /** The judge's own sentence: operator (scope): detail. */
+  whatToFix: string;
+  repairOperation: string | null;
+};
+
+/**
+ * A disagreement the judge deliberately kept open. Carried on the candidate so
+ * that a CONTESTED verdict stays contested: nothing downstream may read the
+ * absence of a refusal as agreement when the critics did not agree.
+ */
+export type CandidateCriticContested = {
+  topic: string;
+  startBar: number;
+  endBar: number;
+  positions: string[];
+  rationale: string;
+};
+
+export type CandidateCriticVerdict = {
+  /** `JUDGE_VERSION` of the judge that produced it. */
+  version: string;
+  /** `CANDIDATE_RANK_VERSION` of the ordering that placed it. */
+  rankVersion: string;
+  releasable: boolean;
+  reasons: string[];
+  blockingCount: number;
+  refusalCount: number;
+  refusals: CandidateCriticRefusal[];
+  topProblems: CandidateCriticProblem[];
+  contested: CandidateCriticContested[];
+  /** Judge priority summed over this candidate's `major` findings. Lower is better. */
+  salienceWeightedMajors: number;
+  /** Control-weighted mean of the applicable dimensions' scores. Higher is better. */
+  constructiveScore: number;
+  /** Position under `rankCandidates` among this job's judged candidates, 1-based. */
+  rank: number;
+  /** Why it sits there rather than one place up, in the ranking's own words. */
+  why: string;
+  /** Candidates the ranking could not tell apart from this one. */
+  tiedWith: string[];
+  /**
+   * The judge's own notion of "indistinguishable": the first rank of the tie
+   * group this candidate belongs to, equal for every member of the group and
+   * equal to `rank` for a candidate that ties with nobody. It is what lets a
+   * later, weaker signal (the owner's pairwise preference model) reorder
+   * candidates the critics could not separate — and only those.
+   */
+  tieGroup: number;
+  /** `candidates_near_identical`: the search produced variations, not a choice. */
+  nearIdentical: string | null;
+  /** Dimensions that carry a passed positive control and may therefore block. */
+  gatedDimensions: string[];
+  dimensionsApplicable: number;
+  dimensionsTotal: number;
+  /** Distinct repair operators the refusing and top-ranked findings asked for. */
+  requestedRepairOperations: string[];
+};
+
 export type CandidateEvaluation = {
   status: CandidateEvaluationStatus;
   providerScore: number;
@@ -5129,6 +5233,13 @@ export type CandidateEvaluation = {
   repair?: CandidateRepairEvidence;
   /** Brain B-11: the compact index of the brain's evidence for this candidate (failure codes, decisions, timing). */
   brainTelemetry?: CandidateBrainTelemetry;
+  /**
+   * Brain B-19: the release judge's verdict on this candidate — the reason a
+   * candidate is, or is not, allowed to ship. Absent on rows written before
+   * the judge was wired into selection, and on candidates that never reached
+   * evaluation (no notes, no verdict).
+   */
+  criticVerdict?: CandidateCriticVerdict;
 };
 
 export type CandidateRepairEvidence = {

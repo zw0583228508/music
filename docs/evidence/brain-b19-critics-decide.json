@@ -1,0 +1,921 @@
+{
+  "version": "B19_CRITICS_DECIDE_v1",
+  "generatedBy": "artifacts/api-server/src/lib/brainB19Evidence.ts, asserted by brainB19CriticsDecide.test.ts",
+  "question": "Does the release judge decide what ships, and can it tell a good candidate from a worsened one?",
+  "wiring": {
+    "gate": "arrangementGeneration.ts: after the diversity pass, every candidate with symbolic notes and complete quality evidence is judged (evaluateAllDimensions + runAdversarialCritics + judge); rankCandidates orders them once; a candidate the judge refuses becomes critic_judge_refused and can never be selected.",
+    "ordering": "candidateRanking.rankEvaluatedCandidates places the judge's persisted rank ahead of the reconciled (musicCritic + audioCritic) / 2 score. The precedence itself lives only in critics/rank.ts.",
+    "allRefused": "job errorCode NO_RELEASABLE_CANDIDATE, stage no_releasable_candidate, retryable; the error names every refusing observation and the repair operators asked for, and the arrangement is not marked ready.",
+    "contested": "disagreements the judge kept open travel on the candidate as criticVerdict.contested; a refusal says how many are unresolved by it.",
+    "notJudged": "a provider candidate with no symbolic notes (audio-only) is not judged and not gated: the note-level critics have nothing to read."
+  },
+  "nullControl": {
+    "note": "A gate that refuses everything gates nothing. These are the nine clean corpus anchors, untouched, through the same judge.",
+    "passed": [
+      "acoustic-demo",
+      "orchestral-midi"
+    ],
+    "refused": [
+      "pop-full",
+      "ballad-piano-vocal",
+      "rock-full",
+      "dance-full",
+      "ethnic-vocal",
+      "jazz-full",
+      "cinematic-midi"
+    ],
+    "rows": [
+      {
+        "anchorId": "pop-full",
+        "composer": "REFERENCE_PART_COMPOSER_V1",
+        "releasable": false,
+        "blocking": 0,
+        "refusals": 3,
+        "refusalRules": [
+          "major_at_the_climax/climax_all_treble",
+          "major_on_a_bed/top_line_above_comfortable_ceiling"
+        ],
+        "conservativeScore": 0.631,
+        "constructiveScore": 91.8984
+      },
+      {
+        "anchorId": "ballad-piano-vocal",
+        "composer": "REFERENCE_PART_COMPOSER_V1",
+        "releasable": false,
+        "blocking": 0,
+        "refusals": 5,
+        "refusalRules": [
+          "major_at_the_climax/vocal_masking",
+          "major_on_a_bed/top_line_above_comfortable_ceiling"
+        ],
+        "conservativeScore": 0.654,
+        "constructiveScore": 92.9539
+      },
+      {
+        "anchorId": "rock-full",
+        "composer": "REFERENCE_PART_COMPOSER_V1",
+        "releasable": false,
+        "blocking": 0,
+        "refusals": 5,
+        "refusalRules": [
+          "major_on_a_bed/top_line_above_comfortable_ceiling"
+        ],
+        "conservativeScore": 0.672,
+        "constructiveScore": 89.7233
+      },
+      {
+        "anchorId": "dance-full",
+        "composer": "REFERENCE_PART_COMPOSER_V1",
+        "releasable": false,
+        "blocking": 0,
+        "refusals": 5,
+        "refusalRules": [
+          "major_at_the_climax/climax_all_treble",
+          "major_on_a_bed/top_line_above_comfortable_ceiling"
+        ],
+        "conservativeScore": 0.787,
+        "constructiveScore": 92.2856
+      },
+      {
+        "anchorId": "acoustic-demo",
+        "composer": "REFERENCE_PART_COMPOSER_V1",
+        "releasable": true,
+        "blocking": 0,
+        "refusals": 0,
+        "refusalRules": [],
+        "conservativeScore": 0.808,
+        "constructiveScore": 94.8125
+      },
+      {
+        "anchorId": "orchestral-midi",
+        "composer": "REFERENCE_PART_COMPOSER_V1",
+        "releasable": true,
+        "blocking": 0,
+        "refusals": 0,
+        "refusalRules": [],
+        "conservativeScore": 0.789,
+        "constructiveScore": 92.228
+      },
+      {
+        "anchorId": "ethnic-vocal",
+        "composer": "REFERENCE_PART_COMPOSER_V1",
+        "releasable": false,
+        "blocking": 0,
+        "refusals": 2,
+        "refusalRules": [
+          "major_on_a_bed/top_line_above_comfortable_ceiling"
+        ],
+        "conservativeScore": 0.721,
+        "constructiveScore": 95.4293
+      },
+      {
+        "anchorId": "jazz-full",
+        "composer": "REFERENCE_PART_COMPOSER_V1",
+        "releasable": false,
+        "blocking": 0,
+        "refusals": 2,
+        "refusalRules": [
+          "major_at_the_climax/vocal_masking",
+          "major_on_a_bed/top_line_above_comfortable_ceiling"
+        ],
+        "conservativeScore": 0.673,
+        "constructiveScore": 93.8898
+      },
+      {
+        "anchorId": "cinematic-midi",
+        "composer": "REFERENCE_PART_COMPOSER_V1",
+        "releasable": false,
+        "blocking": 0,
+        "refusals": 4,
+        "refusalRules": [
+          "major_at_the_climax/foundation_gaps",
+          "major_at_the_climax/vocal_masking",
+          "major_on_a_bed/top_line_above_comfortable_ceiling"
+        ],
+        "conservativeScore": 0.831,
+        "constructiveScore": 91.4828
+      }
+    ]
+  },
+  "positiveControl": {
+    "family": "chord_tone_to_non_chord_tone",
+    "severity": 3,
+    "seed": 1,
+    "note": "The bed (and every other eligible part) revoiced off the chord on the two anchors the judge passes untouched. `clash_share` is the same kind that blocks the owner's Outro.",
+    "rows": [
+      {
+        "anchorId": "acoustic-demo",
+        "partId": "bass-bass",
+        "role": "BASS",
+        "detail": "chord_tone_to_non_chord_tone@3 on bass-bass: 42 notes changed",
+        "clean": {
+          "releasable": true,
+          "blocking": 0,
+          "refusals": 0,
+          "conservativeScore": 0.808,
+          "constructiveScore": 94.8125
+        },
+        "worsened": {
+          "releasable": false,
+          "blocking": 3,
+          "refusals": 3,
+          "conservativeScore": 0.823,
+          "constructiveScore": 89.8096,
+          "refusalKinds": [
+            "clash_share/blocking_from_gated_dimension"
+          ]
+        },
+        "oldScoreWouldHaveShippedTheWorsened": true,
+        "newlySelected": "clean",
+        "worsenedStatus": "critic_judge_refused"
+      },
+      {
+        "anchorId": "acoustic-demo",
+        "partId": "guitar-harmonic_bed",
+        "role": "HARMONIC_BED",
+        "detail": "chord_tone_to_non_chord_tone@3 on guitar-harmonic_bed: 57 notes changed",
+        "clean": {
+          "releasable": true,
+          "blocking": 0,
+          "refusals": 0,
+          "conservativeScore": 0.808,
+          "constructiveScore": 94.8125
+        },
+        "worsened": {
+          "releasable": false,
+          "blocking": 3,
+          "refusals": 3,
+          "conservativeScore": 0.816,
+          "constructiveScore": 90.217,
+          "refusalKinds": [
+            "clash_share/blocking_from_gated_dimension"
+          ]
+        },
+        "oldScoreWouldHaveShippedTheWorsened": true,
+        "newlySelected": "clean",
+        "worsenedStatus": "critic_judge_refused"
+      },
+      {
+        "anchorId": "orchestral-midi",
+        "partId": "bass-bass",
+        "role": "BASS",
+        "detail": "chord_tone_to_non_chord_tone@3 on bass-bass: 5 notes changed",
+        "clean": {
+          "releasable": true,
+          "blocking": 0,
+          "refusals": 0,
+          "conservativeScore": 0.789,
+          "constructiveScore": 92.228
+        },
+        "worsened": {
+          "releasable": false,
+          "blocking": 1,
+          "refusals": 1,
+          "conservativeScore": 0.793,
+          "constructiveScore": 89.428,
+          "refusalKinds": [
+            "clash_share/blocking_from_gated_dimension"
+          ]
+        },
+        "oldScoreWouldHaveShippedTheWorsened": true,
+        "newlySelected": "clean",
+        "worsenedStatus": "critic_judge_refused"
+      },
+      {
+        "anchorId": "orchestral-midi",
+        "partId": "keys-ostinato",
+        "role": "OSTINATO",
+        "detail": "chord_tone_to_non_chord_tone@3 on keys-ostinato: 112 notes changed",
+        "clean": {
+          "releasable": true,
+          "blocking": 0,
+          "refusals": 0,
+          "conservativeScore": 0.789,
+          "constructiveScore": 92.228
+        },
+        "worsened": {
+          "releasable": false,
+          "blocking": 4,
+          "refusals": 5,
+          "conservativeScore": 0.789,
+          "constructiveScore": 86.9267,
+          "refusalKinds": [
+            "clash_share/blocking_from_gated_dimension",
+            "vocal_masking/major_at_the_climax"
+          ]
+        },
+        "oldScoreWouldHaveShippedTheWorsened": true,
+        "newlySelected": "clean",
+        "worsenedStatus": "critic_judge_refused"
+      },
+      {
+        "anchorId": "orchestral-midi",
+        "partId": "strings-climax_layer",
+        "role": "CLIMAX_LAYER",
+        "detail": "chord_tone_to_non_chord_tone@3 on strings-climax_layer: 54 notes changed",
+        "clean": {
+          "releasable": true,
+          "blocking": 0,
+          "refusals": 0,
+          "conservativeScore": 0.789,
+          "constructiveScore": 92.228
+        },
+        "worsened": {
+          "releasable": false,
+          "blocking": 4,
+          "refusals": 4,
+          "conservativeScore": 0.796,
+          "constructiveScore": 86.5413,
+          "refusalKinds": [
+            "clash_share/blocking_from_gated_dimension"
+          ]
+        },
+        "oldScoreWouldHaveShippedTheWorsened": true,
+        "newlySelected": "clean",
+        "worsenedStatus": "critic_judge_refused"
+      }
+    ],
+    "refusedEvery": true,
+    "oldScoreFailedOn": 5,
+    "cases": 5
+  },
+  "ownerSong": {
+    "anchorId": "owner-rachem-na",
+    "composer": "REFERENCE_PART_COMPOSER_V1",
+    "conservativeScore": 0.841,
+    "before": "selected on the conservative score; the judge was consulted by nobody",
+    "after": {
+      "status": "critic_judge_refused",
+      "releasable": false,
+      "blockingCount": 2,
+      "refusalCount": 6,
+      "refusals": [
+        {
+          "kind": "planned_family_silent",
+          "dimension": "orchestration",
+          "severity": "blocking",
+          "rule": "blocking_from_gated_dimension",
+          "section": "Intro",
+          "bars": "1-2",
+          "repairOperation": "compose_missing_part"
+        },
+        {
+          "kind": "overhang_across_chord_change",
+          "dimension": "harmony",
+          "severity": "blocking",
+          "rule": "blocking_from_gated_dimension",
+          "section": "Bridge",
+          "bars": "97-112",
+          "repairOperation": "shorten_or_retie_at_chord_change"
+        },
+        {
+          "kind": "top_line_above_comfortable_ceiling",
+          "dimension": "register",
+          "severity": "major",
+          "rule": "major_on_a_bed",
+          "section": "Chorus",
+          "bars": "41-56",
+          "repairOperation": "lower_top_voice_to_ceiling"
+        },
+        {
+          "kind": "top_line_above_comfortable_ceiling",
+          "dimension": "register",
+          "severity": "major",
+          "rule": "major_on_a_bed",
+          "section": "Chorus 2",
+          "bars": "57-72",
+          "repairOperation": "lower_top_voice_to_ceiling"
+        },
+        {
+          "kind": "top_line_above_comfortable_ceiling",
+          "dimension": "register",
+          "severity": "major",
+          "rule": "major_on_a_bed",
+          "section": "Chorus 2",
+          "bars": "57-72",
+          "repairOperation": "lower_top_voice_to_ceiling"
+        },
+        {
+          "kind": "top_line_above_comfortable_ceiling",
+          "dimension": "register",
+          "severity": "major",
+          "rule": "major_on_a_bed",
+          "section": "Chorus 3",
+          "bars": "113-128",
+          "repairOperation": "lower_top_voice_to_ceiling"
+        }
+      ],
+      "topProblems": [
+        {
+          "observationId": "harmony:overhang_across_chord_change:strings-pad:97-112",
+          "dimension": "harmony",
+          "kind": "overhang_across_chord_change",
+          "severity": "blocking",
+          "bars": "97-112",
+          "section": "Bridge",
+          "priority": 96.3015,
+          "whatToFix": "shorten_or_retie_at_chord_change (note): end or re-strike strings notes at the chord changes in Bridge",
+          "repairOperation": "shorten_or_retie_at_chord_change"
+        },
+        {
+          "observationId": "orchestration:planned_family_silent:*:1-2",
+          "dimension": "orchestration",
+          "kind": "planned_family_silent",
+          "severity": "blocking",
+          "bars": "1-2",
+          "section": "Intro",
+          "priority": 60.1,
+          "whatToFix": "compose_missing_part (part): bass (BASS) has a part task in Intro and wrote no notes",
+          "repairOperation": "compose_missing_part"
+        },
+        {
+          "observationId": "performanceRealisation:dynamic_range_flat_per_section:percussion-fill:1-141",
+          "dimension": "performanceRealisation",
+          "kind": "dynamic_range_flat_per_section",
+          "severity": "major",
+          "bars": "1-141",
+          "section": null,
+          "priority": 33.25,
+          "whatToFix": "shape_within_the_section (part): percussion plays every one of its 4 sections inside a single dynamic marking while the plan's energy spans 0.42 across them",
+          "repairOperation": "shape_within_the_section"
+        }
+      ],
+      "requestedRepairOperations": [
+        "compose_missing_part",
+        "lower_top_voice_to_ceiling",
+        "shape_within_the_section",
+        "shorten_or_retie_at_chord_change"
+      ],
+      "contested": 0,
+      "reason": "the release judge refused this candidate — nothing was releasable: planned_family_silent [blocking] in Intro (bars 1-2) — orchestration, refused by blocking_from_gated_dimension; overhang_across_chord_change [blocking] in Bridge (bars 97-112) — harmony, refused by blocking_from_gated_dimension; top_line_above_comfortable_ceiling [major] in Chorus (bars 41-56) — register, refused by major_on_a_bed; top_line_above_comfortable_ceiling [major] in Chorus 2 (bars 57-72) — register, refused by major_on_a_bed; top_line_above_comfortable_ceiling [major] in Chorus 2 (bars 57-72) — register, refused by major_on_a_bed; top_line_above_comfortable_ceiling [major] in Chorus 3 (bars 113-128) — register, refused by major_on_a_bed. Repairs asked for: compose_missing_part, lower_top_voice_to_ceiling, shape_within_the_section, shorten_or_retie_at_chord_change."
+    }
+  },
+  "operatorHandoff": {
+    "note": "kind -> operator the critic asked for -> whether repairExecutor.ts can execute it. An operator marked executable false is stream B-20's work; the executor's dispatch is the file that would implement it.",
+    "executorFile": "artifacts/api-server/src/lib/repairExecutor.ts",
+    "executable": [
+      "arc.restate_climax",
+      "arc.restate_dynamics",
+      "arc.widen_dynamics",
+      "arc.set_texture_level",
+      "form.change_development_operator",
+      "groove.change_comping_subdivision",
+      "form.add_transition_device",
+      "groove.add_fill",
+      "orchestration.change_role",
+      "register.shift_section_band",
+      "compose.recompose_part"
+    ],
+    "rows": [
+      {
+        "operation": "add_approach_tones",
+        "kinds": [
+          "static_bass_no_approach"
+        ],
+        "dimensions": [
+          "adversarial.professionalWouldChange"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "add_rests",
+        "kinds": [
+          "no_rests"
+        ],
+        "dimensions": [
+          "adversarial.machineMade"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "align_density_to_form",
+        "kinds": [
+          "density_change_off_form"
+        ],
+        "dimensions": [
+          "adversarial.arbitrariness"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "align_entry",
+        "kinds": [
+          "mid_phrase_entry"
+        ],
+        "dimensions": [
+          "adversarial.arbitrariness"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "align_exit",
+        "kinds": [
+          "mid_phrase_exit"
+        ],
+        "dimensions": [
+          "adversarial.arbitrariness"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "approach_from_the_chord_mode",
+        "kinds": [
+          "approach_tone_wrong_mode"
+        ],
+        "dimensions": [
+          "harmony"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "clear_vocal_register",
+        "kinds": [
+          "melody_masked"
+        ],
+        "dimensions": [
+          "adversarial.fighting"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "compose_missing_part",
+        "kinds": [
+          "planned_family_silent"
+        ],
+        "dimensions": [
+          "orchestration"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "compose_planned_part",
+        "kinds": [
+          "planned_family_silent"
+        ],
+        "dimensions": [
+          "adversarial.arbitrariness"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "develop_repeat",
+        "kinds": [
+          "section_note_copy"
+        ],
+        "dimensions": [
+          "adversarial.copiedRepeat"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "fill_foundation_gaps",
+        "kinds": [
+          "foundation_gaps"
+        ],
+        "dimensions": [
+          "density"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "keep_common_tones",
+        "kinds": [
+          "no_common_tone_retention"
+        ],
+        "dimensions": [
+          "voiceLeading"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "lower_string_bed",
+        "kinds": [
+          "string_bed_too_high"
+        ],
+        "dimensions": [
+          "adversarial.instrumentReality"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "lower_top_voice_to_ceiling",
+        "kinds": [
+          "top_line_above_comfortable_ceiling"
+        ],
+        "dimensions": [
+          "register"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "motivate_entry",
+        "kinds": [
+          "unmotivated_entry"
+        ],
+        "dimensions": [
+          "adversarial.causality"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "move_line_out_of_vocal_pitches",
+        "kinds": [
+          "line_masks_vocal"
+        ],
+        "dimensions": [
+          "melodyAndCounterline"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "move_out_of_vocal_band",
+        "kinds": [
+          "vocal_masking"
+        ],
+        "dimensions": [
+          "register"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "open_the_song",
+        "kinds": [
+          "intro_empty"
+        ],
+        "dimensions": [
+          "transitions"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "outside_comfortable_range",
+        "kinds": [
+          "outside_comfortable_range"
+        ],
+        "dimensions": [
+          "playability"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "plan_bass_line",
+        "kinds": [
+          "bass_rarely_states_root"
+        ],
+        "dimensions": [
+          "harmony"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "quantise_harmony_to_the_kit_grid",
+        "kinds": [
+          "harmony_off_grid"
+        ],
+        "dimensions": [
+          "groove"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "realise_bass_pickup",
+        "kinds": [
+          "planned_device_unrealised"
+        ],
+        "dimensions": [
+          "transitions"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "realise_break",
+        "kinds": [
+          "planned_device_unrealised"
+        ],
+        "dimensions": [
+          "transitions"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "realise_cymbal_choke",
+        "kinds": [
+          "planned_device_unrealised"
+        ],
+        "dimensions": [
+          "transitions"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "realise_drum_fill",
+        "kinds": [
+          "planned_device_unrealised",
+          "planned_fill_missing"
+        ],
+        "dimensions": [
+          "groove",
+          "transitions"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "realise_ending_hit",
+        "kinds": [
+          "planned_device_unrealised"
+        ],
+        "dimensions": [
+          "transitions"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "recall_earlier_material",
+        "kinds": [
+          "no_recurrence"
+        ],
+        "dimensions": [
+          "motifRecurrenceAndDevelopment"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "recall_section_material",
+        "kinds": [
+          "repeat_without_identity"
+        ],
+        "dimensions": [
+          "sectionDevelopment"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "requantise_part",
+        "kinds": [
+          "off_grid"
+        ],
+        "dimensions": [
+          "groove"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "restore_comping_rhythm",
+        "kinds": [
+          "comping_below_role_floor"
+        ],
+        "dimensions": [
+          "density"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "revoice_to_chord_tones",
+        "kinds": [
+          "clash_share"
+        ],
+        "dimensions": [
+          "harmony"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "separate_registers",
+        "kinds": [
+          "voice_crossing_between_parts"
+        ],
+        "dimensions": [
+          "voiceLeading"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "settle_subdivision",
+        "kinds": [
+          "subdivision_inconsistent"
+        ],
+        "dimensions": [
+          "groove"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "shape_within_the_section",
+        "kinds": [
+          "dynamic_range_flat_per_section"
+        ],
+        "dimensions": [
+          "performanceRealisation"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "share_anticipations",
+        "kinds": [
+          "anticipation_mismatch"
+        ],
+        "dimensions": [
+          "groove"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "shorten_or_retie_at_chord_change",
+        "kinds": [
+          "overhang_across_chord_change"
+        ],
+        "dimensions": [
+          "harmony"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "state_backbeat",
+        "kinds": [
+          "backbeat_missing"
+        ],
+        "dimensions": [
+          "groove"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "vary_percussion",
+        "kinds": [
+          "single_pitch_percussion"
+        ],
+        "dimensions": [
+          "adversarial.professionalWouldChange"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "vary_rhythm",
+        "kinds": [
+          "rhythm_predictable"
+        ],
+        "dimensions": [
+          "adversarial.boredom"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "voice_the_bed",
+        "kinds": [
+          "bed_thin_voicing"
+        ],
+        "dimensions": [
+          "density"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "write_a_build",
+        "kinds": [
+          "no_build_into_climax"
+        ],
+        "dimensions": [
+          "emotionalArcAndTension"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "write_a_contour",
+        "kinds": [
+          "line_static"
+        ],
+        "dimensions": [
+          "melodyAndCounterline"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "write_a_final_chord",
+        "kinds": [
+          "ending_cut"
+        ],
+        "dimensions": [
+          "transitions"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "write_ending",
+        "kinds": [
+          "ending_missing"
+        ],
+        "dimensions": [
+          "adversarial.causality"
+        ],
+        "executable": false
+      },
+      {
+        "operation": "write_top_line",
+        "kinds": [
+          "no_top_voice_line"
+        ],
+        "dimensions": [
+          "adversarial.professionalWouldChange"
+        ],
+        "executable": false
+      }
+    ],
+    "unexecutable": [
+      "add_approach_tones",
+      "add_rests",
+      "align_density_to_form",
+      "align_entry",
+      "align_exit",
+      "approach_from_the_chord_mode",
+      "clear_vocal_register",
+      "compose_missing_part",
+      "compose_planned_part",
+      "develop_repeat",
+      "fill_foundation_gaps",
+      "keep_common_tones",
+      "lower_string_bed",
+      "lower_top_voice_to_ceiling",
+      "motivate_entry",
+      "move_line_out_of_vocal_pitches",
+      "move_out_of_vocal_band",
+      "open_the_song",
+      "outside_comfortable_range",
+      "plan_bass_line",
+      "quantise_harmony_to_the_kit_grid",
+      "realise_bass_pickup",
+      "realise_break",
+      "realise_cymbal_choke",
+      "realise_drum_fill",
+      "realise_ending_hit",
+      "recall_earlier_material",
+      "recall_section_material",
+      "requantise_part",
+      "restore_comping_rhythm",
+      "revoice_to_chord_tones",
+      "separate_registers",
+      "settle_subdivision",
+      "shape_within_the_section",
+      "share_anticipations",
+      "shorten_or_retie_at_chord_change",
+      "state_backbeat",
+      "vary_percussion",
+      "vary_rhythm",
+      "voice_the_bed",
+      "write_a_build",
+      "write_a_contour",
+      "write_a_final_chord",
+      "write_ending",
+      "write_top_line"
+    ]
+  },
+  "honestLimits": [
+    "The gate is wired and it is strict: today it passes 2 of the 9 clean corpus anchors and refuses the owner's song. That is the measurement, not a target: with this brain, most generations now end in NO_RELEASABLE_CANDIDATE. Nothing here moves a threshold to make the number look better — the release rules are B-05c's and were not touched.",
+    "The refusals are dominated by one rule. `major_on_a_bed` on `top_line_above_comfortable_ceiling` refuses seven of the nine clean anchors on its own. Whether a bed a little over its comfortable ceiling should refuse a release, or should be a major finding the repair loop fixes, is a judgement for B-05c/B-20 and is not settled by this stream.",
+    "The positive control is a corruption of the harness's own vocabulary, applied to the two anchors the judge passes. It shows the gate distinguishes worsened from clean on real material; it does not show the gate ranks two genuinely different *good* candidates correctly, because the corpus does not contain two good candidates for one song.",
+    "The `conservativeScore` here is the symbolic critic alone. On the production path it is averaged with the PCM critic when a render exists; no audio is rendered in this harness, and `(m + (a ?? m)) / 2` is exactly `m` in that case. A rendered candidate could order differently on the old score - which is the point: nothing about the old score was ever the critics' judgement.",
+    "The judge runs twice per candidate on the production path: once for the stored verdict and once inside `rankCandidates`. It is a pure, deterministic function of the same reports, so the two agree by construction; it is duplicated work, not a duplicated rule.",
+    "A provider candidate with no symbolic notes (audio-only) is not judged and therefore not gated. The note-level critics read notes; refusing such a candidate would be a verdict nobody reached, and passing it is not a claim that it is good.",
+    "The owner's row here is the *rebuild* of the owner's song from the stored Song Model v3 fixture, not the exported v7a bytes. The shipped candidate is measured separately, off the saved candidate JSON, in docs/evidence/brain-b19-owner-v7a-selection.json.",
+    "Nobody listened to anything. Every number here is symbolic."
+  ]
+}

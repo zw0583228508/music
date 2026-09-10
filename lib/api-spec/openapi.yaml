@@ -4770,7 +4770,7 @@ components:
       properties:
         status:
           type: string
-          enum: [plan_received, rendering, render_succeeded, analyzing, evaluated, render_failed, analysis_failed, diversity_rejected, repair_not_improved, repair_scope_violated, provider_hard_rule_refused]
+          enum: [plan_received, rendering, render_succeeded, analyzing, evaluated, render_failed, analysis_failed, diversity_rejected, repair_not_improved, repair_scope_violated, provider_hard_rule_refused, critic_judge_refused]
         providerScore: { type: number }
         renderArtifactIds:
           type: array
@@ -4824,6 +4824,91 @@ components:
             reason: { type: string, enum: [baseline_retained, near_duplicate, sufficiently_distinct] }
         repair:
           $ref: "#/components/schemas/CandidateRepairEvidence"
+        criticVerdict:
+          $ref: "#/components/schemas/CandidateCriticVerdict"
+    CandidateCriticVerdict:
+      type: object
+      description: >-
+        Brain B-19: the release judge's decision on this candidate. `releasable`
+        false means the candidate is refused and cannot be selected; `refusals`
+        names each blocking observation with the release rule that refused it,
+        and `topProblems` names the repair operator each asked for. `contested`
+        carries the disagreements the judge deliberately kept open - an empty
+        `refusals` list with a non-empty `contested` list is not agreement.
+      required: [version, rankVersion, releasable, reasons, blockingCount, refusalCount, refusals, topProblems, contested, salienceWeightedMajors, constructiveScore, rank, why, tiedWith, tieGroup, nearIdentical, gatedDimensions, dimensionsApplicable, dimensionsTotal, requestedRepairOperations]
+      properties:
+        version: { type: string }
+        rankVersion: { type: string }
+        releasable: { type: boolean }
+        reasons:
+          type: array
+          items: { type: string }
+        blockingCount: { type: number, minimum: 0 }
+        refusalCount: { type: number, minimum: 0 }
+        refusals:
+          type: array
+          items:
+            type: object
+            required: [observationId, dimension, kind, severity, rule, detail, startBar, endBar, sectionName, repairOperation]
+            properties:
+              observationId: { type: string }
+              dimension: { type: string }
+              kind: { type: string }
+              severity: { type: string, enum: [info, minor, major, blocking] }
+              rule: { type: string }
+              detail: { type: string }
+              startBar: { type: number, minimum: 1 }
+              endBar: { type: number, minimum: 1 }
+              sectionName: { type: [string, "null"] }
+              repairOperation: { type: [string, "null"] }
+        topProblems:
+          type: array
+          items:
+            type: object
+            required: [observationId, dimension, kind, severity, bars, section, priority, whatToFix, repairOperation]
+            properties:
+              observationId: { type: string }
+              dimension: { type: string }
+              kind: { type: string }
+              severity: { type: string, enum: [info, minor, major, blocking] }
+              bars: { type: string }
+              section: { type: [string, "null"] }
+              priority: { type: number }
+              whatToFix: { type: string }
+              repairOperation: { type: [string, "null"] }
+        contested:
+          type: array
+          items:
+            type: object
+            required: [topic, startBar, endBar, positions, rationale]
+            properties:
+              topic: { type: string }
+              startBar: { type: number, minimum: 1 }
+              endBar: { type: number, minimum: 1 }
+              positions:
+                type: array
+                items: { type: string }
+              rationale: { type: string }
+        salienceWeightedMajors: { type: number, minimum: 0 }
+        constructiveScore: { type: number }
+        rank: { type: number, minimum: 1 }
+        why: { type: string }
+        tiedWith:
+          type: array
+          items: { type: string }
+        tieGroup:
+          type: number
+          minimum: 1
+          description: First rank of this candidate's tie group; equal for every candidate the ranking could not separate.
+        nearIdentical: { type: [string, "null"] }
+        gatedDimensions:
+          type: array
+          items: { type: string }
+        dimensionsApplicable: { type: number, minimum: 0 }
+        dimensionsTotal: { type: number, minimum: 0 }
+        requestedRepairOperations:
+          type: array
+          items: { type: string }
     CandidateMusicCriticEvidence:
       type: object
       required: [source, summary, observations]
