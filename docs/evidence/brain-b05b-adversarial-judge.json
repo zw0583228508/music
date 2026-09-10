@@ -1,0 +1,4781 @@
+{
+  "title": "Brain B-05b - adversarial critic + judge: what rejects the reference composer, the positive-control table, and verdicts that keep disagreement",
+  "generatedAt": "2026-09-10T12:00:00.000Z",
+  "versions": {
+    "adversarial": "ADVERSARIAL_CRITIC_v1",
+    "judge": "CRITIC_JUDGE_v1",
+    "taxonomy": "FAILURE_TAXONOMY_v1",
+    "modules": {
+      "adversarial.boredom": "ADVERSARIAL_BOREDOM_v1",
+      "adversarial.machineMade": "ADVERSARIAL_MACHINE_MADE_v1",
+      "adversarial.causality": "ADVERSARIAL_CAUSALITY_v1",
+      "adversarial.arbitrariness": "ADVERSARIAL_ARBITRARINESS_v1",
+      "adversarial.instrumentReality": "ADVERSARIAL_INSTRUMENT_REALITY_v1",
+      "adversarial.copiedRepeat": "ADVERSARIAL_COPIED_REPEAT_v1",
+      "adversarial.fighting": "ADVERSARIAL_FIGHTING_v1",
+      "adversarial.professionalWouldChange": "ADVERSARIAL_PROFESSIONAL_v1"
+    }
+  },
+  "composerUnderTest": "REFERENCE_PART_COMPOSER_V1",
+  "method": "orchestrateArrangement(candidateCount 1, render false, fixed now) on synthetic benchmark cases; the performed track models of the single candidate are the anchor; each module runs on the anchor and on its deliberately worsened copy; detection = the worsened copy carries a strictly larger confidence-weighted penalty.",
+  "anchors": [
+    "pop-full",
+    "orchestral-midi",
+    "cinematic-midi",
+    "rock-full",
+    "jazz-full",
+    "ballad-piano-vocal",
+    "dance-full"
+  ],
+  "referenceComposerUnderAdversarialCritic": {
+    "axes": [
+      {
+        "dimension": "adversarial.boredom",
+        "anchorsApplicable": 7,
+        "anchorsWithMajorOrBlocking": 0,
+        "meanScore": 99.143,
+        "minScore": 96,
+        "kinds": [
+          {
+            "kind": "identical_bars",
+            "code": "REPETITION_FAILURE",
+            "count": 1,
+            "anchors": [
+              "cinematic-midi"
+            ],
+            "worstSeverity": "minor"
+          },
+          {
+            "kind": "rhythm_predictable",
+            "code": "GROOVE_FAILURE",
+            "count": 6,
+            "anchors": [
+              "cinematic-midi",
+              "dance-full",
+              "orchestral-midi",
+              "rock-full"
+            ],
+            "worstSeverity": "minor"
+          }
+        ]
+      },
+      {
+        "dimension": "adversarial.machineMade",
+        "anchorsApplicable": 7,
+        "anchorsWithMajorOrBlocking": 3,
+        "meanScore": 90.857,
+        "minScore": 72,
+        "kinds": [
+          {
+            "kind": "chord_changes_only_on_downbeat",
+            "code": "HARMONY_FAILURE",
+            "count": 1,
+            "anchors": [
+              "pop-full"
+            ],
+            "worstSeverity": "minor"
+          },
+          {
+            "kind": "identical_voicing_shape",
+            "code": "VOICE_LEADING_FAILURE",
+            "count": 2,
+            "anchors": [
+              "dance-full",
+              "rock-full"
+            ],
+            "worstSeverity": "major"
+          },
+          {
+            "kind": "no_rests",
+            "code": "DENSITY_FAILURE",
+            "count": 14,
+            "anchors": [
+              "ballad-piano-vocal",
+              "cinematic-midi",
+              "dance-full",
+              "jazz-full",
+              "orchestral-midi",
+              "pop-full",
+              "rock-full"
+            ],
+            "worstSeverity": "major"
+          },
+          {
+            "kind": "root_position_only",
+            "code": "HARMONY_FAILURE",
+            "count": 2,
+            "anchors": [
+              "dance-full",
+              "rock-full"
+            ],
+            "worstSeverity": "minor"
+          }
+        ]
+      },
+      {
+        "dimension": "adversarial.causality",
+        "anchorsApplicable": 7,
+        "anchorsWithMajorOrBlocking": 3,
+        "meanScore": 93.143,
+        "minScore": 75,
+        "kinds": [
+          {
+            "kind": "climax_not_prepared",
+            "code": "ENERGY_ARC_FAILURE",
+            "count": 1,
+            "anchors": [
+              "jazz-full"
+            ],
+            "worstSeverity": "major"
+          },
+          {
+            "kind": "climax_not_realised",
+            "code": "ENERGY_ARC_FAILURE",
+            "count": 1,
+            "anchors": [
+              "jazz-full"
+            ],
+            "worstSeverity": "major"
+          },
+          {
+            "kind": "ending_is_a_cut",
+            "code": "TRANSITION_FAILURE",
+            "count": 2,
+            "anchors": [
+              "ballad-piano-vocal",
+              "jazz-full"
+            ],
+            "worstSeverity": "major"
+          },
+          {
+            "kind": "transition_unprepared",
+            "code": "TRANSITION_FAILURE",
+            "count": 6,
+            "anchors": [
+              "ballad-piano-vocal",
+              "dance-full",
+              "orchestral-midi",
+              "pop-full",
+              "rock-full"
+            ],
+            "worstSeverity": "major"
+          }
+        ]
+      },
+      {
+        "dimension": "adversarial.arbitrariness",
+        "anchorsApplicable": 7,
+        "anchorsWithMajorOrBlocking": 2,
+        "meanScore": 71,
+        "minScore": 0,
+        "kinds": [
+          {
+            "kind": "mid_phrase_exit",
+            "code": "CAUSALITY_FAILURE",
+            "count": 2,
+            "anchors": [
+              "cinematic-midi",
+              "dance-full"
+            ],
+            "worstSeverity": "minor"
+          },
+          {
+            "kind": "planned_family_silent",
+            "code": "ORCHESTRATION_FAILURE",
+            "count": 8,
+            "anchors": [
+              "cinematic-midi",
+              "orchestral-midi"
+            ],
+            "worstSeverity": "blocking"
+          }
+        ]
+      },
+      {
+        "dimension": "adversarial.instrumentReality",
+        "anchorsApplicable": 7,
+        "anchorsWithMajorOrBlocking": 3,
+        "meanScore": 91.857,
+        "minScore": 60,
+        "kinds": [
+          {
+            "kind": "bass_sustain_beyond_decay",
+            "code": "IDIOM_FAILURE",
+            "count": 2,
+            "anchors": [
+              "ballad-piano-vocal",
+              "cinematic-midi"
+            ],
+            "worstSeverity": "minor"
+          },
+          {
+            "kind": "definition_family_mismatch",
+            "code": "ORCHESTRATION_FAILURE",
+            "count": 1,
+            "anchors": [
+              "dance-full"
+            ],
+            "worstSeverity": "blocking"
+          },
+          {
+            "kind": "string_bed_too_high",
+            "code": "REGISTER_FAILURE",
+            "count": 2,
+            "anchors": [
+              "cinematic-midi",
+              "orchestral-midi"
+            ],
+            "worstSeverity": "major"
+          }
+        ]
+      },
+      {
+        "dimension": "adversarial.copiedRepeat",
+        "anchorsApplicable": 5,
+        "anchorsWithMajorOrBlocking": 4,
+        "meanScore": 75.4,
+        "minScore": 63,
+        "kinds": [
+          {
+            "kind": "section_note_copy",
+            "code": "FORM_FAILURE",
+            "count": 14,
+            "anchors": [
+              "ballad-piano-vocal",
+              "dance-full",
+              "pop-full",
+              "rock-full"
+            ],
+            "worstSeverity": "major"
+          },
+          {
+            "kind": "section_rhythm_copy",
+            "code": "FORM_FAILURE",
+            "count": 2,
+            "anchors": [
+              "ballad-piano-vocal"
+            ],
+            "worstSeverity": "info"
+          }
+        ]
+      },
+      {
+        "dimension": "adversarial.fighting",
+        "anchorsApplicable": 7,
+        "anchorsWithMajorOrBlocking": 5,
+        "meanScore": 93.429,
+        "minScore": 88,
+        "kinds": [
+          {
+            "kind": "melody_masked",
+            "code": "VOCAL_SPACE_FAILURE",
+            "count": 8,
+            "anchors": [
+              "ballad-piano-vocal",
+              "dance-full",
+              "jazz-full",
+              "pop-full",
+              "rock-full"
+            ],
+            "worstSeverity": "major"
+          }
+        ]
+      },
+      {
+        "dimension": "adversarial.professionalWouldChange",
+        "anchorsApplicable": 7,
+        "anchorsWithMajorOrBlocking": 2,
+        "meanScore": 95.143,
+        "minScore": 88,
+        "kinds": [
+          {
+            "kind": "close_position_same_octave",
+            "code": "REGISTER_FAILURE",
+            "count": 2,
+            "anchors": [
+              "rock-full"
+            ],
+            "worstSeverity": "major"
+          },
+          {
+            "kind": "single_pitch_percussion",
+            "code": "ORCHESTRATION_FAILURE",
+            "count": 1,
+            "anchors": [
+              "cinematic-midi"
+            ],
+            "worstSeverity": "major"
+          },
+          {
+            "kind": "static_bass_no_approach",
+            "code": "VOICE_LEADING_FAILURE",
+            "count": 7,
+            "anchors": [
+              "ballad-piano-vocal",
+              "cinematic-midi",
+              "dance-full",
+              "jazz-full",
+              "orchestral-midi",
+              "pop-full",
+              "rock-full"
+            ],
+            "worstSeverity": "minor"
+          }
+        ]
+      }
+    ],
+    "perAnchor": [
+      {
+        "anchor": "pop-full",
+        "genre": "pop",
+        "meter": "4/4",
+        "tempoBpm": 120,
+        "bars": 40,
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "family": "drums",
+            "definitionId": "drums",
+            "notes": 532
+          },
+          {
+            "id": "bass-bass",
+            "family": "strings",
+            "definitionId": "bass",
+            "notes": 137
+          },
+          {
+            "id": "keys-harmonic_bed",
+            "family": "keys",
+            "definitionId": "piano",
+            "notes": 22
+          },
+          {
+            "id": "ensemble-transition",
+            "family": "keys",
+            "definitionId": "piano",
+            "notes": 21
+          }
+        ],
+        "byDimension": {
+          "adversarial.boredom": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 100,
+            "penalty": 0,
+            "coverage": 0.575,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.machineMade": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 97,
+            "penalty": 2.9416,
+            "coverage": 0.575,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "chord_changes_only_on_downbeat",
+                "code": "HARMONY_FAILURE",
+                "severity": "minor",
+                "bars": "1-40",
+                "section": "Intro",
+                "tracks": [
+                  "ensemble-transition",
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.5,
+                "origin": "harmony@0.5",
+                "evidence": {
+                  "arrangementChangesOnDownbeatShare": 1,
+                  "arrangementChanges": 8,
+                  "sourceChordChangesOnDownbeatShare": 1,
+                  "sourceChords": 20
+                },
+                "repair": "anticipate_changes (part)"
+              },
+              {
+                "kind": "no_rests",
+                "code": "DENSITY_FAILURE",
+                "severity": "minor",
+                "bars": "1-8",
+                "section": "Intro",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.1,
+                "origin": "arc@0.5",
+                "evidence": {
+                  "barsWithoutRest": 8,
+                  "restBeats": 1,
+                  "seconds": 15.4002
+                },
+                "repair": "add_rests (section)"
+              },
+              {
+                "kind": "no_rests",
+                "code": "DENSITY_FAILURE",
+                "severity": "minor",
+                "bars": "13-21",
+                "section": "Chorus",
+                "tracks": [
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.1354,
+                "origin": "arc@0.5",
+                "evidence": {
+                  "barsWithoutRest": 9,
+                  "restBeats": 1,
+                  "seconds": 16.1168
+                },
+                "repair": "add_rests (section)"
+              }
+            ]
+          },
+          "adversarial.causality": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 98,
+            "penalty": 2.1712,
+            "coverage": 0.575,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "transition_unprepared",
+                "code": "TRANSITION_FAILURE",
+                "severity": "minor",
+                "bars": "11-13",
+                "section": "Verse",
+                "tracks": [
+                  "bass-bass",
+                  "drums-groove",
+                  "ensemble-transition",
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.5428,
+                "origin": "compose@0.5",
+                "evidence": {
+                  "fromSection": "Verse",
+                  "toSection": "Chorus",
+                  "energyLift": 0.45,
+                  "partsWithGesture": 0,
+                  "plannedDevices": 4,
+                  "plannedKind": "build"
+                },
+                "repair": "prepare_transition (section)"
+              }
+            ]
+          },
+          "adversarial.arbitrariness": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 100,
+            "penalty": 0,
+            "coverage": 0.575,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.instrumentReality": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 100,
+            "penalty": 0,
+            "coverage": 0.575,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.copiedRepeat": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 63,
+            "penalty": 37.04,
+            "coverage": 0.575,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "section_note_copy",
+                "code": "FORM_FAILURE",
+                "severity": "minor",
+                "bars": "21-28",
+                "section": "Verse 2",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.9257,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Verse",
+                  "laterSection": "Verse 2",
+                  "byteMatchShare": 0,
+                  "noteMatchShare": 1,
+                  "rhythmMatchShare": 1,
+                  "notesEarlier": 30,
+                  "notesLater": 30,
+                  "finalRepeat": false
+                },
+                "repair": "develop_repeat (section)"
+              },
+              {
+                "kind": "section_note_copy",
+                "code": "FORM_FAILURE",
+                "severity": "minor",
+                "bars": "21-28",
+                "section": "Verse 2",
+                "tracks": [
+                  "drums-groove"
+                ],
+                "confidence": 0.9999,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Verse",
+                  "laterSection": "Verse 2",
+                  "byteMatchShare": 0.037,
+                  "noteMatchShare": 1,
+                  "rhythmMatchShare": 1,
+                  "notesEarlier": 108,
+                  "notesLater": 108,
+                  "finalRepeat": false
+                },
+                "repair": "develop_repeat (section)"
+              },
+              {
+                "kind": "section_note_copy",
+                "code": "FORM_FAILURE",
+                "severity": "major",
+                "bars": "29-36",
+                "section": "Chorus 2",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.9257,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Chorus",
+                  "laterSection": "Chorus 2",
+                  "byteMatchShare": 0,
+                  "noteMatchShare": 1,
+                  "rhythmMatchShare": 1,
+                  "notesEarlier": 30,
+                  "notesLater": 30,
+                  "finalRepeat": true
+                },
+                "repair": "develop_repeat (section)"
+              },
+              {
+                "kind": "section_note_copy",
+                "code": "FORM_FAILURE",
+                "severity": "major",
+                "bars": "29-36",
+                "section": "Chorus 2",
+                "tracks": [
+                  "drums-groove"
+                ],
+                "confidence": 0.9047,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Chorus",
+                  "laterSection": "Chorus 2",
+                  "byteMatchShare": 0.0857,
+                  "noteMatchShare": 0.9905,
+                  "rhythmMatchShare": 0.9905,
+                  "notesEarlier": 104,
+                  "notesLater": 105,
+                  "finalRepeat": true
+                },
+                "repair": "develop_repeat (section)"
+              },
+              {
+                "kind": "section_note_copy",
+                "code": "FORM_FAILURE",
+                "severity": "major",
+                "bars": "29-36",
+                "section": "Chorus 2",
+                "tracks": [
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.6144,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Chorus",
+                  "laterSection": "Chorus 2",
+                  "byteMatchShare": 0,
+                  "noteMatchShare": 1,
+                  "rhythmMatchShare": 1,
+                  "notesEarlier": 11,
+                  "notesLater": 11,
+                  "finalRepeat": true
+                },
+                "repair": "develop_repeat (section)"
+              }
+            ]
+          },
+          "adversarial.fighting": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 92,
+            "penalty": 8.1,
+            "coverage": 0.575,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "melody_masked",
+                "code": "VOCAL_SPACE_FAILURE",
+                "severity": "major",
+                "bars": "13-19",
+                "section": "Chorus",
+                "tracks": [
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.3375,
+                "origin": "orchestration@0.5",
+                "evidence": {
+                  "maskedMelodyNotes": 7,
+                  "melodyNotesInSungBars": 16,
+                  "maskedShare": 0.4375,
+                  "maskSemitones": 3,
+                  "maskVelocity": 80,
+                  "section": "Chorus"
+                },
+                "repair": "clear_vocal_register (section)"
+              },
+              {
+                "kind": "melody_masked",
+                "code": "VOCAL_SPACE_FAILURE",
+                "severity": "major",
+                "bars": "29-35",
+                "section": "Chorus 2",
+                "tracks": [
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.3375,
+                "origin": "orchestration@0.5",
+                "evidence": {
+                  "maskedMelodyNotes": 7,
+                  "melodyNotesInSungBars": 16,
+                  "maskedShare": 0.4375,
+                  "maskSemitones": 3,
+                  "maskVelocity": 80,
+                  "section": "Chorus 2"
+                },
+                "repair": "clear_vocal_register (section)"
+              }
+            ]
+          },
+          "adversarial.professionalWouldChange": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 97,
+            "penalty": 3.2288,
+            "coverage": 0.575,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "static_bass_no_approach",
+                "code": "VOICE_LEADING_FAILURE",
+                "severity": "minor",
+                "bars": "1-40",
+                "section": "Intro",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.8072,
+                "origin": "compose@1",
+                "evidence": {
+                  "chordChangesLandingOnRoot": 19,
+                  "approachedByStep": 0,
+                  "approachShare": 0
+                },
+                "repair": "add_approach_tones (part)"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "anchor": "orchestral-midi",
+        "genre": "orchestral",
+        "meter": "3/4",
+        "tempoBpm": 76,
+        "bars": 36,
+        "tracks": [
+          {
+            "id": "drums-climax_layer",
+            "family": "drums",
+            "definitionId": "drums",
+            "notes": 344
+          },
+          {
+            "id": "bass-bass",
+            "family": "strings",
+            "definitionId": "bass",
+            "notes": 102
+          },
+          {
+            "id": "brass-climax_layer",
+            "family": "brass",
+            "definitionId": "brass",
+            "notes": 6
+          },
+          {
+            "id": "strings-climax_layer",
+            "family": "strings",
+            "definitionId": "strings",
+            "notes": 8
+          },
+          {
+            "id": "ensemble-transition",
+            "family": "keys",
+            "definitionId": "piano",
+            "notes": 15
+          }
+        ],
+        "byDimension": {
+          "adversarial.boredom": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 99,
+            "penalty": 1.3696,
+            "coverage": 0.4889,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "rhythm_predictable",
+                "code": "GROOVE_FAILURE",
+                "severity": "minor",
+                "bars": "1-36",
+                "section": "Intro",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.2933,
+                "origin": "groove@0.5",
+                "evidence": {
+                  "entropyNormalised": 0.1257,
+                  "entropyBits": 0.65,
+                  "distinctBarRhythms": 2,
+                  "bars": 36
+                },
+                "repair": "vary_rhythm (section)"
+              },
+              {
+                "kind": "rhythm_predictable",
+                "code": "GROOVE_FAILURE",
+                "severity": "minor",
+                "bars": "1-36",
+                "section": "Intro",
+                "tracks": [
+                  "drums-climax_layer"
+                ],
+                "confidence": 0.0491,
+                "origin": "groove@0.5",
+                "evidence": {
+                  "entropyNormalised": 0.1876,
+                  "entropyBits": 0.9697,
+                  "distinctBarRhythms": 5,
+                  "bars": 36
+                },
+                "repair": "vary_rhythm (section)"
+              }
+            ]
+          },
+          "adversarial.machineMade": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 99,
+            "penalty": 1.2164,
+            "coverage": 0.4889,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "no_rests",
+                "code": "DENSITY_FAILURE",
+                "severity": "minor",
+                "bars": "19-31",
+                "section": "Chorus",
+                "tracks": [
+                  "strings-climax_layer"
+                ],
+                "confidence": 0.3041,
+                "origin": "arc@0.5",
+                "evidence": {
+                  "barsWithoutRest": 13,
+                  "restBeats": 1,
+                  "seconds": 28.8057
+                },
+                "repair": "add_rests (section)"
+              }
+            ]
+          },
+          "adversarial.causality": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 99,
+            "penalty": 1.096,
+            "coverage": 0.4889,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "transition_unprepared",
+                "code": "TRANSITION_FAILURE",
+                "severity": "minor",
+                "bars": "5-7",
+                "section": "Intro",
+                "tracks": [
+                  "bass-bass",
+                  "brass-climax_layer",
+                  "drums-climax_layer",
+                  "ensemble-transition",
+                  "strings-climax_layer"
+                ],
+                "confidence": 0.274,
+                "origin": "compose@0.5",
+                "evidence": {
+                  "fromSection": "Intro",
+                  "toSection": "Verse",
+                  "energyLift": 0.2,
+                  "partsWithGesture": 0,
+                  "plannedDevices": 3,
+                  "plannedKind": "build"
+                },
+                "repair": "prepare_transition (section)"
+              }
+            ]
+          },
+          "adversarial.arbitrariness": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 0,
+            "penalty": 158.736,
+            "coverage": 0.4889,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "planned_family_silent",
+                "code": "ORCHESTRATION_FAILURE",
+                "severity": "blocking",
+                "bars": "1-6",
+                "section": "Intro",
+                "tracks": [],
+                "confidence": 0.9844,
+                "origin": "compose@1",
+                "evidence": {
+                  "instrument": "keys",
+                  "plannedRole": "LEAD",
+                  "plannedEntryBar": 1,
+                  "plannedExitBar": 6,
+                  "activeBarsInSection": 0,
+                  "trackExists": false,
+                  "mandatorySection": false
+                },
+                "repair": "compose_planned_part (part)"
+              },
+              {
+                "kind": "planned_family_silent",
+                "code": "ORCHESTRATION_FAILURE",
+                "severity": "blocking",
+                "bars": "7-18",
+                "section": "Verse",
+                "tracks": [],
+                "confidence": 0.9998,
+                "origin": "compose@1",
+                "evidence": {
+                  "instrument": "keys",
+                  "plannedRole": "LEAD",
+                  "plannedEntryBar": 7,
+                  "plannedExitBar": 18,
+                  "activeBarsInSection": 0,
+                  "trackExists": false,
+                  "mandatorySection": true
+                },
+                "repair": "compose_planned_part (part)"
+              },
+              {
+                "kind": "planned_family_silent",
+                "code": "ORCHESTRATION_FAILURE",
+                "severity": "blocking",
+                "bars": "19-30",
+                "section": "Chorus",
+                "tracks": [],
+                "confidence": 0.9998,
+                "origin": "compose@1",
+                "evidence": {
+                  "instrument": "keys",
+                  "plannedRole": "LEAD",
+                  "plannedEntryBar": 19,
+                  "plannedExitBar": 30,
+                  "activeBarsInSection": 0,
+                  "trackExists": false,
+                  "mandatorySection": true
+                },
+                "repair": "compose_planned_part (part)"
+              },
+              {
+                "kind": "planned_family_silent",
+                "code": "ORCHESTRATION_FAILURE",
+                "severity": "blocking",
+                "bars": "31-36",
+                "section": "Outro",
+                "tracks": [],
+                "confidence": 0.9844,
+                "origin": "compose@1",
+                "evidence": {
+                  "instrument": "keys",
+                  "plannedRole": "LEAD",
+                  "plannedEntryBar": 31,
+                  "plannedExitBar": 36,
+                  "activeBarsInSection": 0,
+                  "trackExists": false,
+                  "mandatorySection": false
+                },
+                "repair": "compose_planned_part (part)"
+              }
+            ]
+          },
+          "adversarial.instrumentReality": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 92,
+            "penalty": 7.7568,
+            "coverage": 0.4889,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "string_bed_too_high",
+                "code": "REGISTER_FAILURE",
+                "severity": "major",
+                "bars": "19-29",
+                "section": "Chorus",
+                "tracks": [
+                  "strings-climax_layer"
+                ],
+                "confidence": 0.6464,
+                "origin": "compose@1",
+                "evidence": {
+                  "meanPitch": 86.625,
+                  "minPitch": 79,
+                  "maxPitch": 93,
+                  "bars": 6,
+                  "seconds": 26.0526,
+                  "threshold": 79
+                },
+                "repair": "lower_string_bed (part)"
+              }
+            ]
+          },
+          "adversarial.copiedRepeat": {
+            "applicable": false,
+            "reasonIfNot": "The form has no repeated section (by name or by role); there is nothing that could have been copied.",
+            "score": null,
+            "penalty": 0,
+            "coverage": 0,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.fighting": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 100,
+            "penalty": 0,
+            "coverage": 0.4889,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.professionalWouldChange": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 97,
+            "penalty": 3.0828,
+            "coverage": 0.4889,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "static_bass_no_approach",
+                "code": "VOICE_LEADING_FAILURE",
+                "severity": "minor",
+                "bars": "1-36",
+                "section": "Intro",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.7707,
+                "origin": "compose@1",
+                "evidence": {
+                  "chordChangesLandingOnRoot": 17,
+                  "approachedByStep": 0,
+                  "approachShare": 0
+                },
+                "repair": "add_approach_tones (part)"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "anchor": "cinematic-midi",
+        "genre": "cinematic",
+        "meter": "4/4",
+        "tempoBpm": 60,
+        "bars": 32,
+        "tracks": [
+          {
+            "id": "drums-climax_layer",
+            "family": "drums",
+            "definitionId": "drums",
+            "notes": 424
+          },
+          {
+            "id": "bass-bass",
+            "family": "strings",
+            "definitionId": "bass",
+            "notes": 16
+          },
+          {
+            "id": "percussion-accent",
+            "family": "drums",
+            "definitionId": "drums",
+            "notes": 30
+          },
+          {
+            "id": "brass-climax_layer",
+            "family": "brass",
+            "definitionId": "brass",
+            "notes": 4
+          },
+          {
+            "id": "strings-climax_layer",
+            "family": "strings",
+            "definitionId": "strings",
+            "notes": 6
+          },
+          {
+            "id": "ensemble-transition",
+            "family": "keys",
+            "definitionId": "piano",
+            "notes": 15
+          }
+        ],
+        "byDimension": {
+          "adversarial.boredom": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 96,
+            "penalty": 4.1412,
+            "coverage": 0.3958,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "rhythm_predictable",
+                "code": "GROOVE_FAILURE",
+                "severity": "minor",
+                "bars": "1-31",
+                "section": "Intro",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.5,
+                "origin": "groove@0.5",
+                "evidence": {
+                  "entropyNormalised": 0,
+                  "entropyBits": 0,
+                  "distinctBarRhythms": 1,
+                  "bars": 16
+                },
+                "repair": "vary_rhythm (section)"
+              },
+              {
+                "kind": "identical_bars",
+                "code": "REPETITION_FAILURE",
+                "severity": "minor",
+                "bars": "9-24",
+                "section": "Verse",
+                "tracks": [
+                  "percussion-accent"
+                ],
+                "confidence": 0.375,
+                "origin": "compose@1",
+                "evidence": {
+                  "identicalToPreviousShare": 0.8,
+                  "identicalBars": 12,
+                  "bars": 16
+                },
+                "repair": "vary_repeats (part)"
+              },
+              {
+                "kind": "rhythm_predictable",
+                "code": "GROOVE_FAILURE",
+                "severity": "minor",
+                "bars": "9-24",
+                "section": "Verse",
+                "tracks": [
+                  "percussion-accent"
+                ],
+                "confidence": 0.1603,
+                "origin": "groove@0.5",
+                "evidence": {
+                  "entropyNormalised": 0.1359,
+                  "entropyBits": 0.5436,
+                  "distinctBarRhythms": 2,
+                  "bars": 16
+                },
+                "repair": "vary_rhythm (section)"
+              }
+            ]
+          },
+          "adversarial.machineMade": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 88,
+            "penalty": 11.7916,
+            "coverage": 0.3958,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "no_rests",
+                "code": "DENSITY_FAILURE",
+                "severity": "major",
+                "bars": "1-32",
+                "section": "Intro",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.9375,
+                "origin": "arc@0.5",
+                "evidence": {
+                  "barsWithoutRest": 32,
+                  "restBeats": 1,
+                  "seconds": 127.2941
+                },
+                "repair": "add_rests (section)"
+              },
+              {
+                "kind": "no_rests",
+                "code": "DENSITY_FAILURE",
+                "severity": "minor",
+                "bars": "17-25",
+                "section": "Chorus",
+                "tracks": [
+                  "strings-climax_layer"
+                ],
+                "confidence": 0.1354,
+                "origin": "arc@0.5",
+                "evidence": {
+                  "barsWithoutRest": 9,
+                  "restBeats": 1,
+                  "seconds": 32.6446
+                },
+                "repair": "add_rests (section)"
+              }
+            ]
+          },
+          "adversarial.causality": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 100,
+            "penalty": 0,
+            "coverage": 0.3958,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.arbitrariness": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 0,
+            "penalty": 162.376,
+            "coverage": 0.3958,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "mid_phrase_exit",
+                "code": "CAUSALITY_FAILURE",
+                "severity": "minor",
+                "bars": "1-2",
+                "section": "Intro",
+                "tracks": [
+                  "ensemble-transition"
+                ],
+                "confidence": 0.75,
+                "origin": "compose@1",
+                "evidence": {
+                  "exitBar": 2,
+                  "nearestBoundary": 1,
+                  "plannedExitBar": -1
+                },
+                "repair": "align_exit (section)"
+              },
+              {
+                "kind": "planned_family_silent",
+                "code": "ORCHESTRATION_FAILURE",
+                "severity": "blocking",
+                "bars": "1-8",
+                "section": "Intro",
+                "tracks": [],
+                "confidence": 0.9961,
+                "origin": "compose@1",
+                "evidence": {
+                  "instrument": "keys",
+                  "plannedRole": "LEAD",
+                  "plannedEntryBar": 1,
+                  "plannedExitBar": 8,
+                  "activeBarsInSection": 0,
+                  "trackExists": false,
+                  "mandatorySection": false
+                },
+                "repair": "compose_planned_part (part)"
+              },
+              {
+                "kind": "planned_family_silent",
+                "code": "ORCHESTRATION_FAILURE",
+                "severity": "blocking",
+                "bars": "9-16",
+                "section": "Verse",
+                "tracks": [],
+                "confidence": 0.9961,
+                "origin": "compose@1",
+                "evidence": {
+                  "instrument": "keys",
+                  "plannedRole": "LEAD",
+                  "plannedEntryBar": 9,
+                  "plannedExitBar": 16,
+                  "activeBarsInSection": 0,
+                  "trackExists": false,
+                  "mandatorySection": true
+                },
+                "repair": "compose_planned_part (part)"
+              },
+              {
+                "kind": "planned_family_silent",
+                "code": "ORCHESTRATION_FAILURE",
+                "severity": "blocking",
+                "bars": "17-24",
+                "section": "Chorus",
+                "tracks": [],
+                "confidence": 0.9961,
+                "origin": "compose@1",
+                "evidence": {
+                  "instrument": "keys",
+                  "plannedRole": "LEAD",
+                  "plannedEntryBar": 17,
+                  "plannedExitBar": 24,
+                  "activeBarsInSection": 0,
+                  "trackExists": false,
+                  "mandatorySection": true
+                },
+                "repair": "compose_planned_part (part)"
+              },
+              {
+                "kind": "planned_family_silent",
+                "code": "ORCHESTRATION_FAILURE",
+                "severity": "blocking",
+                "bars": "25-32",
+                "section": "Outro",
+                "tracks": [],
+                "confidence": 0.9961,
+                "origin": "compose@1",
+                "evidence": {
+                  "instrument": "keys",
+                  "plannedRole": "LEAD",
+                  "plannedEntryBar": 25,
+                  "plannedExitBar": 32,
+                  "activeBarsInSection": 0,
+                  "trackExists": false,
+                  "mandatorySection": false
+                },
+                "repair": "compose_planned_part (part)"
+              }
+            ]
+          },
+          "adversarial.instrumentReality": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 92,
+            "penalty": 7.8296,
+            "coverage": 0.3958,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "bass_sustain_beyond_decay",
+                "code": "IDIOM_FAILURE",
+                "severity": "minor",
+                "bars": "1-32",
+                "section": "Intro",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.4574,
+                "origin": "compose@0.5",
+                "evidence": {
+                  "notesBeyondDecay": 16,
+                  "decaySeconds": 5,
+                  "longestSeconds": 7.296
+                },
+                "repair": "rearticulate (part)"
+              },
+              {
+                "kind": "string_bed_too_high",
+                "code": "REGISTER_FAILURE",
+                "severity": "major",
+                "bars": "17-23",
+                "section": "Chorus",
+                "tracks": [
+                  "strings-climax_layer"
+                ],
+                "confidence": 0.5,
+                "origin": "compose@1",
+                "evidence": {
+                  "meanPitch": 86.1667,
+                  "minPitch": 82,
+                  "maxPitch": 91,
+                  "bars": 4,
+                  "seconds": 28,
+                  "threshold": 79
+                },
+                "repair": "lower_string_bed (part)"
+              }
+            ]
+          },
+          "adversarial.copiedRepeat": {
+            "applicable": false,
+            "reasonIfNot": "The form has no repeated section (by name or by role); there is nothing that could have been copied.",
+            "score": null,
+            "penalty": 0,
+            "coverage": 0,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.fighting": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 100,
+            "penalty": 0,
+            "coverage": 0.3958,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.professionalWouldChange": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 88,
+            "penalty": 11.9096,
+            "coverage": 0.3958,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "static_bass_no_approach",
+                "code": "VOICE_LEADING_FAILURE",
+                "severity": "minor",
+                "bars": "1-31",
+                "section": "Intro",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.7274,
+                "origin": "compose@1",
+                "evidence": {
+                  "chordChangesLandingOnRoot": 15,
+                  "approachedByStep": 0,
+                  "approachShare": 0
+                },
+                "repair": "add_approach_tones (part)"
+              },
+              {
+                "kind": "single_pitch_percussion",
+                "code": "ORCHESTRATION_FAILURE",
+                "severity": "major",
+                "bars": "9-24",
+                "section": "Verse",
+                "tracks": [
+                  "percussion-accent"
+                ],
+                "confidence": 0.75,
+                "origin": "orchestration@0.5",
+                "evidence": {
+                  "distinctPitches": 1,
+                  "pitch": 54,
+                  "bars": 16,
+                  "notes": 30,
+                  "wholeTrack": true
+                },
+                "repair": "vary_percussion (part)"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "anchor": "rock-full",
+        "genre": "rock",
+        "meter": "4/4",
+        "tempoBpm": 148,
+        "bars": 36,
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "family": "drums",
+            "definitionId": "drums",
+            "notes": 480
+          },
+          {
+            "id": "bass-bass",
+            "family": "strings",
+            "definitionId": "bass",
+            "notes": 122
+          },
+          {
+            "id": "guitar-rhythmic_harmony",
+            "family": "guitar",
+            "definitionId": "guitar",
+            "notes": 250
+          },
+          {
+            "id": "keys-harmonic_bed",
+            "family": "keys",
+            "definitionId": "piano",
+            "notes": 22
+          },
+          {
+            "id": "ensemble-transition",
+            "family": "keys",
+            "definitionId": "piano",
+            "notes": 15
+          }
+        ],
+        "byDimension": {
+          "adversarial.boredom": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 100,
+            "penalty": 0.2876,
+            "coverage": 0.6167,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "rhythm_predictable",
+                "code": "GROOVE_FAILURE",
+                "severity": "minor",
+                "bars": "1-35",
+                "section": "Intro",
+                "tracks": [
+                  "guitar-rhythmic_harmony"
+                ],
+                "confidence": 0.0719,
+                "origin": "groove@0.5",
+                "evidence": {
+                  "entropyNormalised": 0.1795,
+                  "entropyBits": 0.8631,
+                  "distinctBarRhythms": 2,
+                  "bars": 28
+                },
+                "repair": "vary_rhythm (section)"
+              }
+            ]
+          },
+          "adversarial.machineMade": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 72,
+            "penalty": 28.244,
+            "coverage": 0.6167,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "identical_voicing_shape",
+                "code": "VOICE_LEADING_FAILURE",
+                "severity": "major",
+                "bars": "1-35",
+                "section": "Intro",
+                "tracks": [
+                  "guitar-rhythmic_harmony"
+                ],
+                "confidence": 0.9984,
+                "origin": "harmony@0.5",
+                "evidence": {
+                  "sameShapePerChordShare": 1,
+                  "chordSymbols": 4,
+                  "chords": 74
+                },
+                "repair": "revoice (part)"
+              },
+              {
+                "kind": "no_rests",
+                "code": "DENSITY_FAILURE",
+                "severity": "major",
+                "bars": "1-36",
+                "section": "Intro",
+                "tracks": [
+                  "guitar-rhythmic_harmony"
+                ],
+                "confidence": 0.9558,
+                "origin": "arc@0.5",
+                "evidence": {
+                  "barsWithoutRest": 36,
+                  "restBeats": 1,
+                  "seconds": 58.1728
+                },
+                "repair": "add_rests (section)"
+              },
+              {
+                "kind": "no_rests",
+                "code": "DENSITY_FAILURE",
+                "severity": "minor",
+                "bars": "1-8",
+                "section": "Intro",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.1,
+                "origin": "arc@0.5",
+                "evidence": {
+                  "barsWithoutRest": 8,
+                  "restBeats": 1,
+                  "seconds": 12.4888
+                },
+                "repair": "add_rests (section)"
+              },
+              {
+                "kind": "root_position_only",
+                "code": "HARMONY_FAILURE",
+                "severity": "minor",
+                "bars": "1-35",
+                "section": "Intro",
+                "tracks": [
+                  "guitar-rhythmic_harmony"
+                ],
+                "confidence": 0.9984,
+                "origin": "harmony@0.5",
+                "evidence": {
+                  "rootPositionShare": 1,
+                  "chordsWithSymbol": 74,
+                  "chords": 74
+                },
+                "repair": "use_inversions (part)"
+              },
+              {
+                "kind": "no_rests",
+                "code": "DENSITY_FAILURE",
+                "severity": "minor",
+                "bars": "29-36",
+                "section": "Chorus 2",
+                "tracks": [
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.1,
+                "origin": "arc@0.5",
+                "evidence": {
+                  "barsWithoutRest": 8,
+                  "restBeats": 1,
+                  "seconds": 13.0691
+                },
+                "repair": "add_rests (section)"
+              }
+            ]
+          },
+          "adversarial.causality": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 92,
+            "penalty": 8.4064,
+            "coverage": 0.6167,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "transition_unprepared",
+                "code": "TRANSITION_FAILURE",
+                "severity": "minor",
+                "bars": "11-13",
+                "section": "Verse",
+                "tracks": [
+                  "bass-bass",
+                  "drums-groove",
+                  "ensemble-transition",
+                  "guitar-rhythmic_harmony",
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.4453,
+                "origin": "compose@0.5",
+                "evidence": {
+                  "fromSection": "Verse",
+                  "toSection": "Chorus",
+                  "energyLift": 0.325,
+                  "partsWithGesture": 0,
+                  "plannedDevices": 3,
+                  "plannedKind": "build"
+                },
+                "repair": "prepare_transition (section)"
+              },
+              {
+                "kind": "transition_unprepared",
+                "code": "TRANSITION_FAILURE",
+                "severity": "major",
+                "bars": "27-29",
+                "section": "Bridge",
+                "tracks": [
+                  "bass-bass",
+                  "drums-groove",
+                  "ensemble-transition",
+                  "guitar-rhythmic_harmony",
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.5521,
+                "origin": "compose@0.5",
+                "evidence": {
+                  "fromSection": "Bridge",
+                  "toSection": "Chorus 2",
+                  "energyLift": 0.403,
+                  "partsWithGesture": 0,
+                  "plannedDevices": 4,
+                  "plannedKind": "build"
+                },
+                "repair": "prepare_transition (section)"
+              }
+            ]
+          },
+          "adversarial.arbitrariness": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 100,
+            "penalty": 0,
+            "coverage": 0.6167,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.instrumentReality": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 100,
+            "penalty": 0,
+            "coverage": 0.6167,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.copiedRepeat": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 63,
+            "penalty": 36.7104,
+            "coverage": 0.6167,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "section_note_copy",
+                "code": "FORM_FAILURE",
+                "severity": "major",
+                "bars": "29-36",
+                "section": "Chorus 2",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.9257,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Chorus",
+                  "laterSection": "Chorus 2",
+                  "byteMatchShare": 0,
+                  "noteMatchShare": 1,
+                  "rhythmMatchShare": 1,
+                  "notesEarlier": 30,
+                  "notesLater": 30,
+                  "finalRepeat": true
+                },
+                "repair": "develop_repeat (section)"
+              },
+              {
+                "kind": "section_note_copy",
+                "code": "FORM_FAILURE",
+                "severity": "major",
+                "bars": "29-36",
+                "section": "Chorus 2",
+                "tracks": [
+                  "drums-groove"
+                ],
+                "confidence": 0.9047,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Chorus",
+                  "laterSection": "Chorus 2",
+                  "byteMatchShare": 0.0381,
+                  "noteMatchShare": 0.9905,
+                  "rhythmMatchShare": 0.9905,
+                  "notesEarlier": 105,
+                  "notesLater": 104,
+                  "finalRepeat": true
+                },
+                "repair": "develop_repeat (section)"
+              },
+              {
+                "kind": "section_note_copy",
+                "code": "FORM_FAILURE",
+                "severity": "major",
+                "bars": "29-36",
+                "section": "Chorus 2",
+                "tracks": [
+                  "guitar-rhythmic_harmony"
+                ],
+                "confidence": 0.6144,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Chorus",
+                  "laterSection": "Chorus 2",
+                  "byteMatchShare": 0,
+                  "noteMatchShare": 1,
+                  "rhythmMatchShare": 1,
+                  "notesEarlier": 11,
+                  "notesLater": 11,
+                  "finalRepeat": true
+                },
+                "repair": "develop_repeat (section)"
+              },
+              {
+                "kind": "section_note_copy",
+                "code": "FORM_FAILURE",
+                "severity": "major",
+                "bars": "29-36",
+                "section": "Chorus 2",
+                "tracks": [
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.6144,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Chorus",
+                  "laterSection": "Chorus 2",
+                  "byteMatchShare": 0,
+                  "noteMatchShare": 1,
+                  "rhythmMatchShare": 1,
+                  "notesEarlier": 11,
+                  "notesLater": 11,
+                  "finalRepeat": true
+                },
+                "repair": "develop_repeat (section)"
+              }
+            ]
+          },
+          "adversarial.fighting": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 88,
+            "penalty": 12,
+            "coverage": 0.6167,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "melody_masked",
+                "code": "VOCAL_SPACE_FAILURE",
+                "severity": "major",
+                "bars": "13-19",
+                "section": "Chorus",
+                "tracks": [
+                  "guitar-rhythmic_harmony",
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.5,
+                "origin": "orchestration@0.5",
+                "evidence": {
+                  "maskedMelodyNotes": 16,
+                  "melodyNotesInSungBars": 16,
+                  "maskedShare": 1,
+                  "maskSemitones": 3,
+                  "maskVelocity": 80,
+                  "section": "Chorus"
+                },
+                "repair": "clear_vocal_register (section)"
+              },
+              {
+                "kind": "melody_masked",
+                "code": "VOCAL_SPACE_FAILURE",
+                "severity": "major",
+                "bars": "29-35",
+                "section": "Chorus 2",
+                "tracks": [
+                  "guitar-rhythmic_harmony",
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.5,
+                "origin": "orchestration@0.5",
+                "evidence": {
+                  "maskedMelodyNotes": 16,
+                  "melodyNotesInSungBars": 16,
+                  "maskedShare": 1,
+                  "maskSemitones": 3,
+                  "maskVelocity": 80,
+                  "section": "Chorus 2"
+                },
+                "repair": "clear_vocal_register (section)"
+              }
+            ]
+          },
+          "adversarial.professionalWouldChange": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 93,
+            "penalty": 6.5964,
+            "coverage": 0.6167,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "static_bass_no_approach",
+                "code": "VOICE_LEADING_FAILURE",
+                "severity": "minor",
+                "bars": "1-36",
+                "section": "Intro",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.7707,
+                "origin": "compose@1",
+                "evidence": {
+                  "chordChangesLandingOnRoot": 17,
+                  "approachedByStep": 0,
+                  "approachShare": 0
+                },
+                "repair": "add_approach_tones (part)"
+              },
+              {
+                "kind": "close_position_same_octave",
+                "code": "REGISTER_FAILURE",
+                "severity": "major",
+                "bars": "13-20",
+                "section": "Chorus",
+                "tracks": [
+                  "guitar-rhythmic_harmony",
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.1464,
+                "origin": "compose@1",
+                "evidence": {
+                  "stackedBars": 3,
+                  "sharedBars": 4,
+                  "shareOfSharedBars": 0.75,
+                  "meanCentreDistanceSemitones": 1.3333,
+                  "section": "Chorus"
+                },
+                "repair": "separate_voicings (part)"
+              },
+              {
+                "kind": "close_position_same_octave",
+                "code": "REGISTER_FAILURE",
+                "severity": "major",
+                "bars": "29-36",
+                "section": "Chorus 2",
+                "tracks": [
+                  "guitar-rhythmic_harmony",
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.1464,
+                "origin": "compose@1",
+                "evidence": {
+                  "stackedBars": 3,
+                  "sharedBars": 4,
+                  "shareOfSharedBars": 0.75,
+                  "meanCentreDistanceSemitones": 1.3333,
+                  "section": "Chorus 2"
+                },
+                "repair": "separate_voicings (part)"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "anchor": "jazz-full",
+        "genre": "jazz",
+        "meter": "4/4",
+        "tempoBpm": 132,
+        "bars": 48,
+        "tracks": [
+          {
+            "id": "drums-climax_layer",
+            "family": "drums",
+            "definitionId": "drums",
+            "notes": 627
+          },
+          {
+            "id": "bass-bass",
+            "family": "strings",
+            "definitionId": "bass",
+            "notes": 130
+          },
+          {
+            "id": "keys-harmonic_bed",
+            "family": "keys",
+            "definitionId": "piano",
+            "notes": 257
+          },
+          {
+            "id": "ensemble-transition",
+            "family": "keys",
+            "definitionId": "piano",
+            "notes": 6
+          }
+        ],
+        "byDimension": {
+          "adversarial.boredom": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 100,
+            "penalty": 0,
+            "coverage": 0.5938,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.machineMade": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 86,
+            "penalty": 14.3148,
+            "coverage": 0.5938,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "no_rests",
+                "code": "DENSITY_FAILURE",
+                "severity": "minor",
+                "bars": "1-22",
+                "section": "Verse",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.7662,
+                "origin": "arc@0.5",
+                "evidence": {
+                  "barsWithoutRest": 22,
+                  "restBeats": 1,
+                  "seconds": 38.5461
+                },
+                "repair": "add_rests (section)"
+              },
+              {
+                "kind": "no_rests",
+                "code": "DENSITY_FAILURE",
+                "severity": "major",
+                "bars": "17-48",
+                "section": "Chorus",
+                "tracks": [
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.9375,
+                "origin": "arc@0.5",
+                "evidence": {
+                  "barsWithoutRest": 32,
+                  "restBeats": 1,
+                  "seconds": 57.9522
+                },
+                "repair": "add_rests (section)"
+              }
+            ]
+          },
+          "adversarial.causality": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 75,
+            "penalty": 25.1268,
+            "coverage": 0.5938,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "climax_not_prepared",
+                "code": "ENERGY_ARC_FAILURE",
+                "severity": "major",
+                "bars": "15-16",
+                "section": "Verse",
+                "tracks": [
+                  "bass-bass",
+                  "drums-climax_layer",
+                  "ensemble-transition",
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.9116,
+                "origin": "compose@0.5",
+                "evidence": {
+                  "climaxSection": "Chorus",
+                  "onsetRatioApproachVsBase": 1.1915,
+                  "activePartsDelta": 0.5,
+                  "velocityDelta": -1.0382,
+                  "topPitchDelta": -5,
+                  "plannedTransitionDevices": 3
+                },
+                "repair": "build_into_climax (section)"
+              },
+              {
+                "kind": "climax_not_realised",
+                "code": "ENERGY_ARC_FAILURE",
+                "severity": "major",
+                "bars": "17-32",
+                "section": "Chorus",
+                "tracks": [
+                  "bass-bass",
+                  "drums-climax_layer",
+                  "ensemble-transition",
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.4688,
+                "origin": "compose@0.5",
+                "evidence": {
+                  "climaxSection": "Chorus",
+                  "climaxOnsetsPerBar": 18.875,
+                  "maxOtherOnsetsPerBar": 31.25,
+                  "climaxActiveParts": 2.5625,
+                  "maxOtherActiveParts": 3.0625,
+                  "climaxMeanVelocity": 63.072,
+                  "maxOtherMeanVelocity": 60.1436,
+                  "featuresWon": 1
+                },
+                "repair": "realise_climax (section)"
+              },
+              {
+                "kind": "ending_is_a_cut",
+                "code": "TRANSITION_FAILURE",
+                "severity": "major",
+                "bars": "47-48",
+                "section": "Verse 2",
+                "tracks": [
+                  "bass-bass",
+                  "drums-climax_layer",
+                  "ensemble-transition",
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.7135,
+                "origin": "form@1",
+                "evidence": {
+                  "finalBarOnsets": 34,
+                  "sectionMedianOnsets": 32,
+                  "heldFinalNote": false,
+                  "longestFinalNoteBeats": 0.816,
+                  "plannedEndingDevice": false
+                },
+                "repair": "write_ending (section)"
+              }
+            ]
+          },
+          "adversarial.arbitrariness": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 100,
+            "penalty": 0,
+            "coverage": 0.5938,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.instrumentReality": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 100,
+            "penalty": 0,
+            "coverage": 0.5938,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.copiedRepeat": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 100,
+            "penalty": 0,
+            "coverage": 0.5938,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.fighting": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 91,
+            "penalty": 9,
+            "coverage": 0.5938,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "melody_masked",
+                "code": "VOCAL_SPACE_FAILURE",
+                "severity": "major",
+                "bars": "19-31",
+                "section": "Chorus",
+                "tracks": [
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.75,
+                "origin": "orchestration@0.5",
+                "evidence": {
+                  "maskedMelodyNotes": 20,
+                  "melodyNotesInSungBars": 32,
+                  "maskedShare": 0.625,
+                  "maskSemitones": 3,
+                  "maskVelocity": 80,
+                  "section": "Chorus"
+                },
+                "repair": "clear_vocal_register (section)"
+              }
+            ]
+          },
+          "adversarial.professionalWouldChange": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 97,
+            "penalty": 3.4548,
+            "coverage": 0.5938,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "static_bass_no_approach",
+                "code": "VOICE_LEADING_FAILURE",
+                "severity": "minor",
+                "bars": "1-48",
+                "section": "Verse",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.8637,
+                "origin": "compose@1",
+                "evidence": {
+                  "chordChangesLandingOnRoot": 23,
+                  "approachedByStep": 0,
+                  "approachShare": 0
+                },
+                "repair": "add_approach_tones (part)"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "anchor": "ballad-piano-vocal",
+        "genre": "ballad",
+        "meter": "4/4",
+        "tempoBpm": 68,
+        "bars": 28,
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "family": "drums",
+            "definitionId": "drums",
+            "notes": 372
+          },
+          {
+            "id": "bass-bass",
+            "family": "strings",
+            "definitionId": "bass",
+            "notes": 79
+          },
+          {
+            "id": "keys-harmonic_bed",
+            "family": "keys",
+            "definitionId": "piano",
+            "notes": 22
+          },
+          {
+            "id": "ensemble-transition",
+            "family": "keys",
+            "definitionId": "piano",
+            "notes": 9
+          }
+        ],
+        "byDimension": {
+          "adversarial.boredom": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 100,
+            "penalty": 0,
+            "coverage": 0.5625,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.machineMade": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 99,
+            "penalty": 1.4344,
+            "coverage": 0.5625,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "no_rests",
+                "code": "DENSITY_FAILURE",
+                "severity": "minor",
+                "bars": "1-12",
+                "section": "Verse",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.2586,
+                "origin": "arc@0.5",
+                "evidence": {
+                  "barsWithoutRest": 12,
+                  "restBeats": 1,
+                  "seconds": 41.3031
+                },
+                "repair": "add_rests (section)"
+              },
+              {
+                "kind": "no_rests",
+                "code": "DENSITY_FAILURE",
+                "severity": "minor",
+                "bars": "21-28",
+                "section": "Chorus 2",
+                "tracks": [
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.1,
+                "origin": "arc@0.5",
+                "evidence": {
+                  "barsWithoutRest": 8,
+                  "restBeats": 1,
+                  "seconds": 28.4409
+                },
+                "repair": "add_rests (section)"
+              }
+            ]
+          },
+          "adversarial.causality": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 90,
+            "penalty": 10.0512,
+            "coverage": 0.5625,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "transition_unprepared",
+                "code": "TRANSITION_FAILURE",
+                "severity": "major",
+                "bars": "19-21",
+                "section": "Bridge",
+                "tracks": [
+                  "bass-bass",
+                  "drums-groove",
+                  "ensemble-transition",
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.3691,
+                "origin": "compose@0.5",
+                "evidence": {
+                  "fromSection": "Bridge",
+                  "toSection": "Chorus 2",
+                  "energyLift": 0.306,
+                  "partsWithGesture": 0,
+                  "plannedDevices": 3,
+                  "plannedKind": "build"
+                },
+                "repair": "prepare_transition (section)"
+              },
+              {
+                "kind": "ending_is_a_cut",
+                "code": "TRANSITION_FAILURE",
+                "severity": "major",
+                "bars": "27-28",
+                "section": "Chorus 2",
+                "tracks": [
+                  "bass-bass",
+                  "drums-groove",
+                  "ensemble-transition",
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.4685,
+                "origin": "form@1",
+                "evidence": {
+                  "finalBarOnsets": 19,
+                  "sectionMedianOnsets": 19,
+                  "heldFinalNote": false,
+                  "longestFinalNoteBeats": 0.816,
+                  "plannedEndingDevice": false
+                },
+                "repair": "write_ending (section)"
+              }
+            ]
+          },
+          "adversarial.arbitrariness": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 100,
+            "penalty": 0,
+            "coverage": 0.5625,
+            "controlStatus": "uncalibrated",
+            "observations": []
+          },
+          "adversarial.instrumentReality": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 99,
+            "penalty": 0.8628,
+            "coverage": 0.5625,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "bass_sustain_beyond_decay",
+                "code": "IDIOM_FAILURE",
+                "severity": "minor",
+                "bars": "1-8",
+                "section": "Verse",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.2157,
+                "origin": "compose@0.5",
+                "evidence": {
+                  "notesBeyondDecay": 4,
+                  "decaySeconds": 5,
+                  "longestSeconds": 6.4377
+                },
+                "repair": "rearticulate (part)"
+              }
+            ]
+          },
+          "adversarial.copiedRepeat": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 88,
+            "penalty": 12.3965,
+            "coverage": 0.5625,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "section_note_copy",
+                "code": "FORM_FAILURE",
+                "severity": "major",
+                "bars": "21-28",
+                "section": "Chorus 2",
+                "tracks": [
+                  "drums-groove"
+                ],
+                "confidence": 0.9047,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Chorus",
+                  "laterSection": "Chorus 2",
+                  "byteMatchShare": 0.0286,
+                  "noteMatchShare": 0.9905,
+                  "rhythmMatchShare": 0.9905,
+                  "notesEarlier": 104,
+                  "notesLater": 105,
+                  "finalRepeat": true
+                },
+                "repair": "develop_repeat (section)"
+              },
+              {
+                "kind": "section_rhythm_copy",
+                "code": "FORM_FAILURE",
+                "severity": "info",
+                "bars": "21-28",
+                "section": "Chorus 2",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.9257,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Chorus",
+                  "laterSection": "Chorus 2",
+                  "byteMatchShare": 0,
+                  "noteMatchShare": 0,
+                  "rhythmMatchShare": 1,
+                  "notesEarlier": 30,
+                  "notesLater": 30,
+                  "finalRepeat": true
+                },
+                "repair": null
+              },
+              {
+                "kind": "section_rhythm_copy",
+                "code": "FORM_FAILURE",
+                "severity": "info",
+                "bars": "21-28",
+                "section": "Chorus 2",
+                "tracks": [
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.6144,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Chorus",
+                  "laterSection": "Chorus 2",
+                  "byteMatchShare": 0,
+                  "noteMatchShare": 0,
+                  "rhythmMatchShare": 1,
+                  "notesEarlier": 11,
+                  "notesLater": 11,
+                  "finalRepeat": true
+                },
+                "repair": null
+              }
+            ]
+          },
+          "adversarial.fighting": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 95,
+            "penalty": 4.8,
+            "coverage": 0.5625,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "melody_masked",
+                "code": "VOCAL_SPACE_FAILURE",
+                "severity": "major",
+                "bars": "21-25",
+                "section": "Chorus 2",
+                "tracks": [
+                  "keys-harmonic_bed"
+                ],
+                "confidence": 0.4,
+                "origin": "orchestration@0.5",
+                "evidence": {
+                  "maskedMelodyNotes": 8,
+                  "melodyNotesInSungBars": 16,
+                  "maskedShare": 0.5,
+                  "maskSemitones": 3,
+                  "maskVelocity": 80,
+                  "section": "Chorus 2"
+                },
+                "repair": "clear_vocal_register (section)"
+              }
+            ]
+          },
+          "adversarial.professionalWouldChange": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 97,
+            "penalty": 2.7032,
+            "coverage": 0.5625,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "static_bass_no_approach",
+                "code": "VOICE_LEADING_FAILURE",
+                "severity": "minor",
+                "bars": "1-28",
+                "section": "Verse",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.6758,
+                "origin": "compose@1",
+                "evidence": {
+                  "chordChangesLandingOnRoot": 13,
+                  "approachedByStep": 0,
+                  "approachShare": 0
+                },
+                "repair": "add_approach_tones (part)"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "anchor": "dance-full",
+        "genre": "dance",
+        "meter": "4/4",
+        "tempoBpm": 126,
+        "bars": 40,
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "family": "drums",
+            "definitionId": "drums",
+            "notes": 532
+          },
+          {
+            "id": "bass-bass",
+            "family": "strings",
+            "definitionId": "bass",
+            "notes": 124
+          },
+          {
+            "id": "keys-rhythmic_harmony",
+            "family": "drums",
+            "definitionId": "drums",
+            "notes": 295
+          },
+          {
+            "id": "synth-pad",
+            "family": "synth",
+            "definitionId": "synth_pad",
+            "notes": 24
+          },
+          {
+            "id": "ensemble-transition",
+            "family": "keys",
+            "definitionId": "piano",
+            "notes": 15
+          }
+        ],
+        "byDimension": {
+          "adversarial.boredom": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 99,
+            "penalty": 0.566,
+            "coverage": 0.605,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "rhythm_predictable",
+                "code": "GROOVE_FAILURE",
+                "severity": "minor",
+                "bars": "1-39",
+                "section": "Intro",
+                "tracks": [
+                  "keys-rhythmic_harmony"
+                ],
+                "confidence": 0.1415,
+                "origin": "groove@0.5",
+                "evidence": {
+                  "entropyNormalised": 0.1623,
+                  "entropyBits": 0.8113,
+                  "distinctBarRhythms": 2,
+                  "bars": 32
+                },
+                "repair": "vary_rhythm (section)"
+              }
+            ]
+          },
+          "adversarial.machineMade": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 95,
+            "penalty": 5.4344,
+            "coverage": 0.605,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "no_rests",
+                "code": "DENSITY_FAILURE",
+                "severity": "minor",
+                "bars": "1-12",
+                "section": "Intro",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.2586,
+                "origin": "arc@0.5",
+                "evidence": {
+                  "barsWithoutRest": 12,
+                  "restBeats": 1,
+                  "seconds": 22.2866
+                },
+                "repair": "add_rests (section)"
+              },
+              {
+                "kind": "identical_voicing_shape",
+                "code": "VOICE_LEADING_FAILURE",
+                "severity": "minor",
+                "bars": "17-39",
+                "section": "Chorus",
+                "tracks": [
+                  "synth-pad"
+                ],
+                "confidence": 0.5,
+                "origin": "harmony@0.5",
+                "evidence": {
+                  "sameShapePerChordShare": 1,
+                  "chordSymbols": 4,
+                  "chords": 8
+                },
+                "repair": "revoice (part)"
+              },
+              {
+                "kind": "root_position_only",
+                "code": "HARMONY_FAILURE",
+                "severity": "minor",
+                "bars": "17-39",
+                "section": "Chorus",
+                "tracks": [
+                  "synth-pad"
+                ],
+                "confidence": 0.5,
+                "origin": "harmony@0.5",
+                "evidence": {
+                  "rootPositionShare": 1,
+                  "chordsWithSymbol": 8,
+                  "chords": 8
+                },
+                "repair": "use_inversions (part)"
+              },
+              {
+                "kind": "no_rests",
+                "code": "DENSITY_FAILURE",
+                "severity": "minor",
+                "bars": "33-40",
+                "section": "Chorus 2",
+                "tracks": [
+                  "synth-pad"
+                ],
+                "confidence": 0.1,
+                "origin": "arc@0.5",
+                "evidence": {
+                  "barsWithoutRest": 8,
+                  "restBeats": 1,
+                  "seconds": 15.4676
+                },
+                "repair": "add_rests (section)"
+              }
+            ]
+          },
+          "adversarial.causality": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 98,
+            "penalty": 2.192,
+            "coverage": 0.605,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "transition_unprepared",
+                "code": "TRANSITION_FAILURE",
+                "severity": "minor",
+                "bars": "15-17",
+                "section": "Verse",
+                "tracks": [
+                  "bass-bass",
+                  "drums-groove",
+                  "ensemble-transition",
+                  "keys-rhythmic_harmony",
+                  "synth-pad"
+                ],
+                "confidence": 0.548,
+                "origin": "compose@0.5",
+                "evidence": {
+                  "fromSection": "Verse",
+                  "toSection": "Chorus",
+                  "energyLift": 0.4,
+                  "partsWithGesture": 0,
+                  "plannedDevices": 5,
+                  "plannedKind": "build"
+                },
+                "repair": "prepare_transition (section)"
+              }
+            ]
+          },
+          "adversarial.arbitrariness": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 97,
+            "penalty": 3.2928,
+            "coverage": 0.605,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "mid_phrase_exit",
+                "code": "CAUSALITY_FAILURE",
+                "severity": "minor",
+                "bars": "1-2",
+                "section": "Intro",
+                "tracks": [
+                  "ensemble-transition"
+                ],
+                "confidence": 0.8232,
+                "origin": "compose@1",
+                "evidence": {
+                  "exitBar": 2,
+                  "nearestBoundary": 1,
+                  "plannedExitBar": -1
+                },
+                "repair": "align_exit (section)"
+              }
+            ]
+          },
+          "adversarial.instrumentReality": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 60,
+            "penalty": 40,
+            "coverage": 0.605,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "definition_family_mismatch",
+                "code": "ORCHESTRATION_FAILURE",
+                "severity": "blocking",
+                "bars": "1-39",
+                "section": "Intro",
+                "tracks": [
+                  "keys-rhythmic_harmony"
+                ],
+                "confidence": 1,
+                "origin": "orchestration@0.5",
+                "evidence": {
+                  "instrument": "keys",
+                  "namedFamily": "keys",
+                  "definitionId": "drums",
+                  "definitionFamily": "drums",
+                  "notes": 295
+                },
+                "repair": "resolve_definition (part)"
+              }
+            ]
+          },
+          "adversarial.copiedRepeat": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 63,
+            "penalty": 37.0944,
+            "coverage": 0.605,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "section_note_copy",
+                "code": "FORM_FAILURE",
+                "severity": "major",
+                "bars": "33-40",
+                "section": "Chorus 2",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.9257,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Chorus",
+                  "laterSection": "Chorus 2",
+                  "byteMatchShare": 0,
+                  "noteMatchShare": 1,
+                  "rhythmMatchShare": 1,
+                  "notesEarlier": 30,
+                  "notesLater": 30,
+                  "finalRepeat": true
+                },
+                "repair": "develop_repeat (section)"
+              },
+              {
+                "kind": "section_note_copy",
+                "code": "FORM_FAILURE",
+                "severity": "major",
+                "bars": "33-40",
+                "section": "Chorus 2",
+                "tracks": [
+                  "drums-groove"
+                ],
+                "confidence": 0.9047,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Chorus",
+                  "laterSection": "Chorus 2",
+                  "byteMatchShare": 0.0667,
+                  "noteMatchShare": 0.9905,
+                  "rhythmMatchShare": 0.9905,
+                  "notesEarlier": 105,
+                  "notesLater": 104,
+                  "finalRepeat": true
+                },
+                "repair": "develop_repeat (section)"
+              },
+              {
+                "kind": "section_note_copy",
+                "code": "FORM_FAILURE",
+                "severity": "major",
+                "bars": "33-40",
+                "section": "Chorus 2",
+                "tracks": [
+                  "keys-rhythmic_harmony"
+                ],
+                "confidence": 0.6144,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Chorus",
+                  "laterSection": "Chorus 2",
+                  "byteMatchShare": 0,
+                  "noteMatchShare": 1,
+                  "rhythmMatchShare": 1,
+                  "notesEarlier": 11,
+                  "notesLater": 11,
+                  "finalRepeat": true
+                },
+                "repair": "develop_repeat (section)"
+              },
+              {
+                "kind": "section_note_copy",
+                "code": "FORM_FAILURE",
+                "severity": "major",
+                "bars": "33-40",
+                "section": "Chorus 2",
+                "tracks": [
+                  "synth-pad"
+                ],
+                "confidence": 0.6464,
+                "origin": "compose@1",
+                "evidence": {
+                  "earlierSection": "Chorus",
+                  "laterSection": "Chorus 2",
+                  "byteMatchShare": 0,
+                  "noteMatchShare": 1,
+                  "rhythmMatchShare": 1,
+                  "notesEarlier": 12,
+                  "notesLater": 12,
+                  "finalRepeat": true
+                },
+                "repair": "develop_repeat (section)"
+              }
+            ]
+          },
+          "adversarial.fighting": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 88,
+            "penalty": 12,
+            "coverage": 0.605,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "melody_masked",
+                "code": "VOCAL_SPACE_FAILURE",
+                "severity": "major",
+                "bars": "17-23",
+                "section": "Chorus",
+                "tracks": [
+                  "synth-pad"
+                ],
+                "confidence": 0.5,
+                "origin": "orchestration@0.5",
+                "evidence": {
+                  "maskedMelodyNotes": 11,
+                  "melodyNotesInSungBars": 16,
+                  "maskedShare": 0.6875,
+                  "maskSemitones": 3,
+                  "maskVelocity": 80,
+                  "section": "Chorus"
+                },
+                "repair": "clear_vocal_register (section)"
+              },
+              {
+                "kind": "melody_masked",
+                "code": "VOCAL_SPACE_FAILURE",
+                "severity": "major",
+                "bars": "33-39",
+                "section": "Chorus 2",
+                "tracks": [
+                  "synth-pad"
+                ],
+                "confidence": 0.5,
+                "origin": "orchestration@0.5",
+                "evidence": {
+                  "maskedMelodyNotes": 12,
+                  "melodyNotesInSungBars": 16,
+                  "maskedShare": 0.75,
+                  "maskSemitones": 3,
+                  "maskVelocity": 80,
+                  "section": "Chorus 2"
+                },
+                "repair": "clear_vocal_register (section)"
+              }
+            ]
+          },
+          "adversarial.professionalWouldChange": {
+            "applicable": true,
+            "reasonIfNot": null,
+            "score": 97,
+            "penalty": 3.2288,
+            "coverage": 0.605,
+            "controlStatus": "uncalibrated",
+            "observations": [
+              {
+                "kind": "static_bass_no_approach",
+                "code": "VOICE_LEADING_FAILURE",
+                "severity": "minor",
+                "bars": "1-40",
+                "section": "Intro",
+                "tracks": [
+                  "bass-bass"
+                ],
+                "confidence": 0.8072,
+                "origin": "compose@1",
+                "evidence": {
+                  "chordChangesLandingOnRoot": 19,
+                  "approachedByStep": 0,
+                  "approachShare": 0
+                },
+                "repair": "add_approach_tones (part)"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "positiveControls": [
+    {
+      "dimension": "adversarial.boredom",
+      "control": "loop_one_bar_flat",
+      "description": "Every part repeats its first sounding bar for the whole song at one velocity, and every part plays in every bar.",
+      "tried": 7,
+      "detected": 7,
+      "detectionRate": 1,
+      "ci95": [
+        0.5904,
+        1
+      ],
+      "ledgerStatus": "gated",
+      "perAnchor": [
+        {
+          "anchor": "pop-full",
+          "applicable": true,
+          "refScore": 100,
+          "worseScore": 0,
+          "refPenalty": 0,
+          "worsePenalty": 131.2528,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 10,
+          "detected": true,
+          "newKinds": [
+            "ensemble_never_changes",
+            "everyone_always_playing",
+            "identical_bars",
+            "no_dynamic_movement",
+            "pitch_predictable",
+            "rhythm_predictable"
+          ]
+        },
+        {
+          "anchor": "orchestral-midi",
+          "applicable": true,
+          "refScore": 99,
+          "worseScore": 0,
+          "refPenalty": 1.3696,
+          "worsePenalty": 150.5604,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 12,
+          "detected": true,
+          "newKinds": [
+            "ensemble_never_changes",
+            "everyone_always_playing",
+            "identical_bars",
+            "no_dynamic_movement",
+            "pitch_predictable"
+          ]
+        },
+        {
+          "anchor": "cinematic-midi",
+          "applicable": true,
+          "refScore": 96,
+          "worseScore": 0,
+          "refPenalty": 4.1412,
+          "worsePenalty": 170.3012,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 14,
+          "detected": true,
+          "newKinds": [
+            "ensemble_never_changes",
+            "everyone_always_playing",
+            "no_dynamic_movement",
+            "pitch_predictable"
+          ]
+        },
+        {
+          "anchor": "rock-full",
+          "applicable": true,
+          "refScore": 100,
+          "worseScore": 0,
+          "refPenalty": 0.2876,
+          "worsePenalty": 155.8272,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 12,
+          "detected": true,
+          "newKinds": [
+            "ensemble_never_changes",
+            "everyone_always_playing",
+            "identical_bars",
+            "no_dynamic_movement",
+            "pitch_predictable"
+          ]
+        },
+        {
+          "anchor": "jazz-full",
+          "applicable": true,
+          "refScore": 100,
+          "worseScore": 0,
+          "refPenalty": 0,
+          "worsePenalty": 130.2044,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 10,
+          "detected": true,
+          "newKinds": [
+            "ensemble_never_changes",
+            "everyone_always_playing",
+            "identical_bars",
+            "no_dynamic_movement",
+            "pitch_predictable",
+            "rhythm_predictable"
+          ]
+        },
+        {
+          "anchor": "ballad-piano-vocal",
+          "applicable": true,
+          "refScore": 100,
+          "worseScore": 0,
+          "refPenalty": 0,
+          "worsePenalty": 115.1156,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 10,
+          "detected": true,
+          "newKinds": [
+            "ensemble_never_changes",
+            "everyone_always_playing",
+            "identical_bars",
+            "no_dynamic_movement",
+            "pitch_predictable",
+            "rhythm_predictable"
+          ]
+        },
+        {
+          "anchor": "dance-full",
+          "applicable": true,
+          "refScore": 99,
+          "worseScore": 0,
+          "refPenalty": 0.566,
+          "worsePenalty": 155.7168,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 12,
+          "detected": true,
+          "newKinds": [
+            "ensemble_never_changes",
+            "everyone_always_playing",
+            "identical_bars",
+            "no_dynamic_movement",
+            "pitch_predictable"
+          ]
+        }
+      ]
+    },
+    {
+      "dimension": "adversarial.machineMade",
+      "control": "sequencer_export",
+      "description": "Onsets welded to the 16th grid, one velocity per part, every chordal cluster re-voiced as a root-position close stack, every gap closed.",
+      "tried": 7,
+      "detected": 7,
+      "detectionRate": 1,
+      "ci95": [
+        0.5904,
+        1
+      ],
+      "ledgerStatus": "gated",
+      "perAnchor": [
+        {
+          "anchor": "pop-full",
+          "applicable": true,
+          "refScore": 97,
+          "worseScore": 13,
+          "refPenalty": 2.9416,
+          "worsePenalty": 87.2232,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 7,
+          "detected": true,
+          "newKinds": [
+            "constant_velocity",
+            "grid_locked_onsets"
+          ]
+        },
+        {
+          "anchor": "orchestral-midi",
+          "applicable": true,
+          "refScore": 99,
+          "worseScore": 43,
+          "refPenalty": 1.2164,
+          "worsePenalty": 56.824,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 4,
+          "detected": true,
+          "newKinds": [
+            "constant_velocity",
+            "grid_locked_onsets"
+          ]
+        },
+        {
+          "anchor": "cinematic-midi",
+          "applicable": true,
+          "refScore": 88,
+          "worseScore": 41,
+          "refPenalty": 11.7916,
+          "worsePenalty": 58.68,
+          "refMajorOrBlocking": 1,
+          "worseMajorOrBlocking": 5,
+          "detected": true,
+          "newKinds": [
+            "constant_velocity",
+            "grid_locked_onsets"
+          ]
+        },
+        {
+          "anchor": "rock-full",
+          "applicable": true,
+          "refScore": 72,
+          "worseScore": 0,
+          "refPenalty": 28.244,
+          "worsePenalty": 118.632,
+          "refMajorOrBlocking": 2,
+          "worseMajorOrBlocking": 9,
+          "detected": true,
+          "newKinds": [
+            "constant_velocity",
+            "grid_locked_onsets"
+          ]
+        },
+        {
+          "anchor": "jazz-full",
+          "applicable": true,
+          "refScore": 86,
+          "worseScore": 11,
+          "refPenalty": 14.3148,
+          "worsePenalty": 88.9708,
+          "refMajorOrBlocking": 1,
+          "worseMajorOrBlocking": 6,
+          "detected": true,
+          "newKinds": [
+            "constant_velocity",
+            "grid_locked_onsets",
+            "identical_voicing_shape",
+            "root_position_only"
+          ]
+        },
+        {
+          "anchor": "ballad-piano-vocal",
+          "applicable": true,
+          "refScore": 99,
+          "worseScore": 44,
+          "refPenalty": 1.4344,
+          "worsePenalty": 56.0988,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 4,
+          "detected": true,
+          "newKinds": [
+            "constant_velocity",
+            "grid_locked_onsets"
+          ]
+        },
+        {
+          "anchor": "dance-full",
+          "applicable": true,
+          "refScore": 95,
+          "worseScore": 4,
+          "refPenalty": 5.4344,
+          "worsePenalty": 96.02,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 7,
+          "detected": true,
+          "newKinds": [
+            "constant_velocity",
+            "grid_locked_onsets"
+          ]
+        }
+      ]
+    },
+    {
+      "dimension": "adversarial.causality",
+      "control": "no_build_no_ending",
+      "description": "The two bars before the climax and the last bar before every lift are replaced by the quietest bar of their section; the final bar is a full-density copy of the section's busiest bar with every note cut short.",
+      "tried": 7,
+      "detected": 7,
+      "detectionRate": 1,
+      "ci95": [
+        0.5904,
+        1
+      ],
+      "ledgerStatus": "gated",
+      "perAnchor": [
+        {
+          "anchor": "pop-full",
+          "applicable": true,
+          "refScore": 98,
+          "worseScore": 79,
+          "refPenalty": 2.1712,
+          "worsePenalty": 20.9408,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 3,
+          "detected": true,
+          "newKinds": [
+            "climax_not_prepared",
+            "ending_is_a_cut"
+          ]
+        },
+        {
+          "anchor": "orchestral-midi",
+          "applicable": true,
+          "refScore": 99,
+          "worseScore": 76,
+          "refPenalty": 1.096,
+          "worsePenalty": 23.5648,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 3,
+          "detected": true,
+          "newKinds": [
+            "climax_not_prepared",
+            "ending_is_a_cut"
+          ]
+        },
+        {
+          "anchor": "cinematic-midi",
+          "applicable": true,
+          "refScore": 100,
+          "worseScore": 74,
+          "refPenalty": 0,
+          "worsePenalty": 26.04,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 3,
+          "detected": true,
+          "newKinds": [
+            "climax_not_prepared",
+            "ending_is_a_cut",
+            "transition_unprepared"
+          ]
+        },
+        {
+          "anchor": "rock-full",
+          "applicable": true,
+          "refScore": 92,
+          "worseScore": 85,
+          "refPenalty": 8.4064,
+          "worsePenalty": 15.3864,
+          "refMajorOrBlocking": 1,
+          "worseMajorOrBlocking": 2,
+          "detected": true,
+          "newKinds": [
+            "climax_not_prepared",
+            "ending_is_a_cut"
+          ]
+        },
+        {
+          "anchor": "jazz-full",
+          "applicable": true,
+          "refScore": 75,
+          "worseScore": 71,
+          "refPenalty": 25.1268,
+          "worsePenalty": 29.4696,
+          "refMajorOrBlocking": 3,
+          "worseMajorOrBlocking": 4,
+          "detected": true,
+          "newKinds": [
+            "transition_unprepared"
+          ]
+        },
+        {
+          "anchor": "ballad-piano-vocal",
+          "applicable": true,
+          "refScore": 90,
+          "worseScore": 85,
+          "refPenalty": 10.0512,
+          "worsePenalty": 15.0444,
+          "refMajorOrBlocking": 2,
+          "worseMajorOrBlocking": 3,
+          "detected": true,
+          "newKinds": [
+            "climax_not_prepared"
+          ]
+        },
+        {
+          "anchor": "dance-full",
+          "applicable": true,
+          "refScore": 98,
+          "worseScore": 76,
+          "refPenalty": 2.192,
+          "worsePenalty": 23.9716,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 3,
+          "detected": true,
+          "newKinds": [
+            "climax_not_prepared",
+            "ending_is_a_cut"
+          ]
+        }
+      ]
+    },
+    {
+      "dimension": "adversarial.arbitrariness",
+      "control": "octave_flips_and_holes",
+      "description": "Every pitched part jumps an octave in the third bar of each section and back in the fourth; the second part is silenced in bars 2-3 of each section; odd bars inside phrases get their onsets doubled.",
+      "tried": 7,
+      "detected": 7,
+      "detectionRate": 1,
+      "ci95": [
+        0.5904,
+        1
+      ],
+      "ledgerStatus": "gated",
+      "perAnchor": [
+        {
+          "anchor": "pop-full",
+          "applicable": true,
+          "refScore": 100,
+          "worseScore": 86,
+          "refPenalty": 0,
+          "worsePenalty": 13.7236,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 0,
+          "detected": true,
+          "newKinds": [
+            "density_change_off_form",
+            "mid_phrase_exit",
+            "unmotivated_register_jump"
+          ]
+        },
+        {
+          "anchor": "orchestral-midi",
+          "applicable": true,
+          "refScore": 0,
+          "worseScore": 0,
+          "refPenalty": 158.736,
+          "worsePenalty": 165.8148,
+          "refMajorOrBlocking": 4,
+          "worseMajorOrBlocking": 4,
+          "detected": true,
+          "newKinds": [
+            "density_change_off_form",
+            "mid_phrase_exit",
+            "unmotivated_register_jump"
+          ]
+        },
+        {
+          "anchor": "cinematic-midi",
+          "applicable": true,
+          "refScore": 0,
+          "worseScore": 0,
+          "refPenalty": 162.376,
+          "worsePenalty": 166.5616,
+          "refMajorOrBlocking": 4,
+          "worseMajorOrBlocking": 4,
+          "detected": true,
+          "newKinds": [
+            "density_change_off_form"
+          ]
+        },
+        {
+          "anchor": "rock-full",
+          "applicable": true,
+          "refScore": 100,
+          "worseScore": 81,
+          "refPenalty": 0,
+          "worsePenalty": 18.8732,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 0,
+          "detected": true,
+          "newKinds": [
+            "density_change_off_form",
+            "mid_phrase_exit",
+            "unmotivated_register_jump"
+          ]
+        },
+        {
+          "anchor": "jazz-full",
+          "applicable": true,
+          "refScore": 100,
+          "worseScore": 91,
+          "refPenalty": 0,
+          "worsePenalty": 8.8736,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 0,
+          "detected": true,
+          "newKinds": [
+            "density_change_off_form",
+            "mid_phrase_exit",
+            "unmotivated_register_jump"
+          ]
+        },
+        {
+          "anchor": "ballad-piano-vocal",
+          "applicable": true,
+          "refScore": 100,
+          "worseScore": 92,
+          "refPenalty": 0,
+          "worsePenalty": 8.0304,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 0,
+          "detected": true,
+          "newKinds": [
+            "density_change_off_form",
+            "mid_phrase_exit",
+            "unmotivated_register_jump"
+          ]
+        },
+        {
+          "anchor": "dance-full",
+          "applicable": true,
+          "refScore": 97,
+          "worseScore": 84,
+          "refPenalty": 3.2928,
+          "worsePenalty": 15.8524,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 0,
+          "detected": true,
+          "newKinds": [
+            "density_change_off_form",
+            "unmotivated_register_jump"
+          ]
+        }
+      ]
+    },
+    {
+      "dimension": "adversarial.instrumentReality",
+      "control": "unplayable_registers_and_sustains",
+      "description": "Strings pushed to MIDI 84-96 for the whole song; brass and winds held for 20 s without a breath; the bass held for 8 s; keys given four-note clusters; one keys note put above the piano's range.",
+      "tried": 7,
+      "detected": 7,
+      "detectionRate": 1,
+      "ci95": [
+        0.5904,
+        1
+      ],
+      "ledgerStatus": "gated",
+      "perAnchor": [
+        {
+          "anchor": "pop-full",
+          "applicable": true,
+          "refScore": 100,
+          "worseScore": 0,
+          "refPenalty": 0,
+          "worsePenalty": 189.5368,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 6,
+          "detected": true,
+          "newKinds": [
+            "bass_sustain_beyond_decay",
+            "keyboard_cluster_voicing",
+            "physically_unplayable"
+          ]
+        },
+        {
+          "anchor": "orchestral-midi",
+          "applicable": true,
+          "refScore": 92,
+          "worseScore": 0,
+          "refPenalty": 7.7568,
+          "worsePenalty": 156.0348,
+          "refMajorOrBlocking": 1,
+          "worseMajorOrBlocking": 6,
+          "detected": true,
+          "newKinds": [
+            "bass_sustain_beyond_decay",
+            "brass_no_breathing_room",
+            "endless_sustain",
+            "keyboard_cluster_voicing",
+            "outside_comfortable_range",
+            "physically_unplayable"
+          ]
+        },
+        {
+          "anchor": "cinematic-midi",
+          "applicable": true,
+          "refScore": 92,
+          "worseScore": 31,
+          "refPenalty": 7.8296,
+          "worsePenalty": 69.3908,
+          "refMajorOrBlocking": 1,
+          "worseMajorOrBlocking": 4,
+          "detected": true,
+          "newKinds": [
+            "brass_no_breathing_room",
+            "endless_sustain",
+            "keyboard_cluster_voicing",
+            "physically_unplayable"
+          ]
+        },
+        {
+          "anchor": "rock-full",
+          "applicable": true,
+          "refScore": 100,
+          "worseScore": 0,
+          "refPenalty": 0,
+          "worsePenalty": 169.1832,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 5,
+          "detected": true,
+          "newKinds": [
+            "bass_sustain_beyond_decay",
+            "keyboard_cluster_voicing",
+            "physically_unplayable"
+          ]
+        },
+        {
+          "anchor": "jazz-full",
+          "applicable": true,
+          "refScore": 100,
+          "worseScore": 0,
+          "refPenalty": 0,
+          "worsePenalty": 167.5556,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 5,
+          "detected": true,
+          "newKinds": [
+            "bass_sustain_beyond_decay",
+            "keyboard_cluster_voicing",
+            "physically_unplayable"
+          ]
+        },
+        {
+          "anchor": "ballad-piano-vocal",
+          "applicable": true,
+          "refScore": 99,
+          "worseScore": 0,
+          "refPenalty": 0.8628,
+          "worsePenalty": 156.9012,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 5,
+          "detected": true,
+          "newKinds": [
+            "keyboard_cluster_voicing",
+            "physically_unplayable"
+          ]
+        },
+        {
+          "anchor": "dance-full",
+          "applicable": true,
+          "refScore": 60,
+          "worseScore": 0,
+          "refPenalty": 40,
+          "worsePenalty": 145.4,
+          "refMajorOrBlocking": 1,
+          "worseMajorOrBlocking": 4,
+          "detected": true,
+          "newKinds": [
+            "bass_sustain_beyond_decay",
+            "keyboard_cluster_voicing",
+            "physically_unplayable"
+          ]
+        }
+      ]
+    },
+    {
+      "dimension": "adversarial.copiedRepeat",
+      "control": "paste_first_occurrence",
+      "description": "Every later occurrence of a repeated section is replaced, in every part, by a byte copy of its first occurrence.",
+      "tried": 5,
+      "detected": 5,
+      "detectionRate": 1,
+      "ci95": [
+        0.4782,
+        1
+      ],
+      "ledgerStatus": "informing",
+      "perAnchor": [
+        {
+          "anchor": "pop-full",
+          "applicable": true,
+          "refScore": 63,
+          "worseScore": 48,
+          "refPenalty": 37.04,
+          "worsePenalty": 51.9392,
+          "refMajorOrBlocking": 3,
+          "worseMajorOrBlocking": 5,
+          "detected": true,
+          "newKinds": [
+            "section_byte_copy"
+          ]
+        },
+        {
+          "anchor": "orchestral-midi",
+          "applicable": false,
+          "refScore": null,
+          "worseScore": null,
+          "refPenalty": 0,
+          "worsePenalty": 0,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 0,
+          "detected": false,
+          "newKinds": []
+        },
+        {
+          "anchor": "cinematic-midi",
+          "applicable": false,
+          "refScore": null,
+          "worseScore": null,
+          "refPenalty": 0,
+          "worsePenalty": 0,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 0,
+          "detected": false,
+          "newKinds": []
+        },
+        {
+          "anchor": "rock-full",
+          "applicable": true,
+          "refScore": 63,
+          "worseScore": 53,
+          "refPenalty": 36.7104,
+          "worsePenalty": 46.8528,
+          "refMajorOrBlocking": 4,
+          "worseMajorOrBlocking": 5,
+          "detected": true,
+          "newKinds": [
+            "section_byte_copy"
+          ]
+        },
+        {
+          "anchor": "jazz-full",
+          "applicable": true,
+          "refScore": 100,
+          "worseScore": 88,
+          "refPenalty": 0,
+          "worsePenalty": 12,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 1,
+          "detected": true,
+          "newKinds": [
+            "section_byte_copy"
+          ]
+        },
+        {
+          "anchor": "ballad-piano-vocal",
+          "applicable": true,
+          "refScore": 88,
+          "worseScore": 62,
+          "refPenalty": 12.3965,
+          "worsePenalty": 38.2368,
+          "refMajorOrBlocking": 1,
+          "worseMajorOrBlocking": 4,
+          "detected": true,
+          "newKinds": [
+            "section_byte_copy"
+          ]
+        },
+        {
+          "anchor": "dance-full",
+          "applicable": true,
+          "refScore": 63,
+          "worseScore": 53,
+          "refPenalty": 37.0944,
+          "worsePenalty": 47.2368,
+          "refMajorOrBlocking": 4,
+          "worseMajorOrBlocking": 5,
+          "detected": true,
+          "newKinds": [
+            "section_byte_copy"
+          ]
+        }
+      ]
+    },
+    {
+      "dimension": "adversarial.fighting",
+      "control": "same_register_offbeat",
+      "description": "The two most active pitched non-bass parts are rewritten in one shared register from the bar grid: one plays chord tones on every beat, the other on every offbeat, so they fight bar after bar; in sung bars both sit on the melody's pitch at velocity 100.",
+      "tried": 7,
+      "detected": 7,
+      "detectionRate": 1,
+      "ci95": [
+        0.5904,
+        1
+      ],
+      "ledgerStatus": "gated",
+      "perAnchor": [
+        {
+          "anchor": "pop-full",
+          "applicable": true,
+          "refScore": 92,
+          "worseScore": 57,
+          "refPenalty": 8.1,
+          "worsePenalty": 42.6552,
+          "refMajorOrBlocking": 2,
+          "worseMajorOrBlocking": 7,
+          "detected": true,
+          "newKinds": [
+            "register_fight"
+          ]
+        },
+        {
+          "anchor": "orchestral-midi",
+          "applicable": true,
+          "refScore": 100,
+          "worseScore": 89,
+          "refPenalty": 0,
+          "worsePenalty": 11.4696,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 1,
+          "detected": true,
+          "newKinds": [
+            "register_fight"
+          ]
+        },
+        {
+          "anchor": "cinematic-midi",
+          "applicable": true,
+          "refScore": 100,
+          "worseScore": 89,
+          "refPenalty": 0,
+          "worsePenalty": 11.25,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 1,
+          "detected": true,
+          "newKinds": [
+            "register_fight"
+          ]
+        },
+        {
+          "anchor": "rock-full",
+          "applicable": true,
+          "refScore": 88,
+          "worseScore": 61,
+          "refPenalty": 12,
+          "worsePenalty": 39.1408,
+          "refMajorOrBlocking": 2,
+          "worseMajorOrBlocking": 6,
+          "detected": true,
+          "newKinds": [
+            "register_fight"
+          ]
+        },
+        {
+          "anchor": "jazz-full",
+          "applicable": true,
+          "refScore": 91,
+          "worseScore": 61,
+          "refPenalty": 9,
+          "worsePenalty": 38.8128,
+          "refMajorOrBlocking": 1,
+          "worseMajorOrBlocking": 4,
+          "detected": true,
+          "newKinds": [
+            "register_fight"
+          ]
+        },
+        {
+          "anchor": "ballad-piano-vocal",
+          "applicable": true,
+          "refScore": 95,
+          "worseScore": 70,
+          "refPenalty": 4.8,
+          "worsePenalty": 30.0228,
+          "refMajorOrBlocking": 1,
+          "worseMajorOrBlocking": 5,
+          "detected": true,
+          "newKinds": [
+            "register_fight"
+          ]
+        },
+        {
+          "anchor": "dance-full",
+          "applicable": true,
+          "refScore": 88,
+          "worseScore": 58,
+          "refPenalty": 12,
+          "worsePenalty": 41.6256,
+          "refMajorOrBlocking": 2,
+          "worseMajorOrBlocking": 6,
+          "detected": true,
+          "newKinds": [
+            "register_fight"
+          ]
+        }
+      ]
+    },
+    {
+      "dimension": "adversarial.professionalWouldChange",
+      "control": "first_pass_mistakes",
+      "description": "Keys dropped to double the bass in the low octave; every chordal part stacked in close position around the same centre; percussion reduced to one pitch; the bass forced to leap root-to-root; the top voice frozen to one pitch in instrumental sections.",
+      "tried": 7,
+      "detected": 7,
+      "detectionRate": 1,
+      "ci95": [
+        0.5904,
+        1
+      ],
+      "ledgerStatus": "gated",
+      "perAnchor": [
+        {
+          "anchor": "pop-full",
+          "applicable": true,
+          "refScore": 97,
+          "worseScore": 85,
+          "refPenalty": 3.2288,
+          "worsePenalty": 14.5352,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 1,
+          "detected": true,
+          "newKinds": [
+            "single_pitch_percussion"
+          ]
+        },
+        {
+          "anchor": "orchestral-midi",
+          "applicable": true,
+          "refScore": 97,
+          "worseScore": 86,
+          "refPenalty": 3.0828,
+          "worsePenalty": 14.1728,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 1,
+          "detected": true,
+          "newKinds": [
+            "single_pitch_percussion"
+          ]
+        },
+        {
+          "anchor": "cinematic-midi",
+          "applicable": true,
+          "refScore": 88,
+          "worseScore": 77,
+          "refPenalty": 11.9096,
+          "worsePenalty": 23.1596,
+          "refMajorOrBlocking": 1,
+          "worseMajorOrBlocking": 2,
+          "detected": true,
+          "newKinds": []
+        },
+        {
+          "anchor": "rock-full",
+          "applicable": true,
+          "refScore": 93,
+          "worseScore": 85,
+          "refPenalty": 6.5964,
+          "worsePenalty": 14.5524,
+          "refMajorOrBlocking": 2,
+          "worseMajorOrBlocking": 1,
+          "detected": true,
+          "newKinds": [
+            "single_pitch_percussion"
+          ]
+        },
+        {
+          "anchor": "jazz-full",
+          "applicable": true,
+          "refScore": 97,
+          "worseScore": 81,
+          "refPenalty": 3.4548,
+          "worsePenalty": 18.97,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 1,
+          "detected": true,
+          "newKinds": [
+            "bass_and_keys_share_low_octave",
+            "single_pitch_percussion"
+          ]
+        },
+        {
+          "anchor": "ballad-piano-vocal",
+          "applicable": true,
+          "refScore": 97,
+          "worseScore": 87,
+          "refPenalty": 2.7032,
+          "worsePenalty": 13.3968,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 1,
+          "detected": true,
+          "newKinds": [
+            "single_pitch_percussion"
+          ]
+        },
+        {
+          "anchor": "dance-full",
+          "applicable": true,
+          "refScore": 97,
+          "worseScore": 74,
+          "refPenalty": 3.2288,
+          "worsePenalty": 25.7852,
+          "refMajorOrBlocking": 0,
+          "worseMajorOrBlocking": 2,
+          "detected": true,
+          "newKinds": [
+            "single_pitch_percussion"
+          ]
+        }
+      ]
+    }
+  ],
+  "controlLedgerMeasuredHere": {
+    "adversarial.boredom": "gated",
+    "adversarial.machineMade": "gated",
+    "adversarial.causality": "gated",
+    "adversarial.arbitrariness": "gated",
+    "adversarial.instrumentReality": "gated",
+    "adversarial.copiedRepeat": "informing",
+    "adversarial.fighting": "gated",
+    "adversarial.professionalWouldChange": "gated"
+  },
+  "nullControlCleanFixture": [
+    {
+      "dimension": "adversarial.boredom",
+      "score": 100,
+      "observations": []
+    },
+    {
+      "dimension": "adversarial.machineMade",
+      "score": 100,
+      "observations": []
+    },
+    {
+      "dimension": "adversarial.causality",
+      "score": 100,
+      "observations": []
+    },
+    {
+      "dimension": "adversarial.arbitrariness",
+      "score": 100,
+      "observations": []
+    },
+    {
+      "dimension": "adversarial.instrumentReality",
+      "score": 100,
+      "observations": []
+    },
+    {
+      "dimension": "adversarial.copiedRepeat",
+      "score": 99,
+      "observations": [
+        "section_rhythm_copy[info]"
+      ]
+    },
+    {
+      "dimension": "adversarial.fighting",
+      "score": 100,
+      "observations": []
+    },
+    {
+      "dimension": "adversarial.professionalWouldChange",
+      "score": 100,
+      "observations": []
+    }
+  ],
+  "judgeExamples": [
+    {
+      "anchor": "orchestral-midi",
+      "context": [
+        {
+          "name": "Intro",
+          "startBar": 1,
+          "endBar": 6,
+          "role": "intro",
+          "isClimax": false,
+          "isSung": false
+        },
+        {
+          "name": "Verse",
+          "startBar": 7,
+          "endBar": 18,
+          "role": "verse",
+          "isClimax": false,
+          "isSung": false
+        },
+        {
+          "name": "Chorus",
+          "startBar": 19,
+          "endBar": 30,
+          "role": "chorus",
+          "isClimax": true,
+          "isSung": false
+        },
+        {
+          "name": "Outro",
+          "startBar": 31,
+          "endBar": 36,
+          "role": "outro",
+          "isClimax": false,
+          "isSung": false
+        }
+      ],
+      "withMeasuredLedger": {
+        "releasable": false,
+        "reasons": [
+          "4 blocking observation(s) from gated dimension(s): adversarial.arbitrariness:planned_family_silent:1-6:all, adversarial.arbitrariness:planned_family_silent:7-18:all, adversarial.arbitrariness:planned_family_silent:19-30:all, adversarial.arbitrariness:planned_family_silent:31-36:all",
+          "2 disagreement(s) kept open for a human or a later rule"
+        ],
+        "blocking": [
+          "adversarial.arbitrariness:planned_family_silent:1-6:all",
+          "adversarial.arbitrariness:planned_family_silent:7-18:all",
+          "adversarial.arbitrariness:planned_family_silent:19-30:all",
+          "adversarial.arbitrariness:planned_family_silent:31-36:all"
+        ],
+        "top": [
+          {
+            "id": "adversarial.arbitrariness:planned_family_silent:19-30:all",
+            "priority": 3999.2,
+            "rationale": "blocking x confidence 0.9998 x gated weight 1; boosted by silent_mandatory_family_outranks_all"
+          },
+          {
+            "id": "adversarial.arbitrariness:planned_family_silent:7-18:all",
+            "priority": 3999.2,
+            "rationale": "blocking x confidence 0.9998 x gated weight 1; boosted by silent_mandatory_family_outranks_all"
+          },
+          {
+            "id": "adversarial.arbitrariness:planned_family_silent:1-6:all",
+            "priority": 3937.6,
+            "rationale": "blocking x confidence 0.9844 x gated weight 1; boosted by silent_mandatory_family_outranks_all"
+          },
+          {
+            "id": "adversarial.arbitrariness:planned_family_silent:31-36:all",
+            "priority": 3937.6,
+            "rationale": "blocking x confidence 0.9844 x gated weight 1; boosted by silent_mandatory_family_outranks_all"
+          },
+          {
+            "id": "adversarial.instrumentReality:string_bed_too_high:19-29:strings-climax_layer",
+            "priority": 24.24,
+            "rationale": "major x confidence 0.6464 x gated weight 1; boosted by register_reality_over_voicing_detail; outranked by adversarial.arbitrariness:planned_family_silent:19-30:all under silent_mandatory_family_outranks_all"
+          },
+          {
+            "id": "adversarial.professionalWouldChange:static_bass_no_approach:1-36:bass-bass",
+            "priority": 1.9268,
+            "rationale": "minor x confidence 0.7707 x gated weight 1; outranked by adversarial.arbitrariness:planned_family_silent:1-6:all under silent_mandatory_family_outranks_all"
+          },
+          {
+            "id": "adversarial.machineMade:no_rests:19-31:strings-climax_layer",
+            "priority": 0.7602,
+            "rationale": "minor x confidence 0.3041 x gated weight 1; outranked by adversarial.arbitrariness:planned_family_silent:19-30:all under silent_mandatory_family_outranks_all"
+          },
+          {
+            "id": "adversarial.boredom:rhythm_predictable:1-36:bass-bass",
+            "priority": 0.7332,
+            "rationale": "minor x confidence 0.2933 x gated weight 1; outranked by adversarial.arbitrariness:planned_family_silent:1-6:all under silent_mandatory_family_outranks_all"
+          }
+        ],
+        "agreements": [],
+        "disagreements": [
+          {
+            "topic": "texture density",
+            "bars": "19-30",
+            "resolution": "kept_open",
+            "rationale": "kept open: no resolution rule covers \"texture density\" between adversarial.machineMade and adversarial.arbitrariness; both positions are reported with their evidence.",
+            "positions": [
+              {
+                "dimension": "adversarial.machineMade",
+                "stance": "no_rests (minor, confidence 0.3041): add_rests",
+                "evidenceRef": "adversarial.machineMade:no_rests:19-31:strings-climax_layer"
+              },
+              {
+                "dimension": "adversarial.arbitrariness",
+                "stance": "planned_family_silent (blocking, confidence 0.9998): compose_planned_part",
+                "evidenceRef": "adversarial.arbitrariness:planned_family_silent:19-30:all"
+              }
+            ]
+          },
+          {
+            "topic": "texture density",
+            "bars": "31-31",
+            "resolution": "kept_open",
+            "rationale": "kept open: no resolution rule covers \"texture density\" between adversarial.machineMade and adversarial.arbitrariness; both positions are reported with their evidence.",
+            "positions": [
+              {
+                "dimension": "adversarial.machineMade",
+                "stance": "no_rests (minor, confidence 0.3041): add_rests",
+                "evidenceRef": "adversarial.machineMade:no_rests:19-31:strings-climax_layer"
+              },
+              {
+                "dimension": "adversarial.arbitrariness",
+                "stance": "planned_family_silent (blocking, confidence 0.9844): compose_planned_part",
+                "evidenceRef": "adversarial.arbitrariness:planned_family_silent:31-36:all"
+              }
+            ]
+          }
+        ],
+        "coverage": {
+          "byDimension": {
+            "adversarial.boredom": {
+              "coverage": 0.4889,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.machineMade": {
+              "coverage": 0.4889,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.causality": {
+              "coverage": 0.4889,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.arbitrariness": {
+              "coverage": 0.4889,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.instrumentReality": {
+              "coverage": 0.4889,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.copiedRepeat": {
+              "coverage": 0,
+              "controlStatus": "informing",
+              "applicable": false
+            },
+            "adversarial.fighting": {
+              "coverage": 0.4889,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.professionalWouldChange": {
+              "coverage": 0.4889,
+              "controlStatus": "gated",
+              "applicable": true
+            }
+          },
+          "weighted": 0.4503,
+          "dimensionsApplicable": 7,
+          "dimensionsTotal": 8
+        }
+      },
+      "withoutLedger": {
+        "releasable": true,
+        "reasons": [
+          "4 blocking-severity observation(s) could not block because their dimension is not gated: adversarial.arbitrariness:planned_family_silent:1-6:all, adversarial.arbitrariness:planned_family_silent:7-18:all, adversarial.arbitrariness:planned_family_silent:19-30:all, adversarial.arbitrariness:planned_family_silent:31-36:all",
+          "2 disagreement(s) kept open for a human or a later rule",
+          "no gated dimension was applicable: releasable means only that nothing calibrated objected"
+        ],
+        "blocking": [],
+        "top": [
+          {
+            "id": "adversarial.arbitrariness:planned_family_silent:19-30:all",
+            "priority": 1599.68,
+            "rationale": "blocking x confidence 0.9998 x uncalibrated weight 0.4; boosted by silent_mandatory_family_outranks_all; cannot block: dimension adversarial.arbitrariness is uncalibrated (no passed positive control on record)"
+          },
+          {
+            "id": "adversarial.arbitrariness:planned_family_silent:7-18:all",
+            "priority": 1599.68,
+            "rationale": "blocking x confidence 0.9998 x uncalibrated weight 0.4; boosted by silent_mandatory_family_outranks_all; cannot block: dimension adversarial.arbitrariness is uncalibrated (no passed positive control on record)"
+          },
+          {
+            "id": "adversarial.arbitrariness:planned_family_silent:1-6:all",
+            "priority": 1575.04,
+            "rationale": "blocking x confidence 0.9844 x uncalibrated weight 0.4; boosted by silent_mandatory_family_outranks_all; cannot block: dimension adversarial.arbitrariness is uncalibrated (no passed positive control on record)"
+          },
+          {
+            "id": "adversarial.arbitrariness:planned_family_silent:31-36:all",
+            "priority": 1575.04,
+            "rationale": "blocking x confidence 0.9844 x uncalibrated weight 0.4; boosted by silent_mandatory_family_outranks_all; cannot block: dimension adversarial.arbitrariness is uncalibrated (no passed positive control on record)"
+          },
+          {
+            "id": "adversarial.instrumentReality:string_bed_too_high:19-29:strings-climax_layer",
+            "priority": 9.696,
+            "rationale": "major x confidence 0.6464 x uncalibrated weight 0.4; boosted by register_reality_over_voicing_detail; outranked by adversarial.arbitrariness:planned_family_silent:19-30:all under silent_mandatory_family_outranks_all"
+          },
+          {
+            "id": "adversarial.professionalWouldChange:static_bass_no_approach:1-36:bass-bass",
+            "priority": 0.7707,
+            "rationale": "minor x confidence 0.7707 x uncalibrated weight 0.4; outranked by adversarial.arbitrariness:planned_family_silent:1-6:all under silent_mandatory_family_outranks_all"
+          },
+          {
+            "id": "adversarial.machineMade:no_rests:19-31:strings-climax_layer",
+            "priority": 0.3041,
+            "rationale": "minor x confidence 0.3041 x uncalibrated weight 0.4; outranked by adversarial.arbitrariness:planned_family_silent:19-30:all under silent_mandatory_family_outranks_all"
+          },
+          {
+            "id": "adversarial.boredom:rhythm_predictable:1-36:bass-bass",
+            "priority": 0.2933,
+            "rationale": "minor x confidence 0.2933 x uncalibrated weight 0.4; outranked by adversarial.arbitrariness:planned_family_silent:1-6:all under silent_mandatory_family_outranks_all"
+          }
+        ],
+        "agreements": [],
+        "disagreements": [
+          {
+            "topic": "texture density",
+            "bars": "19-30",
+            "resolution": "kept_open",
+            "rationale": "kept open: no resolution rule covers \"texture density\" between adversarial.machineMade and adversarial.arbitrariness; both positions are reported with their evidence.",
+            "positions": [
+              {
+                "dimension": "adversarial.machineMade",
+                "stance": "no_rests (minor, confidence 0.3041): add_rests",
+                "evidenceRef": "adversarial.machineMade:no_rests:19-31:strings-climax_layer"
+              },
+              {
+                "dimension": "adversarial.arbitrariness",
+                "stance": "planned_family_silent (blocking, confidence 0.9998): compose_planned_part",
+                "evidenceRef": "adversarial.arbitrariness:planned_family_silent:19-30:all"
+              }
+            ]
+          },
+          {
+            "topic": "texture density",
+            "bars": "31-31",
+            "resolution": "kept_open",
+            "rationale": "kept open: no resolution rule covers \"texture density\" between adversarial.machineMade and adversarial.arbitrariness; both positions are reported with their evidence.",
+            "positions": [
+              {
+                "dimension": "adversarial.machineMade",
+                "stance": "no_rests (minor, confidence 0.3041): add_rests",
+                "evidenceRef": "adversarial.machineMade:no_rests:19-31:strings-climax_layer"
+              },
+              {
+                "dimension": "adversarial.arbitrariness",
+                "stance": "planned_family_silent (blocking, confidence 0.9844): compose_planned_part",
+                "evidenceRef": "adversarial.arbitrariness:planned_family_silent:31-36:all"
+              }
+            ]
+          }
+        ],
+        "coverage": {
+          "byDimension": {
+            "adversarial.boredom": {
+              "coverage": 0.4889,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.machineMade": {
+              "coverage": 0.4889,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.causality": {
+              "coverage": 0.4889,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.arbitrariness": {
+              "coverage": 0.4889,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.instrumentReality": {
+              "coverage": 0.4889,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.copiedRepeat": {
+              "coverage": 0,
+              "controlStatus": "uncalibrated",
+              "applicable": false
+            },
+            "adversarial.fighting": {
+              "coverage": 0.4889,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.professionalWouldChange": {
+              "coverage": 0.4889,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            }
+          },
+          "weighted": 0.4278,
+          "dimensionsApplicable": 7,
+          "dimensionsTotal": 8
+        }
+      }
+    },
+    {
+      "anchor": "pop-full",
+      "context": [
+        {
+          "name": "Intro",
+          "startBar": 1,
+          "endBar": 4,
+          "role": "intro",
+          "isClimax": false,
+          "isSung": true
+        },
+        {
+          "name": "Verse",
+          "startBar": 5,
+          "endBar": 12,
+          "role": "verse",
+          "isClimax": false,
+          "isSung": true
+        },
+        {
+          "name": "Chorus",
+          "startBar": 13,
+          "endBar": 20,
+          "role": "chorus",
+          "isClimax": false,
+          "isSung": true
+        },
+        {
+          "name": "Verse 2",
+          "startBar": 21,
+          "endBar": 28,
+          "role": "verse",
+          "isClimax": false,
+          "isSung": true
+        },
+        {
+          "name": "Chorus 2",
+          "startBar": 29,
+          "endBar": 36,
+          "role": "chorus",
+          "isClimax": true,
+          "isSung": true
+        },
+        {
+          "name": "Outro",
+          "startBar": 37,
+          "endBar": 40,
+          "role": "outro",
+          "isClimax": false,
+          "isSung": true
+        }
+      ],
+      "withMeasuredLedger": {
+        "releasable": true,
+        "reasons": [
+          "no blocking observation from any gated dimension"
+        ],
+        "blocking": [],
+        "top": [
+          {
+            "id": "adversarial.copiedRepeat:section_note_copy:29-36:bass-bass",
+            "priority": 83.313,
+            "rationale": "major x confidence 0.9257 x informing weight 0.6; boosted by form_copy_at_final_chorus"
+          },
+          {
+            "id": "adversarial.copiedRepeat:section_note_copy:29-36:drums-groove",
+            "priority": 81.423,
+            "rationale": "major x confidence 0.9047 x informing weight 0.6; boosted by form_copy_at_final_chorus"
+          },
+          {
+            "id": "adversarial.fighting:melody_masked:13-19:keys-harmonic_bed",
+            "priority": 67.5,
+            "rationale": "major x confidence 0.3375 x gated weight 1; boosted by vocal_space_over_density_when_sung"
+          },
+          {
+            "id": "adversarial.fighting:melody_masked:29-35:keys-harmonic_bed",
+            "priority": 67.5,
+            "rationale": "major x confidence 0.3375 x gated weight 1; boosted by vocal_space_over_density_when_sung"
+          },
+          {
+            "id": "adversarial.copiedRepeat:section_note_copy:29-36:keys-harmonic_bed",
+            "priority": 55.296,
+            "rationale": "major x confidence 0.6144 x informing weight 0.6; boosted by form_copy_at_final_chorus"
+          },
+          {
+            "id": "adversarial.professionalWouldChange:static_bass_no_approach:1-40:bass-bass",
+            "priority": 8.072,
+            "rationale": "minor x confidence 0.8072 x gated weight 1"
+          },
+          {
+            "id": "adversarial.copiedRepeat:section_note_copy:21-28:drums-groove",
+            "priority": 5.9994,
+            "rationale": "minor x confidence 0.9999 x informing weight 0.6"
+          },
+          {
+            "id": "adversarial.copiedRepeat:section_note_copy:21-28:bass-bass",
+            "priority": 5.5542,
+            "rationale": "minor x confidence 0.9257 x informing weight 0.6"
+          }
+        ],
+        "agreements": [],
+        "disagreements": [],
+        "coverage": {
+          "byDimension": {
+            "adversarial.boredom": {
+              "coverage": 0.575,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.machineMade": {
+              "coverage": 0.575,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.causality": {
+              "coverage": 0.575,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.arbitrariness": {
+              "coverage": 0.575,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.instrumentReality": {
+              "coverage": 0.575,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.copiedRepeat": {
+              "coverage": 0.575,
+              "controlStatus": "informing",
+              "applicable": true
+            },
+            "adversarial.fighting": {
+              "coverage": 0.575,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.professionalWouldChange": {
+              "coverage": 0.575,
+              "controlStatus": "gated",
+              "applicable": true
+            }
+          },
+          "weighted": 0.575,
+          "dimensionsApplicable": 8,
+          "dimensionsTotal": 8
+        }
+      },
+      "withoutLedger": {
+        "releasable": true,
+        "reasons": [
+          "no gated dimension was applicable: releasable means only that nothing calibrated objected"
+        ],
+        "blocking": [],
+        "top": [
+          {
+            "id": "adversarial.copiedRepeat:section_note_copy:29-36:bass-bass",
+            "priority": 55.542,
+            "rationale": "major x confidence 0.9257 x uncalibrated weight 0.4; boosted by form_copy_at_final_chorus"
+          },
+          {
+            "id": "adversarial.copiedRepeat:section_note_copy:29-36:drums-groove",
+            "priority": 54.282,
+            "rationale": "major x confidence 0.9047 x uncalibrated weight 0.4; boosted by form_copy_at_final_chorus"
+          },
+          {
+            "id": "adversarial.copiedRepeat:section_note_copy:29-36:keys-harmonic_bed",
+            "priority": 36.864,
+            "rationale": "major x confidence 0.6144 x uncalibrated weight 0.4; boosted by form_copy_at_final_chorus"
+          },
+          {
+            "id": "adversarial.fighting:melody_masked:13-19:keys-harmonic_bed",
+            "priority": 27,
+            "rationale": "major x confidence 0.3375 x uncalibrated weight 0.4; boosted by vocal_space_over_density_when_sung"
+          },
+          {
+            "id": "adversarial.fighting:melody_masked:29-35:keys-harmonic_bed",
+            "priority": 27,
+            "rationale": "major x confidence 0.3375 x uncalibrated weight 0.4; boosted by vocal_space_over_density_when_sung"
+          },
+          {
+            "id": "adversarial.copiedRepeat:section_note_copy:21-28:drums-groove",
+            "priority": 3.9996,
+            "rationale": "minor x confidence 0.9999 x uncalibrated weight 0.4"
+          },
+          {
+            "id": "adversarial.copiedRepeat:section_note_copy:21-28:bass-bass",
+            "priority": 3.7028,
+            "rationale": "minor x confidence 0.9257 x uncalibrated weight 0.4"
+          },
+          {
+            "id": "adversarial.professionalWouldChange:static_bass_no_approach:1-40:bass-bass",
+            "priority": 3.2288,
+            "rationale": "minor x confidence 0.8072 x uncalibrated weight 0.4"
+          }
+        ],
+        "agreements": [],
+        "disagreements": [],
+        "coverage": {
+          "byDimension": {
+            "adversarial.boredom": {
+              "coverage": 0.575,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.machineMade": {
+              "coverage": 0.575,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.causality": {
+              "coverage": 0.575,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.arbitrariness": {
+              "coverage": 0.575,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.instrumentReality": {
+              "coverage": 0.575,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.copiedRepeat": {
+              "coverage": 0.575,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.fighting": {
+              "coverage": 0.575,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.professionalWouldChange": {
+              "coverage": 0.575,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            }
+          },
+          "weighted": 0.575,
+          "dimensionsApplicable": 8,
+          "dimensionsTotal": 8
+        }
+      }
+    },
+    {
+      "anchor": "jazz-full",
+      "context": [
+        {
+          "name": "Verse",
+          "startBar": 1,
+          "endBar": 16,
+          "role": "verse",
+          "isClimax": false,
+          "isSung": true
+        },
+        {
+          "name": "Chorus",
+          "startBar": 17,
+          "endBar": 32,
+          "role": "chorus",
+          "isClimax": true,
+          "isSung": true
+        },
+        {
+          "name": "Verse 2",
+          "startBar": 33,
+          "endBar": 48,
+          "role": "verse",
+          "isClimax": false,
+          "isSung": true
+        }
+      ],
+      "withMeasuredLedger": {
+        "releasable": true,
+        "reasons": [
+          "no blocking observation from any gated dimension"
+        ],
+        "blocking": [],
+        "top": [
+          {
+            "id": "adversarial.fighting:melody_masked:19-31:keys-harmonic_bed",
+            "priority": 150,
+            "rationale": "major x confidence 0.75 x gated weight 1; boosted by vocal_space_over_density_when_sung"
+          },
+          {
+            "id": "adversarial.causality:ending_is_a_cut:47-48:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed",
+            "priority": 142.7,
+            "rationale": "major x confidence 0.7135 x gated weight 1; boosted by ending_over_ornament"
+          },
+          {
+            "id": "adversarial.causality:climax_not_realised:17-32:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed",
+            "priority": 93.76,
+            "rationale": "major x confidence 0.4688 x gated weight 1; boosted by arrival_over_restraint_at_climax"
+          },
+          {
+            "id": "adversarial.causality:climax_not_prepared:15-16:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed",
+            "priority": 91.16,
+            "rationale": "major x confidence 0.9116 x gated weight 1"
+          },
+          {
+            "id": "adversarial.machineMade:no_rests:17-48:keys-harmonic_bed",
+            "priority": 23.4375,
+            "rationale": "major x confidence 0.9375 x gated weight 1; outranked by adversarial.fighting:melody_masked:19-31:keys-harmonic_bed under vocal_space_over_density_when_sung; outranked by adversarial.causality:climax_not_realised:17-32:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed under arrival_over_restraint_at_climax"
+          },
+          {
+            "id": "adversarial.professionalWouldChange:static_bass_no_approach:1-48:bass-bass",
+            "priority": 4.3185,
+            "rationale": "minor x confidence 0.8637 x gated weight 1; outranked by adversarial.causality:ending_is_a_cut:47-48:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed under ending_over_ornament"
+          },
+          {
+            "id": "adversarial.machineMade:no_rests:1-22:bass-bass",
+            "priority": 3.831,
+            "rationale": "minor x confidence 0.7662 x gated weight 1; outranked by adversarial.causality:climax_not_realised:17-32:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed under arrival_over_restraint_at_climax"
+          }
+        ],
+        "agreements": [],
+        "disagreements": [
+          {
+            "topic": "texture density",
+            "bars": "17-22",
+            "resolution": "resolved",
+            "rationale": "resolved by rule arrival_first: At the climax, an unrealised arrival wins over a restraint finding. Winner: adversarial.causality:climax_not_realised:17-32:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed.",
+            "positions": [
+              {
+                "dimension": "adversarial.machineMade",
+                "stance": "no_rests (minor, confidence 0.7662): add_rests",
+                "evidenceRef": "adversarial.machineMade:no_rests:1-22:bass-bass"
+              },
+              {
+                "dimension": "adversarial.causality",
+                "stance": "climax_not_realised (major, confidence 0.4688): realise_climax",
+                "evidenceRef": "adversarial.causality:climax_not_realised:17-32:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed"
+              }
+            ]
+          },
+          {
+            "topic": "texture density",
+            "bars": "17-32",
+            "resolution": "resolved",
+            "rationale": "resolved by rule arrival_first: At the climax, an unrealised arrival wins over a restraint finding. Winner: adversarial.causality:climax_not_realised:17-32:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed.",
+            "positions": [
+              {
+                "dimension": "adversarial.machineMade",
+                "stance": "no_rests (major, confidence 0.9375): add_rests",
+                "evidenceRef": "adversarial.machineMade:no_rests:17-48:keys-harmonic_bed"
+              },
+              {
+                "dimension": "adversarial.causality",
+                "stance": "climax_not_realised (major, confidence 0.4688): realise_climax",
+                "evidenceRef": "adversarial.causality:climax_not_realised:17-32:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed"
+              }
+            ]
+          }
+        ],
+        "coverage": {
+          "byDimension": {
+            "adversarial.boredom": {
+              "coverage": 0.5938,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.machineMade": {
+              "coverage": 0.5938,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.causality": {
+              "coverage": 0.5938,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.arbitrariness": {
+              "coverage": 0.5938,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.instrumentReality": {
+              "coverage": 0.5938,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.copiedRepeat": {
+              "coverage": 0.5938,
+              "controlStatus": "informing",
+              "applicable": true
+            },
+            "adversarial.fighting": {
+              "coverage": 0.5938,
+              "controlStatus": "gated",
+              "applicable": true
+            },
+            "adversarial.professionalWouldChange": {
+              "coverage": 0.5938,
+              "controlStatus": "gated",
+              "applicable": true
+            }
+          },
+          "weighted": 0.5938,
+          "dimensionsApplicable": 8,
+          "dimensionsTotal": 8
+        }
+      },
+      "withoutLedger": {
+        "releasable": true,
+        "reasons": [
+          "no gated dimension was applicable: releasable means only that nothing calibrated objected"
+        ],
+        "blocking": [],
+        "top": [
+          {
+            "id": "adversarial.fighting:melody_masked:19-31:keys-harmonic_bed",
+            "priority": 60,
+            "rationale": "major x confidence 0.75 x uncalibrated weight 0.4; boosted by vocal_space_over_density_when_sung"
+          },
+          {
+            "id": "adversarial.causality:ending_is_a_cut:47-48:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed",
+            "priority": 57.08,
+            "rationale": "major x confidence 0.7135 x uncalibrated weight 0.4; boosted by ending_over_ornament"
+          },
+          {
+            "id": "adversarial.causality:climax_not_realised:17-32:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed",
+            "priority": 37.504,
+            "rationale": "major x confidence 0.4688 x uncalibrated weight 0.4; boosted by arrival_over_restraint_at_climax"
+          },
+          {
+            "id": "adversarial.causality:climax_not_prepared:15-16:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed",
+            "priority": 36.464,
+            "rationale": "major x confidence 0.9116 x uncalibrated weight 0.4"
+          },
+          {
+            "id": "adversarial.machineMade:no_rests:17-48:keys-harmonic_bed",
+            "priority": 9.375,
+            "rationale": "major x confidence 0.9375 x uncalibrated weight 0.4; outranked by adversarial.fighting:melody_masked:19-31:keys-harmonic_bed under vocal_space_over_density_when_sung; outranked by adversarial.causality:climax_not_realised:17-32:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed under arrival_over_restraint_at_climax"
+          },
+          {
+            "id": "adversarial.professionalWouldChange:static_bass_no_approach:1-48:bass-bass",
+            "priority": 1.7274,
+            "rationale": "minor x confidence 0.8637 x uncalibrated weight 0.4; outranked by adversarial.causality:ending_is_a_cut:47-48:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed under ending_over_ornament"
+          },
+          {
+            "id": "adversarial.machineMade:no_rests:1-22:bass-bass",
+            "priority": 1.5324,
+            "rationale": "minor x confidence 0.7662 x uncalibrated weight 0.4; outranked by adversarial.causality:climax_not_realised:17-32:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed under arrival_over_restraint_at_climax"
+          }
+        ],
+        "agreements": [],
+        "disagreements": [
+          {
+            "topic": "texture density",
+            "bars": "17-22",
+            "resolution": "resolved",
+            "rationale": "resolved by rule arrival_first: At the climax, an unrealised arrival wins over a restraint finding. Winner: adversarial.causality:climax_not_realised:17-32:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed.",
+            "positions": [
+              {
+                "dimension": "adversarial.machineMade",
+                "stance": "no_rests (minor, confidence 0.7662): add_rests",
+                "evidenceRef": "adversarial.machineMade:no_rests:1-22:bass-bass"
+              },
+              {
+                "dimension": "adversarial.causality",
+                "stance": "climax_not_realised (major, confidence 0.4688): realise_climax",
+                "evidenceRef": "adversarial.causality:climax_not_realised:17-32:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed"
+              }
+            ]
+          },
+          {
+            "topic": "texture density",
+            "bars": "17-32",
+            "resolution": "resolved",
+            "rationale": "resolved by rule arrival_first: At the climax, an unrealised arrival wins over a restraint finding. Winner: adversarial.causality:climax_not_realised:17-32:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed.",
+            "positions": [
+              {
+                "dimension": "adversarial.machineMade",
+                "stance": "no_rests (major, confidence 0.9375): add_rests",
+                "evidenceRef": "adversarial.machineMade:no_rests:17-48:keys-harmonic_bed"
+              },
+              {
+                "dimension": "adversarial.causality",
+                "stance": "climax_not_realised (major, confidence 0.4688): realise_climax",
+                "evidenceRef": "adversarial.causality:climax_not_realised:17-32:bass-bass+drums-climax_layer+ensemble-transition+keys-harmonic_bed"
+              }
+            ]
+          }
+        ],
+        "coverage": {
+          "byDimension": {
+            "adversarial.boredom": {
+              "coverage": 0.5938,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.machineMade": {
+              "coverage": 0.5938,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.causality": {
+              "coverage": 0.5938,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.arbitrariness": {
+              "coverage": 0.5938,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.instrumentReality": {
+              "coverage": 0.5938,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.copiedRepeat": {
+              "coverage": 0.5938,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.fighting": {
+              "coverage": 0.5938,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            },
+            "adversarial.professionalWouldChange": {
+              "coverage": 0.5938,
+              "controlStatus": "uncalibrated",
+              "applicable": true
+            }
+          },
+          "weighted": 0.5938,
+          "dimensionsApplicable": 8,
+          "dimensionsTotal": 8
+        }
+      }
+    }
+  ],
+  "honestLimits": [
+    "Anchors are the synthetic benchmark corpus (9 spec-built songs), not real songs and not the owner's song; nothing here has been listened to.",
+    "The positive controls are the author's own damage transforms; passing them shows each module hears the thing it names, not that it hears every way that thing can go wrong.",
+    "Six or seven anchors give an exact 95 % interval whose lower bound is at best 0.54-0.59 at 100 % detection; 'gated' in the measured ledger means 'passed every anchor tried', not 'calibrated on human material' (only the playability engine inside instrumentReality has that).",
+    "controlStatus is uncalibrated unless a caller passes a ledger; nothing on the production path consumes these reports yet (NOT INTEGRATED).",
+    "Thresholds (entropy, shares, semitone limits) are musical judgement written as constants, not fitted to human data.",
+    "The judge's priority, opposition and resolution rules are a first table; disagreements no rule covers stay open by design.",
+    "The clean fixture is one hand-written 32-bar pop arrangement; it is a null control, not a definition of good music."
+  ]
+}

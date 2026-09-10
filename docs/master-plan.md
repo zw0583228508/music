@@ -5846,6 +5846,133 @@ any of it.
   presets need a preset saved from Cubase, then `make_manifest.py --preset
   --append` + `smoke.py`. Nobody has listened.
 
+### PR-B05b — Brain B-05b: the critic that tries to reject, and the judge that keeps disagreement
+
+- **PR-B05b** ⏳ — `ws-brain-b05b` (Brain program, stream B-05b; parallel to
+  B-05a's constructive critics). Delivers the **adversarial critic** (eight
+  modules whose job is to reject), the **judge / aggregation layer** that ranks
+  by musical priority and preserves disagreement, and the **failure taxonomy**
+  the brief asked for. Nothing here is on the production path yet: it is the
+  measuring instrument the B-05 gate needs, shipped with the controls that
+  prove it measures. Files: `artifacts/api-server/src/lib/critics/adversarial/`
+  (`boredom.ts`, `machineMade.ts`, `causality.ts`, `arbitrariness.ts`,
+  `instrumentReality.ts`, `copiedRepeat.ts`, `fighting.ts`,
+  `professionalWouldChange.ts`, `shared.ts`, `index.ts`, `controls.ts`,
+  `anchors.ts`, `fixture.ts`, `evidence.ts`), `critics/judge.ts`,
+  `critics/failureTaxonomy.ts`, `critics/types.b05b.ts` (a verbatim copy of the
+  shared B-05 contract; the lead unifies it with B-05a's `critics/types.ts`),
+  four test suites (59 tests, registered in `run-focused-api-tests.mjs`),
+  evidence `docs/evidence/brain-b05b-adversarial-judge.json`.
+
+  **What the adversarial critic is.** Each module reads the Song Model's own
+  bar grid (no 120 BPM / 4/4 default: no grid means it abstains and says so),
+  the plan's section targets and role assignments, and the *performed* track
+  models, and returns a `CriticDimensionReport` of located observations
+  (bar range, section, track ids) with numeric evidence, a suspected origin
+  layer, a recommended repair (operation + scope) and a confidence. **No
+  confidence is typed by hand** (a source-gate test forbids the literal):
+  confidence is `(1 - 2^(-n/k)) x effect` - how much evidence, how far past
+  the threshold. Origin confidence is spread over the taxonomy's candidate
+  layers and sharpened only when the plan itself confirms or denies a layer
+  (e.g. a planned entry bar, a planned transition device). Axes: boredom
+  (bar-rhythm and interval-bigram entropy, identical bars, no dynamic
+  movement, everyone always playing), machine-made (grid-locked onsets,
+  constant velocity, identical voicing shape per chord symbol, root position
+  only, harmony changing only on downbeats, no rests), causality (is the
+  climax set up and realised, does an entry answer a fill / a sung phrase end
+  / a section start, is a lift prepared, is the ending a cut), arbitrariness
+  (octave jumps and entries / exits off the phrase grid, density jumps off the
+  form, and **a planned family that wrote nothing**), instrument reality (the
+  calibrated constraint engine reused for the impossible tier, plus the
+  "possible but resented" tier: string bed above MIDI 79 for a section, brass
+  with no breathing room, bass held past its decay, endless sustains, cluster
+  voicings, and an instrument whose definition resolved to another family),
+  copied repeats (byte / note / rhythm copies between repeated sections, the
+  final chorus graded major), fighting (register fights between parts with
+  clashing rhythms; the melody masked in sung bars), and the professional's
+  first-pass list as a data table of eight rules (bass and keys in the same
+  low octave, no top-voice line in an instrumental section, two chordal parts
+  in close position in one octave, single-pitch percussion, accidental unison
+  doubling, a bass that never approaches a change, block homorhythm,
+  low-interval mud).
+
+  **Controls (the acceptance artifact).** Anchors = the reference composer
+  through the real orchestrator on 7 synthetic benchmark cases (pop, orchestral
+  3/4, cinematic, rock, jazz, ballad, dance). Every module has a deliberately
+  worsened transform and passes on every applicable anchor - **7/7 for seven
+  modules, 5/5 for copied repeats** (two forms have no repeated section, so it
+  abstains), exact 95 % CI lower bound 0.59 (0.48 for 5/5). A hand-written
+  clean 32-bar arrangement is the null control: all eight modules score it
+  99-100 with nothing above `info`. The measured ledger therefore reads
+  `gated` for seven modules and `informing` for copied repeats - and **a
+  module never declares its own status**: without a caller-supplied ledger
+  every report is `uncalibrated`.
+
+  **Finding: the reference composer is rejected on several axes** (numbers in
+  the evidence file, per anchor per observation). Instrument reality: the
+  string bed sits at MIDI 79-93 in both orchestral anchors (the owner's-song
+  defect reproduced on the corpus: mean 86.6 / 86.2); in `dance-full` the
+  **keys part resolved to the drum-kit definition** (`definition_family_
+  mismatch`, blocking - the role-based resolution the PR-61 fix left for
+  non-family names). Arbitrariness: the plan's `keys:LEAD` wrote nothing in
+  every section of both instrumental anchors (8 blocking `planned_family_
+  silent` observations - F5 measured at note level). Copied repeats: repeated
+  verses and choruses are note-for-note copies in 14 part-sections across four
+  anchors (only the dynamics differ). Fighting: the keyboard bed sits within
+  three semitones of the sung melody at velocity 100+ in every vocal anchor
+  (`melody_masked`, 8 observations). Machine-made: the guitar / keys voicings
+  are root-position-only with one shape per chord symbol (rock, dance); beds
+  never rest for 8-32 bars (14 observations). Causality: 6 lifts unprepared,
+  the jazz chorus neither prepared nor the densest section, two endings that
+  are cuts. Professional: the bass never approaches a change by step on any
+  anchor (7/7). Boredom and dynamics are largely *not* rejected - the
+  performance layer's velocity shaping and the chord loops give the reference
+  enough entropy; that is a measurement, not a compliment.
+
+  **Judge.** `judge(reports, context)` takes any set of dimension reports
+  (B-05a's constructive ones included) and returns `blocking` (only from
+  `gated` dimensions), `ranked` (severity x confidence x control weight x
+  rule boosts, with the rationale spelled out per observation), `agreements`
+  (two or more *distinct* dimensions on one failure code at overlapping bars,
+  combined by noisy-OR - one critic saying two things is never an agreement),
+  `disagreements` (opposing positions from an `OPPOSITIONS` table, each with
+  both stances and evidence refs, `kept_open` unless a `RESOLUTION_RULES`
+  entry applies and is named), `overall.releasable` with reasons, and
+  coverage per dimension. Priority rules are data (`PRIORITY_RULES`): blocking
+  playability outranks style nuance; a silent mandatory family and a wrong
+  instrument definition outrank everything on their bars; in a sung section
+  vocal space outranks density; at the climax arrival outranks restraint; an
+  ending that is a cut outranks minor ornament. Context (sung / climax) comes
+  from the plan and the vocal evidence via `judgeContextFromInput`. On the
+  orchestral anchor with the measured ledger: unreleasable (4 blocking), two
+  "texture density" disagreements kept open between machine-made `no_rests`
+  and the silent planned keys; on jazz the same opposition is resolved by
+  `arrival_first` and says so; without a ledger nothing blocks and the verdict
+  says why. Determinism proven (any report order, deep-equal).
+
+  **Capability ladder.** Adversarial critic: IMPLEMENTED + TESTED with
+  positive and null controls; NOT INTEGRATED (no production caller); NOT
+  BENCHMARKED against the frozen baseline; NOT VALIDATED ON OUTPUT (nobody has
+  listened). Judge: IMPLEMENTED + TESTED (constructed conflicts, blocking
+  gating, no fabricated consensus, determinism); NOT INTEGRATED. Failure
+  taxonomy: IMPLEMENTED + TESTED (every adversarial kind maps to exactly one
+  code); B-11 owns its persistence.
+
+  **Honest limits.** The anchors are the 9-case synthetic corpus, not real
+  songs and not the owner's song. The positive controls are the author's own
+  damage transforms: passing them shows each module hears the thing it names,
+  not every way that thing can go wrong; seven anchors give a CI lower bound
+  of 0.59 at 100 % detection, so `gated` in the measured ledger means "passed
+  every anchor tried", not "calibrated on human material" (only the
+  playability engine inside `instrumentReality` has that). Thresholds are
+  musical judgement written as named constants, not fitted to human data; the
+  clean fixture is one pop arrangement, a null control, not a definition of
+  good music. The opposition and resolution tables are a first draft and will
+  need B-05a's kinds added; disagreements no rule covers stay open by design.
+  `types.b05b.ts` duplicates the contract until the lead unifies it. Sung-ness
+  is read from vocal evidence only (B-01's "sung by default" rule is not
+  assumed here). Nothing here changes what the orchestrator selects or ships.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
