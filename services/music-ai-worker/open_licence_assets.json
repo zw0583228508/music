@@ -1,0 +1,196 @@
+{
+  "version": 1,
+  "note": "PR-93 (SOUND-2): the open-licence SFZ libraries the platform may fetch into the cloud beside VSCO 2 CE, each pinned to a commit, each with the licence file the gate must capture before a byte is staged, and an explicit instrument -> platform-family map. Families: keys, strings, brass, drums, guitar, voice, synth; `world` marks the instruments the owner's Middle-Eastern / world idiom asks for; `standIn` says out loud when the platform family is not the instrument the library has. Key ranges and drum key maps were read from the pinned .sfz files. Nothing here is a legal opinion: the gate checks that the licence file at the pin carries the legal code the catalogue claims, and the attestation carries that file's hash.",
+  "assets": [
+    {
+      "assetId": "vcsl-1.2.2-sfz-b6e6ac8",
+      "identity": "Versilian Studios / Versilian Community Sample Library (VCSL) 1.2.2 / SFZ branch b6e6ac82 / platform subset",
+      "licenseOwner": "Public domain dedication (CC0-1.0) by Versilian Studios LLC; no licence to hold",
+      "source": {
+        "kind": "git",
+        "repository": "https://github.com/sgossner/VCSL.git",
+        "branch": "sfz",
+        "commit": "b6e6ac82d22248edee98a0bde185eb9ef6d439ad",
+        "note": "The SFZ mappings live only on the `sfz` branch (release v1.2.2-RC points at it; the release has no downloadable assets any more). The branch carries the 4,231 WAVs (6.16 GB) beside 183 .sfz files; only the files the instruments below reference are materialised."
+      },
+      "licence": {
+        "spdx": "CC0-1.0",
+        "file": "LICENSE",
+        "fromCommit": "c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e",
+        "fromBranch": "master",
+        "note": "The sfz branch (commit b6e6ac82) carries no LICENSE file - its README.md states 'This collection is under a Creative Commons 0 license' - so the gate captures the CC0 1.0 Universal legal code from master (commit c1ea7bcc) of the same repository, the same sample set by the same authors. The first provisioning run refused the asset for exactly this reason; the refusal is kept in the evidence."
+      },
+      "smokeInstrument": "Chordophones/Zithers/Grand Piano, Steinway B.sfz",
+      "instruments": [
+        { "sfz": "Chordophones/Zithers/Grand Piano, Steinway B.sfz", "instrument": "VCSL Steinway B grand piano, close mics, sustain + release", "family": "keys", "auditionFamily": "piano", "keyRange": [21, 108] },
+        { "sfz": "Chordophones/Zithers/Harpsichord, French.sfz", "instrument": "VCSL French harpsichord", "family": "keys", "auditionFamily": "piano", "keyRange": [29, 84] },
+        { "sfz": "Idiophones/Struck Idiophones/Marimba.sfz", "instrument": "VCSL Marimba", "family": "keys", "auditionFamily": "piano", "keyRange": [41, 97], "standIn": "A marimba is tuned mallet percussion; it fills the keys slot as a mallet colour, not as a piano." },
+        { "sfz": "Idiophones/Struck Idiophones/Vibraphone - Soft Mallets.sfz", "instrument": "VCSL Vibraphone, soft mallets", "family": "keys", "auditionFamily": "piano", "keyRange": [53, 89], "standIn": "A vibraphone is tuned mallet percussion; it fills the keys slot as a mallet colour, not as a piano." },
+        { "sfz": "Electrophones/TX81Z - FM Piano.sfz", "instrument": "VCSL Yamaha TX81Z FM Piano (hardware FM synthesizer, sampled)", "family": "synth", "auditionFamily": "piano", "keyRange": [24, 109] },
+        { "sfz": "Chordophones/Composite Chordophones/Concert Harp.sfz", "instrument": "VCSL Concert Harp", "family": "strings", "auditionFamily": "strings", "keyRange": [28, 102], "standIn": "A plucked concert harp, not a bowed string section." },
+        { "sfz": "Chordophones/Zithers/Psaltery, Bowed and Plucked - LongBow.sfz", "instrument": "VCSL Bowed Psaltery, long bow", "family": "strings", "auditionFamily": "strings", "keyRange": [67, 91], "standIn": "A solo bowed psaltery (folk zither), a single bowed colour rather than a string section.", "world": true },
+        { "sfz": "Chordophones/Zithers/Dan Tranh - Normal.sfz", "instrument": "VCSL Dan Tranh (Vietnamese 16-string zither), normal pluck", "family": "strings", "auditionFamily": "world", "keyRange": [47, 84], "standIn": "A plucked zither in the strings slot; the nearest open-licence cousin of a kanun the cloud tier has.", "world": true },
+        { "sfz": "Chordophones/Composite Chordophones/Strumstick.sfz", "instrument": "VCSL Strumstick (three-string fretted dulcimer-guitar), finger", "family": "guitar", "auditionFamily": "guitar", "keyRange": [48, 84], "standIn": "A strumstick is a three-string diatonic fretted dulcimer, not a six-string guitar.", "world": true },
+        { "sfz": "Idiophones/Plucked Idiophones/Kalimba, Kenya.sfz", "instrument": "VCSL Kalimba (Kenya)", "family": "keys", "auditionFamily": "world", "keyRange": [59, 84], "standIn": "A plucked lamellophone in the keys slot as a colour, not a keyboard.", "world": true },
+        { "sfz": "Idiophones/Plucked Idiophones/Mbira dzaVadzimu Nyamaropa, Zimbabwe, Low B.sfz", "instrument": "VCSL Mbira dzaVadzimu Nyamaropa (Zimbabwe), low B", "family": "keys", "auditionFamily": "world", "keyRange": [46, 86], "standIn": "A plucked lamellophone in the keys slot as a colour, not a keyboard.", "world": true },
+        { "sfz": "Idiophones/Struck Idiophones/Balafon - Traditional Mallet.sfz", "instrument": "VCSL Balafon, traditional mallet", "family": "keys", "auditionFamily": "world", "keyRange": [60, 91], "standIn": "A West-African gourd-resonated xylophone in the keys slot as a mallet colour.", "world": true },
+        { "sfz": "Aerophones/Reed Aerophones/Tenor Saxophone - Vibrato.sfz", "instrument": "VCSL Tenor Saxophone, vibrato", "family": "brass", "auditionFamily": "strings", "keyRange": [44, 89], "standIn": "A tenor saxophone (single reed) filling the brass / horn-section slot." },
+        { "sfz": "Aerophones/Free Aerophones/Harmonica-Hohner-Special20-C - Normal.sfz", "instrument": "VCSL Hohner Special 20 harmonica in C, normal", "family": "brass", "auditionFamily": "strings", "keyRange": [60, 97], "standIn": "A diatonic harmonica in the wind/brass slot; it is not a horn." },
+        { "sfz": "Aerophones/Lip Aerophones/Didgeridoo.sfz", "instrument": "VCSL Didgeridoo, drones and taps", "family": "brass", "auditionFamily": "world", "keyRange": [60, 71], "standIn": "A didgeridoo drone in the wind/brass slot; the phrase is a texture, not a melody.", "world": true },
+        { "sfz": "Aerophones/Edge-blown Aerophones/Ocarina, Typical - Sus.sfz", "instrument": "VCSL Ocarina (typical), sustain", "family": "brass", "auditionFamily": "world", "keyRange": [69, 86], "standIn": "A vessel flute in the wind/brass slot; the nearest open-licence cousin of a ney the cloud tier has.", "world": true },
+        { "sfz": "Membranophones/Struck Membranophones/Darbuka.sfz", "instrument": "VCSL Darbuka (goblet drum), five strokes", "family": "drums", "auditionFamily": "drums", "keyRange": [60, 64], "world": true, "drumKeys": { "kick": 60, "snare": 61, "hatClosed": 62, "hatOpen": 63, "crash": 64, "tomLow": 60, "tomHigh": 61 } },
+        { "sfz": "Membranophones/Struck Membranophones/Frame Drum.sfz", "instrument": "VCSL Frame Drum (large + small, open + muted)", "family": "drums", "auditionFamily": "drums", "keyRange": [60, 65], "world": true, "drumKeys": { "kick": 60, "snare": 62, "hatClosed": 64, "hatOpen": 65, "crash": 63, "tomLow": 60, "tomHigh": 61 } },
+        { "sfz": "Membranophones/Struck Membranophones/Conga.sfz", "instrument": "VCSL Conga set (tumba, conga, quinto)", "family": "drums", "auditionFamily": "drums", "keyRange": [60, 65], "world": true, "drumKeys": { "kick": 60, "snare": 62, "hatClosed": 64, "hatOpen": 65, "crash": 63, "tomLow": 60, "tomHigh": 61 } },
+        { "sfz": "Membranophones/Struck Membranophones/Bongos.sfz", "instrument": "VCSL Bongos (open + muted)", "family": "drums", "auditionFamily": "drums", "keyRange": [60, 65], "world": true, "drumKeys": { "kick": 60, "snare": 62, "hatClosed": 64, "hatOpen": 65, "crash": 63, "tomLow": 60, "tomHigh": 61 } },
+        { "sfz": "Idiophones/Struck Idiophones/Cajon.sfz", "instrument": "VCSL Cajon", "family": "drums", "auditionFamily": "drums", "keyRange": [60, 62], "world": true, "drumKeys": { "kick": 60, "snare": 61, "hatClosed": 62, "hatOpen": 62, "crash": 61, "tomLow": 60, "tomHigh": 61 } },
+        { "sfz": "Membranophones/Struck Membranophones/Timpani 1 - Hit.sfz", "instrument": "VCSL Timpani 1, hits", "family": "drums", "auditionFamily": "drums", "keyRange": [41, 55], "standIn": "Orchestral timpani, not a kit.", "drumKeys": { "kick": 41, "snare": 48, "hatClosed": 53, "hatOpen": 55, "crash": 50, "tomLow": 43, "tomHigh": 46 } }
+      ]
+    },
+    {
+      "assetId": "salamander-grand-v3-3382bf9",
+      "identity": "Alexander Holm / Salamander Grand Piano V3 (Yamaha C5, 16 velocity layers) / sfzinstruments flac remap by kinwie / commit 3382bf94",
+      "licenseOwner": "Alexander Holm (author), Creative Commons Attribution 3.0 Unported; attribution travels in the attestation",
+      "source": { "kind": "git", "repository": "https://github.com/sfzinstruments/SalamanderGrandPiano.git", "branch": "master", "commit": "3382bf9496bba2486f5ab0de55a264d1dfc38404" },
+      "licence": { "spdx": "CC-BY-3.0", "file": "LICENSE", "attribution": "Salamander Grand Piano V3 by Alexander Holm, CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/); retuned version by Markus Fiedler; SFZ v2 / flac remap by kinwie for sfzinstruments." },
+      "smokeInstrument": "Salamander Grand Piano V3.sfz",
+      "instruments": [
+        { "sfz": "Salamander Grand Piano V3.sfz", "instrument": "Salamander Grand Piano V3 (Yamaha C5), natural tuning, sustain + hammer + resonance layers", "family": "keys", "auditionFamily": "piano", "keyRange": [21, 108] }
+      ]
+    },
+    {
+      "assetId": "drumgizmo-drskit-b014489",
+      "identity": "DrumGizmo / DRSKit v1.0 (Jes Eiler, DRSDrums) / sfzinstruments stereo flac port by kinwie / commit b0144899",
+      "licenseOwner": "Lars Muldjord and Bent Bisballe Nyeng (DrumGizmo), Creative Commons Attribution 4.0 International; attribution travels in the attestation",
+      "source": { "kind": "git", "repository": "https://github.com/sfzinstruments/DrumGizmo.DRSKit.git", "branch": "master", "commit": "b01448990a31f722542f1812e56159a97a6a2a82" },
+      "licence": { "spdx": "CC-BY-4.0", "file": "LICENSE", "attribution": "DRSKit by Lars Muldjord / Bent Bisballe Nyeng (DrumGizmo, www.drumgizmo.org) with Jes Eiler of DRSDrums, CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/); ARIA SFZ port and flac conversion by kinwie for sfzinstruments." },
+      "smokeInstrument": "DrumGizmo/DRSKit/Stereo/DrumGizmo DRSKit.sfz",
+      "instruments": [
+        { "sfz": "DrumGizmo/DRSKit/Stereo/DrumGizmo DRSKit.sfz", "instrument": "DrumGizmo DRSKit, stereo mix (kick, snare, three toms, Paiste hats/crashes/ride, round robins)", "family": "drums", "auditionFamily": "drums", "keyRange": [35, 76], "drumKeys": { "kick": 36, "snare": 38, "hatClosed": 42, "hatOpen": 46, "crash": 49, "tomLow": 43, "tomHigh": 47 } }
+      ]
+    },
+    {
+      "assetId": "avl-drumkits-b06cb2c",
+      "identity": "Glen MacArthur (Bandshed) / AVL Drumkits: Black Pearl 5pc + Red Zeppelin 5pc / studiorack sfz+flac packaging / commit b06cb2c2",
+      "licenseOwner": "Glen MacArthur (author), Creative Commons Attribution-ShareAlike 3.0 Unported; attribution travels in the attestation; renders derived from it carry ShareAlike",
+      "source": { "kind": "git", "repository": "https://github.com/studiorack/avl-drumkits.git", "branch": "main", "commit": "b06cb2c27359cbc68a830a82bddced05bd73d1a0" },
+      "licence": { "spdx": "CC-BY-SA-3.0", "file": "LICENSE", "attribution": "AVL Drumkits by Glen MacArthur (http://www.bandshed.net/avldrumkits/), CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/)." },
+      "smokeInstrument": "Black_Pearl_5pc.sfz",
+      "instruments": [
+        { "sfz": "Black_Pearl_5pc.sfz", "instrument": "AVL Black Pearl 5-piece kit (Pearl 22\" kick, Pearl snare, Sabian cymbals), 5 velocity layers", "family": "drums", "auditionFamily": "drums", "keyRange": [36, 64], "drumKeys": { "kick": 36, "snare": 38, "hatClosed": 42, "hatOpen": 46, "crash": 49, "tomLow": 45, "tomHigh": 48 } },
+        { "sfz": "Red_Zeppelin_5pc.sfz", "instrument": "AVL Red Zeppelin 5-piece kit (Ludwig 26\" kick, Porkpie snare, Paiste/Zildjian cymbals), 5 velocity layers", "family": "drums", "auditionFamily": "drums", "keyRange": [36, 64], "drumKeys": { "kick": 36, "snare": 38, "hatClosed": 42, "hatOpen": 46, "crash": 49, "tomLow": 45, "tomHigh": 48 } }
+      ]
+    },
+    {
+      "assetId": "karoryfer-meatbass-ac9e859",
+      "identity": "Karoryfer Samples / Meatbass (1958 Otto Rubner double bass, D. Smolken) / commit ac9e8595",
+      "licenseOwner": "Public domain dedication (CC0-1.0) by Karoryfer Samples (Karoryfer Lecolds); no licence to hold",
+      "source": { "kind": "git", "repository": "https://github.com/sfzinstruments/karoryfer.meatbass.git", "branch": "master", "commit": "ac9e859564bda286ab5ec672d00ff1aa2fef2895" },
+      "licence": { "spdx": "CC0-1.0", "file": "LICENSE" },
+      "smokeInstrument": "Programs/04_pizz.sfz",
+      "instruments": [
+        { "sfz": "Programs/04_pizz.sfz", "instrument": "Karoryfer Meatbass, pizzicato (4 velocity layers, 4 round robins)", "family": "strings", "auditionFamily": "bass", "keyRange": [24, 67], "standIn": "The platform's bass line is an electric or upright bass; this is an upright (double bass) plucked - the jazz/folk answer, not a P-bass." },
+        { "sfz": "Programs/02_arco_3vel.sfz", "instrument": "Karoryfer Meatbass, arco (3 velocity layers)", "family": "strings", "auditionFamily": "strings", "keyRange": [24, 67], "standIn": "A solo bowed double bass, not a string section." }
+      ]
+    },
+    {
+      "assetId": "karoryfer-pastabass-90135cd",
+      "identity": "Karoryfer Samples / Pastabass (Squier Bass VI, recorded by spacecoyote, mapped by D. Smolken) / commit 90135cd0",
+      "licenseOwner": "Public domain dedication (CC0-1.0) by Karoryfer Samples (Karoryfer Lecolds); no licence to hold",
+      "source": { "kind": "git", "repository": "https://github.com/sfzinstruments/karoryfer.pastabass.git", "branch": "master", "commit": "90135cd026db5d4fa0fe538240b4203f085f5244" },
+      "licence": { "spdx": "CC0-1.0", "file": "LICENSE" },
+      "smokeInstrument": "fetuccine.sfz",
+      "instruments": [
+        { "sfz": "fetuccine.sfz", "instrument": "Karoryfer Pastabass 'fetuccine': electric Bass VI, flatwound strings, fingered, neck pickup", "family": "strings", "auditionFamily": "bass", "keyRange": [33, 76], "standIn": "An electric bass (Bass VI) - the platform's `bass` id lives inside the strings family; this is the electric answer, Meatbass the upright one." }
+      ]
+    },
+    {
+      "assetId": "karoryfer-shinyguitar-57243cc",
+      "identity": "Karoryfer Samples / Shinyguitar (acoustic + electric programs) / commit 57243cca",
+      "licenseOwner": "Public domain dedication (CC0-1.0) by Karoryfer Samples (Karoryfer Lecolds); no licence to hold",
+      "source": { "kind": "git", "repository": "https://github.com/sfzinstruments/karoryfer.shinyguitar.git", "branch": "master", "commit": "57243cca85277dbcc120ce17c6178032f93c80f3" },
+      "licence": { "spdx": "CC0-1.0", "file": "LICENSE" },
+      "smokeInstrument": "Programs/main.sfz",
+      "instruments": [
+        { "sfz": "Programs/main.sfz", "instrument": "Karoryfer Shinyguitar, main program (acoustic and electric pickups blended by CC100, release noises, round robins)", "family": "guitar", "auditionFamily": "guitar", "keyRange": [40, 84] }
+      ]
+    },
+    {
+      "assetId": "karoryfer-emilyguitar-b4920dc",
+      "identity": "Karoryfer Samples / Emilyguitar (clean electric guitar) / commit b4920dc6",
+      "licenseOwner": "Public domain dedication (CC0-1.0) by Karoryfer Samples (Karoryfer Lecolds); no licence to hold",
+      "source": { "kind": "git", "repository": "https://github.com/sfzinstruments/karoryfer.emilyguitar.git", "branch": "master", "commit": "b4920dc662fd9cad6dcaccdeecffdd91c8725d8c" },
+      "licence": { "spdx": "CC0-1.0", "file": "LICENSE" },
+      "smokeInstrument": "emily_clean.sfz",
+      "instruments": [
+        { "sfz": "emily_clean.sfz", "instrument": "Karoryfer Emilyguitar, clean electric (fret and mute noises on the top keys)", "family": "guitar", "auditionFamily": "guitar", "keyRange": [40, 88] }
+      ]
+    },
+    {
+      "assetId": "karoryfer-bigcat-cello-6fd75fb",
+      "identity": "Karoryfer Samples + bigcat Instruments / Cello (bowed velocity layers, plucked) / commit 6fd75fbf",
+      "licenseOwner": "Public domain dedication (CC0-1.0) by Karoryfer Samples (Karoryfer Lecolds) and bigcat Instruments; no licence to hold",
+      "source": { "kind": "git", "repository": "https://github.com/sfzinstruments/karoryfer-bigcat.cello.git", "branch": "master", "commit": "6fd75fbfc1dbb3109bf26220ba1adea46188a18b" },
+      "licence": { "spdx": "CC0-1.0", "file": "LICENSE" },
+      "smokeInstrument": "Programs/01- Bowed (velocity layer).sfz",
+      "instruments": [
+        { "sfz": "Programs/01- Bowed (velocity layer).sfz", "instrument": "Karoryfer/bigcat Cello, bowed sustain with velocity layers, marcato and staccato maps", "family": "strings", "auditionFamily": "strings", "keyRange": [36, 84], "standIn": "A solo cello, not a cello section." },
+        { "sfz": "Programs/03- Plucked.sfz", "instrument": "Karoryfer/bigcat Cello, pizzicato", "family": "strings", "auditionFamily": "strings", "keyRange": [36, 84], "standIn": "A solo cello pizzicato." }
+      ]
+    },
+    {
+      "assetId": "karoryfer-gogodze-phu-vol-ii-69a0274",
+      "identity": "Karoryfer Samples / Gogodze Phu Vol II (kick, snare, three toms, hi-hat; seven mic positions) / commit 69a0274c",
+      "licenseOwner": "Public domain dedication (CC0-1.0) by Karoryfer Samples (Karoryfer Lecolds); no licence to hold",
+      "source": { "kind": "git", "repository": "https://github.com/sfzinstruments/karoryfer.gogodze-phu-vol-ii.git", "branch": "master", "commit": "69a0274cdc39c99c3098cde1bc3789690de86d62" },
+      "licence": { "spdx": "CC0-1.0", "file": "LICENSE" },
+      "smokeInstrument": "Programs/Kit.sfz",
+      "instruments": [
+        { "sfz": "Programs/Kit.sfz", "instrument": "Karoryfer Gogodze Phu Vol II full kit (kick 36, snare 38 / rim 37 / rimshot 40, toms 41-45, hi-hat 46 with CC4 position; no crash or ride in this kit)", "family": "drums", "auditionFamily": "drums", "keyRange": [36, 46], "standIn": "A characterful, deliberately rough kit with no cymbals other than the hi-hat; the phrase's crash hits are silent by design.", "drumKeys": { "kick": 36, "snare": 38, "hatClosed": 46, "hatOpen": 46, "crash": 46, "tomLow": 41, "tomHigh": 45 } }
+      ]
+    },
+    {
+      "assetId": "karoryfer-gogodze-phu-vol-i-7452f62",
+      "identity": "Karoryfer Samples / Gogodze Phu Vol I (five bobobo drums from Ghana, cajon) / commit 7452f620",
+      "licenseOwner": "Public domain dedication (CC0-1.0) by Karoryfer Samples (Karoryfer Lecolds); no licence to hold",
+      "source": { "kind": "git", "repository": "https://github.com/sfzinstruments/karoryfer.gogodze-phu-vol-i.git", "branch": "master", "commit": "7452f62060cd3a468c78bc361d96a4dfb30879c9" },
+      "licence": { "spdx": "CC0-1.0", "file": "LICENSE" },
+      "smokeInstrument": "Programs/Cajon.sfz",
+      "instruments": [
+        { "sfz": "Programs/Cajon.sfz", "instrument": "Karoryfer Gogodze Phu Vol I Cajon (five strike locations, sides, snare-off, finger rolls)", "family": "drums", "auditionFamily": "drums", "keyRange": [48, 56], "world": true, "drumKeys": { "kick": 48, "snare": 50, "hatClosed": 52, "hatOpen": 55, "crash": 56, "tomLow": 49, "tomHigh": 51 } },
+        { "sfz": "Programs/Bobobo.sfz", "instrument": "Karoryfer Gogodze Phu Vol I Bobobo drums (Ghana): bass, tenors, trebles", "family": "drums", "auditionFamily": "drums", "keyRange": [36, 48], "world": true, "drumKeys": { "kick": 36, "snare": 38, "hatClosed": 40, "hatOpen": 41, "crash": 42, "tomLow": 37, "tomHigh": 39 } }
+      ]
+    }
+  ],
+  "soundfontAuditions": [
+    {
+      "id": "musical-artifacts-940-persian-instruments-iran",
+      "identity": "Musical Artifacts #940 'Persian Instruments Iran' (Persa.sf2, author 'Sadot'): nay, santur, tar, tombak, oud, daf, kanun",
+      "url": "https://musical-artifacts.com/artifacts/940/Persa.sf2",
+      "metadata": "https://musical-artifacts.com/artifacts/940.json",
+      "licenceClaimed": "falv13 (Free Art License 1.3) on the artefact page; the SoundFont's own INFO chunk (ICOP / ICMT) must be read and must not contradict it before anything is kept",
+      "spdx": "FAL-1.3",
+      "format": "sf2 (SoundFont 2) - FluidSynth audition only; sfizz does not load sf2, so this cannot enter the sfz asset lifecycle",
+      "phrasePresets": [{ "bank": 0, "preset": 0, "family": "world" }]
+    }
+  ],
+  "excluded": [
+    {
+      "id": "accurate-salamander",
+      "identity": "Accurate-Salamander Project (cyamauch) - remastered Salamander grand piano soundbanks",
+      "source": "https://github.com/cyamauch/NoctSalamanderGrandPiano (HEAD 5ed007d1, 2026-04-04) and https://www.ir.isas.jaxa.jp/~cyamauch/AccurateSalamander/",
+      "reason": "Not clean to pin: the GitHub repository holds only the remastering scripts and one 'vol-eval-only' sfz (264 files, 2.4 MB, no LICENSE file); the built 48 kHz / 24-bit soundbanks are distributed from the author's JAXA page, and the CC-BY 3.0 claim exists only on that page. No licence text inside a pinnable source -> not staged. Salamander Grand v3 (CC-BY 3.0 legal code in the repo) covers the piano."
+    },
+    {
+      "id": "musical-artifacts-941-orient-instruments",
+      "identity": "Musical Artifacts #941 'ORIENT INSTRUMENTS arabic/turkish' (m3_Instruments.sf2, author 'M3 intruments')",
+      "source": "https://musical-artifacts.com/artifacts/941.json",
+      "reason": "The artefact's licence field is 'various' - not a licence the platform can capture or honour, and the catalogue's 'read the licence per artefact' condition cannot be met from the metadata. The file is also unreachable to non-browser clients (Cloudflare 403 from the owner's PC and from Modal; only the .json metadata answers). Not staged, not auditioned."
+    },
+    {
+      "id": "karoryfer-black-and-green-guitars",
+      "identity": "Karoryfer Samples / Black and Green Guitars (electric guitars) / HEAD b3b3249d",
+      "source": "https://github.com/sfzinstruments/karoryfer.black-and-green-guitars (LICENSE = CC0 1.0 Universal legal code, verified 2026-09-10)",
+      "reason": "Licence-clean but left for a later round: Shinyguitar and Emilyguitar already cover the guitar family at ~590 MB together; this one adds 454 MB for the same slot."
+    }
+  ]
+}

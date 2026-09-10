@@ -76,6 +76,15 @@ const suites = {
         "native-renderer-routing.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // PR-93 (SOUND-2): the open-licence sound assets in the cloud - the
+      // admissibility rule (captured licence text, one tree hash through
+      // stage/activate/health, audible render), the family-coverage table and
+      // the PR-92-shaped instrument map an asset root publishes.
+      [
+        "src/lib/openLicenceSoundAssets.test.ts",
+        "open-licence-sound-assets.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       ["src/lib/candidateRanking.test.ts", "candidate-ranking.test.mjs"],
       ["src/lib/candidateQuality.test.ts", "candidate-quality.test.mjs"],
       ["src/lib/candidateRepair.test.ts", "candidate-repair.test.mjs"],

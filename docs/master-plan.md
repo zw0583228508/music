@@ -5570,6 +5570,81 @@ any of it.
   archives were left in `_downloads` (delete command in the report). Nothing
   here is central: the worker is local, the token stays in the process env,
   and no path, token or secret is in the evidence.
+- **PR-93** ✅ — `open-licence-sound-assets-cloud` (production floor, stream
+  SOUND-2). The catalogue of `free-sound-libraries.md` turned into bytes:
+  eleven open-licence SFZ libraries pinned to commits, fetched into the Modal
+  Volume `music-ai-sound-assets-v1`, each licence captured as the legal-code
+  file at its pin, each pushed through the worker's **own** lifecycle
+  (`_stage_asset_candidate` three-render smoke → `_activate_asset_candidate`
+  → `renderer_health`) as its own asset root beside SOUND-1's VSCO 2 CE, and
+  one Performance-MIDI phrase rendered per instrument. Nothing trained,
+  nothing promoted, CPU only, **$3.60 of the $15 cap**.
+
+  **What changed.** `services/music-ai-worker/open_licence_assets.{json,py}`:
+  the catalogue (source pin, licence file, instrument → family map with
+  `world` tags and `standIn` sentences, drum key maps, `excluded` with
+  reasons), the licence gate (missing / empty / wrong legal code /
+  NonCommercial → refused before a byte is staged), and the sfz dependency
+  resolver (root-relative `#include`/`default_path`, several includes per line,
+  textual `#define` persistence, re-expansion of re-included files, undefined
+  `$vars` named). `modal_open_licence_assets.py`: `provision` (per-asset
+  container; `git` blob-less fetch + sparse checkout, or `raw` per-file
+  download verified against git blob SHA-1 — git from Modal took 55–61 min per
+  large repo, raw took 29 s for VCSL's 2.0 GB), `run_attest` (health + render
+  straight from the Volume), `run_audition`, `run_survey`.
+  `operator_open_licence_asset.py`: the lifecycle in process, a preflight
+  that keeps sfizz's and the host's stderr, direct sfizz auditions when the
+  smoke refuses. `native_hosts/common.py` `host_path` — identical to
+  SOUND-1's `c9022b4` fix (main's host could not attest as a zipapp).
+  Platform: `openLicenceSoundAssets.ts` (admissibility rule mirrored, family
+  coverage, PR-92-shaped derived instrument map, provider/asset model),
+  `scripts/open-licence-sound-assets-evidence.mjs` (BS.1770-4 LUFS of the
+  pulled WAVs). Tests: `test_open_licence_assets.py` (18),
+  `openLicenceSoundAssets.test.ts` (6, registered in the focused runner).
+
+  **Measured.** Activated with sensitive smokes and healthy re-attestation
+  from the Volume: **VCSL 1.2.2 sfz branch** (987 files / 2,006 MB, 22/22
+  instruments audible — Steinway B, harpsichord, marimba, vibes, TX81Z FM
+  piano, concert harp, bowed psaltery, dan tranh, strumstick, kalimba, mbira,
+  balafon, tenor sax, harmonica, didgeridoo, ocarina, darbuka, frame drum,
+  conga, bongos, cajon, timpani), **Salamander Grand v3** (748 MB, CC-BY 3.0),
+  **bigcat cello**, **Emilyguitar**, **Pastabass** (CC0). Family coverage in
+  the cloud: keys, strings, brass (stand-ins), drums (hand percussion), guitar,
+  synth — voice none. One render per audition family with digests: piano
+  Steinway 4.8 s / −33.6 LUFS, strings harp 4.2 s / −38.2, world dan tranh
+  3.9 s / −43.1, bass Pastabass 1.6 s / −40.8, guitar Emilyguitar 1.6 s /
+  −32.5, drums darbuka 3.7 s / −33.0. One provider id (`SFIZZ_VSCO2_CE`), one
+  active asset per worker process, one root per library — because the manifest
+  holds one `sfz` entry; serving many at once is a follow-up.
+
+  **Findings.** (1) The worker's canonical smoke plays MIDI 60, 67 and a CC11
+  variant, so **no drum kit and no upright bass can pass it**: DRSKit (CC-BY
+  4.0, 700 MB resolved), AVL Black Pearl / Red Zeppelin (CC-BY-SA 3.0),
+  Gogodze Phu I / II and Meatbass are on the Volume, licence-captured and
+  audible in direct sfizz auditions, but not activated — drums in the cloud are
+  VCSL's hand percussion until `app.py` learns a percussion smoke. (2) sfizz
+  honours CC11 by default. (3) VCSL's sfz branch has no LICENSE — the gate
+  refused it; the catalogue now captures master's CC0 legal code for the same
+  samples with a `fromCommit` pin and a note; both runs are in the evidence.
+  (4) Shinyguitar's `default_path=$sample_dir/` is defined only by its
+  Sforzando bank — 846 samples unresolvable, not an sfz library as shipped.
+  (5) Accurate-Salamander has no licence text in a pinnable source; Musical
+  Artifacts #941 says "various"; **#940 (Persian, FAL 1.3) is behind Cloudflare
+  bot protection for every non-browser client (PC and Modal) — not read, not
+  staged, not rendered**; it is also an sf2, outside the sfz lifecycle.
+
+  **Honest limits.** Nobody has listened: the phrases are WAVs with digests,
+  quiet (−33 to −46 LUFS, single instruments at default controllers), and
+  the production-floor blind A/B against LOCAL_EXPRESSIVE_SYNTH is not run.
+  The deployed `music-ai-worker` was not redeployed to any root; the roots
+  are attested on the Volume only. Latency includes sfizz loading each
+  instrument per render (1.5–7.9 s), no resident process. `raw` fetches
+  have no whole-tree sha256 (commit pin + per-file blob SHA-1 instead). The
+  operator approves the host hash it just built (main's `build_host` is not
+  reproducible); after merging PR-92, rebuild with its registry. Licence
+  capture is provenance, not a legal opinion; CC-BY-SA renders inherit
+  ShareAlike. Still no open-licence oud, kanun, ney or voice.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
