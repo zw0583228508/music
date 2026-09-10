@@ -141,8 +141,19 @@ test("in a worker thread: the same bytes, and the main thread's timer still fire
       `the main thread's timer fired ${ticks} times during a ${offThread.elapsedMs} ms render; it should fire about ${expected} times`);
 
     // The same render, in-process: byte for byte the same, because both paths
-    // call the same pure function.
+    // call the same pure function — and, on the main thread, the timer cannot
+    // fire at all while it runs.
+    let blockedTicks = 0;
+    const blockedTimer = setInterval(() => { blockedTicks += 1; }, 25);
+    const inProcessStarted = performance.now();
     const inProcess = renderEvaluation(trackModels, { durationSeconds: 30 });
+    const inProcessMs = Math.round(performance.now() - inProcessStarted);
+    clearInterval(blockedTimer);
+    t.diagnostic(
+      `worker: ${offThread.elapsedMs} ms wall, ${ticks} of ~${expected} timer ticks fired; ` +
+      `main thread: ${inProcessMs} ms, ${blockedTicks} of ~${Math.floor(inProcessMs / 25)} ticks fired`);
+    assert.equal(blockedTicks, 0,
+      `a 25 ms timer must not fire during a ${inProcessMs} ms render on the main thread; it fired ${blockedTicks} times, so this measurement proves nothing`);
     assert.equal(offThread.result.key, inProcess.key);
     assert.equal(offThread.result.stems.length, inProcess.stems.length);
     assert.equal(offThread.result.mix.length, inProcess.mix.length);

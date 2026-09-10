@@ -9062,6 +9062,302 @@ cases are byte-identical, and so is every case's section plan.
   baseline and **98** with the fix. None of the three is touched here: each
   belongs to a writer or a control outside this bass fix, and a negative
   control is not something to edit quietly.
+### PR-B07 — Brain B-07: the brain hears what it ships
+
+- **PR-B07** ✅ (open; the lead merges) — `ws-brain-b07` (Arrangement &
+  Orchestration Brain, stream B-07, the production render loop). Every
+  candidate a user generates is now rendered once, with one renderer and one
+  loudness, off the API's event loop, and judged on that audio; the two
+  attestation checks that made the benchmark's own renders "infeasible" are
+  named and fixed; and the export render no longer holds the event loop while
+  a job's heartbeat is due. No database, nothing merged, nobody listened.
+
+  **The state this stream found.** The provider called
+  `orchestrateArrangement({ render: false })`, so on **every job a user could
+  reach** the persisted stage trace said `render: skipped` /
+  `audio_critique: skipped` and `finalScore` was the symbolic score alone. The
+  only audio score in the program came from the benchmark — and R-1 P1-5 showed
+  it was computed on renders the pipeline's own attestation rejected
+  (`renderFailures = 5` on every Tier S case in `3bf23aa` and `1467706`, twice
+  recorded and never investigated).
+
+  **D1 — one renderer and one loudness, chosen by measurement.** New
+  `evaluationRender.ts`: the Listening Room's `LISTENING_SYNTH_V2` voices,
+  seats, kit and reverb, rendered per stem straight from TrackModels (no MIDI
+  round trip, no candidate-forward gain), plus two things, both measured:
+  a per-family trim table that makes every family equally loud at equal
+  velocity, and one mix normalisation (−18 dBFS RMS, 0.95 peak ceiling) whose
+  gain is applied to every stem so levels are comparable across candidates.
+  `measureFamilyNeutrality()` is the table's only author — at velocity 90 the
+  V2 kit sits 16 dB above the keys and the bass 5.5 dB above them, an 11.08 dB
+  spread across nine families, 0.08 dB after the trims — and
+  `evaluationRender.test.ts` fails when the committed table and a fresh
+  measurement disagree, so it cannot drift by hand. Untrimmed, a V2 mix of the
+  Tier S corpus puts a mean **83.4 %** of its power below 150 Hz (76.1–89.8 per
+  case); with the trims, **55.2 %** (42.8–67.3), measured on all nine cases. A
+  judge that imposes its own balance cannot judge balance.
+  The renderer itself is not chosen by taste: `evaluationRendererDecision()`
+  runs PR-72's nine objective `rendererCheck` items on all three renderers the
+  platform owns and records the result. **LISTENING_SYNTH_V2 passes all nine;
+  REFERENCE_SYNTH_V1 (the orchestrator's own) fails four —
+  `family_voices_distinguishable`, `struck_and_sustained_envelopes`,
+  `drum_pieces_distinguishable`, `stereo_image`; LOCAL_EXPRESSIVE_SYNTH (the
+  job runner's preview synth) fails five, those four plus `no_clipping`.** The
+  rule was written before the run: pass every check, and among renderers that
+  pass prefer the one the Listening Room already plays to humans, so machine
+  and human judgement hear the same voices.
+  New `evaluationCritique.ts` puts it on the production path.
+  `arrangementOrchestratorProvider.generate` now renders every candidate once
+  (`renderEvaluationOffThread`), runs audio-critic/v1 **and** the five located
+  audio dimensions on the result, ranks on the orchestrator's own blend
+  (`0.6 × symbolic + 0.4 × audio`), persists an
+  `ArrangementBrainAudioEvidence` per candidate — renderer, loudness, duration,
+  spectrum, per-stem levels and trims, both critiques, the symbolic and
+  combined ranks, and a `renderKey` the job runner can reuse — and **rewrites
+  the `render` and `audio_critique` stage records in place** with what
+  happened: the renderer and its version, the sample rate, the duration, the
+  loudness target and the gain applied, and whether the render ran in a worker
+  thread or in-process. `evaluationCritique.test.ts` asserts that no production
+  trace says `skipped`, that the trace names renderer / loudness / duration,
+  and that the score the provider reports is the combined one. What a job's
+  trace says now, verbatim from the evidence run: *"3 candidate(s) rendered
+  once for evaluation with LISTENING_SYNTH_V2 2.0.0 (evaluation contract 1.0)
+  at 44100 Hz / 2 ch, 81.1 s, normalised to −18 dBFS RMS with a 0.95 peak
+  ceiling (peak, +8.04 dB), in-process (no render-worker bundle beside this
+  module …)"* and *"audio-critic/v1 and 5 located audio dimension(s) ran on the
+  evaluation render of 3 candidate(s): mean audio 86.67/100, final =
+  0.6×symbolic + 0.4×audio; 0 candidate(s) rank differently with audio than
+  without"*. On that case the three candidates score 77/77/77 symbolically and
+  87/87/86 on audio, so the audio changed the score (81 / 81 / 80.6) and not
+  the order — the honest result of one case, not a claim about the corpus.
+  `decisionTrace.ts` now answers question 3's audio half from stored rows
+  instead of "the render stage was skipped".
+
+  **D2 — five audio dimensions, with controls measured on audio.**
+  `critics/dimensions/audio{Shared,Balance,Dynamics,Masking,Rhythm,Transitions}.ts`
+  in the B-05 contract: one analysis pass turns each stem and the mix into
+  50 ms-hop band envelopes (sub / low-mid / mid / presence / air) mapped to
+  bars through the symbolic critic's own timeline, and every observation is
+  located in seconds → bars with the seconds kept in its own fields, numeric
+  evidence, a `suspectedOrigin` with a confidence, and a `recommendedRepair` in
+  the repair vocabulary. `audioBalance` hears a part that dominates, a written
+  part nobody can hear and support above the lead; `audioDynamics` hears a
+  clipped stem (origin `render`), dead air inside a section, a flat song and a
+  planned contrast that did not arrive; `audioMasking` hears low-end
+  congestion, a band pile-up, a masked lead, a climax with an empty middle and
+  a bed that renders as one line; `audioTransitions` hears an unrealised lift,
+  an unplanned jump, dead air across a seam and an arrival thinner than its
+  setup; `audioRhythm` — new for the R-1 musical review's second P0 — takes the
+  kit's onsets as the grid, matches every pitched onset to the nearest one from
+  a 5 ms-hop onset envelope, and reports the flam distribution per section,
+  naming `compose` when the offsets are a tight lag and `perform` when they are
+  a wide scatter.
+  `critics/audioControls.ts` is their positive-control harness and the only
+  thing allowed to set a `controlStatus`: **eight clean anchors × twelve
+  controls, both versions rendered with the evaluation renderer** (16.7 minutes,
+  ~104 four-minute renders). Eight anchors is not arbitrary — the shared B-05a
+  gate needs an exact-binomial lower bound of 0.60, and 8/8 is the smallest run
+  that reaches it (7/7 gives 0.59), so a dimension can only be `gated` by
+  catching its control on every one of the eight. `audioControlLedger.ts` is
+  generated from the run and `audioControls.test.ts` regenerates it and fails
+  on any disagreement.
+
+  | dimension | strongest claimed control | second claimed control | status |
+  |---|---|---|---|
+  | audioBalance | `dominate_by_trim` 8/8 [0.63, 1] | `dominate_one_part` 8/8 | **gated** |
+  | audioDynamics | `silence_a_section` 8/8 [0.63, 1] | `flatten_velocities` 7/8 | **gated** |
+  | audioMasking | `stack_octave` 8/8 [0.63, 1] | `boost_sub_bass` 7/8 | **gated** |
+  | audioRhythm | `shift_harmony_off_grid` 6/8 | — | informing |
+  | audioTransitions | `silence_a_section` 5/8 | `thin_the_arrival` 3/8 | informing |
+
+  Each gated dimension rests on **two independent transforms**, one on the
+  notes and one on the levels or the render (R-1 P1-3 asked for exactly that).
+  The **null test** passes: across 8 anchors × 5 dimensions, **zero blocking
+  observations on undamaged output** (`cleanAnchorBlockingRate: 0` for every
+  row). A **negative control** (`align_to_kit`, every pitched part snapped to
+  the beat grid) is reported honestly below.
+
+  **D3 — `renderFailures = 5`, diagnosed.** Two checks in
+  `referenceRenderWorker.ts`, not one, and the second was hiding behind the
+  first.
+  *`correct_sample_rate`.* `arrangementBenchmark.ts:248` renders at 24 kHz; the
+  check asserted `sampleRate === 48_000 || sampleRate === 44_100`, so every
+  stem of every benchmark render was infeasible while the audio critic scored
+  the same stems 86–94 — a policy statement misfiled as a check. It now
+  verifies that the encoded WAV header carries the rate the caller asked for
+  and that the rate is one the pipeline renders at (48 k / 44.1 k production,
+  24 k / 22.05 k speed renders). Rendering the benchmark at 48 kHz instead —
+  R-1's other suggestion — would have doubled its latency and broken
+  comparability with both stored baselines without making the check verify
+  anything more.
+  *`correct_note_events`.* With the rate fixed, `renderFailures` fell from 5 to
+  a mean of 1.22, still 5/5 on orchestral-midi and cinematic-midi.
+  `countOnsets` was a percussive transient detector — 10 ms windows, a 2.2×
+  rise, an absolute 0.01 floor — and it cannot see a sustained voice at all:
+  the V1 `strings` envelope has a 90 ms attack and a 0.85 sustain, so a string
+  entry has flattened below 2.2× by the time it crosses 0.01, and overlapping
+  pad notes never return to silence afterwards. Measured: orchestral-midi's
+  strings stem (24 notes, peak −14.4 dBFS, 8 179 windows above the floor — an
+  audible stem by every other check) counted **0** onsets, and cinematic-midi's
+  (11 notes) likewise, **identically at 24 kHz and at 48 kHz**, which is why
+  the sample-rate fix did not touch it. The check now counts how many planned
+  notes are audible (RMS of each note's first 100 ms against the same −60 dBFS
+  floor `non_silent` uses) and reports the share; its strictness is unchanged
+  (the old rule demanded `>= min(notes.length, 1)`). After both fixes:
+  **0/45 candidates infeasible at 24 kHz and 0/45 at 48 kHz across the nine
+  Tier S cases, with 100 % of planned notes audible on every stem of every
+  case.**
+
+  **The baseline compare.**
+  `pnpm --filter @workspace/api-server run benchmark -- --render --json --out
+  docs/evidence/benchmark-baseline/53c0d2e-b07.json`, then the same run
+  `--compare docs/evidence/benchmark-baseline/1467706.json --no-fail`. Every
+  metric that moved against `1467706` — which was snapshotted before B-02,
+  B-04, B-09 and B-10 merged, so most of this table is four composer streams
+  and not this one:
+
+  | metric | 1467706 | 53c0d2e | Δ | verdict | whose |
+  |---|---|---|---|---|---|
+  | renderFailures | 5 | **0** | −5 | improved | **B-07** |
+  | audioScore | 89.63 | **92.67** | +3.04 | improved | B-07 in part (see below) |
+  | criticScore / shippedCriticScore | 73.5 | 75 | +1.5 | improved | the composer streams |
+  | unselectableShare | 11.11 | 0 | −11.11 | improved | B-04's meter fix |
+  | seamArtefacts | 43.64 | 57.51 | +13.87 | improved | the composer streams |
+  | candidateDistance | 6.69 | 8.16 | +1.47 | improved | the composer streams |
+  | legacyCandidateDiversity | 50.17 | 62.29 | +12.12 | improved (informational) | the composer streams |
+  | noteCount | 467.13 | 475.33 | +8.2 | improved (informational) | the composer streams |
+  | trajectorySmoothness | 76.44 | 67.07 | **−9.37** | **regressed** | inherited (see below) |
+  | motifRecurrence | 34.57 | 32.9 | **−1.67** | **regressed** | inherited (see below) |
+  | playabilityErrors | 0 | 0.33 | +0.33 | "unchanged" by tolerance | inherited (rock-full's 3, R-1 §7) |
+  | harmonyScore | 97.78 | 97.61 | −0.17 | unchanged | — |
+  | chordToneShare | 98.59 | 98.58 | −0.01 | unchanged | — |
+  | clashShare | 0.81 | 0.97 | +0.16 | unchanged | — |
+  | sourceHarmonyScore | 59.25 | 58.33 | −0.92 | unchanged (informational) | — |
+  | latencyMs | 24 813 | 31 695 | +6 882 | regressed (informational) | shared CPU on this box |
+
+  **Verdict: `DO_NOT_PROMOTE: REFERENCE_PIPELINE regresses
+  trajectorySmoothness, motifRecurrence`.** Both regressions are inherited, not
+  this stream's: R-1's independent run of the same compare on `origin/main`
+  *without* B-07 measured −9.38 and −2.1 (R-1 §7). This stream's own effect was
+  isolated by running the benchmark twice on this branch, once with only the
+  sample-rate fix and once with both: `renderFailures` 5 → 1.22 → **0**, and
+  `audioScore` rose by exactly one point on exactly the two cases whose
+  attestation changed with the second fix (acoustic-demo 93 → 94,
+  orchestral-midi 94 → 95). The mechanism is verified, not assumed:
+  `audioCritic.ts:315-321` scores `instrumentRealism` from the share of stems
+  whose attestation says `feasible`, so a broken check was **depressing the
+  audio score that weighs 0.4 of `finalScore` in every render run**.
+
+  **D4 — off the event loop.** New `render-worker.ts` (a build entry beside
+  PR-72's listening worker), `renderOffThread.ts` (a pool of at most four
+  workers; `MUSIC_RENDER_WORKERS` sizes it, `MUSIC_RENDER_WORKER_FILE` names
+  the bundle, `MUSIC_RENDER_OFF_THREAD=off` is an operator escape) and
+  `exportRenderOffThread.ts` (its own module: the pool sits under the brain's
+  provider and `exportEngine` reaches that provider back through the registry,
+  a cycle that leaves the provider class `undefined` at import time).
+  `exportJobs.ts` renders through it and logs where the render ran.
+  Measured in `renderOffThread.test.ts`: during a 3 770 ms render in a worker a
+  25 ms timer on the main thread fired **111 times of ~150**; during the same
+  render in-process (3 464 ms) it fired **0 times of ~138**. That is PR-98's
+  "Export job lease was lost at rendering 25 %" reproduced and removed, and it
+  is why `PRODUCTION_JOB_LEASE_MS` is a knob again rather than a requirement.
+  The bytes are identical either way (same `renderKey`, same loudness, sampled
+  mix comparison), because both paths call the same pure function. The export's
+  per-stem record is unchanged and already shared: `stemRendererEvidence`
+  (B-11) builds the renderer / status / asset / sound-selection reason /
+  fallback reason / gate outcome once, and
+  `exportRenderOffThread.test.ts` asserts that the manifest's `stemEvidence`
+  and the file's `stemEvidence` — the one the mix/master revision stores — are
+  that one builder's output, and that both survive the worker boundary intact.
+
+  **Capability ladder.** Evaluation renderer (one renderer, one loudness,
+  chosen from objective checks) — BENCHMARKED. Audio critique on the production
+  path — INTEGRATED ✓, TESTED ✓ (an integration test asserts it runs and that
+  no production trace says `skipped`); not BENCHMARKED, because the Tier S
+  benchmark still renders with the orchestrator's own V1 synth. Located audio
+  dimensions with positive controls — TESTED (3 of 5 gated on two independent
+  transforms each, 2 informing). Audio findings fed to repair — IMPLEMENTED
+  only (`audioObservationsForRepair` is the B-06 hand-off; B-06 is not merged,
+  so nothing consumes it). `renderFailures` — BENCHMARKED (5 → 0). Export
+  render off the event loop — TESTED. VALIDATED ON OUTPUT — **no**, for every
+  row: no human has listened to a single rendered second of this.
+
+  **Honest limits.** *No human has listened.* Every claim here is a
+  measurement on samples this process generated, and the whole D2 ledger rests
+  on **synthetic damage**: deliberately clipping a stem, flattening every
+  velocity, transposing a part into another's octave. A control is evidence
+  that a detector responds to a defect an author could describe; it is not
+  evidence that the detector hears music.
+  *Two of the four defects the R-1 musical review calls audible are not heard.*
+  `thin_bed_to_one_line` (every chord of the bed reduced to its top voice, what
+  perform → playability repair did to the owner's string bed) is detected
+  **0/7**, and audioMasking's score went *up* 2.38 on average — band-share
+  analysis of a rendered stem cannot distinguish a three-voice piano chord from
+  its top voice; the audible difference is polyphony, and no dimension here
+  does harmonic analysis. `empty_the_middle` is detected **1/8**: moving
+  fundamentals out of G3–G5 does not empty the 500 Hz–2 kHz band, because the
+  harmonics of the notes above and below fill it. `mid_register_hole` did fire
+  — but only when one part dominated the mix (`dominate_by_trim`,
+  `dominate_one_part`), i.e. for the wrong cause. Both kinds ship with no
+  demonstrated sensitivity to what they were written for, and both are named
+  here rather than quietly left in the table. The symbolic
+  `density.bed_single_voice` does catch the first (R-1 §4); the audio path does
+  not.
+  *`audioRhythm` fires on undamaged output and the cause is only partly
+  isolated.* It raises `off_grid_against_kit` on **all eight** clean anchors
+  (minor on seven, major ×2 on rock-full) — independent confirmation, in audio
+  and on the synthetic corpus, of R-1 P0-2 on the owner's song: the harmony
+  writers place their hits at chord-relative subdivisions while the kit is
+  written bar-relative. Charter rule 3 says name a cause only after a control
+  isolates it, so a negative control snaps every pitched part onto the beat
+  grid. The findings disappear on **five of eight** anchors and survive on
+  dance-full, acoustic-demo and cinematic-midi — most likely because the kit's
+  own onsets are not the beat grid either (B-04 writes anticipations, ghosts
+  and swung eighths), so snapping the harmony to the beat can move it *away*
+  from the kit. The cause is therefore **not isolated** on those three, the
+  dimension is `informing` and not `gated`, and it blocks nothing.
+  *`ballad-piano-vocal` raises a major `dropout` on clean output* (a silent run
+  over a second inside a section where parts are planned). Not investigated by
+  this stream — recorded, and it does not block.
+  *Two renders per job remain.* The job runner's evaluation artifact still
+  renders with `renderMusicPipeline` (the preview synth) and scores with
+  `evaluateRenderedPcm`; this stream caches its render under `renderKey` for
+  that consumer but does not replace it, and does not touch
+  `arrangementGeneration.ts`'s ranking.
+  *The benchmark still renders with V1.* `arrangementBenchmark.ts` calls
+  `orchestrateArrangement` directly, so its `audioScore` is still
+  REFERENCE_SYNTH_V1's at 24 kHz — a renderer that fails four of the nine
+  checks. Making the benchmark use the evaluation renderer would change every
+  stored `audioScore` and is a B-08 decision, not this stream's.
+  *Only the export job moved off-thread.* The studio's two inline export
+  routes (`routes/studio.ts`) still render on the request path; the job that
+  lost leases does not.
+  *Latency.* The evaluation render is real work: on the evidence run a
+  three-candidate pop job took **27.3 s** end to end, of which 6.2 s of render
+  and 2.5 s of critique per candidate (an 81-second arrangement at 44.1 kHz,
+  in-process because that run had no worker bundle). A five-candidate job pays
+  that five times, in at most `MUSIC_RENDER_WORKERS` threads. The API stays
+  responsive throughout — that is the measured claim — but the job takes
+  longer, and the audio dimensions' analysis pass is another ~2.5 s of it.
+  *`audioBalance`'s `dominate_by_trim` control raises a level and the dimension
+  measures levels*, which is close to the detector's own definition inverted
+  (R-1 P1-3's objection). Its second control, `dominate_one_part`, damages
+  velocities instead and is also 8/8; the gated status is claimed on that pair,
+  not on the trim alone.
+  *`tests/export-*.test.mjs` could not be run on this machine* — esbuild fails
+  to resolve the harness's imports through the percent-encoded Hebrew path
+  (pre-existing, R-1 P2-8). The export changes are covered by `typecheck` and
+  by the new `exportRenderOffThread.test.ts`, which builds its own bundle.
+
+  **Evidence.** `docs/evidence/brain-b07-render-loop.json` (171 KB, one run of
+  `artifacts/api-server/scripts/brain-b07-evidence.ts`): the renderer decision
+  with all nine checks per renderer, the neutrality measurement, the spectrum
+  of every Tier S case trimmed and untrimmed, the production path's own stage
+  trace and per-candidate audio evidence, the full audio control table
+  (8 anchors × 12 controls × 5 dimensions), the ledger it generates, the null
+  test, the negative control, and the attestation diagnosis per case at both
+  sample rates. Baseline snapshot
+  `docs/evidence/benchmark-baseline/53c0d2e-b07.json`.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 

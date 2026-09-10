@@ -1,0 +1,6550 @@
+{
+  "stream": "B-07",
+  "title": "The production render loop: the brain hears what it ships",
+  "generatedAt": "2026-09-10T10:30:12.434Z",
+  "versions": {
+    "evaluationRenderer": "LISTENING_SYNTH_V2 2.0.0",
+    "evaluationContract": "1.0",
+    "audioControlHarness": "B07_AUDIO_CONTROLS_v1",
+    "audioDimensions": [
+      "audioBalance",
+      "audioDynamics",
+      "audioMasking",
+      "audioRhythm",
+      "audioTransitions"
+    ]
+  },
+  "d1_evaluation_render": {
+    "question": "One renderer and one loudness for everything the platform judges — chosen how?",
+    "rule": "pass every rendererCheck item; among passing renderers prefer the Listening Room's (LISTENING_SYNTH_V2); equalise family loudness at equal velocity by measurement",
+    "reason": "1 of 3 renderers pass every check (LISTENING_SYNTH_V2); REFERENCE_SYNTH_V1 fails family_voices_distinguishable/struck_and_sustained_envelopes/drum_pieces_distinguishable/stereo_image; LOCAL_EXPRESSIVE_SYNTH fails family_voices_distinguishable/struck_and_sustained_envelopes/drum_pieces_distinguishable/no_clipping/stereo_image",
+    "candidates": [
+      {
+        "renderer": "REFERENCE_SYNTH_V1",
+        "version": "1.0.0",
+        "passed": false,
+        "failed": [
+          "family_voices_distinguishable",
+          "struck_and_sustained_envelopes",
+          "drum_pieces_distinguishable",
+          "stereo_image"
+        ],
+        "checks": [
+          "family_voices_distinguishable: FAIL — indistinct pairs: keys/guitar, brass/synth",
+          "struck_and_sustained_envelopes: FAIL — keys -4.63 dB over a held second (must lose ≥ 6); strings -0.25 dB (must lose ≤ 3)",
+          "drum_pieces_distinguishable: FAIL — centroids kick 8694.2 Hz < snare 8982 Hz < closed hat 10103.5 Hz (each ratio ≥ 1.3)",
+          "no_clipping: pass — peak -1.01 dBFS on a fortissimo five-part ensemble",
+          "stereo_image: FAIL — L/R correlation 1.000 (below 0.98 counts as an image)",
+          "loudness_consistent_across_arms: pass — RMS spread 0.80 dB over four candidate variants of one context",
+          "velocity_sensitivity: pass — the same brass note 12.31 dB louder at velocity 110 than at 40 (≥ 6 required)",
+          "pitch_sensitivity: pass — brass centroid 428 → 846 Hz an octave up",
+          "deterministic: pass — two renders of the same MIDI are sample-identical"
+        ]
+      },
+      {
+        "renderer": "LISTENING_SYNTH_V2",
+        "version": "2.0.0",
+        "passed": true,
+        "failed": [],
+        "checks": [
+          "family_voices_distinguishable: pass — all 21 family pairs differ in centroid, attack or decay",
+          "struck_and_sustained_envelopes: pass — keys -8.8 dB over a held second (must lose ≥ 6); strings -2.84 dB (must lose ≤ 3)",
+          "drum_pieces_distinguishable: pass — centroids kick 54.4 Hz < snare 2665 Hz < closed hat 12571.1 Hz (each ratio ≥ 1.3)",
+          "no_clipping: pass — peak -0.50 dBFS on a fortissimo five-part ensemble",
+          "stereo_image: pass — L/R correlation 0.869 (below 0.98 counts as an image)",
+          "loudness_consistent_across_arms: pass — RMS spread 0.00 dB over four candidate variants of one context",
+          "velocity_sensitivity: pass — the same brass note 12.97 dB louder at velocity 110 than at 40 (≥ 6 required)",
+          "pitch_sensitivity: pass — brass centroid 378 → 725 Hz an octave up",
+          "deterministic: pass — two renders of the same MIDI are sample-identical"
+        ]
+      },
+      {
+        "renderer": "LOCAL_EXPRESSIVE_SYNTH",
+        "version": "1.0.0",
+        "passed": false,
+        "failed": [
+          "family_voices_distinguishable",
+          "struck_and_sustained_envelopes",
+          "drum_pieces_distinguishable",
+          "no_clipping",
+          "stereo_image"
+        ],
+        "checks": [
+          "family_voices_distinguishable: FAIL — indistinct pairs: keys/winds, keys/synth, bass/strings, winds/synth",
+          "struck_and_sustained_envelopes: FAIL — keys -0.02 dB over a held second (must lose ≥ 6); strings -1.18 dB (must lose ≤ 3)",
+          "drum_pieces_distinguishable: FAIL — centroids kick 48.9 Hz < snare 54.9 Hz < closed hat 69.1 Hz (each ratio ≥ 1.3)",
+          "no_clipping: FAIL — peak 4.59 dBFS on a fortissimo five-part ensemble",
+          "stereo_image: FAIL — L/R correlation 1.000 (below 0.98 counts as an image)",
+          "loudness_consistent_across_arms: pass — RMS spread 0.34 dB over four candidate variants of one context",
+          "velocity_sensitivity: pass — the same brass note 8.79 dB louder at velocity 110 than at 40 (≥ 6 required)",
+          "pitch_sensitivity: pass — brass centroid 155 → 317 Hz an octave up",
+          "deterministic: pass — two renders of the same MIDI are sample-identical"
+        ]
+      }
+    ],
+    "chosen": {
+      "renderer": "LISTENING_SYNTH_V2",
+      "version": "2.0.0",
+      "familyTrimsDb": {
+        "keys": 6.3,
+        "guitar": 5.7,
+        "bass": -1.2,
+        "strings": 3,
+        "brass": 0,
+        "winds": -2.7,
+        "synth": 3.5,
+        "voice": -0.7,
+        "drums": -4.7
+      },
+      "loudness": {
+        "targetRmsDbfs": -18,
+        "peakCeiling": 0.95
+      }
+    },
+    "familyNeutrality": {
+      "sampleRate": 44100,
+      "rmsDbfs": {
+        "keys": -42.23,
+        "guitar": -41.61,
+        "bass": -34.69,
+        "strings": -38.85,
+        "brass": -35.89,
+        "winds": -33.22,
+        "synth": -39.35,
+        "voice": -35.23,
+        "drums": -31.15
+      },
+      "medianDbfs": -35.89,
+      "trimsDb": {
+        "keys": 6.3,
+        "guitar": 5.7,
+        "bass": -1.2,
+        "strings": 3,
+        "brass": 0,
+        "winds": -2.7,
+        "synth": 3.5,
+        "voice": -0.7,
+        "drums": -4.7
+      },
+      "spreadBeforeDb": 11.08,
+      "spreadAfterDb": 0.08
+    },
+    "sampleRate": 44100,
+    "loudness": {
+      "targetRmsDbfs": -18,
+      "peakCeiling": 0.95
+    },
+    "familyTrimsDb": {
+      "keys": 6.3,
+      "guitar": 5.7,
+      "bass": -1.2,
+      "strings": 3,
+      "brass": 0,
+      "winds": -2.7,
+      "synth": 3.5,
+      "voice": -0.7,
+      "drums": -4.7
+    },
+    "spectrumPerCase": [
+      {
+        "caseId": "pop-full",
+        "tracks": 3,
+        "durationSeconds": 81.105,
+        "renderMs": 11136,
+        "untrimmed": {
+          "sub150": 89.8,
+          "low2k": 8.5,
+          "presence5k": 0.6,
+          "air": 1.1,
+          "frames": 109
+        },
+        "trimmed": {
+          "sub150": 67.3,
+          "low2k": 30.4,
+          "presence5k": 1.6,
+          "air": 0.7,
+          "frames": 109
+        },
+        "loudness": {
+          "targetRmsDbfs": -18,
+          "peakCeiling": 0.95,
+          "applied": "peak",
+          "gainDb": 8.04
+        },
+        "stemLevelsDbfs": {
+          "drums": -25.49,
+          "bass": -28.31,
+          "keys": -27.53
+        }
+      },
+      {
+        "caseId": "ballad-piano-vocal",
+        "tracks": 3,
+        "durationSeconds": 99.82,
+        "renderMs": 16874,
+        "untrimmed": {
+          "sub150": 88.1,
+          "low2k": 6.3,
+          "presence5k": 1.4,
+          "air": 4.3,
+          "frames": 135
+        },
+        "trimmed": {
+          "sub150": 61.6,
+          "low2k": 31.7,
+          "presence5k": 4.4,
+          "air": 2.3,
+          "frames": 135
+        },
+        "loudness": {
+          "targetRmsDbfs": -18,
+          "peakCeiling": 0.95,
+          "applied": "peak",
+          "gainDb": 6.77
+        },
+        "stemLevelsDbfs": {
+          "drums": -31.16,
+          "bass": -33.02,
+          "keys": -32.59
+        }
+      },
+      {
+        "caseId": "rock-full",
+        "tracks": 4,
+        "durationSeconds": 59.557,
+        "renderMs": 11543,
+        "untrimmed": {
+          "sub150": 84.4,
+          "low2k": 11.7,
+          "presence5k": 0.9,
+          "air": 3,
+          "frames": 80
+        },
+        "trimmed": {
+          "sub150": 52.9,
+          "low2k": 44.1,
+          "presence5k": 1.2,
+          "air": 1.7,
+          "frames": 80
+        },
+        "loudness": {
+          "targetRmsDbfs": -18,
+          "peakCeiling": 0.95,
+          "applied": "peak",
+          "gainDb": 3.58
+        },
+        "stemLevelsDbfs": {
+          "drums": -29.28,
+          "bass": -32.48,
+          "keys": -30.88,
+          "guitar": -33.46
+        }
+      },
+      {
+        "caseId": "dance-full",
+        "tracks": 4,
+        "durationSeconds": 77.607,
+        "renderMs": 23946,
+        "untrimmed": {
+          "sub150": 80.3,
+          "low2k": 14.7,
+          "presence5k": 2.2,
+          "air": 2.7,
+          "frames": 105
+        },
+        "trimmed": {
+          "sub150": 48.1,
+          "low2k": 43.7,
+          "presence5k": 5.6,
+          "air": 2.6,
+          "frames": 105
+        },
+        "loudness": {
+          "targetRmsDbfs": -18,
+          "peakCeiling": 0.95,
+          "applied": "peak",
+          "gainDb": 5.54
+        },
+        "stemLevelsDbfs": {
+          "drums": -29.36,
+          "bass": -31.44,
+          "keys": -31.9,
+          "synth": -28.58
+        }
+      },
+      {
+        "caseId": "acoustic-demo",
+        "tracks": 3,
+        "durationSeconds": 84.336,
+        "renderMs": 8656,
+        "untrimmed": {
+          "sub150": 84.1,
+          "low2k": 12.7,
+          "presence5k": 0.7,
+          "air": 2.5,
+          "frames": 114
+        },
+        "trimmed": {
+          "sub150": 58.8,
+          "low2k": 39.2,
+          "presence5k": 0.5,
+          "air": 1.5,
+          "frames": 114
+        },
+        "loudness": {
+          "targetRmsDbfs": -18,
+          "peakCeiling": 0.95,
+          "applied": "peak",
+          "gainDb": 11.23
+        },
+        "stemLevelsDbfs": {
+          "drums": -27.17,
+          "bass": -28.71,
+          "guitar": -27.57
+        }
+      },
+      {
+        "caseId": "orchestral-midi",
+        "tracks": 5,
+        "durationSeconds": 87.146,
+        "renderMs": 13072,
+        "untrimmed": {
+          "sub150": 78.8,
+          "low2k": 17.2,
+          "presence5k": 1.9,
+          "air": 2.1,
+          "frames": 118
+        },
+        "trimmed": {
+          "sub150": 52.9,
+          "low2k": 41.8,
+          "presence5k": 4.1,
+          "air": 1.2,
+          "frames": 118
+        },
+        "loudness": {
+          "targetRmsDbfs": -18,
+          "peakCeiling": 0.95,
+          "applied": "peak",
+          "gainDb": 8.96
+        },
+        "stemLevelsDbfs": {
+          "drums": -29.96,
+          "bass": -30.2,
+          "keys": -31.96,
+          "brass": -33.17,
+          "strings": -33.25
+        }
+      },
+      {
+        "caseId": "ethnic-vocal",
+        "tracks": 3,
+        "durationSeconds": 49.519,
+        "renderMs": 8406,
+        "untrimmed": {
+          "sub150": 76.1,
+          "low2k": 13.6,
+          "presence5k": 2,
+          "air": 8.3,
+          "frames": 67
+        },
+        "trimmed": {
+          "sub150": 42.8,
+          "low2k": 51.5,
+          "presence5k": 2.2,
+          "air": 3.5,
+          "frames": 67
+        },
+        "loudness": {
+          "targetRmsDbfs": -18,
+          "peakCeiling": 0.95,
+          "applied": "peak",
+          "gainDb": 7.49
+        },
+        "stemLevelsDbfs": {
+          "drums": -28.68,
+          "bass": -32.38,
+          "keys": -29.44
+        }
+      },
+      {
+        "caseId": "jazz-full",
+        "tracks": 3,
+        "durationSeconds": 88.238,
+        "renderMs": 10757,
+        "untrimmed": {
+          "sub150": 89.3,
+          "low2k": 9.1,
+          "presence5k": 0.6,
+          "air": 0.9,
+          "frames": 119
+        },
+        "trimmed": {
+          "sub150": 65.6,
+          "low2k": 31.8,
+          "presence5k": 1.9,
+          "air": 0.6,
+          "frames": 119
+        },
+        "loudness": {
+          "targetRmsDbfs": -18,
+          "peakCeiling": 0.95,
+          "applied": "peak",
+          "gainDb": 6.59
+        },
+        "stemLevelsDbfs": {
+          "drums": -25.37,
+          "bass": -28.84,
+          "keys": -27.32
+        }
+      },
+      {
+        "caseId": "cinematic-midi",
+        "tracks": 6,
+        "durationSeconds": 128.84,
+        "renderMs": 14366,
+        "untrimmed": {
+          "sub150": 80,
+          "low2k": 17.1,
+          "presence5k": 1.2,
+          "air": 1.7,
+          "frames": 174
+        },
+        "trimmed": {
+          "sub150": 46.9,
+          "low2k": 49.8,
+          "presence5k": 2.5,
+          "air": 0.8,
+          "frames": 174
+        },
+        "loudness": {
+          "targetRmsDbfs": -18,
+          "peakCeiling": 0.95,
+          "applied": "peak",
+          "gainDb": 7.06
+        },
+        "stemLevelsDbfs": {
+          "drums": -33.63,
+          "bass": -34.23,
+          "percussion": -69.94,
+          "keys": -31.74,
+          "brass": -39.11,
+          "strings": -36.9
+        }
+      }
+    ],
+    "spectrumSummary": {
+      "meanSub150Untrimmed": 83.43,
+      "meanSub150Trimmed": 55.21,
+      "meanRenderMs": 13195
+    },
+    "productionPath": {
+      "note": "One `generate()` call through LocalArrangementOrchestratorProvider, exactly as the job runner calls it.",
+      "candidates": 3,
+      "totalMs": 27266,
+      "renderLocation": {
+        "location": "in_process",
+        "reason": "no render-worker bundle beside this module (unbundled run or test); rendering in-process",
+        "workers": 0
+      },
+      "perCandidate": [
+        {
+          "label": "A · conservative",
+          "score": 0.81,
+          "summary": "conservative · shipped 77/100 (composed 75) · audio 87/100 (LISTENING_SYNTH_V2, 81 s, in process) · combined 81 · 0 playability error(s) · repair attempted, nothing changed · groove: Groove feel is coherent.; leadCompatibility: Support instruments make room for the singer. · weakest: sectionDevelopment: Repeats of \"verse\" are identical — no added layer.",
+          "renderStage": {
+            "stage": "render",
+            "status": "ok",
+            "detail": "3 candidate(s) rendered once for evaluation with LISTENING_SYNTH_V2 2.0.0 (evaluation contract 1.0) at 44100 Hz / 2 ch, 81.1 s, normalised to -18 dBFS RMS with a 0.95 peak ceiling (peak, +8.04 dB), in-process (no render-worker bundle beside this module (unbundled run or test); rendering in-process)",
+            "evidence": {
+              "renderer": "LISTENING_SYNTH_V2",
+              "rendererVersion": "2.0.0",
+              "evaluationVersion": "1.0",
+              "sampleRate": 44100,
+              "channels": 2,
+              "durationSeconds": 81.11,
+              "targetRmsDbfs": -18,
+              "peakCeiling": 0.95,
+              "location": "in_process",
+              "workers": 0,
+              "rendered": 3,
+              "failed": 0,
+              "renderMs": 19564
+            }
+          },
+          "audioCritiqueStage": {
+            "stage": "audio_critique",
+            "status": "ok",
+            "detail": "audio-critic/v1 and 5 located audio dimension(s) ran on the evaluation render of 3 candidate(s): mean audio 86.67/100, final = 0.6×symbolic + 0.4×audio; 0 candidate(s) rank differently with audio than without",
+            "evidence": {
+              "meanAudioScore": 86.67,
+              "audioWeight": 0.4,
+              "critiqueMs": 7043,
+              "dimensions": "audioBalance=100/gated,audioDynamics=100/gated,audioMasking=100/gated,audioRhythm=90.64/informing,audioTransitions=100/informing",
+              "blockingObservations": 0,
+              "majorObservations": 0,
+              "rankChanged": 0
+            }
+          },
+          "audio": {
+            "renderer": "LISTENING_SYNTH_V2 2.0.0",
+            "location": "in_process",
+            "sampleRate": 44100,
+            "durationSeconds": 81.105,
+            "renderMs": 6201,
+            "critiqueMs": 2473,
+            "loudness": {
+              "targetRmsDbfs": -18,
+              "peakCeiling": 0.95,
+              "applied": "peak",
+              "gainDb": 8.04
+            },
+            "spectrum": {
+              "sub150": 67.3,
+              "low2k": 30.4,
+              "presence5k": 1.6,
+              "air": 0.7
+            },
+            "symbolicScore": 77,
+            "audioScore": 87,
+            "finalScore": 81,
+            "audioWeight": 0.4,
+            "rankSymbolic": 1,
+            "rankCombined": 1,
+            "selectedWithAudio": true,
+            "renderKey": "2318ea9a4845acf2296f1d3e0b8bae518d1351301f5372bb7d2ac3ce72808f22",
+            "audioCriticV1": {
+              "overall": 87,
+              "dimensions": [
+                "balance=92",
+                "masking=82",
+                "spectralCrowding=100",
+                "mud=100",
+                "harshness=100",
+                "lowEndConflict=75",
+                "transientQuality=100",
+                "stereoDistribution=50",
+                "dynamicMovement=100",
+                "instrumentRealism=60"
+              ]
+            },
+            "dimensions": [
+              {
+                "dimension": "audioBalance",
+                "score": 100,
+                "coverage": 1,
+                "controlStatus": "gated",
+                "observations": []
+              },
+              {
+                "dimension": "audioDynamics",
+                "score": 100,
+                "coverage": 1,
+                "controlStatus": "gated",
+                "observations": []
+              },
+              {
+                "dimension": "audioMasking",
+                "score": 100,
+                "coverage": 1,
+                "controlStatus": "gated",
+                "observations": []
+              },
+              {
+                "dimension": "audioRhythm",
+                "score": 90.64,
+                "coverage": 0.417,
+                "controlStatus": "informing",
+                "observations": [
+                  "off_grid_against_kit/minor@bars 13-20 (perform)",
+                  "off_grid_against_kit/minor@bars 13-20 (perform)",
+                  "off_grid_against_kit/minor@bars 29-36 (perform)"
+                ]
+              },
+              {
+                "dimension": "audioTransitions",
+                "score": 100,
+                "coverage": 1,
+                "controlStatus": "informing",
+                "observations": []
+              }
+            ],
+            "stems": [
+              "drums -25.49 dBFS (trim -4.7 dB)",
+              "bass -28.31 dBFS (trim -1.2 dB)",
+              "keys -27.53 dBFS (trim 6.3 dB)"
+            ]
+          }
+        },
+        {
+          "label": "C · melodic",
+          "score": 0.81,
+          "summary": "melodic · shipped 77/100 (composed 75) · audio 87/100 (LISTENING_SYNTH_V2, 81 s, in process) · combined 81 · 0 playability error(s) · repair attempted, nothing changed · groove: Groove feel is coherent.; leadCompatibility: Support instruments make room for the singer. · weakest: sectionDevelopment: Repeats of \"verse\" are identical — no added layer.",
+          "renderStage": {
+            "stage": "render",
+            "status": "ok",
+            "detail": "3 candidate(s) rendered once for evaluation with LISTENING_SYNTH_V2 2.0.0 (evaluation contract 1.0) at 44100 Hz / 2 ch, 81.1 s, normalised to -18 dBFS RMS with a 0.95 peak ceiling (peak, +8.04 dB), in-process (no render-worker bundle beside this module (unbundled run or test); rendering in-process)",
+            "evidence": {
+              "renderer": "LISTENING_SYNTH_V2",
+              "rendererVersion": "2.0.0",
+              "evaluationVersion": "1.0",
+              "sampleRate": 44100,
+              "channels": 2,
+              "durationSeconds": 81.11,
+              "targetRmsDbfs": -18,
+              "peakCeiling": 0.95,
+              "location": "in_process",
+              "workers": 0,
+              "rendered": 3,
+              "failed": 0,
+              "renderMs": 19564
+            }
+          },
+          "audioCritiqueStage": {
+            "stage": "audio_critique",
+            "status": "ok",
+            "detail": "audio-critic/v1 and 5 located audio dimension(s) ran on the evaluation render of 3 candidate(s): mean audio 86.67/100, final = 0.6×symbolic + 0.4×audio; 0 candidate(s) rank differently with audio than without",
+            "evidence": {
+              "meanAudioScore": 86.67,
+              "audioWeight": 0.4,
+              "critiqueMs": 7043,
+              "dimensions": "audioBalance=100/gated,audioDynamics=100/gated,audioMasking=100/gated,audioRhythm=90.64/informing,audioTransitions=100/informing",
+              "blockingObservations": 0,
+              "majorObservations": 0,
+              "rankChanged": 0
+            }
+          },
+          "audio": {
+            "renderer": "LISTENING_SYNTH_V2 2.0.0",
+            "location": "in_process",
+            "sampleRate": 44100,
+            "durationSeconds": 81.099,
+            "renderMs": 6946,
+            "critiqueMs": 2232,
+            "loudness": {
+              "targetRmsDbfs": -18,
+              "peakCeiling": 0.95,
+              "applied": "peak",
+              "gainDb": 7.04
+            },
+            "spectrum": {
+              "sub150": 68.8,
+              "low2k": 28.7,
+              "presence5k": 1.6,
+              "air": 1
+            },
+            "symbolicScore": 77,
+            "audioScore": 87,
+            "finalScore": 81,
+            "audioWeight": 0.4,
+            "rankSymbolic": 2,
+            "rankCombined": 2,
+            "selectedWithAudio": false,
+            "renderKey": "6fb874ad670596314aaa0d6a557969500741158d1ad11f183d40a9f095261c50",
+            "audioCriticV1": {
+              "overall": 87,
+              "dimensions": [
+                "balance=92",
+                "masking=82",
+                "spectralCrowding=100",
+                "mud=100",
+                "harshness=100",
+                "lowEndConflict=73",
+                "transientQuality=100",
+                "stereoDistribution=50",
+                "dynamicMovement=100",
+                "instrumentRealism=60"
+              ]
+            },
+            "dimensions": [
+              {
+                "dimension": "audioBalance",
+                "score": 100,
+                "coverage": 1,
+                "controlStatus": "gated",
+                "observations": []
+              },
+              {
+                "dimension": "audioDynamics",
+                "score": 100,
+                "coverage": 1,
+                "controlStatus": "gated",
+                "observations": []
+              },
+              {
+                "dimension": "audioMasking",
+                "score": 100,
+                "coverage": 1,
+                "controlStatus": "gated",
+                "observations": []
+              },
+              {
+                "dimension": "audioRhythm",
+                "score": 90.64,
+                "coverage": 0.333,
+                "controlStatus": "informing",
+                "observations": [
+                  "off_grid_against_kit/minor@bars 13-20 (perform)",
+                  "off_grid_against_kit/minor@bars 13-20 (perform)",
+                  "off_grid_against_kit/minor@bars 29-36 (perform)"
+                ]
+              },
+              {
+                "dimension": "audioTransitions",
+                "score": 100,
+                "coverage": 1,
+                "controlStatus": "informing",
+                "observations": []
+              }
+            ],
+            "stems": [
+              "drums -24.65 dBFS (trim -4.7 dB)",
+              "bass -28.97 dBFS (trim -1.2 dB)",
+              "keys -27.98 dBFS (trim 6.3 dB)"
+            ]
+          }
+        },
+        {
+          "label": "E · adventurous",
+          "score": 0.8059999999999999,
+          "summary": "adventurous · shipped 77/100 (composed 75) · audio 86/100 (LISTENING_SYNTH_V2, 81 s, in process) · combined 81 · 0 playability error(s) · repair attempted, nothing changed · groove: Groove feel is coherent.; leadCompatibility: Support instruments make room for the singer. · weakest: sectionDevelopment: Repeats of \"verse\" are identical — no added layer.",
+          "renderStage": {
+            "stage": "render",
+            "status": "ok",
+            "detail": "3 candidate(s) rendered once for evaluation with LISTENING_SYNTH_V2 2.0.0 (evaluation contract 1.0) at 44100 Hz / 2 ch, 81.1 s, normalised to -18 dBFS RMS with a 0.95 peak ceiling (peak, +8.04 dB), in-process (no render-worker bundle beside this module (unbundled run or test); rendering in-process)",
+            "evidence": {
+              "renderer": "LISTENING_SYNTH_V2",
+              "rendererVersion": "2.0.0",
+              "evaluationVersion": "1.0",
+              "sampleRate": 44100,
+              "channels": 2,
+              "durationSeconds": 81.11,
+              "targetRmsDbfs": -18,
+              "peakCeiling": 0.95,
+              "location": "in_process",
+              "workers": 0,
+              "rendered": 3,
+              "failed": 0,
+              "renderMs": 19564
+            }
+          },
+          "audioCritiqueStage": {
+            "stage": "audio_critique",
+            "status": "ok",
+            "detail": "audio-critic/v1 and 5 located audio dimension(s) ran on the evaluation render of 3 candidate(s): mean audio 86.67/100, final = 0.6×symbolic + 0.4×audio; 0 candidate(s) rank differently with audio than without",
+            "evidence": {
+              "meanAudioScore": 86.67,
+              "audioWeight": 0.4,
+              "critiqueMs": 7043,
+              "dimensions": "audioBalance=100/gated,audioDynamics=100/gated,audioMasking=100/gated,audioRhythm=90.64/informing,audioTransitions=100/informing",
+              "blockingObservations": 0,
+              "majorObservations": 0,
+              "rankChanged": 0
+            }
+          },
+          "audio": {
+            "renderer": "LISTENING_SYNTH_V2 2.0.0",
+            "location": "in_process",
+            "sampleRate": 44100,
+            "durationSeconds": 81.099,
+            "renderMs": 6414,
+            "critiqueMs": 2338,
+            "loudness": {
+              "targetRmsDbfs": -18,
+              "peakCeiling": 0.95,
+              "applied": "peak",
+              "gainDb": 3.63
+            },
+            "spectrum": {
+              "sub150": 64.2,
+              "low2k": 32.3,
+              "presence5k": 2.8,
+              "air": 0.7
+            },
+            "symbolicScore": 77,
+            "audioScore": 86,
+            "finalScore": 80.6,
+            "audioWeight": 0.4,
+            "rankSymbolic": 3,
+            "rankCombined": 3,
+            "selectedWithAudio": false,
+            "renderKey": "bce44e3ef9329f0a1c22719f8518bdc19c45b94e5855fea5cacc3a0a60e19e3f",
+            "audioCriticV1": {
+              "overall": 86,
+              "dimensions": [
+                "balance=92",
+                "masking=81",
+                "spectralCrowding=100",
+                "mud=100",
+                "harshness=100",
+                "lowEndConflict=73",
+                "transientQuality=100",
+                "stereoDistribution=50",
+                "dynamicMovement=100",
+                "instrumentRealism=60"
+              ]
+            },
+            "dimensions": [
+              {
+                "dimension": "audioBalance",
+                "score": 100,
+                "coverage": 1,
+                "controlStatus": "gated",
+                "observations": []
+              },
+              {
+                "dimension": "audioDynamics",
+                "score": 100,
+                "coverage": 1,
+                "controlStatus": "gated",
+                "observations": []
+              },
+              {
+                "dimension": "audioMasking",
+                "score": 100,
+                "coverage": 1,
+                "controlStatus": "gated",
+                "observations": []
+              },
+              {
+                "dimension": "audioRhythm",
+                "score": 87.88,
+                "coverage": 0.333,
+                "controlStatus": "informing",
+                "observations": [
+                  "off_grid_against_kit/minor@bars 13-20 (perform)",
+                  "off_grid_against_kit/minor@bars 13-20 (perform)",
+                  "off_grid_against_kit/minor@bars 29-36 (perform)",
+                  "off_grid_against_kit/minor@bars 37-40 (perform)"
+                ]
+              },
+              {
+                "dimension": "audioTransitions",
+                "score": 100,
+                "coverage": 1,
+                "controlStatus": "informing",
+                "observations": []
+              }
+            ],
+            "stems": [
+              "drums -27.28 dBFS (trim -4.7 dB)",
+              "bass -29.19 dBFS (trim -1.2 dB)",
+              "keys -28.66 dBFS (trim 6.3 dB)"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "d2_audio_controls": {
+    "question": "Do the audio dimensions hear a defect deliberately introduced into the audio?",
+    "harnessVersion": "B07_AUDIO_CONTROLS_v1",
+    "elapsedMs": 953312,
+    "anchors": [
+      {
+        "id": "pop-full",
+        "genre": "pop",
+        "tracks": [
+          "drums-groove",
+          "bass-bass",
+          "keys-harmonic_bed"
+        ],
+        "notes": 640,
+        "durationSeconds": 81.105,
+        "renderMs": 6259,
+        "spectrum": {
+          "sub150": 67.3,
+          "low2k": 30.4,
+          "presence5k": 1.6,
+          "air": 0.7
+        }
+      },
+      {
+        "id": "ballad-piano-vocal",
+        "genre": "ballad",
+        "tracks": [
+          "drums-groove",
+          "bass-bass",
+          "keys-rhythmic_harmony"
+        ],
+        "notes": 305,
+        "durationSeconds": 99.82,
+        "renderMs": 7041,
+        "spectrum": {
+          "sub150": 61.6,
+          "low2k": 31.7,
+          "presence5k": 4.4,
+          "air": 2.3
+        }
+      },
+      {
+        "id": "rock-full",
+        "genre": "rock",
+        "tracks": [
+          "drums-groove",
+          "bass-bass",
+          "keys-rhythmic_harmony",
+          "guitar-harmonic_bed"
+        ],
+        "notes": 564,
+        "durationSeconds": 59.557,
+        "renderMs": 6485,
+        "spectrum": {
+          "sub150": 52.9,
+          "low2k": 44.1,
+          "presence5k": 1.2,
+          "air": 1.7
+        }
+      },
+      {
+        "id": "dance-full",
+        "genre": "dance",
+        "tracks": [
+          "drums-groove",
+          "bass-bass",
+          "keys-harmonic_bed",
+          "synth-pad"
+        ],
+        "notes": 712,
+        "durationSeconds": 77.607,
+        "renderMs": 10343,
+        "spectrum": {
+          "sub150": 48.1,
+          "low2k": 43.7,
+          "presence5k": 5.6,
+          "air": 2.6
+        }
+      },
+      {
+        "id": "acoustic-demo",
+        "genre": "acoustic",
+        "tracks": [
+          "drums-groove",
+          "bass-bass",
+          "guitar-harmonic_bed"
+        ],
+        "notes": 440,
+        "durationSeconds": 84.336,
+        "renderMs": 3986,
+        "spectrum": {
+          "sub150": 58.8,
+          "low2k": 39.2,
+          "presence5k": 0.5,
+          "air": 1.5
+        }
+      },
+      {
+        "id": "orchestral-midi",
+        "genre": "orchestral",
+        "tracks": [
+          "drums-climax_layer",
+          "bass-bass",
+          "keys-ostinato",
+          "brass-climax_layer",
+          "strings-climax_layer"
+        ],
+        "notes": 337,
+        "durationSeconds": 87.146,
+        "renderMs": 8639,
+        "spectrum": {
+          "sub150": 52.9,
+          "low2k": 41.8,
+          "presence5k": 4.1,
+          "air": 1.2
+        }
+      },
+      {
+        "id": "jazz-full",
+        "genre": "jazz",
+        "tracks": [
+          "drums-climax_layer",
+          "bass-bass",
+          "keys-harmonic_bed"
+        ],
+        "notes": 975,
+        "durationSeconds": 88.238,
+        "renderMs": 7759,
+        "spectrum": {
+          "sub150": 65.6,
+          "low2k": 31.8,
+          "presence5k": 1.9,
+          "air": 0.6
+        }
+      },
+      {
+        "id": "cinematic-midi",
+        "genre": "cinematic",
+        "tracks": [
+          "drums-climax_layer",
+          "bass-bass",
+          "percussion-accent",
+          "keys-harmonic_bed",
+          "brass-climax_layer",
+          "strings-climax_layer"
+        ],
+        "notes": 406,
+        "durationSeconds": 128.84,
+        "renderMs": 10552,
+        "spectrum": {
+          "sub150": 46.9,
+          "low2k": 49.8,
+          "presence5k": 2.5,
+          "air": 0.8
+        }
+      }
+    ],
+    "anchorIds": [
+      "pop-full",
+      "ballad-piano-vocal",
+      "rock-full",
+      "dance-full",
+      "acoustic-demo",
+      "orchestral-midi",
+      "jazz-full",
+      "cinematic-midi"
+    ],
+    "controls": [
+      {
+        "control": "align_to_kit",
+        "kind": "notes",
+        "description": "NEGATIVE control: every pitched note snapped to the nearest beat of the composer's grid. Nothing should be detected; audioRhythm's score should RISE, which is what isolates the cause of the off-grid findings on the clean anchors"
+      },
+      {
+        "control": "boost_sub_bass",
+        "kind": "notes",
+        "description": "the bass an octave down at full velocity and the next-lowest pitched part an octave down with it: two parts in the sub band"
+      },
+      {
+        "control": "clip_stem",
+        "kind": "render",
+        "description": "one stem of the finished render driven 6x and hard-clipped at +/-1.0: a defect of the render, which no arrangement of notes can cause"
+      },
+      {
+        "control": "dominate_by_trim",
+        "kind": "render",
+        "description": "one family's render trim raised by 24 dB: the mix balance destroyed by the render rather than by the notes"
+      },
+      {
+        "control": "dominate_one_part",
+        "kind": "notes",
+        "description": "one pitched part at velocity 127 and every other part at velocity 20: one instrument over an inaudible band"
+      },
+      {
+        "control": "empty_the_middle",
+        "kind": "notes",
+        "description": "in the loudest planned section, every pitched note between G3 and G5 moved an octave out - the climax split between the bottom and the top"
+      },
+      {
+        "control": "flatten_velocities",
+        "kind": "notes",
+        "description": "every note of every part at the arrangement's mean velocity: the plan's dynamic contrast erased at the source"
+      },
+      {
+        "control": "shift_harmony_off_grid",
+        "kind": "notes",
+        "description": "every pitched part delayed 110 ms while the kit stays where it is - the harmony written against a different clock"
+      },
+      {
+        "control": "silence_a_section",
+        "kind": "notes",
+        "description": "every note of the loudest planned section deleted: a hole in the middle of the song"
+      },
+      {
+        "control": "stack_octave",
+        "kind": "notes",
+        "description": "the second pitched part transposed into the first's octave, so two parts occupy one register for the whole song"
+      },
+      {
+        "control": "thin_bed_to_one_line",
+        "kind": "notes",
+        "description": "every chord of the bed reduced to its top voice - what perform -> playability repair did to the owner's string bed"
+      },
+      {
+        "control": "thin_the_arrival",
+        "kind": "notes",
+        "description": "the loudest planned section stripped to its two quietest parts at half velocity - an arrival thinner than the section that set it up"
+      }
+    ],
+    "claimed": {
+      "audioBalance": [
+        "dominate_one_part",
+        "dominate_by_trim",
+        "boost_sub_bass"
+      ],
+      "audioDynamics": [
+        "flatten_velocities",
+        "silence_a_section",
+        "clip_stem"
+      ],
+      "audioMasking": [
+        "stack_octave",
+        "boost_sub_bass",
+        "thin_bed_to_one_line",
+        "empty_the_middle"
+      ],
+      "audioRhythm": [
+        "shift_harmony_off_grid"
+      ],
+      "audioTransitions": [
+        "thin_the_arrival",
+        "silence_a_section"
+      ]
+    },
+    "table": [
+      {
+        "dimension": "audioBalance",
+        "control": "align_to_kit",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioBalance",
+        "control": "boost_sub_bass",
+        "claimed": true,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioBalance",
+        "control": "clip_stem",
+        "claimed": false,
+        "n": 8,
+        "detected": 8,
+        "rate": 1,
+        "ci95": [
+          0.6306,
+          1
+        ],
+        "meanScoreDrop": 39.13
+      },
+      {
+        "dimension": "audioBalance",
+        "control": "dominate_by_trim",
+        "claimed": true,
+        "n": 8,
+        "detected": 8,
+        "rate": 1,
+        "ci95": [
+          0.6306,
+          1
+        ],
+        "meanScoreDrop": 94.44
+      },
+      {
+        "dimension": "audioBalance",
+        "control": "dominate_one_part",
+        "claimed": true,
+        "n": 8,
+        "detected": 8,
+        "rate": 1,
+        "ci95": [
+          0.6306,
+          1
+        ],
+        "meanScoreDrop": 81.91
+      },
+      {
+        "dimension": "audioBalance",
+        "control": "empty_the_middle",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioBalance",
+        "control": "flatten_velocities",
+        "claimed": false,
+        "n": 8,
+        "detected": 5,
+        "rate": 0.625,
+        "ci95": [
+          0.2449,
+          0.9148
+        ],
+        "meanScoreDrop": 8.23
+      },
+      {
+        "dimension": "audioBalance",
+        "control": "shift_harmony_off_grid",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioBalance",
+        "control": "silence_a_section",
+        "claimed": false,
+        "n": 8,
+        "detected": 1,
+        "rate": 0.125,
+        "ci95": [
+          0.0032,
+          0.5265
+        ],
+        "meanScoreDrop": 0.89
+      },
+      {
+        "dimension": "audioBalance",
+        "control": "stack_octave",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioBalance",
+        "control": "thin_bed_to_one_line",
+        "claimed": false,
+        "n": 7,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.4096
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioBalance",
+        "control": "thin_the_arrival",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "align_to_kit",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "boost_sub_bass",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "clip_stem",
+        "claimed": true,
+        "n": 8,
+        "detected": 4,
+        "rate": 0.5,
+        "ci95": [
+          0.157,
+          0.843
+        ],
+        "meanScoreDrop": 10.14
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "dominate_by_trim",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "dominate_one_part",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "empty_the_middle",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "flatten_velocities",
+        "claimed": true,
+        "n": 8,
+        "detected": 7,
+        "rate": 0.875,
+        "ci95": [
+          0.4735,
+          0.9968
+        ],
+        "meanScoreDrop": 13.89
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "shift_harmony_off_grid",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "silence_a_section",
+        "claimed": true,
+        "n": 8,
+        "detected": 8,
+        "rate": 1,
+        "ci95": [
+          0.6306,
+          1
+        ],
+        "meanScoreDrop": 11.23
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "stack_octave",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": -0.79
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "thin_bed_to_one_line",
+        "claimed": false,
+        "n": 7,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.4096
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "thin_the_arrival",
+        "claimed": false,
+        "n": 8,
+        "detected": 5,
+        "rate": 0.625,
+        "ci95": [
+          0.2449,
+          0.9148
+        ],
+        "meanScoreDrop": 7.22
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "align_to_kit",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "boost_sub_bass",
+        "claimed": true,
+        "n": 8,
+        "detected": 7,
+        "rate": 0.875,
+        "ci95": [
+          0.4735,
+          0.9968
+        ],
+        "meanScoreDrop": 7.39
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "clip_stem",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "dominate_by_trim",
+        "claimed": false,
+        "n": 8,
+        "detected": 4,
+        "rate": 0.5,
+        "ci95": [
+          0.157,
+          0.843
+        ],
+        "meanScoreDrop": 5.23
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "dominate_one_part",
+        "claimed": false,
+        "n": 8,
+        "detected": 5,
+        "rate": 0.625,
+        "ci95": [
+          0.2449,
+          0.9148
+        ],
+        "meanScoreDrop": 8.1
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "empty_the_middle",
+        "claimed": true,
+        "n": 8,
+        "detected": 1,
+        "rate": 0.125,
+        "ci95": [
+          0.0032,
+          0.5265
+        ],
+        "meanScoreDrop": 1.03
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "flatten_velocities",
+        "claimed": false,
+        "n": 8,
+        "detected": 1,
+        "rate": 0.125,
+        "ci95": [
+          0.0032,
+          0.5265
+        ],
+        "meanScoreDrop": 0.41
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "shift_harmony_off_grid",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "silence_a_section",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "stack_octave",
+        "claimed": true,
+        "n": 8,
+        "detected": 8,
+        "rate": 1,
+        "ci95": [
+          0.6306,
+          1
+        ],
+        "meanScoreDrop": 21.44
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "thin_bed_to_one_line",
+        "claimed": true,
+        "n": 7,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.4096
+        ],
+        "meanScoreDrop": -2.38
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "thin_the_arrival",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "align_to_kit",
+        "claimed": false,
+        "n": 8,
+        "detected": 3,
+        "rate": 0.375,
+        "ci95": [
+          0.0852,
+          0.7551
+        ],
+        "meanScoreDrop": 0.99
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "boost_sub_bass",
+        "claimed": false,
+        "n": 8,
+        "detected": 5,
+        "rate": 0.625,
+        "ci95": [
+          0.2449,
+          0.9148
+        ],
+        "meanScoreDrop": 5.66
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "clip_stem",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "dominate_by_trim",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "dominate_one_part",
+        "claimed": false,
+        "n": 8,
+        "detected": 6,
+        "rate": 0.75,
+        "ci95": [
+          0.3491,
+          0.9681
+        ],
+        "meanScoreDrop": 7.06
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "empty_the_middle",
+        "claimed": false,
+        "n": 8,
+        "detected": 3,
+        "rate": 0.375,
+        "ci95": [
+          0.0852,
+          0.7551
+        ],
+        "meanScoreDrop": 0.45
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "flatten_velocities",
+        "claimed": false,
+        "n": 8,
+        "detected": 5,
+        "rate": 0.625,
+        "ci95": [
+          0.2449,
+          0.9148
+        ],
+        "meanScoreDrop": 5.33
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "shift_harmony_off_grid",
+        "claimed": true,
+        "n": 8,
+        "detected": 6,
+        "rate": 0.75,
+        "ci95": [
+          0.3491,
+          0.9681
+        ],
+        "meanScoreDrop": 4.67
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "silence_a_section",
+        "claimed": false,
+        "n": 6,
+        "detected": 1,
+        "rate": 0.1667,
+        "ci95": [
+          0.0042,
+          0.6412
+        ],
+        "meanScoreDrop": -3.38
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "stack_octave",
+        "claimed": false,
+        "n": 8,
+        "detected": 5,
+        "rate": 0.625,
+        "ci95": [
+          0.2449,
+          0.9148
+        ],
+        "meanScoreDrop": 2.04
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "thin_bed_to_one_line",
+        "claimed": false,
+        "n": 7,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.4096
+        ],
+        "meanScoreDrop": -0.51
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "thin_the_arrival",
+        "claimed": false,
+        "n": 6,
+        "detected": 2,
+        "rate": 0.3333,
+        "ci95": [
+          0.0433,
+          0.7772
+        ],
+        "meanScoreDrop": -1.84
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "align_to_kit",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "boost_sub_bass",
+        "claimed": false,
+        "n": 8,
+        "detected": 3,
+        "rate": 0.375,
+        "ci95": [
+          0.0852,
+          0.7551
+        ],
+        "meanScoreDrop": 1.82
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "clip_stem",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "dominate_by_trim",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": -0.38
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "dominate_one_part",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": -0.38
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "empty_the_middle",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "flatten_velocities",
+        "claimed": false,
+        "n": 8,
+        "detected": 6,
+        "rate": 0.75,
+        "ci95": [
+          0.3491,
+          0.9681
+        ],
+        "meanScoreDrop": 5.89
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "shift_harmony_off_grid",
+        "claimed": false,
+        "n": 8,
+        "detected": 2,
+        "rate": 0.25,
+        "ci95": [
+          0.0319,
+          0.6509
+        ],
+        "meanScoreDrop": 1.65
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "silence_a_section",
+        "claimed": true,
+        "n": 8,
+        "detected": 5,
+        "rate": 0.625,
+        "ci95": [
+          0.2449,
+          0.9148
+        ],
+        "meanScoreDrop": 10.6
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "stack_octave",
+        "claimed": false,
+        "n": 8,
+        "detected": 1,
+        "rate": 0.125,
+        "ci95": [
+          0.0032,
+          0.5265
+        ],
+        "meanScoreDrop": 0.37
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "thin_bed_to_one_line",
+        "claimed": false,
+        "n": 7,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.4096
+        ],
+        "meanScoreDrop": -0.43
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "thin_the_arrival",
+        "claimed": true,
+        "n": 8,
+        "detected": 3,
+        "rate": 0.375,
+        "ci95": [
+          0.0852,
+          0.7551
+        ],
+        "meanScoreDrop": 4.11
+      }
+    ],
+    "ledger": {
+      "audioBalance": {
+        "status": "gated",
+        "strongestControl": "dominate_by_trim",
+        "detectionRate": 1,
+        "ci95": [
+          0.6306,
+          1
+        ],
+        "n": 8,
+        "cleanAnchorBlockingRate": 0
+      },
+      "audioDynamics": {
+        "status": "gated",
+        "strongestControl": "silence_a_section",
+        "detectionRate": 1,
+        "ci95": [
+          0.6306,
+          1
+        ],
+        "n": 8,
+        "cleanAnchorBlockingRate": 0
+      },
+      "audioMasking": {
+        "status": "gated",
+        "strongestControl": "stack_octave",
+        "detectionRate": 1,
+        "ci95": [
+          0.6306,
+          1
+        ],
+        "n": 8,
+        "cleanAnchorBlockingRate": 0
+      },
+      "audioRhythm": {
+        "status": "informing",
+        "strongestControl": "shift_harmony_off_grid",
+        "detectionRate": 0.75,
+        "ci95": [
+          0.3491,
+          0.9681
+        ],
+        "n": 8,
+        "cleanAnchorBlockingRate": 0
+      },
+      "audioTransitions": {
+        "status": "informing",
+        "strongestControl": "silence_a_section",
+        "detectionRate": 0.625,
+        "ci95": [
+          0.2449,
+          0.9148
+        ],
+        "n": 8,
+        "cleanAnchorBlockingRate": 0
+      }
+    },
+    "ledgerSummary": [
+      "audioBalance: gated (dominate_by_trim 100 % [0.6306, 1], n=8)",
+      "audioDynamics: gated (silence_a_section 100 % [0.6306, 1], n=8)",
+      "audioMasking: gated (stack_octave 100 % [0.6306, 1], n=8)",
+      "audioRhythm: informing (shift_harmony_off_grid 75 % [0.3491, 0.9681], n=8)",
+      "audioTransitions: informing (silence_a_section 63 % [0.2449, 0.9148], n=8)"
+    ],
+    "nullTest": {
+      "rule": "no audio dimension may raise a blocking observation on a clean anchor's own render",
+      "blocking": [],
+      "reports": [
+        {
+          "anchorId": "pop-full",
+          "dimension": "audioBalance",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "pop-full",
+          "dimension": "audioDynamics",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "pop-full",
+          "dimension": "audioMasking",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "pop-full",
+          "dimension": "audioRhythm",
+          "score": 90.64,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 3,
+          "kinds": [
+            "off_grid_against_kit"
+          ]
+        },
+        {
+          "anchorId": "pop-full",
+          "dimension": "audioTransitions",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "ballad-piano-vocal",
+          "dimension": "audioBalance",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "ballad-piano-vocal",
+          "dimension": "audioDynamics",
+          "score": 93.68,
+          "applicable": true,
+          "blocking": 0,
+          "major": 1,
+          "minor": 0,
+          "kinds": [
+            "dropout"
+          ]
+        },
+        {
+          "anchorId": "ballad-piano-vocal",
+          "dimension": "audioMasking",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "ballad-piano-vocal",
+          "dimension": "audioRhythm",
+          "score": 89.33,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 3,
+          "kinds": [
+            "off_grid_against_kit"
+          ]
+        },
+        {
+          "anchorId": "ballad-piano-vocal",
+          "dimension": "audioTransitions",
+          "score": 96.96,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 1,
+          "kinds": [
+            "unrealised_lift"
+          ]
+        },
+        {
+          "anchorId": "rock-full",
+          "dimension": "audioBalance",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "rock-full",
+          "dimension": "audioDynamics",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "rock-full",
+          "dimension": "audioMasking",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "rock-full",
+          "dimension": "audioRhythm",
+          "score": 76.9,
+          "applicable": true,
+          "blocking": 0,
+          "major": 2,
+          "minor": 2,
+          "kinds": [
+            "off_grid_against_kit"
+          ]
+        },
+        {
+          "anchorId": "rock-full",
+          "dimension": "audioTransitions",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "dance-full",
+          "dimension": "audioBalance",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "dance-full",
+          "dimension": "audioDynamics",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "dance-full",
+          "dimension": "audioMasking",
+          "score": 96.79,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 1,
+          "kinds": [
+            "low_end_congestion"
+          ]
+        },
+        {
+          "anchorId": "dance-full",
+          "dimension": "audioRhythm",
+          "score": 93.58,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 2,
+          "kinds": [
+            "off_grid_against_kit"
+          ]
+        },
+        {
+          "anchorId": "dance-full",
+          "dimension": "audioTransitions",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "acoustic-demo",
+          "dimension": "audioBalance",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "acoustic-demo",
+          "dimension": "audioDynamics",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "acoustic-demo",
+          "dimension": "audioMasking",
+          "score": 89.88,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 3,
+          "kinds": [
+            "low_end_congestion"
+          ]
+        },
+        {
+          "anchorId": "acoustic-demo",
+          "dimension": "audioRhythm",
+          "score": 93.17,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 2,
+          "kinds": [
+            "off_grid_against_kit"
+          ]
+        },
+        {
+          "anchorId": "acoustic-demo",
+          "dimension": "audioTransitions",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "orchestral-midi",
+          "dimension": "audioBalance",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "orchestral-midi",
+          "dimension": "audioDynamics",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "orchestral-midi",
+          "dimension": "audioMasking",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "orchestral-midi",
+          "dimension": "audioRhythm",
+          "score": 96.3,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 1,
+          "kinds": [
+            "off_grid_against_kit"
+          ]
+        },
+        {
+          "anchorId": "orchestral-midi",
+          "dimension": "audioTransitions",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "jazz-full",
+          "dimension": "audioBalance",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "jazz-full",
+          "dimension": "audioDynamics",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "jazz-full",
+          "dimension": "audioMasking",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "jazz-full",
+          "dimension": "audioRhythm",
+          "score": 88.97,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 3,
+          "kinds": [
+            "off_grid_against_kit"
+          ]
+        },
+        {
+          "anchorId": "jazz-full",
+          "dimension": "audioTransitions",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "cinematic-midi",
+          "dimension": "audioBalance",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "cinematic-midi",
+          "dimension": "audioDynamics",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "cinematic-midi",
+          "dimension": "audioMasking",
+          "score": 93.4,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 2,
+          "kinds": [
+            "low_end_congestion"
+          ]
+        },
+        {
+          "anchorId": "cinematic-midi",
+          "dimension": "audioRhythm",
+          "score": 93.4,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 2,
+          "kinds": [
+            "off_grid_against_kit"
+          ]
+        },
+        {
+          "anchorId": "cinematic-midi",
+          "dimension": "audioTransitions",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        }
+      ]
+    },
+    "negativeControl": {
+      "control": "align_to_kit",
+      "rule": "snapping every pitched part onto the beat grid must not look like damage; audioRhythm's score should rise",
+      "items": [
+        {
+          "anchorId": "pop-full",
+          "audioRhythmBefore": 90.64,
+          "audioRhythmAfter": 90.64,
+          "detected": false
+        },
+        {
+          "anchorId": "ballad-piano-vocal",
+          "audioRhythmBefore": 89.33,
+          "audioRhythmAfter": 92.89,
+          "detected": false
+        },
+        {
+          "anchorId": "rock-full",
+          "audioRhythmBefore": 76.9,
+          "audioRhythmAfter": 78.55,
+          "detected": false
+        },
+        {
+          "anchorId": "dance-full",
+          "audioRhythmBefore": 93.58,
+          "audioRhythmAfter": 87.16,
+          "detected": true
+        },
+        {
+          "anchorId": "acoustic-demo",
+          "audioRhythmBefore": 93.17,
+          "audioRhythmAfter": 89.76,
+          "detected": true
+        },
+        {
+          "anchorId": "orchestral-midi",
+          "audioRhythmBefore": 96.3,
+          "audioRhythmAfter": 96.3,
+          "detected": false
+        },
+        {
+          "anchorId": "jazz-full",
+          "audioRhythmBefore": 88.97,
+          "audioRhythmAfter": 88.97,
+          "detected": false
+        },
+        {
+          "anchorId": "cinematic-midi",
+          "audioRhythmBefore": 93.4,
+          "audioRhythmAfter": 90.1,
+          "detected": true
+        }
+      ]
+    },
+    "items": [
+      {
+        "control": "align_to_kit",
+        "anchorId": "pop-full",
+        "detail": "2 pitched part(s) snapped to the beat grid",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 90.64,
+            "after": 90.64,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "boost_sub_bass",
+        "anchorId": "pop-full",
+        "detail": "bass and keys an octave down at 1.3x velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 100,
+            "after": 71.62,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 90.64,
+            "after": 84.76,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 97.24,
+            "kinds": [
+              "unrealised_lift"
+            ]
+          }
+        }
+      },
+      {
+        "control": "clip_stem",
+        "anchorId": "pop-full",
+        "detail": "bass stem driven 6x and clipped",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 55,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 40,
+            "kinds": [
+              "clipped_stem"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 90.64,
+            "after": 90.64,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_by_trim",
+        "anchorId": "pop-full",
+        "detail": "bass trimmed +24 dB in the render",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 0,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 90.64,
+            "after": 90.64,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_one_part",
+        "anchorId": "pop-full",
+        "detail": "bass at 127, everything else at 20",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 0,
+            "kinds": [
+              "part_dominates",
+              "part_inaudible"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 90.64,
+            "after": 75.4,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "empty_the_middle",
+        "anchorId": "pop-full",
+        "detail": "10 note(s) moved out of G3-G5 in Chorus 2",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 90.64,
+            "after": 90.64,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "flatten_velocities",
+        "anchorId": "pop-full",
+        "detail": "every velocity set to 66",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 84.4,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 90.4,
+            "kinds": [
+              "planned_contrast_unrealised"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 90.64,
+            "after": 75.4,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 86.2,
+            "kinds": [
+              "unrealised_lift"
+            ]
+          }
+        }
+      },
+      {
+        "control": "shift_harmony_off_grid",
+        "anchorId": "pop-full",
+        "detail": "2 pitched part(s) delayed 110 ms against the kit",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 90.64,
+            "after": 87.88,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "silence_a_section",
+        "anchorId": "pop-full",
+        "detail": "Chorus 2 emptied (161 notes)",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 83.05,
+            "kinds": [
+              "dropout",
+              "planned_contrast_unrealised"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 90.64,
+            "after": 93.76,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 84.17,
+            "kinds": [
+              "arrival_thinner_than_setup",
+              "dead_air_at_boundary"
+            ]
+          }
+        }
+      },
+      {
+        "control": "stack_octave",
+        "anchorId": "pop-full",
+        "detail": "keys transposed -24 semitones onto bass",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 100,
+            "after": 59.68,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 90.64,
+            "after": 84.76,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "thin_bed_to_one_line",
+        "anchorId": "pop-full",
+        "detail": "keys: 171 lower voice(s) removed, 131 kept",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 90.64,
+            "after": 90.64,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "thin_the_arrival",
+        "anchorId": "pop-full",
+        "detail": "30 note(s) removed from Chorus 2, the rest at half velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 90.4,
+            "kinds": [
+              "planned_contrast_unrealised"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 90.64,
+            "after": 93.76,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "align_to_kit",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "2 pitched part(s) snapped to the beat grid",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 93.68,
+            "after": 93.68,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 89.33,
+            "after": 92.89,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 96.96,
+            "after": 96.96,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "boost_sub_bass",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "bass and keys an octave down at 1.3x velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 93.68,
+            "after": 93.68,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 89.33,
+            "after": 89.33,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 96.96,
+            "after": 92.39,
+            "kinds": [
+              "unrealised_lift"
+            ]
+          }
+        }
+      },
+      {
+        "control": "clip_stem",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "bass stem driven 6x and clipped",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 66.04,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 93.68,
+            "after": 93.68,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 89.33,
+            "after": 89.33,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 96.96,
+            "after": 96.96,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_by_trim",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "bass trimmed +24 dB in the render",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 2.96,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 93.68,
+            "after": 93.68,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 89.33,
+            "after": 89.33,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 96.96,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_one_part",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "bass at 127, everything else at 20",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 15.64,
+            "kinds": [
+              "part_dominates",
+              "part_inaudible"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 93.68,
+            "after": 93.68,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 89.33,
+            "after": 83.99,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 96.96,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "empty_the_middle",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "14 note(s) moved out of G3-G5 in Chorus",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 93.68,
+            "after": 93.68,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 89.33,
+            "after": 92.89,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 96.96,
+            "after": 96.96,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "flatten_velocities",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "every velocity set to 64",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 83.82,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 93.68,
+            "after": 78.68,
+            "kinds": [
+              "planned_contrast_unrealised"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 89.33,
+            "after": 83.99,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 96.96,
+            "after": 92.39,
+            "kinds": [
+              "unrealised_lift"
+            ]
+          }
+        }
+      },
+      {
+        "control": "shift_harmony_off_grid",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "2 pitched part(s) delayed 110 ms against the kit",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 93.68,
+            "after": 93.68,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 89.33,
+            "after": 83.99,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 96.96,
+            "after": 90.31,
+            "kinds": [
+              "dead_air_at_boundary"
+            ]
+          }
+        }
+      },
+      {
+        "control": "silence_a_section",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "Chorus emptied (71 notes)",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 93.68,
+            "after": 91.43,
+            "kinds": [
+              "dropout"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 89.33,
+            "after": 87.55,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 96.96,
+            "after": 67,
+            "kinds": [
+              "abrupt_level_jump",
+              "arrival_thinner_than_setup",
+              "dead_air_at_boundary",
+              "unrealised_lift"
+            ]
+          }
+        }
+      },
+      {
+        "control": "stack_octave",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "keys transposed -36 semitones onto bass",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 93.68,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 100,
+            "after": 73.64,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 89.33,
+            "after": 85.77,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 96.96,
+            "after": 96.96,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "thin_bed_to_one_line",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "keys: 83 lower voice(s) removed, 78 kept",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 93.68,
+            "after": 93.68,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 89.33,
+            "after": 92.89,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 96.96,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "thin_the_arrival",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "17 note(s) removed from Chorus, the rest at half velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 93.68,
+            "after": 87.36,
+            "kinds": [
+              "dropout"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 89.33,
+            "after": 87.55,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 96.96,
+            "after": 84.79,
+            "kinds": [
+              "abrupt_level_jump",
+              "unrealised_lift"
+            ]
+          }
+        }
+      },
+      {
+        "control": "align_to_kit",
+        "anchorId": "rock-full",
+        "detail": "3 pitched part(s) snapped to the beat grid",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 76.9,
+            "after": 78.55,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "boost_sub_bass",
+        "anchorId": "rock-full",
+        "detail": "bass and guitar an octave down at 1.3x velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 100,
+            "after": 91.75,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 76.9,
+            "after": 73.6,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 92.75,
+            "kinds": [
+              "unrealised_lift"
+            ]
+          }
+        }
+      },
+      {
+        "control": "clip_stem",
+        "anchorId": "rock-full",
+        "detail": "bass stem driven 6x and clipped",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 60,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 76.9,
+            "after": 76.9,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_by_trim",
+        "anchorId": "rock-full",
+        "detail": "bass trimmed +24 dB in the render",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 0,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 100,
+            "after": 91.75,
+            "kinds": [
+              "mid_register_hole"
+            ]
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 76.9,
+            "after": 76.9,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_one_part",
+        "anchorId": "rock-full",
+        "detail": "bass at 127, everything else at 20",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 0,
+            "kinds": [
+              "part_dominates",
+              "part_inaudible"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 100,
+            "after": 88.45,
+            "kinds": [
+              "low_end_congestion",
+              "mid_register_hole"
+            ]
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 76.9,
+            "after": 76.9,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "empty_the_middle",
+        "anchorId": "rock-full",
+        "detail": "11 note(s) moved out of G3-G5 in Chorus",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 100,
+            "after": 91.75,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 76.9,
+            "after": 81.85,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "flatten_velocities",
+        "anchorId": "rock-full",
+        "detail": "every velocity set to 69",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 79,
+            "kinds": [
+              "flat_dynamics",
+              "planned_contrast_unrealised"
+            ]
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 100,
+            "after": 96.7,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 76.9,
+            "after": 76.9,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 92.75,
+            "kinds": [
+              "unrealised_lift"
+            ]
+          }
+        }
+      },
+      {
+        "control": "shift_harmony_off_grid",
+        "anchorId": "rock-full",
+        "detail": "3 pitched part(s) delayed 110 ms against the kit",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 76.9,
+            "after": 68.65,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "silence_a_section",
+        "anchorId": "rock-full",
+        "detail": "Chorus emptied (146 notes)",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 92.5,
+            "kinds": [
+              "dropout"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 76.9,
+            "after": 88.45,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 89.75,
+            "kinds": [
+              "arrival_thinner_than_setup"
+            ]
+          }
+        }
+      },
+      {
+        "control": "stack_octave",
+        "anchorId": "rock-full",
+        "detail": "keys transposed -36 semitones onto bass",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 100,
+            "after": 64.95,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 76.9,
+            "after": 86.8,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "thin_bed_to_one_line",
+        "anchorId": "rock-full",
+        "detail": "guitar: 5 lower voice(s) removed, 7 kept",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 76.9,
+            "after": 76.9,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "thin_the_arrival",
+        "anchorId": "rock-full",
+        "detail": "135 note(s) removed from Chorus, the rest at half velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 76.9,
+            "after": 88.45,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 89.75,
+            "kinds": [
+              "arrival_thinner_than_setup"
+            ]
+          }
+        }
+      },
+      {
+        "control": "align_to_kit",
+        "anchorId": "dance-full",
+        "detail": "3 pitched part(s) snapped to the beat grid",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 96.79,
+            "after": 96.79,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 93.58,
+            "after": 87.16,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "boost_sub_bass",
+        "anchorId": "dance-full",
+        "detail": "bass and keys an octave down at 1.3x velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 96.79,
+            "after": 91.97,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 93.58,
+            "after": 67.99,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "clip_stem",
+        "anchorId": "dance-full",
+        "detail": "bass stem driven 6x and clipped",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 60.1,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 96.79,
+            "after": 96.79,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.58,
+            "after": 93.58,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_by_trim",
+        "anchorId": "dance-full",
+        "detail": "bass trimmed +24 dB in the render",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 0,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 96.79,
+            "after": 80.74,
+            "kinds": [
+              "mid_register_hole"
+            ]
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.58,
+            "after": 93.58,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_one_part",
+        "anchorId": "dance-full",
+        "detail": "bass at 127, everything else at 20",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 0,
+            "kinds": [
+              "part_dominates",
+              "part_inaudible"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 96.79,
+            "after": 75.92,
+            "kinds": [
+              "low_end_congestion",
+              "mid_register_hole"
+            ]
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 93.58,
+            "after": 82.34,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "empty_the_middle",
+        "anchorId": "dance-full",
+        "detail": "11 note(s) moved out of G3-G5 in Chorus 2",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 96.79,
+            "after": 96.79,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.58,
+            "after": 93.58,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "flatten_velocities",
+        "anchorId": "dance-full",
+        "detail": "every velocity set to 54",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 96.79,
+            "after": 96.79,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 93.58,
+            "after": 85.56,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "shift_harmony_off_grid",
+        "anchorId": "dance-full",
+        "detail": "3 pitched part(s) delayed 110 ms against the kit",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 96.79,
+            "after": 96.79,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 93.58,
+            "after": 90.37,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "silence_a_section",
+        "anchorId": "dance-full",
+        "detail": "Chorus 2 emptied (210 notes)",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 93.55,
+            "kinds": [
+              "dropout"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 96.79,
+            "after": 96.79,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.58,
+            "after": 93.58,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "stack_octave",
+        "anchorId": "dance-full",
+        "detail": "synth transposed -36 semitones onto bass",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 96.79,
+            "after": 83.95,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 93.58,
+            "after": 83.95,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "thin_bed_to_one_line",
+        "anchorId": "dance-full",
+        "detail": "keys: 11 lower voice(s) removed, 12 kept",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 96.79,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.58,
+            "after": 93.58,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "thin_the_arrival",
+        "anchorId": "dance-full",
+        "detail": "184 note(s) removed from Chorus 2, the rest at half velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 96.79,
+            "after": 96.79,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.58,
+            "after": 93.58,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "align_to_kit",
+        "anchorId": "acoustic-demo",
+        "detail": "2 pitched part(s) snapped to the beat grid",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 89.88,
+            "after": 89.88,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 93.17,
+            "after": 89.76,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "boost_sub_bass",
+        "anchorId": "acoustic-demo",
+        "detail": "bass and guitar an octave down at 1.3x velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 89.88,
+            "after": 86.46,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 93.17,
+            "after": 86.35,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "clip_stem",
+        "anchorId": "acoustic-demo",
+        "detail": "bass stem driven 6x and clipped",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 66.16,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 93.72,
+            "kinds": [
+              "clipped_stem"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 89.88,
+            "after": 89.88,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.17,
+            "after": 93.17,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_by_trim",
+        "anchorId": "acoustic-demo",
+        "detail": "bass trimmed +24 dB in the render",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 3.97,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 89.88,
+            "after": 89.88,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.17,
+            "after": 93.17,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_one_part",
+        "anchorId": "acoustic-demo",
+        "detail": "bass at 127, everything else at 20",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 17.81,
+            "kinds": [
+              "part_dominates",
+              "part_inaudible"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 89.88,
+            "after": 84.92,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 93.17,
+            "after": 79.53,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "empty_the_middle",
+        "anchorId": "acoustic-demo",
+        "detail": "13 note(s) moved out of G3-G5 in Chorus 2",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 89.88,
+            "after": 89.88,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 93.17,
+            "after": 88.06,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "flatten_velocities",
+        "anchorId": "acoustic-demo",
+        "detail": "every velocity set to 55",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 83.22,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 89.22,
+            "kinds": [
+              "planned_contrast_unrealised"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 89.88,
+            "after": 89.88,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 93.17,
+            "after": 84.64,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 92.59,
+            "kinds": [
+              "unrealised_lift"
+            ]
+          }
+        }
+      },
+      {
+        "control": "shift_harmony_off_grid",
+        "anchorId": "acoustic-demo",
+        "detail": "2 pitched part(s) delayed 110 ms against the kit",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 89.88,
+            "after": 89.88,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 93.17,
+            "after": 84.64,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 93.44,
+            "kinds": [
+              "dead_air_at_boundary"
+            ]
+          }
+        }
+      },
+      {
+        "control": "silence_a_section",
+        "anchorId": "acoustic-demo",
+        "detail": "Chorus 2 emptied (135 notes)",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 92.88,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 93.44,
+            "kinds": [
+              "dropout"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 89.88,
+            "after": 89.88,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.17,
+            "after": 93.17,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "stack_octave",
+        "anchorId": "acoustic-demo",
+        "detail": "guitar transposed -12 semitones onto bass",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 89.88,
+            "after": 86.46,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 93.17,
+            "after": 89.76,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 97.04,
+            "kinds": [
+              "unrealised_lift"
+            ]
+          }
+        }
+      },
+      {
+        "control": "thin_bed_to_one_line",
+        "anchorId": "acoustic-demo",
+        "detail": "guitar: 69 lower voice(s) removed, 114 kept",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 89.88,
+            "after": 96.7,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.17,
+            "after": 93.17,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "thin_the_arrival",
+        "anchorId": "acoustic-demo",
+        "detail": "29 note(s) removed from Chorus 2, the rest at half velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 82.94,
+            "kinds": [
+              "dropout",
+              "planned_contrast_unrealised"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 89.88,
+            "after": 89.88,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.17,
+            "after": 93.17,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "align_to_kit",
+        "anchorId": "orchestral-midi",
+        "detail": "4 pitched part(s) snapped to the beat grid",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 96.3,
+            "after": 96.3,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "boost_sub_bass",
+        "anchorId": "orchestral-midi",
+        "detail": "bass and brass an octave down at 1.3x velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 100,
+            "after": 96.3,
+            "kinds": [
+              "mid_register_hole"
+            ]
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 96.3,
+            "after": 92.6,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "clip_stem",
+        "anchorId": "orchestral-midi",
+        "detail": "bass stem driven 6x and clipped",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 40,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 93,
+            "kinds": [
+              "clipped_stem"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 96.3,
+            "after": 96.3,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_by_trim",
+        "anchorId": "orchestral-midi",
+        "detail": "bass trimmed +24 dB in the render",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 10.58,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 100,
+            "after": 90.75,
+            "kinds": [
+              "mid_register_hole"
+            ]
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 96.3,
+            "after": 96.3,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_one_part",
+        "anchorId": "orchestral-midi",
+        "detail": "bass at 127, everything else at 20",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 40,
+            "kinds": [
+              "part_dominates",
+              "part_inaudible"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 100,
+            "after": 90.75,
+            "kinds": [
+              "mid_register_hole"
+            ]
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 96.3,
+            "after": 90.75,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "empty_the_middle",
+        "anchorId": "orchestral-midi",
+        "detail": "66 note(s) moved out of G3-G5 in Chorus",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 96.3,
+            "after": 92.6,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "flatten_velocities",
+        "anchorId": "orchestral-midi",
+        "detail": "every velocity set to 58",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 85,
+            "kinds": [
+              "flat_dynamics"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 96.3,
+            "after": 96.3,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "shift_harmony_off_grid",
+        "anchorId": "orchestral-midi",
+        "detail": "4 pitched part(s) delayed 110 ms against the kit",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 96.3,
+            "after": 87.05,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "silence_a_section",
+        "anchorId": "orchestral-midi",
+        "detail": "Chorus emptied (208 notes)",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 91.25,
+            "kinds": [
+              "dropout"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 96.3,
+            "after": null,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "stack_octave",
+        "anchorId": "orchestral-midi",
+        "detail": "strings transposed -36 semitones onto bass",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 100,
+            "after": 87.05,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 96.3,
+            "after": 92.6,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "thin_the_arrival",
+        "anchorId": "orchestral-midi",
+        "detail": "140 note(s) removed from Chorus, the rest at half velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 96.3,
+            "after": null,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "align_to_kit",
+        "anchorId": "jazz-full",
+        "detail": "2 pitched part(s) snapped to the beat grid",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 88.97,
+            "after": 88.97,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "boost_sub_bass",
+        "anchorId": "jazz-full",
+        "detail": "bass and keys an octave down at 1.3x velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 100,
+            "after": 92.72,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 88.97,
+            "after": 88.97,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "clip_stem",
+        "anchorId": "jazz-full",
+        "detail": "bass stem driven 6x and clipped",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 72.63,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 92.13,
+            "kinds": [
+              "clipped_stem"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 88.97,
+            "after": 88.97,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_by_trim",
+        "anchorId": "jazz-full",
+        "detail": "bass trimmed +24 dB in the render",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 26.94,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 88.97,
+            "after": 88.97,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_one_part",
+        "anchorId": "jazz-full",
+        "detail": "bass at 127, everything else at 20",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 40,
+            "kinds": [
+              "part_dominates",
+              "part_inaudible"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 88.97,
+            "after": 83.46,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "empty_the_middle",
+        "anchorId": "jazz-full",
+        "detail": "24 note(s) moved out of G3-G5 in Chorus",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 88.97,
+            "after": 88.97,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "flatten_velocities",
+        "anchorId": "jazz-full",
+        "detail": "every velocity set to 66",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 91,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 88,
+            "kinds": [
+              "planned_contrast_unrealised"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 88.97,
+            "after": 83.46,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 93.06,
+            "kinds": [
+              "unrealised_lift"
+            ]
+          }
+        }
+      },
+      {
+        "control": "shift_harmony_off_grid",
+        "anchorId": "jazz-full",
+        "detail": "2 pitched part(s) delayed 110 ms against the kit",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 88.97,
+            "after": 88.97,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "silence_a_section",
+        "anchorId": "jazz-full",
+        "detail": "Chorus emptied (295 notes)",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 79.38,
+            "kinds": [
+              "dropout",
+              "planned_contrast_unrealised"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 88.97,
+            "after": 96.33,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 88,
+            "kinds": [
+              "arrival_thinner_than_setup"
+            ]
+          }
+        }
+      },
+      {
+        "control": "stack_octave",
+        "anchorId": "jazz-full",
+        "detail": "keys transposed -24 semitones onto bass",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 100,
+            "after": 72.63,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 88.97,
+            "after": 88.97,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "thin_bed_to_one_line",
+        "anchorId": "jazz-full",
+        "detail": "keys: 258 lower voice(s) removed, 197 kept",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 88.97,
+            "after": 88.97,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "thin_the_arrival",
+        "anchorId": "jazz-full",
+        "detail": "61 note(s) removed from Chorus, the rest at half velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 88,
+            "kinds": [
+              "planned_contrast_unrealised"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 88.97,
+            "after": 87.14,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "align_to_kit",
+        "anchorId": "cinematic-midi",
+        "detail": "4 pitched part(s) snapped to the beat grid",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 93.4,
+            "after": 90.1,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "boost_sub_bass",
+        "anchorId": "cinematic-midi",
+        "detail": "bass and brass an octave down at 1.3x velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 93.4,
+            "after": 90.1,
+            "kinds": [
+              "mid_register_hole"
+            ]
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "clip_stem",
+        "anchorId": "cinematic-midi",
+        "detail": "bass stem driven 6x and clipped",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 67,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_by_trim",
+        "anchorId": "cinematic-midi",
+        "detail": "bass trimmed +24 dB in the render",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 0,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 93.4,
+            "after": 85.15,
+            "kinds": [
+              "mid_register_hole"
+            ]
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_one_part",
+        "anchorId": "cinematic-midi",
+        "detail": "bass at 127, everything else at 20",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 31.25,
+            "kinds": [
+              "part_dominates",
+              "part_inaudible"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 93.4,
+            "after": 75.25,
+            "kinds": [
+              "low_end_congestion",
+              "mid_register_hole"
+            ]
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "empty_the_middle",
+        "anchorId": "cinematic-midi",
+        "detail": "16 note(s) moved out of G3-G5 in Chorus",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": true,
+            "before": 93.4,
+            "after": 90.1,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "flatten_velocities",
+        "anchorId": "cinematic-midi",
+        "detail": "every velocity set to 57",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 100,
+            "after": 91.75,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 72.25,
+            "kinds": [
+              "flat_dynamics",
+              "planned_contrast_unrealised"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 92.88,
+            "kinds": [
+              "unrealised_lift"
+            ]
+          }
+        }
+      },
+      {
+        "control": "shift_harmony_off_grid",
+        "anchorId": "cinematic-midi",
+        "detail": "4 pitched part(s) delayed 110 ms against the kit",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "silence_a_section",
+        "anchorId": "cinematic-midi",
+        "detail": "Chorus emptied (99 notes)",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 79.28,
+            "kinds": [
+              "dropout",
+              "planned_contrast_unrealised"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.4,
+            "after": null,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 83.22,
+            "kinds": [
+              "arrival_thinner_than_setup",
+              "dead_air_at_boundary"
+            ]
+          }
+        }
+      },
+      {
+        "control": "stack_octave",
+        "anchorId": "cinematic-midi",
+        "detail": "strings transposed -36 semitones onto bass",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": true,
+            "before": 93.4,
+            "after": 80.2,
+            "kinds": [
+              "low_end_congestion"
+            ]
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "thin_bed_to_one_line",
+        "anchorId": "cinematic-midi",
+        "detail": "keys: 136 lower voice(s) removed, 152 kept",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 93.4,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "thin_the_arrival",
+        "anchorId": "cinematic-midi",
+        "detail": "88 note(s) removed from Chorus, the rest at half velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 87.25,
+            "kinds": [
+              "planned_contrast_unrealised"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 93.4,
+            "after": 93.4,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 93.4,
+            "after": null,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 89.5,
+            "kinds": [
+              "arrival_thinner_than_setup"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "d3_render_failures": {
+    "question": "Why did every Tier S case report renderFailures = 5 in all three baselines?",
+    "causes": [
+      {
+        "check": "correct_sample_rate",
+        "wasNamed": "R-1 P1-5",
+        "finding": "arrangementBenchmark.ts:248 renders at 24 kHz; referenceRenderWorker.ts asserted `sampleRate === 48_000 || sampleRate === 44_100`, so every stem of every benchmark render was infeasible while the audio critic scored the same stems 86-94.",
+        "fix": "the check now verifies that the encoded WAV header carries the rate the caller asked for and that the rate is one the pipeline renders at (48 k / 44.1 k production, 24 k / 22.05 k speed renders). Rendering the benchmark at 48 kHz instead would have doubled its latency and broken comparability with both stored baselines for no gain in what the check exists to verify."
+      },
+      {
+        "check": "correct_note_events",
+        "wasNamed": "nobody — it was hidden behind the sample-rate failure",
+        "finding": "`countOnsets` was a percussive transient detector: 10 ms windows, a 2.2x rise and an absolute 0.01 floor. The V1 `strings` voice has a 90 ms attack and a 0.85 sustain, so a string entry has already flattened below 2.2x by the time it crosses 0.01, and overlapping pad notes never return to silence afterwards. orchestral-midi's strings stem (24 notes, peak −14.4 dBFS, 8 179 windows above the floor) counted 0 onsets; cinematic-midi's (11 notes) likewise. Both cases were 5/5 infeasible, and identically so at 48 kHz — the failure is sample-rate independent.",
+        "fix": "the check now counts how many planned notes are audible (RMS of each note's first 100 ms against the same −60 dBFS floor `non_silent` uses). Its strictness is unchanged (the old rule demanded `>= min(notes.length, 1)`); only the measurement is fixed, and the share is reported."
+      }
+    ],
+    "perCase": [
+      {
+        "caseId": "pop-full",
+        "candidatesInfeasibleAt24k": 0,
+        "candidatesInfeasibleAt48k": 0,
+        "soundingNotesPerStem": [
+          {
+            "part": "drums",
+            "notes": 250,
+            "sounding": 250,
+            "share": 1
+          },
+          {
+            "part": "bass",
+            "notes": 88,
+            "sounding": 88,
+            "share": 1
+          },
+          {
+            "part": "keys",
+            "notes": 302,
+            "sounding": 302,
+            "share": 1
+          }
+        ]
+      },
+      {
+        "caseId": "ballad-piano-vocal",
+        "candidatesInfeasibleAt24k": 0,
+        "candidatesInfeasibleAt48k": 0,
+        "soundingNotesPerStem": [
+          {
+            "part": "drums",
+            "notes": 85,
+            "sounding": 85,
+            "share": 1
+          },
+          {
+            "part": "bass",
+            "notes": 59,
+            "sounding": 59,
+            "share": 1
+          },
+          {
+            "part": "keys",
+            "notes": 161,
+            "sounding": 161,
+            "share": 1
+          }
+        ]
+      },
+      {
+        "caseId": "rock-full",
+        "candidatesInfeasibleAt24k": 0,
+        "candidatesInfeasibleAt48k": 0,
+        "soundingNotesPerStem": [
+          {
+            "part": "drums",
+            "notes": 215,
+            "sounding": 215,
+            "share": 1
+          },
+          {
+            "part": "bass",
+            "notes": 84,
+            "sounding": 84,
+            "share": 1
+          },
+          {
+            "part": "keys",
+            "notes": 253,
+            "sounding": 253,
+            "share": 1
+          },
+          {
+            "part": "guitar",
+            "notes": 12,
+            "sounding": 12,
+            "share": 1
+          }
+        ]
+      },
+      {
+        "caseId": "dance-full",
+        "candidatesInfeasibleAt24k": 0,
+        "candidatesInfeasibleAt48k": 0,
+        "soundingNotesPerStem": [
+          {
+            "part": "drums",
+            "notes": 577,
+            "sounding": 577,
+            "share": 1
+          },
+          {
+            "part": "bass",
+            "notes": 80,
+            "sounding": 80,
+            "share": 1
+          },
+          {
+            "part": "keys",
+            "notes": 23,
+            "sounding": 23,
+            "share": 1
+          },
+          {
+            "part": "synth",
+            "notes": 32,
+            "sounding": 32,
+            "share": 1
+          }
+        ]
+      },
+      {
+        "caseId": "acoustic-demo",
+        "candidatesInfeasibleAt24k": 0,
+        "candidatesInfeasibleAt48k": 0,
+        "soundingNotesPerStem": [
+          {
+            "part": "drums",
+            "notes": 204,
+            "sounding": 204,
+            "share": 1
+          },
+          {
+            "part": "bass",
+            "notes": 53,
+            "sounding": 53,
+            "share": 1
+          },
+          {
+            "part": "guitar",
+            "notes": 183,
+            "sounding": 183,
+            "share": 1
+          }
+        ]
+      },
+      {
+        "caseId": "orchestral-midi",
+        "candidatesInfeasibleAt24k": 0,
+        "candidatesInfeasibleAt48k": 0,
+        "soundingNotesPerStem": [
+          {
+            "part": "drums",
+            "notes": 105,
+            "sounding": 105,
+            "share": 1
+          },
+          {
+            "part": "bass",
+            "notes": 38,
+            "sounding": 38,
+            "share": 1
+          },
+          {
+            "part": "keys",
+            "notes": 164,
+            "sounding": 164,
+            "share": 1
+          },
+          {
+            "part": "brass",
+            "notes": 6,
+            "sounding": 6,
+            "share": 1
+          },
+          {
+            "part": "strings",
+            "notes": 24,
+            "sounding": 24,
+            "share": 1
+          }
+        ]
+      },
+      {
+        "caseId": "ethnic-vocal",
+        "candidatesInfeasibleAt24k": 0,
+        "candidatesInfeasibleAt48k": 0,
+        "soundingNotesPerStem": [
+          {
+            "part": "drums",
+            "notes": 109,
+            "sounding": 109,
+            "share": 1
+          },
+          {
+            "part": "bass",
+            "notes": 64,
+            "sounding": 64,
+            "share": 1
+          },
+          {
+            "part": "keys",
+            "notes": 388,
+            "sounding": 388,
+            "share": 1
+          }
+        ]
+      },
+      {
+        "caseId": "jazz-full",
+        "candidatesInfeasibleAt24k": 0,
+        "candidatesInfeasibleAt48k": 0,
+        "soundingNotesPerStem": [
+          {
+            "part": "drums",
+            "notes": 428,
+            "sounding": 428,
+            "share": 1
+          },
+          {
+            "part": "bass",
+            "notes": 92,
+            "sounding": 92,
+            "share": 1
+          },
+          {
+            "part": "keys",
+            "notes": 455,
+            "sounding": 455,
+            "share": 1
+          }
+        ]
+      },
+      {
+        "caseId": "cinematic-midi",
+        "candidatesInfeasibleAt24k": 0,
+        "candidatesInfeasibleAt48k": 0,
+        "soundingNotesPerStem": [
+          {
+            "part": "drums",
+            "notes": 44,
+            "sounding": 44,
+            "share": 1
+          },
+          {
+            "part": "bass",
+            "notes": 52,
+            "sounding": 52,
+            "share": 1
+          },
+          {
+            "part": "percussion",
+            "notes": 7,
+            "sounding": 7,
+            "share": 1
+          },
+          {
+            "part": "keys",
+            "notes": 288,
+            "sounding": 288,
+            "share": 1
+          },
+          {
+            "part": "brass",
+            "notes": 4,
+            "sounding": 4,
+            "share": 1
+          },
+          {
+            "part": "strings",
+            "notes": 11,
+            "sounding": 11,
+            "share": 1
+          }
+        ]
+      }
+    ],
+    "after": {
+      "candidatesInfeasibleAt24k": 0,
+      "candidatesInfeasibleAt48k": 0,
+      "soundingShareMin": 1
+    }
+  },
+  "d4_off_thread": {
+    "question": "Does the export render still block the API's event loop?",
+    "location": {
+      "location": "in_process",
+      "reason": "no render-worker bundle beside this module (unbundled run or test); rendering in-process",
+      "workers": 0
+    },
+    "note": "In this process there is no sibling render-worker bundle, so the location reads in_process; `renderOffThread.test.ts` builds one and measures the worker path (bytes identical, and a 25 ms timer on the main thread keeps firing throughout a whole-song render)."
+  }
+}
