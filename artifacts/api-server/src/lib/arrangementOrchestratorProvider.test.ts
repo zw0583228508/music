@@ -120,8 +120,10 @@ test("a StyleProfile in the parameters shapes the performance (PR-23); without o
   };
   const styled = await provider.generate({ ...generationInput(1), parameters: { styleProfile } });
   assert.equal(styled.candidates[0].parameters["performanceEngineVersion"], "2.0");
+  // Brain B-09: the profile is adapted into the StyleGrammar; what the producer
+  // stated and what the vocabulary implied from his words are both `brief`.
   assert.deepEqual(styled.candidates[0].parameters["performanceStyleInputs"], [
-    "swingRatio=0.64 (stated)", "microtiming=behind (inferred)",
+    "swingRatio=0.64 (brief)", "microtiming=behind (brief)",
   ]);
   // The style changed the performed notes, and the evidence still seals them.
   const plainNotes = JSON.stringify(plain.candidates[0].trackModels!.map((t) => t.notes));

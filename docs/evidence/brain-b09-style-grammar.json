@@ -1,0 +1,3043 @@
+{
+  "title": "Brain B-09: one style contract (StyleGrammar) - the owner's brief resolved with confidence and provenance, the planner / StyleSpec / PerformanceStyle / slot as projections, research as constraints",
+  "date": "2026-09-10",
+  "stream": "B-09 (style intelligence specialist)",
+  "baseCommit": "a751796 (origin/main)",
+  "regenerate": "node artifacts/api-server/scripts/brain-b09-style-evidence.mjs --out docs/evidence/brain-b09-style-grammar.json",
+  "fixture": "artifacts/api-server/src/lib/__fixtures__/rachemNaSongModelV3.ts (the owner's song, C minor, 130.43 BPM, 92 chords, 9 sections; no transcribed notes)",
+  "briefs": {
+    "verbatim": "intimate ballad; piano, soft strings, gentle bass, light percussion; big final chorus",
+    "withTradition": "intimate chassidic ballad; piano, soft strings, gentle bass, light percussion; big final chorus"
+  },
+  "ownerBrief": {
+    "verbatim": {
+      "terms": [
+        "genre:ballad",
+        "word:instrument=keys",
+        "word:instrument=strings",
+        "word:instrument=bass",
+        "word:instrument=percussion",
+        "aesthetic:intimate",
+        "word:tempo_feel=slow",
+        "word:production_feel=intimate",
+        "word:mood=intimate",
+        "word:energy=low"
+      ],
+      "knowledge": {
+        "entry": "ballad",
+        "chain": [
+          "ballad"
+        ],
+        "unknownLevels": [
+          "subgenre",
+          "tradition",
+          "era",
+          "ensemble"
+        ],
+        "ranked": [
+          {
+            "id": "ballad",
+            "score": 4,
+            "chain": [
+              "ballad"
+            ]
+          }
+        ]
+      },
+      "flags": [
+        "tempo_mismatch",
+        "generic_knowledge_entry"
+      ],
+      "walk": [
+        {
+          "level": "genre",
+          "status": "resolved",
+          "from": [
+            "brief",
+            "template"
+          ],
+          "resolved": 2,
+          "unknown": 0,
+          "contested": []
+        },
+        {
+          "level": "subgenre",
+          "status": "unknown",
+          "from": [],
+          "resolved": 0,
+          "unknown": 1,
+          "contested": []
+        },
+        {
+          "level": "tradition",
+          "status": "unknown",
+          "from": [],
+          "resolved": 0,
+          "unknown": 3,
+          "contested": []
+        },
+        {
+          "level": "era",
+          "status": "unknown",
+          "from": [],
+          "resolved": 0,
+          "unknown": 1,
+          "contested": [],
+          "note": "no source names an era; the knowledge base does not guess one"
+        },
+        {
+          "level": "ensemble",
+          "status": "partial",
+          "from": [
+            "brief"
+          ],
+          "resolved": 1,
+          "unknown": 2,
+          "contested": []
+        },
+        {
+          "level": "rhythmic",
+          "status": "partial",
+          "from": [
+            "template"
+          ],
+          "resolved": 7,
+          "unknown": 6,
+          "contested": [],
+          "note": "the style is felt slow but the song was measured at 130 BPM: whether that is the pulse or a multiple of it is not known (groove.feltPulse)"
+        },
+        {
+          "level": "harmonic",
+          "status": "partial",
+          "from": [
+            "fingerprint",
+            "template",
+            "brief"
+          ],
+          "resolved": 6,
+          "unknown": 8,
+          "contested": []
+        },
+        {
+          "level": "orchestration",
+          "status": "partial",
+          "from": [
+            "template"
+          ],
+          "resolved": 5,
+          "unknown": 14,
+          "contested": []
+        },
+        {
+          "level": "aesthetic",
+          "status": "partial",
+          "from": [
+            "brief"
+          ],
+          "resolved": 2,
+          "unknown": 3,
+          "contested": []
+        },
+        {
+          "level": "performance",
+          "status": "partial",
+          "from": [
+            "brief",
+            "template"
+          ],
+          "resolved": 3,
+          "unknown": 8,
+          "contested": []
+        }
+      ],
+      "questions": [
+        {
+          "id": "style:groove.feltPulse",
+          "reason": "unknown",
+          "informationGain": 0.4,
+          "prompt": {
+            "en": "The song was measured at this tempo; is that the pulse you feel, or half of it?",
+            "he": "השיר נמדד בטמפו הזה; זה הדופק שאתה מרגיש, או חצי ממנו?"
+          },
+          "current": null,
+          "options": [
+            {
+              "value": "as_written",
+              "label": {
+                "en": "as written",
+                "he": "כמו שנמדד"
+              },
+              "effect": "grooveStrategy follows groove.family"
+            },
+            {
+              "value": "half_time",
+              "label": {
+                "en": "half time",
+                "he": "חצי מהטמפו (הרגשה איטית)"
+              },
+              "effect": "GlobalArrangementPlan.grooveStrategy → half_time_feel"
+            }
+          ]
+        },
+        {
+          "id": "style:identity.tradition",
+          "reason": "unknown",
+          "informationGain": 0.4,
+          "prompt": {
+            "en": "Which musical world should the arrangement speak?",
+            "he": "לאיזה עולם מוזיקלי העיבוד שייך?"
+          },
+          "current": null,
+          "options": [
+            {
+              "value": "hasidic",
+              "label": {
+                "en": "hasidic",
+                "he": "חסידי"
+              },
+              "effect": "which knowledge entry fills the unknowns (harmony, groove, orchestration)"
+            },
+            {
+              "value": "mizrahi",
+              "label": {
+                "en": "mizrahi",
+                "he": "מזרחי"
+              },
+              "effect": "which knowledge entry fills the unknowns (harmony, groove, orchestration)"
+            },
+            {
+              "value": "gospel",
+              "label": {
+                "en": "gospel",
+                "he": "גוספל"
+              },
+              "effect": "which knowledge entry fills the unknowns (harmony, groove, orchestration)"
+            },
+            {
+              "value": "brazilian",
+              "label": {
+                "en": "brazilian",
+                "he": "ברזילאי"
+              },
+              "effect": "which knowledge entry fills the unknowns (harmony, groove, orchestration)"
+            }
+          ]
+        }
+      ],
+      "grammar": {
+        "version": "STYLE_GRAMMAR_V2",
+        "inputsDigestSha256": "3ae410f55b0076f5ae31040c2e59cf2bd3262fa4fe1f85927b886b0a0593c7bb",
+        "known": 26,
+        "total": 72,
+        "values": {
+          "identity.genre": {
+            "value": "ballad",
+            "confidence": 0.985,
+            "provenance": "brief",
+            "sourceRefs": [
+              "brief:brief-c813b10a650a/dimension/genre",
+              "knowledge:ballad/identity.genre"
+            ]
+          },
+          "identity.knowledgeEntry": {
+            "value": "ballad",
+            "confidence": 0.9,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad"
+            ]
+          },
+          "groove.family": {
+            "value": "straight",
+            "confidence": 0.5,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad/groove.family"
+            ]
+          },
+          "groove.subdivision": {
+            "value": "8th",
+            "confidence": 0.5,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad/groove.subdivision"
+            ]
+          },
+          "groove.fillFrequency": {
+            "value": "rare",
+            "confidence": 0.77,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad/groove.fillFrequency",
+              "brief:brief-c813b10a650a/dimension/fillFrequency",
+              "vocab:profile"
+            ]
+          },
+          "groove.tempoBehavior": {
+            "value": "slow",
+            "confidence": 0.878,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad/groove.tempoBehavior",
+              "brief:brief-c813b10a650a/dimension/tempoBehavior",
+              "vocab:profile"
+            ]
+          },
+          "bass.attackPosition": {
+            "value": "sustained",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad/bass.attackPosition"
+            ]
+          },
+          "bass.motion": {
+            "value": "roots",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad/bass.motion"
+            ]
+          },
+          "harmony.extensions": {
+            "value": "triads",
+            "confidence": 0.99,
+            "provenance": "fingerprint",
+            "sourceRefs": [
+              "fingerprint:song_model/brief:brief-c813b10a650a"
+            ]
+          },
+          "harmony.harmonicRhythm": {
+            "value": "slow",
+            "confidence": 0.655,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad/harmony.harmonicRhythm",
+              "fingerprint:song_model/brief:brief-c813b10a650a"
+            ]
+          },
+          "harmony.chordsPerBar": {
+            "value": 0.65,
+            "confidence": 0.233,
+            "provenance": "fingerprint",
+            "sourceRefs": [
+              "fingerprint:song_model/brief:brief-c813b10a650a"
+            ]
+          },
+          "harmony.functionalMotion": {
+            "value": 0.659,
+            "confidence": 0.883,
+            "provenance": "fingerprint",
+            "sourceRefs": [
+              "fingerprint:song_model/brief:brief-c813b10a650a"
+            ]
+          },
+          "keys.chordRhythm": {
+            "value": "sustained",
+            "confidence": 0.713,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad/keys.chordRhythm",
+              "brief:brief-c813b10a650a/dimension/chordRhythm",
+              "vocab:profile"
+            ]
+          },
+          "keys.voicingWidth": {
+            "value": "close",
+            "confidence": 0.35,
+            "provenance": "brief",
+            "sourceRefs": [
+              "brief:brief-c813b10a650a/dimension/voicingWidth",
+              "vocab:profile"
+            ]
+          },
+          "strings.role": {
+            "value": "pad",
+            "confidence": 0.5,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad/strings.role"
+            ]
+          },
+          "strings.articulation": {
+            "value": "legato",
+            "confidence": 0.7,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad/strings.articulation"
+            ]
+          },
+          "melodic.phraseLength": {
+            "value": "regular",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad/melodic.phraseLength"
+            ]
+          },
+          "arrangement.textureLadder": {
+            "value": {
+              "intro": "duo",
+              "verse": "bed",
+              "prechorus": "full",
+              "chorus": "full",
+              "bridge": "bed",
+              "outro": "duo"
+            },
+            "confidence": 0.5,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad/arrangement.textureLadder"
+            ]
+          },
+          "arrangement.familyPriority": {
+            "value": [
+              "bass",
+              "percussion",
+              "keys",
+              "strings"
+            ],
+            "confidence": 0.85,
+            "provenance": "brief",
+            "sourceRefs": [
+              "brief:brief-c813b10a650a/instrumentation"
+            ]
+          },
+          "arrangement.globalDynamic": {
+            "value": "low",
+            "confidence": 0.85,
+            "provenance": "brief",
+            "sourceRefs": [
+              "brief:brief-c813b10a650a/decision/dec-dc5637af012f",
+              "text:soft",
+              "text:gentle"
+            ]
+          },
+          "arrangement.arcTemplate": {
+            "value": "intimate_ballad",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad/arrangement.arcTemplate"
+            ]
+          },
+          "arrangement.transitionLanguage": {
+            "value": "swells_and_builds",
+            "confidence": 0.5,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad/arrangement.transitionLanguage"
+            ]
+          },
+          "performance.articulationLanguage": {
+            "value": "legato",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:ballad/performance.articulationLanguage"
+            ]
+          },
+          "performance.dynamics": {
+            "value": "narrow",
+            "confidence": 0.35,
+            "provenance": "brief",
+            "sourceRefs": [
+              "brief:brief-c813b10a650a/dimension/dynamics",
+              "vocab:profile"
+            ]
+          },
+          "sound.aesthetic": {
+            "value": "intimate",
+            "confidence": 0.835,
+            "provenance": "brief",
+            "sourceRefs": [
+              "brief:brief-c813b10a650a/dimension/soundAesthetic",
+              "knowledge:ballad/sound.aesthetic"
+            ]
+          },
+          "sound.roomSize": {
+            "value": "small",
+            "confidence": 0.49,
+            "provenance": "brief",
+            "sourceRefs": [
+              "brief:brief-c813b10a650a/dimension/roomSize",
+              "vocab:profile"
+            ]
+          }
+        },
+        "unknown": [
+          "identity.subgenre",
+          "identity.tradition",
+          "identity.region",
+          "identity.era",
+          "identity.ensembleType",
+          "groove.swingRatio",
+          "groove.microtiming",
+          "groove.microtimingMs",
+          "groove.syncopation",
+          "groove.onsetsPerBeat",
+          "groove.kickSnareLanguage",
+          "groove.feltPulse",
+          "bass.register",
+          "bass.sustain",
+          "bass.lockToKick",
+          "harmony.passingChords",
+          "harmony.modalFlavour",
+          "harmony.parallelism",
+          "harmony.cadenceLanguage",
+          "keys.pedal",
+          "keys.registerCentre",
+          "keys.role",
+          "strings.register",
+          "strings.entry",
+          "brassWinds.role",
+          "brassWinds.articulation",
+          "melodic.ornamentation",
+          "melodic.ornamentDensity",
+          "melodic.phraseLengthBeats",
+          "melodic.stepwiseRatio",
+          "melodic.callAndResponse",
+          "melodic.pitchSystem",
+          "melodic.hookExpectation",
+          "arrangement.silenceConventions",
+          "arrangement.globalTexture",
+          "arrangement.registerTendency",
+          "arrangement.development",
+          "arrangement.phraseBehavior",
+          "arrangement.doubling",
+          "performance.articulationVocabulary",
+          "performance.velocityRange",
+          "performance.humanise",
+          "sound.instrumentation",
+          "sound.referenceInstruments",
+          "sound.saturation",
+          "sound.stereo"
+        ],
+        "conflicts": [],
+        "rules": [],
+        "slot": {
+          "status": "not_available",
+          "reason": "no measurement in the reference was far enough from neutral to become a rule (6 considered)"
+        },
+        "omitted": [
+          "groove: no onset evidence in the fingerprint (no transcribed notes) — swing, microtiming, syncopation and onset density stay unknown",
+          "melody: no melodic evidence in the fingerprint — phrase length, stepwise motion and ornamentation stay unknown",
+          "dynamics: no velocity evidence in the fingerprint — the dynamic range stays unknown",
+          "instrument-hierarchy: too close to neutral to be an instruction (weight 0)",
+          "energy-arc: not a style value (the arrangement arc reads the source energy from the musical map)",
+          "density: not a style value (density is the section planner's decision from the map)"
+        ],
+        "basis": {
+          "sources": [
+            "brief:brief-c813b10a650a",
+            "knowledge:ballad",
+            "fingerprint:song_model/brief:brief-c813b10a650a"
+          ],
+          "source": {
+            "kind": "song_model",
+            "id": "brief:brief-c813b10a650a",
+            "version": null
+          },
+          "durationSeconds": 259.45,
+          "sectionCount": 9,
+          "thinEvidence": false,
+          "caveat": "knowledge-base values are generalisations about a style, not measurements of this song; the brief and clear measurements outrank them"
+        }
+      }
+    },
+    "withTradition": {
+      "terms": [
+        "genre:ballad",
+        "word:instrument=keys",
+        "word:instrument=strings",
+        "word:instrument=bass",
+        "word:instrument=percussion",
+        "aesthetic:intimate",
+        "word:tempo_feel=slow",
+        "tradition:hasidic",
+        "word:production_feel=intimate",
+        "word:mood=intimate",
+        "word:energy=low"
+      ],
+      "knowledge": {
+        "entry": "chassidic_ballad",
+        "chain": [
+          "ballad",
+          "chassidic_ballad"
+        ],
+        "unknownLevels": [
+          "era"
+        ],
+        "ranked": [
+          {
+            "id": "chassidic_ballad",
+            "score": 7,
+            "chain": [
+              "ballad",
+              "chassidic_ballad"
+            ]
+          },
+          {
+            "id": "ballad",
+            "score": 4,
+            "chain": [
+              "ballad"
+            ]
+          }
+        ]
+      },
+      "flags": [
+        "tempo_mismatch"
+      ],
+      "walk": [
+        {
+          "level": "genre",
+          "status": "resolved",
+          "from": [
+            "brief",
+            "template"
+          ],
+          "resolved": 2,
+          "unknown": 0,
+          "contested": []
+        },
+        {
+          "level": "subgenre",
+          "status": "resolved",
+          "from": [
+            "template"
+          ],
+          "resolved": 1,
+          "unknown": 0,
+          "contested": []
+        },
+        {
+          "level": "tradition",
+          "status": "partial",
+          "from": [
+            "brief",
+            "template"
+          ],
+          "resolved": 2,
+          "unknown": 1,
+          "contested": []
+        },
+        {
+          "level": "era",
+          "status": "unknown",
+          "from": [],
+          "resolved": 0,
+          "unknown": 1,
+          "contested": [],
+          "note": "no source names an era; the knowledge base does not guess one"
+        },
+        {
+          "level": "ensemble",
+          "status": "resolved",
+          "from": [
+            "template",
+            "brief"
+          ],
+          "resolved": 3,
+          "unknown": 0,
+          "contested": [
+            "arrangement.familyPriority"
+          ]
+        },
+        {
+          "level": "rhythmic",
+          "status": "partial",
+          "from": [
+            "template"
+          ],
+          "resolved": 9,
+          "unknown": 4,
+          "contested": [],
+          "note": "the style is felt slow but the song was measured at 130 BPM: whether that is the pulse or a multiple of it is not known (groove.feltPulse)"
+        },
+        {
+          "level": "harmonic",
+          "status": "partial",
+          "from": [
+            "template",
+            "fingerprint"
+          ],
+          "resolved": 12,
+          "unknown": 2,
+          "contested": [
+            "keys.voicingWidth"
+          ]
+        },
+        {
+          "level": "orchestration",
+          "status": "partial",
+          "from": [
+            "template"
+          ],
+          "resolved": 17,
+          "unknown": 2,
+          "contested": []
+        },
+        {
+          "level": "aesthetic",
+          "status": "resolved",
+          "from": [
+            "brief",
+            "template"
+          ],
+          "resolved": 5,
+          "unknown": 0,
+          "contested": [
+            "sound.aesthetic",
+            "sound.roomSize"
+          ]
+        },
+        {
+          "level": "performance",
+          "status": "partial",
+          "from": [
+            "template",
+            "brief"
+          ],
+          "resolved": 8,
+          "unknown": 3,
+          "contested": [
+            "performance.dynamics"
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "id": "style:groove.feltPulse",
+          "reason": "unknown",
+          "informationGain": 0.4,
+          "prompt": {
+            "en": "The song was measured at this tempo; is that the pulse you feel, or half of it?",
+            "he": "השיר נמדד בטמפו הזה; זה הדופק שאתה מרגיש, או חצי ממנו?"
+          },
+          "current": null,
+          "options": [
+            {
+              "value": "as_written",
+              "label": {
+                "en": "as written",
+                "he": "כמו שנמדד"
+              },
+              "effect": "grooveStrategy follows groove.family"
+            },
+            {
+              "value": "half_time",
+              "label": {
+                "en": "half time",
+                "he": "חצי מהטמפו (הרגשה איטית)"
+              },
+              "effect": "GlobalArrangementPlan.grooveStrategy → half_time_feel"
+            }
+          ]
+        },
+        {
+          "id": "style:performance.dynamics",
+          "reason": "contested",
+          "informationGain": 0.348,
+          "prompt": {
+            "en": "How far should the dynamics travel between the quietest and the loudest moment?",
+            "he": "כמה רחוק הדינמיקה נעה בין הרגע השקט לרועש?"
+          },
+          "current": {
+            "value": "wide",
+            "confidence": 0.454,
+            "provenance": "template"
+          },
+          "options": [
+            {
+              "value": "wide",
+              "label": {
+                "en": "wide",
+                "he": "רחב"
+              },
+              "effect": "PerformanceStyle.dynamics → wide; StyleSpec.dynamics.range"
+            },
+            {
+              "value": "narrow",
+              "label": {
+                "en": "narrow",
+                "he": "צר"
+              },
+              "effect": "PerformanceStyle.dynamics → narrow; StyleSpec.dynamics.range"
+            }
+          ]
+        }
+      ],
+      "grammar": {
+        "version": "STYLE_GRAMMAR_V2",
+        "inputsDigestSha256": "4c7947c6bafcdbd26db088f6b821cd9bbb7de0b3c5bd0761a53c9c63219a0140",
+        "known": 59,
+        "total": 72,
+        "values": {
+          "identity.genre": {
+            "value": "ballad",
+            "confidence": 0.978,
+            "provenance": "brief",
+            "sourceRefs": [
+              "brief:brief-b3253b0d2867/dimension/genre",
+              "knowledge:chassidic_ballad/identity.genre"
+            ]
+          },
+          "identity.subgenre": {
+            "value": "chassidic_ballad",
+            "confidence": 0.8,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/identity.subgenre"
+            ]
+          },
+          "identity.tradition": {
+            "value": "hasidic",
+            "confidence": 0.985,
+            "provenance": "brief",
+            "sourceRefs": [
+              "brief:brief-b3253b0d2867/dimension/tradition",
+              "knowledge:chassidic_ballad/identity.tradition"
+            ]
+          },
+          "identity.ensembleType": {
+            "value": "keys_led_band_with_strings",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/identity.ensembleType"
+            ]
+          },
+          "identity.knowledgeEntry": {
+            "value": "chassidic_ballad",
+            "confidence": 0.99,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad"
+            ]
+          },
+          "groove.family": {
+            "value": "straight",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/groove.family"
+            ]
+          },
+          "groove.microtiming": {
+            "value": "on_top",
+            "confidence": 0.45,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/groove.microtiming"
+            ]
+          },
+          "groove.subdivision": {
+            "value": "8th",
+            "confidence": 0.55,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/groove.subdivision"
+            ]
+          },
+          "groove.kickSnareLanguage": {
+            "value": "soft_backbeat_late_entry",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/groove.kickSnareLanguage"
+            ]
+          },
+          "groove.fillFrequency": {
+            "value": "rare",
+            "confidence": 0.856,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/groove.fillFrequency",
+              "brief:brief-b3253b0d2867/dimension/fillFrequency",
+              "vocab:profile"
+            ]
+          },
+          "groove.tempoBehavior": {
+            "value": "slow",
+            "confidence": 0.899,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/groove.tempoBehavior",
+              "brief:brief-b3253b0d2867/dimension/tempoBehavior",
+              "vocab:profile"
+            ]
+          },
+          "bass.attackPosition": {
+            "value": "sustained",
+            "confidence": 0.7,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/bass.attackPosition"
+            ]
+          },
+          "bass.motion": {
+            "value": "roots",
+            "confidence": 0.7,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/bass.motion"
+            ]
+          },
+          "bass.register": {
+            "value": "low",
+            "confidence": 0.8,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/bass.register"
+            ]
+          },
+          "bass.sustain": {
+            "value": "long",
+            "confidence": 0.7,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/bass.sustain"
+            ]
+          },
+          "bass.lockToKick": {
+            "value": true,
+            "confidence": 0.5,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/bass.lockToKick"
+            ]
+          },
+          "harmony.extensions": {
+            "value": "triads",
+            "confidence": 0.99,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/harmony.extensions",
+              "fingerprint:song_model/brief:brief-b3253b0d2867"
+            ]
+          },
+          "harmony.harmonicRhythm": {
+            "value": "slow",
+            "confidence": 0.77,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/harmony.harmonicRhythm",
+              "fingerprint:song_model/brief:brief-b3253b0d2867"
+            ]
+          },
+          "harmony.chordsPerBar": {
+            "value": 0.65,
+            "confidence": 0.233,
+            "provenance": "fingerprint",
+            "sourceRefs": [
+              "fingerprint:song_model/brief:brief-b3253b0d2867"
+            ]
+          },
+          "harmony.functionalMotion": {
+            "value": 0.659,
+            "confidence": 0.883,
+            "provenance": "fingerprint",
+            "sourceRefs": [
+              "fingerprint:song_model/brief:brief-b3253b0d2867"
+            ]
+          },
+          "harmony.passingChords": {
+            "value": "sparse",
+            "confidence": 0.55,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/harmony.passingChords"
+            ]
+          },
+          "harmony.modalFlavour": {
+            "value": "harmonic_minor",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/harmony.modalFlavour"
+            ]
+          },
+          "harmony.parallelism": {
+            "value": "tolerated",
+            "confidence": 0.5,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/harmony.parallelism"
+            ]
+          },
+          "harmony.cadenceLanguage": {
+            "value": "V-i with the raised leading tone; iv-V-i; a Picardy third only at the very end",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/harmony.cadenceLanguage"
+            ]
+          },
+          "keys.chordRhythm": {
+            "value": "sustained",
+            "confidence": 0.741,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/keys.chordRhythm",
+              "brief:brief-b3253b0d2867/dimension/chordRhythm",
+              "vocab:profile"
+            ]
+          },
+          "keys.voicingWidth": {
+            "value": "open",
+            "confidence": 0.495,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/keys.voicingWidth"
+            ]
+          },
+          "keys.pedal": {
+            "value": "per_chord",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/keys.pedal"
+            ]
+          },
+          "keys.registerCentre": {
+            "value": "mid",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/keys.registerCentre"
+            ]
+          },
+          "keys.role": {
+            "value": "bed",
+            "confidence": 0.8,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/keys.role"
+            ]
+          },
+          "strings.role": {
+            "value": "pad",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/strings.role"
+            ]
+          },
+          "strings.articulation": {
+            "value": "legato",
+            "confidence": 0.8,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/strings.articulation"
+            ]
+          },
+          "strings.register": {
+            "value": "mid",
+            "confidence": 0.55,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/strings.register"
+            ]
+          },
+          "strings.entry": {
+            "value": "chorus",
+            "confidence": 0.55,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/strings.entry"
+            ]
+          },
+          "brassWinds.role": {
+            "value": "none",
+            "confidence": 0.45,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/brassWinds.role"
+            ]
+          },
+          "melodic.ornamentation": {
+            "value": "moderate",
+            "confidence": 0.55,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/melodic.ornamentation"
+            ]
+          },
+          "melodic.phraseLength": {
+            "value": "regular",
+            "confidence": 0.75,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/melodic.phraseLength"
+            ]
+          },
+          "melodic.callAndResponse": {
+            "value": "occasional",
+            "confidence": 0.45,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/melodic.callAndResponse"
+            ]
+          },
+          "melodic.pitchSystem": {
+            "value": "equal_12",
+            "confidence": 0.8,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/melodic.pitchSystem"
+            ]
+          },
+          "melodic.hookExpectation": {
+            "value": true,
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/melodic.hookExpectation"
+            ]
+          },
+          "arrangement.textureLadder": {
+            "value": {
+              "intro": "duo",
+              "verse": "bed",
+              "prechorus": "full",
+              "chorus": "full",
+              "bridge": "bed",
+              "outro": "duo"
+            },
+            "confidence": 0.55,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/arrangement.textureLadder"
+            ]
+          },
+          "arrangement.familyPriority": {
+            "value": [
+              "bass",
+              "percussion",
+              "keys",
+              "strings"
+            ],
+            "confidence": 0.733,
+            "provenance": "brief",
+            "sourceRefs": [
+              "brief:brief-b3253b0d2867/instrumentation"
+            ]
+          },
+          "arrangement.silenceConventions": {
+            "value": [
+              "drums enter late, often only at the first chorus",
+              "no fills under the sung line",
+              "the last verse or the bridge drops to piano and voice before the final chorus"
+            ],
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/arrangement.silenceConventions"
+            ]
+          },
+          "arrangement.globalDynamic": {
+            "value": "low",
+            "confidence": 0.85,
+            "provenance": "brief",
+            "sourceRefs": [
+              "brief:brief-b3253b0d2867/decision/dec-dc5637af012f",
+              "text:soft",
+              "text:gentle"
+            ]
+          },
+          "arrangement.arcTemplate": {
+            "value": "intimate_ballad",
+            "confidence": 0.7,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/arrangement.arcTemplate"
+            ]
+          },
+          "arrangement.registerTendency": {
+            "value": "mid",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/arrangement.registerTendency"
+            ]
+          },
+          "arrangement.transitionLanguage": {
+            "value": "swells_and_builds",
+            "confidence": 0.65,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/arrangement.transitionLanguage"
+            ]
+          },
+          "arrangement.development": {
+            "value": "additive",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/arrangement.development"
+            ]
+          },
+          "arrangement.phraseBehavior": {
+            "value": "sparse_answers",
+            "confidence": 0.5,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/arrangement.phraseBehavior"
+            ]
+          },
+          "arrangement.doubling": {
+            "value": "octaves",
+            "confidence": 0.5,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/arrangement.doubling"
+            ]
+          },
+          "performance.articulationVocabulary": {
+            "value": [
+              "legato",
+              "sustain",
+              "soft",
+              "swell"
+            ],
+            "confidence": 0.5,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/performance.articulationVocabulary"
+            ]
+          },
+          "performance.articulationLanguage": {
+            "value": "legato",
+            "confidence": 0.75,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/performance.articulationLanguage"
+            ]
+          },
+          "performance.dynamics": {
+            "value": "wide",
+            "confidence": 0.454,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/performance.dynamics"
+            ]
+          },
+          "performance.humanise": {
+            "value": "natural",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/performance.humanise"
+            ]
+          },
+          "sound.aesthetic": {
+            "value": "intimate",
+            "confidence": 0.765,
+            "provenance": "brief",
+            "sourceRefs": [
+              "brief:brief-b3253b0d2867/dimension/soundAesthetic",
+              "knowledge:chassidic_ballad/sound.aesthetic"
+            ]
+          },
+          "sound.instrumentation": {
+            "value": "hybrid",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/sound.instrumentation"
+            ]
+          },
+          "sound.referenceInstruments": {
+            "value": [
+              "grand piano",
+              "string ensemble",
+              "electric bass",
+              "soft kit or brushes",
+              "acoustic guitar",
+              "clarinet or flute obbligato"
+            ],
+            "confidence": 0.5,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/sound.referenceInstruments"
+            ]
+          },
+          "sound.roomSize": {
+            "value": "medium",
+            "confidence": 0.491,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/sound.roomSize"
+            ]
+          },
+          "sound.saturation": {
+            "value": "warm",
+            "confidence": 0.7,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/sound.saturation"
+            ]
+          },
+          "sound.stereo": {
+            "value": "natural",
+            "confidence": 0.7,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/sound.stereo"
+            ]
+          }
+        },
+        "unknown": [
+          "identity.region",
+          "identity.era",
+          "groove.swingRatio",
+          "groove.microtimingMs",
+          "groove.syncopation",
+          "groove.onsetsPerBeat",
+          "groove.feltPulse",
+          "brassWinds.articulation",
+          "melodic.ornamentDensity",
+          "melodic.phraseLengthBeats",
+          "melodic.stepwiseRatio",
+          "arrangement.globalTexture",
+          "performance.velocityRange"
+        ],
+        "conflicts": [
+          {
+            "path": "keys.voicingWidth",
+            "chosen": {
+              "value": "open",
+              "confidence": 0.495,
+              "provenance": "template"
+            },
+            "alternatives": [
+              {
+                "value": "close",
+                "confidence": 0.35,
+                "provenance": "brief",
+                "sourceRefs": [
+                  "brief:brief-b3253b0d2867/dimension/voicingWidth",
+                  "vocab:profile"
+                ]
+              }
+            ]
+          },
+          {
+            "path": "arrangement.familyPriority",
+            "chosen": {
+              "value": [
+                "bass",
+                "percussion",
+                "keys",
+                "strings"
+              ],
+              "confidence": 0.733,
+              "provenance": "brief"
+            },
+            "alternatives": [
+              {
+                "value": [
+                  "keys",
+                  "strings",
+                  "bass",
+                  "drums",
+                  "guitar"
+                ],
+                "confidence": 0.55,
+                "provenance": "template",
+                "sourceRefs": [
+                  "knowledge:chassidic_ballad/arrangement.familyPriority"
+                ]
+              },
+              {
+                "value": [
+                  "guitar",
+                  "keys",
+                  "strings",
+                  "bass",
+                  "drums"
+                ],
+                "confidence": 0.4,
+                "provenance": "template",
+                "sourceRefs": [
+                  "knowledge:chassidic_ballad/arrangement.familyPriority"
+                ]
+              }
+            ]
+          },
+          {
+            "path": "performance.dynamics",
+            "chosen": {
+              "value": "wide",
+              "confidence": 0.454,
+              "provenance": "template"
+            },
+            "alternatives": [
+              {
+                "value": "narrow",
+                "confidence": 0.35,
+                "provenance": "brief",
+                "sourceRefs": [
+                  "brief:brief-b3253b0d2867/dimension/dynamics",
+                  "vocab:profile"
+                ]
+              }
+            ]
+          },
+          {
+            "path": "sound.aesthetic",
+            "chosen": {
+              "value": "intimate",
+              "confidence": 0.765,
+              "provenance": "brief"
+            },
+            "alternatives": [
+              {
+                "value": "polished_pop",
+                "confidence": 0.4,
+                "provenance": "template",
+                "sourceRefs": [
+                  "knowledge:chassidic_ballad/sound.aesthetic"
+                ]
+              }
+            ]
+          },
+          {
+            "path": "sound.roomSize",
+            "chosen": {
+              "value": "medium",
+              "confidence": 0.491,
+              "provenance": "template"
+            },
+            "alternatives": [
+              {
+                "value": "small",
+                "confidence": 0.49,
+                "provenance": "brief",
+                "sourceRefs": [
+                  "brief:brief-b3253b0d2867/dimension/roomSize",
+                  "vocab:profile"
+                ]
+              }
+            ]
+          }
+        ],
+        "rules": [],
+        "slot": {
+          "status": "not_available",
+          "reason": "no measurement in the reference was far enough from neutral to become a rule (7 considered)"
+        },
+        "omitted": [
+          "groove: no onset evidence in the fingerprint (no transcribed notes) — swing, microtiming, syncopation and onset density stay unknown",
+          "melody: no melodic evidence in the fingerprint — phrase length, stepwise motion and ornamentation stay unknown",
+          "dynamics: no velocity evidence in the fingerprint — the dynamic range stays unknown",
+          "instrument-hierarchy: too close to neutral to be an instruction (weight 0)",
+          "energy-arc: not a style value (the arrangement arc reads the source energy from the musical map)",
+          "density: not a style value (density is the section planner's decision from the map)",
+          "microtiming: too close to neutral to be an instruction (offset 0 ms)"
+        ],
+        "basis": {
+          "sources": [
+            "brief:brief-b3253b0d2867",
+            "knowledge:chassidic_ballad",
+            "fingerprint:song_model/brief:brief-b3253b0d2867"
+          ],
+          "source": {
+            "kind": "song_model",
+            "id": "brief:brief-b3253b0d2867",
+            "version": null
+          },
+          "durationSeconds": 259.45,
+          "sectionCount": 9,
+          "thinEvidence": false,
+          "caveat": "knowledge-base values are generalisations about a style, not measurements of this song; the brief and clear measurements outrank them"
+        }
+      }
+    },
+    "globalLowDynamic": {
+      "claim": "\"soft strings, gentle bass\" is a global low-dynamic decision (B-01's request to B-09)",
+      "grammarValue": {
+        "value": "low",
+        "confidence": 0.85,
+        "provenance": "brief",
+        "sourceRefs": [
+          "brief:brief-b3253b0d2867/decision/dec-dc5637af012f",
+          "text:soft",
+          "text:gentle"
+        ],
+        "rationale": "low energy overall"
+      },
+      "plannerLever": {
+        "globalDynamicSteps": -1,
+        "evidence": [
+          "style grammar arrangement.globalDynamic=low (brief 0.85) → every section -1 marking"
+        ]
+      }
+    }
+  },
+  "planner": {
+    "before_noBrief_mapHeuristics": {
+      "style": "unknown",
+      "substyle": null,
+      "productionAesthetic": "intimate",
+      "grooveStrategy": "four_on_floor",
+      "arcTemplate": "intimate_ballad",
+      "climax": "Chorus 3",
+      "styleDecisions": {
+        "styleGrammarSha256": null,
+        "style": "map_heuristic",
+        "productionAesthetic": "map_heuristic",
+        "grooveStrategy": "map_heuristic"
+      },
+      "palette": [
+        "drums",
+        "bass",
+        "keys"
+      ]
+    },
+    "after_briefVerbatim": {
+      "style": "ballad",
+      "substyle": null,
+      "productionAesthetic": "intimate",
+      "grooveStrategy": "steady_pulse",
+      "arcTemplate": "intimate_ballad",
+      "climax": "Chorus 3",
+      "styleDecisions": {
+        "styleGrammarSha256": "3ae410f55b0076f5ae31040c2e59cf2bd3262fa4fe1f85927b886b0a0593c7bb",
+        "style": "brief",
+        "productionAesthetic": "brief",
+        "grooveStrategy": "template"
+      },
+      "palette": [
+        "drums",
+        "percussion",
+        "bass",
+        "keys",
+        "strings"
+      ]
+    },
+    "after_briefWithTradition": {
+      "style": "ballad",
+      "substyle": "chassidic_ballad",
+      "productionAesthetic": "intimate",
+      "grooveStrategy": "steady_pulse",
+      "arcTemplate": "intimate_ballad",
+      "climax": "Chorus 3",
+      "styleDecisions": {
+        "styleGrammarSha256": "4c7947c6bafcdbd26db088f6b821cd9bbb7de0b3c5bd0761a53c9c63219a0140",
+        "style": "brief",
+        "productionAesthetic": "brief",
+        "grooveStrategy": "template"
+      },
+      "palette": [
+        "drums",
+        "percussion",
+        "bass",
+        "keys",
+        "strings"
+      ]
+    },
+    "after_answeringFeltPulseHalfTime": {
+      "style": "ballad",
+      "substyle": "chassidic_ballad",
+      "productionAesthetic": "intimate",
+      "grooveStrategy": "half_time_feel",
+      "arcTemplate": "intimate_ballad",
+      "climax": "Chorus 3",
+      "styleDecisions": {
+        "styleGrammarSha256": "bb414ff5aa7052fb6bda854f61f2f1fc4544ca06cdf0a7306a2f500d4b06789e",
+        "style": "brief",
+        "productionAesthetic": "brief",
+        "grooveStrategy": "brief"
+      },
+      "palette": [
+        "drums",
+        "percussion",
+        "bass",
+        "keys",
+        "strings"
+      ]
+    },
+    "hintsEvidence": {
+      "verbatim": [
+        "dec-dc5637af012f: global energy low (prior ×0.85)",
+        "style grammar arrangement.globalDynamic=low (brief 0.85) → every section -1 marking",
+        "Chorus 3: energy bias 0.3 (inferred) → +1 marking (prior ×0.939)",
+        "Chorus 3: density bias 0.3 (stated) → +1 texture level (prior ×1.105)",
+        "palette +bass (foundation, stated)",
+        "palette +percussion (foundation, stated)",
+        "palette +keys (feature, stated)",
+        "palette +strings (feature, stated)",
+        "family priority bass > percussion > keys > strings (brief tiers)",
+        "arc template intimate_ballad (\"intimate\")",
+        "style grammar 3ae410f55b00: knowledge entry ballad, 26 of 72 fields known, 2 question(s) worth asking"
+      ],
+      "withTradition": [
+        "dec-dc5637af012f: global energy low (prior ×0.85)",
+        "style grammar arrangement.globalDynamic=low (brief 0.85) → every section -1 marking",
+        "Chorus 3: energy bias 0.3 (inferred) → +1 marking (prior ×0.939)",
+        "Chorus 3: density bias 0.3 (stated) → +1 texture level (prior ×1.105)",
+        "palette +bass (foundation, stated)",
+        "palette +percussion (foundation, stated)",
+        "palette +keys (feature, stated)",
+        "palette +strings (feature, stated)",
+        "family priority bass > percussion > keys > strings (brief tiers)",
+        "arc template intimate_ballad (\"intimate\")",
+        "style grammar 4c7947c6bafc: knowledge entry chassidic_ballad, 59 of 72 fields known, 2 question(s) worth asking"
+      ]
+    }
+  },
+  "fingerprintGrammar": {
+    "before_a751796_onThisFixture": {
+      "note": "captured in this session by running a751796's deriveStyleGrammar on the fixture: eleven rules, five of them weight 1 from zero data (no transcribed notes)",
+      "rules": [
+        [
+          "chord-extensions",
+          1
+        ],
+        [
+          "onset-density",
+          1,
+          "target 0"
+        ],
+        [
+          "phrase-length",
+          1,
+          "0 beats"
+        ],
+        [
+          "stepwise-motion",
+          1,
+          "target 0"
+        ],
+        [
+          "functional-motion",
+          0.883
+        ],
+        [
+          "density",
+          0.8,
+          "0 notes per bar"
+        ],
+        [
+          "syncopation",
+          0.667,
+          "target 0"
+        ],
+        [
+          "energy-arc",
+          0.6
+        ],
+        [
+          "dynamic-range",
+          0.5,
+          "0-0"
+        ],
+        [
+          "harmonic-rhythm",
+          0.233
+        ],
+        [
+          "ornamentation",
+          0.2,
+          "target 0"
+        ]
+      ]
+    },
+    "after": {
+      "version": "STYLE_GRAMMAR_V2",
+      "inputsDigestSha256": "82d2e7262bf70bdb637599b4dd7870e7decc7464e30a087d5fca323d9d0f4232",
+      "known": 4,
+      "total": 72,
+      "values": {
+        "harmony.extensions": {
+          "value": "triads",
+          "confidence": 0.99,
+          "provenance": "fingerprint",
+          "sourceRefs": [
+            "fingerprint:song_model/rachem-na"
+          ]
+        },
+        "harmony.harmonicRhythm": {
+          "value": "slow",
+          "confidence": 0.233,
+          "provenance": "fingerprint",
+          "sourceRefs": [
+            "fingerprint:song_model/rachem-na"
+          ]
+        },
+        "harmony.chordsPerBar": {
+          "value": 0.65,
+          "confidence": 0.233,
+          "provenance": "fingerprint",
+          "sourceRefs": [
+            "fingerprint:song_model/rachem-na"
+          ]
+        },
+        "harmony.functionalMotion": {
+          "value": 0.659,
+          "confidence": 0.883,
+          "provenance": "fingerprint",
+          "sourceRefs": [
+            "fingerprint:song_model/rachem-na"
+          ]
+        }
+      },
+      "unknown": [
+        "identity.genre",
+        "identity.subgenre",
+        "identity.tradition",
+        "identity.region",
+        "identity.era",
+        "identity.ensembleType",
+        "identity.knowledgeEntry",
+        "groove.family",
+        "groove.swingRatio",
+        "groove.microtiming",
+        "groove.microtimingMs",
+        "groove.subdivision",
+        "groove.syncopation",
+        "groove.onsetsPerBeat",
+        "groove.kickSnareLanguage",
+        "groove.fillFrequency",
+        "groove.tempoBehavior",
+        "groove.feltPulse",
+        "bass.attackPosition",
+        "bass.motion",
+        "bass.register",
+        "bass.sustain",
+        "bass.lockToKick",
+        "harmony.passingChords",
+        "harmony.modalFlavour",
+        "harmony.parallelism",
+        "harmony.cadenceLanguage",
+        "keys.chordRhythm",
+        "keys.voicingWidth",
+        "keys.pedal",
+        "keys.registerCentre",
+        "keys.role",
+        "strings.role",
+        "strings.articulation",
+        "strings.register",
+        "strings.entry",
+        "brassWinds.role",
+        "brassWinds.articulation",
+        "melodic.ornamentation",
+        "melodic.ornamentDensity",
+        "melodic.phraseLength",
+        "melodic.phraseLengthBeats",
+        "melodic.stepwiseRatio",
+        "melodic.callAndResponse",
+        "melodic.pitchSystem",
+        "melodic.hookExpectation",
+        "arrangement.textureLadder",
+        "arrangement.familyPriority",
+        "arrangement.silenceConventions",
+        "arrangement.globalDynamic",
+        "arrangement.globalTexture",
+        "arrangement.arcTemplate",
+        "arrangement.registerTendency",
+        "arrangement.transitionLanguage",
+        "arrangement.development",
+        "arrangement.phraseBehavior",
+        "arrangement.doubling",
+        "performance.articulationVocabulary",
+        "performance.articulationLanguage",
+        "performance.dynamics",
+        "performance.velocityRange",
+        "performance.humanise",
+        "sound.aesthetic",
+        "sound.instrumentation",
+        "sound.referenceInstruments",
+        "sound.roomSize",
+        "sound.saturation",
+        "sound.stereo"
+      ],
+      "conflicts": [],
+      "rules": [],
+      "slot": {
+        "status": "not_available",
+        "reason": "no measurement in the reference was far enough from neutral to become a rule (6 considered)"
+      },
+      "omitted": [
+        "groove: no onset evidence in the fingerprint (no transcribed notes) — swing, microtiming, syncopation and onset density stay unknown",
+        "melody: no melodic evidence in the fingerprint — phrase length, stepwise motion and ornamentation stay unknown",
+        "dynamics: no velocity evidence in the fingerprint — the dynamic range stays unknown",
+        "instrument-hierarchy: too close to neutral to be an instruction (weight 0)",
+        "energy-arc: not a style value (the arrangement arc reads the source energy from the musical map)",
+        "density: not a style value (density is the section planner's decision from the map)"
+      ],
+      "basis": {
+        "sources": [
+          "fingerprint:song_model/rachem-na"
+        ],
+        "source": {
+          "kind": "song_model",
+          "id": "rachem-na",
+          "version": null
+        },
+        "durationSeconds": 259.45,
+        "sectionCount": 9,
+        "thinEvidence": false,
+        "caveat": "derived from one reference: this describes how that reference behaves, not how a genre behaves"
+      }
+    }
+  },
+  "projections": {
+    "styleSpec_withTradition": {
+      "vocabulary": {
+        "groove": "straight",
+        "voicing": "open",
+        "articulation": "legato",
+        "instrumentation": "hybrid",
+        "phraseBehavior": "sparse_answers",
+        "fills": "none",
+        "transitions": "orchestral_swell",
+        "development": "additive"
+      },
+      "era": "unknown",
+      "rhythm": {
+        "swing": 0,
+        "syncopation": 0.42000000000000004,
+        "subdivision": "8th"
+      },
+      "harmonyVoicing": "open",
+      "dynamicsRange": 0.8,
+      "preferredFamilies": [
+        "bass",
+        "percussion",
+        "keys",
+        "strings"
+      ],
+      "styleResolution": {
+        "contractVersion": "STYLE_GRAMMAR_V2",
+        "inputsDigestSha256": "4c7947c6bafcdbd26db088f6b821cd9bbb7de0b3c5bd0761a53c9c63219a0140",
+        "sources": [
+          "brief:brief-b3253b0d2867",
+          "knowledge:chassidic_ballad",
+          "fingerprint:song_model/brief:brief-b3253b0d2867"
+        ],
+        "provenance": {
+          "groove": "template",
+          "voicing": "template",
+          "articulation": "template",
+          "instrumentation": "template",
+          "phraseBehavior": "template",
+          "fills": "template",
+          "transitions": "template",
+          "development": "template",
+          "era": "default",
+          "tempoCharacter": "default",
+          "swing": "default",
+          "syncopation": "default",
+          "subdivision": "template",
+          "preferredFamilies": "brief",
+          "dynamicsRange": "template"
+        }
+      }
+    },
+    "styleSpec_unknownStyleText": {
+      "vocabulary": {
+        "groove": "straight",
+        "voicing": "close",
+        "articulation": "tight",
+        "instrumentation": "hybrid",
+        "phraseBehavior": "continuous",
+        "fills": "cadential",
+        "transitions": "hard_cut",
+        "development": "repetition"
+      },
+      "styleResolution": {
+        "contractVersion": "STYLE_GRAMMAR_V2",
+        "inputsDigestSha256": "2da8a029e8396f51732755f024dc988f86bc491732b207a07fc62dd8a94b6fc9",
+        "sources": [],
+        "provenance": {
+          "groove": "default",
+          "voicing": "default",
+          "articulation": "default",
+          "instrumentation": "default",
+          "phraseBehavior": "default",
+          "fills": "default",
+          "transitions": "default",
+          "development": "default",
+          "era": "default",
+          "tempoCharacter": "default",
+          "swing": "default",
+          "syncopation": "default",
+          "subdivision": "default",
+          "preferredFamilies": "default",
+          "dynamicsRange": "default"
+        }
+      }
+    },
+    "performanceStyle_withTradition": {
+      "microtiming": "on_top",
+      "dynamics": "wide",
+      "melodicOrnamentation": "moderate",
+      "bassAttackPosition": "sustained",
+      "fillFrequency": "rare",
+      "articulationLanguage": "legato",
+      "sources": [
+        {
+          "dimension": "microtiming",
+          "value": "on_top",
+          "provenance": "template"
+        },
+        {
+          "dimension": "dynamics",
+          "value": "wide",
+          "provenance": "template"
+        },
+        {
+          "dimension": "melodicOrnamentation",
+          "value": "moderate",
+          "provenance": "template"
+        },
+        {
+          "dimension": "bassAttackPosition",
+          "value": "sustained",
+          "provenance": "template"
+        },
+        {
+          "dimension": "fillFrequency",
+          "value": "rare",
+          "provenance": "template"
+        },
+        {
+          "dimension": "articulationLanguage",
+          "value": "legato",
+          "provenance": "template"
+        }
+      ]
+    },
+    "performanceStyle_verbatim": {
+      "dynamics": "narrow",
+      "bassAttackPosition": "sustained",
+      "fillFrequency": "rare",
+      "articulationLanguage": "legato",
+      "sources": [
+        {
+          "dimension": "dynamics",
+          "value": "narrow",
+          "provenance": "brief"
+        },
+        {
+          "dimension": "bassAttackPosition",
+          "value": "sustained",
+          "provenance": "template"
+        },
+        {
+          "dimension": "fillFrequency",
+          "value": "rare",
+          "provenance": "template"
+        },
+        {
+          "dimension": "articulationLanguage",
+          "value": "legato",
+          "provenance": "template"
+        }
+      ]
+    },
+    "slot_withTradition": {
+      "status": "not_available",
+      "reason": "no measurement in the reference was far enough from neutral to become a rule (7 considered)"
+    }
+  },
+  "research": {
+    "fixtureProvider": {
+      "run": {
+        "evidence": [
+          {
+            "path": "groove.feltPulse",
+            "value": "half_time",
+            "confidence": 0.75,
+            "rationale": "chassidic ballads written above ~110 BPM are felt at half the written tempo",
+            "citations": [
+              {
+                "title": "FIXTURE: producer notes on chassidic ballad tempo",
+                "locator": "note 3"
+              }
+            ],
+            "providerId": "style-research-fixture/v1"
+          },
+          {
+            "path": "harmony.modalFlavour",
+            "value": "harmonic_minor",
+            "confidence": 0.8,
+            "rationale": "the raised seventh at cadences is the default colour",
+            "citations": [
+              {
+                "title": "FIXTURE: niggun repertoire survey",
+                "locator": "table 2"
+              }
+            ],
+            "providerId": "style-research-fixture/v1"
+          },
+          {
+            "path": "bass.motion",
+            "value": "roots",
+            "confidence": 0.55,
+            "rationale": "roots with an approach tone into the cadence",
+            "citations": [
+              {
+                "title": "FIXTURE: producer notes on chassidic ballad bass",
+                "locator": "note 5"
+              }
+            ],
+            "providerId": "style-research-fixture/v1"
+          },
+          {
+            "path": "identity.era",
+            "value": "2010s",
+            "confidence": 0.3,
+            "rationale": "too weak: the era cannot be told from the tradition alone",
+            "citations": [
+              {
+                "title": "FIXTURE: guess"
+              }
+            ],
+            "providerId": "style-research-fixture/v1"
+          },
+          {
+            "path": "keys.voicingWidth",
+            "value": "open",
+            "confidence": 0.85,
+            "rationale": "uncited on purpose (exercises the hearsay gate)",
+            "citations": [],
+            "providerId": "style-research-fixture/v1"
+          }
+        ],
+        "providers": [
+          {
+            "id": "style-research-fixture/v1",
+            "evidence": 5
+          }
+        ]
+      },
+      "counts": {
+        "evidence": 5,
+        "facts": 2,
+        "weak": 1,
+        "discarded": 2
+      },
+      "filled": [
+        {
+          "path": "groove.feltPulse",
+          "before": null,
+          "after": {
+            "value": "half_time",
+            "confidence": 0.75,
+            "provenance": "research",
+            "sourceRefs": [
+              "research:style-research-fixture/v1/FIXTURE: producer notes on chassidic ballad tempo#note 3"
+            ],
+            "rationale": "chassidic ballads written above ~110 BPM are felt at half the written tempo"
+          }
+        },
+        {
+          "path": "harmony.modalFlavour",
+          "before": {
+            "value": "harmonic_minor",
+            "confidence": 0.6,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/harmony.modalFlavour"
+            ],
+            "rationale": "minor with the raised seventh at cadences; some tunes lean freygish (Ahava Rabbah)"
+          },
+          "after": {
+            "value": "harmonic_minor",
+            "confidence": 0.92,
+            "provenance": "research",
+            "sourceRefs": [
+              "research:style-research-fixture/v1/FIXTURE: niggun repertoire survey#table 2",
+              "knowledge:chassidic_ballad/harmony.modalFlavour"
+            ],
+            "rationale": "the raised seventh at cadences is the default colour"
+          }
+        },
+        {
+          "path": "bass.motion",
+          "before": {
+            "value": "roots",
+            "confidence": 0.7,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/bass.motion"
+            ],
+            "rationale": "roots with the occasional passing tone into the cadence"
+          },
+          "after": {
+            "value": "roots",
+            "confidence": 0.865,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/bass.motion",
+              "research:style-research-fixture/v1/FIXTURE: producer notes on chassidic ballad bass#note 5"
+            ],
+            "rationale": "roots with the occasional passing tone into the cadence"
+          }
+        },
+        {
+          "path": "identity.era",
+          "before": null,
+          "after": null
+        },
+        {
+          "path": "keys.voicingWidth",
+          "before": {
+            "value": "open",
+            "confidence": 0.495,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/keys.voicingWidth"
+            ],
+            "rationale": "open keyboard voicings under the voice; close voicings feel thin here"
+          },
+          "after": {
+            "value": "open",
+            "confidence": 0.495,
+            "provenance": "template",
+            "sourceRefs": [
+              "knowledge:chassidic_ballad/keys.voicingWidth"
+            ],
+            "rationale": "open keyboard voicings under the voice; close voicings feel thin here"
+          }
+        }
+      ],
+      "questionsAfter": [
+        "style:performance.dynamics"
+      ],
+      "note": "every fixture citation is labelled FIXTURE; this exercises the gate and the merge, it is not research about the owner's world"
+    },
+    "liveProvider": {
+      "state": "not_configured",
+      "missing": [
+        "STYLE_RESEARCH_PROVIDER",
+        "STYLE_RESEARCH_API_URL",
+        "STYLE_RESEARCH_API_KEY"
+      ],
+      "requiredEnv": [
+        "STYLE_RESEARCH_PROVIDER",
+        "STYLE_RESEARCH_API_URL",
+        "STYLE_RESEARCH_API_KEY"
+      ],
+      "reason": "live style research is not configured (missing STYLE_RESEARCH_PROVIDER, STYLE_RESEARCH_API_URL, STYLE_RESEARCH_API_KEY); the resolver runs without research"
+    }
+  },
+  "ruleKindLedger": [
+    {
+      "ruleId": "swing",
+      "directiveKind": "swing",
+      "fate": "consumed_as_rule",
+      "path": "groove.swingRatio",
+      "consumers": [
+        "contextAwareComposer.applyGroove (slot rule)",
+        "performanceEngine.performanceStyleFromGrammar",
+        "musicEngines.createStyleSpec"
+      ],
+      "why": "the groove pass reads the ratio from the directive; the performance engine and StyleSpec read the value"
+    },
+    {
+      "ruleId": "microtiming",
+      "directiveKind": "microtiming",
+      "fate": "consumed_as_rule",
+      "path": "groove.microtiming",
+      "consumers": [
+        "performanceEngine.performanceStyleFromGrammar",
+        "contextAwareComposer.applyGroove (slot rule)"
+      ],
+      "why": "the groove pass reads the offset (groove.microtimingMs, or the class's nominal offset); the performance engine reads the class"
+    },
+    {
+      "ruleId": "syncopation",
+      "directiveKind": "ratio:syncopation",
+      "fate": "rehomed_as_value",
+      "path": "groove.syncopation",
+      "consumers": [
+        "globalArrangementPlanner.pickGroove",
+        "musicEngines.createStyleSpec"
+      ],
+      "why": "a syncopation share steers the groove strategy and StyleSpec.rhythm.syncopation; no composer pass read the rule"
+    },
+    {
+      "ruleId": "onset-density",
+      "directiveKind": "rate:onsetsPerBeat",
+      "fate": "rehomed_as_value",
+      "path": "groove.onsetsPerBeat",
+      "consumers": [
+        "musicEngines.createStyleSpec"
+      ],
+      "why": "onsets per beat chooses the StyleSpec subdivision (8th vs 16th); no composer pass read the rule"
+    },
+    {
+      "ruleId": "harmonic-rhythm",
+      "directiveKind": "rate:chordsPerBar",
+      "fate": "rehomed_as_value",
+      "path": "harmony.chordsPerBar",
+      "consumers": [],
+      "why": "kept as a value for B-02 harmony realisation; no production reader yet (honest limit)"
+    },
+    {
+      "ruleId": "chord-extensions",
+      "directiveKind": "chordExtensions",
+      "fate": "rehomed_as_value",
+      "path": "harmony.extensions",
+      "consumers": [
+        "musicEngines.createStyleSpec"
+      ],
+      "why": "extended vocabularies choose drop-2 voicings in StyleSpec.harmony.voicing; B-02 will read it for voicing costs"
+    },
+    {
+      "ruleId": "functional-motion",
+      "directiveKind": "ratio:functionalMotion",
+      "fate": "rehomed_as_value",
+      "path": "harmony.functionalMotion",
+      "consumers": [],
+      "why": "kept for B-02 (cadence and bass-line planning); no production reader yet (honest limit)"
+    },
+    {
+      "ruleId": "stepwise-motion",
+      "directiveKind": "ratio:stepwise",
+      "fate": "rehomed_as_value",
+      "path": "melodic.stepwiseRatio",
+      "consumers": [],
+      "why": "kept for B-10 melodic engine; no production reader yet (honest limit)"
+    },
+    {
+      "ruleId": "phrase-length",
+      "directiveKind": "phraseLength",
+      "fate": "rehomed_as_value",
+      "path": "melodic.phraseLengthBeats",
+      "consumers": [],
+      "why": "kept for B-10; no production reader yet (honest limit)"
+    },
+    {
+      "ruleId": "ornamentation",
+      "directiveKind": "ratio:ornamentation",
+      "fate": "rehomed_as_value",
+      "path": "melodic.ornamentation",
+      "consumers": [
+        "performanceEngine.performanceStyleFromGrammar"
+      ],
+      "why": "the performance engine's melodicOrnamentation now comes from the grammar"
+    },
+    {
+      "ruleId": "register",
+      "directiveKind": "register",
+      "fate": "rehomed_as_value",
+      "path": "arrangement.registerTendency",
+      "consumers": [],
+      "why": "kept for B-03 register plan; no production reader yet (honest limit)"
+    },
+    {
+      "ruleId": "dynamic-range",
+      "directiveKind": "velocityRange",
+      "fate": "rehomed_as_value",
+      "path": "performance.dynamics",
+      "consumers": [
+        "performanceEngine.performanceStyleFromGrammar",
+        "musicEngines.createStyleSpec"
+      ],
+      "why": "the performance engine's dynamics range and StyleSpec.dynamics.range read the class; the measured range rides along in performance.velocityRange"
+    },
+    {
+      "ruleId": "energy-arc",
+      "directiveKind": "arc",
+      "fate": "deleted",
+      "consumers": [],
+      "why": "the arrangement arc (B-01) reads the source energy from the musical map as a weak prior; a style rule repeating it was never an instruction and would make the source an intent"
+    },
+    {
+      "ruleId": "density",
+      "directiveKind": "rate:notesPerBar",
+      "fate": "deleted",
+      "consumers": [],
+      "why": "notes per bar is the section planner's decision from the arc and the map, not a style value"
+    },
+    {
+      "ruleId": "instrument-hierarchy",
+      "directiveKind": "hierarchy",
+      "fate": "rehomed_as_value",
+      "path": "arrangement.familyPriority",
+      "consumers": [
+        "briefToPlanner.briefPlannerHints"
+      ],
+      "why": "the brief's family priority is the first source; the knowledge base and the fingerprint hierarchy fill it when the brief names none"
+    }
+  ],
+  "consumers": [
+    {
+      "path": "identity.genre",
+      "level": "genre",
+      "consumers": [
+        "globalArrangementPlanner.pickStyle",
+        "arrangementArc.templateForStyle (via GlobalArrangementPlan.style)"
+      ],
+      "question": true
+    },
+    {
+      "path": "identity.subgenre",
+      "level": "subgenre",
+      "consumers": [
+        "globalArrangementPlanner.pickStyle"
+      ],
+      "question": false
+    },
+    {
+      "path": "identity.tradition",
+      "level": "tradition",
+      "consumers": [
+        "globalArrangementPlanner.pickStyle"
+      ],
+      "question": true
+    },
+    {
+      "path": "identity.region",
+      "level": "tradition",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "identity.era",
+      "level": "era",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "identity.ensembleType",
+      "level": "ensemble",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "identity.knowledgeEntry",
+      "level": "genre",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "groove.family",
+      "level": "rhythmic",
+      "consumers": [
+        "globalArrangementPlanner.pickGroove",
+        "musicEngines.createStyleSpec"
+      ],
+      "question": true
+    },
+    {
+      "path": "groove.swingRatio",
+      "level": "rhythmic",
+      "consumers": [
+        "contextAwareComposer.applyGroove (slot rule)",
+        "performanceEngine.performanceStyleFromGrammar",
+        "musicEngines.createStyleSpec"
+      ],
+      "question": false
+    },
+    {
+      "path": "groove.microtiming",
+      "level": "performance",
+      "consumers": [
+        "performanceEngine.performanceStyleFromGrammar",
+        "contextAwareComposer.applyGroove (slot rule)"
+      ],
+      "question": false
+    },
+    {
+      "path": "groove.microtimingMs",
+      "level": "performance",
+      "consumers": [
+        "contextAwareComposer.applyGroove (slot rule)"
+      ],
+      "question": false
+    },
+    {
+      "path": "groove.subdivision",
+      "level": "rhythmic",
+      "consumers": [
+        "musicEngines.createStyleSpec"
+      ],
+      "question": false
+    },
+    {
+      "path": "groove.syncopation",
+      "level": "rhythmic",
+      "consumers": [
+        "globalArrangementPlanner.pickGroove",
+        "musicEngines.createStyleSpec"
+      ],
+      "question": false
+    },
+    {
+      "path": "groove.onsetsPerBeat",
+      "level": "rhythmic",
+      "consumers": [
+        "musicEngines.createStyleSpec"
+      ],
+      "question": false
+    },
+    {
+      "path": "groove.kickSnareLanguage",
+      "level": "rhythmic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "groove.fillFrequency",
+      "level": "rhythmic",
+      "consumers": [
+        "performanceEngine.performanceStyleFromGrammar",
+        "musicEngines.createStyleSpec"
+      ],
+      "question": false
+    },
+    {
+      "path": "groove.tempoBehavior",
+      "level": "rhythmic",
+      "consumers": [
+        "globalArrangementPlanner.pickGroove",
+        "musicEngines.createStyleSpec"
+      ],
+      "question": false
+    },
+    {
+      "path": "groove.feltPulse",
+      "level": "rhythmic",
+      "consumers": [
+        "globalArrangementPlanner.pickGroove"
+      ],
+      "question": true
+    },
+    {
+      "path": "bass.attackPosition",
+      "level": "rhythmic",
+      "consumers": [
+        "performanceEngine.performanceStyleFromGrammar"
+      ],
+      "question": false
+    },
+    {
+      "path": "bass.motion",
+      "level": "rhythmic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "bass.register",
+      "level": "orchestration",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "bass.sustain",
+      "level": "orchestration",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "bass.lockToKick",
+      "level": "rhythmic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "harmony.extensions",
+      "level": "harmonic",
+      "consumers": [
+        "musicEngines.createStyleSpec"
+      ],
+      "question": true
+    },
+    {
+      "path": "harmony.harmonicRhythm",
+      "level": "harmonic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "harmony.chordsPerBar",
+      "level": "harmonic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "harmony.functionalMotion",
+      "level": "harmonic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "harmony.passingChords",
+      "level": "harmonic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "harmony.modalFlavour",
+      "level": "harmonic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "harmony.parallelism",
+      "level": "harmonic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "harmony.cadenceLanguage",
+      "level": "harmonic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "keys.chordRhythm",
+      "level": "rhythmic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "keys.voicingWidth",
+      "level": "harmonic",
+      "consumers": [
+        "musicEngines.createStyleSpec"
+      ],
+      "question": true
+    },
+    {
+      "path": "keys.pedal",
+      "level": "performance",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "keys.registerCentre",
+      "level": "orchestration",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "keys.role",
+      "level": "orchestration",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "strings.role",
+      "level": "orchestration",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "strings.articulation",
+      "level": "orchestration",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "strings.register",
+      "level": "orchestration",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "strings.entry",
+      "level": "orchestration",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "brassWinds.role",
+      "level": "orchestration",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "brassWinds.articulation",
+      "level": "orchestration",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "melodic.ornamentation",
+      "level": "performance",
+      "consumers": [
+        "performanceEngine.performanceStyleFromGrammar"
+      ],
+      "question": false
+    },
+    {
+      "path": "melodic.ornamentDensity",
+      "level": "performance",
+      "consumers": [
+        "performanceEngine.performanceStyleFromGrammar"
+      ],
+      "question": false
+    },
+    {
+      "path": "melodic.phraseLength",
+      "level": "harmonic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "melodic.phraseLengthBeats",
+      "level": "harmonic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "melodic.stepwiseRatio",
+      "level": "harmonic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "melodic.callAndResponse",
+      "level": "harmonic",
+      "consumers": [
+        "musicEngines.createStyleSpec"
+      ],
+      "question": false
+    },
+    {
+      "path": "melodic.pitchSystem",
+      "level": "tradition",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "melodic.hookExpectation",
+      "level": "harmonic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "arrangement.textureLadder",
+      "level": "orchestration",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "arrangement.familyPriority",
+      "level": "ensemble",
+      "consumers": [
+        "briefToPlanner.briefPlannerHints"
+      ],
+      "question": false
+    },
+    {
+      "path": "arrangement.silenceConventions",
+      "level": "orchestration",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "arrangement.globalDynamic",
+      "level": "performance",
+      "consumers": [
+        "briefToPlanner.briefPlannerHints"
+      ],
+      "question": false
+    },
+    {
+      "path": "arrangement.globalTexture",
+      "level": "orchestration",
+      "consumers": [
+        "briefToPlanner.briefPlannerHints"
+      ],
+      "question": false
+    },
+    {
+      "path": "arrangement.arcTemplate",
+      "level": "orchestration",
+      "consumers": [
+        "briefToPlanner.briefPlannerHints"
+      ],
+      "question": false
+    },
+    {
+      "path": "arrangement.registerTendency",
+      "level": "orchestration",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "arrangement.transitionLanguage",
+      "level": "orchestration",
+      "consumers": [
+        "musicEngines.createStyleSpec"
+      ],
+      "question": false
+    },
+    {
+      "path": "arrangement.development",
+      "level": "orchestration",
+      "consumers": [
+        "musicEngines.createStyleSpec"
+      ],
+      "question": false
+    },
+    {
+      "path": "arrangement.phraseBehavior",
+      "level": "orchestration",
+      "consumers": [
+        "musicEngines.createStyleSpec"
+      ],
+      "question": false
+    },
+    {
+      "path": "arrangement.doubling",
+      "level": "orchestration",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "performance.articulationVocabulary",
+      "level": "performance",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "performance.articulationLanguage",
+      "level": "performance",
+      "consumers": [
+        "musicEngines.createStyleSpec",
+        "performanceEngine.performanceStyleFromGrammar"
+      ],
+      "question": false
+    },
+    {
+      "path": "performance.dynamics",
+      "level": "performance",
+      "consumers": [
+        "performanceEngine.performanceStyleFromGrammar",
+        "musicEngines.createStyleSpec"
+      ],
+      "question": true
+    },
+    {
+      "path": "performance.velocityRange",
+      "level": "performance",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "performance.humanise",
+      "level": "performance",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "sound.aesthetic",
+      "level": "aesthetic",
+      "consumers": [
+        "globalArrangementPlanner.pickAesthetic",
+        "briefToPlanner.briefPlannerHints"
+      ],
+      "question": true
+    },
+    {
+      "path": "sound.instrumentation",
+      "level": "aesthetic",
+      "consumers": [
+        "musicEngines.createStyleSpec"
+      ],
+      "question": false
+    },
+    {
+      "path": "sound.referenceInstruments",
+      "level": "ensemble",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "sound.roomSize",
+      "level": "aesthetic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "sound.saturation",
+      "level": "aesthetic",
+      "consumers": [],
+      "question": false
+    },
+    {
+      "path": "sound.stereo",
+      "level": "aesthetic",
+      "consumers": [],
+      "question": false
+    }
+  ],
+  "knowledgeBase": {
+    "entries": [
+      {
+        "id": "chassidic_ballad",
+        "coverage": "owner_world",
+        "extends": "ballad",
+        "chain": [
+          "ballad",
+          "chassidic_ballad"
+        ],
+        "unknownLevels": [
+          "era"
+        ],
+        "values": 58,
+        "basis": "the owner's own tradition as he produces it (\"רחם נא\" v6 and his stated brief), plus the B-09 specialist's knowledge of the produced chassidic ballad; not measured from a corpus (no rights-clear corpus exists for this style, PR-76)"
+      },
+      {
+        "id": "chassidic_simcha_dance",
+        "coverage": "sketch",
+        "extends": null,
+        "chain": [
+          "chassidic_simcha_dance"
+        ],
+        "unknownLevels": [
+          "era",
+          "performance"
+        ],
+        "values": 19,
+        "basis": "a sketch by the B-09 specialist, to keep a fast hasidic brief off the ballad entry; performance practice and era deliberately unknown"
+      },
+      {
+        "id": "mizrahi_pop",
+        "coverage": "general_practice",
+        "extends": null,
+        "chain": [
+          "mizrahi_pop"
+        ],
+        "unknownLevels": [
+          "era"
+        ],
+        "values": 53,
+        "basis": "common practice of Israeli Mizrahi pop as the B-09 specialist knows it; the owner's world by proximity; not measured (no rights-clear corpus, PR-76)"
+      },
+      {
+        "id": "pop_ballad",
+        "coverage": "general_practice",
+        "extends": "ballad",
+        "chain": [
+          "ballad",
+          "pop_ballad"
+        ],
+        "unknownLevels": [
+          "tradition",
+          "era"
+        ],
+        "values": 29,
+        "basis": "common practice of the produced pop ballad; B-09 specialist, not measured"
+      },
+      {
+        "id": "singer_songwriter_acoustic",
+        "coverage": "general_practice",
+        "extends": null,
+        "chain": [
+          "singer_songwriter_acoustic"
+        ],
+        "unknownLevels": [
+          "subgenre",
+          "tradition",
+          "era"
+        ],
+        "values": 42,
+        "basis": "common practice of the acoustic singer-songwriter record; B-09 specialist, not measured"
+      },
+      {
+        "id": "rock",
+        "coverage": "general_practice",
+        "extends": null,
+        "chain": [
+          "rock"
+        ],
+        "unknownLevels": [
+          "subgenre",
+          "tradition",
+          "era"
+        ],
+        "values": 44,
+        "basis": "common practice of the rock band record; B-09 specialist, not measured"
+      },
+      {
+        "id": "edm_dance",
+        "coverage": "general_practice",
+        "extends": null,
+        "chain": [
+          "edm_dance"
+        ],
+        "unknownLevels": [
+          "subgenre",
+          "tradition",
+          "era"
+        ],
+        "values": 43,
+        "basis": "common practice of mainstream EDM; B-09 specialist, not measured"
+      },
+      {
+        "id": "jazz_standard",
+        "coverage": "general_practice",
+        "extends": null,
+        "chain": [
+          "jazz_standard"
+        ],
+        "unknownLevels": [
+          "tradition",
+          "era"
+        ],
+        "values": 48,
+        "basis": "common practice of the small-combo jazz standard; B-09 specialist, not measured"
+      },
+      {
+        "id": "orchestral_cinematic",
+        "coverage": "general_practice",
+        "extends": null,
+        "chain": [
+          "orchestral_cinematic"
+        ],
+        "unknownLevels": [
+          "subgenre",
+          "tradition",
+          "era"
+        ],
+        "values": 47,
+        "basis": "common practice of orchestral film writing; B-09 specialist, not measured"
+      },
+      {
+        "id": "gospel",
+        "coverage": "general_practice",
+        "extends": null,
+        "chain": [
+          "gospel"
+        ],
+        "unknownLevels": [
+          "subgenre",
+          "era"
+        ],
+        "values": 49,
+        "basis": "common practice of gospel; B-09 specialist, not measured"
+      },
+      {
+        "id": "bossa_latin",
+        "coverage": "general_practice",
+        "extends": null,
+        "chain": [
+          "bossa_latin"
+        ],
+        "unknownLevels": [
+          "era"
+        ],
+        "values": 47,
+        "basis": "common practice of bossa nova; B-09 specialist, not measured"
+      },
+      {
+        "id": "hip_hop_rnb",
+        "coverage": "general_practice",
+        "extends": null,
+        "chain": [
+          "hip_hop_rnb"
+        ],
+        "unknownLevels": [
+          "subgenre",
+          "tradition",
+          "era"
+        ],
+        "values": 48,
+        "basis": "common practice of hip-hop and R&B production; B-09 specialist, not measured"
+      },
+      {
+        "id": "ballad",
+        "coverage": "general_practice",
+        "extends": null,
+        "chain": [
+          "ballad"
+        ],
+        "unknownLevels": [
+          "subgenre",
+          "tradition",
+          "era",
+          "ensemble"
+        ],
+        "values": 17,
+        "basis": "common practice of the slow sung song across traditions; written by the B-09 style specialist, not measured"
+      },
+      {
+        "id": "pop",
+        "coverage": "general_practice",
+        "extends": null,
+        "chain": [
+          "pop"
+        ],
+        "unknownLevels": [
+          "subgenre",
+          "tradition",
+          "era"
+        ],
+        "values": 40,
+        "basis": "common practice of produced pop; B-09 specialist, not measured"
+      }
+    ],
+    "fieldsFilledByAnyEntry": 59,
+    "totalFields": 72
+  },
+  "capabilityLadder": {
+    "Style intelligence as one contract (StyleGrammar)": "INTEGRATED + TESTED (unit): sectioned contract with confidence/provenance per value; read on the production path by briefPlannerHints -> plannerHintsForJob -> the planner's pickStyle/pickAesthetic/pickGroove, by createStyleSpec (materializeCandidate) and by performanceStyleFromProfile (provider, scoped regeneration). Not BENCHMARKED, not VALIDATED ON OUTPUT: no arrangement was rendered under it.",
+    "Modular knowledge base (genres as data)": "IMPLEMENTED + TESTED (schema validation, matching): 14 entries; one owner-world entry; every era unknown.",
+    "Resolver with ten-level walk and questions": "IMPLEMENTED + TESTED: deterministic; owner's brief yields two questions.",
+    "Research -> constraints": "IMPLEMENTED + TESTED with the fixture provider only; the live provider is an explicit not_configured state (no transport, no live call).",
+    "13 unconsumed rule kinds": "resolved: 2 consumed as slot rules, 11 re-homed as section values (7 of them with a production consumer), 2 deleted (energy-arc, density)."
+  },
+  "changesNeededInFilesNotOwned": [
+    {
+      "file": "artifacts/api-server/src/lib/arrangementOrchestrator.ts",
+      "where": "styleGrammarFor(...)",
+      "proposal": "merge the job's brief grammar with the song's fingerprint: `resolveStyle({ prior: plannerHints?.global?.styleGrammar, fingerprint })` instead of the fingerprint alone, so the composer slot and the planner read one grammar (today the slot is fingerprint-only, the planner brief-first)."
+    },
+    {
+      "file": "artifacts/api-server/src/lib/partGenerationContextV2.ts",
+      "where": "PartGenerationRequestV2",
+      "proposal": "carry the sectioned grammar (`style?: StyleGrammar`) beside the rule slot, so B-02 (harmony.*, keys.voicingWidth, harmony.parallelism), B-04 (groove.*, bass.*, arrangement.silenceConventions) and B-10 (melodic.*) read values instead of rules."
+    },
+    {
+      "file": "artifacts/api-server/src/lib/arrangementArc.ts",
+      "where": "templateForStyle / deriveArrangementArc",
+      "proposal": "one-line adapter: when `hints.styleGrammar?.arrangement.textureLadder` exists (template provenance), use it as the function -> texture defaults instead of the built-in template's ladder; `arrangement.arcTemplate` already reaches the arc through briefToPlanner."
+    },
+    {
+      "file": "artifacts/api-server/src/lib/arrangementGeneration.ts",
+      "where": "materializeCandidate / createStyleSpec call",
+      "proposal": "pass the job's brief grammar (`briefHints.global.styleGrammar`) as the fourth argument so the persisted StyleSpec is the brief's projection, not the style string's."
+    },
+    {
+      "file": "artifacts/api-server/src/lib/musicCritic.ts",
+      "where": "wantsHook whitelist",
+      "proposal": "read `grammar.melodic.hookExpectation` instead of `[\"pop\",\"rock\",\"dance\"].includes(style)`."
+    },
+    {
+      "file": "artifacts/api-server/src/lib/voiceLeading.ts",
+      "where": "cost table",
+      "proposal": "B-02: scale `parallelPerfect` by `harmony.parallelism` (avoid / tolerated / characteristic)."
+    },
+    {
+      "file": "artifacts/api-server/src/lib/soundSelectionBrain.ts",
+      "where": "sound selection",
+      "proposal": "read `sound.referenceInstruments` and `strings.*` / `brassWinds.*` roles when choosing assets (B-03)."
+    },
+    {
+      "file": "artifacts/api-server/scripts/run-focused-api-tests.mjs",
+      "where": "whole file",
+      "proposal": "REPAIRED IN THIS PR (not a proposal): main carried the file twice after #120 (node --check failed: 'spawn' declared twice); the pre-B-01 file was kept and B-01's two entries ported into it."
+    }
+  ],
+  "honestLimits": [
+    "Knowledge base coverage: 14 entries written by the B-09 specialist from common practice, not measured from a corpus; one entry (chassidic ballad) is the owner's world by proximity to his own production, not reviewed line by line by him; the simcha entry is a sketch; era is unknown everywhere; genres outside the list (blues, country, reggae, funk, classical, klezmer...) resolve to no entry and stay unknown.",
+    "Research is unwired: the live provider is an interface with a not_configured state and the env vars it would need; only the fixture provider ran, and its citations are labelled FIXTURE. No claim about a style was researched.",
+    "Two grammars can exist on one job: the planner reads the brief's grammar (hints), the composer slot still comes from the fingerprint alone (arrangementOrchestrator.styleGrammarFor, not owned) - see changesNeededInFilesNotOwned.",
+    "Consumers not yet reading some sections: strings.*, brassWinds.*, keys.chordRhythm/pedal/role, bass.motion/register/sustain/lockToKick, harmony.modalFlavour/parallelism/cadenceLanguage/passingChords/harmonicRhythm/chordsPerBar/functionalMotion, melodic.phraseLength/stepwiseRatio/pitchSystem/hookExpectation, arrangement.textureLadder/silenceConventions/registerTendency/doubling, performance.articulationVocabulary/velocityRange/humanise, sound.referenceInstruments/roomSize/saturation/stereo, identity.era/region/ensembleType carry values with nobody on the production path reading them (B-02/B-03/B-04/B-10).",
+    "The owner's fixture has no transcribed notes, so every groove / melody / dynamics measurement is unknown there; the fingerprint path was exercised on synthetic fingerprints in styleGrammar.test.ts.",
+    "Nothing was rendered or listened to under the new grammar; the plan-level change on the owner's song (style unknown -> ballad, groove four_on_floor -> steady_pulse) is a planner decision, not a validated musical result.",
+    "createStyleSpec now resolves the style string against the knowledge base: for style strings the knowledge base knows, the legacy StyleSpec vocabulary (and therefore styleGrammarEvidenceSha256 and the legacy composer's deterministic seed) changes; for unknown strings it is byte-identical to before.",
+    "performanceStyleFromProfile now resolves the profile with the knowledge base: a profile that names a known genre gains performance values it never stated (e.g. jazz -> swing 0.62, behind); each carries its provenance in `sources`."
+  ]
+}

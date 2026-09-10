@@ -7416,6 +7416,178 @@ Stream B-08 of the Arrangement & Orchestration Brain (`docs/brain/02-diagnosis-a
   `critics/judge.test.ts` fail identically on `a751796` (B-05b written against
   pre-B-01 planners); this stream adds none and one of the five now passes.
 
+### PR-B09 — Brain B-09: one style contract
+
+- **PR-B09** ✅ (open; the lead merges) — `brain-b09-style-grammar` (Arrangement
+  & Orchestration Brain, stream B-09, style intelligence). The five style
+  concepts the audit found side by side (`StyleSpec` from a regex on a style
+  string, `GlobalArrangementPlan.style` from stem hints, the fingerprint rule
+  list, `StyleProfile` → `PerformanceStyle`, `UniversalStyle`) now stand behind
+  **one contract, `StyleGrammar`**, with confidence and provenance per value;
+  the knowledge of genres is data; ambiguity becomes at most three questions;
+  research enters only as structured, cited constraints. Pure TypeScript, no
+  database, no live call, nothing rendered.
+
+  **What changed.** `styleGrammar.ts` is the contract: eleven sections
+  (identity, groove, bass, harmony, keys, strings, brass/winds, melodic,
+  arrangement, performance, sound; 72 fields in a registry that carries each
+  field's resolution level, vocabulary, production consumers and, where a
+  producer can answer it, the question), every value
+  `{ value, confidence, provenance: brief | fingerprint | template | research | default, sourceRefs }`,
+  `unknown` listed and never filled, `conflicts` kept with the losing
+  alternatives, one merge (`assembleStyleGrammar`): a *stated* brief value is
+  absolute; below it a research fact (≥ 0.7) > a clear measurement (≥ 0.5) >
+  the knowledge base and a vocabulary-*implied* brief value (confidence
+  decides) > a weak finding > a weak or prior-only measurement; agreeing
+  sources corroborate (noisy-OR), dissent lowers confidence and is recorded.
+  Measured chord vocabulary is a *prior only* (the analyzer reads triads + one
+  seventh; source ≠ intent). The fingerprint adapter treats **absent evidence
+  as unknown**: on the owner's fixture (no transcribed notes) the old
+  `deriveStyleGrammar` emitted eleven rules, five of them weight 1 from zeros
+  ("write in phrases of 0 beats", "velocities 0–0"); now it emits none and
+  says why. The Q-02 slot carries only the two rule kinds a composer pass
+  reads (`swing`, `microtiming` → `contextAwareComposer.applyGroove`); the
+  other thirteen former rule kinds are re-homed as section values with a named
+  production consumer (syncopation, onset-density, chord-extensions,
+  ornamentation, dynamic-range, instrument-hierarchy), re-homed for a later
+  stream (harmonic-rhythm, functional-motion, stepwise-motion, phrase-length,
+  register — no production reader yet) or deleted (energy-arc, density: the
+  arc and the section planner read the map directly) — `RULE_KIND_LEDGER`,
+  pinned by a test. `styleKnowledge/` is the modular knowledge base: 14 data
+  entries (chassidic ballad — the owner's world — on a generic ballad parent,
+  a chassidic simcha sketch, Mizrahi pop, pop, pop ballad, singer-songwriter
+  acoustic, rock, EDM/dance, jazz standard, orchestral/cinematic, gospel,
+  bossa/Latin, hip-hop/R&B), each with the ten levels filled where known and
+  the literal `"unknown"` where not (era is unknown in every entry), declarative
+  matching (`requires` groups + boosts), `extends` chains, bimodal conventions
+  as two candidates; a validator checks every value against the contract.
+  `styleResolver.ts` walks genre → subgenre → tradition → era → ensemble →
+  rhythmic → harmonic → orchestration → aesthetic → performance from a brief
+  (or a bare profile, or a typed style string through the producer lexicon,
+  so "chassidic" and "חסידי" both reach the owner's entry), the song's
+  fingerprint, a prior grammar and research; `styleQuestions` returns only
+  unknown or contested fields a planner or performer consumes, ranked by
+  information gain, cut at 0.3, at most three; the felt pulse is asked only
+  when the measured tempo contradicts the style's felt tempo, the tradition
+  only when no world or a generic form matched; `answerStyleQuestion` makes
+  the answer a stated value. `styleGrammarResearch.ts`: the provider interface
+  (`research(query) → StructuredStyleEvidence[]` with citations), a
+  deterministic fixture provider (every citation labelled FIXTURE), the gate
+  (uncited = hearsay, < 0.4 discarded, 0.4–0.7 fills unknowns only, ≥ 0.7 a
+  fact; nothing overrides the brief), and the live seam:
+  `liveStyleResearchProvider(env)` is `not_configured` without
+  `STYLE_RESEARCH_PROVIDER` / `STYLE_RESEARCH_API_URL` / `STYLE_RESEARCH_API_KEY`
+  (optional `STYLE_RESEARCH_MODEL`) and `configured_unwired` (rejects) with
+  them — no transport, no live call. **Consumers:** `globalArrangementPlanner`
+  `pickStyle` / `pickAesthetic` / `pickGroove` read `hints.styleGrammar` first
+  and the map's heuristics second (the carrier and rhythm-contradiction checks
+  unchanged; the plan records `styleDecisions` = where each of the three came
+  from and the grammar digest); `createStyleSpec` is a projection (fourth
+  argument or the style string resolved against the knowledge base; every
+  vocabulary word the grammar leaves unknown falls back to the old regex /
+  slider reading and is labelled `default` in `StyleSpec.styleResolution`;
+  `era` is `unknown` instead of a hard-coded `modern`);
+  `performanceStyleFromGrammar` is the derivation and the deprecated
+  `performanceStyleFromProfile` resolves the profile through it (provider,
+  scoped regeneration and the training pipeline unchanged);
+  `briefPlannerHints(brief, { songModel })` takes the global dynamic / texture
+  levers, the arc template when the brief names none and the family priority
+  when it names no instruments from the grammar's arrangement section, and
+  puts the grammar on `global.styleGrammar` (so `plannerHintsForJob` carries it
+  to the job and the provider to the planner); `grammarFromUniversalStyle`
+  adapts the universal style (its own legacy directive kinds stay local,
+  deprecated). Schema (additive): `GlobalArrangementPlan.styleDecisions?`,
+  `StyleSpec.styleResolution?`; `StyleSpec.grammar` marked deprecated. B-01's
+  request — "soft strings, gentle bass" as a global low-dynamic decision — is
+  `arrangement.globalDynamic = low` (brief) and `globalDynamicSteps: -1`.
+  **Also repaired:** `scripts/run-focused-api-tests.mjs` was committed twice
+  over by the #120 merge (`node --check` failed: `spawn` declared twice); the
+  pre-B-01 file was kept and B-01's two entries ported into it before B-09's
+  four were added.
+
+  **Measured on the owner's song** (fixture "רחם נא", brief "intimate ballad;
+  piano, soft strings, gentle bass, light percussion; big final chorus"):
+  planner before (no grammar) `style unknown`, `groove four_on_floor` (130 BPM,
+  no measured syncopation), `aesthetic intimate`; after: `ballad` (brief) /
+  `steady_pulse` (template) / `intimate` (brief), arc `intimate_ballad`,
+  climax `Chorus 3` unchanged; after answering the pulse question
+  `half_time_feel` (brief). Brief as written → knowledge entry `ballad`,
+  two questions: the felt pulse at 130 BPM and which world the ballad belongs
+  to. Brief with the tradition named → `chassidic_ballad`, 59 of 72 fields
+  known (brief 5, template 52, fingerprint 2 — the 92 chords corroborate the
+  style's triads), era unknown, two questions: the felt pulse, and narrow or
+  wide dynamics (the brief's "intimate" implied narrow at 0.35; the chassidic
+  ballad builds to its last chorus at 0.55). `StyleSpec` vocabulary from that
+  grammar: straight / open / legato / hybrid / sparse_answers / none /
+  orchestral_swell / additive, every word `template`, `swing` labelled
+  `default`; `PerformanceStyle`: dynamics wide, fills rare, legato, ornaments
+  moderate, bass sustained, on top; the composer slot `not_available` with the
+  reason (no measured swing or microtiming). Fixture research filled
+  `groove.feltPulse` (fact 0.75) and discarded an uncited and a 0.3 claim.
+
+  Tests: `styleGrammar.test.ts` (13, rewritten for the contract),
+  `styleKnowledge.test.ts` (6), `styleGrammarResearch.test.ts` (5),
+  `styleResolver.test.ts` (9), `brainB09StyleGrammar.test.ts` (5); one
+  assertion updated in each of `performanceEngine.test.ts` (provenance word),
+  `arrangementOrchestrator.test.ts` (an honest empty slot) and
+  `arrangementOrchestratorProvider.test.ts` (provenance word). Green:
+  planners, arc, B-00 golden pin (no digest moved — the composer never read
+  the deleted rules), integrity, adoption, part composer, orchestrator,
+  provider, scoped regeneration, performance, brief compiler / planner, sound
+  and mix brains, Wave-U style resolution / research / clarification,
+  fingerprint, context-aware composer, universal style, conditioning map;
+  `pnpm run typecheck` green. Evidence:
+  `docs/evidence/brain-b09-style-grammar.json` (regenerate with
+  `node artifacts/api-server/scripts/brain-b09-style-evidence.mjs --out docs/evidence/brain-b09-style-grammar.json`).
+
+  **Capability ladder.** Style intelligence as one contract: I → **N + T**
+  (integrated on the production path through `plannerHintsForJob`,
+  `materializeCandidate`'s `createStyleSpec` and the provider's
+  `performanceStyleFromProfile`; unit-tested; not benchmarked; not validated
+  on output). Knowledge base: **I + T** (validated data). Resolver and
+  questions: **I + T**. Research → constraints: **I + T** with the fixture
+  provider; the live provider is a documented `not_configured` state. Rule
+  kinds: 15 of 15 accounted for.
+
+  **Adapters proposed in files B-09 does not own** (also in the evidence):
+  `arrangementOrchestrator.styleGrammarFor` should merge the job's brief
+  grammar with the fingerprint (`resolveStyle({ prior, fingerprint })`) so the
+  composer slot and the planner read one grammar; `PartGenerationRequestV2`
+  should carry the sectioned grammar beside the rule slot for B-02 / B-04 /
+  B-10; `arrangementArc` can read `arrangement.textureLadder` (template) as its
+  function → texture defaults in one line; `arrangementGeneration` should pass
+  the brief grammar as `createStyleSpec`'s fourth argument; `musicCritic`'s
+  hook whitelist → `melodic.hookExpectation`; `voiceLeading` costs →
+  `harmony.parallelism` (B-02); `soundSelectionBrain` → `sound.referenceInstruments`
+  and the strings / brass roles (B-03).
+
+  **Honest limits.** The knowledge base is 14 entries written from common
+  practice by the B-09 specialist, not measured from a corpus; the chassidic
+  entry is the owner's world by proximity to his own production, not reviewed
+  by him line by line; the simcha entry is a sketch; era is unknown
+  everywhere; genres outside the list (blues, country, reggae, funk,
+  classical, klezmer …) match nothing and stay unknown. Research is unwired:
+  only the fixture provider ran; no claim about any style was researched. Two
+  grammars can exist on one job until the orchestrator adapter lands (the
+  planner reads the brief's grammar, the composer slot the fingerprint's).
+  Sections carried without a production reader yet: strings.*, brassWinds.*,
+  keys.chordRhythm / pedal / role, bass.motion / register / sustain /
+  lockToKick, harmony.modalFlavour / parallelism / cadenceLanguage /
+  passingChords / harmonicRhythm / chordsPerBar / functionalMotion,
+  melodic.phraseLength / stepwiseRatio / pitchSystem / hookExpectation,
+  arrangement.textureLadder / silenceConventions / registerTendency /
+  doubling, performance.articulationVocabulary / velocityRange / humanise,
+  sound.referenceInstruments / roomSize / saturation / stereo, identity.era /
+  region / ensembleType. The owner's fixture has no transcribed notes, so its
+  groove / melody / dynamics measurements are unknown; the fingerprint path
+  was exercised on synthetic fingerprints. `createStyleSpec` now resolves the
+  style string against the knowledge base, so for style strings it knows the
+  legacy vocabulary (and the legacy composer's deterministic seed) changes;
+  `performanceStyleFromProfile` now adds what the knowledge base knows about
+  a profile's named genre, each value with its provenance. Nothing was
+  rendered or listened to under the new grammar: the plan-level change on the
+  owner's song is a planner decision, not a validated musical result.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

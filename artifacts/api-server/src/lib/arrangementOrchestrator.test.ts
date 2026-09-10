@@ -227,7 +227,10 @@ test("contextAware derives a style grammar from the song instead of leaving the 
     songModel: makeModel(), candidateCount: 1, render: false, now: NOW, contextAware: true,
   });
   const context = result.stages.find((s) => s.stage === "context")!;
-  assert.match(context.detail, /style grammar STYLE_GRAMMAR_V1:(full|thin) with \d+ rule\(s\)/,
+  // Brain B-09: the slot carries only the rule kinds a composer pass reads
+  // (swing, microtiming); a straight, quantised song honestly yields none,
+  // and the stage says so instead of inventing rules from neutral numbers.
+  assert.match(context.detail, /style grammar STYLE_GRAMMAR_V1:(full|thin) with \d+ rule\(s\)|no style grammar: no measurement in the reference was far enough from neutral/,
     "the song's own behaviour is the description of its style");
 });
 

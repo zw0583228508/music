@@ -76,6 +76,43 @@ const suites = {
         "native-renderer-routing.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Brain B-01: the ArrangementArc (intent from form + brief + template,
+      // source energy a weak prior only), form memory and development
+      // operators, and the LEAD / `mix` integration defects on the owner's song.
+      [
+        "src/lib/arrangementArc.test.ts",
+        "arrangement-arc.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/brainB01RachemNa.test.ts",
+        "brain-b01-rachem-na.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // Brain B-09: one style contract - the sectioned StyleGrammar with
+      // confidence and provenance per value, the modular knowledge base, the
+      // resolver + question generator, research -> constraints, and the
+      // owner's brief end to end (planner, StyleSpec, PerformanceStyle, slot).
+      [
+        "src/lib/styleKnowledge.test.ts",
+        "brain-b09-style-knowledge.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/styleResolver.test.ts",
+        "brain-b09-style-resolver.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/styleGrammarResearch.test.ts",
+        "brain-b09-style-research.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/brainB09StyleGrammar.test.ts",
+        "brain-b09-style-grammar.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // PR-93 (SOUND-2): the open-licence sound assets in the cloud - the
       // admissibility rule (captured licence text, one tree hash through
       // stage/activate/health, audible render), the family-coverage table and

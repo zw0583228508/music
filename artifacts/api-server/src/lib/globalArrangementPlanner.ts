@@ -38,6 +38,8 @@ import {
   type ArcHints,
   type ArrangementArcInput,
 } from "./arrangementArc";
+import type { StyleGrammar, StyleProvenance } from "./styleGrammar";
+import { grooveStrategyOfFamily } from "./styleResolver";
 
 /** "1.1" since Brain B-01 (arc-derived targets); stored "1.0" plans are stale. */
 export const GLOBAL_ARRANGEMENT_PLAN_VERSION = "1.1" as const;
@@ -63,7 +65,16 @@ export type GlobalPlannerHints = ArcHints & {
   productionAesthetic?: GlobalArrangementPlan["productionAesthetic"];
   /** Honoured only when the map's rhythm evidence does not contradict it. */
   grooveStrategy?: GlobalArrangementPlan["grooveStrategy"];
+  /**
+   * Brain B-09: the resolved StyleGrammar (brief + knowledge base + research).
+   * `pickStyle` / `pickAesthetic` / `pickGroove` read it first and fall back
+   * to the musical map's heuristics only for values the grammar leaves unknown.
+   */
+  styleGrammar?: StyleGrammar;
 };
+
+/** Where a style decision of the plan came from (Brain B-09). */
+export type StyleDecisionSource = StyleProvenance | "hint" | "map_heuristic";
 
 const clamp01 = (value: number): number =>
   value < 0 ? 0 : value > 1 ? 1 : value;
@@ -124,29 +135,54 @@ function tensionOverSpan(
 // Strategy pickers
 // ---------------------------------------------------------------------------
 
+/**
+ * Brain B-09: the style is what the grammar says (the brief's word, the
+ * knowledge base, research) — the stem-hint heuristic below is the fallback
+ * for a job with no grammar, and it stays labelled as a heuristic. A value
+ * the grammar measured from the source (`fingerprint`) is not an identity.
+ */
 function pickStyle(
   map: SongModelMusicalMap,
-): { style: string; substyle: string | null } {
+  grammar?: StyleGrammar,
+): { style: string; substyle: string | null; source: StyleDecisionSource } {
+  const genre = grammar?.identity.genre;
+  if (genre && genre.provenance !== "fingerprint") {
+    const subgenre = grammar?.identity.subgenre;
+    return { style: genre.value, substyle: subgenre && subgenre.provenance !== "fingerprint" ? subgenre.value : null, source: genre.provenance };
+  }
   const fp = map.styleFingerprint;
   const hints = new Set(fp.instrumentPaletteHints);
   const hasDrums = hints.has("drums") || hints.has("percussion");
   const hasStrings = hints.has("strings");
   const electronic = hints.has("synth") || hints.has("synths") || hints.has("pad") || hints.has("fx");
   const band = hasDrums && (hints.has("bass") || hints.has("guitar"));
+  const source: StyleDecisionSource = "map_heuristic";
 
-  if (hasStrings && !hasDrums) return { style: "orchestral", substyle: fp.tempoBand === "ballad" ? "chamber" : "cinematic" };
+  if (hasStrings && !hasDrums) return { style: "orchestral", substyle: fp.tempoBand === "ballad" ? "chamber" : "cinematic", source };
   if (electronic && (fp.tempoBand === "uptempo" || fp.tempoBand === "double-time")) {
-    return { style: "dance", substyle: "electronic" };
+    return { style: "dance", substyle: "electronic", source };
   }
-  if (electronic) return { style: "electronic", substyle: null };
-  if (fp.tempoBand === "ballad" && !band) return { style: "ballad", substyle: hints.has("piano") ? "piano_ballad" : null };
+  if (electronic) return { style: "electronic", substyle: null, source };
+  if (fp.tempoBand === "ballad" && !band) return { style: "ballad", substyle: hints.has("piano") ? "piano_ballad" : null, source };
   if (band && (fp.rhythmicComplexity ?? 0) > 0.5 && (fp.tempoBand === "uptempo" || fp.tempoBand === "double-time")) {
-    return { style: "rock", substyle: null };
+    return { style: "rock", substyle: null, source };
   }
-  if (band) return { style: "pop", substyle: (fp.tempoBand ?? undefined) === "ballad" ? "pop_ballad" : null };
-  if (hasStrings) return { style: "cinematic", substyle: null };
-  if (!hasDrums && (hints.has("guitar") || hints.has("piano"))) return { style: "acoustic", substyle: null };
-  return { style: "unknown", substyle: null };
+  if (band) return { style: "pop", substyle: (fp.tempoBand ?? undefined) === "ballad" ? "pop_ballad" : null, source };
+  if (hasStrings) return { style: "cinematic", substyle: null, source };
+  if (!hasDrums && (hints.has("guitar") || hints.has("piano"))) return { style: "acoustic", substyle: null, source };
+  return { style: "unknown", substyle: null, source };
+}
+
+/** The groove strategy a grammar asks for, when it says anything a planner can act on. */
+function grooveFromGrammar(grammar: StyleGrammar | undefined): { strategy: GlobalArrangementPlan["grooveStrategy"]; source: StyleDecisionSource } | null {
+  if (!grammar) return null;
+  const felt = grammar.groove.feltPulse;
+  if (felt && felt.provenance !== "fingerprint" && felt.value === "half_time") return { strategy: "half_time_feel", source: felt.provenance };
+  const family = grammar.groove.family;
+  if (family && family.provenance !== "fingerprint") return { strategy: grooveStrategyOfFamily(family.value), source: family.provenance };
+  const tempo = grammar.groove.tempoBehavior;
+  if (tempo && tempo.provenance !== "fingerprint" && tempo.value === "rubato_tolerant") return { strategy: "rubato", source: tempo.provenance };
+  return null;
 }
 
 const ROLE_TIER: Record<string, number> = {
@@ -217,9 +253,38 @@ function buildPalette(
   return { palette, excluded };
 }
 
+/**
+ * Brain B-09: grammar first (the brief's word, the knowledge base), the
+ * map's rhythm heuristic second. An explicit brief hint still outranks the
+ * grammar, and any wanted strategy is checked against detected rhythm
+ * evidence exactly as before.
+ */
 function pickGroove(
   map: SongModelMusicalMap,
   hint?: GlobalArrangementPlan["grooveStrategy"],
+  grammar?: StyleGrammar,
+): { strategy: GlobalArrangementPlan["grooveStrategy"]; source: StyleDecisionSource } {
+  const fromGrammar = grooveFromGrammar(grammar);
+  const wanted = hint ?? fromGrammar?.strategy;
+  const wantedSource: StyleDecisionSource = hint ? "hint" : fromGrammar?.source ?? "map_heuristic";
+  const derived = grooveFromMap(map);
+  if (!wanted || wanted === derived) return { strategy: derived, source: wanted ? wantedSource : "map_heuristic" };
+  // A stated groove is the arrangement's target, not the source's description,
+  // so it is honoured unless detected rhythm evidence flatly contradicts it:
+  // a straight, un-syncopated source cannot be read as already swinging, and a
+  // detected swing feel is not thrown away for a four-on-the-floor grid.
+  const groove = map.rhythm.grooveProfile;
+  const swung = groove.subdivision === "triplet" || groove.subdivision === "swing-8" || groove.subdivision === "swing-16";
+  const syncMean = mean(map.rhythm.syncopation.map((s) => s.syncopation));
+  const contradicts =
+    (wanted === "swing" && map.rhythm.status === "detected" && !swung && syncMean < 0.15) ||
+    (wanted === "four_on_floor" && map.rhythm.status === "detected" && swung);
+  return contradicts ? { strategy: derived, source: "map_heuristic" } : { strategy: wanted, source: wantedSource };
+}
+
+/** The map's own reading of the groove (the pre-B-09 heuristic, unchanged). */
+function grooveFromMap(
+  map: SongModelMusicalMap,
 ): GlobalArrangementPlan["grooveStrategy"] {
   const groove = map.rhythm.grooveProfile;
   const swung = groove.subdivision === "triplet" || groove.subdivision === "swing-8" || groove.subdivision === "swing-16";
@@ -233,15 +298,7 @@ function pickGroove(
         : (map.styleFingerprint.tempoBand === "uptempo" || map.styleFingerprint.tempoBand === "double-time") && syncMean < 0.25
           ? "four_on_floor"
           : "steady_pulse";
-  if (!hint || hint === derived) return derived;
-  // A stated groove is the arrangement's target, not the source's description,
-  // so it is honoured unless detected rhythm evidence flatly contradicts it:
-  // a straight, un-syncopated source cannot be read as already swinging, and a
-  // detected swing feel is not thrown away for a four-on-the-floor grid.
-  const contradicts =
-    (hint === "swing" && map.rhythm.status === "detected" && !swung && syncMean < 0.15) ||
-    (hint === "four_on_floor" && map.rhythm.status === "detected" && swung);
-  return contradicts ? derived : hint;
+  return derived;
 }
 
 function pickOrchestration(
@@ -286,25 +343,39 @@ function pickContrast(
   return "minimal_contrast";
 }
 
+/**
+ * Brain B-09: grammar first (a brief's or the knowledge base's aesthetic),
+ * the map's heuristic second. An explicit brief hint still comes first, and
+ * whatever is wanted must be carried by the palette, exactly as before.
+ */
 function pickAesthetic(
   map: SongModelMusicalMap,
   style: string,
   palette: GlobalArrangementPlan["instrumentPalette"],
   hint?: GlobalArrangementPlan["productionAesthetic"],
-): GlobalArrangementPlan["productionAesthetic"] {
+  grammar?: StyleGrammar,
+): { aesthetic: GlobalArrangementPlan["productionAesthetic"]; source: StyleDecisionSource } {
+  const fromGrammar = grammar?.sound.aesthetic && grammar.sound.aesthetic.provenance !== "fingerprint" ? grammar.sound.aesthetic : undefined;
+  const wanted = hint ?? fromGrammar?.value;
+  const wantedSource: StyleDecisionSource = hint ? "hint" : fromGrammar?.provenance ?? "map_heuristic";
   const fp = map.styleFingerprint;
   const hints = new Set(fp.instrumentPaletteHints);
+  // The fallback reads the *map's* style, not a grammar-provided one: a
+  // grammar that says "cinematic" must still pass the carrier check below,
+  // and the map's own reading is what the pre-B-09 planner derived from.
+  const mapStyle = pickStyle(map).style;
+  void style;
   const derived: GlobalArrangementPlan["productionAesthetic"] =
-    style === "orchestral" || style === "cinematic"
+    mapStyle === "orchestral" || mapStyle === "cinematic"
       ? hints.has("drums") ? "cinematic" : "orchestral"
-      : style === "electronic" || style === "dance"
+      : mapStyle === "electronic" || mapStyle === "dance"
         ? "electronic"
-        : fp.orchestrationSize === "sparse" || style === "ballad" || style === "acoustic"
+        : fp.orchestrationSize === "sparse" || mapStyle === "ballad" || mapStyle === "acoustic"
           ? "intimate"
           : (fp.harmonicComplexity ?? 0) < 0.35 && (fp.rhythmicComplexity ?? 0) < 0.45
             ? "raw_band"
             : "polished_pop";
-  if (!hint || hint === derived) return derived;
+  if (!wanted || wanted === derived) return { aesthetic: derived, source: wanted ? wantedSource : "map_heuristic" };
   // A stated aesthetic is honoured only when the palette can actually carry
   // it; the palette itself may already have been widened by the same brief.
   const families = new Set(palette.map((p) => p.role));
@@ -316,8 +387,10 @@ function pickAesthetic(
     raw_band: ["drums", "guitar", "bass"],
     polished_pop: [],
   };
-  const required = carriers[hint];
-  return required.length === 0 || required.some((f) => families.has(f)) ? hint : derived;
+  const required = carriers[wanted];
+  return required.length === 0 || required.some((f) => families.has(f))
+    ? { aesthetic: wanted, source: wantedSource }
+    : { aesthetic: derived, source: "map_heuristic" };
 }
 
 // ---------------------------------------------------------------------------
@@ -401,9 +474,11 @@ export function deriveGlobalArrangementPlan(
     };
   });
 
-  const { style, substyle } = pickStyle(map);
+  const grammar = hints.styleGrammar;
+  const { style, substyle, source: styleSource } = pickStyle(map, grammar);
   const { palette: instrumentPalette, excluded: excludedPaletteHints } = buildPalette(map, hints);
-  const productionAesthetic = pickAesthetic(map, style, instrumentPalette, hints.productionAesthetic);
+  const { aesthetic: productionAesthetic, source: aestheticSource } = pickAesthetic(map, style, instrumentPalette, hints.productionAesthetic, grammar);
+  const { strategy: grooveStrategy, source: grooveSource } = pickGroove(map, hints.grooveStrategy, grammar);
 
   // --- what the arrangement intends (the decision) ---------------------------
   const arc = deriveArrangementArc(
@@ -495,13 +570,19 @@ export function deriveGlobalArrangementPlan(
     climax: climaxOf(arc.primaryClimax),
     secondaryClimax: climaxOf(arc.secondaryClimax),
     arc,
-    grooveStrategy: pickGroove(map, hints.grooveStrategy),
+    grooveStrategy,
     orchestrationStrategy: pickOrchestration(energies),
     motifStrategy: pickMotifStrategy(map),
     contrastStrategy: pickContrast(map),
     harmonicComplexity: round3(clamp01(map.styleFingerprint.harmonicComplexity ?? 0.3)),
     rhythmicComplexity: round3(clamp01(map.styleFingerprint.rhythmicComplexity ?? 0.3)),
     productionAesthetic,
+    styleDecisions: {
+      styleGrammarSha256: grammar?.inputsDigestSha256 ?? null,
+      style: styleSource,
+      productionAesthetic: aestheticSource,
+      grooveStrategy: grooveSource,
+    },
   };
 }
 
