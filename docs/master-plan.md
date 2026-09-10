@@ -8388,6 +8388,171 @@ PR, because those files belong to other streams):
   notes, all kit, because a ii-V vocabulary forbids `four_on_floor`) and again
   from the universal refusal of a minor chord's major third (972, unchanged).
 - **Nothing rendered or listened to.** VALIDATED ON OUTPUT is not claimed.
+**Follow-up commit — a family's own level chooses its role, not the section's
+energy.** The root remedy the two commits above named and handed on is taken
+here, inside B-18, and the five B-05c failures listed under "Honest limits" are
+closed. Everything below **supersedes** the "Five of B-05c's tests fail …" and
+"jazz-full's harmony score is 89.2 …" bullets above and the two
+`sectionPhrasePlanner.ts` rows of "The reads the writers must add" (both reads
+are now in this PR); the rest of the entry stands as written.
+
+**The rule.** `sectionPhrasePlanner.assignRole` takes an intended `level`
+instead of reading `section.energy`, and a new `roleForFamily` decides which
+level that is. The section's own energy still sets the default — that is the
+arrangement's plan for the section, and it applies to every family the brief
+said nothing about. A family the brief *did* name is re-read at its own level
+(`familyLevelIn(arcSection, family)`), and the re-read is honoured **only in the
+direction the brief asked for**: a `support` family ("soft strings", "gentle
+bass", "light percussion") may only be given a *quieter* role than the section's
+default, never a busier one; a `feature` family ("big brass") may only be given
+a busier one. The direction gate is not decoration: a role boundary is not
+always a loudness boundary — percussion at a low level takes `FILL`, which is
+*busier* than the `ACCENT` it takes at a high one (`ROLE_ACTIVITY` rhythmic
+0.6 vs 0.35, density 0.25 vs 0.20) — so without it "light percussion" would have
+handed the percussion more notes in the loud choruses than the section asked
+for. Busyness is `density + rhythmic` from `ROLE_ACTIVITY`, because the two
+pairs this decides between differ on different axes. Three constants carry the
+musical reason: `PAD_CEILING_LEVEL = DYNAMIC_LEVEL.mp` (a sustaining family
+holds one sonority at `mp` and under and moves with the harmony from `mf` up),
+`PERCUSSION_ACCENT_LEVEL = 0.6`, `OSTINATO_RHYTHM_LEVEL = 0.6` (the last two
+named, not moved). `dynamicShapeFor` moved inside the per-family loop and
+delegates to `familyDynamicShape(arcSection, family)`, so every role assignment
+now carries its own family's marking. A family the brief never named reads
+`neutral` emphasis and the section's own marking, so **an arrangement with no
+brief is byte-identical** — all nine benchmark cases' section plans are
+unchanged.
+
+**The owner's song, before → after** (role@shape, level in brackets):
+
+| section | keys | bass | strings | percussion / drums |
+|---|---|---|---|---|
+| Intro `p` | RHYTHMIC_HARMONY@p → @p (0.25) | BASS@p → @pp (0.1) | PAD@p → **PAD**@pp (0.1) | — |
+| Verse 1 `p` | RHYTHMIC_HARMONY@p → @p (0.286) | BASS@p → @pp (0.1) | PAD@p → **PAD**@pp (0.1) | — |
+| Verse 2 `p` | RHYTHMIC_HARMONY@p → @p (0.252) | BASS@p → @pp (0.1) | PAD@p → **PAD**@pp (0.1) | FILL@p → @pp (0.1) |
+| Chorus `mf` | HARMONIC_BED@mf → @mf (0.548) | BASS@mf → @mp (0.4) | **HARMONIC_BED@mf → PAD@mp (0.4)** | FILL@mf → @mp (0.4) |
+| Chorus 2 `mf` | HARMONIC_BED@mf → @mf (0.615) | BASS@mf → @mp (0.4) | **HARMONIC_BED@mf → PAD@mp (0.4)** | ACCENT@mf → @mp (0.4) · drums GROOVE@mf (0.615) |
+| Verse 3 `p` | HARMONIC_BED@p → @p (0.212) | BASS@p → @pp (0.1) | PAD@p → **PAD**@pp (0.1) | — |
+| Bridge `mf` | RHYTHMIC_HARMONY@mf→f | BASS@mf→f → @mp→mf (0.4) | COUNTER_MELODY@mf→f → @mp→mf (0.4) | — |
+| Chorus 3 `f` | HARMONIC_BED@f → @f (0.671) | BASS@f → @mf (0.55) | CLIMAX_LAYER@f → @mf (0.55) | ACCENT@f → @mf (0.55) · drums CLIMAX_LAYER@f (0.671) |
+| Outro `p` | RHYTHMIC_HARMONY@p→pp | BASS@p→pp → @pp→pp (0.1) | PAD@p→pp → @pp→pp (0.1) | — |
+
+The strings are a `PAD` in every verse *and* in both middle choruses, and their
+level sits under the piano's in every section (verses 0.1 vs 0.25–0.286,
+choruses 0.4 vs 0.548–0.615, final chorus 0.55 vs 0.671) — before the fix the
+two were equal everywhere. The anchor's track ids are `bass-bass`,
+`drums-groove`, `keys-rhythmic_harmony`, `percussion-fill`, **`strings-pad`**.
+
+**The `single_voice_bed` count did not fall: it is still six sections**
+(meanVoices 1.00–1.17), and this stream does not claim to have fixed R-1b
+P0-1 — the voices are written and lost downstream. What changed is that the
+finding is *sharper*: the composed strings are now in view in **5 of the 6**
+sections (2 before the fix, 4 on B-05c's own anchor) carrying 3, 7, 4, 8 and 9
+voices against a shipped 1, and the strings ship 91 notes against 402 composed.
+
+**The five failures, each measured:**
+
+| suite / test | was | now |
+|---|---|---|
+| `ownerAnchor`: *the owner's song is an anchor* | `strings-harmonic_bed` vs a pinned `strings-pad` | green, **test untouched** — the Chorus strings are a `PAD`, so the first strings task that writes notes names the track |
+| `ownerAnchor`: *control A* | `strings-pad: shipped 0, composed 0` | green, **test untouched** — 3 shipped and 3 composed `off_grid` on `strings-pad`, composed max 0.556 vs shipped 0.556 |
+| `ownerAnchor`: *the string bed ships as one voice* | `0 sections` | green, **test untouched** — 6 sections, 5 with the composed strings in view (needs ≥ 5 and ≥ 4) |
+| `harmony`: *null control* | jazz-full 89.2 vs `>= 90` | green, **test untouched** — 96.4. jazz-full was **not** added to `belowNinety`; the cause was found and fixed (below) |
+| `rank`: *on the owner's song the judge refuses* | the empty intro at #9 vs `intro >= 12` | #11, and the pin restated as `>= 10` with the cause beside it |
+
+**jazz-full: the cause, not the gate.** `approachToneChoice` computed the mode's
+approach set only for a `modeOnly` vocabulary, so the **chromatic** vocabulary
+(pop / band / electronic / jazz) consulted no mode at all and took the first
+admissible pitch — a half step from the target — even where the mode already
+offered a step into it. It now looks inside the mode first for every style and
+falls back to any non-chord tone only when the mode offers nothing, which is
+what `allowOutOfMode` was always documented to mean. Measured: jazz-full's bass
+approached G through F♯ twice per section with F natural admissible and in C
+natural minor; B-05c's harmony dimension grades an out-of-chord-mode approach
+`minor` in any style, and both `approach_tone_wrong_mode` findings (Chorus and
+Verse 2, two approaches each — exactly `APPROACH_TONE_MIN_COUNT`) are gone.
+jazz-full 89.2 → **96.4**, `outOfKeyShare` 0.
+
+**`critics/rank`: the count moved with the arrangement, not with the intro.**
+The pin counts the blocking findings that outrank two silent bars. Measured
+against `origin/main` f2119cb on the same anchor: **13** blocking findings above
+the intro there, **10** here — four `off_grid` findings fall under the blocking
+threshold (strings Verse 1 0.733 → 0.400, keys Verse 3 0.618 → 0.441, strings
+Verse 3 0.571 → 0.500, keys Chorus 0.559 → 0.529) and one `single_voice_bed`
+(Chorus 2) joins them. Nothing about the intro moved: priority 60.1 and the
+salience floor, both still asserted. The two orderings R-1b P0-5 actually asked
+for hold with room — the string bed is #2 and the off-grid harmony #1 against
+the intro at #11.
+
+**Two assertions changed, both with the cause beside them.**
+`ownerAnchor`'s *the cause, named only after the controls* pinned
+`toPerform.length === 1`; it is now the two ids by name plus a share
+(`<= 10 %` of the attributed findings). "Gentle bass" gives the bass its own
+level (mp under the mf choruses, mf under the f final chorus), and the sparser
+line it writes in Chorus 3 is on the grid — its *composed* off-grid share moves
+from 0.120, exactly the dimension's on-grid boundary, to 0.113. Where the
+composed notes are on the grid and the shipped ones are not, the performance
+stage **is** the cause. `rank`'s `intro >= 12` became `>= 10` for the count
+above, with a new assertion that everything ranked above the intro is blocking.
+No threshold inside a dimension was moved.
+
+**Suites, all green, zero failures.** `brainB18BriefReading` 14/14,
+`sectionPhrasePlanner` 10/10, `globalArrangementPlanner` 12/12,
+`arrangementArc` 12/12, `brainB01RachemNa` 6/6, `partComposer` 8/8,
+`referencePartComposer` 5/5, `referencePartComposer.golden` 2/2,
+`arrangementOrchestrator` 13/13, `arrangementBrainIntegrity` 12/12,
+`brainB02Harmony` 7/7, `harmonyPlan/harmonyPlan` 13/13, `groovePlan` 13/13,
+`brainB04Evidence` 4/4, `brainB06Repair` 20/20, `brainB10Motif` 5/5,
+`critics/controls` 5/5, `critics/judge` 10/10, `critics/rank` 12/12,
+`critics/failureTaxonomy` 6/6, `critics/adversarial/adversarial` 43/43, and all
+seventeen `critics/dimensions/*` (density 7, emotionalArcAndTension 5, groove 6,
+harmony 5, idiomaticity 5, melodyAndCounterline 4,
+motifRecurrenceAndDevelopment 4, orchestration 6, ownerAnchor 5,
+performanceRealisation 5, playability 4, register 5, repetitionVsVariation 5,
+rhythmicInteraction 4, sectionDevelopment 4, transitions 4, voiceLeading 4).
+Blast-radius sweep also green: `arrangementBenchmark` 11,
+`arrangementOrchestrator.b11` 4, `arrangementOrchestratorProvider` 13,
+`arrangerTrainingPipeline` 5, `benchmarkMeasures` 7, `blindListening` 6,
+`candidateDiff` 4, `criticRepairLoop` 5, `critics/b05cEvidence` 1,
+`critics/adversarial/evidence` 1, `decisionProvenance` 6, `gmPrograms` 4,
+`invariants/fuzz.property`, `invariants/playability.property`, `musicCritic` 5,
+`orchestrationBudget` 5, `positiveControlLedger` 7, `producerChat` 19,
+`producerIntelligence/briefCompiler` 11, `producerIntelligence/briefToPlanner`
+10, `producerIntelligence/editPlan` 8, `producerIntelligence/explain` 9,
+`realCorpusBenchmark` 8, `registerPlan` 6, `scopedRegeneration` 12,
+`transitionEngine` 5, `brainB09StyleGrammar` 5, `styleResolver` 9,
+`styleKnowledge` 6. `pnpm run typecheck` green, zero `error TS` in its log.
+
+**The golden fixture moved a third time and is re-pinned with its cause** in
+`recordedAt`: one cause, the approach-tone mode preference. `pop-full`,
+`rock-full`, `dance-full` and `jazz-full` moved with **identical note counts**
+(the same approaches written from admissible notes); the five mode-restricted
+cases are byte-identical, and so is every case's section plan.
+
+**Honest limits of the follow-up.**
+- **The role rule is a one-step rule.** `roleForFamily` compares two roles and
+  takes one; it cannot express "two steps quieter", so "barely there" (−2) and
+  "soft" (−1) get the same role whenever both land in the same branch. The
+  level itself does carry the difference into the `dynamicShape`.
+- **`PAD_CEILING_LEVEL` moved a boundary, not only a name.** `section.energy <
+  0.4` became `level <= 0.4`, so a section whose intended level is exactly `mp`
+  now puts a sustaining family on a pad. That is the musical statement, and it
+  is the reading the owner's song had before B-18 — but there it held by a
+  source-prior nudge of two thousandths rather than by a rule. No
+  benchmark-corpus section sits at exactly 0.4, so nothing in the golden corpus
+  measures the change.
+- **jazz-full is 96.4 here against 100 on main.** The remaining 3.6 points are
+  one `clash_share` *minor* on the bass in the Chorus (clashShare 0.0657 vs
+  main's 0.034), left by B-18's no-brief groove reading writing a different bass
+  line. Above the `>= 90` gate, named rather than hidden, and not fixed.
+- **The writer/critic disagreement is narrowed, not resolved.** The style
+  vocabularies still judge an approach against the *key's* mode and B-05c's
+  critic against the *chord's*. A genuinely out-of-mode approach that a
+  chromatic style writes because the mode offers nothing admissible would still
+  be graded `minor`; no corpus case exercises that path today.
+- **The owner's `single_voice_bed` is still six sections**, and the empty
+  two-bar intro is still a blocking `planned_family_silent`: neither is this
+  stream's to fix, and neither is claimed.
+- **Still nothing rendered or listened to.** VALIDATED ON OUTPUT is not claimed.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 

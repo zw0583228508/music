@@ -145,6 +145,19 @@ test("the reference part composer produces byte-identical parts to the golden fi
         "natural over Cm7, which B-05c's harmony critic grades `major`); `approachToneChoice` now refuses that " +
         "note in every style, chromatic idioms included, which is the second thing that moved jazz-full's digest " +
         "and takes its harmony score from 78.4 back to 89.2. Note count unchanged (972). " +
+        "RE-PINNED again inside B-18, one cause: a chromatic style now reads the mode as a *preference*. " +
+        "`approachToneChoice` computed the mode's approach set only for a `modeOnly` vocabulary, so the " +
+        "chromatic vocabulary (pop / band / electronic / jazz aesthetics) consulted no mode at all and took the " +
+        "first admissible pitch - a half step from the target - even where the mode already offered a step into " +
+        "it. It now looks inside the mode first and falls back to any non-chord tone only when the mode offers " +
+        "nothing, which is what `allowOutOfMode` was always documented to mean. Measured on jazz-full: the bass " +
+        "approached G through F sharp twice per section with F natural admissible; the harmony dimension grades " +
+        "an out-of-chord-mode approach `minor` in any style, and jazz-full goes 89.2 -> 96.4 with both " +
+        "`approach_tone_wrong_mode` findings gone and `outOfKeyShare` 0. pop-full, rock-full, dance-full and " +
+        "jazz-full moved, note counts identical in all four (the same approaches are written from admissible " +
+        "notes); the mode-restricted cases (ballad-piano-vocal, acoustic-demo, orchestral-midi, ethnic-vocal, " +
+        "cinematic-midi) are byte-identical, and so is every case's section plan - the per-family role rule that " +
+        "went in with this re-pin only fires where a brief named a family's level, which no corpus case does. " +
         "A future digest change must again name its cause here.",
       cases: current,
     }, null, 2)}\n`);

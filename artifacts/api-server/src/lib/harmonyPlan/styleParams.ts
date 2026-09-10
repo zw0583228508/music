@@ -421,7 +421,16 @@ export function approachToneChoice(input: {
     .map((pitch, index) => ({ pitch, index }))
     .sort((a, b) => rank(a.pitch) - rank(b.pitch) || a.index - b.index)
     .map((e) => e.pitch);
-  const allowed = approachToneSet(vocabulary, input.centre);
+  // The mode is read for every style, `modeOnly` or not: for a style that
+  // states one it is a gate, and for a style whose idiom is chromatic it is a
+  // *preference*. A walking line does lead into the change by a half step —
+  // but where the mode already offers a step into the target there is no
+  // reason to leave the key to find one, and the note that leaves it is heard
+  // as a wrong-mode approach rather than as an idiom. (Measured: jazz-full's
+  // bass approached G through F natural's chromatic neighbour F#, twice per
+  // section, with F itself admissible; B-05c's harmony dimension grades an
+  // out-of-mode approach `minor` in any style and the anchor sat at 89.2.)
+  const allowed = approachToneSet({ ...vocabulary, modeOnly: true }, input.centre);
   const notInChordLeft = (p: number): boolean => !input.avoidPcs.has(pcOf(p));
   const allowedAnywhere = (p: number): boolean => !forbidden.has(pcOf(p));
   const inMode = (p: number): boolean => allowed === null || allowed.has(pcOf(p));

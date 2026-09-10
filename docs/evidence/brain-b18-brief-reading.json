@@ -302,7 +302,7 @@
       }
     ],
     "sectionPlanDiff": {
-      "note": "the section planner still writes one dynamicShape per section (B-07 owns that file). The per-family shape is `arrangementArc.familyDynamicShape(arcSection, family)`; the read B-07 must add is listed in the PR body.",
+      "note": "the section planner reads the per-family level since this stream's fix: `sectionPhrasePlanner.dynamicShapeFor` calls `arrangementArc.familyDynamicShape(arcSection, family)` inside the per-family loop, and `roleForFamily` re-reads `familyLevelIn` to choose the role. The `after` rows below are the final chorus of the owner's song and now hold per family: `perFamilyPlanned` is what the arc planned and `dynamicShape` is what the plan writes - they are the same value since the fix.",
       "before": [
         {
           "instrument": "keys",
@@ -333,17 +333,17 @@
         },
         {
           "instrument": "bass",
-          "dynamicShape": "f",
+          "dynamicShape": "mf",
           "perFamilyPlanned": "mf"
         },
         {
           "instrument": "strings",
-          "dynamicShape": "f",
+          "dynamicShape": "mf",
           "perFamilyPlanned": "mf"
         },
         {
           "instrument": "percussion",
-          "dynamicShape": "f",
+          "dynamicShape": "mf",
           "perFamilyPlanned": "mf"
         },
         {
@@ -910,14 +910,16 @@
       },
       "jazz": {
         "modeOnly": false,
-        "why": "chromatic approach is the idiom: a walking line leads into every change by a half step from either side"
+        "why": "chromatic approach is the idiom: a walking line leads into every change by a half step from either side",
+        "modeIsAPreference": "`modeOnly: false` means the mode is not a *gate* here, not that the mode is unread. `approachToneChoice` looks inside the mode first for every style and falls back to any non-chord tone only when the mode offers nothing - which is what `allowOutOfMode` was always documented to mean. Before this stream's fix the chromatic vocabulary computed no mode set at all (`approachToneSet` returns null when `modeOnly` is false) and took the first admissible pitch, a half step from the target, even where the mode already offered a step into it.",
+        "measured": "jazz-full's bass approached G through F sharp twice per section with F natural admissible and in C natural minor. B-05c's harmony dimension grades an out-of-chord-mode approach `minor` in any style: two `approach_tone_wrong_mode` findings (Chorus and Verse 2, two approach tones each - exactly APPROACH_TONE_MIN_COUNT). With the preference both findings are gone, `outOfKeyShare` is 0, and jazz-full's harmony dimension goes 89.2 -> 96.4 against B-05c's `>= 90` clean-anchor pin."
       },
       "universalRule": {
         "claim": "no style approaches a minor chord through its own major third - not the chord it sounds over, not the chord it leads to",
         "why": "R-1b P1-6 names the note by the chord it sounds over (\"E natural under Cm\"): it sits a semitone from the minor third the keys hold for the whole beat it sounds, and resolving a beat later does not undo it. B-05c's harmony critic reads it the same way and grades it `major` whatever the style.",
         "foundOn": "jazz-full, after B-18's own no-brief groove reading moved its bass: an E natural over Cm7 as a chromatic approach into the next chord's F. The harmony dimension scored 78.4 with two `approach_tone_wrong_mode` majors; with the rule it scores 89.2 and both drop to `minor` (out-of-chord-mode chromatic approaches, which R-1b calls the jazz idiom)."
       },
-      "goldenImpact": "ballad-piano-vocal, ethnic-vocal and cinematic-midi composer digests moved with identical note counts; acoustic-demo's shipped notes moved; jazz-full moved for the groove reading and again for the universal rule; the other chromatic-style cases are byte-identical (see reference-part-composer.golden.json recordedAt)"
+      "goldenImpact": "ballad-piano-vocal, ethnic-vocal and cinematic-midi composer digests moved with identical note counts; acoustic-demo's shipped notes moved; jazz-full moved for the groove reading and again for the universal rule; the other chromatic-style cases are byte-identical (see reference-part-composer.golden.json recordedAt); RE-PINNED once more for the mode preference - pop-full, rock-full, dance-full and jazz-full moved with identical note counts (the same approaches written from admissible notes), the five mode-restricted cases are byte-identical"
     },
     "plannerRead": {
       "file": "artifacts/api-server/src/lib/harmonyPlan/bassLine.ts",
@@ -1002,18 +1004,279 @@
     },
     "writerReads": "listed in the PR body for B-13"
   },
+  "d5_roleFromFamilyLevel": {
+    "claim": "a family's own level chooses its role, not the section's energy (R-1b P1-2, the root remedy the stream's first two commits named and handed on)",
+    "defect": "B-18 replaced a global `-1 marking for the whole song` with per-family levels, so the owner's section markings rose a step (verses pp -> p, choruses mp -> mf). `sectionPhrasePlanner.assignRole` chose a family's role from `section.energy` - the *section's* intended level - so the strings, which the brief calls soft, were handed HARMONIC_BED instead of PAD in both middle choruses: the opposite of the brief. The anchor's track id became `strings-harmonic_bed` (a track takes the role of the first task that writes notes, and the Chorus is the first strings task), which is what broke five of B-05c's tests.",
+    "rule": {
+      "where": "artifacts/api-server/src/lib/sectionPhrasePlanner.ts",
+      "functions": [
+        "roleForFamily",
+        "assignRole(family, section, level, ...)",
+        "dynamicShapeFor(..., family)"
+      ],
+      "statement": "The section's own energy still sets the default - that is the arrangement's plan for the section, and it applies to every family the brief said nothing about. A family the brief *did* name is re-read at its own level (`familyLevelIn(arcSection, family)`), and the re-read is honoured only in the direction the brief asked for: a `support` family (\"soft strings\", \"gentle bass\", \"light percussion\") may only be given a *quieter* role than the section's default, never a busier one; a `feature` family (\"big brass\") may only be given a busier one.",
+      "whyTheDirectionGate": "A role boundary is not always a loudness boundary. Percussion at a low level takes FILL, whose ROLE_ACTIVITY is busier than the ACCENT it takes at a high one (rhythmic 0.6 vs 0.35, density 0.25 vs 0.20), so without the gate \"light percussion\" would have handed the percussion *more* notes in the two loud choruses than the section asked for. Busyness is `ROLE_ACTIVITY[role].density + ROLE_ACTIVITY[role].rhythmic`, because the two pairs this decides between differ on different axes.",
+      "namedConstants": {
+        "PAD_CEILING_LEVEL": "DYNAMIC_LEVEL.mp (0.4). A sustaining family holds one sonority at `mp` and under and moves with the harmony from `mf` up: a pad is what a string section plays when it is asked for weight without motion, and `mp` is the top of that range. This is the one threshold whose *boundary* moved: the old test was `section.energy < 0.4`, which put an exact `mp` on the bed side. Before B-18 the owner's choruses passed it only because a source prior nudged them to 0.398 - the pad was an accident of two thousandths, and it is now a stated rule. No benchmark-corpus section sits at exactly 0.4, so no golden case moved for it.",
+        "PERCUSSION_ACCENT_LEVEL": "0.6. Over this level a percussion part accents the arrangement rather than filling its gaps.",
+        "OSTINATO_RHYTHM_LEVEL": "0.6. The *measured* source rhythm over which comping runs as an ostinato (unchanged; named, not moved)."
+      },
+      "dynamicShape": "`dynamicShapeFor` moved inside the per-family loop and delegates to `arrangementArc.familyDynamicShape(arcSection, family)`, so each role assignment carries the marking its own family plays. The pre-arc delta fallback is unchanged.",
+      "blastRadius": "`familyEmphasisIn` is `neutral` for every family the brief did not name, and `familyDynamicShape` returns the section's own marking then, so an arrangement with no brief is byte-identical. All nine benchmark cases' section plans and composer digests are unchanged by this rule; the four golden cases that moved moved for the approach-tone preference in d3."
+    },
+    "ownerBeforeAfter": {
+      "legend": "role@dynamicShape per family; the number after the arrow-free marking is the arc's per-family intent level. Sections in form order.",
+      "rows": [
+        {
+          "section": "Intro",
+          "sectionMarking": "p",
+          "energy": 0.25,
+          "before": {
+            "keys": "RHYTHMIC_HARMONY@p",
+            "bass": "BASS@p",
+            "strings": "PAD@p"
+          },
+          "after": {
+            "keys": "RHYTHMIC_HARMONY@p (0.25)",
+            "bass": "BASS@pp (0.1)",
+            "strings": "PAD@pp (0.1)"
+          }
+        },
+        {
+          "section": "Verse 1",
+          "sectionMarking": "p",
+          "energy": 0.286,
+          "before": {
+            "keys": "RHYTHMIC_HARMONY@p",
+            "bass": "BASS@p",
+            "strings": "PAD@p"
+          },
+          "after": {
+            "keys": "RHYTHMIC_HARMONY@p (0.286)",
+            "bass": "BASS@pp (0.1)",
+            "strings": "PAD@pp (0.1)"
+          }
+        },
+        {
+          "section": "Verse 2",
+          "sectionMarking": "p",
+          "energy": 0.252,
+          "before": {
+            "keys": "RHYTHMIC_HARMONY@p",
+            "bass": "BASS@p",
+            "strings": "PAD@p",
+            "percussion": "FILL@p"
+          },
+          "after": {
+            "keys": "RHYTHMIC_HARMONY@p (0.252)",
+            "bass": "BASS@pp (0.1)",
+            "strings": "PAD@pp (0.1)",
+            "percussion": "FILL@pp (0.1)"
+          }
+        },
+        {
+          "section": "Chorus",
+          "sectionMarking": "mf",
+          "energy": 0.548,
+          "before": {
+            "keys": "HARMONIC_BED@mf",
+            "bass": "BASS@mf",
+            "strings": "HARMONIC_BED@mf",
+            "percussion": "FILL@mf"
+          },
+          "after": {
+            "keys": "HARMONIC_BED@mf (0.548)",
+            "bass": "BASS@mp (0.4)",
+            "strings": "PAD@mp (0.4)",
+            "percussion": "FILL@mp (0.4)"
+          },
+          "note": "the strings change: soft strings in a mf chorus hold a pad, they do not move with the harmony"
+        },
+        {
+          "section": "Chorus 2",
+          "sectionMarking": "mf",
+          "energy": 0.615,
+          "before": {
+            "keys": "HARMONIC_BED@mf",
+            "bass": "BASS@mf",
+            "strings": "HARMONIC_BED@mf",
+            "percussion": "ACCENT@mf",
+            "drums": "GROOVE@mf"
+          },
+          "after": {
+            "keys": "HARMONIC_BED@mf (0.615)",
+            "bass": "BASS@mp (0.4)",
+            "strings": "PAD@mp (0.4)",
+            "percussion": "ACCENT@mp (0.4)",
+            "drums": "GROOVE@mf (0.615)"
+          },
+          "note": "the percussion keeps ACCENT: the direction gate refuses FILL, which would be busier than the chorus asked for"
+        },
+        {
+          "section": "Verse 3",
+          "sectionMarking": "p",
+          "energy": 0.212,
+          "before": {
+            "keys": "HARMONIC_BED@p",
+            "bass": "BASS@p",
+            "strings": "PAD@p"
+          },
+          "after": {
+            "keys": "HARMONIC_BED@p (0.212)",
+            "bass": "BASS@pp (0.1)",
+            "strings": "PAD@pp (0.1)"
+          }
+        },
+        {
+          "section": "Bridge",
+          "sectionMarking": "mf",
+          "energy": 0.58,
+          "before": {
+            "keys": "RHYTHMIC_HARMONY@mf->f",
+            "bass": "BASS@mf->f",
+            "strings": "COUNTER_MELODY@mf->f"
+          },
+          "after": {
+            "keys": "RHYTHMIC_HARMONY@mf->f (0.58)",
+            "bass": "BASS@mp->mf (0.4)",
+            "strings": "COUNTER_MELODY@mp->mf (0.4)"
+          },
+          "note": "COUNTER_MELODY is the bridge branch and does not read a level; only the shape moves"
+        },
+        {
+          "section": "Chorus 3",
+          "sectionMarking": "f",
+          "energy": 0.671,
+          "before": {
+            "keys": "HARMONIC_BED@f",
+            "bass": "BASS@f",
+            "strings": "CLIMAX_LAYER@f",
+            "percussion": "ACCENT@f",
+            "drums": "CLIMAX_LAYER@f"
+          },
+          "after": {
+            "keys": "HARMONIC_BED@f (0.671)",
+            "bass": "BASS@mf (0.55)",
+            "strings": "CLIMAX_LAYER@mf (0.55)",
+            "percussion": "ACCENT@mf (0.55)",
+            "drums": "CLIMAX_LAYER@f (0.671)"
+          },
+          "note": "\"big final chorus\" is a section word and still lifts the section to f; the three families the brief softened sit a step under it"
+        },
+        {
+          "section": "Outro",
+          "sectionMarking": "p",
+          "energy": 0.25,
+          "before": {
+            "keys": "RHYTHMIC_HARMONY@p->pp",
+            "bass": "BASS@p->pp",
+            "strings": "PAD@p->pp"
+          },
+          "after": {
+            "keys": "RHYTHMIC_HARMONY@p->pp (0.25)",
+            "bass": "BASS@pp->pp (0.1)",
+            "strings": "PAD@pp->pp (0.1)"
+          },
+          "note": "`pp->pp` because the release shift clamps at the bottom of the marking ladder"
+        }
+      ],
+      "trackIds": {
+        "before": [
+          "bass-bass",
+          "drums-groove",
+          "keys-rhythmic_harmony",
+          "percussion-fill",
+          "strings-harmonic_bed"
+        ],
+        "after": [
+          "bass-bass",
+          "drums-groove",
+          "keys-rhythmic_harmony",
+          "percussion-fill",
+          "strings-pad"
+        ]
+      },
+      "stringsBelowThePiano": "in every section the strings' level is at or under the keys': verses 0.1 vs 0.25-0.286, choruses 0.4 vs 0.548-0.615, final chorus 0.55 vs 0.671. Before the fix they were equal in every section."
+    },
+    "singleVoiceBed": {
+      "count": 6,
+      "before": "6 sections on `strings-harmonic_bed`, meanVoices 1.00-1.17 (measured by the previous commit)",
+      "after": "6 sections on `strings-pad`, meanVoices 1.00-1.17 - the finding neither reduced nor disappeared",
+      "whatDidChange": "the composed strings are now in view in 5 of the 6 sections (2 before the fix, 4 on B-05c's own anchor), and they carry more voices: Verse 1 3, Verse 2 7, Chorus 4, Chorus 2 8, Verse 3 9 against a shipped meanVoices of 1.00-1.17. Chorus 3 alone has no composed strings in view and stands on the shipped notes (major, attributed to the composer). The strings ship 91 notes against 402 composed.",
+      "reading": "this is the finding getting *sharper*, not going away: the voices are written and lost downstream, which is the performance / repair stage's and is blocking. A PAD writes more of them than a HARMONIC_BED did, so the loss is larger and better localised. R-1b P0-1's defect is not fixed by this stream and is not claimed to be."
+    },
+    "fiveFailures": [
+      {
+        "suite": "critics/dimensions/ownerAnchor",
+        "test": "the owner's song is an anchor: it builds, it is not in the clean set, and the gated dimensions do look at it",
+        "was": "`strings-harmonic_bed` against a pinned `strings-pad`",
+        "now": "green with no change to the test: the strings are a PAD in the Chorus again, so the first strings task that writes notes has role PAD and the track id is `strings-pad`"
+      },
+      {
+        "suite": "critics/dimensions/ownerAnchor",
+        "test": "control A - remove the performance timing",
+        "was": "`strings-pad: shipped 0, composed 0` - the id it filters on did not exist",
+        "now": "green with no change to the test: 3 shipped and 3 composed `off_grid` observations on `strings-pad`, composed max 0.556 against shipped max 0.556"
+      },
+      {
+        "suite": "critics/dimensions/ownerAnchor",
+        "test": "the string bed the brief asked for ships as one voice",
+        "was": "`single_voice_bed on the strings: 0 sections`",
+        "now": "green with no change to the test: 6 sections, 5 of them with the composed strings in view (the test needs >= 5 and >= 4)"
+      },
+      {
+        "suite": "critics/dimensions/harmony",
+        "test": "null control: no blocking harmony observation on any clean anchor",
+        "was": "jazz-full 89.2 against the `>= 90` clean-anchor pin",
+        "now": "green with no change to the test: 96.4. The cause was found and fixed, not registered - `approachToneChoice` now reads the mode as a preference for a chromatic style too (d3 above), both `approach_tone_wrong_mode` findings are gone, and jazz-full was NOT added to `belowNinety`",
+        "residual": "main measures jazz-full at 100; this stream leaves it at 96.4. The 3.6 points are one `clash_share` minor on the bass in the Chorus (clashShare 0.0657 against main's 0.034), which is B-18's no-brief groove reading writing a different bass line, not the approach tones. Above the gate, and named rather than hidden."
+      },
+      {
+        "suite": "critics/rank",
+        "test": "on the owner's song the judge refuses, and it refuses for the right reasons",
+        "was": "the empty two-bar intro at #9 against a `>= 12` pin (index >= 12)",
+        "now": "#11, and the pin restated as `>= 10` with the cause beside it - the one test change of the five that is a number",
+        "why": "the pin counts the blocking findings that outrank two silent bars, and the arrangement carries fewer of them. Measured against `origin/main` f2119cb on the same anchor: 13 blocking findings above the intro there, 10 here. Four `off_grid` findings fall under the blocking threshold (strings Verse 1 0.733 -> 0.400, keys Verse 3 0.618 -> 0.441, strings Verse 3 0.571 -> 0.500, keys Chorus 0.559 -> 0.529) and one `single_voice_bed` (Chorus 2) joins them. Nothing about the intro moved: priority 60.1 and the salience floor, both still asserted. The two orderings R-1b P0-5 actually asked for hold with room - the string bed is #2 and the off-grid harmony #1 against the intro at #11."
+      }
+    ],
+    "testsChanged": [
+      {
+        "file": "artifacts/api-server/src/lib/critics/dimensions/ownerAnchor.test.ts",
+        "test": "the cause, named only after the controls",
+        "change": "`toPerform.length === 1` -> the two ids by name, plus `toPerform.length <= attributed.length * 0.1`",
+        "cause": "this test passed before the fix and moved with it. \"gentle bass\" now gives the bass its own level (mp under the mf choruses, mf under the f final chorus); the sparser line it writes in Chorus 3 is on the grid, taking its *composed* off-grid share from 0.120 - exactly the dimension's on-grid boundary - to 0.113. Where the composed notes are on the grid and the shipped ones are not, the performance stage is the cause and the dimension is right to say so. The claim the count stands for (the control does not relabel everything) is asserted as a share instead of a magic 1: 2 of 22."
+      },
+      {
+        "file": "artifacts/api-server/src/lib/critics/rank.test.ts",
+        "test": "on the owner's song the judge refuses, and it refuses for the right reasons",
+        "change": "`intro >= 12` -> `intro >= 10`, plus a new assertion that everything above the intro is blocking",
+        "cause": "see fiveFailures[4].why - measured against main, not estimated"
+      },
+      {
+        "file": "artifacts/api-server/src/lib/referencePartComposer.golden.test.ts + the fixture",
+        "test": "the golden fixture",
+        "change": "re-pinned with `B00_WRITE_GOLDEN=1`, the cause appended to `recordedAt`",
+        "cause": "the approach-tone mode preference; pop-full, rock-full, dance-full and jazz-full moved with identical note counts, the other five are byte-identical"
+      }
+    ],
+    "suitesRun": "brainB18BriefReading 14/14, sectionPhrasePlanner 10/10, globalArrangementPlanner 12/12, arrangementArc 12/12, brainB01RachemNa 6/6, partComposer 8/8, referencePartComposer 5/5, referencePartComposer.golden 2/2, arrangementOrchestrator 13/13, arrangementBrainIntegrity 12/12, brainB02Harmony 7/7, harmonyPlan/harmonyPlan 13/13, groovePlan 13/13, brainB04Evidence 4/4, brainB06Repair 20/20, brainB10Motif 5/5, critics/controls 5/5, critics/judge 10/10, critics/rank 12/12, critics/failureTaxonomy 6/6, critics/adversarial/adversarial 43/43, and all seventeen critics/dimensions suites (density 7, emotionalArcAndTension 5, groove 6, harmony 5, idiomaticity 5, melodyAndCounterline 4, motifRecurrenceAndDevelopment 4, orchestration 6, ownerAnchor 5, performanceRealisation 5, playability 4, register 5, repetitionVsVariation 5, rhythmicInteraction 4, sectionDevelopment 4, transitions 4, voiceLeading 4). Zero failures. Also green as a blast-radius sweep: arrangementBenchmark 11, arrangementOrchestrator.b11 4, arrangementOrchestratorProvider 13, arrangerTrainingPipeline 5, benchmarkMeasures 7, blindListening 6, candidateDiff 4, criticRepairLoop 5, critics/b05cEvidence 1, critics/adversarial/evidence 1, decisionProvenance 6, gmPrograms 4, invariants/fuzz.property, invariants/playability.property, musicCritic 5, orchestrationBudget 5, positiveControlLedger 7, producerChat 19, producerIntelligence/briefCompiler 11, producerIntelligence/briefToPlanner 10, producerIntelligence/editPlan 8, producerIntelligence/explain 9, realCorpusBenchmark 8, registerPlan 6, scopedRegeneration 12, transitionEngine 5, brainB09StyleGrammar 5, styleResolver 9, styleKnowledge 6. `pnpm run typecheck` green, zero `error TS` in the log."
+  },
   "honestLimits": [
-    "The plan side only. No writer realises the intro figure, the ending gesture, the per-family level or the approach preference at note level yet; the reads B-13 and B-07 must add are listed in the PR body. Until they do, the owner's shipped notes change only where the bass planner already read HarmonyStyleParams (D3).",
-    "`sectionPhrasePlanner.dynamicShapeFor` still writes one dynamicShape per section, so the per-family marking reaches the section plan only through `arrangementArc.familyDynamicShape` — which nothing calls yet. D1 is proven at the arc, not at the role assignment.",
+    "The plan side only, with one exception. No writer realises the intro figure, the ending gesture or the approach preference from the plan; the per-family *level* does now reach the writers, because the section planner writes each role assignment's `dynamicShape` from `familyDynamicShape(arcSection, family)` and the composer reads that string. The intro and ending intents are still plan-only.",
+    "`sectionPhrasePlanner` now reads the family's own level twice - `familyLevelIn` in `roleForFamily` and `familyDynamicShape` in `dynamicShapeFor`. What it still does not read is `familyEmphasisIn` anywhere but the direction gate: a `feature` family gets a busier role but no extra register, no extra entry, no doubling. \"Big brass\" moves one role and one marking, not an orchestration.",
     "The family-word reader is adjacency-based on the producer's own text: an adjective reaches at most one word past the instrument, and a word about the world ends its reach. \"Make the strings, which enter in the chorus, soft\" is not read; it stays a global word.",
     "`applyConstraint` (\"not too busy\", \"less drums\") is untouched: a *constraint* about a family is still compiled as a section-scoped density nudge, not as a family level.",
     "The forbidden degrees are excluded whatever the target chord is. A minor-key song that genuinely borrows a major-III chord loses the major third as an approach tone into it; no case in the corpus does this, and no test covers it.",
-    "The style vocabularies judge an approach against the *key's* mode; B-05c's harmony critic judges it against the *chord's* own mode. Only the strongest case - the major third of a minor chord - is enforced here in every style. A chromatic style's other out-of-chord-mode approaches remain (jazz-full keeps two, graded `minor`), which is the idiom R-1b explicitly blessed for jazz, and which leaves jazz-full's harmony score at 89.2 against B-05c's `>= 90` pin for a clean anchor - so `critics/dimensions/harmony`'s null control fails (1 of 5). Adding jazz-full to that test's `belowNinety` map would make it green in one line; this stream refused, because the score fell for a change made here and registering a regression in the gate is not fixing it. That is the lead's call, not this stream's.",
-    "Five of B-05c's tests fail with this stream on top of it, in three suites, and the cause is D1 working: `critics/dimensions/ownerAnchor` 3 of 5, `critics/dimensions/harmony` 1 of 5 (the jazz-full pin above), `critics/rank` 1 of 12 - while `critics/controls` 5/5, `critics/judge` 10/10, `critics/adversarial/adversarial` 43/43, `critics/b05cEvidence` 1/1, `critics/dimensions/density` 7/7 and `critics/dimensions/groove` 6/6 stay green. With the global -1 marking gone, the owner's sections rise one step (verses pp -> p, choruses mp -> mf), and `sectionPhrasePlanner.assignRole` - which reads the section's level and not the family's - assigns the strings HARMONIC_BED instead of PAD, so the anchor's track id is `strings-harmonic_bed`. The findings themselves survive intact: `single_voice_bed` still fires on the strings in the same six sections (meanVoices 1.00-1.17), so nothing was hidden. Renaming the id in B-05c's assertions settles one of the three ownerAnchor failures and no more: control A needs the strings' composed off-grid findings in >= 3 sections and now sees 2, and the string-bed test needs >= 4 sections with the composed strings in view and now sees 2. `critics/rank` puts the empty two-bar intro back into the top twelve at #9 against a `>= 12` pin, though the two orderings R-1b P0-5 actually asked for still hold (the bed and the off-grid harmony both outrank it). The root remedy is the per-family read in `sectionPhrasePlanner.assignRole`, listed for B-07: with it the strings are a PAD again and the anchor is the one B-05c measured. It is a file this stream does not own and it would move the golden corpus a third time, so it is handed to the lead rather than taken here - and no count this stream caused to move was re-pinned.",
+    "The style vocabularies judge an approach against the *key's* mode; B-05c's harmony critic judges it against the *chord's* own mode, and the two still disagree in principle. The strongest case (the major third of a minor chord) is refused in every style, and since this stream's fix a chromatic style prefers the key's mode where it can - which is what took jazz-full's two `approach_tone_wrong_mode` findings away and its harmony score to 96.4. The disagreement itself is unresolved: a genuinely out-of-mode approach that a chromatic style writes because the mode offers nothing admissible would still be graded `minor`, and no corpus case exercises that path today.",
+    "The five B-05c tests that failed with this stream on top of it are green, and four of them without touching the test. `critics/dimensions/ownerAnchor` 5/5, `critics/dimensions/harmony` 5/5, `critics/rank` 12/12. Two assertions were changed and both are recorded in `d5_roleFromFamilyLevel.testsChanged` with the measurement behind them: ownerAnchor's `toPerform.length === 1` (a knife-edge at the dimension's 0.12 on-grid boundary) and rank's `intro >= 12` (a count of blocking findings that fell from 13 to 10 because the arrangement improved). No threshold inside a dimension was moved and jazz-full was not added to `belowNinety`.",
     "`tonalCentreOf` reads one tonal centre for the whole part window. A song that modulates is read in its opening key; the fixture does not modulate (keyChanges 0).",
     "The pulse conventions are the B-18 specialist's generalisations about each style, not measurements of a corpus — the same standing as every other knowledge-base value. Their bands are round numbers a musician would defend, and each carries its why.",
     "`inferStyleFromSong` claims a *form*, never a tradition: a triadic minor song with a slow harmonic rhythm and no rhythm section reads as ballad-shaped, and which world it belongs to stays a question. It returns `unknown` whenever the evidence supports no reading.",
     "The no-brief reading replaces a bad default only: it is consulted when the map's answer is a reading the style forbids or a dance grid nothing evidenced. A defensible measurement is never overwritten (the eight corpus cases with a detected rhythm section keep their readings; only jazz-full changed, and only because its ii-V vocabulary forbids four_on_floor).",
-    "`groove.pulseStrategy` outranks `groove.family` in `grooveFromGrammar`. A knowledge entry whose pulse strategy and groove family disagree would now be read by the strategy; every shipped entry's pair agrees, and no test enforces the invariant across future entries."
+    "`groove.pulseStrategy` outranks `groove.family` in `grooveFromGrammar`. A knowledge entry whose pulse strategy and groove family disagree would now be read by the strategy; every shipped entry's pair agrees, and no test enforces the invariant across future entries.",
+    "The role rule is a one-step rule. `roleForFamily` compares two roles and takes one of them; it cannot express \"two steps quieter\", and a family the brief puts 2 markings under the section (\"barely there\") gets the same role as one put 1 under whenever both land in the same branch. The level itself does carry the difference into the `dynamicShape` and from there into the composer.",
+    "`PAD_CEILING_LEVEL` moved a boundary, not only a name: `section.energy < 0.4` became `level <= 0.4`, so a section whose intended level is exactly `mp` now puts a sustaining family on a pad. That is the musical statement (`mp` is the top of the pad range) and it is the reading the owner's song had before B-18 - but there it held by a source-prior nudge of two thousandths rather than by a rule. No benchmark-corpus section sits at exactly 0.4, so nothing in the golden corpus measures the change; the first arrangement that does will be the evidence.",
+    "jazz-full's harmony dimension is 96.4 here against 100 on `origin/main` f2119cb. The remaining 3.6 points are a `clash_share` minor on the bass in the Chorus (clashShare 0.0657 vs 0.034), left by B-18's no-brief groove reading writing a different bass line. It is above the `>= 90` gate, it is not hidden, and it is not fixed.",
+    "The owner's `single_voice_bed` is still 6 sections. This stream did not reduce it and does not claim to: R-1b P0-1's defect is downstream of the composer (the voices are written and lost in performance / repair), and the fix here makes the loss *larger* - 402 composed string notes shipping as 91 - and better localised, with 5 of the 6 sections now carrying the composed notes as evidence instead of 2."
   ]
 }

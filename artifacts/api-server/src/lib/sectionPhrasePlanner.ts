@@ -13,10 +13,16 @@
  * summary and the development operator the arc chose. A section whose vocal
  * map is unavailable is sung by default when its function is a sung one, so
  * an accompaniment family is never promoted to LEAD and silenced.
+ *
+ * Brain B-18: a family the brief gave a level of its own is planned at *that*
+ * level. `roleForFamily` chooses its role from `familyLevelIn(arcSection,
+ * family)` and `dynamicShapeFor` writes `familyDynamicShape(arcSection,
+ * family)`, so "soft strings, gentle bass" is a pad under a piano bed and not
+ * a step down for the whole song. A family the brief never named reads the
+ * section's own level and is unaffected.
  */
 import { createHash } from "node:crypto";
 import type {
-  ArcDynamicMarking,
   ArrangementArc,
   ArrangementArcSection,
   GlobalArrangementPlan,
@@ -32,8 +38,11 @@ import type {
 import { arcForGlobalPlan, deriveGlobalArrangementPlan } from "./globalArrangementPlanner";
 import {
   canonicalFamily,
-  DYNAMIC_MARKINGS,
+  DYNAMIC_LEVEL,
   FAMILY_REGISTER_BAND,
+  familyDynamicShape,
+  familyEmphasisIn,
+  familyLevelIn,
   isNonFamilyHint,
   REGISTER_SHIFTABLE_FAMILIES,
 } from "./arrangementArc";
@@ -125,9 +134,40 @@ function spanMean<T extends { startBar: number; endBar: number }>(
 // Role assignment
 // ---------------------------------------------------------------------------
 
+/**
+ * The level at or under which a sustaining family holds one sonority (`PAD`)
+ * instead of moving with the harmony (`HARMONIC_BED`). A string section asked
+ * for weight without motion is written at `mp` and under; from `mf` up it has
+ * the weight to change with every chord. Written as a level, not a marking, so
+ * a section with no arc — whose `energy` is the source recording's RMS rather
+ * than an intended marking — reads the same boundary.
+ */
+const PAD_CEILING_LEVEL = DYNAMIC_LEVEL.mp;
+/**
+ * Over this level a percussion part accents the arrangement (a downbeat, a
+ * crash) rather than filling its gaps; under it there is room for the fill.
+ */
+const PERCUSSION_ACCENT_LEVEL = 0.6;
+/**
+ * The *measured* source rhythm over which comping runs as an ostinato rather
+ * than as chords. Never the planned density: that would turn every full
+ * chorus into arpeggiated eighths.
+ */
+const OSTINATO_RHYTHM_LEVEL = 0.6;
+
+/**
+ * Role assignment for one family at one intended `level`.
+ *
+ * Brain B-18: the level is the *family's*, not the section's. Before B-18 a
+ * brief that said "soft strings" was realised as one marking under for the
+ * whole song, so the section's own energy carried the request and this
+ * function could read it; per-family levels put the section back where the
+ * arc wants it, and a family's role has to be chosen from the family's line.
+ */
 function assignRole(
   family: string,
   section: SectionPlan,
+  level: number,
   isLead: boolean,
   gapHeavy: boolean,
   isFinalChorus: boolean,
@@ -138,7 +178,7 @@ function assignRole(
     case "drums":
       return isFinalChorus ? "CLIMAX_LAYER" : "GROOVE";
     case "percussion":
-      return section.energy > 0.6 ? "ACCENT" : "FILL";
+      return level > PERCUSSION_ACCENT_LEVEL ? "ACCENT" : "FILL";
     case "bass":
       return "BASS";
     case "keys":
@@ -146,7 +186,7 @@ function assignRole(
       // An ostinato answers a *measured* busy source rhythm; the fallback
       // rhythmic activity (the planned density) must not turn every full
       // chorus into arpeggiated eighths.
-      if (rhythmMeasured && section.rhythmicActivity > 0.6) return "OSTINATO";
+      if (rhythmMeasured && section.rhythmicActivity > OSTINATO_RHYTHM_LEVEL) return "OSTINATO";
       return section.function === "chorus" || section.function === "prechorus"
         ? "HARMONIC_BED"
         : "RHYTHMIC_HARMONY";
@@ -155,7 +195,7 @@ function assignRole(
       if (section.function === "bridge" || section.function === "instrumental" || gapHeavy) {
         return "COUNTER_MELODY";
       }
-      return section.energy < 0.4 ? "PAD" : "HARMONIC_BED";
+      return level <= PAD_CEILING_LEVEL ? "PAD" : "HARMONIC_BED";
     case "brass":
     case "winds":
       return isFinalChorus ? "CLIMAX_LAYER" : gapHeavy ? "CALL_RESPONSE" : "ACCENT";
@@ -184,30 +224,69 @@ const ROLE_ACTIVITY: Record<InstrumentArrangementRole, { rhythmic: number; melod
   CLIMAX_LAYER: { rhythmic: 0.6, melodic: 0.5, density: 0.8 },
 };
 
-const shiftMarking = (marking: ArcDynamicMarking, steps: number): ArcDynamicMarking => {
-  const at = DYNAMIC_MARKINGS.indexOf(marking);
-  return DYNAMIC_MARKINGS[Math.max(0, Math.min(DYNAMIC_MARKINGS.length - 1, at + steps))];
-};
+/**
+ * How busy a role is, for the one comparison the per-family rule needs. The
+ * two pairs it decides between differ on different axes — `PAD` and
+ * `HARMONIC_BED` on how much sound is present, `ACCENT` and `FILL` on how
+ * often it moves — so both are counted.
+ */
+const roleBusyness = (role: InstrumentArrangementRole): number =>
+  ROLE_ACTIVITY[role].density + ROLE_ACTIVITY[role].rhythmic;
 
 /**
- * The dynamic shape of a section from the arc: the intended marking, rising a
- * step through a lift and settling a step through a release or afterglow.
- * Falls back to the pre-arc delta reading when a section has no arc entry.
+ * The role one family takes in one section (Brain B-18, R-1b P1-2).
+ *
+ * The section's own energy still sets the default — that is the arrangement's
+ * plan for the section, and it applies to every family the brief said nothing
+ * about. A family the brief *did* name is re-read at its own level, and the
+ * re-read is honoured only in the direction the brief asked for:
+ *
+ *   - `support` ("soft strings", "gentle bass"): a family asked to sit under
+ *     the section may only be given a **quieter** role than the section's
+ *     default — never a busier one. Asking for soft strings and receiving a
+ *     chordal bed instead of a pad is the opposite of the request.
+ *   - `feature` ("big brass", "driving guitar"): a family asked to carry the
+ *     section may only be given a **busier** role.
+ *
+ * The direction gate matters because a role boundary is not always a loudness
+ * boundary: percussion at a low level takes `FILL`, which is *busier* than the
+ * `ACCENT` it takes at a high one, so "light percussion" must not be allowed
+ * to hand the percussion more notes than the chorus asked for.
+ */
+function roleForFamily(
+  family: string,
+  section: SectionPlan,
+  arcSection: ArrangementArcSection | undefined,
+  isLead: boolean,
+  gapHeavy: boolean,
+  isFinalChorus: boolean,
+  rhythmMeasured: boolean,
+): InstrumentArrangementRole {
+  const atSection = assignRole(family, section, section.energy, isLead, gapHeavy, isFinalChorus, rhythmMeasured);
+  if (!arcSection) return atSection;
+  const emphasis = familyEmphasisIn(arcSection, family);
+  if (emphasis === "neutral") return atSection;
+  const atFamily = assignRole(
+    family, section, familyLevelIn(arcSection, family), isLead, gapHeavy, isFinalChorus, rhythmMeasured,
+  );
+  const busier = roleBusyness(atFamily) > roleBusyness(atSection);
+  return (emphasis === "support" ? !busier : busier) ? atFamily : atSection;
+}
+
+/**
+ * The dynamic shape one family plays in a section: the family's own marking
+ * from the arc (`familyDynamicShape` — the section's when the brief named no
+ * level for it), rising a step through a lift and settling a step through a
+ * release or afterglow. Falls back to the pre-arc delta reading when a section
+ * has no arc entry.
  */
 function dynamicShapeFor(
   arcSection: ArrangementArcSection | undefined,
   section: SectionPlan,
   previousEnergy: number | null,
+  family: string,
 ): string {
-  if (arcSection) {
-    const marking = arcSection.intendedDynamic.value.marking;
-    switch (arcSection.tensionRole.value) {
-      case "lift": return `${marking}->${shiftMarking(marking, 1)}`;
-      case "release":
-      case "afterglow": return `${marking}->${shiftMarking(marking, -1)}`;
-      default: return marking;
-    }
-  }
+  if (arcSection) return familyDynamicShape(arcSection, family);
   if (previousEnergy === null) return "mp";
   const delta = section.energy - previousEnergy;
   if (delta > 0.15) return "mp->f";
@@ -507,11 +586,13 @@ export function deriveSectionPhrasePlan(
     const counterlineFamily = operator === "activate_counterline"
       ? COUNTERLINE_FAMILIES.find((f) => activeFamilies.includes(f))
       : undefined;
-    const dynamicShape = dynamicShapeFor(arcSection, sectionPlan, previousEnergy);
 
     for (const family of activeFamilies) {
       const isLead = leadRole === `instrument:${family}`;
-      let role = assignRole(family, sectionPlan, isLead, gapHeavy, isFinalChorus, measuredRhythm !== null);
+      const dynamicShape = dynamicShapeFor(arcSection, sectionPlan, previousEnergy, family);
+      let role = roleForFamily(
+        family, sectionPlan, arcSection, isLead, gapHeavy, isFinalChorus, measuredRhythm !== null,
+      );
       // Development operators realised through the role vocabulary the
       // composer already reads: a counter-line is a COUNTER_MELODY role; a
       // comping change flips bed and rhythmic comping.
