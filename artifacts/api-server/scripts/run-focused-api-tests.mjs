@@ -246,6 +246,30 @@ const suites = {
         "coherence-metric.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Brain B-05b: the adversarial critic (eight modules that try to reject,
+      // each with a positive control on orchestrated anchors and a clean-fixture
+      // null control), the failure taxonomy, the judge that keeps disagreement,
+      // and the evidence builder.
+      [
+        "src/lib/critics/adversarial/adversarial.test.ts",
+        "brain-b05b-adversarial.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/failureTaxonomy.test.ts",
+        "brain-b05b-failure-taxonomy.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/judge.test.ts",
+        "brain-b05b-judge.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/adversarial/evidence.test.ts",
+        "brain-b05b-evidence.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // Wave Q, Workstream A: tournament pairs into the Listening Room — balanced
       // draw, per-token audio, owner-apart tallies, reward-model preference records.
       [
