@@ -21,7 +21,14 @@ test("the B-05c evidence is built from the same runs the tests assert on, and is
 
   // The isolation: one control moves the finding and the other does not.
   const iso = evidence.grooveIsolation;
-  assert.equal(iso.reproduced.score, 0);
+  // The finding must still *reproduce* — that is what makes the isolation
+  // meaningful — but its exact score is not the point and pinning it made this
+  // suite red the moment B-13 improved the thing it measures (0 → 6.31 of 100,
+  // with 12 off-grid observations still standing). Assert the property: the
+  // dimension is still failing badly and the observations are still there.
+  assert.equal(typeof iso.reproduced.score, "number", "the dimension scored the owner's song at all");
+  assert.ok(iso.reproduced.score! < 25, `the off-grid finding still reproduces (score ${iso.reproduced.score}/100)`);
+  assert.ok(iso.reproduced.offGridObservations >= 5, `and still carries its observations (${iso.reproduced.offGridObservations})`);
   const a = iso.controls.find((c) => c.id === "A_remove_performance_timing")!;
   const b = iso.controls.find((c) => c.id === "B_quantise_to_the_composer_grid")!;
   assert.equal(a.moves, false, "the composed notes carry the finding: the performance stage is not the cause");
@@ -37,7 +44,15 @@ test("the B-05c evidence is built from the same runs the tests assert on, and is
   assert.equal(j.after.topProblems.length, 3);
   assert.ok(j.before.positions.emptyIntro === 1, "R-1b's finding reproduces: the empty two-bar intro led the v1 ordering");
   assert.ok(j.after.positions.emptyIntro > j.after.positions.stringBed, "and no longer outranks the string bed");
-  assert.ok(j.after.positions.emptyIntro > j.after.positions.offGridHarmony, "…or the off-grid harmony");
+  // R-1b also had the empty intro ranked below the off-grid harmony. B-13 then
+  // fixed the harmony's alignment, so that finding falls down the ordering
+  // (position 4 → 6) and the intro rises above it — which is correct: the
+  // harmony lands on the grid now and the two-bar intro is still silent. The
+  // assertion is therefore on the *movement*, not on the pair's order.
+  assert.ok(
+    j.after.positions.offGridHarmony > j.before.positions.offGridHarmony,
+    `the off-grid harmony falls down the ordering after B-13 (${j.before.positions.offGridHarmony} → ${j.after.positions.offGridHarmony})`,
+  );
 
   // The ranking on the corpus.
   assert.equal(evidence.rankingOnTheCorpus.length, 4);
