@@ -130,6 +130,33 @@ def smoke_asset(asset: dict) -> dict:
     }
 
 
+def merge_existing_proofs(existing: dict | None, fresh: dict[str, dict], manifest_assets: list[dict]) -> dict[str, dict]:
+    """Re-smoking one library (VST3_SMOKE_ONLY) must not silently drop the
+    other assets' proofs -- nor keep a stale one. An existing per-asset proof
+    is carried over only when it is about the same plugin digest, the same SFZ
+    file (if any) and the same host binary as now; anything else is dropped
+    and that asset is simply not offered until it is smoked again."""
+    merged = dict(fresh)
+    previous = (existing or {}).get("assets") if isinstance(existing, dict) else None
+    if not isinstance(previous, dict):
+        return merged
+    for asset in manifest_assets:
+        aid = asset["id"]
+        if aid in merged:
+            continue
+        proof = previous.get(aid)
+        if (
+            isinstance(proof, dict)
+            and proof.get("sha256") == asset["sha256"]
+            and proof.get("rendererSha256", "").lower() == host.renderer_sha256().lower()
+            # Proofs written before sfzSha256 was recorded carry no SFZ digest;
+            # app.py accepts them on plugin + host digest alone, and so does this.
+            and proof.get("sfzSha256", asset.get("sfzSha256")) == asset.get("sfzSha256")
+        ):
+            merged[aid] = proof
+    return merged
+
+
 def main() -> None:
     # Resolve before loading any plugin: loading can change the working directory.
     manifest_path = Path(os.getenv("VST3_RENDER_ASSET_MANIFEST", ".local-vst3-assets/asset-manifest.json")).resolve()
@@ -138,7 +165,8 @@ def main() -> None:
     problems = host.verify_asset_manifest(manifest)
     if problems:
         raise SystemExit("asset manifest refused:\n  " + "\n  ".join(problems))
-    assets = host.list_assets(manifest)
+    all_assets = host.list_assets(manifest)
+    assets = all_assets
     only = os.getenv("VST3_SMOKE_ONLY")
     if only:
         assets = [a for a in assets if a["id"] in only.split(",")] or assets
@@ -146,7 +174,11 @@ def main() -> None:
     per_asset: dict[str, dict] = {}
     for asset in assets:
         print(f"smoke: {asset['id']} ...", file=sys.stderr, flush=True)
-        per_asset[asset["id"]] = smoke_asset(asset)
+        per_asset[asset["id"]] = smoke_asset(asset) | ({"sfzSha256": asset["sfzSha256"]} if asset.get("sfzSha256") else {})
+    if only:
+        proof_path = state_dir / SPEC["smoke_proof"]
+        existing = json.loads(proof_path.read_text(encoding="utf-8")) if proof_path.is_file() else None
+        per_asset = merge_existing_proofs(existing, per_asset, all_assets)
 
     default = host.default_asset(manifest)
     default_proof = per_asset.get(default["id"]) or next(iter(per_asset.values()))

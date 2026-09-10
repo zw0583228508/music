@@ -168,3 +168,27 @@ def test_manifest_gate_checks_the_sfz_file_and_its_digest(tmp_path, monkeypatch)
     assert any("SFZ instrument" in p and "missing" in p for p in host.verify_one_asset(asset))
     public = host.asset_public_fields({**asset, "library": "Test (CC0)"})
     assert "sfzPath" not in public and "path" not in public and public["library"] == "Test (CC0)"
+
+
+def test_re_smoking_one_asset_keeps_only_matching_existing_proofs(monkeypatch):
+    import smoke
+
+    monkeypatch.setattr(host, "renderer_sha256", lambda: "cd" * 32)
+    assets = [
+        {"id": "surge", "sha256": "a" * 64},
+        {"id": "piano", "sha256": "b" * 64, "sfzSha256": "p" * 64},
+        {"id": "kit", "sha256": "b" * 64, "sfzSha256": "k" * 64},
+        {"id": "moved", "sha256": "b" * 64, "sfzSha256": "m" * 64},
+    ]
+    existing = {"assets": {
+        "surge": {"sha256": "a" * 64, "rendererSha256": "cd" * 32, "passed": True},
+        "piano": {"sha256": "b" * 64, "rendererSha256": "cd" * 32, "passed": True},  # legacy proof, no sfzSha256
+        "kit": {"sha256": "b" * 64, "rendererSha256": "cd" * 32, "sfzSha256": "k" * 64, "passed": False},
+        "moved": {"sha256": "b" * 64, "rendererSha256": "cd" * 32, "sfzSha256": "old" * 21 + "x", "passed": True},
+        "stale-host": {"sha256": "z" * 64, "rendererSha256": "00" * 32, "passed": True},
+    }}
+    fresh = {"kit": {"sha256": "b" * 64, "rendererSha256": "cd" * 32, "sfzSha256": "k" * 64, "passed": True}}
+    merged = smoke.merge_existing_proofs(existing, fresh, assets)
+    assert merged["kit"]["passed"] is True, "the fresh proof wins"
+    assert set(merged) == {"kit", "surge", "piano"}, "same-digest proofs carry over; a changed SFZ file and unknown assets do not"
+    assert smoke.merge_existing_proofs(None, fresh, assets) == fresh
