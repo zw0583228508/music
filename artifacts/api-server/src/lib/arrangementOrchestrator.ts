@@ -38,6 +38,7 @@ import { planCandidateGeneration } from "./candidateStrategies";
 import { checkArrangementConstraints } from "./musicalConstraints";
 import { critiqueArrangement } from "./musicCritic";
 import { runCriticRepairLoop } from "./criticRepairLoop";
+import { repairPlayability, type PlayabilityRepairReport } from "./playabilityRepair";
 import { applyPerformance } from "./performanceEngine";
 import { renderArrangementStems, renderStem, type StemRenderOptions } from "./referenceRenderWorker";
 import { abCompareCandidates, critiqueRenderedAudio, type AudioAbResult, type AudioStem } from "./audioCritic";
@@ -364,6 +365,7 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
   let totalNotes = 0;
   let totalConstraintErrors = 0;
   let renderedAny = false;
+  const playabilityRepairs: Array<{ candidate: string; trackId: string } & PlayabilityRepairReport> = [];
 
   for (const candidate of candidatePlan.candidates) {
     // --- 4. compose ---------------------------------------------------
@@ -455,9 +457,18 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
         articulationMap: track.mapping?.articulationMap,
         playableRange: track.instrumentDefinition.playableRange,
       });
+      // PR-98: the performed part must satisfy the generation contract's
+      // playability rules or the whole candidate is refused. A player takes an
+      // impossible leap by the octave and releases a held note early; so does
+      // this, and the trace records that it did.
+      const repaired = repairPlayability({ notes: result.notes, definition: track.instrumentDefinition });
+      if (repaired.report.rangeFolds || repaired.report.leapFolds || repaired.report.durationLengthened ||
+        repaired.report.breathTruncated || repaired.report.polyphonyReleases || repaired.report.dropped) {
+        playabilityRepairs.push({ candidate: candidate.label, trackId: track.id, ...repaired.report });
+      }
       const performedTrack: TrackModel = {
         ...track,
-        notes: result.notes,
+        notes: repaired.notes,
         cc: result.cc,
         articulations: result.articulations,
       };
@@ -575,7 +586,21 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     composed.length ? `mean symbolic ${(composed.reduce((s, c) => s + c.critique.overallScore, 0) / composed.length).toFixed(1)}` : "no candidates");
   const repaired = composed.filter((c) => c.repair && c.repair.passes.length > 0).length;
   record("repair", repaired ? "ok" : "skipped", `${repaired} candidate(s) repaired`);
-  record("perform", composed.length ? "ok" : "skipped", "performance humanisation applied");
+  record("perform", composed.length ? "ok" : "skipped",
+    playabilityRepairs.length
+      ? `performance humanisation applied; ${playabilityRepairs.length} part(s) repaired for playability (${playabilityRepairs.reduce((s, r) => s + r.leapFolds, 0)} leap folds, ${playabilityRepairs.reduce((s, r) => s + r.polyphonyReleases, 0)} releases, ${playabilityRepairs.reduce((s, r) => s + r.dropped, 0)} dropped)`
+      : "performance humanisation applied",
+    playabilityRepairs.length
+      ? {
+          repairedParts: playabilityRepairs.length,
+          leapFolds: playabilityRepairs.reduce((s, r) => s + r.leapFolds, 0),
+          rangeFolds: playabilityRepairs.reduce((s, r) => s + r.rangeFolds, 0),
+          polyphonyReleases: playabilityRepairs.reduce((s, r) => s + r.polyphonyReleases, 0),
+          dropped: playabilityRepairs.reduce((s, r) => s + r.dropped, 0),
+          residual: playabilityRepairs.filter((r) => r.residual.length).length,
+          parts: playabilityRepairs.map((r) => `${r.candidate}:${r.trackId.split("--").pop()}`).join(","),
+        }
+      : undefined);
   record("render", renderedAny ? "ok" : "skipped",
     renderedAny ? "stems rendered with attestations" : "rendering disabled");
   record("audio_critique", renderedAny ? "ok" : "skipped",
