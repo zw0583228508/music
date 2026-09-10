@@ -1,0 +1,1188 @@
+{
+  "stream": "B-21",
+  "title": "the note writers write music a musician would sign",
+  "base": "3b9ace3",
+  "generatedFrom": "artifacts/api-server/verify-file-entry.ts (not committed): orchestrateArrangement(candidateCount 3, render false, now 0) on the saved Song Model v3 of the owner's song with the arrangement hints of run v7, then critics/dimensions + critics/adversarial + critics/judge on the candidate the orchestrator itself selects. The shippedV7a column is the same gate run on the saved candidate of run v7a (<scratchpad>/rachem/candidate7.json), which is what the wave-3 brief measured.",
+  "song": {
+    "id": "רחם נא",
+    "tempoBpm": 130.43,
+    "meter": "4/4",
+    "key": "C minor",
+    "sections": 9,
+    "bars": 141,
+    "palette": [
+      "keys",
+      "strings",
+      "bass",
+      "percussion"
+    ],
+    "brief": "intimate chassidic ballad; piano, soft strings, gentle bass, light percussion; big final chorus"
+  },
+  "defects": [
+    {
+      "id": "D1",
+      "claim": "the two-bar intro shipped silent (the earliest note of the arrangement was at 3.795 s)",
+      "cause": "the Intro's keys and bass tasks found zero chord events in their window (harmonyContext.events is empty), so the voicing solver had nothing to solve and the bass skeleton was empty; nothing read arc.opening, which since B-18 says tonic_pad / impliesTonic: true / families [keys, bass]. partComposer.buildPartComposerPlan also emits no INTRO task (B-01 excluded the ensemble carrier with a reason).",
+      "fix": "composer/opening.ts + writeChordal / writeBassLine realise the arc's figure on the song's first analysed chord (chordSource: next_bars)."
+    },
+    {
+      "id": "D2",
+      "claim": "the verses were four to six times busier than the choruses",
+      "cause": "TWO causes, measured, and not the one the brief hypothesised. (a) The role flips per section: sectionPhrasePlanner.assignRole gives the keys RHYTHMIC_HARMONY in Verse 1 / Verse 2 / Bridge and HARMONIC_BED in the choruses, and chordalTextureFor keys off that role, so the verses read the rhythmic cell (arpeggiated_8ths, 8 onsets a bar) and the choruses the bed cell (whole_note_bed, about one onset a chord). (b) The arpeggio archetype was never realised: writeChordal's arpeggio branch needs a group of at least two arpeggio steps and an arpeggiated_8ths group is 0.85 of one, so every onset fell through to emit and struck the WHOLE voicing - 22 bars x 8 eighths x 3 voices = 528, measured 501. The brief's hypothesis (chordalTextureFor consults level in only two narrow branches) is true and is a third, smaller cause: neither isFull(level) nor level !== 'tutti' can thin anything.",
+      "fix": "an arpeggio is a broken chord (one voice per onset, the bottom voice held under it); a struck bed re-articulates on the meter's pulses at a full / tutti texture or from level 0.5."
+    },
+    {
+      "id": "D3",
+      "claim": "the bass was nearly absent under the verses (0.34-0.40 notes a second, foundation_gaps twice)",
+      "cause": "bassRhythmFor's relation === 'pedal' branch DISCARDED groove.bassUnits (the plan's own answer, [0] - the downbeat of every bar) and rebuilt the onsets from chord starts, falling back to 'every second bar' when a bar had none. A second source of truth against groovePlan.bassUnitsFor, inside the composer's own file.",
+      "fix": "the pedal keeps the plan's units and adds the chord starts inside the bar."
+    },
+    {
+      "id": "D4",
+      "claim": "the top line went above the instrument's comfortable ceiling (strings 92, keys 89)",
+      "cause": "composer/registers.ts widened the FAMILY comfortable range by the argmax of section.registerDistribution, which sectionPhrasePlanner builds as a histogram of the section's active families. A section leaning high therefore raised the bass, the keys and the strings together. The critic reads instrumentProfile.roleRegisterFor(profile, role); the composer never called it.",
+      "fix": "the window is the role register (intersected with the instrument's playable + comfortable range); raise_register lifts the floor inside it, never the ceiling above it."
+    },
+    {
+      "id": "D5",
+      "claim": "found while fixing D2: the piano voiced the previous chord for a whole bar in the Outro (clash_share, blocking)",
+      "cause": "visibleChords returned the ANALYSED chord times while the voicing solver worked from chordEventsIn(..., { grid }), whose onsets B-13 snapped to the beat. On the owner's Outro the analysed Cm began at 238.06 s and the solved event at 238.29, so the comping onset at 238.06 asked voicingFor for the chord before it and the piano played an F minor triad for 1.95 s under a C minor chord.",
+      "fix": "visibleChords returns the same quantised chords the solver reads. This is what took harmony from 40 to 83.15 and cleared the blocking clash_share."
+    }
+  ],
+  "ownerSong": {
+    "shippedV7a": {
+      "verdict": false,
+      "blocking": 1,
+      "majors": 26,
+      "firstNoteSeconds": 3.795,
+      "scores": {
+        "harmony": 40,
+        "voiceLeading": 93.49,
+        "melodyAndCounterline": 100,
+        "motifRecurrenceAndDevelopment": 78.94,
+        "groove": 33.59,
+        "rhythmicInteraction": 100,
+        "orchestration": 100,
+        "idiomaticity": 100,
+        "register": 66.3,
+        "density": 50.56,
+        "transitions": 97.55,
+        "repetitionVsVariation": 100,
+        "sectionDevelopment": 94.18,
+        "playability": 50.88,
+        "performanceRealisation": 94.38,
+        "emotionalArcAndTension": 97.4,
+        "adversarial.boredom": 90,
+        "adversarial.machineMade": 77,
+        "adversarial.causality": 75,
+        "adversarial.arbitrariness": 77,
+        "adversarial.instrumentReality": 93,
+        "adversarial.copiedRepeat": 99,
+        "adversarial.fighting": 100,
+        "adversarial.professionalWouldChange": 78
+      },
+      "findings": {
+        "clash_share": 1,
+        "voice_crossing_between_parts": 1,
+        "no_recurrence": 3,
+        "off_grid": 5,
+        "top_line_above_comfortable_ceiling": 4,
+        "foundation_gaps": 2,
+        "arrival_thinner_than_setup": 1,
+        "louder_section_thinner": 1,
+        "rhythm_predictable": 1,
+        "no_rests": 2,
+        "climax_not_prepared": 1,
+        "climax_not_realised": 1,
+        "string_bed_too_high": 1,
+        "no_top_voice_line": 2,
+        "single_pitch_percussion": 1
+      },
+      "perSection": {
+        "Intro": {},
+        "Verse 1": {
+          "bass": {
+            "notes": 16,
+            "notesPerSecond": 0.4,
+            "meanVoices": 1.13,
+            "pitchRange": [
+              29,
+              46
+            ],
+            "meanVelocity": 52
+          },
+          "keys": {
+            "notes": 501,
+            "notesPerSecond": 12.38,
+            "meanVoices": 3,
+            "pitchRange": [
+              55,
+              65
+            ],
+            "meanVelocity": 49
+          }
+        },
+        "Verse 2": {
+          "bass": {
+            "notes": 36,
+            "notesPerSecond": 1.22,
+            "meanVoices": 1.06,
+            "pitchRange": [
+              31,
+              43
+            ],
+            "meanVelocity": 59
+          },
+          "keys": {
+            "notes": 478,
+            "notesPerSecond": 16.24,
+            "meanVoices": 3.95,
+            "pitchRange": [
+              53,
+              72
+            ],
+            "meanVelocity": 46
+          },
+          "strings": {
+            "notes": 63,
+            "notesPerSecond": 2.14,
+            "meanVoices": 10.11,
+            "pitchRange": [
+              60,
+              84
+            ],
+            "meanVelocity": 45
+          }
+        },
+        "Chorus": {
+          "bass": {
+            "notes": 32,
+            "notesPerSecond": 1.09,
+            "meanVoices": 1,
+            "pitchRange": [
+              31,
+              46
+            ],
+            "meanVelocity": 70
+          },
+          "keys": {
+            "notes": 92,
+            "notesPerSecond": 3.12,
+            "meanVoices": 8.89,
+            "pitchRange": [
+              56,
+              75
+            ],
+            "meanVelocity": 69
+          },
+          "strings": {
+            "notes": 33,
+            "notesPerSecond": 1.12,
+            "meanVoices": 9.61,
+            "pitchRange": [
+              62,
+              82
+            ],
+            "meanVelocity": 61
+          }
+        },
+        "Chorus 2": {
+          "bass": {
+            "notes": 31,
+            "notesPerSecond": 1.05,
+            "meanVoices": 1,
+            "pitchRange": [
+              31,
+              43
+            ],
+            "meanVelocity": 74
+          },
+          "percussion": {
+            "notes": 56,
+            "notesPerSecond": 1.9,
+            "meanVoices": 1,
+            "pitchRange": [
+              54,
+              54
+            ],
+            "meanVelocity": 28
+          },
+          "keys": {
+            "notes": 74,
+            "notesPerSecond": 2.51,
+            "meanVoices": 10.43,
+            "pitchRange": [
+              55,
+              77
+            ],
+            "meanVelocity": 79
+          },
+          "strings": {
+            "notes": 22,
+            "notesPerSecond": 0.75,
+            "meanVoices": 10.36,
+            "pitchRange": [
+              65,
+              80
+            ],
+            "meanVelocity": 76
+          }
+        },
+        "Verse 3": {
+          "bass": {
+            "notes": 15,
+            "notesPerSecond": 0.34,
+            "meanVoices": 1.13,
+            "pitchRange": [
+              36,
+              48
+            ],
+            "meanVelocity": 67
+          },
+          "keys": {
+            "notes": 106,
+            "notesPerSecond": 2.4,
+            "meanVoices": 8.49,
+            "pitchRange": [
+              55,
+              65
+            ],
+            "meanVelocity": 61
+          }
+        },
+        "Bridge": {
+          "bass": {
+            "notes": 31,
+            "notesPerSecond": 1.05,
+            "meanVoices": 1.13,
+            "pitchRange": [
+              29,
+              48
+            ],
+            "meanVelocity": 47
+          },
+          "keys": {
+            "notes": 338,
+            "notesPerSecond": 11.48,
+            "meanVoices": 3.08,
+            "pitchRange": [
+              53,
+              72
+            ],
+            "meanVelocity": 48
+          }
+        },
+        "Chorus 3": {
+          "bass": {
+            "notes": 32,
+            "notesPerSecond": 1.09,
+            "meanVoices": 1,
+            "pitchRange": [
+              34,
+              48
+            ],
+            "meanVelocity": 81
+          },
+          "percussion": {
+            "notes": 64,
+            "notesPerSecond": 2.17,
+            "meanVoices": 1,
+            "pitchRange": [
+              54,
+              54
+            ],
+            "meanVelocity": 31
+          },
+          "keys": {
+            "notes": 107,
+            "notesPerSecond": 3.63,
+            "meanVoices": 10.74,
+            "pitchRange": [
+              70,
+              86
+            ],
+            "meanVelocity": 78
+          },
+          "strings": {
+            "notes": 45,
+            "notesPerSecond": 1.53,
+            "meanVoices": 8.51,
+            "pitchRange": [
+              72,
+              92
+            ],
+            "meanVelocity": 71
+          }
+        },
+        "Outro": {
+          "bass": {
+            "notes": 6,
+            "notesPerSecond": 0.25,
+            "meanVoices": 1,
+            "pitchRange": [
+              29,
+              36
+            ],
+            "meanVelocity": 36
+          },
+          "keys": {
+            "notes": 36,
+            "notesPerSecond": 1.5,
+            "meanVoices": 3,
+            "pitchRange": [
+              55,
+              65
+            ],
+            "meanVelocity": 53
+          },
+          "strings": {
+            "notes": 18,
+            "notesPerSecond": 0.75,
+            "meanVoices": 5.56,
+            "pitchRange": [
+              68,
+              79
+            ],
+            "meanVelocity": 37
+          }
+        }
+      }
+    },
+    "before": {
+      "verdict": false,
+      "blocking": 2,
+      "majors": 22,
+      "firstNoteSeconds": 3.786,
+      "lastNoteEndSeconds": 258.498,
+      "scores": {
+        "harmony": 40,
+        "voiceLeading": 93.49,
+        "melodyAndCounterline": 100,
+        "motifRecurrenceAndDevelopment": 100,
+        "groove": 42.32,
+        "rhythmicInteraction": 100,
+        "orchestration": 40,
+        "idiomaticity": 100,
+        "register": 52.26,
+        "density": 82.68,
+        "transitions": 87.67,
+        "repetitionVsVariation": 100,
+        "sectionDevelopment": 94.18,
+        "playability": 50.83,
+        "performanceRealisation": 91.57,
+        "emotionalArcAndTension": 97.4,
+        "adversarial.boredom": 90,
+        "adversarial.machineMade": 77,
+        "adversarial.causality": 89,
+        "adversarial.arbitrariness": 59,
+        "adversarial.instrumentReality": 93,
+        "adversarial.copiedRepeat": 99,
+        "adversarial.fighting": 100,
+        "adversarial.professionalWouldChange": 82
+      },
+      "findings": {
+        "clash_share": 1,
+        "planned_family_silent": 4,
+        "voice_crossing_between_parts": 1,
+        "off_grid": 3,
+        "top_line_above_comfortable_ceiling": 5,
+        "climax_all_treble": 1,
+        "foundation_gaps": 2,
+        "rhythm_predictable": 1,
+        "no_rests": 2,
+        "climax_not_realised": 1,
+        "string_bed_too_high": 1,
+        "no_top_voice_line": 1,
+        "single_pitch_percussion": 1
+      },
+      "perSection": {
+        "Intro": {},
+        "Verse 1": {
+          "bass": {
+            "notes": 17,
+            "notesPerSecond": 0.42,
+            "meanVoices": 1,
+            "pitchRange": [
+              29,
+              46
+            ],
+            "meanVelocity": 60
+          },
+          "keys": {
+            "notes": 501,
+            "notesPerSecond": 12.38,
+            "meanVoices": 3.01,
+            "pitchRange": [
+              55,
+              65
+            ],
+            "meanVelocity": 54
+          }
+        },
+        "Verse 2": {
+          "bass": {
+            "notes": 35,
+            "notesPerSecond": 1.19,
+            "meanVoices": 1,
+            "pitchRange": [
+              31,
+              43
+            ],
+            "meanVelocity": 61
+          },
+          "keys": {
+            "notes": 479,
+            "notesPerSecond": 16.27,
+            "meanVoices": 3.93,
+            "pitchRange": [
+              53,
+              72
+            ],
+            "meanVelocity": 52
+          },
+          "strings": {
+            "notes": 63,
+            "notesPerSecond": 2.14,
+            "meanVoices": 9.79,
+            "pitchRange": [
+              60,
+              84
+            ],
+            "meanVelocity": 47
+          }
+        },
+        "Chorus": {
+          "bass": {
+            "notes": 32,
+            "notesPerSecond": 1.09,
+            "meanVoices": 1,
+            "pitchRange": [
+              31,
+              46
+            ],
+            "meanVelocity": 73
+          },
+          "keys": {
+            "notes": 91,
+            "notesPerSecond": 3.09,
+            "meanVoices": 9.04,
+            "pitchRange": [
+              56,
+              75
+            ],
+            "meanVelocity": 74
+          },
+          "strings": {
+            "notes": 31,
+            "notesPerSecond": 1.05,
+            "meanVoices": 9.13,
+            "pitchRange": [
+              62,
+              82
+            ],
+            "meanVelocity": 60
+          }
+        },
+        "Chorus 2": {
+          "bass": {
+            "notes": 31,
+            "notesPerSecond": 1.05,
+            "meanVoices": 1,
+            "pitchRange": [
+              31,
+              43
+            ],
+            "meanVelocity": 75
+          },
+          "percussion": {
+            "notes": 56,
+            "notesPerSecond": 1.9,
+            "meanVoices": 1,
+            "pitchRange": [
+              54,
+              54
+            ],
+            "meanVelocity": 37
+          },
+          "keys": {
+            "notes": 75,
+            "notesPerSecond": 2.55,
+            "meanVoices": 10.09,
+            "pitchRange": [
+              55,
+              77
+            ],
+            "meanVelocity": 81
+          },
+          "strings": {
+            "notes": 24,
+            "notesPerSecond": 0.82,
+            "meanVoices": 10.67,
+            "pitchRange": [
+              65,
+              80
+            ],
+            "meanVelocity": 71
+          }
+        },
+        "Verse 3": {
+          "bass": {
+            "notes": 15,
+            "notesPerSecond": 0.34,
+            "meanVoices": 1,
+            "pitchRange": [
+              36,
+              48
+            ],
+            "meanVelocity": 68
+          },
+          "keys": {
+            "notes": 104,
+            "notesPerSecond": 2.35,
+            "meanVoices": 8.4,
+            "pitchRange": [
+              55,
+              65
+            ],
+            "meanVelocity": 64
+          }
+        },
+        "Bridge": {
+          "bass": {
+            "notes": 30,
+            "notesPerSecond": 1.02,
+            "meanVoices": 1,
+            "pitchRange": [
+              29,
+              48
+            ],
+            "meanVelocity": 51
+          },
+          "keys": {
+            "notes": 338,
+            "notesPerSecond": 11.48,
+            "meanVoices": 3.1,
+            "pitchRange": [
+              53,
+              66
+            ],
+            "meanVelocity": 55
+          },
+          "strings": {
+            "notes": 4,
+            "notesPerSecond": 0.14,
+            "meanVoices": 4,
+            "pitchRange": [
+              72,
+              91
+            ],
+            "meanVelocity": 77
+          }
+        },
+        "Chorus 3": {
+          "bass": {
+            "notes": 33,
+            "notesPerSecond": 1.12,
+            "meanVoices": 1,
+            "pitchRange": [
+              34,
+              48
+            ],
+            "meanVelocity": 81
+          },
+          "percussion": {
+            "notes": 64,
+            "notesPerSecond": 2.17,
+            "meanVoices": 1,
+            "pitchRange": [
+              54,
+              54
+            ],
+            "meanVelocity": 41
+          },
+          "keys": {
+            "notes": 108,
+            "notesPerSecond": 3.67,
+            "meanVoices": 10.63,
+            "pitchRange": [
+              70,
+              86
+            ],
+            "meanVelocity": 83
+          },
+          "strings": {
+            "notes": 41,
+            "notesPerSecond": 1.39,
+            "meanVoices": 8.95,
+            "pitchRange": [
+              72,
+              92
+            ],
+            "meanVelocity": 69
+          }
+        },
+        "Outro": {
+          "bass": {
+            "notes": 6,
+            "notesPerSecond": 0.25,
+            "meanVoices": 1,
+            "pitchRange": [
+              29,
+              36
+            ],
+            "meanVelocity": 41
+          },
+          "keys": {
+            "notes": 36,
+            "notesPerSecond": 1.5,
+            "meanVoices": 3,
+            "pitchRange": [
+              55,
+              65
+            ],
+            "meanVelocity": 56
+          },
+          "strings": {
+            "notes": 18,
+            "notesPerSecond": 0.75,
+            "meanVoices": 5.56,
+            "pitchRange": [
+              68,
+              79
+            ],
+            "meanVelocity": 42
+          }
+        }
+      }
+    },
+    "after": {
+      "verdict": true,
+      "blocking": 0,
+      "majors": 0,
+      "firstNoteSeconds": 0,
+      "lastNoteEndSeconds": 257.748,
+      "scores": {
+        "harmony": 83.15,
+        "voiceLeading": 94.46,
+        "melodyAndCounterline": 100,
+        "motifRecurrenceAndDevelopment": 100,
+        "groove": 91.57,
+        "rhythmicInteraction": 97.27,
+        "orchestration": 100,
+        "idiomaticity": 100,
+        "register": 100,
+        "density": 97.19,
+        "transitions": 90.14,
+        "repetitionVsVariation": 100,
+        "sectionDevelopment": 91.37,
+        "playability": 100,
+        "performanceRealisation": 100,
+        "emotionalArcAndTension": 97.4,
+        "adversarial.boredom": 100,
+        "adversarial.machineMade": 97,
+        "adversarial.causality": 100,
+        "adversarial.arbitrariness": 85,
+        "adversarial.instrumentReality": 100,
+        "adversarial.copiedRepeat": 100,
+        "adversarial.fighting": 100,
+        "adversarial.professionalWouldChange": 99
+      },
+      "findings": {},
+      "perSection": {
+        "Intro": {
+          "bass": {
+            "notes": 3,
+            "notesPerSecond": 0.82,
+            "meanVoices": 1,
+            "pitchRange": [
+              36,
+              36
+            ],
+            "meanVelocity": 64
+          },
+          "keys": {
+            "notes": 4,
+            "notesPerSecond": 1.09,
+            "meanVoices": 4,
+            "pitchRange": [
+              55,
+              67
+            ],
+            "meanVelocity": 50
+          }
+        },
+        "Verse 1": {
+          "bass": {
+            "notes": 25,
+            "notesPerSecond": 0.62,
+            "meanVoices": 1,
+            "pitchRange": [
+              29,
+              46
+            ],
+            "meanVelocity": 76
+          },
+          "keys": {
+            "notes": 187,
+            "notesPerSecond": 4.62,
+            "meanVoices": 2.53,
+            "pitchRange": [
+              55,
+              65
+            ],
+            "meanVelocity": 50
+          }
+        },
+        "Verse 2": {
+          "bass": {
+            "notes": 34,
+            "notesPerSecond": 1.15,
+            "meanVoices": 1,
+            "pitchRange": [
+              29,
+              43
+            ],
+            "meanVelocity": 62
+          },
+          "keys": {
+            "notes": 142,
+            "notesPerSecond": 4.82,
+            "meanVoices": 2.73,
+            "pitchRange": [
+              50,
+              72
+            ],
+            "meanVelocity": 49
+          },
+          "strings": {
+            "notes": 54,
+            "notesPerSecond": 1.83,
+            "meanVoices": 6,
+            "pitchRange": [
+              60,
+              79
+            ],
+            "meanVelocity": 52
+          }
+        },
+        "Chorus": {
+          "bass": {
+            "notes": 33,
+            "notesPerSecond": 1.12,
+            "meanVoices": 1,
+            "pitchRange": [
+              31,
+              46
+            ],
+            "meanVelocity": 72
+          },
+          "keys": {
+            "notes": 245,
+            "notesPerSecond": 8.32,
+            "meanVoices": 3.99,
+            "pitchRange": [
+              50,
+              67
+            ],
+            "meanVelocity": 75
+          },
+          "strings": {
+            "notes": 39,
+            "notesPerSecond": 1.32,
+            "meanVoices": 6.9,
+            "pitchRange": [
+              62,
+              79
+            ],
+            "meanVelocity": 59
+          }
+        },
+        "Chorus 2": {
+          "bass": {
+            "notes": 32,
+            "notesPerSecond": 1.09,
+            "meanVoices": 1,
+            "pitchRange": [
+              31,
+              43
+            ],
+            "meanVelocity": 74
+          },
+          "percussion": {
+            "notes": 60,
+            "notesPerSecond": 2.04,
+            "meanVoices": 1,
+            "pitchRange": [
+              54,
+              82
+            ],
+            "meanVelocity": 44
+          },
+          "keys": {
+            "notes": 196,
+            "notesPerSecond": 6.66,
+            "meanVoices": 3.71,
+            "pitchRange": [
+              48,
+              65
+            ],
+            "meanVelocity": 79
+          },
+          "strings": {
+            "notes": 25,
+            "notesPerSecond": 0.85,
+            "meanVoices": 6.84,
+            "pitchRange": [
+              65,
+              77
+            ],
+            "meanVelocity": 64
+          }
+        },
+        "Verse 3": {
+          "bass": {
+            "notes": 30,
+            "notesPerSecond": 0.68,
+            "meanVoices": 1,
+            "pitchRange": [
+              36,
+              48
+            ],
+            "meanVelocity": 74
+          },
+          "keys": {
+            "notes": 98,
+            "notesPerSecond": 2.22,
+            "meanVoices": 8.14,
+            "pitchRange": [
+              55,
+              65
+            ],
+            "meanVelocity": 68
+          }
+        },
+        "Bridge": {
+          "bass": {
+            "notes": 17,
+            "notesPerSecond": 0.58,
+            "meanVoices": 1,
+            "pitchRange": [
+              29,
+              41
+            ],
+            "meanVelocity": 56
+          },
+          "keys": {
+            "notes": 81,
+            "notesPerSecond": 2.75,
+            "meanVoices": 3.47,
+            "pitchRange": [
+              53,
+              66
+            ],
+            "meanVelocity": 53
+          },
+          "strings": {
+            "notes": 4,
+            "notesPerSecond": 0.14,
+            "meanVoices": 4,
+            "pitchRange": [
+              72,
+              84
+            ],
+            "meanVelocity": 77
+          }
+        },
+        "Chorus 3": {
+          "bass": {
+            "notes": 34,
+            "notesPerSecond": 1.15,
+            "meanVoices": 1,
+            "pitchRange": [
+              29,
+              48
+            ],
+            "meanVelocity": 81
+          },
+          "percussion": {
+            "notes": 66,
+            "notesPerSecond": 2.24,
+            "meanVoices": 1,
+            "pitchRange": [
+              54,
+              82
+            ],
+            "meanVelocity": 49
+          },
+          "keys": {
+            "notes": 192,
+            "notesPerSecond": 6.52,
+            "meanVoices": 3.15,
+            "pitchRange": [
+              55,
+              67
+            ],
+            "meanVelocity": 87
+          },
+          "strings": {
+            "notes": 46,
+            "notesPerSecond": 1.56,
+            "meanVoices": 6.83,
+            "pitchRange": [
+              72,
+              84
+            ],
+            "meanVelocity": 72
+          }
+        },
+        "Outro": {
+          "bass": {
+            "notes": 17,
+            "notesPerSecond": 0.71,
+            "meanVoices": 1,
+            "pitchRange": [
+              29,
+              43
+            ],
+            "meanVelocity": 66
+          },
+          "keys": {
+            "notes": 27,
+            "notesPerSecond": 1.13,
+            "meanVoices": 4.33,
+            "pitchRange": [
+              55,
+              65
+            ],
+            "meanVelocity": 52
+          },
+          "strings": {
+            "notes": 18,
+            "notesPerSecond": 0.75,
+            "meanVoices": 4.22,
+            "pitchRange": [
+              68,
+              79
+            ],
+            "meanVelocity": 48
+          }
+        }
+      }
+    },
+    "note": "before and after are the same re-composition through orchestrateArrangement at base 3b9ace3 and at this branch's head; shippedV7a is the saved candidate of the run the wave-3 brief measured, which the before column reproduces to within the performance stage's velocity jitter."
+  },
+  "goldenFixture": {
+    "file": "artifacts/api-server/src/lib/__fixtures__/reference-part-composer.golden.json",
+    "rePinnedWith": "B00_WRITE_GOLDEN=1; the cause is appended to recordedAt in referencePartComposer.golden.test.ts",
+    "cases": [
+      {
+        "id": "pop-full",
+        "composerNotesBefore": 907,
+        "composerNotesAfter": 818,
+        "orchestrationBefore": [
+          921,
+          938,
+          1304
+        ],
+        "orchestrationAfter": [
+          816,
+          721,
+          782
+        ]
+      },
+      {
+        "id": "ballad-piano-vocal",
+        "composerNotesBefore": 292,
+        "composerNotesAfter": 411,
+        "orchestrationBefore": [
+          280,
+          318,
+          698
+        ],
+        "orchestrationAfter": [
+          360,
+          301,
+          297
+        ]
+      },
+      {
+        "id": "rock-full",
+        "composerNotesBefore": 783,
+        "composerNotesAfter": 858,
+        "orchestrationBefore": [
+          793,
+          810,
+          1073
+        ],
+        "orchestrationAfter": [
+          806,
+          583,
+          786
+        ]
+      },
+      {
+        "id": "dance-full",
+        "composerNotesBefore": 789,
+        "composerNotesAfter": 930,
+        "orchestrationBefore": [
+          800,
+          806,
+          1019
+        ],
+        "orchestrationAfter": [
+          911,
+          933,
+          941
+        ]
+      },
+      {
+        "id": "acoustic-demo",
+        "composerNotesBefore": 380,
+        "composerNotesAfter": 547,
+        "orchestrationBefore": [
+          378,
+          416,
+          853
+        ],
+        "orchestrationAfter": [
+          532,
+          355,
+          471
+        ]
+      },
+      {
+        "id": "orchestral-midi",
+        "composerNotesBefore": 414,
+        "composerNotesAfter": 410,
+        "orchestrationBefore": [
+          425,
+          426,
+          447
+        ],
+        "orchestrationAfter": [
+          419,
+          419,
+          448
+        ]
+      },
+      {
+        "id": "ethnic-vocal",
+        "composerNotesBefore": 228,
+        "composerNotesAfter": 276,
+        "orchestrationBefore": [
+          222,
+          234,
+          393
+        ],
+        "orchestrationAfter": [
+          253,
+          248,
+          241
+        ]
+      },
+      {
+        "id": "jazz-full",
+        "composerNotesBefore": 1365,
+        "composerNotesAfter": 1013,
+        "orchestrationBefore": [
+          1330,
+          1387,
+          1828
+        ],
+        "orchestrationAfter": [
+          885,
+          1067,
+          959
+        ]
+      },
+      {
+        "id": "cinematic-midi",
+        "composerNotesBefore": 205,
+        "composerNotesAfter": 298,
+        "orchestrationBefore": [
+          202,
+          202,
+          404
+        ],
+        "orchestrationAfter": [
+          294,
+          294,
+          249
+        ]
+      }
+    ]
+  },
+  "movedExpectations": [
+    {
+      "suite": "brain-b02 (brainB02Harmony.test.ts)",
+      "test": "the one parser is what the composer hears (C/E)",
+      "action": "relaxed onset.length >= 3 to >= 2",
+      "cause": "a broken chord sounds one voice per onset with the bottom voice held under it, so a comping part has two voices at a downbeat. The claim the test makes - the keys sit above the planned bass - is unchanged and still checked on every voice that sounds."
+    },
+    {
+      "suite": "brain-b02",
+      "test": "corpus, end to end",
+      "action": "owner.composed.parallelPerfect === 0 became <= 3, and the per-part === 0 became at most one per part in at most three parts; bassApproachedByStep === 4 became >= 3",
+      "cause": "the register window is now the profile's role register (19 semitones for four voices, where the solver used to get 66), and harmonyPlan/voicings.ts writes one parallel perfect each in three of sixteen chordal parts. Opening the floor two octaves under the ceiling was tried and measured WORSE (4), so the profile's floor stands and the finding is handed to the harmony stream. The approach count moved because the pedal bass now attacks every bar."
+    },
+    {
+      "suite": "brain-b02",
+      "test": "owner's song: Chorus 3 voiced higher than Chorus 2",
+      "action": "mean + 3 became mean + 1",
+      "cause": "a piano harmonic bed cannot rise three semitones out of the 48-67 register its profile gives it; the +3 was measured when the composer wrote to MIDI 89, nineteen semitones above that ceiling."
+    },
+    {
+      "suite": "brain-b13 (composer/texture.test.ts)",
+      "test": "every chordalTextureFor call site",
+      "action": "call sites take the two new inputs (arcLevel, plannedBedCell)",
+      "cause": "the arc's numeric level and the plan's bed cell are what the texture was missing; no assertion was weakened."
+    }
+  ],
+  "findingsForOtherStreams": [
+    {
+      "file": "artifacts/api-server/src/lib/arrangementOrchestrator.ts:494-497",
+      "forStream": "lead / B-00",
+      "finding": "the default composer lambda forwards only siblings and texture; the DecisionRegistry it builds per candidate never reaches the reference composer. One line - decisions: context?.decisions - puts B-21's writer decisions (register window, chordal texture, bass line, opening figure, ending gesture) into the shipped candidate's provenance."
+    },
+    {
+      "file": "artifacts/api-server/src/lib/harmonyPlan/voicings.ts",
+      "forStream": "harmony / voice-leading",
+      "finding": "with the register window narrowed to the instrument profile's role register, planVoicings writes one parallel perfect each in three of the owner's sixteen chordal parts (Chorus 3 keys 1 of 12 changes, Chorus strings 1 of 8, Verse 2 strings 1 of 11). Widening the floor makes it worse, so it is a spacing / voice-leading choice in the solver, not a lack of room."
+    },
+    {
+      "file": "artifacts/api-server/src/lib/sectionPhrasePlanner.ts:497-519",
+      "forStream": "B-03 / orchestration",
+      "finding": "registerDistribution is a histogram over the section's ACTIVE FAMILIES, and it was the only per-part register signal the composer had. B-21 stopped reading it as an instruction; the per-part register decision the composer should read is orchestrationBudget.registerBoundsFor(...), which nothing on the production path calls."
+    },
+    {
+      "file": "artifacts/api-server/src/lib/transitionRealisation.ts:438",
+      "forStream": "B-04 / transitions",
+      "finding": "endingGestureFor chooses thin_out vs held_hit from arcIntent.level < 0.45, not from arc.ending.value.gesture. On the owner's song the arc says held_final_chord and the level rule said thin_out. B-21's writers read the arc directly and use endingGestureFor only for the bar; the function itself should read the arc."
+    },
+    {
+      "file": "artifacts/api-server/src/lib/groovePlan.ts:390-392",
+      "forStream": "B-04 / groove",
+      "finding": "the bed comping cell is quarter_pulses only for a lift at level >= 0.55 and whole_note_bed otherwise - an arrival at a tutti texture holds one chord a bar. B-21's texture chooses the cell for a struck bed at the writer instead; the plan should carry the decision."
+    },
+    {
+      "file": "artifacts/api-server/src/lib/critics/adversarial/instrumentReality.ts:30 vs instrumentProfile.ts violin_section.roleRanges.CLIMAX_LAYER",
+      "forStream": "B-05c / critics",
+      "finding": "CONTESTED: the adversarial critic calls a string section with a mean pitch >= 79 over a whole section 'a bed nobody asked for', while the profile gives a CLIMAX_LAYER 67-91. A climax layer written inside its own profile range can trip the flat 79. Not resolved by this stream; on the owner's song the strings' comfortable ceiling (86) keeps the mean under 79 and the finding does not fire."
+    },
+    {
+      "file": "artifacts/api-server/src/lib/performanceEngine.ts (agogics)",
+      "forStream": "performance",
+      "finding": "arc.ending.value.ritardando is true on the owner's song and no stage applies it. The writers now hold the final chord to the end of the last bar; the ritardando is a performance-stage warp."
+    }
+  ],
+  "honestLimits": [
+    "Nothing was rendered or listened to. Every number here is symbolic: composed and shipped notes read by the brain's own critics.",
+    "before and after are re-compositions on this machine, not the database path. The shipped v7a candidate is included as a third column so the re-composition can be checked against what actually shipped.",
+    "The judge's verdict on the owner's song is releasable: true with 0 blocking and 0 major findings, on ONE song and ONE candidate strategy (conservative, the one the orchestrator selects). The nine-case benchmark corpus was re-pinned, not re-judged.",
+    "The role flip that makes a verse a comping part and a chorus a bed is sectionPhrasePlanner.assignRole (B-07's file). B-21 made the writers' realisation of each role musical; it did not change which role a section gets.",
+    "Three parallel perfect intervals appear in the composed voicings that were not there before (see findingsForOtherStreams).",
+    "The percussion writer's two-sound cell and phrase handover, and the 1.5-beat phrase breath, are this stream's own musical choices written from common practice, not measured from a corpus.",
+    "The decision registry is IMPLEMENTED and TESTED but not INTEGRATED: the orchestrator's default composer lambda does not forward it (see findingsForOtherStreams)."
+  ]
+}

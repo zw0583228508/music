@@ -26,9 +26,10 @@ import { accentWeight } from "./frame";
 import { chordPitchClasses, rootPitchClass } from "./harmonyParts";
 import { voiceNear } from "./registers";
 import {
-  anticipationSlots, chordAtTime, grooveSectionForRequest, phraseEndBarsOf, stepUnitsFor, type AnticipationSlot,
+  anticipationSlots, cellUnits, chordAtTime, grooveSectionForRequest, phraseEndBarsOf, stepUnitsFor, type AnticipationSlot,
 } from "../groovePlan";
 import { inRest, transitionGesturesFor, type FamilyKey, type RestWindow } from "../transitionRealisation";
+import { quantiseChordsToGrid } from "../harmonyPlan/shared";
 
 // GM kit map.
 const KICK = 36;
@@ -65,13 +66,27 @@ export type BarSlot = {
   slots: Array<AnticipationSlot<ChordHarmonyEvent>>;
 };
 
-/** All chords the part can see, in start order (current bars, then the next bars for the last anticipation). */
+/**
+ * All chords the part can see, in start order (current bars, then the next bars
+ * for the last anticipation), **on the grid the writers place notes on**.
+ *
+ * B-21: these were the analysed times while the voicing solver worked from
+ * `chordEventsIn(..., { grid })`, whose onsets B-13 snapped to the beat or the
+ * eighth they push to (P0-2). Two sources of truth for *where the chord
+ * changes*: on the owner's Outro the analysed Cm began at 238.06 s and the
+ * solved event at 238.29, so the comping onset at 238.06 asked for a voicing
+ * of the chord before it and the piano played an F minor triad for 1.95 s
+ * under a C minor chord. The harmony critic reported `clash_share` 0.42-0.58
+ * on the Outro keys and strings, blocking the release. One grid now, the
+ * solver's.
+ */
 export function visibleChords(frame: ComposeFrame): ChordHarmonyEvent[] {
   const seen = new Map<number, ChordHarmonyEvent>();
   for (const c of [...frame.request.context.previousBars.chords, ...frame.request.context.currentBars.chords, ...frame.request.context.nextBars.chords]) {
     seen.set(Math.round(c.start * 1000), c);
   }
-  return [...seen.values()].sort((a, b) => a.start - b.start);
+  const grid = { origin: frame.origin, beat: frame.beatSeconds, subdivision: frame.beatSeconds / 2 };
+  return quantiseChordsToGrid([...seen.values()], grid).sort((a, b) => a.start - b.start);
 }
 
 /**
@@ -190,12 +205,19 @@ function hitDuration(cell: GrooveCompingCell, unitSeconds: number, stepUnits: nu
  * end. A harmony writer puts its voicing on each onset; `anticipates` names
  * the chord to voice when the onset is a push.
  */
-export function compingRhythmFor(frame: ComposeFrame, which?: "rhythmic" | "bed"): CompingOnset[] {
+export function compingRhythmFor(frame: ComposeFrame, which?: "rhythmic" | "bed", onsetCell?: GrooveCompingCell): CompingOnset[] {
   const groove = grooveOf(frame);
   const role = frame.request.role;
   const kind = which ?? (role === "RHYTHMIC_HARMONY" || role === "OSTINATO" ? "rhythmic" : "bed");
-  const cell = kind === "rhythmic" ? groove.comping.rhythmic.value : groove.comping.bed.value;
-  const units = kind === "rhythmic" ? groove.comping.rhythmicUnits : groove.comping.bedUnits;
+  const planned = kind === "rhythmic" ? groove.comping.rhythmic.value : groove.comping.bed.value;
+  // B-21: the texture may ask this part for a different cell of the groove
+  // plan's own vocabulary (a struck bed re-articulating on the pulse under an
+  // arrival). The cells and their unit sets stay the plan's - `cellUnits` is
+  // the plan's function - so this is which cell is read, never a private grid.
+  const cell = onsetCell ?? planned;
+  const units = cell === planned
+    ? (kind === "rhythmic" ? groove.comping.rhythmicUnits : groove.comping.bedUnits)
+    : cellUnits(cell, frame.meter, groove.comping.arpeggioStepUnits);
   const family = familyOf(frame);
   const { rests } = directivesFor(frame, family);
   const chords = visibleChords(frame);
@@ -206,8 +228,11 @@ export function compingRhythmFor(frame: ComposeFrame, which?: "rhythmic" | "bed"
   const out: CompingOnset[] = [];
   for (const b of barsOf(frame, groove)) {
     if (b.isLastOfSong && groove.ending.value !== "none") {
+      // B-21: the final chord is held to the end of the last bar (the frame
+      // clamps it to the section window), not released 5 % early. R-1b P1-7
+      // heard the owner's song end 1.06 s before its last bar.
       const chord = chordAtTime(chords, b.barStart);
-      out.push({ bar: b.bar, unit: 0, start: b.barStart, duration: frame.barSeconds * 0.95, accent: 1, chord, anticipates: null, crescendo: 0, cell });
+      out.push({ bar: b.bar, unit: 0, start: b.barStart, duration: frame.barSeconds, accent: 1, chord, anticipates: null, crescendo: 0, cell });
       continue;
     }
     const slotUnits = new Set(b.slots.map((s) => s.unit));
@@ -264,18 +289,27 @@ export function bassRhythmFor(frame: ComposeFrame): BassOnset[] {
   const backbeat = groove.kit.snare[0] ?? groove.kit.sideStick[0] ?? pulses[1] ?? 0;
   for (const b of barsOf(frame, groove)) {
     if (b.isLastOfSong && groove.ending.value !== "none") {
-      out.push({ bar: b.bar, unit: 0, start: b.barStart, duration: frame.barSeconds * 0.95, accent: 1, chord: chordAtTime(chords, b.barStart), anticipates: null, crescendo: 0, figure: "root" });
+      // B-21: held to the end of the last bar (see `compingRhythmFor`).
+      out.push({ bar: b.bar, unit: 0, start: b.barStart, duration: frame.barSeconds, accent: 1, chord: chordAtTime(chords, b.barStart), anticipates: null, crescendo: 0, figure: "root" });
       continue;
     }
     let barUnits: number[] = [...groove.bassUnits];
     if (relation === "pedal") {
-      // Attack at chord starts; re-articulate a long pedal every second bar.
-      barUnits = [];
+      // B-21: the plan's own onsets (`groove.bassUnits`, `[0]` for a pedal -
+      // the downbeat of every bar) *plus* any chord start inside the bar.
+      //
+      // Before this the writer threw the plan's units away and rebuilt the
+      // pedal's onsets from the chord starts alone, re-articulating only every
+      // second bar when a bar had none. That is a second source of truth for
+      // the bass's onsets against `bassUnitsFor` in `groovePlan.ts`, and it is
+      // why the owner's bass had no note in 12 of Verse 3's 24 bars and 7 of
+      // the Outro's 13 (`density:foundation_gaps`, major, twice) while the
+      // plan said "a held root under every chord".
       for (const c of chords) {
         const u = (c.start - b.barStart) / unitSeconds;
-        if (u > -1e-6 && u < n - 1e-6) barUnits.push(r4(Math.max(0, u)));
+        if (u > 1e-6 && u < n - 1e-6 && !barUnits.some((x) => near(x, u))) barUnits.push(r4(u));
       }
-      if (!barUnits.length && (b.bar - frame.request.section.startBar) % 2 === 0) barUnits.push(0);
+      barUnits.sort((x, y) => x - y);
     }
     const slotUnits = new Set(b.slots.map((s) => s.unit));
     barUnits.forEach((u, index) => {
@@ -485,7 +519,19 @@ export function writeDrumKit(frame: ComposeFrame): void {
   }
 }
 
-/** PERCUSSION: the meter's weak units (shaker / tambourine), pulses only when the texture is thin. */
+/**
+ * PERCUSSION: the meter's weak units on the shaker, the groove's backbeat on
+ * the tambourine, pulses only when the texture is thin, and a breath at phrase
+ * ends.
+ *
+ * B-21: before this the whole part was **one pitch on the same units in every
+ * bar** — measured on the owner's song, 120 notes on MIDI 54 across 30 bars
+ * with a bar-rhythm entropy of exactly 0, which the critics reported as
+ * `instrumentReality:single_pitch_percussion` (major, whole track) and
+ * `adversarial.boredom:rhythm_predictable` (major). A percussionist holding a
+ * shaker and a tambourine plays the backbeat on one and the subdivision on the
+ * other, and lifts at the end of a phrase.
+ */
 export function writePercussion(frame: ComposeFrame): void {
   const { request, baseVelocity, beatSeconds: unit, push } = frame;
   const groove = grooveOf(frame);
@@ -495,20 +541,46 @@ export function writePercussion(frame: ComposeFrame): void {
   const level = request.arcIntent?.level ?? request.section.energy;
   const texture = request.arcIntent?.texture ?? null;
   const thinTexture = texture === "solo" || texture === "duo" || level < 0.3;
+  const isLift = request.arcIntent?.tensionRole === "lift";
   const backbeat = groove.kit.snare.length ? groove.kit.snare : groove.kit.sideStick;
-  const units: number[] = thinTexture
-    ? backbeat
+  const subdivision: number[] = thinTexture
+    ? []
     : spec.feel === "simple"
-      ? (spec.numerator === 3 ? [1, 2] : groove.subdivision.value === "quarters" ? backbeat : Array.from({ length: n }, (_, i) => i + 0.5))
+      ? (spec.numerator === 3 ? [1, 2] : groove.subdivision.value === "quarters" ? [] : Array.from({ length: n }, (_, i) => i + 0.5))
       : spec.grouping.map((g, i) => spec.pulses[i] + g - 1);
-  const pitch = level >= 0.5 ? TAMBOURINE : SHAKER;
+  // Two hands, two sounds: the accent on the backbeat, the filler between.
+  const struck: Array<{ unit: number; pitch: number; accentOffset: number }> = [
+    ...backbeat.map((u) => ({ unit: u, pitch: TAMBOURINE, accentOffset: 6 })),
+    ...subdivision.filter((u) => !backbeat.some((b) => near(b, u))).map((u) => ({ unit: u, pitch: SHAKER, accentOffset: 0 })),
+  ].sort((a, b) => a.unit - b.unit);
+  if (!struck.length) {
+    for (const u of backbeat) struck.push({ unit: u, pitch: level >= 0.5 ? TAMBOURINE : SHAKER, accentOffset: 6 });
+  }
+  const phraseEnds = phraseEndBarsOf(request.phrases);
   for (const b of barsOf(frame, groove)) {
     if (b.isLastOfSong && groove.ending.value !== "none") continue;
     if (thinBars.has(b.bar)) continue;
-    for (const u of units) {
-      const start = b.barStart + swungUnit(groove, u) * unit;
+    // A phrase ends: the filler hand stops and only the accent marks the bar.
+    // The bar before it takes a pickup on the last off-beat, the way a
+    // percussionist hands the phrase over. Three bar-rhythms instead of one.
+    const closing = b.phraseEnd && !isLift;
+    const handover = !closing && phraseEnds.has(b.bar + 1) && !isLift;
+    // A hand percussionist plays a two-bar cell, not one bar over and over:
+    // the second bar of each pair leaves the first off-beat out.
+    const secondOfPair = Math.abs((b.bar - request.section.startBar) % 2) === 1;
+    for (const s of struck) {
+      if (closing && s.pitch === SHAKER) continue;
+      if (secondOfPair && !closing && s.pitch === SHAKER && near(s.unit, subdivision[0] ?? -1)) continue;
+      const start = b.barStart + swungUnit(groove, s.unit) * unit;
       if (inRest(rests, start)) continue;
-      push(start, 0.1, pitch, baseVelocity - 18 + (accentWeight(spec, u) - 0.46) * 10 + approachGainAt(groove, frame, b.bar, u), `pc${b.bar}-${u}`);
+      push(start, 0.1, s.pitch, baseVelocity - 18 + s.accentOffset + (accentWeight(spec, s.unit) - 0.46) * 10 + approachGainAt(groove, frame, b.bar, s.unit), `pc${b.bar}-${s.unit}`);
+    }
+    if (handover) {
+      const at = n - 0.5;
+      const start = b.barStart + swungUnit(groove, at) * unit;
+      if (!inRest(rests, start) && !struck.some((s) => near(s.unit, at))) {
+        push(start, 0.1, TAMBOURINE, baseVelocity - 14 + approachGainAt(groove, frame, b.bar, at), `pc${b.bar}-pick`);
+      }
     }
   }
 }

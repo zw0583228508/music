@@ -18,8 +18,8 @@
  */
 import type { MusicalNote } from "@workspace/db";
 import type { PartGenerationRequest } from "./partComposer";
-import { barTiming, type ComposeFrame, type PartWriter } from "./composer/frame";
-import { registerBounds } from "./composer/registers";
+import { barTiming, recordWriterDecision, type ComposeFrame, type PartWriter } from "./composer/frame";
+import { registerWindowFor } from "./composer/registers";
 import {
   writeBassLine, writeBrassAccents, writeKeysVoicing, writeStringBed,
   type HarmonyFrame, type SiblingPart,
@@ -28,6 +28,7 @@ import { writeCounterMelody } from "./composer/melodyParts";
 import { writeDrumKit, writeOstinato, writePercussion } from "./composer/rhythmParts";
 import { writeIntroOrEnding, writeTransitionFigure } from "./composer/transitions";
 import type { TextureIntent } from "./composer/texture";
+import type { DecisionRegistry } from "./decisionProvenance";
 
 export const REFERENCE_PART_COMPOSER = "REFERENCE_PART_COMPOSER_V1" as const;
 
@@ -51,6 +52,21 @@ export type ComposeContext = {
    * note of their output afterwards. Absent = the writers' defaults.
    */
   texture?: TextureIntent;
+  /**
+   * Brain B-21: the candidate's decision registry (B-11). The writers register
+   * the choices they took — the register window, the texture archetype, the
+   * bass onset set, the arc's opening figure and ending gesture — and attach
+   * this part's bars to them, so a shipped note can be traced to the decision
+   * that authored it.
+   *
+   * INTEGRATED-pending: `arrangementOrchestrator.ts` builds a `DecisionRegistry`
+   * per candidate and hands it to `compose(request, { decisions, ... })`, but
+   * its default composer lambda (`arrangementOrchestrator.ts:494-497`) forwards
+   * only `siblings` and `texture`. One line there — `decisions:
+   * context?.decisions` — puts the writers' decisions in the shipped
+   * candidate's provenance. That file is not this stream's.
+   */
+  decisions?: DecisionRegistry;
 };
 
 /** Which module writes which task. A task without a writer produces no notes (as the original switch did). */
@@ -100,7 +116,8 @@ export function composeReferencePart(
   const partWindow = request.partWindow ?? { startBar: request.section.startBar, endBar: request.section.endBar };
   const windowStart = Math.max(startSeconds, origin + (partWindow.startBar - 1) * barSeconds);
   const windowEnd = Math.max(windowStart, Math.min(endSeconds, origin + partWindow.endBar * barSeconds));
-  const { lo, hi } = registerBounds(request);
+  const registerWindow = registerWindowFor(request);
+  const { lo, hi } = registerWindow;
   const chords = (request.context.currentBars.chords ?? [])
     .filter((c) => c.end > startSeconds && c.start < endSeconds)
     .sort((a, b) => a.start - b.start);
@@ -143,7 +160,14 @@ export function composeReferencePart(
     window: { start: windowStart, end: windowEnd },
     siblings: context.siblings,
     texture: context.texture,
+    decisions: context.decisions,
   };
+  // B-21: every part says which register it wrote in and why - the same
+  // sentence the register critic can check against `instrumentProfile.ts`.
+  recordWriterDecision(frame, {
+    layer: "register", kind: "register_window", source: registerWindow.source,
+    reason: `${request.instrument} ${request.role}: ${registerWindow.lo}-${registerWindow.hi}; ${registerWindow.reason}`,
+  });
   WRITERS[request.task]?.(frame);
 
   notes.sort((a, b) => a.start - b.start || a.pitch - b.pitch);

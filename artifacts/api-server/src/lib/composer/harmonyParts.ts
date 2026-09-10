@@ -47,8 +47,8 @@
  * the rhythm and transition writers, read through the one parser.
  */
 import type { ChordHarmonyEvent, MusicalNote } from "@workspace/db";
-import type { ComposeFrame } from "./frame";
-import { registerBounds, registerOf, voiceNear } from "./registers";
+import { recordWriterDecision, type ComposeFrame } from "./frame";
+import { registerBounds, voiceNear } from "./registers";
 import { chordFromEvent, parsePitchClass, type ParsedChord } from "../chordSymbols";
 import { canonicalFamily, REGISTER_SHIFTABLE_FAMILIES } from "../arrangementArc";
 import { getInstrumentDefinition } from "../musicEngines";
@@ -58,7 +58,8 @@ import { planBassLine, planBassSkeleton, topVoiceGuide, type BassPlan } from "..
 import { planVoicings, voiceCountFor, type VoicingPlan, type VoicingRoleKind } from "../harmonyPlan/voicings";
 import { chordEventsIn, nearestPitch, quantiseChordsToGrid, nearestPitchWithin, pc, seededUnit, type HarmonyChordEvent } from "../harmonyPlan/shared";
 import { bassRhythmFor, compingRhythmFor, grooveOf, visibleChords, type BassOnset, type CompingOnset } from "./rhythmParts";
-import { stepUnitsFor } from "../groovePlan";
+import { phraseEndBarsOf, stepUnitsFor } from "../groovePlan";
+import { endingIntentFor, openingFigureFor, type OpeningFigure } from "./opening";
 import { endingGestureFor, entryGestureFor, familyOfInstrument, transitionGesturesFor, type TransitionGesture } from "../transitionRealisation";
 import { BASELINE_TEXTURE, bassTextureFor, chordalTextureFor, type ChordalTexture, type TextureIntent } from "./texture";
 
@@ -164,29 +165,32 @@ function harmonyContext(frame: HarmonyFrame): HarmonyContext {
     harmonicComplexity: request.styleFingerprint?.harmonicComplexity ?? null,
   });
   const operator = request.formMemory?.developmentOperator ?? "identity";
-  // `raise_register`: B-01 raised the plan's register band one step for the
-  // shiftable families; here the target band may also extend an octave up
-  // within the comfortable range. (B-03's per-window register plan supersedes
-  // this line when it lands: `registerBoundsFor(request, window)`.)
+  // `raise_register` (B-01) is realised by `composer/registers.ts` since B-21:
+  // it lifts the part's **floor** inside the register its own instrument
+  // profile gives it in this role, so the part sits high in its own range.
+  // Before this the band was widened *above* the comfortable ceiling (a whole
+  // octave, clamped only by the playable maximum), which is how the owner's
+  // strings reached MIDI 92 and the keys 89 in the last chorus and the
+  // register critic reported `top_line_above_comfortable_ceiling` four times.
+  // `raiseRegister` still lifts the solver's *target* inside [lo, hi]; the
+  // band itself is the frame's.
   const shiftable = REGISTER_SHIFTABLE_FAMILIES.has(canonicalFamily(request.instrument));
-  // The plan's band raise moves the centre by about three semitones; the
-  // solver adds the rest of the octave (8) - or the whole octave when the
-  // majority band did not move (another family held the majority).
-  const bandAlreadyRaised = registerOf(request) === "upper_mid" || registerOf(request) === "high";
-  const raiseRegister = operator !== "raise_register" ? 0 : bandAlreadyRaised ? 8 : 12;
-  const band = raiseRegister === 12 && shiftable
-    ? { lo: frame.lo, hi: Math.min(request.constraints.comfortableRange.max, request.constraints.playableRange.max, frame.hi + 12) }
-    : { lo: frame.lo, hi: frame.hi };
+  const raiseRegister = operator === "raise_register" && shiftable ? 8 : 0;
+  const band = { lo: frame.lo, hi: frame.hi };
   const intent = frame.texture ?? BASELINE_TEXTURE;
+  const level = request.arcIntent?.level ?? request.section.energy;
+  const groove = grooveOf(frame);
   const chordal = CHORDAL_TASKS.has(request.task)
     ? chordalTextureFor({
       task: request.task, role: request.role, family: familyOfInstrument(request.instrument),
-      level: request.arcIntent?.texture ?? null, intent, plannedRhythmicCell: grooveOf(frame).comping.rhythmic.value,
+      level: request.arcIntent?.texture ?? null, arcLevel: level, intent,
+      plannedRhythmicCell: groove.comping.rhythmic.value,
+      plannedBedCell: groove.comping.bed.value,
     })
     : null;
   return {
     window, events, warmup, style: styleWithTexture(baseStyle, chordal),
-    level: request.arcIntent?.level ?? request.section.energy,
+    level,
     texture: request.arcIntent?.texture ?? null,
     tensionRole: request.arcIntent?.tensionRole ?? null,
     operator, raiseRegister, band, intent, chordal,
@@ -221,10 +225,14 @@ function bassReference(frame: HarmonyFrame, ctx: HarmonyContext): { pitches: Arr
     return { pitches, source: "sibling" };
   }
   if (!hasBass) return { pitches: ctx.events.map(() => null), source: "none" };
+  // B-21: the stand-in request names the instrument and the role, because the
+  // register window is now read from that instrument's profile in that role
+  // (`composer/registers.ts`). Without them this recomputation would use a
+  // different register from the one the real bass part writes in.
   const bassRequest = { constraints: {
     playableRange: BASS_DEFINITION.playableRange, comfortableRange: BASS_DEFINITION.comfortableRange,
     maxLeap: BASS_DEFINITION.constraints.maxLeap, maxSimultaneousNotes: 1, minNoteDuration: BASS_DEFINITION.constraints.minNoteDuration, physicalRules: [],
-  }, section: request.section } as unknown as PartGenerationRequest;
+  }, section: request.section, instrument: "bass", role: "BASS", formMemory: request.formMemory } as unknown as PartGenerationRequest;
   const range = registerBounds(bassRequest);
   const skeleton = planBassSkeleton({
     events: ctx.events, warmup: ctx.warmup, window: ctx.window, range,
@@ -383,6 +391,32 @@ export function writeBassLine(frame: ComposeFrame): void {
   const plan = bassPlanFor(hf);
   const { request, baseVelocity, push } = frame;
   const onsets = bassRhythmFor(frame);
+  // B-21 (R-1b P1-7): the bass states the tonic under the song's opening
+  // figure. The owner's Intro has no analysed chord, so the skeleton was empty
+  // and the bass wrote nothing for two bars while the arc said the intro
+  // implies the tonic and named `bass` among the families that play it.
+  const opening = openingFigureFor(frame, ctx.events.length > 0);
+  if (opening) {
+    recordWriterDecision(frame, {
+      layer: "arc", kind: "opening_figure", source: opening.chordSource,
+      reason: `${opening.figure}${opening.plays ? ": the bass states the tonic the arc says the intro implies" : " (this family does not play it)"}; ${opening.reason}`,
+    });
+    if (opening.plays && opening.chord) {
+      const parsed = chordFromEvent(opening.chord);
+      const klass = parsed ? parsed.bass : rootPitchClass(opening.chord.symbol);
+      const root = voiceNear(klass, (ctx.band.lo + ctx.band.hi) / 2 - 6, ctx.band.lo, ctx.band.hi);
+      const minDur = request.constraints.minNoteDuration;
+      if (opening.figure === "pickup_only") {
+        const last = opening.barStarts[opening.barStarts.length - 1] + frame.barSeconds;
+        push(last - frame.beatSeconds, Math.max(minDur, frame.beatSeconds - 0.01), root, baseVelocity - 4, "b-open-pickup");
+      } else {
+        for (const barStart of opening.barStarts) {
+          push(barStart, Math.max(minDur, frame.barSeconds - 0.01), root, baseVelocity - 4, `b-open${barStart.toFixed(2)}`);
+        }
+      }
+    }
+    return;
+  }
   if (!onsets.length || !plan.skeleton.length) {
     // No groove onsets in the window (or no harmony): the planner's own line.
     for (const note of plan.notes) push(note.start, note.duration, note.pitch, baseVelocity + note.velocityOffset, `b${note.start.toFixed(2)}`);
@@ -395,8 +429,13 @@ export function writeBassLine(frame: ComposeFrame): void {
   const groove = grooveOf(frame);
   const relation = groove.kickBass.value;
   const texture = bassTextureFor(ctx.intent, ctx.level);
+  recordWriterDecision(frame, {
+    kind: "bass_line", source: plan.pattern,
+    reason: `pattern ${plan.pattern}, figures ${texture.figures} (${texture.reason}), kick/bass ${grooveOf(frame).kickBass.value} on the plan's units [${grooveOf(frame).bassUnits.join(", ")}]`,
+  });
   const { gestures, spans } = gesturesFor(frame, "bass");
   const ending = endingGestureFor(frame);
+  const arcEnding = endingIntentFor(frame);
   const entry = entryGestureFor(frame);
   const events = ctx.events;
   // The song's own tonal centre, read exactly as the bass planner reads it
@@ -521,8 +560,12 @@ export function writeBassLine(frame: ComposeFrame): void {
     const nextStart = Math.min(next?.start ?? o.start + o.duration, nextChangeStart);
     const duration = Math.max(minDur, Math.min(o.duration, nextStart - o.start - gap));
     const isEnding = !!ending && Math.abs(o.start - ending.barStart) < 1e-3;
+    // B-21: the arc's ending gesture, not the section's level (see `writeChordal`).
+    const endingGain = !isEnding ? 0
+      : (arcEnding?.gesture ?? (ending!.kind === "thin_out" ? "fade" : "stop")) === "fade" ? -6
+      : (arcEnding?.gesture ?? "stop") === "held_final_chord" ? 4 : 8;
     const velocity = baseVelocity + o.crescendo + (figure === "root" || figure === "pedal" ? (o.unit === 0 ? 8 : 6) : figure === "approach" ? -2 : -4) + (o.accent - 0.68) * 10
-      + (isEnding ? (ending!.kind === "held_hit" ? 8 : -6) : 0);
+      + endingGain;
     emit(o.start, duration, pitch, velocity, `b${o.start.toFixed(2)}`);
     prev = pitch;
     // The approach on the last beat of the chord: one extra note in the line,
@@ -606,6 +649,97 @@ function nearestVoicing(previous: readonly number[], chord: ChordHarmonyEvent, l
 
 type ChordalGroup = { start: number; end: number; chord: ChordHarmonyEvent; at: number; accent: number; crescendo: number; isPush: boolean; bar: number };
 
+/**
+ * Beats of silence at the end of a phrase for a comping or bed part (B-21).
+ *
+ * One beat is the *critic's* minimum for a rest (`adversarial.machineMade`
+ * `REST_BEATS`), and a breath measured exactly one beat does not survive the
+ * performance stage's microtiming: at 130.43 BPM the beat is 460 ms and the
+ * one-beat breaths shipped as 423-462 ms, so two of the owner's three phrase
+ * ends still counted as no rest at all. A player lifts before the beat, not on
+ * it: the piano stops on beat 3 and lets the singer finish the line.
+ */
+const PHRASE_BREATH_BEATS = 1.5;
+
+/**
+ * A close voicing of `chord` stacked upward inside this part's own register
+ * window. Used only where there is no solved voicing to realise - the song's
+ * opening figure, whose section the chord analysis left empty.
+ */
+function stackedVoicing(chord: ChordHarmonyEvent, voices: number, lo: number, hi: number): number[] {
+  const classes = [...new Set(chordPitchClasses(chord))];
+  if (!classes.length) return [];
+  const pitches: number[] = [];
+  let cursor = lo + Math.max(0, Math.round((hi - lo) / 4));
+  for (let i = 0; i < voices; i += 1) {
+    const klass = classes[i % classes.length];
+    let pitch = voiceNear(klass, cursor, lo, hi);
+    while (pitches.length && pitch <= pitches[pitches.length - 1] && pitch + 12 <= hi) pitch += 12;
+    if (pitches.includes(pitch)) continue;
+    pitches.push(pitch);
+    cursor = pitch + 2;
+  }
+  return pitches.sort((a, b) => a - b);
+}
+
+/**
+ * The song's opening figure (B-21, realising B-18's `arc.opening`): the tonic
+ * the arc says the intro implies, written as the figure the arc named.
+ *
+ * `tonic_pad` holds the chord - once for a bowed / blown family, once a bar for
+ * a struck one, because a struck string decays; `piano_motif` states it as a
+ * broken chord over the keys' own arpeggio step with the bottom voice under it;
+ * `pickup_only` sounds the last beat before the first section.
+ */
+function writeOpeningFigure(
+  frame: ComposeFrame, ctx: HarmonyContext, opening: OpeningFigure,
+  options: { idPrefix: string; velocityOffset: number; releaseSeconds: number },
+): void {
+  const { request, baseVelocity, beatSeconds, barSeconds, push } = frame;
+  const { lo, hi } = ctx.band;
+  const minDur = request.constraints.minNoteDuration;
+  const chord = opening.chord!;
+  const max = request.constraints.maxSimultaneousNotes;
+  const voices = Math.max(2, Math.min(max, voiceCountFor(roleKindOf(request), ctx.texture, max, ctx.operator) + (ctx.chordal?.voiceDelta ?? 0)));
+  const pitches = stackedVoicing(chord, voices, lo, hi);
+  if (!pitches.length || !opening.barStarts.length) return;
+  const velocity = baseVelocity + options.velocityOffset - 4;
+  const emit = (start: number, duration: number, voiced: number[], base: number, tag: string) => {
+    const n = voiced.length;
+    voiced.forEach((pitch, i) => push(start, Math.max(minDur, duration), pitch, base - (n - 1 - i) * 2, `${tag}-${i}`));
+  };
+  const sustaining = ctx.chordal?.archetype === "sustained";
+  if (opening.figure === "pickup_only") {
+    const last = opening.barStarts[opening.barStarts.length - 1] + barSeconds;
+    emit(last - beatSeconds, beatSeconds - options.releaseSeconds, pitches, velocity, `${options.idPrefix}-open-pickup`);
+    return;
+  }
+  if (opening.figure === "piano_motif" && canonicalFamily(request.instrument) === "keys") {
+    const step = (grooveOf(frame).comping.arpeggioStepUnits || stepUnitsFor("8ths", frame.meter) || 1) * beatSeconds;
+    const upper = pitches.length > 1 ? pitches.slice(1) : pitches;
+    const order = upper.length >= 3 ? [...upper.keys(), ...[...upper.keys()].slice(1, -1).reverse()] : [...upper.keys()];
+    let k = 0;
+    for (const barStart of opening.barStarts) {
+      push(barStart, barSeconds - options.releaseSeconds, pitches[0], velocity - 2, `${options.idPrefix}-open-b${barStart.toFixed(2)}`);
+      for (let t = barStart; t < barStart + barSeconds - 1e-6; t += step, k += 1) {
+        const voice = upper[order[k % order.length]];
+        push(t, Math.max(minDur, step * 0.9), voice, velocity - 4 - (k % order.length === 0 ? 0 : 6), `${options.idPrefix}-open-a${k}`);
+      }
+    }
+    return;
+  }
+  // tonic_pad (and any figure a family other than the keys is asked for).
+  if (sustaining) {
+    const start = opening.barStarts[0];
+    const end = opening.barStarts[opening.barStarts.length - 1] + barSeconds;
+    emit(start, end - start - options.releaseSeconds, pitches, velocity, `${options.idPrefix}-open`);
+    return;
+  }
+  for (const barStart of opening.barStarts) {
+    emit(barStart, barSeconds - options.releaseSeconds, pitches, velocity, `${options.idPrefix}-open${barStart.toFixed(2)}`);
+  }
+}
+
 /** Realise a solved voicing plan on the groove's comping onsets as the texture says. */
 function writeChordal(frame: ComposeFrame, options: { idPrefix: string; velocityOffset: number; releaseSeconds: number }): void {
   const hf = frame as HarmonyFrame;
@@ -617,13 +751,59 @@ function writeChordal(frame: ComposeFrame, options: { idPrefix: string; velocity
   const family = familyOfInstrument(request.instrument);
   const { gestures, spans, thinBars } = gesturesFor(frame, family);
   const ending = endingGestureFor(frame);
+  const arcEnding = endingIntentFor(frame);
   const entry = entryGestureFor(frame);
   const groove = grooveOf(frame);
   const { lo, hi } = ctx.band;
   const minDur = request.constraints.minNoteDuration;
   const events = ctx.events;
-  const onsets: CompingOnset[] = compingRhythmFor(frame, texture.cell)
-    .filter((o) => (o.anticipates ?? o.chord) && !inSpans(spans, o.start) && !thinBars.has(o.bar));
+
+  // B-21 (R-1b P1-7): the song's opening figure. A section the chord analysis
+  // left empty is not "no harmony" when the arc says the intro states the
+  // tonic; it is the tonic, and the writers state it. Without this the owner's
+  // two-bar intro shipped silent and `orchestration:planned_family_silent`
+  // blocked the release.
+  recordWriterDecision(frame, {
+    kind: "chordal_texture", source: texture.archetype,
+    reason: `${request.instrument} ${request.role}: ${texture.archetype} on the ${texture.cell} cell "${texture.onsetCell}"${texture.brokenChord ? " as a broken chord" : ""}; ${texture.reason}`,
+  });
+  const opening = openingFigureFor(frame, events.length > 0);
+  if (opening) {
+    recordWriterDecision(frame, {
+      layer: "arc", kind: "opening_figure", source: opening.chordSource,
+      reason: `${opening.figure}${opening.plays ? "" : " (this family does not play it)"}: ${opening.reason}`,
+    });
+    if (opening.plays && opening.chord) writeOpeningFigure(frame, ctx, opening, options);
+    return;
+  }
+  if (ending && arcEnding) {
+    recordWriterDecision(frame, {
+      layer: "arc", kind: "ending_gesture", source: arcEnding.gesture,
+      reason: `${arcEnding.gesture} on the last bar${arcEnding.ritardando ? " with a ritardando (the agogic belongs to the performance stage)" : ""}: ${arcEnding.reason}`,
+      startBar: request.section.endBar, endBar: request.section.endBar,
+    });
+  }
+
+  // B-21: the phrase's breath. The last beat of a phrase-final bar is silent
+  // for a comping or bed part - a push into the next phrase is exempt, because
+  // that is the one thing the beat is *for*. `compingRhythmFor` already skips
+  // its own cell's last unit at a phrase end, but only for cells other than
+  // `whole_note_bed` / `sparse_hits` and only when nothing pushes there, and a
+  // held voice covered the gap anyway: measured, the owner's keys ran 40 bars
+  // and the strings 40 without one beat of rest (`no_rests`, major, twice).
+  const phraseEndsForBreath = phraseEndBarsOf(request.phrases);
+  const breathWindows: Array<{ start: number; end: number }> = [];
+  if (phraseEndsForBreath.size && request.arcIntent?.tensionRole !== "lift") {
+    for (const bar of phraseEndsForBreath) {
+      if (bar < request.section.startBar || bar > request.section.endBar) continue;
+      const barEnd = frame.origin + bar * frame.barSeconds;
+      breathWindows.push({ start: barEnd - beatSeconds * PHRASE_BREATH_BEATS, end: barEnd });
+    }
+  }
+  const inBreath = (t: number) => breathWindows.some((w) => t >= w.start - 1e-3 && t < w.end - 1e-3);
+  const onsets: CompingOnset[] = compingRhythmFor(frame, texture.cell, texture.onsetCell)
+    .filter((o) => (o.anticipates ?? o.chord) && !inSpans(spans, o.start) && !thinBars.has(o.bar) &&
+      !(inBreath(o.start) && !o.anticipates));
 
   let lastVoicing: number[] | null = null;
   const voicingFor = (chord: ChordHarmonyEvent, at: number): number[] | null => {
@@ -667,6 +847,49 @@ function writeChordal(frame: ComposeFrame, options: { idPrefix: string; velocity
     spaced[i].end = Math.min(spaced[i].end, spaced[i + 1].start - options.releaseSeconds);
   }
 
+  // B-21: the bed breathes. `adversarial.machineMade:no_rests` measured 40
+  // bars without a rest on the owner's strings and 31 on the keys, because a
+  // held bed ties across every phrase and a re-struck one re-attacks on every
+  // cell onset. At a phrase end the part lifts for the last beat - unless the
+  // section is a lift, where the point is that nothing lets go.
+  const breaths = breathWindows.map((w) => w.start).sort((a, b) => a - b);
+
+  /**
+   * When a note struck at `start` with these pitches must be released.
+   *
+   * B-21: two rules the bass writer already had and this one did not, which is
+   * why a held bed could sound a wrong note under the next chord and why a
+   * comping part never rested. A voicing is released (a) before the next chord
+   * whose tones it does not all belong to - "a root held across a change is the
+   * wrong note under the new chord" is not only true of the bass - and (b) at
+   * the phrase's breath. Measured before the rule: the owner's Outro keys held
+   * 43 % of its time past its chord (`harmony:clash_share`, major) and the
+   * keys ran 40 bars without a rest (`no_rests`, major).
+   */
+  const releaseBy = (start: number, end: number, pitches: readonly number[]): number => {
+    let out = end;
+    const foreign = events.find((e) => e.start > start + 1e-3 && pitches.some((p) => !e.chord.pitchClasses.includes(pc(p))));
+    if (foreign) {
+      const room = foreign.start - options.releaseSeconds;
+      if (room - start >= minDur) out = Math.min(out, room);
+    }
+    const breath = breaths.find((t) => t > start + 1e-3);
+    if (breath !== undefined && breath - start >= minDur) out = Math.min(out, breath);
+    return out;
+  };
+  for (const g of spaced) g.end = Math.max(g.start + minDur, releaseBy(g.start, g.end, []));
+
+  // The groups of one chord, for the broken-chord figure: the bottom voice is
+  // held under the figure and the upper voices are walked one per onset.
+  const chordKeyOf = (g: ChordalGroup) => `${g.chord.symbol}@${g.chord.start.toFixed(4)}`;
+  const groupsOfChord = new Map<string, ChordalGroup[]>();
+  for (const g of spaced) {
+    const key = chordKeyOf(g);
+    groupsOfChord.set(key, [...(groupsOfChord.get(key) ?? []), g]);
+  }
+  let brokenChordKey: string | null = null;
+  let brokenCursor = 0;
+
   const emit = (start: number, duration: number, pitches: number[], velocityBase: number, tag: string) => {
     const n = pitches.length;
     pitches.forEach((pitch, i) => push(start, Math.max(minDur, duration), pitch, velocityBase - (n - 1 - i) * 2, `${tag}-${i}`));
@@ -685,11 +908,48 @@ function writeChordal(frame: ComposeFrame, options: { idPrefix: string; velocity
     const isEnding = !!ending && Math.abs(g.start - ending.barStart) < 1e-3;
     let velocityBase = baseVelocity + options.velocityOffset + g.crescendo + (g.accent - 0.68) * 8;
     if (isEnding) {
-      if (ending!.kind === "thin_out") { pitches = pitches.slice(0, Math.max(2, pitches.length - 2)); velocityBase -= 8; }
+      // B-21 (R-1b P1-7): *which* ending this is was B-18's decision
+      // (`arc.ending`), not a level threshold. `endingGestureFor` says where
+      // the last bar is; the arc says what happens there. The owner's Outro is
+      // level 0.25, so the old `soft` rule thinned the final chord to two
+      // quiet voices although the arc, from the brief, says
+      // `held_final_chord`.
+      const gesture = arcEnding?.gesture ?? (ending!.kind === "thin_out" ? "fade" : "stop");
+      if (gesture === "fade") { pitches = pitches.slice(0, Math.max(2, pitches.length - 2)); velocityBase -= 8; }
+      else if (gesture === "held_final_chord") velocityBase += 4;
       else velocityBase += 10;
     }
     const tag = `${options.idPrefix}${g.start.toFixed(2)}`;
+    // The resolved voicing decides the release: a voicing every one of whose
+    // tones belongs to the arriving chord may hold across it (that is the
+    // common-tone tie), one that would sound a foreign tone may not.
+    if (!isEnding) g.end = Math.max(g.start + minDur, releaseBy(g.start, g.end, pitches));
     const span = g.end - g.start;
+    // B-21: a broken chord sounds one voice per onset with the bottom voice
+    // held under it. Before this an `arpeggio` archetype whose groups were
+    // shorter than two steps - which every onset of an `arpeggiated_8ths` cell
+    // is - fell silently through to `emit` and struck the whole voicing on
+    // every eighth: the owner's Verse 1 keys, 501 notes at 12.4 a second in a
+    // ten-semitone box, with the archetype still calling itself an arpeggio.
+    if (texture.brokenChord && !isEnding && !g.isPush && span < step * 2 - 1e-6 && pitches.length >= 2) {
+      const key = chordKeyOf(g);
+      if (key !== brokenChordKey) {
+        brokenChordKey = key;
+        brokenCursor = 0;
+        // The bottom voice under the figure, held while the chord lasts (a
+        // pianist re-takes it at most every other bar).
+        const siblings = groupsOfChord.get(key) ?? [g];
+        const holdEnd = releaseBy(g.start, Math.min(siblings[siblings.length - 1].end, g.start + frame.barSeconds * 2), [pitches[0]]);
+        push(g.start, Math.max(minDur, holdEnd - g.start - options.releaseSeconds), pitches[0], velocityBase - 2, `${tag}-h`);
+      }
+      const upper = pitches.slice(1);
+      const order = upper.length >= 3 ? [...upper.keys(), ...[...upper.keys()].slice(1, -1).reverse()] : [...upper.keys()];
+      const voice = upper[order[brokenCursor % order.length]];
+      const first = brokenCursor % order.length === 0;
+      brokenCursor += 1;
+      push(g.start, Math.max(minDur, span - options.releaseSeconds), voice, velocityBase - 4 - (first ? 0 : 6), `${tag}-a`);
+      continue;
+    }
     if (texture.archetype === "arpeggio" && !isEnding && !g.isPush && span >= step * 2 - 1e-6) {
       // Up, then back down without repeating the top or the bottom (1 2 3 4 3 2 | 1 ...).
       const n = pitches.length;

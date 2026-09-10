@@ -45,12 +45,12 @@ test("every candidate strategy's bias reaches a texture: no parameter is carried
 
 test("the strategy's harmonic risk and register spread move the voicing solver, not the note count", () => {
   const adventurous = chordalTextureFor({
-    task: "KEYS", role: "HARMONIC_BED", family: "keys", level: "full",
-    intent: intentFor("adventurous", 1.2), plannedRhythmicCell: "quarter_pulses",
+    task: "KEYS", role: "HARMONIC_BED", family: "keys", level: "full", arcLevel: 0.6,
+    intent: intentFor("adventurous", 1.2), plannedRhythmicCell: "quarter_pulses", plannedBedCell: "whole_note_bed",
   });
   const conservative = chordalTextureFor({
-    task: "KEYS", role: "HARMONIC_BED", family: "keys", level: "full",
-    intent: intentFor("conservative", 0.95), plannedRhythmicCell: "quarter_pulses",
+    task: "KEYS", role: "HARMONIC_BED", family: "keys", level: "full", arcLevel: 0.6,
+    intent: intentFor("conservative", 0.95), plannedRhythmicCell: "quarter_pulses", plannedBedCell: "whole_note_bed",
   });
   assert.equal(adventurous.extensionsShift, 1, "harmonic risk 0.85 asks for one extension level up");
   assert.equal(conservative.extensionsShift, -1, "harmonic risk 0.1 asks for one level down");
@@ -63,13 +63,15 @@ test("a bed is sustained on a bowed family and re-struck on a keyboard; a thin t
   const thin = intentFor("sparse", 0.6);
   const dense = intentFor("adventurous", 1.2);
   const strings = (intent: typeof normal) => chordalTextureFor({
-    task: "STRINGS", role: "PAD", family: "strings", level: "bed", intent, plannedRhythmicCell: "arpeggiated_8ths",
+    task: "STRINGS", role: "PAD", family: "strings", level: "bed", arcLevel: 0.44, intent,
+    plannedRhythmicCell: "arpeggiated_8ths", plannedBedCell: "whole_note_bed",
   });
   assert.equal(strings(normal).archetype, "sustained", "a bowed bed holds the chord");
   assert.equal(strings(thin).archetype, "sustained");
   assert.equal(strings(thin).voiceDelta <= 0, true, "a thin texture takes a voice, it does not delete notes");
   const keysBed = (intent: typeof normal) => chordalTextureFor({
-    task: "KEYS", role: "HARMONIC_BED", family: "keys", level: "bed", intent, plannedRhythmicCell: "arpeggiated_8ths",
+    task: "KEYS", role: "HARMONIC_BED", family: "keys", level: "bed", arcLevel: 0.44, intent,
+    plannedRhythmicCell: "arpeggiated_8ths", plannedBedCell: "whole_note_bed",
   });
   assert.equal(keysBed(normal).cell, "bed");
   assert.equal(keysBed(dense).cell, "rhythmic", "a dense keyboard bed moves on the rhythmic cell");
@@ -79,8 +81,8 @@ test("a bed is sustained on a bowed family and re-struck on a keyboard; a thin t
 
 test("the comping cell of the groove plan decides the archetype; only the strategy's density and named intent move it", () => {
   const intent = intentFor("rhythmic", 1.1);
-  const block = chordalTextureFor({ task: "PIANO", role: "RHYTHMIC_HARMONY", family: "keys", level: "bed", intent, plannedRhythmicCell: "sparse_hits" });
-  const arp = chordalTextureFor({ task: "PIANO", role: "RHYTHMIC_HARMONY", family: "keys", level: "bed", intent, plannedRhythmicCell: "arpeggiated_8ths" });
+  const block = chordalTextureFor({ task: "PIANO", role: "RHYTHMIC_HARMONY", family: "keys", level: "bed", arcLevel: 0.44, intent, plannedRhythmicCell: "sparse_hits", plannedBedCell: "whole_note_bed" });
+  const arp = chordalTextureFor({ task: "PIANO", role: "RHYTHMIC_HARMONY", family: "keys", level: "bed", arcLevel: 0.44, intent, plannedRhythmicCell: "arpeggiated_8ths", plannedBedCell: "whole_note_bed" });
   assert.equal(block.archetype, "block");
   assert.equal(arp.archetype, "arpeggio");
   assert.equal(block.cell, "rhythmic");
