@@ -5876,6 +5876,29 @@ components:
         minRaters: { type: number }
         minWinShare: { type: number }
         reason: { type: string }
+        sensitivity:
+          $ref: "#/components/schemas/ListeningGateSensitivity"
+    ListeningGateSensitivity:
+      type: object
+      description: B-08 - what the session's positive-control pairs say; Gate C is withheld unless verdict is may_judge_training
+      required: [verdict, controlPairs, reasons, controls]
+      properties:
+        verdict: { type: string, enum: [insufficient_data, not_sensitive, may_judge_training] }
+        controlPairs: { type: number }
+        reasons:
+          type: array
+          items: { type: string }
+        controls:
+          type: array
+          items:
+            type: object
+            required: [comparison, pairs, votes, detected, detectionRate]
+            properties:
+              comparison: { type: string }
+              pairs: { type: number }
+              votes: { type: number }
+              detected: { type: number }
+              detectionRate: { type: number, nullable: true }
     ListeningResults:
       type: object
       required: [version, raters, ownerVotesExcluded, votesCounted, perQuestion, elo, primaryQuestion, comparisons, gateC]

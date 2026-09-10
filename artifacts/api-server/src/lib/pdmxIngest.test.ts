@@ -12,6 +12,8 @@ import {
 const clean: PdmxMetadataRow = {
   id: "0001",
   title: "A niggun",
+  // The composition layer: a composer on the verified public-domain list (d. 1938).
+  composer: "Abraham Zevi Idelsohn",
   license_conflict: false,
   license: "Public Domain",
   url: "https://example.test/score/0001",
@@ -49,6 +51,8 @@ test("a row becomes an entry whose rights name the work, not the dataset", () =>
   assert.equal(entry.rights.reference, clean.url, "the work's own licence statement, not the record page");
   assert.match(entry.rights.work, /A niggun \(PDMX 0001, no_license_conflict\)/);
   assert.equal(entry.rights.commercialUse, true);
+  assert.equal(entry.rights.composer, "Abraham Zevi Idelsohn", "the composition layer names its composer");
+  assert.equal(entry.rights.composerDied, 1938);
   // Attributes are derived from published metadata, never invented.
   assert.equal(entry.attributes.tempoBand, "medium");
   assert.equal(entry.attributes.harmony, "moderate");
@@ -56,6 +60,21 @@ test("a row becomes an entry whose rights name the work, not the dataset", () =>
   assert.equal(entry.attributes.ensemble, "small");
   assert.equal(entry.attributes.idiom, "western");
   // Everything admitted here passes the corpus's own rights gate.
+  assert.equal(admitEntries(entries).refused.length, 0);
+});
+
+test("the score's licence does not clear the composition: a row with no verified composer is refused as contested, with the reason", () => {
+  const { entries, refused } = pdmxToCorpusEntries([
+    { ...clean, id: "pd", composer: "Ludwig van Beethoven" },
+    { ...clean, id: "pop", title: "Mamma Mia!", composer: undefined, artist: "ABBA" },
+    { ...clean, id: "nobody", title: "Untitled score", composer: undefined },
+    { ...clean, id: "label", title: "Santa Baby", composer: "Traditional" },
+  ], { clearedAt: "2026-09-10T00:00:00.000Z" });
+  assert.deepEqual(entries.map((e) => e.id), ["pdmx-pd"]);
+  assert.deepEqual(refused.map((r) => r.id), ["pop", "nobody", "label"]);
+  assert.match(refused[0].reason, /contested: .*"abba".*names no verified composer/);
+  assert.match(refused[1].reason, /contested: .*names no composer/);
+  assert.match(refused[2].reason, /contested: .*labelled "Traditional".*not on the verified traditional/);
   assert.equal(admitEntries(entries).refused.length, 0);
 });
 

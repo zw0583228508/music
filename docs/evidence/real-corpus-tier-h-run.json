@@ -1,0 +1,5674 @@
+{
+  "version": "1.1",
+  "method": "real-corpus-benchmark/v1.1",
+  "tier": "H",
+  "task": {
+    "id": "strip-families-and-arrange",
+    "version": "1.0",
+    "text": "On a rights-cleared human multitrack work, strip N families (N = 1 by default; further families removed from the context, never from the anchor), have the system write the stripped part against the remaining human ensemble on the shared estimated chords, and judge the written part against the human original at the part level with the tournament judge (playability, range, register, chord-tone share, coverage, repetition, density and interval shape vs the human, clash with the context). The human part is the anchor, never an answer key; a system out-scoring the human on a task marks the judge suspect there.",
+    "shape": "tournamentTask.buildTournamentTask — one task per (work, GM program, bar window)"
+  },
+  "ranAt": "2026-09-10T04:00:41.087Z",
+  "gitSha": "05c12e77bba38cc7875be6e7fc585d9386392933",
+  "metricVersions": {
+    "musicCritic": "1.0",
+    "audioCritic": "1.0",
+    "partJudge": "1.1",
+    "coherenceMetric": "COHERENCE_METRIC_v1",
+    "benchmarkMeasures": "1.0"
+  },
+  "judgeVersion": "1.1",
+  "providers": [
+    "HUMAN_ORIGIN_REFERENCE",
+    "REFERENCE_PART_COMPOSER"
+  ],
+  "seeds": [
+    7
+  ],
+  "options": {
+    "windowBars": 16,
+    "maxTasksPerWork": 4,
+    "stripAdditionalFamilies": 0
+  },
+  "corpus": {
+    "entries": 40,
+    "runnable": 40,
+    "withMaterial": 40,
+    "coverage": {
+      "songs": 40,
+      "humanGold": 0,
+      "targetSongs": 100,
+      "targetHumanGold": 30,
+      "dimensions": [
+        {
+          "dimension": "inputType",
+          "counts": {
+            "midi": 40
+          },
+          "missing": [
+            "full_song",
+            "piano_vocal",
+            "vocal_only"
+          ]
+        },
+        {
+          "dimension": "tempoBand",
+          "counts": {
+            "slow": 21,
+            "medium": 15,
+            "fast": 4
+          },
+          "missing": []
+        },
+        {
+          "dimension": "meter",
+          "counts": {
+            "4/4": 19,
+            "3/4": 8,
+            "3/8": 3,
+            "6/8": 3,
+            "2/4": 1,
+            "3/2": 2,
+            "2/2": 2,
+            "12/8": 2
+          },
+          "missing": []
+        },
+        {
+          "dimension": "feel",
+          "counts": {
+            "swung": 3,
+            "compound": 5,
+            "straight": 32
+          },
+          "missing": []
+        },
+        {
+          "dimension": "harmony",
+          "counts": {
+            "complex": 11,
+            "moderate": 21,
+            "simple": 8
+          },
+          "missing": []
+        },
+        {
+          "dimension": "density",
+          "counts": {
+            "dense": 25,
+            "moderate": 12,
+            "sparse": 3
+          },
+          "missing": []
+        },
+        {
+          "dimension": "ensemble",
+          "counts": {
+            "large": 25,
+            "small": 15
+          },
+          "missing": []
+        },
+        {
+          "dimension": "idiom",
+          "counts": {
+            "western": 40
+          },
+          "missing": [
+            "non_western"
+          ]
+        },
+        {
+          "dimension": "production",
+          "counts": {
+            "acoustic": 40
+          },
+          "missing": [
+            "electronic"
+          ]
+        }
+      ],
+      "ready": false,
+      "gaps": [
+        "songs: 40 of 100",
+        "inputType \"full_song\": 0 of 3 songs",
+        "inputType \"piano_vocal\": 0 of 3 songs",
+        "inputType \"vocal_only\": 0 of 3 songs",
+        "idiom \"non_western\": 0 of 3 songs",
+        "production \"electronic\": 0 of 3 songs",
+        "human gold arrangements: 0 of 30"
+      ]
+    },
+    "gaps": [
+      "songs: 40 of 100",
+      "inputType \"full_song\": 0 of 3 songs",
+      "inputType \"piano_vocal\": 0 of 3 songs",
+      "inputType \"vocal_only\": 0 of 3 songs",
+      "idiom \"non_western\": 0 of 3 songs",
+      "production \"electronic\": 0 of 3 songs",
+      "human gold arrangements: 0 of 30"
+    ]
+  },
+  "works": [
+    {
+      "entryId": "pdmx-QmYoSb5q8XUyPXGaizifu1QRsVLToY1aCQV5gDrMUa99vw",
+      "workId": "QmYoSb5q8XUyPXGaizifu1QRsVLToY1aCQV5gDrMUa99vw",
+      "title": "Piano Concerto No.21 in C major K.467",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "swung",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "d7b5122321d5",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "keys",
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 270,
+          "chordCoverage": 0.75,
+          "human": {
+            "score": 93.74,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9191,
+            "coverage": 0.625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 61.16,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.75,
+              "deltaVsHuman": -32.58,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "bd406b4248c3",
+          "targetFamily": "strings",
+          "targetInst": 45,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 51,
+          "chordCoverage": 0.875,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 70.4,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.88,
+              "deltaVsHuman": -29.6,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "787bb9d5b585",
+          "targetFamily": "strings",
+          "targetInst": 48,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 384,
+          "chordCoverage": 1,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8516,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 69.97,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 1,
+              "deltaVsHuman": -30.03,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "2a6c44214583",
+          "targetFamily": "reed",
+          "targetInst": 68,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "keys",
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 57,
+          "chordCoverage": 0.75,
+          "human": {
+            "score": 94.78,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8571,
+            "coverage": 0.625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 50.7,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -44.08,
+              "failure": null
+            }
+          },
+          "limits": []
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmRPTQvtBowZ5rcT7BBkmHYspycANuQY2aZFcTp3S9Muym",
+      "workId": "QmRPTQvtBowZ5rcT7BBkmHYspycANuQY2aZFcTp3S9Muym",
+      "title": "Concerto In C MVT2",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "3/4",
+        "feel": "swung",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "3c48b2d40008",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "guitar",
+            "keys",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 48,
+          "chordCoverage": 0.6875,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9091,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 64.07,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.69,
+              "deltaVsHuman": -35.93,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "1b7b8bc9231f",
+          "targetFamily": "keys",
+          "targetInst": 6,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "guitar",
+            "keys",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 136,
+          "chordCoverage": 0.5,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9846,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 56.83,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -43.17,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "897ec2ce19c0",
+          "targetFamily": "guitar",
+          "targetInst": 24,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "keys",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 141,
+          "chordCoverage": 0.4375,
+          "human": {
+            "score": 98.98,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7581,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 5.15,
+              "playabilityErrors": 3,
+              "chordToneShare": 1,
+              "coverage": 0.44,
+              "deltaVsHuman": -93.83,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 44% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "a2f788d61e99",
+          "targetFamily": "strings",
+          "targetInst": 40,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "guitar",
+            "keys",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 141,
+          "chordCoverage": 0.4375,
+          "human": {
+            "score": 98.98,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7581,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 42.08,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.44,
+              "deltaVsHuman": -56.9,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 44% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmTa8epLaUjVkEcV7ZzYbazW6fxEgvwLMC5AuG5uqBKyJ6",
+      "workId": "QmTa8epLaUjVkEcV7ZzYbazW6fxEgvwLMC5AuG5uqBKyJ6",
+      "title": "Rigoletto",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "3/8",
+        "feel": "swung",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "64a4ae689c44",
+          "targetFamily": "strings",
+          "targetInst": 48,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 60,
+          "chordCoverage": 0.5,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 0.9375
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 54.69,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -45.31,
+              "failure": null
+            }
+          },
+          "limits": [
+            "46 tempo events; seconds follow the first (69.00001725000432 BPM) only"
+          ]
+        },
+        {
+          "taskId": "ae4aabd2f5bf",
+          "targetFamily": "brass",
+          "targetInst": 60,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 32,
+          "chordCoverage": 0.6875,
+          "human": {
+            "score": 88.81,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 0.5
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 42.89,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.5,
+              "coverage": 0.25,
+              "deltaVsHuman": -45.92,
+              "failure": null
+            }
+          },
+          "limits": [
+            "46 tempo events; seconds follow the first (69.00001725000432 BPM) only"
+          ]
+        },
+        {
+          "taskId": "0c8f72205224",
+          "targetFamily": "reed",
+          "targetInst": 68,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 22,
+          "chordCoverage": 0.6875,
+          "human": {
+            "score": 85.52,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8399,
+            "coverage": 0.4375
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 42.89,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.5,
+              "coverage": 0.25,
+              "deltaVsHuman": -42.63,
+              "failure": null
+            }
+          },
+          "limits": [
+            "46 tempo events; seconds follow the first (69.00001725000432 BPM) only"
+          ]
+        },
+        {
+          "taskId": "bc17ebaed7f8",
+          "targetFamily": "reed",
+          "targetInst": 69,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 51,
+          "chordCoverage": 0.8125,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7896,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 65.23,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.25,
+              "deltaVsHuman": -34.77,
+              "failure": null
+            }
+          },
+          "limits": [
+            "46 tempo events; seconds follow the first (69.00001725000432 BPM) only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmY8KJiDxZhpTwzNqvX15YfzoSD6X9hkAb5eMw8HAvBDsj",
+      "workId": "QmY8KJiDxZhpTwzNqvX15YfzoSD6X9hkAb5eMw8HAvBDsj",
+      "title": "Kleine Orgelmesse or Missa brevis Sancti Joannis de Deo Mass No. 7 in Bb Major",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "6/8",
+        "feel": "compound",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "0f59a6fd5db1",
+          "targetFamily": "organ",
+          "targetInst": 19,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 76,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8937,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 52.72,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.56,
+              "deltaVsHuman": -47.28,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "9733c0378032",
+          "targetFamily": "strings",
+          "targetInst": 40,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "organ",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 73,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8117,
+            "coverage": 0.875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 54.34,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.56,
+              "deltaVsHuman": -45.66,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "8cc8456e1ff9",
+          "targetFamily": "ensemble",
+          "targetInst": 52,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "organ",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 67,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7821,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 0,
+              "playabilityErrors": 7,
+              "chordToneShare": 1,
+              "coverage": 0.56,
+              "deltaVsHuman": -100,
+              "failure": null
+            }
+          },
+          "limits": []
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmR8F9HZyxGE7yC37FUaDURa4MaBh6bkoHJz3K1AhFzQRr",
+      "workId": "QmR8F9HZyxGE7yC37FUaDURa4MaBh6bkoHJz3K1AhFzQRr",
+      "title": "Greensleeves",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "6/8",
+        "feel": "compound",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "c602243c28f9",
+          "targetFamily": "guitar",
+          "targetInst": 26,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "guitar",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 58,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8292,
+            "coverage": 0.8125
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 47.14,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.38,
+              "deltaVsHuman": -52.86,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "23a489f52a2c",
+          "targetFamily": "guitar",
+          "targetInst": 27,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "guitar",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 41,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8504,
+            "coverage": 0.875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 68.31,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.56,
+              "deltaVsHuman": -31.69,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "c07803e8656d",
+          "targetFamily": "strings",
+          "targetInst": 40,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "guitar",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 46,
+          "chordCoverage": 0.5,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8857,
+            "coverage": 0.9375
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 52.83,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -47.17,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "93e66d9fbf84",
+          "targetFamily": "strings",
+          "targetInst": 41,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "guitar",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 22,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 92.96,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8752,
+            "coverage": 0.5625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 49.86,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.38,
+              "deltaVsHuman": -43.1,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmZWa9Ewjm3w5cjP9a9gutRT7N58S4EMnBAonBd4iN5oMi",
+      "workId": "QmZWa9Ewjm3w5cjP9a9gutRT7N58S4EMnBAonBd4iN5oMi",
+      "title": "Sicilienne Op.78",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "6/8",
+        "feel": "compound",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "fe83cedc7664",
+          "targetFamily": "guitar",
+          "targetInst": 25,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "bass",
+            "brass",
+            "drums",
+            "guitar",
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 196,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 78.5,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.4564,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 17.75,
+              "playabilityErrors": 3,
+              "chordToneShare": 1,
+              "coverage": 0.56,
+              "deltaVsHuman": -60.75,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "f02569d87c6f",
+          "targetFamily": "guitar",
+          "targetInst": 26,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "bass",
+            "brass",
+            "drums",
+            "guitar",
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 205,
+          "chordCoverage": 0.4375,
+          "human": {
+            "score": 96.87,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.6598,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 7.97,
+              "playabilityErrors": 3,
+              "chordToneShare": 1,
+              "coverage": 0.44,
+              "deltaVsHuman": -88.9,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 44% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "eb836cde167d",
+          "targetFamily": "bass",
+          "targetInst": 32,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "bass",
+            "brass",
+            "guitar",
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 51,
+          "chordCoverage": 0.6875,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8864,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 63.98,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.69,
+              "deltaVsHuman": -36.02,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "cb9dc0f7106d",
+          "targetFamily": "brass",
+          "targetInst": 56,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "bass",
+            "brass",
+            "drums",
+            "guitar",
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 54,
+          "chordCoverage": 0.25,
+          "human": {
+            "score": 89.21,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7207,
+            "coverage": 0.75
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 36.32,
+              "playabilityErrors": 0,
+              "chordToneShare": null,
+              "coverage": 0.25,
+              "deltaVsHuman": -52.89,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 25% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmacY5xSh18WXR348MvKWuvzpuAfRqe8ieh6m8gpNQbyNr",
+      "workId": "QmacY5xSh18WXR348MvKWuvzpuAfRqe8ieh6m8gpNQbyNr",
+      "title": "Silent night - Instrumental flute - flugehorn - violin",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "fca07b10c37e",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "bass",
+            "brass",
+            "drums",
+            "keys",
+            "pipe",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 60,
+          "chordCoverage": 0.625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9807,
+            "coverage": 0.9375
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 63.56,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.63,
+              "deltaVsHuman": -36.44,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "1aa1b34fb832",
+          "targetFamily": "bass",
+          "targetInst": 34,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "drums",
+            "keys",
+            "pipe",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 23,
+          "chordCoverage": 0.6875,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 0.9375
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 67.7,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.69,
+              "deltaVsHuman": -32.3,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "e6461b6de9da",
+          "targetFamily": "strings",
+          "targetInst": 40,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "bass",
+            "brass",
+            "drums",
+            "keys",
+            "pipe"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 32,
+          "chordCoverage": 0.75,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9099,
+            "coverage": 0.9375
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 62.37,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.75,
+              "deltaVsHuman": -37.63,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "f29db85ebda5",
+          "targetFamily": "brass",
+          "targetInst": 56,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "bass",
+            "drums",
+            "keys",
+            "pipe",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 24,
+          "chordCoverage": 0.625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9667,
+            "coverage": 0.9375
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 54.06,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -45.94,
+              "failure": null
+            }
+          },
+          "limits": []
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmRjibSinfVz16xTgqnq4EPza8mrMFTLbqzwJL9wbUJ2io",
+      "workId": "QmRjibSinfVz16xTgqnq4EPza8mrMFTLbqzwJL9wbUJ2io",
+      "title": "Glorie daÈi lui Dumnezeu!",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "cdb90ab7da24",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys",
+            "pipe"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 147,
+          "chordCoverage": 0.75,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8434,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 60.8,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.75,
+              "deltaVsHuman": -39.2,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "33d1ed41f406",
+          "targetFamily": "ensemble",
+          "targetInst": 53,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys",
+            "pipe"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 27,
+          "chordCoverage": 0.625,
+          "human": {
+            "score": 92.5,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8501,
+            "coverage": 0.5625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 0,
+              "playabilityErrors": 10,
+              "chordToneShare": 1,
+              "coverage": 0.63,
+              "deltaVsHuman": -92.5,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "ea169a3a0e27",
+          "targetFamily": "pipe",
+          "targetInst": 73,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 34,
+          "chordCoverage": 0.75,
+          "human": {
+            "score": 93.88,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7594,
+            "coverage": 0.6875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 58.21,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -35.67,
+              "failure": null
+            }
+          },
+          "limits": []
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmZpW5y91mNNqfY1ofLXkGQDe31eJfr8FR4JWcpT6qapD1",
+      "workId": "QmZpW5y91mNNqfY1ofLXkGQDe31eJfr8FR4JWcpT6qapD1",
+      "title": "Symphony No.9 Op.125",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "2/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "sparse",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "9708ea4ddab5",
+          "targetFamily": "strings",
+          "targetInst": 40,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 28,
+          "chordCoverage": 0.25,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9287,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 64.13,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.25,
+              "deltaVsHuman": -35.87,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 25% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "beff4a501bcc",
+          "targetFamily": "reed",
+          "targetInst": 71,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "pipe",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 33,
+          "chordCoverage": 0,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": null,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 0,
+              "playabilityErrors": 0,
+              "chordToneShare": null,
+              "coverage": 0,
+              "deltaVsHuman": -100,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 0% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "8facaca134f5",
+          "targetFamily": "pipe",
+          "targetInst": 73,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 28,
+          "chordCoverage": 0.25,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9287,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 54.46,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -45.54,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 25% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmP8P1EjQNde6Z8i3ZP8JK9ny9cVPQCC2ThtqpaUcqSato",
+      "workId": "QmP8P1EjQNde6Z8i3ZP8JK9ny9cVPQCC2ThtqpaUcqSato",
+      "title": "Heilig aus der Deutschen Messe",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "sparse",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "4db175d7f8b8",
+          "targetFamily": "strings",
+          "targetInst": 42,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "pipe"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 23,
+          "chordCoverage": 0.9375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9048,
+            "coverage": 0.9375
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 78.22,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.94,
+              "deltaVsHuman": -21.78,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (72.00002880001152 BPM) only"
+          ]
+        },
+        {
+          "taskId": "282a992f2d22",
+          "targetFamily": "pipe",
+          "targetInst": 74,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "pipe",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 23,
+          "chordCoverage": 0.625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.6787,
+            "coverage": 0.9375
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 58.94,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -41.06,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (72.00002880001152 BPM) only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmU1nWTKzCtLUFXgt7kZbsm3pJcN7U1E8kKDwKA6nxhMee",
+      "workId": "QmU1nWTKzCtLUFXgt7kZbsm3pJcN7U1E8kKDwKA6nxhMee",
+      "title": "O leggiadr' occhi",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "sparse",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "2c387a30c198",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 10,
+          "chordCoverage": 0,
+          "human": {
+            "score": 83.82,
+            "playabilityErrors": 0,
+            "chordToneShare": null,
+            "coverage": 0.625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 0,
+              "playabilityErrors": 0,
+              "chordToneShare": null,
+              "coverage": 0,
+              "deltaVsHuman": -83.82,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (70.00023333411112 BPM) only",
+            "estimated chords cover 0% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "b7d39147ae22",
+          "targetFamily": "ensemble",
+          "targetInst": 52,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 35,
+          "chordCoverage": 0.125,
+          "human": {
+            "score": 82.66,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.1666,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 35.26,
+              "playabilityErrors": 1,
+              "chordToneShare": 1,
+              "coverage": 0.13,
+              "deltaVsHuman": -47.4,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (70.00023333411112 BPM) only",
+            "estimated chords cover 13% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmY5RQf5HHdJfVA95Dn1bE257cHbefkcqEAFGx8ivkCV59",
+      "workId": "QmY5RQf5HHdJfVA95Dn1bE257cHbefkcqEAFGx8ivkCV59",
+      "title": "Se La Face Ay Pale - Guillaume Dufay",
+      "attributes": {
+        "tempoBand": "fast",
+        "meter": "3/2",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "4c42cd74a114",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 40,
+          "chordCoverage": 0.5,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8413,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 38.78,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.31,
+              "deltaVsHuman": -61.22,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (169.9996033342589 BPM) only"
+          ]
+        },
+        {
+          "taskId": "f02ebfaa73d5",
+          "targetFamily": "reed",
+          "targetInst": 70,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "keys",
+            "pipe"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 46,
+          "chordCoverage": 0.3125,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.75,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 20,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.67,
+              "coverage": 0.5,
+              "deltaVsHuman": -80,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (169.9996033342589 BPM) only",
+            "estimated chords cover 31% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "1bb40dcf705f",
+          "targetFamily": "pipe",
+          "targetInst": 75,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "keys",
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 45,
+          "chordCoverage": 0.3125,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.6898,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 40.65,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.75,
+              "coverage": 0.5,
+              "deltaVsHuman": -59.35,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (169.9996033342589 BPM) only",
+            "estimated chords cover 31% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmSTacsYPkj7oA7RtKFuF7GP1hzqxWJfzWD81Uo3pJM2Yg",
+      "workId": "QmSTacsYPkj7oA7RtKFuF7GP1hzqxWJfzWD81Uo3pJM2Yg",
+      "title": "Chandos Anthem No. 4: No. 6 - O worship the Lord in the beauty of holiness",
+      "attributes": {
+        "tempoBand": "fast",
+        "meter": "3/2",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "95a8bcdb78ab",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "keys",
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 59,
+          "chordCoverage": 0.5,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8667,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 63.24,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.19,
+              "deltaVsHuman": -36.76,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "d3651b3318cf",
+          "targetFamily": "reed",
+          "targetInst": 70,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "keys",
+            "pipe"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 50,
+          "chordCoverage": 0.625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8085,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 47.54,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -52.46,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "de3dc70d63ce",
+          "targetFamily": "pipe",
+          "targetInst": 74,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "keys",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 52,
+          "chordCoverage": 0.75,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.889,
+            "coverage": 0.9375
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 60.29,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -39.71,
+              "failure": null
+            }
+          },
+          "limits": []
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmQiv698z1BpNkRnoFvkZvJQPUPn1aZK8vqsKXVQLoVLqS",
+      "workId": "QmQiv698z1BpNkRnoFvkZvJQPUPn1aZK8vqsKXVQLoVLqS",
+      "title": "Hungarian Rhapsody No.15 S.244/15",
+      "attributes": {
+        "tempoBand": "fast",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "d5ab8e084691",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "chromatic_perc",
+            "keys",
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 40,
+          "chordCoverage": 0.4375,
+          "human": {
+            "score": 94.28,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.957,
+            "coverage": 0.5
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 61.21,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.44,
+              "deltaVsHuman": -33.07,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (143.99988480009216 BPM) only",
+            "estimated chords cover 44% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "44769f6e8f8f",
+          "targetFamily": "brass",
+          "targetInst": 56,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "chromatic_perc",
+            "keys",
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 67,
+          "chordCoverage": 0.4375,
+          "human": {
+            "score": 78.79,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.5697,
+            "coverage": 0.5
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 31.46,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.67,
+              "coverage": 0.5,
+              "deltaVsHuman": -47.33,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (143.99988480009216 BPM) only",
+            "estimated chords cover 44% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "a51ba7b81ba5",
+          "targetFamily": "brass",
+          "targetInst": 57,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "chromatic_perc",
+            "keys",
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 64,
+          "chordCoverage": 0.3125,
+          "human": {
+            "score": 86,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.6249,
+            "coverage": 0.625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 30.76,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.5,
+              "coverage": 0.5,
+              "deltaVsHuman": -55.24,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (143.99988480009216 BPM) only",
+            "estimated chords cover 31% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "fed73710a888",
+          "targetFamily": "brass",
+          "targetInst": 58,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "chromatic_perc",
+            "keys",
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 52,
+          "chordCoverage": 0.3125,
+          "human": {
+            "score": 95.18,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8889,
+            "coverage": 0.625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 47.8,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -47.38,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (143.99988480009216 BPM) only",
+            "estimated chords cover 31% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmbaPnp5ffQMNGPJh7cF5pTU3ewYpAhJ3i3EfooSny54jW",
+      "workId": "QmbaPnp5ffQMNGPJh7cF5pTU3ewYpAhJ3i3EfooSny54jW",
+      "title": "Benedictus uit Messe Solonelle",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "1bd728afab7e",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 32,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys",
+            "organ"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 52,
+          "chordCoverage": 0.6875,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9072,
+            "coverage": 0.75
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 46.39,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.69,
+              "deltaVsHuman": -53.61,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (83.99996640001343 BPM) only"
+          ]
+        },
+        {
+          "taskId": "6bcfd1aaaba4",
+          "targetFamily": "organ",
+          "targetInst": 19,
+          "barStart": 32,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys",
+            "organ"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 49,
+          "chordCoverage": 0.75,
+          "human": {
+            "score": 87.39,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7106,
+            "coverage": 0.625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 51.19,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.75,
+              "deltaVsHuman": -36.2,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (83.99996640001343 BPM) only"
+          ]
+        },
+        {
+          "taskId": "e385b32a0b4b",
+          "targetFamily": "organ",
+          "targetInst": 20,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys",
+            "organ"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 45,
+          "chordCoverage": 0.625,
+          "human": {
+            "score": 78.73,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.5682,
+            "coverage": 0.5
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 67,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.63,
+              "deltaVsHuman": -11.73,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (83.99996640001343 BPM) only"
+          ]
+        },
+        {
+          "taskId": "cc391d4f796e",
+          "targetFamily": "ensemble",
+          "targetInst": 52,
+          "barStart": 32,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys",
+            "organ"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 26,
+          "chordCoverage": 0.8125,
+          "human": {
+            "score": 94.93,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8751,
+            "coverage": 0.625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 0,
+              "playabilityErrors": 7,
+              "chordToneShare": 1,
+              "coverage": 0.81,
+              "deltaVsHuman": -94.93,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (83.99996640001343 BPM) only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmaxCMVTUnP27mT65k76NYKsVy9Eev7nAYskQ17mcidUkS",
+      "workId": "QmaxCMVTUnP27mT65k76NYKsVy9Eev7nAYskQ17mcidUkS",
+      "title": "Arthur S. Sullivan: Christ is Risen!",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "ba77fd62fc27",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "ensemble",
+            "keys",
+            "organ"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 108,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8835,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 48.37,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.38,
+              "deltaVsHuman": -51.63,
+              "failure": null
+            }
+          },
+          "limits": [
+            "7 tempo events; seconds follow the first (115.00024916720653 BPM) only",
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "25c5f287a244",
+          "targetFamily": "organ",
+          "targetInst": 19,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "ensemble",
+            "keys"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 108,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.848,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 54.74,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.56,
+              "deltaVsHuman": -45.26,
+              "failure": null
+            }
+          },
+          "limits": [
+            "7 tempo events; seconds follow the first (115.00024916720653 BPM) only"
+          ]
+        },
+        {
+          "taskId": "692ac040bc42",
+          "targetFamily": "ensemble",
+          "targetInst": 52,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "ensemble",
+            "keys",
+            "organ"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 108,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8503,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 23.28,
+              "playabilityErrors": 2,
+              "chordToneShare": 1,
+              "coverage": 0.56,
+              "deltaVsHuman": -76.72,
+              "failure": null
+            }
+          },
+          "limits": [
+            "7 tempo events; seconds follow the first (115.00024916720653 BPM) only"
+          ]
+        },
+        {
+          "taskId": "dc5bca6c0285",
+          "targetFamily": "brass",
+          "targetInst": 58,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys",
+            "organ"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 54,
+          "chordCoverage": 0.5,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8657,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 47.28,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -52.72,
+              "failure": null
+            }
+          },
+          "limits": [
+            "7 tempo events; seconds follow the first (115.00024916720653 BPM) only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmUeMxaCbfQm7LTRPruopP8ixYRDojtRHJ8q5SFRQ1qM6G",
+      "workId": "QmUeMxaCbfQm7LTRPruopP8ixYRDojtRHJ8q5SFRQ1qM6G",
+      "title": "Giunto che m'hebb' amor",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "2da972392f90",
+          "targetFamily": "brass",
+          "targetInst": 57,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 22,
+          "chordCoverage": 0.5,
+          "human": {
+            "score": 97.18,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 0.5625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 57.12,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -40.06,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "1bc808991d7a",
+          "targetFamily": "reed",
+          "targetInst": 68,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 22,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8621,
+            "coverage": 0.8125
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 57.12,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.86,
+              "coverage": 0.5,
+              "deltaVsHuman": -42.88,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "d4fb08a87074",
+          "targetFamily": "reed",
+          "targetInst": 70,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 26,
+          "chordCoverage": 0.625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8715,
+            "coverage": 0.875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 63.4,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -36.6,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "1ba24dd3bf73",
+          "targetFamily": "reed",
+          "targetInst": 71,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 27,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7751,
+            "coverage": 0.875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 47.45,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.6,
+              "coverage": 0.5,
+              "deltaVsHuman": -52.55,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmRi9oH5ENmQU2NgfFLPQRVhQ7nYYjyzcb5saZ1XJPtmik",
+      "workId": "QmRi9oH5ENmQU2NgfFLPQRVhQ7nYYjyzcb5saZ1XJPtmik",
+      "title": "Canon and Gigue in D major P.37",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "7ac64dae1139",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "keys",
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 69,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8263,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 46.16,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.38,
+              "deltaVsHuman": -53.84,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "38d22724c1ed",
+          "targetFamily": "guitar",
+          "targetInst": 24,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "keys",
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 88,
+          "chordCoverage": 0.4375,
+          "human": {
+            "score": 96.41,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8333,
+            "coverage": 0.75
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 26.58,
+              "playabilityErrors": 2,
+              "chordToneShare": 1,
+              "coverage": 0.44,
+              "deltaVsHuman": -69.83,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 44% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "2ac729f74e3f",
+          "targetFamily": "reed",
+          "targetInst": 65,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "guitar",
+            "keys",
+            "pipe"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 43,
+          "chordCoverage": 0.4375,
+          "human": {
+            "score": 87.73,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8751,
+            "coverage": 0.5
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 51.46,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -36.27,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 44% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "958d627dda13",
+          "targetFamily": "pipe",
+          "targetInst": 73,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "keys",
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 24,
+          "chordCoverage": 0.75,
+          "human": {
+            "score": 80.37,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.6093,
+            "coverage": 0.5
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 63.94,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -16.43,
+              "failure": null
+            }
+          },
+          "limits": []
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmY6WMtfD8J78NL7m1T8wDDvYg9EP1FUbKpxpoQPEAFyWC",
+      "workId": "QmY6WMtfD8J78NL7m1T8wDDvYg9EP1FUbKpxpoQPEAFyWC",
+      "title": "Parsifal WWV 111",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "14c7f17a0495",
+          "targetFamily": "strings",
+          "targetInst": 48,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 256,
+          "chordCoverage": 0.625,
+          "human": {
+            "score": 98.94,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7494,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 47.36,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.63,
+              "deltaVsHuman": -51.58,
+              "failure": null
+            }
+          },
+          "limits": [
+            "4 tempo events; seconds follow the first (120 BPM) only"
+          ]
+        },
+        {
+          "taskId": "3f8f22912020",
+          "targetFamily": "brass",
+          "targetInst": 57,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 38,
+          "chordCoverage": 0.625,
+          "human": {
+            "score": 94.01,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7545,
+            "coverage": 0.75
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 46.93,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -47.08,
+              "failure": null
+            }
+          },
+          "limits": [
+            "4 tempo events; seconds follow the first (120 BPM) only"
+          ]
+        },
+        {
+          "taskId": "350072b577ff",
+          "targetFamily": "brass",
+          "targetInst": 58,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 19,
+          "chordCoverage": 0.625,
+          "human": {
+            "score": 88.97,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.6226,
+            "coverage": 0.75
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 49.15,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -39.82,
+              "failure": null
+            }
+          },
+          "limits": [
+            "4 tempo events; seconds follow the first (120 BPM) only"
+          ]
+        },
+        {
+          "taskId": "87e00e566d48",
+          "targetFamily": "brass",
+          "targetInst": 60,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 56,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 82.16,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7678,
+            "coverage": 0.5
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 45.37,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -36.79,
+              "failure": null
+            }
+          },
+          "limits": [
+            "4 tempo events; seconds follow the first (120 BPM) only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmQKhXJ45WEpxojLTX2GcPqwgFkUfDXbGVjG3GtdHfGvQn",
+      "workId": "QmQKhXJ45WEpxojLTX2GcPqwgFkUfDXbGVjG3GtdHfGvQn",
+      "title": "Maurerische Trauermusik K.477/479a",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "2/2",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "377a585646de",
+          "targetFamily": "strings",
+          "targetInst": 48,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 95,
+          "chordCoverage": 0.625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7562,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 43.9,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.31,
+              "deltaVsHuman": -56.1,
+              "failure": null
+            }
+          },
+          "limits": [
+            "4 tempo events; seconds follow the first (70.00023333411112 BPM) only"
+          ]
+        },
+        {
+          "taskId": "2a0388dc1dcf",
+          "targetFamily": "brass",
+          "targetInst": 60,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 10,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 98.68,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9546,
+            "coverage": 0.625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 36.75,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.67,
+              "coverage": 0.5,
+              "deltaVsHuman": -61.93,
+              "failure": null
+            }
+          },
+          "limits": [
+            "4 tempo events; seconds follow the first (70.00023333411112 BPM) only"
+          ]
+        },
+        {
+          "taskId": "92d59e9a37b6",
+          "targetFamily": "reed",
+          "targetInst": 68,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 42,
+          "chordCoverage": 0.5,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9475,
+            "coverage": 0.8125
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 34.68,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.75,
+              "coverage": 0.5,
+              "deltaVsHuman": -65.32,
+              "failure": null
+            }
+          },
+          "limits": [
+            "4 tempo events; seconds follow the first (70.00023333411112 BPM) only"
+          ]
+        },
+        {
+          "taskId": "eca42812d301",
+          "targetFamily": "reed",
+          "targetInst": 70,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 12,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 72.23,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.5894,
+            "coverage": 0.625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 43.81,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.67,
+              "coverage": 0.5,
+              "deltaVsHuman": -28.42,
+              "failure": null
+            }
+          },
+          "limits": [
+            "4 tempo events; seconds follow the first (70.00023333411112 BPM) only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmVub35843rfqDG6a5QWkdikfMyynfsyrYAihB31WJT6Pf",
+      "workId": "QmVub35843rfqDG6a5QWkdikfMyynfsyrYAihB31WJT6Pf",
+      "title": "Sanctus à 12 (1597)",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "cf04f7c7cf17",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "chromatic_perc",
+            "keys",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 41,
+          "chordCoverage": 0.3125,
+          "human": {
+            "score": 90.67,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8334,
+            "coverage": 0.5625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 39.85,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.31,
+              "deltaVsHuman": -50.82,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 31% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "102c3db31fd1",
+          "targetFamily": "strings",
+          "targetInst": 47,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "chromatic_perc",
+            "keys",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 27,
+          "chordCoverage": 0.5,
+          "human": {
+            "score": 96.1,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8686,
+            "coverage": 0.6875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 0,
+              "playabilityErrors": 28,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -96.1,
+              "failure": null
+            }
+          },
+          "limits": []
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmPnMysjKyz1GSqYvR4tFgs3TgL5TgVxqsNGr7MPDUhj2C",
+      "workId": "QmPnMysjKyz1GSqYvR4tFgs3TgL5TgVxqsNGr7MPDUhj2C",
+      "title": "Sinfonia in F minor BWV 795",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "fe31d91e0e78",
+          "targetFamily": "strings",
+          "targetInst": 41,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 100,
+          "chordCoverage": 0.1875,
+          "human": {
+            "score": 97.25,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.5343,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 60.56,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.19,
+              "deltaVsHuman": -36.69,
+              "failure": null
+            }
+          },
+          "limits": [
+            "5 tempo events; seconds follow the first (42.00001260000378 BPM) only",
+            "estimated chords cover 19% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "81895b64d9b8",
+          "targetFamily": "reed",
+          "targetInst": 70,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "pipe",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 96,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 89.81,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.4109,
+            "coverage": 0.9375
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 38.84,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -50.97,
+              "failure": null
+            }
+          },
+          "limits": [
+            "5 tempo events; seconds follow the first (42.00001260000378 BPM) only",
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "ff821cb4ddd0",
+          "targetFamily": "pipe",
+          "targetInst": 73,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 113,
+          "chordCoverage": 0.25,
+          "human": {
+            "score": 89.71,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.4747,
+            "coverage": 0.875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 17.15,
+              "playabilityErrors": 0,
+              "chordToneShare": 0,
+              "coverage": 0.5,
+              "deltaVsHuman": -72.56,
+              "failure": null
+            }
+          },
+          "limits": [
+            "5 tempo events; seconds follow the first (42.00001260000378 BPM) only",
+            "estimated chords cover 25% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmdjNEQuyT2BJ7WKuqsqC6fBx8uuEfDYUPNLoV6VCimnoG",
+      "workId": "QmdjNEQuyT2BJ7WKuqsqC6fBx8uuEfDYUPNLoV6VCimnoG",
+      "title": "Ave Maria Op. 145",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "moderate",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "b93bd0758813",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "pipe"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 23,
+          "chordCoverage": 0.5,
+          "human": {
+            "score": 94.75,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8438,
+            "coverage": 0.625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 56.47,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -38.28,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "323b77f62aef",
+          "targetFamily": "ensemble",
+          "targetInst": 52,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys",
+            "pipe"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 47,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 94.45,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.65,
+            "coverage": 0.875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 0,
+              "playabilityErrors": 4,
+              "chordToneShare": 1,
+              "coverage": 0.38,
+              "deltaVsHuman": -94.45,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "ee710734d6da",
+          "targetFamily": "pipe",
+          "targetInst": 73,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 13,
+          "chordCoverage": 0.4375,
+          "human": {
+            "score": 94.27,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 0.5
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 70.88,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -23.39,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 44% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmacZvReyzBnUFUNGyNCk7sfmz8mC6w6knAvPqsHDB9RdF",
+      "workId": "QmacZvReyzBnUFUNGyNCk7sfmz8mC6w6knAvPqsHDB9RdF",
+      "title": "Repentir",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "33b41cc12393",
+          "targetFamily": "strings",
+          "targetInst": 48,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "ensemble",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 117,
+          "chordCoverage": 0.6875,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 57.51,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.69,
+              "deltaVsHuman": -42.49,
+              "failure": null
+            }
+          },
+          "limits": [
+            "10 tempo events; seconds follow the first (72.00002880001152 BPM) only"
+          ]
+        },
+        {
+          "taskId": "ae10229f379e",
+          "targetFamily": "ensemble",
+          "targetInst": 52,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "ensemble",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 31,
+          "chordCoverage": 0.625,
+          "human": {
+            "score": 93,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9251,
+            "coverage": 0.5
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 0,
+              "playabilityErrors": 6,
+              "chordToneShare": 1,
+              "coverage": 0.63,
+              "deltaVsHuman": -93,
+              "failure": null
+            }
+          },
+          "limits": [
+            "10 tempo events; seconds follow the first (72.00002880001152 BPM) only"
+          ]
+        },
+        {
+          "taskId": "c53dbc59d97e",
+          "targetFamily": "brass",
+          "targetInst": 60,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "ensemble",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 117,
+          "chordCoverage": 0.6875,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 57.35,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -42.65,
+              "failure": null
+            }
+          },
+          "limits": [
+            "10 tempo events; seconds follow the first (72.00002880001152 BPM) only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmPSDehUeJySKzfRhGcyeFqV8ket1fRPuS6L11TXtnfryA",
+      "workId": "QmPSDehUeJySKzfRhGcyeFqV8ket1fRPuS6L11TXtnfryA",
+      "title": "Requiem in D minor K.626",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "0d44db982101",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "ensemble",
+            "organ",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 72,
+          "chordCoverage": 0.25,
+          "human": {
+            "score": 94.16,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7124,
+            "coverage": 0.75
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 61.91,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.25,
+              "deltaVsHuman": -32.25,
+              "failure": null
+            }
+          },
+          "limits": [
+            "8 tempo events; seconds follow the first (37.00001418333877 BPM) only",
+            "estimated chords cover 25% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "7d853929c5b2",
+          "targetFamily": "organ",
+          "targetInst": 19,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "ensemble",
+            "keys",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 116,
+          "chordCoverage": 0.25,
+          "human": {
+            "score": 82.49,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.6703,
+            "coverage": 0.5
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 61.91,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.25,
+              "deltaVsHuman": -20.58,
+              "failure": null
+            }
+          },
+          "limits": [
+            "8 tempo events; seconds follow the first (37.00001418333877 BPM) only",
+            "estimated chords cover 25% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "2b841a60aec9",
+          "targetFamily": "strings",
+          "targetInst": 48,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "ensemble",
+            "keys",
+            "organ",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 132,
+          "chordCoverage": 0.1875,
+          "human": {
+            "score": 99.54,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.6031,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 59.14,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.19,
+              "deltaVsHuman": -40.4,
+              "failure": null
+            }
+          },
+          "limits": [
+            "8 tempo events; seconds follow the first (37.00001418333877 BPM) only",
+            "estimated chords cover 19% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "edbcd5860bc0",
+          "targetFamily": "ensemble",
+          "targetInst": 52,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "ensemble",
+            "keys",
+            "organ",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 54,
+          "chordCoverage": 0.1875,
+          "human": {
+            "score": 84.65,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.4999,
+            "coverage": 0.75
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 27.52,
+              "playabilityErrors": 2,
+              "chordToneShare": 1,
+              "coverage": 0.19,
+              "deltaVsHuman": -57.13,
+              "failure": null
+            }
+          },
+          "limits": [
+            "8 tempo events; seconds follow the first (37.00001418333877 BPM) only",
+            "estimated chords cover 19% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmUd76kyxzBGnDj6f4Gdvd1qrPncxUMAp3Qo2G5AGDPmqE",
+      "workId": "QmUd76kyxzBGnDj6f4Gdvd1qrPncxUMAp3Qo2G5AGDPmqE",
+      "title": "Romance Op.36",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "703e9042782f",
+          "targetFamily": "strings",
+          "targetInst": 40,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 49,
+          "chordCoverage": 0.8125,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 64.66,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.81,
+              "deltaVsHuman": -35.34,
+              "failure": null
+            }
+          },
+          "limits": [
+            "18 tempo events; seconds follow the first (76.00016213367923 BPM) only"
+          ]
+        },
+        {
+          "taskId": "0218b9e309db",
+          "targetFamily": "strings",
+          "targetInst": 41,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 48,
+          "chordCoverage": 0.875,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9572,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 65,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.88,
+              "deltaVsHuman": -35,
+              "failure": null
+            }
+          },
+          "limits": [
+            "18 tempo events; seconds follow the first (76.00016213367923 BPM) only"
+          ]
+        },
+        {
+          "taskId": "ca997dfc4e19",
+          "targetFamily": "strings",
+          "targetInst": 42,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 16,
+          "chordCoverage": 0.9375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 16.55,
+              "playabilityErrors": 9,
+              "chordToneShare": 1,
+              "coverage": 0.94,
+              "deltaVsHuman": -83.45,
+              "failure": null
+            }
+          },
+          "limits": [
+            "18 tempo events; seconds follow the first (76.00016213367923 BPM) only"
+          ]
+        },
+        {
+          "taskId": "ab58a9eed5b8",
+          "targetFamily": "strings",
+          "targetInst": 43,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 16,
+          "chordCoverage": 0.9375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 0,
+              "playabilityErrors": 48,
+              "chordToneShare": 1,
+              "coverage": 0.94,
+              "deltaVsHuman": -100,
+              "failure": null
+            }
+          },
+          "limits": [
+            "18 tempo events; seconds follow the first (76.00016213367923 BPM) only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmYswpCbtf9oM4g58Qj15qWdbjS7CHBMgcS7a4SLiuyTkg",
+      "workId": "QmYswpCbtf9oM4g58Qj15qWdbjS7CHBMgcS7a4SLiuyTkg",
+      "title": "Laudate pueri Dominum",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "8d5f51afb68a",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 15,
+          "chordCoverage": 0.0625,
+          "human": {
+            "score": 98.5,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 0.5625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 52.98,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.06,
+              "deltaVsHuman": -45.52,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 6% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "b5e7c1415537",
+          "targetFamily": "brass",
+          "targetInst": 57,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "keys",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 34,
+          "chordCoverage": 0.0625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 0.875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 20,
+              "playabilityErrors": 0,
+              "chordToneShare": null,
+              "coverage": 0.5,
+              "deltaVsHuman": -80,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 6% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "a777a8bf51f7",
+          "targetFamily": "reed",
+          "targetInst": 68,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "keys",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 17,
+          "chordCoverage": 0.0625,
+          "human": {
+            "score": 78.51,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.5003,
+            "coverage": 0.5625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 20,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -58.51,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 6% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmabLHtHwqSE1MNh6fqJeq5jv3chRXVNzWm3Uub6YU2b3v",
+      "workId": "QmabLHtHwqSE1MNh6fqJeq5jv3chRXVNzWm3Uub6YU2b3v",
+      "title": "La nuict froide et sombre",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "4fbc9f0f7563",
+          "targetFamily": "strings",
+          "targetInst": 40,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 36,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8095,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 40.48,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.38,
+              "deltaVsHuman": -59.52,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "6291a6523407",
+          "targetFamily": "brass",
+          "targetInst": 60,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 33,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8183,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 30.85,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.6,
+              "coverage": 0.5,
+              "deltaVsHuman": -69.15,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "6b0cc57ab77a",
+          "targetFamily": "reed",
+          "targetInst": 68,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "pipe",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 44,
+          "chordCoverage": 0.625,
+          "human": {
+            "score": 99.71,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.718,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 22.67,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.33,
+              "coverage": 0.5,
+              "deltaVsHuman": -77.04,
+              "failure": null
+            }
+          },
+          "limits": []
+        },
+        {
+          "taskId": "687dacd1db2a",
+          "targetFamily": "pipe",
+          "targetInst": 73,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 33,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 98.77,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.674,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 20,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.4,
+              "coverage": 0.5,
+              "deltaVsHuman": -78.77,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmZfbGTDQEsE19m3tsnSiGcm1Z1PCSeQZgRR1fHbRpsNSw",
+      "workId": "QmZfbGTDQEsE19m3tsnSiGcm1Z1PCSeQZgRR1fHbRpsNSw",
+      "title": "Ave verum corpus K.618",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "bdb3fa84da3f",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys",
+            "organ"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 40,
+          "chordCoverage": 0.875,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7503,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 68.97,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.88,
+              "deltaVsHuman": -31.03,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (60 BPM) only"
+          ]
+        },
+        {
+          "taskId": "1ee50e5c8d02",
+          "targetFamily": "organ",
+          "targetInst": 19,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 57,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8334,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 52.75,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.56,
+              "deltaVsHuman": -47.25,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (60 BPM) only"
+          ]
+        },
+        {
+          "taskId": "1af97b4ec378",
+          "targetFamily": "ensemble",
+          "targetInst": 52,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys",
+            "organ"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 39,
+          "chordCoverage": 0.625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8438,
+            "coverage": 0.875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 36.74,
+              "playabilityErrors": 1,
+              "chordToneShare": 1,
+              "coverage": 0.63,
+              "deltaVsHuman": -63.26,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (60 BPM) only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmVUs32cGZC7fe5RN2AaeWxiJEb9f2ht2EHCBNqa5z1RRM",
+      "workId": "QmVUs32cGZC7fe5RN2AaeWxiJEb9f2ht2EHCBNqa5z1RRM",
+      "title": "Magnificat in E-flat major BWV 243a",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "3/8",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "2bca1783dad7",
+          "targetFamily": "organ",
+          "targetInst": 19,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 53,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9468,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 49.69,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.38,
+              "deltaVsHuman": -50.31,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "30d5e8ff8cc3",
+          "targetFamily": "strings",
+          "targetInst": 40,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "organ",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 70,
+          "chordCoverage": 0.4375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7743,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 54.57,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.44,
+              "deltaVsHuman": -45.43,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 44% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "bb1c531ed4d5",
+          "targetFamily": "strings",
+          "targetInst": 41,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "organ",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 36,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9231,
+            "coverage": 0.8125
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 43.25,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.38,
+              "deltaVsHuman": -56.75,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "a984ac05f903",
+          "targetFamily": "strings",
+          "targetInst": 42,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "organ",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 53,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9468,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 51.5,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.38,
+              "deltaVsHuman": -48.5,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmNeeCREFpNohPbnUgeuEWdb6PT1jo2DmqxndJD4dkt8GH",
+      "workId": "QmNeeCREFpNohPbnUgeuEWdb6PT1jo2DmqxndJD4dkt8GH",
+      "title": "Weihnachtsoratorium BWV 248",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "12/8",
+        "feel": "compound",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "1069be260501",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "organ",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 76,
+          "chordCoverage": 0.25,
+          "human": {
+            "score": 95.43,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.839,
+            "coverage": 0.6875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 62.64,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.25,
+              "deltaVsHuman": -32.79,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 25% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "4b8e8b46812f",
+          "targetFamily": "organ",
+          "targetInst": 19,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "keys",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 123,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 91.33,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.76,
+            "coverage": 0.6875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 44.89,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.38,
+              "deltaVsHuman": -46.44,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "5d085250c305",
+          "targetFamily": "strings",
+          "targetInst": 48,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "keys",
+            "organ",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 185,
+          "chordCoverage": 0.75,
+          "human": {
+            "score": 95.08,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.6424,
+            "coverage": 0.875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 60.21,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.75,
+              "deltaVsHuman": -34.87,
+              "failure": null
+            }
+          },
+          "limits": []
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmSkrSgHGjYgtFVKRJMwoXj8qNehF4MFqM3NAcZDfSCWXk",
+      "workId": "QmSkrSgHGjYgtFVKRJMwoXj8qNehF4MFqM3NAcZDfSCWXk",
+      "title": "Pictures at an Exhibition",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "456bc7bbbf36",
+          "targetFamily": "brass",
+          "targetInst": 57,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 10,
+          "chordCoverage": 0.3125,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 0.625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 20,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.5,
+              "coverage": 0.5,
+              "deltaVsHuman": -80,
+              "failure": null
+            }
+          },
+          "limits": [
+            "34 tempo events; seconds follow the first (53.33319111149037 BPM) only",
+            "estimated chords cover 31% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "4251a64bb35a",
+          "targetFamily": "brass",
+          "targetInst": 58,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 12,
+          "chordCoverage": 0.25,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 0.75
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 20,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.5,
+              "coverage": 0.5,
+              "deltaVsHuman": -80,
+              "failure": null
+            }
+          },
+          "limits": [
+            "34 tempo events; seconds follow the first (53.33319111149037 BPM) only",
+            "estimated chords cover 25% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "972c48854cf7",
+          "targetFamily": "brass",
+          "targetInst": 60,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 12,
+          "chordCoverage": 0.25,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 0.75
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 20,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.5,
+              "coverage": 0.5,
+              "deltaVsHuman": -80,
+              "failure": null
+            }
+          },
+          "limits": [
+            "34 tempo events; seconds follow the first (53.33319111149037 BPM) only",
+            "estimated chords cover 25% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "2c6dfdb870f5",
+          "targetFamily": "reed",
+          "targetInst": 70,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 10,
+          "chordCoverage": 0.3125,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 0.625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 20,
+              "playabilityErrors": 0,
+              "chordToneShare": 0.5,
+              "coverage": 0.5,
+              "deltaVsHuman": -80,
+              "failure": null
+            }
+          },
+          "limits": [
+            "34 tempo events; seconds follow the first (53.33319111149037 BPM) only",
+            "estimated chords cover 31% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmYRN81aYQwTnBC8T29MbuYeEPanGKE1fF7idpSDYcmsW4",
+      "workId": "QmYRN81aYQwTnBC8T29MbuYeEPanGKE1fF7idpSDYcmsW4",
+      "title": "Sospir che dal bel petto",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "22e96c44a029",
+          "targetFamily": "keys",
+          "targetInst": 0,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 37,
+          "chordCoverage": 0.4375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8572,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 41.62,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.44,
+              "deltaVsHuman": -58.38,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (60 BPM) only",
+            "estimated chords cover 44% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "5ecc529a6947",
+          "targetFamily": "keys",
+          "targetInst": 6,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 115,
+          "chordCoverage": 0.25,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8002,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 61.27,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.25,
+              "deltaVsHuman": -38.73,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (60 BPM) only",
+            "estimated chords cover 25% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "26d695e48040",
+          "targetFamily": "strings",
+          "targetInst": 42,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 37,
+          "chordCoverage": 0.4375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8572,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 38.12,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.44,
+              "deltaVsHuman": -61.88,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (60 BPM) only",
+            "estimated chords cover 44% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "cdb73cd21365",
+          "targetFamily": "ensemble",
+          "targetInst": 52,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "keys",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 65,
+          "chordCoverage": 0.3125,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7502,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 0,
+              "playabilityErrors": 3,
+              "chordToneShare": 1,
+              "coverage": 0.31,
+              "deltaVsHuman": -100,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (60 BPM) only",
+            "estimated chords cover 31% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmWQW2UNmevbsAeoWY6cFcswHx3veUXD32gaGFRJuRy6UT",
+      "workId": "QmWQW2UNmevbsAeoWY6cFcswHx3veUXD32gaGFRJuRy6UT",
+      "title": "Symphonie No.1 Op.14",
+      "attributes": {
+        "tempoBand": "fast",
+        "meter": "2/2",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "e7438965afaf",
+          "targetFamily": "strings",
+          "targetInst": 48,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 256,
+          "chordCoverage": 0.6875,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9432,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 62.25,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.19,
+              "deltaVsHuman": -37.75,
+              "failure": null
+            }
+          },
+          "limits": [
+            "5 tempo events; seconds follow the first (176.00004693334586 BPM) only"
+          ]
+        },
+        {
+          "taskId": "b4eaf74c374e",
+          "targetFamily": "brass",
+          "targetInst": 57,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 256,
+          "chordCoverage": 0.6875,
+          "human": {
+            "score": 38.48,
+            "playabilityErrors": 41,
+            "chordToneShare": 0.9432,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 20,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -18.48,
+              "failure": null
+            }
+          },
+          "limits": [
+            "5 tempo events; seconds follow the first (176.00004693334586 BPM) only"
+          ]
+        },
+        {
+          "taskId": "fd305c98b942",
+          "targetFamily": "brass",
+          "targetInst": 60,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 256,
+          "chordCoverage": 0.6875,
+          "human": {
+            "score": 41.07,
+            "playabilityErrors": 22,
+            "chordToneShare": 0.9432,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 20,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -21.07,
+              "failure": null
+            }
+          },
+          "limits": [
+            "5 tempo events; seconds follow the first (176.00004693334586 BPM) only"
+          ]
+        },
+        {
+          "taskId": "b957d31fe3b1",
+          "targetFamily": "reed",
+          "targetInst": 68,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 256,
+          "chordCoverage": 0.6875,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9432,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 20,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -80,
+              "failure": null
+            }
+          },
+          "limits": [
+            "5 tempo events; seconds follow the first (176.00004693334586 BPM) only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmagNp8uSuDjmqYA4Fdmy5heeqtruuSujihZGHzzHLFveo",
+      "workId": "QmagNp8uSuDjmqYA4Fdmy5heeqtruuSujihZGHzzHLFveo",
+      "title": "Herr Jesu Christ du höchstes Gut BWV 113",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "12/8",
+        "feel": "compound",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "12f2fd1c5d75",
+          "targetFamily": "organ",
+          "targetInst": 19,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 138,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8167,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 49.91,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.38,
+              "deltaVsHuman": -50.09,
+              "failure": null
+            }
+          },
+          "limits": [
+            "19 tempo events; seconds follow the first (120 BPM) only",
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "3a00c6da07f5",
+          "targetFamily": "strings",
+          "targetInst": 43,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "organ",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 138,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8167,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 0,
+              "playabilityErrors": 30,
+              "chordToneShare": 1,
+              "coverage": 0.38,
+              "deltaVsHuman": -100,
+              "failure": null
+            }
+          },
+          "limits": [
+            "19 tempo events; seconds follow the first (120 BPM) only",
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "a0a44467067a",
+          "targetFamily": "strings",
+          "targetInst": 48,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "organ",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 138,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8167,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 42.68,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.38,
+              "deltaVsHuman": -57.32,
+              "failure": null
+            }
+          },
+          "limits": [
+            "19 tempo events; seconds follow the first (120 BPM) only",
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "f820d3243f1d",
+          "targetFamily": "brass",
+          "targetInst": 57,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "organ",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 122,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 84.65,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.6454,
+            "coverage": 0.625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 62.89,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.25,
+              "deltaVsHuman": -21.76,
+              "failure": null
+            }
+          },
+          "limits": [
+            "19 tempo events; seconds follow the first (120 BPM) only",
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmaiVgivyKRqDRrVGCBm7RntRAS8ycfhXNZPfisacyq8xB",
+      "workId": "QmaiVgivyKRqDRrVGCBm7RntRAS8ycfhXNZPfisacyq8xB",
+      "title": "Dido and Aeneas Z.626",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "13888d2bd653",
+          "targetFamily": "keys",
+          "targetInst": 6,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 117,
+          "chordCoverage": 0.25,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8114,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 64,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.25,
+              "deltaVsHuman": -36,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (85.00016291697892 BPM) only",
+            "estimated chords cover 25% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "b925bbdaa08b",
+          "targetFamily": "strings",
+          "targetInst": 42,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 24,
+          "chordCoverage": 0.4375,
+          "human": {
+            "score": 98.23,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9108,
+            "coverage": 0.6875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 47.72,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.44,
+              "deltaVsHuman": -50.51,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (85.00016291697892 BPM) only",
+            "estimated chords cover 44% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "628c1f9e3a59",
+          "targetFamily": "ensemble",
+          "targetInst": 52,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "ensemble",
+            "keys",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 71,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 94.57,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7246,
+            "coverage": 0.8125
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 0,
+              "playabilityErrors": 4,
+              "chordToneShare": 1,
+              "coverage": 0.56,
+              "deltaVsHuman": -94.57,
+              "failure": null
+            }
+          },
+          "limits": [
+            "2 tempo events; seconds follow the first (85.00016291697892 BPM) only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmbuiKkdzFVTc2nw7gVz27vnKqpxX8wzGJtuJCKVibqXJW",
+      "workId": "QmbuiKkdzFVTc2nw7gVz27vnKqpxX8wzGJtuJCKVibqXJW",
+      "title": "I was Glad",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "505fb3122124",
+          "targetFamily": "strings",
+          "targetInst": 48,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "ensemble",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 210,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7071,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 63.35,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.56,
+              "deltaVsHuman": -36.65,
+              "failure": null
+            }
+          },
+          "limits": [
+            "8 tempo events; seconds follow the first (72.00002880001152 BPM) only"
+          ]
+        },
+        {
+          "taskId": "b5de41f49e93",
+          "targetFamily": "ensemble",
+          "targetInst": 52,
+          "barStart": 16,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "ensemble",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 40,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 97.05,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.6458,
+            "coverage": 0.9375
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 0,
+              "playabilityErrors": 4,
+              "chordToneShare": 1,
+              "coverage": 0.38,
+              "deltaVsHuman": -97.05,
+              "failure": null
+            }
+          },
+          "limits": [
+            "8 tempo events; seconds follow the first (72.00002880001152 BPM) only",
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "030993a7953b",
+          "targetFamily": "brass",
+          "targetInst": 56,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "ensemble",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 35,
+          "chordCoverage": 0.5625,
+          "human": {
+            "score": 92.03,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8425,
+            "coverage": 0.5625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 54.48,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -37.55,
+              "failure": null
+            }
+          },
+          "limits": [
+            "8 tempo events; seconds follow the first (72.00002880001152 BPM) only"
+          ]
+        },
+        {
+          "taskId": "d4abc2902273",
+          "targetFamily": "brass",
+          "targetInst": 58,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "ensemble",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 39,
+          "chordCoverage": 0.625,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.9664,
+            "coverage": 0.6875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 47.4,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -52.6,
+              "failure": null
+            }
+          },
+          "limits": [
+            "8 tempo events; seconds follow the first (72.00002880001152 BPM) only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmRazo5uaUEZxMyvVRquR2RJgCTFj2NoVdaaRKCvLWUZVT",
+      "workId": "QmRazo5uaUEZxMyvVRquR2RJgCTFj2NoVdaaRKCvLWUZVT",
+      "title": "Du sollt Gott deinen Herren lieben BWV 77",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "309141f3b6cf",
+          "targetFamily": "strings",
+          "targetInst": 42,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 120,
+          "chordCoverage": 0.4375,
+          "human": {
+            "score": 96.53,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.5851,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 42.19,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.44,
+              "deltaVsHuman": -54.34,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 44% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "36db9354305a",
+          "targetFamily": "reed",
+          "targetInst": 68,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 130,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.6717,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 40.07,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -59.93,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "f3736622a3d0",
+          "targetFamily": "pipe",
+          "targetInst": 73,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 86,
+          "chordCoverage": 0.4375,
+          "human": {
+            "score": 83.14,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.694,
+            "coverage": 0.5625
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 57.5,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -25.64,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 44% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmUWMUkMcVhUk6DJNQf4LmYnhvpL4Gh3YYebVzc2jHon8g",
+      "workId": "QmUWMUkMcVhUk6DJNQf4LmYnhvpL4Gh3YYebVzc2jHon8g",
+      "title": "Bring a Torch Jeanette Isabella",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "3/8",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "moderate",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "d7efce0e962b",
+          "targetFamily": "guitar",
+          "targetInst": 25,
+          "barStart": 32,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 60,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 98.72,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.5907,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 50.83,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.38,
+              "deltaVsHuman": -47.89,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "06fd99805990",
+          "targetFamily": "brass",
+          "targetInst": 57,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "chromatic_perc"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 24,
+          "chordCoverage": 0.3125,
+          "human": {
+            "score": 93.5,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.75,
+            "coverage": 0.6875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 50,
+              "playabilityErrors": 0,
+              "chordToneShare": null,
+              "coverage": 0.25,
+              "deltaVsHuman": -43.5,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 31% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "65d035af672b",
+          "targetFamily": "brass",
+          "targetInst": 58,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "chromatic_perc"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 14,
+          "chordCoverage": 0.3125,
+          "human": {
+            "score": 96,
+            "playabilityErrors": 0,
+            "chordToneShare": 1,
+            "coverage": 0.5
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 57.93,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.25,
+              "deltaVsHuman": -38.07,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 31% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "8b254fb5970e",
+          "targetFamily": "brass",
+          "targetInst": 60,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "brass",
+            "chromatic_perc"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 26,
+          "chordCoverage": 0.375,
+          "human": {
+            "score": 97.79,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.8573,
+            "coverage": 0.6875
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 66,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.25,
+              "deltaVsHuman": -31.79,
+              "failure": null
+            }
+          },
+          "limits": [
+            "estimated chords cover 38% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    },
+    {
+      "entryId": "pdmx-QmSjcutfPijpJPFnCwwpuuVbszjuAFHSg9WFtvMiFZZ8D7",
+      "workId": "QmSjcutfPijpJPFnCwwpuuVbszjuAFHSg9WFtvMiFZZ8D7",
+      "title": "Psalm 90 - Herr du bist uns're Zuflucht",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "tasks": [
+        {
+          "taskId": "e706d11832d4",
+          "targetFamily": "strings",
+          "targetInst": 41,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "pipe",
+            "reed"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 78,
+          "chordCoverage": 0.1875,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7391,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 61.12,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.19,
+              "deltaVsHuman": -38.88,
+              "failure": null
+            }
+          },
+          "limits": [
+            "3 tempo events; seconds follow the first (55.00000458333371 BPM) only",
+            "estimated chords cover 19% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "47de376e10db",
+          "targetFamily": "reed",
+          "targetInst": 69,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 68,
+          "chordCoverage": 0.25,
+          "human": {
+            "score": 37.11,
+            "playabilityErrors": 26,
+            "chordToneShare": 0.9167,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 46.7,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": 9.59,
+              "failure": null
+            }
+          },
+          "limits": [
+            "3 tempo events; seconds follow the first (55.00000458333371 BPM) only",
+            "estimated chords cover 25% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "9977e6eb9952",
+          "targetFamily": "reed",
+          "targetInst": 70,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "pipe",
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 76,
+          "chordCoverage": 0.3125,
+          "human": {
+            "score": 100,
+            "playabilityErrors": 0,
+            "chordToneShare": 0.7665,
+            "coverage": 0.9375
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 52.08,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -47.92,
+              "failure": null
+            }
+          },
+          "limits": [
+            "3 tempo events; seconds follow the first (55.00000458333371 BPM) only",
+            "estimated chords cover 31% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        },
+        {
+          "taskId": "c1875771f08f",
+          "targetFamily": "pipe",
+          "targetInst": 73,
+          "barStart": 0,
+          "windowBars": 16,
+          "contextFamilies": [
+            "reed",
+            "strings"
+          ],
+          "strippedFromContext": [],
+          "humanNotes": 65,
+          "chordCoverage": 0.3125,
+          "human": {
+            "score": 97.57,
+            "playabilityErrors": 1,
+            "chordToneShare": 0.8421,
+            "coverage": 1
+          },
+          "byProvider": {
+            "REFERENCE_PART_COMPOSER": {
+              "score": 48.83,
+              "playabilityErrors": 0,
+              "chordToneShare": 1,
+              "coverage": 0.5,
+              "deltaVsHuman": -48.74,
+              "failure": null
+            }
+          },
+          "limits": [
+            "3 tempo events; seconds follow the first (55.00000458333371 BPM) only",
+            "estimated chords cover 31% of the window's bars; harmony metrics rest on the covered bars only"
+          ]
+        }
+      ],
+      "skipped": null
+    }
+  ],
+  "aggregate": [
+    {
+      "providerId": "REFERENCE_PART_COMPOSER",
+      "tasks": 141,
+      "failures": 0,
+      "meanScore": 43.35,
+      "meanHumanScore": 94.95,
+      "meanDeltaVsHuman": -51.6,
+      "atOrAboveHumanShare": 0.0071,
+      "meanPlayabilityErrors": 1.26,
+      "meanChordToneShare": 0.94
+    }
+  ],
+  "unavailable": [],
+  "levelBlockers": {
+    "vs-reference-part-composer": "The corpus is not a measure yet: songs: 40 of 100; inputType \"full_song\": 0 of 3 songs; inputType \"piano_vocal\": 0 of 3 songs; inputType \"vocal_only\": 0 of 3 songs; idiom \"non_western\": 0 of 3 songs; production \"electronic\": 0 of 3 songs; human gold arrangements: 0 of 30.",
+    "vs-production-model": "The corpus is not a measure yet: songs: 40 of 100; inputType \"full_song\": 0 of 3 songs; inputType \"piano_vocal\": 0 of 3 songs; inputType \"vocal_only\": 0 of 3 songs; idiom \"non_western\": 0 of 3 songs; production \"electronic\": 0 of 3 songs; human gold arrangements: 0 of 30.",
+    "vs-human-gold": "No song in the corpus has a human gold arrangement with an uploaded source; the north-star benchmark cannot be run."
+  },
+  "honestLimits": [
+    "Part-level judging against the human's own part: the judge's density and interval-shape terms compare the written part to the human, so a different but good part is penalised; the human part is an anchor, not an answer key.",
+    "The judge is a proxy calibrated on its physical half only (judge 1.1); a machine at or above the human marks the judge suspect on that task.",
+    "One family is stripped per task; the rest of the ensemble is the human's, so this measures part writing in context, not whole-song arrangement.",
+    "Tier H numbers are never pooled with Tier S or Tier P.",
+    "No song in the corpus has a human gold arrangement with an uploaded source; the north-star benchmark cannot be run."
+  ],
+  "materialDigestMismatches": [],
+  "pdmxDir": "..\\AI-Music-Production-Platform-main\\.pdmx-data"
+}

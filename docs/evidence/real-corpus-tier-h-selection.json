@@ -1,0 +1,2540 @@
+{
+  "title": "Tier H selection — which PDMX works enter REAL_BENCHMARK_CORPUS, measured (Brain B-08)",
+  "ranAt": "2026-09-10T03:59:30.893Z",
+  "finishedAt": "2026-09-10T04:00:28.947Z",
+  "selectionVersion": "2.0",
+  "pdmx": {
+    "dir": "..\\AI-Music-Production-Platform-main\\.pdmx-data",
+    "subset": "no_license_conflict ∩ our gate (pdmxRefusalReason)",
+    "csvRows": 254077,
+    "admitted": 222856,
+    "multitrackRows": 25414
+  },
+  "method": {
+    "measurement": "measurePdmxWork: one metre per work (metre changes refused), first tempo, bars on the metre grid, parts = (track, program) groups with >= 8 notes, families via ARRANGER_REMI familyOf, total onsets per bar, swing = triplet-band share of off-beat onset phases (>= 24 off-beats)",
+    "attributes": "attributesFromMeasurement: pdmxIngest thresholds (tempo < 76 slow / > 132 fast; notes per bar < 6 sparse / > 16 dense; parts <= 5 small else large; effective pitch classes from the CSV entropy <= 7 simple / <= 9 moderate / else complex; 6/8, 9/8, 12/8 compound; swing ratio >= 0.6 swung; genre families / tags decide non_western); production is 'acoustic' for every score because a score carries no production",
+    "selection": "selectTierH: tournament-anchor works first, then each required value filled to MIN_PER_VALUE in rarest-first order from the scan (stable hash order, genre-labelled 3–8-family 24–128-bar works preferred); nothing synthetic"
+  },
+  "rights": {
+    "rule": "The uploader's public-domain statement (no_license_conflict subset) clears the score - the engraving or arrangement - only. The composition enters Tier H when compositionRightsFor proves it: a composer on the verified list who died in or before 1955 (life + 70 as of 2026), read from the row's composer_name / artist_name, or a title on the verified traditional / public-domain tune list. Everything else is contested and excluded; contested and unknown are valid answers, and no composer is guessed to admit a work.",
+    "compositionRightsVersion": "1.0",
+    "deathYearCutoff": 1955,
+    "verifiedComposers": 301,
+    "verifiedTunes": 98,
+    "candidates": 7633,
+    "proven": 901,
+    "provenBasis": {
+      "composer": 872,
+      "traditional": 29
+    },
+    "contested": 6732,
+    "contestedByReason": {
+      "no composer recorded; title not a verified tune": 742,
+      "names a person not on the verified public-domain composer list": 4661,
+      "category label, not a composer": 139,
+      "only a handle or single-word label; no verified composer": 991,
+      "uploader's traditional/anonymous label; title not on the verified tune list": 199
+    },
+    "contestedListedIn": "docs\\evidence\\real-corpus-tier-h-contested.json",
+    "bothLayers": "a proven entry clears both layers: the composition through the basis above, the arrangement/engraving through the uploader's CC0 / public-domain dedication in the no_license_conflict subset (a living arranger's CC0 arrangement of a public-domain work is admitted on those two facts; an arrangement of an unproven composition is contested whatever its score licence says)"
+  },
+  "seeds": [
+    {
+      "file": "docs/evidence/model-tournament-live.json",
+      "works": 12,
+      "kept": 7
+    },
+    {
+      "file": "docs/evidence/listening-benchmark-v2-report.json",
+      "works": 12,
+      "kept": 0
+    },
+    {
+      "file": "docs/evidence/model-tournament-global-live.json",
+      "works": 50,
+      "kept": 47
+    }
+  ],
+  "scan": {
+    "works": 25414,
+    "candidates": 7633,
+    "refusals": {
+      "not multitrack: fewer than two pitched families and no drums": 7673,
+      "N bars: shorter than a benchmark task": 593,
+      "metre changes (N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 689,
+      "metre changes (N/N, N/N); bar numbers would not mean one thing": 5242,
+      "metre changes (N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 349,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 36,
+      "metre changes (N/N, N/N, N/N); bar numbers would not mean one thing": 2523,
+      "N bars: longer than the tournament task builder handles in one form": 114,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 125,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 177,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 69,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 71,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 2,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 18,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 4,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 1,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 29,
+      "no usable tempo": 2,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 1,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 6,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 2,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 2,
+      "MIDI not on disk under the rights subset": 19,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 10,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 5,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 7,
+      "no notes": 2,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 2,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 5,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 1,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 1,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 1
+    },
+    "provenPoolCoverage": [
+      {
+        "dimension": "inputType",
+        "counts": {
+          "midi": 901
+        },
+        "missing": [
+          "full_song",
+          "piano_vocal",
+          "vocal_only"
+        ]
+      },
+      {
+        "dimension": "tempoBand",
+        "counts": {
+          "medium": 579,
+          "slow": 223,
+          "fast": 99
+        },
+        "missing": []
+      },
+      {
+        "dimension": "meter",
+        "counts": {
+          "4/4": 440,
+          "3/4": 145,
+          "2/4": 69,
+          "4/2": 51,
+          "2/2": 73,
+          "6/4": 11,
+          "3/2": 25,
+          "12/8": 15,
+          "3/8": 16,
+          "6/8": 47,
+          "9/8": 1,
+          "2/1": 2,
+          "6/2": 3,
+          "8/4": 1,
+          "5/4": 1,
+          "1/4": 1
+        },
+        "missing": []
+      },
+      {
+        "dimension": "feel",
+        "counts": {
+          "straight": 812,
+          "compound": 63,
+          "swung": 26
+        },
+        "missing": []
+      },
+      {
+        "dimension": "harmony",
+        "counts": {
+          "moderate": 563,
+          "simple": 171,
+          "complex": 167
+        },
+        "missing": []
+      },
+      {
+        "dimension": "density",
+        "counts": {
+          "moderate": 352,
+          "dense": 539,
+          "sparse": 10
+        },
+        "missing": []
+      },
+      {
+        "dimension": "ensemble",
+        "counts": {
+          "small": 463,
+          "large": 438
+        },
+        "missing": []
+      },
+      {
+        "dimension": "idiom",
+        "counts": {
+          "western": 901
+        },
+        "missing": [
+          "non_western"
+        ]
+      },
+      {
+        "dimension": "production",
+        "counts": {
+          "acoustic": 901
+        },
+        "missing": [
+          "electronic"
+        ]
+      }
+    ]
+  },
+  "chosen": [
+    {
+      "id": "pdmx-QmYoSb5q8XUyPXGaizifu1QRsVLToY1aCQV5gDrMUa99vw",
+      "title": "Piano Concerto No.21 in C major K.467",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Wolfgang Amadeus Mozart",
+        "composerDied": 1791
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "swung",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 104,
+        "tracks": 16,
+        "families": [
+          "brass",
+          "keys",
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 63,
+        "tempoChanges": 0,
+        "notesPerBar": 52.44,
+        "swingRatio": 0.8939,
+        "effectivePitchClasses": 9.28
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmRPTQvtBowZ5rcT7BBkmHYspycANuQY2aZFcTp3S9Muym",
+      "title": "Concerto In C MVT2",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Antonio Vivaldi",
+        "composerDied": 1741
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "3/4",
+        "feel": "swung",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 35,
+        "tracks": 6,
+        "families": [
+          "guitar",
+          "keys",
+          "strings"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 50,
+        "tempoChanges": 0,
+        "notesPerBar": 35.09,
+        "swingRatio": 0.7458,
+        "effectivePitchClasses": 8.45
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-QmTa8epLaUjVkEcV7ZzYbazW6fxEgvwLMC5AuG5uqBKyJ6",
+      "title": "Rigoletto",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Giuseppe Verdi",
+        "composerDied": 1901
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "3/8",
+        "feel": "swung",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 91,
+        "tracks": 14,
+        "families": [
+          "brass",
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "3/8",
+        "tempoBpm": 69,
+        "tempoChanges": 45,
+        "notesPerBar": 23.15,
+        "swingRatio": 0.9123,
+        "effectivePitchClasses": 6.35
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmY8KJiDxZhpTwzNqvX15YfzoSD6X9hkAb5eMw8HAvBDsj",
+      "title": "Kleine Orgelmesse or Missa brevis Sancti Joannis de Deo Mass No. 7 in Bb Major",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Joseph Haydn",
+        "composerDied": 1809
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "6/8",
+        "feel": "compound",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 30,
+        "tracks": 7,
+        "families": [
+          "ensemble",
+          "organ",
+          "strings"
+        ],
+        "meter": "6/8",
+        "tempoBpm": 75,
+        "tempoChanges": 0,
+        "notesPerBar": 26.77,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.49
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmR8F9HZyxGE7yC37FUaDURa4MaBh6bkoHJz3K1AhFzQRr",
+      "title": "Greensleeves",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "traditional": true,
+        "source": "Greensleeves: English broadside ballad tune, registered 1580 (Stationers' Company)"
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "6/8",
+        "feel": "compound",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 31,
+        "tracks": 5,
+        "families": [
+          "ensemble",
+          "guitar",
+          "strings"
+        ],
+        "meter": "6/8",
+        "tempoBpm": 70,
+        "tempoChanges": 0,
+        "notesPerBar": 14.03,
+        "swingRatio": 0,
+        "effectivePitchClasses": 7.49
+      },
+      "genre": {
+        "primary": "folk",
+        "families": [
+          "folk"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmZWa9Ewjm3w5cjP9a9gutRT7N58S4EMnBAonBd4iN5oMi",
+      "title": "Sicilienne Op.78",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Gabriel Fauré",
+        "composerDied": 1924
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "6/8",
+        "feel": "compound",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 89,
+        "tracks": 14,
+        "families": [
+          "bass",
+          "brass",
+          "drums",
+          "guitar",
+          "pipe",
+          "reed"
+        ],
+        "meter": "6/8",
+        "tempoBpm": 75,
+        "tempoChanges": 0,
+        "notesPerBar": 51.8,
+        "swingRatio": 0.9092,
+        "effectivePitchClasses": 8.84
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmacY5xSh18WXR348MvKWuvzpuAfRqe8ieh6m8gpNQbyNr",
+      "title": "Silent night - Instrumental flute - flugehorn - violin",
+      "admittedBy": "tournament-global",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Franz Xaver Gruber",
+        "composerDied": 1863
+      },
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 93,
+        "tracks": 7,
+        "families": [
+          "bass",
+          "brass",
+          "drums",
+          "keys",
+          "pipe",
+          "strings"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 90,
+        "tempoChanges": 0,
+        "notesPerBar": 14.7,
+        "swingRatio": 0.0082,
+        "effectivePitchClasses": 8.19
+      },
+      "genre": {
+        "primary": "film_game",
+        "families": [
+          "film_game",
+          "religious_worship"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmRjibSinfVz16xTgqnq4EPza8mrMFTLbqzwJL9wbUJ2io",
+      "title": "Glorie daÈi lui Dumnezeu!",
+      "admittedBy": "tournament-classical",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Dieterich Buxtehude",
+        "composerDied": 1707
+      },
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 64,
+        "tracks": 5,
+        "families": [
+          "ensemble",
+          "keys",
+          "pipe"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 120,
+        "tempoChanges": 0,
+        "notesPerBar": 19.38,
+        "swingRatio": 0.0069,
+        "effectivePitchClasses": 6.43
+      },
+      "genre": {
+        "primary": "unlabelled",
+        "families": [
+          "unlabelled"
+        ],
+        "source": "none"
+      }
+    },
+    {
+      "id": "pdmx-QmZpW5y91mNNqfY1ofLXkGQDe31eJfr8FR4JWcpT6qapD1",
+      "title": "Symphony No.9 Op.125",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Ludwig van Beethoven",
+        "composerDied": 1827
+      },
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "2/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "sparse",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 32,
+        "tracks": 3,
+        "families": [
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "2/4",
+        "tempoBpm": 80,
+        "tempoChanges": 0,
+        "notesPerBar": 5.63,
+        "swingRatio": null,
+        "effectivePitchClasses": 5.9
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmP8P1EjQNde6Z8i3ZP8JK9ny9cVPQCC2ThtqpaUcqSato",
+      "title": "Heilig aus der Deutschen Messe",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Franz Schubert",
+        "composerDied": 1828
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "sparse",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 64,
+        "tracks": 4,
+        "families": [
+          "pipe",
+          "strings"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 72,
+        "tempoChanges": 1,
+        "notesPerBar": 5.72,
+        "swingRatio": null,
+        "effectivePitchClasses": 6.94
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmU1nWTKzCtLUFXgt7kZbsm3pJcN7U1E8kKDwKA6nxhMee",
+      "title": "O leggiadr' occhi",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Sigismondo d'India",
+        "composerDied": 1629
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "sparse",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 81,
+        "tracks": 3,
+        "families": [
+          "ensemble",
+          "keys"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 70,
+        "tempoChanges": 1,
+        "notesPerBar": 4.88,
+        "swingRatio": null,
+        "effectivePitchClasses": 7.58
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmY5RQf5HHdJfVA95Dn1bE257cHbefkcqEAFGx8ivkCV59",
+      "title": "Se La Face Ay Pale - Guillaume Dufay",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Guillaume Dufay",
+        "composerDied": 1474
+      },
+      "attributes": {
+        "tempoBand": "fast",
+        "meter": "3/2",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 31,
+        "tracks": 5,
+        "families": [
+          "guitar",
+          "keys",
+          "pipe",
+          "reed"
+        ],
+        "meter": "3/2",
+        "tempoBpm": 170,
+        "tempoChanges": 1,
+        "notesPerBar": 13,
+        "swingRatio": 0.0222,
+        "effectivePitchClasses": 6.6
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-QmSTacsYPkj7oA7RtKFuF7GP1hzqxWJfzWD81Uo3pJM2Yg",
+      "title": "Chandos Anthem No. 4: No. 6 - O worship the Lord in the beauty of holiness",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "George Frideric Handel",
+        "composerDied": 1759
+      },
+      "attributes": {
+        "tempoBand": "fast",
+        "meter": "3/2",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 84,
+        "tracks": 4,
+        "families": [
+          "keys",
+          "pipe",
+          "reed"
+        ],
+        "meter": "3/2",
+        "tempoBpm": 150,
+        "tempoChanges": 0,
+        "notesPerBar": 11.68,
+        "swingRatio": 0,
+        "effectivePitchClasses": 7.67
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmQiv698z1BpNkRnoFvkZvJQPUPn1aZK8vqsKXVQLoVLqS",
+      "title": "Hungarian Rhapsody No.15 S.244/15",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Franz Liszt",
+        "composerDied": 1886
+      },
+      "attributes": {
+        "tempoBand": "fast",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 98,
+        "tracks": 14,
+        "families": [
+          "brass",
+          "chromatic_perc",
+          "keys",
+          "pipe",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 144,
+        "tempoChanges": 1,
+        "notesPerBar": 38.99,
+        "swingRatio": 0.0231,
+        "effectivePitchClasses": 9.46
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmbaPnp5ffQMNGPJh7cF5pTU3ewYpAhJ3i3EfooSny54jW",
+      "title": "Benedictus uit Messe Solonelle",
+      "admittedBy": "tournament-global",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Louis Vierne",
+        "composerDied": 1937
+      },
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 57,
+        "tracks": 10,
+        "families": [
+          "ensemble",
+          "keys",
+          "organ"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 84,
+        "tempoChanges": 1,
+        "notesPerBar": 16.89,
+        "swingRatio": 0,
+        "effectivePitchClasses": 9.75
+      },
+      "genre": {
+        "primary": "religious_worship",
+        "families": [
+          "religious_worship"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmaxCMVTUnP27mT65k76NYKsVy9Eev7nAYskQ17mcidUkS",
+      "title": "Arthur S. Sullivan: Christ is Risen!",
+      "admittedBy": "tournament-global",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Arthur Sullivan",
+        "composerDied": 1900
+      },
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 76,
+        "tracks": 6,
+        "families": [
+          "brass",
+          "ensemble",
+          "keys",
+          "organ"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 115,
+        "tempoChanges": 6,
+        "notesPerBar": 34.37,
+        "swingRatio": 0,
+        "effectivePitchClasses": 7.66
+      },
+      "genre": {
+        "primary": "religious_worship",
+        "families": [
+          "religious_worship"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-QmUeMxaCbfQm7LTRPruopP8ixYRDojtRHJ8q5SFRQ1qM6G",
+      "title": "Giunto che m'hebb' amor",
+      "admittedBy": "tournament-classical",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Benedetto Pallavicino",
+        "composerDied": 1601
+      },
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 80,
+        "tracks": 5,
+        "families": [
+          "brass",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 78,
+        "tempoChanges": 0,
+        "notesPerBar": 10.86,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.28
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmRi9oH5ENmQU2NgfFLPQRVhQ7nYYjyzcb5saZ1XJPtmik",
+      "title": "Canon and Gigue in D major P.37",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Johann Pachelbel",
+        "composerDied": 1706
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 53,
+        "tracks": 8,
+        "families": [
+          "guitar",
+          "keys",
+          "pipe",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 70,
+        "tempoChanges": 0,
+        "notesPerBar": 29.38,
+        "swingRatio": 0,
+        "effectivePitchClasses": 6.85
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmY6WMtfD8J78NL7m1T8wDDvYg9EP1FUbKpxpoQPEAFyWC",
+      "title": "Parsifal WWV 111",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Richard Wagner",
+        "composerDied": 1883
+      },
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 68,
+        "tracks": 27,
+        "families": [
+          "brass",
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 120,
+        "tempoChanges": 3,
+        "notesPerBar": 64.29,
+        "swingRatio": 0.0392,
+        "effectivePitchClasses": 11.28
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical",
+          "religious_worship"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmQKhXJ45WEpxojLTX2GcPqwgFkUfDXbGVjG3GtdHfGvQn",
+      "title": "Maurerische Trauermusik K.477/479a",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Wolfgang Amadeus Mozart",
+        "composerDied": 1791
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "2/2",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 70,
+        "tracks": 12,
+        "families": [
+          "brass",
+          "reed",
+          "strings"
+        ],
+        "meter": "2/2",
+        "tempoBpm": 70,
+        "tempoChanges": 3,
+        "notesPerBar": 31.26,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.36
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmVub35843rfqDG6a5QWkdikfMyynfsyrYAihB31WJT6Pf",
+      "title": "Sanctus à 12 (1597)",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Giovanni Gabrieli",
+        "composerDied": 1612
+      },
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 51,
+        "tracks": 18,
+        "families": [
+          "chromatic_perc",
+          "keys",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 96,
+        "tempoChanges": 0,
+        "notesPerBar": 35.02,
+        "swingRatio": 0,
+        "effectivePitchClasses": 7.81
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmPnMysjKyz1GSqYvR4tFgs3TgL5TgVxqsNGr7MPDUhj2C",
+      "title": "Sinfonia in F minor BWV 795",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Johann Sebastian Bach",
+        "composerDied": 1750
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 35,
+        "tracks": 3,
+        "families": [
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 42,
+        "tempoChanges": 4,
+        "notesPerBar": 19.03,
+        "swingRatio": 0.0073,
+        "effectivePitchClasses": 10.76
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmdjNEQuyT2BJ7WKuqsqC6fBx8uuEfDYUPNLoV6VCimnoG",
+      "title": "Ave Maria Op. 145",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Camille Saint-Saëns",
+        "composerDied": 1921
+      },
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "moderate",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 77,
+        "tracks": 6,
+        "families": [
+          "ensemble",
+          "keys",
+          "pipe"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 120,
+        "tempoChanges": 0,
+        "notesPerBar": 8.75,
+        "swingRatio": 0,
+        "effectivePitchClasses": 9.55
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmacZvReyzBnUFUNGyNCk7sfmz8mC6w6knAvPqsHDB9RdF",
+      "title": "Repentir",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Charles Gounod",
+        "composerDied": 1893
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 92,
+        "tracks": 8,
+        "families": [
+          "brass",
+          "ensemble",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 72,
+        "tempoChanges": 9,
+        "notesPerBar": 51.72,
+        "swingRatio": 0.0527,
+        "effectivePitchClasses": 10.25
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmPSDehUeJySKzfRhGcyeFqV8ket1fRPuS6L11TXtnfryA",
+      "title": "Requiem in D minor K.626",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Wolfgang Amadeus Mozart",
+        "composerDied": 1791
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 83,
+        "tracks": 18,
+        "families": [
+          "brass",
+          "ensemble",
+          "keys",
+          "organ",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 37,
+        "tempoChanges": 7,
+        "notesPerBar": 108.17,
+        "swingRatio": 0,
+        "effectivePitchClasses": 9.94
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmUd76kyxzBGnDj6f4Gdvd1qrPncxUMAp3Qo2G5AGDPmqE",
+      "title": "Romance Op.36",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Camille Saint-Saëns",
+        "composerDied": 1921
+      },
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 93,
+        "tracks": 12,
+        "families": [
+          "brass",
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 76,
+        "tempoChanges": 17,
+        "notesPerBar": 14.37,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.37
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmYswpCbtf9oM4g58Qj15qWdbjS7CHBMgcS7a4SLiuyTkg",
+      "title": "Laudate pueri Dominum",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Leone Leoni",
+        "composerDied": 1627
+      },
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 110,
+        "tracks": 4,
+        "families": [
+          "brass",
+          "keys",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 120,
+        "tempoChanges": 0,
+        "notesPerBar": 6.66,
+        "swingRatio": 0,
+        "effectivePitchClasses": 6.74
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmabLHtHwqSE1MNh6fqJeq5jv3chRXVNzWm3Uub6YU2b3v",
+      "title": "La nuict froide et sombre",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Orlando di Lasso",
+        "composerDied": 1594
+      },
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 34,
+        "tracks": 4,
+        "families": [
+          "brass",
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 106,
+        "tempoChanges": 0,
+        "notesPerBar": 12.88,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.94
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmZfbGTDQEsE19m3tsnSiGcm1Z1PCSeQZgRR1fHbRpsNSw",
+      "title": "Ave verum corpus K.618",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Wolfgang Amadeus Mozart",
+        "composerDied": 1791
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 46,
+        "tracks": 8,
+        "families": [
+          "ensemble",
+          "keys",
+          "organ"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 60,
+        "tempoChanges": 1,
+        "notesPerBar": 17.96,
+        "swingRatio": 0.087,
+        "effectivePitchClasses": 8.84
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmVUs32cGZC7fe5RN2AaeWxiJEb9f2ht2EHCBNqa5z1RRM",
+      "title": "Magnificat in E-flat major BWV 243a",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Johann Sebastian Bach",
+        "composerDied": 1750
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "3/8",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 92,
+        "tracks": 6,
+        "families": [
+          "ensemble",
+          "organ",
+          "strings"
+        ],
+        "meter": "3/8",
+        "tempoBpm": 60,
+        "tempoChanges": 0,
+        "notesPerBar": 17.67,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.37
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmNeeCREFpNohPbnUgeuEWdb6PT1jo2DmqxndJD4dkt8GH",
+      "title": "Weihnachtsoratorium BWV 248",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Johann Sebastian Bach",
+        "composerDied": 1750
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "12/8",
+        "feel": "compound",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 63,
+        "tracks": 4,
+        "families": [
+          "keys",
+          "organ",
+          "strings"
+        ],
+        "meter": "12/8",
+        "tempoBpm": 75,
+        "tempoChanges": 0,
+        "notesPerBar": 33.87,
+        "swingRatio": 0.0073,
+        "effectivePitchClasses": 9.13
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmSkrSgHGjYgtFVKRJMwoXj8qNehF4MFqM3NAcZDfSCWXk",
+      "title": "Pictures at an Exhibition",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Modest Mussorgsky",
+        "composerDied": 1881
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 30,
+        "tracks": 13,
+        "families": [
+          "brass",
+          "reed",
+          "strings"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 53.33,
+        "tempoChanges": 33,
+        "notesPerBar": 7.47,
+        "swingRatio": null,
+        "effectivePitchClasses": 8.93
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmYRN81aYQwTnBC8T29MbuYeEPanGKE1fF7idpSDYcmsW4",
+      "title": "Sospir che dal bel petto",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Constantijn Huygens",
+        "composerDied": 1687
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 38,
+        "tracks": 4,
+        "families": [
+          "ensemble",
+          "keys",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 60,
+        "tempoChanges": 1,
+        "notesPerBar": 15.05,
+        "swingRatio": 0,
+        "effectivePitchClasses": 7.95
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmWQW2UNmevbsAeoWY6cFcswHx3veUXD32gaGFRJuRy6UT",
+      "title": "Symphonie No.1 Op.14",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Louis Vierne",
+        "composerDied": 1937
+      },
+      "attributes": {
+        "tempoBand": "fast",
+        "meter": "2/2",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 81,
+        "tracks": 12,
+        "families": [
+          "brass",
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "2/2",
+        "tempoBpm": 176,
+        "tempoChanges": 4,
+        "notesPerBar": 107.78,
+        "swingRatio": 0.0655,
+        "effectivePitchClasses": 8.94
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmagNp8uSuDjmqYA4Fdmy5heeqtruuSujihZGHzzHLFveo",
+      "title": "Herr Jesu Christ du höchstes Gut BWV 113",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Johann Sebastian Bach",
+        "composerDied": 1750
+      },
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "12/8",
+        "feel": "compound",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 48,
+        "tracks": 6,
+        "families": [
+          "brass",
+          "organ",
+          "reed",
+          "strings"
+        ],
+        "meter": "12/8",
+        "tempoBpm": 120,
+        "tempoChanges": 18,
+        "notesPerBar": 46.58,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.43
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmaiVgivyKRqDRrVGCBm7RntRAS8ycfhXNZPfisacyq8xB",
+      "title": "Dido and Aeneas Z.626",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Henry Purcell",
+        "composerDied": 1695
+      },
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 58,
+        "tracks": 6,
+        "families": [
+          "ensemble",
+          "keys",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 85,
+        "tempoChanges": 1,
+        "notesPerBar": 17.57,
+        "swingRatio": 0.0175,
+        "effectivePitchClasses": 8.66
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmbuiKkdzFVTc2nw7gVz27vnKqpxX8wzGJtuJCKVibqXJW",
+      "title": "I was Glad",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Hubert Parry",
+        "composerDied": 1918
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 81,
+        "tracks": 13,
+        "families": [
+          "brass",
+          "ensemble",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 72,
+        "tempoChanges": 7,
+        "notesPerBar": 46.43,
+        "swingRatio": 0,
+        "effectivePitchClasses": 10.04
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmRazo5uaUEZxMyvVRquR2RJgCTFj2NoVdaaRKCvLWUZVT",
+      "title": "Du sollt Gott deinen Herren lieben BWV 77",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Johann Sebastian Bach",
+        "composerDied": 1750
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 65,
+        "tracks": 4,
+        "families": [
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 60,
+        "tempoChanges": 0,
+        "notesPerBar": 28.38,
+        "swingRatio": 0,
+        "effectivePitchClasses": 9.53
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmUWMUkMcVhUk6DJNQf4LmYnhvpL4Gh3YYebVzc2jHon8g",
+      "title": "Bring a Torch Jeanette Isabella",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "traditional": true,
+        "source": "Bring a Torch, Jeanette, Isabella: Provençal carol, 17th century"
+      },
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "3/8",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "moderate",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 59,
+        "tracks": 6,
+        "families": [
+          "brass",
+          "chromatic_perc",
+          "guitar"
+        ],
+        "meter": "3/8",
+        "tempoBpm": 93,
+        "tempoChanges": 0,
+        "notesPerBar": 7.58,
+        "swingRatio": null,
+        "effectivePitchClasses": 6.34
+      },
+      "genre": {
+        "primary": "folk",
+        "families": [
+          "folk"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmSjcutfPijpJPFnCwwpuuVbszjuAFHSg9WFtvMiFZZ8D7",
+      "title": "Psalm 90 - Herr du bist uns're Zuflucht",
+      "admittedBy": "b08-csv-scan",
+      "rights": {
+        "kind": "public_domain",
+        "composer": "Jan Pieterszoon Sweelinck",
+        "composerDied": 1621
+      },
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 29,
+        "tracks": 4,
+        "families": [
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 55,
+        "tempoChanges": 2,
+        "notesPerBar": 16.1,
+        "swingRatio": 0,
+        "effectivePitchClasses": 7.89
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    }
+  ],
+  "coverage": {
+    "songs": 40,
+    "humanGold": 0,
+    "targetSongs": 100,
+    "targetHumanGold": 30,
+    "dimensions": [
+      {
+        "dimension": "inputType",
+        "counts": {
+          "midi": 40
+        },
+        "missing": [
+          "full_song",
+          "piano_vocal",
+          "vocal_only"
+        ]
+      },
+      {
+        "dimension": "tempoBand",
+        "counts": {
+          "slow": 21,
+          "medium": 15,
+          "fast": 4
+        },
+        "missing": []
+      },
+      {
+        "dimension": "meter",
+        "counts": {
+          "4/4": 19,
+          "3/4": 8,
+          "3/8": 3,
+          "6/8": 3,
+          "2/4": 1,
+          "3/2": 2,
+          "2/2": 2,
+          "12/8": 2
+        },
+        "missing": []
+      },
+      {
+        "dimension": "feel",
+        "counts": {
+          "swung": 3,
+          "compound": 5,
+          "straight": 32
+        },
+        "missing": []
+      },
+      {
+        "dimension": "harmony",
+        "counts": {
+          "complex": 11,
+          "moderate": 21,
+          "simple": 8
+        },
+        "missing": []
+      },
+      {
+        "dimension": "density",
+        "counts": {
+          "dense": 25,
+          "moderate": 12,
+          "sparse": 3
+        },
+        "missing": []
+      },
+      {
+        "dimension": "ensemble",
+        "counts": {
+          "large": 25,
+          "small": 15
+        },
+        "missing": []
+      },
+      {
+        "dimension": "idiom",
+        "counts": {
+          "western": 40
+        },
+        "missing": [
+          "non_western"
+        ]
+      },
+      {
+        "dimension": "production",
+        "counts": {
+          "acoustic": 40
+        },
+        "missing": [
+          "electronic"
+        ]
+      }
+    ],
+    "ready": false,
+    "gaps": [
+      "songs: 40 of 100",
+      "inputType \"full_song\": 0 of 3 songs",
+      "inputType \"piano_vocal\": 0 of 3 songs",
+      "inputType \"vocal_only\": 0 of 3 songs",
+      "idiom \"non_western\": 0 of 3 songs",
+      "production \"electronic\": 0 of 3 songs",
+      "human gold arrangements: 0 of 30"
+    ]
+  },
+  "short": [
+    {
+      "dimension": "idiom",
+      "value": "non_western",
+      "have": 0
+    }
+  ],
+  "gaps": [
+    "songs: 40 of 100",
+    "inputType \"full_song\": 0 of 3 songs",
+    "inputType \"piano_vocal\": 0 of 3 songs",
+    "inputType \"vocal_only\": 0 of 3 songs",
+    "idiom \"non_western\": 0 of 3 songs",
+    "production \"electronic\": 0 of 3 songs",
+    "human gold arrangements: 0 of 30"
+  ],
+  "excluded": [
+    {
+      "id": "pdmx-QmShENbwkZFu1WzVmUfschPHEAVVmm83mxcaBNr3GqBbam",
+      "title": "amaranth",
+      "admittedBy": "tournament-global",
+      "reason": "\"amaranth\" is contested: the PDMX row's only attribution is \"nightwish\", which names no verified composer; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmdR8JT7qjszfGL9ivGsbCKx9UgnNvfiPAWkKwBhdPJs2L",
+      "title": "Blues bossa sax+guitare+accompagnement",
+      "admittedBy": "tournament-global",
+      "reason": "\"Blues bossa sax+guitare+accompagnement\" is contested: the PDMX row names no composer and the title is not a verified public-domain tune; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmVCMwJFL9Q67AL1TyeBGTLbu2a5uHnpiFivsBr339Tymr",
+      "title": "build me up buttercup",
+      "admittedBy": "tournament-global",
+      "reason": "\"build me up buttercup\" is contested: the PDMX row names \"the foundationsarranged by salah miller\" and \"the foundations\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmacuG15tfzWWXG7SNHuHpXL7RjEMPURsTNnppD6ALETtH",
+      "title": "Christmas Yee in Three",
+      "admittedBy": "tournament-global",
+      "reason": "\"Christmas Yee in Three\" is contested: the PDMX row names \"by rory mosher\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-Qma4X9oCvTBVazSqVsqZ7j8YLH5ouhEnzkEQRPDgM14Gsa",
+      "title": "cold duck time",
+      "admittedBy": "tournament-global",
+      "reason": "\"cold duck time\" is contested: the PDMX row names \"eddie harris\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmdRTNCGVUhi7wa7cGC1vynEHxbo5rupUehZ4GQuJqkH4N",
+      "title": "Counterpoint/Pie Jesu",
+      "admittedBy": "tournament-global",
+      "reason": "\"Counterpoint/Pie Jesu\" is contested: the PDMX row names \"richard oberackerheidi bletzinger\" and \"richard oberacker\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmaCJHoZ3Un2y3r9vWYYAuxFjNgQSmYcLvmztgFDh4SK6E",
+      "title": "country roads",
+      "admittedBy": "tournament-global",
+      "reason": "\"country roads\" is contested: the PDMX row names \"hermes house band\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmahFMNjxfieADi4t4iM3nCBgr3L2Jymjm8e2wJjczogPF",
+      "title": "Dont Let Me Go",
+      "admittedBy": "tournament-global",
+      "reason": "\"Dont Let Me Go\" is contested: the PDMX row names \"cigarettes after sex\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmcyP7UNchU4YMGwNp1KhopxYD6CnkkMe3Fs87XEFXMRuM",
+      "title": "earth angel will you be mine",
+      "admittedBy": "b08-csv-scan",
+      "reason": "\"earth angel will you be mine\" is contested: the PDMX row names \"marvin berry\" and \"the starlighters\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection"
+      ]
+    },
+    {
+      "id": "pdmx-QmUJGQdm7iiPTE6xX4DrR3Z13YSRKK5ULX6i3vr8iZxwCr",
+      "title": "earthbound - onett",
+      "admittedBy": "tournament-classical",
+      "reason": "\"earthbound - onett\" is contested: \"Misc Computer Games\" is a category label, not a composer; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-Qmf7FdCC3DBZvRLTi39zUniikKvXYdZky7upgtJLUpb9Xa",
+      "title": "Eleven",
+      "admittedBy": "b08-csv-scan",
+      "reason": "\"Eleven\" is contested: the PDMX row names \"michael stein\" and \"kyle dixon\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection"
+      ]
+    },
+    {
+      "id": "pdmx-QmaogLCs2WhXCuJKogH558zJE51JeNXxQ4C7RejKmwPnev",
+      "title": "For smart living",
+      "admittedBy": "tournament-classical",
+      "reason": "\"For smart living\" is contested: the PDMX row's only attribution is \"blow\", which names no verified composer; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmanYWjTEPXebCvngzAdXN3vojzCtRmLKyLGMov4U82HwX",
+      "title": "Gangsta's Paradise",
+      "admittedBy": "tournament-global",
+      "reason": "\"Gangsta's Paradise\" is contested: the PDMX row names \"rickey c battle jr\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmaxnwxSTa3JMZNAFwY8j1fzFKYFPZYsWcAiQrNvWd9hRU",
+      "title": "guantanamera",
+      "admittedBy": "tournament-global",
+      "reason": "\"guantanamera\" is contested: the PDMX row names \"joseito fernandez\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmYwCRCydYK2Na6mn5mh9AMMb64BwZv5yx1DpigpyKBtLC",
+      "title": "I Can't Breathe",
+      "admittedBy": "b08-csv-scan",
+      "reason": "\"I Can't Breathe\" is contested: the PDMX row names \"jordan jennings\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection"
+      ]
+    },
+    {
+      "id": "pdmx-QmeuGpDFNwqhaKhtUNuCQdcxiq2TwT1S1f3Rr2H685XJXj",
+      "title": "i got you babe",
+      "admittedBy": "tournament-global",
+      "reason": "\"i got you babe\" is contested: the PDMX row's only attribution is \"ub40\", which names no verified composer; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmaGSbbadetKUxXVTcFYk9QaqRGQyi2KRtWmckqBD2Z1dK",
+      "title": "i will survive",
+      "admittedBy": "tournament-global",
+      "reason": "\"i will survive\" is contested: the PDMX row names \"gloria gaynor\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-Qma2qXH7BTNA9mf19TPCYLmsP5sZBDxJ3SzdNi7oQVdqyT",
+      "title": "let me down slowly",
+      "admittedBy": "tournament-global",
+      "reason": "\"let me down slowly\" is contested: the PDMX row names \"alec benjamin\" and \"alessia cara\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmWu1GKEdGjxwwV9ePmmSbmUN4y5cmYMpMkXJK2EUxVh1J",
+      "title": "Mamma Mia!",
+      "admittedBy": "tournament-global",
+      "reason": "\"Mamma Mia!\" is contested: the PDMX row names \"benny andresson stig anderson bjorn ulvaeus\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmZAqZ5sWmk1bVXiTQsW2kBQhKWJfbN7jDAT9C7abGqSxU",
+      "title": "Musical Hair: Where do I go (arranged for small R&B band)",
+      "admittedBy": "tournament-global",
+      "reason": "\"Musical Hair: Where do I go (arranged for small R&B band)\" is contested: the PDMX row names \"galt macdermot\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmabLFxpikYVjcZXgubR9kVaJN6ctKXYSYnWYMpBsWubN5",
+      "title": "Nipsey Hussle x Victory Lap",
+      "admittedBy": "tournament-global",
+      "reason": "\"Nipsey Hussle x Victory Lap\" is contested: the PDMX row names \"tyquon garrett\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmaChhKKLYJWXX4nbSyCyNtdEk69GGBQJ6DPA1FcazWyY3",
+      "title": "On the Take",
+      "admittedBy": "b08-csv-scan",
+      "reason": "\"On the Take\" is contested: the PDMX row names \"allen maples\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection"
+      ]
+    },
+    {
+      "id": "pdmx-QmbqqfxB2FW85LZJLL7HwSxbaSSMWC4oqioxXfKF7GFhzQ",
+      "title": "overnight celebrtiy",
+      "admittedBy": "tournament-global",
+      "reason": "\"overnight celebrtiy\" is contested: the PDMX row's only attribution is \"twista\", which names no verified composer; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmaLyZRXXjfypokZs1VXcjrCyU7huPwxKj1DetTLLn2dzY",
+      "title": "postcards from italy",
+      "admittedBy": "tournament-global",
+      "reason": "\"postcards from italy\" is contested: the PDMX row's only attribution is \"beirut\", which names no verified composer; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmassW1LM1SqYqu6jnexbafnq2q5BEwVQiT6w79SrxVCvS",
+      "title": "Procuro Olvidarte",
+      "admittedBy": "tournament-global",
+      "reason": "\"Procuro Olvidarte\" is contested: the PDMX row names \"alejandro fernandez\" and \"los nocheros\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmaPWhAxxRc8s16bjJVeEGEKEvKWKzNqg7W2qakbByRrL4",
+      "title": "Pure Cocaine",
+      "admittedBy": "tournament-global",
+      "reason": "\"Pure Cocaine\" is contested: the PDMX row names \"lil baby\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-Qma3KDfPJTb2ybD5UBqm5JAuSzYoBaGRqN8gogjMF53J9w",
+      "title": "sandstorm",
+      "admittedBy": "tournament-global",
+      "reason": "\"sandstorm\" is contested: the PDMX row names \"original audio darude\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmaCHVw1Uoj5ot5ciMpYCj2ffGga8PsJAzq94mfx7PUXW3",
+      "title": "Señorita",
+      "admittedBy": "tournament-global",
+      "reason": "\"Señorita\" is contested: the PDMX row names \"ncdt d budnitsky\" and \"camila cabello\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmTqqMaBHWUp9D5UZyBQLQEKH7uivDdctjuz4RftniwCUi",
+      "title": "sleeping sun",
+      "admittedBy": "tournament-global",
+      "reason": "\"sleeping sun\" is contested: the PDMX row's only attribution is \"nightwish\", which names no verified composer; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-Qma1c7LuqVV8Jyw1GmBnwdqKZPeoNTahvqbNkYZqQhMwN2",
+      "title": "sos",
+      "admittedBy": "tournament-global",
+      "reason": "\"sos\" is contested: the PDMX row names \"wesley steenbergen\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmSj6ei4HACHGvcbAXCaV8evjAHdgaqyrTdwJdKZCsCsz3",
+      "title": "Take Me Home Country Roads",
+      "admittedBy": "tournament-global",
+      "reason": "\"Take Me Home Country Roads\" is contested: the PDMX row names \"john denver\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmarK8WuALDnUkYx44Nrk5Knx4bMsmh1m8Jduyz3R1V9PD",
+      "title": "them changes",
+      "admittedBy": "tournament-global",
+      "reason": "\"them changes\" is contested: the PDMX row names \"stephen bruner\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmaAJQvJnwF4yghG8p3s5gzvrKYkJG23atgk8Hdg8dkopa",
+      "title": "This Girl - The Kungs for Pep band",
+      "admittedBy": "tournament-global",
+      "reason": "\"This Girl - The Kungs for Pep band\" is contested: the PDMX row names no composer and the title is not a verified public-domain tune; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmaetaqYGz3UfazAh9AULVNpaxnP62CskUZWfG37g8Q2bW",
+      "title": "time in a bottle",
+      "admittedBy": "tournament-global",
+      "reason": "\"time in a bottle\" is contested: the PDMX row names \"jim croce\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmNwf6GRbingp8jNGB7BgyPZ8nhWWvLjF1jZzEXUF4LxvQ",
+      "title": "tong hua",
+      "admittedBy": "tournament-global",
+      "reason": "\"tong hua\" is contested: the PDMX row names \"michael wong\" and \"guang liang\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmbuxgCLicDNZhBAFRUN83FnS13caK5St3DbmRmiTnbyFi",
+      "title": "Viva Cristo Rey",
+      "admittedBy": "tournament-global",
+      "reason": "\"Viva Cristo Rey\" is contested: \"Misc Praise Songs\" is a category label, not a composer; the composition is unproven",
+      "wasIn": [
+        "previous-selection",
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-Qman4NnnDCm9dg9t4uzexYFhsTeiqRqG2wUJHMByfzY84q",
+      "title": "abc",
+      "admittedBy": "tournament-global",
+      "reason": "\"abc\" is contested: the PDMX row names \"jackson 5\" and \"the jackson 5\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmcERhYvQKb8YejShMvqqQRLmUgdcV6nWpogf3j1BFSj8Y",
+      "title": "Banaha",
+      "admittedBy": "tournament-global",
+      "reason": "\"Banaha\" is contested: the PDMX row names \"tradicional congolesa\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmT8HvwNzoxRoJCfjipR4pqLvmsauu6kyVe7gSMEGGj9bw",
+      "title": "Beat 7 Metal Band",
+      "admittedBy": "tournament-global",
+      "reason": "\"Beat 7 Metal Band\" is contested: the PDMX row names \"preston eccles\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-Qmd6suAZHfFCEQvjhNoAcd7CGStM1HiGicz7yPkXvPF5qb",
+      "title": "by the rivers of babylon",
+      "admittedBy": "tournament-global",
+      "reason": "\"by the rivers of babylon\" is contested: the PDMX row names \"bob marley\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmaCz64M1bUYrs6qWUkrQHCnCR6rHgm41JRQVW9aUXsXCA",
+      "title": "Dragon Quest IX entinell of the starrysky Hills and meadows",
+      "admittedBy": "tournament-global",
+      "reason": "\"Dragon Quest IX entinell of the starrysky Hills and meadows\" is contested: the PDMX row names \"koichi sugiyama\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmaKwt5BEXk6w6dGXkDd3PYox35UikxR8NqJXqqG4Vs1d9",
+      "title": "how am i supposed to live without you",
+      "admittedBy": "tournament-global",
+      "reason": "\"how am i supposed to live without you\" is contested: the PDMX row names \"michael bolton\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmaLgzzfoz52P4ANXCHsSEX64RbxbFhwPCKhHympzBgye9",
+      "title": "In The Mood",
+      "admittedBy": "tournament-global",
+      "reason": "\"In The Mood\" is contested: the PDMX row names \"glenn miller\" and \"joe garland\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmadLHGjpgNtPRMuTtuiHDeEMQ4xqp5dBKebzDigWiWMs3",
+      "title": "lemon tree",
+      "admittedBy": "tournament-global",
+      "reason": "\"lemon tree\" is contested: the PDMX row names \"fool's garden\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmasDRy7rFCGZmvQtNxAW2AgRT8iCveUw1JDjW3gBn9gNm",
+      "title": "Noel Nouvelet",
+      "admittedBy": "tournament-global",
+      "reason": "\"Noel Nouvelet\" is contested: labelled \"Misc Traditional\" by the uploader, but \"Noel Nouvelet\" is not on the verified traditional / public-domain tune list; an uploader's label is not proof",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-Qmbk6poUxa9V7SzhLzd4P223SiqVsMGS7mPD4VVPjBrj69",
+      "title": "Old Town Road For Brass Band",
+      "admittedBy": "tournament-global",
+      "reason": "\"Old Town Road For Brass Band\" is contested: the PDMX row names \"ej hardy\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmWKFRxvyKFJbD39VSWG75zGuvQiCFtLwTnQWyrPiobcej",
+      "title": "Peaceful The Wondrous Night",
+      "admittedBy": "tournament-classical",
+      "reason": "\"Peaceful The Wondrous Night\" is contested: the PDMX row names \"peaceful night e g snelling\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmZvjxouMK4Puvr4VHHkToA8i6UsNdg6Ssc4nJTjTu7KoX",
+      "title": "rhymes and reasons",
+      "admittedBy": "tournament-global",
+      "reason": "\"rhymes and reasons\" is contested: the PDMX row names \"john denver\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmZbJx4Utyv1KNTSowiwfiTXjNbkFrmpiJqiupkuKwzqdy",
+      "title": "Save us O Lord",
+      "admittedBy": "tournament-classical",
+      "reason": "\"Save us O Lord\" is contested: the PDMX row names \"save us o lord bairstow\" and \"edward bairstow\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-Qma17QDkQeaFVTi6vAj46MqWbztfC5fHn4m64fatBoNNvW",
+      "title": "skyrim - dragonborn",
+      "admittedBy": "tournament-global",
+      "reason": "\"skyrim - dragonborn\" is contested: \"Misc Computer Games\" is a category label, not a composer; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmbLxE1mBzNDKUUfCE7m3MdrWPXRbVNbXBwHk2m95A4U4z",
+      "title": "The Brook",
+      "admittedBy": "tournament-global",
+      "reason": "\"The Brook\" is contested: the PDMX row names \"bent rønsholdt\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmXvjrdeMJSXdqjVGKu9y22dDAxeYtrZMUX7G5k8PbG8kX",
+      "title": "The Klezmer Blues",
+      "admittedBy": "tournament-global",
+      "reason": "\"The Klezmer Blues\" is contested: the PDMX row names \"j l\" and \"dapper dan\", not on the verified public-domain composer list; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    },
+    {
+      "id": "pdmx-QmSkJZx8dUJJTWYzuJaCSBuvERNEpJVy6DMw6F5zuXoVMY",
+      "title": "The Moon Shines",
+      "admittedBy": "tournament-classical",
+      "reason": "\"The Moon Shines\" is contested: the PDMX row names no composer and the title is not a verified public-domain tune; the composition is unproven",
+      "wasIn": [
+        "tournament-seed"
+      ]
+    }
+  ],
+  "honestLimits": [
+    "Rights: composer identification rests on PDMX's composer_name / artist_name as the uploader typed them; a public-domain work whose row names nobody, or names its composer in a spelling the verified list lacks, is contested (under-admitted), never admitted by guessing. A row that names a modern person beside a public-domain title (an arranger typed into the composer field, a username as artist) is contested unless the name is a single word; a single-word handle does not block a verified title.",
+    "Rights: the verified tune list admits a title only when the row names nobody or says traditional; a modern original that happens to share a public-domain title would be admitted on the title alone - the list is kept to distinctive titles for that reason, and liturgical texts need the traditional label as well.",
+    "Rights: the term applied is life + 70 (composer dead by 1955). Under the United States' publication-based term a work first published after 1929 by a composer who died in 1930-1955 (Ravel, Holst, Vierne, Gershwin, Bartok, Rachmaninoff, Prokofiev, Ives) may still be protected there; entries with composerDied > 1929 carry that residual risk and are identifiable from the basis.",
+    "Rights: the previous Tier H (40 works) was admitted on the score's licence alone; every one of its contested works is listed in excluded[] with the reason, and the sidecar lists every contested candidate of the scan.",
+    "PDMX holds scores, not recordings: every entry is inputType midi and production acoustic; the full_song / piano_vocal / vocal_only rows of the required coverage cannot come from PDMX and stay in gaps[] until recorded, rights-cleared songs exist.",
+    "Swing is measured on notated onset phases; a lead sheet that a player would swing but that is notated straight reads as straight.",
+    "Idiom is read from PDMX genre/tag labels; a work with no label is 'western' by default, which under-counts non-western material rather than inventing it.",
+    "Harmony complexity comes from the CSV's pitch-class entropy (a whole-work number), not from a chord analysis.",
+    "The tournament-anchor seeds were already admitted by earlier PRs for their rights; their musical attributes are measured here for the first time."
+  ]
+}

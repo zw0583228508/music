@@ -1,0 +1,2794 @@
+{
+  "title": "Brain B-08 — the measure before the redesign: candidate-dependent benchmark, baseline snapshot, positive-control ledger, real corpus, Gate C controls",
+  "date": "2026-09-10",
+  "baseSha": "3bf23aa810263d5c658effeb8bde1673695d8040",
+  "spec": "docs/brain/reviews/2026-09-10-audit-evaluation-and-loops.md §7 (7.1 measure, 7.2 corpus, 7.3 snapshot, 7.4 ledger, 7.5 human A/B)",
+  "whatChangedInTheMeasure": {
+    "benchmarkVersion": {
+      "before": "1.0",
+      "after": "2.0"
+    },
+    "harmonyScore": "before: the critic's harmony dimension (reads the Song Model only; 58.33 for every composer). after: 100 x (chordToneShare - clashShare) on the selected candidate's pitched, performed notes vs the Song Model chords, via partJudge.chordToneShare / contextClashShare. The old number is kept as sourceHarmonyScore (informational).",
+    "shippedCriticScore": "new: critiqueArrangement on the performed tracks the selected candidate returns, beside the orchestrator's own criticScore (pre-performance notes after the plan-only repair loop).",
+    "sectionConsistency": "replaced by coherence trajectorySmoothness / seamArtefacts / motifRecurrence (COHERENCE_METRIC_v1 on the selected candidate with the plan's section targets); kept one release as legacySectionConsistency.",
+    "candidateDiversity": "replaced by candidateDistance = 100 x mean pairwise candidateDiversity.candidateDistance over the run's candidates (the production gate's own measure); kept one release as legacyCandidateDiversity.",
+    "pins": "every BenchmarkRun carries gitSha, render flag, tier, corpusIds and metricVersions {musicCritic, audioCritic, partJudge, coherenceMetric, benchmarkMeasures}; compareBenchmarkRuns refuses (outcome incomparable) across a different benchmark version, tier, render flag, corpus or metric pin.",
+    "cli": "benchmark-cli: --out <file>, --compare <baseline.json> (verdict table; exit 1 on do_not_promote unless --no-fail; exit 2 when incomparable), --tier S|P, --candidates N; repo-relative paths resolved against the workspace root."
+  },
+  "baselineOnSameSha": {
+    "note": "All four runs orchestrate main 3bf23aa's code (the measure is applied on top; no arrangement code changed). Symbolic and render runs select different candidates (audio weighs 0.4 in the combined score), so they are reported apart and compareBenchmarkRuns refuses to mix them.",
+    "oldFieldsSymbolic": {
+      "criticScore": 74.56,
+      "audioScore": null,
+      "playabilityErrors": 0,
+      "harmonyScore": 58.33,
+      "sectionConsistency": 100,
+      "candidateDiversity": 50.4,
+      "renderFailures": null,
+      "noteCount": 576.56,
+      "latencyMs": 137.78
+    },
+    "oldFieldsRender": {
+      "criticScore": 74.56,
+      "audioScore": 90.33,
+      "playabilityErrors": 0,
+      "harmonyScore": 58.33,
+      "sectionConsistency": 100,
+      "candidateDiversity": 50.4,
+      "renderFailures": 5,
+      "noteCount": 557.22,
+      "latencyMs": 29141.22
+    },
+    "newFieldsSymbolic": {
+      "criticScore": 74.56,
+      "shippedCriticScore": 74.67,
+      "audioScore": null,
+      "playabilityErrors": 0,
+      "harmonyScore": 98.35,
+      "chordToneShare": 98.86,
+      "clashShare": 0.52,
+      "sourceHarmonyScore": 58.33,
+      "trajectorySmoothness": 47.77,
+      "seamArtefacts": 50.7,
+      "motifRecurrence": 26.83,
+      "candidateDistance": 6.59,
+      "legacySectionConsistency": 100,
+      "legacyCandidateDiversity": 50.4,
+      "renderFailures": null,
+      "noteCount": 576.56,
+      "latencyMs": 148.56
+    },
+    "newFieldsRender_baselineSnapshot": {
+      "criticScore": 74.56,
+      "shippedCriticScore": 74.67,
+      "audioScore": 90.33,
+      "playabilityErrors": 0,
+      "harmonyScore": 98.43,
+      "chordToneShare": 98.9,
+      "clashShare": 0.48,
+      "sourceHarmonyScore": 58.33,
+      "trajectorySmoothness": 48.03,
+      "seamArtefacts": 50.7,
+      "motifRecurrence": 33.16,
+      "candidateDistance": 6.59,
+      "legacySectionConsistency": 100,
+      "legacyCandidateDiversity": 50.4,
+      "renderFailures": 5,
+      "noteCount": 557.22,
+      "latencyMs": 35718.78
+    },
+    "baselineFile": "docs/evidence/benchmark-baseline/3bf23aa.json",
+    "baselineRunId": "9832608f496a",
+    "baselineMetricVersions": {
+      "musicCritic": "1.0",
+      "audioCritic": "1.0",
+      "partJudge": "1.1",
+      "coherenceMetric": "COHERENCE_METRIC_v1",
+      "benchmarkMeasures": "1.0"
+    },
+    "compareAgainstItself": {
+      "exitCode": "0",
+      "outcomeLine": "UNCHANGED: REFERENCE_PIPELINE is not measurably better — unchanged within tolerance 1"
+    },
+    "perCaseNewFieldsRender": [
+      {
+        "caseId": "pop-full",
+        "criticScore": 77,
+        "shippedCriticScore": 77,
+        "harmonyScore": 99.32,
+        "chordToneShare": 99.32,
+        "clashShare": 0,
+        "sourceHarmonyScore": 72,
+        "trajectorySmoothness": 49.2,
+        "seamArtefacts": 100,
+        "motifRecurrence": 100,
+        "candidateDistance": 6.57,
+        "renderFailures": 5
+      },
+      {
+        "caseId": "ballad-piano-vocal",
+        "criticScore": 76,
+        "shippedCriticScore": 76,
+        "harmonyScore": 98.44,
+        "chordToneShare": 98.97,
+        "clashShare": 0.53,
+        "sourceHarmonyScore": 57,
+        "trajectorySmoothness": 36.57,
+        "seamArtefacts": 100,
+        "motifRecurrence": 48.64,
+        "candidateDistance": 6.73,
+        "renderFailures": 5
+      },
+      {
+        "caseId": "rock-full",
+        "criticScore": 76,
+        "shippedCriticScore": 76,
+        "harmonyScore": 98.65,
+        "chordToneShare": 99.27,
+        "clashShare": 0.62,
+        "sourceHarmonyScore": 57,
+        "trajectorySmoothness": 62.54,
+        "seamArtefacts": 100,
+        "motifRecurrence": 29.16,
+        "candidateDistance": 6.55,
+        "renderFailures": 5
+      },
+      {
+        "caseId": "dance-full",
+        "criticScore": 75,
+        "shippedCriticScore": 76,
+        "harmonyScore": 96.94,
+        "chordToneShare": 98.59,
+        "clashShare": 1.65,
+        "sourceHarmonyScore": 51,
+        "trajectorySmoothness": 62.52,
+        "seamArtefacts": 0,
+        "motifRecurrence": 28.76,
+        "candidateDistance": 6.1,
+        "renderFailures": 5
+      },
+      {
+        "caseId": "acoustic-demo",
+        "criticScore": 74,
+        "shippedCriticScore": 74,
+        "harmonyScore": 99.96,
+        "chordToneShare": 99.96,
+        "clashShare": 0,
+        "sourceHarmonyScore": 57,
+        "trajectorySmoothness": 43.54,
+        "seamArtefacts": 0,
+        "motifRecurrence": 36.24,
+        "candidateDistance": 7.34,
+        "renderFailures": 5
+      },
+      {
+        "caseId": "orchestral-midi",
+        "criticScore": 71,
+        "shippedCriticScore": 71,
+        "harmonyScore": 95.64,
+        "chordToneShare": 96.94,
+        "clashShare": 1.3,
+        "sourceHarmonyScore": 57,
+        "trajectorySmoothness": 44.67,
+        "seamArtefacts": 100,
+        "motifRecurrence": 38.48,
+        "candidateDistance": 6.53,
+        "renderFailures": 5
+      },
+      {
+        "caseId": "ethnic-vocal",
+        "criticScore": 72,
+        "shippedCriticScore": 72,
+        "harmonyScore": 99.91,
+        "chordToneShare": 99.91,
+        "clashShare": 0,
+        "sourceHarmonyScore": 51,
+        "trajectorySmoothness": 32.15,
+        "seamArtefacts": null,
+        "motifRecurrence": 0,
+        "candidateDistance": 6.48,
+        "renderFailures": 5
+      },
+      {
+        "caseId": "jazz-full",
+        "criticScore": 77,
+        "shippedCriticScore": 77,
+        "harmonyScore": 99.13,
+        "chordToneShare": 99.33,
+        "clashShare": 0.2,
+        "sourceHarmonyScore": 57,
+        "trajectorySmoothness": 64.62,
+        "seamArtefacts": 5.56,
+        "motifRecurrence": 17.12,
+        "candidateDistance": 6.5,
+        "renderFailures": 5
+      },
+      {
+        "caseId": "cinematic-midi",
+        "criticScore": 73,
+        "shippedCriticScore": 73,
+        "harmonyScore": 97.85,
+        "chordToneShare": 97.85,
+        "clashShare": 0,
+        "sourceHarmonyScore": 66,
+        "trajectorySmoothness": 36.48,
+        "seamArtefacts": 0,
+        "motifRecurrence": 0,
+        "candidateDistance": 6.48,
+        "renderFailures": 5
+      }
+    ],
+    "criticVsShipped": [
+      {
+        "caseId": "pop-full",
+        "criticScore": 77,
+        "shippedCriticScore": 77,
+        "dimensionsThatMoved": []
+      },
+      {
+        "caseId": "ballad-piano-vocal",
+        "criticScore": 76,
+        "shippedCriticScore": 76,
+        "dimensionsThatMoved": []
+      },
+      {
+        "caseId": "rock-full",
+        "criticScore": 76,
+        "shippedCriticScore": 76,
+        "dimensionsThatMoved": []
+      },
+      {
+        "caseId": "dance-full",
+        "criticScore": 75,
+        "shippedCriticScore": 76,
+        "dimensionsThatMoved": [
+          "playability"
+        ]
+      },
+      {
+        "caseId": "acoustic-demo",
+        "criticScore": 74,
+        "shippedCriticScore": 74,
+        "dimensionsThatMoved": []
+      },
+      {
+        "caseId": "orchestral-midi",
+        "criticScore": 71,
+        "shippedCriticScore": 71,
+        "dimensionsThatMoved": []
+      },
+      {
+        "caseId": "ethnic-vocal",
+        "criticScore": 72,
+        "shippedCriticScore": 72,
+        "dimensionsThatMoved": []
+      },
+      {
+        "caseId": "jazz-full",
+        "criticScore": 77,
+        "shippedCriticScore": 77,
+        "dimensionsThatMoved": []
+      },
+      {
+        "caseId": "cinematic-midi",
+        "criticScore": 73,
+        "shippedCriticScore": 73,
+        "dimensionsThatMoved": [
+          "playability"
+        ]
+      }
+    ],
+    "tierP": {
+      "note": "the operator's song, reported per song, never aggregated with S or H",
+      "aggregate": {
+        "criticScore": 70,
+        "shippedCriticScore": 70,
+        "audioScore": null,
+        "playabilityErrors": 0,
+        "harmonyScore": 99.87,
+        "chordToneShare": 99.87,
+        "clashShare": 0,
+        "sourceHarmonyScore": 88,
+        "trajectorySmoothness": 50.81,
+        "seamArtefacts": 88.98,
+        "motifRecurrence": 0,
+        "candidateDistance": 7.08,
+        "legacySectionConsistency": 75,
+        "legacyCandidateDiversity": 50.35,
+        "renderFailures": null,
+        "noteCount": 1081,
+        "latencyMs": 1278
+      },
+      "critique": {
+        "orchestrator": {
+          "harmony": 88,
+          "groove": 55,
+          "voiceLeading": 72,
+          "leadCompatibility": 65,
+          "orchestration": 68,
+          "sectionDevelopment": 46,
+          "motifCoherence": 60,
+          "contrast": 88,
+          "transitions": 82,
+          "playability": 100,
+          "performancePotential": 62
+        },
+        "shipped": {
+          "harmony": 88,
+          "groove": 55,
+          "voiceLeading": 72,
+          "leadCompatibility": 65,
+          "orchestration": 68,
+          "sectionDevelopment": 46,
+          "motifCoherence": 60,
+          "contrast": 88,
+          "transitions": 82,
+          "playability": 100,
+          "performancePotential": 62
+        }
+      },
+      "notes": [
+        "rendering disabled for this run"
+      ]
+    },
+    "supersededBy": "baselineAtMerge (7/7): the composer changed at the merge; 3bf23aa.json stays as the pre-program record"
+  },
+  "tritoneControl": {
+    "method": "the reference composer through the orchestrator with every pitched part transposed a tritone (same rhythm, same register); Tier S, symbolic, 5 candidates; scratchpad probe b08-tritone.ts, reproducible from arrangementBenchmark.test.ts",
+    "perCase": [
+      {
+        "caseId": "pop-full",
+        "harmonyScore": [
+          98.7,
+          0
+        ],
+        "criticScore": [
+          77,
+          76
+        ]
+      },
+      {
+        "caseId": "ballad-piano-vocal",
+        "harmonyScore": [
+          98.44,
+          0
+        ],
+        "criticScore": [
+          76,
+          74
+        ]
+      },
+      {
+        "caseId": "rock-full",
+        "harmonyScore": [
+          98.54,
+          0
+        ],
+        "criticScore": [
+          76,
+          72
+        ]
+      },
+      {
+        "caseId": "dance-full",
+        "harmonyScore": [
+          96.94,
+          0
+        ],
+        "criticScore": [
+          75,
+          74
+        ]
+      },
+      {
+        "caseId": "acoustic-demo",
+        "harmonyScore": [
+          99.96,
+          0
+        ],
+        "criticScore": [
+          74,
+          73
+        ]
+      },
+      {
+        "caseId": "orchestral-midi",
+        "harmonyScore": [
+          95.64,
+          0
+        ],
+        "criticScore": [
+          71,
+          70
+        ]
+      },
+      {
+        "caseId": "ethnic-vocal",
+        "harmonyScore": [
+          99.91,
+          0
+        ],
+        "criticScore": [
+          72,
+          74
+        ]
+      },
+      {
+        "caseId": "jazz-full",
+        "harmonyScore": [
+          99.13,
+          9.66
+        ],
+        "criticScore": [
+          77,
+          75
+        ]
+      },
+      {
+        "caseId": "cinematic-midi",
+        "harmonyScore": [
+          97.85,
+          0
+        ],
+        "criticScore": [
+          73,
+          74
+        ]
+      }
+    ],
+    "aggregate": {
+      "harmonyScore": [
+        98.35,
+        1.07
+      ],
+      "criticScore": [
+        74.56,
+        73.56
+      ],
+      "sourceHarmonyScore": [
+        58.33,
+        58.33
+      ]
+    },
+    "reading": "the new measure falls to the floor on wrong pitches; the orchestrator's critic moves by one point and rises on two cases; the 1.0 harmonyScore does not move at all"
+  },
+  "positiveControlLedger": {
+    "file": "docs/evidence/positive-control-ledger.json",
+    "rule": "a metric may gate a family only if it detects the strongest rung at >= 90 % on >= 8 trials; it informs where the strongest rung is above chance (one-sided exact p < 0.05); otherwise it is demoted for that family. Detected = strictly worse than the original in the metric's own direction.",
+    "anchors": {
+      "tierS": 9,
+      "tierH": 80,
+      "targets": 120
+    },
+    "trials": {
+      "total": 189000,
+      "applicable": 129834,
+      "seconds": 63.3
+    },
+    "gate": [
+      {
+        "metric": "musicCritic.overall",
+        "families": [
+          "density_doubling",
+          "role_inversion"
+        ]
+      },
+      {
+        "metric": "musicCritic.playability",
+        "families": [
+          "density_doubling",
+          "role_inversion"
+        ]
+      },
+      {
+        "metric": "benchmarkHarmony.harmonyScore",
+        "families": [
+          "pitch_shift_in_key",
+          "pitch_shift_out_of_key",
+          "chord_tone_to_non_chord_tone",
+          "leap_injection",
+          "bar_copy_repetition",
+          "phrase_shift",
+          "motif_destruction",
+          "cross_part_clash",
+          "section_swap",
+          "duration_overhang",
+          "listening_pitch_shift",
+          "listening_random_pitch"
+        ]
+      },
+      {
+        "metric": "benchmarkHarmony.chordToneShare",
+        "families": [
+          "pitch_shift_in_key",
+          "pitch_shift_out_of_key",
+          "chord_tone_to_non_chord_tone",
+          "cross_part_clash",
+          "section_swap",
+          "duration_overhang",
+          "listening_pitch_shift",
+          "listening_random_pitch"
+        ]
+      },
+      {
+        "metric": "benchmarkHarmony.clashShare",
+        "families": [
+          "pitch_shift_in_key",
+          "pitch_shift_out_of_key",
+          "phrase_shift",
+          "cross_part_clash",
+          "section_swap",
+          "listening_pitch_shift",
+          "listening_random_pitch"
+        ]
+      },
+      {
+        "metric": "partJudge.score",
+        "families": [
+          "pitch_shift_in_key",
+          "pitch_shift_out_of_key",
+          "chord_tone_to_non_chord_tone",
+          "quantisation_coarsening",
+          "density_thinning",
+          "density_doubling",
+          "bar_copy_repetition",
+          "cross_part_clash",
+          "role_inversion",
+          "section_swap",
+          "duration_overhang",
+          "listening_pitch_shift",
+          "listening_note_deletion",
+          "listening_random_pitch"
+        ]
+      },
+      {
+        "metric": "partJudge.playabilityErrors",
+        "families": [
+          "role_inversion"
+        ]
+      },
+      {
+        "metric": "partJudge.rangeShare",
+        "families": [
+          "role_inversion"
+        ]
+      },
+      {
+        "metric": "partJudge.registerShare",
+        "families": [
+          "role_inversion"
+        ]
+      },
+      {
+        "metric": "partJudge.coverage",
+        "families": [
+          "density_thinning"
+        ]
+      },
+      {
+        "metric": "partJudge.barRepetitionShare",
+        "families": [
+          "bar_copy_repetition"
+        ]
+      },
+      {
+        "metric": "candidateQuality.playability",
+        "families": [
+          "role_inversion"
+        ]
+      },
+      {
+        "metric": "candidateQuality.repetition",
+        "families": [
+          "parallel_doubling",
+          "bar_copy_repetition"
+        ]
+      }
+    ],
+    "inform": [
+      {
+        "metric": "musicCritic.overall",
+        "families": [
+          "octave_displacement"
+        ]
+      },
+      {
+        "metric": "benchmarkHarmony.harmonyScore",
+        "families": [
+          "onset_jitter",
+          "quantisation_coarsening",
+          "listening_onset_jitter"
+        ]
+      },
+      {
+        "metric": "benchmarkHarmony.chordToneShare",
+        "families": [
+          "leap_injection",
+          "onset_jitter",
+          "quantisation_coarsening",
+          "bar_copy_repetition",
+          "phrase_shift",
+          "motif_destruction",
+          "listening_onset_jitter"
+        ]
+      },
+      {
+        "metric": "benchmarkHarmony.clashShare",
+        "families": [
+          "chord_tone_to_non_chord_tone",
+          "leap_injection",
+          "onset_jitter",
+          "quantisation_coarsening",
+          "bar_copy_repetition",
+          "motif_destruction",
+          "duration_overhang",
+          "listening_onset_jitter"
+        ]
+      },
+      {
+        "metric": "partJudge.score",
+        "families": [
+          "octave_displacement",
+          "leap_injection",
+          "parallel_doubling",
+          "onset_jitter",
+          "syncopation_removal",
+          "phrase_shift",
+          "motif_destruction",
+          "listening_onset_jitter"
+        ]
+      },
+      {
+        "metric": "partJudge.playabilityErrors",
+        "families": [
+          "duration_overhang"
+        ]
+      },
+      {
+        "metric": "partJudge.coverage",
+        "families": [
+          "listening_note_deletion"
+        ]
+      },
+      {
+        "metric": "coherence.score",
+        "families": [
+          "pitch_shift_in_key",
+          "pitch_shift_out_of_key",
+          "chord_tone_to_non_chord_tone",
+          "octave_displacement",
+          "leap_injection",
+          "onset_jitter",
+          "quantisation_coarsening",
+          "density_thinning",
+          "phrase_shift",
+          "motif_destruction",
+          "cross_part_clash",
+          "section_swap",
+          "listening_pitch_shift",
+          "listening_onset_jitter",
+          "listening_note_deletion",
+          "listening_random_pitch"
+        ]
+      },
+      {
+        "metric": "coherence.harmonicAgreement",
+        "families": [
+          "pitch_shift_in_key",
+          "pitch_shift_out_of_key",
+          "chord_tone_to_non_chord_tone",
+          "density_thinning",
+          "bar_copy_repetition",
+          "phrase_shift",
+          "motif_destruction",
+          "cross_part_clash",
+          "section_swap",
+          "listening_pitch_shift",
+          "listening_note_deletion",
+          "listening_random_pitch"
+        ]
+      },
+      {
+        "metric": "coherence.trajectorySmoothness",
+        "families": [
+          "leap_injection"
+        ]
+      },
+      {
+        "metric": "coherence.motifRecurrence",
+        "families": [
+          "onset_jitter",
+          "listening_onset_jitter"
+        ]
+      },
+      {
+        "metric": "candidateQuality.score",
+        "families": [
+          "bar_copy_repetition",
+          "role_inversion"
+        ]
+      },
+      {
+        "metric": "candidateQuality.vocalFit",
+        "families": [
+          "parallel_doubling"
+        ]
+      }
+    ],
+    "demoted": [
+      "musicCritic.harmony",
+      "musicCritic.groove",
+      "musicCritic.voiceLeading",
+      "musicCritic.leadCompatibility",
+      "musicCritic.orchestration",
+      "musicCritic.sectionDevelopment",
+      "musicCritic.motifCoherence",
+      "musicCritic.contrast",
+      "musicCritic.transitions",
+      "musicCritic.performancePotential",
+      "coherence.seamArtefacts",
+      "coherence.instrumentationContinuity",
+      "candidateQuality.registerCollisions"
+    ],
+    "insufficient": [
+      "candidateQuality.harmony",
+      "candidateQuality.development",
+      "candidateQuality.contrastAndTransitions",
+      "candidateQuality.styleAndControlAdherence",
+      "candidateQuality.roleDuplication",
+      "candidateQuality.orchestralBalance",
+      "candidateQuality.grooveCoordination",
+      "candidateQuality.voiceLeading",
+      "candidateQuality.countermelodyShape",
+      "candidateQuality.dramaticTrajectory",
+      "candidateQuality.motifContinuityAndDevelopment",
+      "candidateQuality.phraseIntent",
+      "candidateQuality.vocalInteraction"
+    ],
+    "musicCriticDimensions": {
+      "musicCritic.overall": "gate",
+      "musicCritic.harmony": "demoted",
+      "musicCritic.groove": "demoted",
+      "musicCritic.voiceLeading": "demoted",
+      "musicCritic.leadCompatibility": "demoted",
+      "musicCritic.orchestration": "demoted",
+      "musicCritic.sectionDevelopment": "demoted",
+      "musicCritic.motifCoherence": "demoted",
+      "musicCritic.contrast": "demoted",
+      "musicCritic.transitions": "demoted",
+      "musicCritic.playability": "gate",
+      "musicCritic.performancePotential": "demoted"
+    },
+    "tierHAnchorSource": "REAL_CORPUS_TIER_H (proven-public-domain compositions only) via tierHTasksFor, windowBars 16, maxTasksPerWork 2, N = 1",
+    "changesFromPreviousLedger": {
+      "previousTierHAnchors": "21 task windows of the Listening Benchmark V2 report (12 works admitted on the score's licence)",
+      "gate": {
+        "benchmarkHarmony.chordToneShare": {
+          "lost": [
+            "bar_copy_repetition",
+            "phrase_shift"
+          ],
+          "gained": []
+        },
+        "benchmarkHarmony.clashShare": {
+          "lost": [],
+          "gained": [
+            "pitch_shift_in_key",
+            "phrase_shift",
+            "section_swap",
+            "listening_random_pitch"
+          ]
+        },
+        "partJudge.score": {
+          "lost": [
+            "syncopation_removal",
+            "motif_destruction"
+          ],
+          "gained": [
+            "quantisation_coarsening"
+          ]
+        },
+        "partJudge.coverage": {
+          "lost": [],
+          "gained": [
+            "density_thinning"
+          ]
+        },
+        "partJudge.barRepetitionShare": {
+          "lost": [],
+          "gained": [
+            "bar_copy_repetition"
+          ]
+        }
+      },
+      "inform": {
+        "benchmarkHarmony.harmonyScore": {
+          "lost": [],
+          "gained": [
+            "listening_onset_jitter"
+          ]
+        },
+        "benchmarkHarmony.chordToneShare": {
+          "lost": [],
+          "gained": [
+            "bar_copy_repetition",
+            "phrase_shift",
+            "listening_onset_jitter"
+          ]
+        },
+        "benchmarkHarmony.clashShare": {
+          "lost": [
+            "pitch_shift_in_key",
+            "phrase_shift",
+            "section_swap",
+            "listening_random_pitch"
+          ],
+          "gained": [
+            "onset_jitter",
+            "listening_onset_jitter"
+          ]
+        },
+        "partJudge.score": {
+          "lost": [
+            "quantisation_coarsening"
+          ],
+          "gained": [
+            "syncopation_removal",
+            "motif_destruction",
+            "listening_onset_jitter"
+          ]
+        },
+        "partJudge.coverage": {
+          "lost": [
+            "density_thinning"
+          ],
+          "gained": [
+            "listening_note_deletion"
+          ]
+        },
+        "partJudge.barRepetitionShare": {
+          "lost": [
+            "bar_copy_repetition"
+          ],
+          "gained": []
+        },
+        "coherence.score": {
+          "lost": [],
+          "gained": [
+            "octave_displacement",
+            "onset_jitter",
+            "quantisation_coarsening",
+            "phrase_shift",
+            "listening_onset_jitter",
+            "listening_note_deletion"
+          ]
+        },
+        "coherence.harmonicAgreement": {
+          "lost": [],
+          "gained": [
+            "pitch_shift_in_key",
+            "density_thinning",
+            "bar_copy_repetition",
+            "phrase_shift",
+            "motif_destruction",
+            "section_swap",
+            "listening_note_deletion",
+            "listening_random_pitch"
+          ]
+        },
+        "coherence.motifRecurrence": {
+          "lost": [
+            "chord_tone_to_non_chord_tone",
+            "leap_injection",
+            "motif_destruction"
+          ],
+          "gained": [
+            "onset_jitter",
+            "listening_onset_jitter"
+          ]
+        },
+        "partJudge.playabilityErrors": {
+          "lost": [],
+          "gained": [
+            "duration_overhang"
+          ]
+        },
+        "coherence.trajectorySmoothness": {
+          "lost": [],
+          "gained": [
+            "leap_injection"
+          ]
+        }
+      },
+      "demotedBefore": [
+        "musicCritic.harmony",
+        "musicCritic.groove",
+        "musicCritic.voiceLeading",
+        "musicCritic.leadCompatibility",
+        "musicCritic.orchestration",
+        "musicCritic.sectionDevelopment",
+        "musicCritic.motifCoherence",
+        "musicCritic.contrast",
+        "musicCritic.transitions",
+        "musicCritic.performancePotential",
+        "coherence.seamArtefacts",
+        "coherence.instrumentationContinuity",
+        "coherence.trajectorySmoothness",
+        "candidateQuality.registerCollisions"
+      ],
+      "demotedAfter": [
+        "musicCritic.harmony",
+        "musicCritic.groove",
+        "musicCritic.voiceLeading",
+        "musicCritic.leadCompatibility",
+        "musicCritic.orchestration",
+        "musicCritic.sectionDevelopment",
+        "musicCritic.motifCoherence",
+        "musicCritic.contrast",
+        "musicCritic.transitions",
+        "musicCritic.performancePotential",
+        "coherence.seamArtefacts",
+        "coherence.instrumentationContinuity",
+        "candidateQuality.registerCollisions"
+      ],
+      "verdictRowsChanged": 38,
+      "tierSOnlyRowsWhoseVerdictChanged": 0,
+      "tierSDetailRowsDiffering": 73,
+      "note": "Tier S anchors are the same nine selected candidates; the corruption RNG stream is shared across anchors in ledger order, so per-row Tier S detected counts move with the anchor set while no Tier S-only verdict changed."
+    },
+    "supersededBy": "baselineAtMerge.ledgerAtMerge (7/7): the ledger was re-run on the merged anchors; lists and changes are recorded there"
+  },
+  "realCorpus": {
+    "selectionFile": "docs/evidence/real-corpus-tier-h-selection.json",
+    "runFile": "docs/evidence/real-corpus-tier-h-run.json",
+    "tierH": {
+      "entries": 40,
+      "rightsBasis": {
+        "composer": 38,
+        "traditional": 2
+      },
+      "composerDeathYears": {
+        "earliest": 1474,
+        "latest": 1937,
+        "after1929": [
+          "Benedictus uit Messe Solonelle (Louis Vierne, d. 1937)",
+          "Symphonie No.1 Op.14 (Louis Vierne, d. 1937)"
+        ]
+      },
+      "eras": {
+        "classical": 7,
+        "baroque": 11,
+        "romantic_and_after": 13,
+        "traditional": 2,
+        "renaissance": 7
+      },
+      "composers": {
+        "Wolfgang Amadeus Mozart": 4,
+        "Antonio Vivaldi": 1,
+        "Giuseppe Verdi": 1,
+        "Joseph Haydn": 1,
+        "traditional: Greensleeves": 1,
+        "Gabriel Fauré": 1,
+        "Franz Xaver Gruber": 1,
+        "Dieterich Buxtehude": 1,
+        "Ludwig van Beethoven": 1,
+        "Franz Schubert": 1,
+        "Sigismondo d'India": 1,
+        "Guillaume Dufay": 1,
+        "George Frideric Handel": 1,
+        "Franz Liszt": 1,
+        "Louis Vierne": 2,
+        "Arthur Sullivan": 1,
+        "Benedetto Pallavicino": 1,
+        "Johann Pachelbel": 1,
+        "Richard Wagner": 1,
+        "Giovanni Gabrieli": 1,
+        "Johann Sebastian Bach": 5,
+        "Camille Saint-Saëns": 2,
+        "Charles Gounod": 1,
+        "Leone Leoni": 1,
+        "Orlando di Lasso": 1,
+        "Modest Mussorgsky": 1,
+        "Constantijn Huygens": 1,
+        "Henry Purcell": 1,
+        "Hubert Parry": 1,
+        "traditional: Bring a Torch, Jeanette, Isabella": 1,
+        "Jan Pieterszoon Sweelinck": 1
+      },
+      "coverageDimensions": [
+        {
+          "dimension": "inputType",
+          "counts": {
+            "midi": 40
+          },
+          "missing": [
+            "full_song",
+            "piano_vocal",
+            "vocal_only"
+          ]
+        },
+        {
+          "dimension": "tempoBand",
+          "counts": {
+            "slow": 21,
+            "medium": 15,
+            "fast": 4
+          },
+          "missing": []
+        },
+        {
+          "dimension": "meter",
+          "counts": {
+            "4/4": 19,
+            "3/4": 8,
+            "3/8": 3,
+            "6/8": 3,
+            "2/4": 1,
+            "3/2": 2,
+            "2/2": 2,
+            "12/8": 2
+          },
+          "missing": []
+        },
+        {
+          "dimension": "feel",
+          "counts": {
+            "swung": 3,
+            "compound": 5,
+            "straight": 32
+          },
+          "missing": []
+        },
+        {
+          "dimension": "harmony",
+          "counts": {
+            "complex": 11,
+            "moderate": 21,
+            "simple": 8
+          },
+          "missing": []
+        },
+        {
+          "dimension": "density",
+          "counts": {
+            "dense": 25,
+            "moderate": 12,
+            "sparse": 3
+          },
+          "missing": []
+        },
+        {
+          "dimension": "ensemble",
+          "counts": {
+            "large": 25,
+            "small": 15
+          },
+          "missing": []
+        },
+        {
+          "dimension": "idiom",
+          "counts": {
+            "western": 40
+          },
+          "missing": [
+            "non_western"
+          ]
+        },
+        {
+          "dimension": "production",
+          "counts": {
+            "acoustic": 40
+          },
+          "missing": [
+            "electronic"
+          ]
+        }
+      ],
+      "gaps": [
+        "songs: 40 of 100",
+        "inputType \"full_song\": 0 of 3 songs",
+        "inputType \"piano_vocal\": 0 of 3 songs",
+        "inputType \"vocal_only\": 0 of 3 songs",
+        "idiom \"non_western\": 0 of 3 songs",
+        "production \"electronic\": 0 of 3 songs",
+        "human gold arrangements: 0 of 30"
+      ],
+      "short": [
+        {
+          "dimension": "idiom",
+          "value": "non_western",
+          "have": 0
+        }
+      ],
+      "admittedBy": {
+        "b08-csv-scan": 35,
+        "tournament-global": 3,
+        "tournament-classical": 2
+      },
+      "oneEntryPerComposition": "selectTierH collapses further arrangements of a chosen composition (verified tune name, else composer + folded title)"
+    },
+    "tierHRun": {
+      "task": "strip-families-and-arrange",
+      "gitSha": "05c12e77bba38cc7875be6e7fc585d9386392933",
+      "works": 40,
+      "tasks": 141,
+      "unavailable": [],
+      "aggregate": [
+        {
+          "providerId": "REFERENCE_PART_COMPOSER",
+          "tasks": 141,
+          "failures": 0,
+          "meanScore": 43.35,
+          "meanHumanScore": 94.95,
+          "meanDeltaVsHuman": -51.6,
+          "atOrAboveHumanShare": 0.0071,
+          "meanPlayabilityErrors": 1.26,
+          "meanChordToneShare": 0.94
+        }
+      ],
+      "levelBlockers": {
+        "vs-reference-part-composer": "The corpus is not a measure yet: songs: 40 of 100; inputType \"full_song\": 0 of 3 songs; inputType \"piano_vocal\": 0 of 3 songs; inputType \"vocal_only\": 0 of 3 songs; idiom \"non_western\": 0 of 3 songs; production \"electronic\": 0 of 3 songs; human gold arrangements: 0 of 30.",
+        "vs-production-model": "The corpus is not a measure yet: songs: 40 of 100; inputType \"full_song\": 0 of 3 songs; inputType \"piano_vocal\": 0 of 3 songs; inputType \"vocal_only\": 0 of 3 songs; idiom \"non_western\": 0 of 3 songs; production \"electronic\": 0 of 3 songs; human gold arrangements: 0 of 30.",
+        "vs-human-gold": "No song in the corpus has a human gold arrangement with an uploaded source; the north-star benchmark cannot be run."
+      },
+      "worksWithNoTask": [],
+      "byTargetFamily": {
+        "strings": {
+          "tasks": 33,
+          "meanDeltaVsHuman": -50.1
+        },
+        "brass": {
+          "tasks": 26,
+          "meanDeltaVsHuman": -48.8
+        },
+        "keys": {
+          "tasks": 21,
+          "meanDeltaVsHuman": -44.1
+        },
+        "reed": {
+          "tasks": 20,
+          "meanDeltaVsHuman": -53
+        },
+        "ensemble": {
+          "tasks": 12,
+          "meanDeltaVsHuman": -84.3
+        },
+        "pipe": {
+          "tasks": 11,
+          "meanDeltaVsHuman": -44.3
+        },
+        "organ": {
+          "tasks": 9,
+          "meanDeltaVsHuman": -39.5
+        },
+        "guitar": {
+          "tasks": 7,
+          "meanDeltaVsHuman": -63.7
+        },
+        "bass": {
+          "tasks": 2,
+          "meanDeltaVsHuman": -34.2
+        }
+      },
+      "atOrAboveHuman": [
+        "Psalm 90 - Herr du bist uns're Zuflucht: reed"
+      ],
+      "beforeRightsCorrection": {
+        "corpus": "40 works admitted on the score's licence alone (36 of them now contested)",
+        "task": "strip-families-and-arrange",
+        "works": 40,
+        "tasks": 153,
+        "unavailable": [],
+        "aggregate": [
+          {
+            "providerId": "REFERENCE_PART_COMPOSER",
+            "tasks": 153,
+            "failures": 0,
+            "meanScore": 49.21,
+            "meanHumanScore": 93.36,
+            "meanDeltaVsHuman": -44.15,
+            "atOrAboveHumanShare": 0.0196,
+            "meanPlayabilityErrors": 0.72,
+            "meanChordToneShare": 0.96
+          }
+        ],
+        "levelBlockers": {
+          "vs-reference-part-composer": "The corpus is not a measure yet: songs: 40 of 100; inputType \"full_song\": 0 of 3 songs; inputType \"piano_vocal\": 0 of 3 songs; inputType \"vocal_only\": 0 of 3 songs; production \"electronic\": 0 of 3 songs; human gold arrangements: 0 of 30.",
+          "vs-production-model": "The corpus is not a measure yet: songs: 40 of 100; inputType \"full_song\": 0 of 3 songs; inputType \"piano_vocal\": 0 of 3 songs; inputType \"vocal_only\": 0 of 3 songs; production \"electronic\": 0 of 3 songs; human gold arrangements: 0 of 30.",
+          "vs-human-gold": "No song in the corpus has a human gold arrangement with an uploaded source; the north-star benchmark cannot be run."
+        },
+        "worksWithNoTask": [],
+        "note": "not comparable to the run above: different works; the same judge (partJudge 1.1), task and options"
+      }
+    },
+    "tierP": {
+      "entries": 1,
+      "id": "owner-rachem-na",
+      "fixture": "artifacts/api-server/src/lib/__fixtures__/rachemNaSongModelV3.ts"
+    },
+    "contestedFile": "docs/evidence/real-corpus-tier-h-contested.json"
+  },
+  "humanAbControls": {
+    "candidateControlRungs": [
+      "pitch_shift 60 %",
+      "pitch_shift 30 %",
+      "pitch_shift 60 %"
+    ],
+    "rule": "sessionResults withholds Gate C unless sensitivityReport(session, independent votes, primary question).gate.verdict === may_judge_training; a session with no control pairs is withheld with that reason; control votes never enter the Elo, the tallies or the release share.",
+    "route": "POST /projects/{id}/listening-sessions builds the control pairs, degrades the challenger's own notes with degradeSideMidi (last track = the pitched track with the most notes; context bytes identical), renders original + degraded with LISTENING_SYNTH_V2 and stores them under the session (audioByToken). Not exercised against a live server in this stream.",
+    "openapi": "ListeningGateC.sensitivity (optional) added; orval clients regenerated."
+  },
+  "honestLimits": [
+    "shippedCriticScore equals criticScore within 0.11 on main 3bf23aa because the perform stage there does not repair notes and the critic is 76 % plan-derived; the inflation the audit describes becomes visible only once PR-98's playability repair merges (re-snapshot required: see the tracker entry for the command).",
+    "harmonyScore sits near its ceiling (98-100) on the synthetic corpus and the owner's song because the reference composer stacks chord tones (audit F6); the metric is discriminating (the tritone control drops it below 30) but not informative about label-stacking harmony. It measures chord membership and semitone clashes, not voice leading.",
+    "renderFailures = 5 on every case of the render baseline: every candidate's reference-synth render is reported infeasible by renderArrangementStems while the audio critic still scores it 87-93. Recorded, not investigated here (outside B-08's files).",
+    "seamArtefacts and trajectorySmoothness — two of the three coherence components now in the benchmark — detect no corruption family in the ledger; motifRecurrence and coherence.score inform only. They replace constants with measurements, not with validated gates.",
+    "candidateDistance ~ 6.6 (x100) on every case: the production gate's distance, whose plan-level components are empty on orchestrator output (plan.sections = []); only note-level components move.",
+    "The ledger's detection is a strict inequality on deterministic metrics; a gate verdict says the metric sees the damage, not that it sizes it. partJudge.score on arrangement anchors includes anchor-relative terms and is biased towards detection; its components are the honest rows.",
+    "musicCritic and candidateQuality run on Tier S anchors only (they need a plan); 13 candidateQuality dimensions are unavailable on brain output and are listed as insufficient data, not as demoted.",
+    "The Tier H task strips one family per task (N = 1); further stripping is implemented (stripAdditionalFamilies) but the committed run uses N = 1.",
+    "Gate C control pairs: with three pairs a session needs eight independent raters answering every pair before the gate can read both rungs (SENSITIVITY_GATE.minVotesPerRung = 8); the release share still needs five. The control pairs are rendered with LISTENING_SYNTH_V2 while the song pair plays the candidates' evaluation renders — one renderer within a pair, not across pairs.",
+    "The route wiring for control audio was typechecked, not run: no database or server in this stream.",
+    "No human has voted on any control pair; nothing here changes the training gate.",
+    "Tier H rights (corrected 2026-09-10): every entry now proves its composition — a verified composer dead by 1955 or a documented traditional tune — beside the uploader's public-domain statement for the score. Composer identification rests on PDMX's composer_name / artist_name as typed: a public-domain work whose row names nobody, or names its composer in a spelling the list lacks, is contested (under-admitted), never guessed in. 6,732 of 7,633 measured candidates are contested; 901 proven; 36 of the previous 40 entries and 49 of 54 tournament seeds are among the contested.",
+    "Tier H rights: a living arranger's CC0 arrangement of a public-domain composition is admitted on two facts (the uploader's dedication covers the arrangement layer; the composition basis covers the work); an arrangement of an unproven composition is contested whatever its score licence. A row naming a modern person beside a public-domain title is contested unless the name is a single word (an uploader handle), which does not block a verified title.",
+    "Tier H rights: the term applied is life + 70. Under the United States' publication-based term, works first published after 1929 by composers who died 1930–1955 may still be protected there; the corpus carries two Vierne entries (d. 1937) with composerDied > 1929 (listed under realCorpus.tierH.composerDeathYears.after1929) and the lead should decide whether to exclude them for a US-facing product.",
+    "Tier H cannot supply full_song / piano_vocal / vocal_only input types, electronic production, human gold arrangements — or, now, non-western idiom: no proven-public-domain multitrack work in PDMX carries a non-western genre / tag label (0 of 3, 7 gaps). Produced pop / dance / Mizrahi, electronic and other modern idioms cannot come from public-domain compositions at all; those rows of the required spread need licensed or operator-owned recordings. 'feel: swung' on this corpus is notated triplet subdivision in slow classical movements (Mozart K.467, Vivaldi, Verdi), not a jazz swing feel.",
+    "The first proven-only selection labelled three Christmas carols non_western through the bare substring 'world' matching tags such as 'joytotheworld'; the idiom regex is now bounded by non-letters and under-counts rather than invents. Duplicate arrangements of one composition are collapsed (one entry per composition)."
+  ],
+  "rightsCorrection": {
+    "date": "2026-09-10",
+    "ruling": "The lead's ruling on B-08: a PDMX uploader's CC0 / public-domain statement clears at most the engraving or arrangement, never the composition. Tier H admits a work only when the composition is verifiably public domain (composer died in or before 1955 = life + 70 as of 2026, or a documented traditional / anonymous tune); everything else is rights.kind 'contested', commercialUse false, excluded from REAL_CORPUS_TIER_H and every Tier H aggregate, and listed with its reason. Contested / unknown are valid answers; no composer is guessed to admit a work.",
+    "mechanism": "admit only what is proven: compositionRights.ts (a curated list of public-domain composers with death years and spellings met in PDMX, plus a curated list of verified traditional / public-domain tunes) read from the row's composer_name / artist_name / title; pdmxRightsBasis returns public_domain with composer + composerDied or traditional + source, else contested; benchmarkCorpusPlan.corpusRefusalReason refuses a public_domain basis with no composition evidence and any contested basis; selectTierH excludes before any quota is filled. No denylist of pop songs is used as the mechanism.",
+    "compositionRightsVersion": "1.0",
+    "selectionVersion": "2.0",
+    "deathYearCutoff": 1955,
+    "verifiedComposers": 301,
+    "verifiedTunes": 98,
+    "measuredCandidates": 7633,
+    "proven": {
+      "total": 901,
+      "composer": 872,
+      "traditional": 29
+    },
+    "contested": {
+      "total": 6732,
+      "byReason": {
+        "no composer recorded; title not a verified tune": 742,
+        "names a person not on the verified public-domain composer list": 4661,
+        "category label, not a composer": 139,
+        "only a handle or single-word label; no verified composer": 991,
+        "uploader's traditional/anonymous label; title not on the verified tune list": 199
+      },
+      "listedIn": "docs\\evidence\\real-corpus-tier-h-contested.json",
+      "sidecarTotal": 6732
+    },
+    "previousTierH": {
+      "entries": 40,
+      "keptAsProven": [
+        "Silent night - Instrumental flute - flugehorn - violin",
+        "Symphony No.9 Op.125",
+        "Benedictus uit Messe Solonelle",
+        "Arthur S. Sullivan: Christ is Risen!"
+      ],
+      "displaced": 36,
+      "displacedTitles": [
+        "amaranth",
+        "Blues bossa sax+guitare+accompagnement",
+        "build me up buttercup",
+        "Christmas Yee in Three",
+        "cold duck time",
+        "Counterpoint/Pie Jesu",
+        "country roads",
+        "Dont Let Me Go",
+        "earth angel will you be mine",
+        "earthbound - onett",
+        "Eleven",
+        "For smart living",
+        "Gangsta's Paradise",
+        "guantanamera",
+        "I Can't Breathe",
+        "i got you babe",
+        "i will survive",
+        "let me down slowly",
+        "Mamma Mia!",
+        "Musical Hair: Where do I go (arranged for small R&B band)",
+        "Nipsey Hussle x Victory Lap",
+        "On the Take",
+        "overnight celebrtiy",
+        "postcards from italy",
+        "Procuro Olvidarte",
+        "Pure Cocaine",
+        "sandstorm",
+        "Señorita",
+        "sleeping sun",
+        "sos",
+        "Take Me Home Country Roads",
+        "them changes",
+        "This Girl - The Kungs for Pep band",
+        "time in a bottle",
+        "tong hua",
+        "Viva Cristo Rey"
+      ]
+    },
+    "tournamentSeeds": {
+      "measured": 54,
+      "contested": 49
+    },
+    "excludedExamples": [
+      {
+        "title": "country roads",
+        "reason": "the PDMX row names \"hermes house band\", not on the verified public-domain composer list; the composition is unproven"
+      },
+      {
+        "title": "earth angel will you be mine",
+        "reason": "the PDMX row names \"marvin berry\" and \"the starlighters\", not on the verified public-domain composer list; the composition is unproven"
+      },
+      {
+        "title": "Gangsta's Paradise",
+        "reason": "the PDMX row names \"rickey c battle jr\", not on the verified public-domain composer list; the composition is unproven"
+      },
+      {
+        "title": "guantanamera",
+        "reason": "the PDMX row names \"joseito fernandez\", not on the verified public-domain composer list; the composition is unproven"
+      },
+      {
+        "title": "I Can't Breathe",
+        "reason": "the PDMX row names \"jordan jennings\", not on the verified public-domain composer list; the composition is unproven"
+      },
+      {
+        "title": "i will survive",
+        "reason": "the PDMX row names \"gloria gaynor\", not on the verified public-domain composer list; the composition is unproven"
+      },
+      {
+        "title": "let me down slowly",
+        "reason": "the PDMX row names \"alec benjamin\" and \"alessia cara\", not on the verified public-domain composer list; the composition is unproven"
+      },
+      {
+        "title": "Mamma Mia!",
+        "reason": "the PDMX row names \"benny andresson stig anderson bjorn ulvaeus\", not on the verified public-domain composer list; the composition is unproven"
+      },
+      {
+        "title": "Nipsey Hussle x Victory Lap",
+        "reason": "the PDMX row names \"tyquon garrett\", not on the verified public-domain composer list; the composition is unproven"
+      },
+      {
+        "title": "Pure Cocaine",
+        "reason": "the PDMX row names \"lil baby\", not on the verified public-domain composer list; the composition is unproven"
+      },
+      {
+        "title": "sandstorm",
+        "reason": "the PDMX row names \"original audio darude\", not on the verified public-domain composer list; the composition is unproven"
+      },
+      {
+        "title": "Señorita",
+        "reason": "the PDMX row names \"ncdt d budnitsky\" and \"camila cabello\", not on the verified public-domain composer list; the composition is unproven"
+      },
+      {
+        "title": "time in a bottle",
+        "reason": "the PDMX row names \"jim croce\", not on the verified public-domain composer list; the composition is unproven"
+      }
+    ],
+    "bothLayers": "a proven entry clears both layers: the composition through the basis above, the arrangement/engraving through the uploader's CC0 / public-domain dedication in the no_license_conflict subset (a living arranger's CC0 arrangement of a public-domain work is admitted on those two facts; an arrangement of an unproven composition is contested whatever its score licence says)"
+  },
+  "baselineAtMerge": {
+    "date": "2026-09-10",
+    "note": "B-08 (7/7): the branch was rebased onto main at 1467706 (B-00 hard-rule gate, B-01 ArrangementArc, B-03 instrument profiles, B-05b, B-12). The brain changed materially; the measure did not (metric pins unchanged, benchmark 2.0). The baseline is re-snapshotted here; 3bf23aa.json stays as the pre-program record. gitSha inside the file is the merge base whose arrangement code was measured (--git-sha); headSha is the B-08 branch commit the run was taken from — the branch changes no file on the arrangement path.",
+    "mergeBaseSha": "1467706c8330a55213ac3ae1c8e89a1cddefa364",
+    "headShaOfRun": "5fea1b4cb37f10c7d7335a8ccc33c46afc61b8f7",
+    "file": "docs/evidence/benchmark-baseline/1467706.json",
+    "runId": "9832608f496a",
+    "startedAt": "2026-09-10T04:28:14.750Z",
+    "tier": "S",
+    "render": true,
+    "candidateCount": 5,
+    "corpusIds": [
+      "pop-full",
+      "ballad-piano-vocal",
+      "rock-full",
+      "dance-full",
+      "acoustic-demo",
+      "orchestral-midi",
+      "ethnic-vocal",
+      "jazz-full",
+      "cinematic-midi"
+    ],
+    "metricVersions": {
+      "musicCritic": "1.0",
+      "audioCritic": "1.0",
+      "partJudge": "1.1",
+      "coherenceMetric": "COHERENCE_METRIC_v1",
+      "benchmarkMeasures": "1.0"
+    },
+    "aggregate": {
+      "criticScore": 73.5,
+      "shippedCriticScore": 73.5,
+      "audioScore": 89.63,
+      "playabilityErrors": 0,
+      "harmonyScore": 97.78,
+      "chordToneShare": 98.59,
+      "clashShare": 0.81,
+      "sourceHarmonyScore": 59.25,
+      "trajectorySmoothness": 76.44,
+      "seamArtefacts": 43.64,
+      "motifRecurrence": 34.57,
+      "candidateDistance": 6.69,
+      "legacySectionConsistency": 100,
+      "legacyCandidateDiversity": 50.17,
+      "renderFailures": 5,
+      "unselectableShare": 11.11,
+      "noteCount": 467.13,
+      "latencyMs": 24813.33
+    },
+    "aggregateCases": {
+      "criticScore": 8,
+      "shippedCriticScore": 8,
+      "audioScore": 8,
+      "playabilityErrors": 9,
+      "harmonyScore": 8,
+      "chordToneShare": 8,
+      "clashShare": 8,
+      "sourceHarmonyScore": 8,
+      "trajectorySmoothness": 8,
+      "seamArtefacts": 8,
+      "motifRecurrence": 8,
+      "candidateDistance": 9,
+      "legacySectionConsistency": 9,
+      "legacyCandidateDiversity": 9,
+      "renderFailures": 9,
+      "unselectableShare": 9,
+      "noteCount": 8,
+      "latencyMs": 9
+    },
+    "unselectable": {
+      "count": 1,
+      "caseIds": [
+        "ethnic-vocal"
+      ],
+      "reasons": {
+        "ethnic-vocal": "no candidate passed the hard-rule gate: cand-A [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-B [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-C [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-D [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-E [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]"
+      }
+    },
+    "perCase": [
+      {
+        "caseId": "pop-full",
+        "selectedStrategy": "sparse",
+        "unselectable": false,
+        "hardRule": {
+          "eligible": 5,
+          "rejected": 0
+        },
+        "criticScore": 77,
+        "shippedCriticScore": 77,
+        "audioScore": 90,
+        "harmonyScore": 99.96,
+        "chordToneShare": 99.96,
+        "clashShare": 0,
+        "sourceHarmonyScore": 72,
+        "trajectorySmoothness": 82.95,
+        "seamArtefacts": 100,
+        "motifRecurrence": 26.8,
+        "candidateDistance": 6.77,
+        "playabilityErrors": 0,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 460
+      },
+      {
+        "caseId": "ballad-piano-vocal",
+        "selectedStrategy": "melodic",
+        "unselectable": false,
+        "hardRule": {
+          "eligible": 5,
+          "rejected": 0
+        },
+        "criticScore": 77,
+        "shippedCriticScore": 77,
+        "audioScore": 89,
+        "harmonyScore": 99.99,
+        "chordToneShare": 99.99,
+        "clashShare": 0,
+        "sourceHarmonyScore": 57,
+        "trajectorySmoothness": 72.15,
+        "seamArtefacts": 19.37,
+        "motifRecurrence": 27.08,
+        "candidateDistance": 6.93,
+        "playabilityErrors": 0,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 434
+      },
+      {
+        "caseId": "rock-full",
+        "selectedStrategy": "sparse",
+        "unselectable": false,
+        "hardRule": {
+          "eligible": 5,
+          "rejected": 0
+        },
+        "criticScore": 74,
+        "shippedCriticScore": 74,
+        "audioScore": 90,
+        "harmonyScore": 99.94,
+        "chordToneShare": 99.94,
+        "clashShare": 0,
+        "sourceHarmonyScore": 57,
+        "trajectorySmoothness": 81.53,
+        "seamArtefacts": 86.03,
+        "motifRecurrence": 15.6,
+        "candidateDistance": 6.45,
+        "playabilityErrors": 0,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 413
+      },
+      {
+        "caseId": "dance-full",
+        "selectedStrategy": "conservative",
+        "unselectable": false,
+        "hardRule": {
+          "eligible": 5,
+          "rejected": 0
+        },
+        "criticScore": 72,
+        "shippedCriticScore": 72,
+        "audioScore": 89,
+        "harmonyScore": 96.79,
+        "chordToneShare": 98.27,
+        "clashShare": 1.48,
+        "sourceHarmonyScore": 51,
+        "trajectorySmoothness": 71.56,
+        "seamArtefacts": 9.57,
+        "motifRecurrence": 9.76,
+        "candidateDistance": 7.17,
+        "playabilityErrors": 0,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 736
+      },
+      {
+        "caseId": "acoustic-demo",
+        "selectedStrategy": "conservative",
+        "unselectable": false,
+        "hardRule": {
+          "eligible": 5,
+          "rejected": 0
+        },
+        "criticScore": 74,
+        "shippedCriticScore": 74,
+        "audioScore": 89,
+        "harmonyScore": 99.96,
+        "chordToneShare": 99.96,
+        "clashShare": 0,
+        "sourceHarmonyScore": 57,
+        "trajectorySmoothness": 79.47,
+        "seamArtefacts": 0,
+        "motifRecurrence": 47.16,
+        "candidateDistance": 7.39,
+        "playabilityErrors": 0,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 454
+      },
+      {
+        "caseId": "orchestral-midi",
+        "selectedStrategy": "sparse",
+        "unselectable": false,
+        "hardRule": {
+          "eligible": 5,
+          "rejected": 0
+        },
+        "criticScore": 69,
+        "shippedCriticScore": 69,
+        "audioScore": 91,
+        "harmonyScore": 91.49,
+        "chordToneShare": 94.61,
+        "clashShare": 3.12,
+        "sourceHarmonyScore": 57,
+        "trajectorySmoothness": 69.77,
+        "seamArtefacts": 89.74,
+        "motifRecurrence": 22.8,
+        "candidateDistance": 5.24,
+        "playabilityErrors": 0,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 232
+      },
+      {
+        "caseId": "ethnic-vocal",
+        "selectedStrategy": null,
+        "unselectable": true,
+        "hardRule": {
+          "eligible": 0,
+          "rejected": 5
+        },
+        "criticScore": null,
+        "shippedCriticScore": null,
+        "audioScore": null,
+        "harmonyScore": null,
+        "chordToneShare": null,
+        "clashShare": null,
+        "sourceHarmonyScore": null,
+        "trajectorySmoothness": null,
+        "seamArtefacts": null,
+        "motifRecurrence": null,
+        "candidateDistance": 6.86,
+        "playabilityErrors": 0,
+        "renderFailures": 5,
+        "unselectableShare": 100,
+        "noteCount": null
+      },
+      {
+        "caseId": "jazz-full",
+        "selectedStrategy": "sparse",
+        "unselectable": false,
+        "hardRule": {
+          "eligible": 5,
+          "rejected": 0
+        },
+        "criticScore": 73,
+        "shippedCriticScore": 73,
+        "audioScore": 89,
+        "harmonyScore": 99.94,
+        "chordToneShare": 99.94,
+        "clashShare": 0,
+        "sourceHarmonyScore": 57,
+        "trajectorySmoothness": 77.68,
+        "seamArtefacts": 0,
+        "motifRecurrence": 60.68,
+        "candidateDistance": 6.69,
+        "playabilityErrors": 0,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 727
+      },
+      {
+        "caseId": "cinematic-midi",
+        "selectedStrategy": "sparse",
+        "unselectable": false,
+        "hardRule": {
+          "eligible": 5,
+          "rejected": 0
+        },
+        "criticScore": 72,
+        "shippedCriticScore": 72,
+        "audioScore": 90,
+        "harmonyScore": 94.16,
+        "chordToneShare": 96.07,
+        "clashShare": 1.91,
+        "sourceHarmonyScore": 66,
+        "trajectorySmoothness": 76.43,
+        "seamArtefacts": 44.45,
+        "motifRecurrence": 66.68,
+        "candidateDistance": 6.7,
+        "playabilityErrors": 0,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 281
+      }
+    ],
+    "compareAgainstItself": {
+      "command": "pnpm --filter @workspace/api-server run benchmark -- --render --compare docs/evidence/benchmark-baseline/1467706.json --git-sha 1467706c8330a55213ac3ae1c8e89a1cddefa364",
+      "exitCode": 0,
+      "outcomeLine": "UNCHANGED: REFERENCE_PIPELINE is not measurably better — unchanged within tolerance 1; 1 case(s) unselectable in the candidate (ethnic-vocal) vs 1 in the baseline",
+      "rows": [
+        {
+          "metric": "criticScore",
+          "baseline": 73.5,
+          "candidate": 73.5,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "shippedCriticScore",
+          "baseline": 73.5,
+          "candidate": 73.5,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "audioScore",
+          "baseline": 89.63,
+          "candidate": 89.63,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "playabilityErrors",
+          "baseline": 0,
+          "candidate": 0,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "harmonyScore",
+          "baseline": 97.78,
+          "candidate": 97.78,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "chordToneShare",
+          "baseline": 98.59,
+          "candidate": 98.59,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "clashShare",
+          "baseline": 0.81,
+          "candidate": 0.81,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "sourceHarmonyScore",
+          "baseline": 59.25,
+          "candidate": 59.25,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": false
+        },
+        {
+          "metric": "trajectorySmoothness",
+          "baseline": 76.44,
+          "candidate": 76.44,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "seamArtefacts",
+          "baseline": 43.64,
+          "candidate": 43.64,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "motifRecurrence",
+          "baseline": 34.57,
+          "candidate": 34.57,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "candidateDistance",
+          "baseline": 6.69,
+          "candidate": 6.69,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "legacySectionConsistency",
+          "baseline": 100,
+          "candidate": 100,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": false
+        },
+        {
+          "metric": "legacyCandidateDiversity",
+          "baseline": 50.17,
+          "candidate": 50.17,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": false
+        },
+        {
+          "metric": "renderFailures",
+          "baseline": 5,
+          "candidate": 5,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "unselectableShare",
+          "baseline": 11.11,
+          "candidate": 11.11,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "noteCount",
+          "baseline": 467.13,
+          "candidate": 467.13,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": false
+        },
+        {
+          "metric": "latencyMs",
+          "baseline": 24813.33,
+          "candidate": 20571,
+          "delta": -4242.33,
+          "verdict": "improved",
+          "quality": false
+        }
+      ],
+      "unselectableLine": "unselectable cases — baseline: ethnic-vocal · candidate: ethnic-vocal"
+    },
+    "compareAgainst3bf23aa": {
+      "command": "pnpm --filter @workspace/api-server run benchmark -- --render --compare docs/evidence/benchmark-baseline/3bf23aa.json --no-fail --git-sha 1467706c8330a55213ac3ae1c8e89a1cddefa364",
+      "exitCode": 0,
+      "outcomeLine": "DO_NOT_PROMOTE: REFERENCE_PIPELINE regresses criticScore, shippedCriticScore, seamArtefacts — do not promote; 1 case(s) unselectable in the candidate (ethnic-vocal)",
+      "rows": [
+        {
+          "metric": "criticScore",
+          "baseline": 74.56,
+          "candidate": 73.5,
+          "delta": -1.06,
+          "verdict": "regressed",
+          "quality": true
+        },
+        {
+          "metric": "shippedCriticScore",
+          "baseline": 74.67,
+          "candidate": 73.5,
+          "delta": -1.17,
+          "verdict": "regressed",
+          "quality": true
+        },
+        {
+          "metric": "audioScore",
+          "baseline": 90.33,
+          "candidate": 89.63,
+          "delta": -0.7,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "playabilityErrors",
+          "baseline": 0,
+          "candidate": 0,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "harmonyScore",
+          "baseline": 98.43,
+          "candidate": 97.78,
+          "delta": -0.65,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "chordToneShare",
+          "baseline": 98.9,
+          "candidate": 98.59,
+          "delta": -0.31,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "clashShare",
+          "baseline": 0.48,
+          "candidate": 0.81,
+          "delta": 0.33,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "sourceHarmonyScore",
+          "baseline": 58.33,
+          "candidate": 59.25,
+          "delta": 0.92,
+          "verdict": "unchanged",
+          "quality": false
+        },
+        {
+          "metric": "trajectorySmoothness",
+          "baseline": 48.03,
+          "candidate": 76.44,
+          "delta": 28.41,
+          "verdict": "improved",
+          "quality": true
+        },
+        {
+          "metric": "seamArtefacts",
+          "baseline": 50.7,
+          "candidate": 43.64,
+          "delta": -7.06,
+          "verdict": "regressed",
+          "quality": true
+        },
+        {
+          "metric": "motifRecurrence",
+          "baseline": 33.16,
+          "candidate": 34.57,
+          "delta": 1.41,
+          "verdict": "improved",
+          "quality": true
+        },
+        {
+          "metric": "candidateDistance",
+          "baseline": 6.59,
+          "candidate": 6.69,
+          "delta": 0.1,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "legacySectionConsistency",
+          "baseline": 100,
+          "candidate": 100,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": false
+        },
+        {
+          "metric": "legacyCandidateDiversity",
+          "baseline": 50.4,
+          "candidate": 50.17,
+          "delta": -0.23,
+          "verdict": "unchanged",
+          "quality": false
+        },
+        {
+          "metric": "renderFailures",
+          "baseline": 5,
+          "candidate": 5,
+          "delta": 0,
+          "verdict": "unchanged",
+          "quality": true
+        },
+        {
+          "metric": "noteCount",
+          "baseline": 557.22,
+          "candidate": 467.13,
+          "delta": -90.09,
+          "verdict": "regressed",
+          "quality": false
+        },
+        {
+          "metric": "latencyMs",
+          "baseline": 35718.78,
+          "candidate": 29621.56,
+          "delta": -6097.22,
+          "verdict": "improved",
+          "quality": false
+        },
+        {
+          "metric": "unselectableShare",
+          "baseline": null,
+          "candidate": 11.11,
+          "delta": null,
+          "verdict": "unavailable",
+          "quality": true
+        }
+      ],
+      "unselectableLine": "unselectable cases — baseline: none · candidate: ethnic-vocal",
+      "perCaseOldVsNew": [
+        {
+          "caseId": "pop-full",
+          "criticScore": [
+            77,
+            77
+          ],
+          "shippedCriticScore": [
+            77,
+            77
+          ],
+          "harmonyScore": [
+            99.32,
+            99.96
+          ],
+          "audioScore": [
+            91,
+            90
+          ],
+          "noteCount": [
+            406,
+            460
+          ],
+          "strategy": [
+            "sparse",
+            "sparse"
+          ]
+        },
+        {
+          "caseId": "ballad-piano-vocal",
+          "criticScore": [
+            76,
+            77
+          ],
+          "shippedCriticScore": [
+            76,
+            77
+          ],
+          "harmonyScore": [
+            98.44,
+            99.99
+          ],
+          "audioScore": [
+            90,
+            89
+          ],
+          "noteCount": [
+            429,
+            434
+          ],
+          "strategy": [
+            "conservative",
+            "melodic"
+          ]
+        },
+        {
+          "caseId": "rock-full",
+          "criticScore": [
+            76,
+            74
+          ],
+          "shippedCriticScore": [
+            76,
+            74
+          ],
+          "harmonyScore": [
+            98.65,
+            99.94
+          ],
+          "audioScore": [
+            88,
+            90
+          ],
+          "noteCount": [
+            877,
+            413
+          ],
+          "strategy": [
+            "melodic",
+            "sparse"
+          ]
+        },
+        {
+          "caseId": "dance-full",
+          "criticScore": [
+            75,
+            72
+          ],
+          "shippedCriticScore": [
+            76,
+            72
+          ],
+          "harmonyScore": [
+            96.94,
+            96.79
+          ],
+          "audioScore": [
+            90,
+            89
+          ],
+          "noteCount": [
+            915,
+            736
+          ],
+          "strategy": [
+            "conservative",
+            "conservative"
+          ]
+        },
+        {
+          "caseId": "acoustic-demo",
+          "criticScore": [
+            74,
+            74
+          ],
+          "shippedCriticScore": [
+            74,
+            74
+          ],
+          "harmonyScore": [
+            99.96,
+            99.96
+          ],
+          "audioScore": [
+            90,
+            89
+          ],
+          "noteCount": [
+            489,
+            454
+          ],
+          "strategy": [
+            "conservative",
+            "conservative"
+          ]
+        },
+        {
+          "caseId": "orchestral-midi",
+          "criticScore": [
+            71,
+            69
+          ],
+          "shippedCriticScore": [
+            71,
+            69
+          ],
+          "harmonyScore": [
+            95.64,
+            91.49
+          ],
+          "audioScore": [
+            92,
+            91
+          ],
+          "noteCount": [
+            281,
+            232
+          ],
+          "strategy": [
+            "sparse",
+            "sparse"
+          ]
+        },
+        {
+          "caseId": "ethnic-vocal",
+          "criticScore": [
+            72,
+            null
+          ],
+          "shippedCriticScore": [
+            72,
+            null
+          ],
+          "harmonyScore": [
+            99.91,
+            null
+          ],
+          "audioScore": [
+            92,
+            null
+          ],
+          "noteCount": [
+            413,
+            null
+          ],
+          "strategy": [
+            "conservative",
+            null
+          ]
+        },
+        {
+          "caseId": "jazz-full",
+          "criticScore": [
+            77,
+            73
+          ],
+          "shippedCriticScore": [
+            77,
+            73
+          ],
+          "harmonyScore": [
+            99.13,
+            99.94
+          ],
+          "audioScore": [
+            87,
+            89
+          ],
+          "noteCount": [
+            930,
+            727
+          ],
+          "strategy": [
+            "conservative",
+            "sparse"
+          ]
+        },
+        {
+          "caseId": "cinematic-midi",
+          "criticScore": [
+            73,
+            72
+          ],
+          "shippedCriticScore": [
+            73,
+            72
+          ],
+          "harmonyScore": [
+            97.85,
+            94.16
+          ],
+          "audioScore": [
+            93,
+            90
+          ],
+          "noteCount": [
+            275,
+            281
+          ],
+          "strategy": [
+            "sparse",
+            "sparse"
+          ]
+        }
+      ],
+      "reading": [
+        "DO_NOT_PROMOTE is the 2.0 measure's reading of the merged brain against the pre-program record, not a verdict on B-00/B-01/B-03 (merged by the lead); it is what the baseline procedure prints when the composer changes materially, which was the point of re-snapshotting.",
+        "criticScore −1.06 and shippedCriticScore −1.17 (paired over the same 8 cases: −1.38 / −1.5): the critic is 76 % plan-derived and 11 of its 11 dimensions are demoted in the ledger, so a one-point move is inside what it cannot see; shippedCriticScore now equals criticScore on every case (3bf23aa: 0.11 apart) because B-00 critiques the shipped notes — the column is redundant on this brain and stays as the check that it remains so.",
+        "trajectorySmoothness +28.41 (paired +26.42) is the largest move and is the ArrangementArc (B-01) as the coherence metric sees it; the component informs on three families and gates none, so it is a measurement of the arc, not a validated gain.",
+        "seamArtefacts −7.06: the component detects no corruption family (demoted); the move is recorded, not interpreted.",
+        "harmonyScore −0.65, clashShare +0.33, chordToneShare −0.31: within tolerance; harmony stays at its ceiling (91.5–100 per case) and still flatters chord-tone stacking.",
+        "unselectableShare 11.11 vs unavailable: ethnic-vocal ships nothing under the hard-rule gate (every candidate drops bass and keys in Chorus and Verse 2 — planned, chords under them, no notes); 3bf23aa shipped it (drums, bass, ensemble-transition; critic 72). The old file predates the field, so the row is unavailable rather than a 0.",
+        "noteCount −90 (paired −108): B-01 removed the ensemble-transition tracks and put keys on every case; rock, dance and jazz lost 450–500 notes each while pop, ballad and acoustic barely moved.",
+        "renderFailures 5 on every case, unchanged and still not investigated (outside B-08's files)."
+      ]
+    },
+    "ledgerAtMerge": {
+      "command": "pnpm --filter @workspace/api-server run control-ledger",
+      "previous": {
+        "gitSha": "05c12e77bba38cc7875be6e7fc585d9386392933",
+        "anchors": 89,
+        "tierS": 9,
+        "tierH": 80,
+        "targets": 120,
+        "trials": {
+          "total": 189000,
+          "applicable": 129834,
+          "seconds": 63.3
+        },
+        "lists": {
+          "gate": 13,
+          "inform": 13,
+          "demoted": 13,
+          "insufficient": 13
+        }
+      },
+      "current": {
+        "gitSha": "5fea1b4cb37f10c7d7335a8ccc33c46afc61b8f7",
+        "anchors": 88,
+        "tierS": 8,
+        "tierH": 80,
+        "targets": 111,
+        "trials": {
+          "total": 163485,
+          "applicable": 115744,
+          "seconds": 82.9
+        },
+        "lists": {
+          "gate": 16,
+          "inform": 14,
+          "demoted": 14,
+          "insufficient": 13
+        }
+      },
+      "tierSAnchors": {
+        "old": [
+          "S:pop-full:drums-groove/bass-bass/keys-harmonic_bed/ensemble-transition",
+          "S:ballad-piano-vocal:drums-groove/bass-bass/keys-harmonic_bed/ensemble-transition",
+          "S:rock-full:drums-groove/bass-bass/guitar-rhythmic_harmony/keys-harmonic_bed/ensemble-transition",
+          "S:dance-full:drums-groove/bass-bass/keys-rhythmic_harmony/synth-pad/ensemble-transition",
+          "S:acoustic-demo:drums-groove/bass-bass/guitar-harmonic_bed/ensemble-transition",
+          "S:orchestral-midi:drums-climax_layer/bass-bass/brass-climax_layer/strings-climax_layer/ensemble-transition",
+          "S:ethnic-vocal:drums-climax_layer/bass-bass/ensemble-transition",
+          "S:jazz-full:drums-climax_layer/bass-bass/keys-harmonic_bed/ensemble-transition",
+          "S:cinematic-midi:drums-climax_layer/bass-bass/percussion-accent/brass-climax_layer/strings-climax_layer/ensemble-transition"
+        ],
+        "new": [
+          "S:pop-full:drums-groove/bass-bass/keys-harmonic_bed",
+          "S:ballad-piano-vocal:drums-groove/bass-bass/keys-rhythmic_harmony",
+          "S:rock-full:drums-groove/bass-bass/keys-rhythmic_harmony/guitar-harmonic_bed",
+          "S:dance-full:drums-groove/bass-bass/keys-harmonic_bed/synth-pad",
+          "S:acoustic-demo:drums-groove/bass-bass/guitar-harmonic_bed",
+          "S:orchestral-midi:drums-climax_layer/bass-bass/keys-ostinato/brass-climax_layer/strings-climax_layer",
+          "S:jazz-full:drums-climax_layer/bass-bass/keys-harmonic_bed",
+          "S:cinematic-midi:drums-climax_layer/bass-bass/percussion-accent/keys-harmonic_bed/brass-climax_layer/strings-climax_layer"
+        ]
+      },
+      "tierSUnselectable": [
+        "ethnic-vocal"
+      ],
+      "rowsChanged": 28,
+      "rowsTotal": 1035,
+      "verdictChanges": [
+        {
+          "metric": "musicCritic.overall",
+          "family": "density_doubling",
+          "from": "gate",
+          "to": "inform"
+        },
+        {
+          "metric": "musicCritic.overall",
+          "family": "duration_overhang",
+          "from": "demoted",
+          "to": "inform"
+        },
+        {
+          "metric": "musicCritic.playability",
+          "family": "density_doubling",
+          "from": "gate",
+          "to": "demoted"
+        },
+        {
+          "metric": "musicCritic.playability",
+          "family": "role_inversion",
+          "from": "gate",
+          "to": "demoted"
+        },
+        {
+          "metric": "benchmarkHarmony.harmonyScore",
+          "family": "onset_jitter",
+          "from": "inform",
+          "to": "gate"
+        },
+        {
+          "metric": "benchmarkHarmony.clashShare",
+          "family": "leap_injection",
+          "from": "inform",
+          "to": "gate"
+        },
+        {
+          "metric": "benchmarkHarmony.clashShare",
+          "family": "syncopation_removal",
+          "from": "demoted",
+          "to": "inform"
+        },
+        {
+          "metric": "benchmarkHarmony.clashShare",
+          "family": "bar_copy_repetition",
+          "from": "inform",
+          "to": "gate"
+        },
+        {
+          "metric": "benchmarkHarmony.clashShare",
+          "family": "duration_overhang",
+          "from": "inform",
+          "to": "gate"
+        },
+        {
+          "metric": "partJudge.score",
+          "family": "octave_displacement",
+          "from": "inform",
+          "to": "demoted"
+        },
+        {
+          "metric": "partJudge.score",
+          "family": "parallel_doubling",
+          "from": "inform",
+          "to": "gate"
+        },
+        {
+          "metric": "coherence.score",
+          "family": "pitch_shift_out_of_key",
+          "from": "inform",
+          "to": "gate"
+        },
+        {
+          "metric": "coherence.score",
+          "family": "bar_copy_repetition",
+          "from": "demoted",
+          "to": "inform"
+        },
+        {
+          "metric": "coherence.harmonicAgreement",
+          "family": "pitch_shift_out_of_key",
+          "from": "inform",
+          "to": "gate"
+        },
+        {
+          "metric": "coherence.harmonicAgreement",
+          "family": "chord_tone_to_non_chord_tone",
+          "from": "inform",
+          "to": "gate"
+        },
+        {
+          "metric": "coherence.harmonicAgreement",
+          "family": "leap_injection",
+          "from": "demoted",
+          "to": "inform"
+        },
+        {
+          "metric": "coherence.harmonicAgreement",
+          "family": "cross_part_clash",
+          "from": "inform",
+          "to": "gate"
+        },
+        {
+          "metric": "coherence.trajectorySmoothness",
+          "family": "density_thinning",
+          "from": "demoted",
+          "to": "inform"
+        },
+        {
+          "metric": "coherence.trajectorySmoothness",
+          "family": "listening_onset_jitter",
+          "from": "demoted",
+          "to": "inform"
+        },
+        {
+          "metric": "candidateQuality.score",
+          "family": "role_inversion",
+          "from": "inform",
+          "to": "gate"
+        },
+        {
+          "metric": "candidateQuality.score",
+          "family": "section_swap",
+          "from": "demoted",
+          "to": "inform"
+        },
+        {
+          "metric": "candidateQuality.vocalFit",
+          "family": "parallel_doubling",
+          "from": "inform",
+          "to": "demoted"
+        },
+        {
+          "metric": "candidateQuality.vocalFit",
+          "family": "syncopation_removal",
+          "from": "demoted",
+          "to": "insufficient_data"
+        },
+        {
+          "metric": "candidateQuality.registerCollisions",
+          "family": "octave_displacement",
+          "from": "demoted",
+          "to": "inform"
+        },
+        {
+          "metric": "candidateQuality.registerCollisions",
+          "family": "parallel_doubling",
+          "from": "demoted",
+          "to": "inform"
+        },
+        {
+          "metric": "candidateQuality.registerCollisions",
+          "family": "section_swap",
+          "from": "demoted",
+          "to": "gate"
+        },
+        {
+          "metric": "candidateQuality.repetition",
+          "family": "density_doubling",
+          "from": "demoted",
+          "to": "inform"
+        },
+        {
+          "metric": "candidateQuality.repetition",
+          "family": "bar_copy_repetition",
+          "from": "gate",
+          "to": "inform"
+        }
+      ],
+      "gateListChanges": {
+        "musicCritic.overall": {
+          "added": [],
+          "removed": [
+            "density_doubling"
+          ]
+        },
+        "musicCritic.playability": {
+          "added": [],
+          "removed": [
+            "density_doubling",
+            "role_inversion"
+          ]
+        },
+        "benchmarkHarmony.harmonyScore": {
+          "added": [
+            "onset_jitter"
+          ],
+          "removed": []
+        },
+        "benchmarkHarmony.clashShare": {
+          "added": [
+            "leap_injection",
+            "bar_copy_repetition",
+            "duration_overhang"
+          ],
+          "removed": []
+        },
+        "partJudge.score": {
+          "added": [
+            "parallel_doubling"
+          ],
+          "removed": []
+        },
+        "candidateQuality.repetition": {
+          "added": [],
+          "removed": [
+            "bar_copy_repetition"
+          ]
+        },
+        "coherence.score": {
+          "added": [
+            "pitch_shift_out_of_key"
+          ],
+          "removed": []
+        },
+        "coherence.harmonicAgreement": {
+          "added": [
+            "pitch_shift_out_of_key",
+            "chord_tone_to_non_chord_tone",
+            "cross_part_clash"
+          ],
+          "removed": []
+        },
+        "candidateQuality.score": {
+          "added": [
+            "role_inversion"
+          ],
+          "removed": []
+        },
+        "candidateQuality.registerCollisions": {
+          "added": [
+            "section_swap"
+          ],
+          "removed": []
+        }
+      },
+      "informListChanges": {
+        "musicCritic.overall": {
+          "added": [
+            "density_doubling",
+            "duration_overhang"
+          ],
+          "removed": []
+        },
+        "benchmarkHarmony.harmonyScore": {
+          "added": [],
+          "removed": [
+            "onset_jitter"
+          ]
+        },
+        "benchmarkHarmony.clashShare": {
+          "added": [
+            "syncopation_removal"
+          ],
+          "removed": [
+            "leap_injection",
+            "bar_copy_repetition",
+            "duration_overhang"
+          ]
+        },
+        "partJudge.score": {
+          "added": [],
+          "removed": [
+            "octave_displacement",
+            "parallel_doubling"
+          ]
+        },
+        "coherence.score": {
+          "added": [
+            "bar_copy_repetition"
+          ],
+          "removed": [
+            "pitch_shift_out_of_key"
+          ]
+        },
+        "coherence.harmonicAgreement": {
+          "added": [
+            "leap_injection"
+          ],
+          "removed": [
+            "pitch_shift_out_of_key",
+            "chord_tone_to_non_chord_tone",
+            "cross_part_clash"
+          ]
+        },
+        "coherence.trajectorySmoothness": {
+          "added": [
+            "density_thinning",
+            "listening_onset_jitter"
+          ],
+          "removed": []
+        },
+        "candidateQuality.score": {
+          "added": [
+            "section_swap"
+          ],
+          "removed": [
+            "role_inversion"
+          ]
+        },
+        "candidateQuality.vocalFit": {
+          "added": [],
+          "removed": [
+            "parallel_doubling"
+          ]
+        },
+        "candidateQuality.registerCollisions": {
+          "added": [
+            "octave_displacement",
+            "parallel_doubling"
+          ],
+          "removed": []
+        },
+        "candidateQuality.repetition": {
+          "added": [
+            "density_doubling",
+            "bar_copy_repetition"
+          ],
+          "removed": []
+        }
+      },
+      "demotedList": {
+        "added": [
+          "musicCritic.playability",
+          "candidateQuality.vocalFit"
+        ],
+        "removed": [
+          "candidateQuality.registerCollisions"
+        ]
+      },
+      "reading": [
+        "28 of 1,035 rows changed verdict; every one of them is a row with Tier S trials and the Tier H detected/trials of every changed row are identical to the previous ledger (the 80 Tier H anchors did not change). The changes are the merged brain's anchors, not the metrics or the corruptions.",
+        "Tier S anchors 9 → 8 (ethnic-vocal has no shipped arrangement to corrupt) and targets 40 → 31: B-01 removed the ensemble-transition track from every case and added keys to pop, ballad, rock, orchestral and cinematic; the lists are judged on 31 Tier S targets, still above the rule's 8 for every family that was judged before (candidateQuality.vocalFit / syncopation_removal fell to 6 trials and is insufficient_data).",
+        "Real losses on the merged anchors, demoted in the ledger and named here: musicCritic.playability gate → demoted on density_doubling (36/36 → 17/28, p 0.17) and role_inversion (25/25 → 11/15, p 0.06) — every one of the critic's 11 dimensions is now demoted, only musicCritic.overall gates (role_inversion) or informs (octave_displacement, density_doubling, duration_overhang); musicCritic.overall density_doubling gate → inform (33/36 → 20/28); candidateQuality.repetition bar_copy_repetition gate → inform (39/40 → 24/31); candidateQuality.vocalFit parallel_doubling inform → demoted (17/21 → 4/14), the dimension now demoted; partJudge.score octave_displacement inform → demoted (Tier S 24/29 → 10/21, Tier H 45/80 unchanged). No cause is isolated here; a control that varies one thing about the anchors would be needed before naming one.",
+        "Real gains on Tier S: candidateQuality.registerCollisions section_swap demoted → gate (18/40 → 29/31) and the dimension leaves the demoted list (octave_displacement, parallel_doubling inform); candidateQuality.score role_inversion inform → gate (18/25 → 14/15); coherence.harmonicAgreement on pitch_shift_out_of_key / chord_tone_to_non_chord_tone rose on Tier S (14/28 → 19/22, 18/28 → 20/21).",
+        "Gate verdicts gained on pooled rows where the Tier H part is unchanged and only the Tier S share moved: benchmarkHarmony.harmonyScore onset_jitter (95/107 → 91/100; Tier H 69/78 = 88.5 % on its own, below the gate; Tier S 22/22) — so 'nothing hears onset_jitter at gate level' is now 'harmonyScore gates it on the pooled trials and not on the human anchors alone'; benchmarkHarmony.clashShare leap_injection, bar_copy_repetition, duration_overhang; partJudge.score parallel_doubling; coherence.score pitch_shift_out_of_key; coherence.harmonicAgreement cross_part_clash. Read byTier before gating on any of these.",
+        "Lists: gate 13 → 16 metrics, inform 13 → 14, demoted 13 → 14 (+ musicCritic.playability, + candidateQuality.vocalFit, − candidateQuality.registerCollisions), insufficient 13 unchanged. 115,744 applicable trials of 163,485 in 82.9 s (was 129,834 of 189,000)."
+      ]
+    },
+    "recalibratedTests": [
+      {
+        "suite": "benchmarkMeasures.test.ts",
+        "test": "a tournament task can be built around one track of an arrangement",
+        "was": "taskFromArrangement(..., \"guitar-rhythmic_harmony\")",
+        "now": "the guitar track found by instrument prefix (rock-full's guitar is guitar-harmonic_bed, 11 notes; keys took the RHYTHMIC_HARMONY role)",
+        "cause": "B-01 ArrangementArc re-roled rock-full: keys-rhythmic_harmony 250 notes, guitar-harmonic_bed 11 notes"
+      },
+      {
+        "suite": "positiveControlLedger.test.ts",
+        "test": "the ledger records detection per metric per family with the stated rule",
+        "was": "3 anchors (pop, rock, jazz); chordToneShare/listening_pitch_shift expected gate or inform",
+        "now": "4 anchors (dance-full added); the test asserts >= minTrials pitched targets and >= minTrials trials at the strongest rung before reading the verdict",
+        "cause": "the merged candidates carry 2 + 3 + 2 = 7 pitched parts (was >= 8), one short of the sensitivity gate's minTrials = 8; the rule's n is unchanged and non-trials are not counted"
+      },
+      {
+        "suite": "positiveControlLedger.test.ts",
+        "test": "a task anchor is measured by the judge, the harmony measure and coherence only",
+        "was": "\"guitar-rhythmic_harmony\"",
+        "now": "the guitar track by prefix",
+        "cause": "as above"
+      },
+      {
+        "suite": "realCorpusBenchmark.test.ts",
+        "test": "measurement reads metre, tempo, bars, parts, families and density from the MIDI",
+        "was": "bars 36",
+        "now": "bars 37, with the overrun asserted: the last note-off lies inside a 37th bar while the Song Model has 36",
+        "cause": "the merged strings-climax_layer holds its final chord (3 notes, 5.42 s from bar 35) 0.71 s past the last bar line at 76 BPM 3/4; measurePdmxWork counts bars to the last note-off. The same overrun exists on cinematic-midi (strings, +1.18 s) and dance-full (keys and synth, +0.24 s); recorded, outside B-08's files"
+      },
+      {
+        "suite": "blindListening.test.ts",
+        "test": "candidate controls degrade only the last (most active pitched) track",
+        "was": "targetTrackId === \"guitar-rhythmic_harmony\"",
+        "now": "targetTrackId equals the densest pitched track computed in the test by the stated rule, unique, never a kit",
+        "cause": "B-01 keys plays everywhere: rock-full's densest pitched part is keys-rhythmic_harmony (250 notes), the guitar is an 11-note bed"
+      },
+      {
+        "suite": "arrangementBenchmark.test.ts",
+        "test": "a case where no candidate passes the hard-rule gate is reported unselectable, counted in the aggregate and never averaged away",
+        "was": "(new)",
+        "now": "unselectable per case with the orchestrator's reason and hard-rule tally, selected-candidate metrics null, unselectableShare 100/0 per case and a lower-is-better quality metric in the aggregate, aggregateCases per metric, compare counts it as a regression and names the case, an old file without the field shows the row unavailable",
+        "cause": "B-00's hard-rule gate makes selected: null a legitimate outcome; ethnic-vocal is one on the merged brain"
+      }
+    ],
+    "honestLimits": [
+      "The 3bf23aa → 1467706 comparison is not a controlled experiment: five streams merged between the two snapshots and the corpus of selectable cases shrank from 9 to 8; the paired means are given, but no delta here isolates one stream.",
+      "gitSha in 1467706.json is the merge base, written with --git-sha; the run was taken from B-08 branch commit headSha, which differs from the base only in measurement, corpus, rights, listening-session and evidence files (git diff origin/main --stat touches no file on the arrangement path). A reader who wants the sha of the checkout that ran has it in headSha.",
+      "The benchmark's shape gained fields (unselectable, selectionReason, hardRule, unselectableShare, aggregateCases, headSha) without a version bump, so that 1467706.json remains comparable with 3bf23aa.json as asked; compareBenchmarkRuns takes the union of both files' metrics and shows a metric one file lacks as unavailable. A later reader should know that BENCHMARK_VERSION 2.0 covers both shapes.",
+      "ethnic-vocal's unselectability is reported, not repaired: the reference composer writes no bass or keys in that case's Chorus and Verse 2 although both are planned with chords under them; whether the plan or the composer is wrong is B-00/B-01's question.",
+      "Three of nine selected arrangements end after the Song Model's last bar (orchestral-midi +0.71 s, cinematic-midi +1.18 s, dance-full +0.24 s): a sustained final chord in the strings / keys / synth. Recorded from the test recalibration; not investigated; not B-08's file.",
+      "The ledger's Tier S losses (musicCritic.playability, candidateQuality.vocalFit and repetition, partJudge.score on octave_displacement) are stated as what the merged anchors show; nothing here says why the dimension stopped moving, and the corruption RNG stream is shared across anchors in order, so a Tier S row's exact counts depend on the anchor order as well as on the anchors.",
+      "Tier P (the owner's song) was orchestrated on the merged brain to check selectability (5 of 5 candidates pass the hard-rule gate, cand-D sparse selected) but was not re-snapshotted as a benchmark run in this commit."
+    ],
+    "pairedOverTheEightSelectableCases": {
+      "note": "3bf23aa.json's aggregate covers 9 cases and the new file's covers 8 (ethnic-vocal is unselectable now), so the CLI's aggregate deltas mix a corpus change with a composer change. These are the means of both files over the same 8 cases.",
+      "cases": [
+        "pop-full",
+        "ballad-piano-vocal",
+        "rock-full",
+        "dance-full",
+        "acoustic-demo",
+        "orchestral-midi",
+        "jazz-full",
+        "cinematic-midi"
+      ],
+      "metrics": {
+        "criticScore": {
+          "old8": 74.88,
+          "new8": 73.5,
+          "delta": -1.38
+        },
+        "shippedCriticScore": {
+          "old8": 75,
+          "new8": 73.5,
+          "delta": -1.5
+        },
+        "audioScore": {
+          "old8": 90.13,
+          "new8": 89.63,
+          "delta": -0.5
+        },
+        "playabilityErrors": {
+          "old8": 0,
+          "new8": 0,
+          "delta": 0
+        },
+        "harmonyScore": {
+          "old8": 98.24,
+          "new8": 97.78,
+          "delta": -0.46
+        },
+        "chordToneShare": {
+          "old8": 98.78,
+          "new8": 98.59,
+          "delta": -0.19
+        },
+        "clashShare": {
+          "old8": 0.54,
+          "new8": 0.81,
+          "delta": 0.27
+        },
+        "sourceHarmonyScore": {
+          "old8": 59.25,
+          "new8": 59.25,
+          "delta": 0
+        },
+        "trajectorySmoothness": {
+          "old8": 50.02,
+          "new8": 76.44,
+          "delta": 26.42
+        },
+        "seamArtefacts": {
+          "old8": 50.7,
+          "new8": 43.64,
+          "delta": -7.06
+        },
+        "motifRecurrence": {
+          "old8": 37.3,
+          "new8": 34.57,
+          "delta": -2.73
+        },
+        "candidateDistance": {
+          "old8": 6.6,
+          "new8": 6.67,
+          "delta": 0.07
+        },
+        "legacySectionConsistency": {
+          "old8": 100,
+          "new8": 100,
+          "delta": 0
+        },
+        "legacyCandidateDiversity": {
+          "old8": 50.4,
+          "new8": 50.12,
+          "delta": -0.28
+        },
+        "renderFailures": {
+          "old8": 5,
+          "new8": 5,
+          "delta": 0
+        },
+        "unselectableShare": {
+          "old8": null,
+          "new8": 0,
+          "delta": null
+        },
+        "noteCount": {
+          "old8": 575.25,
+          "new8": 467.13,
+          "delta": -108.12
+        },
+        "latencyMs": {
+          "old8": 39008.63,
+          "new8": 27172.75,
+          "delta": -11835.88
+        }
+      }
+    }
+  }
+}
