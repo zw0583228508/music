@@ -77,6 +77,7 @@ import {
   seedForCandidate,
   strategyForCandidate,
 } from "./candidateDiversity";
+import { adoptBrainPlan, readArrangementBrainEvidence } from "./brainPlanAdoption";
 import {
   applyBoundedRepair,
   boundedRepairSourceSeed,
@@ -345,6 +346,13 @@ type CandidateMaterializationInput = {
   /** PR-U5: the brief the job carries; stamped on the plan and read by its planning layers. */
   productionBrief?: BriefPlanRef | null;
   plannerHints?: { global?: GlobalPlannerHints; section?: SectionPlannerHints };
+  /**
+   * Brain B-00 (D4): the provider candidate's parameters. When they carry the
+   * Arrangement Brain's evidence (its own plan) and the provider materialises
+   * its track models, the runner grades and diversifies on *that* plan; the
+   * legacy planner supplies only the skeleton. Absent or foreign: unchanged.
+   */
+  candidateParameters?: GenerationParameters | Record<string, unknown> | null;
 };
 
 function materializeCandidate(input: CandidateMaterializationInput): {
@@ -429,7 +437,19 @@ function materializeCandidate(input: CandidateMaterializationInput): {
     registerTrackToken(descriptor.name, projectTrack.name);
     registerTrackToken(descriptor.role, projectTrack.name);
   }
-  const plan: ArrangementPlan = {
+  // Brain B-00 (D4): a provider that composed its own notes from its own plan
+  // is graded and diversified on that plan and on its candidate's own
+  // sections — not on a second legacy plan the notes never saw. Every other
+  // provider takes the legacy path below, unchanged.
+  const brainEvidence = input.trackModelsMaterialized
+    ? readArrangementBrainEvidence(input.candidateParameters)
+    : null;
+  const plan: ArrangementPlan = brainEvidence ? adoptBrainPlan({
+    legacyPlan: generatedPlan,
+    candidatePlan: candidate.plan,
+    brainPlan: brainEvidence.plan,
+    tracks,
+  }) : {
     ...generatedPlan,
     sections: generatedPlan.sections.map((section) => {
       const providerSection = providerSections.get(
@@ -1379,6 +1399,8 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
           trackModelsMaterialized: provider.definition.materializesTrackModels === true,
           productionBrief: jobBrief.ref,
           ...(jobBrief.plannerHints ? { plannerHints: jobBrief.plannerHints } : {}),
+          // B-00 (D4): the brain's own plan travels on the candidate's parameters.
+          candidateParameters: candidate.parameters,
         });
         const bounded = snapshot.repair
           ? applyBoundedRepair({
