@@ -10,8 +10,24 @@
  * Every stage is recorded (ok / skipped / failed) so the result is traceable
  * and repeatable. The note generator is injected: without one the built-in
  * reference composer runs, so the chain completes locally with no workers.
+ *
+ * Brain B-00 (integrity):
+ *   - The score that ranks a candidate is the critique of the notes that ship
+ *     (performed + playability-repaired). The critique of the composed notes
+ *     is kept as `compositionCritique`; the one before repair as `initialCritique`.
+ *   - The repair loop recomposes from its repaired plan; a candidate carries
+ *     the plan its notes were written from. A pass that changed nothing is
+ *     never reported as a repair.
+ *   - An empty part, an assumed tempo or meter, a constraint the performed
+ *     notes break and a playability check that did not run are findings on
+ *     the candidate. `error` findings fail the hard-rule gate, and a candidate
+ *     that fails the gate is never `selected` — `selected` is null with the
+ *     reason, and every candidate's findings are on the result.
+ *   - `traceable` means every canonical stage produced a record and no stage
+ *     was skipped or failed without a stated reason.
  */
 import type {
+  ArrangementBrainFinding,
   ArrangementCritique,
   ArrangementPlan,
   AudioCritique,
@@ -37,7 +53,7 @@ import { buildPartComposerPlan, buildPartGenerationRequest, type PartGenerationR
 import { planCandidateGeneration } from "./candidateStrategies";
 import { checkArrangementConstraints } from "./musicalConstraints";
 import { critiqueArrangement } from "./musicCritic";
-import { runCriticRepairLoop } from "./criticRepairLoop";
+import { applyPlanRepairs, runCriticRepairLoop, type RepairApplier } from "./criticRepairLoop";
 import { repairPlayability, type PlayabilityRepairReport } from "./playabilityRepair";
 import { applyPerformance } from "./performanceEngine";
 import { renderArrangementStems, renderStem, type StemRenderOptions } from "./referenceRenderWorker";
@@ -57,6 +73,12 @@ export type OrchestratorStage =
   | "critique" | "repair" | "perform" | "render" | "audio_critique" | "select"
   | "context";
 
+/** The stages every run must record, in order. `context` is optional and does not break traceability. */
+export const CANONICAL_STAGES: readonly OrchestratorStage[] = [
+  "plan", "parts", "candidates", "compose", "constraints",
+  "critique", "repair", "perform", "render", "audio_critique", "select",
+];
+
 export type StageRecord = {
   stage: OrchestratorStage;
   status: "ok" | "skipped" | "failed";
@@ -64,16 +86,35 @@ export type StageRecord = {
   evidence?: Record<string, number | string | boolean>;
 };
 
+export type CandidateFinding = ArrangementBrainFinding;
+
 export type OrchestratedCandidate = {
   candidateId: string;
   label: string;
   strategy: CandidateStrategyId;
   seed: number;
+  /** The plan these notes were composed from: the run's plan, or the repaired plan when a repair pass recomposed. */
+  plan: ArrangementPlan;
+  /** The notes that ship: performed and playability-repaired. */
   trackModels: TrackModel[];
   noteCount: number;
+  /** Composition errors + errors remaining in the performed notes. */
   constraintErrors: number;
+  /** Errors remaining in the performed, playability-repaired notes — the ones that would ship. */
+  performedConstraintErrors: number;
+  /** Critique of the composed notes before any repair pass. */
+  initialCritique: ArrangementCritique;
+  /** Critique of the composed notes that went to performance (after repair when it recomposed). */
+  compositionCritique: ArrangementCritique;
+  /** Critique of the shipped notes. This is what ranks. */
   critique: ArrangementCritique;
   repair: CriticRepairLoopResult | null;
+  /** True only when a repair pass changed the plan or the notes. */
+  repairApplied: boolean;
+  findings: CandidateFinding[];
+  /** The critic's hard rules plus the orchestrator's `error` findings. */
+  hardRule: { feasible: boolean; reasons: string[] };
+  playabilityRepairs: Array<{ trackId: string } & PlayabilityRepairReport>;
   audioCritique: AudioCritique | null;
   renderFeasible: boolean | null;
   finalScore: number;
@@ -94,6 +135,14 @@ export type OrchestrationResult = {
     audioScore: number | null;
     combinedScore: number;
   } | null;
+  /** Why the winner won, or why nobody did; every rejected candidate with its reasons. */
+  selection: {
+    reason: string;
+    eligible: string[];
+    rejected: Array<{ candidateId: string; reasons: string[] }>;
+  };
+  /** The tempo and meter the run composed at, and whether they were read or assumed. */
+  timing: { tempoBpm: number; tempoAssumed: boolean; meter: string; meterAssumed: boolean };
   traceable: boolean;
 };
 
@@ -137,6 +186,14 @@ export type OrchestrateInput = {
    * Pass an explicit `not_available` slot to suppress that derivation.
    */
   styleGrammar?: StyleGrammarSlot;
+  /**
+   * B-00: the plan-level repair applier the repair loop runs before the
+   * orchestrator recomposes from the returned plan. Defaults to the loop's
+   * deterministic `applyPlanRepairs`; injectable (like `composeParts`) so the
+   * recompose path can be exercised by a test or an experiment. Whatever it
+   * returns, the orchestrator still recomposes and re-critiques the notes.
+   */
+  repairApplier?: RepairApplier;
 };
 
 // ---------------------------------------------------------------------------
@@ -273,7 +330,39 @@ function trackModelFor(
   };
 }
 
+/** Tasks that decorate a section rather than carry a planned family; dropping one is a warning, not a failure. */
+const DECORATIVE_TASKS = new Set<PartGenerationRequest["task"]>(["FILL", "TRANSITION", "INTRO", "ENDING"]);
+/** Tasks that need no harmony to write. */
+const UNPITCHED_TASKS = new Set<PartGenerationRequest["task"]>(["DRUMS", "PERCUSSION"]);
+
+/**
+ * `traceable` (B-00): every canonical stage has a record, and no record is
+ * skipped or failed without saying why. An optional `context` stage neither
+ * adds nor removes traceability.
+ */
+export function isTraceable(stages: StageRecord[]): boolean {
+  return CANONICAL_STAGES.every((stage) => stages.some((record) => record.stage === stage)) &&
+    stages.every((record) => record.status === "ok" || record.detail.trim().length > 0);
+}
+
 // ---------------------------------------------------------------------------
+
+type PlanLayers = {
+  globalPlan: NonNullable<ArrangementPlan["globalPlan"]>;
+  sectionPlan: NonNullable<ArrangementPlan["sectionPlan"]>;
+  orchestrationBudget: NonNullable<ArrangementPlan["orchestrationBudget"]>;
+  transitionPlan: NonNullable<ArrangementPlan["transitionPlan"]>;
+};
+
+function layersOf(plan: ArrangementPlan): PlanLayers | null {
+  if (!plan.globalPlan || !plan.sectionPlan || !plan.orchestrationBudget || !plan.transitionPlan) return null;
+  return {
+    globalPlan: plan.globalPlan,
+    sectionPlan: plan.sectionPlan,
+    orchestrationBudget: plan.orchestrationBudget,
+    transitionPlan: plan.transitionPlan,
+  };
+}
 
 export function orchestrateArrangement(input: OrchestrateInput): OrchestrationResult {
   const now = input.now ?? new Date(0);
@@ -284,8 +373,28 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
   ) => stages.push({ stage, status, detail, evidence });
 
   const songModel = input.songModel;
-  const tempoBpm = songModel.tempoMap?.[0]?.bpm ?? 120;
-  const meter = songModel.meterMap?.[0]?.meter ?? "4/4";
+  // B-00: a missing tempo or meter is not silently 120 in 4/4. The run still
+  // composes — at an *assumed* value, so the trace is inspectable — but every
+  // candidate carries an `error` finding and none can pass the hard-rule gate.
+  const readTempo = songModel.tempoMap?.[0]?.bpm;
+  const readMeter = songModel.meterMap?.[0]?.meter;
+  const tempoAssumed = !(typeof readTempo === "number" && Number.isFinite(readTempo) && readTempo > 0);
+  const meterAssumed = !(typeof readMeter === "string" && /^\d+\/\d+$/.test(readMeter));
+  const tempoBpm = tempoAssumed ? 120 : readTempo;
+  const meter = meterAssumed ? "4/4" : readMeter;
+  const timingFindings: CandidateFinding[] = [];
+  if (tempoAssumed) {
+    timingFindings.push({
+      kind: "unknown_tempo", severity: "error",
+      message: "Tempo is UNKNOWN: the Song Model has no tempo map, so the run composed at an assumed 120 BPM. Nothing composed at an assumed tempo may ship.",
+    });
+  }
+  if (meterAssumed) {
+    timingFindings.push({
+      kind: "unknown_meter", severity: "error",
+      message: "Meter is UNKNOWN: the Song Model has no meter map, so the run composed in an assumed 4/4. Nothing composed in an assumed meter may ship.",
+    });
+  }
   const compose = input.composeParts ??
     ((request: PartGenerationRequest) => composeReferencePart(request, { tempoBpm, meter }));
   const composerName = input.composerName ??
@@ -313,6 +422,10 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     style: globalPlan.style,
     climaxBar: globalPlan.climax?.atBar ?? 0,
     confidence: globalPlan.confidence,
+    tempoBpm,
+    tempoAssumed,
+    meter,
+    meterAssumed,
   });
 
   // --- 2. parts ---------------------------------------------------------
@@ -328,12 +441,6 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
   record("candidates", "ok", `${candidatePlan.candidates.length} strategies`, {
     strategies: candidatePlan.candidates.map((c) => c.strategy).join(","),
   });
-
-  const layers = {
-    globalPlan, sectionPlan,
-    budgetWindows: orchestrationBudget.windows,
-    transitions: transitionPlan.transitions,
-  };
 
   // Solved once for the arrangement, not once per part: two parts voicing the
   // same chord differently are not voicing the same chord.
@@ -361,26 +468,36 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     );
   }
 
-  const composed: OrchestratedCandidate[] = [];
-  let totalNotes = 0;
-  let totalConstraintErrors = 0;
-  let renderedAny = false;
-  const playabilityRepairs: Array<{ candidate: string; trackId: string } & PlayabilityRepairReport> = [];
-
-  for (const candidate of candidatePlan.candidates) {
-    // --- 4. compose ---------------------------------------------------
-    // One physical instrument is one performer: parts for the same instrument
-    // merge into a single track even when their section roles differ, so the
-    // constraint engine sees the real simultaneous load (limbs, hands, strings).
+  /**
+   * Compose every task of a part plan for one candidate against one set of
+   * plan layers. Used for the first composition and again when a repair pass
+   * changes the plan, so the repaired plan is what the shipped notes come from.
+   *
+   * One physical instrument is one performer: parts for the same instrument
+   * merge into a single track even when their section roles differ, so the
+   * constraint engine sees the real simultaneous load (limbs, hands, strings).
+   * A part that writes nothing is a finding, not a silent `continue`.
+   */
+  const composeCandidate = (
+    layers: PlanLayers,
+    tasks: typeof partPlan.tasks,
+    candidate: (typeof candidatePlan.candidates)[number],
+  ): { trackModels: TrackModel[]; findings: CandidateFinding[] } => {
+    const requestLayers = {
+      globalPlan: layers.globalPlan, sectionPlan: layers.sectionPlan,
+      budgetWindows: layers.orchestrationBudget.windows,
+      transitions: layers.transitionPlan.transitions,
+    };
     const byTrack = new Map<string, { instrument: string; role: string; notes: MusicalNote[] }>();
     const existing: Array<{ instrument: string; role: string; noteCount: number }> = [];
     // The same parts again, with their notes. V1 carries only counts, and a
     // count is not something a later part can arrange against.
     const siblings: Array<{ instrument: string; role: string; notes: MusicalNote[] }> = [];
-    for (const task of partPlan.tasks) {
+    const findings: CandidateFinding[] = [];
+    for (const task of tasks) {
       const adjustment = candidate.partAdjustments.find((a) => a.taskId === task.id);
       const request = buildPartGenerationRequest(
-        songModel, { ...task, seed: adjustment?.seed ?? task.seed }, layers, existing,
+        songModel, { ...task, seed: adjustment?.seed ?? task.seed }, requestLayers, existing,
       );
       const raw = compose(request);
       let notes = applyDensity(raw, adjustment?.densityMultiplier ?? 1);
@@ -396,13 +513,66 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
           if (pass.changed > 0) contextPasses.push(pass);
         }
       }
-      if (notes.length === 0) continue;
+      if (notes.length === 0) {
+        const section = layers.sectionPlan.sections.find((s) => s.sectionName === task.sectionName);
+        const planned = section?.activeInstrumentFamilies.includes(task.instrument) ?? false;
+        const decorative = DECORATIVE_TASKS.has(task.task);
+        const pitched = !UNPITCHED_TASKS.has(task.task);
+        const harmonyUnder = request.context.currentBars.chords.length;
+        // Severity names the cause, not a guess at it: a planned part that had
+        // material and wrote nothing is an error; a pitched part with no chord
+        // under its bars had nothing to write from — that is the plan's
+        // defect (a family planned where there is no harmony), reported as a
+        // warning with the missing harmony as the reason.
+        const noMaterial = pitched && harmonyUnder === 0;
+        const severity = planned && !decorative && !noMaterial ? "error" : "warning";
+        findings.push({
+          kind: "dropped_part",
+          severity,
+          instrument: task.instrument,
+          taskId: task.id,
+          sectionName: task.sectionName,
+          startBar: task.startBar,
+          endBar: task.endBar,
+          message: severity === "error"
+            ? `${task.instrument} (${task.task}) is planned in "${task.sectionName}" (bars ${task.startBar}-${task.endBar}) with ${harmonyUnder} chord(s) under it but wrote no notes; the section ships without it.`
+            : noMaterial
+              ? `${task.instrument} (${task.task}) wrote no notes for "${task.sectionName}" (bars ${task.startBar}-${task.endBar}): no chord lies under those bars, so a pitched part had no harmony to write from.`
+              : `${task.instrument} (${task.task}) wrote no notes for "${task.sectionName}" (bars ${task.startBar}-${task.endBar}).`,
+        });
+        continue;
+      }
       const key = task.instrument;
       const entry = byTrack.get(key) ?? { instrument: task.instrument, role: task.role, notes: [] };
       entry.notes.push(...notes);
       byTrack.set(key, entry);
       existing.push({ instrument: task.instrument, role: task.role, noteCount: notes.length });
       siblings.push({ instrument: task.instrument, role: task.role, notes });
+    }
+    // A family the section plan lists as active for which the part plan made
+    // no task at all (the owner's song: `keys` was LEAD in every sung section
+    // and `taskFor("LEAD")` returns nothing) wrote nothing and would have
+    // shipped as silence with no record. The cause that can be read from the
+    // plan — the role that produced no task — is named; the fix is B-01's.
+    for (const section of layers.sectionPlan.sections) {
+      for (const family of section.activeInstrumentFamilies) {
+        const hasTask = tasks.some((t) => t.sectionName === section.sectionName && t.instrument === family);
+        if (hasTask) continue;
+        const role = layers.sectionPlan.roleAssignments.find(
+          (r) => r.sectionName === section.sectionName && r.instrument === family,
+        )?.role ?? null;
+        findings.push({
+          kind: "planned_family_silent",
+          severity: "error",
+          instrument: family,
+          sectionName: section.sectionName,
+          startBar: section.startBar,
+          endBar: section.endBar,
+          message: `${family} is an active family of "${section.sectionName}" (bars ${section.startBar}-${section.endBar}) but no part task exists for it` +
+            (role ? ` (its role there is ${role}, which produced no task)` : " (it has no role assignment there)") +
+            "; the section ships without it.",
+        });
+      }
     }
     // Merged parts can now double the same pitch at the same instant; keep the
     // loudest and drop the duplicate rather than asking for a third hand.
@@ -412,8 +582,23 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     const trackModels = [...byTrack.values()]
       .map((entry, index) => trackModelFor(entry.instrument, entry.role, entry.notes.sort((a, b) => a.start - b.start), index + 1))
       .filter((track) => track.notes.length > 0);
-    const noteCount = trackModels.reduce((sum, t) => sum + t.notes.length, 0);
-    totalNotes += noteCount;
+    return { trackModels, findings };
+  };
+
+  const composed: OrchestratedCandidate[] = [];
+  let totalNotes = 0;
+  let totalConstraintErrors = 0;
+  let totalDroppedParts = 0;
+  let renderedAny = false;
+  const allPlayabilityRepairs: Array<{ candidate: string; trackId: string } & PlayabilityRepairReport> = [];
+  const baseLayers = layersOf(plan)!;
+
+  for (const candidate of candidatePlan.candidates) {
+    // --- 4. compose ---------------------------------------------------
+    const composition = composeCandidate(baseLayers, partPlan.tasks, candidate);
+    let candidatePlanLayers: ArrangementPlan = plan;
+    let trackModels = composition.trackModels;
+    let findings: CandidateFinding[] = [...timingFindings, ...composition.findings];
 
     // --- 5. constraints ------------------------------------------------
     const constraintReport = checkArrangementConstraints(
@@ -426,12 +611,45 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
 
     // --- 6/7. critique + repair ---------------------------------------
     const initialCritique = critiqueArrangement({ songModel, plan, trackModels });
-    const repair = runCriticRepairLoop({ songModel, plan, trackModels });
-    const critique = repair.finalCritique;
+    // B-00: the repair applier edits the plan *and recomposes from it*, so the
+    // loop's re-critique judges notes that exist. Deterministic: the same
+    // repaired plan yields the same part plan, seeds and notes.
+    const planApplier = input.repairApplier ?? applyPlanRepairs;
+    const recomposeFromRepairedPlan: RepairApplier = (context) => {
+      const planned = planApplier(context);
+      if (planned.applied.length === 0 || JSON.stringify(planned.plan) === JSON.stringify(context.plan)) {
+        // Nothing changed; say so rather than claim a repair.
+        return { plan: context.plan, trackModels: context.trackModels, applied: [] };
+      }
+      const layers = layersOf(planned.plan);
+      if (!layers) return { plan: context.plan, trackModels: context.trackModels, applied: [] };
+      const repairedPartPlan = buildPartComposerPlan(
+        songModel, layers.globalPlan, layers.sectionPlan, layers.transitionPlan.transitions, { now },
+      );
+      planned.plan.partComposerPlan = repairedPartPlan;
+      const recomposed = composeCandidate(layers, repairedPartPlan.tasks, candidate);
+      // Dropped parts of the recomposition replace the original composition's.
+      findings = [...timingFindings, ...recomposed.findings];
+      return { plan: planned.plan, trackModels: recomposed.trackModels, applied: planned.applied };
+    };
+    const repair = runCriticRepairLoop({
+      songModel, plan, trackModels, initialCritique, applyRepair: recomposeFromRepairedPlan,
+    });
+    const repairApplied = repair.appliedPasses > 0;
+    if (repairApplied) {
+      candidatePlanLayers = repair.plan;
+      if (repair.trackModels) trackModels = repair.trackModels;
+    } else {
+      // The recomposition never ran or changed nothing: the original findings stand.
+      findings = [...timingFindings, ...composition.findings];
+    }
+    const compositionCritique = repairApplied ? repair.finalCritique : initialCritique;
+    const planForPerformance = layersOf(candidatePlanLayers) ?? baseLayers;
 
     // --- 8. perform ----------------------------------------------------
+    const playabilityRepairs: OrchestratedCandidate["playabilityRepairs"] = [];
     const performed = trackModels.map((track) => {
-      const assignment = sectionPlan.roleAssignments.find(
+      const assignment = planForPerformance.sectionPlan.roleAssignments.find(
         (r) => r.instrument === track.instrument,
       );
       const result = applyPerformance({
@@ -442,10 +660,10 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
         notes: track.notes,
         tempoBpm,
         meter,
-        groove: globalPlan.grooveStrategy,
-        style: globalPlan.style,
+        groove: planForPerformance.globalPlan.grooveStrategy,
+        style: planForPerformance.globalPlan.style,
         dynamicShape: assignment?.dynamicShape,
-        phrases: sectionPlan.phrases,
+        phrases: planForPerformance.sectionPlan.phrases,
         seed: candidate.seed,
         // Only articulations this instrument can actually map are performed,
         // and a monophonic instrument stays monophonic after humanisation.
@@ -464,7 +682,8 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
       const repaired = repairPlayability({ notes: result.notes, definition: track.instrumentDefinition });
       if (repaired.report.rangeFolds || repaired.report.leapFolds || repaired.report.durationLengthened ||
         repaired.report.breathTruncated || repaired.report.polyphonyReleases || repaired.report.dropped) {
-        playabilityRepairs.push({ candidate: candidate.label, trackId: track.id, ...repaired.report });
+        playabilityRepairs.push({ trackId: track.id, ...repaired.report });
+        allPlayabilityRepairs.push({ candidate: candidate.label, trackId: track.id, ...repaired.report });
       }
       const performedTrack: TrackModel = {
         ...track,
@@ -487,6 +706,13 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
         }],
         { tempoBpm },
       ).byTrack[0];
+      // B-00: a check that produced no report is a failed check, not a pass.
+      if (!playability) {
+        findings.push({
+          kind: "playability_check_missing", severity: "error", instrument: track.instrument,
+          message: `${track.instrument}: the post-performance playability check produced no report; the evidence cannot claim the part is playable.`,
+        });
+      }
       performedTrack.performanceEvidence = {
         version: "1.0",
         seed: candidate.seed,
@@ -503,12 +729,14 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
           start: item.start, end: item.end,
         })),
         playability: {
-          valid: playability ? playability.feasible : true,
+          valid: playability ? playability.feasible : false,
           checkedNotes: performedTrack.notes.length,
-          violations: (playability?.violations ?? []).map((violation) =>
-            typeof (violation as { message?: unknown }).message === "string"
-              ? (violation as { message: string }).message
-              : JSON.stringify(violation)),
+          violations: playability
+            ? playability.violations.map((violation) =>
+              typeof (violation as { message?: unknown }).message === "string"
+                ? (violation as { message: string }).message
+                : JSON.stringify(violation))
+            : ["the post-performance playability check produced no report"],
         },
         // Computed last: it covers every field above that the renderer echoes.
         performedMaterialSha256: performedMaterialSha256(performedTrack),
@@ -528,6 +756,16 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
       { tempoBpm },
     );
     totalConstraintErrors += performedConstraints.errorCount;
+    if (performedConstraints.errorCount > 0) {
+      findings.push({
+        kind: "performed_constraints", severity: "error",
+        message: `${performedConstraints.errorCount} playability error(s) remain in the performed notes (${performedConstraints.byTrack.filter((t) => !t.feasible).map((t) => t.instrument).join(", ")}).`,
+      });
+    }
+
+    // --- 6 again, on the shipped notes ---------------------------------
+    // B-00: the score that ranks is the score of the notes that ship.
+    const critique = critiqueArrangement({ songModel, plan: candidatePlanLayers, trackModels: performed });
 
     // --- 9/10. render + audio critique ---------------------------------
     let audioCritique: AudioCritique | null = null;
@@ -556,6 +794,15 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
       renderedAny = true;
     }
 
+    const noteCount = performed.reduce((sum, t) => sum + t.notes.length, 0);
+    totalNotes += noteCount;
+    const droppedParts = findings.filter((f) => f.kind === "dropped_part" || f.kind === "planned_family_silent").length;
+    totalDroppedParts += droppedParts;
+    const errorFindings = findings.filter((f) => f.severity === "error");
+    const hardRuleReasons = [
+      ...critique.hardRuleFindings.filter((f) => f.severity === "error").map((f) => `critic: ${f.message}`),
+      ...errorFindings.map((f) => `${f.kind}: ${f.message}`),
+    ];
     const symbolic = critique.overallScore;
     const audio = audioCritique?.overallScore ?? null;
     composed.push({
@@ -563,48 +810,73 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
       label: candidate.label,
       strategy: candidate.strategy,
       seed: candidate.seed,
+      plan: candidatePlanLayers,
       trackModels: performed,
       noteCount,
       // Composition errors and performance errors both count; a candidate is
       // only clean if what reaches the renderer is clean.
       constraintErrors: constraintReport.errorCount + performedConstraints.errorCount,
+      performedConstraintErrors: performedConstraints.errorCount,
+      initialCritique,
+      compositionCritique,
       critique,
       repair: repair.passes.length ? repair : null,
+      repairApplied,
+      findings,
+      hardRule: { feasible: critique.feasible && errorFindings.length === 0, reasons: hardRuleReasons },
+      playabilityRepairs,
       audioCritique,
       renderFeasible,
       finalScore: audio === null ? symbolic : Number((symbolic * 0.6 + audio * 0.4).toFixed(2)),
     });
-    void initialCritique;
   }
 
   record("compose", composed.length ? "ok" : "failed",
-    `${totalNotes} notes across ${composed.length} candidate(s) via ${composerName}`,
-    { notes: totalNotes, composer: composerName });
+    `${totalNotes} notes across ${composed.length} candidate(s) via ${composerName}` +
+      (totalDroppedParts ? `; ${totalDroppedParts} planned part(s) or families wrote no notes` : ""),
+    { notes: totalNotes, composer: composerName, droppedParts: totalDroppedParts });
   record("constraints", totalConstraintErrors === 0 ? "ok" : "failed",
-    `${totalConstraintErrors} playability error(s)`, { errors: totalConstraintErrors });
+    `${totalConstraintErrors} playability error(s) in the performed notes`, { errors: totalConstraintErrors });
   record("critique", composed.length ? "ok" : "skipped",
-    composed.length ? `mean symbolic ${(composed.reduce((s, c) => s + c.critique.overallScore, 0) / composed.length).toFixed(1)}` : "no candidates");
-  const repaired = composed.filter((c) => c.repair && c.repair.passes.length > 0).length;
-  record("repair", repaired ? "ok" : "skipped", `${repaired} candidate(s) repaired`);
-  record("perform", composed.length ? "ok" : "skipped",
-    playabilityRepairs.length
-      ? `performance humanisation applied; ${playabilityRepairs.length} part(s) repaired for playability (${playabilityRepairs.reduce((s, r) => s + r.leapFolds, 0)} leap folds, ${playabilityRepairs.reduce((s, r) => s + r.polyphonyReleases, 0)} releases, ${playabilityRepairs.reduce((s, r) => s + r.dropped, 0)} dropped)`
-      : "performance humanisation applied",
-    playabilityRepairs.length
+    composed.length
+      ? `mean shipped ${(composed.reduce((s, c) => s + c.critique.overallScore, 0) / composed.length).toFixed(1)} (composed ${(composed.reduce((s, c) => s + c.compositionCritique.overallScore, 0) / composed.length).toFixed(1)}); judged on the performed, repaired notes`
+      : "no candidates",
+    composed.length
       ? {
-          repairedParts: playabilityRepairs.length,
-          leapFolds: playabilityRepairs.reduce((s, r) => s + r.leapFolds, 0),
-          rangeFolds: playabilityRepairs.reduce((s, r) => s + r.rangeFolds, 0),
-          polyphonyReleases: playabilityRepairs.reduce((s, r) => s + r.polyphonyReleases, 0),
-          dropped: playabilityRepairs.reduce((s, r) => s + r.dropped, 0),
-          residual: playabilityRepairs.filter((r) => r.residual.length).length,
-          parts: playabilityRepairs.map((r) => `${r.candidate}:${r.trackId.split("--").pop()}`).join(","),
+          meanShipped: Number((composed.reduce((s, c) => s + c.critique.overallScore, 0) / composed.length).toFixed(2)),
+          meanComposed: Number((composed.reduce((s, c) => s + c.compositionCritique.overallScore, 0) / composed.length).toFixed(2)),
+        }
+      : undefined);
+  const repairedCount = composed.filter((c) => c.repairApplied).length;
+  const attempted = composed.filter((c) => c.repair && c.repair.passes.length > 0).length;
+  record("repair", repairedCount ? "ok" : "skipped",
+    repairedCount
+      ? `${repairedCount} candidate(s) repaired (plan edited and recomposed); ${attempted - repairedCount} attempted pass(es) changed nothing`
+      : attempted
+        ? `${attempted} candidate(s) attempted a repair pass; none changed the plan or the notes, so nothing was repaired`
+        : "no candidate was in the repair band",
+    { repaired: repairedCount, attempted });
+  record("perform", composed.length ? "ok" : "skipped",
+    composed.length
+      ? allPlayabilityRepairs.length
+        ? `performance humanisation applied; ${allPlayabilityRepairs.length} part(s) repaired for playability (${allPlayabilityRepairs.reduce((s, r) => s + r.leapFolds, 0)} leap folds, ${allPlayabilityRepairs.reduce((s, r) => s + r.polyphonyReleases, 0)} releases, ${allPlayabilityRepairs.reduce((s, r) => s + r.dropped, 0)} dropped)`
+        : "performance humanisation applied"
+      : "no candidates to perform",
+    allPlayabilityRepairs.length
+      ? {
+          repairedParts: allPlayabilityRepairs.length,
+          leapFolds: allPlayabilityRepairs.reduce((s, r) => s + r.leapFolds, 0),
+          rangeFolds: allPlayabilityRepairs.reduce((s, r) => s + r.rangeFolds, 0),
+          polyphonyReleases: allPlayabilityRepairs.reduce((s, r) => s + r.polyphonyReleases, 0),
+          dropped: allPlayabilityRepairs.reduce((s, r) => s + r.dropped, 0),
+          residual: allPlayabilityRepairs.filter((r) => r.residual.length).length,
+          parts: allPlayabilityRepairs.map((r) => `${r.candidate}:${r.trackId.split("--").pop()}`).join(","),
         }
       : undefined);
   record("render", renderedAny ? "ok" : "skipped",
-    renderedAny ? "stems rendered with attestations" : "rendering disabled");
+    renderedAny ? "stems rendered with attestations" : "rendering disabled by the caller (render: false)");
   record("audio_critique", renderedAny ? "ok" : "skipped",
-    renderedAny ? "audio critique complete" : "no rendered audio");
+    renderedAny ? "audio critique complete" : "no rendered audio to critique");
 
   // --- 11. select --------------------------------------------------------
   const abComparison = renderedAny
@@ -613,25 +885,34 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
         .map((c) => ({ candidateId: c.candidateId, label: c.label, critique: c.audioCritique! })))
     : null;
 
-  const ranked = [...composed].sort((a, b) =>
-    Number(b.critique.feasible) - Number(a.critique.feasible) ||
+  // B-00: only candidates that pass the hard-rule gate compete. There is no
+  // "best available" among the ones that failed it.
+  const eligible = composed.filter((c) => c.hardRule.feasible);
+  const rejected = composed
+    .filter((c) => !c.hardRule.feasible)
+    .map((c) => ({ candidateId: c.candidateId, reasons: c.hardRule.reasons }));
+  const ranked = [...eligible].sort((a, b) =>
     b.finalScore - a.finalScore ||
     a.candidateId.localeCompare(b.candidateId));
   const winner = ranked[0] ?? null;
+  const selectionReason = winner
+    ? `highest combined score of ${eligible.length} candidate(s) that passed the hard-rule gate (${winner.strategy})` +
+      (rejected.length ? `; ${rejected.length} rejected` : "")
+    : composed.length
+      ? `no candidate passed the hard-rule gate: ${rejected.map((r) => `${r.candidateId} [${r.reasons.join(" | ")}]`).join("; ")}`
+      : "nothing to select";
   const selected = winner
     ? {
         candidateId: winner.candidateId,
-        reason: winner.critique.feasible
-          ? `highest combined score (${winner.strategy})`
-          : "no candidate passed the hard-rule gate; best available",
+        reason: selectionReason,
         symbolicScore: winner.critique.overallScore,
         audioScore: winner.audioCritique?.overallScore ?? null,
         combinedScore: winner.finalScore,
       }
     : null;
   record("select", winner ? "ok" : "failed",
-    winner ? `${winner.candidateId} (${winner.strategy})` : "nothing to select",
-    winner ? { candidateId: winner.candidateId, combinedScore: winner.finalScore } : undefined);
+    winner ? `${winner.candidateId} (${winner.strategy}); ${rejected.length} rejected by the hard-rule gate` : selectionReason,
+    { eligible: eligible.length, rejected: rejected.length, ...(winner ? { candidateId: winner.candidateId, combinedScore: winner.finalScore } : {}) });
 
   return {
     version: ORCHESTRATOR_VERSION,
@@ -642,6 +923,8 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     candidates: composed,
     abComparison,
     selected,
-    traceable: stages.length === 11,
+    selection: { reason: selectionReason, eligible: eligible.map((c) => c.candidateId), rejected },
+    timing: { tempoBpm, tempoAssumed, meter, meterAssumed },
+    traceable: isTraceable(stages),
   };
 }

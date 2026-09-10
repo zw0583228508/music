@@ -10,6 +10,13 @@
  * scope via the Part Composer / a provider; the built-in default performs
  * deterministic plan-level repairs so the loop is useful (and testable) with no
  * model workers online.
+ *
+ * Brain B-00: the result carries the plan (and, when the applier recomposed,
+ * the notes) that `finalCritique` was computed on, and every pass records
+ * whether it changed the plan or the notes, separately from what it claimed
+ * to apply. A pass that changed nothing is not a repair and stops the loop.
+ * The orchestrator injects an applier that recomposes from the repaired plan,
+ * so the loop's re-critique judges notes that exist.
  */
 import type {
   ArrangementCritique,
@@ -158,16 +165,19 @@ export const applyPlanRepairs: RepairApplier = ({ requests, plan }) => {
         break;
       }
       case "leadCompatibility": {
+        // B-00: this used to report success unconditionally. Now it reports
+        // only what it ducked, and nothing when there was nothing to duck.
+        let ducked = 0;
         for (const window of next.orchestrationBudget?.windows ?? []) {
           if (window.vocalAttention >= 0.6) {
-            window.instrumentAdjustments = window.instrumentAdjustments.map((a) =>
-              a.densityMultiplier > 0.85
-                ? { ...a, densityMultiplier: 0.6, note: `${a.note}; repaired: duck under the vocal` }
-                : a,
-            );
+            window.instrumentAdjustments = window.instrumentAdjustments.map((a) => {
+              if (a.densityMultiplier <= 0.85) return a;
+              ducked += 1;
+              return { ...a, densityMultiplier: 0.6, note: `${a.note}; repaired: duck under the vocal` };
+            });
           }
         }
-        applied.push(`${request.id}: ducked support under the vocal`);
+        if (ducked > 0) applied.push(`${request.id}: ducked ${ducked} support adjustment(s) under the vocal`);
         break;
       }
       case "orchestration": {
@@ -211,29 +221,44 @@ export const applyPlanRepairs: RepairApplier = ({ requests, plan }) => {
 // Loop
 // ---------------------------------------------------------------------------
 
+/** Structural equality by canonical JSON; the loop's plans are small enough for this to be the honest check. */
+function sameJson(left: unknown, right: unknown): boolean {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
 export function runCriticRepairLoop(input: {
   songModel: SongModelData;
   plan: ArrangementPlan;
   trackModels?: TrackModel[];
   applyRepair?: RepairApplier;
   maxPasses?: number;
+  /** B-00: the caller's critique of the same plan and notes, so it is not computed twice. */
+  initialCritique?: ArrangementCritique;
 }): CriticRepairLoopResult {
   const maxPasses = Math.max(1, Math.min(MAX_CRITIC_REPAIR_PASSES, input.maxPasses ?? MAX_CRITIC_REPAIR_PASSES));
   const applyRepair = input.applyRepair ?? applyPlanRepairs;
 
   let plan = input.plan;
   let trackModels = input.trackModels;
-  let critique = critiqueArrangement({ songModel: input.songModel, plan, trackModels });
+  let critique = input.initialCritique ?? critiqueArrangement({ songModel: input.songModel, plan, trackModels });
   const initialScore = critique.overallScore;
   const passes: CriticRepairPass[] = [];
+  const changed = { plan: false, notes: false };
+  const finish = (outcome: CriticRepairLoopResult["outcome"]): CriticRepairLoopResult => ({
+    version: "1.0", method: METHOD, maxPasses, outcome,
+    initialScore, finalScore: critique.overallScore, passes, finalCritique: critique,
+    // B-00: the result carries what it critiqued. A caller that ranks on
+    // `finalCritique` must ship `plan` and `trackModels`, or say the repair
+    // was advisory; before this the repaired plan was discarded and its score kept.
+    plan,
+    ...(changed.notes && trackModels ? { trackModels } : {}),
+    changed: { ...changed },
+    appliedPasses: passes.filter((p) => p.applied.length > 0 && (p.planChanged || p.notesChanged)).length,
+  });
 
   const decision = shouldAttemptRepair(critique);
   if (!decision.attempt) {
-    return {
-      version: "1.0", method: METHOD, maxPasses,
-      outcome: critique.feasible ? "not_needed" : "infeasible",
-      initialScore, finalScore: critique.overallScore, passes, finalCritique: critique,
-    };
+    return finish(critique.feasible ? "not_needed" : "infeasible");
   }
 
   let outcome: CriticRepairLoopResult["outcome"] = "exhausted";
@@ -243,8 +268,14 @@ export function runCriticRepairLoop(input: {
 
     const scoreBefore = critique.overallScore;
     const result = applyRepair({ pass, requests, plan, trackModels });
+    // What a pass claims (`applied`) and what it did (`planChanged`,
+    // `notesChanged`) are recorded separately; only the latter makes it a repair.
+    const planChanged = !sameJson(result.plan, plan);
+    const notesChanged = result.trackModels !== undefined && !sameJson(result.trackModels, trackModels);
     plan = result.plan;
     trackModels = result.trackModels ?? trackModels;
+    changed.plan ||= planChanged;
+    changed.notes ||= notesChanged;
     const nextCritique = critiqueArrangement({ songModel: input.songModel, plan, trackModels });
 
     passes.push({
@@ -254,9 +285,14 @@ export function runCriticRepairLoop(input: {
       scoreBefore,
       scoreAfter: nextCritique.overallScore,
       feasibleAfter: nextCritique.feasible,
+      planChanged,
+      notesChanged,
     });
     critique = nextCritique;
 
+    // A pass that changed nothing cannot have improved anything; stop rather
+    // than re-critique the same material until the budget runs out.
+    if (!planChanged && !notesChanged) { outcome = "plateau"; break; }
     if (nextCritique.overallScore - scoreBefore < MIN_IMPROVEMENT) {
       outcome = nextCritique.overallScore > initialScore + MIN_IMPROVEMENT ? "improved" : "plateau";
       break;
@@ -270,8 +306,5 @@ export function runCriticRepairLoop(input: {
     outcome = "improved";
   }
 
-  return {
-    version: "1.0", method: METHOD, maxPasses, outcome,
-    initialScore, finalScore: critique.overallScore, passes, finalCritique: critique,
-  };
+  return finish(outcome);
 }

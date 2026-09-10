@@ -5972,6 +5972,161 @@ any of it.
   `types.b05b.ts` duplicates the contract until the lead unifies it. Sung-ness
   is read from vocal evidence only (B-01's "sung by default" rule is not
   assumed here). Nothing here changes what the orchestrator selects or ships.
+### PR-B00 — Brain B-00: the score of the shipped notes
+
+- **PR-B00** ✅ — `ws-brain-b00` (Arrangement & Orchestration Brain, stream
+  B-00: the integrity defects in the orchestrator's judge / repair / select
+  path, honest provider evidence, one planner per job, and the mechanical
+  decomposition of the reference composer). The adversarial audit
+  (`docs/brain/reviews/2026-09-10-audit-fake-intelligence-and-tests.md`) showed
+  the judging half of the chain was decorative: the score that ranked a
+  candidate was computed on notes that never shipped, the repair loop raised
+  scores without touching a note and its plan was thrown away, a drums-only
+  arrangement scored 73 and was selected, empty parts vanished with every
+  stage `ok`, tempo and meter defaulted to 120 / 4/4, provider confidence was
+  `0.5 + score/200` and `smokeTested: true` was a literal, and the job runner
+  graded and diversified the brain's candidates on a second, legacy plan.
+
+  **What changed.** `arrangementOrchestrator.ts`: the critique that ranks is
+  computed on the performed, playability-repaired notes (`critique`); the
+  critique of the composed notes is kept (`compositionCritique`) and the one
+  before repair is exposed (`initialCritique`) instead of `void`ed. The repair
+  loop's applier now **recomposes from the repaired plan** (part plan rebuilt
+  from the edited section / transition layers, deterministic seeds), the loop's
+  result carries the plan and notes it critiqued, each pass records
+  `planChanged` / `notesChanged` separately from what it claimed to apply, and
+  a candidate carries the plan its notes came from. A pass with `applied: []`
+  — or one whose claims changed nothing — is never reported as a repair (the
+  stage says "attempted, nothing changed"). Findings on the candidate replace
+  silent behaviour: `dropped_part` (instrument, task, section, bars; `error`
+  when the family was planned and had harmony under it, `warning` when a
+  pitched part had no chord to write from or the task is decorative),
+  `planned_family_silent` (a family the section plan lists as active for
+  which no part task exists — the owner's `keys` = LEAD in every sung
+  section, cause named from the plan), `unknown_tempo` / `unknown_meter`
+  (composed at an assumed value so the trace is inspectable, never
+  selectable), `performed_constraints`, `playability_check_missing`.
+  `hardRule = critic hard rules ∧ no error finding`; only passers compete;
+  when none pass `selected` is `null` with the reason and every rejected
+  candidate's reasons on `selection`. `performanceEvidence.playability.valid`
+  is `false` (with the reason) when the check produced no report.
+  `traceable` = every canonical stage recorded and no skip or failure without
+  a stated reason (a `context` stage neither helps nor hurts).
+  `criticRepairLoop.ts`: `leadCompatibility` no longer reports a duck it did
+  not perform; result carries `plan`, `trackModels?`, `changed`,
+  `appliedPasses`. `musicCritic.ts`: the `.some(() => …)` predicate that made
+  "instruments over the vocal" tautological now reads the instrument's role
+  (foreground roles over-play above 0.9, any role above 1); every dimension
+  reports `notesConsulted`; a dimension that never saw a note has its
+  confidence capped at 0.4; the critique reports `noteEvidenceWeight` (0.24 —
+  the audit's number, now on the record). `arrangementOrchestratorProvider.ts`:
+  `confidence = hardRule ? 0.35·playability + 0.35·coverage + 0.15·agreement +
+  0.15·intact : min(0.2, 0.25·that)` with the inputs persisted; `smokeTested`
+  is true only after a real 8-bar orchestration ran in-process on the first
+  health call (latency reported; before that `healthStatus: "unknown"`);
+  `parameters.arrangementBrain` persists the brain's own plan, the stage
+  records with evidence, `initialCritique` / `compositionCritique` /
+  `shippedCritique`, the repair passes, the playability-repair counts per
+  track and the confidence inputs (the `"stage:status"` string is gone); the
+  candidate plan's sections are the candidate's own (active tracks from its
+  shipped notes, density scaled by its own multipliers); when the brain
+  selected nothing the provider refuses with the reasons. `brainPlanAdoption.ts`
+  + `arrangementGeneration.ts`: when the provider materialises its notes and
+  carries brain evidence, `materializeCandidate` grades and diversifies on the
+  brain's plan and the candidate's own sections; the legacy planner supplies
+  only the skeleton (style, hierarchy, directives); legacy providers are
+  byte-unchanged. `referencePartComposer.ts` split mechanically into
+  `composer/harmonyParts.ts`, `composer/rhythmParts.ts`,
+  `composer/transitions.ts`, `composer/registers.ts` (+ `composer/frame.ts`),
+  pinned by `referencePartComposer.golden.test.ts` and
+  `__fixtures__/reference-part-composer.golden.json` (composer digests over
+  every part request of the 9 synthetic cases, and shipped-note digests per
+  candidate). Schema (`music-studio.ts`, delimited B-00 block):
+  `CriticRepairPass.planChanged/notesChanged`, `CriticRepairLoopResult.plan/
+  trackModels/changed/appliedPasses`, `ArrangementBrainFinding`,
+  `ArrangementBrainCandidateEvidence`, `CritiqueDimensionScore.notesConsulted`,
+  `ArrangementCritique.noteEvidenceWeight`. Tests: `arrangementBrainIntegrity`
+  (12: the audit's probes 1/2/3/5 and §2.2/2.5/2.7 as gates, plus the owner's
+  song), `referencePartComposer` (4 + 1 `todo`), the golden (2),
+  `brainPlanAdoption` (5, incl. the diversity arithmetic), provider 8 → 13;
+  `scripts/run-focused-api-tests.mjs` gains an `arrangement-brain` suite with
+  the fourteen unregistered chain suites plus these (19 bundles, 128 pass + 1
+  todo through the esbuild harness). Fixture:
+  `__fixtures__/rachem-na-song-model-v3.b00.json` (the owner's Song Model v3,
+  68 KB, musical map re-derived at load). Evidence:
+  `docs/evidence/brain-b00-integrity.json` (`scripts/brain-b00-evidence.ts`).
+
+  **Measured** (`brain-b00-integrity.json`, 9 synthetic cases + the owner's
+  song without and with the PR-98 brief, 3 candidates each, 36 candidates).
+  Composition-vs-shipped inflation: min −2, max +1, mean −0.1, non-zero on 7
+  of 36 — on this corpus the perform stage moves the critic by at most two
+  points because the critic hears 24 % of what changed (B-05). Repair: 36 of
+  36 candidates attempted a pass, **0** changed the plan or the notes; every
+  one was previously reported as "1 repair pass(es)". Drums-only probe: score
+  75, `hardRule: false`, `selected: null` (was: 73, feasible, selected).
+  Random-pitch probe: reference 77/77/77 vs nonsense 75/74/73, nonsense still
+  passes the hard rules — reported as such, not tuned. Unknown tempo: assumed
+  120 recorded on the plan stage, every candidate fails the gate. Confidence:
+  legacy mean 0.868 → evidence mean 0.594 (0.82 on selectable candidates, 0.2
+  on gate failures). Runs with **no selectable candidate**: `ethnic-vocal`
+  (7/8 — bass and keys write nothing in Chorus and Verse 2 with four chords
+  under them: the composer derives its bar from the meter's numerator only,
+  documented as `todo`, B-04), `orchestral-midi` and `cinematic-midi` (`keys`
+  is LEAD in every section of a no-vocal case and `taskFor("LEAD")` writes
+  nothing outside `instrumental` sections — F5, B-01), and **the owner's song
+  with the PR-98 brief hints** (keys LEAD in all 9 sections, the piano that
+  played was `mix`: exactly the v3 that shipped as "silence and a weak beep",
+  now refused with the cause named). The owner's song without a brief
+  (drums 1835 notes + bass 94 + ensemble 24, shipped 69) is selectable: the
+  gate catches silence that was promised, not thinness. Diversity arithmetic
+  verified: with `activeTracks`, `densityEnergy` and `trackRoleInstruments`
+  shared, two candidates with entirely different notes reach 0.245 < 0.25;
+  with the candidate's own sections the same pair reaches 0.35. Golden:
+  every composer digest and every shipped-note digest byte-identical after
+  the split (`noteCount` re-pinned once, with the reason, because it now
+  counts performed notes). Typecheck green.
+
+  **Capability ladder.** Shipped score = score of shipped notes: INTEGRATED +
+  TESTED (positive control: recompose applier adds strings, shipped notes
+  contain them). Repair recomposes from its plan: IMPLEMENTED + TESTED on an
+  injected applier; on the production applier it never fires on the corpus
+  (0/36) — BENCHMARKED as a null result, not validated. Dropped parts /
+  silent families / UNKNOWN tempo as hard-rule findings: INTEGRATED + TESTED
+  (drums-only, owner's song). Honest provider confidence and smoke-tested
+  readiness: IMPLEMENTED + TESTED (formula reproduced from persisted inputs).
+  One planner per job (plan adoption): IMPLEMENTED + TESTED on the pure module;
+  **not exercised against the database** (no runner test exists; the runner
+  call site passes `candidateParameters`). Composer split: byte-identical,
+  VALIDATED by golden. Critic `.some` fix and confidence cap: IMPLEMENTED +
+  TESTED; the dimensions themselves remain plan-graded (B-05).
+
+  **Honest limits.** The critic is unchanged in what it hears: random pitches
+  score within 2–4 points of the reference and still pass; B-00 reports this,
+  it does not fix it. `planned_family_silent` makes the owner's hinted
+  generation **fail at the provider until B-01 lands** (keys = LEAD writes
+  nothing); that is the honest state of v3, and the lead may sequence B-01
+  first or demote the finding — it is one line. The repair loop's production
+  applier applies nothing on any corpus case, so "repair recomposes" is
+  proven only by an injected applier. The three playability validators still
+  disagree (audit §5.1); the repair's rewrites are counted and lower
+  confidence, not prevented. `brainPlanAdoption` keeps the legacy skeleton
+  (style, hierarchy, composition intelligence) because the export and
+  selection paths read it; the persisted plan is now the brain's layers and
+  sections on a legacy frame, not a brain-only plan. The 7/8 bar-length
+  defect is documented (`todo`), not fixed (B-04 owns the composer's rhythm).
+  The repo's focused runner (`run-focused-api-tests.mjs`) still cannot spawn
+  esbuild on this machine (Hebrew cwd); the suite is registered and its
+  counts come from the same bundles run by hand. `noteCount` on candidates
+  now counts shipped notes (712 vs 636 composed on `pop-full` cand-A) —
+  anything that compared it to a composition count reads differently. Nothing
+  here was rendered or listened to; the evidence is symbolic. Files not owned
+  by B-00 that need a change: `sectionPhrasePlanner.ts` (a vocal phrase
+  without canonical `coordinates` is treated as no vocal — the orchestrator
+  test fixture had to be canonicalised to be recognised as sung; B-01),
+  `partComposer.ts` `taskFor("LEAD")` (B-01), `referencePartComposer` meter
+  denominator (B-04), `arrangementBenchmark.ts` (three corpus cases now report
+  `selected: null`; the aggregate should say so rather than average around it;
+  B-08).
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 

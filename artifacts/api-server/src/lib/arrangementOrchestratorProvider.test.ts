@@ -56,7 +56,7 @@ test("the brain generates exactly the requested candidates, with real notes", as
     assert.ok(candidate.score >= 0 && candidate.score <= 1);
     assert.ok(candidate.confidence >= 0 && candidate.confidence <= 1);
     assert.ok(candidate.plan.sections.length > 0, "the plan names the song's sections");
-    assert.match(candidate.summary, /symbolic \d+\/100/);
+    assert.match(candidate.summary, /shipped \d+\/100/, "the summary names the score of the shipped notes");
     assert.equal(candidate.parameters["orchestratorVersion"], "1.0");
   }
   // Ranked: the first candidate is never worse than the last.
@@ -193,4 +193,115 @@ test("with no remote provider configured, routing picks the brain for ARRANGEMEN
     task: "ORCHESTRATION", style: "cinematic", hardware: "CPU", speed: "QUALITY",
   });
   assert.equal(explicit.definition.id, ARRANGEMENT_ORCHESTRATOR_ID);
+});
+
+// ---------------------------------------------------------------------------
+// Brain B-00: honest provider evidence
+// ---------------------------------------------------------------------------
+import type { ArrangementBrainCandidateEvidence } from "@workspace/db";
+import { BRAIN_CONFIDENCE_FORMULA, brainConfidence, runBrainSmokeTest } from "./arrangementOrchestratorProvider";
+import { orchestrateArrangement } from "./arrangementOrchestrator";
+
+test("B-00: confidence is derived from evidence, with its inputs on the record, not 0.5 + score/200", async () => {
+  const provider = new LocalArrangementOrchestratorProvider();
+  const result = await provider.generate(generationInput(2));
+  for (const candidate of result.candidates) {
+    const evidence = candidate.parameters["arrangementBrain"] as ArrangementBrainCandidateEvidence;
+    assert.equal(evidence.confidence.formula, BRAIN_CONFIDENCE_FORMULA);
+    assert.equal(candidate.confidence, evidence.confidence.value);
+    const legacy = 0.5 + evidence.shippedCritique.overallScore / 200;
+    assert.notEqual(Number(candidate.confidence.toFixed(4)), Number(legacy.toFixed(4)), "the old formula is gone");
+    const i = evidence.confidence.inputs;
+    assert.equal(i["hardRule"], 1);
+    assert.ok(i["coverage"] > 0 && i["coverage"] < 1, `coverage ${i["coverage"]} is the critic's weighted evidence, not a constant 1`);
+    const expected = 0.35 * i["playability"] + 0.35 * i["coverage"] + 0.15 * i["agreement"] + 0.15 * i["intact"];
+    assert.ok(Math.abs(expected - candidate.confidence) < 1e-3, `formula reproduces the value (${expected} vs ${candidate.confidence})`);
+  }
+  // A candidate that failed the hard-rule gate is capped at 0.2 whatever its score.
+  const run = orchestrateArrangement({ songModel: { ...songModel, tempoMap: [] }, candidateCount: 1, render: false, now: new Date(0) });
+  const failed = brainConfidence(run.candidates[0]);
+  assert.equal(failed.inputs["hardRule"], 0);
+  assert.ok(failed.value <= 0.2, `hard-rule failure caps confidence: ${failed.value}`);
+});
+
+test("B-00: readiness reports a real smoke run with its latency; before the first health call it says it has not run", async () => {
+  const provider = new LocalArrangementOrchestratorProvider();
+  const smoke = runBrainSmokeTest();
+  assert.equal(smoke.passed, true, smoke.detail);
+  assert.ok(smoke.latencyMs >= 0);
+  assert.match(smoke.detail, /notes across \d+ track\(s\)/);
+  const health = await provider.checkHealth(true);
+  assert.equal(health.smokeTested, true);
+  assert.equal(health.healthStatus, "healthy");
+  assert.equal(typeof health.latencyMs, "number");
+  assert.match(health.message ?? "", /smoke orchestration: \d+ notes/);
+  // A snapshot that has not smoke-tested says so rather than claiming it.
+  class Cold extends LocalArrangementOrchestratorProvider {
+    protected override snapshot() {
+      return {
+        ...super.snapshot(), smokeTested: false, healthStatus: "unknown" as const, latencyMs: null,
+      };
+    }
+  }
+  const cold = new Cold();
+  assert.equal(cold.readiness.smokeTested, false);
+  assert.equal(cold.readiness.healthStatus, "unknown");
+});
+
+test("B-00: the brain's plan, stages, every critique, repair passes and playability-repair counts are persisted on the candidate", async () => {
+  const provider = new LocalArrangementOrchestratorProvider();
+  const result = await provider.generate(generationInput(2));
+  for (const candidate of result.candidates) {
+    assert.equal(candidate.parameters["stages"], undefined, "no more 'stage:status' string");
+    const evidence = candidate.parameters["arrangementBrain"] as ArrangementBrainCandidateEvidence;
+    assert.equal(evidence.version, "1.0");
+    assert.ok(evidence.plan.globalPlan && evidence.plan.sectionPlan && evidence.plan.partComposerPlan, "the brain's own plan layers");
+    assert.deepEqual(evidence.stages.map((s) => s.stage), ["plan", "parts", "candidates", "compose", "constraints", "critique", "repair", "perform", "render", "audio_critique", "select"]);
+    assert.ok(evidence.stages.every((s) => s.status === "ok" || s.detail.length > 0));
+    assert.equal(evidence.traceable, true);
+    assert.equal(evidence.initialCritique.evaluatedNotes, true);
+    assert.equal(evidence.compositionCritique.evaluatedNotes, true);
+    assert.equal(evidence.shippedCritique.evaluatedNotes, true);
+    assert.equal(evidence.shippedCritique.overallScore, candidate.parameters["symbolicScore"], "symbolicScore is the shipped score");
+    assert.equal(evidence.scoreDriftCompositionToShipped, evidence.shippedCritique.overallScore - evidence.compositionCritique.overallScore);
+    assert.ok(Array.isArray(evidence.findings));
+    assert.equal(evidence.hardRule.feasible, true);
+    assert.equal(evidence.selectable, true);
+    if (evidence.repair) {
+      assert.equal(evidence.repair.mode, "recompose");
+      assert.ok(evidence.repair.passes.every((p) => typeof p.planChanged === "boolean" && typeof p.notesChanged === "boolean"));
+      // An attempted pass that changed nothing is not called a repair anywhere.
+      if (evidence.repair.appliedPasses === 0) {
+        assert.equal(candidate.parameters["repairApplied"], false);
+        assert.doesNotMatch(candidate.summary, /repair applied/);
+      }
+    }
+    for (const repair of evidence.playabilityRepairs) {
+      assert.ok(candidate.trackModels!.some((t) => t.id.endsWith(repair.trackId)), `${repair.trackId} names a shipped track`);
+    }
+  }
+});
+
+test("B-00: candidate plan sections are this candidate's own — active tracks from its shipped notes, density from its own multipliers", async () => {
+  const provider = new LocalArrangementOrchestratorProvider();
+  const result = await provider.generate(generationInput(5));
+  const sparse = result.candidates.find((c) => c.parameters["strategy"] === "sparse");
+  const other = result.candidates.find((c) => c.parameters["strategy"] === "conservative");
+  assert.ok(sparse && other, `strategies present: ${result.candidates.map((c) => c.parameters["strategy"]).join(",")}`);
+  for (const candidate of result.candidates) {
+    for (const section of candidate.plan.sections) {
+      assert.ok(section.tracks.length > 0, `${candidate.label} ${section.name} names the tracks that play in it`);
+      assert.ok(typeof section.startBar === "number" && typeof section.endBar === "number");
+    }
+  }
+  const density = (c: typeof sparse) => c!.plan.sections.map((s) => s.density);
+  assert.notDeepEqual(density(sparse), density(other), "the sparse candidate's sections are thinner than another strategy's");
+});
+
+test("B-00: when every candidate fails the hard-rule gate the provider refuses with the reasons instead of shipping 'best available'", async () => {
+  const provider = new LocalArrangementOrchestratorProvider();
+  await assert.rejects(
+    provider.generate({ ...generationInput(2), songModel: { ...songModel, tempoMap: [] } }),
+    /refused every candidate: no candidate passed the hard-rule gate.*unknown_tempo/,
+  );
 });

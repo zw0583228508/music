@@ -198,7 +198,11 @@ test("'keep the drums, regenerate the bass': the drum track is the same bytes; t
 
 test("ranking: locks, hard rules, playability, score — then the edit's own direction breaks the critic's ties, never the id alone", () => {
   const merged = (candidateId: string, over: Partial<Omit<MergedCandidate, "candidate" | "verification">> & { honoured?: boolean }): MergedCandidate => ({
-    candidate: { candidateId, label: candidateId, strategy: "conservative", seed: 1, trackModels: [], noteCount: 0, constraintErrors: 0, critique: {} as never, repair: null, audioCritique: null, renderFeasible: null, finalScore: 0 },
+    candidate: {
+      candidateId, label: candidateId, strategy: "conservative", seed: 1, plan: {} as never, trackModels: [], noteCount: 0, constraintErrors: 0, performedConstraintErrors: 0,
+      initialCritique: {} as never, compositionCritique: {} as never, critique: {} as never, repair: null, repairApplied: false,
+      findings: [], hardRule: { feasible: true, reasons: [] }, playabilityRepairs: [], audioCritique: null, renderFeasible: null, finalScore: 0,
+    },
     trackModels: [], keptNotes: 0, replacedNotes: 100, identicalReplacedNotes: 0, feasible: true, score: 70, constraintErrors: 0,
     verification: { honoured: over.honoured ?? true, violations: over.honoured === false ? ["x"] : [] },
     ...over,

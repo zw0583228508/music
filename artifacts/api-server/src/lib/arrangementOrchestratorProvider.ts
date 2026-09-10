@@ -11,15 +11,39 @@
  * The one thing it asks of the runner is `materializesTrackModels`: its notes
  * have already been composed, constraint-checked, critiqued, repaired and
  * performed, so the legacy modulation/composition passes must not touch them.
+ *
+ * Brain B-00 (honest provider evidence):
+ *   - `confidence` is derived from evidence (hard-rule pass, playability errors,
+ *     the critic's per-dimension evidence coverage, composition→shipped score
+ *     drift, how much the playability repair had to rewrite); see
+ *     `brainConfidence` for the formula and its inputs. No `0.5 + score/200`.
+ *   - `smokeTested` is true only after a real, tiny orchestration ran in this
+ *     process (on the first health call), with its latency.
+ *   - The brain's own plan, stage records with evidence, every critique it
+ *     computed, the repair passes and the playability-repair counts per track
+ *     are persisted on `parameters.arrangementBrain` instead of a string.
+ *   - When the brain selected nothing (every candidate failed the hard-rule
+ *     gate) the provider refuses with the reasons; a candidate that failed the
+ *     gate while others passed is returned labelled `selectable: false`.
  */
-import type { CandidatePlan, GenerationParameters, SongModelData, StyleProfile, TrackModel } from "@workspace/db";
+import type {
+  ArrangementBrainCandidateEvidence,
+  ArrangementPlan,
+  CandidatePlan,
+  GenerationParameters,
+  SongModelData,
+  StyleProfile,
+  TrackModel,
+} from "@workspace/db";
 import {
   ORCHESTRATOR_VERSION,
   orchestrateArrangement,
   type OrchestratedCandidate,
   type OrchestrateInput,
+  type OrchestrationResult,
 } from "./arrangementOrchestrator";
 import { performanceStyleFromProfile } from "./performanceEngine";
+import { BENCHMARK_CORPUS, buildBenchmarkSongModel } from "./benchmarkCorpus";
 
 /** A StyleProfile travels in `parameters.styleProfile`; anything else is ignored. */
 function readStyleProfile(parameters: GenerationParameters | undefined): StyleProfile | null {
@@ -75,17 +99,68 @@ export const ARRANGEMENT_ORCHESTRATOR_DEFINITION: ProviderDefinition = {
   materializesTrackModels: true,
 };
 
-function healthySnapshot(): ProviderRuntimeSnapshot {
+// ---------------------------------------------------------------------------
+// Smoke test (B-00): readiness says what actually ran in this process
+// ---------------------------------------------------------------------------
+
+export type BrainSmokeResult = {
+  passed: boolean;
+  latencyMs: number;
+  detail: string;
+  ranAt: string;
+};
+
+/**
+ * A tiny, deterministic orchestration: an 8-bar pop model, one candidate, no
+ * render. Passes when the chain selects a candidate with notes, every stage is
+ * traceable and every shipped track carries valid playability evidence.
+ */
+export function runBrainSmokeTest(now: () => number = () => performance.now()): BrainSmokeResult {
+  const started = now();
+  try {
+    const spec = { ...BENCHMARK_CORPUS[0], id: "brain-smoke", form: [["Verse", 4], ["Chorus", 4]] as Array<[string, number]>, energies: [0.4, 0.9] };
+    const songModel = buildBenchmarkSongModel(spec);
+    const result = orchestrateArrangement({ songModel, candidateCount: 1, render: false, now: new Date(0) });
+    const candidate = result.candidates[0];
+    const checks: Array<[string, boolean]> = [
+      ["selected", result.selected !== null],
+      ["traceable", result.traceable],
+      ["notes", (candidate?.noteCount ?? 0) > 0],
+      ["playability evidence valid", Boolean(candidate) && candidate.trackModels.every((t) => t.performanceEvidence?.playability.valid === true)],
+    ];
+    const failed = checks.filter(([, ok]) => !ok).map(([name]) => name);
+    const latencyMs = Math.max(0, Math.round(now() - started));
+    return {
+      passed: failed.length === 0,
+      latencyMs,
+      detail: failed.length
+        ? `smoke orchestration failed: ${failed.join(", ")}${result.selected ? "" : `; ${result.selection.reason}`}`
+        : `smoke orchestration: ${candidate.noteCount} notes across ${candidate.trackModels.length} track(s), shipped critique ${candidate.critique.overallScore}/100, ${latencyMs} ms`,
+      ranAt: new Date().toISOString(),
+    };
+  } catch (error) {
+    return {
+      passed: false,
+      latencyMs: Math.max(0, Math.round(now() - started)),
+      detail: `smoke orchestration threw: ${error instanceof Error ? error.message : String(error)}`,
+      ranAt: new Date().toISOString(),
+    };
+  }
+}
+
+function snapshotFor(smoke: BrainSmokeResult | null): ProviderRuntimeSnapshot {
   return {
-    availability: "ready",
+    availability: smoke === null || smoke.passed ? "ready" : "unavailable",
     configurationReady: true,
     checkpointReady: true,
     runtimeReady: true,
-    smokeTested: true,
-    healthStatus: "healthy",
-    checkedAt: new Date().toISOString(),
-    latencyMs: 0,
-    message: "In-process symbolic arrangement brain. No endpoint, no weights, no GPU.",
+    smokeTested: smoke?.passed ?? false,
+    healthStatus: smoke === null ? "unknown" : smoke.passed ? "healthy" : "unhealthy",
+    checkedAt: smoke?.ranAt ?? null,
+    latencyMs: smoke?.latencyMs ?? null,
+    message: smoke === null
+      ? "In-process symbolic arrangement brain. No endpoint, no weights, no GPU. Smoke test not yet run (first health check runs it)."
+      : `In-process symbolic arrangement brain. ${smoke.detail}`,
     reportedVersion: ORCHESTRATOR_VERSION,
     maximumCandidates: 5,
     reportedChecksum: null,
@@ -105,23 +180,108 @@ function clampUnit(value: number): number {
   return Math.max(0, Math.min(1, Number.isFinite(value) ? value : 0));
 }
 
-/** Same ordering the orchestrator uses to pick its winner: feasible first, then score. */
+/** Same ordering the orchestrator uses to pick its winner: hard-rule pass first, then score. */
 function rankCandidates(candidates: OrchestratedCandidate[]): OrchestratedCandidate[] {
   return [...candidates].sort((a, b) =>
-    Number(b.critique.feasible) - Number(a.critique.feasible) ||
+    Number(b.hardRule.feasible) - Number(a.hardRule.feasible) ||
     b.finalScore - a.finalScore ||
     a.candidateId.localeCompare(b.candidateId));
 }
 
-function candidatePlan(songModel: SongModelData, trackModels: TrackModel[], candidate: OrchestratedCandidate, sectionDensity: Map<string, number>): CandidatePlan {
-  const instruments = trackModels.map((track) => track.instrument);
+// ---------------------------------------------------------------------------
+// Confidence (B-00): derived from evidence, with the inputs on the record
+// ---------------------------------------------------------------------------
+
+export const BRAIN_CONFIDENCE_FORMULA =
+  "hardRule ? 0.35*playability + 0.35*coverage + 0.15*agreement + 0.15*intact : min(0.2, 0.25*that); " +
+  "playability = 1 - constraintErrors/tracks; coverage = weighted mean of the critic's per-dimension confidence " +
+  "(plan-only dimensions capped at 0.4); agreement = 1 - |shipped - composed|/100; " +
+  "intact = 1 - playabilityRepairedNotes/noteCount";
+
+export function brainConfidence(candidate: OrchestratedCandidate): ArrangementBrainCandidateEvidence["confidence"] {
+  const tracks = Math.max(1, candidate.trackModels.length);
+  const playability = clampUnit(1 - candidate.constraintErrors / tracks);
+  const weightSum = candidate.critique.dimensions.reduce((s, d) => s + d.weight, 0) || 1;
+  const coverage = clampUnit(candidate.critique.dimensions.reduce((s, d) => s + d.weight * d.confidence, 0) / weightSum);
+  const drift = Math.abs(candidate.critique.overallScore - candidate.compositionCritique.overallScore);
+  const agreement = clampUnit(1 - drift / 100);
+  const repairedNotes = candidate.playabilityRepairs.reduce(
+    (s, r) => s + r.rangeFolds + r.leapFolds + r.polyphonyReleases + r.breathTruncated + r.dropped, 0);
+  const intact = clampUnit(1 - repairedNotes / Math.max(1, candidate.noteCount));
+  const base = 0.35 * playability + 0.35 * coverage + 0.15 * agreement + 0.15 * intact;
+  const hardRule = candidate.hardRule.feasible ? 1 : 0;
+  const value = Number((hardRule ? base : Math.min(0.2, base * 0.25)).toFixed(4));
   return {
-    sections: songModel.sections.map((section) => ({
+    value: clampUnit(value),
+    formula: BRAIN_CONFIDENCE_FORMULA,
+    inputs: {
+      hardRule, playability, coverage: Number(coverage.toFixed(4)), agreement: Number(agreement.toFixed(4)),
+      intact: Number(intact.toFixed(4)), constraintErrors: candidate.constraintErrors, tracks,
+      scoreDrift: drift, playabilityRepairedNotes: repairedNotes, noteCount: candidate.noteCount,
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Per-candidate plan (B-00): what this candidate actually plays, per section
+// ---------------------------------------------------------------------------
+
+function sectionSpans(songModel: SongModelData, timing: OrchestrationResult["timing"]): Array<{ name: string; startBar: number; endBar: number; start: number; end: number; sourceEnergy: number | null }> {
+  const bars = songModel.bars ?? [];
+  const beats = Number(timing.meter.split("/")[0]) || 4;
+  const barSeconds = (60 / Math.max(1, timing.tempoBpm)) * beats;
+  return songModel.sections.map((section) => {
+    const first = bars.find((b) => b.bar === section.startBar);
+    const last = bars.find((b) => b.bar === section.endBar);
+    return {
       name: section.name,
-      energy: clampUnit(section.energy ?? 0.5),
-      density: clampUnit(sectionDensity.get(section.name.toLowerCase()) ?? 0.5),
-      tracks: instruments,
-    })),
+      startBar: section.startBar,
+      endBar: section.endBar,
+      start: first?.start ?? (section.startBar - 1) * barSeconds,
+      end: last?.end ?? section.endBar * barSeconds,
+      sourceEnergy: typeof section.energy === "number" ? section.energy : null,
+    };
+  });
+}
+
+/**
+ * The candidate's plan as the runner reads it: per section, the tracks that
+ * actually have notes in it (from the shipped notes), the brain's planned
+ * energy target, and the planned density scaled by this candidate's own
+ * density multipliers for the section's tasks. These differ between
+ * candidates, which is what lets the runner's diversity gate see them.
+ */
+function candidatePlan(
+  songModel: SongModelData,
+  trackModels: TrackModel[],
+  candidate: OrchestratedCandidate,
+  result: OrchestrationResult,
+): CandidatePlan {
+  const targets = new Map((candidate.plan.globalPlan?.sectionTargets ?? []).map((t) => [t.sectionName.toLowerCase(), t]));
+  const adjustments = new Map(
+    (candidate.plan.candidateGenerationPlan?.candidates.find((c) => c.candidateId === candidate.candidateId)?.partAdjustments ?? [])
+      .map((a) => [a.taskId, a.densityMultiplier]),
+  );
+  const tasks = candidate.plan.partComposerPlan?.tasks ?? [];
+  return {
+    sections: sectionSpans(songModel, result.timing).map((span) => {
+      const target = targets.get(span.name.toLowerCase());
+      const multipliers = tasks
+        .filter((t) => t.sectionName === span.name)
+        .map((t) => adjustments.get(t.id) ?? 1);
+      const meanMultiplier = multipliers.length ? multipliers.reduce((s, m) => s + m, 0) / multipliers.length : 1;
+      const active = trackModels
+        .filter((track) => track.notes.some((n) => n.start >= span.start - 1e-6 && n.start < span.end - 1e-6))
+        .map((track) => track.instrument);
+      return {
+        name: span.name,
+        energy: clampUnit(target?.energy ?? span.sourceEnergy ?? 0),
+        density: clampUnit((target?.density ?? 0.5) * meanMultiplier),
+        tracks: active,
+        startBar: span.startBar,
+        endBar: span.endBar,
+      };
+    }),
     tracks: trackModels.map((track) => ({
       id: track.id,
       name: track.instrument,
@@ -131,11 +291,48 @@ function candidatePlan(songModel: SongModelData, trackModels: TrackModel[], cand
   } as CandidatePlan;
 }
 
+function brainEvidence(
+  candidate: OrchestratedCandidate,
+  result: OrchestrationResult,
+  confidence: ArrangementBrainCandidateEvidence["confidence"],
+): ArrangementBrainCandidateEvidence {
+  return {
+    version: "1.0",
+    plan: candidate.plan as ArrangementPlan,
+    stages: result.stages.map((s) => ({ stage: s.stage, status: s.status, detail: s.detail, ...(s.evidence ? { evidence: s.evidence } : {}) })),
+    traceable: result.traceable,
+    findings: candidate.findings,
+    hardRule: candidate.hardRule,
+    initialCritique: candidate.initialCritique,
+    compositionCritique: candidate.compositionCritique,
+    shippedCritique: candidate.critique,
+    scoreDriftCompositionToShipped: candidate.critique.overallScore - candidate.compositionCritique.overallScore,
+    repair: candidate.repair
+      ? {
+          mode: "recompose",
+          outcome: candidate.repair.outcome,
+          passes: candidate.repair.passes,
+          appliedPasses: candidate.repair.appliedPasses,
+          planChanged: candidate.repair.changed.plan,
+          notesChanged: candidate.repair.changed.notes,
+        }
+      : null,
+    playabilityRepairs: candidate.playabilityRepairs.map((r) => ({
+      trackId: r.trackId, rangeFolds: r.rangeFolds, leapFolds: r.leapFolds, durationLengthened: r.durationLengthened,
+      breathTruncated: r.breathTruncated, polyphonyReleases: r.polyphonyReleases, dropped: r.dropped, residual: r.residual,
+    })),
+    confidence,
+    selectable: candidate.hardRule.feasible,
+  };
+}
+
 /** What a subclass may add to one orchestration and to every candidate's parameters (PR-31). */
 export type OrchestrateOverrides = {
   orchestrate?: Partial<Pick<OrchestrateInput, "plannerHints" | "performanceStyle">>;
   parameters?: Record<string, string | number | boolean | null>;
 };
+
+let sharedSmoke: BrainSmokeResult | null = null;
 
 export class LocalArrangementOrchestratorProvider implements MusicGenerationProvider {
   readonly definition: ProviderDefinition;
@@ -147,8 +344,9 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
     this.readiness = this.snapshot();
   }
 
+  /** The readiness snapshot: `smokeTested` only after `checkHealth` ran the smoke orchestration in this process. */
   protected snapshot(): ProviderRuntimeSnapshot {
-    return healthySnapshot();
+    return snapshotFor(sharedSmoke);
   }
 
   /** A learned policy (PR-31) or a brief may shape the orchestration; the base brain adds nothing. */
@@ -156,7 +354,8 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
     return {};
   }
 
-  async checkHealth(): Promise<ProviderRuntimeSnapshot> {
+  async checkHealth(force = false): Promise<ProviderRuntimeSnapshot> {
+    if (sharedSmoke === null || force) sharedSmoke = runBrainSmokeTest();
     this.readiness = this.snapshot();
     return this.readiness;
   }
@@ -212,6 +411,13 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
     if (signal?.aborted) throw new Error("Arrangement generation was cancelled");
     await onProgress?.({ progress: 60, stage: "composed" });
 
+    // B-00: when the brain itself would ship nothing, the provider ships
+    // nothing. Returning the rejected candidates as if they were a result
+    // would be a fallback dressed as judgement.
+    if (result.selected === null) {
+      throw new Error(`The Arrangement Brain refused every candidate: ${result.selection.reason}`);
+    }
+
     const ranked = rankCandidates(result.candidates);
     if (ranked.length !== input.candidates) {
       // Padding with duplicates would fake diversity; say what happened instead.
@@ -220,19 +426,14 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
       );
     }
 
-    const sectionDensity = new Map<string, number>();
-    for (const target of result.plan.globalPlan?.sectionTargets ?? []) {
-      sectionDensity.set(target.sectionName.toLowerCase(), target.density);
-    }
-
-    const stageSummary = result.stages.map((stage) => `${stage.stage}:${stage.status}`).join(",");
     // Track ids are a global primary key in the studio, and the brain names
     // tracks by instrument ("drums-groove"). Scope them to the project so two
     // projects' drum tracks never collide, and so a regeneration in the same
     // project reuses the same track rows.
     const scopedId = (id: string) => `${input.projectId}--${id}`;
     const candidates: ProviderCandidate[] = ranked.map((candidate) => {
-      const symbolic = candidate.critique.overallScore;
+      const shipped = candidate.critique.overallScore;
+      const composedScore = candidate.compositionCritique.overallScore;
       const trackModels: TrackModel[] = candidate.trackModels.map((track) => {
         const scoped: TrackModel = { ...track, id: scopedId(track.id) };
         // The performed-material digest covers the id, so re-scoping it must
@@ -245,37 +446,46 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
         }
         return scoped;
       });
+      const confidence = brainConfidence(candidate);
+      const evidence = brainEvidence(candidate, result, confidence);
       const strengths = candidate.critique.strengths.slice(0, 2).join("; ");
       const weaknesses = candidate.critique.weaknesses.slice(0, 1).join("; ");
+      const errorFindings = candidate.findings.filter((f) => f.severity === "error").length;
       return {
         providerRequestId: null,
         label: candidate.label,
         score: clampUnit(candidate.finalScore / 100),
-        // Confidence tracks the critic: a candidate that failed a hard rule is
-        // reported as low-confidence however well it scored elsewhere.
-        confidence: candidate.critique.feasible
-          ? clampUnit(0.5 + symbolic / 200)
-          : 0.3,
+        confidence: confidence.value,
         summary: [
-          `${candidate.strategy} · symbolic ${symbolic.toFixed(0)}/100`,
+          `${candidate.strategy} · shipped ${shipped.toFixed(0)}/100` + (composedScore !== shipped ? ` (composed ${composedScore.toFixed(0)})` : ""),
+          candidate.hardRule.feasible ? null : `FAILED the hard-rule gate (${candidate.hardRule.reasons.length} reason(s)) — not selectable`,
           `${candidate.constraintErrors} playability error(s)`,
-          candidate.repair ? `${candidate.repair.passes.length} repair pass(es)` : null,
+          errorFindings ? `${errorFindings} error finding(s)` : null,
+          candidate.repairApplied
+            ? `repair applied (${candidate.repair?.appliedPasses ?? 0} pass(es) recomposed the plan)`
+            : candidate.repair?.passes.length
+              ? "repair attempted, nothing changed"
+              : null,
+          candidate.playabilityRepairs.length ? `${candidate.playabilityRepairs.length} part(s) playability-repaired` : null,
           strengths || null,
           weaknesses ? `weakest: ${weaknesses}` : null,
         ].filter(Boolean).join(" · "),
         seed: candidate.seed,
-        plan: candidatePlan(songModel, trackModels, candidate, sectionDensity),
+        plan: candidatePlan(songModel, trackModels, candidate, result),
         parameters: {
           orchestratorVersion: ORCHESTRATOR_VERSION,
           orchestratorMethod: result.method,
           composer: result.composer,
           strategy: candidate.strategy,
-          symbolicScore: symbolic,
-          hardRuleFeasible: candidate.critique.feasible,
+          symbolicScore: shipped,
+          compositionScore: composedScore,
+          hardRuleFeasible: candidate.hardRule.feasible,
+          selectable: candidate.hardRule.feasible,
           constraintErrors: candidate.constraintErrors,
-          repairPasses: candidate.repair?.passes.length ?? 0,
-          stages: stageSummary,
+          repairApplied: candidate.repairApplied,
           traceable: result.traceable,
+          confidenceFormula: BRAIN_CONFIDENCE_FORMULA,
+          arrangementBrain: evidence,
           performanceEngineVersion: performanceStyle || overrides.orchestrate?.performanceStyle ? "2.0" : "1.0",
           ...(overrides.parameters ?? {}),
           ...(briefRef ? { ...briefRef, briefPlannerHints: briefHints !== null } : {}),

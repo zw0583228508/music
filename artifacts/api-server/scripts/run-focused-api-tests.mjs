@@ -104,6 +104,35 @@ const suites = {
       "tests/style-decompose-route.test.mjs",
     ],
   },
+  // Arrangement Brain (B-00): the chain suites the adversarial audit found
+  // unregistered — orchestrator, both critics, the repair loop, the constraints
+  // engine, every planner, strategies, part composer, render worker,
+  // fingerprint, musical map, benchmark — plus B-00's own integrity gates,
+  // the composer golden pin, the first behavioural composer suite and the
+  // runner's adoption of the brain's plan.
+  "arrangement-brain": {
+    bundles: [
+      ["src/lib/arrangementOrchestrator.test.ts", "arrangement-orchestrator.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/arrangementBrainIntegrity.test.ts", "arrangement-brain-integrity.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/musicCritic.test.ts", "music-critic.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/criticRepairLoop.test.ts", "critic-repair-loop.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/candidateStrategies.test.ts", "candidate-strategies.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/partComposer.test.ts", "part-composer.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/referencePartComposer.test.ts", "reference-part-composer.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/referencePartComposer.golden.test.ts", "reference-part-composer-golden.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/audioCritic.test.ts", "audio-critic.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/musicalConstraints.test.ts", "musical-constraints.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/globalArrangementPlanner.test.ts", "global-arrangement-planner.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/sectionPhrasePlanner.test.ts", "section-phrase-planner.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/orchestrationBudget.test.ts", "orchestration-budget.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/transitionEngine.test.ts", "transition-engine.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/styleFingerprint.test.ts", "style-fingerprint.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/songMusicalMap.test.ts", "song-musical-map.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/referenceRenderWorker.test.ts", "reference-render-worker.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/arrangementBenchmark.test.ts", "arrangement-benchmark.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/brainPlanAdoption.test.ts", "brain-plan-adoption.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
   // Wave Q, Q-00: the contract and the gate in front of the real benchmark
   // corpus. No music here — these prove the corpus refuses to call itself a
   // measure before it is one.
