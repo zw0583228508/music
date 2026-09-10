@@ -15,12 +15,19 @@ flight. **No row has reached V: no human has judged a whole arrangement of the
 new brain yet.** (The owner's song was re-arranged on 2026-09-10 as run v7a
 and the judge refused it; see `05-wave3-diagnosis.md`.)
 
-Wave 3 (2026-09-10, base `3b9ace3`): the owner's song was re-arranged with the
+Wave 3 (2026-09-10/11, base `3b9ace3`): the owner's song was re-arranged with the
 whole Wave 1 + 2 brain (run "v7a") and **the brain's own judge refuses it**
 (`releasable: false`, a blocking `clash_share` on the string bed in the Outro,
 five register refusals) — and it shipped anyway, because the judge is not wired
 into selection. The measurements and the four streams are in
 `05-wave3-diagnosis.md`. Nothing was delivered to the owner from that run.
+
+
+Merged in Wave 3 so far: PR-B07 (render loop), PR-B24 (section vocabulary),
+the B-05c isolation repair, and this diagnosis. PR-B19 (the critics decide)
+is reviewed and green. B-20 (repair operators), B-21 (the writers) and B-22
+(the owner's melody) are in flight. **Still no row at V for a whole
+arrangement judged by a human.**
 
 | capability | before the program | after wave 1 | evidence | owner / next |
 |---|---|---|---|---|
@@ -41,16 +48,16 @@ into selection. The measurements and the four streams are in
 | Meters other than 4/4 | — (7/8 doubled, 5/4 padded) | N + T (7/7 re-metred variants correct) | PR-B04, `referencePartComposer.test.ts` 5 | B-12b re-run |
 | Transition device realisation (18 devices) | D | I + T per family; kit devices N; pitched gestures **N-pending**; ritardando cannot reach the export (multi-segment tempo map refused) | PR-B04 | B-13 / export follow-up |
 | Per-section performance (accents per meter, pedal on chord onsets, agogics) | I / defect | accents + pedal + agogics I + T; `chordOnsets`/`agogics` **N-pending** in the orchestrator call | PR-B04 | **B-13** |
-| Note-level critics (16 dimensions, located, origin layer, repair, confidence) | — | T with positive controls: 11 gated / 5 informing on the merged anchors; **N-pending** (not yet ranking or gating production) | PR-B05a ledger | B-06 (repair reads them), B-00 follow-up (ranking) |
-| Adversarial critic (8 axes) + judge that keeps disagreement | — | T (7 gated / 1 informing); N-pending | PR-B05b | B-06 |
+| Note-level critics (16 dimensions, located, origin layer, repair, confidence) | — | **V**: they decide what ships. B-19 judges every candidate on the notes that would ship and refuses the unreleasable; the owner's v7a candidate went `validated` → `critic_judge_refused` | PR-B05a ledger, PR-B19 | the operators they name (B-20) |
+| Adversarial critic (8 axes) + judge that keeps disagreement | — | **N + T**: run per candidate on the production path; CONTESTED is carried, not collapsed | PR-B05b, PR-B19 | keep |
 | Failure taxonomy with origin layer, persisted | — | N + T (24 codes; findings classified and stored) | PR-B05b, PR-B11 | keep |
-| Repair that changes notes and names the origin layer; backtracking | — (plan-only, discarded) | N: recomposing loop (B-00) — production applier still changes nothing on the corpus (36/36 no-op) | PR-B00 | **B-06** |
+| Repair that changes notes and names the origin layer; backtracking | — (plan-only, discarded) | N, still a no-op (36/36). **Cause found (B-19):** the dimensions ask for 45 operators via `recommendedRepair`; `repairExecutor` dispatches 11 in a different namespace and the two vocabularies do not intersect at all | PR-B00, PR-B19 `operatorHandoff` | **B-20** |
 | Shipped score = score of shipped notes; hard-rule failure blocks selection; dropped parts reported | — | N + T | PR-B00 integrity 12 | keep; B-06/B-05 for ranking on the new critics |
 | Honest provider confidence / readiness | — (formulas) | N + T (evidence formula 0.594 mean; real smoke) | PR-B00 | keep |
 | One planner per job | — (two) | N + T (`brainPlanAdoption`; diversity 0.245 → 0.35 measured) | PR-B00 | keep |
 | Candidate search producing genuinely different readings | — (seed + stride thinning) | — (still `applyDensity`) | audit §1.4 | **B-13** texture archetypes; then a search stream (B-14) |
-| Production render loop; audio critique attributed to layers | — (`render: false`) | — | audit §1.7 | **B-07** |
-| Off-thread export render | — | — | PR-98 | **B-07** |
+| Production render loop; audio critique attributed to layers | — (`render: false`) | N + T; the audio ledger now uses the program's one `SENSITIVITY_RULE`, which demoted `audioMasking` to informing (one claimed control, not two) and `audioDynamics` by measurement | PR-B07 | re-snapshot the baseline |
+| Off-thread export render | — | N + T | PR-B07 | keep |
 | Benchmark that measures the arrangement; stored baselines; CLI compare | — | T + B (benchmark 2.0; baselines `3bf23aa`, `1467706`; `--compare`; `unselectableShare`) | PR-B08 | re-snapshot after B-13/B-07 |
 | Positive-control ledger for every metric | — | T (129,834 trials; all 11 `musicCritic` dimensions demoted; gate 16 / inform 14 / demoted 14) | `positive-control-ledger.json` | keep current |
 | Real corpus (Tier H human works, Tier P owner songs) | — | I + T: Tier H 40 proven-PD works (fails closed on composition rights), Tier P 1 song; gaps: produced pop / electronic / non-western 0 | PR-B08 | licensed or owner-owned recordings for the gaps |
@@ -61,4 +68,6 @@ into selection. The measurements and the four streams are in
 | Property / metamorphic / fuzz tests | — | T (13 suites, 16 known failures isolated to a line at B-12; several closed since) | PR-B12 | **B-12b** |
 | Chain suites registered in the focused runner | partial | done; registry rebuilt after a duplication (#124) | `run-focused-api-tests.mjs` | keep `node --check` in every merge |
 | Producer corrections captured as data | — | — | Wave Q Tier E | **B-15** |
+| Section function read from the name a producer types | — (English regex; a Hebrew-named song planned as 9 neutral sections) | N + T: one vocabulary, Hebrew included; section functions changed 99 → 0 and the climax layer survives every seed. Note counts still move: the part seed carries the section name (`partComposer.ts:135`) | PR-B24 | B-21 (the seed) |
+| Section function inferred from the *music* when there is no name | — | — (unnamed twins: 0/20, 99 functions changed) | PR-B24 | unassigned |
 | Whole-arrangement human judgement of a brain output | — | — | | after v7: owner + independent raters |
