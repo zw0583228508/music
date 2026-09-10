@@ -1,5 +1,5 @@
 {
-  "recordedAt": "before the B-00 composer split (main 39aad30)",
+  "recordedAt": "composer digests and shipped-note digests recorded on main 39aad30 before the B-00 composer split; orchestration noteCount re-pinned after B-00 D1 (it now counts the shipped, performed notes; every digest unchanged)",
   "cases": [
     {
       "id": "pop-full",
@@ -12,7 +12,7 @@
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 636,
+          "noteCount": 712,
           "tracks": [
             "drums",
             "bass",
@@ -24,7 +24,7 @@
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 683,
+          "noteCount": 763,
           "tracks": [
             "drums",
             "bass",
@@ -36,7 +36,7 @@
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 683,
+          "noteCount": 763,
           "tracks": [
             "drums",
             "bass",
@@ -58,7 +58,7 @@
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 429,
+          "noteCount": 482,
           "tracks": [
             "drums",
             "bass",
@@ -70,7 +70,7 @@
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 461,
+          "noteCount": 517,
           "tracks": [
             "drums",
             "bass",
@@ -82,7 +82,7 @@
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 461,
+          "noteCount": 517,
           "tracks": [
             "drums",
             "bass",
@@ -104,7 +104,7 @@
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 821,
+          "noteCount": 889,
           "tracks": [
             "drums",
             "bass",
@@ -117,7 +117,7 @@
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 877,
+          "noteCount": 949,
           "tracks": [
             "drums",
             "bass",
@@ -130,7 +130,7 @@
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 877,
+          "noteCount": 949,
           "tracks": [
             "drums",
             "bass",
@@ -153,7 +153,7 @@
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 915,
+          "noteCount": 990,
           "tracks": [
             "drums",
             "bass",
@@ -166,7 +166,7 @@
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 975,
+          "noteCount": 1055,
           "tracks": [
             "drums",
             "bass",
@@ -179,7 +179,7 @@
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 975,
+          "noteCount": 1055,
           "tracks": [
             "drums",
             "bass",
@@ -202,7 +202,7 @@
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 489,
+          "noteCount": 549,
           "tracks": [
             "drums",
             "bass",
@@ -214,7 +214,7 @@
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 525,
+          "noteCount": 589,
           "tracks": [
             "drums",
             "bass",
@@ -226,7 +226,7 @@
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 525,
+          "noteCount": 589,
           "tracks": [
             "drums",
             "bass",
@@ -248,7 +248,7 @@
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 449,
+          "noteCount": 475,
           "tracks": [
             "drums",
             "bass",
@@ -261,7 +261,7 @@
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 479,
+          "noteCount": 505,
           "tracks": [
             "drums",
             "bass",
@@ -274,7 +274,7 @@
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 479,
+          "noteCount": 505,
           "tracks": [
             "drums",
             "bass",
@@ -297,7 +297,7 @@
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 413,
+          "noteCount": 457,
           "tracks": [
             "drums",
             "bass",
@@ -308,7 +308,7 @@
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 446,
+          "noteCount": 494,
           "tracks": [
             "drums",
             "bass",
@@ -319,7 +319,7 @@
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 446,
+          "noteCount": 494,
           "tracks": [
             "drums",
             "bass",
@@ -340,7 +340,7 @@
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 930,
+          "noteCount": 1020,
           "tracks": [
             "drums",
             "bass",
@@ -352,7 +352,7 @@
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 992,
+          "noteCount": 1088,
           "tracks": [
             "drums",
             "bass",
@@ -364,7 +364,7 @@
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 992,
+          "noteCount": 1088,
           "tracks": [
             "drums",
             "bass",
@@ -386,7 +386,7 @@
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 441,
+          "noteCount": 495,
           "tracks": [
             "drums",
             "bass",
@@ -400,7 +400,7 @@
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 471,
+          "noteCount": 529,
           "tracks": [
             "drums",
             "bass",
@@ -414,7 +414,7 @@
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 471,
+          "noteCount": 529,
           "tracks": [
             "drums",
             "bass",

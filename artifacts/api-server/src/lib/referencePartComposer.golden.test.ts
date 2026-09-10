@@ -108,7 +108,11 @@ function currentGolden(): GoldenCase[] {
 test("the reference part composer produces byte-identical parts to the golden fixture", () => {
   const current = currentGolden();
   if (process.env.B00_WRITE_GOLDEN === "1") {
-    writeFileSync(FIXTURE, `${JSON.stringify({ recordedAt: "before the B-00 composer split (main 39aad30)", cases: current }, null, 2)}\n`);
+    writeFileSync(FIXTURE, `${JSON.stringify({
+      recordedAt: "composer digests and shipped-note digests recorded on main 39aad30 before the B-00 composer split; " +
+        "orchestration noteCount re-pinned after B-00 D1 (it now counts the shipped, performed notes; every digest unchanged)",
+      cases: current,
+    }, null, 2)}\n`);
     return;
   }
   const golden = JSON.parse(readFileSync(FIXTURE, "utf8")) as { cases: GoldenCase[] };
