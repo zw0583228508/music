@@ -144,7 +144,10 @@ test("the ledger is derived from the harness and the evidence is written from th
     const evidence = {
       version: CONTROL_HARNESS_VERSION,
       generatedAt: new Date().toISOString(),
-      recalibratedAtMerge: "onto main with B-00 (shipped-notes score, composer split), B-01 (ArrangementArc: drums enter at the chorus, bass thinned in quiet sections, chorus 2 developed, keys in every section, ensemble/mix not a family) and B-03 (instrument profiles); see the PR-B05a tracker entry",
+      recalibratedAtMerge: "onto main with B-00 (shipped-notes score, composer split), B-01 (ArrangementArc: drums enter at the chorus, bass thinned in quiet sections, chorus 2 developed, keys in every section, ensemble/mix not a family) and B-03 (instrument profiles); see the PR-B05a tracker entry. " +
+        "Regenerated at the B-13 merge for three causes, each recorded in the PR-B13 tracker entry: (1) B-13's writers changed the anchors themselves - the beds read the groove plan's bed cell, the bass plays the plan's onsets with the full figure set, and the transition realisation writes the planned fills - so several controls now apply, or stop applying, where they did not before; " +
+        "(2) `tutti_everywhere` was fixed to cycle the source section's bars *that carry notes* instead of giving up on the ones the part rests in, so it produces the tutti it claims (dance-full's synth-pad reached only 0.900 active share against the 0.95 `continuous_tutti` asks for); " +
+        "(3) `functionFromNotes` no longer calls a sustained multi-voice chord an 'answer', which it did for any pitched part whose onsets fell outside the vocal phrases.",
       method: "every critic dimension over every anchor x control; detected = score drop >= 1 and a located non-info observation new or upgraded on the damaged tracks; rate with exact Clopper-Pearson 95 % interval; a control whose damage leaves an anchor unchanged skips that anchor",
       ledgerRule: "gated: strongest claimed control >= 0.90 with CI lower >= 0.60 and no blocking observation on a clean anchor; informing: >= 0.50; demoted: measured (n >= 5) and < 0.50; uncalibrated: no claimed control measurable",
       ledgerSeverity: LEDGER_SEVERITY,

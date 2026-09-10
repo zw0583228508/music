@@ -148,7 +148,22 @@ test("the reference composer is rejected on several axes (recorded, not hidden)"
     }
   }
   // Each of these is a defect the program diagnosis named; the adversarial critic now measures it at note level.
-  assert.ok((byKind.get("string_bed_too_high") ?? 0) >= 2, "strings written at MIDI 79+ (the owner's-song defect) in the orchestral anchors");
+  //
+  // B-13 at the merge: `string_bed_too_high` was the third of these to close,
+  // so it is asserted as a fix rather than as a count. B-13 wired the string
+  // bed to the voicing solver and the groove plan's bed cell, and the two
+  // anchors that carry a string part now average MIDI 74.84 (orchestral-midi,
+  // 107 notes) and 73.59 (cinematic-midi, 22 notes) - below the 79 the rule
+  // asks for, per section as well as overall. The tops still reach 86 and 84;
+  // a violin line over a bed is not the defect, a bed parked up there was.
+  // The rule and its threshold are untouched: the arrangement moved.
+  assert.equal(byKind.get("string_bed_too_high") ?? 0, 0, "B-13: no string part is a bed parked at MIDI 79+ any more (was >= 2 in the orchestral anchors)");
+  const stringMeans = ALL
+    .flatMap((a) => a.input.trackModels.filter((t) => t.instrumentDefinition.family === "strings" && !/bass/i.test(t.instrument)))
+    .filter((t) => t.notes.length > 0)
+    .map((t) => t.notes.reduce((s, n) => s + n.pitch, 0) / t.notes.length);
+  assert.ok(stringMeans.length >= 2, `${stringMeans.length} string parts across the anchors`);
+  assert.ok(stringMeans.every((m) => m < 79), `every string part averages below the 79 the rule asks for: ${stringMeans.map((m) => m.toFixed(2)).join(", ")}`);
   // F5 (the planned LEAD keys wrote nothing) was closed by B-01: keys is never LEAD in a sung section, so the count is no longer asserted here.
   // Repeated sections as note copies (diagnosis §11.2) were closed by B-01 (operators) + B-10 (recall with variation) + B-02
   // (voicings solved per chord in context); the count is recorded in the evidence, not asserted here.

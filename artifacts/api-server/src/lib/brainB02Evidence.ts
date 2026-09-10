@@ -56,6 +56,17 @@ export type PartMetrics = {
   bass?: {
     maxLeap: number; leapsOverLimit: number; maxLeapAllowed: number; overlapsIntoNextChord: number;
     changesLandingOnRoot: number; approachedByStep: number; approachShare: number;
+    /**
+     * B-13 at the merge: the same two counts asked of the arrival the bass
+     * *actually plays*. `changesLandingOnRoot` counts only changes the bass
+     * meets in root position; since B-02 the bass line planner solves slash
+     * basses and inversions (this suite asserts `rootPositionShare` tells are
+     * gone), so a change met on the planned third or fifth is an arrival the
+     * root-only count cannot see - and an approach tone leading into it is
+     * invisible with it. These count a change as arrived when the note states
+     * the arriving chord, root or not.
+     */
+    changesStatingChord: number; approachedIntoStatedChord: number; statedApproachShare: number;
     contraryVsKeysTop: number; contraryShare: number | null;
     slashChordsUnderPart: number; slashBassHonoured: number;
   };
@@ -173,6 +184,8 @@ function bassMetrics(notes: MusicalNote[], chords: Chord[], maxLeap: number, key
   let overlaps = 0;
   let changes = 0;
   let approached = 0;
+  let statedChanges = 0;
+  let statedApproached = 0;
   let contraryChanges = 0;
   let contrary = 0;
   let slashUnder = 0;
@@ -205,11 +218,19 @@ function bassMetrics(notes: MusicalNote[], chords: Chord[], maxLeap: number, key
     if (leap > maxLeap) over += 1;
     const before = statedBy(prev);
     if (!before || !chord || before === chord) continue;
+    const fromApproachTone = !chordPcs(before).has(pc(prev.pitch));
+    const stepIn = (leap === 1 || leap === 2) && fromApproachTone;
+    // B-13 at the merge: the arrival the bass actually plays. A change met on
+    // the planned slash bass or an inversion is an arrival; only the root-only
+    // count below cannot see it.
+    if (chordPcs(chord).has(pc(n.pitch))) {
+      statedChanges += 1;
+      if (stepIn) statedApproached += 1;
+    }
     const root = rootOf(chord);
     if (root === null || pc(n.pitch) !== root) continue;
     changes += 1;
-    const fromApproachTone = !chordPcs(before).has(pc(prev.pitch));
-    if ((leap === 1 || leap === 2) && fromApproachTone) approached += 1;
+    if (stepIn) approached += 1;
     if (keysNotes) {
       const topAt = (t: number) => {
         const sounding = keysNotes.filter((k) => k.start <= t + 0.03 && k.start + k.duration > t + 0.03);
@@ -226,6 +247,8 @@ function bassMetrics(notes: MusicalNote[], chords: Chord[], maxLeap: number, key
   return {
     maxLeap: maxLeapSeen, leapsOverLimit: over, maxLeapAllowed: maxLeap, overlapsIntoNextChord: overlaps,
     changesLandingOnRoot: changes, approachedByStep: approached, approachShare: changes ? r3(approached / changes) : 0,
+    changesStatingChord: statedChanges, approachedIntoStatedChord: statedApproached,
+    statedApproachShare: statedChanges ? r3(statedApproached / statedChanges) : 0,
     contraryVsKeysTop: contrary, contraryShare: contraryChanges ? r3(contrary / contraryChanges) : null,
     slashChordsUnderPart: slashUnder, slashBassHonoured: slashHonoured,
   };
@@ -298,6 +321,9 @@ function aggregate(parts: PartMetrics[]) {
     bassChangesLandingOnRoot: sum(bass.map((p) => p.bass!.changesLandingOnRoot)),
     bassApproachedByStep: sum(bass.map((p) => p.bass!.approachedByStep)),
     bassApproachShare: weightedMean(bass.map((p) => [p.bass!.approachShare, p.bass!.changesLandingOnRoot])),
+    bassChangesStatingChord: sum(bass.map((p) => p.bass!.changesStatingChord)),
+    bassApproachedIntoStatedChord: sum(bass.map((p) => p.bass!.approachedIntoStatedChord)),
+    bassStatedApproachShare: weightedMean(bass.map((p) => [p.bass!.statedApproachShare, p.bass!.changesStatingChord])),
     bassContraryShare: weightedMean(bass.filter((p) => p.bass!.contraryShare !== null).map((p) => [p.bass!.contraryShare!, 1])),
     slashChordsUnderBass: sum(bass.map((p) => p.bass!.slashChordsUnderPart)),
     slashBassHonoured: sum(bass.map((p) => p.bass!.slashBassHonoured)),

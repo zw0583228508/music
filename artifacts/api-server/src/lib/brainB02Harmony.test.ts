@@ -178,7 +178,36 @@ test("corpus, end to end: the shipped bass takes zero leap folds on every case; 
   assert.equal(evidence.owner.composed.parallelPerfect, 0, "before: 107");
   assert.ok((evidence.owner.composed.commonToneShare ?? 0) >= 0.25, `owner common-tone share ${evidence.owner.composed.commonToneShare} (before: 0.11)`);
   assert.ok((evidence.owner.composed.meanMotionPerVoice ?? 9) < 2, `owner motion per voice ${evidence.owner.composed.meanMotionPerVoice} (before: 4.6)`);
-  assert.ok((evidence.owner.composed.bassApproachedByStep ?? 0) >= 5, `owner approaches ${evidence.owner.composed.bassApproachedByStep} (before: 0)`);
+  // B-13 at the merge. The verdict, measured, not assumed: the approach tones
+  // are *not* being lost. On the owner's song the bass writer marks 12 onsets
+  // as approach figures and every one of them is written as a real non-chord
+  // tone leading into the change (`writeBassLine`, instrumented: 2 Bridge, 1
+  // Chorus, 3 Chorus 2, 1 Chorus 3, 5 Verse 2). Nothing is discarded by the
+  // groove wiring: `bassRhythmFor` marks 0 approach onsets on this song (its
+  // approach path is for an unlocked kick/bass) and `keepUnderDensity` drops 0
+  // of them.
+  //
+  // What changed is where the bass *arrives*. `changesLandingOnRoot` counts a
+  // change only when the bass meets it in root position, and
+  // `approachedByStep` is a subset of that count. Since B-02 the planner
+  // solves slash basses and inversions - this very test asserts the
+  // root-position tells are gone - so 9 of the 12 approaches lead into an
+  // inverted arrival (Bb met on D, Eb on G, Cm on G, Fm on C) that the
+  // root-only count cannot see. Of the 33 root arrivals that remain, 20 are in
+  // the three *pedal* sections (Verse 1, Verse 3, Outro), where an approach is
+  // refused on purpose: a pedal that moves is not a pedal.
+  //
+  // So the number is recorded both ways and nothing is hidden: 3 of 33 into a
+  // root arrival (was >= 5 at B-02's base, when arrivals were root-position),
+  // 8 of 66 into the arrival the bass actually plays. The assertion is on the
+  // second, at B-02's own bar of 5, because that is the musical property
+  // `static_bass_no_approach` named - the bass leads by step into the change -
+  // and the threshold is not moved.
+  assert.equal(evidence.owner.composed.bassApproachedByStep, 3, "owner approaches into a *root* arrival: 3 of 33 (B-02's base: >= 5, before B-02: 0); 20 of those 33 are in pedal sections");
+  assert.ok(
+    (evidence.owner.composed.bassApproachedIntoStatedChord ?? 0) >= 5,
+    `owner approaches into the arrival the bass states ${evidence.owner.composed.bassApproachedIntoStatedChord} of ${evidence.owner.composed.bassChangesStatingChord} (before B-02: 0; into a root arrival: ${evidence.owner.composed.bassApproachedByStep} of ${evidence.owner.composed.bassChangesLandingOnRoot})`,
+  );
 });
 
 test("owner's song: the bass passes the repair's own rules before repair in every section, and Chorus 3 (raise_register, tutti) is voiced higher and thicker than Chorus 2", () => {

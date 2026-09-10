@@ -59,7 +59,7 @@ import { buildPartComposerPlan, buildPartGenerationRequest, type PartGenerationR
 import { planCandidateGeneration } from "./candidateStrategies";
 import { deriveGroovePlan } from "./groovePlan";
 import { agogicsFor } from "./transitionRealisation";
-import { applyTextureAfterWriting, textureIntentFor, type TextureIntent } from "./composer/texture";
+import { applyTextureAfterWriting, isMotifProtected, textureIntentFor, type TextureIntent } from "./composer/texture";
 import { checkArrangementConstraints } from "./musicalConstraints";
 import { critiqueArrangement } from "./musicCritic";
 import { applyPlanRepairs, runBacktrackingRepairLoop, runCriticRepairLoop, type RepairApplier, type RepairExecution } from "./criticRepairLoop";
@@ -371,13 +371,28 @@ function applyStrategyDynamics(notes: MusicalNote[], multiplier: number): Musica
   }));
 }
 
-/** Drop duplicate onsets of the same pitch, keeping the loudest. */
+/**
+ * Drop duplicate onsets of the same pitch, keeping the loudest.
+ *
+ * B-13 at the merge: a note carrying motif provenance outranks a louder one
+ * that carries none (`isMotifProtected`). One instrument is one track, and
+ * since B-13 wired the beds to the groove plan a bed and a motif statement can
+ * now sound the same pitch at the same instant on the same track - the owner's
+ * Bridge is exactly that shape. Keeping the loudest would silently delete a
+ * note of the statement, which is the defect `applyDensity` was removed for.
+ * Between two notes that are both motif notes, or neither, the loudest still
+ * wins.
+ */
 function dedupeSimultaneous(notes: MusicalNote[]): MusicalNote[] {
   const best = new Map<string, MusicalNote>();
   for (const note of notes.slice().sort((a, b) => a.start - b.start || a.pitch - b.pitch)) {
     const key = `${Math.round(note.start * 200)}:${note.pitch}`;
     const held = best.get(key);
-    if (!held || note.velocity > held.velocity) best.set(key, note);
+    if (!held) { best.set(key, note); continue; }
+    const heldMotif = isMotifProtected(held);
+    const noteMotif = isMotifProtected(note);
+    if (heldMotif !== noteMotif) { if (noteMotif) best.set(key, note); continue; }
+    if (note.velocity > held.velocity) best.set(key, note);
   }
   return [...best.values()].sort((a, b) => a.start - b.start || a.pitch - b.pitch);
 }

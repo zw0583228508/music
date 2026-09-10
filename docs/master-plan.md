@@ -8775,6 +8775,146 @@ cases are byte-identical, and so is every case's section plan.
     still do not rank or gate on the production path. R-1b's items 5 and 10
     belong to B-02/B-03 and to B-06.
 
+  **Reconciled at the merge.** Rebased on `origin/main` `f2119cb`, B-13 red-lit
+  **seventeen** suites of already-merged streams. Each was traced to a cause before
+  anything was changed, and no assertion was weakened to make a number pass.
+
+  - **`brainB02Harmony` — `owner approaches 3 (before: 0)`.** *Not* a
+    regression: the approach tones are written. Instrumenting `writeBassLine`
+    on the owner's song shows twelve onsets marked as approach figures, every
+    one of them a real non-chord tone leading into the change (2 Bridge, 1
+    Chorus, 3 Chorus 2, 1 Chorus 3, 5 Verse 2), and the groove wiring discards
+    none of them — `bassRhythmFor` marks 0 approach onsets on this song (its
+    approach path is for an unlocked kick/bass) and `keepUnderDensity` drops 0.
+    What changed is where the bass *arrives*: `changesLandingOnRoot` counts a
+    change only when the bass meets it in root position, and 9 of the 12
+    approaches now lead into an inversion the bass-line planner solved (Bb met
+    on D, Eb on G, Cm on G, Fm on C). Of the 33 root arrivals left, 20 are in
+    the three *pedal* sections, where an approach is refused on purpose.
+    `brainB02Evidence.ts` gains `changesStatingChord` /
+    `approachedIntoStatedChord` beside the root-only pair, both are reported,
+    and the assertion moved to the second at B-02's own bar of 5: **3 of 33
+    into a root arrival, 8 of 66 into the arrival the bass actually plays.**
+  - **`brainB06Repair` — 0 of 8 repaired.** `arrival_thinner_than_setup` is the
+    entry that stopped being repaired. The arc pass still resolves both of its
+    observations; it was rejected because the verdict worsened, and it worsened
+    because the seeding also silences the drums through the Chorus, so
+    restoring the texture level brings a drum part into bars 13–20 for the
+    first time and every drum finding re-indexes over a wider span while a fill
+    and a device are newly planned at the drums' new entry. The entry names
+    R-1b P0-4, "the first chorus is thinner and quieter than the verse *before*
+    it", and never seeded that verse — only `Verse 2`, which follows the
+    chorus. `Verse` is now planned full as well, the entry seeds what it says,
+    and the corpus is back to the merged B-06 baseline: **1 of 8 repaired, 4 of
+    8 attributed** (`arrival_thinner_than_setup` at `arc`, 2 of 2 resolved,
+    burden 360.05 → 350.92).
+  - **`brainB10Motif` — `10 composed -> 9 shipped`.** The note is not thinned:
+    orchestrator telemetry reads composedNotes 10, keptNotes 10, and all ten
+    ids are on the shipped strings track carrying their provenance. B-13 gives
+    the performance engine the track's section ranges, so the Bridge is
+    performed with the COUNTER_MELODY role's own feel instead of the intro's,
+    and that moves the statement's first onset 2.777 ms earlier — to 176.6437 s
+    against a Bridge that begins at 176.64648 s. A half-open window on the
+    nominal boundary excluded a note that is present and correct. The count is
+    now taken on the track, id for id, with the boundary asserted separately.
+    The motif exemption the brief asked for is made enforceable rather than
+    assumed: `composer/texture.ts` gains `isMotifProtected` / `thinExceptMotif`,
+    `applyKitTexture` honours them, and the orchestrator's `dedupeSimultaneous`
+    now prefers a motif note over a louder one that carries none — a hazard
+    B-13 opened by putting a bed and a counter-line on one track.
+  - **`critics/rank` — `the harmony is off the beat`.** B-13 fixed the defect
+    the test borrowed. On today's owner anchor `off_grid` no longer refuses and
+    `single_voice_bed` is not raised at all. The case is now constructed —
+    `strip_bed_to_top_voice` plus a new `displaceHarmonyOffGrid` (every
+    harmonic part's onsets moved 180 ms, the middle of the 100–230 ms range
+    R-1b measured) — so the test exercises the ranking rules, and the fix is
+    asserted where the defect used to be pinned.
+  - **`critics/dimensions/groove` — `the anchor itself reports the weak fill`.**
+    Same shape. B-13's transition realisation writes the planned fills where
+    the drums already play, so dance-full raises no `planned_fill_missing` at
+    all and no anchor carries a weak one. That is asserted as the fix, and the
+    dimension's ability to hear a weak fill is demonstrated on a constructed
+    case (`weakenPlannedDrumFill`: bar 8 thinned from 9 to 5 onsets against a
+    section mean of 7.63, ratio 0.70). The 1.15 threshold is untouched.
+
+  **Twelve more suites were red on the branch before any of this, and are
+  fixed here too** (the isolating control: every one of them fails identically with
+  this reconciliation's source edits reverted).
+
+  - **`critics/adversarial/adversarial`.** (a) `string_bed_too_high` fell to 0:
+    B-13's bed wiring brings the two string parts to mean MIDI 74.84 and 73.59,
+    below the rule's 79. Asserted as the fix. (b) The "clean hand-written
+    arrangement" null control was genuinely not clean: bar 31's string pad ran
+    4.6 beats into bar 32's four-voice final chord, eight voices on a
+    four-voice section. It was invisible before because the old contract
+    bucketed onsets to the millisecond and then filtered by exact start,
+    dropping three of the final chord's four voices from the cluster it
+    measured; B-13's `polyphonyClusters` evaluates at each gesture's last onset
+    and is right. The fixture's pad now releases 48 ms before the chord.
+  - **`critics/dimensions/ownerAnchor`** (0 of 5 passing). This suite pins
+    R-1a P1-1, and B-13 closed most of what it pinned. `groove = 0` no longer
+    reproduces (**8.85** shipped, **45.55** composed); `single_voice_bed` on the
+    owner's song is **0** where it was five or more. Both are asserted as
+    fixes, both controls are kept, and each control's sensitivity is
+    demonstrated on a constructed case instead of on a defect that is gone.
+    What remains is named the same way it was: the bass and the bed take their
+    onsets from the groove plan, whose swing and anticipations are eighth-note
+    figures, so quantising to eighths reaches 83.46 while sixteenths reach
+    56.49. The keys have crossed over — written on the grid now (composed
+    off-grid observations 3 → **0**), so what is left on them is the
+    performance stage's, and the attribution says so.
+  - **`critics/dimensions/density`.** B-13's beds fill the verses, so thinning a
+    chorus to a third now drops it to ratio 0.50 on pop-full and rock-full as
+    well: `louder_section_thinner` catches three anchors where it caught one.
+    acoustic-demo is recorded as a **null result** with its numbers — its verse
+    is 2.00 onsets/bar and the thinned chorus is still 5.00, so there is no
+    thinner arrival to find and none is manufactured.
+  - **`critics/dimensions/motifRecurrenceAndDevelopment`.** A number that got
+    worse, recorded: B-13's bass dropped acoustic-demo's recurrence share to
+    **0.066**, so the anchor already reports `no_recurrence` in three of four
+    sections and the random-pitch control has no new section to flag. The
+    control is now asserted on what still means something — every affected
+    section's recurrence share must fall to 0 — and the base finding is pinned
+    by name.
+  - **`critics/dimensions/orchestration`.** Two root fixes. (a)
+    `functionFromNotes` called any pitched part whose onsets fell outside the
+    vocal an "answer", with no texture guard, so B-13's sustained beds (pop-full
+    Chorus keys: 1.00 onsets/bar, 3.25 voices, 2.84 beats held) read as answers
+    rather than pads; an answer must now be close to monophonic. (b) The
+    `tutti_everywhere` harness cycled through *all* of a source section's bars
+    and gave up on the ones the part rests in, so dance-full's `synth-pad`
+    reached only 0.900 active share against the 0.95 `continuous_tutti` needs —
+    the harness was not producing a tutti. It now cycles the source bars that
+    carry notes.
+  - **`critics/dimensions/harmony`.** The null control proper still holds — zero
+    blocking observations on all nine clean anchors — but **seven of the nine
+    are now under 90 where one was**, and the reason is one repeated finding:
+    `bass_rarely_states_root`, 20 across the clean anchors against B-05c's 1.
+    B-13's bass meets a chord change in root position about a quarter of the
+    time (`rootStatedShare` 0.25 on six anchors; 0 and 0.125 on jazz-full's
+    choruses). Two anchors also carry a single **major** finding where they
+    carried none (ethnic-vocal `clash_share` 0.241 on the bass in Verse 2;
+    jazz-full `approach_tone_wrong_mode`, a major third over a minor chord).
+    The dimension is unchanged, no threshold moved, and the per-anchor table is
+    pinned as measured. This is the same narrowness the B-02 verdict above
+    describes from the other side and it is left for the lead to judge.
+
+  **Invariants B-13 changed.** `invariants/determinism.property`'s
+  `different seed` invariant — a seed changes the performance, not the harmony
+  — went from **19/20 seeds passing to 3/20**, with 64
+  `harmony_changed_with_seed` violations, almost all on the bass. The cause is
+  B-13's own design: `writeBassLine` decides whether an onset becomes an
+  approach tone with `seededUnit(frame.seed, ...) < style.approachToneRate`, so
+  the part's seed chooses a pitch and not only a performance. It runs as a
+  `todo` with that reason measured and written down, as B-12 requires; whether
+  per-candidate approach-tone variation or this invariant gives way is the
+  lead's call and is not settled here. The suite's negative control was also
+  repaired: its stateful composer showed its state only through
+  `pitch: 60 + (calls % 7)`, and B-13's plan makes exactly 56 calls per run —
+  a multiple of 7 — so the second run aliased onto the first and the control
+  silently stopped controlling. The call index now rides on the note id. Every
+  other invariant suite is unchanged by B-13.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

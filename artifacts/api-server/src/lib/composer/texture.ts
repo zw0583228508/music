@@ -194,6 +194,48 @@ export function kitTextureFor(intent: TextureIntent): KitTexture {
   return { hats: "as_planned", ghosts: true, reason: "the plan's kit as written" };
 }
 
+// ---------------------------------------------------------------------------
+// The motif exemption (B-13's brief; made enforceable at the merge)
+// ---------------------------------------------------------------------------
+
+/**
+ * A note that carries motif provenance is never thinned.
+ *
+ * This is the rule `applyDensity` broke and B-13's brief required: a motif
+ * statement is a musical *identity*, and a texture that removes one of its
+ * notes does not make the part sparser, it makes the statement wrong. B-10
+ * owns the provenance (`note.motif`); every texture path here asks this
+ * question before it drops anything, and so does the orchestrator's merge
+ * (`dedupeSimultaneous`), which since B-13 put a bed and a counter-line on one
+ * track could otherwise have kept a louder bed note over the motif note that
+ * doubles it.
+ *
+ * The exemption is per *note*, and it is deliberately not per group: a note
+ * that names its statement is protected on its own, so a group split across
+ * bars or handed to another instrument keeps every one of its notes.
+ */
+export function isMotifProtected(note: MusicalNote): boolean {
+  return !!note.motif;
+}
+
+/**
+ * `keep` with the motif exemption applied: a note the predicate would drop is
+ * kept anyway when it carries motif provenance. Returns the same array when
+ * nothing is dropped, and reports how many notes the exemption saved.
+ */
+export function thinExceptMotif(
+  notes: MusicalNote[],
+  keep: (note: MusicalNote) => boolean,
+): { notes: MusicalNote[]; exempted: number } {
+  let exempted = 0;
+  const kept = notes.filter((note) => {
+    if (keep(note)) return true;
+    if (isMotifProtected(note)) { exempted += 1; return true; }
+    return false;
+  });
+  return { notes: kept.length === notes.length ? notes : kept, exempted };
+}
+
 /** The reference kit's note ids (`composer/rhythmParts.ts`): `h<bar>-<unit>` hats / ride, `g<bar>-<unit>` ghost snares. */
 const HAT_ID = /^(?:.*-)?h(\d+)-([\d.]+)$/;
 const GHOST_ID = /^(?:.*-)?g(\d+)-([\d.]+)$/;
@@ -207,7 +249,10 @@ const GHOST_ID = /^(?:.*-)?g(\d+)-([\d.]+)$/;
 export function applyKitTexture(notes: MusicalNote[], texture: KitTexture, meter: MeterSpec): MusicalNote[] {
   if (texture.hats === "as_planned" && texture.ghosts) return notes;
   const pulses = new Set(meter.pulses.map((p) => Number(p.toFixed(3))));
-  const kept = notes.filter((note) => {
+  // The motif exemption applies here too: a kit figure B-10 tagged as a motif
+  // statement (a hooked hat pattern handed to the drummer) is not a ghost note
+  // the texture may send home.
+  return thinExceptMotif(notes, (note) => {
     const hat = HAT_ID.exec(note.id);
     if (hat && texture.hats === "pulses_only") {
       const unit = Number(hat[2]);
@@ -215,8 +260,7 @@ export function applyKitTexture(notes: MusicalNote[], texture: KitTexture, meter
     }
     if (!texture.ghosts && GHOST_ID.test(note.id)) return false;
     return true;
-  });
-  return kept.length === notes.length ? notes : kept;
+  }).notes;
 }
 
 /**

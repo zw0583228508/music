@@ -4,11 +4,21 @@ import { anchors, applyFamilyCorruption, applyPreparation, applyPurposeBuilt, CL
 import { buildContext } from "./shared";
 import { repetitionVsVariationDimension, sectionPairIdentity } from "./repetitionVsVariation";
 
-test("section identity: the pop anchor's second verse repeats the keys of its first verse bar for bar while B-01 thins the bass (a real, partial repeat), and a chorus is not a verse", () => {
+test("section identity: the pop anchor's second verse repeats half its first verse's keys, the bass none of it, and a chorus is not a verse", () => {
   // Recalibrated at the merge: before B-01 Verse 2 was Verse 1 in *every*
   // part (exactShare 1.0 on bass and keys). B-01's arc lets the bass exit
   // Verse 2 early (30 notes -> 4), so the bass shares nothing bar-for-bar
   // while the keys are still a verbatim copy — the metric reads both truths.
+  //
+  // Re-anchored at the B-13 merge, and the direction is the right one. The
+  // keys' verbatim share has fallen **1.00 (pre-B-01) -> 0.75 (B-01) -> 0.50**:
+  // B-13's bed reads the groove plan's bed cell, and the plan differs between
+  // the two verses, so half the bars are no longer a copy. That is the defect
+  // this block records getting smaller, so the assertion is written as the
+  // band it is now in rather than as the old floor — a keys part that repeats
+  // *more* than half its bars is still a real, partial repeat and still worth
+  // the metric reading, and a drop below a quarter would mean the pair had
+  // stopped being a repeat at all and should be looked at.
   const anchor = anchors(["pop-full"])[0];
   const context = buildContext(anchor.input);
   const verse = context.sections.find((s) => s.name === "Verse")!;
@@ -18,7 +28,7 @@ test("section identity: the pop anchor's second verse repeats the keys of its fi
   console.log("pop verse identity:", JSON.stringify(same.map((x) => [x.part.id, x.exactShare, x.rhythmShare])));
   const keys = same.find((x) => x.part.family === "keys")!;
   const bass = same.find((x) => x.part.family === "bass")!;
-  assert.ok(keys.exactShare >= 0.75, `keys repeat verbatim: ${keys.exactShare}`);
+  assert.ok(keys.exactShare >= 0.25 && keys.exactShare <= 0.6, `keys repeat verbatim: ${keys.exactShare} (1.00 pre-B-01, 0.75 at B-01, 0.50 at B-13)`);
   assert.ok(bass.exactShare < 0.5, `the bass does not (B-01 thins it in Verse 2): ${bass.exactShare}`);
   const different = sectionPairIdentity(context, verse, chorus);
   assert.ok(different.some((x) => x.exactShare < 0.5));

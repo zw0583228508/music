@@ -46,8 +46,18 @@ test("positive control: a top line that jumps an octave at every move is erratic
   // pitches, so the lost `line_masks_vocal` majors cancel the new
   // `line_erratic` majors in the score (6/7 in the ledger); pop keeps a
   // 32-note top line per verse.
-  assert.equal(applyPurposeBuilt(anchors(["dance-full"])[0], "top_line_erratic"), null, "dance-full has no line to make erratic");
-  for (const anchor of anchors(["rock-full", "pop-full", "jazz-full"])) {
+  //
+  // Re-anchored again at the B-13 merge, and this one is a fix, so the fix is
+  // what it asserts. B-13's beds read the groove plan's bed cell instead of
+  // holding one chord per bar, so dance-full's keys and pad now carry enough
+  // top-voice notes per section to *be* a line: `top_line_erratic` applies to
+  // `keys-harmonic_bed` and `synth-pad` where it used to return null, and the
+  // dimension hears the octave lift there like everywhere else. dance-full has
+  // therefore rejoined the loop below rather than being kept as a skip.
+  const dance = applyPurposeBuilt(anchors(["dance-full"])[0], "top_line_erratic");
+  assert.ok(dance, "B-13: dance-full now carries a top line the control can make erratic (it returned null before)");
+  assert.deepEqual([...dance.targetTrackIds].sort(), ["keys-harmonic_bed", "synth-pad"]);
+  for (const anchor of anchors(["rock-full", "pop-full", "jazz-full", "dance-full"])) {
     const worsened = applyPurposeBuilt(anchor, "top_line_erratic")!;
     const d = detect(melodyAndCounterlineDimension, anchor.input, worsened);
     assert.ok(d.detected, anchor.id);

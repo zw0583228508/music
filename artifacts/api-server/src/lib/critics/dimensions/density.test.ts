@@ -27,37 +27,68 @@ test("positive control: a bed thinned to one note per bar is no longer a chord",
   }
 });
 
-test("positive control: choruses thinned to a third are caught, and only dance-full is caught by `louder_section_thinner` — the reason is the anchors", () => {
-  // Re-anchored (B-05c), with the cause.
+test("positive control: choruses thinned to a third are caught by `louder_section_thinner` on three of four anchors — the reason is the anchors", () => {
+  // Re-anchored at the B-13 merge, with the cause. (B-05c's version of this
+  // comment, and its numbers, are kept below the new ones.)
   //
   // `louder_section_thinner` fires when the planned energy rises by >= 0.25,
   // the onsets-per-bar ratio falls below 0.85, and either no part is added or
-  // the ratio falls below 0.6. Measured at `origin/main` 31b9443 with the
-  // choruses thinned to a third:
+  // the ratio falls below 0.6.
+  //
+  // B-05c measured, at `origin/main` 31b9443, with the choruses thinned to a
+  // third:
   //
   //   pop-full   verse 5.00 -> chorus 4.50 onsets/bar, ratio 0.90, drums enter
   //   rock-full  verse 5.00 -> chorus 4.50, ratio 0.90, drums enter
   //   dance-full verse 11.88 -> chorus 5.88, ratio 0.50            <- caught
   //
-  // Since B-01 the pop and rock verses have no drums, so thinning the chorus to
-  // a third still leaves it at 90 % of the verse's onsets per bar *with an
-  // extra part playing*, and the dimension is right not to call that a thinner
-  // arrival. It detects the control on those anchors through the other kinds
-  // named below. What the review actually asked for — an arrival measured in
-  // onsets *and voices and dynamics* — is `arrival_thinner_than_setup`, tested
-  // separately with its own transform.
+  // and concluded that a thinned chorus on the pop and rock anchors still sat
+  // at 90 % of the verse with an extra part playing, so the dimension was
+  // right not to call it a thinner arrival.
+  //
+  // B-13 changed the arrangement, not the dimension. The beds now play on the
+  // groove plan's cells, so the verses carry real material (pop-full verse
+  // 10.00 onsets/bar) and thinning the chorus to a third drops it to ratio
+  // **0.50** on pop-full and rock-full as well. Both are now caught by
+  // `louder_section_thinner` itself, which is the finding the control exists
+  // for — the dimension gained anchors here, it did not lose any.
+  //
+  //   pop-full   chorus ratio 0.500 (Chorus) and 0.586 (Chorus 2)  <- caught
+  //   rock-full  chorus ratio 0.500                                 <- caught
+  //   dance-full chorus ratio 0.455                                 <- caught
+  //   acoustic-demo  verse 2.00 -> thinned chorus 5.00 onsets/bar   <- null result
+  //
+  // acoustic-demo is a **null result and is recorded as one**: its verse is a
+  // guitar and a bass at 2 onsets per bar, and keeping one chorus onset in
+  // three still leaves the chorus at 5 per bar — two and a half times its own
+  // setup. There is no thinner arrival there to find, and no threshold is
+  // moved to manufacture one. The transform does damage the notes (drums
+  // 203 -> 72), so this is the dimension declining to call a still-denser
+  // arrival thin, not the dimension failing to look.
   const expected: Record<string, string[]> = {
-    "pop-full": ["quieter_section_denser"],
-    "rock-full": ["density_flat_against_plan"],
+    "pop-full": ["louder_section_thinner", "quieter_section_denser"],
+    "rock-full": ["louder_section_thinner"],
     "dance-full": ["louder_section_thinner"],
-    "acoustic-demo": ["density_flat_against_plan", "foundation_gaps"],
+    "acoustic-demo": [],
   };
   for (const anchor of anchors(["pop-full", "rock-full", "dance-full", "acoustic-demo"])) {
     const worsened = applyPurposeBuilt(anchor, "chorus_thinner_than_verse")!;
     const d = detect(densityDimension, anchor.input, worsened);
-    assert.ok(d.detected, anchor.id);
     const kinds = [...new Set(d.newObservations.map((o) => o.kind))].sort();
     assert.deepEqual(kinds, [...expected[anchor.id]].sort(), `${anchor.id}: ${kinds.join(",")}`);
+    if (expected[anchor.id].length) {
+      assert.ok(d.detected, anchor.id);
+      continue;
+    }
+    // The null result, pinned with the numbers that explain it.
+    assert.equal(d.detected, false, `${anchor.id}: nothing new is reported`);
+    assert.ok(worsened.input.trackModels.some((t, i) => t.notes.length < anchor.input.trackModels[i].notes.length),
+      `${anchor.id}: the transform did remove notes`);
+    const measured = densityDimension.evaluate(worsened.input).observations.filter((o) => o.kind === "measured");
+    const verse = measured.find((o) => o.location.sectionName === "Verse")!;
+    const chorus = measured.find((o) => o.location.sectionName === "Chorus")!;
+    assert.ok((chorus.evidence.onsetsPerBar as number) > (verse.evidence.onsetsPerBar as number),
+      `${anchor.id}: the thinned chorus (${chorus.evidence.onsetsPerBar}/bar) is still denser than its verse (${verse.evidence.onsetsPerBar}/bar)`);
   }
   const dance = anchors(["dance-full"])[0];
   const thinner = detect(densityDimension, dance.input, applyPurposeBuilt(dance, "chorus_thinner_than_verse")!)
@@ -74,15 +105,35 @@ test("positive control (B-05c): an arrival thinned, unvoiced and softened is sma
   // as onsets, which is what an arrival that fails to arrive actually looks
   // like on the owner's song (chorus onsets 0.80 of the verse's, one voice in
   // the strings, velocities down).
+  //
+  // Re-anchored at the B-13 merge, with the cause. B-05c caught all three
+  // anchors here; acoustic-demo is now a **null result** for the same reason
+  // it is one for `chorus_thinner_than_verse` above. Its verse is a guitar and
+  // a bass at 2.00 onsets per bar and its chorus, after the transform, is
+  // still 5.00 — so of the three respects the finding needs two of, only
+  // *voices* falls (1.35 against the setup's 2.00); onsets rise. The dimension
+  // reports what it does see there, `bed_thin_voicing` in Chorus 2, and
+  // declines to call a denser arrival thin. No threshold is moved.
   let caught = 0;
   const rows: string[] = [];
+  const expectedWithoutArrival: Record<string, string[]> = { "acoustic-demo": ["bed_thin_voicing"] };
   for (const anchor of anchors(["pop-full", "rock-full", "acoustic-demo"])) {
     const worsened = applyPurposeBuilt(anchor, "arrival_thinned_and_softened")!;
     const d = detect(densityDimension, anchor.input, worsened);
     assert.ok(d.detected, anchor.id);
     const arrival = d.newObservations.find((o) => o.kind === "arrival_thinner_than_setup");
     rows.push(`${anchor.id}:${arrival ? "caught" : d.newObservations.map((o) => o.kind).join("/")}`);
-    if (!arrival) continue;
+    if (!arrival) {
+      const expectedKinds = expectedWithoutArrival[anchor.id];
+      assert.ok(expectedKinds, `${anchor.id}: no arrival finding and no recorded reason for it`);
+      assert.deepEqual([...new Set(d.newObservations.map((o) => o.kind))].sort(), [...expectedKinds].sort(), anchor.id);
+      const measured = densityDimension.evaluate(worsened.input).observations.filter((o) => o.kind === "measured");
+      const verse = measured.find((o) => o.location.sectionName === "Verse")!;
+      const chorus = measured.find((o) => o.location.sectionName === "Chorus")!;
+      assert.ok((chorus.evidence.onsetsPerBar as number) > (verse.evidence.onsetsPerBar as number),
+        `${anchor.id}: the thinned arrival (${chorus.evidence.onsetsPerBar}/bar) is still denser than its setup (${verse.evidence.onsetsPerBar}/bar), so only voices fall`);
+      continue;
+    }
     caught += 1;
     // Major at the planned climax or when the combined ratio falls below 0.85;
     // minor for a smaller arrival elsewhere in the form. The test pins the
@@ -104,7 +155,7 @@ test("positive control (B-05c): an arrival thinned, unvoiced and softened is sma
       .filter((r) => (r as number) < 0.95).length;
     assert.equal(fell, arrival.evidence.respectsThatFell, `${anchor.id}: ${JSON.stringify(arrival.evidence)}`);
   }
-  assert.equal(caught, 3, rows.join(" "));
+  assert.equal(caught, 2, rows.join(" "));
 });
 
 test("positive control (B-05c): a bed reduced to its top voice is a single-voice bed, and the composed notes say which layer lost them", () => {

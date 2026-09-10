@@ -15,8 +15,13 @@ import { CANDIDATE_STRATEGIES } from "../candidateStrategies";
 import { meterOf } from "./frame";
 import {
   applyKitTexture, applyTextureAfterWriting, bassTextureFor, chordalTextureFor,
-  densityLevelOf, kitTextureFor, textureIntentFor, BASELINE_TEXTURE,
+  densityLevelOf, isMotifProtected, kitTextureFor, textureIntentFor, thinExceptMotif, BASELINE_TEXTURE,
 } from "./texture";
+
+const MOTIF: NonNullable<MusicalNote["motif"]> = {
+  id: "m1", fingerprint: "fp", parentMotifId: null, transformation: "repetition",
+  phraseId: "p1", intention: "foreground", evidenceSha256: "a".repeat(64), windowEndSeconds: 4,
+};
 
 const meter = meterOf("4/4");
 const intentFor = (strategy: keyof typeof CANDIDATE_STRATEGIES, multiplier: number) =>
@@ -112,6 +117,46 @@ test("the kit texture never touches a kick, a snare or a crash: only hats off th
   assert.ok(!ids.has("g1-2.5"), "ghost snares stay home in a thin texture");
   // The plan's kit, unchanged, is returned as the same array.
   assert.equal(applyKitTexture(notes, kitTextureFor(intentFor("rhythmic", 1.1)), meter), notes);
+});
+
+test("the motif exemption: a note carrying motif provenance is never thinned, whatever the texture asks", () => {
+  // B-13's brief: a motif statement is an identity, and a texture that removes
+  // one of its notes does not make the part sparser - it makes the statement
+  // wrong. `applyDensity` broke this; `isMotifProtected` is the rule that
+  // replaces it, and every path that can drop a note asks it.
+  const plain: MusicalNote = { id: "h1-0.5", start: 0.25, duration: 0.1, pitch: 42, velocity: 50 };
+  const tagged: MusicalNote = { ...plain, id: "h1-1.5", start: 0.75, motif: MOTIF };
+  assert.equal(isMotifProtected(plain), false);
+  assert.equal(isMotifProtected(tagged), true);
+
+  // The predicate would drop both; the exemption keeps the tagged one and says so.
+  const dropAll = thinExceptMotif([plain, tagged], () => false);
+  assert.deepEqual(dropAll.notes.map((n) => n.id), ["h1-1.5"]);
+  assert.equal(dropAll.exempted, 1);
+  // Nothing dropped: the same array back, and nothing exempted.
+  const keepAll = thinExceptMotif([plain, tagged], () => true);
+  assert.equal(keepAll.notes.length, 2);
+  assert.equal(keepAll.exempted, 0);
+
+  // The kit texture honours it: an off-pulse hat goes, the same hat tagged as a
+  // motif statement stays, and the kick is never in question either way.
+  const kit: MusicalNote[] = [
+    { id: "k1-0", start: 0, duration: 0.2, pitch: 36, velocity: 100 },
+    plain,
+    { id: "g1-2.5", start: 1.25, duration: 0.1, pitch: 38, velocity: 30, motif: MOTIF },
+    tagged,
+  ];
+  const thinned = applyKitTexture(kit, kitTextureFor(intentFor("sparse", 0.6)), meter);
+  const ids = new Set(thinned.map((n) => n.id));
+  assert.ok(ids.has("k1-0"), "the kick is never touched");
+  assert.ok(!ids.has("h1-0.5"), "an untagged hat off the pulses still goes");
+  assert.ok(ids.has("h1-1.5"), "the same hat tagged as a motif statement stays");
+  assert.ok(ids.has("g1-2.5"), "a ghost snare that states a motif is not sent home");
+
+  // And through the after-writing entry point, on the one task that has one.
+  const applied = applyTextureAfterWriting("DRUMS", kit, intentFor("sparse", 0.6), meter);
+  assert.ok(applied.notes.every((n) => !n.motif || n.motif === MOTIF));
+  assert.equal(applied.notes.filter((n) => n.motif).length, 2, "both motif notes survive the thinnest texture");
 });
 
 test("only the kit is textured after writing; every pitched part realises its texture while writing", () => {

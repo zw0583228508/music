@@ -5,39 +5,36 @@
  * dimension's `controlStatus` can only come from a measured detection rate.
  *
  * Derived from severity 3 of every corruption family, seed(s) 1,
- * and every purpose-built worsening, over the nine benchmark anchors (eight
- * clean since the merge onto B-00 / B-01 / B-03; ethnic-vocal still overflows).
+ * and every purpose-built worsening, over the eight in-song benchmark anchors
+ * (ethnic-vocal overflows the song; the owner's song is an anchor but not a
+ * control target — see `dimensions/anchors.ts`).
+ *
+ * The status rule is `critics/sensitivity.ts` — the one rule shared with the
+ * adversarial harness and B-08's ledger. `gatingTransforms` names the
+ * independent, non-prepared transforms that earned a `gated` status;
+ * `reason` says why a dimension is not gated.
  */
-import type { ControlStatus } from "../types";
+import type { LedgerEntry } from "../sensitivity";
 
-export type LedgerEntry = {
-  status: ControlStatus;
-  /** The control with the highest detection rate among the dimension's claimed controls. */
-  strongestControl: string | null;
-  detectionRate: number | null;
-  ci95: [number, number] | null;
-  n: number;
-  /** Blocking observations raised on clean anchors, per anchor evaluated. */
-  cleanAnchorBlockingRate: number | null;
-};
+export type { LedgerEntry };
 
-export const CONTROL_LEDGER_VERSION = "B05A_CONTROLS_v2" as const;
+export const CONTROL_LEDGER_VERSION = "B05C_CONTROLS_v3" as const;
 
 export const CONTROL_LEDGER: Record<string, LedgerEntry> = {
-  density: { status: "informing", strongestControl: "piano_one_note_per_bar", detectionRate: 1, ci95: [0.5904, 1], n: 7, cleanAnchorBlockingRate: 0 },
-  emotionalArcAndTension: { status: "informing", strongestControl: "flatten_arc", detectionRate: 0.875, ci95: [0.4735, 0.9968], n: 8, cleanAnchorBlockingRate: 0 },
-  groove: { status: "gated", strongestControl: "onset_jitter@3", detectionRate: 0.9688, ci95: [0.8378, 0.9992], n: 32, cleanAnchorBlockingRate: 0 },
-  harmony: { status: "gated", strongestControl: "chord_tone_to_non_chord_tone@3", detectionRate: 1, ci95: [0.8456, 1], n: 22, cleanAnchorBlockingRate: 0 },
-  idiomaticity: { status: "informing", strongestControl: "piano_wide_voicing", detectionRate: 1, ci95: [0.5904, 1], n: 7, cleanAnchorBlockingRate: 0 },
-  melodyAndCounterline: { status: "gated", strongestControl: "top_line_erratic", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
-  motifRecurrenceAndDevelopment: { status: "informing", strongestControl: "random_pitch", detectionRate: 0.5714, ci95: [0.1841, 0.901], n: 7, cleanAnchorBlockingRate: 0 },
-  orchestration: { status: "gated", strongestControl: "drums_only", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
-  performanceRealisation: { status: "gated", strongestControl: "strip_cc_and_quantise", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
-  playability: { status: "gated", strongestControl: "bass_roots_only_leaps", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
-  register: { status: "gated", strongestControl: "role_inversion@3", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
-  repetitionVsVariation: { status: "informing", strongestControl: "chorus_copy", detectionRate: 1, ci95: [0.4782, 1], n: 5, cleanAnchorBlockingRate: 0 },
-  rhythmicInteraction: { status: "gated", strongestControl: "parallel_doubling@3", detectionRate: 1, ci95: [0.8456, 1], n: 22, cleanAnchorBlockingRate: 0 },
-  sectionDevelopment: { status: "informing", strongestControl: "chorus_copy+develop_chorus_2", detectionRate: 1, ci95: [0.4782, 1], n: 5, cleanAnchorBlockingRate: 0 },
-  transitions: { status: "gated", strongestControl: "erase_boundary_events", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
-  voiceLeading: { status: "gated", strongestControl: "bass_roots_only_leaps", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
+  density: { status: "gated", strongestControl: "strip_bed_to_top_voice", detectionRate: 1, ci95: [0.6637, 1], n: 9, cleanAnchorBlockingRate: 0, gatingTransforms: ["piano_one_note_per_bar","strip_bed_to_top_voice"], reason: "2 independent non-prepared transforms passed (piano_one_note_per_bar, strip_bed_to_top_voice) and no clean anchor is blocked" },
+  emotionalArcAndTension: { status: "informing", strongestControl: "flatten_arc", detectionRate: 0.8889, ci95: [0.5175, 0.9972], n: 9, cleanAnchorBlockingRate: 0, gatingTransforms: [], reason: "0 of 2 independent non-prepared transforms pass" },
+  groove: { status: "gated", strongestControl: "onset_jitter@3", detectionRate: 1, ci95: [0.8911, 1], n: 32, cleanAnchorBlockingRate: 0, gatingTransforms: ["onset_jitter@3","unlock_bass_from_kick"], reason: "2 independent non-prepared transforms passed (onset_jitter@3, unlock_bass_from_kick) and no clean anchor is blocked" },
+  harmony: { status: "gated", strongestControl: "chord_tone_to_non_chord_tone@3", detectionRate: 1, ci95: [0.8456, 1], n: 22, cleanAnchorBlockingRate: 0, gatingTransforms: ["chord_tone_to_non_chord_tone@3","cross_part_clash@3","parallel_perfect_motion","pitch_shift_out_of_key@3","random_pitch"], reason: "5 independent non-prepared transforms passed (chord_tone_to_non_chord_tone@3, cross_part_clash@3, parallel_perfect_motion, pitch_shift_out_of_key@3, random_pitch) and no clean anchor is blocked" },
+  idiomaticity: { status: "informing", strongestControl: "piano_wide_voicing", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0, gatingTransforms: ["piano_wide_voicing"], reason: "1 of 2 independent non-prepared transforms pass; caught brass_hold_forever 2/2 but on fewer than 8 items (the transform does not apply to every anchor)" },
+  melodyAndCounterline: { status: "informing", strongestControl: "top_line_erratic", detectionRate: 1, ci95: [0.6637, 1], n: 9, cleanAnchorBlockingRate: 0, gatingTransforms: ["top_line_erratic"], reason: "1 of 2 independent non-prepared transforms pass" },
+  motifRecurrenceAndDevelopment: { status: "informing", strongestControl: "random_pitch", detectionRate: 0.5, ci95: [0.157, 0.843], n: 8, cleanAnchorBlockingRate: 0, gatingTransforms: [], reason: "0 of 2 independent non-prepared transforms pass" },
+  orchestration: { status: "gated", strongestControl: "drums_only", detectionRate: 1, ci95: [0.6637, 1], n: 9, cleanAnchorBlockingRate: 0, gatingTransforms: ["drums_only","silence_planned_family","tutti_everywhere"], reason: "3 independent non-prepared transforms passed (drums_only, silence_planned_family, tutti_everywhere) and no clean anchor is blocked" },
+  performanceRealisation: { status: "gated", strongestControl: "strip_cc_and_quantise", detectionRate: 1, ci95: [0.6637, 1], n: 9, cleanAnchorBlockingRate: 0, gatingTransforms: ["strip_cc_and_quantise","velocity_flatten_all"], reason: "2 independent non-prepared transforms passed (strip_cc_and_quantise, velocity_flatten_all) and no clean anchor is blocked" },
+  playability: { status: "gated", strongestControl: "bass_roots_only_leaps", detectionRate: 1, ci95: [0.6637, 1], n: 9, cleanAnchorBlockingRate: 0, gatingTransforms: ["bass_roots_only_leaps","octave_displacement@3","piano_wide_voicing","strings_up_two_octaves"], reason: "4 independent non-prepared transforms passed (bass_roots_only_leaps, octave_displacement@3, piano_wide_voicing, strings_up_two_octaves) and no clean anchor is blocked" },
+  register: { status: "gated", strongestControl: "strings_up_two_octaves", detectionRate: 1, ci95: [0.6637, 1], n: 9, cleanAnchorBlockingRate: 0, gatingTransforms: ["role_inversion@3","strings_up_two_octaves"], reason: "2 independent non-prepared transforms passed (role_inversion@3, strings_up_two_octaves) and no clean anchor is blocked" },
+  repetitionVsVariation: { status: "informing", strongestControl: "bar_copy_repetition@3", detectionRate: 0.5313, ci95: [0.3474, 0.7091], n: 32, cleanAnchorBlockingRate: 0, gatingTransforms: [], reason: "0 of 2 independent non-prepared transforms pass; caught chorus_copy 5/5, chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)" },
+  rhythmicInteraction: { status: "informing", strongestControl: "parallel_doubling@3", detectionRate: 1, ci95: [0.8456, 1], n: 22, cleanAnchorBlockingRate: 0, gatingTransforms: ["parallel_doubling@3"], reason: "1 of 2 independent non-prepared transforms pass" },
+  sectionDevelopment: { status: "demoted", strongestControl: "section_swap@3", detectionRate: 0.087, ci95: [0.0107, 0.2804], n: 23, cleanAnchorBlockingRate: 0, gatingTransforms: [], reason: "strongest claimed transform section_swap@3 detected 9 % of 23 items, below 50 %; caught chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)" },
+  transitions: { status: "informing", strongestControl: "erase_boundary_events+realise_boundaries", detectionRate: 1, ci95: [0.6637, 1], n: 9, cleanAnchorBlockingRate: 0, gatingTransforms: [], reason: "0 of 2 independent non-prepared transforms pass (erase_boundary_events+realise_boundaries is prepared: it writes the gesture it then erases)" },
+  voiceLeading: { status: "gated", strongestControl: "bass_roots_only_leaps", detectionRate: 1, ci95: [0.6637, 1], n: 9, cleanAnchorBlockingRate: 0, gatingTransforms: ["bass_roots_only_leaps","parallel_perfect_motion"], reason: "2 independent non-prepared transforms passed (bass_roots_only_leaps, parallel_perfect_motion) and no clean anchor is blocked" },
 };

@@ -4,7 +4,7 @@ import { anchors, applyPreparation, applyPurposeBuilt, CLEAN_ANCHOR_IDS, detect 
 import { buildContext } from "./shared";
 import { readBoundary, transitionsDimension } from "./transitions";
 
-test("boundaries are read from the notes: on dance-full the intro closes on a crash and a register move, not a fill; where B-01 brings the drums in at the boundary (pop-full) the entry marks it and the planned fill is unrealised", () => {
+test("boundaries are read from the notes: on dance-full the intro now closes on a real fill and a crash, and no longer needs a register jump; where B-01 brings the drums in at the boundary (pop-full) the entry marks it and the planned fill is unrealised", () => {
   // Re-anchored (B-05c), with the cause.
   //
   // At the B-01 merge this asserted a fill into the dance verse
@@ -18,13 +18,27 @@ test("boundaries are read from the notes: on dance-full the intro closes on a cr
   // fill. (This is also why `erase_drum_fills` is no longer a control on this
   // anchor — see the groove suite: copying bar 7 over bar 8 *raises* the fill
   // bar's density.)
+  //
+  // Re-anchored again at the B-13 merge, and this one is a fix. B-13's
+  // transition realisation writes the fill the plan asked for: `fillRatio` is
+  // now **1.1803**, over the dimension's 1.15, so the last intro bar reads as a
+  // fill and not as "one extra hit". The crash and the register move are still
+  // there, and the groove suite records the other side of the same change —
+  // dance-full raises no `planned_fill_missing` at all any more. The threshold
+  // is untouched; the arrangement crossed it.
   const dance = buildContext(anchors(["dance-full"])[0].input);
   const introToVerse = readBoundary(dance, dance.sections.findIndex((s) => s.name === "Intro"))!;
   assert.equal(introToVerse.toSection, "Verse");
   assert.equal(introToVerse.tomHits, 0, "B-04's kit writes no tom anywhere on this anchor");
-  assert.ok(introToVerse.fillRatio !== null && introToVerse.fillRatio > 1 && introToVerse.fillRatio < 1.15,
-    `the last intro bar is denser than the section mean but under the fill threshold: ${JSON.stringify(introToVerse)}`);
-  assert.ok(introToVerse.crashOnDownbeat && introToVerse.registerMoves > 0, `the boundary is marked, by a crash and a register move: ${JSON.stringify(introToVerse)}`);
+  assert.ok(introToVerse.fillRatio !== null && introToVerse.fillRatio >= 1.15,
+    `B-13: the last intro bar is a fill, over the dimension's threshold (was 1.1428, under it): ${JSON.stringify(introToVerse)}`);
+  // B-13 at the merge: the register move is gone (`registerMoves` 1 -> 0) and a
+  // fill has taken its place. The bed now holds its planned band across the
+  // boundary instead of jumping an octave into the verse, so the boundary is
+  // marked by the two devices the plan asked for - a fill and a crash - rather
+  // than by a register jump standing in for the fill the composer did not write.
+  assert.equal(introToVerse.registerMoves, 0, `B-13: the bed keeps its band across the boundary: ${JSON.stringify(introToVerse)}`);
+  assert.ok(introToVerse.crashOnDownbeat, `the boundary is marked, by the fill above and a crash: ${JSON.stringify(introToVerse)}`);
 
   const pop = anchors(["pop-full"])[0];
   const context = buildContext(pop.input);
@@ -81,10 +95,16 @@ test("positive control: erased fills and pickups leave planned devices unrealise
       `${id}: devices lost = ${[...new Set(unrealised.map((o) => o.evidence.device))].join(",")}`);
     assert.ok(d.scoreDrop! >= 5, `${id}: ${d.scoreDrop}`);
   }
-  // Recorded null result: the raw erasure is not a control on dance-full.
+  // B-13 at the merge: the recorded null result is closed, so the fix is what
+  // is asserted. B-05c recorded "the raw erasure is not a control on
+  // dance-full", because the anchor's fill bar was thinner than the bar before
+  // it and copying bar 7 over bar 8 *raised* its density. B-13 writes the
+  // planned fill (bar 8 fillRatio 1.1803), so erasing it is a real worsening
+  // there and the raw case is a control again.
   const dance = anchors(["dance-full"])[0];
   const raw = detect(transitionsDimension, dance.input, applyPurposeBuilt(dance, "erase_boundary_events")!);
-  assert.equal(raw.detected, false, "the raw erasure raises the fill bar's density on dance-full, so it is not a worsening there");
+  assert.equal(raw.detected, true, "B-13: the fill is written, so erasing it is a worsening on dance-full too");
+  assert.ok(raw.scoreDrop! > 0, `dance-full: ${raw.scoreDrop}`);
 });
 
 test("devices the notes cannot verify are reported as information, not failure", () => {

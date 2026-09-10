@@ -162,7 +162,23 @@ export function cleanFixture(options: FixtureOptions = {}): CriticInput {
     const chord = voicing(ci, (ci + 1) % 3, 72).slice(0, 3);
     if (bar === 32) { chord.forEach((p, i) => strings.add(`final-${i}`, bar, 0, 4, p, 84 - i)); strings.add("final-top", bar, 0, 4, 84, 88); continue; }
     if (bar % 2 === 1 && phraseBar(bar) !== 4) {
-      const dur = phraseBar(bar) === 3 ? 4.6 : 7.6; // stop short of the phrase-end rest
+      // A phrase-bar-3 chord runs 4.6 beats: it holds over the phrase's last
+      // bar, which is a rest, and stops short of the next phrase.
+      //
+      // B-13 at the merge: bar 31 is the exception, and it was wrong. Bar 32
+      // is not a rest - it carries the final four-voice chord - so 4.6 beats
+      // rang 0.6 of a beat (302 ms) into it and eight string voices sounded
+      // together on a section whose ceiling is four. It was invisible until
+      // B-13: the old contract bucketed onsets to the millisecond but then
+      // filtered by exact start, so three of the final chord's four voices
+      // (62.0032 / 62.0033 / 62.0034 s, all in the 62003 ms bucket) were
+      // dropped from the cluster it measured and it counted four. B-13's
+      // `polyphonyClusters` evaluates at each gesture's *last* onset, so every
+      // voice of a staggered chord has arrived - and the fixture's overlap is
+      // real. This is a hand-written *clean* arrangement and the null control
+      // it anchors means what it says, so the pad now releases 48 ms before
+      // the final chord instead of playing through it.
+      const dur = phraseBar(bar) === 3 ? (bar === 31 ? 3.9 : 4.6) : 7.6;
       chord.forEach((p, i) => strings.add(`p${bar}-${i}`, bar, 0, dur, p, (bar > 24 ? 72 : 62) - i * 2));
     }
     if (bar > 24) strings.add(`top${bar}`, bar, 0, phraseBar(bar) === 4 ? 2.8 : 3.8, topLine[bar - 25], 76 + phraseBar(bar) * 2);
