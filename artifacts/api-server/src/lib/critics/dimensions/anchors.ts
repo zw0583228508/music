@@ -350,6 +350,45 @@ export function displaceHarmonyOffGrid(input: CriticInput, seconds = 0.18): Crit
     : t)));
 }
 
+/**
+ * A **constructed** silent opening: every note that sounds inside the first
+ * `bars` bars removed from every part, so the song begins with the plan's
+ * opening families writing nothing (B-25, at the B-21 merge).
+ *
+ * This exists for the same reason `displaceHarmonyOffGrid` does. The silent
+ * intro used to be free: the owner's own arrangement began at 3.795 s in a
+ * 4:18 song because the Intro's writers found no chord event in their window,
+ * and R-1b P0-5 was written about it ("the judge ranks a 2-bar silent intro
+ * above everything else"). B-21's D1 closed it — `composer/opening.ts` reads
+ * the arc's decided opening figure and states the tonic under it, and the
+ * owner's first note is at 0.000 s. A test that still read
+ * `planned_family_silent` off the owner's anchor would be asserting the old
+ * composer, not the ranking rule that test is about.
+ *
+ * Nothing here touches a dimension or a threshold: the constructed opening is
+ * genuinely empty, and `orchestration` is left to say that the families the
+ * plan named do not play there. Returns `null` when the anchor's opening bars
+ * carry no note to remove (nothing changed is not a control).
+ */
+export function silenceOpeningBars(anchor: Anchor, bars = 2): Worsened | null {
+  const context = buildContext(anchor.input);
+  const until = context.barInfo(bars)?.end;
+  if (until === undefined) return null;
+  const changed: string[] = [];
+  const tracks = anchor.input.trackModels.map((t) => {
+    const kept = t.notes.filter((n) => n.start >= until - 1e-6);
+    if (kept.length === t.notes.length) return t;
+    changed.push(t.id);
+    return { ...t, notes: kept };
+  });
+  if (!changed.length) return null;
+  return {
+    input: withTracks(anchor.input, tracks),
+    targetTrackIds: changed,
+    detail: `bars 1-${bars} emptied on ${changed.join(",")}: the song starts at ${until.toFixed(3)} s`,
+  };
+}
+
 /** Tom pitches, as `groove.ts` reads them when it asks whether a fill was played. */
 const TOM_PITCHES: ReadonlySet<number> = new Set([41, 43, 45, 47, 48, 50]);
 

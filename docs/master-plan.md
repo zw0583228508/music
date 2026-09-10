@@ -10250,6 +10250,183 @@ counts too, and those still move — the cause is isolated and named below.
     critic reads the part's own role and does not fire; a reader who checks the
     *track* against its lowest role's ceiling will still see it.
 
+### PR-B25 — Brain B-25: the anchors survive the song being fixed
+
+- **PR-B25** ✅ (open; the lead merges, **after PR-B21**) — `ws-brain-b25`,
+  branched from `origin/ws-brain-b21` (Arrangement & Orchestration Brain, stream
+  B-25, the critics' anchors). The owner's song "רחם נא" is the tenth anchor
+  because it was **defective**: it carried the off-grid harmony, the silent
+  intro, the single-voice string bed and the high string bed that B-05c's
+  positive controls were built to detect. The anchor is not stored data — it is
+  recomposed from live code by `orchestrateArrangement`, so the moment B-21
+  improved the writers the anchor stopped carrying the defects and seven
+  assertions that pinned them went red across four suites. This stream closes
+  them the way `ownerAnchor.test.ts`'s own header says the B-13 merge closed the
+  same event: **assert the fix, keep every control, and demonstrate the
+  sensitivity of any control the anchor can no longer exercise on a constructed
+  defect instead of deleting it.** No dimension, threshold, tolerance or release
+  rule was touched, and no composer file was opened.
+
+  **The control ledger, before → after → where its sensitivity lives now.**
+  Every figure measured on this tree; "was" names the stream that closed it.
+
+  | control | on the owner's song before | now | sensitivity demonstrated on |
+  |---|---|---|---|
+  | A — remove the performance timing (`ownerComposedAnchor`) | B-05c: composed 0 / shipped 0, off-grid shares 0.55–0.73 per part. B-13: 45.55 / 8.85, 3–4 `off_grid` per harmonic part | composed **83.00** / shipped **70.74**, **0** `off_grid` on either layer; every part's median deviation 3.3–12.4 ms inside a 30 ms tolerance | the same 180 ms displacement applied to the shipped notes alone vs to both layers: the same 22 findings, **17/22 → `perform`** vs **18/22 → `compose`**, with `composedOnGrid` true on 17 and false on 14 |
+  | B — quantise to the composer's grid (`quantiseFamiliesToGrid`) | B-05c/B-13: ≥ 3 `off_grid` on the bass, removed by the control; sixteenths 56.49 vs eighths 83.46 | **0** on the bass; the control is a **no-op** (observations byte-identical before and after) | the constructed off-grid case: bass **5 → 0**, keys **9 → 9**, strings **8 → 8** (isolating); all harmony → sixteenths **53.53** with 0 `off_grid` but `harmony_off_grid` still standing, → the kit's eighths **69.34** with both cleared |
+  | `strip_bed_to_top_voice` (`density:single_voice_bed`) | R-1b P0-1: ≥ 5 blocking on `strings-pad`, shipped mean voices 1.00 against a composed 3.0–4.0 (closed by **B-13**) | **0** | the same transform on the owner's own beds: **11** findings, **7** with the composed notes in view, all seven `perform` + blocking with composedMeanVoices 3–8; the other four `compose` + major |
+  | `displaceHarmonyOffGrid` (`groove` floor) | R-1a P1-1: `groove = 0` (closed by **B-13** + **B-21** D2/D3/D5) | **70.74** | the constructed case reproduces **0** exactly, 22 `off_grid` including 5 on the bass — a drop worth 70.74 points, against B-13's 8.85 |
+  | `strings_up_two_octaves` (`register:top_line_above_comfortable_ceiling`) | R-1b: **5** refusals under `major_on_a_bed` + one `climax_all_treble`, the bed at MIDI 92 (closed by **B-21** D4) | register **100**, **0** non-info observations | the same transform on the owner's bed: register **0**, **8** `top_line_above_comfortable_ceiling` majors, all on `strings-pad` |
+  | `silenceOpeningBars` (`orchestration:planned_family_silent`) — **new** | R-1b P0-5/P1-7: the first note at 3.795 s, the empty intro leading the judge at priority 2404 (closed by **B-21** D1) | first note **0.000 s**, **0** `planned_family_silent` | a constructed case built one transform per closed defect; all four refuse, and P0-5's ordering holds — off-grid harmony **#1**, string bed **#5**, empty intro **#33** at the salience floor |
+
+  **Where the owner's song now belongs: still out of `CLEAN_ANCHOR_IDS`, for a
+  measured reason rather than a remembered one.** It scores 70.74 on `groove`
+  and 100 on `register`, but the judge still refuses it: one **blocking**
+  `harmony:overhang_across_chord_change` on `strings-pad` in Chorus 3 (bars
+  97–112 — overhangShare 0.866, 5 of 10 notes clashing, chordToneShare 0.395)
+  and one **major** `groove:harmony_off_grid` on the same part in the Bridge
+  (median 53.4 ms from the kit against a 50 ms tolerance, with the kit itself on
+  its own grid). Both are located to the string bed the owner's brief asks for,
+  and the cause is isolated by a control rather than assumed: remove the
+  `strings-pad` part and both findings go; build the same arrangement with the
+  brief's **global** planner hints withheld and the plan has no strings part at
+  all (0 notes against 281) — harmony 40 → 88.77, groove 70.74 → 86.34, 0
+  blocking, 0 major. *Which* decision about that bed is wrong — the planner's,
+  the voicing solver's or the release rule's — is **UNKNOWN** here.
+
+  **What that costs the positive-control ledger: nothing, and it is checked
+  rather than asserted.** The owner's song is an anchor but not a control target
+  (141 bars × 22 part tasks is a different order of runtime, and worsening an
+  already-defective anchor measures the interaction rather than the worsening),
+  so `controls.ts` runs the nine benchmark anchors and the ledger's composition
+  does not depend on where the owner's song sits. The null control still holds:
+  no clean anchor gets a blocking observation from any dimension
+  (`cleanAnchorBlockingRate` 0 for all sixteen).
+
+  **The ledger itself was stale and is regenerated by its own generator**
+  (`B05A_WRITE_LEDGER=1`, never hand-edited), together with
+  `docs/evidence/brain-b05a-critic-controls.json`. B-21 moved eight rows:
+  `melodyAndCounterline` **informing → gated** (`top_line_into_vocal_register`
+  now 9/9), `emotionalArcAndTension` 0-of-2 → 1-of-2
+  (`swap_climax_with_quietest` 9/9), `register` 2 → 3 transforms (n 9 → 10),
+  `playability` 4 → 2, `motifRecurrence` 0.5 → 0.5556, `sectionDevelopment`
+  0.087 → 0.0435, `groove` unchanged but with a new strongest control — and
+  **`voiceLeading` gated → informing**, the one loss. Its cause is isolated, not
+  assumed: on `acoustic-demo` the guitar bed now repeats the **same bottom note
+  in 65 of 72 consecutive cluster pairs**, so `parallel_perfect_motion`'s
+  re-voicing over that bottom note moves no voice, the detector's
+  `movedA !== 0 && movedB !== 0` guard correctly declines to call it parallel
+  motion, and the parallel share is 14/216 = 6.5 % against a 20 % minor
+  threshold (`ballad-piano-vocal`, for contrast: 74/291 = 25.4 %, detected).
+  **The harness stops producing the damage on that anchor; the dimension is
+  right.** Making the transform skip static-bottom parts would restore the gate,
+  and this stream deliberately did not make a harness change whose effect is to
+  restore a gate — see *Honest limits*.
+
+  **Also fixed here (charter rule 6, the program's recurring bug):**
+  `b05cEvidence`'s §4 table quoted **eleven** hand-copied detection rates
+  ("onset_jitter@3 (29/31)", "strings_up_two_octaves (9/9)" …) that went stale
+  the moment the anchors moved. They are read from the generated ledger now, so
+  there is one source of truth for what a control showed. `judgeOnTheOwnersSong`
+  reported a rank of `0` for a finding that is not raised at all; it reports
+  `null` and names the stream that closed it, with R-1b P0-5's ordering
+  demonstrated on the constructed case beside it.
+
+  **Tests.** `critics/dimensions/ownerAnchor.test.ts` **8/8** (was 2/6 — four
+  red, and two tests added: the register control and the anchor's own remaining
+  defect with the control that isolated it); `critics/rank.test.ts` **12/12**
+  (was 11/12); `critics/controls.test.ts` **5/5** (was 4/5, the ledger stale);
+  `critics/b05cEvidence.test.ts` **1/1** (was 0/1). Also green and unchanged:
+  `critics/judge.test.ts` 10/10, `critics/failureTaxonomy.test.ts` 6/6,
+  `positiveControlLedger.test.ts` 7/7, and eight dimension suites. Evidence:
+  `docs/evidence/brain-b25-anchors-survive-the-fix.json`, plus the regenerated
+  `brain-b05a-critic-controls.json` and `brain-b05c-critics-decide.json`.
+  `pnpm run typecheck` green (exit 0); `node --check
+  scripts/run-focused-api-tests.mjs` clean — all four suites were already
+  registered, so the registry is unchanged.
+
+  **Found and not fixed — handed to the lead before PR-B21 merges.**
+
+  1. **`string_bed_too_high` is back, and two rules disagree about how high a
+     bed may sit.** `adversarial.instrumentReality:string_bed_too_high` fires on
+     `orchestral-midi/strings-climax_layer` (Chorus, bars 19–30, mean MIDI
+     **79.93**, max 86, 28.4 s) and on the owner's own `strings-pad` (Bridge,
+     bars 97–110, mean **80.00**, max 84, 25.8 s). B-13 had closed this —
+     orchestral-midi averaged 74.84 — and `critics/adversarial/adversarial.test.ts`
+     asserts the closure, so it is red. The adversarial rule uses a fixed
+     threshold of 79; B-21's D4 gives the writers
+     `instrumentProfile.roleRegisterFor`, which allows a violin section
+     `CLIMAX_LAYER` 67–91. So `register` scores **100** on the owner's song while
+     the adversarial critic calls its Bridge bed too high. Two sources of truth
+     for one musical claim. Belongs to B-21 and the adversarial stream.
+  2. **The judge's disagreement machinery has no demonstrated sensitivity.**
+     `critics/adversarial/evidence.test.ts` asserts "at least one anchor produces
+     a recorded disagreement"; measured now, **all ten anchors produce zero**
+     (6–20 agreements each). Same class as this stream's job — the remedy is a
+     constructed case, not a deleted assertion. Not this stream's file.
+  3. **PR-B21's headline number does not reproduce through the critics' anchor
+     path.** B-21's entry reports `releasable: true, 0 blocking, 0 major` on the
+     owner's song. Rebuilt with the review's brief
+     (`briefPlannerHints(compileProductionBrief(OWNER_BRIEF …))`) and
+     `composeReferencePart`, **every** candidate at `candidateCount` 1, 3 and 5
+     reports harmony 40, groove 70.74, one blocking
+     `overhang_across_chord_change@97-112` on `strings-pad` and one major
+     `harmony_off_grid` in the Bridge. Injecting `composeParts` or letting the
+     orchestrator default makes no difference (both report
+     `REFERENCE_PART_COMPOSER_V1`); withholding the brief's global hints does.
+     Either B-21 measured through a different gate or the runs differ in a
+     variable this stream did not find. It should be reconciled before merge,
+     because the finding sits on the string bed the owner's brief asks for.
+  4. **Fifteen more red tests in eleven suites at the B-21 base, all the same
+     class.** Measured by stashing this stream's changes and re-running:
+     identical failures, so B-21 leaves them and B-25 does not cause them.
+     `critics/dimensions/density` 2, `register` 2, `repetitionVsVariation` 2,
+     `sectionDevelopment` 2, `groove` 1, `harmony` 1,
+     `motifRecurrenceAndDevelopment` 1, `playability` 1, `transitions` 1,
+     `critics/adversarial/adversarial` 1, `critics/adversarial/evidence` 1.
+     Every one is an anchor pin the improved composer moved, and every one needs
+     the same treatment this stream gave its four: assert the fix, keep the
+     control, demonstrate it on a constructed case. They are outside this
+     stream's file set and are listed, with counts, rather than touched.
+  5. Minor: `scripts/run-focused-api-tests.mjs` spawns `esbuild` by bare name,
+     which cannot resolve `esbuild.CMD` on Windows without a shell, so the
+     grouped runner fails with `spawn esbuild ENOENT` on this machine. The
+     suites were run directly through `esbuild.CMD` + `node --test` instead. Not
+     changed here: the file is shared and the fix (`shell: true`, or resolving
+     `node_modules/.bin`) belongs with whoever owns the runner.
+
+  **Honest limits.**
+
+  - **Rung: TESTED.** Nothing was generated or rendered by this stream. The
+    anchors are recomposed from live code and every number is a symbolic
+    measurement by the unmodified critic dimensions. No audio, no listening.
+  - The owner's song is **still not clean**, and the cause of what remains is
+    located to the brief's string bed but **not** attributed to a decision. That
+    is a control result, not a diagnosis.
+  - **`voiceLeading` loses its gate and this stream did not restore it.** The
+    cause is isolated and reported above, and re-pointing
+    `parallel_perfect_motion` to skip parts whose bottom voice does not move
+    would restore it — the same recalibration `top_line_erratic` and the
+    `erase_*` transforms already use. This stream declined, because the decision
+    "change the harness in a way that restores a gate" should not be taken by
+    the stream that benefits from it. A reviewer should take it or refuse it
+    explicitly. Until then `voiceLeading` informs and does not refuse, which is
+    the conservative direction.
+  - The ledger's composition is **checked, not improved**: the owner's song was
+    never a control target, so moving it would have changed nothing, and no new
+    defective anchor was needed or constructed. `DEFECT_ANCHOR_REASONS` is still
+    empty and all nine benchmark anchors are still in the clean set.
+  - `silenceOpeningBars` is exercised on the owner's anchor only. It is
+    deliberately **not** in `PURPOSE_BUILT`, so it does not enter the
+    positive-control ledger and gates nothing.
+  - `docs/evidence/brain-b25-anchors-survive-the-fix.json` is a snapshot built
+    by a scratchpad script rather than by a committed builder. Every number in
+    it is re-asserted by a committed test, named per row in `reproducedBy`, but
+    the file itself has no generator in the repo.
+  - The fifteen red tests in item 4 mean the critics surface is **not** green at
+    this branch's head. Four suites are; eleven are not, for reasons that
+    predate this stream.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
