@@ -16,7 +16,7 @@
  */
 import type { ArrangementBrainFinding, ArrangementFailureCode, DecisionOriginLayer, FailureClassification, FailureCodeCount } from "@workspace/db";
 import { FAILURE_CODES, FAILURE_TAXONOMY, codeForKind, type FailureCode } from "./critics/failureTaxonomy";
-import type { OriginLayer } from "./critics/types.b05b";
+import type { OriginLayer } from "./critics/types";
 
 export const FINDING_CLASSIFICATION_VERSION = "FINDING_CLASSIFICATION_v1" as const;
 

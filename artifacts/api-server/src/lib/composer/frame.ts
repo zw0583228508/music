@@ -28,8 +28,12 @@ export type ComposeFrame = {
   density: number;
   energy: number;
   baseVelocity: number;
-  /** Append a note, clamped to the section window, the minimum duration and MIDI ranges. */
-  push: (start: number, duration: number, pitch: number, velocity: number, suffix: string) => void;
+  /**
+   * Append a note, clamped to the section window, the minimum duration and MIDI
+   * ranges. Brain B-10: an optional motif provenance rides on the note
+   * (`MusicalNote.motif`) so a melodic part can say which cell it states.
+   */
+  push: (start: number, duration: number, pitch: number, velocity: number, suffix: string, motif?: MusicalNote["motif"]) => void;
 };
 
 export type PartWriter = (frame: ComposeFrame) => void;
