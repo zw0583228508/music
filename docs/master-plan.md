@@ -5517,6 +5517,59 @@ any of it.
   owner's songs were re-encoded to 320 kb/s MP3 because the live Basic Pitch
   worker refuses the 45–52 MiB FLAC proxies (HTTP 413). Quick tunnel,
   in-memory leases, CPU containers: a measurement setup, not production.
+- **PR-94** ✅ — `local-open-instruments-vst3-worker` (Sound, Stream LOCAL-1:
+  the owner's PC becomes a production floor of *open* instruments, rendered
+  through the existing VST3 worker; evidence `docs/evidence/local-open-instruments-live.json`,
+  report `docs/model-discovery/production-floor-local.md`). Installed from
+  official GitHub Releases / vendor sites, every file hashed before it ran,
+  $0, no account, no sign-in, drive D: untouched: **sfizz 1.2.3** (VST3 +
+  `sfizz_render`), **Surge XT 1.3.4**, **Dexed 1.0.1**, **MT Power Drum Kit
+  2** files, and six CC0/CC-BY libraries under `C:\MusicLibraries\` — VSCO 2
+  CE 1.1.0 (3.2 GB), Salamander Grand V3, DrumGizmo DRSKit (sfz), Karoryfer
+  Meatbass / Shinyguitar / Emilyguitar — 5.9 GB installed (≤ 10 GB budget),
+  licence files recorded. The worker learned to host **SFZ libraries, one
+  asset per library**: `pluginName` for multi-plugin binaries; `sfzPath`
+  injected into sfizz's VST3 component state through pedalboard's `raw_state`
+  (JUCE `VC2!` + JUCE base64 + sfizz state v5; codec proven byte-exact against
+  a captured state); the file's `set_cc` defaults applied as `controller_N`
+  parameters (pedalboard re-applies cached CCs after every reset and silenced
+  Karoryfer/DrumGizmo, which route amplitude through CCs); `sfzSha256` in the
+  manifest gate; `VST3_SMOKE_ONLY` re-smokes one library without dropping the
+  others' proofs; and **plugin work on the main thread** (`python app.py`:
+  uvicorn in a thread, `MainThreadRunner` on main) because pedalboard refuses
+  to reinstantiate a plugin off the main thread — the first live export
+  returned 503s for every sfizz asset while the smoke had passed. **12 of 13
+  assets attested** (Surge XT default, Dexed, Salamander, VSCO2 violins /
+  cellos / horn / flute / harp, DRSKit, Meatbass arco + pizz, Emilyguitar;
+  Shinyguitar renders but fails the octave-brighter gate and is not offered).
+  **A/B on the dev project** (arrangement v3, approved revision v7, same
+  durable export job, only `PEDALBOARD_VST3_API_URL` differs): A = fallback
+  synth, 0/3 native, `preview-only`; B = **3/3 native, `production-ready`**,
+  chosen by the PR-24 brain with no operator table — drums → DRSKit (score 9),
+  bass → Meatbass arco (10), ensemble → Salamander (5) — per-stem LUFS/peak/
+  sha256 and renderer attestation recorded; both bundles are project
+  artifacts (`export-…-21`, `export-…-23`). Tests: 32 pytest (state codec,
+  injection, CC defaults with `#include`/`#define`, manifest gate, proof
+  merge, main-thread runner); `pnpm run typecheck` green (no TS changed).
+
+  **Honest limits.** The shell was not elevated, so plugins live in the
+  per-user VST3 folder, not `C:\Program Files\Common Files\VST3`. Odin 2
+  (Inno 6.4 installer, needs elevation), Vital (account), Decent Sampler and
+  Musical Artifacts #940/#941 (sites answer 403 to automated fetches) and
+  Pianobook (login) were **not** installed; MT Power Drum Kit is installed
+  but crashes the headless host (GUI activation) — the owner's exact steps
+  and sizes for these and for Native Access / Kontakt 8 Player / Komplete
+  Start, Spitfire (SSO Discover 5.7 GB, BBCSO Discover 0.2 GB, LABS), SINE +
+  Berlin Free Orchestra (3 GB), GLADE (4.4/12.5 GB), LUX Strings Elements
+  (3.5 GB), Tokyo Scoring Strings Free (2 GB), Sonixinema Origins, Blueprint,
+  Ample Lite ×2, SSD5 Free and Soundpaint are in the report; with 18.6 GB
+  free on C: they do not all fit. The A/B master is identical in both runs
+  (the export ships the approved master preview); the difference is in the
+  stems and full mix. sfizz renders are not bit-deterministic (round-robin);
+  `discover.py` timed Surge XT out once under CPU contention. The 5.5 GB of
+  archives were left in `_downloads` (delete command in the report). Nothing
+  here is central: the worker is local, the token stays in the process env,
+  and no path, token or secret is in the evidence.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

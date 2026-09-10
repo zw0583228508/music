@@ -1,0 +1,1858 @@
+{
+  "pr": "PR-94 local-open-instruments-vst3-worker",
+  "recordedAt": "2026-09-10T00:53:37+00:00",
+  "workstation": {
+    "os": "Windows 11 Pro 10.0.26200",
+    "python": "3.11.9",
+    "shellElevated": false,
+    "note": "The session shell is not elevated, so plugins were installed into the per-user VST3 folder (%LOCALAPPDATA%\\Programs\\Common\\VST3), which discover.py scans; nothing under C:\\Program Files was touched and drive D: was not read."
+  },
+  "downloads": [
+    {
+      "file": "sfizz-1.2.3-win64.exe",
+      "url": "https://github.com/sfztools/sfizz-ui/releases/download/1.2.3/sfizz-1.2.3-win64.exe",
+      "bytes": 3626650,
+      "sha256": "56f57dfe443018e947b82b8e2bf4c9d824a9c961ff2b8eb6c5e929030b71b937",
+      "note": "official GitHub Release (sfztools/sfizz-ui); Inno Setup installer, extracted with innoextract instead of run"
+    },
+    {
+      "file": "sfizz-1.2.3-win64.zip",
+      "url": "https://github.com/sfztools/sfizz/releases/download/1.2.3/sfizz-1.2.3-win64.zip",
+      "bytes": 8286178,
+      "sha256": "7431cbe9b7f2e71a9ff4b12fbbe82c766dbf75b1eedecca627e7506cb06a9fcc",
+      "note": "official GitHub Release (sfztools/sfizz); library + sfizz_render CLI"
+    },
+    {
+      "file": "surge-xt-win64-1.3.4-portable-install.zip",
+      "url": "https://github.com/surge-synthesizer/releases-xt/releases/download/1.3.4/surge-xt-win64-1.3.4-portable-install.zip",
+      "bytes": 301759660,
+      "sha256": "a5f2376702ad218c0382640ed0c7b9ebb222ba2410a210879899c0f726859d8e",
+      "note": "official GitHub Release; portable layout (plugin + SurgeXTData side by side)"
+    },
+    {
+      "file": "surge-xt-win64-1.3.4-setup.exe",
+      "url": "https://github.com/surge-synthesizer/releases-xt/releases/download/1.3.4/surge-xt-win64-1.3.4-setup.exe",
+      "bytes": 183385478,
+      "sha256": "6e221e05f29254508142b9e0ed76a85f22fa1b512501bebde571951e7eefecca",
+      "note": "official GitHub Release; not run (needs elevation) - the portable zip was used"
+    },
+    {
+      "file": "Dexed-1.0.1-win.zip",
+      "url": "https://github.com/asb2m10/dexed/releases/download/v1.0.1/Dexed-1.0.1-win.zip",
+      "bytes": 9742538,
+      "sha256": "1f118445f2c5c411636bb41ddf8b456db09af74cd38f9ede8a93a01020505f05",
+      "note": "official GitHub Release; md5 in artifact_md5sum.txt of the same release"
+    },
+    {
+      "file": "Odin2.4.1WinInstaller.exe",
+      "url": "https://github.com/TheWaveWarden/odin2/releases/download/NightlyDevel/Odin2.4.1WinInstaller.exe",
+      "bytes": 40936418,
+      "sha256": "c8e42d8f67f7a49328de0727bb9e97c7681b02300f1b0ccc5c24d31d065e3ae2",
+      "note": "official GitHub Release; Inno Setup 6.4 installer - innoextract 1.9 cannot unpack it and the shell is not elevated, so NOT installed"
+    },
+    {
+      "file": "MTPDK-2.1.5.1-VST3-64bit-Windows-FULL.zip",
+      "url": "https://www.powerdrumkit.com/download76187.php",
+      "bytes": 63331484,
+      "sha256": "f07c53cdf4cec0730d694709ee2f292f103f2082bc1850e7ccbd790ae3eea679",
+      "note": "official vendor download (MANDA AUDIO); plugin + content .pdk copied, activation code is the owner's step"
+    },
+    {
+      "file": "innoextract-1.9-windows.zip",
+      "url": "https://github.com/dscharrer/innoextract/releases/download/1.9/innoextract-1.9-windows.zip",
+      "bytes": 520705,
+      "sha256": "6989342c9b026a00a72a38f23b62a8e6a22cc5de69805cf47d68ac2fec993065",
+      "note": "official GitHub Release; tool used to unpack the sfizz installer without running it"
+    },
+    {
+      "file": "VSCO-2-CE-1.1.0.zip",
+      "url": "https://github.com/sgossner/VSCO-2-CE/archive/refs/tags/1.1.0.zip",
+      "bytes": 2297598334,
+      "sha256": "4a4446628df0e1a12aaee58e9f65f8fa7cde51971e961abb1b43083a6d3a8ab7",
+      "note": "official GitHub source archive of tag 1.1.0 (CC0)"
+    },
+    {
+      "file": "SalamanderGrandPiano-sfzinstruments-master.zip",
+      "url": "https://github.com/sfzinstruments/SalamanderGrandPiano/archive/refs/heads/master.zip",
+      "bytes": 748476973,
+      "sha256": "74d11c1ea0fcfe77eb80d6a48e960cbfc42716bdfd74a621eca5799f1680cb5c",
+      "note": "official GitHub archive (CC-BY 3.0)"
+    },
+    {
+      "file": "DrumGizmo.DRSKit-sfzinstruments-master.zip",
+      "url": "https://github.com/sfzinstruments/DrumGizmo.DRSKit/archive/refs/heads/master.zip",
+      "bytes": 754841648,
+      "sha256": "8a71f4d722e93304731f6285779eb3c0d9db03090b934fb61ac8a718036f8d71",
+      "note": "official GitHub archive (CC-BY 4.0)"
+    },
+    {
+      "file": "Karoryfer.Meatbass.v1.001.zip",
+      "url": "https://github.com/sfzinstruments/karoryfer.meatbass/releases/download/v1.001/Karoryfer.Meatbass.v1.001.zip",
+      "bytes": 255425351,
+      "sha256": "bc053061d4f39fb76ba56bc1f323efa228d1f63757c331738812479bcf04fe96",
+      "note": "official GitHub Release (CC0)"
+    },
+    {
+      "file": "Karoryfer.Shinyguitar.v1.002.zip",
+      "url": "https://github.com/sfzinstruments/karoryfer.shinyguitar/releases/download/v1.002/Karoryfer.Shinyguitar.v1.002.zip",
+      "bytes": 368411844,
+      "sha256": "23cf4030cbf9ce9e2c84d7cbb1c022fbca124bfff0ad118a14eda7cf6c921d7b",
+      "note": "official GitHub Release (CC0)"
+    },
+    {
+      "file": "Karoryfer.Emilyguitar.v1.001.zip",
+      "url": "https://github.com/sfzinstruments/karoryfer.emilyguitar/releases/download/v1.001/Karoryfer.Emilyguitar.v1.001.zip",
+      "bytes": 103484350,
+      "sha256": "ffef3b28972763820bee73660a25cf47ea6e13b184342fd5d325a5631598cacb",
+      "note": "official GitHub Release (CC0)"
+    }
+  ],
+  "plugins": [
+    {
+      "plugin": "sfizz",
+      "version": "1.2.3",
+      "licence": "BSD-2-Clause",
+      "installedAs": "%LOCALAPPDATA%\\Programs\\Common\\VST3\\sfizz.vst3/Contents/x86_64-win/sfizz.vst3",
+      "binarySha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+      "binaryBytes": 3182592,
+      "fromDownload": "sfizz-1.2.3-win64.exe"
+    },
+    {
+      "plugin": "Surge XT",
+      "version": "1.3.4",
+      "licence": "GPL-3.0",
+      "installedAs": "%LOCALAPPDATA%\\Programs\\Common\\VST3\\Surge Synth Team/Surge XT.vst3/Contents/x86_64-win/Surge XT.vst3",
+      "binarySha256": "49794ad99d899a869b97416024283d74baf2c517bac15db0fde511bc99624e20",
+      "binaryBytes": 21102592,
+      "fromDownload": "surge-xt-win64-1.3.4-portable-install.zip"
+    },
+    {
+      "plugin": "Dexed",
+      "version": "1.0.1",
+      "licence": "GPL-3.0",
+      "installedAs": "%LOCALAPPDATA%\\Programs\\Common\\VST3\\Dexed.vst3/Contents/x86_64-win/Dexed.vst3",
+      "binarySha256": "e8b3b00a53bb0aa1ef082b0c1b5cb66bdf1af5eddf787b8f47397df6d2411a40",
+      "binaryBytes": 7203840,
+      "fromDownload": "Dexed-1.0.1-win.zip"
+    },
+    {
+      "plugin": "MT Power Drum Kit 2",
+      "version": "2.1.5.1",
+      "licence": "freeware (MANDA AUDIO EULA; activation code)",
+      "installedAs": "%LOCALAPPDATA%\\Programs\\Common\\VST3\\MT-PowerDrumKit.vst3",
+      "binarySha256": "7044653b6eb6deae326e953b2c4a87a51f8a2c322bb0873fd5e5ff7b3d3ded54",
+      "binaryBytes": 12551168,
+      "fromDownload": "MTPDK-2.1.5.1-VST3-64bit-Windows-FULL.zip"
+    }
+  ],
+  "libraries": [
+    {
+      "library": "VSCO 2 Community Edition 1.1.0",
+      "author": "Versilian Studios (Sam Gossner)",
+      "licence": "CC0 1.0",
+      "installedUnder": "C:\\MusicLibraries\\VSCO-2-CE",
+      "sizeMb": 3238.1,
+      "licenceFile": "VSCO-2-CE-1.1.0/LICENSE",
+      "licenceFileSha256": "36ffd9dc085d529a7e60e1276d73ae5a030b020313e6c5408593a6ae2af39673",
+      "licenceFileFirstLine": "CC0 1.0 Universal"
+    },
+    {
+      "library": "Salamander Grand Piano V3 (sfz)",
+      "author": "Alexander Holm; sfz mapping by sfzinstruments",
+      "licence": "CC-BY 3.0 Unported",
+      "installedUnder": "C:\\MusicLibraries\\SalamanderGrandPiano",
+      "sizeMb": 748.5,
+      "licenceFile": "SalamanderGrandPiano-master/LICENSE",
+      "licenceFileSha256": "e6bc9e9c474700b708f568bac9e5a8a9bcb2b1dad53442f5ba449fcb848b8e76",
+      "licenceFileFirstLine": "Creative Commons Legal Code"
+    },
+    {
+      "library": "DrumGizmo DRSKit v1.0 (sfz port)",
+      "author": "DrumGizmo team / Jes Eiler; sfz by kinwie",
+      "licence": "CC-BY 4.0",
+      "installedUnder": "C:\\MusicLibraries\\DrumGizmo-DRSKit",
+      "sizeMb": 754.3,
+      "licenceFile": "DrumGizmo.DRSKit-master/LICENSE",
+      "licenceFileSha256": "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411",
+      "licenceFileFirstLine": "Attribution 4.0 International"
+    },
+    {
+      "library": "Karoryfer Meatbass v1.001",
+      "author": "Karoryfer Samples",
+      "licence": "CC0 1.0",
+      "installedUnder": "C:\\MusicLibraries\\Karoryfer-Meatbass",
+      "sizeMb": 296.4,
+      "licenceFile": "Meatbass/LICENSE",
+      "licenceFileSha256": "a19d58aaab15c4d0019e569d1c073d1b5286fdd37dbeee7a58a7d1ae76045ae1",
+      "licenceFileFirstLine": "Creative Commons Legal Code"
+    },
+    {
+      "library": "Karoryfer Shinyguitar v1.002",
+      "author": "Karoryfer Samples",
+      "licence": "CC0 1.0",
+      "installedUnder": "C:\\MusicLibraries\\Karoryfer-Shinyguitar",
+      "sizeMb": 460.4,
+      "licenceFile": "Shinyguitar/LICENSE",
+      "licenceFileSha256": "a19d58aaab15c4d0019e569d1c073d1b5286fdd37dbeee7a58a7d1ae76045ae1",
+      "licenceFileFirstLine": "Creative Commons Legal Code"
+    },
+    {
+      "library": "Karoryfer Emilyguitar v1.001",
+      "author": "Karoryfer Samples",
+      "licence": "CC0 1.0",
+      "installedUnder": "C:\\MusicLibraries\\Karoryfer-Emilyguitar",
+      "sizeMb": 125.5,
+      "licenceFile": "Emilyguitar/LICENSE",
+      "licenceFileSha256": "a19d58aaab15c4d0019e569d1c073d1b5286fdd37dbeee7a58a7d1ae76045ae1",
+      "licenceFileFirstLine": "Creative Commons Legal Code"
+    }
+  ],
+  "notInstalled": [
+    {
+      "item": "Odin 2 (2.4.1)",
+      "reason": "official installer is Inno Setup 6.4 (innoextract 1.9 cannot unpack it) and requires an elevated install; not run",
+      "ownerStep": "double-click C:\\MusicLibraries\\_downloads\\Odin2.4.1WinInstaller.exe, accept the GPL-3.0 notice, then re-run discover.py / make_manifest.py"
+    },
+    {
+      "item": "Vital",
+      "reason": "download requires a Vital account (account-bound) - out of scope by the hard rules"
+    },
+    {
+      "item": "Decent Sampler plugin",
+      "reason": "decentsamples.com and store.decentsamples.com refuse automated access (HTTP 403) and the vendor flow is an email checkout; not installed, so no Decent Sampler packs were fetched",
+      "ownerStep": "download from https://www.decentsamples.com/product/decent-sampler-plugin/ (free checkout), install the VST3, then Pianobook packs can be hosted the same way sfizz is (state carries the .dspreset path)"
+    },
+    {
+      "item": "Pianobook packs (Expressive Duduk, MyDuduk, oud/saz/kanun/darbuka)",
+      "reason": "pianobook.co.uk shows 'Log in to download' - account-bound, out of scope"
+    },
+    {
+      "item": "Musical Artifacts #940 / #941",
+      "reason": "musical-artifacts.com returns HTTP 403 to automated fetches; licence files could not be read, so nothing was downloaded"
+    },
+    {
+      "item": "MT Power Drum Kit 2 as a hosted asset",
+      "reason": "the plugin crashes pedalboard's headless host on load (discover.py: 'no output'); it needs its GUI for the first-run activation screen. Files are installed; the activation code is the owner's step (powerdrumkit.com/keygen.php; the screen can also be skipped with START)"
+    }
+  ],
+  "inventory": {
+    "scannedAt": "2026-09-09T23:46:58Z",
+    "hostIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+    "instruments": [
+      {
+        "name": "Splice INSTRUMENT",
+        "identity": "VST3-Splice INSTRUMENT-c22c2e6c-6cc6ab35@2.4.17",
+        "loadSeconds": 5.43,
+        "bundle": "Splice INSTRUMENT.vst3"
+      },
+      {
+        "name": "Groove Agent SE",
+        "identity": "VST3-Groove Agent SE-73451159-c72dfe05@5.2.20",
+        "loadSeconds": 25.74,
+        "bundle": "Groove Agent SE.vst3"
+      },
+      {
+        "name": "HALion Sonic",
+        "identity": "VST3-HALion Sonic-bcf4278b-90a5f2a8@7.1.40.846",
+        "loadSeconds": 42.9,
+        "bundle": "HALion Sonic.vst3"
+      },
+      {
+        "name": "Padshop",
+        "identity": "VST3-Padshop-7951d599-77cdd10c@2.2.0",
+        "loadSeconds": 32.27,
+        "bundle": "Padshop.vst3"
+      },
+      {
+        "name": "Retrologue",
+        "identity": "VST3-Retrologue-f78a36a1-8be6f179@2.4.0",
+        "loadSeconds": 14.42,
+        "bundle": "Retrologue.vst3"
+      },
+      {
+        "name": "Dexed",
+        "identity": "VST3-Dexed-4e4f359c-d7709eec@1.0.1",
+        "loadSeconds": 2.05,
+        "bundle": "Dexed.vst3"
+      },
+      {
+        "name": "sfizz",
+        "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+        "loadSeconds": 30.56,
+        "bundle": "sfizz.vst3"
+      }
+    ],
+    "failed": [
+      {
+        "bundle": "MT-PowerDrumKit.vst3",
+        "error": "no output"
+      },
+      {
+        "bundle": "Surge XT.vst3",
+        "error": "load exceeded 90.0s (dialog or hang)"
+      }
+    ],
+    "effectsCount": 18
+  },
+  "workerHealth": {
+    "contractVersion": "1.0",
+    "provider": "VST3",
+    "requestedProvider": "VST3",
+    "healthy": true,
+    "runtimeReady": true,
+    "smokeTested": true,
+    "runtimeIdentity": "pedalboard-0.9.24/python-3.11.9/windows-amd64",
+    "modelVersion": "VST3-Surge XT-8df11193-190e4fbd@1.3.4",
+    "worker": {
+      "name": "VST3_RENDER_WORKER",
+      "version": "1.0.0",
+      "role": "LICENSED_INSTRUMENT_RENDERER"
+    },
+    "problems": [],
+    "asset": {
+      "id": "surge-xt-1.3.4",
+      "identity": "VST3-Surge XT-8df11193-190e4fbd@1.3.4",
+      "sha256": "49794ad99d899a869b97416024283d74baf2c517bac15db0fde511bc99624e20",
+      "licenseOwner": "Open-source software, GPL-3.0 (Surge Synth Team)",
+      "licenseReference": "GPL-3.0; github.com/surge-synthesizer/releases-xt release 1.3.4 (portable zip)",
+      "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+      "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+      "name": "Surge XT",
+      "manufacturer": "Surge Synth Team",
+      "families": [
+        "synth"
+      ],
+      "character": [
+        "analog",
+        "wide",
+        "clean",
+        "digital"
+      ],
+      "library": "Surge XT 1.3.4 (GPL-3.0, Surge Synth Team)"
+    },
+    "plugin": {
+      "name": "Surge XT",
+      "identifier": "VST3-Surge XT-8df11193-190e4fbd",
+      "version": "1.3.4",
+      "manufacturer": "Surge Synth Team",
+      "category": "Instrument|Synth",
+      "is_instrument": true,
+      "binary_path": "<private>",
+      "binary_sha256": "49794ad99d899a869b97416024283d74baf2c517bac15db0fde511bc99624e20",
+      "state_sha256": "8e3e432e7a9dd38e1be2accec0b1f5a27b576e72d407b27fcfa7e435149d7ed5",
+      "identity": "VST3-Surge XT-8df11193-190e4fbd@1.3.4"
+    },
+    "smokeEvidence": {
+      "assetId": "surge-xt-1.3.4",
+      "sha256": "49794ad99d899a869b97416024283d74baf2c517bac15db0fde511bc99624e20",
+      "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+      "outputSha256": "abca45c177bf5f36985cff72a2d863800707b55ae809419c83261d0ad988086d",
+      "trackModelRendered": true,
+      "audible": true,
+      "canonicalSensitivity": true,
+      "nativeHostAttested": true,
+      "deterministic": false,
+      "velocitySensitive": true,
+      "ranAt": "2026-09-10T00:36:44+00:00"
+    },
+    "assets": [
+      {
+        "id": "surge-xt-1.3.4",
+        "identity": "VST3-Surge XT-8df11193-190e4fbd@1.3.4",
+        "sha256": "49794ad99d899a869b97416024283d74baf2c517bac15db0fde511bc99624e20",
+        "licenseOwner": "Open-source software, GPL-3.0 (Surge Synth Team)",
+        "licenseReference": "GPL-3.0; github.com/surge-synthesizer/releases-xt release 1.3.4 (portable zip)",
+        "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+        "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+        "name": "Surge XT",
+        "manufacturer": "Surge Synth Team",
+        "families": [
+          "synth"
+        ],
+        "character": [
+          "analog",
+          "wide",
+          "clean",
+          "digital"
+        ],
+        "library": "Surge XT 1.3.4 (GPL-3.0, Surge Synth Team)",
+        "smokeEvidence": {
+          "assetId": "surge-xt-1.3.4",
+          "sha256": "49794ad99d899a869b97416024283d74baf2c517bac15db0fde511bc99624e20",
+          "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+          "outputSha256": "abca45c177bf5f36985cff72a2d863800707b55ae809419c83261d0ad988086d",
+          "trackModelRendered": true,
+          "audible": true,
+          "canonicalSensitivity": true,
+          "nativeHostAttested": true,
+          "deterministic": false,
+          "velocitySensitive": true,
+          "ranAt": null
+        }
+      },
+      {
+        "id": "dexed-1.0.1",
+        "identity": "VST3-Dexed-4e4f359c-d7709eec@1.0.1",
+        "sha256": "e8b3b00a53bb0aa1ef082b0c1b5cb66bdf1af5eddf787b8f47397df6d2411a40",
+        "licenseOwner": "Open-source software, GPL-3.0 (Digital Suburban / asb2m10)",
+        "licenseReference": "GPL-3.0; github.com/asb2m10/dexed release v1.0.1",
+        "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+        "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+        "name": "Dexed",
+        "manufacturer": "Digital Suburban",
+        "families": [
+          "synth"
+        ],
+        "character": [
+          "digital",
+          "fm",
+          "bright",
+          "vintage",
+          "electric"
+        ],
+        "library": "Dexed 1.0.1 (GPL-3.0, Digital Suburban)",
+        "smokeEvidence": {
+          "assetId": "dexed-1.0.1",
+          "sha256": "e8b3b00a53bb0aa1ef082b0c1b5cb66bdf1af5eddf787b8f47397df6d2411a40",
+          "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+          "outputSha256": "c5882db87c7c3b575e387cdc835704da5474740f5f79e2a731846cc7b52dacef",
+          "trackModelRendered": true,
+          "audible": true,
+          "canonicalSensitivity": true,
+          "nativeHostAttested": true,
+          "deterministic": true,
+          "velocitySensitive": false,
+          "ranAt": null
+        }
+      },
+      {
+        "id": "sfizz-salamander-grand-v3",
+        "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+        "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+        "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+        "licenseReference": "CC-BY 3.0 Unported; github.com/sfzinstruments/SalamanderGrandPiano (LICENSE in library folder)",
+        "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+        "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+        "name": "Salamander Grand Piano",
+        "manufacturer": "SFZTools",
+        "families": [
+          "keys"
+        ],
+        "character": [
+          "acoustic",
+          "piano",
+          "natural",
+          "sampled",
+          "grand"
+        ],
+        "library": "Salamander Grand Piano V3 (CC-BY 3.0, Alexander Holm; sfz by sfzinstruments)",
+        "sfzSha256": "c8b282f03fdb2d9e6be24a99df0d97a05e7ece718d1a14e0b882c518161f7837",
+        "smokeEvidence": {
+          "assetId": "sfizz-salamander-grand-v3",
+          "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+          "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+          "outputSha256": "3cead6eb46e18043eff20896a1dfcede335b847425c80f6392e31dbf3b3ab839",
+          "trackModelRendered": true,
+          "audible": true,
+          "canonicalSensitivity": true,
+          "nativeHostAttested": true,
+          "deterministic": false,
+          "velocitySensitive": true,
+          "ranAt": null
+        }
+      },
+      {
+        "id": "sfizz-vsco2-violin-ens-sus",
+        "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+        "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+        "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+        "licenseReference": "CC0 1.0; github.com/sgossner/VSCO-2-CE tag 1.1.0 (LICENSE in library folder)",
+        "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+        "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+        "name": "VSCO2 Violin Ensemble Sustain",
+        "manufacturer": "SFZTools",
+        "families": [
+          "strings"
+        ],
+        "roles": [
+          "PAD",
+          "HARMONIC_BED",
+          "TRANSITION",
+          "CLIMAX_LAYER",
+          "COUNTER_MELODY"
+        ],
+        "character": [
+          "acoustic",
+          "orchestral",
+          "sampled",
+          "sustain",
+          "natural"
+        ],
+        "library": "VSCO 2 Community Edition 1.1.0 (CC0, Versilian Studios)",
+        "sfzSha256": "4591e212cccf1cbcff0c78cf8429a8221bb0820b70cb7c8dd6685f470ace4eaa",
+        "smokeEvidence": {
+          "assetId": "sfizz-vsco2-violin-ens-sus",
+          "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+          "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+          "outputSha256": "a0afaad992826451444e8efafea13250441d32612fee61e90fab244531689b43",
+          "trackModelRendered": true,
+          "audible": true,
+          "canonicalSensitivity": true,
+          "nativeHostAttested": true,
+          "deterministic": true,
+          "velocitySensitive": true,
+          "ranAt": null
+        }
+      },
+      {
+        "id": "sfizz-vsco2-cello-ens-sus",
+        "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+        "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+        "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+        "licenseReference": "CC0 1.0; github.com/sgossner/VSCO-2-CE tag 1.1.0 (LICENSE in library folder)",
+        "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+        "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+        "name": "VSCO2 Cello Ensemble Sustain",
+        "manufacturer": "SFZTools",
+        "families": [
+          "strings"
+        ],
+        "roles": [
+          "FOUNDATION",
+          "HARMONIC_BED",
+          "COUNTER_MELODY",
+          "PAD"
+        ],
+        "character": [
+          "acoustic",
+          "orchestral",
+          "sampled",
+          "dark",
+          "sustain"
+        ],
+        "library": "VSCO 2 Community Edition 1.1.0 (CC0, Versilian Studios)",
+        "sfzSha256": "276352639dda425dd12a4fdb3acdf545867fdb0ff4f89876319f4ec3cf12a19f",
+        "smokeEvidence": {
+          "assetId": "sfizz-vsco2-cello-ens-sus",
+          "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+          "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+          "outputSha256": "cdfdc2b6f4c69d4ece81e850a0dbb3e3314cf18b2bcc2a2cf07f7aeab4a357a1",
+          "trackModelRendered": true,
+          "audible": true,
+          "canonicalSensitivity": true,
+          "nativeHostAttested": true,
+          "deterministic": true,
+          "velocitySensitive": true,
+          "ranAt": null
+        }
+      },
+      {
+        "id": "sfizz-vsco2-horn-sus",
+        "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+        "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+        "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+        "licenseReference": "CC0 1.0; github.com/sgossner/VSCO-2-CE tag 1.1.0 (LICENSE in library folder)",
+        "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+        "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+        "name": "VSCO2 French Horn Sustain",
+        "manufacturer": "SFZTools",
+        "families": [
+          "brass"
+        ],
+        "roles": [
+          "PAD",
+          "CLIMAX_LAYER",
+          "HARMONIC_BED",
+          "COUNTER_MELODY"
+        ],
+        "character": [
+          "acoustic",
+          "orchestral",
+          "sampled",
+          "warm"
+        ],
+        "library": "VSCO 2 Community Edition 1.1.0 (CC0, Versilian Studios)",
+        "sfzSha256": "52a8ccef8baaf0dbea4b3e528b8096c89ffb5c8aafba2b69c4c38af1d64587a5",
+        "smokeEvidence": {
+          "assetId": "sfizz-vsco2-horn-sus",
+          "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+          "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+          "outputSha256": "5821ce21c86d62757c0f31150818aa8a71ad37fd696fb8c0e830206f6a26983b",
+          "trackModelRendered": true,
+          "audible": true,
+          "canonicalSensitivity": true,
+          "nativeHostAttested": true,
+          "deterministic": true,
+          "velocitySensitive": true,
+          "ranAt": null
+        }
+      },
+      {
+        "id": "sfizz-vsco2-flute-sus",
+        "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+        "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+        "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+        "licenseReference": "CC0 1.0; github.com/sgossner/VSCO-2-CE tag 1.1.0 (LICENSE in library folder)",
+        "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+        "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+        "name": "VSCO2 Flute Sustain Vibrato",
+        "manufacturer": "SFZTools",
+        "families": [
+          "winds"
+        ],
+        "roles": [
+          "LEAD",
+          "COUNTER_MELODY",
+          "CALL_RESPONSE"
+        ],
+        "character": [
+          "acoustic",
+          "orchestral",
+          "sampled",
+          "airy"
+        ],
+        "library": "VSCO 2 Community Edition 1.1.0 (CC0, Versilian Studios)",
+        "sfzSha256": "26b0dedaa483b6f7f4201d144673b26ab1d0e4585493a97815d03904319a0734",
+        "smokeEvidence": {
+          "assetId": "sfizz-vsco2-flute-sus",
+          "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+          "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+          "outputSha256": "4c888a24a166f375bd84273c973523d96b2a850b7566cde1eefdc7d2f2563905",
+          "trackModelRendered": true,
+          "audible": true,
+          "canonicalSensitivity": true,
+          "nativeHostAttested": true,
+          "deterministic": true,
+          "velocitySensitive": true,
+          "ranAt": null
+        }
+      },
+      {
+        "id": "sfizz-vsco2-harp",
+        "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+        "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+        "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+        "licenseReference": "CC0 1.0; github.com/sgossner/VSCO-2-CE tag 1.1.0 (LICENSE in library folder)",
+        "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+        "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+        "name": "VSCO2 Harp",
+        "manufacturer": "SFZTools",
+        "families": [
+          "strings"
+        ],
+        "roles": [
+          "OSTINATO",
+          "ACCENT"
+        ],
+        "character": [
+          "acoustic",
+          "orchestral",
+          "plucked",
+          "sampled"
+        ],
+        "library": "VSCO 2 Community Edition 1.1.0 (CC0, Versilian Studios)",
+        "sfzSha256": "25b553eb756a94f833b1cc1239fe3e6dced3ebc83335bac95d05c951589f7da9",
+        "smokeEvidence": {
+          "assetId": "sfizz-vsco2-harp",
+          "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+          "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+          "outputSha256": "cc0acb05d430b7dd59ab7dea05be827c3a4ea58b5342e07ab96ef2973f2764f8",
+          "trackModelRendered": true,
+          "audible": true,
+          "canonicalSensitivity": true,
+          "nativeHostAttested": true,
+          "deterministic": true,
+          "velocitySensitive": true,
+          "ranAt": null
+        }
+      },
+      {
+        "id": "sfizz-drskit-stereo",
+        "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+        "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+        "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+        "licenseReference": "CC-BY 4.0; github.com/sfzinstruments/DrumGizmo.DRSKit (LICENSE in library folder)",
+        "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+        "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+        "name": "DrumGizmo DRSKit",
+        "manufacturer": "SFZTools",
+        "families": [
+          "drums"
+        ],
+        "roles": [
+          "GROOVE",
+          "FILL"
+        ],
+        "character": [
+          "acoustic",
+          "kit",
+          "drum",
+          "natural",
+          "sampled"
+        ],
+        "library": "DrumGizmo DRSKit v1.0 sfz port (CC-BY 4.0, DrumGizmo team / kinwie)",
+        "sfzSha256": "14634014dcea45235de643d854d77197334ac702f06c68a9a2cd7f8f97828a48",
+        "smokeEvidence": {
+          "assetId": "sfizz-drskit-stereo",
+          "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+          "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+          "outputSha256": "fc7e7403d8a130ce5afb21ccd0ba51fe187a9b08b134f4fd6fe98b07fa0937f4",
+          "trackModelRendered": true,
+          "audible": true,
+          "canonicalSensitivity": true,
+          "nativeHostAttested": true,
+          "deterministic": false,
+          "velocitySensitive": true,
+          "ranAt": null
+        }
+      },
+      {
+        "id": "sfizz-meatbass-arco",
+        "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+        "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+        "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+        "licenseReference": "CC0 1.0; github.com/sfzinstruments/karoryfer.meatbass release v1.001 (LICENSE in library folder)",
+        "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+        "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+        "name": "Karoryfer Meatbass Arco",
+        "manufacturer": "SFZTools",
+        "families": [
+          "bass",
+          "strings"
+        ],
+        "roles": [
+          "BASS",
+          "FOUNDATION"
+        ],
+        "character": [
+          "acoustic",
+          "dark",
+          "mono",
+          "sampled",
+          "bowed"
+        ],
+        "library": "Karoryfer Meatbass v1.001 (CC0, Karoryfer Samples)",
+        "sfzSha256": "008cf9b04358b4e499104792956c7c8d9f926df233c84d5ac195910cf3b82631",
+        "smokeEvidence": {
+          "assetId": "sfizz-meatbass-arco",
+          "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+          "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+          "outputSha256": "2ef8ea8c1f6246b12f278c4f3c55dd9ec8c4e2c02287cc7d6af8ea3d6e80ea6c",
+          "trackModelRendered": true,
+          "audible": true,
+          "canonicalSensitivity": true,
+          "nativeHostAttested": true,
+          "deterministic": false,
+          "velocitySensitive": true,
+          "ranAt": null
+        }
+      },
+      {
+        "id": "sfizz-meatbass-pizz",
+        "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+        "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+        "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+        "licenseReference": "CC0 1.0; github.com/sfzinstruments/karoryfer.meatbass release v1.001 (LICENSE in library folder)",
+        "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+        "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+        "name": "Karoryfer Meatbass Pizzicato",
+        "manufacturer": "SFZTools",
+        "families": [
+          "bass",
+          "strings"
+        ],
+        "roles": [
+          "BASS",
+          "FOUNDATION",
+          "OSTINATO"
+        ],
+        "character": [
+          "acoustic",
+          "dark",
+          "mono",
+          "sampled",
+          "plucked"
+        ],
+        "library": "Karoryfer Meatbass v1.001 (CC0, Karoryfer Samples)",
+        "sfzSha256": "af95601d4be39dea012a10bdec49b72c376a68ad201e31c5dc37e5f21512a628",
+        "smokeEvidence": {
+          "assetId": "sfizz-meatbass-pizz",
+          "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+          "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+          "outputSha256": "883fed8e2e387c492376701964679a1ab3264bc212094574ebd9baf6590a5366",
+          "trackModelRendered": true,
+          "audible": true,
+          "canonicalSensitivity": true,
+          "nativeHostAttested": true,
+          "deterministic": false,
+          "velocitySensitive": true,
+          "ranAt": null
+        }
+      },
+      {
+        "id": "sfizz-emilyguitar-basic",
+        "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+        "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+        "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+        "licenseReference": "CC0 1.0; github.com/sfzinstruments/karoryfer.emilyguitar release v1.001 (LICENSE in library folder)",
+        "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+        "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+        "name": "Karoryfer Emilyguitar Electric",
+        "manufacturer": "SFZTools",
+        "families": [
+          "guitar"
+        ],
+        "roles": [
+          "RHYTHMIC_HARMONY",
+          "LEAD",
+          "COUNTER_MELODY",
+          "ACCENT"
+        ],
+        "character": [
+          "electric",
+          "clean",
+          "vintage",
+          "sampled"
+        ],
+        "library": "Karoryfer Emilyguitar v1.001 (CC0, Karoryfer Samples)",
+        "sfzSha256": "6374cae8516592aa50c0bc00de431b9e4ab45d5a8af66ddddc183a3945e907f0",
+        "smokeEvidence": {
+          "assetId": "sfizz-emilyguitar-basic",
+          "sha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+          "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+          "outputSha256": "34ddf369e954a8baa862b123f4e472847ce177e45709a4cebec662eee0d0bbed",
+          "trackModelRendered": true,
+          "audible": true,
+          "canonicalSensitivity": true,
+          "nativeHostAttested": true,
+          "deterministic": false,
+          "velocitySensitive": true,
+          "ranAt": null
+        }
+      }
+    ]
+  },
+  "attestedAssets": [
+    {
+      "assetId": "surge-xt-1.3.4",
+      "name": "Surge XT",
+      "identity": "VST3-Surge XT-8df11193-190e4fbd@1.3.4",
+      "pluginSha256": "49794ad99d899a869b97416024283d74baf2c517bac15db0fde511bc99624e20",
+      "library": "Surge XT 1.3.4 (GPL-3.0, Surge Synth Team)",
+      "sfzFile": null,
+      "sfzSha256": null,
+      "families": [
+        "synth"
+      ],
+      "roles": null,
+      "character": [
+        "analog",
+        "wide",
+        "clean",
+        "digital"
+      ],
+      "licenseOwner": "Open-source software, GPL-3.0 (Surge Synth Team)",
+      "licenseReference": "GPL-3.0; github.com/surge-synthesizer/releases-xt release 1.3.4 (portable zip)",
+      "smoke": {
+        "passed": true,
+        "audible": true,
+        "noClipping": true,
+        "canonicalSensitivity": true,
+        "nativeHostAttested": true,
+        "velocitySensitive": true,
+        "deterministic": false,
+        "loadSeconds": 22.15,
+        "outputSha256": "abca45c177bf5f36985cff72a2d863800707b55ae809419c83261d0ad988086d",
+        "measurements": {
+          "activeFrameRatio": 0.9046,
+          "clippedSamples": 0,
+          "expectedFrames": 144000,
+          "frames": 144000,
+          "headroomGainDb": 0.0,
+          "loudRmsDbfs": -17.06,
+          "midiEvents": 17,
+          "peak": 0.6797,
+          "rawPluginPeak": 0.6797,
+          "rmsDbfs": -17.27,
+          "softRmsDbfs": -18.39,
+          "sparseRmsDbfs": -30.13,
+          "spectralCentroidHz": 4200.3,
+          "spectralCentroidHzOctaveUp": 4865.0
+        }
+      }
+    },
+    {
+      "assetId": "dexed-1.0.1",
+      "name": "Dexed",
+      "identity": "VST3-Dexed-4e4f359c-d7709eec@1.0.1",
+      "pluginSha256": "e8b3b00a53bb0aa1ef082b0c1b5cb66bdf1af5eddf787b8f47397df6d2411a40",
+      "library": "Dexed 1.0.1 (GPL-3.0, Digital Suburban)",
+      "sfzFile": null,
+      "sfzSha256": null,
+      "families": [
+        "synth"
+      ],
+      "roles": null,
+      "character": [
+        "digital",
+        "fm",
+        "bright",
+        "vintage",
+        "electric"
+      ],
+      "licenseOwner": "Open-source software, GPL-3.0 (Digital Suburban / asb2m10)",
+      "licenseReference": "GPL-3.0; github.com/asb2m10/dexed release v1.0.1",
+      "smoke": {
+        "passed": true,
+        "audible": true,
+        "noClipping": true,
+        "canonicalSensitivity": true,
+        "nativeHostAttested": true,
+        "velocitySensitive": false,
+        "deterministic": true,
+        "loadSeconds": 1.03,
+        "outputSha256": "c5882db87c7c3b575e387cdc835704da5474740f5f79e2a731846cc7b52dacef",
+        "measurements": {
+          "activeFrameRatio": 0.9003,
+          "clippedSamples": 0,
+          "expectedFrames": 144000,
+          "frames": 144000,
+          "headroomGainDb": 0.0,
+          "loudRmsDbfs": -22.29,
+          "midiEvents": 17,
+          "peak": 0.4119,
+          "rawPluginPeak": 0.4119,
+          "rmsDbfs": -22.29,
+          "softRmsDbfs": -22.29,
+          "sparseRmsDbfs": -32.88,
+          "spectralCentroidHz": 479.3,
+          "spectralCentroidHzOctaveUp": 808.1
+        }
+      }
+    },
+    {
+      "assetId": "sfizz-salamander-grand-v3",
+      "name": "Salamander Grand Piano",
+      "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+      "pluginSha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+      "library": "Salamander Grand Piano V3 (CC-BY 3.0, Alexander Holm; sfz by sfzinstruments)",
+      "sfzFile": "Salamander Grand Piano V3.sfz",
+      "sfzSha256": "c8b282f03fdb2d9e6be24a99df0d97a05e7ece718d1a14e0b882c518161f7837",
+      "families": [
+        "keys"
+      ],
+      "roles": null,
+      "character": [
+        "acoustic",
+        "piano",
+        "natural",
+        "sampled",
+        "grand"
+      ],
+      "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+      "licenseReference": "CC-BY 3.0 Unported; github.com/sfzinstruments/SalamanderGrandPiano (LICENSE in library folder)",
+      "smoke": {
+        "passed": true,
+        "audible": true,
+        "noClipping": true,
+        "canonicalSensitivity": true,
+        "nativeHostAttested": true,
+        "velocitySensitive": true,
+        "deterministic": false,
+        "loadSeconds": 21.12,
+        "outputSha256": "3cead6eb46e18043eff20896a1dfcede335b847425c80f6392e31dbf3b3ab839",
+        "measurements": {
+          "activeFrameRatio": 0.9929,
+          "clippedSamples": 0,
+          "expectedFrames": 144000,
+          "frames": 144000,
+          "headroomGainDb": 0.0,
+          "loudRmsDbfs": -25.75,
+          "midiEvents": 17,
+          "peak": 0.2756,
+          "rawPluginPeak": 0.2756,
+          "rmsDbfs": -30.01,
+          "softRmsDbfs": -43.31,
+          "sparseRmsDbfs": -36.1,
+          "spectralCentroidHz": 1018.5,
+          "spectralCentroidHzOctaveUp": 1433.6
+        }
+      }
+    },
+    {
+      "assetId": "sfizz-vsco2-violin-ens-sus",
+      "name": "VSCO2 Violin Ensemble Sustain",
+      "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+      "pluginSha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+      "library": "VSCO 2 Community Edition 1.1.0 (CC0, Versilian Studios)",
+      "sfzFile": "ViolinEnsSusVib.sfz",
+      "sfzSha256": "4591e212cccf1cbcff0c78cf8429a8221bb0820b70cb7c8dd6685f470ace4eaa",
+      "families": [
+        "strings"
+      ],
+      "roles": [
+        "PAD",
+        "HARMONIC_BED",
+        "TRANSITION",
+        "CLIMAX_LAYER",
+        "COUNTER_MELODY"
+      ],
+      "character": [
+        "acoustic",
+        "orchestral",
+        "sampled",
+        "sustain",
+        "natural"
+      ],
+      "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+      "licenseReference": "CC0 1.0; github.com/sgossner/VSCO-2-CE tag 1.1.0 (LICENSE in library folder)",
+      "smoke": {
+        "passed": true,
+        "audible": true,
+        "noClipping": true,
+        "canonicalSensitivity": true,
+        "nativeHostAttested": true,
+        "velocitySensitive": true,
+        "deterministic": true,
+        "loadSeconds": 13.85,
+        "outputSha256": "a0afaad992826451444e8efafea13250441d32612fee61e90fab244531689b43",
+        "measurements": {
+          "activeFrameRatio": 0.991,
+          "clippedSamples": 0,
+          "expectedFrames": 144000,
+          "frames": 144000,
+          "headroomGainDb": 0.0,
+          "loudRmsDbfs": -30.92,
+          "midiEvents": 17,
+          "peak": 0.1164,
+          "rawPluginPeak": 0.1164,
+          "rmsDbfs": -35.78,
+          "softRmsDbfs": -47.83,
+          "sparseRmsDbfs": -51.42,
+          "spectralCentroidHz": 2556.0,
+          "spectralCentroidHzOctaveUp": 3368.0
+        }
+      }
+    },
+    {
+      "assetId": "sfizz-vsco2-cello-ens-sus",
+      "name": "VSCO2 Cello Ensemble Sustain",
+      "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+      "pluginSha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+      "library": "VSCO 2 Community Edition 1.1.0 (CC0, Versilian Studios)",
+      "sfzFile": "CelloEnsSusVib.sfz",
+      "sfzSha256": "276352639dda425dd12a4fdb3acdf545867fdb0ff4f89876319f4ec3cf12a19f",
+      "families": [
+        "strings"
+      ],
+      "roles": [
+        "FOUNDATION",
+        "HARMONIC_BED",
+        "COUNTER_MELODY",
+        "PAD"
+      ],
+      "character": [
+        "acoustic",
+        "orchestral",
+        "sampled",
+        "dark",
+        "sustain"
+      ],
+      "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+      "licenseReference": "CC0 1.0; github.com/sgossner/VSCO-2-CE tag 1.1.0 (LICENSE in library folder)",
+      "smoke": {
+        "passed": true,
+        "audible": true,
+        "noClipping": true,
+        "canonicalSensitivity": true,
+        "nativeHostAttested": true,
+        "velocitySensitive": true,
+        "deterministic": true,
+        "loadSeconds": 26.5,
+        "outputSha256": "cdfdc2b6f4c69d4ece81e850a0dbb3e3314cf18b2bcc2a2cf07f7aeab4a357a1",
+        "measurements": {
+          "activeFrameRatio": 0.9996,
+          "clippedSamples": 0,
+          "expectedFrames": 144000,
+          "frames": 144000,
+          "headroomGainDb": 0.0,
+          "loudRmsDbfs": -21.4,
+          "midiEvents": 17,
+          "peak": 0.4786,
+          "rawPluginPeak": 0.4786,
+          "rmsDbfs": -23.99,
+          "softRmsDbfs": -43.74,
+          "sparseRmsDbfs": -36.29,
+          "spectralCentroidHz": 2224.3,
+          "spectralCentroidHzOctaveUp": 2771.7
+        }
+      }
+    },
+    {
+      "assetId": "sfizz-vsco2-horn-sus",
+      "name": "VSCO2 French Horn Sustain",
+      "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+      "pluginSha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+      "library": "VSCO 2 Community Edition 1.1.0 (CC0, Versilian Studios)",
+      "sfzFile": "FHornSus.sfz",
+      "sfzSha256": "52a8ccef8baaf0dbea4b3e528b8096c89ffb5c8aafba2b69c4c38af1d64587a5",
+      "families": [
+        "brass"
+      ],
+      "roles": [
+        "PAD",
+        "CLIMAX_LAYER",
+        "HARMONIC_BED",
+        "COUNTER_MELODY"
+      ],
+      "character": [
+        "acoustic",
+        "orchestral",
+        "sampled",
+        "warm"
+      ],
+      "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+      "licenseReference": "CC0 1.0; github.com/sgossner/VSCO-2-CE tag 1.1.0 (LICENSE in library folder)",
+      "smoke": {
+        "passed": true,
+        "audible": true,
+        "noClipping": true,
+        "canonicalSensitivity": true,
+        "nativeHostAttested": true,
+        "velocitySensitive": true,
+        "deterministic": true,
+        "loadSeconds": 23.83,
+        "outputSha256": "5821ce21c86d62757c0f31150818aa8a71ad37fd696fb8c0e830206f6a26983b",
+        "measurements": {
+          "activeFrameRatio": 0.9994,
+          "clippedSamples": 0,
+          "expectedFrames": 144000,
+          "frames": 144000,
+          "headroomGainDb": 0.0,
+          "loudRmsDbfs": -18.64,
+          "midiEvents": 17,
+          "peak": 0.5333,
+          "rawPluginPeak": 0.5333,
+          "rmsDbfs": -22.64,
+          "softRmsDbfs": -35.52,
+          "sparseRmsDbfs": -37.61,
+          "spectralCentroidHz": 656.1,
+          "spectralCentroidHzOctaveUp": 819.1
+        }
+      }
+    },
+    {
+      "assetId": "sfizz-vsco2-flute-sus",
+      "name": "VSCO2 Flute Sustain Vibrato",
+      "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+      "pluginSha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+      "library": "VSCO 2 Community Edition 1.1.0 (CC0, Versilian Studios)",
+      "sfzFile": "FluteSusVib.sfz",
+      "sfzSha256": "26b0dedaa483b6f7f4201d144673b26ab1d0e4585493a97815d03904319a0734",
+      "families": [
+        "winds"
+      ],
+      "roles": [
+        "LEAD",
+        "COUNTER_MELODY",
+        "CALL_RESPONSE"
+      ],
+      "character": [
+        "acoustic",
+        "orchestral",
+        "sampled",
+        "airy"
+      ],
+      "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+      "licenseReference": "CC0 1.0; github.com/sgossner/VSCO-2-CE tag 1.1.0 (LICENSE in library folder)",
+      "smoke": {
+        "passed": true,
+        "audible": true,
+        "noClipping": true,
+        "canonicalSensitivity": true,
+        "nativeHostAttested": true,
+        "velocitySensitive": true,
+        "deterministic": true,
+        "loadSeconds": 17.7,
+        "outputSha256": "4c888a24a166f375bd84273c973523d96b2a850b7566cde1eefdc7d2f2563905",
+        "measurements": {
+          "activeFrameRatio": 0.9598,
+          "clippedSamples": 0,
+          "expectedFrames": 144000,
+          "frames": 144000,
+          "headroomGainDb": 0.0,
+          "loudRmsDbfs": -32.13,
+          "midiEvents": 17,
+          "peak": 0.1279,
+          "rawPluginPeak": 0.1279,
+          "rmsDbfs": -35.16,
+          "softRmsDbfs": -48.34,
+          "sparseRmsDbfs": -53.87,
+          "spectralCentroidHz": 1583.0,
+          "spectralCentroidHzOctaveUp": 2093.3
+        }
+      }
+    },
+    {
+      "assetId": "sfizz-vsco2-harp",
+      "name": "VSCO2 Harp",
+      "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+      "pluginSha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+      "library": "VSCO 2 Community Edition 1.1.0 (CC0, Versilian Studios)",
+      "sfzFile": "Harp.sfz",
+      "sfzSha256": "25b553eb756a94f833b1cc1239fe3e6dced3ebc83335bac95d05c951589f7da9",
+      "families": [
+        "strings"
+      ],
+      "roles": [
+        "OSTINATO",
+        "ACCENT"
+      ],
+      "character": [
+        "acoustic",
+        "orchestral",
+        "plucked",
+        "sampled"
+      ],
+      "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+      "licenseReference": "CC0 1.0; github.com/sgossner/VSCO-2-CE tag 1.1.0 (LICENSE in library folder)",
+      "smoke": {
+        "passed": true,
+        "audible": true,
+        "noClipping": true,
+        "canonicalSensitivity": true,
+        "nativeHostAttested": true,
+        "velocitySensitive": true,
+        "deterministic": true,
+        "loadSeconds": 17.87,
+        "outputSha256": "cc0acb05d430b7dd59ab7dea05be827c3a4ea58b5342e07ab96ef2973f2764f8",
+        "measurements": {
+          "activeFrameRatio": 0.9867,
+          "clippedSamples": 0,
+          "expectedFrames": 144000,
+          "frames": 144000,
+          "headroomGainDb": 0.0,
+          "loudRmsDbfs": -32.48,
+          "midiEvents": 17,
+          "peak": 0.1814,
+          "rawPluginPeak": 0.1814,
+          "rmsDbfs": -35.7,
+          "softRmsDbfs": -50.05,
+          "sparseRmsDbfs": -45.36,
+          "spectralCentroidHz": 792.4,
+          "spectralCentroidHzOctaveUp": 1394.2
+        }
+      }
+    },
+    {
+      "assetId": "sfizz-drskit-stereo",
+      "name": "DrumGizmo DRSKit",
+      "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+      "pluginSha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+      "library": "DrumGizmo DRSKit v1.0 sfz port (CC-BY 4.0, DrumGizmo team / kinwie)",
+      "sfzFile": "DrumGizmo DRSKit.sfz",
+      "sfzSha256": "14634014dcea45235de643d854d77197334ac702f06c68a9a2cd7f8f97828a48",
+      "families": [
+        "drums"
+      ],
+      "roles": [
+        "GROOVE",
+        "FILL"
+      ],
+      "character": [
+        "acoustic",
+        "kit",
+        "drum",
+        "natural",
+        "sampled"
+      ],
+      "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+      "licenseReference": "CC-BY 4.0; github.com/sfzinstruments/DrumGizmo.DRSKit (LICENSE in library folder)",
+      "smoke": {
+        "passed": true,
+        "audible": true,
+        "noClipping": true,
+        "canonicalSensitivity": true,
+        "nativeHostAttested": true,
+        "velocitySensitive": true,
+        "deterministic": false,
+        "loadSeconds": 31.08,
+        "outputSha256": "fc7e7403d8a130ce5afb21ccd0ba51fe187a9b08b134f4fd6fe98b07fa0937f4",
+        "measurements": {
+          "activeFrameRatio": 0.9796,
+          "clippedSamples": 0,
+          "expectedFrames": 144000,
+          "frames": 144000,
+          "headroomGainDb": 0.0,
+          "loudRmsDbfs": -28.53,
+          "midiEvents": 22,
+          "peak": 0.4392,
+          "rawPluginPeak": 0.4392,
+          "rmsDbfs": -28.72,
+          "softRmsDbfs": -38.58,
+          "sparseRmsDbfs": -44.56,
+          "spectralCentroidHz": 4587.6,
+          "spectralCentroidHzOctaveUp": 8811.5
+        }
+      }
+    },
+    {
+      "assetId": "sfizz-meatbass-arco",
+      "name": "Karoryfer Meatbass Arco",
+      "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+      "pluginSha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+      "library": "Karoryfer Meatbass v1.001 (CC0, Karoryfer Samples)",
+      "sfzFile": "02_arco_3vel.sfz",
+      "sfzSha256": "008cf9b04358b4e499104792956c7c8d9f926df233c84d5ac195910cf3b82631",
+      "families": [
+        "bass",
+        "strings"
+      ],
+      "roles": [
+        "BASS",
+        "FOUNDATION"
+      ],
+      "character": [
+        "acoustic",
+        "dark",
+        "mono",
+        "sampled",
+        "bowed"
+      ],
+      "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+      "licenseReference": "CC0 1.0; github.com/sfzinstruments/karoryfer.meatbass release v1.001 (LICENSE in library folder)",
+      "smoke": {
+        "passed": true,
+        "audible": true,
+        "noClipping": true,
+        "canonicalSensitivity": true,
+        "nativeHostAttested": true,
+        "velocitySensitive": true,
+        "deterministic": false,
+        "loadSeconds": 22.24,
+        "outputSha256": "2ef8ea8c1f6246b12f278c4f3c55dd9ec8c4e2c02287cc7d6af8ea3d6e80ea6c",
+        "measurements": {
+          "activeFrameRatio": 0.8725,
+          "clippedSamples": 0,
+          "expectedFrames": 144000,
+          "frames": 144000,
+          "headroomGainDb": 0.0,
+          "loudRmsDbfs": -37.89,
+          "midiEvents": 17,
+          "peak": 0.0432,
+          "rawPluginPeak": 0.0432,
+          "rmsDbfs": -41.4,
+          "softRmsDbfs": -42.31,
+          "sparseRmsDbfs": -56.65,
+          "spectralCentroidHz": 3082.8,
+          "spectralCentroidHzOctaveUp": 4416.7
+        }
+      }
+    },
+    {
+      "assetId": "sfizz-meatbass-pizz",
+      "name": "Karoryfer Meatbass Pizzicato",
+      "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+      "pluginSha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+      "library": "Karoryfer Meatbass v1.001 (CC0, Karoryfer Samples)",
+      "sfzFile": "04_pizz.sfz",
+      "sfzSha256": "af95601d4be39dea012a10bdec49b72c376a68ad201e31c5dc37e5f21512a628",
+      "families": [
+        "bass",
+        "strings"
+      ],
+      "roles": [
+        "BASS",
+        "FOUNDATION",
+        "OSTINATO"
+      ],
+      "character": [
+        "acoustic",
+        "dark",
+        "mono",
+        "sampled",
+        "plucked"
+      ],
+      "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+      "licenseReference": "CC0 1.0; github.com/sfzinstruments/karoryfer.meatbass release v1.001 (LICENSE in library folder)",
+      "smoke": {
+        "passed": true,
+        "audible": true,
+        "noClipping": true,
+        "canonicalSensitivity": true,
+        "nativeHostAttested": true,
+        "velocitySensitive": true,
+        "deterministic": false,
+        "loadSeconds": 38.82,
+        "outputSha256": "883fed8e2e387c492376701964679a1ab3264bc212094574ebd9baf6590a5366",
+        "measurements": {
+          "activeFrameRatio": 0.5723,
+          "clippedSamples": 0,
+          "expectedFrames": 144000,
+          "frames": 144000,
+          "headroomGainDb": 0.0,
+          "loudRmsDbfs": -28.82,
+          "midiEvents": 17,
+          "peak": 0.3336,
+          "rawPluginPeak": 0.3336,
+          "rmsDbfs": -31.65,
+          "softRmsDbfs": -35.83,
+          "sparseRmsDbfs": -35.17,
+          "spectralCentroidHz": 1246.0,
+          "spectralCentroidHzOctaveUp": 1614.2
+        }
+      }
+    },
+    {
+      "assetId": "sfizz-emilyguitar-basic",
+      "name": "Karoryfer Emilyguitar Electric",
+      "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+      "pluginSha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+      "library": "Karoryfer Emilyguitar v1.001 (CC0, Karoryfer Samples)",
+      "sfzFile": "emily_basic.sfz",
+      "sfzSha256": "6374cae8516592aa50c0bc00de431b9e4ab45d5a8af66ddddc183a3945e907f0",
+      "families": [
+        "guitar"
+      ],
+      "roles": [
+        "RHYTHMIC_HARMONY",
+        "LEAD",
+        "COUNTER_MELODY",
+        "ACCENT"
+      ],
+      "character": [
+        "electric",
+        "clean",
+        "vintage",
+        "sampled"
+      ],
+      "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+      "licenseReference": "CC0 1.0; github.com/sfzinstruments/karoryfer.emilyguitar release v1.001 (LICENSE in library folder)",
+      "smoke": {
+        "passed": true,
+        "audible": true,
+        "noClipping": true,
+        "canonicalSensitivity": true,
+        "nativeHostAttested": true,
+        "velocitySensitive": true,
+        "deterministic": false,
+        "loadSeconds": 25.85,
+        "outputSha256": "34ddf369e954a8baa862b123f4e472847ce177e45709a4cebec662eee0d0bbed",
+        "measurements": {
+          "activeFrameRatio": 0.8958,
+          "clippedSamples": 0,
+          "expectedFrames": 144000,
+          "frames": 144000,
+          "headroomGainDb": 0.0,
+          "loudRmsDbfs": -31.16,
+          "midiEvents": 17,
+          "peak": 0.2049,
+          "rawPluginPeak": 0.2049,
+          "rmsDbfs": -32.73,
+          "softRmsDbfs": -39.14,
+          "sparseRmsDbfs": -40.96,
+          "spectralCentroidHz": 1694.9,
+          "spectralCentroidHzOctaveUp": 1980.7
+        }
+      }
+    },
+    {
+      "assetId": "sfizz-shinyguitar-main",
+      "name": "Karoryfer Shinyguitar",
+      "identity": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+      "pluginSha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+      "library": "Karoryfer Shinyguitar v1.002 (CC0, Karoryfer Samples)",
+      "sfzFile": "platform_main.sfz",
+      "sfzSha256": "7db6072ce120ea3003db0753ae60b30d138a26b48f71034fb149d207dadba0d3",
+      "families": [
+        "guitar"
+      ],
+      "roles": [
+        "RHYTHMIC_HARMONY",
+        "ACCENT",
+        "OSTINATO",
+        "COUNTER_MELODY"
+      ],
+      "character": [
+        "acoustic",
+        "electric",
+        "plucked",
+        "natural",
+        "sampled",
+        "steel"
+      ],
+      "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+      "licenseReference": "CC0 1.0; github.com/sfzinstruments/karoryfer.shinyguitar release v1.002 (LICENSE in library folder)",
+      "smoke": {
+        "passed": false,
+        "audible": true,
+        "noClipping": true,
+        "canonicalSensitivity": false,
+        "nativeHostAttested": true,
+        "velocitySensitive": true,
+        "deterministic": false,
+        "loadSeconds": 25.1,
+        "outputSha256": "a25e633e666a0ed38d588ede1875e58612587f7dc11c6e82ce61ac14a427e6f8",
+        "measurements": {
+          "activeFrameRatio": 0.9195,
+          "clippedSamples": 0,
+          "expectedFrames": 144000,
+          "frames": 144000,
+          "headroomGainDb": 0.0,
+          "loudRmsDbfs": -29.76,
+          "midiEvents": 17,
+          "peak": 0.5168,
+          "rawPluginPeak": 0.5168,
+          "rmsDbfs": -30.72,
+          "softRmsDbfs": -32.38,
+          "sparseRmsDbfs": -35.96,
+          "spectralCentroidHz": 2961.1,
+          "spectralCentroidHzOctaveUp": 2951.5
+        }
+      }
+    }
+  ],
+  "smoke": {
+    "ranAt": "2026-09-10T00:36:44+00:00",
+    "assetsPassed": [
+      "dexed-1.0.1",
+      "sfizz-drskit-stereo",
+      "sfizz-emilyguitar-basic",
+      "sfizz-meatbass-arco",
+      "sfizz-meatbass-pizz",
+      "sfizz-salamander-grand-v3",
+      "sfizz-vsco2-cello-ens-sus",
+      "sfizz-vsco2-flute-sus",
+      "sfizz-vsco2-harp",
+      "sfizz-vsco2-horn-sus",
+      "sfizz-vsco2-violin-ens-sus",
+      "surge-xt-1.3.4"
+    ],
+    "assetsFailed": [
+      "sfizz-shinyguitar-main"
+    ],
+    "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+    "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391"
+  },
+  "abPair": {
+    "projectId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2",
+    "runA_fallbackSynth": {
+      "label": "fallback-synth",
+      "exportJobId": "fcaec469-84c1-4066-8073-9a59848f6a6a",
+      "exportArtifactId": "export-0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2-21-c30b1284",
+      "arrangement": {
+        "id": "4da143de-3667-48f2-b750-ea14a041825c",
+        "name": "Brain E2E · A · conservative · A · conservative",
+        "version": 3
+      },
+      "approvedRevision": {
+        "id": "1f644436-6d38-4911-a6d3-ec452a84c1ab",
+        "version": 7,
+        "approvedAt": "2026-09-08T21:57:49.023Z"
+      },
+      "idempotencyKey": "pr94-fallback-synth-1788998602",
+      "bundleSha256": "7fbb9096f2fb05bb15f76fed28a9f8ddca4bb65e03f2738f219edcfb96c32229",
+      "bundleBytes": 89592139,
+      "exportTechnicalMetadata": {
+        "bytes": 89592139,
+        "fileCount": 8,
+        "mediaType": "application/zip",
+        "stemCount": 3,
+        "renderStatus": "preview-only",
+        "nativeStemCount": 0,
+        "productionReady": false,
+        "fallbackStemCount": 3,
+        "arrangementVersion": 3,
+        "pedalboardProcessing": "not-requested",
+        "renderEvidenceVersion": "1.0.0"
+      },
+      "measured": {
+        "stems/01_drums.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "bitsPerSample": 16,
+          "frames": 3528000,
+          "durationSeconds": 80.0,
+          "lufsIntegrated": -30.91,
+          "peakDbfs": -10.91,
+          "rmsDbfs": -32.3,
+          "sha256": "02d8d7db042a60ff9cb1d98d3b2499a0622146b6475a8bdade1c4db741d6c78d",
+          "silent": false
+        },
+        "stems/02_bass.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "bitsPerSample": 16,
+          "frames": 3528000,
+          "durationSeconds": 80.0,
+          "lufsIntegrated": -24.24,
+          "peakDbfs": -15.85,
+          "rmsDbfs": -25.29,
+          "sha256": "c5cff7fd7d9d1be19ace8d3478960ac88fb6b384bbe5a161958d61b3ae46f169",
+          "silent": false
+        },
+        "stems/03_ensemble.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "bitsPerSample": 16,
+          "frames": 3528000,
+          "durationSeconds": 80.0,
+          "lufsIntegrated": -18.71,
+          "peakDbfs": -6.44,
+          "rmsDbfs": -31.46,
+          "sha256": "d166daf4ae8f515a154dc2fba3ffa6393a0d643c9a9d45d72bbfa182c041826f",
+          "silent": false
+        },
+        "mix/full_mix.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "bitsPerSample": 16,
+          "frames": 3528000,
+          "durationSeconds": 80.0,
+          "lufsIntegrated": -23.74,
+          "peakDbfs": -8.3,
+          "rmsDbfs": -24.77,
+          "sha256": "b2b705e276868d8a42adb1a46f0421373c6f3b444b33d6354787d471379211d0",
+          "silent": false
+        },
+        "mix/premaster.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "bitsPerSample": 16,
+          "frames": 3528000,
+          "durationSeconds": 80.0,
+          "lufsIntegrated": -23.74,
+          "peakDbfs": -8.3,
+          "rmsDbfs": -24.77,
+          "sha256": "b2b705e276868d8a42adb1a46f0421373c6f3b444b33d6354787d471379211d0",
+          "silent": false
+        },
+        "mix/master.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "bitsPerSample": 16,
+          "frames": 4601740,
+          "durationSeconds": 104.348,
+          "lufsIntegrated": -12.48,
+          "peakDbfs": -6.53,
+          "rmsDbfs": -14.0,
+          "sha256": "6b6a3d76f229125483e8dd75cffaaf060b4c95d3a84dba045956781a559cdf15",
+          "silent": false
+        }
+      },
+      "stems": {
+        "stems/01_drums.wav": {
+          "role": "GROOVE",
+          "trackName": "drums",
+          "rendererStatus": "preview-only",
+          "rendererProvider": "LOCAL_EXPRESSIVE_SYNTH",
+          "fallbackReason": "No healthy licensed native renderer was configured for this export.",
+          "productionReady": "false",
+          "stemOutputSha256": "02d8d7db042a60ff9cb1d98d3b2499a0622146b6475a8bdade1c4db741d6c78d",
+          "performedMaterialSha256": "41a217a290991dc9e3a253565154e396face736958294e24f1f76a5a1d33963c",
+          "midiAgreementSha256": "7e091e36f907e3303b4303a083b148c638db13096a996464c23085b7f2095229"
+        },
+        "stems/03_ensemble.wav": {
+          "role": "TRANSITION",
+          "trackName": "ensemble",
+          "rendererStatus": "preview-only",
+          "rendererProvider": "LOCAL_EXPRESSIVE_SYNTH",
+          "fallbackReason": "No healthy licensed native renderer was configured for this export.",
+          "productionReady": "false",
+          "stemOutputSha256": "d166daf4ae8f515a154dc2fba3ffa6393a0d643c9a9d45d72bbfa182c041826f",
+          "performedMaterialSha256": "3d79f161f08c9812b2a5b66d3a90d0c4ef63b39eb1247417448a031070abafee",
+          "midiAgreementSha256": "7e091e36f907e3303b4303a083b148c638db13096a996464c23085b7f2095229"
+        },
+        "stems/02_bass.wav": {
+          "role": "BASS",
+          "trackName": "bass",
+          "rendererStatus": "preview-only",
+          "rendererProvider": "LOCAL_EXPRESSIVE_SYNTH",
+          "fallbackReason": "No healthy licensed native renderer was configured for this export.",
+          "productionReady": "false",
+          "stemOutputSha256": "c5cff7fd7d9d1be19ace8d3478960ac88fb6b384bbe5a161958d61b3ae46f169",
+          "performedMaterialSha256": "7e3468ff88d601225188caf9a70352415c6662d7bc33a0cf9435972f531be523",
+          "midiAgreementSha256": "7e091e36f907e3303b4303a083b148c638db13096a996464c23085b7f2095229"
+        }
+      },
+      "elapsedSeconds": 80.4
+    },
+    "runB_localWorker": {
+      "label": "local-worker",
+      "exportJobId": "2458ee57-a0c1-416a-af76-30c967a72d68",
+      "exportArtifactId": "export-0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2-23-5e6210ae",
+      "arrangement": {
+        "id": "4da143de-3667-48f2-b750-ea14a041825c",
+        "name": "Brain E2E · A · conservative · A · conservative",
+        "version": 3
+      },
+      "approvedRevision": {
+        "id": "1f644436-6d38-4911-a6d3-ec452a84c1ab",
+        "version": 7,
+        "approvedAt": "2026-09-08T21:57:49.023Z"
+      },
+      "idempotencyKey": "pr94-local-worker-1789001371",
+      "bundleSha256": "a23d2701fc9528ed423153c3ef2f796e65f0c01a5271330547b25005019ed414",
+      "bundleBytes": 89601146,
+      "exportTechnicalMetadata": {
+        "bytes": 89601146,
+        "fileCount": 8,
+        "mediaType": "application/zip",
+        "stemCount": 3,
+        "renderStatus": "production-ready",
+        "nativeStemCount": 3,
+        "productionReady": true,
+        "fallbackStemCount": 0,
+        "arrangementVersion": 3,
+        "pedalboardProcessing": "not-requested",
+        "renderEvidenceVersion": "1.0.0"
+      },
+      "measured": {
+        "stems/01_drums.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "bitsPerSample": 16,
+          "frames": 3528000,
+          "durationSeconds": 80.0,
+          "lufsIntegrated": -28.66,
+          "peakDbfs": -5.54,
+          "rmsDbfs": -30.53,
+          "sha256": "6203969985e2aaffe55ae2f3e6cd4f8db36fdb4a932650b2998397ae9ba56378",
+          "silent": false
+        },
+        "stems/02_bass.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "bitsPerSample": 16,
+          "frames": 3528000,
+          "durationSeconds": 80.0,
+          "lufsIntegrated": -32.89,
+          "peakDbfs": -18.32,
+          "rmsDbfs": -33.78,
+          "sha256": "bf1600acb9fec71e70168ea7f554d3506cd528bd00e7093d09beb4feed9198ed",
+          "silent": false
+        },
+        "stems/03_ensemble.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "bitsPerSample": 16,
+          "frames": 3528000,
+          "durationSeconds": 80.0,
+          "lufsIntegrated": -28.32,
+          "peakDbfs": -8.06,
+          "rmsDbfs": -38.68,
+          "sha256": "17e53794da44a10ed18314b98dd96b259abbe5a17290b2135d222c61e9165634",
+          "silent": false
+        },
+        "mix/full_mix.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "bitsPerSample": 16,
+          "frames": 3528000,
+          "durationSeconds": 80.0,
+          "lufsIntegrated": -28.72,
+          "peakDbfs": -7.69,
+          "rmsDbfs": -30.19,
+          "sha256": "84796a1f310b416bae576fa55fb5bfb60be9650d58a26fbe4de6c31759e73c4a",
+          "silent": false
+        },
+        "mix/premaster.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "bitsPerSample": 16,
+          "frames": 3528000,
+          "durationSeconds": 80.0,
+          "lufsIntegrated": -28.72,
+          "peakDbfs": -7.69,
+          "rmsDbfs": -30.19,
+          "sha256": "84796a1f310b416bae576fa55fb5bfb60be9650d58a26fbe4de6c31759e73c4a",
+          "silent": false
+        },
+        "mix/master.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "bitsPerSample": 16,
+          "frames": 4601740,
+          "durationSeconds": 104.348,
+          "lufsIntegrated": -12.48,
+          "peakDbfs": -6.53,
+          "rmsDbfs": -14.0,
+          "sha256": "6b6a3d76f229125483e8dd75cffaaf060b4c95d3a84dba045956781a559cdf15",
+          "silent": false
+        }
+      },
+      "stems": {
+        "stems/02_bass.wav": {
+          "role": "BASS",
+          "trackName": "bass",
+          "rendererStatus": "licensed-native",
+          "rendererProvider": "VST3",
+          "rendererProduct": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+          "nativeHost": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+          "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+          "licenseReference": "CC0 1.0; github.com/sfzinstruments/karoryfer.meatbass release v1.001 (LICENSE in library folder)",
+          "runtimeIdentity": "pedalboard-0.9.24/python-3.11.9/windows-amd64",
+          "soundSelection": "brain: sfizz-meatbass-arco (score 10): declared for family strings; declared for role BASS; \"dark\" fits dark; \"mono\" fits mono / low register; \"acoustic\" fits acoustic — over sfizz-meatbass-pizz (10), sfizz-vsco2-cello-ens-sus (2), sfizz-vsco2-harp (1), sfizz-vsco2-violin-ens-sus (1)",
+          "productionReady": "true",
+          "stemOutputSha256": "bf1600acb9fec71e70168ea7f554d3506cd528bd00e7093d09beb4feed9198ed",
+          "performedMaterialSha256": "7e3468ff88d601225188caf9a70352415c6662d7bc33a0cf9435972f531be523",
+          "midiAgreementSha256": "7e091e36f907e3303b4303a083b148c638db13096a996464c23085b7f2095229",
+          "otherMetadata": {
+            "assetSha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+            "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+            "trackModelSha256": "8118d68f7b7d2dd5b54430c1eb408cea0856579c3141c9108c775c137b987504",
+            "smokeOutputSha256": "2ef8ea8c1f6246b12f278c4f3c55dd9ec8c4e2c02287cc7d6af8ea3d6e80ea6c",
+            "rendererOutputSha256": "bf1600acb9fec71e70168ea7f554d3506cd528bd00e7093d09beb4feed9198ed"
+          }
+        },
+        "stems/01_drums.wav": {
+          "role": "GROOVE",
+          "trackName": "drums",
+          "rendererStatus": "licensed-native",
+          "rendererProvider": "VST3",
+          "rendererProduct": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+          "nativeHost": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+          "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+          "licenseReference": "CC-BY 4.0; github.com/sfzinstruments/DrumGizmo.DRSKit (LICENSE in library folder)",
+          "runtimeIdentity": "pedalboard-0.9.24/python-3.11.9/windows-amd64",
+          "soundSelection": "brain: sfizz-drskit-stereo (score 9): declared for family drums; declared for role GROOVE; \"drum\" fits sharp, short; \"acoustic\" fits acoustic",
+          "productionReady": "true",
+          "stemOutputSha256": "6203969985e2aaffe55ae2f3e6cd4f8db36fdb4a932650b2998397ae9ba56378",
+          "performedMaterialSha256": "41a217a290991dc9e3a253565154e396face736958294e24f1f76a5a1d33963c",
+          "midiAgreementSha256": "7e091e36f907e3303b4303a083b148c638db13096a996464c23085b7f2095229",
+          "otherMetadata": {
+            "assetSha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+            "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+            "trackModelSha256": "91677e4e999dbd84f956ba2c527eaff21586258305d0d642fa78ab55f9db1fa5",
+            "smokeOutputSha256": "fc7e7403d8a130ce5afb21ccd0ba51fe187a9b08b134f4fd6fe98b07fa0937f4",
+            "rendererOutputSha256": "6203969985e2aaffe55ae2f3e6cd4f8db36fdb4a932650b2998397ae9ba56378"
+          }
+        },
+        "stems/03_ensemble.wav": {
+          "role": "TRANSITION",
+          "trackName": "ensemble",
+          "rendererStatus": "licensed-native",
+          "rendererProvider": "VST3",
+          "rendererProduct": "VST3-sfizz-2ff5a19c-5da1643a@1.2.3",
+          "nativeHost": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+          "licenseOwner": "sfizz 1.2.3 (BSD-2-Clause, SFZTools) hosting an open SFZ library",
+          "licenseReference": "CC-BY 3.0 Unported; github.com/sfzinstruments/SalamanderGrandPiano (LICENSE in library folder)",
+          "runtimeIdentity": "pedalboard-0.9.24/python-3.11.9/windows-amd64",
+          "soundSelection": "brain: sfizz-salamander-grand-v3 (score 5): declared for family keys; \"acoustic\" fits acoustic",
+          "productionReady": "true",
+          "stemOutputSha256": "17e53794da44a10ed18314b98dd96b259abbe5a17290b2135d222c61e9165634",
+          "performedMaterialSha256": "3d79f161f08c9812b2a5b66d3a90d0c4ef63b39eb1247417448a031070abafee",
+          "midiAgreementSha256": "7e091e36f907e3303b4303a083b148c638db13096a996464c23085b7f2095229",
+          "otherMetadata": {
+            "assetSha256": "b034341678fac5266faea3e361e5d1a618910e2f885bfd09a2dd4edd9d833f6f",
+            "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+            "trackModelSha256": "b042da48d471c38604f80ba88b566b266ad2eab7d7d91c3529cf7a54ed5b7134",
+            "smokeOutputSha256": "3cead6eb46e18043eff20896a1dfcede335b847425c80f6392e31dbf3b3ab839",
+            "rendererOutputSha256": "17e53794da44a10ed18314b98dd96b259abbe5a17290b2135d222c61e9165634"
+          }
+        }
+      },
+      "elapsedSeconds": 114.7
+    }
+  }
+}
