@@ -823,6 +823,15 @@ const suites = {
       ["src/lib/harmonyPlan/harmonyPlan.test.ts", "harmony-plan.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
     ],
   },
+  "brain-b04": {
+    bundles: [
+      ["src/lib/brainB04Evidence.test.ts", "brain-b04-evidence.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/groovePlan.test.ts", "groove-plan.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/performanceEngine.b04.test.ts", "performance-engine.b04.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/rhythmRealisation.test.ts", "rhythm-realisation.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/transitionRealisation.test.ts", "transition-realisation.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
   "brain-invariants": {
     bundles: [
       ["src/lib/invariants/generators.property.test.ts", "b12-generators.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],

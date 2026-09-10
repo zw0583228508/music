@@ -19,6 +19,7 @@ import { deriveTransitionPlan } from "./transitionEngine";
 import { buildPartComposerPlan, buildPartGenerationRequest, type PartGenerationRequest } from "./partComposer";
 import { checkPlayabilityRules } from "./playabilityRepair";
 import { getInstrumentDefinition } from "./musicEngines";
+import { barTiming } from "./composer/frame";
 
 const NOW = new Date(0);
 
@@ -93,21 +94,36 @@ test("a drum part in 3/4 puts the backbeat on beat 2 only and never on a beat th
       let beatInBar = ((note.start % barSeconds) + barSeconds) % barSeconds / beatSeconds;
       if (beatInBar > 3 - 0.01) beatInBar = 0;
       assert.ok(beatInBar < 3 - 0.01, `${part.request.taskId}: a note at beat ${beatInBar.toFixed(2)} of a 3-beat bar`);
-      if (note.pitch === 38) assert.ok(Math.abs(beatInBar - 1) < 1e-3, `${part.request.taskId}: snare on beat ${(beatInBar + 1).toFixed(2)}, expected beat 2`);
-      if (note.pitch === 36 && !note.id.includes("ks")) assert.ok(Math.abs(beatInBar) < 1e-3 || Math.abs(beatInBar - 2) < 1e-3, `${part.request.taskId}: kick on beat ${(beatInBar + 1).toFixed(2)}`);
+      // B-04: the backbeat snare (id s<bar>-<unit>) sits on beat 2; ghosts (g...), fills and the ending hit are not backbeats.
+      const backbeat = note.pitch === 38 && /-s\d+-[\d.]+$/.test(note.id);
+      if (backbeat) assert.ok(Math.abs(beatInBar - 1) < 1e-3, `${part.request.taskId}: snare on beat ${(beatInBar + 1).toFixed(2)}, expected beat 2`);
+      // Template kicks (k<bar>-<unit>) sit on beat 1 (or 3); a waltz kick never pushes the "and" of 3.
+      const templateKick = note.pitch === 36 && /-k\d+-[\d.]+$/.test(note.id);
+      if (templateKick) assert.ok(Math.abs(beatInBar) < 1e-3 || Math.abs(beatInBar - 2) < 1e-3, `${part.request.taskId}: kick on beat ${(beatInBar + 1).toFixed(2)}`);
+      assert.ok(!(note.pitch === 36 && note.id.includes("-ka")), `${part.request.taskId}: a waltz kick anticipated at beat ${(beatInBar + 1).toFixed(2)}`);
     }
   }
 });
 
-test("known failure: in 7/8 the composer reads the meter's numerator only, so its bars are twice the Song Model's and later sections lose their bass and keys", { todo: "referencePartComposer derives barSeconds = beatSeconds × numerator, ignoring the denominator (B-04 owns the fix)" }, () => {
-  const sevenEight = CORPUS.filter((p) => p.meter === "7/8");
+test("in 7/8 the composer's bars are the Song Model's: every part's notes fall inside its own section and later sections keep their bass and keys (B-04)", () => {
+  const spec = BENCHMARK_CORPUS.find((c) => c.meter === "7/8")!;
+  const model = buildBenchmarkSongModel(spec);
+  const sevenEight = CORPUS.filter((p) => p.caseId === spec.id);
   assert.ok(sevenEight.length > 0);
-  const model = buildBenchmarkSongModel(BENCHMARK_CORPUS.find((c) => c.meter === "7/8")!);
   const songBar = model.bars[0].end - model.bars[0].start;
-  const composerBar = (60 / 104) * 7;
-  assert.ok(Math.abs(songBar - composerBar) < 1e-3, `the composer's bar (${composerBar.toFixed(3)} s) should equal the Song Model's (${songBar.toFixed(3)} s)`);
+  const composerBar = barTiming(spec.tempoBpm, spec.meter).barSeconds;
+  assert.ok(Math.abs(songBar - composerBar) < 1e-6, `the composer's bar (${composerBar.toFixed(3)} s) equals the Song Model's (${songBar.toFixed(3)} s)`);
+  for (const part of sevenEight) {
+    const start = model.bars.find((b) => b.bar === part.request.section.startBar)!.start;
+    const end = model.bars.find((b) => b.bar === part.request.section.endBar)!.end;
+    for (const note of part.notes) {
+      assert.ok(note.start >= start - 1e-3 && note.start < end + 1e-3, `${part.request.taskId}: a note at ${note.start.toFixed(3)} s lies outside its section (${start.toFixed(3)}-${end.toFixed(3)} s)`);
+    }
+  }
   const verse2Bass = sevenEight.find((p) => p.request.task === "BASS" && p.request.section.sectionName === "Verse 2");
-  assert.ok(verse2Bass && verse2Bass.notes.length > 0, "the bass should play in Verse 2 of the 7/8 case");
+  assert.ok(verse2Bass && verse2Bass.notes.length > 0, "the bass plays in Verse 2 of the 7/8 case");
+  const verse2Keys = sevenEight.find((p) => /KEYS|PIANO/.test(p.request.task) && p.request.section.sectionName === "Verse 2");
+  assert.ok(verse2Keys && verse2Keys.notes.length > 0, "the keys play in Verse 2 of the 7/8 case");
 });
 
 test("the composer is a pure function of its request: the same request composes the same notes", () => {

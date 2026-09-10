@@ -1,0 +1,4971 @@
+{
+  "title": "Brain B-04 - one groove, shared; transitions that happen: before / after on the nine synthetic cases + the owner's song fixture",
+  "generatedAt": "2026-09-10T12:00:00.000Z",
+  "method": [
+    "composeSong: every part of each Song Model composed by the reference composer through the real planners (fixed now); orchestratedMeasure: orchestrateArrangement(candidateCount 1, render false) and the adversarial machineMade / causality / arbitrariness penalties on the shipped (performed, repaired) notes.",
+    "'before' = the same measurement module run against a pristine checkout of a751796 (main before this stream); 'after' = this branch.",
+    "planInterlocking compares the shipped kit's kicks with the bass rhythm the plan hands the bass writer (bassRhythmFor); interlocking compares the kit with the shipped bass, which B-02's writer still composes (unwired)."
+  ],
+  "before": {
+    "mode": "before",
+    "generatedAt": "2026-09-10T04:32:52.044Z",
+    "songs": [
+      {
+        "id": "pop-full",
+        "tempoBpm": 120,
+        "meter": "4/4",
+        "style": "pop",
+        "groove": "four_on_floor",
+        "tasks": 15,
+        "notes": 734,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "keys:HARMONIC_BED:KEYS",
+          "keys:RHYTHMIC_HARMONY:KEYS"
+        ]
+      },
+      {
+        "id": "ballad-piano-vocal",
+        "tempoBpm": 68,
+        "meter": "4/4",
+        "style": "ballad",
+        "groove": "rubato",
+        "tasks": 10,
+        "notes": 402,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "keys:HARMONIC_BED:KEYS",
+          "keys:RHYTHMIC_HARMONY:KEYS"
+        ]
+      },
+      {
+        "id": "rock-full",
+        "tempoBpm": 148,
+        "meter": "4/4",
+        "style": "pop",
+        "groove": "four_on_floor",
+        "tasks": 13,
+        "notes": 662,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "guitar:HARMONIC_BED:ACOUSTIC_GUITAR",
+          "keys:HARMONIC_BED:KEYS",
+          "keys:RHYTHMIC_HARMONY:KEYS"
+        ]
+      },
+      {
+        "id": "dance-full",
+        "tempoBpm": 126,
+        "meter": "4/4",
+        "style": "dance",
+        "groove": "four_on_floor",
+        "tasks": 14,
+        "notes": 708,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "keys:HARMONIC_BED:KEYS",
+          "synth:PAD:PAD"
+        ]
+      },
+      {
+        "id": "acoustic-demo",
+        "tempoBpm": 92,
+        "meter": "4/4",
+        "style": "acoustic",
+        "groove": "steady_pulse",
+        "tasks": 10,
+        "notes": 452,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "guitar:HARMONIC_BED:ACOUSTIC_GUITAR",
+          "guitar:RHYTHMIC_HARMONY:ACOUSTIC_GUITAR"
+        ]
+      },
+      {
+        "id": "orchestral-midi",
+        "tempoBpm": 76,
+        "meter": "3/4",
+        "style": "orchestral",
+        "groove": "steady_pulse",
+        "tasks": 12,
+        "notes": 396,
+        "roles": [
+          "bass:BASS:BASS",
+          "brass:CLIMAX_LAYER:BRASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "keys:OSTINATO:OSTINATO",
+          "strings:CLIMAX_LAYER:STRINGS",
+          "strings:PAD:PAD"
+        ]
+      },
+      {
+        "id": "ethnic-vocal",
+        "tempoBpm": 104,
+        "meter": "7/8",
+        "style": "unknown",
+        "groove": "steady_pulse",
+        "tasks": 8,
+        "notes": 376,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "keys:HARMONIC_BED:KEYS",
+          "keys:RHYTHMIC_HARMONY:KEYS"
+        ]
+      },
+      {
+        "id": "jazz-full",
+        "tempoBpm": 132,
+        "meter": "4/4",
+        "style": "pop",
+        "groove": "four_on_floor",
+        "tasks": 8,
+        "notes": 1158,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "keys:HARMONIC_BED:KEYS",
+          "keys:RHYTHMIC_HARMONY:KEYS"
+        ]
+      },
+      {
+        "id": "cinematic-midi",
+        "tempoBpm": 60,
+        "meter": "4/4",
+        "style": "ballad",
+        "groove": "rubato",
+        "tasks": 14,
+        "notes": 468,
+        "roles": [
+          "bass:BASS:BASS",
+          "brass:CLIMAX_LAYER:BRASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "keys:HARMONIC_BED:KEYS",
+          "keys:RHYTHMIC_HARMONY:KEYS",
+          "percussion:ACCENT:PERCUSSION",
+          "strings:CLIMAX_LAYER:STRINGS",
+          "strings:PAD:PAD"
+        ]
+      },
+      {
+        "id": "owner-rachem-na",
+        "tempoBpm": 130.43,
+        "meter": "4/4",
+        "style": "unknown",
+        "groove": "four_on_floor",
+        "tasks": 22,
+        "notes": 1795,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "keys:HARMONIC_BED:KEYS",
+          "keys:RHYTHMIC_HARMONY:KEYS"
+        ]
+      }
+    ],
+    "interlocking": {
+      "rows": [
+        {
+          "song": "pop-full",
+          "section": "Intro",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 2,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "pop-full",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 32,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "pop-full",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.5,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "pop-full",
+          "section": "Verse 2",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "pop-full",
+          "section": "Chorus 2",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.5,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "pop-full",
+          "section": "Outro",
+          "role": null,
+          "kicks": 8,
+          "bassOnsets": 16,
+          "kickToBass": 1,
+          "bassToKick": 0.5,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "ballad-piano-vocal",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "ballad-piano-vocal",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 4,
+          "kickToBass": 0.25,
+          "bassToKick": 1,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "ballad-piano-vocal",
+          "section": "Bridge",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 2,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "ballad-piano-vocal",
+          "section": "Chorus 2",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.5,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "rock-full",
+          "section": "Intro",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 2,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "rock-full",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 32,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "rock-full",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.5,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "rock-full",
+          "section": "Bridge",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 32,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "rock-full",
+          "section": "Chorus 2",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.5,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "dance-full",
+          "section": "Intro",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 4,
+          "kickToBass": 0.25,
+          "bassToKick": 1,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "dance-full",
+          "section": "Verse",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.5,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "dance-full",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.5,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "dance-full",
+          "section": "Breakdown",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 4,
+          "kickToBass": 0.25,
+          "bassToKick": 1,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "dance-full",
+          "section": "Chorus 2",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.5,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "acoustic-demo",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "acoustic-demo",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 4,
+          "kickToBass": 0.25,
+          "bassToKick": 1,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "acoustic-demo",
+          "section": "Verse 2",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "acoustic-demo",
+          "section": "Chorus 2",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.5,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "orchestral-midi",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 6,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": 0.083
+        },
+        {
+          "song": "orchestral-midi",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 24,
+          "bassOnsets": 6,
+          "kickToBass": 0.25,
+          "bassToKick": 1,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": 1
+        },
+        {
+          "song": "ethnic-vocal",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "ethnic-vocal",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 0,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "ethnic-vocal",
+          "section": "Verse 2",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 0,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "jazz-full",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 8,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "jazz-full",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 32,
+          "bassOnsets": 64,
+          "kickToBass": 1,
+          "bassToKick": 0.5,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "jazz-full",
+          "section": "Verse 2",
+          "role": null,
+          "kicks": 32,
+          "bassOnsets": 64,
+          "kickToBass": 1,
+          "bassToKick": 0.5,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "cinematic-midi",
+          "section": "Intro",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "cinematic-midi",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "cinematic-midi",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 4,
+          "kickToBass": 0.25,
+          "bassToKick": 1,
+          "percussionOnKit": 1,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "cinematic-midi",
+          "section": "Outro",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Verse 1",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 15,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Verse 2",
+          "role": null,
+          "kicks": 32,
+          "bassOnsets": 16,
+          "kickToBass": 0.031,
+          "bassToKick": 0.063,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 32,
+          "bassOnsets": 10,
+          "kickToBass": 0.031,
+          "bassToKick": 0.1,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Chorus 2",
+          "role": null,
+          "kicks": 32,
+          "bassOnsets": 10,
+          "kickToBass": 0.031,
+          "bassToKick": 0.1,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Verse 3",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 12,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Bridge",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 14,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Chorus 3",
+          "role": null,
+          "kicks": 32,
+          "bassOnsets": 13,
+          "kickToBass": 0.031,
+          "bassToKick": 0.077,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Outro",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 9,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        }
+      ],
+      "meanKickToBass": 0.619,
+      "meanBassToKick": 0.561,
+      "meanPercussionOnKit": 1,
+      "meanOstinatoOnRhythmSection": 0.541
+    },
+    "hatRates": [
+      {
+        "song": "pop-full",
+        "tempoBpm": 120,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 8,
+        "hatSubdivisionsPerBeat": 4
+      },
+      {
+        "song": "ballad-piano-vocal",
+        "tempoBpm": 68,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 2.268,
+        "hatSubdivisionsPerBeat": 2.001
+      },
+      {
+        "song": "rock-full",
+        "tempoBpm": 148,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 9.901,
+        "hatSubdivisionsPerBeat": 4.014
+      },
+      {
+        "song": "dance-full",
+        "tempoBpm": 126,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 8.403,
+        "hatSubdivisionsPerBeat": 4.002
+      },
+      {
+        "song": "acoustic-demo",
+        "tempoBpm": 92,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 3.067,
+        "hatSubdivisionsPerBeat": 2.001
+      },
+      {
+        "song": "orchestral-midi",
+        "tempoBpm": 76,
+        "meter": "3/4",
+        "maxHatStrikesPerSecond": 2.538,
+        "hatSubdivisionsPerBeat": 2.004
+      },
+      {
+        "song": "ethnic-vocal",
+        "tempoBpm": 104,
+        "meter": "7/8",
+        "maxHatStrikesPerSecond": 3.472,
+        "hatSubdivisionsPerBeat": 2.003
+      },
+      {
+        "song": "jazz-full",
+        "tempoBpm": 132,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 8.85,
+        "hatSubdivisionsPerBeat": 4.023
+      },
+      {
+        "song": "cinematic-midi",
+        "tempoBpm": 60,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 2,
+        "hatSubdivisionsPerBeat": 2
+      },
+      {
+        "song": "owner-rachem-na",
+        "tempoBpm": 130.43,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 4.348,
+        "hatSubdivisionsPerBeat": 2
+      }
+    ],
+    "meter": {
+      "corpus": [
+        {
+          "song": "pop-full",
+          "meter": "4/4",
+          "tempoBpm": 120,
+          "songBarSeconds": 2,
+          "notesOutsideSection": 0,
+          "notes": 734,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 304,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "ballad-piano-vocal",
+          "meter": "4/4",
+          "tempoBpm": 68,
+          "songBarSeconds": 3.529,
+          "notesOutsideSection": 0,
+          "notes": 402,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 192,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "rock-full",
+          "meter": "4/4",
+          "tempoBpm": 148,
+          "songBarSeconds": 1.622,
+          "notesOutsideSection": 0,
+          "notes": 662,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 256,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "dance-full",
+          "meter": "4/4",
+          "tempoBpm": 126,
+          "songBarSeconds": 1.905,
+          "notesOutsideSection": 0,
+          "notes": 708,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 556,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "acoustic-demo",
+          "meter": "4/4",
+          "tempoBpm": 92,
+          "songBarSeconds": 2.609,
+          "notesOutsideSection": 0,
+          "notes": 452,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 192,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "orchestral-midi",
+          "meter": "3/4",
+          "tempoBpm": 76,
+          "songBarSeconds": 2.368,
+          "notesOutsideSection": 0,
+          "notes": 396,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 108,
+          "snareBeats": [
+            1
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "ethnic-vocal",
+          "meter": "7/8",
+          "tempoBpm": 104,
+          "songBarSeconds": 2.019,
+          "notesOutsideSection": 286,
+          "notes": 376,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 288,
+          "snareBeats": [
+            2,
+            6
+          ],
+          "kickBeats": [
+            0,
+            4
+          ],
+          "familiesSilentInLaterSections": [
+            "Chorus:BASS",
+            "Chorus:KEYS",
+            "Verse 2:BASS",
+            "Verse 2:KEYS"
+          ]
+        },
+        {
+          "song": "jazz-full",
+          "meter": "4/4",
+          "tempoBpm": 132,
+          "songBarSeconds": 1.818,
+          "notesOutsideSection": 0,
+          "notes": 1158,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 512,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "cinematic-midi",
+          "meter": "4/4",
+          "tempoBpm": 60,
+          "songBarSeconds": 4,
+          "notesOutsideSection": 0,
+          "notes": 468,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 96,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "owner-rachem-na",
+          "meter": "4/4",
+          "tempoBpm": 130.43,
+          "songBarSeconds": 1.84,
+          "notesOutsideSection": 0,
+          "notes": 1795,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 772,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        }
+      ],
+      "variants": [
+        {
+          "song": "pop-full@3-4",
+          "meter": "3/4",
+          "tempoBpm": 120,
+          "songBarSeconds": 1.5,
+          "notesOutsideSection": 0,
+          "notes": 558,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 228,
+          "snareBeats": [
+            1
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "pop-full@6-8",
+          "meter": "6/8",
+          "tempoBpm": 120,
+          "songBarSeconds": 1.5,
+          "notesOutsideSection": 416,
+          "notes": 502,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 416,
+          "snareBeats": [
+            0,
+            2
+          ],
+          "kickBeats": [
+            0,
+            4
+          ],
+          "familiesSilentInLaterSections": [
+            "Chorus:BASS",
+            "Chorus:KEYS",
+            "Verse 2:BASS",
+            "Verse 2:KEYS",
+            "Chorus 2:BASS",
+            "Chorus 2:KEYS",
+            "Outro:BASS",
+            "Outro:KEYS"
+          ]
+        },
+        {
+          "song": "rock-full@5-4",
+          "meter": "5/4",
+          "tempoBpm": 148,
+          "songBarSeconds": 2.027,
+          "notesOutsideSection": 0,
+          "notes": 802,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 304,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "jazz-full@7-8",
+          "meter": "7/8",
+          "tempoBpm": 132,
+          "songBarSeconds": 1.591,
+          "notesOutsideSection": 798,
+          "notes": 1018,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 800,
+          "snareBeats": [
+            2,
+            6
+          ],
+          "kickBeats": [
+            0,
+            4
+          ],
+          "familiesSilentInLaterSections": [
+            "Chorus:BASS",
+            "Chorus:KEYS",
+            "Verse 2:BASS",
+            "Verse 2:KEYS"
+          ]
+        },
+        {
+          "song": "ballad-piano-vocal@6-8",
+          "meter": "6/8",
+          "tempoBpm": 68,
+          "songBarSeconds": 2.647,
+          "notesOutsideSection": 254,
+          "notes": 332,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 256,
+          "snareBeats": [
+            0,
+            2
+          ],
+          "kickBeats": [
+            0,
+            4
+          ],
+          "familiesSilentInLaterSections": [
+            "Chorus:BASS",
+            "Chorus:KEYS",
+            "Bridge:BASS",
+            "Bridge:KEYS",
+            "Chorus 2:BASS",
+            "Chorus 2:KEYS"
+          ]
+        },
+        {
+          "song": "dance-full@7-8",
+          "meter": "7/8",
+          "tempoBpm": 126,
+          "songBarSeconds": 1.667,
+          "notesOutsideSection": 768,
+          "notes": 848,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 844,
+          "snareBeats": [
+            2,
+            6
+          ],
+          "kickBeats": [
+            0,
+            4
+          ],
+          "familiesSilentInLaterSections": [
+            "Verse:BASS",
+            "Chorus:BASS",
+            "Chorus:KEYS",
+            "Breakdown:BASS",
+            "Chorus 2:BASS",
+            "Chorus 2:KEYS"
+          ]
+        },
+        {
+          "song": "acoustic-demo@5-4",
+          "meter": "5/4",
+          "tempoBpm": 92,
+          "songBarSeconds": 3.261,
+          "notesOutsideSection": 0,
+          "notes": 540,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 224,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        }
+      ]
+    },
+    "orchestrated": [
+      {
+        "song": "pop-full",
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "notes": 320
+          },
+          {
+            "id": "bass-bass",
+            "notes": 111
+          },
+          {
+            "id": "keys-harmonic_bed",
+            "notes": 296
+          }
+        ],
+        "noteCount": 727,
+        "machineMade": {
+          "score": 71,
+          "penalty": 28.652,
+          "kinds": [
+            "identical_voicing_shape[major]@1-40:keys-harmonic_bed",
+            "no_rests[major]@1-40:keys-harmonic_bed",
+            "root_position_only[minor]@1-40:keys-harmonic_bed",
+            "no_rests[minor]@21-32:bass-bass"
+          ]
+        },
+        "causality": {
+          "score": 88,
+          "penalty": 11.6844,
+          "kinds": [
+            "climax_not_realised[major]@29-36:bass-bass+drums-groove+keys-harmonic_bed",
+            "ending_is_a_cut[major]@39-40:bass-bass+drums-groove+keys-harmonic_bed"
+          ]
+        },
+        "arbitrariness": {
+          "score": 97,
+          "penalty": 3.5,
+          "kinds": [
+            "mid_phrase_exit[minor]@25-26:drums-groove"
+          ]
+        },
+        "playabilityRepairs": {
+          "tracks": 0,
+          "rangeFolds": 0,
+          "leapFolds": 0,
+          "polyphonyReleases": 0,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "ballad-piano-vocal",
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "notes": 208
+          },
+          {
+            "id": "bass-bass",
+            "notes": 40
+          },
+          {
+            "id": "keys-rhythmic_harmony",
+            "notes": 159
+          }
+        ],
+        "noteCount": 407,
+        "machineMade": {
+          "score": 90,
+          "penalty": 10.5,
+          "kinds": [
+            "no_rests[major]@1-24:bass-bass"
+          ]
+        },
+        "causality": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "arbitrariness": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "playabilityRepairs": {
+          "tracks": 1,
+          "rangeFolds": 0,
+          "leapFolds": 1,
+          "polyphonyReleases": 0,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "rock-full",
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "notes": 268
+          },
+          {
+            "id": "bass-bass",
+            "notes": 122
+          },
+          {
+            "id": "keys-rhythmic_harmony",
+            "notes": 250
+          },
+          {
+            "id": "guitar-harmonic_bed",
+            "notes": 11
+          }
+        ],
+        "noteCount": 651,
+        "machineMade": {
+          "score": 99,
+          "penalty": 0.8,
+          "kinds": [
+            "no_rests[minor]@1-8:bass-bass",
+            "no_rests[minor]@29-36:guitar-harmonic_bed"
+          ]
+        },
+        "causality": {
+          "score": 98,
+          "penalty": 1.5392,
+          "kinds": [
+            "transition_unprepared[minor]@11-13:bass-bass+drums-groove+guitar-harmonic_bed+keys-rhythmic_harmony"
+          ]
+        },
+        "arbitrariness": {
+          "score": 97,
+          "penalty": 3.2928,
+          "kinds": [
+            "mid_phrase_exit[minor]@25-26:drums-groove"
+          ]
+        },
+        "playabilityRepairs": {
+          "tracks": 0,
+          "rangeFolds": 0,
+          "leapFolds": 0,
+          "polyphonyReleases": 0,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "dance-full",
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "notes": 592
+          },
+          {
+            "id": "bass-bass",
+            "notes": 98
+          },
+          {
+            "id": "keys-harmonic_bed",
+            "notes": 22
+          },
+          {
+            "id": "synth-pad",
+            "notes": 24
+          }
+        ],
+        "noteCount": 736,
+        "machineMade": {
+          "score": 91,
+          "penalty": 8.6452,
+          "kinds": [
+            "chord_changes_only_on_downbeat[minor]@1-40:keys-harmonic_bed+synth-pad",
+            "identical_voicing_shape[minor]@17-39:synth-pad",
+            "root_position_only[minor]@17-39:synth-pad",
+            "no_rests[minor]@25-36:bass-bass",
+            "no_rests[minor]@33-40:keys-harmonic_bed",
+            "no_rests[minor]@33-40:synth-pad"
+          ]
+        },
+        "causality": {
+          "score": 91,
+          "penalty": 9.32,
+          "kinds": [
+            "transition_unprepared[minor]@15-17:bass-bass+drums-groove+keys-harmonic_bed+synth-pad",
+            "climax_not_prepared[major]@31-32:bass-bass+drums-groove+keys-harmonic_bed+synth-pad"
+          ]
+        },
+        "arbitrariness": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "playabilityRepairs": {
+          "tracks": 1,
+          "rangeFolds": 0,
+          "leapFolds": 0,
+          "polyphonyReleases": 4,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "acoustic-demo",
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "notes": 208
+          },
+          {
+            "id": "bass-bass",
+            "notes": 42
+          },
+          {
+            "id": "guitar-harmonic_bed",
+            "notes": 204
+          }
+        ],
+        "noteCount": 454,
+        "machineMade": {
+          "score": 66,
+          "penalty": 34.1232,
+          "kinds": [
+            "identical_voicing_shape[major]@1-31:guitar-harmonic_bed",
+            "no_rests[major]@1-28:bass-bass",
+            "no_rests[major]@1-32:guitar-harmonic_bed"
+          ]
+        },
+        "causality": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "arbitrariness": {
+          "score": 97,
+          "penalty": 3,
+          "kinds": [
+            "mid_phrase_exit[minor]@21-22:drums-groove"
+          ]
+        },
+        "playabilityRepairs": {
+          "tracks": 0,
+          "rangeFolds": 0,
+          "leapFolds": 0,
+          "polyphonyReleases": 0,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "orchestral-midi",
+        "tracks": [
+          {
+            "id": "drums-climax_layer",
+            "notes": 112
+          },
+          {
+            "id": "bass-bass",
+            "notes": 12
+          },
+          {
+            "id": "keys-ostinato",
+            "notes": 200
+          },
+          {
+            "id": "brass-climax_layer",
+            "notes": 6
+          },
+          {
+            "id": "strings-climax_layer",
+            "notes": 20
+          }
+        ],
+        "noteCount": 350,
+        "machineMade": {
+          "score": 67,
+          "penalty": 33.4392,
+          "kinds": [
+            "no_rests[major]@1-36:keys-ostinato",
+            "no_rests[major]@1-36:strings-climax_layer",
+            "no_rests[major]@7-30:bass-bass"
+          ]
+        },
+        "causality": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "arbitrariness": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "playabilityRepairs": {
+          "tracks": 1,
+          "rangeFolds": 0,
+          "leapFolds": 4,
+          "polyphonyReleases": 50,
+          "durationLengthened": 0,
+          "dropped": 34
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "ethnic-vocal",
+        "tracks": [
+          {
+            "id": "drums-climax_layer",
+            "notes": 294
+          },
+          {
+            "id": "bass-bass",
+            "notes": 4
+          },
+          {
+            "id": "keys-rhythmic_harmony",
+            "notes": 80
+          }
+        ],
+        "noteCount": 378,
+        "machineMade": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "causality": {
+          "score": 83,
+          "penalty": 17.4324,
+          "kinds": [
+            "climax_not_realised[major]@9-16:bass-bass+drums-climax_layer+keys-rhythmic_harmony",
+            "ending_is_a_cut[major]@23-24:bass-bass+drums-climax_layer+keys-rhythmic_harmony"
+          ]
+        },
+        "arbitrariness": {
+          "score": 0,
+          "penalty": 199.22,
+          "kinds": [
+            "planned_family_silent[blocking]@9-16:bass-bass",
+            "planned_family_silent[blocking]@9-16:drums-climax_layer",
+            "planned_family_silent[blocking]@9-16:keys-rhythmic_harmony",
+            "planned_family_silent[blocking]@17-24:bass-bass",
+            "planned_family_silent[blocking]@17-24:keys-rhythmic_harmony"
+          ]
+        },
+        "playabilityRepairs": {
+          "tracks": 0,
+          "rangeFolds": 0,
+          "leapFolds": 0,
+          "polyphonyReleases": 0,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": false,
+        "hardRuleReasons": [
+          "dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it.",
+          "dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.",
+          "dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it.",
+          "dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it."
+        ]
+      },
+      {
+        "song": "jazz-full",
+        "tracks": [
+          {
+            "id": "drums-climax_layer",
+            "notes": 536
+          },
+          {
+            "id": "bass-bass",
+            "notes": 130
+          },
+          {
+            "id": "keys-harmonic_bed",
+            "notes": 485
+          }
+        ],
+        "noteCount": 1151,
+        "machineMade": {
+          "score": 81,
+          "penalty": 18.8776,
+          "kinds": [
+            "no_rests[minor]@1-22:bass-bass",
+            "no_rests[major]@1-48:keys-harmonic_bed",
+            "root_position_only[minor]@1-48:keys-harmonic_bed"
+          ]
+        },
+        "causality": {
+          "score": 77,
+          "penalty": 23.3916,
+          "kinds": [
+            "climax_not_prepared[major]@15-16:bass-bass+drums-climax_layer+keys-harmonic_bed",
+            "climax_not_realised[major]@17-32:bass-bass+drums-climax_layer+keys-harmonic_bed",
+            "ending_is_a_cut[major]@47-48:bass-bass+drums-climax_layer+keys-harmonic_bed"
+          ]
+        },
+        "arbitrariness": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "playabilityRepairs": {
+          "tracks": 0,
+          "rangeFolds": 0,
+          "leapFolds": 0,
+          "polyphonyReleases": 0,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "cinematic-midi",
+        "tracks": [
+          {
+            "id": "drums-climax_layer",
+            "notes": 104
+          },
+          {
+            "id": "bass-bass",
+            "notes": 16
+          },
+          {
+            "id": "percussion-accent",
+            "notes": 15
+          },
+          {
+            "id": "keys-harmonic_bed",
+            "notes": 284
+          },
+          {
+            "id": "brass-climax_layer",
+            "notes": 4
+          },
+          {
+            "id": "strings-climax_layer",
+            "notes": 14
+          }
+        ],
+        "noteCount": 437,
+        "machineMade": {
+          "score": 55,
+          "penalty": 45.1824,
+          "kinds": [
+            "identical_voicing_shape[major]@1-32:keys-harmonic_bed",
+            "no_rests[major]@1-32:bass-bass",
+            "no_rests[major]@1-32:keys-harmonic_bed",
+            "root_position_only[minor]@1-32:keys-harmonic_bed",
+            "no_rests[major]@9-32:strings-climax_layer"
+          ]
+        },
+        "causality": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "arbitrariness": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "playabilityRepairs": {
+          "tracks": 1,
+          "rangeFolds": 0,
+          "leapFolds": 8,
+          "polyphonyReleases": 32,
+          "durationLengthened": 0,
+          "dropped": 22
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "owner-rachem-na",
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "notes": 835
+          },
+          {
+            "id": "bass-bass",
+            "notes": 94
+          },
+          {
+            "id": "keys-rhythmic_harmony",
+            "notes": 878
+          }
+        ],
+        "noteCount": 1807,
+        "machineMade": {
+          "score": 98,
+          "penalty": 2.2112,
+          "kinds": [
+            "no_rests[minor]@6-23:bass-bass"
+          ]
+        },
+        "causality": {
+          "score": 60,
+          "penalty": 39.5544,
+          "kinds": [
+            "unmotivated_entry[minor]@43-44:keys-rhythmic_harmony",
+            "unmotivated_entry[minor]@54-55:keys-rhythmic_harmony",
+            "unmotivated_entry[minor]@63-64:keys-rhythmic_harmony",
+            "unmotivated_entry[minor]@68-69:keys-rhythmic_harmony",
+            "unmotivated_entry[minor]@76-77:keys-rhythmic_harmony",
+            "unmotivated_entry[minor]@80-81:keys-rhythmic_harmony",
+            "unmotivated_entry[minor]@87-88:keys-rhythmic_harmony",
+            "transition_unprepared[minor]@95-97:bass-bass+drums-groove+keys-rhythmic_harmony",
+            "climax_not_prepared[major]@111-112:bass-bass+drums-groove+keys-rhythmic_harmony",
+            "transition_unprepared[major]@111-113:bass-bass+drums-groove+keys-rhythmic_harmony",
+            "climax_not_realised[major]@113-128:bass-bass+drums-groove+keys-rhythmic_harmony",
+            "unmotivated_entry[minor]@126-127:keys-rhythmic_harmony",
+            "ending_missing[major]@141-141:bass-bass+drums-groove+keys-rhythmic_harmony"
+          ]
+        },
+        "arbitrariness": {
+          "score": 28,
+          "penalty": 71.5248,
+          "kinds": [
+            "planned_family_silent[major]@1-2:bass-bass",
+            "planned_family_silent[major]@1-2:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@41-42:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@49-50:keys-rhythmic_harmony",
+            "mid_phrase_entry[minor]@55-55:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@65-66:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@73-74:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@78-79:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@82-83:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@89-90:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@93-94:bass-bass",
+            "mid_phrase_exit[minor]@93-94:drums-groove",
+            "mid_phrase_exit[minor]@94-95:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@110-111:bass-bass",
+            "mid_phrase_exit[minor]@126-127:bass-bass",
+            "mid_phrase_entry[minor]@127-127:keys-rhythmic_harmony"
+          ]
+        },
+        "playabilityRepairs": {
+          "tracks": 0,
+          "rangeFolds": 0,
+          "leapFolds": 0,
+          "polyphonyReleases": 0,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      }
+    ],
+    "adversarialTotals": {
+      "machineMadePenalty": 182.431,
+      "causalityPenalty": 102.922,
+      "arbitrarinessPenalty": 280.538,
+      "playabilityRepairTracks": 4,
+      "leapFolds": 13,
+      "polyphonyReleases": 86,
+      "feasible": 9
+    }
+  },
+  "after": {
+    "songs": [
+      {
+        "id": "pop-full",
+        "tempoBpm": 120,
+        "meter": "4/4",
+        "style": "pop",
+        "groove": "four_on_floor",
+        "tasks": 15,
+        "notes": 666,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "keys:HARMONIC_BED:KEYS",
+          "keys:RHYTHMIC_HARMONY:KEYS"
+        ]
+      },
+      {
+        "id": "ballad-piano-vocal",
+        "tempoBpm": 68,
+        "meter": "4/4",
+        "style": "ballad",
+        "groove": "rubato",
+        "tasks": 10,
+        "notes": 301,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "keys:HARMONIC_BED:KEYS",
+          "keys:RHYTHMIC_HARMONY:KEYS"
+        ]
+      },
+      {
+        "id": "rock-full",
+        "tempoBpm": 148,
+        "meter": "4/4",
+        "style": "pop",
+        "groove": "four_on_floor",
+        "tasks": 13,
+        "notes": 611,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "guitar:HARMONIC_BED:ACOUSTIC_GUITAR",
+          "keys:HARMONIC_BED:KEYS",
+          "keys:RHYTHMIC_HARMONY:KEYS"
+        ]
+      },
+      {
+        "id": "dance-full",
+        "tempoBpm": 126,
+        "meter": "4/4",
+        "style": "dance",
+        "groove": "four_on_floor",
+        "tasks": 14,
+        "notes": 732,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "keys:HARMONIC_BED:KEYS",
+          "synth:PAD:PAD"
+        ]
+      },
+      {
+        "id": "acoustic-demo",
+        "tempoBpm": 92,
+        "meter": "4/4",
+        "style": "acoustic",
+        "groove": "steady_pulse",
+        "tasks": 10,
+        "notes": 450,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "guitar:HARMONIC_BED:ACOUSTIC_GUITAR",
+          "guitar:RHYTHMIC_HARMONY:ACOUSTIC_GUITAR"
+        ]
+      },
+      {
+        "id": "orchestral-midi",
+        "tempoBpm": 76,
+        "meter": "3/4",
+        "style": "orchestral",
+        "groove": "steady_pulse",
+        "tasks": 12,
+        "notes": 353,
+        "roles": [
+          "bass:BASS:BASS",
+          "brass:CLIMAX_LAYER:BRASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "keys:OSTINATO:OSTINATO",
+          "strings:CLIMAX_LAYER:STRINGS",
+          "strings:PAD:PAD"
+        ]
+      },
+      {
+        "id": "ethnic-vocal",
+        "tempoBpm": 104,
+        "meter": "7/8",
+        "style": "unknown",
+        "groove": "steady_pulse",
+        "tasks": 8,
+        "notes": 523,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "keys:HARMONIC_BED:KEYS",
+          "keys:RHYTHMIC_HARMONY:KEYS"
+        ]
+      },
+      {
+        "id": "jazz-full",
+        "tempoBpm": 132,
+        "meter": "4/4",
+        "style": "pop",
+        "groove": "four_on_floor",
+        "tasks": 8,
+        "notes": 1054,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "keys:HARMONIC_BED:KEYS",
+          "keys:RHYTHMIC_HARMONY:KEYS"
+        ]
+      },
+      {
+        "id": "cinematic-midi",
+        "tempoBpm": 60,
+        "meter": "4/4",
+        "style": "ballad",
+        "groove": "rubato",
+        "tasks": 14,
+        "notes": 411,
+        "roles": [
+          "bass:BASS:BASS",
+          "brass:CLIMAX_LAYER:BRASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "keys:HARMONIC_BED:KEYS",
+          "keys:RHYTHMIC_HARMONY:KEYS",
+          "percussion:ACCENT:PERCUSSION",
+          "strings:CLIMAX_LAYER:STRINGS",
+          "strings:PAD:PAD"
+        ]
+      },
+      {
+        "id": "owner-rachem-na",
+        "tempoBpm": 130.43,
+        "meter": "4/4",
+        "style": "unknown",
+        "groove": "four_on_floor",
+        "tasks": 22,
+        "notes": 1823,
+        "roles": [
+          "bass:BASS:BASS",
+          "drums:CLIMAX_LAYER:DRUMS",
+          "drums:GROOVE:DRUMS",
+          "keys:HARMONIC_BED:KEYS",
+          "keys:RHYTHMIC_HARMONY:KEYS"
+        ]
+      }
+    ],
+    "interlocking": {
+      "rows": [
+        {
+          "song": "pop-full",
+          "section": "Intro",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 2,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "pop-full",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 32,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "pop-full",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 28,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.875,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "pop-full",
+          "section": "Verse 2",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "pop-full",
+          "section": "Chorus 2",
+          "role": null,
+          "kicks": 29,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.906,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "pop-full",
+          "section": "Outro",
+          "role": null,
+          "kicks": 8,
+          "bassOnsets": 16,
+          "kickToBass": 1,
+          "bassToKick": 0.5,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "ballad-piano-vocal",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "ballad-piano-vocal",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 8,
+          "bassOnsets": 4,
+          "kickToBass": 0.5,
+          "bassToKick": 1,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "ballad-piano-vocal",
+          "section": "Bridge",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 2,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "ballad-piano-vocal",
+          "section": "Chorus 2",
+          "role": null,
+          "kicks": 8,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.25,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "rock-full",
+          "section": "Intro",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 2,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "rock-full",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 32,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "rock-full",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 28,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.875,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "rock-full",
+          "section": "Bridge",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 32,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "rock-full",
+          "section": "Chorus 2",
+          "role": null,
+          "kicks": 26,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.813,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "dance-full",
+          "section": "Intro",
+          "role": null,
+          "kicks": 8,
+          "bassOnsets": 4,
+          "kickToBass": 0.5,
+          "bassToKick": 1,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "dance-full",
+          "section": "Verse",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 32,
+          "kickToBass": 0.75,
+          "bassToKick": 0.375,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "dance-full",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 28,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.875,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "dance-full",
+          "section": "Breakdown",
+          "role": null,
+          "kicks": 9,
+          "bassOnsets": 4,
+          "kickToBass": 0.111,
+          "bassToKick": 0.25,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "dance-full",
+          "section": "Chorus 2",
+          "role": null,
+          "kicks": 26,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.813,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "acoustic-demo",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "acoustic-demo",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 13,
+          "bassOnsets": 4,
+          "kickToBass": 0.077,
+          "bassToKick": 0.25,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "acoustic-demo",
+          "section": "Verse 2",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "acoustic-demo",
+          "section": "Chorus 2",
+          "role": null,
+          "kicks": 12,
+          "bassOnsets": 32,
+          "kickToBass": 1,
+          "bassToKick": 0.375,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "orchestral-midi",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 6,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": 0.02
+        },
+        {
+          "song": "orchestral-midi",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 7,
+          "bassOnsets": 6,
+          "kickToBass": 0.143,
+          "bassToKick": 0.167,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": 1
+        },
+        {
+          "song": "ethnic-vocal",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "ethnic-vocal",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 16,
+          "bassOnsets": 56,
+          "kickToBass": 1,
+          "bassToKick": 0.286,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "ethnic-vocal",
+          "section": "Verse 2",
+          "role": null,
+          "kicks": 8,
+          "bassOnsets": 4,
+          "kickToBass": 0.125,
+          "bassToKick": 0.25,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "jazz-full",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 8,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "jazz-full",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 56,
+          "bassOnsets": 64,
+          "kickToBass": 1,
+          "bassToKick": 0.875,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "jazz-full",
+          "section": "Verse 2",
+          "role": null,
+          "kicks": 54,
+          "bassOnsets": 64,
+          "kickToBass": 1,
+          "bassToKick": 0.844,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "cinematic-midi",
+          "section": "Intro",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "cinematic-midi",
+          "section": "Verse",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "cinematic-midi",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 8,
+          "bassOnsets": 4,
+          "kickToBass": 0.5,
+          "bassToKick": 1,
+          "percussionOnKit": 1,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "cinematic-midi",
+          "section": "Outro",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 4,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Verse 1",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 15,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Verse 2",
+          "role": null,
+          "kicks": 62,
+          "bassOnsets": 16,
+          "kickToBass": 0.032,
+          "bassToKick": 0.125,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Chorus",
+          "role": null,
+          "kicks": 62,
+          "bassOnsets": 10,
+          "kickToBass": 0.016,
+          "bassToKick": 0.1,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Chorus 2",
+          "role": null,
+          "kicks": 62,
+          "bassOnsets": 10,
+          "kickToBass": 0.048,
+          "bassToKick": 0.3,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Verse 3",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 12,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Bridge",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 14,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Chorus 3",
+          "role": null,
+          "kicks": 63,
+          "bassOnsets": 13,
+          "kickToBass": 0.016,
+          "bassToKick": 0.077,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Outro",
+          "role": null,
+          "kicks": 0,
+          "bassOnsets": 9,
+          "kickToBass": null,
+          "bassToKick": null,
+          "percussionOnKit": null,
+          "ostinatoOnRhythmSection": null
+        }
+      ],
+      "meanKickToBass": 0.617,
+      "meanBassToKick": 0.549,
+      "meanPercussionOnKit": 1,
+      "meanOstinatoOnRhythmSection": 0.51
+    },
+    "hatRates": [
+      {
+        "song": "pop-full",
+        "tempoBpm": 120,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 4,
+        "hatSubdivisionsPerBeat": 2
+      },
+      {
+        "song": "ballad-piano-vocal",
+        "tempoBpm": 68,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 1.134,
+        "hatSubdivisionsPerBeat": 1
+      },
+      {
+        "song": "rock-full",
+        "tempoBpm": 148,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 4.95,
+        "hatSubdivisionsPerBeat": 2.007
+      },
+      {
+        "song": "dance-full",
+        "tempoBpm": 126,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 8.403,
+        "hatSubdivisionsPerBeat": 4.002
+      },
+      {
+        "song": "acoustic-demo",
+        "tempoBpm": 92,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 3.067,
+        "hatSubdivisionsPerBeat": 2.001
+      },
+      {
+        "song": "orchestral-midi",
+        "tempoBpm": 76,
+        "meter": "3/4",
+        "maxHatStrikesPerSecond": 2.538,
+        "hatSubdivisionsPerBeat": 2.004
+      },
+      {
+        "song": "ethnic-vocal",
+        "tempoBpm": 104,
+        "meter": "7/8",
+        "maxHatStrikesPerSecond": 3.472,
+        "hatSubdivisionsPerBeat": 2.003
+      },
+      {
+        "song": "jazz-full",
+        "tempoBpm": 132,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 4.405,
+        "hatSubdivisionsPerBeat": 2.002
+      },
+      {
+        "song": "cinematic-midi",
+        "tempoBpm": 60,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 1,
+        "hatSubdivisionsPerBeat": 1
+      },
+      {
+        "song": "owner-rachem-na",
+        "tempoBpm": 130.43,
+        "meter": "4/4",
+        "maxHatStrikesPerSecond": 4.348,
+        "hatSubdivisionsPerBeat": 2
+      }
+    ],
+    "meter": {
+      "corpus": [
+        {
+          "song": "pop-full",
+          "meter": "4/4",
+          "tempoBpm": 120,
+          "songBarSeconds": 2,
+          "notesOutsideSection": 0,
+          "notes": 666,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 236,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "ballad-piano-vocal",
+          "meter": "4/4",
+          "tempoBpm": 68,
+          "songBarSeconds": 3.529,
+          "notesOutsideSection": 0,
+          "notes": 301,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 91,
+          "snareBeats": [],
+          "kickBeats": [
+            0
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "rock-full",
+          "meter": "4/4",
+          "tempoBpm": 148,
+          "songBarSeconds": 1.622,
+          "notesOutsideSection": 0,
+          "notes": 611,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 205,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "dance-full",
+          "meter": "4/4",
+          "tempoBpm": 126,
+          "songBarSeconds": 1.905,
+          "notesOutsideSection": 0,
+          "notes": 732,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 580,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "acoustic-demo",
+          "meter": "4/4",
+          "tempoBpm": 92,
+          "songBarSeconds": 2.609,
+          "notesOutsideSection": 0,
+          "notes": 450,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 190,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "orchestral-midi",
+          "meter": "3/4",
+          "tempoBpm": 76,
+          "songBarSeconds": 2.368,
+          "notesOutsideSection": 0,
+          "notes": 353,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 104,
+          "snareBeats": [
+            1
+          ],
+          "kickBeats": [
+            0
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "ethnic-vocal",
+          "meter": "7/8",
+          "tempoBpm": 104,
+          "songBarSeconds": 2.019,
+          "notesOutsideSection": 0,
+          "notes": 523,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 111,
+          "snareBeats": [
+            4
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "jazz-full",
+          "meter": "4/4",
+          "tempoBpm": 132,
+          "songBarSeconds": 1.818,
+          "notesOutsideSection": 0,
+          "notes": 1054,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 408,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "cinematic-midi",
+          "meter": "4/4",
+          "tempoBpm": 60,
+          "songBarSeconds": 4,
+          "notesOutsideSection": 0,
+          "notes": 411,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 47,
+          "snareBeats": [],
+          "kickBeats": [
+            0
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "owner-rachem-na",
+          "meter": "4/4",
+          "tempoBpm": 130.43,
+          "songBarSeconds": 1.84,
+          "notesOutsideSection": 0,
+          "notes": 1823,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 800,
+          "snareBeats": [
+            1,
+            3
+          ],
+          "kickBeats": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "familiesSilentInLaterSections": []
+        }
+      ],
+      "variants": [
+        {
+          "song": "pop-full@3-4",
+          "meter": "3/4",
+          "tempoBpm": 120,
+          "songBarSeconds": 1.5,
+          "notesOutsideSection": 0,
+          "notes": 456,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 149,
+          "snareBeats": [
+            1
+          ],
+          "kickBeats": [
+            0
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "pop-full@6-8",
+          "meter": "6/8",
+          "tempoBpm": 120,
+          "songBarSeconds": 1.5,
+          "notesOutsideSection": 0,
+          "notes": 789,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 159,
+          "snareBeats": [
+            3
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "rock-full@5-4",
+          "meter": "5/4",
+          "tempoBpm": 148,
+          "songBarSeconds": 2.027,
+          "notesOutsideSection": 0,
+          "notes": 708,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 210,
+          "snareBeats": [
+            3
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "jazz-full@7-8",
+          "meter": "7/8",
+          "tempoBpm": 132,
+          "songBarSeconds": 1.591,
+          "notesOutsideSection": 0,
+          "notes": 1432,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 330,
+          "snareBeats": [
+            4
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "ballad-piano-vocal@6-8",
+          "meter": "6/8",
+          "tempoBpm": 68,
+          "songBarSeconds": 2.647,
+          "notesOutsideSection": 0,
+          "notes": 441,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 143,
+          "snareBeats": [
+            3
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "dance-full@7-8",
+          "meter": "7/8",
+          "tempoBpm": 126,
+          "songBarSeconds": 1.667,
+          "notesOutsideSection": 0,
+          "notes": 611,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 387,
+          "snareBeats": [
+            4
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        },
+        {
+          "song": "acoustic-demo@5-4",
+          "meter": "5/4",
+          "tempoBpm": 92,
+          "songBarSeconds": 3.261,
+          "notesOutsideSection": 0,
+          "notes": 511,
+          "kitOnsetsOutsideBar": 0,
+          "kitOnsets": 195,
+          "snareBeats": [
+            3
+          ],
+          "kickBeats": [
+            0,
+            2
+          ],
+          "familiesSilentInLaterSections": []
+        }
+      ]
+    },
+    "orchestrated": [
+      {
+        "song": "pop-full",
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "notes": 250
+          },
+          {
+            "id": "bass-bass",
+            "notes": 111
+          },
+          {
+            "id": "keys-harmonic_bed",
+            "notes": 296
+          }
+        ],
+        "noteCount": 657,
+        "machineMade": {
+          "score": 71,
+          "penalty": 28.652,
+          "kinds": [
+            "identical_voicing_shape[major]@1-40:keys-harmonic_bed",
+            "no_rests[major]@1-40:keys-harmonic_bed",
+            "root_position_only[minor]@1-40:keys-harmonic_bed",
+            "no_rests[minor]@21-32:bass-bass"
+          ]
+        },
+        "causality": {
+          "score": 92,
+          "penalty": 7.7568,
+          "kinds": [
+            "climax_not_prepared[major]@27-28:bass-bass+drums-groove+keys-harmonic_bed"
+          ]
+        },
+        "arbitrariness": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "playabilityRepairs": {
+          "tracks": 0,
+          "rangeFolds": 0,
+          "leapFolds": 0,
+          "polyphonyReleases": 0,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "ballad-piano-vocal",
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "notes": 85
+          },
+          {
+            "id": "bass-bass",
+            "notes": 40
+          },
+          {
+            "id": "keys-rhythmic_harmony",
+            "notes": 159
+          }
+        ],
+        "noteCount": 284,
+        "machineMade": {
+          "score": 90,
+          "penalty": 10.5,
+          "kinds": [
+            "no_rests[major]@1-24:bass-bass"
+          ]
+        },
+        "causality": {
+          "score": 96,
+          "penalty": 3.5148,
+          "kinds": [
+            "climax_not_prepared[major]@19-20:bass-bass+drums-groove+keys-rhythmic_harmony"
+          ]
+        },
+        "arbitrariness": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "playabilityRepairs": {
+          "tracks": 1,
+          "rangeFolds": 0,
+          "leapFolds": 1,
+          "polyphonyReleases": 0,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "rock-full",
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "notes": 215
+          },
+          {
+            "id": "bass-bass",
+            "notes": 122
+          },
+          {
+            "id": "keys-rhythmic_harmony",
+            "notes": 250
+          },
+          {
+            "id": "guitar-harmonic_bed",
+            "notes": 11
+          }
+        ],
+        "noteCount": 598,
+        "machineMade": {
+          "score": 99,
+          "penalty": 0.8,
+          "kinds": [
+            "no_rests[minor]@1-8:bass-bass",
+            "no_rests[minor]@29-36:guitar-harmonic_bed"
+          ]
+        },
+        "causality": {
+          "score": 98,
+          "penalty": 1.5392,
+          "kinds": [
+            "transition_unprepared[minor]@11-13:bass-bass+drums-groove+guitar-harmonic_bed+keys-rhythmic_harmony"
+          ]
+        },
+        "arbitrariness": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "playabilityRepairs": {
+          "tracks": 0,
+          "rangeFolds": 0,
+          "leapFolds": 0,
+          "polyphonyReleases": 0,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "dance-full",
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "notes": 577
+          },
+          {
+            "id": "bass-bass",
+            "notes": 98
+          },
+          {
+            "id": "keys-harmonic_bed",
+            "notes": 22
+          },
+          {
+            "id": "synth-pad",
+            "notes": 24
+          }
+        ],
+        "noteCount": 721,
+        "machineMade": {
+          "score": 91,
+          "penalty": 8.6452,
+          "kinds": [
+            "chord_changes_only_on_downbeat[minor]@1-40:keys-harmonic_bed+synth-pad",
+            "identical_voicing_shape[minor]@17-39:synth-pad",
+            "root_position_only[minor]@17-39:synth-pad",
+            "no_rests[minor]@25-36:bass-bass",
+            "no_rests[minor]@33-40:keys-harmonic_bed",
+            "no_rests[minor]@33-40:synth-pad"
+          ]
+        },
+        "causality": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "arbitrariness": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "playabilityRepairs": {
+          "tracks": 2,
+          "rangeFolds": 0,
+          "leapFolds": 0,
+          "polyphonyReleases": 6,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "acoustic-demo",
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "notes": 204
+          },
+          {
+            "id": "bass-bass",
+            "notes": 42
+          },
+          {
+            "id": "guitar-harmonic_bed",
+            "notes": 204
+          }
+        ],
+        "noteCount": 450,
+        "machineMade": {
+          "score": 66,
+          "penalty": 34.1232,
+          "kinds": [
+            "identical_voicing_shape[major]@1-31:guitar-harmonic_bed",
+            "no_rests[major]@1-28:bass-bass",
+            "no_rests[major]@1-32:guitar-harmonic_bed"
+          ]
+        },
+        "causality": {
+          "score": 92,
+          "penalty": 7.7568,
+          "kinds": [
+            "climax_not_prepared[major]@23-24:bass-bass+drums-groove+guitar-harmonic_bed"
+          ]
+        },
+        "arbitrariness": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "playabilityRepairs": {
+          "tracks": 0,
+          "rangeFolds": 0,
+          "leapFolds": 0,
+          "polyphonyReleases": 0,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "orchestral-midi",
+        "tracks": [
+          {
+            "id": "drums-climax_layer",
+            "notes": 105
+          },
+          {
+            "id": "bass-bass",
+            "notes": 12
+          },
+          {
+            "id": "keys-ostinato",
+            "notes": 164
+          },
+          {
+            "id": "brass-climax_layer",
+            "notes": 6
+          },
+          {
+            "id": "strings-climax_layer",
+            "notes": 20
+          }
+        ],
+        "noteCount": 307,
+        "machineMade": {
+          "score": 77,
+          "penalty": 23.3748,
+          "kinds": [
+            "no_rests[major]@1-36:strings-climax_layer",
+            "no_rests[major]@7-30:bass-bass",
+            "no_rests[minor]@19-32:keys-ostinato"
+          ]
+        },
+        "causality": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "arbitrariness": {
+          "score": 97,
+          "penalty": 3,
+          "kinds": [
+            "mid_phrase_exit[minor]@16-17:keys-ostinato"
+          ]
+        },
+        "playabilityRepairs": {
+          "tracks": 1,
+          "rangeFolds": 0,
+          "leapFolds": 4,
+          "polyphonyReleases": 50,
+          "durationLengthened": 0,
+          "dropped": 34
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "ethnic-vocal",
+        "tracks": [
+          {
+            "id": "drums-climax_layer",
+            "notes": 109
+          },
+          {
+            "id": "bass-bass",
+            "notes": 61
+          },
+          {
+            "id": "keys-harmonic_bed",
+            "notes": 331
+          }
+        ],
+        "noteCount": 501,
+        "machineMade": {
+          "score": 74,
+          "penalty": 26.4968,
+          "kinds": [
+            "identical_voicing_shape[major]@1-24:keys-harmonic_bed",
+            "no_rests[major]@1-24:keys-harmonic_bed",
+            "root_position_only[minor]@1-24:keys-harmonic_bed"
+          ]
+        },
+        "causality": {
+          "score": 92,
+          "penalty": 7.7568,
+          "kinds": [
+            "climax_not_prepared[major]@7-8:bass-bass+drums-climax_layer+keys-harmonic_bed"
+          ]
+        },
+        "arbitrariness": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "playabilityRepairs": {
+          "tracks": 0,
+          "rangeFolds": 0,
+          "leapFolds": 0,
+          "polyphonyReleases": 0,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "jazz-full",
+        "tracks": [
+          {
+            "id": "drums-climax_layer",
+            "notes": 428
+          },
+          {
+            "id": "bass-bass",
+            "notes": 130
+          },
+          {
+            "id": "keys-harmonic_bed",
+            "notes": 485
+          }
+        ],
+        "noteCount": 1043,
+        "machineMade": {
+          "score": 81,
+          "penalty": 18.8776,
+          "kinds": [
+            "no_rests[minor]@1-22:bass-bass",
+            "no_rests[major]@1-48:keys-harmonic_bed",
+            "root_position_only[minor]@1-48:keys-harmonic_bed"
+          ]
+        },
+        "causality": {
+          "score": 83,
+          "penalty": 17.238,
+          "kinds": [
+            "climax_not_prepared[major]@15-16:bass-bass+drums-climax_layer+keys-harmonic_bed",
+            "climax_not_realised[major]@17-32:bass-bass+drums-climax_layer+keys-harmonic_bed",
+            "ending_is_a_cut[major]@47-48:bass-bass+drums-climax_layer+keys-harmonic_bed"
+          ]
+        },
+        "arbitrariness": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "playabilityRepairs": {
+          "tracks": 0,
+          "rangeFolds": 0,
+          "leapFolds": 0,
+          "polyphonyReleases": 0,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "cinematic-midi",
+        "tracks": [
+          {
+            "id": "drums-climax_layer",
+            "notes": 44
+          },
+          {
+            "id": "bass-bass",
+            "notes": 16
+          },
+          {
+            "id": "percussion-accent",
+            "notes": 7
+          },
+          {
+            "id": "keys-harmonic_bed",
+            "notes": 284
+          },
+          {
+            "id": "brass-climax_layer",
+            "notes": 4
+          },
+          {
+            "id": "strings-climax_layer",
+            "notes": 14
+          }
+        ],
+        "noteCount": 369,
+        "machineMade": {
+          "score": 55,
+          "penalty": 45.1824,
+          "kinds": [
+            "identical_voicing_shape[major]@1-32:keys-harmonic_bed",
+            "no_rests[major]@1-32:bass-bass",
+            "no_rests[major]@1-32:keys-harmonic_bed",
+            "root_position_only[minor]@1-32:keys-harmonic_bed",
+            "no_rests[major]@9-32:strings-climax_layer"
+          ]
+        },
+        "causality": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "arbitrariness": {
+          "score": 100,
+          "penalty": 0,
+          "kinds": []
+        },
+        "playabilityRepairs": {
+          "tracks": 1,
+          "rangeFolds": 0,
+          "leapFolds": 8,
+          "polyphonyReleases": 32,
+          "durationLengthened": 0,
+          "dropped": 22
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      },
+      {
+        "song": "owner-rachem-na",
+        "tracks": [
+          {
+            "id": "drums-groove",
+            "notes": 846
+          },
+          {
+            "id": "bass-bass",
+            "notes": 94
+          },
+          {
+            "id": "keys-rhythmic_harmony",
+            "notes": 878
+          }
+        ],
+        "noteCount": 1818,
+        "machineMade": {
+          "score": 98,
+          "penalty": 2.2112,
+          "kinds": [
+            "no_rests[minor]@6-23:bass-bass"
+          ]
+        },
+        "causality": {
+          "score": 60,
+          "penalty": 39.5532,
+          "kinds": [
+            "unmotivated_entry[minor]@43-44:keys-rhythmic_harmony",
+            "unmotivated_entry[minor]@54-55:keys-rhythmic_harmony",
+            "unmotivated_entry[minor]@63-64:keys-rhythmic_harmony",
+            "unmotivated_entry[minor]@68-69:keys-rhythmic_harmony",
+            "unmotivated_entry[minor]@76-77:keys-rhythmic_harmony",
+            "unmotivated_entry[minor]@80-81:keys-rhythmic_harmony",
+            "unmotivated_entry[minor]@87-88:keys-rhythmic_harmony",
+            "transition_unprepared[minor]@95-97:bass-bass+drums-groove+keys-rhythmic_harmony",
+            "climax_not_prepared[major]@111-112:bass-bass+drums-groove+keys-rhythmic_harmony",
+            "transition_unprepared[major]@111-113:bass-bass+drums-groove+keys-rhythmic_harmony",
+            "climax_not_realised[major]@113-128:bass-bass+drums-groove+keys-rhythmic_harmony",
+            "unmotivated_entry[minor]@126-127:keys-rhythmic_harmony",
+            "ending_missing[major]@141-141:bass-bass+drums-groove+keys-rhythmic_harmony"
+          ]
+        },
+        "arbitrariness": {
+          "score": 32,
+          "penalty": 67.7016,
+          "kinds": [
+            "planned_family_silent[major]@1-2:bass-bass",
+            "planned_family_silent[major]@1-2:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@41-42:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@49-50:keys-rhythmic_harmony",
+            "mid_phrase_entry[minor]@55-55:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@65-66:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@73-74:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@78-79:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@82-83:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@89-90:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@93-94:bass-bass",
+            "mid_phrase_exit[minor]@94-95:keys-rhythmic_harmony",
+            "mid_phrase_exit[minor]@110-111:bass-bass",
+            "mid_phrase_exit[minor]@126-127:bass-bass",
+            "mid_phrase_entry[minor]@127-127:keys-rhythmic_harmony"
+          ]
+        },
+        "playabilityRepairs": {
+          "tracks": 0,
+          "rangeFolds": 0,
+          "leapFolds": 0,
+          "polyphonyReleases": 0,
+          "durationLengthened": 0,
+          "dropped": 0
+        },
+        "feasible": true,
+        "hardRuleReasons": []
+      }
+    ],
+    "adversarialTotals": {
+      "machineMadePenalty": 198.863,
+      "causalityPenalty": 85.116,
+      "arbitrarinessPenalty": 70.702,
+      "playabilityRepairTracks": 5,
+      "leapFolds": 13,
+      "polyphonyReleases": 88,
+      "feasible": 10
+    },
+    "groovePlans": [
+      {
+        "song": "pop-full",
+        "inputsDigest": "7796f2b16cee6b5dad3258d5d8d9b74b0eef92cb025000182eee6752429ee00d",
+        "sections": [
+          {
+            "name": "Intro",
+            "bars": "1-4",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (arc: four-on-the-floor asks for a full texture; the arc's level 0.4 / bed here keeps a backbeat)",
+            "subdivision": "8ths (strategy: four_on_floor: straight 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              2
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (style)",
+            "anticipations": "3.5 before_chord_change +kick",
+            "comping": "arpeggiated_8ths / bed whole_note_bed",
+            "fills": [],
+            "approach": "2 bars, hats 0.5u, +10",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "first section",
+            "digest": "f59566de5821"
+          },
+          {
+            "name": "Verse",
+            "bars": "5-12",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (arc: four-on-the-floor asks for a full texture; the arc's level 0.39 / bed here keeps a backbeat)",
+            "subdivision": "8ths (strategy: four_on_floor: straight 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              2
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (style)",
+            "anticipations": "3.5 before_chord_change +kick",
+            "comping": "arpeggiated_8ths / bed whole_note_bed",
+            "fills": [
+              "12:snare_rollx2@0.827(transition)"
+            ],
+            "approach": "2 bars, hats 0.5u, +18",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "same groove as Intro",
+            "digest": "81d9b2d60196"
+          },
+          {
+            "name": "Chorus",
+            "bars": "13-20",
+            "grouping": "1+1+1+1",
+            "pulse": "four_on_floor (strategy: four-on-the-floor kick under a backbeat snare)",
+            "subdivision": "8ths (tempo: 16ths wanted (full texture at level 0.716: one step denser than the 8ths the strategy gives) but 8ths at 120 BPM = 4 strikes/s ≤ 7.5/s (one hand))",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "off_beat_chop / bed whole_note_bed",
+            "fills": [
+              "13:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture bed → full; tension setup → arrival; function verse → chorus",
+            "digest": "1e71691968c0"
+          },
+          {
+            "name": "Verse 2",
+            "bars": "21-28",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (arc: four-on-the-floor asks for a full texture; the arc's level 0.38 / bed here keeps a backbeat)",
+            "subdivision": "8ths (strategy: four_on_floor: straight 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              2
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "3.5 every_bar +kick",
+            "comping": "arpeggiated_8ths / bed whole_note_bed",
+            "fills": [
+              "28:snare_rollx4@0.96(transition)"
+            ],
+            "approach": "2 bars, hats 0.5u, +18",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture full → bed; tension arrival → lift; function chorus → verse",
+            "digest": "ae1edd4ceb85"
+          },
+          {
+            "name": "Chorus 2",
+            "bars": "29-36",
+            "grouping": "1+1+1+1",
+            "pulse": "four_on_floor (strategy: four-on-the-floor kick under a backbeat snare)",
+            "subdivision": "8ths (tempo: 16ths wanted (tutti texture at level 0.894: one step denser than the 8ths the strategy gives) but 8ths at 120 BPM = 4 strikes/s ≤ 7.5/s (one hand))",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "off_beat_chop / bed whole_note_bed",
+            "fills": [
+              "29:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture bed → tutti; tension lift → arrival; function verse → chorus",
+            "digest": "9f7ccf5c036f"
+          },
+          {
+            "name": "Outro",
+            "bars": "37-40",
+            "grouping": "1+1+1+1",
+            "pulse": "four_on_floor (strategy: four-on-the-floor kick under a backbeat snare)",
+            "subdivision": "quarters (arc: full texture / afterglow: one step sparser than 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "pedal (arc)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "off_beat_chop / bed whole_note_bed",
+            "fills": [],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "thin_out",
+            "continuity": "licensed by texture tutti → full; tension arrival → afterglow; function chorus → outro",
+            "digest": "0f39c040f56c"
+          }
+        ]
+      },
+      {
+        "song": "ballad-piano-vocal",
+        "inputsDigest": "d4657a4196374353d9e4977ffa3234236523ac3ab14496778027401ff0270bf1",
+        "sections": [
+          {
+            "name": "Verse",
+            "bars": "1-8",
+            "grouping": "1+1+1+1",
+            "pulse": "rubato (strategy: rubato groove: the kit marks pulses only)",
+            "subdivision": "quarters (strategy: rubato: pulses only)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "pedal (strategy)",
+            "anticipations": "3.5 never",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [
+              "8:tom_runx2@0.811(transition)"
+            ],
+            "approach": "2 bars, hats 0.5u, +18",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "first section",
+            "digest": "914c2c0fdca0"
+          },
+          {
+            "name": "Chorus",
+            "bars": "9-16",
+            "grouping": "1+1+1+1",
+            "pulse": "rubato (strategy: rubato groove: the kit marks pulses only)",
+            "subdivision": "quarters (strategy: rubato: pulses only)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "pedal (strategy)",
+            "anticipations": "3.5 never",
+            "comping": "arpeggiated_8ths / bed whole_note_bed",
+            "fills": [
+              "9:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture bed → full; tension setup → arrival; function verse → chorus",
+            "digest": "0aed65d601fc"
+          },
+          {
+            "name": "Bridge",
+            "bars": "17-20",
+            "grouping": "1+1+1+1",
+            "pulse": "rubato (strategy: rubato groove: the kit marks pulses only)",
+            "subdivision": "quarters (strategy: rubato: pulses only)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "pedal (strategy)",
+            "anticipations": "3.5 never",
+            "comping": "arpeggiated_8ths / bed quarter_pulses",
+            "fills": [
+              "20:tom_runx1@0.745(transition)"
+            ],
+            "approach": "2 bars, hats 0.5u, +18",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture full → bed; tension arrival → lift; function chorus → bridge",
+            "digest": "55cba8b3d9c6"
+          },
+          {
+            "name": "Chorus 2",
+            "bars": "21-28",
+            "grouping": "1+1+1+1",
+            "pulse": "rubato (strategy: rubato groove: the kit marks pulses only)",
+            "subdivision": "quarters (strategy: rubato: pulses only)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "pedal (strategy)",
+            "anticipations": "3.5 never",
+            "comping": "arpeggiated_8ths / bed whole_note_bed",
+            "fills": [
+              "21:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "thin_out",
+            "continuity": "licensed by texture bed → tutti; tension lift → arrival; function bridge → chorus",
+            "digest": "c83784b5d851"
+          }
+        ]
+      },
+      {
+        "song": "rock-full",
+        "inputsDigest": "0cf13c9e12a2c1d1da4998f05391355c4457e23f29d3e71dcbdba30cc2bb665d",
+        "sections": [
+          {
+            "name": "Intro",
+            "bars": "1-4",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (arc: four-on-the-floor asks for a full texture; the arc's level 0.4 / bed here keeps a backbeat)",
+            "subdivision": "8ths (strategy: four_on_floor: straight 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              2
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (style)",
+            "anticipations": "3.5 before_chord_change +kick",
+            "comping": "arpeggiated_8ths / bed whole_note_bed",
+            "fills": [],
+            "approach": "2 bars, hats 0.5u, +10",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "first section",
+            "digest": "b17fbb50dda3"
+          },
+          {
+            "name": "Verse",
+            "bars": "5-12",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (arc: four-on-the-floor asks for a full texture; the arc's level 0.4 / bed here keeps a backbeat)",
+            "subdivision": "8ths (strategy: four_on_floor: straight 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              2
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (style)",
+            "anticipations": "3.5 before_chord_change +kick",
+            "comping": "arpeggiated_8ths / bed whole_note_bed",
+            "fills": [
+              "12:snare_rollx2@0.823(transition)"
+            ],
+            "approach": "2 bars, hats 0.5u, +18",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "same groove as Intro",
+            "digest": "e0f4ef8d0e0c"
+          },
+          {
+            "name": "Chorus",
+            "bars": "13-20",
+            "grouping": "1+1+1+1",
+            "pulse": "four_on_floor (strategy: four-on-the-floor kick under a backbeat snare)",
+            "subdivision": "8ths (tempo: 16ths wanted (full texture at level 0.719: one step denser than the 8ths the strategy gives) but 8ths at 148 BPM = 4.933 strikes/s ≤ 7.5/s (one hand))",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "off_beat_chop / bed whole_note_bed",
+            "fills": [
+              "13:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture bed → full; tension setup → arrival; function verse → chorus",
+            "digest": "fdbc7de22cf3"
+          },
+          {
+            "name": "Bridge",
+            "bars": "21-28",
+            "grouping": "1+1+1+1",
+            "pulse": "four_on_floor (strategy: four-on-the-floor kick under a backbeat snare)",
+            "subdivision": "8ths (strategy: four_on_floor: straight 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "3.5 every_bar",
+            "comping": "off_beat_chop / bed quarter_pulses",
+            "fills": [
+              "28:snare_rollx2@0.819(transition)"
+            ],
+            "approach": "2 bars, hats 0.5u, +18",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture full → bed; tension arrival → lift; function chorus → bridge",
+            "digest": "8242c35a0b6e"
+          },
+          {
+            "name": "Chorus 2",
+            "bars": "29-36",
+            "grouping": "1+1+1+1",
+            "pulse": "four_on_floor (strategy: four-on-the-floor kick under a backbeat snare)",
+            "subdivision": "8ths (tempo: 16ths wanted (tutti texture at level 0.861: one step denser than the 8ths the strategy gives) but 8ths at 148 BPM = 4.933 strikes/s ≤ 7.5/s (one hand))",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "off_beat_chop / bed whole_note_bed",
+            "fills": [
+              "29:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "held_hit",
+            "continuity": "licensed by texture bed → tutti; tension lift → arrival; function bridge → chorus",
+            "digest": "43f800b156e5"
+          }
+        ]
+      },
+      {
+        "song": "dance-full",
+        "inputsDigest": "0563a0e78fb36ba83c68fb154e1dca97be3a29c43d86be620fa39196000fe0e1",
+        "sections": [
+          {
+            "name": "Intro",
+            "bars": "1-8",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (arc: four-on-the-floor asks for a full texture; the arc's level 0.4 / duo here keeps a backbeat)",
+            "subdivision": "quarters (arc: duo texture / setup: one step sparser than 8ths)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "lock (style)",
+            "anticipations": "3.5 never +kick",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [
+              "8:crash_onlyx1@0.582(transition)"
+            ],
+            "approach": "2 bars, hats 0.5u, +10",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "first section",
+            "digest": "0f9152fd38d1"
+          },
+          {
+            "name": "Verse",
+            "bars": "9-16",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (arc: four-on-the-floor asks for a full texture; the arc's level 0.4 / bed here keeps a backbeat)",
+            "subdivision": "8ths (strategy: four_on_floor: straight 8ths)",
+            "ceiling": "16ths",
+            "kick": [
+              0,
+              2
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (style)",
+            "anticipations": "3.5 before_chord_change +kick",
+            "comping": "off_beat_chop / bed whole_note_bed",
+            "fills": [
+              "9:crash_onlyx0@0.8(transition)",
+              "16:snare_rollx2@0.826(transition)"
+            ],
+            "approach": "2 bars, hats 0.25u, +18",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture duo → bed; function intro → verse",
+            "digest": "cbc558796388"
+          },
+          {
+            "name": "Chorus",
+            "bars": "17-24",
+            "grouping": "1+1+1+1",
+            "pulse": "four_on_floor (strategy: four-on-the-floor kick under a backbeat snare)",
+            "subdivision": "16ths (arc: tutti texture at level 0.724: one step denser than the 8ths the strategy gives)",
+            "ceiling": "16ths",
+            "kick": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "off_beat_chop / bed whole_note_bed",
+            "fills": [
+              "17:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture bed → tutti; tension setup → arrival; function verse → chorus",
+            "digest": "fbbbce14a752"
+          },
+          {
+            "name": "Breakdown",
+            "bars": "25-32",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (arc: four-on-the-floor asks for a full texture; the arc's level 0.22 / duo here keeps a backbeat)",
+            "subdivision": "quarters (arc: duo texture / lift: one step sparser than 8ths)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "lock (arc)",
+            "anticipations": "3.5 every_bar +kick",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [
+              "32:snare_rollx4@1(transition)"
+            ],
+            "approach": "2 bars, hats 0.5u, +18",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture tutti → duo; tension arrival → lift; function chorus → breakdown",
+            "digest": "c6244696e503"
+          },
+          {
+            "name": "Chorus 2",
+            "bars": "33-40",
+            "grouping": "1+1+1+1",
+            "pulse": "four_on_floor (strategy: four-on-the-floor kick under a backbeat snare)",
+            "subdivision": "16ths (arc: tutti texture at level 0.856: one step denser than the 8ths the strategy gives)",
+            "ceiling": "16ths",
+            "kick": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "off_beat_chop / bed whole_note_bed",
+            "fills": [
+              "33:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "held_hit",
+            "continuity": "licensed by texture duo → tutti; tension lift → arrival; function breakdown → chorus",
+            "digest": "da7081092e6b"
+          }
+        ]
+      },
+      {
+        "song": "acoustic-demo",
+        "inputsDigest": "8dfaee0c5203492d89398581ae1cb33afd9c06045fde9ba41c119838f2a25d3a",
+        "sections": [
+          {
+            "name": "Verse",
+            "bars": "1-8",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (strategy: steady_pulse: kick 1 and 3, snare 2 and 4)",
+            "subdivision": "quarters (arc: bed texture / setup: one step sparser than 8ths)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "complement (style)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [
+              "8:crash_onlyx2@0.823(transition)"
+            ],
+            "approach": "2 bars, hats 0.5u, +18",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "first section",
+            "digest": "9ad8e6a7d5ac"
+          },
+          {
+            "name": "Chorus",
+            "bars": "9-16",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (strategy: steady_pulse: kick 1 and 3, snare 2 and 4)",
+            "subdivision": "8ths (strategy: steady_pulse: straight 8ths)",
+            "ceiling": "16ths",
+            "kick": [
+              0,
+              2
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "complement (style)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "arpeggiated_8ths / bed whole_note_bed",
+            "fills": [
+              "9:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture bed → full; tension setup → arrival; function verse → chorus",
+            "digest": "891b55cf765f"
+          },
+          {
+            "name": "Verse 2",
+            "bars": "17-24",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (strategy: steady_pulse: kick 1 and 3, snare 2 and 4)",
+            "subdivision": "quarters (arc: bed texture / lift: one step sparser than 8ths)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "complement (style)",
+            "anticipations": "3.5 every_bar",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [
+              "24:snare_rollx4@0.927(transition)"
+            ],
+            "approach": "2 bars, hats 0.5u, +18",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture full → bed; tension arrival → lift; function chorus → verse",
+            "digest": "eef373bbfdc7"
+          },
+          {
+            "name": "Chorus 2",
+            "bars": "25-32",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (strategy: steady_pulse: kick 1 and 3, snare 2 and 4)",
+            "subdivision": "8ths (strategy: steady_pulse: straight 8ths)",
+            "ceiling": "16ths",
+            "kick": [
+              0,
+              2
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "complement (style)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "arpeggiated_8ths / bed whole_note_bed",
+            "fills": [
+              "25:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "thin_out",
+            "continuity": "licensed by texture bed → tutti; tension lift → arrival; function verse → chorus",
+            "digest": "f3e47b8d426c"
+          }
+        ]
+      },
+      {
+        "song": "orchestral-midi",
+        "inputsDigest": "8b44b333e4a9b6916013cf20449b46dc44ca2bb4e7cffa1a5ba5d8858d1d0307",
+        "sections": [
+          {
+            "name": "Intro",
+            "bars": "1-6",
+            "grouping": "1+1+1",
+            "pulse": "waltz (meter: 3/4: downbeat kick, snare on 2, cross-stick on 3 - no fourth beat to backbeat)",
+            "subdivision": "quarters (arc: duo texture / setup: one step sparser than 8ths)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "pedal (style)",
+            "anticipations": "2.5 never",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [],
+            "approach": "2 bars, hats 0.5u, +10",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "first section",
+            "digest": "1f5d91c841a0"
+          },
+          {
+            "name": "Verse",
+            "bars": "7-18",
+            "grouping": "1+1+1",
+            "pulse": "waltz (meter: 3/4: downbeat kick, snare on 2, cross-stick on 3 - no fourth beat to backbeat)",
+            "subdivision": "quarters (arc: bed texture / lift: one step sparser than 8ths)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "lock (arc)",
+            "anticipations": "2.5 every_bar",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [
+              "18:snare_rollx3@1(transition)"
+            ],
+            "approach": "2 bars, hats 0.5u, +18",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture duo → bed; tension setup → lift; function intro → verse",
+            "digest": "fb43d0b97ead"
+          },
+          {
+            "name": "Chorus",
+            "bars": "19-30",
+            "grouping": "1+1+1",
+            "pulse": "waltz (meter: 3/4: downbeat kick, snare on 2, cross-stick on 3 - no fourth beat to backbeat)",
+            "subdivision": "8ths (strategy: steady_pulse: straight 8ths)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [
+              1
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "2.5 before_chord_change",
+            "comping": "arpeggiated_8ths / bed whole_note_bed",
+            "fills": [
+              "19:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture bed → tutti; tension lift → arrival; function verse → chorus",
+            "digest": "ba409864014e"
+          },
+          {
+            "name": "Outro",
+            "bars": "31-36",
+            "grouping": "1+1+1",
+            "pulse": "waltz (meter: 3/4: downbeat kick, snare on 2, cross-stick on 3 - no fourth beat to backbeat)",
+            "subdivision": "quarters (arc: duo texture / afterglow: one step sparser than 8ths)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "pedal (arc)",
+            "anticipations": "2.5 never",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "thin_out",
+            "continuity": "licensed by texture tutti → duo; tension arrival → afterglow; function chorus → outro",
+            "digest": "122cce27bf70"
+          }
+        ]
+      },
+      {
+        "song": "ethnic-vocal",
+        "inputsDigest": "b210887035bface003108bddf773c096297ac89a9625ed9dd31d0c1ff31ed871",
+        "sections": [
+          {
+            "name": "Verse",
+            "bars": "1-8",
+            "grouping": "2+2+3",
+            "pulse": "additive (meter: 7/8 as 2+2+3: kick on the group starts, snare on the group nearest the bar's middle)",
+            "subdivision": "quarters (arc: bed texture / lift: one step sparser than 8ths)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "lock (arc)",
+            "anticipations": "6 every_bar +kick",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [
+              "8:snare_rollx7@0.94(transition)"
+            ],
+            "approach": "2 bars, hats 1u, +18",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "first section",
+            "digest": "cabff624e47d"
+          },
+          {
+            "name": "Chorus",
+            "bars": "9-16",
+            "grouping": "2+2+3",
+            "pulse": "additive (meter: 7/8 as 2+2+3: kick on the group starts, snare on the group nearest the bar's middle)",
+            "subdivision": "8ths (meter: 7/8: the hats mark every unit)",
+            "ceiling": "16ths",
+            "kick": [
+              0,
+              2
+            ],
+            "snare": [
+              4
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "6 before_chord_change +kick",
+            "comping": "arpeggiated_8ths / bed whole_note_bed",
+            "fills": [
+              "9:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture bed → tutti; tension lift → arrival; function verse → chorus",
+            "digest": "6cc8ec3f09d1"
+          },
+          {
+            "name": "Verse 2",
+            "bars": "17-24",
+            "grouping": "2+2+3",
+            "pulse": "additive (meter: 7/8 as 2+2+3: kick on the group starts, snare on the group nearest the bar's middle)",
+            "subdivision": "quarters (arc: full texture / setup: one step sparser than 8ths)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "lock (style)",
+            "anticipations": "6 before_chord_change +kick",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "thin_out",
+            "continuity": "licensed by texture tutti → full; tension arrival → setup; function chorus → verse",
+            "digest": "cd806e43fdf6"
+          }
+        ]
+      },
+      {
+        "song": "jazz-full",
+        "inputsDigest": "e7792dad671ebe4204217c1c2abb88e922c25af456295ec4d7bddcfa3a10682f",
+        "sections": [
+          {
+            "name": "Verse",
+            "bars": "1-16",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (arc: four-on-the-floor asks for a full texture; the arc's level 0.39 / bed here keeps a backbeat)",
+            "subdivision": "8ths (strategy: four_on_floor: straight 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              2
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "3.5 every_bar +kick",
+            "comping": "arpeggiated_8ths / bed whole_note_bed",
+            "fills": [
+              "16:snare_rollx4@0.926(transition)"
+            ],
+            "approach": "2 bars, hats 0.5u, +18",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "first section",
+            "digest": "a1d169410cf6"
+          },
+          {
+            "name": "Chorus",
+            "bars": "17-32",
+            "grouping": "1+1+1+1",
+            "pulse": "four_on_floor (strategy: four-on-the-floor kick under a backbeat snare)",
+            "subdivision": "8ths (tempo: 16ths wanted (tutti texture at level 0.88: one step denser than the 8ths the strategy gives) but 8ths at 132 BPM = 4.4 strikes/s ≤ 7.5/s (one hand))",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "off_beat_chop / bed whole_note_bed",
+            "fills": [
+              "17:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture bed → tutti; tension lift → arrival; function verse → chorus",
+            "digest": "174715c7035e"
+          },
+          {
+            "name": "Verse 2",
+            "bars": "33-48",
+            "grouping": "1+1+1+1",
+            "pulse": "four_on_floor (strategy: four-on-the-floor kick under a backbeat snare)",
+            "subdivision": "8ths (strategy: four_on_floor: straight 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (style)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "off_beat_chop / bed whole_note_bed",
+            "fills": [],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "held_hit",
+            "continuity": "same groove as Chorus",
+            "digest": "3c7a1276c675"
+          }
+        ]
+      },
+      {
+        "song": "cinematic-midi",
+        "inputsDigest": "7368292f4cc83337838634125c224cfb01a6a46d9b56f3de5b12f9a18fecef10",
+        "sections": [
+          {
+            "name": "Intro",
+            "bars": "1-8",
+            "grouping": "1+1+1+1",
+            "pulse": "rubato (strategy: rubato groove: the kit marks pulses only)",
+            "subdivision": "quarters (strategy: rubato: pulses only)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "pedal (strategy)",
+            "anticipations": "3.5 never",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [],
+            "approach": "2 bars, hats 0.5u, +10",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "first section",
+            "digest": "9d509f25667f"
+          },
+          {
+            "name": "Verse",
+            "bars": "9-16",
+            "grouping": "1+1+1+1",
+            "pulse": "rubato (strategy: rubato groove: the kit marks pulses only)",
+            "subdivision": "quarters (strategy: rubato: pulses only)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "pedal (strategy)",
+            "anticipations": "3.5 never",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [
+              "16:snare_rollx4@0.912(transition)"
+            ],
+            "approach": "2 bars, hats 0.5u, +18",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "same groove as Intro",
+            "digest": "530cac534468"
+          },
+          {
+            "name": "Chorus",
+            "bars": "17-24",
+            "grouping": "1+1+1+1",
+            "pulse": "rubato (strategy: rubato groove: the kit marks pulses only)",
+            "subdivision": "quarters (strategy: rubato: pulses only)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "pedal (strategy)",
+            "anticipations": "3.5 never",
+            "comping": "arpeggiated_8ths / bed whole_note_bed",
+            "fills": [
+              "17:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture bed → tutti; tension lift → arrival; function verse → chorus",
+            "digest": "e22b4e1b06e9"
+          },
+          {
+            "name": "Outro",
+            "bars": "25-32",
+            "grouping": "1+1+1+1",
+            "pulse": "rubato (strategy: rubato groove: the kit marks pulses only)",
+            "subdivision": "quarters (strategy: rubato: pulses only)",
+            "ceiling": "16ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "pedal (strategy)",
+            "anticipations": "3.5 never",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "thin_out",
+            "continuity": "licensed by texture tutti → bed; tension arrival → afterglow; function chorus → outro",
+            "digest": "52d271507556"
+          }
+        ]
+      },
+      {
+        "song": "owner-rachem-na",
+        "inputsDigest": "a688e9dea6f0151a572931d35c8fcbe660470b3961f1994c08e8b6ec61f58a05",
+        "sections": [
+          {
+            "name": "Intro",
+            "bars": "1-2",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (arc: four-on-the-floor asks for a full texture; the arc's level 0.25 / bed here keeps a backbeat)",
+            "subdivision": "quarters (arc: bed texture / setup: one step sparser than 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "pedal (style)",
+            "anticipations": "3.5 never",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "first section",
+            "digest": "cde461fa9ac5"
+          },
+          {
+            "name": "Verse 1",
+            "bars": "3-24",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (arc: four-on-the-floor asks for a full texture; the arc's level 0.286 / bed here keeps a backbeat)",
+            "subdivision": "quarters (arc: bed texture / setup: one step sparser than 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "pedal (style)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by function intro → verse",
+            "digest": "9d10e2246564"
+          },
+          {
+            "name": "Verse 2",
+            "bars": "25-40",
+            "grouping": "1+1+1+1",
+            "pulse": "four_on_floor (strategy: four-on-the-floor kick under a backbeat snare)",
+            "subdivision": "quarters (arc: full texture / setup: one step sparser than 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (style)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [
+              "40:snare_pickupx1@0.468(transition)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture bed → full",
+            "digest": "53a7c98c3d2c"
+          },
+          {
+            "name": "Chorus",
+            "bars": "41-56",
+            "grouping": "1+1+1+1",
+            "pulse": "four_on_floor (strategy: four-on-the-floor kick under a backbeat snare)",
+            "subdivision": "8ths (strategy: four_on_floor: straight 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "off_beat_chop / bed whole_note_bed",
+            "fills": [
+              "41:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by tension setup → arrival; function verse → chorus",
+            "digest": "1f300eeda771"
+          },
+          {
+            "name": "Chorus 2",
+            "bars": "57-72",
+            "grouping": "1+1+1+1",
+            "pulse": "four_on_floor (strategy: four-on-the-floor kick under a backbeat snare)",
+            "subdivision": "8ths (strategy: four_on_floor: straight 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "off_beat_chop / bed whole_note_bed",
+            "fills": [
+              "57:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "same groove as Chorus",
+            "digest": "2f76f1a610d8"
+          },
+          {
+            "name": "Verse 3",
+            "bars": "73-96",
+            "grouping": "1+1+1+1",
+            "pulse": "backbeat (arc: four-on-the-floor asks for a full texture; the arc's level 0.212 / bed here keeps a backbeat)",
+            "subdivision": "quarters (arc: bed texture / setup: one step sparser than 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0
+            ],
+            "snare": [],
+            "kickBass": "pedal (style)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "quarter_pulses / bed whole_note_bed (operator)",
+            "fills": [],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture full → bed; tension arrival → setup; function chorus → verse; operator change_comping_subdivision",
+            "digest": "2a21c9227da5"
+          },
+          {
+            "name": "Bridge",
+            "bars": "97-112",
+            "grouping": "1+1+1+1",
+            "pulse": "four_on_floor (strategy: four-on-the-floor kick under a backbeat snare)",
+            "subdivision": "8ths (strategy: four_on_floor: straight 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "3.5 every_bar",
+            "comping": "off_beat_chop / bed quarter_pulses",
+            "fills": [
+              "112:crash_onlyx1@0.409(transition)"
+            ],
+            "approach": "2 bars, hats 0.5u, +18",
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by tension setup → lift; function verse → bridge",
+            "digest": "404f115abea8"
+          },
+          {
+            "name": "Chorus 3",
+            "bars": "113-128",
+            "grouping": "1+1+1+1",
+            "pulse": "four_on_floor (strategy: four-on-the-floor kick under a backbeat snare)",
+            "subdivision": "8ths (strategy: four_on_floor: straight 8ths)",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "snare": [
+              1,
+              3
+            ],
+            "kickBass": "lock (arc)",
+            "anticipations": "3.5 before_chord_change",
+            "comping": "off_beat_chop / bed whole_note_bed",
+            "fills": [
+              "113:crash_onlyx0@0.8(arc)"
+            ],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "none",
+            "continuity": "licensed by texture bed → tutti; tension lift → arrival; function bridge → chorus",
+            "digest": "f65e85e234a7"
+          },
+          {
+            "name": "Outro",
+            "bars": "129-141",
+            "grouping": "1+1+1+1",
+            "pulse": "two_feel (arc: afterglow at level 0.25: a 2-feel leaves room)",
+            "subdivision": "quarters (arc: 2-feel: hats on the beats)",
+            "ceiling": "8ths",
+            "kick": [
+              0,
+              2
+            ],
+            "snare": [],
+            "kickBass": "pedal (arc)",
+            "anticipations": "3.5 never",
+            "comping": "sparse_hits / bed whole_note_bed",
+            "fills": [],
+            "approach": null,
+            "swing": 0.5,
+            "ending": "thin_out",
+            "continuity": "licensed by texture tutti → bed; tension arrival → afterglow; function chorus → outro",
+            "digest": "8dae0e9bb7ab"
+          }
+        ]
+      }
+    ],
+    "planInterlocking": {
+      "rows": [
+        {
+          "song": "pop-full",
+          "section": "Chorus",
+          "relation": "lock",
+          "kicks": 28,
+          "bassOnsets": 31,
+          "kickToBass": 1,
+          "bassToKick": 0.903
+        },
+        {
+          "song": "pop-full",
+          "section": "Chorus 2",
+          "relation": "lock",
+          "kicks": 29,
+          "bassOnsets": 33,
+          "kickToBass": 1,
+          "bassToKick": 0.879
+        },
+        {
+          "song": "pop-full",
+          "section": "Outro",
+          "relation": "pedal",
+          "kicks": 8,
+          "bassOnsets": 3,
+          "kickToBass": 0.125,
+          "bassToKick": 0.333
+        },
+        {
+          "song": "ballad-piano-vocal",
+          "section": "Chorus",
+          "relation": "pedal",
+          "kicks": 8,
+          "bassOnsets": 4,
+          "kickToBass": 0.5,
+          "bassToKick": 1
+        },
+        {
+          "song": "ballad-piano-vocal",
+          "section": "Chorus 2",
+          "relation": "pedal",
+          "kicks": 8,
+          "bassOnsets": 5,
+          "kickToBass": 0.625,
+          "bassToKick": 1
+        },
+        {
+          "song": "rock-full",
+          "section": "Chorus",
+          "relation": "lock",
+          "kicks": 28,
+          "bassOnsets": 31,
+          "kickToBass": 1,
+          "bassToKick": 0.903
+        },
+        {
+          "song": "rock-full",
+          "section": "Chorus 2",
+          "relation": "lock",
+          "kicks": 26,
+          "bassOnsets": 29,
+          "kickToBass": 1,
+          "bassToKick": 0.897
+        },
+        {
+          "song": "dance-full",
+          "section": "Intro",
+          "relation": "lock",
+          "kicks": 8,
+          "bassOnsets": 8,
+          "kickToBass": 1,
+          "bassToKick": 1
+        },
+        {
+          "song": "dance-full",
+          "section": "Verse",
+          "relation": "lock",
+          "kicks": 16,
+          "bassOnsets": 17,
+          "kickToBass": 1,
+          "bassToKick": 0.941
+        },
+        {
+          "song": "dance-full",
+          "section": "Chorus",
+          "relation": "lock",
+          "kicks": 28,
+          "bassOnsets": 31,
+          "kickToBass": 1,
+          "bassToKick": 0.903
+        },
+        {
+          "song": "dance-full",
+          "section": "Breakdown",
+          "relation": "lock",
+          "kicks": 7,
+          "bassOnsets": 7,
+          "kickToBass": 1,
+          "bassToKick": 1
+        },
+        {
+          "song": "dance-full",
+          "section": "Chorus 2",
+          "relation": "lock",
+          "kicks": 26,
+          "bassOnsets": 29,
+          "kickToBass": 1,
+          "bassToKick": 0.897
+        },
+        {
+          "song": "acoustic-demo",
+          "section": "Chorus",
+          "relation": "complement",
+          "kicks": 13,
+          "bassOnsets": 31,
+          "kickToBass": 1,
+          "bassToKick": 0.419
+        },
+        {
+          "song": "acoustic-demo",
+          "section": "Chorus 2",
+          "relation": "complement",
+          "kicks": 12,
+          "bassOnsets": 29,
+          "kickToBass": 1,
+          "bassToKick": 0.414
+        },
+        {
+          "song": "orchestral-midi",
+          "section": "Chorus",
+          "relation": "lock",
+          "kicks": 7,
+          "bassOnsets": 13,
+          "kickToBass": 1,
+          "bassToKick": 0.538
+        },
+        {
+          "song": "ethnic-vocal",
+          "section": "Chorus",
+          "relation": "lock",
+          "kicks": 16,
+          "bassOnsets": 16,
+          "kickToBass": 1,
+          "bassToKick": 1
+        },
+        {
+          "song": "ethnic-vocal",
+          "section": "Verse 2",
+          "relation": "lock",
+          "kicks": 8,
+          "bassOnsets": 8,
+          "kickToBass": 1,
+          "bassToKick": 1
+        },
+        {
+          "song": "jazz-full",
+          "section": "Chorus",
+          "relation": "lock",
+          "kicks": 56,
+          "bassOnsets": 63,
+          "kickToBass": 1,
+          "bassToKick": 0.889
+        },
+        {
+          "song": "jazz-full",
+          "section": "Verse 2",
+          "relation": "lock",
+          "kicks": 54,
+          "bassOnsets": 61,
+          "kickToBass": 1,
+          "bassToKick": 0.885
+        },
+        {
+          "song": "cinematic-midi",
+          "section": "Chorus",
+          "relation": "pedal",
+          "kicks": 8,
+          "bassOnsets": 4,
+          "kickToBass": 0.5,
+          "bassToKick": 1
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Verse 2",
+          "relation": "lock",
+          "kicks": 61,
+          "bassOnsets": 64,
+          "kickToBass": 1,
+          "bassToKick": 0.953
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Chorus",
+          "relation": "lock",
+          "kicks": 62,
+          "bassOnsets": 63,
+          "kickToBass": 1,
+          "bassToKick": 0.984
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Chorus 2",
+          "relation": "lock",
+          "kicks": 62,
+          "bassOnsets": 63,
+          "kickToBass": 1,
+          "bassToKick": 0.984
+        },
+        {
+          "song": "owner-rachem-na",
+          "section": "Chorus 3",
+          "relation": "lock",
+          "kicks": 63,
+          "bassOnsets": 64,
+          "kickToBass": 1,
+          "bassToKick": 0.984
+        }
+      ],
+      "lock": {
+        "sections": 18,
+        "meanKickToBass": 1,
+        "minKickToBass": 1
+      },
+      "complement": {
+        "sections": 2,
+        "meanKickToBass": 1,
+        "minKickToBass": 1
+      },
+      "pedal": {
+        "sections": 4,
+        "meanKickToBass": 0.438,
+        "minKickToBass": 0.125
+      }
+    },
+    "anticipationAgreement": {
+      "slots": 151,
+      "agreed": 151,
+      "rate": 1,
+      "disagreements": []
+    },
+    "transitionGestures": {
+      "bass_pickup": {
+        "planned": 47,
+        "realisedFor": {
+          "bass": 47
+        },
+        "notApplicable": 47
+      },
+      "brass_push": {
+        "planned": 6,
+        "realisedFor": {
+          "brass": 6,
+          "winds": 6
+        },
+        "notApplicable": 6
+      },
+      "break": {
+        "planned": 28,
+        "realisedFor": {
+          "drums": 28,
+          "bass": 28,
+          "keys": 28,
+          "guitar": 28,
+          "strings": 28,
+          "pads": 28,
+          "synth": 28,
+          "brass": 28,
+          "winds": 28
+        },
+        "notApplicable": 0
+      },
+      "breakdown": {
+        "planned": 13,
+        "realisedFor": {
+          "drums": 13,
+          "keys": 13,
+          "guitar": 13,
+          "strings": 13,
+          "pads": 13,
+          "synth": 13,
+          "brass": 13,
+          "winds": 13
+        },
+        "notApplicable": 0
+      },
+      "build_up": {
+        "planned": 16,
+        "realisedFor": {
+          "strings": 16,
+          "pads": 16,
+          "synth": 16,
+          "brass": 16,
+          "winds": 16
+        },
+        "notApplicable": 16
+      },
+      "cymbal_choke": {
+        "planned": 28,
+        "realisedFor": {
+          "drums": 28
+        },
+        "notApplicable": 0
+      },
+      "cymbal_swell": {
+        "planned": 28,
+        "realisedFor": {
+          "drums": 28
+        },
+        "notApplicable": 0
+      },
+      "drum_fill": {
+        "planned": 37,
+        "realisedFor": {},
+        "notApplicable": 37
+      },
+      "ending_hit": {
+        "planned": 17,
+        "realisedFor": {},
+        "notApplicable": 17
+      },
+      "keys_pickup": {
+        "planned": 4,
+        "realisedFor": {
+          "keys": 4,
+          "guitar": 4
+        },
+        "notApplicable": 4
+      },
+      "riser": {
+        "planned": 4,
+        "realisedFor": {
+          "strings": 4,
+          "pads": 4,
+          "synth": 4
+        },
+        "notApplicable": 4
+      },
+      "ritardando": {
+        "planned": 11,
+        "realisedFor": {
+          "drums": 11,
+          "bass": 11,
+          "keys": 11,
+          "guitar": 11,
+          "strings": 11,
+          "pads": 11,
+          "synth": 11,
+          "brass": 11,
+          "winds": 11
+        },
+        "notApplicable": 0
+      },
+      "string_run": {
+        "planned": 10,
+        "realisedFor": {
+          "strings": 10
+        },
+        "notApplicable": 10
+      },
+      "turnaround": {
+        "planned": 2,
+        "realisedFor": {
+          "bass": 2,
+          "keys": 2,
+          "guitar": 2
+        },
+        "notApplicable": 2
+      }
+    }
+  },
+  "deltas": {
+    "machineMadePenalty": 16.432,
+    "causalityPenalty": -17.806,
+    "arbitrarinessPenalty": -209.836,
+    "leapFolds": 0,
+    "polyphonyReleases": 2,
+    "shippedKickToBass": [
+      0.619,
+      0.617
+    ],
+    "planKickToBassLock": 1,
+    "hatMaxStrikesPerSecond": {
+      "pop-full": [
+        8,
+        4
+      ],
+      "ballad-piano-vocal": [
+        2.268,
+        1.134
+      ],
+      "rock-full": [
+        9.901,
+        4.95
+      ],
+      "dance-full": [
+        8.403,
+        8.403
+      ],
+      "acoustic-demo": [
+        3.067,
+        3.067
+      ],
+      "orchestral-midi": [
+        2.538,
+        2.538
+      ],
+      "ethnic-vocal": [
+        3.472,
+        3.472
+      ],
+      "jazz-full": [
+        8.85,
+        4.405
+      ],
+      "cinematic-midi": [
+        2,
+        1
+      ],
+      "owner-rachem-na": [
+        4.348,
+        4.348
+      ]
+    },
+    "sevenEightNotesOutsideSection": [
+      286,
+      0
+    ],
+    "meterVariantsCorrect": "7/7 (before: 3/7)"
+  },
+  "honestLimits": [
+    "Nothing here was rendered or listened to; every number is symbolic.",
+    "The shipped bass, keys, guitar, strings and pad parts are still written by composer/harmonyParts.ts (stream B-02): bassRhythmFor / compingRhythmFor / GrooveOnset.crescendo / endingGestureFor / entryGestureFor are exported and tested but reach the shipped notes only when B-02 calls them (one line each). The shipped kick/bass agreement therefore stays at its pre-B-04 value; the plan-level agreement is what the wiring buys.",
+    "climax_not_prepared remains on five cases whose approach bars have no kit (the arc's lift sections are bass + keys); the plan carries the approach crescendo and every-bar anticipations for those bars, unrealised until B-02 wires the rhythm.",
+    "machineMade rose on ethnic-vocal because the 7/8 meter fix makes the keys play in all three sections (before: silent in two); the identical_voicing_shape / no_rests findings it now reports are B-02's voicing, not the groove.",
+    "ritardando is a tempo map + a time warp on the gesture and an `agogics` input on the performance engine; the orchestrator does not pass it yet (one line), and the production export refuses a tempo map with more than one segment - so a ritardando reaches the export only through the warped note onsets once wired, never as a tempo event.",
+    "The orchestrator does not persist the GroovePlan on the ArrangementPlan yet (`plan.groovePlan = deriveGroovePlan(...)`, one line, B-00/B-11); every part derives the identical section from its request, which the parity test proves.",
+    "The 5 pre-existing failures in critics/adversarial/adversarial.test.ts on a751796 (fighting positive control on pop-full, the source gate, silent LEAD keys, keys-as-drum-kit on dance-full, 'rejected on several axes') are unchanged by this stream.",
+    "Groove rules (pulse per style, ceilings 7.5 / 9 strikes per second, swing 0.67 / 0.62 / 0.56 by tempo, fill vocabularies) are musical judgement written as constants, not fitted to human material."
+  ]
+}

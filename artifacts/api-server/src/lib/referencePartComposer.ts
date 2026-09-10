@@ -18,7 +18,7 @@
  */
 import type { MusicalNote } from "@workspace/db";
 import type { PartGenerationRequest } from "./partComposer";
-import type { ComposeFrame, PartWriter } from "./composer/frame";
+import { barTiming, type ComposeFrame, type PartWriter } from "./composer/frame";
 import { registerBounds } from "./composer/registers";
 import {
   writeBassLine, writeBrassAccents, writeKeysVoicing, writeStringBed,
@@ -81,9 +81,9 @@ export function composeReferencePart(
   request: PartGenerationRequest,
   context: ComposeContext,
 ): MusicalNote[] {
-  const beats = Number((context.meter ?? "4/4").split("/")[0]) || 4;
-  const beatSeconds = 60 / Math.max(1, context.tempoBpm);
-  const barSeconds = beatSeconds * beats;
+  // B-04: a bar is numerator × one denominator unit (7/8 at 104 BPM is 2.02 s, not 4.04 s).
+  const timing = barTiming(context.tempoBpm, context.meter);
+  const { beats, beatSeconds, barSeconds } = timing;
   const origin = context.originSeconds ?? 0;
   const startSeconds = origin + (request.section.startBar - 1) * barSeconds;
   const endSeconds = origin + request.section.endBar * barSeconds;
@@ -129,7 +129,7 @@ export function composeReferencePart(
   const baseVelocity = 52 + energy * 55;
 
   const frame: HarmonyFrame = {
-    request, beats, beatSeconds, barSeconds, origin, startSeconds, endSeconds,
+    request, ...timing, origin, startSeconds, endSeconds,
     lo, hi, chords, seed, density, energy, baseVelocity, push,
     window: { start: windowStart, end: windowEnd },
     siblings: context.siblings,
