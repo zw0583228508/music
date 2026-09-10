@@ -9294,6 +9294,24 @@ cases are byte-identical, and so is every case's section plan.
     choices**, written from common practice, not measured against a corpus. The
     1.5-beat breath is calibrated to survive the performance stage's microtiming,
     which is an engineering reason as much as a musical one.
+  - **`brain-invariants-b12b` fails 18 tests at base `3b9ace3` and 18 after
+    B-21 — but not the same 18** (both runs on this machine, the six composer
+    files checked out at base and at head, everything else identical). Four are
+    **fixed**: `every family the plan marks active writes at least one note`
+    (D1), `harmony_on_the_grid` (D5), `performance_respects_section_dynamics`
+    (D2), and one negative control. Four are **newly failing**: the grid
+    invariant's own sensitivity control (it proves itself by moving the sheet's
+    onsets off the grid and watching the shipped onsets follow — D5 quantises
+    them, which is what made the invariant pass); the transposition invariant's
+    isolating control (it shifts `constraints.comfortableRange` by k, which no
+    longer moves a window read from the profile's role register; the invariant
+    itself is 0/24 before and after); the corpus-scale parallel-perfect finding
+    already handed to the harmony stream; and **one this stream cannot explain**
+    — `negative controls: … a scrambled cell is refused` no longer refuses a
+    scrambled motif cell. That last one is **UNKNOWN**, not attributed.
+  - **`brain-invariants` (B-12's fuzz and property set) is red at base and after**
+    with the same self-annotated causes; it was not re-measured test by test, so
+    this stream cannot say whether any of its counts moved.
   - **`before` and `after` are re-compositions on this machine**, not the database
     path; the shipped v7a candidate is carried in the evidence as a third column
     so the re-composition can be checked against what actually shipped.
