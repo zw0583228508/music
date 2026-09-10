@@ -8155,7 +8155,12 @@ gate declared met.
   a checker rather than recording a failure — the motif checker's grouping and
   its beat length — the change is named in the suite so the earlier numbers
   can be read as the artefacts they were. Nothing here was fixed: fourteen
-  invariants are red on purpose.
+  invariants are red on purpose. The focused runner cannot be executed on this
+  machine to prove the registration end to end: `node
+  scripts/run-focused-api-tests.mjs brain-invariants-b12b` exits with `spawn
+  esbuild ENOENT`, and so do the pre-existing `brain-invariants` and
+  `brain-b02` groups (R-1a P2-8) - the group was verified with `node --check`
+  and by running each of its ten bundles directly.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
