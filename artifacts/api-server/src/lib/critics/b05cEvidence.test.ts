@@ -26,7 +26,8 @@ test("the B-05c evidence is built from the same runs the tests assert on, and is
   // suite red the moment B-13 improved the thing it measures (0 → 6.31 of 100,
   // with 12 off-grid observations still standing). Assert the property: the
   // dimension is still failing badly and the observations are still there.
-  assert.ok(iso.reproduced.score < 25, `the off-grid finding still reproduces (score ${iso.reproduced.score}/100)`);
+  assert.equal(typeof iso.reproduced.score, "number", "the dimension scored the owner's song at all");
+  assert.ok(iso.reproduced.score! < 25, `the off-grid finding still reproduces (score ${iso.reproduced.score}/100)`);
   assert.ok(iso.reproduced.offGridObservations >= 5, `and still carries its observations (${iso.reproduced.offGridObservations})`);
   const a = iso.controls.find((c) => c.id === "A_remove_performance_timing")!;
   const b = iso.controls.find((c) => c.id === "B_quantise_to_the_composer_grid")!;
