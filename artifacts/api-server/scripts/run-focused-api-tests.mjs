@@ -869,6 +869,11 @@ const suites = {
       ["src/lib/transitionRealisation.test.ts", "transition-realisation.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
     ],
   },
+  "runner-gate": {
+    bundles: [
+      ["src/lib/providerHardRuleGate.test.ts", "provider-hard-rule-gate.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
   "brain-invariants": {
     bundles: [
       ["src/lib/invariants/generators.property.test.ts", "b12-generators.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
