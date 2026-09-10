@@ -59,3 +59,28 @@ def test_unset_token_fails_closed(monkeypatch, tmp_path):
 
     response = TestClient(app_module.app).get("/health", headers={"Authorization": "Bearer anything"})
     assert response.status_code == 503
+
+
+def test_main_thread_runner_executes_jobs_on_the_main_thread_when_serving():
+    import threading
+    import app as app_module
+
+    runner = app_module.MainThreadRunner()
+    # Inactive: work runs inline on whatever thread calls it (uvicorn CLI, tests).
+    assert runner.run(lambda: threading.current_thread().name) == threading.current_thread().name
+    stop = threading.Event()
+    seen: dict[str, object] = {}
+
+    def worker() -> None:
+        seen["thread"] = runner.run(lambda: threading.current_thread() is threading.main_thread())
+        try:
+            runner.run(lambda: (_ for _ in ()).throw(ValueError("plugin said no")))
+        except ValueError as error:
+            seen["error"] = str(error)
+        stop.set()
+
+    runner.arm()  # serve_forever arms before uvicorn can accept a request
+    threading.Thread(target=worker).start()
+    runner.serve(stop)  # blocks the (main) test thread until the worker is done
+    assert seen == {"thread": True, "error": "plugin said no"}
+    assert runner.active is False

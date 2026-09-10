@@ -13,6 +13,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+import queue
 import secrets
 import threading
 import time
@@ -85,6 +86,67 @@ _runtime_lock = threading.Lock()
 _render_lock = threading.Lock()  # plugins are not re-entrant
 
 
+class MainThreadRunner:
+    """Run plugin work on the Python main thread.
+
+    pedalboard reinstantiates a VST3 plugin when its state is set (how an SFZ
+    reaches sfizz) and when a render resets it, and refuses to do so off the
+    main thread ("must be reloaded on the main thread"). FastAPI runs sync
+    handlers in a thread pool, so under `uvicorn app:app` every sfizz asset
+    failed to load while the smoke (main thread) passed. `python app.py` runs
+    uvicorn in a background thread and this loop on the main thread; handlers
+    hand plugin work over with `run()` and wait. Without the loop (`uvicorn
+    app:app`, tests) work runs inline, as before.
+    """
+
+    def __init__(self) -> None:
+        self._jobs: queue.Queue = queue.Queue()
+        self.active = False
+
+    def run(self, fn):
+        if not self.active or threading.current_thread() is threading.main_thread():
+            return fn()
+        done = threading.Event()
+        box: dict[str, Any] = {}
+
+        def job() -> None:
+            try:
+                box["result"] = fn()
+            except BaseException as error:  # noqa: BLE001 - re-raised on the caller's thread
+                box["error"] = error
+            finally:
+                done.set()
+
+        self._jobs.put(job)
+        done.wait()
+        if "error" in box:
+            raise box["error"]
+        return box["result"]
+
+    def arm(self) -> None:
+        """Route work to the main thread from now on. Call before the HTTP
+        server can accept a request, or the first request would run inline."""
+        self.active = True
+
+    def serve(self, stop: threading.Event) -> None:
+        """Block the calling (main) thread, executing submitted jobs until `stop`."""
+        if threading.current_thread() is not threading.main_thread():
+            raise RuntimeError("MainThreadRunner.serve must run on the main thread")
+        self.arm()
+        try:
+            while not stop.is_set():
+                try:
+                    job = self._jobs.get(timeout=0.2)
+                except queue.Empty:
+                    continue
+                job()
+        finally:
+            self.active = False
+
+
+main_thread = MainThreadRunner()
+
+
 def _load_asset(runtime: Runtime, asset: dict) -> LoadedAsset:
     """Load an asset's plugin on first use and verify it is what the manifest
     (and therefore the smoke proof) says it is."""
@@ -129,7 +191,7 @@ def _build_runtime() -> Runtime:
     asset = host.default_asset(manifest)
     runtime.asset = asset
     try:
-        entry = _load_asset(runtime, asset)
+        entry = main_thread.run(lambda: _load_asset(runtime, asset))
         runtime.plugin, runtime.identity = entry.plugin, entry.identity
     except Exception as error:  # noqa: BLE001 - reported, never raised out of health
         runtime.problems.append(f"plugin failed to load: {error}")
@@ -251,10 +313,13 @@ def render(request: RenderRequest, _: None = Depends(require_bearer)) -> dict:
     started = time.time()
     with _render_lock:
         try:
-            entry = _load_asset(runtime, target)
+            entry = main_thread.run(lambda: _load_asset(runtime, target))
         except Exception as error:  # noqa: BLE001
             raise HTTPException(503, f"asset {target['id']} failed to load: {error}") from error
-        output = host.render_track(entry.plugin, track, request.sampleRate, request.durationSeconds)
+        try:
+            output = main_thread.run(lambda: host.render_track(entry.plugin, track, request.sampleRate, request.durationSeconds))
+        except Exception as error:  # noqa: BLE001 - a plugin failure is a 503 with its reason, not a bare 500
+            raise HTTPException(503, f"asset {target['id']} failed to render: {error}") from error
     elapsed = time.time() - started
     return {
         "contractVersion": CONTRACT_VERSION,
@@ -290,3 +355,37 @@ def inventory(refresh: bool = False, _: None = Depends(require_bearer)) -> dict:
     import discover
 
     return discover.inventory(refresh=refresh)
+
+
+def serve_forever(host_name: str = "127.0.0.1", port: int = 8022) -> None:
+    """Run uvicorn in a background thread and keep the main thread for plugin work."""
+    import uvicorn
+
+    config = uvicorn.Config(app, host=host_name, port=port, log_level="info")
+    server = uvicorn.Server(config)
+    stop = threading.Event()
+
+    def run_server() -> None:
+        try:
+            server.run()
+        finally:
+            stop.set()
+
+    main_thread.arm()  # before the server can accept a request
+    thread = threading.Thread(target=run_server, name="uvicorn", daemon=True)
+    thread.start()
+    try:
+        main_thread.serve(stop)
+    except KeyboardInterrupt:
+        server.should_exit = True
+        thread.join(timeout=10)
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="VST3 render worker (plugin work on the main thread)")
+    parser.add_argument("--host", default="127.0.0.1")
+    parser.add_argument("--port", type=int, default=8022)
+    args = parser.parse_args()
+    serve_forever(args.host, args.port)

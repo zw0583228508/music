@@ -43,8 +43,13 @@ python make_manifest.py --plugin "C:\Program Files\Common Files\VST3\Steinberg\R
   --license-reference "Steinberg Cubase 14 licence"
 $env:VST3_RENDER_TOKEN = "<random secret>"
 python smoke.py                                # writes .local-vst3-assets/state/smoke-proof.json
-python -m uvicorn app:app --host 127.0.0.1 --port 8022
+python app.py --host 127.0.0.1 --port 8022         # uvicorn in a thread, plugin work on the main thread
 ```
+
+`python -m uvicorn app:app` still works for pure synths (Retrologue), but pedalboard
+reinstantiates a plugin when its state is set or a render resets it and refuses to
+do that off the main thread; `python app.py` keeps the main thread for plugin work
+(`MainThreadRunner`), which every sfizz/SFZ asset needs (PR-94).
 
 Then point the API at it in `.env.local`:
 
