@@ -60,10 +60,13 @@ on disk).
 
 ## 2. Hosted by the worker (attested)
 
-`discover.py` found 7 instruments loadable by pedalboard (Steinberg Groove Agent SE, HALion Sonic,
-Padshop, Retrologue; Dexed; sfizz; the owner's Splice INSTRUMENT, which is account-bound and was
-not attested) and 18 effects; Surge XT exceeded the 90 s probe timeout under CPU contention with
-the manifest build but loaded in 22 s for the manifest and the smoke.
+`discover.py` (final run, 240 s probe timeout) found 10 instruments loadable by pedalboard:
+Steinberg Groove Agent SE, HALion Sonic, Padshop, Retrologue; Dexed, sfizz, Surge XT (40.9 s to
+load); and three account-bound instruments the owner installed himself while this ran — Splice
+INSTRUMENT and Spitfire Abbey Road One / Abbey Road Orchestra — which load headless in 3–14 s but
+were not attested (account-bound, and content players render silence without a saved
+`.vstpreset`). 17 effects; 2 failed to load headless (MT Power Drum Kit, iZotope RX 11 Breath
+Control). An earlier scan under CPU contention with the manifest build timed Surge XT out at 90 s.
 
 One asset per *library*: the same sfizz binary is attested once per SFZ file, each with its own
 smoke proof, its own `sfzSha256`, and its own routing hints for the Sound Selection Brain.
@@ -192,6 +195,9 @@ with a `.vstpreset` saved from Cubase (content players render silence without a 
   the universal synth.
 - sfizz assets are not bit-deterministic across renders (round-robin and random sample offsets are
   the library's musicality); the smoke records `deterministic: false` and does not gate on it.
-- `discover.py`'s inventory shows Surge XT as a 90 s timeout because the scan ran while the
-  manifest build was loading the same plugin; the manifest and smoke loaded it in 22 s.
+- Surge XT takes 22–41 s to load (it scans its 0.5 GB data folder); a first `discover.py` pass under
+  CPU contention timed it out at 90 s, the final pass (240 s timeout) lists it.
+- The owner's own Spitfire (Abbey Road One / Orchestra) and Splice installs appeared in
+  `C:\Program Files\Common Files\VST3` during this session; they are listed in the inventory
+  only, untouched and unattested — account-bound instruments are the owner's to wire (§4).
 - The 4.9 GB of archives were left in `_downloads` rather than deleted; the delete command is above.
