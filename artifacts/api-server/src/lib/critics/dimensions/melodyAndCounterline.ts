@@ -28,9 +28,32 @@ import {
 } from "./shared";
 
 export const MELODY_DIMENSION = "melodyAndCounterline";
-export const MELODY_VERSION = "1.0";
+/** 1.1 (B-05c): `counterline_clashes_bed` — a counter-line inside the bed it is supposed to answer. */
+export const MELODY_VERSION = "1.1";
 
 const MELODIC_ROLES = new Set(["LEAD", "COUNTER_MELODY", "CALL_RESPONSE", "OSTINATO"]);
+const BED_ROLES = new Set(["HARMONIC_BED", "PAD", "CLIMAX_LAYER"]);
+
+/**
+ * `counterline_clashes_bed` (B-05c, R-1b P1-5).
+ *
+ * A counter-line exists to be heard against the bed. On the owner's bridge the
+ * strings' only melodic writing of the song holds G5 for five seconds across
+ * Cm–Bb–Cm–Fm while the piano holds C4–C5 — the line lives inside the bed's own
+ * octave, so it is not a second voice, it is a note added to the chord, and
+ * where it is not a chord tone it is a dissonance nobody wrote deliberately.
+ * `harmony.overhang_across_chord_change` catches the overhang and says nothing
+ * about the counter-line's relation to the bed; `register.low_mid_pileup`
+ * needs three parts. This reads the pair.
+ *
+ * Two things must both hold: the line's pitches overlap the bed's sounding
+ * range for most of its notes, and a material share of its onsets sound a
+ * semitone or a whole tone against a bed note at the same moment.
+ */
+export const COUNTERLINE_OVERLAP_SHARE = 0.6;
+export const COUNTERLINE_CLASH_SHARE: [number, number, number] = [0.2, 0.35, 0.6];
+/** Onsets a counter-line must have in a section before the pair is worth reading. */
+export const COUNTERLINE_MIN_ONSETS = 4;
 
 export type LineStats = {
   notes: number;
@@ -214,6 +237,54 @@ export function evaluateMelodyAndCounterline(input: CriticInput) {
             });
           }
         }
+      }
+    }
+  }
+
+  // B-05c: the counter-line against the bed it is supposed to answer.
+  for (const section of context.sections) {
+    const beds = context.pitched.filter((p) =>
+      p.family !== "bass" && BED_ROLES.has(roleInSection(p, section.name)) &&
+      context.notesInBars(p, section.startBar, section.endBar).length >= 4);
+    if (!beds.length) continue;
+    for (const part of context.pitched) {
+      if (part.family === "bass" || beds.some((b) => b.id === part.id)) continue;
+      if (!MELODIC_ROLES.has(roleInSection(part, section.name))) continue;
+      const line = topVoice(context.notesInBars(part, section.startBar, section.endBar));
+      if (line.length < COUNTERLINE_MIN_ONSETS) continue;
+      for (const bed of beds) {
+        const bedNotes = context.notesInBars(bed, section.startBar, section.endBar);
+        if (bedNotes.length < 4) continue;
+        const bedLow = Math.min(...bedNotes.map((n) => n.pitch));
+        const bedHigh = Math.max(...bedNotes.map((n) => n.pitch));
+        const inside = line.filter((n) => n.pitch >= bedLow && n.pitch <= bedHigh).length / line.length;
+        if (inside < COUNTERLINE_OVERLAP_SHARE) continue;
+        let clashing = 0;
+        for (const n of line) {
+          const sounding = bedNotes.filter((b) => b.start <= n.start + 0.03 && b.end > n.start + 0.03);
+          if (sounding.some((b) => { const d = Math.abs(b.pitch - n.pitch); return d === 1 || d === 2; })) clashing += 1;
+        }
+        const share = clashing / line.length;
+        const sev = severityFromShare(share, COUNTERLINE_CLASH_SHARE);
+        if (!sev) continue;
+        drafts.push({
+          kind: "counterline_clashes_bed",
+          severity: sev,
+          location: { startBar: section.startBar, endBar: section.endBar, sectionName: section.name, trackIds: [part.id, bed.id].sort() },
+          evidence: {
+            clashingOnsetShare: share, onsetsInBedRangeShare: inside, lineOnsets: line.length,
+            bedLowestPitch: bedLow, bedHighestPitch: bedHigh,
+            lineLowestPitch: Math.min(...line.map((n) => n.pitch)), lineHighestPitch: Math.max(...line.map((n) => n.pitch)),
+            bedInstrument: bed.instrument, lineRole: roleInSection(part, section.name),
+          },
+          suspectedOrigin: "compose",
+          originConfidence: confidenceFromCount(clashing, 4, 0.75),
+          recommendedRepair: {
+            operation: "move_the_counterline_out_of_the_bed", scope: "section",
+            detail: `${part.instrument}'s counter-line lies inside ${bed.instrument}'s own range (${bedLow}-${bedHigh}) for ${Math.round(inside * 100)} % of its onsets in ${section.name} and sounds a second against it on ${Math.round(share * 100)} %; give the line the register the bed is not using`,
+          },
+          confidence: confidenceFromCount(line.length, 8),
+        });
       }
     }
   }

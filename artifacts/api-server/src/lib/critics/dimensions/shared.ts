@@ -167,6 +167,19 @@ export type CriticContext = {
   notesInBars(part: PartInfo, startBar: number, endBar: number): NoteRef[];
   vocalPitchAt(time: number): number | null;
   vocalActiveAt(time: number): boolean;
+  /**
+   * Mean simultaneous voices per onset in the composed notes of a part over a
+   * bar range — `null` when the caller passed no composed notes (B-05c). A
+   * dimension that reads it must state in its evidence which case it is in.
+   */
+  composedVoicesOf(part: PartInfo, startBar: number, endBar: number): number | null;
+  /**
+   * The composed notes of a part over a bar range, as `NoteRef`s on the same
+   * bar grid — `null` when the caller passed none. This is the isolating
+   * control R-1a P1-1 asked for, available to any dimension: a defect present
+   * in these notes did not come from the performance stage.
+   */
+  composedNotesInBars(part: PartInfo, startBar: number, endBar: number): NoteRef[] | null;
 };
 
 const MAJOR_SCALE = [0, 2, 4, 5, 7, 9, 11];
@@ -348,6 +361,47 @@ export function roleInSection(part: PartInfo, sectionName: string): string {
   return (part.plannedRoles.find((r) => r.sectionName === sectionName)?.role ?? part.role).toUpperCase();
 }
 
+/**
+ * One note on the bar grid. Shared by the shipped tracks and (B-05c) by the
+ * composed ones, so a dimension compares like with like.
+ *
+ * A downbeat the performance pushed a few milliseconds early is still the
+ * downbeat: the onset belongs to the bar of its nearest sixteenth, not to the
+ * bar the raw clock time falls in.
+ */
+function noteRefOn(
+  barAt: (time: number) => number,
+  barInfo: (bar: number) => BarInfo | null,
+  bars: BarInfo[],
+): (note: MusicalNote) => NoteRef {
+  return (note: MusicalNote): NoteRef => {
+    let bar = barAt(note.start);
+    let info = barInfo(bar) ?? bars[0];
+    if (info) {
+      const step = Math.round((note.start - info.start) / (info.beatSeconds / 4));
+      const next = barInfo(bar + 1);
+      if (step >= info.beats * 4 && next) {
+        bar = next.bar;
+        info = next;
+      }
+    }
+    const beatSeconds = info?.beatSeconds ?? 0.5;
+    const duration = Math.max(0, note.duration);
+    return {
+      note,
+      start: note.start,
+      end: note.start + duration,
+      duration,
+      pitch: note.pitch,
+      velocity: note.velocity,
+      pc: pc(note.pitch),
+      bar,
+      beat: info ? (note.start - info.start) / beatSeconds : 0,
+      beatSeconds,
+    };
+  };
+}
+
 const contextCache = new WeakMap<CriticInput, CriticContext>();
 
 /** Derived once per input object (a pure function of it); every dimension reads the same context. */
@@ -406,35 +460,7 @@ function deriveContext(input: CriticInput): CriticContext {
       const family = partFamilyOf(track);
       const notes: NoteRef[] = track.notes
         .filter((n) => Number.isFinite(n.start) && Number.isFinite(n.pitch))
-        .map((note) => {
-          // A downbeat the performance pushed a few milliseconds early is
-          // still the downbeat: the onset belongs to the bar of its nearest
-          // sixteenth, not to the bar the raw clock time falls in.
-          let bar = barAt(note.start);
-          let info = barInfo(bar) ?? bars[0];
-          if (info) {
-            const step = Math.round((note.start - info.start) / (info.beatSeconds / 4));
-            const next = barInfo(bar + 1);
-            if (step >= info.beats * 4 && next) {
-              bar = next.bar;
-              info = next;
-            }
-          }
-          const beatSeconds = info?.beatSeconds ?? 0.5;
-          const duration = Math.max(0, note.duration);
-          return {
-            note,
-            start: note.start,
-            end: note.start + duration,
-            duration,
-            pitch: note.pitch,
-            velocity: note.velocity,
-            pc: pc(note.pitch),
-            bar,
-            beat: info ? (note.start - info.start) / beatSeconds : 0,
-            beatSeconds,
-          };
-        })
+        .map(noteRefOn(barAt, barInfo, bars))
         .sort((a, b) => a.start - b.start || a.pitch - b.pitch);
       const instrumentKey = track.instrument.toLowerCase();
       const ranges = effectiveRanges(track, family);
@@ -453,6 +479,22 @@ function deriveContext(input: CriticInput): CriticContext {
       };
     })
     .sort((a, b) => a.id.localeCompare(b.id));
+
+  // B-05c: the composed notes, when the caller has them, keyed by track id and
+  // placed on the same bar grid as the shipped ones.
+  const composedById = new Map<string, NoteRef[]>();
+  for (const t of input.composedTrackModels ?? []) composedById.set(t.id, t.notes.map(noteRefOn(barAt, barInfo, bars)).sort((a, b) => a.start - b.start || a.pitch - b.pitch));
+  const composedNotesInBars = (part: PartInfo, startBar: number, endBar: number): NoteRef[] | null => {
+    const notes = composedById.get(part.id);
+    if (!notes) return null;
+    return notes.filter((n) => n.bar >= startBar && n.bar <= endBar);
+  };
+  const composedVoicesOf = (part: PartInfo, startBar: number, endBar: number): number | null => {
+    const inRange = composedNotesInBars(part, startBar, endBar);
+    if (!inRange || !inRange.length) return null;
+    const clusters = onsetClusters(inRange);
+    return clusters.length ? mean(clusters.map((c) => c.length)) : null;
+  };
 
   const vocal = buildVocal(songModel);
   const vocalPitchAt = (time: number): number | null => {
@@ -487,6 +529,8 @@ function deriveContext(input: CriticInput): CriticContext {
     notesInBars: (part, startBar, endBar) => part.notes.filter((n) => n.bar >= startBar && n.bar <= endBar),
     vocalPitchAt,
     vocalActiveAt,
+    composedVoicesOf,
+    composedNotesInBars,
   };
 }
 

@@ -26,11 +26,24 @@ test("positive control: onset jitter at severity 3 puts a part off the grid, loc
       const d = detect(grooveDimension, anchor.input, worsened);
       if (!d.detected) continue;
       detected += 1;
+      // B-05c: jitter can surface as `off_grid` (against the metre) or, on a
+      // pitched harmonic part in an anchor with a kit, as `harmony_off_grid`
+      // (against the grid the kit plays) — on rock-full's guitar, whose twelve
+      // held chords are all within the sixteenth tolerance after jitter but
+      // 50 ms or more from the kit's eighths, only the second fires. Either is
+      // the dimension hearing the damage; the test asserts whichever it is.
       const off = d.newObservations.find((o) => o.kind === "off_grid");
-      assert.ok(off, `${anchor.id}/${part.id}: ${d.newObservations.map((o) => o.kind).join(",")}`);
-      assert.deepEqual(off!.location.trackIds, [part.id]);
-      assert.ok((off!.evidence.offGridShare as number) >= 0.12);
-      assert.ok(["perform", "compose"].includes(off!.suspectedOrigin));
+      const vsKit = d.newObservations.find((o) => o.kind === "harmony_off_grid");
+      assert.ok(off ?? vsKit, `${anchor.id}/${part.id}: ${d.newObservations.map((o) => o.kind).join(",")}`);
+      if (off) {
+        assert.deepEqual(off.location.trackIds, [part.id]);
+        assert.ok((off.evidence.offGridShare as number) >= 0.12);
+        assert.ok(["perform", "compose"].includes(off.suspectedOrigin));
+      } else {
+        assert.ok(vsKit!.location.trackIds.includes(part.id), `${anchor.id}/${part.id}: ${vsKit!.location.trackIds.join(",")}`);
+        assert.ok((vsKit!.evidence.shareBeyondToleranceMs as number) >= 0.25);
+        assert.ok(["compose", "groove"].includes(vsKit!.suspectedOrigin));
+      }
     }
   }
   assert.ok(total >= 8 && detected / total >= 0.8, `detected ${detected}/${total}`);
@@ -63,10 +76,25 @@ test("positive control: erasing the drum fills the plan asked for is flagged at 
       assert.equal(o.suspectedOrigin, "compose");
     }
   }
-  // The one anchor whose drummer plays before its planned fills (dance-full) still detects the raw erasure.
+  // Re-anchored (B-05c), with the cause. The B-01-merge version claimed
+  // "dance-full, whose drummer plays before its planned fills, still detects
+  // the raw erasure". Measured at `origin/main` 31b9443 it does not, and the
+  // reason is in the notes: the erasure copies the *previous* bar over the fill
+  // bar, and on dance-full bar 7 carries 10 drum onsets against bar 8's 8. The
+  // copy therefore makes the fill bar busier, removes the anchor's own
+  // `planned_fill_missing` at bar 8 (density ratio 1.14 against the mean of 7,
+  // just under the 1.15 threshold), and the groove score *rises* 91.27 -> 93.76.
+  // A transform that improves the score is not a control; it is recorded here
+  // as the null result it is, with the number that explains it.
   const dance = anchors(["dance-full"])[0];
-  const raw = detect(grooveDimension, dance.input, applyPurposeBuilt(dance, "erase_drum_fills")!);
-  assert.ok(raw.detected && raw.newObservations.filter((o) => o.kind === "planned_fill_missing").length >= 2, "dance-full: raw fills erased");
+  const rawWorsening = applyPurposeBuilt(dance, "erase_drum_fills")!;
+  const raw = detect(grooveDimension, dance.input, rawWorsening);
+  assert.equal(raw.detected, false, "dance-full: copying bar 7 over bar 8 raises the fill bar's density");
+  assert.ok(raw.scoreDrop! < 0, `dance-full: the score rises, drop ${raw.scoreDrop}`);
+  const anchorFill = grooveDimension.evaluate(dance.input).observations.find((o) => o.kind === "planned_fill_missing");
+  assert.ok(anchorFill, "the anchor itself reports the weak fill into the verse");
+  assert.equal(anchorFill!.location.startBar, 8);
+  assert.ok((anchorFill!.evidence.densityRatio as number) < 1.15, String(anchorFill!.evidence.densityRatio));
   // And the raw erasure is not a control where there is no fill to erase.
   assert.equal(applyPurposeBuilt(anchors(["pop-full"])[0], "erase_drum_fills"), null, "pop-full: no drum bar changes at a planned-fill boundary");
 });

@@ -12,22 +12,24 @@
  * reference composer already sits at the floor of the dimension being tested.
  *
  * The ledger (`dimensions/controlLedger.ts`) is derived from this table and
- * nothing else: a dimension's `controlStatus` is
- *   gated        strongest claimed control detected ≥ 90 % with CI lower bound
- *                ≥ 60 %, and no blocking observation on any clean anchor;
- *   informing    strongest claimed control ≥ 50 %;
- *   demoted      claimed controls measured (n ≥ 5) and none reaches 50 %;
- *   uncalibrated no claimed control could be measured on the anchors.
+ * nothing else. **B-05c: the derivation itself now lives in one place** —
+ * `critics/sensitivity.ts`, whose thresholds are `SENSITIVITY_GATE`'s own, so
+ * this harness, `critics/adversarial/controls.ts` and B-08's
+ * `positiveControlLedger.ts` read one rule instead of three (R-1a P1-3). Under
+ * that rule a prepared control (`control+preparation` — one that writes the
+ * gesture it then erases) can inform but never gate, and a dimension needs two
+ * independent claimed transforms to gate.
  * "Claimed" means the dimension's author says it should hear that damage; the
  * table still reports every control against every dimension, so the reviewer
  * can see cross-sensitivity and what a dimension hears that it did not claim.
  *
- * Program charter rule 3: none of this makes a dimension gate anything today —
- * B-00 / B-06 read the ledger when they wire the critics in.
+ * Program charter rule 3: the ledger is what lets a dimension gate; B-05c's
+ * `critics/rank.ts` and the judge read it, and nothing else may write it.
  */
 import { CORRUPTION_FAMILIES, CORRUPTION_FAMILY_NAMES, type CorruptionFamily, type CorruptionSeverity } from "../symbolicCorruptions";
 import { exactBinomialCi } from "../listeningSensitivity";
-import type { CriticDimensionReport, ControlStatus } from "./types";
+import { deriveStatus, SENSITIVITY_RULE, type TransformMeasurement } from "./sensitivity";
+import type { CriticDimensionReport } from "./types";
 import { ALL_DIMENSIONS, DIMENSION_NAMES } from "./dimensions/index";
 import {
   anchors,
@@ -47,10 +49,16 @@ import {
   type Anchor,
   type Worsened,
 } from "./dimensions/anchors";
-import type { LedgerEntry } from "./dimensions/controlLedger";
+import type { LedgerEntry } from "./sensitivity";
 
-/** v2: recalibrated at the merge onto B-00 / B-01 / B-03 (eight clean anchors, `playsIn`, split boundary controls, `realise_boundaries`). */
-export const CONTROL_HARNESS_VERSION = "B05A_CONTROLS_v2" as const;
+/**
+ * v3 (B-05c): one shared sensitivity rule (`critics/sensitivity.ts`), prepared
+ * controls never gate, two independent transforms required, `minTrials` raised
+ * from 5 to `SENSITIVITY_GATE.minVotesPerRung`. The anchor set gains four
+ * purpose-built transforms so the dimensions that should gate can earn a
+ * second, independent one instead of losing their status to the new clause.
+ */
+export const CONTROL_HARNESS_VERSION = "B05C_CONTROLS_v3" as const;
 
 /**
  * Controls each dimension claims to hear. The table measures every control
@@ -61,22 +69,22 @@ export const CONTROL_HARNESS_VERSION = "B05A_CONTROLS_v2" as const;
  * prepared anchors; transitions claims the prepared erasure too.
  */
 export const CLAIMED_CONTROLS: Record<string, string[]> = {
-  harmony: ["chord_tone_to_non_chord_tone@3", "pitch_shift_out_of_key@3", "cross_part_clash@3", "duration_overhang@3", "random_pitch"],
-  voiceLeading: ["parallel_doubling@3", "bass_roots_only_leaps"],
-  melodyAndCounterline: ["top_line_into_vocal_register", "top_line_erratic"],
+  harmony: ["chord_tone_to_non_chord_tone@3", "pitch_shift_out_of_key@3", "cross_part_clash@3", "duration_overhang@3", "random_pitch", "parallel_perfect_motion"],
+  voiceLeading: ["parallel_doubling@3", "bass_roots_only_leaps", "parallel_perfect_motion"],
+  melodyAndCounterline: ["top_line_into_vocal_register", "top_line_erratic", "counterline_into_bed_register"],
   motifRecurrenceAndDevelopment: ["motif_destruction@3", "random_pitch", "homorhythm"],
-  groove: ["onset_jitter@3", "quantisation_coarsening@3", "phrase_shift@3", "erase_drum_fills", "erase_boundary_events+realise_boundaries"],
-  rhythmicInteraction: ["homorhythm", "parallel_doubling@3"],
+  groove: ["onset_jitter@3", "quantisation_coarsening@3", "phrase_shift@3", "erase_drum_fills", "erase_boundary_events+realise_boundaries", "displace_backbeat", "unlock_bass_from_kick"],
+  rhythmicInteraction: ["homorhythm", "parallel_doubling@3", "unlock_bass_from_kick"],
   orchestration: ["drums_only", "silence_planned_family", "tutti_everywhere"],
-  idiomaticity: ["piano_wide_voicing", "brass_hold_forever", "density_doubling@3"],
-  register: ["strings_up_two_octaves", "octave_displacement@3", "role_inversion@3", "top_line_into_vocal_register"],
-  density: ["piano_one_note_per_bar", "chorus_thinner_than_verse", "density_thinning@3", "tutti_everywhere"],
+  idiomaticity: ["piano_wide_voicing", "brass_hold_forever", "density_doubling@3", "parallel_perfect_motion"],
+  register: ["strings_up_two_octaves", "octave_displacement@3", "role_inversion@3", "top_line_into_vocal_register", "counterline_into_bed_register"],
+  density: ["piano_one_note_per_bar", "chorus_thinner_than_verse", "density_thinning@3", "tutti_everywhere", "arrival_thinned_and_softened", "strip_bed_to_top_voice"],
   transitions: ["erase_boundary_events", "erase_boundary_events+realise_boundaries", "section_swap@3"],
   repetitionVsVariation: ["bar_copy_repetition@3", "chorus_copy", "chorus_copy+develop_chorus_2"],
-  sectionDevelopment: ["chorus_copy+develop_chorus_2", "section_swap@3"],
+  sectionDevelopment: ["chorus_copy+develop_chorus_2", "section_swap@3", "arrival_thinned_and_softened"],
   playability: ["octave_displacement@3", "bass_roots_only_leaps", "strings_up_two_octaves", "piano_wide_voicing"],
-  performanceRealisation: ["velocity_flatten_all", "dynamics_flattening@3", "strip_cc_and_quantise"],
-  emotionalArcAndTension: ["swap_climax_with_quietest", "flatten_arc"],
+  performanceRealisation: ["velocity_flatten_all", "dynamics_flattening@3", "strip_cc_and_quantise", "arrival_thinned_and_softened"],
+  emotionalArcAndTension: ["swap_climax_with_quietest", "flatten_arc", "arrival_thinned_and_softened"],
 };
 
 export const LEDGER_SEVERITY: CorruptionSeverity = 3;
@@ -259,31 +267,21 @@ export function buildTable(items: readonly ControlItem[], controlOrder: readonly
   return rows;
 }
 
-export const MIN_ITEMS_FOR_STATUS = 5;
+/** B-05c: the shared rule's `minTrials`, kept as a named export for the tests that assert the rule is one rule. */
+export const MIN_ITEMS_FOR_STATUS = SENSITIVITY_RULE.minTrials;
+
+/** A control that names a preparation writes the gesture it then erases; it can inform, never gate. */
+export const isPreparedControl = (control: string): boolean => control.includes("+");
 
 export function deriveLedger(table: readonly TableRow[], anchorReports: HarnessResult["anchorReports"]): Record<string, LedgerEntry> {
   const ledger: Record<string, LedgerEntry> = {};
   for (const dimension of DIMENSION_NAMES) {
     const clean = anchorReports.filter((r) => r.dimension === dimension && CLEAN_ANCHOR_IDS.includes(r.anchorId));
     const cleanBlocking = clean.length ? Number((clean.filter((r) => r.blocking > 0).length / clean.length).toFixed(4)) : null;
-    const claimed = table.filter((r) => r.dimension === dimension && r.claimed && r.n >= MIN_ITEMS_FOR_STATUS && r.rate !== null);
-    if (!claimed.length) {
-      ledger[dimension] = { status: "uncalibrated", strongestControl: null, detectionRate: null, ci95: null, n: 0, cleanAnchorBlockingRate: cleanBlocking };
-      continue;
-    }
-    const strongest = [...claimed].sort((a, b) => (b.rate! - a.rate!) || (b.ci95![0] - a.ci95![0]) || a.control.localeCompare(b.control))[0];
-    let status: ControlStatus;
-    if (strongest.rate! >= 0.9 && strongest.ci95![0] >= 0.6 && cleanBlocking === 0) status = "gated";
-    else if (strongest.rate! >= 0.5) status = "informing";
-    else status = "demoted";
-    ledger[dimension] = {
-      status,
-      strongestControl: strongest.control,
-      detectionRate: strongest.rate,
-      ci95: strongest.ci95,
-      n: strongest.n,
-      cleanAnchorBlockingRate: cleanBlocking,
-    };
+    const measurements: TransformMeasurement[] = table
+      .filter((r) => r.dimension === dimension)
+      .map((r) => ({ control: r.control, claimed: r.claimed, prepared: isPreparedControl(r.control), n: r.n, detected: r.detected, rate: r.rate, ci95: r.ci95 }));
+    ledger[dimension] = deriveStatus({ dimension, measurements, cleanAnchorBlockingRate: cleanBlocking });
   }
   return ledger;
 }
@@ -292,7 +290,7 @@ export function deriveLedger(table: readonly TableRow[], anchorReports: HarnessR
 export function renderLedgerSource(ledger: Record<string, LedgerEntry>, ledgerVersion: string): string {
   const entries = Object.keys(ledger).sort().map((dimension) => {
     const e = ledger[dimension];
-    return `  ${dimension}: { status: ${JSON.stringify(e.status)}, strongestControl: ${JSON.stringify(e.strongestControl)}, detectionRate: ${e.detectionRate}, ci95: ${e.ci95 ? `[${e.ci95[0]}, ${e.ci95[1]}]` : "null"}, n: ${e.n}, cleanAnchorBlockingRate: ${e.cleanAnchorBlockingRate} },`;
+    return `  ${dimension}: { status: ${JSON.stringify(e.status)}, strongestControl: ${JSON.stringify(e.strongestControl)}, detectionRate: ${e.detectionRate}, ci95: ${e.ci95 ? `[${e.ci95[0]}, ${e.ci95[1]}]` : "null"}, n: ${e.n}, cleanAnchorBlockingRate: ${e.cleanAnchorBlockingRate}, gatingTransforms: ${JSON.stringify(e.gatingTransforms)}, reason: ${JSON.stringify(e.reason)} },`;
   });
   return [
     "/**",
@@ -302,21 +300,18 @@ export function renderLedgerSource(ledger: Record<string, LedgerEntry>, ledgerVe
     " * dimension's `controlStatus` can only come from a measured detection rate.",
     " *",
     ` * Derived from severity ${LEDGER_SEVERITY} of every corruption family, seed(s) ${DEFAULT_SEEDS.join(",")},`,
-    " * and every purpose-built worsening, over the nine benchmark anchors (eight",
-    " * clean since the merge onto B-00 / B-01 / B-03; ethnic-vocal still overflows).",
+    " * and every purpose-built worsening, over the eight in-song benchmark anchors",
+    " * (ethnic-vocal overflows the song; the owner's song is an anchor but not a",
+    " * control target — see `dimensions/anchors.ts`).",
+    " *",
+    " * The status rule is `critics/sensitivity.ts` — the one rule shared with the",
+    " * adversarial harness and B-08's ledger. `gatingTransforms` names the",
+    " * independent, non-prepared transforms that earned a `gated` status;",
+    " * `reason` says why a dimension is not gated.",
     " */",
-    "import type { ControlStatus } from \"../types\";",
+    "import type { LedgerEntry } from \"../sensitivity\";",
     "",
-    "export type LedgerEntry = {",
-    "  status: ControlStatus;",
-    "  /** The control with the highest detection rate among the dimension's claimed controls. */",
-    "  strongestControl: string | null;",
-    "  detectionRate: number | null;",
-    "  ci95: [number, number] | null;",
-    "  n: number;",
-    "  /** Blocking observations raised on clean anchors, per anchor evaluated. */",
-    "  cleanAnchorBlockingRate: number | null;",
-    "};",
+    "export type { LedgerEntry };",
     "",
     `export const CONTROL_LEDGER_VERSION = ${JSON.stringify(ledgerVersion)} as const;`,
     "",
@@ -331,6 +326,8 @@ export function renderLedgerSource(ledger: Record<string, LedgerEntry>, ledgerVe
 export function summariseLedger(ledger: Record<string, LedgerEntry>): string[] {
   return Object.keys(ledger).sort().map((d) => {
     const e = ledger[d];
-    return `${d}: ${e.status}${e.strongestControl ? ` (${e.strongestControl} ${Math.round((e.detectionRate ?? 0) * 100)} % [${e.ci95?.[0]}, ${e.ci95?.[1]}], n=${e.n})` : ""}`;
+    const strongest = e.strongestControl ? ` (${e.strongestControl} ${Math.round((e.detectionRate ?? 0) * 100)} % [${e.ci95?.[0]}, ${e.ci95?.[1]}], n=${e.n})` : "";
+    const gates = e.gatingTransforms.length ? ` gated by ${e.gatingTransforms.join(" + ")}` : ` — ${e.reason}`;
+    return `${d}: ${e.status}${strongest}${gates}`;
   });
 }

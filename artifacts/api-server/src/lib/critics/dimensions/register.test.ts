@@ -27,16 +27,32 @@ test("positive control: the sustained bed two octaves up leaves its planned band
 });
 
 test("positive control: a bass inverted to the top of the ensemble is outside its band and its range", () => {
+  // Re-anchored (B-05c), with the cause. The B-01-merge version wrote
+  // `applyFamilyCorruption(...)!` and crashed with `Cannot read properties of
+  // null` — R-1a P1-2's `TypeError`. The corruption is genuinely inapplicable
+  // on dance-full: `roleInversion` refuses when the inverted register would
+  // leave the MIDI range or when the part already sits where the inversion
+  // would put it (`symbolicCorruptions.ts`), and dance-full's bass is one of
+  // those. The harness's own rule — an unchanged input is not a control on that
+  // anchor — is what the test now follows, and it names which anchors the
+  // control could be applied to so a future change of that set is visible.
   let detected = 0;
+  let applicable = 0;
+  const skipped: string[] = [];
   for (const anchor of anchors(["pop-full", "rock-full", "dance-full", "jazz-full"])) {
-    const bass = eligibleParts(anchor, "role_inversion").find((p) => p.family === "bass")!;
-    const worsened = applyFamilyCorruption(anchor, bass.id, "role_inversion", 3, 1)!;
+    const bass = eligibleParts(anchor, "role_inversion").find((p) => p.family === "bass");
+    assert.ok(bass, `${anchor.id}: the anchor has a bass part with enough notes to damage`);
+    const worsened = applyFamilyCorruption(anchor, bass!.id, "role_inversion", 3, 1);
+    if (!worsened) { skipped.push(anchor.id); continue; }
+    applicable += 1;
     const d = detect(registerDimension, anchor.input, worsened);
     if (!d.detected) continue;
     detected += 1;
-    assert.ok(d.newObservations.some((o) => (o.kind === "part_outside_comfortable_range" || o.kind === "part_outside_planned_band") && o.location.trackIds[0] === bass.id), anchor.id);
+    assert.ok(d.newObservations.some((o) => (o.kind === "part_outside_comfortable_range" || o.kind === "part_outside_planned_band") && o.location.trackIds[0] === bass!.id), anchor.id);
   }
-  assert.ok(detected >= 3, `detected ${detected}/4`);
+  assert.deepEqual(skipped, ["dance-full"], `the inversion is inapplicable only on dance-full; skipped ${skipped.join(",")}`);
+  assert.equal(detected, applicable, `detected ${detected}/${applicable} applicable`);
+  assert.ok(applicable >= 3, `applicable ${applicable}`);
 });
 
 test("the reference beds sit on the singer's pitches: vocal masking is a real finding on the anchors, located to sung sections", () => {

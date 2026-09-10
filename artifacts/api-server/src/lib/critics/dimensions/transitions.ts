@@ -27,10 +27,33 @@ import {
 } from "./shared";
 
 export const TRANSITIONS_DIMENSION = "transitions";
-export const TRANSITIONS_VERSION = "1.0";
+/** 1.1 (B-05c): `intro_empty` and `ending_cut` — how the song opens and how it stops. */
+export const TRANSITIONS_VERSION = "1.1";
 
 const TOMS = new Set([41, 43, 45, 47, 48, 50]);
 const CRASH = new Set([49, 52, 55, 57]);
+
+/**
+ * `intro_empty` and `ending_cut` (B-05c, R-1b P1-7 and item 8 of §7).
+ *
+ * These are the two boundaries every arrangement has and this set never looked
+ * at: the one before the first note and the one after the last. On the owner's
+ * song bars 1–2 are silence because the chord sheet starts at bar 3 — the
+ * arrangement opens with two bars of nothing — and the last piano stab ends
+ * 1.06 s before the song ends, so the song stops rather than finishes. Both
+ * are things a listener notices in the first and last second.
+ *
+ * `intro_empty` is a *minor* finding: two silent bars are two seconds, and the
+ * judge must never rank them above a bed that is wrong for a hundred bars
+ * (R-1b: "the judge's ordering would send an engineer to fix a 2-bar intro
+ * first"). `ending_cut` is major when nothing is left sounding at the end,
+ * because there is no listener who does not hear it.
+ */
+export const INTRO_SILENT_BEAT_SHARE = 0.75;
+/** A final chord must still be sounding within this many seconds of the song's end. */
+export const ENDING_TAIL_SECONDS = 0.5;
+/** Below this many pitched parts sounding at the end, the ending is a cut rather than a chord. */
+export const ENDING_MIN_SOUNDING_PARTS = 1;
 
 export type BoundaryReading = {
   fromSection: string;
@@ -206,6 +229,79 @@ export function evaluateTransitions(input: CriticInput) {
           confidence: confidenceFromCount(context.parts.length * 2, 6),
         });
       }
+    }
+  }
+
+  // B-05c: how the song opens.
+  const first = context.sections[0];
+  if (first) {
+    const bars = Math.min(first.endBar, first.startBar + 3);
+    let silentBeats = 0;
+    let beats = 0;
+    for (let bar = first.startBar; bar <= bars; bar += 1) {
+      const info = context.barInfo(bar);
+      if (!info) continue;
+      for (let b = 0; b < info.beats; b += 1) {
+        beats += 1;
+        const t = info.start + b * info.beatSeconds + 0.001;
+        if (!context.parts.some((p) => soundingAt(p.notes, t).length > 0)) silentBeats += 1;
+      }
+    }
+    const share = beats ? silentBeats / beats : 0;
+    if (beats >= 4 && share >= INTRO_SILENT_BEAT_SHARE) {
+      const plannedParts = (context.plan.sectionPlan?.roleAssignments ?? []).filter((r) => r.sectionName === first.name).length;
+      const hasChord = context.chords.some((c) => c.startBar <= bars && c.endBar >= first.startBar);
+      drafts.push({
+        kind: "intro_empty",
+        severity: "minor",
+        location: { startBar: first.startBar, endBar: bars, sectionName: first.name, trackIds: [] },
+        evidence: {
+          silentBeatShare: share, beatsExamined: beats, silentBeats,
+          plannedPartsInSection: plannedParts, chordUnderTheseBars: hasChord,
+          barsSilent: bars - first.startBar + 1,
+        },
+        // A section the plan populated that sounds nothing is the composer's;
+        // an opening with no chord under it is the harmony source's.
+        suspectedOrigin: hasChord ? "compose" : "harmony",
+        originConfidence: confidenceFromCount(silentBeats, 6, hasChord ? 0.8 : 0.85),
+        recommendedRepair: {
+          operation: "open_the_song", scope: "section",
+          detail: hasChord
+            ? `${first.name} (bars ${first.startBar}-${bars}) is planned for ${plannedParts} part(s) and sounds nothing for ${Math.round(share * 100)} % of its beats`
+            : `${first.name} (bars ${first.startBar}-${bars}) has no chord under it, so every part rested; the opening bars are the tonic, not "no harmony"`,
+        },
+        confidence: confidenceFromCount(beats, 8),
+      });
+    }
+  }
+
+  // B-05c: how the song stops.
+  const last = context.sections[context.sections.length - 1];
+  const lastBarInfo = context.barInfo(context.totalBars);
+  if (last && lastBarInfo && context.pitched.length) {
+    const songEnd = lastBarInfo.end;
+    const soundingAtEnd = context.pitched.filter((p) => p.notes.some((n) => n.end >= songEnd - ENDING_TAIL_SECONDS)).length;
+    const lastEnd = Math.max(...context.parts.flatMap((p) => p.notes.map((n) => n.end)), context.songStart);
+    const gapSeconds = songEnd - lastEnd;
+    if (soundingAtEnd < ENDING_MIN_SOUNDING_PARTS || gapSeconds > ENDING_TAIL_SECONDS) {
+      const longestFinal = Math.max(0, ...context.pitched.flatMap((p) => p.notes.filter((n) => n.bar >= last.startBar).map((n) => n.duration)));
+      drafts.push({
+        kind: "ending_cut",
+        severity: soundingAtEnd < ENDING_MIN_SOUNDING_PARTS ? "major" : "minor",
+        location: { startBar: last.startBar, endBar: context.totalBars, sectionName: last.name, trackIds: context.pitched.map((p) => p.id).sort() },
+        evidence: {
+          pitchedPartsSoundingAtEnd: soundingAtEnd, silenceBeforeEndSeconds: Math.max(0, gapSeconds),
+          tailToleranceSeconds: ENDING_TAIL_SECONDS, longestFinalSectionNoteSeconds: longestFinal,
+          lastNoteEndSeconds: lastEnd, songEndSeconds: songEnd,
+        },
+        suspectedOrigin: "compose",
+        originConfidence: confidenceFromCount(context.pitched.length, 3, 0.85),
+        recommendedRepair: {
+          operation: "write_a_final_chord", scope: "section",
+          detail: `the last note ends ${Math.max(0, gapSeconds).toFixed(2)} s before ${last.name} does and ${soundingAtEnd} pitched part(s) are still sounding at the end: the song stops rather than finishing. A held final chord on every pitched part, with the planned ritardando.`,
+        },
+        confidence: confidenceFromCount(context.pitched.length * 2, 6),
+      });
     }
   }
 

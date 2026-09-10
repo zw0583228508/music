@@ -34,6 +34,11 @@ import type { MusicalNote, TrackModel } from "@workspace/db";
 import { BENCHMARK_CORPUS, buildBenchmarkSongModel, type BenchmarkCase } from "../../benchmarkCorpus";
 import { orchestrateArrangement, type PartComposerFn } from "../../arrangementOrchestrator";
 import { composeReferencePart } from "../../referencePartComposer";
+import { RACHEM_NA_FIXED_NOW, rachemNaSongModel } from "../../__fixtures__/rachemNaSongModelV3";
+import { compileProductionBrief } from "../../producerIntelligence/briefCompiler";
+import { briefPlannerHints } from "../../producerIntelligence/briefToPlanner";
+import { extractUserIntentSync } from "../../producerIntelligence/intentExtraction";
+import { resolveStyleProfile } from "../../producerIntelligence/styleResolution";
 import type { PartGenerationRequest } from "../../partComposer";
 import type { ChordQuality, EstimatedChord } from "../../chordsFromNotes";
 import {
@@ -45,7 +50,7 @@ import {
   type CorruptionSeverity,
 } from "../../symbolicCorruptions";
 import type { CriticInput } from "../types";
-import { buildContext, onsetClusters, soundingAt, topVoice, type CriticContext, type PartInfo } from "./shared";
+import { buildContext, mean, onsetClusters, soundingAt, topVoice, type CriticContext, type PartInfo } from "./shared";
 
 export type Anchor = { id: string; genre: string; composer: string; input: CriticInput };
 
@@ -102,23 +107,145 @@ export function anchors(ids: readonly string[] = anchorIds()): Anchor[] {
  * The MIDI anchors carry a lead line without vocal evidence (`leadIsVocal`
  * false); `VOCAL_ANCHOR_IDS` names the six with a detected vocal.
  */
-export const CLEAN_ANCHOR_IDS: readonly string[] = ["pop-full", "ballad-piano-vocal", "rock-full", "dance-full", "acoustic-demo", "orchestral-midi", "jazz-full", "cinematic-midi"];
-export const VOCAL_ANCHOR_IDS: readonly string[] = ["pop-full", "ballad-piano-vocal", "rock-full", "dance-full", "acoustic-demo", "jazz-full"];
+export const CLEAN_ANCHOR_IDS: readonly string[] = ["pop-full", "ballad-piano-vocal", "rock-full", "dance-full", "acoustic-demo", "orchestral-midi", "jazz-full", "cinematic-midi", "ethnic-vocal"];
+export const VOCAL_ANCHOR_IDS: readonly string[] = ["pop-full", "ballad-piano-vocal", "rock-full", "dance-full", "acoustic-demo", "jazz-full", "ethnic-vocal"];
 /**
  * Anchors the purpose-built worsenings are applied to: every anchor whose
- * notes lie inside the song. The 7/8 anchor's parts overflow the song (see
- * `DEFECT_ANCHOR_REASONS`), so a section-level worsening of it measures the
- * overflow, not the worsening.
+ * notes lie inside the song — which is now all nine (B-05c).
  */
-export const PURPOSE_BUILT_ANCHOR_IDS: readonly string[] = ["pop-full", "ballad-piano-vocal", "rock-full", "dance-full", "acoustic-demo", "orchestral-midi", "jazz-full", "cinematic-midi"];
-export const DEFECT_ANCHOR_REASONS: Record<string, string> = {
-  "ethnic-vocal": "7/8: composeReferencePart derives beatSeconds from the tempo alone (60/bpm), so its bars are twice the Song Model's and the parts overflow the song (still true after B-00/B-01/B-03)",
-};
-/** Defects the anchors carried before the merge and no longer do — kept so the evidence says why the clean set grew. */
+export const PURPOSE_BUILT_ANCHOR_IDS: readonly string[] = ["pop-full", "ballad-piano-vocal", "rock-full", "dance-full", "acoustic-demo", "orchestral-midi", "jazz-full", "cinematic-midi", "ethnic-vocal"];
+export const DEFECT_ANCHOR_REASONS: Record<string, string> = {};
+/** Defects the anchors carried before a merge and no longer do — kept so the evidence says why the clean set grew. */
 export const FIXED_ANCHOR_DEFECTS: Record<string, string> = {
   "orchestral-midi": "keys assigned LEAD in every section with no part task — fixed by B-01 (keys plays in every section)",
   "cinematic-midi": "keys assigned LEAD in every section with no part task — fixed by B-01 (keys plays in every section)",
+  // B-05c: measured, not assumed. `DEFECT_ANCHOR_REASONS` still said "7/8:
+  // composeReferencePart derives beatSeconds from the tempo alone, so its bars
+  // are twice the Song Model's and the parts overflow the song". At
+  // `origin/main` 31b9443 the anchor's last note ends at 48.32 s inside a
+  // 48.46 s song, `orchestration` raises no `notes_outside_song`, and no
+  // dimension raises a blocking observation on it. R-1a's own benchmark table
+  // records the same event from the other side (`unselectableShare 11.11 -> 0`,
+  // "B-04's meter fix (ethnic-vocal 7/8) — explained"). The reason string was
+  // stale, exactly as R-1a §5 found the B-12 `todo` reasons to be; the anchor
+  // is now clean and is a control target like the rest.
+  "ethnic-vocal": "7/8 parts overflowed the song (composeReferencePart derived beatSeconds from the tempo alone) — fixed by B-04's meter work; measured clean at 31b9443 and moved into the clean set by B-05c",
 };
+
+// ---------------------------------------------------------------------------
+// The owner's song as an anchor (B-05c, D2 — R-1a P1-1)
+// ---------------------------------------------------------------------------
+
+/**
+ * The tenth anchor: the owner's own song, "רחם נא", arranged exactly as the
+ * R-1b review arranged it — the stored Song Model v3 fixture, the review's
+ * brief, `RACHEM_NA_FIXED_NOW`, one candidate, no render.
+ *
+ * R-1a P1-1: "the gated critics were never run on the owner's song; when run,
+ * `groove = 0` with `off_grid` on the bass and nobody can say why". This anchor
+ * is what lets a test say why. It is **deliberately not** in `CLEAN_ANCHOR_IDS`
+ * or `PURPOSE_BUILT_ANCHOR_IDS`:
+ *
+ *  - not clean, because it carries real, located composer defects the
+ *    dimensions are supposed to flag (an empty two-bar intro, harmony onsets
+ *    100–230 ms off the beat, a string bed reduced to one voice) — a null
+ *    control on it would be a null control on a broken arrangement;
+ *  - not a control target, because 141 bars × 22 part tasks × every control is
+ *    a different order of runtime from the synthetic corpus, and because a
+ *    worsening of an already-defective anchor measures the interaction, not
+ *    the worsening.
+ *
+ * `ownerComposedAnchor` is the same arrangement read at the **composed** notes
+ * — before `applyPerformance` and before `playabilityRepair`. It is the
+ * isolating control for anything the review attributed to "perform".
+ */
+export const OWNER_ANCHOR_ID = "owner-rachem-na";
+export const OWNER_BRIEF = "intimate ballad; piano, soft strings, gentle bass, light percussion; big final chorus";
+
+type OwnerBuild = { anchor: Anchor; composed: Anchor };
+let ownerBuild: OwnerBuild | null = null;
+
+function buildOwner(): OwnerBuild {
+  if (ownerBuild) return ownerBuild;
+  const songModel = rachemNaSongModel();
+  const now = RACHEM_NA_FIXED_NOW;
+  const intent = extractUserIntentSync(OWNER_BRIEF, { now });
+  const profile = resolveStyleProfile(intent, { now });
+  const brief = compileProductionBrief(intent, profile, songModel, [], { now });
+  const plannerHints = briefPlannerHints(brief, { songModel });
+  const tempoBpm = songModel.tempoMap?.[0]?.bpm ?? 120;
+  const meter = songModel.meterMap?.[0]?.meter ?? "4/4";
+  // The composed notes, captured through the composer the orchestrator calls.
+  const composedByTask = new Map<string, MusicalNote[]>();
+  const composeParts: PartComposerFn = (request) => {
+    const notes = composeReferencePart(request, { tempoBpm, meter });
+    composedByTask.set(`${request.instrument}|${request.role}`, [
+      ...(composedByTask.get(`${request.instrument}|${request.role}`) ?? []),
+      ...notes.map((n) => ({ ...n })),
+    ]);
+    return notes;
+  };
+  const result = orchestrateArrangement({
+    songModel, candidateCount: 1, render: false, now, plannerHints,
+    composeParts, composerName: "REFERENCE_PART_COMPOSER_V1",
+  });
+  const candidate = result.candidates[0];
+  const trackModels = candidate?.trackModels ?? [];
+  const anchor: Anchor = {
+    id: OWNER_ANCHOR_ID, genre: "chassidic_ballad", composer: result.composer,
+    input: { songModel, plan: result.plan, trackModels },
+  };
+  // The same tracks carrying the notes the composer wrote, in composition order.
+  const composedTracks = trackModels.map((t) => {
+    const key = `${t.instrument}|${t.role}`;
+    const notes = (composedByTask.get(key) ?? []).slice().sort((a, b) => a.start - b.start || a.pitch - b.pitch);
+    return { ...t, notes };
+  }).filter((t) => t.notes.length > 0);
+  const composed: Anchor = {
+    id: `${OWNER_ANCHOR_ID}-composed`, genre: "chassidic_ballad", composer: result.composer,
+    input: { songModel, plan: result.plan, trackModels: composedTracks },
+  };
+  ownerBuild = { anchor, composed };
+  return ownerBuild;
+}
+
+/** The owner's song as the provider ships it: performed notes after the playability repair. */
+export function ownerAnchor(): Anchor {
+  return buildOwner().anchor;
+}
+
+/** The same song read at the composed notes: no performance timing, no repair. */
+export function ownerComposedAnchor(): Anchor {
+  return buildOwner().composed;
+}
+
+/**
+ * Isolating control: every onset of the named families snapped to the
+ * *composer's* bar grid, nothing else changed. `stepsPerBeat` chooses the grid
+ * — 4 for sixteenths (what `off_grid` measures against), 2 for eighths (what
+ * comping and bass actually place hits on, and what `harmony_off_grid`
+ * measures against the kit). If a grid finding survives this, it is not a grid
+ * finding.
+ */
+export function quantiseFamiliesToGrid(anchor: Anchor, families: readonly string[], stepsPerBeat: 2 | 4 = 4): Worsened {
+  const context = buildContext(anchor.input);
+  const targets = context.parts.filter((p) => families.includes(p.family));
+  const ids = new Set(targets.map((p) => p.id));
+  const tracks = anchor.input.trackModels.map((t) => {
+    if (!ids.has(t.id)) return t;
+    return {
+      ...t,
+      notes: t.notes.map((n) => {
+        const info = context.barInfo(context.barAt(n.start));
+        if (!info) return n;
+        const step = info.beatSeconds / stepsPerBeat;
+        const k = Math.round((n.start - info.start) / step);
+        return { ...n, start: Number((info.start + k * step).toFixed(4)) };
+      }).sort((a, b) => a.start - b.start || a.pitch - b.pitch),
+    };
+  });
+  return { input: withTracks(anchor.input, tracks), targetTrackIds: [...ids], detail: `${families.join("+")} onsets snapped to a 1/${stepsPerBeat}-of-a-beat grid` };
+}
 
 // ---------------------------------------------------------------------------
 // The audit's probe composers
@@ -444,8 +571,16 @@ export const PURPOSE_BUILT: Record<string, { description: string; apply: Worseni
     apply: (anchor) => eraseBoundaryEvents(anchor, { drums: false, pickups: true }),
   },
   tutti_everywhere: {
-    description: "every part plays in every section: its busiest section's bars are looped into the bars of the sections where it did not play (sounded in fewer than a quarter of the bars)",
+    description: "every part plays in every bar: its busiest section's bars are looped into every bar in which it is not already sounding — a tutti that never rests",
     apply: (anchor) => {
+      // B-05c: the previous version filled only the *sections* a part did not
+      // "play in" (sounding in more than a quarter of the bars). On five of the
+      // eight anchors every part clears that bar by a margin while still
+      // resting inside its sections, so the transform added nothing and the
+      // control detected 2/5 — not because `continuous_tutti` is blind but
+      // because the harness never produced a tutti. `continuous_tutti` asks for
+      // three or more substantial parts none of which ever rests a *bar*, so
+      // that is what the control now writes.
       const context = buildContext(anchor.input);
       if (context.sections.length < 2 || context.parts.length < 3) return null;
       let changed = false;
@@ -457,26 +592,26 @@ export const PURPOSE_BUILT: Record<string, { description: string; apply: Worseni
         const srcRange = barRange(context, source.startBar, source.endBar);
         const srcNotes = notesIn(context, t, srcRange);
         if (!srcNotes.length) return t;
+        const sounding = soundingBars(context, part, 1, context.totalBars);
+        const sourceBars = source.endBar - source.startBar + 1;
+        const barOf = barOfNote(context);
         const added: MusicalNote[] = [];
-        for (const { s } of counts) {
-          // Recalibrated at the merge: a single cymbal hit or one bass note every other bar (the B-01 anchors) is not "playing" — those bars are filled too, the existing notes kept.
-          if (s === source || playsIn(context, part, s.startBar, s.endBar)) continue;
-          const sounding = soundingBars(context, part, s.startBar, s.endBar);
-          for (let bar = s.startBar; bar <= s.endBar; bar += 1) {
-            if (sounding.has(bar)) continue;
-            const srcBar = source.startBar + ((bar - s.startBar) % (source.endBar - source.startBar + 1));
-            const from = context.barInfo(srcBar)!;
-            const to = context.barInfo(bar)!;
-            const barOf = barOfNote(context);
-            added.push(...shiftNotes(srcNotes.filter((x) => barOf(x) === srcBar), to.start - from.start, `${t.id}-tutti${bar}`));
-          }
+        for (let bar = 1; bar <= context.totalBars; bar += 1) {
+          if (sounding.has(bar)) continue;
+          const srcBar = source.startBar + ((bar - 1) % sourceBars);
+          const from = context.barInfo(srcBar);
+          const to = context.barInfo(bar);
+          if (!from || !to) continue;
+          const fromBar = srcNotes.filter((x) => barOf(x) === srcBar);
+          if (!fromBar.length) continue;
+          added.push(...shiftNotes(fromBar, to.start - from.start, `${t.id}-tutti${bar}`));
         }
         if (!added.length) return t;
         changed = true;
         return { ...t, notes: [...t.notes, ...added].sort((a, b) => a.start - b.start || a.pitch - b.pitch) };
       });
       if (!changed) return null;
-      return { input: withTracks(anchor.input, tracks), targetTrackIds: tracks.map((t) => t.id), detail: "silent sections filled" };
+      return { input: withTracks(anchor.input, tracks), targetTrackIds: tracks.map((t) => t.id), detail: "every resting bar filled" };
     },
   },
   swap_climax_with_quietest: {
@@ -635,6 +770,147 @@ export const PURPOSE_BUILT: Record<string, { description: string; apply: Worseni
       return { input: withTracks(anchor.input, tracks), targetTrackIds: tracks.map((t) => t.id), detail: `${choruses.length} chorus(es) thinned` };
     },
   },
+  // -------------------------------------------------------------------------
+  // B-05c: second, independent transforms.
+  //
+  // R-1a P1-3 requires two independent transforms before a dimension may gate.
+  // That requirement cannot be met by a harness that offers one transform per
+  // dimension, so six more are added here. Each is damage a professional names
+  // in words ("the snare is on 1 and 3", "the bass isn't with the kick", "the
+  // strings are a solo violin", "the chorus arrives smaller than the verse"),
+  // and each damages a *different* musical property from the transform it sits
+  // beside — never the detector's own definition inverted. What they measure is
+  // reported whether or not it earns a gate: `idiomaticity`, `rhythmicInteraction`,
+  // `transitions`, `sectionDevelopment`, `voiceLeading` and `melodyAndCounterline`
+  // still fail to reach two, and the ledger says so.
+  // -------------------------------------------------------------------------
+  displace_backbeat: {
+    description: "every snare moved one beat earlier: the backbeat lands on 1 and 3 (a metric-placement failure, not a grid failure — the onsets stay exactly on the grid)",
+    apply: (anchor) => {
+      const context = buildContext(anchor.input);
+      const drums = context.percussive.find((p) => p.family === "drums");
+      if (!drums) return null;
+      const SNARE_PITCHES = new Set([38, 40]);
+      let moved = 0;
+      const notes = drums.notes.map((n) => {
+        if (!SNARE_PITCHES.has(n.pitch)) return n.note;
+        const info = context.barInfo(n.bar);
+        if (!info || n.beat < 0.9) return n.note;
+        moved += 1;
+        return { ...n.note, start: Number((n.start - info.beatSeconds).toFixed(4)) };
+      });
+      if (moved < 4) return null;
+      return { input: replaceNotes(anchor.input, drums.id, notes), targetTrackIds: [drums.id], detail: `${moved} snare hits pulled onto 1 and 3` };
+    },
+  },
+  unlock_bass_from_kick: {
+    description: "every bass onset displaced by half a beat: it lands on the eighth-note grid (so it is not off the grid) but never with the kick",
+    apply: (anchor) => {
+      const context = buildContext(anchor.input);
+      const bass = context.pitched.find((p) => p.family === "bass");
+      const drums = context.percussive.find((p) => p.family === "drums");
+      if (!bass || !drums || bass.notes.length < 8) return null;
+      const notes = bass.notes.map((n) => {
+        const info = context.barInfo(n.bar);
+        if (!info) return n.note;
+        const half = info.beatSeconds / 2;
+        const shifted = n.start + (Math.round(n.beat * 2) % 2 === 0 ? half : -half);
+        return { ...n.note, start: Number(Math.max(context.songStart, shifted).toFixed(4)) };
+      });
+      return { input: replaceNotes(anchor.input, bass.id, notes), targetTrackIds: [bass.id], detail: `${notes.length} bass onsets moved off the kick by an eighth` };
+    },
+  },
+  parallel_perfect_motion: {
+    description: "every chordal part re-voiced as bare parallel fifths and octaves over its own bottom voice: consecutive chords move in perfect parallels",
+    apply: (anchor) => {
+      const context = buildContext(anchor.input);
+      const targets = context.pitched.filter((p) => p.family !== "bass" && onsetClusters(p.notes).filter((c) => c.length >= 2).length >= 4);
+      if (!targets.length) return null;
+      const tracks = anchor.input.trackModels.map((t) => {
+        const part = targets.find((p) => p.id === t.id);
+        if (!part) return t;
+        const notes: MusicalNote[] = [];
+        for (const cluster of onsetClusters(part.notes)) {
+          const root = cluster[0];
+          for (const [i, interval] of [0, 7, 12].entries()) {
+            const source = cluster[Math.min(i, cluster.length - 1)];
+            notes.push({ ...source.note, id: `${t.id}-par${notes.length}`, start: root.start, duration: root.duration, pitch: clampPitch(root.pitch + interval) });
+          }
+        }
+        return { ...t, notes: notes.sort((a, b) => a.start - b.start || a.pitch - b.pitch) };
+      });
+      return { input: withTracks(anchor.input, tracks), targetTrackIds: targets.map((p) => p.id), detail: `${targets.length} part(s) in bare parallel fifths and octaves` };
+    },
+  },
+  counterline_into_bed_register: {
+    description: "the highest melodic part transposed into the sustained bed's own octave: two lines competing for the same notes",
+    apply: (anchor) => {
+      const context = buildContext(anchor.input);
+      const bed = pickBed(context);
+      const line = context.pitched
+        .filter((p) => p.family !== "bass" && p.id !== bed?.id && onsetClusters(p.notes).length >= 12)
+        .sort((a, b) => mean(topVoice(b.notes).map((n) => n.pitch)) - mean(topVoice(a.notes).map((n) => n.pitch)))[0] ?? null;
+      if (!bed || !line) return null;
+      const bedMean = mean(bed.notes.map((n) => n.pitch));
+      const lineMean = mean(line.notes.map((n) => n.pitch));
+      const shift = Math.round((bedMean - lineMean) / 12) * 12;
+      if (!shift) return null;
+      return {
+        input: replaceNotes(anchor.input, line.id, line.track.notes.map((n) => ({ ...n, pitch: clampPitch(n.pitch + shift) }))),
+        targetTrackIds: [line.id],
+        detail: `${line.id} moved ${shift} semitones into ${bed.id}'s register`,
+      };
+    },
+  },
+  arrival_thinned_and_softened: {
+    description: "every arrival section (a section the plan makes louder than the one before it) keeps one of every three onset clusters, loses the top voice of what remains and is played 20 % softer: the arrival is smaller than its setup in onsets, voices and dynamics at once",
+    apply: (anchor) => {
+      const context = buildContext(anchor.input);
+      const arrivals = context.sections.filter((s, i) => i > 0 && s.energy - context.sections[i - 1].energy >= 0.15);
+      if (!arrivals.length) return null;
+      const barOf = barOfNote(context);
+      let changed = false;
+      const tracks = anchor.input.trackModels.map((t) => {
+        const part = context.parts.find((p) => p.id === t.id);
+        if (!part) return t;
+        let notes = t.notes;
+        for (const s of arrivals) {
+          const inside = onsetClusters(context.notesInBars(part, s.startBar, s.endBar));
+          if (inside.length < 4) continue;
+          const keep = new Map<string, boolean>();
+          inside.forEach((cluster, i) => {
+            const survives = i % 3 === 0;
+            cluster.forEach((n, k) => keep.set(n.note.id, survives && !(cluster.length > 1 && k === cluster.length - 1)));
+          });
+          notes = notes.flatMap((n) => {
+            if (!(barOf(n) >= s.startBar && barOf(n) <= s.endBar)) return [n];
+            if (keep.get(n.id) === false) return [];
+            if (keep.get(n.id) === undefined) return [n];
+            changed = true;
+            return [{ ...n, velocity: Math.max(1, Math.round(n.velocity * 0.8)) }];
+          });
+        }
+        return { ...t, notes };
+      }).filter((t) => t.notes.length > 0);
+      if (!changed) return null;
+      return { input: withTracks(anchor.input, tracks), targetTrackIds: tracks.map((t) => t.id), detail: `${arrivals.length} arrival(s) thinned, unvoiced and softened` };
+    },
+  },
+  strip_bed_to_top_voice: {
+    description: "every sustained bed reduced to its top voice — exactly what the perform → repair cascade does to the strings on the owner's song (R-1b P0-1): the chord becomes a solo line",
+    apply: (anchor) => {
+      const context = buildContext(anchor.input);
+      const beds = context.pitched.filter((p) => p.family !== "bass" && onsetClusters(p.notes).filter((c) => c.length >= 2).length >= 4);
+      if (!beds.length) return null;
+      const tracks = anchor.input.trackModels.map((t) => {
+        const part = beds.find((p) => p.id === t.id);
+        if (!part) return t;
+        const keep = new Set(topVoice(part.notes).map((n) => n.note.id));
+        return { ...t, notes: t.notes.filter((n) => keep.has(n.id)) };
+      }).filter((t) => t.notes.length > 0);
+      return { input: withTracks(anchor.input, tracks), targetTrackIds: beds.map((p) => p.id), detail: `${beds.length} bed(s) reduced to one voice` };
+    },
+  },
   random_pitch: {
     description: "the audit's Probe 1 composer: the reference rhythm with random pitches (steps ≤ 7) in every pitched part",
     apply: (anchor) => {
@@ -647,6 +923,28 @@ export const PURPOSE_BUILT: Record<string, { description: string; apply: Worseni
 };
 
 export const PURPOSE_BUILT_NAMES = Object.keys(PURPOSE_BUILT).sort();
+
+/**
+ * Copy one named section over another in every part (B-05c). The generalisation
+ * of `chorus_copy`, for the tests that need to paste a specific pair — e.g. the
+ * verse over the breakdown, which is what the dance anchor used to do by itself
+ * and no longer does.
+ */
+export function copySectionOver(anchor: Anchor, fromName: string, toName: string): Worsened | null {
+  const context = buildContext(anchor.input);
+  const from = context.sections.find((s) => s.name === fromName);
+  const to = context.sections.find((s) => s.name === toName);
+  if (!from || !to) return null;
+  const bars = Math.min(from.endBar - from.startBar, to.endBar - to.startBar) + 1;
+  const src = barRange(context, from.startBar, from.startBar + bars - 1);
+  const dst = barRange(context, to.startBar, to.startBar + bars - 1);
+  const tracks = anchor.input.trackModels.map((t) => ({
+    ...t,
+    notes: [...notesOutside(context, t, dst), ...shiftNotes(notesIn(context, t, src), dst.start - src.start, `${t.id}-sect`)]
+      .sort((a, b) => a.start - b.start || a.pitch - b.pitch),
+  }));
+  return { input: withTracks(anchor.input, tracks), targetTrackIds: tracks.map((t) => t.id), detail: `${fromName} -> ${toName} (${bars} bars)` };
+}
 
 /**
  * The boundary erasure behind `erase_boundary_events`, `erase_drum_fills` and

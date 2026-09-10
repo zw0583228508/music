@@ -9,7 +9,23 @@
  * (`register`); a part that leaves the band the plan gave it is the
  * composer's (`compose`); a plan band the instrument cannot reach is the
  * orchestration plan's (`orchestration`).
+ *
+ * B-05c adds the two register findings R-1b §4 says the set was blind to:
+ *
+ *  - `top_line_above_comfortable_ceiling` — the *audible top voice* of a part
+ *    parked above the ceiling its own profile gives it in the role it holds.
+ *    `part_outside_comfortable_range` reads every note against the absolute
+ *    comfortable band (60–86 for a violin section), so a bed sitting at 79–84
+ *    for a hundred bars is "in range"; a section bed's PAD register in the
+ *    profile stops far lower, which is why an arranger calls the same notes
+ *    shrill. The ceiling is read from `instrumentProfile.ts`, never invented.
+ *  - `climax_all_treble` — the climax with a hole where the music lives: no
+ *    note-seconds between C3 and C5 while the top voice sits above C6
+ *    (R-1b P0-4: "bass C2, keys 93 % ≥ C5, strings 100 % ≥ C6 — the climax is
+ *    the thinnest-textured, shrillest section of the song").
  */
+import { profileForDefinition, roleRegisterFor } from "../../instrumentProfile";
+import type { InstrumentArrangementRole } from "@workspace/db";
 import type { CriticDimension, CriticInput } from "../types";
 import {
   buildContext,
@@ -18,16 +34,49 @@ import {
   mean,
   notApplicable,
   pitchBand,
+  roleInSection,
   round,
   severityFromShare,
   soundingAt,
+  topVoice,
   type CriticContext,
   type ObservationDraft,
   type PartInfo,
 } from "./shared";
 
 export const REGISTER_DIMENSION = "register";
-export const REGISTER_VERSION = "1.0";
+/** 1.1 (B-05c): `top_line_above_comfortable_ceiling` and `climax_all_treble`. */
+export const REGISTER_VERSION = "1.1";
+
+/**
+ * The middle register a climax must not vacate. C3 (48) to C5 (72) is where a
+ * left hand, a viola/cello line and a tenor sit; an arrangement whose loudest
+ * section has nothing there is thin however many notes it has.
+ */
+export const MIDDLE_REGISTER: [number, number] = [48, 72];
+/** C6: above this the top voice is unambiguously in the shrill octave for a pop/ballad ensemble. */
+export const TREBLE_TOP_PITCH = 84;
+/** Share of a section's beats the top voice must spend above the ceiling before it is a finding (not one high note). */
+export const TOP_LINE_CEILING_SHARE: [number, number, number] = [0.4, 0.7, 1.01];
+/** Bars a section must have before its register occupancy is worth a claim. */
+export const MIN_SECTION_BARS_FOR_REGISTER = 4;
+
+/**
+ * The ceiling this part's own profile gives it in the role it holds: the
+ * role register's high bound when `instrumentProfile.ts` has one for the role,
+ * else the profile's comfortable maximum, else the effective comfortable
+ * maximum the context derived. The source is carried into the evidence so a
+ * reader can check the number against the profile table.
+ */
+export function comfortableCeilingFor(part: PartInfo, role: string): { ceiling: number; source: string } {
+  const profile = part.track.instrumentDefinition ? profileForDefinition(part.track.instrumentDefinition) : null;
+  if (profile) {
+    const roleRegister = roleRegisterFor(profile, role as InstrumentArrangementRole);
+    if (roleRegister.fromRole) return { ceiling: roleRegister.hi, source: `instrumentProfile ${profile.id} roleRegisters.${role}` };
+    return { ceiling: profile.range.comfortable.value[1], source: `instrumentProfile ${profile.id} range.comfortable` };
+  }
+  return { ceiling: part.comfortableRange.max, source: "family fallback comfortable range" };
+}
 
 /** Pitch range the plan's register bands denote (the budget engine's five bands). */
 export const PLANNED_BAND_RANGE: Record<string, [number, number]> = {
@@ -201,6 +250,89 @@ export function evaluateRegister(input: CriticInput) {
           originConfidence: confidenceFromCount(Math.round(outsideComfort * notes.length), 6, 0.75),
           recommendedRepair: { operation: "return_to_comfortable_range", scope: "section", detail: `${Math.round(outsideComfort * 100)} % of ${p.instrument}'s notes in ${section.name} lie outside its comfortable range ${p.comfortableRange.min}-${p.comfortableRange.max}` },
           confidence: confidenceFromCount(notes.length, 10),
+        });
+      }
+    }
+
+    // B-05c: the audible top voice against the ceiling this part's own profile
+    // gives it in the role it holds. A bed at 79-84 is inside a violin
+    // section's absolute comfortable band and far above its PAD register.
+    const sectionBars = section.endBar - section.startBar + 1;
+    if (sectionBars >= MIN_SECTION_BARS_FOR_REGISTER) {
+      for (const p of active) {
+        if (p.family === "bass") continue;
+        const notes = context.notesInBars(p, section.startBar, section.endBar);
+        if (notes.length < 6) continue;
+        const role = roleInSection(p, section.name);
+        const { ceiling, source } = comfortableCeilingFor(p, role);
+        const line = topVoice(notes);
+        if (line.length < 6) continue;
+        // Note-seconds, not note counts: one long high note colours a section more than four short ones.
+        const totalSeconds = line.reduce((s, n) => s + Math.max(0.05, n.duration), 0);
+        const aboveSeconds = line.filter((n) => n.pitch > ceiling).reduce((s, n) => s + Math.max(0.05, n.duration), 0);
+        const share = totalSeconds > 0 ? aboveSeconds / totalSeconds : 0;
+        const sev = severityFromShare(share, TOP_LINE_CEILING_SHARE);
+        if (!sev) continue;
+        const excess = Math.round(Math.max(...line.map((n) => n.pitch)) - ceiling);
+        drafts.push({
+          kind: "top_line_above_comfortable_ceiling",
+          severity: sev,
+          location: { startBar: section.startBar, endBar: section.endBar, sectionName: section.name, trackIds: [p.id] },
+          evidence: {
+            topLineSecondsAboveCeilingShare: share, ceiling, ceilingSource: source, role,
+            highestTopVoicePitch: Math.max(...line.map((n) => n.pitch)),
+            medianTopVoicePitch: Math.round(mean(line.map((n) => n.pitch))),
+            semitonesAboveCeiling: excess,
+            topLineNotes: line.length,
+          },
+          suspectedOrigin: "compose",
+          originConfidence: confidenceFromCount(line.filter((n) => n.pitch > ceiling).length, 6, 0.8),
+          recommendedRepair: {
+            operation: "lower_top_voice_to_ceiling", scope: "section",
+            detail: `${p.instrument}'s top voice spends ${Math.round(share * 100)} % of its sounding time above ${ceiling} in ${section.name} (${source}); the highest note is ${excess} semitones over. Open the voicing downward instead of lifting it.`,
+          },
+          confidence: confidenceFromCount(line.length, 10),
+        });
+      }
+    }
+
+    // B-05c: the climax with no middle register. Note-seconds per octave band
+    // across the whole ensemble; a section that is loudest by plan and empty
+    // between C3 and C5 while its top voice sits above C6 is the shrill climax.
+    const isClimax = context.plan.globalPlan?.climax?.sectionName === section.name ||
+      section.energy >= Math.max(...context.sections.map((s) => s.energy)) - 1e-9;
+    if (isClimax && sectionBars >= MIN_SECTION_BARS_FOR_REGISTER && active.length >= 2) {
+      let middleSeconds = 0;
+      let totalSeconds = 0;
+      let topSeconds = 0;
+      for (const p of active) {
+        for (const n of context.notesInBars(p, section.startBar, section.endBar)) {
+          const seconds = Math.max(0.05, n.duration);
+          totalSeconds += seconds;
+          if (n.pitch >= MIDDLE_REGISTER[0] && n.pitch < MIDDLE_REGISTER[1]) middleSeconds += seconds;
+          if (n.pitch >= TREBLE_TOP_PITCH) topSeconds += seconds;
+        }
+      }
+      const middleShare = totalSeconds > 0 ? middleSeconds / totalSeconds : 0;
+      const trebleShare = totalSeconds > 0 ? topSeconds / totalSeconds : 0;
+      if (totalSeconds > 0 && middleShare <= 0.05 && trebleShare >= 0.15) {
+        drafts.push({
+          kind: "climax_all_treble",
+          severity: "major",
+          location,
+          evidence: {
+            middleRegisterSecondsShare: middleShare, trebleSecondsShare: trebleShare,
+            middleRegisterFrom: MIDDLE_REGISTER[0], middleRegisterTo: MIDDLE_REGISTER[1],
+            trebleFrom: TREBLE_TOP_PITCH, noteSeconds: totalSeconds, parts: active.length,
+            plannedClimax: context.plan.globalPlan?.climax?.sectionName === section.name,
+          },
+          suspectedOrigin: "orchestration",
+          originConfidence: confidenceFromCount(active.length, 3, 0.8),
+          recommendedRepair: {
+            operation: "fill_middle_register_at_climax", scope: "section",
+            detail: `${section.name} is the loudest section and has ${Math.round(middleShare * 100)} % of its note-seconds between C3 and C5 while ${Math.round(trebleShare * 100)} % sit above C6 — add left-hand octaves and open the bed downward rather than lifting the top`,
+          },
+          confidence: confidenceFromCount(Math.round(totalSeconds), 20),
         });
       }
     }

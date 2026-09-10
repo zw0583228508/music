@@ -28,10 +28,35 @@ import {
 } from "./shared";
 
 export const DENSITY_DIMENSION = "density";
-export const DENSITY_VERSION = "1.0";
+/** 1.1 (B-05c): `single_voice_bed` (was `bed_single_voice`, minor) and `arrival_thinner_than_setup`. */
+export const DENSITY_VERSION = "1.1";
 
 const COMPING_ROLES = new Set(["RHYTHMIC_HARMONY", "OSTINATO", "GROOVE"]);
 const BED_ROLES = new Set(["HARMONIC_BED", "PAD", "CLIMAX_LAYER"]);
+
+/** Mean voices per onset at or below which a bed is a solo line, not a chord. */
+export const SINGLE_VOICE_BED_CEILING = 1.2;
+/** Voices a bed is expected to have: the smallest triad. */
+export const BED_MIN_VOICES = 3;
+
+/**
+ * `arrival_thinner_than_setup` (B-05c, R-1b P0-4 / item 5 of §7).
+ *
+ * An arrival is a section the plan makes louder than the one before it. A
+ * professional's rule is not "more onsets": it is that an arrival is bigger in
+ * *some* of onsets, voices and loudness and smaller in none of them. So the
+ * finding needs two of the three ratios to fall and the combined ratio to fall
+ * materially — that is why `louder_section_thinner`, which reads onsets alone
+ * against one threshold, missed the owner's first chorus (onset ratio 0.80 with
+ * a new part entering) and misses a chorus thinned in the harness while its
+ * velocities stay put.
+ */
+export const ARRIVAL_ENERGY_STEP = 0.15;
+/** A ratio below this counts as "the arrival is smaller in this respect". */
+export const ARRIVAL_RATIO_FLOOR = 0.95;
+/** Two of the three must fall, and their geometric mean must be at or below this. */
+export const ARRIVAL_COMBINED_FLOOR = 0.92;
+export const ARRIVAL_MAJOR_COMBINED = 0.85;
 
 export type SectionDensity = {
   onsetsPerBar: number;
@@ -132,15 +157,31 @@ export function evaluateDensity(input: CriticInput) {
             confidence: confidenceFromCount(Math.round(p.onsetsPerBar * bars), 6),
           });
         }
-        if (BED_ROLES.has(role) && p.meanVoices <= 1.2 && p.part.family !== "brass" && p.part.family !== "winds" && p.part.maxVoices >= 3) {
+        if (BED_ROLES.has(role) && p.meanVoices <= SINGLE_VOICE_BED_CEILING && p.part.family !== "brass" && p.part.family !== "winds" && p.part.maxVoices >= BED_MIN_VOICES) {
+          // B-05c: a bed is a chord. One voice is a solo line, and on the
+          // owner's song it is a solo line the composer did not write: the
+          // perform -> repair cascade dropped 200 of 304 string notes. When the
+          // composed notes are in the input the finding says so and blocks;
+          // without them it is still a major finding on the shipped notes,
+          // because a single-voice "soft strings" bed is not what was asked for.
+          const composedVoices = context.composedVoicesOf(p.part, section.startBar, section.endBar);
+          const lostDownstream = composedVoices !== null && composedVoices >= BED_MIN_VOICES;
           drafts.push({
-            kind: "bed_single_voice",
-            severity: "minor",
+            kind: "single_voice_bed",
+            severity: lostDownstream ? "blocking" : "major",
             location,
-            evidence: { meanVoices: p.meanVoices, onsetsPerBar: p.onsetsPerBar, role },
-            suspectedOrigin: "compose",
-            originConfidence: confidenceFromCount(Math.round(p.onsetsPerBar * bars), 6, 0.75),
-            recommendedRepair: { operation: "voice_the_bed", scope: "section", detail: `${p.part.instrument} in a bed role plays ${p.meanVoices.toFixed(2)} voices per onset in ${section.name}` },
+            evidence: {
+              meanVoices: p.meanVoices, onsetsPerBar: p.onsetsPerBar, role,
+              instrumentMaxVoices: p.part.maxVoices,
+              composedMeanVoices: composedVoices ?? -1,
+              composedNotesAvailable: composedVoices !== null,
+              lostAfterCompose: lostDownstream,
+            },
+            suspectedOrigin: lostDownstream ? "perform" : "compose",
+            originConfidence: confidenceFromCount(Math.round(p.onsetsPerBar * bars), 6, lostDownstream ? 0.9 : 0.75),
+            recommendedRepair: lostDownstream
+              ? { operation: "keep_the_composed_voices", scope: "part", detail: `${p.part.instrument} was composed with ${composedVoices!.toFixed(2)} voices per onset in ${section.name} and ships with ${p.meanVoices.toFixed(2)}: the voices are lost between the composer and the track, not missing from the writing` }
+              : { operation: "voice_the_bed", scope: "section", detail: `${p.part.instrument} holds a bed role in ${section.name} and plays ${p.meanVoices.toFixed(2)} voices per onset; an instrument that can sound ${p.part.maxVoices} is writing a solo line` },
             confidence: confidenceFromCount(Math.round(p.onsetsPerBar * bars), 6),
           });
         }
@@ -205,6 +246,50 @@ export function evaluateDensity(input: CriticInput) {
         confidence: confidenceFromCount(Math.round((prev.d.onsetsPerBar + cur.d.onsetsPerBar) * 4), 24),
       });
     }
+  }
+
+  // B-05c: the arrival against its setup, in onsets, voices and loudness at once.
+  for (let i = 1; i < densities.length; i += 1) {
+    const setup = densities[i - 1];
+    const arrival = densities[i];
+    if (!setup.d.activeParts || !arrival.d.activeParts) continue;
+    const energyDelta = arrival.section.energy - setup.section.energy;
+    const plannedArrival = energyDelta >= ARRIVAL_ENERGY_STEP;
+    const isPlannedClimax = context.plan.globalPlan?.climax?.sectionName === arrival.section.name;
+    if (!plannedArrival && !isPlannedClimax) continue;
+    const meanVelocity = (d: typeof arrival.d, s: typeof arrival.section) => {
+      const notes = d.perPart.flatMap((p) => context.notesInBars(p.part, s.startBar, s.endBar));
+      return notes.length ? mean(notes.map((n) => n.velocity)) : 0;
+    };
+    const setupVelocity = meanVelocity(setup.d, setup.section);
+    const arrivalVelocity = meanVelocity(arrival.d, arrival.section);
+    if (!setupVelocity || !setup.d.meanVoices || !setup.d.onsetsPerBar) continue;
+    const onsetsRatio = arrival.d.onsetsPerBar / setup.d.onsetsPerBar;
+    const voicesRatio = arrival.d.meanVoices / setup.d.meanVoices;
+    const velocityRatio = arrivalVelocity / setupVelocity;
+    const ratios = [onsetsRatio, voicesRatio, velocityRatio];
+    const fell = ratios.filter((r) => r < ARRIVAL_RATIO_FLOOR).length;
+    const combined = Math.cbrt(ratios.reduce((a, b) => a * Math.max(0.01, b), 1));
+    if (fell < 2 || combined > ARRIVAL_COMBINED_FLOOR) continue;
+    drafts.push({
+      kind: "arrival_thinner_than_setup",
+      severity: combined <= ARRIVAL_MAJOR_COMBINED || isPlannedClimax ? "major" : "minor",
+      location: { startBar: arrival.section.startBar, endBar: arrival.section.endBar, sectionName: arrival.section.name, trackIds: arrival.d.perPart.map((p) => p.part.id).sort() },
+      evidence: {
+        setupSection: setup.section.name, plannedEnergyDelta: energyDelta, plannedClimax: isPlannedClimax,
+        onsetsRatio, voicesRatio, velocityRatio, combinedRatio: combined, respectsThatFell: fell,
+        setupOnsetsPerBar: setup.d.onsetsPerBar, arrivalOnsetsPerBar: arrival.d.onsetsPerBar,
+        setupMeanVoices: setup.d.meanVoices, arrivalMeanVoices: arrival.d.meanVoices,
+        setupMeanVelocity: setupVelocity, arrivalMeanVelocity: arrivalVelocity,
+      },
+      suspectedOrigin: "compose",
+      originConfidence: confidenceFromCount(arrival.section.endBar - arrival.section.startBar + 1, 6, 0.8),
+      recommendedRepair: {
+        operation: "make_the_arrival_arrive", scope: "section",
+        detail: `${arrival.section.name} is planned ${energyDelta.toFixed(2)} louder than ${setup.section.name} and arrives with ${Math.round(onsetsRatio * 100)} % of its onsets per bar, ${Math.round(voicesRatio * 100)} % of its voices and ${Math.round(velocityRatio * 100)} % of its velocity`,
+      },
+      confidence: confidenceFromCount(Math.round((setup.d.onsetsPerBar + arrival.d.onsetsPerBar) * 4), 24),
+    });
   }
 
   // Flat density across the song vs a moving plan.

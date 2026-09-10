@@ -90,6 +90,16 @@ export type CriticInput = {
   songModel: SongModelData;
   plan: ArrangementPlan;
   trackModels: TrackModel[];
+  /**
+   * The notes the *composer* wrote, before `applyPerformance` and
+   * `playabilityRepair` (B-05c). Optional and read defensively: when it is
+   * present a dimension can say which layer lost something (R-1b P0-1: a
+   * three-voice string bed composed and shipped as one line), and when it is
+   * absent the dimension falls back to what the shipped notes alone support
+   * and says so in its evidence. Never required for a dimension to be
+   * applicable.
+   */
+  composedTrackModels?: TrackModel[];
   /** ArrangementArc (B-01) once it exists; read defensively. */
   arc?: unknown;
   /** GroovePlan (B-03) once it exists; read defensively. */

@@ -106,7 +106,11 @@ const SEEDED: SeededDefect[] = [
     id: "bed_single_voice",
     description: "the sustained bed arrives at the repair stage as one line: every chord reduced to its top voice",
     song: "pop-full", seeding: "notes", expectedLayer: "compose",
-    kinds: ["bed_single_voice", "bed_thin_voicing"],
+    // The kind is `single_voice_bed`: B-05c renamed density's `bed_single_voice`
+    // and the taxonomy, which owns kind names, lists only the new one. The row's
+    // `id` stays `bed_single_voice` - it names this corpus case (and the
+    // evidence file and R1B_DEFECTS key on it), not an observation kind.
+    kinds: ["single_voice_bed", "bed_thin_voicing"],
     corrupt: (notes, request) => (isBed(request.instrument) ? collapseToTopVoice(notes) : [...notes]),
     r1b: "P0-1 (the string bed ships as a single voice)",
   },
@@ -114,7 +118,7 @@ const SEEDED: SeededDefect[] = [
     id: "owner_bed_single_voice",
     description: "the owner's song with its harmony bed collapsed to one line, as the perform -> playability cascade delivers it today",
     song: "rachem-na", seeding: "notes", expectedLayer: "compose",
-    kinds: ["bed_single_voice", "bed_thin_voicing"],
+    kinds: ["single_voice_bed", "bed_thin_voicing"],
     corrupt: (notes, request) => (isBed(request.instrument) ? collapseToTopVoice(notes) : [...notes]),
     r1b: "P0-1 on the owner's song",
   },
