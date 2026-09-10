@@ -12,8 +12,11 @@ import {
   musicBlindListeningVotesTable,
   musicGenerationCandidatesTable,
   musicProjectsTable,
+  songModelsTable,
   type BlindListeningPick,
   type BlindListeningSide,
+  type BlindListeningSides,
+  type TrackModel,
 } from "@workspace/db";
 import {
   CloseListeningSessionParams,
@@ -31,8 +34,20 @@ import {
   SubmitListeningVotesParams,
   SubmitListeningVotesResponse,
 } from "@workspace/api-zod";
-import { audioUrlForToken, buildListeningPairs, raterView, sessionResults, validateVotes, type ListeningVoteLike } from "../lib/blindListening";
-import { getPrivateObject } from "../lib/objectStorage";
+import {
+  CANDIDATE_CONTROL_RUNGS,
+  audioUrlForToken,
+  buildCandidateControls,
+  buildListeningPairs,
+  isControlPair,
+  raterView,
+  sessionResults,
+  validateVotes,
+  type ListeningVoteLike,
+} from "../lib/blindListening";
+import { LISTENING_RENDERER_V2 } from "../lib/listeningRendererV2";
+import { getPrivateObject, saveExportObject } from "../lib/objectStorage";
+import { renderTournamentSide } from "../lib/tournamentAudio";
 
 const router: IRouter = Router();
 
@@ -77,8 +92,8 @@ async function ownedProject(projectId: string, ownerId: string) {
 
 type SideInput = { label: string; candidateId?: string; generationJobId?: string; pick?: "ranked" | "first" };
 
-/** The candidate a side stands for, and its existing evaluation render. */
-async function resolveSide(projectId: string, input: SideInput): Promise<{ side: BlindListeningSide } | { status: number; error: string }> {
+/** The candidate a side stands for, its existing evaluation render, and its notes (for the control pairs). */
+async function resolveSide(projectId: string, input: SideInput): Promise<{ side: BlindListeningSide; trackModels: TrackModel[] | null } | { status: number; error: string }> {
   let candidate: CandidateRow | undefined;
   let pick: BlindListeningPick;
   if (input.candidateId) {
@@ -114,7 +129,47 @@ async function resolveSide(projectId: string, input: SideInput): Promise<{ side:
       pick,
       audioUrl: audio.url,
     },
+    trackModels: candidate.trackModels ?? null,
   };
+}
+
+/**
+ * B-08 (audit §7.5): the positive-control pairs of a candidate session — the
+ * challenger's own notes against degraded copies of them, rendered with the
+ * listening benchmark's neutral renderer and stored under the session so the
+ * tokens are served like a tournament side. When the challenger carries no
+ * notes, or the project has no Song Model to read the tempo from, no control
+ * can be built; the session is then created without controls and Gate C
+ * stays withheld with that reason — never a control at an invented tempo.
+ */
+async function candidateControlAudio(
+  sessionId: string,
+  projectId: string,
+  challenger: { trackModels: TrackModel[] | null },
+  pairs: ReturnType<typeof buildListeningPairs>["pairs"],
+): Promise<{ audioByToken: Record<string, string>; built: number; reason: string | null }> {
+  if (!challenger.trackModels?.length) return { audioByToken: {}, built: 0, reason: "the challenger candidate carries no track models" };
+  const [songModelRow] = await db.select({ model: songModelsTable.model }).from(songModelsTable)
+    .where(eq(songModelsTable.projectId, projectId)).orderBy(desc(songModelsTable.version)).limit(1);
+  const tempoBpm = songModelRow?.model.tempoMap?.[0]?.bpm;
+  const meter = songModelRow?.model.meterMap?.[0]?.meter;
+  if (!tempoBpm) return { audioByToken: {}, built: 0, reason: "the project has no Song Model tempo to place the notes on" };
+  const material = buildCandidateControls({ trackModels: challenger.trackModels, tempoBpm, meter }, sessionId, CANDIDATE_CONTROL_RUNGS);
+  if (material.refusal) return { audioByToken: {}, built: 0, reason: material.refusal };
+  const controlPairs = pairs.filter(isControlPair);
+  const audioByToken: Record<string, string> = {};
+  // One render of the original, shared by every control pair's "original" side.
+  const original = renderTournamentSide(material.original, { renderer: LISTENING_RENDERER_V2 });
+  const originalUrl = await saveExportObject(`listening/${sessionId}/controls/original.wav`, original.wav, "audio/wav");
+  for (let i = 0; i < controlPairs.length; i += 1) {
+    const pair = controlPairs[i];
+    const control = material.controls[i];
+    if (!control) break;
+    const render = renderTournamentSide(control.midi, { renderer: LISTENING_RENDERER_V2 });
+    audioByToken[pair.left.token] = originalUrl;
+    audioByToken[pair.right.token] = await saveExportObject(`listening/${sessionId}/controls/${pair.right.token}.wav`, render.wav, "audio/wav");
+  }
+  return { audioByToken, built: controlPairs.length, reason: null };
 }
 
 router.post("/projects/:projectId/listening-sessions", async (req, res): Promise<void> => {
@@ -136,8 +191,14 @@ router.post("/projects/:projectId/listening-sessions", async (req, res): Promise
     return;
   }
   const id = randomUUID();
-  const sides = { left: left.side, right: right.side, challenger: body.data.challenger ?? "right" as const };
-  const { pairs, keyBySide } = buildListeningPairs(id, sides);
+  const challenger = body.data.challenger ?? "right" as const;
+  const baseSides = { left: left.side, right: right.side, challenger };
+  // Every candidate session carries positive-control pairs (B-08); when none
+  // can be built the session is created without them and says so in Gate C.
+  const withControls = buildListeningPairs(id, baseSides);
+  const controls = await candidateControlAudio(id, project.id, challenger === "right" ? right : left, withControls.pairs);
+  const { pairs, keyBySide } = controls.built ? withControls : buildListeningPairs(id, baseSides, { controlRungs: [] });
+  const sides: BlindListeningSides = controls.built ? { ...baseSides, kind: "candidates", audioByToken: controls.audioByToken } : { ...baseSides, kind: "candidates" };
   const [row] = await db.insert(musicBlindListeningSessionsTable).values({
     id,
     projectId: project.id,

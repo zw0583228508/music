@@ -6886,6 +6886,33 @@ export interface EloRating {
   comparisons: number;
 }
 
+export type ListeningGateSensitivityVerdict = typeof ListeningGateSensitivityVerdict[keyof typeof ListeningGateSensitivityVerdict];
+
+
+export const ListeningGateSensitivityVerdict = {
+  insufficient_data: 'insufficient_data',
+  not_sensitive: 'not_sensitive',
+  may_judge_training: 'may_judge_training',
+} as const;
+
+export type ListeningGateSensitivityControlsItem = {
+  comparison: string;
+  pairs: number;
+  votes: number;
+  detected: number;
+  detectionRate: number | null;
+};
+
+/**
+ * B-08 - what the session's positive-control pairs say; Gate C is withheld unless verdict is may_judge_training
+ */
+export interface ListeningGateSensitivity {
+  verdict: ListeningGateSensitivityVerdict;
+  controlPairs: number;
+  reasons: string[];
+  controls: ListeningGateSensitivityControlsItem[];
+}
+
 export interface ListeningGateC {
   passed: boolean;
   challenger: string;
@@ -6895,6 +6922,7 @@ export interface ListeningGateC {
   minRaters: number;
   minWinShare: number;
   reason: string;
+  sensitivity?: ListeningGateSensitivity;
 }
 
 export interface ListeningResults {

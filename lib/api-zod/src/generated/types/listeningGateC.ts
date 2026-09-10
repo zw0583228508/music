@@ -5,6 +5,7 @@
  * API for the AI Music Production Studio
  * OpenAPI spec version: 0.1.0
  */
+import type { ListeningGateSensitivity } from './listeningGateSensitivity';
 
 export interface ListeningGateC {
   passed: boolean;
@@ -15,4 +16,5 @@ export interface ListeningGateC {
   minRaters: number;
   minWinShare: number;
   reason: string;
+  sensitivity?: ListeningGateSensitivity;
 }

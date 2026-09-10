@@ -22222,7 +22222,19 @@ export const CreateListeningSessionResponse = zod.object({
   "releaseShare": zod.number().nullable(),
   "minRaters": zod.number(),
   "minWinShare": zod.number(),
-  "reason": zod.string()
+  "reason": zod.string(),
+  "sensitivity": zod.object({
+  "verdict": zod.enum(['insufficient_data', 'not_sensitive', 'may_judge_training']),
+  "controlPairs": zod.number(),
+  "reasons": zod.array(zod.string()),
+  "controls": zod.array(zod.object({
+  "comparison": zod.string(),
+  "pairs": zod.number(),
+  "votes": zod.number(),
+  "detected": zod.number(),
+  "detectionRate": zod.number().nullable()
+}))
+}).optional().describe('B-08 - what the session\'s positive-control pairs say; Gate C is withheld unless verdict is may_judge_training')
 })
 }),
   "createdAt": zod.string(),
@@ -22320,7 +22332,19 @@ export const ListListeningSessionsResponseItem = zod.object({
   "releaseShare": zod.number().nullable(),
   "minRaters": zod.number(),
   "minWinShare": zod.number(),
-  "reason": zod.string()
+  "reason": zod.string(),
+  "sensitivity": zod.object({
+  "verdict": zod.enum(['insufficient_data', 'not_sensitive', 'may_judge_training']),
+  "controlPairs": zod.number(),
+  "reasons": zod.array(zod.string()),
+  "controls": zod.array(zod.object({
+  "comparison": zod.string(),
+  "pairs": zod.number(),
+  "votes": zod.number(),
+  "detected": zod.number(),
+  "detectionRate": zod.number().nullable()
+}))
+}).optional().describe('B-08 - what the session\'s positive-control pairs say; Gate C is withheld unless verdict is may_judge_training')
 })
 }),
   "createdAt": zod.string(),
@@ -22437,7 +22461,19 @@ export const CreateTournamentListeningSessionResponse = zod.object({
   "releaseShare": zod.number().nullable(),
   "minRaters": zod.number(),
   "minWinShare": zod.number(),
-  "reason": zod.string()
+  "reason": zod.string(),
+  "sensitivity": zod.object({
+  "verdict": zod.enum(['insufficient_data', 'not_sensitive', 'may_judge_training']),
+  "controlPairs": zod.number(),
+  "reasons": zod.array(zod.string()),
+  "controls": zod.array(zod.object({
+  "comparison": zod.string(),
+  "pairs": zod.number(),
+  "votes": zod.number(),
+  "detected": zod.number(),
+  "detectionRate": zod.number().nullable()
+}))
+}).optional().describe('B-08 - what the session\'s positive-control pairs say; Gate C is withheld unless verdict is may_judge_training')
 })
 }),
   "createdAt": zod.string(),
@@ -22585,7 +22621,19 @@ export const CreateListeningBenchmarkV2SessionResponse = zod.object({
   "releaseShare": zod.number().nullable(),
   "minRaters": zod.number(),
   "minWinShare": zod.number(),
-  "reason": zod.string()
+  "reason": zod.string(),
+  "sensitivity": zod.object({
+  "verdict": zod.enum(['insufficient_data', 'not_sensitive', 'may_judge_training']),
+  "controlPairs": zod.number(),
+  "reasons": zod.array(zod.string()),
+  "controls": zod.array(zod.object({
+  "comparison": zod.string(),
+  "pairs": zod.number(),
+  "votes": zod.number(),
+  "detected": zod.number(),
+  "detectionRate": zod.number().nullable()
+}))
+}).optional().describe('B-08 - what the session\'s positive-control pairs say; Gate C is withheld unless verdict is may_judge_training')
 })
 }),
   "createdAt": zod.string(),
@@ -22850,7 +22898,19 @@ export const GetListeningResultsResponse = zod.object({
   "releaseShare": zod.number().nullable(),
   "minRaters": zod.number(),
   "minWinShare": zod.number(),
-  "reason": zod.string()
+  "reason": zod.string(),
+  "sensitivity": zod.object({
+  "verdict": zod.enum(['insufficient_data', 'not_sensitive', 'may_judge_training']),
+  "controlPairs": zod.number(),
+  "reasons": zod.array(zod.string()),
+  "controls": zod.array(zod.object({
+  "comparison": zod.string(),
+  "pairs": zod.number(),
+  "votes": zod.number(),
+  "detected": zod.number(),
+  "detectionRate": zod.number().nullable()
+}))
+}).optional().describe('B-08 - what the session\'s positive-control pairs say; Gate C is withheld unless verdict is may_judge_training')
 })
 }),
   "createdAt": zod.string(),
@@ -22948,7 +23008,19 @@ export const CloseListeningSessionResponse = zod.object({
   "releaseShare": zod.number().nullable(),
   "minRaters": zod.number(),
   "minWinShare": zod.number(),
-  "reason": zod.string()
+  "reason": zod.string(),
+  "sensitivity": zod.object({
+  "verdict": zod.enum(['insufficient_data', 'not_sensitive', 'may_judge_training']),
+  "controlPairs": zod.number(),
+  "reasons": zod.array(zod.string()),
+  "controls": zod.array(zod.object({
+  "comparison": zod.string(),
+  "pairs": zod.number(),
+  "votes": zod.number(),
+  "detected": zod.number(),
+  "detectionRate": zod.number().nullable()
+}))
+}).optional().describe('B-08 - what the session\'s positive-control pairs say; Gate C is withheld unless verdict is may_judge_training')
 })
 }),
   "createdAt": zod.string(),
