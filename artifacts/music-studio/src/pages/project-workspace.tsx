@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useRoute } from "wouter";
+import { Link, useRoute } from "wouter";
 import {
   useGetProject,
   useListArrangements,
@@ -1371,9 +1371,15 @@ export default function ProjectWorkspace() {
                     </Button>
                   </div>
                   {activeArrangement && (
-                    <Badge variant={activeArrangement.status === 'generating' ? 'secondary' : 'outline'} className="font-mono bg-card shadow-sm">
-                      {activeArrangement.status}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      {/* Brain B-11: the read-only decision trace of this version. */}
+                      <Link href={`/projects/${projectId}/arrangements/${activeArrangement.id}/trace`}>
+                        <Button variant="outline" size="sm" className="bg-card" data-testid="button-decision-trace">Decision trace</Button>
+                      </Link>
+                      <Badge variant={activeArrangement.status === 'generating' ? 'secondary' : 'outline'} className="font-mono bg-card shadow-sm">
+                        {activeArrangement.status}
+                      </Badge>
+                    </div>
                   )}
                 </div>
 

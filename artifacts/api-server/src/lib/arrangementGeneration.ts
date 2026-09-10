@@ -78,6 +78,7 @@ import {
   strategyForCandidate,
 } from "./candidateDiversity";
 import { adoptBrainPlan, readArrangementBrainEvidence } from "./brainPlanAdoption";
+import { arrangementTelemetry, candidateBrainTelemetry } from "./brainTelemetry";
 import {
   applyBoundedRepair,
   boundedRepairSourceSeed,
@@ -1594,6 +1595,9 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
             baseSeed: job.seed,
             seed: candidate.seed,
           },
+          // B-11: the compact index of the brain's evidence (failure codes
+          // with origin, decisions, repairs, timing); null for other providers.
+          ...((() => { const brainTelemetry = candidateBrainTelemetry(candidate.parameters); return brainTelemetry ? { brainTelemetry } : {}; })()),
           ...(snapshot.repair
             ? {
                 repair: {
@@ -2525,10 +2529,21 @@ export async function selectGenerationCandidate(
     const generatedTrackModels = evaluatedTrackModels;
     const selectedPlanArtifactId = randomUUID();
     const trackModels = generatedTrackModels;
+    const arrangementId = randomUUID();
+    // B-11: the failure codes of the shipped candidate and what changed
+    // against the version this one was derived from, persisted with the row
+    // so "what changed between N and N+1" is an answer, not an offline diff.
+    const telemetry = arrangementTelemetry({
+      parameters: candidate.parameters,
+      parent: source.trackModels.length || source.plan
+        ? { id: source.id, name: source.name, version: source.version, plan: source.plan, trackModels: source.trackModels }
+        : null,
+      next: { id: arrangementId, name: `${source.name} · ${candidate.label}`, version: nextVersion, plan, trackModels },
+    });
     const [arrangement] = await tx
       .insert(arrangementsTable)
       .values({
-        id: randomUUID(),
+        id: arrangementId,
         projectId: source.projectId,
         name: `${source.name} · ${candidate.label}`,
         style: evaluatedArrangement.style,
@@ -2571,6 +2586,7 @@ export async function selectGenerationCandidate(
           parameters: candidate.parameters,
           parentArtifactIds: candidate.parentArtifactIds,
           evaluation: candidate.evaluation,
+          telemetry,
         },
       })
       .returning();

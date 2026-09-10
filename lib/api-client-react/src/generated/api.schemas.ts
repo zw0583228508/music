@@ -5088,6 +5088,457 @@ export interface ArrangementDetail {
   provenance: ArtifactProvenance | null;
 }
 
+/**
+ * Brain B-11 / B-05b - the layer a decision or failure belongs to.
+ */
+export type DecisionOriginLayer = typeof DecisionOriginLayer[keyof typeof DecisionOriginLayer];
+
+
+export const DecisionOriginLayer = {
+  brief: 'brief',
+  arc: 'arc',
+  form: 'form',
+  harmony: 'harmony',
+  groove: 'groove',
+  orchestration: 'orchestration',
+  register: 'register',
+  compose: 'compose',
+  perform: 'perform',
+  render: 'render',
+  mix: 'mix',
+  unknown: 'unknown',
+} as const;
+
+/**
+ * The closed failure taxonomy (critics/failureTaxonomy.ts, FAILURE_TAXONOMY_v1).
+ */
+export type ArrangementFailureCode = typeof ArrangementFailureCode[keyof typeof ArrangementFailureCode];
+
+
+export const ArrangementFailureCode = {
+  GLOBAL_COHERENCE_FAILURE: 'GLOBAL_COHERENCE_FAILURE',
+  FORM_FAILURE: 'FORM_FAILURE',
+  ENERGY_ARC_FAILURE: 'ENERGY_ARC_FAILURE',
+  MOTIF_FAILURE: 'MOTIF_FAILURE',
+  HARMONY_FAILURE: 'HARMONY_FAILURE',
+  VOICE_LEADING_FAILURE: 'VOICE_LEADING_FAILURE',
+  GROOVE_FAILURE: 'GROOVE_FAILURE',
+  ORCHESTRATION_FAILURE: 'ORCHESTRATION_FAILURE',
+  REGISTER_FAILURE: 'REGISTER_FAILURE',
+  DENSITY_FAILURE: 'DENSITY_FAILURE',
+  PLAYABILITY_FAILURE: 'PLAYABILITY_FAILURE',
+  IDIOM_FAILURE: 'IDIOM_FAILURE',
+  STYLE_FAILURE: 'STYLE_FAILURE',
+  TRANSITION_FAILURE: 'TRANSITION_FAILURE',
+  REPETITION_FAILURE: 'REPETITION_FAILURE',
+  PREDICTABILITY_FAILURE: 'PREDICTABILITY_FAILURE',
+  CAUSALITY_FAILURE: 'CAUSALITY_FAILURE',
+  MASKING_FAILURE: 'MASKING_FAILURE',
+  VOCAL_SPACE_FAILURE: 'VOCAL_SPACE_FAILURE',
+  PERFORMANCE_FAILURE: 'PERFORMANCE_FAILURE',
+  RENDER_FAILURE: 'RENDER_FAILURE',
+  AUDIO_BALANCE_FAILURE: 'AUDIO_BALANCE_FAILURE',
+  PLAN_REALISATION_FAILURE: 'PLAN_REALISATION_FAILURE',
+  INPUT_UNKNOWN: 'INPUT_UNKNOWN',
+} as const;
+
+export type FailureCodeCountSeverity = typeof FailureCodeCountSeverity[keyof typeof FailureCodeCountSeverity];
+
+
+export const FailureCodeCountSeverity = {
+  error: 'error',
+  warning: 'warning',
+  info: 'info',
+} as const;
+
+export interface FailureCodeCount {
+  failureCode: ArrangementFailureCode;
+  originLayer: DecisionOriginLayer;
+  count: number;
+  severity: FailureCodeCountSeverity;
+}
+
+export type RevisionStemEvidenceRendererStatus = typeof RevisionStemEvidenceRendererStatus[keyof typeof RevisionStemEvidenceRendererStatus];
+
+
+export const RevisionStemEvidenceRendererStatus = {
+  'licensed-native': 'licensed-native',
+  'preview-only': 'preview-only',
+} as const;
+
+export type RevisionStemEvidenceGate = {
+  passed: boolean;
+  reasons: string[];
+};
+
+/**
+ * Brain B-11 (D4) - one stem of a mix/master revision or export, who rendered it and whether the gates let it through.
+ */
+export interface RevisionStemEvidence {
+  trackId: string;
+  trackName: string;
+  role: string;
+  instrument: string;
+  renderer: string;
+  rendererStatus: RevisionStemEvidenceRendererStatus;
+  /** @nullable */
+  assetId: string | null;
+  /** @nullable */
+  assetIdentity: string | null;
+  /** @nullable */
+  soundSelection: string | null;
+  /** @nullable */
+  fallbackReason: string | null;
+  gate: RevisionStemEvidenceGate;
+}
+
+export interface DecisionTraceReason {
+  /** @nullable */
+  decisionId: string | null;
+  layer: DecisionOriginLayer;
+  /** @nullable */
+  source: string | null;
+  reason: string;
+}
+
+export type DecisionTraceEntryStatus = typeof DecisionTraceEntryStatus[keyof typeof DecisionTraceEntryStatus];
+
+
+export const DecisionTraceEntryStatus = {
+  entered: 'entered',
+  silent: 'silent',
+  not_planned: 'not_planned',
+} as const;
+
+export interface DecisionTraceEntry {
+  sectionName: string;
+  startBar: number;
+  endBar: number;
+  family: string;
+  status: DecisionTraceEntryStatus;
+  noteCount: number;
+  reasons: DecisionTraceReason[];
+}
+
+export type DecisionTraceVoicingRangesItem = {
+  startBar: number;
+  endBar: number;
+  decisions: DecisionTraceReason[];
+};
+
+export type DecisionTraceVoicingNotRecordedItem = {
+  layer: DecisionOriginLayer;
+  reason: string;
+};
+
+export interface DecisionTraceVoicing {
+  trackId: string;
+  instrument: string;
+  role: string;
+  noteCount: number;
+  ranges: DecisionTraceVoicingRangesItem[];
+  notRecorded: DecisionTraceVoicingNotRecordedItem[];
+}
+
+export type DecisionTraceFindingSource = typeof DecisionTraceFindingSource[keyof typeof DecisionTraceFindingSource];
+
+
+export const DecisionTraceFindingSource = {
+  brain: 'brain',
+  critic_hard_rule: 'critic_hard_rule',
+  critic_dimension: 'critic_dimension',
+  runner_music_critic: 'runner_music_critic',
+  runner_audio_critic: 'runner_audio_critic',
+  render_gate: 'render_gate',
+  mix: 'mix',
+} as const;
+
+export type DecisionTraceFindingSeverity = typeof DecisionTraceFindingSeverity[keyof typeof DecisionTraceFindingSeverity];
+
+
+export const DecisionTraceFindingSeverity = {
+  error: 'error',
+  warning: 'warning',
+  info: 'info',
+} as const;
+
+export interface DecisionTraceFinding {
+  source: DecisionTraceFindingSource;
+  kind: string;
+  severity: DecisionTraceFindingSeverity;
+  failureCode: ArrangementFailureCode | null;
+  originLayer: DecisionOriginLayer | null;
+  /** @nullable */
+  sectionName: string | null;
+  /** @nullable */
+  instrument: string | null;
+  trackIds: string[];
+  /** @nullable */
+  startBar: number | null;
+  /** @nullable */
+  endBar: number | null;
+  /** @nullable */
+  startSeconds: number | null;
+  /** @nullable */
+  endSeconds: number | null;
+  message: string;
+}
+
+export type DecisionTraceRepairSource = typeof DecisionTraceRepairSource[keyof typeof DecisionTraceRepairSource];
+
+
+export const DecisionTraceRepairSource = {
+  critic_repair_loop: 'critic_repair_loop',
+  playability_repair: 'playability_repair',
+  bounded_repair: 'bounded_repair',
+} as const;
+
+export type DecisionTraceRepairCounts = {
+  rangeFolds: number;
+  leapFolds: number;
+  durationLengthened: number;
+  breathTruncated: number;
+  polyphonyReleases: number;
+  dropped: number;
+  residual: string[];
+} | null;
+
+export type DecisionTraceRepairChangedScopesItemLevel = typeof DecisionTraceRepairChangedScopesItemLevel[keyof typeof DecisionTraceRepairChangedScopesItemLevel];
+
+
+export const DecisionTraceRepairChangedScopesItemLevel = {
+  song: 'song',
+  section: 'section',
+  phrase: 'phrase',
+  bar: 'bar',
+  event: 'event',
+} as const;
+
+export type DecisionTraceRepairChangedScopesItem = {
+  level: DecisionTraceRepairChangedScopesItemLevel;
+  id: string;
+};
+
+export interface DecisionTraceRepair {
+  source: DecisionTraceRepairSource;
+  /** @nullable */
+  pass: number | null;
+  applied: string[];
+  requested: string[];
+  changed: boolean;
+  /** @nullable */
+  scoreBefore: number | null;
+  /** @nullable */
+  scoreAfter: number | null;
+  /** @nullable */
+  trackId: string | null;
+  counts: DecisionTraceRepairCounts;
+  changedScopes: DecisionTraceRepairChangedScopesItem[];
+  /** @nullable */
+  outsideScopePreserved: boolean | null;
+  detail: string;
+}
+
+export type DecisionTraceRendererReadiness = {
+  ready: boolean;
+  status: string;
+  reasons: string[];
+} | null;
+
+export interface DecisionTraceRenderer {
+  source: string;
+  sourceId: string;
+  /** @nullable */
+  createdAt: string | null;
+  stems: RevisionStemEvidence[];
+  readiness: DecisionTraceRendererReadiness;
+}
+
+export type CandidateDiffTrackStatus = typeof CandidateDiffTrackStatus[keyof typeof CandidateDiffTrackStatus];
+
+
+export const CandidateDiffTrackStatus = {
+  added: 'added',
+  removed: 'removed',
+  changed: 'changed',
+  unchanged: 'unchanged',
+} as const;
+
+export type CandidateDiffTrackRangesItem = {
+  startBar: number;
+  endBar: number;
+  added: number;
+  removed: number;
+  changed: number;
+};
+
+export interface CandidateDiffTrack {
+  trackId: string;
+  instrument: string;
+  status: CandidateDiffTrackStatus;
+  notesBefore: number;
+  notesAfter: number;
+  added: number;
+  removed: number;
+  changed: number;
+  ranges: CandidateDiffTrackRangesItem[];
+}
+
+export type CandidateDiffVersion = typeof CandidateDiffVersion[keyof typeof CandidateDiffVersion];
+
+
+export const CandidateDiffVersion = {
+  '10': '1.0',
+} as const;
+
+export type CandidateDiffBefore = {
+  id: string;
+  label: string;
+};
+
+export type CandidateDiffAfter = {
+  id: string;
+  label: string;
+};
+
+export type CandidateDiffPlanItem = {
+  path: string;
+  /** @nullable */
+  before: string | null;
+  /** @nullable */
+  after: string | null;
+};
+
+export type CandidateDiffSummary = {
+  tracksChanged: number;
+  notesAdded: number;
+  notesRemoved: number;
+  notesChanged: number;
+  planFieldsChanged: number;
+};
+
+/**
+ * Brain B-11 - what changed between iteration N and N+1 (per-track bar ranges and plan fields).
+ */
+export interface CandidateDiff {
+  version: CandidateDiffVersion;
+  before: CandidateDiffBefore;
+  after: CandidateDiffAfter;
+  /** @nullable */
+  barSeconds: number | null;
+  tracks: CandidateDiffTrack[];
+  plan: CandidateDiffPlanItem[];
+  summary: CandidateDiffSummary;
+}
+
+export type DecisionTraceVersion = typeof DecisionTraceVersion[keyof typeof DecisionTraceVersion];
+
+
+export const DecisionTraceVersion = {
+  '10': '1.0',
+} as const;
+
+export type DecisionTraceArrangement = {
+  id: string;
+  name: string;
+  version: number;
+  projectId: string;
+  /** @nullable */
+  provider: string | null;
+  /** @nullable */
+  candidateId: string | null;
+  /** @nullable */
+  parentArrangementId: string | null;
+  /** @nullable */
+  createdAt: string | null;
+};
+
+export type DecisionTraceTiming = {
+  /** @nullable */
+  tempoBpm: number | null;
+  /** @nullable */
+  tempoAssumed: boolean | null;
+  /** @nullable */
+  meter: string | null;
+  /** @nullable */
+  meterAssumed: boolean | null;
+  source: string;
+};
+
+export type DecisionTracePerformanceItem = {
+  trackId: string;
+  engine: string;
+  engineVersion: string;
+  profile: string;
+  reasonedNotes: number;
+  measuredNotes: number;
+  /** @nullable */
+  meanTimingOffsetMs: number | null;
+  /** @nullable */
+  meanVelocityDelta: number | null;
+  addedNotes: number;
+};
+
+export type DecisionTraceContextPassesItem = {
+  id: string;
+  changed: number;
+  note: string;
+};
+
+export type DecisionTraceStagesItemStatus = typeof DecisionTraceStagesItemStatus[keyof typeof DecisionTraceStagesItemStatus];
+
+
+export const DecisionTraceStagesItemStatus = {
+  ok: 'ok',
+  skipped: 'skipped',
+  failed: 'failed',
+} as const;
+
+export type DecisionTraceStagesItemEvidence = { [key: string]: unknown };
+
+export type DecisionTraceStagesItem = {
+  stage: string;
+  status: DecisionTraceStagesItemStatus;
+  detail: string;
+  evidence?: DecisionTraceStagesItemEvidence;
+};
+
+export type DecisionTraceSelection = {
+  /** @nullable */
+  reason: string | null;
+  /** @nullable */
+  score: number | null;
+  /** @nullable */
+  confidence: number | null;
+};
+
+export type DecisionTraceNotRecordedItem = {
+  question: string;
+  layer: DecisionOriginLayer;
+  reason: string;
+};
+
+/**
+ * Brain B-11 - the seven questions answered from stored rows only.
+ */
+export interface DecisionTrace {
+  version: DecisionTraceVersion;
+  arrangement: DecisionTraceArrangement;
+  timing: DecisionTraceTiming;
+  entries: DecisionTraceEntry[];
+  voicings: DecisionTraceVoicing[];
+  findings: DecisionTraceFinding[];
+  failureCodes: FailureCodeCount[];
+  repairs: DecisionTraceRepair[];
+  renderers: DecisionTraceRenderer[];
+  diff: CandidateDiff | null;
+  performance: DecisionTracePerformanceItem[];
+  contextPasses: DecisionTraceContextPassesItem[];
+  stages: DecisionTraceStagesItem[];
+  selection: DecisionTraceSelection;
+  notRecorded: DecisionTraceNotRecordedItem[];
+}
+
 export interface ArrangementRevisionSummary {
   affectedSections: string[];
   affectedTracks: string[];
@@ -6713,6 +7164,12 @@ export type MixMasterRevisionEvidenceQuality = {
   findings: MixMasterFinding[];
 };
 
+export type MixMasterRevisionEvidenceReadiness = {
+  ready: boolean;
+  status: string;
+  reasons: string[];
+};
+
 export type MixMasterRevisionEvidence = {
   arrangementId: string;
   arrangementVersion: number;
@@ -6723,6 +7180,9 @@ export type MixMasterRevisionEvidence = {
   variants: MixMasterRevisionEvidenceVariants;
   renderer: string;
   quality: MixMasterRevisionEvidenceQuality;
+  /** Brain B-11 (D4) - per-stem renderer, asset, sound-selection reason and gate outcome; absent on revisions created before it. */
+  stems?: RevisionStemEvidence[];
+  readiness?: MixMasterRevisionEvidenceReadiness;
 };
 
 export interface MixMasterRevision {

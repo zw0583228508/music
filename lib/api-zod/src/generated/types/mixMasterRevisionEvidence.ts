@@ -6,7 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { MixMasterRevisionEvidenceQuality } from './mixMasterRevisionEvidenceQuality';
+import type { MixMasterRevisionEvidenceReadiness } from './mixMasterRevisionEvidenceReadiness';
 import type { MixMasterRevisionEvidenceVariants } from './mixMasterRevisionEvidenceVariants';
+import type { RevisionStemEvidence } from './revisionStemEvidence';
 
 export type MixMasterRevisionEvidence = {
   arrangementId: string;
@@ -18,4 +20,7 @@ export type MixMasterRevisionEvidence = {
   variants: MixMasterRevisionEvidenceVariants;
   renderer: string;
   quality: MixMasterRevisionEvidenceQuality;
+  /** Brain B-11 (D4) - per-stem renderer, asset, sound-selection reason and gate outcome; absent on revisions created before it. */
+  stems?: RevisionStemEvidence[];
+  readiness?: MixMasterRevisionEvidenceReadiness;
 };

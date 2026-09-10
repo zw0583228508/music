@@ -660,6 +660,9 @@ export type MixMasterRevisionEvidence = {
   };
   renderer: string;
   quality: { integratedLufs: number; truePeakDbtp: number; truePeakMethod: "4x-windowed-sinc-estimate"; findings: MixMasterFinding[] };
+  /** Brain B-11: per-stem renderer, asset, sound-selection reason and gate outcome - the same facts the export manifest carries. */
+  stems?: RevisionStemEvidence[];
+  readiness?: { ready: boolean; status: string; reasons: string[] };
 };
 
 export type SongModelField =
@@ -2042,6 +2045,8 @@ export type ArrangementGenerationProvenance = {
   parameters: GenerationParameters;
   parentArtifactIds: string[];
   evaluation: CandidateEvaluation;
+  /** Brain B-11: failure codes of the shipped candidate and the diff against the parent version. */
+  telemetry?: ArrangementTelemetry;
 };
 
 export type CandidateEvaluationStatus =
@@ -2190,6 +2195,8 @@ export type TrackModel = {
   mapping?: TrackMappingMetadata;
   /** Deterministic performance decisions and canonical timeline binding. */
   performanceEvidence?: TrackPerformanceEvidence;
+  /** Brain B-11: which decisions authored which bar ranges of this track (ids into the candidate's `decisions`). */
+  decisionProvenance?: TrackDecisionProvenance;
   harmonyEvidence?: {
     version: "2.0";
     mode: "advanced_voicing" | "phrase_countermelody";
@@ -4034,6 +4041,9 @@ export type ArrangementBrainFinding = {
   startBar?: number;
   endBar?: number;
   message: string;
+  // --- Brain B-11: the finding's place in the failure taxonomy ---------------
+  failureCode?: ArrangementFailureCode;
+  originLayer?: DecisionOriginLayer;
 };
 
 export type ArrangementBrainStageRecord = {
@@ -4088,6 +4098,306 @@ export type ArrangementBrainCandidateEvidence = {
   confidence: { value: number; formula: string; inputs: Record<string, number> };
   /** False when the brain itself would not have selected this candidate (hard-rule failure). */
   selectable: boolean;
+  // --- Brain B-11: decision provenance and telemetry -------------------------
+  /** Every decision the trace can point at (arc, part plan, density, performance, repair); tracks reference them by id. */
+  decisions?: DecisionRecord[];
+  parts?: PartCompositionTelemetry[];
+  performance?: TrackPerformanceTelemetry[];
+  /** The context passes that changed notes (context-aware path); empty when the path was off. */
+  contextPasses?: Array<{ id: string; changed: number; note: string }>;
+  timing?: { tempoBpm: number; tempoAssumed: boolean; meter: string; meterAssumed: boolean };
+  failureCodes?: FailureCodeCount[];
+};
+
+// ===========================================================================
+// Brain B-11 (observability): decision provenance, failure codes with origin,
+// candidate telemetry, the N -> N+1 diff and the decision trace
+//
+// Everything in this block is additive and optional on the rows that carry
+// it. The contract for other streams (B-02 harmony, B-04 groove, B-10 motif)
+// is documented in docs/brain/04-decision-provenance.md: a layer that authors
+// notes registers a `DecisionRecord` (layer, kind, reason) and either tags
+// the notes it wrote with the decision id (`MusicalNote.decisionId`) or asks
+// the registry to attach a bar range. The persisted form is ranges, not
+// per-note objects.
+// ===========================================================================
+
+/**
+ * The layer a decision or a failure belongs to. Identical to the critics'
+ * `OriginLayer` (critics/types.b05b.ts); a test keeps the two unions equal.
+ */
+export type DecisionOriginLayer =
+  | "brief" | "arc" | "form" | "harmony" | "groove" | "orchestration" | "register"
+  | "compose" | "perform" | "render" | "mix" | "unknown";
+
+/** The closed failure code list of critics/failureTaxonomy.ts (FAILURE_TAXONOMY_v1); a test keeps the two lists equal. */
+export type ArrangementFailureCode =
+  | "GLOBAL_COHERENCE_FAILURE" | "FORM_FAILURE" | "ENERGY_ARC_FAILURE" | "MOTIF_FAILURE"
+  | "HARMONY_FAILURE" | "VOICE_LEADING_FAILURE" | "GROOVE_FAILURE" | "ORCHESTRATION_FAILURE"
+  | "REGISTER_FAILURE" | "DENSITY_FAILURE" | "PLAYABILITY_FAILURE" | "IDIOM_FAILURE"
+  | "STYLE_FAILURE" | "TRANSITION_FAILURE" | "REPETITION_FAILURE" | "PREDICTABILITY_FAILURE"
+  | "CAUSALITY_FAILURE" | "MASKING_FAILURE" | "VOCAL_SPACE_FAILURE" | "PERFORMANCE_FAILURE"
+  | "RENDER_FAILURE" | "AUDIO_BALANCE_FAILURE" | "PLAN_REALISATION_FAILURE" | "INPUT_UNKNOWN";
+
+/** A finding's place in the taxonomy: which code, and which layer is suspected to have caused it. */
+export type FailureClassification = {
+  failureCode: ArrangementFailureCode;
+  originLayer: DecisionOriginLayer;
+};
+
+/**
+ * One musical decision, by any layer, with the reason it was taken. Ids are
+ * `<layer>:<kind>:<qualifier>` (see `decisionId()` in decisionProvenance.ts)
+ * and are unique within one candidate. `refs` name the decisions this one
+ * followed from (a part task follows from an arc entry, a repair pass from a
+ * critic request), so the chain plan -> part -> notes -> repair is walkable.
+ */
+export type DecisionRecord = {
+  id: string;
+  layer: DecisionOriginLayer;
+  /** e.g. `family_entry`, `family_exit`, `part_task`, `lead_kept_as_bed`, `density`, `voicing`, `groove_cell`, `performance`, `playability_repair`, `repair_pass`. */
+  kind: string;
+  sectionName?: string;
+  instrument?: string;
+  startBar?: number;
+  endBar?: number;
+  /** Where the value came from when the layer says (an arc's `brief` / `template` / `source_prior` / `default`). */
+  source?: string;
+  reason: string;
+  refs?: string[];
+};
+
+/**
+ * A bar range of one track and the decisions that authored the notes in it.
+ * A note whose onset lies in [startBar, endBar] is attributed to every listed
+ * decision; a note that also carries `decisionId` is attributed to that
+ * decision first (the finer grain wins).
+ */
+export type DecisionProvenanceRange = {
+  startBar: number;
+  endBar: number;
+  decisionIds: string[];
+};
+
+export type TrackDecisionProvenance = {
+  version: "1.0";
+  ranges: DecisionProvenanceRange[];
+  /** Layers that recorded nothing for this track, with the reason (never a guess). */
+  notRecorded?: Array<{ layer: DecisionOriginLayer; reason: string }>;
+};
+
+/** What one part task composed for one candidate (the raw count and what density thinning kept). */
+export type PartCompositionTelemetry = {
+  taskId: string;
+  decisionId: string;
+  task: string;
+  instrument: string;
+  role: string;
+  sectionName: string;
+  startBar: number;
+  endBar: number;
+  seed: number;
+  composedNotes: number;
+  keptNotes: number;
+  densityMultiplier: number;
+};
+
+/**
+ * The performance layer's decisions for one track in a compact form: the
+ * engine's reasoned sample (capped at its MAX_DECISION_SAMPLE) plus, for
+ * every composed note that survived performance, the measured timing offset
+ * and velocity delta aligned with `noteIds`. Notes the performance added
+ * (ghosts, flams, fills) are counted, not listed.
+ */
+export type TrackPerformanceTelemetry = {
+  trackId: string;
+  engine: string;
+  engineVersion: string;
+  profile: string;
+  sampleCap: number;
+  sample: PerformanceDecision[];
+  noteIds: string[];
+  /** Milliseconds, one per `noteIds` entry, rounded to 0.1 ms. */
+  timingOffsetsMs: number[];
+  /** Velocity after minus velocity before, one per `noteIds` entry. */
+  velocityDeltas: number[];
+  addedNotes: number;
+  removedNotes: number;
+  /** Set when the per-note arrays were cut at this many notes to bound the row; the engine's sample and the counts are still complete. */
+  truncatedAt?: number;
+};
+
+export type FailureCodeCount = {
+  failureCode: ArrangementFailureCode;
+  originLayer: DecisionOriginLayer;
+  count: number;
+  severity: "error" | "warning" | "info";
+};
+
+/** Per-candidate telemetry persisted on `evaluation.brainTelemetry` (job runner) - the compact index of the brain's evidence. */
+export type CandidateBrainTelemetry = {
+  version: "1.0";
+  orchestratorVersion: string;
+  composer: string;
+  traceable: boolean;
+  selectable: boolean;
+  shippedScore: number;
+  compositionScore: number;
+  failureCodes: FailureCodeCount[];
+  decisions: number;
+  repairPasses: number;
+  appliedRepairPasses: number;
+  playabilityRepairedTracks: number;
+  timing: { tempoBpm: number; tempoAssumed: boolean; meter: string; meterAssumed: boolean } | null;
+};
+
+/** A bar range of one track that changed between two versions. */
+export type CandidateDiffRange = {
+  startBar: number;
+  endBar: number;
+  added: number;
+  removed: number;
+  changed: number;
+};
+
+export type CandidateDiffTrack = {
+  trackId: string;
+  instrument: string;
+  status: "added" | "removed" | "changed" | "unchanged";
+  notesBefore: number;
+  notesAfter: number;
+  added: number;
+  removed: number;
+  changed: number;
+  ranges: CandidateDiffRange[];
+};
+
+/**
+ * What changed between iteration N and N+1 (a parent arrangement version and
+ * the version derived from it, or a source candidate and its bounded repair):
+ * per track the note ranges that differ, and the plan fields that differ.
+ */
+export type CandidateDiff = {
+  version: "1.0";
+  before: { id: string; label: string };
+  after: { id: string; label: string };
+  barSeconds: number | null;
+  tracks: CandidateDiffTrack[];
+  plan: Array<{ path: string; before: string | null; after: string | null }>;
+  summary: { tracksChanged: number; notesAdded: number; notesRemoved: number; notesChanged: number; planFieldsChanged: number };
+};
+
+/** Arrangement-row telemetry (`generationProvenance.telemetry`). */
+export type ArrangementTelemetry = {
+  version: "1.0";
+  failureCodes: FailureCodeCount[];
+  parentArrangementId: string | null;
+  parentVersion: number | null;
+  candidateDiff: CandidateDiff | null;
+};
+
+/** One stem of a mix/master revision: who rendered it and why, and whether the gates let it through. */
+export type RevisionStemEvidence = {
+  trackId: string;
+  trackName: string;
+  role: string;
+  instrument: string;
+  renderer: string;
+  rendererStatus: "licensed-native" | "preview-only";
+  assetId: string | null;
+  assetIdentity: string | null;
+  soundSelection: string | null;
+  fallbackReason: string | null;
+  gate: { passed: boolean; reasons: string[] };
+};
+
+// ---------------------------------------------------------------------------
+// The decision trace (GET /api/arrangements/:id/decision-trace): the seven
+// questions answered from stored rows only. Where a layer recorded nothing
+// the answer is `not recorded by <layer>: <reason>` - never a reconstruction.
+// ---------------------------------------------------------------------------
+
+export type DecisionTraceReason = {
+  decisionId: string | null;
+  layer: DecisionOriginLayer;
+  source: string | null;
+  reason: string;
+};
+
+export type DecisionTraceEntry = {
+  sectionName: string;
+  startBar: number;
+  endBar: number;
+  family: string;
+  status: "entered" | "silent" | "not_planned";
+  noteCount: number;
+  reasons: DecisionTraceReason[];
+};
+
+export type DecisionTraceVoicing = {
+  trackId: string;
+  instrument: string;
+  role: string;
+  noteCount: number;
+  ranges: Array<{ startBar: number; endBar: number; decisions: DecisionTraceReason[] }>;
+  notRecorded: Array<{ layer: DecisionOriginLayer; reason: string }>;
+};
+
+export type DecisionTraceFinding = {
+  source: "brain" | "critic_hard_rule" | "critic_dimension" | "runner_music_critic" | "runner_audio_critic" | "render_gate" | "mix";
+  kind: string;
+  severity: "error" | "warning" | "info";
+  failureCode: ArrangementFailureCode | null;
+  originLayer: DecisionOriginLayer | null;
+  sectionName: string | null;
+  instrument: string | null;
+  trackIds: string[];
+  startBar: number | null;
+  endBar: number | null;
+  startSeconds: number | null;
+  endSeconds: number | null;
+  message: string;
+};
+
+export type DecisionTraceRepair = {
+  source: "critic_repair_loop" | "playability_repair" | "bounded_repair";
+  pass: number | null;
+  applied: string[];
+  requested: string[];
+  changed: boolean;
+  scoreBefore: number | null;
+  scoreAfter: number | null;
+  trackId: string | null;
+  counts: PlayabilityRepairCounts | null;
+  changedScopes: ArrangementHierarchyScope[];
+  outsideScopePreserved: boolean | null;
+  detail: string;
+};
+
+export type DecisionTraceRenderer = {
+  source: string;
+  sourceId: string;
+  createdAt: string | null;
+  stems: RevisionStemEvidence[];
+  readiness: { ready: boolean; status: string; reasons: string[] } | null;
+};
+
+export type DecisionTrace = {
+  version: "1.0";
+  arrangement: { id: string; name: string; version: number; projectId: string; provider: string | null; candidateId: string | null; parentArrangementId: string | null; createdAt: string | null };
+  timing: { tempoBpm: number | null; tempoAssumed: boolean | null; meter: string | null; meterAssumed: boolean | null; source: string };
+  entries: DecisionTraceEntry[];
+  voicings: DecisionTraceVoicing[];
+  findings: DecisionTraceFinding[];
+  failureCodes: FailureCodeCount[];
+  repairs: DecisionTraceRepair[];
+  renderers: DecisionTraceRenderer[];
+  diff: CandidateDiff | null;
+  performance: Array<{ trackId: string; engine: string; engineVersion: string; profile: string; reasonedNotes: number; measuredNotes: number; meanTimingOffsetMs: number | null; meanVelocityDelta: number | null; addedNotes: number }>;
+  contextPasses: Array<{ id: string; changed: number; note: string }>;
+  stages: ArrangementBrainStageRecord[];
+  selection: { reason: string | null; score: number | null; confidence: number | null };
+  notRecorded: Array<{ question: string; layer: DecisionOriginLayer; reason: string }>;
 };
 
 /** Deliberate candidate-generation strategies (PR-10). */
@@ -4161,6 +4471,8 @@ export type ArrangementPlan = {
 export type MusicalNote = {
   id: string; start: number; duration: number; pitch: number; velocity: number;
   channel?: number; voice?: string;
+  /** Brain B-11: the decision (DecisionRecord.id) that authored this note, when the authoring layer tags notes. */
+  decisionId?: string;
   /** Canonical motif decision that authored this event. */
   motif?: {
     id: string;
@@ -4269,6 +4581,8 @@ export type CandidateEvaluation = {
   strategy?: CandidateStrategyEvidence;
   diversity?: CandidateDiversityEvidence;
   repair?: CandidateRepairEvidence;
+  /** Brain B-11: the compact index of the brain's evidence for this candidate (failure codes, decisions, timing). */
+  brainTelemetry?: CandidateBrainTelemetry;
 };
 
 export type CandidateRepairEvidence = {

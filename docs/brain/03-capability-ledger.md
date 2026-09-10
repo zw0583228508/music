@@ -13,7 +13,7 @@ judged). "—" = does not exist.
 | Physical playability (range, polyphony, leap, breath) | T (calibrated on 30,570 human windows) | `judge-calibration.json`, `musicalConstraints.test.ts` | keep; B-00 documents the three-validator disagreement |
 | Playability repair (fold / release) | T | `playabilityRepair.test.ts` (6, vs the contract validator) | PR-98; B-02 must make it rarely needed |
 | Native-render plausibility gate | T (positive control: the owner's drone) | `nativeRenderGate.test.ts` | PR-98 |
-| Per-stem renderer attestation in the export | N | export manifest of v6 | PR-98; B-07 extends to the revision evidence |
+| Per-stem renderer attestation in the export | N | export manifest of v6 | PR-98; **B-11 (PR-B11): the mix/master revision evidence now carries the same per-stem table (`evidence.stems`, T)**; B-07 for the production render loop |
 | Arrangement arc (intended dynamics, texture, tension roles) | D (types only; source RMS used as intent) | diagnosis §1 | B-01 |
 | Form memory / section development operators | D | diagnosis §2 | B-01 |
 | Sung-section default; no accompaniment family as LEAD; `mix` never a family | — (defect) | stored plan of v3 | B-01 |
@@ -46,8 +46,8 @@ judged). "—" = does not exist.
 | Human A/B with positive controls in every session | I (V2 infra) / no votes | evaluation audit §3 | B-08 |
 | Style intelligence as one contract (`StyleGrammar`) | I (13 rule kinds, 2 consumed) | audit §1.8 | B-09 |
 | Motif ledger consumed by generation | — | diagnosis §4 | B-10 |
-| Observability: why this instrument / voicing / critic / repair / diff | — | audit §7 | B-11 |
-| Failure taxonomy with origin layer | — | evaluation audit §6 | B-11 |
+| Observability: why this instrument / voicing / critic / repair / diff | T (PR-B11: decision provenance per bar range, `GET /arrangements/:id/decision-trace`, studio panel; voicing / groove / register still `not recorded` until B-02 / B-04 / B-03 register decisions) | `brain-b11-observability.json` | B-11 |
+| Failure taxonomy with origin layer | T (PR-B11: `classifyFinding`, codes + `originLayer` persisted on candidate findings, `evaluation.brainTelemetry`, `generationProvenance.telemetry`) | `findingClassification.test.ts` | B-11; critics' dimension findings still uncoded (B-05) |
 | Property / metamorphic / fuzz tests on musical invariants | — | audit §6 | B-12 |
 | Chain suites registered in the focused runner | partial (14 missing) | audit §6.1 | B-00 |
 | Whole-arrangement human judgement of a brain output | — (never) | `human-blind-ratings-live.json` scope | B-08 + every stream's gate |

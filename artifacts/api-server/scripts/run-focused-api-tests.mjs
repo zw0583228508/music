@@ -791,6 +791,17 @@ const suites = {
       ["src/lib/brainB01RachemNa.test.ts", "brain-b01-rachem-na.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
     ],
   },
+  "brain-b11": {
+    bundles: [
+      ["src/lib/arrangementOrchestrator.b11.test.ts", "arrangement-orchestrator.b11.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/brainB11Evidence.test.ts", "brain-b11-evidence.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/candidateDiff.test.ts", "candidate-diff.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/decisionProvenance.test.ts", "decision-provenance.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/decisionTrace.test.ts", "decision-trace.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/findingClassification.test.ts", "finding-classification.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/gmPrograms.test.ts", "gm-programs.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
   "brain-invariants": {
     bundles: [
       ["src/lib/invariants/generators.property.test.ts", "b12-generators.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
