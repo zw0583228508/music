@@ -9359,6 +9359,94 @@ cases are byte-identical, and so is every case's section plan.
   sample rates. Baseline snapshot
   `docs/evidence/benchmark-baseline/53c0d2e-b07.json`.
 
+  **Reconciled with B-05c at the merge.** This stream was written against
+  B-05a's rule and carried its own copy of it: `audioControls.ts` inlined
+  `rate >= 0.9 && ci95[0] >= 0.6 && cleanBlocking === 0` for `gated`,
+  `rate >= 0.5` for `informing`, and `MIN_ITEMS_FOR_STATUS = 4`. B-05c has since
+  made **one** rule for the whole program (`critics/sensitivity.ts`), so the
+  duplicate is deleted rather than reconciled by hand: `deriveAudioLedger` calls
+  `deriveStatus`, every threshold and `minTrials` (8 — the listening gate's own
+  `minVotesPerRung`) comes from `SENSITIVITY_RULE`, a control that may gate is
+  one `transformGates` accepts, and — B-05c's added clause, which is R-1a
+  P1-3's ask — **two independent, non-prepared transforms are required to
+  gate**, not one. No audio control is prepared (none writes the gesture it
+  then erases), so that half of the clause changes nothing here. Every ledger
+  entry now carries `gatingTransforms` and a `reason`, and the file was
+  **regenerated** by `scripts/brain-b07-evidence.ts --ledger-out …` (14.6 min,
+  104 renders), never edited; `docs/evidence/brain-b07-render-loop.json` is the
+  same run.
+
+  Regenerating on the rebased tree moved two things at once, so they were
+  separated before anything was written down. The same B-05a rule was applied
+  to the table this branch committed and to the fresh one, and only then the
+  shared rule:
+
+  | dimension | B-05a rule, committed table | B-05a rule, fresh table | shared rule, fresh table |
+  |---|---|---|---|
+  | audioBalance | gated (`dominate_by_trim` 8/8) | gated (8/8) | **gated** — `dominate_by_trim` 8/8 **and** `dominate_one_part` 8/8 both clear the gate |
+  | audioDynamics | gated (`silence_a_section` 8/8) | **informing** (6/8) | informing — 0 of 2 pass |
+  | audioMasking | gated (`stack_octave` 8/8) | gated (8/8) | **informing** — 1 of 2 pass |
+  | audioRhythm | informing (`shift_harmony_off_grid` 6/8) | informing (5/8) | informing — 0 of 2 pass |
+  | audioTransitions | informing (`silence_a_section` 5/8) | informing (5/8) | informing — 0 of 2 pass |
+
+  So **`audioMasking`'s demotion is the rule** — `stack_octave` is still 8/8
+  [0.63, 1], but it is now the only claimed control that clears the gate
+  (`boost_sub_bass` measures 5/8 here, `empty_the_middle` 2/8,
+  `thin_bed_to_one_line` 0/7 and below `minTrials` in any case), and one is not
+  two. **`audioDynamics`' demotion is not the rule but the measurement**: its
+  strongest claimed control fell from 8/8 to 6/8 (75 %, CI [0.35, 0.97]) and
+  `flatten_velocities` from 7/8 to 5/8, so it is `informing` under this
+  stream's own old rule too. The cause is that the anchors are not fixtures —
+  `dimensions/anchors.ts` builds them by running `orchestrateArrangement` over
+  the benchmark corpus, so B-13 and B-18 on `main` rewrote them: 31 of the 60
+  table rows moved, and the anchors' note counts with them (pop-full 640 → 921,
+  jazz-full 975 → 1330, cinematic-midi 406 → 202). The table printed in D2
+  above, and the 83.4 % / 55.2 % sub-150 figures, were measured before that
+  rebase and are superseded by the regenerated evidence. Nothing was weakened
+  to keep a status: the rule's two added clauses can only ever lower one.
+
+  The D2 table above was also too generous when it was written, on its own
+  numbers: it said each gated dimension rested on two independent transforms,
+  but `audioDynamics`' and `audioMasking`' second controls were 7/8 even then —
+  87.5 %, whose exact 95 % lower bound is 0.4735, under both of the rule's
+  numbers. Only `audioBalance`'s pair ever cleared the gate.
+
+  **`audioBalance` does still gate, and the honest limit recorded above still
+  stands.** `dominate_by_trim` raises one family's render trim by 24 dB and the
+  dimension measures levels, which is close to its own definition inverted; the
+  status rests on it only together with `dominate_one_part`, which touches the
+  render not at all — it writes one part at velocity 127 and every other at 20
+  and lets the renderer do what it always does — and reaches the same 8/8
+  [0.63, 1]. By the rule's test they are two transforms (different base names,
+  neither prepared) and they damage different layers of the pipeline. They do,
+  however, damage the **same musical property**, relative part level, so
+  B-05c's reason for the clause — "two transforms that damage different musical
+  properties cannot both be the definition" — is met in letter and only partly
+  in spirit. `audioBalance`'s `gated` is the strongest claim this measurement
+  supports and should not be read as more; a control that damages a *different*
+  property the dimension claims (a written part nobody can hear, a support part
+  over the lead) would settle it, and this stream did not run one.
+
+  Nothing on the production path moves with the two demotions:
+  `audioObservationsForRepair` puts `gated` and `informing` in the same
+  `actionable` bucket and no other code branches on the difference. What changed
+  is what the ledger claims. `audioControls.test.ts` was updated with the rule:
+  the freshness test compares `gatingTransforms` and `reason` against a
+  regeneration as well as the status, the `gated` check asks
+  `critics/sensitivity.ts` instead of restating 0.9 / 0.6, and the measurability
+  check no longer demands that every claimed control reach `minTrials` — it
+  reports the under-powered ones (`thin_bed_to_one_line`, 7 of 8 anchors) and
+  asserts that neither a status nor a gate rests on them. One further rebase
+  casualty was fixed in `decisionTrace.test.ts`: B-13 emits a `groove:` decision
+  for every part, so `decisionProvenance.ts` no longer reports the layer as
+  missing and the owner-fixture expectation is `["harmony", "register"]`.
+  Still open, and not this stream's: `critics/b05cEvidence.test.ts` fails on
+  `grooveIsolation.reproduced.score` (6.31, expected 0) — B-05c's reproduction
+  of the owner's off-grid finding, which B-13 ("the harmony lands on the beat")
+  changed; none of this branch's files is in that suite's bundle. The
+  `53c0d2e-b07.json` baseline snapshot predates the same rebase and was not
+  re-run here.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

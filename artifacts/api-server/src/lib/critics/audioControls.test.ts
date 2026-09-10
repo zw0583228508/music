@@ -1,12 +1,18 @@
 /**
  * The audio dimensions' positive controls (Brain B-07 D2).
  *
+ * The status rule is the program's one rule (`critics/sensitivity.ts`, B-05c):
+ * this suite checks that the committed ledger is what that rule derives, never
+ * that it clears a threshold restated here.
+ *
  * This suite runs the whole harness — eight rendered anchors × every control,
  * both versions rendered with the evaluation renderer — and holds three things:
  *
  *   1. the committed ledger (`dimensions/audioControlLedger.ts`) is exactly
- *      what a regeneration produces, so a `controlStatus` cannot be typed by
- *      hand and cannot go stale without this failing;
+ *      what a regeneration produces — status, strongest control, rate, n, the
+ *      independent transforms that gated it and the reason it did not — so a
+ *      `controlStatus` cannot be typed by hand and cannot go stale without
+ *      this failing;
  *   2. the null test: no audio dimension raises a blocking observation on a
  *      clean anchor's own render;
  *   3. the negative control: snapping every pitched part to the beat grid makes
@@ -28,10 +34,12 @@ import {
   AUDIO_CONTROL_HARNESS_VERSION,
   AUDIO_CONTROL_NAMES,
   MIN_ITEMS_FOR_STATUS,
+  audioMeasurement,
   renderAudioLedgerSource,
   runAudioControlHarness,
   type AudioHarnessResult,
 } from "./audioControls";
+import { SENSITIVITY_RULE, independentTransforms, transformGates } from "./sensitivity";
 import { AUDIO_CONTROL_LEDGER, AUDIO_CONTROL_LEDGER_VERSION } from "./dimensions/audioControlLedger";
 import { AUDIO_DIMENSION_NAMES } from "./dimensions/audioDimensions";
 
@@ -70,6 +78,15 @@ test("the ledger is generated, not typed: a regeneration reproduces the committe
     assert.equal(AUDIO_CONTROL_LEDGER[dimension].strongestControl, run.ledger[dimension].strongestControl);
     assert.equal(AUDIO_CONTROL_LEDGER[dimension].detectionRate, run.ledger[dimension].detectionRate);
     assert.equal(AUDIO_CONTROL_LEDGER[dimension].n, run.ledger[dimension].n);
+    // B-05c's two fields: the committed ledger carries the same gating set and
+    // the same reason the shared rule wrote at the merge.
+    assert.deepEqual(AUDIO_CONTROL_LEDGER[dimension].gatingTransforms, run.ledger[dimension].gatingTransforms,
+      `${dimension}: committed gatingTransforms differ from the regenerated ones`);
+    assert.equal(AUDIO_CONTROL_LEDGER[dimension].reason, run.ledger[dimension].reason,
+      `${dimension}: committed reason differs from the regenerated one`);
+    if (run.ledger[dimension].status !== "gated") {
+      assert.ok(run.ledger[dimension].reason.length > 0, `${dimension} is not gated and must say why`);
+    }
   }
 
   const source = committedLedgerSource();
@@ -92,27 +109,55 @@ test("the null test: no audio dimension blocks a clean anchor's own render", () 
   }
 });
 
-test("every claimed control was actually measurable, so no status rests on too little", () => {
+test("every claimed control was actually measurable, and no status rests on fewer than the shared rule's minTrials", (t) => {
   const run = harness();
+  const underPowered: string[] = [];
   for (const [dimension, controls] of Object.entries(AUDIO_CLAIMED_CONTROLS)) {
     for (const control of controls) {
       assert.ok(AUDIO_CONTROL_NAMES.includes(control), `${dimension} claims an unknown control "${control}"`);
       const row = run.table.find((r) => r.dimension === dimension && r.control === control)!;
       assert.ok(row, `${dimension} × ${control} is missing from the table`);
       assert.ok(row.claimed, `${dimension} × ${control} should be marked claimed`);
-      assert.ok(row.n >= MIN_ITEMS_FOR_STATUS,
-        `${dimension} × ${control} was measurable on only ${row.n} anchor(s); a status may not rest on that`);
+      assert.ok(row.n > 0, `${dimension} × ${control} could not be applied to a single anchor`);
+      // Under the shared rule a control measurable on fewer than `minTrials`
+      // anchors says nothing in either direction — it may not carry a status,
+      // and the ledger must not rest one on it.
+      if (row.n < MIN_ITEMS_FOR_STATUS) {
+        underPowered.push(`${dimension} × ${control}: ${row.detected}/${row.n}`);
+        assert.notEqual(run.ledger[dimension].strongestControl, control,
+          `${dimension}'s status rests on ${control}, measurable on only ${row.n} of ${MIN_ITEMS_FOR_STATUS} required anchors`);
+        assert.ok(!run.ledger[dimension].gatingTransforms.includes(control),
+          `${dimension} gates on ${control}, measurable on only ${row.n} anchor(s)`);
+      }
     }
   }
-  // A status is only ever the strongest claimed control's rate.
+  t.diagnostic(underPowered.length
+    ? `claimed controls below ${MIN_ITEMS_FOR_STATUS} anchors (they inform no status): ${underPowered.join("; ")}`
+    : `every claimed control ran on all ${MIN_ITEMS_FOR_STATUS} anchors`);
+
+  // A status is only ever the strongest claimed control's rate, and a `gated`
+  // status is exactly what `critics/sensitivity.ts` says it is — the thresholds
+  // are not restated here either.
   for (const dimension of AUDIO_DIMENSION_NAMES) {
     const entry = run.ledger[dimension];
     if (entry.status === "uncalibrated") { assert.equal(entry.strongestControl, null); continue; }
     const row = run.table.find((r) => r.dimension === dimension && r.control === entry.strongestControl)!;
     assert.equal(row.rate, entry.detectionRate);
     assert.ok(row.claimed, `${dimension}'s status rests on ${entry.strongestControl}, which it must claim`);
+    assert.ok(row.n >= MIN_ITEMS_FOR_STATUS, `${dimension}'s status rests on ${row.n} items`);
+
+    const gates = independentTransforms(
+      run.table.filter((r) => r.dimension === dimension).map(audioMeasurement).filter(transformGates).map((m) => m.control));
+    assert.deepEqual(entry.gatingTransforms, gates,
+      `${dimension}: the ledger's gatingTransforms are not the ones transformGates accepts`);
     if (entry.status === "gated") {
-      assert.ok(entry.detectionRate! >= 0.9 && entry.ci95![0] >= 0.6 && entry.cleanAnchorBlockingRate === 0);
+      assert.ok(gates.length >= SENSITIVITY_RULE.minTransformsToGate,
+        `${dimension} is gated on ${gates.length} independent transform(s); the shared rule needs ${SENSITIVITY_RULE.minTransformsToGate}`);
+      assert.equal(entry.cleanAnchorBlockingRate, 0, `${dimension} gates while blocking a clean anchor`);
+    } else {
+      assert.ok(gates.length < SENSITIVITY_RULE.minTransformsToGate || entry.cleanAnchorBlockingRate !== 0,
+        `${dimension} meets the shared rule but is not gated`);
+      assert.ok(entry.reason.length > 0, `${dimension} is ${entry.status} and must say why`);
     }
   }
 });

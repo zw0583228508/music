@@ -7,18 +7,22 @@
  *
  * Derived from 8 rendered anchors (pop-full, ballad-piano-vocal, rock-full, dance-full, acoustic-demo, orchestral-midi, jazz-full, cinematic-midi) ×
  * 12 controls, both versions rendered with the evaluation renderer.
- * The rule is B-05a's: gated = strongest claimed control >= 90 % with CI lower
- * >= 60 % and no blocking observation on a clean anchor's own render.
+ *
+ * The status rule is `critics/sensitivity.ts` — the one rule shared with the
+ * symbolic ledger, the adversarial harness and B-08's ledger. `gatingTransforms`
+ * names the independent, non-prepared controls that earned a `gated` status;
+ * `reason` says why a dimension is not gated.
  */
-import type { ControlStatus } from "../types";
-import type { LedgerEntry } from "./controlLedger";
+import type { LedgerEntry } from "../sensitivity";
+
+export type { LedgerEntry };
 
 export const AUDIO_CONTROL_LEDGER_VERSION = "B07_AUDIO_CONTROLS_v1" as const;
 
-export const AUDIO_CONTROL_LEDGER: Record<string, LedgerEntry & { status: ControlStatus }> = {
-  audioBalance: { status: "gated", strongestControl: "dominate_by_trim", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
-  audioDynamics: { status: "gated", strongestControl: "silence_a_section", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
-  audioMasking: { status: "gated", strongestControl: "stack_octave", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0 },
-  audioRhythm: { status: "informing", strongestControl: "shift_harmony_off_grid", detectionRate: 0.75, ci95: [0.3491, 0.9681], n: 8, cleanAnchorBlockingRate: 0 },
-  audioTransitions: { status: "informing", strongestControl: "silence_a_section", detectionRate: 0.625, ci95: [0.2449, 0.9148], n: 8, cleanAnchorBlockingRate: 0 },
+export const AUDIO_CONTROL_LEDGER: Record<string, LedgerEntry> = {
+  audioBalance: { status: "gated", strongestControl: "dominate_by_trim", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0, gatingTransforms: ["dominate_by_trim","dominate_one_part"], reason: "2 independent non-prepared transforms passed (dominate_by_trim, dominate_one_part) and no clean anchor is blocked" },
+  audioDynamics: { status: "informing", strongestControl: "silence_a_section", detectionRate: 0.75, ci95: [0.3491, 0.9681], n: 8, cleanAnchorBlockingRate: 0, gatingTransforms: [], reason: "0 of 2 independent non-prepared transforms pass" },
+  audioMasking: { status: "informing", strongestControl: "stack_octave", detectionRate: 1, ci95: [0.6306, 1], n: 8, cleanAnchorBlockingRate: 0, gatingTransforms: ["stack_octave"], reason: "1 of 2 independent non-prepared transforms pass" },
+  audioRhythm: { status: "informing", strongestControl: "shift_harmony_off_grid", detectionRate: 0.625, ci95: [0.2449, 0.9148], n: 8, cleanAnchorBlockingRate: 0, gatingTransforms: [], reason: "0 of 2 independent non-prepared transforms pass" },
+  audioTransitions: { status: "informing", strongestControl: "silence_a_section", detectionRate: 0.625, ci95: [0.2449, 0.9148], n: 8, cleanAnchorBlockingRate: 0, gatingTransforms: [], reason: "0 of 2 independent non-prepared transforms pass" },
 };

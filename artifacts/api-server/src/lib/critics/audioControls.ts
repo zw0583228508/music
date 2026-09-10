@@ -10,14 +10,16 @@
  * run and nothing else, and `audioControls.test.ts` fails when the committed
  * ledger disagrees with a regeneration.
  *
- * The rule is B-05a's, unchanged, so the two ledgers can be read together:
- *   gated        strongest claimed control detected >= 90 % with the exact
- *                binomial CI lower bound >= 60 %, and no blocking observation
- *                on any clean anchor's own render (the null test);
- *   informing    strongest claimed control >= 50 %;
- *   demoted      claimed controls measured (n >= MIN_ITEMS_FOR_STATUS) and
- *                none reaches 50 %;
- *   uncalibrated no claimed control could be measured.
+ * The rule is not this module's. It is the program's one sensitivity rule,
+ * `critics/sensitivity.ts` (B-05c) — the same `SENSITIVITY_RULE`,
+ * `transformGates` and `deriveStatus` the symbolic ledger, the adversarial
+ * ledger and B-08 use, so the ledgers can be read together and a change to the
+ * listening gate moves all of them at once. This module measures; it does not
+ * decide. In particular it does **not** restate the thresholds: a dimension is
+ * `gated` only when **two independent, non-prepared** claimed controls each
+ * clear the gate on at least `SENSITIVITY_RULE.minTrials` anchors and no clean
+ * anchor is blocked, and every non-gated dimension carries the `reason` the
+ * shared rule wrote for it.
  *
  * The controls are the four the B-07 brief names — stack two parts in one
  * octave, flatten the velocities, boost the sub-bass, clip a stem — plus the
@@ -34,7 +36,7 @@
  */
 import type { MusicalNote, TrackModel } from "@workspace/db";
 import { exactBinomialCi } from "../listeningSensitivity";
-import type { ControlStatus, CriticDimensionReport, CriticInput } from "./types";
+import type { CriticDimensionReport, CriticInput } from "./types";
 import { SEVERITY_ORDER } from "./types";
 import { ALL_AUDIO_DIMENSIONS, AUDIO_DIMENSION_NAMES } from "./dimensions/audioDimensions";
 import type { AudioCriticInput } from "./dimensions/audioShared";
@@ -48,7 +50,7 @@ import {
   type EvaluationRenderOptions,
 } from "../evaluationRender";
 import { audioRenderLike } from "../evaluationCritique";
-import type { LedgerEntry } from "./dimensions/controlLedger";
+import { deriveStatus, SENSITIVITY_RULE, type LedgerEntry, type TransformMeasurement } from "./sensitivity";
 
 export const AUDIO_CONTROL_HARNESS_VERSION = "B07_AUDIO_CONTROLS_v1" as const;
 
@@ -57,8 +59,9 @@ export const AUDIO_CONTROL_HARNESS_VERSION = "B07_AUDIO_CONTROLS_v1" as const;
  * ethnic-vocal, carries a known composer defect whose parts overflow the song,
  * so it cannot serve as a null control). Eight is not an arbitrary number: the
  * shared gate needs a 95 % exact-binomial lower bound of 0.6, and 8/8 is the
- * smallest run that reaches it (7/7 gives 0.59). A dimension can therefore be
- * `gated` here only by catching its control on every one of the eight.
+ * smallest run that reaches it (7/7 gives 0.59) — and it is also
+ * `SENSITIVITY_RULE.minTrials`. A dimension can therefore be `gated` here only
+ * by catching **two** independent claimed controls on every one of the eight.
  */
 export const AUDIO_ANCHOR_IDS: readonly string[] = [
   "pop-full", "ballad-piano-vocal", "rock-full", "dance-full",
@@ -74,7 +77,8 @@ export const AUDIO_CLAIMED_CONTROLS: Record<string, string[]> = {
   audioTransitions: ["thin_the_arrival", "silence_a_section"],
 };
 
-export const MIN_ITEMS_FOR_STATUS = 4;
+/** The shared rule's `minTrials`, re-exported so nothing here restates it. */
+export const MIN_ITEMS_FOR_STATUS = SENSITIVITY_RULE.minTrials;
 
 // ---------------------------------------------------------------------------
 // Controls
@@ -588,41 +592,47 @@ export function buildAudioTable(items: readonly AudioControlItem[], controlOrder
   return rows;
 }
 
+/**
+ * No audio control prepares its anchor: every one of them damages material the
+ * composer actually wrote (or the render of it) and none writes the gesture it
+ * then erases, so none is barred from gating by the shared rule's prepared
+ * clause. The B-05a preparation syntax (`control+preparation`) is honoured
+ * anyway, so a prepared audio control added later is read the same way as a
+ * prepared symbolic one.
+ */
+export const isPreparedAudioControl = (control: string): boolean => control.includes("+");
+
+/** One table row as the shared rule reads it — the shape `transformGates` and `deriveStatus` take. */
+export function audioMeasurement(row: AudioTableRow): TransformMeasurement {
+  return { control: row.control, claimed: row.claimed, prepared: isPreparedAudioControl(row.control), n: row.n, detected: row.detected, rate: row.rate, ci95: row.ci95 };
+}
+
+/**
+ * The audio ledger, derived by the program's one sensitivity rule
+ * (`critics/sensitivity.ts`). Every threshold, `minTrials`, the
+ * two-independent-transforms requirement and the wording of `reason` come from
+ * there; this function only turns the measured table into the measurements the
+ * rule reads.
+ */
 export function deriveAudioLedger(
   table: readonly AudioTableRow[],
   anchorReports: AudioHarnessResult["anchorReports"],
-): Record<string, LedgerEntry & { status: ControlStatus }> {
-  const ledger: Record<string, LedgerEntry & { status: ControlStatus }> = {};
+): Record<string, LedgerEntry> {
+  const ledger: Record<string, LedgerEntry> = {};
   for (const dimension of AUDIO_DIMENSION_NAMES) {
     const clean = anchorReports.filter((r) => r.dimension === dimension);
     const cleanBlocking = clean.length ? Number((clean.filter((r) => r.blocking > 0).length / clean.length).toFixed(4)) : null;
-    const claimed = table.filter((r) => r.dimension === dimension && r.claimed && r.n >= MIN_ITEMS_FOR_STATUS && r.rate !== null);
-    if (!claimed.length) {
-      ledger[dimension] = { status: "uncalibrated", strongestControl: null, detectionRate: null, ci95: null, n: 0, cleanAnchorBlockingRate: cleanBlocking };
-      continue;
-    }
-    const strongest = [...claimed].sort((a, b) => (b.rate! - a.rate!) || (b.ci95![0] - a.ci95![0]) || a.control.localeCompare(b.control))[0];
-    let status: ControlStatus;
-    if (strongest.rate! >= 0.9 && strongest.ci95![0] >= 0.6 && cleanBlocking === 0) status = "gated";
-    else if (strongest.rate! >= 0.5) status = "informing";
-    else status = "demoted";
-    ledger[dimension] = {
-      status,
-      strongestControl: strongest.control,
-      detectionRate: strongest.rate,
-      ci95: strongest.ci95,
-      n: strongest.n,
-      cleanAnchorBlockingRate: cleanBlocking,
-    };
+    const measurements: TransformMeasurement[] = table.filter((r) => r.dimension === dimension).map(audioMeasurement);
+    ledger[dimension] = deriveStatus({ dimension, measurements, cleanAnchorBlockingRate: cleanBlocking });
   }
   return ledger;
 }
 
 /** The TypeScript source of `dimensions/audioControlLedger.ts` for a ledger. */
-export function renderAudioLedgerSource(ledger: Record<string, LedgerEntry & { status: ControlStatus }>, ledgerVersion: string): string {
+export function renderAudioLedgerSource(ledger: Record<string, LedgerEntry>, ledgerVersion: string): string {
   const entries = Object.keys(ledger).sort().map((dimension) => {
     const e = ledger[dimension];
-    return `  ${dimension}: { status: ${JSON.stringify(e.status)}, strongestControl: ${JSON.stringify(e.strongestControl)}, detectionRate: ${e.detectionRate}, ci95: ${e.ci95 ? `[${e.ci95[0]}, ${e.ci95[1]}]` : "null"}, n: ${e.n}, cleanAnchorBlockingRate: ${e.cleanAnchorBlockingRate} },`;
+    return `  ${dimension}: { status: ${JSON.stringify(e.status)}, strongestControl: ${JSON.stringify(e.strongestControl)}, detectionRate: ${e.detectionRate}, ci95: ${e.ci95 ? `[${e.ci95[0]}, ${e.ci95[1]}]` : "null"}, n: ${e.n}, cleanAnchorBlockingRate: ${e.cleanAnchorBlockingRate}, gatingTransforms: ${JSON.stringify(e.gatingTransforms)}, reason: ${JSON.stringify(e.reason)} },`;
   });
   return [
     "/**",
@@ -634,15 +644,19 @@ export function renderAudioLedgerSource(ledger: Record<string, LedgerEntry & { s
     " *",
     ` * Derived from ${AUDIO_ANCHOR_IDS.length} rendered anchors (${AUDIO_ANCHOR_IDS.join(", ")}) ×`,
     ` * ${AUDIO_CONTROL_NAMES.length} controls, both versions rendered with the evaluation renderer.`,
-    " * The rule is B-05a's: gated = strongest claimed control >= 90 % with CI lower",
-    " * >= 60 % and no blocking observation on a clean anchor's own render.",
+    " *",
+    " * The status rule is `critics/sensitivity.ts` — the one rule shared with the",
+    " * symbolic ledger, the adversarial harness and B-08's ledger. `gatingTransforms`",
+    " * names the independent, non-prepared controls that earned a `gated` status;",
+    " * `reason` says why a dimension is not gated.",
     " */",
-    "import type { ControlStatus } from \"../types\";",
-    "import type { LedgerEntry } from \"./controlLedger\";",
+    "import type { LedgerEntry } from \"../sensitivity\";",
+    "",
+    "export type { LedgerEntry };",
     "",
     `export const AUDIO_CONTROL_LEDGER_VERSION = ${JSON.stringify(ledgerVersion)} as const;`,
     "",
-    "export const AUDIO_CONTROL_LEDGER: Record<string, LedgerEntry & { status: ControlStatus }> = {",
+    "export const AUDIO_CONTROL_LEDGER: Record<string, LedgerEntry> = {",
     ...entries,
     "};",
     "",
@@ -650,10 +664,12 @@ export function renderAudioLedgerSource(ledger: Record<string, LedgerEntry & { s
 }
 
 /** Compact summary for the tracker and the final report. */
-export function summariseAudioLedger(ledger: Record<string, LedgerEntry & { status: ControlStatus }>): string[] {
+export function summariseAudioLedger(ledger: Record<string, LedgerEntry>): string[] {
   return Object.keys(ledger).sort().map((d) => {
     const e = ledger[d];
-    return `${d}: ${e.status}${e.strongestControl ? ` (${e.strongestControl} ${Math.round((e.detectionRate ?? 0) * 100)} % [${e.ci95?.[0]}, ${e.ci95?.[1]}], n=${e.n})` : ""}`;
+    const strongest = e.strongestControl ? ` (${e.strongestControl} ${Math.round((e.detectionRate ?? 0) * 100)} % [${e.ci95?.[0]}, ${e.ci95?.[1]}], n=${e.n})` : "";
+    const gates = e.status === "gated" ? ` gated by ${e.gatingTransforms.join(" + ")}` : ` — ${e.reason}`;
+    return `${d}: ${e.status}${strongest}${gates}`;
   });
 }
 

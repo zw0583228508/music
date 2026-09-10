@@ -1,7 +1,7 @@
 {
   "stream": "B-07",
   "title": "The production render loop: the brain hears what it ships",
-  "generatedAt": "2026-09-10T10:30:12.434Z",
+  "generatedAt": "2026-09-10T20:50:52.334Z",
   "versions": {
     "evaluationRenderer": "LISTENING_SYNTH_V2 2.0.0",
     "evaluationContract": "1.0",
@@ -149,299 +149,299 @@
       {
         "caseId": "pop-full",
         "tracks": 3,
-        "durationSeconds": 81.105,
-        "renderMs": 11136,
+        "durationSeconds": 81.138,
+        "renderMs": 8805,
         "untrimmed": {
-          "sub150": 89.8,
-          "low2k": 8.5,
-          "presence5k": 0.6,
+          "sub150": 85.5,
+          "low2k": 12.1,
+          "presence5k": 1.4,
           "air": 1.1,
           "frames": 109
         },
         "trimmed": {
-          "sub150": 67.3,
-          "low2k": 30.4,
-          "presence5k": 1.6,
-          "air": 0.7,
+          "sub150": 51.2,
+          "low2k": 42.8,
+          "presence5k": 5.4,
+          "air": 0.6,
           "frames": 109
         },
         "loudness": {
           "targetRmsDbfs": -18,
           "peakCeiling": 0.95,
           "applied": "peak",
-          "gainDb": 8.04
+          "gainDb": 1.81
         },
         "stemLevelsDbfs": {
-          "drums": -25.49,
-          "bass": -28.31,
-          "keys": -27.53
+          "drums": -31.16,
+          "bass": -32.94,
+          "keys": -29.82
         }
       },
       {
         "caseId": "ballad-piano-vocal",
         "tracks": 3,
-        "durationSeconds": 99.82,
-        "renderMs": 16874,
+        "durationSeconds": 100.125,
+        "renderMs": 5976,
         "untrimmed": {
-          "sub150": 88.1,
-          "low2k": 6.3,
-          "presence5k": 1.4,
+          "sub150": 83.8,
+          "low2k": 9.6,
+          "presence5k": 2.4,
           "air": 4.3,
           "frames": 135
         },
         "trimmed": {
-          "sub150": 61.6,
-          "low2k": 31.7,
-          "presence5k": 4.4,
-          "air": 2.3,
+          "sub150": 46.7,
+          "low2k": 42.7,
+          "presence5k": 8.8,
+          "air": 1.9,
           "frames": 135
         },
         "loudness": {
           "targetRmsDbfs": -18,
           "peakCeiling": 0.95,
           "applied": "peak",
-          "gainDb": 6.77
+          "gainDb": 3.48
         },
         "stemLevelsDbfs": {
-          "drums": -31.16,
-          "bass": -33.02,
-          "keys": -32.59
+          "drums": -33.98,
+          "bass": -34.99,
+          "keys": -31.24
         }
       },
       {
         "caseId": "rock-full",
         "tracks": 4,
-        "durationSeconds": 59.557,
-        "renderMs": 11543,
+        "durationSeconds": 59.621,
+        "renderMs": 5313,
         "untrimmed": {
-          "sub150": 84.4,
-          "low2k": 11.7,
-          "presence5k": 0.9,
-          "air": 3,
+          "sub150": 79.5,
+          "low2k": 16.4,
+          "presence5k": 1,
+          "air": 3.2,
           "frames": 80
         },
         "trimmed": {
-          "sub150": 52.9,
-          "low2k": 44.1,
+          "sub150": 40.1,
+          "low2k": 57.2,
           "presence5k": 1.2,
-          "air": 1.7,
+          "air": 1.4,
           "frames": 80
         },
         "loudness": {
           "targetRmsDbfs": -18,
           "peakCeiling": 0.95,
           "applied": "peak",
-          "gainDb": 3.58
+          "gainDb": -0.39
         },
         "stemLevelsDbfs": {
-          "drums": -29.28,
-          "bass": -32.48,
-          "keys": -30.88,
-          "guitar": -33.46
+          "drums": -32.47,
+          "bass": -34.7,
+          "keys": -31.54,
+          "guitar": -32.96
         }
       },
       {
         "caseId": "dance-full",
         "tracks": 4,
-        "durationSeconds": 77.607,
-        "renderMs": 23946,
+        "durationSeconds": 77.441,
+        "renderMs": 8628,
         "untrimmed": {
-          "sub150": 80.3,
-          "low2k": 14.7,
-          "presence5k": 2.2,
-          "air": 2.7,
-          "frames": 105
+          "sub150": 81.1,
+          "low2k": 11.6,
+          "presence5k": 2.7,
+          "air": 4.6,
+          "frames": 104
         },
         "trimmed": {
-          "sub150": 48.1,
-          "low2k": 43.7,
-          "presence5k": 5.6,
-          "air": 2.6,
-          "frames": 105
+          "sub150": 49.8,
+          "low2k": 38.1,
+          "presence5k": 9.2,
+          "air": 3,
+          "frames": 104
         },
         "loudness": {
           "targetRmsDbfs": -18,
           "peakCeiling": 0.95,
           "applied": "peak",
-          "gainDb": 5.54
+          "gainDb": 1.35
         },
         "stemLevelsDbfs": {
-          "drums": -29.36,
-          "bass": -31.44,
-          "keys": -31.9,
-          "synth": -28.58
+          "drums": -31.26,
+          "bass": -33.82,
+          "keys": -34.01,
+          "synth": -35.23
         }
       },
       {
         "caseId": "acoustic-demo",
         "tracks": 3,
-        "durationSeconds": 84.336,
-        "renderMs": 8656,
+        "durationSeconds": 84.659,
+        "renderMs": 6093,
         "untrimmed": {
-          "sub150": 84.1,
-          "low2k": 12.7,
-          "presence5k": 0.7,
-          "air": 2.5,
+          "sub150": 77.6,
+          "low2k": 16.8,
+          "presence5k": 1.1,
+          "air": 4.4,
           "frames": 114
         },
         "trimmed": {
-          "sub150": 58.8,
-          "low2k": 39.2,
-          "presence5k": 0.5,
-          "air": 1.5,
+          "sub150": 47.1,
+          "low2k": 49.3,
+          "presence5k": 1.5,
+          "air": 2.1,
           "frames": 114
         },
         "loudness": {
           "targetRmsDbfs": -18,
           "peakCeiling": 0.95,
           "applied": "peak",
-          "gainDb": 11.23
+          "gainDb": 2.43
         },
         "stemLevelsDbfs": {
-          "drums": -27.17,
-          "bass": -28.71,
-          "guitar": -27.57
+          "drums": -34.58,
+          "bass": -35.42,
+          "guitar": -33.5
         }
       },
       {
         "caseId": "orchestral-midi",
         "tracks": 5,
-        "durationSeconds": 87.146,
-        "renderMs": 13072,
+        "durationSeconds": 87.01,
+        "renderMs": 10157,
         "untrimmed": {
-          "sub150": 78.8,
-          "low2k": 17.2,
-          "presence5k": 1.9,
-          "air": 2.1,
-          "frames": 118
+          "sub150": 70.9,
+          "low2k": 24,
+          "presence5k": 3.4,
+          "air": 1.6,
+          "frames": 117
         },
         "trimmed": {
-          "sub150": 52.9,
-          "low2k": 41.8,
-          "presence5k": 4.1,
-          "air": 1.2,
-          "frames": 118
+          "sub150": 40.1,
+          "low2k": 52.2,
+          "presence5k": 6.8,
+          "air": 0.9,
+          "frames": 117
         },
         "loudness": {
           "targetRmsDbfs": -18,
           "peakCeiling": 0.95,
           "applied": "peak",
-          "gainDb": 8.96
+          "gainDb": 7.19
         },
         "stemLevelsDbfs": {
-          "drums": -29.96,
-          "bass": -30.2,
-          "keys": -31.96,
-          "brass": -33.17,
-          "strings": -33.25
+          "drums": -31.71,
+          "bass": -29.12,
+          "keys": -29.98,
+          "brass": -34.94,
+          "strings": -28.59
         }
       },
       {
         "caseId": "ethnic-vocal",
         "tracks": 3,
-        "durationSeconds": 49.519,
-        "renderMs": 8406,
+        "durationSeconds": 49.596,
+        "renderMs": 2640,
         "untrimmed": {
-          "sub150": 76.1,
-          "low2k": 13.6,
-          "presence5k": 2,
-          "air": 8.3,
+          "sub150": 75.8,
+          "low2k": 14.7,
+          "presence5k": 1.7,
+          "air": 7.8,
           "frames": 67
         },
         "trimmed": {
-          "sub150": 42.8,
-          "low2k": 51.5,
-          "presence5k": 2.2,
-          "air": 3.5,
+          "sub150": 46.8,
+          "low2k": 48.5,
+          "presence5k": 1.2,
+          "air": 3.4,
           "frames": 67
         },
         "loudness": {
           "targetRmsDbfs": -18,
           "peakCeiling": 0.95,
           "applied": "peak",
-          "gainDb": 7.49
+          "gainDb": 6.45
         },
         "stemLevelsDbfs": {
-          "drums": -28.68,
-          "bass": -32.38,
-          "keys": -29.44
+          "drums": -29.91,
+          "bass": -31.68,
+          "keys": -30.26
         }
       },
       {
         "caseId": "jazz-full",
         "tracks": 3,
-        "durationSeconds": 88.238,
-        "renderMs": 10757,
+        "durationSeconds": 88.408,
+        "renderMs": 9549,
         "untrimmed": {
-          "sub150": 89.3,
-          "low2k": 9.1,
-          "presence5k": 0.6,
-          "air": 0.9,
+          "sub150": 82.8,
+          "low2k": 14.2,
+          "presence5k": 1.4,
+          "air": 1.6,
           "frames": 119
         },
         "trimmed": {
-          "sub150": 65.6,
-          "low2k": 31.8,
-          "presence5k": 1.9,
-          "air": 0.6,
+          "sub150": 46.1,
+          "low2k": 48.8,
+          "presence5k": 4.3,
+          "air": 0.8,
           "frames": 119
         },
         "loudness": {
           "targetRmsDbfs": -18,
           "peakCeiling": 0.95,
           "applied": "peak",
-          "gainDb": 6.59
+          "gainDb": 2.68
         },
         "stemLevelsDbfs": {
-          "drums": -25.37,
-          "bass": -28.84,
-          "keys": -27.32
+          "drums": -30.83,
+          "bass": -32.5,
+          "keys": -28.95
         }
       },
       {
         "caseId": "cinematic-midi",
         "tracks": 6,
-        "durationSeconds": 128.84,
-        "renderMs": 14366,
+        "durationSeconds": 129.073,
+        "renderMs": 13892,
         "untrimmed": {
-          "sub150": 80,
-          "low2k": 17.1,
-          "presence5k": 1.2,
-          "air": 1.7,
+          "sub150": 69.4,
+          "low2k": 26.2,
+          "presence5k": 2.9,
+          "air": 1.5,
           "frames": 174
         },
         "trimmed": {
-          "sub150": 46.9,
-          "low2k": 49.8,
-          "presence5k": 2.5,
-          "air": 0.8,
+          "sub150": 31.3,
+          "low2k": 62.4,
+          "presence5k": 5.6,
+          "air": 0.7,
           "frames": 174
         },
         "loudness": {
           "targetRmsDbfs": -18,
           "peakCeiling": 0.95,
           "applied": "peak",
-          "gainDb": 7.06
+          "gainDb": 5.22
         },
         "stemLevelsDbfs": {
-          "drums": -33.63,
-          "bass": -34.23,
-          "percussion": -69.94,
-          "keys": -31.74,
-          "brass": -39.11,
-          "strings": -36.9
+          "drums": -35.48,
+          "bass": -35.98,
+          "percussion": -71.11,
+          "keys": -30.99,
+          "brass": -40.95,
+          "strings": -32.68
         }
       }
     ],
     "spectrumSummary": {
-      "meanSub150Untrimmed": 83.43,
-      "meanSub150Trimmed": 55.21,
-      "meanRenderMs": 13195
+      "meanSub150Untrimmed": 78.49,
+      "meanSub150Trimmed": 44.36,
+      "meanRenderMs": 7895
     },
     "productionPath": {
       "note": "One `generate()` call through LocalArrangementOrchestratorProvider, exactly as the job runner calls it.",
       "candidates": 3,
-      "totalMs": 27266,
+      "totalMs": 26405,
       "renderLocation": {
         "location": "in_process",
         "reason": "no render-worker bundle beside this module (unbundled run or test); rendering in-process",
@@ -450,39 +450,39 @@
       "perCandidate": [
         {
           "label": "A · conservative",
-          "score": 0.81,
-          "summary": "conservative · shipped 77/100 (composed 75) · audio 87/100 (LISTENING_SYNTH_V2, 81 s, in process) · combined 81 · 0 playability error(s) · repair attempted, nothing changed · groove: Groove feel is coherent.; leadCompatibility: Support instruments make room for the singer. · weakest: sectionDevelopment: Repeats of \"verse\" are identical — no added layer.",
+          "score": 0.774,
+          "summary": "conservative · shipped 73/100 · audio 84/100 (LISTENING_SYNTH_V2, 81 s, in process) · combined 77 · 0 playability error(s) · repair attempted, nothing changed · groove: Groove feel is coherent.; leadCompatibility: Support instruments make room for the singer. · weakest: sectionDevelopment: Repeats of \"verse\" are identical — no added layer.",
           "renderStage": {
             "stage": "render",
             "status": "ok",
-            "detail": "3 candidate(s) rendered once for evaluation with LISTENING_SYNTH_V2 2.0.0 (evaluation contract 1.0) at 44100 Hz / 2 ch, 81.1 s, normalised to -18 dBFS RMS with a 0.95 peak ceiling (peak, +8.04 dB), in-process (no render-worker bundle beside this module (unbundled run or test); rendering in-process)",
+            "detail": "3 candidate(s) rendered once for evaluation with LISTENING_SYNTH_V2 2.0.0 (evaluation contract 1.0) at 44100 Hz / 2 ch, 81.1 s, normalised to -18 dBFS RMS with a 0.95 peak ceiling (peak, +1.81 dB), in-process (no render-worker bundle beside this module (unbundled run or test); rendering in-process)",
             "evidence": {
               "renderer": "LISTENING_SYNTH_V2",
               "rendererVersion": "2.0.0",
               "evaluationVersion": "1.0",
               "sampleRate": 44100,
               "channels": 2,
-              "durationSeconds": 81.11,
+              "durationSeconds": 81.14,
               "targetRmsDbfs": -18,
               "peakCeiling": 0.95,
               "location": "in_process",
               "workers": 0,
               "rendered": 3,
               "failed": 0,
-              "renderMs": 19564
+              "renderMs": 17926
             }
           },
           "audioCritiqueStage": {
             "stage": "audio_critique",
             "status": "ok",
-            "detail": "audio-critic/v1 and 5 located audio dimension(s) ran on the evaluation render of 3 candidate(s): mean audio 86.67/100, final = 0.6×symbolic + 0.4×audio; 0 candidate(s) rank differently with audio than without",
+            "detail": "audio-critic/v1 and 5 located audio dimension(s) ran on the evaluation render of 3 candidate(s): mean audio 83.33/100, final = 0.6×symbolic + 0.4×audio; 0 candidate(s) rank differently with audio than without",
             "evidence": {
-              "meanAudioScore": 86.67,
+              "meanAudioScore": 83.33,
               "audioWeight": 0.4,
-              "critiqueMs": 7043,
-              "dimensions": "audioBalance=100/gated,audioDynamics=100/gated,audioMasking=100/gated,audioRhythm=90.64/informing,audioTransitions=100/informing",
+              "critiqueMs": 6066,
+              "dimensions": "audioBalance=92.2/gated,audioDynamics=100/gated,audioMasking=100/gated,audioRhythm=90.64/informing,audioTransitions=100/informing",
               "blockingObservations": 0,
-              "majorObservations": 0,
+              "majorObservations": 3,
               "rankChanged": 0
             }
           },
@@ -490,38 +490,38 @@
             "renderer": "LISTENING_SYNTH_V2 2.0.0",
             "location": "in_process",
             "sampleRate": 44100,
-            "durationSeconds": 81.105,
-            "renderMs": 6201,
-            "critiqueMs": 2473,
+            "durationSeconds": 81.138,
+            "renderMs": 5703,
+            "critiqueMs": 2045,
             "loudness": {
               "targetRmsDbfs": -18,
               "peakCeiling": 0.95,
               "applied": "peak",
-              "gainDb": 8.04
+              "gainDb": 1.81
             },
             "spectrum": {
-              "sub150": 67.3,
-              "low2k": 30.4,
-              "presence5k": 1.6,
-              "air": 0.7
+              "sub150": 51.2,
+              "low2k": 42.8,
+              "presence5k": 5.4,
+              "air": 0.6
             },
-            "symbolicScore": 77,
-            "audioScore": 87,
-            "finalScore": 81,
+            "symbolicScore": 73,
+            "audioScore": 84,
+            "finalScore": 77.4,
             "audioWeight": 0.4,
             "rankSymbolic": 1,
             "rankCombined": 1,
             "selectedWithAudio": true,
-            "renderKey": "2318ea9a4845acf2296f1d3e0b8bae518d1351301f5372bb7d2ac3ce72808f22",
+            "renderKey": "30a0dcac126d696b48fe7450dc4d61e96dc76e41fb20a392769ad4a861940296",
             "audioCriticV1": {
-              "overall": 87,
+              "overall": 84,
               "dimensions": [
-                "balance=92",
-                "masking=82",
+                "balance=74",
+                "masking=79",
                 "spectralCrowding=100",
                 "mud=100",
                 "harshness=100",
-                "lowEndConflict=75",
+                "lowEndConflict=76",
                 "transientQuality=100",
                 "stereoDistribution=50",
                 "dynamicMovement=100",
@@ -531,10 +531,12 @@
             "dimensions": [
               {
                 "dimension": "audioBalance",
-                "score": 100,
+                "score": 92.2,
                 "coverage": 1,
                 "controlStatus": "gated",
-                "observations": []
+                "observations": [
+                  "part_dominates/major@bars 21-28 (orchestration)"
+                ]
               },
               {
                 "dimension": "audioDynamics",
@@ -570,47 +572,47 @@
               }
             ],
             "stems": [
-              "drums -25.49 dBFS (trim -4.7 dB)",
-              "bass -28.31 dBFS (trim -1.2 dB)",
-              "keys -27.53 dBFS (trim 6.3 dB)"
+              "drums -31.16 dBFS (trim -4.7 dB)",
+              "bass -32.94 dBFS (trim -1.2 dB)",
+              "keys -29.82 dBFS (trim 6.3 dB)"
             ]
           }
         },
         {
           "label": "C · melodic",
-          "score": 0.81,
-          "summary": "melodic · shipped 77/100 (composed 75) · audio 87/100 (LISTENING_SYNTH_V2, 81 s, in process) · combined 81 · 0 playability error(s) · repair attempted, nothing changed · groove: Groove feel is coherent.; leadCompatibility: Support instruments make room for the singer. · weakest: sectionDevelopment: Repeats of \"verse\" are identical — no added layer.",
+          "score": 0.77,
+          "summary": "melodic · shipped 73/100 · audio 83/100 (LISTENING_SYNTH_V2, 81 s, in process) · combined 77 · 0 playability error(s) · repair attempted, nothing changed · groove: Groove feel is coherent.; leadCompatibility: Support instruments make room for the singer. · weakest: sectionDevelopment: Repeats of \"verse\" are identical — no added layer.",
           "renderStage": {
             "stage": "render",
             "status": "ok",
-            "detail": "3 candidate(s) rendered once for evaluation with LISTENING_SYNTH_V2 2.0.0 (evaluation contract 1.0) at 44100 Hz / 2 ch, 81.1 s, normalised to -18 dBFS RMS with a 0.95 peak ceiling (peak, +8.04 dB), in-process (no render-worker bundle beside this module (unbundled run or test); rendering in-process)",
+            "detail": "3 candidate(s) rendered once for evaluation with LISTENING_SYNTH_V2 2.0.0 (evaluation contract 1.0) at 44100 Hz / 2 ch, 81.1 s, normalised to -18 dBFS RMS with a 0.95 peak ceiling (peak, +1.81 dB), in-process (no render-worker bundle beside this module (unbundled run or test); rendering in-process)",
             "evidence": {
               "renderer": "LISTENING_SYNTH_V2",
               "rendererVersion": "2.0.0",
               "evaluationVersion": "1.0",
               "sampleRate": 44100,
               "channels": 2,
-              "durationSeconds": 81.11,
+              "durationSeconds": 81.14,
               "targetRmsDbfs": -18,
               "peakCeiling": 0.95,
               "location": "in_process",
               "workers": 0,
               "rendered": 3,
               "failed": 0,
-              "renderMs": 19564
+              "renderMs": 17926
             }
           },
           "audioCritiqueStage": {
             "stage": "audio_critique",
             "status": "ok",
-            "detail": "audio-critic/v1 and 5 located audio dimension(s) ran on the evaluation render of 3 candidate(s): mean audio 86.67/100, final = 0.6×symbolic + 0.4×audio; 0 candidate(s) rank differently with audio than without",
+            "detail": "audio-critic/v1 and 5 located audio dimension(s) ran on the evaluation render of 3 candidate(s): mean audio 83.33/100, final = 0.6×symbolic + 0.4×audio; 0 candidate(s) rank differently with audio than without",
             "evidence": {
-              "meanAudioScore": 86.67,
+              "meanAudioScore": 83.33,
               "audioWeight": 0.4,
-              "critiqueMs": 7043,
-              "dimensions": "audioBalance=100/gated,audioDynamics=100/gated,audioMasking=100/gated,audioRhythm=90.64/informing,audioTransitions=100/informing",
+              "critiqueMs": 6066,
+              "dimensions": "audioBalance=92.2/gated,audioDynamics=100/gated,audioMasking=100/gated,audioRhythm=90.64/informing,audioTransitions=100/informing",
               "blockingObservations": 0,
-              "majorObservations": 0,
+              "majorObservations": 3,
               "rankChanged": 0
             }
           },
@@ -618,38 +620,38 @@
             "renderer": "LISTENING_SYNTH_V2 2.0.0",
             "location": "in_process",
             "sampleRate": 44100,
-            "durationSeconds": 81.099,
-            "renderMs": 6946,
-            "critiqueMs": 2232,
+            "durationSeconds": 81.133,
+            "renderMs": 5489,
+            "critiqueMs": 2033,
             "loudness": {
               "targetRmsDbfs": -18,
               "peakCeiling": 0.95,
               "applied": "peak",
-              "gainDb": 7.04
+              "gainDb": 2.23
             },
             "spectrum": {
-              "sub150": 68.8,
-              "low2k": 28.7,
-              "presence5k": 1.6,
-              "air": 1
+              "sub150": 59.7,
+              "low2k": 35.6,
+              "presence5k": 3.9,
+              "air": 0.8
             },
-            "symbolicScore": 77,
-            "audioScore": 87,
-            "finalScore": 81,
+            "symbolicScore": 73,
+            "audioScore": 83,
+            "finalScore": 77,
             "audioWeight": 0.4,
             "rankSymbolic": 2,
             "rankCombined": 2,
             "selectedWithAudio": false,
-            "renderKey": "6fb874ad670596314aaa0d6a557969500741158d1ad11f183d40a9f095261c50",
+            "renderKey": "d4332b1aa4f54bd039fe7efc20be28355d70fc4dfc062f6a7e798e2cfaaba3f4",
             "audioCriticV1": {
-              "overall": 87,
+              "overall": 83,
               "dimensions": [
-                "balance=92",
-                "masking=82",
+                "balance=74",
+                "masking=79",
                 "spectralCrowding=100",
                 "mud=100",
                 "harshness=100",
-                "lowEndConflict=73",
+                "lowEndConflict=75",
                 "transientQuality=100",
                 "stereoDistribution=50",
                 "dynamicMovement=100",
@@ -659,140 +661,14 @@
             "dimensions": [
               {
                 "dimension": "audioBalance",
-                "score": 100,
+                "score": 92.2,
                 "coverage": 1,
                 "controlStatus": "gated",
-                "observations": []
-              },
-              {
-                "dimension": "audioDynamics",
-                "score": 100,
-                "coverage": 1,
-                "controlStatus": "gated",
-                "observations": []
-              },
-              {
-                "dimension": "audioMasking",
-                "score": 100,
-                "coverage": 1,
-                "controlStatus": "gated",
-                "observations": []
-              },
-              {
-                "dimension": "audioRhythm",
-                "score": 90.64,
-                "coverage": 0.333,
-                "controlStatus": "informing",
                 "observations": [
-                  "off_grid_against_kit/minor@bars 13-20 (perform)",
-                  "off_grid_against_kit/minor@bars 13-20 (perform)",
-                  "off_grid_against_kit/minor@bars 29-36 (perform)"
+                  "part_dominates/major@bars 21-28 (orchestration)"
                 ]
               },
               {
-                "dimension": "audioTransitions",
-                "score": 100,
-                "coverage": 1,
-                "controlStatus": "informing",
-                "observations": []
-              }
-            ],
-            "stems": [
-              "drums -24.65 dBFS (trim -4.7 dB)",
-              "bass -28.97 dBFS (trim -1.2 dB)",
-              "keys -27.98 dBFS (trim 6.3 dB)"
-            ]
-          }
-        },
-        {
-          "label": "E · adventurous",
-          "score": 0.8059999999999999,
-          "summary": "adventurous · shipped 77/100 (composed 75) · audio 86/100 (LISTENING_SYNTH_V2, 81 s, in process) · combined 81 · 0 playability error(s) · repair attempted, nothing changed · groove: Groove feel is coherent.; leadCompatibility: Support instruments make room for the singer. · weakest: sectionDevelopment: Repeats of \"verse\" are identical — no added layer.",
-          "renderStage": {
-            "stage": "render",
-            "status": "ok",
-            "detail": "3 candidate(s) rendered once for evaluation with LISTENING_SYNTH_V2 2.0.0 (evaluation contract 1.0) at 44100 Hz / 2 ch, 81.1 s, normalised to -18 dBFS RMS with a 0.95 peak ceiling (peak, +8.04 dB), in-process (no render-worker bundle beside this module (unbundled run or test); rendering in-process)",
-            "evidence": {
-              "renderer": "LISTENING_SYNTH_V2",
-              "rendererVersion": "2.0.0",
-              "evaluationVersion": "1.0",
-              "sampleRate": 44100,
-              "channels": 2,
-              "durationSeconds": 81.11,
-              "targetRmsDbfs": -18,
-              "peakCeiling": 0.95,
-              "location": "in_process",
-              "workers": 0,
-              "rendered": 3,
-              "failed": 0,
-              "renderMs": 19564
-            }
-          },
-          "audioCritiqueStage": {
-            "stage": "audio_critique",
-            "status": "ok",
-            "detail": "audio-critic/v1 and 5 located audio dimension(s) ran on the evaluation render of 3 candidate(s): mean audio 86.67/100, final = 0.6×symbolic + 0.4×audio; 0 candidate(s) rank differently with audio than without",
-            "evidence": {
-              "meanAudioScore": 86.67,
-              "audioWeight": 0.4,
-              "critiqueMs": 7043,
-              "dimensions": "audioBalance=100/gated,audioDynamics=100/gated,audioMasking=100/gated,audioRhythm=90.64/informing,audioTransitions=100/informing",
-              "blockingObservations": 0,
-              "majorObservations": 0,
-              "rankChanged": 0
-            }
-          },
-          "audio": {
-            "renderer": "LISTENING_SYNTH_V2 2.0.0",
-            "location": "in_process",
-            "sampleRate": 44100,
-            "durationSeconds": 81.099,
-            "renderMs": 6414,
-            "critiqueMs": 2338,
-            "loudness": {
-              "targetRmsDbfs": -18,
-              "peakCeiling": 0.95,
-              "applied": "peak",
-              "gainDb": 3.63
-            },
-            "spectrum": {
-              "sub150": 64.2,
-              "low2k": 32.3,
-              "presence5k": 2.8,
-              "air": 0.7
-            },
-            "symbolicScore": 77,
-            "audioScore": 86,
-            "finalScore": 80.6,
-            "audioWeight": 0.4,
-            "rankSymbolic": 3,
-            "rankCombined": 3,
-            "selectedWithAudio": false,
-            "renderKey": "bce44e3ef9329f0a1c22719f8518bdc19c45b94e5855fea5cacc3a0a60e19e3f",
-            "audioCriticV1": {
-              "overall": 86,
-              "dimensions": [
-                "balance=92",
-                "masking=81",
-                "spectralCrowding=100",
-                "mud=100",
-                "harshness=100",
-                "lowEndConflict=73",
-                "transientQuality=100",
-                "stereoDistribution=50",
-                "dynamicMovement=100",
-                "instrumentRealism=60"
-              ]
-            },
-            "dimensions": [
-              {
-                "dimension": "audioBalance",
-                "score": 100,
-                "coverage": 1,
-                "controlStatus": "gated",
-                "observations": []
-              },
-              {
                 "dimension": "audioDynamics",
                 "score": 100,
                 "coverage": 1,
@@ -808,11 +684,10 @@
               },
               {
                 "dimension": "audioRhythm",
-                "score": 87.88,
+                "score": 91,
                 "coverage": 0.333,
                 "controlStatus": "informing",
                 "observations": [
-                  "off_grid_against_kit/minor@bars 13-20 (perform)",
                   "off_grid_against_kit/minor@bars 13-20 (perform)",
                   "off_grid_against_kit/minor@bars 29-36 (perform)",
                   "off_grid_against_kit/minor@bars 37-40 (perform)"
@@ -827,9 +702,140 @@
               }
             ],
             "stems": [
-              "drums -27.28 dBFS (trim -4.7 dB)",
-              "bass -29.19 dBFS (trim -1.2 dB)",
-              "keys -28.66 dBFS (trim 6.3 dB)"
+              "drums -29.23 dBFS (trim -4.7 dB)",
+              "bass -32.36 dBFS (trim -1.2 dB)",
+              "keys -30.21 dBFS (trim 6.3 dB)"
+            ]
+          }
+        },
+        {
+          "label": "E · adventurous",
+          "score": 0.77,
+          "summary": "adventurous · shipped 73/100 · audio 83/100 (LISTENING_SYNTH_V2, 81 s, in process) · combined 77 · 0 playability error(s) · repair attempted, nothing changed · groove: Groove feel is coherent.; leadCompatibility: Support instruments make room for the singer. · weakest: sectionDevelopment: Repeats of \"verse\" are identical — no added layer.",
+          "renderStage": {
+            "stage": "render",
+            "status": "ok",
+            "detail": "3 candidate(s) rendered once for evaluation with LISTENING_SYNTH_V2 2.0.0 (evaluation contract 1.0) at 44100 Hz / 2 ch, 81.1 s, normalised to -18 dBFS RMS with a 0.95 peak ceiling (peak, +1.81 dB), in-process (no render-worker bundle beside this module (unbundled run or test); rendering in-process)",
+            "evidence": {
+              "renderer": "LISTENING_SYNTH_V2",
+              "rendererVersion": "2.0.0",
+              "evaluationVersion": "1.0",
+              "sampleRate": 44100,
+              "channels": 2,
+              "durationSeconds": 81.14,
+              "targetRmsDbfs": -18,
+              "peakCeiling": 0.95,
+              "location": "in_process",
+              "workers": 0,
+              "rendered": 3,
+              "failed": 0,
+              "renderMs": 17926
+            }
+          },
+          "audioCritiqueStage": {
+            "stage": "audio_critique",
+            "status": "ok",
+            "detail": "audio-critic/v1 and 5 located audio dimension(s) ran on the evaluation render of 3 candidate(s): mean audio 83.33/100, final = 0.6×symbolic + 0.4×audio; 0 candidate(s) rank differently with audio than without",
+            "evidence": {
+              "meanAudioScore": 83.33,
+              "audioWeight": 0.4,
+              "critiqueMs": 6066,
+              "dimensions": "audioBalance=92.2/gated,audioDynamics=100/gated,audioMasking=100/gated,audioRhythm=90.64/informing,audioTransitions=100/informing",
+              "blockingObservations": 0,
+              "majorObservations": 3,
+              "rankChanged": 0
+            }
+          },
+          "audio": {
+            "renderer": "LISTENING_SYNTH_V2 2.0.0",
+            "location": "in_process",
+            "sampleRate": 44100,
+            "durationSeconds": 81.137,
+            "renderMs": 6729,
+            "critiqueMs": 1988,
+            "loudness": {
+              "targetRmsDbfs": -18,
+              "peakCeiling": 0.95,
+              "applied": "peak",
+              "gainDb": 5.47
+            },
+            "spectrum": {
+              "sub150": 53.4,
+              "low2k": 40.4,
+              "presence5k": 5.4,
+              "air": 0.9
+            },
+            "symbolicScore": 73,
+            "audioScore": 83,
+            "finalScore": 77,
+            "audioWeight": 0.4,
+            "rankSymbolic": 3,
+            "rankCombined": 3,
+            "selectedWithAudio": false,
+            "renderKey": "eb92bcec3a0f71d29a18cafc74300ee13bdc5da313933611b982de2d92c027ba",
+            "audioCriticV1": {
+              "overall": 83,
+              "dimensions": [
+                "balance=74",
+                "masking=79",
+                "spectralCrowding=100",
+                "mud=100",
+                "harshness=100",
+                "lowEndConflict=74",
+                "transientQuality=100",
+                "stereoDistribution=53",
+                "dynamicMovement=100",
+                "instrumentRealism=60"
+              ]
+            },
+            "dimensions": [
+              {
+                "dimension": "audioBalance",
+                "score": 92.2,
+                "coverage": 1,
+                "controlStatus": "gated",
+                "observations": [
+                  "part_dominates/major@bars 21-28 (orchestration)"
+                ]
+              },
+              {
+                "dimension": "audioDynamics",
+                "score": 100,
+                "coverage": 1,
+                "controlStatus": "gated",
+                "observations": []
+              },
+              {
+                "dimension": "audioMasking",
+                "score": 100,
+                "coverage": 1,
+                "controlStatus": "gated",
+                "observations": []
+              },
+              {
+                "dimension": "audioRhythm",
+                "score": 87.52,
+                "coverage": 0.333,
+                "controlStatus": "informing",
+                "observations": [
+                  "off_grid_against_kit/minor@bars 13-20 (perform)",
+                  "off_grid_against_kit/minor@bars 13-20 (perform)",
+                  "off_grid_against_kit/minor@bars 29-36 (perform)",
+                  "off_grid_against_kit/minor@bars 29-36 (perform)"
+                ]
+              },
+              {
+                "dimension": "audioTransitions",
+                "score": 100,
+                "coverage": 1,
+                "controlStatus": "informing",
+                "observations": []
+              }
+            ],
+            "stems": [
+              "drums -25.21 dBFS (trim -4.7 dB)",
+              "bass -26.4 dBFS (trim -1.2 dB)",
+              "keys -24.21 dBFS (trim 6.3 dB)"
             ]
           }
         }
@@ -839,7 +845,7 @@
   "d2_audio_controls": {
     "question": "Do the audio dimensions hear a defect deliberately introduced into the audio?",
     "harnessVersion": "B07_AUDIO_CONTROLS_v1",
-    "elapsedMs": 953312,
+    "elapsedMs": 877369,
     "anchors": [
       {
         "id": "pop-full",
@@ -849,14 +855,14 @@
           "bass-bass",
           "keys-harmonic_bed"
         ],
-        "notes": 640,
-        "durationSeconds": 81.105,
-        "renderMs": 6259,
+        "notes": 921,
+        "durationSeconds": 81.138,
+        "renderMs": 6438,
         "spectrum": {
-          "sub150": 67.3,
-          "low2k": 30.4,
-          "presence5k": 1.6,
-          "air": 0.7
+          "sub150": 51.2,
+          "low2k": 42.8,
+          "presence5k": 5.4,
+          "air": 0.6
         }
       },
       {
@@ -867,14 +873,14 @@
           "bass-bass",
           "keys-rhythmic_harmony"
         ],
-        "notes": 305,
-        "durationSeconds": 99.82,
-        "renderMs": 7041,
+        "notes": 280,
+        "durationSeconds": 100.125,
+        "renderMs": 4678,
         "spectrum": {
-          "sub150": 61.6,
-          "low2k": 31.7,
-          "presence5k": 4.4,
-          "air": 2.3
+          "sub150": 46.7,
+          "low2k": 42.7,
+          "presence5k": 8.8,
+          "air": 1.9
         }
       },
       {
@@ -886,14 +892,14 @@
           "keys-rhythmic_harmony",
           "guitar-harmonic_bed"
         ],
-        "notes": 564,
-        "durationSeconds": 59.557,
-        "renderMs": 6485,
+        "notes": 793,
+        "durationSeconds": 59.621,
+        "renderMs": 4209,
         "spectrum": {
-          "sub150": 52.9,
-          "low2k": 44.1,
+          "sub150": 40.1,
+          "low2k": 57.2,
           "presence5k": 1.2,
-          "air": 1.7
+          "air": 1.4
         }
       },
       {
@@ -905,14 +911,14 @@
           "keys-harmonic_bed",
           "synth-pad"
         ],
-        "notes": 712,
-        "durationSeconds": 77.607,
-        "renderMs": 10343,
+        "notes": 800,
+        "durationSeconds": 77.441,
+        "renderMs": 11105,
         "spectrum": {
-          "sub150": 48.1,
-          "low2k": 43.7,
-          "presence5k": 5.6,
-          "air": 2.6
+          "sub150": 49.8,
+          "low2k": 38.1,
+          "presence5k": 9.2,
+          "air": 3
         }
       },
       {
@@ -923,14 +929,14 @@
           "bass-bass",
           "guitar-harmonic_bed"
         ],
-        "notes": 440,
-        "durationSeconds": 84.336,
-        "renderMs": 3986,
+        "notes": 378,
+        "durationSeconds": 84.659,
+        "renderMs": 2307,
         "spectrum": {
-          "sub150": 58.8,
-          "low2k": 39.2,
-          "presence5k": 0.5,
-          "air": 1.5
+          "sub150": 47.1,
+          "low2k": 49.3,
+          "presence5k": 1.5,
+          "air": 2.1
         }
       },
       {
@@ -943,14 +949,14 @@
           "brass-climax_layer",
           "strings-climax_layer"
         ],
-        "notes": 337,
-        "durationSeconds": 87.146,
-        "renderMs": 8639,
+        "notes": 425,
+        "durationSeconds": 87.01,
+        "renderMs": 6553,
         "spectrum": {
-          "sub150": 52.9,
-          "low2k": 41.8,
-          "presence5k": 4.1,
-          "air": 1.2
+          "sub150": 40.1,
+          "low2k": 52.2,
+          "presence5k": 6.8,
+          "air": 0.9
         }
       },
       {
@@ -961,14 +967,14 @@
           "bass-bass",
           "keys-harmonic_bed"
         ],
-        "notes": 975,
-        "durationSeconds": 88.238,
-        "renderMs": 7759,
+        "notes": 1330,
+        "durationSeconds": 88.408,
+        "renderMs": 7008,
         "spectrum": {
-          "sub150": 65.6,
-          "low2k": 31.8,
-          "presence5k": 1.9,
-          "air": 0.6
+          "sub150": 46.1,
+          "low2k": 48.8,
+          "presence5k": 4.3,
+          "air": 0.8
         }
       },
       {
@@ -982,14 +988,14 @@
           "brass-climax_layer",
           "strings-climax_layer"
         ],
-        "notes": 406,
-        "durationSeconds": 128.84,
-        "renderMs": 10552,
+        "notes": 202,
+        "durationSeconds": 129.073,
+        "renderMs": 10765,
         "spectrum": {
-          "sub150": 46.9,
-          "low2k": 49.8,
-          "presence5k": 2.5,
-          "air": 0.8
+          "sub150": 31.3,
+          "low2k": 62.4,
+          "presence5k": 5.6,
+          "air": 0.7
         }
       }
     ],
@@ -1096,629 +1102,18 @@
         "control": "align_to_kit",
         "claimed": false,
         "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioBalance",
-        "control": "boost_sub_bass",
-        "claimed": true,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioBalance",
-        "control": "clip_stem",
-        "claimed": false,
-        "n": 8,
-        "detected": 8,
-        "rate": 1,
-        "ci95": [
-          0.6306,
-          1
-        ],
-        "meanScoreDrop": 39.13
-      },
-      {
-        "dimension": "audioBalance",
-        "control": "dominate_by_trim",
-        "claimed": true,
-        "n": 8,
-        "detected": 8,
-        "rate": 1,
-        "ci95": [
-          0.6306,
-          1
-        ],
-        "meanScoreDrop": 94.44
-      },
-      {
-        "dimension": "audioBalance",
-        "control": "dominate_one_part",
-        "claimed": true,
-        "n": 8,
-        "detected": 8,
-        "rate": 1,
-        "ci95": [
-          0.6306,
-          1
-        ],
-        "meanScoreDrop": 81.91
-      },
-      {
-        "dimension": "audioBalance",
-        "control": "empty_the_middle",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioBalance",
-        "control": "flatten_velocities",
-        "claimed": false,
-        "n": 8,
-        "detected": 5,
-        "rate": 0.625,
-        "ci95": [
-          0.2449,
-          0.9148
-        ],
-        "meanScoreDrop": 8.23
-      },
-      {
-        "dimension": "audioBalance",
-        "control": "shift_harmony_off_grid",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioBalance",
-        "control": "silence_a_section",
-        "claimed": false,
-        "n": 8,
-        "detected": 1,
-        "rate": 0.125,
-        "ci95": [
-          0.0032,
-          0.5265
-        ],
-        "meanScoreDrop": 0.89
-      },
-      {
-        "dimension": "audioBalance",
-        "control": "stack_octave",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioBalance",
-        "control": "thin_bed_to_one_line",
-        "claimed": false,
-        "n": 7,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.4096
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioBalance",
-        "control": "thin_the_arrival",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioDynamics",
-        "control": "align_to_kit",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioDynamics",
-        "control": "boost_sub_bass",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioDynamics",
-        "control": "clip_stem",
-        "claimed": true,
-        "n": 8,
-        "detected": 4,
-        "rate": 0.5,
-        "ci95": [
-          0.157,
-          0.843
-        ],
-        "meanScoreDrop": 10.14
-      },
-      {
-        "dimension": "audioDynamics",
-        "control": "dominate_by_trim",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioDynamics",
-        "control": "dominate_one_part",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioDynamics",
-        "control": "empty_the_middle",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioDynamics",
-        "control": "flatten_velocities",
-        "claimed": true,
-        "n": 8,
-        "detected": 7,
-        "rate": 0.875,
-        "ci95": [
-          0.4735,
-          0.9968
-        ],
-        "meanScoreDrop": 13.89
-      },
-      {
-        "dimension": "audioDynamics",
-        "control": "shift_harmony_off_grid",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioDynamics",
-        "control": "silence_a_section",
-        "claimed": true,
-        "n": 8,
-        "detected": 8,
-        "rate": 1,
-        "ci95": [
-          0.6306,
-          1
-        ],
-        "meanScoreDrop": 11.23
-      },
-      {
-        "dimension": "audioDynamics",
-        "control": "stack_octave",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": -0.79
-      },
-      {
-        "dimension": "audioDynamics",
-        "control": "thin_bed_to_one_line",
-        "claimed": false,
-        "n": 7,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.4096
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioDynamics",
-        "control": "thin_the_arrival",
-        "claimed": false,
-        "n": 8,
-        "detected": 5,
-        "rate": 0.625,
-        "ci95": [
-          0.2449,
-          0.9148
-        ],
-        "meanScoreDrop": 7.22
-      },
-      {
-        "dimension": "audioMasking",
-        "control": "align_to_kit",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioMasking",
-        "control": "boost_sub_bass",
-        "claimed": true,
-        "n": 8,
-        "detected": 7,
-        "rate": 0.875,
-        "ci95": [
-          0.4735,
-          0.9968
-        ],
-        "meanScoreDrop": 7.39
-      },
-      {
-        "dimension": "audioMasking",
-        "control": "clip_stem",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioMasking",
-        "control": "dominate_by_trim",
-        "claimed": false,
-        "n": 8,
-        "detected": 4,
-        "rate": 0.5,
-        "ci95": [
-          0.157,
-          0.843
-        ],
-        "meanScoreDrop": 5.23
-      },
-      {
-        "dimension": "audioMasking",
-        "control": "dominate_one_part",
-        "claimed": false,
-        "n": 8,
-        "detected": 5,
-        "rate": 0.625,
-        "ci95": [
-          0.2449,
-          0.9148
-        ],
-        "meanScoreDrop": 8.1
-      },
-      {
-        "dimension": "audioMasking",
-        "control": "empty_the_middle",
-        "claimed": true,
-        "n": 8,
-        "detected": 1,
-        "rate": 0.125,
-        "ci95": [
-          0.0032,
-          0.5265
-        ],
-        "meanScoreDrop": 1.03
-      },
-      {
-        "dimension": "audioMasking",
-        "control": "flatten_velocities",
-        "claimed": false,
-        "n": 8,
-        "detected": 1,
-        "rate": 0.125,
-        "ci95": [
-          0.0032,
-          0.5265
-        ],
-        "meanScoreDrop": 0.41
-      },
-      {
-        "dimension": "audioMasking",
-        "control": "shift_harmony_off_grid",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioMasking",
-        "control": "silence_a_section",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioMasking",
-        "control": "stack_octave",
-        "claimed": true,
-        "n": 8,
-        "detected": 8,
-        "rate": 1,
-        "ci95": [
-          0.6306,
-          1
-        ],
-        "meanScoreDrop": 21.44
-      },
-      {
-        "dimension": "audioMasking",
-        "control": "thin_bed_to_one_line",
-        "claimed": true,
-        "n": 7,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.4096
-        ],
-        "meanScoreDrop": -2.38
-      },
-      {
-        "dimension": "audioMasking",
-        "control": "thin_the_arrival",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioRhythm",
-        "control": "align_to_kit",
-        "claimed": false,
-        "n": 8,
-        "detected": 3,
-        "rate": 0.375,
-        "ci95": [
-          0.0852,
-          0.7551
-        ],
-        "meanScoreDrop": 0.99
-      },
-      {
-        "dimension": "audioRhythm",
-        "control": "boost_sub_bass",
-        "claimed": false,
-        "n": 8,
-        "detected": 5,
-        "rate": 0.625,
-        "ci95": [
-          0.2449,
-          0.9148
-        ],
-        "meanScoreDrop": 5.66
-      },
-      {
-        "dimension": "audioRhythm",
-        "control": "clip_stem",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioRhythm",
-        "control": "dominate_by_trim",
-        "claimed": false,
-        "n": 8,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.3694
-        ],
-        "meanScoreDrop": 0
-      },
-      {
-        "dimension": "audioRhythm",
-        "control": "dominate_one_part",
-        "claimed": false,
-        "n": 8,
-        "detected": 6,
-        "rate": 0.75,
-        "ci95": [
-          0.3491,
-          0.9681
-        ],
-        "meanScoreDrop": 7.06
-      },
-      {
-        "dimension": "audioRhythm",
-        "control": "empty_the_middle",
-        "claimed": false,
-        "n": 8,
-        "detected": 3,
-        "rate": 0.375,
-        "ci95": [
-          0.0852,
-          0.7551
-        ],
-        "meanScoreDrop": 0.45
-      },
-      {
-        "dimension": "audioRhythm",
-        "control": "flatten_velocities",
-        "claimed": false,
-        "n": 8,
-        "detected": 5,
-        "rate": 0.625,
-        "ci95": [
-          0.2449,
-          0.9148
-        ],
-        "meanScoreDrop": 5.33
-      },
-      {
-        "dimension": "audioRhythm",
-        "control": "shift_harmony_off_grid",
-        "claimed": true,
-        "n": 8,
-        "detected": 6,
-        "rate": 0.75,
-        "ci95": [
-          0.3491,
-          0.9681
-        ],
-        "meanScoreDrop": 4.67
-      },
-      {
-        "dimension": "audioRhythm",
-        "control": "silence_a_section",
-        "claimed": false,
-        "n": 6,
-        "detected": 1,
-        "rate": 0.1667,
-        "ci95": [
-          0.0042,
-          0.6412
-        ],
-        "meanScoreDrop": -3.38
-      },
-      {
-        "dimension": "audioRhythm",
-        "control": "stack_octave",
-        "claimed": false,
-        "n": 8,
-        "detected": 5,
-        "rate": 0.625,
-        "ci95": [
-          0.2449,
-          0.9148
-        ],
-        "meanScoreDrop": 2.04
-      },
-      {
-        "dimension": "audioRhythm",
-        "control": "thin_bed_to_one_line",
-        "claimed": false,
-        "n": 7,
-        "detected": 0,
-        "rate": 0,
-        "ci95": [
-          0,
-          0.4096
-        ],
-        "meanScoreDrop": -0.51
-      },
-      {
-        "dimension": "audioRhythm",
-        "control": "thin_the_arrival",
-        "claimed": false,
-        "n": 6,
         "detected": 2,
-        "rate": 0.3333,
+        "rate": 0.25,
         "ci95": [
-          0.0433,
-          0.7772
+          0.0319,
+          0.6509
         ],
-        "meanScoreDrop": -1.84
+        "meanScoreDrop": 7.52
       },
       {
-        "dimension": "audioTransitions",
-        "control": "align_to_kit",
-        "claimed": false,
+        "dimension": "audioBalance",
+        "control": "boost_sub_bass",
+        "claimed": true,
         "n": 8,
         "detected": 0,
         "rate": 0,
@@ -1729,59 +1124,46 @@
         "meanScoreDrop": 0
       },
       {
-        "dimension": "audioTransitions",
-        "control": "boost_sub_bass",
-        "claimed": false,
-        "n": 8,
-        "detected": 3,
-        "rate": 0.375,
-        "ci95": [
-          0.0852,
-          0.7551
-        ],
-        "meanScoreDrop": 1.82
-      },
-      {
-        "dimension": "audioTransitions",
+        "dimension": "audioBalance",
         "control": "clip_stem",
         "claimed": false,
         "n": 8,
-        "detected": 0,
-        "rate": 0,
+        "detected": 8,
+        "rate": 1,
         "ci95": [
-          0,
-          0.3694
+          0.6306,
+          1
         ],
-        "meanScoreDrop": 0
+        "meanScoreDrop": 33.48
       },
       {
-        "dimension": "audioTransitions",
+        "dimension": "audioBalance",
         "control": "dominate_by_trim",
-        "claimed": false,
+        "claimed": true,
         "n": 8,
-        "detected": 0,
-        "rate": 0,
+        "detected": 8,
+        "rate": 1,
         "ci95": [
-          0,
-          0.3694
+          0.6306,
+          1
         ],
-        "meanScoreDrop": -0.38
+        "meanScoreDrop": 81.97
       },
       {
-        "dimension": "audioTransitions",
+        "dimension": "audioBalance",
         "control": "dominate_one_part",
-        "claimed": false,
+        "claimed": true,
         "n": 8,
-        "detected": 0,
-        "rate": 0,
+        "detected": 8,
+        "rate": 1,
         "ci95": [
-          0,
-          0.3694
+          0.6306,
+          1
         ],
-        "meanScoreDrop": -0.38
+        "meanScoreDrop": 72.19
       },
       {
-        "dimension": "audioTransitions",
+        "dimension": "audioBalance",
         "control": "empty_the_middle",
         "claimed": false,
         "n": 8,
@@ -1794,20 +1176,176 @@
         "meanScoreDrop": 0
       },
       {
-        "dimension": "audioTransitions",
+        "dimension": "audioBalance",
         "control": "flatten_velocities",
         "claimed": false,
         "n": 8,
-        "detected": 6,
-        "rate": 0.75,
+        "detected": 4,
+        "rate": 0.5,
         "ci95": [
-          0.3491,
-          0.9681
+          0.157,
+          0.843
         ],
-        "meanScoreDrop": 5.89
+        "meanScoreDrop": 11.44
       },
       {
-        "dimension": "audioTransitions",
+        "dimension": "audioBalance",
+        "control": "shift_harmony_off_grid",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioBalance",
+        "control": "silence_a_section",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": -0.95
+      },
+      {
+        "dimension": "audioBalance",
+        "control": "stack_octave",
+        "claimed": false,
+        "n": 8,
+        "detected": 1,
+        "rate": 0.125,
+        "ci95": [
+          0.0032,
+          0.5265
+        ],
+        "meanScoreDrop": 6.55
+      },
+      {
+        "dimension": "audioBalance",
+        "control": "thin_bed_to_one_line",
+        "claimed": false,
+        "n": 7,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.4096
+        ],
+        "meanScoreDrop": -3.58
+      },
+      {
+        "dimension": "audioBalance",
+        "control": "thin_the_arrival",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": -0.95
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "align_to_kit",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": -2.36
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "boost_sub_bass",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": -0.78
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "clip_stem",
+        "claimed": true,
+        "n": 8,
+        "detected": 1,
+        "rate": 0.125,
+        "ci95": [
+          0.0032,
+          0.5265
+        ],
+        "meanScoreDrop": 6.72
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "dominate_by_trim",
+        "claimed": false,
+        "n": 8,
+        "detected": 2,
+        "rate": 0.25,
+        "ci95": [
+          0.0319,
+          0.6509
+        ],
+        "meanScoreDrop": 6.31
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "dominate_one_part",
+        "claimed": false,
+        "n": 8,
+        "detected": 4,
+        "rate": 0.5,
+        "ci95": [
+          0.157,
+          0.843
+        ],
+        "meanScoreDrop": 10.44
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "empty_the_middle",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "flatten_velocities",
+        "claimed": true,
+        "n": 8,
+        "detected": 5,
+        "rate": 0.625,
+        "ci95": [
+          0.2449,
+          0.9148
+        ],
+        "meanScoreDrop": 5.15
+      },
+      {
+        "dimension": "audioDynamics",
         "control": "shift_harmony_off_grid",
         "claimed": false,
         "n": 8,
@@ -1817,7 +1355,475 @@
           0.0319,
           0.6509
         ],
-        "meanScoreDrop": 1.65
+        "meanScoreDrop": 0.51
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "silence_a_section",
+        "claimed": true,
+        "n": 8,
+        "detected": 6,
+        "rate": 0.75,
+        "ci95": [
+          0.3491,
+          0.9681
+        ],
+        "meanScoreDrop": 10.46
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "stack_octave",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "thin_bed_to_one_line",
+        "claimed": false,
+        "n": 7,
+        "detected": 1,
+        "rate": 0.1429,
+        "ci95": [
+          0.0036,
+          0.5787
+        ],
+        "meanScoreDrop": 1.81
+      },
+      {
+        "dimension": "audioDynamics",
+        "control": "thin_the_arrival",
+        "claimed": false,
+        "n": 8,
+        "detected": 6,
+        "rate": 0.75,
+        "ci95": [
+          0.3491,
+          0.9681
+        ],
+        "meanScoreDrop": 11.63
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "align_to_kit",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "boost_sub_bass",
+        "claimed": true,
+        "n": 8,
+        "detected": 5,
+        "rate": 0.625,
+        "ci95": [
+          0.2449,
+          0.9148
+        ],
+        "meanScoreDrop": 7.96
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "clip_stem",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "dominate_by_trim",
+        "claimed": false,
+        "n": 8,
+        "detected": 4,
+        "rate": 0.5,
+        "ci95": [
+          0.157,
+          0.843
+        ],
+        "meanScoreDrop": 5.22
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "dominate_one_part",
+        "claimed": false,
+        "n": 8,
+        "detected": 6,
+        "rate": 0.75,
+        "ci95": [
+          0.3491,
+          0.9681
+        ],
+        "meanScoreDrop": 7.8
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "empty_the_middle",
+        "claimed": true,
+        "n": 8,
+        "detected": 2,
+        "rate": 0.25,
+        "ci95": [
+          0.0319,
+          0.6509
+        ],
+        "meanScoreDrop": 0.84
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "flatten_velocities",
+        "claimed": false,
+        "n": 8,
+        "detected": 2,
+        "rate": 0.25,
+        "ci95": [
+          0.0319,
+          0.6509
+        ],
+        "meanScoreDrop": 1.26
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "shift_harmony_off_grid",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "silence_a_section",
+        "claimed": false,
+        "n": 8,
+        "detected": 1,
+        "rate": 0.125,
+        "ci95": [
+          0.0032,
+          0.5265
+        ],
+        "meanScoreDrop": 0.64
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "stack_octave",
+        "claimed": true,
+        "n": 8,
+        "detected": 8,
+        "rate": 1,
+        "ci95": [
+          0.6306,
+          1
+        ],
+        "meanScoreDrop": 18.46
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "thin_bed_to_one_line",
+        "claimed": true,
+        "n": 7,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.4096
+        ],
+        "meanScoreDrop": -0.47
+      },
+      {
+        "dimension": "audioMasking",
+        "control": "thin_the_arrival",
+        "claimed": false,
+        "n": 8,
+        "detected": 1,
+        "rate": 0.125,
+        "ci95": [
+          0.0032,
+          0.5265
+        ],
+        "meanScoreDrop": 0.64
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "align_to_kit",
+        "claimed": false,
+        "n": 8,
+        "detected": 3,
+        "rate": 0.375,
+        "ci95": [
+          0.0852,
+          0.7551
+        ],
+        "meanScoreDrop": 1.01
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "boost_sub_bass",
+        "claimed": false,
+        "n": 8,
+        "detected": 5,
+        "rate": 0.625,
+        "ci95": [
+          0.2449,
+          0.9148
+        ],
+        "meanScoreDrop": 4.74
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "clip_stem",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "dominate_by_trim",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "dominate_one_part",
+        "claimed": false,
+        "n": 8,
+        "detected": 6,
+        "rate": 0.75,
+        "ci95": [
+          0.3491,
+          0.9681
+        ],
+        "meanScoreDrop": 4.87
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "empty_the_middle",
+        "claimed": false,
+        "n": 8,
+        "detected": 2,
+        "rate": 0.25,
+        "ci95": [
+          0.0319,
+          0.6509
+        ],
+        "meanScoreDrop": 0.02
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "flatten_velocities",
+        "claimed": false,
+        "n": 8,
+        "detected": 6,
+        "rate": 0.75,
+        "ci95": [
+          0.3491,
+          0.9681
+        ],
+        "meanScoreDrop": 2.07
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "shift_harmony_off_grid",
+        "claimed": true,
+        "n": 8,
+        "detected": 5,
+        "rate": 0.625,
+        "ci95": [
+          0.2449,
+          0.9148
+        ],
+        "meanScoreDrop": 3.73
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "silence_a_section",
+        "claimed": false,
+        "n": 6,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.4593
+        ],
+        "meanScoreDrop": -2.83
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "stack_octave",
+        "claimed": false,
+        "n": 8,
+        "detected": 7,
+        "rate": 0.875,
+        "ci95": [
+          0.4735,
+          0.9968
+        ],
+        "meanScoreDrop": 3.74
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "thin_bed_to_one_line",
+        "claimed": false,
+        "n": 7,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.4096
+        ],
+        "meanScoreDrop": -2.9
+      },
+      {
+        "dimension": "audioRhythm",
+        "control": "thin_the_arrival",
+        "claimed": false,
+        "n": 6,
+        "detected": 1,
+        "rate": 0.1667,
+        "ci95": [
+          0.0042,
+          0.6412
+        ],
+        "meanScoreDrop": -0.93
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "align_to_kit",
+        "claimed": false,
+        "n": 8,
+        "detected": 1,
+        "rate": 0.125,
+        "ci95": [
+          0.0032,
+          0.5265
+        ],
+        "meanScoreDrop": 0.79
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "boost_sub_bass",
+        "claimed": false,
+        "n": 8,
+        "detected": 1,
+        "rate": 0.125,
+        "ci95": [
+          0.0032,
+          0.5265
+        ],
+        "meanScoreDrop": 0.36
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "clip_stem",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "dominate_by_trim",
+        "claimed": false,
+        "n": 8,
+        "detected": 1,
+        "rate": 0.125,
+        "ci95": [
+          0.0032,
+          0.5265
+        ],
+        "meanScoreDrop": 0.38
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "dominate_one_part",
+        "claimed": false,
+        "n": 8,
+        "detected": 2,
+        "rate": 0.25,
+        "ci95": [
+          0.0319,
+          0.6509
+        ],
+        "meanScoreDrop": 1.31
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "empty_the_middle",
+        "claimed": false,
+        "n": 8,
+        "detected": 0,
+        "rate": 0,
+        "ci95": [
+          0,
+          0.3694
+        ],
+        "meanScoreDrop": 0
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "flatten_velocities",
+        "claimed": false,
+        "n": 8,
+        "detected": 4,
+        "rate": 0.5,
+        "ci95": [
+          0.157,
+          0.843
+        ],
+        "meanScoreDrop": 4.45
+      },
+      {
+        "dimension": "audioTransitions",
+        "control": "shift_harmony_off_grid",
+        "claimed": false,
+        "n": 8,
+        "detected": 1,
+        "rate": 0.125,
+        "ci95": [
+          0.0032,
+          0.5265
+        ],
+        "meanScoreDrop": 0.83
       },
       {
         "dimension": "audioTransitions",
@@ -1830,20 +1836,20 @@
           0.2449,
           0.9148
         ],
-        "meanScoreDrop": 10.6
+        "meanScoreDrop": 12.78
       },
       {
         "dimension": "audioTransitions",
         "control": "stack_octave",
         "claimed": false,
         "n": 8,
-        "detected": 1,
-        "rate": 0.125,
+        "detected": 0,
+        "rate": 0,
         "ci95": [
-          0.0032,
-          0.5265
+          0,
+          0.3694
         ],
-        "meanScoreDrop": 0.37
+        "meanScoreDrop": 0
       },
       {
         "dimension": "audioTransitions",
@@ -1856,7 +1862,7 @@
           0,
           0.4096
         ],
-        "meanScoreDrop": -0.43
+        "meanScoreDrop": 0
       },
       {
         "dimension": "audioTransitions",
@@ -1869,7 +1875,7 @@
           0.0852,
           0.7551
         ],
-        "meanScoreDrop": 4.11
+        "meanScoreDrop": 3.44
       }
     ],
     "ledger": {
@@ -1882,21 +1888,28 @@
           1
         ],
         "n": 8,
-        "cleanAnchorBlockingRate": 0
+        "cleanAnchorBlockingRate": 0,
+        "gatingTransforms": [
+          "dominate_by_trim",
+          "dominate_one_part"
+        ],
+        "reason": "2 independent non-prepared transforms passed (dominate_by_trim, dominate_one_part) and no clean anchor is blocked"
       },
       "audioDynamics": {
-        "status": "gated",
+        "status": "informing",
         "strongestControl": "silence_a_section",
-        "detectionRate": 1,
+        "detectionRate": 0.75,
         "ci95": [
-          0.6306,
-          1
+          0.3491,
+          0.9681
         ],
         "n": 8,
-        "cleanAnchorBlockingRate": 0
+        "cleanAnchorBlockingRate": 0,
+        "gatingTransforms": [],
+        "reason": "0 of 2 independent non-prepared transforms pass"
       },
       "audioMasking": {
-        "status": "gated",
+        "status": "informing",
         "strongestControl": "stack_octave",
         "detectionRate": 1,
         "ci95": [
@@ -1904,18 +1917,24 @@
           1
         ],
         "n": 8,
-        "cleanAnchorBlockingRate": 0
+        "cleanAnchorBlockingRate": 0,
+        "gatingTransforms": [
+          "stack_octave"
+        ],
+        "reason": "1 of 2 independent non-prepared transforms pass"
       },
       "audioRhythm": {
         "status": "informing",
         "strongestControl": "shift_harmony_off_grid",
-        "detectionRate": 0.75,
+        "detectionRate": 0.625,
         "ci95": [
-          0.3491,
-          0.9681
+          0.2449,
+          0.9148
         ],
         "n": 8,
-        "cleanAnchorBlockingRate": 0
+        "cleanAnchorBlockingRate": 0,
+        "gatingTransforms": [],
+        "reason": "0 of 2 independent non-prepared transforms pass"
       },
       "audioTransitions": {
         "status": "informing",
@@ -1926,15 +1945,17 @@
           0.9148
         ],
         "n": 8,
-        "cleanAnchorBlockingRate": 0
+        "cleanAnchorBlockingRate": 0,
+        "gatingTransforms": [],
+        "reason": "0 of 2 independent non-prepared transforms pass"
       }
     },
     "ledgerSummary": [
-      "audioBalance: gated (dominate_by_trim 100 % [0.6306, 1], n=8)",
-      "audioDynamics: gated (silence_a_section 100 % [0.6306, 1], n=8)",
-      "audioMasking: gated (stack_octave 100 % [0.6306, 1], n=8)",
-      "audioRhythm: informing (shift_harmony_off_grid 75 % [0.3491, 0.9681], n=8)",
-      "audioTransitions: informing (silence_a_section 63 % [0.2449, 0.9148], n=8)"
+      "audioBalance: gated (dominate_by_trim 100 % [0.6306, 1], n=8) gated by dominate_by_trim + dominate_one_part",
+      "audioDynamics: informing (silence_a_section 75 % [0.3491, 0.9681], n=8) — 0 of 2 independent non-prepared transforms pass",
+      "audioMasking: informing (stack_octave 100 % [0.6306, 1], n=8) — 1 of 2 independent non-prepared transforms pass",
+      "audioRhythm: informing (shift_harmony_off_grid 63 % [0.2449, 0.9148], n=8) — 0 of 2 independent non-prepared transforms pass",
+      "audioTransitions: informing (silence_a_section 63 % [0.2449, 0.9148], n=8) — 0 of 2 independent non-prepared transforms pass"
     ],
     "nullTest": {
       "rule": "no audio dimension may raise a blocking observation on a clean anchor's own render",
@@ -1943,12 +1964,14 @@
         {
           "anchorId": "pop-full",
           "dimension": "audioBalance",
-          "score": 100,
+          "score": 92.2,
           "applicable": true,
           "blocking": 0,
-          "major": 0,
+          "major": 1,
           "minor": 0,
-          "kinds": []
+          "kinds": [
+            "part_dominates"
+          ]
         },
         {
           "anchorId": "pop-full",
@@ -1995,20 +2018,22 @@
         {
           "anchorId": "ballad-piano-vocal",
           "dimension": "audioBalance",
-          "score": 100,
+          "score": 92.39,
           "applicable": true,
           "blocking": 0,
-          "major": 0,
+          "major": 1,
           "minor": 0,
-          "kinds": []
+          "kinds": [
+            "part_dominates"
+          ]
         },
         {
           "anchorId": "ballad-piano-vocal",
           "dimension": "audioDynamics",
-          "score": 93.68,
+          "score": 81.04,
           "applicable": true,
           "blocking": 0,
-          "major": 1,
+          "major": 3,
           "minor": 0,
           "kinds": [
             "dropout"
@@ -2027,11 +2052,11 @@
         {
           "anchorId": "ballad-piano-vocal",
           "dimension": "audioRhythm",
-          "score": 89.33,
+          "score": 83.99,
           "applicable": true,
           "blocking": 0,
-          "major": 0,
-          "minor": 3,
+          "major": 1,
+          "minor": 2,
           "kinds": [
             "off_grid_against_kit"
           ]
@@ -2039,14 +2064,12 @@
         {
           "anchorId": "ballad-piano-vocal",
           "dimension": "audioTransitions",
-          "score": 96.96,
+          "score": 100,
           "applicable": true,
           "blocking": 0,
           "major": 0,
-          "minor": 1,
-          "kinds": [
-            "unrealised_lift"
-          ]
+          "minor": 0,
+          "kinds": []
         },
         {
           "anchorId": "rock-full",
@@ -2071,59 +2094,7 @@
         {
           "anchorId": "rock-full",
           "dimension": "audioMasking",
-          "score": 100,
-          "applicable": true,
-          "blocking": 0,
-          "major": 0,
-          "minor": 0,
-          "kinds": []
-        },
-        {
-          "anchorId": "rock-full",
-          "dimension": "audioRhythm",
-          "score": 76.9,
-          "applicable": true,
-          "blocking": 0,
-          "major": 2,
-          "minor": 2,
-          "kinds": [
-            "off_grid_against_kit"
-          ]
-        },
-        {
-          "anchorId": "rock-full",
-          "dimension": "audioTransitions",
-          "score": 100,
-          "applicable": true,
-          "blocking": 0,
-          "major": 0,
-          "minor": 0,
-          "kinds": []
-        },
-        {
-          "anchorId": "dance-full",
-          "dimension": "audioBalance",
-          "score": 100,
-          "applicable": true,
-          "blocking": 0,
-          "major": 0,
-          "minor": 0,
-          "kinds": []
-        },
-        {
-          "anchorId": "dance-full",
-          "dimension": "audioDynamics",
-          "score": 100,
-          "applicable": true,
-          "blocking": 0,
-          "major": 0,
-          "minor": 0,
-          "kinds": []
-        },
-        {
-          "anchorId": "dance-full",
-          "dimension": "audioMasking",
-          "score": 96.79,
+          "score": 96.7,
           "applicable": true,
           "blocking": 0,
           "major": 0,
@@ -2133,13 +2104,65 @@
           ]
         },
         {
-          "anchorId": "dance-full",
+          "anchorId": "rock-full",
           "dimension": "audioRhythm",
-          "score": 93.58,
+          "score": 83.5,
           "applicable": true,
           "blocking": 0,
           "major": 0,
-          "minor": 2,
+          "minor": 5,
+          "kinds": [
+            "off_grid_against_kit"
+          ]
+        },
+        {
+          "anchorId": "rock-full",
+          "dimension": "audioTransitions",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "dance-full",
+          "dimension": "audioBalance",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "dance-full",
+          "dimension": "audioDynamics",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "dance-full",
+          "dimension": "audioMasking",
+          "score": 100,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 0,
+          "kinds": []
+        },
+        {
+          "anchorId": "dance-full",
+          "dimension": "audioRhythm",
+          "score": 90.37,
+          "applicable": true,
+          "blocking": 0,
+          "major": 0,
+          "minor": 3,
           "kinds": [
             "off_grid_against_kit"
           ]
@@ -2157,31 +2180,35 @@
         {
           "anchorId": "acoustic-demo",
           "dimension": "audioBalance",
-          "score": 100,
+          "score": 91.75,
           "applicable": true,
           "blocking": 0,
-          "major": 0,
+          "major": 1,
           "minor": 0,
-          "kinds": []
+          "kinds": [
+            "part_dominates"
+          ]
         },
         {
           "anchorId": "acoustic-demo",
           "dimension": "audioDynamics",
-          "score": 100,
+          "score": 12.06,
           "applicable": true,
           "blocking": 0,
-          "major": 0,
+          "major": 14,
           "minor": 0,
-          "kinds": []
+          "kinds": [
+            "dropout"
+          ]
         },
         {
           "anchorId": "acoustic-demo",
           "dimension": "audioMasking",
-          "score": 89.88,
+          "score": 96.59,
           "applicable": true,
           "blocking": 0,
           "major": 0,
-          "minor": 3,
+          "minor": 1,
           "kinds": [
             "low_end_congestion"
           ]
@@ -2221,12 +2248,14 @@
         {
           "anchorId": "orchestral-midi",
           "dimension": "audioDynamics",
-          "score": 100,
+          "score": 93.75,
           "applicable": true,
           "blocking": 0,
-          "major": 0,
+          "major": 1,
           "minor": 0,
-          "kinds": []
+          "kinds": [
+            "dropout"
+          ]
         },
         {
           "anchorId": "orchestral-midi",
@@ -2263,12 +2292,14 @@
         {
           "anchorId": "jazz-full",
           "dimension": "audioBalance",
-          "score": 100,
+          "score": 91,
           "applicable": true,
           "blocking": 0,
-          "major": 0,
+          "major": 1,
           "minor": 0,
-          "kinds": []
+          "kinds": [
+            "part_dominates"
+          ]
         },
         {
           "anchorId": "jazz-full",
@@ -2325,24 +2356,24 @@
         {
           "anchorId": "cinematic-midi",
           "dimension": "audioDynamics",
+          "score": 43.47,
+          "applicable": true,
+          "blocking": 0,
+          "major": 9,
+          "minor": 0,
+          "kinds": [
+            "dropout"
+          ]
+        },
+        {
+          "anchorId": "cinematic-midi",
+          "dimension": "audioMasking",
           "score": 100,
           "applicable": true,
           "blocking": 0,
           "major": 0,
           "minor": 0,
           "kinds": []
-        },
-        {
-          "anchorId": "cinematic-midi",
-          "dimension": "audioMasking",
-          "score": 93.4,
-          "applicable": true,
-          "blocking": 0,
-          "major": 0,
-          "minor": 2,
-          "kinds": [
-            "low_end_congestion"
-          ]
         },
         {
           "anchorId": "cinematic-midi",
@@ -2380,21 +2411,21 @@
         },
         {
           "anchorId": "ballad-piano-vocal",
-          "audioRhythmBefore": 89.33,
-          "audioRhythmAfter": 92.89,
+          "audioRhythmBefore": 83.99,
+          "audioRhythmAfter": 87.55,
           "detected": false
         },
         {
           "anchorId": "rock-full",
-          "audioRhythmBefore": 76.9,
+          "audioRhythmBefore": 83.5,
           "audioRhythmAfter": 78.55,
-          "detected": false
+          "detected": true
         },
         {
           "anchorId": "dance-full",
-          "audioRhythmBefore": 93.58,
-          "audioRhythmAfter": 87.16,
-          "detected": true
+          "audioRhythmBefore": 90.37,
+          "audioRhythmAfter": 90.37,
+          "detected": false
         },
         {
           "anchorId": "acoustic-demo",
@@ -2429,10 +2460,12 @@
         "detail": "2 pitched part(s) snapped to the beat grid",
         "results": {
           "audioBalance": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
+            "detected": true,
+            "before": 92.2,
+            "after": 84.4,
+            "kinds": [
+              "part_dominates"
+            ]
           },
           "audioDynamics": {
             "detected": false,
@@ -2467,8 +2500,8 @@
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 92.2,
+            "after": 92.2,
             "kinds": []
           },
           "audioDynamics": {
@@ -2480,7 +2513,7 @@
           "audioMasking": {
             "detected": true,
             "before": 100,
-            "after": 71.62,
+            "after": 76.3,
             "kinds": [
               "low_end_congestion"
             ]
@@ -2488,18 +2521,16 @@
           "audioRhythm": {
             "detected": true,
             "before": 90.64,
-            "after": 84.76,
+            "after": 77.86,
             "kinds": [
               "off_grid_against_kit"
             ]
           },
           "audioTransitions": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 97.24,
-            "kinds": [
-              "unrealised_lift"
-            ]
+            "after": 100,
+            "kinds": []
           }
         }
       },
@@ -2510,19 +2541,17 @@
         "results": {
           "audioBalance": {
             "detected": true,
-            "before": 100,
-            "after": 55,
+            "before": 92.2,
+            "after": 62.8,
             "kinds": [
               "part_dominates"
             ]
           },
           "audioDynamics": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 40,
-            "kinds": [
-              "clipped_stem"
-            ]
+            "after": 100,
+            "kinds": []
           },
           "audioMasking": {
             "detected": false,
@@ -2551,7 +2580,7 @@
         "results": {
           "audioBalance": {
             "detected": true,
-            "before": 100,
+            "before": 92.2,
             "after": 0,
             "kinds": [
               "part_dominates"
@@ -2590,8 +2619,8 @@
         "results": {
           "audioBalance": {
             "detected": true,
-            "before": 100,
-            "after": 0,
+            "before": 92.2,
+            "after": 18.6,
             "kinds": [
               "part_dominates",
               "part_inaudible"
@@ -2612,7 +2641,7 @@
           "audioRhythm": {
             "detected": true,
             "before": 90.64,
-            "after": 75.4,
+            "after": 87.52,
             "kinds": [
               "off_grid_against_kit"
             ]
@@ -2628,12 +2657,12 @@
       {
         "control": "empty_the_middle",
         "anchorId": "pop-full",
-        "detail": "10 note(s) moved out of G3-G5 in Chorus 2",
+        "detail": "21 note(s) moved out of G3-G5 in Chorus 2",
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 92.2,
+            "after": 92.2,
             "kinds": []
           },
           "audioDynamics": {
@@ -2665,12 +2694,12 @@
       {
         "control": "flatten_velocities",
         "anchorId": "pop-full",
-        "detail": "every velocity set to 66",
+        "detail": "every velocity set to 64",
         "results": {
           "audioBalance": {
             "detected": true,
-            "before": 100,
-            "after": 84.4,
+            "before": 92.2,
+            "after": 77.5,
             "kinds": [
               "part_dominates"
             ]
@@ -2692,7 +2721,7 @@
           "audioRhythm": {
             "detected": true,
             "before": 90.64,
-            "after": 75.4,
+            "after": 87.52,
             "kinds": [
               "off_grid_against_kit"
             ]
@@ -2714,8 +2743,8 @@
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 92.2,
+            "after": 92.2,
             "kinds": []
           },
           "audioDynamics": {
@@ -2733,7 +2762,7 @@
           "audioRhythm": {
             "detected": true,
             "before": 90.64,
-            "after": 87.88,
+            "after": 83.74,
             "kinds": [
               "off_grid_against_kit"
             ]
@@ -2749,18 +2778,18 @@
       {
         "control": "silence_a_section",
         "anchorId": "pop-full",
-        "detail": "Chorus 2 emptied (161 notes)",
+        "detail": "Chorus 2 emptied (193 notes)",
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 92.2,
+            "after": 92.2,
             "kinds": []
           },
           "audioDynamics": {
             "detected": true,
             "before": 100,
-            "after": 83.05,
+            "after": 82.83,
             "kinds": [
               "dropout",
               "planned_contrast_unrealised"
@@ -2781,7 +2810,7 @@
           "audioTransitions": {
             "detected": true,
             "before": 100,
-            "after": 84.17,
+            "after": 83.95,
             "kinds": [
               "arrival_thinner_than_setup",
               "dead_air_at_boundary"
@@ -2796,8 +2825,8 @@
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 92.2,
+            "after": 92.2,
             "kinds": []
           },
           "audioDynamics": {
@@ -2809,7 +2838,7 @@
           "audioMasking": {
             "detected": true,
             "before": 100,
-            "after": 59.68,
+            "after": 59.14,
             "kinds": [
               "low_end_congestion"
             ]
@@ -2833,11 +2862,11 @@
       {
         "control": "thin_bed_to_one_line",
         "anchorId": "pop-full",
-        "detail": "keys: 171 lower voice(s) removed, 131 kept",
+        "detail": "keys: 290 lower voice(s) removed, 252 kept",
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
+            "before": 92.2,
             "after": 100,
             "kinds": []
           },
@@ -2846,45 +2875,6 @@
             "before": 100,
             "after": 100,
             "kinds": []
-          },
-          "audioMasking": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "audioRhythm": {
-            "detected": false,
-            "before": 90.64,
-            "after": 90.64,
-            "kinds": []
-          },
-          "audioTransitions": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          }
-        }
-      },
-      {
-        "control": "thin_the_arrival",
-        "anchorId": "pop-full",
-        "detail": "30 note(s) removed from Chorus 2, the rest at half velocity",
-        "results": {
-          "audioBalance": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "audioDynamics": {
-            "detected": true,
-            "before": 100,
-            "after": 90.4,
-            "kinds": [
-              "planned_contrast_unrealised"
-            ]
           },
           "audioMasking": {
             "detected": false,
@@ -2907,255 +2897,20 @@
         }
       },
       {
-        "control": "align_to_kit",
-        "anchorId": "ballad-piano-vocal",
-        "detail": "2 pitched part(s) snapped to the beat grid",
+        "control": "thin_the_arrival",
+        "anchorId": "pop-full",
+        "detail": "33 note(s) removed from Chorus 2, the rest at half velocity",
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 92.2,
+            "after": 92.2,
             "kinds": []
           },
           "audioDynamics": {
-            "detected": false,
-            "before": 93.68,
-            "after": 93.68,
-            "kinds": []
-          },
-          "audioMasking": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "audioRhythm": {
-            "detected": false,
-            "before": 89.33,
-            "after": 92.89,
-            "kinds": []
-          },
-          "audioTransitions": {
-            "detected": false,
-            "before": 96.96,
-            "after": 96.96,
-            "kinds": []
-          }
-        }
-      },
-      {
-        "control": "boost_sub_bass",
-        "anchorId": "ballad-piano-vocal",
-        "detail": "bass and keys an octave down at 1.3x velocity",
-        "results": {
-          "audioBalance": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "audioDynamics": {
-            "detected": false,
-            "before": 93.68,
-            "after": 93.68,
-            "kinds": []
-          },
-          "audioMasking": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "audioRhythm": {
-            "detected": false,
-            "before": 89.33,
-            "after": 89.33,
-            "kinds": []
-          },
-          "audioTransitions": {
-            "detected": true,
-            "before": 96.96,
-            "after": 92.39,
-            "kinds": [
-              "unrealised_lift"
-            ]
-          }
-        }
-      },
-      {
-        "control": "clip_stem",
-        "anchorId": "ballad-piano-vocal",
-        "detail": "bass stem driven 6x and clipped",
-        "results": {
-          "audioBalance": {
             "detected": true,
             "before": 100,
-            "after": 66.04,
-            "kinds": [
-              "part_dominates"
-            ]
-          },
-          "audioDynamics": {
-            "detected": false,
-            "before": 93.68,
-            "after": 93.68,
-            "kinds": []
-          },
-          "audioMasking": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "audioRhythm": {
-            "detected": false,
-            "before": 89.33,
-            "after": 89.33,
-            "kinds": []
-          },
-          "audioTransitions": {
-            "detected": false,
-            "before": 96.96,
-            "after": 96.96,
-            "kinds": []
-          }
-        }
-      },
-      {
-        "control": "dominate_by_trim",
-        "anchorId": "ballad-piano-vocal",
-        "detail": "bass trimmed +24 dB in the render",
-        "results": {
-          "audioBalance": {
-            "detected": true,
-            "before": 100,
-            "after": 2.96,
-            "kinds": [
-              "part_dominates"
-            ]
-          },
-          "audioDynamics": {
-            "detected": false,
-            "before": 93.68,
-            "after": 93.68,
-            "kinds": []
-          },
-          "audioMasking": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "audioRhythm": {
-            "detected": false,
-            "before": 89.33,
-            "after": 89.33,
-            "kinds": []
-          },
-          "audioTransitions": {
-            "detected": false,
-            "before": 96.96,
-            "after": 100,
-            "kinds": []
-          }
-        }
-      },
-      {
-        "control": "dominate_one_part",
-        "anchorId": "ballad-piano-vocal",
-        "detail": "bass at 127, everything else at 20",
-        "results": {
-          "audioBalance": {
-            "detected": true,
-            "before": 100,
-            "after": 15.64,
-            "kinds": [
-              "part_dominates",
-              "part_inaudible"
-            ]
-          },
-          "audioDynamics": {
-            "detected": false,
-            "before": 93.68,
-            "after": 93.68,
-            "kinds": []
-          },
-          "audioMasking": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "audioRhythm": {
-            "detected": true,
-            "before": 89.33,
-            "after": 83.99,
-            "kinds": [
-              "off_grid_against_kit"
-            ]
-          },
-          "audioTransitions": {
-            "detected": false,
-            "before": 96.96,
-            "after": 100,
-            "kinds": []
-          }
-        }
-      },
-      {
-        "control": "empty_the_middle",
-        "anchorId": "ballad-piano-vocal",
-        "detail": "14 note(s) moved out of G3-G5 in Chorus",
-        "results": {
-          "audioBalance": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "audioDynamics": {
-            "detected": false,
-            "before": 93.68,
-            "after": 93.68,
-            "kinds": []
-          },
-          "audioMasking": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "audioRhythm": {
-            "detected": false,
-            "before": 89.33,
-            "after": 92.89,
-            "kinds": []
-          },
-          "audioTransitions": {
-            "detected": false,
-            "before": 96.96,
-            "after": 96.96,
-            "kinds": []
-          }
-        }
-      },
-      {
-        "control": "flatten_velocities",
-        "anchorId": "ballad-piano-vocal",
-        "detail": "every velocity set to 64",
-        "results": {
-          "audioBalance": {
-            "detected": true,
-            "before": 100,
-            "after": 83.82,
-            "kinds": [
-              "part_dominates"
-            ]
-          },
-          "audioDynamics": {
-            "detected": true,
-            "before": 93.68,
-            "after": 78.68,
+            "after": 90.4,
             "kinds": [
               "planned_contrast_unrealised"
             ]
@@ -3168,15 +2923,297 @@
           },
           "audioRhythm": {
             "detected": true,
-            "before": 89.33,
-            "after": 83.99,
+            "before": 90.64,
+            "after": 85.96,
             "kinds": [
               "off_grid_against_kit"
             ]
           },
           "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "align_to_kit",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "2 pitched part(s) snapped to the beat grid",
+        "results": {
+          "audioBalance": {
             "detected": true,
-            "before": 96.96,
+            "before": 92.39,
+            "after": 40,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 81.04,
+            "after": 81.04,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 83.99,
+            "after": 87.55,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "boost_sub_bass",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "bass and keys an octave down at 1.3x velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 92.39,
+            "after": 92.39,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 81.04,
+            "after": 81.04,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 83.99,
+            "after": 85.77,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "clip_stem",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "bass stem driven 6x and clipped",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 92.39,
+            "after": 73.64,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 81.04,
+            "after": 81.04,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 83.99,
+            "after": 83.99,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "dominate_by_trim",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "bass trimmed +24 dB in the render",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 92.39,
+            "after": 22,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 81.04,
+            "after": 36.79,
+            "kinds": [
+              "dropout"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 83.99,
+            "after": 83.99,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 96.96,
+            "kinds": [
+              "unrealised_lift"
+            ]
+          }
+        }
+      },
+      {
+        "control": "dominate_one_part",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "bass at 127, everything else at 20",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 92.39,
+            "after": 20.71,
+            "kinds": [
+              "part_dominates",
+              "part_inaudible"
+            ]
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 81.04,
+            "after": 66.04,
+            "kinds": [
+              "planned_contrast_unrealised"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 83.99,
+            "after": 89.33,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
+            "after": 92.39,
+            "kinds": [
+              "unrealised_lift"
+            ]
+          }
+        }
+      },
+      {
+        "control": "empty_the_middle",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "28 note(s) moved out of G3-G5 in Chorus",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 92.39,
+            "after": 92.39,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": false,
+            "before": 81.04,
+            "after": 81.04,
+            "kinds": []
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 83.99,
+            "after": 87.55,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "flatten_velocities",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "every velocity set to 75",
+        "results": {
+          "audioBalance": {
+            "detected": true,
+            "before": 92.39,
+            "after": 40,
+            "kinds": [
+              "part_dominates"
+            ]
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 81.04,
+            "after": 75.04,
+            "kinds": [
+              "planned_contrast_unrealised"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 83.99,
+            "after": 92.89,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
             "after": 92.39,
             "kinds": [
               "unrealised_lift"
@@ -3191,55 +3228,14 @@
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 92.39,
+            "after": 92.39,
             "kinds": []
           },
           "audioDynamics": {
             "detected": false,
-            "before": 93.68,
-            "after": 93.68,
-            "kinds": []
-          },
-          "audioMasking": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "audioRhythm": {
-            "detected": true,
-            "before": 89.33,
-            "after": 83.99,
-            "kinds": [
-              "off_grid_against_kit"
-            ]
-          },
-          "audioTransitions": {
-            "detected": true,
-            "before": 96.96,
-            "after": 90.31,
-            "kinds": [
-              "dead_air_at_boundary"
-            ]
-          }
-        }
-      },
-      {
-        "control": "silence_a_section",
-        "anchorId": "ballad-piano-vocal",
-        "detail": "Chorus emptied (71 notes)",
-        "results": {
-          "audioBalance": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "audioDynamics": {
-            "detected": true,
-            "before": 93.68,
-            "after": 91.43,
+            "before": 81.04,
+            "after": 80.07,
             "kinds": [
               "dropout"
             ]
@@ -3251,16 +3247,55 @@
             "kinds": []
           },
           "audioRhythm": {
-            "detected": true,
-            "before": 89.33,
+            "detected": false,
+            "before": 83.99,
             "after": 87.55,
-            "kinds": [
-              "off_grid_against_kit"
-            ]
+            "kinds": []
           },
           "audioTransitions": {
             "detected": true,
-            "before": 96.96,
+            "before": 100,
+            "after": 93.36,
+            "kinds": [
+              "dead_air_at_boundary"
+            ]
+          }
+        }
+      },
+      {
+        "control": "silence_a_section",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "Chorus emptied (76 notes)",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 92.39,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 81.04,
+            "after": 72.46,
+            "kinds": [
+              "dropout"
+            ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 83.99,
+            "after": 87.55,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": true,
+            "before": 100,
             "after": 67,
             "kinds": [
               "abrupt_level_jump",
@@ -3277,37 +3312,39 @@
         "detail": "keys transposed -36 semitones onto bass",
         "results": {
           "audioBalance": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
+            "detected": true,
+            "before": 92.39,
+            "after": 40,
+            "kinds": [
+              "part_dominates"
+            ]
           },
           "audioDynamics": {
             "detected": false,
-            "before": 93.68,
-            "after": 100,
+            "before": 81.04,
+            "after": 81.04,
             "kinds": []
           },
           "audioMasking": {
             "detected": true,
             "before": 100,
-            "after": 73.64,
+            "after": 87.55,
             "kinds": [
               "low_end_congestion"
             ]
           },
           "audioRhythm": {
             "detected": true,
-            "before": 89.33,
-            "after": 85.77,
+            "before": 83.99,
+            "after": 80.44,
             "kinds": [
               "off_grid_against_kit"
             ]
           },
           "audioTransitions": {
             "detected": false,
-            "before": 96.96,
-            "after": 96.96,
+            "before": 100,
+            "after": 100,
             "kinds": []
           }
         }
@@ -3315,55 +3352,18 @@
       {
         "control": "thin_bed_to_one_line",
         "anchorId": "ballad-piano-vocal",
-        "detail": "keys: 83 lower voice(s) removed, 78 kept",
+        "detail": "keys: 99 lower voice(s) removed, 73 kept",
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "audioDynamics": {
-            "detected": false,
-            "before": 93.68,
-            "after": 93.68,
-            "kinds": []
-          },
-          "audioMasking": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
-          },
-          "audioRhythm": {
-            "detected": false,
-            "before": 89.33,
-            "after": 92.89,
-            "kinds": []
-          },
-          "audioTransitions": {
-            "detected": false,
-            "before": 96.96,
-            "after": 100,
-            "kinds": []
-          }
-        }
-      },
-      {
-        "control": "thin_the_arrival",
-        "anchorId": "ballad-piano-vocal",
-        "detail": "17 note(s) removed from Chorus, the rest at half velocity",
-        "results": {
-          "audioBalance": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 92.39,
+            "after": 92.39,
             "kinds": []
           },
           "audioDynamics": {
             "detected": true,
-            "before": 93.68,
-            "after": 87.36,
+            "before": 81.04,
+            "after": 68.39,
             "kinds": [
               "dropout"
             ]
@@ -3375,19 +3375,55 @@
             "kinds": []
           },
           "audioRhythm": {
-            "detected": true,
-            "before": 89.33,
+            "detected": false,
+            "before": 83.99,
             "after": 87.55,
+            "kinds": []
+          },
+          "audioTransitions": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          }
+        }
+      },
+      {
+        "control": "thin_the_arrival",
+        "anchorId": "ballad-piano-vocal",
+        "detail": "4 note(s) removed from Chorus, the rest at half velocity",
+        "results": {
+          "audioBalance": {
+            "detected": false,
+            "before": 92.39,
+            "after": 100,
+            "kinds": []
+          },
+          "audioDynamics": {
+            "detected": true,
+            "before": 81.04,
+            "after": 55.75,
             "kinds": [
-              "off_grid_against_kit"
+              "dropout"
             ]
+          },
+          "audioMasking": {
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
+          },
+          "audioRhythm": {
+            "detected": false,
+            "before": 83.99,
+            "after": 83.99,
+            "kinds": []
           },
           "audioTransitions": {
             "detected": true,
-            "before": 96.96,
-            "after": 84.79,
+            "before": 100,
+            "after": 96.96,
             "kinds": [
-              "abrupt_level_jump",
               "unrealised_lift"
             ]
           }
@@ -3412,13 +3448,13 @@
           },
           "audioMasking": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 96.7,
+            "after": 96.7,
             "kinds": []
           },
           "audioRhythm": {
-            "detected": false,
-            "before": 76.9,
+            "detected": true,
+            "before": 83.5,
             "after": 78.55,
             "kinds": [
               "off_grid_against_kit"
@@ -3451,24 +3487,22 @@
           },
           "audioMasking": {
             "detected": true,
-            "before": 100,
+            "before": 96.7,
             "after": 91.75,
             "kinds": [
               "low_end_congestion"
             ]
           },
           "audioRhythm": {
-            "detected": true,
-            "before": 76.9,
-            "after": 73.6,
-            "kinds": [
-              "off_grid_against_kit"
-            ]
+            "detected": false,
+            "before": 83.5,
+            "after": 83.5,
+            "kinds": []
           },
           "audioTransitions": {
             "detected": true,
             "before": 100,
-            "after": 92.75,
+            "after": 97.1,
             "kinds": [
               "unrealised_lift"
             ]
@@ -3496,14 +3530,14 @@
           },
           "audioMasking": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 96.7,
+            "after": 96.7,
             "kinds": []
           },
           "audioRhythm": {
             "detected": false,
-            "before": 76.9,
-            "after": 76.9,
+            "before": 83.5,
+            "after": 83.5,
             "kinds": []
           },
           "audioTransitions": {
@@ -3522,7 +3556,7 @@
           "audioBalance": {
             "detected": true,
             "before": 100,
-            "after": 0,
+            "after": 6.67,
             "kinds": [
               "part_dominates"
             ]
@@ -3535,16 +3569,16 @@
           },
           "audioMasking": {
             "detected": true,
-            "before": 100,
-            "after": 91.75,
+            "before": 96.7,
+            "after": 88.45,
             "kinds": [
               "mid_register_hole"
             ]
           },
           "audioRhythm": {
             "detected": false,
-            "before": 76.9,
-            "after": 76.9,
+            "before": 83.5,
+            "after": 83.5,
             "kinds": []
           },
           "audioTransitions": {
@@ -3563,45 +3597,52 @@
           "audioBalance": {
             "detected": true,
             "before": 100,
-            "after": 0,
+            "after": 18.75,
             "kinds": [
               "part_dominates",
               "part_inaudible"
             ]
           },
           "audioDynamics": {
-            "detected": false,
+            "detected": true,
             "before": 100,
-            "after": 100,
-            "kinds": []
+            "after": 79,
+            "kinds": [
+              "flat_dynamics",
+              "planned_contrast_unrealised"
+            ]
           },
           "audioMasking": {
             "detected": true,
-            "before": 100,
-            "after": 88.45,
+            "before": 96.7,
+            "after": 83.5,
             "kinds": [
               "low_end_congestion",
               "mid_register_hole"
             ]
           },
           "audioRhythm": {
-            "detected": false,
-            "before": 76.9,
-            "after": 76.9,
-            "kinds": []
+            "detected": true,
+            "before": 83.5,
+            "after": 78.55,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
           },
           "audioTransitions": {
-            "detected": false,
+            "detected": true,
             "before": 100,
-            "after": 100,
-            "kinds": []
+            "after": 97.1,
+            "kinds": [
+              "unrealised_lift"
+            ]
           }
         }
       },
       {
         "control": "empty_the_middle",
         "anchorId": "rock-full",
-        "detail": "11 note(s) moved out of G3-G5 in Chorus",
+        "detail": "25 note(s) moved out of G3-G5 in Chorus",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -3617,16 +3658,16 @@
           },
           "audioMasking": {
             "detected": true,
-            "before": 100,
-            "after": 91.75,
+            "before": 96.7,
+            "after": 93.4,
             "kinds": [
               "low_end_congestion"
             ]
           },
           "audioRhythm": {
             "detected": false,
-            "before": 76.9,
-            "after": 81.85,
+            "before": 83.5,
+            "after": 86.8,
             "kinds": []
           },
           "audioTransitions": {
@@ -3640,36 +3681,39 @@
       {
         "control": "flatten_velocities",
         "anchorId": "rock-full",
-        "detail": "every velocity set to 69",
+        "detail": "every velocity set to 67",
         "results": {
           "audioBalance": {
-            "detected": false,
+            "detected": true,
             "before": 100,
-            "after": 100,
-            "kinds": []
+            "after": 84.75,
+            "kinds": [
+              "part_dominates"
+            ]
           },
           "audioDynamics": {
             "detected": true,
             "before": 100,
-            "after": 79,
+            "after": 85,
             "kinds": [
-              "flat_dynamics",
               "planned_contrast_unrealised"
             ]
           },
           "audioMasking": {
             "detected": true,
-            "before": 100,
-            "after": 96.7,
+            "before": 96.7,
+            "after": 91.75,
             "kinds": [
               "low_end_congestion"
             ]
           },
           "audioRhythm": {
-            "detected": false,
-            "before": 76.9,
-            "after": 76.9,
-            "kinds": []
+            "detected": true,
+            "before": 83.5,
+            "after": 78.55,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
           },
           "audioTransitions": {
             "detected": true,
@@ -3700,17 +3744,15 @@
           },
           "audioMasking": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 96.7,
+            "after": 96.7,
             "kinds": []
           },
           "audioRhythm": {
-            "detected": true,
-            "before": 76.9,
-            "after": 68.65,
-            "kinds": [
-              "off_grid_against_kit"
-            ]
+            "detected": false,
+            "before": 83.5,
+            "after": 83.5,
+            "kinds": []
           },
           "audioTransitions": {
             "detected": false,
@@ -3723,7 +3765,7 @@
       {
         "control": "silence_a_section",
         "anchorId": "rock-full",
-        "detail": "Chorus emptied (146 notes)",
+        "detail": "Chorus emptied (172 notes)",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -3734,29 +3776,30 @@
           "audioDynamics": {
             "detected": true,
             "before": 100,
-            "after": 92.5,
+            "after": 92.25,
             "kinds": [
               "dropout"
             ]
           },
           "audioMasking": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 96.7,
+            "after": 96.7,
             "kinds": []
           },
           "audioRhythm": {
             "detected": false,
-            "before": 76.9,
-            "after": 88.45,
+            "before": 83.5,
+            "after": 90.1,
             "kinds": []
           },
           "audioTransitions": {
             "detected": true,
             "before": 100,
-            "after": 89.75,
+            "after": 82.5,
             "kinds": [
-              "arrival_thinner_than_setup"
+              "arrival_thinner_than_setup",
+              "unrealised_lift"
             ]
           }
         }
@@ -3780,7 +3823,7 @@
           },
           "audioMasking": {
             "detected": true,
-            "before": 100,
+            "before": 96.7,
             "after": 64.95,
             "kinds": [
               "low_end_congestion"
@@ -3788,8 +3831,8 @@
           },
           "audioRhythm": {
             "detected": false,
-            "before": 76.9,
-            "after": 86.8,
+            "before": 83.5,
+            "after": 83.5,
             "kinds": []
           },
           "audioTransitions": {
@@ -3803,7 +3846,7 @@
       {
         "control": "thin_bed_to_one_line",
         "anchorId": "rock-full",
-        "detail": "guitar: 5 lower voice(s) removed, 7 kept",
+        "detail": "guitar: 14 lower voice(s) removed, 16 kept",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -3819,14 +3862,14 @@
           },
           "audioMasking": {
             "detected": false,
-            "before": 100,
+            "before": 96.7,
             "after": 100,
             "kinds": []
           },
           "audioRhythm": {
             "detected": false,
-            "before": 76.9,
-            "after": 76.9,
+            "before": 83.5,
+            "after": 86.8,
             "kinds": []
           },
           "audioTransitions": {
@@ -3840,7 +3883,7 @@
       {
         "control": "thin_the_arrival",
         "anchorId": "rock-full",
-        "detail": "135 note(s) removed from Chorus, the rest at half velocity",
+        "detail": "147 note(s) removed from Chorus, the rest at half velocity",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -3849,29 +3892,32 @@
             "kinds": []
           },
           "audioDynamics": {
-            "detected": false,
+            "detected": true,
             "before": 100,
-            "after": 100,
-            "kinds": []
+            "after": 81.25,
+            "kinds": [
+              "dropout"
+            ]
           },
           "audioMasking": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 96.7,
+            "after": 96.7,
             "kinds": []
           },
           "audioRhythm": {
             "detected": false,
-            "before": 76.9,
-            "after": 88.45,
+            "before": 83.5,
+            "after": 90.1,
             "kinds": []
           },
           "audioTransitions": {
             "detected": true,
             "before": 100,
-            "after": 89.75,
+            "after": 82.5,
             "kinds": [
-              "arrival_thinner_than_setup"
+              "arrival_thinner_than_setup",
+              "unrealised_lift"
             ]
           }
         }
@@ -3895,17 +3941,15 @@
           },
           "audioMasking": {
             "detected": false,
-            "before": 96.79,
-            "after": 96.79,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "audioRhythm": {
-            "detected": true,
-            "before": 93.58,
-            "after": 87.16,
-            "kinds": [
-              "off_grid_against_kit"
-            ]
+            "detected": false,
+            "before": 90.37,
+            "after": 90.37,
+            "kinds": []
           },
           "audioTransitions": {
             "detected": false,
@@ -3934,16 +3978,16 @@
           },
           "audioMasking": {
             "detected": true,
-            "before": 96.79,
-            "after": 91.97,
+            "before": 100,
+            "after": 96.79,
             "kinds": [
               "low_end_congestion"
             ]
           },
           "audioRhythm": {
             "detected": true,
-            "before": 93.58,
-            "after": 67.99,
+            "before": 90.37,
+            "after": 77.62,
             "kinds": [
               "off_grid_against_kit"
             ]
@@ -3964,7 +4008,7 @@
           "audioBalance": {
             "detected": true,
             "before": 100,
-            "after": 60.1,
+            "after": 40,
             "kinds": [
               "part_dominates"
             ]
@@ -3977,14 +4021,14 @@
           },
           "audioMasking": {
             "detected": false,
-            "before": 96.79,
-            "after": 96.79,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "audioRhythm": {
             "detected": false,
-            "before": 93.58,
-            "after": 93.58,
+            "before": 90.37,
+            "after": 90.37,
             "kinds": []
           },
           "audioTransitions": {
@@ -4009,23 +4053,25 @@
             ]
           },
           "audioDynamics": {
-            "detected": false,
+            "detected": true,
             "before": 100,
-            "after": 100,
-            "kinds": []
+            "after": 93.78,
+            "kinds": [
+              "dropout"
+            ]
           },
           "audioMasking": {
             "detected": true,
-            "before": 96.79,
-            "after": 80.74,
+            "before": 100,
+            "after": 83.95,
             "kinds": [
               "mid_register_hole"
             ]
           },
           "audioRhythm": {
             "detected": false,
-            "before": 93.58,
-            "after": 93.58,
+            "before": 90.37,
+            "after": 90.37,
             "kinds": []
           },
           "audioTransitions": {
@@ -4058,8 +4104,8 @@
           },
           "audioMasking": {
             "detected": true,
-            "before": 96.79,
-            "after": 75.92,
+            "before": 100,
+            "after": 80.74,
             "kinds": [
               "low_end_congestion",
               "mid_register_hole"
@@ -4067,8 +4113,8 @@
           },
           "audioRhythm": {
             "detected": true,
-            "before": 93.58,
-            "after": 82.34,
+            "before": 90.37,
+            "after": 76.02,
             "kinds": [
               "off_grid_against_kit"
             ]
@@ -4084,7 +4130,7 @@
       {
         "control": "empty_the_middle",
         "anchorId": "dance-full",
-        "detail": "11 note(s) moved out of G3-G5 in Chorus 2",
+        "detail": "18 note(s) moved out of G3-G5 in Chorus 2",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -4100,14 +4146,14 @@
           },
           "audioMasking": {
             "detected": false,
-            "before": 96.79,
-            "after": 96.79,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "audioRhythm": {
             "detected": false,
-            "before": 93.58,
-            "after": 93.58,
+            "before": 90.37,
+            "after": 90.37,
             "kinds": []
           },
           "audioTransitions": {
@@ -4121,7 +4167,7 @@
       {
         "control": "flatten_velocities",
         "anchorId": "dance-full",
-        "detail": "every velocity set to 54",
+        "detail": "every velocity set to 58",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -4137,14 +4183,14 @@
           },
           "audioMasking": {
             "detected": false,
-            "before": 96.79,
-            "after": 96.79,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "audioRhythm": {
             "detected": true,
-            "before": 93.58,
-            "after": 85.56,
+            "before": 90.37,
+            "after": 87.16,
             "kinds": [
               "off_grid_against_kit"
             ]
@@ -4176,14 +4222,14 @@
           },
           "audioMasking": {
             "detected": false,
-            "before": 96.79,
-            "after": 96.79,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "audioRhythm": {
             "detected": true,
-            "before": 93.58,
-            "after": 90.37,
+            "before": 90.37,
+            "after": 87.16,
             "kinds": [
               "off_grid_against_kit"
             ]
@@ -4199,7 +4245,7 @@
       {
         "control": "silence_a_section",
         "anchorId": "dance-full",
-        "detail": "Chorus 2 emptied (210 notes)",
+        "detail": "Chorus 2 emptied (238 notes)",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -4208,23 +4254,21 @@
             "kinds": []
           },
           "audioDynamics": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 93.55,
-            "kinds": [
-              "dropout"
-            ]
+            "after": 100,
+            "kinds": []
           },
           "audioMasking": {
             "detected": false,
-            "before": 96.79,
-            "after": 96.79,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "audioRhythm": {
             "detected": false,
-            "before": 93.58,
-            "after": 93.58,
+            "before": 90.37,
+            "after": 90.37,
             "kinds": [
               "off_grid_against_kit"
             ]
@@ -4256,15 +4300,15 @@
           },
           "audioMasking": {
             "detected": true,
-            "before": 96.79,
-            "after": 83.95,
+            "before": 100,
+            "after": 88.77,
             "kinds": [
               "low_end_congestion"
             ]
           },
           "audioRhythm": {
             "detected": true,
-            "before": 93.58,
+            "before": 90.37,
             "after": 83.95,
             "kinds": [
               "off_grid_against_kit"
@@ -4281,7 +4325,7 @@
       {
         "control": "thin_bed_to_one_line",
         "anchorId": "dance-full",
-        "detail": "keys: 11 lower voice(s) removed, 12 kept",
+        "detail": "keys: 23 lower voice(s) removed, 23 kept",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -4297,13 +4341,13 @@
           },
           "audioMasking": {
             "detected": false,
-            "before": 96.79,
+            "before": 100,
             "after": 100,
             "kinds": []
           },
           "audioRhythm": {
             "detected": false,
-            "before": 93.58,
+            "before": 90.37,
             "after": 93.58,
             "kinds": []
           },
@@ -4318,7 +4362,7 @@
       {
         "control": "thin_the_arrival",
         "anchorId": "dance-full",
-        "detail": "184 note(s) removed from Chorus 2, the rest at half velocity",
+        "detail": "194 note(s) removed from Chorus 2, the rest at half velocity",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -4327,21 +4371,23 @@
             "kinds": []
           },
           "audioDynamics": {
+            "detected": true,
+            "before": 100,
+            "after": 81.33,
+            "kinds": [
+              "dropout"
+            ]
+          },
+          "audioMasking": {
             "detected": false,
             "before": 100,
             "after": 100,
             "kinds": []
           },
-          "audioMasking": {
-            "detected": false,
-            "before": 96.79,
-            "after": 96.79,
-            "kinds": []
-          },
           "audioRhythm": {
             "detected": false,
-            "before": 93.58,
-            "after": 93.58,
+            "before": 90.37,
+            "after": 90.37,
             "kinds": [
               "off_grid_against_kit"
             ]
@@ -4361,20 +4407,20 @@
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 91.75,
+            "after": 91.75,
             "kinds": []
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 12.06,
+            "after": 30.91,
             "kinds": []
           },
           "audioMasking": {
             "detected": false,
-            "before": 89.88,
-            "after": 89.88,
+            "before": 96.59,
+            "after": 96.59,
             "kinds": []
           },
           "audioRhythm": {
@@ -4400,20 +4446,20 @@
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 91.75,
+            "after": 91.75,
             "kinds": []
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 12.06,
+            "after": 18.34,
             "kinds": []
           },
           "audioMasking": {
             "detected": true,
-            "before": 89.88,
-            "after": 86.46,
+            "before": 96.59,
+            "after": 82.94,
             "kinds": [
               "low_end_congestion"
             ]
@@ -4441,24 +4487,22 @@
         "results": {
           "audioBalance": {
             "detected": true,
-            "before": 100,
-            "after": 66.16,
+            "before": 91.75,
+            "after": 74.41,
             "kinds": [
               "part_dominates"
             ]
           },
           "audioDynamics": {
-            "detected": true,
-            "before": 100,
-            "after": 93.72,
-            "kinds": [
-              "clipped_stem"
-            ]
+            "detected": false,
+            "before": 12.06,
+            "after": 12.06,
+            "kinds": []
           },
           "audioMasking": {
             "detected": false,
-            "before": 89.88,
-            "after": 89.88,
+            "before": 96.59,
+            "after": 96.59,
             "kinds": []
           },
           "audioRhythm": {
@@ -4482,7 +4526,7 @@
         "results": {
           "audioBalance": {
             "detected": true,
-            "before": 100,
+            "before": 91.75,
             "after": 3.97,
             "kinds": [
               "part_dominates"
@@ -4490,14 +4534,14 @@
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 12.06,
+            "after": 12.06,
             "kinds": []
           },
           "audioMasking": {
             "detected": false,
-            "before": 89.88,
-            "after": 89.88,
+            "before": 96.59,
+            "after": 96.59,
             "kinds": []
           },
           "audioRhythm": {
@@ -4521,8 +4565,8 @@
         "results": {
           "audioBalance": {
             "detected": true,
-            "before": 100,
-            "after": 17.81,
+            "before": 91.75,
+            "after": 14.97,
             "kinds": [
               "part_dominates",
               "part_inaudible"
@@ -4530,14 +4574,14 @@
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 12.06,
+            "after": 12.06,
             "kinds": []
           },
           "audioMasking": {
             "detected": true,
-            "before": 89.88,
-            "after": 84.92,
+            "before": 96.59,
+            "after": 91.47,
             "kinds": [
               "low_end_congestion"
             ]
@@ -4545,7 +4589,7 @@
           "audioRhythm": {
             "detected": true,
             "before": 93.17,
-            "after": 79.53,
+            "after": 89.76,
             "kinds": [
               "off_grid_against_kit"
             ]
@@ -4561,33 +4605,33 @@
       {
         "control": "empty_the_middle",
         "anchorId": "acoustic-demo",
-        "detail": "13 note(s) moved out of G3-G5 in Chorus 2",
+        "detail": "25 note(s) moved out of G3-G5 in Chorus 2",
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 91.75,
+            "after": 91.75,
             "kinds": []
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 12.06,
+            "after": 12.06,
             "kinds": []
           },
           "audioMasking": {
-            "detected": false,
-            "before": 89.88,
-            "after": 89.88,
-            "kinds": []
+            "detected": true,
+            "before": 96.59,
+            "after": 93.17,
+            "kinds": [
+              "low_end_congestion"
+            ]
           },
           "audioRhythm": {
-            "detected": true,
+            "detected": false,
             "before": 93.17,
-            "after": 88.06,
-            "kinds": [
-              "off_grid_against_kit"
-            ]
+            "after": 93.17,
+            "kinds": []
           },
           "audioTransitions": {
             "detected": false,
@@ -4600,45 +4644,43 @@
       {
         "control": "flatten_velocities",
         "anchorId": "acoustic-demo",
-        "detail": "every velocity set to 55",
+        "detail": "every velocity set to 62",
         "results": {
           "audioBalance": {
-            "detected": true,
-            "before": 100,
-            "after": 83.22,
-            "kinds": [
-              "part_dominates"
-            ]
+            "detected": false,
+            "before": 91.75,
+            "after": 91.75,
+            "kinds": []
           },
           "audioDynamics": {
-            "detected": true,
-            "before": 100,
-            "after": 89.22,
+            "detected": false,
+            "before": 12.06,
+            "after": 22.19,
             "kinds": [
-              "planned_contrast_unrealised"
+              "flat_dynamics"
             ]
           },
           "audioMasking": {
-            "detected": false,
-            "before": 89.88,
-            "after": 89.88,
-            "kinds": []
+            "detected": true,
+            "before": 96.59,
+            "after": 91.47,
+            "kinds": [
+              "low_end_congestion"
+            ]
           },
           "audioRhythm": {
             "detected": true,
             "before": 93.17,
-            "after": 84.64,
+            "after": 86.35,
             "kinds": [
               "off_grid_against_kit"
             ]
           },
           "audioTransitions": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 92.59,
-            "kinds": [
-              "unrealised_lift"
-            ]
+            "after": 100,
+            "kinds": []
           }
         }
       },
@@ -4649,20 +4691,22 @@
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 91.75,
+            "after": 91.75,
             "kinds": []
           },
           "audioDynamics": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
+            "detected": true,
+            "before": 12.06,
+            "after": 10.94,
+            "kinds": [
+              "dropout"
+            ]
           },
           "audioMasking": {
             "detected": false,
-            "before": 89.88,
-            "after": 89.88,
+            "before": 96.59,
+            "after": 96.59,
             "kinds": []
           },
           "audioRhythm": {
@@ -4674,41 +4718,37 @@
             ]
           },
           "audioTransitions": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 93.44,
-            "kinds": [
-              "dead_air_at_boundary"
-            ]
+            "after": 100,
+            "kinds": []
           }
         }
       },
       {
         "control": "silence_a_section",
         "anchorId": "acoustic-demo",
-        "detail": "Chorus 2 emptied (135 notes)",
+        "detail": "Chorus 2 emptied (147 notes)",
         "results": {
           "audioBalance": {
-            "detected": true,
-            "before": 100,
-            "after": 92.88,
-            "kinds": [
-              "part_dominates"
-            ]
+            "detected": false,
+            "before": 91.75,
+            "after": 91.75,
+            "kinds": []
           },
           "audioDynamics": {
-            "detected": true,
-            "before": 100,
-            "after": 93.44,
-            "kinds": [
-              "dropout"
-            ]
+            "detected": false,
+            "before": 12.06,
+            "after": 18.34,
+            "kinds": []
           },
           "audioMasking": {
-            "detected": false,
-            "before": 89.88,
-            "after": 89.88,
-            "kinds": []
+            "detected": true,
+            "before": 96.59,
+            "after": 91.47,
+            "kinds": [
+              "low_end_congestion"
+            ]
           },
           "audioRhythm": {
             "detected": false,
@@ -4731,20 +4771,20 @@
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 91.75,
+            "after": 91.75,
             "kinds": []
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 12.06,
+            "after": 12.06,
             "kinds": []
           },
           "audioMasking": {
             "detected": true,
-            "before": 89.88,
-            "after": 86.46,
+            "before": 96.59,
+            "after": 82.94,
             "kinds": [
               "low_end_congestion"
             ]
@@ -4758,42 +4798,40 @@
             ]
           },
           "audioTransitions": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 97.04,
-            "kinds": [
-              "unrealised_lift"
-            ]
+            "after": 100,
+            "kinds": []
           }
         }
       },
       {
         "control": "thin_bed_to_one_line",
         "anchorId": "acoustic-demo",
-        "detail": "guitar: 69 lower voice(s) removed, 114 kept",
+        "detail": "guitar: 37 lower voice(s) removed, 60 kept",
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
+            "before": 91.75,
             "after": 100,
             "kinds": []
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 12.06,
+            "after": 12.06,
             "kinds": []
           },
           "audioMasking": {
             "detected": false,
-            "before": 89.88,
-            "after": 96.7,
+            "before": 96.59,
+            "after": 96.59,
             "kinds": []
           },
           "audioRhythm": {
             "detected": false,
             "before": 93.17,
-            "after": 93.17,
+            "after": 96.59,
             "kinds": []
           },
           "audioTransitions": {
@@ -4807,28 +4845,27 @@
       {
         "control": "thin_the_arrival",
         "anchorId": "acoustic-demo",
-        "detail": "29 note(s) removed from Chorus 2, the rest at half velocity",
+        "detail": "28 note(s) removed from Chorus 2, the rest at half velocity",
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 91.75,
+            "after": 91.75,
             "kinds": []
           },
           "audioDynamics": {
-            "detected": true,
-            "before": 100,
-            "after": 82.94,
-            "kinds": [
-              "dropout",
-              "planned_contrast_unrealised"
-            ]
+            "detected": false,
+            "before": 12.06,
+            "after": 18.34,
+            "kinds": []
           },
           "audioMasking": {
-            "detected": false,
-            "before": 89.88,
-            "after": 89.88,
-            "kinds": []
+            "detected": true,
+            "before": 96.59,
+            "after": 91.47,
+            "kinds": [
+              "low_end_congestion"
+            ]
           },
           "audioRhythm": {
             "detected": false,
@@ -4857,8 +4894,8 @@
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 93.75,
+            "after": 93.75,
             "kinds": []
           },
           "audioMasking": {
@@ -4894,17 +4931,15 @@
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 93.75,
+            "after": 93.75,
             "kinds": []
           },
           "audioMasking": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 96.3,
-            "kinds": [
-              "mid_register_hole"
-            ]
+            "after": 100,
+            "kinds": []
           },
           "audioRhythm": {
             "detected": true,
@@ -4937,8 +4972,8 @@
           },
           "audioDynamics": {
             "detected": true,
-            "before": 100,
-            "after": 93,
+            "before": 93.75,
+            "after": 40,
             "kinds": [
               "clipped_stem"
             ]
@@ -4971,15 +5006,15 @@
           "audioBalance": {
             "detected": true,
             "before": 100,
-            "after": 10.58,
+            "after": 19.83,
             "kinds": [
               "part_dominates"
             ]
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 93.75,
+            "after": 93.75,
             "kinds": []
           },
           "audioMasking": {
@@ -5020,8 +5055,8 @@
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 93.75,
+            "after": 93.75,
             "kinds": []
           },
           "audioMasking": {
@@ -5035,7 +5070,7 @@
           "audioRhythm": {
             "detected": true,
             "before": 96.3,
-            "after": 90.75,
+            "after": 87.05,
             "kinds": [
               "off_grid_against_kit"
             ]
@@ -5051,7 +5086,7 @@
       {
         "control": "empty_the_middle",
         "anchorId": "orchestral-midi",
-        "detail": "66 note(s) moved out of G3-G5 in Chorus",
+        "detail": "98 note(s) moved out of G3-G5 in Chorus",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -5061,8 +5096,8 @@
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 93.75,
+            "after": 93.75,
             "kinds": []
           },
           "audioMasking": {
@@ -5090,7 +5125,7 @@
       {
         "control": "flatten_velocities",
         "anchorId": "orchestral-midi",
-        "detail": "every velocity set to 58",
+        "detail": "every velocity set to 63",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -5100,7 +5135,7 @@
           },
           "audioDynamics": {
             "detected": true,
-            "before": 100,
+            "before": 93.75,
             "after": 85,
             "kinds": [
               "flat_dynamics"
@@ -5113,10 +5148,12 @@
             "kinds": []
           },
           "audioRhythm": {
-            "detected": false,
+            "detected": true,
             "before": 96.3,
-            "after": 96.3,
-            "kinds": []
+            "after": 92.6,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
           },
           "audioTransitions": {
             "detected": false,
@@ -5139,8 +5176,8 @@
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 93.75,
+            "after": 93.75,
             "kinds": []
           },
           "audioMasking": {
@@ -5168,7 +5205,7 @@
       {
         "control": "silence_a_section",
         "anchorId": "orchestral-midi",
-        "detail": "Chorus emptied (208 notes)",
+        "detail": "Chorus emptied (245 notes)",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -5178,8 +5215,8 @@
           },
           "audioDynamics": {
             "detected": true,
-            "before": 100,
-            "after": 91.25,
+            "before": 93.75,
+            "after": 85,
             "kinds": [
               "dropout"
             ]
@@ -5217,14 +5254,14 @@
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 93.75,
+            "after": 93.75,
             "kinds": []
           },
           "audioMasking": {
             "detected": true,
             "before": 100,
-            "after": 87.05,
+            "after": 90.75,
             "kinds": [
               "low_end_congestion"
             ]
@@ -5248,7 +5285,7 @@
       {
         "control": "thin_the_arrival",
         "anchorId": "orchestral-midi",
-        "detail": "140 note(s) removed from Chorus, the rest at half velocity",
+        "detail": "131 note(s) removed from Chorus, the rest at half velocity",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -5258,8 +5295,8 @@
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 93.75,
+            "after": 93.75,
             "kinds": []
           },
           "audioMasking": {
@@ -5289,8 +5326,8 @@
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 91,
+            "after": 91,
             "kinds": []
           },
           "audioDynamics": {
@@ -5326,8 +5363,8 @@
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 91,
+            "after": 91,
             "kinds": []
           },
           "audioDynamics": {
@@ -5339,16 +5376,18 @@
           "audioMasking": {
             "detected": true,
             "before": 100,
-            "after": 92.72,
+            "after": 81.81,
             "kinds": [
               "low_end_congestion"
             ]
           },
           "audioRhythm": {
-            "detected": false,
+            "detected": true,
             "before": 88.97,
-            "after": 88.97,
-            "kinds": []
+            "after": 85.3,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
           },
           "audioTransitions": {
             "detected": false,
@@ -5365,19 +5404,17 @@
         "results": {
           "audioBalance": {
             "detected": true,
-            "before": 100,
-            "after": 72.63,
+            "before": 91,
+            "after": 81.63,
             "kinds": [
               "part_dominates"
             ]
           },
           "audioDynamics": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 92.13,
-            "kinds": [
-              "clipped_stem"
-            ]
+            "after": 100,
+            "kinds": []
           },
           "audioMasking": {
             "detected": false,
@@ -5406,8 +5443,8 @@
         "results": {
           "audioBalance": {
             "detected": true,
-            "before": 100,
-            "after": 26.94,
+            "before": 91,
+            "after": 36.13,
             "kinds": [
               "part_dominates"
             ]
@@ -5445,7 +5482,7 @@
         "results": {
           "audioBalance": {
             "detected": true,
-            "before": 100,
+            "before": 91,
             "after": 40,
             "kinds": [
               "part_dominates",
@@ -5453,21 +5490,26 @@
             ]
           },
           "audioDynamics": {
-            "detected": false,
+            "detected": true,
             "before": 100,
-            "after": 100,
-            "kinds": []
+            "after": 80.2,
+            "kinds": [
+              "flat_dynamics",
+              "planned_contrast_unrealised"
+            ]
           },
           "audioMasking": {
-            "detected": false,
+            "detected": true,
             "before": 100,
-            "after": 100,
-            "kinds": []
+            "after": 92.72,
+            "kinds": [
+              "low_end_congestion"
+            ]
           },
           "audioRhythm": {
             "detected": true,
             "before": 88.97,
-            "after": 83.46,
+            "after": 79.79,
             "kinds": [
               "off_grid_against_kit"
             ]
@@ -5483,12 +5525,12 @@
       {
         "control": "empty_the_middle",
         "anchorId": "jazz-full",
-        "detail": "24 note(s) moved out of G3-G5 in Chorus",
+        "detail": "45 note(s) moved out of G3-G5 in Chorus",
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 91,
+            "after": 91,
             "kinds": []
           },
           "audioDynamics": {
@@ -5520,12 +5562,12 @@
       {
         "control": "flatten_velocities",
         "anchorId": "jazz-full",
-        "detail": "every velocity set to 66",
+        "detail": "every velocity set to 58",
         "results": {
           "audioBalance": {
             "detected": true,
-            "before": 100,
-            "after": 91,
+            "before": 91,
+            "after": 81.81,
             "kinds": [
               "part_dominates"
             ]
@@ -5547,7 +5589,7 @@
           "audioRhythm": {
             "detected": true,
             "before": 88.97,
-            "after": 83.46,
+            "after": 85.3,
             "kinds": [
               "off_grid_against_kit"
             ]
@@ -5569,8 +5611,8 @@
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 91,
+            "after": 91,
             "kinds": []
           },
           "audioDynamics": {
@@ -5586,10 +5628,12 @@
             "kinds": []
           },
           "audioRhythm": {
-            "detected": false,
+            "detected": true,
             "before": 88.97,
-            "after": 88.97,
-            "kinds": []
+            "after": 83.46,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
           },
           "audioTransitions": {
             "detected": false,
@@ -5602,20 +5646,19 @@
       {
         "control": "silence_a_section",
         "anchorId": "jazz-full",
-        "detail": "Chorus emptied (295 notes)",
+        "detail": "Chorus emptied (326 notes)",
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 91,
+            "after": 91,
             "kinds": []
           },
           "audioDynamics": {
             "detected": true,
             "before": 100,
-            "after": 79.38,
+            "after": 88,
             "kinds": [
-              "dropout",
               "planned_contrast_unrealised"
             ]
           },
@@ -5628,15 +5671,16 @@
           "audioRhythm": {
             "detected": false,
             "before": 88.97,
-            "after": 96.33,
+            "after": 92.65,
             "kinds": []
           },
           "audioTransitions": {
             "detected": true,
             "before": 100,
-            "after": 88,
+            "after": 81.06,
             "kinds": [
-              "arrival_thinner_than_setup"
+              "arrival_thinner_than_setup",
+              "unrealised_lift"
             ]
           }
         }
@@ -5648,8 +5692,8 @@
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 91,
+            "after": 91,
             "kinds": []
           },
           "audioDynamics": {
@@ -5661,16 +5705,18 @@
           "audioMasking": {
             "detected": true,
             "before": 100,
-            "after": 72.63,
+            "after": 78.14,
             "kinds": [
               "low_end_congestion"
             ]
           },
           "audioRhythm": {
-            "detected": false,
+            "detected": true,
             "before": 88.97,
-            "after": 88.97,
-            "kinds": []
+            "after": 85.3,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
           },
           "audioTransitions": {
             "detected": false,
@@ -5683,11 +5729,11 @@
       {
         "control": "thin_bed_to_one_line",
         "anchorId": "jazz-full",
-        "detail": "keys: 258 lower voice(s) removed, 197 kept",
+        "detail": "keys: 413 lower voice(s) removed, 365 kept",
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
+            "before": 91,
             "after": 100,
             "kinds": []
           },
@@ -5706,7 +5752,7 @@
           "audioRhythm": {
             "detected": false,
             "before": 88.97,
-            "after": 88.97,
+            "after": 92.65,
             "kinds": []
           },
           "audioTransitions": {
@@ -5720,12 +5766,12 @@
       {
         "control": "thin_the_arrival",
         "anchorId": "jazz-full",
-        "detail": "61 note(s) removed from Chorus, the rest at half velocity",
+        "detail": "50 note(s) removed from Chorus, the rest at half velocity",
         "results": {
           "audioBalance": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 91,
+            "after": 91,
             "kinds": []
           },
           "audioDynamics": {
@@ -5743,18 +5789,18 @@
             "kinds": []
           },
           "audioRhythm": {
-            "detected": true,
+            "detected": false,
             "before": 88.97,
-            "after": 87.14,
-            "kinds": [
-              "off_grid_against_kit"
-            ]
+            "after": 92.65,
+            "kinds": []
           },
           "audioTransitions": {
-            "detected": false,
+            "detected": true,
             "before": 100,
-            "after": 100,
-            "kinds": []
+            "after": 93.06,
+            "kinds": [
+              "unrealised_lift"
+            ]
           }
         }
       },
@@ -5771,14 +5817,14 @@
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 43.47,
+            "after": 43.47,
             "kinds": []
           },
           "audioMasking": {
             "detected": false,
-            "before": 93.4,
-            "after": 93.4,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "audioRhythm": {
@@ -5790,10 +5836,12 @@
             ]
           },
           "audioTransitions": {
-            "detected": false,
+            "detected": true,
             "before": 100,
-            "after": 100,
-            "kinds": []
+            "after": 93.72,
+            "kinds": [
+              "dead_air_at_boundary"
+            ]
           }
         }
       },
@@ -5810,17 +5858,15 @@
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 43.47,
+            "after": 43.47,
             "kinds": []
           },
           "audioMasking": {
-            "detected": true,
-            "before": 93.4,
-            "after": 90.1,
-            "kinds": [
-              "mid_register_hole"
-            ]
+            "detected": false,
+            "before": 100,
+            "after": 100,
+            "kinds": []
           },
           "audioRhythm": {
             "detected": false,
@@ -5851,14 +5897,14 @@
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 43.47,
+            "after": 43.47,
             "kinds": []
           },
           "audioMasking": {
             "detected": false,
-            "before": 93.4,
-            "after": 93.4,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "audioRhythm": {
@@ -5883,21 +5929,21 @@
           "audioBalance": {
             "detected": true,
             "before": 100,
-            "after": 0,
+            "after": 23,
             "kinds": [
               "part_dominates"
             ]
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 43.47,
+            "after": 43.47,
             "kinds": []
           },
           "audioMasking": {
             "detected": true,
-            "before": 93.4,
-            "after": 85.15,
+            "before": 100,
+            "after": 91.75,
             "kinds": [
               "mid_register_hole"
             ]
@@ -5924,24 +5970,26 @@
           "audioBalance": {
             "detected": true,
             "before": 100,
-            "after": 31.25,
+            "after": 36.75,
             "kinds": [
               "part_dominates",
               "part_inaudible"
             ]
           },
           "audioDynamics": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
+            "detected": true,
+            "before": 43.47,
+            "after": 15.72,
+            "kinds": [
+              "flat_dynamics",
+              "planned_contrast_unrealised"
+            ]
           },
           "audioMasking": {
             "detected": true,
-            "before": 93.4,
-            "after": 75.25,
+            "before": 100,
+            "after": 91.75,
             "kinds": [
-              "low_end_congestion",
               "mid_register_hole"
             ]
           },
@@ -5964,7 +6012,7 @@
       {
         "control": "empty_the_middle",
         "anchorId": "cinematic-midi",
-        "detail": "16 note(s) moved out of G3-G5 in Chorus",
+        "detail": "43 note(s) moved out of G3-G5 in Chorus",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -5974,14 +6022,14 @@
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 43.47,
+            "after": 43.47,
             "kinds": []
           },
           "audioMasking": {
             "detected": false,
-            "before": 93.4,
-            "after": 93.4,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "audioRhythm": {
@@ -6003,29 +6051,24 @@
       {
         "control": "flatten_velocities",
         "anchorId": "cinematic-midi",
-        "detail": "every velocity set to 57",
+        "detail": "every velocity set to 74",
         "results": {
           "audioBalance": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 91.75,
-            "kinds": [
-              "part_dominates"
-            ]
+            "after": 100,
+            "kinds": []
           },
           "audioDynamics": {
-            "detected": true,
-            "before": 100,
-            "after": 72.25,
-            "kinds": [
-              "flat_dynamics",
-              "planned_contrast_unrealised"
-            ]
+            "detected": false,
+            "before": 43.47,
+            "after": 43.47,
+            "kinds": []
           },
           "audioMasking": {
             "detected": false,
-            "before": 93.4,
-            "after": 93.4,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "audioRhythm": {
@@ -6037,12 +6080,10 @@
             ]
           },
           "audioTransitions": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 92.88,
-            "kinds": [
-              "unrealised_lift"
-            ]
+            "after": 100,
+            "kinds": []
           }
         }
       },
@@ -6058,15 +6099,17 @@
             "kinds": []
           },
           "audioDynamics": {
-            "detected": false,
-            "before": 100,
-            "after": 100,
-            "kinds": []
+            "detected": true,
+            "before": 43.47,
+            "after": 41.5,
+            "kinds": [
+              "dropout"
+            ]
           },
           "audioMasking": {
             "detected": false,
-            "before": 93.4,
-            "after": 93.4,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "audioRhythm": {
@@ -6088,7 +6131,7 @@
       {
         "control": "silence_a_section",
         "anchorId": "cinematic-midi",
-        "detail": "Chorus emptied (99 notes)",
+        "detail": "Chorus emptied (105 notes)",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -6098,17 +6141,18 @@
           },
           "audioDynamics": {
             "detected": true,
-            "before": 100,
-            "after": 79.28,
+            "before": 43.47,
+            "after": 7.75,
             "kinds": [
               "dropout",
+              "flat_dynamics",
               "planned_contrast_unrealised"
             ]
           },
           "audioMasking": {
             "detected": false,
-            "before": 93.4,
-            "after": 93.4,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "audioRhythm": {
@@ -6141,23 +6185,25 @@
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 43.47,
+            "after": 43.47,
             "kinds": []
           },
           "audioMasking": {
             "detected": true,
-            "before": 93.4,
-            "after": 80.2,
+            "before": 100,
+            "after": 93.4,
             "kinds": [
               "low_end_congestion"
             ]
           },
           "audioRhythm": {
-            "detected": false,
+            "detected": true,
             "before": 93.4,
-            "after": 93.4,
-            "kinds": []
+            "after": 90.1,
+            "kinds": [
+              "off_grid_against_kit"
+            ]
           },
           "audioTransitions": {
             "detected": false,
@@ -6170,7 +6216,7 @@
       {
         "control": "thin_bed_to_one_line",
         "anchorId": "cinematic-midi",
-        "detail": "keys: 136 lower voice(s) removed, 152 kept",
+        "detail": "keys: 52 lower voice(s) removed, 51 kept",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -6180,13 +6226,13 @@
           },
           "audioDynamics": {
             "detected": false,
-            "before": 100,
-            "after": 100,
+            "before": 43.47,
+            "after": 43.47,
             "kinds": []
           },
           "audioMasking": {
             "detected": false,
-            "before": 93.4,
+            "before": 100,
             "after": 100,
             "kinds": []
           },
@@ -6207,7 +6253,7 @@
       {
         "control": "thin_the_arrival",
         "anchorId": "cinematic-midi",
-        "detail": "88 note(s) removed from Chorus, the rest at half velocity",
+        "detail": "84 note(s) removed from Chorus, the rest at half velocity",
         "results": {
           "audioBalance": {
             "detected": false,
@@ -6217,16 +6263,16 @@
           },
           "audioDynamics": {
             "detected": true,
-            "before": 100,
-            "after": 87.25,
+            "before": 43.47,
+            "after": 28.47,
             "kinds": [
-              "planned_contrast_unrealised"
+              "flat_dynamics"
             ]
           },
           "audioMasking": {
             "detected": false,
-            "before": 93.4,
-            "after": 93.4,
+            "before": 100,
+            "after": 100,
             "kinds": []
           },
           "audioRhythm": {
@@ -6236,12 +6282,10 @@
             "kinds": []
           },
           "audioTransitions": {
-            "detected": true,
+            "detected": false,
             "before": 100,
-            "after": 89.5,
-            "kinds": [
-              "arrival_thinner_than_setup"
-            ]
+            "after": 100,
+            "kinds": []
           }
         }
       }
@@ -6271,20 +6315,20 @@
         "soundingNotesPerStem": [
           {
             "part": "drums",
-            "notes": 250,
-            "sounding": 250,
+            "notes": 270,
+            "sounding": 270,
             "share": 1
           },
           {
             "part": "bass",
-            "notes": 88,
-            "sounding": 88,
+            "notes": 109,
+            "sounding": 109,
             "share": 1
           },
           {
             "part": "keys",
-            "notes": 302,
-            "sounding": 302,
+            "notes": 542,
+            "sounding": 542,
             "share": 1
           }
         ]
@@ -6296,20 +6340,20 @@
         "soundingNotesPerStem": [
           {
             "part": "drums",
-            "notes": 85,
-            "sounding": 85,
+            "notes": 91,
+            "sounding": 91,
             "share": 1
           },
           {
             "part": "bass",
-            "notes": 59,
-            "sounding": 59,
+            "notes": 17,
+            "sounding": 17,
             "share": 1
           },
           {
             "part": "keys",
-            "notes": 161,
-            "sounding": 161,
+            "notes": 172,
+            "sounding": 172,
             "share": 1
           }
         ]
@@ -6321,26 +6365,26 @@
         "soundingNotesPerStem": [
           {
             "part": "drums",
-            "notes": 215,
-            "sounding": 215,
+            "notes": 233,
+            "sounding": 233,
             "share": 1
           },
           {
             "part": "bass",
-            "notes": 84,
-            "sounding": 84,
+            "notes": 114,
+            "sounding": 114,
             "share": 1
           },
           {
             "part": "keys",
-            "notes": 253,
-            "sounding": 253,
+            "notes": 416,
+            "sounding": 416,
             "share": 1
           },
           {
             "part": "guitar",
-            "notes": 12,
-            "sounding": 12,
+            "notes": 30,
+            "sounding": 30,
             "share": 1
           }
         ]
@@ -6352,26 +6396,26 @@
         "soundingNotesPerStem": [
           {
             "part": "drums",
-            "notes": 577,
-            "sounding": 577,
+            "notes": 612,
+            "sounding": 612,
             "share": 1
           },
           {
             "part": "bass",
-            "notes": 80,
-            "sounding": 80,
+            "notes": 97,
+            "sounding": 97,
             "share": 1
           },
           {
             "part": "keys",
-            "notes": 23,
-            "sounding": 23,
+            "notes": 46,
+            "sounding": 46,
             "share": 1
           },
           {
             "part": "synth",
-            "notes": 32,
-            "sounding": 32,
+            "notes": 45,
+            "sounding": 45,
             "share": 1
           }
         ]
@@ -6383,20 +6427,20 @@
         "soundingNotesPerStem": [
           {
             "part": "drums",
-            "notes": 204,
-            "sounding": 204,
+            "notes": 203,
+            "sounding": 203,
             "share": 1
           },
           {
             "part": "bass",
-            "notes": 53,
-            "sounding": 53,
+            "notes": 78,
+            "sounding": 78,
             "share": 1
           },
           {
             "part": "guitar",
-            "notes": 183,
-            "sounding": 183,
+            "notes": 97,
+            "sounding": 97,
             "share": 1
           }
         ]
@@ -6408,20 +6452,20 @@
         "soundingNotesPerStem": [
           {
             "part": "drums",
-            "notes": 105,
-            "sounding": 105,
+            "notes": 116,
+            "sounding": 116,
             "share": 1
           },
           {
             "part": "bass",
-            "notes": 38,
-            "sounding": 38,
+            "notes": 19,
+            "sounding": 19,
             "share": 1
           },
           {
             "part": "keys",
-            "notes": 164,
-            "sounding": 164,
+            "notes": 177,
+            "sounding": 177,
             "share": 1
           },
           {
@@ -6432,8 +6476,8 @@
           },
           {
             "part": "strings",
-            "notes": 24,
-            "sounding": 24,
+            "notes": 107,
+            "sounding": 107,
             "share": 1
           }
         ]
@@ -6445,20 +6489,20 @@
         "soundingNotesPerStem": [
           {
             "part": "drums",
-            "notes": 109,
-            "sounding": 109,
+            "notes": 111,
+            "sounding": 111,
             "share": 1
           },
           {
             "part": "bass",
-            "notes": 64,
-            "sounding": 64,
+            "notes": 32,
+            "sounding": 32,
             "share": 1
           },
           {
             "part": "keys",
-            "notes": 388,
-            "sounding": 388,
+            "notes": 79,
+            "sounding": 79,
             "share": 1
           }
         ]
@@ -6470,20 +6514,20 @@
         "soundingNotesPerStem": [
           {
             "part": "drums",
-            "notes": 428,
-            "sounding": 428,
+            "notes": 434,
+            "sounding": 434,
             "share": 1
           },
           {
             "part": "bass",
-            "notes": 92,
-            "sounding": 92,
+            "notes": 118,
+            "sounding": 118,
             "share": 1
           },
           {
             "part": "keys",
-            "notes": 455,
-            "sounding": 455,
+            "notes": 778,
+            "sounding": 778,
             "share": 1
           }
         ]
@@ -6495,26 +6539,26 @@
         "soundingNotesPerStem": [
           {
             "part": "drums",
-            "notes": 44,
-            "sounding": 44,
+            "notes": 47,
+            "sounding": 47,
             "share": 1
           },
           {
             "part": "bass",
-            "notes": 52,
-            "sounding": 52,
+            "notes": 18,
+            "sounding": 18,
             "share": 1
           },
           {
             "part": "percussion",
-            "notes": 7,
-            "sounding": 7,
+            "notes": 8,
+            "sounding": 8,
             "share": 1
           },
           {
             "part": "keys",
-            "notes": 288,
-            "sounding": 288,
+            "notes": 103,
+            "sounding": 103,
             "share": 1
           },
           {
@@ -6525,8 +6569,8 @@
           },
           {
             "part": "strings",
-            "notes": 11,
-            "sounding": 11,
+            "notes": 22,
+            "sounding": 22,
             "share": 1
           }
         ]
