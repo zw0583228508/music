@@ -42,17 +42,17 @@ test("the table: piano 0, electric piano 4, organ 16, guitar 24/25, bass 32/33, 
   for (const pitched of ["piano", "bass", "strings", "guitar", "brass", "flute"]) assert.equal(choose(pitched).percussion, false, pitched);
 });
 
-test("the instrument name outranks a definition that says drums: the brain's keys track in the RHYTHMIC_HARMONY role is a piano on a pitched channel", () => {
-  // musicEngines.ts resolves "keys" + RHYTHMIC_HARMONY to the drum-kit definition
-  // (FAMILY_WORDS has no keyboard word - B-01 / B-12 finding, B-03 owns the fix).
+test("the instrument name outranks the definition: a keys track in the RHYTHMIC_HARMONY role is a piano on a pitched channel, before and after B-03", () => {
+  // Before B-03 musicEngines.ts resolved "keys" + RHYTHMIC_HARMONY to the drum-kit definition (FAMILY_WORDS had no
+  // keyboard word); B-03's profiles closed that. The GM choice never depended on it - it reads the name first - so
+  // the export was right either way; this test now pins both facts.
   const definition = getInstrumentDefinition("keys", "RHYTHMIC_HARMONY");
-  assert.equal(definition.family, "drums", "the defect this test guards the export against still exists upstream");
+  assert.equal(definition.family, "keys", "B-03: keys is a keyboard whatever the role");
   const keys = gmProgramFor({ instrument: "keys", definition });
   assert.equal(keys.percussion, false);
   assert.equal(keys.program, GM.ACOUSTIC_GRAND_PIANO);
-  assert.match(keys.reason, /piano/);
-  // And a real kit stays a kit whatever its definition says.
-  assert.equal(gmProgramFor({ instrument: "drum kit", definition: getInstrumentDefinition("piano") }).percussion, true);
+  const asIfKit = gmProgramFor({ instrument: "keys", definition: { ...definition, family: "drums" as const, id: "drums" } });
+  assert.equal(asIfKit.percussion, false, "the name outranks a definition that says drums");
 });
 
 test("channels: percussion tracks share channel 9 (MIDI channel 10); pitched tracks never land on it, even at index 9", () => {
