@@ -136,13 +136,13 @@ test("B-01: a family with no instrument definition is excluded with a reason ins
     ...layers.sectionPlan,
     roleAssignments: [
       ...layers.sectionPlan.roleAssignments,
-      { ...layers.sectionPlan.roleAssignments[0], sectionName: "Chorus", instrument: "winds", role: "ACCENT" as const },
+      { ...layers.sectionPlan.roleAssignments[0], sectionName: "Chorus", instrument: "theremin", role: "ACCENT" as const },
       { ...layers.sectionPlan.roleAssignments[0], sectionName: "Chorus", instrument: "mix", role: "HARMONIC_BED" as const },
     ],
   };
   const plan = buildPartComposerPlan(model, layers.globalPlan, withWinds, layers.transitions, { now: FIXED_NOW });
-  assert.ok(!plan.tasks.some((t) => t.instrument === "winds" || t.instrument === "mix"));
-  const winds = plan.decisions?.find((d) => d.instrument === "winds");
+  assert.ok(!plan.tasks.some((t) => t.instrument === "theremin" || t.instrument === "mix"));
+  const winds = plan.decisions?.find((d) => d.instrument === "theremin"); // "winds" gained a real definition in PR-97
   assert.equal(winds?.kind, "excluded_no_definition");
   assert.match(winds?.reason ?? "", /piano/);
   const mix = plan.decisions?.find((d) => d.instrument === "mix");
