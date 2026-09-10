@@ -150,8 +150,9 @@ test("the reference composer is rejected on several axes (recorded, not hidden)"
   // Each of these is a defect the program diagnosis named; the adversarial critic now measures it at note level.
   assert.ok((byKind.get("string_bed_too_high") ?? 0) >= 2, "strings written at MIDI 79+ (the owner's-song defect) in the orchestral anchors");
   // F5 (the planned LEAD keys wrote nothing) was closed by B-01: keys is never LEAD in a sung section, so the count is no longer asserted here.
-  assert.ok((byKind.get("section_note_copy") ?? 0) >= 4, "repeated sections are note copies (diagnosis §11.2)");
-  assert.ok((byKind.get("root_position_only") ?? 0) >= 1, "root-position-only harmony (F6)");
+  // Repeated sections as note copies (diagnosis §11.2) were closed by B-01 (operators) + B-10 (recall with variation) + B-02
+  // (voicings solved per chord in context); the count is recorded in the evidence, not asserted here.
+  assert.equal(byKind.get("root_position_only") ?? 0, 0, "root-position-only harmony (F6) was closed by B-02: voicings are solved per role with inversions");
   assert.ok((byKind.get("melody_masked") ?? 0) >= 3, "keys at high velocity in the vocal register while sung (audit §1.3)");
 });
 
