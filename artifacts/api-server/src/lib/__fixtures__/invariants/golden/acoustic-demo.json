@@ -1,0 +1,105 @@
+{
+  "case": "acoustic-demo",
+  "orchestratorVersion": "1.0",
+  "composer": "REFERENCE_PART_COMPOSER_V1",
+  "candidateCount": 3,
+  "planDigest": "3085ee6a77f6e442c8b2938075bbd9336689d2f89bc8fda2f5f91138fabb7d55",
+  "candidates": [
+    {
+      "candidateId": "cand-A",
+      "strategy": "conservative",
+      "noteCount": 489,
+      "trackModelsSha256": "e9c9e100e33167936560a8c8ea2f84d9869eef5992e0f483e936de96eceb37aa",
+      "tracks": [
+        {
+          "id": "drums-groove",
+          "instrument": "drums",
+          "notes": 424,
+          "sha256": "0710bceb545ef10145cc1991b1347307dd73e91668fd5c58cb7e6359eed045b1"
+        },
+        {
+          "id": "bass-bass",
+          "instrument": "bass",
+          "notes": 94,
+          "sha256": "7b8f01d707976a8eaa4355046aea77ba08436463d5eac3d60165c6ad2299ffa5"
+        },
+        {
+          "id": "guitar-harmonic_bed",
+          "instrument": "guitar",
+          "notes": 22,
+          "sha256": "c6d5d116c45dfcf307f0a1afb53abd1882bdf4ed4cecafe7a5208df1137b1041"
+        },
+        {
+          "id": "ensemble-transition",
+          "instrument": "ensemble",
+          "notes": 9,
+          "sha256": "fcfc37f5f9f1b6c4293cbdbd2e1cad4bff3f1d7ad117e100197e78d2eb045bea"
+        }
+      ]
+    },
+    {
+      "candidateId": "cand-B",
+      "strategy": "melodic",
+      "noteCount": 525,
+      "trackModelsSha256": "3bb140130531933977747c865a9dd38c6571f13733a1e711f41550bcc4a12ba4",
+      "tracks": [
+        {
+          "id": "drums-groove",
+          "instrument": "drums",
+          "notes": 456,
+          "sha256": "26cade4556dcaec6e9a6334a853b83a9a95315325ad62921848952daff113a49"
+        },
+        {
+          "id": "bass-bass",
+          "instrument": "bass",
+          "notes": 100,
+          "sha256": "ac164ec2c3b3e5ca28a086ee89f5e5d2ff5758ad93961218f148727bae0d28b0"
+        },
+        {
+          "id": "guitar-harmonic_bed",
+          "instrument": "guitar",
+          "notes": 24,
+          "sha256": "885cc91166bca44a22d12485b3bd8392ccff37f871ddf0c3193ce83b2cd04a67"
+        },
+        {
+          "id": "ensemble-transition",
+          "instrument": "ensemble",
+          "notes": 9,
+          "sha256": "21861f934cb66dfdd65969ab77db5f9cdd8f1c210a1276644c9c28554dc0e6c5"
+        }
+      ]
+    },
+    {
+      "candidateId": "cand-C",
+      "strategy": "adventurous",
+      "noteCount": 525,
+      "trackModelsSha256": "4d5b08701848b1e5e45c536d6bd723b726e11c11cd6e357619d592f0590607c5",
+      "tracks": [
+        {
+          "id": "drums-groove",
+          "instrument": "drums",
+          "notes": 456,
+          "sha256": "8e84f6eee6abda222f477bc474302b87c7c696e178733746dae3d9972df6a3e3"
+        },
+        {
+          "id": "bass-bass",
+          "instrument": "bass",
+          "notes": 100,
+          "sha256": "be383723fde9d77f359ca7dfa925b8bb00da997e2aad996b00f68ae1aacdbe9a"
+        },
+        {
+          "id": "guitar-harmonic_bed",
+          "instrument": "guitar",
+          "notes": 24,
+          "sha256": "cf3a2ac6e23e0a196ad2b18d7deb45f84b643c8b29923e3d4d2152ad8f95065a"
+        },
+        {
+          "id": "ensemble-transition",
+          "instrument": "ensemble",
+          "notes": 9,
+          "sha256": "45f14e3b34934b893807b00e597395b410581d0ddadf214f678a0a29a5b9eb76"
+        }
+      ]
+    }
+  ]
+}
