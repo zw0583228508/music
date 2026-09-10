@@ -175,6 +175,8 @@ async function runExport() {
     rendererOutputSha256: track.rendererAttestation?.rendererOutputSha256 ?? null,
     trackModelSha256: track.rendererAttestation?.trackModelSha256 ?? null,
     performedMaterialSha256: track.rendererAttestation?.performedMaterialSha256 ?? null,
+    // PR-97: the Spitfire adapter's evidence (source/wire digests, technique changes, trim), when the stem went through it.
+    articulationAdapter: track.rendererAttestation?.articulationAdapter ?? null,
   }));
   const record = {
     label,
@@ -245,6 +247,9 @@ async function runRegister() {
     evidenceFile: flag("evidence", "docs/evidence/sfizz-vsco2-live.json"),
     a: side(aDir),
     b: side(bDir),
+    // PR-97: other production-floor pairs name their comparison and author.
+    comparison: flag("comparison", "production-floor:synth-vs-sfizz"),
+    createdBy: flag("created-by", "sound-ab (PR-92)"),
   });
   writeFileSync(join(dirname(aDir), "registration.json"), JSON.stringify({ runId, projectId, ...result }, null, 2) + "\n");
   console.log(JSON.stringify(result, null, 2));

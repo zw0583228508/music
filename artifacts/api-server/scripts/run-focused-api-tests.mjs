@@ -399,6 +399,7 @@ const suites = {
       ["src/lib/projectTracks.test.ts", "project-tracks.test.mjs"],
       // PR-98: a native stem must follow the preview envelope of the same notes (the drone gate).
       ["src/lib/nativeRenderGate.test.ts", "native-render-gate.test.mjs"],
+      ["src/lib/spitfireArticulation.test.ts", "spitfire-articulation.test.mjs"],
       ["src/lib/playabilityRepair.test.ts", "playability-repair.test.mjs"],
       ["src/lib/canonicalTimeline.test.ts", "canonical-timeline.test.mjs"],
       [

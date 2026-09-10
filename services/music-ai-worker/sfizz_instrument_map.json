@@ -63,6 +63,7 @@
     "drums": "VSCO 2 CE has orchestral percussion only (GM-StylePerc maps timpani, snare and cymbals onto GM notes); a pop kit with hi-hats is not in the library, so drums keep the preview synth rather than a wrong instrument.",
     "guitar": "No guitar in VSCO 2 CE (the harp is not a guitar).",
     "voice": "No choir or voice in the Community Edition.",
-    "synth": "No synthesizer patches in an orchestral sample library."
+    "synth": "No synthesizer patches in an orchestral sample library.",
+    "winds": "VSCO 2 CE has woodwinds, but the provisioned platform subset carries keys, strings and brass only (PR-92); extending the subset is a worker image change, so winds keep the preview synth or a local Spitfire asset (PR-97)."
   }
 }
