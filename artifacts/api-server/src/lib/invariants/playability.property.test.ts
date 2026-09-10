@@ -121,18 +121,19 @@ test("negative control: a 30-semitone bass leap fails both validators", () => {
   assert.deepEqual(verdict.disagreements, []);
 });
 
-test("documented disagreement: a 10 ms legato overlap on the bass passes the engine and the contract but trips the repair's polyphony rule (audit probe 4)", () => {
+test("former disagreement (audit probe 4), closed by B-13: a 10 ms legato overlap on the bass is a connected line to the engine, the contract and the repair's rules", () => {
   const notes: MusicalNote[] = [];
   for (let i = 0; i < 8; i += 1) notes.push({ id: `n${i}`, start: i * 0.5, duration: 0.51, pitch: 40 + (i % 4), velocity: 90 });
   const bass = track("bass", "BASS", notes);
   const verdict = judgeShipped([bass], 120);
   assert.equal(verdict.contractErrors, 0, "the contract reads a 10 ms tail as legato (LEGATO_TOLERANCE_SECONDS)");
   assert.equal(verdict.engineErrors, 0, "the engine reads the same tail as legato");
-  assert.deepEqual(checkPlayabilityRules(bass.notes, bass.instrumentDefinition), ["polyphony"], "playabilityRepair's own rule counts any overlap as a second voice");
-  assert.equal(verdict.disagreements.length, 1, "the disagreement is recorded");
+  // Before B-13 playabilityRepair's own rule counted any overlap as a second voice (["polyphony"]) and truncated 7 of 8 notes.
+  assert.deepEqual(checkPlayabilityRules(bass.notes, bass.instrumentDefinition), [], "the repair judges with the engine's predicate");
+  assert.deepEqual(verdict.disagreements, [], "no disagreement is left to record");
 });
 
-test("documented disagreement: piano C2 + E4 struck apart passes the engine, fails the contract's leap rule", () => {
+test("former disagreement (audit probe 4), closed by B-13: piano C2 + E4 struck apart passes the engine, the contract and the repair's rules", () => {
   const piano = track("piano", "HARMONIC_BED", [
     { id: "a", start: 0, duration: 0.4, pitch: 36, velocity: 90 },
     { id: "b", start: 0.5, duration: 0.4, pitch: 64, velocity: 90 },
@@ -140,9 +141,10 @@ test("documented disagreement: piano C2 + E4 struck apart passes the engine, fai
     { id: "d", start: 1.5, duration: 0.4, pitch: 64, velocity: 90 },
   ]);
   const verdict = judgeShipped([piano], 120);
-  assert.ok(verdict.violations.some((v) => v.code === "contract_error" && /leap/.test(v.detail)));
+  // Before B-13 the contract read the two-hand figure as "an unplayable melodic leap" (1 x maxLeap on a start-sorted stream).
+  assert.deepEqual(verdict.violations, []);
   assert.equal(verdict.engineErrors, 0);
-  assert.equal(verdict.disagreements.length, 1);
+  assert.deepEqual(verdict.disagreements, []);
 });
 
 test("control: a plain playable part is clean under all three", () => {
