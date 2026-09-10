@@ -57,6 +57,9 @@ import { deriveOrchestrationBudget } from "./orchestrationBudget";
 import { deriveTransitionPlan } from "./transitionEngine";
 import { buildPartComposerPlan, buildPartGenerationRequest, type PartGenerationRequest } from "./partComposer";
 import { planCandidateGeneration } from "./candidateStrategies";
+import { deriveGroovePlan } from "./groovePlan";
+import { agogicsFor } from "./transitionRealisation";
+import { applyTextureAfterWriting, isMotifProtected, textureIntentFor, type TextureIntent } from "./composer/texture";
 import { checkArrangementConstraints } from "./musicalConstraints";
 import { critiqueArrangement } from "./musicCritic";
 import { applyPlanRepairs, runBacktrackingRepairLoop, runCriticRepairLoop, type RepairApplier, type RepairExecution } from "./criticRepairLoop";
@@ -80,6 +83,7 @@ import { composeWithContext, type ComposePass } from "./contextAwareComposer";
 import { harmonyPlanSlot, solveVoiceLeading } from "./voiceLeading";
 import { deriveStyleGrammar, styleGrammarSlot } from "./styleGrammar";
 import { deriveStyleFingerprint } from "./styleFingerprint";
+import { barTiming } from "./composer/frame";
 
 export const ORCHESTRATOR_VERSION = "1.0" as const;
 const METHOD = "arrangement-orchestrator/v1";
@@ -179,7 +183,18 @@ export type OrchestrationResult = {
  * attaches a bar range; see docs/brain/04-decision-provenance.md. Optional,
  * so every existing composer (and every test double) is unchanged.
  */
-export type PartComposerContext = { decisions: DecisionRegistry };
+export type PartComposerContext = {
+  decisions: DecisionRegistry;
+  /**
+   * B-13: parts already composed for this candidate, with their notes. The
+   * harmony writers voice above the bass part's actual notes and away from
+   * sibling voicings; without them the bass is re-planned deterministically
+   * from the same inputs (the same skeleton, but not the same notes).
+   */
+  siblings?: Array<{ instrument: string; role: string; notes: MusicalNote[] }>;
+  /** B-13: what the candidate strategy asks of this part's texture (`composer/texture.ts`). */
+  texture?: TextureIntent;
+};
 
 export type PartComposerFn = (request: PartGenerationRequest, context?: PartComposerContext) => MusicalNote[];
 
@@ -334,35 +349,50 @@ export function styleGrammarFor(
 }
 
 /**
- * Deterministically thin/boost a part to match a strategy's density multiplier.
- * Thinning is proportional (an evenly-spaced stride keeps the musical shape)
- * rather than "every Nth note", so a 0.95 multiplier really does write 5% less.
+ * A strategy's density as a *velocity* reading (Brain B-13).
+ *
+ * `applyDensity` used to delete every Nth note of the time-sorted list to hit
+ * a strategy's multiplier: kicks fell off downbeats (B-12, C7), a motif
+ * statement lost half its notes (B-10, and R-1b P1-5 on the shipped bridge
+ * counter-line: 10 composed -> 5 shipped on the *conservative* candidate), and
+ * an inner voice vanished from a solved voicing. Which notes exist is now the
+ * writers' decision, taken from the strategy's `TextureIntent`
+ * (`composer/texture.ts`) while writing - a sustained bed, block chords on the
+ * plan's cell, an arpeggio, roots only or the full figure set. What is left
+ * here is the part of the multiplier that was always a dynamic reading: a
+ * thinner strategy plays a little softer.
  */
-function applyDensity(notes: MusicalNote[], multiplier: number): MusicalNote[] {
-  if (notes.length === 0) return notes;
-  const velocityScale = multiplier > 1
-    ? Math.min(1.18, multiplier)
-    : 0.78 + multiplier * 0.22;
-  const scale = (list: MusicalNote[]) =>
-    list.map((n) => ({
-      ...n,
-      velocity: Math.max(1, Math.min(127, Math.round(n.velocity * velocityScale))),
-    }));
-  const target = Math.max(1, Math.round(notes.length * Math.min(1, multiplier)));
-  if (target >= notes.length) return scale(notes);
-  const stride = notes.length / target;
-  const kept: MusicalNote[] = [];
-  for (let i = 0; i < target; i += 1) kept.push(notes[Math.floor(i * stride)]);
-  return scale(kept);
+function applyStrategyDynamics(notes: MusicalNote[], multiplier: number): MusicalNote[] {
+  if (notes.length === 0 || multiplier === 1) return notes;
+  const velocityScale = multiplier > 1 ? Math.min(1.18, multiplier) : 0.78 + multiplier * 0.22;
+  return notes.map((n) => ({
+    ...n,
+    velocity: Math.max(1, Math.min(127, Math.round(n.velocity * velocityScale))),
+  }));
 }
 
-/** Drop duplicate onsets of the same pitch, keeping the loudest. */
+/**
+ * Drop duplicate onsets of the same pitch, keeping the loudest.
+ *
+ * B-13 at the merge: a note carrying motif provenance outranks a louder one
+ * that carries none (`isMotifProtected`). One instrument is one track, and
+ * since B-13 wired the beds to the groove plan a bed and a motif statement can
+ * now sound the same pitch at the same instant on the same track - the owner's
+ * Bridge is exactly that shape. Keeping the loudest would silently delete a
+ * note of the statement, which is the defect `applyDensity` was removed for.
+ * Between two notes that are both motif notes, or neither, the loudest still
+ * wins.
+ */
 function dedupeSimultaneous(notes: MusicalNote[]): MusicalNote[] {
   const best = new Map<string, MusicalNote>();
   for (const note of notes.slice().sort((a, b) => a.start - b.start || a.pitch - b.pitch)) {
     const key = `${Math.round(note.start * 200)}:${note.pitch}`;
     const held = best.get(key);
-    if (!held || note.velocity > held.velocity) best.set(key, note);
+    if (!held) { best.set(key, note); continue; }
+    const heldMotif = isMotifProtected(held);
+    const noteMotif = isMotifProtected(note);
+    if (heldMotif !== noteMotif) { if (noteMotif) best.set(key, note); continue; }
+    if (note.velocity > held.velocity) best.set(key, note);
   }
   return [...best.values()].sort((a, b) => a.start - b.start || a.pitch - b.pitch);
 }
@@ -461,7 +491,10 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     });
   }
   const compose = input.composeParts ??
-    ((request: PartGenerationRequest) => composeReferencePart(request, { tempoBpm, meter }));
+    ((request: PartGenerationRequest, context?: PartComposerContext) =>
+      composeReferencePart(request, {
+        tempoBpm, meter, siblings: context?.siblings, texture: context?.texture,
+      }));
   const composerName = input.composerName ??
     (input.composeParts ? "INJECTED_COMPOSER" : REFERENCE_PART_COMPOSER);
 
@@ -483,6 +516,16 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     hierarchy: {} as ArrangementPlan["hierarchy"],
     globalPlan, sectionPlan, orchestrationBudget, transitionPlan,
   } as ArrangementPlan;
+  // B-13: the GroovePlan is derived once for the song and persisted on the
+  // plan. Every part already derived the identical section from its own
+  // request (`grooveSectionForRequest`, B-04's parity test); persisting it is
+  // what lets the performance stage, the critics and the evidence read the
+  // groove the notes were written from instead of re-deriving it.
+  plan.groovePlan = deriveGroovePlan(
+    songModel,
+    { globalPlan, sectionPlan, transitions: transitionPlan.transitions },
+    { tempoBpm, meter, now },
+  );
   record("plan", "ok", `${globalPlan.sectionTargets.length} sections planned`, {
     style: globalPlan.style,
     climaxBar: globalPlan.climax?.atBar ?? 0,
@@ -510,6 +553,8 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
   // Solved once for the arrangement, not once per part: two parts voicing the
   // same chord differently are not voicing the same chord.
   const beatSeconds = 60 / Math.max(1, tempoBpm);
+  // B-13: one bar timing for the whole run (a bar is numerator x one denominator unit).
+  const barTimingForPerformance = barTiming(tempoBpm, meter);
   const harmonyPlan = input.contextAware ? harmonyPlanFor(songModel) : undefined;
   // The song's own behaviour is the best available description of its style.
   // Deriving it here is what makes the groove pass run at all; before this the
@@ -568,8 +613,20 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
       const request = buildPartGenerationRequest(
         songModel, { ...task, seed: adjustment?.seed ?? task.seed }, requestLayers, existing,
       );
-      const raw = compose(request, { decisions });
-      let notes = applyDensity(raw, adjustment?.densityMultiplier ?? 1);
+      // B-13 (D3): the strategy reaches the writers as a texture, not as a
+      // stride over their output. `siblings` reaches them too, so the keys
+      // voice above the bass part's actual notes instead of a re-planned copy.
+      const texture = textureIntentFor(candidate.strategy, {
+        syncopationBias: Number(candidate.parameters.syncopationBias ?? 0),
+        harmonicAdventurousness: Number(candidate.parameters.harmonicAdventurousness ?? 0.3),
+        registerSpread: Number(candidate.parameters.registerSpread ?? 0.5),
+        orchestrationSizeDelta: Number(candidate.parameters.orchestrationSizeDelta ?? 0),
+      }, adjustment?.densityMultiplier ?? 1);
+      const raw = compose(request, { decisions, siblings, texture });
+      // The kit's writer is B-04's: its texture (hats on the pulses, ghosts
+      // home) is applied to the notes it wrote, and never to a kick or a snare.
+      const textured = applyTextureAfterWriting(task.task, raw, texture, barTimingForPerformance.meter);
+      let notes = applyStrategyDynamics(textured.notes, adjustment?.densityMultiplier ?? 1);
       parts.push({
         taskId: task.id,
         decisionId: decisionId("compose", "part_task", task.id),
@@ -860,7 +917,45 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     // --- 8. perform ----------------------------------------------------
     const playabilityRepairs: OrchestratedCandidate["playabilityRepairs"] = [];
     const performanceTelemetry: TrackPerformanceTelemetry[] = [];
+    // B-13 (R-1b P0-3): a track is performed section by section. The first
+    // assignment stays the fallback for a note outside every planned range.
+    const barSecondsForPerformance = barTimingForPerformance.barSeconds;
+    const sectionRangesFor = (instrument: string) =>
+      planForPerformance.sectionPlan.sections.map((section) => {
+        const assignment = planForPerformance.sectionPlan.roleAssignments.find(
+          (r) => r.sectionName === section.sectionName && r.instrument === instrument,
+        );
+        return {
+          sectionName: section.sectionName,
+          start: (section.startBar - 1) * barSecondsForPerformance,
+          end: section.endBar * barSecondsForPerformance,
+          role: assignment?.role,
+          dynamicShape: assignment?.dynamicShape,
+          tensionRole: planForPerformance.globalPlan.sectionTargets
+            .find((t) => t.sectionName === section.sectionName)?.tensionRole,
+        };
+      });
+    // B-04's chord onsets and the plan's ritardando reach every track alike:
+    // one harmonic rhythm for the pedal, one time warp for the ensemble.
+    const performanceChordOnsets = [...new Set(
+      (songModel.chords ?? []).map((c) => Number(c.start.toFixed(3))),
+    )].sort((a, b) => a - b);
+    // A ritardando is a time warp, and the warp carries a permanent offset into
+    // everything after it: the parts stay together, but from there on the whole
+    // song sits off the bar grid the plan and the kit were written on, and the
+    // production export cannot carry a multi-segment tempo map to say the grid
+    // moved (B-04's own note). So a planned ritardando is performed only when
+    // it lands in the song's last bar - the ending, where nothing follows it.
+    // A mid-song one stays in the plan and in the transition gesture's tempo
+    // events, unperformed, and is named in B-13's honest limits.
+    const lastBarStart = (Math.max(
+      ...planForPerformance.sectionPlan.sections.map((s) => s.endBar), 1,
+    ) - 1) * barSecondsForPerformance;
+    const performanceAgogics = agogicsFor(
+      planForPerformance.transitionPlan.transitions, barTimingForPerformance,
+    ).filter((a) => a.end >= lastBarStart - 1e-6);
     const performed = trackModels.map((track) => {
+      const ranges = sectionRangesFor(track.instrument);
       const assignment = planForPerformance.sectionPlan.roleAssignments.find(
         (r) => r.instrument === track.instrument,
       );
@@ -872,9 +967,13 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
         notes: track.notes,
         tempoBpm,
         meter,
+        barSeconds: barSecondsForPerformance,
         groove: planForPerformance.globalPlan.grooveStrategy,
         style: planForPerformance.globalPlan.style,
         dynamicShape: assignment?.dynamicShape,
+        sectionRanges: ranges,
+        chordOnsets: performanceChordOnsets,
+        agogics: performanceAgogics,
         phrases: planForPerformance.sectionPlan.phrases,
         seed: candidate.seed,
         // Only articulations this instrument can actually map are performed,
@@ -918,7 +1017,12 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
       }
       telemetry.removedNotes = Math.max(0, track.notes.length - measured);
       performanceTelemetry.push(telemetry);
-      const repaired = repairPlayability({ notes: result.notes, definition: track.instrumentDefinition });
+      // B-13: the repair judges with the engine's rules (one playability truth)
+      // and tags every note it rewrites with `perform:playability_repair:<trackId>`.
+      const repaired = repairPlayability({
+        notes: result.notes, definition: track.instrumentDefinition,
+        trackId: track.id, instrument: track.instrument, role: track.role, tempoBpm,
+      });
       if (repaired.report.rangeFolds || repaired.report.leapFolds || repaired.report.durationLengthened ||
         repaired.report.breathTruncated || repaired.report.polyphonyReleases || repaired.report.dropped) {
         playabilityRepairs.push({ trackId: track.id, ...repaired.report });

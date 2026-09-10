@@ -15,6 +15,17 @@
  * PR-61 (judge calibration on 30,570 human PDMX windows) changed five rules
  * where the human corpus proved the old rule wrong; each is marked below with
  * the measured case that justified it.
+ *
+ * Brain B-13 (one playability truth): the predicates the engine judges with -
+ * `simultaneousVoicesAt` / `polyphonyClusters` (who sounds together, under the
+ * legato tolerance and the performance engine's own 12 ms chord-gesture
+ * window), `melodicLeapViolations` (leaps judged per outer voice, never across
+ * a chord's tones), `isSectionPart` - are exported, and the
+ * provider contract validators (`musicProviders.ts`) and the playability
+ * repair (`playabilityRepair.ts`) call them through `checkTrackConstraints` /
+ * `contractPlayabilityErrors`. Before this the three held three definitions
+ * of "simultaneous" and "leap" (audit §5.1, Probe 4) and the strictest, least
+ * musical one won after the critic had scored.
  */
 import type { InstrumentDefinition } from "@workspace/db";
 import { getInstrumentDefinition } from "./musicEngines";
@@ -61,6 +72,13 @@ export type ConstraintCheckInput = {
   polyphonyCeiling?: number;
   /** Semitones beyond which a leap in a solo line is an error (default 1.5 x the definition's maxLeap). */
   leapCeiling?: number;
+  /**
+   * B-13: the track's own definition (a remote provider's TrackModel carries
+   * one; the orchestrator's tracks carry the one they were composed under).
+   * When given, the rules judge against it instead of re-resolving the
+   * instrument name, so the contract validator and the engine see one definition.
+   */
+  definition?: InstrumentDefinition | null;
 };
 
 /** Standard tunings the fingerability check tries, low to high (MIDI). */
@@ -141,6 +159,25 @@ const PHYSICAL: Record<string, PhysicalProfile> = {
 const physicalFor = (family: string): PhysicalProfile =>
   PHYSICAL[family] ?? { reArticulationMinSeconds: 0.05 };
 
+/**
+ * The physical family a part is judged as: a bass guitar lives in the
+ * "strings" definition family but is not a bowed solo string player.
+ */
+export function physicalFamilyOf(instrument: string | undefined, family: string): string {
+  return /bass/i.test(`${instrument ?? ""} ${family}`) ? "bass" : family;
+}
+
+/**
+ * The longest single note a player of this family can hold: the stricter of
+ * the physical breath and the definition's sourced `breathSeconds`. Null for
+ * families that do not breathe (keys, strings, guitar, kit, synth).
+ */
+export function breathCapacityFor(physicalFamily: string, definition: Pick<InstrumentDefinition, "constraints"> | null | undefined): number | null {
+  const physical = physicalFor(physicalFamily).breathCapacitySeconds;
+  if (!physical) return null;
+  return Math.min(definition?.constraints.breathSeconds ?? Number.POSITIVE_INFINITY, physical);
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -149,31 +186,96 @@ const noteEnd = (note: ConstraintNote): number => note.start + note.duration;
 const idOf = (note: ConstraintNote, index: number): string => note.id ?? `note-${index}`;
 
 /**
- * Groups of notes actually sounding together at a given onset.
- *
- * This deliberately does NOT chain by transitive overlap: a legato line where
- * each note ends as the next begins is a melody, not a 24-note chord. For every
- * distinct onset we collect the notes sounding at that instant, then keep the
- * distinct groups of two or more.
- */
-/**
  * A previous note whose tail laps a few milliseconds into the next onset is
  * legato connection, not a chord. Shared with the provider contract validator
  * so the platform has one definition of "simultaneous", not two.
  */
 export const LEGATO_TOLERANCE_SECONDS = 0.03;
 
-function simultaneousClusters(notes: ConstraintNote[]): ConstraintNote[][] {
-  const onsets = [...new Set(notes.map((note) => Math.round(note.start * 1000)))]
-    .sort((a, b) => a - b);
+// ---------------------------------------------------------------------------
+// B-13: the shared playability predicates (one truth for engine, contract, repair)
+// ---------------------------------------------------------------------------
+
+/** Millisecond onset bucket: notes whose starts round to the same ms share an onset. */
+export const onsetKey = (start: number): number => Math.round(start * 1000);
+
+/**
+ * One chord gesture: a player does not strike four notes at the same
+ * microsecond, and the performance engine says so - it rolls a keyboard chord,
+ * strums a guitar and staggers a string section's voices, grouping its own
+ * clusters with `Math.abs(open[0].start - note.start) < 0.012`
+ * (`performanceEngine.ts`). This is that same window, shared, so what the
+ * engine performed as one chord every rule downstream also reads as one chord.
+ *
+ * Before B-13 the repair tested `o.start === n.start`: a string bed's three
+ * voices, staggered 1.5 ms apart by the engine, became "earlier notes crowding
+ * a later onset", the release computed for them was ~2 ms - under
+ * `minNoteDuration` - and they were dropped. The owner's string bed shipped as
+ * a single violin line (304 composed notes -> 91 shipped, 200 dropped;
+ * review R-1b P0-1).
+ */
+export const GESTURE_WINDOW_SECONDS = 0.012;
+
+/** Do these two onsets belong to one chord gesture? */
+export const sameGesture = (a: number, b: number): boolean =>
+  Math.abs(a - b) <= GESTURE_WINDOW_SECONDS + 1e-9;
+
+/**
+ * Onset identity per note under the gesture window: notes whose starts lie
+ * within one window of the gesture's first onset share an onset key. The
+ * anchor only moves when a note falls outside the open window, so a gesture
+ * spans at most `GESTURE_WINDOW_SECONDS` and a run of 16ths never chains into
+ * one giant "chord".
+ */
+export function gestureOnsets(
+  notes: ReadonlyArray<ConstraintNote>,
+  window = GESTURE_WINDOW_SECONDS,
+): Map<ConstraintNote, number> {
+  const sorted = [...notes].sort((a, b) => a.start - b.start);
+  const out = new Map<ConstraintNote, number>();
+  let anchor = Number.NEGATIVE_INFINITY;
+  for (const note of sorted) {
+    if (!(note.start <= anchor + window + 1e-9)) anchor = note.start;
+    out.set(note, onsetKey(anchor));
+  }
+  return out;
+}
+
+/**
+ * The notes sounding at instant `t`: started within a gesture of it or before,
+ * and still sounding more than the legato tolerance after it. A tail that laps
+ * a few milliseconds into the next onset is a connected line, not a second
+ * voice; a voice struck 1.5 ms after the one below it is the same chord, not a
+ * later note.
+ */
+export function simultaneousVoicesAt(notes: ReadonlyArray<ConstraintNote>, t: number): ConstraintNote[] {
+  return notes
+    .filter((note) =>
+      note.start <= t + GESTURE_WINDOW_SECONDS + 1e-9 &&
+      noteEnd(note) > t + LEGATO_TOLERANCE_SECONDS)
+    .sort((a, b) => a.pitch - b.pitch || a.start - b.start);
+}
+
+/**
+ * Groups of notes actually sounding together at a given onset.
+ *
+ * This deliberately does NOT chain by transitive overlap: a legato line where
+ * each note ends as the next begins is a melody, not a 24-note chord. For every
+ * distinct gesture we collect the notes sounding at its last onset (so every
+ * voice of a rolled or staggered chord has arrived), then keep the distinct
+ * groups of two or more.
+ */
+export function polyphonyClusters(notes: ReadonlyArray<ConstraintNote>): ConstraintNote[][] {
+  const groups = gestureOnsets(notes);
+  const lastStart = new Map<number, number>();
+  for (const note of notes) {
+    const key = groups.get(note)!;
+    lastStart.set(key, Math.max(lastStart.get(key) ?? note.start, note.start));
+  }
   const seen = new Set<string>();
   const clusters: ConstraintNote[][] = [];
-  for (const onsetMs of onsets) {
-    const t = onsetMs / 1000;
-    const sounding = notes
-      .filter((note) =>
-        note.start <= t + 1e-6 && noteEnd(note) > t + LEGATO_TOLERANCE_SECONDS)
-      .sort((a, b) => a.pitch - b.pitch || a.start - b.start);
+  for (const t of [...lastStart.values()].sort((a, b) => a - b)) {
+    const sounding = simultaneousVoicesAt(notes, t);
     if (sounding.length < 2) continue;
     const key = sounding.map((n) => `${n.pitch}@${n.start.toFixed(3)}`).join("|");
     if (seen.has(key)) continue;
@@ -181,6 +283,126 @@ function simultaneousClusters(notes: ConstraintNote[]): ConstraintNote[][] {
     clusters.push(sounding);
   }
   return clusters;
+}
+
+/** The most voices ever sounding together (1 for a line, 0 for an empty part). */
+export function maxSimultaneousVoices(notes: ReadonlyArray<ConstraintNote>): number {
+  if (!notes.length) return 0;
+  return Math.max(1, ...polyphonyClusters(notes).map((c) => c.length));
+}
+
+/** Clusters wider than `ceiling` voices. */
+export function polyphonyViolations(notes: ReadonlyArray<ConstraintNote>, ceiling: number): ConstraintNote[][] {
+  return polyphonyClusters(notes).filter((cluster) => cluster.length > ceiling);
+}
+
+/**
+ * The outer voices: the highest and the lowest note at every onset, in time
+ * order. A chord contributes its top to the top line and its bottom to the
+ * bottom line; a single note is both. Leaps are judged inside a line, never
+ * from a chord's top to the next chord's bottom.
+ */
+export function outerVoices(notes: ReadonlyArray<ConstraintNote>): { top: ConstraintNote[]; bottom: ConstraintNote[]; onsetCounts: Map<number, number>; groupOf: Map<ConstraintNote, number> } {
+  const top = new Map<number, ConstraintNote>();
+  const bottom = new Map<number, ConstraintNote>();
+  const onsetCounts = new Map<number, number>();
+  // B-13: one chord gesture is one onset. The engine staggers a chord's voices
+  // by 1.5-8 ms; without the window each staggered voice was its own "onset"
+  // and the leap rule read a chord's tones as a melody.
+  const groupOf = gestureOnsets(notes);
+  for (const note of notes) {
+    const key = groupOf.get(note)!;
+    onsetCounts.set(key, (onsetCounts.get(key) ?? 0) + 1);
+    const highest = top.get(key);
+    if (!highest || note.pitch > highest.pitch) top.set(key, note);
+    const lowest = bottom.get(key);
+    if (!lowest || note.pitch < lowest.pitch) bottom.set(key, note);
+  }
+  const byStart = (a: ConstraintNote, b: ConstraintNote) => a.start - b.start;
+  return { top: [...top.values()].sort(byStart), bottom: [...bottom.values()].sort(byStart), onsetCounts, groupOf };
+}
+
+export type LeapLine = "top" | "bottom";
+
+export type LeapViolation = {
+  from: ConstraintNote;
+  to: ConstraintNote;
+  leap: number;
+  line: LeapLine;
+  /** `error` above the ceiling (1.5 x maxLeap by default), `warning` above maxLeap. */
+  severity: "error" | "warning";
+};
+
+export type LeapRuleOptions = {
+  /** The instrument's comfortable leap (definition `maxLeap`); wider is a warning. */
+  maxLeap: number;
+  /** Beyond this a leap is an error; default 1.5 x `maxLeap` (PR-61 calibration). */
+  leapCeiling?: number;
+  /** A section spreads leaps across players: exempt. */
+  isSection?: boolean;
+  /** A kit has no melodic leaps (PR-61: 304 "leaps" between kit pieces): exempt. */
+  family?: string;
+  /** Polyphonic instruments are judged on both outer voices; a line on its one voice. */
+  polyphonic?: boolean;
+  /** A rest longer than this breaks the line (default 0.6 s). */
+  restSeconds?: number;
+  /**
+   * `skip` (default, the PR-61 calibration): a pair in which either onset is a
+   * chord is not judged - a top-voice reduction of two hands is not a melody
+   * (46 of 83 flagged human keyboard leaps were between two voices). `judge`
+   * compares outer voices across chords too (top to top, bottom to bottom);
+   * not calibrated on the human corpus, offered for stricter callers.
+   */
+  chordOnsets?: "skip" | "judge";
+};
+
+/**
+ * Melodic leaps judged per outer voice. Never across same-onset chord tones
+ * (those are a voicing, not a melody), never from a chord's top to the next
+ * chord's bottom, never when the earlier note is still sounding past the
+ * legato tolerance (two voices), never across a rest longer than
+ * `restSeconds`. Sections and kits are exempt.
+ */
+export function melodicLeapViolations(notes: ReadonlyArray<ConstraintNote>, options: LeapRuleOptions): LeapViolation[] {
+  if (options.isSection || options.family === "drums") return [];
+  const ceiling = options.leapCeiling ?? options.maxLeap * 1.5;
+  const rest = options.restSeconds ?? 0.6;
+  const mode = options.chordOnsets ?? "skip";
+  const { top, bottom, onsetCounts, groupOf } = outerVoices(notes);
+  const isChord = (note: ConstraintNote) => (onsetCounts.get(groupOf.get(note) ?? onsetKey(note.start)) ?? 1) > 1;
+  const out: LeapViolation[] = [];
+  const seen = new Set<string>();
+  const judge = (line: ConstraintNote[], name: LeapLine) => {
+    for (let i = 1; i < line.length; i += 1) {
+      const from = line[i - 1];
+      const to = line[i];
+      const gap = to.start - noteEnd(from);
+      if (gap > rest) continue;
+      if (noteEnd(from) > to.start + LEGATO_TOLERANCE_SECONDS) continue;
+      if (mode === "skip" && (isChord(from) || isChord(to))) continue;
+      const leap = Math.abs(to.pitch - from.pitch);
+      if (leap <= options.maxLeap) continue;
+      // The same two notes seen from both lines (single notes) are one leap.
+      const key = `${groupOf.get(from) ?? onsetKey(from.start)}:${from.pitch}>${groupOf.get(to) ?? onsetKey(to.start)}:${to.pitch}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push({ from, to, leap, line: name, severity: leap > ceiling ? "error" : "warning" });
+    }
+  };
+  judge(top, "top");
+  if (options.polyphonic ?? true) judge(bottom, "bottom");
+  return out.sort((a, b) => a.to.start - b.to.start || (a.line === "top" ? -1 : 1));
+}
+
+/**
+ * Is this part a section (many players: divisi and independent leaps are
+ * fine)? Forced by a role that says so; otherwise a string part whose
+ * definition holds more than two voices is a section, solo writing is the
+ * restrictive case. One inference for the engine, the contract and the repair.
+ */
+export function isSectionPart(family: string, role: string | undefined, definition: Pick<InstrumentDefinition, "constraints"> | null | undefined): boolean {
+  if (/section|ensemble|divisi|pad|bed/i.test(role ?? "")) return true;
+  return family === "strings" && (definition?.constraints.maxSimultaneousNotes ?? 1) > 2;
 }
 
 /** Can `pitches` be split into ≤ `hands` groups each within `span` semitones? */
@@ -222,7 +444,7 @@ function phrases(notes: ConstraintNote[], gap = 0.15): ConstraintNote[][] {
 export function checkInstrumentConstraints(
   input: ConstraintCheckInput,
 ): ConstraintCheckResult {
-  const definition = safeDefinition(input.instrument ?? input.family, input.role ?? "");
+  const definition = input.definition ?? safeDefinition(input.instrument ?? input.family, input.role ?? "");
   // A bass guitar lives in the "strings" definition family but is not a bowed
   // solo string player; give it its own physical rules.
   const family = /bass/i.test(`${input.instrument ?? ""} ${input.family}`)
@@ -231,8 +453,7 @@ export function checkInstrumentConstraints(
   const physical = physicalFor(family);
   // A string *section* has many players: divisi and independent leaps are fine.
   // Solo writing is the restrictive case.
-  const isSection = input.isSection ??
-    (family === "strings" && (definition?.constraints.maxSimultaneousNotes ?? 1) > 2);
+  const isSection = input.isSection ?? isSectionPart(family, undefined, definition);
   const notes = input.notes
     .filter((note) =>
       Number.isFinite(note.start) && Number.isFinite(note.duration) &&
@@ -273,7 +494,7 @@ export function checkInstrumentConstraints(
     });
   }
 
-  const clusters = simultaneousClusters(notes);
+  const clusters = polyphonyClusters(notes);
   const maxSimultaneous = input.polyphonyCeiling ?? definition?.constraints.maxSimultaneousNotes ?? 8;
   const oneVoiceBreath = maxSimultaneous === 1 && (family === "brass" || family === "winds" || family === "voice");
 
@@ -308,35 +529,24 @@ export function checkInstrumentConstraints(
     }
   }
 
-  // 4. Melodic leaps (top voice at each onset).
-  const topLine = topVoice(notes);
+  // 4. Melodic leaps, per outer voice (B-13: the shared predicate). Section
+  // writing spreads leaps across players and a kit has no melodic leaps at all
+  // (PR-61: 304 "leaps" between kit pieces); a pair in which either onset is a
+  // chord, or whose earlier note still sounds past the legato tolerance, is
+  // two voices, not a melody (PR-61: 46 of 83 flagged human keyboard leaps,
+  // 18 of 45 bass, 14 of 49 brass).
   const maxLeap = definition?.constraints.maxLeap ?? 24;
-  const impossibleLeap = input.leapCeiling ?? maxLeap * 1.5;
-  const onsetCounts = new Map<number, number>();
-  for (const note of notes) {
-    const key = Math.round(note.start * 1000);
-    onsetCounts.set(key, (onsetCounts.get(key) ?? 0) + 1);
-  }
-  // Section writing spreads leaps across players; only solo lines are bound.
-  // A kit has no melodic leaps at all (PR-61: 304 "leaps" between kit pieces).
-  for (let i = 1; !isSection && family !== "drums" && i < topLine.length; i += 1) {
-    const gap = topLine[i].start - noteEnd(topLine[i - 1]);
-    if (gap > 0.6) continue;
-    // PR-61: a top-voice reduction of a polyphonic part is not a melody. When
-    // the earlier note is still sounding past legato overlap, or either onset
-    // is a chord, the "leap" is between two voices (46 of 83 flagged human
-    // keyboard leaps, 18 of 45 bass, 14 of 49 brass).
-    if (noteEnd(topLine[i - 1]) > topLine[i].start + LEGATO_TOLERANCE_SECONDS) continue;
-    if ((onsetCounts.get(Math.round(topLine[i].start * 1000)) ?? 1) > 1 ||
-      (onsetCounts.get(Math.round(topLine[i - 1].start * 1000)) ?? 1) > 1) continue;
-    const leap = Math.abs(topLine[i].pitch - topLine[i - 1].pitch);
-    if (leap > impossibleLeap) {
-      add("impossible_leap", "error", [topLine[i - 1], topLine[i]],
-        `A ${leap}-semitone leap exceeds the ${family} limit of ${maxLeap}.`,
+  for (const v of melodicLeapViolations(notes, {
+    maxLeap, leapCeiling: input.leapCeiling, isSection, family,
+    polyphonic: (definition?.constraints.maxSimultaneousNotes ?? maxSimultaneous) > 1,
+  })) {
+    if (v.severity === "error") {
+      add("impossible_leap", "error", [v.from, v.to],
+        `A ${v.leap}-semitone leap exceeds the ${family} limit of ${maxLeap}.`,
         "Insert a passing note or re-voice into a nearer octave.");
-    } else if (leap > maxLeap) {
-      add("wide_leap", "warning", [topLine[i - 1], topLine[i]],
-        `A ${leap}-semitone leap is wide for ${family} (limit ${maxLeap}).`,
+    } else {
+      add("wide_leap", "warning", [v.from, v.to],
+        `A ${v.leap}-semitone leap is wide for ${family} (limit ${maxLeap}).`,
         "Consider a step-wise approach or an octave adjustment.");
     }
   }
@@ -423,17 +633,22 @@ export function checkInstrumentConstraints(
   // MIDI encodes no breath. Only a single note longer than a breath is a
   // physical impossibility; a long unbroken phrase is a warning.
   if (physical.breathCapacitySeconds) {
+    // B-13: one capacity for the engine, the contract validator and the repair
+    // - the stricter of the player's physical breath and the definition's
+    // sourced value (a section's 12 s is staggered across players; a flute
+    // holds about 8).
+    const capacity = breathCapacityFor(family, definition) ?? physical.breathCapacitySeconds;
     const runs = phrases(notes);
     let previousLong = false;
     for (const run of runs) {
       const span = noteEnd(run[run.length - 1]) - run[0].start;
       const longest = run.reduce((best, note) => (note.duration > best.duration ? note : best), run[0]);
-      if (longest.duration > physical.breathCapacitySeconds) {
+      if (longest.duration > capacity) {
         add("breath_violation", "error", longest,
           `A single ${longest.duration.toFixed(1)} s note exceeds the ${family} breath capacity ` +
-          `of ${physical.breathCapacitySeconds} s.`,
+          `of ${capacity} s.`,
           "Split the note, or write it for a section.");
-      } else if (span > physical.breathCapacitySeconds) {
+      } else if (span > capacity) {
         const breathAt = suggestedBreathPoint(run);
         add("long_phrase_no_rest", "warning", run,
           `A ${span.toFixed(1)} s phrase with no rest; the player must steal a breath from a note.`,
@@ -444,7 +659,7 @@ export function checkInstrumentConstraints(
           "A demanding phrase follows another with no room to breathe.",
           `Leave at least ${physical.breathRecoverySeconds ?? 0.5} s before this phrase.`);
       }
-      previousLong = span > physical.breathCapacitySeconds * 0.7;
+      previousLong = span > capacity * 0.7;
     }
   }
 
@@ -493,17 +708,6 @@ function safeDefinition(instrument: string, role: string): InstrumentDefinition 
   }
 }
 
-/** Highest-sounding note at each onset — a monophonic reduction for leap checks. */
-function topVoice(notes: ConstraintNote[]): ConstraintNote[] {
-  const byStart = new Map<number, ConstraintNote>();
-  for (const note of notes) {
-    const key = Math.round(note.start * 1000);
-    const held = byStart.get(key);
-    if (!held || note.pitch > held.pitch) byStart.set(key, note);
-  }
-  return [...byStart.values()].sort((a, b) => a.start - b.start);
-}
-
 function suggestedBreathPoint(run: ConstraintNote[]): number {
   let bestGap = -1;
   let bestAt = run[Math.floor(run.length / 2)].start;
@@ -534,41 +738,113 @@ export type ArrangementConstraintReport = {
   }>;
 };
 
-type ConstraintTrack = {
+export type ConstraintTrack = {
   id: string;
   instrument: string;
   role?: string;
-  instrumentDefinition?: { family: string } | null;
+  /** The track's definition; a full `InstrumentDefinition` is judged against directly (B-13). */
+  instrumentDefinition?: InstrumentDefinition | { family: string } | null;
   notes: ConstraintNote[];
   articulations?: Array<{ time: number; name: string }>;
 };
+
+const isFullDefinition = (value: ConstraintTrack["instrumentDefinition"]): value is InstrumentDefinition =>
+  !!value && typeof value === "object" && "constraints" in value && "playableRange" in value;
+
+/**
+ * One track through the engine, the way `checkArrangementConstraints` has
+ * always run it: the family from the track's definition, `section` forced only
+ * when the role says so (else inferred from the definition's voice count), and
+ * - B-13 - the track's own definition when it carries a full one, so a remote
+ * provider's TrackModel is judged against the definition it declares.
+ */
+export function checkTrackConstraints(track: ConstraintTrack, context: { tempoBpm: number }): ArrangementConstraintReport["byTrack"][number] {
+  const definition = isFullDefinition(track.instrumentDefinition) ? track.instrumentDefinition : null;
+  const family = track.instrumentDefinition?.family ??
+    safeDefinition(track.instrument, track.role ?? "")?.family ?? "keys";
+  const result = checkInstrumentConstraints({
+    family,
+    instrument: track.instrument,
+    role: track.role,
+    tempoBpm: context.tempoBpm,
+    notes: track.notes,
+    articulations: track.articulations,
+    definition,
+    // Only force "section" when the role says so; otherwise let the engine
+    // infer it from the instrument definition's voice count.
+    isSection: /section|ensemble|divisi|pad|bed/i.test(track.role ?? "") || undefined,
+  });
+  return {
+    trackId: track.id,
+    instrument: track.instrument,
+    family,
+    feasible: result.feasible,
+    violations: result.violations,
+  };
+}
+
+/**
+ * B-13: the provider contract's playability rules as one function over the
+ * engine, so `validateArrangementProviderOutput`, `validateCanonicalTrackModels`
+ * and `playabilityRepair` reject exactly what `checkInstrumentConstraints`
+ * rejects: range (kits excepted: they address pieces, not pitches), voices
+ * sounding together at an onset under the legato tolerance (with the engine's
+ * fingering / hand-span / double-stop / limb rules), melodic leaps per outer
+ * voice above the calibrated ceiling, a single note longer than a breath - plus
+ * the one rule that is the renderer's, not the player's: a note shorter than
+ * the instrument's minimum duration. Messages keep the historical wording so
+ * callers that match on them still do.
+ */
+export const CONTRACT_PLAYABILITY_CODES = {
+  range: ["out_of_range"],
+  polyphony: ["excess_polyphony", "unplayable_voicing", "impossible_fingering", "triple_stop", "impossible_limb_count"],
+  leap: ["impossible_leap"],
+  breath: ["breath_violation"],
+} as const;
+
+export type ContractPlayabilityRule = keyof typeof CONTRACT_PLAYABILITY_CODES | "min_duration";
+
+export type ContractPlayabilityError = { rule: ContractPlayabilityRule; code: string; message: string; noteIds: string[] };
+
+export function contractPlayabilityErrors(
+  track: ConstraintTrack & { instrumentDefinition: InstrumentDefinition },
+  context: { tempoBpm?: number } = {},
+): ContractPlayabilityError[] {
+  // One entry per violation (the repair needs every one); callers that report
+  // per track dedupe the messages.
+  const errors: ContractPlayabilityError[] = [];
+  const report = checkTrackConstraints(track, { tempoBpm: context.tempoBpm ?? 120 });
+  const push = (rule: ContractPlayabilityRule, code: string, message: string, noteIds: string[]) => {
+    errors.push({ rule, code, message, noteIds });
+  };
+  for (const violation of report.violations) {
+    if (violation.severity !== "error") continue;
+    const code = violation.code;
+    if ((CONTRACT_PLAYABILITY_CODES.range as readonly string[]).includes(code)) {
+      push("range", code, `${track.id} contains a note outside the instrument playable range`, violation.noteIds);
+    } else if (code === "excess_polyphony") {
+      push("polyphony", code, `${track.id} exceeds the instrument polyphony limit`, violation.noteIds);
+    } else if ((CONTRACT_PLAYABILITY_CODES.polyphony as readonly string[]).includes(code)) {
+      push("polyphony", code, `${track.id} contains a voicing the instrument cannot play (${code})`, violation.noteIds);
+    } else if ((CONTRACT_PLAYABILITY_CODES.leap as readonly string[]).includes(code)) {
+      push("leap", code, `${track.id} contains an unplayable melodic leap`, violation.noteIds);
+    } else if ((CONTRACT_PLAYABILITY_CODES.breath as readonly string[]).includes(code)) {
+      push("breath", code, `${track.id} contains a phrase longer than the instrument breath limit`, violation.noteIds);
+    }
+  }
+  const minNoteDuration = track.instrumentDefinition.constraints.minNoteDuration;
+  const short = track.notes.filter((note) => note.duration < minNoteDuration - 1e-9);
+  if (short.length) {
+    push("min_duration", "min_duration", `${track.id} contains notes shorter than the instrument can perform`, short.map((n, i) => n.id ?? `note-${i}`));
+  }
+  return errors;
+}
 
 export function checkArrangementConstraints(
   tracks: ConstraintTrack[],
   context: { tempoBpm: number },
 ): ArrangementConstraintReport {
-  const byTrack = tracks.map((track) => {
-    const family = track.instrumentDefinition?.family ??
-      safeDefinition(track.instrument, track.role ?? "")?.family ?? "keys";
-    const result = checkInstrumentConstraints({
-      family,
-      instrument: track.instrument,
-      role: track.role,
-      tempoBpm: context.tempoBpm,
-      notes: track.notes,
-      articulations: track.articulations,
-      // Only force "section" when the role says so; otherwise let the engine
-      // infer it from the instrument definition's voice count.
-      isSection: /section|ensemble|divisi|pad|bed/i.test(track.role ?? "") || undefined,
-    });
-    return {
-      trackId: track.id,
-      instrument: track.instrument,
-      family,
-      feasible: result.feasible,
-      violations: result.violations,
-    };
-  });
+  const byTrack = tracks.map((track) => checkTrackConstraints(track, context));
   const all = byTrack.flatMap((entry) => entry.violations);
   return {
     feasible: byTrack.every((entry) => entry.feasible),

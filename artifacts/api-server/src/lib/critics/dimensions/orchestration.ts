@@ -46,7 +46,18 @@ export function functionFromNotes(context: CriticContext, part: PartInfo, startB
   let fn: FunctionFromNotes;
   if (part.percussive) fn = onsetsPerBar >= 2 ? "pulse" : "accent";
   else if (part.family === "bass") fn = onsetsPerBar >= 2 ? "pulse" : "support";
-  else if (context.vocal && notes.length >= 4 && notes.filter((n) => !context.vocalActiveAt(n.start)).length / notes.length >= 0.7 &&
+  // An answer is a *line* that speaks where the singer does not. B-13 at the
+  // merge: this branch had no texture guard at all, so any pitched part whose
+  // onsets mostly fell outside the vocal phrases was called an answer -
+  // including a chord. Since B-13 gave the beds the groove plan's bed cell
+  // they hold three or four voices for two or three beats and rest between
+  // them, which lands their onsets off the vocal: pop-full's Chorus keys
+  // (1.00 onsets/bar, 3.25 voices, 2.84 beats held) read as `answer` when it is
+  // plainly a pad. Requiring an answer to be close to monophonic is what the
+  // word means; it is not a threshold moved to make a number look better, and
+  // the `support` branch below already describes exactly this part.
+  else if (context.vocal && notes.length >= 4 && meanVoices <= 1.5 &&
+    notes.filter((n) => !context.vocalActiveAt(n.start)).length / notes.length >= 0.7 &&
     context.vocal.phrases.some((p) => p.start < (context.barInfo(endBar)?.end ?? Infinity) && p.end > (context.barInfo(startBar)?.start ?? 0))) fn = "answer";
   else if (meanVoices <= 1.3 && distinctPitches >= 5 && onsetsPerBar >= 1.5) fn = "lead";
   else if (onsetsPerBar < 1 && meanDurationBeats <= 2) fn = "accent";

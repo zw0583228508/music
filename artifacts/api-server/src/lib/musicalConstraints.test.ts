@@ -1,9 +1,19 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  breathCapacityFor,
   checkArrangementConstraints,
   checkInstrumentConstraints,
+  checkTrackConstraints,
+  contractPlayabilityErrors,
+  isSectionPart,
+  maxSimultaneousVoices,
+  melodicLeapViolations,
+  polyphonyClusters,
+  polyphonyViolations,
+  simultaneousVoicesAt,
 } from "./musicalConstraints";
+import { getInstrumentDefinition } from "./musicEngines";
 
 const n = (start: number, duration: number, pitch: number, id?: string) => ({
   id: id ?? `n${start}-${pitch}`,
@@ -213,4 +223,77 @@ test("arrangement aggregate reports per-track feasibility", () => {
   assert.equal(keys.feasible, false);
   assert.equal(report.feasible, false);
   assert.ok(report.errorCount >= 1);
+});
+
+// ---------------------------------------------------------------------------
+// Brain B-13: the shared predicates (one playability truth)
+// ---------------------------------------------------------------------------
+
+test("B-13 simultaneousVoicesAt / polyphonyClusters: a tail inside the legato tolerance is not a voice; a real overlap is", () => {
+  const legato = [n(0, 0.52, 40), n(0.5, 0.52, 43), n(1.0, 0.52, 45)];
+  assert.equal(simultaneousVoicesAt(legato, 0.5).length, 1);
+  assert.deepEqual(polyphonyClusters(legato), []);
+  assert.equal(maxSimultaneousVoices(legato), 1);
+  const chord = [n(0, 1, 60), n(0, 1, 64), n(0, 1, 67), n(0.5, 1, 72)];
+  assert.equal(simultaneousVoicesAt(chord, 0.5).length, 4, "three held notes plus the new one sound at 0.5 s");
+  assert.equal(maxSimultaneousVoices(chord), 4);
+  assert.equal(polyphonyViolations(chord, 3).length, 1);
+  assert.equal(polyphonyViolations(chord, 4).length, 0);
+  assert.equal(maxSimultaneousVoices([]), 0);
+});
+
+test("B-13 melodicLeapViolations: judged per outer voice, never across a chord's tones, never from a chord's top to the next chord's bottom", () => {
+  // Chord A (60 64 67 72) to chord B (58 62 65 70): the old start-then-pitch rule read 72 -> 58 as a 14-semitone leap.
+  const beds = [...[60, 64, 67, 72].map((p) => n(0, 1.98, p)), ...[58, 62, 65, 70].map((p) => n(2, 1.98, p))];
+  assert.deepEqual(melodicLeapViolations(beds, { maxLeap: 10, polyphonic: true }), [], "calibrated (chords skipped)");
+  assert.deepEqual(melodicLeapViolations(beds, { maxLeap: 10, polyphonic: true, chordOnsets: "judge" }), [], "outer voices move by 2: no leap even when chords are judged");
+  // A monophonic line: 40 -> 60 is an error above 1.5 x 12, 40 -> 55 a warning above 12.
+  const line = [n(0, 0.5, 40), n(0.5, 0.5, 60), n(1, 0.5, 43), n(1.5, 0.5, 58)];
+  const found = melodicLeapViolations(line, { maxLeap: 12, polyphonic: false });
+  assert.deepEqual(found.map((v) => [v.from.pitch, v.to.pitch, v.leap, v.severity]), [[40, 60, 20, "error"], [60, 43, 17, "warning"], [43, 58, 15, "warning"]]);
+  // A single note reached from a chord is not judged under the calibration; judged only when asked.
+  const strideLike = [n(0, 0.4, 36), n(0.5, 0.4, 64), n(0.5, 0.4, 67), n(0.5, 0.4, 72), n(1, 0.4, 36)];
+  assert.deepEqual(melodicLeapViolations(strideLike, { maxLeap: 24 }), []);
+  const judged = melodicLeapViolations(strideLike, { maxLeap: 24, chordOnsets: "judge" });
+  assert.ok(judged.some((v) => v.line === "top" && v.from.pitch === 36 && v.to.pitch === 72 && v.severity === "warning"));
+  // The same pair is one leap even though a single note is both the top and the bottom line.
+  assert.equal(melodicLeapViolations([n(0, 0.4, 36), n(0.5, 0.4, 66)], { maxLeap: 12, polyphonic: true }).length, 1);
+  // Sections and kits are exempt; a rest longer than 0.6 s breaks the line; a held earlier note is two voices.
+  assert.deepEqual(melodicLeapViolations(line, { maxLeap: 12, isSection: true }), []);
+  assert.deepEqual(melodicLeapViolations(line, { maxLeap: 12, family: "drums" }), []);
+  assert.deepEqual(melodicLeapViolations([n(0, 0.4, 40), n(1.2, 0.4, 66)], { maxLeap: 12 }), []);
+  assert.deepEqual(melodicLeapViolations([n(0, 2, 40), n(0.5, 0.4, 66)], { maxLeap: 12 }), []);
+});
+
+test("B-13 isSectionPart and the track's own definition: the engine judges a remote TrackModel against the definition it declares", () => {
+  const strings = getInstrumentDefinition("strings", "HARMONIC_BED");
+  assert.equal(isSectionPart("strings", undefined, strings), true, "four voices of strings is a section");
+  assert.equal(isSectionPart("strings", undefined, { constraints: { ...strings.constraints, maxSimultaneousNotes: 2 } }), false, "two voices is a solo player");
+  assert.equal(isSectionPart("keys", "PAD", null), true, "a role that says pad / bed / section / divisi forces it");
+  assert.equal(isSectionPart("brass", "ACCENT", null), false);
+  // A track that declares a one-voice definition is judged as one voice even when the name resolves to a chordal instrument.
+  const mono = { ...getInstrumentDefinition("keys", "HARMONIC_BED"), polyphonic: false, maxVoices: 1, constraints: { ...getInstrumentDefinition("keys", "HARMONIC_BED").constraints, maxSimultaneousNotes: 1 } };
+  const report = checkTrackConstraints({ id: "t", instrument: "keys", role: "HARMONIC_BED", instrumentDefinition: mono, notes: [n(0, 1, 60), n(0, 1, 64)] }, { tempoBpm: 120 });
+  assert.ok(report.violations.some((v) => v.code === "excess_polyphony" && v.severity === "error"));
+  const byName = checkTrackConstraints({ id: "t", instrument: "keys", role: "HARMONIC_BED", notes: [n(0, 1, 60), n(0, 1, 64)] }, { tempoBpm: 120 });
+  assert.equal(byName.feasible, true, "without a declared definition the name resolves to the piano, which holds two voices");
+});
+
+test("B-13 contractPlayabilityErrors: the contract's rules are the engine's, plus the renderer's minimum duration; breath is the stricter of physical and sourced", () => {
+  const bass = getInstrumentDefinition("bass", "BASS");
+  const piano = getInstrumentDefinition("keys", "HARMONIC_BED");
+  const brass = getInstrumentDefinition("brass", "ACCENT");
+  const errorsOf = (def: typeof bass, notes: ReturnType<typeof n>[], role = "X") =>
+    contractPlayabilityErrors({ id: "t", instrument: def.id, role, instrumentDefinition: def, notes });
+  assert.deepEqual(errorsOf(bass, [n(0, 0.4, 36), n(0.5, 0.4, 66)]).map((e) => [e.rule, e.code]), [["leap", "impossible_leap"]]);
+  assert.deepEqual(errorsOf(bass, [n(0, 0.4, 36), n(0.5, 0.4, 52)]), [], "16 semitones on a bass is wide, not impossible: a warning, not a contract error");
+  assert.deepEqual(errorsOf(piano, [n(0, 0.4, 36), n(0.5, 0.4, 64), n(1, 0.4, 36), n(1.5, 0.4, 64)]), [], "audit Probe 4: a two-hand figure");
+  assert.deepEqual(errorsOf(piano, [n(0, 2, 36), n(0, 2, 52), n(0, 2, 67), n(0, 2, 84)]).map((e) => [e.rule, e.code]), [["polyphony", "unplayable_voicing"]]);
+  assert.deepEqual(errorsOf(bass, [n(0, 0.03, 40)]).map((e) => [e.rule, e.code]), [["min_duration", "min_duration"]]);
+  assert.equal(breathCapacityFor("brass", brass), Math.min(10, brass.constraints.breathSeconds ?? 99), "the brass definition says 12 s (GM), the player 10: 10 wins");
+  assert.deepEqual(errorsOf(brass, [n(0, 11, 60)]).map((e) => [e.rule, e.code]), [["breath", "breath_violation"]]);
+  assert.equal(breathCapacityFor("keys", piano), null);
+  // A kit addresses pieces, not pitches: no range rule (the engine's rule 1), so the contract holds none either.
+  const kit = getInstrumentDefinition("drums", "GROOVE");
+  assert.deepEqual(errorsOf(kit, [n(0, 0.1, 36), n(0.5, 0.1, 100)]), []);
 });

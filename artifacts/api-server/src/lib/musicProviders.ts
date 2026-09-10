@@ -17,7 +17,7 @@ import { LocalArrangementOrchestratorProvider } from "./arrangementOrchestratorP
 import { LocalArrangerModelProvider } from "./arrangerModelProvider";
 import { ARRANGER_MODEL_PROVIDER_ID, arrangerModelIsPromoted, loadActiveArrangerModel, setArrangerModelPromoted } from "./arrangerModelRouting";
 export { setArrangerModelPromoted, arrangerModelIsPromoted };
-import { LEGATO_TOLERANCE_SECONDS } from "./musicalConstraints";
+import { contractPlayabilityErrors } from "./musicalConstraints";
 import {
   anyAccompCommercialUseAuthorized,
   expectedGpuContainerDigest,
@@ -977,48 +977,18 @@ export function validateArrangementProviderOutput(
   }
   for (const track of output.trackModels ?? []) {
     if (!track.id || !track.instrument || !track.role) errors.push("A TrackModel is missing identity fields");
-    if (!track.instrumentDefinition) errors.push(`${track.id || "TrackModel"} is missing an InstrumentDefinition`);
-    for (const note of track.notes ?? []) {
-      if (
-        note.pitch < track.instrumentDefinition.playableRange.min ||
-        note.pitch > track.instrumentDefinition.playableRange.max
-      ) {
-        errors.push(`${track.id} contains a note outside the instrument playable range`);
-        break;
-      }
+    if (!track.instrumentDefinition) {
+      errors.push(`${track.id || "TrackModel"} is missing an InstrumentDefinition`);
+      continue;
     }
-    const sortedNotes = [...track.notes].sort((left, right) => left.start - right.start);
-    let maximumConcurrent = 0;
-    for (const note of sortedNotes) {
-      maximumConcurrent = Math.max(
-        maximumConcurrent,
-        sortedNotes.filter((other) =>
-          other.start < note.start + note.duration &&
-          other.start + other.duration > note.start).length,
-      );
-    }
-    const allowedVoices = Math.min(
-      track.instrumentDefinition.maxVoices,
-      track.instrumentDefinition.constraints.maxSimultaneousNotes,
-    );
-    if (maximumConcurrent > allowedVoices || (!track.instrumentDefinition.polyphonic && maximumConcurrent > 1)) {
-      errors.push(`${track.id} exceeds the instrument polyphony limit`);
-    }
-    if (sortedNotes.some((note) => note.duration < track.instrumentDefinition.constraints.minNoteDuration)) {
-      errors.push(`${track.id} contains notes shorter than the instrument can perform`);
-    }
-    if (sortedNotes.some((note, index) => {
-      const previous = sortedNotes[index - 1];
-      return previous && Math.abs(note.pitch - previous.pitch) > track.instrumentDefinition.constraints.maxLeap;
-    })) {
-      errors.push(`${track.id} contains an unplayable melodic leap`);
-    }
-    if (
-      track.instrumentDefinition.constraints.breathSeconds &&
-      sortedNotes.some((note) => note.duration > track.instrumentDefinition.constraints.breathSeconds!)
-    ) {
-      errors.push(`${track.id} contains a phrase longer than the instrument breath limit`);
-    }
+    // B-13: one playability truth - the constraint engine's rules, through the
+    // shared contract function (range, voices sounding together under the
+    // legato tolerance, leaps per outer voice, breath, minimum duration).
+    const playability = contractPlayabilityErrors({
+      id: track.id, instrument: track.instrument, role: track.role,
+      instrumentDefinition: track.instrumentDefinition, notes: track.notes ?? [], articulations: track.articulations,
+    });
+    for (const message of new Set(playability.map((error) => error.message))) errors.push(message);
   }
   for (const candidate of output.candidates) {
     if (!candidate.id.trim()) errors.push("A candidate is missing its id");
@@ -2700,47 +2670,19 @@ export function validateCanonicalTrackModels(
     errors.push("TrackModels must map one-to-one to the requested project track ids");
   }
   for (const track of tracks) {
-    const sortedNotes = [...track.notes].sort((left, right) => left.start - right.start);
-    const allowedVoices = Math.min(
-      track.instrumentDefinition.maxVoices,
-      track.instrumentDefinition.constraints.maxSimultaneousNotes,
-    );
-    for (const note of sortedNotes) {
-      // Two notes are simultaneous only when they overlap by more than the
-      // legato tolerance; a tail lapping a few ms into the next onset is a
-      // connected line, not a chord. Same rule as the constraint engine.
-      const noteEnd = note.start + note.duration;
-      const concurrent = sortedNotes.filter((other) => {
-        const overlap = Math.min(noteEnd, other.start + other.duration) -
-          Math.max(note.start, other.start);
-        // Epsilon: 0.5 + 0.03 - 0.5 is 0.030000000000000027 in floating point.
-        return other === note || overlap > LEGATO_TOLERANCE_SECONDS + 1e-9;
-      }).length;
-      if (
-        concurrent > allowedVoices ||
-        (!track.instrumentDefinition.polyphonic && concurrent > 1)
-      ) {
-        errors.push(`${track.id} exceeds the instrument polyphony limit`);
-        break;
-      }
-    }
-    if (sortedNotes.some((note) =>
-      note.duration < track.instrumentDefinition.constraints.minNoteDuration)) {
-      errors.push(`${track.id} contains notes shorter than the instrument can perform`);
-    }
-    if (sortedNotes.some((note, noteIndex) => {
-      const previous = sortedNotes[noteIndex - 1];
-      return previous &&
-        Math.abs(note.pitch - previous.pitch) >
-          track.instrumentDefinition.constraints.maxLeap;
-    })) {
-      errors.push(`${track.id} contains an unplayable melodic leap`);
-    }
-    const breathSeconds = track.instrumentDefinition.constraints.breathSeconds;
-    if (breathSeconds &&
-      sortedNotes.some((note) => note.duration > breathSeconds)) {
-      errors.push(`${track.id} contains a phrase longer than the instrument breath limit`);
-    }
+    // B-13: one playability truth. The contract rejects exactly what the
+    // constraint engine rejects (`musicalConstraints.contractPlayabilityErrors`):
+    // voices sounding together at an onset under the legato tolerance (a tail
+    // lapping a few ms into the next onset is a connected line, not a chord),
+    // leaps judged per outer voice above the calibrated ceiling and never
+    // across a chord's tones, range, breath - plus the renderer's minimum
+    // duration. Before this the contract counted pairwise overlaps and read a
+    // chord's top to the next chord's bottom as a melodic leap (audit §5.1).
+    const playability = contractPlayabilityErrors({
+      id: track.id, instrument: track.instrument, role: track.role,
+      instrumentDefinition: track.instrumentDefinition, notes: track.notes, articulations: track.articulations,
+    });
+    for (const message of new Set(playability.map((error) => error.message))) errors.push(message);
   }
   return errors;
 }

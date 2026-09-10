@@ -37,6 +37,7 @@ import { extractUserIntentSync } from "./producerIntelligence/intentExtraction";
 import { resolveStyleProfile } from "./producerIntelligence/styleResolution";
 import { RACHEM_NA_FIXED_NOW, rachemNaSongModel } from "./__fixtures__/rachemNaSongModelV3";
 import { parseChord } from "./chordSymbols";
+import { quantiseChordsToGrid } from "./harmonyPlan/shared";
 
 const NOW = new Date(0);
 const OWNER_BRIEF = "intimate ballad; piano, soft strings, gentle bass, light percussion; big final chorus";
@@ -55,6 +56,17 @@ export type PartMetrics = {
   bass?: {
     maxLeap: number; leapsOverLimit: number; maxLeapAllowed: number; overlapsIntoNextChord: number;
     changesLandingOnRoot: number; approachedByStep: number; approachShare: number;
+    /**
+     * B-13 at the merge: the same two counts asked of the arrival the bass
+     * *actually plays*. `changesLandingOnRoot` counts only changes the bass
+     * meets in root position; since B-02 the bass line planner solves slash
+     * basses and inversions (this suite asserts `rootPositionShare` tells are
+     * gone), so a change met on the planned third or fifth is an arrival the
+     * root-only count cannot see - and an approach tone leading into it is
+     * invisible with it. These count a change as arrived when the note states
+     * the arriving chord, root or not.
+     */
+    changesStatingChord: number; approachedIntoStatedChord: number; statedApproachShare: number;
     contraryVsKeysTop: number; contraryShare: number | null;
     slashChordsUnderPart: number; slashBassHonoured: number;
   };
@@ -152,13 +164,28 @@ function chordalMetrics(notes: MusicalNote[], chords: Chord[]): PartMetrics["cho
   };
 }
 
-function bassMetrics(notes: MusicalNote[], chords: Chord[], maxLeap: number, keysNotes: MusicalNote[] | null): PartMetrics["bass"] {
+function bassMetrics(notes: MusicalNote[], chords: Chord[], maxLeap: number, keysNotes: MusicalNote[] | null, beatSeconds = 0): PartMetrics["bass"] {
   const line = clustersOf(notes).map((c) => c.reduce((m, n) => (n.pitch < m.pitch ? n : m), c[0]));
+  // B-13: the chord a note *states*. The groove plan's shared anticipation
+  // puts the next chord's bass on the "and" before its downbeat, so a note
+  // that sounds the next chord's root up to a beat early states that chord -
+  // otherwise every pushed arrival reads as "still the old chord" and the
+  // approach tone before it becomes invisible to this metric.
+  const statedBy = (note: MusicalNote): Chord | null => {
+    const under = chordAt(chords, note.start);
+    if (beatSeconds > 0) {
+      const ahead = chords.find((c) => c.start > note.start + 1e-6 && c.start - note.start <= beatSeconds + 1e-6);
+      if (ahead && ahead !== under && rootOf(ahead) === pc(note.pitch)) return ahead;
+    }
+    return under;
+  };
   let maxLeapSeen = 0;
   let over = 0;
   let overlaps = 0;
   let changes = 0;
   let approached = 0;
+  let statedChanges = 0;
+  let statedApproached = 0;
   let contraryChanges = 0;
   let contrary = 0;
   let slashUnder = 0;
@@ -174,23 +201,36 @@ function bassMetrics(notes: MusicalNote[], chords: Chord[], maxLeap: number, key
   }
   for (let i = 0; i < line.length; i += 1) {
     const n = line[i];
-    const chord = chordAt(chords, n.start);
+    const chord = statedBy(n);
     if (chord) {
       const next = chords.find((c) => c.start > chord.start + 1e-6 && c.start >= chord.end - 1e-6);
-      if (next && n.start + n.duration > next.start + 0.02) overlaps += 1;
+      // B-13: a note that sounds under the next chord is a hangover only when
+      // it is a wrong note there. The groove plan's shared anticipation puts
+      // the *next* chord's bass on the "and" before its downbeat and ties the
+      // downbeat; that note sounds across the change on purpose, and the
+      // metric must not read a push as a hangover.
+      if (next && n.start + n.duration > next.start + 0.02 && !chordPcs(next).has(pc(n.pitch))) overlaps += 1;
     }
     if (i === 0) continue;
     const prev = line[i - 1];
     const leap = Math.abs(n.pitch - prev.pitch);
     maxLeapSeen = Math.max(maxLeapSeen, leap);
     if (leap > maxLeap) over += 1;
-    const before = chordAt(chords, prev.start);
+    const before = statedBy(prev);
     if (!before || !chord || before === chord) continue;
+    const fromApproachTone = !chordPcs(before).has(pc(prev.pitch));
+    const stepIn = (leap === 1 || leap === 2) && fromApproachTone;
+    // B-13 at the merge: the arrival the bass actually plays. A change met on
+    // the planned slash bass or an inversion is an arrival; only the root-only
+    // count below cannot see it.
+    if (chordPcs(chord).has(pc(n.pitch))) {
+      statedChanges += 1;
+      if (stepIn) statedApproached += 1;
+    }
     const root = rootOf(chord);
     if (root === null || pc(n.pitch) !== root) continue;
     changes += 1;
-    const fromApproachTone = !chordPcs(before).has(pc(prev.pitch));
-    if ((leap === 1 || leap === 2) && fromApproachTone) approached += 1;
+    if (stepIn) approached += 1;
     if (keysNotes) {
       const topAt = (t: number) => {
         const sounding = keysNotes.filter((k) => k.start <= t + 0.03 && k.start + k.duration > t + 0.03);
@@ -207,6 +247,8 @@ function bassMetrics(notes: MusicalNote[], chords: Chord[], maxLeap: number, key
   return {
     maxLeap: maxLeapSeen, leapsOverLimit: over, maxLeapAllowed: maxLeap, overlapsIntoNextChord: overlaps,
     changesLandingOnRoot: changes, approachedByStep: approached, approachShare: changes ? r3(approached / changes) : 0,
+    changesStatingChord: statedChanges, approachedIntoStatedChord: statedApproached,
+    statedApproachShare: statedChanges ? r3(statedApproached / statedChanges) : 0,
     contraryVsKeysTop: contrary, contraryShare: contraryChanges ? r3(contrary / contraryChanges) : null,
     slashChordsUnderPart: slashUnder, slashBassHonoured: slashHonoured,
   };
@@ -234,7 +276,13 @@ export function composedPartMetrics(model: SongModelData, tempoBpm: number, mete
       siblings.push({ instrument: task.instrument, role: task.role, notes });
     }
   }
-  const chords = model.chords as Chord[];
+  // B-13: the composer writes chord changes on the beat grid (`chordEventsIn`
+  // with the section's grid), so "lands on the root" and "laps the next chord"
+  // are asked of that grid too. Measuring against the analysed onsets - up to
+  // half a beat away on the owner's fixture - would count a note that releases
+  // exactly at the chord change as lapping it.
+  const beatSeconds = (60 / Math.max(1, tempoBpm)) * (4 / (Number(/\/(\d+)$/.exec(meter)?.[1]) || 4));
+  const chords = quantiseChordsToGrid(model.chords as Chord[], { origin: 0, beat: beatSeconds, subdivision: beatSeconds / 2 });
   return composed.map(({ request, notes }) => {
     const base: PartMetrics = {
       taskId: request.taskId, task: request.task, instrument: request.instrument, role: request.role,
@@ -244,7 +292,7 @@ export function composedPartMetrics(model: SongModelData, tempoBpm: number, mete
     if (CHORDAL_TASKS.has(request.task) && notes.length) base.chordal = chordalMetrics(notes, sectionChords.length ? sectionChords : chords);
     if (request.task === "BASS" && notes.length) {
       const keys = composed.find((p) => ["PIANO", "KEYS", "ACOUSTIC_GUITAR", "ELECTRIC_GUITAR"].includes(p.request.task) && p.request.section.sectionName === request.section.sectionName && p.notes.length);
-      base.bass = bassMetrics(notes, chords, request.constraints.maxLeap, keys ? keys.notes : null);
+      base.bass = bassMetrics(notes, chords, request.constraints.maxLeap, keys ? keys.notes : null, beatSeconds);
     }
     return base;
   });
@@ -273,6 +321,9 @@ function aggregate(parts: PartMetrics[]) {
     bassChangesLandingOnRoot: sum(bass.map((p) => p.bass!.changesLandingOnRoot)),
     bassApproachedByStep: sum(bass.map((p) => p.bass!.approachedByStep)),
     bassApproachShare: weightedMean(bass.map((p) => [p.bass!.approachShare, p.bass!.changesLandingOnRoot])),
+    bassChangesStatingChord: sum(bass.map((p) => p.bass!.changesStatingChord)),
+    bassApproachedIntoStatedChord: sum(bass.map((p) => p.bass!.approachedIntoStatedChord)),
+    bassStatedApproachShare: weightedMean(bass.map((p) => [p.bass!.statedApproachShare, p.bass!.changesStatingChord])),
     bassContraryShare: weightedMean(bass.filter((p) => p.bass!.contraryShare !== null).map((p) => [p.bass!.contraryShare!, 1])),
     slashChordsUnderBass: sum(bass.map((p) => p.bass!.slashChordsUnderPart)),
     slashBassHonoured: sum(bass.map((p) => p.bass!.slashBassHonoured)),

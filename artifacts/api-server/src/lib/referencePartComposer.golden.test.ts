@@ -158,7 +158,34 @@ test("the reference part composer produces byte-identical parts to the golden fi
         "notes); the mode-restricted cases (ballad-piano-vocal, acoustic-demo, orchestral-midi, ethnic-vocal, " +
         "cinematic-midi) are byte-identical, and so is every case's section plan - the per-family role rule that " +
         "went in with this re-pin only fires where a brief named a family's level, which no corpus case does. " +
-        "A future digest change must again name its cause here.",
+        "A future digest change must again name its cause here. " +
+        "RE-PINNED again at the B-13 merge (one playability truth, one groove for every part, base 30041f5): every harmony writer " +
+        "now takes its onsets from the shared GroovePlan instead of subdividing the analysed chord span - the bass from " +
+        "bassRhythmFor (kick/bass relation, shared anticipations, approach tones, pedal, held ending), keys / guitar / strings / " +
+        "pads from compingRhythmFor on the texture the candidate strategy asks for (sustained bed, block chords, arpeggio) - and " +
+        "the analysed chord onsets are read as the beat or the 8th they state (chordEventsIn's grid), so every composer digest " +
+        "changed on every case. The shipped-note digests changed with them and for three more reasons: the strategy no longer " +
+        "thins a part by an evenly spaced stride (texture instead of deletion), the performance engine performs each section with " +
+        "its own role and dynamic shape instead of the first section's, and the playability repair reads a rolled or staggered " +
+        "chord as one gesture so a bed keeps its voices. A future digest change must again name its cause here. " +
+        "RE-PINNED again at the second reconciliation of B-13 with B-18, one cause in `composer/harmonyParts.writeBassLine`: " +
+        "the bass's approach tone is written where the bass *planner* writes its own - on the last beat of the chord it is " +
+        "leaving (`realiseBassLine`: `e - beatSeconds`) - instead of on whichever groove onset happened to be the last " +
+        "before the change, and its pitch now comes from B-18's `approachToneChoice` instead of the copy of the pre-B-18 " +
+        "rule (`chromaticApproach || scale.has(pc) || a whole tone`) that lived in this writer. The two were one defect: " +
+        "with B-18 reading a jazz standard's own convention instead of the tempo map, jazz-full's bass plays beats 1 and 3, " +
+        "so the promoted onset sat a beat and a half from the arrival and sounded a third of the chord - and, chosen by the " +
+        "old rule, it could be the major third of the minor chord it sounded over (B natural under Gm7, E natural under " +
+        "Cm7). B-05c's harmony dimension graded jazz-full's bass at chord-tone share 0.878 with a major `clash_share`; it " +
+        "is 0.952 with no major finding, and the owner's song keeps all eight of its approaches into the chord the bass " +
+        "states (`brainB02Harmony`), now led into from a beat away instead of from the middle of the chord. Seven of the " +
+        "nine cases moved, composer and shipped digests together: pop-full 906 -> 907, rock-full 781 -> 783, dance-full " +
+        "788 -> 789, orchestral-midi 413 -> 414 and ethnic-vocal 227 -> 228 gain the approach notes the groove had no " +
+        "onset for; acoustic-demo's count is unchanged at 380 and only its digest moved; jazz-full goes 1202 -> 1365, " +
+        "most of it B-18's own groove reading for a jazz standard, which this writer now plays through. " +
+        "ballad-piano-vocal and cinematic-midi are byte-identical - `brainB02Evidence` measures zero bass approaches on " +
+        "both, so there was nothing here to move. The section plans, the kit, the comping and the counter-melody are " +
+        "untouched. A future digest change must again name its cause here.",
       cases: current,
     }, null, 2)}\n`);
     return;

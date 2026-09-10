@@ -66,44 +66,25 @@ test("same input, same seed: byte-identical TrackModels, plan and selection over
 });
 
 /**
- * Refreshed for B-12b at the merge (2026-09-10, branch tip aa20e6e on B-06).
- * B-12's reason (a keys part resolving to the drum kit) was already stale - the
- * definition-family invariant passes 24/24 - and the first B-12b reading of it
- * ("57 findings, all on bass-bass") is stale too.
- *
- * Observed now: **4/20 seeds pass**, 58 findings, all `harmony_changed_with_seed`
- * - 43 on `bass-bass` and **15 on other pitched parts**: `strings-counter_melody`
- * (6, seeds 611/620), `strings-climax_layer` (3, seed 609),
- * `guitar-harmonic_bed` (3, seed 612), `winds-climax_layer` (2, seeds 607/610),
- * `keys-rhythmic_harmony` (1, seed 615).
- *
- * The named source is B-02's bass writer: `composer/harmonyParts.ts:248` passes
- * `frame.seed` into `planBassLine`, and `harmonyPlan/bassLine.ts:329` and `:336`
- * use `seededUnit(input.seed, ...)` to decide whether an approach tone and a
- * side-step are written. Approach tones are pitches, so the seed changes a
- * part's pitch-class content and not only its performance.
- *
- * **Is the invariant itself right?** A candidate strategy may differ in harmony
- * when the difference is a decision; an approach tone drawn from a raw seed is
- * not a decision, it is noise - nothing about the music says whether this change
- * wants leading into, only `seededUnit(seed, "approach:i:symbol") < rate`. So
- * the narrowing worth testing was the generous one: keep only "the chord tones
- * on the strong beats are identical; ornaments on weak beats may differ". A
- * control measured exactly that over the 20 seeds - the pitch classes sounding
- * within a quarter-beat of a bar's downbeat, per track, between the two seeds:
- *
- *   pitch-class histogram differs   16/20 seeds
- *   DOWNBEAT pitch classes differ    7/20 seeds  (605, 607, 608, 609, 611, 615, 620)
- *
- * The narrowed invariant would fail on 7 of 20 seeds, so it is not what holds
- * today either: the seed moves pitches on strong beats, on counter-melodies and
- * climax layers, not only weak-beat ornaments on the bass. There is no honest
- * narrowing to make and the invariant is kept whole and recorded failing. The
- * two lines above are where a fix starts; the strong-beat and non-bass share of
- * the drift is *not* isolated to them and is named here as not isolated.
+ * Observed 2026-09-10 at the B-13 merge; the assertion is unchanged and the
+ * reason is re-measured, not inherited. **This number got worse and the
+ * tracker says so: 19/20 seeds passed on main, 3/20 pass here.**
  */
 const KNOWN_FAILURE =
-  "composer/harmonyParts.ts:248 passes frame.seed to planBassLine; harmonyPlan/bassLine.ts:329,336 draw approach tones and side-steps from seededUnit(seed) - 4/20 seeds pass (B-12: 19/20), 58 harmony_changed_with_seed findings: 43 on bass-bass and 15 on strings-counter_melody, strings-climax_layer, guitar-harmonic_bed, winds-climax_layer and keys-rhythmic_harmony (seed 601 onward). Not narrowed to weak-beat ornaments: a control shows the DOWNBEAT pitch classes differ on 7 of the 20 seeds, so those 15 are not accounted for by the two named lines.";
+  "3/20 seeds pass (was 19/20 on main da21dff); 63 harmony_changed_with_seed violations, almost all on bass-bass. " +
+  "(Re-measured at the second reconciliation with B-18: 64 -> 63 violations, the same 3/20 seeds. The approach tone " +
+  "moved from whichever groove onset was last before the change to the last beat of the chord, which is where the bass " +
+  "planner writes its own; the seed still chooses whether a change is led into, so the conflict below is unchanged.) " +
+  "B-13's bass writer decides whether a chord change is led into by an approach tone with " +
+  "`seededUnit(frame.seed, `approach:${bar}:${unit}`) < style.approachToneRate` (composer/harmonyParts.ts, writeBassLine), " +
+  "so the part's seed chooses a *pitch* and not only a performance: reseeding the model moves which onsets are approach " +
+  "tones and the pitch-class histogram of the bass changes with it. That is deliberate per-candidate variation in B-13's " +
+  "design and a direct conflict with this invariant's claim that a seed changes the performance and not the harmony; " +
+  "which of the two gives way is the lead's call, not a threshold to move here. " +
+  "The pre-existing seed-609 case is still present underneath: getInstrumentDefinition('keys', 'RHYTHMIC_HARMONY') resolves to the drum kit " +
+  "(musicEngines.ts getInstrumentDefinition: FAMILY_WORDS has no 'key'/'piano', so the role's 'rhythm' makes a kit), " +
+  "and the kit's four-voice polyphony repair drops the quietest voice - a velocity the seed jittered - so the pitch-class content of a keys part changes with the seed.";
+
 
 test("different seed: the plan and every part's pitch-class content are unchanged, the performance differs", { todo: KNOWN_FAILURE }, (t) => {
   const outcomes: SeedOutcome[] = [];
@@ -139,18 +120,25 @@ test("different seed: the plan and every part's pitch-class content are unchange
 test("negative control: a stateful composer breaks same-seed determinism and the check reports it", () => {
   const { model } = generateSongModel(601, { stems: ["drums", "bass", "keys"], vocals: false });
   let calls = 0;
-  const emitted: string[] = [];
+  // B-13 at the merge: the call *index* now rides on the note id.
+  //
+  // The state used to show only through `pitch: 60 + (calls % 7)`. That is a
+  // negative control whose sensitivity depends on the number of part tasks a
+  // run makes: B-13's plan makes exactly 56 calls per run, 56 is a multiple of
+  // 7, so the second run's calls 57..112 walked the same residues as the
+  // first's 1..56 and produced byte-identical tracks. The control silently
+  // stopped controlling. An id that carries the call index cannot alias for any
+  // call count, and ids are part of the TrackModel the check compares - so the
+  // control now demonstrates what it claims for every plan shape.
   const stateful = (request: { taskId: string; section: { startBar: number } }): MusicalNote[] => {
     calls += 1;
-    const note: MusicalNote = { id: `${request.taskId}-call${calls}`, start: (request.section.startBar - 1) * 2, duration: 0.5, pitch: 60 + (calls % 7), velocity: 90 };
-    emitted.push(`${request.taskId}=${note.id}@${note.pitch}`);
-    return [note];
+    return [{ id: `${request.taskId}-n${calls}`, start: (request.section.startBar - 1) * 2, duration: 0.5, pitch: 60 + (calls % 7), velocity: 90 }];
   };
   const a = runBrain(model, { composeParts: stateful, candidateCount: 2 });
-  const callsInA = calls;
+  const callsInFirstRun = calls;
   const b = runBrain(model, { composeParts: stateful, candidateCount: 2 });
-  assert.ok(callsInA > 0 && calls > callsInA, `the injected composer must be the one composing: ${callsInA} call(s) in run A, ${calls - callsInA} in run B`);
-  assert.notDeepEqual(emitted.slice(0, callsInA), emitted.slice(callsInA), "the stateful composer must emit something different the second time, or this control proves nothing");
+  assert.ok(callsInFirstRun > 0 && calls === callsInFirstRun * 2, `the composer is called once per task per run (${callsInFirstRun}, ${calls})`);
+
   assert.ok(checkSameSeed(a, b).some((v) => v.code === "track_models_differ"), "the stateful composer is caught");
 });
 

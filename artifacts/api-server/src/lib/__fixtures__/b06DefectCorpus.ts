@@ -74,10 +74,26 @@ const isBed = (instrument: string) => instrument === "keys" || instrument === "s
 const SEEDED: SeededDefect[] = [
   {
     id: "arrival_thinner_than_setup",
-    description: "the chorus is planned as a bed under a verse planned full: the arrival is thinner than its own setup",
+    description: "the chorus is planned as a bed under the verses planned full: the arrival is thinner than its own setup",
     song: "pop-full", seeding: "plan", expectedLayer: "arc",
     kinds: ["louder_section_thinner", "quieter_section_denser"],
-    hints: { global: { textureLevels: { Chorus: "bed", "Verse 2": "full" } } },
+    // B-13 at the merge: `Verse` was added to the seeding. What this entry
+    // names - R-1b P0-4, "the first chorus is thinner and quieter than the
+    // verse *before* it" - was never seeded: only `Verse 2`, the verse that
+    // *follows* the chorus, was planned full, so the setup the arrival is
+    // measured against was left at whatever the arc chose. Until B-13 that gap
+    // did not show, because a texture level barely reached the notes; now that
+    // the writers realise it, `arc.set_texture_level` restoring the Chorus
+    // brings a drum part into bars 13-20 for the first time, and every drum
+    // finding on the anchor re-indexes over a wider span (grid_locked_onsets
+    // 21-38 -> 13-38) while a fill and a transition device are newly planned
+    // at the drums' new entry and left unwritten - the known B-06 limitation.
+    // The verdict guard then rejected a pass that had resolved both of the
+    // defect's own observations: the seeding was producing a second defect the
+    // repair could not avoid, not the one it names. With the setup verse
+    // planned full, the entry seeds what it says and the arc repairs it:
+    // 2 of 2 observations resolved, burden 360.05 -> 350.92.
+    hints: { global: { textureLevels: { Chorus: "bed", Verse: "full", "Verse 2": "full" } } },
     r1b: "P0-4 (the first chorus is thinner and quieter than the verse before it)",
   },
   {

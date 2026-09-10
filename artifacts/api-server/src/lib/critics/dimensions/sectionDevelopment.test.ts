@@ -25,12 +25,30 @@ test("re-anchored (B-05c): at the planned climax the composer develops but does 
   // different section with the same chords") and lists it as the *new* problem
   // B-01 introduced while fixing the literal repeat. The dimension is right and
   // the test now pins what it reads.
+  //
+  // Re-anchored again at the B-13 merge, and the news is partly good. Measured
+  // here (identity share, then the axes the dimension reads as developed):
+  //
+  //   pop-full        0.458 (was 0.333)  register, dynamics, rhythm
+  //   rock-full       0.458 (was 0.375)  instrumentation, register, dynamics, texture
+  //                                      — and `identityKept` is now **true**
+  //   dance-full      0.188 (was 0.219)  register, dynamics — and `repeat_without_identity`
+  //   acoustic-demo   0.250 (was 0.000)  register, dynamics — and the finding is gone
+  //
+  // B-13's writers give chorus 2 more in common with chorus 1 than B-01..B-10
+  // left it: the identity share rises on three of the four anchors, rock-full
+  // crosses the threshold into "identity kept *and* developed" — the claim
+  // B-01 made and could not hold — and acoustic-demo, which had 0, is no longer
+  // reported as a repeat without identity. dance-full moves the other way and
+  // is the one anchor that now carries the finding, which the table pins.
   const expected: Record<string, { identityKept: boolean; developed: string[] }> = {
     "pop-full": { identityKept: false, developed: ["register", "dynamics", "rhythm"] },
-    "rock-full": { identityKept: false, developed: ["instrumentation", "register", "dynamics", "rhythm"] },
-    "dance-full": { identityKept: false, developed: ["register"] },
+    "rock-full": { identityKept: true, developed: ["instrumentation", "register", "dynamics", "texture"] },
+    "dance-full": { identityKept: false, developed: ["register", "dynamics"] },
     "acoustic-demo": { identityKept: false, developed: ["register", "dynamics"] },
   };
+  /** The anchors whose climax the dimension reports as a repeat without identity, measured. */
+  const withoutIdentity = new Set(["dance-full"]);
   for (const anchor of anchors(["pop-full", "rock-full", "dance-full", "acoustic-demo"])) {
     const report = sectionDevelopmentDimension.evaluate(anchor.input);
     const climax = anchor.input.plan.globalPlan!.climax!.sectionName;
@@ -45,9 +63,12 @@ test("re-anchored (B-05c): at the planned climax the composer develops but does 
     // The pre-B-01 finding stays gone: the composer does develop the climax.
     assert.equal(report.observations.find((x) => x.kind === "repeat_without_development" && x.location.sectionName === climax), undefined,
       `${anchor.id}: the pre-merge finding must not come back`);
-    // …and the dimension reports the loss of identity where it is total.
+    // …and the dimension reports the loss of identity where it reads one.
+    // B-05c could tie this to `identityShare === 0` because acoustic-demo was
+    // the only anchor at the floor; at B-13 no anchor is at 0 and dance-full
+    // (0.188) is the one the dimension reports, so the anchors are named.
     const lost = report.observations.find((x) => x.kind === "repeat_without_identity" && x.location.sectionName === climax);
-    assert.equal(Boolean(lost), measured!.evidence.identityShare === 0, `${anchor.id}: identityShare ${measured!.evidence.identityShare}`);
+    assert.equal(Boolean(lost), withoutIdentity.has(anchor.id), `${anchor.id}: identityShare ${measured!.evidence.identityShare}`);
   }
 });
 
@@ -87,11 +108,21 @@ test("positive control: pasting chorus 1 over the developed chorus 2 removes the
     // against 7.8-8.0 on the three anchors whose chorus 2 still has an identity
     // to lose. Asserting one threshold for all four would either hide that or
     // require loosening the threshold for every anchor.
+    //
+    // Re-anchored again at the B-13 merge: the *shape* of that reasoning is
+    // unchanged and so is the rule below, but three anchors now sit at the
+    // floor instead of one. The preparation lifts the bed an octave on top of a
+    // chorus 2 that B-13 writes from the groove plan's cells, and on rock-full
+    // (prepared identity 0.167), dance-full (0.188) and acoustic-demo (0.000)
+    // that is already a repeat without identity; only pop-full (0.208) still
+    // has an identity left to lose, and only it drops the full 7.8. Measured
+    // drops: pop-full 7.80, acoustic-demo 4.95, rock-full 4.80, dance-full
+    // 4.68. The floors are untouched; which anchor sits at which is measured.
     const anchorReport = sectionDevelopmentDimension.evaluate(prepared.input);
     const alreadyWithoutIdentity = anchorReport.observations.some((x) => x.kind === "repeat_without_identity" && x.location.sectionName === "Chorus 2");
     const floor = alreadyWithoutIdentity ? 4.5 : 7;
     assert.ok(d.scoreDrop! >= floor, `${anchor.id}: ${d.scoreDrop} (identity already lost: ${alreadyWithoutIdentity})`);
-    assert.equal(alreadyWithoutIdentity, anchor.id === "acoustic-demo", `${anchor.id}: which anchors sit at the dimension's floor`);
+    assert.equal(alreadyWithoutIdentity, anchor.id !== "pop-full", `${anchor.id}: which anchors sit at the dimension's floor`);
   }
 });
 

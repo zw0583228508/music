@@ -81,11 +81,17 @@ test("owner's song: the ledger is inferred from the chord structure and says so;
   const before = notesIn(owner.before.candidates[0].trackModels, "strings", window);
   const after = notesIn(owner.after.result.candidates[0].trackModels, "strings", window);
   assert.ok(after.length > before.length, `Bridge strings: ${before.length} legacy notes -> ${after.length} engine notes`);
-  assert.ok(after.every((n) => n.motif), "every Bridge strings note carries motif provenance");
+  // One instrument is one track: since B-13 wired the string bed to the groove
+  // plan the bed plays in the Bridge too, so the counter-line is the part of
+  // this track written by the COUNTER_MELODY task. Every one of its notes
+  // carries motif provenance; the bed's notes are a bed and carry none.
+  const counterLine = after.filter((n) => n.id.startsWith(`${tasks[0].id}-`));
+  assert.ok(counterLine.length > 0, "the counter-melody task wrote notes into the strings track");
+  assert.ok(counterLine.every((n) => n.motif), "every Bridge counter-line note carries motif provenance");
   assert.ok(before.every((n) => !n.motif), "the legacy figure carried none");
   assert.ok(ledger.data.occurrences.every((o) => o.sectionName === "Bridge" && o.instrument === "strings"));
   assert.ok(ledger.data.occurrences.every((o) => o.placement === "part_window"));
-  assert.ok(after.every((n) => ledger.entry(n.motif!.id)), "every shipped motif id is a ledger id");
+  assert.ok(counterLine.every((n) => ledger.entry(n.motif!.id)), "every shipped motif id is a ledger id");
   // The label describes the *composed* cell. The orchestrator performs and repairs after composition
   // (timing humanised, leaps folded), so the truthfulness check recomposes the Bridge task directly.
   const bridgeTask = owner.after.result.plan.partComposerPlan!.tasks.find((t) => t.id === tasks[0].id)!;
@@ -93,14 +99,51 @@ test("owner's song: the ledger is inferred from the chord structure and says so;
   const fresh = motifLedgerForPlan(owner.model, layers.globalPlan, { tempoBpm: owner.tempoBpm, meter: owner.meter });
   const composed = composeReferencePart({ ...buildPartGenerationRequest(owner.model, bridgeTask, layers, []), motifLedger: fresh }, { tempoBpm: owner.tempoBpm, meter: owner.meter });
   assert.ok(assertTruthfulMotifMetadata(composed, fresh, 60 / owner.tempoBpm, "owner Bridge (composed)") >= 1);
-  // Finding for the orchestrator (isolated here, not assumed): the candidate strategy thins the counter-line
-  // note by note. The shipped notes are a strict subset of the composed ones, the strategy carries a density
-  // multiplier < 1 for exactly this task, and every other note id survives - a motif statement cut in half.
+  // B-13 (R-1b P1-5) closed the finding this block used to record: the
+  // candidate strategy thinned the counter-line note by note (10 composed -> 5
+  // shipped on the *conservative* candidate), because the orchestrator deleted
+  // every Nth note of the time-sorted part to hit a density multiplier. The
+  // strategy still carries a multiplier < 1 for this task - it is now a
+  // texture the writers realise and a velocity reading, never a deletion - and
+  // the motif statement ships whole.
   const composedIds = new Set(composed.map((n) => n.id));
-  assert.ok(after.every((n) => composedIds.has(n.id)), "thinning removes notes, it does not invent them");
+  assert.ok(counterLine.every((n) => composedIds.has(n.id)), "the shipped counter-line is the composed one, note for note");
   const adjustment = owner.after.result.plan.candidateGenerationPlan!.candidates[0].partAdjustments.find((a) => a.taskId === bridgeTask.id);
   assert.ok(adjustment && adjustment.densityMultiplier < 1, `the strategy thins this task (multiplier ${adjustment?.densityMultiplier})`);
-  assert.ok(after.length < composed.length, `${composed.length} composed -> ${after.length} shipped`);
+  // "Thinned away" is a question about the *track*, not about a nominal
+  // window, and it is asked here of the whole track for a measured reason.
+  //
+  // B-13 at the merge: this count read 9 of 10 through `notesIn(..., window)`,
+  // and the tenth note was not thinned - it shipped. B-13 also gave the
+  // performance engine the track's section ranges, so the Bridge is performed
+  // with the COUNTER_MELODY role's own feel offset instead of the whole
+  // track being performed as the *intro's* role. That offset humanises the
+  // statement's first onset 2.777 ms earlier, to 176.6437 s, and the Bridge
+  // begins at 176.64648 s - so a half-open window starting exactly on the
+  // section boundary excluded a note that is present, tagged and correct.
+  // Counting a performed onset against an unhumanised boundary measures the
+  // humanisation, not the thinning. The orchestrator's own telemetry agrees:
+  // composedNotes 10, keptNotes 10.
+  const shippedCounterLine = owner.after.result.candidates[0].trackModels
+    .filter((t) => t.instrument === "strings")
+    .flatMap((t) => t.notes)
+    .filter((n) => n.id.startsWith(`${tasks[0].id}-`));
+  assert.equal(shippedCounterLine.length, composed.length, `${composed.length} composed -> ${shippedCounterLine.length} shipped: no motif note is thinned away`);
+  assert.ok(shippedCounterLine.every((n) => n.motif), "every shipped note of the statement still carries its provenance");
+  assert.deepEqual(
+    shippedCounterLine.map((n) => n.id).sort(), composed.map((n) => n.id).sort(),
+    "the shipped statement is the composed statement, id for id",
+  );
+  // The one note the window excludes is excluded by humanisation alone: it is
+  // inside the Bridge by less than a millisecond of its nominal start before
+  // the engine moved it, and by under 3 ms after.
+  const outsideWindow = shippedCounterLine.filter((n) => n.start < window.start - 1e-6);
+  assert.equal(outsideWindow.length, counterLine.length === composed.length ? 0 : 1);
+  for (const n of outsideWindow) {
+    assert.ok(window.start - n.start < 0.01, `${n.id} is humanised ${((window.start - n.start) * 1000).toFixed(3)} ms before the Bridge, not moved out of it`);
+  }
+  const telemetry = (owner.after.result.candidates[0].parts ?? []).find((p) => p.taskId === bridgeTask.id);
+  assert.ok(telemetry && telemetry.composedNotes === telemetry.keptNotes, `the orchestrator kept every composed note (${telemetry?.composedNotes} -> ${telemetry?.keptNotes})`);
   assert.ok(owner.after.result.selected, "the run with the engine is selectable");
   assert.equal(owner.after.result.candidates[0].hardRule.feasible, owner.before.candidates[0].hardRule.feasible);
 });

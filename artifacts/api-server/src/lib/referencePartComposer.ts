@@ -27,6 +27,7 @@ import {
 import { writeCounterMelody } from "./composer/melodyParts";
 import { writeDrumKit, writeOstinato, writePercussion } from "./composer/rhythmParts";
 import { writeIntroOrEnding, writeTransitionFigure } from "./composer/transitions";
+import type { TextureIntent } from "./composer/texture";
 
 export const REFERENCE_PART_COMPOSER = "REFERENCE_PART_COMPOSER_V1" as const;
 
@@ -42,6 +43,14 @@ export type ComposeContext = {
    * re-planned deterministically from the same inputs (same skeleton).
    */
   siblings?: SiblingPart[];
+  /**
+   * Brain B-13: what the candidate strategy asks of this part's texture
+   * (`composer/texture.ts`). The writers realise it while writing - a
+   * sustained bed, block chords on the plan's cell, an arpeggio, roots only or
+   * the full bass figure set - instead of the orchestrator deleting every Nth
+   * note of their output afterwards. Absent = the writers' defaults.
+   */
+  texture?: TextureIntent;
 };
 
 /** Which module writes which task. A task without a writer produces no notes (as the original switch did). */
@@ -133,6 +142,7 @@ export function composeReferencePart(
     lo, hi, chords, seed, density, energy, baseVelocity, push,
     window: { start: windowStart, end: windowEnd },
     siblings: context.siblings,
+    texture: context.texture,
   };
   WRITERS[request.task]?.(frame);
 

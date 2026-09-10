@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { anchors, applyFamilyCorruption, applyPreparation, applyPurposeBuilt, CLEAN_ANCHOR_IDS, detect, eligibleParts } from "./anchors";
+import { anchors, applyFamilyCorruption, applyPreparation, applyPurposeBuilt, CLEAN_ANCHOR_IDS, detect, eligibleParts, weakenPlannedDrumFill } from "./anchors";
 import { buildContext } from "./shared";
 import { gridProfile, grooveDimension, toleranceSeconds } from "./groove";
 
@@ -91,10 +91,35 @@ test("positive control: erasing the drum fills the plan asked for is flagged at 
   const raw = detect(grooveDimension, dance.input, rawWorsening);
   assert.equal(raw.detected, false, "dance-full: copying bar 7 over bar 8 raises the fill bar's density");
   assert.ok(raw.scoreDrop! < 0, `dance-full: the score rises, drop ${raw.scoreDrop}`);
-  const anchorFill = grooveDimension.evaluate(dance.input).observations.find((o) => o.kind === "planned_fill_missing");
-  assert.ok(anchorFill, "the anchor itself reports the weak fill into the verse");
+
+  // Re-anchored again at the merge, with the cause. The B-05c version above
+  // explained the null result by pointing at the anchor's *own* weak fill:
+  // "the anchor itself reports the weak fill into the verse" at bar 8, density
+  // ratio 1.14 against a mean of 7. B-13's transition realisation writes the
+  // planned fills where the drums are already playing, so that fill is no
+  // longer weak — dance-full now raises no `planned_fill_missing` at all, and
+  // neither does any other anchor with a boundary the drummer plays through.
+  //
+  // The defect is fixed, so the fix is what is asserted here; and because the
+  // dimension's ability to *hear* a weak fill must still be demonstrated, the
+  // weak fill is now constructed rather than borrowed. Nothing is weakened:
+  // `weakenPlannedDrumFill` thins a real drum bar below the section's mean and
+  // removes its toms, and the dimension's 1.15 ratio is untouched.
+  const danceFills = grooveDimension.evaluate(dance.input).observations.filter((o) => o.kind === "planned_fill_missing");
+  assert.deepEqual(danceFills, [], "B-13: the fill into the verse is written, so the anchor reports none");
+  const weakened = weakenPlannedDrumFill(dance);
+  assert.ok(weakened, "dance-full has a planned fill at a boundary the drummer plays through");
+  assert.match(weakened.detail, /it is not a fill/);
+  const weak = detect(grooveDimension, dance.input, weakened);
+  assert.ok(weak.detected, "a fill bar thinned below its section's mean is heard");
+  assert.ok(weak.scoreDrop! > 0, `the score falls, drop ${weak.scoreDrop}`);
+  const anchorFill = weak.newObservations.find((o) => o.kind === "planned_fill_missing");
+  assert.ok(anchorFill, "the constructed weak fill into the verse is reported");
   assert.equal(anchorFill!.location.startBar, 8);
+  assert.equal(anchorFill!.evidence.drumsSilentBeforeBoundary, false, "this is a weak fill, not a missing entry fill");
+  assert.ok((anchorFill!.evidence.lastBarOnsets as number) > 0, "the bar is played, it is just not a fill");
   assert.ok((anchorFill!.evidence.densityRatio as number) < 1.15, String(anchorFill!.evidence.densityRatio));
+  assert.equal(anchorFill!.suspectedOrigin, "compose");
   // And the raw erasure is not a control where there is no fill to erase.
   assert.equal(applyPurposeBuilt(anchors(["pop-full"])[0], "erase_drum_fills"), null, "pop-full: no drum bar changes at a planned-fill boundary");
 });

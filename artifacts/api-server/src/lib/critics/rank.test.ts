@@ -7,7 +7,7 @@
  */
 import assert from "node:assert/strict";
 import test from "node:test";
-import { anchors, ownerAnchor, ownerComposedAnchor, probeAnchor } from "./dimensions/anchors";
+import { anchors, applyPurposeBuilt, displaceHarmonyOffGrid, ownerAnchor, ownerComposedAnchor, probeAnchor } from "./dimensions/anchors";
 import { BENCHMARK_CORPUS } from "../benchmarkCorpus";
 import { evaluateAllDimensions } from "./dimensions/index";
 import { runAdversarialCritics } from "./adversarial/index";
@@ -210,10 +210,35 @@ test("disagreement is still preserved", () => {
 // The real corpus and the owner's song
 // ---------------------------------------------------------------------------
 
-test("on the owner's song the judge refuses, and it refuses for the right reasons", () => {
+test("on the owner's song, constructed with R-1b's three defects, the judge refuses, and it refuses for the right reasons", () => {
+  // Re-anchored at the merge, and this is what changed.
+  //
+  // This test is about the *ranking*: that the judge refuses on each of R-1b
+  // §7's three defects by its own rule, and that it puts them above an empty
+  // two-bar intro (P0-5). It used to get those three defects for free, because
+  // the owner's arrangement had them. B-13 fixed two of them - the harmony is
+  // now written on the bar grid (chord events median 140.8 ms -> 0.04 ms from
+  // the beat) and no bed ships as one voice (the owner's string bed 91 -> 278
+  // notes, no section below 3 voices) - so on today's owner anchor `off_grid`
+  // is no longer a refusal and `single_voice_bed` does not exist at all.
+  //
+  // Reading the ranking off an arrangement that no longer has the defects
+  // would be testing the composer's old output, not the ranking. So the case
+  // is now *constructed*: `strip_bed_to_top_voice` puts the beds back on one
+  // voice and `displaceHarmonyOffGrid` moves every harmonic part's onsets
+  // 180 ms off the beat - the middle of the 100-230 ms range R-1b measured.
+  // Both are deterministic, and the composed (pre-perform) notes are left on
+  // the grid, so the constructed defect has the shape the review found.
+  //
+  // The dimensions and the release rules are untouched: no threshold moved,
+  // and the defects are real observations raised by the unmodified critics.
   const owner = ownerAnchor();
   const composed = ownerComposedAnchor();
-  const input = { ...owner.input, composedTrackModels: composed.input.trackModels };
+  const stripped = applyPurposeBuilt(owner, "strip_bed_to_top_voice");
+  assert.ok(stripped, "the owner's beds can be reduced to one voice");
+  assert.match(stripped.detail, /bed\(s\) reduced to one voice/);
+  const constructed = displaceHarmonyOffGrid(stripped.input);
+  const input = { ...constructed, composedTrackModels: composed.input.trackModels };
   const reports = [...evaluateAllDimensions(input), ...runAdversarialCritics(input)];
   const context = judgeContextFromInput(input);
   const v = judge(reports, context);
@@ -225,6 +250,18 @@ test("on the owner's song the judge refuses, and it refuses for the right reason
   assert.ok(kinds.has("single_voice_bed"), "the string bed ships as one voice");
   assert.ok(kinds.has("top_line_above_comfortable_ceiling"), "and it sits above the profile's ceiling");
   assert.ok(v.refusals.some((r) => r.rule === "major_on_a_bed"));
+
+  // And the fix B-13 landed is asserted where the defect used to be pinned:
+  // on the unmodified owner anchor the harmony is on the grid and no bed is a
+  // single voice, so neither refuses.
+  const clean = { ...owner.input, composedTrackModels: composed.input.trackModels };
+  const cleanVerdict = judge([...evaluateAllDimensions(clean), ...runAdversarialCritics(clean)], judgeContextFromInput(clean));
+  const cleanKinds = new Set(cleanVerdict.refusals.map((r) => r.kind));
+  assert.ok(!cleanKinds.has("off_grid"), "B-13: the harmony is on the bar grid, so off_grid no longer refuses the owner's song");
+  assert.ok(
+    !cleanVerdict.ranked.some((r) => r.observation.kind === "single_voice_bed"),
+    "B-13: no bed on the owner's song ships as one voice, so the observation is not raised at all",
+  );
 
   // R-1b P0-5: "the judge ranks a 2-bar silent intro above everything else …
   // Until the judge prefers a full string bed over an empty two-bar intro, the
@@ -257,8 +294,13 @@ test("on the owner's song the judge refuses, and it refuses for the right reason
   assert.ok(v.ranked[bed].salience > SALIENCE_FLOOR);
   assert.match(introRanked.rationale, /silent_mandatory_family_outranks_all does not apply: no music sounds/);
 
-  // And the verdict says what to fix first, in the order R-1b's item 10 asks for.
-  assert.deepEqual(v.topProblems.slice(0, 2).map((p) => p.kind), ["off_grid", "single_voice_bed"]);
+  // And the verdict says what to fix first, one per kind, covering the
+  // constructed defects. The order inside the top three is a property of *this
+  // construction's* magnitudes (a bed on one voice is blocking on every bed;
+  // the 180 ms displacement lands hardest on the harmony against the kit), not
+  // of the ranking rule, so it is pinned as measured rather than argued from
+  // R-1b's item 10 - which is about these problems coming first at all.
+  assert.deepEqual(v.topProblems.map((p) => p.kind), ["single_voice_bed", "harmony_off_grid", "off_grid"]);
 });
 
 test("on the corpus the ranking prefers the reference composer to the audit's probes, on every case", () => {

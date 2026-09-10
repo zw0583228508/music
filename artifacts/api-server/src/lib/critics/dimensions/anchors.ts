@@ -315,6 +315,100 @@ export function replaceNotes(input: CriticInput, trackId: string, notes: Musical
   return mapTrack(input, trackId, (t) => ({ ...t, notes: notes.slice().sort((a, b) => a.start - b.start || a.pitch - b.pitch) }));
 }
 
+/** The families whose onsets `displaceHarmonyOffGrid` moves: everything that states the harmony. */
+const HARMONY_FAMILIES_FOR_DISPLACEMENT: ReadonlySet<string> = new Set(["keys", "piano", "strings", "guitar", "synth", "pad", "pads", "bass"]);
+
+/**
+ * A **constructed** off-grid case: every harmonic part's onsets displaced by a
+ * fixed offset, so the harmony states its chords beside the beat instead of on
+ * it (B-13, at the merge).
+ *
+ * This exists because the defect it reproduces is fixed. Until B-13 the
+ * owner's song *was* the off-grid fixture - the reference composer placed its
+ * chord events at the analysed onsets, a median 140.8 ms from the beat, and
+ * every test that needed an off-grid arrangement simply used the owner's
+ * anchor. B-13 put the harmony on the bar grid (median 0.04 ms), so a test
+ * that still reads `off_grid` off the owner's anchor is no longer testing what
+ * it claims: it is testing that the composer's old defect is still there.
+ *
+ * A test that needs an off-grid arrangement now *builds* one. 180 ms is the
+ * middle of the range the R-1b review measured on the owner's song (100-230
+ * ms) and is well outside the sixteenth-note tolerance at any anchor's tempo,
+ * so the displacement is audible to `groove` rather than borderline. The
+ * displacement is uniform and deterministic: nothing about the ranking or the
+ * dimension under test depends on a seed.
+ *
+ * Note that only the shipped notes move. A caller that also passes
+ * `composedTrackModels` keeps the composed (pre-perform) notes on the grid,
+ * which is what makes the constructed defect look like the one the review
+ * found: the harmony arrives off the beat after the performance, and the
+ * dimension can say so.
+ */
+export function displaceHarmonyOffGrid(input: CriticInput, seconds = 0.18): CriticInput {
+  return withTracks(input, input.trackModels.map((t) => (HARMONY_FAMILIES_FOR_DISPLACEMENT.has(t.instrument)
+    ? { ...t, notes: t.notes.map((n) => ({ ...n, start: Number((n.start + seconds).toFixed(4)) })) }
+    : t)));
+}
+
+/** Tom pitches, as `groove.ts` reads them when it asks whether a fill was played. */
+const TOM_PITCHES: ReadonlySet<number> = new Set([41, 43, 45, 47, 48, 50]);
+
+/**
+ * A **constructed** weak fill: at the first boundary where the plan asks for a
+ * `drum_fill` *and the drummer is already playing the section before it*, the
+ * fill bar keeps playing but stops being a fill - its toms are removed and its
+ * onsets thinned below the section's mean, so `groove`'s density ratio falls
+ * under the 1.15 the dimension asks for (B-13, at the merge).
+ *
+ * This exists for the same reason `displaceHarmonyOffGrid` does. The weak fill
+ * used to be free: dance-full's bar 8 carried a fill the composer wrote too
+ * thin (density ratio 1.14 against a mean of 7), and a test that needed one
+ * read it off the anchor. B-13's transition realisation writes the planned
+ * fills where the drums already play, so no anchor carries a weak fill any
+ * more - on dance-full `planned_fill_missing` is now empty. A test that still
+ * read it off the anchor would be asserting the old defect, not the dimension.
+ *
+ * Nothing here touches the dimension or its threshold: the constructed bar is
+ * a real drum bar that is genuinely not a fill, and `groove` is left to say so.
+ * Returns `null` when the anchor has no such boundary to weaken.
+ */
+export function weakenPlannedDrumFill(anchor: Anchor): Worsened | null {
+  const context = buildContext(anchor.input);
+  const drums = context.percussive.find((p) => p.family === "drums");
+  if (!drums) return null;
+  for (const t of anchor.input.plan.transitionPlan?.transitions ?? []) {
+    if (!t.devices.some((d) => d.device === "drum_fill")) continue;
+    const fillBar = t.atBar - 1;
+    const section = context.sectionOfBar(fillBar);
+    if (!section || fillBar < 1) continue;
+    const bars = section.endBar - section.startBar + 1;
+    if (bars < 2) continue;
+    const sectionNotes = context.notesInBars(drums, section.startBar, section.endBar);
+    // Only a boundary the drummer already plays through: an entry fill is a
+    // different observation (`drumsSilentBeforeBoundary`), reported elsewhere.
+    if (sectionNotes.length < 8) continue;
+    const inFillBar = sectionNotes.filter((n) => n.bar === fillBar);
+    if (!inFillBar.length) continue;
+    const meanPerBar = sectionNotes.length / bars;
+    // Keep the bar sounding, but well under the mean so the ratio is < 1.15.
+    const keepCount = Math.max(1, Math.floor(meanPerBar * 0.75));
+    const keep = new Set(
+      inFillBar.filter((n) => !TOM_PITCHES.has(n.pitch)).slice(0, keepCount).map((n) => n.note.id),
+    );
+    const dropped = new Set(inFillBar.filter((n) => !keep.has(n.note.id)).map((n) => n.note.id));
+    if (!dropped.size) continue;
+    const tracks = anchor.input.trackModels.map((tr) => (tr.id === drums.id
+      ? { ...tr, notes: tr.notes.filter((n) => !dropped.has(n.id)) }
+      : tr));
+    return {
+      input: withTracks(anchor.input, tracks),
+      targetTrackIds: [drums.id],
+      detail: `bar ${fillBar} thinned from ${inFillBar.length} to ${keep.size} drum onset(s) against a section mean of ${meanPerBar.toFixed(2)}: the fill into ${t.toSection} is played, but it is not a fill`,
+    };
+  }
+  return null;
+}
+
 const clampPitch = (p: number): number => Math.max(0, Math.min(127, Math.round(p)));
 
 function shiftNotes(notes: readonly MusicalNote[], seconds: number, idPrefix: string): MusicalNote[] {
@@ -593,12 +687,27 @@ export const PURPOSE_BUILT: Record<string, { description: string; apply: Worseni
         const srcNotes = notesIn(context, t, srcRange);
         if (!srcNotes.length) return t;
         const sounding = soundingBars(context, part, 1, context.totalBars);
-        const sourceBars = source.endBar - source.startBar + 1;
         const barOf = barOfNote(context);
+        // B-13 at the merge: cycle through the source section's bars **that
+        // carry notes**, not through all of its bars.
+        //
+        // The old version took `source.startBar + ((bar - 1) % sourceBars)` and
+        // gave up (`continue`) when that bar happened to be one the part rests
+        // in - leaving the target bar empty. That is the same defect B-05c
+        // fixed once at the section level, one level down: since B-13 the beds
+        // read the groove plan's bed cell and rest inside their busiest section
+        // too, so on dance-full's `synth-pad` four of forty bars were left
+        // unfilled, the part reached an active share of 0.900 against the 0.95
+        // `continuous_tutti` asks for, and the control read as a miss. The
+        // harness was not producing a tutti; the dimension was right.
+        const sourceBarsWithNotes = [...new Set(srcNotes.map((x) => barOf(x)))].sort((a, b) => a - b);
+        if (!sourceBarsWithNotes.length) return t;
         const added: MusicalNote[] = [];
+        let cursor = 0;
         for (let bar = 1; bar <= context.totalBars; bar += 1) {
           if (sounding.has(bar)) continue;
-          const srcBar = source.startBar + ((bar - 1) % sourceBars);
+          const srcBar = sourceBarsWithNotes[cursor % sourceBarsWithNotes.length];
+          cursor += 1;
           const from = context.barInfo(srcBar);
           const to = context.barInfo(bar);
           if (!from || !to) continue;
