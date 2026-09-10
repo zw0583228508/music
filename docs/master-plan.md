@@ -9604,7 +9604,10 @@ cases are byte-identical, and so is every case's section plan.
   the two agree by construction; it is duplicated *work*, not a duplicated
   rule. (6) The critic pass adds real time to every generation job (the owner's
   141-bar arrangement takes ~20 s of dimensions per candidate in the harness);
-  it is not parallelised here. (7) The positive control shows the gate
+  it is not parallelised here; it renews the job lease per judged candidate,
+  because otherwise a long judge run would lose the two-minute lease it already
+  holds and the final transaction would refuse to commit candidates that were
+  correctly evaluated and correctly judged. (7) The positive control shows the gate
   separates worsened from clean on real material; it does **not** show it ranks
   two genuinely *good* candidates correctly, because the corpus contains no
   such pair for one song. (8) `conservativeScore` in

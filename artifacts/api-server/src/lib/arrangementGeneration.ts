@@ -1892,16 +1892,15 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
     // -----------------------------------------------------------------------
     const judgedCandidates: CandidateReports[] = [];
     const judgeVerdicts = new Map<string, JudgeVerdict>();
-    for (const candidate of candidateRows) {
-      if (
-        !candidate.evaluatedPlan ||
-        !candidate.trackModels?.length ||
-        !hasCompleteQualityEvidence(candidate.evaluation)
-      ) continue;
+    const judgeable = candidateRows.filter((candidate) =>
+      candidate.evaluatedPlan &&
+      candidate.trackModels?.length &&
+      hasCompleteQualityEvidence(candidate.evaluation));
+    for (const [judgeIndex, candidate] of judgeable.entries()) {
       const criticInput: CriticInput = {
         songModel: evaluationSongModel,
-        plan: candidate.evaluatedPlan,
-        trackModels: candidate.trackModels,
+        plan: candidate.evaluatedPlan!,
+        trackModels: candidate.trackModels!,
       };
       const reports = [...evaluateAllDimensions(criticInput), ...runAdversarialCritics(criticInput)];
       const context = judgeContextFromInput(criticInput);
@@ -1910,8 +1909,27 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
         candidateId: candidate.id,
         reports,
         context,
-        noteCount: candidate.trackModels.reduce((total, track) => total + track.notes.length, 0),
+        noteCount: candidate.trackModels!.reduce((total, track) => total + track.notes.length, 0),
       });
+      // The critic pass is real work — on the owner's 141-bar arrangement the
+      // dimensions take tens of seconds per candidate — and the lease is two
+      // minutes. Without a heartbeat here a long judge run would lose the lease
+      // it already holds and the final transaction would refuse to commit
+      // candidates that were correctly evaluated and correctly judged.
+      await db
+        .update(musicGenerationJobsTable)
+        .set({
+          progress: 92 + Math.round(((judgeIndex + 1) / judgeable.length) * 3),
+          stage: "judging_candidates",
+          heartbeatAt: new Date(),
+          leaseExpiresAt: new Date(Date.now() + leaseDurationMs),
+        })
+        .where(and(
+          eq(musicGenerationJobsTable.id, job.id),
+          eq(musicGenerationJobsTable.workerId, workerId),
+          eq(musicGenerationJobsTable.leaseVersion, leaseVersion),
+          eq(musicGenerationJobsTable.status, "running"),
+        ));
     }
     const criticVerdicts = judgedCandidates.length
       ? criticVerdictsFromRanking(rankCandidates(judgedCandidates), judgeVerdicts)
