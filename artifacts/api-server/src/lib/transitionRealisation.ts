@@ -467,3 +467,40 @@ export function entryGestureFor(frame: ComposeFrame): EntryGesture | null {
     reason: `enters at bar ${request.partWindow.startBar} (arc entry offset ${request.partWindow.startBar - request.section.startBar}); the first chord is anticipated on the "and" before it`,
   };
 }
+
+export type PlannedAgogic = { kind: "ritardando"; start: number; end: number; slowdown: number };
+
+/**
+ * The song's planned agogics, as the performance engine takes them (Brain
+ * B-13): every `ritardando` device in the transition plan, in absolute
+ * seconds, with the fractional slowdown `realiseDevice` computes for it.
+ *
+ * A ritardando is a time warp that is a pure function of time, so every part
+ * must receive the same one - which is why it is derived from the plan once,
+ * by the orchestrator, and passed to every track's performance, rather than
+ * per family. B-04 realised the device (tempo events + warp) but the
+ * orchestrator never passed it on: `agogics` had no producer and the owner's
+ * song ended on a staccato piano stab a second early (R-1b P1-7).
+ */
+export function agogicsFor(
+  transitions: readonly TransitionPlan[],
+  timing: BarTiming,
+  origin = 0,
+): PlannedAgogic[] {
+  const out: PlannedAgogic[] = [];
+  for (const transition of transitions) {
+    for (const device of transition.devices) {
+      if (device.device !== "ritardando") continue;
+      const start = origin + (device.startBar - 1) * timing.barSeconds;
+      const end = origin + (transition.atBar - 1) * timing.barSeconds;
+      if (!(end > start)) continue;
+      const intensity = Math.max(0, Math.min(1, device.intensity));
+      out.push({
+        kind: "ritardando",
+        start: r4(start), end: r4(end),
+        slowdown: Number(Math.min(0.3, 0.1 + 0.2 * intensity).toFixed(3)),
+      });
+    }
+  }
+  return out.sort((a, b) => a.start - b.start);
+}

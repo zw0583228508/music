@@ -93,15 +93,27 @@ test("the one parser is what the composer hears: Gsus4 is a suspension, C/E puts
   const notes = composeReferencePart(slashRequest, { tempoBpm, meter });
   assert.ok(notes.length >= 4);
   for (const [i, expected] of [4, 11, 0, 9].entries()) {
-    const first = notes.find((n) => n.start >= chords[i].start - 1e-6)!;
+    // B-13: the bass plays the groove plan's onsets, and the shared
+    // anticipation puts the next chord's bass on the "and" before its downbeat
+    // and ties the downbeat rather than restriking it. So the note that states
+    // the slash bass is the one *sounding* at the chord's downbeat, which may
+    // have started just before it.
+    const at = chords[i].start;
+    const sounding = notes.filter((n) => n.start <= at + 1e-6 && n.start + n.duration > at + 1e-6);
+    const first = sounding.at(-1) ?? notes.find((n) => n.start >= at - 1e-6)!;
     assert.equal(first.pitch % 12, expected, `${symbols[i]}: the bass opens on the slash bass`);
   }
   // The keys above a slash chord do not put the same bass an octave up as their lowest voice only by accident: they sit above the planned bass.
   const keys = requests.find((r) => r.task === "KEYS" && r.section.sectionName === "Verse")!;
   const keysNotes = composeReferencePart({ ...keys, context: slashRequest.context }, { tempoBpm, meter });
   for (const [i] of symbols.entries()) {
-    const onset = keysNotes.filter((n) => Math.abs(n.start - chords[i].start) < 1e-3);
-    const bassNote = notes.find((n) => n.start >= chords[i].start - 1e-6)!;
+    // B-13: both parts place their onsets on the groove plan's cells, so the
+    // voicing and the bass note to compare are the ones *sounding* at the
+    // chord's downbeat, not the ones struck exactly on it.
+    const at = chords[i].start;
+    const soundingAt = (list: typeof keysNotes) => list.filter((n) => n.start <= at + 1e-6 && n.start + n.duration > at + 1e-6);
+    const onset = soundingAt(keysNotes);
+    const bassNote = soundingAt(notes).at(-1) ?? notes.find((n) => n.start >= at - 1e-6)!;
     assert.ok(onset.length >= 3 && Math.min(...onset.map((n) => n.pitch)) >= bassNote.pitch + 3, `${symbols[i]}: keys above the bass`);
   }
 });

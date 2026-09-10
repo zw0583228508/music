@@ -139,6 +139,29 @@ export type PerformanceInput = {
    * `phrases`.
    */
   agogics?: Array<{ kind: "ritardando"; start: number; end: number; slowdown: number }>;
+  /**
+   * B-13 (R-1b P0-3): the track's section ranges in absolute seconds, each
+   * with the role and dynamic shape the section plan assigned it, and the
+   * arc's tension role.
+   *
+   * Without this the orchestrator resolved one role assignment per instrument
+   * - `roleAssignments.find((r) => r.instrument === track.instrument)`, the
+   * *first* section's - and the whole track was performed as the intro's
+   * "pp": shipped velocities were x0.58-0.60 of composed in every one of the
+   * owner's nine sections, and the "big final chorus" piano shipped at mean
+   * velocity 52 against a composed 86. With it the role, the dynamic ramp and
+   * `progress` are resolved per section, so the ramp a shape describes
+   * ("mp->mf") happens inside the section it was written for and the composed
+   * velocities keep the arc they were written with.
+   */
+  sectionRanges?: Array<{
+    sectionName: string;
+    start: number;
+    end: number;
+    role?: InstrumentArrangementRole;
+    dynamicShape?: string;
+    tensionRole?: string;
+  }>;
 };
 
 export type PerformedTrack = {
@@ -344,6 +367,29 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
   const source = [...input.notes].sort((a, b) => a.start - b.start || a.pitch - b.pitch);
   const songEnd = Math.max(0.001, ...source.map((n) => n.start + n.duration));
 
+  // B-13: the section a note belongs to, and the role / dynamic ramp that
+  // section was planned with. With no `sectionRanges` the track keeps V1's
+  // single role and shape and one ramp across the whole song.
+  const ranges = (input.sectionRanges ?? []).filter((r) => r.end > r.start).sort((a, b) => a.start - b.start);
+  const rangeAt = (time: number) => ranges.find((r) => time >= r.start - 1e-6 && time < r.end - 1e-6);
+  /** The role, the dynamic ramp's endpoints and where in the ramp `time` sits. */
+  const shapeAt = (time: number): { role: InstrumentArrangementRole; from: number; to: number; progress: number; section: string | null; tensionRole: string | null } => {
+    const range = rangeAt(time);
+    if (!range) {
+      return { role: input.role, from: dynStart, to: dynEnd, progress: clamp(time / songEnd, 0, 1), section: null, tensionRole: null };
+    }
+    const [from, to] = dynamicRamp(range.dynamicShape ?? input.dynamicShape);
+    return {
+      role: range.role ?? input.role, from, to,
+      progress: clamp((time - range.start) / Math.max(1e-6, range.end - range.start), 0, 1),
+      section: range.sectionName, tensionRole: range.tensionRole ?? null,
+    };
+  };
+  const dynamicLevelAt = (time: number): number => {
+    const shape = shapeAt(time);
+    return shape.from + (shape.to - shape.from) * shape.progress;
+  };
+
   const notes: MusicalNote[] = [];
   const cc: ControlEvent[] = [];
   const articulations: ArticulationEvent[] = [];
@@ -427,13 +473,16 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
     const { beatInBar, fraction } = metricalPosition(anchor.start, input.tempoBpm, beatsPerBar);
     const weight = metricalWeightAt(anchor.start, unitSeconds, meterSpec);
     const arc = phraseArc(anchor.start, input.phrases, barSeconds);
-    const progress = clamp(anchor.start / songEnd, 0, 1);
-    const dynamicLevel = dynStart + (dynEnd - dynStart) * progress;
+    // B-13: this section's role, shape and place in its own ramp.
+    const shape = shapeAt(anchor.start);
+    const role = shape.role;
+    const dynamicLevel = shape.from + (shape.to - shape.from) * shape.progress;
 
     // --- timing -------------------------------------------------------
     const reasons: string[] = [];
-    let offsetMs = (profile.feelMs + (ROLE_FEEL_MS[input.role] ?? 0)) * microFeelScale + microFeelMs;
-    reasons.push(`${family} feel ${profile.feelMs}ms`, `${input.role} feel ${ROLE_FEEL_MS[input.role] ?? 0}ms`);
+    let offsetMs = (profile.feelMs + (ROLE_FEEL_MS[role] ?? 0)) * microFeelScale + microFeelMs;
+    reasons.push(`${family} feel ${profile.feelMs}ms`, `${role} feel ${ROLE_FEEL_MS[role] ?? 0}ms`);
+    if (shape.section) reasons.push(`${shape.section}${shape.tensionRole ? ` (${shape.tensionRole})` : ""}: ${role}, ${shape.from.toFixed(2)}->${shape.to.toFixed(2)}`);
     if (style?.microtiming) reasons.push(`microtiming ${style.microtiming}`);
     if (plucked && style?.bassAttackPosition) {
       // Where the bassist places the attack against the kick.
@@ -509,8 +558,8 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
       // longer chord would lap the next one and break a fingering the composition kept legal).
       let duration = note.duration * profile.lengthFactor * warp.stretch;
       if (plucked && style?.bassAttackPosition === "sustained") duration *= 1.15;
-      if (input.role === "PAD" || input.role === "HARMONIC_BED") duration *= 1.06;
-      if (input.role === "GROOVE" || family === "drums") duration = Math.min(duration, 0.25);
+      if (role === "PAD" || role === "HARMONIC_BED") duration *= 1.06;
+      if (role === "GROOVE" || family === "drums") duration = Math.min(duration, 0.25);
       duration = Math.max(0.02, duration);
 
       notes.push({ ...note, start: Number(start.toFixed(4)), duration: Number(duration.toFixed(4)), velocity: performedVelocity });
@@ -560,7 +609,7 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
     const step = Math.max(0.25, beatSeconds / 2);
     for (let t = 0; t <= songEnd; t += step) {
       const arc = phraseArc(t, input.phrases, barSeconds);
-      const level = dynStart + (dynEnd - dynStart) * clamp(t / songEnd, 0, 1);
+      const level = dynamicLevelAt(t);
       cc.push({ controller: 1, time: Number(t.toFixed(3)), value: midi(40 + arc * 60 + level * 20) });
       cc.push({ controller: 11, time: Number(t.toFixed(3)), value: midi(50 + level * 60 + arc * 15) });
     }

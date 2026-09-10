@@ -37,6 +37,7 @@ import { extractUserIntentSync } from "./producerIntelligence/intentExtraction";
 import { resolveStyleProfile } from "./producerIntelligence/styleResolution";
 import { RACHEM_NA_FIXED_NOW, rachemNaSongModel } from "./__fixtures__/rachemNaSongModelV3";
 import { parseChord } from "./chordSymbols";
+import { quantiseChordsToGrid } from "./harmonyPlan/shared";
 
 const NOW = new Date(0);
 const OWNER_BRIEF = "intimate ballad; piano, soft strings, gentle bass, light percussion; big final chorus";
@@ -152,8 +153,21 @@ function chordalMetrics(notes: MusicalNote[], chords: Chord[]): PartMetrics["cho
   };
 }
 
-function bassMetrics(notes: MusicalNote[], chords: Chord[], maxLeap: number, keysNotes: MusicalNote[] | null): PartMetrics["bass"] {
+function bassMetrics(notes: MusicalNote[], chords: Chord[], maxLeap: number, keysNotes: MusicalNote[] | null, beatSeconds = 0): PartMetrics["bass"] {
   const line = clustersOf(notes).map((c) => c.reduce((m, n) => (n.pitch < m.pitch ? n : m), c[0]));
+  // B-13: the chord a note *states*. The groove plan's shared anticipation
+  // puts the next chord's bass on the "and" before its downbeat, so a note
+  // that sounds the next chord's root up to a beat early states that chord -
+  // otherwise every pushed arrival reads as "still the old chord" and the
+  // approach tone before it becomes invisible to this metric.
+  const statedBy = (note: MusicalNote): Chord | null => {
+    const under = chordAt(chords, note.start);
+    if (beatSeconds > 0) {
+      const ahead = chords.find((c) => c.start > note.start + 1e-6 && c.start - note.start <= beatSeconds + 1e-6);
+      if (ahead && ahead !== under && rootOf(ahead) === pc(note.pitch)) return ahead;
+    }
+    return under;
+  };
   let maxLeapSeen = 0;
   let over = 0;
   let overlaps = 0;
@@ -174,17 +188,22 @@ function bassMetrics(notes: MusicalNote[], chords: Chord[], maxLeap: number, key
   }
   for (let i = 0; i < line.length; i += 1) {
     const n = line[i];
-    const chord = chordAt(chords, n.start);
+    const chord = statedBy(n);
     if (chord) {
       const next = chords.find((c) => c.start > chord.start + 1e-6 && c.start >= chord.end - 1e-6);
-      if (next && n.start + n.duration > next.start + 0.02) overlaps += 1;
+      // B-13: a note that sounds under the next chord is a hangover only when
+      // it is a wrong note there. The groove plan's shared anticipation puts
+      // the *next* chord's bass on the "and" before its downbeat and ties the
+      // downbeat; that note sounds across the change on purpose, and the
+      // metric must not read a push as a hangover.
+      if (next && n.start + n.duration > next.start + 0.02 && !chordPcs(next).has(pc(n.pitch))) overlaps += 1;
     }
     if (i === 0) continue;
     const prev = line[i - 1];
     const leap = Math.abs(n.pitch - prev.pitch);
     maxLeapSeen = Math.max(maxLeapSeen, leap);
     if (leap > maxLeap) over += 1;
-    const before = chordAt(chords, prev.start);
+    const before = statedBy(prev);
     if (!before || !chord || before === chord) continue;
     const root = rootOf(chord);
     if (root === null || pc(n.pitch) !== root) continue;
@@ -234,7 +253,13 @@ export function composedPartMetrics(model: SongModelData, tempoBpm: number, mete
       siblings.push({ instrument: task.instrument, role: task.role, notes });
     }
   }
-  const chords = model.chords as Chord[];
+  // B-13: the composer writes chord changes on the beat grid (`chordEventsIn`
+  // with the section's grid), so "lands on the root" and "laps the next chord"
+  // are asked of that grid too. Measuring against the analysed onsets - up to
+  // half a beat away on the owner's fixture - would count a note that releases
+  // exactly at the chord change as lapping it.
+  const beatSeconds = (60 / Math.max(1, tempoBpm)) * (4 / (Number(/\/(\d+)$/.exec(meter)?.[1]) || 4));
+  const chords = quantiseChordsToGrid(model.chords as Chord[], { origin: 0, beat: beatSeconds, subdivision: beatSeconds / 2 });
   return composed.map(({ request, notes }) => {
     const base: PartMetrics = {
       taskId: request.taskId, task: request.task, instrument: request.instrument, role: request.role,
@@ -244,7 +269,7 @@ export function composedPartMetrics(model: SongModelData, tempoBpm: number, mete
     if (CHORDAL_TASKS.has(request.task) && notes.length) base.chordal = chordalMetrics(notes, sectionChords.length ? sectionChords : chords);
     if (request.task === "BASS" && notes.length) {
       const keys = composed.find((p) => ["PIANO", "KEYS", "ACOUSTIC_GUITAR", "ELECTRIC_GUITAR"].includes(p.request.task) && p.request.section.sectionName === request.section.sectionName && p.notes.length);
-      base.bass = bassMetrics(notes, chords, request.constraints.maxLeap, keys ? keys.notes : null);
+      base.bass = bassMetrics(notes, chords, request.constraints.maxLeap, keys ? keys.notes : null, beatSeconds);
     }
     return base;
   });

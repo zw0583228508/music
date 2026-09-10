@@ -6,6 +6,8 @@
 import type { ChordHarmonyEvent } from "@workspace/db";
 import { chordFromEvent, type ParsedChord } from "../chordSymbols";
 
+export const pc = (v: number): number => ((v % 12) + 12) % 12;
+
 export type HarmonyChordEvent = {
   /** Index in the source list, so a plan can be joined back to the Song Model's chords. */
   sourceIndex: number;
@@ -13,33 +15,97 @@ export type HarmonyChordEvent = {
   end: number;
   symbol: string;
   chord: ParsedChord;
+  /** B-13: the analysed onset before quantisation, when the grid moved it (evidence, never a note position). */
+  rawStart?: number;
+  rawEnd?: number;
 };
 
-export const pc = (v: number): number => ((v % 12) + 12) % 12;
+/**
+ * The bar grid the harmony is written on (Brain B-13, R-1b P0-2).
+ *
+ * The kit is written on the bar grid and the harmony writers subdivided the
+ * *analysed* chord span, so on the owner's song the piano, strings and bass
+ * played 100-230 ms after the kick (median 136 ms; 79 of 92 chord events more
+ * than 50 ms off the beat) while the kit was on it.
+ *
+ * A chord change belongs on a beat unless it is deliberately pushed, so the
+ * snap tries the beat first and only then the subdivision (an 8th): an onset
+ * within `toleranceSeconds` of a beat is a late or early reading of that beat;
+ * one further out but within the tolerance of an 8th is a push, and keeps its
+ * eighth; anything beyond both is telling us something the grid is not, and
+ * keeps its analysed time. The analysed onset survives as `rawStart` /
+ * `rawEnd` - evidence, never a note position.
+ *
+ * The tolerance is a fraction of the beat rather than a fixed millisecond
+ * count: at 130 BPM the owner's 136 ms readings are a third of a beat late,
+ * and at 68 BPM the same 136 ms would be a sixth of one.
+ */
+export type ChordGrid = {
+  origin: number;
+  /** Seconds per beat: the first grid a chord change is tried against. */
+  beat: number;
+  /** Seconds per subdivision (an 8th of the bar's beat); the second grid. */
+  subdivision?: number;
+  /** How far an onset may be from a grid point and still be read as that point (default 0.35 x beat). */
+  toleranceSeconds?: number;
+};
+
+export const CHORD_GRID_BEAT_FRACTION = 0.35;
+
+const snap = (t: number, grid: ChordGrid): number => {
+  if (!(grid.beat > 0)) return t;
+  const tolerance = grid.toleranceSeconds ?? grid.beat * CHORD_GRID_BEAT_FRACTION;
+  for (const step of [grid.beat, grid.subdivision ?? grid.beat / 2]) {
+    if (!(step > 0)) continue;
+    const snapped = grid.origin + Math.round((t - grid.origin) / step) * step;
+    if (Math.abs(snapped - t) <= tolerance) return Number(snapped.toFixed(4));
+  }
+  return t;
+};
 
 /**
- * The chord events overlapping `[start, end)`, clipped to it, parsed, in
- * start order. Unreadable symbols are dropped (and counted by the caller when
- * it cares); a zero-length event is dropped too.
- *
- * `minEventSeconds`: an event shorter than a part can articulate (an analysis
- * blip of 0.2 s between two real chords) is absorbed by its predecessor - the
- * held voicing continues through it - rather than written as a note the
- * instrument's minimum duration would stretch over the next chord.
+ * The same snap applied to raw chord events, keeping their shape (B-13). Used
+ * where a measurement has to ask "does this note lap the next chord?" of the
+ * grid the writers actually wrote on, not of the analysed onsets they read.
  */
+export function quantiseChordsToGrid<T extends { start: number; end: number }>(chords: ReadonlyArray<T>, grid: ChordGrid): T[] {
+  return chords.map((chord) => {
+    const start = snap(chord.start, grid);
+    const end = snap(chord.end, grid);
+    return end - start > 1e-6 ? { ...chord, start, end } : { ...chord };
+  });
+}
+
 export function chordEventsIn(
   chords: ReadonlyArray<ChordHarmonyEvent>,
   window: { start: number; end: number },
-  options: { minEventSeconds?: number } = {},
+  options: { minEventSeconds?: number; grid?: ChordGrid } = {},
 ): HarmonyChordEvent[] {
   const out: HarmonyChordEvent[] = [];
   chords.forEach((event, sourceIndex) => {
-    const start = Math.max(event.start, window.start);
-    const end = Math.min(event.end, window.end);
-    if (end - start <= 1e-6) return;
+    const rawStart = Math.max(event.start, window.start);
+    const rawEnd = Math.min(event.end, window.end);
+    if (rawEnd - rawStart <= 1e-6) return;
     const chord = chordFromEvent(event);
     if (!chord) return;
-    out.push({ sourceIndex, start, end, symbol: event.symbol, chord });
+    // The grid moves the onset the writers place notes from; the window still
+    // bounds it, and an event the snap would empty keeps its analysed time.
+    const grid = options.grid;
+    let start = rawStart;
+    let end = rawEnd;
+    if (grid) {
+      const snappedStart = Math.max(window.start, snap(rawStart, grid));
+      const snappedEnd = Math.min(window.end, snap(rawEnd, grid));
+      if (snappedEnd - snappedStart > 1e-6) {
+        start = snappedStart;
+        end = snappedEnd;
+      }
+    }
+    out.push({
+      sourceIndex, start, end, symbol: event.symbol, chord,
+      ...(start !== rawStart ? { rawStart } : {}),
+      ...(end !== rawEnd ? { rawEnd } : {}),
+    });
   });
   out.sort((a, b) => a.start - b.start || a.sourceIndex - b.sourceIndex);
   const minEvent = options.minEventSeconds ?? 0;
