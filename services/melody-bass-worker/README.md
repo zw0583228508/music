@@ -40,6 +40,34 @@ no redirects - the platform leases one object through its analysis-asset
 surface and the API itself is never exposed. Register limits: melody 80-1100 Hz,
 bass 32-400 Hz (wide enough to *observe* an octave error instead of clamping it).
 
+## Running it on a workstation (PR-B22)
+
+The identity gate is written for the image, where every pin is re-verified. A
+workstation that cannot install the pinned wheels may still run the worker, and
+must say so:
+
+```
+MELODY_BASS_ALLOW_UNPINNED_RUNTIME=1   # package pins may differ; weight digests may not
+MELODY_BASS_ALLOW_LOCAL_SOURCES=1      # a sourceUrl on 127.0.0.1
+MELODY_BASS_STEM_DUMP_DIR=<dir>        # write the separated stems beside the run (local evidence)
+TORCH_HOME=<dir>                       # where the htdemucs checkpoint is cached
+```
+
+`/health` then reports `healthy: false` with the exact `pinDeviations`,
+`runnable: true`, and `identityMode: "unpinned_local"`; `/transcribe` gates on
+`runnable`, refuses outright if any **weight** digest differs, and stamps
+`identity` on every result. `melodyBassPaths.ts` carries that stamp into the
+provenance record as version `1.0.0+unpinned_local`, so an unpinned run can
+never be read as the attested image. `smoke_test.py` writes its own deviations
+into the marker, and `identity()` refuses a marker that carries any — the
+pinned gate cannot be satisfied by a lenient run.
+
+Measured on one Windows workstation (12 cores, 10 torch threads, CPU only) on
+the owner's four-minute song: htdemucs separation of 258 s of stereo about
+**5.5 minutes**, and each stem then costs about 3.4x real time for pYIN and
+4.4x for CREPE. That is roughly ten times the deployed image's separation cost;
+budget the client timeout with `MELODY_BASS_TIMEOUT_MS`.
+
 ## Deploy
 
 ```

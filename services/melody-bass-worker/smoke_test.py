@@ -111,9 +111,19 @@ def main() -> int:
 
     ident = tracker.identity()
     failed = [c for c in ident["checks"] if not c["ok"] and c["name"] != "build_time_smoke"]
-    assert not failed, failed
+    if tracker.unpinned_allowed():
+        # An operator-declared unpinned workstation may differ from the package
+        # pins; it may never differ on a weight digest, and the deviation is
+        # written into the marker so `identity()` can refuse to call the pinned
+        # gate satisfied by this run.
+        blocking = [c for c in failed if c["name"] in tracker.WEIGHT_CHECK_NAMES]
+        assert not blocking, blocking
+    else:
+        assert not failed, failed
     marker = {
         "passed": True,
+        "identityMode": ident["identityMode"],
+        "pinDeviations": [c["name"] for c in failed],
         "demucs_checkpoint_sha256": tracker.MANIFEST["separation"]["checkpoint_sha256"],
         "checks": {k: round(v, 2) for k, v in checks.items()},
         "leadBasicPitchNotes": len(lead_bp),

@@ -15,6 +15,7 @@ model_manifest.json and re-reads every pinned package version.
 """
 from __future__ import annotations
 
+import gc
 import hashlib
 import importlib.metadata
 import json
@@ -35,6 +36,22 @@ SMOKE_MARKER = Path(os.environ.get("MELODY_BASS_SMOKE_MARKER", "/app/smoke-marke
 STEM_NAMES = ("drums", "bass", "other", "vocals")
 TRACKER_NAMES = ("pyin", "crepe", "basic_pitch")
 HOP_SECONDS = 0.01
+
+# The checks that decide the *numbers*: every weight digest and the Basic Pitch
+# backend. A different weight is a different model and is never runnable. A
+# package version that differs from the pin changes the code around the weights,
+# which is a deviation to be *stated*, not one to be hidden - and only where the
+# operator has said so with MELODY_BASS_ALLOW_UNPINNED_RUNTIME=1 (a workstation
+# that cannot install the pinned wheels; the deployed image never sets it).
+WEIGHT_CHECK_NAMES = frozenset({
+    "demucs_checkpoint_sha256",
+    "crepe_full_sha256",
+    "crepe_tiny_sha256",
+    "basic_pitch_onnx_sha256",
+    "basic_pitch_backend_is_onnx",
+})
+UNPINNED_RUNTIME_ENV = "MELODY_BASS_ALLOW_UNPINNED_RUNTIME"
+
 # The downloaded source is saved under this name, deliberately without an
 # extension: ffmpeg lets a file extension outvote content probing, and a
 # ".bin" suffix hands an ID3-tagged MP3 to the `bintext` demuxer ("source could
@@ -60,6 +77,11 @@ def sha256_file(path: Path) -> str | None:
         for chunk in iter(lambda: handle.read(1 << 20), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def unpinned_allowed() -> bool:
+    """True when the operator has explicitly allowed an unpinned local runtime."""
+    return os.environ.get(UNPINNED_RUNTIME_ENV) == "1"
 
 
 def _version(dist: str) -> str | None:
@@ -104,15 +126,32 @@ def identity() -> dict:
         onnx_selected = False
     checks.append({"name": "basic_pitch_backend_is_onnx", "expected": True, "actual": onnx_selected, "ok": onnx_selected})
     marker = json.loads(SMOKE_MARKER.read_text()) if SMOKE_MARKER.is_file() else None
+    # A smoke that itself ran on an unpinned runtime does not satisfy the pinned
+    # gate: the marker carries its deviations and they are read here, so the
+    # strict answer can never be borrowed from a lenient run.
     smoke_ok = bool(marker and marker.get("passed") is True
-                    and marker.get("demucs_checkpoint_sha256") == MANIFEST["separation"]["checkpoint_sha256"])
+                    and marker.get("demucs_checkpoint_sha256") == MANIFEST["separation"]["checkpoint_sha256"]
+                    and not marker.get("pinDeviations"))
     checks.append({"name": "build_time_smoke", "expected": True, "actual": smoke_ok, "ok": smoke_ok})
     import torch
 
+    deviations = [item["name"] for item in checks if not item["ok"]]
+    healthy = not deviations
+    weights_ok = all(item["ok"] for item in checks if item["name"] in WEIGHT_CHECK_NAMES)
+    allowed = unpinned_allowed()
+    runnable = healthy or (allowed and weights_ok)
     return {
         "worker": MANIFEST["worker"],
         "version": MANIFEST["version"],
-        "healthy": all(item["ok"] for item in checks),
+        "healthy": healthy,
+        # What /transcribe actually gates on. In the deployed image this equals
+        # `healthy`; on an operator-declared unpinned workstation it also allows
+        # a package-version deviation, never a weight one, and the deviation
+        # travels with every result so nothing downstream can score an unpinned
+        # run as if the pinned image had produced it.
+        "runnable": runnable,
+        "identityMode": "pinned" if healthy else ("unpinned_local" if runnable else "unverified"),
+        "pinDeviations": deviations,
         "checks": checks,
         "separation": {k: v for k, v in MANIFEST["separation"].items() if k != "note"},
         "trackers": {name: {k: v for k, v in spec.items() if k != "note"} for name, spec in MANIFEST["trackers"].items()},
@@ -277,14 +316,36 @@ def track_stem(stereo: np.ndarray, sr: int, register: str, trackers: list[str], 
     limits = REGISTERS[register]
     mono = to_mono(stereo)
     result: dict = {"register": register, "rmsDbfs": round(rms_dbfs(mono), 2), "durationSeconds": round(mono.size / sr, 3)}
+    # One tracker's failure is that tracker's absence, recorded by name, not the
+    # loss of the other two after forty minutes of separation and tracking.
+    # pYIN's FFT over a whole stem is the largest allocation in this worker and
+    # raised MemoryError on a 16 GB workstation for a four-minute song; the
+    # fusion downstream already reports which trackers took part
+    # (`fusion.stats.trackersUsed`), so an absence is visible, never silent.
+    errors: dict[str, str] = {}
+
+    def run(name: str, fn) -> None:
+        try:
+            result[name] = fn()
+        except MemoryError as exc:
+            errors[name] = f"MemoryError: {exc}" if str(exc) else "MemoryError"
+            gc.collect()
+        except Exception as exc:  # noqa: BLE001 - the failure is the evidence
+            errors[name] = f"{type(exc).__name__}: {exc}"[:300]
+            gc.collect()
+
     if "pyin" in trackers:
-        result["pyin"] = track_pyin(mono, sr, limits["fmin"], limits["fmax"])
+        run("pyin", lambda: track_pyin(mono, sr, limits["fmin"], limits["fmax"]))
     if "crepe" in trackers:
-        result["crepe"] = track_crepe(mono, sr, limits["fmin"], limits["fmax"])
+        run("crepe", lambda: track_crepe(mono, sr, limits["fmin"], limits["fmax"]))
     if "basic_pitch" in trackers:
         path = workdir / f"{label}.wav"
         sf.write(str(path), mono, sr)
-        result["basic_pitch"] = track_basic_pitch(path, limits["fmin"], limits["fmax"], basic_pitch_params)
+        run("basic_pitch", lambda: track_basic_pitch(path, limits["fmin"], limits["fmax"], basic_pitch_params))
+    if errors:
+        result["trackerErrors"] = errors
+    if not any(name in result for name in TRACKER_NAMES):
+        raise RuntimeError(f"every requested tracker failed on {label}: {errors}")
     return result
 
 
@@ -303,13 +364,44 @@ def analyse(source: Path, workdir: Path, *, mode: str, stems: list[tuple[str, st
     if max_seconds and stereo.shape[1] > int(max_seconds * sr):
         stereo = stereo[:, : int(max_seconds * sr)]
     duration = stereo.shape[1] / sr
+    channels = int(stereo.shape[0])
     separated: dict[str, np.ndarray] = {}
+    separation_rms: dict[str, dict] = {}
     separation_seconds = None
     if mode == "mix" and any(name in STEM_NAMES for name, _ in stems):
         sep_started = time.monotonic()
         separated = separate(stereo, sr)
         separation_seconds = round(time.monotonic() - sep_started, 3)
+        # Every stem's level is evidence and is read now; the *samples* of a
+        # stem nobody is going to track are not, and on a four-minute song they
+        # are ~90 MB each. pYIN's FFT over a whole stem is the peak allocation
+        # of this worker (it raised MemoryError on a 16 GB workstation with the
+        # four stems and the source still resident), so what is finished with is
+        # released before the trackers start. Nothing here changes a number:
+        # the RMS is taken first, and the tracked stems are untouched.
+        separation_rms = {name: {"rmsDbfs": round(rms_dbfs(to_mono(stem)), 2)} for name, stem in separated.items()}
+    # Local evidence only, off unless an operator points it somewhere: write the
+    # separated stems next to the run so the stem that was *tracked* is the stem
+    # that can be listened to. Nothing downstream reads these files; the point is
+    # that a melody and the audio it was heard in cannot drift apart.
+    dump_dir = os.environ.get("MELODY_BASS_STEM_DUMP_DIR")
+    dumped: dict[str, str] = {}
+    if separated and dump_dir:
+        target = Path(dump_dir)
+        target.mkdir(parents=True, exist_ok=True)
+        for name, stem in separated.items():
+            path = target / f"{name}.flac"
+            sf.write(str(path), stem.T, sr)
+            dumped[name] = str(path)
+    wanted = {name for name, _ in stems}
+    if separated:
+        for name in [name for name in separated if name not in wanted]:
+            del separated[name]
+        if "mix" not in wanted and mode != "stem":
+            stereo = None  # the source samples; the trackers work on the stems
+        gc.collect()
     tracks: dict[str, dict] = {}
+    remaining = {name: sum(1 for other, _ in stems if other == name) for name in wanted}
     for name, register in stems:
         key = f"{name}:{register}"
         if name == "mix" or mode == "stem":
@@ -319,18 +411,26 @@ def analyse(source: Path, workdir: Path, *, mode: str, stems: list[tuple[str, st
         else:
             continue
         tracks[key] = {"stem": name, **track_stem(audio, sr, register, trackers, workdir, key.replace(":", "_"), basic_pitch_params)}
+        # Released as soon as the last register that wanted it is done, so the
+        # second stem's pYIN does not have to share the heap with the first.
+        remaining[name] -= 1
+        if remaining[name] <= 0 and name in separated:
+            del separated[name]
+            audio = None
+            gc.collect()
     return {
         "contractVersion": "1.0",
         "provider": "MELODY_BASS_WORKER",
         "version": MANIFEST["version"],
         "mode": mode,
-        "audio": {"durationSeconds": round(duration, 3), "sampleRate": sr, "channels": int(stereo.shape[0])},
+        "audio": {"durationSeconds": round(duration, 3), "sampleRate": sr, "channels": channels},
         "separation": ({
             "model": MANIFEST["separation"]["model"],
             "checkpointSha256": MANIFEST["separation"]["checkpoint_sha256"],
             "seconds": separation_seconds,
-            "stems": {name: {"rmsDbfs": round(rms_dbfs(to_mono(stem)), 2)} for name, stem in separated.items()},
-        } if separated else None),
+            "stems": separation_rms,
+            **({"dumpedStems": dumped} if dumped else {}),
+        } if separation_rms else None),
         "tracks": tracks,
         "seconds": round(time.monotonic() - started, 3),
     }

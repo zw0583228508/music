@@ -9748,6 +9748,251 @@ counts too, and those still move — the cause is isolated and named below.
   analysis, so nothing about "רחם נא" changes because of this stream except the
   performance jitter values and the fill choices, which moved for every song.
 
+### PR-B22 — Brain B-22: the melody of the owner's song
+
+- **PR-B22** ✅ (open; the lead merges) — `ws-brain-b22` (Arrangement &
+  Orchestration Brain, stream B-22: the separated-stem melody path meets real
+  bytes). Every arrangement of "רחם נא" is chords, bass and percussion with no
+  tune in it, and the Song Model says why: `melody: []`, `fieldStatus.melody:
+  not_available`, "1680 transcribed event(s) from BASIC_PITCH did not meet the
+  canonical melody threshold; a single transcription provider on a full mix is
+  not a melodic line." That refusal is correct and is untouched here. Its
+  consequence, measured on this project: `buildMotifLedger` reports **`source:
+  "harmonic_inference"`, 8 cells inferred from the chord-root motion of 9
+  sections**, so nothing the brain writes quotes the tune. This stream ran
+  `services/melody-bass-worker` + `melodyBassPaths.ts` on the bytes that Song
+  Model was built from — the platform's own FLAC proxy
+  `/objects/proxies/e3fa24b2…flac`, 258.53 s, sha256 `a77fef9a…` — and measured
+  what came back. Evidence:
+  `docs/evidence/melody-of-the-owners-song-b22-live.json`.
+
+  **The run.** Local worker on :8033 (8023 was taken by another stream), local
+  lease on :8034, `MELODY_STEM_PATH_V1=1`, through `melodyStemPathForAnalysis`
+  — the analyser's own entry point, not a script of this stream's own.
+  **3,743 s wall clock (62 min)**: htdemucs separation 680 s, then CREPE 1,281 s
+  / pYIN 220 s / Basic Pitch 11 s on the vocal stem and 1,338 / 156 / 11 s on the
+  bass stem. The RMS rule chose `vocals` (−22.39 dBFS against `other` −25.66);
+  **`drums` came back at −72.79 dBFS and `bass` at −55.29 dBFS — the owner's
+  recording has no drum kit and almost no bass instrument**, which is a fact
+  about the source that every arrangement stream should know: the percussion and
+  the bass in the shipped arrangements are inventions, not transcriptions.
+
+  **Three defects, each found by running it, none visible from a mock.**
+
+  1. *The call could not complete from Node.* `requestMelodyBassWorker` used the
+     global `fetch` with `AbortSignal.timeout(25 * 60_000)`. Undici aborts a
+     request whose **response headers** have not arrived within 300 s, and no
+     `AbortSignal` and no `fetch` option raises that ceiling; only an undici
+     `Agent` dispatcher can, and undici is not a dependency here. The first real
+     run died at **311 s** with `TypeError: fetch failed`, and the client's own
+     bound was already half the fifty minutes the worker's README documents. The
+     deployed path survived only because Modal answers inside its own 150 s HTTP
+     limit with a 303 self-redirect that restarts undici's clock — a property of
+     one deployment, not of the client. **Fixed:** `longRunningFetch`
+     (`node:http`/`https`, no idle timeout, fetch-shaped, follows a 303 or a
+     301/302-on-POST as a GET exactly as `fetch` does so the Modal self-redirect
+     still works, decodes gzip/deflate/br, honours the caller's signal) is the
+     default transport; `MELODY_BASS_DEFAULT_TIMEOUT_MS` is 55 minutes and
+     `MELODY_BASS_TIMEOUT_MS` overrides it; `fetchImpl` injection is unchanged.
+     Tested against a real `node:http` server (POST + bearer, withheld headers,
+     a 303 that must become a bodiless GET, gzip, a 503 surfaced as
+     `Response.ok === false`, an abort). The 62-minute call above is the control:
+     it is 12× the ceiling that used to stop it.
+  2. *pYIN ran out of memory on a four-minute stem.* `librosa.pyin`'s FFT over a
+     whole stem is the worker's largest allocation; with the four separated
+     stems and the decoded source still resident it raised `MemoryError` **after
+     seventeen minutes of separation**, and the whole request became an HTTP 500.
+     **Fixed twice over:** `analyse()` reads every stem's RMS first and then
+     releases the stems nobody will track and the decoded source before tracking
+     starts, and releases each stem when the last register that wanted it is
+     done (no number moves — the RMS is taken before the release); and
+     `track_stem` runs each tracker inside its own failure boundary, so one
+     tracker's absence is recorded by name in `trackerErrors` and carried into
+     `StemPathResult.trackerErrors` instead of discarding the other two and the
+     forty minutes behind them. `fusion.stats.trackersUsed` already says who did
+     speak, so an absence is visible from both sides and never inferred from
+     silence.
+  3. *The identity gate is written for the image, and this is a workstation.*
+     The manifest pins torch 2.2.2 / torchaudio 2.2.2 / librosa 0.10.2.post1 /
+     resampy 0.4.3; this machine has 2.1.0+cu118 / 2.1.0 / 0.10.1 / 0.4.2.
+     Rather than weaken the gate, `identity()` now computes **`runnable`**
+     separately from `healthy`: with `MELODY_BASS_ALLOW_UNPINNED_RUNTIME=1` an
+     operator may run with a package-version deviation and **never** with a
+     weight-digest one (all five weight checks — htdemucs `8726e21a…`, CREPE
+     full `13322560…` and tiny `d4993eea…`, the Basic Pitch ONNX `2c3c1d14…`,
+     and the ONNX backend selection — passed here byte for byte); the deviation
+     list is stamped on every `/transcribe` result, `melodyBassPaths.ts` carries
+     it into the provenance record as version **`1.0.0+unpinned_local`**, and
+     `sourceAnalyzer` logs the mode, the deviations and the timings beside the
+     result. `smoke_test.py` writes its own deviations into its marker and
+     `identity()` refuses a marker that carries any, so the pinned gate can
+     never be satisfied by a lenient run: **`healthy` stayed `false` for every
+     number in this PR.**
+
+  **The runtime can hear (positive control at the Python layer).**
+  `smoke_test.py` on this workstation: pYIN within **1.3–2.5 cents** of the
+  truth on the synthesised lead and bass, CREPE within **5.3–6.8 cents**, the
+  bass line still within 2.5 cents *after* htdemucs separation, an MP3 saved
+  without an extension decoded, separation of the 6 s smoke mix in 31.8 s.
+
+  **The path can hear, and one tracker cannot (positive control at the path
+  layer).** A synthetic lead stem whose pitch is known exactly — four phrases in
+  C minor at the song's own 130.43 BPM, harmonic-rich, 12-cent vibrato, rests,
+  22 notes, 17.5 s — through the worker and the same `stemPathFromTrack` the
+  owner's song goes through, scored with `scoreNotes` against the truth:
+
+  | tracker | onset F1 | onset+pitch F1 | octave-error rate | frame pitch |
+  | --- | --- | --- | --- | --- |
+  | CREPE | 1.000 | **1.000** | 0 | 0.991 |
+  | pYIN | 1.000 | **1.000** | 0 | 0.967 |
+  | Basic Pitch | 1.000 | **0.4545** | **0.5455** | 0.325 |
+
+  Basic Pitch found every onset and put **12 of 22 notes an octave out**. The
+  melody variant anchored on Basic Pitch, and `fuseTrackers` keeps the anchor's
+  pitch when the others disagree (correctly — it must never average), so the
+  fused line inherited the anchor's octave errors: F1 **0.4545**. The negative
+  control — the same prediction scored against a truth transposed by five
+  semitones — is **0**, so the scorer discriminates. Anchored on CREPE or pYIN,
+  with or without the onset split, the same evidence scores **1.000**.
+
+  **The owner's song says the same thing from the other side.** Same worker
+  call, same tracker lines, only the anchor changed (`variantSweep` in the
+  evidence; no new audio, no new call):
+
+  | anchor | notes | agreed | pitch range | chord-tone | OCTAVE_JUMP | canonical | canonical warnings |
+  | --- | --- | --- | --- | --- | --- | --- | --- |
+  | `basic_pitch` (was the default) | 758 | 461 | 46–84 (38 st) | 0.583 | **32** | 251 | **3** |
+  | `crepe` | 941 | 486 | **46–61 (15 st)** | 0.623 | **0** | 212 | **0** |
+  | `pyin` | 228 | 112 | 48–77 | 0.746 | 0 | 29 | 0 |
+
+  Bb2–C#4 is one singer; Bb2–C6 is a singer plus that singer's octave errors.
+  **So the anchor now follows the stem** (`variantFor(register, stem)`): the
+  `vocals` stem is a voice and CREPE anchors it (`VOCAL_MELODY_VARIANT`), the
+  `other` stem — an instrumental lead sharing a stem with everything that is not
+  drums or bass — keeps the Basic Pitch anchor that ANALYSIS_GOLD_V1's 21
+  instrumental works measured (0.717 vs 0.678). Each half keeps the measurement
+  that earned it; nothing was tuned to make a number look better, and no
+  threshold was lowered anywhere in this PR.
+
+  **The melody, judged.** The shipped line (CREPE-anchored, 941 notes) and the
+  **agreed** line inside it — the 486 notes at least two trackers heard at the
+  same onset and the same pitch, which is what `MIN_MELODY_CONFIDENCE = 0.5`
+  admits downstream:
+
+  ```
+                        notes  range          sounding  n/s    chord-tone  in-key  phrases  within one section
+  shipped (fused)         941  Bb2-C#4 (15st)   70.8 %  3.64        0.623   0.908       19              68 %
+  agreed (conf >= 0.5)    486  Bb2-C#4 (15st)   40.9 %  1.95        0.632   0.944       61              95 %
+  ```
+
+  The chord-tone rate is reported against a **null distribution** because a rate
+  with nothing to beat says nothing: the same notes with their pitches permuted
+  (200 trials) score 0.469 mean / **0.500 p95**, and uniformly random pitches
+  over the same range score 0.250 / 0.288. The agreed line's **0.632 clears
+  both**; 94 % of its notes are a chord tone or a tone of the confirmed C minor;
+  95 % of the phrases the motif ledger cuts fall inside one producer-confirmed
+  section; and the Intro (bars 1–2), which is silent in the arrangement because
+  the chord analysis found nothing under it, has **0 melody notes** here too.
+  Per section, the agreed line is denser in the verses and the bridge (1.8–2.9
+  notes/s) than in the first two choruses (0.75–0.88) — believable for a sung
+  ballad's tracker agreement, not a claim about the song.
+
+  **Under the canonical gate.** Alone: **0 notes**, exactly as designed (the
+  agreement-rate result confidence × the measured 0.72 reliability never reaches
+  the 0.85 sole-provider floor). Beside a full-mix BASIC_PITCH result
+  (reconstructed here with the same ICASSP-2022 ONNX checkpoint, 2,268 events —
+  the original analysis's 1,680 were never persisted): **212 canonical notes,
+  `melody: detected`, validator clean, pitch range 46–60.** With the old Basic
+  Pitch anchor it was 251 notes spanning 46–84 with three `OCTAVE_JUMP`
+  warnings.
+
+  **Those three warnings were not cosmetic.** Built offline from v3, the model
+  carrying the old line validates as **`flagged`**, and
+  `evaluateArrangementEligibility` then returns `eligible: false`,
+  `SONG_MODEL_FLAGGED` with an **empty `fieldsToConfirm`** — the producer has
+  nothing to confirm that would clear it, and the correction route cannot touch
+  melody, so landing that line would have blocked arrangement generation for the
+  owner's project with no route out. The CREPE-anchored line lands as
+  **`accepted`, `eligible: true`**, with every producer-corrected field
+  byte-identical (`tempoMap`, `keyMap`, `meterMap`, `sections`, `chords`, and
+  all eight `edited` flags).
+
+  **What it unlocks.** `buildMotifLedger` on the agreed line: **`status:
+  "available"`, `source: "melody_notes"`, 31 motifs from 61 sung phrases**, hook
+  `motif-40186d4c` — where before it was `harmonic_inference`, 8 cells from
+  chord roots, hook `motif-6a9e5902`. `motifLedger.ts` was not edited by this
+  stream.
+
+  **The landing path, and why it was not executed.** There is no route that adds
+  a melody to a corrected model. `CorrectProjectSongModelBody` accepts only
+  `bpm`, `key`, `meter`, `sections` and `chords`, so `PATCH
+  /projects/:projectId/song-model` can never carry one; and
+  `analyzeProjectSource` inserts a **fresh** model at version + 1 with no
+  `parentModelId` and no carry-forward of `correction`, so a re-analysis is the
+  only way to get the melody and it arrives with the producer's tempo, metre,
+  key, harmony and sections replaced by whatever the providers say this time.
+  The sanctioned two-step is therefore: **(1)** re-analyse with
+  `MELODY_STEM_PATH_V1=1` → v4 carries the melody and loses the corrections;
+  **(2)** `PATCH … { baseVersion: 4, bpm, key, meter, sections, chords }` from
+  v3's confirmed values → v5, because the correction route spreads the previous
+  model (`correctedModelBase = { ...latest.model, … }`) and therefore carries
+  the melody through untouched, sets `parentModelId` and `edited: true`, and
+  inserts a new row — v3 and v4 are both kept, nothing is destroyed. **Between
+  the two steps the project's *latest* model is v4, uncorrected, and that is the
+  row the arrangement pipeline reads**, so this stream did not run it against
+  the owner's live project. Instead the whole landing was built offline and
+  validated: `landing-preview.json` + `songmodel-v3-plus-melody.json`, with a
+  negative control — the same pipeline with an empty stem-path line reproduces
+  the platform's own refusal (0 canonical notes, `not_available`).
+
+  **Honest limits.**
+  - Rung reached: **VALIDATED ON OUTPUT** for the path itself (real audio, real
+    worker, exact-truth control, measured on the owner's song) and for the
+    stem-aware anchor. **Not landed**: the owner's project still has no melody,
+    because landing it needs the two-step above and step 1 leaves a window in
+    which the arrangement pipeline would read an uncorrected model. That is the
+    lead's call, not this stream's.
+  - The runtime was **unpinned** (`healthy: false`, mode `unpinned_local`, five
+    deviations) throughout. Every weight digest matched, but no number in this
+    PR was produced by the attested image, and every one of them is labelled
+    `1.0.0+unpinned_local`.
+  - **The two providers the canonical gate treats as independent are the same
+    model.** `MELODY_STEM_PATH_V1` anchored on Basic Pitch and the full-mix
+    `BASIC_PITCH` provider are one ICASSP-2022 checkpoint on two different
+    audio inputs, so a correlated error — an octave, exactly the failure the
+    control isolates — is *corroborated* by the gate rather than caught by it.
+    That is how three `OCTAVE_JUMP` warnings reached the canonical line. Moving
+    the vocal anchor to CREPE makes the two providers genuinely different
+    models for the melody register, which is a second reason for the change,
+    but the gate's independence assumption is still unaudited and belongs to
+    whoever owns `fuseCanonicalNotes`.
+  - The full-mix side of the canonical fusion is a **reconstruction** (2,268
+    events, this worker, the same checkpoint), not the 1,680 events the original
+    analysis recorded — the Song Model's `pitchEvidence` is empty, so the
+    originals no longer exist. The 212-note figure is therefore "what the gate
+    does with two providers on this audio", not a replay of the 2026-09-10 run.
+  - **There is no sung truth set.** The exact-truth control is one synthetic
+    sung-*like* lead (n = 1); the owner's song has no truth at all, so
+    "chord-tone rate above a permutation null" is *plausibility*, not accuracy —
+    a passing tone is correct and is counted against the line here. Whether
+    these 486 notes are the tune the singer sang is **UNKNOWN** until the owner
+    hears them; the vocal stem and the melody JSON are saved for exactly that.
+  - The line is a **skeleton, not a transcription**: 1.95 notes/s over 41 % of
+    the song, median note 163 ms, 61 phrases of median 3 notes, 31 motifs each
+    stated once — enough for the ledger to quote a shape, not enough to sing
+    from. Offsets are weak everywhere (the fused line's last note runs 0.57 s
+    past the Song Model's analysis window because the FLAC proxy is 258.53 s
+    against the model's 257.94 s; the canonical gate drops it, and the mismatch
+    belongs to the analyser's window, not to this path).
+  - **Bass is not landed.** The bass stem is at −55.29 dBFS: CREPE found 14
+    notes in it and pYIN 8, agreement 0.43, and `bassEvidenceFromOutcome`
+    carried **6**. That is a measurement of a recording with almost no bass, not
+    a bass line.
+  - `scripts/run-focused-api-tests.mjs` cannot run on Windows —
+    `spawn("esbuild", …)` without `shell` cannot find `esbuild.CMD`
+    (`ENOENT`). The suite is registered and `node --check`-clean; it was built
+    and run directly with `esbuild.CMD`, 27/27 green. Not fixed here: that file
+    is shared with every other stream.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

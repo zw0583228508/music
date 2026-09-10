@@ -126,8 +126,8 @@ def transcribe(payload: TranscribeRequest, _: None = Depends(_require_token)) ->
     if not payload.trackers:
         raise HTTPException(400, "at least one tracker is required")
     ident = tracker.identity()
-    if not ident["healthy"]:
-        raise HTTPException(503, "worker identity is not verified")
+    if not ident["runnable"]:
+        raise HTTPException(503, f"worker identity is not verified: {', '.join(ident['pinDeviations']) or 'unknown'}")
     tmp = Path(tempfile.mkdtemp(prefix="melody-bass-"))
     try:
         source = download_source(payload.source_url, tmp)
@@ -141,6 +141,13 @@ def transcribe(payload: TranscribeRequest, _: None = Depends(_require_token)) ->
             raise HTTPException(400, "source could not be decoded as audio") from exc
         result["imageEvidence"] = os.environ.get("MUSIC_AI_IMAGE_EVIDENCE")
         result["runtime"] = ident["runtime"]
+        # The identity that produced these numbers travels with them. A result
+        # from an unpinned workstation says so in every consumer's hands.
+        result["identity"] = {
+            "healthy": ident["healthy"],
+            "mode": ident["identityMode"],
+            "pinDeviations": ident["pinDeviations"],
+        }
         return result
     finally:
         shutil.rmtree(tmp, ignore_errors=True)

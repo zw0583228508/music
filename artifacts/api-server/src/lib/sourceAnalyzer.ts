@@ -1414,6 +1414,16 @@ export async function analyzeProjectSource(
         notes: stemPath.transcription?.notes.length ?? 0,
         agreementRate: stemPath.outcome?.melody?.fusion.stats.agreementRate ?? null,
         bassEvidenceMeasured: stemPath.bassEvidence.length,
+        // PR-B22: which worker produced it. `unpinned_local` is a workstation
+        // whose package versions differ from the manifest (its weight digests
+        // never may); the provenance record carries the same fact as
+        // `1.0.0+unpinned_local`, so an operator reading either one knows.
+        workerIdentity: stemPath.outcome?.worker.identity?.mode ?? null,
+        workerPinDeviations: stemPath.outcome?.worker.identity?.pinDeviations ?? null,
+        // The worker call is minutes long; how long it actually took belongs in
+        // the log beside the result.
+        workerSeconds: stemPath.outcome?.worker.seconds ?? null,
+        separationSeconds: stemPath.outcome?.worker.separationSeconds ?? null,
       }, "MELODY_STEM_PATH_V1 ran beside the provider round");
     }
     let sourceStems: SongModelData["sourceStems"] =
