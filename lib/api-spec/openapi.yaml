@@ -6071,7 +6071,7 @@ components:
       required: [id, family, playableRange, comfortableRange, registers, polyphonic, maxVoices, articulations, constraints, controls]
       properties:
         id: { type: string }
-        family: { type: string, enum: [keys, strings, brass, drums, guitar, voice, synth] }
+        family: { type: string, enum: [keys, strings, brass, winds, drums, guitar, voice, synth] }
         playableRange: { type: object, required: [min, max], properties: { min: { type: number }, max: { type: number } } }
         comfortableRange: { type: object, required: [min, max], properties: { min: { type: number }, max: { type: number } } }
         registers: { type: array, items: { type: object, required: [name, min, max, character], properties: { name: { type: string }, min: { type: number }, max: { type: number }, character: { type: string } } } }
@@ -6160,7 +6160,7 @@ components:
         seed: { type: number }
         instrumentFamily:
           type: string
-          enum: [keys, strings, brass, drums, guitar, voice, synth]
+          enum: [keys, strings, brass, winds, drums, guitar, voice, synth]
         articulationProfile: { type: string }
         timingProfile: { type: string }
         dynamicsProfile: { type: string }

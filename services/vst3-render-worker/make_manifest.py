@@ -28,6 +28,10 @@ def main() -> None:
     parser.add_argument("--families", help="comma-separated routing hint, e.g. drums or keys,synth")
     parser.add_argument("--roles", help="comma-separated routing hint, e.g. GROOVE or PAD,HARMONIC_BED")
     parser.add_argument("--character", help="comma-separated character words for sound selection, e.g. analog,warm or granular,pad")
+    parser.add_argument("--patches", help="comma-separated names of the presets/patches installed for this plugin (descriptive)")
+    parser.add_argument("--gain-trim-db", type=float, help="measured level trim in dB the API applies to this asset's stems (PR-97)")
+    parser.add_argument("--keyswitches", help="preset keyswitch table, e.g. legato=0,long=1,short=2 (PR-97; read from the loaded preset)")
+    parser.add_argument("--articulation-protocol", choices=("keyswitch", "uacc"), help="how the loaded preset switches articulations (Spitfire default: keyswitch)")
     parser.add_argument("--append", action="store_true",
                         help="add this asset to an existing manifest's `assets` (keeps the existing default)")
     parser.add_argument("--out", default=".local-vst3-assets/asset-manifest.json")
@@ -72,6 +76,19 @@ def main() -> None:
         asset["roles"] = [r.strip() for r in args.roles.split(",") if r.strip()]
     if args.character:
         asset["character"] = [c.strip().lower() for c in args.character.split(",") if c.strip()]
+    if args.patches:
+        asset["patches"] = [p.strip() for p in args.patches.split(",") if p.strip()]
+    if args.gain_trim_db is not None:
+        asset["gainTrimDb"] = args.gain_trim_db
+    if args.keyswitches or args.articulation_protocol:
+        articulation: dict = {}
+        if args.articulation_protocol:
+            articulation["protocol"] = args.articulation_protocol
+        if args.keyswitches:
+            articulation["keyswitches"] = {
+                pair.split("=", 1)[0].strip(): int(pair.split("=", 1)[1]) for pair in args.keyswitches.split(",") if "=" in pair
+            }
+        asset["articulation"] = articulation
     out.parent.mkdir(parents=True, exist_ok=True)
     if args.append and out.is_file():
         manifest = json.loads(out.read_text(encoding="utf-8"))

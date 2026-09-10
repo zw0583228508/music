@@ -16,7 +16,7 @@ import json
 import os
 from pathlib import Path
 
-PLATFORM_FAMILIES = ("keys", "strings", "brass", "drums", "guitar", "voice", "synth")
+PLATFORM_FAMILIES = ("keys", "strings", "brass", "winds", "drums", "guitar", "voice", "synth")
 MATCH_KEYS = ("nameKeyword", "instrumentId", "family")
 ENV_NAME = "MUSIC_AI_SFIZZ_INSTRUMENT_MAP"
 

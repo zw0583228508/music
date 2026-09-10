@@ -75,6 +75,25 @@ export type NativeRendererAttestation = {
   sampleRate: number;
   frameCount: number;
   durationSeconds: number;
+  /**
+   * PR-97: when the platform translated the performed material for the
+   * instrument (Spitfire keyswitch table / UACC / CC defaults), the worker
+   * attests the *translated* track. Both digests are recorded and the export
+   * re-derives the translation from the canonical track before it accepts the
+   * stem, so the chain canonical -> wire -> audio stays verifiable.
+   */
+  articulationAdapter?: {
+    id: string;
+    assetId: string;
+    protocol: "keyswitch" | "uacc";
+    sourcePerformedMaterialSha256: string;
+    wirePerformedMaterialSha256: string;
+    techniqueChanges: number;
+    cc32Events: number;
+    keyswitchesRewritten: number;
+    cc1Inserted: boolean;
+    gainTrimDb: number;
+  };
 };
 
 export type InstrumentPerformanceCapability = {
@@ -89,6 +108,7 @@ const PERFORMANCE_CAPABILITIES: Record<InstrumentDefinition["family"], Instrumen
   keys: { family: "keys", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "key-attack-and-pedal", timingProfile: "phrase-locked-keyboard", dynamicsProfile: "velocity-and-expression" },
   strings: { family: "strings", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "bowed-and-pizzicato", timingProfile: "phrase-legato", dynamicsProfile: "continuous-bow-expression" },
   brass: { family: "brass", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "breath-and-tongue", timingProfile: "breath-phrase", dynamicsProfile: "breath-expression" },
+  winds: { family: "winds", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "breath-and-tongue", timingProfile: "breath-phrase", dynamicsProfile: "breath-expression" },
   drums: { family: "drums", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "kit-limb-articulation", timingProfile: "meter-aware-groove", dynamicsProfile: "accent-and-ghost-note" },
   guitar: { family: "guitar", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "pick-strum-and-fret", timingProfile: "string-aware-phrase", dynamicsProfile: "pick-velocity" },
   voice: { family: "voice", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "source-phrase-preserving", timingProfile: "canonical-source-locked", dynamicsProfile: "phrase-expression" },
@@ -385,7 +405,7 @@ const directiveMappings = (id: string) => ({
 });
 
 /** Words in an instrument's own name that settle its family; the role is consulted only when none is present. */
-const FAMILY_WORDS = ["drum", "percussion", "bass", "violin", "cello", "string", "horn", "brass", "trumpet", "guitar", "pad", "synth"];
+const FAMILY_WORDS = ["drum", "percussion", "bass", "violin", "cello", "string", "horn", "brass", "trumpet", "guitar", "pad", "synth", "wind", "flute", "oboe", "clarinet", "bassoon", "reed"];
 
 export function getInstrumentDefinition(instrument: string, role = ""): InstrumentDefinition {
   const id = instrument.toLowerCase().replace(/[^a-z0-9]+/g, "_");
@@ -458,6 +478,27 @@ export function getInstrumentDefinition(instrument: string, role = ""): Instrume
       constraints: { maxLeap: 12, minNoteDuration: 0.12, maxSimultaneousNotes: 1, breathSeconds: 8 },
       controls: { dynamics: [1], expression: [11], pitchBend: true, aftertouch: true },
       directiveMappings: directiveMappings("brass"),
+    };
+  }
+  // PR-97: the planner's "winds" part (orchestral / cinematic styles) and any
+  // named woodwind. Before this branch a "winds" track was a piano: pedal on,
+  // ten voices, no breath - and no native woodwind library could ever serve it.
+  if (normalized.includes("wind") || normalized.includes("flute") || normalized.includes("oboe") ||
+    normalized.includes("clarinet") || normalized.includes("bassoon") || normalized.includes("reed")) {
+    return {
+      id: "winds",
+      family: "winds",
+      playableRange: { min: 48, max: 96 },
+      comfortableRange: { min: 55, max: 88 },
+      registers: RANGE(48, 96).registers,
+      polyphonic: true,
+      maxVoices: 3,
+      articulations: ["legato", "sustain", "staccato", "trill", "flutter", "marcato"],
+      // A woodwind section leaps freely (the planner's climax layer spans two
+      // octaves); the first regeneration with a leap limit of 12 was refused whole.
+      constraints: { maxLeap: 24, minNoteDuration: 0.1, maxSimultaneousNotes: 3, breathSeconds: 8 },
+      controls: { dynamics: [1], expression: [11], pitchBend: true, aftertouch: false },
+      directiveMappings: directiveMappings("winds"),
     };
   }
   if (normalized.includes("guitar")) {
@@ -3679,7 +3720,7 @@ export class PedalboardRenderer {
     track: TrackModel,
     sampleRate: number,
     durationSeconds: number,
-    options: { assetId?: string } = {},
+    options: { assetId?: string; keyswitchLeadSeconds?: number } = {},
   ): Promise<NativeRenderResult> {
     this.assertConfigured();
     return renderRemoteInstrument({
@@ -3690,8 +3731,12 @@ export class PedalboardRenderer {
       sampleRate,
       durationSeconds,
       // Only the asset id crosses the wire; the worker resolves it against its
-      // private manifest. Never a filesystem path.
-      parameters: options.assetId ? { assetId: options.assetId } : {},
+      // private manifest. Never a filesystem path. PR-97: how far ahead of a
+      // note the worker plays a keyswitch (a Spitfire preset needs ~250 ms).
+      parameters: {
+        ...(options.assetId ? { assetId: options.assetId } : {}),
+        ...(options.keyswitchLeadSeconds !== undefined ? { keyswitchLeadSeconds: String(options.keyswitchLeadSeconds) } : {}),
+      },
     });
   }
 }
@@ -3857,13 +3902,25 @@ type RendererAssetIdentityFields = {
   rendererIdentity?: string;
   rendererSha256?: string;
 };
-/** Informational hints the worker passes through from the manifest (PR-22/24). */
+/** Informational hints the worker passes through from the manifest (PR-22/24; PR-97 adds patches, gainTrimDb, articulation). */
 export type RendererAssetHints = {
   name?: string;
   manufacturer?: string;
   families?: string[];
   roles?: string[];
   character?: string[];
+  /** Presets/patches installed for the plugin, as the operator recorded them. */
+  patches?: string[];
+  /** A measured level trim (dB) the export applies to this asset's stems; never part of the attestation. */
+  gainTrimDb?: number;
+  /** How the loaded preset switches articulations (PR-97, `spitfireArticulation.ts`). */
+  articulation?: {
+    protocol?: "keyswitch" | "uacc";
+    keyswitches?: Record<string, number>;
+    keyswitchLeadSeconds?: number;
+    defaultCc1?: number;
+    defaultCc11?: number;
+  };
 };
 type RendererAssetFields = RendererAssetIdentityFields & RendererAssetHints;
 

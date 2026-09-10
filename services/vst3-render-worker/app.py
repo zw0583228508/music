@@ -147,6 +147,33 @@ class MainThreadRunner:
 main_thread = MainThreadRunner()
 
 
+def _opening_keyswitch(track: dict) -> int | None:
+    """The first articulation keyswitch the track plays, if any."""
+    events = [a for a in (track.get("articulations") or []) if isinstance(a.get("keyswitch"), (int, float))]
+    if not events:
+        return None
+    first = min(events, key=lambda a: float(a.get("time", 0.0)))
+    return max(0, min(127, int(round(first["keyswitch"]))))
+
+
+def _prime_keyswitch(plugin, keyswitch: int, sample_rate: int) -> None:
+    """PR-97: settle a keyswitched instrument on the track's opening articulation
+    with a throwaway render before the real one. Measured on Abbey Road One: the
+    articulation state persists across renders of the shared plugin instance
+    (`reset=True` does not clear it) and a switch applied inside an offline
+    render can leave the rest of that render silent while the engine changes
+    state. The priming render is never returned."""
+    from mido import Message
+
+    messages = [
+        Message("note_on", note=keyswitch, velocity=100, channel=0, time=0.0),
+        Message("note_off", note=keyswitch, velocity=0, channel=0, time=0.05),
+        Message("note_on", note=72, velocity=80, channel=0, time=0.3),
+        Message("note_off", note=72, velocity=0, channel=0, time=0.6),
+    ]
+    plugin(messages, duration=1.0, sample_rate=float(sample_rate), num_channels=2, reset=True)
+
+
 def _load_asset(runtime: Runtime, asset: dict) -> LoadedAsset:
     """Load an asset's plugin on first use and verify it is what the manifest
     (and therefore the smoke proof) says it is."""
@@ -306,6 +333,14 @@ def render(request: RenderRequest, _: None = Depends(require_bearer)) -> dict:
     requested = request.parameters.get("assetId")
     if requested is not None and not isinstance(requested, str):
         raise HTTPException(422, "parameters.assetId must be a string")
+    # PR-97: the API says how far ahead of a note a keyswitch is played. The
+    # bridge default (10 ms) suits synths; a Spitfire preset applies a switch
+    # asynchronously and needs a real lead. Bounded, never negative.
+    lead_raw = request.parameters.get("keyswitchLeadSeconds", "0.01")
+    try:
+        keyswitch_lead = min(1.0, max(0.0, float(lead_raw)))
+    except (TypeError, ValueError) as error:
+        raise HTTPException(422, "parameters.keyswitchLeadSeconds must be a number of seconds") from error
     target = host.find_asset(runtime.manifest, requested) if requested else runtime.asset
     if target is None or target["id"] not in runtime.smoke_by_asset:
         raise HTTPException(422, {"error": f"asset {requested!r} is not an attested instrument on this worker",
@@ -316,8 +351,13 @@ def render(request: RenderRequest, _: None = Depends(require_bearer)) -> dict:
             entry = main_thread.run(lambda: _load_asset(runtime, target))
         except Exception as error:  # noqa: BLE001
             raise HTTPException(503, f"asset {target['id']} failed to load: {error}") from error
+        primed = None
+        if isinstance(target.get("articulation"), dict) and target["articulation"].get("keyswitches"):
+            primed = _opening_keyswitch(track)
+            if primed is not None:
+                main_thread.run(lambda: _prime_keyswitch(entry.plugin, primed, request.sampleRate))
         try:
-            output = main_thread.run(lambda: host.render_track(entry.plugin, track, request.sampleRate, request.durationSeconds))
+            output = main_thread.run(lambda: host.render_track(entry.plugin, track, request.sampleRate, request.durationSeconds, keyswitch_lead_seconds=keyswitch_lead))
         except Exception as error:  # noqa: BLE001 - a plugin failure is a 503 with its reason, not a bare 500
             raise HTTPException(503, f"asset {target['id']} failed to render: {error}") from error
     elapsed = time.time() - started
@@ -341,6 +381,8 @@ def render(request: RenderRequest, _: None = Depends(require_bearer)) -> dict:
             "clippedSamples": output.clipped_samples,
             "activeFrameRatio": round(output.active_frame_ratio, 4),
             "midiEvents": output.event_count,
+            "keyswitchLeadSeconds": keyswitch_lead,
+            "primedKeyswitch": primed,
             "renderSeconds": round(elapsed, 3),
             "realtimeFactor": round(request.durationSeconds / elapsed, 2) if elapsed > 0 else None,
         },

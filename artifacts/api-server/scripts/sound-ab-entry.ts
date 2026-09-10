@@ -131,6 +131,9 @@ export async function registerSoundAb(input: {
   evidenceFile: string;
   a: SoundAbSide;
   b: SoundAbSide;
+  /** PR-97: which production-floor comparison this pair is (default: PR-92's synth vs sfizz). */
+  comparison?: string;
+  createdBy?: string;
 }): Promise<{
   artifactIds: { a: string; b: string };
   urls: { a: string; b: string };
@@ -163,7 +166,7 @@ export async function registerSoundAb(input: {
       checksum: side.measurement.sha256,
       hash: side.measurement.sha256,
       parentIds: [],
-      createdBy: "sound-ab (PR-92)",
+      createdBy: input.createdBy ?? "sound-ab (PR-92)",
       modelVersion: `${side.label}@production-floor-ab`,
       provider: side.label,
       parameters: { runId: input.runId, side: key, description: side.description },
@@ -190,7 +193,7 @@ export async function registerSoundAb(input: {
     left: { token: left, systemUnderTest: input.a.label },
     right: { token: right, systemUnderTest: input.b.label },
     questions: [question, "Which one sounds more like real instruments?", "Which one would you keep working on?"],
-    meta: { comparison: "production-floor:synth-vs-sfizz", taskId: input.runId, seed: 0, family: "mixed" },
+    meta: { comparison: input.comparison ?? "production-floor:synth-vs-sfizz", taskId: input.runId, seed: 0, family: "mixed" },
   }];
   const keyBySide = { [left]: input.a.label, [right]: input.b.label };
   const sides: BlindListeningSides = {
@@ -204,7 +207,7 @@ export async function registerSoundAb(input: {
       evidenceFile: input.evidenceFile,
       primaryQuestion: question,
       secondaryQuestions: ["Which one sounds more like real instruments?", "Which one would you keep working on?"],
-      comparisons: [{ id: "production-floor:synth-vs-sfizz", a: input.a.label, b: input.b.label, pairs: 1 }],
+      comparisons: [{ id: input.comparison ?? "production-floor:synth-vs-sfizz", a: input.a.label, b: input.b.label, pairs: 1 }],
       entryByToken: { [left]: `${input.runId}:${input.a.label}`, [right]: `${input.runId}:${input.b.label}` },
     },
   };

@@ -1,0 +1,2556 @@
+{
+  "pr": "PR-97 spitfire-libraries-local-render (SPITFIRE-1)",
+  "recordedAt": "2026-09-10T01:47:18.563Z",
+  "worker": {
+    "endpoint": "http://127.0.0.1:8023",
+    "unauthenticatedHealthStatus": 401,
+    "manifestSource": "main checkout .local-vst3-assets (git-ignored), state dir alongside"
+  },
+  "health": {
+    "contractVersion": "1.0",
+    "provider": "VST3",
+    "requestedProvider": "VST3",
+    "healthy": true,
+    "runtimeReady": true,
+    "smokeTested": true,
+    "runtimeIdentity": "pedalboard-0.9.24/python-3.11.9/windows-amd64",
+    "modelVersion": "VST3-Retrologue-f78a36a1-8be6f179@2.4.0",
+    "worker": {
+      "name": "VST3_RENDER_WORKER",
+      "version": "1.0.0",
+      "role": "LICENSED_INSTRUMENT_RENDERER"
+    },
+    "problems": [],
+    "asset": {
+      "id": "retrologue-2.4.0",
+      "identity": "VST3-Retrologue-f78a36a1-8be6f179@2.4.0",
+      "sha256": "ee5467001fe6590095d8745e5254ae240b8d5e6592b7eb0214690655243c7692",
+      "licenseOwner": "Local Steinberg licence holder (Steinberg Activation Manager)",
+      "licenseReference": "Steinberg Cubase 14 bundle licence, activated on this workstation",
+      "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+      "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+      "name": "Retrologue",
+      "manufacturer": "Steinberg Media Technologies"
+    },
+    "smokeEvidence": {
+      "assetId": "retrologue-2.4.0",
+      "sha256": "ee5467001fe6590095d8745e5254ae240b8d5e6592b7eb0214690655243c7692",
+      "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+      "outputSha256": "a5d6878c53835897d193284a3b97151cc89df3f1e9d72d039bcfbf9438a40305",
+      "trackModelRendered": true,
+      "audible": true,
+      "canonicalSensitivity": true,
+      "nativeHostAttested": true,
+      "deterministic": false,
+      "velocitySensitive": false,
+      "ranAt": "2026-09-10T00:10:19+00:00"
+    },
+    "assets": [
+      {
+        "id": "retrologue-2.4.0",
+        "identity": "VST3-Retrologue-f78a36a1-8be6f179@2.4.0",
+        "sha256": "ee5467001fe6590095d8745e5254ae240b8d5e6592b7eb0214690655243c7692",
+        "licenseOwner": "Local Steinberg licence holder (Steinberg Activation Manager)",
+        "licenseReference": "Steinberg Cubase 14 bundle licence, activated on this workstation",
+        "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+        "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+        "name": "Retrologue",
+        "manufacturer": "Steinberg Media Technologies",
+        "smokeEvidence": {
+          "assetId": "retrologue-2.4.0",
+          "sha256": "ee5467001fe6590095d8745e5254ae240b8d5e6592b7eb0214690655243c7692",
+          "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+          "outputSha256": "a5d6878c53835897d193284a3b97151cc89df3f1e9d72d039bcfbf9438a40305",
+          "trackModelRendered": true,
+          "audible": true,
+          "canonicalSensitivity": true,
+          "nativeHostAttested": true,
+          "deterministic": false,
+          "velocitySensitive": false,
+          "ranAt": null
+        }
+      },
+      {
+        "id": "spitfire-abbey-road-one",
+        "identity": "VST3-Abbey Road One-96300254-1ba8eb30@1.2.0",
+        "sha256": "6dee889d069474ce0d15d387bab9a579bbdd4287eb9499c9ac1224afc17615a9",
+        "licenseOwner": "Owner's Spitfire Audio account (licence holder)",
+        "licenseReference": "Spitfire Audio EULA; Abbey Road One registered in the owner's Spitfire account; local render only",
+        "rendererIdentity": "pedalboard_native:pedalboard_native.cp311-win_amd64.pyd@0.9.24",
+        "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+        "name": "Abbey Road One",
+        "manufacturer": "Spitfire Audio",
+        "families": [
+          "winds"
+        ],
+        "roles": [
+          "HARMONIC_BED",
+          "PAD",
+          "MELODY",
+          "COUNTER_MELODY",
+          "ACCENT",
+          "CALL_RESPONSE",
+          "CLIMAX_LAYER",
+          "LEAD"
+        ],
+        "character": [
+          "orchestral",
+          "cinematic",
+          "abbey-road",
+          "woodwind",
+          "reeds",
+          "ensemble",
+          "spitfire"
+        ],
+        "patches": [
+          "Mysterious Reeds",
+          "Vibrant Reeds"
+        ],
+        "articulation": {
+          "protocol": "keyswitch",
+          "keyswitches": {
+            "legato": 0,
+            "long": 1,
+            "short": 2,
+            "Legato (8ve)": 3,
+            "Long (8ve)": 4,
+            "Short Staccato (8ve)": 5
+          },
+          "keyswitchLeadSeconds": 0.25,
+          "defaultCc1": 96,
+          "defaultCc11": 112
+        },
+        "smokeEvidence": {
+          "assetId": "spitfire-abbey-road-one",
+          "sha256": "6dee889d069474ce0d15d387bab9a579bbdd4287eb9499c9ac1224afc17615a9",
+          "rendererSha256": "b8227bef7b5c90628b6617e5a711c16169d47e27048512e91e683104995b5391",
+          "outputSha256": "0cfa721fba98d82d7aacbd5ee9ee03ab56cace25c404ec24bcb70489b77cb0ab",
+          "trackModelRendered": true,
+          "audible": true,
+          "canonicalSensitivity": true,
+          "nativeHostAttested": true,
+          "deterministic": true,
+          "velocitySensitive": false,
+          "ranAt": null
+        }
+      }
+    ]
+  },
+  "smoke": {
+    "ranAt": "2026-09-10T00:10:19+00:00",
+    "rows": [
+      {
+        "assetId": "groove-agent-se-5.2.20",
+        "identity": "VST3-Groove Agent SE-73451159-c72dfe05@5.2.20",
+        "passed": false,
+        "audible": false,
+        "canonicalSensitivity": false,
+        "noClipping": true,
+        "deterministic": true,
+        "velocitySensitive": false,
+        "loadSeconds": 12.63,
+        "outputSha256": "ec3650bd450cebe9985c1d4d4b59749debe34301f9f9e889171d0e49a316c89c",
+        "rmsDbfs": null,
+        "peak": 0
+      },
+      {
+        "assetId": "halion-sonic-7.1.40.846",
+        "identity": "VST3-HALion Sonic-bcf4278b-90a5f2a8@7.1.40.846",
+        "passed": false,
+        "audible": false,
+        "canonicalSensitivity": false,
+        "noClipping": true,
+        "deterministic": true,
+        "velocitySensitive": false,
+        "loadSeconds": 22.75,
+        "outputSha256": "ec3650bd450cebe9985c1d4d4b59749debe34301f9f9e889171d0e49a316c89c",
+        "rmsDbfs": null,
+        "peak": 0
+      },
+      {
+        "assetId": "padshop-2.2.0",
+        "identity": "VST3-Padshop-7951d599-77cdd10c@2.2.0",
+        "passed": false,
+        "audible": false,
+        "canonicalSensitivity": false,
+        "noClipping": true,
+        "deterministic": true,
+        "velocitySensitive": false,
+        "loadSeconds": 13.48,
+        "outputSha256": "ec3650bd450cebe9985c1d4d4b59749debe34301f9f9e889171d0e49a316c89c",
+        "rmsDbfs": null,
+        "peak": 0
+      },
+      {
+        "assetId": "retrologue-2.4.0",
+        "identity": "VST3-Retrologue-f78a36a1-8be6f179@2.4.0",
+        "passed": true,
+        "audible": true,
+        "canonicalSensitivity": true,
+        "noClipping": true,
+        "deterministic": false,
+        "velocitySensitive": false,
+        "loadSeconds": 5.46,
+        "outputSha256": "a5d6878c53835897d193284a3b97151cc89df3f1e9d72d039bcfbf9438a40305",
+        "rmsDbfs": -12.58,
+        "peak": 0.944
+      },
+      {
+        "assetId": "spitfire-abbey-road-one",
+        "identity": "VST3-Abbey Road One-96300254-1ba8eb30@1.2.0",
+        "passed": true,
+        "audible": true,
+        "canonicalSensitivity": true,
+        "noClipping": true,
+        "deterministic": true,
+        "velocitySensitive": false,
+        "loadSeconds": 11.53,
+        "outputSha256": "0cfa721fba98d82d7aacbd5ee9ee03ab56cace25c404ec24bcb70489b77cb0ab",
+        "rmsDbfs": -43.96,
+        "peak": 0.0314
+      }
+    ]
+  },
+  "inventory": [
+    {
+      "bundle": "<private path> Files\\Common Files\\VST3\\Abbey Road Orchestra.vst3",
+      "binary": "<private path> Files\\Common Files\\VST3\\Abbey Road Orchestra.vst3\\Contents\\x86_64-win\\Abbey Road Orchestra.vst3",
+      "ok": true,
+      "loadSeconds": 17.14,
+      "name": "Abbey Road Orchestra",
+      "identifier": "VST3-Abbey Road Orchestra-1a7cced8-67db5f7a",
+      "version": "1.4.7",
+      "manufacturer": "Spitfire Audio",
+      "category": "Instrument|Synth",
+      "is_instrument": true,
+      "binary_path": "<private>",
+      "binary_sha256": "550bc1366ec391621bb63f1ed8787e38f24af4efb28e39e9798fd863ee18f3e4",
+      "state_sha256": "ee228e18c1e6abb194c10f4a52f5617c7d748ce4d4087a985f2bf101d8bd3c77",
+      "identity": "VST3-Abbey Road Orchestra-1a7cced8-67db5f7a@1.4.7"
+    }
+  ],
+  "pluginProbes": {
+    "defaultState": {
+      "defaultPatchMeta": "<META family=\"Selections\" name=\"Mysterious Reeds\" productMode=\"0\" version=\"1.0.4\" tags=\"Ensemble,Woodwind,Mysterious Reeds\" modified=\"0\"/>",
+      "patchSwapMetaAfter": "<META family=\"Selections\" name=\"Mysterious Reeds\" productMode=\"0\" version=\"1.0.4\" tags=\"Ensemble,Woodwind,Mysterious Reeds\" modified=\"1\"/>",
+      "patchSwapArtics": [
+        "Selections - Mysterious Reeds - Legato",
+        "Selections - Mysterious Reeds - Long",
+        "Selections - Mysterious Reeds - Short Staccato",
+        "Selections - Mysterious Reeds - Legato (8ve)",
+        "Selections - Mysterious Reeds - Long (8ve)",
+        "Selections - Mysterious Reeds - Short Staccato (8ve)"
+      ],
+      "presetLoad": {
+        "ok": false,
+        "error": "Plugin failed to load data from preset file: <private path>"
+      },
+      "stateSha256": "f83689a88b9de5ff3626b428cc3f6aeca6fff3205af28276b2c5a79ee859809d"
+    },
+    "probe1": {
+      "plugin": "VST3-Abbey Road One-96300254-1ba8eb30@1.2.0",
+      "loadSeconds": 11.7,
+      "renderSeconds": 11.41,
+      "deterministic": false,
+      "variants": {
+        "baseline": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          }
+        },
+        "cc1=0": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          },
+          "differsFromBaseline": false
+        },
+        "cc1=20": {
+          "sha256": "4c4eb79ac2c13efd",
+          "rmsDbfs": -50.66,
+          "peak": 0.0138,
+          "centroidHz": 1387,
+          "n1": {
+            "attackMs": 559.9,
+            "peakEnv": 0.0047,
+            "first150msRmsDb": -59.4,
+            "sustainRmsDb": -49.3,
+            "sustainRatioDb": 10.2,
+            "releaseTailDb": -57.5
+          },
+          "n2": {
+            "attackMs": 1387,
+            "peakEnv": 0.0045,
+            "first150msRmsDb": -59.5,
+            "sustainRmsDb": -58,
+            "sustainRatioDb": 1.5,
+            "releaseTailDb": -60.3
+          },
+          "differsFromBaseline": true
+        },
+        "cc1=64": {
+          "sha256": "6490f85fdbb9e738",
+          "rmsDbfs": -47.29,
+          "peak": 0.0262,
+          "centroidHz": 1565.5,
+          "n1": {
+            "attackMs": 55,
+            "peakEnv": 0.0024,
+            "first150msRmsDb": -56.2,
+            "sustainRmsDb": -180,
+            "sustainRatioDb": -123.8,
+            "releaseTailDb": -50
+          },
+          "n2": {
+            "attackMs": 1210.9,
+            "peakEnv": 0.007,
+            "first150msRmsDb": -52.4,
+            "sustainRmsDb": -49.4,
+            "sustainRatioDb": 3,
+            "releaseTailDb": -48.4
+          },
+          "differsFromBaseline": true
+        },
+        "cc1=110": {
+          "sha256": "2ba3ee7bc18dd3b2",
+          "rmsDbfs": -43.67,
+          "peak": 0.0281,
+          "centroidHz": 1718.8,
+          "n1": {
+            "attackMs": 1165.4,
+            "peakEnv": 0.0082,
+            "first150msRmsDb": -51.3,
+            "sustainRmsDb": -45,
+            "sustainRatioDb": 6.3,
+            "releaseTailDb": -47.4
+          },
+          "n2": {
+            "attackMs": 1333.6,
+            "peakEnv": 0.0083,
+            "first150msRmsDb": -52.4,
+            "sustainRmsDb": -48.7,
+            "sustainRatioDb": 3.7,
+            "releaseTailDb": -48.2
+          },
+          "differsFromBaseline": true
+        },
+        "cc1=127": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          },
+          "differsFromBaseline": false
+        },
+        "cc11=0": {
+          "sha256": "a5f5ebf2259813ed",
+          "rmsDbfs": null,
+          "peak": 0,
+          "centroidHz": 0,
+          "n1": {
+            "silent": true
+          },
+          "n2": {
+            "silent": true
+          },
+          "differsFromBaseline": true
+        },
+        "cc11=20": {
+          "sha256": "03ce7d666725f6c8",
+          "rmsDbfs": -58.5,
+          "peak": 0.0052,
+          "centroidHz": 2204.2,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0014,
+            "first150msRmsDb": -66.7,
+            "sustainRmsDb": -59.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -61.4
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0014,
+            "first150msRmsDb": -65.7,
+            "sustainRmsDb": -63.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -61.7
+          },
+          "differsFromBaseline": true
+        },
+        "cc11=64": {
+          "sha256": "09608b28587b38a5",
+          "rmsDbfs": -48.4,
+          "peak": 0.0165,
+          "centroidHz": 1807.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0043,
+            "first150msRmsDb": -56.6,
+            "sustainRmsDb": -49.3,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -51.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0044,
+            "first150msRmsDb": -55.6,
+            "sustainRmsDb": -53.4,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -51.6
+          },
+          "differsFromBaseline": true
+        },
+        "cc11=127": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          },
+          "differsFromBaseline": false
+        },
+        "cc32=1": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          },
+          "differsFromBaseline": false
+        },
+        "cc32=2": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          },
+          "differsFromBaseline": false
+        },
+        "cc32=3": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          },
+          "differsFromBaseline": false
+        },
+        "cc32=6": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          },
+          "differsFromBaseline": false
+        },
+        "cc32=7": {
+          "sha256": "4aae96a06eac6b44",
+          "rmsDbfs": -42.55,
+          "peak": 0.0327,
+          "centroidHz": 1744.8,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -53.5,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 10.2,
+            "releaseTailDb": -45.5
+          },
+          "n2": {
+            "attackMs": 192.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -50.8,
+            "sustainRmsDb": -47.6,
+            "sustainRatioDb": 3.2,
+            "releaseTailDb": -45.9
+          },
+          "differsFromBaseline": true
+        },
+        "cc32=20": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          },
+          "differsFromBaseline": false
+        },
+        "cc32=26": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          },
+          "differsFromBaseline": false
+        },
+        "cc32=40": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          },
+          "differsFromBaseline": false
+        },
+        "cc32=41": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          },
+          "differsFromBaseline": false
+        },
+        "cc32=42": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          },
+          "differsFromBaseline": false
+        },
+        "cc32=52": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          },
+          "differsFromBaseline": false
+        },
+        "cc32=56": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          },
+          "differsFromBaseline": false
+        },
+        "cc32=60": {
+          "sha256": "4aae96a06eac6b44",
+          "rmsDbfs": -42.55,
+          "peak": 0.0327,
+          "centroidHz": 1744.8,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -53.5,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 10.2,
+            "releaseTailDb": -45.5
+          },
+          "n2": {
+            "attackMs": 192.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -50.8,
+            "sustainRmsDb": -47.6,
+            "sustainRatioDb": 3.2,
+            "releaseTailDb": -45.9
+          },
+          "differsFromBaseline": true
+        },
+        "cc32=70": {
+          "sha256": "4aae96a06eac6b44",
+          "rmsDbfs": -42.55,
+          "peak": 0.0327,
+          "centroidHz": 1744.8,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -53.5,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 10.2,
+            "releaseTailDb": -45.5
+          },
+          "n2": {
+            "attackMs": 192.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -50.8,
+            "sustainRmsDb": -47.6,
+            "sustainRatioDb": 3.2,
+            "releaseTailDb": -45.9
+          },
+          "differsFromBaseline": true
+        },
+        "ks=0": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3,
+            "releaseTailDb": -45.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2,
+            "releaseTailDb": -45.6
+          },
+          "differsFromBaseline": false
+        },
+        "ks=1": {
+          "sha256": "805ec7e7377605d8",
+          "rmsDbfs": -42.79,
+          "peak": 0.0337,
+          "centroidHz": 1665.5,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -50.9,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.5,
+            "releaseTailDb": -45.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0085,
+            "first150msRmsDb": -49,
+            "sustainRmsDb": -47.1,
+            "sustainRatioDb": 1.9,
+            "releaseTailDb": -47.3
+          },
+          "differsFromBaseline": true
+        },
+        "ks=2": {
+          "sha256": "a8dfbc0f345aede4",
+          "rmsDbfs": -55.35,
+          "peak": 0.0172,
+          "centroidHz": 1800.7,
+          "n1": {
+            "attackMs": 63.2,
+            "peakEnv": 0.0043,
+            "first150msRmsDb": -51.1,
+            "sustainRmsDb": -74.6,
+            "sustainRatioDb": -23.5,
+            "releaseTailDb": -53.4
+          },
+          "n2": {
+            "attackMs": 554.3,
+            "peakEnv": 0.0059,
+            "first150msRmsDb": -51,
+            "sustainRmsDb": -54.2,
+            "sustainRatioDb": -3.2,
+            "releaseTailDb": -52.6
+          },
+          "differsFromBaseline": true
+        },
+        "ks=3": {
+          "sha256": "1922a4678717c476",
+          "rmsDbfs": -68.55,
+          "peak": 0.0072,
+          "centroidHz": 1710.8,
+          "n1": {
+            "attackMs": 43.8,
+            "peakEnv": 0.0025,
+            "first150msRmsDb": -56.1,
+            "sustainRmsDb": -180,
+            "sustainRatioDb": -123.9,
+            "releaseTailDb": -180
+          },
+          "n2": {
+            "silent": true
+          },
+          "differsFromBaseline": true
+        },
+        "ks=4": {
+          "sha256": "3b0f6872fbb3e633",
+          "rmsDbfs": -43.33,
+          "peak": 0.0345,
+          "centroidHz": 1193.2,
+          "n1": {
+            "attackMs": 348.3,
+            "peakEnv": 0.0077,
+            "first150msRmsDb": -50.3,
+            "sustainRmsDb": -44.2,
+            "sustainRatioDb": 6.1,
+            "releaseTailDb": -47.2
+          },
+          "n2": {
+            "attackMs": 652.8,
+            "peakEnv": 0.0082,
+            "first150msRmsDb": -47.9,
+            "sustainRmsDb": -46.4,
+            "sustainRatioDb": 1.5,
+            "releaseTailDb": -44.2
+          },
+          "differsFromBaseline": true
+        },
+        "ks=5": {
+          "sha256": "a5f5ebf2259813ed",
+          "rmsDbfs": null,
+          "peak": 0,
+          "centroidHz": 0,
+          "n1": {
+            "silent": true
+          },
+          "n2": {
+            "silent": true
+          },
+          "differsFromBaseline": true
+        },
+        "ks=6": {
+          "sha256": "833251e4cd889d94",
+          "rmsDbfs": -55.18,
+          "peak": 0.016,
+          "centroidHz": 1470.2,
+          "n1": {
+            "attackMs": 44,
+            "peakEnv": 0.0051,
+            "first150msRmsDb": -49.9,
+            "sustainRmsDb": -73.9,
+            "sustainRatioDb": -24,
+            "releaseTailDb": -55.6
+          },
+          "n2": {
+            "attackMs": 1048.6,
+            "peakEnv": 0.0067,
+            "first150msRmsDb": -54.2,
+            "sustainRmsDb": -52.9,
+            "sustainRatioDb": 1.2,
+            "releaseTailDb": -55.9
+          },
+          "differsFromBaseline": true
+        },
+        "ks=7": {
+          "sha256": "833251e4cd889d94",
+          "rmsDbfs": -55.18,
+          "peak": 0.016,
+          "centroidHz": 1470.2,
+          "n1": {
+            "attackMs": 44,
+            "peakEnv": 0.0051,
+            "first150msRmsDb": -49.9,
+            "sustainRmsDb": -73.9,
+            "sustainRatioDb": -24,
+            "releaseTailDb": -55.6
+          },
+          "n2": {
+            "attackMs": 1048.6,
+            "peakEnv": 0.0067,
+            "first150msRmsDb": -54.2,
+            "sustainRmsDb": -52.9,
+            "sustainRatioDb": 1.2,
+            "releaseTailDb": -55.9
+          },
+          "differsFromBaseline": true
+        },
+        "ks=8": {
+          "sha256": "833251e4cd889d94",
+          "rmsDbfs": -55.18,
+          "peak": 0.016,
+          "centroidHz": 1470.2,
+          "n1": {
+            "attackMs": 44,
+            "peakEnv": 0.0051,
+            "first150msRmsDb": -49.9,
+            "sustainRmsDb": -73.9,
+            "sustainRatioDb": -24,
+            "releaseTailDb": -55.6
+          },
+          "n2": {
+            "attackMs": 1048.6,
+            "peakEnv": 0.0067,
+            "first150msRmsDb": -54.2,
+            "sustainRmsDb": -52.9,
+            "sustainRatioDb": 1.2,
+            "releaseTailDb": -55.9
+          },
+          "differsFromBaseline": true
+        },
+        "ks=12": {
+          "sha256": "833251e4cd889d94",
+          "rmsDbfs": -55.18,
+          "peak": 0.016,
+          "centroidHz": 1470.2,
+          "n1": {
+            "attackMs": 44,
+            "peakEnv": 0.0051,
+            "first150msRmsDb": -49.9,
+            "sustainRmsDb": -73.9,
+            "sustainRatioDb": -24,
+            "releaseTailDb": -55.6
+          },
+          "n2": {
+            "attackMs": 1048.6,
+            "peakEnv": 0.0067,
+            "first150msRmsDb": -54.2,
+            "sustainRmsDb": -52.9,
+            "sustainRatioDb": 1.2,
+            "releaseTailDb": -55.9
+          },
+          "differsFromBaseline": true
+        },
+        "ks=24": {
+          "sha256": "833251e4cd889d94",
+          "rmsDbfs": -55.18,
+          "peak": 0.016,
+          "centroidHz": 1470.2,
+          "n1": {
+            "attackMs": 44,
+            "peakEnv": 0.0051,
+            "first150msRmsDb": -49.9,
+            "sustainRmsDb": -73.9,
+            "sustainRatioDb": -24,
+            "releaseTailDb": -55.6
+          },
+          "n2": {
+            "attackMs": 1048.6,
+            "peakEnv": 0.0067,
+            "first150msRmsDb": -54.2,
+            "sustainRmsDb": -52.9,
+            "sustainRatioDb": 1.2,
+            "releaseTailDb": -55.9
+          },
+          "differsFromBaseline": true
+        },
+        "ks=25": {
+          "sha256": "833251e4cd889d94",
+          "rmsDbfs": -55.18,
+          "peak": 0.016,
+          "centroidHz": 1470.2,
+          "n1": {
+            "attackMs": 44,
+            "peakEnv": 0.0051,
+            "first150msRmsDb": -49.9,
+            "sustainRmsDb": -73.9,
+            "sustainRatioDb": -24,
+            "releaseTailDb": -55.6
+          },
+          "n2": {
+            "attackMs": 1048.6,
+            "peakEnv": 0.0067,
+            "first150msRmsDb": -54.2,
+            "sustainRmsDb": -52.9,
+            "sustainRatioDb": 1.2,
+            "releaseTailDb": -55.9
+          },
+          "differsFromBaseline": true
+        },
+        "ks=26": {
+          "sha256": "833251e4cd889d94",
+          "rmsDbfs": -55.18,
+          "peak": 0.016,
+          "centroidHz": 1470.2,
+          "n1": {
+            "attackMs": 44,
+            "peakEnv": 0.0051,
+            "first150msRmsDb": -49.9,
+            "sustainRmsDb": -73.9,
+            "sustainRatioDb": -24,
+            "releaseTailDb": -55.6
+          },
+          "n2": {
+            "attackMs": 1048.6,
+            "peakEnv": 0.0067,
+            "first150msRmsDb": -54.2,
+            "sustainRmsDb": -52.9,
+            "sustainRatioDb": 1.2,
+            "releaseTailDb": -55.9
+          },
+          "differsFromBaseline": true
+        },
+        "ks=27": {
+          "sha256": "833251e4cd889d94",
+          "rmsDbfs": -55.18,
+          "peak": 0.016,
+          "centroidHz": 1470.2,
+          "n1": {
+            "attackMs": 44,
+            "peakEnv": 0.0051,
+            "first150msRmsDb": -49.9,
+            "sustainRmsDb": -73.9,
+            "sustainRatioDb": -24,
+            "releaseTailDb": -55.6
+          },
+          "n2": {
+            "attackMs": 1048.6,
+            "peakEnv": 0.0067,
+            "first150msRmsDb": -54.2,
+            "sustainRmsDb": -52.9,
+            "sustainRatioDb": 1.2,
+            "releaseTailDb": -55.9
+          },
+          "differsFromBaseline": true
+        },
+        "vel=40": {
+          "sha256": "d2dc68ee402fa2f8",
+          "rmsDbfs": -63,
+          "peak": 0.0056,
+          "centroidHz": 1415.2,
+          "n1": {
+            "attackMs": 83,
+            "peakEnv": 0.0018,
+            "first150msRmsDb": -58.9,
+            "sustainRmsDb": -79.6,
+            "sustainRatioDb": -20.6,
+            "releaseTailDb": -63.4
+          },
+          "n2": {
+            "attackMs": 1060.4,
+            "peakEnv": 0.0023,
+            "first150msRmsDb": -62.4,
+            "sustainRmsDb": -60.2,
+            "sustainRatioDb": 2.1,
+            "releaseTailDb": -62
+          },
+          "differsFromBaseline": true
+        }
+      }
+    },
+    "probe2": {
+      "variants": {
+        "long/noCC": {
+          "sha256": "d83e67e3e0381e0f",
+          "rmsDbfs": -42.45,
+          "peak": 0.0327,
+          "centroidHz": 1726.1,
+          "n1": {
+            "attackMs": 1169.2,
+            "peakEnv": 0.0086,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.3
+          },
+          "n2": {
+            "attackMs": 186.9,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -49.6,
+            "sustainRmsDb": -47.5,
+            "sustainRatioDb": 2.2
+          }
+        },
+        "long/ks": {
+          "sha256": "805ec7e7377605d8",
+          "rmsDbfs": -42.79,
+          "peak": 0.0337,
+          "centroidHz": 1665.5,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -50.9,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0085,
+            "first150msRmsDb": -49,
+            "sustainRmsDb": -47.1,
+            "sustainRatioDb": 1.9
+          }
+        },
+        "short/ks": {
+          "sha256": "a5f5ebf2259813ed",
+          "rmsDbfs": null,
+          "peak": 0,
+          "centroidHz": 0,
+          "n1": {
+            "silent": true
+          },
+          "n2": {
+            "silent": true
+          }
+        },
+        "legato/ks": {
+          "sha256": "2bac478d360cb011",
+          "rmsDbfs": -55.65,
+          "peak": 0.0149,
+          "centroidHz": 1756,
+          "n1": {
+            "attackMs": 63,
+            "peakEnv": 0.0033,
+            "first150msRmsDb": -53.4,
+            "sustainRmsDb": -180,
+            "sustainRatioDb": -126.6
+          },
+          "n2": {
+            "attackMs": 553.9,
+            "peakEnv": 0.0046,
+            "first150msRmsDb": -52.6,
+            "sustainRmsDb": -59.3,
+            "sustainRatioDb": -6.7
+          }
+        },
+        "long/cc1=0": {
+          "sha256": "805ec7e7377605d8",
+          "rmsDbfs": -42.79,
+          "peak": 0.0337,
+          "centroidHz": 1665.5,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -50.9,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0085,
+            "first150msRmsDb": -49,
+            "sustainRmsDb": -47.1,
+            "sustainRatioDb": 1.9
+          }
+        },
+        "long/cc1=1": {
+          "sha256": "e9394e5758a9a9be",
+          "rmsDbfs": -54.99,
+          "peak": 0.009,
+          "centroidHz": 1623.3,
+          "n1": {
+            "attackMs": 861.7,
+            "peakEnv": 0.0029,
+            "first150msRmsDb": -62.2,
+            "sustainRmsDb": -54.3,
+            "sustainRatioDb": 7.9
+          },
+          "n2": {
+            "attackMs": 1472.6,
+            "peakEnv": 0.0025,
+            "first150msRmsDb": -61.9,
+            "sustainRmsDb": -62.2,
+            "sustainRatioDb": -0.3
+          }
+        },
+        "long/cc1=20": {
+          "sha256": "29ed7db32adbe022",
+          "rmsDbfs": -50.94,
+          "peak": 0.0143,
+          "centroidHz": 1399.9,
+          "n1": {
+            "attackMs": 865.4,
+            "peakEnv": 0.0046,
+            "first150msRmsDb": -58.2,
+            "sustainRmsDb": -50.2,
+            "sustainRatioDb": 8
+          },
+          "n2": {
+            "attackMs": 1472.6,
+            "peakEnv": 0.004,
+            "first150msRmsDb": -58,
+            "sustainRmsDb": -58.1,
+            "sustainRatioDb": -0.1
+          }
+        },
+        "long/cc1=40": {
+          "sha256": "b759431d32b01eea",
+          "rmsDbfs": -49.11,
+          "peak": 0.0164,
+          "centroidHz": 1492.8,
+          "n1": {
+            "attackMs": 333.8,
+            "peakEnv": 0.0058,
+            "first150msRmsDb": -57.7,
+            "sustainRmsDb": -49,
+            "sustainRatioDb": 8.7
+          },
+          "n2": {
+            "attackMs": 1480.2,
+            "peakEnv": 0.0048,
+            "first150msRmsDb": -55.5,
+            "sustainRmsDb": -55.6,
+            "sustainRatioDb": -0.1
+          }
+        },
+        "long/cc1=64": {
+          "sha256": "e240571521818b83",
+          "rmsDbfs": -46.41,
+          "peak": 0.023,
+          "centroidHz": 1598.7,
+          "n1": {
+            "attackMs": 267.7,
+            "peakEnv": 0.0062,
+            "first150msRmsDb": -54.5,
+            "sustainRmsDb": -47.8,
+            "sustainRatioDb": 6.7
+          },
+          "n2": {
+            "attackMs": 1480.8,
+            "peakEnv": 0.0063,
+            "first150msRmsDb": -49.9,
+            "sustainRmsDb": -52.8,
+            "sustainRatioDb": -2.9
+          }
+        },
+        "long/cc1=90": {
+          "sha256": "cf67937549a9f8f9",
+          "rmsDbfs": -44.98,
+          "peak": 0.0243,
+          "centroidHz": 1650.8,
+          "n1": {
+            "attackMs": 438,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -55.2,
+            "sustainRmsDb": -46.1,
+            "sustainRatioDb": 9.1
+          },
+          "n2": {
+            "attackMs": 1268.4,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -51,
+            "sustainRmsDb": -52.3,
+            "sustainRatioDb": -1.3
+          }
+        },
+        "long/cc1=110": {
+          "sha256": "7d06055c1c27bf3c",
+          "rmsDbfs": -43.73,
+          "peak": 0.0286,
+          "centroidHz": 1671.7,
+          "n1": {
+            "attackMs": 438,
+            "peakEnv": 0.0087,
+            "first150msRmsDb": -53.7,
+            "sustainRmsDb": -44.6,
+            "sustainRatioDb": 9.2
+          },
+          "n2": {
+            "attackMs": 1264.9,
+            "peakEnv": 0.0091,
+            "first150msRmsDb": -51.2,
+            "sustainRmsDb": -49.9,
+            "sustainRatioDb": 1.3
+          }
+        },
+        "long/cc1=127": {
+          "sha256": "805ec7e7377605d8",
+          "rmsDbfs": -42.79,
+          "peak": 0.0337,
+          "centroidHz": 1665.5,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -50.9,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0085,
+            "first150msRmsDb": -49,
+            "sustainRmsDb": -47.1,
+            "sustainRatioDb": 1.9
+          }
+        },
+        "long/cc11=0": {
+          "sha256": "a5f5ebf2259813ed",
+          "rmsDbfs": null,
+          "peak": 0,
+          "centroidHz": 0,
+          "n1": {
+            "silent": true
+          },
+          "n2": {
+            "silent": true
+          }
+        },
+        "long/cc11=20": {
+          "sha256": "67f8326ef0729e33",
+          "rmsDbfs": -58.84,
+          "peak": 0.0053,
+          "centroidHz": 2194.4,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0013,
+            "first150msRmsDb": -67,
+            "sustainRmsDb": -59.5,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0013,
+            "first150msRmsDb": -65.1,
+            "sustainRmsDb": -63.2,
+            "sustainRatioDb": 1.9
+          }
+        },
+        "long/cc11=64": {
+          "sha256": "c8da519d3a8fae7e",
+          "rmsDbfs": -48.74,
+          "peak": 0.017,
+          "centroidHz": 1755,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0041,
+            "first150msRmsDb": -56.9,
+            "sustainRmsDb": -49.3,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0043,
+            "first150msRmsDb": -55,
+            "sustainRmsDb": -53.1,
+            "sustainRatioDb": 1.9
+          }
+        },
+        "long/cc11=100": {
+          "sha256": "1b4fdf9eaf0c5715",
+          "rmsDbfs": -44.86,
+          "peak": 0.0265,
+          "centroidHz": 1688.6,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0064,
+            "first150msRmsDb": -53,
+            "sustainRmsDb": -45.5,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0067,
+            "first150msRmsDb": -51.1,
+            "sustainRmsDb": -49.2,
+            "sustainRatioDb": 1.9
+          }
+        },
+        "long/cc11=127": {
+          "sha256": "805ec7e7377605d8",
+          "rmsDbfs": -42.79,
+          "peak": 0.0337,
+          "centroidHz": 1665.5,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -50.9,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0085,
+            "first150msRmsDb": -49,
+            "sustainRmsDb": -47.1,
+            "sustainRatioDb": 1.9
+          }
+        },
+        "long/vel=30": {
+          "sha256": "805ec7e7377605d8",
+          "rmsDbfs": -42.79,
+          "peak": 0.0337,
+          "centroidHz": 1665.5,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -50.9,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0085,
+            "first150msRmsDb": -49,
+            "sustainRmsDb": -47.1,
+            "sustainRatioDb": 1.9
+          }
+        },
+        "long/vel=64": {
+          "sha256": "805ec7e7377605d8",
+          "rmsDbfs": -42.79,
+          "peak": 0.0337,
+          "centroidHz": 1665.5,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -50.9,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0085,
+            "first150msRmsDb": -49,
+            "sustainRmsDb": -47.1,
+            "sustainRatioDb": 1.9
+          }
+        },
+        "long/vel=100": {
+          "sha256": "805ec7e7377605d8",
+          "rmsDbfs": -42.79,
+          "peak": 0.0337,
+          "centroidHz": 1665.5,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -50.9,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0085,
+            "first150msRmsDb": -49,
+            "sustainRmsDb": -47.1,
+            "sustainRatioDb": 1.9
+          }
+        },
+        "long/vel=127": {
+          "sha256": "805ec7e7377605d8",
+          "rmsDbfs": -42.79,
+          "peak": 0.0337,
+          "centroidHz": 1665.5,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -50.9,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0085,
+            "first150msRmsDb": -49,
+            "sustainRmsDb": -47.1,
+            "sustainRatioDb": 1.9
+          }
+        },
+        "short/vel=30": {
+          "sha256": "ecad929f32f9b69d",
+          "rmsDbfs": -67.35,
+          "peak": 0.0035,
+          "centroidHz": 2124.2,
+          "n1": {
+            "attackMs": 186.6,
+            "peakEnv": 0.001,
+            "first150msRmsDb": -68.7,
+            "sustainRmsDb": -85,
+            "sustainRatioDb": -16.2
+          },
+          "n2": {
+            "attackMs": 1089.5,
+            "peakEnv": 0.0013,
+            "first150msRmsDb": -66.1,
+            "sustainRmsDb": -64.7,
+            "sustainRatioDb": 1.4
+          }
+        },
+        "short/vel=100": {
+          "sha256": "a8dfbc0f345aede4",
+          "rmsDbfs": -55.35,
+          "peak": 0.0172,
+          "centroidHz": 1800.7,
+          "n1": {
+            "attackMs": 63.2,
+            "peakEnv": 0.0043,
+            "first150msRmsDb": -51.1,
+            "sustainRmsDb": -74.6,
+            "sustainRatioDb": -23.5
+          },
+          "n2": {
+            "attackMs": 554.3,
+            "peakEnv": 0.0059,
+            "first150msRmsDb": -51,
+            "sustainRmsDb": -54.2,
+            "sustainRatioDb": -3.2
+          }
+        },
+        "long/cc32=1": {
+          "sha256": "805ec7e7377605d8",
+          "rmsDbfs": -42.79,
+          "peak": 0.0337,
+          "centroidHz": 1665.5,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -50.9,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0085,
+            "first150msRmsDb": -49,
+            "sustainRmsDb": -47.1,
+            "sustainRatioDb": 1.9
+          }
+        },
+        "long/cc32=40": {
+          "sha256": "805ec7e7377605d8",
+          "rmsDbfs": -42.79,
+          "peak": 0.0337,
+          "centroidHz": 1665.5,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -50.9,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0085,
+            "first150msRmsDb": -49,
+            "sustainRmsDb": -47.1,
+            "sustainRatioDb": 1.9
+          }
+        },
+        "long/cc32=56": {
+          "sha256": "805ec7e7377605d8",
+          "rmsDbfs": -42.79,
+          "peak": 0.0337,
+          "centroidHz": 1665.5,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -50.9,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0085,
+            "first150msRmsDb": -49,
+            "sustainRmsDb": -47.1,
+            "sustainRatioDb": 1.9
+          }
+        },
+        "mixed/long-then-short": {
+          "sha256": "e93498c87d5f3b12",
+          "rmsDbfs": -45.83,
+          "peak": 0.0337,
+          "centroidHz": 1771.8,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -50.9,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 554.3,
+            "peakEnv": 0.0058,
+            "first150msRmsDb": -50.7,
+            "sustainRmsDb": -54.2,
+            "sustainRatioDb": -3.5
+          }
+        },
+        "vibrant/long": {
+          "sha256": "805ec7e7377605d8",
+          "rmsDbfs": -42.79,
+          "peak": 0.0337,
+          "centroidHz": 1665.5,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -50.9,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0085,
+            "first150msRmsDb": -49,
+            "sustainRmsDb": -47.1,
+            "sustainRatioDb": 1.9
+          }
+        },
+        "vibrant/noCC": {
+          "sha256": "805ec7e7377605d8",
+          "rmsDbfs": -42.79,
+          "peak": 0.0337,
+          "centroidHz": 1665.5,
+          "n1": {
+            "attackMs": 428.6,
+            "peakEnv": 0.0081,
+            "first150msRmsDb": -50.9,
+            "sustainRmsDb": -43.4,
+            "sustainRatioDb": 7.5
+          },
+          "n2": {
+            "attackMs": 237.6,
+            "peakEnv": 0.0085,
+            "first150msRmsDb": -49,
+            "sustainRmsDb": -47.1,
+            "sustainRatioDb": 1.9
+          }
+        }
+      }
+    }
+  },
+  "articulationMeasurement": {
+    "throughWorker": null,
+    "firstRunSalvaged": {
+      "note": "salvaged from the console lines of the first worker-path measurement (2026-09-10 ~03:35-03:50, drive D: mounted); the JSON file of that run was overwritten by a later run during which drive D: (the Spitfire sample content) was unmounted and every render went silent",
+      "variants": {
+        "long/keyswitch1+cc32=1": {
+          "rmsDbfs": -47.83,
+          "centroidHz": 1861.3,
+          "longNote": {
+            "attackTo90pctMs": 270.4,
+            "first150msRmsDb": -54.6,
+            "sustain600to1200msRmsDb": -44.2,
+            "sustainMinusOnsetDb": 10.4
+          },
+          "shortNote": {
+            "attackTo90pctMs": 107,
+            "first150msRmsDb": -42.9,
+            "sustain600to1200msRmsDb": -49.5,
+            "sustainMinusOnsetDb": -6.6
+          },
+          "rmsPerRun": [
+            -47.83,
+            -47.83,
+            -47.83
+          ]
+        },
+        "short/keyswitch2+cc32=40": {
+          "rmsDbfs": -57.69,
+          "centroidHz": 2135.6,
+          "longNote": {
+            "attackTo90pctMs": 43,
+            "first150msRmsDb": -51.8,
+            "sustain600to1200msRmsDb": -75.2,
+            "sustainMinusOnsetDb": -23.4
+          },
+          "shortNote": {
+            "attackTo90pctMs": 565.7,
+            "first150msRmsDb": -51.7,
+            "sustain600to1200msRmsDb": -54.1,
+            "sustainMinusOnsetDb": -2.4
+          },
+          "rmsPerRun": [
+            -57.69,
+            -57.69,
+            -57.69
+          ]
+        },
+        "legato/keyswitch0+cc32=20": {
+          "rmsDbfs": -48.61,
+          "centroidHz": 1886.3,
+          "longNote": {
+            "attackTo90pctMs": 189.9,
+            "first150msRmsDb": -51.9,
+            "sustain600to1200msRmsDb": -47.3,
+            "sustainMinusOnsetDb": 4.7
+          },
+          "shortNote": {
+            "attackTo90pctMs": 227,
+            "first150msRmsDb": -49.3,
+            "sustain600to1200msRmsDb": -48.6,
+            "sustainMinusOnsetDb": 0.7
+          },
+          "rmsPerRun": [
+            -48.61,
+            -50.89,
+            -48.61
+          ]
+        },
+        "mixed/long-then-short": {
+          "rmsDbfs": -58.73,
+          "centroidHz": 2135.8,
+          "longNote": {
+            "attackTo90pctMs": 1499.6,
+            "first150msRmsDb": -180,
+            "sustain600to1200msRmsDb": -180,
+            "sustainMinusOnsetDb": 0
+          },
+          "shortNote": {
+            "attackTo90pctMs": 565.7,
+            "first150msRmsDb": -51.7,
+            "sustain600to1200msRmsDb": -54.1,
+            "sustainMinusOnsetDb": -2.4
+          },
+          "rmsPerRun": [
+            -50.21,
+            -58.73
+          ]
+        },
+        "uacc-only/cc32=40-no-keyswitch": {
+          "rmsDbfs": -57.69,
+          "centroidHz": 2135.6,
+          "longNote": {
+            "attackTo90pctMs": 43,
+            "first150msRmsDb": -51.8,
+            "sustain600to1200msRmsDb": -75.2,
+            "sustainMinusOnsetDb": -23.4
+          },
+          "shortNote": {
+            "attackTo90pctMs": 565.7,
+            "first150msRmsDb": -51.7,
+            "sustain600to1200msRmsDb": -54.1,
+            "sustainMinusOnsetDb": -2.4
+          },
+          "rmsPerRun": [
+            -57.69,
+            -57.69
+          ]
+        },
+        "control/generic-keyswitch-24": {
+          "rmsDbfs": -57.69,
+          "centroidHz": 2135.6,
+          "longNote": {
+            "attackTo90pctMs": 43,
+            "first150msRmsDb": -51.8,
+            "sustain600to1200msRmsDb": -75.2,
+            "sustainMinusOnsetDb": -23.4
+          },
+          "shortNote": {
+            "attackTo90pctMs": 565.7,
+            "first150msRmsDb": -51.7,
+            "sustain600to1200msRmsDb": -54.1,
+            "sustainMinusOnsetDb": -2.4
+          },
+          "rmsPerRun": [
+            -60.66,
+            -57.69
+          ]
+        },
+        "control/no-cc-at-all": {
+          "rmsDbfs": -45.15,
+          "centroidHz": 1959.7,
+          "longNote": {
+            "attackTo90pctMs": 451.7,
+            "first150msRmsDb": -48.4,
+            "sustain600to1200msRmsDb": -44.7,
+            "sustainMinusOnsetDb": 3.7
+          },
+          "shortNote": {
+            "attackTo90pctMs": 81.2,
+            "first150msRmsDb": -38.1,
+            "sustain600to1200msRmsDb": -45.5,
+            "sustainMinusOnsetDb": -7.4
+          },
+          "rmsPerRun": [
+            -240,
+            -45.15
+          ]
+        },
+        "dynamics/cc1=20": {
+          "rmsDbfs": -58.57,
+          "centroidHz": 2176.3,
+          "longNote": {
+            "attackTo90pctMs": 717.6,
+            "first150msRmsDb": -65.6,
+            "sustain600to1200msRmsDb": -52.5,
+            "sustainMinusOnsetDb": 13.1
+          },
+          "shortNote": {
+            "attackTo90pctMs": 238.9,
+            "first150msRmsDb": -84.9,
+            "sustain600to1200msRmsDb": -84.5,
+            "sustainMinusOnsetDb": 0.3
+          },
+          "rmsPerRun": [
+            -58,
+            -58.57
+          ]
+        },
+        "dynamics/cc1=127": {
+          "rmsDbfs": -45.71,
+          "centroidHz": 1934.1,
+          "longNote": {
+            "attackTo90pctMs": 451.7,
+            "first150msRmsDb": -49.5,
+            "sustain600to1200msRmsDb": -45.8,
+            "sustainMinusOnsetDb": 3.7
+          },
+          "shortNote": {
+            "attackTo90pctMs": 81.2,
+            "first150msRmsDb": -39.2,
+            "sustain600to1200msRmsDb": -45.2,
+            "sustainMinusOnsetDb": -6
+          },
+          "rmsPerRun": [
+            -45.71,
+            -45.71
+          ]
+        }
+      }
+    },
+    "driveUnmountedRun": {
+      "note": "drive D: (Spitfire sample content) was unmounted mid-run; every render after the first variant is silent - kept as the record of that failure mode",
+      "variants": {
+        "long/keyswitch1+cc32=1": {
+          "rmsPerRun": [
+            -48.76,
+            -47.83,
+            -47.83
+          ]
+        },
+        "short/keyswitch2+cc32=40": {
+          "rmsPerRun": [
+            -240,
+            -240,
+            -240
+          ]
+        },
+        "mixed/long-then-short": {
+          "rmsPerRun": [
+            -240,
+            -240
+          ]
+        },
+        "long/again": {
+          "rmsPerRun": [
+            -240,
+            -240
+          ]
+        },
+        "uacc-only/cc32=40-no-keyswitch": {
+          "rmsPerRun": [
+            -240,
+            -240
+          ]
+        },
+        "control/generic-keyswitch-24": {
+          "rmsPerRun": [
+            -240,
+            -240
+          ]
+        },
+        "control/no-cc-at-all": {
+          "rmsPerRun": [
+            -240,
+            -240
+          ]
+        },
+        "dynamics/cc1=20": {
+          "rmsPerRun": [
+            -240,
+            -240
+          ]
+        },
+        "dynamics/cc1=127": {
+          "rmsPerRun": [
+            -240,
+            -240
+          ]
+        },
+        "legato-patch/keyswitch0+cc32=20": {
+          "rmsPerRun": [
+            -240,
+            -240,
+            -240
+          ]
+        }
+      }
+    },
+    "switchingAfterPriming": {
+      "sequence": [
+        "long",
+        "short",
+        "long",
+        "legato",
+        "short",
+        "legato",
+        "long",
+        "short"
+      ],
+      "rows": [
+        {
+          "articulation": "long",
+          "outputSha256": "da6acc614cae53f3",
+          "rmsDbfs": -44.54,
+          "primedKeyswitch": 1,
+          "n1RmsDb": -45.6,
+          "seconds": 55.9
+        },
+        {
+          "articulation": "short",
+          "outputSha256": "34dec5fa786ddef6",
+          "rmsDbfs": -57.15,
+          "primedKeyswitch": 2,
+          "n1RmsDb": -58.4,
+          "seconds": 13.3
+        },
+        {
+          "articulation": "long",
+          "outputSha256": "d235f05288212f50",
+          "rmsDbfs": -43.17,
+          "primedKeyswitch": 1,
+          "n1RmsDb": -45.6,
+          "seconds": 7.4
+        },
+        {
+          "articulation": "legato",
+          "outputSha256": "ec3650bd450cebe9",
+          "rmsDbfs": null,
+          "primedKeyswitch": 0,
+          "n1RmsDb": -180,
+          "seconds": 16.9
+        },
+        {
+          "articulation": "short",
+          "outputSha256": "c4d614d8c022cde2",
+          "rmsDbfs": -54.09,
+          "primedKeyswitch": 2,
+          "n1RmsDb": -58.4,
+          "seconds": 27.1
+        },
+        {
+          "articulation": "legato",
+          "outputSha256": "ec3650bd450cebe9",
+          "rmsDbfs": null,
+          "primedKeyswitch": 0,
+          "n1RmsDb": -180,
+          "seconds": 16.2
+        },
+        {
+          "articulation": "long",
+          "outputSha256": "d235f05288212f50",
+          "rmsDbfs": -43.17,
+          "primedKeyswitch": 1,
+          "n1RmsDb": -45.6,
+          "seconds": 17.1
+        },
+        {
+          "articulation": "short",
+          "outputSha256": "c4d614d8c022cde2",
+          "rmsDbfs": -54.09,
+          "primedKeyswitch": 2,
+          "n1RmsDb": -58.4,
+          "seconds": 5.1
+        }
+      ],
+      "silentRenders": [
+        {
+          "articulation": "legato",
+          "outputSha256": "ec3650bd450cebe9",
+          "rmsDbfs": null,
+          "primedKeyswitch": 0,
+          "n1RmsDb": -180,
+          "seconds": 16.9
+        },
+        {
+          "articulation": "legato",
+          "outputSha256": "ec3650bd450cebe9",
+          "rmsDbfs": null,
+          "primedKeyswitch": 0,
+          "n1RmsDb": -180,
+          "seconds": 16.2
+        }
+      ],
+      "identicalWithinArticulation": {
+        "long": false,
+        "short": false,
+        "legato": true
+      }
+    }
+  },
+  "ab": {
+    "a": {
+      "label": "LOCAL_EXPRESSIVE_SYNTH",
+      "projectId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2",
+      "arrangementId": "d3b5c7c3-7f77-46a3-b6c5-6da39347ca1a",
+      "approvedRevisionId": "7bfb0d6d-8561-4f60-9ea8-02807381792b",
+      "idempotencyKey": null,
+      "jobId": "bd583b1b-e959-4354-8ea2-d439abeecdd2",
+      "exportArtifactId": "export-0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2-24-98de100e",
+      "exportUrl": "/api/exports/export-0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2-24-98de100e/download",
+      "exportZipSha256": "d30b1d3ac7c3a874f09208ef1a0cb65305fd034dafac9ed90a5ca2570f821852",
+      "elapsedMs": 374,
+      "productionReadiness": null,
+      "mastering": {
+        "target": {
+          "integratedLufs": -14,
+          "truePeakDbtp": -1,
+          "stereoWidth": 1,
+          "limiter": true
+        },
+        "output": {
+          "integratedLufs": -14.04,
+          "truePeakDbtp": -0.999999859003339,
+          "loudnessRangeLu": 14.92756027613685,
+          "maxMomentaryLufs": -7.71
+        },
+        "withinTarget": true
+      },
+      "durationSeconds": 80,
+      "stems": [
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--drums-groove",
+          "instrument": "drums",
+          "family": "drums",
+          "renderer": "LOCAL_EXPRESSIVE_SYNTH",
+          "rendererStatus": "preview-only",
+          "fallbackReason": "No PEDALBOARD_VST3 worker is configured. SFIZZ_VSCO2_CE is not configured (MUSIC_AI_WORKER_URL / SFIZZ_RENDER_API_URL).",
+          "soundSelection": null,
+          "assetIdentity": null,
+          "rendererOutputSha256": null,
+          "trackModelSha256": null,
+          "performedMaterialSha256": null,
+          "articulationAdapter": null,
+          "measurement": {
+            "sampleRate": 44100,
+            "channels": 2,
+            "frames": 3528000,
+            "durationSeconds": 80,
+            "integratedLufs": -31.67,
+            "loudnessRangeLu": 8.46,
+            "truePeakDbtp": -10.58,
+            "samplePeakDbfs": -10.58,
+            "sha256": "349798d261a3a3ade2f81e2382b0b8b7e1f4eb6e3c022249ba0f80e6cf72e4fa",
+            "bytes": 14112044,
+            "method": "BS.1770-4"
+          }
+        },
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--bass-bass",
+          "instrument": "bass",
+          "family": "strings",
+          "renderer": "LOCAL_EXPRESSIVE_SYNTH",
+          "rendererStatus": "preview-only",
+          "fallbackReason": "No PEDALBOARD_VST3 worker is configured. SFIZZ_VSCO2_CE is not configured (MUSIC_AI_WORKER_URL / SFIZZ_RENDER_API_URL).",
+          "soundSelection": null,
+          "assetIdentity": null,
+          "rendererOutputSha256": null,
+          "trackModelSha256": null,
+          "performedMaterialSha256": null,
+          "articulationAdapter": null,
+          "measurement": {
+            "sampleRate": 44100,
+            "channels": 2,
+            "frames": 3528000,
+            "durationSeconds": 80,
+            "integratedLufs": -23.54,
+            "loudnessRangeLu": 7.87,
+            "truePeakDbtp": -15.47,
+            "samplePeakDbfs": -15.47,
+            "sha256": "4ddcad9a3522b48a045b88e09df3540317ebff6f2d9004780744ca05474417cb",
+            "bytes": 14112044,
+            "method": "BS.1770-4"
+          }
+        },
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--winds-climax_layer",
+          "instrument": "winds",
+          "family": "winds",
+          "renderer": "LOCAL_EXPRESSIVE_SYNTH",
+          "rendererStatus": "preview-only",
+          "fallbackReason": "No PEDALBOARD_VST3 worker is configured. SFIZZ_VSCO2_CE is not configured (MUSIC_AI_WORKER_URL / SFIZZ_RENDER_API_URL).",
+          "soundSelection": null,
+          "assetIdentity": null,
+          "rendererOutputSha256": null,
+          "trackModelSha256": null,
+          "performedMaterialSha256": null,
+          "articulationAdapter": null,
+          "measurement": {
+            "sampleRate": 44100,
+            "channels": 2,
+            "frames": 3528000,
+            "durationSeconds": 80,
+            "integratedLufs": -19.08,
+            "loudnessRangeLu": 11.95,
+            "truePeakDbtp": -7.52,
+            "samplePeakDbfs": -7.52,
+            "sha256": "181ef24f5324757a9f672e9bd823e9a63286445e842ec8c223888a52d16e3bbb",
+            "bytes": 14112044,
+            "method": "BS.1770-4"
+          }
+        },
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--ensemble-transition",
+          "instrument": "ensemble",
+          "family": "keys",
+          "renderer": "LOCAL_EXPRESSIVE_SYNTH",
+          "rendererStatus": "preview-only",
+          "fallbackReason": "No PEDALBOARD_VST3 worker is configured. SFIZZ_VSCO2_CE is not configured (MUSIC_AI_WORKER_URL / SFIZZ_RENDER_API_URL).",
+          "soundSelection": null,
+          "assetIdentity": null,
+          "rendererOutputSha256": null,
+          "trackModelSha256": null,
+          "performedMaterialSha256": null,
+          "articulationAdapter": null,
+          "measurement": {
+            "sampleRate": 44100,
+            "channels": 2,
+            "frames": 3528000,
+            "durationSeconds": 80,
+            "integratedLufs": -13.89,
+            "loudnessRangeLu": 5.37,
+            "truePeakDbtp": -5.96,
+            "samplePeakDbfs": -5.96,
+            "sha256": "27243832f8626bf71a4763fca898ffb1162dcf973173748ea6d9d62881ea1e46",
+            "bytes": 14112044,
+            "method": "BS.1770-4"
+          }
+        }
+      ],
+      "files": {
+        "stems/01_drums.wav": 14112044,
+        "stems/02_bass.wav": 14112044,
+        "stems/03_ensemble.wav": 14112044,
+        "stems/04_winds.wav": 14112044,
+        "mix/full_mix.wav": 14112044,
+        "mix/premaster.wav": 14112044,
+        "mix/master.wav": 18407004,
+        "midi/full_arrangement.mid": 11559,
+        "project/manifest.json": 786762,
+        "metadata/export-manifest.json": 14227
+      },
+      "measurements": {
+        "stems/01_drums.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -31.67,
+          "loudnessRangeLu": 8.46,
+          "truePeakDbtp": -10.58,
+          "samplePeakDbfs": -10.58,
+          "sha256": "349798d261a3a3ade2f81e2382b0b8b7e1f4eb6e3c022249ba0f80e6cf72e4fa",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        },
+        "stems/02_bass.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -23.54,
+          "loudnessRangeLu": 7.87,
+          "truePeakDbtp": -15.47,
+          "samplePeakDbfs": -15.47,
+          "sha256": "4ddcad9a3522b48a045b88e09df3540317ebff6f2d9004780744ca05474417cb",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        },
+        "stems/03_ensemble.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -13.89,
+          "loudnessRangeLu": 5.37,
+          "truePeakDbtp": -5.96,
+          "samplePeakDbfs": -5.96,
+          "sha256": "27243832f8626bf71a4763fca898ffb1162dcf973173748ea6d9d62881ea1e46",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        },
+        "stems/04_winds.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -19.08,
+          "loudnessRangeLu": 11.95,
+          "truePeakDbtp": -7.52,
+          "samplePeakDbfs": -7.52,
+          "sha256": "181ef24f5324757a9f672e9bd823e9a63286445e842ec8c223888a52d16e3bbb",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        },
+        "mix/full_mix.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -23.34,
+          "loudnessRangeLu": 15.49,
+          "truePeakDbtp": -7.82,
+          "samplePeakDbfs": -7.82,
+          "sha256": "13aea1ffcfbb7c6941c7a272fe2a2070d72137bb1ba8ab2db3493f8349f3ca48",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        },
+        "mix/premaster.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -23.34,
+          "loudnessRangeLu": 15.49,
+          "truePeakDbtp": -7.82,
+          "samplePeakDbfs": -7.82,
+          "sha256": "13aea1ffcfbb7c6941c7a272fe2a2070d72137bb1ba8ab2db3493f8349f3ca48",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        },
+        "mix/master.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 4601740,
+          "durationSeconds": 104.348,
+          "integratedLufs": -14.04,
+          "loudnessRangeLu": 15.06,
+          "truePeakDbtp": -1,
+          "samplePeakDbfs": -1,
+          "sha256": "9172d24ead9f23c5f1d169f05e29c2bd2438db110f450cceecf1bc76405abdef",
+          "bytes": 18407004,
+          "method": "BS.1770-4"
+        }
+      }
+    },
+    "b": null,
+    "b2": null,
+    "bWithDriveUnmounted": {
+      "note": "side B exported while drive D: (Spitfire sample content) was unmounted: the worker rendered silence and the export refused to attest it ('returned audio that failed validation'), so the stem fell back to the preview synth with that reason",
+      "label": "SPITFIRE_ABBEY_ROAD_ONE",
+      "projectId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2",
+      "arrangementId": "d3b5c7c3-7f77-46a3-b6c5-6da39347ca1a",
+      "approvedRevisionId": "7bfb0d6d-8561-4f60-9ea8-02807381792b",
+      "idempotencyKey": "sound-ab:SPITFIRE_ABBEY_ROAD_ONE:1789002688326",
+      "jobId": "6491c8f1-622b-4350-8aa2-8317b9295211",
+      "exportArtifactId": "export-0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2-25-4f72733d",
+      "exportUrl": "/api/exports/export-0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2-25-4f72733d/download",
+      "exportZipSha256": "98c1d0226097ab20a9dfcadf50741c71b9b0b04c834acfb9cea99cebbc665195",
+      "elapsedMs": 74442,
+      "productionReadiness": null,
+      "mastering": {
+        "target": {
+          "integratedLufs": -14,
+          "truePeakDbtp": -1,
+          "stereoWidth": 1,
+          "limiter": true
+        },
+        "output": {
+          "integratedLufs": -14.04,
+          "truePeakDbtp": -0.999999859003339,
+          "loudnessRangeLu": 14.92756027613685,
+          "maxMomentaryLufs": -7.71
+        },
+        "withinTarget": true
+      },
+      "durationSeconds": 80,
+      "stems": [
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--drums-groove",
+          "instrument": "drums",
+          "family": "drums",
+          "renderer": "LOCAL_EXPRESSIVE_SYNTH",
+          "rendererStatus": "preview-only",
+          "fallbackReason": "The licensed native renderer was unavailable or failed attestation (PEDALBOARD_VST3: premium instrument routing refused (family drums names asset preview-synth, which the renderer has not attested (attested: retrologue-2.4.0)); SFIZZ_VSCO2_CE is not configured (MUSIC_AI_WORKER_URL / SFIZZ_RENDER_API_URL).).",
+          "soundSelection": null,
+          "assetIdentity": null,
+          "rendererOutputSha256": null,
+          "trackModelSha256": null,
+          "performedMaterialSha256": null,
+          "articulationAdapter": null,
+          "measurement": {
+            "sampleRate": 44100,
+            "channels": 2,
+            "frames": 3528000,
+            "durationSeconds": 80,
+            "integratedLufs": -31.67,
+            "loudnessRangeLu": 8.46,
+            "truePeakDbtp": -10.58,
+            "samplePeakDbfs": -10.58,
+            "sha256": "349798d261a3a3ade2f81e2382b0b8b7e1f4eb6e3c022249ba0f80e6cf72e4fa",
+            "bytes": 14112044,
+            "method": "BS.1770-4"
+          }
+        },
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--bass-bass",
+          "instrument": "bass",
+          "family": "strings",
+          "renderer": "LOCAL_EXPRESSIVE_SYNTH",
+          "rendererStatus": "preview-only",
+          "fallbackReason": "The licensed native renderer was unavailable or failed attestation (PEDALBOARD_VST3: premium instrument routing refused (family strings names asset preview-synth, which the renderer has not attested (attested: retrologue-2.4.0)); SFIZZ_VSCO2_CE is not configured (MUSIC_AI_WORKER_URL / SFIZZ_RENDER_API_URL).).",
+          "soundSelection": null,
+          "assetIdentity": null,
+          "rendererOutputSha256": null,
+          "trackModelSha256": null,
+          "performedMaterialSha256": null,
+          "articulationAdapter": null,
+          "measurement": {
+            "sampleRate": 44100,
+            "channels": 2,
+            "frames": 3528000,
+            "durationSeconds": 80,
+            "integratedLufs": -23.54,
+            "loudnessRangeLu": 7.87,
+            "truePeakDbtp": -15.47,
+            "samplePeakDbfs": -15.47,
+            "sha256": "4ddcad9a3522b48a045b88e09df3540317ebff6f2d9004780744ca05474417cb",
+            "bytes": 14112044,
+            "method": "BS.1770-4"
+          }
+        },
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--winds-climax_layer",
+          "instrument": "winds",
+          "family": "winds",
+          "renderer": "LOCAL_EXPRESSIVE_SYNTH",
+          "rendererStatus": "preview-only",
+          "fallbackReason": "The licensed native renderer was unavailable or failed attestation (PEDALBOARD_VST3: returned audio that failed validation; SFIZZ_VSCO2_CE is not configured (MUSIC_AI_WORKER_URL / SFIZZ_RENDER_API_URL).).",
+          "soundSelection": null,
+          "assetIdentity": null,
+          "rendererOutputSha256": null,
+          "trackModelSha256": null,
+          "performedMaterialSha256": null,
+          "articulationAdapter": null,
+          "measurement": {
+            "sampleRate": 44100,
+            "channels": 2,
+            "frames": 3528000,
+            "durationSeconds": 80,
+            "integratedLufs": -19.08,
+            "loudnessRangeLu": 11.95,
+            "truePeakDbtp": -7.52,
+            "samplePeakDbfs": -7.52,
+            "sha256": "181ef24f5324757a9f672e9bd823e9a63286445e842ec8c223888a52d16e3bbb",
+            "bytes": 14112044,
+            "method": "BS.1770-4"
+          }
+        },
+        {
+          "id": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--ensemble-transition",
+          "instrument": "ensemble",
+          "family": "keys",
+          "renderer": "LOCAL_EXPRESSIVE_SYNTH",
+          "rendererStatus": "preview-only",
+          "fallbackReason": "The licensed native renderer was unavailable or failed attestation (PEDALBOARD_VST3: premium instrument routing refused (family keys names asset preview-synth, which the renderer has not attested (attested: retrologue-2.4.0)); SFIZZ_VSCO2_CE is not configured (MUSIC_AI_WORKER_URL / SFIZZ_RENDER_API_URL).).",
+          "soundSelection": null,
+          "assetIdentity": null,
+          "rendererOutputSha256": null,
+          "trackModelSha256": null,
+          "performedMaterialSha256": null,
+          "articulationAdapter": null,
+          "measurement": {
+            "sampleRate": 44100,
+            "channels": 2,
+            "frames": 3528000,
+            "durationSeconds": 80,
+            "integratedLufs": -13.89,
+            "loudnessRangeLu": 5.37,
+            "truePeakDbtp": -5.96,
+            "samplePeakDbfs": -5.96,
+            "sha256": "27243832f8626bf71a4763fca898ffb1162dcf973173748ea6d9d62881ea1e46",
+            "bytes": 14112044,
+            "method": "BS.1770-4"
+          }
+        }
+      ],
+      "files": {
+        "stems/01_drums.wav": 14112044,
+        "stems/02_bass.wav": 14112044,
+        "stems/03_ensemble.wav": 14112044,
+        "stems/04_winds.wav": 14112044,
+        "mix/full_mix.wav": 14112044,
+        "mix/premaster.wav": 14112044,
+        "mix/master.wav": 18407004,
+        "midi/full_arrangement.mid": 11559,
+        "project/manifest.json": 787415,
+        "metadata/export-manifest.json": 14227
+      },
+      "measurements": {
+        "stems/01_drums.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -31.67,
+          "loudnessRangeLu": 8.46,
+          "truePeakDbtp": -10.58,
+          "samplePeakDbfs": -10.58,
+          "sha256": "349798d261a3a3ade2f81e2382b0b8b7e1f4eb6e3c022249ba0f80e6cf72e4fa",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        },
+        "stems/02_bass.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -23.54,
+          "loudnessRangeLu": 7.87,
+          "truePeakDbtp": -15.47,
+          "samplePeakDbfs": -15.47,
+          "sha256": "4ddcad9a3522b48a045b88e09df3540317ebff6f2d9004780744ca05474417cb",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        },
+        "stems/03_ensemble.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -13.89,
+          "loudnessRangeLu": 5.37,
+          "truePeakDbtp": -5.96,
+          "samplePeakDbfs": -5.96,
+          "sha256": "27243832f8626bf71a4763fca898ffb1162dcf973173748ea6d9d62881ea1e46",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        },
+        "stems/04_winds.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -19.08,
+          "loudnessRangeLu": 11.95,
+          "truePeakDbtp": -7.52,
+          "samplePeakDbfs": -7.52,
+          "sha256": "181ef24f5324757a9f672e9bd823e9a63286445e842ec8c223888a52d16e3bbb",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        },
+        "mix/full_mix.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -23.34,
+          "loudnessRangeLu": 15.49,
+          "truePeakDbtp": -7.82,
+          "samplePeakDbfs": -7.82,
+          "sha256": "13aea1ffcfbb7c6941c7a272fe2a2070d72137bb1ba8ab2db3493f8349f3ca48",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        },
+        "mix/premaster.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -23.34,
+          "loudnessRangeLu": 15.49,
+          "truePeakDbtp": -7.82,
+          "samplePeakDbfs": -7.82,
+          "sha256": "13aea1ffcfbb7c6941c7a272fe2a2070d72137bb1ba8ab2db3493f8349f3ca48",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        },
+        "mix/master.wav": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 4601740,
+          "durationSeconds": 104.348,
+          "integratedLufs": -14.04,
+          "loudnessRangeLu": 15.06,
+          "truePeakDbtp": -1,
+          "samplePeakDbfs": -1,
+          "sha256": "9172d24ead9f23c5f1d169f05e29c2bd2438db110f450cceecf1bc76405abdef",
+          "bytes": 18407004,
+          "method": "BS.1770-4"
+        }
+      }
+    },
+    "abMasters": {
+      "a": null,
+      "b": null
+    },
+    "registration": null
+  }
+}

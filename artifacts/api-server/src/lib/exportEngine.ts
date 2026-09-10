@@ -26,6 +26,7 @@ import {
 import { decideNativeRoute } from "./nativeRendererRouting";
 import { loadPremiumRoutingTable } from "./premiumInstrumentRouting";
 import { resolveTrackAsset, toSoundCatalogue } from "./soundSelectionBrain";
+import { adaptTrackForSpitfire, spitfireGainTrimLinear, spitfireProfileForAsset, spitfireRefusal } from "./spitfireArticulation";
 import { MASTERING_ENGINE_VERSION, masterAudio as masterThroughEngine, masteringProfile, tracksForMasterProfile } from "./masteringEngine";
 import { validateCanonicalTrackModels } from "./musicProviders";
 import type { PedalboardProcessingEvidence } from "./pedalboardBuiltin";
@@ -728,9 +729,17 @@ export async function renderArrangementExport(input: {
   // choice from the worker's attested catalogue, then the table default, then
   // the worker's own default. Only attested instruments can be chosen.
   const routingTable = pedalboardRenderer.isConfigured() ? loadPremiumRoutingTable() : null;
-  const soundCatalogue = pedalboardRenderer.isConfigured()
-    ? toSoundCatalogue(await pedalboardRenderer.listAttestedAssets().catch(() => []))
+  // PR-97: the attested assets are kept whole - the Spitfire adapter reads the
+  // manifest hints (manufacturer, patches, keyswitch table, trim) the brain's
+  // catalogue view does not carry.
+  const attestedAssets = pedalboardRenderer.isConfigured()
+    ? await pedalboardRenderer.listAttestedAssets().catch(() => [])
     : [];
+  const soundCatalogue = toSoundCatalogue(attestedAssets);
+  const spitfireProfileFor = (assetId: string | undefined) => {
+    const asset = assetId ? attestedAssets.find((candidate) => candidate.id === assetId) : undefined;
+    return asset ? spitfireProfileForAsset(asset) : null;
+  };
   // PR-92: one health round trip tells routing which families the sfizz
   // worker serves, by the same ordered map the worker itself resolves with.
   const sfizzState = await sfizzRenderer.workerState();
@@ -763,7 +772,23 @@ export async function renderArrangementExport(input: {
         const usePedalboard = candidate.renderer === "PEDALBOARD_VST3";
         let assetId: string | undefined;
         let soundSelection: RenderedTrack["soundSelection"];
+        // PR-97: what actually goes over the wire for a Spitfire asset, and the
+        // measured trim applied to what comes back.
+        let wireTrack = rendered.trackModel;
+        let keyswitchLeadSeconds: number | undefined;
+        let gainTrim = 1;
+        let articulationAdapter: NonNullable<RenderedTrack["rendererAttestation"]>["articulationAdapter"];
         if (usePedalboard && (routingTable || soundCatalogue.length)) {
+          // PR-97: a Spitfire library that holds no content for this family is
+          // not a candidate at all - the brain never sees it for this track, and
+          // the reason is kept for the stem.
+          const spitfireRefusals: string[] = [];
+          const usableCatalogue = soundCatalogue.filter((entry) => {
+            const profile = spitfireProfileFor(entry.assetId);
+            const refusal = profile ? spitfireRefusal(rendered.trackModel, profile) : null;
+            if (refusal) spitfireRefusals.push(refusal);
+            return !refusal;
+          });
           const resolved = resolveTrackAsset({
             track: {
               trackId: rendered.trackModel.id,
@@ -773,10 +798,14 @@ export async function renderArrangementExport(input: {
               notes: rendered.trackModel.notes,
             },
             table: routingTable,
-            catalogue: soundCatalogue,
+            catalogue: usableCatalogue,
             styleProfile: input.styleProfile ?? null,
           });
-          soundSelection = { assetId: resolved.assetId, source: resolved.source, reason: resolved.reason };
+          soundSelection = {
+            assetId: resolved.assetId,
+            source: resolved.source,
+            reason: resolved.reason + (spitfireRefusals.length ? ` | not offered: ${spitfireRefusals.join("; ")}` : ""),
+          };
           // A rule that cannot be honoured is a refusal, not a guess: rendering
           // with a different instrument than the operator named would be wrong
           // audio presented as right.
@@ -784,10 +813,41 @@ export async function renderArrangementExport(input: {
             // PR-92: the refusal is final for PEDALBOARD_VST3 - but it says
             // nothing about the next attested renderer, which serves the track
             // under its own published map and labels the stem with it.
-            failures.push(`PEDALBOARD_VST3: premium instrument routing refused (${resolved.reason})`);
+            failures.push(`PEDALBOARD_VST3: premium instrument routing refused (${resolved.reason})`
+              + (spitfireRefusals.length ? `; not offered: ${spitfireRefusals.join("; ")}` : ""));
             continue;
           }
           assetId = resolved.assetId ?? undefined;
+          // An operator rule may still name a Spitfire asset outright; the same
+          // refusal applies, and a served track is translated for the library.
+          const profile = spitfireProfileFor(assetId);
+          if (profile) {
+            const refusal = spitfireRefusal(rendered.trackModel, profile);
+            if (refusal) {
+              failures.push(`PEDALBOARD_VST3: ${refusal}`);
+              continue;
+            }
+            const adapted = adaptTrackForSpitfire(rendered.trackModel, profile);
+            wireTrack = adapted.track;
+            keyswitchLeadSeconds = profile.keyswitchLeadSeconds;
+            gainTrim = spitfireGainTrimLinear(profile);
+            articulationAdapter = {
+              id: adapted.report.adapter,
+              assetId: profile.assetId,
+              protocol: profile.protocol,
+              sourcePerformedMaterialSha256: performedMaterialSha256(rendered.trackModel),
+              wirePerformedMaterialSha256: performedMaterialSha256(wireTrack),
+              techniqueChanges: adapted.report.techniqueChanges.length,
+              cc32Events: adapted.report.cc32Events,
+              keyswitchesRewritten: adapted.report.keyswitchesRewritten,
+              cc1Inserted: adapted.report.cc1Inserted,
+              gainTrimDb: profile.gainTrimDb,
+            };
+            soundSelection.reason += ` | ${adapted.report.adapter} (${profile.protocol}): `
+              + adapted.report.techniqueChanges.map((change) => `${change.technique}@${change.time}s ks${change.keyswitch ?? "-"}/cc32=${change.uacc}`).join(", ")
+              + (adapted.report.cc1Inserted ? `; CC1 default ${profile.defaultCc1}` : "")
+              + (profile.gainTrimDb ? `; trim ${profile.gainTrimDb} dB` : "");
+          }
         }
         if (!usePedalboard) {
           // The VSCO 2 CE instrument the worker's map assigned - and, when the
@@ -805,10 +865,10 @@ export async function renderArrangementExport(input: {
         try {
           const native = usePedalboard
             ? await pedalboardRenderer.renderAttested(
-                rendered.trackModel,
+                wireTrack,
                 SAMPLE_RATE,
                 pipeline.durationSeconds,
-                { assetId },
+                { assetId, keyswitchLeadSeconds },
               )
             : await sfizzRenderer.renderAttested(
                 rendered.trackModel,
@@ -816,7 +876,7 @@ export async function renderArrangementExport(input: {
                 pipeline.durationSeconds,
               );
           samples = native.samples;
-          rendererAttestation = native.attestation;
+          rendererAttestation = articulationAdapter ? { ...native.attestation, articulationAdapter } : native.attestation;
         } catch (error) {
           // A configured endpoint is not proof of a licensed, compatible asset.
           // Keep the already-rendered deterministic stem and do not attribute it
@@ -839,7 +899,7 @@ export async function renderArrangementExport(input: {
           continue;
         }
         const volume = activeTracks.find((track) => track.id === rendered.trackModel.id)?.volume ?? 0;
-        const gain = 10 ** (volume / 20);
+        const gain = 10 ** (volume / 20) * gainTrim;
         if (gain !== 1) {
           for (let index = 0; index < samples.length; index += 1) samples[index] *= gain;
         }
@@ -892,8 +952,24 @@ export async function renderArrangementExport(input: {
   // attested stems of the other tracks down with it. The master is
   // production-ready only when every stem is native (below); until then the
   // export is a labelled mixed preview, each stem saying who rendered it.
+  // PR-97: a stem rendered through the Spitfire adapter attests the translated
+  // track; the export re-derives that translation from the canonical track
+  // and accepts the stem only when every digest in the chain agrees.
+  const attestsPerformedMaterial = (track: RenderedTrack): boolean => {
+    const attestation = track.rendererAttestation;
+    if (!attestation) return false;
+    const canonical = performedMaterialSha256(track.trackModel);
+    const adapter = attestation.articulationAdapter;
+    if (!adapter) return attestation.performedMaterialSha256 === canonical;
+    const profile = spitfireProfileFor(adapter.assetId);
+    if (!profile) return false;
+    const wire = performedMaterialSha256(adaptTrackForSpitfire(track.trackModel, profile).track);
+    return adapter.sourcePerformedMaterialSha256 === canonical
+      && adapter.wirePerformedMaterialSha256 === wire
+      && attestation.performedMaterialSha256 === wire;
+  };
   const nativeStemBlockers = (track: RenderedTrack): string[] => track.rendererStatus !== "licensed-native" ? [] : [
-    ...(track.rendererAttestation?.performedMaterialSha256 === performedMaterialSha256(track.trackModel)
+    ...(attestsPerformedMaterial(track)
       ? []
       : [`${track.trackModel.id} native render does not attest its performed material.`]),
     ...trackEvidenceFailures(track),

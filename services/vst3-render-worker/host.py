@@ -426,11 +426,11 @@ def parse_wav_header(data: bytes) -> dict:
     raise ValueError("no data chunk")
 
 
-def render_track(plugin, track: dict, sample_rate: int, duration_seconds: float) -> RenderOutput:
+def render_track(plugin, track: dict, sample_rate: int, duration_seconds: float, *, keyswitch_lead_seconds: float = 0.01) -> RenderOutput:
     if sample_rate not in SUPPORTED_SAMPLE_RATES:
         raise ValueError(f"unsupported sample rate {sample_rate}")
     frames = frames_for(sample_rate, duration_seconds)
-    events = build_events(track, duration_seconds)
+    events = build_events(track, duration_seconds, keyswitch_lead_seconds=keyswitch_lead_seconds)
     messages = to_mido_messages(events)
     audio = plugin(messages, duration=frames / sample_rate, sample_rate=float(sample_rate), num_channels=2, reset=True)
     stereo = _to_stereo(audio, frames)
@@ -564,7 +564,10 @@ def asset_public_fields(asset: dict) -> dict:
     are informational; the routing and sound-selection decisions are the
     API's."""
     public = {key: asset[key] for key in ("id", "identity", "sha256", "licenseOwner", "licenseReference", "rendererIdentity", "rendererSha256")}
-    for hint in ("name", "manufacturer", "families", "roles", "character", "library", "sfzSha256"):
+    # PR-97: `patches` (installed presets), `gainTrimDb` (a measured level trim the
+    # API applies to the stem) and `articulation` (protocol + keyswitch table of
+    # the loaded preset) travel too - descriptive, never a path.
+    for hint in ("name", "manufacturer", "families", "roles", "character", "library", "sfzSha256", "patches", "gainTrimDb", "articulation"):
         if hint in asset:
             public[hint] = asset[hint]
     return public

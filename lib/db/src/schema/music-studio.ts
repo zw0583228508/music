@@ -2246,7 +2246,8 @@ export type ControlEvent = {
 
 export type InstrumentDefinition = {
   id: string;
-  family: "keys" | "strings" | "brass" | "drums" | "guitar" | "voice" | "synth";
+  /** PR-97: `winds` joins the families - the planner already writes a "winds" part and the Performance Engine already phrases it; the definition no longer falls through to a piano. */
+  family: "keys" | "strings" | "brass" | "winds" | "drums" | "guitar" | "voice" | "synth";
   playableRange: { min: number; max: number };
   comfortableRange: { min: number; max: number };
   registers: Array<{ name: string; min: number; max: number; character: string }>;

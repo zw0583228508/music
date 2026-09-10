@@ -13,6 +13,7 @@ export const InstrumentDefinitionFamily = {
   keys: 'keys',
   strings: 'strings',
   brass: 'brass',
+  winds: 'winds',
   drums: 'drums',
   guitar: 'guitar',
   voice: 'voice',

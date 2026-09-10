@@ -12,7 +12,7 @@
  */
 import type { TrackModel } from "@workspace/db";
 
-export const PLATFORM_FAMILIES = ["keys", "strings", "brass", "drums", "guitar", "voice", "synth"] as const;
+export const PLATFORM_FAMILIES = ["keys", "strings", "brass", "winds", "drums", "guitar", "voice", "synth"] as const;
 export type PlatformFamily = (typeof PLATFORM_FAMILIES)[number];
 
 export type SfizzInstrumentMapEntry = {
@@ -167,6 +167,6 @@ export function sfizzFamilyCoverage(map: SfizzInstrumentMap): Array<{
       })
       .map((entry) => ({ match: entry.match, sfz: entry.sfz, instrument: entry.instrument, ...(entry.standIn ? { standIn: entry.standIn } : {}) }));
     const served = instruments.some((entry) => entry.match.family);
-    return { family, served, instruments, reason: served ? null : map.unserved?.[family] ?? "not mapped" };
+    return { family, served, instruments, reason: served ? null : map.unserved?.[family] ?? `not mapped: the published map names no instrument and no reason for '${family}' (a family the map predates); the track keeps the preview synth or another attested renderer` };
   });
 }
