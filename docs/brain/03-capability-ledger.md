@@ -1,0 +1,53 @@
+# Arrangement Brain — capability ledger
+
+One row per quality-critical capability the brief requires. The rung is the
+highest one **proven** (a test, a benchmark run or a rendered arrangement that
+a human judged); nothing moves up on the strength of a type, a prompt or a
+plan. Updated by the lead at every merge. Rungs: D = DESIGNED, I = IMPLEMENTED,
+N = INTEGRATED on the production path, T = TESTED (unit + positive control),
+B = BENCHMARKED vs the frozen baseline, V = VALIDATED ON OUTPUT (rendered,
+judged). "—" = does not exist.
+
+| capability | rung 2026-09-10 (before the program) | evidence | owning stream |
+|---|---|---|---|
+| Physical playability (range, polyphony, leap, breath) | T (calibrated on 30,570 human windows) | `judge-calibration.json`, `musicalConstraints.test.ts` | keep; B-00 documents the three-validator disagreement |
+| Playability repair (fold / release) | T | `playabilityRepair.test.ts` (6, vs the contract validator) | PR-98; B-02 must make it rarely needed |
+| Native-render plausibility gate | T (positive control: the owner's drone) | `nativeRenderGate.test.ts` | PR-98 |
+| Per-stem renderer attestation in the export | N | export manifest of v6 | PR-98; B-07 extends to the revision evidence |
+| Arrangement arc (intended dynamics, texture, tension roles) | D (types only; source RMS used as intent) | diagnosis §1 | B-01 |
+| Form memory / section development operators | D | diagnosis §2 | B-01 |
+| Sung-section default; no accompaniment family as LEAD; `mix` never a family | — (defect) | stored plan of v3 | B-01 |
+| Harmony realisation (bass line first, per-role voicing, common tones, inversions) | I (SATB solver exists, off) | `voiceLeading.test.ts`; benchmark `do_not_promote` | B-02 |
+| One chord-symbol parser | — (twelve) | audit §5.6 | B-02 |
+| Instrument profiles (range, idiom, role suitability, blend, density tolerance) | I (coarse, 7 substring definitions) | `musicEngines.ts:390-506` | B-03 |
+| Register plan applied to pitch choice | D | budget occupancy by family counts | B-03 |
+| Range-aware sound selection | — (cello chosen for MIDI 79–91) | v4 export manifest | B-03 |
+| Silence as a decision | — | diagnosis §5 | B-03 API, B-01/B-02 wiring |
+| GroovePlan shared by drums / bass / comping; interlocking | — (fixed 4/4 grid) | diagnosis §7 | B-04 |
+| Transition device realisation (18 devices) | D | one 3-note figure | B-04 |
+| Per-section performance (role, dynamic, pedal on chord onsets, agogics) | I (engine) / defect at integration | diagnosis §8 | B-04 (accents) + B-00 (wiring) |
+| Note-level critics with location, severity, origin layer, repair, confidence | — (plan/source-graded) | audit §1.1, probes | B-05 |
+| Adversarial critic | — | — | B-05 |
+| Judge layer that preserves disagreement | — (weighted mean) | `musicCritic.ts:535` | B-05 |
+| Positive controls per critic dimension | — (none in production) | evaluation audit §2 | B-05 + B-08 |
+| Repair that changes notes and names the origin layer | — (plan-only, discarded) | audit §2.1 | B-06 |
+| Backtracking from a downstream finding to a plan decision | — | evaluation audit §5 | B-06 |
+| Shipped score = score of shipped notes | — (defect) | audit §2.2 | B-00 |
+| Hard-rule failure blocks selection | — ("best available") | audit §2.2 | B-00 |
+| Dropped parts reported | — | audit §2.3 | B-00 |
+| Honest provider confidence / readiness | — (formulas) | audit §1.5 | B-00 |
+| One planner per job (runner grades the brain's plan) | — (two planners) | architecture map hot spot 1 | B-00 |
+| Candidate search that produces genuinely different readings | — (seed + stride thinning) | audit §1.4 | B-00 (measure) → later stream |
+| Production render loop with audio critique attributed to layers | — (`render: false`) | audit §1.7 | B-07 |
+| Off-thread export render | — | PR-98 tracker | B-07 |
+| Frozen benchmark that measures the arrangement (not the corpus) | — (`harmonyScore` composer-invariant) | evaluation audit §0 | B-08 |
+| Stored baseline snapshot + CLI compare | — | evaluation audit §1.2 | B-08 |
+| Real corpus (Tier H human works, Tier P owner songs) | — (`REAL_BENCHMARK_CORPUS = []`) | evaluation audit §1.1 | B-08 |
+| Human A/B with positive controls in every session | I (V2 infra) / no votes | evaluation audit §3 | B-08 |
+| Style intelligence as one contract (`StyleGrammar`) | I (13 rule kinds, 2 consumed) | audit §1.8 | B-09 |
+| Motif ledger consumed by generation | — | diagnosis §4 | B-10 |
+| Observability: why this instrument / voicing / critic / repair / diff | — | audit §7 | B-11 |
+| Failure taxonomy with origin layer | — | evaluation audit §6 | B-11 |
+| Property / metamorphic / fuzz tests on musical invariants | — | audit §6 | B-12 |
+| Chain suites registered in the focused runner | partial (14 missing) | audit §6.1 | B-00 |
+| Whole-arrangement human judgement of a brain output | — (never) | `human-blind-ratings-live.json` scope | B-08 + every stream's gate |
