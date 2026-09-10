@@ -7999,6 +7999,40 @@ gate declared met.
   measured from the notes, so the ordering in the evidence is a measurement of
   this composer, not a fixed ranking. (9) Nobody listened to anything.
 
+- **Reconciled with B-06 at the merge.** B-06 (PR-134) carried a private
+  kind -> failure-code map inside `repairPlanner.ts` (`B05A_KIND_CODES`) plus
+  its own byte-identical copy of `DIMENSION_DEFAULT_CODE`, written while the
+  taxonomy still listed only B-05b’s kinds. B-05c put every B-05a/B-05c kind
+  into `critics/failureTaxonomy.ts` and gave `codeForKind` the same dimension
+  fallback, which made the private copy a second definition of one concept:
+  dead for every kind the taxonomy now lists (`codeForKind` was consulted
+  first) and, where it disagreed, a lie about what the planner would do. Both
+  copies are deleted; `failureCodeOf` is now `codeForKind(kind, dimension)` and
+  nothing else, so the taxonomy is the only source of truth. **The canonical
+  kind name is `single_voice_bed`** (B-05c’s rename of density’s
+  `bed_single_voice`); the B-06 defect corpus and the B-06 unit fixture were
+  updated to it, and the corpus row keeps its `id` `bed_single_voice`, which
+  names a corpus case and not an observation kind. Two real regressions B-05c
+  had caused are closed, not re-anchored: (a) moving `louder_section_thinner`
+  and the `density_flat_*` kinds from `DENSITY_FAILURE` to
+  `ENERGY_ARC_FAILURE` switched off `arc.set_texture_level`, whose trigger read
+  the stale code — the trigger now keys on the kind set as well as the code, so
+  the next code move cannot silently disarm it; (b) the corpus named a kind the
+  critics no longer emit, so its seeding reported zero observations. **Corpus
+  before/after: 0/8 repaired and 3/8 attributed to the causing layer under the
+  unreconciled merge, back to the merged B-06 baseline of 1/8 repaired and 4/8
+  attributed** (`arrival_thinner_than_setup` repaired at `arc`, 2 of 2 of its
+  observations resolved, burden 532.78 -> 457.20). The B-06 test that asserted
+  `DENSITY_FAILURE` for `louder_section_thinner` now asserts the taxonomy’s
+  `ENERGY_ARC_FAILURE`, with the reason beside it: a section thinner where the
+  arc planned it louder, and an arrival thinner than its own setup, are arc
+  decisions — the thickness is wrong only against the place the arc gave the
+  section, and the arc is the layer that would have to change. No assertion was
+  weakened and no number re-anchored; **no regression was left open** — the
+  seven defects the corpus still does not repair are the same seven, for the
+  same reasons B-06 recorded (the layers the planner reopens are read by the
+  composer only where B-01..B-04 wired them).
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

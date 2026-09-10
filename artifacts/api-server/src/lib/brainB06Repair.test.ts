@@ -151,7 +151,17 @@ test("the plan covers different problems before it repeats one edit (the judge's
 });
 
 test("every observation kind the critics emit gets a failure code, and an unmapped one is INPUT_UNKNOWN rather than a guess", () => {
-  assert.equal(failureCodeOf({ kind: "louder_section_thinner", dimension: "density" }), "DENSITY_FAILURE");
+  // The code is the taxonomy's, not a copy kept here: `failureCodeOf` is
+  // `codeForKind` and nothing else. A section that is *thinner where the arc
+  // planned it louder* is an arc failure, not a density one - the thickness is
+  // right or wrong only against the place the arc gave the section, and the
+  // layer that would have to change is the arc. Same for the arrival kind
+  // B-05c added: an arrival is an arc decision, so an arrival thinner than its
+  // own setup is `ENERGY_ARC_FAILURE`. `single_voice_bed` (a bed that is one
+  // line whatever the arc says) stays `DENSITY_FAILURE`.
+  assert.equal(failureCodeOf({ kind: "louder_section_thinner", dimension: "density" }), "ENERGY_ARC_FAILURE");
+  assert.equal(failureCodeOf({ kind: "arrival_thinner_than_setup", dimension: "density" }), "ENERGY_ARC_FAILURE");
+  assert.equal(failureCodeOf({ kind: "single_voice_bed", dimension: "density" }), "DENSITY_FAILURE");
   assert.equal(failureCodeOf({ kind: "vocal_masking", dimension: "register" }), "VOCAL_SPACE_FAILURE");
   assert.equal(failureCodeOf({ kind: "climax_misplaced", dimension: "emotionalArcAndTension" }), "ENERGY_ARC_FAILURE");
   assert.equal(failureCodeOf({ kind: "repeat_without_development", dimension: "sectionDevelopment" }), "FORM_FAILURE");
@@ -263,7 +273,7 @@ test("the splice replaces only the notes inside the pass's windows, and the scop
 
 test("the observation delta counts what the stage moved, and a verdict that worsens is named", () => {
   const before = [
-    { id: "a", dimension: "density", kind: "bed_single_voice", severity: "major", location: { startBar: 1, endBar: 4, trackIds: ["k"] }, evidence: {}, suspectedOrigin: "compose", originConfidence: 0.5, recommendedRepair: null, confidence: 0.5 },
+    { id: "a", dimension: "density", kind: "single_voice_bed", severity: "major", location: { startBar: 1, endBar: 4, trackIds: ["k"] }, evidence: {}, suspectedOrigin: "compose", originConfidence: 0.5, recommendedRepair: null, confidence: 0.5 },
     { id: "b", dimension: "register", kind: "vocal_masking", severity: "minor", location: { startBar: 5, endBar: 8, trackIds: ["k"] }, evidence: {}, suspectedOrigin: "register", originConfidence: 0.5, recommendedRepair: null, confidence: 0.5 },
     { id: "c", dimension: "groove", kind: "note", severity: "info", location: { startBar: 1, endBar: 8, trackIds: [] }, evidence: {}, suspectedOrigin: "groove", originConfidence: 0.5, recommendedRepair: null, confidence: 0.5 },
   ] as const;

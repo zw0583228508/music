@@ -63,83 +63,20 @@ export const QUEUE_DEPTH_FACTOR = 4;
 // ---------------------------------------------------------------------------
 
 /**
- * B-05a's dimension kinds are not in `critics/failureTaxonomy.ts` (written by
- * B-05b before B-05a landed); until the taxonomy lists them, this supplement
- * gives each one the code its definition matches. `codeForKind` wins when it
- * knows the kind.
+ * One map, and it is not here. B-06 shipped with a private `B05A_KIND_CODES`
+ * supplement plus its own copy of `DIMENSION_DEFAULT_CODE`, written while the
+ * taxonomy still listed only B-05b's kinds. B-05c put every B-05a/B-05c kind
+ * into `critics/failureTaxonomy.ts` and gave `codeForKind` the same dimension
+ * fallback, so the copy here had become a second definition of one concept -
+ * dead for every kind the taxonomy now lists (`codeForKind` was consulted
+ * first) and, where it disagreed, a lie about what the planner would do:
+ * `louder_section_thinner`, `quieter_section_denser` and the two
+ * `density_flat_*` kinds read `DENSITY_FAILURE` here and `ENERGY_ARC_FAILURE`
+ * there. The taxonomy owns kind -> code; a kind missing from it is added to it,
+ * never re-mapped here.
  */
-export const B05A_KIND_CODES: Readonly<Record<string, FailureCode>> = Object.freeze({
-  // register
-  low_mid_pileup: "REGISTER_FAILURE",
-  low_register_crowding: "REGISTER_FAILURE",
-  vocal_masking: "VOCAL_SPACE_FAILURE",
-  /** The part left the band the plan gave it: the notes contradict the plan. */
-  part_outside_planned_band: "PLAN_REALISATION_FAILURE",
-  part_outside_comfortable_range: "IDIOM_FAILURE",
-  sub_register_overlap: "AUDIO_BALANCE_FAILURE",
-  // orchestration
-  notes_outside_song: "PLAN_REALISATION_FAILURE",
-  unplanned_entry: "ORCHESTRATION_FAILURE",
-  continuous_tutti: "GLOBAL_COHERENCE_FAILURE",
-  // emotional arc
-  climax_misplaced: "ENERGY_ARC_FAILURE",
-  no_build_into_climax: "ENERGY_ARC_FAILURE",
-  no_release_after_climax: "ENERGY_ARC_FAILURE",
-  flat_arc: "ENERGY_ARC_FAILURE",
-  flat_arc_by_plan: "ENERGY_ARC_FAILURE",
-  // form
-  repeat_without_development: "FORM_FAILURE",
-  development_by_dynamics_only: "FORM_FAILURE",
-  repeat_without_identity: "FORM_FAILURE",
-  // harmony / voice leading
-  clash_share: "HARMONY_FAILURE",
-  overhang_across_chord_change: "HARMONY_FAILURE",
-  out_of_key_share: "HARMONY_FAILURE",
-  bass_leaves_chord: "HARMONY_FAILURE",
-  bass_rarely_states_root: "HARMONY_FAILURE",
-  parallel_perfects_within_part: "VOICE_LEADING_FAILURE",
-  no_common_tone_retention: "VOICE_LEADING_FAILURE",
-  voice_crossing_between_parts: "VOICE_LEADING_FAILURE",
-  // density
-  part_sparse_in_dense_section: "DENSITY_FAILURE",
-  comping_below_role_floor: "DENSITY_FAILURE",
-  bed_thin_voicing: "DENSITY_FAILURE",
-  bed_single_voice: "DENSITY_FAILURE",
-  part_overdense: "DENSITY_FAILURE",
-  foundation_gaps: "DENSITY_FAILURE",
-  louder_section_thinner: "DENSITY_FAILURE",
-  quieter_section_denser: "DENSITY_FAILURE",
-  density_flat_against_plan: "DENSITY_FAILURE",
-  density_flat_by_plan: "DENSITY_FAILURE",
-  // repetition
-  loop_without_variation: "REPETITION_FAILURE",
-  section_verbatim_copy: "FORM_FAILURE",
-  same_type_sections_unrelated: "FORM_FAILURE",
-  sections_indistinguishable: "FORM_FAILURE",
-});
-
-/** The code a dimension's unlisted kinds default to; `INPUT_UNKNOWN` for a dimension nobody mapped. */
-export const DIMENSION_DEFAULT_CODE: Readonly<Record<string, FailureCode>> = Object.freeze({
-  harmony: "HARMONY_FAILURE",
-  voiceLeading: "VOICE_LEADING_FAILURE",
-  melodyAndCounterline: "MOTIF_FAILURE",
-  motifRecurrenceAndDevelopment: "MOTIF_FAILURE",
-  groove: "GROOVE_FAILURE",
-  rhythmicInteraction: "GROOVE_FAILURE",
-  orchestration: "ORCHESTRATION_FAILURE",
-  idiomaticity: "IDIOM_FAILURE",
-  register: "REGISTER_FAILURE",
-  density: "DENSITY_FAILURE",
-  transitions: "TRANSITION_FAILURE",
-  repetitionVsVariation: "REPETITION_FAILURE",
-  sectionDevelopment: "FORM_FAILURE",
-  playability: "PLAYABILITY_FAILURE",
-  performanceRealisation: "PERFORMANCE_FAILURE",
-  emotionalArcAndTension: "ENERGY_ARC_FAILURE",
-});
-
 export function failureCodeOf(observation: Pick<CriticObservation, "kind" | "dimension">): ArrangementFailureCode {
-  return codeForKind(observation.kind) ?? B05A_KIND_CODES[observation.kind] ?? DIMENSION_DEFAULT_CODE[observation.dimension] ?? "INPUT_UNKNOWN";
+  return codeForKind(observation.kind, observation.dimension) ?? "INPUT_UNKNOWN";
 }
 
 // ---------------------------------------------------------------------------
@@ -375,6 +312,17 @@ type OperationDraft = {
 const BASS_KINDS = new Set(["bass_leaves_chord", "bass_rarely_states_root", "static_bass_no_approach", "bass_sustain_beyond_decay", "bass_and_keys_share_low_octave"]);
 const SECTION_WIDE_REGISTER_KINDS = new Set(["low_mid_pileup", "low_register_crowding", "close_position_same_octave", "keys_low_interval_mud", "bass_and_keys_share_low_octave", "register_crowded"]);
 const TRANSITION_KINDS = new Set(["transition_unprepared", "climax_not_prepared", "planned_fill_missing", "ending_is_a_cut", "ending_missing"]);
+/**
+ * The kinds that say a section's texture contradicts the place the arc gave it.
+ * They used to reach `arc.set_texture_level` through `DENSITY_FAILURE`; B-05c
+ * moved the arc-shaped ones to `ENERGY_ARC_FAILURE` (a thin arrival is an arc
+ * decision, not a density accident), which silently switched this operator off
+ * and dropped the corpus from 1/8 repaired to 0/8. The trigger keys on the kind
+ * set as well as the code so that the next code move cannot do it again.
+ */
+const TEXTURE_AGAINST_THE_ARC_KINDS = new Set(["arrival_thinner_than_setup", "louder_section_thinner", "quieter_section_denser", "density_flat_by_plan", "density_flat_against_plan"]);
+/** Of those, the ones that say the texture is too *thin* for the section's place: step it up, not down. */
+const TEXTURE_TOO_THIN_KINDS = new Set(["arrival_thinner_than_setup", "louder_section_thinner", "part_sparse_in_dense_section", "density_flat_by_plan", "density_flat_against_plan"]);
 
 /** A task-producing role for a family whose assigned role built no task (`taskFor` in partComposer.ts). */
 function taskProducingRole(family: string): string {
@@ -441,8 +389,8 @@ function draftOperation(layer: DecisionOriginLayer, group: Group, sections: Sect
           reason: `the arc is flat: raise the climax one marking and thin the quietest section`,
         };
       }
-      if (code === "DENSITY_FAILURE" && first) {
-        const thinner = kinds.has("louder_section_thinner") || kinds.has("part_sparse_in_dense_section") || kinds.has("density_flat_by_plan") || kinds.has("density_flat_against_plan");
+      if ((code === "DENSITY_FAILURE" || [...kinds].some((k) => TEXTURE_AGAINST_THE_ARC_KINDS.has(k))) && first) {
+        const thinner = [...kinds].some((k) => TEXTURE_TOO_THIN_KINDS.has(k));
         const steps = thinner ? 1 : -1;
         return {
           operation: "arc.set_texture_level",
