@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { SongModelData } from "@workspace/db";
 import { deriveMusicalMap } from "./songMusicalMap";
+import { canonicalizeSongModelCoordinates } from "./songModelValidation";
 import { ORCHESTRATOR_VERSION, orchestrateArrangement } from "./arrangementOrchestrator";
 
 const NOW = new Date("2026-01-01T00:00:00.000Z");
@@ -35,7 +36,30 @@ function makeModel(): SongModelData {
     });
   }
   const energy = [...Array(8).fill(0.32), ...Array(8).fill(0.9), ...Array(8).fill(0.35)] as number[];
+  // B-00: the fixture names a vocal stem, so it must also carry the vocal
+  // evidence the planners read. Without it the vocal map is `not_available`,
+  // the section planner makes `keys` the LEAD of every section, `taskFor("LEAD")`
+  // writes nothing outside instrumental sections, and the orchestrator now
+  // reports that planned-and-silent family as a hard-rule failure (the F5
+  // defect B-01 owns) instead of quietly shipping without it.
+  const phraseSpans = Array.from({ length: 12 }, (_, phrase) => ({ start: phrase * 4, end: phrase * 4 + 1.95 }));
+  const silentSpans = phraseSpans.slice(1).map((span, i) => ({ start: phraseSpans[i].end, end: span.start }));
+  const vocalProvenance = { sourceStemRole: "vocals", objectPath: "/objects/analysis/test/vocals.wav", provider: "TEST" };
   const model: SongModelData = {
+    vocalEvidence: {
+      status: "detected", reason: null, provenance: vocalProvenance,
+      sampleRate: 44_100, channels: 1, frameSizeSamples: 2048,
+      thresholds: { rms: 0.01, peak: 0.02, activitySample: 0.01, activityRatio: 0.2 },
+      observedVoicedWindows: phraseSpans, observedSilentWindows: silentSpans,
+    },
+    vocalIntelligence: {
+      version: "1.0", provenance: vocalProvenance,
+      phrases: { status: "detected", reason: null, events: phraseSpans.map((s, i) => ({ id: `phrase-${i + 1}`, start: s.start, end: s.end, confidence: 0.9 })) },
+      breaths: { status: "not_available", reason: "not synthesised", events: [] },
+      lyricAlignment: { status: "not_available", reason: "no lyrics", alignments: [] },
+      melodyAlignment: { status: "not_available", reason: "not synthesised", alignments: [] },
+      arrangementSpace: { status: "not_available", reason: "derived downstream", windows: [] },
+    },
     contractVersion: "2.0",
     timebase: { ppq: 960, originSeconds: 0, coordinateSystem: "seconds+ticks" },
     audio: {
@@ -70,8 +94,12 @@ function makeModel(): SongModelData {
     validation: { status: "accepted", issues: [] },
     fusion: { selectedProvider: "MT3", confidence: 0.9, decisions: [] },
   };
-  model.musicalMap = deriveMusicalMap(model, { now: NOW });
-  return model;
+  // The section planner recognises a sung section only through the vocal
+  // phrases' canonical coordinates, which analysis writes and this fixture
+  // must therefore write too.
+  const canonical = canonicalizeSongModelCoordinates(model);
+  canonical.musicalMap = deriveMusicalMap(canonical, { now: NOW });
+  return canonicalizeSongModelCoordinates(canonical);
 }
 
 test("the full chain runs and every stage is recorded", () => {

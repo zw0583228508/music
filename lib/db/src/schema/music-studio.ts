@@ -3551,6 +3551,8 @@ export type CritiqueDimensionScore = {
   /** 0..1 — lower when judged from the plan alone (no notes yet). */
   confidence: number;
   findings: string[];
+  // --- Brain B-00: say whether this dimension read the notes at all --------
+  notesConsulted?: boolean;
 };
 
 export type CritiqueRecommendedRepair = {
@@ -3573,6 +3575,9 @@ export type ArrangementCritique = {
   method: string;
   /** True when track models (notes) were supplied, not just the plan. */
   evaluatedNotes: boolean;
+  // --- Brain B-00: the share of the overall score that the notes can move ---
+  /** Sum of the weights of the dimensions that read notes (0 when none were supplied). */
+  noteEvidenceWeight?: number;
   feasible: boolean;
   hardRuleFindings: CritiqueFinding[];
   overallScore: number;
@@ -3602,6 +3607,11 @@ export type CriticRepairPass = {
   scoreBefore: number;
   scoreAfter: number;
   feasibleAfter: boolean;
+  // --- Brain B-00: a pass is a repair only if it changed something ---------
+  /** True when the applier's plan differs from the plan it was given. */
+  planChanged?: boolean;
+  /** True when the applier returned notes that differ from the notes it was given. */
+  notesChanged?: boolean;
 };
 
 /**
@@ -3617,6 +3627,98 @@ export type CriticRepairLoopResult = {
   finalScore: number;
   passes: CriticRepairPass[];
   finalCritique: ArrangementCritique;
+  // --- Brain B-00: the result carries what it critiqued ---------------------
+  /** The plan `finalCritique` was computed on (the input plan when nothing was applied). */
+  plan: ArrangementPlan;
+  /** The notes `finalCritique` was computed on, when the applier recomposed them. */
+  trackModels?: TrackModel[];
+  /** Whether anything actually changed across all passes. */
+  changed: { plan: boolean; notes: boolean };
+  /** Passes whose `applied` list is non-empty AND changed the plan or the notes. */
+  appliedPasses: number;
+};
+
+// ===========================================================================
+// Brain B-00 (integrity): candidate findings and the brain's persisted evidence
+// ===========================================================================
+
+/**
+ * A fact about a candidate the orchestrator would previously have swallowed:
+ * a part that wrote nothing, a tempo or meter that had to be assumed, a
+ * constraint the performed notes break, a playability check that did not run.
+ * `error` findings fail the hard-rule gate; a candidate with one is never
+ * `selected`.
+ */
+export type ArrangementBrainFinding = {
+  kind:
+    | "dropped_part"
+    | "planned_family_silent"
+    | "unknown_tempo"
+    | "unknown_meter"
+    | "performed_constraints"
+    | "playability_check_missing"
+    | "repair_unapplied";
+  severity: "error" | "warning" | "info";
+  instrument?: string;
+  taskId?: string;
+  sectionName?: string;
+  startBar?: number;
+  endBar?: number;
+  message: string;
+};
+
+export type ArrangementBrainStageRecord = {
+  stage: string;
+  status: "ok" | "skipped" | "failed";
+  detail: string;
+  evidence?: Record<string, number | string | boolean>;
+};
+
+export type PlayabilityRepairCounts = {
+  rangeFolds: number;
+  leapFolds: number;
+  durationLengthened: number;
+  breathTruncated: number;
+  polyphonyReleases: number;
+  dropped: number;
+  residual: string[];
+};
+
+/**
+ * What the Arrangement Brain persists on every candidate's `parameters`
+ * (`parameters.arrangementBrain`) instead of a `"stage:status"` string: its
+ * own plan, the stage records with evidence, every critique it computed,
+ * the repair passes, the playability-repair counts per track and the inputs
+ * of its confidence. Small enough to store; large enough to answer "why".
+ */
+export type ArrangementBrainCandidateEvidence = {
+  version: "1.0";
+  /** The candidate's own plan (the brain's layers; repaired when a repair pass recomposed it). */
+  plan: ArrangementPlan;
+  stages: ArrangementBrainStageRecord[];
+  traceable: boolean;
+  findings: ArrangementBrainFinding[];
+  hardRule: { feasible: boolean; reasons: string[] };
+  /** The critic on the composed notes, before any repair pass. */
+  initialCritique: ArrangementCritique;
+  /** The critic on the composed notes that went to performance (after repair when it recomposed). */
+  compositionCritique: ArrangementCritique;
+  /** The critic on the performed, playability-repaired notes — the notes that ship. This is what ranked. */
+  shippedCritique: ArrangementCritique;
+  /** `shippedCritique.overallScore - compositionCritique.overallScore`: how far the composed score overstated the shipped notes. */
+  scoreDriftCompositionToShipped: number;
+  repair: {
+    mode: "recompose";
+    outcome: CriticRepairLoopResult["outcome"];
+    passes: CriticRepairPass[];
+    appliedPasses: number;
+    planChanged: boolean;
+    notesChanged: boolean;
+  } | null;
+  playabilityRepairs: Array<{ trackId: string } & PlayabilityRepairCounts>;
+  confidence: { value: number; formula: string; inputs: Record<string, number> };
+  /** False when the brain itself would not have selected this candidate (hard-rule failure). */
+  selectable: boolean;
 };
 
 /** Deliberate candidate-generation strategies (PR-10). */

@@ -53,6 +53,37 @@ const DIMENSION_WEIGHT: Record<CritiqueDimension, number> = {
   performancePotential: 0.02,
 };
 
+/**
+ * Brain B-00 (confidence honesty): which dimensions read the composed notes at
+ * all. The other eight judge the plan or the source Song Model; their
+ * confidence is capped so a plan-only judgement never reports itself as
+ * better-founded than a note-level one. The critic rebuild (B-05) replaces
+ * the dimensions themselves; this only stops the literals from overstating.
+ */
+const READS_NOTES: Record<CritiqueDimension, boolean> = {
+  harmony: false,
+  groove: true,
+  voiceLeading: true,
+  leadCompatibility: false,
+  orchestration: false,
+  sectionDevelopment: false,
+  motifCoherence: false,
+  contrast: false,
+  transitions: false,
+  playability: true,
+  performancePotential: false,
+};
+/** Ceiling on the confidence of a dimension that never saw a note. */
+export const PLAN_ONLY_CONFIDENCE_CAP = 0.4;
+
+/** Sum of the weights of dimensions that read notes — the share of the score the notes can move. */
+export const NOTE_EVIDENCE_WEIGHT = Number(
+  (Object.keys(READS_NOTES) as CritiqueDimension[])
+    .filter((d) => READS_NOTES[d])
+    .reduce((sum, d) => sum + DIMENSION_WEIGHT[d], 0)
+    .toFixed(4),
+);
+
 type Partial3 = { score: number; confidence: number; findings: string[] };
 
 const NOTE_ROOTS: Record<string, number> = {
@@ -297,10 +328,21 @@ function critiqueLeadCompatibility(
   const budget = plan.orchestrationBudget;
   if (budget) {
     const sung = budget.windows.filter((w) => w.vocalAttention >= 0.6);
+    // B-00: the original predicate was `[...].some(() => a.densityMultiplier > 0.9) && a.densityMultiplier > 1`,
+    // whose callback ignored the role list, so it collapsed to `> 1` — a value only
+    // CLIMAX_LAYER can reach — and the +12 bonus was handed out by default. The
+    // intended rule: a foreground role (counter-melody, fill, call/response) is
+    // over-playing under the singer above 0.9; any role is above 1.
+    const FOREGROUND_ROLES = new Set(["COUNTER_MELODY", "FILL", "CALL_RESPONSE"]);
+    const roleOf = (instrument: string, window: { startBar: number; endBar: number }): string | null =>
+      plan.sectionPlan?.roleAssignments.find((r) =>
+        r.instrument === instrument && r.entryBar <= window.endBar && r.exitBar >= window.startBar)?.role ?? null;
     const overPlaying = sung.filter((w) =>
-      w.instrumentAdjustments.some((a) =>
-        ["COUNTER_MELODY", "FILL", "CALL_RESPONSE"].some(() => a.densityMultiplier > 0.9) &&
-        a.densityMultiplier > 1),
+      w.instrumentAdjustments.some((a) => {
+        const role = roleOf(a.instrument, w);
+        return (role !== null && FOREGROUND_ROLES.has(role) && a.densityMultiplier > 0.9) ||
+          a.densityMultiplier > 1;
+      }),
     ).length;
     if (sung.length) {
       if (overPlaying === 0) { score += 12; findings.push("Support instruments make room for the singer."); }
@@ -524,13 +566,22 @@ export function critiqueArrangement(input: {
     performancePotential: critiquePerformancePotential(map, plan),
   };
 
-  const dimensions: CritiqueDimensionScore[] = (Object.keys(parts) as CritiqueDimension[]).map((dimension) => ({
-    dimension,
-    score: parts[dimension].score,
-    weight: DIMENSION_WEIGHT[dimension],
-    confidence: clamp01(parts[dimension].confidence),
-    findings: parts[dimension].findings,
-  }));
+  const evaluatedNotes = Boolean(trackModels && trackModels.length);
+  const dimensions: CritiqueDimensionScore[] = (Object.keys(parts) as CritiqueDimension[]).map((dimension) => {
+    const notesConsulted = evaluatedNotes && READS_NOTES[dimension];
+    return {
+      dimension,
+      score: parts[dimension].score,
+      weight: DIMENSION_WEIGHT[dimension],
+      // B-00: a dimension that never saw a note may not report more confidence
+      // than a plan-level judgement supports.
+      confidence: clamp01(notesConsulted
+        ? parts[dimension].confidence
+        : Math.min(parts[dimension].confidence, PLAN_ONLY_CONFIDENCE_CAP)),
+      findings: parts[dimension].findings,
+      notesConsulted,
+    };
+  });
 
   const overallScore = gate.feasible
     ? clamp100(dimensions.reduce((sum, d) => sum + d.score * d.weight, 0))
@@ -546,7 +597,8 @@ export function critiqueArrangement(input: {
   return {
     version: MUSIC_CRITIC_VERSION,
     method: METHOD,
-    evaluatedNotes: Boolean(trackModels && trackModels.length),
+    evaluatedNotes,
+    noteEvidenceWeight: evaluatedNotes ? NOTE_EVIDENCE_WEIGHT : 0,
     feasible: gate.feasible,
     hardRuleFindings: gate.findings,
     overallScore,
