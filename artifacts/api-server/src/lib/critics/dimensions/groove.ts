@@ -32,7 +32,8 @@ import {
 } from "./shared";
 
 export const GROOVE_DIMENSION = "groove";
-export const GROOVE_VERSION = "1.0";
+/** 1.1: a planned drum fill at the drummer's entry (silent section before) is checked on the fill bar alone. */
+export const GROOVE_VERSION = "1.1";
 
 const KICK = new Set([35, 36]);
 const SNARE = new Set([38, 40]);
@@ -277,17 +278,37 @@ export function evaluateGroove(input: CriticInput) {
       if (!section || fillBar < 1) continue;
       const sectionNotes = context.notesInBars(drums, section.startBar, section.endBar);
       const bars = section.endBar - section.startBar + 1;
-      if (sectionNotes.length < 8 || bars < 2) continue;
+      if (bars < 2) continue;
       const lastBar = sectionNotes.filter((n) => n.bar === fillBar);
+      const toms = lastBar.filter((n) => TOMS.has(n.pitch)).length;
+      if (sectionNotes.length < 8) {
+        // The drummer does not play this section (since B-01 the arc brings the
+        // drums in at the chorus). The plan still asks for a fill into the next
+        // section: the entry fill. Four or more onsets in the fill bar, or a
+        // tom, realise it; a drummer absent on both sides of the boundary is
+        // the transition plan's inconsistency, reported by `transitions`.
+        const entersAtBoundary = context.notesInBars(drums, t.atBar, t.atBar).length > 0;
+        if (!entersAtBoundary || lastBar.length >= 4 || toms > 0) continue;
+        drafts.push({
+          kind: "planned_fill_missing",
+          severity: t.kind === "build" && t.strength >= 0.6 ? "major" : "minor",
+          location: { startBar: fillBar, endBar: fillBar, sectionName: section.name, trackIds: [drums.id] },
+          evidence: { lastBarOnsets: lastBar.length, meanOnsetsPerBar: sectionNotes.length / bars, densityRatio: -1, tomHits: toms, drumsSilentBeforeBoundary: true, transitionKind: t.kind, transitionStrength: t.strength },
+          suspectedOrigin: "compose",
+          originConfidence: confidenceFromCount(context.notesInBars(drums, t.atBar, t.atBar).length, 8, 0.8),
+          recommendedRepair: { operation: "realise_drum_fill", scope: "note", detail: `the plan asks for a drum fill into ${t.toSection} at bar ${t.atBar}, where the drums enter; bar ${fillBar} carries ${lastBar.length} drum onsets — write the entry fill` },
+          confidence: confidenceFromCount(context.notesInBars(drums, t.atBar, t.atBar).length, 12),
+        });
+        continue;
+      }
       const meanPerBar = sectionNotes.length / bars;
       const ratio = lastBar.length / Math.max(1, meanPerBar);
-      const toms = lastBar.filter((n) => TOMS.has(n.pitch)).length;
       if (ratio < 1.15 && toms === 0) {
         drafts.push({
           kind: "planned_fill_missing",
           severity: t.kind === "build" && t.strength >= 0.6 ? "major" : "minor",
           location: { startBar: fillBar, endBar: fillBar, sectionName: section.name, trackIds: [drums.id] },
-          evidence: { lastBarOnsets: lastBar.length, meanOnsetsPerBar: meanPerBar, densityRatio: ratio, tomHits: toms, transitionKind: t.kind, transitionStrength: t.strength },
+          evidence: { lastBarOnsets: lastBar.length, meanOnsetsPerBar: meanPerBar, densityRatio: ratio, tomHits: toms, drumsSilentBeforeBoundary: false, transitionKind: t.kind, transitionStrength: t.strength },
           suspectedOrigin: "compose",
           originConfidence: confidenceFromCount(sectionNotes.length, 8, 0.85),
           recommendedRepair: { operation: "realise_drum_fill", scope: "note", detail: `the plan asks for a drum fill into ${t.toSection} at bar ${t.atBar}; bar ${fillBar} carries ${lastBar.length} onsets against a section mean of ${meanPerBar.toFixed(1)} and no tom` },

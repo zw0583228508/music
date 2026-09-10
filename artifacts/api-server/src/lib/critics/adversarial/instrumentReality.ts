@@ -11,7 +11,7 @@
  *     definition resolved to another family (a keys part that became a kit).
  */
 import { checkArrangementConstraints } from "../../musicalConstraints";
-import type { CriticDimensionReport, CriticInput, CriticObservation } from "../types.b05b";
+import type { CriticDimensionReport, CriticInput, CriticObservation } from "../types";
 import {
   barAt, barSpan, buildReport, cellCoverage, clustersOf, confidenceFromEvidence, effectPast, longestUnbrokenRun,
   makeObservation, mean, notApplicable, prepare, type ControlStatus,

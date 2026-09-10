@@ -12,7 +12,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import test from "node:test";
 import type { MusicalNote, TrackModel } from "@workspace/db";
-import type { CriticDimensionReport, CriticObservation } from "../types.b05b";
+import type { CriticDimensionReport, CriticObservation } from "../types";
 import { ANCHOR_CASE_IDS, anchorFor, anchors } from "./anchors";
 import { ADVERSARIAL_MODULES, ADVERSARIAL_KINDS, runAdversarialCritics } from "./index";
 import { CONTROLS, controlFor, ledgerStatusFromDetection } from "./controls";

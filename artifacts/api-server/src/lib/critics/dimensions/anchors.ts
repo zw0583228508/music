@@ -19,6 +19,16 @@
  * The audit's two probes are here as injectable composers: `randomPitchComposer`
  * (same rhythm, pitches drawn at random within the comfortable range with
  * steps ≤ 7) and `drumsOnlyComposer` (`[]` for every non-drum part).
+ *
+ * Recalibrated at the merge onto B-00 / B-01 / B-03 (see the tracker entry):
+ * the anchors are fuller and sparser at once — the arc brings the drums in
+ * at the chorus, thins the bass to one note every other bar in quiet
+ * sections, develops chorus 2, gives the MIDI cases a keys part — so a
+ * worsening that assumed "has a note" = "plays" (`tutti_everywhere`,
+ * `flatten_arc`) reads `playsIn`, a worsening with nothing to erase returns
+ * null instead of counting a miss (`erase_*`, `top_line_erratic`), and the
+ * boundary controls gained a preparation (`realise_boundaries`) because the
+ * reference composer sits at the floor of the fill/pickup dimensions.
  */
 import type { MusicalNote, TrackModel } from "@workspace/db";
 import { BENCHMARK_CORPUS, buildBenchmarkSongModel, type BenchmarkCase } from "../../benchmarkCorpus";
@@ -35,7 +45,7 @@ import {
   type CorruptionSeverity,
 } from "../../symbolicCorruptions";
 import type { CriticInput } from "../types";
-import { buildContext, onsetClusters, soundingAt, type CriticContext, type PartInfo } from "./shared";
+import { buildContext, onsetClusters, soundingAt, topVoice, type CriticContext, type PartInfo } from "./shared";
 
 export type Anchor = { id: string; genre: string; composer: string; input: CriticInput };
 
@@ -80,12 +90,20 @@ export function anchors(ids: readonly string[] = anchorIds()): Anchor[] {
 
 /**
  * Anchors on which the reference composer wrote every planned part inside the
- * song. The others carry a real composer defect the orchestration dimension is
- * *supposed* to flag (7/8 overflow in ethnic-vocal; keys planned LEAD with no
- * task in orchestral-midi and cinematic-midi), so they cannot serve as the
- * "no blocking observation" null control.
+ * song. The remaining anchor carries a real composer defect the orchestration
+ * dimension is *supposed* to flag (7/8 overflow in ethnic-vocal), so it cannot
+ * serve as the "no blocking observation" null control.
+ *
+ * Recalibrated at the merge (B-00 / B-01 / B-03 on main): orchestral-midi and
+ * cinematic-midi used to be defect anchors ("keys assigned LEAD in every
+ * section, no part task built for it"); B-01's arc gives the keys a part in
+ * every section (keys-ostinato / keys-harmonic_bed), the orchestration
+ * dimension raises nothing on them any more, and they join the clean set.
+ * The MIDI anchors carry a lead line without vocal evidence (`leadIsVocal`
+ * false); `VOCAL_ANCHOR_IDS` names the six with a detected vocal.
  */
-export const CLEAN_ANCHOR_IDS: readonly string[] = ["pop-full", "ballad-piano-vocal", "rock-full", "dance-full", "acoustic-demo", "jazz-full"];
+export const CLEAN_ANCHOR_IDS: readonly string[] = ["pop-full", "ballad-piano-vocal", "rock-full", "dance-full", "acoustic-demo", "orchestral-midi", "jazz-full", "cinematic-midi"];
+export const VOCAL_ANCHOR_IDS: readonly string[] = ["pop-full", "ballad-piano-vocal", "rock-full", "dance-full", "acoustic-demo", "jazz-full"];
 /**
  * Anchors the purpose-built worsenings are applied to: every anchor whose
  * notes lie inside the song. The 7/8 anchor's parts overflow the song (see
@@ -94,9 +112,12 @@ export const CLEAN_ANCHOR_IDS: readonly string[] = ["pop-full", "ballad-piano-vo
  */
 export const PURPOSE_BUILT_ANCHOR_IDS: readonly string[] = ["pop-full", "ballad-piano-vocal", "rock-full", "dance-full", "acoustic-demo", "orchestral-midi", "jazz-full", "cinematic-midi"];
 export const DEFECT_ANCHOR_REASONS: Record<string, string> = {
-  "ethnic-vocal": "7/8: composeReferencePart derives beatSeconds from the tempo alone (60/bpm), so its bars are twice the Song Model's and the parts overflow the song",
-  "orchestral-midi": "keys assigned LEAD in every section, no part task built for it",
-  "cinematic-midi": "keys assigned LEAD in every section, no part task built for it",
+  "ethnic-vocal": "7/8: composeReferencePart derives beatSeconds from the tempo alone (60/bpm), so its bars are twice the Song Model's and the parts overflow the song (still true after B-00/B-01/B-03)",
+};
+/** Defects the anchors carried before the merge and no longer do — kept so the evidence says why the clean set grew. */
+export const FIXED_ANCHOR_DEFECTS: Record<string, string> = {
+  "orchestral-midi": "keys assigned LEAD in every section with no part task — fixed by B-01 (keys plays in every section)",
+  "cinematic-midi": "keys assigned LEAD in every section with no part task — fixed by B-01 (keys plays in every section)",
 };
 
 // ---------------------------------------------------------------------------
@@ -200,6 +221,29 @@ function notesIn(context: CriticContext, track: TrackModel, range: BarRange): Mu
 function notesOutside(context: CriticContext, track: TrackModel, range: BarRange): MusicalNote[] {
   const barOf = barOfNote(context);
   return track.notes.filter((n) => !(barOf(n) >= range.startBar && barOf(n) <= range.endBar));
+}
+
+/** Bars of [startBar, endBar] in which the part has a sounding note (an onset or a sustain). */
+function soundingBars(context: CriticContext, part: PartInfo, startBar: number, endBar: number): Set<number> {
+  const bars = new Set<number>();
+  for (const n of part.notes) {
+    const last = context.barAt(Math.max(n.start, n.end - 1e-3));
+    for (let b = Math.max(startBar, n.bar); b <= Math.min(endBar, last); b += 1) bars.add(b);
+  }
+  return bars;
+}
+
+/**
+ * Whether a part *plays* in a section. Recalibrated at the merge: the B-01
+ * anchors carry single hits (the cymbal choke that opens a verse, one bass
+ * note every other bar), so "has a note in the section" no longer means
+ * "plays there". A part plays in a section when it sounds in more than a
+ * quarter of its bars (one hit in a four-bar bridge is not playing).
+ */
+export const PLAYS_IN_SECTION_MIN_BAR_SHARE = 0.25;
+export function playsIn(context: CriticContext, part: PartInfo, startBar: number, endBar: number): boolean {
+  const bars = Math.max(1, endBar - startBar + 1);
+  return soundingBars(context, part, startBar, endBar).size / bars > PLAYS_IN_SECTION_MIN_BAR_SHARE;
 }
 
 // ---------------------------------------------------------------------------
@@ -389,36 +433,22 @@ export const PURPOSE_BUILT: Record<string, { description: string; apply: Worseni
   },
   erase_boundary_events: {
     description: "at every section boundary the drums' last bar becomes a copy of the bar before it and the pitched pickups in the last beat are deleted",
-    apply: (anchor) => {
-      const context = buildContext(anchor.input);
-      if (context.sections.length < 2) return null;
-      const drums = context.percussive.find((p) => p.family === "drums");
-      const tracks = anchor.input.trackModels.map((t) => {
-        let notes = t.notes;
-        for (let i = 0; i + 1 < context.sections.length; i += 1) {
-          const lastBar = context.sections[i].endBar;
-          const info = context.barInfo(lastBar);
-          const prev = context.barInfo(lastBar - 1);
-          if (!info || !prev) continue;
-          if (drums && t.id === drums.id) {
-            const barOf = barOfNote(context);
-            notes = [...notes.filter((n) => barOf(n) !== lastBar),
-              ...shiftNotes(notes.filter((n) => barOf(n) === lastBar - 1), info.start - prev.start, `${t.id}-b${lastBar}`)];
-          } else {
-            const lastBeat = info.start + (info.beats - 1) * info.beatSeconds - 0.02;
-            notes = notes.filter((n) => !(n.start >= lastBeat && n.start < info.end));
-          }
-        }
-        return { ...t, notes: notes.sort((a, b) => a.start - b.start || a.pitch - b.pitch) };
-      }).filter((t) => t.notes.length > 0);
-      return { input: withTracks(anchor.input, tracks), targetTrackIds: tracks.map((t) => t.id), detail: "fills copied over, pickups deleted" };
-    },
+    apply: (anchor) => eraseBoundaryEvents(anchor, { drums: true, pickups: true }),
+  },
+  erase_drum_fills: {
+    description: "at every boundary where the plan asks for a drum_fill the drums' last bar becomes a copy of the bar before it (skipped when no drum bar changes: a drummer who is silent before every planned fill has no fill to erase)",
+    apply: (anchor) => eraseBoundaryEvents(anchor, { drums: true, pickups: false, plannedFillBoundariesOnly: true }),
+  },
+  erase_pickups: {
+    description: "the pitched pickups in the last beat before every section boundary are deleted (skipped when there is none)",
+    apply: (anchor) => eraseBoundaryEvents(anchor, { drums: false, pickups: true }),
   },
   tutti_everywhere: {
-    description: "every part plays in every section: its busiest section's bars are looped into the sections where it was silent",
+    description: "every part plays in every section: its busiest section's bars are looped into the bars of the sections where it did not play (sounded in fewer than a quarter of the bars)",
     apply: (anchor) => {
       const context = buildContext(anchor.input);
       if (context.sections.length < 2 || context.parts.length < 3) return null;
+      let changed = false;
       const tracks = anchor.input.trackModels.map((t) => {
         const part = context.parts.find((p) => p.id === t.id);
         if (!part) return t;
@@ -428,9 +458,12 @@ export const PURPOSE_BUILT: Record<string, { description: string; apply: Worseni
         const srcNotes = notesIn(context, t, srcRange);
         if (!srcNotes.length) return t;
         const added: MusicalNote[] = [];
-        for (const { s, n } of counts) {
-          if (n > 0) continue;
+        for (const { s } of counts) {
+          // Recalibrated at the merge: a single cymbal hit or one bass note every other bar (the B-01 anchors) is not "playing" — those bars are filled too, the existing notes kept.
+          if (s === source || playsIn(context, part, s.startBar, s.endBar)) continue;
+          const sounding = soundingBars(context, part, s.startBar, s.endBar);
           for (let bar = s.startBar; bar <= s.endBar; bar += 1) {
+            if (sounding.has(bar)) continue;
             const srcBar = source.startBar + ((bar - s.startBar) % (source.endBar - source.startBar + 1));
             const from = context.barInfo(srcBar)!;
             const to = context.barInfo(bar)!;
@@ -438,8 +471,11 @@ export const PURPOSE_BUILT: Record<string, { description: string; apply: Worseni
             added.push(...shiftNotes(srcNotes.filter((x) => barOf(x) === srcBar), to.start - from.start, `${t.id}-tutti${bar}`));
           }
         }
+        if (!added.length) return t;
+        changed = true;
         return { ...t, notes: [...t.notes, ...added].sort((a, b) => a.start - b.start || a.pitch - b.pitch) };
       });
+      if (!changed) return null;
       return { input: withTracks(anchor.input, tracks), targetTrackIds: tracks.map((t) => t.id), detail: "silent sections filled" };
     },
   },
@@ -478,7 +514,8 @@ export const PURPOSE_BUILT: Record<string, { description: string; apply: Worseni
       const climaxRange = barRange(context, climax.startBar, climax.endBar);
       const tracks = anchor.input.trackModels.map((t) => {
         const part = context.parts.find((p) => p.id === t.id);
-        const playsInQuiet = part ? context.notesInBars(part, quiet.startBar, quiet.endBar).length > 0 : true;
+        // Recalibrated at the merge: on the B-01 anchors every part has *a* note in the quietest section (a cymbal choke, one bass note every other bar); "plays in" means sounding in a quarter of its bars.
+        const playsInQuiet = part ? playsIn(context, part, quiet.startBar, quiet.endBar) : true;
         const notes = (playsInQuiet ? t.notes : notesOutside(context, t, climaxRange)).map((n) => ({ ...n, velocity: meanVelocity }));
         return { ...t, notes };
       }).filter((t) => t.notes.length > 0);
@@ -532,10 +569,12 @@ export const PURPOSE_BUILT: Record<string, { description: string; apply: Worseni
     },
   },
   top_line_erratic: {
-    description: "every other onset of each harmonic part displaced an octave up: the audible top line leaps an octave at every move",
+    description: "every other onset of each harmonic part displaced an octave up: the audible top line leaps an octave at every move (parts whose top voice never reaches seven notes in a section carry no line to make erratic and are skipped)",
     apply: (anchor) => {
       const context = buildContext(anchor.input);
-      const targets = context.pitched.filter((p) => p.family !== "bass" && !/transition|fill/i.test(p.role) && onsetClusters(p.notes).length >= 8);
+      // Recalibrated at the merge: dance-full's keys and pad are four whole-note chords per chorus — the dimension (rightly) reads no line there, so the control skips such parts instead of counting a miss.
+      const hasLine = (p: PartInfo) => context.sections.some((s) => topVoice(p.notes).filter((n) => n.bar >= s.startBar && n.bar <= s.endBar).length >= 7);
+      const targets = context.pitched.filter((p) => p.family !== "bass" && !/transition|fill/i.test(p.role) && onsetClusters(p.notes).length >= 8 && hasLine(p));
       if (!targets.length) return null;
       const tracks = anchor.input.trackModels.map((t) => {
         const part = targets.find((p) => p.id === t.id);
@@ -610,14 +649,102 @@ export const PURPOSE_BUILT: Record<string, { description: string; apply: Worseni
 export const PURPOSE_BUILT_NAMES = Object.keys(PURPOSE_BUILT).sort();
 
 /**
+ * The boundary erasure behind `erase_boundary_events`, `erase_drum_fills` and
+ * `erase_pickups`. Returns null when nothing changed: on the B-01 anchors the
+ * drums enter *at* most planned-fill boundaries (silent in the verse before),
+ * so there is no fill bar to copy over, and several anchors carry no pickup
+ * — the adversarial suite's rule (an unchanged input is not a control on
+ * that anchor) applies.
+ */
+function eraseBoundaryEvents(anchor: Anchor, what: { drums: boolean; pickups: boolean; plannedFillBoundariesOnly?: boolean }): Worsened | null {
+  const context = buildContext(anchor.input);
+  if (context.sections.length < 2) return null;
+  const drums = context.percussive.find((p) => p.family === "drums");
+  const fillBoundaries = new Set((context.plan.transitionPlan?.transitions ?? []).filter((t) => t.devices.some((d) => d.device === "drum_fill")).map((t) => t.atBar));
+  const signature = (notes: readonly MusicalNote[]) => notes.map((n) => `${n.start.toFixed(3)}:${n.pitch}`).sort().join("|");
+  const changedTracks: string[] = [];
+  const tracks = anchor.input.trackModels.map((t) => {
+    let notes = t.notes;
+    const isDrums = Boolean(drums && t.id === drums.id);
+    if ((isDrums && !what.drums) || (!isDrums && !what.pickups)) return t;
+    for (let i = 0; i + 1 < context.sections.length; i += 1) {
+      const lastBar = context.sections[i].endBar;
+      const info = context.barInfo(lastBar);
+      const prev = context.barInfo(lastBar - 1);
+      if (!info || !prev) continue;
+      if (what.plannedFillBoundariesOnly && !fillBoundaries.has(context.sections[i + 1].startBar)) continue;
+      if (isDrums) {
+        const barOf = barOfNote(context);
+        notes = [...notes.filter((n) => barOf(n) !== lastBar),
+          ...shiftNotes(notes.filter((n) => barOf(n) === lastBar - 1), info.start - prev.start, `${t.id}-b${lastBar}`)];
+      } else {
+        const lastBeat = info.start + (info.beats - 1) * info.beatSeconds - 0.02;
+        notes = notes.filter((n) => !(n.start >= lastBeat && n.start < info.end));
+      }
+    }
+    if (signature(notes) !== signature(t.notes)) changedTracks.push(t.id);
+    return { ...t, notes: notes.sort((a, b) => a.start - b.start || a.pitch - b.pitch) };
+  }).filter((t) => t.notes.length > 0);
+  if (!changedTracks.length) return null;
+  const detail = what.drums && what.pickups ? "fills copied over, pickups deleted" : what.drums ? "fills copied over" : "pickups deleted";
+  return { input: withTracks(anchor.input, tracks), targetTrackIds: tracks.map((t) => t.id), detail: `${detail} (${changedTracks.join(",")} changed)` };
+}
+
+/**
  * Preparations: transforms applied to an anchor *before* a worsening, for
  * dimensions on which the reference composer already sits at its floor (its
- * second chorus is its first chorus). `develop_chorus_2` gives chorus 2 a
- * register lift in the bed and a dynamic step, so that pasting chorus 1 over
- * it is a measurable loss rather than a no-op. A control that uses one says
- * so in the ledger.
+ * second chorus is its first chorus; it realises no planned fill or pickup).
+ * `develop_chorus_2` gives chorus 2 a register lift in the bed and a dynamic
+ * step, so that pasting chorus 1 over it is a measurable loss rather than a
+ * no-op; `realise_boundaries` writes the drum fills and pickups the transition
+ * plan asked for, so that erasing them is a measurable loss. A control that
+ * uses one says so in the ledger (`control+preparation`).
  */
 export const PREPARATIONS: Record<string, { description: string; apply: Worsening }> = {
+  realise_boundaries: {
+    description: "the planned boundary devices realised: a two-beat snare/tom fill in the bar before every planned drum_fill (the drummer's entry fill when the drums were silent), and two eighth-note pickups in the last beat before every planned bass/keys/guitar pickup",
+    apply: (anchor) => {
+      const context = buildContext(anchor.input);
+      const transitions = context.plan.transitionPlan?.transitions ?? [];
+      if (!transitions.length) return null;
+      const drums = context.percussive.find((p) => p.family === "drums") ?? null;
+      const FILL_PITCHES = [38, 45, 47, 48, 38, 45, 47, 50];
+      let changed = false;
+      const tracks = anchor.input.trackModels.map((t) => {
+        const part = context.parts.find((p) => p.id === t.id);
+        if (!part) return t;
+        const added: MusicalNote[] = [];
+        for (const tr of transitions) {
+          const fillBar = tr.atBar - 1;
+          const info = context.barInfo(fillBar);
+          if (!info || fillBar < 1) continue;
+          if (drums && t.id === drums.id && tr.devices.some((d) => d.device === "drum_fill")) {
+            const beats = Math.min(2, info.beats);
+            const step = info.beatSeconds / 4;
+            const start = info.end - beats * info.beatSeconds;
+            for (let k = 0; k < beats * 4; k += 1) {
+              added.push({ id: `${t.id}-fill${fillBar}-${k}`, start: Number((start + k * step).toFixed(4)), duration: Number((step * 0.9).toFixed(4)), pitch: FILL_PITCHES[k % FILL_PITCHES.length], velocity: 96 });
+            }
+          }
+          const pickup = tr.devices.find((d) => /_pickup$/.test(d.device) && d.instrument.toLowerCase() === part.instrument.toLowerCase());
+          if (pickup && !part.percussive) {
+            const target = part.notes.find((n) => n.bar === tr.atBar) ?? part.notes.find((n) => n.bar > fillBar);
+            if (!target) continue;
+            const half = info.beatSeconds / 2;
+            const lastBeatStart = info.end - info.beatSeconds;
+            [-3, -1].forEach((offset, k) => {
+              added.push({ id: `${t.id}-pickup${fillBar}-${k}`, start: Number((lastBeatStart + k * half).toFixed(4)), duration: Number((half * 0.9).toFixed(4)), pitch: clampPitch(target.pitch + offset), velocity: target.velocity });
+            });
+          }
+        }
+        if (!added.length) return t;
+        changed = true;
+        return { ...t, notes: [...t.notes, ...added].sort((a, b) => a.start - b.start || a.pitch - b.pitch) };
+      });
+      if (!changed) return null;
+      return { input: withTracks(anchor.input, tracks), targetTrackIds: tracks.map((t) => t.id), detail: "planned fills and pickups written" };
+    },
+  },
   develop_chorus_2: {
     description: "chorus 2 developed against chorus 1: the sustained bed lifted an octave and every part +10 velocity in chorus 2",
     apply: (anchor) => {
@@ -636,6 +763,12 @@ export const PREPARATIONS: Record<string, { description: string; apply: Worsenin
       return { input: withTracks(anchor.input, tracks), targetTrackIds: tracks.map((t) => t.id), detail: `${c2.name} developed (bed +12, +10 velocity)` };
     },
   },
+};
+
+/** Which purpose-built controls run on a prepared anchor (`control+preparation` in the table and the ledger). */
+export const PREPARED_CONTROLS: Record<string, readonly string[]> = {
+  develop_chorus_2: ["chorus_copy"],
+  realise_boundaries: ["erase_boundary_events"],
 };
 
 export function applyPreparation(anchor: Anchor, name: string): Anchor | null {

@@ -5,7 +5,7 @@
  * control ledger measured by the positive-control run (see `controls.ts`
  * and the evidence file): a module never declares its own gating status.
  */
-import type { CriticDimensionReport, CriticInput } from "../types.b05b";
+import type { CriticDimensionReport, CriticInput } from "../types";
 import { ARBITRARINESS_DIMENSION, ARBITRARINESS_KINDS, critiqueArbitrariness } from "./arbitrariness";
 import { BOREDOM_DIMENSION, BOREDOM_KINDS, critiqueBoredom } from "./boredom";
 import { CAUSALITY_DIMENSION, CAUSALITY_KINDS, critiqueCausality } from "./causality";

@@ -38,7 +38,9 @@ import {
   DEFECT_ANCHOR_REASONS,
   detect,
   eligibleParts,
+  FIXED_ANCHOR_DEFECTS,
   PREPARATIONS,
+  PREPARED_CONTROLS,
   PURPOSE_BUILT,
   PURPOSE_BUILT_ANCHOR_IDS,
   PURPOSE_BUILT_NAMES,
@@ -47,21 +49,29 @@ import {
 } from "./dimensions/anchors";
 import type { LedgerEntry } from "./dimensions/controlLedger";
 
-export const CONTROL_HARNESS_VERSION = "B05A_CONTROLS_v1" as const;
+/** v2: recalibrated at the merge onto B-00 / B-01 / B-03 (eight clean anchors, `playsIn`, split boundary controls, `realise_boundaries`). */
+export const CONTROL_HARNESS_VERSION = "B05A_CONTROLS_v2" as const;
 
-/** Controls each dimension claims to hear. The table measures every control regardless. */
+/**
+ * Controls each dimension claims to hear. The table measures every control
+ * regardless. Recalibrated at the merge: voiceLeading no longer claims
+ * `random_pitch` (measured 2/8 — a random line with steps ≤ 7 is smoother
+ * than the reference bass, so voiceLeading scores it *higher*; harmony catches
+ * the probe); groove claims the drum-fill erasure on its own and on the
+ * prepared anchors; transitions claims the prepared erasure too.
+ */
 export const CLAIMED_CONTROLS: Record<string, string[]> = {
   harmony: ["chord_tone_to_non_chord_tone@3", "pitch_shift_out_of_key@3", "cross_part_clash@3", "duration_overhang@3", "random_pitch"],
-  voiceLeading: ["parallel_doubling@3", "bass_roots_only_leaps", "random_pitch"],
+  voiceLeading: ["parallel_doubling@3", "bass_roots_only_leaps"],
   melodyAndCounterline: ["top_line_into_vocal_register", "top_line_erratic"],
   motifRecurrenceAndDevelopment: ["motif_destruction@3", "random_pitch", "homorhythm"],
-  groove: ["onset_jitter@3", "quantisation_coarsening@3", "phrase_shift@3", "erase_boundary_events"],
+  groove: ["onset_jitter@3", "quantisation_coarsening@3", "phrase_shift@3", "erase_drum_fills", "erase_boundary_events+realise_boundaries"],
   rhythmicInteraction: ["homorhythm", "parallel_doubling@3"],
   orchestration: ["drums_only", "silence_planned_family", "tutti_everywhere"],
   idiomaticity: ["piano_wide_voicing", "brass_hold_forever", "density_doubling@3"],
   register: ["strings_up_two_octaves", "octave_displacement@3", "role_inversion@3", "top_line_into_vocal_register"],
   density: ["piano_one_note_per_bar", "chorus_thinner_than_verse", "density_thinning@3", "tutti_everywhere"],
-  transitions: ["erase_boundary_events", "section_swap@3"],
+  transitions: ["erase_boundary_events", "erase_boundary_events+realise_boundaries", "section_swap@3"],
   repetitionVsVariation: ["bar_copy_repetition@3", "chorus_copy", "chorus_copy+develop_chorus_2"],
   sectionDevelopment: ["chorus_copy+develop_chorus_2", "section_swap@3"],
   playability: ["octave_displacement@3", "bass_roots_only_leaps", "strings_up_two_octaves", "piano_wide_voicing"],
@@ -93,7 +103,7 @@ export type TableRow = {
 
 export type HarnessResult = {
   version: typeof CONTROL_HARNESS_VERSION;
-  anchors: Array<{ id: string; genre: string; composer: string; tracks: string[]; notes: number; clean: boolean; purposeBuilt: boolean; defectReason: string | null }>;
+  anchors: Array<{ id: string; genre: string; composer: string; tracks: string[]; notes: number; clean: boolean; purposeBuilt: boolean; defectReason: string | null; fixedDefect: string | null }>;
   controls: Array<{ control: string; kind: "family" | "purpose_built"; description: string; prepare: string | null }>;
   items: ControlItem[];
   table: TableRow[];
@@ -173,7 +183,7 @@ export function runControlHarness(options: HarnessOptions = {}): HarnessResult {
       }
     }
   }
-  const purposeControls = [...PURPOSE_BUILT_NAMES, ...Object.keys(PREPARATIONS).sort().flatMap((prep) => ["chorus_copy"].map((c) => `${c}+${prep}`))];
+  const purposeControls = [...PURPOSE_BUILT_NAMES, ...Object.keys(PREPARED_CONTROLS).sort().flatMap((prep) => PREPARED_CONTROLS[prep].map((c) => `${c}+${prep}`))];
   for (const name of purposeControls) {
     const { base, prepare } = parseControl(name);
     controls.push({ control: name, kind: "purpose_built", description: PURPOSE_BUILT[base].description + (prepare ? ` — applied to an anchor prepared by ${prepare}: ${PREPARATIONS[prepare].description}` : ""), prepare });
@@ -215,7 +225,7 @@ export function runControlHarness(options: HarnessOptions = {}): HarnessResult {
     anchors: baseAnchors.map((a) => ({
       id: a.id, genre: a.genre, composer: a.composer, tracks: a.input.trackModels.map((t) => t.id),
       notes: a.input.trackModels.reduce((s, t) => s + t.notes.length, 0),
-      clean: CLEAN_ANCHOR_IDS.includes(a.id), purposeBuilt: PURPOSE_BUILT_ANCHOR_IDS.includes(a.id), defectReason: DEFECT_ANCHOR_REASONS[a.id] ?? null,
+      clean: CLEAN_ANCHOR_IDS.includes(a.id), purposeBuilt: PURPOSE_BUILT_ANCHOR_IDS.includes(a.id), defectReason: DEFECT_ANCHOR_REASONS[a.id] ?? null, fixedDefect: FIXED_ANCHOR_DEFECTS[a.id] ?? null,
     })),
     controls,
     items,
@@ -292,7 +302,8 @@ export function renderLedgerSource(ledger: Record<string, LedgerEntry>, ledgerVe
     " * dimension's `controlStatus` can only come from a measured detection rate.",
     " *",
     ` * Derived from severity ${LEDGER_SEVERITY} of every corruption family, seed(s) ${DEFAULT_SEEDS.join(",")},`,
-    " * and every purpose-built worsening, over the nine benchmark anchors.",
+    " * and every purpose-built worsening, over the nine benchmark anchors (eight",
+    " * clean since the merge onto B-00 / B-01 / B-03; ethnic-vocal still overflows).",
     " */",
     "import type { ControlStatus } from \"../types\";",
     "",

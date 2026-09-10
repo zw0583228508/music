@@ -4,15 +4,22 @@ import { anchors, applyPreparation, applyPurposeBuilt, CLEAN_ANCHOR_IDS, detect 
 import { buildContext } from "./shared";
 import { readDevelopment, sectionDevelopmentDimension } from "./sectionDevelopment";
 
-test("the reference composer's second chorus keeps its identity and develops nothing: a real finding at the planned climax", () => {
+test("since B-01 the reference composer's second chorus keeps its identity AND develops: the pre-merge finding (nothing developed at the planned climax) is gone and the dimension reads what changed", () => {
+  // Recalibrated at the merge. Before B-01 this test pinned a real defect:
+  // chorus 2 was chorus 1 note for note at the planned climax
+  // (`repeat_without_development` major on pop / rock / dance / acoustic).
+  // B-01's development operators (drums to CLIMAX_LAYER, guitar entering,
+  // register lift, dynamic step) removed it; the dimension must now read the
+  // repeat as identity kept + developed, and must not raise the old finding.
   for (const anchor of anchors(["pop-full", "rock-full", "dance-full", "acoustic-demo"])) {
     const report = sectionDevelopmentDimension.evaluate(anchor.input);
     const climax = anchor.input.plan.globalPlan!.climax!.sectionName;
-    const o = report.observations.find((x) => x.kind === "repeat_without_development" && x.location.sectionName === climax);
-    assert.ok(o, `${anchor.id}: ${report.observations.map((x) => `${x.kind}@${x.location.sectionName}`).join(",")}`);
-    assert.equal(o!.severity, "major");
-    assert.equal(o!.suspectedOrigin, "form");
-    assert.equal(o!.evidence.plannedClimax, true);
+    const measured = report.observations.find((x) => x.kind === "measured" && x.location.sectionName === climax);
+    assert.ok(measured, `${anchor.id}: ${report.observations.map((x) => `${x.kind}@${x.location.sectionName}`).join(",")}`);
+    assert.equal(measured!.evidence.plannedClimax, true);
+    assert.equal(measured!.evidence.identityKept, true, `${anchor.id}: chorus 2 is still recognisably the chorus`);
+    assert.ok(measured!.evidence.developedIn !== "nothing" && String(measured!.evidence.developedIn).includes("density"), `${anchor.id}: developed in ${measured!.evidence.developedIn}`);
+    assert.equal(report.observations.find((x) => x.kind === "repeat_without_development" && x.location.sectionName === climax), undefined, `${anchor.id}: the pre-merge finding must not come back`);
   }
 });
 

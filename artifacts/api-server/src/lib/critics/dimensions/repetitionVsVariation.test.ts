@@ -4,15 +4,22 @@ import { anchors, applyFamilyCorruption, applyPreparation, applyPurposeBuilt, CL
 import { buildContext } from "./shared";
 import { repetitionVsVariationDimension, sectionPairIdentity } from "./repetitionVsVariation";
 
-test("section identity: the pop anchor's second verse is its first verse in every part (a real finding), and a chorus is not a verse", () => {
+test("section identity: the pop anchor's second verse repeats the keys of its first verse bar for bar while B-01 thins the bass (a real, partial repeat), and a chorus is not a verse", () => {
+  // Recalibrated at the merge: before B-01 Verse 2 was Verse 1 in *every*
+  // part (exactShare 1.0 on bass and keys). B-01's arc lets the bass exit
+  // Verse 2 early (30 notes -> 4), so the bass shares nothing bar-for-bar
+  // while the keys are still a verbatim copy — the metric reads both truths.
   const anchor = anchors(["pop-full"])[0];
   const context = buildContext(anchor.input);
   const verse = context.sections.find((s) => s.name === "Verse")!;
   const verse2 = context.sections.find((s) => s.name === "Verse 2")!;
   const chorus = context.sections.find((s) => s.name === "Chorus")!;
   const same = sectionPairIdentity(context, verse, verse2);
-  assert.ok(same.length >= 2 && same.every((x) => x.exactShare >= 0.75), JSON.stringify(same.map((x) => [x.part.id, x.exactShare])));
   console.log("pop verse identity:", JSON.stringify(same.map((x) => [x.part.id, x.exactShare, x.rhythmShare])));
+  const keys = same.find((x) => x.part.family === "keys")!;
+  const bass = same.find((x) => x.part.family === "bass")!;
+  assert.ok(keys.exactShare >= 0.75, `keys repeat verbatim: ${keys.exactShare}`);
+  assert.ok(bass.exactShare < 0.5, `the bass does not (B-01 thins it in Verse 2): ${bass.exactShare}`);
   const different = sectionPairIdentity(context, verse, chorus);
   assert.ok(different.some((x) => x.exactShare < 0.5));
 });

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { BENCHMARK_CORPUS } from "../../benchmarkCorpus";
-import { anchors, applyPurposeBuilt, CLEAN_ANCHOR_IDS, DEFECT_ANCHOR_REASONS, detect, probeAnchor } from "./anchors";
+import { anchors, applyPurposeBuilt, CLEAN_ANCHOR_IDS, DEFECT_ANCHOR_REASONS, detect, FIXED_ANCHOR_DEFECTS, probeAnchor } from "./anchors";
 import { buildContext } from "./shared";
 import { functionFromNotes, orchestrationDimension } from "./orchestration";
 
@@ -44,26 +44,45 @@ test("positive control: removing one planned harmonic part is flagged in each of
 });
 
 test("positive control: a tutti that never rests is flagged on anchors whose substantial parts otherwise enter and leave", () => {
+  // Recalibrated at the merge: the control fills the sections where a part
+  // does not *play* (sounds in a quarter of the bars or fewer) — on the B-01
+  // anchors the drums leave a single cymbal choke in the verse/bridge and the
+  // bass one note every other bar, which the old "has no note" rule mistook
+  // for playing. The MIDI anchors (sustained beds, few notes) stay undetected.
   let detected = 0;
-  for (const anchor of anchors(["ballad-piano-vocal", "rock-full", "jazz-full", "acoustic-demo"])) {
+  const ids = ["pop-full", "rock-full", "dance-full", "jazz-full", "acoustic-demo"];
+  for (const anchor of anchors(ids)) {
     const worsened = applyPurposeBuilt(anchor, "tutti_everywhere")!;
     const d = detect(orchestrationDimension, anchor.input, worsened);
     if (d.detected && d.newObservations.some((o) => o.kind === "continuous_tutti")) detected += 1;
   }
-  assert.ok(detected >= 3, `detected ${detected}/4`);
+  assert.ok(detected >= 4, `detected ${detected}/${ids.length}`);
 });
 
-test("the anchors with a known composer defect are caught as such: LEAD keys assigned but never tasked (origin orchestration), 7/8 parts overflowing the song", () => {
+test("the anchors' composer defects, before and after the merge: the LEAD keys with no task are fixed by B-01 (keys planned and sounding in every section), the 7/8 overflow is not", () => {
+  // Before the merge orchestral-midi and cinematic-midi carried >= 3 blocking
+  // `planned_family_silent` (keys assigned LEAD, no task, origin
+  // orchestration). B-01's arc gives the keys a part in every section; the
+  // dimension must now read them as planned *and* sounding, with nothing
+  // blocking — and they join the clean set.
   for (const id of ["orchestral-midi", "cinematic-midi"]) {
-    const report = orchestrationDimension.evaluate(anchors([id])[0].input);
-    const lead = report.observations.filter((o) => o.kind === "planned_family_silent" && o.evidence.instrument === "keys");
-    assert.ok(lead.length >= 3, id);
-    assert.ok(lead.every((o) => o.severity === "blocking" && o.suspectedOrigin === "orchestration" && o.evidence.taskPlanned === false), id);
-    assert.ok(DEFECT_ANCHOR_REASONS[id]);
+    const anchor = anchors([id])[0];
+    const report = orchestrationDimension.evaluate(anchor.input);
+    assert.equal(report.observations.filter((o) => o.kind === "planned_family_silent").length, 0, `${id}: no planned family is silent any more`);
+    assert.equal(report.summary.score0to100, 100, id);
+    const keysPlanned = new Set((anchor.input.plan.sectionPlan?.roleAssignments ?? []).filter((r) => r.instrument.toLowerCase() === "keys").map((r) => r.sectionName));
+    assert.ok(keysPlanned.size >= 3, `${id}: keys planned in ${keysPlanned.size} sections`);
+    for (const o of report.observations.filter((x) => x.kind === "measured" && x.location.sectionName && keysPlanned.has(x.location.sectionName))) {
+      assert.ok(`${o.evidence.lead},${o.evidence.support},${o.evidence.pulse}`.split(",").includes("keys"), `${id}/${o.location.sectionName}: keys sound (${o.evidence.lead} / ${o.evidence.support})`);
+    }
+    assert.equal(DEFECT_ANCHOR_REASONS[id], undefined);
+    assert.ok(FIXED_ANCHOR_DEFECTS[id]);
+    assert.ok(CLEAN_ANCHOR_IDS.includes(id));
   }
   const ethnic = orchestrationDimension.evaluate(anchors(["ethnic-vocal"])[0].input);
   assert.ok(ethnic.observations.some((o) => o.kind === "notes_outside_song"));
   assert.ok(ethnic.observations.some((o) => o.kind === "planned_family_silent" && o.evidence.instrument === "bass" && o.suspectedOrigin === "compose"));
+  assert.ok(DEFECT_ANCHOR_REASONS["ethnic-vocal"]);
 });
 
 test("null control: no blocking orchestration observation on any clean anchor", () => {

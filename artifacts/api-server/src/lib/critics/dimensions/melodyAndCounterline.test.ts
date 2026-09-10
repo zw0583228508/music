@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { anchors, applyPurposeBuilt, CLEAN_ANCHOR_IDS, detect } from "./anchors";
+import { anchors, applyPurposeBuilt, CLEAN_ANCHOR_IDS, detect, VOCAL_ANCHOR_IDS } from "./anchors";
 import { lineStats, melodyAndCounterlineDimension } from "./melodyAndCounterline";
 import type { NoteRef } from "./shared";
 
@@ -38,7 +38,16 @@ test("positive control: harmonic parts transposed onto the sung pitch mask the v
 });
 
 test("positive control: a top line that jumps an octave at every move is erratic", () => {
-  for (const anchor of anchors(["rock-full", "dance-full", "jazz-full"])) {
+  // Recalibrated at the merge: dance-full left this list — since B-01 its keys
+  // and pad are four whole-note chords per chorus, so no section has the
+  // seven top-voice notes the dimension needs to call anything a line; the
+  // control now skips such anchors (`applyPurposeBuilt` returns null there).
+  // On cinematic-midi the octave lift also moves the bed off the singer's
+  // pitches, so the lost `line_masks_vocal` majors cancel the new
+  // `line_erratic` majors in the score (6/7 in the ledger); pop keeps a
+  // 32-note top line per verse.
+  assert.equal(applyPurposeBuilt(anchors(["dance-full"])[0], "top_line_erratic"), null, "dance-full has no line to make erratic");
+  for (const anchor of anchors(["rock-full", "pop-full", "jazz-full"])) {
     const worsened = applyPurposeBuilt(anchor, "top_line_erratic")!;
     const d = detect(melodyAndCounterlineDimension, anchor.input, worsened);
     assert.ok(d.detected, anchor.id);
@@ -49,12 +58,14 @@ test("positive control: a top line that jumps an octave at every move is erratic
 });
 
 test("null control: no blocking observation on any clean anchor; without a lead melody the vocal checks stay off and say so", () => {
+  // Since the merge the clean set includes the two MIDI anchors (B-01 gave
+  // their keys a part); they carry a lead line without vocal evidence.
   for (const anchor of anchors(CLEAN_ANCHOR_IDS)) {
     const report = melodyAndCounterlineDimension.evaluate(anchor.input);
     assert.ok(report.applicable);
     assert.equal(report.observations.filter((o) => o.severity === "blocking").length, 0, anchor.id);
     const measured = report.observations.find((o) => o.kind === "measured")!;
-    assert.equal(measured.evidence.leadIsVocal, true, "the corpus cases with a vocal stem carry detected vocal evidence");
+    assert.equal(measured.evidence.leadIsVocal, VOCAL_ANCHOR_IDS.includes(anchor.id), `${anchor.id}: the corpus cases with a vocal stem carry detected vocal evidence, the MIDI cases do not`);
   }
   const anchor = anchors(["cinematic-midi"])[0];
   const withLead = melodyAndCounterlineDimension.evaluate(anchor.input);

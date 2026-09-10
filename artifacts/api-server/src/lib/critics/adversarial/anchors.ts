@@ -6,7 +6,7 @@
  */
 import { BENCHMARK_CORPUS, buildBenchmarkSongModel, type BenchmarkCase } from "../../benchmarkCorpus";
 import { orchestrateArrangement } from "../../arrangementOrchestrator";
-import type { CriticInput } from "../types.b05b";
+import type { CriticInput } from "../types";
 
 export const ANCHOR_NOW = new Date("2026-01-01T00:00:00.000Z");
 

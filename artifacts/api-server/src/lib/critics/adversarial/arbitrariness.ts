@@ -6,7 +6,7 @@
  * that doubles or halves off the form - and the plan's own arbitrariness: a
  * family the plan assigned that never wrote a note.
  */
-import type { CriticDimensionReport, CriticInput, CriticObservation } from "../types.b05b";
+import type { CriticDimensionReport, CriticInput, CriticObservation } from "../types";
 import {
   buildReport, cellCoverage, confidenceFromEvidence, effectPast, makeObservation, mean, mergeRuns, notApplicable,
   prepare, type BarGrid, type SectionInfo, type ControlStatus,

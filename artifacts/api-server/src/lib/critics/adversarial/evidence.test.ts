@@ -17,8 +17,13 @@ test("the evidence file is built from the same runs the tests assert on, and is 
   for (const ex of evidence.judgeExamples) {
     assert.equal(ex.withoutLedger.blocking.length, 0, "without a ledger nothing blocks");
   }
+  // Recalibrated at the merge (B-01): the intact orchestral anchor no longer
+  // has silent planned keys; the injected variant carries that defect.
   const orchestral = evidence.judgeExamples.find((e) => e.anchor === "orchestral-midi")!;
-  assert.equal(orchestral.withMeasuredLedger.releasable, false, "with the measured ledger the silent planned keys block");
+  assert.equal(orchestral.withMeasuredLedger.blocking.length, 0, "since B-01 the intact orchestral anchor carries no blocking finding");
+  const silenced = evidence.judgeExamples.find((e) => e.anchor === "orchestral-midi+keys_silenced")!;
+  assert.equal(silenced.withMeasuredLedger.releasable, false, "with the measured ledger the silent planned keys block");
+  assert.equal(silenced.withoutLedger.releasable, true, "without a ledger the same finding cannot block");
   assert.ok(evidence.judgeExamples.some((e) => e.withMeasuredLedger.disagreements.length >= 1), "at least one anchor produces a recorded disagreement");
   assert.ok(evidence.honestLimits.length >= 5);
 

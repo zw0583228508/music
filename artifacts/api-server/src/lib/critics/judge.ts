@@ -12,7 +12,7 @@
  * confidence x control weight for priority) - never a plain mean. Output is
  * deterministic for the same reports and context.
  */
-import type { CriticDimensionReport, CriticInput, CriticObservation, Severity } from "./types.b05b";
+import type { CriticDimensionReport, CriticInput, CriticObservation, Severity } from "./types";
 import { codeForKind, type FailureCode } from "./failureTaxonomy";
 import { gridFrom, sectionsFrom, type SectionInfo } from "./adversarial/shared";
 

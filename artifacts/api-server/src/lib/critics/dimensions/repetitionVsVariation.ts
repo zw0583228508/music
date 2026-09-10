@@ -27,7 +27,8 @@ import {
 } from "./shared";
 
 export const REPETITION_DIMENSION = "repetitionVsVariation";
-export const REPETITION_VERSION = "1.0";
+/** 1.1: a form with no repeated section type carries a `measured` observation behind its score instead of none. */
+export const REPETITION_VERSION = "1.1";
 
 export type SectionPairIdentity = {
   part: PartInfo;
@@ -169,6 +170,28 @@ export function evaluateRepetitionVsVariation(input: CriticInput) {
         });
       }
     }
+  }
+
+  // A form without a repeated section type (the MIDI anchors since B-01 gave
+  // them a keys part: Intro / Verse / Chorus / Outro) produces no same-type
+  // pair; the score is still a summary of what was examined, so say what was.
+  if (!drafts.length) {
+    let maxCrossTypeExactShare = 0;
+    for (let i = 0; i < context.sections.length; i += 1) {
+      for (let j = i + 1; j < context.sections.length; j += 1) {
+        for (const x of sectionPairIdentity(context, context.sections[i], context.sections[j])) maxCrossTypeExactShare = Math.max(maxCrossTypeExactShare, x.exactShare);
+      }
+    }
+    drafts.push({
+      kind: "measured",
+      severity: "info",
+      location: { startBar: 1, endBar: context.totalBars, trackIds: context.parts.map((p) => p.id).sort() },
+      evidence: { sameTypeSectionPairs: 0, sectionPairsExamined: pairsExamined, maxCrossTypeExactShare, partsExamined: context.parts.length, loopsFound: 0 },
+      suspectedOrigin: "form",
+      originConfidence: 0,
+      recommendedRepair: null,
+      confidence: confidenceFromCount(pairsExamined * Math.max(1, context.parts.length), 8),
+    });
   }
 
   return buildReport({

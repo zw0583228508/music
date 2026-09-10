@@ -6,7 +6,7 @@
  * something (a fill, the end of a sung phrase, a section start)? Does the bar
  * before a lift prepare it? Is the ending prepared, or does the music just stop?
  */
-import type { CriticDimensionReport, CriticInput, CriticObservation } from "../types.b05b";
+import type { CriticDimensionReport, CriticInput, CriticObservation } from "../types";
 import {
   barSpan, buildReport, cellCoverage, confidenceFromEvidence, effectPast, makeObservation, mean, median,
   mergeRuns, notApplicable, prepare, voicedWindows, type BarGrid, type PartView, type SectionInfo, type ControlStatus,
