@@ -28,17 +28,18 @@
  * constraint solver; none is claimed here.
  */
 import type { HarmonyPlanSlot } from "./partGenerationContextV2";
+import { parseChord, type ChordToneRole as SymbolToneRole, type ParsedChord } from "./chordSymbols";
 
 // ---------------------------------------------------------------------------
 // Chords
 // ---------------------------------------------------------------------------
 
-const ROOTS: Record<string, number> = {
-  C: 0, "C#": 1, DB: 1, D: 2, "D#": 3, EB: 3, E: 4, F: 5, "F#": 6, GB: 6,
-  G: 7, "G#": 8, AB: 8, A: 9, "A#": 10, BB: 10, B: 11,
-};
-
-export type ChordToneRole = "root" | "third" | "fifth" | "seventh";
+/**
+ * Roles a voice may hold. Doubling rules read them: the root doubles freely,
+ * the fifth tolerably, the third is thin and the seventh (and every extension,
+ * which behaves like one) fights its own resolution.
+ */
+export type ChordToneRole = SymbolToneRole;
 
 export type ChordTones = {
   symbol: string;
@@ -49,71 +50,35 @@ export type ChordTones = {
   /** The pitch class that must be lowest, from a slash chord. Null means any. */
   requiredBass: number | null;
   quality: "major" | "minor" | "diminished" | "augmented" | "suspended";
+  /** The full reading (Brain B-02): extensions, alterations, template. */
+  parsed: ParsedChord;
 };
 
-const normalise = (symbol: string): string =>
-  symbol.replace(/♯/g, "#").replace(/♭/g, "b").trim();
+const QUALITY_OF: Record<ParsedChord["triad"], ChordTones["quality"]> = {
+  maj: "major", min: "minor", dim: "diminished", aug: "augmented", sus4: "suspended", sus2: "suspended", power: "major",
+};
 
-function rootOf(text: string): { pitchClass: number; rest: string } | null {
-  const match = /^([A-Ga-g])([#b]?)/.exec(text);
-  if (!match) return null;
-  const pitchClass = ROOTS[`${match[1].toUpperCase()}${match[2].toUpperCase()}`];
-  if (pitchClass === undefined) return null;
-  return { pitchClass, rest: text.slice(match[0].length) };
+/** The solver's view of a parsed chord. */
+export function chordTonesOf(parsed: ParsedChord, options: { requireBass?: boolean } = {}): ChordTones {
+  const requireBass = options.requireBass ?? true;
+  return {
+    symbol: parsed.input,
+    root: parsed.root,
+    roles: new Map(parsed.roles),
+    pitchClasses: [...parsed.pitchClasses],
+    requiredBass: requireBass && parsed.bass !== parsed.root ? parsed.bass : null,
+    quality: QUALITY_OF[parsed.triad],
+    parsed,
+  };
 }
 
 /**
- * Chord tones with their roles. Roles matter because doubling is not a free
- * choice: doubling the root is idiomatic, doubling the third is thin, and
- * doubling the seventh of a dominant chord fights its own resolution.
+ * Chord tones with their roles, read by the one parser (`chordSymbols.ts`).
+ * Kept as the solver's entry point so its callers and tests do not change.
  */
 export function parseChordTones(symbol: string): ChordTones | null {
-  const text = normalise(symbol);
-  const [body, slash] = text.split("/");
-  const parsed = rootOf(body);
-  if (!parsed) return null;
-  const { pitchClass: root, rest } = parsed;
-  const q = rest.toLowerCase();
-
-  const quality: ChordTones["quality"] =
-    q.includes("dim") || q.startsWith("°") ? "diminished"
-      : q.includes("aug") || q.startsWith("+") ? "augmented"
-        : q.startsWith("sus") ? "suspended"
-          : q.startsWith("m") && !q.startsWith("maj") ? "minor"
-            : "major";
-
-  const third = quality === "minor" || quality === "diminished" ? 3
-    : quality === "suspended" ? (q.includes("sus2") ? 2 : 5)
-      : 4;
-  const fifth = quality === "diminished" ? 6 : quality === "augmented" ? 8 : 7;
-
-  const roles = new Map<number, ChordToneRole>();
-  roles.set(root, "root");
-  roles.set((root + third) % 12, "third");
-  roles.set((root + fifth) % 12, "fifth");
-  if (/(^|[^s])7|9|11|13/.test(q)) {
-    // A diminished seventh is a diminished seventh; maj7 is a major seventh;
-    // everything else in this vocabulary is minor.
-    const seventh = q.includes("maj7") || q.includes("ma7") || q.includes("M7") ? 11
-      : quality === "diminished" && q.includes("dim7") ? 9
-        : 10;
-    roles.set((root + seventh) % 12, "seventh");
-  }
-
-  let requiredBass: number | null = null;
-  if (slash) {
-    const bass = rootOf(normalise(slash));
-    if (bass) requiredBass = bass.pitchClass;
-  }
-
-  return {
-    symbol,
-    root,
-    roles,
-    pitchClasses: [...roles.keys()],
-    requiredBass,
-    quality,
-  };
+  const parsed = parseChord(symbol);
+  return parsed ? chordTonesOf(parsed) : null;
 }
 
 // ---------------------------------------------------------------------------
@@ -213,7 +178,14 @@ function pitchesInRange(pitchClass: number, range: { min: number; max: number })
   return found;
 }
 
-function doublingCost(pitches: number[], chord: ChordTones, weight: number): number {
+/** Cost per extra doubling of a role, relative to the `awkwardDoubling` weight. */
+export type DoublingPreferences = Partial<Record<ChordToneRole, number>>;
+
+export const DEFAULT_DOUBLING: DoublingPreferences = {
+  root: 0, fifth: 0.5, third: 1, seventh: 1, sixth: 1, ninth: 1, eleventh: 1, thirteenth: 1, suspension: 1,
+};
+
+function doublingCost(pitches: number[], chord: ChordTones, weight: number, preferences: DoublingPreferences = DEFAULT_DOUBLING): number {
   const counts = new Map<number, number>();
   for (const pitch of pitches) {
     const pc = ((pitch % 12) + 12) % 12;
@@ -225,11 +197,27 @@ function doublingCost(pitches: number[], chord: ChordTones, weight: number): num
     const role = chord.roles.get(pc);
     // The root may be doubled freely; the fifth tolerably; the third is thin
     // and the seventh wants to resolve, so doubling either is paid for.
-    const penalty = role === "root" ? 0 : role === "fifth" ? 0.5 : 1;
+    const penalty = role === undefined ? 1 : preferences[role] ?? DEFAULT_DOUBLING[role] ?? 1;
     cost += penalty * (count - 1) * weight;
   }
   return cost;
 }
+
+export type CandidateOptions = {
+  cap?: number;
+  weights?: VoiceLeadingWeights;
+  doubling?: DoublingPreferences;
+  /** Widest interval allowed between adjacent voices from `spacingFromIndex` up (default an octave from the tenor). */
+  maxSpacing?: number;
+  /** First voice index the spacing rule applies to (default 2: bass to tenor may be wide). */
+  spacingFromIndex?: number;
+  /** Widest interval between the two lowest voices (default unlimited). */
+  maxBassSpacing?: number;
+  /** The lowest voice may not sit below this pitch (a planned bass owns the octave beneath). */
+  floor?: number;
+  /** Rank capped candidates by this static cost in addition to doubling. */
+  unary?: (pitches: number[]) => number;
+};
 
 /**
  * Admissible voicings of one chord: in range, not crossed, spaced like a chord,
@@ -238,12 +226,15 @@ function doublingCost(pitches: number[], chord: ChordTones, weight: number): num
 export function candidateVoicings(
   chord: ChordTones,
   voices: Voice[],
-  options: { cap?: number; weights?: VoiceLeadingWeights } = {},
+  options: CandidateOptions = {},
 ): { candidates: number[][]; capped: boolean } {
   const weights = options.weights ?? DEFAULT_WEIGHTS;
+  const maxSpacing = options.maxSpacing ?? MAX_UPPER_SPACING;
+  const spacingFrom = options.spacingFromIndex ?? 2;
   const perVoice = voices.map((voice) =>
     chord.pitchClasses
       .flatMap((pc) => pitchesInRange(pc, voice.range))
+      .filter((pitch) => options.floor === undefined || pitch >= options.floor)
       .sort((a, b) => a - b));
 
   const results: number[][] = [];
@@ -264,7 +255,8 @@ export function candidateVoicings(
       // two lines a listener can follow.
       if (below !== undefined && pitch < below) continue;
       // Spacing applies between the upper voices; bass to tenor may be wide.
-      if (index >= 2 && below !== undefined && pitch - below > MAX_UPPER_SPACING) continue;
+      if (index >= spacingFrom && below !== undefined && pitch - below > maxSpacing) continue;
+      if (index === 1 && options.maxBassSpacing !== undefined && below !== undefined && pitch - below > options.maxBassSpacing) continue;
       if (index === 0 && chord.requiredBass !== null && ((pitch % 12) + 12) % 12 !== chord.requiredBass) continue;
       current.push(pitch);
       walk(index + 1);
@@ -278,7 +270,7 @@ export function candidateVoicings(
   // Over the cap the cheapest-standing voicings are kept. This is where the
   // search stops being exact, and the caller is told so.
   const ranked = results
-    .map((pitches) => ({ pitches, cost: doublingCost(pitches, chord, weights.awkwardDoubling) }))
+    .map((pitches) => ({ pitches, cost: doublingCost(pitches, chord, weights.awkwardDoubling, options.doubling) + (options.unary?.(pitches) ?? 0) }))
     .sort((a, b) => a.cost - b.cost)
     .slice(0, cap)
     .map((entry) => entry.pitches);
@@ -300,6 +292,7 @@ export function transitionCost(
   to: number[],
   chord: ChordTones,
   weights: VoiceLeadingWeights,
+  doubling: DoublingPreferences = DEFAULT_DOUBLING,
 ): { cost: number; reasons: string[] } {
   const reasons: string[] = [];
   let cost = 0;
@@ -351,7 +344,7 @@ export function transitionCost(
     }
   }
 
-  cost += doublingCost(to, chord, weights.awkwardDoubling);
+  cost += doublingCost(to, chord, weights.awkwardDoubling, doubling);
   return { cost: Number(cost.toFixed(4)), reasons };
 }
 
@@ -359,13 +352,83 @@ export function transitionCost(
 // The search
 // ---------------------------------------------------------------------------
 
+export type ChainSolution = {
+  /** Index of the chosen candidate per layer. */
+  chosen: number[];
+  totalCost: number;
+  /** Cost paid to arrive at each layer's choice (0 for the first unless `startFrom`). */
+  stepCosts: number[];
+  stepReasons: string[][];
+};
+
 /**
- * The cheapest assignment of voicings across the whole progression.
- *
- * Dynamic programming, one layer per chord: for each candidate at chord i, keep
- * the cheapest way to have arrived there. Because every cost is adjacent-only,
- * that is the global optimum, not a good guess — and it costs
- * `chords × candidates²` rather than `candidates^chords`.
+ * The cheapest path through layers of candidates when every cost is either a
+ * property of one candidate (`unary`) or of two adjacent ones (`pairwise`).
+ * Dynamic programming, one layer per chord: for each candidate at layer i,
+ * keep the cheapest way to have arrived there. That is the global optimum,
+ * not a good guess, and it costs layers x candidates^2 rather than
+ * candidates^layers. Generic over the candidate type so a bass line (one
+ * pitch per chord) and a voicing (one pitch per voice) use one solver.
+ */
+export function solveChain<T>(problem: {
+  layers: ReadonlyArray<ReadonlyArray<T>>;
+  unary: (candidate: T, layer: number) => number;
+  pairwise: (from: T, to: T, layer: number) => { cost: number; reasons: string[] };
+  startFrom?: T;
+}): ChainSolution | null {
+  const { layers } = problem;
+  if (!layers.length || layers.some((layer) => layer.length === 0)) return null;
+  const opening = layers[0].map((candidate) =>
+    problem.startFrom === undefined ? { cost: 0, reasons: [] as string[] } : problem.pairwise(problem.startFrom, candidate, 0));
+  let costs: number[] = layers[0].map((candidate, i) => problem.unary(candidate, 0) + opening[i].cost);
+  const backPointers: number[][] = [new Array(layers[0].length).fill(-1)];
+  const stepCosts: number[][] = [opening.map((o) => o.cost)];
+  const stepReasons: string[][][] = [opening.map((o) => o.reasons)];
+
+  for (let layer = 1; layer < layers.length; layer += 1) {
+    const previous = layers[layer - 1];
+    const current = layers[layer];
+    const next: number[] = new Array(current.length).fill(Infinity);
+    const from: number[] = new Array(current.length).fill(-1);
+    const paid: number[] = new Array(current.length).fill(0);
+    const why: string[][] = new Array(current.length).fill(null).map(() => []);
+    for (let c = 0; c < current.length; c += 1) {
+      const here = problem.unary(current[c], layer);
+      for (let p = 0; p < previous.length; p += 1) {
+        if (!Number.isFinite(costs[p])) continue;
+        const move = problem.pairwise(previous[p], current[c], layer);
+        const total = costs[p] + move.cost + here;
+        if (total < next[c]) {
+          next[c] = total;
+          from[c] = p;
+          paid[c] = move.cost;
+          why[c] = move.reasons;
+        }
+      }
+    }
+    costs = next;
+    backPointers.push(from);
+    stepCosts.push(paid);
+    stepReasons.push(why);
+  }
+
+  let best = 0;
+  for (let i = 1; i < costs.length; i += 1) if (costs[i] < costs[best]) best = i;
+  if (!Number.isFinite(costs[best])) return null;
+  const chosen: number[] = new Array(layers.length).fill(0);
+  chosen[layers.length - 1] = best;
+  for (let layer = layers.length - 1; layer > 0; layer -= 1) chosen[layer - 1] = backPointers[layer][chosen[layer]];
+  return {
+    chosen,
+    totalCost: Number(costs[best].toFixed(4)),
+    stepCosts: chosen.map((c, layer) => stepCosts[layer][c]),
+    stepReasons: chosen.map((c, layer) => stepReasons[layer][c] ?? []),
+  };
+}
+
+/**
+ * The cheapest assignment of voicings across the whole progression - the
+ * SATB entry point, now a thin caller of `solveChain`.
  */
 export function solveVoiceLeading(problem: VoiceLeadingProblem): VoiceLeadingSolution {
   const voices = problem.voices ?? SATB;
@@ -399,61 +462,25 @@ export function solveVoiceLeading(problem: VoiceLeadingProblem): VoiceLeadingSol
     layers.push({ bar: entry.bar, symbol: entry.symbol, chord, candidates });
   }
 
-  const first = layers[0];
-  let costs: number[] = first.candidates.map((pitches) => {
-    const base = doublingCost(pitches, first.chord, weights.awkwardDoubling);
-    if (!problem.startFrom || problem.startFrom.length !== pitches.length) return base;
-    // Continuing from a previous section is the same move as any other.
-    return base + transitionCost(problem.startFrom, pitches, first.chord, weights).cost;
+  const startFrom = problem.startFrom && problem.startFrom.length === voices.length ? problem.startFrom : undefined;
+  const solved = solveChain<number[]>({
+    layers: layers.map((layer) => layer.candidates),
+    unary: (pitches, index) => doublingCost(pitches, layers[index].chord, weights.awkwardDoubling),
+    pairwise: (from, to, index) => transitionCost(from, to, layers[index].chord, weights),
+    startFrom,
   });
-  const backPointers: number[][] = [new Array(first.candidates.length).fill(-1)];
-  const stepCosts: number[][] = [costs.map(() => 0)];
-  const stepReasons: string[][][] = [first.candidates.map(() => [])];
-
-  for (let layer = 1; layer < layers.length; layer += 1) {
-    const previous = layers[layer - 1];
-    const current = layers[layer];
-    const next: number[] = new Array(current.candidates.length).fill(Infinity);
-    const from: number[] = new Array(current.candidates.length).fill(-1);
-    const paid: number[] = new Array(current.candidates.length).fill(0);
-    const why: string[][] = new Array(current.candidates.length).fill(null).map(() => []);
-
-    for (let c = 0; c < current.candidates.length; c += 1) {
-      for (let p = 0; p < previous.candidates.length; p += 1) {
-        if (!Number.isFinite(costs[p])) continue;
-        const move = transitionCost(previous.candidates[p], current.candidates[c], current.chord, weights);
-        const total = costs[p] + move.cost;
-        if (total < next[c]) {
-          next[c] = total;
-          from[c] = p;
-          paid[c] = move.cost;
-          why[c] = move.reasons;
-        }
-      }
-    }
-    costs = next;
-    backPointers.push(from);
-    stepCosts.push(paid);
-    stepReasons.push(why);
-  }
-
-  let best = 0;
-  for (let i = 1; i < costs.length; i += 1) if (costs[i] < costs[best]) best = i;
-
-  const chosen: number[] = new Array(layers.length).fill(0);
-  chosen[layers.length - 1] = best;
-  for (let layer = layers.length - 1; layer > 0; layer -= 1) {
-    chosen[layer - 1] = backPointers[layer][chosen[layer]];
+  if (!solved) {
+    return { status: "unsolvable", reason: "no path through the candidate voicings", notes };
   }
 
   const voicings: SolvedVoicing[] = layers.map((layer, index) => {
-    const pitches = layer.candidates[chosen[index]];
-    const reasons = stepReasons[index][chosen[index]] ?? [];
+    const pitches = layer.candidates[solved.chosen[index]];
+    const reasons = solved.stepReasons[index];
     return {
       bar: layer.bar,
       symbol: layer.symbol,
       pitches,
-      transitionCost: index === 0 ? 0 : stepCosts[index][chosen[index]],
+      transitionCost: index === 0 && startFrom === undefined ? 0 : solved.stepCosts[index],
       rationale: index === 0
         ? "opening voicing, chosen for spacing and doubling"
         : reasons.length ? reasons.join("; ") : "smooth motion, no rule broken",
@@ -463,7 +490,7 @@ export function solveVoiceLeading(problem: VoiceLeadingProblem): VoiceLeadingSol
   return {
     status: "solved",
     voicings,
-    totalCost: Number(costs[best].toFixed(4)),
+    totalCost: solved.totalCost,
     optimality: notes.length ? "beam" : "exact",
     notes,
   };
