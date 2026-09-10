@@ -17,10 +17,12 @@ import {
 import { createExportBundle, persistExportBundle } from "./export-pipeline";
 import {
   type GeneratedExportFile,
-  renderArrangementExport,
   rendererEvidenceTechnicalMetadata,
   processingEvidenceTechnicalMetadata,
 } from "./exportEngine";
+// Brain B-07 (D4): the export render runs in a worker thread where the built
+// server has one, so the 30 s heartbeat timer fires while a long song renders.
+import { renderArrangementExportOffThread } from "./exportRenderOffThread";
 import { masteringProfile, revisionControlsForExport } from "./masteringEngine";
 import { processPedalboardBuiltinWav, type PedalboardProcessingEvidence } from "./pedalboardBuiltin";
 import { resolveExportSongModel } from "./exportLineage";
@@ -331,8 +333,8 @@ export async function runExportProductionJob(jobId: string): Promise<void> {
       masteringProfile(input.masterProfile ?? "STREAMING"),
       input.masterProfile !== undefined,
     );
-    const deterministicFiles = exportTrackModels.length > 0
-      ? await renderArrangementExport({
+    const renderedOffThread = exportTrackModels.length > 0
+      ? await renderArrangementExportOffThread({
           projectName: project.name, bpm, key, meter,
           arrangementName: arrangement.name, arrangementVersion: arrangement.version,
           mixMasterControls: exportControls.controls, masteringNotes: exportControls.notes,
@@ -348,7 +350,17 @@ export async function runExportProductionJob(jobId: string): Promise<void> {
           planArtifactId: planArtifact.id, planParentIds: planArtifact.parentIds, trackModelArtifactIds,
           includeStems: input.includeStems ?? true, includeMidi: input.includeMidi ?? true,
         })
-      : [];
+      : null;
+    const deterministicFiles = renderedOffThread?.result ?? [];
+    if (renderedOffThread) {
+      // Where the render ran is part of the job's record: an export that fell
+      // back to the main thread and lost its lease must be diagnosable from
+      // the log rather than guessed at.
+      console.info(
+        `[export ${input.exportId ?? "?"}] render ${renderedOffThread.location} in ${renderedOffThread.elapsedMs} ms` +
+        (renderedOffThread.fallbackReason ? ` (${renderedOffThread.fallbackReason})` : ""),
+      );
+    }
     const providerAudioFiles = await selectedProviderAudioExport(
       arrangement,
       artifacts,

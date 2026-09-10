@@ -61,7 +61,9 @@ test("the brain generates exactly the requested candidates, with real notes", as
   }
   // Ranked: the first candidate is never worse than the last.
   assert.ok(result.candidates[0].score >= result.candidates[2].score);
-  assert.deepEqual(stages, ["planning", "composed", "candidates_ready"]);
+  // B-07: `rendering` is the evaluation render of every candidate, between the
+  // composed notes and the candidates the runner receives.
+  assert.deepEqual(stages, ["planning", "composed", "rendering", "candidates_ready"]);
 });
 
 test("every candidate passes the runner's canonical TrackModel contract", async () => {

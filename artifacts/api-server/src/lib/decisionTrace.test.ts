@@ -119,7 +119,18 @@ test("on the owner's fixture the trace answers entries, voicings (with 'not reco
   // 6. renderers: nothing rendered yet -> said so.
   assert.deepEqual(trace.renderers, []);
   assert.ok(trace.notRecorded.some((n) => n.question === "which renderer produced each stem" && /no mix\/master revision and no export/.test(n.reason)));
-  assert.ok(trace.notRecorded.some((n) => n.question === "which critic objected (audio)" && /render stage was skipped/.test(n.reason)));
+  // Brain B-07: the audio half of question 3 is answered now — the brain
+  // renders every candidate for evaluation, so the trace carries located
+  // audio findings instead of a `not recorded: the render stage was skipped`.
+  assert.ok(!trace.notRecorded.some((n) => n.question === "which critic objected (audio)"),
+    JSON.stringify(trace.notRecorded.filter((n) => n.question === "which critic objected (audio)")));
+  const audioFindings = trace.findings.filter((f) => f.source === "runner_audio_critic");
+  assert.ok(audioFindings.length > 0, "the evaluation render produced audio findings on the owner's fixture");
+  for (const finding of audioFindings) {
+    assert.ok(finding.startBar !== null && finding.endBar !== null, "located to bars");
+    assert.ok(finding.startSeconds !== null, "and keeping the seconds it was heard over");
+    assert.match(finding.message, /heard in the evaluation render/);
+  }
   // 7. diff: parent not loaded -> said so, not invented.
   assert.equal(trace.diff, null);
   assert.ok(trace.notRecorded.some((n) => n.question === "what changed between N and N+1" && /parent version arr-1 was not loaded/.test(n.reason)));

@@ -108,7 +108,9 @@ const VOICES: Record<string, Voice> = {
   },
 };
 
-const voiceFor = (family: string): Voice => VOICES[family] ?? VOICES.keys;
+/** The V2 voice for a renderer family (unknown families fall back to keys) - exported for the evaluation renderer (B-07). */
+export const voiceFor = (family: string): Voice => VOICES[family] ?? VOICES.keys;
+export type { Voice as V2Voice };
 
 /**
  * Renderer family for a GM program / percussion flag — the same mapping as
@@ -215,7 +217,7 @@ function onePoleHp(cutoffHz: number, sampleRate: number): (x: number) => number 
 // Note synthesis
 // ---------------------------------------------------------------------------
 
-type NoteEvent = { id: string; start: number; duration: number; pitch: number; velocity: number };
+export type NoteEvent = { id: string; start: number; duration: number; pitch: number; velocity: number };
 
 function envelopeSeconds(voice: Voice, pitch: number): { tail: number } {
   const env = voice.envelope;
@@ -223,7 +225,7 @@ function envelopeSeconds(voice: Voice, pitch: number): { tail: number } {
   return { tail: env.release + 0.02 };
 }
 
-function renderPitchedNote(out: Float32Array, note: NoteEvent, voice: Voice, sampleRate: number): void {
+export function renderPitchedNote(out: Float32Array, note: NoteEvent, voice: Voice, sampleRate: number): void {
   const env = voice.envelope;
   const start = Math.max(0, Math.floor(note.start * sampleRate));
   const { tail } = envelopeSeconds(voice, note.pitch);
@@ -302,7 +304,7 @@ function renderPitchedNote(out: Float32Array, note: NoteEvent, voice: Voice, sam
   }
 }
 
-function renderDrumNote(out: Float32Array, note: NoteEvent, sampleRate: number): void {
+export function renderDrumNote(out: Float32Array, note: NoteEvent, sampleRate: number): void {
   const piece = drumPieceV2(note.pitch);
   const start = Math.max(0, Math.floor(note.start * sampleRate));
   const length = Math.max(piece.toneTau, piece.noiseTau) * 5 + 0.02;
@@ -340,7 +342,7 @@ function renderDrumNote(out: Float32Array, note: NoteEvent, sampleRate: number):
 // Reverb (Schroeder: four combs, two all-passes, per channel)
 // ---------------------------------------------------------------------------
 
-function schroederReverb(input: Float32Array, sampleRate: number, channelOffset: number): Float32Array {
+export function schroederReverb(input: Float32Array, sampleRate: number, channelOffset: number): Float32Array {
   const combLengths = [1557, 1617, 1491, 1422].map((n) => Math.round((n + channelOffset) * (sampleRate / 44_100)));
   const allpassLengths = [225, 556].map((n) => Math.round(n * (sampleRate / 44_100)));
   const predelay = Math.round(0.012 * sampleRate);

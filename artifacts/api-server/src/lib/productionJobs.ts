@@ -45,12 +45,17 @@ type ProductionJobTransaction =
   Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 /**
- * How long a claimed job stays owned without a heartbeat. The export render
- * still runs its synthesis synchronously on the API's event loop, so the
- * 30-second heartbeat timer cannot fire while a long song renders and a
- * two-minute lease is lost mid-render (seen on a 4:18 song: "Export job lease
- * was lost" at rendering 25 %). Until that render moves off-thread, the lease
- * length is an operator knob; the default is unchanged.
+ * How long a claimed job stays owned without a heartbeat.
+ *
+ * The export render used to run its synthesis synchronously on the API's event
+ * loop, so the 30-second heartbeat timer could not fire while a long song
+ * rendered and a two-minute lease was lost mid-render (seen on a 4:18 song:
+ * "Export job lease was lost" at rendering 25 %). Brain B-07 moved that render
+ * into a worker thread (`exportRenderOffThread.ts`), so the heartbeat fires on
+ * time and this is a knob again rather than a requirement — the default is
+ * unchanged, and it still matters where the worker bundle is absent (an
+ * unbundled run) or an input cannot be transferred, both of which fall back to
+ * the main thread and say so in the export log.
  */
 const LEASE_MS = Number(process.env.PRODUCTION_JOB_LEASE_MS) > 0
   ? Number(process.env.PRODUCTION_JOB_LEASE_MS)

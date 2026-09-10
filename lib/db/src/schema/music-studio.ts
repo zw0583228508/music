@@ -4580,6 +4580,77 @@ export type ArrangementBrainCandidateEvidence = {
   contextPasses?: Array<{ id: string; changed: number; note: string }>;
   timing?: { tempoBpm: number; tempoAssumed: boolean; meter: string; meterAssumed: boolean };
   failureCodes?: FailureCodeCount[];
+  /** Brain B-07: the evaluation render the audio critique ran on, the audio critique and its located observations. */
+  audio?: ArrangementBrainAudioEvidence;
+};
+
+// ---------------------------------------------------------------------------
+// Brain B-07 (production render loop): what the audio critique heard
+// ---------------------------------------------------------------------------
+
+/** One located audio observation in the B-05 critic contract (`critics/types.ts` CriticObservation, location flattened). */
+export type ArrangementBrainAudioObservation = {
+  id: string;
+  dimension: string;
+  kind: string;
+  severity: "info" | "minor" | "major" | "blocking";
+  startBar: number;
+  endBar: number;
+  sectionName?: string;
+  trackIds: string[];
+  /** Seconds the observation was measured over, before the timeline mapped them to bars. */
+  startSeconds: number;
+  endSeconds: number;
+  evidence: Record<string, number | string | boolean>;
+  suspectedOrigin: string;
+  originConfidence: number;
+  recommendedRepair: { operation: string; scope: "note" | "part" | "section" | "plan"; detail: string } | null;
+  confidence: number;
+};
+
+export type ArrangementBrainAudioDimension = {
+  dimension: string;
+  version: string;
+  applicable: boolean;
+  reasonIfNot?: string;
+  score0to100: number | null;
+  coverage: number;
+  /** From the audio control ledger only (`critics/dimensions/audioControlLedger.ts`), never typed by hand. */
+  controlStatus: "gated" | "informing" | "demoted" | "uncalibrated";
+  observations: ArrangementBrainAudioObservation[];
+};
+
+export type ArrangementBrainAudioEvidence = {
+  version: "1.0";
+  renderer: string;
+  rendererVersion: string;
+  /** The evaluation render contract (family trims + loudness + stem layout). */
+  evaluationVersion: string;
+  location: "worker_thread" | "in_process";
+  sampleRate: number;
+  channels: number;
+  durationSeconds: number;
+  renderMs: number;
+  critiqueMs: number;
+  loudness: { targetRmsDbfs: number; peakCeiling: number; applied: "rms" | "peak"; gainDb: number };
+  familyTrimsDb: Record<string, number>;
+  /** Percent of the mix's power below 150 Hz / 150 Hz-2 kHz / 2-5 kHz / above 5 kHz. */
+  spectrum: { sub150: number; low2k: number; presence5k: number; air: number };
+  stems: Array<{ trackId: string; instrument: string; family: string; trimDb: number; rmsDbfs: number; peakDbfs: number; noteCount: number }>;
+  /** audio-critic/v1 on the stems (balance, masking, mud, low end, transients, dynamics ...). */
+  critique: AudioCritique;
+  /** The located audio dimensions (audioBalance, audioDynamics, audioMasking, audioTransitions). */
+  dimensions: ArrangementBrainAudioDimension[];
+  symbolicScore: number;
+  audioScore: number;
+  audioWeight: number;
+  finalScore: number;
+  /** Rank among this run's hard-rule-passing candidates by symbolic score alone, and with audio; `selectedWithAudio` marks the run's winner. */
+  rankSymbolic: number;
+  rankCombined: number;
+  selectedWithAudio: boolean;
+  /** The render bytes' digest (cache key): the job runner's evaluation artifact reuses this render when the key matches. */
+  renderKey: string;
 };
 
 // ===========================================================================
