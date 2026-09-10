@@ -33,7 +33,7 @@ import { critiqueMachineMade } from "./critics/adversarial/machineMade";
 import { critiqueCausality } from "./critics/adversarial/causality";
 import { critiqueArbitrariness } from "./critics/adversarial/arbitrariness";
 import { penaltyOf } from "./critics/adversarial/shared";
-import type { CriticInput } from "./critics/types.b05b";
+import type { CriticInput } from "./critics/types";
 import { readFileSync } from "node:fs";
 import { barTiming, type ComposeFrame } from "./composer/frame";
 import { registerBounds, voiceNear } from "./composer/registers";

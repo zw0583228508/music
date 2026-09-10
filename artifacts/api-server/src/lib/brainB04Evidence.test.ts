@@ -16,7 +16,7 @@ import { orchestrateArrangement } from "./arrangementOrchestrator";
 import { critiqueMachineMade } from "./critics/adversarial/machineMade";
 import { critiqueCausality } from "./critics/adversarial/causality";
 import { penaltyOf } from "./critics/adversarial/shared";
-import type { CriticInput } from "./critics/types.b05b";
+import type { CriticInput } from "./critics/types";
 import { B04_EVIDENCE_NOW, buildB04Evidence, type B04Before } from "./brainB04Evidence";
 
 /** Recorded on a751796 with this module (scratch before-tree run, 2026-09-10). */
