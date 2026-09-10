@@ -31,7 +31,7 @@ import { getInstrumentDefinition } from "./musicEngines";
 import { critiqueBoredom } from "./critics/adversarial/boredom";
 import { critiqueCopiedRepeat } from "./critics/adversarial/copiedRepeat";
 import { ngrams, normalisedEntropy, topLine } from "./critics/adversarial/shared";
-import type { CriticInput, CriticDimensionReport } from "./critics/types.b05b";
+import type { CriticInput, CriticDimensionReport } from "./critics/types";
 import { orchestrateArrangement, type OrchestrationResult } from "./arrangementOrchestrator";
 import { rachemNaSongModel, RACHEM_NA_FIXED_NOW } from "./__fixtures__/rachemNaSongModelV3";
 import { compileProductionBrief } from "./producerIntelligence/briefCompiler";
