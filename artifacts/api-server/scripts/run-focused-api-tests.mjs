@@ -661,6 +661,30 @@ const suites = {
       ],
     ],
   },
+  // Brain B-12: the musical invariants the Arrangement Brain must keep -
+  // metamorphic (transposition, tempo, metre, section naming, seed,
+  // instrument swap, scope preservation), silent planned parts, playability
+  // under every validator, critic positive controls, bounded fuzz and golden
+  // digests. Every invariant carries a negative control; invariants the brain
+  // fails today run as `todo` with the observed behaviour in the reason and in
+  // docs/evidence/brain-b12-invariants.json - never weakened.
+  "brain-invariants": {
+    bundles: [
+      ["src/lib/invariants/generators.property.test.ts", "b12-generators.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/transposition.property.test.ts", "b12-transposition.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/tempo.property.test.ts", "b12-tempo.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/meter.property.test.ts", "b12-meter.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/sectionNaming.property.test.ts", "b12-section-naming.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/determinism.property.test.ts", "b12-determinism.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/instrumentSwap.property.test.ts", "b12-instrument-swap.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/scopePreservation.property.test.ts", "b12-scope-preservation.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/emptyParts.property.test.ts", "b12-empty-parts.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/playability.property.test.ts", "b12-playability.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/criticSanity.property.test.ts", "b12-critic-sanity.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/fuzz.property.test.ts", "b12-fuzz.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/golden.property.test.ts", "b12-golden.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
 };
 
 const supportedPermissionFailureCodes = new Set(["EPERM", "EACCES"]);

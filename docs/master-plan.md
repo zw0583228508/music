@@ -6252,6 +6252,73 @@ any of it.
   figures were removed, not re-homed (per-family device realisation is B-04).
   The "before" tables were produced by running the `3bf23aa` planners beside
   the new ones, not from stored production runs.
+### PR-B12 — Brain B-12: invariants the brain must keep
+
+- **What.** Property, metamorphic, fuzz and golden tests over the Arrangement
+  Brain (`orchestrateArrangement`, reference composer, context passes off):
+  `artifacts/api-server/src/lib/invariants/` — seeded Song Model generators
+  (`generators.ts`: any key, four modes, diatonic + borrowed chords, 4/4 3/4
+  6/8 5/4 7/8, 56–176 BPM, 2–9 sections in English / Hebrew / unnamed, with or
+  without vocal phrases and an energy curve, every model valid under
+  `validateCanonicalSongModel` and eligible, 60/60; mutations transpose /
+  retime / rename / shuffle / remove family / swap instrument / reseed), pure
+  checkers (`analysis.ts`) and thirteen `*.property.test.ts` suites registered
+  as `brain-invariants` in `run-focused-api-tests.mjs`. Every invariant ships
+  with a negative control that shows the checker rejecting a deliberately
+  broken input; an invariant the brain fails today runs as node:test `todo`
+  with the observed behaviour in the reason — the assertion is never weakened.
+  51 tests: 35 pass, 0 fail, 16 known failures. Evidence
+  `docs/evidence/brain-b12-invariants.json` (per invariant: seeds, pass/fail,
+  failing seeds with their violations, the cause isolated by a probe).
+  Golden digests (note count + sha256 per candidate and track) for the nine
+  synthetic cases and the owner's song (`__fixtures__/invariants/
+  rachem-na-song-model-v3.b12.json`, slimmed v3) under `__fixtures__/
+  invariants/golden/`; drift is reported, not blocked.
+- **Pass today.** Same-seed determinism 20/20 (byte-identical TrackModels,
+  plan, selection); scope regeneration 20/20 (`regenerateWithinScopes` over
+  random (section, family) scopes: every other note byte-identical, 872 notes
+  replaced); fuzz never throws on 200 models (83 degenerate: one section, one
+  chord, no chords, 300/30 BPM, 1/4, 13/8, no stems, a bar per section, a
+  section gap, no bars, no map); golden 10/10 match; the owner's fixture valid.
+- **Known failures, each isolated to a line by a control probe.** (C1)
+  `musicEngines.ts getInstrumentDefinition`: `FAMILY_WORDS` has no
+  key/piano, so **keys or piano in the RHYTHMIC_HARMONY role is a drum kit**
+  (8/24 seeds; composed into 36–60, four voices, ghost notes, a flam). (C2)
+  `referencePartComposer.ts:73-78`: the composer's bar is numerator × quarter,
+  **in 6/8 and 7/8 twice the Song Model's bar** — a 128 s song is written over
+  255 s, every harmony part is silent from the second or third section on
+  (89 silent planned pairs), transitions fall back to a literal C major, and
+  the drum accents land on eighths 3 and 5; metre 6/8 0/20, 7/8 0/20. (C3)
+  `referencePartComposer.ts:157/183/226` `Math.round(span/beatSeconds)` on a
+  .5 knife edge — a pure retime changes the bass from 204 to 142 notes with a
+  byte-identical plan; tempo 13/24. (C4) `:80-82` a chord that overlaps the
+  next section by a float epsilon is written as a minimum-duration stub of the
+  old harmony on the downbeat with a duplicate id (6/200 fuzz models). (C5)
+  `playabilityRepair.ts:139` breaks velocity ties on pitch, so which voice of
+  a legal chord is dropped depends on the key (transposition 7/24; the raw
+  composer transposes exactly, 0 wrong pitches over 2,289). (C6)
+  `candidateRepair.ts` id-keyed restore rewrites the first of two notes sharing
+  an id (seed 803) — `outsideScopePreserved` correctly false. (C7)
+  `applyDensity` stride thinning deletes downbeat kicks (3/4 16/20). (C8) one
+  drum cell for every numerator: 5/4 is a padded 4/4 backbeat 20/20. (C9)
+  `classifySection` is an English regex: Hebrew and unnamed sections are all
+  `neutral`, the climax layer is lost in 19/20 seeds, intro/ending tasks are
+  not planned. (C10) LEAD in a sung section writes nothing (F5, 10 pairs).
+  (C11) the critic (F1, measured): playable random pitches move the score by
+  −2..+2 on 15/20 seeds, drums-only outscores the full arrangement on 10/20.
+  (C12) three playability definitions disagree on 6/72 shipped candidates
+  (contract passes, engine `impossible_fingering`) and on a keys→guitar swap;
+  `playabilityRepair` counts any overlap as a voice where the other two allow
+  30 ms. (C13) `songMusicalMap.ts sampleWindowMean` floor/ceil edges move a
+  section's energy by 0.09 under a pure retime when samples align with bars.
+- **Honest limits.** Reference-composer path only, no rendering, no audio
+  critic, no job runner; 20–24 fixed seeds per invariant and 200 fuzz models;
+  the generator has one tempo and one metre per song, no slash chords, no
+  modulation; transposition tolerates whole-octave folds and sub-40 ms roll
+  shifts (reported); the tempo invariant stays inside one tempo band; metre
+  checks judge kick/snare/hat placement only and 3/4 passes a non-waltz cell;
+  golden digests describe output, not quality; no production module was
+  changed and nothing was fixed; nobody has listened.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 

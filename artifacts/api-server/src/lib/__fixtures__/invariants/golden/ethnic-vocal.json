@@ -1,0 +1,87 @@
+{
+  "case": "ethnic-vocal",
+  "orchestratorVersion": "1.0",
+  "composer": "REFERENCE_PART_COMPOSER_V1",
+  "candidateCount": 3,
+  "planDigest": "f350e845d79e8c08af4c3aa1b38f2e206df7dc2f7d7dd42956c467540cc46951",
+  "candidates": [
+    {
+      "candidateId": "cand-A",
+      "strategy": "conservative",
+      "noteCount": 413,
+      "trackModelsSha256": "7bfd8130f98a33fd1121958d6dd6a735868234aa88cd9c54b572bc552eef92f0",
+      "tracks": [
+        {
+          "id": "drums-climax_layer",
+          "instrument": "drums",
+          "notes": 447,
+          "sha256": "e6cd01255cb1cdd26518a12f383ea28345276d27e608844279354b2d7e99cf0a"
+        },
+        {
+          "id": "bass-bass",
+          "instrument": "bass",
+          "notes": 4,
+          "sha256": "b71b6258c294f0432644fc8ff09a62abf349027c1b3b0d73d6aecc0495fdd2a2"
+        },
+        {
+          "id": "ensemble-transition",
+          "instrument": "ensemble",
+          "notes": 6,
+          "sha256": "461116ce2e01b3e790b120083547988a4444c0ed5642cfdd73196fe7bdd9340b"
+        }
+      ]
+    },
+    {
+      "candidateId": "cand-B",
+      "strategy": "melodic",
+      "noteCount": 446,
+      "trackModelsSha256": "aef51cbce47a173c446597d93611b6cf981dcfdb93308abbc8ad94a165108b07",
+      "tracks": [
+        {
+          "id": "drums-climax_layer",
+          "instrument": "drums",
+          "notes": 484,
+          "sha256": "1a78c35b226aeee7de89182ae7bce7ffae1fff4ec7cb3a1844141bb332ae689f"
+        },
+        {
+          "id": "bass-bass",
+          "instrument": "bass",
+          "notes": 4,
+          "sha256": "0308d0ed04d2c3e477cc362ac167ab1c0ccf3219641dcd465932dc317f8581ed"
+        },
+        {
+          "id": "ensemble-transition",
+          "instrument": "ensemble",
+          "notes": 6,
+          "sha256": "dd051940ac9074a0fed40211eccd98c78579a32db866f19e5daaa60d911821b6"
+        }
+      ]
+    },
+    {
+      "candidateId": "cand-C",
+      "strategy": "adventurous",
+      "noteCount": 446,
+      "trackModelsSha256": "1f7213891cdc46da1165123736ec3ecf611f533285e513483276f250d9fe3626",
+      "tracks": [
+        {
+          "id": "drums-climax_layer",
+          "instrument": "drums",
+          "notes": 484,
+          "sha256": "791be328280650b732020ee8d9e29845098382a08c409d6d3b6ebea4238b491c"
+        },
+        {
+          "id": "bass-bass",
+          "instrument": "bass",
+          "notes": 4,
+          "sha256": "3c084d7981fb222dc8b6f20932e7f580d71ea6c62dede4f3aefd7ea50671878e"
+        },
+        {
+          "id": "ensemble-transition",
+          "instrument": "ensemble",
+          "notes": 6,
+          "sha256": "e6a4a7a24fb78b4d77406d7a8ba64911be4276283eac743fa7ee762a566317a5"
+        }
+      ]
+    }
+  ]
+}
