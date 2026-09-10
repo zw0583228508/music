@@ -46,25 +46,51 @@ export type OpenLicenceCatalogue = {
 };
 
 /** What `modal_open_licence_assets.provision_asset` writes per asset root (`provision-evidence.json`). */
+export type RenderRecord = {
+  audible?: boolean;
+  peak?: number;
+  outputSha256?: string;
+  wav?: string;
+  wavSha256?: string;
+  renderMs?: number;
+  error?: string;
+  durationSeconds?: number;
+  family?: string;
+  auditionFamily?: string;
+  instrument?: string;
+  /** False for the operator's direct sfizz_render audition of a refused asset; absent/true for the attested `/render` path. */
+  viaLifecycle?: boolean;
+};
+
 export type ProvisionRecord = {
   assetId: string;
   identity?: string;
   refused?: string;
   error?: string;
-  licence?: { spdx: string; file: string; sha256: string; bytes?: number; firstLine?: string; markersFound?: string[]; attribution?: string | null };
+  fetchMode?: "git" | "raw";
+  licence?: { spdx: string; file: string; sha256: string; bytes?: number; firstLine?: string; markersFound?: string[]; attribution?: string | null; fromCommit?: string };
   activated?: boolean;
   warnings?: string[];
   steps?: {
-    source?: { commit?: string; repository?: string; fullTree?: { sha256: string | null; fileCount: number; bytes: number; mode?: string } };
-    subset?: { sha256: string; fileCount: number; bytes: number; missing?: string[] };
+    source?: {
+      commit?: string; repository?: string; branch?: string; fetch?: string; seconds?: number;
+      fullTree?: { sha256: string | null; fileCount: number; bytes: number; mode?: string; gitCommit?: string };
+      licenceFrom?: { commit: string; branch?: string; file: string; gitBlobSha1?: string; pinnedTreeHasLicenceFile?: boolean; pinnedTreeReadmeStatement?: string | null; why?: string };
+      fullLibraryProbe?: { sfz: string; exit: number; peak?: number; audible?: boolean; stderrTail?: string };
+    };
+    subset?: { sha256: string; fileCount: number; bytes: number; missing?: string[]; undefinedVariables?: string[] };
     operator?: { exit: number; seconds: number };
   };
   operator?: {
     host?: { identity: string; sha256: string; sfizzRenderSha256?: string };
-    stage?: { candidate?: { candidateId?: string; sha256?: string; rendererSha256?: string; status?: string }; smoke?: { audible?: boolean; canonicalSensitivity?: boolean; outputSha256?: string; pitchVariantSha256?: string; expressionVariantSha256?: string; peak?: number } };
+    preflight?: { sfizzRender?: { exit: number; wavBytes?: number }; host?: { exit: number; peak?: number; attested?: boolean } };
+    stage?: { error?: string; candidate?: { candidateId?: string; sha256?: string; rendererSha256?: string; status?: string }; smoke?: { audible?: boolean; canonicalSensitivity?: boolean; outputSha256?: string; pitchVariantSha256?: string; expressionVariantSha256?: string; peak?: number } };
     activate?: { status?: string; sha256?: string; activatedAt?: string };
     health?: { healthy?: boolean; asset?: { id?: string; sha256?: string; rendererSha256?: string }; reason?: string };
-    renders?: Record<string, { audible?: boolean; peak?: number; outputSha256?: string; wav?: string; wavSha256?: string; renderMs?: number; error?: string; durationSeconds?: number; family?: string; auditionFamily?: string; instrument?: string }>;
+    /** Renders through the worker's attested `/render` path (activated assets only). */
+    renders?: Record<string, RenderRecord>;
+    /** Direct sfizz_render auditions written when the smoke refused the asset - audible evidence, never coverage. */
+    directRenders?: Record<string, RenderRecord>;
   };
   cost?: { containerWallSeconds?: number; costUsd?: number };
 };
@@ -132,9 +158,11 @@ export function familyCoverage(catalogue: OpenLicenceCatalogue, records: Record<
           ...(typeof render.peak === "number" ? { peak: render.peak } : {}),
         });
       } else {
+        const direct = record?.operator?.directRenders?.[instrument.sfz];
         row.notCounted.push({
           assetId: asset.assetId, sfz: instrument.sfz,
-          why: !admissible ? reasons[0] ?? "asset not admissible" : render?.error ? `render failed: ${render.error}` : render ? "rendered silence" : "not rendered",
+          why: (!admissible ? reasons[0] ?? "asset not admissible" : render?.error ? `render failed: ${render.error}` : render ? "rendered silence" : "not rendered")
+            + (direct?.audible ? " (audible in the direct sfizz_render audition, which does not count)" : ""),
         });
       }
     }

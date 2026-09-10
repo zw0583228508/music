@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -148,6 +149,62 @@ def _fetch_commit(repository: str, commit: str, target: Path) -> dict[str, int]:
     return listing
 
 
+def _github_repo(repository: str) -> str:
+    """`https://github.com/owner/name(.git)` -> `owner/name`."""
+    match = re.search(r"github\.com[/:]([^/]+)/([^/]+?)(?:\.git)?/?$", repository)
+    if not match:
+        raise RuntimeError(f"raw fetch needs a GitHub repository URL, got {repository}")
+    return f"{match.group(1)}/{match.group(2)}"
+
+
+def _github_tree(repository: str, commit: str) -> dict[str, tuple[int, str]]:
+    """path -> (bytes, git blob SHA-1) at `commit`, from the Git trees API (one request)."""
+    data = _github_json(f"https://api.github.com/repos/{_github_repo(repository)}/git/trees/{commit}?recursive=1")
+    if not isinstance(data, dict) or data.get("truncated"):
+        raise RuntimeError(f"tree listing for {repository}@{commit} is truncated or unavailable")
+    return {entry["path"]: (int(entry.get("size", 0)), entry["sha"]) for entry in data["tree"] if entry.get("type") == "blob"}
+
+
+def _raw_one(repository: str, commit: str, relative: str, target: Path, expected: tuple[int, str]) -> int:
+    """One file from raw.githubusercontent.com, verified against the commit tree's size and blob SHA-1."""
+    import hashlib
+    import urllib.error
+    import urllib.parse
+    import urllib.request
+
+    url = f"https://raw.githubusercontent.com/{_github_repo(repository)}/{commit}/{urllib.parse.quote(relative)}"
+    last: Exception | None = None
+    for attempt in range(6):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "music-platform-sound-assets/1.0"}), timeout=180) as response:
+                data = response.read()
+            break
+        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+            last = exc
+            time.sleep(2 * (attempt + 1))
+    else:
+        raise RuntimeError(f"could not download {relative}: {last}")
+    if len(data) != expected[0]:
+        raise RuntimeError(f"{relative}: expected {expected[0]} bytes, got {len(data)}")
+    actual = hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+    if actual != expected[1]:
+        raise RuntimeError(f"{relative}: git blob sha1 {actual} != {expected[1]} in the commit tree")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(data)
+    return len(data)
+
+
+def _raw_materialise(repository: str, commit: str, library: Path, tree: dict[str, tuple[int, str]], paths: list[str], *, workers: int = 16) -> dict:
+    """Download exactly `paths` at `commit`, every one verified; returns counts."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    started = time.monotonic()
+    wanted = [path for path in paths if path in tree and not (library / path).is_file()]
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        sizes = list(pool.map(lambda path: _raw_one(repository, commit, path, library / path, tree[path]), wanted))
+    return {"downloaded": len(wanted), "bytes": sum(sizes), "seconds": round(time.monotonic() - started, 1), "verified": "size + git blob SHA-1 against the commit tree, per file"}
+
+
 def _materialise(target: Path, paths: list[str] | None) -> None:
     """Check out exactly `paths` from FETCH_HEAD (missing blobs fetched from the promisor remote), or the whole tree when None.
 
@@ -249,20 +306,30 @@ def survey(repos: list[str], release_lookups: list[str] | None = None) -> dict:
     # disk holds every library here, and the source checkout is removed as
     # soon as the subset is hard-linked out of it.
 )
-def provision_asset(asset_id: str, host_identity: str) -> dict:
-    """Download -> hash -> licence gate -> subset -> stage/activate/health/render -> copy to the Volume."""
+def provision_asset(asset_id: str, host_identity: str, fetch: str = "git") -> dict:
+    """Download -> hash -> licence gate -> subset -> stage/activate/health/render -> copy to the Volume.
+
+    `fetch`: `git` (blob-less fetch of the commit + sparse checkout; the whole
+    tree is checked out and hashed when it is under 1 GiB) or `raw`
+    (the commit's tree from the GitHub API, then only the needed files from
+    raw.githubusercontent.com, each verified against its git blob SHA-1 -
+    minutes instead of the hour a git fetch of these repositories took from
+    Modal; no whole-tree sha256, the commit is the pin).
+    """
     import tempfile
 
     sys.path.insert(0, "/app")
     sys.path.insert(0, "/app/native_hosts")
     from open_licence_assets import LicenceRefused, capture_licence, load_catalogue, subset_files, tree_evidence
 
+    if fetch not in {"git", "raw"}:
+        raise ValueError("fetch must be git or raw")
     started = time.monotonic()
     catalogue = load_catalogue(Path("/app/open_licence_assets.json"))
     asset = next((a for a in catalogue["assets"] if a["assetId"] == asset_id), None)
     if asset is None:
         raise ValueError(f"{asset_id} is not in the catalogue")
-    record: dict = {"assetId": asset_id, "identity": asset["identity"], "startedAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "steps": {}}
+    record: dict = {"assetId": asset_id, "identity": asset["identity"], "startedAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "fetchMode": fetch, "steps": {}}
     asset_root = Path(ASSET_ROOT) / asset_id
     if asset_root.exists():
         shutil.rmtree(asset_root)
@@ -274,19 +341,45 @@ def provision_asset(asset_id: str, host_identity: str) -> dict:
         step_started = time.monotonic()
         library = work / "library"
         listing: dict[str, int] | None = None
+        raw_tree: dict[str, tuple[int, str]] | None = None
+        licence_root = library
         if source["kind"] == "git":
-            listing = _fetch_commit(source["repository"], source["commit"], library)
+            if fetch == "raw":
+                raw_tree = _github_tree(source["repository"], source["commit"])
+                listing = {path: size for path, (size, _sha) in raw_tree.items()}
+                library.mkdir(parents=True, exist_ok=True)
+            else:
+                listing = _fetch_commit(source["repository"], source["commit"], library)
             total_bytes = sum(listing.values())
             # Phase 1: the text files only (sfz, includes, licence, readme) -
             # enough to run the licence gate and resolve every sample the
             # instruments reference before a single sample is fetched.
             texts = sorted(path for path in listing if Path(path).suffix.lower() in TEXT_SUFFIXES)
-            _materialise(library, texts)
+            phase1 = _raw_materialise(source["repository"], source["commit"], library, raw_tree, texts) if raw_tree is not None else None
+            if raw_tree is None:
+                _materialise(library, texts)
             fetched = {
                 "repository": source["repository"], "commit": source["commit"], "branch": source.get("branch"),
-                "fetch": "git fetch --depth 1 --filter=blob:none by commit SHA; blobs materialised through sparse-checkout, each verified by git against the tree's SHA-1",
-                "listingFileCount": len(listing), "listingBytes": total_bytes, "phase1TextFiles": len(texts),
+                "fetch": ("GitHub trees API listing of the commit; files from raw.githubusercontent.com at the commit, each verified against its size and git blob SHA-1" if raw_tree is not None
+                          else "git fetch --depth 1 --filter=blob:none by commit SHA; blobs materialised through sparse-checkout, each verified by git against the tree's SHA-1"),
+                "listingFileCount": len(listing), "listingBytes": total_bytes, "phase1TextFiles": len(texts), **({"phase1": phase1} if phase1 else {}),
             }
+            licence_pin = asset["licence"].get("fromCommit")
+            if licence_pin and licence_pin != source["commit"]:
+                # The legal code lives at another commit of the same repository:
+                # fetch that one file, verified against that commit's tree, into a
+                # separate root so the staged subset stays exactly the pinned tree.
+                other_tree = _github_tree(source["repository"], licence_pin)
+                licence_file = asset["licence"]["file"]
+                if licence_file not in other_tree:
+                    raise RuntimeError(f"{licence_file} is not in {source['repository']}@{licence_pin} either")
+                licence_root = work / "licence-root"
+                _raw_one(source["repository"], licence_pin, licence_file, licence_root / licence_file, other_tree[licence_file])
+                statement = None
+                readme = library / "README.md"
+                if readme.is_file():
+                    statement = next((line.strip() for line in readme.read_text(encoding="utf-8", errors="replace").splitlines() if "creative commons" in line.lower() or "cc0" in line.lower()), None)
+                fetched["licenceFrom"] = {"commit": licence_pin, "branch": asset["licence"].get("fromBranch"), "file": licence_file, "gitBlobSha1": other_tree[licence_file][1], "pinnedTreeHasLicenceFile": licence_file in listing, "pinnedTreeReadmeStatement": statement, "why": asset["licence"].get("note")}
         elif source["kind"] == "archive":
             archive = work / "archive.bin"
             fetched = _download(source["url"], archive)
@@ -308,7 +401,9 @@ def provision_asset(asset_id: str, host_identity: str) -> dict:
 
         # 2. licence gate - before any sample byte is fetched or staged
         try:
-            captured = capture_licence(library, asset)
+            captured = capture_licence(licence_root, asset)
+            if licence_root is not library:
+                captured["fromCommit"] = asset["licence"]["fromCommit"]
         except LicenceRefused as exc:
             record["refused"] = str(exc)
             record["finishedAt"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
@@ -318,7 +413,7 @@ def provision_asset(asset_id: str, host_identity: str) -> dict:
             return record
         licence_dir = asset_root / "licence"
         licence_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(library / asset["licence"]["file"], licence_dir / Path(asset["licence"]["file"]).name)
+        shutil.copyfile(licence_root / asset["licence"]["file"], licence_dir / Path(asset["licence"]["file"]).name)
         record["licence"] = captured
 
         # 3. the subset the instruments need; for a git source this is what
@@ -326,7 +421,17 @@ def provision_asset(asset_id: str, host_identity: str) -> dict:
         #    to hash whole as well)
         step_started = time.monotonic()
         subset = subset_files(library, asset, listing)
-        if listing is not None:
+        if raw_tree is not None:
+            record["steps"]["source"]["phase2"] = _raw_materialise(source["repository"], source["commit"], library, raw_tree, subset["files"])
+            record["steps"]["source"]["fullTree"] = {
+                "sha256": None, "fileCount": len(listing), "bytes": sum(listing.values()), "gitCommit": source["commit"],
+                "mode": "raw per-file download of the subset only; the commit SHA is the full-tree pin and every downloaded file was verified against its git blob SHA-1",
+            }
+            unmaterialised = [relative for relative in subset["files"] if not (library / relative).is_file()]
+            if unmaterialised:
+                raise RuntimeError(f"{len(unmaterialised)} subset file(s) did not download from the pinned commit, e.g. {unmaterialised[:3]}")
+            record["steps"]["source"]["materialiseSeconds"] = round(time.monotonic() - step_started, 1)
+        elif listing is not None:
             if sum(listing.values()) <= FULL_CHECKOUT_LIMIT:
                 _materialise(library, None)
                 record["steps"]["source"]["fullTree"] = {**tree_evidence(library), "mode": "full checkout, sha256 over every file"}
@@ -336,6 +441,11 @@ def provision_asset(asset_id: str, host_identity: str) -> dict:
                     "sha256": None, "fileCount": len(listing), "bytes": sum(listing.values()), "gitCommit": source["commit"],
                     "mode": "too large to check out whole; the commit SHA is the full-tree pin and only the subset below was materialised and hashed",
                 }
+            if (library / asset["smokeInstrument"]).is_file() and sum(listing.values()) <= FULL_CHECKOUT_LIMIT:
+                # The whole tree is on disk: ask sfizz itself whether the
+                # smoke instrument sounds from the *full* library, so a silent
+                # subset can be told apart from a library sfizz cannot load.
+                record["steps"]["source"]["fullLibraryProbe"] = _direct_probe(library, asset["smokeInstrument"])
             unmaterialised = [relative for relative in subset["files"] if not (library / relative).is_file()]
             if unmaterialised:
                 raise RuntimeError(f"{len(unmaterialised)} subset file(s) did not materialise from the pinned commit, e.g. {unmaterialised[:3]}")
@@ -348,9 +458,10 @@ def provision_asset(asset_id: str, host_identity: str) -> dict:
             destination.parent.mkdir(parents=True, exist_ok=True)
             os.link(library / relative, destination)
         subset_tree = tree_evidence(staging)
-        record["steps"]["subset"] = {"seconds": round(time.monotonic() - step_started, 1), "fileCount": len(subset["files"]), "bytes": subset["bytes"], "missing": subset["missing"], "perInstrument": subset["perInstrument"], "sha256": subset_tree["sha256"]}
+        record["steps"]["subset"] = {"seconds": round(time.monotonic() - step_started, 1), "fileCount": len(subset["files"]), "bytes": subset["bytes"], "missing": subset["missing"], "undefinedVariables": subset["undefinedVariables"], "perInstrument": subset["perInstrument"], "sha256": subset_tree["sha256"]}
         if subset["missing"]:
-            record["warnings"] = [f"{len(subset['missing'])} referenced sample(s) are missing from the source; the affected instrument will render silence and fail its audibility check"]
+            record["warnings"] = [f"{len(subset['missing'])} referenced sample(s) are missing from the source; the affected instrument will render silence and fail its audibility check"
+                                  + (f"; undefined SFZ variables on the walk: {', '.join(subset['undefinedVariables'])} (defined outside any .sfz, e.g. by a Sforzando bank)" if subset["undefinedVariables"] else "")]
 
         # 4. the worker's own lifecycle, in a subprocess so `app.py`'s import-time
         #    asset root / manifest constants are this asset's.
@@ -384,6 +495,30 @@ def provision_asset(asset_id: str, host_identity: str) -> dict:
     (asset_root / "provision-evidence.json").write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
     _copy_root_to_volume(asset_root, asset_id)
     return record
+
+
+def _direct_probe(library: Path, sfz: str) -> dict:
+    """One short pitched phrase through sfizz_render alone (no host, no lifecycle): exit code, stderr tail, peak."""
+    import tempfile
+
+    sys.path.insert(0, "/app")
+    from operator_open_licence_asset import phrase_midi_bytes
+
+    started = time.monotonic()
+    with tempfile.TemporaryDirectory(prefix="probe-") as temporary:
+        midi = Path(temporary) / "probe.mid"
+        midi.write_bytes(phrase_midi_bytes("piano", key_range=[48, 72]))
+        wav = Path(temporary) / "probe.wav"
+        completed = subprocess.run([SFIZZ_BINARY, "--sfz", str(library / sfz), "--midi", str(midi), "--wav", str(wav), "--samplerate", "22050"], capture_output=True, text=True, timeout=900)
+        out = {"sfz": sfz, "exit": completed.returncode, "ms": round((time.monotonic() - started) * 1000), "stderrTail": "\n".join(line for line in completed.stderr.splitlines() if "thread scheduling" not in line)[-600:]}
+        if wav.is_file():
+            import numpy as np
+            import soundfile as sf
+
+            audio, _rate = sf.read(wav, always_2d=True, dtype="float32")
+            out["peak"] = round(float(np.max(np.abs(audio))) if audio.size else 0.0, 6)
+            out["audible"] = bool(audio.size) and float(np.max(np.abs(audio))) >= 0.0005
+        return out
 
 
 def _copy_root_to_volume(asset_root: Path, asset_id: str) -> None:
@@ -523,9 +658,9 @@ def audition_soundfonts(artifacts: list[dict]) -> dict:
 
 
 @app.local_entrypoint()
-def provision(asset_ids: str, host_identity: str = "music-ai-worker sfizz TrackModel host / main (PR-93 open-licence assets)", out: str = "") -> None:
+def provision(asset_ids: str, host_identity: str = "music-ai-worker sfizz TrackModel host / main (PR-93 open-licence assets)", out: str = "", fetch: str = "git") -> None:
     ids = [value.strip() for value in asset_ids.split(",") if value.strip()]
-    results = list(provision_asset.map(ids, [host_identity] * len(ids), return_exceptions=True))
+    results = list(provision_asset.map(ids, [host_identity] * len(ids), [fetch] * len(ids), return_exceptions=True))
     payload = {asset_id: (result if isinstance(result, dict) else {"error": repr(result)}) for asset_id, result in zip(ids, results)}
     text = json.dumps(payload, indent=2, sort_keys=True)
     if out:

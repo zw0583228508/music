@@ -91,6 +91,11 @@ def catalogue_problems(catalogue: object) -> list[str]:
         licence = asset.get("licence")
         if not isinstance(licence, dict) or licence.get("spdx") not in LICENCE_MARKERS or not isinstance(licence.get("file"), str):
             problems.append(f"{label} licence needs a known spdx id and the licence file path inside the source")
+        elif "fromCommit" in licence and not (re.fullmatch(r"[0-9a-f]{40}", str(licence["fromCommit"])) and isinstance(licence.get("note"), str) and licence["note"].strip()):
+            # The legal code may live at another commit of the SAME repository
+            # (VCSL's sfz branch has no LICENSE; master does); that is allowed
+            # only with a 40-hex pin and a sentence saying why.
+            problems.append(f"{label} licence.fromCommit must be a 40-hex commit of the same repository with a note saying why")
         instruments = asset.get("instruments")
         if not isinstance(instruments, list) or not instruments:
             problems.append(f"{label} has no instruments")
@@ -261,35 +266,45 @@ def sfz_dependencies(library: Path, sfz: str, known_files: dict[str, int] | None
 
     files: dict[str, int] = {}
     missing: list[str] = []
-    visited: set[str] = set()
     root_base = PurePosixPath(_normalise(sfz)).parent
+    # `#include` is textual: a `#define` made inside one include stays in force
+    # for everything after it, and a file included twice is expanded twice
+    # (Salamander's notes.txt sets $VEL in vel_NN.txt, then includes the same
+    # region.txt sixteen times). So one shared define table, no visited set,
+    # and a depth guard instead of deduplication.
     state = {"default_path": root_base}
+    defines: dict[str, str] = {}
+    max_depth = 32
 
-    def visit(relative_sfz: str, defines: dict[str, str]) -> None:
+    def visit(relative_sfz: str, depth: int) -> None:
         key = _normalise(relative_sfz)
-        if key.lower() in visited:
+        if depth > max_depth:
+            missing.append(f"{key} (include depth over {max_depth}; an include cycle?)")
             return
-        visited.add(key.lower())
         found = resolve(key)
         if found is None:
-            missing.append(key)
+            if key not in missing:
+                missing.append(key)
             return
         files[found[0]] = found[1]
-        local_defines = dict(defines)
         for raw in (library / found[0]).read_text(encoding="utf-8", errors="replace").splitlines():
             line = _strip_comment(raw).strip()
             if not line:
                 continue
-            for name, value in sorted(local_defines.items(), key=lambda kv: -len(kv[0])):
-                line = line.replace(name, value)
             if line.startswith("#define"):
+                # Read the definition raw: substituting earlier defines into
+                # this line would turn `#define $VEL v2` (after `$VEL v1`) into
+                # `#define v1 v2` and then rewrite every "v1" in every path.
                 parts = line.split(None, 2)
-                if len(parts) == 3:
-                    local_defines[parts[1]] = parts[2].strip()
+                if len(parts) == 3 and parts[1].startswith("$"):
+                    defines[parts[1]] = parts[2].strip()
                 continue
+            if "$" in line:
+                for name, value in sorted(defines.items(), key=lambda kv: -len(kv[0])):
+                    line = line.replace(name, value)
             if "#include" in line:
                 for included in re.findall(r'#include\s+"([^"]+)"', line):
-                    visit((root_base / included.replace("\\", "/")).as_posix(), local_defines)
+                    visit((root_base / included.replace("\\", "/")).as_posix(), depth + 1)
                 continue
             for opcode, value in _opcodes(line):
                 if opcode == "default_path":
@@ -298,15 +313,23 @@ def sfz_dependencies(library: Path, sfz: str, known_files: dict[str, int] | None
                     target = (state["default_path"] / value.replace("\\", "/")).as_posix()
                     sample = resolve(target)
                     if sample is None:
-                        missing.append(_normalise(target))
+                        normalised = _normalise(target)
+                        if normalised not in missing:
+                            missing.append(normalised)
                     else:
                         files[sample[0]] = sample[1]
 
-    visit(sfz, {})
+    visit(sfz, 0)
+    # A `$name` left inside a missing path was never defined by any .sfz on
+    # the walk (Shinyguitar's `default_path=$sample_dir/` is defined by its
+    # Sforzando bank, not by a file sfizz reads): say so by name.
+    undefined = sorted({match for item in missing for match in re.findall(r"\$[A-Za-z_]\w*", item)})
     return {
         "files": sorted(files),
         "bytes": sum(files.values()),
         "missing": sorted(set(missing)),
+        "undefinedVariables": undefined,
+        "definesSeen": sorted(defines),
     }
 
 
@@ -334,8 +357,9 @@ def subset_files(library: Path, asset: dict, known_files: dict[str, int] | None 
     return {
         "files": files,
         "bytes": sum(sizes.get(f, 0) for f in files),
-        "perInstrument": {sfz: {"fileCount": len(d["files"]), "bytes": d["bytes"], "missing": d["missing"]} for sfz, d in union.items()},
+        "perInstrument": {sfz: {"fileCount": len(d["files"]), "bytes": d["bytes"], "missing": d["missing"], "undefinedVariables": d["undefinedVariables"]} for sfz, d in union.items()},
         "missing": sorted({m for d in union.values() for m in d["missing"]}),
+        "undefinedVariables": sorted({v for d in union.values() for v in d["undefinedVariables"]}),
     }
 
 

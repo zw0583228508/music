@@ -23,14 +23,15 @@ import {
   type ProvisionRecord,
 } from "../src/lib/openLicenceSoundAssets";
 
-type Args = { provision: string[]; attest?: string; audition?: string; survey?: string; renders?: string; out: string; catalogue: string; extraUsd: number; branch?: string };
+type Args = { provision: string[]; previous: string[]; attest?: string; audition?: string; survey?: string; renders?: string; out: string; catalogue: string; extraUsd: number; branch?: string };
 
 function parseArgs(argv: string[]): Args {
-  const args: Args = { provision: [], out: "", catalogue: "", extraUsd: 0 };
+  const args: Args = { provision: [], previous: [], out: "", catalogue: "", extraUsd: 0 };
   for (let i = 0; i < argv.length; i += 1) {
     const flag = argv[i];
     const value = argv[i + 1];
     if (flag === "--provision") { args.provision.push(value); i += 1; }
+    else if (flag === "--previous") { args.previous.push(value); i += 1; }
     else if (flag === "--attest") { args.attest = value; i += 1; }
     else if (flag === "--audition") { args.audition = value; i += 1; }
     else if (flag === "--survey") { args.survey = value; i += 1; }
@@ -111,11 +112,36 @@ export function main(argv: string[]): void {
   const catalogueText = readFileSync(args.catalogue, "utf8");
   const catalogue = JSON.parse(catalogueText) as OpenLicenceCatalogue;
   const records: Record<string, ProvisionRecord | undefined> = {};
+  // Earlier runs of the same asset are kept, never overwritten: a first-run
+  // refusal (VCSL's missing LICENSE on the sfz branch) or a git-mode failure
+  // is part of the story, and the spend adds up over every run.
+  const earlierRuns: Record<string, Array<{ file: string; summary: Record<string, unknown> }>> = {};
+  const allRunsForSpend: Array<ProvisionRecord | undefined> = [];
+  const summarise = (record: ProvisionRecord): Record<string, unknown> => ({
+    fetchMode: record.fetchMode ?? "git",
+    refused: record.refused ?? null,
+    error: record.error ?? null,
+    activated: record.activated === true,
+    stageError: record.operator?.stage?.error ?? null,
+    sourceSeconds: record.steps?.source?.seconds ?? null,
+    subsetMissing: record.steps?.subset?.missing?.length ?? null,
+    cost: record.cost ?? null,
+  });
+  for (const file of args.previous) {
+    const batch = readJson<Record<string, ProvisionRecord>>(file);
+    for (const [assetId, record] of Object.entries(batch)) {
+      (earlierRuns[assetId] ??= []).push({ file: file.split(/[\\/]/).pop()!, summary: summarise(record) });
+      allRunsForSpend.push(record);
+    }
+  }
   for (const file of args.provision) {
     const batch = readJson<Record<string, ProvisionRecord>>(file);
     for (const [assetId, record] of Object.entries(batch)) {
-      // A later file wins only if it carries a real record; an error entry never replaces an activated one.
-      if (!records[assetId] || !(record as { error?: string }).error || !records[assetId]?.activated) records[assetId] = record;
+      if (records[assetId]) {
+        (earlierRuns[assetId] ??= []).push({ file: "superseded", summary: summarise(records[assetId]!) });
+        allRunsForSpend.push(records[assetId]);
+      }
+      records[assetId] = record;
     }
   }
   const attest = args.attest && existsSync(args.attest) ? readJson<{ attestedAt: string; volume: string; mount: string; assets: Record<string, unknown>; cost?: { costUsd?: number; containerWallSeconds?: number } }>(args.attest) : null;
@@ -126,7 +152,9 @@ export function main(argv: string[]): void {
     const record = records[asset.assetId];
     const { admissible, reasons } = assetAdmissibility(asset, record);
     const renders = asset.instruments.map((instrument) => {
-      const render = record?.operator?.renders?.[instrument.sfz];
+      const lifecycle = record?.operator?.renders?.[instrument.sfz];
+      const direct = record?.operator?.directRenders?.[instrument.sfz];
+      const render = lifecycle ?? (direct ? { ...direct, viaLifecycle: false } : undefined);
       let local: ReturnType<typeof measureWav> | { error: string } | null = null;
       if (render?.wav && args.renders) {
         const path = join(args.renders, asset.assetId, "renders", render.wav);
@@ -146,6 +174,7 @@ export function main(argv: string[]): void {
         auditionFamily: instrument.auditionFamily,
         ...(instrument.world ? { world: true } : {}),
         ...(instrument.standIn ? { standIn: instrument.standIn } : {}),
+        viaLifecycle: lifecycle ? true : direct ? false : null,
         rendered: render ?? null,
         local,
       };
@@ -154,10 +183,12 @@ export function main(argv: string[]): void {
       assetId: asset.assetId,
       identity: asset.identity,
       licenseOwner: asset.licenseOwner,
+      fetchMode: record?.fetchMode ?? (record ? "git" : null),
       source: { ...asset.source, ...(record?.steps?.source ?? {}) },
       licence: { claimed: asset.licence, captured: record?.licence ?? null },
-      subset: record?.steps?.subset ? { sha256: record.steps.subset.sha256, fileCount: record.steps.subset.fileCount, bytes: record.steps.subset.bytes, missing: record.steps.subset.missing ?? [] } : null,
+      subset: record?.steps?.subset ? { sha256: record.steps.subset.sha256, fileCount: record.steps.subset.fileCount, bytes: record.steps.subset.bytes, missing: record.steps.subset.missing ?? [], undefinedVariables: record.steps.subset.undefinedVariables ?? [] } : null,
       host: record?.operator?.host ?? null,
+      preflight: record?.operator?.preflight ?? null,
       stage: record?.operator?.stage ?? null,
       activate: record?.operator?.activate ?? null,
       health: record?.operator?.health ?? null,
@@ -170,6 +201,7 @@ export function main(argv: string[]): void {
       renders,
       attestedFromVolume: attest?.assets?.[asset.assetId] ?? null,
       cost: record?.cost ?? null,
+      earlierRuns: earlierRuns[asset.assetId] ?? [],
       derivedInstrumentMap: deriveSfizzInstrumentMap(asset),
     };
   });
@@ -177,21 +209,35 @@ export function main(argv: string[]): void {
   const coverage = familyCoverage(catalogue, records);
   const auditionRenders: Record<string, unknown> = {};
   for (const family of ["piano", "strings", "world", "bass", "guitar", "drums"]) {
-    const candidates = assets
-      .filter((asset) => asset.admissible)
-      .flatMap((asset) => asset.renders.filter((render) => render.auditionFamily === family && render.rendered?.audible === true).map((render) => ({ asset, render })));
-    const measured = candidates.find((candidate) => candidate.render.local && !("error" in candidate.render.local)) ?? candidates[0];
-    auditionRenders[family] = measured
-      ? {
-          assetId: measured.asset.assetId, sfz: measured.render.sfz, instrument: measured.render.instrument,
-          renderMs: measured.render.rendered?.renderMs ?? null, peak: measured.render.rendered?.peak ?? null, outputSha256: measured.render.rendered?.outputSha256 ?? null,
-          wav: measured.render.rendered?.wav ?? null, local: measured.render.local,
-          alternatives: candidates.length - 1,
-        }
-      : { none: `no admissible asset rendered an audible '${family}' phrase` };
+    const pick = (viaLifecycle: boolean) => {
+      const candidates = assets
+        .filter((asset) => (viaLifecycle ? asset.admissible : true))
+        .flatMap((asset) => asset.renders
+          .filter((render) => render.auditionFamily === family && render.rendered?.audible === true && render.viaLifecycle === viaLifecycle)
+          .map((render) => ({ asset, render })));
+      // An instrument that IS the family (no stand-in) comes before a declared stand-in; measured WAVs before unmeasured.
+      const ordered = [...candidates].sort((a, b) => Number(Boolean(a.render.standIn)) - Number(Boolean(b.render.standIn)));
+      const measured = ordered.find((candidate) => candidate.render.local && !("error" in candidate.render.local)) ?? ordered[0];
+      return measured
+        ? {
+            assetId: measured.asset.assetId, sfz: measured.render.sfz, instrument: measured.render.instrument, viaLifecycle,
+            ...(measured.render.standIn ? { standIn: measured.render.standIn } : {}),
+            renderMs: measured.render.rendered?.renderMs ?? null, peak: measured.render.rendered?.peak ?? null, outputSha256: measured.render.rendered?.outputSha256 ?? null,
+            wav: measured.render.rendered?.wav ?? null, local: measured.render.local,
+            alternatives: candidates.length - 1,
+          }
+        : null;
+    };
+    const attested = pick(true);
+    const direct = pick(false);
+    auditionRenders[family] = attested
+      ? { ...attested, ...(direct ? { directAuditionAlso: { assetId: direct.assetId, sfz: direct.sfz } } : {}) }
+      : direct
+        ? { ...direct, note: "no admissible asset rendered this family through the attested lifecycle; this WAV is the operator's direct sfizz_render audition of a refused asset and does not count as coverage" }
+        : { none: `no asset rendered an audible '${family}' phrase, attested or direct` };
   }
 
-  const spend = estimatedSpend([...Object.values(records), attest ?? undefined, audition ?? undefined], args.extraUsd);
+  const spend = estimatedSpend([...Object.values(records), ...allRunsForSpend, attest ?? undefined, audition ?? undefined], args.extraUsd);
   const notSampled = coverage.filter((row) => !row.sampled).map((row) => row.family);
   const evidence = {
     pr: "PR-93",
@@ -215,15 +261,27 @@ export function main(argv: string[]): void {
     soundfontAuditions: (catalogue.soundfontAuditions ?? []).map((entry) => ({ ...entry, outcome: audition?.artifacts?.[entry.id] ?? audition?.artifacts?.[entry.id.split("-")[2]] ?? null })),
     excluded: catalogue.excluded ?? [],
     familyCoverage: coverage,
-    worldInstruments: worldInstruments(catalogue).map((instrument) => ({
-      ...instrument,
-      renderedAudibly: assets.find((asset) => asset.assetId === instrument.assetId)?.renders.find((render) => render.sfz === instrument.sfz)?.rendered?.audible === true,
-    })),
+    worldInstruments: worldInstruments(catalogue).map((instrument) => {
+      const render = assets.find((asset) => asset.assetId === instrument.assetId)?.renders.find((entry) => entry.sfz === instrument.sfz);
+      return {
+        ...instrument,
+        renderedAudibly: render?.viaLifecycle === true && render.rendered?.audible === true,
+        directAuditionAudible: render?.viaLifecycle === false && render.rendered?.audible === true,
+        ...(render?.local && !("error" in render.local) ? { integratedLufs: render.local.integratedLufs, truePeakDbtp: render.local.truePeakDbtp } : {}),
+      };
+    }),
     providerAssetModel: providerAssetModel(catalogue, records),
     auditionRenders,
     attestation: attest ? { attestedAt: attest.attestedAt, volume: attest.volume, mount: attest.mount, cost: attest.cost ?? null } : null,
     survey: survey ? { repos: survey.repos ?? null, releases: survey.releases ?? null } : null,
-    spend: { ...spend, capUsd: 15, basis: "Modal list price for CPU cores and memory per container-second, summed over every function run recorded here; the workspace dashboard is authoritative" },
+    spend: {
+      ...spend,
+      capUsd: 15,
+      basis: "Modal list price for CPU cores and memory per container-second, summed over every provisioning run recorded here (superseded runs included), the Volume attestation and the SoundFont audition; the workspace dashboard is authoritative",
+      extraUsd: args.extraUsd,
+      extraCovers: "the repository survey from Modal (four clones, ~31 min at 2 CPU / 4 GiB), the Musical Artifacts reachability probe, and the first image build of the app - estimated, not metered",
+      gpu: null,
+    },
     honestLimits: [
       ...(notSampled.length ? [`Families with no attested sampled instrument in the cloud after this PR: ${notSampled.join(", ")} (they keep LOCAL_EXPRESSIVE_SYNTH).`] : []),
       "Each asset is its own asset root with its own manifest: a worker process serves one library at a time (see providerAssetModel.why). Nothing here changes which asset the deployed music-ai-worker serves.",

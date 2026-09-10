@@ -173,11 +173,11 @@ def phrase_track(asset: dict, instrument: dict) -> dict:
     }, duration
 
 
-def phrase_midi_bytes(family: str, *, program: int = 0, bank: int = 0, channel: int = 0, key_range: list[int] | None = None) -> bytes:
-    """The same phrase as a Standard MIDI File (for the FluidSynth SoundFont audition)."""
+def phrase_midi_bytes(family: str, *, program: int = 0, bank: int = 0, channel: int = 0, key_range: list[int] | None = None, drum_keys: dict | None = None) -> bytes:
+    """The same phrase as a Standard MIDI File (for sfizz_render directly and for the FluidSynth SoundFont audition)."""
     import mido
 
-    notes = phrase_notes(family, key_range or [0, 127])
+    notes = phrase_notes(family, key_range or [0, 127], drum_keys)
     midi = mido.MidiFile(ticks_per_beat=480)
     track = mido.MidiTrack()
     midi.tracks.append(track)
@@ -271,6 +271,48 @@ def preflight(asset: dict, source: Path, host: Path, host_identity: str) -> dict
     return out
 
 
+def direct_renders(asset: dict, source: Path, renders_dir: Path) -> dict:
+    """Each instrument's phrase straight through sfizz_render - NOT the attested lifecycle.
+
+    Used only when the worker's canonical smoke refused the asset (today: every
+    drum-only library, because the smoke's pitch variant plays MIDI 67 and a
+    kit has no sample there). These WAVs let the owner hear the library and
+    carry digests, but they count for nothing in family coverage: the rule is
+    activated + rendered through `_render_sfizz_track`, and these are neither.
+    """
+    import tempfile
+
+    import soundfile as sf
+
+    renders_dir.mkdir(parents=True, exist_ok=True)
+    out: dict = {}
+    for instrument in asset["instruments"]:
+        started = time.monotonic()
+        entry = {"instrument": instrument["instrument"], "family": instrument["family"], "auditionFamily": instrument["auditionFamily"], "viaLifecycle": False, "sampleRate": 44100}
+        try:
+            with tempfile.TemporaryDirectory(prefix="direct-") as temporary:
+                midi = Path(temporary) / "phrase.mid"
+                midi.write_bytes(phrase_midi_bytes(instrument["auditionFamily"], key_range=instrument["keyRange"], drum_keys=instrument.get("drumKeys")))
+                wav_tmp = Path(temporary) / "phrase.wav"
+                completed = subprocess.run(
+                    [os.environ["SFIZZ_RENDER_BINARY"], "--sfz", str(source / instrument["sfz"]), "--midi", str(midi), "--wav", str(wav_tmp), "--samplerate", "44100"],
+                    capture_output=True, text=True, timeout=900,
+                )
+                entry["renderMs"] = round((time.monotonic() - started) * 1000)
+                entry["exit"] = completed.returncode
+                if not wav_tmp.is_file():
+                    raise RuntimeError(completed.stderr[-400:] or "sfizz_render wrote no WAV")
+                audio, rate = sf.read(wav_tmp, always_2d=True, dtype="float32")
+                peak = float(abs(audio).max()) if audio.size else 0.0
+                wav = renders_dir / f"{instrument['auditionFamily']}--{Path(instrument['sfz']).stem.replace(' ', '_')}--direct.wav"
+                sf.write(wav, audio, rate, subtype="PCM_16")
+                entry.update({"audible": peak >= 0.0005, "peak": round(peak, 6), "durationSeconds": round(audio.shape[0] / rate, 3), "outputSha256": hashlib.sha256(audio.T.astype("float32").tobytes()).hexdigest(), "wav": wav.name, "wavSha256": sha256_file(wav), "wavBytes": wav.stat().st_size, "channels": int(audio.shape[1])})
+        except Exception as exc:  # noqa: BLE001
+            entry.update({"audible": False, "renderMs": round((time.monotonic() - started) * 1000), "error": str(exc)[:500]})
+        out[instrument["sfz"]] = entry
+    return out
+
+
 def public_health(health: dict) -> dict:
     return {k: v for k, v in health.items() if k not in {"smokeEvidence"}} | {"smokeEvidence": {k: health["smokeEvidence"][k] for k in ("outputSha256", "pitchVariantSha256", "expressionVariantSha256", "peak", "canonicalSensitivity", "audible") if isinstance(health.get("smokeEvidence"), dict) and k in health["smokeEvidence"]}}
 
@@ -345,6 +387,7 @@ def main() -> None:
         candidate = asyncio.run(stage(app, asset, args.source, host, args.host_identity, licence))
     except Exception as exc:  # noqa: BLE001
         record["stage"] = {"seconds": round(time.monotonic() - started, 1), "error": str(getattr(exc, "detail", exc))[:800]}
+        record["directRenders"] = direct_renders(asset, args.source, args.renders) if args.renders else {}
         write_evidence()
         raise
     record["stage"] = {"seconds": round(time.monotonic() - started, 1), "candidate": {k: v for k, v in candidate.items() if k != "smokeEvidence"}, "smoke": {k: candidate["smokeEvidence"].get(k) for k in ("outputSha256", "pitchVariantSha256", "expressionVariantSha256", "peak", "canonicalSensitivity", "audible", "sampleRate", "durationSeconds")}}

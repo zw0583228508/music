@@ -13,7 +13,13 @@
         "commit": "b6e6ac82d22248edee98a0bde185eb9ef6d439ad",
         "note": "The SFZ mappings live only on the `sfz` branch (release v1.2.2-RC points at it; the release has no downloadable assets any more). The branch carries the 4,231 WAVs (6.16 GB) beside 183 .sfz files; only the files the instruments below reference are materialised."
       },
-      "licence": { "spdx": "CC0-1.0", "file": "LICENSE" },
+      "licence": {
+        "spdx": "CC0-1.0",
+        "file": "LICENSE",
+        "fromCommit": "c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e",
+        "fromBranch": "master",
+        "note": "The sfz branch (commit b6e6ac82) carries no LICENSE file - its README.md states 'This collection is under a Creative Commons 0 license' - so the gate captures the CC0 1.0 Universal legal code from master (commit c1ea7bcc) of the same repository, the same sample set by the same authors. The first provisioning run refused the asset for exactly this reason; the refusal is kept in the evidence."
+      },
       "smokeInstrument": "Chordophones/Zithers/Grand Piano, Steinway B.sfz",
       "instruments": [
         { "sfz": "Chordophones/Zithers/Grand Piano, Steinway B.sfz", "instrument": "VCSL Steinway B grand piano, close mics, sustain + release", "family": "keys", "auditionFamily": "piano", "keyRange": [21, 108] },

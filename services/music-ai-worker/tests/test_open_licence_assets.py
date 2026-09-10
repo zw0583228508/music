@@ -191,6 +191,57 @@ class DependencyResolverTests(unittest.TestCase):
             self.assertEqual(subset["missing"], ["Samples/missing.wav"])
             self.assertEqual(subset["perInstrument"]["Stereo/Kit.sfz"]["fileCount"], 6)
 
+    def test_defines_made_inside_an_include_persist_and_a_reincluded_file_expands_again(self):
+        """Salamander's shape: `<group> #include "vel_01.txt" ... #include "region.txt"` per velocity layer."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "Data").mkdir()
+            (root / "Samples").mkdir()
+            (root / "Piano.sfz").write_text('#define $EXT wav\n<control> default_path=Samples/\n#include "Data/notes.txt"\n', encoding="utf-8")
+            (root / "Data" / "notes.txt").write_text(
+                '<group> #include "Data/vel_01.txt" lovel=1 hivel=64 #include "Data/region.txt"\n'
+                '<group> #include "Data/vel_02.txt" lovel=65 hivel=127 #include "Data/region.txt"\n',
+                encoding="utf-8",
+            )
+            # v1 then v10: a redefinition must not turn into a rewrite of every
+            # "v1" substring (the bug that produced `A0v90` and `vel_101.txt`).
+            (root / "Data" / "vel_01.txt").write_text("#define $VEL v1\n#define $OFF01 481\n", encoding="utf-8")
+            (root / "Data" / "vel_02.txt").write_text("#define $VEL v10\n#define $OFF01 1388\n", encoding="utf-8")
+            (root / "Data" / "region.txt").write_text("<region> key=21 offset=$OFF01 sample=A0$VEL.$EXT\n", encoding="utf-8")
+            for name in ("A0v1.wav", "A0v10.wav", "A0v100.wav", "A0v3.wav"):
+                (root / "Samples" / name).write_bytes(b"RIFF" + b"\0" * 20)
+            deps = sfz_dependencies(root, "Piano.sfz")
+            self.assertEqual(deps["missing"], [])
+            self.assertEqual([f for f in deps["files"] if f.startswith("Samples/")], ["Samples/A0v1.wav", "Samples/A0v10.wav"])
+            self.assertEqual(deps["files"].count("Data/region.txt"), 1)
+            self.assertEqual(deps["definesSeen"], ["$EXT", "$OFF01", "$VEL"])
+
+    def test_an_include_cycle_is_reported_not_looped(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "a.sfz").write_text('#include "b.sfz"\n', encoding="utf-8")
+            (root / "b.sfz").write_text('#include "a.sfz"\n', encoding="utf-8")
+            deps = sfz_dependencies(root, "a.sfz")
+            self.assertTrue(any("include depth" in item for item in deps["missing"]))
+
+    def test_an_undefined_variable_in_default_path_is_reported_as_missing_samples(self):
+        """Shinyguitar's shape: `default_path=$sample_dir/` with the define living only in a Sforzando bank."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "Programs").mkdir()
+            (root / "Samples" / "acoustic").mkdir(parents=True)
+            (root / "Programs" / "main.sfz").write_text("<control> default_path=$sample_dir/\n<region> sample=acoustic\\a2_vl1_rr1_1.wav\n", encoding="utf-8")
+            (root / "Samples" / "acoustic" / "a2_vl1_rr1_1.wav").write_bytes(b"RIFF" + b"\0" * 20)
+            deps = sfz_dependencies(root, "Programs/main.sfz")
+            self.assertEqual(deps["missing"], ["Programs/$sample_dir/acoustic/a2_vl1_rr1_1.wav"])
+            self.assertEqual(deps["undefinedVariables"], ["$sample_dir"])
+
+    def test_a_licence_pinned_at_another_commit_needs_a_pin_and_a_reason(self):
+        with_reason = minimal_asset(licence={"spdx": "CC0-1.0", "file": "LICENSE", "fromCommit": "b" * 40, "note": "the pinned branch has no LICENSE; master's is the legal code for the same samples"})
+        self.assertEqual(catalogue_problems({"assets": [with_reason]}), [])
+        bare = minimal_asset(licence={"spdx": "CC0-1.0", "file": "LICENSE", "fromCommit": "b" * 40})
+        self.assertTrue(any("fromCommit" in problem for problem in catalogue_problems({"assets": [bare]})))
+
     def test_tree_evidence_matches_the_worker_hash_shape(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
