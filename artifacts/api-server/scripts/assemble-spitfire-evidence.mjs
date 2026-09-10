@@ -26,7 +26,10 @@ const worker = flag("worker", "http://127.0.0.1:8023");
 const out = resolve(flag("out", "docs/evidence/spitfire-local-render-live.json"));
 const stateDir = flag("state-dir") ? resolve(flag("state-dir")) : null;
 
-const readJson = (path) => (existsSync(path) ? JSON.parse(readFileSync(path, "utf8")) : null);
+// Python wrote the smoke proof with `-Infinity` for silent renders; JSON.parse refuses it.
+const readJson = (path) => (existsSync(path)
+  ? JSON.parse(readFileSync(path, "utf8").replace(/:\s*-Infinity/g, ": null").replace(/:\s*Infinity/g, ": null").replace(/:\s*NaN/g, ": null"))
+  : null);
 const token = process.env.VST3_RENDER_TOKEN ?? process.env.PEDALBOARD_VST3_API_TOKEN;
 if (!token) throw new Error("VST3_RENDER_TOKEN must be in the process environment");
 
@@ -51,17 +54,28 @@ const measurement = readJson(join(scratch, "articulation-measurement.json"));
 const measurementRun1 = readJson(join(scratch, "articulation-measurement-run1.json"));
 const measurementUnmounted = readJson(join(scratch, "articulation-measurement-D-unmounted.json"));
 const switching = readJson(join(scratch, "switching-measurement.json"));
-const inventory = readJson(join(scratch, "state", "instrument-inventory.json"));
+const inventoryRaw = readJson(join(scratch, "state", "instrument-inventory.json"));
+// Identities only - never a filesystem path.
+const redactPaths = (value) => Array.isArray(value) ? value.map(redactPaths)
+  : value && typeof value === "object" ? Object.fromEntries(Object.entries(value).map(([k, v]) => [k, /path|dir|file/i.test(k) && typeof v === "string" ? "<private>" : redactPaths(v)]))
+  : value;
+const inventory = redactPaths(inventoryRaw);
 
 const stripAudio = (record) => record && {
   ...record,
-  stems: (record.stems ?? []).map((stem) => ({ ...stem, measurement: record.measurements?.[`stems/${stem.instrument}.wav`] ?? stem.measurement ?? null })),
+  stems: (record.stems ?? []).map((stem) => {
+    const key = Object.keys(record.measurements ?? {}).find((name) => name.startsWith("stems/") && name.endsWith(`_${stem.instrument}.wav`));
+    return { ...stem, measurement: key ? record.measurements[key] : null };
+  }),
 };
 const ab = abDir
   ? {
       a: stripAudio(readJson(join(abDir, "synth", "export.json"))),
       b: stripAudio(readJson(join(abDir, "spitfire", "export.json"))),
       b2: existsSync(join(abDir, "spitfire-trimmed", "export.json")) ? stripAudio(readJson(join(abDir, "spitfire-trimmed", "export.json"))) : null,
+      bWithDriveUnmounted: existsSync(join(abDir, "spitfire-drive-unmounted", "export.json"))
+        ? { note: "side B exported while drive D: (Spitfire sample content) was unmounted: the worker rendered silence and the export refused to attest it ('returned audio that failed validation'), so the stem fell back to the preview synth with that reason", ...stripAudio(readJson(join(abDir, "spitfire-drive-unmounted", "export.json"))) }
+        : null,
       abMasters: {
         a: readJson(join(abDir, "synth", "ab-master.json")),
         b: readJson(join(abDir, existsSync(join(abDir, "spitfire-trimmed", "ab-master.json")) ? "spitfire-trimmed" : "spitfire", "ab-master.json")),
@@ -90,5 +104,13 @@ const evidence = {
   },
   ab,
 };
-writeFileSync(out, JSON.stringify(evidence, null, 2) + "\n");
+// Belt and braces: no local filesystem path of any kind leaves with the evidence
+// (plugin bundles, scratch files inside error messages, the operator's home).
+const WINDOWS_PATH = /[A-Za-z]:\\[^"\s]*/g;
+const POSIX_HOME = /\/(?:c|d)\/Users\/[^"\s]*/g;
+const scrubPaths = (value) => Array.isArray(value) ? value.map(scrubPaths)
+  : value && typeof value === "object" ? Object.fromEntries(Object.entries(value).map(([k, v]) => [k, scrubPaths(v)]))
+  : typeof value === "string" ? value.replace(WINDOWS_PATH, "<private path>").replace(POSIX_HOME, "<private path>")
+  : value;
+writeFileSync(out, JSON.stringify(scrubPaths(evidence), null, 2) + "\n");
 console.log("wrote", out, JSON.stringify({ healthy: health.healthy, assets: (health.assets ?? []).map((a) => a.id), smokeRows: smokeRows.length, ab: Boolean(ab) }));

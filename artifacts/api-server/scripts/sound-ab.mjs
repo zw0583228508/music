@@ -94,6 +94,9 @@ async function api(base, path, init = {}, cookie = "") {
 }
 
 async function runExport() {
+  // The measurement library is bundled with the real @workspace/db, whose module
+  // top requires DATABASE_URL even though `export` never queries it (PR-97 fix).
+  loadEnvLocal();
   const base = flag("api", "http://127.0.0.1:5020");
   const label = flag("label");
   const projectId = flag("project");

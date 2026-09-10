@@ -813,7 +813,8 @@ export async function renderArrangementExport(input: {
             // PR-92: the refusal is final for PEDALBOARD_VST3 - but it says
             // nothing about the next attested renderer, which serves the track
             // under its own published map and labels the stem with it.
-            failures.push(`PEDALBOARD_VST3: premium instrument routing refused (${resolved.reason})`);
+            failures.push(`PEDALBOARD_VST3: premium instrument routing refused (${resolved.reason})`
+              + (spitfireRefusals.length ? `; not offered: ${spitfireRefusals.join("; ")}` : ""));
             continue;
           }
           assetId = resolved.assetId ?? undefined;

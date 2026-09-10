@@ -5747,6 +5747,105 @@ any of it.
   exported MIDI's GM program numbers are wrong (piano → organ, strings →
   guitar); no human has judged v6 blind. These are exactly the defects the
   Arrangement & Orchestration Brain program (`docs/brain/`) now owns.
+- **PR-97** ✅ — `spitfire-libraries-local-render` (stream SPITFIRE-1). The
+  owner's Spitfire libraries rendered through the local VST3 worker
+  (PR-21/22) on port 8023 with the main checkout's private manifest, $0 Modal.
+  Write-up `docs/model-discovery/production-floor-spitfire.md`, evidence
+  `docs/evidence/spitfire-local-render-live.json`.
+
+  **What is actually installed.** `Abbey Road One (64 Bit).vst3`
+  (`VST3-Abbey Road One-96300254-1ba8eb30@1.2.0`) is **Abbey Road One -
+  Selections**: the content folder holds two woodwind ensembles (`Mysterious
+  Reeds`, `Vibrant Reeds`) and nothing else - the plugin's own state XML says
+  `family="Selections" ... tags="Ensemble,Woodwind"`. The manifest entry had
+  declared `strings,brass,winds`; it now declares **`winds`** only, the two
+  patches, the measured keyswitch table and the articulation protocol.
+  `Abbey Road Orchestra.vst3` appeared during the stream
+  (`VST3-Abbey Road Orchestra-1a7cced8-67db5f7a@1.4.7`, discovered in 17 s;
+  its `Patches/Flutes` content was still downloading); BBCSO Pro, Hans Zimmer
+  Strings and LABS never arrived. `/health` on :8023 attests
+  `spitfire-abbey-road-one` (audible, canonicalSensitivity, deterministic,
+  load 11.5 s; 401 without the bearer) and now publishes the PR-97 hints
+  (`patches`, `articulation`, `gainTrimDb`).
+
+  **What switches articulations - measured, not assumed.** Through
+  pedalboard the plugin exposes `dynamics`/`expression`/`legato_offset`/mics
+  and a raw CC sweep, no technique list; the JUCE-base64 state holds six
+  `<ARTIC>` blocks (Legato ks 0, Long 1, Short Staccato 2, the 8ve variants
+  3-5), a CC32 lane with `p_articLock="0"`. Renders: **CC32 1/2/3/6/20/26/40/
+  41/42/52/56 leave the output byte-identical; MIDI notes 0-5 switch the six
+  articulations; notes 6+ (the Performance Engine's generic `24 + index`
+  keyswitches) switch nothing and corrupt the legato onset.** CC1 = 0 is
+  ignored, 1-127 spans ~12 dB, no CC1 = full dynamics; CC11 = 0 is silence;
+  longs ignore velocity, shorts follow it. So UACC is *not* what this install
+  listens to - its default is keyswitches, and "lock to UACC" is a UI action
+  saved into a preset. Through the worker (the export's wire path): **Long vs
+  Short Staccato = attack-to-90 % 270 ms vs 43 ms, sustain-minus-onset
+  +10.4 dB vs -23.4 dB**, deterministic after the first (lazy-streamed)
+  render. Two findings changed the code: articulation state **persists across
+  renders** on the shared plugin instance (a CC32-only or generic-keyswitch
+  render reproduced the previous render's articulation), and the **Legato
+  patch is unusable offline** (non-deterministic, then fully silent once
+  primed).
+
+  **Wired.** `spitfireArticulation.ts` (+ 9 tests, registered): UACC v2 table
+  with a confidence per row (1-20, 26, 52, 56 published; the rest labelled
+  `inferred`), technique mapping (legato/sustain/bow_change/staccato/spiccato/
+  marcato/pizzicato/tremolo/trill/harmonic/mute), per-library profiles (manifest
+  hints win), `spitfireRefusal`, and the pure idempotent
+  `adaptTrackForSpitfire`: preset keyswitches (never the generic note), CC32
+  per technique change at the lead, CC1/CC11 clamped ≥ 1 and defaulted
+  96/112, an explicit opening technique, notes untouched; `legato` intent
+  plays Long on AR1. `exportEngine.ts`: a Spitfire asset that cannot play a
+  family is **not offered** to the brain for that track and an operator rule
+  naming it is refused, both with the reason on the stem; a served track is
+  translated, rendered with `keyswitchLeadSeconds`, trimmed by a measured
+  `gainTrimDb`, and its attestation carries `articulationAdapter` (source +
+  wire digests) - the export **re-derives the translation** and accepts the
+  stem only when all three digests agree. Worker: `parameters.
+  keyswitchLeadSeconds`, **keyswitch priming** (a throwaway render on the
+  opening keyswitch; after it, alternating long/short renders are audible and
+  byte-identical per articulation), hint passthrough, `make_manifest.py
+  --patches/--gain-trim-db/--keyswitches/--articulation-protocol`,
+  `run_local_worker.py`. **`winds` is now a platform family** - the planner
+  had written `winds` parts and the Performance Engine phrased them, but the
+  definition fell through to a piano and the canonical contract rejected the
+  family (the first regeneration with woodwinds failed on exactly that);
+  schema union, definition (48-96, 3 voices, breath 8 s, leap 24),
+  capabilities, `PLATFORM_FAMILIES`, contract check, OpenAPI enum (orval
+  regenerated), sfizz `unserved` reason.
+
+  **The A/B.** New arrangement `d3b5c7c3…` on the dev project (brief edited
+  through the producer chat to add woodwinds; QUICK_ARRANGE, in-process
+  orchestrator, $0): drums / bass / **winds** (CLIMAX_LAYER, legato +
+  staccato events, CC1/CC11) / ensemble; revision `7bfb0d6d…` approved. Side
+  A (no worker, `export-…-24-98de100e`): all four stems `LOCAL_EXPRESSIVE_
+  SYNTH`, winds stem −19.08 LUFS, premaster −23.34 LUFS. Side B (API with
+  `PEDALBOARD_VST3_API_URL=:8023` and an operator table sending winds to
+  `spitfire-abbey-road-one`, `export-…-25-4f72733d`): drums/bass/ensemble
+  refused with their reasons, winds routed and translated - **but drive `D:`
+  (the Spitfire sample content) had been unmounted minutes earlier, the
+  plugin rendered silence, and the export refused to attest it (`returned
+  audio that failed validation`) and fell back to the synth with that
+  reason.** The pair is therefore *not* registered as a listening session:
+  registering silence against a synth would be a fake A/B. Everything to
+  finish it is in place (`run_side_b.sh` in the stream's scratch + `sound-ab.mjs
+  register --comparison production-floor:synth-vs-spitfire`), and the
+  per-asset trim is measured from the two winds stems the moment side B
+  renders audibly.
+
+  **Honest limits.** No strings/brass Spitfire render exists on this
+  workstation - the installed library has none; the A/B is one woodwind stem
+  vs the synth and waits for the drive. The UACC table beyond 1-20/26/52/56
+  is inferred and unverifiable here (CC32 inert in keyswitch mode). The
+  Legato patch is silent offline; mid-phrase switches worked in the measured
+  renders but are not proven under every timing. The worker's health does
+  not notice a missing sample drive. Programmatic preset selection is not
+  available (renaming the patch in the state XML is ignored; a hand-built
+  `.vstpreset` is refused) - Vibrant Reeds, LABS instruments and UACC-locked
+  presets need a preset saved from Cubase, then `make_manifest.py --preset
+  --append` + `smoke.py`. Nobody has listened.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
