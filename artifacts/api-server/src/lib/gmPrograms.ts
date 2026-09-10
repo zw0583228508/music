@@ -92,6 +92,9 @@ const FAMILY_DEFAULT: Readonly<Record<InstrumentDefinition["family"], { program:
   voice: { program: GM.CHOIR_AAHS, note: "voice family -> choir" },
   synth: { program: GM.PAD_NEW_AGE, note: "synth family -> pad" },
   drums: { program: 0, note: "drums -> percussion channel (program byte ignored)" },
+  // B-03: an instrument no profile knows has no GM home; the file still needs a program byte, and a
+  // piano is the least misleading placeholder because the note also says the family is unknown.
+  unknown: { program: GM.ACOUSTIC_GRAND_PIANO, note: "unknown family -> piano placeholder (no profile matched the name)" },
 });
 
 export type GmProgramChoice = {
