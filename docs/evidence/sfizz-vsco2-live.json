@@ -1,0 +1,943 @@
+{
+  "pr": "PR-92 sfizz-vsco2-live-render (SOUND-1)",
+  "recordedAt": "2026-09-09T23:56:12.649Z",
+  "claim": "SFIZZ_VSCO2_CE is live on Modal inside the music-ai-worker image: sfizz 1.2.3 built from its pinned commit, the VSCO 2 Community Edition (CC0-1.0) platform subset verified file by file against the pinned commit, staged through the worker's own three-render smoke and activated atomically at image build time; /health attests it; real TrackModels of a real arrangement rendered through the platform's own client with every echoed digest verified; the same arrangement exported twice through the platform's export path (fallback synth vs SFIZZ_VSCO2_CE) and registered on the dev project as a blind A/B pair.",
+  "worker": {
+    "app": "music-ai-worker (Modal, cpu=4, 8 GiB, no GPU)",
+    "endpointHost": "windot100--music-ai-worker-endpoint.modal.run",
+    "tokenPrinted": false,
+    "envForTheApi": [
+      "MUSIC_AI_WORKER_URL",
+      "MUSIC_AI_WORKER_TOKEN"
+    ],
+    "fallbackEnv": [
+      "SFIZZ_RENDER_API_URL",
+      "SFIZZ_RENDER_API_TOKEN"
+    ],
+    "imageEvidenceFiles": "modal_config.IMAGE_EVIDENCE_FILES (Dockerfile, app.py, instrument map, approved hosts, subset manifest, bootstrap, operator, native hosts)",
+    "deploys": {
+      "attempts": [
+        {
+          "when": "2026-09-10 ~01:58 (previous agent)",
+          "result": "image build failed: built sfz host sha256 d4d348d2... was not in approved_native_hosts.json (registry lagged the sources)"
+        },
+        {
+          "when": "2026-09-10 ~02:05 (previous agent)",
+          "result": "image build failed at staging: the host exited 1 inside the three-render smoke; the worker swallowed the host's stderr (now logged)"
+        },
+        {
+          "when": "2026-09-10 ~02:20 (this agent) - diagnosis on the scratch volume sfizz-debug-assets",
+          "result": "sfizz_render rendered (peak 0.021); the host died in write_attestation -> sha256_tree(Path(__file__)): inside the zipapp __file__ is <archive>/__main__.py, not a file on disk, so the renderer hash found no files. Fixed by native_hosts/common.host_path(); the host archive now hashes to d950a0d0..., re-approved in approved_native_hosts.json"
+        },
+        {
+          "when": "2026-09-09T23:32Z (UTC; local 02:32) - modal deploy services/music-ai-worker/modal_app.py",
+          "result": "image im-P68OEEH17VdUph1xwTxrA4 built in 215 s: sfizz 1.2.3 built from 4e70dc0b, 250 subset files verified, host approved, staged (three-render smoke: 4086ff96 / d83653b1 / d7ea436a, peak 0.020996), activated, 9 map entries rendered audibly, health healthy, Basic Pitch smoke passed; endpoint https://windot100--music-ai-worker-endpoint.modal.run"
+        },
+        {
+          "when": "2026-09-09T23:45Z (UTC) - final redeploy",
+          "result": "same sources except tests/test_sfizz_renderer.py (the stub sfizz_render now honours CC 11 so the canonical expression variant differs); see the in-image test run"
+        }
+      ],
+      "spend": {
+        "cap": "$15 for the SOUND-1 stream",
+        "estimate": "under $1 in total: five CPU-only image builds of 3-4 minutes (previous agent's two failed builds, this agent's two deploys, one scratch provision that built sfizz on a 4-CPU function), two 30-second scratch host checks, two in-image test runs, health/render calls of a few seconds each; no GPU was used anywhere",
+        "authority": "the Modal usage dashboard for workspace windot100; the estimate is from run durations and Modal's published CPU rates, not from a billing read"
+      }
+    }
+  },
+  "health": {
+    "unauthenticated": "401 without a bearer token",
+    "latencyMs": 7186,
+    "healthy": true,
+    "status": "ok",
+    "provider": "SFIZZ_VSCO2_CE",
+    "contractVersion": "1.0",
+    "modelVersion": "sfizz-1.2.3",
+    "runtimeIdentity": "music-ai-worker/python-3.11/sfizz-1.2.3",
+    "checksum": "ae31f58ea0392f2aa44e677bfc7ea0dade82278a1034b7b5cff68e7cace87157",
+    "runtimeReady": true,
+    "smokeTested": true,
+    "runtime": {
+      "ready": true,
+      "python": "3.11",
+      "device": "cpu"
+    },
+    "asset": {
+      "id": "vsco2-ce-sfz-6dd651d-platform-subset-v1",
+      "identity": "Versilian Studios / VSCO 2 Community Edition / SFZ branch 6dd651d5 / platform subset v1",
+      "licenseOwner": "Public domain dedication (CC0-1.0) by Versilian Studios LLC; no licence to hold",
+      "licenseReference": "https://github.com/sgossner/VSCO-2-CE/blob/6dd651d55dde97fd4028699be9d4481f26917891/LICENSE (CC0-1.0, LICENSE sha256 36ffd9dc085d529a7e60e1276d73ae5a030b020313e6c5408593a6ae2af39673)",
+      "sha256": "ae31f58ea0392f2aa44e677bfc7ea0dade82278a1034b7b5cff68e7cace87157",
+      "rendererIdentity": "music-ai-worker sfizz TrackModel host / PR-92",
+      "rendererSha256": "d950a0d0fd25c4eb2d44c681c48ba5a914f9988c8976ec83e8fb68a7b3f8aee3"
+    },
+    "smokeEvidence": {
+      "assetId": "vsco2-ce-sfz-6dd651d-platform-subset-v1",
+      "audible": true,
+      "canonicalSensitivity": true,
+      "durationSeconds": 1,
+      "expressionVariantSha256": "d7ea436a1043eb717f935ef720960e033fec8dadf5a6ecbd6bfe9aa7476f1d78",
+      "format": "wav/pcm_s16le",
+      "nativeHostAttested": true,
+      "outputSha256": "4086ff9673121752997258d2ad7cacf53f4e6bdb6c3d575c33aadb1a3725b6e2",
+      "peak": 0.020996,
+      "pitchVariantSha256": "d83653b1fe3b937344ee73c9c623d32c5fd36125d4f16c52df4ec8693756ef66",
+      "rendererIdentity": "music-ai-worker sfizz TrackModel host / PR-92",
+      "rendererSha256": "d950a0d0fd25c4eb2d44c681c48ba5a914f9988c8976ec83e8fb68a7b3f8aee3",
+      "sampleRate": 22050,
+      "sha256": "ae31f58ea0392f2aa44e677bfc7ea0dade82278a1034b7b5cff68e7cace87157",
+      "trackModelRendered": true
+    },
+    "nativeToolchain": {
+      "sfizz": {
+        "version": "1.2.3",
+        "commit": "4e70dc0bef53b41f2853ed46e26f5911114c92d0",
+        "repository": "https://github.com/sfztools/sfizz.git",
+        "binarySha256": "fdd05e4f6de22b305ef0f46659658f39b3482d15847d563bf223263d21cffe15",
+        "binaryPinned": true
+      },
+      "vsco2Ce": {
+        "version": "SFZ branch",
+        "commit": "6dd651d55dde97fd4028699be9d4481f26917891",
+        "repository": "https://github.com/sgossner/VSCO-2-CE.git",
+        "license": "CC0-1.0",
+        "licenseSha256": "36ffd9dc085d529a7e60e1276d73ae5a030b020313e6c5408593a6ae2af39673",
+        "licenseFirstLine": "CC0 1.0 Universal",
+        "mode": "subset",
+        "treeSha1": "6dd651d55dde97fd4028699be9d4481f26917891",
+        "fullTree": {
+          "bytes": 3238104343,
+          "files": 3273
+        },
+        "instruments": [
+          "CelloEnsSusVib.sfz",
+          "ContrabassPizz.sfz",
+          "FHornSus.sfz",
+          "TromboneSus.sfz",
+          "TrumpetSusVib.sfz",
+          "UprightPiano.sfz",
+          "ViolinEnsSusVib.sfz"
+        ],
+        "fileCount": 250,
+        "bytes": 525383792,
+        "sha256": "ae31f58ea0392f2aa44e677bfc7ea0dade82278a1034b7b5cff68e7cace87157",
+        "manifest": "vsco2-ce-subset.json",
+        "manifestSha256": "3edcc813aa9e7665a2d75c4275e16395d6371fc897a774e926652a58625db42f",
+        "verifiedFiles": 250
+      }
+    },
+    "servedFamilies": [
+      "keys",
+      "strings",
+      "brass"
+    ],
+    "instrumentMapSha256": "cb10deb714a483edb0d3d6a03186e2b7effade0b4f06c50aba8083cb9b73b8f0",
+    "instrumentMap": {
+      "version": 1,
+      "library": "VSCO 2 CE, SFZ branch 6dd651d55dde97fd4028699be9d4481f26917891 (CC0-1.0)",
+      "entries": [
+        {
+          "match": {
+            "nameKeyword": "trumpet"
+          },
+          "sfz": "TrumpetSusVib.sfz",
+          "instrument": "VSCO 2 CE Trumpet, sustain vibrato",
+          "keyRange": [
+            52,
+            84
+          ]
+        },
+        {
+          "match": {
+            "nameKeyword": "trombone"
+          },
+          "sfz": "TromboneSus.sfz",
+          "instrument": "VSCO 2 CE Tenor Trombone, sustain",
+          "keyRange": [
+            34,
+            65
+          ]
+        },
+        {
+          "match": {
+            "nameKeyword": "cello"
+          },
+          "sfz": "CelloEnsSusVib.sfz",
+          "instrument": "VSCO 2 CE Cello Section, sustain vibrato",
+          "keyRange": [
+            36,
+            77
+          ]
+        },
+        {
+          "match": {
+            "instrumentId": "bass"
+          },
+          "sfz": "ContrabassPizz.sfz",
+          "instrument": "VSCO 2 CE Solo Contrabass, pizzicato",
+          "standIn": "The platform's bass is an electric or upright bass line (finger, pick, slap); VSCO 2 CE has no bass guitar, so it is played on a pizzicato contrabass.",
+          "keyRange": [
+            24,
+            60
+          ]
+        },
+        {
+          "match": {
+            "instrumentId": "cello"
+          },
+          "sfz": "CelloEnsSusVib.sfz",
+          "instrument": "VSCO 2 CE Cello Section, sustain vibrato",
+          "keyRange": [
+            36,
+            77
+          ]
+        },
+        {
+          "match": {
+            "instrumentId": "strings"
+          },
+          "sfz": "ViolinEnsSusVib.sfz",
+          "instrument": "VSCO 2 CE Violin Section, sustain vibrato",
+          "keyRange": [
+            55,
+            86
+          ]
+        },
+        {
+          "match": {
+            "family": "strings"
+          },
+          "sfz": "ViolinEnsSusVib.sfz",
+          "instrument": "VSCO 2 CE Violin Section, sustain vibrato",
+          "keyRange": [
+            55,
+            86
+          ]
+        },
+        {
+          "match": {
+            "family": "brass"
+          },
+          "sfz": "FHornSus.sfz",
+          "instrument": "VSCO 2 CE French Horn, sustain",
+          "keyRange": [
+            33,
+            77
+          ]
+        },
+        {
+          "match": {
+            "family": "keys"
+          },
+          "sfz": "UprightPiano.sfz",
+          "instrument": "VSCO 2 CE Upright Piano",
+          "keyRange": [
+            21,
+            108
+          ]
+        }
+      ],
+      "unserved": {
+        "drums": "VSCO 2 CE has orchestral percussion only (GM-StylePerc maps timpani, snare and cymbals onto GM notes); a pop kit with hi-hats is not in the library, so drums keep the preview synth rather than a wrong instrument.",
+        "guitar": "No guitar in VSCO 2 CE (the harp is not a guitar).",
+        "voice": "No choir or voice in the Community Edition.",
+        "synth": "No synthesizer patches in an orchestral sample library."
+      }
+    }
+  },
+  "liveRenders": {
+    "arrangementId": "4da143de-3667-48f2-b750-ea14a041825c",
+    "projectId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2",
+    "durationSeconds": 81,
+    "sampleRate": 44100,
+    "path": "SfzRenderer.renderAttested -> renderRemoteInstrument (health re-read, POST /render, echoed trackModelSha256 / performedMaterialSha256 / asset identity / rendererSha256 verified before audio is accepted)",
+    "tracks": [
+      {
+        "trackModelId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--drums-groove",
+        "instrument": "drums",
+        "instrumentId": "drums",
+        "family": "drums",
+        "notes": 532,
+        "cc": 0,
+        "decision": null,
+        "fallbackReason": "No PEDALBOARD_VST3 worker is configured. SFIZZ_VSCO2_CE has no approved instrument for family 'drums' (instrument 'drums', id 'drums'); served families: keys, strings, brass. VSCO 2 CE has orchestral percussion only (GM-StylePerc maps timpani, snare and cymbals onto GM notes); a pop kit with hi-hats is not in the library, so drums keep the preview synth rather than a wrong instrument.",
+        "performedMaterialSha256": "41a217a290991dc9e3a253565154e396face736958294e24f1f76a5a1d33963c"
+      },
+      {
+        "trackModelId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--bass-bass",
+        "instrument": "bass",
+        "instrumentId": "bass",
+        "family": "strings",
+        "notes": 137,
+        "cc": 636,
+        "decision": {
+          "renderer": "SFIZZ_VSCO2_CE",
+          "sfz": "ContrabassPizz.sfz",
+          "instrument": "VSCO 2 CE Solo Contrabass, pizzicato",
+          "matchedBy": {
+            "instrumentId": "bass"
+          },
+          "standIn": "The platform's bass is an electric or upright bass line (finger, pick, slap); VSCO 2 CE has no bass guitar, so it is played on a pizzicato contrabass."
+        },
+        "fallbackReason": null,
+        "performedMaterialSha256": "7e3468ff88d601225188caf9a70352415c6662d7bc33a0cf9435972f531be523",
+        "render": {
+          "ok": true,
+          "latencyMs": 7648,
+          "secondsOfAudio": 81,
+          "latencyPerMinuteOfAudioMs": 5665,
+          "frames": 3572100,
+          "peak": 0.05432,
+          "rmsDbfs": -47.38,
+          "attestation": {
+            "contractVersion": "1.0",
+            "provider": "SFIZZ_VSCO2_CE",
+            "modelVersion": "sfizz-1.2.3",
+            "runtimeIdentity": "music-ai-worker/python-3.11/sfizz-1.2.3",
+            "assetId": "vsco2-ce-sfz-6dd651d-platform-subset-v1",
+            "assetIdentity": "Versilian Studios / VSCO 2 Community Edition / SFZ branch 6dd651d5 / platform subset v1",
+            "assetSha256": "ae31f58ea0392f2aa44e677bfc7ea0dade82278a1034b7b5cff68e7cace87157",
+            "licenseOwner": "Public domain dedication (CC0-1.0) by Versilian Studios LLC; no licence to hold",
+            "licenseReference": "https://github.com/sgossner/VSCO-2-CE/blob/6dd651d55dde97fd4028699be9d4481f26917891/LICENSE (CC0-1.0, LICENSE sha256 36ffd9dc085d529a7e60e1276d73ae5a030b020313e6c5408593a6ae2af39673)",
+            "rendererIdentity": "music-ai-worker sfizz TrackModel host / PR-92",
+            "rendererSha256": "d950a0d0fd25c4eb2d44c681c48ba5a914f9988c8976ec83e8fb68a7b3f8aee3",
+            "smokeOutputSha256": "4086ff9673121752997258d2ad7cacf53f4e6bdb6c3d575c33aadb1a3725b6e2",
+            "trackModelSha256": "8202adaf095cc1c6f5735b9cee2a16ad1b729a99809ceaa17cc8905067f93a39",
+            "rendererOutputSha256": "ecea83be46eb86356b3b47f455b22ad159cae5be85f79fd7325e799ef07e07ca",
+            "performedMaterialSha256": "7e3468ff88d601225188caf9a70352415c6662d7bc33a0cf9435972f531be523",
+            "sampleRate": 44100,
+            "frameCount": 3572100,
+            "durationSeconds": 81
+          }
+        }
+      },
+      {
+        "trackModelId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--ensemble-transition",
+        "instrument": "ensemble",
+        "instrumentId": "piano",
+        "family": "keys",
+        "notes": 21,
+        "cc": 80,
+        "decision": {
+          "renderer": "SFIZZ_VSCO2_CE",
+          "sfz": "UprightPiano.sfz",
+          "instrument": "VSCO 2 CE Upright Piano",
+          "matchedBy": {
+            "family": "keys"
+          }
+        },
+        "fallbackReason": null,
+        "performedMaterialSha256": "3d79f161f08c9812b2a5b66d3a90d0c4ef63b39eb1247417448a031070abafee",
+        "render": {
+          "ok": true,
+          "latencyMs": 6055,
+          "secondsOfAudio": 81,
+          "latencyPerMinuteOfAudioMs": 4485,
+          "frames": 3572100,
+          "peak": 0.08206,
+          "rmsDbfs": -52.5,
+          "attestation": {
+            "contractVersion": "1.0",
+            "provider": "SFIZZ_VSCO2_CE",
+            "modelVersion": "sfizz-1.2.3",
+            "runtimeIdentity": "music-ai-worker/python-3.11/sfizz-1.2.3",
+            "assetId": "vsco2-ce-sfz-6dd651d-platform-subset-v1",
+            "assetIdentity": "Versilian Studios / VSCO 2 Community Edition / SFZ branch 6dd651d5 / platform subset v1",
+            "assetSha256": "ae31f58ea0392f2aa44e677bfc7ea0dade82278a1034b7b5cff68e7cace87157",
+            "licenseOwner": "Public domain dedication (CC0-1.0) by Versilian Studios LLC; no licence to hold",
+            "licenseReference": "https://github.com/sgossner/VSCO-2-CE/blob/6dd651d55dde97fd4028699be9d4481f26917891/LICENSE (CC0-1.0, LICENSE sha256 36ffd9dc085d529a7e60e1276d73ae5a030b020313e6c5408593a6ae2af39673)",
+            "rendererIdentity": "music-ai-worker sfizz TrackModel host / PR-92",
+            "rendererSha256": "d950a0d0fd25c4eb2d44c681c48ba5a914f9988c8976ec83e8fb68a7b3f8aee3",
+            "smokeOutputSha256": "4086ff9673121752997258d2ad7cacf53f4e6bdb6c3d575c33aadb1a3725b6e2",
+            "trackModelSha256": "6e23b3e377b04a9f7eff664c61b54bbde86bbff69ff80aa8a21eb899ed6bb514",
+            "rendererOutputSha256": "11e27ac96005fc14d625d416e194e90c4e8af8c6eef1481ad042d617e20d8faa",
+            "performedMaterialSha256": "3d79f161f08c9812b2a5b66d3a90d0c4ef63b39eb1247417448a031070abafee",
+            "sampleRate": 44100,
+            "frameCount": 3572100,
+            "durationSeconds": 81
+          }
+        }
+      }
+    ],
+    "unservedFamilyOnTheWire": {
+      "family": "drums",
+      "httpStatus": 422,
+      "detail": "SFIZZ_VSCO2_CE has no approved instrument for family 'drums' (instrument 'drums', id 'drums'); served families: keys, strings, brass"
+    }
+  },
+  "familyCoverage": [
+    {
+      "family": "keys",
+      "served": true,
+      "instruments": [
+        {
+          "match": {
+            "family": "keys"
+          },
+          "sfz": "UprightPiano.sfz",
+          "instrument": "VSCO 2 CE Upright Piano"
+        }
+      ],
+      "fallback": null
+    },
+    {
+      "family": "strings",
+      "served": true,
+      "instruments": [
+        {
+          "match": {
+            "nameKeyword": "cello"
+          },
+          "sfz": "CelloEnsSusVib.sfz",
+          "instrument": "VSCO 2 CE Cello Section, sustain vibrato"
+        },
+        {
+          "match": {
+            "instrumentId": "bass"
+          },
+          "sfz": "ContrabassPizz.sfz",
+          "instrument": "VSCO 2 CE Solo Contrabass, pizzicato",
+          "standIn": "The platform's bass is an electric or upright bass line (finger, pick, slap); VSCO 2 CE has no bass guitar, so it is played on a pizzicato contrabass."
+        },
+        {
+          "match": {
+            "instrumentId": "cello"
+          },
+          "sfz": "CelloEnsSusVib.sfz",
+          "instrument": "VSCO 2 CE Cello Section, sustain vibrato"
+        },
+        {
+          "match": {
+            "instrumentId": "strings"
+          },
+          "sfz": "ViolinEnsSusVib.sfz",
+          "instrument": "VSCO 2 CE Violin Section, sustain vibrato"
+        },
+        {
+          "match": {
+            "family": "strings"
+          },
+          "sfz": "ViolinEnsSusVib.sfz",
+          "instrument": "VSCO 2 CE Violin Section, sustain vibrato"
+        }
+      ],
+      "fallback": null
+    },
+    {
+      "family": "brass",
+      "served": true,
+      "instruments": [
+        {
+          "match": {
+            "nameKeyword": "trumpet"
+          },
+          "sfz": "TrumpetSusVib.sfz",
+          "instrument": "VSCO 2 CE Trumpet, sustain vibrato"
+        },
+        {
+          "match": {
+            "nameKeyword": "trombone"
+          },
+          "sfz": "TromboneSus.sfz",
+          "instrument": "VSCO 2 CE Tenor Trombone, sustain"
+        },
+        {
+          "match": {
+            "family": "brass"
+          },
+          "sfz": "FHornSus.sfz",
+          "instrument": "VSCO 2 CE French Horn, sustain"
+        }
+      ],
+      "fallback": null
+    },
+    {
+      "family": "drums",
+      "served": false,
+      "instruments": [],
+      "fallback": "VSCO 2 CE has orchestral percussion only (GM-StylePerc maps timpani, snare and cymbals onto GM notes); a pop kit with hi-hats is not in the library, so drums keep the preview synth rather than a wrong instrument."
+    },
+    {
+      "family": "guitar",
+      "served": false,
+      "instruments": [],
+      "fallback": "No guitar in VSCO 2 CE (the harp is not a guitar)."
+    },
+    {
+      "family": "voice",
+      "served": false,
+      "instruments": [],
+      "fallback": "No choir or voice in the Community Edition."
+    },
+    {
+      "family": "synth",
+      "served": false,
+      "instruments": [],
+      "fallback": "No synthesizer patches in an orchestral sample library."
+    }
+  ],
+  "ab": {
+    "projectId": "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2",
+    "runId": "pr92",
+    "arrangementId": "4da143de-3667-48f2-b750-ea14a041825c",
+    "approvedRevisionId": "1f644436-6d38-4911-a6d3-ec452a84c1ab",
+    "api": "PORT=5020, dev sign-in on loopback; side B had MUSIC_AI_WORKER_URL + MUSIC_AI_WORKER_TOKEN in its process env and LOCAL_OBJECT_STORAGE_DIR pointed at the main checkout's store (the approved preview bytes live there)",
+    "a": {
+      "label": "LOCAL_EXPRESSIVE_SYNTH",
+      "abMaster": {
+        "profile": "STREAMING",
+        "engineVersion": "2.0",
+        "report": {
+          "version": "2.0",
+          "method": "mastering-engine/v2 (BS.1770-4 gated loudness, 4x true-peak limiter)",
+          "profile": "STREAMING",
+          "intent": "loudness-normalised platforms: -14 LUFS, -1 dBTP, light glue",
+          "sampleRate": 44100,
+          "target": {
+            "integratedLufs": -14,
+            "truePeakDbtp": -1,
+            "stereoWidth": 1,
+            "limiter": true
+          },
+          "input": {
+            "integratedLufs": -23.74,
+            "truePeakDbtp": -8.301170978990903,
+            "loudnessRangeLu": 7.23952534338725
+          },
+          "output": {
+            "integratedLufs": -14.06,
+            "truePeakDbtp": -0.9999997586505318,
+            "loudnessRangeLu": 7.022343711443185,
+            "maxMomentaryLufs": -9.07
+          },
+          "gainDb": 9.79,
+          "compression": {
+            "ratio": 1.6,
+            "maxReductionDb": 0.61
+          },
+          "limiter": {
+            "enabled": true,
+            "maxReductionDb": 2.41,
+            "limitedFrameRatio": 0.00016
+          },
+          "withinTarget": true,
+          "warnings": [],
+          "steps": [
+            {
+              "step": "high_pass",
+              "detail": "24 Hz Butterworth, 2nd order"
+            },
+            {
+              "step": "glue_compression",
+              "detail": "1.6:1 above -18 dB, max 0.6 dB reduction"
+            },
+            {
+              "step": "stereo_width",
+              "detail": "unchanged"
+            },
+            {
+              "step": "loudness_normalise",
+              "detail": "+9.79 dB to reach -14 LUFS (measured -23.79 LUFS)"
+            },
+            {
+              "step": "true_peak_limiter",
+              "detail": "ceiling -1 dBTP, 5 ms lookahead, 100 ms release, max 2.41 dB reduction on 0.02 % of frames"
+            }
+          ],
+          "excludedTracks": []
+        },
+        "raw": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -23.74,
+          "loudnessRangeLu": 7.24,
+          "truePeakDbtp": -8.3,
+          "samplePeakDbfs": -8.3,
+          "sha256": "b2b705e276868d8a42adb1a46f0421373c6f3b444b33d6354787d471379211d0",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        },
+        "mastered": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -14.06,
+          "loudnessRangeLu": 7.02,
+          "truePeakDbtp": -1,
+          "samplePeakDbfs": -1,
+          "sha256": "3ef63927e3f494a61148c1f56ec92c3f7610ad38014b3f8ecb200e5751eae3f8",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        }
+      },
+      "jobId": "99c61e97-75bc-44b3-97c8-8b0473e5753e",
+      "exportArtifactId": "export-0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2-14-2521679f",
+      "exportZipSha256": "c2a19ac8878747dc62c96845873b4a95ca49a1fe7c02eea3b1a99a2bcb6682e0",
+      "elapsedMs": 381,
+      "productionReadiness": null,
+      "mastering": {
+        "target": {
+          "integratedLufs": -14,
+          "truePeakDbtp": -1,
+          "stereoWidth": 1,
+          "limiter": true
+        },
+        "output": {
+          "integratedLufs": -14.06,
+          "truePeakDbtp": -0.9999997422969482,
+          "loudnessRangeLu": 7.02226294709946,
+          "maxMomentaryLufs": -9.07
+        },
+        "withinTarget": true
+      },
+      "master": {
+        "sampleRate": 44100,
+        "channels": 2,
+        "frames": 4601740,
+        "durationSeconds": 104.348,
+        "integratedLufs": -12.48,
+        "loudnessRangeLu": 1.08,
+        "truePeakDbtp": -6.14,
+        "samplePeakDbfs": -6.53,
+        "sha256": "6b6a3d76f229125483e8dd75cffaaf060b4c95d3a84dba045956781a559cdf15",
+        "bytes": 18407004,
+        "method": "BS.1770-4"
+      },
+      "stems": [
+        {
+          "instrument": "drums",
+          "family": "drums",
+          "renderer": "LOCAL_EXPRESSIVE_SYNTH",
+          "rendererStatus": "preview-only",
+          "fallbackReason": "Premium instrument routing: role GROOVE names asset retrologue-2.4.0, which the renderer has not attested (attested: none).",
+          "soundSelection": null,
+          "assetIdentity": null,
+          "rendererOutputSha256": null,
+          "performedMaterialSha256": null,
+          "measurement": {
+            "sampleRate": 44100,
+            "channels": 2,
+            "frames": 3528000,
+            "durationSeconds": 80,
+            "integratedLufs": -30.91,
+            "loudnessRangeLu": 10.42,
+            "truePeakDbtp": -10.91,
+            "samplePeakDbfs": -10.91,
+            "sha256": "02d8d7db042a60ff9cb1d98d3b2499a0622146b6475a8bdade1c4db741d6c78d",
+            "bytes": 14112044,
+            "method": "BS.1770-4"
+          }
+        },
+        {
+          "instrument": "bass",
+          "family": "strings",
+          "renderer": "LOCAL_EXPRESSIVE_SYNTH",
+          "rendererStatus": "preview-only",
+          "fallbackReason": "Premium instrument routing: role BASS names asset retrologue-2.4.0, which the renderer has not attested (attested: none).",
+          "soundSelection": null,
+          "assetIdentity": null,
+          "rendererOutputSha256": null,
+          "performedMaterialSha256": null,
+          "measurement": {
+            "sampleRate": 44100,
+            "channels": 2,
+            "frames": 3528000,
+            "durationSeconds": 80,
+            "integratedLufs": -24.24,
+            "loudnessRangeLu": 6.32,
+            "truePeakDbtp": -15.85,
+            "samplePeakDbfs": -15.85,
+            "sha256": "c5cff7fd7d9d1be19ace8d3478960ac88fb6b384bbe5a161958d61b3ae46f169",
+            "bytes": 14112044,
+            "method": "BS.1770-4"
+          }
+        },
+        {
+          "instrument": "ensemble",
+          "family": "keys",
+          "renderer": "LOCAL_EXPRESSIVE_SYNTH",
+          "rendererStatus": "preview-only",
+          "fallbackReason": "Premium instrument routing: default names asset retrologue-2.4.0, which the renderer has not attested (attested: none).",
+          "soundSelection": null,
+          "assetIdentity": null,
+          "rendererOutputSha256": null,
+          "performedMaterialSha256": null,
+          "measurement": {
+            "sampleRate": 44100,
+            "channels": 2,
+            "frames": 3528000,
+            "durationSeconds": 80,
+            "integratedLufs": -18.71,
+            "loudnessRangeLu": 10.22,
+            "truePeakDbtp": -6.44,
+            "samplePeakDbfs": -6.44,
+            "sha256": "d166daf4ae8f515a154dc2fba3ffa6393a0d643c9a9d45d72bbfa182c041826f",
+            "bytes": 14112044,
+            "method": "BS.1770-4"
+          }
+        }
+      ]
+    },
+    "b": {
+      "label": "SFIZZ_VSCO2_CE",
+      "abMaster": {
+        "profile": "STREAMING",
+        "engineVersion": "2.0",
+        "report": {
+          "version": "2.0",
+          "method": "mastering-engine/v2 (BS.1770-4 gated loudness, 4x true-peak limiter)",
+          "profile": "STREAMING",
+          "intent": "loudness-normalised platforms: -14 LUFS, -1 dBTP, light glue",
+          "sampleRate": 44100,
+          "target": {
+            "integratedLufs": -14,
+            "truePeakDbtp": -1,
+            "stereoWidth": 1,
+            "limiter": true
+          },
+          "input": {
+            "integratedLufs": -32.58,
+            "truePeakDbtp": -11.664361475180947,
+            "loudnessRangeLu": 9.91759522101249
+          },
+          "output": {
+            "integratedLufs": -16.26,
+            "truePeakDbtp": -0.9999996577546693,
+            "loudnessRangeLu": 7.316515890150681,
+            "maxMomentaryLufs": -11.67
+          },
+          "gainDb": 18.61,
+          "compression": {
+            "ratio": 1.6,
+            "maxReductionDb": 0
+          },
+          "limiter": {
+            "enabled": true,
+            "maxReductionDb": 8.12,
+            "limitedFrameRatio": 0.00877
+          },
+          "withinTarget": false,
+          "warnings": [
+            "integrated loudness -16.26 LUFS missed the -14 LUFS target by -2.26 LU",
+            "the limiter reduced peaks by up to 8.1 dB: this target costs transients on this material"
+          ],
+          "steps": [
+            {
+              "step": "high_pass",
+              "detail": "24 Hz Butterworth, 2nd order"
+            },
+            {
+              "step": "glue_compression",
+              "detail": "1.6:1 above -18 dB, max 0.0 dB reduction"
+            },
+            {
+              "step": "stereo_width",
+              "detail": "unchanged"
+            },
+            {
+              "step": "loudness_normalise",
+              "detail": "+18.61 dB to reach -14 LUFS (measured -32.61 LUFS)"
+            },
+            {
+              "step": "limiter_makeup",
+              "detail": "+1.40 dB after the limiter cost 2.80 LU, limited again"
+            },
+            {
+              "step": "true_peak_limiter",
+              "detail": "ceiling -1 dBTP, 5 ms lookahead, 100 ms release, max 8.12 dB reduction on 0.88 % of frames"
+            }
+          ],
+          "excludedTracks": []
+        },
+        "raw": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -32.58,
+          "loudnessRangeLu": 9.92,
+          "truePeakDbtp": -11.66,
+          "samplePeakDbfs": -11.66,
+          "sha256": "7b41c603aa4640c7d6cbf4b066f53d32a1b26be195d779eb1d51628c664bb48c",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        },
+        "mastered": {
+          "sampleRate": 44100,
+          "channels": 2,
+          "frames": 3528000,
+          "durationSeconds": 80,
+          "integratedLufs": -16.26,
+          "loudnessRangeLu": 7.32,
+          "truePeakDbtp": -1,
+          "samplePeakDbfs": -1,
+          "sha256": "8b0fadbb3ce055c496a02d757c60246cb2653b3eb54da5561c3556f46e0d8a47",
+          "bytes": 14112044,
+          "method": "BS.1770-4"
+        }
+      },
+      "jobId": "801001de-9503-4dbe-a5bd-dbd61f83f6a8",
+      "exportArtifactId": "export-0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2-16-5f1ecd09",
+      "exportZipSha256": "b7d5a6f355ccd8517bb3974e2620a67a110627a7f5b16e0b9a3992a438be7b85",
+      "elapsedMs": 87846,
+      "productionReadiness": {
+        "ready": false,
+        "status": "preview-only",
+        "reasons": [
+          "Every active track must have an attested native instrument render.",
+          "0bd4bff8-a7f3-496c-b4bc-6c807e0f6ea2--drums-groove native render does not attest its performed material."
+        ],
+        "performedMaterialSha256": "aaee2e2e97bb0e1012873074f7f6643eb50e4ccbf3e86a1ea8495299feb66bee",
+        "midiAgreementSha256": "7e091e36f907e3303b4303a083b148c638db13096a996464c23085b7f2095229"
+      },
+      "mastering": {
+        "target": {
+          "integratedLufs": -14,
+          "truePeakDbtp": -1,
+          "stereoWidth": 1,
+          "limiter": true
+        },
+        "output": {
+          "integratedLufs": -16.26,
+          "truePeakDbtp": -0.9999996894332329,
+          "loudnessRangeLu": 7.316768123173503,
+          "maxMomentaryLufs": -11.67
+        },
+        "withinTarget": false
+      },
+      "master": {
+        "sampleRate": 44100,
+        "channels": 2,
+        "frames": 4601740,
+        "durationSeconds": 104.348,
+        "integratedLufs": -12.48,
+        "loudnessRangeLu": 1.08,
+        "truePeakDbtp": -6.14,
+        "samplePeakDbfs": -6.53,
+        "sha256": "6b6a3d76f229125483e8dd75cffaaf060b4c95d3a84dba045956781a559cdf15",
+        "bytes": 18407004,
+        "method": "BS.1770-4"
+      },
+      "stems": [
+        {
+          "instrument": "drums",
+          "family": "drums",
+          "renderer": "LOCAL_EXPRESSIVE_SYNTH",
+          "rendererStatus": "preview-only",
+          "fallbackReason": "The licensed native renderer was unavailable or failed attestation (PEDALBOARD_VST3: premium instrument routing refused (role GROOVE names asset retrologue-2.4.0, which the renderer has not attested (attested: none))).",
+          "soundSelection": null,
+          "assetIdentity": null,
+          "rendererOutputSha256": null,
+          "performedMaterialSha256": null,
+          "measurement": {
+            "sampleRate": 44100,
+            "channels": 2,
+            "frames": 3528000,
+            "durationSeconds": 80,
+            "integratedLufs": -30.91,
+            "loudnessRangeLu": 10.42,
+            "truePeakDbtp": -10.91,
+            "samplePeakDbfs": -10.91,
+            "sha256": "02d8d7db042a60ff9cb1d98d3b2499a0622146b6475a8bdade1c4db741d6c78d",
+            "bytes": 14112044,
+            "method": "BS.1770-4"
+          }
+        },
+        {
+          "instrument": "bass",
+          "family": "strings",
+          "renderer": "SFIZZ_VSCO2_CE",
+          "rendererStatus": "licensed-native",
+          "fallbackReason": null,
+          "soundSelection": {
+            "assetId": "ContrabassPizz.sfz",
+            "source": "sfizz-instrument-map",
+            "reason": "after PEDALBOARD_VST3: premium instrument routing refused (role BASS names asset retrologue-2.4.0, which the renderer has not attested (attested: none)): instrumentId=bass -> VSCO 2 CE Solo Contrabass, pizzicato (stand-in: The platform's bass is an electric or upright bass line (finger, pick, slap); VSCO 2 CE has no bass guitar, so it is played on a pizzicato contrabass.)"
+          },
+          "assetIdentity": "Versilian Studios / VSCO 2 Community Edition / SFZ branch 6dd651d5 / platform subset v1",
+          "rendererOutputSha256": "22e7d56963ba9fb3ca0a5119bf012f92be0aea7de5614b3bc4c6f5f814927bfc",
+          "performedMaterialSha256": "7e3468ff88d601225188caf9a70352415c6662d7bc33a0cf9435972f531be523",
+          "measurement": {
+            "sampleRate": 44100,
+            "channels": 2,
+            "frames": 3528000,
+            "durationSeconds": 80,
+            "integratedLufs": -45.23,
+            "loudnessRangeLu": 14.59,
+            "truePeakDbtp": -25.3,
+            "samplePeakDbfs": -25.3,
+            "sha256": "22e7d56963ba9fb3ca0a5119bf012f92be0aea7de5614b3bc4c6f5f814927bfc",
+            "bytes": 14112044,
+            "method": "BS.1770-4"
+          }
+        },
+        {
+          "instrument": "ensemble",
+          "family": "keys",
+          "renderer": "SFIZZ_VSCO2_CE",
+          "rendererStatus": "licensed-native",
+          "fallbackReason": null,
+          "soundSelection": {
+            "assetId": "UprightPiano.sfz",
+            "source": "sfizz-instrument-map",
+            "reason": "after PEDALBOARD_VST3: premium instrument routing refused (default names asset retrologue-2.4.0, which the renderer has not attested (attested: none)): family=keys -> VSCO 2 CE Upright Piano"
+          },
+          "assetIdentity": "Versilian Studios / VSCO 2 Community Edition / SFZ branch 6dd651d5 / platform subset v1",
+          "rendererOutputSha256": "9e638706111ab36ed9071e3258f4a6fad9c70122c653fb57b27b17e1d7aba83e",
+          "performedMaterialSha256": "3d79f161f08c9812b2a5b66d3a90d0c4ef63b39eb1247417448a031070abafee",
+          "measurement": {
+            "sampleRate": 44100,
+            "channels": 2,
+            "frames": 3528000,
+            "durationSeconds": 80,
+            "integratedLufs": -38.96,
+            "loudnessRangeLu": 14.79,
+            "truePeakDbtp": -21.71,
+            "samplePeakDbfs": -21.72,
+            "sha256": "9e638706111ab36ed9071e3258f4a6fad9c70122c653fb57b27b17e1d7aba83e",
+            "bytes": 14112044,
+            "method": "BS.1770-4"
+          }
+        }
+      ]
+    },
+    "exportMastersIdentical": true,
+    "exportMastersIdenticalBecause": "exportJobs substitutes the producer-approved revision WAV as mix/master.wav on every export of an approved revision; the pair is therefore built from mix/full_mix.wav (the premaster that carries the stems), each side mastered through masteringEngine.ts 2.0 with the STREAMING profile (abMaster on each side)",
+    "premastersIdentical": false,
+    "registered": {
+      "artifactIds": {
+        "a": "sound-ab-pr92-a-f7846937",
+        "b": "sound-ab-pr92-b-43e67586"
+      },
+      "sessionId": "cd279fa0-2de1-4356-a793-b2577b734f9f",
+      "raterPath": "/listen/cd279fa0-2de1-4356-a793-b2577b734f9f",
+      "keyBySide": {
+        "44344b21": "LOCAL_EXPRESSIVE_SYNTH",
+        "7a9676dc": "SFIZZ_VSCO2_CE"
+      }
+    }
+  },
+  "tests": {
+    "node": "nativeRendererRouting.test.ts 10/10 (registered in scripts/run-focused-api-tests.mjs)",
+    "workerLocal": "tests/test_sfizz_renderer.py 9 passed, 8 skipped on Windows (POSIX-only host/worker tests)",
+    "workerInImage": "17 tests, OK (modal run scratch caller -> music-ai-worker.unit_tests)",
+    "typecheck": "pnpm run typecheck green"
+  },
+  "spend": {
+    "cap": "$15 for the SOUND-1 stream",
+    "estimate": "under $1 in total: five CPU-only image builds of 3-4 minutes (previous agent's two failed builds, this agent's two deploys, one scratch provision that built sfizz on a 4-CPU function), two 30-second scratch host checks, two in-image test runs, health/render calls of a few seconds each; no GPU was used anywhere",
+    "authority": "the Modal usage dashboard for workspace windot100; the estimate is from run durations and Modal's published CPU rates, not from a billing read"
+  },
+  "honestLimits": [
+    "Bass is a declared stand-in (pizzicato contrabass for an electric/upright bass line); drums, guitar, voice and synth are not served and keep the preview synth with the reason on the stem, so the sfizz export is a labelled mixed preview, not production-ready.",
+    "The pedalboard routing refusal now falls through to the next attested renderer; that policy is proven by this live export, not by a unit test of exportEngine (which has none).",
+    "The canonical smoke and the verification renders prove audibility and sensitivity, not musical quality; nobody has listened blind yet - the pair is registered for the owner.",
+    "The premium routing table in .env.local names retrologue-2.4.0 for GROOVE/BASS/default; with the VST3 worker unattested that rule is refused on every track and the stems say so.",
+    "Cold start of the worker is several seconds (health 7.2 s in the final probe, 6.5 s in the first); the 30 s health cache hides it for the rest of an export.",
+    "The A/B side B was exported on the first live image; the final redeploy changed only the worker test file and the proof was re-run on it. sfizz_render is not bit-reproducible between builds (nativeToolchain.sfizz.binarySha256 differs per image); the host, library tree and instrument map hashes are identical.",
+    "The pair is mastered from each side's premaster because the export master is the producer-approved WAV on both sides by design; side B reached -16.26 LUFS against a -14 target (true-peak ceiling after +18.6 dB of gain): the VSCO 2 CE instruments are much quieter than the synth at the same velocities and CC 11, and the map has no per-instrument trim yet."
+  ]
+}

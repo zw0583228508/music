@@ -32,6 +32,16 @@ from starlette.background import BackgroundTask
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl
 
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
+from sfizz_instrument_map import (  # noqa: E402 -- the worker root is not a package
+    instrument_map_sha256,
+    load_instrument_map,
+    public_instrument_map,
+    resolve_sfz_instrument,
+    served_families,
+    validate_instrument_map,
+)
+
 MANIFEST = json.loads((ROOT / "model_manifest.json").read_text())
 MAX_DOWNLOAD_BYTES = int(os.getenv("MUSIC_AI_MAX_SOURCE_BYTES", 25 * 1024 * 1024))
 MAX_INPUT_BYTES = int(os.getenv("MUSIC_AI_MAX_INPUT_BYTES", 25 * 1024 * 1024))
@@ -67,7 +77,7 @@ NATIVE_ADAPTER_REQUIREMENTS = {
         "an approved executable sfizz native host",
         "a compatible licensed VSCO/SFZ library",
         "library and host SHA-256 values in the private manifest",
-        "approved instrument/control mappings",
+        "an explicit instrument map (MUSIC_AI_SFIZZ_INSTRUMENT_MAP) whose every SFZ exists in the active library",
         "canonical TrackModel smoke evidence with host and output attestation",
     ],
 }
@@ -954,6 +964,15 @@ def _render_native_track(
                 f"configured {kind} renderer timed out after {INFERENCE_TIMEOUT:g} seconds",
             ) from exc
         except (OSError, subprocess.CalledProcessError) as exc:
+            # The host's own words go to the worker log only; the HTTP detail
+            # stays free of private paths.
+            stderr = getattr(exc, "stderr", b"") or b""
+            print(
+                f"[music-ai-worker] native {kind} host failed: "
+                f"{stderr.decode('utf-8', 'replace')[-2000:] if isinstance(stderr, bytes) else str(stderr)[-2000:]}",
+                file=sys.stderr,
+                flush=True,
+            )
             raise HTTPException(503, f"configured {kind} renderer could not render TrackModel") from exc
         if not output_path.is_file():
             raise HTTPException(503, f"native {kind} renderer did not produce a WAV")
@@ -1018,11 +1037,64 @@ def _render_sfizz_track(
     return _render_native_track("sfz", track, sample_rate, duration_seconds, asset)
 
 
+def _sfizz_toolchain() -> dict:
+    """What the provisioning step recorded, checked against the binary that will run.
+
+    `provision-evidence.json` is written by `bootstrap_sfizz_vsco2.py` beside
+    the library (pinned sfizz commit and binary hash, pinned VSCO 2 CE commit,
+    CC0 licence hash, tree hash). When it is present the live `sfizz_render`
+    must hash to the recorded value; a swapped binary is unhealthy.
+    """
+    binary = os.getenv("SFIZZ_RENDER_BINARY") or "sfizz_render"
+    binary_path = Path(binary)
+    live_sha256 = _sha256(binary_path) if binary_path.is_absolute() else None
+    evidence_path = ASSET_ROOT / "sfz" / "provision-evidence.json"
+    try:
+        evidence = json.loads(evidence_path.read_text())
+    except (OSError, json.JSONDecodeError):
+        evidence = {}
+    sfizz = evidence.get("sfizz") if isinstance(evidence.get("sfizz"), dict) else {}
+    vsco = evidence.get("vsco2Ce") if isinstance(evidence.get("vsco2Ce"), dict) else {}
+    pinned = sfizz.get("binarySha256")
+    if pinned and live_sha256 != pinned:
+        raise ValueError("sfizz_render binary does not match its provision evidence")
+    return {
+        "sfizz": {
+            "version": sfizz.get("version"),
+            "commit": sfizz.get("commit"),
+            "repository": sfizz.get("repository"),
+            "binarySha256": live_sha256,
+            "binaryPinned": bool(pinned),
+        },
+        "vsco2Ce": {
+            key: vsco.get(key)
+            for key in ("version", "commit", "repository", "license", "licenseSha256", "licenseFirstLine",
+                        "mode", "treeSha1", "fullTree", "instruments", "fileCount", "bytes", "sha256",
+                        "manifest", "manifestSha256", "verifiedFiles")
+        } if vsco else None,
+    }
+
+
+def _sfizz_instrument_details(asset: dict) -> dict:
+    """The map health publishes; unhealthy when any mapped SFZ is missing from the active library."""
+    instrument_map = load_instrument_map()
+    problems = validate_instrument_map(instrument_map, asset["libraryPath"])
+    if problems:
+        raise ValueError("instrument map does not fit the active library: " + "; ".join(problems))
+    return {
+        "instrumentMap": public_instrument_map(instrument_map),
+        "instrumentMapSha256": instrument_map_sha256(instrument_map),
+        "servedFamilies": served_families(instrument_map),
+        "nativeToolchain": _sfizz_toolchain(),
+    }
+
+
 def renderer_health(provider: str) -> dict:
     """Attest the selected licensed asset and native smoke evidence."""
     kind = "vst3" if provider == "VST3" else "sfz"
     try:
         asset = _licensed_asset(kind)
+        extra: dict = {}
         if provider == "VST3":
             # Loading is deliberately part of health; package presence alone is
             # not proof that this plugin can be instantiated.
@@ -1031,7 +1103,9 @@ def renderer_health(provider: str) -> dict:
             load_plugin(str(asset["path"]), plugin_name=plugin_name)
             package_version = installed_version("pedalboard")
         else:
-            package_version = "native-command"
+            extra = _sfizz_instrument_details(asset)
+            sfizz_version = extra["nativeToolchain"]["sfizz"].get("version")
+            package_version = f"sfizz-{sfizz_version}" if sfizz_version else "native-command"
         marker = asset.get("smokeEvidence") or _readiness_marker().get(
             "vst3" if provider == "VST3" else "sfizz"
         )
@@ -1068,6 +1142,7 @@ def renderer_health(provider: str) -> dict:
             },
             "smokeEvidence": marker if isinstance(marker, dict) else None,
             "runtime": {"ready": smoke_tested, "python": "3.11", "device": "cpu"},
+            **extra,
         }
     except Exception as exc:
         return {
@@ -1505,6 +1580,15 @@ def render(payload: RenderRequest) -> dict:
     if payload.track_model is None:
         raise HTTPException(422, "instrument rendering requires a canonical TrackModel")
     track = _canonical_track_model(payload.track_model)
+    instrument: dict | None = None
+    if payload.provider == "SFIZZ_VSCO2_CE":
+        # The map decides, before any native process runs, which VSCO 2 CE
+        # instrument this track may use; a family it does not serve is refused
+        # with the reason, never rendered with whatever happens to be loaded.
+        try:
+            instrument = resolve_sfz_instrument(load_instrument_map(), track)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
     audio, asset = (
         _render_vst3_track(track, payload.sample_rate, payload.duration_seconds)
         if payload.provider == "VST3"
@@ -1541,6 +1625,7 @@ def render(payload: RenderRequest) -> dict:
         "format": "wav",
         "encoding": "pcm_s16le",
         "trackModelId": track["id"],
+        **({"instrument": instrument} if instrument else {}),
     }
 
 

@@ -1,12 +1,15 @@
-"""Modal deployment for the CPU analysis worker (Spotify Basic Pitch).
+"""Modal deployment for the CPU worker: Basic Pitch analysis + sfizz/VSCO 2 CE rendering.
 
     modal deploy services/music-ai-worker/modal_app.py
 
-Nothing here marks the provider ready. Readiness is still `/health`'s own
+Nothing here marks a provider ready. Readiness is still `/health`'s own
 verification inside the container: the pinned package tree, the pinned
-checkpoint tree, the pinned runtime versions and the build-time smoke marker.
-The bearer token comes from the shared `music-ai-worker-runtime` secret, so an
-unauthenticated caller gets 401 exactly as it does on every other worker.
+checkpoint tree, the pinned runtime versions and the build-time smoke marker
+for Basic Pitch; the activated manifest, the library and host checksums, the
+retained three-render smoke evidence and the instrument map for
+SFIZZ_VSCO2_CE. The bearer token comes from the shared
+`music-ai-worker-runtime` secret, so an unauthenticated caller gets 401
+exactly as it does on every other worker.
 """
 from __future__ import annotations
 
@@ -42,7 +45,8 @@ endpoint_secret = modal.Secret.from_name(ENDPOINT_SECRET_NAME)
     # endpoint.
     secrets=[runtime_secret, endpoint_secret],
     env=worker_environment(),
-    # Basic Pitch is a small CNN over a CQT: CPU is the right runtime, and a
+    # Basic Pitch is a small CNN over a CQT and sfizz renders offline faster
+    # than real time on a few cores: CPU is the right runtime, and a
     # three-minute song fits comfortably in this memory.
     cpu=4.0,
     memory=8192,
@@ -61,3 +65,13 @@ def endpoint() -> None:
         cwd="/app",
         env={**os.environ, **worker_environment()},
     )
+
+
+@app.function(image=image, secrets=[runtime_secret, endpoint_secret], env=worker_environment(), cpu=2.0, memory=4096, timeout=1800)
+def unit_tests(pattern: str = "test_sfizz_renderer.py") -> str:
+    """Run a worker test module inside the built image (the CI job for the full suite needs Torch)."""
+    completed = subprocess.run(
+        ["python", "-m", "unittest", "discover", "-s", "/app/tests", "-p", pattern, "-v"],
+        cwd="/app", capture_output=True, text=True, env={**os.environ, **worker_environment()},
+    )
+    return completed.stdout + completed.stderr + f"\nexit={completed.returncode}\n"

@@ -3,7 +3,26 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
+
+
+def host_path(module_file: str) -> Path:
+    """The executable the worker hashed as `rendererSha256`.
+
+    Run as a plain script this is the script itself. Run as the checksum-bound
+    zipapp the worker actually executes, `__file__` is `<archive>/__main__.py`,
+    a member inside the archive and not a file on disk; the archive is the host,
+    so its parent is what must be hashed. (Before PR-92 this hashed the member
+    path, found no file and raised "asset contains no files" on every native
+    render: the smoke that gates staging could never pass on a real host.)
+    """
+    here = Path(module_file).resolve()
+    if here.is_file():
+        return here
+    if here.parent.is_file():
+        return here.parent
+    return Path(sys.argv[0]).resolve()
 
 
 def parser(kind: str) -> argparse.ArgumentParser:

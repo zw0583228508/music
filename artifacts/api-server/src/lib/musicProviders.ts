@@ -511,10 +511,10 @@ export const MUSIC_PROVIDERS: MusicProviderDescriptor[] = [
     capabilities: ["audio_generation"],
     inputTypes: ["MIDI"],
     execution: "remote",
-    status: remoteConfigured("SFIZZ_RENDER") ? "configured" : "unavailable",
-    license: "VSCO 2 CE / sfizz terms",
+    status: remoteConfigured("SFIZZ_RENDER") || remoteConfigured("MUSIC_AI_WORKER") ? "configured" : "unavailable",
+    license: "sfizz BSD-2-Clause; VSCO 2 Community Edition CC0-1.0",
     priority: 66,
-    notes: "Requires SFIZZ_RENDER_API_URL and a worker-attested licensed SFZ library/native host.",
+    notes: "Requires MUSIC_AI_WORKER_URL (or SFIZZ_RENDER_API_URL) and a worker-attested SFZ library/native host; serves keys, strings and brass by its published instrument map, other families fall back with a reason (PR-92).",
   },
   {
     id: "PEDALBOARD_VST3",

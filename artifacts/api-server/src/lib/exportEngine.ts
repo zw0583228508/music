@@ -22,6 +22,7 @@ import {
   renderMusicPipeline,
   type RenderedTrack,
 } from "./musicEngines";
+import { decideNativeRoute } from "./nativeRendererRouting";
 import { loadPremiumRoutingTable } from "./premiumInstrumentRouting";
 import { resolveTrackAsset, toSoundCatalogue } from "./soundSelectionBrain";
 import { MASTERING_ENGINE_VERSION, masterAudio as masterThroughEngine, masteringProfile, tracksForMasterProfile } from "./masteringEngine";
@@ -721,7 +722,6 @@ export async function renderArrangementExport(input: {
   }
   const sfizzRenderer = new SfzRenderer();
   const pedalboardRenderer = new PedalboardRenderer();
-  const nativeRendererConfigured = sfizzRenderer.isConfigured() || pedalboardRenderer.isConfigured();
   // PR-22/24: each track goes to the attested instrument that fits it — an
   // explicit operator rule first, otherwise the Sound Selection Brain's
   // choice from the worker's attested catalogue, then the table default, then
@@ -730,24 +730,26 @@ export async function renderArrangementExport(input: {
   const soundCatalogue = pedalboardRenderer.isConfigured()
     ? toSoundCatalogue(await pedalboardRenderer.listAttestedAssets().catch(() => []))
     : [];
-  const remoteTracks: RenderedTrack[] = await Promise.all(pipeline.tracks.map(async (rendered): Promise<RenderedTrack> => {
+  // PR-92: one health round trip tells routing which families the sfizz
+  // worker serves, by the same ordered map the worker itself resolves with.
+  const sfizzState = await sfizzRenderer.workerState();
+  const attemptedTracks: RenderedTrack[] = await Promise.all(pipeline.tracks.map(async (rendered): Promise<RenderedTrack> => {
       const fallback = (reason: string): RenderedTrack => ({
         ...rendered,
         rendererStatus: "preview-only",
         fallbackReason: reason,
       });
       const capability = getInstrumentPerformanceCapability(rendered.trackModel.instrumentDefinition);
-      const usePedalboard = pedalboardRenderer.isConfigured() &&
-        capability.nativeRenderers.includes("PEDALBOARD_VST3");
-      const useSfizz = !usePedalboard &&
-        sfizzRenderer.isConfigured() &&
-        capability.nativeRenderers.includes("SFIZZ_VSCO2_CE");
-      if (!usePedalboard && !useSfizz) {
-        return fallback(
-          nativeRendererConfigured
-            ? "The configured native renderer does not support this instrument family."
-            : "No healthy licensed native renderer was configured for this export.",
-        );
+      const route = decideNativeRoute({
+        track: rendered.trackModel,
+        pedalboardConfigured: pedalboardRenderer.isConfigured(),
+        pedalboardFamilies: capability.nativeRenderers.includes("PEDALBOARD_VST3")
+          ? [rendered.trackModel.instrumentDefinition.family]
+          : [],
+        sfizz: sfizzState,
+      });
+      if (!route.candidates.length) {
+        return fallback(route.reason ?? "No healthy licensed native renderer was configured for this export.");
       }
       if (
         !input.parentIds.length &&
@@ -755,75 +757,148 @@ export async function renderArrangementExport(input: {
       ) {
         return fallback("Render lineage was incomplete, so licensed native rendering was skipped.");
       }
-      const renderer = usePedalboard ? pedalboardRenderer : sfizzRenderer;
-      let assetId: string | undefined;
-      let soundSelection: RenderedTrack["soundSelection"];
-      if (usePedalboard && (routingTable || soundCatalogue.length)) {
-        const resolved = resolveTrackAsset({
-          track: {
-            trackId: rendered.trackModel.id,
-            instrument: rendered.trackModel.instrument,
-            role: rendered.trackModel.role,
-            family: rendered.trackModel.instrumentDefinition.family,
-            notes: rendered.trackModel.notes,
-          },
-          table: routingTable,
-          catalogue: soundCatalogue,
-          styleProfile: input.styleProfile ?? null,
-        });
-        soundSelection = { assetId: resolved.assetId, source: resolved.source, reason: resolved.reason };
-        // A rule that cannot be honoured is a refusal, not a guess: rendering
-        // with a different instrument than the operator named would be wrong
-        // audio presented as right.
-        if (resolved.source === "refused") {
-          return { ...fallback(`Premium instrument routing: ${resolved.reason}.`), soundSelection };
+      const failures: string[] = [];
+      for (const candidate of route.candidates) {
+        const usePedalboard = candidate.renderer === "PEDALBOARD_VST3";
+        let assetId: string | undefined;
+        let soundSelection: RenderedTrack["soundSelection"];
+        if (usePedalboard && (routingTable || soundCatalogue.length)) {
+          const resolved = resolveTrackAsset({
+            track: {
+              trackId: rendered.trackModel.id,
+              instrument: rendered.trackModel.instrument,
+              role: rendered.trackModel.role,
+              family: rendered.trackModel.instrumentDefinition.family,
+              notes: rendered.trackModel.notes,
+            },
+            table: routingTable,
+            catalogue: soundCatalogue,
+            styleProfile: input.styleProfile ?? null,
+          });
+          soundSelection = { assetId: resolved.assetId, source: resolved.source, reason: resolved.reason };
+          // A rule that cannot be honoured is a refusal, not a guess: rendering
+          // with a different instrument than the operator named would be wrong
+          // audio presented as right.
+          if (resolved.source === "refused") {
+            // PR-92: the refusal is final for PEDALBOARD_VST3 - but it says
+            // nothing about the next attested renderer, which serves the track
+            // under its own published map and labels the stem with it.
+            failures.push(`PEDALBOARD_VST3: premium instrument routing refused (${resolved.reason})`);
+            continue;
+          }
+          assetId = resolved.assetId ?? undefined;
         }
-        assetId = resolved.assetId ?? undefined;
+        if (!usePedalboard) {
+          // The VSCO 2 CE instrument the worker's map assigned - and, when the
+          // platform family is not what the library has, the stand-in it declares.
+          soundSelection = {
+            assetId: candidate.sfz,
+            source: "sfizz-instrument-map",
+            reason: (failures.length ? `after ${failures.join("; ")}: ` : "")
+              + `${Object.entries(candidate.matchedBy).map(([key, value]) => `${key}=${value}`).join(",")} -> ${candidate.instrument}`
+              + (candidate.standIn ? ` (stand-in: ${candidate.standIn})` : ""),
+          };
+        }
+        let samples: Float32Array;
+        let rendererAttestation: RenderedTrack["rendererAttestation"];
+        try {
+          const native = usePedalboard
+            ? await pedalboardRenderer.renderAttested(
+                rendered.trackModel,
+                SAMPLE_RATE,
+                pipeline.durationSeconds,
+                { assetId },
+              )
+            : await sfizzRenderer.renderAttested(
+                rendered.trackModel,
+                SAMPLE_RATE,
+                pipeline.durationSeconds,
+              );
+          samples = native.samples;
+          rendererAttestation = native.attestation;
+        } catch (error) {
+          // A configured endpoint is not proof of a licensed, compatible asset.
+          // Keep the already-rendered deterministic stem and do not attribute it
+          // to a native provider that failed attestation or playback validation.
+          failures.push(`${candidate.renderer}: ${error instanceof Error ? error.message : "unavailable or failed attestation"}`);
+          continue;
+        }
+        const expectedLength = Math.ceil(SAMPLE_RATE * pipeline.durationSeconds) * CHANNELS;
+        if (validateNativeRenderSamples(samples, expectedLength).length) {
+          failures.push(`${candidate.renderer}: returned audio that failed validation`);
+          continue;
+        }
+        const volume = activeTracks.find((track) => track.id === rendered.trackModel.id)?.volume ?? 0;
+        const gain = 10 ** (volume / 20);
+        if (gain !== 1) {
+          for (let index = 0; index < samples.length; index += 1) samples[index] *= gain;
+        }
+        return {
+          ...rendered,
+          samples,
+          renderer: candidate.renderer,
+          rendererStatus: "licensed-native",
+          rendererAttestation,
+          // The preview pass recorded why *it* cannot be production audio. That
+          // reason must not travel with a stem that was rendered natively.
+          fallbackReason: undefined,
+          ...(soundSelection ? { soundSelection } : {}),
+        };
       }
-      let samples: Float32Array;
-      let rendererAttestation: RenderedTrack["rendererAttestation"];
-      try {
-        const native = usePedalboard
-          ? await pedalboardRenderer.renderAttested(
-              rendered.trackModel,
-              SAMPLE_RATE,
-              pipeline.durationSeconds,
-              { assetId },
-            )
-          : await renderer.renderAttested(
-              rendered.trackModel,
-              SAMPLE_RATE,
-              pipeline.durationSeconds,
-            );
-        samples = native.samples;
-        rendererAttestation = native.attestation;
-      } catch {
-        // A configured endpoint is not proof of a licensed, compatible asset.
-        // Keep the already-rendered deterministic stem and do not attribute it
-        // to a native provider that failed attestation or playback validation.
-        return fallback("The licensed native renderer was unavailable or failed attestation.");
-      }
-      const expectedLength = Math.ceil(SAMPLE_RATE * pipeline.durationSeconds) * CHANNELS;
-      if (validateNativeRenderSamples(samples, expectedLength).length) {
-        return fallback("The licensed native renderer returned audio that failed validation.");
-      }
-      const volume = activeTracks.find((track) => track.id === rendered.trackModel.id)?.volume ?? 0;
-      const gain = 10 ** (volume / 20);
-      if (gain !== 1) {
-        for (let index = 0; index < samples.length; index += 1) samples[index] *= gain;
-      }
-      return {
-        ...rendered,
-        samples,
-        renderer: renderer.providerId,
-        rendererStatus: "licensed-native",
-        rendererAttestation,
-        // The preview pass recorded why *it* cannot be production audio. That
-        // reason must not travel with a stem that was rendered natively.
-        fallbackReason: undefined,
-        ...(soundSelection ? { soundSelection } : {}),
-      };
+      return fallback(`The licensed native renderer was unavailable or failed attestation (${[...failures, ...route.skipped].join("; ")}).`);
     }));
+  const trackEvidenceFailures = (track: RenderedTrack): string[] => {
+    const evidence = track.trackModel.performanceEvidence;
+    if (!evidence) return [`${track.trackModel.id} is missing deterministic performance evidence.`];
+    const failures: string[] = [];
+    if (evidence.canonicalTimelineSha256 !== canonicalPerformanceTimelineSha256(input.songModel)) {
+      failures.push(`${track.trackModel.id} performance evidence does not match the canonical timeline.`);
+    }
+    if (JSON.stringify(evidence.phraseIds) !==
+      JSON.stringify(canonicalPerformancePhraseIds(input.songModel))) {
+      failures.push(`${track.trackModel.id} performance evidence does not match canonical phrases.`);
+    }
+    const expectedSectionRanges = (track.trackModel.appliedDirectives ?? []).map((item) => ({
+      section: item.section,
+      startBar: item.startBar,
+      endBar: item.endBar,
+      start: item.start,
+      end: item.end,
+    }));
+    if (JSON.stringify(evidence.sectionRanges) !== JSON.stringify(expectedSectionRanges)) {
+      failures.push(`${track.trackModel.id} performance evidence does not match canonical section ranges.`);
+    }
+    if (evidence.performedMaterialSha256 !== performedMaterialSha256(track.trackModel)) {
+      failures.push(`${track.trackModel.id} performance evidence is stale for the performed material.`);
+    }
+    if (!evidence.playability.valid) {
+      failures.push(`${track.trackModel.id} performance evidence reports playability violations.`);
+    }
+    return failures;
+  };
+  // PR-92: a native stem is used only when its own attestation holds - the
+  // worker's performedMaterialSha256 echo and the track's performance
+  // evidence. A rejected native stem falls back alone; it no longer takes the
+  // attested stems of the other tracks down with it. The master is
+  // production-ready only when every stem is native (below); until then the
+  // export is a labelled mixed preview, each stem saying who rendered it.
+  const nativeStemBlockers = (track: RenderedTrack): string[] => track.rendererStatus !== "licensed-native" ? [] : [
+    ...(track.rendererAttestation?.performedMaterialSha256 === performedMaterialSha256(track.trackModel)
+      ? []
+      : [`${track.trackModel.id} native render does not attest its performed material.`]),
+    ...trackEvidenceFailures(track),
+  ];
+  const remoteTracks: RenderedTrack[] = attemptedTracks.map((track) => {
+    const blockers = nativeStemBlockers(track);
+    if (!blockers.length) return track;
+    const local = pipeline.tracks.find((candidate) => candidate.trackModel.id === track.trackModel.id) ?? track;
+    return {
+      ...local,
+      rendererStatus: "preview-only" as const,
+      fallbackReason: `The native render was rejected: ${blockers.join(" ")}`,
+      rendererAttestation: undefined,
+    };
+  });
   // PR-26: the mastering profile decides which tracks are *in the mix*
   // (a karaoke master leaves the voice out; a backing track leaves the lead
   // out — the stems above keep every track) and how the master is made.
@@ -900,38 +975,36 @@ export async function renderArrangementExport(input: {
       track.rendererAttestation?.performedMaterialSha256 === performedMaterialSha256(track.trackModel)
         ? []
         : [`${track.trackModel.id} native render does not attest its performed material.`]),
-    ...remoteTracks.flatMap((track) => {
-      const evidence = track.trackModel.performanceEvidence;
-      if (!evidence) return [`${track.trackModel.id} is missing deterministic performance evidence.`];
-      const failures: string[] = [];
-      if (evidence.canonicalTimelineSha256 !== canonicalPerformanceTimelineSha256(input.songModel)) {
-        failures.push(`${track.trackModel.id} performance evidence does not match the canonical timeline.`);
-      }
-      if (JSON.stringify(evidence.phraseIds) !==
-        JSON.stringify(canonicalPerformancePhraseIds(input.songModel))) {
-        failures.push(`${track.trackModel.id} performance evidence does not match canonical phrases.`);
-      }
-      const expectedSectionRanges = (track.trackModel.appliedDirectives ?? []).map((item) => ({
-        section: item.section,
-        startBar: item.startBar,
-        endBar: item.endBar,
-        start: item.start,
-        end: item.end,
-      }));
-      if (JSON.stringify(evidence.sectionRanges) !== JSON.stringify(expectedSectionRanges)) {
-        failures.push(`${track.trackModel.id} performance evidence does not match canonical section ranges.`);
-      }
-      if (evidence.performedMaterialSha256 !== performedMaterialSha256(track.trackModel)) {
-        failures.push(`${track.trackModel.id} performance evidence is stale for the performed material.`);
-      }
-      if (!evidence.playability.valid) {
-        failures.push(`${track.trackModel.id} performance evidence reports playability violations.`);
-      }
-      return failures;
-    }),
+    ...remoteTracks.flatMap(trackEvidenceFailures),
   ];
   const nativeQualityPassed =
     readinessReasons.length === 0;
+  const nativeProvenance = nativeTracks.map((track) => ({
+    model: track.renderer,
+    version: "attested-native-asset",
+    parameters: {
+      sampleRate: SAMPLE_RATE,
+      durationSeconds: pipeline.durationSeconds,
+      trackModelId: track.trackModel.id,
+      assetId: track.rendererAttestation!.assetId,
+      assetIdentity: track.rendererAttestation!.assetIdentity,
+      assetSha256: track.rendererAttestation!.assetSha256,
+      licenseOwner: track.rendererAttestation!.licenseOwner,
+      licenseReference: track.rendererAttestation!.licenseReference,
+      rendererIdentity: track.rendererAttestation!.rendererIdentity,
+      runtimeIdentity: track.rendererAttestation!.runtimeIdentity,
+      rendererSha256: track.rendererAttestation!.rendererSha256,
+      smokeOutputSha256: track.rendererAttestation!.smokeOutputSha256,
+      trackModelSha256: track.rendererAttestation!.trackModelSha256,
+      rendererOutputSha256: track.rendererAttestation!.rendererOutputSha256,
+      performedMaterialSha256: track.rendererAttestation!.performedMaterialSha256,
+      ...(track.soundSelection ? { soundSelection: `${track.soundSelection.source}: ${track.soundSelection.reason}` } : {}),
+    },
+    parentIds: input.trackModelArtifactIds?.[track.trackModel.id]
+      ? [input.trackModelArtifactIds[track.trackModel.id]]
+      : input.parentIds,
+    createdBy: "renderer-adapter",
+  }));
   quality.productionReadiness = {
     ready: nativeQualityPassed,
     status: nativeQualityPassed ? "production-ready" : "preview-only",
@@ -950,32 +1023,27 @@ export async function renderArrangementExport(input: {
       provenance: [
         ...pipeline.provenance.filter((item) =>
           item.model !== "LOCAL_EXPRESSIVE_SYNTH"),
-        ...nativeTracks.map((track) => ({
-          model: track.renderer,
-          version: "attested-native-asset",
-          parameters: {
-            sampleRate: SAMPLE_RATE,
-            durationSeconds: pipeline.durationSeconds,
-            trackModelId: track.trackModel.id,
-            assetId: track.rendererAttestation!.assetId,
-            assetIdentity: track.rendererAttestation!.assetIdentity,
-            assetSha256: track.rendererAttestation!.assetSha256,
-            licenseOwner: track.rendererAttestation!.licenseOwner,
-            licenseReference: track.rendererAttestation!.licenseReference,
-            rendererIdentity: track.rendererAttestation!.rendererIdentity,
-            runtimeIdentity: track.rendererAttestation!.runtimeIdentity,
-            rendererSha256: track.rendererAttestation!.rendererSha256,
-            smokeOutputSha256: track.rendererAttestation!.smokeOutputSha256,
-            trackModelSha256: track.rendererAttestation!.trackModelSha256,
-            rendererOutputSha256: track.rendererAttestation!.rendererOutputSha256,
-            performedMaterialSha256: track.rendererAttestation!.performedMaterialSha256,
-          },
-          parentIds: input.trackModelArtifactIds?.[track.trackModel.id]
-            ? [input.trackModelArtifactIds[track.trackModel.id]]
-            : input.parentIds,
-          createdBy: "renderer-adapter",
-        })),
+        ...nativeProvenance,
       ],
+    };
+  } else if (nativeTracks.length) {
+    // PR-92: a mixed preview. The stems an attested native instrument
+    // rendered stay native and say so; the others keep the preview synth
+    // and the reason; the master stays preview-only with the global reasons.
+    pipeline = {
+      ...pipeline,
+      tracks: remoteTracks.map((track) => track.rendererStatus === "licensed-native"
+        ? track
+        : {
+            ...track,
+            rendererStatus: "preview-only" as const,
+            fallbackReason: track.fallbackReason ?? "No attested licensed native renderer produced this stem.",
+          }),
+      mix,
+      premaster: mastered.premaster,
+      master: mastered.master,
+      quality,
+      provenance: [...pipeline.provenance, ...nativeProvenance],
     };
   } else {
     pipeline = {
