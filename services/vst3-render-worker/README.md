@@ -81,6 +81,35 @@ unaffected. Save a preset from your DAW and give the asset a `presetPath`
 (`make_manifest.py --preset <file>.vstpreset`), then re-run `smoke.py`.
 Retrologue, a pure synth with an audible default program, needs none.
 
+## Open instruments and SFZ libraries (PR-94)
+
+The same worker hosts free, open instruments next to the operator's licensed
+ones. Synths (Surge XT, Dexed) are ordinary VST3 assets. SFZ libraries are
+played by **sfizz**, one asset per library: sfizz has no file parameter, so the
+worker hands it the instrument through its VST3 component state (`sfzPath`),
+exactly the bytes JUCE/pedalboard expose as `raw_state` -- the state version and
+everything after the path are left untouched (`host.load_sfz`, tested against a
+captured sfizz 1.2.3 state in `tests/test_sfz_state.py`). sfizz loads the file
+synchronously in offline (freewheeling) rendering, which is how pedalboard
+renders, so the first render of a large library is slow (Salamander: ~12 s) and
+the rest are not.
+
+```powershell
+# a binary that exports several plugins needs --plugin-name (sfizz ships sfizz and sfizz-multi)
+python make_manifest.py --plugin "$env:LOCALAPPDATA/Programs/Common/VST3/sfizz.vst3" --plugin-name sfizz `
+  --sfz "C:/MusicLibraries/SalamanderGrandPiano/Salamander Grand Piano V3.sfz" --id sfizz-salamander-grand-v3 `
+  --name "Salamander Grand Piano" --families keys --character acoustic,piano,sampled `
+  --library "Salamander Grand Piano V3 (CC-BY 3.0)" --license-owner "sfizz (BSD-2-Clause) hosting an open library" `
+  --license-reference "CC-BY 3.0; github.com/sfzinstruments/SalamanderGrandPiano" --append
+```
+
+The manifest records `sfzPath` and `sfzSha256`; `verify_asset_manifest` refuses
+an asset whose SFZ file moved or changed, and the path never leaves the worker
+(`library` and `sfzSha256` do, as hints). `discover.py` resolves multi-plugin
+binaries by taking the first exported plugin. Plugins that need a GUI to
+activate (MT Power Drum Kit) crash pedalboard's headless host and are listed
+under `failed` rather than offered.
+
 ## Smoke contract (`smoke.py`)
 
 Gates: a real TrackModel renders at the exact frame count, audibly, without

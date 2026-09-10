@@ -267,10 +267,80 @@ def sfizz_state_with_sfz(component: bytes, sfz_path: str | Path) -> bytes:
     return component[:8] + struct.pack("<i", len(encoded) + 1) + encoded + b"\0" + component[12 + length:]
 
 
+_SFZ_INCLUDE_RE = re.compile(r'#include\s+"([^"]+)"')
+_SFZ_DEFINE_RE = re.compile(r'#define\s+(\$[A-Za-z0-9_]+)\s+(\S+)')
+_SFZ_SET_CC_RE = re.compile(r'\bset_(hdcc|realcc|cc)(\d+)=(-?[0-9]*\.?[0-9]+)')
+SFZ_MAX_INCLUDED_FILES = 4000
+
+
+def sfz_control_defaults(sfz_path: str | Path) -> dict[int, float]:
+    """The `set_ccN` / `set_hdccN` defaults an SFZ instrument declares, as
+    normalised 0..1 values, following `#include` and expanding `#define`
+    macros (Karoryfer and DrumGizmo kits put their mic and macro levels behind
+    `set_cc$vol_kd=$default_level`).
+
+    Why this exists: many libraries route every region's amplitude through a
+    CC (`amplitude_oncc7=100`, `locc$mic=1`) and rely on the file's `set_cc`
+    to make it audible. pedalboard exposes those CCs as parameters
+    (`controller_N`) and re-applies its cached values after every reset, which
+    silently overrides what the file set; the defaults must therefore be
+    applied as parameters too (see `load_sfz`)."""
+    defaults: dict[int, float] = {}
+    macros: dict[str, str] = {}
+    visited: set[Path] = set()
+
+    def expand(line: str) -> str:
+        if "$" not in line:
+            return line
+        for name in sorted(macros, key=len, reverse=True):
+            if name in line:
+                line = line.replace(name, macros[name])
+        return line
+
+    def walk(path: Path, depth: int) -> None:
+        resolved = path.resolve()
+        if resolved in visited or depth > 12 or len(visited) >= SFZ_MAX_INCLUDED_FILES or not resolved.is_file():
+            return
+        visited.add(resolved)
+        text = resolved.read_text(encoding="utf-8", errors="replace")
+        for raw in text.splitlines():
+            line = raw.split("//", 1)[0]
+            if not line.strip():
+                continue
+            for name, value in _SFZ_DEFINE_RE.findall(line):
+                macros[name] = value
+            if "set_" not in line and "#include" not in line:
+                continue
+            line = expand(line)
+            for kind, number, value in _SFZ_SET_CC_RE.findall(line):
+                cc = int(number)
+                level = float(value)
+                normalised = level if kind in ("hdcc", "realcc") else level / 127.0
+                defaults[cc] = min(1.0, max(0.0, normalised))
+            for include in _SFZ_INCLUDE_RE.findall(line):
+                walk(resolved.parent / include.replace("\\", "/"), depth + 1)
+
+    walk(Path(sfz_path), 0)
+    return defaults
+
+
+def apply_control_defaults(plugin, defaults: dict[int, float]) -> dict[int, float]:
+    """Set the sampler's `controller_N` parameters to the file's defaults.
+    Returns what was applied (CCs the plugin does not expose are skipped)."""
+    applied: dict[int, float] = {}
+    for cc, value in sorted(defaults.items()):
+        name = f"controller_{cc}"
+        if name in getattr(plugin, "parameters", {}) or hasattr(plugin, name):
+            setattr(plugin, name, value)
+            applied[cc] = value
+    return applied
+
+
 def load_sfz(plugin, sfz_path: str | Path) -> str:
-    """Point a loaded sfizz instance at an SFZ file through its state and
-    confirm the plugin now names that file. sfizz loads it synchronously in
-    freewheeling (offline) mode, which is how pedalboard renders."""
+    """Point a loaded sfizz instance at an SFZ file through its state, confirm
+    the plugin now names that file, and apply the file's CC defaults as
+    parameters. sfizz loads the file synchronously in freewheeling (offline)
+    mode, which is how pedalboard renders."""
     target = Path(sfz_path)
     if not target.is_file():
         raise FileNotFoundError(f"SFZ instrument {target} is missing")
@@ -280,6 +350,7 @@ def load_sfz(plugin, sfz_path: str | Path) -> str:
     loaded = sfizz_state_sfz_path(after)
     if Path(loaded) != Path(str(target).replace("\\", "/")):
         raise RuntimeError(f"sampler did not take the SFZ path (state names {loaded!r})")
+    apply_control_defaults(plugin, sfz_control_defaults(target))
     return loaded
 
 
