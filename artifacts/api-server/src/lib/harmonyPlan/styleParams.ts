@@ -394,8 +394,24 @@ export function approachToneChoice(input: {
   avoidPcs: ReadonlySet<number>;
   style: Pick<HarmonyStyleParams, "approachTones" | "chromaticApproach">;
   centre: Pick<TonalCentre, "tonicPc" | "mode">;
+  /** The chord the approach note *sounds over* (the one being left), when the caller knows it. */
+  sourceChord?: { root: number; pitchClasses: readonly number[] } | null;
+  /** The chord being approached, when the caller knows it. */
+  targetChord?: { root: number; pitchClasses: readonly number[] } | null;
 }): number | null {
   const vocabulary = input.style.approachTones;
+  // One rule holds in every style, chromatic idioms included: no approach note
+  // is the major third of a *minor* chord — neither the chord it sounds over
+  // nor the chord it leads to. R-1b P1-6 heard exactly that ("E natural under
+  // Cm", "A natural under Fm"): the note sits a semitone from the minor third
+  // the keys are holding for the whole beat it sounds, and resolving a beat
+  // later does not undo it. B-05c's harmony critic reads the same note the
+  // same way and grades it `major` whatever the style, which is why this is
+  // the one refusal that does not consult the style's vocabulary.
+  const forbidden = new Set<number>();
+  for (const pc of [majorThirdOfMinorChord(input.sourceChord ?? null), majorThirdOfMinorChord(input.targetChord ?? null)]) {
+    if (pc !== null) forbidden.add(pc);
+  }
   const order = vocabulary.preferredOffsets;
   const rank = (pitch: number): number => {
     const at = order.indexOf(pitch - input.target);
@@ -407,13 +423,26 @@ export function approachToneChoice(input: {
     .map((e) => e.pitch);
   const allowed = approachToneSet(vocabulary, input.centre);
   const notInChordLeft = (p: number): boolean => !input.avoidPcs.has(pcOf(p));
+  const allowedAnywhere = (p: number): boolean => !forbidden.has(pcOf(p));
   const inMode = (p: number): boolean => allowed === null || allowed.has(pcOf(p));
-  const choice = ordered.find((p) => notInChordLeft(p) && inMode(p));
+  const choice = ordered.find((p) => notInChordLeft(p) && allowedAnywhere(p) && inMode(p));
   if (choice !== undefined) return choice;
   // Nothing in the mode. Only a style whose idiom *is* chromatic falls back to
   // any non-chord tone; the others write no approach at all.
   if (!vocabulary.allowOutOfMode) return null;
-  return ordered.find(notInChordLeft) ?? null;
+  return ordered.find((p) => notInChordLeft(p) && allowedAnywhere(p)) ?? null;
+}
+
+/**
+ * The pitch class no approach may use, given the chord being approached: the
+ * major third above a minor chord's root. `null` when the chord is not minor
+ * (or is not known), which is every other case.
+ */
+export function majorThirdOfMinorChord(chord: { root: number; pitchClasses: readonly number[] } | null): number | null {
+  if (!chord) return null;
+  const pcs = new Set(chord.pitchClasses.map(pcOf));
+  const minor = pcs.has(pcOf(chord.root + 3)) && !pcs.has(pcOf(chord.root + 4));
+  return minor ? pcOf(chord.root + 4) : null;
 }
 
 /** The solver's weight vector for a style. */

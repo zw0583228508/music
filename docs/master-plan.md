@@ -8235,7 +8235,15 @@ the raised seventh; major as written), refusing the major third and the major
 sixth above a minor tonic. A style that finds nothing admissible writes **no
 approach**: a plainer bass line beats a wrong note. Blues / jazz / pop / band /
 electronic keep the chromatic idiom ("unless the style says otherwise"), and
-their candidate order is untouched, so their notes are byte-identical. A new
+their candidate order is untouched. **One refusal holds in every style**,
+chromatic idioms included: no approach note is the major third of a *minor*
+chord — neither the chord it sounds over nor the chord it leads to. R-1b names
+the note by the chord it sounds over ("E natural under Cm"), and B-05c's new
+`approach_tone_wrong_mode` critic reads it the same way and grades it `major`
+whatever the style. That rule was found on the corpus rather than designed at a
+desk: this stream's own no-brief groove reading moved jazz-full's bass onto an
+E natural over a Cm7 and the critic caught it, taking that anchor's harmony
+score from 78.4 back to 89.2. A new
 `chassidic` parameter set (selected by the resolved tradition, or by a grammar
 whose `harmony.modalFlavour` is harmonic minor / freygish) prefers the leading
 tone and the lower neighbour — the V–i of the niggun repertoire.
@@ -8287,6 +8295,7 @@ PR, because those files belong to other streams):
 | file : function | read to add | what it fixes |
 |---|---|---|
 | `sectionPhrasePlanner.ts : dynamicShapeFor` | take the family and return `familyDynamicShape(arcSection, family)`; the caller already has `family` in its `for (const family of activeFamilies)` loop | one `dynamicShape` per section is what makes "soft strings" unrealisable at note level (P1-2) |
+| `sectionPhrasePlanner.ts : assignRole` | take the family’s own level — `familyLevelIn(arcSection, family)` — where the `strings` branch reads `section.energy` | with the global marking gone, "soft strings" makes the strings *busier*: `HARMONIC_BED` instead of `PAD`. This is the root cause of the five B-05c failures below |
 | `arrangementOrchestrator.ts` (part-request assembly) : `arcIntent.level` | `familyLevelIn(arcSection, request.instrument)` instead of `arcSection.intendedDynamic.value.level` | the part's own level, so the strings are soft and the piano is not |
 | `composer/harmonyParts.ts : harmonyContext` | pass the resolved grammar: `harmonyStyleParams({ ..., grammar: request.globalPlan.styleGrammar ?? request.styleGrammar })` | the chassidic parameter set and the leading-tone approach vocabulary reach the owner's song (today only the aesthetic word does) |
 | `composer/*` (intro): the first section's writer | `arc.opening.value` — write the tonic figure over an intro the chord analysis left empty | two bars of silence at the top of the owner's song (P1-7) |
@@ -8319,6 +8328,51 @@ PR, because those files belong to other streams):
 - **The production path still asks no style questions.** The felt-pulse question
   is generated and its answer demonstrably moves the plan, but nothing in
   production surfaces it to the producer.
+- **Five of B-05c's tests fail with this stream on top of it, in three suites,
+  and the cause is D1 working.** `critics/dimensions/ownerAnchor` 3 of 5,
+  `critics/dimensions/harmony` 1 of 5 and `critics/rank` 1 of 12, while
+  `critics/controls` (5/5), `critics/judge` (10/10),
+  `critics/adversarial/adversarial` (43/43), `critics/b05cEvidence` (1/1),
+  `critics/dimensions/density` (7/7) and `critics/dimensions/groove` (6/6) stay
+  green. With the global -1 marking gone the owner's sections rise one step
+  (verses pp → p, choruses mp → mf), and `sectionPhrasePlanner.assignRole`
+  — which reads the *section's* level, not the family's — then assigns the
+  strings `HARMONIC_BED` instead of `PAD`, so the anchor's track id is
+  `strings-harmonic_bed`. **The findings themselves survive intact**:
+  `single_voice_bed` still fires on the strings in the same six sections
+  (meanVoices 1.00–1.17), so nothing was hidden. What fails, measured:
+  - *the owner's song is an anchor …* — the sorted track-id list. Renaming the
+    id in B-05c's assertion settles this one, and only this one.
+  - *control A — remove the performance timing* — the strings' **composed**
+    off-grid findings now cover 2 sections; the control needs ≥ 3.
+  - *the string bed the brief asked for ships as one voice* — six
+    `single_voice_bed` sections as before, but only 2 carry the composed
+    strings in view; the assertion needs ≥ 4.
+  - *`critics/dimensions/harmony`’s null control* — jazz-full at 89.2 (next
+    limit).
+  - *`critics/rank`: on the owner’s song the judge refuses* — the empty two-bar
+    intro re-enters the top twelve at #9 against a `>= 12` pin. The two
+    orderings R-1b P0-5 actually asked for still hold: the string bed and the
+    off-grid harmony both still outrank it.
+  The remedy is **not** one line, and no count this stream caused to move was
+  re-pinned. The root remedy is the per-family read in
+  `sectionPhrasePlanner.assignRole` (listed above, for B-07): with it the
+  strings are a `PAD` again and the anchor is the one B-05c measured. That file
+  belongs to another stream and the change would move the golden corpus a third
+  time, so it is handed to the lead rather than taken here. Nothing was worked
+  around; the numbers are reported as measured.
+- **jazz-full's harmony score is 89.2 against B-05c's `>= 90` pin for a clean
+  anchor** (it was 78.4 before the universal refusal above). The two remaining
+  findings are `approach_tone_wrong_mode` at *minor* severity — chromatic
+  approaches out of the chord's own mode, which R-1b P1-6 calls the jazz idiom
+  ("jazz: fine (idiom)"), and they are why `critics/dimensions/harmony`'s null
+  control is one of the five failures above. Adding jazz-full to that test's
+  `belowNinety` map — the same shape `orchestral-midi` already has there —
+  would make the suite green in one line, and this stream refused to do it: the
+  score fell for a change made here, and registering a regression in the gate is
+  not fixing it. The deeper difference —
+  the style vocabularies judge against the *key's* mode, B-05c's critic against
+  the *chord's* — is left standing, and named here.
 - **One out-of-scope one-line fix**, found while re-pinning the golden corpus and
   listed here for the lead: `arrangerTrainingPipeline.policyOrchestrateOptions`
   returned `performanceStyle: {}` for a NEUTRAL policy, and
@@ -8329,9 +8383,10 @@ PR, because those files belong to other streams):
   runs' *rounded* aggregate metrics happened to coincide. An empty style is now
   omitted, and the test's expectation is `{}`.
 - **The golden fixture moved and is re-pinned with its cause** in `recordedAt`:
-  four cases from the approach-tone change (identical note counts) and
-  `jazz-full` from the no-brief groove reading (988 → 972 composed notes, all
-  kit, because a ii-V vocabulary forbids `four_on_floor`).
+  four cases from the approach-tone change (identical note counts), and
+  `jazz-full` twice — from the no-brief groove reading (988 → 972 composed
+  notes, all kit, because a ii-V vocabulary forbids `four_on_floor`) and again
+  from the universal refusal of a minor chord's major third (972, unchanged).
 - **Nothing rendered or listened to.** VALIDATED ON OUTPUT is not claimed.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)

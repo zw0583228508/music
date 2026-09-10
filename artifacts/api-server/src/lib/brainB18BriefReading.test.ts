@@ -42,7 +42,7 @@ import { extractUserIntentSync } from "./producerIntelligence/intentExtraction";
 import { resolveStyleProfile } from "./producerIntelligence/styleResolution";
 import {
   HARMONY_STYLE_DEFAULTS, aestheticFor, approachToneChoice, approachToneSet, harmonyStyleParams,
-  tonalCentreOf,
+  majorThirdOfMinorChord, tonalCentreOf,
 } from "./harmonyPlan/styleParams";
 import { chordFromEvent } from "./chordSymbols";
 import { STYLE_KNOWLEDGE_ENTRIES, feltPulseFor, pulseConventionOf, pulseStrategyFor } from "./styleKnowledge";
@@ -364,6 +364,41 @@ test("D3: in a minor key the approach set excludes the major third above the ton
 
   // Unknown mode: nothing is claimed, and the planner's own order stands.
   assert.equal(approachToneSet(ballad.approachTones, { tonicPc: null, mode: "unknown" }), null);
+});
+
+test("D3: no style approaches a minor chord through its own major third — not even a chromatic one", () => {
+  // The one refusal that does not consult the style's vocabulary. R-1b P1-6
+  // describes the note by the chord it *sounds over* ("E natural under Cm",
+  // "A natural under Fm"), and B-05c's harmony critic reads it the same way
+  // and grades it `major` whatever the style. Found on the corpus: after B-18's
+  // no-brief groove reading moved jazz-full's bass, it wrote an E natural over
+  // a Cm7 as a chromatic approach into the next chord's F — idiomatic by the
+  // offset, a semitone from the Eb the keys hold for the whole beat it sounds.
+  const cm7 = { root: 0, pitchClasses: [0, 3, 7, 10] };
+  const bb = { root: 10, pitchClasses: [10, 2, 5] };
+  const major = { tonicPc: 5, mode: "major" as const };
+  for (const [name, style] of Object.entries(HARMONY_STYLE_DEFAULTS)) {
+    // 64 = E natural: the major third of the Cm7 it sounds over, a semitone
+    // under the F (65) it leads to.
+    assert.notEqual(
+      approachToneChoice({ admissible: [64, 63], target: 65, avoidPcs: new Set(cm7.pitchClasses), style, centre: major, sourceChord: cm7, targetChord: bb }),
+      64, `${name}: the major third of a minor chord is never an approach note`,
+    );
+    // The same rule on the chord being approached.
+    assert.notEqual(
+      approachToneChoice({ admissible: [64, 62], target: 63, avoidPcs: new Set(bb.pitchClasses), style, centre: major, sourceChord: bb, targetChord: cm7 }),
+      64, `${name}: nor of the minor chord it leads to`,
+    );
+  }
+  // A *major* chord's third is untouched: this is not a ban on thirds.
+  const c = { root: 0, pitchClasses: [0, 4, 7] };
+  assert.equal(majorThirdOfMinorChord(c), null);
+  assert.equal(majorThirdOfMinorChord(cm7), 4);
+  assert.equal(majorThirdOfMinorChord(null), null);
+  assert.equal(
+    approachToneChoice({ admissible: [64, 66], target: 65, avoidPcs: new Set([10, 2, 5]), style: HARMONY_STYLE_DEFAULTS.jazz, centre: major, sourceChord: c, targetChord: c }),
+    64, "over a C major chord, E is a chord tone of the world and the chromatic style may still use it",
+  );
 });
 
 test("D3: chassidic and liturgical styles prefer the leading tone and the lower neighbour", () => {

@@ -140,7 +140,11 @@ test("the reference part composer produces byte-identical parts to the golden fi
         "ii-V vocabulary with sevenths, which `inferStyleFromSong` reads as a jazz standard, and a jazz standard forbids " +
         "`four_on_floor`; the map's tempo band (132 BPM, no measured syncopation) used to answer `four_on_floor`. The " +
         "measured rhythm is not swung either, so the plan writes `steady_pulse` and records why in " +
-        "`styleDecisions.grooveReason` - 16 fewer composed notes (988 -> 972), all of them kit. " +
+        "`styleDecisions.grooveReason` - 16 fewer composed notes (988 -> 972), all of them kit. That new bass " +
+        "line then wrote two approach notes that are the major third of the minor chord they sound over (an E " +
+        "natural over Cm7, which B-05c's harmony critic grades `major`); `approachToneChoice` now refuses that " +
+        "note in every style, chromatic idioms included, which is the second thing that moved jazz-full's digest " +
+        "and takes its harmony score from 78.4 back to 89.2. Note count unchanged (972). " +
         "A future digest change must again name its cause here.",
       cases: current,
     }, null, 2)}\n`);
