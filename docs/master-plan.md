@@ -8032,6 +8032,130 @@ gate declared met.
   seven defects the corpus still does not repair are the same seven, for the
   same reasons B-06 recorded (the layers the planner reopens are read by the
   composer only where B-01..B-04 wired them).
+### PR-B12b — Brain B-12b: invariants of the new brain
+
+- **Status:** committed on `ws-brain-b12b`, PR open, not merged. Based on
+  `origin/main` `4c5d967`; not rebased. Evidence
+  `docs/evidence/brain-b12b-invariants.json`. **No production module was
+  changed and nothing was fixed** — every file touched is under
+  `src/lib/invariants/`, `src/lib/__fixtures__/invariants/golden/` or
+  `scripts/`.
+- **What.** B-12 tested the brain as it was before B-01…B-11. This stream
+  tests the brain those merges built, and encodes the defects the two
+  independent R-1 reviews isolated as invariants that fail today. Ten new
+  suites (`arcIntent`, `sungByDefault`, `harmony`, `groove`, `style`, `motif`,
+  `provenance`, `selectionIntegrity`, `shippedMusic`, `wiring`) registered as
+  `brain-invariants-b12b` in `run-focused-api-tests.mjs`; new checkers in
+  `invariants/analysis.ts` and `invariants/reviewChecks.ts`; a new generator
+  mutation (`withOffGridChords`: a chord sheet with analysis-shaped onsets and
+  the bars, sections and tempo map untouched). **44 tests: 30 pass, 0 fail, 14
+  known failures.** Same rules as B-12's: every invariant carries a negative
+  control in its own suite, and an invariant the brain fails today runs as
+  node:test `todo` with the observed behaviour, a reproducing seed and the
+  production `file:line` in the reason — never weakened.
+- **The six the reviews asked for, all failing today.**
+  `bed_keeps_its_voices` 0/20 (55 of 195 bed parts ship under 80 % of their
+  composed thickness; mean 3.76 → 3.05 voices per gesture) —
+  `playabilityRepair.ts:135` compares onsets with `===` against the chord roll
+  `performanceEngine.ts:466-487` has just applied. `harmony_on_the_grid` 11/20
+  on a sheet moved off the grid (1,771 of 7,339 onsets over 50 ms; seed 1807
+  keys median 70 ms, p90 164 ms) — `composer/harmonyParts.ts:283-289`
+  subdivides the chord's own span while the kit uses the bar grid at
+  `composer/rhythmParts.ts:91`. `performance_respects_section_dynamics` 17/20
+  (6 pairs of sections ship in the wrong order; the composed→shipped ratio
+  sits in one 0.70–1.09 band across every section of every seed) —
+  `performanceEngine.ts:430,495` with the first section's shape.
+  `arrival_not_thinner_than_setup` 1/20 (of 42 arrival/setup pairs, 30
+  arrivals have fewer onsets per second and 26 fewer voices; 3 put under 10 %
+  of their notes between C3 and C5). `selection_respects_selectable` fails
+  outright — `candidateRanking.ts:261-285,319-337` never reads the
+  `selectable: false` that `arrangementOrchestratorProvider.ts:527-528`
+  writes, so a brain-refused candidate is selectable and ranks 1.
+  `composer_receives_its_context` 0/20 — `arrangementOrchestrator.ts:425-426`
+  forwards no context: no candidate carries a `groovePlan` on its plan, and
+  all 20 report harmony, groove and register as `notRecorded`.
+- **New defects this stream isolated, with the control that isolated them.**
+  (1) **The composer no longer transposes.** B-12 recorded "the raw composer
+  transposes exactly, 0 wrong pitches over 2,289 notes"; composer-direct now
+  gives 4,572 exact of 15,252 matched, 9,905 wrong pitch classes and 775
+  octave folds. Control: moving each instrument's range by the same k lifts
+  exact to 11,945 and cuts wrong to 3,197, which places most of the gap on the
+  voicer's absolute register anchor (`harmonyPlan/voicings.ts:198-200,210`;
+  `composer/registers.ts:18-30` never sees the key). The residual 3,197 is
+  **not** isolated. (2) **The downbeat kick is deleted, and it is not
+  `applyDensity`.** B-12's C7 blamed stride thinning; the control refutes it —
+  every one of 718 measured bars has a groove cell asking for a kick on unit
+  0, the *composed* kit already has it in only 151, and shipping changes the
+  share by under two points. `composer/rhythmParts.ts:442` drops it whenever
+  any part anticipates the bar line (`tiedDownbeat`, `:101`/`:105`) while the
+  replacement push at `:443-446` only fires when the plan sets
+  `kickAnticipates`: 177 of 238 such bars carry no kick within 0.75 beats of
+  the bar line. This is what `kick_missing_downbeat` 20/20 now means in every
+  metre. (3) **The bass/top parallel is never costed** —
+  `voiceLeading.ts:310-327` costs `parallelPerfect` only between voices inside
+  one voicing and the planned bass reaches `planVoicings` as a static unary
+  floor (`voicings.ts:222-226`); 35 findings under the classical parameters,
+  all parallel octaves. (4) **The pedal eats the slash bass** —
+  `harmonyPlan/bassLine.ts:111-118` returns the pedal candidates before the
+  slash branch. (5) **The motif ledger records notes that never shipped** —
+  `melodicEngine.ts:645-660` records the occurrence before
+  `referencePartComposer.ts:110-112` refuses out-of-window notes and `:115`
+  re-clamps their durations: 46 of 3,000 named notes are absent and 601 of 735
+  recorded cells are the cell of their own notes. (6) **The seed changes the
+  notes** — `composer/harmonyParts.ts:248` passes `frame.seed` to
+  `planBassLine` and `harmonyPlan/bassLine.ts:329,336` draw approach tones
+  from it, so a reseed changes pitch-class content (determinism 4/20, was
+  19/20). (7) **Duplicate section names, duplicate note ids** — all six fuzz
+  failures are models with duplicate section names (6 of 12 such models fail,
+  0 of the other 188): `partComposer.ts:233` names a task after its section
+  and note ids are position-based inside that namespace.
+- **B-12's own thirteen suites, re-run on this base.** Fixed: `empty-parts`
+  12/24 → **24/24**, `definition-family` 16/24 → **24/24** (B-12's C1, its
+  largest finding), `scope-bounded-repair` 19/20 → **20/20**; their `todo`s
+  are removed so a regression fails. Regressed: `transposition` 7/24 → **0/24**,
+  `tempo` 13/24 → **3/24**, `determinism-different-seed` 19/20 → **4/20**,
+  `meter-3-4` 16/20 → **0/20**, `instrument-swap` 23/24 → **21/24**.
+  Unchanged: `meter-6-8` / `5/4` / `7/8` 0/20 (but B-04 fixed the bar length —
+  what remains is the deleted downbeat, and in 6/8 a kit cell on eighths 1 and
+  3 against pulses 1 and 4, `compound_pulse_ignored` 20/20),
+  `section-naming-hebrew` / `-unnamed` 0/20, `playability-shipped` 22/24,
+  `scope-regeneration` 20/20, `determinism-same-seed` 20/20, `critic-sanity`
+  3/20 → 4/20, fuzz 194/200. Every stale `todo` reason was refreshed (R-1a's
+  P1-10): B-12's reasons still cited `referencePartComposer.ts:73-78/157/183/
+  226`, lines the B-00 split removed.
+- **Fuzz.** 200 models (83 degenerate), nothing thrown, no malformed note, a
+  selection on every model that had candidates; one cause group,
+  `duplicate_note_ids` on 6 models, all with duplicate section names.
+- **Golden.** All ten cases drifted from B-12's pin — every plan digest
+  changed, and note counts moved by up to 2.3× (`rachem-na-v3` 1,691 → 2,096;
+  `drums-groove` 1,835 → 846; `keys-rhythmic_harmony` new at 962). Re-pinned
+  with `B12_UPDATE_GOLDEN=1`; each fixture now carries a `repin` header naming
+  the eight merges between the pins (B-03, B-05a, B-11, B-10, B-08, B-02,
+  B-04, B-09) so a reader of a golden file can see what moved the notes.
+- **Honest limits.** Reference-composer path only: no rendering, no audio
+  critic, no job runner, no DB, and nobody listened to any of it. 20–24 fixed
+  seeds per invariant and 200 fuzz models; the generator has one tempo and one
+  metre per song and no modulation. `selection_respects_selectable` is a unit
+  invariant over `candidateRanking`'s two exported functions with a
+  hand-built runner-shaped candidate — it does not exercise
+  `arrangementGeneration`, which needs a database, so it shows the gate is
+  absent, not what a real job would then do. `composer_receives_its_context`
+  measures two observable consequences (the groove plan on the plan, the three
+  provenance layers); it does not prove the other four fields R-1a lists are
+  unreachable. The register-shift control leaves 3,197 wrong pitch classes
+  unexplained, and the tempo suite's 25 `pitch_content_changed` findings are
+  named as **not isolated**. `arrival_not_thinner_than_setup` uses onsets per
+  second and voices per gesture as a proxy for "thinner"; a legitimately
+  sparse arrival would fail it. The `harmony_on_the_grid` tolerance (50 ms,
+  eighths) and the `bed_keeps_its_voices` tolerance (80 % of composed
+  thickness) are this stream's choices, stated so the lead can move them. Two
+  of the twenty "unknown" genres (`grunge`, `trance`) do resolve, to `rock` and
+  `edm_dance`; the suite now splits on what the resolver matched and holds the
+  invariant over the eighteen that are genuinely unknown. Where B-12b changed
+  a checker rather than recording a failure — the motif checker's grouping and
+  its beat length — the change is named in the suite so the earlier numbers
+  can be read as the artefacts they were. Nothing here was fixed: fourteen
+  invariants are red on purpose.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 

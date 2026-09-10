@@ -104,11 +104,17 @@ test("regenerating one family in one section leaves every other note byte-identi
   assert.deepEqual(outcomes.filter((o) => !o.passed).map((o) => `${o.seed}: ${o.violations.slice(0, 2).map((v) => `${v.code}: ${v.detail}`).join(" | ")}`), []);
 });
 
-/** Observed 2026-09-10 on main da21dff; the assertion is unchanged. */
-const KNOWN_FAILURE_REPAIR =
-  "19/20 seeds pass. Seed 803 (6/8): an untouched guitar track carries two notes with one id (the composer's boundary stub, see the fuzz suite), and candidateRepair.ts's id-keyed restore after synchronizeMotifLineage rewrites the first duplicate with the second; outsideScopePreserved is correctly false - the verifier works, the restore does not survive duplicate ids.";
+/**
+ * Fixed. B-12 recorded 19/20 - seed 803 (6/8) carried two notes with one id
+ * and `candidateRepair.ts`'s id-keyed restore rewrote the first duplicate with
+ * the second. Re-run on 4c5d967 (B-12b, 2026-09-10): **20/20 pass**. The
+ * duplicate-id defect itself is not gone - the fuzz suite still finds it on 6
+ * of 200 models - it no longer lands on this suite's seeds. The `todo` is
+ * removed so a regression here fails rather than being tolerated.
+ */
+const KNOWN_FAILURE_REPAIR = "";
 
-test("bounded repair of one section of one track keeps outsideScopePreserved and the outside notes byte-identical (20 seeds)", { todo: KNOWN_FAILURE_REPAIR }, (t) => {
+test("bounded repair of one section of one track keeps outsideScopePreserved and the outside notes byte-identical (20 seeds)", { todo: KNOWN_FAILURE_REPAIR || undefined }, (t) => {
   const outcomes: SeedOutcome[] = [];
   for (const seed of SEEDS) {
     const rng = makeRng(seed * 13);

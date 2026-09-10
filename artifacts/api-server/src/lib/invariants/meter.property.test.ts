@@ -81,13 +81,30 @@ test("negative controls: a 4/4 backbeat laid over 3/4, 6/8, 5/4 and 7/8 bars fai
   assert.ok(checkCompoundHatAccents(dupleHats.track, dupleHats.model).violations.length > 0, "duple hat accents in 6/8 are refused");
 });
 
-/** Observed 2026-09-10 on main da21dff; the assertions are unchanged. */
+/**
+ * Refreshed for B-12b (R-1a's P1-10 asked for exactly this: B-12's reasons
+ * still cited the pre-B-04 bar-length cause, so the suite's own text no longer
+ * explained its failures).
+ *
+ * Re-measured 2026-09-10 on 4c5d967. B-04 fixed the bar length - no metre
+ * reports `pattern_period_not_bar` for that reason any more - and 3/4
+ * *regressed* from 16/20 to 0/20. One code now dominates every metre:
+ * `kick_missing_downbeat` on 20 of 20 seeds in all four. B-12b isolated it
+ * (see `groove.property.test.ts`'s control): the groove cell asks for a kick
+ * on unit 0 in every one of 718 measured bars, and
+ * `composer/rhythmParts.ts:442` deletes it whenever any part's anticipation
+ * slot targets the bar line (`tiedDownbeat`, `:101` / `:105`), while the
+ * kit's own replacement push at `:443-446` only fires when the plan sets
+ * `kickAnticipates`. It is *not* `applyDensity` stride thinning, which B-12
+ * named: the composed kit has already lost the downbeat (151 of 718 bars)
+ * before any thinning, and shipping changes the share by under 2 points.
+ */
 const KNOWN_FAILURES: Record<Meter, string> = {
   "4/4": "",
-  "3/4": "16/20 seeds pass. The composer's 3/4 bar equals the Song Model's, so the grid is kick 1 and 3, snare 2 (a truncated 4/4 cell, not a waltz, but no snare on 4 and no bar-line drift). The 4 failing seeds lost downbeat kicks to applyDensity's stride thinning (arrangementOrchestrator.ts:219-235): kick on beat 1 in only 75-83 % of bars.",
-  "6/8": "0/20 seeds pass. The composer's bar is 6 quarters = two Song Model bars (referencePartComposer.ts:73-78; performanceEngine.ts:268 counts quarters too): kick on the downbeat in 50 % of bars, a backbeat snare on the downbeat of every second bar, every kick/snare on eighths 3 and 5 instead of the dotted pulses, the pattern repeats every two bars, hats carry no dotted-pulse accent.",
-  "5/4": "0/20 seeds pass. The 4/4 cell (kick 1 and 3, snare 2 and 4) is written with beat 5 dead in more than 90 % of bars (referencePartComposer.ts:116-121); 2 seeds also lose downbeat kicks to density thinning.",
-  "7/8": "0/20 seeds pass. The composer's bar is 7 quarters = two Song Model bars: kick on the downbeat in 50 % of bars and the kick/snare pattern repeats every two bars (referencePartComposer.ts:73-78).",
+  "3/4": "composer/rhythmParts.ts:442 (tiedDownbeat at :101/:105) - 0/20 seeds pass, down from B-12's 16/20: kick_missing_downbeat 20/20 (seed 101: kick on the downbeat in 21% of 14 bars), snare_on_downbeat 12, pattern_period_not_bar 7. B-12 attributed its 4 failures to applyDensity stride thinning; B-12b's control refutes that - the composed kit has already lost the downbeat.",
+  "6/8": "composer/rhythmParts.ts:442 plus B-04's compound cell - 0/20 seeds pass: kick_missing_downbeat 20/20 (seed 201: 13% of 32 bars) and compound_pulse_ignored 20/20 (seed 201: 59 kick/snare hits on eighths other than 1 and 4, the dotted pulses). B-04's kit template places the 6/8 kick on eighths 1 and 3; the metre's pulses are 1 and 4. The bar-length cause B-12 named (referencePartComposer.ts:73-78) is fixed.",
+  "5/4": "composer/rhythmParts.ts:442 plus the 4/4-shaped cell - 0/20 seeds pass: kick_missing_downbeat 20/20, pattern_period_not_bar 17, snare_on_downbeat 8.",
+  "7/8": "composer/rhythmParts.ts:442 - 0/20 seeds pass: kick_missing_downbeat 20/20, pattern_period_not_bar 12, snare_on_downbeat 7. The two-bar period B-12 named is gone; what remains is the deleted downbeat.",
 };
 
 for (const meter of ["3/4", "6/8", "5/4", "7/8"] as Meter[]) {

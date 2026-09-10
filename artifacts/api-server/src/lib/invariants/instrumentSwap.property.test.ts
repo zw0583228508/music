@@ -44,11 +44,20 @@ export function checkSwappedTrack(track: TrackModel, tempoBpm: number): { violat
   return { violations, disagreements };
 }
 
-/** Observed 2026-09-10 on main da21dff; the assertions are unchanged. */
+/**
+ * Refreshed for B-12b on 4c5d967. The swap invariant slipped from 23/24 to
+ * 21/24 and the family invariant is fixed: B-03's profile table replaced the
+ * substring lookup, so keys and piano in the RHYTHMIC_HARMONY role no longer
+ * resolve to a drum kit (B-12's C1, the largest of its findings).
+ */
 const KNOWN_FAILURE_SWAP =
-  "23/24 seeds pass: range, polyphony, breath and minimum duration are re-mapped by playabilityRepair for every swap. Seed 711 keys -> guitar: the piano voicing (chord tones stacked at centre + 3i, referencePartComposer.ts:179) ships as 3-5-note shapes the constraint engine cannot finger in any tuning (7 chords) while the contract validator passes them - the swap re-maps physics, not idiom.";
-const KNOWN_FAILURE_FAMILY =
-  "16/24 seeds pass. keys/piano in the RHYTHMIC_HARMONY role resolve to the drum-kit definition (musicEngines.ts getInstrumentDefinition: FAMILY_WORDS lacks 'key' and 'piano', so kitByRhythm fires on the role): the part is composed into 36-60 with four voices, performed with ghost notes and a flam, and would be routed to a kit.";
+  "the swap re-maps physics, not idiom - 21/24 seeds pass (B-12: 23/24), seeds 701, 710, 721: keys -> guitar ships 3-5-note piano voicings the constraint engine cannot finger in any tuning (engine_impossible_fingering 8, contract_error 4) while the contract validator passes them, and repair_rule_leap 4";
+/**
+ * Fixed. B-12 measured 16/24 with keys and piano in the RHYTHMIC_HARMONY role
+ * resolving to the drum-kit definition. Re-run 2026-09-10 on 4c5d967:
+ * **24/24 pass, 0 mismatches**. The `todo` is removed so a regression fails.
+ */
+const KNOWN_FAILURE_FAMILY = "";
 
 test("swapping a family's instrument re-maps range, polyphony and breath on the shipped track (24 seeds x present swaps)", { todo: KNOWN_FAILURE_SWAP }, (t) => {
   const outcomes: SeedOutcome[] = [];
@@ -91,7 +100,7 @@ test("swapping a family's instrument re-maps range, polyphony and breath on the 
   assert.deepEqual(outcomes.filter((o) => !o.passed).map((o) => `${o.seed}: ${o.violations.slice(0, 3).map((v) => `${v.code}: ${v.detail}`).join(" | ")}`), []);
 });
 
-test("every shipped track's instrument definition belongs to its planner family (24 seeds)", { todo: KNOWN_FAILURE_FAMILY }, (t) => {
+test("every shipped track's instrument definition belongs to its planner family (24 seeds)", { todo: KNOWN_FAILURE_FAMILY || undefined }, (t) => {
   const outcomes: SeedOutcome[] = [];
   const roles = new Map<string, number>();
   for (const seed of SEEDS) {

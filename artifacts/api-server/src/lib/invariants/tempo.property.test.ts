@@ -34,10 +34,26 @@ function retimeInBand(model: SongModelData, seed: number): { retimed: SongModelD
 }
 
 /** Observed 2026-09-10 on main da21dff; the assertion below is unchanged. */
+/**
+ * Refreshed for B-12b. B-12's line references (`referencePartComposer.ts:157 /
+ * :183 / :226 / :212`) no longer exist - B-00 split that file to 141 lines and
+ * the writers moved into `composer/`. The arithmetic moved with them and the
+ * failure grew.
+ *
+ * Observed 2026-09-10 on 4c5d967: **3/24 seeds pass** (B-12: 13/24), with 73
+ * `onset_moved`, 70 `note_count_changed` and 25 `pitch_content_changed`
+ * findings over 62,918 matched notes; performance offsets still stayed within
+ * 28.4 ms of the grid, so this is the composer and not the engine. The same
+ * `.5` knife edge is now at `composer/harmonyParts.ts:284`, `hits =
+ * Math.max(1, Math.round((span / beatSeconds) * (density > 0.6 ? 2 : 1)))`:
+ * the hit count flips with the tempo's floating-point residue whenever a chord
+ * spans an odd number of half-beats. The 25 `pitch_content_changed` findings
+ * are **not** isolated by this run - a retime changes the spans the voicing
+ * solver's costs are computed over, but no control here separates that from
+ * the boundary equality B-12 named.
+ */
 const KNOWN_FAILURE =
-  "13/24 seeds pass; plans, densities and budgets are byte-identical across the retime, the raw composer is not: " +
-  "Math.round(span / beatSeconds) (referencePartComposer.ts:157 bass steps, :183 comping hits, :226 ostinato steps) sits on a .5 knife edge for a half-bar harmonic rhythm in 3/4 and for any chord in x/8, so the count flips with the tempo's floating-point residue (seed 21: bass 204 -> 142, guitar 635 -> 439; seed 20: bass 54 -> 33). " +
-  "Brass/strings accents pick the chord at a bar start by float boundary equality (referencePartComposer.ts:212), so a retime changes their pitches (seeds 2, 10, 16). Performance offsets stayed within 28.3 ms of the grid on every note.";
+  "composer/harmonyParts.ts:284 Math.round((span / beatSeconds) * ...) on a .5 knife edge (B-12's referencePartComposer.ts:157/183/226, relocated by the B-00 split) - 3/24 seeds pass (B-12: 13/24): 73 onset_moved, 70 note_count_changed, 25 pitch_content_changed (not isolated) over 62,918 matched notes; seed 1 guitar-rhythmic_harmony 30 notes changed pitch and 40 onsets moved";
 
 test("retiming inside a tempo band keeps bar-relative onsets, families, roles, and performance offsets within the engine's range", { todo: KNOWN_FAILURE }, (t) => {
   const outcomes: SeedOutcome[] = [];

@@ -631,3 +631,132 @@ export function reseedSongModel(model: SongModelData, label: string): SongModelD
     },
   };
 }
+
+// ---------------------------------------------------------------------------
+// B-12b mutations: the new layers' metamorphic relations
+// ---------------------------------------------------------------------------
+
+/**
+ * Scale the source recording's loudness: every energy / dynamics sample and
+ * every section's energy by `factor` (clamped to the validator's 0..1). Bars,
+ * chords, melody and structure are untouched, so the only thing that changed
+ * is what the microphone heard - which the arc may read as a weak prior and
+ * never as intent (charter rule 5). Callers that want an exact x3 without
+ * clamping compare `scaleEnergy(m, 1/3)` with `m`.
+ */
+export function scaleEnergy(model: SongModelData, factor: number): SongModelData {
+  const scale = (v: number) => Number(Math.min(1, Math.max(0, v * factor)).toFixed(4));
+  return finalizeSongModel({
+    ...model,
+    energy: (model.energy ?? []).map(scale),
+    dynamics: (model.dynamics ?? []).map(scale),
+    sections: model.sections.map((s) => ({ ...s, energy: typeof s.energy === "number" ? scale(s.energy) : s.energy })),
+  });
+}
+
+/**
+ * A non-uniform change of the source: one repeated section is made much
+ * quieter than its siblings (its energy x `factor`). This is the control that
+ * shows the curve *does* reach the arc - as a bounded prior / a contrast
+ * signal - so a checker that sees no change under uniform scaling has
+ * demonstrated sensitivity, not blindness. Returns null when no section
+ * function repeats.
+ */
+export function quietenOneRepeatedSection(model: SongModelData, factor = 0.2): { model: SongModelData; sectionName: string } | null {
+  const base = (name: string) => name.toLowerCase().replace(/\s*\d+$/, "").trim();
+  const counts = new Map<string, number>();
+  for (const s of model.sections) counts.set(base(s.name), (counts.get(base(s.name)) ?? 0) + 1);
+  const target = model.sections.find((s) => (counts.get(base(s.name)) ?? 0) > 1);
+  if (!target) return null;
+  const barSeconds = model.bars.length ? model.bars[0].end - model.bars[0].start : model.audio.durationSeconds / Math.max(1, model.sections.at(-1)?.endBar ?? 1);
+  const from = (target.startBar - 1) * barSeconds;
+  const to = target.endBar * barSeconds;
+  const samples = model.energy ?? [];
+  const perSecond = samples.length / Math.max(1e-6, model.audio.durationSeconds);
+  const scaled = samples.map((v, i) => {
+    const t = i / perSecond;
+    return t >= from && t < to ? Number((v * factor).toFixed(4)) : v;
+  });
+  return {
+    sectionName: target.name,
+    model: finalizeSongModel({
+      ...model,
+      energy: scaled,
+      dynamics: scaled.map((v) => Number((v * 0.9).toFixed(4))),
+      sections: model.sections.map((s) => (s.name === target.name && typeof s.energy === "number" ? { ...s, energy: Number((s.energy * factor).toFixed(4)) } : s)),
+    }),
+  };
+}
+
+const PITCH_CLASS_NAMES_FLAT = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+
+/**
+ * Turn a seeded share of the chord events into slash chords whose bass is the
+ * chord's third or fifth (first / second inversion), writing both the symbol
+ * (`C/E`) and the canonical `bass` field the parser lays over it. Returns the
+ * model and the events changed (by start time) so a checker knows where a
+ * slash bass is owed.
+ */
+export function withSlashChords(model: SongModelData, rng: Rng, share = 0.35): { model: SongModelData; slashStarts: number[] } {
+  const slashStarts: number[] = [];
+  const chords = model.chords.map((chord) => {
+    if (chord.bass || /\//.test(chord.symbol) || !rng.chance(share)) return chord;
+    const tones = chordTonesOf(chord);
+    if (tones.length < 3) return chord;
+    const bassPc = rng.chance(0.6) ? tones[1] : tones[2];
+    const bassName = PITCH_CLASS_NAMES_FLAT[bassPc];
+    slashStarts.push(chord.start);
+    return { ...chord, symbol: `${chord.symbol}/${bassName}`, bass: bassName, inversion: bassPc === tones[1] ? 1 : 2 };
+  });
+  return { model: finalizeSongModel({ ...model, chords }), slashStarts };
+}
+
+/**
+ * The chord sheet as *analysis* delivers it: onsets a little off the bar grid.
+ *
+ * The generated corpus puts every chord exactly on a bar or half-bar line,
+ * which no transcription of a real recording ever does. This mutation moves
+ * each chord's start (and the previous chord's end with it, so the sheet stays
+ * contiguous) by a seeded offset inside `+-maxSeconds`, and moves nothing
+ * else: the bars, the sections, the tempo map and the metre are untouched, so
+ * the *grid* is exactly where it was. Everything a part writer does with the
+ * bar grid must therefore be unchanged; only what it copies from the chord
+ * onsets moves.
+ */
+export function withOffGridChords(model: SongModelData, rng: Rng, maxSeconds = 0.2): { model: SongModelData; offsets: number[] } {
+  const offsets: number[] = [];
+  const chords = model.chords.map((chord, i) => {
+    if (i === 0) { offsets.push(0); return chord; }
+    // Never past the previous onset or the next one: the sheet stays ordered.
+    const room = Math.min(maxSeconds, Math.max(0, (chord.end - chord.start) / 3), Math.max(0, (chord.start - model.chords[i - 1].start) / 3));
+    const offset = Number(((rng.next() * 2 - 1) * room).toFixed(4));
+    offsets.push(offset);
+    return { ...chord, start: Number((chord.start + offset).toFixed(4)) };
+  });
+  // Close the gaps the shifts opened: each chord ends where the next begins.
+  const contiguous = chords.map((chord, i) => (i < chords.length - 1 ? { ...chord, end: chords[i + 1].start } : chord));
+  return { model: finalizeSongModel({ ...model, chords: contiguous }), offsets };
+}
+
+/** Drop the vocal stem and every vocal trace (melody, vocal evidence, phrases): the same song, sung by nobody the analysis heard. */
+export function withoutVocals(model: SongModelData): SongModelData {
+  const unavailable = (reason: string) => ({ status: "not_available" as const, reason, events: [] });
+  return finalizeSongModel({
+    ...model,
+    stems: model.stems.filter((s) => s.role !== "vocals"),
+    melody: [],
+    vocalEvidence: {
+      status: "not_available", reason: "B-12b: vocal stem removed for the sung-by-default invariant.",
+      provenance: null, sampleRate: null, channels: null, frameSizeSamples: null, thresholds: null,
+      observedVoicedWindows: [], observedSilentWindows: [],
+    },
+    vocalIntelligence: model.vocalIntelligence
+      ? {
+          ...model.vocalIntelligence,
+          provenance: null,
+          phrases: unavailable("B-12b: vocal stem removed."),
+          arrangementSpace: { status: "not_available", reason: "B-12b: vocal stem removed.", windows: [] },
+        }
+      : model.vocalIntelligence,
+  });
+}

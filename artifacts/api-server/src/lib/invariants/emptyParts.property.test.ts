@@ -14,12 +14,18 @@ import { generateSongModel } from "./generators";
 
 const SEEDS = seedsUpTo(24, 900);
 
-/** Observed 2026-09-10 on main da21dff; the assertion is unchanged. */
-const KNOWN_FAILURE =
-  "12/24 seeds pass; 99 of 476 planned (section, family) pairs are silent. LEAD in a sung section writes nothing (partComposer.ts:51-53, the audit's F5): 10 pairs. " +
-  "In 6/8 and 7/8 the composer's bar is twice the Song Model's (referencePartComposer.ts:73-78), so from the second or third section onward every harmony part is written into time after the song ends (seed 903: last note at 255 s of a 128 s song) - BASS 34, HARMONIC_BED 18, RHYTHMIC_HARMONY 18, PAD 9 silent pairs.";
+/**
+ * Fixed. B-12 recorded 12/24 seeds and 99 of 476 planned (section, family)
+ * pairs silent - LEAD in a sung section writing nothing (`partComposer.ts:51-53`,
+ * the audit's F5) and, in 6/8 and 7/8, a composer bar twice the Song Model's
+ * that put every harmony part after the song's end. Re-run on 4c5d967
+ * (B-12b, 2026-09-10): **24/24 seeds pass, 0 of 471 planned pairs silent**.
+ * The `todo` is removed so a regression fails the suite instead of being
+ * tolerated by a stale reason.
+ */
+const KNOWN_FAILURE = "";
 
-test("every family the plan marks active in a section writes at least one note there (24 seeds)", { todo: KNOWN_FAILURE }, (t) => {
+test("every family the plan marks active in a section writes at least one note there (24 seeds)", { todo: KNOWN_FAILURE || undefined }, (t) => {
   const outcomes: SeedOutcome[] = [];
   const byRole = new Map<string, number>();
   const byFamily = new Map<string, number>();

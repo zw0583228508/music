@@ -1,0 +1,3701 @@
+{
+  "stream": "B-12b",
+  "title": "Brain B-12b: invariants of the new brain",
+  "generatedAt": "2026-09-10T09:55:46.367Z",
+  "generatedBy": "artifacts/api-server/scripts/brain-b12b-evidence.mjs (records written by the suites themselves; nothing here is typed by hand)",
+  "base": {
+    "branch": "ws-brain-b12b",
+    "baseCommit": "4c5d967",
+    "productionModulesChanged": []
+  },
+  "node": "v24.5.0",
+  "harness": "esbuild bundle + node --test; registered as suite `brain-invariants-b12b` in artifacts/api-server/scripts/run-focused-api-tests.mjs",
+  "method": {
+    "scope": "The invariants of the brain B-01..B-11 built, plus the six the two independent R-1 reviews isolated (scratchpad/brain/r1a-engineering-attack.md, r1b-musical-attack.md).",
+    "rules": "Every invariant carries a negative control in its own suite. An invariant the brain fails today runs under node:test `{ todo }` with the observed behaviour, a reproducing seed and the production file:line in the reason; the assertion is never weakened. No production module was changed.",
+    "controls": "Where a failure's cause was not already isolated, the suite carries a control that isolates it: the register-shift control for the composed transposition, the composed-vs-shipped control for the downbeat kick, the on-grid/off-grid control for the harmony grid, the non-uniform-loudness sensitivity control for the arc.",
+    "seedPolicy": "Fixed seed blocks per suite (1200s arc, 1400s harmony, 1500s groove, 1600s motif, 1700s style, 1800s shipped music, 1900s wiring); every failure reproduces by seed."
+  },
+  "totals": {
+    "invariants": 26,
+    "pass": 12,
+    "knownFailure": 14
+  },
+  "invariantTable": [
+    {
+      "invariant": "arc-brief-stated-dynamics",
+      "description": "With sectionDynamics and textureLevels stated for every section, the arc under a x0.3 source is identical (marking, level, texture, families) and every level's source is `brief`.",
+      "status": "known_failure",
+      "seeds": 24,
+      "passed": 3,
+      "failed": 21,
+      "failingSeeds": [
+        1201,
+        1202,
+        1203,
+        1204,
+        1205,
+        1206,
+        1207,
+        1208,
+        1209,
+        1210,
+        1211,
+        1212,
+        1213,
+        1214,
+        1216,
+        1217,
+        1218,
+        1220,
+        1222,
+        1223,
+        1224
+      ],
+      "violationCodes": {
+        "level_followed_curve": 73,
+        "stated_marking_relabelled_by_source": 21
+      },
+      "knownFailure": "arrangementArc.ts:654-661 - a brief-stated marking keeps the source's level nudge: 3/24 seeds pass, 73 level_followed_curve (up to |d| 0.030, seed 1223), 83/135 stated sections relabelled source_prior",
+      "cause": "artifacts/api-server/src/lib/arrangementArc.ts:654-661",
+      "measured": {
+        "statedSectionsRelabelled": 83
+      }
+    },
+    {
+      "invariant": "arc-intent-not-rms",
+      "description": "Uniform x0.3 / x3 scaling of the Song Model's energy curve leaves every arc decision (marking, texture, tension, operator, families) unchanged; the level moves at most within the documented source-prior bound.",
+      "status": "pass",
+      "seeds": 24,
+      "passed": 24,
+      "failed": 0,
+      "violationCodes": {},
+      "measured": {
+        "sections": 135,
+        "sectionsWhoseLevelCarriesASourcePrior": 83,
+        "maxLevelShiftSeen": 0.03
+      }
+    },
+    {
+      "invariant": "arrival_not_thinner_than_setup",
+      "description": "Every arc section whose tension role is `arrival` has at least the onsets per second and the voices per gesture of the nearest preceding setup / lift, and at least 10% of its notes between C3 and C5.",
+      "status": "known_failure",
+      "seeds": 20,
+      "passed": 1,
+      "failed": 19,
+      "failingSeeds": [
+        1801,
+        1802,
+        1803,
+        1804,
+        1805,
+        1806,
+        1807,
+        1808,
+        1809,
+        1810,
+        1811,
+        1812,
+        1814,
+        1815,
+        1816,
+        1817,
+        1818,
+        1819,
+        1820
+      ],
+      "violationCodes": {
+        "arrival_thinner_than_setup": 30,
+        "arrival_fewer_voices_than_setup": 26,
+        "arrival_hollow_between_c3_and_c5": 3
+      },
+      "knownFailure": "the operator table has no rule that an arrival is denser than its setup (raise_register lifts the top voice and thicken_voicing adds above) - 1/20 seeds pass: of 42 arrival/setup pairs, 30 arrivals have fewer onsets per second than their setup and 26 fewer voices per gesture, and 3 arrivals put under 10% of their notes between C3 and C5 (seed 1801: Chorus 1 5.55 onsets/s against Verse 5.78)",
+      "cause": "artifacts/api-server/src/lib/arrangementArc.ts development operators (raise_register / thicken_voicing)",
+      "measured": {
+        "arrivalSetupPairs": 42,
+        "thinnerFindings": 56,
+        "hollowFindings": 3
+      }
+    },
+    {
+      "invariant": "bed_keeps_its_voices",
+      "description": "For every bed-role part the composer wrote with at least 2.5 voices per gesture, the shipped track keeps at least 80% of that thickness over the same bars.",
+      "status": "known_failure",
+      "seeds": 20,
+      "passed": 0,
+      "failed": 20,
+      "failingSeeds": [
+        1801,
+        1802,
+        1803,
+        1804,
+        1805,
+        1806,
+        1807,
+        1808,
+        1809,
+        1810,
+        1811,
+        1812,
+        1813,
+        1814,
+        1815,
+        1816,
+        1817,
+        1818,
+        1819,
+        1820
+      ],
+      "violationCodes": {
+        "bed_lost_its_voices": 55
+      },
+      "knownFailure": "playabilityRepair.ts:135 tests o.start === n.start against the chord roll performanceEngine.ts:466-487 has just applied - 0/20 seeds pass: 55 of 195 bed parts ship under 80% of their composed thickness, mean 3.76 -> 3.05 voices per gesture (seed 1801 part-Chorus_1-keys-HARMONIC_BED: composed 4.00 over 32 notes, shipped 2.89 over 26)",
+      "cause": "artifacts/api-server/src/lib/playabilityRepair.ts:135 + performanceEngine.ts:466-487",
+      "measured": {
+        "bedPartsJudged": 195,
+        "bedPartsThinned": 55,
+        "meanComposedVoices": 3.76,
+        "meanShippedVoices": 3.05
+      }
+    },
+    {
+      "invariant": "composer_receives_its_context",
+      "description": "Through the orchestrator's own default compose lambda: the shipped ArrangementPlan carries a groovePlan, and every candidate carries at least one harmony, groove and register decision in its provenance.",
+      "status": "known_failure",
+      "seeds": 20,
+      "passed": 0,
+      "failed": 20,
+      "failingSeeds": [
+        1901,
+        1902,
+        1903,
+        1904,
+        1905,
+        1906,
+        1907,
+        1908,
+        1909,
+        1910,
+        1911,
+        1912,
+        1913,
+        1914,
+        1915,
+        1916,
+        1917,
+        1918,
+        1919,
+        1920
+      ],
+      "violationCodes": {
+        "groove_plan_not_on_the_plan": 20,
+        "layer_unreachable_from_the_composer": 60
+      },
+      "knownFailure": "arrangementOrchestrator.ts:425-426 - the default compose lambda forwards no context, so no siblings, decision registry, groove plan or motif ledger reach a writer - 0/20 seeds pass: 0 of 20 candidates carry a groovePlan on the plan, and all 20 report harmony, groove and register as notRecorded while carrying only arc, compose, orchestration and perform decisions",
+      "cause": "artifacts/api-server/src/lib/arrangementOrchestrator.ts:425-426",
+      "measured": {
+        "candidatesJudged": 20,
+        "candidatesWithGroovePlanOnThePlan": 0,
+        "layersReportedNotRecorded": {
+          "groove": 20,
+          "harmony": 20,
+          "register": 20
+        },
+        "layersCarryingDecisions": {
+          "arc": 20,
+          "compose": 20,
+          "orchestration": 20,
+          "perform": 20
+        }
+      }
+    },
+    {
+      "invariant": "empty-parts-no-vocals",
+      "description": "Every (section, active family) pair has at least one shipped note inside the section, on 24 Song Models whose vocal stem was removed.",
+      "status": "pass",
+      "seeds": 24,
+      "passed": 24,
+      "failed": 0,
+      "violationCodes": {},
+      "measured": {
+        "plannedPairs": 429,
+        "silentByRole": {},
+        "silentByFamily": {}
+      }
+    },
+    {
+      "invariant": "groove-anticipations-shared",
+      "description": "Shipped notes: at the kit's anticipation pushes (the plan's slots), the comping and the bass have an onset within 60 ms on at least 80% of pushes per section.",
+      "status": "known_failure",
+      "seeds": 20,
+      "passed": 7,
+      "failed": 13,
+      "failingSeeds": [
+        1502,
+        1503,
+        1504,
+        1505,
+        1509,
+        1510,
+        1512,
+        1513,
+        1514,
+        1515,
+        1516,
+        1517,
+        1519
+      ],
+      "violationCodes": {
+        "comping_misses_anticipation": 38,
+        "bass_misses_anticipation": 29
+      },
+      "knownFailure": "composer/rhythmParts.ts:193 compingRhythmFor has no production caller - 7/20 seeds pass; of 260 kit pushes the comping strikes with only 19 and the bass with 138",
+      "cause": "artifacts/api-server/src/lib/composer/rhythmParts.ts:193 (no production caller)",
+      "measured": {
+        "kitPushes": 260,
+        "compingWithPush": 19,
+        "compingPushesJudged": 260,
+        "bassWithPush": 138,
+        "bassPushesJudged": 260
+      }
+    },
+    {
+      "invariant": "groove-downbeat-kick",
+      "description": "Per section: the share of bars with an accented kick within 0.2 beats of beat 1 (a pushed downbeat counts) is at least 0.9.",
+      "status": "known_failure",
+      "seeds": 20,
+      "passed": 0,
+      "failed": 20,
+      "failingSeeds": [
+        1501,
+        1502,
+        1503,
+        1504,
+        1505,
+        1506,
+        1507,
+        1508,
+        1509,
+        1510,
+        1511,
+        1512,
+        1513,
+        1514,
+        1515,
+        1516,
+        1517,
+        1518,
+        1519,
+        1520
+      ],
+      "violationCodes": {
+        "downbeat_kick_missing": 97
+      },
+      "knownFailure": "composer/rhythmParts.ts:442 (tiedDownbeat at :101/:105) deletes the cell's unit-0 kick whenever any part anticipates the bar line, and the replacement push at :443-446 only fires when kickAnticipates - 0/20 seeds pass: 114/596 bars in kick-anticipating sections and 59/222 in plain ones; 177/238 plain bars have no kick within 0.75 beats of the bar line (seed 1501 onward)",
+      "cause": "artifacts/api-server/src/lib/composer/rhythmParts.ts:442 (tiedDownbeat at :101/:105; the replacement push at :443-446)",
+      "measured": {
+        "anticipatingKick": {
+          "bars": 596,
+          "withKick": 114
+        },
+        "plainKick": {
+          "bars": 222,
+          "withKick": 59
+        },
+        "anticipationWhen": {
+          "before_chord_change": 93,
+          "every_bar": 22,
+          "never": 2
+        }
+      }
+    },
+    {
+      "invariant": "groove-hat-ceiling",
+      "description": "Distinct hat/ride onsets per bar divided by the bar's seconds never exceed 7.5 (9 for a programmed dance/electronic kit).",
+      "status": "pass",
+      "seeds": 20,
+      "passed": 20,
+      "failed": 0,
+      "violationCodes": {},
+      "measured": {
+        "barsJudged": 549,
+        "maxStrikesPerSecondSeen": 6.47
+      }
+    },
+    {
+      "invariant": "groove-kick-bass-lock",
+      "description": "Shipped kit vs shipped bass: on every section whose GroovePlan kickBass is `lock`, at least 90% of accented kick onsets have a bass onset within 60 ms.",
+      "status": "known_failure",
+      "seeds": 20,
+      "passed": 7,
+      "failed": 13,
+      "failingSeeds": [
+        1502,
+        1503,
+        1504,
+        1507,
+        1509,
+        1510,
+        1512,
+        1513,
+        1514,
+        1515,
+        1516,
+        1517,
+        1519
+      ],
+      "violationCodes": {
+        "kick_bass_not_locked": 32
+      },
+      "knownFailure": "composer/harmonyParts.ts:283-289 writes the bass from the chord span; composer/rhythmParts.ts:255 bassRhythmFor has no production caller - 7/20 seeds pass, 691/899 accented kicks have a bass onset within 60 ms over 104 sections the plan locks (seed 1501 onward)",
+      "cause": "artifacts/api-server/src/lib/composer/harmonyParts.ts:283-289 (composer/rhythmParts.ts:255 has no production caller)",
+      "measured": {
+        "lockSections": 104,
+        "kicksJudged": 899,
+        "kicksWithBass": 691,
+        "agreement": 0.769,
+        "relationsPlanned": {
+          "lock": 104,
+          "pedal": 13
+        }
+      }
+    },
+    {
+      "invariant": "harmony_on_the_grid",
+      "description": "With the chord sheet's onsets moved off the bar grid and nothing else changed, every pitched track's median onset deviation from the nearest eighth of the Song Model's own bars stays within 50 ms.",
+      "status": "known_failure",
+      "seeds": 20,
+      "passed": 11,
+      "failed": 9,
+      "failingSeeds": [
+        1807,
+        1808,
+        1809,
+        1810,
+        1812,
+        1813,
+        1816,
+        1818,
+        1819
+      ],
+      "violationCodes": {
+        "harmony_off_the_grid": 25
+      },
+      "knownFailure": "harmonyPlan/shared.ts chordEventsIn passes the analysed onsets through unquantised and composer/harmonyParts.ts:283-289 subdivides the chord's own span, while the kit is written on the bar grid at composer/rhythmParts.ts:91 - 11/20 seeds pass with the sheet off the grid: 1,771 of 7,339 onsets over 50 ms, median of seed medians 22.3 ms (seed 1807 keys-rhythmic_harmony: median 70 ms, p90 164 ms, 88 of 144 onsets over). The control shows the writers on the grid when the sheet is (mean median 5.1 ms, 119/7,091 over).",
+      "cause": "artifacts/api-server/src/lib/composer/harmonyParts.ts:283-289 + harmonyPlan/shared.ts chordEventsIn (kit: composer/rhythmParts.ts:91)",
+      "measured": {
+        "onsetsJudged": 7339,
+        "onsetsOver50ms": 1771,
+        "medianOfSeedMediansMs": 22.3
+      }
+    },
+    {
+      "invariant": "harmony-bass-leaps-and-slash",
+      "description": "Composer-direct bass: consecutive notes never leap beyond constraints.maxLeap; the first bass note under a slash chord has the slash note's pitch class.",
+      "status": "known_failure",
+      "seeds": 24,
+      "passed": 22,
+      "failed": 2,
+      "failingSeeds": [
+        1409,
+        1412
+      ],
+      "violationCodes": {
+        "slash_bass_ignored": 2
+      },
+      "knownFailure": "harmonyPlan/bassLine.ts:111-118 - the pedal branch returns before the slash branch: 22/24 seeds pass, 2 slash_bass_ignored (seed 1409 Outro/afterglow D/Gb -> pc 9; seed 1412 Section 1/setup Bbm/F -> pc 1)",
+      "cause": "artifacts/api-server/src/lib/harmonyPlan/bassLine.ts:111-118",
+      "measured": {
+        "bassParts": 105,
+        "slashEventsJudged": 260,
+        "slashEventsWithoutOnsetNote": 0,
+        "largestLeapSeen": 12
+      }
+    },
+    {
+      "invariant": "harmony-chord-tones-and-range",
+      "description": "Composer-direct: at every chord event with notes struck at its onset at least one is a chord tone; no chordal or bass note outside the playable range.",
+      "status": "pass",
+      "seeds": 24,
+      "passed": 24,
+      "failed": 0,
+      "violationCodes": {},
+      "measured": {
+        "chordalParts": 194,
+        "chordEventsJudged": 1395,
+        "chordEventsWithoutOnsetNotes": 70
+      }
+    },
+    {
+      "invariant": "harmony-parallels",
+      "description": "Composer-direct: parallel perfect fifths/octaves between the bass and the top voice at consecutive chord onsets are 0 under classical harmony parameters; the default aesthetic's count is reported, not gated.",
+      "status": "known_failure",
+      "seeds": 24,
+      "passed": 7,
+      "failed": 17,
+      "failingSeeds": [
+        1401,
+        1402,
+        1403,
+        1408,
+        1409,
+        1410,
+        1412,
+        1413,
+        1414,
+        1416,
+        1417,
+        1418,
+        1419,
+        1420,
+        1421,
+        1423,
+        1424
+      ],
+      "violationCodes": {
+        "parallel_perfect_classical": 35
+      },
+      "knownFailure": "voiceLeading.ts:310-327 + voicings.ts:222-226 - the planned bass is a static unary floor, never a voice in the pairwise parallel cost: 7/24 seeds pass, 35 parallel_perfect_classical over 880 pairs (86 under the default aesthetic); seed 1402 Em7->Bm bass 40->42, top 64->66",
+      "cause": "artifacts/api-server/src/lib/voiceLeading.ts:310-327 + harmonyPlan/voicings.ts:222-226",
+      "measured": {
+        "classicalPairsJudged": 880,
+        "defaultParallels": 86,
+        "defaultPairsJudged": 880
+      }
+    },
+    {
+      "invariant": "harmony-transposition-by-construction",
+      "description": "Composer-direct: for every chordal / bass task, the notes composed for T_k(song) equal T_k(the notes for song) by note id - exact +k on every matched note, no octave fold, no note lost or gained.",
+      "status": "known_failure",
+      "seeds": 24,
+      "passed": 0,
+      "failed": 24,
+      "failingSeeds": [
+        1401,
+        1402,
+        1403,
+        1404,
+        1405,
+        1406,
+        1407,
+        1408,
+        1409,
+        1410,
+        1411,
+        1412,
+        1413,
+        1414,
+        1415,
+        1416,
+        1417,
+        1418,
+        1419,
+        1420,
+        1421,
+        1422,
+        1423,
+        1424
+      ],
+      "violationCodes": {
+        "voicing_not_transposed": 222,
+        "voicing_note_set_changed": 56,
+        "voicing_octave_folded": 81
+      },
+      "knownFailure": "harmonyPlan/voicings.ts:198-200,210 (targetCentre from the instrument's range, not the key; composer/registers.ts:18-30) - 0/24 seeds pass: 4,572 exact of 15,252 matched, 9,905 wrong pitch class, 775 octave folds, 119 lost, 112 gained; the range-shift control lifts exact to 11,945 and leaves 3,197 wrong, which are not isolated",
+      "cause": "artifacts/api-server/src/lib/harmonyPlan/voicings.ts:198-200,210 (composer/registers.ts:18-30)",
+      "measured": {
+        "matched": 15252,
+        "exact": 4572,
+        "octaveFolds": 775,
+        "wrongPitchClass": 9905,
+        "lost": 119,
+        "gained": 112,
+        "byTaskKind": {
+          "bass-BASS": {
+            "exact": 1113,
+            "folds": 660,
+            "wrong": 307,
+            "setChanged": 231
+          },
+          "guitar-HARMONIC_BED": {
+            "exact": 148,
+            "folds": 4,
+            "wrong": 168,
+            "setChanged": 0
+          },
+          "keys-HARMONIC_BED": {
+            "exact": 436,
+            "folds": 0,
+            "wrong": 742,
+            "setChanged": 0
+          },
+          "keys-RHYTHMIC_HARMONY": {
+            "exact": 1853,
+            "folds": 18,
+            "wrong": 6737,
+            "setChanged": 0
+          },
+          "guitar-RHYTHMIC_HARMONY": {
+            "exact": 438,
+            "folds": 0,
+            "wrong": 936,
+            "setChanged": 0
+          },
+          "pads-PAD": {
+            "exact": 124,
+            "folds": 9,
+            "wrong": 203,
+            "setChanged": 0
+          },
+          "strings-HARMONIC_BED": {
+            "exact": 273,
+            "folds": 51,
+            "wrong": 248,
+            "setChanged": 0
+          },
+          "brass-CLIMAX_LAYER": {
+            "exact": 33,
+            "folds": 5,
+            "wrong": 0,
+            "setChanged": 0
+          },
+          "strings-CLIMAX_LAYER": {
+            "exact": 77,
+            "folds": 7,
+            "wrong": 348,
+            "setChanged": 0
+          },
+          "strings-PAD": {
+            "exact": 75,
+            "folds": 21,
+            "wrong": 138,
+            "setChanged": 0
+          },
+          "keys-LEAD": {
+            "exact": 2,
+            "folds": 0,
+            "wrong": 78,
+            "setChanged": 0
+          }
+        }
+      }
+    },
+    {
+      "invariant": "motif-answers-clear-of-vocal",
+      "description": "Composer-direct CALL_RESPONSE / COUNTER_MELODY parts: no note with intention `response` overlaps a melody note of confidence >= 0.6.",
+      "status": "pass",
+      "seeds": 20,
+      "passed": 20,
+      "failed": 0,
+      "violationCodes": {},
+      "measured": {
+        "answerNotes": 1981,
+        "parts": 202
+      }
+    },
+    {
+      "invariant": "motif-labels-truthful",
+      "description": "Per ledger occurrence: every note it names shipped, its recorded cell is the cell of exactly those notes, its transformation is what classifyTransformation reads off that cell against the entry's, and no motif-tagged note belongs to no occurrence.",
+      "status": "known_failure",
+      "seeds": 20,
+      "passed": 2,
+      "failed": 18,
+      "failingSeeds": [
+        1601,
+        1603,
+        1604,
+        1605,
+        1606,
+        1608,
+        1609,
+        1610,
+        1611,
+        1612,
+        1613,
+        1614,
+        1615,
+        1616,
+        1617,
+        1618,
+        1619,
+        1620
+      ],
+      "violationCodes": {
+        "ledger_names_a_note_that_never_shipped": 46,
+        "ledger_cell_is_not_the_notes": 127,
+        "motif_label_untrue": 10
+      },
+      "knownFailure": "melodicEngine.ts:645-660 records the occurrence before referencePartComposer.ts:110-112 drops out-of-window notes (and :115 re-clamps their durations) - 2/20 seeds pass: 46/3,000 named notes never shipped, 601/735 recorded cells are the cell of their own notes, 10 labels untrue (seed 1601 occurrence 15 of motif-6c2ca027)",
+      "cause": "artifacts/api-server/src/lib/melodicEngine.ts:645-660 + referencePartComposer.ts:110-112,115",
+      "measured": {
+        "taggedNotes": 2954,
+        "occurrencesChecked": 728,
+        "occurrences": 735,
+        "notesNamed": 3000,
+        "notesMissing": 46,
+        "cellMatches": 601
+      }
+    },
+    {
+      "invariant": "motif-recall-across-repeats",
+      "description": "Threaded ledger: for every (later occurrence of a section function, instrument) with earlier statements of the same instrument and function, at least one occurrence carries recallOf.",
+      "status": "pass",
+      "seeds": 20,
+      "passed": 20,
+      "failed": 0,
+      "violationCodes": {},
+      "measured": {
+        "repeatPartsJudged": 94,
+        "repeatPartsRecalling": 94
+      }
+    },
+    {
+      "invariant": "performance_respects_section_dynamics",
+      "description": "For every pair of arc sections whose intended level differs by more than 0.15, the shipped mean velocity of the pitched tracks orders them the same way.",
+      "status": "known_failure",
+      "seeds": 20,
+      "passed": 17,
+      "failed": 3,
+      "failingSeeds": [
+        1802,
+        1804,
+        1806
+      ],
+      "violationCodes": {
+        "shipped_dynamics_invert_the_arc": 6
+      },
+      "knownFailure": "arrangementOrchestrator.ts perform loop takes the first section's roleAssignment and dynamicShape; performanceEngine.ts:430 ramps progress across the whole track and :495 rescales by rangeFloor + dynamicLevel x rangeSpan - 17/20 seeds pass: 6 pairs of sections ship in the wrong order (seed 1802: Bridge mf level 0.55 at velocity 59.8 under Verse 3 mp level 0.371 at 66.1), and the composed-to-shipped ratio sits in a single 0.70-1.09 band (median 0.88) across every section of every seed",
+      "cause": "artifacts/api-server/src/lib/performanceEngine.ts:430,495 (arrangementOrchestrator.ts perform loop)",
+      "measured": {
+        "sectionsJudged": 102,
+        "invertedPairs": 6,
+        "composedToShippedRatio": {
+          "min": 0.7,
+          "median": 0.882,
+          "max": 1.092,
+          "spread": 0.392
+        }
+      }
+    },
+    {
+      "invariant": "provenance-complete",
+      "description": "buildCandidateProvenance over the brain's shipped candidates: no note outside every decision range, no dangling decision id or ref, harmony/groove/register either recorded or listed under notRecorded.",
+      "status": "pass",
+      "seeds": 20,
+      "passed": 20,
+      "failed": 0,
+      "violationCodes": {},
+      "measured": {
+        "candidates": 40,
+        "notes": 43706,
+        "decisions": 4484,
+        "ranges": 962,
+        "notRecordedLayerCounts": {
+          "groove": 40,
+          "harmony": 40,
+          "register": 40
+        }
+      }
+    },
+    {
+      "invariant": "selection_respects_selectable",
+      "description": "A provider candidate labelled `selectable: false` by the brain's hard-rule gate is refused by isSelectableCandidate and never ranked above a candidate the brain passed, whatever the critic scores are.",
+      "status": "known_failure",
+      "seeds": 1,
+      "passed": 0,
+      "failed": 1,
+      "failingSeeds": [
+        1
+      ],
+      "violationCodes": {
+        "refused_candidate_is_selectable": 1,
+        "refused_candidate_ranks_first": 1
+      },
+      "knownFailure": "arrangementOrchestratorProvider.ts:527-528 writes selectable: false; candidateRanking.ts:261-285 isSelectableCandidate and :319-337 rankEvaluatedCandidates never read it - the brain-refused candidate is selectable and ranks 1 ahead of the candidate the brain passed",
+      "cause": "artifacts/api-server/src/lib/candidateRanking.ts:261-285,319-337 (arrangementOrchestratorProvider.ts:527-528)",
+      "measured": {
+        "ranking": [
+          "cand-refused:rank 1",
+          "cand-passed:rank 2"
+        ]
+      }
+    },
+    {
+      "invariant": "selection-integrity",
+      "description": "selected candidate passes the hard-rule gate and is eligible; selected null => non-empty reason and no feasible candidate; rejected list == infeasible candidates; critique.overallScore == critiqueArrangement(shipped notes, candidate plan).",
+      "status": "pass",
+      "seeds": 20,
+      "passed": 20,
+      "failed": 0,
+      "violationCodes": {},
+      "measured": {
+        "scoresRecomputed": 60,
+        "runsWithSelection": 20,
+        "nothingSelectedByReasonKind": {}
+      }
+    },
+    {
+      "invariant": "style-deterministic",
+      "description": "resolveStyle and briefPlannerHints are pure in (brief, Song Model): identical grammar, questions, knowledge entry and digest on a second call.",
+      "status": "pass",
+      "seeds": 20,
+      "passed": 20,
+      "failed": 0,
+      "violationCodes": {}
+    },
+    {
+      "invariant": "style-fully-specified-no-questions",
+      "description": "Answering each question the resolver asks (first question, a seeded option) re-enters as a stated brief value and the question list reaches empty within 8 rounds.",
+      "status": "pass",
+      "seeds": 20,
+      "passed": 20,
+      "failed": 0,
+      "violationCodes": {},
+      "measured": {
+        "maxRounds": 2,
+        "answersGiven": 12
+      }
+    },
+    {
+      "invariant": "style-unknown-genre",
+      "description": "resolveStyle on a genre outside the knowledge base: no entry, the no_knowledge_entry flag, no template-provenance values, at least half the contract unknown, at most 3 questions each with >= 2 options. Genres the base does match are judged as the control instead: the entry is named and its template fills something.",
+      "status": "pass",
+      "seeds": 20,
+      "passed": 20,
+      "failed": 0,
+      "violationCodes": {},
+      "measured": {
+        "questionsTotal": 54,
+        "maxQuestions": 3,
+        "genresUnknown": 18,
+        "genresMatched": [
+          "grunge->rock",
+          "trance->edm_dance"
+        ]
+      }
+    },
+    {
+      "invariant": "sung-by-default",
+      "description": "Song Models without a vocal stem: no section plan lead of the form instrument:<family> and no LEAD role assignment outside instrumental sections.",
+      "status": "pass",
+      "seeds": 24,
+      "passed": 24,
+      "failed": 0,
+      "violationCodes": {},
+      "measured": {
+        "leadRoleSources": {
+          "bridge:sung_by_default:vocals": 6,
+          "chorus:sung_by_default:vocals": 29,
+          "intro:none:none": 7,
+          "neutral:sung_by_default:vocals": 48,
+          "outro:none:none": 8,
+          "prechorus:sung_by_default:vocals": 6,
+          "verse:sung_by_default:vocals": 23
+        }
+      }
+    }
+  ],
+  "controls": [
+    {
+      "invariant": "arc-sensitivity-control",
+      "seedsTried": 18,
+      "seedsWithEffect": 18,
+      "codes": {
+        "level_followed_curve": 55
+      }
+    },
+    {
+      "invariant": "groove-downbeat-kick-control",
+      "description": "Control for the downbeat-kick failure: the composed kit vs the shipped kit, whether the governing groove cell lists unit 0 as a kick, and the split by whether the plan lets the kick anticipate.",
+      "composed": {
+        "bars": 718,
+        "onBarline": 151
+      },
+      "shipped": {
+        "bars": 678,
+        "onBarline": 106
+      },
+      "barsWhoseCellAsksForADownbeatKick": 718,
+      "byAnticipation": {
+        "anticipating": {
+          "bars": 480,
+          "onBarline": 90,
+          "pushed": 75,
+          "neither": 315
+        },
+        "plain": {
+          "bars": 238,
+          "onBarline": 61,
+          "pushed": 0,
+          "neither": 177
+        }
+      }
+    },
+    {
+      "invariant": "harmony_on_the_grid-control",
+      "description": "The same 20 songs with the chord sheet on the bar lines and with its onsets moved off them; nothing else differs.",
+      "onGrid": {
+        "onsets": 7091,
+        "over50ms": 119,
+        "meanMedianMs": 5.1
+      },
+      "offGrid": {
+        "onsets": 7339,
+        "over50ms": 1771,
+        "meanMedianMs": 27.7
+      }
+    },
+    {
+      "invariant": "harmony-transposition-register-control",
+      "description": "Control: the same composer-direct comparison with each instrument's playable and comfortable range moved by k. Isolates how much of the transposition gap is the voicer's absolute register anchor.",
+      "plain": {
+        "exact": 4572,
+        "folds": 775,
+        "wrong": 9905,
+        "matched": 15252,
+        "pass": 0
+      },
+      "control": {
+        "exact": 11945,
+        "folds": 110,
+        "wrong": 3197,
+        "matched": 15252,
+        "pass": 0
+      },
+      "residualByTask": {
+        "keys-RHYTHMIC_HARMONY": 2804,
+        "bass-BASS": 319,
+        "keys-HARMONIC_BED": 105,
+        "guitar-HARMONIC_BED": 64,
+        "pads-PAD": 9,
+        "strings-PAD": 6,
+        "guitar-RHYTHMIC_HARMONY": 0,
+        "strings-HARMONIC_BED": 0,
+        "brass-CLIMAX_LAYER": 0,
+        "strings-CLIMAX_LAYER": 0,
+        "keys-LEAD": 0
+      }
+    }
+  ],
+  "b12VsNow": [
+    {
+      "invariant": "transposition",
+      "b12": "7/24",
+      "now": "0/24",
+      "delta": -7,
+      "direction": "regressed",
+      "violationCodesNow": {
+        "playability_changed": 11,
+        "note_set_changed": 154,
+        "pitch_not_transposed": 214,
+        "rhythm_changed": 83,
+        "voice_choice_changed": 33
+      },
+      "failingSeedsNow": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ]
+    },
+    {
+      "invariant": "tempo",
+      "b12": "13/24",
+      "now": "3/24",
+      "delta": -10,
+      "direction": "regressed",
+      "violationCodesNow": {
+        "pitch_content_changed": 25,
+        "onset_moved": 73,
+        "note_count_changed": 70
+      },
+      "failingSeedsNow": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ]
+    },
+    {
+      "invariant": "meter-3-4",
+      "b12": "16/20",
+      "now": "0/20",
+      "delta": -16,
+      "direction": "regressed",
+      "violationCodesNow": {
+        "kick_missing_downbeat": 20,
+        "snare_on_downbeat": 12,
+        "pattern_period_not_bar": 7
+      },
+      "failingSeedsNow": [
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120
+      ]
+    },
+    {
+      "invariant": "meter-6-8",
+      "b12": "0/20",
+      "now": "0/20",
+      "delta": 0,
+      "direction": "unchanged",
+      "violationCodesNow": {
+        "kick_missing_downbeat": 20,
+        "compound_pulse_ignored": 20,
+        "pattern_period_not_bar": 18,
+        "snare_on_downbeat": 10
+      },
+      "failingSeedsNow": [
+        201,
+        202,
+        203,
+        204,
+        205,
+        206,
+        207,
+        208,
+        209,
+        210,
+        211,
+        212,
+        213,
+        214,
+        215,
+        216,
+        217,
+        218,
+        219,
+        220
+      ]
+    },
+    {
+      "invariant": "meter-5-4",
+      "b12": "0/20",
+      "now": "0/20",
+      "delta": 0,
+      "direction": "unchanged",
+      "violationCodesNow": {
+        "kick_missing_downbeat": 20,
+        "pattern_period_not_bar": 17,
+        "snare_on_downbeat": 8
+      },
+      "failingSeedsNow": [
+        301,
+        302,
+        303,
+        304,
+        305,
+        306,
+        307,
+        308,
+        309,
+        310,
+        311,
+        312,
+        313,
+        314,
+        315,
+        316,
+        317,
+        318,
+        319,
+        320
+      ]
+    },
+    {
+      "invariant": "meter-7-8",
+      "b12": "0/20",
+      "now": "0/20",
+      "delta": 0,
+      "direction": "unchanged",
+      "violationCodesNow": {
+        "kick_missing_downbeat": 20,
+        "pattern_period_not_bar": 12,
+        "snare_on_downbeat": 7
+      },
+      "failingSeedsNow": [
+        401,
+        402,
+        403,
+        404,
+        405,
+        406,
+        407,
+        408,
+        409,
+        410,
+        411,
+        412,
+        413,
+        414,
+        415,
+        416,
+        417,
+        418,
+        419,
+        420
+      ]
+    },
+    {
+      "invariant": "section-naming-hebrew",
+      "b12": "0/20",
+      "now": "0/20",
+      "delta": 0,
+      "direction": "unchanged",
+      "violationCodesNow": {
+        "function_changed": 99,
+        "families_changed": 31,
+        "roles_changed": 62,
+        "task_count_changed": 31,
+        "notes_changed": 97,
+        "transition_changed": 63,
+        "climax_layer_changed": 19
+      },
+      "failingSeedsNow": [
+        501,
+        502,
+        503,
+        504,
+        505,
+        506,
+        507,
+        508,
+        509,
+        510,
+        511,
+        512,
+        513,
+        514,
+        515,
+        516,
+        517,
+        518,
+        519,
+        520
+      ]
+    },
+    {
+      "invariant": "section-naming-unnamed",
+      "b12": "0/20",
+      "now": "0/20",
+      "delta": 0,
+      "direction": "unchanged",
+      "violationCodesNow": {
+        "function_changed": 99,
+        "families_changed": 31,
+        "roles_changed": 62,
+        "task_count_changed": 31,
+        "notes_changed": 95,
+        "transition_changed": 55,
+        "climax_layer_changed": 19
+      },
+      "failingSeedsNow": [
+        501,
+        502,
+        503,
+        504,
+        505,
+        506,
+        507,
+        508,
+        509,
+        510,
+        511,
+        512,
+        513,
+        514,
+        515,
+        516,
+        517,
+        518,
+        519,
+        520
+      ]
+    },
+    {
+      "invariant": "determinism-same-seed",
+      "b12": "20/20",
+      "now": "20/20",
+      "delta": 0,
+      "direction": "unchanged",
+      "violationCodesNow": {}
+    },
+    {
+      "invariant": "determinism-different-seed",
+      "b12": "19/20",
+      "now": "4/20",
+      "delta": -15,
+      "direction": "regressed",
+      "violationCodesNow": {
+        "harmony_changed_with_seed": 57
+      },
+      "failingSeedsNow": [
+        601,
+        602,
+        605,
+        607,
+        608,
+        609,
+        610,
+        611,
+        612,
+        613,
+        614,
+        615,
+        616,
+        617,
+        618,
+        620
+      ]
+    },
+    {
+      "invariant": "instrument-swap",
+      "b12": "23/24",
+      "now": "21/24",
+      "delta": -2,
+      "direction": "regressed",
+      "violationCodesNow": {
+        "engine_impossible_fingering": 8,
+        "repair_rule_leap": 4,
+        "contract_error": 4
+      },
+      "failingSeedsNow": [
+        701,
+        710,
+        721
+      ]
+    },
+    {
+      "invariant": "definition-family",
+      "b12": "16/24",
+      "now": "24/24",
+      "delta": 8,
+      "direction": "improved",
+      "violationCodesNow": {}
+    },
+    {
+      "invariant": "scope-regeneration",
+      "b12": "20/20",
+      "now": "20/20",
+      "delta": 0,
+      "direction": "unchanged",
+      "violationCodesNow": {}
+    },
+    {
+      "invariant": "scope-bounded-repair",
+      "b12": "19/20",
+      "now": "20/20",
+      "delta": 1,
+      "direction": "improved",
+      "violationCodesNow": {}
+    },
+    {
+      "invariant": "empty-parts",
+      "b12": "12/24",
+      "now": "24/24",
+      "delta": 12,
+      "direction": "improved",
+      "violationCodesNow": {}
+    },
+    {
+      "invariant": "playability-shipped",
+      "b12": "22/24",
+      "now": "22/24",
+      "delta": 0,
+      "direction": "unchanged",
+      "violationCodesNow": {
+        "engine_impossible_fingering": 3,
+        "contract_error": 3
+      },
+      "failingSeedsNow": [
+        1002,
+        1004
+      ]
+    },
+    {
+      "invariant": "critic-sanity",
+      "b12": "3/20",
+      "now": "4/20",
+      "delta": 1,
+      "direction": "improved",
+      "violationCodesNow": {
+        "playable_random_pitch_not_penalised": 11,
+        "drums_only_scores_higher": 10
+      },
+      "failingSeedsNow": [
+        1101,
+        1103,
+        1104,
+        1105,
+        1106,
+        1107,
+        1109,
+        1111,
+        1112,
+        1113,
+        1115,
+        1116,
+        1117,
+        1118,
+        1119,
+        1120
+      ]
+    },
+    {
+      "invariant": "fuzz",
+      "b12": "194/200",
+      "now": "194/200",
+      "delta": 0,
+      "direction": "unchanged",
+      "violationCodesNow": {
+        "duplicate_note_ids": 14
+      },
+      "failingSeedsNow": [
+        2044,
+        2051,
+        2071,
+        2132,
+        2158,
+        2175
+      ]
+    }
+  ],
+  "fuzz": {
+    "invariant": "fuzz",
+    "description": "orchestrateArrangement over 200 random Song Models (45% degenerate): no unhandled exception, finite numbers, pitches 0-127, positive durations, unique note ids per track, a selection when candidates exist.",
+    "seeds": [
+      2001,
+      2002,
+      2003,
+      2004,
+      2005,
+      2006,
+      2007,
+      2008,
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025,
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035,
+      2036,
+      2037,
+      2038,
+      2039,
+      2040,
+      2041,
+      2042,
+      2043,
+      2044,
+      2045,
+      2046,
+      2047,
+      2048,
+      2049,
+      2050,
+      2051,
+      2052,
+      2053,
+      2054,
+      2055,
+      2056,
+      2057,
+      2058,
+      2059,
+      2060,
+      2061,
+      2062,
+      2063,
+      2064,
+      2065,
+      2066,
+      2067,
+      2068,
+      2069,
+      2070,
+      2071,
+      2072,
+      2073,
+      2074,
+      2075,
+      2076,
+      2077,
+      2078,
+      2079,
+      2080,
+      2081,
+      2082,
+      2083,
+      2084,
+      2085,
+      2086,
+      2087,
+      2088,
+      2089,
+      2090,
+      2091,
+      2092,
+      2093,
+      2094,
+      2095,
+      2096,
+      2097,
+      2098,
+      2099,
+      2100,
+      2101,
+      2102,
+      2103,
+      2104,
+      2105,
+      2106,
+      2107,
+      2108,
+      2109,
+      2110,
+      2111,
+      2112,
+      2113,
+      2114,
+      2115,
+      2116,
+      2117,
+      2118,
+      2119,
+      2120,
+      2121,
+      2122,
+      2123,
+      2124,
+      2125,
+      2126,
+      2127,
+      2128,
+      2129,
+      2130,
+      2131,
+      2132,
+      2133,
+      2134,
+      2135,
+      2136,
+      2137,
+      2138,
+      2139,
+      2140,
+      2141,
+      2142,
+      2143,
+      2144,
+      2145,
+      2146,
+      2147,
+      2148,
+      2149,
+      2150,
+      2151,
+      2152,
+      2153,
+      2154,
+      2155,
+      2156,
+      2157,
+      2158,
+      2159,
+      2160,
+      2161,
+      2162,
+      2163,
+      2164,
+      2165,
+      2166,
+      2167,
+      2168,
+      2169,
+      2170,
+      2171,
+      2172,
+      2173,
+      2174,
+      2175,
+      2176,
+      2177,
+      2178,
+      2179,
+      2180,
+      2181,
+      2182,
+      2183,
+      2184,
+      2185,
+      2186,
+      2187,
+      2188,
+      2189,
+      2190,
+      2191,
+      2192,
+      2193,
+      2194,
+      2195,
+      2196,
+      2197,
+      2198,
+      2199,
+      2200
+    ],
+    "passed": 194,
+    "failed": 6,
+    "status": "known_failure",
+    "knownFailure": "194/200 pass and nothing throws. 6 models ship duplicate note ids: a chord whose end exceeds the next section's start by a floating-point epsilon is still included in that section's window (referencePartComposer.ts:80-82) and written as a minimum-duration stub of the previous harmony on the downbeat, with the same position-based id as the new chord's voice (referencePartComposer.ts:88-96, 181).",
+    "violationCodes": {
+      "duplicate_note_ids": 14
+    },
+    "outcomes": [
+      {
+        "seed": 2001,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "section_gap",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2002,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2003,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2004,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2005,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "duplicate_section_names+melody_out_of_range",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2006,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "empty_chords+empty_chords",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2007,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2008,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2009,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "bpm_30+bar_per_section",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2010,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2011,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2012,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "bpm_300",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2013,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "bpm_30",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2014,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "meter_2_2+meter_1_4",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2015,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2016,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2017,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "one_section+melody_out_of_range",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2018,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2019,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2020,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2021,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2022,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2023,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2024,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2025,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2026,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2027,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2028,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "meter_2_2",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2029,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2030,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2031,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "empty_stems+bpm_30",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2032,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "empty_stems+section_gap",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2033,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2034,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2035,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2036,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2037,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2038,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2039,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2040,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "no_bars_no_beats+meter_13_8",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2041,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2042,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2043,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2044,
+        "passed": false,
+        "violations": [
+          {
+            "code": "duplicate_note_ids",
+            "trackId": "strings-counter_melody",
+            "count": 3,
+            "detail": "cand-A/strings-counter_melody: 3 duplicate id(s)"
+          },
+          {
+            "code": "duplicate_note_ids",
+            "trackId": "strings-counter_melody",
+            "count": 4,
+            "detail": "cand-B/strings-counter_melody: 4 duplicate id(s)"
+          }
+        ],
+        "notes": {
+          "degeneration": "duplicate_section_names+meter_13_8",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2045,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2046,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2047,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2048,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "section_gap+bar_per_section",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2049,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2050,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "no_energy+meter_13_8",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2051,
+        "passed": false,
+        "violations": [
+          {
+            "code": "duplicate_note_ids",
+            "trackId": "keys-rhythmic_harmony",
+            "count": 5,
+            "detail": "cand-A/keys-rhythmic_harmony: 5 duplicate id(s)"
+          },
+          {
+            "code": "duplicate_note_ids",
+            "trackId": "strings-counter_melody",
+            "count": 1,
+            "detail": "cand-A/strings-counter_melody: 1 duplicate id(s)"
+          },
+          {
+            "code": "duplicate_note_ids",
+            "trackId": "keys-rhythmic_harmony",
+            "count": 6,
+            "detail": "cand-B/keys-rhythmic_harmony: 6 duplicate id(s)"
+          },
+          {
+            "code": "duplicate_note_ids",
+            "trackId": "strings-counter_melody",
+            "count": 3,
+            "detail": "cand-B/strings-counter_melody: 3 duplicate id(s)"
+          }
+        ],
+        "notes": {
+          "degeneration": "one_chord+duplicate_section_names",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2052,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2053,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2054,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2055,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2056,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2057,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2058,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2059,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "meter_2_2",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2060,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "no_musical_map+meter_13_8",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2061,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2062,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2063,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2064,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "one_chord+one_chord",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2065,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2066,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2067,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2068,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "one_section+zero_length_audio",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2069,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "one_section+duplicate_section_names",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2070,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2071,
+        "passed": false,
+        "violations": [
+          {
+            "code": "duplicate_note_ids",
+            "trackId": "keys-rhythmic_harmony",
+            "count": 2,
+            "detail": "cand-A/keys-rhythmic_harmony: 2 duplicate id(s)"
+          },
+          {
+            "code": "duplicate_note_ids",
+            "trackId": "keys-rhythmic_harmony",
+            "count": 3,
+            "detail": "cand-B/keys-rhythmic_harmony: 3 duplicate id(s)"
+          }
+        ],
+        "notes": {
+          "degeneration": "duplicate_section_names",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2072,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2073,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "meter_13_8+zero_length_audio",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2074,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2075,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "bpm_30",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2076,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2077,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "empty_chords",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2078,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2079,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "duplicate_section_names",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2080,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2081,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2082,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "meter_2_2+meter_13_8",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2083,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2084,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2085,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "empty_chords",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2086,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2087,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2088,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "one_chord",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2089,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2090,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "no_energy+bpm_30",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2091,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "empty_chords+no_bars_no_beats",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2092,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "meter_13_8",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2093,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2094,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2095,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2096,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2097,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "one_section",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2098,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2099,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2100,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2101,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2102,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "one_chord",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2103,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "meter_1_4",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2104,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "meter_1_4+meter_13_8",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2105,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "one_section",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2106,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2107,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "melody_out_of_range",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2108,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2109,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2110,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "no_bars_no_beats",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2111,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2112,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2113,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "meter_13_8+no_energy",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2114,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "no_energy",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2115,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "bar_per_section+no_musical_map",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2116,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "one_chord+meter_13_8",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2117,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "bpm_300",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2118,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2119,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2120,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "duplicate_section_names",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2121,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "bpm_300+zero_length_audio",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2122,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "bpm_300",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2123,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2124,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "meter_1_4+bpm_300",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2125,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "bpm_30",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2126,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2127,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "zero_length_audio",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2128,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2129,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2130,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2131,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2132,
+        "passed": false,
+        "violations": [
+          {
+            "code": "duplicate_note_ids",
+            "trackId": "keys-harmonic_bed",
+            "count": 6,
+            "detail": "cand-A/keys-harmonic_bed: 6 duplicate id(s)"
+          },
+          {
+            "code": "duplicate_note_ids",
+            "trackId": "keys-harmonic_bed",
+            "count": 6,
+            "detail": "cand-B/keys-harmonic_bed: 6 duplicate id(s)"
+          }
+        ],
+        "notes": {
+          "degeneration": "duplicate_section_names",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2133,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "no_bars_no_beats",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2134,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2135,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "one_section",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2136,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "section_gap+empty_stems",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2137,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "no_musical_map+section_gap",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2138,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2139,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2140,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "bar_per_section",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2141,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2142,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "section_gap+melody_out_of_range",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2143,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2144,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "empty_chords+all_stems_mix",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2145,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2146,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2147,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "bpm_30+meter_13_8",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2148,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2149,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2150,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2151,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2152,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2153,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2154,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2155,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "meter_2_2",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2156,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "bpm_300+duplicate_section_names",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2157,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "no_energy",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2158,
+        "passed": false,
+        "violations": [
+          {
+            "code": "duplicate_note_ids",
+            "trackId": "keys-rhythmic_harmony",
+            "count": 13,
+            "detail": "cand-A/keys-rhythmic_harmony: 13 duplicate id(s)"
+          },
+          {
+            "code": "duplicate_note_ids",
+            "trackId": "keys-rhythmic_harmony",
+            "count": 14,
+            "detail": "cand-B/keys-rhythmic_harmony: 14 duplicate id(s)"
+          }
+        ],
+        "notes": {
+          "degeneration": "duplicate_section_names",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2159,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2160,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2161,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2162,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2163,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2164,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "one_section",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2165,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "no_bars_no_beats+empty_stems",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2166,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2167,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "all_stems_mix",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2168,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "bar_per_section+one_section",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2169,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2170,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "meter_1_4+duplicate_section_names",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2171,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "bpm_300+meter_13_8",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2172,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2173,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "no_musical_map+bar_per_section",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2174,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2175,
+        "passed": false,
+        "violations": [
+          {
+            "code": "duplicate_note_ids",
+            "trackId": "keys-harmonic_bed",
+            "count": 11,
+            "detail": "cand-A/keys-harmonic_bed: 11 duplicate id(s)"
+          },
+          {
+            "code": "duplicate_note_ids",
+            "trackId": "keys-harmonic_bed",
+            "count": 12,
+            "detail": "cand-B/keys-harmonic_bed: 12 duplicate id(s)"
+          }
+        ],
+        "notes": {
+          "degeneration": "zero_length_audio+duplicate_section_names",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2176,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2177,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2178,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "empty_chords+no_energy",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2179,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "meter_2_2",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2180,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2181,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "one_chord",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2182,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2183,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "empty_chords",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2184,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "no_energy+meter_2_2",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2185,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2186,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "meter_13_8",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2187,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "bpm_300+meter_2_2",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2188,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "one_section",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2189,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "empty_stems+meter_13_8",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2190,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2191,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2192,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2193,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2194,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "meter_2_2+section_gap",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2195,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "section_gap+bar_per_section",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2196,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "section_gap+no_musical_map",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2197,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2198,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2199,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      },
+      {
+        "seed": 2200,
+        "passed": true,
+        "violations": [],
+        "notes": {
+          "degeneration": "none",
+          "candidates": 2
+        }
+      }
+    ],
+    "extra": {
+      "degenerateModels": 83,
+      "throwsByDegeneration": {}
+    }
+  },
+  "golden": {
+    "comparedAgainst": "the fixtures committed at HEAD",
+    "repin": {
+      "stream": "B-12b",
+      "date": "2026-09-10",
+      "baseCommit": "4c5d967",
+      "previousPin": "e7b4b89 (PR-B12)",
+      "causes": [
+        "B-03 (1467706): instrument profiles behind getInstrumentDefinition, register plan, shouldRest",
+        "B-05a (043f3cb): sixteen note-level critic dimensions and the control ledger",
+        "B-11 (e3f83da): decision provenance per note group, failure codes with origin",
+        "B-10 (93a6c3b): motif ledger, melodic engine, counter-lines and answers",
+        "B-08 (632a925): benchmark 2.0, baseline snapshots, positive-control ledger",
+        "B-02 (347ab19): one chord parser, bass line planned first, per-role voicing solver, partWindow honoured",
+        "B-04 (30041f5): GroovePlan per section, metre-correct kit/percussion/ostinato, transition devices, agogics",
+        "B-09 (4c5d967): StyleGrammar, knowledge base as data, planner / StyleSpec / PerformanceStyle as projections"
+      ],
+      "note": "Re-pinned by B-12b after reporting the drift; the digests describe output, not quality, and nobody listened to any of it."
+    },
+    "cases": [
+      {
+        "case": "acoustic-demo",
+        "status": "drift",
+        "diff": [
+          "plan digest changed",
+          "cand-A (conservative): notes 489 -> 440",
+          "  ~ drums-groove: 424 -> 204 notes",
+          "  ~ bass-bass: 94 -> 53 notes",
+          "  ~ guitar-harmonic_bed: 22 -> 183 notes",
+          "  - ensemble-transition",
+          "cand-B (melodic): notes 525 -> 470",
+          "  ~ drums-groove: 456 -> 219 notes",
+          "  ~ bass-bass: 100 -> 57 notes",
+          "  ~ guitar-harmonic_bed: 24 -> 194 notes",
+          "  - ensemble-transition",
+          "cand-C (adventurous): notes 525 -> 470",
+          "  ~ drums-groove: 456 -> 219 notes",
+          "  ~ bass-bass: 100 -> 57 notes",
+          "  ~ guitar-harmonic_bed: 24 -> 194 notes",
+          "  - ensemble-transition"
+        ]
+      },
+      {
+        "case": "ballad-piano-vocal",
+        "status": "drift",
+        "diff": [
+          "plan digest changed",
+          "cand-A (conservative): notes 429 -> 305",
+          "  ~ drums-groove: 372 -> 85 notes",
+          "  ~ bass-bass: 79 -> 59 notes",
+          "  + keys-rhythmic_harmony (161 notes)",
+          "  - keys-harmonic_bed",
+          "  - ensemble-transition",
+          "cand-B (melodic): notes 461 -> 322",
+          "  ~ drums-groove: 400 -> 91 notes",
+          "  ~ bass-bass: 84 -> 61 notes",
+          "  + keys-rhythmic_harmony (170 notes)",
+          "  - keys-harmonic_bed",
+          "  - ensemble-transition",
+          "cand-C (adventurous): notes 461 -> 322",
+          "  ~ drums-groove: 400 -> 91 notes",
+          "  ~ bass-bass: 84 -> 61 notes",
+          "  + keys-rhythmic_harmony (170 notes)",
+          "  - keys-harmonic_bed",
+          "  - ensemble-transition"
+        ]
+      },
+      {
+        "case": "cinematic-midi",
+        "status": "drift",
+        "diff": [
+          "plan digest changed",
+          "cand-A (conservative): notes 441 -> 406",
+          "  ~ drums-climax_layer: 424 -> 44 notes",
+          "  ~ bass-bass: 16 -> 52 notes",
+          "  ~ percussion-accent: 30 -> 7 notes",
+          "  + keys-harmonic_bed (288 notes)",
+          "  ~ brass-climax_layer: 4 -> 4 notes",
+          "  ~ strings-climax_layer: 6 -> 11 notes",
+          "  - ensemble-transition",
+          "cand-B (melodic): notes 471 -> 428",
+          "  ~ drums-climax_layer: 456 -> 47 notes",
+          "  ~ bass-bass: 16 -> 54 notes",
+          "  ~ percussion-accent: 32 -> 8 notes",
+          "  + keys-harmonic_bed (304 notes)",
+          "  ~ brass-climax_layer: 4 -> 4 notes",
+          "  ~ strings-climax_layer: 6 -> 11 notes",
+          "  - ensemble-transition",
+          "cand-C (adventurous): notes 471 -> 429",
+          "  ~ drums-climax_layer: 456 -> 47 notes",
+          "  ~ bass-bass: 16 -> 55 notes",
+          "  ~ percussion-accent: 32 -> 8 notes",
+          "  + keys-harmonic_bed (304 notes)",
+          "  ~ brass-climax_layer: 4 -> 4 notes",
+          "  ~ strings-climax_layer: 6 -> 11 notes",
+          "  - ensemble-transition"
+        ]
+      },
+      {
+        "case": "dance-full",
+        "status": "drift",
+        "diff": [
+          "plan digest changed",
+          "cand-A (conservative): notes 915 -> 712",
+          "  ~ drums-groove: 532 -> 577 notes",
+          "  ~ bass-bass: 124 -> 80 notes",
+          "  + keys-harmonic_bed (23 notes)",
+          "  ~ synth-pad: 24 -> 32 notes",
+          "  - keys-rhythmic_harmony",
+          "  - ensemble-transition",
+          "cand-B (melodic): notes 975 -> 759",
+          "  ~ drums-groove: 572 -> 619 notes",
+          "  ~ bass-bass: 132 -> 83 notes",
+          "  + keys-harmonic_bed (25 notes)",
+          "  ~ synth-pad: 24 -> 32 notes",
+          "  - keys-rhythmic_harmony",
+          "  - ensemble-transition",
+          "cand-C (adventurous): notes 975 -> 759",
+          "  ~ drums-groove: 572 -> 619 notes",
+          "  ~ bass-bass: 132 -> 83 notes",
+          "  + keys-harmonic_bed (25 notes)",
+          "  ~ synth-pad: 24 -> 32 notes",
+          "  - keys-rhythmic_harmony",
+          "  - ensemble-transition"
+        ]
+      },
+      {
+        "case": "ethnic-vocal",
+        "status": "drift",
+        "diff": [
+          "plan digest changed",
+          "cand-A (conservative): notes 413 -> 561",
+          "  ~ drums-climax_layer: 447 -> 109 notes",
+          "  ~ bass-bass: 4 -> 64 notes",
+          "  + keys-harmonic_bed (388 notes)",
+          "  - ensemble-transition",
+          "cand-B (melodic): notes 446 -> 593",
+          "  ~ drums-climax_layer: 484 -> 117 notes",
+          "  ~ bass-bass: 4 -> 68 notes",
+          "  + keys-harmonic_bed (408 notes)",
+          "  - ensemble-transition",
+          "cand-C (adventurous): notes 446 -> 592",
+          "  ~ drums-climax_layer: 484 -> 117 notes",
+          "  ~ bass-bass: 4 -> 67 notes",
+          "  + keys-harmonic_bed (408 notes)",
+          "  - ensemble-transition"
+        ]
+      },
+      {
+        "case": "jazz-full",
+        "status": "drift",
+        "diff": [
+          "plan digest changed",
+          "cand-A (conservative): notes 930 -> 975",
+          "  ~ drums-climax_layer: 627 -> 428 notes",
+          "  ~ bass-bass: 130 -> 92 notes",
+          "  ~ keys-harmonic_bed: 257 -> 455 notes",
+          "  - ensemble-transition",
+          "cand-B (melodic): notes 992 -> 1047",
+          "  ~ drums-climax_layer: 676 -> 465 notes",
+          "  ~ bass-bass: 136 -> 102 notes",
+          "  ~ keys-harmonic_bed: 270 -> 480 notes",
+          "  - ensemble-transition",
+          "cand-C (adventurous): notes 992 -> 1048",
+          "  ~ drums-climax_layer: 676 -> 465 notes",
+          "  ~ bass-bass: 136 -> 103 notes",
+          "  ~ keys-harmonic_bed: 270 -> 480 notes",
+          "  - ensemble-transition"
+        ]
+      },
+      {
+        "case": "orchestral-midi",
+        "status": "drift",
+        "diff": [
+          "plan digest changed",
+          "cand-A (conservative): notes 449 -> 337",
+          "  ~ drums-climax_layer: 344 -> 105 notes",
+          "  ~ bass-bass: 102 -> 38 notes",
+          "  + keys-ostinato (164 notes)",
+          "  ~ brass-climax_layer: 6 -> 6 notes",
+          "  ~ strings-climax_layer: 8 -> 24 notes",
+          "  - ensemble-transition",
+          "cand-B (melodic): notes 479 -> 363",
+          "  ~ drums-climax_layer: 368 -> 116 notes",
+          "  ~ bass-bass: 108 -> 40 notes",
+          "  + keys-ostinato (177 notes)",
+          "  ~ brass-climax_layer: 6 -> 6 notes",
+          "  ~ strings-climax_layer: 8 -> 24 notes",
+          "  - ensemble-transition",
+          "cand-C (adventurous): notes 479 -> 363",
+          "  ~ drums-climax_layer: 368 -> 116 notes",
+          "  ~ bass-bass: 108 -> 40 notes",
+          "  + keys-ostinato (177 notes)",
+          "  ~ brass-climax_layer: 6 -> 6 notes",
+          "  ~ strings-climax_layer: 8 -> 24 notes",
+          "  - ensemble-transition"
+        ]
+      },
+      {
+        "case": "pop-full",
+        "status": "drift",
+        "diff": [
+          "plan digest changed",
+          "cand-A (conservative): notes 636 -> 640",
+          "  ~ drums-groove: 532 -> 250 notes",
+          "  ~ bass-bass: 137 -> 88 notes",
+          "  ~ keys-harmonic_bed: 22 -> 302 notes",
+          "  - ensemble-transition",
+          "cand-B (melodic): notes 683 -> 678",
+          "  ~ drums-groove: 572 -> 270 notes",
+          "  ~ bass-bass: 146 -> 91 notes",
+          "  ~ keys-harmonic_bed: 24 -> 317 notes",
+          "  - ensemble-transition",
+          "cand-C (adventurous): notes 683 -> 679",
+          "  ~ drums-groove: 572 -> 270 notes",
+          "  ~ bass-bass: 146 -> 92 notes",
+          "  ~ keys-harmonic_bed: 24 -> 317 notes",
+          "  - ensemble-transition"
+        ]
+      },
+      {
+        "case": "rachem-na-v3",
+        "status": "drift",
+        "diff": [
+          "plan digest changed",
+          "cand-A (conservative): notes 1691 -> 2096",
+          "  ~ drums-groove: 1835 -> 846 notes",
+          "  ~ bass-bass: 94 -> 288 notes",
+          "  + keys-rhythmic_harmony (962 notes)",
+          "  - ensemble-transition",
+          "cand-B (melodic): notes 1823 -> 2235",
+          "  ~ drums-groove: 1982 -> 922 notes",
+          "  ~ bass-bass: 99 -> 300 notes",
+          "  + keys-rhythmic_harmony (1013 notes)",
+          "  - ensemble-transition",
+          "cand-C (adventurous): notes 1823 -> 2231",
+          "  ~ drums-groove: 1982 -> 922 notes",
+          "  ~ bass-bass: 99 -> 296 notes",
+          "  + keys-rhythmic_harmony (1013 notes)",
+          "  - ensemble-transition"
+        ]
+      },
+      {
+        "case": "rock-full",
+        "status": "drift",
+        "diff": [
+          "plan digest changed",
+          "cand-A (conservative): notes 821 -> 564",
+          "  ~ drums-groove: 480 -> 215 notes",
+          "  ~ bass-bass: 122 -> 84 notes",
+          "  + keys-rhythmic_harmony (253 notes)",
+          "  + guitar-harmonic_bed (12 notes)",
+          "  - guitar-rhythmic_harmony",
+          "  - keys-harmonic_bed",
+          "  - ensemble-transition",
+          "cand-B (melodic): notes 877 -> 600",
+          "  ~ drums-groove: 516 -> 233 notes",
+          "  ~ bass-bass: 130 -> 90 notes",
+          "  + keys-rhythmic_harmony (265 notes)",
+          "  + guitar-harmonic_bed (12 notes)",
+          "  - guitar-rhythmic_harmony",
+          "  - keys-harmonic_bed",
+          "  - ensemble-transition",
+          "cand-C (adventurous): notes 877 -> 602",
+          "  ~ drums-groove: 516 -> 233 notes",
+          "  ~ bass-bass: 130 -> 92 notes",
+          "  + keys-rhythmic_harmony (265 notes)",
+          "  + guitar-harmonic_bed (12 notes)",
+          "  - guitar-rhythmic_harmony",
+          "  - keys-harmonic_bed",
+          "  - ensemble-transition"
+        ]
+      }
+    ]
+  }
+}

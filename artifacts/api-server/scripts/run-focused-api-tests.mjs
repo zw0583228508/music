@@ -903,6 +903,29 @@ const suites = {
       ["src/lib/invariants/golden.property.test.ts", "b12-golden.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
     ],
   },
+  // Brain B-12b: the invariants of the *new* brain - the arc as intent rather
+  // than loudness (B-01), harmony as voicing (B-02), one shared groove (B-04),
+  // one style contract (B-09), a thematic memory that writes (B-10),
+  // provenance and selection integrity (B-11/B-00), sung by default (B-01) -
+  // plus the six the two independent R-1 reviews isolated. Same rules as
+  // B-12's: every invariant has a negative control, and one the brain fails
+  // today runs as `todo` with the observed behaviour, the seed and the
+  // production file:line in the reason, in
+  // docs/evidence/brain-b12b-invariants.json - never weakened.
+  "brain-invariants-b12b": {
+    bundles: [
+      ["src/lib/invariants/arcIntent.property.test.ts", "b12b-arc-intent.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/sungByDefault.property.test.ts", "b12b-sung-by-default.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/harmony.property.test.ts", "b12b-harmony.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/groove.property.test.ts", "b12b-groove.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/style.property.test.ts", "b12b-style.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/motif.property.test.ts", "b12b-motif.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/provenance.property.test.ts", "b12b-provenance.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/selectionIntegrity.property.test.ts", "b12b-selection-integrity.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/shippedMusic.property.test.ts", "b12b-shipped-music.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/invariants/wiring.property.test.ts", "b12b-wiring.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
 };
 
 const supportedPermissionFailureCodes = new Set(["EPERM", "EACCES"]);

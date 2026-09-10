@@ -65,10 +65,25 @@ test("same input, same seed: byte-identical TrackModels, plan and selection over
   assert.deepEqual(outcomes.filter((o) => !o.passed).map((o) => o.seed), []);
 });
 
-/** Observed 2026-09-10 on main da21dff; the assertion is unchanged. */
+/**
+ * Refreshed for B-12b: B-12's reason (a keys part resolving to the drum kit)
+ * is stale - the definition-family invariant now passes 24/24 - and the
+ * failure is both larger and elsewhere.
+ *
+ * Observed 2026-09-10 on 4c5d967: **4/20 seeds pass** (B-12 measured 19/20),
+ * 57 findings, every one `harmony_changed_with_seed` on `bass-bass`. B-02's
+ * bass writer takes the seed: `composer/harmonyParts.ts:248` passes
+ * `frame.seed` into `planBassLine`, and `harmonyPlan/bassLine.ts:329` and
+ * `:336` use `seededUnit(input.seed, ...)` to decide whether an approach tone
+ * and a side-step are written. Approach tones are pitches, so the seed now
+ * changes a part's pitch-class content and not only its performance. That may
+ * be the intended design of B-02's bass line; the invariant as B-12 wrote it
+ * says a seed changes the performance and not the notes, and it is recorded
+ * failing rather than rewritten to match the new behaviour - the lead decides
+ * which of the two is the contract.
+ */
 const KNOWN_FAILURE =
-  "19/20 seeds pass. Seed 609: getInstrumentDefinition('keys', 'RHYTHMIC_HARMONY') resolves to the drum kit (musicEngines.ts getInstrumentDefinition: FAMILY_WORDS has no 'key'/'piano', so the role's 'rhythm' makes a kit), " +
-  "and the kit's four-voice polyphony repair drops the quietest voice - a velocity the seed jittered - so the pitch-class content of a keys part changes with the seed.";
+  "composer/harmonyParts.ts:248 passes frame.seed to planBassLine; harmonyPlan/bassLine.ts:329,336 draw approach tones and side-steps from seededUnit(seed) - 4/20 seeds pass (B-12: 19/20), 57 harmony_changed_with_seed findings, all on bass-bass (seed 601 onward)";
 
 test("different seed: the plan and every part's pitch-class content are unchanged, the performance differs", { todo: KNOWN_FAILURE }, (t) => {
   const outcomes: SeedOutcome[] = [];

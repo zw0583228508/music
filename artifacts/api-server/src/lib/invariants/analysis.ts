@@ -7,9 +7,17 @@
  * invariant is shown to fail when it should. Nothing here changes any input.
  */
 import { createHash } from "node:crypto";
-import type { MusicalNote, SongModelData, TrackModel } from "@workspace/db";
+import type { ArrangementArcSection, GroovePlan, GroovePlanSection, MusicalNote, PartTask, SongModelData, TrackModel } from "@workspace/db";
 import { orchestrateArrangement, type OrchestrateInput, type OrchestrationResult, type OrchestratedCandidate } from "../arrangementOrchestrator";
-import { chordTonesOf, meterParts } from "./generators";
+import { barTiming, type BarTiming } from "../composer/frame";
+import { chordEventsIn, type HarmonyChordEvent } from "../harmonyPlan/shared";
+import { composeReferencePart } from "../referencePartComposer";
+import { buildPartGenerationRequest, planPartComposition, type PartGenerationRequest } from "../partComposer";
+import { deriveGroovePlan, styleFamilyOf } from "../groovePlan";
+import { critiqueArrangement } from "../musicCritic";
+import { buildCandidateProvenance, barOfSeconds, type CandidateProvenance } from "../decisionProvenance";
+import { cellOf, classifyTransformation, buildMotifLedger, type MotifLedger } from "../motifLedger";
+import { chordTonesOf, meterParts, transposeSongModel } from "./generators";
 
 export type Violation = {
   code: string;
@@ -669,4 +677,688 @@ export function plannedCoverage(candidate: OrchestratedCandidate, result: Orches
   const planned = (result.plan.sectionPlan?.sections ?? []).reduce((s, section) => s + section.activeInstrumentFamilies.length, 0);
   if (!planned) return 1;
   return 1 - plannedButSilent(candidate, result, model).length / planned;
+}
+
+// ===========================================================================
+// B-12b: checkers for the layers merged after B-12 (arc, harmony plan, groove
+// plan, motif engine, style grammar, provenance, selection). Every checker is
+// pure; each suite shows it rejecting a deliberately broken input.
+// ===========================================================================
+
+export const NOW = new Date(0);
+
+// ---------------------------------------------------------------------------
+// Arc: intent, not RMS (B-01)
+// ---------------------------------------------------------------------------
+
+export type ArcIntentRow = {
+  sectionName: string;
+  marking: string;
+  level: number;
+  levelSource: string;
+  texture: string;
+  textureSource: string;
+  tension: string;
+  operator: string;
+  /** Families the section plan activates (what the composer is asked to write). */
+  families: string[];
+  arcFamilies: string[];
+};
+
+/** The arc's decision per section, joined with the section plan's active families. */
+export function arcIntentOf(result: OrchestrationResult): ArcIntentRow[] | null {
+  const arc = result.plan.globalPlan?.arc;
+  if (!arc || arc.status !== "available") return null;
+  return arc.sections.map((s: ArrangementArcSection) => {
+    const planned = result.plan.sectionPlan?.sections.find((p) => p.sectionName === s.sectionName && p.startBar === s.startBar);
+    return {
+      sectionName: s.sectionName,
+      marking: s.intendedDynamic.value.marking, level: s.intendedDynamic.value.level, levelSource: s.intendedDynamic.source,
+      texture: s.textureLevel.value, textureSource: s.textureLevel.source,
+      tension: s.tensionRole.value, operator: s.developmentOperator.value,
+      families: [...(planned?.activeInstrumentFamilies ?? [])].sort(),
+      arcFamilies: [...s.activeFamilies].sort(),
+    };
+  });
+}
+
+/** The arc's documented source-prior bound on a level (arrangementArc.ts: "at most +-0.05"), plus the +-0.03 contrast nudge. */
+export const ARC_PRIOR_BOUND = 0.05 + 0.03;
+
+/**
+ * Two arcs of the same song under two source loudnesses. Markings, textures,
+ * tension roles, operators and families must be identical; the level may
+ * differ only within the prior bound (each run's nudge is bounded, so the
+ * difference is bounded by twice the bound) - and when the brief stated the
+ * dynamic, not at all.
+ */
+export function compareArcIntent(a: ArcIntentRow[] | null, b: ArcIntentRow[] | null, options: { statedByBrief: boolean }): Violation[] {
+  const violations: Violation[] = [];
+  if (!a || !b) return [{ code: "arc_missing", detail: `arc ${a ? "present" : "missing"} vs ${b ? "present" : "missing"}` }];
+  if (a.length !== b.length) return [{ code: "arc_section_count", detail: `${a.length} vs ${b.length} arc sections` }];
+  const levelBound = options.statedByBrief ? 1e-9 : ARC_PRIOR_BOUND * 2;
+  for (let i = 0; i < a.length; i += 1) {
+    const x = a[i];
+    const y = b[i];
+    const where = x.sectionName;
+    if (x.marking !== y.marking) violations.push({ code: "marking_followed_curve", sectionName: where, detail: `${where}: ${x.marking} -> ${y.marking} (${x.levelSource} -> ${y.levelSource})` });
+    if (Math.abs(x.level - y.level) > levelBound) violations.push({ code: "level_followed_curve", sectionName: where, detail: `${where}: level ${x.level} -> ${y.level} (|d| ${Math.abs(x.level - y.level).toFixed(3)} > ${levelBound.toFixed(3)}; ${x.levelSource} -> ${y.levelSource})` });
+    if (x.texture !== y.texture) violations.push({ code: "texture_followed_curve", sectionName: where, detail: `${where}: texture ${x.texture} -> ${y.texture} (${x.textureSource} -> ${y.textureSource})` });
+    if (x.tension !== y.tension) violations.push({ code: "tension_followed_curve", sectionName: where, detail: `${where}: ${x.tension} -> ${y.tension}` });
+    if (x.operator !== y.operator) violations.push({ code: "operator_followed_curve", sectionName: where, detail: `${where}: ${x.operator} -> ${y.operator}` });
+    if (stableStringify(x.families) !== stableStringify(y.families)) violations.push({ code: "families_followed_curve", sectionName: where, detail: `${where}: ${x.families.join(",")} -> ${y.families.join(",")}` });
+    if (stableStringify(x.arcFamilies) !== stableStringify(y.arcFamilies)) violations.push({ code: "arc_families_followed_curve", sectionName: where, detail: `${where}: ${x.arcFamilies.join(",")} -> ${y.arcFamilies.join(",")}` });
+  }
+  return violations;
+}
+
+// ---------------------------------------------------------------------------
+// Sung by default (B-01): no accompaniment family leads a sung section
+// ---------------------------------------------------------------------------
+
+export function accompanimentLeadViolations(result: OrchestrationResult): Violation[] {
+  const violations: Violation[] = [];
+  const plan = result.plan.sectionPlan;
+  for (const section of plan?.sections ?? []) {
+    if (section.function === "instrumental") continue;
+    if (section.leadRole.startsWith("instrument:")) {
+      violations.push({ code: "accompaniment_leads_sung_section", sectionName: section.sectionName, detail: `${section.sectionName} (${section.function}): lead is ${section.leadRole} (source ${section.leadRoleSource ?? "?"})` });
+    }
+  }
+  for (const assignment of plan?.roleAssignments ?? []) {
+    const section = plan?.sections.find((s) => s.sectionName === assignment.sectionName);
+    if (!section || section.function === "instrumental") continue;
+    if (assignment.role === "LEAD" && assignment.instrument.toLowerCase() !== "vocals") {
+      violations.push({ code: "lead_role_in_sung_section", sectionName: assignment.sectionName, detail: `${assignment.sectionName} (${section.function}): ${assignment.instrument} assigned LEAD` });
+    }
+  }
+  return violations;
+}
+
+// ---------------------------------------------------------------------------
+// Harmony (B-02): the composer's own parts, before performance and repair
+// ---------------------------------------------------------------------------
+
+export const CHORDAL_TASKS: readonly PartTask[] = ["PIANO", "KEYS", "ACOUSTIC_GUITAR", "ELECTRIC_GUITAR", "STRINGS", "PAD", "BRASS", "WOODWINDS"];
+
+export type ComposedPart = {
+  request: PartGenerationRequest;
+  notes: MusicalNote[];
+  timing: BarTiming;
+  /** The part's window in seconds (section bounds intersected with the arc's part window). */
+  window: { start: number; end: number };
+  /** The chord events the harmony writers voice inside the window (the same reduction `harmonyParts.ts` applies). */
+  events: HarmonyChordEvent[];
+};
+
+export type ComposedSong = {
+  parts: ComposedPart[];
+  tempoBpm: number;
+  meter: string;
+  layers: ReturnType<typeof planPartComposition>["layers"];
+  plan: ReturnType<typeof planPartComposition>["plan"];
+};
+
+/**
+ * Compose the part plan's tasks directly with the reference composer (no
+ * candidate strategy, no performance, no repair): what B-02's planners wrote,
+ * measured before anything else touches it.
+ */
+export function composeSong(
+  model: SongModelData,
+  options: { tasks?: readonly PartTask[]; patch?: (request: PartGenerationRequest) => PartGenerationRequest } = {},
+): ComposedSong {
+  const tempoBpm = model.tempoMap?.[0]?.bpm ?? 120;
+  const meter = model.meterMap?.[0]?.meter ?? "4/4";
+  const { plan, layers } = planPartComposition(model, { now: NOW });
+  const timing = barTiming(tempoBpm, meter);
+  const parts: ComposedPart[] = [];
+  for (const task of plan.tasks) {
+    if (options.tasks && !options.tasks.includes(task.task)) continue;
+    let request = buildPartGenerationRequest(model, task, layers, []);
+    if (options.patch) request = options.patch(request);
+    const notes = composeReferencePart(request, { tempoBpm, meter });
+    const sectionStart = (request.section.startBar - 1) * timing.barSeconds;
+    const sectionEnd = request.section.endBar * timing.barSeconds;
+    const partWindow = request.partWindow ?? { startBar: request.section.startBar, endBar: request.section.endBar };
+    const start = Math.max(sectionStart, (partWindow.startBar - 1) * timing.barSeconds);
+    const end = Math.max(start, Math.min(sectionEnd, partWindow.endBar * timing.barSeconds));
+    const seen = new Set<string>();
+    const known = [...request.context.previousBars.chords, ...request.context.currentBars.chords].filter((c) => {
+      const key = `${c.start.toFixed(4)}|${c.end.toFixed(4)}|${c.symbol}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    const minEventSeconds = Math.max(0.15, request.constraints.minNoteDuration * 2);
+    parts.push({ request, notes, timing, window: { start, end }, events: chordEventsIn(known, { start, end }, { minEventSeconds }) });
+  }
+  return { parts, tempoBpm, meter, layers, plan };
+}
+
+const ONSET_TOLERANCE = 0.03;
+const pcOf = (pitch: number) => ((pitch % 12) + 12) % 12;
+
+export const isChordalPart = (part: ComposedPart): boolean => CHORDAL_TASKS.includes(part.request.task);
+export const isBassPart = (part: ComposedPart): boolean => part.request.task === "BASS";
+
+/** Notes whose onset is at a chord event's onset (within the tolerance). */
+export const notesAtOnset = (part: ComposedPart, event: HarmonyChordEvent): MusicalNote[] =>
+  part.notes.filter((n) => Math.abs(n.start - event.start) <= ONSET_TOLERANCE);
+
+export type ChordToneReport = { violations: Violation[]; eventsJudged: number; eventsWithoutOnset: number };
+
+/** Per chord event: at least one chord tone among the notes struck at the event's onset. */
+export function chordToneOnsets(part: ComposedPart): ChordToneReport {
+  const violations: Violation[] = [];
+  let eventsJudged = 0;
+  let eventsWithoutOnset = 0;
+  for (const event of part.events) {
+    const onset = notesAtOnset(part, event);
+    if (!onset.length) { eventsWithoutOnset += 1; continue; }
+    eventsJudged += 1;
+    const tones = new Set(event.chord.pitchClasses);
+    if (!onset.some((n) => tones.has(pcOf(n.pitch)))) {
+      violations.push({ code: "no_chord_tone_at_onset", trackId: part.request.taskId, detail: `${part.request.taskId} ${event.symbol} @${event.start.toFixed(2)}s: onset pitches ${onset.map((n) => n.pitch).join(",")} carry none of ${[...tones].join(",")}` });
+    }
+  }
+  return { violations, eventsJudged, eventsWithoutOnset };
+}
+
+/** No composed note outside the instrument's playable range. */
+export function rangeViolations(part: ComposedPart): Violation[] {
+  const { min, max } = part.request.constraints.playableRange;
+  const out = part.notes.filter((n) => n.pitch < min || n.pitch > max);
+  return out.length ? [{ code: "out_of_range", trackId: part.request.taskId, count: out.length, detail: `${part.request.taskId}: ${out.length} note(s) outside ${min}-${max} (e.g. ${out[0].pitch})` }] : [];
+}
+
+/** Consecutive bass notes never leap beyond the instrument's limit (by construction, before repair). */
+export function bassLeapViolations(part: ComposedPart): { violations: Violation[]; maxLeap: number } {
+  const ordered = [...part.notes].sort((a, b) => a.start - b.start || a.pitch - b.pitch);
+  let maxLeap = 0;
+  let over = 0;
+  let example = "";
+  for (let i = 1; i < ordered.length; i += 1) {
+    const leap = Math.abs(ordered[i].pitch - ordered[i - 1].pitch);
+    maxLeap = Math.max(maxLeap, leap);
+    if (leap > part.request.constraints.maxLeap) { over += 1; if (!example) example = `${ordered[i - 1].pitch}->${ordered[i].pitch} @${ordered[i].start.toFixed(2)}s`; }
+  }
+  return { maxLeap, violations: over ? [{ code: "bass_leap_over_limit", trackId: part.request.taskId, count: over, detail: `${part.request.taskId}: ${over} leap(s) over ${part.request.constraints.maxLeap} (${example})` }] : [] };
+}
+
+export type SlashReport = { violations: Violation[]; slashEventsJudged: number; slashEventsWithoutOnset: number };
+
+/** Under a slash chord the bass opens on the slash note. */
+export function slashBassHonoured(part: ComposedPart): SlashReport {
+  const violations: Violation[] = [];
+  let judged = 0;
+  let withoutOnset = 0;
+  for (const event of part.events) {
+    if (event.chord.bass === event.chord.root) continue;
+    const first = [...part.notes].sort((a, b) => a.start - b.start).find((n) => n.start >= event.start - 1e-3 && n.start < event.end - 1e-3);
+    if (!first) { withoutOnset += 1; continue; }
+    judged += 1;
+    if (pcOf(first.pitch) !== event.chord.bass) {
+      violations.push({ code: "slash_bass_ignored", trackId: part.request.taskId, detail: `${part.request.taskId} ${event.symbol} @${event.start.toFixed(2)}s: bass opens on pc ${pcOf(first.pitch)} (pitch ${first.pitch}), slash asks ${event.chord.bass}` });
+    }
+  }
+  return { violations, slashEventsJudged: judged, slashEventsWithoutOnset: withoutOnset };
+}
+
+export type ParallelReport = { parallels: number; pairsJudged: number; examples: string[] };
+
+/**
+ * Parallel perfect fifths / octaves between the bass part and the top voice
+ * of a chordal part, judged at consecutive chord onsets where both parts
+ * strike a note and both voices move.
+ */
+export function parallelPerfects(bass: ComposedPart, upper: ComposedPart): ParallelReport {
+  const examples: string[] = [];
+  let parallels = 0;
+  let pairsJudged = 0;
+  const events = upper.events;
+  const voiceAt = (part: ComposedPart, event: HarmonyChordEvent, pick: "low" | "high"): number | null => {
+    const onset = notesAtOnset(part, event);
+    if (!onset.length) return null;
+    return pick === "low" ? Math.min(...onset.map((n) => n.pitch)) : Math.max(...onset.map((n) => n.pitch));
+  };
+  for (let i = 1; i < events.length; i += 1) {
+    const b1 = voiceAt(bass, events[i - 1], "low");
+    const b2 = voiceAt(bass, events[i], "low");
+    const t1 = voiceAt(upper, events[i - 1], "high");
+    const t2 = voiceAt(upper, events[i], "high");
+    if (b1 === null || b2 === null || t1 === null || t2 === null) continue;
+    pairsJudged += 1;
+    if (b1 === b2 || t1 === t2) continue;
+    const i1 = pcOf(t1 - b1);
+    const i2 = pcOf(t2 - b2);
+    if (i1 === i2 && (i1 === 0 || i1 === 7)) {
+      parallels += 1;
+      if (examples.length < 4) examples.push(`${upper.request.taskId}: ${events[i - 1].symbol}->${events[i].symbol} bass ${b1}->${b2}, top ${t1}->${t2} (parallel ${i1 === 0 ? "octaves" : "fifths"})`);
+    }
+  }
+  return { parallels, pairsJudged, examples };
+}
+
+export type ComposedTranspositionReport = {
+  violations: Violation[];
+  matched: number;
+  exact: number;
+  octaveFolds: number;
+  wrongPitchClass: number;
+  lost: number;
+  gained: number;
+  perTask: Record<string, { exact: number; folds: number; wrong: number; lost: number; gained: number }>;
+};
+
+/**
+ * The composer's own parts for T_k(song) against T_k(the composer's parts for
+ * song), note id by note id (ids are position-based). With ranges respected
+ * by construction there is no reason for a fold, so every matched pitched
+ * note must sit exactly k semitones away; folds are counted and reported.
+ */
+export function composedTransposition(model: SongModelData, k: number, options: { tasks?: readonly PartTask[] } = {}): ComposedTranspositionReport {
+  return compareComposedSongs(composeSong(model, options), composeSong(transposeSongModel(model, k), options), k);
+}
+
+/** `b` must be `a` transposed by `k`, task by task and note id by note id. */
+export function compareComposedSongs(a: Pick<ComposedSong, "parts">, b: Pick<ComposedSong, "parts">, k: number): ComposedTranspositionReport {
+  const violations: Violation[] = [];
+  const perTask: ComposedTranspositionReport["perTask"] = {};
+  let matched = 0, exact = 0, folds = 0, wrong = 0, lost = 0, gained = 0;
+  for (const part of a.parts) {
+    if (part.request.task === "DRUMS" || part.request.task === "PERCUSSION") continue;
+    const twin = b.parts.find((p) => p.request.taskId === part.request.taskId);
+    const row = { exact: 0, folds: 0, wrong: 0, lost: 0, gained: 0 };
+    perTask[part.request.taskId] = row;
+    if (!twin) { violations.push({ code: "task_missing", trackId: part.request.taskId, detail: `${part.request.taskId} not composed after transposition` }); continue; }
+    const byId = new Map(twin.notes.map((n) => [n.id, n]));
+    for (const note of part.notes) {
+      const other = byId.get(note.id);
+      if (!other) { row.lost += 1; continue; }
+      byId.delete(note.id);
+      matched += 1;
+      const delta = other.pitch - note.pitch;
+      if (delta === k) { row.exact += 1; exact += 1; }
+      else if (pcOf(delta - k) === 0) { row.folds += 1; folds += 1; }
+      else { row.wrong += 1; wrong += 1; }
+    }
+    row.gained = byId.size;
+    lost += row.lost;
+    gained += row.gained;
+    if (row.wrong) violations.push({ code: "voicing_not_transposed", trackId: part.request.taskId, count: row.wrong, detail: `${part.request.taskId} (${part.request.task}): ${row.wrong} note(s) whose pitch class does not follow +${k}` });
+    if (row.folds) violations.push({ code: "voicing_octave_folded", trackId: part.request.taskId, count: row.folds, detail: `${part.request.taskId} (${part.request.task}): ${row.folds} note(s) an octave off +${k}` });
+    if (row.lost || row.gained) violations.push({ code: "voicing_note_set_changed", trackId: part.request.taskId, count: row.lost + row.gained, detail: `${part.request.taskId} (${part.request.task}): ${row.lost} note(s) lost, ${row.gained} gained` });
+  }
+  return { violations, matched, exact, octaveFolds: folds, wrongPitchClass: wrong, lost, gained, perTask };
+}
+
+// ---------------------------------------------------------------------------
+// Groove (B-04): the shipped kit, bass and comping against the section's plan
+// ---------------------------------------------------------------------------
+
+const KICK_PITCHES = new Set([35, 36]);
+const HAT_PITCHES = new Set([42, 44, 46, 51]);
+/** One hand on a hi-hat (groovePlan.ts HAND_LIMIT); programmed kits are allowed 9. */
+export const HAT_HAND_LIMIT = 7.5;
+export const HAT_PROGRAMMED_LIMIT = 9;
+
+/** The groove plan the composer derived per request, rebuilt whole from the run's plan layers (`deriveGroovePlan` agrees with `grooveSectionForRequest`, B-04). */
+export function groovePlanOf(result: OrchestrationResult, model: SongModelData): GroovePlan | null {
+  const { globalPlan, sectionPlan, transitionPlan } = result.plan;
+  if (!globalPlan || !sectionPlan || !transitionPlan) return null;
+  return deriveGroovePlan(model, { globalPlan, sectionPlan, transitions: transitionPlan.transitions }, { tempoBpm: result.timing.tempoBpm, meter: result.timing.meter, now: NOW });
+}
+
+export type LockSectionRow = { sectionName: string; relation: string; kicks: number; matched: number; share: number | null };
+
+/**
+ * On sections whose plan locks the bass to the kick, every accented kick
+ * onset has a bass onset within the performance engine's jitter allowance.
+ */
+export function kickBassLock(candidate: OrchestratedCandidate, result: OrchestrationResult, model: SongModelData, toleranceSeconds = 0.06): { violations: Violation[]; rows: LockSectionRow[] } {
+  const plan = groovePlanOf(result, model);
+  const g = geometryOf(model);
+  const drums = candidate.trackModels.find(isDrumTrack);
+  const bass = candidate.trackModels.find((t) => familyOfTrack(t) === "bass");
+  const rows: LockSectionRow[] = [];
+  const violations: Violation[] = [];
+  if (!plan || !drums || !bass) return { violations, rows };
+  const bassOnsets = bass.notes.map((n) => n.start).sort((a, b) => a - b);
+  for (const section of plan.sections) {
+    if (section.kickBass.value !== "lock") continue;
+    const kicks = notesInBars(drums, g, section.startBar, section.endBar).filter((n) => KICK_PITCHES.has(n.pitch) && isAccentHit(n));
+    if (!notesInBars(bass, g, section.startBar, section.endBar).length) continue;
+    const matched = kicks.filter((k) => bassOnsets.some((b) => Math.abs(b - k.start) <= toleranceSeconds)).length;
+    const share = kicks.length ? matched / kicks.length : null;
+    rows.push({ sectionName: section.sectionName, relation: section.kickBass.value, kicks: kicks.length, matched, share: share === null ? null : Number(share.toFixed(3)) });
+    if (kicks.length >= 4 && share !== null && share < 0.9) {
+      violations.push({ code: "kick_bass_not_locked", sectionName: section.sectionName, detail: `${section.sectionName}: plan says lock (${section.kickBass.reason}); ${matched}/${kicks.length} kicks have a bass onset within ${toleranceSeconds * 1000} ms` });
+    }
+  }
+  return { violations, rows };
+}
+
+export type AnticipationRow = { sectionName: string; planned: number; kitPushes: number; compingAtPush: number; bassAtPush: number };
+
+/**
+ * Where the plan pushes an up-beat (the anticipation set), the kit's push and
+ * the comping / bass onsets coincide. Measured on the kit's `ka` pushes
+ * (the kit realises the plan's slots), asking whether the comping and the
+ * bass strike with it.
+ */
+export function anticipationsShared(candidate: OrchestratedCandidate, result: OrchestrationResult, model: SongModelData, toleranceSeconds = 0.06): { violations: Violation[]; rows: AnticipationRow[] } {
+  const plan = groovePlanOf(result, model);
+  const g = geometryOf(model);
+  const drums = candidate.trackModels.find(isDrumTrack);
+  const rows: AnticipationRow[] = [];
+  const violations: Violation[] = [];
+  if (!plan || !drums) return { violations, rows };
+  const comping = candidate.trackModels.filter((t) => ["keys", "piano", "guitar"].includes(familyOfTrack(t)));
+  const bass = candidate.trackModels.find((t) => familyOfTrack(t) === "bass");
+  for (const section of plan.sections) {
+    const anticipation = section.anticipations.value;
+    if (!anticipation.units.length || anticipation.when === "never") continue;
+    const pushes = notesInBars(drums, g, section.startBar, section.endBar).filter((n) => /-ka\d+-/.test(n.id) && KICK_PITCHES.has(n.pitch));
+    if (!pushes.length) continue;
+    const compingNotes = comping.flatMap((t) => notesInBars(t, g, section.startBar, section.endBar));
+    const bassNotes = bass ? notesInBars(bass, g, section.startBar, section.endBar) : [];
+    const at = (notes: MusicalNote[], time: number) => notes.some((n) => Math.abs(n.start - time) <= toleranceSeconds);
+    const compingAtPush = compingNotes.length ? pushes.filter((p) => at(compingNotes, p.start)).length : -1;
+    const bassAtPush = bassNotes.length ? pushes.filter((p) => at(bassNotes, p.start)).length : -1;
+    rows.push({ sectionName: section.sectionName, planned: anticipation.units.length, kitPushes: pushes.length, compingAtPush, bassAtPush });
+    if (compingAtPush >= 0 && compingAtPush / pushes.length < 0.8) {
+      violations.push({ code: "comping_misses_anticipation", sectionName: section.sectionName, detail: `${section.sectionName}: the kit pushes ${pushes.length} up-beat(s) (${section.anticipations.reason}); the comping strikes with ${compingAtPush}` });
+    }
+    if (bassAtPush >= 0 && bassAtPush / pushes.length < 0.8) {
+      violations.push({ code: "bass_misses_anticipation", sectionName: section.sectionName, detail: `${section.sectionName}: the kit pushes ${pushes.length} up-beat(s); the bass strikes with ${bassAtPush}` });
+    }
+  }
+  return { violations, rows };
+}
+
+/** Hat / ride strikes per second never exceed the tempo ceiling the plan documents. */
+export function hatCeiling(candidate: OrchestratedCandidate, result: OrchestrationResult, model: SongModelData): { violations: Violation[]; maxStrikesPerSecond: number; ceiling: number; barsJudged: number } {
+  const g = geometryOf(model);
+  const drums = candidate.trackModels.find(isDrumTrack);
+  const style = result.plan.globalPlan?.style ?? "unknown";
+  const family = styleFamilyOf(style, result.plan.globalPlan?.productionAesthetic ?? null);
+  const ceiling = family === "dance" || family === "electronic" ? HAT_PROGRAMMED_LIMIT : HAT_HAND_LIMIT;
+  const violations: Violation[] = [];
+  let max = 0;
+  let barsJudged = 0;
+  if (!drums) return { violations, maxStrikesPerSecond: 0, ceiling, barsJudged };
+  const perBar = new Map<number, Set<number>>();
+  for (const note of drums.notes) {
+    if (!HAT_PITCHES.has(note.pitch)) continue;
+    const bar = g.barOf(note.start);
+    const set = perBar.get(bar) ?? new Set<number>();
+    set.add(Math.round(note.start * 1000));
+    perBar.set(bar, set);
+  }
+  for (const [bar, onsets] of perBar) {
+    const { start, end } = g.barBounds(bar);
+    const seconds = Math.max(1e-3, end - start);
+    const rate = onsets.size / seconds;
+    barsJudged += 1;
+    max = Math.max(max, rate);
+    if (rate > ceiling + 0.01) violations.push({ code: "hat_rate_over_ceiling", detail: `bar ${bar}: ${onsets.size} hat strikes in ${seconds.toFixed(2)} s = ${rate.toFixed(2)}/s > ${ceiling} (${family})` });
+  }
+  return { violations, maxStrikesPerSecond: Number(max.toFixed(2)), ceiling, barsJudged };
+}
+
+// ---------------------------------------------------------------------------
+// Motif (B-10): answers, ledger truth, recall
+// ---------------------------------------------------------------------------
+
+export const SUNG_FUNCTIONS = new Set(["verse", "prechorus", "chorus", "bridge"]);
+
+/** The ledger the orchestrator wiring would thread: the plan's sections with their tension roles (brainB10Evidence.motifLedgerForPlan). */
+export function ledgerForPlan(model: SongModelData, layers: ComposedSong["layers"], tempoBpm: number, meter: string): MotifLedger {
+  // The *notated* beat, as `barTiming` and the melodic engine use it. Deriving
+  // it as 60/bpm halves every span in x/8 and made the ledger's `spanBeats`
+  // read as twice the emitted cell's - a checker artefact, not the brain's.
+  const { beatSeconds, barSeconds } = barTiming(tempoBpm, meter);
+  const seconds = (bar: number) => (bar - 1) * barSeconds;
+  const arc = layers.globalPlan.arc;
+  const sections = arc?.sections?.length
+    ? arc.sections.map((s) => ({ sectionName: s.sectionName, startBar: s.startBar, endBar: s.endBar, function: s.function, tensionRole: s.tensionRole.value, startSeconds: seconds(s.startBar), endSeconds: seconds(s.endBar + 1) }))
+    : layers.globalPlan.sectionTargets.map((t) => ({ sectionName: t.sectionName, startBar: t.startBar, endBar: t.endBar, function: t.role, tensionRole: undefined, startSeconds: seconds(t.startBar), endSeconds: seconds(t.endBar + 1) }));
+  return buildMotifLedger({ songModel: model, sections, beatSeconds, barStart: seconds });
+}
+
+export type AnswerPart = { request: PartGenerationRequest; notes: MusicalNote[]; sectionName: string; instrument: string; occurrenceIndex: number; sectionFunction: string };
+
+/**
+ * The B-10 harness shape: per sung section a strings COUNTER_MELODY and a
+ * brass CALL_RESPONSE task through the real request builder, composed with
+ * one ledger for the song (`thread: true`) or a fresh local one per part.
+ */
+export function composeMelodicParts(model: SongModelData, options: { thread: boolean }): { parts: AnswerPart[]; ledger: MotifLedger | null; tempoBpm: number; meter: string; beatSeconds: number } {
+  const tempoBpm = model.tempoMap?.[0]?.bpm ?? 120;
+  const meter = model.meterMap?.[0]?.meter ?? "4/4";
+  const { layers } = planPartComposition(model, { now: NOW });
+  const ledger = options.thread ? ledgerForPlan(model, layers, tempoBpm, meter) : null;
+  const parts: AnswerPart[] = [];
+  const requestLayers = { globalPlan: layers.globalPlan, sectionPlan: layers.sectionPlan, budgetWindows: layers.budgetWindows, transitions: layers.transitions };
+  for (const section of layers.sectionPlan.sections) {
+    if (!SUNG_FUNCTIONS.has(section.function)) continue;
+    for (const [instrument, task, role] of [["strings", "COUNTER_MELODY", "COUNTER_MELODY"], ["brass", "CALL_RESPONSE", "CALL_RESPONSE"]] as const) {
+      const taskId = `b12b-${section.sectionName}-${instrument}-${task}`.replace(/\s+/g, "_");
+      const target = { id: taskId, task, sectionName: section.sectionName, instrument, role, startBar: section.startBar, endBar: section.endBar, seed: 1000 + section.startBar, dependsOn: [] as string[] };
+      const request = buildPartGenerationRequest(model, target, requestLayers, []);
+      const notes = composeReferencePart(ledger ? { ...request, motifLedger: ledger } : request, { tempoBpm, meter });
+      parts.push({ request, notes, sectionName: section.sectionName, instrument, occurrenceIndex: request.formMemory?.occurrenceIndex ?? 0, sectionFunction: section.function });
+    }
+  }
+  return { parts, ledger, tempoBpm, meter, beatSeconds: barTiming(tempoBpm, meter).beatSeconds };
+}
+
+/** Sung notes the engine must respect: melody evidence at confidence >= 0.6. */
+export const sungNotes = (model: SongModelData) => (model.melody ?? []).filter((n) => (n.confidence ?? 0) >= 0.6);
+
+/** An answer (`intention: response`) never sounds over a sung note. */
+export function answersOverVocal(part: AnswerPart, model: SongModelData): Violation[] {
+  const sung = sungNotes(model);
+  const answers = part.notes.filter((n) => n.motif?.intention === "response");
+  const overlapping = answers.filter((n) => sung.some((m) => n.start < m.end - 1e-6 && n.start + n.duration > m.start + 1e-6));
+  return overlapping.length ? [{ code: "answer_over_vocal", trackId: part.request.taskId, count: overlapping.length, detail: `${part.request.taskId}: ${overlapping.length} of ${answers.length} answer note(s) sound over a sung note (first at ${overlapping[0].start.toFixed(2)}s)` }] : [];
+}
+
+export type MotifLabelReport = { violations: Violation[]; groupsChecked: number; occurrences: number; notesNamed: number; notesMissing: number; cellMatches: number };
+
+/**
+ * The ledger's own claim, judged against the notes the ledger itself names.
+ *
+ * The occurrence record - not a regrouping of the notes by id prefix - is the
+ * unit: it names its `noteIds`, its `cell` and its `transformation`. Three
+ * things must hold, in this order, because the later ones are meaningless if
+ * an earlier one fails:
+ *
+ *   1. every note the occurrence names is a note that shipped;
+ *   2. the recorded `cell` is the cell of exactly those notes;
+ *   3. the recorded transformation is the one `classifyTransformation` reads
+ *      off that cell against the entry's own cell, in the same context the
+ *      engine had (`harmonic_adaptation` is the honest label when the harmony
+ *      bent the cell beyond recognition).
+ *
+ * Every motif-tagged note must also belong to an occurrence: a label carried
+ * by notes the memory never recorded is a label nothing can check.
+ */
+export function motifLabelsTruthful(notes: readonly MusicalNote[], ledger: MotifLedger, beatSeconds: number, label: string): MotifLabelReport {
+  const violations: Violation[] = [];
+  const byId = new Map<string, MusicalNote>();
+  for (const n of notes) byId.set(n.id, n);
+  const named = new Set<string>();
+  let checked = 0;
+  let occurrences = 0;
+  let notesNamed = 0;
+  let notesMissing = 0;
+  let cellMatches = 0;
+  for (const occurrence of ledger.data.occurrences) {
+    const ids = occurrence.noteIds ?? [];
+    if (!ids.length || !ids.some((id) => byId.has(id))) continue;
+    occurrences += 1;
+    notesNamed += ids.length;
+    const group: MusicalNote[] = [];
+    const missing: string[] = [];
+    for (const id of ids) {
+      const note = byId.get(id);
+      if (note) { group.push(note); named.add(id); } else missing.push(id);
+    }
+    if (missing.length) {
+      notesMissing += missing.length;
+      violations.push({ code: "ledger_names_a_note_that_never_shipped", detail: `${label}: occurrence ${occurrence.index} of ${occurrence.motifId} names ${missing.length} of ${ids.length} note(s) that are not in the part (e.g. ${missing[0]})` });
+    }
+    const entry = ledger.entry(occurrence.motifId);
+    if (!entry) { violations.push({ code: "motif_not_in_ledger", detail: `${label}: occurrence ${occurrence.index} cites motif ${occurrence.motifId} with no ledger entry` }); continue; }
+    const emitted = cellOf(group.map((n) => ({ start: n.start, end: n.start + n.duration, pitch: n.pitch })), beatSeconds);
+    if (!emitted) continue;
+    if (stableStringify(emitted) === stableStringify(occurrence.cell)) cellMatches += 1;
+    else violations.push({ code: "ledger_cell_is_not_the_notes", detail: `${label}: occurrence ${occurrence.index} of ${occurrence.motifId} recorded ${stableStringify(occurrence.cell)} for notes whose cell is ${stableStringify(emitted)}` });
+    checked += 1;
+    const detected = classifyTransformation(entry.cell, emitted, {
+      transposition: occurrence.transposition,
+      sameInstrument: entry.origin.kind === "instrument_statement" ? entry.origin.instrument === occurrence.instrument : undefined,
+    });
+    const claimed = occurrence.transformation;
+    const ok = detected === null
+      ? claimed === "harmonic_adaptation"
+      : claimed === detected || (detected === "transposition" && ["repetition", "orchestral_handoff", "reharmonisation"].includes(claimed));
+    if (!ok) violations.push({ code: "motif_label_untrue", detail: `${label}: occurrence ${occurrence.index} of ${occurrence.motifId} labelled ${claimed}, its own notes read as ${detected ?? "nothing (not the cell)"}` });
+    for (const note of group) {
+      if (note.motif && note.motif.transformation !== claimed) {
+        violations.push({ code: "motif_label_mixed", detail: `${label}: note ${note.id} carries ${note.motif.transformation} while its occurrence records ${claimed}` });
+        break;
+      }
+    }
+  }
+  const orphans = notes.filter((n) => n.motif && !named.has(n.id));
+  if (orphans.length) violations.push({ code: "motif_note_in_no_occurrence", count: orphans.length, detail: `${label}: ${orphans.length} motif-tagged note(s) belong to no ledger occurrence (e.g. ${orphans[0].id} labelled ${orphans[0].motif!.transformation})` });
+  return { violations, groupsChecked: checked, occurrences, notesNamed, notesMissing, cellMatches };
+}
+
+export type RecallRow = { sectionName: string; instrument: string; occurrenceIndex: number; statements: number; recalls: number; earlierStatements: number };
+
+/**
+ * A later statement of a section function develops what the earlier one
+ * said: when the same instrument stated something in an earlier occurrence,
+ * at least one of its statements in the later occurrence recalls it.
+ */
+export function recallAcrossRepeats(parts: AnswerPart[], ledger: MotifLedger): { violations: Violation[]; rows: RecallRow[] } {
+  const violations: Violation[] = [];
+  const rows: RecallRow[] = [];
+  const occurrences = ledger.data.occurrences;
+  for (const part of parts) {
+    if (part.occurrenceIndex <= 0) continue;
+    const mine = occurrences.filter((o) => o.sectionName === part.sectionName && o.instrument === part.instrument);
+    if (!mine.length) continue;
+    const earlier = occurrences.filter((o) => o.instrument === part.instrument && o.sectionFunction === part.sectionFunction && (o.occurrenceIndex ?? 0) < part.occurrenceIndex);
+    if (!earlier.length) continue;
+    const recalls = mine.filter((o) => o.recallOf !== null).length;
+    rows.push({ sectionName: part.sectionName, instrument: part.instrument, occurrenceIndex: part.occurrenceIndex, statements: mine.length, recalls, earlierStatements: earlier.length });
+    if (!recalls) violations.push({ code: "repeat_without_recall", sectionName: part.sectionName, detail: `${part.sectionName} (${part.sectionFunction} #${part.occurrenceIndex + 1}) ${part.instrument}: ${mine.length} statement(s), none recalls the ${earlier.length} earlier statement(s) of this function` });
+  }
+  return { violations, rows };
+}
+
+// ---------------------------------------------------------------------------
+// Provenance (B-11): every shipped note group is accounted for
+// ---------------------------------------------------------------------------
+
+export function provenanceOf(candidate: OrchestratedCandidate, result: OrchestrationResult): CandidateProvenance {
+  const beats = Number(result.timing.meter.split("/")[0]) || 4;
+  return buildCandidateProvenance({
+    candidateId: candidate.candidateId, strategy: candidate.strategy, seed: candidate.seed, plan: candidate.plan,
+    trackModels: candidate.trackModels, composer: result.composer, barSeconds: (60 / Math.max(1, result.timing.tempoBpm)) * beats,
+    composerRegistry: candidate.composerDecisions ?? null, repairPasses: candidate.repair?.passes ?? [],
+    playabilityRepairs: candidate.playabilityRepairs, performance: candidate.performance ?? [], contextPasses: result.contextPasses ?? [],
+  });
+}
+
+export type ProvenanceReport = { violations: Violation[]; notes: number; decisions: number; ranges: number; notRecordedLayers: string[] };
+
+export function checkProvenance(candidate: OrchestratedCandidate, result: OrchestrationResult, provenance = provenanceOf(candidate, result)): ProvenanceReport {
+  const violations: Violation[] = [];
+  const ids = new Set(provenance.decisions.map((d) => d.id));
+  const beats = Number(result.timing.meter.split("/")[0]) || 4;
+  const barSeconds = (60 / Math.max(1, result.timing.tempoBpm)) * beats;
+  let notes = 0;
+  let ranges = 0;
+  const notRecorded = new Set<string>();
+  for (const d of provenance.decisions) {
+    for (const ref of d.refs ?? []) if (!ids.has(ref)) violations.push({ code: "dangling_ref", detail: `${d.id} refs ${ref}, which is not a decision` });
+  }
+  for (const track of candidate.trackModels) {
+    const own = provenance.byTrack[track.id];
+    if (!own) { violations.push({ code: "track_without_provenance", trackId: track.id, detail: `${track.id} has no provenance` }); continue; }
+    ranges += own.ranges.length;
+    for (const layer of own.notRecorded ?? []) notRecorded.add(layer.layer);
+    for (const range of own.ranges) for (const id of range.decisionIds) if (!ids.has(id)) violations.push({ code: "dangling_decision_id", trackId: track.id, detail: `${track.id} bars ${range.startBar}-${range.endBar} cite ${id}, which is not a decision` });
+    let uncovered = 0;
+    let example = "";
+    for (const note of track.notes) {
+      notes += 1;
+      if (note.decisionId && !ids.has(note.decisionId)) violations.push({ code: "note_cites_unknown_decision", trackId: track.id, detail: `${track.id}/${note.id} cites ${note.decisionId}` });
+      const bar = barOfSeconds(note.start, barSeconds);
+      const covered = (note.decisionId && ids.has(note.decisionId)) || own.ranges.some((r) => bar >= r.startBar && bar <= r.endBar);
+      if (!covered) { uncovered += 1; if (!example) example = `${note.id} @bar ${bar}`; }
+    }
+    if (uncovered) violations.push({ code: "note_without_decision", trackId: track.id, count: uncovered, detail: `${track.id}: ${uncovered} note(s) in no decision range (${example})` });
+    // A layer that composed nothing traceable must be named, not silently absent.
+    const layersHere = new Set<string>();
+    for (const range of own.ranges) for (const id of range.decisionIds) layersHere.add(id.split(":")[0]);
+    for (const layer of ["harmony", "groove", "register"]) {
+      if (!layersHere.has(layer) && !(own.notRecorded ?? []).some((n) => n.layer === layer)) violations.push({ code: "layer_silently_missing", trackId: track.id, detail: `${track.id}: no ${layer} decision and no notRecorded entry for it` });
+    }
+  }
+  return { violations, notes, decisions: provenance.decisions.length, ranges, notRecordedLayers: [...notRecorded].sort() };
+}
+
+// ---------------------------------------------------------------------------
+// Selection integrity (B-00 / B-05): the gate, the reason, the score
+// ---------------------------------------------------------------------------
+
+export type SelectionReport = { violations: Violation[]; recomputed: number; nothingSelectedReasons: string[] };
+
+/** The kind of every hard-rule reason on the rejected candidates, without ids or numbers - so causes can be grouped. */
+export function rejectionKinds(result: OrchestrationResult): string[] {
+  const kinds = new Set<string>();
+  for (const rejected of result.selection.rejected) {
+    for (const reason of rejected.reasons) {
+      const head = reason.split(":")[0].trim();
+      const body = reason.slice(head.length + 1).trim();
+      kinds.add(head === "critic" ? `critic: ${body.replace(/\d+(\.\d+)?/g, "N").replace(/"[^"]*"/g, '"S"').slice(0, 90)}` : head);
+    }
+  }
+  return [...kinds].sort();
+}
+
+export function checkSelectionIntegrity(result: OrchestrationResult, model: SongModelData, options: { recompute?: boolean } = {}): SelectionReport {
+  const violations: Violation[] = [];
+  let recomputed = 0;
+  const infeasible = result.candidates.filter((c) => !c.hardRule.feasible).map((c) => c.candidateId);
+  if (result.selected) {
+    const winner = result.candidates.find((c) => c.candidateId === result.selected!.candidateId);
+    if (!winner) violations.push({ code: "selected_unknown_candidate", detail: `${result.selected.candidateId} is not a candidate` });
+    else if (!winner.hardRule.feasible) violations.push({ code: "selected_infeasible", detail: `${winner.candidateId} was selected with hard-rule reasons: ${winner.hardRule.reasons.slice(0, 2).join(" | ")}` });
+    if (!result.selection.eligible.includes(result.selected.candidateId)) violations.push({ code: "selected_not_eligible", detail: `${result.selected.candidateId} is not in the eligible list` });
+    if (!result.selected.reason.trim()) violations.push({ code: "selection_without_reason", detail: "selected but no reason" });
+  } else {
+    if (!result.selection.reason.trim()) violations.push({ code: "nothing_selected_no_reason", detail: `${result.candidates.length} candidates, nothing selected, no reason` });
+    const feasible = result.candidates.filter((c) => c.hardRule.feasible);
+    if (feasible.length) violations.push({ code: "feasible_candidate_unselected", detail: `${feasible.map((c) => c.candidateId).join(",")} pass the gate but nothing was selected` });
+  }
+  const rejectedIds = result.selection.rejected.map((r) => r.candidateId).sort();
+  if (stableStringify(rejectedIds) !== stableStringify([...infeasible].sort())) violations.push({ code: "rejected_list_mismatch", detail: `rejected ${rejectedIds.join(",")} vs infeasible ${infeasible.join(",")}` });
+  for (const rejected of result.selection.rejected) if (!rejected.reasons.length) violations.push({ code: "rejected_without_reason", detail: rejected.candidateId });
+  if (options.recompute !== false) {
+    for (const candidate of result.candidates) {
+      const again = critiqueArrangement({ songModel: model, plan: candidate.plan, trackModels: candidate.trackModels });
+      recomputed += 1;
+      if (again.overallScore !== candidate.critique.overallScore) violations.push({ code: "score_not_reproducible", detail: `${candidate.candidateId}: shipped critique ${candidate.critique.overallScore}, recomputed on the shipped notes ${again.overallScore}` });
+      if (again.feasible !== candidate.critique.feasible) violations.push({ code: "feasibility_not_reproducible", detail: `${candidate.candidateId}: critique.feasible ${candidate.critique.feasible} vs recomputed ${again.feasible}` });
+    }
+  }
+  return { violations, recomputed, nothingSelectedReasons: result.selected ? [] : rejectionKinds(result) };
 }
