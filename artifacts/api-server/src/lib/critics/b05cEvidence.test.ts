@@ -19,25 +19,78 @@ test("the B-05c evidence is built from the same runs the tests assert on, and is
   const open = evidence.section4Table.filter((r) => r.status === "open");
   assert.ok(open.length >= 2, "the rows this stream does not close are named, not quietly dropped");
 
-  // The isolation: one control moves the finding and the other does not.
+  // The isolation, re-anchored at the B-21 merge (B-25). The finding is closed
+  // in the writers, so what is asserted is the fix plus each control's
+  // demonstrated sensitivity on a constructed case - never a deleted control.
   const iso = evidence.grooveIsolation;
-  assert.equal(iso.reproduced.score, 0);
+  assert.ok(iso.reproduced.score! > 60, `groove on the owner's song: ${iso.reproduced.score} (B-05c 0, B-13 8.85)`);
+  assert.equal(iso.reproduced.offGridObservations, 0, "the observation the finding was made of is not raised at all");
+  assert.match(iso.reproduced.closedBy, /B-13/);
+  assert.match(iso.reproduced.closedBy, /B-21/);
+  // A null result is only a fix if the dimension still has sensitivity: the
+  // constructed case puts it straight back on its floor.
+  assert.equal(iso.reproducedOnAConstructedCase.score, 0);
+  assert.ok(iso.reproducedOnAConstructedCase.offGridObservations >= 20);
+
   const a = iso.controls.find((c) => c.id === "A_remove_performance_timing")!;
   const b = iso.controls.find((c) => c.id === "B_quantise_to_the_composer_grid")!;
-  assert.equal(a.moves, false, "the composed notes carry the finding: the performance stage is not the cause");
-  assert.equal(b.moves, true, "quantising to the composer's grid removes it");
-  assert.equal(iso.cause.named, "the composer, through the analysed chord onsets");
+  assert.equal(a.moves, "no_finding_to_move", "neither layer carries an off_grid finding any more");
+  assert.equal(b.moves, "no_finding_to_move", "and there is nothing on the bass for the grid control to remove");
+  assert.equal(a.onTheOwnersSong.offGridObservations, 0);
+  assert.equal(b.onTheOwnersSong.bassOffGridBeforeTheControl, 0);
+  // Control A still tells the layers apart: the same displacement, applied
+  // after composition and in the writing, is attributed the opposite way round.
+  const performed = a.sensitivityDemonstratedOn.displacedAfterComposition;
+  const written = a.sensitivityDemonstratedOn.displacedInTheWriting;
+  assert.ok(performed && written, "control A reports both constructed cases");
+  assert.equal(performed.total, written.total, "the same findings in both cases");
+  assert.ok(performed.perform > performed.compose, `${performed.perform}/${performed.total} to perform when only the shipped notes moved`);
+  assert.ok(written.compose > written.perform, `${written.compose}/${written.total} to compose when both layers moved`);
+  assert.equal(performed.worstComposedShare, 0, "the composed notes are exactly on the grid in the performance-stage case");
+  // Control B is still isolating: it removes the bass's findings and no others.
+  const isolating = b.sensitivityDemonstratedOn.bassOnlyToSixteenths;
+  assert.ok(isolating, "control B reports the bass-only isolation");
+  assert.ok(isolating.bassBefore >= 5 && isolating.bassAfter === 0, `bass ${isolating.bassBefore} -> ${isolating.bassAfter}`);
+  assert.ok(isolating.keysUnchanged && isolating.stringsUnchanged, "the parts it did not touch report what they reported before");
+  const sixteenths = b.sensitivityDemonstratedOn.allHarmonyToSixteenths;
+  const eighths = b.sensitivityDemonstratedOn.allHarmonyToEighths;
+  assert.ok(sixteenths && eighths, "control B reports both grids");
+  assert.ok(eighths.score! > sixteenths.score!, "on a grid and with the kit are still not the same claim");
+  assert.equal(sixteenths.offGrid, 0);
+  assert.ok(sixteenths.harmonyOffGrid >= 1);
+
+  assert.match(iso.cause.named, /closed/);
   assert.ok(iso.cause.ruledOut.length >= 3);
-  assert.ok(iso.cause.attributionAfterTheFix.compose > iso.cause.attributionAfterTheFix.perform);
+  assert.equal(iso.cause.attributionAfterTheFix.total, 0, "there is nothing left to attribute on the owner's song");
+  assert.ok(iso.cause.attributionOnTheConstructedCase.displacedInTheWriting.compose
+    > iso.cause.attributionOnTheConstructedCase.displacedInTheWriting.perform,
+    "and where there is, the attribution still names the layer that moved the notes");
+  assert.equal(iso.cause.whatIsLeft.length, 1, "one harmony_off_grid major on the strings, named rather than dropped");
 
   // The judge, before and after.
   const j = evidence.judgeOnTheOwnersSong;
-  assert.equal(j.after.releasable, false, "the owner's R-1b output is refused");
-  assert.ok(j.after.refusals.length >= 3);
+  assert.equal(j.after.releasable, false, "the owner's output is still refused - one blocking harmony finding on the bed the brief asks for");
+  assert.ok(j.after.refusals.length >= 1);
   assert.equal(j.after.topProblems.length, 3);
-  assert.ok(j.before.positions.emptyIntro === 1, "R-1b's finding reproduces: the empty two-bar intro led the v1 ordering");
-  assert.ok(j.after.positions.emptyIntro > j.after.positions.stringBed, "and no longer outranks the string bed");
-  assert.ok(j.after.positions.emptyIntro > j.after.positions.offGridHarmony, "…or the off-grid harmony");
+  // B-25: three of the four findings R-1b ranked here are closed in the
+  // writers, so their positions are `null` rather than a rank - and `null` is
+  // asserted, because a 0 would read as "first".
+  for (const key of ["emptyIntro", "stringBed", "offGridHarmony"] as const) {
+    assert.equal(j.after.positions[key], null, `${key} is not raised on the owner's song at all`);
+    assert.equal(j.before.positions[key], null, `${key}: the v1 ordering has nothing to rank either`);
+  }
+  assert.ok(j.after.closedInTheWriters.emptyIntro.includes("B-21"));
+  // The ordering R-1b P0-5 asked for is demonstrated where the findings exist.
+  const constructed = j.after.onTheConstructedCase;
+  assert.equal(constructed.built, true, "the constructed case builds from the anchor set's own transforms");
+  assert.equal(constructed.releasable, false);
+  for (const kind of ["off_grid", "single_voice_bed", "top_line_above_comfortable_ceiling", "planned_family_silent"]) {
+    assert.ok(constructed.refusalKinds.includes(kind), `${kind} refuses on the constructed case`);
+  }
+  const pos = constructed.positions;
+  assert.ok(pos.emptyIntro! > pos.stringBed!, `the empty intro (#${pos.emptyIntro}) does not outrank the string bed (#${pos.stringBed})`);
+  assert.ok(pos.emptyIntro! > pos.offGridHarmony!, `…or the off-grid harmony (#${pos.offGridHarmony})`);
+  assert.equal(pos.aboveTheIntroAllBlocking, true, "everything above the intro is blocking");
 
   // The ranking on the corpus.
   assert.equal(evidence.rankingOnTheCorpus.length, 4);

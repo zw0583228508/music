@@ -159,45 +159,45 @@
       "tracks": [
         {
           "id": "drums-groove",
-          "notes": 423
+          "notes": 363
         },
         {
           "id": "bass-bass",
-          "notes": 211
+          "notes": 214
         },
         {
           "id": "percussion-fill",
-          "notes": 199
+          "notes": 210
         },
         {
           "id": "keys-rhythmic_harmony",
-          "notes": 943
+          "notes": 1081
         },
         {
           "id": "strings-pad",
-          "notes": 91
+          "notes": 281
         }
       ],
       "composedTracks": [
         {
           "id": "drums-groove",
-          "notes": 189
+          "notes": 175
         },
         {
           "id": "bass-bass",
-          "notes": 223
+          "notes": 512
         },
         {
           "id": "percussion-fill",
-          "notes": 151
+          "notes": 84
         },
         {
           "id": "keys-rhythmic_harmony",
-          "notes": 854
+          "notes": 670
         },
         {
           "id": "strings-pad",
-          "notes": 202
+          "notes": 261
         }
       ],
       "note": "deliberately not in the clean set or the control set: it carries real defects the dimensions are supposed to flag, and 141 bars x every control is a different order of runtime"
@@ -212,8 +212,8 @@
         "density.single_voice_bed"
       ],
       "controlStatus": "gated",
-      "measuredOnTheOwnersSong": "6 sections, worst blocking; with the composed notes in view four of them are attributed to `perform` with composedMeanVoices 3-4 against a shipped 1.0",
-      "control": "strip_bed_to_top_voice (9/9) and, for the origin, the composed-notes control"
+      "measuredOnTheOwnersSong": "0 sections (B-05c measured >= 5, all blocking). Closed by B-13: `playabilityRepair` releases the earlier voices of a crowded onset instead of dropping them, and the bed ships 281 notes with no section below three voices. The control that found it keeps its sensitivity on a constructed case - `strip_bed_to_top_voice` on the owner's own beds raises it again in 11 sections, 7 of them attributed to `perform` with composedMeanVoices 3-8 against a shipped 1.0 (`dimensions/ownerAnchor.test.ts`)",
+      "control": "density gates on piano_one_note_per_bar + strip_bed_to_top_voice (strongest strip_bed_to_top_voice, 100 % of 9 items); for the origin, the composed-notes control"
     },
     {
       "observedDefect": "Strings at 89-92 in the climax; 79-84 elsewhere read as \"in range\"",
@@ -224,8 +224,8 @@
         "register.part_outside_comfortable_range"
       ],
       "controlStatus": "gated",
-      "measuredOnTheOwnersSong": "6 sections against the ceiling the part's own profile gives it in its role, plus 1 against the absolute band",
-      "control": "strings_up_two_octaves (9/9) + role_inversion@3 (9/9)"
+      "measuredOnTheOwnersSong": "0 sections against the ceiling the part's own profile gives it in its role, plus 0 against the absolute band (R-1b: 5 refusals and one `climax_all_treble`). Closed by B-21 D4: the writers take the window from `instrumentProfile.roleRegisterFor` - the critic's own table - instead of the family range widened by the section histogram, and `register` scores 100. Sensitivity demonstrated on `strings_up_two_octaves`, which puts the dimension on its floor with 8 `top_line_above_comfortable_ceiling` majors on the same bed",
+      "control": "register gates on octave_displacement@3 + role_inversion@3 + strings_up_two_octaves (strongest role_inversion@3, 100 % of 10 items)"
     },
     {
       "observedDefect": "Harmony parts 100-230 ms off the beat while the kit is on it",
@@ -236,8 +236,8 @@
         "groove.harmony_off_grid"
       ],
       "controlStatus": "gated",
-      "measuredOnTheOwnersSong": "23 off_grid and 14 harmony_off_grid observations; the origin is now decided by the composed-notes control and reads `compose` on 22 of 23",
-      "control": "onset_jitter@3 (29/31) + unlock_bass_from_kick (9/9)"
+      "measuredOnTheOwnersSong": "0 off_grid and 1 harmony_off_grid observations (B-05c measured >= 20 off_grid, B-13 12). Closed by B-13 and B-21 D2/D3/D5; every part's median deviation is 3-13 ms inside a 30 ms tolerance. What is left is one `harmony_off_grid` major: the strings state the harmony 53 ms from the kit in the Bridge, measured against the kit's own eighth grid. Both controls keep their sensitivity on a constructed case - see `grooveIsolation`",
+      "control": "groove gates on onset_jitter@3 + unlock_bass_from_kick (strongest unlock_bass_from_kick, 100 % of 9 items)"
     },
     {
       "observedDefect": "Arc flattened in performance (x0.6, first-section shape)",
@@ -247,8 +247,8 @@
         "performanceRealisation.dynamic_range_flat_per_section"
       ],
       "controlStatus": "gated",
-      "measuredOnTheOwnersSong": "16 findings; performanceRealisation 39.48 (was 97 in the review). What is still not caught is the *cause*: nothing here reads the first-section role assignment, because the critic sees notes and not the performance call.",
-      "control": "velocity_flatten_all (9/9) + strip_cc_and_quantise (9/9)"
+      "measuredOnTheOwnersSong": "0 findings; performanceRealisation 100 (was 97 in the review). What is still not caught is the *cause*: nothing here reads the first-section role assignment, because the critic sees notes and not the performance call.",
+      "control": "performanceRealisation gates on strip_cc_and_quantise + velocity_flatten_all (strongest strip_cc_and_quantise, 100 % of 9 items)"
     },
     {
       "observedDefect": "The chorus is thinner than the verse before it",
@@ -259,8 +259,8 @@
         "density.louder_section_thinner"
       ],
       "controlStatus": "gated",
-      "measuredOnTheOwnersSong": "0 arrivals smaller than their setup in two of onsets/voices/dynamics, 1 on onsets alone; the new kind refuses a candidate on its own",
-      "control": "arrival_thinned_and_softened (9/9)"
+      "measuredOnTheOwnersSong": "0 arrivals smaller than their setup in two of onsets/voices/dynamics, 0 on onsets alone; the new kind refuses a candidate on its own",
+      "control": "density gates on piano_one_note_per_bar + strip_bed_to_top_voice (strongest strip_bed_to_top_voice, 100 % of 9 items)"
     },
     {
       "observedDefect": "No LH / empty C3-C5 in the climax",
@@ -290,8 +290,8 @@
         "harmony.approach_tone_wrong_mode"
       ],
       "controlStatus": "gated",
-      "measuredOnTheOwnersSong": "Chorus: 2 approach tones, 0 of them the major third of a minor chord (Cm,D); Chorus 3: 2 approach tones, 1 of them the major third of a minor chord (Fm,Cm)",
-      "control": "chord_tone_to_non_chord_tone@3 (22/22) + parallel_perfect_motion (9/9) for the dimension; this kind has no transform of its own"
+      "measuredOnTheOwnersSong": "not raised on this output (the approach notes the review names are longer than the 0.75 s window or do not resolve by step within a beat)",
+      "control": "harmony gates on chord_tone_to_non_chord_tone@3 + cross_part_clash@3 + parallel_perfect_motion + pitch_shift_out_of_key@3 + random_pitch (strongest chord_tone_to_non_chord_tone@3, 100 % of 22 items); this kind has no transform of its own"
     },
     {
       "observedDefect": "Eight planned devices unrealised",
@@ -301,8 +301,8 @@
         "transitions.planned_device_unrealised"
       ],
       "controlStatus": "informing",
-      "measuredOnTheOwnersSong": "8 unrealised devices; the dimension is now `informing`, not `gated`, because its only passing transform is a prepared one",
-      "control": "erase_boundary_events+realise_boundaries (9/9, prepared: informing only)"
+      "measuredOnTheOwnersSong": "5 unrealised devices; the dimension is now `informing`, not `gated`, because its only passing transform is a prepared one",
+      "control": "transitions does not gate: 0 of 2 independent non-prepared transforms pass (erase_boundary_events+realise_boundaries is prepared: it writes the gesture it then erases) - its only passing transform is prepared, so it informs and never gates"
     },
     {
       "observedDefect": "Climax unprepared (keys alone -> tutti with no fill)",
@@ -312,9 +312,9 @@
         "emotionalArcAndTension.no_build_into_climax",
         "causality.climax_not_prepared"
       ],
-      "controlStatus": "gated",
-      "measuredOnTheOwnersSong": "1 emotionalArc no_build_into_climax and 1 causality climax_not_prepared findings on the owner's output",
-      "control": "flatten_arc (9/9) + swap_climax_with_quietest (9/9)"
+      "controlStatus": "informing",
+      "measuredOnTheOwnersSong": "1 emotionalArc no_build_into_climax and 0 causality climax_not_prepared findings on the owner's output",
+      "control": "emotionalArcAndTension gates on swap_climax_with_quietest (strongest swap_climax_with_quietest, 100 % of 9 items)"
     },
     {
       "observedDefect": "No ending: the last stab lands 1.06 s before the song does",
@@ -325,7 +325,7 @@
         "causality.ending_missing"
       ],
       "controlStatus": "informing",
-      "measuredOnTheOwnersSong": "ending_cut major: {\"lastNoteEndSeconds\":256.8822,\"longestFinalSectionNoteSeconds\":3.6761,\"pitchedPartsSoundingAtEnd\":0,\"silenceBeforeEndSeconds\":1.0584,\"songEndSeconds\":257.9406,\"tailToleranceSeconds\":0.5}",
+      "measuredOnTheOwnersSong": "not raised: a pitched part is still sounding within half a second of the song's end on this output",
       "control": "none of its own; the kind is exercised by its unit test"
     },
     {
@@ -337,8 +337,8 @@
         "orchestration.planned_family_silent"
       ],
       "controlStatus": "gated",
-      "measuredOnTheOwnersSong": "1 intro_empty (minor) and 6 planned_family_silent; the finding is still made and is no longer first — see `judgeOnTheOwnersSong`",
-      "control": "drums_only (9/9) + silence_planned_family (9/9)"
+      "measuredOnTheOwnersSong": "0 intro_empty and 0 planned_family_silent. Closed by B-21 D1: `composer/opening.ts` reads the arc's decided opening figure and states the tonic under it on the song's own first analysed chord, and the arrangement starts at 0.000 s instead of 3.795 s. R-1b P0-5's ordering - the bed and the off-grid harmony above the empty intro - is demonstrated on the constructed case in `judgeOnTheOwnersSong.after.onTheConstructedCase`",
+      "control": "orchestration gates on drums_only + silence_planned_family + tutti_everywhere (strongest drums_only, 100 % of 9 items)"
     },
     {
       "observedDefect": "Jazz arranged as disco; rock without a guitar; a kit in an orchestra",
@@ -347,7 +347,7 @@
       "caughtBy": [],
       "controlStatus": "informing",
       "measuredOnTheOwnersSong": "not applicable to the owner's song. On the corpus it is still open: no dimension in this set reads a style contract, and `idiomaticity` is now `demoted`-adjacent (`informing`, gated by one transform). B-05c does not close it; B-09's grammar has no critic.",
-      "control": "piano_wide_voicing (8/8)"
+      "control": "idiomaticity gates on piano_wide_voicing (strongest piano_wide_voicing, 100 % of 8 items)"
     },
     {
       "observedDefect": "Counter-line halved by density thinning",
@@ -358,217 +358,326 @@
       ],
       "controlStatus": "gated",
       "measuredOnTheOwnersSong": "the new kind reads the counter-line's *relation to the bed* and does not fire here; the thinning itself (10 notes -> 5) is still uncaught — it needs the composed notes on the melodic part, which B-05c wires but no dimension yet reads for this",
-      "control": "top_line_into_vocal_register (9/9) + top_line_erratic (9/9)"
+      "control": "melodyAndCounterline gates on top_line_erratic + top_line_into_vocal_register (strongest top_line_erratic, 100 % of 9 items)"
     }
   ],
   "grooveIsolation": {
     "finding": "R-1a P1-1: `groove = 0` on the owner's song, `off_grid` on the bass, `suspectedOrigin: perform`, and nobody could say why.",
     "reproduced": {
+      "score": 70.74,
+      "offGridObservations": 0,
+      "closedBy": "B-13 (chord events on the bar grid, median 140.8 ms -> 0.04 ms) and B-21 D2/D3/D5 (the arpeggio as a broken chord, the bass back on `groove.bassUnits`, `visibleChords` on the solver's quantised events)",
+      "note": "The finding no longer reproduces on the owner's song: 0 -> 8.85 (B-13) -> 70.74 (B-21), and `off_grid` is empty on every part and on both layers. Every part's median deviation is 3-13 ms inside a 30 ms tolerance, with an off-grid share of exactly 0 (B-05c measured shares of 0.55-0.73)."
+    },
+    "reproducedOnAConstructedCase": {
+      "what": "`displaceHarmonyOffGrid(shipped)` — every harmonic part's onsets +180 ms, the middle of the range R-1b measured on this song",
       "score": 0,
-      "offGridObservations": 23
+      "offGridObservations": 22,
+      "reading": "The dimension is back on its floor, so the controls below have something to isolate. Nothing about the dimension or its tolerance changed; the arrangement did."
     },
     "controls": [
       {
         "id": "A_remove_performance_timing",
         "what": "evaluate the notes the composer wrote, before `applyPerformance` and `playabilityRepair`",
-        "result": {
-          "score": 0,
-          "offGridObservations": 16,
+        "onTheOwnersSong": {
+          "score": 83,
+          "shippedScore": 70.74,
+          "offGridObservations": 0,
           "worstShareByPart": {
             "bass-bass": {
-              "shipped": 0.636,
-              "composed": 0.583
+              "shipped": 0,
+              "composed": 0
             },
             "keys-rhythmic_harmony": {
-              "shipped": 0.618,
-              "composed": 0.552
+              "shipped": 0,
+              "composed": 0
             },
             "strings-pad": {
-              "shipped": 0.733,
-              "composed": 0.583
+              "shipped": 0,
+              "composed": 0
             }
           }
         },
-        "moves": false,
-        "reading": "The composed notes score 0 as well and carry three quarters or more of the deviation. The performance stage is not the cause."
+        "moves": "no_finding_to_move",
+        "sensitivityDemonstratedOn": {
+          "case": "the same 180 ms displacement, applied to the shipped notes alone and to both layers — the two cases differ only in what the composer wrote",
+          "displacedAfterComposition": {
+            "total": 22,
+            "compose": 5,
+            "perform": 17,
+            "composedRecordedOnGrid": 17,
+            "worstComposedShare": 0
+          },
+          "displacedInTheWriting": {
+            "total": 22,
+            "compose": 18,
+            "perform": 4,
+            "composedRecordedOffGrid": 14,
+            "worstComposedShare": 1
+          },
+          "reading": "The same 22 findings, attributed the opposite way round: 17 of 22 to `perform` when only the shipped notes moved, 18 of 22 to `compose` when both layers did. The attribution is the control's evidence, not the size of the deviation."
+        },
+        "reading": "On the owner's song neither layer carries an `off_grid` finding, so the control has nothing to move — the answer is 'neither', not 'the composer'. Its ability to say which layer is demonstrated above, on a case where there is a layer to name."
       },
       {
         "id": "B_quantise_to_the_composer_grid",
         "what": "snap the shipped onsets to the composer's bar grid, nothing else changed",
-        "result": {
+        "onTheOwnersSong": {
           "bassOnlyToSixteenths": {
             "bassOffGridObservations": 0,
-            "score": 0
+            "score": 70.74
+          },
+          "bassOffGridBeforeTheControl": 0
+        },
+        "moves": "no_finding_to_move",
+        "sensitivityDemonstratedOn": {
+          "case": "the constructed off-grid arrangement",
+          "bassOnlyToSixteenths": {
+            "bassBefore": 5,
+            "bassAfter": 0,
+            "keysUnchanged": true,
+            "stringsUnchanged": true
           },
           "allHarmonyToSixteenths": {
-            "score": 5.5,
+            "score": 53.53,
             "offGrid": 0,
-            "harmonyOffGrid": 14
+            "harmonyOffGrid": 1
           },
           "allHarmonyToEighths": {
-            "score": 86.14,
+            "score": 69.34,
             "offGrid": 0,
             "harmonyOffGrid": 0
-          }
+          },
+          "reading": "Quantising only the bass removes all five of the bass's findings and leaves the keys' nine and the strings' eight exactly as they were: the control is isolating. Quantising all the harmony to sixteenths clears `off_grid` and leaves `harmony_off_grid` standing; only the kit's own eighths settle both. 'On a grid' and 'with the kit' are still not the same claim."
         },
-        "moves": true,
-        "reading": "Quantising the bass removes every `off_grid` on the bass and touches nothing else. Quantising all the harmony to the *kit's eighths* lifts the dimension from 0 to 86; quantising it to sixteenths only reaches 5.5, because a hit on a sixteenth line can still be half a beat from the drums."
+        "reading": "On the owner's song the control is a no-op — it takes nothing away, because the bass is already on the grid before it runs."
       }
     ],
     "cause": {
-      "named": "the composer, through the analysed chord onsets",
-      "statement": "The harmony writers take the Song Model's analysed chord onsets as the harmonic rhythm (`harmonyPlan/shared.ts chordEventsIn` passes them through unquantised) and the owner's stored chord onsets sit a median of 136 ms from the nearest beat; the kit writer uses the bar grid. The arrangement has two grids, and it has them before the performance stage runs.",
+      "named": "closed: both causes named on this anchor are fixed in the writers",
+      "statement": "B-05c named the cause as the harmony writers passing the Song Model's analysed chord onsets through unquantised (a median 136 ms from the beat) while the kit writer used the bar grid — two grids, before the performance stage ran. B-13 closed that (140.8 ms -> 0.04 ms). B-13 then named the residue as the groove plan's own eighth-note swing and anticipations under the bass and the bed; B-21's D2, D3 and D5 closed that. With the composed notes in view the dimension now raises 0 `off_grid` observations, where B-05c measured >= 20 and B-13 measured 12.",
       "ruledOut": [
-        "the performance engine — control A leaves the finding standing",
-        "the critic's tolerance — max(30 ms, 5 % of a beat) is unchanged by this stream; the deviations survive on the composed notes and no tolerance that still rejects `onset_jitter@3` would accept them",
-        "the critic being wrong — control B removes the finding exactly where the grid is fixed"
+        "the performance engine — control A finds no finding on either layer, and demonstrates on a constructed case that it can still tell the layers apart",
+        "the critic's tolerance — max(30 ms, 5 % of a beat) is unchanged by B-05c, B-13, B-21 or B-25, and every part's median deviation is 3-13 ms inside it",
+        "the critic being wrong — the same unmodified dimension goes straight back to 0 on the constructed case"
       ],
-      "whatChangedInTheCritic": "`off_grid` no longer guesses the layer from the size of the deviation. When `CriticInput.composedTrackModels` is present it reads the composed notes and says which layer put the onsets there; when it is not, it attributes to the composer at a lower confidence and names the control in the repair text.",
+      "whatChangedInTheCritic": "nothing in B-25. `off_grid` still reads `CriticInput.composedTrackModels` when it is present and says which layer put the onsets there; when it is not, it attributes to the composer at a lower confidence and names the control in the repair text.",
       "attributionAfterTheFix": {
-        "total": 23,
-        "compose": 22,
-        "perform": 1,
-        "note": "the one `perform` is real: the bass in Chorus 2 is on the grid in the composed notes and off it in the shipped ones"
-      }
+        "total": 0,
+        "compose": 0,
+        "perform": 0,
+        "note": "zero: there is nothing left on the owner's song for the attribution to attribute."
+      },
+      "attributionOnTheConstructedCase": {
+        "displacedAfterComposition": {
+          "total": 22,
+          "compose": 5,
+          "perform": 17
+        },
+        "displacedInTheWriting": {
+          "total": 22,
+          "compose": 18,
+          "perform": 4
+        }
+      },
+      "whatIsLeft": [
+        {
+          "dimension": "groove",
+          "kind": "harmony_off_grid",
+          "severity": "major",
+          "bars": "97-112",
+          "section": "Bridge",
+          "tracks": [
+            "strings-pad",
+            "drums-groove"
+          ],
+          "origin": "compose@0.395",
+          "confidence": 0.565,
+          "evidence": {
+            "family": "strings",
+            "gridStepsPerBeat": 2,
+            "kitMeanSignedDeviationMs": -3.6192,
+            "kitOffGridShare": 0,
+            "kitOnItsOwnGrid": true,
+            "meanSignedDeviationFromKitMs": -24.3677,
+            "medianAbsDeviationFromKitMs": 53.4494,
+            "onsets": 10,
+            "shareBeyondToleranceMs": 0.5,
+            "toleranceMs": 50
+          },
+          "repair": "quantise_harmony_to_the_kit_grid (part)"
+        }
+      ]
     },
-    "ownersOutputBefore": [
+    "ownersOutputNow": [
       {
         "dimension": "groove",
-        "kind": "off_grid",
-        "severity": "major",
-        "bars": "3-24",
-        "section": "Verse 1",
-        "tracks": [
-          "bass-bass"
-        ],
-        "origin": "compose@0.348",
-        "confidence": 0.689,
-        "evidence": {
-          "composedNotesAvailable": false,
-          "composedOffGridShare": -1,
-          "composedOnGrid": "unknown",
-          "meanSignedDeviationMs": -9.0636,
-          "medianAbsDeviationMs": 21.8554,
-          "offGridShare": 0.4286,
-          "onsets": 14,
-          "toleranceMs": 30
-        },
-        "repair": "requantise_part (part)"
-      },
-      {
-        "dimension": "groove",
-        "kind": "off_grid",
-        "severity": "blocking",
-        "bars": "3-24",
-        "section": "Verse 1",
-        "tracks": [
-          "keys-rhythmic_harmony"
-        ],
-        "origin": "compose@0.55",
-        "confidence": 0.95,
-        "evidence": {
-          "composedNotesAvailable": false,
-          "composedOffGridShare": -1,
-          "composedOnGrid": "unknown",
-          "meanSignedDeviationMs": 0.3344,
-          "medianAbsDeviationMs": 33.7789,
-          "offGridShare": 0.5565,
-          "onsets": 248,
-          "toleranceMs": 30
-        },
-        "repair": "requantise_part (part)"
-      },
-      {
-        "dimension": "groove",
-        "kind": "off_grid",
-        "severity": "blocking",
+        "kind": "subdivision_inconsistent",
+        "severity": "minor",
         "bars": "3-24",
         "section": "Verse 1",
         "tracks": [
           "strings-pad"
         ],
-        "origin": "compose@0.462",
-        "confidence": 0.713,
+        "origin": "compose@0.544",
+        "confidence": 0.803,
         "evidence": {
-          "composedNotesAvailable": false,
-          "composedOffGridShare": -1,
-          "composedOnGrid": "unknown",
-          "meanSignedDeviationMs": 10.3478,
-          "medianAbsDeviationMs": 34.5928,
-          "offGridShare": 0.7333,
-          "onsets": 15,
-          "toleranceMs": 30
+          "barsWithOnsets": 13,
+          "changesPerBar": 0.5
         },
-        "repair": "requantise_part (part)"
+        "repair": "settle_subdivision (section)"
       },
       {
         "dimension": "groove",
-        "kind": "off_grid",
-        "severity": "major",
-        "bars": "25-40",
-        "section": "Verse 2",
-        "tracks": [
-          "bass-bass"
-        ],
-        "origin": "compose@0.379",
-        "confidence": 0.736,
-        "evidence": {
-          "composedNotesAvailable": false,
-          "composedOffGridShare": -1,
-          "composedOnGrid": "unknown",
-          "meanSignedDeviationMs": 1.7122,
-          "medianAbsDeviationMs": 23.2406,
-          "offGridShare": 0.4375,
-          "onsets": 16,
-          "toleranceMs": 30
-        },
-        "repair": "requantise_part (part)"
-      },
-      {
-        "dimension": "groove",
-        "kind": "off_grid",
-        "severity": "major",
-        "bars": "25-40",
-        "section": "Verse 2",
-        "tracks": [
-          "keys-rhythmic_harmony"
-        ],
-        "origin": "compose@0.55",
-        "confidence": 0.95,
-        "evidence": {
-          "composedNotesAvailable": false,
-          "composedOffGridShare": -1,
-          "composedOnGrid": "unknown",
-          "meanSignedDeviationMs": -7.0014,
-          "medianAbsDeviationMs": 27.0108,
-          "offGridShare": 0.4487,
-          "onsets": 234,
-          "toleranceMs": 30
-        },
-        "repair": "requantise_part (part)"
-      },
-      {
-        "dimension": "groove",
-        "kind": "off_grid",
-        "severity": "major",
+        "kind": "subdivision_inconsistent",
+        "severity": "minor",
         "bars": "25-40",
         "section": "Verse 2",
         "tracks": [
           "strings-pad"
         ],
-        "origin": "compose@0.348",
-        "confidence": 0.736,
+        "origin": "compose@0.578",
+        "confidence": 0.803,
         "evidence": {
-          "composedNotesAvailable": false,
-          "composedOffGridShare": -1,
-          "composedOnGrid": "unknown",
-          "meanSignedDeviationMs": -1.2303,
-          "medianAbsDeviationMs": 26.4849,
-          "offGridShare": 0.375,
-          "onsets": 16,
-          "toleranceMs": 30
+          "barsWithOnsets": 13,
+          "changesPerBar": 0.5833
         },
-        "repair": "requantise_part (part)"
+        "repair": "settle_subdivision (section)"
+      },
+      {
+        "dimension": "groove",
+        "kind": "subdivision_inconsistent",
+        "severity": "minor",
+        "bars": "41-56",
+        "section": "Chorus",
+        "tracks": [
+          "strings-pad"
+        ],
+        "origin": "compose@0.369",
+        "confidence": 0.583,
+        "evidence": {
+          "barsWithOnsets": 7,
+          "changesPerBar": 0.5
+        },
+        "repair": "settle_subdivision (section)"
+      },
+      {
+        "dimension": "groove",
+        "kind": "backbeat_missing",
+        "severity": "minor",
+        "bars": "57-72",
+        "section": "Chorus 2",
+        "tracks": [
+          "drums-groove"
+        ],
+        "origin": "compose@0.687",
+        "confidence": 0.931,
+        "evidence": {
+          "bars": 16,
+          "barsWithBackbeat": 0
+        },
+        "repair": "state_backbeat (section)"
+      },
+      {
+        "dimension": "groove",
+        "kind": "subdivision_inconsistent",
+        "severity": "minor",
+        "bars": "57-72",
+        "section": "Chorus 2",
+        "tracks": [
+          "strings-pad"
+        ],
+        "origin": "compose@0.442",
+        "confidence": 0.528,
+        "evidence": {
+          "barsWithOnsets": 6,
+          "changesPerBar": 0.8
+        },
+        "repair": "settle_subdivision (section)"
+      },
+      {
+        "dimension": "groove",
+        "kind": "anticipation_mismatch",
+        "severity": "minor",
+        "bars": "97-112",
+        "section": "Bridge",
+        "tracks": [
+          "bass-bass",
+          "keys-rhythmic_harmony"
+        ],
+        "origin": "groove@0.292",
+        "confidence": 0.931,
+        "evidence": {
+          "maxAnticipationShare": 0.8667,
+          "pushingParts": "bass",
+          "straightParts": "keys"
+        },
+        "repair": "share_anticipations (section)"
+      },
+      {
+        "dimension": "groove",
+        "kind": "harmony_off_grid",
+        "severity": "major",
+        "bars": "97-112",
+        "section": "Bridge",
+        "tracks": [
+          "strings-pad",
+          "drums-groove"
+        ],
+        "origin": "compose@0.395",
+        "confidence": 0.565,
+        "evidence": {
+          "family": "strings",
+          "gridStepsPerBeat": 2,
+          "kitMeanSignedDeviationMs": -3.6192,
+          "kitOffGridShare": 0,
+          "kitOnItsOwnGrid": true,
+          "meanSignedDeviationFromKitMs": -24.3677,
+          "medianAbsDeviationFromKitMs": 53.4494,
+          "onsets": 10,
+          "shareBeyondToleranceMs": 0.5,
+          "toleranceMs": 50
+        },
+        "repair": "quantise_harmony_to_the_kit_grid (part)"
+      },
+      {
+        "dimension": "groove",
+        "kind": "planned_fill_missing",
+        "severity": "minor",
+        "bars": "112-112",
+        "section": "Bridge",
+        "tracks": [
+          "drums-groove"
+        ],
+        "origin": "compose@0.642",
+        "confidence": 0.662,
+        "evidence": {
+          "densityRatio": -1,
+          "drumsSilentBeforeBoundary": true,
+          "lastBarOnsets": 0,
+          "meanOnsetsPerBar": 0,
+          "tomHits": 0,
+          "transitionKind": "continue",
+          "transitionStrength": 0.547
+        },
+        "repair": "realise_drum_fill (note)"
+      },
+      {
+        "dimension": "groove",
+        "kind": "backbeat_missing",
+        "severity": "minor",
+        "bars": "113-128",
+        "section": "Chorus 3",
+        "tracks": [
+          "drums-groove"
+        ],
+        "origin": "compose@0.687",
+        "confidence": 0.931,
+        "evidence": {
+          "bars": 16,
+          "barsWithBackbeat": 0
+        },
+        "repair": "state_backbeat (section)"
       }
     ]
   },
@@ -580,8 +689,8 @@
         "applicable": true
       },
       "voiceLeading": {
-        "score": 97.19,
-        "controlStatus": "gated",
+        "score": 94.74,
+        "controlStatus": "informing",
         "applicable": true
       },
       "melodyAndCounterline": {
@@ -590,22 +699,22 @@
         "applicable": true
       },
       "motifRecurrenceAndDevelopment": {
-        "score": 100,
+        "score": 97.19,
         "controlStatus": "informing",
         "applicable": true
       },
       "groove": {
-        "score": 0,
+        "score": 70.74,
         "controlStatus": "gated",
         "applicable": true
       },
       "rhythmicInteraction": {
-        "score": 86.85,
+        "score": 100,
         "controlStatus": "informing",
         "applicable": true
       },
       "orchestration": {
-        "score": 40,
+        "score": 100,
         "controlStatus": "gated",
         "applicable": true
       },
@@ -615,17 +724,17 @@
         "applicable": true
       },
       "register": {
-        "score": 55.06,
+        "score": 100,
         "controlStatus": "gated",
         "applicable": true
       },
       "density": {
-        "score": 5.86,
+        "score": 91.22,
         "controlStatus": "gated",
         "applicable": true
       },
       "transitions": {
-        "score": 70.93,
+        "score": 87.62,
         "controlStatus": "informing",
         "applicable": true
       },
@@ -635,23 +744,23 @@
         "applicable": true
       },
       "sectionDevelopment": {
-        "score": 88.56,
+        "score": 94.18,
         "controlStatus": "demoted",
         "applicable": true
       },
       "playability": {
-        "score": 68.06,
+        "score": 100,
         "controlStatus": "gated",
         "applicable": true
       },
       "performanceRealisation": {
-        "score": 39.48,
+        "score": 100,
         "controlStatus": "gated",
         "applicable": true
       },
       "emotionalArcAndTension": {
         "score": 97.4,
-        "controlStatus": "gated",
+        "controlStatus": "informing",
         "applicable": true
       },
       "adversarial.boredom": {
@@ -660,27 +769,27 @@
         "applicable": true
       },
       "adversarial.machineMade": {
-        "score": 74,
+        "score": 87,
         "controlStatus": "uncalibrated",
         "applicable": true
       },
       "adversarial.causality": {
-        "score": 76,
+        "score": 99,
         "controlStatus": "uncalibrated",
         "applicable": true
       },
       "adversarial.arbitrariness": {
-        "score": 50,
+        "score": 81,
         "controlStatus": "uncalibrated",
         "applicable": true
       },
       "adversarial.instrumentReality": {
-        "score": 70,
+        "score": 97,
         "controlStatus": "uncalibrated",
         "applicable": true
       },
       "adversarial.copiedRepeat": {
-        "score": 100,
+        "score": 88,
         "controlStatus": "uncalibrated",
         "applicable": true
       },
@@ -690,7 +799,7 @@
         "applicable": true
       },
       "adversarial.professionalWouldChange": {
-        "score": 83,
+        "score": 91,
         "controlStatus": "uncalibrated",
         "applicable": true
       }
@@ -700,74 +809,74 @@
       "releasable": false,
       "top8": [
         {
-          "priority": 2404,
+          "priority": 310,
           "salience": 1,
-          "what": "orchestration:planned_family_silent",
+          "what": "harmony:overhang_across_chord_change",
           "severity": "blocking",
-          "section": "Intro",
-          "bars": "1-2"
+          "section": "Bridge",
+          "bars": "97-112"
         },
         {
-          "priority": 950,
+          "priority": 59.802,
           "salience": 1,
-          "what": "groove:off_grid",
-          "severity": "blocking",
-          "section": "Verse 1",
-          "bars": "3-24"
+          "what": "adversarial.copiedRepeat:section_note_copy",
+          "severity": "major",
+          "section": "Chorus 3",
+          "bars": "113-128"
         },
         {
-          "priority": 941,
+          "priority": 56.5,
           "salience": 1,
-          "what": "groove:off_grid",
-          "severity": "blocking",
-          "section": "Chorus",
-          "bars": "41-56"
+          "what": "groove:harmony_off_grid",
+          "severity": "major",
+          "section": "Bridge",
+          "bars": "97-112"
         },
         {
-          "priority": 941,
+          "priority": 35,
           "salience": 1,
-          "what": "groove:off_grid",
-          "severity": "blocking",
+          "what": "adversarial.machineMade:no_rests",
+          "severity": "major",
+          "section": "Bridge",
+          "bars": "97-120"
+        },
+        {
+          "priority": 12.858,
+          "salience": 1,
+          "what": "adversarial.instrumentReality:string_bed_too_high",
+          "severity": "major",
+          "section": "Bridge",
+          "bars": "97-110"
+        },
+        {
+          "priority": 9.5,
+          "salience": 1,
+          "what": "density:foundation_gaps",
+          "severity": "minor",
           "section": "Verse 3",
           "bars": "73-96"
         },
         {
-          "priority": 931,
+          "priority": 9.44,
           "salience": 1,
-          "what": "density:single_voice_bed",
-          "severity": "blocking",
-          "section": "Verse 2",
-          "bars": "25-40"
-        },
-        {
-          "priority": 918,
-          "salience": 1,
-          "what": "density:single_voice_bed",
-          "severity": "blocking",
+          "what": "density:comping_below_role_floor",
+          "severity": "minor",
           "section": "Verse 1",
           "bars": "3-24"
         },
         {
-          "priority": 865,
+          "priority": 9.31,
           "salience": 1,
-          "what": "density:single_voice_bed",
-          "severity": "blocking",
-          "section": "Verse 3",
-          "bars": "73-96"
-        },
-        {
-          "priority": 777,
-          "salience": 1,
-          "what": "density:single_voice_bed",
-          "severity": "blocking",
-          "section": "Chorus",
-          "bars": "41-56"
+          "what": "groove:anticipation_mismatch",
+          "severity": "minor",
+          "section": "Bridge",
+          "bars": "97-112"
         }
       ],
       "positions": {
-        "emptyIntro": 1,
-        "stringBed": 5,
-        "offGridHarmony": 2
+        "emptyIntro": null,
+        "stringBed": null,
+        "offGridHarmony": null
       }
     },
     "after": {
@@ -775,172 +884,115 @@
       "releasable": false,
       "top8": [
         {
-          "priority": 245.7892,
-          "salience": 0.2612,
-          "what": "groove:off_grid",
+          "priority": 65.813,
+          "salience": 0.2123,
+          "what": "harmony:overhang_across_chord_change",
           "severity": "blocking",
-          "section": "Verse 3",
-          "bars": "73-96"
+          "section": "Bridge",
+          "bars": "97-112"
         },
         {
-          "priority": 234.935,
-          "salience": 0.2473,
-          "what": "groove:off_grid",
-          "severity": "blocking",
-          "section": "Verse 1",
-          "bars": "3-24"
+          "priority": 17.3306,
+          "salience": 0.2898,
+          "what": "adversarial.copiedRepeat:section_note_copy",
+          "severity": "major",
+          "section": "Chorus 3",
+          "bars": "113-128"
         },
         {
-          "priority": 227.0214,
-          "salience": 0.2473,
-          "what": "density:single_voice_bed",
-          "severity": "blocking",
-          "section": "Verse 1",
-          "bars": "3-24"
+          "priority": 13.0235,
+          "salience": 0.3721,
+          "what": "adversarial.machineMade:no_rests",
+          "severity": "major",
+          "section": "Bridge",
+          "bars": "97-120"
         },
         {
-          "priority": 225.938,
-          "salience": 0.2612,
-          "what": "density:single_voice_bed",
-          "severity": "blocking",
-          "section": "Verse 3",
-          "bars": "73-96"
+          "priority": 11.9949,
+          "salience": 0.2123,
+          "what": "groove:harmony_off_grid",
+          "severity": "major",
+          "section": "Bridge",
+          "bars": "97-112"
         },
         {
-          "priority": 195.1634,
-          "salience": 0.2074,
-          "what": "groove:off_grid",
-          "severity": "blocking",
-          "section": "Chorus",
-          "bars": "41-56"
+          "priority": 5.25,
+          "salience": 1.4,
+          "what": "adversarial.professionalWouldChange:static_bass_no_approach",
+          "severity": "minor",
+          "section": "Intro",
+          "bars": "1-140"
         },
         {
-          "priority": 193.0894,
-          "salience": 0.2074,
-          "what": "density:single_voice_bed",
-          "severity": "blocking",
-          "section": "Verse 2",
-          "bars": "25-40"
+          "priority": 2.698,
+          "salience": 0.2898,
+          "what": "groove:backbeat_missing",
+          "severity": "minor",
+          "section": "Chorus 3",
+          "bars": "113-128"
         },
         {
-          "priority": 179.9668,
-          "salience": 0.2612,
-          "what": "groove:off_grid",
-          "severity": "blocking",
-          "section": "Verse 3",
-          "bars": "73-96"
+          "priority": 2.5531,
+          "salience": 0.2898,
+          "what": "harmony:clash_share",
+          "severity": "minor",
+          "section": "Chorus 3",
+          "bars": "113-128"
         },
         {
-          "priority": 176.3249,
-          "salience": 0.2473,
-          "what": "groove:off_grid",
-          "severity": "blocking",
-          "section": "Verse 1",
-          "bars": "3-24"
+          "priority": 2.5523,
+          "salience": 0.1985,
+          "what": "adversarial.instrumentReality:string_bed_too_high",
+          "severity": "major",
+          "section": "Bridge",
+          "bars": "97-110"
         }
       ],
       "positions": {
-        "emptyIntro": 14,
-        "stringBed": 3,
-        "offGridHarmony": 1
+        "emptyIntro": null,
+        "stringBed": null,
+        "offGridHarmony": null
+      },
+      "closedInTheWriters": {
+        "emptyIntro": "B-21 D1: `composer/opening.ts` states the arc's decided opening on the song's own first chord; the first note is at 0.000 s, not 3.795 s, and `planned_family_silent` is not raised",
+        "stringBed": "B-13: `playabilityRepair` releases the earlier voices of a crowded onset instead of dropping them; no section is below three voices and `single_voice_bed` is not raised",
+        "offGridHarmony": "B-13 + B-21 D2/D3/D5: the writers are on the bar grid and `off_grid` is not raised on either layer",
+        "note": "All three positions above are therefore `null`. The ordering R-1b P0-5 asked for is demonstrated on the constructed case below, where the three findings exist to be ordered."
+      },
+      "onTheConstructedCase": {
+        "built": true,
+        "transforms": [
+          "counterline_into_bed_register",
+          "strip_bed_to_top_voice",
+          "silenceOpeningBars(2)",
+          "displaceHarmonyOffGrid(0.18)"
+        ],
+        "releasable": false,
+        "refusalKinds": [
+          "planned_family_silent",
+          "single_voice_bed",
+          "harmony_off_grid",
+          "off_grid",
+          "overhang_across_chord_change",
+          "top_line_above_comfortable_ceiling",
+          "climax_all_treble"
+        ],
+        "positions": {
+          "emptyIntro": 33,
+          "stringBed": 5,
+          "offGridHarmony": 1,
+          "aboveTheIntroAllBlocking": true,
+          "introSalience": 0.1,
+          "introPriority": 60.1
+        },
+        "topProblems": [
+          "off_grid (blocking)",
+          "harmony_off_grid (blocking)",
+          "single_voice_bed (blocking)"
+        ],
+        "reading": "The string bed and the off-grid harmony both outrank the empty two-bar intro, which sits at the salience floor because no music sounds in bars 1-2 — R-1b P0-5, on an arrangement that has the findings."
       },
       "refusals": [
-        {
-          "observationId": "orchestration:planned_family_silent:*:1-2",
-          "dimension": "orchestration",
-          "kind": "planned_family_silent",
-          "severity": "blocking",
-          "rule": "blocking_from_gated_dimension",
-          "detail": "orchestration is gated by measured positive controls and calls this blocking"
-        },
-        {
-          "observationId": "density:single_voice_bed:strings-pad:3-24",
-          "dimension": "density",
-          "kind": "single_voice_bed",
-          "severity": "blocking",
-          "rule": "blocking_from_gated_dimension",
-          "detail": "density is gated by measured positive controls and calls this blocking"
-        },
-        {
-          "observationId": "groove:off_grid:keys-rhythmic_harmony:3-24",
-          "dimension": "groove",
-          "kind": "off_grid",
-          "severity": "blocking",
-          "rule": "blocking_from_gated_dimension",
-          "detail": "groove is gated by measured positive controls and calls this blocking"
-        },
-        {
-          "observationId": "groove:off_grid:strings-pad:3-24",
-          "dimension": "groove",
-          "kind": "off_grid",
-          "severity": "blocking",
-          "rule": "blocking_from_gated_dimension",
-          "detail": "groove is gated by measured positive controls and calls this blocking"
-        },
-        {
-          "observationId": "density:single_voice_bed:strings-pad:25-40",
-          "dimension": "density",
-          "kind": "single_voice_bed",
-          "severity": "blocking",
-          "rule": "blocking_from_gated_dimension",
-          "detail": "density is gated by measured positive controls and calls this blocking"
-        },
-        {
-          "observationId": "density:single_voice_bed:strings-pad:41-56",
-          "dimension": "density",
-          "kind": "single_voice_bed",
-          "severity": "blocking",
-          "rule": "blocking_from_gated_dimension",
-          "detail": "density is gated by measured positive controls and calls this blocking"
-        },
-        {
-          "observationId": "groove:off_grid:keys-rhythmic_harmony:41-56",
-          "dimension": "groove",
-          "kind": "off_grid",
-          "severity": "blocking",
-          "rule": "blocking_from_gated_dimension",
-          "detail": "groove is gated by measured positive controls and calls this blocking"
-        },
-        {
-          "observationId": "groove:off_grid:strings-pad:41-56",
-          "dimension": "groove",
-          "kind": "off_grid",
-          "severity": "blocking",
-          "rule": "blocking_from_gated_dimension",
-          "detail": "groove is gated by measured positive controls and calls this blocking"
-        },
-        {
-          "observationId": "density:single_voice_bed:strings-pad:73-96",
-          "dimension": "density",
-          "kind": "single_voice_bed",
-          "severity": "blocking",
-          "rule": "blocking_from_gated_dimension",
-          "detail": "density is gated by measured positive controls and calls this blocking"
-        },
-        {
-          "observationId": "groove:off_grid:bass-bass:73-96",
-          "dimension": "groove",
-          "kind": "off_grid",
-          "severity": "blocking",
-          "rule": "blocking_from_gated_dimension",
-          "detail": "groove is gated by measured positive controls and calls this blocking"
-        },
-        {
-          "observationId": "groove:off_grid:keys-rhythmic_harmony:73-96",
-          "dimension": "groove",
-          "kind": "off_grid",
-          "severity": "blocking",
-          "rule": "blocking_from_gated_dimension",
-          "detail": "groove is gated by measured positive controls and calls this blocking"
-        },
-        {
-          "observationId": "groove:off_grid:strings-pad:73-96",
-          "dimension": "groove",
-          "kind": "off_grid",
-          "severity": "blocking",
-          "rule": "blocking_from_gated_dimension",
-          "detail": "groove is gated by measured positive controls and calls this blocking"
-        },
         {
           "observationId": "harmony:overhang_across_chord_change:strings-pad:97-112",
           "dimension": "harmony",
@@ -948,127 +1000,46 @@
           "severity": "blocking",
           "rule": "blocking_from_gated_dimension",
           "detail": "harmony is gated by measured positive controls and calls this blocking"
-        },
-        {
-          "observationId": "groove:harmony_off_grid:bass-bass+drums-groove:129-141",
-          "dimension": "groove",
-          "kind": "harmony_off_grid",
-          "severity": "blocking",
-          "rule": "blocking_from_gated_dimension",
-          "detail": "groove is gated by measured positive controls and calls this blocking"
-        },
-        {
-          "observationId": "groove:off_grid:strings-pad:129-141",
-          "dimension": "groove",
-          "kind": "off_grid",
-          "severity": "blocking",
-          "rule": "blocking_from_gated_dimension",
-          "detail": "groove is gated by measured positive controls and calls this blocking"
-        },
-        {
-          "observationId": "register:top_line_above_comfortable_ceiling:keys-rhythmic_harmony:41-56",
-          "dimension": "register",
-          "kind": "top_line_above_comfortable_ceiling",
-          "severity": "major",
-          "rule": "major_on_a_bed",
-          "detail": "register calls the sustained texture wrong (top_line_above_comfortable_ceiling); a bed that is wrong is wrong wherever it plays"
-        },
-        {
-          "observationId": "register:top_line_above_comfortable_ceiling:strings-pad:41-56",
-          "dimension": "register",
-          "kind": "top_line_above_comfortable_ceiling",
-          "severity": "major",
-          "rule": "major_on_a_bed",
-          "detail": "register calls the sustained texture wrong (top_line_above_comfortable_ceiling); a bed that is wrong is wrong wherever it plays"
-        },
-        {
-          "observationId": "density:single_voice_bed:strings-pad:57-72",
-          "dimension": "density",
-          "kind": "single_voice_bed",
-          "severity": "major",
-          "rule": "major_on_a_bed",
-          "detail": "density calls the sustained texture wrong (single_voice_bed); a bed that is wrong is wrong wherever it plays"
-        },
-        {
-          "observationId": "register:top_line_above_comfortable_ceiling:keys-rhythmic_harmony:57-72",
-          "dimension": "register",
-          "kind": "top_line_above_comfortable_ceiling",
-          "severity": "major",
-          "rule": "major_on_a_bed",
-          "detail": "register calls the sustained texture wrong (top_line_above_comfortable_ceiling); a bed that is wrong is wrong wherever it plays"
-        },
-        {
-          "observationId": "register:top_line_above_comfortable_ceiling:strings-pad:57-72",
-          "dimension": "register",
-          "kind": "top_line_above_comfortable_ceiling",
-          "severity": "major",
-          "rule": "major_on_a_bed",
-          "detail": "register calls the sustained texture wrong (top_line_above_comfortable_ceiling); a bed that is wrong is wrong wherever it plays"
-        },
-        {
-          "observationId": "density:single_voice_bed:strings-pad:113-128",
-          "dimension": "density",
-          "kind": "single_voice_bed",
-          "severity": "major",
-          "rule": "major_on_a_bed",
-          "detail": "density calls the sustained texture wrong (single_voice_bed); a bed that is wrong is wrong wherever it plays"
-        },
-        {
-          "observationId": "register:part_outside_comfortable_range:strings-pad:113-128",
-          "dimension": "register",
-          "kind": "part_outside_comfortable_range",
-          "severity": "major",
-          "rule": "major_at_the_climax",
-          "detail": "register calls part_outside_comfortable_range major in the section the song is built towards"
-        },
-        {
-          "observationId": "register:top_line_above_comfortable_ceiling:keys-rhythmic_harmony:113-128",
-          "dimension": "register",
-          "kind": "top_line_above_comfortable_ceiling",
-          "severity": "major",
-          "rule": "major_on_a_bed",
-          "detail": "register calls the sustained texture wrong (top_line_above_comfortable_ceiling); a bed that is wrong is wrong wherever it plays"
         }
       ],
       "topProblems": [
         {
-          "observationId": "groove:off_grid:keys-rhythmic_harmony:73-96",
-          "dimension": "groove",
-          "kind": "off_grid",
+          "observationId": "harmony:overhang_across_chord_change:strings-pad:97-112",
+          "dimension": "harmony",
+          "kind": "overhang_across_chord_change",
           "severity": "blocking",
-          "bars": "73-96",
-          "section": "Verse 3",
-          "priority": 245.7892,
-          "whatToFix": "requantise_part (part): 62 % of keys's onsets in Verse 3 miss the nearest grid line by more than 30 ms (median 34 ms); pass the composed notes (`composedTrackModels`) to say whether the composer or the performance stage put them there"
+          "bars": "97-112",
+          "section": "Bridge",
+          "priority": 65.813,
+          "whatToFix": "shorten_or_retie_at_chord_change (note): end or re-strike strings notes at the chord changes in Bridge"
         },
         {
-          "observationId": "density:single_voice_bed:strings-pad:3-24",
-          "dimension": "density",
-          "kind": "single_voice_bed",
-          "severity": "blocking",
-          "bars": "3-24",
-          "section": "Verse 1",
-          "priority": 227.0214,
-          "whatToFix": "keep_the_composed_voices (part): strings was composed with 3.00 voices per onset in Verse 1 and ships with 1.00: the voices are lost between the composer and the track, not missing from the writing"
+          "observationId": "adversarial.copiedRepeat:section_note_copy:113-128:percussion-fill",
+          "dimension": "adversarial.copiedRepeat",
+          "kind": "section_note_copy",
+          "severity": "major",
+          "bars": "113-128",
+          "section": "Chorus 3",
+          "priority": 17.3306,
+          "whatToFix": "develop_repeat (section): percussion-fill plays the same pitches and rhythm in \"Chorus 3\" as in \"Chorus\" (only the dynamics differ); the repeat owes a development, not a louder copy."
         },
         {
-          "observationId": "groove:harmony_off_grid:bass-bass+drums-groove:129-141",
-          "dimension": "groove",
-          "kind": "harmony_off_grid",
-          "severity": "blocking",
-          "bars": "129-141",
-          "section": "Outro",
-          "priority": 93.903,
-          "whatToFix": "quantise_harmony_to_the_kit_grid (part): bass places 80 % of its onsets in Outro more than 50 ms from the grid the kit plays (median 83 ms; the kit itself is on the grid)"
+          "observationId": "adversarial.machineMade:no_rests:97-120:keys-rhythmic_harmony",
+          "dimension": "adversarial.machineMade",
+          "kind": "no_rests",
+          "severity": "major",
+          "bars": "97-120",
+          "section": "Bridge",
+          "priority": 13.0235,
+          "whatToFix": "add_rests (section): Let the part breathe: a rest at phrase ends, a bar out before the chorus, a comping pattern with space instead of a held pad."
         }
       ],
       "reasons": [
-        "15 blocking observation(s) from gated dimension(s): orchestration:planned_family_silent:*:1-2, density:single_voice_bed:strings-pad:3-24, groove:off_grid:keys-rhythmic_harmony:3-24, groove:off_grid:strings-pad:3-24, density:single_voice_bed:strings-pad:25-40, density:single_voice_bed:strings-pad:41-56, groove:off_grid:keys-rhythmic_harmony:41-56, groove:off_grid:strings-pad:41-56, density:single_voice_bed:strings-pad:73-96, groove:off_grid:bass-bass:73-96, groove:off_grid:keys-rhythmic_harmony:73-96, groove:off_grid:strings-pad:73-96, harmony:overhang_across_chord_change:strings-pad:97-112, groove:harmony_off_grid:bass-bass+drums-groove:129-141, groove:off_grid:strings-pad:129-141",
-        "8 refusal(s) under the B-05c release rules: register:top_line_above_comfortable_ceiling:keys-rhythmic_harmony:41-56 (major_on_a_bed), register:top_line_above_comfortable_ceiling:strings-pad:41-56 (major_on_a_bed), density:single_voice_bed:strings-pad:57-72 (major_on_a_bed), register:top_line_above_comfortable_ceiling:keys-rhythmic_harmony:57-72 (major_on_a_bed), register:top_line_above_comfortable_ceiling:strings-pad:57-72 (major_on_a_bed), density:single_voice_bed:strings-pad:113-128 (major_on_a_bed), register:part_outside_comfortable_range:strings-pad:113-128 (major_at_the_climax), register:top_line_above_comfortable_ceiling:keys-rhythmic_harmony:113-128 (major_on_a_bed)",
-        "fix first: 1. off_grid in Verse 3 (groove, blocking); 2. single_voice_bed in Verse 1 (density, blocking); 3. harmony_off_grid in Outro (groove, blocking)"
+        "1 blocking observation(s) from gated dimension(s): harmony:overhang_across_chord_change:strings-pad:97-112",
+        "fix first: 1. overhang_across_chord_change in Bridge (harmony, blocking); 2. section_note_copy in Chorus 3 (adversarial.copiedRepeat, major); 3. no_rests in Bridge (adversarial.machineMade, major)"
       ],
       "disagreementsKeptOpen": 0,
-      "agreements": 42
+      "agreements": 20
     }
   },
   "rankingOnTheCorpus": [
@@ -1079,12 +1050,12 @@
         {
           "candidateId": "reference",
           "rank": 1,
-          "releasable": true,
+          "releasable": false,
           "blocking": 0,
-          "refusals": 0,
-          "salienceWeightedMajors": 264.2765,
-          "constructiveScore": 93.8027,
-          "why": "no gated dimension blocks it and no release rule refuses it"
+          "refusals": 1,
+          "salienceWeightedMajors": 411.287,
+          "constructiveScore": 90.8267,
+          "why": "refused (1 refusal(s)), and no candidate is better"
         },
         {
           "candidateId": "drums-only",
@@ -1092,26 +1063,26 @@
           "releasable": false,
           "blocking": 10,
           "refusals": 10,
-          "salienceWeightedMajors": 24.408,
-          "constructiveScore": 82.6398,
-          "why": "reference is releasable and this one is not"
+          "salienceWeightedMajors": 29.028,
+          "constructiveScore": 82.6098,
+          "why": "10 blocking finding(s) against 0 for reference"
         },
         {
           "candidateId": "random-pitch",
           "rank": 3,
           "releasable": false,
-          "blocking": 12,
-          "refusals": 15,
-          "salienceWeightedMajors": 606.2231,
-          "constructiveScore": 84.4233,
-          "why": "12 blocking finding(s) against 10 for drums-only"
+          "blocking": 14,
+          "refusals": 17,
+          "salienceWeightedMajors": 661.1507,
+          "constructiveScore": 83.1468,
+          "why": "14 blocking finding(s) against 10 for drums-only"
         }
       ],
       "nearIdentical": null,
       "referenceTopProblems": [
-        "vocal_masking @Chorus (major)",
-        "no_rests @Intro (major)",
-        "no_recurrence @Chorus (major)"
+        "line_masks_vocal @Chorus 2 (major)",
+        "vocal_masking @Verse 2 (major)",
+        "no_recurrence @Verse (major)"
       ]
     },
     {
@@ -1121,12 +1092,12 @@
         {
           "candidateId": "reference",
           "rank": 1,
-          "releasable": false,
+          "releasable": true,
           "blocking": 0,
-          "refusals": 5,
-          "salienceWeightedMajors": 466.9368,
-          "constructiveScore": 91.9173,
-          "why": "refused (5 refusal(s)), and no candidate is better"
+          "refusals": 0,
+          "salienceWeightedMajors": 435.3978,
+          "constructiveScore": 92.2364,
+          "why": "no gated dimension blocks it and no release rule refuses it"
         },
         {
           "candidateId": "drums-only",
@@ -1134,26 +1105,26 @@
           "releasable": false,
           "blocking": 10,
           "refusals": 10,
-          "salienceWeightedMajors": 14.2428,
-          "constructiveScore": 83.8756,
-          "why": "10 blocking finding(s) against 0 for reference"
+          "salienceWeightedMajors": 14.4064,
+          "constructiveScore": 83.7677,
+          "why": "reference is releasable and this one is not"
         },
         {
           "candidateId": "random-pitch",
           "rank": 3,
           "releasable": false,
-          "blocking": 12,
-          "refusals": 14,
-          "salienceWeightedMajors": 581.2539,
-          "constructiveScore": 86.5629,
-          "why": "12 blocking finding(s) against 10 for drums-only"
+          "blocking": 11,
+          "refusals": 13,
+          "salienceWeightedMajors": 820.9829,
+          "constructiveScore": 83.4652,
+          "why": "11 blocking finding(s) against 10 for drums-only"
         }
       ],
       "nearIdentical": null,
       "referenceTopProblems": [
-        "vocal_masking @Chorus 2 (major)",
-        "top_line_above_comfortable_ceiling @Verse (major)",
-        "no_rests @Intro (major)"
+        "line_masks_vocal @Verse (major)",
+        "vocal_masking @Verse (major)",
+        "homorhythmic_texture @Chorus 2 (major)"
       ]
     },
     {
@@ -1163,12 +1134,12 @@
         {
           "candidateId": "reference",
           "rank": 1,
-          "releasable": false,
+          "releasable": true,
           "blocking": 0,
-          "refusals": 3,
-          "salienceWeightedMajors": 314.3776,
-          "constructiveScore": 95.1213,
-          "why": "refused (3 refusal(s)), and no candidate is better"
+          "refusals": 0,
+          "salienceWeightedMajors": 156.0648,
+          "constructiveScore": 96.1862,
+          "why": "no gated dimension blocks it and no release rule refuses it"
         },
         {
           "candidateId": "drums-only",
@@ -1176,9 +1147,9 @@
           "releasable": false,
           "blocking": 6,
           "refusals": 6,
-          "salienceWeightedMajors": 4.3998,
-          "constructiveScore": 85.1826,
-          "why": "6 blocking finding(s) against 0 for reference"
+          "salienceWeightedMajors": 4.3735,
+          "constructiveScore": 85.0787,
+          "why": "reference is releasable and this one is not"
         },
         {
           "candidateId": "random-pitch",
@@ -1186,16 +1157,16 @@
           "releasable": false,
           "blocking": 6,
           "refusals": 7,
-          "salienceWeightedMajors": 345.9341,
-          "constructiveScore": 87.5347,
+          "salienceWeightedMajors": 313.1952,
+          "constructiveScore": 88.6438,
           "why": "7 refusal(s) against 6 for drums-only"
         }
       ],
       "nearIdentical": null,
       "referenceTopProblems": [
-        "vocal_masking @Chorus (major)",
-        "top_line_above_comfortable_ceiling @Verse 2 (major)",
-        "melody_masked @Chorus (major)"
+        "no_recurrence @Chorus (major)",
+        "planned_fill_missing @Verse (major)",
+        "planned_device_unrealised (major)"
       ]
     },
     {
@@ -1205,39 +1176,39 @@
         {
           "candidateId": "reference",
           "rank": 1,
-          "releasable": false,
+          "releasable": true,
           "blocking": 0,
-          "refusals": 2,
-          "salienceWeightedMajors": 242.4652,
-          "constructiveScore": 94.3848,
-          "why": "refused (2 refusal(s)), and no candidate is better"
-        },
-        {
-          "candidateId": "random-pitch",
-          "rank": 2,
-          "releasable": false,
-          "blocking": 8,
-          "refusals": 10,
-          "salienceWeightedMajors": 261.7905,
-          "constructiveScore": 88.8712,
-          "why": "8 blocking finding(s) against 0 for reference"
+          "refusals": 0,
+          "salienceWeightedMajors": 38.6397,
+          "constructiveScore": 97.1599,
+          "why": "no gated dimension blocks it and no release rule refuses it"
         },
         {
           "candidateId": "drums-only",
-          "rank": 3,
+          "rank": 2,
           "releasable": false,
           "blocking": 9,
           "refusals": 9,
-          "salienceWeightedMajors": 5.3571,
-          "constructiveScore": 86.2852,
-          "why": "9 blocking finding(s) against 8 for random-pitch"
+          "salienceWeightedMajors": 5.3859,
+          "constructiveScore": 86.1517,
+          "why": "reference is releasable and this one is not"
+        },
+        {
+          "candidateId": "random-pitch",
+          "rank": 3,
+          "releasable": false,
+          "blocking": 9,
+          "refusals": 10,
+          "salienceWeightedMajors": 282.1659,
+          "constructiveScore": 88.3698,
+          "why": "10 refusal(s) against 9 for drums-only"
         }
       ],
       "nearIdentical": null,
       "referenceTopProblems": [
-        "vocal_masking @Chorus 2 (major)",
         "no_recurrence @Chorus (major)",
-        "section_note_copy @Chorus 2 (major)"
+        "static_bass_no_approach @Intro (minor)",
+        "subdivision_inconsistent @Chorus 2 (minor)"
       ]
     }
   ],
@@ -1263,17 +1234,16 @@
     {
       "dimension": "voiceLeading",
       "before": "gated",
-      "after": "gated",
-      "direction": "unchanged",
+      "after": "informing",
+      "direction": "demoted",
       "strongestControlBefore": "bass_roots_only_leaps",
       "strongestControlAfter": "bass_roots_only_leaps",
       "nBefore": 8,
       "nAfter": 9,
       "gatingTransforms": [
-        "bass_roots_only_leaps",
-        "parallel_perfect_motion"
+        "bass_roots_only_leaps"
       ],
-      "reason": "2 independent non-prepared transforms passed (bass_roots_only_leaps, parallel_perfect_motion) and no clean anchor is blocked"
+      "reason": "1 of 2 independent non-prepared transforms pass"
     },
     {
       "dimension": "melodyAndCounterline",
@@ -1281,7 +1251,7 @@
       "after": "gated",
       "direction": "unchanged",
       "strongestControlBefore": "top_line_into_vocal_register",
-      "strongestControlAfter": "top_line_into_vocal_register",
+      "strongestControlAfter": "top_line_erratic",
       "nBefore": 8,
       "nAfter": 9,
       "gatingTransforms": [
@@ -1342,9 +1312,10 @@
       "nAfter": 9,
       "gatingTransforms": [
         "drums_only",
-        "silence_planned_family"
+        "silence_planned_family",
+        "tutti_everywhere"
       ],
-      "reason": "2 independent non-prepared transforms passed (drums_only, silence_planned_family) and no clean anchor is blocked"
+      "reason": "3 independent non-prepared transforms passed (drums_only, silence_planned_family, tutti_everywhere) and no clean anchor is blocked"
     },
     {
       "dimension": "idiomaticity",
@@ -1366,14 +1337,15 @@
       "after": "gated",
       "direction": "unchanged",
       "strongestControlBefore": "role_inversion@3",
-      "strongestControlAfter": "strings_up_two_octaves",
+      "strongestControlAfter": "role_inversion@3",
       "nBefore": 8,
-      "nAfter": 9,
+      "nAfter": 10,
       "gatingTransforms": [
+        "octave_displacement@3",
         "role_inversion@3",
         "strings_up_two_octaves"
       ],
-      "reason": "2 independent non-prepared transforms passed (role_inversion@3, strings_up_two_octaves) and no clean anchor is blocked"
+      "reason": "3 independent non-prepared transforms passed (octave_displacement@3, role_inversion@3, strings_up_two_octaves) and no clean anchor is blocked"
     },
     {
       "dimension": "density",
@@ -1381,15 +1353,14 @@
       "after": "gated",
       "direction": "promoted",
       "strongestControlBefore": "piano_one_note_per_bar",
-      "strongestControlAfter": "arrival_thinned_and_softened",
+      "strongestControlAfter": "strip_bed_to_top_voice",
       "nBefore": 7,
       "nAfter": 9,
       "gatingTransforms": [
-        "arrival_thinned_and_softened",
         "piano_one_note_per_bar",
         "strip_bed_to_top_voice"
       ],
-      "reason": "3 independent non-prepared transforms passed (arrival_thinned_and_softened, piano_one_note_per_bar, strip_bed_to_top_voice) and no clean anchor is blocked"
+      "reason": "2 independent non-prepared transforms passed (piano_one_note_per_bar, strip_bed_to_top_voice) and no clean anchor is blocked"
     },
     {
       "dimension": "transitions",
@@ -1411,7 +1382,7 @@
       "strongestControlBefore": "chorus_copy",
       "strongestControlAfter": "bar_copy_repetition@3",
       "nBefore": 5,
-      "nAfter": 31,
+      "nAfter": 32,
       "gatingTransforms": [],
       "reason": "0 of 2 independent non-prepared transforms pass; caught chorus_copy 5/5, chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)"
     },
@@ -1425,7 +1396,7 @@
       "nBefore": 5,
       "nAfter": 23,
       "gatingTransforms": [],
-      "reason": "strongest claimed transform section_swap@3 detected 17 % of 23 items, below 50 %; caught chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)"
+      "reason": "strongest claimed transform section_swap@3 detected 4 % of 23 items, below 50 %; caught chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor)"
     },
     {
       "dimension": "playability",
@@ -1438,11 +1409,9 @@
       "nAfter": 9,
       "gatingTransforms": [
         "bass_roots_only_leaps",
-        "octave_displacement@3",
-        "piano_wide_voicing",
-        "strings_up_two_octaves"
+        "piano_wide_voicing"
       ],
-      "reason": "4 independent non-prepared transforms passed (bass_roots_only_leaps, octave_displacement@3, piano_wide_voicing, strings_up_two_octaves) and no clean anchor is blocked"
+      "reason": "2 independent non-prepared transforms passed (bass_roots_only_leaps, piano_wide_voicing) and no clean anchor is blocked"
     },
     {
       "dimension": "performanceRealisation",
@@ -1462,17 +1431,16 @@
     {
       "dimension": "emotionalArcAndTension",
       "before": "gated",
-      "after": "gated",
-      "direction": "unchanged",
+      "after": "informing",
+      "direction": "demoted",
       "strongestControlBefore": "flatten_arc",
-      "strongestControlAfter": "flatten_arc",
+      "strongestControlAfter": "swap_climax_with_quietest",
       "nBefore": 8,
       "nAfter": 9,
       "gatingTransforms": [
-        "flatten_arc",
         "swap_climax_with_quietest"
       ],
-      "reason": "2 independent non-prepared transforms passed (flatten_arc, swap_climax_with_quietest) and no clean anchor is blocked"
+      "reason": "1 of 2 independent non-prepared transforms pass"
     }
   ],
   "ledgerDiffSummary": {
@@ -1480,13 +1448,14 @@
       "density: informing -> gated"
     ],
     "demoted": [
+      "voiceLeading: gated -> informing (1 of 2 independent non-prepared transforms pass)",
       "rhythmicInteraction: gated -> informing (1 of 2 independent non-prepared transforms pass)",
       "transitions: gated -> informing (0 of 2 independent non-prepared transforms pass (erase_boundary_events+realise_boundaries is prepared: it writes the gesture it then erases))",
-      "sectionDevelopment: informing -> demoted (strongest claimed transform section_swap@3 detected 17 % of 23 items, below 50 %; caught chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor))"
+      "sectionDevelopment: informing -> demoted (strongest claimed transform section_swap@3 detected 4 % of 23 items, below 50 %; caught chorus_copy+develop_chorus_2 5/5 but on fewer than 8 items (the transform does not apply to every anchor))",
+      "emotionalArcAndTension: gated -> informing (1 of 2 independent non-prepared transforms pass)"
     ],
     "unchanged": [
       "harmony",
-      "voiceLeading",
       "melodyAndCounterline",
       "motifRecurrenceAndDevelopment",
       "groove",
@@ -1495,8 +1464,7 @@
       "register",
       "repetitionVsVariation",
       "playability",
-      "performanceRealisation",
-      "emotionalArcAndTension"
+      "performanceRealisation"
     ]
   },
   "releaseRules": {
