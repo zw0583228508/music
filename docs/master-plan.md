@@ -7065,6 +7065,186 @@ Stream B-08 of the Arrangement & Orchestration Brain (`docs/brain/02-diagnosis-a
 
 **Recalibrated at the merge (7/7).** The lead rebased `ws-brain-b08` onto main `1467706` (B-05b, B-00 hard-rule gate, B-01 ArrangementArc, B-12, B-03). Nothing in the measure changed (benchmark 2.0, every metric pin identical); the brain did, and four B-08 tests calibrated on the 3bf23aa anchors failed. Each was recomputed from the new truth, none weakened: (1) `benchmarkMeasures` "a tournament task" and `positiveControlLedger` "a task anchor" named `guitar-rhythmic_harmony` on rock-full — B-01 gave the RHYTHMIC_HARMONY role to keys (`keys-rhythmic_harmony`, 250 notes) and the guitar is now an 11-note `guitar-harmonic_bed`; both tests find the guitar by instrument. (2) `positiveControlLedger` "the ledger records detection" read `chordToneShare / listening_pitch_shift` on three anchors whose merged candidates carry 2 + 3 + 2 = 7 pitched parts — one trial short of the rule's `minTrials` = 8 (the sensitivity gate's own constant, not lowered); the anchor set is widened by dance-full to 10 pitched targets and the test asserts the trial count before it reads the verdict; non-trials are never counted. (3) `realCorpusBenchmark` measured orchestral-midi at 36 bars; the merged `strings-climax_layer` holds its final chord 0.71 s past the 36th bar line (76 BPM, 3/4) and `measurePdmxWork` counts bars to the last note-off, so the same Song Model measures 37 — asserted together with the overrun. The same overrun exists on cinematic-midi (+1.18 s, strings) and dance-full (+0.24 s, keys and synth): recorded, outside B-08's files. (4) `blindListening` pinned the control target to the guitar; the rule is "the pitched track with the most notes" and the test now computes it (unique, never a kit) — on the merged brain that is the keys. **`selected: null` is a benchmark outcome now.** ethnic-vocal ships nothing on the merged brain (every candidate drops bass and keys in Chorus and Verse 2 — planned, chords under them, no notes). `arrangementBenchmark` reports it instead of averaging it away: per case `unselectable`, the orchestrator's `selectionReason`, the `hardRule` tally, selected-candidate metrics null (there is no best hard-rule-passing candidate to measure); a new lower-is-better quality metric `unselectableShare` (0/100 per case, share of cases in the aggregate); `aggregateCases` says how many cases each mean covers; `compareBenchmarkRuns` takes the union of both files' metrics, counts a rise as a regression and names the cases; a file written before the field shows the row as unavailable, not 0. The CLI prints `unsel`, lists the reasons, and takes `--git-sha` (records the commit whose arrangement code was measured; the checkout's HEAD is always `headSha`). The control-ledger runner lists an unselectable case under `source.tierS.unselectable` and in the limits. The shape grew without a version bump so the two baselines stay comparable, as asked. **Baseline re-snapshotted:** `docs/evidence/benchmark-baseline/1467706.json` (Tier S, render on, 5 candidates, full sha inside as `gitSha`, run from branch HEAD `5fea1b4` as `headSha` — the branch touches no file on the arrangement path); `3bf23aa.json` stays as the pre-program record. `--compare` against itself: **UNCHANGED**, exit 0, every quality metric delta 0 (only latency moved) — selection and measurement are deterministic on this brain. `--compare` against `3bf23aa.json` (`--no-fail`): **DO_NOT_PROMOTE** — regressed criticScore 74.56 → 73.5 (−1.06), shippedCriticScore 74.67 → 73.5 (−1.17), seamArtefacts 50.7 → 43.64 (−7.06); improved trajectorySmoothness 48.03 → 76.44 (+28.41), motifRecurrence 33.16 → 34.57 (+1.41); unchanged audioScore 90.33 → 89.63, harmonyScore 98.43 → 97.78, chordToneShare 98.9 → 98.59, clashShare 0.48 → 0.81, candidateDistance 6.59 → 6.69, playabilityErrors 0, renderFailures 5 (still on every case, still uninvestigated); informational noteCount 557 → 467, sourceHarmonyScore 58.33 → 59.25; unselectableShare — → 11.11 (unavailable in the old file). Paired over the same 8 selectable cases: critic 74.88 → 73.5, shipped 75 → 73.5, harmony 98.24 → 97.78, trajectory 50.02 → 76.44, seams 50.7 → 43.64, motif 37.3 → 34.57, notes 575 → 467. Reading: this is the 2.0 measure's view of a materially different composer, not a verdict on the merged streams — the critic (76 % plan-derived, all 11 dimensions demoted) reads a point lower; shippedCriticScore now equals criticScore on every case (B-00 critiques the shipped notes, so the 0.11 inflation of 3bf23aa is 0 and the column is redundant on this brain — kept as the check); the arc shows up as trajectory; seams read worse and the component detects no corruption family. **Ledger re-run on the merged anchors** (`positive-control-ledger.json`, sha `5fea1b4`): Tier S 8 anchors (ethnic-vocal has nothing shipped to corrupt), 31 targets (was 9 / 40 — the ensemble-transition tracks are gone, keys is on five more cases), Tier H 80 anchors unchanged; 115,744 applicable trials of 163,485 in 82.9 s. 28 of 1,035 rows changed verdict, all rows with Tier S trials and with identical Tier H counts. Demoted on the merged anchors, named as real losses: `musicCritic.playability` gate → demoted on density_doubling (36/36 → 17/28) and role_inversion (25/25 → 11/15) — **all 11 critic dimensions are demoted now**, only `musicCritic.overall` gates (role_inversion); `musicCritic.overall` density_doubling gate → inform (33/36 → 20/28); `candidateQuality.repetition` bar_copy_repetition gate → inform (39/40 → 24/31); `candidateQuality.vocalFit` parallel_doubling inform → demoted (17/21 → 4/14), the dimension now demoted; `partJudge.score` octave_displacement inform → demoted (Tier S 24/29 → 10/21). Gains on Tier S: `candidateQuality.registerCollisions` section_swap demoted → gate (18/40 → 29/31) and the dimension leaves the demoted list; `candidateQuality.score` role_inversion inform → gate (14/15). Gate gained on pooled rows whose Tier H part did not move: `harmonyScore` onset_jitter (Tier H alone 69/78 = 88.5 %, below the gate; Tier S 22/22) — onset jitter is still heard by nothing at gate level on the human anchors alone; `clashShare` leap_injection / bar_copy_repetition / duration_overhang; `partJudge.score` parallel_doubling; `coherence.score` pitch_shift_out_of_key; `coherence.harmonicAgreement` ×3. Lists: gate 13 → 16, inform 13 → 14, demoted 13 → 14, insufficient 13. No cause for any Tier S change is named: a control that varies one thing about the anchors would have to isolate it first. Evidence: `brain-b08-benchmark-measure.json` → `baselineAtMerge` (aggregates, per case, both compare tables, paired means, ledger changes with counts, the recalibrated tests, limits). Tests: the four suites plus `arrangementBenchmark` (now 11), `arrangementOrchestrator` 13 and `arrangementBrainIntegrity` 12 green; `pnpm run typecheck` green. The tracker file itself: the rebase had duplicated `docs/master-plan.md` whole (main's 6,838 lines twice, this entry twice, one copy with unfilled placeholders); it is main's file plus this one entry again. Honest limits: the comparison is not controlled (five streams and a corpus of 8 vs 9 between the two snapshots); ethnic-vocal is reported, not repaired; the final-bar overruns are not investigated; Tier P was checked selectable (5/5 pass, cand-D) but not re-snapshotted; the ledger's Tier S counts depend on anchor order as well as anchors (shared RNG stream).
 
+### PR-B02 — Brain B-02: harmony as voicing, not labels
+
+- **PR-B02** ✅ (open; the lead merges) — `ws-brain-b02` (Arrangement &
+  Orchestration Brain, stream B-02, harmony & voice-leading specialist). The
+  reference composer's harmony was label stacking: root-position close
+  triads from the register centre, no common tones, the bass root re-voiced
+  per chord, slash basses discarded, twelve chord parsers that disagreed on
+  `Gsus4`. Now the bass is *planned* first and the upper voices are *solved*
+  against it, per role, on the real harmonic rhythm, with style-parameterised
+  costs — and one parser reads every chord the brain voices. Pure TypeScript,
+  no database, nothing rendered.
+
+  **What changed.** New `chordSymbols.ts` — the one parser: roots in both
+  accidental spellings (double accidentals folded), triads, power chords,
+  sus2/sus4/7sus4, 6/69, 7/maj7/m7/mMaj7/dim7/m7b5/aug7 in every spelling
+  (`M7`, `Δ`, `ø`, `°`, `-7`…), 9/11/13, alterations (b5 #5 b9 #9 #11 b13,
+  alt), adds, omissions, MIREX `C:maj/3`, slash basses; canonical fields of a
+  Song Model chord (`root`/`quality`/`bass`/`extensions`/`alterations`) lay
+  over the symbol; `formatChord` round-trips (every analysis template in
+  every root and every chord-tone bass reads back to itself); `N`/`X`/junk →
+  null. `harmonyEngine.parseChordSymbol` is now an adapter over it
+  (`HarmonyQuality` = its template union) — three of the old alias table's
+  misreadings are corrected on purpose: `Cmaj13` was C *minor*, `C13`/`C11`
+  folded to `dom7` (now `dom9`), `C7sus4` had a major third (now `sus4`).
+  New `harmonyPlan/styleParams.ts` — `HarmonyStyleParams` as data per
+  aesthetic (`intimate_ballad`, `pop`, `band`, `orchestral`, `classical`,
+  `electronic`, `jazz`, chosen from `productionAesthetic` + style words):
+  parallel-fifth weight (0 = allowed, band/electronic), doubling preferences
+  per chord-tone role, approach-tone rate, chromatic vs diatonic approaches,
+  inversion tolerance, pedal tolerance, close-vs-open, extension level,
+  motion/common-tone/register/spacing weights, bass idiom; refined by the
+  song's `StyleGrammar` (`chord-extensions`, `functional-motion`) or the slim
+  fingerprint's harmonic complexity, every value carrying its `source`.
+  New `harmonyPlan/bassLine.ts` — `planBassSkeleton` (exact chain solver:
+  root / slash bass / inversion per chord event, octave chosen so every leap
+  is ≤ `maxLeap` **by construction**, contrary motion against a top-voice
+  guide rewarded, pedal under `setup`/`afterglow` when the style tolerates
+  one; seed-free so the keys recompute the same skeleton) and
+  `realiseBassLine` (density from the arc's level: pp whole notes → per-bar
+  roots → roots and fifths → a moving/walking line; approach tones into
+  changes at the style's rate by step from a non-chord tone; no onset closer
+  than the instrument's shortest note; every duration clipped to its chord —
+  the B-01 walking-branch overlap is gone). New `harmonyPlan/voicings.ts` —
+  per-role voice sets (keys bed 3–4 voices above the bass, or LH bass + RH
+  when no bass family exists; keys comping close; string pad/bed with the
+  cello on the root or third; string climax open; pad synth above the keys;
+  brass a single guide-tone line; winds 2–3), voice count from
+  `textureLevel`, tones reduced to what the voices carry (third and seventh
+  kept, fifth dropped first), candidates from the generalised
+  `candidateVoicings` (floor above the planned bass, spacing per role), costs
+  = motion + common tones + parallels + doubling (style weights) + spacing
+  target + register target + low-interval mud + bass-octave clash + sibling
+  unison + singer clearance, solved by `solveChain` — the DP core factored out
+  of `voiceLeading.ts` (generic over candidates; `solveVoiceLeading` is now a
+  thin caller, its 12 tests unchanged). Operators realised:
+  `thicken_voicing` adds a voice and opens the spacing; `raise_register`
+  lifts the target an octave (8 semitones when B-01's band raise already
+  carried part of it). `composer/harmonyParts.ts`: `writeBassLine`,
+  `writeKeysVoicing`, `writeStringBed`, `writeBrassAccents` rewritten on the
+  planners; `writeCounterMelody` untouched; `chordPitchClasses` /
+  `rootPitchClass` kept for the rhythm/transition writers, now through the
+  parser. `referencePartComposer.ts` honours `partWindow` for every
+  sustained/rhythmic part (a late entry writes nothing before its bar, a held
+  note ends at the exit) — the boundary/answer tasks (`WINDOW_EXEMPT_TASKS`:
+  COUNTER_MELODY, CALL_RESPONSE, FILL, TRANSITION, INTRO, ENDING) keep the
+  section bounds until their writers (B-04/B-10) read the window (the
+  strings counter-line of the owner's Bridge is anchored at bar 112, two bars
+  past its exit); `ComposeContext.siblings` lets a caller pass composed
+  sibling notes (the orchestrator does not yet — lead wiring). Chord events
+  shorter than the part can articulate (a 23 ms analysis blip in the owner's
+  Bridge) are absorbed by their neighbour. Golden re-pinned with the cause in
+  `recordedAt`. Tests: `chordSymbols.test.ts` (11), `harmonyPlan/harmonyPlan.test.ts`
+  (13: 204 seeded progressions in 12 keys × 3 leap limits × 4 levels =
+  20k+ bass notes, slash chords, approach rates 0/1, pedals, inversions,
+  voicings vs the old stacker and the old bass as positive controls,
+  parallels classical vs band, cello, spacing, operators, singer clearance,
+  style params), `brainB02Harmony.test.ts` (7: window, operators, slash
+  chords through the composer, corpus and owner's song end to end against the
+  recorded before numbers); 31 chain suites green including B-00 integrity,
+  B-01 owner's song, orchestrator, contextAware, benchmark; typecheck green.
+  Evidence `docs/evidence/brain-b02-harmony-realisation.json` (before at
+  a751796 / after, one metric implementation; regenerate with
+  `artifacts/api-server/scripts/brain-b02-harmony-evidence.mjs --before`).
+
+  **Measured — nine synthetic cases (composed parts, then the shipped
+  candidate).** Parallel perfect intervals across all chordal parts 115 → 2;
+  common-tone share (weighted by chord changes) 0.235 → 0.398; motion per
+  voice per change 4.70 → 1.19 semitones; root-position share 0.94 → 0.29;
+  bass leaps over the limit 1 → 0, bass notes lapping the next chord 0 → 0,
+  bass approach share 0 → 0.13–0.55 per case (ethnic/jazz 0: the 7/8 case
+  writes no bass past bar 8 — B-04's bar-length defect; jazz walks at f
+  only). Shipped: bass leap folds 1 → 0; adversarial `machineMade` mean 80 →
+  92.1 (`root_position_only` 4 anchors → 0, `identical_voicing_shape` 4 → 1),
+  `professionalWouldChange` mean 96.8 → 99.1 (`static_bass_no_approach` 8 →
+  2). **Owner's song (fixture, brief "intimate ballad; piano, soft strings,
+  gentle bass, light percussion; big final chorus").** Composed: parallels
+  107 → 0; common tones 0.11 → 0.31; motion 4.6 → 1.29; contrary motion vs the
+  keys' top voice 0.39 → 0.71; approaches 0 → 9 (share 0.13); bass max leap
+  10 → 12 (= the limit, never over); pedal held under the Verse 1 setup;
+  Chorus 3 keys a fifth above Chorus 2 with the `raise_register` operator,
+  tutti 4 voices. Shipped: the **bass track needs no repair at all** (0 folds,
+  0 releases, 0 drops, before: none either but 13–18 semitone leaps were the
+  v3 finding); `professionalWouldChange` 79 → 88 (`static_bass_no_approach`
+  gone, `no_top_voice_line` 4 → 1); selectable, 0 hard-rule errors.
+
+  **What got worse, and why (recorded, not hidden).** The shipped **strings**
+  track's repair counts rose (owner: 53 → 118 leap folds, 254 → 320 releases,
+  166 → 199 dropped; orchestral-midi climax 4 → 22 folds). The composed
+  strings pass range and polyphony (`checkPlayabilityRules` = `['leap']`
+  only); what folds is chord A's *top* note to chord B's *bottom* note read as
+  a melodic leap by `playabilityRepair.ts`'s start-sorted rule — a rule
+  `musicalConstraints.ts:311-342` deliberately does not hold for sections or
+  chords (audit §5.1). Wider, correctly spaced string voicings expose it
+  more; the releases come from the performance stage lengthening held notes
+  across the next chord. The owner's keys track shows 12 range folds because
+  the *track* still resolves to the drum-kit definition (range 35–81;
+  `musicEngines.ts FAMILY_WORDS`, B-03's one-liner) while the request was
+  voiced for a piano. Corpus total leap folds 13 → 29 for the same reason;
+  polyphony releases 86 → 93; dropped 56 → 44.
+
+  **Capability ladder.** One chord-symbol parser — IMPLEMENTED ✓ TESTED ✓
+  INTEGRATED ✓ in everything B-02 owns and in `harmonyEngine.parseChordSymbol`;
+  10 callers still carry their own tables (listed below). Bass line planned
+  first (root/inversion, approach tones, contrary motion, pedals, density from
+  the arc, leaps by construction) — IMPLEMENTED ✓ INTEGRATED ✓ TESTED ✓
+  (positive controls) BENCHMARKED ✓ (this evidence) VALIDATED ON OUTPUT ✗.
+  Per-role voicing solver (instrument voice sets, common tones, inversions,
+  style costs, sibling and singer clearance) — IMPLEMENTED ✓ INTEGRATED ✓
+  TESTED ✓ BENCHMARKED ✓; sibling clearance INTEGRATED-pending (the
+  orchestrator passes no sibling notes). Style parameters as data — IMPLEMENTED
+  ✓ INTEGRATED ✓ TESTED ✓ (grammar refinement reaches it only through the
+  slim fingerprint today; the full `StyleGrammar` is not on the V1 request).
+  `partWindow` honoured — INTEGRATED ✓ TESTED ✓ for sustained/rhythmic parts;
+  exempt tasks named. `thicken_voicing` / `raise_register` — INTEGRATED ✓
+  TESTED ✓. Playability repair rarely needed — TRUE for the bass (0 on the
+  corpus and the owner's song), FALSE for polyphonic parts until the repair's
+  leap rule matches the calibrated engine.
+
+  **For the lead / other streams.** (1) `playabilityRepair.ts:56-71` leap
+  pass and `checkPlayabilityRules`: skip notes sharing an onset and section
+  instruments, as `musicalConstraints.ts` does — until then every string bed
+  is folded and dropped regardless of voicing (B-06 / playability owner).
+  (2) `arrangementOrchestrator.ts` compose loop: pass `siblings` into
+  `composeReferencePart(request, { tempoBpm, meter, siblings })` — the keys
+  then voice above the bass's *actual* notes and away from sibling voicings
+  (`unison_doubling_by_accident` on dance-full is two beds solved blind).
+  (3) `musicEngines.ts FAMILY_WORDS` (B-03): add key/piano/organ so the keys
+  track's definition is the piano the request was voiced for. (4) B-03's
+  `registerBoundsFor(request, window)` supersedes the one-line band lift in
+  `harmonyParts.ts harmonyContext`. (5) B-04 / B-10: FILL, TRANSITION,
+  INTRO, ENDING, COUNTER_MELODY, CALL_RESPONSE writers should place their
+  figures inside `partWindow`; then `WINDOW_EXEMPT_TASKS` can go. (6) B-05b's
+  suites `critics/adversarial/adversarial.test.ts` (4), `evidence.test.ts`
+  (1) and `critics/judge.test.ts` (1) **already fail on main at a751796**
+  (verified on a throwaway worktree): their anchors assert pre-B-01 defects
+  (silent LEAD keys, keys-as-kit on dance-full); B-02 additionally removes
+  `root_position_only` from the anchors. They need re-anchoring by their
+  owner. (7) Parsers still to migrate onto `chordSymbols.ts`:
+  `musicCritic.ts:89-99`, `partJudge.ts:141-154`,
+  `symbolicCorruptions.ts:127-186`, `planningSupervision.ts:115-119`,
+  `conditioningMap.ts:902-909`, `musicEngines.ts:4457`,
+  `analysisProviders.ts:1505-1529`, `songModelValidation.ts:1023-1043`,
+  `analysisGoldSynthetic.ts:66`, `critics/adversarial/shared.ts:347-372`
+  (`harmonyMetrics.ts:353` already goes through the adapter).
+
+  **Honest limits.** Nothing rendered or listened to — VALIDATED ON OUTPUT
+  is not claimed. The keys' bass reference is a re-plan, not the bass part's
+  notes, until the orchestrator passes siblings. Contrary motion is measured
+  against a *guide* (a smooth third-line), not the solved top voice; on the
+  corpus the keys-top-vs-bass contrary share moved both ways per case
+  (owner's song 0.39 → 0.71). `bassContraryShare`/`approachShare` have small
+  denominators on 4-chord loops. `identical_voicing_shape` remains on
+  pop-full: a 4-chord loop voiced by an exact solver repeats its optimum; only
+  the operators vary it across sections. The strings' shipped notes are
+  worse after repair than before (numbers above) for a reason outside this
+  stream's files. Style parameters are defaults per aesthetic; no song-level
+  learning. `harmonyEngine`'s three corrected readings change analysis for
+  symbols containing `maj13`, `11`, `13`, `7sus4`, `5`, `7#9` (previously
+  null or wrong) — no stored Song Model in the fixtures carries them.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

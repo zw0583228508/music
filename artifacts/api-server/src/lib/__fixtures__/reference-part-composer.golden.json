@@ -1,12 +1,144 @@
 {
-  "recordedAt": "composer digests and shipped-note digests recorded on main 39aad30 before the B-00 composer split, orchestration noteCount re-pinned after B-00 D1; RE-PINNED at the B-01 merge (planners v1.1: arc targets, sung-by-default, mix/ensemble excluded, operators) - every part request changed, so every digest changed; the split itself was verified byte-identical at 39aad30 -> B-00. RE-PINNED again at the B-03 merge: instrument definitions now come from sourced profiles (ranges, polyphony and leap limits from the GM table, e.g. strings leap 10 -> 24; keys never a kit), which changes the constraints every part is composed under. A future digest change must again name its cause here.",
+  "recordedAt": "composer digests and shipped-note digests recorded on main 39aad30 before the B-00 composer split, orchestration noteCount re-pinned after B-00 D1; RE-PINNED at the B-01 merge (planners v1.1: arc targets, sung-by-default, mix/ensemble excluded, operators) - every part request changed, so every digest changed; the split itself was verified byte-identical at 39aad30 -> B-00. RE-PINNED at B-02 (harmony realisation, base a751796): the four chordal writers (bass line planned first, keys / strings / brass voicings solved per role against it) replaced the root-position stacks and the root-nearest-40 bass; the composer honours partWindow (sustained and rhythmic parts stop at their exit bar); chord tones are read through chordSymbols.ts (identical for this corpus's maj / min / 7 / m7 symbols) - so every case's composer digest changed and every shipped-note digest with it; the rhythm, transition and counter-melody writers are untouched. A future digest change must again name its cause here.",
   "cases": [
     {
       "id": "pop-full",
       "composer": {
         "tasks": 15,
-        "notes": 734,
-        "digest": "cc52c1b2ab234540af08f9183270992394cef5613419e0a80e9b763a8e4dcd35"
+        "notes": 708,
+        "digest": "6abf9beafb418653d25c5fa3e7f60312f94c6db771ea771c15811bf30d2c5503"
+      },
+      "orchestration": [
+        {
+          "candidateId": "cand-A",
+          "strategy": "conservative",
+          "noteCount": 684,
+          "tracks": [
+            "drums",
+            "bass",
+            "keys"
+          ],
+          "digest": "dbba28beb6be8f13aba3cad7fae68c3b31de669e103426306bb1d7a985954317"
+        },
+        {
+          "candidateId": "cand-B",
+          "strategy": "melodic",
+          "noteCount": 724,
+          "tracks": [
+            "drums",
+            "bass",
+            "keys"
+          ],
+          "digest": "3e6ac8a9a4014fb1a19aa3e0fd4034a97785383aaf4e0dc614abe9ae06cc83cb"
+        },
+        {
+          "candidateId": "cand-C",
+          "strategy": "adventurous",
+          "noteCount": 725,
+          "tracks": [
+            "drums",
+            "bass",
+            "keys"
+          ],
+          "digest": "384951739a68eefab135dc0e02afdd4939e54fb8de13919af153c52b9c9b37f6"
+        }
+      ]
+    },
+    {
+      "id": "ballad-piano-vocal",
+      "composer": {
+        "tasks": 10,
+        "notes": 429,
+        "digest": "8fb93834c1ec130c4c56c8519e29d169b32869c26f4b61e83d8ef52562b0d7c3"
+      },
+      "orchestration": [
+        {
+          "candidateId": "cand-A",
+          "strategy": "conservative",
+          "noteCount": 428,
+          "tracks": [
+            "drums",
+            "bass",
+            "keys"
+          ],
+          "digest": "7ae5b88cf448101b20e524a443302739ced27ee569f741a0277b488d54265b5c"
+        },
+        {
+          "candidateId": "cand-B",
+          "strategy": "melodic",
+          "noteCount": 455,
+          "tracks": [
+            "drums",
+            "bass",
+            "keys"
+          ],
+          "digest": "cf2ced5a4ae7fdd4efc3e02e1f836dbbc37ca7f93078fabd9ca7ae60a4ca655e"
+        },
+        {
+          "candidateId": "cand-C",
+          "strategy": "adventurous",
+          "noteCount": 455,
+          "tracks": [
+            "drums",
+            "bass",
+            "keys"
+          ],
+          "digest": "3554258e9b873c4c5c82ae3e60acea6faf997a9bb1800c0f1b610147b62473fa"
+        }
+      ]
+    },
+    {
+      "id": "rock-full",
+      "composer": {
+        "tasks": 13,
+        "notes": 634,
+        "digest": "6a4b3c099d38d4e36f8103d8a1f8910847c02c95b979111c1812d1ee85bedb9d"
+      },
+      "orchestration": [
+        {
+          "candidateId": "cand-A",
+          "strategy": "conservative",
+          "noteCount": 617,
+          "tracks": [
+            "drums",
+            "bass",
+            "keys",
+            "guitar"
+          ],
+          "digest": "a02c5b500771a0d4f543665df2e526887585843b7c7a8507920791062d0e18d1"
+        },
+        {
+          "candidateId": "cand-B",
+          "strategy": "melodic",
+          "noteCount": 656,
+          "tracks": [
+            "drums",
+            "bass",
+            "keys",
+            "guitar"
+          ],
+          "digest": "f14a67607404ca66f63415ae6b544c84c5dd8a2b2b8c6f6e16258905fdba8e7b"
+        },
+        {
+          "candidateId": "cand-C",
+          "strategy": "adventurous",
+          "noteCount": 658,
+          "tracks": [
+            "drums",
+            "bass",
+            "keys",
+            "guitar"
+          ],
+          "digest": "7edc7d347d323f19366c53b06888ed1950a83b07d2c2319c72f8e899a4f086da"
+        }
+      ]
+    },
+    {
+      "id": "dance-full",
+      "composer": {
+        "tasks": 14,
+        "notes": 704,
+        "digest": "8dbbd29fb08e90c9ae9b49539ace887a42b3e823d6a6ea2d830df94b5d895e4c"
       },
       "orchestration": [
         {
@@ -16,166 +148,34 @@
           "tracks": [
             "drums",
             "bass",
-            "keys"
+            "keys",
+            "synth"
           ],
-          "digest": "e4b229b88c896333b4a31db6a86717be0c98cd1a5d9dcaf27ae10f32efb286ed"
+          "digest": "58d0f17a9c49bf023d3633caf8daae08e8545dc23fa1f39e8ef711fbe4d7dbb4"
         },
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 774,
-          "tracks": [
-            "drums",
-            "bass",
-            "keys"
-          ],
-          "digest": "dd1f13269d99bf25d397ea96eb721f0edfd3fe9ff555ea3fc5d7f9260f3bc02b"
-        },
-        {
-          "candidateId": "cand-C",
-          "strategy": "adventurous",
-          "noteCount": 774,
-          "tracks": [
-            "drums",
-            "bass",
-            "keys"
-          ],
-          "digest": "a043ccf31d3cfd85eca9e7cbe095fc1ab2f3830a224feb4536efcc6a90c08e33"
-        }
-      ]
-    },
-    {
-      "id": "ballad-piano-vocal",
-      "composer": {
-        "tasks": 10,
-        "notes": 402,
-        "digest": "1cbb0c99672b49d6cbcd3024c726c24cb9af46680d7988ed9fa41953b874d8c2"
-      },
-      "orchestration": [
-        {
-          "candidateId": "cand-A",
-          "strategy": "conservative",
-          "noteCount": 407,
-          "tracks": [
-            "drums",
-            "bass",
-            "keys"
-          ],
-          "digest": "ea0879add0cfcf0d42cfab8cefc946adf2e1ff1dfa02f1651d3196ddf52024a9"
-        },
-        {
-          "candidateId": "cand-B",
-          "strategy": "melodic",
-          "noteCount": 434,
-          "tracks": [
-            "drums",
-            "bass",
-            "keys"
-          ],
-          "digest": "adc1f54fe22d7275938b10d09f902bca98779c95b4bf323bd72bcbfb21d261b2"
-        },
-        {
-          "candidateId": "cand-C",
-          "strategy": "adventurous",
-          "noteCount": 434,
-          "tracks": [
-            "drums",
-            "bass",
-            "keys"
-          ],
-          "digest": "4957b4a0fa4e13e882bf273a60c69bf0a00190aaa996a377fc2e5ae2d0fef048"
-        }
-      ]
-    },
-    {
-      "id": "rock-full",
-      "composer": {
-        "tasks": 13,
-        "notes": 662,
-        "digest": "b71f6577d970ce815f79a3d617719de50117213bba8799377b6200c543fa8305"
-      },
-      "orchestration": [
-        {
-          "candidateId": "cand-A",
-          "strategy": "conservative",
-          "noteCount": 651,
-          "tracks": [
-            "drums",
-            "bass",
-            "keys",
-            "guitar"
-          ],
-          "digest": "24ca05b7efa0041551c0db34ec1a98c1b7f82723b20de279f4184ee0db0b0a3d"
-        },
-        {
-          "candidateId": "cand-B",
-          "strategy": "melodic",
-          "noteCount": 694,
-          "tracks": [
-            "drums",
-            "bass",
-            "keys",
-            "guitar"
-          ],
-          "digest": "17e4b5bd782d3d5e3cdd28675c98ad6fcc91f76f01a87c56786431cbf0ad67b5"
-        },
-        {
-          "candidateId": "cand-C",
-          "strategy": "adventurous",
-          "noteCount": 694,
-          "tracks": [
-            "drums",
-            "bass",
-            "keys",
-            "guitar"
-          ],
-          "digest": "5d3b402e83a321943ea959a645fb3abec7e3a9bf7f1b1da7109601bb493c4dbf"
-        }
-      ]
-    },
-    {
-      "id": "dance-full",
-      "composer": {
-        "tasks": 14,
-        "notes": 708,
-        "digest": "1ab899296f037fc063f847db8c5b038433e426d86787d7147b4aecae7860c1c2"
-      },
-      "orchestration": [
-        {
-          "candidateId": "cand-A",
-          "strategy": "conservative",
-          "noteCount": 736,
+          "noteCount": 776,
           "tracks": [
             "drums",
             "bass",
             "keys",
             "synth"
           ],
-          "digest": "1cb9c7e729a3f289b0d328500368caa861657abbf6c3778bfdce6fd69e642779"
-        },
-        {
-          "candidateId": "cand-B",
-          "strategy": "melodic",
-          "noteCount": 788,
-          "tracks": [
-            "drums",
-            "bass",
-            "keys",
-            "synth"
-          ],
-          "digest": "87f5401eb163149e48f7fd0938b2987012668f524ee17af13045ee860c31ec51"
+          "digest": "f46c72c9099a655a25759f66aabbeab772341b039382e69285ff98ea6671d9ab"
         },
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 788,
+          "noteCount": 776,
           "tracks": [
             "drums",
             "bass",
             "keys",
             "synth"
           ],
-          "digest": "4ce159b40d34576b7a21719e515c3167cdcf1d6c006fd30277f5df3ca6c85860"
+          "digest": "770377dc3090c2045c5f11d368788c6258401dfeccac21ff54ca9824c2484b1d"
         }
       ]
     },
@@ -183,42 +183,42 @@
       "id": "acoustic-demo",
       "composer": {
         "tasks": 10,
-        "notes": 452,
-        "digest": "6bd424a1ddc361fb7088af0278169b298d4de475d3c751f50a33431a9ce6d1ec"
+        "notes": 449,
+        "digest": "18e4ebf6e734c0a5a989a57722ae6f51514d97135f1e36e222d406f845fa4d37"
       },
       "orchestration": [
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 454,
+          "noteCount": 444,
           "tracks": [
             "drums",
             "bass",
             "guitar"
           ],
-          "digest": "11a9418a5c4da9de39d54d0016a3698b4a91d7be9fa7c0c1d20e0b9341be5774"
+          "digest": "fb8346b6f3d7eb78eeecdc386ac7fd11441ce0700ea40cf701af1372ea7184f2"
         },
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 484,
+          "noteCount": 475,
           "tracks": [
             "drums",
             "bass",
             "guitar"
           ],
-          "digest": "27c430da0b991289973350ce22173c1959de58c501d1efd69878543acbc10ef4"
+          "digest": "a78506bd17c88245721c85937f19058dfcbabea3836fe45f9d36e6538f7de10b"
         },
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 484,
+          "noteCount": 475,
           "tracks": [
             "drums",
             "bass",
             "guitar"
           ],
-          "digest": "4d02809230a4fd0530cfdca0c7d243a2227d046754b5cfe94574f2c251433b65"
+          "digest": "08623675e19bc9c56e0da6a11acb49a0dae3b5257834b4280f1bac1bc628080f"
         }
       ]
     },
@@ -226,14 +226,14 @@
       "id": "orchestral-midi",
       "composer": {
         "tasks": 12,
-        "notes": 396,
-        "digest": "b0416412fff9b1a88e34691f1635d1523da1f409d52f000ecd7be7d0ec824cc9"
+        "notes": 412,
+        "digest": "bc1335ad552dbcf473e2af35c7d0e5ef74e1c4fac71188a9e843a8c0ba5185e9"
       },
       "orchestration": [
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 350,
+          "noteCount": 369,
           "tracks": [
             "drums",
             "bass",
@@ -241,12 +241,12 @@
             "brass",
             "strings"
           ],
-          "digest": "960ba4e56b099cc3c7fe70c3cb7279be0dda34bac5ac3f49f54caa53484fb270"
+          "digest": "4a35727741fae7930dd6373293cb0c899f8face2bab46d39827ff8e6a0acd434"
         },
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 374,
+          "noteCount": 394,
           "tracks": [
             "drums",
             "bass",
@@ -254,12 +254,12 @@
             "brass",
             "strings"
           ],
-          "digest": "61118ffb9b6c8e670f30b14865e7666ed9493311ab36702c4fa968ba07ea211c"
+          "digest": "6c09d83686078ca08729739f1a5ce6154332349217c69c38e2ee277fdfd134fc"
         },
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 374,
+          "noteCount": 394,
           "tracks": [
             "drums",
             "bass",
@@ -267,7 +267,7 @@
             "brass",
             "strings"
           ],
-          "digest": "a2510da47fb8b736426101ed2ea797451bf53640db091a4554dbf7189f43a7fc"
+          "digest": "6fab6e1587e90d0c55b856b9d24bd7cba32614737cea5fb4aa1ee765dfaeb628"
         }
       ]
     },
@@ -276,7 +276,7 @@
       "composer": {
         "tasks": 8,
         "notes": 376,
-        "digest": "7eb049820e48bbd7c134e86daa8447c7889f913c360336d96967d72c6428e83a"
+        "digest": "0818a81163ce05c278d3c215ad9e5be210e36970dd8ad1bddae574d1306ef565"
       },
       "orchestration": [
         {
@@ -288,7 +288,7 @@
             "bass",
             "keys"
           ],
-          "digest": "a684e954d78e80f7c0a3b7a307dea58d0d7652553550fd70d460140d2cd00d80"
+          "digest": "e3be166a0af425718fbcb6ddc6e3e3a23584d49749c0ae2bc63e8a93181345e6"
         },
         {
           "candidateId": "cand-B",
@@ -299,7 +299,7 @@
             "bass",
             "keys"
           ],
-          "digest": "982da25297592300e0258f967dcd75139064d82cdae9bf06d32d2ea20d7eca14"
+          "digest": "e0ebd7fc3b89ecc7aceeacc4be7fcefa82c294942fbd2d5ddf5e1ada379d4919"
         },
         {
           "candidateId": "cand-C",
@@ -310,7 +310,7 @@
             "bass",
             "keys"
           ],
-          "digest": "5294674bf87ab3a185ab7b4387207fbadbb2c03cffd1db937e594354313641ef"
+          "digest": "b77a3245ae3eb430617f4d4b238e3cd4a91d44f568f3b206539c7eafb2a757a2"
         }
       ]
     },
@@ -318,42 +318,42 @@
       "id": "jazz-full",
       "composer": {
         "tasks": 8,
-        "notes": 1158,
-        "digest": "967c198d2e5d3fbd6f83a13c42732eb85630218ca2aad24770618853df2c0a41"
+        "notes": 1092,
+        "digest": "d2fcc584a5315cff99328d3eb3ccd14f23a16bbd018c743c4b52d8e3826db6d7"
       },
       "orchestration": [
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 1151,
+          "noteCount": 1083,
           "tracks": [
             "drums",
             "bass",
             "keys"
           ],
-          "digest": "d498d77962af6d4f0cba8dcbb258d38941fc148ccfb025dc0251d9c265e811c4"
+          "digest": "119d073a1991c7fc723c85d4b52e38c17832b89aa2e61f84256c00752eef3e58"
         },
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 1222,
+          "noteCount": 1158,
           "tracks": [
             "drums",
             "bass",
             "keys"
           ],
-          "digest": "a2cfe605f2e74e822afe230c7b9cb6f8911dd79ab0b8d752bce8b4b55dc0c740"
+          "digest": "d066d20d514e6ea51162a52697c4ce7ab8108df9402160d139bea55efc8e487d"
         },
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 1222,
+          "noteCount": 1159,
           "tracks": [
             "drums",
             "bass",
             "keys"
           ],
-          "digest": "5456db4dc96b365d71c37035fc5c9b9c6b3c81894428411003ba3f502f2f5946"
+          "digest": "a446636dee15758bb5d74b3588c5208c9a9f68d37b6926368ab8e35d4250fd50"
         }
       ]
     },
@@ -361,14 +361,14 @@
       "id": "cinematic-midi",
       "composer": {
         "tasks": 14,
-        "notes": 468,
-        "digest": "b88b243191a8bbcc0277980c8ee745bf72d31dc4db11870a866b4eec4faee74f"
+        "notes": 500,
+        "digest": "d73969c41d18cef7327d7f6bdd0f17060164a3b38e94d368e8289446f9caf8fd"
       },
       "orchestration": [
         {
           "candidateId": "cand-A",
           "strategy": "conservative",
-          "noteCount": 437,
+          "noteCount": 474,
           "tracks": [
             "drums",
             "bass",
@@ -377,12 +377,12 @@
             "brass",
             "strings"
           ],
-          "digest": "a8a914971e555ad5c8d57086bf084d15664adb49d7df40021d5fd8b6ad2268e4"
+          "digest": "b1260f559c769f401c39e9d8d6339b79beee12bdcad5f9532102f29ce320c31f"
         },
         {
           "candidateId": "cand-B",
           "strategy": "melodic",
-          "noteCount": 462,
+          "noteCount": 501,
           "tracks": [
             "drums",
             "bass",
@@ -391,12 +391,12 @@
             "brass",
             "strings"
           ],
-          "digest": "06d54c8e691236977cf5593e862b369af3782f7e139f41a199c83cf8d29f3796"
+          "digest": "b9416444827aa8e0f563c00e4f58661ece560b18c9c072b444890d453d91ad3b"
         },
         {
           "candidateId": "cand-C",
           "strategy": "adventurous",
-          "noteCount": 462,
+          "noteCount": 502,
           "tracks": [
             "drums",
             "bass",
@@ -405,7 +405,7 @@
             "brass",
             "strings"
           ],
-          "digest": "35f391a5bc003d105e68251d326eaecb4bb466f6941a6045ded12547d6f6bade"
+          "digest": "17d250803523a52e91d3c990eb183b4e19ef995e006afb600e2657db6297d066"
         }
       ]
     }

@@ -63,6 +63,7 @@
  *   Half a beat is the floor because no common notation writes a functional
  *   chord shorter than that without also writing the beat it sits on.
  */
+import { parseChordTemplate, type TemplateQuality } from "./chordSymbols";
 import {
   type AnalysisDomain,
   reliabilityFor,
@@ -112,12 +113,8 @@ export function parsePitchClass(token: string): PitchClass | null {
 // Chord vocabulary
 // ---------------------------------------------------------------------------
 
-export type HarmonyQuality =
-  | "maj" | "min" | "dim" | "aug"
-  | "sus4" | "sus2"
-  | "maj6" | "min6"
-  | "dom7" | "maj7" | "min7" | "m7b5" | "dim7" | "minMaj7"
-  | "add9" | "dom9" | "maj9" | "min9";
+/** The chord-template vocabulary; the literal union lives in `chordSymbols.ts` (Brain B-02). */
+export type HarmonyQuality = TemplateQuality;
 
 /** Interval sets in semitones above the root. */
 export const CHORD_TEMPLATES: Record<HarmonyQuality, number[]> = {
@@ -448,80 +445,20 @@ export type ParsedChordSymbol = {
 };
 
 /**
- * Order matters, and so does case. The uppercase-`M` shorthands (`CM7` = C
- * major seventh) **must** be matched case-sensitively and before the
- * lowercase-`m` minor forms: a case-insensitive `/M7/i` silently swallows
- * `Cm7` and turns every minor seventh in the corpus into a major seventh.
- */
-const QUALITY_ALIASES: Array<[RegExp, HarmonyQuality]> = [
-  // Case-sensitive uppercase-M shorthands, first.
-  [/^mM7$/, "minMaj7"],
-  [/^M7$/, "maj7"],
-  [/^M9$/, "maj9"],
-  [/^M6$/, "maj6"],
-  [/^M$/, "maj"],
-  // Then the case-insensitive spellings.
-  [/^(mmaj7|minmaj7|-Δ7?)$/i, "minMaj7"],
-  [/^(maj7|major7|Δ7?)$/i, "maj7"],
-  [/^(maj9|major9)$/i, "maj9"],
-  [/^(maj6|major6|6)$/i, "maj6"],
-  [/^(m6|min6|minor6|-6)$/i, "min6"],
-  [/^(m7b5|min7b5|hdim7|halfdim|ø7?)$/i, "m7b5"],
-  [/^(dim7|o7|°7)$/i, "dim7"],
-  [/^(dim|o|°)$/i, "dim"],
-  [/^(aug|\+|\+5)$/i, "aug"],
-  [/^(m9|min9|minor9|-9)$/i, "min9"],
-  [/^(m7|min7|minor7|-7)$/i, "min7"],
-  [/^(m|min|minor|-)$/i, "min"],
-  [/^(sus4|sus)$/i, "sus4"],
-  [/^sus2$/i, "sus2"],
-  [/^(add9|add2)$/i, "add9"],
-  [/^(9|dom9)$/i, "dom9"],
-  [/^(7|dom7|dom)$/i, "dom7"],
-  [/^(maj|major)$/i, "maj"],
-  [/^$/, "maj"],
-];
-
-/**
  * Parses the symbol dialects the platform actually receives: plain (`Cmaj7`),
  * MIREX lab (`C:maj7`), and slash (`C/E`, `C:maj/3`). Returns null for `N`
- * (no chord) and anything unrecognised — an unparsed symbol is dropped, never
+ * (no chord) and anything unrecognised - an unparsed symbol is dropped, never
  * guessed at.
+ *
+ * Brain B-02: an adapter over the one parser (`chordSymbols.ts`), which reads
+ * the full vocabulary and reduces it to the template nearest the chord. Three
+ * readings of the old alias table changed on purpose: `Cmaj13` was read as C
+ * minor (the `^m` fallback), `C13` / `C11` folded to `dom7` although their
+ * ninth is in the chroma (now `dom9`), and `C7sus4` was a dominant seventh
+ * with a major third it does not have (now `sus4`).
  */
 export function parseChordSymbol(symbol: string): ParsedChordSymbol | null {
-  const raw = symbol.trim();
-  if (!raw || raw === "N" || raw === "X" || raw.toUpperCase() === "N.C.") return null;
-  const [body, bassToken] = raw.split("/");
-  const root = parsePitchClass(body);
-  if (root === null) return null;
-  const afterRoot = body.replace(/♯/g, "#").replace(/♭/g, "b")
-    .replace(/^[A-Ga-g][#b]{0,2}/, "");
-  const qualityToken = afterRoot.replace(/^:/, "").trim();
-  let quality: HarmonyQuality | null = null;
-  for (const [pattern, value] of QUALITY_ALIASES) {
-    if (pattern.test(qualityToken)) { quality = value; break; }
-  }
-  if (quality === null) {
-    // Unknown extension — fall back to the triad the token implies rather than
-    // dropping a usable observation. `C13` is at least a dominant-family C.
-    if (/^(11|13|7sus4|7sus)/i.test(qualityToken)) quality = "dom7";
-    else if (/^m/i.test(qualityToken)) quality = "min";
-    else return null;
-  }
-  let bass = root;
-  if (bassToken !== undefined) {
-    const parsedBass = parsePitchClass(bassToken);
-    if (parsedBass !== null) bass = parsedBass;
-    else if (/^\d+$/.test(bassToken.trim())) {
-      // Degree form (`C:maj/3`): 1-based scale degree into the template.
-      const degree = Number(bassToken.trim());
-      const template = CHORD_TEMPLATES[quality];
-      const interval = degree === 3 ? template[1] : degree === 5 ? template[2]
-        : degree === 7 ? template[3] : 0;
-      bass = pc(root + (interval ?? 0));
-    }
-  }
-  return { root, quality, bass };
+  return parseChordTemplate(symbol);
 }
 
 /** `C6`, `Am/C`, `G7/B`. Root position omits the slash. */

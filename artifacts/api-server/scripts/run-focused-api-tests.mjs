@@ -816,6 +816,13 @@ const suites = {
       ["src/lib/positiveControlLedger.test.ts", "positive-control-ledger.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
     ],
   },
+  "brain-b02": {
+    bundles: [
+      ["src/lib/brainB02Harmony.test.ts", "brain-b02-harmony.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/chordSymbols.test.ts", "chord-symbols.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/harmonyPlan/harmonyPlan.test.ts", "harmony-plan.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
   "brain-invariants": {
     bundles: [
       ["src/lib/invariants/generators.property.test.ts", "b12-generators.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],

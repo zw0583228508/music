@@ -114,7 +114,13 @@ test("the reference part composer produces byte-identical parts to the golden fi
         "mix/ensemble excluded, operators) - every part request changed, so every digest changed; the split itself was verified " +
         "byte-identical at 39aad30 -> B-00. RE-PINNED again at the B-03 merge: instrument definitions now come from " +
         "sourced profiles (ranges, polyphony and leap limits from the GM table, e.g. strings leap 10 -> 24; keys never a kit), " +
-        "which changes the constraints every part is composed under. A future digest change must again name its cause here.",
+        "which changes the constraints every part is composed under. A future digest change must again name its cause here. " +
+        "RE-PINNED again at the B-02 merge (rebased over B-03 and B-10) (harmony realisation, base a751796): the four chordal writers " +
+        "(bass line planned first, keys / strings / brass voicings solved per role against it) replaced the root-position stacks " +
+        "and the root-nearest-40 bass; the composer honours partWindow (sustained and rhythmic parts stop at their exit bar); " +
+        "chord tones are read through chordSymbols.ts (identical for this corpus's maj / min / 7 / m7 symbols) - so every " +
+        "case's composer digest changed and every shipped-note digest with it; the rhythm, transition and counter-melody writers " +
+        "are untouched. A future digest change must again name its cause here.",
       cases: current,
     }, null, 2)}\n`);
     return;
