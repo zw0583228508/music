@@ -36,6 +36,8 @@ export type StemRenderResult = {
 };
 
 const DEFAULT_SR = 48_000;
+/** Rates the pipeline renders at: production stems (48 k / 44.1 k) and the benchmark's speed renders (24 k / 22.05 k). */
+export const SUPPORTED_SAMPLE_RATES: ReadonlySet<number> = new Set([48_000, 44_100, 24_000, 22_050]);
 const NON_SILENT_RMS_DBFS = -60;
 const CLIP_CEILING = 0.999;
 
@@ -303,14 +305,21 @@ export function renderStem(
   const expectedFrames = Math.ceil(durationSeconds * sampleRate);
   add("correct_duration", Math.abs(samples.length - expectedFrames) <= 1,
     `${samples.length} frames vs ${expectedFrames}`);
-  add("correct_sample_rate", sampleRate === 48_000 || sampleRate === 44_100,
-    `${sampleRate} Hz`);
+  // B-07: the check verifies that the encoded stem carries the sample rate the
+  // caller asked for and that the rate is one the pipeline renders at. It used
+  // to be a hard-coded 48 k / 44.1 k whitelist, which made every stem of the
+  // benchmark's 24 kHz speed renders "infeasible" (renderFailures = 5 on every
+  // Tier S case in the 3bf23aa / 1467706 baselines) while the audio critic
+  // scored the same stems 86-94 - a policy statement misfiled as a check.
+  add("correct_sample_rate", wav.readUInt32LE(24) === sampleRate && SUPPORTED_SAMPLE_RATES.has(sampleRate),
+    `${sampleRate} Hz (encoded ${wav.readUInt32LE(24)} Hz)`);
   add("no_clipping", measuredPeak < CLIP_CEILING,
     `true peak ${toDbfs(measuredPeak).toFixed(2)} dBFS`);
   add("correct_instrument", Boolean(family) && family in VOICES,
     `family "${family}"`);
-  add("correct_note_events", countOnsets(samples, sampleRate) >= Math.min(notes.length, 1) || notes.length === 0,
-    `${notes.length} planned note(s)`);
+  const sounded = soundingNotes(samples, sampleRate, notes);
+  add("correct_note_events", notes.length === 0 || sounded.sounding >= 1,
+    `${notes.length} planned note(s), ${sounded.sounding} audible (${(sounded.share * 100).toFixed(0)} %) above ${NON_SILENT_RMS_DBFS} dBFS`);
 
   // Pitch sensitivity: a probe note an octave up must be brighter.
   const probe: MusicalNote = notes[0]
@@ -359,18 +368,45 @@ export function renderStem(
   return { wav, samples, attestation };
 }
 
-function countOnsets(samples: Float32Array, sampleRate: number): number {
-  const win = Math.max(1, Math.floor(sampleRate * 0.01));
-  let onsets = 0;
-  let prevEnergy = 0;
-  for (let i = 0; i + win < samples.length; i += win) {
+/**
+ * How many of the planned notes are audible in the stem: the RMS of each
+ * note's first 100 ms (or its whole length, when shorter) against the same
+ * silence floor the `non_silent` check uses.
+ *
+ * B-07: this replaces a 10 ms / 2.2x-rise transient counter. That counter was
+ * a percussive onset detector with an absolute 0.01 floor, and it could not
+ * see a sustained voice at all: the V1 `strings` envelope has a 90 ms attack
+ * and a 0.85 sustain, so by the time a string entry crosses 0.01 its ramp has
+ * flattened below 2.2x, and overlapping pad notes never return to silence
+ * afterwards. Measured on the benchmark corpus at both 24 kHz and 48 kHz:
+ * orchestral-midi's `strings` stem (24 notes, peak −14.4 dBFS, 8 179 windows
+ * above the floor — a perfectly audible stem) counted **0** onsets and was
+ * marked infeasible, as did cinematic-midi's (11 notes). Those two cases are
+ * the 5/5 candidate render failures that survived the sample-rate fix, and the
+ * failure is sample-rate independent, which is why it hid behind it.
+ *
+ * The strictness of `correct_note_events` is unchanged (the old check demanded
+ * `>= min(notes.length, 1)`, i.e. one audible event); only the measurement is
+ * fixed, and the share is reported so a reviewer can see how much of a part
+ * actually sounds.
+ */
+export function soundingNotes(
+  samples: Float32Array,
+  sampleRate: number,
+  notes: ReadonlyArray<Pick<MusicalNote, "start" | "duration">>,
+  floorDbfs = NON_SILENT_RMS_DBFS,
+): { sounding: number; share: number } {
+  const floor = 10 ** (floorDbfs / 20);
+  let sounding = 0;
+  for (const note of notes) {
+    const from = Math.max(0, Math.floor(note.start * sampleRate));
+    const to = Math.min(samples.length, from + Math.max(1, Math.floor(Math.min(0.1, note.duration) * sampleRate)));
+    if (to <= from) continue;
     let e = 0;
-    for (let j = i; j < i + win; j += 1) e += samples[j] * samples[j];
-    e = Math.sqrt(e / win);
-    if (e > prevEnergy * 2.2 && e > 0.01) onsets += 1;
-    prevEnergy = e;
+    for (let i = from; i < to; i += 1) e += samples[i] * samples[i];
+    if (Math.sqrt(e / (to - from)) > floor) sounding += 1;
   }
-  return onsets;
+  return { sounding, share: notes.length ? Number((sounding / notes.length).toFixed(4)) : 0 };
 }
 
 export type ArrangementRenderResult = {

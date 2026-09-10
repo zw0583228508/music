@@ -385,9 +385,41 @@ export function buildDecisionTrace(input: DecisionTraceInput): DecisionTrace {
       });
     }
   }
+  // Brain B-07: the brain renders every candidate for evaluation and critiques
+  // it, so question 3's audio half is answerable from stored rows. Before B-07
+  // the render stage was `skipped` on every production job and this was always
+  // a `not recorded` line.
   const renderStage = evidence?.stages.find((s) => s.stage === "render");
-  if (renderStage && renderStage.status !== "ok") {
+  const brainAudio = evidence?.audio ?? null;
+  if (brainAudio) {
+    for (const dimension of brainAudio.dimensions) {
+      for (const observation of dimension.observations) {
+        if (observation.severity === "info") continue;
+        const classified = classifyFinding(observation.kind);
+        findings.push({
+          source: "runner_audio_critic",
+          kind: observation.kind,
+          severity: observation.severity === "blocking" ? "error" : observation.severity === "major" ? "warning" : "info",
+          failureCode: classified.failureCode,
+          originLayer: classified.originLayer,
+          sectionName: observation.sectionName ?? null,
+          instrument: null,
+          trackIds: [...observation.trackIds],
+          startBar: observation.startBar,
+          endBar: observation.endBar,
+          startSeconds: observation.startSeconds,
+          endSeconds: observation.endSeconds,
+          message:
+            `${dimension.dimension}/${observation.kind} (${dimension.controlStatus}): ${observation.recommendedRepair?.detail ?? observation.kind}` +
+            ` — suspected origin ${observation.suspectedOrigin} (${observation.originConfidence}), heard in the evaluation render` +
+            ` (${brainAudio.renderer} ${brainAudio.rendererVersion}, ${brainAudio.durationSeconds} s)`,
+        });
+      }
+    }
+  } else if (renderStage && renderStage.status !== "ok") {
     notRecorded.push({ question: "which critic objected (audio)", layer: "render", reason: `not recorded by render: the brain's render stage was ${renderStage.status} (${renderStage.detail}); no audio critique of the candidates exists` });
+  } else if (evidence) {
+    notRecorded.push({ question: "which critic objected (audio)", layer: "render", reason: "not recorded by render: this candidate predates the evaluation render (Brain B-07); no audio critique was persisted with it" });
   }
   if (!evidence) {
     notRecorded.push({ question: "which critic objected (symbolic)", layer: "compose", reason: `not recorded: ${brainMissingReason}` });

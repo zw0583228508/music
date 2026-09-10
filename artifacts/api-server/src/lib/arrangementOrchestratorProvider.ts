@@ -47,6 +47,11 @@ import { performanceStyleFromProfile } from "./performanceEngine";
 import { BENCHMARK_CORPUS, buildBenchmarkSongModel } from "./benchmarkCorpus";
 import { buildCandidateProvenance, type CandidateProvenance } from "./decisionProvenance";
 import { classifyBrainFinding, countFailureCodes } from "./findingClassification";
+import {
+  evaluateCandidatesWithAudio,
+  mergeEvaluationStages,
+  type EvaluationCritiqueResult,
+} from "./evaluationCritique";
 
 /** A StyleProfile travels in `parameters.styleProfile`; anything else is ignored. */
 function readStyleProfile(parameters: GenerationParameters | undefined): StyleProfile | null {
@@ -360,13 +365,21 @@ function brainEvidence(
   result: OrchestrationResult,
   confidence: ArrangementBrainCandidateEvidence["confidence"],
   telemetry: { provenance: CandidateProvenance; scopedId: (id: string) => string },
+  evaluation: EvaluationCritiqueResult | null,
 ): ArrangementBrainCandidateEvidence {
   // B-11: every finding carries its failure code and origin layer.
   const findings = candidate.findings.map(classifyBrainFinding);
+  const audio = evaluation?.byCandidate.get(candidate.candidateId)?.audio ?? null;
   return {
     version: "1.0",
     plan: candidate.plan as ArrangementPlan,
-    stages: result.stages.map((s) => ({ stage: s.stage, status: s.status, detail: s.detail, ...(s.evidence ? { evidence: s.evidence } : {}) })),
+    // B-07: the orchestrator ran with `render: false`; the provider rendered
+    // and critiqued every candidate afterwards, so the trace says what the
+    // brain actually heard instead of "skipped".
+    stages: mergeEvaluationStages(
+      result.stages.map((s) => ({ stage: s.stage, status: s.status, detail: s.detail, ...(s.evidence ? { evidence: s.evidence } : {}) })),
+      evaluation?.stages ?? [],
+    ),
     traceable: result.traceable,
     findings,
     hardRule: candidate.hardRule,
@@ -407,6 +420,37 @@ function brainEvidence(
     contextPasses: (result.contextPasses ?? []).map((pass) => ({ id: pass.id, changed: pass.changed, note: pass.note })),
     timing: result.timing,
     failureCodes: countFailureCodes(findings),
+    ...(audio ? { audio } : {}),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// B-07: the evaluation render on the production path
+// ---------------------------------------------------------------------------
+
+/**
+ * The evaluation render is **on** by default: without it the audio half of the
+ * score is a number no user's job ever produced. `MUSIC_BRAIN_EVALUATION_RENDER=off`
+ * is an operator escape for an incident, not a configuration: when it is set the
+ * stage trace says so in as many words and no candidate carries an audio score,
+ * so nothing downstream can mistake a disabled loop for a passed one.
+ */
+export function evaluationRenderEnabled(): boolean {
+  return process.env.MUSIC_BRAIN_EVALUATION_RENDER?.trim().toLowerCase() !== "off";
+}
+
+function disabledEvaluation(): EvaluationCritiqueResult {
+  const detail = "the evaluation render is disabled by MUSIC_BRAIN_EVALUATION_RENDER=off; no candidate was rendered and no audio score was computed";
+  return {
+    byCandidate: new Map(),
+    stages: [
+      { stage: "render", status: "skipped", detail, evidence: { disabledBy: "MUSIC_BRAIN_EVALUATION_RENDER=off" } },
+      { stage: "audio_critique", status: "skipped", detail: "no evaluation render to critique (disabled by MUSIC_BRAIN_EVALUATION_RENDER=off)" },
+    ],
+    location: "in_process",
+    totalRenderMs: 0,
+    totalCritiqueMs: 0,
+    rankedIds: [],
   };
 }
 
@@ -457,10 +501,14 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
     const songModel = input.songModel;
     await onProgress?.({ progress: 10, stage: "planning" });
 
-    // Rendering is left to the job runner, which already renders, quality-checks
-    // and critiques every candidate it persists. Rendering here as well would
-    // double the cost of each candidate for nothing. `now` is fixed so the
-    // same Song Model and seed always give the same arrangement.
+    // B-07: the orchestrator's own in-loop render is off. It renders with the
+    // reference synth (`REFERENCE_SYNTH_V1`), which fails four of PR-72's nine
+    // objective renderer checks, and it would render every candidate a second
+    // time. The provider renders each candidate exactly once below, with the
+    // evaluation renderer and one loudness, off the event loop, and rewrites
+    // the trace's `render` / `audio_critique` records with what happened.
+    // `now` is fixed so the same Song Model and seed always give the same
+    // arrangement.
     // PR-23: a resolved StyleProfile in the generation parameters (the Wave U
     // brief pipeline puts it there) shapes the performance — swing ratio,
     // microtiming, dynamics width, ornaments, fills. Without one the
@@ -507,13 +555,41 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
       throw new Error(`The Arrangement Brain refused every candidate: ${result.selection.reason}`);
     }
 
-    const ranked = rankCandidates(result.candidates);
-    if (ranked.length !== input.candidates) {
+    const symbolicRanked = rankCandidates(result.candidates);
+    if (symbolicRanked.length !== input.candidates) {
       // Padding with duplicates would fake diversity; say what happened instead.
       throw new Error(
-        `The Arrangement Brain produced ${ranked.length} candidate(s) for a request of ${input.candidates}`,
+        `The Arrangement Brain produced ${symbolicRanked.length} candidate(s) for a request of ${input.candidates}`,
       );
     }
+
+    // --- B-07: the brain hears what it ships ------------------------------
+    // Every candidate is rendered once with one renderer and one loudness, off
+    // the event loop, and critiqued by audio-critic/v1 plus the located audio
+    // dimensions. The audio score is 0.4 of the score that ranks, exactly as
+    // `orchestrateArrangement` blends them when it renders itself.
+    await onProgress?.({ progress: 62, stage: "rendering" });
+    const evaluation = evaluationRenderEnabled()
+      ? await evaluateCandidatesWithAudio({
+          songModel,
+          plan: result.plan as ArrangementPlan,
+          timing: result.timing,
+          candidates: symbolicRanked,
+          ...(signal ? { signal } : {}),
+        })
+      : disabledEvaluation();
+    if (signal?.aborted) throw new Error("Arrangement generation was cancelled");
+    const order = new Map(evaluation.rankedIds.map((id, index) => [id, index]));
+    // Candidates the render could not reach keep their symbolic order behind
+    // the ones it did — a fallback that carries its reason, never one that
+    // ranks as if the render had happened.
+    const ranked = evaluation.byCandidate.size
+      ? [...symbolicRanked].sort((a, b) =>
+          Number(b.hardRule.feasible) - Number(a.hardRule.feasible) ||
+          (order.get(a.candidateId) ?? Number.MAX_SAFE_INTEGER) - (order.get(b.candidateId) ?? Number.MAX_SAFE_INTEGER) ||
+          b.finalScore - a.finalScore ||
+          a.candidateId.localeCompare(b.candidateId))
+      : symbolicRanked;
 
     // Track ids are a global primary key in the studio, and the brain names
     // tracks by instrument ("drums-groove"). Scope them to the project so two
@@ -542,17 +618,21 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
         return scoped;
       });
       const confidence = brainConfidence(candidate);
-      const evidence = brainEvidence(candidate, result, confidence, { provenance, scopedId });
+      const evidence = brainEvidence(candidate, result, confidence, { provenance, scopedId }, evaluation);
+      const audio = evidence.audio ?? null;
       const strengths = candidate.critique.strengths.slice(0, 2).join("; ");
       const weaknesses = candidate.critique.weaknesses.slice(0, 1).join("; ");
       const errorFindings = candidate.findings.filter((f) => f.severity === "error").length;
       return {
         providerRequestId: null,
         label: candidate.label,
-        score: clampUnit(candidate.finalScore / 100),
+        score: clampUnit((audio?.finalScore ?? candidate.finalScore) / 100),
         confidence: confidence.value,
         summary: [
           `${candidate.strategy} · shipped ${shipped.toFixed(0)}/100` + (composedScore !== shipped ? ` (composed ${composedScore.toFixed(0)})` : ""),
+          audio
+            ? `audio ${audio.audioScore.toFixed(0)}/100 (${audio.renderer}, ${audio.durationSeconds.toFixed(0)} s, ${audio.location.replace("_", " ")}) · combined ${audio.finalScore.toFixed(0)}`
+            : "no evaluation render (audio not judged)",
           candidate.hardRule.feasible ? null : `FAILED the hard-rule gate (${candidate.hardRule.reasons.length} reason(s)) — not selectable`,
           `${candidate.constraintErrors} playability error(s)`,
           errorFindings ? `${errorFindings} error finding(s)` : null,
@@ -574,6 +654,17 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
           strategy: candidate.strategy,
           symbolicScore: shipped,
           compositionScore: composedScore,
+          // B-07: the audio half of the score that ranks, on the production path.
+          ...(audio
+            ? {
+                audioScore: audio.audioScore,
+                combinedScore: audio.finalScore,
+                audioWeight: audio.audioWeight,
+                evaluationRenderer: `${audio.renderer} ${audio.rendererVersion}`,
+                evaluationRenderLocation: audio.location,
+                evaluationRenderSeconds: audio.durationSeconds,
+              }
+            : {}),
           hardRuleFeasible: candidate.hardRule.feasible,
           selectable: candidate.hardRule.feasible,
           constraintErrors: candidate.constraintErrors,
