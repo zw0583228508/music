@@ -1,3 +1,15 @@
+/**
+ * Candidate musical fit (the legacy ranking's critic).
+ *
+ * RETIRED FROM RANKING (Brain B-05c, D5 — not yet enforced). B-08's merged
+ * ledger records 13 of this module's 17 dimensions as `insufficient data` on
+ * brain output, and `arrangementGeneration.ts` still ranks every candidate on
+ * `(musicCritic.score + audioCritic.score) / 2` with `candidateRanking.ts`
+ * never consulting the brain's own verdict (R-1a P0-1, P0-3). When
+ * `critics/rank.ts` is wired, `rankCandidates` is the ordering and this module
+ * is the legacy path's own score, read by nothing that selects. Nothing here
+ * is deleted and nothing here is changed by B-05c.
+ */
 import type {
   ArrangementPlan,
   CandidateMusicCriticDimension,

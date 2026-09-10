@@ -25,9 +25,29 @@ import {
 } from "./shared";
 
 export const PERFORMANCE_DIMENSION = "performanceRealisation";
-export const PERFORMANCE_VERSION = "1.0";
+/** 1.1 (B-05c): `dynamic_range_flat_per_section` — shape *inside* a section, not just between sections. */
+export const PERFORMANCE_VERSION = "1.1";
 
 const SUSTAINING = new Set(["strings", "brass", "winds"]);
+
+/**
+ * `dynamic_range_flat_per_section` (B-05c, R-1b P0-3 / §4 row 4).
+ *
+ * `flat_dynamics` fires at a velocity standard deviation below 2.5 — a part
+ * with literally no shaping. `no_dynamic_contrast_between_sections` compares
+ * section means. Neither hears the thing R-1b measured: keys shipping at
+ * velocity 21–35 for a whole verse and 42–78 for the climax, i.e. every
+ * section played inside a single dynamic marking, with `performanceRealisation`
+ * scoring 97.
+ *
+ * A dynamic marking is worth roughly 12–16 velocity units in any standard
+ * p–f mapping, and a sampled instrument changes velocity layer about that
+ * often. A section whose middle 80 % of velocities does not span one marking
+ * has no dynamic shape inside it, whatever its mean is.
+ */
+export const DYNAMIC_MARKING_VELOCITY_SPAN = 12;
+/** Sections a part must play before "every section is flat" is a claim about the part. */
+export const MIN_SECTIONS_FOR_PART_CLAIM = 3;
 
 export function evaluatePerformanceRealisation(input: CriticInput) {
   const context = buildContext(input);
@@ -63,6 +83,7 @@ export function evaluatePerformanceRealisation(input: CriticInput) {
 
     let flatSections = 0;
     let sectionsWithNotes = 0;
+    let narrowSections = 0;
     for (const section of context.sections) {
       const notes = context.notesInBars(part, section.startBar, section.endBar);
       if (notes.length < 8) continue;
@@ -70,6 +91,32 @@ export function evaluatePerformanceRealisation(input: CriticInput) {
       const v = notes.map((n) => n.velocity);
       const sd = stddev(v);
       const location = { startBar: section.startBar, endBar: section.endBar, sectionName: section.name, trackIds: [part.id] };
+      // B-05c: the usable dynamic range inside the section — the middle 80 %,
+      // so one accent or one ghost note does not make a flat part look shaped.
+      const sortedV = [...v].sort((a, b) => a - b);
+      const p10 = sortedV[Math.floor(sortedV.length * 0.1)];
+      const p90 = sortedV[Math.min(sortedV.length - 1, Math.floor(sortedV.length * 0.9))];
+      const span = p90 - p10;
+      if (span < DYNAMIC_MARKING_VELOCITY_SPAN) {
+        narrowSections += 1;
+        drafts.push({
+          kind: "dynamic_range_flat_per_section",
+          severity: "minor",
+          location,
+          evidence: {
+            velocitySpanP10toP90: span, markingSpan: DYNAMIC_MARKING_VELOCITY_SPAN,
+            velocityP10: p10, velocityP90: p90, velocityMean: mean(v),
+            velocityStddev: sd, notes: notes.length, plannedEnergy: section.energy,
+          },
+          suspectedOrigin: "perform",
+          originConfidence: confidenceFromCount(notes.length, 10, 0.75),
+          recommendedRepair: {
+            operation: "shape_within_the_section", scope: "section",
+            detail: `${part.instrument} plays ${section.name} inside ${span} velocity units (p10 ${p10} — p90 ${p90}); one dynamic marking is about ${DYNAMIC_MARKING_VELOCITY_SPAN}, so the section has a level but no shape`,
+          },
+          confidence: confidenceFromCount(notes.length, 12),
+        });
+      }
       if (sd < 2.5) {
         flatSections += 1;
         drafts.push({
@@ -98,6 +145,27 @@ export function evaluatePerformanceRealisation(input: CriticInput) {
           confidence: confidenceFromCount(Math.min(downbeats.length, offbeats.length), 8),
         });
       }
+    }
+    if (sectionsWithNotes >= MIN_SECTIONS_FOR_PART_CLAIM && narrowSections === sectionsWithNotes) {
+      const energies = context.sections.filter((s) => context.notesInBars(part, s.startBar, s.endBar).length >= 8).map((s) => s.energy);
+      const plannedRange = energies.length ? Math.max(...energies) - Math.min(...energies) : 0;
+      drafts.push({
+        kind: "dynamic_range_flat_per_section",
+        severity: plannedRange >= 0.3 ? "major" : "minor",
+        location: { startBar: 1, endBar: context.totalBars, trackIds: [part.id] },
+        evidence: {
+          narrowSections, sectionsWithNotes, markingSpan: DYNAMIC_MARKING_VELOCITY_SPAN,
+          plannedEnergyRangeAcrossSections: plannedRange, wholePart: true,
+          velocityStddev: stddev(velocities),
+        },
+        suspectedOrigin: "perform",
+        originConfidence: confidenceFromCount(sectionsWithNotes, 3, 0.85),
+        recommendedRepair: {
+          operation: "shape_within_the_section", scope: "part",
+          detail: `${part.instrument} plays every one of its ${sectionsWithNotes} sections inside a single dynamic marking while the plan's energy spans ${plannedRange.toFixed(2)} across them`,
+        },
+        confidence: confidenceFromCount(part.notes.length, 16),
+      });
     }
     if (sectionsWithNotes >= 2 && flatSections === sectionsWithNotes) {
       drafts.push({

@@ -7780,6 +7780,225 @@ gate declared met.
   run with the stage switched off. Deriving `coverage` from the new critics'
   own `coverage` fields is B-00 / B-05's change, not this one's.
 
+### PR-B05c — Brain B-05c: the critics that can hear decide
+
+- **PR-B05c** ⏳ — `ws-brain-b05c` (Brain program, stream B-05c: judge and
+  ranking). The direct answer to R-1a **P0-3 / P1-1 / P1-2 / P1-3** and R-1b
+  **§4 / P0-4 / P0-5 / §7 item 10**. One sensitivity rule for every critic
+  ledger in the repo, the owner's song as the tenth anchor with the `groove = 0`
+  finding isolated by two controls, eleven new failure kinds with named
+  constants and musical reasons, a judge re-weighted by musical salience, and a
+  pure `critics/rank.ts` that orders candidates on the critics that passed a
+  control. Evidence: `docs/evidence/brain-b05c-critics-decide.json` (built by
+  `critics/b05cEvidence.ts`, asserted by its test) and the regenerated
+  `docs/evidence/brain-b05a-critic-controls.json`. **No orchestrator file is
+  touched: nothing here is wired into production** — see the integration lines.
+
+  **D1. The eight red suites, and one rule for three ledgers.** R-1a P1-2 found
+  eight `critics/dimensions` suites failing on `main` (twelve tests, one of them
+  a crash) while every stream reported green, because those suites are
+  registered under `benchmark-corpus` and no `brain-*` group runs them. All
+  twelve are green now: **two fixed** — `orchestration.tutti_everywhere` (the
+  control filled only the sections a part did not "play in", so on five of nine
+  anchors the harness never produced a tutti and the dimension was measured at
+  2/5; it now fills every resting bar and is 9/9) and `register.role_inversion`
+  (a non-null assertion crashed where the corruption is genuinely inapplicable
+  on dance-full) — and **ten re-anchored with the cause written beside each**
+  (see `redSuites` in the evidence; each cause is a measurement — e.g.
+  `sectionDevelopment`: the composer now develops chorus 2 and keeps *no*
+  identity, identity share 0.22–0.375 and 0 on acoustic-demo, exactly what R-1b
+  §5 measured on the owner's song; `groove.erase_drum_fills` on dance-full is no
+  longer a control at all, because copying bar 7's ten onsets over bar 8's eight
+  *raises* the fill bar's density and the score rises 91.27 → 93.76). Every one
+  of the sixteen dimension suites, the control harness, the taxonomy, the judge,
+  the ranking, the owner's anchor and the two evidence builders are registered
+  together in a new **`brain-b05c`** runner group, so a lead can run the whole
+  critic surface as one merge gate.
+
+  `critics/sensitivity.ts` is now the only place a critic control status is
+  decided, shared by `critics/controls.ts` and `critics/adversarial/controls.ts`
+  and taking its thresholds from `listeningSensitivity.SENSITIVITY_GATE` — the
+  same constants B-08's `positiveControlLedger.ts` reads, so there is no fourth
+  set of numbers in the repo. Two clauses are added, each answering R-1a P1-3:
+  **a prepared control may inform, never gate** (a control that writes the fills
+  it then erases measures the harness's own gesture), and **two independent
+  non-prepared transforms are required to gate** (one transform that is the
+  detector's definition inverted proves the code runs, not that the dimension
+  hears music). Six new purpose-built transforms were added so a dimension can
+  earn a second one — `displace_backbeat`, `unlock_bass_from_kick`,
+  `parallel_perfect_motion`, `counterline_into_bed_register`,
+  `arrival_thinned_and_softened`, `strip_bed_to_top_voice` — and what they
+  measure is reported whether or not it earns a gate. The ninth anchor is
+  `ethnic-vocal`: its `DEFECT_ANCHOR_REASONS` entry ("the 7/8 parts overflow the
+  song") was stale — measured at 31b9443 its last note ends at 48.32 s inside a
+  48.46 s song and no dimension raises a blocking observation on it, so B-04's
+  meter work closed it and the anchor joins the clean and the control sets.
+
+  **Ledger diff (B05A_CONTROLS_v2 → B05C_CONTROLS_v3), every change.** density
+  informing → **gated** (`arrival_thinned_and_softened` 9/9 +
+  `strip_bed_to_top_voice` 9/9); rhythmicInteraction gated → **informing** (only
+  `parallel_doubling@3` passes — `unlock_bass_from_kick` 0/9, `homorhythm` 7/9);
+  sectionDevelopment informing → **demoted** (`section_swap@3` 4/23 = 17 %;
+  `chorus_copy+develop_chorus_2` is 5/5 and both prepared and under the
+  eight-item floor); transitions gated → **informing** (its only passing
+  transform, `erase_boundary_events+realise_boundaries`, is prepared);
+  idiomaticity stays **informing** on nine anchors (`piano_wide_voicing` 8/8,
+  `density_doubling@3` 0/31) after briefly reading `demoted` at eight.
+  Unchanged and gated: harmony (five transforms), orchestration,
+  performanceRealisation, playability (four), register, voiceLeading (now
+  `bass_roots_only_leaps` + `parallel_perfect_motion`), groove (now
+  `onset_jitter@3` + `unlock_bass_from_kick`), emotionalArcAndTension,
+  melodyAndCounterline. Three demotions, one promotion, and every non-gated
+  dimension now carries a `reason` string in the generated ledger.
+
+  **D2. The owner's song, and why `groove = 0`.** `ownerAnchor()` builds
+  "רחם נא" from the stored Song Model v3 fixture with the R-1b brief, through
+  `orchestrateArrangement` exactly as the provider calls it;
+  `ownerComposedAnchor()` is the same arrangement read at the **composed**
+  notes. It is deliberately not in the clean set (it carries real defects the
+  dimensions are supposed to flag) and not a control target (141 bars × every
+  control is a different order of runtime). Two isolating controls, and they
+  disagree in the way that settles it:
+  - **A — remove the performance timing.** The composed notes score `groove = 0`
+    as well and carry three quarters or more of the deviation (bass 0.583
+    composed vs 0.636 shipped, keys 0.552 vs 0.618, strings 0.583 vs 0.733). The
+    finding does **not** move: the performance engine is not the cause.
+  - **B — quantise to the composer's grid.** Snapping the bass alone removes
+    every `off_grid` on the bass and changes nothing else; snapping all the
+    harmony to the kit's eighths lifts the dimension 0 → 86.1 (to sixteenths,
+    only 5.5 — a hit on a sixteenth line can still be half a beat from the
+    drums). The finding **does** move.
+
+  **The cause, named only after the controls:** the harmony writers take the
+  Song Model's analysed chord onsets as the harmonic rhythm (`chordEventsIn`
+  passes them through unquantised) and the owner's stored chord onsets sit a
+  median of 136 ms from the nearest beat, while the kit writer uses the bar
+  grid. The arrangement has two grids, and it has them before the performance
+  stage runs. **Ruled out:** the performance engine (control A); the 30 ms
+  tolerance (untouched by this stream — the deviations survive on the composed
+  notes, and no tolerance that still rejects `onset_jitter@3` would accept
+  them); the critic being wrong (control B). **What changed in the critic:**
+  `off_grid` no longer guesses the layer from the size of the deviation — with
+  `CriticInput.composedTrackModels` present it reads the composed notes and says
+  which layer put the onsets there (22 of 23 `compose`, and the one `perform` is
+  real: the bass in Chorus 2 is on the grid composed and off it shipped);
+  without them it attributes to the composer at a lower confidence and names the
+  control in the repair text. No threshold was moved.
+
+  **D3. Eleven new kinds**, each with named constants, a musical reason, a
+  positive control where one exists, and a null test. `single_voice_bed` (a bed
+  role at ≤ 1.2 mean voices on an instrument that can sound three — major, and
+  **blocking** with origin `perform` when the composed notes show ≥ 3; control
+  `strip_bed_to_top_voice` 9/9); `top_line_above_comfortable_ceiling` (the
+  audible top voice against the ceiling `instrumentProfile.ts` gives the part
+  *in the role it holds*, in note-seconds — which is why a bed at 79–84 is a
+  finding while `part_outside_comfortable_range` calls it in range);
+  `harmony_off_grid` (the harmony against the kit's own placement, at the
+  **eighth** grid with a 50 ms tolerance, because a chord 136 ms after the beat
+  is 21 ms from the next sixteenth and a fifth of a bar late);
+  `arrival_thinner_than_setup` (onsets **and** voices **and** velocity: two of
+  the three must fall and their geometric mean reach 0.92 — `louder_section_thinner`
+  reads onsets alone against 0.85 and misses the owner's first chorus at ratio
+  0.80 with a part entering; the new kind refuses a candidate on its own);
+  `climax_all_treble` (no note-seconds between C3 and C5 while the top sits
+  above C6); `dynamic_range_flat_per_section` (the middle 80 % of a section's
+  velocities spanning less than one dynamic marking, ~12 units); `intro_empty`
+  (**minor** by design — two silent bars are two seconds) and `ending_cut`
+  (major); `approach_tone_wrong_mode` (a short non-chord tone resolving by step
+  into a chord tone, judged against the chord's *own* mode, so a secondary
+  dominant's raised third is not flagged and the major third of a minor chord
+  is); `counterline_clashes_bed`; and `candidates_near_identical` in `rank.ts`.
+  The taxonomy now maps **every** kind the dimensions emit — until this PR not
+  one of the forty-odd B-05a kinds was in `failureTaxonomy.ts`, so every
+  constructive finding reached the judge as `UNCLASSIFIED` and no code-based
+  rule could fire on one.
+
+  **D4. The judge, re-weighted; `critics/rank.ts`.** Priority is now severity ×
+  confidence × control weight × **musical salience** × rule boosts, where
+  salience is the *seconds of sounding music* inside the observation's bars as a
+  share of the song's sounding seconds (floor 0.1, ×1.4 at the climax, ×1.2 in a
+  sung section), and a boost that assumes a section is being carried does not
+  apply where nothing sounds. On the owner's output that moves the empty two-bar
+  intro from **#1 (priority 2404 — R-1b's number, reproduced)** to **#14**, with
+  `off_grid` at #1 and `single_voice_bed` at #3: R-1b's item 10 read literally.
+  `releasable: false` when a gated dimension emits blocking, when
+  register/density/instrumentReality emit `major` on a bed finding or at the
+  climax, or when `arrival_thinner_than_setup` fires; the verdict names the top
+  three problems with their repairs; disagreement is still preserved and still
+  resolved only by a named rule. `critics/rank.ts` is pure: verdict → blocking
+  count → refusal count → salience-weighted majors → control-weighted scores →
+  candidate id, deterministic in any input order, with a
+  `candidates_near_identical` report (R-1b P1-8's 72/72/72). On the corpus the
+  reference composer is preferred to the audit's random-pitch and drums-only
+  probes on all four cases tested; through the production path R-1a measured the
+  random composer *selected* on six of nine.
+
+  **D5. Retired from the ranking** (documented, not enforced; nothing deleted).
+  When `rank.ts` is wired, the ranking must stop reading all eleven
+  `musicCritic.ts` dimensions — harmony, voiceLeading, melody, rhythm, groove,
+  orchestration, register, density, transitions, performancePotential,
+  arrangementArc; every one demoted in B-08's merged ledger, with only
+  `musicCritic.overall` gating, on one family — and `candidateQuality.ts`'s
+  `evaluateCandidateMusicalFit` (13 of 17 dimensions `insufficient data` on
+  brain output). `musicCritic` stays, and stays called, as `initialCritique` for
+  the drift metric. Both files carry a header comment saying so; neither is
+  otherwise changed.
+
+  **Integration lines for the lead** (this stream edits no file it does not
+  own): (1) `arrangementOrchestrator.ts` compose loop (B-13) — build a
+  `CriticInput` per candidate with `composedTrackModels` captured from
+  `composeParts`, call `evaluateAllDimensions` + `runAdversarialCritics` +
+  `judge`, select with `rankCandidates`. (2) `arrangementGeneration.ts` /
+  `candidateRanking.ts` (B-00/B-13) — honour
+  `parameters.arrangementBrain.selectable === false`, and rank on
+  `rankCandidates` rather than `(musicCritic + audioCritic) / 2`.
+  (3) `criticRepairLoop.ts` (B-06) — read `verdict.topProblems` and the
+  observations' `recommendedRepair` instead of the v1 findings.
+  (4) `positiveControlLedger.ts` (B-08) — import `SENSITIVITY_RULE` from
+  `critics/sensitivity.ts` instead of restating `SENSITIVITY_GATE`.
+  (5) `run-focused-api-tests.mjs` — make `brain-b05c` a merge gate the lead
+  runs, so P1-2 cannot recur.
+
+  **Capability ladder.** Critic dimensions DESIGNED ✓ IMPLEMENTED ✓ TESTED ✓
+  (24 suites, 160 tests, green) BENCHMARKED ✓ (nine anchors × 83 controls, the
+  regenerated ledger) VALIDATED ✓ on one real output (the owner's song, by two
+  isolating controls) — **NOT INTEGRATED**: no production path calls
+  `evaluateAllDimensions`, `judge` or `rankCandidates`, so the ranking that
+  ships is still `musicCritic`. Judge DESIGNED ✓ IMPLEMENTED ✓ TESTED ✓
+  VALIDATED ✓ (the owner's output is refused, and refused for the three defects
+  R-1b puts first) NOT INTEGRATED. Candidate ranking DESIGNED ✓ IMPLEMENTED ✓
+  TESTED ✓ BENCHMARKED ✓ (four corpus cases × three composers) NOT INTEGRATED.
+  One control rule INTEGRATED ✓ across `critics/controls.ts` and
+  `critics/adversarial/controls.ts`; B-08's ledger is a one-line import away and
+  is listed above.
+
+  **Honest limits.** (1) Nothing is wired: R-1a P0-3 is answered on paper.
+  (2) Two of the transforms that earn a gate are close to a detector's own
+  definition — `strip_bed_to_top_voice` reduces beds to one voice and
+  `single_voice_bed` counts voices; `arrival_thinned_and_softened` damages the
+  three quantities `arrival_thinner_than_setup` reads. They are independent of
+  each other, which is what the rule asks, and not of the detector; R-1a §3's
+  criticism of `flatten_arc` and `strip_cc_and_quantise` applies to them and is
+  not closed. A reader who discounts that transform should read `density` as
+  `informing`. (3) The ninth anchor raises `n` from 8 to 9 on every
+  purpose-built control, which is what lifts several transforms over the
+  eight-item floor — more evidence, not a weaker rule, but several statuses sit
+  one item above the threshold. (4) Three rows of R-1b §4 stay **open** and are
+  named as open in the evidence: gesture monotony (the same staccato triad for
+  22 bars), style fidelity (jazz arranged as disco, rock without a guitar), and
+  the density thinning of a motif-tagged line. (5) `climax_all_treble`,
+  `ending_cut`, `approach_tone_wrong_mode` and `counterline_clashes_bed` have
+  unit and null tests but no transform of their own, so they carry their
+  dimension's status rather than earning one, and the evidence records where
+  they do not fire on the owner's song. (6) `composedTrackModels` is filled only
+  by a caller that captured the composed notes; on the production path nobody
+  does, so `single_voice_bed` would ship as `major`/`compose` rather than
+  `blocking`/`perform` — the correct reading of the shipped notes alone, and not
+  the whole truth. (7) The owner's anchor is one arrangement of one song with
+  one brief; it is a real anchor and it is not a corpus. (8) Salience is
+  measured from the notes, so the ordering in the evidence is a measurement of
+  this composer, not a fixed ranking. (9) Nobody listened to anything.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

@@ -879,6 +879,13 @@ const suites = {
       ["src/lib/providerHardRuleGate.test.ts", "provider-hard-rule-gate.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
     ],
   },
+  "brain-b05c": {
+    bundles: [
+      ["src/lib/critics/b05cEvidence.test.ts", "b05c-evidence.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/critics/dimensions/ownerAnchor.test.ts", "owner-anchor.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/critics/rank.test.ts", "rank.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
   "brain-invariants": {
     bundles: [
       ["src/lib/invariants/generators.property.test.ts", "b12-generators.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],

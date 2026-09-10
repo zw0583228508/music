@@ -4,22 +4,50 @@ import { anchors, applyPreparation, applyPurposeBuilt, CLEAN_ANCHOR_IDS, detect 
 import { buildContext } from "./shared";
 import { readDevelopment, sectionDevelopmentDimension } from "./sectionDevelopment";
 
-test("since B-01 the reference composer's second chorus keeps its identity AND develops: the pre-merge finding (nothing developed at the planned climax) is gone and the dimension reads what changed", () => {
-  // Recalibrated at the merge. Before B-01 this test pinned a real defect:
-  // chorus 2 was chorus 1 note for note at the planned climax
-  // (`repeat_without_development` major on pop / rock / dance / acoustic).
-  // B-01's development operators (drums to CLIMAX_LAYER, guitar entering,
-  // register lift, dynamic step) removed it; the dimension must now read the
-  // repeat as identity kept + developed, and must not raise the old finding.
+test("re-anchored (B-05c): at the planned climax the composer develops but does not keep identity — variation without a recurring identity", () => {
+  // Re-anchored, with the cause.
+  //
+  // Before B-01 this test pinned "chorus 2 is chorus 1 note for note"
+  // (`repeat_without_development`). At the B-01 merge it was re-anchored to the
+  // opposite claim: identity kept AND developed. Measured on `origin/main`
+  // 31b9443 after B-02 (harmony chain), B-04 (groove plan) and B-10 (motif
+  // engine) changed the composer again, neither half of that claim holds:
+  //
+  //   pop-full        identityShare 0.333  developed in register, dynamics, rhythm
+  //   rock-full       identityShare 0.375  developed in instrumentation, register, dynamics, rhythm
+  //   dance-full      identityShare 0.219  developed in register
+  //   acoustic-demo   identityShare 0.000  developed in register, dynamics — and `repeat_without_identity`
+  //
+  // The cause is the composer, not the dimension: chorus 2 is now written from
+  // a different groove cell and a different voicing set, so nothing recurs
+  // bar-for-bar. R-1b §5 measured the same thing on the owner's song ("identity
+  // share with Chorus 1 is 0.15: nothing recurs, nothing is developed; it is a
+  // different section with the same chords") and lists it as the *new* problem
+  // B-01 introduced while fixing the literal repeat. The dimension is right and
+  // the test now pins what it reads.
+  const expected: Record<string, { identityKept: boolean; developed: string[] }> = {
+    "pop-full": { identityKept: false, developed: ["register", "dynamics", "rhythm"] },
+    "rock-full": { identityKept: false, developed: ["instrumentation", "register", "dynamics", "rhythm"] },
+    "dance-full": { identityKept: false, developed: ["register"] },
+    "acoustic-demo": { identityKept: false, developed: ["register", "dynamics"] },
+  };
   for (const anchor of anchors(["pop-full", "rock-full", "dance-full", "acoustic-demo"])) {
     const report = sectionDevelopmentDimension.evaluate(anchor.input);
     const climax = anchor.input.plan.globalPlan!.climax!.sectionName;
     const measured = report.observations.find((x) => x.kind === "measured" && x.location.sectionName === climax);
     assert.ok(measured, `${anchor.id}: ${report.observations.map((x) => `${x.kind}@${x.location.sectionName}`).join(",")}`);
     assert.equal(measured!.evidence.plannedClimax, true);
-    assert.equal(measured!.evidence.identityKept, true, `${anchor.id}: chorus 2 is still recognisably the chorus`);
-    assert.ok(measured!.evidence.developedIn !== "nothing" && String(measured!.evidence.developedIn).includes("density"), `${anchor.id}: developed in ${measured!.evidence.developedIn}`);
-    assert.equal(report.observations.find((x) => x.kind === "repeat_without_development" && x.location.sectionName === climax), undefined, `${anchor.id}: the pre-merge finding must not come back`);
+    const want = expected[anchor.id];
+    assert.equal(measured!.evidence.identityKept, want.identityKept, `${anchor.id}: identityShare ${measured!.evidence.identityShare}`);
+    for (const axis of want.developed) {
+      assert.ok(String(measured!.evidence.developedIn).includes(axis), `${anchor.id}: developed in ${measured!.evidence.developedIn}, expected ${axis}`);
+    }
+    // The pre-B-01 finding stays gone: the composer does develop the climax.
+    assert.equal(report.observations.find((x) => x.kind === "repeat_without_development" && x.location.sectionName === climax), undefined,
+      `${anchor.id}: the pre-merge finding must not come back`);
+    // …and the dimension reports the loss of identity where it is total.
+    const lost = report.observations.find((x) => x.kind === "repeat_without_identity" && x.location.sectionName === climax);
+    assert.equal(Boolean(lost), measured!.evidence.identityShare === 0, `${anchor.id}: identityShare ${measured!.evidence.identityShare}`);
   }
 });
 
@@ -30,7 +58,12 @@ test("a developed chorus 2 (bed up an octave, +10 velocity) reads as developed i
   const c1 = context.sections.find((s) => s.name === "Chorus")!;
   const c2 = context.sections.find((s) => s.name === "Chorus 2")!;
   const reading = readDevelopment(context, c1, c2)!;
-  assert.ok(reading.identityKept);
+  // Re-anchored (B-05c): the `identityKept` assertion is dropped for the cause
+  // above — the preparation lifts the bed an octave *on top of* a chorus 2 that
+  // already shares only 0.33 of its bars with chorus 1, so identity is 0.29 and
+  // the reading is right to say so. What the preparation is for is the two axes
+  // it moves, and those are what the test pins.
+  assert.equal(reading.identityKept, false, `identityShare ${reading.identityShare}`);
   assert.ok(reading.changed.includes("register") && reading.changed.includes("dynamics"), reading.changed.join(","));
   const report = sectionDevelopmentDimension.evaluate(prepared.input);
   assert.ok(!report.observations.some((o) => o.kind === "repeat_without_development" && o.location.sectionName === "Chorus 2"));
@@ -47,7 +80,18 @@ test("positive control: pasting chorus 1 over the developed chorus 2 removes the
     assert.equal(o!.severity, "major");
     assert.equal(o!.location.sectionName, "Chorus 2");
     assert.equal(o!.recommendedRepair?.operation, "apply_development_operator");
-    assert.ok(d.scoreDrop! >= 7, `${anchor.id}: ${d.scoreDrop}`);
+    // Re-anchored (B-05c): the drop is smaller on acoustic-demo, and the cause
+    // is in the anchor, not the control. Its prepared chorus 2 already carries
+    // `repeat_without_identity` (identityShare 0), so pasting chorus 1 over it
+    // trades one major finding for another instead of adding one: 4.95 points
+    // against 7.8-8.0 on the three anchors whose chorus 2 still has an identity
+    // to lose. Asserting one threshold for all four would either hide that or
+    // require loosening the threshold for every anchor.
+    const anchorReport = sectionDevelopmentDimension.evaluate(prepared.input);
+    const alreadyWithoutIdentity = anchorReport.observations.some((x) => x.kind === "repeat_without_identity" && x.location.sectionName === "Chorus 2");
+    const floor = alreadyWithoutIdentity ? 4.5 : 7;
+    assert.ok(d.scoreDrop! >= floor, `${anchor.id}: ${d.scoreDrop} (identity already lost: ${alreadyWithoutIdentity})`);
+    assert.equal(alreadyWithoutIdentity, anchor.id === "acoustic-demo", `${anchor.id}: which anchors sit at the dimension's floor`);
   }
 });
 

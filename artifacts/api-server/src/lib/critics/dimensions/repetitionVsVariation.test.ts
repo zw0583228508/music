@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { anchors, applyFamilyCorruption, applyPreparation, applyPurposeBuilt, CLEAN_ANCHOR_IDS, detect, eligibleParts } from "./anchors";
+import { anchors, applyFamilyCorruption, applyPreparation, applyPurposeBuilt, CLEAN_ANCHOR_IDS, copySectionOver, detect, eligibleParts } from "./anchors";
 import { buildContext } from "./shared";
 import { repetitionVsVariationDimension, sectionPairIdentity } from "./repetitionVsVariation";
 
@@ -57,12 +57,38 @@ test("positive control: chorus 1 pasted over a developed chorus 2 is a verbatim 
   assert.ok(detected >= 3, `detected ${detected}/4: ${ids.join(" ")}`);
 });
 
-test("the dance anchor's breakdown is its verse note for note: sections of different function that are indistinguishable", () => {
-  const report = repetitionVsVariationDimension.evaluate(anchors(["dance-full"])[0].input);
-  const same = report.observations.find((o) => o.kind === "sections_indistinguishable");
-  assert.ok(same);
+test("re-anchored (B-05c): the dance breakdown is no longer its verse, and pasting the verse back over it is the control", () => {
+  // Re-anchored, with the cause.
+  //
+  // At the B-01 merge the dance anchor's breakdown really was its verse note
+  // for note, and this test pinned the finding. Measured at `origin/main`
+  // 31b9443, after B-04 gave the breakdown its own groove cell, the two
+  // sections share almost nothing: bass exactShare 0.25 / rhythmShare 0.375,
+  // drums 0 / 0. The dimension is right not to raise
+  // `sections_indistinguishable`, and a test that still demands it is testing
+  // a composer defect that was fixed.
+  //
+  // A "real finding" test that stops finding anything is not a test any more,
+  // so it becomes a positive control: paste the verse back over the breakdown
+  // and the dimension must say so. That keeps the detector under test without
+  // requiring the composer to stay broken.
+  const anchor = anchors(["dance-full"])[0];
+  const context = buildContext(anchor.input);
+  const verse = context.sections.find((s) => s.name === "Verse")!;
+  const breakdown = context.sections.find((s) => s.name === "Breakdown")!;
+  const identity = sectionPairIdentity(context, verse, breakdown);
+  assert.ok(identity.every((x) => x.exactShare < 0.5), `verse/breakdown identity: ${JSON.stringify(identity.map((x) => [x.part.id, x.exactShare]))}`);
+  const report = repetitionVsVariationDimension.evaluate(anchor.input);
+  assert.equal(report.observations.find((o) => o.kind === "sections_indistinguishable"), undefined, "the sections differ now");
+
+  const worsened = copySectionOver(anchor, "Verse", "Breakdown")!;
+  const d = detect(repetitionVsVariationDimension, anchor.input, worsened);
+  assert.ok(d.detected, "pasting the verse over the breakdown is detected");
+  const same = d.newObservations.find((o) => o.kind === "sections_indistinguishable");
+  assert.ok(same, d.newObservations.map((o) => o.kind).join(","));
   assert.equal(same!.severity, "major");
   assert.equal(same!.location.sectionName, "Breakdown");
+  assert.ok(d.scoreDrop! >= 5, String(d.scoreDrop));
 });
 
 test("null control: no blocking repetition observation on any clean anchor", () => {

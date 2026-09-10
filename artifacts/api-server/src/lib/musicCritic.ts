@@ -9,6 +9,20 @@
  *   orchestration → section development → motif coherence → contrast →
  *   transitions → playability → performance potential
  *
+ * RETIRED FROM RANKING (Brain B-05c, D5 — not yet enforced).
+ *
+ * All eleven dimensions below are `demoted` in B-08's merged positive-control
+ * ledger (`docs/evidence/positive-control-ledger.json`); only
+ * `musicCritic.overall` gates anything, on one corruption family. R-1a P0-3
+ * measured what that costs: through the production path a same-rhythm
+ * random-pitch composer is *selected* on six of the nine benchmark cases.
+ *
+ * When `critics/rank.ts` is wired into the compose loop (B-13) and the repair
+ * stage (B-06), the ranking must stop reading these dimensions. This module
+ * stays, and stays called, as `initialCritique` — the before/after pair the
+ * drift metric needs. Nothing here is deleted and nothing here is changed by
+ * B-05c; this note is the record of the decision.
+ *
  * Deterministic and pure. When track models (notes) are supplied it grades
  * them; otherwise it grades the arrangement plan's intent at lower confidence.
  */

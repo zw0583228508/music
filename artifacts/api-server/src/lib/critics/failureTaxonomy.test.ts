@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { ADVERSARIAL_KINDS, ADVERSARIAL_MODULES } from "./adversarial/index";
-import { FAILURE_CODES, FAILURE_TAXONOMY, KIND_TO_CODE, codeForKind, originsForKind, repairScopeForKind } from "./failureTaxonomy";
+import { DIMENSION_DEFAULT_CODE, FAILURE_CODES, FAILURE_TAXONOMY, KIND_TO_CODE, codeForKind, originsForKind, repairScopeForKind } from "./failureTaxonomy";
+import { anchors } from "./dimensions/anchors";
+import { DIMENSION_NAMES, evaluateAllDimensions } from "./dimensions/index";
 
 test("every code has a definition, at least one default origin layer and a repair scope", () => {
   for (const code of FAILURE_CODES) {
@@ -43,6 +45,43 @@ test("each module's declared kinds are the kinds it can emit (no undeclared emis
     assert.ok(m.kinds.length >= 2, `${m.dimension} declares its kinds`);
     for (const kind of m.kinds) assert.ok(codeForKind(kind), `${m.dimension}: ${kind} maps to a code`);
   }
+});
+
+test("every kind a B-05a dimension emits on the anchors maps to a code (B-05c)", () => {
+  // R-1b P0-5: "the judge's priority appears to scale with bar extent and gated
+  // status". Part of the cause was here: the judge's PRIORITY_RULES,
+  // OPPOSITIONS and agreement grouping all match on failure *codes*, and until
+  // B-05c not one of the forty-odd kinds the B-05a dimensions emit was in the
+  // taxonomy. Every one of them was `UNCLASSIFIED`, so no code-based rule could
+  // ever fire on a constructive finding and no two dimensions could ever be
+  // recorded as agreeing. This test walks the dimensions over every anchor and
+  // requires a code for everything they actually emit.
+  const emitted = new Set<string>();
+  for (const anchor of anchors()) {
+    for (const report of evaluateAllDimensions(anchor.input)) {
+      for (const o of report.observations) emitted.add(`${report.dimension}|${o.kind}`);
+    }
+  }
+  assert.ok(emitted.size >= 40, `kinds observed on the anchors: ${emitted.size}`);
+  const unmapped = [...emitted]
+    .filter((entry) => {
+      const [dimension, kind] = entry.split("|");
+      // `measured` is the informational record every dimension writes; it is a
+      // measurement, not a failure, and deliberately has no failure code.
+      if (kind === "measured") return false;
+      return codeForKind(kind) === null && codeForKind(kind, dimension) === null;
+    })
+    .sort();
+  assert.deepEqual(unmapped, [], `unmapped kinds: ${unmapped.join(", ")}`);
+  // The playability dimension re-emits the constraint engine's own violation
+  // codes, an open set; they reach a code through the dimension fallback rather
+  // than a taxonomy row, so that the engine's vocabulary lives in one place.
+  const playabilityKinds = [...emitted].filter((e) => e.startsWith("playability|")).map((e) => e.split("|")[1]);
+  const viaFallback = playabilityKinds.filter((kind) => KIND_TO_CODE[kind] === undefined && kind !== "measured");
+  for (const kind of viaFallback) assert.equal(codeForKind(kind, "playability"), "PLAYABILITY_FAILURE");
+  assert.equal(DIMENSION_DEFAULT_CODE.playability, "PLAYABILITY_FAILURE");
+  // Every dimension has a fallback, so a kind added tomorrow reaches the rules.
+  for (const dimension of DIMENSION_NAMES) assert.ok(DIMENSION_DEFAULT_CODE[dimension], `${dimension} has no default code`);
 });
 
 test("origins and repair scope for a kind come from its code; unknown kinds attribute to nothing", () => {

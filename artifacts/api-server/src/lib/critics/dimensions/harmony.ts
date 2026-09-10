@@ -34,7 +34,47 @@ import {
 } from "./shared";
 
 export const HARMONY_DIMENSION = "harmony";
-export const HARMONY_VERSION = "1.0";
+/** 1.1 (B-05c): `approach_tone_wrong_mode` — an approach note from outside the chord's own mode. */
+export const HARMONY_VERSION = "1.1";
+
+/**
+ * `approach_tone_wrong_mode` (B-05c, R-1b P1-6).
+ *
+ * `clash_share` weighs every non-chord tone by its sounding time, so a
+ * sixteenth-note approach costs almost nothing and four of them across a
+ * climax read as "minor". But an approach note is not a passing colour: it is
+ * the note that *announces* the chord, and it either belongs to the chord's
+ * mode or contradicts it. On the owner's final chorus the bass approaches Cm
+ * through E natural and Fm through A natural — the major third of a minor
+ * chord, sounding a semitone from the minor third the keys are holding. A
+ * professional does not call that a taste question.
+ *
+ * An approach tone here is a short non-chord tone that moves by a step or a
+ * semitone into a chord tone within a beat. It is judged against the chord's
+ * *own* diatonic mode (a minor chord's natural minor, a major chord's major),
+ * not against the key: a secondary dominant's raised third is idiomatic and
+ * must not be flagged, which is why the dominant/seventh qualities admit the
+ * mixolydian degree.
+ */
+const NATURAL_MINOR = [0, 2, 3, 5, 7, 8, 10];
+const MAJOR = [0, 2, 4, 5, 7, 9, 11];
+const MIXOLYDIAN = [0, 2, 4, 5, 7, 9, 10];
+/** Beats within which a non-chord tone must reach a chord tone to be an approach rather than a colour. */
+export const APPROACH_WINDOW_BEATS = 1;
+/** Seconds above which a note is a held choice, not an approach. */
+export const APPROACH_MAX_SECONDS = 0.75;
+/** Approach tones in a section before the finding is raised (one is a slip; three is a habit). */
+export const APPROACH_TONE_MIN_COUNT = 2;
+
+/** The pitch classes a chord's own mode admits, relative to concert pitch. */
+export function modeToneSetFor(chord: ChordInfo): { pcs: Set<number>; mode: string } | null {
+  if (chord.rootPc === null) return null;
+  const symbol = chord.symbol.toLowerCase();
+  const isMinor = /(^|[^a-z])m(?!aj)/.test(symbol.replace(/^[a-g][#b♯♭]?/, "")) || symbol.includes("min") || symbol.includes("dim");
+  const isDominant = /(?<!ma)j?7/.test(symbol) && !symbol.includes("maj7") && !isMinor;
+  const scale = isMinor ? NATURAL_MINOR : isDominant ? MIXOLYDIAN : MAJOR;
+  return { pcs: new Set(scale.map((d) => (chord.rootPc! + d) % 12)), mode: isMinor ? "natural_minor" : isDominant ? "mixolydian" : "major" };
+}
 
 export type NonChordToneClass = "passing" | "neighbour" | "suspension" | "anticipation" | "appoggiatura" | "clash";
 
@@ -251,6 +291,47 @@ export function evaluateHarmony(input: CriticInput) {
           const wanted = chord.tones?.requiredBass ?? chord.rootPc;
           if (wanted !== null && first.pc === wanted) stated += 1;
         }
+        // B-05c: approach tones from outside the chord's own mode.
+        const approaches: Array<{ note: NoteRef; chord: ChordInfo; mode: string; majorThirdOfMinor: boolean }> = [];
+        const sectionReadings = readings.filter((r) => r.note.bar >= section.startBar && r.note.bar <= section.endBar);
+        for (let i = 0; i < sectionReadings.length; i += 1) {
+          const r = sectionReadings[i];
+          if (r.chordTone || r.note.duration > APPROACH_MAX_SECONDS) continue;
+          const next = sectionReadings[i + 1];
+          if (!next || !next.chordTone) continue;
+          if (Math.abs(next.note.pitch - r.note.pitch) > STEP) continue;
+          if (next.note.start - r.note.start > APPROACH_WINDOW_BEATS * r.note.beatSeconds + 1e-6) continue;
+          const mode = modeToneSetFor(r.chord);
+          if (!mode || mode.pcs.has(r.note.pc)) continue;
+          const majorThirdOfMinor = mode.mode === "natural_minor" && r.chord.rootPc !== null && r.note.pc === (r.chord.rootPc + 4) % 12;
+          approaches.push({ note: r.note, chord: r.chord, mode: mode.mode, majorThirdOfMinor });
+        }
+        if (approaches.length >= APPROACH_TONE_MIN_COUNT) {
+          const worst = approaches.some((a) => a.majorThirdOfMinor);
+          drafts.push({
+            kind: "approach_tone_wrong_mode",
+            severity: worst ? "major" : "minor",
+            location,
+            evidence: {
+              approachTones: approaches.length,
+              majorThirdOverMinorChord: approaches.filter((a) => a.majorThirdOfMinor).length,
+              chords: [...new Set(approaches.map((a) => a.chord.symbol))].join(","),
+              modes: [...new Set(approaches.map((a) => a.mode))].join(","),
+              examples: approaches.slice(0, 4).map((a) => `bar ${a.note.bar} beat ${a.note.beat.toFixed(2)}: pitch ${a.note.pitch} into ${a.chord.symbol}`).join(" | "),
+              meanChordConfidence: chordConf,
+            },
+            suspectedOrigin: "compose",
+            originConfidence: confidenceFromCount(approaches.length, 3, evidenceQuality),
+            recommendedRepair: {
+              operation: "approach_from_the_chord_mode", scope: "note",
+              detail: worst
+                ? `the bass approaches ${approaches.filter((a) => a.majorThirdOfMinor).map((a) => a.chord.symbol).join("/")} through the major third of a minor chord in ${section.name}; approach from the chord's own mode (or the fifth/octave in a ballad)`
+                : `${approaches.length} bass approach tones in ${section.name} come from outside the sounding chord's mode (${[...new Set(approaches.map((a) => a.mode))].join(",")})`,
+            },
+            confidence: confidenceFromCount(approaches.length, 4, evidenceQuality),
+          });
+        }
+
         if (counted >= 4 && stated / counted < 0.5) {
           drafts.push({
             kind: "bass_rarely_states_root",

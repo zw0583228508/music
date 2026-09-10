@@ -32,8 +32,42 @@ import {
 } from "./shared";
 
 export const GROOVE_DIMENSION = "groove";
-/** 1.1: a planned drum fill at the drummer's entry (silent section before) is checked on the fill bar alone. */
-export const GROOVE_VERSION = "1.1";
+/**
+ * 1.1: a planned drum fill at the drummer's entry (silent section before) is
+ * checked on the fill bar alone.
+ * 1.2 (B-05c): `harmony_off_grid` — the harmony parts measured against the
+ * *kit's* grid rather than against the bar grid in the abstract, so the
+ * finding says "two grids" and names which one the kit is on.
+ */
+export const GROOVE_VERSION = "1.2";
+
+/**
+ * `harmony_off_grid` (B-05c, R-1b P0-2).
+ *
+ * `off_grid` measures every part against the metre with a tolerance of
+ * max(30 ms, 5 % of a beat). It fires on the owner's song and is *right*, but
+ * it cannot say the thing an arranger says first: the kit and the harmony are
+ * playing on two different grids. This finding measures the pitched harmonic
+ * parts against the drum kit's own placement (the kit's median deviation is
+ * subtracted, so a kit that lays back is the reference, not an error), and
+ * reports the median deviation and the share beyond 50 ms.
+ *
+ * 50 ms is not a taste threshold: two attacks less than ~30–50 ms apart fuse
+ * into one event, and beyond it the later attack is heard as a separate, late
+ * hit. A chord 190 ms after the crash on a chorus downbeat is not a feel.
+ *
+ * The reference grid is the **eighth**, not the sixteenth. Comping and bass
+ * place their hits on beats and eighths, and measuring them against a grid
+ * they do not play understates the defect by a whole subdivision: on the
+ * owner's song the chords sit 119–229 ms after the beat and `off_grid` (a
+ * sixteenth grid at 130 BPM, 115 ms per step) reports a median of ~30 ms,
+ * because a hit 136 ms late is only 21 ms from the *next sixteenth*. It is on
+ * a grid line and it is a fifth of a bar late.
+ */
+export const HARMONY_GRID_TOLERANCE_MS = 50;
+export const HARMONY_GRID_STEPS_PER_BEAT = 2;
+export const HARMONY_OFF_GRID_SHARE: [number, number, number] = [0.25, 0.45, 0.7];
+const HARMONIC_FAMILIES = new Set(["keys", "guitar", "strings", "synth", "brass", "winds", "bass"]);
 
 const KICK = new Set([35, 36]);
 const SNARE = new Set([38, 40]);
@@ -142,15 +176,50 @@ export function evaluateGroove(input: CriticInput) {
       const profile = gridProfile(notes)!;
       const sev = severityFromShare(profile.offGridShare, [0.12, 0.3, 0.55]);
       if (sev) {
-        const performanceScale = profile.medianAbsDeviationMs < 0.2 * notes[0].beatSeconds * 1000;
+        // B-05c (R-1a P1-1 — the `groove = 0` isolation).
+        //
+        // v1.1 read a small, symmetric deviation as the performance engine's
+        // humanisation and attributed `off_grid` to `perform`. On the owner's
+        // song that attribution is provably wrong: the *composed* notes, which
+        // no performance stage has touched, carry the same deviations
+        // (bass Verse 1 0.400 composed vs 0.429 shipped, keys Verse 1 0.552 vs
+        // 0.557, strings Verse 3 0.583 vs 0.571), and quantising the same
+        // onsets to the bar grid removes the finding entirely. The deviation is
+        // the composer's — it inherits the analysed chord onsets — and the
+        // scale of the deviation was never evidence about which layer made it.
+        //
+        // So the isolating control decides when it is available, and when it is
+        // not the origin is the composer with a lower confidence and the
+        // control named as the way to settle it. `perform` is claimed only when
+        // the composed notes are on the grid and the shipped ones are not.
+        const composed = context.composedNotesInBars(part, section.startBar, section.endBar);
+        const composedProfile = composed && composed.length >= 6 ? gridProfile(composed) : null;
+        const composedIsOnGrid = composedProfile ? composedProfile.offGridShare < 0.12 : null;
+        const origin = composedIsOnGrid === true ? "perform" : "compose";
+        const quality = composedIsOnGrid === null ? 0.55 : 0.9;
         drafts.push({
           kind: "off_grid",
           severity: sev,
           location,
-          evidence: { offGridShare: profile.offGridShare, medianAbsDeviationMs: profile.medianAbsDeviationMs, meanSignedDeviationMs: profile.meanSignedDeviationMs, onsets: notes.length, toleranceMs: toleranceSeconds(notes[0].beatSeconds) * 1000 },
-          suspectedOrigin: performanceScale ? "perform" : "compose",
-          originConfidence: confidenceFromCount(Math.round(profile.offGridShare * notes.length), 6, performanceScale ? 0.7 : 0.8),
-          recommendedRepair: { operation: performanceScale ? "reduce_humanisation_width" : "requantise_part", scope: "part", detail: `${Math.round(profile.offGridShare * 100)} % of ${part.instrument}'s onsets in ${section.name} miss the nearest grid line by more than ${Math.round(toleranceSeconds(notes[0].beatSeconds) * 1000)} ms (median ${Math.round(profile.medianAbsDeviationMs)} ms)` },
+          evidence: {
+            offGridShare: profile.offGridShare, medianAbsDeviationMs: profile.medianAbsDeviationMs,
+            meanSignedDeviationMs: profile.meanSignedDeviationMs, onsets: notes.length,
+            toleranceMs: toleranceSeconds(notes[0].beatSeconds) * 1000,
+            composedNotesAvailable: composedProfile !== null,
+            composedOffGridShare: composedProfile ? composedProfile.offGridShare : -1,
+            composedOnGrid: composedIsOnGrid === null ? "unknown" : composedIsOnGrid,
+          },
+          suspectedOrigin: origin,
+          originConfidence: confidenceFromCount(Math.round(profile.offGridShare * notes.length), 6, quality),
+          recommendedRepair: {
+            operation: origin === "perform" ? "reduce_humanisation_width" : "requantise_part", scope: "part",
+            detail: `${Math.round(profile.offGridShare * 100)} % of ${part.instrument}'s onsets in ${section.name} miss the nearest grid line by more than ${Math.round(toleranceSeconds(notes[0].beatSeconds) * 1000)} ms (median ${Math.round(profile.medianAbsDeviationMs)} ms)`
+              + (composedProfile
+                ? composedIsOnGrid
+                  ? "; the composed notes are on the grid, so the performance stage moved them"
+                  : `; the composed notes are already ${Math.round(composedProfile.offGridShare * 100)} % off it, so this is the writing, not the playing`
+                : "; pass the composed notes (`composedTrackModels`) to say whether the composer or the performance stage put them there"),
+          },
           confidence: confidenceFromCount(notes.length, 12),
         });
       }
@@ -214,6 +283,62 @@ export function evaluateGroove(input: CriticInput) {
             confidence: confidenceFromCount(bars, 6),
           });
         }
+      }
+    }
+  }
+
+  // B-05c: the harmony against the kit's grid — two grids in one arrangement.
+  if (drums) {
+    // The kit is judged on *its own* grid (it plays sixteenth hats and ghost
+    // notes; measuring a ghost note against an eighth grid would call an
+    // accurate drummer late). The harmony is judged on the eighth grid the kit
+    // states, offset by however far the kit itself lays back.
+    const kitProfile = gridProfile(drums.notes);
+    const kitOffsetMs = kitProfile ? kitProfile.meanSignedDeviationMs : 0;
+    const kitOffGridShare = kitProfile ? kitProfile.offGridShare : 1;
+    const kitOnItsGrid = Boolean(kitProfile && kitProfile.offGridShare < 0.12);
+    for (const part of parts) {
+      if (part.percussive || !HARMONIC_FAMILIES.has(part.family)) continue;
+      for (const section of context.sections) {
+        const notes = context.notesInBars(part, section.startBar, section.endBar);
+        if (notes.length < 8) continue;
+        // A part that genuinely writes sixteenths is not placing its hits on
+        // eighths, so the eighth grid is the wrong reference for it: abstain
+        // rather than call a sixteenth-note figure late.
+        const sixteenthBars = new Set(notes.map((n) => n.bar)).size
+          ? [...new Set(notes.map((n) => n.bar))].filter((bar) => barSubdivision(notes.filter((n) => n.bar === bar)) === 4).length / new Set(notes.map((n) => n.bar)).size
+          : 0;
+        if (sixteenthBars >= 0.5) continue;
+        // Deviation from the kit's own placement, in milliseconds.
+        const deviations = notes.map((n) => gridDeviation(n, HARMONY_GRID_STEPS_PER_BEAT).deviationSeconds * 1000 - kitOffsetMs);
+        const beyond = deviations.filter((d) => Math.abs(d) > HARMONY_GRID_TOLERANCE_MS).length;
+        const share = beyond / notes.length;
+        const sev = severityFromShare(share, HARMONY_OFF_GRID_SHARE);
+        if (!sev) continue;
+        const medianMs = median(deviations.map((d) => Math.abs(d)));
+        drafts.push({
+          kind: "harmony_off_grid",
+          severity: sev,
+          location: { startBar: section.startBar, endBar: section.endBar, sectionName: section.name, trackIds: [part.id, drums.id] },
+          evidence: {
+            shareBeyondToleranceMs: share, toleranceMs: HARMONY_GRID_TOLERANCE_MS,
+            medianAbsDeviationFromKitMs: medianMs,
+            meanSignedDeviationFromKitMs: mean(deviations),
+            kitMeanSignedDeviationMs: kitOffsetMs, kitOnItsOwnGrid: kitOnItsGrid,
+            kitOffGridShare: kitOffGridShare, gridStepsPerBeat: HARMONY_GRID_STEPS_PER_BEAT,
+            onsets: notes.length, family: part.family,
+          },
+          // The kit is on the grid and the harmony is not: the harmony writer
+          // took its onsets from somewhere else (the analysed chord onsets),
+          // which is the composer's, not the performer's.
+          suspectedOrigin: kitOnItsGrid ? "compose" : "groove",
+          originConfidence: confidenceFromCount(beyond, 8, kitOnItsGrid ? 0.85 : 0.6),
+          recommendedRepair: {
+            operation: kitOnItsGrid ? "quantise_harmony_to_the_kit_grid" : "agree_one_grid", scope: "part",
+            detail: `${part.instrument} places ${Math.round(share * 100)} % of its onsets in ${section.name} more than ${HARMONY_GRID_TOLERANCE_MS} ms from the grid the kit plays (median ${Math.round(medianMs)} ms${kitOnItsGrid ? "; the kit itself is on the grid" : "; the kit is off it too"})`,
+          },
+          confidence: confidenceFromCount(notes.length, 12),
+        });
       }
     }
   }
