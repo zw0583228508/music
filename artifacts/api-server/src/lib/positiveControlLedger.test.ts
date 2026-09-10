@@ -92,13 +92,21 @@ test("the corruption context of an arrangement target carries the ensemble, the 
 });
 
 test("the ledger records detection per metric per family with the stated rule; chord-tone share sees a pitch shift, the critic's harmony dimension does not", () => {
-  const anchors = ["pop-full", "rock-full", "jazz-full"].map(anchorFor);
+  // Recalibrated at the merge (B-01): the merged brain's pop / rock / jazz
+  // candidates carry 2 + 3 + 2 = 7 pitched parts (the 3bf23aa anchors carried
+  // more), one trial each at a listening rung — one short of the rule's
+  // `minTrials` = 8, which is the sensitivity gate's own constant and is not
+  // lowered here. The anchor set is widened by dance-full (bass, keys, synth)
+  // so the strongest rung is judged on >= 8 real trials.
+  const anchors = ["pop-full", "rock-full", "jazz-full", "dance-full"].map(anchorFor);
   const families = controlFamilies().filter((f) => ["octave_displacement", "leap_injection", "density_thinning", "listening_pitch_shift"].includes(f.id));
   const ledger = buildPositiveControlLedger(anchors, { families, now: NOW, gitSha: "test" });
 
   assert.equal(ledger.version, "1.0");
   assert.equal(ledger.rule.gateMinDetection, LEDGER_RULE.gateMinDetection);
-  assert.equal(ledger.anchors.length, 3);
+  assert.equal(ledger.anchors.length, 4);
+  const pitchedTargets = anchors.reduce((n, a) => n + a.trackModels.filter((t) => t.notes.length && !/drum|percussion/.test(t.id)).length, 0);
+  assert.ok(pitchedTargets >= LEDGER_RULE.minTrials, `${pitchedTargets} pitched targets; the rule needs ${LEDGER_RULE.minTrials} trials at the strongest rung`);
   assert.ok(ledger.trials.total > 0);
   for (const row of ledger.rows) {
     assert.ok(["gate", "inform", "demoted", "insufficient_data"].includes(row.verdict));
@@ -120,6 +128,7 @@ test("the ledger records detection per metric per family with the stated rule; c
   // The one control with an arithmetic guarantee: moving 60 % of a chord-tone
   // part by a semitone or two cannot leave its chord-tone share where it was.
   const chordTone = ledger.rows.find((r) => r.metric === "benchmarkHarmony.chordToneShare" && r.family === "listening_pitch_shift")!;
+  assert.ok(chordTone.rungs[chordTone.rungs.length - 1].trials >= LEDGER_RULE.minTrials, chordTone.reason);
   assert.ok(chordTone.verdict === "gate" || chordTone.verdict === "inform", chordTone.reason);
   // And the audit's finding, as a ledger row: the critic's harmony dimension does not see it.
   const criticHarmony = ledger.rows.find((r) => r.metric === "musicCritic.harmony" && r.family === "listening_pitch_shift")!;
@@ -135,7 +144,11 @@ test("the ledger records detection per metric per family with the stated rule; c
 
 test("a task anchor (a real part in its context) is measured by the judge, the harmony measure and coherence only", () => {
   const anchor = anchorFor("rock-full");
-  const task = taskFromArrangement(anchor.songModel, anchor.trackModels, "guitar-rhythmic_harmony", { workId: "as-if-pdmx" })!;
+  // Recalibrated at the merge (B-01): the guitar is `guitar-harmonic_bed` now, not `guitar-rhythmic_harmony`; the instrument is what the task is built around.
+  const guitar = anchor.trackModels.find((t) => t.id.startsWith("guitar-") && t.notes.length > 0)!;
+  assert.ok(guitar, "rock-full has a guitar part with notes");
+  const task = taskFromArrangement(anchor.songModel, anchor.trackModels, guitar.id, { workId: "as-if-pdmx" })!;
+  assert.ok(task);
   const [taskAnchor] = tierHAnchorsFrom([task]);
   const families = controlFamilies().filter((f) => f.id === "pitch_shift_out_of_key");
   const ledger = buildPositiveControlLedger([taskAnchor], { families, now: NOW });

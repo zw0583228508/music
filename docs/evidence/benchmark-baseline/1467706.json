@@ -1,0 +1,638 @@
+{
+  "version": "2.0",
+  "method": "arrangement-benchmark/v2",
+  "runId": "9832608f496a",
+  "startedAt": "2026-09-10T04:28:14.750Z",
+  "tier": "S",
+  "corpusSize": 9,
+  "corpusIds": [
+    "pop-full",
+    "ballad-piano-vocal",
+    "rock-full",
+    "dance-full",
+    "acoustic-demo",
+    "orchestral-midi",
+    "ethnic-vocal",
+    "jazz-full",
+    "cinematic-midi"
+  ],
+  "systemUnderTest": "REFERENCE_PIPELINE",
+  "render": true,
+  "gitSha": "1467706c8330a55213ac3ae1c8e89a1cddefa364",
+  "headSha": "5fea1b4cb37f10c7d7335a8ccc33c46afc61b8f7",
+  "metricVersions": {
+    "musicCritic": "1.0",
+    "audioCritic": "1.0",
+    "partJudge": "1.1",
+    "coherenceMetric": "COHERENCE_METRIC_v1",
+    "benchmarkMeasures": "1.0"
+  },
+  "metricNotes": {
+    "criticScore": "the orchestrator's own critic score of the selected candidate (pre-performance notes, after the plan-only repair loop)",
+    "shippedCriticScore": "critiqueArrangement on the performed tracks the selected candidate returns — the notes that ship",
+    "audioScore": "audio critic on the reference-synth render; null when rendering is off",
+    "playabilityErrors": "constraint-engine errors summed over all candidates (composition + performance)",
+    "harmonyScore": "0..100 = 100 x (chordToneShare - clashShare) on the selected candidate's pitched tracks vs the Song Model chords",
+    "chordToneShare": "percent of pitched sounding time on a chord tone of the Song Model chords (selected candidate)",
+    "clashShare": "percent of pitched sounding time a semitone from another sounding pitched part (selected candidate); lower is better",
+    "sourceHarmonyScore": "1.0's harmonyScore: the critic's harmony dimension, a property of the Song Model, not of the arrangement (informational)",
+    "trajectorySmoothness": "coherence metric: register/density roughness inside sections + plan adherence (selected candidate)",
+    "seamArtefacts": "coherence metric: bar-line jumps at the 8-bar window grid beyond ordinary phrase structure (selected candidate)",
+    "motifRecurrence": "coherence metric: share of each section's melodic cells already heard earlier (selected candidate)",
+    "candidateDistance": "100 x mean pairwise candidateDiversity distance over the run's candidates (the production gate's own measure)",
+    "legacySectionConsistency": "1.0's sectionConsistency: planner novelty bookkeeping, 100 on every run (informational, one release)",
+    "legacyCandidateDiversity": "1.0's candidateDiversity: note-count spread, 50.4 on every run (informational, one release)",
+    "renderFailures": "candidates whose reference-synth render was infeasible; null when rendering is off",
+    "unselectableShare": "100 when no candidate passed the orchestrator's hard-rule gate (selected: null) or orchestration failed, else 0; the aggregate is the share of such cases in percent; lower is better",
+    "noteCount": "notes in the selected candidate (not a quality metric)",
+    "latencyMs": "wall time per case (not a quality metric)"
+  },
+  "cases": [
+    {
+      "caseId": "pop-full",
+      "genre": "pop",
+      "inputType": "full_song",
+      "metrics": {
+        "criticScore": 77,
+        "shippedCriticScore": 77,
+        "audioScore": 90,
+        "playabilityErrors": 0,
+        "harmonyScore": 99.96,
+        "chordToneShare": 99.96,
+        "clashShare": 0,
+        "sourceHarmonyScore": 72,
+        "trajectorySmoothness": 82.95,
+        "seamArtefacts": 100,
+        "motifRecurrence": 26.8,
+        "candidateDistance": 6.77,
+        "legacySectionConsistency": 100,
+        "legacyCandidateDiversity": 50.28,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 460,
+        "latencyMs": 22274
+      },
+      "selectedStrategy": "sparse",
+      "feasible": true,
+      "unselectable": false,
+      "selectionReason": "highest combined score of 5 candidate(s) that passed the hard-rule gate (sparse)",
+      "hardRule": {
+        "eligible": 5,
+        "rejected": 0
+      },
+      "critique": {
+        "orchestrator": {
+          "harmony": 72,
+          "groove": 80,
+          "voiceLeading": 72,
+          "leadCompatibility": 94,
+          "orchestration": 72,
+          "sectionDevelopment": 46,
+          "motifCoherence": 78,
+          "contrast": 100,
+          "transitions": 74,
+          "playability": 100,
+          "performancePotential": 86
+        },
+        "shipped": {
+          "harmony": 72,
+          "groove": 80,
+          "voiceLeading": 72,
+          "leadCompatibility": 94,
+          "orchestration": 72,
+          "sectionDevelopment": 46,
+          "motifCoherence": 78,
+          "contrast": 100,
+          "transitions": 74,
+          "playability": 100,
+          "performancePotential": 86
+        }
+      },
+      "notes": []
+    },
+    {
+      "caseId": "ballad-piano-vocal",
+      "genre": "ballad",
+      "inputType": "piano_vocal",
+      "metrics": {
+        "criticScore": 77,
+        "shippedCriticScore": 77,
+        "audioScore": 89,
+        "playabilityErrors": 0,
+        "harmonyScore": 99.99,
+        "chordToneShare": 99.99,
+        "clashShare": 0,
+        "sourceHarmonyScore": 57,
+        "trajectorySmoothness": 72.15,
+        "seamArtefacts": 19.37,
+        "motifRecurrence": 27.08,
+        "candidateDistance": 6.93,
+        "legacySectionConsistency": 100,
+        "legacyCandidateDiversity": 50.39,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 434,
+        "latencyMs": 31908
+      },
+      "selectedStrategy": "melodic",
+      "feasible": true,
+      "unselectable": false,
+      "selectionReason": "highest combined score of 5 candidate(s) that passed the hard-rule gate (melodic)",
+      "hardRule": {
+        "eligible": 5,
+        "rejected": 0
+      },
+      "critique": {
+        "orchestrator": {
+          "harmony": 57,
+          "groove": 86,
+          "voiceLeading": 72,
+          "leadCompatibility": 94,
+          "orchestration": 72,
+          "sectionDevelopment": 61,
+          "motifCoherence": 78,
+          "contrast": 89,
+          "transitions": 82,
+          "playability": 100,
+          "performancePotential": 86
+        },
+        "shipped": {
+          "harmony": 57,
+          "groove": 86,
+          "voiceLeading": 72,
+          "leadCompatibility": 94,
+          "orchestration": 72,
+          "sectionDevelopment": 61,
+          "motifCoherence": 78,
+          "contrast": 89,
+          "transitions": 82,
+          "playability": 100,
+          "performancePotential": 86
+        }
+      },
+      "notes": []
+    },
+    {
+      "caseId": "rock-full",
+      "genre": "rock",
+      "inputType": "full_song",
+      "metrics": {
+        "criticScore": 74,
+        "shippedCriticScore": 74,
+        "audioScore": 90,
+        "playabilityErrors": 0,
+        "harmonyScore": 99.94,
+        "chordToneShare": 99.94,
+        "clashShare": 0,
+        "sourceHarmonyScore": 57,
+        "trajectorySmoothness": 81.53,
+        "seamArtefacts": 86.03,
+        "motifRecurrence": 15.6,
+        "candidateDistance": 6.45,
+        "legacySectionConsistency": 100,
+        "legacyCandidateDiversity": 50.24,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 413,
+        "latencyMs": 17112
+      },
+      "selectedStrategy": "sparse",
+      "feasible": true,
+      "unselectable": false,
+      "selectionReason": "highest combined score of 5 candidate(s) that passed the hard-rule gate (sparse)",
+      "hardRule": {
+        "eligible": 5,
+        "rejected": 0
+      },
+      "critique": {
+        "orchestrator": {
+          "harmony": 57,
+          "groove": 80,
+          "voiceLeading": 72,
+          "leadCompatibility": 94,
+          "orchestration": 72,
+          "sectionDevelopment": 82,
+          "motifCoherence": 78,
+          "contrast": 91,
+          "transitions": 74,
+          "playability": 0,
+          "performancePotential": 86
+        },
+        "shipped": {
+          "harmony": 57,
+          "groove": 80,
+          "voiceLeading": 72,
+          "leadCompatibility": 94,
+          "orchestration": 72,
+          "sectionDevelopment": 82,
+          "motifCoherence": 78,
+          "contrast": 91,
+          "transitions": 74,
+          "playability": 0,
+          "performancePotential": 86
+        }
+      },
+      "notes": []
+    },
+    {
+      "caseId": "dance-full",
+      "genre": "dance",
+      "inputType": "full_song",
+      "metrics": {
+        "criticScore": 72,
+        "shippedCriticScore": 72,
+        "audioScore": 89,
+        "playabilityErrors": 0,
+        "harmonyScore": 96.79,
+        "chordToneShare": 98.27,
+        "clashShare": 1.48,
+        "sourceHarmonyScore": 51,
+        "trajectorySmoothness": 71.56,
+        "seamArtefacts": 9.57,
+        "motifRecurrence": 9.76,
+        "candidateDistance": 7.17,
+        "legacySectionConsistency": 100,
+        "legacyCandidateDiversity": 50.88,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 736,
+        "latencyMs": 20603
+      },
+      "selectedStrategy": "conservative",
+      "feasible": true,
+      "unselectable": false,
+      "selectionReason": "highest combined score of 5 candidate(s) that passed the hard-rule gate (conservative)",
+      "hardRule": {
+        "eligible": 5,
+        "rejected": 0
+      },
+      "critique": {
+        "orchestrator": {
+          "harmony": 51,
+          "groove": 80,
+          "voiceLeading": 72,
+          "leadCompatibility": 94,
+          "orchestration": 72,
+          "sectionDevelopment": 61,
+          "motifCoherence": 78,
+          "contrast": 100,
+          "transitions": 82,
+          "playability": 0,
+          "performancePotential": 86
+        },
+        "shipped": {
+          "harmony": 51,
+          "groove": 80,
+          "voiceLeading": 72,
+          "leadCompatibility": 94,
+          "orchestration": 72,
+          "sectionDevelopment": 61,
+          "motifCoherence": 78,
+          "contrast": 100,
+          "transitions": 82,
+          "playability": 0,
+          "performancePotential": 86
+        }
+      },
+      "notes": []
+    },
+    {
+      "caseId": "acoustic-demo",
+      "genre": "acoustic",
+      "inputType": "rough_demo",
+      "metrics": {
+        "criticScore": 74,
+        "shippedCriticScore": 74,
+        "audioScore": 89,
+        "playabilityErrors": 0,
+        "harmonyScore": 99.96,
+        "chordToneShare": 99.96,
+        "clashShare": 0,
+        "sourceHarmonyScore": 57,
+        "trajectorySmoothness": 79.47,
+        "seamArtefacts": 0,
+        "motifRecurrence": 47.16,
+        "candidateDistance": 7.39,
+        "legacySectionConsistency": 100,
+        "legacyCandidateDiversity": 50.35,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 454,
+        "latencyMs": 16920
+      },
+      "selectedStrategy": "conservative",
+      "feasible": true,
+      "unselectable": false,
+      "selectionReason": "highest combined score of 5 candidate(s) that passed the hard-rule gate (conservative)",
+      "hardRule": {
+        "eligible": 5,
+        "rejected": 0
+      },
+      "critique": {
+        "orchestrator": {
+          "harmony": 57,
+          "groove": 80,
+          "voiceLeading": 72,
+          "leadCompatibility": 94,
+          "orchestration": 72,
+          "sectionDevelopment": 46,
+          "motifCoherence": 78,
+          "contrast": 85,
+          "transitions": 82,
+          "playability": 100,
+          "performancePotential": 86
+        },
+        "shipped": {
+          "harmony": 57,
+          "groove": 80,
+          "voiceLeading": 72,
+          "leadCompatibility": 94,
+          "orchestration": 72,
+          "sectionDevelopment": 46,
+          "motifCoherence": 78,
+          "contrast": 85,
+          "transitions": 82,
+          "playability": 100,
+          "performancePotential": 86
+        }
+      },
+      "notes": []
+    },
+    {
+      "caseId": "orchestral-midi",
+      "genre": "orchestral",
+      "inputType": "midi",
+      "metrics": {
+        "criticScore": 69,
+        "shippedCriticScore": 69,
+        "audioScore": 91,
+        "playabilityErrors": 0,
+        "harmonyScore": 91.49,
+        "chordToneShare": 94.61,
+        "clashShare": 3.12,
+        "sourceHarmonyScore": 57,
+        "trajectorySmoothness": 69.77,
+        "seamArtefacts": 89.74,
+        "motifRecurrence": 22.8,
+        "candidateDistance": 5.24,
+        "legacySectionConsistency": 100,
+        "legacyCandidateDiversity": 48.98,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 232,
+        "latencyMs": 34305
+      },
+      "selectedStrategy": "sparse",
+      "feasible": true,
+      "unselectable": false,
+      "selectionReason": "highest combined score of 5 candidate(s) that passed the hard-rule gate (sparse)",
+      "hardRule": {
+        "eligible": 5,
+        "rejected": 0
+      },
+      "critique": {
+        "orchestrator": {
+          "harmony": 57,
+          "groove": 44,
+          "voiceLeading": 72,
+          "leadCompatibility": 65,
+          "orchestration": 72,
+          "sectionDevelopment": 76,
+          "motifCoherence": 66,
+          "contrast": 98,
+          "transitions": 74,
+          "playability": 94,
+          "performancePotential": 80
+        },
+        "shipped": {
+          "harmony": 57,
+          "groove": 44,
+          "voiceLeading": 72,
+          "leadCompatibility": 65,
+          "orchestration": 72,
+          "sectionDevelopment": 76,
+          "motifCoherence": 66,
+          "contrast": 98,
+          "transitions": 74,
+          "playability": 94,
+          "performancePotential": 80
+        }
+      },
+      "notes": []
+    },
+    {
+      "caseId": "ethnic-vocal",
+      "genre": "ethnic",
+      "inputType": "vocal_only",
+      "metrics": {
+        "criticScore": null,
+        "shippedCriticScore": null,
+        "audioScore": null,
+        "playabilityErrors": 0,
+        "harmonyScore": null,
+        "chordToneShare": null,
+        "clashShare": null,
+        "sourceHarmonyScore": null,
+        "trajectorySmoothness": null,
+        "seamArtefacts": null,
+        "motifRecurrence": null,
+        "candidateDistance": 6.86,
+        "legacySectionConsistency": 100,
+        "legacyCandidateDiversity": 50.59,
+        "renderFailures": 5,
+        "unselectableShare": 100,
+        "noteCount": null,
+        "latencyMs": 5938
+      },
+      "selectedStrategy": null,
+      "feasible": false,
+      "unselectable": true,
+      "selectionReason": "no candidate passed the hard-rule gate: cand-A [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-B [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-C [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-D [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-E [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]",
+      "hardRule": {
+        "eligible": 0,
+        "rejected": 5
+      },
+      "critique": null,
+      "notes": [
+        "unselectable: no candidate passed the hard-rule gate: cand-A [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-B [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-C [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-D [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-E [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]"
+      ]
+    },
+    {
+      "caseId": "jazz-full",
+      "genre": "jazz",
+      "inputType": "full_song",
+      "metrics": {
+        "criticScore": 73,
+        "shippedCriticScore": 73,
+        "audioScore": 89,
+        "playabilityErrors": 0,
+        "harmonyScore": 99.94,
+        "chordToneShare": 99.94,
+        "clashShare": 0,
+        "sourceHarmonyScore": 57,
+        "trajectorySmoothness": 77.68,
+        "seamArtefacts": 0,
+        "motifRecurrence": 60.68,
+        "candidateDistance": 6.69,
+        "legacySectionConsistency": 100,
+        "legacyCandidateDiversity": 50.25,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 727,
+        "latencyMs": 34230
+      },
+      "selectedStrategy": "sparse",
+      "feasible": true,
+      "unselectable": false,
+      "selectionReason": "highest combined score of 5 candidate(s) that passed the hard-rule gate (sparse)",
+      "hardRule": {
+        "eligible": 5,
+        "rejected": 0
+      },
+      "critique": {
+        "orchestrator": {
+          "harmony": 57,
+          "groove": 80,
+          "voiceLeading": 72,
+          "leadCompatibility": 94,
+          "orchestration": 72,
+          "sectionDevelopment": 72,
+          "motifCoherence": 78,
+          "contrast": 80,
+          "transitions": 82,
+          "playability": 0,
+          "performancePotential": 86
+        },
+        "shipped": {
+          "harmony": 57,
+          "groove": 80,
+          "voiceLeading": 72,
+          "leadCompatibility": 94,
+          "orchestration": 72,
+          "sectionDevelopment": 72,
+          "motifCoherence": 78,
+          "contrast": 80,
+          "transitions": 82,
+          "playability": 0,
+          "performancePotential": 86
+        }
+      },
+      "notes": []
+    },
+    {
+      "caseId": "cinematic-midi",
+      "genre": "cinematic",
+      "inputType": "midi",
+      "metrics": {
+        "criticScore": 72,
+        "shippedCriticScore": 72,
+        "audioScore": 90,
+        "playabilityErrors": 0,
+        "harmonyScore": 94.16,
+        "chordToneShare": 96.07,
+        "clashShare": 1.91,
+        "sourceHarmonyScore": 66,
+        "trajectorySmoothness": 76.43,
+        "seamArtefacts": 44.45,
+        "motifRecurrence": 66.68,
+        "candidateDistance": 6.7,
+        "legacySectionConsistency": 100,
+        "legacyCandidateDiversity": 49.59,
+        "renderFailures": 5,
+        "unselectableShare": 0,
+        "noteCount": 281,
+        "latencyMs": 40030
+      },
+      "selectedStrategy": "sparse",
+      "feasible": true,
+      "unselectable": false,
+      "selectionReason": "highest combined score of 5 candidate(s) that passed the hard-rule gate (sparse)",
+      "hardRule": {
+        "eligible": 5,
+        "rejected": 0
+      },
+      "critique": {
+        "orchestrator": {
+          "harmony": 66,
+          "groove": 50,
+          "voiceLeading": 72,
+          "leadCompatibility": 65,
+          "orchestration": 72,
+          "sectionDevelopment": 76,
+          "motifCoherence": 78,
+          "contrast": 100,
+          "transitions": 74,
+          "playability": 100,
+          "performancePotential": 80
+        },
+        "shipped": {
+          "harmony": 66,
+          "groove": 50,
+          "voiceLeading": 72,
+          "leadCompatibility": 65,
+          "orchestration": 72,
+          "sectionDevelopment": 76,
+          "motifCoherence": 78,
+          "contrast": 100,
+          "transitions": 74,
+          "playability": 100,
+          "performancePotential": 80
+        }
+      },
+      "notes": []
+    }
+  ],
+  "aggregate": {
+    "criticScore": 73.5,
+    "shippedCriticScore": 73.5,
+    "audioScore": 89.63,
+    "playabilityErrors": 0,
+    "harmonyScore": 97.78,
+    "chordToneShare": 98.59,
+    "clashShare": 0.81,
+    "sourceHarmonyScore": 59.25,
+    "trajectorySmoothness": 76.44,
+    "seamArtefacts": 43.64,
+    "motifRecurrence": 34.57,
+    "candidateDistance": 6.69,
+    "legacySectionConsistency": 100,
+    "legacyCandidateDiversity": 50.17,
+    "renderFailures": 5,
+    "unselectableShare": 11.11,
+    "noteCount": 467.13,
+    "latencyMs": 24813.33
+  },
+  "aggregateCases": {
+    "criticScore": 8,
+    "shippedCriticScore": 8,
+    "audioScore": 8,
+    "playabilityErrors": 9,
+    "harmonyScore": 8,
+    "chordToneShare": 8,
+    "clashShare": 8,
+    "sourceHarmonyScore": 8,
+    "trajectorySmoothness": 8,
+    "seamArtefacts": 8,
+    "motifRecurrence": 8,
+    "candidateDistance": 9,
+    "legacySectionConsistency": 9,
+    "legacyCandidateDiversity": 9,
+    "renderFailures": 9,
+    "unselectableShare": 9,
+    "noteCount": 8,
+    "latencyMs": 9
+  },
+  "unselectable": {
+    "count": 1,
+    "caseIds": [
+      "ethnic-vocal"
+    ],
+    "reasons": {
+      "ethnic-vocal": "no candidate passed the hard-rule gate: cand-A [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-B [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-C [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-D [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]; cand-E [dropped_part: bass (BASS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: bass (BASS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Chorus\" (bars 9-16) with 4 chord(s) under it but wrote no notes; the section ships without it. | dropped_part: keys (KEYS) is planned in \"Verse 2\" (bars 17-24) with 4 chord(s) under it but wrote no notes; the section ships without it.]"
+    }
+  },
+  "unavailableMetrics": [
+    "analysisAccuracy (needs a labelled analysis set and live providers)",
+    "gpuCost (no GPU worker in this run)"
+  ]
+}

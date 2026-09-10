@@ -15,6 +15,7 @@ import {
   buildBlindComparisonSheet,
   compareBenchmarkRuns,
   runArrangementBenchmark,
+  songsFromCorpus,
   updateEloRatings,
   type BenchmarkRun,
 } from "./arrangementBenchmark";
@@ -101,6 +102,90 @@ test("the run is reproducible", () => {
   assert.equal(verdict.comparable, true);
   assert.equal(verdict.outcome, "unchanged");
   assert.deepEqual(verdict.regressed, []);
+});
+
+/**
+ * Since the hard-rule gate (B-00) the orchestrator may select nothing. The
+ * benchmark must say so per case and in the aggregate — never average the case
+ * away — and a comparison must count it as a regression. The second case is
+ * forced unselectable through the injectable orchestrator so the test does not
+ * depend on which corpus case the brain of the day fails.
+ */
+test("a case where no candidate passes the hard-rule gate is reported unselectable, counted in the aggregate and never averaged away", () => {
+  const songs = songsFromCorpus(smallCorpus);
+  const failing = songs[1].id;
+  const orchestrate = (input: OrchestrateInput) => {
+    const result = orchestrateArrangement(input);
+    if (input.songModel !== songs[1].songModel) return result;
+    return {
+      ...result,
+      selected: null,
+      selection: {
+        reason: `no candidate passed the hard-rule gate: ${result.candidates.map((c) => `${c.candidateId} [dropped_part: forced by the test]`).join("; ")}`,
+        eligible: [],
+        rejected: result.candidates.map((c) => ({ candidateId: c.candidateId, reasons: ["dropped_part: forced by the test"] })),
+      },
+      candidates: result.candidates.map((c) => ({ ...c, hardRule: { feasible: false, reasons: ["dropped_part: forced by the test"] } })),
+    };
+  };
+  const baseline = runArrangementBenchmark({ songs, tier: "S", candidateCount: 2, render: false, now: NOW, clock: () => 0, systemUnderTest: "ALL_SELECTABLE" });
+  const run = runArrangementBenchmark({ songs, tier: "S", candidateCount: 2, render: false, now: NOW, clock: () => 0, systemUnderTest: "ONE_UNSELECTABLE", orchestrate });
+
+  assert.deepEqual(baseline.unselectable, { count: 0, caseIds: [], reasons: {} });
+  assert.equal(baseline.aggregate.unselectableShare, 0);
+  for (const c of baseline.cases) assert.equal(c.unselectable, false);
+
+  const failed = run.cases.find((c) => c.caseId === failing)!;
+  assert.equal(failed.unselectable, true);
+  assert.match(failed.selectionReason ?? "", /no candidate passed the hard-rule gate/);
+  assert.deepEqual(failed.hardRule, { eligible: 0, rejected: 2 });
+  assert.equal(failed.selectedStrategy, null);
+  assert.equal(failed.feasible, false);
+  assert.equal(failed.critique, null);
+  // There is no best hard-rule-passing candidate to measure: the selected-candidate metrics are null with the reason, not a number.
+  for (const metric of ["criticScore", "shippedCriticScore", "harmonyScore", "chordToneShare", "clashShare", "trajectorySmoothness", "motifRecurrence", "noteCount"] as const) {
+    assert.equal(failed.metrics[metric], null, `${metric} must be null on an unselectable case`);
+  }
+  assert.equal(failed.metrics.unselectableShare, 100);
+  assert.ok(failed.notes.some((n) => /^unselectable: /.test(n)));
+  // Candidate-level measures that need no winner are still reported.
+  assert.ok(failed.metrics.candidateDistance !== null);
+  assert.ok(failed.metrics.playabilityErrors !== null);
+  for (const c of run.cases.filter((c) => c.caseId !== failing)) {
+    assert.equal(c.unselectable, false);
+    assert.equal(c.metrics.unselectableShare, 0);
+    assert.deepEqual(c.hardRule, { eligible: 2, rejected: 0 });
+  }
+
+  // The aggregate reports the share and says how many cases each mean covers.
+  assert.equal(run.unselectable?.count, 1);
+  assert.deepEqual(run.unselectable?.caseIds, [failing]);
+  assert.match(run.unselectable?.reasons[failing] ?? "", /hard-rule gate/);
+  assert.equal(run.aggregate.unselectableShare, 33.33);
+  assert.equal(run.aggregateCases?.criticScore, 2);
+  assert.equal(run.aggregateCases?.unselectableShare, 3);
+  assert.equal(baseline.aggregateCases?.criticScore, 3);
+
+  // A comparison counts it as a quality regression, and names the case.
+  assert.ok(QUALITY_METRICS.includes("unselectableShare"));
+  const verdict = compareBenchmarkRuns(baseline, run);
+  assert.equal(verdict.comparable, true);
+  assert.equal(verdict.outcome, "do_not_promote");
+  assert.ok(verdict.regressed.includes("unselectableShare"));
+  assert.deepEqual(verdict.unselectable, { baseline: [], candidate: [failing] });
+  assert.match(verdict.summary, new RegExp(`1 case\\(s\\) unselectable in the candidate \\(${failing}\\)`));
+
+  // Against a file written before the field existed the row is unavailable, not a 0 that a regression could hide behind.
+  const { unselectableShare: _dropped, ...oldAggregate } = baseline.aggregate;
+  void _dropped;
+  const oldFile = { ...baseline, aggregate: oldAggregate as BenchmarkRun["aggregate"], unselectable: undefined, aggregateCases: undefined, cases: baseline.cases.map(({ unselectable: _u, ...rest }) => { void _u; return rest as BenchmarkRun["cases"][number]; }) };
+  const againstOld = compareBenchmarkRuns(oldFile, run);
+  assert.equal(againstOld.comparable, true);
+  const row = againstOld.comparisons.find((c) => c.metric === "unselectableShare")!;
+  assert.equal(row.verdict, "unavailable");
+  assert.equal(row.baseline, null);
+  assert.equal(row.candidate, 33.33);
+  assert.deepEqual(againstOld.unselectable, { baseline: [], candidate: [failing] });
 });
 
 /**

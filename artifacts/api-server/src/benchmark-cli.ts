@@ -7,6 +7,15 @@
  *   pnpm --filter @workspace/api-server run benchmark -- --out docs/evidence/benchmark-baseline/<sha>.json --render
  *   pnpm --filter @workspace/api-server run benchmark -- --compare docs/evidence/benchmark-baseline/<sha>.json [--no-fail]
  *   pnpm --filter @workspace/api-server run benchmark -- --tier P --out run-tier-p.json
+ *   pnpm --filter @workspace/api-server run benchmark -- --render --json --out docs/evidence/benchmark-baseline/<sha>.json --git-sha <full sha>
+ *
+ * `--git-sha` records the given commit as the run's `gitSha` — the commit whose
+ * arrangement code was measured — when the run is taken from a checkout whose
+ * HEAD differs (a measurement-only branch snapshotting the brain at its merge
+ * base); the checkout's own HEAD is always written as `headSha`.
+ *
+ * A case where no candidate passed the orchestrator's hard-rule gate is printed
+ * as `unsel` 100 with its reason after the table, and counts in the aggregate.
  *
  * Prints a per-case table plus the aggregate, honestly lists the metrics this
  * environment cannot measure, and — with `--compare` — prints the verdict
@@ -77,6 +86,13 @@ function gitSha(): string | null {
   }
 }
 
+const headSha = gitSha();
+const shaOverride = flag("git-sha");
+if (shaOverride && !/^[0-9a-f]{7,40}$/i.test(shaOverride)) {
+  process.stderr.write(`--git-sha ${shaOverride} is not a commit sha\n`);
+  process.exit(2);
+}
+
 const run = runArrangementBenchmark({
   render,
   candidateCount,
@@ -84,7 +100,8 @@ const run = runArrangementBenchmark({
   songs: tier === "P" ? tierPSongs() : undefined,
   systemUnderTest: process.env.BENCHMARK_SYSTEM ?? "REFERENCE_PIPELINE",
   now: new Date(),
-  gitSha: gitSha(),
+  gitSha: shaOverride ?? headSha,
+  headSha,
 });
 
 const out = (text: string) => process.stdout.write(text);
@@ -94,16 +111,16 @@ function printRun(): void {
   const columns: BenchmarkMetric[] = [
     "criticScore", "shippedCriticScore", "audioScore", "harmonyScore", "chordToneShare", "clashShare",
     "sourceHarmonyScore", "trajectorySmoothness", "seamArtefacts", "motifRecurrence", "candidateDistance",
-    "playabilityErrors", "noteCount", "latencyMs",
+    "playabilityErrors", "unselectableShare", "noteCount", "latencyMs",
   ];
   const short: Record<string, string> = {
     criticScore: "critic", shippedCriticScore: "shippd", audioScore: "audio", harmonyScore: "harm",
     chordToneShare: "chdTn%", clashShare: "clsh%", sourceHarmonyScore: "srcHrm", trajectorySmoothness: "traj",
     seamArtefacts: "seam", motifRecurrence: "motif", candidateDistance: "dist", playabilityErrors: "playEr",
-    noteCount: "notes", latencyMs: "ms",
+    unselectableShare: "unsel", noteCount: "notes", latencyMs: "ms",
   };
   out(`\nArrangement benchmark ${run.version} · tier ${run.tier} · ${run.systemUnderTest} · run ${run.runId}\n`);
-  out(`corpus: ${run.corpusSize} case(s) · rendering ${render ? "on" : "off"} · git ${run.gitSha ?? "n/a"}\n`);
+  out(`corpus: ${run.corpusSize} case(s) · rendering ${render ? "on" : "off"} · git ${run.gitSha ?? "n/a"}${run.headSha && run.headSha !== run.gitSha ? ` (run from HEAD ${run.headSha.slice(0, 7)})` : ""}\n`);
   out(`metric versions: ${Object.entries(run.metricVersions).map(([k, v]) => `${k}=${v}`).join(" ")}\n\n`);
   out(`${"case".padEnd(22)}${"genre".padEnd(12)}${columns.map((c) => short[c].padStart(7)).join("")}  ok\n`);
   for (const result of run.cases) {
@@ -115,6 +132,10 @@ function printRun(): void {
   }
   out(`\n${"AGGREGATE".padEnd(34)}${columns.map((c) => cell(run.aggregate[c])).join("")}\n`);
   out(`legacy (informational): sectionConsistency ${run.aggregate.legacySectionConsistency ?? "—"} · candidateDiversity ${run.aggregate.legacyCandidateDiversity ?? "—"}\n`);
+  if (run.unselectable?.count) {
+    out(`\nUnselectable (no candidate passed the hard-rule gate; selected-candidate metrics null, aggregates over ${run.corpusSize - run.unselectable.count} case(s)):\n`);
+    for (const id of run.unselectable.caseIds) out(`  · ${id}: ${run.unselectable.reasons[id]}\n`);
+  }
   out(`\nNot measurable here:\n`);
   for (const metric of run.unavailableMetrics) out(`  · ${metric}\n`);
   out("\n");
@@ -149,6 +170,9 @@ if (comparePath) {
       `${row.metric.padEnd(26)}${cell(row.baseline).padStart(10)}${cell(row.candidate).padStart(11)}` +
       `${(row.delta === null ? "—" : (row.delta > 0 ? "+" : "") + String(row.delta)).padStart(9)}  ${row.verdict}${row.quality ? "" : " (informational)"}\n`,
     );
+  }
+  if (verdict.unselectable.baseline.length || verdict.unselectable.candidate.length) {
+    out(`unselectable cases — baseline: ${verdict.unselectable.baseline.join(", ") || "none"} · candidate: ${verdict.unselectable.candidate.join(", ") || "none"}\n`);
   }
   out(`\n${verdict.outcome.toUpperCase()}: ${verdict.summary}\n\n`);
   if (verdict.outcome === "do_not_promote" && !noFail) process.exit(1);

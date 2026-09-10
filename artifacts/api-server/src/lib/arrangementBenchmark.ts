@@ -25,6 +25,15 @@
  *    own `candidateDistance`; the old two survive one release as `legacy*`.
  *  - Every run pins the metric versions it was measured under; a comparison
  *    across different pins is refused, not averaged.
+ *  - Since the hard-rule gate (B-00) the orchestrator may return
+ *    `selected: null` — no candidate was shippable. That is a legitimate
+ *    outcome and the benchmark reports it, never skips it: the case carries
+ *    `unselectable: true` with the orchestrator's reason, its selected-candidate
+ *    metrics are null (there is no best hard-rule-passing candidate to measure),
+ *    `unselectableShare` (0 or 100 per case) enters the aggregate as a quality
+ *    metric where lower is better, and `aggregateCases` says how many cases each
+ *    mean was taken over. Files written before this field lack it; a comparison
+ *    against such a file shows the row as unavailable rather than inventing a 0.
  *
  * Two halves:
  *  - automated metrics (this module's `runArrangementBenchmark`), and
@@ -56,14 +65,14 @@ export type BenchmarkMetric =
   | "harmonyScore" | "chordToneShare" | "clashShare" | "sourceHarmonyScore"
   | "trajectorySmoothness" | "seamArtefacts" | "motifRecurrence" | "candidateDistance"
   | "legacySectionConsistency" | "legacyCandidateDiversity"
-  | "renderFailures" | "noteCount" | "latencyMs";
+  | "renderFailures" | "unselectableShare" | "noteCount" | "latencyMs";
 
 export const BENCHMARK_METRICS: readonly BenchmarkMetric[] = [
   "criticScore", "shippedCriticScore", "audioScore", "playabilityErrors",
   "harmonyScore", "chordToneShare", "clashShare", "sourceHarmonyScore",
   "trajectorySmoothness", "seamArtefacts", "motifRecurrence", "candidateDistance",
   "legacySectionConsistency", "legacyCandidateDiversity",
-  "renderFailures", "noteCount", "latencyMs",
+  "renderFailures", "unselectableShare", "noteCount", "latencyMs",
 ];
 
 /** What each metric is, in one line, so a reader of the JSON need not open this file. */
@@ -83,6 +92,7 @@ export const METRIC_NOTES: Record<BenchmarkMetric, string> = {
   legacySectionConsistency: "1.0's sectionConsistency: planner novelty bookkeeping, 100 on every run (informational, one release)",
   legacyCandidateDiversity: "1.0's candidateDiversity: note-count spread, 50.4 on every run (informational, one release)",
   renderFailures: "candidates whose reference-synth render was infeasible; null when rendering is off",
+  unselectableShare: "100 when no candidate passed the orchestrator's hard-rule gate (selected: null) or orchestration failed, else 0; the aggregate is the share of such cases in percent; lower is better",
   noteCount: "notes in the selected candidate (not a quality metric)",
   latencyMs: "wall time per case (not a quality metric)",
 };
@@ -92,7 +102,7 @@ export const QUALITY_METRICS: readonly BenchmarkMetric[] = [
   "criticScore", "shippedCriticScore", "audioScore", "playabilityErrors",
   "harmonyScore", "chordToneShare", "clashShare",
   "trajectorySmoothness", "seamArtefacts", "motifRecurrence", "candidateDistance",
-  "renderFailures",
+  "renderFailures", "unselectableShare",
 ];
 
 /** A metric the local run genuinely cannot measure is reported as null, not faked. */
@@ -103,6 +113,17 @@ export type BenchmarkCaseResult = {
   metrics: Record<BenchmarkMetric, number | null>;
   selectedStrategy: string | null;
   feasible: boolean;
+  /**
+   * True when the orchestrator selected nothing — every candidate failed the
+   * hard-rule gate (or orchestration threw). The selected-candidate metrics are
+   * then null and `selectionReason` says why; the case still counts in
+   * `unselectableShare`.
+   */
+  unselectable: boolean;
+  /** The orchestrator's own `selection.reason` (why the winner won, or why nobody did). */
+  selectionReason: string | null;
+  /** The hard-rule gate's tally over the run's candidates. */
+  hardRule: { eligible: number; rejected: number } | null;
   /** The critic's per-dimension scores on the shipped notes vs the orchestrator's, so a reader can see which dimensions move. */
   critique: {
     orchestrator: Record<string, number>;
@@ -136,13 +157,23 @@ export type BenchmarkRun = {
    * rendering is compared only with another run with rendering.
    */
   render: boolean;
-  /** The commit the run was measured at; null when not run from a checkout. */
+  /** The commit whose arrangement code was measured; null when not run from a checkout. */
   gitSha: string | null;
+  /**
+   * The checkout the run was taken from, when it differs from `gitSha` (a
+   * measurement-only branch snapshotting the brain at its merge base records
+   * the base as `gitSha` and its own HEAD here). Absent in older files.
+   */
+  headSha?: string | null;
   /** The metric versions the numbers were measured under. A comparison across different pins is refused. */
   metricVersions: MetricVersions;
   metricNotes: Record<BenchmarkMetric, string>;
   cases: BenchmarkCaseResult[];
   aggregate: Record<BenchmarkMetric, number | null>;
+  /** How many cases each aggregate mean was taken over — an unselectable case contributes to `unselectableShare` and to nothing else. Absent in older files. */
+  aggregateCases?: Record<BenchmarkMetric, number>;
+  /** The cases where the orchestrator selected nothing, with its reasons. Absent in older files. */
+  unselectable?: { count: number; caseIds: string[]; reasons: Record<string, string> };
   unavailableMetrics: string[];
 };
 
@@ -176,7 +207,7 @@ function sourceHarmonyScore(result: OrchestrationResult): number | null {
 }
 
 const nullMetrics = (latencyMs: number): Record<BenchmarkMetric, number | null> =>
-  Object.fromEntries(BENCHMARK_METRICS.map((m) => [m, m === "latencyMs" ? latencyMs : null])) as Record<BenchmarkMetric, number | null>;
+  Object.fromEntries(BENCHMARK_METRICS.map((m) => [m, m === "latencyMs" ? latencyMs : m === "unselectableShare" ? 100 : null])) as Record<BenchmarkMetric, number | null>;
 
 export function songsFromCorpus(corpus: readonly BenchmarkCase[]): BenchmarkSong[] {
   return corpus.map((spec) => ({ id: spec.id, genre: spec.genre, inputType: spec.inputType, songModel: buildBenchmarkSongModel(spec) }));
@@ -195,6 +226,7 @@ export function runArrangementBenchmark(options: {
   now?: Date;
   clock?: () => number;
   gitSha?: string | null;
+  headSha?: string | null;
 } = {}): BenchmarkRun {
   const songs = options.songs ?? songsFromCorpus(options.corpus ?? BENCHMARK_CORPUS);
   const tier: BenchmarkTier = options.tier ?? (options.songs ? "P" : "S");
@@ -225,11 +257,20 @@ export function runArrangementBenchmark(options: {
       return {
         caseId: song.id, genre: song.genre, inputType: song.inputType,
         metrics: nullMetrics(latencyMs),
-        selectedStrategy: null, feasible: false, critique: null, notes,
+        selectedStrategy: null, feasible: false,
+        unselectable: true, selectionReason: notes[0] ?? "orchestration failed", hardRule: null,
+        critique: null, notes,
       };
     }
 
     const selected = result.candidates.find((c) => c.candidateId === result!.selected?.candidateId);
+    const unselectable = !selected;
+    const selectionReason = result.selection?.reason ?? (selected ? null : "the orchestrator selected no candidate and gave no reason");
+    if (unselectable) notes.push(`unselectable: ${selectionReason}`);
+    const hardRule = {
+      eligible: result.candidates.filter((c) => c.hardRule?.feasible !== false).length,
+      rejected: result.candidates.filter((c) => c.hardRule?.feasible === false).length,
+    };
     const renderFailures = render
       ? result.candidates.filter((c) => c.renderFeasible === false).length
       : null;
@@ -280,11 +321,15 @@ export function runArrangementBenchmark(options: {
         legacySectionConsistency: legacySectionConsistency(result),
         legacyCandidateDiversity: legacyCandidateDiversity(result),
         renderFailures,
+        unselectableShare: unselectable ? 100 : 0,
         noteCount: selected?.noteCount ?? null,
         latencyMs,
       },
       selectedStrategy: selected?.strategy ?? null,
       feasible: selected?.critique.feasible ?? false,
+      unselectable,
+      selectionReason,
+      hardRule,
       critique: selected ? { orchestrator: dims(selected.critique), shipped: dims(shippedCritique) } : null,
       notes,
     };
@@ -296,6 +341,15 @@ export function runArrangementBenchmark(options: {
       mean(cases.map((c) => c.metrics[name]).filter((v): v is number => v !== null)),
     ]),
   ) as Record<BenchmarkMetric, number | null>;
+  const aggregateCases = Object.fromEntries(
+    BENCHMARK_METRICS.map((name) => [name, cases.filter((c) => c.metrics[name] !== null).length]),
+  ) as Record<BenchmarkMetric, number>;
+  const unselectableCases = cases.filter((c) => c.unselectable);
+  const unselectable = {
+    count: unselectableCases.length,
+    caseIds: unselectableCases.map((c) => c.caseId),
+    reasons: Object.fromEntries(unselectableCases.map((c) => [c.caseId, c.selectionReason ?? "no reason given"])),
+  };
 
   const unavailableMetrics = [
     "analysisAccuracy (needs a labelled analysis set and live providers)",
@@ -317,10 +371,13 @@ export function runArrangementBenchmark(options: {
     systemUnderTest: options.systemUnderTest ?? "REFERENCE_PIPELINE",
     render,
     gitSha: options.gitSha ?? null,
+    headSha: options.headSha ?? null,
     metricVersions: currentMetricVersions(),
     metricNotes: METRIC_NOTES,
     cases,
     aggregate,
+    aggregateCases,
+    unselectable,
     unavailableMetrics,
   };
 }
@@ -331,7 +388,7 @@ export function runArrangementBenchmark(options: {
 
 /** Metrics where lower is better. */
 const LOWER_IS_BETTER = new Set<BenchmarkMetric>([
-  "playabilityErrors", "clashShare", "renderFailures", "latencyMs",
+  "playabilityErrors", "clashShare", "renderFailures", "unselectableShare", "latencyMs",
 ]);
 
 export type BenchmarkComparison = {
@@ -355,6 +412,8 @@ export type BenchmarkVerdict = {
   beatsBaseline: boolean;
   outcome: "promote" | "do_not_promote" | "unchanged" | "incomparable";
   summary: string;
+  /** The cases each run could not select a candidate for (empty for a file written before the field existed). */
+  unselectable: { baseline: string[]; candidate: string[] };
 };
 
 export function compareBenchmarkRuns(
@@ -382,7 +441,9 @@ export function compareBenchmarkRuns(
     incomparableReasons.push("the two runs were measured on different corpora");
   }
 
-  const metrics = Object.keys(baseline.aggregate) as BenchmarkMetric[];
+  // The union of both runs' metrics: a metric one file lacks (written before it
+  // existed) is shown as unavailable, never silently dropped or read as 0.
+  const metrics = [...new Set([...Object.keys(baseline.aggregate), ...Object.keys(candidate.aggregate)])] as BenchmarkMetric[];
   const comparisons: BenchmarkComparison[] = metrics.map((metric) => {
     const b = baseline.aggregate[metric];
     const c = candidate.aggregate[metric];
@@ -410,16 +471,24 @@ export function compareBenchmarkRuns(
   const outcome: BenchmarkVerdict["outcome"] = !comparable
     ? "incomparable"
     : beatsBaseline ? "promote" : qualityRegressed.length ? "do_not_promote" : "unchanged";
+  const unselectable = {
+    baseline: baseline.unselectable?.caseIds ?? baseline.cases?.filter((c) => c.unselectable).map((c) => c.caseId) ?? [],
+    candidate: candidate.unselectable?.caseIds ?? candidate.cases?.filter((c) => c.unselectable).map((c) => c.caseId) ?? [],
+  };
+  const unselectableNote = unselectable.candidate.length
+    ? `; ${unselectable.candidate.length} case(s) unselectable in the candidate (${unselectable.candidate.join(", ")})${unselectable.baseline.length ? ` vs ${unselectable.baseline.length} in the baseline` : ""}`
+    : "";
 
   return {
     comparable, incomparableReasons, comparisons, improved, regressed, beatsBaseline, outcome,
     summary: !comparable
       ? `runs are not comparable: ${incomparableReasons.join("; ")}`
       : beatsBaseline
-        ? `${candidate.systemUnderTest} beats ${baseline.systemUnderTest} on ${qualityImproved.join(", ")}`
+        ? `${candidate.systemUnderTest} beats ${baseline.systemUnderTest} on ${qualityImproved.join(", ")}${unselectableNote}`
         : qualityRegressed.length
-          ? `${candidate.systemUnderTest} regresses ${qualityRegressed.join(", ")} — do not promote`
-          : `${candidate.systemUnderTest} is not measurably better — unchanged within tolerance ${tolerance}`,
+          ? `${candidate.systemUnderTest} regresses ${qualityRegressed.join(", ")} — do not promote${unselectableNote}`
+          : `${candidate.systemUnderTest} is not measurably better — unchanged within tolerance ${tolerance}${unselectableNote}`,
+    unselectable,
   };
 }
 

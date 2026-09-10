@@ -69,15 +69,23 @@ const limits = [];
 
 // --- Tier S anchors ----------------------------------------------------------------
 const tierS = [];
+const tierSUnselectable = [];
 for (const spec of lib.BENCHMARK_CORPUS) {
   const songModel = lib.buildBenchmarkSongModel(spec);
   const result = lib.orchestrateArrangement({ songModel, candidateCount: 5, render: false, now: NOW });
   const selected = result.candidates.find((c) => c.candidateId === result.selected?.candidateId);
-  if (!selected) { limits.push(`${spec.id}: the orchestrator selected nothing; no anchor`); continue; }
+  if (!selected) {
+    // Since the hard-rule gate (B-00) a case may have no shippable candidate. It
+    // is not an anchor — there is nothing shipped to corrupt — and it is named
+    // here, never skipped silently.
+    tierSUnselectable.push({ id: spec.id, reason: result.selection?.reason ?? "the orchestrator selected nothing" });
+    limits.push(`Tier S ${spec.id}: no candidate passed the hard-rule gate, so there is no shipped arrangement to anchor; ${result.selection?.reason ?? ""}`.trim());
+    continue;
+  }
   tierS.push({ id: `S:${spec.id}`, songModel, plan: result.plan, trackModels: selected.trackModels });
 }
 const anchors = lib.tierSAnchorsFrom(tierS);
-console.log(`Tier S: ${anchors.length} anchors (selected candidates of the synthetic corpus)`);
+console.log(`Tier S: ${anchors.length} anchors (selected candidates of the synthetic corpus)${tierSUnselectable.length ? `; ${tierSUnselectable.length} case(s) unselectable: ${tierSUnselectable.map((u) => u.id).join(", ")}` : ""}`);
 
 // --- Tier P (optional, reported apart) -------------------------------------------
 let tierPAnchors = [];
@@ -165,7 +173,7 @@ const ledger = lib.buildPositiveControlLedger(all, {
   },
 });
 ledger.source = {
-  tierS: { anchors: anchors.length, from: "BENCHMARK_CORPUS via orchestrateArrangement (candidateCount 5, render off, now epoch), selected candidate's performed tracks" },
+  tierS: { anchors: anchors.length, cases: lib.BENCHMARK_CORPUS.length, unselectable: tierSUnselectable, from: "BENCHMARK_CORPUS via orchestrateArrangement (candidateCount 5, render off, now epoch), selected candidate's performed tracks; a case with no hard-rule-passing candidate has no anchor and is listed under unselectable" },
   tierH: { ...tierHSummary, from: sourcePath === null ? `REAL_CORPUS_TIER_H (proven-public-domain compositions only) via tierHTasksFor, windowBars 16, maxTasksPerWork ${tierHTasksPerWork}, N = 1` : relative(repoRoot, sourcePath) },
   tierP: { anchors: tierPAnchors.length },
 };

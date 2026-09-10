@@ -44,6 +44,8 @@ function midiFromCase(caseId: string): Buffer {
   });
 }
 
+const songModelBars = (caseId: string) => buildBenchmarkSongModel(BENCHMARK_CORPUS.find((c) => c.id === caseId)!).bars.length;
+
 function entryFor(id: string, midi: Buffer, admittedBy: "b08-csv-scan" | "tournament-global" = "b08-csv-scan"): CorpusEntry {
   const measured = measurePdmxWork(parseMidiFile(midi));
   assert.ok(measured.ok);
@@ -78,12 +80,22 @@ test("a symbolic entry is runnable without an uploaded source; coverage still re
 });
 
 test("measurement reads metre, tempo, bars, parts, families and density from the MIDI; the coverage attributes follow the stated thresholds", () => {
-  const measured = measurePdmxWork(parseMidiFile(midiFromCase("orchestral-midi")));
+  const midi = parseMidiFile(midiFromCase("orchestral-midi"));
+  const measured = measurePdmxWork(midi);
   assert.ok(measured.ok);
   const m = measured.measurement;
   assert.equal(m.meter, "3/4");
   assert.equal(m.tempoBpm, 76);
-  assert.equal(m.bars, 36);
+  // Recalibrated at the merge (B-01): the Song Model has 36 bars, but the
+  // merged brain's strings-climax_layer holds its final chord (three notes,
+  // 5.42 s from bar 35) 0.71 s past the last bar line at 76 BPM in 3/4, and
+  // measurePdmxWork counts bars up to the last note-off (ceil), so the written
+  // MIDI measures as 37 bars (36 on 3bf23aa). The overrun is asserted as such,
+  // not hidden: the bar count follows the notes, and the notes now run over.
+  const ticksPerBar = 3 * 480;
+  assert.equal(songModelBars("orchestral-midi"), 36);
+  assert.ok(midi.endTick > 36 * ticksPerBar && midi.endTick <= 37 * ticksPerBar, `the arrangement's last note-off (${midi.endTick} ticks) lies inside a 37th bar`);
+  assert.equal(m.bars, 37);
   assert.ok(m.tracks >= 3);
   assert.ok(m.families.includes("bass") && m.families.includes("drums"));
   const attributes = attributesFromMeasurement(m, { n_pitch_classes: 10.5, genres: "classical" });

@@ -110,7 +110,14 @@ test("mean candidate distance is the production gate's own distance, averaged ov
 
 test("a tournament task can be built around one track of an arrangement", () => {
   const { songModel, selected } = arrangement("rock-full");
-  const task = taskFromArrangement(songModel, selected.trackModels, "guitar-rhythmic_harmony", { workId: "rock" })!;
+  // Recalibrated at the merge (B-01): rock-full's guitar is no longer the
+  // RHYTHMIC_HARMONY part — keys took that role and the guitar is a HARMONIC_BED
+  // (`guitar-harmonic_bed`, 11 notes on 3bf23aa's successor, was
+  // `guitar-rhythmic_harmony`). The test names the instrument, not the role.
+  const guitar = selected.trackModels.find((t) => t.id.startsWith("guitar-"))!;
+  assert.ok(guitar, `rock-full has a guitar part: ${selected.trackModels.map((t) => t.id).join(", ")}`);
+  assert.ok(guitar.notes.length > 0, "the guitar part carries notes");
+  const task = taskFromArrangement(songModel, selected.trackModels, guitar.id, { workId: "rock" })!;
   assert.ok(task);
   assert.equal(task.targetFamily, "guitar");
   assert.equal(task.targetInst, 25);

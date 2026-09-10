@@ -185,7 +185,18 @@ test("candidate controls degrade only the last (most active pitched) track; the 
   const selected = result.candidates.find((c) => c.candidateId === result.selected?.candidateId)!;
   const material = buildCandidateControls({ trackModels: selected.trackModels, tempoBpm: spec.tempoBpm, meter: spec.meter }, "s-1");
   assert.equal(material.refusal, null);
-  assert.equal(material.targetTrackId, "guitar-rhythmic_harmony", "the pitched track with the most notes is the part under control");
+  // Recalibrated at the merge (B-01, "keys plays everywhere"): the rule is the
+  // pitched track with the most notes. On 3bf23aa that was rock-full's
+  // `guitar-rhythmic_harmony`; on the merged brain keys took the rhythmic-
+  // harmony role (`keys-rhythmic_harmony`, 250 notes) and the guitar is an
+  // 11-note bed. The expectation is computed by the rule, so the test states
+  // the rule rather than one brain's answer to it.
+  const pitched = selected.trackModels.filter((t) => !/drum|percussion/.test(t.id) && t.notes.length > 0);
+  const densest = [...pitched].sort((a, b) => b.notes.length - a.notes.length || a.id.localeCompare(b.id))[0];
+  assert.ok(pitched.length >= 2, "rock-full has several pitched parts");
+  assert.ok(densest.notes.length > Math.max(...pitched.filter((t) => t !== densest).map((t) => t.notes.length)), "the rule picks a unique densest part");
+  assert.equal(material.targetTrackId, densest.id, "the pitched track with the most notes is the part under control");
+  assert.ok(!/drum|percussion/.test(material.targetTrackId), "a kit is never the part under a pitch-shift control");
   assert.equal(material.controls.length, CANDIDATE_CONTROL_RUNGS.length);
   const originalDigest = contextDigest(material.original);
   for (const control of material.controls) {
