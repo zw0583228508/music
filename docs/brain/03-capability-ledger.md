@@ -12,7 +12,15 @@ consumed on the production path (the tracker entry says by which stream).
 Wave 1 (2026-09-10): B-00, B-01, B-02, B-03, B-04, B-05a, B-05b, B-08, B-09,
 B-10, B-11, B-12 merged; B-13, B-06, B-07, B-15, B-12b and review round R-1 in
 flight. **No row has reached V: no human has judged a whole arrangement of the
-new brain yet, and the owner's song has not been re-rendered since v6.**
+new brain yet.** (The owner's song was re-arranged on 2026-09-10 as run v7a
+and the judge refused it; see `05-wave3-diagnosis.md`.)
+
+Wave 3 (2026-09-10, base `3b9ace3`): the owner's song was re-arranged with the
+whole Wave 1 + 2 brain (run "v7a") and **the brain's own judge refuses it**
+(`releasable: false`, a blocking `clash_share` on the string bed in the Outro,
+five register refusals) — and it shipped anyway, because the judge is not wired
+into selection. The measurements and the four streams are in
+`05-wave3-diagnosis.md`. Nothing was delivered to the owner from that run.
 
 | capability | before the program | after wave 1 | evidence | owner / next |
 |---|---|---|---|---|
