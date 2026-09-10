@@ -1879,6 +1879,11 @@ export type CriticRepairFinding = {
   /** The repair worker may perform only one of these local operations. */
   permissibleRepairOperations?: CriticRepairOperation[];
   musicalReason: string;
+  // --- Brain B-06: the finding names its failure code and origin layer -------
+  /** The critic's observation kind, when the finding came from one. */
+  kind?: string;
+  failureCode?: ArrangementFailureCode;
+  originLayer?: DecisionOriginLayer;
 };
 export type CriticRepairOperation =
   | "adjust_notes"
@@ -4236,6 +4241,32 @@ export type CriticRepairPass = {
   planChanged?: boolean;
   /** True when the applier returned notes that differ from the notes it was given. */
   notesChanged?: boolean;
+  // --- Brain B-06: a backtracking pass names the layer it reopened -----------
+  /** The layer the pass reopened (arc / form / harmony / groove / orchestration / register / compose). */
+  layer?: RepairLayer;
+  /** The bounded operation applied to that layer's plan objects (e.g. "arc.restate_climax", "compose.recompose_part"). */
+  operation?: string;
+  /** The operation's parameters, as the planner decided them. */
+  params?: Record<string, unknown>;
+  scope?: RepairOperationScope;
+  /** Critic observation ids the pass targeted. */
+  targets?: string[];
+  /** The subset of `targets` that had to disappear for the pass to be accepted. */
+  expectedEffect?: string[];
+  /** True when the pass was kept; false when it was reverted (`rejectionReason` says why). */
+  accepted?: boolean;
+  rejectionReason?: string | null;
+  /** What the attempt changed before the verdict (a reverted pass leaves `planChanged` / `notesChanged` false). */
+  attempted?: { planChanged: boolean; notesChanged: boolean };
+  criticBefore?: RepairCriticSummary;
+  criticAfter?: RepairCriticSummary;
+  /** Targeted observations still present after the pass (empty when accepted on a measurable target). */
+  remainingTargets?: string[];
+  /** Decision ids (B-11 provenance) added or removed by the pass, plus the pass's own `compose:repair_pass:` id. */
+  decisionIdsChanged?: string[];
+  /** False when the named layer has no plan lever the composer reads and the pass was realised as a recompose. */
+  leverAvailable?: boolean;
+  note?: string;
 };
 
 /**
@@ -4260,6 +4291,99 @@ export type CriticRepairLoopResult = {
   changed: { plan: boolean; notes: boolean };
   /** Passes whose `applied` list is non-empty AND changed the plan or the notes. */
   appliedPasses: number;
+  // --- Brain B-06 ------------------------------------------------------------
+  /** "backtracking" when the passes reopened plan layers from critic observations; "legacy_plan_applier" for the B-00 applier path. */
+  mode?: "backtracking" | "legacy_plan_applier";
+  /** The plan the passes were drawn from (built before the first pass; re-planned after each accepted one). */
+  repairPlan?: RepairPlan | null;
+  /** Critic summary of the notes before the first pass and after the last accepted one. */
+  criticBefore?: RepairCriticSummary;
+  criticAfter?: RepairCriticSummary;
+  /**
+   * Which observations the stage actually moved: ids present before the first
+   * pass and gone after the last accepted one (`resolved`), ids present after
+   * and not before (`introduced`), and ids present in both (`persisted`).
+   * This is the stage's own claim, auditable against the critics — a stage
+   * that resolved nothing says so here rather than in a score.
+   */
+  observationDelta?: { resolved: string[]; introduced: string[]; persisted: string[] };
+};
+
+// ===========================================================================
+// Brain B-06 (repair that reopens the decision that caused it)
+//
+// A RepairPlan is built from the note-level critics' observations (B-05a /
+// B-05b) and the judge's verdict: observations are grouped by scope, the
+// origin layer is chosen by the critics' weighted vote, and each group becomes
+// one bounded operation on that layer's plan objects with the observations it
+// is expected to remove. The orchestrator's repair stage applies one operation
+// per pass, recomposes only the affected tasks, re-runs the critics and keeps
+// the pass only if the targeted observations are gone and the verdict did not
+// worsen; otherwise the pass is reverted and recorded as tried / rejected.
+// ===========================================================================
+
+/** The plan layers a repair pass may reopen. `perform`, `render` and `mix` findings are deferred to their own stages. */
+export type RepairLayer = "arc" | "form" | "harmony" | "groove" | "orchestration" | "register" | "compose" | "perform";
+
+/** Where a repair operation may change notes: sections and instruments (empty instruments = every part of the sections), bars inclusive. */
+export type RepairOperationScope = {
+  sections: string[];
+  instruments: string[];
+  trackIds: string[];
+  startBar: number;
+  endBar: number;
+};
+
+export type RepairOperationSpec = {
+  id: string;
+  layer: RepairLayer;
+  /** `<layer>.<operation>`; the executor's table names the plan edit each one performs. */
+  operation: string;
+  params: Record<string, unknown>;
+  scope: RepairOperationScope;
+  /** The failure code the operation is primarily about (the group's highest-priority code). */
+  failureCode: ArrangementFailureCode;
+  suspectedOrigin: DecisionOriginLayer;
+  /** The critics' vote on the origin layer (confidence x originConfidence, summed per layer). */
+  originVotes: Array<{ layer: DecisionOriginLayer; weight: number }>;
+  /** Every observation of the group. */
+  targets: string[];
+  /** The observations that must be gone for the pass to be accepted (the primary code's). Empty = no measurable target (a producer's finding). */
+  expectedEffect: string[];
+  /** The judge's priority of the group's highest-ranked observation. */
+  priority: number;
+  reason: string;
+  /** False when the layer has no plan lever the composer reads today; the operation is then realised as a recompose and says so. */
+  leverAvailable: boolean;
+  leverNote?: string;
+  /** The operation to try if this one is rejected (one level). */
+  fallback?: RepairOperationSpec | null;
+};
+
+export type RepairPlan = {
+  version: "1.0";
+  method: string;
+  maxPasses: number;
+  /** Observations of severity minor or worse that the planner considered. */
+  observationsConsidered: number;
+  /** Ordered by priority; at most `maxPasses` are kept here, the rest are deferred with the reason. */
+  operations: RepairOperationSpec[];
+  deferred: Array<{ observationIds: string[]; reason: string }>;
+  /** A producer-triggered repair's scope, when the plan was restricted to one. */
+  scopeLimit?: RepairOperationScope | null;
+};
+
+/** A compact reading of the critics' verdict on one set of notes, kept before and after every pass. */
+export type RepairCriticSummary = {
+  observations: number;
+  blocking: number;
+  major: number;
+  minor: number;
+  /** Sum of the judge's priorities over observations of severity minor or worse. */
+  burden: number;
+  releasable: boolean;
+  /** The legacy critic's overall score of the same notes (what ranks candidates today), when computed. */
+  legacyScore: number | null;
 };
 
 // ===========================================================================
@@ -4341,6 +4465,13 @@ export type ArrangementBrainCandidateEvidence = {
     appliedPasses: number;
     planChanged: boolean;
     notesChanged: boolean;
+    // --- Brain B-06: what the stage planned, reopened, moved and left --------
+    /** "backtracking" (layers reopened from critic observations) or "legacy_plan_applier". */
+    stageMode?: CriticRepairLoopResult["mode"];
+    repairPlan?: RepairPlan | null;
+    criticBefore?: RepairCriticSummary;
+    criticAfter?: RepairCriticSummary;
+    observationDelta?: { resolved: string[]; introduced: string[]; persisted: string[] };
   } | null;
   playabilityRepairs: Array<{ trackId: string } & PlayabilityRepairCounts>;
   confidence: { value: number; formula: string; inputs: Record<string, number> };

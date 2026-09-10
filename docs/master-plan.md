@@ -7587,6 +7587,198 @@ Stream B-08 of the Arrangement & Orchestration Brain (`docs/brain/02-diagnosis-a
   a profile's named genre, each value with its provenance. Nothing was
   rendered or listened to under the new grammar: the plan-level change on the
   owner's song is a planner decision, not a validated musical result.
+### PR-B06 — Brain B-06: repair that reopens the decision that caused it
+
+The repair stage no longer edits a plan nobody plays and re-scores it. It reads
+the note-level critics (B-05a dimensions + B-05b adversarial + the judge) on the
+composed notes, asks a **repair planner** which layer to reopen for each group of
+observations, applies one **bounded operation** to that layer's plan objects,
+re-derives every layer below it, recomposes **only the tasks in scope**, splices
+them over the candidate's notes, re-runs the critics, and keeps the pass only
+when the targeted observations are gone and the judge did not worsen. Otherwise
+the pass is reverted and recorded as tried / rejected with the reason, and the
+next voted layer (or the operation's fallback) is tried. Deterministic end to
+end.
+
+**What a pass is.** `repairPlanner.ts` (new) groups observations of severity
+minor or worse by scope, attributes each group to a layer by the critics'
+weighted vote (`confidence x originConfidence`), refines it where the plan
+itself can confirm or deny the layer (a climax planned thinner than the actual
+peak is the arc's decision, not the composer's), and falls through to the
+failure taxonomy's owning layers when the only layer the critics can see is the
+composer — a critic reading notes says "compose" for a thin arrival; the layer
+that decided the arrival would be thin is the arc. Each group becomes one
+`RepairOperationSpec` naming layer, operation, params, scope, the observations
+it targets and the subset that must disappear. `repairExecutor.ts` (new)
+performs the plan edit — `arc.restate_climax` / `arc.restate_dynamics` /
+`arc.widen_dynamics` / `arc.set_texture_level` (restated arc hints, global plan
+re-derived), `form.change_development_operator`, `form.add_transition_device` /
+`groove.add_fill`, `groove.change_comping_subdivision`,
+`orchestration.change_role`, `register.shift_section_band` — then rebuilds
+section plan, orchestration budget, transitions and part plan from it.
+
+**Acceptance is measured, never claimed.** A pass is kept only if (a) every
+targeted observation is gone (`observationPersists` matches dimension + kind at
+an overlapping place, so an id that shifted is not read as a fix), (b) the
+judge's blocking count and summed priority burden did not rise at all, (c) no
+note, CC, articulation or automation event outside the pass's section windows
+changed — verified by `notesOutsideScopePreserved` (new in `candidateRepair.ts`,
+the same byte-equality discipline the producer's bounded repair already used),
+and (d) no family the plan it just wrote still calls active was left with
+nothing to play (`familiesSilencedByPass`; a repair stage does not get to decide
+silence — that is the defect the program started from). A pass that changed
+neither the plan nor the notes is rejected **before** it spends a pass and can
+never be reported as a repair; the stage record now says how many passes were
+tried and reverted, and which layers the accepted ones reopened. This closes
+R-1a **P1-4** ("`applyPlanRepairs` fires on nothing — 36/36 candidates report a
+repair pass that changed nothing"): a group whose only named layer is the
+composer is no longer given a bare recompose of notes that same deterministic
+composer just wrote from that same plan — it is deferred with that reason.
+
+**The producer's bounded repair (D3).** `queueCandidateRepair` stamps the
+critic's finding with `failureCode` + `originLayer` (`classifyRepairFinding`;
+an unmapped dimension is `INPUT_UNKNOWN` / `unknown`, never a guessed musical
+cause), the provider reads `parameters.repair` off the job, unscopes the
+studio-prefixed track ids and hands the orchestrator `{ finding, scope }`. The
+stage then plans that finding first and is **restricted to its scope**: an
+operation whose plan change propagates outside the producer's sections is
+rejected, and observations outside it are deferred with that reason. A finding
+that names no origin layer does not become one — the observations inside its
+scope are planned instead.
+
+**Persisted.** `CriticRepairPass` now carries layer, operation, params, scope,
+targets, expectedEffect, accepted / rejectionReason, what the attempt actually
+changed, the critic summary before and after, remaining targets, changed
+decision ids and whether the layer had a lever. `CriticRepairLoopResult` carries
+the `RepairPlan` (operations + every deferral with its reason), the critic
+summaries and an `observationDelta` (`resolved` / `introduced` / `persisted` by
+observation id). The provider persists all of it on
+`parameters.arrangementBrain.repair`, so the claim "this was repaired" is
+auditable against the critics rather than read off a score. Each accepted pass
+registers a `compose:repair_reopened:` decision (B-11 provenance) whose reason
+names the layer, the operation and the sections, and attaches it to the
+instruments it recomposed.
+
+**Tests** (`brainB06Repair.test.ts`, 20 tests, registered as `brain-b06`;
+corpus in `__fixtures__/b06DefectCorpus.ts`). Planner: every non-info
+observation is planned or deferred with a reason and none disappears; a
+`performanceRealisation` finding is deferred to the perform stage, not
+recomposed; a compose-only group on fresh notes is deferred rather than given a
+no-op; the plan covers distinct problems before repeating one edit; unmapped
+kinds are `INPUT_UNKNOWN`. Executor: an arc operation re-derives every layer
+below it, an unknown operation is refused, a register shift moves the band away
+from the singer and never onto her band, a lever-less operation edits no plan
+and names the missing lever, the splice replaces only the notes inside the
+window and the verifier catches a leak. Producer path: the finding is stamped
+and idempotent, the provider parses and rejects junk, the scope is honoured.
+Corpus: 8 seeded defects on the synthetic anchors and the owner's fixture
+(`__fixtures__/rachemNaSongModelV3.ts`), seeded two ways — as a *plan decision*
+through the same `plannerHints` a brief uses, and as *notes* through a composer
+wrapper that reproduces the defect on every recompose — plus a negative control,
+a byte-identity control (a candidate whose passes were all rejected is identical
+to the same run with the stage off) and determinism (same input twice: same
+plan, same passes, same notes).
+
+**Capability ladder.** Repair with origin layer — IMPLEMENTED ✓ INTEGRATED ✓
+(the production repair stage of every orchestrated candidate) TESTED ✓ (20
+tests, seeded corpus with a negative control and a byte-identity control)
+BENCHMARKED — (the golden fixture is byte-unchanged by this stream: no shipped
+note on the benchmark corpus moves) VALIDATED ON OUTPUT — (nothing rendered or
+listened to). Backtracking (try, measure, revert, try the next layer) —
+INTEGRATED ✓ TESTED ✓. Bounded plan operations per layer — arc ✓ form ✓
+orchestration ✓ register ✓ (levers the composer reads); harmony —, groove
+cells — (`leverAvailable: false`, recorded as such). Producer-scoped repair
+(D3) — INTEGRATED ✓ TESTED ✓. Repair provenance in the decision trace —
+INTEGRATED ✓.
+
+**The seeded corpus, measured** (`docs/evidence/brain-b06-repair-backtracking.json`;
+defect → layer named → repaired → outside-scope preserved → judge):
+
+| defect (seeding) | expected layer | named | repaired | preserved | judge burden |
+|---|---|---|---|---|---|
+| arrival thinner than setup (plan) | arc | **arc** | **yes** (2/2 observations) | yes | 1031.3 → 999.0 |
+| climax planned thin / early climax (plan) | form | **form** | no | yes | unchanged |
+| tutti everywhere (plan) | arc | **arc** | no | yes | unchanged |
+| repeat with no development (plan) | form | **form**+register | partly (1/5) | yes | 1063.4 → 920.3 |
+| bed collapsed to one voice (notes) | compose | arc | no | yes | 685.1 → 556.9 |
+| the same on the owner's song (notes) | compose | groove | no | yes | unchanged |
+| bed two octaves up (notes) | compose | — | no | yes | 1286.2 → 1195.6 |
+| off-grid harmony (notes, **negative control**) | — | — | **not claimed** | yes | 672.5 |
+
+**1 of 8 defects repaired; 4 of 8 attributed to the layer that caused them —
+and all 4 of the plan-seeded ones.** The DAG's gate is ≥ 80 % repaired at the
+originating layer; this is 12.5 %, and the number is reported rather than the
+gate declared met.
+
+**Honest limits.**
+- **The gate is not met, and the cause is downstream of this stream.** The
+  stage names the right layer for every defect whose cause *is* a plan
+  decision (4/4), reopens it, and re-derives the plan below it — and the notes
+  still carry the defect, because the composer does not read most of what the
+  reopened layers decide. R-1b's P0-1..P0-4 are the same finding from the other
+  end. Concretely: `groove.recompose_rhythm_section` and
+  `harmony.resolve_voicings` are `leverAvailable: false` (the plan carries no
+  per-section groove cell and no per-section harmony cost profile), and
+  `form.add_transition_device` / `groove.add_fill` add a device the transition
+  realisation only partly writes, so `planned_device_unrealised` survives its
+  own repair on every anchor. Until **B-13** (perform per section; the
+  `chordOnsets` / `agogics` wiring) and **B-18** (the composer reading the
+  register plan, the groove cells and the transition devices) land, reopening
+  those layers cannot move the notes, and this stage will keep rejecting its
+  own passes — correctly, and out loud.
+- **Which of R-1b's five the loop can fix today.** *Arrival thinner than
+  setup* — yes, at the arc, on the pop anchor. *Climax all treble* and
+  *single-voice bed* — no: the critics report them (7 and 2 observations), the
+  stage names a layer, and no plan lever moves the composed pitches or voice
+  count; both need B-02/B-03's `registerBoundsFor` and voicing width to be
+  plan-driven (B-18), and the bed's real cause on the shipped notes is the
+  perform → playability cascade (B-13 / PR-98), which runs *after* this stage
+  and which this stage therefore cannot see at all. *Unrealised transitions* —
+  no, as above. *Off-grid harmony* — the production critics never report it:
+  the groove dimension measures the harmony onsets against the chord grid those
+  writers already follow, so displacing both leaves nothing to see. That is the
+  negative control here, and it is a **B-05a** gap before it is a repair gap.
+- **The pass budget is spent on ties.** The judge gives dozens of observations
+  the same priority (73.6 on five sections of one song), so the ranked plan is
+  arbitrary among equals. The queue is dealt round-robin over operation shape
+  so three passes cover three problems rather than one edit in three sections —
+  a musical rule, stated in the planner and visible in the persisted plan. Two
+  further reorderings (skip an operation shape whose targets survived it once;
+  demote it after two failures) were measured on the corpus and each moved the
+  result by ±2 defects in *both* directions on different anchors: they fit this
+  corpus's noise, not a rule, and neither is shipped.
+- **`register.shift_section_band` had the direction wrong** and is fixed here:
+  it moved a part planned *above* the singer down onto her, and stopped a part
+  planned *on* her band inside it. It now moves away from the vocal band and
+  steps past it. It still fails to clear `vocal_masking` on most sections —
+  measured, not assumed: the pass changes the notes and the critic still sees
+  the part within two semitones of the sung pitch on ≥ 20 % of sung beats,
+  because the composer steers to the section's majority band and the band step
+  is smaller than the vocal's span. B-03's per-part register plan is the fix.
+- **The corpus is seeded, not sampled.** Nine anchors and one owner song; four
+  defects are stated as plan decisions through `plannerHints` and four as note
+  corruptions through a composer wrapper. A note-seeded defect is reproduced by
+  every recompose on purpose, so "the wrapper stopped injecting it" can never
+  read as a repair — but it also means the corpus cannot measure a repair that
+  works by recomposing from an unchanged plan. There is no such repair in this
+  architecture, which is exactly why the bare recompose is no longer offered.
+- **Not measured against the benchmark baseline.** The golden fixture is
+  byte-unchanged, so no shipped note on the benchmark corpus moved; a full
+  `arrangementBenchmark` compare against `1467706` was not run (R-1a P1-5's
+  24 kHz render defect is unfixed and would dominate the audio half).
+- **Nothing rendered or listened to.** VALIDATED ON OUTPUT is not claimed for
+  any row.
+- **Two dimensions are excluded from planning**, not from reporting:
+  `performanceRealisation` (the perform stage runs after this one), and
+  `INPUT_UNKNOWN` observations (the critic could not judge). Both are deferred
+  with the reason, never dropped.
+- **Confidence is untouched.** `brainConfidence` still spends 0.35 on a
+  `coverage` term that is a weighted mean of literal per-dimension confidences
+  (R-1a P1-4's second half). This stream does not raise it: a stage that
+  accepted nothing leaves `compositionCritique === initialCritique`, which the
+  corpus asserts by comparing a rejected-only run byte for byte with the same
+  run with the stage switched off. Deriving `coverage` from the new critics'
+  own `coverage` fields is B-00 / B-05's change, not this one's.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 

@@ -30,6 +30,7 @@ import type {
   ArrangementBrainCandidateEvidence,
   ArrangementPlan,
   CandidatePlan,
+  CriticRepairFinding,
   GenerationParameters,
   SongModelData,
   StyleProfile,
@@ -66,6 +67,40 @@ function readPlannerHints(parameters: GenerationParameters | undefined): Orchest
   const global = hints.global && typeof hints.global === "object" && !Array.isArray(hints.global) ? hints.global as NonNullable<OrchestrateInput["plannerHints"]>["global"] : undefined;
   const section = hints.section && typeof hints.section === "object" && !Array.isArray(hints.section) ? hints.section as NonNullable<OrchestrateInput["plannerHints"]>["section"] : undefined;
   return global || section ? { ...(global ? { global } : {}), ...(section ? { section } : {}) } : null;
+}
+
+/**
+ * B-06 (D3): the producer's bounded repair request, as the job runner puts it
+ * on the parameters (`parameters.repair.finding`, a `CriticRepairFinding` the
+ * runner classified with a failure code and origin layer). Track ids are
+ * studio-scoped (`<projectId>--<brainTrackId>`); the brain names its own
+ * tracks, so the prefix is removed before the orchestrator reads the scope.
+ * Junk is ignored: a repair job without a usable finding runs the ordinary
+ * repair stage.
+ */
+export function readRepairRequest(parameters: GenerationParameters | undefined, projectId: string): OrchestrateInput["repair"] | undefined {
+  const raw = (parameters as Record<string, unknown> | undefined)?.repair;
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return undefined;
+  const finding = (raw as { finding?: unknown }).finding as Partial<CriticRepairFinding> | undefined;
+  if (!finding || typeof finding !== "object" || typeof finding.id !== "string" || !Array.isArray(finding.affectedSections) ||
+    !Array.isArray(finding.affectedTrackIds) || typeof finding.startBar !== "number" || typeof finding.endBar !== "number") return undefined;
+  const prefix = `${projectId}--`;
+  const unscoped = (id: string) => (id.startsWith(prefix) ? id.slice(prefix.length) : id);
+  return {
+    finding: {
+      id: finding.id,
+      ...(finding.kind ? { kind: finding.kind } : {}),
+      ...(finding.failureCode ? { failureCode: finding.failureCode } : {}),
+      ...(finding.originLayer ? { originLayer: finding.originLayer } : {}),
+      musicalReason: typeof finding.musicalReason === "string" ? finding.musicalReason : "",
+    },
+    scope: {
+      sections: finding.affectedSections.filter((s): s is string => typeof s === "string"),
+      startBar: finding.startBar,
+      endBar: finding.endBar,
+      trackIds: finding.affectedTrackIds.filter((t): t is string => typeof t === "string").map(unscoped),
+    },
+  };
 }
 
 /** The brief reference a job carries in its parameters (PR-U5), when it does. */
@@ -347,6 +382,16 @@ function brainEvidence(
           appliedPasses: candidate.repair.appliedPasses,
           planChanged: candidate.repair.changed.plan,
           notesChanged: candidate.repair.changed.notes,
+          // B-06: what the stage planned, what it moved and what it left. A
+          // stage that accepted nothing persists exactly that, with each
+          // pass's rejection reason and each unplanned group's deferral —
+          // there is no reading of this block on which nothing counts as a
+          // repair.
+          ...(candidate.repair.mode ? { stageMode: candidate.repair.mode } : {}),
+          ...(candidate.repair.repairPlan ? { repairPlan: candidate.repair.repairPlan } : {}),
+          ...(candidate.repair.criticBefore ? { criticBefore: candidate.repair.criticBefore } : {}),
+          ...(candidate.repair.criticAfter ? { criticAfter: candidate.repair.criticAfter } : {}),
+          ...(candidate.repair.observationDelta ? { observationDelta: candidate.repair.observationDelta } : {}),
         }
       : null,
     playabilityRepairs: candidate.playabilityRepairs.map((r) => ({
@@ -427,6 +472,10 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
     // brief, not only a chat regeneration.
     const briefHints = readPlannerHints(input.parameters);
     const briefRef = readBriefRef(input.parameters);
+    // B-06 (D3): a producer's bounded repair names its finding and scope; the
+    // repair stage then targets that finding inside that scope instead of
+    // re-orchestrating blind. The runner's scope verifier still checks the result.
+    const producerRepair = readRepairRequest(input.parameters, input.projectId);
     const overrides = await this.orchestrateOverrides(input, songModel);
     const policyHints = overrides.orchestrate?.plannerHints;
     const result = orchestrateArrangement({
@@ -434,6 +483,7 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
       candidateCount: input.candidates,
       render: false,
       now: new Date(0),
+      ...(producerRepair ? { repair: producerRepair } : {}),
       ...(overrides.orchestrate ?? {}),
       // The request's own style (a brief or a personal profile) outranks a learned policy's.
       performanceStyle: performanceStyle

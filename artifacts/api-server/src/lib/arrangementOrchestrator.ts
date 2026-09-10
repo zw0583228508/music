@@ -29,12 +29,15 @@
 import type {
   ArrangementBrainFinding,
   ArrangementCritique,
+  ArrangementFailureCode,
   ArrangementPlan,
   AudioCritique,
   CandidateStrategyId,
   CriticRepairLoopResult,
+  DecisionOriginLayer,
   MusicalNote,
   PartCompositionTelemetry,
+  RepairOperationScope,
   SongModelData,
   TrackModel,
   TrackPerformanceTelemetry,
@@ -56,7 +59,17 @@ import { buildPartComposerPlan, buildPartGenerationRequest, type PartGenerationR
 import { planCandidateGeneration } from "./candidateStrategies";
 import { checkArrangementConstraints } from "./musicalConstraints";
 import { critiqueArrangement } from "./musicCritic";
-import { applyPlanRepairs, runCriticRepairLoop, type RepairApplier } from "./criticRepairLoop";
+import { applyPlanRepairs, runBacktrackingRepairLoop, runCriticRepairLoop, type RepairApplier, type RepairExecution } from "./criticRepairLoop";
+import {
+  applyRepairOperationToPlan,
+  familiesSilencedByPass,
+  mergeDecisionRegistries,
+  planWithLayers,
+  sectionWindows,
+  spliceTracks,
+} from "./repairExecutor";
+import { notesOutsideScopePreserved } from "./candidateRepair";
+import type { SeededRepairTarget } from "./repairPlanner";
 import { repairPlayability, type PlayabilityRepairReport } from "./playabilityRepair";
 import { applyPerformance } from "./performanceEngine";
 import { renderArrangementStems, renderStem, type StemRenderOptions } from "./referenceRenderWorker";
@@ -221,7 +234,32 @@ export type OrchestrateInput = {
    * returns, the orchestrator still recomposes and re-critiques the notes.
    */
   repairApplier?: RepairApplier;
+  /**
+   * B-06: passes the backtracking repair stage may take (default 3, at most
+   * 5). `0` disables the stage — the composed notes go to performance as they
+   * are, which is how the defect harness reads a candidate before repair.
+   */
+  repairMaxPasses?: number;
+  /**
+   * B-06 (D3): a producer-triggered bounded repair. The finding names its
+   * failure code and origin layer; the repair stage plans it first and is
+   * restricted to `scope` (sections, bars, track ids in the brain's own
+   * naming) instead of re-orchestrating the whole song.
+   */
+  repair?: {
+    finding: {
+      id: string;
+      kind?: string;
+      failureCode?: ArrangementFailureCode;
+      originLayer?: DecisionOriginLayer;
+      musicalReason: string;
+    };
+    scope: { sections: string[]; startBar: number; endBar: number; trackIds: string[] };
+  };
 };
+
+/** B-06: what a repair pass must carry along with the plan and the notes when it is accepted. */
+type RepairExtra = { findings: CandidateFinding[]; parts: PartCompositionTelemetry[]; decisions: DecisionRegistry };
 
 // ---------------------------------------------------------------------------
 
@@ -652,42 +690,170 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
 
     // --- 6/7. critique + repair ---------------------------------------
     const initialCritique = critiqueArrangement({ songModel, plan, trackModels });
-    // B-00: the repair applier edits the plan *and recomposes from it*, so the
-    // loop's re-critique judges notes that exist. Deterministic: the same
-    // repaired plan yields the same part plan, seeds and notes.
-    const planApplier = input.repairApplier ?? applyPlanRepairs;
-    const recomposeFromRepairedPlan: RepairApplier = (context) => {
-      const planned = planApplier(context);
-      if (planned.applied.length === 0 || JSON.stringify(planned.plan) === JSON.stringify(context.plan)) {
-        // Nothing changed; say so rather than claim a repair.
-        return { plan: context.plan, trackModels: context.trackModels, applied: [] };
+    let repair: CriticRepairLoopResult;
+    if (input.repairApplier) {
+      // B-00's plan-level applier path, kept for callers that inject one: the
+      // applier edits the plan *and the orchestrator recomposes from it*, so
+      // the loop's re-critique judges notes that exist. Deterministic: the
+      // same repaired plan yields the same part plan, seeds and notes.
+      const planApplier = input.repairApplier ?? applyPlanRepairs;
+      const recomposeFromRepairedPlan: RepairApplier = (context) => {
+        const planned = planApplier(context);
+        if (planned.applied.length === 0 || JSON.stringify(planned.plan) === JSON.stringify(context.plan)) {
+          // Nothing changed; say so rather than claim a repair.
+          return { plan: context.plan, trackModels: context.trackModels, applied: [] };
+        }
+        const layers = layersOf(planned.plan);
+        if (!layers) return { plan: context.plan, trackModels: context.trackModels, applied: [] };
+        const repairedPartPlan = buildPartComposerPlan(
+          songModel, layers.globalPlan, layers.sectionPlan, layers.transitionPlan.transitions, { now },
+        );
+        planned.plan.partComposerPlan = repairedPartPlan;
+        const recomposed = composeCandidate(layers, repairedPartPlan.tasks, candidate);
+        // Dropped parts of the recomposition replace the original composition's.
+        findings = [...timingFindings, ...recomposed.findings];
+        parts = recomposed.parts;
+        composerDecisions = recomposed.decisions;
+        return { plan: planned.plan, trackModels: recomposed.trackModels, applied: planned.applied };
+      };
+      repair = {
+        ...runCriticRepairLoop({ songModel, plan, trackModels, initialCritique, applyRepair: recomposeFromRepairedPlan }),
+        mode: "legacy_plan_applier",
+      };
+      if (repair.appliedPasses > 0) {
+        candidatePlanLayers = repair.plan;
+        if (repair.trackModels) trackModels = repair.trackModels;
+      } else {
+        // The recomposition never ran or changed nothing: the original findings stand.
+        findings = [...timingFindings, ...composition.findings];
+        parts = composition.parts;
+        composerDecisions = composition.decisions;
       }
-      const layers = layersOf(planned.plan);
-      if (!layers) return { plan: context.plan, trackModels: context.trackModels, applied: [] };
-      const repairedPartPlan = buildPartComposerPlan(
-        songModel, layers.globalPlan, layers.sectionPlan, layers.transitionPlan.transitions, { now },
-      );
-      planned.plan.partComposerPlan = repairedPartPlan;
-      const recomposed = composeCandidate(layers, repairedPartPlan.tasks, candidate);
-      // Dropped parts of the recomposition replace the original composition's.
-      findings = [...timingFindings, ...recomposed.findings];
-      parts = recomposed.parts;
-      composerDecisions = recomposed.decisions;
-      return { plan: planned.plan, trackModels: recomposed.trackModels, applied: planned.applied };
-    };
-    const repair = runCriticRepairLoop({
-      songModel, plan, trackModels, initialCritique, applyRepair: recomposeFromRepairedPlan,
-    });
-    const repairApplied = repair.appliedPasses > 0;
-    if (repairApplied) {
-      candidatePlanLayers = repair.plan;
-      if (repair.trackModels) trackModels = repair.trackModels;
     } else {
-      // The recomposition never ran or changed nothing: the original findings stand.
-      findings = [...timingFindings, ...composition.findings];
-      parts = composition.parts;
-      composerDecisions = composition.decisions;
+      // B-06: repair that reopens the decision that caused it. The note-level
+      // critics (B-05a / B-05b) and the judge read the composed notes; the
+      // planner names, per group of observations, the layer to reopen and a
+      // bounded operation on that layer's plan objects; the executor below
+      // applies it, regenerates the plan below that layer, recomposes only the
+      // tasks in scope and splices them over the candidate's notes; the loop
+      // re-runs the critics and keeps the pass only if the targeted
+      // observations are gone and the verdict did not worsen. Untouched notes
+      // are verified byte-identical (`notesOutsideScopePreserved`).
+      const producerScope: RepairOperationScope | null = input.repair
+        ? {
+            sections: [...input.repair.scope.sections],
+            instruments: [...new Set(input.repair.scope.trackIds.map((id) => trackModels.find((t) => t.id === id)?.instrument).filter((i): i is string => !!i))].sort(),
+            trackIds: [...input.repair.scope.trackIds],
+            startBar: input.repair.scope.startBar,
+            endBar: input.repair.scope.endBar,
+          }
+        : null;
+      const producerSeed: SeededRepairTarget | null = input.repair && producerScope
+        ? {
+            id: input.repair.finding.id,
+            failureCode: input.repair.finding.failureCode ?? "INPUT_UNKNOWN",
+            originLayer: input.repair.finding.originLayer ?? "unknown",
+            ...(input.repair.finding.kind ? { kind: input.repair.finding.kind } : {}),
+            reason: input.repair.finding.musicalReason,
+            scope: producerScope,
+          }
+        : null;
+      const executorContext = { songModel, now, plannerHints: input.plannerHints };
+      const backtracking = runBacktrackingRepairLoop<RepairExtra>({
+        songModel, plan, trackModels, initialCritique,
+        maxPasses: input.repairMaxPasses,
+        scopeLimit: producerScope,
+        seeded: producerSeed,
+        // These notes came out of `composeCandidate` from this plan a moment
+        // ago, so a bare recompose of a part would write them again: the
+        // planner is told, and defers such a group with that reason instead of
+        // spending a pass proving it (R-1a P1-4).
+        notesAreFreshFromPlan: true,
+        initialExtra: { findings: composition.findings, parts: composition.parts, decisions: composition.decisions },
+        execute: (operation, state, pass, extra): RepairExecution<RepairExtra> => {
+          const currentLayers = layersOf(state.plan) ?? baseLayers;
+          const currentPartPlan = state.plan.partComposerPlan ?? partPlan;
+          const edit = applyRepairOperationToPlan(operation, executorContext, currentLayers, currentPartPlan);
+          if ("rejected" in edit) return edit;
+          if (producerScope && edit.propagatedSections.some((s) => !producerScope.sections.includes(s))) {
+            return { rejected: `the plan change propagated to ${edit.propagatedSections.filter((s) => !producerScope.sections.includes(s)).join(", ")}, outside the producer's repair scope` };
+          }
+          const scopeSections = new Set([...operation.scope.sections, ...edit.propagatedSections]);
+          const scopedInstruments = operation.scope.instruments.length ? new Set(operation.scope.instruments) : null;
+          const inScope = (task: { sectionName: string; instrument: string }) =>
+            scopeSections.has(task.sectionName) && (!scopedInstruments || scopedInstruments.has(task.instrument));
+          const tasksNow = edit.partPlan.tasks.filter(inScope);
+          const tasksBefore = currentPartPlan.tasks.filter(inScope);
+          if (!tasksNow.length && !tasksBefore.length) return { rejected: "no part task lies in the operation's scope" };
+          const instruments = new Set([...tasksBefore.map((t) => t.instrument), ...tasksNow.map((t) => t.instrument)]);
+          const windows = sectionWindows(songModel, edit.layers.sectionPlan.sections.filter((s) => scopeSections.has(s.sectionName)), { tempoBpm, meter });
+          const recomposed = tasksNow.length
+            ? composeCandidate(edit.layers, tasksNow, candidate)
+            : { trackModels: [] as TrackModel[], findings: [] as CandidateFinding[], parts: [] as PartCompositionTelemetry[], decisions: new DecisionRegistry() };
+          const spliced = spliceTracks(state.trackModels, recomposed.trackModels, { instruments, windows });
+          const preserved = notesOutsideScopePreserved(state.trackModels, spliced, { instruments, windows });
+          if (!preserved.preserved) return { rejected: `scope violation: ${preserved.violations.join("; ")}` };
+          // A repair pass may not leave a family the plan still calls active
+          // with nothing to play: that ships planned silence, which is the
+          // defect the program started from, not a repair.
+          const silenced = familiesSilencedByPass(state.trackModels, spliced, windows);
+          if (silenced.length) return { rejected: `the pass silenced ${silenced.join(", ")} in ${[...scopeSections].join(", ")}, which the plan it wrote still plans there` };
+          const notesChanged = JSON.stringify(spliced.map((t) => [t.instrument, t.notes])) !== JSON.stringify(state.trackModels.map((t) => [t.instrument, t.notes]));
+          // Findings, part telemetry and decisions: keep what lies outside the
+          // scope, replace what lies inside with the recomposition's own. The
+          // recomposition saw only the scoped tasks, so its findings about other
+          // families are not about this pass and are dropped.
+          const findingInScope = (f: CandidateFinding) =>
+            !!f.sectionName && scopeSections.has(f.sectionName) && (!scopedInstruments || !f.instrument || scopedInstruments.has(f.instrument));
+          const previous = extra ?? { findings: composition.findings, parts: composition.parts, decisions: composition.decisions };
+          const mergedFindings = [
+            ...previous.findings.filter((f) => !findingInScope(f)),
+            ...recomposed.findings.filter(findingInScope),
+          ];
+          const mergedParts = [
+            ...previous.parts.filter((p) => !(scopeSections.has(p.sectionName) && (!scopedInstruments || scopedInstruments.has(p.instrument)))),
+            ...recomposed.parts,
+          ];
+          const merged = mergeDecisionRegistries(
+            previous.decisions, recomposed.decisions,
+            { sections: scopeSections, instruments: scopedInstruments, startBar: operation.scope.startBar, endBar: operation.scope.endBar },
+            [...new Set([...state.trackModels.map((t) => t.instrument), ...spliced.map((t) => t.instrument)])],
+          );
+          const reopened = merged.registry.register({
+            layer: operation.layer === "compose" ? "compose" : operation.layer,
+            kind: "repair_reopened",
+            qualifiers: [candidate.candidateId, pass],
+            startBar: operation.scope.startBar, endBar: operation.scope.endBar,
+            reason: `repair pass ${pass} reopened the ${operation.layer} layer with ${operation.operation} on ${[...scopeSections].join(", ")}: ${operation.reason}. ${edit.note}`,
+          });
+          for (const instrument of instruments) merged.registry.attach(instrument, operation.scope.startBar, operation.scope.endBar, [reopened.id]);
+          return {
+            plan: planWithLayers(state.plan, edit.layers, edit.partPlan),
+            trackModels: spliced,
+            changed: { plan: edit.planChanged, notes: notesChanged },
+            scope: { ...operation.scope, sections: [...scopeSections], instruments: [...instruments].sort() },
+            note: `${edit.note}; ${tasksNow.length} task(s) recomposed (${tasksNow.map((t) => t.id).join(", ") || "none"})` +
+              (edit.propagatedSections.length ? `; the plan change propagated to ${edit.propagatedSections.join(", ")}, recomposed as well` : ""),
+            decisionIdsChanged: [...merged.changedIds, reopened.id],
+            extra: { findings: mergedFindings, parts: mergedParts, decisions: merged.registry },
+          };
+        },
+      });
+      // The candidate keeps the pass records, the repair plan and the compact
+      // critic summaries; the full critic reports and the accepted pass's
+      // registries stay in this scope (they are megabytes and one of them is a
+      // class instance — neither belongs on a persisted candidate).
+      const { evaluationBefore: _before, evaluationAfter: _after, lastAccepted: _accepted, ...persistable } = backtracking;
+      repair = persistable;
+      if (backtracking.lastAccepted) {
+        candidatePlanLayers = backtracking.plan;
+        if (backtracking.trackModels) trackModels = backtracking.trackModels;
+        findings = [...timingFindings, ...backtracking.lastAccepted.findings];
+        parts = backtracking.lastAccepted.parts;
+        composerDecisions = backtracking.lastAccepted.decisions;
+      }
     }
+    const repairApplied = repair.appliedPasses > 0;
     const compositionCritique = repairApplied ? repair.finalCritique : initialCritique;
     const planForPerformance = layersOf(candidatePlanLayers) ?? baseLayers;
 
@@ -925,13 +1091,25 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
       : undefined);
   const repairedCount = composed.filter((c) => c.repairApplied).length;
   const attempted = composed.filter((c) => c.repair && c.repair.passes.length > 0).length;
+  // B-06: which layers the accepted passes reopened, and how many passes were tried and reverted.
+  const layerCounts = new Map<string, number>();
+  let rejectedPasses = 0;
+  for (const c of composed) {
+    for (const pass of c.repair?.passes ?? []) {
+      if (pass.accepted) layerCounts.set(pass.layer ?? "plan", (layerCounts.get(pass.layer ?? "plan") ?? 0) + 1);
+      else if (pass.accepted === false) rejectedPasses += 1;
+    }
+  }
+  const layersReopened = [...layerCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([layer, n]) => `${layer} x${n}`).join(", ");
   record("repair", repairedCount ? "ok" : "skipped",
     repairedCount
-      ? `${repairedCount} candidate(s) repaired (plan edited and recomposed); ${attempted - repairedCount} attempted pass(es) changed nothing`
+      ? `${repairedCount} candidate(s) repaired (plan edited and recomposed${layersReopened ? `; layers reopened: ${layersReopened}` : ""}); ${attempted - repairedCount} attempted candidate(s) changed nothing` +
+        (rejectedPasses ? `; ${rejectedPasses} pass(es) tried and reverted` : "")
       : attempted
-        ? `${attempted} candidate(s) attempted a repair pass; none changed the plan or the notes, so nothing was repaired`
-        : "no candidate was in the repair band",
-    { repaired: repairedCount, attempted });
+        ? `${attempted} candidate(s) attempted a repair pass; none changed the plan or the notes, so nothing was repaired` +
+          (rejectedPasses ? ` (${rejectedPasses} pass(es) tried and reverted: targets persisted, the verdict worsened or nothing changed)` : "")
+        : "no candidate had an observation to repair",
+    { repaired: repairedCount, attempted, rejectedPasses, ...(layersReopened ? { layersReopened } : {}) });
   record("perform", composed.length ? "ok" : "skipped",
     composed.length
       ? allPlayabilityRepairs.length
