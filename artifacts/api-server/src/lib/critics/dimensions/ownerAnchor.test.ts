@@ -138,11 +138,27 @@ test("the cause, named only after the controls: the composer inherits the analys
   }
   assert.ok(attributed.some((o) => o.evidence.composedNotesAvailable === true && o.evidence.composedOnGrid === false),
     "the isolating control is in play over most of the song");
-  // The one place the performance stage really is the cause is still reported
-  // as such — the control does not simply relabel everything.
+  // The places the performance stage really is the cause are still reported as
+  // such — the control does not simply relabel everything.
+  //
+  // Two of them, not one, since B-18 gives each family the level the brief
+  // asked for ("gentle bass" = one marking under the section: mp under the mf
+  // choruses, mf under the f final chorus) instead of the section's own. The
+  // sparser bass that writes in "Chorus 3" is on the grid: its *composed*
+  // off-grid share moves from 0.120 — exactly this dimension's on-grid
+  // boundary — to 0.113, and where the composed notes are on the grid and the
+  // shipped ones are not, the performance stage is the cause and the dimension
+  // says so. The claim the count stands for is unchanged and asserted below:
+  // two of twenty-two, not twenty-two of twenty-two.
   const toPerform = attributed.filter((o) => o.suspectedOrigin === "perform");
-  assert.equal(toPerform.length, 1, toPerform.map((o) => o.id).join(","));
-  assert.ok((toPerform[0].evidence.composedOffGridShare as number) < 0.12, `${toPerform[0].id}: the composed notes there are on the grid`);
+  assert.deepEqual(toPerform.map((o) => o.id).sort(), [
+    "groove:off_grid:bass-bass:113-128",
+    "groove:off_grid:bass-bass:57-72",
+  ], toPerform.map((o) => o.id).join(","));
+  assert.ok(toPerform.length <= attributed.length * 0.1, `${toPerform.length}/${attributed.length} attributed to the performance stage`);
+  for (const o of toPerform) {
+    assert.ok((o.evidence.composedOffGridShare as number) < 0.12, `${o.id}: the composed notes there are on the grid`);
+  }
 });
 
 test("the string bed the brief asked for ships as one voice, and the composed notes say which layer lost it", () => {

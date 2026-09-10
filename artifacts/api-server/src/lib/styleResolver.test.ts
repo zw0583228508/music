@@ -154,8 +154,13 @@ test("answering a question settles the field as a stated brief value and removes
   assert.equal(grooveStrategyOfFamily("swung"), "swing");
   assert.equal(grooveStrategyOfFamily("maqsum"), "syncopated");
   assert.equal(grooveStrategyOfFamily("backbeat"), "steady_pulse");
-  // A bad answer changes nothing.
-  assert.deepEqual(answerStyleQuestion({ brief: ballad, song: { tempoBpm: 130 } }, { path: "groove.feltPulse" }, "sideways").grammar.groove.feltPulse, undefined);
+  // A bad answer changes nothing. B-18: "nothing" is now the ballad entry's own
+  // pulse convention (130 BPM is outside a ballad's 50-108 written band, so the
+  // style reads it as half time) rather than an absent value - the plan gets a
+  // musical default and the producer is still asked.
+  const bad = answerStyleQuestion({ brief: ballad, song: { tempoBpm: 130 } }, { path: "groove.feltPulse" }, "sideways").grammar.groove.feltPulse;
+  assert.equal(bad?.value, "half_time");
+  assert.equal(bad?.provenance, "template", "a rejected answer leaves the style's convention in place, never a stated value");
 });
 
 test("information gain: unknown consumed fields score by reach; a contested stated value is asked about only when the dissent is strong; an unconsumed field is never asked", () => {

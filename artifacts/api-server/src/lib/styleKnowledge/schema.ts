@@ -21,9 +21,59 @@
  * the song at hand; the merge ranks it below the brief and below a clear
  * measurement. `coverage` says how far to trust the entry as a whole.
  */
-import { STYLE_FIELDS, STYLE_LEVELS, isStylePath, validateStyleValue, type StyleLevel, type StylePath } from "../styleGrammar";
+import {
+  GROOVE_STRATEGIES, STYLE_FIELDS, STYLE_LEVELS, isStylePath, validateStyleValue,
+  type FeltPulse, type GrooveStrategy, type StyleLevel, type StylePath,
+} from "../styleGrammar";
 
 export type KnowledgeValue = { value: unknown; confidence: number; why: string };
+
+/**
+ * How a style's felt pulse relates to the tempo somebody measured
+ * (Brain B-18, R-1b P1-3).
+ *
+ * A style value cannot answer this on its own: "ballad" says the pulse is
+ * slow, but the *written* tempo of a ballad is whatever the analysis counted.
+ * The owner's song was measured at 130.43 BPM; an intimate ballad at 130 is
+ * felt at 65, and before B-18 the plan asked for `steady_pulse` and the kit
+ * played a pop backbeat on 2 and 4 at 130 (and, with no brief at all,
+ * `four_on_floor` — kick on every beat of a chassidic ballad).
+ *
+ * So a style states the band inside which its written tempo *is* its pulse,
+ * what it means above and below that band, the strategy it builds on at its
+ * own pulse, and the readings it must never be given.
+ */
+export type PulseConvention = {
+  /** Written BPM inside which the measured tempo is the felt pulse. */
+  writtenBpm: { min: number; max: number };
+  /** The felt pulse when the measured tempo is above the band (fast written, slow felt). */
+  above: FeltPulse;
+  /** The felt pulse when the measured tempo is below the band. */
+  below: FeltPulse;
+  /** The groove strategy this style is arranged on at its own felt pulse. */
+  strategy: GrooveStrategy;
+  /** The strategy this style asks for when the felt pulse is half the written one. */
+  halfTimeStrategy?: GrooveStrategy;
+  /** Readings this style must never be given, whatever a tempo band measures. */
+  never: GrooveStrategy[];
+  confidence: number;
+  why: string;
+};
+
+/** The felt pulse this convention implies for a measured tempo. */
+export function feltPulseFor(pulse: PulseConvention, bpm: number | null | undefined): FeltPulse | null {
+  if (bpm === null || bpm === undefined || !Number.isFinite(bpm) || bpm <= 0) return null;
+  if (bpm > pulse.writtenBpm.max) return pulse.above;
+  if (bpm < pulse.writtenBpm.min) return pulse.below;
+  return "as_written";
+}
+
+/** The groove strategy this convention asks for at a measured tempo. */
+export function pulseStrategyFor(pulse: PulseConvention, bpm: number | null | undefined): GrooveStrategy {
+  const felt = feltPulseFor(pulse, bpm);
+  if (felt === "half_time") return pulse.halfTimeStrategy ?? "half_time_feel";
+  return pulse.strategy;
+}
 
 export type MatchSlot = "genre" | "subgenre" | "tradition" | "scene" | "ensemble" | "aesthetic" | "era" | "word";
 export type MatchTerm = { slot: MatchSlot; term: string };
@@ -40,6 +90,13 @@ export type StyleKnowledgeEntry = {
     boosts?: Array<MatchTerm & { weight?: number }>;
   };
   levels: Record<StyleLevel, "unknown" | Partial<Record<StylePath, KnowledgeValue | KnowledgeValue[]>>>;
+  /**
+   * Brain B-18: how this style's felt pulse relates to a measured tempo, and
+   * which groove readings it forbids. Required on every entry: a style with no
+   * pulse convention is a style whose groove the tempo band decides, which is
+   * the defect R-1b P1-3 measured. Inherited from `extends` when absent.
+   */
+  pulse?: PulseConvention;
   /** Where this knowledge comes from, in one line. */
   basis: string;
   /** `owner_world`: the owner's own tradition, reviewed by him; `general_practice`: common practice of a widely produced style; `sketch`: a thin entry that mostly says "unknown". */
@@ -94,9 +151,37 @@ export function validateKnowledgeEntry(entry: StyleKnowledgeEntry, all: readonly
       }
     }
   }
+  // B-18: the pulse convention, when this entry states one.
+  const pulse = entry.pulse;
+  if (pulse) {
+    const { min, max } = pulse.writtenBpm ?? {};
+    if (!(typeof min === "number" && typeof max === "number" && min > 0 && max >= min && max <= 320)) {
+      issue("pulse.writtenBpm must be a { min, max } band in (0, 320]", "pulse");
+    }
+    for (const [field, value] of [["above", pulse.above], ["below", pulse.below]] as const) {
+      if (!["as_written", "half_time", "double_time"].includes(String(value))) issue(`pulse.${field} is not a felt pulse`, "pulse");
+    }
+    for (const [field, value] of [["strategy", pulse.strategy], ["halfTimeStrategy", pulse.halfTimeStrategy]] as const) {
+      if (value !== undefined && !GROOVE_STRATEGIES.includes(value)) issue(`pulse.${field} ${String(value)} is not a groove strategy`, "pulse");
+    }
+    if (!Array.isArray(pulse.never)) issue("pulse.never must be a list (write [] when the style forbids nothing)", "pulse");
+    else for (const s of pulse.never) if (!GROOVE_STRATEGIES.includes(s)) issue(`pulse.never ${String(s)} is not a groove strategy`, "pulse");
+    if (pulse.never?.includes(pulse.strategy)) issue("pulse.never forbids the style's own strategy", "pulse");
+    if (!(pulse.confidence > 0 && pulse.confidence <= 1)) issue(`pulse.confidence ${pulse.confidence} is not in (0, 1]`, "pulse");
+    if (!pulse.why?.trim()) issue("pulse needs a why", "pulse");
+  } else if (!entry.extends) {
+    issue("a root entry must state a pulse convention (B-18): without one, the tempo band decides the groove", "pulse");
+  }
   const levelsKnown = STYLE_LEVELS.filter((l) => entry.levels?.[l] !== "unknown").length;
   if (levelsKnown === 0) issue("an entry with every level unknown says nothing");
   return issues;
+}
+
+/** The pulse convention of an entry, or the nearest ancestor's. */
+export function pulseConventionOf(entry: StyleKnowledgeEntry, all: readonly StyleKnowledgeEntry[]): PulseConvention | null {
+  const chain = knowledgeChain(entry, all);
+  for (let i = chain.length - 1; i >= 0; i -= 1) if (chain[i].pulse) return chain[i].pulse!;
+  return null;
 }
 
 /** The entry chain from the root ancestor down to `entry`. */

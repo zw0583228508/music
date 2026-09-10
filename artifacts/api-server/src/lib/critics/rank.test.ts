@@ -236,7 +236,19 @@ test("on the owner's song the judge refuses, and it refuses for the right reason
   assert.ok(intro >= 0 && bed >= 0 && grid >= 0, `intro ${intro}, bed ${bed}, grid ${grid}`);
   assert.ok(bed < intro, `the string bed (#${bed + 1}) outranks the empty intro (#${intro + 1})`);
   assert.ok(grid < intro, `the off-grid harmony (#${grid + 1}) outranks the empty intro (#${intro + 1})`);
-  assert.ok(intro >= 12, `the empty intro is out of the top twelve (#${intro + 1})`);
+  // The count moved with the arrangement, not with the intro. On B-05c's
+  // anchor thirteen blocking findings outranked the two silent bars; with
+  // B-18's per-family levels the owner's arrangement carries ten, because four
+  // `off_grid` findings fall under the blocking threshold — strings Verse 1
+  // 0.733 -> 0.400, keys Verse 3 0.618 -> 0.441, strings Verse 3 0.571 ->
+  // 0.500, keys Chorus 0.559 -> 0.529 — and one `single_voice_bed` (Chorus 2)
+  // joins them. Nothing about the intro moved: its priority is the same 60.1
+  // and its salience the same floor, asserted below. The orderings R-1b P0-5
+  // actually asked for are the two assertions above, and both hold with the
+  // bed at #2 and the off-grid harmony at #1.
+  assert.ok(intro >= 10, `the empty intro is out of the top ten (#${intro + 1})`);
+  assert.ok(v.ranked.slice(0, intro).every((r) => r.observation.severity === "blocking"),
+    "everything above it is blocking — the intro is last of the blocking findings that carry sounding music");
 
   // The salience that does it is measured, not asserted: two silent bars carry
   // no sounding music, so they sit at the floor.

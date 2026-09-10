@@ -2736,6 +2736,12 @@ export type GlobalArrangementPlan = {
     style: string;
     productionAesthetic: string;
     grooveStrategy: string;
+    /**
+     * Brain B-18: one line when the groove is *not* the one the map's tempo
+     * band would have derived — a reading the style forbids, a dance grid with
+     * no rhythm evidence for it, or a style read from the song's own chords.
+     */
+    grooveReason?: string;
   };
 };
 
@@ -3082,6 +3088,54 @@ export type ArcFamilyEvent = {
   reason: string;
 };
 
+/**
+ * One family's own dynamic in a section (Brain B-18, R-1b P1-2). "Soft
+ * strings, gentle bass" is a level for those two families, not a marking for
+ * the song: the section keeps its arc marking and each named family sits a
+ * step under (or over) it.
+ */
+export type ArcFamilyDynamic = {
+  family: string;
+  marking: ArcDynamicMarking;
+  /** The 0..1 intent level of `marking` (the planners' "energy" for this family). */
+  level: number;
+  /** Steps away from the section's own marking (negative = quieter than the section). */
+  steps: number;
+  emphasis: "support" | "neutral" | "feature";
+  source: ArcValueSource;
+  reason: string;
+};
+
+/** How the song opens (Brain B-18, R-1b P1-7). A two-bar intro is not "no harmony". */
+export type ArcIntroFigure = "tonic_pad" | "piano_motif" | "pickup_only" | "none";
+/** How the song ends (Brain B-18, R-1b P1-7). No song ends on a staccato stab a second early. */
+export type ArcEndingGesture = "held_final_chord" | "stop" | "fade";
+
+export type ArcOpeningIntent = {
+  figure: ArcIntroFigure;
+  /** The section the figure belongs to, or null when the form has no intro. */
+  sectionName: string | null;
+  barCount: number;
+  /**
+   * True when the intro states the tonic even though the chord analysis found
+   * no chord under it: the writers realise the key's tonic, not silence.
+   */
+  impliesTonic: boolean;
+  /** Pitch-class-free: the families that play the figure, in the arc's order. */
+  families: string[];
+};
+
+export type ArcEndingIntent = {
+  gesture: ArcEndingGesture;
+  sectionName: string | null;
+  /** Bars over which the gesture is realised (the last `bars` bars of the section). */
+  bars: number;
+  /** A ritardando over those bars (an `agogics` warp for the performance stage). */
+  ritardando: boolean;
+  /** Families that hold (or release) the final chord. */
+  families: string[];
+};
+
 /** What an earlier occurrence of the same section function stated (form memory). */
 export type PreviousOccurrenceSummary = {
   sectionName: string;
@@ -3101,6 +3155,12 @@ export type ArrangementArcSection = {
   occurrenceIndex: number;
   occurrenceCount: number;
   intendedDynamic: ArcDecision<{ marking: ArcDynamicMarking; level: number }>;
+  /**
+   * Brain B-18: the families the brief gave a level of their own, with the
+   * marking each plays in this section. Families not listed play the
+   * section's `intendedDynamic`. Absent on arcs planned before B-18.
+   */
+  familyDynamics?: ArcFamilyDynamic[];
   textureLevel: ArcDecision<ArcTextureLevel>;
   tensionRole: ArcDecision<ArcTensionRole>;
   /** Canonical families active in this section, in the arc's priority order. */
@@ -3139,6 +3199,13 @@ export type ArrangementArc = {
   sections: ArrangementArcSection[];
   primaryClimax: ArrangementArcClimax | null;
   secondaryClimax: ArrangementArcClimax | null;
+  /**
+   * Brain B-18 (R-1b P1-7): how the song opens and closes, as intent. The
+   * writers that realise them are B-13's; the arc states which figure and
+   * whether the intro implies the tonic. Absent on arcs planned before B-18.
+   */
+  opening?: ArcDecision<ArcOpeningIntent> | null;
+  ending?: ArcDecision<ArcEndingIntent> | null;
 };
 
 // ===========================================================================
@@ -3996,9 +4063,36 @@ export type ProductionBrief = {
     plannerAesthetic?: GlobalArrangementPlan["productionAesthetic"];
   };
   producerDecisions: ProducerBriefDecision[];
+  /**
+   * Brain B-18 (R-1b P1-2): words a producer attached to an *instrument*
+   * ("soft strings", "gentle bass", "light percussion") are a level and a role
+   * for that family, never a marking for the whole song. Absent when the brief
+   * named no family-scoped word.
+   */
+  familyLevels?: BriefFamilyLevel[];
   openQuestionIds: string[];
   answeredQuestionIds: string[];
   confidence: number;
+};
+
+/**
+ * What a producer asked of one family (Brain B-18). `dynamicSteps` shifts that
+ * family's marking relative to the section's arc marking (-2..2); `emphasis`
+ * says whether the family supports or is featured. `word` is the producer's
+ * own adjective, `sourceRefs` the text it came from.
+ */
+export type BriefFamilyLevel = {
+  family: string;
+  /** Marking steps relative to the section's arc marking (negative = under it). */
+  dynamicSteps: number;
+  emphasis: "support" | "neutral" | "feature";
+  /** The producer's own word ("soft", "gentle", "light"). */
+  word: string;
+  confidence: number;
+  provenance: IntelligenceProvenance;
+  sourceRefs: string[];
+  /** One line: why this family and not the whole song. */
+  rationale: string;
 };
 
 export type ClarificationOption = {

@@ -86,7 +86,11 @@ test("the policy becomes orchestrator options, and the caller's own hints and st
   const overridden = policyOrchestrateOptions(model.policy, songModel, { performanceStyle: { swingRatio: 0.5 }, plannerHints: { section: { activeFamilyBias: 0.4 } } });
   assert.equal(overridden.performanceStyle?.swingRatio, 0.5);
   assert.equal(overridden.plannerHints?.section?.activeFamilyBias, 0.4);
-  assert.deepEqual(policyOrchestrateOptions(NEUTRAL_POLICY, songModel), { performanceStyle: {} });
+  // B-18: a neutral policy carries *no* option at all. An empty `performanceStyle`
+  // used to be passed through, and `orchestrateArrangement` treats any present
+  // style as "use the V2 performance stage" - so the neutral policy silently
+  // changed every track model while claiming to decide nothing.
+  assert.deepEqual(policyOrchestrateOptions(NEUTRAL_POLICY, songModel), {});
 });
 
 test("the evaluation gate: a neutral policy is never promotable; a real policy is promotable only when the benchmark says it beats the reference", () => {

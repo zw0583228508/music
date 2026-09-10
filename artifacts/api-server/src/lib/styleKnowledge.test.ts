@@ -98,6 +98,12 @@ test("every consumed contract field is filled by at least one entry, so the cons
   for (const entry of STYLE_KNOWLEDGE_ENTRIES) for (const c of styleCandidatesFromKnowledge(entry)) filled.add(c.path);
   const consumedButNeverFilled = STYLE_PATHS.filter((p) => STYLE_FIELDS[p].consumers.length > 0 && !filled.has(p));
   // Measured-only and brief-only fields are legitimately never in a knowledge entry.
-  const allowed = new Set(["groove.microtimingMs", "groove.onsetsPerBeat", "groove.feltPulse", "arrangement.globalDynamic", "arrangement.globalTexture", "melodic.ornamentDensity", "identity.knowledgeEntry"]);
+  // B-18: `groove.pulseStrategy`, `groove.forbiddenStrategies` and
+  // `groove.feltPulse` are filled from the entry's `pulse` convention rather
+  // than from its `levels` block, because all three depend on the song's
+  // measured tempo (`styleCandidatesFromPulse`); `styleCandidatesFromKnowledge`
+  // therefore does not produce them. `brain-b18-brief-reading.json` records the
+  // value each of the 14 entries yields at the owner's 130.43 BPM.
+  const allowed = new Set(["groove.microtimingMs", "groove.onsetsPerBeat", "groove.feltPulse", "groove.pulseStrategy", "groove.forbiddenStrategies", "arrangement.globalDynamic", "arrangement.globalTexture", "melodic.ornamentDensity", "identity.knowledgeEntry"]);
   assert.deepEqual(consumedButNeverFilled.filter((p) => !allowed.has(p)), []);
 });

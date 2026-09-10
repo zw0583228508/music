@@ -38,7 +38,7 @@
  * `styleResolver.ts` and `universalStyle.ts` respectively.
  */
 import { createHash } from "node:crypto";
-import type { ArcTemplateId, ArcTextureLevel, GlobalArrangementPlan, StyleFingerprint } from "@workspace/db";
+import type { ArcEndingGesture, ArcIntroFigure, ArcTemplateId, ArcTextureLevel, GlobalArrangementPlan, StyleFingerprint } from "@workspace/db";
 import type { StyleGrammarSlot } from "./partGenerationContextV2";
 
 /** Version of the Q-02 *slot* rules (pinned by orchestrator evidence; unchanged in shape). */
@@ -89,6 +89,8 @@ export type Subdivision = "quarter" | "8th" | "16th" | "triplet" | "12_8";
 export type Frequency = "rare" | "moderate" | "frequent";
 export type TempoBehavior = "slow" | "moderate" | "fast" | "rubato_tolerant" | "strict_grid" | "breathing";
 export type FeltPulse = "as_written" | "half_time" | "double_time";
+/** The planner's groove strategy vocabulary (`GlobalArrangementPlan.grooveStrategy`). */
+export type GrooveStrategy = GlobalArrangementPlan["grooveStrategy"];
 export type BassAttack = "on_the_beat" | "anticipated" | "laid_back" | "sustained";
 export type BassMotion = "roots" | "root_fifth" | "walking" | "riff" | "pedal" | "melodic" | "octaves";
 export type ChordExtensions = "triads" | "sevenths" | "extended" | "quartal" | "modal";
@@ -147,6 +149,18 @@ export type StyleGrammarSections = {
     tempoBehavior?: SV<TempoBehavior>;
     /** Whether the written tempo is felt as is, at half, or at double time. */
     feltPulse?: SV<FeltPulse>;
+    /**
+     * Brain B-18: the groove strategy this style asks the planner for at its
+     * own felt pulse. `groove.family` says what the drummer plays; this says
+     * what the *arrangement* is built on, and it is what `pickGroove` reads.
+     */
+    pulseStrategy?: SV<GrooveStrategy>;
+    /**
+     * Brain B-18 (R-1b P1-3): strategies this style must never be read as. A
+     * ballad, a chassidic nigun, a singer-songwriter song and a jazz standard
+     * are never `four_on_floor`, whatever the tempo band measures.
+     */
+    forbiddenStrategies?: SV<GrooveStrategy[]>;
   };
   bass: {
     attackPosition?: SV<BassAttack>;
@@ -203,6 +217,10 @@ export type StyleGrammarSections = {
     globalDynamic?: SV<DynamicLevel>;
     globalTexture?: SV<TextureLevelGlobal>;
     arcTemplate?: SV<ArcTemplateId>;
+    /** Brain B-18 (R-1b P1-7): what plays over the intro; an empty intro is not "no harmony". */
+    introFigure?: SV<ArcIntroFigure>;
+    /** Brain B-18 (R-1b P1-7): how the song ends. */
+    endingGesture?: SV<ArcEndingGesture>;
     registerTendency?: SV<Register>;
     transitionLanguage?: SV<TransitionLanguage>;
     development?: SV<Development>;
@@ -308,6 +326,9 @@ const BOOL = (level: StyleLevel, consumers: readonly string[] = []): StyleFieldS
 export const GROOVE_FAMILIES: readonly GrooveFamily[] = ["straight", "backbeat", "swung", "shuffle", "syncopated", "four_on_floor", "half_time", "compound_6_8", "waltz", "march", "bossa", "breakbeat", "boom_bap", "trap", "maqsum", "rubato"];
 export const PRODUCTION_AESTHETICS: readonly ProductionAesthetic[] = ["intimate", "polished_pop", "cinematic", "raw_band", "electronic", "orchestral"];
 export const ARC_TEMPLATES: readonly ArcTemplateId[] = ["intimate_ballad", "pop_build", "band_steady", "cinematic_swell", "electronic_drop"];
+export const GROOVE_STRATEGIES: readonly GrooveStrategy[] = ["steady_pulse", "syncopated", "swing", "half_time_feel", "four_on_floor", "rubato"];
+export const INTRO_FIGURES: readonly ArcIntroFigure[] = ["tonic_pad", "piano_motif", "pickup_only", "none"];
+export const ENDING_GESTURES: readonly ArcEndingGesture[] = ["held_final_chord", "stop", "fade"];
 const SECTION_FUNCTIONS: readonly SectionFunction[] = ["intro", "verse", "prechorus", "chorus", "bridge", "breakdown", "outro", "instrumental", "neutral"];
 const TEXTURE_LEVELS: readonly ArcTextureLevel[] = ["solo", "duo", "bed", "full", "tutti"];
 
@@ -354,6 +375,12 @@ export const STYLE_FIELDS = {
   "groove.feltPulse": ENUM("rhythmic", ["as_written", "half_time", "double_time"], [C.pickGroove],
     { en: "The song was measured at this tempo; is that the pulse you feel, or half of it?", he: "השיר נמדד בטמפו הזה; זה הדופק שאתה מרגיש, או חצי ממנו?" },
     ["as_written", "half_time"]),
+
+  // Brain B-18 (R-1b P1-3): the arrangement's pulse, and the readings this
+  // style forbids. `groove.family` is what the drummer plays; these two are
+  // what the planner builds on, and `pickGroove` reads both.
+  "groove.pulseStrategy": ENUM("rhythmic", GROOVE_STRATEGIES, [C.pickGroove]),
+  "groove.forbiddenStrategies": STRS("rhythmic", [C.pickGroove]),
 
   "bass.attackPosition": ENUM("rhythmic", ["on_the_beat", "anticipated", "laid_back", "sustained"], [C.perf]),
   "bass.motion": ENUM("rhythmic", ["roots", "root_fifth", "walking", "riff", "pedal", "melodic", "octaves"]),
@@ -402,6 +429,9 @@ export const STYLE_FIELDS = {
   "arrangement.globalDynamic": ENUM("performance", ["low", "moderate", "high"], [C.briefLevers]),
   "arrangement.globalTexture": ENUM("orchestration", ["thin", "moderate", "full"], [C.briefLevers]),
   "arrangement.arcTemplate": ENUM("orchestration", ARC_TEMPLATES, [C.briefLevers]),
+  // Brain B-18 (R-1b P1-7): how the song opens and closes, as style intent.
+  "arrangement.introFigure": ENUM("orchestration", INTRO_FIGURES, [C.briefLevers]),
+  "arrangement.endingGesture": ENUM("orchestration", ENDING_GESTURES, [C.briefLevers]),
   "arrangement.registerTendency": ENUM("orchestration", ["low", "low_mid", "mid", "upper_mid", "high", "wide"]),
   "arrangement.transitionLanguage": ENUM("orchestration", ["swells_and_builds", "drum_fills", "hard_cut", "riser", "breakdown", "thin_build"], [C.styleSpec]),
   "arrangement.development": ENUM("orchestration", ["repetition", "additive", "transformative", "dynamic_arc"], [C.styleSpec]),

@@ -39,7 +39,7 @@ import {
   type ArrangementArcInput,
 } from "./arrangementArc";
 import type { StyleGrammar, StyleProvenance } from "./styleGrammar";
-import { grooveStrategyOfFamily } from "./styleResolver";
+import { grooveStrategyOfFamily, inferStyleFromSong, type SongHarmonyEvidence } from "./styleResolver";
 
 /** "1.1" since Brain B-01 (arc-derived targets); stored "1.0" plans are stale. */
 export const GLOBAL_ARRANGEMENT_PLAN_VERSION = "1.1" as const;
@@ -178,11 +178,53 @@ function grooveFromGrammar(grammar: StyleGrammar | undefined): { strategy: Globa
   if (!grammar) return null;
   const felt = grammar.groove.feltPulse;
   if (felt && felt.provenance !== "fingerprint" && felt.value === "half_time") return { strategy: "half_time_feel", source: felt.provenance };
+  // Brain B-18: the style's own pulse strategy, above `groove.family`. A
+  // family says what the drummer plays; the pulse strategy says what the
+  // arrangement is built on, and it already accounts for the felt pulse.
+  const pulse = grammar.groove.pulseStrategy;
+  if (pulse && pulse.provenance !== "fingerprint") return { strategy: pulse.value, source: pulse.provenance };
   const family = grammar.groove.family;
   if (family && family.provenance !== "fingerprint") return { strategy: grooveStrategyOfFamily(family.value), source: family.provenance };
   const tempo = grammar.groove.tempoBehavior;
   if (tempo && tempo.provenance !== "fingerprint" && tempo.value === "rubato_tolerant") return { strategy: "rubato", source: tempo.provenance };
   return null;
+}
+
+/** Readings the resolved style forbids (Brain B-18): a ballad is never `four_on_floor`. */
+function forbiddenStrategies(grammar: StyleGrammar | undefined): Set<GlobalArrangementPlan["grooveStrategy"]> {
+  const listed = grammar?.groove.forbiddenStrategies;
+  if (!listed || listed.provenance === "fingerprint") return new Set();
+  return new Set(listed.value as GlobalArrangementPlan["grooveStrategy"][]);
+}
+
+/** The song's own chord evidence, for the no-brief reading (Brain B-18). */
+function harmonyEvidenceOf(songModel: SongModelData | undefined): SongHarmonyEvidence {
+  const chords = songModel?.chords ?? [];
+  const bars = songModel?.sections?.length ? Math.max(...songModel.sections.map((s) => s.endBar)) : (songModel?.bars?.length ?? 0);
+  const roots = chords.map((c) => c.root ?? c.symbol.replace(/[^A-G#b].*$/, "")).filter(Boolean);
+  const PITCH: Record<string, number> = { C: 0, "C#": 1, Db: 1, D: 2, "D#": 3, Eb: 3, E: 4, F: 5, "F#": 6, Gb: 6, G: 7, "G#": 8, Ab: 8, A: 9, "A#": 10, Bb: 10, B: 11 };
+  let moves = 0;
+  let functional = 0;
+  for (let i = 1; i < roots.length; i += 1) {
+    const a = PITCH[roots[i - 1]];
+    const b = PITCH[roots[i]];
+    if (a === undefined || b === undefined || a === b) continue;
+    moves += 1;
+    const interval = ((b - a) % 12 + 12) % 12;
+    if (interval === 5 || interval === 7) functional += 1;
+  }
+  const extension = chords.length
+    ? chords.filter((c) => (c.extensions?.length ?? 0) > 0 || /(maj7|m7|min7|7|9|11|13|add|sus|dim|aug|ø|°)/i.test(c.symbol)).length / chords.length
+    : null;
+  return {
+    symbols: chords.map((c) => c.symbol),
+    chordsPerBar: bars > 0 && chords.length ? chords.length / bars : null,
+    extensionShare: extension,
+    functionalMotion: moves ? functional / moves : null,
+    key: songModel?.keyMap?.[0]?.key ?? null,
+    tempoBpm: songModel?.tempoMap?.[0]?.bpm ?? null,
+    hasRhythmEvidence: false,
+  };
 }
 
 const ROLE_TIER: Record<string, number> = {
@@ -258,17 +300,70 @@ function buildPalette(
  * map's rhythm heuristic second. An explicit brief hint still outranks the
  * grammar, and any wanted strategy is checked against detected rhythm
  * evidence exactly as before.
+ *
+ * Brain B-18 (R-1b P1-3) adds two things and removes one default:
+ *
+ *  - the grammar's `groove.pulseStrategy` — the style's own reading of the
+ *    measured tempo — is consulted above `groove.family`, so an intimate
+ *    ballad counted at 130 BPM is arranged on a half-time feel;
+ *  - with **no** grammar at all (the common case: a job with no brief), the
+ *    song's own chord vocabulary and harmonic rhythm are read for a style
+ *    (`inferStyleFromSong`) before the tempo-band heuristic. The owner's
+ *    chassidic ballad used to plan as `four_on_floor` — kick on every beat in
+ *    all three choruses — because 130 BPM with no measured syncopation is what
+ *    that heuristic calls a dance record;
+ *  - `four_on_floor` is never a *fallback*. It is written only when the style
+ *    asks for it or the source's own rhythm was measured that way; when
+ *    nothing evidences it, the plan says `steady_pulse` and says why.
  */
 function pickGroove(
   map: SongModelMusicalMap,
   hint?: GlobalArrangementPlan["grooveStrategy"],
   grammar?: StyleGrammar,
-): { strategy: GlobalArrangementPlan["grooveStrategy"]; source: StyleDecisionSource } {
+  songModel?: SongModelData,
+): { strategy: GlobalArrangementPlan["grooveStrategy"]; source: StyleDecisionSource; reason?: string } {
   const fromGrammar = grooveFromGrammar(grammar);
-  const wanted = hint ?? fromGrammar?.strategy;
-  const wantedSource: StyleDecisionSource = hint ? "hint" : fromGrammar?.source ?? "map_heuristic";
+  const forbidden = forbiddenStrategies(grammar);
   const derived = grooveFromMap(map);
-  if (!wanted || wanted === derived) return { strategy: derived, source: wanted ? wantedSource : "map_heuristic" };
+  // Something in the source actually plays a beat: the rhythm group was
+  // detected *and* a drum or percussion family is in the palette. Without both,
+  // the tempo band is a count over a sung line and cannot evidence a dance grid.
+  const playsABeat = map.rhythm.status === "detected" &&
+    map.styleFingerprint.instrumentPaletteHints.some((h) => canonicalFamily(h) === "drums" || canonicalFamily(h) === "percussion");
+
+  // No grammar and no hint: read the song's own harmony before the tempo band.
+  let inferred: ReturnType<typeof inferStyleFromSong> | null = null;
+  if (!hint && !fromGrammar && songModel) {
+    inferred = inferStyleFromSong({ ...harmonyEvidenceOf(songModel), hasRhythmEvidence: playsABeat });
+    for (const s of inferred.forbidden) forbidden.add(s as GlobalArrangementPlan["grooveStrategy"]);
+  }
+  // The song's own reading is a *replacement for a bad default*, never an
+  // override of a defensible measurement: it is used when the map's answer is
+  // a reading the style forbids, or the dance grid nothing evidenced.
+  const derivedIsUnevidencedDance = derived === "four_on_floor" && !playsABeat;
+  const inferredStrategy = inferred?.strategy && (forbidden.has(derived) || derivedIsUnevidencedDance)
+    ? (inferred.strategy.value as GlobalArrangementPlan["grooveStrategy"])
+    : undefined;
+  const wanted = hint ?? fromGrammar?.strategy ?? inferredStrategy;
+  const wantedSource: StyleDecisionSource = hint
+    ? "hint"
+    : fromGrammar?.source ?? (inferredStrategy ? "template" : "map_heuristic");
+  // A reading the style forbids, or a dance grid nothing evidenced, is never
+  // written; the plain reading takes its place and the plan says why.
+  const safeDerived: GlobalArrangementPlan["grooveStrategy"] = forbidden.has(derived) || derivedIsUnevidencedDance
+    ? "steady_pulse"
+    : derived;
+  const derivedReason = safeDerived === derived
+    ? undefined
+    : forbidden.has(derived)
+      ? `${derived} is a reading this style forbids; the plan falls back to ${safeDerived}`
+      : `four_on_floor was the tempo band's default and nothing in the source plays a beat (rhythm ${map.rhythm.status}, no drums in the palette); the plan says ${safeDerived} instead`;
+  if (!wanted || wanted === safeDerived) {
+    return { strategy: safeDerived, source: wanted ? wantedSource : "map_heuristic", ...(derivedReason ? { reason: derivedReason } : {}) };
+  }
+  if (forbidden.has(wanted)) {
+    return { strategy: safeDerived, source: "map_heuristic", reason: `${wanted} is a reading this style forbids` };
+  }
   // A stated groove is the arrangement's target, not the source's description,
   // so it is honoured unless detected rhythm evidence flatly contradicts it:
   // a straight, un-syncopated source cannot be read as already swinging, and a
@@ -279,7 +374,13 @@ function pickGroove(
   const contradicts =
     (wanted === "swing" && map.rhythm.status === "detected" && !swung && syncMean < 0.15) ||
     (wanted === "four_on_floor" && map.rhythm.status === "detected" && swung);
-  return contradicts ? { strategy: derived, source: "map_heuristic" } : { strategy: wanted, source: wantedSource };
+  return contradicts
+    ? { strategy: safeDerived, source: "map_heuristic", reason: `the source's measured rhythm contradicts ${wanted}` }
+    : {
+      strategy: wanted,
+      source: wantedSource,
+      ...(inferred?.strategy && !hint && !fromGrammar ? { reason: inferred.strategy.why } : {}),
+    };
 }
 
 /** The map's own reading of the groove (the pre-B-09 heuristic, unchanged). */
@@ -478,7 +579,7 @@ export function deriveGlobalArrangementPlan(
   const { style, substyle, source: styleSource } = pickStyle(map, grammar);
   const { palette: instrumentPalette, excluded: excludedPaletteHints } = buildPalette(map, hints);
   const { aesthetic: productionAesthetic, source: aestheticSource } = pickAesthetic(map, style, instrumentPalette, hints.productionAesthetic, grammar);
-  const { strategy: grooveStrategy, source: grooveSource } = pickGroove(map, hints.grooveStrategy, grammar);
+  const { strategy: grooveStrategy, source: grooveSource, reason: grooveReason } = pickGroove(map, hints.grooveStrategy, grammar, songModel);
 
   // --- what the arrangement intends (the decision) ---------------------------
   const arc = deriveArrangementArc(
@@ -582,6 +683,7 @@ export function deriveGlobalArrangementPlan(
       style: styleSource,
       productionAesthetic: aestheticSource,
       grooveStrategy: grooveSource,
+      ...(grooveReason ? { grooveReason } : {}),
     },
   };
 }

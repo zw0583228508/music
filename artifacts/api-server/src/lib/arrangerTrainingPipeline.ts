@@ -160,9 +160,19 @@ export function policyOrchestrateOptions(policy: ArrangerPolicy, songModel: Song
   const global = { ...(Object.keys(sectionDensityBias).length ? { sectionDensityBias } : {}), ...(base.plannerHints?.global ?? {}) };
   const section = { ...(policy.plannerHints.activeFamilyBias ? { activeFamilyBias: policy.plannerHints.activeFamilyBias } : {}), ...(base.plannerHints?.section ?? {}) };
   const hasHints = Object.keys(global).length > 0 || Object.keys(section).length > 0;
+  // Brain B-18 found this while re-pinning the corpus: an *empty*
+  // `performanceStyle` is not the same as an absent one. `orchestrateArrangement`
+  // reads `input.performanceStyle` as "V2 performance requested"; `{}` therefore
+  // switched the whole performance stage over while carrying no decision, so a
+  // NEUTRAL policy did not in fact reproduce the reference run - it produced
+  // different track models for every corpus case, and the evaluation gate's
+  // "reproduces the reference run exactly" assertion held only because the two
+  // runs' rounded aggregate metrics happened to coincide. Omitting an empty
+  // style makes the neutral policy genuinely neutral.
+  const performanceStyle = { ...policy.performanceStyle, ...(base.performanceStyle ?? {}) };
   return {
     ...(hasHints ? { plannerHints: { ...(Object.keys(global).length ? { global } : {}), ...(Object.keys(section).length ? { section } : {}) } } : {}),
-    performanceStyle: { ...policy.performanceStyle, ...(base.performanceStyle ?? {}) },
+    ...(Object.keys(performanceStyle).length ? { performanceStyle } : {}),
   };
 }
 

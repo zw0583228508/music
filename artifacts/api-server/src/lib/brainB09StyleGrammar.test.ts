@@ -5,12 +5,15 @@
  *   - the brief resolves to one StyleGrammar with confidence and provenance
  *     per value, the owner's world (chassidic ballad) when the tradition is
  *     named, the generic ballad when it is not;
- *   - "soft strings, gentle bass" is a *global* low-dynamic decision the
- *     grammar carries (B-01's request), and the planner reads it;
+ *   - "soft strings, gentle bass" was a *global* low-dynamic decision the
+ *     grammar carried (B-01's request). Brain B-18 (R-1b P1-2) reads those
+ *     words as levels for the two families they name; the assertions below say
+ *     so, and `brainB18BriefReading.test.ts` holds the full before/after;
  *   - the planner's style / aesthetic / groove come from the grammar first:
  *     before B-09 the owner's ballad planned as style `unknown` and groove
- *     `four_on_floor` (130 BPM, no syncopation); now `ballad` / `steady_pulse`,
- *     and the plan records where each decision came from;
+ *     `four_on_floor` (130 BPM, no syncopation); now `ballad` / `half_time_feel`
+ *     (B-18: an intimate ballad counted at 130 is felt at 65), and the plan
+ *     records where each decision came from;
  *   - at most two questions, and they are the right ones (the felt pulse at
  *     130 BPM; narrow or wide dynamics for an "intimate" song with a
  *     "big final chorus");
@@ -60,9 +63,20 @@ test("the owner's brief resolves to one grammar: the brief's words are `brief`, 
   assert.equal(g.strings.role?.value, "pad");
   assert.equal(g.sound.aesthetic?.value, "intimate");
   assert.equal(g.sound.aesthetic?.provenance, "brief");
-  // "soft strings, gentle bass": a global low-dynamic decision the grammar owns.
-  assert.equal(g.arrangement.globalDynamic?.value, "low");
-  assert.equal(g.arrangement.globalDynamic?.provenance, "brief");
+  // B-18 (R-1b P1-2) changed this on purpose. "Soft strings, gentle bass" was a
+  // *global* low-dynamic decision here; the review measured what that did to
+  // the owner's song - `globalDynamicSteps: -1` shifted every section one
+  // marking down (template chorus mf -> mp, verse p -> pp, Verse 3 to level
+  // 0.059) because two words about two instruments were read as a statement
+  // about the whole arrangement. The words now become per-family levels
+  // (`brief.familyLevels`, `hints.global.familyDynamicSteps`), and no global
+  // dynamic is claimed at all. A word about the song ("quiet", "understated")
+  // still produces one; `brainB18BriefReading.test.ts` holds both controls.
+  assert.equal(g.arrangement.globalDynamic, undefined, "the family words no longer speak for the song (B-18, R-1b P1-2)");
+  assert.deepEqual(
+    (brief.familyLevels ?? []).map((l) => [l.family, l.dynamicSteps, l.emphasis]),
+    [["bass", -1, "support"], ["percussion", -1, "support"], ["strings", -1, "support"]],
+  );
   // Absent evidence is unknown: the fixture has no transcribed notes, so no swing, no microtiming, no velocity range.
   for (const path of ["groove.swingRatio", "groove.microtimingMs", "performance.velocityRange", "melodic.stepwiseRatio"] as const) {
     assert.equal(getStyleValue(g, path), undefined, `${path} stays unknown`);
@@ -94,24 +108,38 @@ test("the questions are the right two, and no more: the felt pulse at 130 BPM, a
   assert.ok(verbatim.questions.find((q) => q.path === "identity.tradition")!.options.some((o) => o.value === "hasidic"));
 });
 
-test("the planner reads the grammar first: the owner's ballad is `ballad` / `steady_pulse` / `intimate` with provenance, where the map's heuristic said `unknown` / `four_on_floor`", () => {
+test("the planner reads the grammar first: the owner's ballad is `ballad` / `half_time_feel` / `intimate` with provenance, where the map's heuristic said `unknown` / `four_on_floor` (B-18: the pulse and the family levels)", () => {
   const model = rachemNaSongModel();
   const legacy = deriveGlobalArrangementPlan(model, { now: NOW });
   assert.equal(legacy.style, "unknown");
-  assert.equal(legacy.grooveStrategy, "four_on_floor", "130 BPM with no measured syncopation reads as four-on-the-floor to the map");
-  assert.deepEqual(legacy.styleDecisions, { styleGrammarSha256: null, style: "map_heuristic", productionAesthetic: "map_heuristic", grooveStrategy: "map_heuristic" });
+  // B-18 (R-1b P1-3) changed this on purpose. With no brief the map's tempo
+  // band used to answer: 130 BPM with no measured syncopation reads as
+  // four-on-the-floor, so a chassidic ballad shipped with a kick on every beat
+  // in all three choruses. The planner now reads the song's own chord
+  // vocabulary first (0.65 changes a bar over plain triads in C minor = the
+  // harmonic rhythm of a slow sung song -> the ballad entry's pulse
+  // convention), and `four_on_floor` is no longer available as a *fallback*.
+  assert.equal(legacy.grooveStrategy, "half_time_feel", "the song's own harmony reads as a ballad; a ballad at 130 written BPM is felt at 65");
+  assert.equal(legacy.styleDecisions?.grooveStrategy, "template");
+  assert.equal(legacy.styleDecisions?.style, "map_heuristic", "the *identity* is still unknown: four chords name no tradition");
+  assert.equal(legacy.style, "unknown");
+  assert.ok(/harmonic rhythm of a slow sung song/.test(legacy.styleDecisions?.grooveReason ?? ""), legacy.styleDecisions?.grooveReason);
 
   const hints = briefPlannerHints(ownerBrief(OWNER_BRIEF, model).brief, { songModel: model });
   assert.ok(hints.global.styleGrammar, "the grammar rides on the hints");
-  assert.equal(hints.global.globalDynamicSteps, -1, "soft / gentle: every section one marking down");
+  // B-18: "soft strings, gentle bass, light percussion" are three family levels,
+  // not one global marking (R-1b P1-2).
+  assert.equal(hints.global.globalDynamicSteps, undefined, "no global marking: the words belong to three families");
+  assert.deepEqual(hints.global.familyDynamicSteps, { bass: -1, percussion: -1, strings: -1 });
   assert.equal(hints.global.arcTemplate, "intimate_ballad");
   assert.deepEqual(hints.global.familyPriority, ["bass", "percussion", "keys", "strings"], "the brief's tiers, unchanged from B-01");
-  assert.ok(hints.evidence.some((e) => /style grammar arrangement\.globalDynamic=low/.test(e)));
+  assert.ok(hints.evidence.some((e) => /strings: "soft".*strings only/.test(e)), hints.evidence.join(" | "));
   assert.equal(hints.style?.knowledgeEntry, "ballad");
 
   const plan = deriveGlobalArrangementPlan(model, { now: NOW, hints: hints.global });
   assert.equal(plan.style, "ballad");
-  assert.equal(plan.grooveStrategy, "steady_pulse");
+  // B-18: an intimate ballad counted at 130 is felt at 65 (R-1b P1-3).
+  assert.equal(plan.grooveStrategy, "half_time_feel");
   assert.equal(plan.productionAesthetic, "intimate");
   assert.equal(plan.styleDecisions?.style, "brief");
   assert.equal(plan.styleDecisions?.grooveStrategy, "template");
@@ -119,12 +147,20 @@ test("the planner reads the grammar first: the owner's ballad is `ballad` / `ste
   assert.equal(plan.arc?.template?.id, "intimate_ballad");
   assert.equal(plan.climax?.sectionName, "Chorus 3", "B-01's climax decision is untouched");
 
-  // Answering the pulse question moves the groove: 130 felt as 65 is a half-time feel.
+  // Answering the pulse question moves the groove: 130 felt as 65 is a half-time
+  // feel. B-18: the style's own convention already reads it that way, so the
+  // answer *confirms* the plan (and the decision's provenance rises from
+  // `template` to `brief`); answering the other way changes it.
   const answered = answerStyleQuestion({ brief: ownerBrief(OWNER_BRIEF, model).brief, song: { tempoBpm: 130.43 } }, { path: "groove.feltPulse" }, "half_time");
   const halfTime = deriveGlobalArrangementPlan(model, { now: NOW, hints: { ...hints.global, styleGrammar: answered.grammar } });
   assert.equal(halfTime.grooveStrategy, "half_time_feel");
   assert.equal(halfTime.styleDecisions?.grooveStrategy, "brief");
   assert.notEqual(halfTime.inputsDigestSha256, plan.inputsDigestSha256, "a different grammar is a different plan");
+  const asWritten = answerStyleQuestion({ brief: ownerBrief(OWNER_BRIEF, model).brief, song: { tempoBpm: 130.43 } }, { path: "groove.feltPulse" }, "as_written");
+  const written = deriveGlobalArrangementPlan(model, { now: NOW, hints: { ...hints.global, styleGrammar: asWritten.grammar } });
+  assert.equal(written.grooveStrategy, "steady_pulse", "the producer says he feels 130: the arrangement is built on the written pulse");
+  assert.equal(written.styleDecisions?.grooveStrategy, "brief");
+  assert.notEqual(written.grooveStrategy, halfTime.grooveStrategy, "the answer is what decides, not the tempo band");
 });
 
 test("StyleSpec, PerformanceStyle and the Q-02 slot are projections of the same grammar", () => {

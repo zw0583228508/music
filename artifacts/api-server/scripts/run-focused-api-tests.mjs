@@ -828,6 +828,15 @@ const suites = {
       ["src/lib/brainB01RachemNa.test.ts", "brain-b01-rachem-na.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
     ],
   },
+  // Brain B-18: the brief read like a musician (R-1b P1-2/3/6/7) - per-family
+  // levels instead of a global marking, the felt pulse from the style's own
+  // convention and the song's own chords, approach tones from the mode, and
+  // the intro / ending the arc states.
+  "brain-b18": {
+    bundles: [
+      ["src/lib/brainB18BriefReading.test.ts", "brain-b18-brief-reading.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
   "brain-b06": {
     bundles: [
       ["src/lib/brainB06Repair.test.ts", "brain-b06-repair.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],

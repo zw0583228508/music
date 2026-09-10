@@ -126,7 +126,39 @@ test("the reference part composer produces byte-identical parts to the golden fi
         "ostinato read the GroovePlan (meter templates, tempo-capped hats, shared anticipations, fills from the vocabulary, the ending), " +
         "and the performance engine accents per meter, pedals on chord onsets, ghosts on weak positions and broadens cadences - so every " +
         "shipped-note digest changed; the harmony writers (B-02) are untouched, so a 4/4 case's bass / keys / strings composer digests " +
-        "changed only where the whole-part digest includes the kit. A future digest change must again name its cause here.",
+        "changed only where the whole-part digest includes the kit. A future digest change must again name its cause here. " +
+        "RE-PINNED again at the B-18 merge (the brief read like a musician). Five of the nine cases moved, for two named causes. " +
+        "(1) Approach tones (R-1b P1-6): the bass now takes them from the mode's own scale " +
+        "(harmonyPlan/styleParams.approachToneChoice) instead of the union of every pitch class any chord of the song uses. " +
+        "That union is what admitted an Ab under Dm and a B natural under Bb in an F major ballad; the old test was " +
+        "`chromaticApproach || scale.has(pc) || Math.abs(p - target) === 2`, with a fallback to any non-chord tone. " +
+        "This moved ballad-piano-vocal, ethnic-vocal and cinematic-midi (all `intimate` -> mode-restricted) and " +
+        "acoustic-demo's shipped notes only - the note count is identical in all four, because the same approaches are " +
+        "written from admissible notes. The chromatic styles (pop / band / electronic / jazz aesthetics) state no offset " +
+        "preference and no mode restriction, so pop-full, rock-full, dance-full and orchestral-midi are byte-identical. " +
+        "(2) Groove without a brief (R-1b P1-3): jazz-full is the only case whose *plan* changed. Its 24 chords are a " +
+        "ii-V vocabulary with sevenths, which `inferStyleFromSong` reads as a jazz standard, and a jazz standard forbids " +
+        "`four_on_floor`; the map's tempo band (132 BPM, no measured syncopation) used to answer `four_on_floor`. The " +
+        "measured rhythm is not swung either, so the plan writes `steady_pulse` and records why in " +
+        "`styleDecisions.grooveReason` - 16 fewer composed notes (988 -> 972), all of them kit. That new bass " +
+        "line then wrote two approach notes that are the major third of the minor chord they sound over (an E " +
+        "natural over Cm7, which B-05c's harmony critic grades `major`); `approachToneChoice` now refuses that " +
+        "note in every style, chromatic idioms included, which is the second thing that moved jazz-full's digest " +
+        "and takes its harmony score from 78.4 back to 89.2. Note count unchanged (972). " +
+        "RE-PINNED again inside B-18, one cause: a chromatic style now reads the mode as a *preference*. " +
+        "`approachToneChoice` computed the mode's approach set only for a `modeOnly` vocabulary, so the " +
+        "chromatic vocabulary (pop / band / electronic / jazz aesthetics) consulted no mode at all and took the " +
+        "first admissible pitch - a half step from the target - even where the mode already offered a step into " +
+        "it. It now looks inside the mode first and falls back to any non-chord tone only when the mode offers " +
+        "nothing, which is what `allowOutOfMode` was always documented to mean. Measured on jazz-full: the bass " +
+        "approached G through F sharp twice per section with F natural admissible; the harmony dimension grades " +
+        "an out-of-chord-mode approach `minor` in any style, and jazz-full goes 89.2 -> 96.4 with both " +
+        "`approach_tone_wrong_mode` findings gone and `outOfKeyShare` 0. pop-full, rock-full, dance-full and " +
+        "jazz-full moved, note counts identical in all four (the same approaches are written from admissible " +
+        "notes); the mode-restricted cases (ballad-piano-vocal, acoustic-demo, orchestral-midi, ethnic-vocal, " +
+        "cinematic-midi) are byte-identical, and so is every case's section plan - the per-family role rule that " +
+        "went in with this re-pin only fires where a brief named a family's level, which no corpus case does. " +
+        "A future digest change must again name its cause here.",
       cases: current,
     }, null, 2)}\n`);
     return;

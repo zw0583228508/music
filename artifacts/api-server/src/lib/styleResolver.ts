@@ -32,9 +32,12 @@ import type { ProductionBrief, StyleDimension, StyleDimensionName, StyleDimensio
 import {
   STYLE_FIELDS, STYLE_LEVELS, STYLE_PATHS, assembleStyleGrammar, effectiveRank, getStyleValue, isStylePath,
   styleCandidatesFromFingerprint, validateStyleValue,
-  type ProductionAesthetic, type StyleCandidate, type StyleConflict, type StyleGrammar, type StyleLevel, type StylePath, type StyleProvenance, type StyleValue,
+  type FeltPulse, type ProductionAesthetic, type StyleCandidate, type StyleConflict, type StyleGrammar, type StyleLevel, type StylePath, type StyleProvenance, type StyleValue,
 } from "./styleGrammar";
-import { STYLE_KNOWLEDGE_ENTRIES, knowledgeChain, unknownLevels, type MatchSlot, type MatchTerm, type StyleKnowledgeEntry } from "./styleKnowledge";
+import {
+  STYLE_KNOWLEDGE_ENTRIES, feltPulseFor, knowledgeChain, pulseConventionOf, pulseStrategyFor, unknownLevels,
+  type MatchSlot, type MatchTerm, type PulseConvention, type StyleKnowledgeEntry,
+} from "./styleKnowledge";
 import { findLexiconHits } from "./producerIntelligence/vocabulary";
 import { styleCandidatesFromEvidence, type StructuredStyleEvidence, type StyleResearchProvider, type StyleResearchQuery, runStyleResearch } from "./styleGrammarResearch";
 
@@ -67,7 +70,7 @@ export type ResolveStyleInput = {
 };
 
 /** Ambiguities the resolver noticed that no single field records. */
-export type StyleResolutionFlag = "tempo_mismatch" | "no_knowledge_entry" | "generic_knowledge_entry";
+export type StyleResolutionFlag = "tempo_mismatch" | "no_knowledge_entry" | "generic_knowledge_entry" | "pulse_inferred";
 
 export type StyleWalkStep = {
   level: StyleLevel;
@@ -107,7 +110,8 @@ export type StyleQuestion = {
   id: string;
   path: StylePath;
   level: StyleLevel;
-  reason: "unknown" | "contested";
+  /** `inferred` (B-18): a value the style's own convention supplied, which the producer alone can confirm. */
+  reason: "unknown" | "contested" | "inferred";
   prompt: { en: string; he: string };
   options: StyleQuestionOption[];
   informationGain: number;
@@ -399,6 +403,199 @@ export function styleCandidatesFromKnowledge(entry: StyleKnowledgeEntry, entries
 }
 
 // ---------------------------------------------------------------------------
+// Pulse (Brain B-18, R-1b P1-3)
+// ---------------------------------------------------------------------------
+
+/**
+ * The knowledge entry's pulse convention, read against the song's measured
+ * tempo. Three candidates come out of it, all `template`:
+ *
+ *   `groove.feltPulse`          — the pulse the style implies at this tempo;
+ *   `groove.pulseStrategy`      — the strategy the arrangement is built on;
+ *   `groove.forbiddenStrategies`— the readings this style must never be given.
+ *
+ * Nothing here is a measurement: the convention is a generalisation about the
+ * style and the tempo is the analysis's count. The producer's own word
+ * outranks all three, and the felt pulse stays a *question* whenever the count
+ * falls outside the style's own band.
+ */
+export function styleCandidatesFromPulse(
+  entry: StyleKnowledgeEntry,
+  pulse: PulseConvention,
+  bpm: number | null | undefined,
+  /**
+   * A felt pulse the producer stated or answered. It replaces the convention's
+   * reading, and the *strategy* follows it — otherwise answering the question
+   * would move `groove.feltPulse` and leave the plan exactly as it was.
+   */
+  stated?: FeltPulse | null,
+): { candidates: StyleCandidate[]; feltPulse: ReturnType<typeof feltPulseFor>; outsideBand: boolean } {
+  const refs = [`knowledge:${entry.id}/pulse`];
+  const conventionFelt = feltPulseFor(pulse, bpm);
+  const felt = stated ?? conventionFelt;
+  // The band is still the reason the question was worth asking, even when the
+  // producer's own answer is now the pulse.
+  const outsideBand = conventionFelt !== null && conventionFelt !== "as_written";
+  const strategy = felt === "half_time" ? (pulse.halfTimeStrategy ?? "half_time_feel") : pulse.strategy;
+  const candidates: StyleCandidate[] = [
+    {
+      path: "groove.pulseStrategy", value: strategy,
+      // A strategy read off a tempo the style does not own is a weaker claim;
+      // one the producer's own answer settled is as strong as his word.
+      confidence: stated ? 0.95 : outsideBand ? pulse.confidence * 0.85 : pulse.confidence,
+      provenance: stated ? "brief" : "template",
+      sourceRefs: stated ? [...refs, "answer:style:groove.feltPulse"] : refs,
+      rationale: stated
+        ? `the producer feels the pulse ${stated}: ${entry.id} is arranged on ${strategy}`
+        : `${entry.id}: ${pulse.why}`,
+    },
+  ];
+  if (pulse.never.length) {
+    candidates.push({
+      path: "groove.forbiddenStrategies", value: [...pulse.never],
+      confidence: pulse.confidence, provenance: "template", sourceRefs: refs,
+      rationale: `${entry.id} is never read as ${pulse.never.join(" / ")}`,
+    });
+  }
+  if (conventionFelt && !stated) {
+    candidates.push({
+      path: "groove.feltPulse", value: conventionFelt,
+      confidence: outsideBand ? pulse.confidence : pulse.confidence * 0.8,
+      provenance: "template", sourceRefs: refs,
+      rationale: outsideBand
+        ? `${Math.round(bpm!)} BPM is outside ${entry.id}'s written band ${pulse.writtenBpm.min}-${pulse.writtenBpm.max}: felt ${conventionFelt}`
+        : `${Math.round(bpm!)} BPM is inside ${entry.id}'s written band: the count is the pulse`,
+    });
+  }
+  return { candidates, feltPulse: felt, outsideBand };
+}
+
+// ---------------------------------------------------------------------------
+// Style from the song itself (Brain B-18) — the no-brief case
+// ---------------------------------------------------------------------------
+
+export type SongHarmonyEvidence = {
+  /** Chord symbols in order, as the analysis spelled them. */
+  symbols: readonly string[];
+  /** Chord changes per bar over the song. */
+  chordsPerBar: number | null;
+  /** Share of chords beyond a triad, 0..1. */
+  extensionShare: number | null;
+  /** Share of root motion by fourth or fifth, 0..1. */
+  functionalMotion: number | null;
+  /** The key the analysis named ("C minor"), or null. */
+  key: string | null;
+  tempoBpm: number | null;
+  /**
+   * True when something in the source actually plays a beat: the rhythm group
+   * was detected *and* a drum or percussion family is in the palette. Without
+   * it the analysis's tempo is a count over a sung line, not a groove — which
+   * is exactly the owner's song (`rhythm: not_available`, one `mix` stem,
+   * 130.43 BPM).
+   */
+  hasRhythmEvidence: boolean;
+};
+
+export type SongStyleInference = {
+  status: "inferred" | "unknown";
+  /** Knowledge entries the song's own vocabulary supports, best first. */
+  candidates: Array<{ entryId: string; confidence: number; why: string }>;
+  /** The strategy those candidates agree on, or null when they do not. */
+  strategy: { value: StyleCandidate["value"]; confidence: number; why: string } | null;
+  /** Strategies every supported candidate forbids. */
+  forbidden: string[];
+  /** What the inference could and could not read, in one line each. */
+  notes: string[];
+};
+
+const MINOR_KEY = /\bmin(or)?\b|\bm$/i;
+
+/**
+ * What the song's own chord vocabulary and harmonic rhythm say about its
+ * style — the no-brief case (R-1b §1: "no-brief run (the common case):
+ * `groove four_on_floor` from the map heuristic — kick on every beat in all
+ * three choruses of a chassidic ballad").
+ *
+ * Three readings, each of which a musician would defend from the page alone,
+ * and `unknown` when none of them holds. Nothing here claims a *tradition*:
+ * a triadic minor song with a slow harmonic rhythm is a ballad-shaped song,
+ * and which world it belongs to is a question for the producer, not an
+ * inference from four chords.
+ */
+export function inferStyleFromSong(evidence: SongHarmonyEvidence): SongStyleInference {
+  const notes: string[] = [];
+  const candidates: SongStyleInference["candidates"] = [];
+  const symbols = evidence.symbols.filter((s) => s && s.trim());
+  if (symbols.length < 4) {
+    return {
+      status: "unknown", candidates: [], strategy: null, forbidden: [],
+      notes: [`only ${symbols.length} chord(s): too little vocabulary to read a style from`],
+    };
+  }
+  const chordsPerBar = evidence.chordsPerBar;
+  const extensionShare = evidence.extensionShare;
+  const functional = evidence.functionalMotion;
+  const minor = !!evidence.key && MINOR_KEY.test(evidence.key);
+  // The seventh / extension vocabulary, read off the symbols when the map did
+  // not measure it (the analyzer's own vocabulary is thin — B-09's caveat).
+  const coloured = symbols.filter((s) => /(maj7|m7|min7|7|9|11|13|add|sus|dim|aug|ø|°)/i.test(s)).length / symbols.length;
+  const share = extensionShare ?? coloured;
+
+  if (share >= 0.4 && (functional ?? 0) >= 0.4) {
+    candidates.push({
+      entryId: "jazz_standard",
+      confidence: Math.min(0.7, 0.35 + share * 0.5),
+      why: `${Math.round(share * 100)}% of the chords go beyond a triad and ${Math.round((functional ?? 0) * 100)}% of the root motion is by fourth or fifth: a ii-V vocabulary, not a pop one`,
+    });
+  }
+  // The ballad reading needs two things, not one. A slow harmonic rhythm over
+  // plain triads is half of it; the other half is that **nothing in the source
+  // plays a beat**. A band record can sit on one chord a bar and still be a
+  // band record — it is the absence of any rhythm section, with a tempo the
+  // analysis counted off a sung line, that says "slow sung song".
+  if (chordsPerBar !== null && chordsPerBar <= 1.2 && share < 0.35 && !evidence.hasRhythmEvidence) {
+    candidates.push({
+      entryId: "ballad",
+      confidence: minor ? 0.55 : 0.45,
+      why: `${chordsPerBar.toFixed(2)} chord changes a bar over plain triads${minor ? " in a minor key" : ""} and no rhythm section in the source: one or two chords under a long phrase, the harmonic rhythm of a slow sung song`,
+    });
+  }
+  if (chordsPerBar !== null && chordsPerBar >= 1.8 && share < 0.35 && evidence.hasRhythmEvidence) {
+    candidates.push({
+      entryId: "pop",
+      confidence: 0.4,
+      why: `${chordsPerBar.toFixed(2)} chord changes a bar over plain triads with a rhythm section playing: a song that moves, not a ballad`,
+    });
+  }
+  if (!candidates.length) {
+    notes.push(
+      `chord vocabulary ${Math.round(share * 100)}% beyond triads, ${chordsPerBar === null ? "unknown" : chordsPerBar.toFixed(2)} changes a bar, ${evidence.hasRhythmEvidence ? "a rhythm section is playing" : "no rhythm section"}: no reading this evidence supports`,
+    );
+    return { status: "unknown", candidates: [], strategy: null, forbidden: [], notes };
+  }
+  candidates.sort((a, b) => b.confidence - a.confidence);
+  const entries = candidates
+    .map((c) => STYLE_KNOWLEDGE_ENTRIES.find((e) => e.id === c.entryId))
+    .filter((e): e is StyleKnowledgeEntry => !!e);
+  const pulses = entries
+    .map((e) => ({ entry: e, pulse: pulseConventionOf(e, STYLE_KNOWLEDGE_ENTRIES) }))
+    .filter((p): p is { entry: StyleKnowledgeEntry; pulse: PulseConvention } => !!p.pulse);
+  const forbidden = pulses.length
+    ? [...new Set(pulses.flatMap((p) => p.pulse.never))].filter((s) => pulses.every((p) => p.pulse.never.includes(s)))
+    : [];
+  const best = pulses[0] ?? null;
+  const strategy = best
+    ? {
+      value: pulseStrategyFor(best.pulse, evidence.tempoBpm),
+      confidence: Math.min(candidates[0].confidence, best.pulse.confidence),
+      why: `${candidates[0].why} → ${best.entry.id}: ${best.pulse.why}`,
+    }
+    : null;
+  notes.push(`read from ${symbols.length} chords${evidence.key ? ` in ${evidence.key}` : ""}; nothing here names a tradition — that stays a question`);
+  return { status: "inferred", candidates, strategy, forbidden, notes };
+}
+
+// ---------------------------------------------------------------------------
 // Resolution
 // ---------------------------------------------------------------------------
 
@@ -442,10 +639,26 @@ export function resolveStyle(input: ResolveStyleInput = {}): StyleResolution {
 
   const ranked = rankKnowledge(terms, entries);
   const chosen = ranked[0] ? entries.find((e) => e.id === ranked[0].id) ?? null : null;
+  // B-18: the entry's pulse convention, read against the song's measured tempo.
+  let pulseOutsideBand = false;
   if (chosen) {
     candidates.push(...styleCandidatesFromKnowledge(chosen, entries));
     candidates.push({ path: "identity.knowledgeEntry", value: chosen.id, confidence: Math.min(0.99, 0.5 + ranked[0].score * 0.1), provenance: "template", sourceRefs: [`knowledge:${chosen.id}`], rationale: `matched on ${terms.map(termKey).join(", ")}` });
     sources.push(`knowledge:${chosen.id}`);
+    const pulse = pulseConventionOf(chosen, entries);
+    if (pulse) {
+      // A felt pulse the producer answered replaces the convention's reading —
+      // and takes the arrangement's strategy with it.
+      const answered = (input.answers ?? []).find((a) => a.path === "groove.feltPulse");
+      const statedPulse = answered && !validateStyleValue("groove.feltPulse", answered.value)
+        ? (answered.value as "as_written" | "half_time" | "double_time")
+        : null;
+      const fromPulse = styleCandidatesFromPulse(chosen, pulse, input.song?.tempoBpm ?? null, statedPulse);
+      candidates.push(...fromPulse.candidates);
+      pulseOutsideBand = fromPulse.outsideBand;
+    } else {
+      omitted.push(`pulse: ${chosen.id} states no pulse convention — the felt pulse stays unknown`);
+    }
   } else if (terms.length) {
     omitted.push(`knowledge: no entry matches ${terms.map(termKey).join(", ")} — the style stays what the brief said and nothing more`);
   }
@@ -474,7 +687,13 @@ export function resolveStyle(input: ResolveStyleInput = {}): StyleResolution {
 
   const grammar = assembleStyleGrammar(candidates, { sources, fingerprint: input.fingerprint ?? null, omitted });
   const flags: StyleResolutionFlag[] = [];
-  if (tempoMismatch(grammar, input)) flags.push("tempo_mismatch");
+  // B-18: the pulse is still contested when the count falls outside the style's
+  // own written band — the convention gives the plan a musical default, and the
+  // producer is still asked, because only he can say what he feels.
+  const feltValue = getStyleValue<string>(grammar, "groove.feltPulse");
+  const feltStated = feltValue?.provenance === "brief";
+  if (pulseOutsideBand && !feltStated) flags.push("pulse_inferred");
+  if (tempoMismatch(grammar, input) || (pulseOutsideBand && !feltStated)) flags.push("tempo_mismatch");
   if (!chosen) flags.push("no_knowledge_entry");
   else if (entries.some((e) => e.extends === chosen.id)) flags.push("generic_knowledge_entry");
   const walk = walkOf(grammar, input);
@@ -562,7 +781,10 @@ const labelOf = (value: unknown): { en: string; he: string } => {
 /** The planner-level effect of a value, in one line (for the option's `changes`). */
 function projectedEffect(path: StylePath, value: unknown): string {
   switch (path) {
-    case "groove.feltPulse": return value === "half_time" ? "GlobalArrangementPlan.grooveStrategy → half_time_feel" : "grooveStrategy follows groove.family";
+    case "groove.feltPulse": return value === "half_time"
+      ? "GlobalArrangementPlan.grooveStrategy → half_time_feel (the kit plays the felt pulse, not the counted one)"
+      : "grooveStrategy follows the style's pulse strategy (groove.pulseStrategy), else groove.family";
+    case "groove.pulseStrategy": return `GlobalArrangementPlan.grooveStrategy → ${String(value)}`;
     case "groove.family": return `GlobalArrangementPlan.grooveStrategy → ${grooveStrategyOfFamily(String(value))}; StyleSpec.grammar.vocabulary.groove`;
     case "sound.aesthetic": return `GlobalArrangementPlan.productionAesthetic → ${String(value)}`;
     case "arrangement.globalDynamic": return `every section ${value === "low" ? "-1" : value === "high" ? "+1" : "±0"} marking (briefToPlanner.globalDynamicSteps)`;
@@ -660,14 +882,22 @@ export function styleQuestions(resolution: Pick<StyleResolution, "grammar" | "kn
     if (!spec.question || !spec.consumers.length) continue;
     const current = getStyleValue(grammar, path);
     const conflict = conflicts.get(path);
-    if (current && !conflict) continue;
+    // B-18: an *inferred* felt pulse is a value and still a question. The
+    // style's convention gives the plan a musical default at a tempo the style
+    // does not own (an intimate ballad counted at 130); only the producer can
+    // say whether he feels 130 or 65, and his answer changes the groove.
+    const inferredPulse = path === "groove.feltPulse" && !!current && current.provenance !== "brief" &&
+      flags.includes("pulse_inferred");
+    if (current && !conflict && !inferredPulse) continue;
     // Two fields are ambiguous only in context: the felt pulse when the
     // measured tempo contradicts the style's felt tempo, and the tradition
     // when no world matched or only a generic form did (a rock brief is not
     // asked which tradition it belongs to).
     if (path === "groove.feltPulse" && !flags.includes("tempo_mismatch")) continue;
     if (path === "identity.tradition" && !current && !flags.includes("no_knowledge_entry") && !flags.includes("generic_knowledge_entry")) continue;
-    const gain = questionGain(path, current, conflict);
+    const gain = inferredPulse
+      ? Math.min(1, 0.4 * spec.consumers.length) * 0.75
+      : questionGain(path, current, conflict);
     if (gain < QUESTION_MIN_GAIN) continue;
     const options = optionsFor(path, current, conflict, resolution, entries);
     if (options.length < 2) continue;
@@ -675,7 +905,7 @@ export function styleQuestions(resolution: Pick<StyleResolution, "grammar" | "kn
       id: `style:${path}`,
       path,
       level: spec.level,
-      reason: current ? "contested" : "unknown",
+      reason: inferredPulse ? "inferred" : current ? "contested" : "unknown",
       prompt: spec.question,
       options,
       informationGain: Number(gain.toFixed(3)),
