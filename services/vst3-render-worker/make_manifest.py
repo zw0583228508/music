@@ -12,6 +12,7 @@ import re
 from pathlib import Path
 
 import host
+import sfz_range
 
 
 def main() -> None:
@@ -32,6 +33,8 @@ def main() -> None:
     parser.add_argument("--gain-trim-db", type=float, help="measured level trim in dB the API applies to this asset's stems (PR-97)")
     parser.add_argument("--keyswitches", help="preset keyswitch table, e.g. legato=0,long=1,short=2 (PR-97; read from the loaded preset)")
     parser.add_argument("--articulation-protocol", choices=("keyswitch", "uacc"), help="how the loaded preset switches articulations (Spitfire default: keyswitch)")
+    parser.add_argument("--key-range", help="lowest,highest MIDI key the asset sounds (B-03); an --sfz asset reads it from its regions unless given")
+    parser.add_argument("--articulations", help="comma-separated articulations the asset offers, e.g. sustain,vibrato or arco,pizzicato")
     parser.add_argument("--append", action="store_true",
                         help="add this asset to an existing manifest's `assets` (keeps the existing default)")
     parser.add_argument("--out", default=".local-vst3-assets/asset-manifest.json")
@@ -89,6 +92,19 @@ def main() -> None:
                 pair.split("=", 1)[0].strip(): int(pair.split("=", 1)[1]) for pair in args.keyswitches.split(",") if "=" in pair
             }
         asset["articulation"] = articulation
+    # B-03: the keys the asset actually sounds. An SFZ library says so itself;
+    # a synth answers every key; anything else is declared or left unverified.
+    if args.key_range:
+        lo, hi = (int(v) for v in args.key_range.split(","))
+        asset["keyRange"] = [lo, hi]
+        asset["keyRangeSource"] = "operator-declared"
+    elif sfz:
+        asset.update(sfz_range.range_hints(sfz))
+    else:
+        asset["keyRange"] = [0, 127]
+        asset["keyRangeSource"] = "synth: a VST3 synthesizer answers every MIDI key (no sample map)"
+    if args.articulations:
+        asset["articulations"] = [a.strip().lower() for a in args.articulations.split(",") if a.strip()]
     out.parent.mkdir(parents=True, exist_ok=True)
     if args.append and out.is_file():
         manifest = json.loads(out.read_text(encoding="utf-8"))

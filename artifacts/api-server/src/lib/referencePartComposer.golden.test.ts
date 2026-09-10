@@ -112,7 +112,9 @@ test("the reference part composer produces byte-identical parts to the golden fi
       recordedAt: "composer digests and shipped-note digests recorded on main 39aad30 before the B-00 composer split, " +
         "orchestration noteCount re-pinned after B-00 D1; RE-PINNED at the B-01 merge (planners v1.1: arc targets, sung-by-default, " +
         "mix/ensemble excluded, operators) - every part request changed, so every digest changed; the split itself was verified " +
-        "byte-identical at 39aad30 -> B-00. A future digest change must again name its cause here.",
+        "byte-identical at 39aad30 -> B-00. RE-PINNED again at the B-03 merge: instrument definitions now come from " +
+        "sourced profiles (ranges, polyphony and leap limits from the GM table, e.g. strings leap 10 -> 24; keys never a kit), " +
+        "which changes the constraints every part is composed under. A future digest change must again name its cause here.",
       cases: current,
     }, null, 2)}\n`);
     return;

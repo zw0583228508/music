@@ -98,6 +98,34 @@ const suites = {
         "track-model-contract.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Arrangement Brain B-03: instruments as instruments — profiles with
+      // sourced ranges / gestures / role suitability, an explicit UNKNOWN
+      // instead of a silent piano, silence as a decision (shouldRest).
+      [
+        "src/lib/instrumentProfile.test.ts",
+        "instrument-profile.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // B-03: the register plan on pitch bands over time (collisions, low-mid
+      // accumulation, registerBoundsFor) on the owner's stored plan.
+      [
+        "src/lib/registerPlan.test.ts",
+        "register-plan.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // PR-06 budgets on the 1.1 engine.
+      [
+        "src/lib/orchestrationBudget.test.ts",
+        "orchestration-budget.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      // PR-24 + B-03: range-aware sound selection (the owner's 79–91 string
+      // part is never routed to the cello ensemble).
+      [
+        "src/lib/soundSelectionBrain.test.ts",
+        "sound-selection-brain.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
     ],
     tests: [
       // Wave Q, Q-02: the read-only style decomposition route.

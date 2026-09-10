@@ -2246,8 +2246,12 @@ export type ControlEvent = {
 
 export type InstrumentDefinition = {
   id: string;
-  /** PR-97: `winds` joins the families - the planner already writes a "winds" part and the Performance Engine already phrases it; the definition no longer falls through to a piano. */
-  family: "keys" | "strings" | "brass" | "winds" | "drums" | "guitar" | "voice" | "synth";
+  /**
+   * B-03: `winds` is a real family (flute/oboe/clarinet/bassoon were pianos
+   * before); `unknown` is the explicit answer for a name no profile knows —
+   * never a silent piano. Callers must handle it (see `profile.status`).
+   */
+  family: "keys" | "strings" | "brass" | "drums" | "guitar" | "voice" | "synth" | "winds" | "unknown";
   playableRange: { min: number; max: number };
   comfortableRange: { min: number; max: number };
   registers: Array<{ name: string; min: number; max: number; character: string }>;
@@ -2261,6 +2265,19 @@ export type InstrumentDefinition = {
   controls: { dynamics: number[]; expression: number[]; sustain?: number; pitchBend: boolean; aftertouch: boolean };
   /** Maps provider-neutral directives onto instrument-specific renderer data. */
   directiveMappings?: InstrumentDirectiveMappings;
+  /**
+   * B-03: which `InstrumentProfile` produced this definition and how the name
+   * was matched. `status: "unknown"` means no profile matched: the ranges are
+   * the full MIDI range (no constraint claimed, none invented) and the caller
+   * must report it rather than compose for a piano. Absent on definitions
+   * stored before B-03.
+   */
+  profile?: {
+    id: string | null;
+    status: "resolved" | "unknown";
+    matchedBy: "exact" | "alias" | "name-word" | "role" | "none";
+    note: string;
+  };
 };
 
 export type AutomationPoint = { parameter: string; time: number; value: number };
@@ -2503,6 +2520,127 @@ export type InstrumentDirectiveMappings = {
   controls?: Record<string, number>;
 };
 
+// ---------------------------------------------------------------------------
+// Instrument profiles (Arrangement Brain B-03). An instrument known as an
+// instrument: range, registers with their character, polyphony, idiomatic
+// gestures per role, role suitability, blend, density tolerance, doubling,
+// breath / bow, transposition. Every number carries its source; nothing is
+// invented to make a pipeline proceed.
+// ---------------------------------------------------------------------------
+
+/** Where a profile value comes from. */
+export type InstrumentProfileSource =
+  /** `instrumentReference.ts` GM_REFERENCE (Wave Q Workstream C; calibrated on 30,570 human windows). */
+  | "gm-reference-table"
+  /** Standard orchestration references (Adler, Rimsky-Korsakov, Piston): register character, section practice. */
+  | "orchestration-reference"
+  /** General MIDI level 1 percussion key map. */
+  | "gm-percussion-key-map"
+  /** The platform's own pre-B-03 definitions and conventions (kept where nothing better is known). */
+  | "platform-convention"
+  /** A sample library's published documentation. */
+  | "library-documentation";
+
+export type SourcedValue<T> = { value: T; source: InstrumentProfileSource; note: string };
+
+export type InstrumentProfileRegister = {
+  name: string;
+  /** Concert-pitch MIDI, inclusive. */
+  range: [number, number];
+  character: string;
+  source: InstrumentProfileSource;
+};
+
+/** One idiomatic thing the instrument does, and the roles it serves. */
+export type InstrumentProfileGesture = {
+  id: string;
+  roles: InstrumentArrangementRole[];
+  /** Simultaneous voices the gesture uses, min..max. */
+  voices: [number, number];
+  density: "sparse" | "medium" | "dense";
+  description: string;
+  source: InstrumentProfileSource;
+};
+
+/** A desk of a section (violins, violas, cellos, basses) for divisi layouts. */
+export type InstrumentProfileDesk = {
+  desk: string;
+  /** The solo/section profile that desk is made of. */
+  profileId: string;
+  voices: number;
+  voicing: "close" | "open" | "line";
+  defaultRange: [number, number];
+  roleRanges: Partial<Record<InstrumentArrangementRole, [number, number]>>;
+  note: string;
+};
+
+export type InstrumentProfile = {
+  id: string;
+  name: string;
+  family: InstrumentDefinition["family"];
+  /** The legacy `InstrumentDefinition.id` this profile produces (a routing contract: the sfizz map matches on it). */
+  definitionId: string;
+  /** GM program whose reference physics the profile reuses; null for kits / unpitched. */
+  gmProgram: number | null;
+  /** Many players: divisi, staggered breathing, independent leaps. */
+  section: boolean;
+  transposition: SourcedValue<{ writtenToSoundingSemitones: number } | null>;
+  range: {
+    absolute: SourcedValue<[number, number]>;
+    comfortable: SourcedValue<[number, number]>;
+  };
+  registers: InstrumentProfileRegister[];
+  /** Where each role sits by default (concert MIDI) before the register plan moves it. */
+  roleRegisters: Partial<Record<InstrumentArrangementRole, SourcedValue<[number, number]>>>;
+  polyphony: SourcedValue<{ maxVoices: number; hands?: number; players: "one" | "section"; divisiMax?: number }>;
+  leap: SourcedValue<{ std: number; ext: number }>;
+  minNoteDuration: SourcedValue<number>;
+  breath: SourcedValue<{ seconds: number } | null>;
+  bow: SourcedValue<{ seconds: number } | null>;
+  /** 0..1 per role; absent roles are unsuited (0). */
+  roleSuitability: Partial<Record<InstrumentArrangementRole, number>>;
+  roleSuitabilitySource: InstrumentProfileSource;
+  gestures: InstrumentProfileGesture[];
+  blend: SourcedValue<{ projection: "low" | "medium" | "high"; blendsWith: string[]; note: string }>;
+  /** 0..1: how much simultaneous activity the sound tolerates before it muddies (1 = carries a full texture alone). */
+  densityTolerance: SourcedValue<number>;
+  doubling: SourcedValue<{ octaveAbove: string[]; unison: string[]; octaveBelow: string[]; avoid: string[] }>;
+  /** 0..1: how freely the register plan may move this instrument. */
+  registerFlexibility: SourcedValue<number>;
+  desks?: InstrumentProfileDesk[];
+  articulations: string[];
+  /** Names (normalised) that resolve to this profile. */
+  aliases: string[];
+};
+
+export type InstrumentResolution =
+  | {
+      status: "resolved";
+      profileId: string;
+      matchedBy: "exact" | "alias" | "name-word" | "role";
+      input: string;
+      role: string;
+      note: string | null;
+    }
+  | {
+      status: "unknown";
+      profileId: null;
+      matchedBy: "none";
+      input: string;
+      role: string;
+      reason: string;
+      /** Profile ids a human might have meant; never applied automatically. */
+      nearest: string[];
+    };
+
+/** D4: silence as a decision, with the convention that asked for it. */
+export type RestDecision = {
+  rest: boolean;
+  reason: string;
+  convention: string | null;
+  confidence: number;
+};
+
 /**
  * Whole-song arrangement direction (PR-04), derived before any section or note
  * is written. Every candidate section is planned against this one plan.
@@ -2704,17 +2842,89 @@ export type RegisterOccupancySpan = {
 };
 
 /**
+ * Register plan (Arrangement Brain B-03): pitch-band occupancy over time. Per
+ * window and per band the planned voices, collisions between independent
+ * close voicings, low-mid accumulation, and the concrete bounds each
+ * instrument must compose within (the resolution, as a register shift, a
+ * trim or a tacet). Bands are concert MIDI: low < C3 (48), low_mid C3–B3,
+ * mid C4–B4, upper_mid C5–B5, high >= C6 (84).
+ */
+export type RegisterBandBounds = Record<RegisterBand, [number, number]>;
+
+export type RegisterPlanDesk = {
+  desk: string;
+  profileId: string;
+  lo: number;
+  hi: number;
+  voices: number;
+  voicing: "close" | "open" | "line";
+};
+
+export type RegisterPlanEntry = {
+  /** Palette instrument / role-assignment name ("keys", "strings", "mix"). */
+  instrument: string;
+  profileId: string;
+  role: InstrumentArrangementRole;
+  voicing: "close" | "open" | "line" | "unpitched";
+  voices: number;
+  /** The profile's default register for the role, before resolution. */
+  target: { lo: number; hi: number };
+  /** What the composer must use; null = tacet in this window (a decision, with the reason). */
+  bounds: { lo: number; hi: number } | null;
+  desks?: RegisterPlanDesk[];
+  /** Semitones the bounds moved from the target (0, ±12); trims are not shifts. */
+  registerShift: number;
+  action: "keep" | "trim" | "octave_up" | "octave_down" | "tacet";
+  bands: RegisterBand[];
+  reason: string;
+};
+
+export type RegisterPlanCollision = {
+  band: RegisterBand;
+  between: [string, string];
+  overlap: [number, number];
+  resolution: string;
+};
+
+export type RegisterPlanWindow = {
+  id: string;
+  sectionName: string;
+  startBar: number;
+  endBar: number;
+  vocal: { status: "detected" | "not_available"; band: RegisterBand | null; range: [number, number] | null };
+  lead: { instrument: string | null; bounds: { lo: number; hi: number } | null };
+  /** Planned voices per band after resolution (fractional by overlap). */
+  occupancy: Record<RegisterBand, number>;
+  closeVoicingsPerBand: Record<RegisterBand, number>;
+  collisions: RegisterPlanCollision[];
+  lowMid: { voices: number; closeVoicings: number; flagged: boolean; note: string };
+  entries: RegisterPlanEntry[];
+};
+
+export type RegisterPlan = {
+  version: "1.0";
+  method: string;
+  bandBounds: RegisterBandBounds;
+  windows: RegisterPlanWindow[];
+  /** Instruments no profile knows: no range was invented for them. */
+  unresolved: Array<{ instrument: string; role: string; reason: string }>;
+};
+
+/**
  * Orchestration Budget Engine (PR-06): per-moment density/attention budgets and
  * a register-occupancy map with overcrowding resolutions, derived from the
- * section/phrase plan and the vocal arrangement-space map.
+ * section/phrase plan and the vocal arrangement-space map. Version 1.1 (B-03)
+ * adds the pitch-band register plan; `instrumentAdjustments[].registerShift`
+ * and `registerOccupancy` are derived from it.
  */
 export type OrchestrationBudgetPlan = {
-  version: "1.0";
+  version: "1.0" | "1.1";
   derivedAt: string;
   inputsDigestSha256: string;
   method: string;
   windows: OrchestrationBudgetWindow[];
   registerOccupancy: RegisterOccupancySpan[];
+  registerPlan?: RegisterPlan;
 };
 
 export type TransitionDevice =
@@ -2983,6 +3193,19 @@ export type SoundCatalogueEntry = {
   roles?: string[];
   /** Operator-declared character words ("analog", "warm", "granular", "acoustic"). */
   character?: string[];
+  /**
+   * B-03: the keys the asset actually sounds, inclusive MIDI (from its SFZ
+   * regions, the worker's known-library table, or a synth's full range). A
+   * note outside it renders silence; absent means the range is unverified.
+   */
+  keyRange?: [number, number];
+  /** Keys backed by their own samples (pitch_keycenter span); outside it the asset stretches a neighbour. */
+  sampledRange?: [number, number];
+  /** Kits: the exact keys with a sample. */
+  mappedKeys?: number[];
+  velocityLayers?: number;
+  articulations?: string[];
+  keyRangeSource?: string;
 };
 
 export type SoundSelectionCandidate = {

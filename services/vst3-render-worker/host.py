@@ -558,11 +558,53 @@ def verify_asset_manifest(manifest: dict) -> list[str]:
     return problems
 
 
+RANGE_HINT_FIELDS = ("keyRange", "sampledRange", "mappedKeys", "velocityLayers", "articulations", "keyRangeSource")
+_KNOWN_RANGES_PATH = Path(__file__).resolve().parent / "known_asset_ranges.json"
+_known_ranges_cache: dict | None = None
+
+
+def known_asset_ranges() -> dict:
+    """Ranges of the open libraries this worker is known to host, keyed by the
+    SFZ file's SHA-256 (content-addressed: a different file is a different
+    instrument). Read from the SFZ files with `sfz_range.py` (B-03) so a
+    manifest written before ranges existed still publishes them."""
+    global _known_ranges_cache
+    if _known_ranges_cache is None:
+        try:
+            _known_ranges_cache = json.loads(_KNOWN_RANGES_PATH.read_text(encoding="utf-8")).get("bySfzSha256", {})
+        except (OSError, ValueError):
+            _known_ranges_cache = {}
+    return _known_ranges_cache
+
+
+def asset_range_hints(asset: dict) -> dict:
+    """The playable-range hints for an asset: what the manifest declares
+    first (`keyRange` etc., written by make_manifest / annotate_manifest), else
+    the known-library table by SFZ digest, else the synth convention (a VST3
+    synth with no sample map answers every key). Never a guess about a sample
+    library whose file is unknown: that asset carries no range and the API
+    scores it below one that declares a fitting range."""
+    declared = {field: asset[field] for field in RANGE_HINT_FIELDS if field in asset}
+    if declared.get("keyRange") is not None or declared.get("mappedKeys") is not None:
+        return declared
+    sfz_sha = asset.get("sfzSha256")
+    if sfz_sha:
+        known = known_asset_ranges().get(sfz_sha.lower())
+        if known:
+            return {**declared, **{field: known[field] for field in RANGE_HINT_FIELDS if field in known}}
+        return declared
+    if not asset.get("sfzPath"):
+        return {**declared, "keyRange": [0, 127], "keyRangeSource": "synth: a VST3 synthesizer answers every MIDI key (no sample map)"}
+    return declared
+
+
 def asset_public_fields(asset: dict) -> dict:
     """What leaves the worker: identity and licence evidence, never paths.
     Routing hints (`families`, `roles`) and the operator's `character` words
     are informational; the routing and sound-selection decisions are the
-    API's."""
+    API's. B-03: the playable-range hints (`keyRange`, `sampledRange`,
+    `mappedKeys`, `velocityLayers`, `articulations`, `keyRangeSource`) travel
+    too, so the API can refuse an asset that cannot sound a part."""
     public = {key: asset[key] for key in ("id", "identity", "sha256", "licenseOwner", "licenseReference", "rendererIdentity", "rendererSha256")}
     # PR-97: `patches` (installed presets), `gainTrimDb` (a measured level trim the
     # API applies to the stem) and `articulation` (protocol + keyswitch table of
@@ -570,6 +612,7 @@ def asset_public_fields(asset: dict) -> dict:
     for hint in ("name", "manufacturer", "families", "roles", "character", "library", "sfzSha256", "patches", "gainTrimDb", "articulation"):
         if hint in asset:
             public[hint] = asset[hint]
+    public.update(asset_range_hints(asset))
     return public
 
 
