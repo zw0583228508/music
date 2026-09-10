@@ -1,0 +1,66 @@
+{
+  "id": "chord-sheet-correction-live",
+  "pr": "PR-98",
+  "recordedAt": "2026-09-10T04:05:00+03:00",
+  "question": "Can a real recording go from 'analysed but untrustworthy' to a Song Model the Arrangement Brain may trust, using the platform's own engines and one producer correction?",
+  "song": {
+    "title": "רחם נא (owner's own recording, Dropbox Cubase projects folder)",
+    "projectId": "ab1833c8-0515-4521-bbc1-323866b7503a",
+    "sourceId": "e3fa24b2-dbcc-43d1-b0b5-d6497b1745b5",
+    "durationSeconds": 257.94,
+    "format": "mp3 44.1 kHz stereo 128 kb/s, 4,127,049 bytes"
+  },
+  "songModelV1_platformAlone": {
+    "validation": "flagged (CONTESTED_KEY)",
+    "tempo": { "bpm": 64.8, "status": "low_confidence", "confidence": 0.374, "provider": "LOCAL_SIGNAL_ANALYZER_V1" },
+    "meter": { "value": "4/4 assumed", "status": "low_confidence", "confidence": 0.3 },
+    "key": { "status": "contested", "candidates": ["C major (LOCAL_SIGNAL_ANALYZER_V1)", "C minor (TRANSCRIPTION_KEY_V1)"], "relation": "parallel" },
+    "chords": 0,
+    "melody": "not_available (1,680 full-mix transcription events below the canonical melody threshold)",
+    "sections": "7, low_confidence, cut on the 64.8 BPM grid",
+    "trustReport": { "verdict": "needs_confirmation", "fieldsToConfirm": ["tempo", "meter", "key", "sections"] }
+  },
+  "engines": {
+    "rhythm": {
+      "worker": "rhythm-tournament-worker (PR-84), multipart /analyze, Modal 303 poll redirect followed",
+      "readings": {
+        "MADMOM": { "tempoBpm": 130.43, "meter": "4/4", "meterAgreement": 1.0, "downbeatsFirst": [3.71, 5.56, 7.41] },
+        "BEATNET": { "tempoBpm": 130.43, "meter": "4/4", "meterAgreement": 1.0 },
+        "LIBROSA": { "tempoBpm": 129.2 },
+        "BEAT_THIS": { "tempoBpm": 65.22, "meter": "2/4", "note": "the half level" },
+        "ALL_IN_ONE": "unavailable (module missing in the worker)"
+      },
+      "consensus": "130.43 BPM, 4/4; the platform's 64.8 is the half level again (same failure family as PR-84/89 recorded)"
+    },
+    "harmony": {
+      "worker": "harmony-acr-worker (PR-85) modal run ::batch on a 22.05 kHz mono decode, 96 s",
+      "key": { "KEY_KRUMHANSL": "C minor 0.69 (margin 0.10)", "BTC": "C:min dominates (118.6 s) with F:min (92.0 s), G, D#, G:min" },
+      "chordSheet": { "source": "BTC_MAJMIN", "segments": 107, "afterMergeAndSilenceDrop": 92, "shortSegmentAbsorbedBelowSeconds": 0.35 }
+    }
+  },
+  "corrections": [
+    { "version": 2, "fields": ["bpm", "key", "meter", "chords"], "bpm": 130.43, "key": "C minor", "meter": "4/4", "chords": 92, "validation": "accepted", "romanFirst": ["i", "bVI", "i", "iv", "i", "bVII", "iv", "V"], "barsAfterRegrid": 141, "trust": { "verdict": "needs_confirmation", "fieldsToConfirm": ["sections"] } },
+    { "version": 3, "fields": ["sections"], "sections": ["Intro 1-2", "Verse 1 3-24", "Verse 2 25-40", "Chorus 41-56", "Chorus 2 57-72", "Verse 3 73-96", "Bridge 97-112", "Chorus 3 113-128", "Outro 129-141"], "how": "placed by the lead from the bar-by-bar roman-numeral layout and the energy curve on the corrected grid", "validation": "accepted", "trust": { "verdict": "trusted_automatically", "fieldsToConfirm": [] } }
+  ],
+  "firstArrangementAttempt": {
+    "arrangementId": "6550e647-2f85-4b6d-bd87-f03a0f334125",
+    "generation": "ARRANGEMENT_ORCHESTRATOR 1.0, 3 candidates, REFERENCE_PART_COMPOSER_V1; A conservative selected (score 0.74, symbolic 69/100), C/E diversity_rejected",
+    "palette": "drums GROOVE (1,867 notes) + bass + ensemble TRANSITION (24 notes) - no keys, strings or pad; not the brief",
+    "mixRevision": "MUSIC_ENGINE@1.0 audition, -14.18 LUFS, TP -1.0, 0 findings, approved",
+    "export": "FAILED at rendering 25 %: 'Export job lease was lost' - the synchronous render blocked the 30 s heartbeat timer past the 2-minute lease",
+    "fix": "PRODUCTION_JOB_LEASE_MS knob (default unchanged); the proper fix is an off-thread export render (as PR-72 did for listening renders) - not done here"
+  },
+  "secondArrangementAttempt": {
+    "plannerHints": {
+      "global": { "paletteAdd": ["keys", "strings", "pads", "percussion"], "paletteRemove": ["drums"], "grooveStrategy": "half_time_feel", "climaxSectionName": "Chorus 3" },
+      "section": { "activeFamilyBias": -0.25 }
+    },
+    "status": "see arrange2.log / the tracker entry"
+  },
+  "honestLimits": [
+    "The chord sheet is BTC's reading, not a human's: 0.786 root accuracy on synthetic audio (PR-85); the lead did not verify the 92 chords by ear.",
+    "Sections were placed by the lead from chord/energy structure - a musical judgement, not a measurement; no structure provider is live.",
+    "Melody remains not_available: the Brain arranges the harmony and form, not around the sung line.",
+    "trusted_automatically here means 'every field confirmed by a producer', which is exactly what happened; it does not mean the analysis was right on its own - v1 was wrong on tempo (half) and contested on key."
+  ]
+}

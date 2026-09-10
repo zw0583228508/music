@@ -5645,6 +5645,45 @@ any of it.
   capture is provenance, not a legal opinion; CC-BY-SA renders inherit
   ShareAlike. Still no open-licence oud, kanun, ney or voice.
 
+- **PR-98** ✅ — `producer-chord-sheet-correction` (the owner uploaded his own
+  recording, "רחם נא", and asked for a simple, beautiful arrangement, exported
+  as audio). What the platform alone produced: tempo **64.8** low-confidence
+  (the half level again), key **contested** C major / C minor, **0 chords**,
+  melody not_available, 7 sections on the wrong grid — `needs_confirmation`
+  on four fields. The Arrangement Brain voices nothing without chords, and
+  the correction endpoint accepted only tempo, key, metre and sections.
+
+  **What changed.** `SongModelCorrectionInput.chords` — a producer's chord
+  sheet in seconds, plain or MIREX symbols — goes through the same versioned
+  correction path: parsed by the platform's symbol parser, roman numerals in
+  the key confirmed in the same correction (or the model's), `N`/unparsable
+  lines dropped never guessed, `fieldStatus.harmony` marked user-supplied,
+  `correctionFields` treats a sheet as always touching harmony. Tests 6
+  (songModelCorrection). Also: `PRODUCTION_JOB_LEASE_MS` — the first export
+  of a 4:18 song **lost its two-minute lease at rendering 25 %** because the
+  synchronous render blocks the 30-second heartbeat timer; the lease length
+  is now an operator knob (default unchanged) until the export render moves
+  off-thread as PR-72 did for listening renders.
+
+  **Proof on the owner's song** (`docs/evidence/chord-sheet-correction-live.json`).
+  PR-84's rhythm worker: MADMOM / BEATNET / LIBROSA **130.4 BPM, 4/4**,
+  BEAT_THIS 65.2 (the half). PR-85's harmony worker: Krumhansl **C minor**
+  0.69, BTC `C:min` 118.6 s / `F:min` 92.0 s / `G`. One PATCH — bpm 130.43,
+  key C minor, 4/4, **92 chords** (i, bVI, iv, bVII, V…) — v2 `accepted`,
+  141 bars; sections placed from the roman-numeral / energy layout — v3
+  `accepted`, and **the first Song Model to reach `trusted_automatically`**
+  (every field producer-confirmed). The first generation then chose a
+  drums + bass + transition palette (not the brief) and its export died on
+  the lease; the second run passes `plannerHints` (keys, strings, pads,
+  light percussion; no drums; half-time feel; climax at the last chorus).
+
+  **Honest limits.** The chord sheet is BTC's reading, not a human's (0.786
+  root accuracy on synthetic audio); sections are the lead's musical
+  judgement; melody is still not_available so the Brain arranges harmony and
+  form, not around the sung line; `trusted_automatically` means every field
+  was confirmed, not that the analysis was right on its own — v1 was wrong
+  on tempo and contested on key. No studio panel enters a chord sheet yet;
+  the export render still runs on the event loop.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
