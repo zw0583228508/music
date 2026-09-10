@@ -1,0 +1,1864 @@
+{
+  "title": "Tier H selection — which PDMX works enter REAL_BENCHMARK_CORPUS, measured (Brain B-08)",
+  "ranAt": "2026-09-10T03:17:23.563Z",
+  "finishedAt": "2026-09-10T03:18:04.483Z",
+  "selectionVersion": "1.0",
+  "pdmx": {
+    "dir": "..\\AI-Music-Production-Platform-main\\.pdmx-data",
+    "subset": "no_license_conflict ∩ our gate (pdmxRefusalReason)",
+    "csvRows": 254077,
+    "admitted": 222856,
+    "multitrackRows": 25414
+  },
+  "method": {
+    "measurement": "measurePdmxWork: one metre per work (metre changes refused), first tempo, bars on the metre grid, parts = (track, program) groups with >= 8 notes, families via ARRANGER_REMI familyOf, total onsets per bar, swing = triplet-band share of off-beat onset phases (>= 24 off-beats)",
+    "attributes": "attributesFromMeasurement: pdmxIngest thresholds (tempo < 76 slow / > 132 fast; notes per bar < 6 sparse / > 16 dense; parts <= 5 small else large; effective pitch classes from the CSV entropy <= 7 simple / <= 9 moderate / else complex; 6/8, 9/8, 12/8 compound; swing ratio >= 0.6 swung; genre families / tags decide non_western); production is 'acoustic' for every score because a score carries no production",
+    "selection": "selectTierH: tournament-anchor works first, then each required value filled to MIN_PER_VALUE in rarest-first order from the scan (stable hash order, genre-labelled 3–8-family 24–128-bar works preferred); nothing synthetic"
+  },
+  "seeds": [
+    {
+      "file": "docs/evidence/model-tournament-live.json",
+      "works": 12,
+      "kept": 7
+    },
+    {
+      "file": "docs/evidence/listening-benchmark-v2-report.json",
+      "works": 12,
+      "kept": 0
+    },
+    {
+      "file": "docs/evidence/model-tournament-global-live.json",
+      "works": 50,
+      "kept": 47
+    }
+  ],
+  "scan": {
+    "works": 25414,
+    "candidates": 7633,
+    "refusals": {
+      "not multitrack: fewer than two pitched families and no drums": 7673,
+      "N bars: shorter than a benchmark task": 593,
+      "metre changes (N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 689,
+      "metre changes (N/N, N/N); bar numbers would not mean one thing": 5242,
+      "metre changes (N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 349,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 36,
+      "metre changes (N/N, N/N, N/N); bar numbers would not mean one thing": 2523,
+      "N bars: longer than the tournament task builder handles in one form": 114,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 125,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 177,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 69,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 71,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 2,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 18,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 4,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 1,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 29,
+      "no usable tempo": 2,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 1,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 6,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 2,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 2,
+      "MIDI not on disk under the rights subset": 19,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 10,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 5,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 7,
+      "no notes": 2,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 2,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 5,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 1,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 1,
+      "metre changes (N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N, N/N); bar numbers would not mean one thing": 1
+    },
+    "poolCoverage": [
+      {
+        "dimension": "inputType",
+        "counts": {
+          "midi": 7633
+        },
+        "missing": [
+          "full_song",
+          "piano_vocal",
+          "vocal_only"
+        ]
+      },
+      {
+        "dimension": "tempoBand",
+        "counts": {
+          "medium": 5130,
+          "slow": 985,
+          "fast": 1518
+        },
+        "missing": []
+      },
+      {
+        "dimension": "meter",
+        "counts": {
+          "4/4": 5524,
+          "6/8": 281,
+          "3/4": 719,
+          "2/4": 301,
+          "9/8": 21,
+          "2/2": 325,
+          "4/2": 84,
+          "1/4": 3,
+          "6/4": 49,
+          "3/2": 63,
+          "12/8": 105,
+          "44/32": 1,
+          "2/1": 42,
+          "3/8": 36,
+          "10/8": 2,
+          "7/8": 14,
+          "5/4": 22,
+          "7/16": 1,
+          "13/8": 2,
+          "8/8": 3,
+          "6/16": 1,
+          "8/4": 8,
+          "4/8": 5,
+          "4/1": 1,
+          "16/8": 2,
+          "17/16": 1,
+          "35/16": 1,
+          "6/2": 3,
+          "7/4": 5,
+          "9/4": 1,
+          "29/16": 1,
+          "1/8": 1,
+          "15/8": 1,
+          "1/2": 3,
+          "5/8": 1
+        },
+        "missing": []
+      },
+      {
+        "dimension": "feel",
+        "counts": {
+          "straight": 6919,
+          "compound": 407,
+          "swung": 307
+        },
+        "missing": []
+      },
+      {
+        "dimension": "harmony",
+        "counts": {
+          "moderate": 3718,
+          "simple": 2711,
+          "complex": 1204
+        },
+        "missing": []
+      },
+      {
+        "dimension": "density",
+        "counts": {
+          "moderate": 2210,
+          "dense": 5306,
+          "sparse": 117
+        },
+        "missing": []
+      },
+      {
+        "dimension": "ensemble",
+        "counts": {
+          "small": 3049,
+          "large": 4584
+        },
+        "missing": []
+      },
+      {
+        "dimension": "idiom",
+        "counts": {
+          "western": 7452,
+          "non_western": 181
+        },
+        "missing": []
+      },
+      {
+        "dimension": "production",
+        "counts": {
+          "acoustic": 7633
+        },
+        "missing": [
+          "electronic"
+        ]
+      }
+    ]
+  },
+  "chosen": [
+    {
+      "id": "pdmx-QmaxnwxSTa3JMZNAFwY8j1fzFKYFPZYsWcAiQrNvWd9hRU",
+      "title": "guantanamera",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "non_western",
+        "production": "acoustic",
+        "tradition": "world_traditional"
+      },
+      "measured": {
+        "bars": 103,
+        "tracks": 9,
+        "families": [
+          "bass",
+          "chromatic_perc",
+          "drums",
+          "guitar",
+          "keys"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 120,
+        "tempoChanges": 0,
+        "notesPerBar": 41.23,
+        "swingRatio": 0.0115,
+        "effectivePitchClasses": 7.28
+      },
+      "genre": {
+        "primary": "world_traditional",
+        "families": [
+          "world_traditional"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmNwf6GRbingp8jNGB7BgyPZ8nhWWvLjF1jZzEXUF4LxvQ",
+      "title": "tong hua",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "non_western",
+        "production": "acoustic",
+        "tradition": "world_traditional"
+      },
+      "measured": {
+        "bars": 66,
+        "tracks": 6,
+        "families": [
+          "drums",
+          "keys",
+          "strings",
+          "synth"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 66,
+        "tempoChanges": 0,
+        "notesPerBar": 29.42,
+        "swingRatio": 0.0031,
+        "effectivePitchClasses": 9.7
+      },
+      "genre": {
+        "primary": "world_traditional",
+        "families": [
+          "world_traditional"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-QmassW1LM1SqYqu6jnexbafnq2q5BEwVQiT6w79SrxVCvS",
+      "title": "Procuro Olvidarte",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "non_western",
+        "production": "acoustic",
+        "tradition": "world_traditional"
+      },
+      "measured": {
+        "bars": 43,
+        "tracks": 4,
+        "families": [
+          "brass",
+          "ensemble",
+          "keys"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 75,
+        "tempoChanges": 1,
+        "notesPerBar": 15.3,
+        "swingRatio": 0.2138,
+        "effectivePitchClasses": 7.28
+      },
+      "genre": {
+        "primary": "world_traditional",
+        "families": [
+          "world_traditional"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmacuG15tfzWWXG7SNHuHpXL7RjEMPURsTNnppD6ALETtH",
+      "title": "Christmas Yee in Three",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "fast",
+        "meter": "3/4",
+        "feel": "swung",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 151,
+        "tracks": 7,
+        "families": [
+          "bass",
+          "brass",
+          "drums",
+          "keys",
+          "reed"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 155,
+        "tempoChanges": 0,
+        "notesPerBar": 16.28,
+        "swingRatio": 1,
+        "effectivePitchClasses": 6.9
+      },
+      "genre": {
+        "primary": "jazz",
+        "families": [
+          "jazz"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-QmaogLCs2WhXCuJKogH558zJE51JeNXxQ4C7RejKmwPnev",
+      "title": "For smart living",
+      "admittedBy": "tournament-classical",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "8/8",
+        "feel": "swung",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 81,
+        "tracks": 3,
+        "families": [
+          "brass",
+          "drums",
+          "reed"
+        ],
+        "meter": "8/8",
+        "tempoBpm": 95,
+        "tempoChanges": 0,
+        "notesPerBar": 19.98,
+        "swingRatio": 1,
+        "effectivePitchClasses": 4.45
+      },
+      "genre": {
+        "primary": "unlabelled",
+        "families": [
+          "unlabelled"
+        ],
+        "source": "none"
+      }
+    },
+    {
+      "id": "pdmx-QmaChhKKLYJWXX4nbSyCyNtdEk69GGBQJ6DPA1FcazWyY3",
+      "title": "On the Take",
+      "admittedBy": "b08-csv-scan",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "swung",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 112,
+        "tracks": 11,
+        "families": [
+          "brass",
+          "drums",
+          "keys",
+          "reed",
+          "synth"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 130,
+        "tempoChanges": 0,
+        "notesPerBar": 42.66,
+        "swingRatio": 0.8338,
+        "effectivePitchClasses": 9.38
+      },
+      "genre": {
+        "primary": "blues",
+        "families": [
+          "blues"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-QmbuxgCLicDNZhBAFRUN83FnS13caK5St3DbmRmiTnbyFi",
+      "title": "Viva Cristo Rey",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "6/8",
+        "feel": "compound",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 121,
+        "tracks": 5,
+        "families": [
+          "guitar",
+          "keys",
+          "organ",
+          "reed"
+        ],
+        "meter": "6/8",
+        "tempoBpm": 100,
+        "tempoChanges": 0,
+        "notesPerBar": 55.43,
+        "swingRatio": 0,
+        "effectivePitchClasses": 6.45
+      },
+      "genre": {
+        "primary": "religious_worship",
+        "families": [
+          "religious_worship"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmahFMNjxfieADi4t4iM3nCBgr3L2Jymjm8e2wJjczogPF",
+      "title": "Dont Let Me Go",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "6/8",
+        "feel": "compound",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "non_western",
+        "production": "acoustic",
+        "tradition": "rock"
+      },
+      "measured": {
+        "bars": 130,
+        "tracks": 11,
+        "families": [
+          "bass",
+          "brass",
+          "drums",
+          "guitar",
+          "keys",
+          "pipe",
+          "strings",
+          "synth"
+        ],
+        "meter": "6/8",
+        "tempoBpm": 100,
+        "tempoChanges": 1,
+        "notesPerBar": 51.66,
+        "swingRatio": 0.0621,
+        "effectivePitchClasses": 6.63
+      },
+      "genre": {
+        "primary": "rock",
+        "families": [
+          "rock"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmcyP7UNchU4YMGwNp1KhopxYD6CnkkMe3Fs87XEFXMRuM",
+      "title": "earth angel will you be mine",
+      "admittedBy": "b08-csv-scan",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "6/8",
+        "feel": "compound",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 37,
+        "tracks": 6,
+        "families": [
+          "bass",
+          "drums",
+          "guitar",
+          "keys",
+          "reed"
+        ],
+        "meter": "6/8",
+        "tempoBpm": 100,
+        "tempoChanges": 0,
+        "notesPerBar": 42.68,
+        "swingRatio": null,
+        "effectivePitchClasses": 7.53
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-QmaetaqYGz3UfazAh9AULVNpaxnP62CskUZWfG37g8Q2bW",
+      "title": "time in a bottle",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "fast",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 93,
+        "tracks": 9,
+        "families": [
+          "drums",
+          "ensemble",
+          "guitar",
+          "keys",
+          "strings"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 140,
+        "tempoChanges": 9,
+        "notesPerBar": 47.45,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.41
+      },
+      "genre": {
+        "primary": "folk",
+        "families": [
+          "folk"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmacY5xSh18WXR348MvKWuvzpuAfRqe8ieh6m8gpNQbyNr",
+      "title": "Silent night - Instrumental flute - flugehorn - violin",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "3/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 93,
+        "tracks": 7,
+        "families": [
+          "bass",
+          "brass",
+          "drums",
+          "keys",
+          "pipe",
+          "strings"
+        ],
+        "meter": "3/4",
+        "tempoBpm": 90,
+        "tempoChanges": 0,
+        "notesPerBar": 14.7,
+        "swingRatio": 0.0082,
+        "effectivePitchClasses": 8.19
+      },
+      "genre": {
+        "primary": "film_game",
+        "families": [
+          "film_game",
+          "religious_worship"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmZpW5y91mNNqfY1ofLXkGQDe31eJfr8FR4JWcpT6qapD1",
+      "title": "Symphony No.9 Op.125",
+      "admittedBy": "b08-csv-scan",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "2/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "sparse",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 32,
+        "tracks": 3,
+        "families": [
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "2/4",
+        "tempoBpm": 80,
+        "tempoChanges": 0,
+        "notesPerBar": 5.63,
+        "swingRatio": null,
+        "effectivePitchClasses": 5.9
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmYwCRCydYK2Na6mn5mh9AMMb64BwZv5yx1DpigpyKBtLC",
+      "title": "I Can't Breathe",
+      "admittedBy": "b08-csv-scan",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "sparse",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 64,
+        "tracks": 7,
+        "families": [
+          "drums",
+          "keys",
+          "organ",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 72,
+        "tempoChanges": 1,
+        "notesPerBar": 5.31,
+        "swingRatio": 0,
+        "effectivePitchClasses": 6.98
+      },
+      "genre": {
+        "primary": "film_game",
+        "families": [
+          "film_game"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-Qmf7FdCC3DBZvRLTi39zUniikKvXYdZky7upgtJLUpb9Xa",
+      "title": "Eleven",
+      "admittedBy": "b08-csv-scan",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "sparse",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 49,
+        "tracks": 10,
+        "families": [
+          "bass",
+          "brass",
+          "chromatic_perc",
+          "keys"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 120,
+        "tempoChanges": 0,
+        "notesPerBar": 5.41,
+        "swingRatio": null,
+        "effectivePitchClasses": 5.64
+      },
+      "genre": {
+        "primary": "classical",
+        "families": [
+          "classical"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmWu1GKEdGjxwwV9ePmmSbmUN4y5cmYMpMkXJK2EUxVh1J",
+      "title": "Mamma Mia!",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "fast",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 83,
+        "tracks": 17,
+        "families": [
+          "brass",
+          "drums",
+          "pipe",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 140,
+        "tempoChanges": 0,
+        "notesPerBar": 72.67,
+        "swingRatio": 0.0242,
+        "effectivePitchClasses": 9.04
+      },
+      "genre": {
+        "primary": "musical_theatre",
+        "families": [
+          "musical_theatre"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-QmaPWhAxxRc8s16bjJVeEGEKEvKWKzNqg7W2qakbByRrL4",
+      "title": "Pure Cocaine",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 33,
+        "tracks": 11,
+        "families": [
+          "brass",
+          "pipe",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 60,
+        "tempoChanges": 0,
+        "notesPerBar": 48.33,
+        "swingRatio": 0.0497,
+        "effectivePitchClasses": 6.29
+      },
+      "genre": {
+        "primary": "hiphop",
+        "families": [
+          "hiphop",
+          "wind_band_marching"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmbaPnp5ffQMNGPJh7cF5pTU3ewYpAhJ3i3EfooSny54jW",
+      "title": "Benedictus uit Messe Solonelle",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 57,
+        "tracks": 10,
+        "families": [
+          "ensemble",
+          "keys",
+          "organ"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 84,
+        "tempoChanges": 1,
+        "notesPerBar": 16.89,
+        "swingRatio": 0,
+        "effectivePitchClasses": 9.75
+      },
+      "genre": {
+        "primary": "religious_worship",
+        "families": [
+          "religious_worship"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmaCJHoZ3Un2y3r9vWYYAuxFjNgQSmYcLvmztgFDh4SK6E",
+      "title": "country roads",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 82,
+        "tracks": 10,
+        "families": [
+          "brass",
+          "chromatic_perc",
+          "drums",
+          "ethnic",
+          "keys",
+          "organ",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 100,
+        "tempoChanges": 23,
+        "notesPerBar": 54.05,
+        "swingRatio": 0,
+        "effectivePitchClasses": 7.53
+      },
+      "genre": {
+        "primary": "pop",
+        "families": [
+          "pop"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmabLFxpikYVjcZXgubR9kVaJN6ctKXYSYnWYMpBsWubN5",
+      "title": "Nipsey Hussle x Victory Lap",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 26,
+        "tracks": 10,
+        "families": [
+          "brass",
+          "pipe",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 85,
+        "tempoChanges": 0,
+        "notesPerBar": 48.35,
+        "swingRatio": 0.0244,
+        "effectivePitchClasses": 6.27
+      },
+      "genre": {
+        "primary": "wind_band_marching",
+        "families": [
+          "wind_band_marching"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-Qma2qXH7BTNA9mf19TPCYLmsP5sZBDxJ3SzdNi7oQVdqyT",
+      "title": "let me down slowly",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "slow",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 52,
+        "tracks": 7,
+        "families": [
+          "bass",
+          "drums",
+          "guitar",
+          "keys",
+          "pipe"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 75,
+        "tempoChanges": 1,
+        "notesPerBar": 41.33,
+        "swingRatio": 0.0077,
+        "effectivePitchClasses": 6.91
+      },
+      "genre": {
+        "primary": "pop",
+        "families": [
+          "pop",
+          "rnb_funk_soul"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmbqqfxB2FW85LZJLL7HwSxbaSSMWC4oqioxXfKF7GFhzQ",
+      "title": "overnight celebrtiy",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "fast",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 43,
+        "tracks": 5,
+        "families": [
+          "bass",
+          "drums",
+          "ensemble",
+          "ethnic",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 180,
+        "tempoChanges": 2,
+        "notesPerBar": 27.21,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.98
+      },
+      "genre": {
+        "primary": "hiphop",
+        "families": [
+          "hiphop"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmanYWjTEPXebCvngzAdXN3vojzCtRmLKyLGMov4U82HwX",
+      "title": "Gangsta's Paradise",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 36,
+        "tracks": 11,
+        "families": [
+          "brass",
+          "pipe",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 80,
+        "tempoChanges": 0,
+        "notesPerBar": 41.83,
+        "swingRatio": 0.0208,
+        "effectivePitchClasses": 6.14
+      },
+      "genre": {
+        "primary": "hiphop",
+        "families": [
+          "hiphop"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmeuGpDFNwqhaKhtUNuCQdcxiq2TwT1S1f3Rr2H685XJXj",
+      "title": "i got you babe",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "12/8",
+        "feel": "compound",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 39,
+        "tracks": 7,
+        "families": [
+          "brass",
+          "guitar",
+          "keys",
+          "organ",
+          "pipe",
+          "reed"
+        ],
+        "meter": "12/8",
+        "tempoBpm": 120,
+        "tempoChanges": 0,
+        "notesPerBar": 40.44,
+        "swingRatio": null,
+        "effectivePitchClasses": 8.66
+      },
+      "genre": {
+        "primary": "reggae_ska",
+        "families": [
+          "reggae_ska"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-Qma4X9oCvTBVazSqVsqZ7j8YLH5ouhEnzkEQRPDgM14Gsa",
+      "title": "cold duck time",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 30,
+        "tracks": 3,
+        "families": [
+          "bass",
+          "brass",
+          "keys"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 124,
+        "tempoChanges": 3,
+        "notesPerBar": 9.67,
+        "swingRatio": 0,
+        "effectivePitchClasses": 5.95
+      },
+      "genre": {
+        "primary": "jazz",
+        "families": [
+          "jazz",
+          "rnb_funk_soul"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-QmdRTNCGVUhi7wa7cGC1vynEHxbo5rupUehZ4GQuJqkH4N",
+      "title": "Counterpoint/Pie Jesu",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "moderate",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 29,
+        "tracks": 5,
+        "families": [
+          "brass",
+          "ensemble",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 76,
+        "tempoChanges": 0,
+        "notesPerBar": 10.79,
+        "swingRatio": 0.0455,
+        "effectivePitchClasses": 7.4
+      },
+      "genre": {
+        "primary": "musical_theatre",
+        "families": [
+          "musical_theatre"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-Qma1c7LuqVV8Jyw1GmBnwdqKZPeoNTahvqbNkYZqQhMwN2",
+      "title": "sos",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 64,
+        "tracks": 9,
+        "families": [
+          "bass",
+          "keys",
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 100,
+        "tempoChanges": 1,
+        "notesPerBar": 40.02,
+        "swingRatio": 0,
+        "effectivePitchClasses": 6.27
+      },
+      "genre": {
+        "primary": "electronic",
+        "families": [
+          "electronic"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmarK8WuALDnUkYx44Nrk5Knx4bMsmh1m8Jduyz3R1V9PD",
+      "title": "them changes",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "fast",
+        "meter": "2/2",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 124,
+        "tracks": 8,
+        "families": [
+          "bass",
+          "drums",
+          "ensemble",
+          "guitar",
+          "keys"
+        ],
+        "meter": "2/2",
+        "tempoBpm": 160,
+        "tempoChanges": 0,
+        "notesPerBar": 35.52,
+        "swingRatio": 0.0011,
+        "effectivePitchClasses": 8.31
+      },
+      "genre": {
+        "primary": "rnb_funk_soul",
+        "families": [
+          "rnb_funk_soul"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmaxCMVTUnP27mT65k76NYKsVy9Eev7nAYskQ17mcidUkS",
+      "title": "Arthur S. Sullivan: Christ is Risen!",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 76,
+        "tracks": 6,
+        "families": [
+          "brass",
+          "ensemble",
+          "keys",
+          "organ"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 115,
+        "tempoChanges": 6,
+        "notesPerBar": 34.37,
+        "swingRatio": 0,
+        "effectivePitchClasses": 7.66
+      },
+      "genre": {
+        "primary": "religious_worship",
+        "families": [
+          "religious_worship"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-QmVCMwJFL9Q67AL1TyeBGTLbu2a5uHnpiFivsBr339Tymr",
+      "title": "build me up buttercup",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 79,
+        "tracks": 25,
+        "families": [
+          "brass",
+          "drums",
+          "pipe",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 128,
+        "tempoChanges": 0,
+        "notesPerBar": 73.56,
+        "swingRatio": 0.0652,
+        "effectivePitchClasses": 7.09
+      },
+      "genre": {
+        "primary": "rnb_funk_soul",
+        "families": [
+          "rnb_funk_soul"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmdR8JT7qjszfGL9ivGsbCKx9UgnNvfiPAWkKwBhdPJs2L",
+      "title": "Blues bossa sax+guitare+accompagnement",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 36,
+        "tracks": 8,
+        "families": [
+          "bass",
+          "drums",
+          "guitar",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 120,
+        "tempoChanges": 1,
+        "notesPerBar": 27.64,
+        "swingRatio": 0.1585,
+        "effectivePitchClasses": 7.83
+      },
+      "genre": {
+        "primary": "blues",
+        "families": [
+          "blues",
+          "latin"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-Qma3KDfPJTb2ybD5UBqm5JAuSzYoBaGRqN8gogjMF53J9w",
+      "title": "sandstorm",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 65,
+        "tracks": 20,
+        "families": [
+          "bass",
+          "brass",
+          "drums",
+          "reed",
+          "strings"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 125,
+        "tempoChanges": 1,
+        "notesPerBar": 54.45,
+        "swingRatio": 0.0009,
+        "effectivePitchClasses": 9.38
+      },
+      "genre": {
+        "primary": "electronic",
+        "families": [
+          "electronic"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmSj6ei4HACHGvcbAXCaV8evjAHdgaqyrTdwJdKZCsCsz3",
+      "title": "Take Me Home Country Roads",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "fast",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 123,
+        "tracks": 6,
+        "families": [
+          "bass",
+          "brass",
+          "drums",
+          "guitar",
+          "organ"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 166,
+        "tempoChanges": 3,
+        "notesPerBar": 19.19,
+        "swingRatio": 0.0033,
+        "effectivePitchClasses": 6.83
+      },
+      "genre": {
+        "primary": "country",
+        "families": [
+          "country",
+          "folk"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmZAqZ5sWmk1bVXiTQsW2kBQhKWJfbN7jDAT9C7abGqSxU",
+      "title": "Musical Hair: Where do I go (arranged for small R&B band)",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 65,
+        "tracks": 9,
+        "families": [
+          "bass",
+          "ensemble",
+          "guitar",
+          "keys",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 120,
+        "tempoChanges": 0,
+        "notesPerBar": 38.62,
+        "swingRatio": 0.0228,
+        "effectivePitchClasses": 8
+      },
+      "genre": {
+        "primary": "musical_theatre",
+        "families": [
+          "musical_theatre"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-QmTqqMaBHWUp9D5UZyBQLQEKH7uivDdctjuz4RftniwCUi",
+      "title": "sleeping sun",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "complex",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 109,
+        "tracks": 9,
+        "families": [
+          "bass",
+          "chromatic_perc",
+          "drums",
+          "guitar",
+          "pipe",
+          "synth"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 110,
+        "tempoChanges": 0,
+        "notesPerBar": 18.88,
+        "swingRatio": 0.0047,
+        "effectivePitchClasses": 10.11
+      },
+      "genre": {
+        "primary": "metal",
+        "families": [
+          "metal"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmaGSbbadetKUxXVTcFYk9QaqRGQyi2KRtWmckqBD2Z1dK",
+      "title": "i will survive",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 92,
+        "tracks": 11,
+        "families": [
+          "bass",
+          "brass",
+          "drums",
+          "ensemble",
+          "guitar",
+          "keys",
+          "pipe",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 116,
+        "tempoChanges": 1,
+        "notesPerBar": 54.32,
+        "swingRatio": 0,
+        "effectivePitchClasses": 8.96
+      },
+      "genre": {
+        "primary": "electronic",
+        "families": [
+          "electronic"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmaAJQvJnwF4yghG8p3s5gzvrKYkJG23atgk8Hdg8dkopa",
+      "title": "This Girl - The Kungs for Pep band",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 38,
+        "tracks": 13,
+        "families": [
+          "brass",
+          "drums",
+          "pipe",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 130,
+        "tempoChanges": 0,
+        "notesPerBar": 69.79,
+        "swingRatio": 0.0072,
+        "effectivePitchClasses": 6.97
+      },
+      "genre": {
+        "primary": "wind_band_marching",
+        "families": [
+          "wind_band_marching"
+        ],
+        "source": "tags"
+      }
+    },
+    {
+      "id": "pdmx-QmShENbwkZFu1WzVmUfschPHEAVVmm83mxcaBNr3GqBbam",
+      "title": "amaranth",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 124,
+        "tracks": 9,
+        "families": [
+          "bass",
+          "ensemble",
+          "guitar",
+          "keys",
+          "strings",
+          "synth"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 128,
+        "tempoChanges": 0,
+        "notesPerBar": 35.63,
+        "swingRatio": 0,
+        "effectivePitchClasses": 7.59
+      },
+      "genre": {
+        "primary": "metal",
+        "families": [
+          "metal"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmUJGQdm7iiPTE6xX4DrR3Z13YSRKK5ULX6i3vr8iZxwCr",
+      "title": "earthbound - onett",
+      "admittedBy": "tournament-classical",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 63,
+        "tracks": 5,
+        "families": [
+          "bass",
+          "brass",
+          "drums",
+          "ensemble"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 110,
+        "tempoChanges": 0,
+        "notesPerBar": 30.05,
+        "swingRatio": 0.025,
+        "effectivePitchClasses": 7.67
+      },
+      "genre": {
+        "primary": "film_game",
+        "families": [
+          "film_game"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmaCHVw1Uoj5ot5ciMpYCj2ffGga8PsJAzq94mfx7PUXW3",
+      "title": "Señorita",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "moderate",
+        "density": "dense",
+        "ensemble": "large",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 84,
+        "tracks": 18,
+        "families": [
+          "brass",
+          "drums",
+          "pipe",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 120,
+        "tempoChanges": 0,
+        "notesPerBar": 59.35,
+        "swingRatio": 0.0044,
+        "effectivePitchClasses": 8.12
+      },
+      "genre": {
+        "primary": "pop",
+        "families": [
+          "pop",
+          "rnb_funk_soul"
+        ],
+        "source": "genres"
+      }
+    },
+    {
+      "id": "pdmx-QmaLyZRXXjfypokZs1VXcjrCyU7huPwxKj1DetTLLn2dzY",
+      "title": "postcards from italy",
+      "admittedBy": "tournament-global",
+      "attributes": {
+        "tempoBand": "medium",
+        "meter": "4/4",
+        "feel": "straight",
+        "harmony": "simple",
+        "density": "dense",
+        "ensemble": "small",
+        "idiom": "western",
+        "production": "acoustic"
+      },
+      "measured": {
+        "bars": 100,
+        "tracks": 5,
+        "families": [
+          "drums",
+          "guitar",
+          "keys",
+          "pipe",
+          "reed"
+        ],
+        "meter": "4/4",
+        "tempoBpm": 120,
+        "tempoChanges": 0,
+        "notesPerBar": 38.78,
+        "swingRatio": 0.0113,
+        "effectivePitchClasses": 6.75
+      },
+      "genre": {
+        "primary": "folk",
+        "families": [
+          "folk"
+        ],
+        "source": "genres"
+      }
+    }
+  ],
+  "coverage": {
+    "songs": 40,
+    "humanGold": 0,
+    "targetSongs": 100,
+    "targetHumanGold": 30,
+    "dimensions": [
+      {
+        "dimension": "inputType",
+        "counts": {
+          "midi": 40
+        },
+        "missing": [
+          "full_song",
+          "piano_vocal",
+          "vocal_only"
+        ]
+      },
+      {
+        "dimension": "tempoBand",
+        "counts": {
+          "medium": 29,
+          "slow": 5,
+          "fast": 6
+        },
+        "missing": []
+      },
+      {
+        "dimension": "meter",
+        "counts": {
+          "4/4": 30,
+          "3/4": 3,
+          "8/8": 1,
+          "6/8": 3,
+          "2/4": 1,
+          "12/8": 1,
+          "2/2": 1
+        },
+        "missing": []
+      },
+      {
+        "dimension": "feel",
+        "counts": {
+          "straight": 33,
+          "swung": 3,
+          "compound": 4
+        },
+        "missing": []
+      },
+      {
+        "dimension": "harmony",
+        "counts": {
+          "moderate": 18,
+          "complex": 6,
+          "simple": 16
+        },
+        "missing": []
+      },
+      {
+        "dimension": "density",
+        "counts": {
+          "dense": 33,
+          "moderate": 4,
+          "sparse": 3
+        },
+        "missing": []
+      },
+      {
+        "dimension": "ensemble",
+        "counts": {
+          "large": 31,
+          "small": 9
+        },
+        "missing": []
+      },
+      {
+        "dimension": "idiom",
+        "counts": {
+          "non_western": 4,
+          "western": 36
+        },
+        "missing": []
+      },
+      {
+        "dimension": "production",
+        "counts": {
+          "acoustic": 40
+        },
+        "missing": [
+          "electronic"
+        ]
+      }
+    ],
+    "ready": false,
+    "gaps": [
+      "songs: 40 of 100",
+      "inputType \"full_song\": 0 of 3 songs",
+      "inputType \"piano_vocal\": 0 of 3 songs",
+      "inputType \"vocal_only\": 0 of 3 songs",
+      "production \"electronic\": 0 of 3 songs",
+      "human gold arrangements: 0 of 30"
+    ]
+  },
+  "short": [],
+  "gaps": [
+    "songs: 40 of 100",
+    "inputType \"full_song\": 0 of 3 songs",
+    "inputType \"piano_vocal\": 0 of 3 songs",
+    "inputType \"vocal_only\": 0 of 3 songs",
+    "production \"electronic\": 0 of 3 songs",
+    "human gold arrangements: 0 of 30"
+  ],
+  "honestLimits": [
+    "PDMX holds scores, not recordings: every entry is inputType midi and production acoustic; the full_song / piano_vocal / vocal_only rows of the required coverage cannot come from PDMX and stay in gaps[] until recorded, rights-cleared songs exist.",
+    "Swing is measured on notated onset phases; a lead sheet that a player would swing but that is notated straight reads as straight.",
+    "Idiom is read from PDMX genre/tag labels; a work with no label is 'western' by default, which under-counts non-western material rather than inventing it.",
+    "Harmony complexity comes from the CSV's pitch-class entropy (a whole-work number), not from a chord analysis.",
+    "The tournament-anchor seeds were already admitted by earlier PRs for their rights; their musical attributes are measured here for the first time."
+  ]
+}
