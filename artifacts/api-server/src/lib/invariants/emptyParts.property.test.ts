@@ -72,9 +72,4 @@ test("the defect B-12 isolated is closed by B-01: keys is never the instrumental
   const silent = plannedButSilent(result.candidates[0], result, model);
   assert.equal(silent.filter((p) => p.family === "keys" && p.role === "LEAD").length, 0, "no keys LEAD is silent");
 });
-  const leadSections = (result.plan.sectionPlan?.sections ?? []).filter((s) => s.leadRole === "instrument:keys");
-  assert.ok(leadSections.length > 0, "keys is the instrumental lead somewhere");
-  const silent = plannedButSilent(result.candidates[0], result, model);
-  const silentKeys = silent.filter((p) => p.family === "keys" && p.role === "LEAD");
-  assert.equal(silentKeys.length, leadSections.filter((s) => s.function !== "instrumental").length, "every sung section with a keys LEAD is silent for keys");
-});
+
