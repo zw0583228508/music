@@ -240,34 +240,54 @@ function grooveIsolation() {
   const offGrid = (r: CriticDimensionReport, trackId?: string) =>
     r.observations.filter((o) => o.kind === "off_grid" && (!trackId || o.location.trackIds[0] === trackId));
 
+  // Whether a control moves the finding is *measured*, not asserted. It was
+  // written as a literal `moves: false` / `moves: true` beside a sentence of
+  // prose quoting numbers that were true when the sentence was typed; B-13
+  // then changed the composed material and the prose went on claiming "the
+  // composed notes score 0 as well" while the measurement beside it said 42.7.
+  // An isolation whose verdict cannot be recomputed is not an isolation.
+  const shippedOffGrid = offGrid(shippedReport).length;
+  const composedOffGrid = offGrid(composedReport).length;
+  const bassQuantisedOffGrid = offGrid(bassQuantised, "bass-bass").length;
+  // A control "moves" the finding when the finding is gone after it: no
+  // `off_grid` observation is left where there was one before.
+  const aMoves = shippedOffGrid > 0 && composedOffGrid === 0;
+  const bMoves = offGrid(shippedReport, "bass-bass").length > 0 && bassQuantisedOffGrid === 0;
+  const share = (report: CriticDimensionReport, id: string) =>
+    r3(Math.max(0, ...offGrid(report, id).map((o) => o.evidence.offGridShare as number)));
+
   return {
     finding: "R-1a P1-1: `groove = 0` on the owner's song, `off_grid` on the bass, `suspectedOrigin: perform`, and nobody could say why.",
-    reproduced: { score: shippedReport.summary.score0to100, offGridObservations: offGrid(shippedReport).length },
+    reproduced: { score: shippedReport.summary.score0to100, offGridObservations: shippedOffGrid },
     controls: [
       {
         id: "A_remove_performance_timing",
         what: "evaluate the notes the composer wrote, before `applyPerformance` and `playabilityRepair`",
         result: {
           score: composedReport.summary.score0to100,
-          offGridObservations: offGrid(composedReport).length,
+          offGridObservations: composedOffGrid,
           worstShareByPart: Object.fromEntries(["bass-bass", "keys-rhythmic_harmony", "strings-pad"].map((id) => [id, {
-            shipped: r3(Math.max(0, ...offGrid(shippedReport, id).map((o) => o.evidence.offGridShare as number))),
-            composed: r3(Math.max(0, ...offGrid(composedReport, id).map((o) => o.evidence.offGridShare as number))),
+            shipped: share(shippedReport, id),
+            composed: share(composedReport, id),
           }])),
         },
-        moves: false,
-        reading: "The composed notes score 0 as well and carry three quarters or more of the deviation. The performance stage is not the cause.",
+        moves: aMoves,
+        reading: aMoves
+          ? `Removing the performance stage removes every off-grid observation (${shippedOffGrid} → 0). The performance stage is the cause.`
+          : `The composed notes keep ${composedOffGrid} of the ${shippedOffGrid} off-grid observations and score ${composedReport.summary.score0to100} themselves. The performance stage is not the cause.`,
       },
       {
         id: "B_quantise_to_the_composer_grid",
         what: "snap the shipped onsets to the composer's bar grid, nothing else changed",
         result: {
-          bassOnlyToSixteenths: { bassOffGridObservations: offGrid(bassQuantised, "bass-bass").length, score: bassQuantised.summary.score0to100 },
+          bassOnlyToSixteenths: { bassOffGridObservations: bassQuantisedOffGrid, score: bassQuantised.summary.score0to100 },
           allHarmonyToSixteenths: { score: allSixteenths.summary.score0to100, offGrid: offGrid(allSixteenths).length, harmonyOffGrid: allSixteenths.observations.filter((o) => o.kind === "harmony_off_grid").length },
           allHarmonyToEighths: { score: allEighths.summary.score0to100, offGrid: offGrid(allEighths).length, harmonyOffGrid: allEighths.observations.filter((o) => o.kind === "harmony_off_grid").length },
         },
-        moves: true,
-        reading: "Quantising the bass removes every `off_grid` on the bass and touches nothing else. Quantising all the harmony to the *kit's eighths* lifts the dimension from 0 to 86; quantising it to sixteenths only reaches 5.5, because a hit on a sixteenth line can still be half a beat from the drums.",
+        moves: bMoves,
+        reading: `Quantising the bass ${bMoves ? "removes every" : "does not remove the"} \`off_grid\` observation on the bass and touches nothing else. `
+          + `Quantising all the harmony to the kit's eighths lifts the dimension from ${shippedReport.summary.score0to100} to ${allEighths.summary.score0to100}; `
+          + `quantising it to sixteenths only reaches ${allSixteenths.summary.score0to100}, because a hit on a sixteenth line can still be half a beat from the drums.`,
       },
     ],
     cause: {
