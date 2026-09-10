@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 import host
@@ -20,6 +21,10 @@ def main() -> None:
     parser.add_argument("--license-reference", required=True)
     parser.add_argument("--id", help="asset id (default: derived from the plugin identifier)")
     parser.add_argument("--preset", help="optional .vstpreset to load")
+    parser.add_argument("--sfz", help="SFZ instrument for a sampler plugin (sfizz); one asset per library")
+    parser.add_argument("--plugin-name", help="plugin to pick from a binary that exports several (e.g. sfizz)")
+    parser.add_argument("--name", help="display name for sound selection (default: the plugin's own name)")
+    parser.add_argument("--library", help="library name and licence note shown with the asset, e.g. 'Salamander Grand Piano V3 (CC-BY 3.0)'")
     parser.add_argument("--families", help="comma-separated routing hint, e.g. drums or keys,synth")
     parser.add_argument("--roles", help="comma-separated routing hint, e.g. GROOVE or PAD,HARMONIC_BED")
     parser.add_argument("--character", help="comma-separated character words for sound selection, e.g. analog,warm or granular,pad")
@@ -31,13 +36,17 @@ def main() -> None:
     # while it initialises, and a relative --out would then land elsewhere.
     out = Path(args.out).resolve()
     preset = Path(args.preset).resolve() if args.preset else None
+    sfz = Path(args.sfz).resolve() if args.sfz else None
 
-    plugin, identity = host.load_instrument(args.plugin, preset)
+    plugin, identity = host.load_instrument(args.plugin, preset, plugin_name=args.plugin_name, sfz_path=sfz)
     del plugin
+    default_id = f"{identity.name.lower().replace(' ', '-')}-{identity.version}"
+    if sfz and not args.id:
+        default_id = f"{default_id}-{re.sub(r'[^a-z0-9]+', '-', sfz.stem.lower()).strip('-')}"
     asset = {
-        "id": args.id or f"{identity.name.lower().replace(' ', '-')}-{identity.version}",
+        "id": args.id or default_id,
         "identity": identity.identity,
-        "name": identity.name,
+        "name": args.name or identity.name,
         "manufacturer": identity.manufacturer,
         "path": identity.binary_path,
         "sha256": identity.binary_sha256,
@@ -50,6 +59,13 @@ def main() -> None:
     }
     if preset:
         asset["presetPath"] = str(preset)
+    if args.plugin_name:
+        asset["pluginName"] = args.plugin_name
+    if sfz:
+        asset["sfzPath"] = str(sfz)
+        asset["sfzSha256"] = host.sha256_file(sfz)
+    if args.library:
+        asset["library"] = args.library
     if args.families:
         asset["families"] = [f.strip() for f in args.families.split(",") if f.strip()]
     if args.roles:
@@ -70,7 +86,7 @@ def main() -> None:
     else:
         manifest = {"vst3": asset}
     out.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    print(json.dumps({**asset, "path": "<private>"}, indent=2))
+    print(json.dumps({**asset, "path": "<private>", **({"sfzPath": "<private>"} if sfz else {})}, indent=2))
     print(f"\nwrote {out} ({len(host.list_assets(manifest))} asset(s))")
 
 
