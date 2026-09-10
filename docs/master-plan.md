@@ -6744,6 +6744,143 @@ any of it.
   vocal evidence rather than pretending. The energy/tension proxies are
   proxies. The evidence JSON is 4.5 MB.
 
+### PR-B11 — Brain B-11: every decision inspectable
+
+- **PR-B11** ✅ (open; the lead merges) — `ws-brain-b11` (Arrangement &
+  Orchestration Brain, stream B-11, symbolic / MIDI + observability). What the
+  lead had to reconstruct by hand for the owner's song (four tables and an
+  export bundle, `docs/evidence/chord-sheet-correction-live.json`) is now one
+  read-only endpoint and one studio page, built from stored rows only. Pure
+  TypeScript, additive schema fields (JSON columns already present, no
+  migration), nothing rendered.
+
+  **What changed.** (D1) *Decision provenance.* A delimited B-11 block in
+  `music-studio.ts`: `DecisionRecord` (`id = <layer>:<kind>:<qualifier>`,
+  `layer`, `kind`, `source`, `reason`, `refs`), `DecisionProvenanceRange`
+  (bar ranges → decision ids) and `TrackModel.decisionProvenance` (+
+  `notRecorded` per layer); `MusicalNote.decisionId` optional for layers that
+  tag at chord / cell grain. New `decisionProvenance.ts`: `DecisionRegistry`
+  (deterministic ids, dedupe, `attach`), `rangesFromTaggedNotes`,
+  `buildCandidateProvenance` (arc entries / exits / dynamic / texture /
+  tension / operator, palette + exclusions, role assignments, part-plan
+  decisions, part tasks with `refs` → arc entry + role, density multipliers,
+  repair passes + requests, playability repairs, performance, context passes).
+  The orchestrator hands every composer call `{ decisions }` (optional second
+  argument of `PartComposerFn`), keeps per-candidate `parts` (composed vs kept
+  notes per task), `performance` (the engine's 64-note reasoned sample **plus
+  measured timing / velocity deltas for every composed note**, capped at
+  4,000 per track) and the composer registry, and exposes `contextPasses` on
+  the result (collected since PR-47, never written anywhere). The provider
+  attaches the ranges to every shipped track and persists the registry,
+  parts, performance, context passes, timing and failure-code counts on
+  `parameters.arrangementBrain`. Contract for B-02 / B-03 / B-04 / B-10 in
+  `docs/brain/04-decision-provenance.md`, tested with a tagging composer.
+  (D2) *Failure codes with origin.* `findingClassification.ts`:
+  `classifyFinding(kind) → { failureCode, originLayer }` over the
+  orchestrator's kinds, the constraint engine's codes, the critics' kinds
+  (via `critics/failureTaxonomy.ts`), the render gates and the mix
+  measurements; `classifyHardRuleMessage` for the critic's hard rules;
+  unknown → `INPUT_UNKNOWN / unknown`, never a guess. Codes and layers are
+  stamped on every `ArrangementBrainFinding`, counted on the candidate
+  (`evaluation.brainTelemetry`) and on the arrangement row
+  (`generationProvenance.telemetry.failureCodes`). Schema copies of the two
+  unions are compile-time pinned to the critics' (`OriginLayer`,
+  `FAILURE_CODES`). (D3) *Telemetry that answers the seven questions.*
+  `decisionTrace.ts` + `GET /api/arrangements/:id/decision-trace` (owner
+  check, openapi + orval): entries (sections × families: entered / silent /
+  not planned with the arc / role / task / finding reasons quoted verbatim;
+  an unexplained entry falls back to the decisions covering those bars —
+  e.g. the performance layer's boundary fill — or says `not recorded`),
+  voicings (ranges → decisions; `not recorded by harmony / groove /
+  register` with the composer named), findings from seven sources with
+  location and code, repairs (critic loop passes that changed vs claimed,
+  playability counts per track, bounded repair with `changedScopes` /
+  `outsideScopePreserved`), tempo / meter read-or-assumed with its source,
+  renderers per stem, `candidateDiff` (new `candidateDiff.ts`: per-track bar
+  ranges added / removed / changed by (onset, pitch) on a 10 ms grid, plan
+  field deltas; persisted on every new arrangement version against its
+  parent by the runner), performance summary, stages, selection, and a
+  `notRecorded` list per question. (D4) *Revision evidence names renderers.*
+  `MixMasterRevisionEvidence.stems` (`RevisionStemEvidence[]`: renderer,
+  status, asset, sound-selection reason, fallback reason, gate verdict) +
+  `readiness`, filled by the revision route from the export engine's new
+  `stemRendererEvidence` (also on the manifest as `stemEvidence`, whether or
+  not stems were requested). (D5) *GM programs.* New `gmPrograms.ts` (one
+  table: piano 0, electric piano 4, organ 16, guitar 24/25, bass 32/33,
+  strings 48, cello 42, violin 40, brass 61, horn 60, flute / winds 73, pad
+  88, choir 52; drums on channel 10; `assignMidiChannels` never puts a
+  pitched track on channel 10); `createPerformanceMidi` uses it (before:
+  `trackIndex === 0 ? 0 : trackIndex * 8 % 96` — the owner's export had piano
+  on 16 = organ, strings on 24 = guitar, bass on 32); the three legacy
+  `mapping.program` sites in `musicEngines.ts` read the same table; the
+  manifest lists `midi.programs`. (D6) *Studio.* Read-only page
+  `/projects/:projectId/arrangements/:arrangementId/trace`
+  (`pages/decision-trace.tsx`, pure helpers in `decision-trace-view.ts`),
+  linked from the Director tab; sections × families grid with the reasons
+  of the clicked cell, findings by source with code @ layer and location,
+  repairs, per-stem renderer table, N→N+1 diff, performance / stages, and
+  the "Not recorded" card first. Tests: `findingClassification.test.ts` (8),
+  `decisionProvenance.test.ts` (6), `arrangementOrchestrator.b11.test.ts`
+  (4), `candidateDiff.test.ts` (4), `decisionTrace.test.ts` (5),
+  `gmPrograms.test.ts` (4, the owner's fixture MIDI parsed back byte by
+  byte; the instrument name outranks a drum-kit definition), `brainB11Evidence.test.ts`
+  (1, writes the evidence), studio `decision-trace-view.test.ts` (5) — 37 new, all registered; the eight
+  touched suites (orchestrator, provider, integrity, B-01, golden, scoped
+  regeneration, mix automation, plan adoption: 66) green; `pnpm run
+  typecheck` green (api + studio). Evidence:
+  `docs/evidence/brain-b11-observability.json` — the owner's fixture with
+  the owner's brief through the provider (3 candidates), traced from the
+  stored-row shapes with a v1 → v2 diff and a revision carrying stems.
+
+  **What the trace answers today on the owner's fixture** (from the
+  evidence): (1) *why did this instrument enter* — every entered cell cites
+  a recorded decision (arc entry with `brief` / `template` source, role
+  assignment, part task, or the performance layer's fill where no plan
+  decision places the family); planned-but-silent cells carry the
+  `dropped_part` / `planned_family_silent` finding with code and layer.
+  (2) *why this voicing* — **not recorded**: part-level provenance only;
+  `REFERENCE_PART_COMPOSER_V1` registers no harmony / groove / register
+  decisions (the contract is in place and tested; B-02 / B-04 / B-03 must
+  call it). (3) *which critic objected* — brain findings and hard rules with
+  code @ layer and bars; music-critic/v1 dimension findings are listed but
+  carry no location and no code (B-05). (4) *what repair occurred* — critic
+  loop passes (changed vs claimed), playability counts per track (which
+  notes: not recorded), bounded repair scopes. (5) *tempo / meter* — 130.43
+  BPM 4/4 **read**, from the brain's own record; a legacy arrangement says
+  "assumed or read: not recorded". (6) *which renderer per stem* — from a
+  revision's `stems` or an export's stem artifacts; revisions before this PR
+  say `not recorded` (the owner's v1–v6 remain diagnosable only from the
+  export). (7) *what changed N → N+1* — per-track ranges and plan deltas
+  against the parent version, persisted at materialisation.
+
+  **Capability ladder.** Decision provenance per note group — DESIGNED ✓
+  IMPLEMENTED ✓ INTEGRATED ✓ (provider + runner persist it) TESTED ✓;
+  layers recording: arc, form, orchestration, compose (task / density /
+  repair), perform ✓; harmony, groove, register ✗ (not recorded, named).
+  Failure taxonomy with origin — IMPLEMENTED ✓ INTEGRATED ✓ TESTED ✓ for
+  orchestrator / hard-rule / constraint / render / mix findings; critic
+  dimensions pending B-05. Decision trace endpoint + panel — IMPLEMENTED ✓
+  INTEGRATED ✓ TESTED ✓ (builder on stored shapes; route typechecked, not
+  exercised over HTTP). Revision per-stem renderer — IMPLEMENTED ✓
+  INTEGRATED ✓ TESTED ✓ (`stemRendererEvidence` shape; the route path is
+  typechecked, not run against a database). GM programs — TESTED ✓ on the
+  owner's fixture bytes. BENCHMARKED / VALIDATED ON OUTPUT — not applicable /
+  not claimed.
+
+  **Honest limits.** Voicing / groove / register decisions are not recorded
+  by any shipped layer; the trace says so for every track. Playability
+  repair keeps counts, not note ids; performance reasons exist for the first
+  64 notes per track (engine cap), deltas for all. Per-stem revision evidence
+  starts with revisions created after this PR. The route and the revision
+  persistence were typechecked and covered through the pure builders over the
+  same row shapes, not run against Neon (no DB writes in this stream). The
+  candidate row grows by the registry (176 decisions on the owner's fixture)
+  and the per-note performance arrays (≤ 4,000 per track); nothing was
+  measured for size on a live database. The `keys` track still resolves to the
+  drum-kit definition upstream (`FAMILY_WORDS`, B-03): the GM table decides by
+  name so the export is right, the constraint and performance layers are not.
+  Nothing was rendered or listened to.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

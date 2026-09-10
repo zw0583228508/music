@@ -44,6 +44,8 @@ import {
 } from "./arrangementOrchestrator";
 import { performanceStyleFromProfile } from "./performanceEngine";
 import { BENCHMARK_CORPUS, buildBenchmarkSongModel } from "./benchmarkCorpus";
+import { buildCandidateProvenance, type CandidateProvenance } from "./decisionProvenance";
+import { classifyBrainFinding, countFailureCodes } from "./findingClassification";
 
 /** A StyleProfile travels in `parameters.styleProfile`; anything else is ignored. */
 function readStyleProfile(parameters: GenerationParameters | undefined): StyleProfile | null {
@@ -291,17 +293,47 @@ function candidatePlan(
   } as CandidatePlan;
 }
 
+/** Seconds per bar of the run's (read or assumed) tempo and meter. */
+export function barSecondsOf(timing: OrchestrationResult["timing"]): number {
+  const beats = Number(timing.meter.split("/")[0]) || 4;
+  return (60 / Math.max(1, timing.tempoBpm)) * beats;
+}
+
+/**
+ * B-11: the decisions behind one candidate, derived from its plan layers and
+ * the composers' own registrations, keyed by the brain's (unscoped) track ids.
+ */
+export function candidateProvenance(candidate: OrchestratedCandidate, result: OrchestrationResult): CandidateProvenance {
+  return buildCandidateProvenance({
+    candidateId: candidate.candidateId,
+    strategy: candidate.strategy,
+    seed: candidate.seed,
+    plan: candidate.plan,
+    trackModels: candidate.trackModels,
+    composer: result.composer,
+    barSeconds: barSecondsOf(result.timing),
+    composerRegistry: candidate.composerDecisions ?? null,
+    repairPasses: candidate.repair?.passes ?? [],
+    playabilityRepairs: candidate.playabilityRepairs,
+    performance: candidate.performance ?? [],
+    contextPasses: result.contextPasses ?? [],
+  });
+}
+
 function brainEvidence(
   candidate: OrchestratedCandidate,
   result: OrchestrationResult,
   confidence: ArrangementBrainCandidateEvidence["confidence"],
+  telemetry: { provenance: CandidateProvenance; scopedId: (id: string) => string },
 ): ArrangementBrainCandidateEvidence {
+  // B-11: every finding carries its failure code and origin layer.
+  const findings = candidate.findings.map(classifyBrainFinding);
   return {
     version: "1.0",
     plan: candidate.plan as ArrangementPlan,
     stages: result.stages.map((s) => ({ stage: s.stage, status: s.status, detail: s.detail, ...(s.evidence ? { evidence: s.evidence } : {}) })),
     traceable: result.traceable,
-    findings: candidate.findings,
+    findings,
     hardRule: candidate.hardRule,
     initialCritique: candidate.initialCritique,
     compositionCritique: candidate.compositionCritique,
@@ -323,6 +355,13 @@ function brainEvidence(
     })),
     confidence,
     selectable: candidate.hardRule.feasible,
+    // --- B-11: decision provenance and telemetry, in the shape the trace reads ---
+    decisions: telemetry.provenance.decisions,
+    parts: candidate.parts ?? [],
+    performance: (candidate.performance ?? []).map((track) => ({ ...track, trackId: telemetry.scopedId(track.trackId) })),
+    contextPasses: (result.contextPasses ?? []).map((pass) => ({ id: pass.id, changed: pass.changed, note: pass.note })),
+    timing: result.timing,
+    failureCodes: countFailureCodes(findings),
   };
 }
 
@@ -434,8 +473,14 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
     const candidates: ProviderCandidate[] = ranked.map((candidate) => {
       const shipped = candidate.critique.overallScore;
       const composedScore = candidate.compositionCritique.overallScore;
+      // B-11: which decisions authored which bar ranges of each track. Built on
+      // the brain's own ids, attached to the scoped tracks below; the digest
+      // does not cover it, so the evidence stays sealed.
+      const provenance = candidateProvenance(candidate, result);
       const trackModels: TrackModel[] = candidate.trackModels.map((track) => {
         const scoped: TrackModel = { ...track, id: scopedId(track.id) };
+        const trackProvenance = provenance.byTrack[track.id];
+        if (trackProvenance) scoped.decisionProvenance = trackProvenance;
         // The performed-material digest covers the id, so re-scoping it must
         // re-seal the evidence or the export will reject it as stale.
         if (scoped.performanceEvidence) {
@@ -447,7 +492,7 @@ export class LocalArrangementOrchestratorProvider implements MusicGenerationProv
         return scoped;
       });
       const confidence = brainConfidence(candidate);
-      const evidence = brainEvidence(candidate, result, confidence);
+      const evidence = brainEvidence(candidate, result, confidence, { provenance, scopedId });
       const strengths = candidate.critique.strengths.slice(0, 2).join("; ");
       const weaknesses = candidate.critique.weaknesses.slice(0, 1).join("; ");
       const errorFindings = candidate.findings.filter((f) => f.severity === "error").length;

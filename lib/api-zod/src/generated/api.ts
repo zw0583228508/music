@@ -16113,6 +16113,221 @@ export const RestoreArrangementRevisionResponse = zod.object({
 
 
 /**
+ * Brain B-11. Answers, from stored rows only, why each instrument entered
+ * or stayed silent in each section, which decisions authored each bar
+ * range of each track, which critic objected where (with failure codes
+ * and origin layers), what repair occurred, which tempo / meter was read
+ * or assumed, which renderer produced each stem and why, and what changed
+ * against the parent version. Where a layer recorded nothing the answer
+ * says `not recorded by <layer>` - nothing is reconstructed.
+ * @summary The decision trace of one arrangement version (Brain B-11), read-only
+ */
+export const GetArrangementDecisionTraceParams = zod.object({
+  "arrangementId": zod.coerce.string()
+})
+
+export const GetArrangementDecisionTraceResponse = zod.object({
+  "version": zod.enum(['1.0']),
+  "arrangement": zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "version": zod.number(),
+  "projectId": zod.string(),
+  "provider": zod.string().nullable(),
+  "candidateId": zod.string().nullable(),
+  "parentArrangementId": zod.string().nullable(),
+  "createdAt": zod.string().nullable()
+}),
+  "timing": zod.object({
+  "tempoBpm": zod.number().nullable(),
+  "tempoAssumed": zod.boolean().nullable(),
+  "meter": zod.string().nullable(),
+  "meterAssumed": zod.boolean().nullable(),
+  "source": zod.string()
+}),
+  "entries": zod.array(zod.object({
+  "sectionName": zod.string(),
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "family": zod.string(),
+  "status": zod.enum(['entered', 'silent', 'not_planned']),
+  "noteCount": zod.number(),
+  "reasons": zod.array(zod.object({
+  "decisionId": zod.string().nullable(),
+  "layer": zod.enum(['brief', 'arc', 'form', 'harmony', 'groove', 'orchestration', 'register', 'compose', 'perform', 'render', 'mix', 'unknown']).describe('Brain B-11 \/ B-05b - the layer a decision or failure belongs to.'),
+  "source": zod.string().nullable(),
+  "reason": zod.string()
+}))
+})),
+  "voicings": zod.array(zod.object({
+  "trackId": zod.string(),
+  "instrument": zod.string(),
+  "role": zod.string(),
+  "noteCount": zod.number(),
+  "ranges": zod.array(zod.object({
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "decisions": zod.array(zod.object({
+  "decisionId": zod.string().nullable(),
+  "layer": zod.enum(['brief', 'arc', 'form', 'harmony', 'groove', 'orchestration', 'register', 'compose', 'perform', 'render', 'mix', 'unknown']).describe('Brain B-11 \/ B-05b - the layer a decision or failure belongs to.'),
+  "source": zod.string().nullable(),
+  "reason": zod.string()
+}))
+})),
+  "notRecorded": zod.array(zod.object({
+  "layer": zod.enum(['brief', 'arc', 'form', 'harmony', 'groove', 'orchestration', 'register', 'compose', 'perform', 'render', 'mix', 'unknown']).describe('Brain B-11 \/ B-05b - the layer a decision or failure belongs to.'),
+  "reason": zod.string()
+}))
+})),
+  "findings": zod.array(zod.object({
+  "source": zod.enum(['brain', 'critic_hard_rule', 'critic_dimension', 'runner_music_critic', 'runner_audio_critic', 'render_gate', 'mix']),
+  "kind": zod.string(),
+  "severity": zod.enum(['error', 'warning', 'info']),
+  "failureCode": zod.union([zod.enum(['GLOBAL_COHERENCE_FAILURE', 'FORM_FAILURE', 'ENERGY_ARC_FAILURE', 'MOTIF_FAILURE', 'HARMONY_FAILURE', 'VOICE_LEADING_FAILURE', 'GROOVE_FAILURE', 'ORCHESTRATION_FAILURE', 'REGISTER_FAILURE', 'DENSITY_FAILURE', 'PLAYABILITY_FAILURE', 'IDIOM_FAILURE', 'STYLE_FAILURE', 'TRANSITION_FAILURE', 'REPETITION_FAILURE', 'PREDICTABILITY_FAILURE', 'CAUSALITY_FAILURE', 'MASKING_FAILURE', 'VOCAL_SPACE_FAILURE', 'PERFORMANCE_FAILURE', 'RENDER_FAILURE', 'AUDIO_BALANCE_FAILURE', 'PLAN_REALISATION_FAILURE', 'INPUT_UNKNOWN']).describe('The closed failure taxonomy (critics\/failureTaxonomy.ts, FAILURE_TAXONOMY_v1).'),zod.null()]),
+  "originLayer": zod.union([zod.enum(['brief', 'arc', 'form', 'harmony', 'groove', 'orchestration', 'register', 'compose', 'perform', 'render', 'mix', 'unknown']).describe('Brain B-11 \/ B-05b - the layer a decision or failure belongs to.'),zod.null()]),
+  "sectionName": zod.string().nullable(),
+  "instrument": zod.string().nullable(),
+  "trackIds": zod.array(zod.string()),
+  "startBar": zod.number().nullable(),
+  "endBar": zod.number().nullable(),
+  "startSeconds": zod.number().nullable(),
+  "endSeconds": zod.number().nullable(),
+  "message": zod.string()
+})),
+  "failureCodes": zod.array(zod.object({
+  "failureCode": zod.enum(['GLOBAL_COHERENCE_FAILURE', 'FORM_FAILURE', 'ENERGY_ARC_FAILURE', 'MOTIF_FAILURE', 'HARMONY_FAILURE', 'VOICE_LEADING_FAILURE', 'GROOVE_FAILURE', 'ORCHESTRATION_FAILURE', 'REGISTER_FAILURE', 'DENSITY_FAILURE', 'PLAYABILITY_FAILURE', 'IDIOM_FAILURE', 'STYLE_FAILURE', 'TRANSITION_FAILURE', 'REPETITION_FAILURE', 'PREDICTABILITY_FAILURE', 'CAUSALITY_FAILURE', 'MASKING_FAILURE', 'VOCAL_SPACE_FAILURE', 'PERFORMANCE_FAILURE', 'RENDER_FAILURE', 'AUDIO_BALANCE_FAILURE', 'PLAN_REALISATION_FAILURE', 'INPUT_UNKNOWN']).describe('The closed failure taxonomy (critics\/failureTaxonomy.ts, FAILURE_TAXONOMY_v1).'),
+  "originLayer": zod.enum(['brief', 'arc', 'form', 'harmony', 'groove', 'orchestration', 'register', 'compose', 'perform', 'render', 'mix', 'unknown']).describe('Brain B-11 \/ B-05b - the layer a decision or failure belongs to.'),
+  "count": zod.number(),
+  "severity": zod.enum(['error', 'warning', 'info'])
+})),
+  "repairs": zod.array(zod.object({
+  "source": zod.enum(['critic_repair_loop', 'playability_repair', 'bounded_repair']),
+  "pass": zod.number().nullable(),
+  "applied": zod.array(zod.string()),
+  "requested": zod.array(zod.string()),
+  "changed": zod.boolean(),
+  "scoreBefore": zod.number().nullable(),
+  "scoreAfter": zod.number().nullable(),
+  "trackId": zod.string().nullable(),
+  "counts": zod.union([zod.object({
+  "rangeFolds": zod.number(),
+  "leapFolds": zod.number(),
+  "durationLengthened": zod.number(),
+  "breathTruncated": zod.number(),
+  "polyphonyReleases": zod.number(),
+  "dropped": zod.number(),
+  "residual": zod.array(zod.string())
+}),zod.null()]),
+  "changedScopes": zod.array(zod.object({
+  "level": zod.enum(['song', 'section', 'phrase', 'bar', 'event']),
+  "id": zod.string()
+})),
+  "outsideScopePreserved": zod.boolean().nullable(),
+  "detail": zod.string()
+})),
+  "renderers": zod.array(zod.object({
+  "source": zod.string(),
+  "sourceId": zod.string(),
+  "createdAt": zod.string().nullable(),
+  "stems": zod.array(zod.object({
+  "trackId": zod.string(),
+  "trackName": zod.string(),
+  "role": zod.string(),
+  "instrument": zod.string(),
+  "renderer": zod.string(),
+  "rendererStatus": zod.enum(['licensed-native', 'preview-only']),
+  "assetId": zod.string().nullable(),
+  "assetIdentity": zod.string().nullable(),
+  "soundSelection": zod.string().nullable(),
+  "fallbackReason": zod.string().nullable(),
+  "gate": zod.object({
+  "passed": zod.boolean(),
+  "reasons": zod.array(zod.string())
+})
+}).describe('Brain B-11 (D4) - one stem of a mix\/master revision or export, who rendered it and whether the gates let it through.')),
+  "readiness": zod.union([zod.object({
+  "ready": zod.boolean(),
+  "status": zod.string(),
+  "reasons": zod.array(zod.string())
+}),zod.null()])
+})),
+  "diff": zod.union([zod.object({
+  "version": zod.enum(['1.0']),
+  "before": zod.object({
+  "id": zod.string(),
+  "label": zod.string()
+}),
+  "after": zod.object({
+  "id": zod.string(),
+  "label": zod.string()
+}),
+  "barSeconds": zod.number().nullable(),
+  "tracks": zod.array(zod.object({
+  "trackId": zod.string(),
+  "instrument": zod.string(),
+  "status": zod.enum(['added', 'removed', 'changed', 'unchanged']),
+  "notesBefore": zod.number(),
+  "notesAfter": zod.number(),
+  "added": zod.number(),
+  "removed": zod.number(),
+  "changed": zod.number(),
+  "ranges": zod.array(zod.object({
+  "startBar": zod.number(),
+  "endBar": zod.number(),
+  "added": zod.number(),
+  "removed": zod.number(),
+  "changed": zod.number()
+}))
+})),
+  "plan": zod.array(zod.object({
+  "path": zod.string(),
+  "before": zod.string().nullable(),
+  "after": zod.string().nullable()
+})),
+  "summary": zod.object({
+  "tracksChanged": zod.number(),
+  "notesAdded": zod.number(),
+  "notesRemoved": zod.number(),
+  "notesChanged": zod.number(),
+  "planFieldsChanged": zod.number()
+})
+}).describe('Brain B-11 - what changed between iteration N and N+1 (per-track bar ranges and plan fields).'),zod.null()]),
+  "performance": zod.array(zod.object({
+  "trackId": zod.string(),
+  "engine": zod.string(),
+  "engineVersion": zod.string(),
+  "profile": zod.string(),
+  "reasonedNotes": zod.number(),
+  "measuredNotes": zod.number(),
+  "meanTimingOffsetMs": zod.number().nullable(),
+  "meanVelocityDelta": zod.number().nullable(),
+  "addedNotes": zod.number()
+})),
+  "contextPasses": zod.array(zod.object({
+  "id": zod.string(),
+  "changed": zod.number(),
+  "note": zod.string()
+})),
+  "stages": zod.array(zod.object({
+  "stage": zod.string(),
+  "status": zod.enum(['ok', 'skipped', 'failed']),
+  "detail": zod.string(),
+  "evidence": zod.record(zod.string(), zod.unknown()).optional()
+})),
+  "selection": zod.object({
+  "reason": zod.string().nullable(),
+  "score": zod.number().nullable(),
+  "confidence": zod.number().nullable()
+}),
+  "notRecorded": zod.array(zod.object({
+  "question": zod.string(),
+  "layer": zod.enum(['brief', 'arc', 'form', 'harmony', 'groove', 'orchestration', 'register', 'compose', 'perform', 'render', 'mix', 'unknown']).describe('Brain B-11 \/ B-05b - the layer a decision or failure belongs to.'),
+  "reason": zod.string()
+}))
+}).describe('Brain B-11 - the seven questions answered from stored rows only.')
+
+
+/**
  * @summary Queue provider-backed arrangement generation
  */
 export const GenerateArrangementParams = zod.object({
@@ -20586,7 +20801,28 @@ export const ListMixMasterRevisionsResponseItem = zod.object({
   "startSeconds": zod.number().min(listMixMasterRevisionsResponseEvidenceQualityFindingsItemStartSecondsMin),
   "endSeconds": zod.number().min(listMixMasterRevisionsResponseEvidenceQualityFindingsItemEndSecondsMin)
 }))
+}),
+  "stems": zod.array(zod.object({
+  "trackId": zod.string(),
+  "trackName": zod.string(),
+  "role": zod.string(),
+  "instrument": zod.string(),
+  "renderer": zod.string(),
+  "rendererStatus": zod.enum(['licensed-native', 'preview-only']),
+  "assetId": zod.string().nullable(),
+  "assetIdentity": zod.string().nullable(),
+  "soundSelection": zod.string().nullable(),
+  "fallbackReason": zod.string().nullable(),
+  "gate": zod.object({
+  "passed": zod.boolean(),
+  "reasons": zod.array(zod.string())
 })
+}).describe('Brain B-11 (D4) - one stem of a mix\/master revision or export, who rendered it and whether the gates let it through.')).optional().describe('Brain B-11 (D4) - per-stem renderer, asset, sound-selection reason and gate outcome; absent on revisions created before it.'),
+  "readiness": zod.object({
+  "ready": zod.boolean(),
+  "status": zod.string(),
+  "reasons": zod.array(zod.string())
+}).optional()
 }),
   "approvedAt": zod.string().nullable(),
   "approvedBy": zod.string().nullable(),
@@ -20841,7 +21077,28 @@ export const CreateMixMasterRevisionResponse = zod.object({
   "startSeconds": zod.number().min(createMixMasterRevisionResponseEvidenceQualityFindingsItemStartSecondsMin),
   "endSeconds": zod.number().min(createMixMasterRevisionResponseEvidenceQualityFindingsItemEndSecondsMin)
 }))
+}),
+  "stems": zod.array(zod.object({
+  "trackId": zod.string(),
+  "trackName": zod.string(),
+  "role": zod.string(),
+  "instrument": zod.string(),
+  "renderer": zod.string(),
+  "rendererStatus": zod.enum(['licensed-native', 'preview-only']),
+  "assetId": zod.string().nullable(),
+  "assetIdentity": zod.string().nullable(),
+  "soundSelection": zod.string().nullable(),
+  "fallbackReason": zod.string().nullable(),
+  "gate": zod.object({
+  "passed": zod.boolean(),
+  "reasons": zod.array(zod.string())
 })
+}).describe('Brain B-11 (D4) - one stem of a mix\/master revision or export, who rendered it and whether the gates let it through.')).optional().describe('Brain B-11 (D4) - per-stem renderer, asset, sound-selection reason and gate outcome; absent on revisions created before it.'),
+  "readiness": zod.object({
+  "ready": zod.boolean(),
+  "status": zod.string(),
+  "reasons": zod.array(zod.string())
+}).optional()
 }),
   "approvedAt": zod.string().nullable(),
   "approvedBy": zod.string().nullable(),
@@ -21027,7 +21284,28 @@ export const ApproveMixMasterRevisionResponse = zod.object({
   "startSeconds": zod.number().min(approveMixMasterRevisionResponseEvidenceQualityFindingsItemStartSecondsMin),
   "endSeconds": zod.number().min(approveMixMasterRevisionResponseEvidenceQualityFindingsItemEndSecondsMin)
 }))
+}),
+  "stems": zod.array(zod.object({
+  "trackId": zod.string(),
+  "trackName": zod.string(),
+  "role": zod.string(),
+  "instrument": zod.string(),
+  "renderer": zod.string(),
+  "rendererStatus": zod.enum(['licensed-native', 'preview-only']),
+  "assetId": zod.string().nullable(),
+  "assetIdentity": zod.string().nullable(),
+  "soundSelection": zod.string().nullable(),
+  "fallbackReason": zod.string().nullable(),
+  "gate": zod.object({
+  "passed": zod.boolean(),
+  "reasons": zod.array(zod.string())
 })
+}).describe('Brain B-11 (D4) - one stem of a mix\/master revision or export, who rendered it and whether the gates let it through.')).optional().describe('Brain B-11 (D4) - per-stem renderer, asset, sound-selection reason and gate outcome; absent on revisions created before it.'),
+  "readiness": zod.object({
+  "ready": zod.boolean(),
+  "status": zod.string(),
+  "reasons": zod.array(zod.string())
+}).optional()
 }),
   "approvedAt": zod.string().nullable(),
   "approvedBy": zod.string().nullable(),

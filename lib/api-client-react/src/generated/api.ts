@@ -39,6 +39,7 @@ import type {
   CreateListeningSessionInput,
   CreateTournamentListeningSessionInput,
   Dashboard,
+  DecisionTrace,
   ErasePreferenceEvents200,
   ErasePreferenceEventsParams,
   Error,
@@ -2638,6 +2639,90 @@ export const useRestoreArrangementRevision = <TError = ErrorType<NotFoundRespons
       > => {
       return useMutation(getRestoreArrangementRevisionMutationOptions(options));
     }
+
+export const getGetArrangementDecisionTraceUrl = (arrangementId: string,) => {
+
+
+
+
+  return `/api/arrangements/${arrangementId}/decision-trace`
+}
+
+/**
+ * Brain B-11. Answers, from stored rows only, why each instrument entered
+ * or stayed silent in each section, which decisions authored each bar
+ * range of each track, which critic objected where (with failure codes
+ * and origin layers), what repair occurred, which tempo / meter was read
+ * or assumed, which renderer produced each stem and why, and what changed
+ * against the parent version. Where a layer recorded nothing the answer
+ * says `not recorded by <layer>` - nothing is reconstructed.
+ * @summary The decision trace of one arrangement version (Brain B-11), read-only
+ */
+export const getArrangementDecisionTrace = async (arrangementId: string, options?: Parameters<typeof customFetch>[1]): Promise<DecisionTrace> => {
+
+  return customFetch<DecisionTrace>(getGetArrangementDecisionTraceUrl(arrangementId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetArrangementDecisionTraceQueryKey = (arrangementId: string,) => {
+    return [
+    `/api/arrangements/${arrangementId}/decision-trace`
+    ] as const;
+    }
+
+
+export const getGetArrangementDecisionTraceQueryOptions = <TData = Awaited<ReturnType<typeof getArrangementDecisionTrace>>, TError = ErrorType<NotFoundResponse>>(arrangementId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getArrangementDecisionTrace>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetArrangementDecisionTraceQueryKey(arrangementId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getArrangementDecisionTrace>>> = ({ signal }) => getArrangementDecisionTrace(arrangementId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: arrangementId !== null && arrangementId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getArrangementDecisionTrace>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetArrangementDecisionTraceQueryResult = NonNullable<Awaited<ReturnType<typeof getArrangementDecisionTrace>>>
+export type GetArrangementDecisionTraceQueryError = ErrorType<NotFoundResponse>
+
+
+/**
+ * @summary The decision trace of one arrangement version (Brain B-11), read-only
+ */
+
+export function useGetArrangementDecisionTrace<TData = Awaited<ReturnType<typeof getArrangementDecisionTrace>>, TError = ErrorType<NotFoundResponse>>(
+ arrangementId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getArrangementDecisionTrace>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetArrangementDecisionTraceQueryOptions(arrangementId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
 
 export const getGenerateArrangementUrl = (arrangementId: string,) => {
 

@@ -19,6 +19,7 @@ import Projects from '@/pages/projects';
 import ProjectWorkspace from '@/pages/project-workspace';
 import InstrumentPacks from '@/pages/instrument-packs';
 import ListeningRoom from '@/pages/listening-room';
+import DecisionTracePage from '@/pages/decision-trace';
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ function Router() {
           <Route path="/" component={Dashboard} />
           <Route path="/projects" component={Projects} />
           <Route path="/projects/:projectId" component={ProjectWorkspace} />
+          <Route path="/projects/:projectId/arrangements/:arrangementId/trace" component={DecisionTracePage} />
           <Route path="/instrument-packs" component={InstrumentPacks} />
           <Route path="/listen/:sessionId" component={ListeningRoom} />
           <Route component={NotFound} />

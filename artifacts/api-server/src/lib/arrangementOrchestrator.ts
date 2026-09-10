@@ -34,10 +34,13 @@ import type {
   CandidateStrategyId,
   CriticRepairLoopResult,
   MusicalNote,
+  PartCompositionTelemetry,
   SongModelData,
   TrackModel,
+  TrackPerformanceTelemetry,
   PerformanceStyle,
 } from "@workspace/db";
+import { DecisionRegistry, decisionId } from "./decisionProvenance";
 import {
   canonicalPerformancePhraseIds,
   canonicalPerformanceTimelineSha256,
@@ -118,6 +121,14 @@ export type OrchestratedCandidate = {
   audioCritique: AudioCritique | null;
   renderFeasible: boolean | null;
   finalScore: number;
+  // --- Brain B-11 (observability): what each layer decided, kept, not summarised ---
+  // Optional so that hand-built candidates in older tests stay valid; the orchestrator always fills them.
+  /** What each part task composed for this candidate and what density thinning kept (the plan its notes came from). */
+  parts?: PartCompositionTelemetry[];
+  /** The performance layer's decisions per shipped track: the engine's reasoned sample plus measured deltas for every note. */
+  performance?: TrackPerformanceTelemetry[];
+  /** Decisions the composing layers registered while writing this candidate's notes (the B-02 / B-04 / B-10 contract). */
+  composerDecisions?: DecisionRegistry;
 };
 
 export type OrchestrationResult = {
@@ -144,9 +155,25 @@ export type OrchestrationResult = {
   /** The tempo and meter the run composed at, and whether they were read or assumed. */
   timing: { tempoBpm: number; tempoAssumed: boolean; meter: string; meterAssumed: boolean };
   traceable: boolean;
+  /** B-11: the context passes that changed notes (context-aware path); empty when the path was off. Previously collected and dropped. */
+  contextPasses: ComposePass[];
 };
 
-export type PartComposerFn = (request: PartGenerationRequest) => MusicalNote[];
+/**
+ * B-11: what the orchestrator hands every composer call besides the request.
+ * A composing layer that makes a decision worth tracing registers it here
+ * and tags the notes it wrote with the returned id (`note.decisionId`) or
+ * attaches a bar range; see docs/brain/04-decision-provenance.md. Optional,
+ * so every existing composer (and every test double) is unchanged.
+ */
+export type PartComposerContext = { decisions: DecisionRegistry };
+
+export type PartComposerFn = (request: PartGenerationRequest, context?: PartComposerContext) => MusicalNote[];
+
+/** `performanceEngine.ts` keeps reasons for this many notes per track (its MAX_DECISION_SAMPLE); B-11 measures the rest. */
+export const PERFORMANCE_DECISION_SAMPLE_CAP = 64;
+/** Per-note performance deltas are persisted up to this many notes per track; beyond it the counts stay and the arrays are cut. */
+export const PERFORMANCE_TELEMETRY_NOTE_CAP = 4000;
 
 export type OrchestrateInput = {
   songModel: SongModelData;
@@ -482,7 +509,7 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     layers: PlanLayers,
     tasks: typeof partPlan.tasks,
     candidate: (typeof candidatePlan.candidates)[number],
-  ): { trackModels: TrackModel[]; findings: CandidateFinding[] } => {
+  ): { trackModels: TrackModel[]; findings: CandidateFinding[]; parts: PartCompositionTelemetry[]; decisions: DecisionRegistry } => {
     const requestLayers = {
       globalPlan: layers.globalPlan, sectionPlan: layers.sectionPlan,
       budgetWindows: layers.orchestrationBudget.windows,
@@ -494,13 +521,24 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     // count is not something a later part can arrange against.
     const siblings: Array<{ instrument: string; role: string; notes: MusicalNote[] }> = [];
     const findings: CandidateFinding[] = [];
+    // B-11: one registry per composition; every composer call may register
+    // the decisions it took, and every task records what it composed.
+    const decisions = new DecisionRegistry();
+    const parts: PartCompositionTelemetry[] = [];
     for (const task of tasks) {
       const adjustment = candidate.partAdjustments.find((a) => a.taskId === task.id);
       const request = buildPartGenerationRequest(
         songModel, { ...task, seed: adjustment?.seed ?? task.seed }, requestLayers, existing,
       );
-      const raw = compose(request);
+      const raw = compose(request, { decisions });
       let notes = applyDensity(raw, adjustment?.densityMultiplier ?? 1);
+      parts.push({
+        taskId: task.id,
+        decisionId: decisionId("compose", "part_task", task.id),
+        task: task.task, instrument: task.instrument, role: task.role, sectionName: task.sectionName,
+        startBar: task.startBar, endBar: task.endBar, seed: adjustment?.seed ?? task.seed,
+        composedNotes: raw.length, keptNotes: notes.length, densityMultiplier: adjustment?.densityMultiplier ?? 1,
+      });
       if (input.contextAware) {
         const upgraded = upgradePartGenerationRequest(request, {
           siblings,
@@ -582,7 +620,7 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     const trackModels = [...byTrack.values()]
       .map((entry, index) => trackModelFor(entry.instrument, entry.role, entry.notes.sort((a, b) => a.start - b.start), index + 1))
       .filter((track) => track.notes.length > 0);
-    return { trackModels, findings };
+    return { trackModels, findings, parts, decisions };
   };
 
   const composed: OrchestratedCandidate[] = [];
@@ -599,6 +637,9 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     let candidatePlanLayers: ArrangementPlan = plan;
     let trackModels = composition.trackModels;
     let findings: CandidateFinding[] = [...timingFindings, ...composition.findings];
+    // B-11: the telemetry of the composition the shipped notes came from.
+    let parts = composition.parts;
+    let composerDecisions = composition.decisions;
 
     // --- 5. constraints ------------------------------------------------
     const constraintReport = checkArrangementConstraints(
@@ -630,6 +671,8 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
       const recomposed = composeCandidate(layers, repairedPartPlan.tasks, candidate);
       // Dropped parts of the recomposition replace the original composition's.
       findings = [...timingFindings, ...recomposed.findings];
+      parts = recomposed.parts;
+      composerDecisions = recomposed.decisions;
       return { plan: planned.plan, trackModels: recomposed.trackModels, applied: planned.applied };
     };
     const repair = runCriticRepairLoop({
@@ -642,12 +685,15 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     } else {
       // The recomposition never ran or changed nothing: the original findings stand.
       findings = [...timingFindings, ...composition.findings];
+      parts = composition.parts;
+      composerDecisions = composition.decisions;
     }
     const compositionCritique = repairApplied ? repair.finalCritique : initialCritique;
     const planForPerformance = layersOf(candidatePlanLayers) ?? baseLayers;
 
     // --- 8. perform ----------------------------------------------------
     const playabilityRepairs: OrchestratedCandidate["playabilityRepairs"] = [];
+    const performanceTelemetry: TrackPerformanceTelemetry[] = [];
     const performed = trackModels.map((track) => {
       const assignment = planForPerformance.sectionPlan.roleAssignments.find(
         (r) => r.instrument === track.instrument,
@@ -679,6 +725,33 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
       // playability rules or the whole candidate is refused. A player takes an
       // impossible leap by the octave and releases a held note early; so does
       // this, and the trace records that it did.
+      // B-11: the engine keeps reasons for its first PERFORMANCE_DECISION_SAMPLE_CAP
+      // notes; the timing and velocity change of every composed note is
+      // measured here (composed -> performed, before the playability repair),
+      // so a 2,000-note part no longer has 64 explained notes and 1,936 silent ones.
+      const composedById = new Map(track.notes.map((n) => [n.id, n]));
+      const telemetry: TrackPerformanceTelemetry = {
+        trackId: track.id,
+        engine: result.evidence.engine,
+        engineVersion: result.evidence.engineVersion ?? "1.0",
+        profile: result.evidence.profile,
+        sampleCap: PERFORMANCE_DECISION_SAMPLE_CAP,
+        sample: result.evidence.decisions,
+        noteIds: [], timingOffsetsMs: [], velocityDeltas: [],
+        addedNotes: 0, removedNotes: 0,
+      };
+      let measured = 0;
+      for (const note of result.notes) {
+        const before = composedById.get(note.id);
+        if (!before) { telemetry.addedNotes += 1; continue; }
+        measured += 1;
+        if (measured > PERFORMANCE_TELEMETRY_NOTE_CAP) { telemetry.truncatedAt = PERFORMANCE_TELEMETRY_NOTE_CAP; continue; }
+        telemetry.noteIds.push(note.id);
+        telemetry.timingOffsetsMs.push(Math.round((note.start - before.start) * 10_000) / 10);
+        telemetry.velocityDeltas.push(note.velocity - before.velocity);
+      }
+      telemetry.removedNotes = Math.max(0, track.notes.length - measured);
+      performanceTelemetry.push(telemetry);
       const repaired = repairPlayability({ notes: result.notes, definition: track.instrumentDefinition });
       if (repaired.report.rangeFolds || repaired.report.leapFolds || repaired.report.durationLengthened ||
         repaired.report.breathTruncated || repaired.report.polyphonyReleases || repaired.report.dropped) {
@@ -828,6 +901,9 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
       audioCritique,
       renderFeasible,
       finalScore: audio === null ? symbolic : Number((symbolic * 0.6 + audio * 0.4).toFixed(2)),
+      parts,
+      performance: performanceTelemetry,
+      composerDecisions,
     });
   }
 
@@ -926,5 +1002,6 @@ export function orchestrateArrangement(input: OrchestrateInput): OrchestrationRe
     selection: { reason: selectionReason, eligible: eligible.map((c) => c.candidateId), rejected },
     timing: { tempoBpm, tempoAssumed, meter, meterAssumed },
     traceable: isTraceable(stages),
+    contextPasses,
   };
 }

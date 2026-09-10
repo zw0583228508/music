@@ -34,6 +34,8 @@ import {
   exportAudioRole,
   type ExportAudioRole,
 } from "./exportAudioRoles";
+import { assignMidiChannels, gmProgramFor, GM_PROGRAM_TABLE_VERSION } from "./gmPrograms";
+import type { RevisionStemEvidence } from "@workspace/db";
 
 export type ExportTrack = {
   id: string;
@@ -53,6 +55,13 @@ export type GeneratedExportFile = {
   provenance: ArtifactProvenance;
   rendererEvidence?: ExportRendererEvidence;
   processingEvidence?: PedalboardProcessingEvidence;
+  /**
+   * B-11: on the manifest file only - every rendered stem's renderer, asset,
+   * sound-selection reason and gate outcome, whether or not stems were
+   * requested. The mix/master revision route stores this on its evidence so
+   * a revision is diagnosable without an export (the owner's v5 defect).
+   */
+  stemEvidence?: RevisionStemEvidence[];
 };
 
 export type ExportRendererEvidence = {
@@ -515,8 +524,12 @@ export function createPerformanceMidi(
     0x00,
   );
 
+  // B-11: the program follows the instrument (gmPrograms.ts), not the track's
+  // position in the file; a pitched track is never written on channel 10.
+  const programs = trackModels.map((track) => gmProgramFor({ instrument: track.instrument, definition: track.instrumentDefinition }));
+  const channels = assignMidiChannels(programs);
   trackModels.forEach((track, trackIndex) => {
-    const channel = track.instrumentDefinition.family === "drums" ? 9 : trackIndex % 16;
+    const channel = channels[trackIndex];
     const events: Array<{ tick: number; order: number; bytes: number[] }> = [];
     track.cc.forEach((event) => {
       events.push({
@@ -547,7 +560,7 @@ export function createPerformanceMidi(
       events.push({ tick: end, order: 1, bytes: [0x80 | channel, midiByte(note.pitch), 48] });
     });
     events.sort((left, right) => left.tick - right.tick || left.order - right.order);
-    const bytes: number[] = [0x00, 0xc0 | channel, midiByte(trackIndex === 0 ? 0 : (trackIndex * 8) % 96)];
+    const bytes: number[] = [0x00, 0xc0 | channel, midiByte(programs[trackIndex].program)];
     let previousTick = 0;
     for (const event of events) {
       bytes.push(...vlq(Math.max(0, event.tick - previousTick)), ...event.bytes);
@@ -1379,16 +1392,68 @@ export async function renderArrangementExport(input: {
     },
     generationProvider: input.generationProvider,
   };
+  const stemEvidence = stemRendererEvidence(pipeline.tracks, activeTracks, pipeline.quality.productionReadiness);
   files.push({
     name: "project/manifest.json",
     type: "METADATA",
     format: "JSON",
     contentType: "application/json",
-    data: Buffer.from(JSON.stringify(metadata, null, 2)),
+    data: Buffer.from(JSON.stringify({
+      ...metadata,
+      // B-11: the per-stem renderer table and the GM table version in the manifest itself.
+      stemEvidence,
+      midi: { programTable: GM_PROGRAM_TABLE_VERSION, programs: programsByTrack(remoteTracks.map((track) => track.trackModel)) },
+    }, null, 2)),
     provenance: fileProvenance("EXPORT_ENGINE", "2.0.0", {
       qualityScore: pipeline.quality.score,
       arrangementVersion: input.arrangementVersion,
     }),
+    stemEvidence,
   });
   return files;
+}
+
+/** The GM program and channel each track of a performance MIDI is written with (B-11). */
+export function programsByTrack(trackModels: TrackModel[]): Array<{ trackId: string; instrument: string; program: number; channel: number; reason: string }> {
+  const programs = trackModels.map((track) => gmProgramFor({ instrument: track.instrument, definition: track.instrumentDefinition }));
+  const channels = assignMidiChannels(programs);
+  return trackModels.map((track, index) => ({
+    trackId: track.id, instrument: track.instrument, program: programs[index].program, channel: channels[index], reason: programs[index].reason,
+  }));
+}
+
+/**
+ * B-11 (D4): per-stem renderer evidence in the shape the mix/master revision
+ * stores - the same facts the export manifest carries per stem (renderer,
+ * status, asset, why the sound was chosen, why a native render fell back)
+ * plus the gate verdict: `passed` only when the stem is licensed-native and
+ * the export's readiness gates found nothing against it.
+ */
+export function stemRendererEvidence(
+  rendered: ReadonlyArray<RenderedTrack>,
+  tracks: ReadonlyArray<Pick<ExportTrack, "id" | "name" | "role">>,
+  readiness: { ready: boolean; status: string; reasons: string[] } | undefined,
+): RevisionStemEvidence[] {
+  return rendered.map((stem) => {
+    const track = tracks.find((candidate) => candidate.id === stem.trackModel.id);
+    const status = stem.rendererStatus ?? "preview-only";
+    const stemReasons = (readiness?.reasons ?? []).filter((reason) => reason.includes(stem.trackModel.id));
+    const reasons = [
+      ...(stem.fallbackReason ? [stem.fallbackReason] : []),
+      ...stemReasons,
+    ];
+    return {
+      trackId: stem.trackModel.id,
+      trackName: track?.name ?? stem.trackModel.instrument,
+      role: track?.role ?? stem.trackModel.role,
+      instrument: stem.trackModel.instrument,
+      renderer: stem.rendererAttestation?.provider ?? stem.renderer,
+      rendererStatus: status,
+      assetId: stem.rendererAttestation?.assetId ?? stem.soundSelection?.assetId ?? null,
+      assetIdentity: stem.rendererAttestation?.assetIdentity ?? null,
+      soundSelection: stem.soundSelection ? `${stem.soundSelection.source}: ${stem.soundSelection.reason}` : null,
+      fallbackReason: stem.fallbackReason ?? null,
+      gate: { passed: status === "licensed-native" && stemReasons.length === 0, reasons },
+    };
+  });
 }

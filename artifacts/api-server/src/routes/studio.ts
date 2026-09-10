@@ -53,6 +53,8 @@ import {
   GetArrangementResponse,
   ListArrangementRevisionsParams,
   ListArrangementRevisionsResponse,
+  GetArrangementDecisionTraceParams,
+  GetArrangementDecisionTraceResponse,
   ListArrangementsParams,
   ListArrangementsResponse,
   ListArtifactsParams,
@@ -212,6 +214,7 @@ import {
 import { deriveMixPlan, mixPlanToControls } from "../lib/mixBrain";
 import { correctionFields, regridTimeline, sectionCountMayChange, verifiedConfidence, chordSheetToEvents } from "../lib/songModelCorrection";
 import { arrangementTrackRows } from "../lib/projectTracks";
+import { buildDecisionTrace, stemEvidenceFromExportArtifacts } from "../lib/decisionTrace";
 import { compareFingerprints, deriveStyleFingerprint } from "../lib/styleFingerprint";
 import { FEATURE_NAMES, recordPreferenceEvent, trainingRows, type PreferenceSubjectInput } from "../lib/preferenceEvents";
 import { DbPreferenceEventStore } from "../lib/preferenceEventsDbStore";
@@ -2614,6 +2617,76 @@ router.get("/arrangements/:arrangementId/revisions", async (req, res): Promise<v
   ));
 });
 
+/**
+ * Brain B-11: the decision trace of one arrangement version, assembled from
+ * stored rows only (the arrangement, its parent version, the source
+ * candidate, the Song Model, the mix/master revisions and the export stem
+ * artifacts). Read-only; nothing is recomputed from the music, and a layer
+ * that recorded nothing is reported as `not recorded`.
+ */
+router.get("/arrangements/:arrangementId/decision-trace", async (req, res): Promise<void> => {
+  const params = GetArrangementDecisionTraceParams.safeParse(req.params);
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+  const [arrangement] = await db
+    .select()
+    .from(arrangementsTable)
+    .where(eq(arrangementsTable.id, params.data.arrangementId))
+    .limit(1);
+  const [project] = arrangement
+    ? await db
+        .select({ ownerId: musicProjectsTable.ownerId })
+        .from(musicProjectsTable)
+        .where(eq(musicProjectsTable.id, arrangement.projectId))
+        .limit(1)
+    : [];
+  if (!arrangement || !project || project.ownerId !== req.user!.id) {
+    res.status(404).json({ error: "Arrangement not found" });
+    return;
+  }
+  const [parentRows, candidateRows, songModelRows, revisionRows, exportRows, stemArtifacts] = await Promise.all([
+    arrangement.parentArrangementId
+      ? db.select().from(arrangementsTable).where(and(eq(arrangementsTable.id, arrangement.parentArrangementId), eq(arrangementsTable.projectId, arrangement.projectId))).limit(1)
+      : Promise.resolve([]),
+    arrangement.sourceCandidateId
+      ? db.select().from(musicGenerationCandidatesTable).where(eq(musicGenerationCandidatesTable.id, arrangement.sourceCandidateId)).limit(1)
+      : Promise.resolve([]),
+    arrangement.songModelVersion !== null
+      ? db.select().from(songModelsTable).where(and(eq(songModelsTable.projectId, arrangement.projectId), eq(songModelsTable.version, arrangement.songModelVersion))).limit(1)
+      : Promise.resolve([]),
+    db.select().from(mixMasterRevisionsTable).where(eq(mixMasterRevisionsTable.arrangementId, arrangement.id)).orderBy(desc(mixMasterRevisionsTable.version)),
+    db.select().from(musicExportsTable).where(eq(musicExportsTable.arrangementId, arrangement.id)).orderBy(desc(musicExportsTable.createdAt)),
+    db.select().from(musicArtifactsTable).where(and(eq(musicArtifactsTable.projectId, arrangement.projectId), eq(musicArtifactsTable.type, "STEM"))),
+  ]);
+  const parent = parentRows[0];
+  const candidate = candidateRows[0];
+  const trace = buildDecisionTrace({
+    arrangement: {
+      id: arrangement.id, projectId: arrangement.projectId, name: arrangement.name, version: arrangement.version,
+      parentArrangementId: arrangement.parentArrangementId, generationProvider: arrangement.generationProvider,
+      sourceCandidateId: arrangement.sourceCandidateId, createdAt: arrangement.createdAt,
+      plan: arrangement.plan, trackModels: arrangement.trackModels, generationProvenance: arrangement.generationProvenance ?? null,
+    },
+    parent: parent ? { id: parent.id, name: parent.name, version: parent.version, plan: parent.plan, trackModels: parent.trackModels } : null,
+    candidate: candidate ? { id: candidate.id, label: candidate.label, parameters: candidate.parameters as Record<string, unknown>, evaluation: candidate.evaluation } : null,
+    songModel: songModelRows[0]?.model ?? null,
+    mixRevisions: revisionRows.map((revision) => ({ id: revision.id, version: revision.version, createdAt: revision.createdAt, approvedAt: revision.approvedAt, evidence: revision.evidence })),
+    exports: exportRows.map((exportRow) => {
+      const artifacts = stemArtifacts.filter((artifact) => artifact.technicalMetadata["exportId"] === exportRow.id);
+      const stems = stemEvidenceFromExportArtifacts(artifacts);
+      return {
+        id: exportRow.id, status: exportRow.status, createdAt: exportRow.createdAt, stems,
+        readiness: stems.length
+          ? { ready: stems.every((stem) => stem.gate.passed), status: stems.every((stem) => stem.gate.passed) ? "production-ready" : "preview-only", reasons: stems.flatMap((stem) => stem.gate.reasons) }
+          : null,
+      };
+    }),
+  });
+  res.json(GetArrangementDecisionTraceResponse.parse(trace));
+});
+
 router.post(
   "/arrangements/:arrangementId/revisions/:revisionId/restore",
   async (req, res): Promise<void> => {
@@ -3597,6 +3670,24 @@ router.post("/projects/:projectId/mix-master-revisions", async (req, res): Promi
   const master = files.find((file) => file.type === "MASTER" && file.format === "WAV");
   const mixed = files.find((file) => file.type === "MIX" && file.format === "WAV");
   if (!master || !mixed) throw new Error("Mix/master renderer did not produce both WAV variants");
+  // B-11 (D4): the revision records per stem who rendered it, with which
+  // asset, why that sound was chosen and what the gates said - exactly what
+  // the export manifest carries. The owner's v5 defect (faders applied twice,
+  // bass gone from the approved master) was diagnosable only from an export
+  // because the revision said "MUSIC_ENGINE@1.0" and nothing else.
+  const manifestFile = files.find((file) => file.type === "METADATA");
+  const stemEvidence = manifestFile?.stemEvidence ?? [];
+  const manifestReadiness = (() => {
+    try {
+      const parsed = manifestFile ? JSON.parse(manifestFile.data.toString("utf8")) as { productionReadiness?: { ready?: boolean; status?: string; reasons?: string[] } } : null;
+      const readiness = parsed?.productionReadiness;
+      return readiness && typeof readiness.ready === "boolean"
+        ? { ready: readiness.ready, status: String(readiness.status ?? (readiness.ready ? "production-ready" : "preview-only")), reasons: Array.isArray(readiness.reasons) ? readiness.reasons.map(String) : [] }
+        : null;
+    } catch {
+      return null;
+    }
+  })();
   const [source] = await db.select().from(projectSourcesTable).where(and(
     eq(projectSourcesTable.id, songModel.sourceId),
     eq(projectSourcesTable.projectId, project.id),
@@ -3678,6 +3769,8 @@ router.post("/projects/:projectId/mix-master-revisions", async (req, res): Promi
       },
       renderer: "MUSIC_ENGINE@1.0",
       quality: { integratedLufs: measured.integratedLufs, truePeakDbtp: measured.truePeakDbtp, truePeakMethod: "4x-windowed-sinc-estimate" as const, findings },
+      stems: stemEvidence,
+      ...(manifestReadiness ? { readiness: manifestReadiness } : {}),
     };
     await tx.insert(musicArtifactsTable).values({
       id: mixedArtifactId, projectId: project.id, type: "AUDIO_TRACK", label: `Mixed preview v${version}`,

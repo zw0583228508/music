@@ -10,6 +10,7 @@
     "pretypecheck": "tsc --build ../../lib/api-client-react/tsconfig.json ../../lib/replit-auth-web/tsconfig.json --force",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test:build": "node --test tests/vite-build.test.mjs",
+    "test:decision-trace-view": "sh -c 'bundle=$(mktemp /tmp/music-studio-decision-trace-view.XXXXXX.mjs) || exit; trap \"rm -f $bundle\" EXIT; pnpm exec esbuild src/pages/decision-trace-view.test.ts --bundle --platform=node --format=esm --outfile=\"$bundle\" && node --test \"$bundle\"'",
     "test:repair-view": "sh -c 'bundle=$(mktemp /tmp/music-studio-repair-view.XXXXXX.mjs) || exit; trap \"rm -f $bundle\" EXIT; pnpm exec esbuild src/pages/project-workspace-repair.test.ts --bundle --platform=node --format=esm --outfile=\"$bundle\" && node --test \"$bundle\"'",
     "test:transport": "sh -c 'bundle=$(mktemp /tmp/music-studio-audio-transport.XXXXXX.mjs) || exit; trap \"rm -f $bundle\" EXIT; pnpm exec esbuild src/components/studio/audio-transport.test.ts --bundle --platform=node --format=esm --outfile=\"$bundle\" && node --test \"$bundle\"'"
   },

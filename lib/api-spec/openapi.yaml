@@ -699,6 +699,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /arrangements/{arrangementId}/decision-trace:
+    get:
+      operationId: getArrangementDecisionTrace
+      tags: [arrangements]
+      summary: The decision trace of one arrangement version (Brain B-11), read-only
+      description: |
+        Brain B-11. Answers, from stored rows only, why each instrument entered
+        or stayed silent in each section, which decisions authored each bar
+        range of each track, which critic objected where (with failure codes
+        and origin layers), what repair occurred, which tempo / meter was read
+        or assumed, which renderer produced each stem and why, and what changed
+        against the parent version. Where a layer recorded nothing the answer
+        says `not recorded by <layer>` - nothing is reconstructed.
+      parameters:
+        - $ref: "#/components/parameters/ArrangementId"
+      responses:
+        "200":
+          description: The decision trace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DecisionTrace"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /arrangements/{arrangementId}/generate:
     post:
       operationId: generateArrangement
@@ -4157,6 +4181,306 @@ components:
           oneOf:
             - $ref: "#/components/schemas/ArtifactProvenance"
             - { type: "null" }
+    DecisionOriginLayer:
+      type: string
+      description: Brain B-11 / B-05b - the layer a decision or failure belongs to.
+      enum: [brief, arc, form, harmony, groove, orchestration, register, compose, perform, render, mix, unknown]
+    ArrangementFailureCode:
+      type: string
+      description: The closed failure taxonomy (critics/failureTaxonomy.ts, FAILURE_TAXONOMY_v1).
+      enum: [GLOBAL_COHERENCE_FAILURE, FORM_FAILURE, ENERGY_ARC_FAILURE, MOTIF_FAILURE, HARMONY_FAILURE, VOICE_LEADING_FAILURE, GROOVE_FAILURE, ORCHESTRATION_FAILURE, REGISTER_FAILURE, DENSITY_FAILURE, PLAYABILITY_FAILURE, IDIOM_FAILURE, STYLE_FAILURE, TRANSITION_FAILURE, REPETITION_FAILURE, PREDICTABILITY_FAILURE, CAUSALITY_FAILURE, MASKING_FAILURE, VOCAL_SPACE_FAILURE, PERFORMANCE_FAILURE, RENDER_FAILURE, AUDIO_BALANCE_FAILURE, PLAN_REALISATION_FAILURE, INPUT_UNKNOWN]
+    FailureCodeCount:
+      type: object
+      required: [failureCode, originLayer, count, severity]
+      properties:
+        failureCode: { $ref: "#/components/schemas/ArrangementFailureCode" }
+        originLayer: { $ref: "#/components/schemas/DecisionOriginLayer" }
+        count: { type: number }
+        severity: { type: string, enum: [error, warning, info] }
+    RevisionStemEvidence:
+      type: object
+      description: Brain B-11 (D4) - one stem of a mix/master revision or export, who rendered it and whether the gates let it through.
+      required: [trackId, trackName, role, instrument, renderer, rendererStatus, assetId, assetIdentity, soundSelection, fallbackReason, gate]
+      properties:
+        trackId: { type: string }
+        trackName: { type: string }
+        role: { type: string }
+        instrument: { type: string }
+        renderer: { type: string }
+        rendererStatus: { type: string, enum: [licensed-native, preview-only] }
+        assetId: { type: ["string", "null"] }
+        assetIdentity: { type: ["string", "null"] }
+        soundSelection: { type: ["string", "null"] }
+        fallbackReason: { type: ["string", "null"] }
+        gate:
+          type: object
+          required: [passed, reasons]
+          properties:
+            passed: { type: boolean }
+            reasons: { type: array, items: { type: string } }
+    DecisionTraceReason:
+      type: object
+      required: [decisionId, layer, source, reason]
+      properties:
+        decisionId: { type: ["string", "null"] }
+        layer: { $ref: "#/components/schemas/DecisionOriginLayer" }
+        source: { type: ["string", "null"] }
+        reason: { type: string }
+    DecisionTraceEntry:
+      type: object
+      required: [sectionName, startBar, endBar, family, status, noteCount, reasons]
+      properties:
+        sectionName: { type: string }
+        startBar: { type: number }
+        endBar: { type: number }
+        family: { type: string }
+        status: { type: string, enum: [entered, silent, not_planned] }
+        noteCount: { type: number }
+        reasons: { type: array, items: { $ref: "#/components/schemas/DecisionTraceReason" } }
+    DecisionTraceVoicing:
+      type: object
+      required: [trackId, instrument, role, noteCount, ranges, notRecorded]
+      properties:
+        trackId: { type: string }
+        instrument: { type: string }
+        role: { type: string }
+        noteCount: { type: number }
+        ranges:
+          type: array
+          items:
+            type: object
+            required: [startBar, endBar, decisions]
+            properties:
+              startBar: { type: number }
+              endBar: { type: number }
+              decisions: { type: array, items: { $ref: "#/components/schemas/DecisionTraceReason" } }
+        notRecorded:
+          type: array
+          items:
+            type: object
+            required: [layer, reason]
+            properties:
+              layer: { $ref: "#/components/schemas/DecisionOriginLayer" }
+              reason: { type: string }
+    DecisionTraceFinding:
+      type: object
+      required: [source, kind, severity, failureCode, originLayer, sectionName, instrument, trackIds, startBar, endBar, startSeconds, endSeconds, message]
+      properties:
+        source: { type: string, enum: [brain, critic_hard_rule, critic_dimension, runner_music_critic, runner_audio_critic, render_gate, mix] }
+        kind: { type: string }
+        severity: { type: string, enum: [error, warning, info] }
+        failureCode:
+          oneOf: [{ $ref: "#/components/schemas/ArrangementFailureCode" }, { type: "null" }]
+        originLayer:
+          oneOf: [{ $ref: "#/components/schemas/DecisionOriginLayer" }, { type: "null" }]
+        sectionName: { type: ["string", "null"] }
+        instrument: { type: ["string", "null"] }
+        trackIds: { type: array, items: { type: string } }
+        startBar: { type: ["number", "null"] }
+        endBar: { type: ["number", "null"] }
+        startSeconds: { type: ["number", "null"] }
+        endSeconds: { type: ["number", "null"] }
+        message: { type: string }
+    DecisionTraceRepair:
+      type: object
+      required: [source, pass, applied, requested, changed, scoreBefore, scoreAfter, trackId, counts, changedScopes, outsideScopePreserved, detail]
+      properties:
+        source: { type: string, enum: [critic_repair_loop, playability_repair, bounded_repair] }
+        pass: { type: ["number", "null"] }
+        applied: { type: array, items: { type: string } }
+        requested: { type: array, items: { type: string } }
+        changed: { type: boolean }
+        scoreBefore: { type: ["number", "null"] }
+        scoreAfter: { type: ["number", "null"] }
+        trackId: { type: ["string", "null"] }
+        counts:
+          oneOf:
+            - type: object
+              required: [rangeFolds, leapFolds, durationLengthened, breathTruncated, polyphonyReleases, dropped, residual]
+              properties:
+                rangeFolds: { type: number }
+                leapFolds: { type: number }
+                durationLengthened: { type: number }
+                breathTruncated: { type: number }
+                polyphonyReleases: { type: number }
+                dropped: { type: number }
+                residual: { type: array, items: { type: string } }
+            - type: "null"
+        changedScopes:
+          type: array
+          items:
+            type: object
+            required: [level, id]
+            properties:
+              level: { type: string, enum: [song, section, phrase, bar, event] }
+              id: { type: string }
+        outsideScopePreserved: { type: ["boolean", "null"] }
+        detail: { type: string }
+    DecisionTraceRenderer:
+      type: object
+      required: [source, sourceId, createdAt, stems, readiness]
+      properties:
+        source: { type: string }
+        sourceId: { type: string }
+        createdAt: { type: ["string", "null"] }
+        stems: { type: array, items: { $ref: "#/components/schemas/RevisionStemEvidence" } }
+        readiness:
+          oneOf:
+            - type: object
+              required: [ready, status, reasons]
+              properties:
+                ready: { type: boolean }
+                status: { type: string }
+                reasons: { type: array, items: { type: string } }
+            - type: "null"
+    CandidateDiffTrack:
+      type: object
+      required: [trackId, instrument, status, notesBefore, notesAfter, added, removed, changed, ranges]
+      properties:
+        trackId: { type: string }
+        instrument: { type: string }
+        status: { type: string, enum: [added, removed, changed, unchanged] }
+        notesBefore: { type: number }
+        notesAfter: { type: number }
+        added: { type: number }
+        removed: { type: number }
+        changed: { type: number }
+        ranges:
+          type: array
+          items:
+            type: object
+            required: [startBar, endBar, added, removed, changed]
+            properties:
+              startBar: { type: number }
+              endBar: { type: number }
+              added: { type: number }
+              removed: { type: number }
+              changed: { type: number }
+    CandidateDiff:
+      type: object
+      description: Brain B-11 - what changed between iteration N and N+1 (per-track bar ranges and plan fields).
+      required: [version, before, after, barSeconds, tracks, plan, summary]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        before:
+          type: object
+          required: [id, label]
+          properties:
+            id: { type: string }
+            label: { type: string }
+        after:
+          type: object
+          required: [id, label]
+          properties:
+            id: { type: string }
+            label: { type: string }
+        barSeconds: { type: ["number", "null"] }
+        tracks: { type: array, items: { $ref: "#/components/schemas/CandidateDiffTrack" } }
+        plan:
+          type: array
+          items:
+            type: object
+            required: [path, before, after]
+            properties:
+              path: { type: string }
+              before: { type: ["string", "null"] }
+              after: { type: ["string", "null"] }
+        summary:
+          type: object
+          required: [tracksChanged, notesAdded, notesRemoved, notesChanged, planFieldsChanged]
+          properties:
+            tracksChanged: { type: number }
+            notesAdded: { type: number }
+            notesRemoved: { type: number }
+            notesChanged: { type: number }
+            planFieldsChanged: { type: number }
+    DecisionTrace:
+      type: object
+      description: Brain B-11 - the seven questions answered from stored rows only.
+      required: [version, arrangement, timing, entries, voicings, findings, failureCodes, repairs, renderers, diff, performance, contextPasses, stages, selection, notRecorded]
+      properties:
+        version: { type: string, enum: ["1.0"] }
+        arrangement:
+          type: object
+          required: [id, name, version, projectId, provider, candidateId, parentArrangementId, createdAt]
+          properties:
+            id: { type: string }
+            name: { type: string }
+            version: { type: number }
+            projectId: { type: string }
+            provider: { type: ["string", "null"] }
+            candidateId: { type: ["string", "null"] }
+            parentArrangementId: { type: ["string", "null"] }
+            createdAt: { type: ["string", "null"] }
+        timing:
+          type: object
+          required: [tempoBpm, tempoAssumed, meter, meterAssumed, source]
+          properties:
+            tempoBpm: { type: ["number", "null"] }
+            tempoAssumed: { type: ["boolean", "null"] }
+            meter: { type: ["string", "null"] }
+            meterAssumed: { type: ["boolean", "null"] }
+            source: { type: string }
+        entries: { type: array, items: { $ref: "#/components/schemas/DecisionTraceEntry" } }
+        voicings: { type: array, items: { $ref: "#/components/schemas/DecisionTraceVoicing" } }
+        findings: { type: array, items: { $ref: "#/components/schemas/DecisionTraceFinding" } }
+        failureCodes: { type: array, items: { $ref: "#/components/schemas/FailureCodeCount" } }
+        repairs: { type: array, items: { $ref: "#/components/schemas/DecisionTraceRepair" } }
+        renderers: { type: array, items: { $ref: "#/components/schemas/DecisionTraceRenderer" } }
+        diff:
+          oneOf: [{ $ref: "#/components/schemas/CandidateDiff" }, { type: "null" }]
+        performance:
+          type: array
+          items:
+            type: object
+            required: [trackId, engine, engineVersion, profile, reasonedNotes, measuredNotes, meanTimingOffsetMs, meanVelocityDelta, addedNotes]
+            properties:
+              trackId: { type: string }
+              engine: { type: string }
+              engineVersion: { type: string }
+              profile: { type: string }
+              reasonedNotes: { type: number }
+              measuredNotes: { type: number }
+              meanTimingOffsetMs: { type: ["number", "null"] }
+              meanVelocityDelta: { type: ["number", "null"] }
+              addedNotes: { type: number }
+        contextPasses:
+          type: array
+          items:
+            type: object
+            required: [id, changed, note]
+            properties:
+              id: { type: string }
+              changed: { type: number }
+              note: { type: string }
+        stages:
+          type: array
+          items:
+            type: object
+            required: [stage, status, detail]
+            properties:
+              stage: { type: string }
+              status: { type: string, enum: [ok, skipped, failed] }
+              detail: { type: string }
+              evidence:
+                type: object
+                additionalProperties: true
+        selection:
+          type: object
+          required: [reason, score, confidence]
+          properties:
+            reason: { type: ["string", "null"] }
+            score: { type: ["number", "null"] }
+            confidence: { type: ["number", "null"] }
+        notRecorded:
+          type: array
+          items:
+            type: object
+            required: [question, layer, reason]
+            properties:
+              question: { type: string }
+              layer: { $ref: "#/components/schemas/DecisionOriginLayer" }
+              reason: { type: string }
     ArrangementRevisionSummary:
       type: object
       required: [affectedSections, affectedTracks, trackMembershipChanges, chordChanges, noteChanges, ccChanges, conductorControls, candidateSelectionChanged]
@@ -5790,6 +6114,17 @@ components:
                 truePeakDbtp: { type: number }
                 truePeakMethod: { type: string, enum: [4x-windowed-sinc-estimate] }
                 findings: { type: array, items: { $ref: "#/components/schemas/MixMasterFinding" } }
+            stems:
+              type: array
+              description: Brain B-11 (D4) - per-stem renderer, asset, sound-selection reason and gate outcome; absent on revisions created before it.
+              items: { $ref: "#/components/schemas/RevisionStemEvidence" }
+            readiness:
+              type: object
+              required: [ready, status, reasons]
+              properties:
+                ready: { type: boolean }
+                status: { type: string }
+                reasons: { type: array, items: { type: string } }
         approvedAt: { type: ["string", "null"] }
         approvedBy: { type: ["string", "null"] }
         createdAt: { type: string }

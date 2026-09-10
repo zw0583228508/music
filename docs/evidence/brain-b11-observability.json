@@ -1,0 +1,3596 @@
+{
+  "title": "Brain B-11 - every important musical decision inspectable: decision provenance, failure codes with origin, telemetry, the N -> N+1 diff, per-stem renderer in the revision evidence, GM programs in the exported MIDI",
+  "date": "2026-09-10",
+  "fixture": "artifacts/api-server/src/lib/__fixtures__/rachemNaSongModelV3.ts (the owner's song, Song Model v3, slimmed), brief: intimate ballad; piano, soft strings, gentle bass, light percussion; big final chorus",
+  "method": {
+    "generation": "LocalArrangementOrchestratorProvider.generate (3 candidates, render: false, now = 2026-09-10T00:00Z) - the shape the job runner persists on music_generation_candidates.parameters.arrangementBrain",
+    "storedRows": "arrangement row v2 (winner) with parentArrangementId -> v1 (runner-up), generationProvenance.telemetry from arrangementTelemetry(); a mix/master revision whose evidence carries the new per-stem `stems`; no export row",
+    "trace": "buildDecisionTrace() over those rows only - what GET /api/arrangements/:id/decision-trace returns",
+    "determinism": "fixed clock and seeds; rerunning this test reproduces every number"
+  },
+  "sevenQuestions": {
+    "1 why did this instrument enter this section": {
+      "answerable": true,
+      "detail": "33/33 entered cells cite a recorded decision (arc entry / role assignment / part task / performance); 3 planned-but-silent cell(s) each carry a finding or say 'not recorded'",
+      "layersReporting": [
+        "arc",
+        "compose",
+        "orchestration",
+        "perform"
+      ]
+    },
+    "2 why this voicing": {
+      "answerable": false,
+      "detail": "part-level provenance recorded (which task, seed, density multiplier, role, arc entry wrote each bar range); the voicing of each chord is NOT recorded - REFERENCE_PART_COMPOSER_V1 registers no harmony / groove / register decisions (contract in docs/brain/04-decision-provenance.md; B-02 / B-04 / B-03)",
+      "notRecordedBy": [
+        "harmony",
+        "groove",
+        "register"
+      ]
+    },
+    "3 which critic objected, where": {
+      "answerable": true,
+      "detail": "20 finding(s): brain=3, critic_dimension=17; brain and hard-rule findings carry a failure code and an origin layer; music-critic/v1 dimension findings carry no location and no code (B-05 rebuild)",
+      "failureCodes": [
+        {
+          "failureCode": "PLAN_REALISATION_FAILURE",
+          "originLayer": "compose",
+          "severity": "warning",
+          "count": 3
+        }
+      ]
+    },
+    "4 what repair occurred": {
+      "answerable": true,
+      "detail": "2 repair record(s): critic_repair_loop, playability_repair",
+      "limits": "playability repair persists counts per track, not which notes; a critic-loop pass that changed nothing is reported as such"
+    },
+    "5 tempo / meter assumed or measured": {
+      "answerable": true,
+      "detail": {
+        "tempoBpm": 130.43,
+        "tempoAssumed": false,
+        "meter": "4/4",
+        "meterAssumed": false,
+        "source": "the brain's run record (arrangementBrain.timing)"
+      }
+    },
+    "6 which renderer produced each stem": {
+      "answerable": true,
+      "detail": "1 render source(s); the fixture's mix/master revision carries 5 stem(s) with renderer, asset, sound-selection reason and gate verdict (the route persists this on every new revision; older revisions say 'not recorded')"
+    },
+    "7 what changed between N and N+1": {
+      "answerable": true,
+      "detail": {
+        "tracksChanged": 5,
+        "notesAdded": 345,
+        "notesRemoved": 438,
+        "notesChanged": 1078,
+        "planFieldsChanged": 0
+      }
+    }
+  },
+  "winner": {
+    "label": "A · conservative",
+    "shippedScore": 72,
+    "compositionScore": 72,
+    "selectable": true,
+    "tracks": [
+      {
+        "id": "rachem-na--drums-groove",
+        "instrument": "drums",
+        "role": "GROOVE",
+        "notes": 416,
+        "provenanceRanges": 3,
+        "notRecorded": [
+          "harmony",
+          "groove",
+          "register"
+        ]
+      },
+      {
+        "id": "rachem-na--bass-bass",
+        "instrument": "bass",
+        "role": "BASS",
+        "notes": 94,
+        "provenanceRanges": 10,
+        "notRecorded": [
+          "harmony",
+          "groove",
+          "register"
+        ]
+      },
+      {
+        "id": "rachem-na--percussion-fill",
+        "instrument": "percussion",
+        "role": "FILL",
+        "notes": 120,
+        "provenanceRanges": 5,
+        "notRecorded": [
+          "harmony",
+          "groove",
+          "register"
+        ]
+      },
+      {
+        "id": "rachem-na--keys-rhythmic_harmony",
+        "instrument": "keys",
+        "role": "RHYTHMIC_HARMONY",
+        "notes": 878,
+        "provenanceRanges": 10,
+        "notRecorded": [
+          "harmony",
+          "groove",
+          "register"
+        ]
+      },
+      {
+        "id": "rachem-na--strings-pad",
+        "instrument": "strings",
+        "role": "PAD",
+        "notes": 91,
+        "provenanceRanges": 10,
+        "notRecorded": [
+          "harmony",
+          "groove",
+          "register"
+        ]
+      }
+    ],
+    "decisions": 176,
+    "decisionsByLayer": [
+      [
+        "arc",
+        47
+      ],
+      [
+        "form",
+        9
+      ],
+      [
+        "orchestration",
+        47
+      ],
+      [
+        "compose",
+        67
+      ],
+      [
+        "perform",
+        6
+      ]
+    ],
+    "failureCodes": [
+      {
+        "failureCode": "PLAN_REALISATION_FAILURE",
+        "originLayer": "compose",
+        "severity": "warning",
+        "count": 3
+      }
+    ],
+    "candidateTelemetry": {
+      "version": "1.0",
+      "orchestratorVersion": "1.0",
+      "composer": "REFERENCE_PART_COMPOSER_V1",
+      "traceable": true,
+      "selectable": true,
+      "shippedScore": 72,
+      "compositionScore": 72,
+      "failureCodes": [
+        {
+          "failureCode": "PLAN_REALISATION_FAILURE",
+          "originLayer": "compose",
+          "severity": "warning",
+          "count": 3
+        }
+      ],
+      "decisions": 176,
+      "repairPasses": 1,
+      "appliedRepairPasses": 0,
+      "playabilityRepairedTracks": 1,
+      "timing": {
+        "tempoBpm": 130.43,
+        "tempoAssumed": false,
+        "meter": "4/4",
+        "meterAssumed": false
+      }
+    }
+  },
+  "trace": {
+    "version": "1.0",
+    "arrangement": {
+      "id": "arr-v2",
+      "name": "רחם נא · A · conservative",
+      "version": 2,
+      "projectId": "rachem-na",
+      "provider": "ARRANGEMENT_ORCHESTRATOR",
+      "candidateId": "cand-winner",
+      "parentArrangementId": "arr-v1",
+      "createdAt": "2026-09-10T00:00:00.000Z"
+    },
+    "timing": {
+      "tempoBpm": 130.43,
+      "tempoAssumed": false,
+      "meter": "4/4",
+      "meterAssumed": false,
+      "source": "the brain's run record (arrangementBrain.timing)"
+    },
+    "entries": [
+      {
+        "sectionName": "Intro",
+        "startBar": 1,
+        "endBar": 2,
+        "family": "drums",
+        "status": "not_planned",
+        "noteCount": 0,
+        "reasons": [
+          {
+            "decisionId": null,
+            "layer": "arc",
+            "source": null,
+            "reason": "drums is an inactive family of \"Intro\" in the section plan (the arc lists no exit event here; the texture level and family order decide who is in)"
+          }
+        ]
+      },
+      {
+        "sectionName": "Intro",
+        "startBar": 1,
+        "endBar": 2,
+        "family": "percussion",
+        "status": "not_planned",
+        "noteCount": 0,
+        "reasons": [
+          {
+            "decisionId": null,
+            "layer": "arc",
+            "source": null,
+            "reason": "percussion is an inactive family of \"Intro\" in the section plan (the arc lists no exit event here; the texture level and family order decide who is in)"
+          }
+        ]
+      },
+      {
+        "sectionName": "Intro",
+        "startBar": 1,
+        "endBar": 2,
+        "family": "bass",
+        "status": "silent",
+        "noteCount": 0,
+        "reasons": [
+          {
+            "decisionId": "arc:family_entry:Intro/bass",
+            "layer": "arc",
+            "source": "template",
+            "reason": "the song opens with its core"
+          },
+          {
+            "decisionId": "orchestration:role_assignment:Intro/bass",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "BASS in the low register, pp, unison voicing, pluck, independent the lead (bars 1-2); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Intro-bass-BASS",
+            "layer": "compose",
+            "source": null,
+            "reason": "BASS part for bass as BASS in \"Intro\" (bars 1-2), seed 2216444772"
+          },
+          {
+            "decisionId": null,
+            "layer": "compose",
+            "source": "finding:dropped_part",
+            "reason": "bass (BASS) wrote no notes for \"Intro\" (bars 1-2): no chord lies under those bars, so a pitched part had no harmony to write from."
+          }
+        ]
+      },
+      {
+        "sectionName": "Intro",
+        "startBar": 1,
+        "endBar": 2,
+        "family": "keys",
+        "status": "silent",
+        "noteCount": 0,
+        "reasons": [
+          {
+            "decisionId": "arc:family_entry:Intro/keys",
+            "layer": "arc",
+            "source": "template",
+            "reason": "the song opens with its core"
+          },
+          {
+            "decisionId": "orchestration:role_assignment:Intro/keys",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "RHYTHMIC_HARMONY in the mid register, pp, close voicing, mixed, independent the lead (bars 1-2); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Intro-keys-RHYTHMIC_HARMONY",
+            "layer": "compose",
+            "source": null,
+            "reason": "KEYS part for keys as RHYTHMIC_HARMONY in \"Intro\" (bars 1-2), seed 1216330272, after part-Intro-bass-BASS"
+          },
+          {
+            "decisionId": null,
+            "layer": "compose",
+            "source": "finding:dropped_part",
+            "reason": "keys (KEYS) wrote no notes for \"Intro\" (bars 1-2): no chord lies under those bars, so a pitched part had no harmony to write from."
+          }
+        ]
+      },
+      {
+        "sectionName": "Intro",
+        "startBar": 1,
+        "endBar": 2,
+        "family": "strings",
+        "status": "silent",
+        "noteCount": 0,
+        "reasons": [
+          {
+            "decisionId": "arc:family_entry:Intro/strings",
+            "layer": "arc",
+            "source": "template",
+            "reason": "the song opens with its core"
+          },
+          {
+            "decisionId": "orchestration:role_assignment:Intro/strings",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "PAD in the upper_mid register, pp, open voicing, legato, support the lead (bars 1-2); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Intro-strings-PAD",
+            "layer": "compose",
+            "source": null,
+            "reason": "PAD part for strings as PAD in \"Intro\" (bars 1-2), seed 2008991357, after part-Intro-keys-RHYTHMIC_HARMONY, part-Intro-bass-BASS"
+          },
+          {
+            "decisionId": null,
+            "layer": "compose",
+            "source": "finding:dropped_part",
+            "reason": "strings (PAD) wrote no notes for \"Intro\" (bars 1-2): no chord lies under those bars, so a pitched part had no harmony to write from."
+          }
+        ]
+      },
+      {
+        "sectionName": "Verse 1",
+        "startBar": 3,
+        "endBar": 24,
+        "family": "drums",
+        "status": "not_planned",
+        "noteCount": 0,
+        "reasons": [
+          {
+            "decisionId": null,
+            "layer": "arc",
+            "source": null,
+            "reason": "drums is an inactive family of \"Verse 1\" in the section plan (the arc lists no exit event here; the texture level and family order decide who is in)"
+          }
+        ]
+      },
+      {
+        "sectionName": "Verse 1",
+        "startBar": 3,
+        "endBar": 24,
+        "family": "percussion",
+        "status": "not_planned",
+        "noteCount": 0,
+        "reasons": [
+          {
+            "decisionId": null,
+            "layer": "arc",
+            "source": null,
+            "reason": "percussion is an inactive family of \"Verse 1\" in the section plan (the arc lists no exit event here; the texture level and family order decide who is in)"
+          }
+        ]
+      },
+      {
+        "sectionName": "Verse 1",
+        "startBar": 3,
+        "endBar": 24,
+        "family": "bass",
+        "status": "entered",
+        "noteCount": 15,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Verse_1/bass",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "BASS in the low register, pp, unison voicing, pluck, independent the lead (bars 3-24); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Verse_1-bass-BASS",
+            "layer": "compose",
+            "source": null,
+            "reason": "BASS part for bass as BASS in \"Verse 1\" (bars 3-24), seed 3824940334"
+          }
+        ]
+      },
+      {
+        "sectionName": "Verse 1",
+        "startBar": 3,
+        "endBar": 24,
+        "family": "keys",
+        "status": "entered",
+        "noteCount": 251,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Verse_1/keys",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "RHYTHMIC_HARMONY in the mid register, pp, close voicing, mixed, avoid the lead (bars 3-24); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Verse_1-keys-RHYTHMIC_HARMONY",
+            "layer": "compose",
+            "source": null,
+            "reason": "KEYS part for keys as RHYTHMIC_HARMONY in \"Verse 1\" (bars 3-24), seed 724509168, after part-Verse_1-bass-BASS"
+          }
+        ]
+      },
+      {
+        "sectionName": "Verse 1",
+        "startBar": 3,
+        "endBar": 24,
+        "family": "strings",
+        "status": "entered",
+        "noteCount": 15,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Verse_1/strings",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "PAD in the upper_mid register, pp, open voicing, legato, support the lead (bars 3-24); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Verse_1-strings-PAD",
+            "layer": "compose",
+            "source": null,
+            "reason": "PAD part for strings as PAD in \"Verse 1\" (bars 3-24), seed 80101673, after part-Verse_1-keys-RHYTHMIC_HARMONY, part-Verse_1-bass-BASS"
+          }
+        ]
+      },
+      {
+        "sectionName": "Verse 2",
+        "startBar": 25,
+        "endBar": 40,
+        "family": "drums",
+        "status": "not_planned",
+        "noteCount": 0,
+        "reasons": [
+          {
+            "decisionId": null,
+            "layer": "arc",
+            "source": null,
+            "reason": "drums is an inactive family of \"Verse 2\" in the section plan (the arc lists no exit event here; the texture level and family order decide who is in)"
+          }
+        ]
+      },
+      {
+        "sectionName": "Verse 2",
+        "startBar": 25,
+        "endBar": 40,
+        "family": "percussion",
+        "status": "entered",
+        "noteCount": 30,
+        "reasons": [
+          {
+            "decisionId": "arc:family_entry:Verse_2/percussion",
+            "layer": "arc",
+            "source": "template",
+            "reason": "add_layer: percussion is the layer this repeat adds"
+          },
+          {
+            "decisionId": "orchestration:role_assignment:Verse_2/percussion",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "FILL in the mid register, pp, percussive voicing, percussive, independent the lead (bars 25-40); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Verse_2-percussion-FILL",
+            "layer": "compose",
+            "source": null,
+            "reason": "PERCUSSION part for percussion as FILL in \"Verse 2\" (bars 25-40), seed 1136010851"
+          }
+        ]
+      },
+      {
+        "sectionName": "Verse 2",
+        "startBar": 25,
+        "endBar": 40,
+        "family": "bass",
+        "status": "entered",
+        "noteCount": 15,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Verse_2/bass",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "BASS in the low register, pp, unison voicing, pluck, independent the lead (bars 25-40); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Verse_2-bass-BASS",
+            "layer": "compose",
+            "source": null,
+            "reason": "BASS part for bass as BASS in \"Verse 2\" (bars 25-40), seed 1572533477"
+          }
+        ]
+      },
+      {
+        "sectionName": "Verse 2",
+        "startBar": 25,
+        "endBar": 40,
+        "family": "keys",
+        "status": "entered",
+        "noteCount": 185,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Verse_2/keys",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "RHYTHMIC_HARMONY in the mid register, pp, close voicing, mixed, avoid the lead (bars 25-40); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Verse_2-keys-RHYTHMIC_HARMONY",
+            "layer": "compose",
+            "source": null,
+            "reason": "KEYS part for keys as RHYTHMIC_HARMONY in \"Verse 2\" (bars 25-40), seed 3081284016, after part-Verse_2-bass-BASS, part-Verse_2-percussion-FILL"
+          }
+        ]
+      },
+      {
+        "sectionName": "Verse 2",
+        "startBar": 25,
+        "endBar": 40,
+        "family": "strings",
+        "status": "entered",
+        "noteCount": 16,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Verse_2/strings",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "PAD in the upper_mid register, pp, open voicing, legato, support the lead (bars 25-40); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Verse_2-strings-PAD",
+            "layer": "compose",
+            "source": null,
+            "reason": "PAD part for strings as PAD in \"Verse 2\" (bars 25-40), seed 292329079, after part-Verse_2-keys-RHYTHMIC_HARMONY, part-Verse_2-bass-BASS, part-Verse_2-percussion-FILL"
+          }
+        ]
+      },
+      {
+        "sectionName": "Chorus",
+        "startBar": 41,
+        "endBar": 56,
+        "family": "drums",
+        "status": "entered",
+        "noteCount": 2,
+        "reasons": [
+          {
+            "decisionId": "perform:performance:drums-groove",
+            "layer": "perform",
+            "source": null,
+            "reason": "no plan decision places drums in \"Chorus\"; 2 note(s) there fall under this decision: PERFORMANCE_ENGINE_V2 1.0, profile kit-limb: 64 note(s) carry the engine's reasons, timing and velocity deltas measured for 356 note(s), 60 note(s) added by the performance"
+          }
+        ]
+      },
+      {
+        "sectionName": "Chorus",
+        "startBar": 41,
+        "endBar": 56,
+        "family": "percussion",
+        "status": "entered",
+        "noteCount": 30,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Chorus/percussion",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "FILL in the mid register, mp, percussive voicing, percussive, independent the lead (bars 41-56); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Chorus-percussion-FILL",
+            "layer": "compose",
+            "source": null,
+            "reason": "PERCUSSION part for percussion as FILL in \"Chorus\" (bars 41-56), seed 3002466503"
+          }
+        ]
+      },
+      {
+        "sectionName": "Chorus",
+        "startBar": 41,
+        "endBar": 56,
+        "family": "bass",
+        "status": "entered",
+        "noteCount": 10,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Chorus/bass",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "BASS in the low register, mp, unison voicing, pluck, independent the lead (bars 41-56); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Chorus-bass-BASS",
+            "layer": "compose",
+            "source": null,
+            "reason": "BASS part for bass as BASS in \"Chorus\" (bars 41-56), seed 3219804474"
+          }
+        ]
+      },
+      {
+        "sectionName": "Chorus",
+        "startBar": 41,
+        "endBar": 56,
+        "family": "keys",
+        "status": "entered",
+        "noteCount": 29,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Chorus/keys",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "HARMONIC_BED in the mid register, mp, close voicing, mixed, support the lead (bars 41-56); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Chorus-keys-HARMONIC_BED",
+            "layer": "compose",
+            "source": null,
+            "reason": "KEYS part for keys as HARMONIC_BED in \"Chorus\" (bars 41-56), seed 844831205, after part-Chorus-bass-BASS, part-Chorus-percussion-FILL"
+          }
+        ]
+      },
+      {
+        "sectionName": "Chorus",
+        "startBar": 41,
+        "endBar": 56,
+        "family": "strings",
+        "status": "entered",
+        "noteCount": 10,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Chorus/strings",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "PAD in the upper_mid register, mp, open voicing, legato, support the lead (bars 41-56); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Chorus-strings-PAD",
+            "layer": "compose",
+            "source": null,
+            "reason": "PAD part for strings as PAD in \"Chorus\" (bars 41-56), seed 96600006, after part-Chorus-keys-HARMONIC_BED, part-Chorus-bass-BASS, part-Chorus-percussion-FILL"
+          }
+        ]
+      },
+      {
+        "sectionName": "Chorus 2",
+        "startBar": 57,
+        "endBar": 72,
+        "family": "drums",
+        "status": "entered",
+        "noteCount": 205,
+        "reasons": [
+          {
+            "decisionId": "arc:family_entry:Chorus_2/drums",
+            "layer": "arc",
+            "source": "template",
+            "reason": "add_layer: drums is the layer this repeat adds"
+          },
+          {
+            "decisionId": "arc:family_exit:Chorus_2/drums",
+            "layer": "arc",
+            "source": "template",
+            "reason": "not carried into Verse 3"
+          },
+          {
+            "decisionId": "orchestration:role_assignment:Chorus_2/drums",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "GROOVE in the low_mid register, mp, percussive voicing, percussive, independent the lead (bars 57-72); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Chorus_2-drums-GROOVE",
+            "layer": "compose",
+            "source": null,
+            "reason": "DRUMS part for drums as GROOVE in \"Chorus 2\" (bars 57-72), seed 2048832541"
+          }
+        ]
+      },
+      {
+        "sectionName": "Chorus 2",
+        "startBar": 57,
+        "endBar": 72,
+        "family": "percussion",
+        "status": "entered",
+        "noteCount": 30,
+        "reasons": [
+          {
+            "decisionId": "arc:family_exit:Chorus_2/percussion",
+            "layer": "arc",
+            "source": "template",
+            "reason": "not carried into Verse 3"
+          },
+          {
+            "decisionId": "orchestration:role_assignment:Chorus_2/percussion",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "FILL in the mid register, mp, percussive voicing, percussive, independent the lead (bars 57-72); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Chorus_2-percussion-FILL",
+            "layer": "compose",
+            "source": null,
+            "reason": "PERCUSSION part for percussion as FILL in \"Chorus 2\" (bars 57-72), seed 2851900015, after part-Chorus_2-drums-GROOVE"
+          }
+        ]
+      },
+      {
+        "sectionName": "Chorus 2",
+        "startBar": 57,
+        "endBar": 72,
+        "family": "bass",
+        "status": "entered",
+        "noteCount": 10,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Chorus_2/bass",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "BASS in the low register, mp, unison voicing, pluck, independent the lead (bars 57-72); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Chorus_2-bass-BASS",
+            "layer": "compose",
+            "source": null,
+            "reason": "BASS part for bass as BASS in \"Chorus 2\" (bars 57-72), seed 1564511996, after part-Chorus_2-drums-GROOVE"
+          }
+        ]
+      },
+      {
+        "sectionName": "Chorus 2",
+        "startBar": 57,
+        "endBar": 72,
+        "family": "keys",
+        "status": "entered",
+        "noteCount": 29,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Chorus_2/keys",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "HARMONIC_BED in the mid register, mp, close voicing, mixed, support the lead (bars 57-72); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Chorus_2-keys-HARMONIC_BED",
+            "layer": "compose",
+            "source": null,
+            "reason": "KEYS part for keys as HARMONIC_BED in \"Chorus 2\" (bars 57-72), seed 3745902065, after part-Chorus_2-bass-BASS, part-Chorus_2-percussion-FILL, part-Chorus_2-drums-GROOVE"
+          }
+        ]
+      },
+      {
+        "sectionName": "Chorus 2",
+        "startBar": 57,
+        "endBar": 72,
+        "family": "strings",
+        "status": "entered",
+        "noteCount": 10,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Chorus_2/strings",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "HARMONIC_BED in the upper_mid register, mp, open voicing, legato, support the lead (bars 57-72); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Chorus_2-strings-HARMONIC_BED",
+            "layer": "compose",
+            "source": null,
+            "reason": "STRINGS part for strings as HARMONIC_BED in \"Chorus 2\" (bars 57-72), seed 299292574, after part-Chorus_2-keys-HARMONIC_BED, part-Chorus_2-bass-BASS, part-Chorus_2-percussion-FILL, part-Chorus_2-drums-GROOVE"
+          }
+        ]
+      },
+      {
+        "sectionName": "Verse 3",
+        "startBar": 73,
+        "endBar": 96,
+        "family": "drums",
+        "status": "entered",
+        "noteCount": 1,
+        "reasons": [
+          {
+            "decisionId": "perform:performance:drums-groove",
+            "layer": "perform",
+            "source": null,
+            "reason": "no plan decision places drums in \"Verse 3\"; 1 note(s) there fall under this decision: PERFORMANCE_ENGINE_V2 1.0, profile kit-limb: 64 note(s) carry the engine's reasons, timing and velocity deltas measured for 356 note(s), 60 note(s) added by the performance"
+          }
+        ]
+      },
+      {
+        "sectionName": "Verse 3",
+        "startBar": 73,
+        "endBar": 96,
+        "family": "percussion",
+        "status": "not_planned",
+        "noteCount": 0,
+        "reasons": [
+          {
+            "decisionId": null,
+            "layer": "arc",
+            "source": null,
+            "reason": "percussion is an inactive family of \"Verse 3\" in the section plan (the arc lists no exit event here; the texture level and family order decide who is in)"
+          }
+        ]
+      },
+      {
+        "sectionName": "Verse 3",
+        "startBar": 73,
+        "endBar": 96,
+        "family": "bass",
+        "status": "entered",
+        "noteCount": 11,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Verse_3/bass",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "BASS in the low register, pp, unison voicing, pluck, independent the lead (bars 73-96); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Verse_3-bass-BASS",
+            "layer": "compose",
+            "source": null,
+            "reason": "BASS part for bass as BASS in \"Verse 3\" (bars 73-96), seed 4202996697"
+          }
+        ]
+      },
+      {
+        "sectionName": "Verse 3",
+        "startBar": 73,
+        "endBar": 96,
+        "family": "keys",
+        "status": "entered",
+        "noteCount": 34,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Verse_3/keys",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "HARMONIC_BED in the mid register, pp, close voicing, mixed, support the lead (bars 73-96); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Verse_3-keys-HARMONIC_BED",
+            "layer": "compose",
+            "source": null,
+            "reason": "KEYS part for keys as HARMONIC_BED in \"Verse 3\" (bars 73-96), seed 2642856027, after part-Verse_3-bass-BASS"
+          }
+        ]
+      },
+      {
+        "sectionName": "Verse 3",
+        "startBar": 73,
+        "endBar": 96,
+        "family": "strings",
+        "status": "entered",
+        "noteCount": 14,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Verse_3/strings",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "PAD in the upper_mid register, pp, open voicing, legato, support the lead (bars 73-96); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Verse_3-strings-PAD",
+            "layer": "compose",
+            "source": null,
+            "reason": "PAD part for strings as PAD in \"Verse 3\" (bars 73-96), seed 1776039380, after part-Verse_3-keys-HARMONIC_BED, part-Verse_3-bass-BASS"
+          }
+        ]
+      },
+      {
+        "sectionName": "Bridge",
+        "startBar": 97,
+        "endBar": 112,
+        "family": "drums",
+        "status": "entered",
+        "noteCount": 2,
+        "reasons": [
+          {
+            "decisionId": "perform:performance:drums-groove",
+            "layer": "perform",
+            "source": null,
+            "reason": "no plan decision places drums in \"Bridge\"; 2 note(s) there fall under this decision: PERFORMANCE_ENGINE_V2 1.0, profile kit-limb: 64 note(s) carry the engine's reasons, timing and velocity deltas measured for 356 note(s), 60 note(s) added by the performance"
+          }
+        ]
+      },
+      {
+        "sectionName": "Bridge",
+        "startBar": 97,
+        "endBar": 112,
+        "family": "percussion",
+        "status": "not_planned",
+        "noteCount": 0,
+        "reasons": [
+          {
+            "decisionId": null,
+            "layer": "arc",
+            "source": null,
+            "reason": "percussion is an inactive family of \"Bridge\" in the section plan (the arc lists no exit event here; the texture level and family order decide who is in)"
+          }
+        ]
+      },
+      {
+        "sectionName": "Bridge",
+        "startBar": 97,
+        "endBar": 112,
+        "family": "bass",
+        "status": "entered",
+        "noteCount": 13,
+        "reasons": [
+          {
+            "decisionId": "arc:family_exit:Bridge/bass",
+            "layer": "arc",
+            "source": "template",
+            "reason": "a breath before the final chorus: keys alone for the last 2 bars"
+          },
+          {
+            "decisionId": "orchestration:role_assignment:Bridge/bass",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "BASS in the low register, mp->mf, unison voicing, pluck, independent the lead (bars 97-110); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Bridge-bass-BASS",
+            "layer": "compose",
+            "source": null,
+            "reason": "BASS part for bass as BASS in \"Bridge\" (bars 97-110), seed 888983362"
+          }
+        ]
+      },
+      {
+        "sectionName": "Bridge",
+        "startBar": 97,
+        "endBar": 112,
+        "family": "keys",
+        "status": "entered",
+        "noteCount": 182,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Bridge/keys",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "RHYTHMIC_HARMONY in the mid register, mp->mf, close voicing, mixed, avoid the lead (bars 97-112); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Bridge-keys-RHYTHMIC_HARMONY",
+            "layer": "compose",
+            "source": null,
+            "reason": "KEYS part for keys as RHYTHMIC_HARMONY in \"Bridge\" (bars 97-112), seed 3835796338, after part-Bridge-bass-BASS"
+          }
+        ]
+      },
+      {
+        "sectionName": "Bridge",
+        "startBar": 97,
+        "endBar": 112,
+        "family": "strings",
+        "status": "entered",
+        "noteCount": 2,
+        "reasons": [
+          {
+            "decisionId": "arc:family_exit:Bridge/strings",
+            "layer": "arc",
+            "source": "template",
+            "reason": "a breath before the final chorus: keys alone for the last 2 bars"
+          },
+          {
+            "decisionId": "orchestration:role_assignment:Bridge/strings",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "COUNTER_MELODY in the upper_mid register, mp->mf, open voicing, legato, answer the lead (bars 97-110); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Bridge-strings-COUNTER_MELODY",
+            "layer": "compose",
+            "source": null,
+            "reason": "COUNTER_MELODY part for strings as COUNTER_MELODY in \"Bridge\" (bars 97-110), seed 2031058279, after part-Bridge-keys-RHYTHMIC_HARMONY, part-Bridge-bass-BASS"
+          }
+        ]
+      },
+      {
+        "sectionName": "Chorus 3",
+        "startBar": 113,
+        "endBar": 128,
+        "family": "drums",
+        "status": "entered",
+        "noteCount": 206,
+        "reasons": [
+          {
+            "decisionId": "arc:family_entry:Chorus_3/drums",
+            "layer": "arc",
+            "source": "template",
+            "reason": "enters with the chorus"
+          },
+          {
+            "decisionId": "arc:family_exit:Chorus_3/drums",
+            "layer": "arc",
+            "source": "template",
+            "reason": "not carried into Outro"
+          },
+          {
+            "decisionId": "orchestration:role_assignment:Chorus_3/drums",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "CLIMAX_LAYER in the low_mid register, f, percussive voicing, percussive, independent the lead (bars 113-128); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Chorus_3-drums-CLIMAX_LAYER",
+            "layer": "compose",
+            "source": null,
+            "reason": "DRUMS part for drums as CLIMAX_LAYER in \"Chorus 3\" (bars 113-128), seed 363618993"
+          }
+        ]
+      },
+      {
+        "sectionName": "Chorus 3",
+        "startBar": 113,
+        "endBar": 128,
+        "family": "percussion",
+        "status": "entered",
+        "noteCount": 30,
+        "reasons": [
+          {
+            "decisionId": "arc:family_entry:Chorus_3/percussion",
+            "layer": "arc",
+            "source": "template",
+            "reason": "enters with the chorus"
+          },
+          {
+            "decisionId": "arc:family_exit:Chorus_3/percussion",
+            "layer": "arc",
+            "source": "template",
+            "reason": "not carried into Outro"
+          },
+          {
+            "decisionId": "orchestration:role_assignment:Chorus_3/percussion",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "ACCENT in the mid register, f, percussive voicing, percussive, independent the lead (bars 113-128); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Chorus_3-percussion-ACCENT",
+            "layer": "compose",
+            "source": null,
+            "reason": "PERCUSSION part for percussion as ACCENT in \"Chorus 3\" (bars 113-128), seed 437624986, after part-Chorus_3-drums-CLIMAX_LAYER"
+          }
+        ]
+      },
+      {
+        "sectionName": "Chorus 3",
+        "startBar": 113,
+        "endBar": 128,
+        "family": "bass",
+        "status": "entered",
+        "noteCount": 12,
+        "reasons": [
+          {
+            "decisionId": "arc:family_entry:Chorus_3/bass",
+            "layer": "arc",
+            "source": "template",
+            "reason": "enters with the chorus"
+          },
+          {
+            "decisionId": "orchestration:role_assignment:Chorus_3/bass",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "BASS in the low register, f, unison voicing, pluck, independent the lead (bars 113-128); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Chorus_3-bass-BASS",
+            "layer": "compose",
+            "source": null,
+            "reason": "BASS part for bass as BASS in \"Chorus 3\" (bars 113-128), seed 2465534812, after part-Chorus_3-drums-CLIMAX_LAYER"
+          }
+        ]
+      },
+      {
+        "sectionName": "Chorus 3",
+        "startBar": 113,
+        "endBar": 128,
+        "family": "keys",
+        "status": "entered",
+        "noteCount": 37,
+        "reasons": [
+          {
+            "decisionId": "orchestration:role_assignment:Chorus_3/keys",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "HARMONIC_BED in the upper_mid register, f, close voicing, mixed, support the lead (bars 113-128); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Chorus_3-keys-HARMONIC_BED",
+            "layer": "compose",
+            "source": null,
+            "reason": "KEYS part for keys as HARMONIC_BED in \"Chorus 3\" (bars 113-128), seed 2127419628, after part-Chorus_3-bass-BASS, part-Chorus_3-percussion-ACCENT, part-Chorus_3-drums-CLIMAX_LAYER"
+          }
+        ]
+      },
+      {
+        "sectionName": "Chorus 3",
+        "startBar": 113,
+        "endBar": 128,
+        "family": "strings",
+        "status": "entered",
+        "noteCount": 13,
+        "reasons": [
+          {
+            "decisionId": "arc:family_entry:Chorus_3/strings",
+            "layer": "arc",
+            "source": "template",
+            "reason": "enters with the chorus"
+          },
+          {
+            "decisionId": "orchestration:role_assignment:Chorus_3/strings",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "CLIMAX_LAYER in the upper_mid register, f, open voicing, legato, independent the lead (bars 113-128); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Chorus_3-strings-CLIMAX_LAYER",
+            "layer": "compose",
+            "source": null,
+            "reason": "STRINGS part for strings as CLIMAX_LAYER in \"Chorus 3\" (bars 113-128), seed 3990590412, after part-Chorus_3-keys-HARMONIC_BED, part-Chorus_3-bass-BASS, part-Chorus_3-percussion-ACCENT, part-Chorus_3-drums-CLIMAX_LAYER"
+          }
+        ]
+      },
+      {
+        "sectionName": "Outro",
+        "startBar": 129,
+        "endBar": 141,
+        "family": "drums",
+        "status": "not_planned",
+        "noteCount": 0,
+        "reasons": [
+          {
+            "decisionId": null,
+            "layer": "arc",
+            "source": null,
+            "reason": "drums is an inactive family of \"Outro\" in the section plan (the arc lists no exit event here; the texture level and family order decide who is in)"
+          }
+        ]
+      },
+      {
+        "sectionName": "Outro",
+        "startBar": 129,
+        "endBar": 141,
+        "family": "percussion",
+        "status": "not_planned",
+        "noteCount": 0,
+        "reasons": [
+          {
+            "decisionId": null,
+            "layer": "arc",
+            "source": null,
+            "reason": "percussion is an inactive family of \"Outro\" in the section plan (the arc lists no exit event here; the texture level and family order decide who is in)"
+          }
+        ]
+      },
+      {
+        "sectionName": "Outro",
+        "startBar": 129,
+        "endBar": 141,
+        "family": "bass",
+        "status": "entered",
+        "noteCount": 8,
+        "reasons": [
+          {
+            "decisionId": "arc:family_exit:Outro/bass",
+            "layer": "arc",
+            "source": "template",
+            "reason": "the song ends"
+          },
+          {
+            "decisionId": "orchestration:role_assignment:Outro/bass",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "BASS in the low register, pp->pp, unison voicing, pluck, independent the lead (bars 129-141); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Outro-bass-BASS",
+            "layer": "compose",
+            "source": null,
+            "reason": "BASS part for bass as BASS in \"Outro\" (bars 129-141), seed 1091653027"
+          }
+        ]
+      },
+      {
+        "sectionName": "Outro",
+        "startBar": 129,
+        "endBar": 141,
+        "family": "keys",
+        "status": "entered",
+        "noteCount": 131,
+        "reasons": [
+          {
+            "decisionId": "arc:family_exit:Outro/keys",
+            "layer": "arc",
+            "source": "template",
+            "reason": "the song ends"
+          },
+          {
+            "decisionId": "orchestration:role_assignment:Outro/keys",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "RHYTHMIC_HARMONY in the mid register, pp->pp, close voicing, mixed, independent the lead (bars 129-141); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Outro-keys-RHYTHMIC_HARMONY",
+            "layer": "compose",
+            "source": null,
+            "reason": "KEYS part for keys as RHYTHMIC_HARMONY in \"Outro\" (bars 129-141), seed 4031246376, after part-Outro-bass-BASS"
+          }
+        ]
+      },
+      {
+        "sectionName": "Outro",
+        "startBar": 129,
+        "endBar": 141,
+        "family": "strings",
+        "status": "entered",
+        "noteCount": 11,
+        "reasons": [
+          {
+            "decisionId": "arc:family_exit:Outro/strings",
+            "layer": "arc",
+            "source": "template",
+            "reason": "the outro thins to its core from bar 8 of 13"
+          },
+          {
+            "decisionId": "orchestration:role_assignment:Outro/strings",
+            "layer": "orchestration",
+            "source": null,
+            "reason": "PAD in the upper_mid register, pp->pp, open voicing, legato, support the lead (bars 129-135); sectionPhrasePlanner records no reason for the role choice itself"
+          },
+          {
+            "decisionId": "compose:part_task:part-Outro-strings-PAD",
+            "layer": "compose",
+            "source": null,
+            "reason": "PAD part for strings as PAD in \"Outro\" (bars 129-135), seed 1195048166, after part-Outro-keys-RHYTHMIC_HARMONY, part-Outro-bass-BASS"
+          }
+        ]
+      }
+    ],
+    "voicings": [
+      {
+        "trackId": "rachem-na--drums-groove",
+        "instrument": "drums",
+        "role": "GROOVE",
+        "noteCount": 416,
+        "ranges": [
+          {
+            "startBar": 1,
+            "endBar": 141,
+            "decisions": [
+              {
+                "decisionId": "perform:performance:drums-groove",
+                "layer": "perform",
+                "source": null,
+                "reason": "PERFORMANCE_ENGINE_V2 1.0, profile kit-limb: 64 note(s) carry the engine's reasons, timing and velocity deltas measured for 356 note(s), 60 note(s) added by the performance"
+              }
+            ]
+          },
+          {
+            "startBar": 57,
+            "endBar": 72,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Chorus_2-drums-GROOVE",
+                "layer": "compose",
+                "source": null,
+                "reason": "DRUMS part for drums as GROOVE in \"Chorus 2\" (bars 57-72), seed 2048832541"
+              },
+              {
+                "decisionId": "arc:family_entry:Chorus_2/drums",
+                "layer": "arc",
+                "source": "template",
+                "reason": "add_layer: drums is the layer this repeat adds"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Chorus_2/drums",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "GROOVE in the low_mid register, mp, percussive voicing, percussive, independent the lead (bars 57-72); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Chorus_2-drums-GROOVE",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.926 (rhythmic emphasis); seed 1151538341"
+              }
+            ]
+          },
+          {
+            "startBar": 113,
+            "endBar": 128,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Chorus_3-drums-CLIMAX_LAYER",
+                "layer": "compose",
+                "source": null,
+                "reason": "DRUMS part for drums as CLIMAX_LAYER in \"Chorus 3\" (bars 113-128), seed 363618993"
+              },
+              {
+                "decisionId": "arc:family_entry:Chorus_3/drums",
+                "layer": "arc",
+                "source": "template",
+                "reason": "enters with the chorus"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Chorus_3/drums",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "CLIMAX_LAYER in the low_mid register, f, percussive voicing, percussive, independent the lead (bars 113-128); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Chorus_3-drums-CLIMAX_LAYER",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.926 (rhythmic emphasis); seed 2860806283"
+              }
+            ]
+          }
+        ],
+        "notRecorded": [
+          {
+            "layer": "harmony",
+            "reason": "not recorded by harmony: REFERENCE_PART_COMPOSER_V1 emits no voicing decisions; the voicing of each chord is not recorded (harmony realisation is stream B-02)"
+          },
+          {
+            "layer": "groove",
+            "reason": "not recorded by groove: REFERENCE_PART_COMPOSER_V1 emits no groove decisions; the rhythm cell of each bar is not recorded (GroovePlan is stream B-04)"
+          },
+          {
+            "layer": "register",
+            "reason": "not recorded by register: the register plan is applied through family counts only; no per-window register decision is recorded (instrument profiles are stream B-03)"
+          }
+        ]
+      },
+      {
+        "trackId": "rachem-na--bass-bass",
+        "instrument": "bass",
+        "role": "BASS",
+        "noteCount": 94,
+        "ranges": [
+          {
+            "startBar": 1,
+            "endBar": 2,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Intro-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "BASS part for bass as BASS in \"Intro\" (bars 1-2), seed 2216444772"
+              },
+              {
+                "decisionId": "arc:family_entry:Intro/bass",
+                "layer": "arc",
+                "source": "template",
+                "reason": "the song opens with its core"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Intro/bass",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "BASS in the low register, pp, unison voicing, pluck, independent the lead (bars 1-2); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Intro-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 61270637"
+              }
+            ]
+          },
+          {
+            "startBar": 1,
+            "endBar": 141,
+            "decisions": [
+              {
+                "decisionId": "perform:performance:bass-bass",
+                "layer": "perform",
+                "source": null,
+                "reason": "PERFORMANCE_ENGINE_V2 1.0, profile finger-bass: 64 note(s) carry the engine's reasons, timing and velocity deltas measured for 94 note(s), 0 note(s) added by the performance"
+              }
+            ]
+          },
+          {
+            "startBar": 3,
+            "endBar": 24,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Verse_1-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "BASS part for bass as BASS in \"Verse 1\" (bars 3-24), seed 3824940334"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Verse_1/bass",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "BASS in the low register, pp, unison voicing, pluck, independent the lead (bars 3-24); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Verse_1-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 2455105359"
+              }
+            ]
+          },
+          {
+            "startBar": 25,
+            "endBar": 40,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Verse_2-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "BASS part for bass as BASS in \"Verse 2\" (bars 25-40), seed 1572533477"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Verse_2/bass",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "BASS in the low register, pp, unison voicing, pluck, independent the lead (bars 25-40); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Verse_2-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 429817862"
+              }
+            ]
+          },
+          {
+            "startBar": 41,
+            "endBar": 56,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Chorus-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "BASS part for bass as BASS in \"Chorus\" (bars 41-56), seed 3219804474"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Chorus/bass",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "BASS in the low register, mp, unison voicing, pluck, independent the lead (bars 41-56); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Chorus-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 1294923078"
+              }
+            ]
+          },
+          {
+            "startBar": 57,
+            "endBar": 72,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Chorus_2-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "BASS part for bass as BASS in \"Chorus 2\" (bars 57-72), seed 1564511996, after part-Chorus_2-drums-GROOVE"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Chorus_2/bass",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "BASS in the low register, mp, unison voicing, pluck, independent the lead (bars 57-72); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Chorus_2-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 318563003"
+              }
+            ]
+          },
+          {
+            "startBar": 73,
+            "endBar": 96,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Verse_3-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "BASS part for bass as BASS in \"Verse 3\" (bars 73-96), seed 4202996697"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Verse_3/bass",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "BASS in the low register, pp, unison voicing, pluck, independent the lead (bars 73-96); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Verse_3-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 645388321"
+              }
+            ]
+          },
+          {
+            "startBar": 97,
+            "endBar": 110,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Bridge-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "BASS part for bass as BASS in \"Bridge\" (bars 97-110), seed 888983362"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Bridge/bass",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "BASS in the low register, mp->mf, unison voicing, pluck, independent the lead (bars 97-110); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Bridge-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 1412987910"
+              }
+            ]
+          },
+          {
+            "startBar": 113,
+            "endBar": 128,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Chorus_3-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "BASS part for bass as BASS in \"Chorus 3\" (bars 113-128), seed 2465534812, after part-Chorus_3-drums-CLIMAX_LAYER"
+              },
+              {
+                "decisionId": "arc:family_entry:Chorus_3/bass",
+                "layer": "arc",
+                "source": "template",
+                "reason": "enters with the chorus"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Chorus_3/bass",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "BASS in the low register, f, unison voicing, pluck, independent the lead (bars 113-128); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Chorus_3-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 2535585619"
+              }
+            ]
+          },
+          {
+            "startBar": 129,
+            "endBar": 141,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Outro-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "BASS part for bass as BASS in \"Outro\" (bars 129-141), seed 1091653027"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Outro/bass",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "BASS in the low register, pp->pp, unison voicing, pluck, independent the lead (bars 129-141); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Outro-bass-BASS",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 1091323452"
+              }
+            ]
+          }
+        ],
+        "notRecorded": [
+          {
+            "layer": "harmony",
+            "reason": "not recorded by harmony: REFERENCE_PART_COMPOSER_V1 emits no voicing decisions; the voicing of each chord is not recorded (harmony realisation is stream B-02)"
+          },
+          {
+            "layer": "groove",
+            "reason": "not recorded by groove: REFERENCE_PART_COMPOSER_V1 emits no groove decisions; the rhythm cell of each bar is not recorded (GroovePlan is stream B-04)"
+          },
+          {
+            "layer": "register",
+            "reason": "not recorded by register: the register plan is applied through family counts only; no per-window register decision is recorded (instrument profiles are stream B-03)"
+          }
+        ]
+      },
+      {
+        "trackId": "rachem-na--percussion-fill",
+        "instrument": "percussion",
+        "role": "FILL",
+        "noteCount": 120,
+        "ranges": [
+          {
+            "startBar": 1,
+            "endBar": 141,
+            "decisions": [
+              {
+                "decisionId": "perform:performance:percussion-fill",
+                "layer": "perform",
+                "source": null,
+                "reason": "PERFORMANCE_ENGINE_V2 1.0, profile kit-limb: 64 note(s) carry the engine's reasons, timing and velocity deltas measured for 120 note(s), 0 note(s) added by the performance"
+              }
+            ]
+          },
+          {
+            "startBar": 25,
+            "endBar": 40,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Verse_2-percussion-FILL",
+                "layer": "compose",
+                "source": null,
+                "reason": "PERCUSSION part for percussion as FILL in \"Verse 2\" (bars 25-40), seed 1136010851"
+              },
+              {
+                "decisionId": "arc:family_entry:Verse_2/percussion",
+                "layer": "arc",
+                "source": "template",
+                "reason": "add_layer: percussion is the layer this repeat adds"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Verse_2/percussion",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "FILL in the mid register, pp, percussive voicing, percussive, independent the lead (bars 25-40); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Verse_2-percussion-FILL",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.926 (rhythmic emphasis); seed 2796504958"
+              }
+            ]
+          },
+          {
+            "startBar": 41,
+            "endBar": 56,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Chorus-percussion-FILL",
+                "layer": "compose",
+                "source": null,
+                "reason": "PERCUSSION part for percussion as FILL in \"Chorus\" (bars 41-56), seed 3002466503"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Chorus/percussion",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "FILL in the mid register, mp, percussive voicing, percussive, independent the lead (bars 41-56); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Chorus-percussion-FILL",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.926 (rhythmic emphasis); seed 3713571819"
+              }
+            ]
+          },
+          {
+            "startBar": 57,
+            "endBar": 72,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Chorus_2-percussion-FILL",
+                "layer": "compose",
+                "source": null,
+                "reason": "PERCUSSION part for percussion as FILL in \"Chorus 2\" (bars 57-72), seed 2851900015, after part-Chorus_2-drums-GROOVE"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Chorus_2/percussion",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "FILL in the mid register, mp, percussive voicing, percussive, independent the lead (bars 57-72); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Chorus_2-percussion-FILL",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.926 (rhythmic emphasis); seed 373456481"
+              }
+            ]
+          },
+          {
+            "startBar": 113,
+            "endBar": 128,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Chorus_3-percussion-ACCENT",
+                "layer": "compose",
+                "source": null,
+                "reason": "PERCUSSION part for percussion as ACCENT in \"Chorus 3\" (bars 113-128), seed 437624986, after part-Chorus_3-drums-CLIMAX_LAYER"
+              },
+              {
+                "decisionId": "arc:family_entry:Chorus_3/percussion",
+                "layer": "arc",
+                "source": "template",
+                "reason": "enters with the chorus"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Chorus_3/percussion",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "ACCENT in the mid register, f, percussive voicing, percussive, independent the lead (bars 113-128); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Chorus_3-percussion-ACCENT",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.926 (rhythmic emphasis); seed 1830500746"
+              }
+            ]
+          }
+        ],
+        "notRecorded": [
+          {
+            "layer": "harmony",
+            "reason": "not recorded by harmony: REFERENCE_PART_COMPOSER_V1 emits no voicing decisions; the voicing of each chord is not recorded (harmony realisation is stream B-02)"
+          },
+          {
+            "layer": "groove",
+            "reason": "not recorded by groove: REFERENCE_PART_COMPOSER_V1 emits no groove decisions; the rhythm cell of each bar is not recorded (GroovePlan is stream B-04)"
+          },
+          {
+            "layer": "register",
+            "reason": "not recorded by register: the register plan is applied through family counts only; no per-window register decision is recorded (instrument profiles are stream B-03)"
+          }
+        ]
+      },
+      {
+        "trackId": "rachem-na--keys-rhythmic_harmony",
+        "instrument": "keys",
+        "role": "RHYTHMIC_HARMONY",
+        "noteCount": 878,
+        "ranges": [
+          {
+            "startBar": 1,
+            "endBar": 2,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Intro-keys-RHYTHMIC_HARMONY",
+                "layer": "compose",
+                "source": null,
+                "reason": "KEYS part for keys as RHYTHMIC_HARMONY in \"Intro\" (bars 1-2), seed 1216330272, after part-Intro-bass-BASS"
+              },
+              {
+                "decisionId": "arc:family_entry:Intro/keys",
+                "layer": "arc",
+                "source": "template",
+                "reason": "the song opens with its core"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Intro/keys",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "RHYTHMIC_HARMONY in the mid register, pp, close voicing, mixed, independent the lead (bars 1-2); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Intro-keys-RHYTHMIC_HARMONY",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 90262421"
+              }
+            ]
+          },
+          {
+            "startBar": 1,
+            "endBar": 141,
+            "decisions": [
+              {
+                "decisionId": "perform:performance:keys-rhythmic_harmony",
+                "layer": "perform",
+                "source": null,
+                "reason": "PERFORMANCE_ENGINE_V2 1.0, profile kit-limb: 64 note(s) carry the engine's reasons, timing and velocity deltas measured for 878 note(s), 0 note(s) added by the performance"
+              }
+            ]
+          },
+          {
+            "startBar": 3,
+            "endBar": 24,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Verse_1-keys-RHYTHMIC_HARMONY",
+                "layer": "compose",
+                "source": null,
+                "reason": "KEYS part for keys as RHYTHMIC_HARMONY in \"Verse 1\" (bars 3-24), seed 724509168, after part-Verse_1-bass-BASS"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Verse_1/keys",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "RHYTHMIC_HARMONY in the mid register, pp, close voicing, mixed, avoid the lead (bars 3-24); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Verse_1-keys-RHYTHMIC_HARMONY",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 1843670218"
+              }
+            ]
+          },
+          {
+            "startBar": 25,
+            "endBar": 40,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Verse_2-keys-RHYTHMIC_HARMONY",
+                "layer": "compose",
+                "source": null,
+                "reason": "KEYS part for keys as RHYTHMIC_HARMONY in \"Verse 2\" (bars 25-40), seed 3081284016, after part-Verse_2-bass-BASS, part-Verse_2-percussion-FILL"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Verse_2/keys",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "RHYTHMIC_HARMONY in the mid register, pp, close voicing, mixed, avoid the lead (bars 25-40); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Verse_2-keys-RHYTHMIC_HARMONY",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 2571698372"
+              }
+            ]
+          },
+          {
+            "startBar": 41,
+            "endBar": 56,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Chorus-keys-HARMONIC_BED",
+                "layer": "compose",
+                "source": null,
+                "reason": "KEYS part for keys as HARMONIC_BED in \"Chorus\" (bars 41-56), seed 844831205, after part-Chorus-bass-BASS, part-Chorus-percussion-FILL"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Chorus/keys",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "HARMONIC_BED in the mid register, mp, close voicing, mixed, support the lead (bars 41-56); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Chorus-keys-HARMONIC_BED",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 3742707896"
+              }
+            ]
+          },
+          {
+            "startBar": 57,
+            "endBar": 72,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Chorus_2-keys-HARMONIC_BED",
+                "layer": "compose",
+                "source": null,
+                "reason": "KEYS part for keys as HARMONIC_BED in \"Chorus 2\" (bars 57-72), seed 3745902065, after part-Chorus_2-bass-BASS, part-Chorus_2-percussion-FILL, part-Chorus_2-drums-GROOVE"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Chorus_2/keys",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "HARMONIC_BED in the mid register, mp, close voicing, mixed, support the lead (bars 57-72); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Chorus_2-keys-HARMONIC_BED",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 3620608860"
+              }
+            ]
+          },
+          {
+            "startBar": 73,
+            "endBar": 96,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Verse_3-keys-HARMONIC_BED",
+                "layer": "compose",
+                "source": null,
+                "reason": "KEYS part for keys as HARMONIC_BED in \"Verse 3\" (bars 73-96), seed 2642856027, after part-Verse_3-bass-BASS"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Verse_3/keys",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "HARMONIC_BED in the mid register, pp, close voicing, mixed, support the lead (bars 73-96); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Verse_3-keys-HARMONIC_BED",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 2510370230"
+              }
+            ]
+          },
+          {
+            "startBar": 97,
+            "endBar": 112,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Bridge-keys-RHYTHMIC_HARMONY",
+                "layer": "compose",
+                "source": null,
+                "reason": "KEYS part for keys as RHYTHMIC_HARMONY in \"Bridge\" (bars 97-112), seed 3835796338, after part-Bridge-bass-BASS"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Bridge/keys",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "RHYTHMIC_HARMONY in the mid register, mp->mf, close voicing, mixed, avoid the lead (bars 97-112); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Bridge-keys-RHYTHMIC_HARMONY",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 981825076"
+              }
+            ]
+          },
+          {
+            "startBar": 113,
+            "endBar": 128,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Chorus_3-keys-HARMONIC_BED",
+                "layer": "compose",
+                "source": null,
+                "reason": "KEYS part for keys as HARMONIC_BED in \"Chorus 3\" (bars 113-128), seed 2127419628, after part-Chorus_3-bass-BASS, part-Chorus_3-percussion-ACCENT, part-Chorus_3-drums-CLIMAX_LAYER"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Chorus_3/keys",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "HARMONIC_BED in the upper_mid register, f, close voicing, mixed, support the lead (bars 113-128); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Chorus_3-keys-HARMONIC_BED",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 3327645619"
+              }
+            ]
+          },
+          {
+            "startBar": 129,
+            "endBar": 141,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Outro-keys-RHYTHMIC_HARMONY",
+                "layer": "compose",
+                "source": null,
+                "reason": "KEYS part for keys as RHYTHMIC_HARMONY in \"Outro\" (bars 129-141), seed 4031246376, after part-Outro-bass-BASS"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Outro/keys",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "RHYTHMIC_HARMONY in the mid register, pp->pp, close voicing, mixed, independent the lead (bars 129-141); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Outro-keys-RHYTHMIC_HARMONY",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.95 (baseline); seed 2407955952"
+              }
+            ]
+          }
+        ],
+        "notRecorded": [
+          {
+            "layer": "harmony",
+            "reason": "not recorded by harmony: REFERENCE_PART_COMPOSER_V1 emits no voicing decisions; the voicing of each chord is not recorded (harmony realisation is stream B-02)"
+          },
+          {
+            "layer": "groove",
+            "reason": "not recorded by groove: REFERENCE_PART_COMPOSER_V1 emits no groove decisions; the rhythm cell of each bar is not recorded (GroovePlan is stream B-04)"
+          },
+          {
+            "layer": "register",
+            "reason": "not recorded by register: the register plan is applied through family counts only; no per-window register decision is recorded (instrument profiles are stream B-03)"
+          }
+        ]
+      },
+      {
+        "trackId": "rachem-na--strings-pad",
+        "instrument": "strings",
+        "role": "PAD",
+        "noteCount": 91,
+        "ranges": [
+          {
+            "startBar": 1,
+            "endBar": 2,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Intro-strings-PAD",
+                "layer": "compose",
+                "source": null,
+                "reason": "PAD part for strings as PAD in \"Intro\" (bars 1-2), seed 2008991357, after part-Intro-keys-RHYTHMIC_HARMONY, part-Intro-bass-BASS"
+              },
+              {
+                "decisionId": "arc:family_entry:Intro/strings",
+                "layer": "arc",
+                "source": "template",
+                "reason": "the song opens with its core"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Intro/strings",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "PAD in the upper_mid register, pp, open voicing, legato, support the lead (bars 1-2); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Intro-strings-PAD",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.993 (colour layer); seed 2382434284"
+              }
+            ]
+          },
+          {
+            "startBar": 1,
+            "endBar": 141,
+            "decisions": [
+              {
+                "decisionId": "perform:performance:strings-pad",
+                "layer": "perform",
+                "source": null,
+                "reason": "PERFORMANCE_ENGINE_V2 1.0, profile bowed-phrase: 64 note(s) carry the engine's reasons, timing and velocity deltas measured for 257 note(s), 0 note(s) added by the performance"
+              },
+              {
+                "decisionId": "perform:playability_repair:strings-pad",
+                "layer": "perform",
+                "source": null,
+                "reason": "post-performance playability repair: 0 range fold(s), 53 leap fold(s), 254 polyphony release(s), 0 breath truncation(s), 0 lengthened, 166 dropped; residual: leap"
+              }
+            ]
+          },
+          {
+            "startBar": 3,
+            "endBar": 24,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Verse_1-strings-PAD",
+                "layer": "compose",
+                "source": null,
+                "reason": "PAD part for strings as PAD in \"Verse 1\" (bars 3-24), seed 80101673, after part-Verse_1-keys-RHYTHMIC_HARMONY, part-Verse_1-bass-BASS"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Verse_1/strings",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "PAD in the upper_mid register, pp, open voicing, legato, support the lead (bars 3-24); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Verse_1-strings-PAD",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.993 (colour layer); seed 3549501502"
+              }
+            ]
+          },
+          {
+            "startBar": 25,
+            "endBar": 40,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Verse_2-strings-PAD",
+                "layer": "compose",
+                "source": null,
+                "reason": "PAD part for strings as PAD in \"Verse 2\" (bars 25-40), seed 292329079, after part-Verse_2-keys-RHYTHMIC_HARMONY, part-Verse_2-bass-BASS, part-Verse_2-percussion-FILL"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Verse_2/strings",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "PAD in the upper_mid register, pp, open voicing, legato, support the lead (bars 25-40); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Verse_2-strings-PAD",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.993 (colour layer); seed 598509739"
+              }
+            ]
+          },
+          {
+            "startBar": 41,
+            "endBar": 56,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Chorus-strings-PAD",
+                "layer": "compose",
+                "source": null,
+                "reason": "PAD part for strings as PAD in \"Chorus\" (bars 41-56), seed 96600006, after part-Chorus-keys-HARMONIC_BED, part-Chorus-bass-BASS, part-Chorus-percussion-FILL"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Chorus/strings",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "PAD in the upper_mid register, mp, open voicing, legato, support the lead (bars 41-56); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Chorus-strings-PAD",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.993 (colour layer); seed 4113692833"
+              }
+            ]
+          },
+          {
+            "startBar": 57,
+            "endBar": 72,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Chorus_2-strings-HARMONIC_BED",
+                "layer": "compose",
+                "source": null,
+                "reason": "STRINGS part for strings as HARMONIC_BED in \"Chorus 2\" (bars 57-72), seed 299292574, after part-Chorus_2-keys-HARMONIC_BED, part-Chorus_2-bass-BASS, part-Chorus_2-percussion-FILL, part-Chorus_2-drums-GROOVE"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Chorus_2/strings",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "HARMONIC_BED in the upper_mid register, mp, open voicing, legato, support the lead (bars 57-72); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Chorus_2-strings-HARMONIC_BED",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.993 (colour layer); seed 2962501799"
+              }
+            ]
+          },
+          {
+            "startBar": 73,
+            "endBar": 96,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Verse_3-strings-PAD",
+                "layer": "compose",
+                "source": null,
+                "reason": "PAD part for strings as PAD in \"Verse 3\" (bars 73-96), seed 1776039380, after part-Verse_3-keys-HARMONIC_BED, part-Verse_3-bass-BASS"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Verse_3/strings",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "PAD in the upper_mid register, pp, open voicing, legato, support the lead (bars 73-96); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Verse_3-strings-PAD",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.993 (colour layer); seed 306357390"
+              }
+            ]
+          },
+          {
+            "startBar": 97,
+            "endBar": 110,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Bridge-strings-COUNTER_MELODY",
+                "layer": "compose",
+                "source": null,
+                "reason": "COUNTER_MELODY part for strings as COUNTER_MELODY in \"Bridge\" (bars 97-110), seed 2031058279, after part-Bridge-keys-RHYTHMIC_HARMONY, part-Bridge-bass-BASS"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Bridge/strings",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "COUNTER_MELODY in the upper_mid register, mp->mf, open voicing, legato, answer the lead (bars 97-110); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Bridge-strings-COUNTER_MELODY",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.537 (counter-melody emphasis); seed 3450539366"
+              }
+            ]
+          },
+          {
+            "startBar": 113,
+            "endBar": 128,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Chorus_3-strings-CLIMAX_LAYER",
+                "layer": "compose",
+                "source": null,
+                "reason": "STRINGS part for strings as CLIMAX_LAYER in \"Chorus 3\" (bars 113-128), seed 3990590412, after part-Chorus_3-keys-HARMONIC_BED, part-Chorus_3-bass-BASS, part-Chorus_3-percussion-ACCENT, part-Chorus_3-drums-CLIMAX_LAYER"
+              },
+              {
+                "decisionId": "arc:family_entry:Chorus_3/strings",
+                "layer": "arc",
+                "source": "template",
+                "reason": "enters with the chorus"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Chorus_3/strings",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "CLIMAX_LAYER in the upper_mid register, f, open voicing, legato, independent the lead (bars 113-128); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Chorus_3-strings-CLIMAX_LAYER",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.993 (colour layer); seed 3666043627"
+              }
+            ]
+          },
+          {
+            "startBar": 129,
+            "endBar": 135,
+            "decisions": [
+              {
+                "decisionId": "compose:part_task:part-Outro-strings-PAD",
+                "layer": "compose",
+                "source": null,
+                "reason": "PAD part for strings as PAD in \"Outro\" (bars 129-135), seed 1195048166, after part-Outro-keys-RHYTHMIC_HARMONY, part-Outro-bass-BASS"
+              },
+              {
+                "decisionId": "orchestration:role_assignment:Outro/strings",
+                "layer": "orchestration",
+                "source": null,
+                "reason": "PAD in the upper_mid register, pp->pp, open voicing, legato, support the lead (bars 129-135); sectionPhrasePlanner records no reason for the role choice itself"
+              },
+              {
+                "decisionId": "compose:density:cand-A/part-Outro-strings-PAD",
+                "layer": "compose",
+                "source": null,
+                "reason": "density x0.993 (colour layer); seed 744499146"
+              }
+            ]
+          }
+        ],
+        "notRecorded": [
+          {
+            "layer": "harmony",
+            "reason": "not recorded by harmony: REFERENCE_PART_COMPOSER_V1 emits no voicing decisions; the voicing of each chord is not recorded (harmony realisation is stream B-02)"
+          },
+          {
+            "layer": "groove",
+            "reason": "not recorded by groove: REFERENCE_PART_COMPOSER_V1 emits no groove decisions; the rhythm cell of each bar is not recorded (GroovePlan is stream B-04)"
+          },
+          {
+            "layer": "register",
+            "reason": "not recorded by register: the register plan is applied through family counts only; no per-window register decision is recorded (instrument profiles are stream B-03)"
+          }
+        ]
+      }
+    ],
+    "findings": [
+      {
+        "source": "brain",
+        "kind": "dropped_part",
+        "severity": "warning",
+        "failureCode": "PLAN_REALISATION_FAILURE",
+        "originLayer": "compose",
+        "sectionName": "Intro",
+        "instrument": "bass",
+        "trackIds": [
+          "rachem-na--bass-bass"
+        ],
+        "startBar": 1,
+        "endBar": 2,
+        "startSeconds": 0,
+        "endSeconds": 3.68013493828107,
+        "message": "bass (BASS) wrote no notes for \"Intro\" (bars 1-2): no chord lies under those bars, so a pitched part had no harmony to write from."
+      },
+      {
+        "source": "brain",
+        "kind": "dropped_part",
+        "severity": "warning",
+        "failureCode": "PLAN_REALISATION_FAILURE",
+        "originLayer": "compose",
+        "sectionName": "Intro",
+        "instrument": "keys",
+        "trackIds": [
+          "rachem-na--keys-rhythmic_harmony"
+        ],
+        "startBar": 1,
+        "endBar": 2,
+        "startSeconds": 0,
+        "endSeconds": 3.68013493828107,
+        "message": "keys (KEYS) wrote no notes for \"Intro\" (bars 1-2): no chord lies under those bars, so a pitched part had no harmony to write from."
+      },
+      {
+        "source": "brain",
+        "kind": "dropped_part",
+        "severity": "warning",
+        "failureCode": "PLAN_REALISATION_FAILURE",
+        "originLayer": "compose",
+        "sectionName": "Intro",
+        "instrument": "strings",
+        "trackIds": [
+          "rachem-na--strings-pad"
+        ],
+        "startBar": 1,
+        "endBar": 2,
+        "startSeconds": 0,
+        "endSeconds": 3.68013493828107,
+        "message": "strings (PAD) wrote no notes for \"Intro\" (bars 1-2): no chord lies under those bars, so a pitched part had no harmony to write from."
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "harmony",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "Cadences land at the section boundaries. (music-critic/v1 harmony 88/100, judged from the plan, not the notes; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "harmony",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "Harmonic tension barely moves across the song. (music-critic/v1 harmony 88/100, judged from the plan, not the notes; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "groove",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "No rhythm evidence to judge. (music-critic/v1 groove 55/100; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "voiceLeading",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "bass: smooth voice leading. (music-critic/v1 voiceLeading 72/100; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "voiceLeading",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "keys: smooth voice leading. (music-critic/v1 voiceLeading 72/100; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "voiceLeading",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "strings: smooth voice leading. (music-critic/v1 voiceLeading 72/100; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "leadCompatibility",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "No verified vocal to protect. (music-critic/v1 leadCompatibility 65/100, judged from the plan, not the notes; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "orchestration",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "Register space is managed. (music-critic/v1 orchestration 72/100, judged from the plan, not the notes; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "orchestration",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "Orchestration density follows the energy curve. (music-critic/v1 orchestration 72/100, judged from the plan, not the notes; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "sectionDevelopment",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "\"verse\" develops across its repeats. (music-critic/v1 sectionDevelopment 88/100, judged from the plan, not the notes; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "sectionDevelopment",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "\"chorus\" develops across its repeats. (music-critic/v1 sectionDevelopment 88/100, judged from the plan, not the notes; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "sectionDevelopment",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "The climax lands in the back half. (music-critic/v1 sectionDevelopment 88/100, judged from the plan, not the notes; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "motifCoherence",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "No melody to trace a motif through. (music-critic/v1 motifCoherence 60/100, judged from the plan, not the notes; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "contrast",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "Moderate section contrast. (music-critic/v1 contrast 88/100, judged from the plan, not the notes; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "transitions",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "Builds lift and drops clear space. (music-critic/v1 transitions 82/100, judged from the plan, not the notes; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "playability",
+        "severity": "warning",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "0 playability error(s), 16 warning(s). (music-critic/v1 playability 4/100; the dimension carries no location and no failure code)"
+      },
+      {
+        "source": "critic_dimension",
+        "kind": "performancePotential",
+        "severity": "info",
+        "failureCode": null,
+        "originLayer": null,
+        "sectionName": null,
+        "instrument": null,
+        "trackIds": [],
+        "startBar": null,
+        "endBar": null,
+        "startSeconds": null,
+        "endSeconds": null,
+        "message": "Wide dynamic range leaves room for a real performance. (music-critic/v1 performancePotential 80/100, judged from the plan, not the notes; the dimension carries no location and no failure code)"
+      }
+    ],
+    "failureCodes": [
+      {
+        "failureCode": "PLAN_REALISATION_FAILURE",
+        "originLayer": "compose",
+        "severity": "warning",
+        "count": 3
+      }
+    ],
+    "repairs": [
+      {
+        "source": "critic_repair_loop",
+        "pass": 1,
+        "applied": [],
+        "requested": [
+          "playability: apply the constraint-engine suggested fixes",
+          "groove: align kick and bass onsets; add a fill into each energy lift",
+          "motifCoherence: restate the motif in the intro; develop the motif in the bridge"
+        ],
+        "changed": false,
+        "scoreBefore": 72,
+        "scoreAfter": 72,
+        "trackId": null,
+        "counts": null,
+        "changedScopes": [],
+        "outsideScopePreserved": null,
+        "detail": "pass 1 found 3 request(s) and applied nothing"
+      },
+      {
+        "source": "playability_repair",
+        "pass": null,
+        "applied": [],
+        "requested": [],
+        "changed": true,
+        "scoreBefore": null,
+        "scoreAfter": null,
+        "trackId": "rachem-na--strings-pad",
+        "counts": {
+          "rangeFolds": 0,
+          "leapFolds": 53,
+          "durationLengthened": 0,
+          "breathTruncated": 0,
+          "polyphonyReleases": 254,
+          "dropped": 166,
+          "residual": [
+            "leap"
+          ]
+        },
+        "changedScopes": [],
+        "outsideScopePreserved": null,
+        "detail": "rachem-na--strings-pad: 473 note(s) rewritten after performance (0 range folds, 53 leap folds, 254 releases, 0 breath truncations, 0 lengthened, 166 dropped); residual: leap; which notes is not recorded (the repair keeps counts only)"
+      }
+    ],
+    "renderers": [
+      {
+        "source": "mix_master_revision v1",
+        "sourceId": "rev-fixture",
+        "createdAt": "2026-09-10T00:00:00.000Z",
+        "stems": [
+          {
+            "trackId": "rachem-na--drums-groove",
+            "trackName": "drums",
+            "role": "GROOVE",
+            "instrument": "drums",
+            "renderer": "SFIZZ_VSCO2_CE",
+            "rendererStatus": "licensed-native",
+            "assetId": "sfizz-drums",
+            "assetIdentity": "fixture asset for drums",
+            "soundSelection": "sfizz-instrument-map: family=drums -> drums",
+            "fallbackReason": null,
+            "gate": {
+              "passed": true,
+              "reasons": []
+            }
+          },
+          {
+            "trackId": "rachem-na--bass-bass",
+            "trackName": "bass",
+            "role": "BASS",
+            "instrument": "bass",
+            "renderer": "SFIZZ_VSCO2_CE",
+            "rendererStatus": "licensed-native",
+            "assetId": "sfizz-bass",
+            "assetIdentity": "fixture asset for bass",
+            "soundSelection": "sfizz-instrument-map: family=strings -> bass",
+            "fallbackReason": null,
+            "gate": {
+              "passed": true,
+              "reasons": []
+            }
+          },
+          {
+            "trackId": "rachem-na--percussion-fill",
+            "trackName": "percussion",
+            "role": "FILL",
+            "instrument": "percussion",
+            "renderer": "SFIZZ_VSCO2_CE",
+            "rendererStatus": "licensed-native",
+            "assetId": "sfizz-percussion",
+            "assetIdentity": "fixture asset for percussion",
+            "soundSelection": "sfizz-instrument-map: family=drums -> percussion",
+            "fallbackReason": null,
+            "gate": {
+              "passed": true,
+              "reasons": []
+            }
+          },
+          {
+            "trackId": "rachem-na--keys-rhythmic_harmony",
+            "trackName": "keys",
+            "role": "RHYTHMIC_HARMONY",
+            "instrument": "keys",
+            "renderer": "SFIZZ_VSCO2_CE",
+            "rendererStatus": "licensed-native",
+            "assetId": "sfizz-keys",
+            "assetIdentity": "fixture asset for keys",
+            "soundSelection": "sfizz-instrument-map: family=drums -> keys",
+            "fallbackReason": null,
+            "gate": {
+              "passed": true,
+              "reasons": []
+            }
+          },
+          {
+            "trackId": "rachem-na--strings-pad",
+            "trackName": "strings",
+            "role": "PAD",
+            "instrument": "strings",
+            "renderer": "SFIZZ_VSCO2_CE",
+            "rendererStatus": "licensed-native",
+            "assetId": "sfizz-strings",
+            "assetIdentity": "fixture asset for strings",
+            "soundSelection": "sfizz-instrument-map: family=strings -> strings",
+            "fallbackReason": null,
+            "gate": {
+              "passed": true,
+              "reasons": []
+            }
+          }
+        ],
+        "readiness": {
+          "ready": true,
+          "status": "production-ready",
+          "reasons": []
+        }
+      }
+    ],
+    "diff": {
+      "version": "1.0",
+      "before": {
+        "id": "arr-v1",
+        "label": "רחם נא v1"
+      },
+      "after": {
+        "id": "arr-v2",
+        "label": "רחם נא · A · conservative v2"
+      },
+      "barSeconds": 1.840067469140535,
+      "tracks": [
+        {
+          "trackId": "rachem-na--bass-bass",
+          "instrument": "bass",
+          "status": "changed",
+          "notesBefore": 99,
+          "notesAfter": 94,
+          "added": 39,
+          "removed": 44,
+          "changed": 45,
+          "ranges": [
+            {
+              "startBar": 3,
+              "endBar": 3,
+              "added": 0,
+              "removed": 0,
+              "changed": 1
+            },
+            {
+              "startBar": 7,
+              "endBar": 8,
+              "added": 1,
+              "removed": 1,
+              "changed": 1
+            },
+            {
+              "startBar": 10,
+              "endBar": 11,
+              "added": 0,
+              "removed": 0,
+              "changed": 2
+            },
+            {
+              "startBar": 14,
+              "endBar": 14,
+              "added": 1,
+              "removed": 1,
+              "changed": 1
+            },
+            {
+              "startBar": 16,
+              "endBar": 17,
+              "added": 2,
+              "removed": 2,
+              "changed": 0
+            },
+            {
+              "startBar": 20,
+              "endBar": 24,
+              "added": 3,
+              "removed": 4,
+              "changed": 1
+            },
+            {
+              "startBar": 26,
+              "endBar": 29,
+              "added": 2,
+              "removed": 2,
+              "changed": 2
+            },
+            {
+              "startBar": 31,
+              "endBar": 37,
+              "added": 1,
+              "removed": 1,
+              "changed": 8
+            },
+            {
+              "startBar": 39,
+              "endBar": 40,
+              "added": 0,
+              "removed": 1,
+              "changed": 2
+            },
+            {
+              "startBar": 44,
+              "endBar": 46,
+              "added": 2,
+              "removed": 2,
+              "changed": 1
+            },
+            {
+              "startBar": 48,
+              "endBar": 49,
+              "added": 1,
+              "removed": 1,
+              "changed": 1
+            },
+            {
+              "startBar": 55,
+              "endBar": 57,
+              "added": 1,
+              "removed": 1,
+              "changed": 3
+            },
+            {
+              "startBar": 59,
+              "endBar": 59,
+              "added": 1,
+              "removed": 1,
+              "changed": 0
+            },
+            {
+              "startBar": 64,
+              "endBar": 65,
+              "added": 1,
+              "removed": 1,
+              "changed": 1
+            },
+            {
+              "startBar": 69,
+              "endBar": 69,
+              "added": 0,
+              "removed": 0,
+              "changed": 1
+            },
+            {
+              "startBar": 71,
+              "endBar": 73,
+              "added": 4,
+              "removed": 4,
+              "changed": 2
+            },
+            {
+              "startBar": 77,
+              "endBar": 78,
+              "added": 1,
+              "removed": 1,
+              "changed": 1
+            },
+            {
+              "startBar": 81,
+              "endBar": 82,
+              "added": 0,
+              "removed": 0,
+              "changed": 2
+            },
+            {
+              "startBar": 88,
+              "endBar": 89,
+              "added": 0,
+              "removed": 0,
+              "changed": 2
+            },
+            {
+              "startBar": 93,
+              "endBar": 94,
+              "added": 2,
+              "removed": 3,
+              "changed": 0
+            },
+            {
+              "startBar": 97,
+              "endBar": 98,
+              "added": 2,
+              "removed": 2,
+              "changed": 1
+            },
+            {
+              "startBar": 100,
+              "endBar": 100,
+              "added": 0,
+              "removed": 0,
+              "changed": 1
+            },
+            {
+              "startBar": 102,
+              "endBar": 102,
+              "added": 1,
+              "removed": 1,
+              "changed": 1
+            },
+            {
+              "startBar": 104,
+              "endBar": 106,
+              "added": 1,
+              "removed": 1,
+              "changed": 2
+            },
+            {
+              "startBar": 108,
+              "endBar": 108,
+              "added": 0,
+              "removed": 0,
+              "changed": 1
+            },
+            {
+              "startBar": 111,
+              "endBar": 113,
+              "added": 2,
+              "removed": 3,
+              "changed": 1
+            },
+            {
+              "startBar": 115,
+              "endBar": 115,
+              "added": 1,
+              "removed": 1,
+              "changed": 0
+            },
+            {
+              "startBar": 117,
+              "endBar": 120,
+              "added": 1,
+              "removed": 1,
+              "changed": 3
+            },
+            {
+              "startBar": 122,
+              "endBar": 123,
+              "added": 2,
+              "removed": 2,
+              "changed": 0
+            },
+            {
+              "startBar": 127,
+              "endBar": 131,
+              "added": 3,
+              "removed": 4,
+              "changed": 1
+            },
+            {
+              "startBar": 133,
+              "endBar": 137,
+              "added": 3,
+              "removed": 3,
+              "changed": 2
+            }
+          ]
+        },
+        {
+          "trackId": "rachem-na--drums-groove",
+          "instrument": "drums",
+          "status": "changed",
+          "notesBefore": 448,
+          "notesAfter": 416,
+          "added": 40,
+          "removed": 72,
+          "changed": 307,
+          "ranges": [
+            {
+              "startBar": 56,
+              "endBar": 72,
+              "added": 0,
+              "removed": 16,
+              "changed": 171
+            },
+            {
+              "startBar": 112,
+              "endBar": 128,
+              "added": 40,
+              "removed": 56,
+              "changed": 136
+            }
+          ]
+        },
+        {
+          "trackId": "rachem-na--keys-rhythmic_harmony",
+          "instrument": "keys",
+          "status": "changed",
+          "notesBefore": 924,
+          "notesAfter": 878,
+          "added": 193,
+          "removed": 239,
+          "changed": 600,
+          "ranges": [
+            {
+              "startBar": 3,
+              "endBar": 41,
+              "added": 80,
+              "removed": 103,
+              "changed": 313
+            },
+            {
+              "startBar": 44,
+              "endBar": 46,
+              "added": 3,
+              "removed": 3,
+              "changed": 4
+            },
+            {
+              "startBar": 48,
+              "endBar": 49,
+              "added": 3,
+              "removed": 3,
+              "changed": 3
+            },
+            {
+              "startBar": 55,
+              "endBar": 57,
+              "added": 0,
+              "removed": 1,
+              "changed": 13
+            },
+            {
+              "startBar": 59,
+              "endBar": 59,
+              "added": 0,
+              "removed": 0,
+              "changed": 3
+            },
+            {
+              "startBar": 64,
+              "endBar": 65,
+              "added": 0,
+              "removed": 0,
+              "changed": 5
+            },
+            {
+              "startBar": 69,
+              "endBar": 69,
+              "added": 3,
+              "removed": 3,
+              "changed": 0
+            },
+            {
+              "startBar": 71,
+              "endBar": 73,
+              "added": 3,
+              "removed": 4,
+              "changed": 13
+            },
+            {
+              "startBar": 77,
+              "endBar": 78,
+              "added": 0,
+              "removed": 0,
+              "changed": 6
+            },
+            {
+              "startBar": 81,
+              "endBar": 82,
+              "added": 0,
+              "removed": 1,
+              "changed": 3
+            },
+            {
+              "startBar": 88,
+              "endBar": 89,
+              "added": 0,
+              "removed": 0,
+              "changed": 6
+            },
+            {
+              "startBar": 92,
+              "endBar": 94,
+              "added": 0,
+              "removed": 1,
+              "changed": 10
+            },
+            {
+              "startBar": 96,
+              "endBar": 113,
+              "added": 56,
+              "removed": 66,
+              "changed": 117
+            },
+            {
+              "startBar": 115,
+              "endBar": 115,
+              "added": 0,
+              "removed": 0,
+              "changed": 2
+            },
+            {
+              "startBar": 117,
+              "endBar": 124,
+              "added": 8,
+              "removed": 9,
+              "changed": 12
+            },
+            {
+              "startBar": 127,
+              "endBar": 140,
+              "added": 37,
+              "removed": 45,
+              "changed": 90
+            }
+          ]
+        },
+        {
+          "trackId": "rachem-na--percussion-fill",
+          "instrument": "percussion",
+          "status": "changed",
+          "notesBefore": 128,
+          "notesAfter": 120,
+          "added": 14,
+          "removed": 22,
+          "changed": 96,
+          "ranges": [
+            {
+              "startBar": 25,
+              "endBar": 72,
+              "added": 0,
+              "removed": 6,
+              "changed": 83
+            },
+            {
+              "startBar": 113,
+              "endBar": 128,
+              "added": 14,
+              "removed": 16,
+              "changed": 13
+            }
+          ]
+        },
+        {
+          "trackId": "rachem-na--strings-pad",
+          "instrument": "strings",
+          "status": "changed",
+          "notesBefore": 93,
+          "notesAfter": 91,
+          "added": 59,
+          "removed": 61,
+          "changed": 30,
+          "ranges": [
+            {
+              "startBar": 3,
+              "endBar": 3,
+              "added": 0,
+              "removed": 0,
+              "changed": 1
+            },
+            {
+              "startBar": 6,
+              "endBar": 8,
+              "added": 2,
+              "removed": 2,
+              "changed": 1
+            },
+            {
+              "startBar": 10,
+              "endBar": 11,
+              "added": 2,
+              "removed": 2,
+              "changed": 1
+            },
+            {
+              "startBar": 14,
+              "endBar": 14,
+              "added": 1,
+              "removed": 1,
+              "changed": 1
+            },
+            {
+              "startBar": 16,
+              "endBar": 17,
+              "added": 0,
+              "removed": 0,
+              "changed": 2
+            },
+            {
+              "startBar": 20,
+              "endBar": 23,
+              "added": 3,
+              "removed": 3,
+              "changed": 1
+            },
+            {
+              "startBar": 25,
+              "endBar": 29,
+              "added": 3,
+              "removed": 3,
+              "changed": 2
+            },
+            {
+              "startBar": 31,
+              "endBar": 37,
+              "added": 8,
+              "removed": 8,
+              "changed": 1
+            },
+            {
+              "startBar": 39,
+              "endBar": 41,
+              "added": 2,
+              "removed": 2,
+              "changed": 2
+            },
+            {
+              "startBar": 44,
+              "endBar": 46,
+              "added": 1,
+              "removed": 1,
+              "changed": 2
+            },
+            {
+              "startBar": 48,
+              "endBar": 49,
+              "added": 2,
+              "removed": 2,
+              "changed": 0
+            },
+            {
+              "startBar": 55,
+              "endBar": 57,
+              "added": 3,
+              "removed": 3,
+              "changed": 2
+            },
+            {
+              "startBar": 64,
+              "endBar": 65,
+              "added": 1,
+              "removed": 1,
+              "changed": 1
+            },
+            {
+              "startBar": 69,
+              "endBar": 69,
+              "added": 1,
+              "removed": 1,
+              "changed": 0
+            },
+            {
+              "startBar": 71,
+              "endBar": 73,
+              "added": 5,
+              "removed": 5,
+              "changed": 1
+            },
+            {
+              "startBar": 77,
+              "endBar": 78,
+              "added": 1,
+              "removed": 1,
+              "changed": 1
+            },
+            {
+              "startBar": 81,
+              "endBar": 82,
+              "added": 1,
+              "removed": 1,
+              "changed": 1
+            },
+            {
+              "startBar": 88,
+              "endBar": 89,
+              "added": 1,
+              "removed": 1,
+              "changed": 1
+            },
+            {
+              "startBar": 92,
+              "endBar": 94,
+              "added": 4,
+              "removed": 4,
+              "changed": 1
+            },
+            {
+              "startBar": 112,
+              "endBar": 113,
+              "added": 2,
+              "removed": 4,
+              "changed": 3
+            },
+            {
+              "startBar": 115,
+              "endBar": 115,
+              "added": 1,
+              "removed": 1,
+              "changed": 0
+            },
+            {
+              "startBar": 117,
+              "endBar": 124,
+              "added": 5,
+              "removed": 5,
+              "changed": 3
+            },
+            {
+              "startBar": 127,
+              "endBar": 127,
+              "added": 1,
+              "removed": 1,
+              "changed": 0
+            },
+            {
+              "startBar": 129,
+              "endBar": 131,
+              "added": 3,
+              "removed": 3,
+              "changed": 1
+            },
+            {
+              "startBar": 133,
+              "endBar": 137,
+              "added": 6,
+              "removed": 6,
+              "changed": 1
+            }
+          ]
+        }
+      ],
+      "plan": [],
+      "summary": {
+        "tracksChanged": 5,
+        "notesAdded": 345,
+        "notesRemoved": 438,
+        "notesChanged": 1078,
+        "planFieldsChanged": 0
+      }
+    },
+    "performance": [
+      {
+        "trackId": "rachem-na--drums-groove",
+        "engine": "PERFORMANCE_ENGINE_V2",
+        "engineVersion": "1.0",
+        "profile": "kit-limb",
+        "reasonedNotes": 64,
+        "measuredNotes": 356,
+        "meanTimingOffsetMs": -4.94,
+        "meanVelocityDelta": -25.16,
+        "addedNotes": 60
+      },
+      {
+        "trackId": "rachem-na--bass-bass",
+        "engine": "PERFORMANCE_ENGINE_V2",
+        "engineVersion": "1.0",
+        "profile": "finger-bass",
+        "reasonedNotes": 64,
+        "measuredNotes": 94,
+        "meanTimingOffsetMs": -5.06,
+        "meanVelocityDelta": -29.86,
+        "addedNotes": 0
+      },
+      {
+        "trackId": "rachem-na--percussion-fill",
+        "engine": "PERFORMANCE_ENGINE_V2",
+        "engineVersion": "1.0",
+        "profile": "kit-limb",
+        "reasonedNotes": 64,
+        "measuredNotes": 120,
+        "meanTimingOffsetMs": -3.72,
+        "meanVelocityDelta": -28.18,
+        "addedNotes": 0
+      },
+      {
+        "trackId": "rachem-na--keys-rhythmic_harmony",
+        "engine": "PERFORMANCE_ENGINE_V2",
+        "engineVersion": "1.0",
+        "profile": "kit-limb",
+        "reasonedNotes": 64,
+        "measuredNotes": 878,
+        "meanTimingOffsetMs": -2.1,
+        "meanVelocityDelta": -30.71,
+        "addedNotes": 0
+      },
+      {
+        "trackId": "rachem-na--strings-pad",
+        "engine": "PERFORMANCE_ENGINE_V2",
+        "engineVersion": "1.0",
+        "profile": "bowed-phrase",
+        "reasonedNotes": 64,
+        "measuredNotes": 257,
+        "meanTimingOffsetMs": 14.66,
+        "meanVelocityDelta": -13.9,
+        "addedNotes": 0
+      }
+    ],
+    "contextPasses": [],
+    "stages": [
+      {
+        "stage": "plan",
+        "status": "ok",
+        "detail": "9 sections planned",
+        "evidence": {
+          "style": "unknown",
+          "climaxBar": 113,
+          "confidence": 0.56,
+          "tempoBpm": 130.43,
+          "tempoAssumed": false,
+          "meter": "4/4",
+          "meterAssumed": false
+        }
+      },
+      {
+        "stage": "parts",
+        "status": "ok",
+        "detail": "33 part tasks",
+        "evidence": {
+          "tasks": 33
+        }
+      },
+      {
+        "stage": "candidates",
+        "status": "ok",
+        "detail": "3 strategies",
+        "evidence": {
+          "strategies": "conservative,melodic,adventurous"
+        }
+      },
+      {
+        "stage": "compose",
+        "status": "ok",
+        "detail": "4983 notes across 3 candidate(s) via REFERENCE_PART_COMPOSER_V1; 9 planned part(s) or families wrote no notes",
+        "evidence": {
+          "notes": 4983,
+          "composer": "REFERENCE_PART_COMPOSER_V1",
+          "droppedParts": 9
+        }
+      },
+      {
+        "stage": "constraints",
+        "status": "ok",
+        "detail": "0 playability error(s) in the performed notes",
+        "evidence": {
+          "errors": 0
+        }
+      },
+      {
+        "stage": "critique",
+        "status": "ok",
+        "detail": "mean shipped 72.0 (composed 72.0); judged on the performed, repaired notes",
+        "evidence": {
+          "meanShipped": 72,
+          "meanComposed": 72
+        }
+      },
+      {
+        "stage": "repair",
+        "status": "skipped",
+        "detail": "3 candidate(s) attempted a repair pass; none changed the plan or the notes, so nothing was repaired",
+        "evidence": {
+          "repaired": 0,
+          "attempted": 3
+        }
+      },
+      {
+        "stage": "perform",
+        "status": "ok",
+        "detail": "performance humanisation applied; 3 part(s) repaired for playability (159 leap folds, 762 releases, 498 dropped)",
+        "evidence": {
+          "repairedParts": 3,
+          "leapFolds": 159,
+          "rangeFolds": 0,
+          "polyphonyReleases": 762,
+          "dropped": 498,
+          "residual": 1,
+          "parts": "A · conservative:strings-pad,C · melodic:strings-pad,E · adventurous:strings-pad"
+        }
+      },
+      {
+        "stage": "render",
+        "status": "skipped",
+        "detail": "rendering disabled by the caller (render: false)"
+      },
+      {
+        "stage": "audio_critique",
+        "status": "skipped",
+        "detail": "no rendered audio to critique"
+      },
+      {
+        "stage": "select",
+        "status": "ok",
+        "detail": "cand-A (conservative); 0 rejected by the hard-rule gate",
+        "evidence": {
+          "eligible": 3,
+          "rejected": 0,
+          "candidateId": "cand-A",
+          "combinedScore": 72
+        }
+      }
+    ],
+    "selection": {
+      "reason": "cand-A (conservative); 0 rejected by the hard-rule gate",
+      "score": 72,
+      "confidence": 0.753
+    },
+    "notRecorded": [
+      {
+        "question": "why this voicing",
+        "layer": "harmony",
+        "reason": "not recorded by harmony: REFERENCE_PART_COMPOSER_V1 emits no voicing decisions; the voicing of each chord is not recorded (harmony realisation is stream B-02)"
+      },
+      {
+        "question": "why this voicing",
+        "layer": "groove",
+        "reason": "not recorded by groove: REFERENCE_PART_COMPOSER_V1 emits no groove decisions; the rhythm cell of each bar is not recorded (GroovePlan is stream B-04)"
+      },
+      {
+        "question": "why this voicing",
+        "layer": "register",
+        "reason": "not recorded by register: the register plan is applied through family counts only; no per-window register decision is recorded (instrument profiles are stream B-03)"
+      },
+      {
+        "question": "which critic objected (audio)",
+        "layer": "render",
+        "reason": "not recorded by render: the brain's render stage was skipped (rendering disabled by the caller (render: false)); no audio critique of the candidates exists"
+      }
+    ]
+  },
+  "midi": {
+    "table": "GM_PROGRAMS_v1",
+    "programs": [
+      {
+        "trackId": "rachem-na--drums-groove",
+        "instrument": "drums",
+        "program": 0,
+        "channel": 9,
+        "reason": "drums -> percussion channel (program byte ignored) (from \"drums\")"
+      },
+      {
+        "trackId": "rachem-na--bass-bass",
+        "instrument": "bass",
+        "program": 33,
+        "channel": 0,
+        "reason": "bass (electric, fingered) (from \"bass\")"
+      },
+      {
+        "trackId": "rachem-na--percussion-fill",
+        "instrument": "percussion",
+        "program": 0,
+        "channel": 9,
+        "reason": "drums -> percussion channel (program byte ignored) (from \"percussion\")"
+      },
+      {
+        "trackId": "rachem-na--keys-rhythmic_harmony",
+        "instrument": "keys",
+        "program": 0,
+        "channel": 1,
+        "reason": "piano (from \"keys\")"
+      },
+      {
+        "trackId": "rachem-na--strings-pad",
+        "instrument": "strings",
+        "program": 48,
+        "channel": 2,
+        "reason": "string ensemble (from \"strings\")"
+      }
+    ],
+    "bytes": 32302,
+    "before": "createPerformanceMidi assigned programs by track index (trackIndex === 0 ? 0 : trackIndex * 8 % 96): the owner's export carried piano 16 (organ), strings 24 (guitar), bass 32; a pitched track at index 9 landed on the percussion channel"
+  },
+  "honestLimits": [
+    "Voicing decisions are not recorded: the reference composer registers nothing; the contract (DecisionRegistry via the composer's second argument, MusicalNote.decisionId) is documented and tested with a tagging composer, but B-02 / B-04 / B-10 must call it - until then the trace says 'not recorded by harmony/groove/register' for every track.",
+    "Playability repair persists counts per track, not the rewritten note ids; performance reasons exist for the engine's first 64 notes per track (its sample cap), the measured timing / velocity deltas exist for every note.",
+    "music-critic/v1 dimension findings carry no location and no failure code (B-05 owns the rebuild); only the orchestrator's findings, the critic's hard rules, the render gates and the mix measurements are classified.",
+    "The per-stem renderer evidence on mix/master revisions exists for revisions created after this PR; older revisions (the owner's v1-v6) are reported as 'not recorded' - the export manifest remains their only record.",
+    "The keys track (RHYTHMIC_HARMONY role) still resolves to the drum-kit definition upstream (musicEngines.ts FAMILY_WORDS has no keyboard word - B-01 / B-12 finding, B-03 owns it); the GM table decides by the instrument's name first, so the export writes it as piano on a pitched channel, but the constraint engine and the performance layer still treat those notes as a kit.",
+    "Nothing here was rendered or listened to; the trace reports stored decisions and measurements, it does not judge them.",
+    "The evidence run uses the provider in-process (no database); the route was typechecked and its assembly of rows is covered by the trace tests over the same shapes, not by a live HTTP call."
+  ]
+}

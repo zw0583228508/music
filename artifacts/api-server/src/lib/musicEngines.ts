@@ -31,6 +31,7 @@ import { deriveOrchestrationBudget } from "./orchestrationBudget";
 import { deriveTransitionPlan } from "./transitionEngine";
 import { buildPartComposerPlan } from "./partComposer";
 import { planCandidateGeneration } from "./candidateStrategies";
+import { gmProgramFor } from "./gmPrograms";
 
 export type PerformanceNote = MusicalNote & {
   articulation: string;
@@ -2353,7 +2354,7 @@ export class CompositionEngine {
         appliedDirectives,
         mapping: {
           midiChannel: definition.family === "drums" ? 9 : undefined,
-          program: definition.id === "bass" ? 33 : definition.family === "strings" ? 48 : 0,
+          program: gmProgramFor({ instrument: definition.id, definition }).program,
           articulationMap: Object.fromEntries(definition.articulations.map((articulation, index) => [articulation, 24 + index])),
           controlMap: definition.directiveMappings?.controls,
         },
@@ -2653,7 +2654,7 @@ export class CompositionEngine {
         appliedDirectives,
         mapping: {
           midiChannel: definition.family === "drums" ? 9 : undefined,
-          program: definition.id === "bass" ? 33 : definition.family === "strings" ? 48 : 0,
+          program: gmProgramFor({ instrument: definition.id, definition }).program,
           articulationMap: Object.fromEntries(definition.articulations.map((articulation, index) => [articulation, 24 + index])),
           controlMap: definition.directiveMappings?.controls,
         },
@@ -2900,7 +2901,7 @@ export class CompositionEngine {
         appliedDirectives,
         mapping: {
           midiChannel: definition.family === "drums" ? 9 : undefined,
-          program: definition.id === "bass" ? 33 : definition.family === "strings" ? 48 : 0,
+          program: gmProgramFor({ instrument: definition.id, definition }).program,
           articulationMap: Object.fromEntries(definition.articulations.map((articulation, index) => [articulation, 24 + index])),
           controlMap: definition.directiveMappings?.controls,
         },
