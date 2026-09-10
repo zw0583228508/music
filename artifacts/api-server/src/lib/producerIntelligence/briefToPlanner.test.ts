@@ -107,16 +107,50 @@ test("a stated aesthetic is honoured only when the palette can carry it", () => 
   assert.notEqual(noCarriers.globalPlan.productionAesthetic, "cinematic", "but the planner will not claim an aesthetic the palette cannot carry");
 });
 
-test("a climax hint re-ranks the map's candidates and cannot invent one", () => {
+test("a climax hint is an arrangement decision (B-01): the named section becomes the arc's primary climax", () => {
   const model = makeTestSongModel();
   const plain = deriveGlobalArrangementPlan(model, { now: FIXED_NOW });
-  const candidates = model.musicalMap!.structure.climaxCandidates;
-  const inVerse = candidates.some((c) => c.atBar >= 1 && c.atBar <= 8);
+  assert.equal(plain.climax?.sectionName, "Final Chorus", "by the form, the last chorus");
+  // Before B-01 a hint could only re-rank the map's *source* climax candidates;
+  // a climax is a decision, so the named section is honoured and the map's
+  // candidate (when it has one there) only places the bar.
   const hinted = deriveGlobalArrangementPlan(model, { now: FIXED_NOW, hints: { climaxSectionName: "Verse" } });
-  if (!inVerse) assert.deepEqual(hinted.climax, plain.climax, "no candidate in the verse: the climax stays where the evidence put it");
+  assert.equal(hinted.climax?.sectionName, "Verse");
+  assert.equal(hinted.arc?.primaryClimax?.source, "brief");
   const brief = briefFor("the last chorus still doesn't feel like a climax");
-  assert.equal(briefPlannerHints(brief).global.climaxSectionName, "Final Chorus");
-  assert.equal(applyBriefToPlans(model, brief, { now: FIXED_NOW }).globalPlan.climax?.sectionName, "Final Chorus");
+  const hints = briefPlannerHints(brief);
+  assert.equal(hints.global.climaxSectionName, "Final Chorus");
+  assert.ok((hints.global.sectionDynamicSteps?.["Final Chorus"] ?? 0) >= 1, "a climax is at least one marking up");
+  const planned = applyBriefToPlans(model, brief, { now: FIXED_NOW }).globalPlan;
+  assert.equal(planned.climax?.sectionName, "Final Chorus");
+  assert.equal(planned.arc?.primaryClimax?.source, "brief");
+});
+
+test("B-01 levers: words about loudness, fullness, character and instruments reach the arc as intent", () => {
+  const quiet = briefPlannerHints(briefFor("quiet and intimate"));
+  assert.equal(quiet.global.globalDynamicSteps, -1, "\"quiet\" is one marking down everywhere");
+  assert.equal(quiet.global.arcTemplate, "intimate_ballad");
+  assert.ok(quiet.evidence.some((e) => /arc template intimate_ballad/.test(e)));
+  const bigger = briefPlannerHints(briefFor("the first chorus more powerful"));
+  assert.equal(bigger.global.sectionDynamicSteps?.Chorus, 1);
+  assert.equal(bigger.global.sectionDynamicSteps?.Verse, undefined);
+  const dense = briefPlannerHints(briefFor("a dense, full texture"));
+  assert.equal(dense.global.globalTextureSteps, 1);
+  const named = briefPlannerHints(briefFor("piano, soft strings, gentle bass"));
+  assert.ok(named.global.familyPriority?.includes("keys") && named.global.familyPriority?.includes("strings"));
+  assert.ok(named.evidence.some((e) => /family priority/.test(e)));
+  // The deprecated multiplier is still emitted for older readers but moves the
+  // planned energy by at most the prior's reach.
+  const model = makeTestSongModel();
+  const plain = deriveGlobalArrangementPlan(model, { now: FIXED_NOW });
+  const biased = deriveGlobalArrangementPlan(model, { now: FIXED_NOW, hints: { sectionEnergyBias: { Chorus: 1.4 } } });
+  const chorus = (plan: typeof plain) => plan.sectionTargets.find((t) => t.sectionName === "Chorus")!;
+  assert.equal(chorus(biased).intendedDynamic, chorus(plain).intendedDynamic, "a multiplier cannot change the marking");
+  assert.ok(Math.abs(chorus(biased).energy - chorus(plain).energy) <= 0.1 + 1e-9, "within the prior's reach (+-0.05 either way)");
+  // The levers, in contrast, do.
+  const stated = deriveGlobalArrangementPlan(model, { now: FIXED_NOW, hints: { sectionDynamics: { Chorus: "pp" } } });
+  assert.equal(chorus(stated).intendedDynamic, "pp");
+  assert.ok(chorus(stated).energy < chorus(plain).energy - 0.2);
 });
 
 test("a global density request biases every section and how many families stay active", () => {

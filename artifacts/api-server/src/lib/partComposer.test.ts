@@ -4,9 +4,11 @@ import type { SongModelData } from "@workspace/db";
 import { deriveMusicalMap } from "./songMusicalMap";
 import {
   PART_COMPOSER_PLAN_VERSION,
+  buildPartComposerPlan,
   buildPartGenerationRequest,
   partComposerPlanInputsDigest,
   planPartComposition,
+  silentPlannedFamilyFindings,
 } from "./partComposer";
 
 const FIXED_NOW = new Date("2026-01-01T00:00:00.000Z");
@@ -91,12 +93,111 @@ test("part plan is versioned, deterministic, and enumerates real tasks", () => {
   assert.ok(a.plan.tasks.length >= 6);
   const tasks = new Set(a.plan.tasks.map((t) => t.task));
   assert.ok(tasks.has("DRUMS") && tasks.has("BASS"));
-  assert.ok(a.plan.tasks.some((t) => t.task === "ENDING" && t.sectionName === "Outro"));
-  assert.ok(a.plan.tasks.some((t) => t.task === "TRANSITION"));
+  // Brain B-01: the `ensemble` intro / ending / transition figures (a piano
+  // nobody planned) are no longer written; each is recorded as a decision.
+  assert.ok(!a.plan.tasks.some((t) => t.instrument === "ensemble"), "no fake ensemble instrument");
+  assert.ok(a.plan.decisions?.some((d) => d.instrument === "ensemble" && d.sectionName === "Outro" && /ending/.test(d.reason)));
+  assert.ok(a.plan.decisions?.some((d) => d.instrument === "ensemble" && /transition/.test(d.reason)));
   assert.equal(
     a.plan.inputsDigestSha256,
     partComposerPlanInputsDigest(model, a.layers.sectionPlan, a.layers.transitions),
   );
+});
+
+test("B-01: a sung section keeps its keys part; a LEAD family in a sung section keeps its bed task", () => {
+  const model = makeModel();
+  const { plan, layers } = planPartComposition(model, { now: FIXED_NOW });
+  // The verse and chorus are sung (a vocal stem is in the model): keys is not LEAD and still writes.
+  for (const name of ["Verse", "Chorus"]) {
+    const section = layers.sectionPlan.sections.find((s) => s.sectionName === name)!;
+    assert.equal(section.leadRole, "vocals", `${name} is sung`);
+    if (section.activeInstrumentFamilies.includes("keys")) {
+      assert.ok(plan.tasks.some((t) => t.sectionName === name && t.instrument === "keys"), `${name}: keys task`);
+    }
+  }
+  // A plan that still says LEAD in a sung section (pre-B-01 rows, a caller's own plan) is not silenced.
+  const forced = {
+    ...layers.sectionPlan,
+    roleAssignments: layers.sectionPlan.roleAssignments.map((r) =>
+      r.sectionName === "Verse" && r.instrument === "keys" ? { ...r, role: "LEAD" as const } : r),
+  };
+  const rebuilt = buildPartComposerPlan(model, layers.globalPlan, forced, layers.transitions, { now: FIXED_NOW });
+  const keysVerse = rebuilt.tasks.find((t) => t.sectionName === "Verse" && t.instrument === "keys");
+  assert.ok(keysVerse, "the keys part exists");
+  assert.equal(keysVerse!.task, "KEYS");
+  assert.equal(keysVerse!.role, "HARMONIC_BED");
+  assert.ok(rebuilt.decisions?.some((d) => d.kind === "lead_kept_as_bed" && d.instrument === "keys" && d.sectionName === "Verse"));
+});
+
+test("B-01: a family with no instrument definition is excluded with a reason instead of becoming a piano", () => {
+  const model = makeModel();
+  const { layers } = planPartComposition(model, { now: FIXED_NOW });
+  const withWinds = {
+    ...layers.sectionPlan,
+    roleAssignments: [
+      ...layers.sectionPlan.roleAssignments,
+      { ...layers.sectionPlan.roleAssignments[0], sectionName: "Chorus", instrument: "theremin", role: "ACCENT" as const },
+      { ...layers.sectionPlan.roleAssignments[0], sectionName: "Chorus", instrument: "mix", role: "HARMONIC_BED" as const },
+    ],
+  };
+  const plan = buildPartComposerPlan(model, layers.globalPlan, withWinds, layers.transitions, { now: FIXED_NOW });
+  assert.ok(!plan.tasks.some((t) => t.instrument === "theremin" || t.instrument === "mix"));
+  const winds = plan.decisions?.find((d) => d.instrument === "theremin"); // "winds" gained a real definition in PR-97
+  assert.equal(winds?.kind, "excluded_no_definition");
+  assert.match(winds?.reason ?? "", /piano/);
+  const mix = plan.decisions?.find((d) => d.instrument === "mix");
+  assert.equal(mix?.kind, "excluded_non_family");
+});
+
+test("B-01: a request carries the arc's intent, the form memory and its own bar window; keys is never constrained as a kit", () => {
+  const model = makeModel();
+  const { plan, layers } = planPartComposition(model, { now: FIXED_NOW });
+  const chorusKeys = plan.tasks.find((t) => t.sectionName === "Chorus" && t.instrument === "keys");
+  const verseKeys = plan.tasks.find((t) => t.sectionName === "Verse" && t.instrument === "keys");
+  assert.ok(chorusKeys && verseKeys, "keys plays the verse and the chorus");
+  const request = buildPartGenerationRequest(model, chorusKeys!, layers);
+  assert.ok(request.arcIntent, "the arc's intent is on the request");
+  assert.ok(["pp", "p", "mp", "mf", "f", "ff"].includes(request.arcIntent!.dynamic));
+  assert.equal(request.arcIntent!.level, request.section.energy);
+  assert.equal(request.formMemory.occurrenceIndex, 0);
+  assert.equal(request.formMemory.occurrenceCount, 1);
+  assert.equal(request.formMemory.developmentOperator, "identity");
+  assert.ok(request.partWindow.startBar >= request.section.startBar && request.partWindow.endBar <= request.section.endBar);
+  // The verse keys part is comping (RHYTHMIC_HARMONY), a role name that used to
+  // turn "keys" into the drum kit's range and polyphony.
+  const verseRequest = buildPartGenerationRequest(model, verseKeys!, layers);
+  assert.ok(verseRequest.constraints.playableRange.min <= 21 && verseRequest.constraints.playableRange.max >= 108, "a piano's range, not a kit's");
+  assert.ok(verseRequest.constraints.maxSimultaneousNotes >= 8);
+});
+
+test("B-01 hard rule: a planned family that writes nothing in a sung section is an error; the reference path is clean", () => {
+  const model = makeModel();
+  const { plan, layers } = planPartComposition(model, { now: FIXED_NOW });
+  const seconds = (bar: number) => (bar - 1) * 2;
+  const tracks = layers.sectionPlan.sections.flatMap((s) =>
+    s.activeInstrumentFamilies.map((family) => ({
+      instrument: family,
+      notes: [{ start: seconds(s.startBar) + 0.5 }],
+    })));
+  // Negative control: every planned family has a note in every section.
+  assert.deepEqual(silentPlannedFamilyFindings(model, { sectionPlan: layers.sectionPlan, partComposerPlan: plan }, tracks), []);
+  // Positive control: the keys track is empty although the plan tasks it in the chorus.
+  const silentKeys = tracks.filter((t) => t.instrument !== "keys");
+  const findings = silentPlannedFamilyFindings(model, { sectionPlan: layers.sectionPlan, partComposerPlan: plan }, silentKeys);
+  const errors = findings.filter((f) => f.severity === "error");
+  assert.ok(errors.length >= 1, "the silence is caught");
+  assert.ok(errors.every((f) => f.instrument === "keys" && f.dimension === "hardRule"));
+  assert.ok(errors.some((f) => f.sectionName === "Chorus"));
+  assert.match(errors[0].message, /zero notes in mandatory section/);
+  // An excluded family is a warning that carries the plan's reason, not an error.
+  const excluded = {
+    ...plan,
+    tasks: plan.tasks.filter((t) => t.instrument !== "keys"),
+    decisions: [{ kind: "excluded_no_definition" as const, sectionName: "Chorus", instrument: "keys", reason: "test exclusion" }],
+  };
+  const warned = silentPlannedFamilyFindings(model, { sectionPlan: layers.sectionPlan, partComposerPlan: excluded }, silentKeys);
+  assert.ok(warned.some((f) => f.severity === "warning" && f.sectionName === "Chorus" && /test exclusion/.test(f.message)));
+  assert.ok(!warned.some((f) => f.severity === "error" && f.sectionName === "Chorus"));
 });
 
 test("foundation composes before harmony before melodic; seeds are stable", () => {

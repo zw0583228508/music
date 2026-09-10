@@ -43,7 +43,9 @@ test("probe 5: a drums-only arrangement is not selected — dropped parts are er
   assert.equal(candidate.hardRule.feasible, false);
   const dropped = candidate.findings.filter((f) => f.kind === "dropped_part");
   assert.ok(dropped.some((f) => f.severity === "error" && f.instrument === "bass" && f.sectionName && f.taskId), "the planned bass that wrote nothing is an error finding naming instrument, task and section");
-  assert.ok(dropped.some((f) => f.severity === "warning" && f.instrument === "ensemble"), "a decorative ensemble task is a warning, not a failure");
+  // B-01: "ensemble" is not an instrument; the part plan excludes it with a recorded reason, so nothing of it can be dropped here.
+  assert.ok(!dropped.some((f) => f.instrument === "ensemble"), "no ensemble task exists to be dropped");
+  assert.ok((run.plan.partComposerPlan?.decisions ?? []).some((d) => d.instrument === "ensemble" && d.kind === "excluded_no_definition"), "the exclusion is on the record");
   assert.match(run.selection.reason, /no candidate passed the hard-rule gate/);
   assert.deepEqual(run.selection.rejected.map((r) => r.candidateId), [candidate.candidateId]);
   assert.ok(run.selection.rejected[0].reasons.some((r) => /dropped_part: bass/.test(r)));
@@ -277,7 +279,7 @@ function ownerSong(): SongModelData {
   return canonicalizeSongModelCoordinates(canonical);
 }
 
-test("owner's song with the PR-98 brief: keys is LEAD in every sung section and writes nothing — now an error finding naming the cause, and nothing is selected", () => {
+test("owner's song with the PR-98 brief: after B-01 keys is never LEAD in a sung section, it plays everywhere, and the run is selectable", () => {
   const run = orchestrateArrangement({
     songModel: ownerSong(), candidateCount: 2, render: false, now: NOW,
     plannerHints: {
@@ -287,17 +289,14 @@ test("owner's song with the PR-98 brief: keys is LEAD in every sung section and 
   });
   assert.equal(run.timing.tempoAssumed, false);
   assert.equal(run.timing.tempoBpm, 130.43);
-  assert.equal(run.selected, null, "the arrangement that shipped as 'silence and a weak beep' is not selectable");
+  assert.ok(run.selected, "the arrangement that shipped as 'silence and a weak beep' at 3bf23aa is now selectable because keys writes");
   for (const candidate of run.candidates) {
-    assert.equal(candidate.hardRule.feasible, false);
-    const silent = candidate.findings.filter((f) => f.kind === "planned_family_silent" && f.instrument === "keys");
-    assert.ok(silent.length >= 8, `keys is planned and silent in ${silent.length} sections`);
-    assert.match(silent[0].message, /its role there is LEAD, which produced no task/);
-    assert.ok(!candidate.trackModels.some((t) => t.instrument === "keys"), "no keys track shipped");
-    // The 2-bar intro has no chord under it: the bass there is a warning that names the missing harmony, not an error.
-    const introBass = candidate.findings.find((f) => f.kind === "dropped_part" && f.instrument === "bass" && f.sectionName === "Intro");
-    assert.ok(introBass && introBass.severity === "warning");
-    assert.match(introBass.message, /no chord lies under those bars/);
+    assert.equal(candidate.hardRule.feasible, true, candidate.findings.filter((f) => f.severity === "error").map((f) => f.message).join("; "));
+    assert.equal(candidate.findings.filter((f) => f.kind === "planned_family_silent").length, 0, "no planned family is silent");
+    const keys = candidate.trackModels.find((t) => t.instrument === "keys");
+    assert.ok(keys && keys.notes.length > 100, `keys shipped ${keys?.notes.length ?? 0} notes`);
+    assert.ok(!candidate.trackModels.some((t) => t.instrument === "mix"), "'mix' is not a family and ships no track");
   }
+  assert.ok((run.plan.sectionPlan?.sections ?? []).every((s) => s.leadRole !== "instrument:keys"), "keys is never LEAD in a sung section");
   assert.equal(run.traceable, true);
 });

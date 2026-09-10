@@ -109,8 +109,10 @@ test("the reference part composer produces byte-identical parts to the golden fi
   const current = currentGolden();
   if (process.env.B00_WRITE_GOLDEN === "1") {
     writeFileSync(FIXTURE, `${JSON.stringify({
-      recordedAt: "composer digests and shipped-note digests recorded on main 39aad30 before the B-00 composer split; " +
-        "orchestration noteCount re-pinned after B-00 D1 (it now counts the shipped, performed notes; every digest unchanged)",
+      recordedAt: "composer digests and shipped-note digests recorded on main 39aad30 before the B-00 composer split, " +
+        "orchestration noteCount re-pinned after B-00 D1; RE-PINNED at the B-01 merge (planners v1.1: arc targets, sung-by-default, " +
+        "mix/ensemble excluded, operators) - every part request changed, so every digest changed; the split itself was verified " +
+        "byte-identical at 39aad30 -> B-00. A future digest change must again name its cause here.",
       cases: current,
     }, null, 2)}\n`);
     return;

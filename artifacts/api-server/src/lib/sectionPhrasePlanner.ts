@@ -1,13 +1,24 @@
 /**
- * Section / Phrase / Instrument-Role Planner (PR-05).
+ * Section / Phrase / Instrument-Role Planner (PR-05, arc-driven since Brain B-01).
  *
  * Turns the whole-song `GlobalArrangementPlan` into per-section direction, a
  * 2/4/8-bar phrase breakdown, and one arrangement role per active instrument
  * per section — all before a note is written. Deterministic and pure; reads the
  * global plan plus the Canonical Song Model V2 musical map.
+ *
+ * Brain B-01: which families a section keeps, when they enter and leave, the
+ * dynamic shape and the role density all read the `ArrangementArc` on the
+ * global plan (the arrangement's *intent*), never the source recording's RMS.
+ * Repeated sections carry their occurrence index, the previous occurrence's
+ * summary and the development operator the arc chose. A section whose vocal
+ * map is unavailable is sung by default when its function is a sung one, so
+ * an accompaniment family is never promoted to LEAD and silenced.
  */
 import { createHash } from "node:crypto";
 import type {
+  ArcDynamicMarking,
+  ArrangementArc,
+  ArrangementArcSection,
   GlobalArrangementPlan,
   InstrumentArrangementRole,
   InstrumentRoleAssignment,
@@ -18,19 +29,32 @@ import type {
   SongModelData,
   SongModelMusicalMap,
 } from "@workspace/db";
-import { deriveGlobalArrangementPlan } from "./globalArrangementPlanner";
+import { arcForGlobalPlan, deriveGlobalArrangementPlan } from "./globalArrangementPlanner";
+import {
+  canonicalFamily,
+  DYNAMIC_MARKINGS,
+  FAMILY_REGISTER_BAND,
+  isNonFamilyHint,
+  REGISTER_SHIFTABLE_FAMILIES,
+} from "./arrangementArc";
 import { deriveMusicalMap, isMusicalMapStale } from "./songMusicalMap";
 
-export const SECTION_PHRASE_PLAN_VERSION = "1.0" as const;
-const METHOD = "section-phrase-role-planner/v1";
+/** "1.1" since Brain B-01 (arc-driven families, entries, dynamics); "1.0" plans are stale. */
+export const SECTION_PHRASE_PLAN_VERSION = "1.1" as const;
+const METHOD = "section-phrase-role-planner/v1.1-arc";
 
 /**
- * Optional biases from a ProductionBrief (Wave U). They nudge which palette
- * families a section keeps active; role assignment, registers and activity
- * metrics are still derived exactly as before from the resulting families.
+ * Optional biases from a ProductionBrief (Wave U). `sectionFamilies` forces
+ * palette families in or out of a section on top of the arc; role assignment,
+ * registers and activity metrics are still derived from the resulting set.
  */
 export type SectionPlannerHints = {
-  /** -1..1 bias on how many palette families every section keeps active. */
+  /**
+   * @deprecated -1..1 bias on how many palette families every section keeps.
+   * Since B-01 the arc's texture level decides; this bias is honoured only for
+   * a global plan that carries no arc. Brief density words now reach the arc
+   * as `globalTextureSteps`.
+   */
   activeFamilyBias?: number;
   /** Per-section families to force in or out (palette families only). */
   sectionFamilies?: Record<string, { add?: string[]; remove?: string[] }>;
@@ -49,24 +73,13 @@ const round3 = (v: number): number => Math.round(v * 1000) / 1000;
 // Instrument-family conventions
 // ---------------------------------------------------------------------------
 
-const FAMILY_ALIASES: Record<string, string> = {
-  synths: "synth", pad: "pads", rhythm_guitar: "guitar", keyboard: "keys",
-  piano: "keys", vocal: "vocals", voice: "vocals",
-};
-const canonicalFamily = (role: string): string =>
-  FAMILY_ALIASES[role] ?? role;
-
-/** Foundation-first ordering used to pick which families a section keeps. */
+/** Foundation-first ordering, used only when no arc is available. */
 const FAMILY_TIER: Record<string, number> = {
   drums: 0, bass: 1, keys: 2, guitar: 2, percussion: 3,
   pads: 4, synth: 4, strings: 4, brass: 5, winds: 5, vocals: 6,
 };
 
-const FAMILY_REGISTER: Record<string, RegisterBand> = {
-  bass: "low", drums: "low_mid", percussion: "mid", keys: "mid",
-  guitar: "mid", synth: "mid", pads: "upper_mid", strings: "upper_mid",
-  brass: "upper_mid", winds: "high", vocals: "mid",
-};
+const REGISTER_BANDS: RegisterBand[] = ["low", "low_mid", "mid", "upper_mid", "high"];
 
 const FAMILY_ARTICULATION: Record<string, InstrumentRoleAssignment["articulationFamily"]> = {
   drums: "percussive", percussion: "percussive", bass: "pluck", guitar: "pluck",
@@ -79,6 +92,14 @@ const FAMILY_VOICING: Record<string, InstrumentRoleAssignment["voicingStrategy"]
   keys: "close", synth: "spread", pads: "open", strings: "open",
   brass: "spread", winds: "spread", vocals: "unison",
 };
+
+/** Section functions that are sung when the vocal map cannot say (a verse is sung). */
+const SUNG_FUNCTIONS = new Set<SectionPlan["function"]>(["verse", "prechorus", "chorus", "bridge", "neutral"]);
+/** Families that may carry an instrumental lead in a solo / interlude section. */
+const LEAD_CAPABLE_FAMILIES = ["keys", "guitar", "synth", "strings", "winds", "brass"];
+const COUNTERLINE_FAMILIES = ["strings", "winds", "brass", "guitar", "synth"];
+const COMPING_FAMILIES = new Set(["keys", "guitar"]);
+const CHORDAL_FAMILIES = new Set(["keys", "guitar", "strings", "pads", "synth"]);
 
 // ---------------------------------------------------------------------------
 // Bar-span helpers
@@ -110,6 +131,7 @@ function assignRole(
   isLead: boolean,
   gapHeavy: boolean,
   isFinalChorus: boolean,
+  rhythmMeasured: boolean,
 ): InstrumentArrangementRole {
   if (isLead) return "LEAD";
   switch (family) {
@@ -121,7 +143,10 @@ function assignRole(
       return "BASS";
     case "keys":
     case "guitar":
-      if (section.rhythmicActivity > 0.6) return "OSTINATO";
+      // An ostinato answers a *measured* busy source rhythm; the fallback
+      // rhythmic activity (the planned density) must not turn every full
+      // chorus into arpeggiated eighths.
+      if (rhythmMeasured && section.rhythmicActivity > 0.6) return "OSTINATO";
       return section.function === "chorus" || section.function === "prechorus"
         ? "HARMONIC_BED"
         : "RHYTHMIC_HARMONY";
@@ -159,7 +184,30 @@ const ROLE_ACTIVITY: Record<InstrumentArrangementRole, { rhythmic: number; melod
   CLIMAX_LAYER: { rhythmic: 0.6, melodic: 0.5, density: 0.8 },
 };
 
-function dynamicShapeFor(section: SectionPlan, previousEnergy: number | null): string {
+const shiftMarking = (marking: ArcDynamicMarking, steps: number): ArcDynamicMarking => {
+  const at = DYNAMIC_MARKINGS.indexOf(marking);
+  return DYNAMIC_MARKINGS[Math.max(0, Math.min(DYNAMIC_MARKINGS.length - 1, at + steps))];
+};
+
+/**
+ * The dynamic shape of a section from the arc: the intended marking, rising a
+ * step through a lift and settling a step through a release or afterglow.
+ * Falls back to the pre-arc delta reading when a section has no arc entry.
+ */
+function dynamicShapeFor(
+  arcSection: ArrangementArcSection | undefined,
+  section: SectionPlan,
+  previousEnergy: number | null,
+): string {
+  if (arcSection) {
+    const marking = arcSection.intendedDynamic.value.marking;
+    switch (arcSection.tensionRole.value) {
+      case "lift": return `${marking}->${shiftMarking(marking, 1)}`;
+      case "release":
+      case "afterglow": return `${marking}->${shiftMarking(marking, -1)}`;
+      default: return marking;
+    }
+  }
   if (previousEnergy === null) return "mp";
   const delta = section.energy - previousEnergy;
   if (delta > 0.15) return "mp->f";
@@ -194,9 +242,11 @@ export function sectionPhrasePlanInputsDigest(
 ): string {
   return createHash("sha256")
     .update(JSON.stringify({
+      version: SECTION_PHRASE_PLAN_VERSION,
       sectionTargets: globalPlan.sectionTargets,
       instrumentPalette: globalPlan.instrumentPalette,
       grooveStrategy: globalPlan.grooveStrategy,
+      arc: globalPlan.arc?.inputsDigestSha256 ?? null,
       subphrases: songModel.musicalMap?.structure.subphrases ?? null,
       transitions: songModel.musicalMap?.structure.transitions ?? null,
       vocals: songModel.musicalMap?.vocals.phrases.map((p) => p.phraseId) ?? null,
@@ -218,10 +268,16 @@ export function deriveSectionPhrasePlan(
       ? songModel.musicalMap
       : deriveMusicalMap(songModel, { now: options.now });
   const globalPlan = globalPlanInput ?? deriveGlobalArrangementPlan(songModel, { now: options.now });
+  const arc: ArrangementArc = arcForGlobalPlan(globalPlan, map, undefined, { now: options.now });
 
   const paletteFamilies = [
     ...new Set(globalPlan.instrumentPalette.map((entry) => canonicalFamily(entry.role))),
-  ].filter((family) => family !== "vocals" && family !== "fx");
+  ].filter((family) => !isNonFamilyHint(family));
+  const orderedFamilies = arc.status === "available" && arc.familyOrder.length
+    ? [...arc.familyOrder, ...paletteFamilies.filter((f) => !arc.familyOrder.includes(f))]
+    : [...paletteFamilies].sort(
+        (a, b) => (FAMILY_TIER[a] ?? 3) - (FAMILY_TIER[b] ?? 3) || a.localeCompare(b),
+      );
 
   const chorusIndexes = globalPlan.sectionTargets
     .map((target, index) => ({ target, index }))
@@ -236,31 +292,40 @@ export function deriveSectionPhrasePlan(
   const maxOnsets = Math.max(1, ...map.rhythm.rhythmicDensity.map((s) => s.onsetsPerBar));
   const maxMelodyNotes = Math.max(1, ...map.melody.melodicDensity.map((s) => s.notesPerBar));
 
-  const sections: SectionPlan[] = [];
-  const roleAssignments: InstrumentRoleAssignment[] = [];
-  const phrases: PhrasePlan[] = [];
-
-  globalPlan.sectionTargets.forEach((target, sectionIndex) => {
-    const { startBar, endBar } = target;
-    const barCount = endBar - startBar + 1;
-
-    // How many families this section keeps: 2 (foundation) up to the full
-    // palette, scaled by planned energy. A brief bias shifts the count by up
-    // to half the palette's headroom without escaping the same bounds.
-    const familyBias = Math.max(-1, Math.min(1, hints.activeFamilyBias ?? 0));
-    const activeCount = Math.max(
-      2,
-      Math.min(
-        paletteFamilies.length,
-        Math.round(2 + (target.energy + familyBias * 0.5) * (paletteFamilies.length - 2)),
-      ),
-    );
-    const orderedFamilies = [...paletteFamilies].sort(
-      (a, b) => (FAMILY_TIER[a] ?? 3) - (FAMILY_TIER[b] ?? 3) || a.localeCompare(b),
-    );
-    const activeFamilies = orderedFamilies.slice(0, activeCount);
-    if (target.energy > 0.2 && !activeFamilies.includes("bass") && orderedFamilies.includes("bass")) {
-      activeFamilies.push("bass");
+  // --- pass 1: which families each section keeps ---------------------------
+  const arcSections = globalPlan.sectionTargets.map((target) =>
+    arc.sections.find((s) => s.sectionName === target.sectionName && s.startBar === target.startBar));
+  const activeSets: string[][] = globalPlan.sectionTargets.map((target, sectionIndex) => {
+    const arcSection = arcSections[sectionIndex];
+    let activeFamilies: string[];
+    if (arcSection) {
+      activeFamilies = arcSection.activeFamilies.filter((f) => orderedFamilies.includes(f));
+      // The deprecated family bias still moves one family in or out - but
+      // only where the arc heard nothing from the brief about texture, so a
+      // brief that already thinned the arc is not applied twice.
+      const familyBias = hints.activeFamilyBias ?? 0;
+      if (arcSection.textureLevel.source !== "brief" && Math.abs(familyBias) >= 0.25) {
+        if (familyBias < 0 && activeFamilies.length > 2) activeFamilies = activeFamilies.slice(0, -1);
+        if (familyBias > 0) {
+          const next = orderedFamilies.find((f) => !activeFamilies.includes(f));
+          if (next) activeFamilies = [...activeFamilies, next];
+        }
+      }
+    } else {
+      // No arc for this section (a plan without one): the pre-B-01 count on
+      // the target energy, with the deprecated family bias.
+      const familyBias = Math.max(-1, Math.min(1, hints.activeFamilyBias ?? 0));
+      const activeCount = Math.max(
+        2,
+        Math.min(
+          orderedFamilies.length,
+          Math.round(2 + (target.energy + familyBias * 0.5) * (orderedFamilies.length - 2)),
+        ),
+      );
+      activeFamilies = orderedFamilies.slice(0, activeCount);
+      if (target.energy > 0.2 && !activeFamilies.includes("bass") && orderedFamilies.includes("bass")) {
+        activeFamilies.push("bass");
+      }
     }
     // Per-section brief requests: a family the user asked for here joins if
     // the palette has it; one they asked out leaves. Everything downstream
@@ -277,9 +342,29 @@ export function deriveSectionPhrasePlan(
       const at = activeFamilies.indexOf(canonical);
       if (at >= 0 && activeFamilies.length > 1) activeFamilies.splice(at, 1);
     }
-    const inactiveFamilies = orderedFamilies.filter((f) => !activeFamilies.includes(f));
+    return activeFamilies;
+  });
 
-    const sectionHasVocal = map.vocals.status !== "not_available" &&
+  const sections: SectionPlan[] = [];
+  const roleAssignments: InstrumentRoleAssignment[] = [];
+  const phrases: PhrasePlan[] = [];
+
+  // --- pass 2: lead, roles, entries / exits, phrases -------------------------
+  globalPlan.sectionTargets.forEach((target, sectionIndex) => {
+    const { startBar, endBar } = target;
+    const barCount = endBar - startBar + 1;
+    const arcSection = arcSections[sectionIndex];
+    const activeFamilies = activeSets[sectionIndex];
+    const inactiveFamilies = orderedFamilies.filter((f) => !activeFamilies.includes(f));
+    const previousActive = new Set(sectionIndex > 0 ? activeSets[sectionIndex - 1] : []);
+    const nextActive = new Set(sectionIndex + 1 < activeSets.length ? activeSets[sectionIndex + 1] : []);
+    const isLastSection = sectionIndex === globalPlan.sectionTargets.length - 1;
+
+    // Who leads. A detected vocal phrase settles it; without a vocal map a
+    // sung function is sung by default (the owner's verses and choruses were
+    // not instrumentals because the separator found no vocal stem); only an
+    // instrumental section hands the lead to an instrument.
+    const vocalDetected = map.vocals.status !== "not_available" &&
       map.vocals.phrases.some((phrase) => {
         try {
           return phrase.coordinates
@@ -289,22 +374,30 @@ export function deriveSectionPhrasePlan(
           return false;
         }
       });
-    const melodicFamily = activeFamilies.find((f) => f === "keys" || f === "guitar" || f === "synth");
-    const leadRole = sectionHasVocal
+    const sungByDefault = !vocalDetected && map.vocals.status === "not_available" && SUNG_FUNCTIONS.has(target.role);
+    const melodicFamily = target.role === "instrumental"
+      ? LEAD_CAPABLE_FAMILIES.find((f) => activeFamilies.includes(f))
+      : undefined;
+    const leadRole = vocalDetected || sungByDefault
       ? "vocals"
       : melodicFamily
         ? `instrument:${melodicFamily}`
         : "none";
+    const leadRoleSource: SectionPlan["leadRoleSource"] = vocalDetected
+      ? "vocal_map"
+      : sungByDefault
+        ? "sung_by_default"
+        : melodicFamily
+          ? "instrumental"
+          : "none";
 
     const gapHeavy = map.arrangementSpace.status !== "not_available" &&
       map.arrangementSpace.windows.some(
         (w) => w.vocalDensity === "none" && w.bars.some((bar) => bar >= startBar && bar <= endBar),
       );
 
-    const rhythmicActivity = round3(clamp01(
-      (spanMean(map.rhythm.rhythmicDensity, (s) => s.onsetsPerBar / maxOnsets, startBar, endBar) ??
-        target.density),
-    ));
+    const measuredRhythm = spanMean(map.rhythm.rhythmicDensity, (s) => s.onsetsPerBar / maxOnsets, startBar, endBar);
+    const rhythmicActivity = round3(clamp01(measuredRhythm ?? target.density));
     const melodicActivity = round3(clamp01(
       (spanMean(map.melody.melodicDensity, (s) => s.notesPerBar / maxMelodyNotes, startBar, endBar) ??
         target.density * 0.6),
@@ -317,14 +410,23 @@ export function deriveSectionPhrasePlan(
     const transitionIn = map.structure.transitions.find((t) => t.atBar === startBar)?.kind ??
       (sectionIndex === 0 ? "start" : "continue");
     const transitionOut = map.structure.transitions.find((t) => t.atBar === endBar + 1)?.kind ??
-      (sectionIndex === globalPlan.sectionTargets.length - 1 ? "end" : "continue");
+      (isLastSection ? "end" : "continue");
 
-    // Register distribution from the active families' conventional bands,
-    // nudged by the vocal register when the singer leads.
+    // Register band per family: the convention, raised one band by the
+    // `raise_register` operator for the families that have a register to raise.
+    const registerShift = arcSection?.registerBandShift ?? 0;
+    const registerOf = (family: string): RegisterBand => {
+      const band = FAMILY_REGISTER_BAND[family] ?? "mid";
+      if (!registerShift || !REGISTER_SHIFTABLE_FAMILIES.has(family)) return band;
+      return REGISTER_BANDS[Math.min(REGISTER_BANDS.length - 1, REGISTER_BANDS.indexOf(band) + registerShift)];
+    };
+
+    // Register distribution from the active families' bands, nudged by the
+    // vocal register when the singer leads.
     const bands: Record<RegisterBand, number> = {
       low: 0, low_mid: 0, mid: 0, upper_mid: 0, high: 0,
     };
-    for (const family of activeFamilies) bands[FAMILY_REGISTER[family] ?? "mid"] += 1;
+    for (const family of activeFamilies) bands[registerOf(family)] += 1;
     if (leadRole === "vocals") {
       const vocalRegister = map.vocals.registerMap.find(
         (r) => r.startBar <= endBar && r.endBar >= startBar,
@@ -359,8 +461,37 @@ export function deriveSectionPhrasePlan(
       transitionIn,
       transitionOut,
       noveltyRelativeToPreviousSection: target.noveltyVsPrevious,
+      leadRoleSource,
+      ...(arcSection ? {
+        intendedDynamic: arcSection.intendedDynamic.value.marking,
+        textureLevel: arcSection.textureLevel.value,
+        tensionRole: arcSection.tensionRole.value,
+        occurrenceIndex: arcSection.occurrenceIndex,
+        occurrenceCount: arcSection.occurrenceCount,
+        developmentOperator: arcSection.developmentOperator.value,
+        previousOccurrenceSummary: arcSection.previousOccurrenceSummary,
+        sourceEnergy: arcSection.sourceEnergy,
+      } : {}),
     };
     sections.push(sectionPlan);
+
+    // -- entries and exits (bar offsets from the arc; defaults otherwise) ----
+    const entryOffsetOf = (family: string): number | null => {
+      const fromArc = arcSection?.familyEntries.find((e) => e.family === family)?.barOffset;
+      if (fromArc !== undefined) return Math.max(0, Math.min(barCount - 1, fromArc));
+      return previousActive.has(family) ? null : 0;
+    };
+    const exitOffsetOf = (family: string): number | null => {
+      const fromArc = arcSection?.familyExits.find((e) => e.family === family)?.barOffset;
+      if (fromArc !== undefined) return Math.max(1, Math.min(barCount, fromArc));
+      return isLastSection || !nextActive.has(family) ? barCount : null;
+    };
+    const entryBarOf = (family: string): number => startBar + (entryOffsetOf(family) ?? 0);
+    const exitBarOf = (family: string): number => {
+      const exit = exitOffsetOf(family);
+      const bar = exit === null ? endBar : startBar + exit - 1;
+      return Math.max(entryBarOf(family), bar);
+    };
 
     // -- role assignments --------------------------------------------------
     const previousEnergy = sectionIndex > 0
@@ -369,15 +500,31 @@ export function deriveSectionPhrasePlan(
     const leadRegister = leadRole === "vocals"
       ? (map.vocals.registerMap.find((r) => r.startBar <= endBar && r.endBar >= startBar)?.register ?? "mid")
       : melodicFamily
-        ? FAMILY_REGISTER[melodicFamily] ?? "mid"
+        ? FAMILY_REGISTER_BAND[melodicFamily] ?? "mid"
         : null;
     const isFinalChorus = sectionIndex === finalChorusIndex && finalChorusIndex >= 0;
+    const operator = arcSection?.developmentOperator.value ?? "identity";
+    const counterlineFamily = operator === "activate_counterline"
+      ? COUNTERLINE_FAMILIES.find((f) => activeFamilies.includes(f))
+      : undefined;
+    const dynamicShape = dynamicShapeFor(arcSection, sectionPlan, previousEnergy);
 
     for (const family of activeFamilies) {
       const isLead = leadRole === `instrument:${family}`;
-      const role = assignRole(family, sectionPlan, isLead, gapHeavy, isFinalChorus);
+      let role = assignRole(family, sectionPlan, isLead, gapHeavy, isFinalChorus, measuredRhythm !== null);
+      // Development operators realised through the role vocabulary the
+      // composer already reads: a counter-line is a COUNTER_MELODY role; a
+      // comping change flips bed and rhythmic comping.
+      if (family === counterlineFamily && !isLead) role = "COUNTER_MELODY";
+      if (operator === "change_comping_subdivision" && COMPING_FAMILIES.has(family)) {
+        if (role === "HARMONIC_BED") role = "RHYTHMIC_HARMONY";
+        else if (role === "RHYTHMIC_HARMONY") role = "HARMONIC_BED";
+      }
       const base = ROLE_ACTIVITY[role];
-      const register = FAMILY_REGISTER[family] ?? "mid";
+      const register = registerOf(family);
+      const voicing = operator === "thicken_voicing" && CHORDAL_FAMILIES.has(family)
+        ? "spread"
+        : FAMILY_VOICING[family] ?? "close";
       roleAssignments.push({
         sectionName: target.sectionName,
         instrument: family,
@@ -386,12 +533,12 @@ export function deriveSectionPhrasePlan(
         density: round3(clamp01(base.density * (0.6 + target.energy * 0.6))),
         rhythmicActivity: round3(clamp01(base.rhythmic * (0.55 + rhythmicActivity * 0.7))),
         melodicActivity: round3(clamp01(base.melodic * (0.5 + melodicActivity * 0.8))),
-        voicingStrategy: FAMILY_VOICING[family] ?? "close",
+        voicingStrategy: voicing,
         articulationFamily: FAMILY_ARTICULATION[family] ?? "mixed",
-        dynamicShape: dynamicShapeFor(sectionPlan, previousEnergy),
+        dynamicShape,
         interactionWithLead: interactionFor(role, register, leadRegister),
-        entryBar: startBar,
-        exitBar: endBar,
+        entryBar: entryBarOf(family),
+        exitBar: exitBarOf(family),
       });
     }
 
@@ -421,6 +568,19 @@ export function deriveSectionPhrasePlan(
           : unit.role === "fill"
             ? 0.1
             : 0;
+      // A family enters in the unit holding its entry bar and leaves in the
+      // unit holding its last bar; the last unit of a section names every
+      // family the next section does not carry.
+      const entersFamilies = activeFamilies.filter((family) => {
+        if (entryOffsetOf(family) === null) return false;
+        const bar = entryBarOf(family);
+        return bar >= unit.startBar && bar <= unit.endBar;
+      });
+      const leavesFamilies = activeFamilies.filter((family) => {
+        if (exitOffsetOf(family) === null) return false;
+        const bar = exitBarOf(family);
+        return bar >= unit.startBar && bar <= unit.endBar;
+      });
       phrases.push({
         id: `phrase-${target.sectionName}-${unitIndex + 1}`.replace(/\s+/g, "_"),
         sectionName: target.sectionName,
@@ -428,11 +588,8 @@ export function deriveSectionPhrasePlan(
         endBar: unit.endBar,
         role: unit.role,
         energyTarget: round3(clamp01(target.energy + positional)),
-        entersFamilies: unitIndex === 0 ? activeFamilies : [],
-        leavesFamilies:
-          unitIndex === units.length - 1 && sectionIndex < globalPlan.sectionTargets.length - 1
-            ? []
-            : [],
+        entersFamilies,
+        leavesFamilies,
       });
     });
   });

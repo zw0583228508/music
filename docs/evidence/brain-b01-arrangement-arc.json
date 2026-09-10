@@ -1,0 +1,3015 @@
+{
+  "title": "Brain B-01: ArrangementArc, form memory, and the silent LEAD - before / after on the owner's song and the synthetic benchmark",
+  "date": "2026-09-10",
+  "stream": "B-01 (music director / global-form specialist)",
+  "baseCommit": "3bf23aa (origin/main)",
+  "regenerate": "cd artifacts/api-server && node scripts/brain-b01-arc-evidence.mjs --out <file>   (the 'before' tables were captured the same way against the 3bf23aa planners copied beside the new ones)",
+  "fixture": {
+    "path": "artifacts/api-server/src/lib/__fixtures__/rachemNaSongModelV3.ts",
+    "source": "scratchpad songmodel-v3.json of the owner's song (Song Model v3, trusted_automatically), slimmed: tempo/meter/key maps, 92 chords, 9 sections, bars, beats, energy + dynamics curves, stems (MIX), vocal statuses; waveform, provenance, trust report and the stored musical map dropped; the map is re-derived deterministically",
+    "sections": [
+      "Intro 1-2",
+      "Verse 1 3-24",
+      "Verse 2 25-40",
+      "Chorus 41-56",
+      "Chorus 2 57-72",
+      "Verse 3 73-96",
+      "Bridge 97-112",
+      "Chorus 3 113-128",
+      "Outro 129-141"
+    ],
+    "bpm": 130.43,
+    "meter": "4/4",
+    "key": "C minor",
+    "chords": 92,
+    "vocals": "not_available",
+    "stemHints": [
+      "mix"
+    ],
+    "reDerivedSourceEnergyVsStoredV3": [
+      {
+        "name": "Intro",
+        "mapEnergy": 0.009,
+        "v3": 0.005
+      },
+      {
+        "name": "Verse 1",
+        "mapEnergy": 0.156,
+        "v3": 0.125
+      },
+      {
+        "name": "Verse 2",
+        "mapEnergy": 0.143,
+        "v3": 0.129
+      },
+      {
+        "name": "Chorus",
+        "mapEnergy": 0.249,
+        "v3": 0.274
+      },
+      {
+        "name": "Chorus 2",
+        "mapEnergy": 0.372,
+        "v3": 0.427
+      },
+      {
+        "name": "Verse 3",
+        "mapEnergy": 0.109,
+        "v3": 0.093
+      },
+      {
+        "name": "Bridge",
+        "mapEnergy": 0.2,
+        "v3": 0.175
+      },
+      {
+        "name": "Chorus 3",
+        "mapEnergy": 0.148,
+        "v3": 0.185
+      },
+      {
+        "name": "Outro",
+        "mapEnergy": 0.138,
+        "v3": 0.083
+      }
+    ],
+    "verifiedFactsGuardedAgainst": [
+      "every section had leadRole = instrument:keys and taskFor('LEAD') returned null outside instrumentals, so the keys family wrote nothing",
+      "the palette entry `mix` (the full-mix stem hint) was treated as a family and resolved to a piano definition",
+      "section energy targets were the recording's max-normalised RMS (v3: Intro 0.005 ... Chorus 2 0.427 ... Chorus 3 0.185); active families = round(2 + energy*(palette-2)) = 2 almost everywhere",
+      "repeated sections were planned independently; entryBar/exitBar were always the section bounds; leavesFamilies was always []"
+    ]
+  },
+  "brief": {
+    "text": "intimate ballad; piano, soft strings, gentle bass, light percussion; big final chorus",
+    "compiled": {
+      "sectionIntentions": [
+        {
+          "name": "Chorus 3",
+          "energyBias": 0.3,
+          "densityBias": 0.3,
+          "climax": null,
+          "character": [],
+          "instrumentation": null
+        }
+      ],
+      "hierarchy": [
+        "bass:foundation",
+        "percussion:foundation",
+        "keys:feature",
+        "strings:feature"
+      ],
+      "excluded": [],
+      "aesthetic": {
+        "descriptors": [
+          {
+            "value": "intimate",
+            "confidence": 0.7,
+            "provenance": "inferred",
+            "sourceRefs": [
+              "text:intimate"
+            ]
+          }
+        ]
+      },
+      "decisions": [
+        "global aesthetic=intimate (mood: intimate)",
+        "global instrumentation=keys (feature keys (piano))",
+        "global energy=low (low energy overall)",
+        "global instrumentation=strings (feature strings (strings))",
+        "global instrumentation=bass (feature bass (bass))",
+        "global instrumentation=percussion (feature percussion (percussion))",
+        "section:Chorus 3 density=dense (Chorus 3: dense texture)",
+        "section:Chorus 3 energy=high (Chorus 3: high energy)"
+      ]
+    },
+    "plannerHintsBefore": {
+      "global": {
+        "sectionEnergyBias": {
+          "Intro": 0.85,
+          "Verse 1": 0.85,
+          "Verse 2": 0.85,
+          "Chorus": 0.85,
+          "Chorus 2": 0.85,
+          "Verse 3": 0.85,
+          "Bridge": 0.85,
+          "Chorus 3": 0.939,
+          "Outro": 0.85
+        },
+        "sectionDensityBias": {
+          "Chorus 3": 1.105
+        },
+        "paletteAdd": [
+          "bass",
+          "keys",
+          "percussion",
+          "strings"
+        ]
+      },
+      "section": {},
+      "evidence": [
+        "dec-dc5637af012f: global energy low → all sections ×0.85",
+        "Chorus 3: energy bias 0.3 (inferred) → ×0.939",
+        "Chorus 3: density bias 0.3 (stated) → ×1.105",
+        "palette +bass (foundation, stated)",
+        "palette +percussion (foundation, stated)",
+        "palette +keys (feature, stated)",
+        "palette +strings (feature, stated)"
+      ]
+    },
+    "plannerHintsAfter": {
+      "global": {
+        "sectionEnergyBias": {
+          "Intro": 0.85,
+          "Verse 1": 0.85,
+          "Verse 2": 0.85,
+          "Chorus": 0.85,
+          "Chorus 2": 0.85,
+          "Verse 3": 0.85,
+          "Bridge": 0.85,
+          "Chorus 3": 0.939,
+          "Outro": 0.85
+        },
+        "sectionDensityBias": {
+          "Chorus 3": 1.105
+        },
+        "paletteAdd": [
+          "bass",
+          "keys",
+          "percussion",
+          "strings"
+        ],
+        "sectionDynamicSteps": {
+          "Chorus 3": 1
+        },
+        "globalDynamicSteps": -1,
+        "textureSteps": {
+          "Chorus 3": 1
+        },
+        "arcTemplate": "intimate_ballad",
+        "familyPriority": [
+          "bass",
+          "percussion",
+          "keys",
+          "strings"
+        ]
+      },
+      "section": {},
+      "evidence": [
+        "dec-dc5637af012f: global energy low → every section -1 marking (prior ×0.85)",
+        "Chorus 3: energy bias 0.3 (inferred) → +1 marking (prior ×0.939)",
+        "Chorus 3: density bias 0.3 (stated) → +1 texture level (prior ×1.105)",
+        "palette +bass (foundation, stated)",
+        "palette +percussion (foundation, stated)",
+        "palette +keys (feature, stated)",
+        "palette +strings (feature, stated)",
+        "family priority bass > percussion > keys > strings (brief tiers)",
+        "arc template intimate_ballad (\"intimate\")"
+      ]
+    }
+  },
+  "ownerSong": {
+    "noBrief": {
+      "before": {
+        "plan": {
+          "style": "unknown",
+          "aesthetic": "intimate",
+          "palette": [
+            "drums",
+            "bass",
+            "mix"
+          ],
+          "climax": {
+            "sectionName": "Chorus 3",
+            "atBar": 113,
+            "energy": 0.148
+          },
+          "secondaryClimax": {
+            "sectionName": "Outro",
+            "atBar": 129,
+            "energy": 0.138
+          },
+          "sections": [
+            {
+              "section": "Intro",
+              "function": "intro",
+              "energy": 0.009,
+              "density": 0.009,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.005,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "none",
+              "activeFamilies": [
+                "drums",
+                "bass"
+              ],
+              "roles": [
+                "drums:GROOVE@1-2/low_mid",
+                "bass:BASS@1-2/low"
+              ],
+              "dynamicShapes": [
+                "mp"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "1-2",
+                  "enters": [
+                    "drums",
+                    "bass"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Verse 1",
+              "function": "verse",
+              "energy": 0.156,
+              "density": 0.156,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.125,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "none",
+              "activeFamilies": [
+                "drums",
+                "bass"
+              ],
+              "roles": [
+                "drums:GROOVE@3-24/low_mid",
+                "bass:BASS@3-24/low"
+              ],
+              "dynamicShapes": [
+                "mp->mf"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "3-10",
+                  "enters": [
+                    "drums",
+                    "bass"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Verse 2",
+              "function": "verse",
+              "energy": 0.143,
+              "density": 0.143,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.129,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "none",
+              "activeFamilies": [
+                "drums",
+                "bass"
+              ],
+              "roles": [
+                "drums:GROOVE@25-40/low_mid",
+                "bass:BASS@25-40/low"
+              ],
+              "dynamicShapes": [
+                "mp"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "25-32",
+                  "enters": [
+                    "drums",
+                    "bass"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Chorus",
+              "function": "chorus",
+              "energy": 0.249,
+              "density": 0.249,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.274,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "none",
+              "activeFamilies": [
+                "drums",
+                "bass"
+              ],
+              "roles": [
+                "drums:GROOVE@41-56/low_mid",
+                "bass:BASS@41-56/low"
+              ],
+              "dynamicShapes": [
+                "mp->mf"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "41-48",
+                  "enters": [
+                    "drums",
+                    "bass"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Chorus 2",
+              "function": "chorus",
+              "energy": 0.372,
+              "density": 0.372,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.427,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "none",
+              "activeFamilies": [
+                "drums",
+                "bass"
+              ],
+              "roles": [
+                "drums:GROOVE@57-72/low_mid",
+                "bass:BASS@57-72/low"
+              ],
+              "dynamicShapes": [
+                "mp->mf"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "57-64",
+                  "enters": [
+                    "drums",
+                    "bass"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Verse 3",
+              "function": "verse",
+              "energy": 0.109,
+              "density": 0.109,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.093,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "none",
+              "activeFamilies": [
+                "drums",
+                "bass"
+              ],
+              "roles": [
+                "drums:GROOVE@73-96/low_mid",
+                "bass:BASS@73-96/low"
+              ],
+              "dynamicShapes": [
+                "f->mp"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "73-80",
+                  "enters": [
+                    "drums",
+                    "bass"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Bridge",
+              "function": "bridge",
+              "energy": 0.194,
+              "density": 0.194,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.175,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "none",
+              "activeFamilies": [
+                "drums",
+                "bass"
+              ],
+              "roles": [
+                "drums:GROOVE@97-112/low_mid",
+                "bass:BASS@97-112/low"
+              ],
+              "dynamicShapes": [
+                "mp->mf"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "97-104",
+                  "enters": [
+                    "drums",
+                    "bass"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Chorus 3",
+              "function": "chorus",
+              "energy": 0.148,
+              "density": 0.148,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.185,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "none",
+              "activeFamilies": [
+                "drums",
+                "bass"
+              ],
+              "roles": [
+                "drums:CLIMAX_LAYER@113-128/low_mid",
+                "bass:BASS@113-128/low"
+              ],
+              "dynamicShapes": [
+                "mp"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "113-120",
+                  "enters": [
+                    "drums",
+                    "bass"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Outro",
+              "function": "outro",
+              "energy": 0.138,
+              "density": 0.138,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.083,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "none",
+              "activeFamilies": [
+                "drums",
+                "bass"
+              ],
+              "roles": [
+                "drums:GROOVE@129-141/low_mid",
+                "bass:BASS@129-141/low"
+              ],
+              "dynamicShapes": [
+                "mp"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "129-132",
+                  "enters": [
+                    "drums",
+                    "bass"
+                  ],
+                  "leaves": []
+                }
+              ]
+            }
+          ]
+        },
+        "orchestrated": {
+          "partTasks": 27,
+          "tasksBySection": {
+            "Bridge": [
+              "drums:DRUMS",
+              "bass:BASS"
+            ],
+            "Chorus": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "ensemble:TRANSITION"
+            ],
+            "Chorus 2": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "ensemble:TRANSITION"
+            ],
+            "Chorus 3": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "ensemble:TRANSITION"
+            ],
+            "Intro": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "ensemble:INTRO"
+            ],
+            "Outro": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "ensemble:ENDING",
+              "ensemble:TRANSITION"
+            ],
+            "Verse 1": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "ensemble:TRANSITION"
+            ],
+            "Verse 2": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "ensemble:TRANSITION"
+            ],
+            "Verse 3": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "ensemble:TRANSITION"
+            ]
+          },
+          "selectedCandidate": "cand-A",
+          "strategy": "conservative",
+          "noteCount": 1691,
+          "criticScore": 69,
+          "feasible": true,
+          "hardRuleFindings": [],
+          "constraintErrors": 0,
+          "tracks": [
+            {
+              "instrument": "drums",
+              "role": "GROOVE",
+              "notes": 1835,
+              "pitchRange": [
+                36,
+                48
+              ]
+            },
+            {
+              "instrument": "bass",
+              "role": "BASS",
+              "notes": 94,
+              "pitchRange": [
+                36,
+                46
+              ]
+            },
+            {
+              "instrument": "ensemble",
+              "role": "TRANSITION",
+              "notes": 24,
+              "pitchRange": [
+                55,
+                67
+              ]
+            }
+          ],
+          "notesPerFamilyPerSection": {
+            "Intro": {
+              "drums": 28,
+              "bass": 0,
+              "ensemble": 0
+            },
+            "Verse 1": {
+              "drums": 284,
+              "bass": 15,
+              "ensemble": 3
+            },
+            "Verse 2": {
+              "drums": 211,
+              "bass": 15,
+              "ensemble": 3
+            },
+            "Chorus": {
+              "drums": 208,
+              "bass": 10,
+              "ensemble": 3
+            },
+            "Chorus 2": {
+              "drums": 209,
+              "bass": 10,
+              "ensemble": 3
+            },
+            "Verse 3": {
+              "drums": 312,
+              "bass": 11,
+              "ensemble": 3
+            },
+            "Bridge": {
+              "drums": 211,
+              "bass": 13,
+              "ensemble": 0
+            },
+            "Chorus 3": {
+              "drums": 208,
+              "bass": 12,
+              "ensemble": 3
+            },
+            "Outro": {
+              "drums": 155,
+              "bass": 8,
+              "ensemble": 3
+            }
+          },
+          "candidates": [
+            {
+              "id": "cand-A",
+              "strategy": "conservative",
+              "notes": 1691,
+              "errors": 0,
+              "score": 69
+            },
+            {
+              "id": "cand-B",
+              "strategy": "melodic",
+              "notes": 1823,
+              "errors": 0,
+              "score": 69
+            },
+            {
+              "id": "cand-C",
+              "strategy": "adventurous",
+              "notes": 1823,
+              "errors": 0,
+              "score": 69
+            }
+          ]
+        }
+      },
+      "after": {
+        "plan": {
+          "style": "unknown",
+          "aesthetic": "intimate",
+          "palette": [
+            "drums",
+            "bass",
+            "keys"
+          ],
+          "climax": {
+            "sectionName": "Chorus 3",
+            "atBar": 113,
+            "energy": 0.668
+          },
+          "secondaryClimax": {
+            "sectionName": "Chorus 2",
+            "atBar": 57,
+            "energy": 0.615
+          },
+          "sections": [
+            {
+              "section": "Intro",
+              "function": "intro",
+              "energy": 0.25,
+              "density": 0.228,
+              "sourceEnergy": 0.009,
+              "v3StoredEnergy": 0.005,
+              "intendedDynamic": "p",
+              "textureLevel": "bed",
+              "tensionRole": "setup",
+              "occurrenceIndex": 0,
+              "developmentOperator": "identity",
+              "leadRole": "none",
+              "activeFamilies": [
+                "keys",
+                "bass"
+              ],
+              "roles": [
+                "keys:RHYTHMIC_HARMONY@1-2/mid",
+                "bass:BASS@1-2/low"
+              ],
+              "dynamicShapes": [
+                "p"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "1-2",
+                  "enters": [
+                    "keys",
+                    "bass"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Verse 1",
+              "function": "verse",
+              "energy": 0.286,
+              "density": 0.24,
+              "sourceEnergy": 0.156,
+              "v3StoredEnergy": 0.125,
+              "intendedDynamic": "p",
+              "textureLevel": "bed",
+              "tensionRole": "setup",
+              "occurrenceIndex": 0,
+              "developmentOperator": "identity",
+              "leadRole": "vocals",
+              "activeFamilies": [
+                "keys",
+                "bass"
+              ],
+              "roles": [
+                "keys:RHYTHMIC_HARMONY@3-24/mid",
+                "bass:BASS@3-24/low"
+              ],
+              "dynamicShapes": [
+                "p"
+              ],
+              "entriesExits": []
+            },
+            {
+              "section": "Verse 2",
+              "function": "verse",
+              "energy": 0.252,
+              "density": 0.248,
+              "sourceEnergy": 0.143,
+              "v3StoredEnergy": 0.129,
+              "intendedDynamic": "p",
+              "textureLevel": "full",
+              "tensionRole": "setup",
+              "occurrenceIndex": 1,
+              "developmentOperator": "add_layer",
+              "leadRole": "vocals",
+              "activeFamilies": [
+                "keys",
+                "bass",
+                "drums"
+              ],
+              "roles": [
+                "keys:RHYTHMIC_HARMONY@25-40/mid",
+                "bass:BASS@25-40/low",
+                "drums:GROOVE@25-40/low_mid"
+              ],
+              "dynamicShapes": [
+                "p"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "25-32",
+                  "enters": [
+                    "drums"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Chorus",
+              "function": "chorus",
+              "energy": 0.548,
+              "density": 0.352,
+              "sourceEnergy": 0.249,
+              "v3StoredEnergy": 0.274,
+              "intendedDynamic": "mf",
+              "textureLevel": "full",
+              "tensionRole": "arrival",
+              "occurrenceIndex": 0,
+              "developmentOperator": "identity",
+              "leadRole": "vocals",
+              "activeFamilies": [
+                "keys",
+                "bass",
+                "drums"
+              ],
+              "roles": [
+                "keys:HARMONIC_BED@41-56/mid",
+                "bass:BASS@41-56/low",
+                "drums:GROOVE@41-56/low_mid"
+              ],
+              "dynamicShapes": [
+                "mf"
+              ],
+              "entriesExits": []
+            },
+            {
+              "section": "Chorus 2",
+              "function": "chorus",
+              "energy": 0.615,
+              "density": 0.375,
+              "sourceEnergy": 0.372,
+              "v3StoredEnergy": 0.427,
+              "intendedDynamic": "mf",
+              "textureLevel": "full",
+              "tensionRole": "arrival",
+              "occurrenceIndex": 1,
+              "developmentOperator": "raise_register",
+              "leadRole": "vocals",
+              "activeFamilies": [
+                "keys",
+                "bass",
+                "drums"
+              ],
+              "roles": [
+                "keys:HARMONIC_BED@57-72/upper_mid",
+                "bass:BASS@57-72/low",
+                "drums:GROOVE@57-72/low_mid"
+              ],
+              "dynamicShapes": [
+                "mf"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "65-72",
+                  "enters": [],
+                  "leaves": [
+                    "drums"
+                  ]
+                }
+              ]
+            },
+            {
+              "section": "Verse 3",
+              "function": "verse",
+              "energy": 0.212,
+              "density": 0.214,
+              "sourceEnergy": 0.109,
+              "v3StoredEnergy": 0.093,
+              "intendedDynamic": "p",
+              "textureLevel": "bed",
+              "tensionRole": "setup",
+              "occurrenceIndex": 2,
+              "developmentOperator": "change_comping_subdivision",
+              "leadRole": "vocals",
+              "activeFamilies": [
+                "keys",
+                "bass"
+              ],
+              "roles": [
+                "keys:HARMONIC_BED@73-96/mid",
+                "bass:BASS@73-96/low"
+              ],
+              "dynamicShapes": [
+                "p"
+              ],
+              "entriesExits": []
+            },
+            {
+              "section": "Bridge",
+              "function": "bridge",
+              "energy": 0.58,
+              "density": 0.343,
+              "sourceEnergy": 0.194,
+              "v3StoredEnergy": 0.175,
+              "intendedDynamic": "mf",
+              "textureLevel": "bed",
+              "tensionRole": "lift",
+              "occurrenceIndex": 0,
+              "developmentOperator": "identity",
+              "leadRole": "vocals",
+              "activeFamilies": [
+                "keys",
+                "bass"
+              ],
+              "roles": [
+                "keys:RHYTHMIC_HARMONY@97-112/mid",
+                "bass:BASS@97-110/low"
+              ],
+              "dynamicShapes": [
+                "mf->f"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "105-112",
+                  "enters": [],
+                  "leaves": [
+                    "bass"
+                  ]
+                }
+              ]
+            },
+            {
+              "section": "Chorus 3",
+              "function": "chorus",
+              "energy": 0.668,
+              "density": 0.414,
+              "sourceEnergy": 0.148,
+              "v3StoredEnergy": 0.185,
+              "intendedDynamic": "f",
+              "textureLevel": "tutti",
+              "tensionRole": "arrival",
+              "occurrenceIndex": 2,
+              "developmentOperator": "thicken_voicing",
+              "leadRole": "vocals",
+              "activeFamilies": [
+                "keys",
+                "bass",
+                "drums"
+              ],
+              "roles": [
+                "keys:HARMONIC_BED@113-128/mid",
+                "bass:BASS@113-128/low",
+                "drums:CLIMAX_LAYER@113-128/low_mid"
+              ],
+              "dynamicShapes": [
+                "f"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "113-120",
+                  "enters": [
+                    "bass",
+                    "drums"
+                  ],
+                  "leaves": []
+                },
+                {
+                  "bars": "121-128",
+                  "enters": [],
+                  "leaves": [
+                    "drums"
+                  ]
+                }
+              ]
+            },
+            {
+              "section": "Outro",
+              "function": "outro",
+              "energy": 0.25,
+              "density": 0.228,
+              "sourceEnergy": 0.138,
+              "v3StoredEnergy": 0.083,
+              "intendedDynamic": "p",
+              "textureLevel": "bed",
+              "tensionRole": "afterglow",
+              "occurrenceIndex": 0,
+              "developmentOperator": "identity",
+              "leadRole": "none",
+              "activeFamilies": [
+                "keys",
+                "bass"
+              ],
+              "roles": [
+                "keys:RHYTHMIC_HARMONY@129-141/mid",
+                "bass:BASS@129-141/low"
+              ],
+              "dynamicShapes": [
+                "p->pp"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "141-141",
+                  "enters": [],
+                  "leaves": [
+                    "keys",
+                    "bass"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "orchestrated": {
+          "partTasks": 22,
+          "tasksBySection": {
+            "Chorus": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "keys:KEYS"
+            ],
+            "Chorus 2": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "keys:KEYS"
+            ],
+            "Chorus 3": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "keys:KEYS"
+            ],
+            "Verse 2": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "keys:KEYS"
+            ],
+            "Bridge": [
+              "bass:BASS",
+              "keys:KEYS"
+            ],
+            "Intro": [
+              "bass:BASS",
+              "keys:KEYS"
+            ],
+            "Outro": [
+              "bass:BASS",
+              "keys:KEYS"
+            ],
+            "Verse 1": [
+              "bass:BASS",
+              "keys:KEYS"
+            ],
+            "Verse 3": [
+              "bass:BASS",
+              "keys:KEYS"
+            ]
+          },
+          "selectedCandidate": "cand-A",
+          "strategy": "conservative",
+          "noteCount": 1687,
+          "criticScore": 72,
+          "feasible": true,
+          "hardRuleFindings": [],
+          "constraintErrors": 0,
+          "tracks": [
+            {
+              "instrument": "drums",
+              "role": "GROOVE",
+              "notes": 835,
+              "pitchRange": [
+                36,
+                48
+              ]
+            },
+            {
+              "instrument": "bass",
+              "role": "BASS",
+              "notes": 94,
+              "pitchRange": [
+                36,
+                46
+              ]
+            },
+            {
+              "instrument": "keys",
+              "role": "RHYTHMIC_HARMONY",
+              "notes": 878,
+              "pitchRange": [
+                55,
+                72
+              ]
+            }
+          ],
+          "notesPerFamilyPerSection": {
+            "Intro": {
+              "drums": 0,
+              "bass": 0,
+              "keys": 0
+            },
+            "Verse 1": {
+              "drums": 2,
+              "bass": 15,
+              "keys": 251
+            },
+            "Verse 2": {
+              "drums": 211,
+              "bass": 15,
+              "keys": 185
+            },
+            "Chorus": {
+              "drums": 208,
+              "bass": 10,
+              "keys": 29
+            },
+            "Chorus 2": {
+              "drums": 205,
+              "bass": 10,
+              "keys": 29
+            },
+            "Verse 3": {
+              "drums": 1,
+              "bass": 11,
+              "keys": 34
+            },
+            "Bridge": {
+              "drums": 2,
+              "bass": 13,
+              "keys": 182
+            },
+            "Chorus 3": {
+              "drums": 206,
+              "bass": 12,
+              "keys": 37
+            },
+            "Outro": {
+              "drums": 0,
+              "bass": 8,
+              "keys": 131
+            }
+          },
+          "candidates": [
+            {
+              "id": "cand-A",
+              "strategy": "conservative",
+              "notes": 1687,
+              "errors": 0,
+              "score": 72
+            },
+            {
+              "id": "cand-B",
+              "strategy": "melodic",
+              "notes": 1795,
+              "errors": 0,
+              "score": 71
+            },
+            {
+              "id": "cand-C",
+              "strategy": "adventurous",
+              "notes": 1795,
+              "errors": 0,
+              "score": 71
+            }
+          ]
+        }
+      }
+    },
+    "withBrief": {
+      "before": {
+        "plan": {
+          "style": "unknown",
+          "aesthetic": "intimate",
+          "palette": [
+            "drums",
+            "percussion",
+            "bass",
+            "keys",
+            "mix",
+            "strings"
+          ],
+          "climax": {
+            "sectionName": "Chorus 3",
+            "atBar": 113,
+            "energy": 0.139
+          },
+          "secondaryClimax": {
+            "sectionName": "Outro",
+            "atBar": 129,
+            "energy": 0.117
+          },
+          "sections": [
+            {
+              "section": "Intro",
+              "function": "intro",
+              "energy": 0.007,
+              "density": 0.007,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.005,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "none",
+              "activeFamilies": [
+                "drums",
+                "bass"
+              ],
+              "roles": [
+                "drums:GROOVE@1-2/low_mid",
+                "bass:BASS@1-2/low"
+              ],
+              "dynamicShapes": [
+                "mp"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "1-2",
+                  "enters": [
+                    "drums",
+                    "bass"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Verse 1",
+              "function": "verse",
+              "energy": 0.133,
+              "density": 0.133,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.125,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "instrument:keys",
+              "activeFamilies": [
+                "drums",
+                "bass",
+                "keys"
+              ],
+              "roles": [
+                "drums:GROOVE@3-24/low_mid",
+                "bass:BASS@3-24/low",
+                "keys:LEAD@3-24/mid"
+              ],
+              "dynamicShapes": [
+                "mp->mf"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "3-10",
+                  "enters": [
+                    "drums",
+                    "bass",
+                    "keys"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Verse 2",
+              "function": "verse",
+              "energy": 0.121,
+              "density": 0.121,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.129,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "none",
+              "activeFamilies": [
+                "drums",
+                "bass"
+              ],
+              "roles": [
+                "drums:GROOVE@25-40/low_mid",
+                "bass:BASS@25-40/low"
+              ],
+              "dynamicShapes": [
+                "mp"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "25-32",
+                  "enters": [
+                    "drums",
+                    "bass"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Chorus",
+              "function": "chorus",
+              "energy": 0.212,
+              "density": 0.212,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.274,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "instrument:keys",
+              "activeFamilies": [
+                "drums",
+                "bass",
+                "keys"
+              ],
+              "roles": [
+                "drums:GROOVE@41-56/low_mid",
+                "bass:BASS@41-56/low",
+                "keys:LEAD@41-56/mid"
+              ],
+              "dynamicShapes": [
+                "mp->mf"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "41-48",
+                  "enters": [
+                    "drums",
+                    "bass",
+                    "keys"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Chorus 2",
+              "function": "chorus",
+              "energy": 0.316,
+              "density": 0.316,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.427,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "instrument:keys",
+              "activeFamilies": [
+                "drums",
+                "bass",
+                "keys"
+              ],
+              "roles": [
+                "drums:GROOVE@57-72/low_mid",
+                "bass:BASS@57-72/low",
+                "keys:LEAD@57-72/mid"
+              ],
+              "dynamicShapes": [
+                "mp->mf"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "57-64",
+                  "enters": [
+                    "drums",
+                    "bass",
+                    "keys"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Verse 3",
+              "function": "verse",
+              "energy": 0.093,
+              "density": 0.093,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.093,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "none",
+              "activeFamilies": [
+                "drums",
+                "bass"
+              ],
+              "roles": [
+                "drums:GROOVE@73-96/low_mid",
+                "bass:BASS@73-96/low"
+              ],
+              "dynamicShapes": [
+                "f->mp"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "73-80",
+                  "enters": [
+                    "drums",
+                    "bass"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Bridge",
+              "function": "bridge",
+              "energy": 0.165,
+              "density": 0.165,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.175,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "instrument:keys",
+              "activeFamilies": [
+                "drums",
+                "bass",
+                "keys"
+              ],
+              "roles": [
+                "drums:GROOVE@97-112/low_mid",
+                "bass:BASS@97-112/low",
+                "keys:LEAD@97-112/mid"
+              ],
+              "dynamicShapes": [
+                "mp->mf"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "97-104",
+                  "enters": [
+                    "drums",
+                    "bass",
+                    "keys"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Chorus 3",
+              "function": "chorus",
+              "energy": 0.139,
+              "density": 0.154,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.185,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "instrument:keys",
+              "activeFamilies": [
+                "drums",
+                "bass",
+                "keys"
+              ],
+              "roles": [
+                "drums:CLIMAX_LAYER@113-128/low_mid",
+                "bass:BASS@113-128/low",
+                "keys:LEAD@113-128/mid"
+              ],
+              "dynamicShapes": [
+                "mp"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "113-120",
+                  "enters": [
+                    "drums",
+                    "bass",
+                    "keys"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Outro",
+              "function": "outro",
+              "energy": 0.117,
+              "density": 0.117,
+              "sourceEnergy": null,
+              "v3StoredEnergy": 0.083,
+              "intendedDynamic": null,
+              "textureLevel": null,
+              "tensionRole": null,
+              "occurrenceIndex": null,
+              "developmentOperator": null,
+              "leadRole": "none",
+              "activeFamilies": [
+                "drums",
+                "bass"
+              ],
+              "roles": [
+                "drums:GROOVE@129-141/low_mid",
+                "bass:BASS@129-141/low"
+              ],
+              "dynamicShapes": [
+                "mp"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "129-132",
+                  "enters": [
+                    "drums",
+                    "bass"
+                  ],
+                  "leaves": []
+                }
+              ]
+            }
+          ]
+        },
+        "orchestrated": {
+          "partTasks": 26,
+          "tasksBySection": {
+            "Bridge": [
+              "drums:DRUMS",
+              "bass:BASS"
+            ],
+            "Chorus": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "ensemble:TRANSITION"
+            ],
+            "Chorus 2": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "ensemble:TRANSITION"
+            ],
+            "Chorus 3": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "ensemble:TRANSITION"
+            ],
+            "Intro": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "ensemble:INTRO"
+            ],
+            "Outro": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "ensemble:ENDING",
+              "ensemble:TRANSITION"
+            ],
+            "Verse 1": [
+              "drums:DRUMS",
+              "bass:BASS"
+            ],
+            "Verse 2": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "ensemble:TRANSITION"
+            ],
+            "Verse 3": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "ensemble:TRANSITION"
+            ]
+          },
+          "selectedCandidate": "cand-A",
+          "strategy": "conservative",
+          "noteCount": 1688,
+          "criticScore": 71,
+          "feasible": true,
+          "hardRuleFindings": [],
+          "constraintErrors": 0,
+          "tracks": [
+            {
+              "instrument": "drums",
+              "role": "GROOVE",
+              "notes": 1835,
+              "pitchRange": [
+                36,
+                48
+              ]
+            },
+            {
+              "instrument": "bass",
+              "role": "BASS",
+              "notes": 94,
+              "pitchRange": [
+                36,
+                46
+              ]
+            },
+            {
+              "instrument": "ensemble",
+              "role": "TRANSITION",
+              "notes": 21,
+              "pitchRange": [
+                55,
+                67
+              ]
+            }
+          ],
+          "notesPerFamilyPerSection": {
+            "Intro": {
+              "drums": 28,
+              "bass": 0,
+              "ensemble": 0
+            },
+            "Verse 1": {
+              "drums": 284,
+              "bass": 15,
+              "ensemble": 0
+            },
+            "Verse 2": {
+              "drums": 211,
+              "bass": 15,
+              "ensemble": 3
+            },
+            "Chorus": {
+              "drums": 208,
+              "bass": 10,
+              "ensemble": 3
+            },
+            "Chorus 2": {
+              "drums": 209,
+              "bass": 10,
+              "ensemble": 3
+            },
+            "Verse 3": {
+              "drums": 312,
+              "bass": 11,
+              "ensemble": 3
+            },
+            "Bridge": {
+              "drums": 211,
+              "bass": 13,
+              "ensemble": 0
+            },
+            "Chorus 3": {
+              "drums": 208,
+              "bass": 12,
+              "ensemble": 3
+            },
+            "Outro": {
+              "drums": 155,
+              "bass": 8,
+              "ensemble": 3
+            }
+          },
+          "candidates": [
+            {
+              "id": "cand-A",
+              "strategy": "conservative",
+              "notes": 1688,
+              "errors": 0,
+              "score": 71
+            },
+            {
+              "id": "cand-B",
+              "strategy": "melodic",
+              "notes": 1820,
+              "errors": 0,
+              "score": 71
+            },
+            {
+              "id": "cand-C",
+              "strategy": "adventurous",
+              "notes": 1820,
+              "errors": 0,
+              "score": 71
+            }
+          ]
+        }
+      },
+      "after": {
+        "plan": {
+          "style": "unknown",
+          "aesthetic": "intimate",
+          "palette": [
+            "drums",
+            "percussion",
+            "bass",
+            "keys",
+            "strings"
+          ],
+          "climax": {
+            "sectionName": "Chorus 3",
+            "atBar": 113,
+            "energy": 0.666
+          },
+          "secondaryClimax": {
+            "sectionName": "Chorus 2",
+            "atBar": 57,
+            "energy": 0.454
+          },
+          "sections": [
+            {
+              "section": "Intro",
+              "function": "intro",
+              "energy": 0.1,
+              "density": 0.175,
+              "sourceEnergy": 0.009,
+              "v3StoredEnergy": 0.005,
+              "intendedDynamic": "pp",
+              "textureLevel": "bed",
+              "tensionRole": "setup",
+              "occurrenceIndex": 0,
+              "developmentOperator": "identity",
+              "leadRole": "none",
+              "activeFamilies": [
+                "keys",
+                "bass",
+                "strings"
+              ],
+              "roles": [
+                "keys:RHYTHMIC_HARMONY@1-2/mid",
+                "bass:BASS@1-2/low",
+                "strings:PAD@1-2/upper_mid"
+              ],
+              "dynamicShapes": [
+                "pp"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "1-2",
+                  "enters": [
+                    "keys",
+                    "bass",
+                    "strings"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Verse 1",
+              "function": "verse",
+              "energy": 0.131,
+              "density": 0.186,
+              "sourceEnergy": 0.156,
+              "v3StoredEnergy": 0.125,
+              "intendedDynamic": "pp",
+              "textureLevel": "bed",
+              "tensionRole": "setup",
+              "occurrenceIndex": 0,
+              "developmentOperator": "identity",
+              "leadRole": "vocals",
+              "activeFamilies": [
+                "keys",
+                "bass",
+                "strings"
+              ],
+              "roles": [
+                "keys:RHYTHMIC_HARMONY@3-24/mid",
+                "bass:BASS@3-24/low",
+                "strings:PAD@3-24/upper_mid"
+              ],
+              "dynamicShapes": [
+                "pp"
+              ],
+              "entriesExits": []
+            },
+            {
+              "section": "Verse 2",
+              "function": "verse",
+              "energy": 0.098,
+              "density": 0.194,
+              "sourceEnergy": 0.143,
+              "v3StoredEnergy": 0.129,
+              "intendedDynamic": "pp",
+              "textureLevel": "full",
+              "tensionRole": "setup",
+              "occurrenceIndex": 1,
+              "developmentOperator": "add_layer",
+              "leadRole": "vocals",
+              "activeFamilies": [
+                "keys",
+                "bass",
+                "strings",
+                "percussion"
+              ],
+              "roles": [
+                "keys:RHYTHMIC_HARMONY@25-40/mid",
+                "bass:BASS@25-40/low",
+                "strings:PAD@25-40/upper_mid",
+                "percussion:FILL@25-40/mid"
+              ],
+              "dynamicShapes": [
+                "pp"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "25-32",
+                  "enters": [
+                    "percussion"
+                  ],
+                  "leaves": []
+                }
+              ]
+            },
+            {
+              "section": "Chorus",
+              "function": "chorus",
+              "energy": 0.39,
+              "density": 0.297,
+              "sourceEnergy": 0.249,
+              "v3StoredEnergy": 0.274,
+              "intendedDynamic": "mp",
+              "textureLevel": "full",
+              "tensionRole": "arrival",
+              "occurrenceIndex": 0,
+              "developmentOperator": "identity",
+              "leadRole": "vocals",
+              "activeFamilies": [
+                "keys",
+                "bass",
+                "strings",
+                "percussion"
+              ],
+              "roles": [
+                "keys:HARMONIC_BED@41-56/mid",
+                "bass:BASS@41-56/low",
+                "strings:PAD@41-56/upper_mid",
+                "percussion:FILL@41-56/mid"
+              ],
+              "dynamicShapes": [
+                "mp"
+              ],
+              "entriesExits": []
+            },
+            {
+              "section": "Chorus 2",
+              "function": "chorus",
+              "energy": 0.454,
+              "density": 0.339,
+              "sourceEnergy": 0.372,
+              "v3StoredEnergy": 0.427,
+              "intendedDynamic": "mp",
+              "textureLevel": "tutti",
+              "tensionRole": "arrival",
+              "occurrenceIndex": 1,
+              "developmentOperator": "add_layer",
+              "leadRole": "vocals",
+              "activeFamilies": [
+                "keys",
+                "bass",
+                "strings",
+                "percussion",
+                "drums"
+              ],
+              "roles": [
+                "keys:HARMONIC_BED@57-72/mid",
+                "bass:BASS@57-72/low",
+                "strings:HARMONIC_BED@57-72/upper_mid",
+                "percussion:FILL@57-72/mid",
+                "drums:GROOVE@57-72/low_mid"
+              ],
+              "dynamicShapes": [
+                "mp"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "57-64",
+                  "enters": [
+                    "drums"
+                  ],
+                  "leaves": []
+                },
+                {
+                  "bars": "65-72",
+                  "enters": [],
+                  "leaves": [
+                    "percussion",
+                    "drums"
+                  ]
+                }
+              ]
+            },
+            {
+              "section": "Verse 3",
+              "function": "verse",
+              "energy": 0.059,
+              "density": 0.161,
+              "sourceEnergy": 0.109,
+              "v3StoredEnergy": 0.093,
+              "intendedDynamic": "pp",
+              "textureLevel": "bed",
+              "tensionRole": "setup",
+              "occurrenceIndex": 2,
+              "developmentOperator": "change_comping_subdivision",
+              "leadRole": "vocals",
+              "activeFamilies": [
+                "keys",
+                "bass",
+                "strings"
+              ],
+              "roles": [
+                "keys:HARMONIC_BED@73-96/mid",
+                "bass:BASS@73-96/low",
+                "strings:PAD@73-96/upper_mid"
+              ],
+              "dynamicShapes": [
+                "pp"
+              ],
+              "entriesExits": []
+            },
+            {
+              "section": "Bridge",
+              "function": "bridge",
+              "energy": 0.4,
+              "density": 0.28,
+              "sourceEnergy": 0.194,
+              "v3StoredEnergy": 0.175,
+              "intendedDynamic": "mp",
+              "textureLevel": "bed",
+              "tensionRole": "lift",
+              "occurrenceIndex": 0,
+              "developmentOperator": "identity",
+              "leadRole": "vocals",
+              "activeFamilies": [
+                "keys",
+                "bass",
+                "strings"
+              ],
+              "roles": [
+                "keys:RHYTHMIC_HARMONY@97-112/mid",
+                "bass:BASS@97-110/low",
+                "strings:COUNTER_MELODY@97-110/upper_mid"
+              ],
+              "dynamicShapes": [
+                "mp->mf"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "105-112",
+                  "enters": [],
+                  "leaves": [
+                    "bass",
+                    "strings"
+                  ]
+                }
+              ]
+            },
+            {
+              "section": "Chorus 3",
+              "function": "chorus",
+              "energy": 0.666,
+              "density": 0.413,
+              "sourceEnergy": 0.148,
+              "v3StoredEnergy": 0.185,
+              "intendedDynamic": "f",
+              "textureLevel": "tutti",
+              "tensionRole": "arrival",
+              "occurrenceIndex": 2,
+              "developmentOperator": "raise_register",
+              "leadRole": "vocals",
+              "activeFamilies": [
+                "keys",
+                "bass",
+                "strings",
+                "percussion",
+                "drums"
+              ],
+              "roles": [
+                "keys:HARMONIC_BED@113-128/upper_mid",
+                "bass:BASS@113-128/low",
+                "strings:CLIMAX_LAYER@113-128/upper_mid",
+                "percussion:ACCENT@113-128/mid",
+                "drums:CLIMAX_LAYER@113-128/low_mid"
+              ],
+              "dynamicShapes": [
+                "f"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "113-120",
+                  "enters": [
+                    "bass",
+                    "strings",
+                    "percussion",
+                    "drums"
+                  ],
+                  "leaves": []
+                },
+                {
+                  "bars": "121-128",
+                  "enters": [],
+                  "leaves": [
+                    "percussion",
+                    "drums"
+                  ]
+                }
+              ]
+            },
+            {
+              "section": "Outro",
+              "function": "outro",
+              "energy": 0.1,
+              "density": 0.175,
+              "sourceEnergy": 0.138,
+              "v3StoredEnergy": 0.083,
+              "intendedDynamic": "pp",
+              "textureLevel": "bed",
+              "tensionRole": "afterglow",
+              "occurrenceIndex": 0,
+              "developmentOperator": "identity",
+              "leadRole": "none",
+              "activeFamilies": [
+                "keys",
+                "bass",
+                "strings"
+              ],
+              "roles": [
+                "keys:RHYTHMIC_HARMONY@129-141/mid",
+                "bass:BASS@129-141/low",
+                "strings:PAD@129-135/upper_mid"
+              ],
+              "dynamicShapes": [
+                "pp->pp"
+              ],
+              "entriesExits": [
+                {
+                  "bars": "133-136",
+                  "enters": [],
+                  "leaves": [
+                    "strings"
+                  ]
+                },
+                {
+                  "bars": "141-141",
+                  "enters": [],
+                  "leaves": [
+                    "keys",
+                    "bass"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "orchestrated": {
+          "partTasks": 33,
+          "tasksBySection": {
+            "Chorus 2": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "percussion:PERCUSSION",
+              "keys:KEYS",
+              "strings:STRINGS"
+            ],
+            "Chorus 3": [
+              "drums:DRUMS",
+              "bass:BASS",
+              "percussion:PERCUSSION",
+              "keys:KEYS",
+              "strings:STRINGS"
+            ],
+            "Bridge": [
+              "bass:BASS",
+              "keys:KEYS",
+              "strings:COUNTER_MELODY"
+            ],
+            "Chorus": [
+              "bass:BASS",
+              "percussion:PERCUSSION",
+              "keys:KEYS",
+              "strings:PAD"
+            ],
+            "Intro": [
+              "bass:BASS",
+              "keys:KEYS",
+              "strings:PAD"
+            ],
+            "Outro": [
+              "bass:BASS",
+              "keys:KEYS",
+              "strings:PAD"
+            ],
+            "Verse 1": [
+              "bass:BASS",
+              "keys:KEYS",
+              "strings:PAD"
+            ],
+            "Verse 2": [
+              "bass:BASS",
+              "percussion:PERCUSSION",
+              "keys:KEYS",
+              "strings:PAD"
+            ],
+            "Verse 3": [
+              "bass:BASS",
+              "keys:KEYS",
+              "strings:PAD"
+            ]
+          },
+          "selectedCandidate": "cand-A",
+          "strategy": "conservative",
+          "noteCount": 1705,
+          "criticScore": 72,
+          "feasible": true,
+          "hardRuleFindings": [],
+          "constraintErrors": 0,
+          "tracks": [
+            {
+              "instrument": "drums",
+              "role": "GROOVE",
+              "notes": 416,
+              "pitchRange": [
+                36,
+                42
+              ]
+            },
+            {
+              "instrument": "bass",
+              "role": "BASS",
+              "notes": 94,
+              "pitchRange": [
+                36,
+                46
+              ]
+            },
+            {
+              "instrument": "percussion",
+              "role": "FILL",
+              "notes": 120,
+              "pitchRange": [
+                54,
+                54
+              ]
+            },
+            {
+              "instrument": "keys",
+              "role": "RHYTHMIC_HARMONY",
+              "notes": 878,
+              "pitchRange": [
+                55,
+                79
+              ]
+            },
+            {
+              "instrument": "strings",
+              "role": "PAD",
+              "notes": 257,
+              "pitchRange": [
+                72,
+                96
+              ]
+            }
+          ],
+          "notesPerFamilyPerSection": {
+            "Intro": {
+              "drums": 0,
+              "bass": 0,
+              "percussion": 0,
+              "keys": 0,
+              "strings": 0
+            },
+            "Verse 1": {
+              "drums": 0,
+              "bass": 15,
+              "percussion": 0,
+              "keys": 251,
+              "strings": 45
+            },
+            "Verse 2": {
+              "drums": 0,
+              "bass": 15,
+              "percussion": 30,
+              "keys": 185,
+              "strings": 48
+            },
+            "Chorus": {
+              "drums": 2,
+              "bass": 10,
+              "percussion": 30,
+              "keys": 29,
+              "strings": 30
+            },
+            "Chorus 2": {
+              "drums": 205,
+              "bass": 10,
+              "percussion": 30,
+              "keys": 29,
+              "strings": 30
+            },
+            "Verse 3": {
+              "drums": 1,
+              "bass": 11,
+              "percussion": 0,
+              "keys": 34,
+              "strings": 36
+            },
+            "Bridge": {
+              "drums": 2,
+              "bass": 13,
+              "percussion": 0,
+              "keys": 182,
+              "strings": 2
+            },
+            "Chorus 3": {
+              "drums": 206,
+              "bass": 12,
+              "percussion": 30,
+              "keys": 37,
+              "strings": 39
+            },
+            "Outro": {
+              "drums": 0,
+              "bass": 8,
+              "percussion": 0,
+              "keys": 131,
+              "strings": 27
+            }
+          },
+          "candidates": [
+            {
+              "id": "cand-A",
+              "strategy": "conservative",
+              "notes": 1705,
+              "errors": 0,
+              "score": 72
+            },
+            {
+              "id": "cand-B",
+              "strategy": "melodic",
+              "notes": 1794,
+              "errors": 0,
+              "score": 72
+            },
+            {
+              "id": "cand-C",
+              "strategy": "adventurous",
+              "notes": 1794,
+              "errors": 0,
+              "score": 72
+            }
+          ]
+        }
+      }
+    },
+    "criticDimensionsNoBrief": {
+      "before": {
+        "harmony": 88,
+        "groove": 55,
+        "voiceLeading": 72,
+        "leadCompatibility": 65,
+        "orchestration": 68,
+        "sectionDevelopment": 46,
+        "motifCoherence": 60,
+        "contrast": 88,
+        "transitions": 82,
+        "playability": 76,
+        "performancePotential": 62
+      },
+      "after": {
+        "harmony": 88,
+        "groove": 55,
+        "voiceLeading": 72,
+        "leadCompatibility": 65,
+        "orchestration": 72,
+        "sectionDevelopment": 67,
+        "motifCoherence": 60,
+        "contrast": 88,
+        "transitions": 82,
+        "playability": 64,
+        "performancePotential": 80
+      },
+      "afterFindings": {
+        "harmony": [
+          "Cadences land at the section boundaries.",
+          "Harmonic tension barely moves across the song."
+        ],
+        "groove": [
+          "No rhythm evidence to judge."
+        ],
+        "voiceLeading": [
+          "bass: smooth voice leading.",
+          "keys: smooth voice leading."
+        ],
+        "leadCompatibility": [
+          "No verified vocal to protect."
+        ],
+        "orchestration": [
+          "Register space is managed.",
+          "Orchestration density follows the energy curve."
+        ],
+        "sectionDevelopment": [
+          "\"verse\" develops across its repeats.",
+          "Repeats of \"chorus\" are identical — no added layer.",
+          "The climax lands in the back half."
+        ],
+        "motifCoherence": [
+          "No melody to trace a motif through."
+        ],
+        "contrast": [
+          "Moderate section contrast."
+        ],
+        "transitions": [
+          "Builds lift and drops clear space."
+        ],
+        "playability": [
+          "0 playability error(s), 6 warning(s)."
+        ],
+        "performancePotential": [
+          "Wide dynamic range leaves room for a real performance."
+        ]
+      }
+    },
+    "gates": {
+      "familyCountFollowsTheBriefNotTheRms": "with the brief: Verse 1..3 = 3 / 4 / 3 families, Chorus 1..3 = 4 / 5 / 5; Chorus 3 (source RMS 0.148, the recording's second-quietest chorus) is the fullest and loudest section (f, tutti) while Chorus 2 (source RMS 0.372, the recording's loudest) is mp/tutti",
+      "everySectionAtLeastThreeFamilies": "with the brief: yes (Intro and Outro included)",
+      "keysNeverLead": "yes - every verse / chorus / bridge is sung by default (leadRoleSource = sung_by_default); no LEAD assignment anywhere",
+      "mixAbsentFromPalette": "yes - recorded in globalPlan.excludedPaletteHints with the reason",
+      "chorus2DiffersFromChorus1ByOperator": "with the brief: Chorus = identity (keys+bass+strings+percussion, mp); Chorus 2 = add_layer (+drums, tutti, mp); Chorus 3 = raise_register (keys mid -> upper_mid, f, tutti). Without the brief: identity / raise_register / thicken_voicing",
+      "noSectionWithZeroPlannedFamilies": "yes (2 families minimum without a brief, 3 with)",
+      "hardRuleFindings": "0 in both runs; silentPlannedFamilyFindings reports no error"
+    }
+  },
+  "benchmark": {
+    "corpus": "runArrangementBenchmark, 9 synthetic cases, candidateCount 3, render off",
+    "aggregate": {
+      "before": {
+        "criticScore": 74.33,
+        "audioScore": null,
+        "playabilityErrors": 0,
+        "harmonyScore": 58.33,
+        "sectionConsistency": 100,
+        "candidateDiversity": 36.64,
+        "renderFailures": null,
+        "noteCount": 613.67,
+        "latencyMs": 0
+      },
+      "after": {
+        "criticScore": 73,
+        "audioScore": null,
+        "playabilityErrors": 0,
+        "harmonyScore": 58.33,
+        "sectionConsistency": 100,
+        "candidateDiversity": 36.44,
+        "renderFailures": null,
+        "noteCount": 558.22,
+        "latencyMs": 0
+      }
+    },
+    "cases": [
+      {
+        "case": "pop-full",
+        "criticScore": {
+          "before": 77,
+          "after": 77
+        },
+        "feasible": {
+          "before": true,
+          "after": true
+        },
+        "playabilityErrors": {
+          "before": 0,
+          "after": 0
+        },
+        "noteCount": {
+          "before": 636,
+          "after": 688
+        },
+        "familiesAfter": [
+          "Intro:keys+bass",
+          "Verse:keys+bass",
+          "Chorus:keys+bass+drums",
+          "Verse 2:keys+bass",
+          "Chorus 2:keys+bass+drums",
+          "Outro:keys+bass+drums"
+        ],
+        "familiesBefore": [
+          "Intro:drums+bass",
+          "Verse:drums+bass",
+          "Chorus:drums+bass+keys",
+          "Verse 2:drums+bass",
+          "Chorus 2:drums+bass+keys",
+          "Outro:drums+bass"
+        ],
+        "dimensionsChanged": {}
+      },
+      {
+        "case": "ballad-piano-vocal",
+        "criticScore": {
+          "before": 76,
+          "after": 77
+        },
+        "feasible": {
+          "before": true,
+          "after": true
+        },
+        "playabilityErrors": {
+          "before": 0,
+          "after": 0
+        },
+        "noteCount": {
+          "before": 429,
+          "after": 377
+        },
+        "familiesAfter": [
+          "Verse:keys+bass",
+          "Chorus:keys+bass+drums",
+          "Bridge:keys+bass",
+          "Chorus 2:keys+bass+drums"
+        ],
+        "familiesBefore": [
+          "Verse:drums+bass",
+          "Chorus:drums+bass+keys",
+          "Bridge:drums+bass",
+          "Chorus 2:drums+bass+keys"
+        ],
+        "dimensionsChanged": {
+          "voiceLeading": {
+            "before": 60,
+            "after": 72,
+            "afterFindings": [
+              "bass: smooth voice leading.",
+              "keys: smooth voice leading."
+            ],
+            "beforeFindings": [
+              "bass: smooth voice leading.",
+              "keys: smooth voice leading.",
+              "ensemble: voices leap between chords (avg 6.1 semitones)."
+            ]
+          },
+          "playability": {
+            "before": 88,
+            "after": 94,
+            "afterFindings": [
+              "0 playability error(s), 1 warning(s)."
+            ],
+            "beforeFindings": [
+              "0 playability error(s), 2 warning(s)."
+            ]
+          }
+        }
+      },
+      {
+        "case": "rock-full",
+        "criticScore": {
+          "before": 76,
+          "after": 74
+        },
+        "feasible": {
+          "before": true,
+          "after": true
+        },
+        "playabilityErrors": {
+          "before": 0,
+          "after": 0
+        },
+        "noteCount": {
+          "before": 821,
+          "after": 620
+        },
+        "familiesAfter": [
+          "Intro:keys+bass",
+          "Verse:keys+bass",
+          "Chorus:keys+bass+drums",
+          "Bridge:keys+bass",
+          "Chorus 2:keys+bass+drums+guitar"
+        ],
+        "familiesBefore": [
+          "Intro:drums+bass+guitar",
+          "Verse:drums+bass+guitar",
+          "Chorus:drums+bass+guitar+keys",
+          "Bridge:drums+bass+guitar",
+          "Chorus 2:drums+bass+guitar+keys"
+        ],
+        "dimensionsChanged": {
+          "sectionDevelopment": {
+            "before": 61,
+            "after": 82,
+            "afterFindings": [
+              "\"chorus\" develops across its repeats.",
+              "Each section is a clear change.",
+              "The climax lands in the back half."
+            ],
+            "beforeFindings": [
+              "Repeats of \"chorus\" are identical — no added layer.",
+              "Each section is a clear change.",
+              "The climax lands in the back half."
+            ]
+          },
+          "transitions": {
+            "before": 82,
+            "after": 74,
+            "afterFindings": [
+              "Some builds/drops lack the expected gesture."
+            ],
+            "beforeFindings": [
+              "Builds lift and drops clear space."
+            ]
+          },
+          "playability": {
+            "before": 100,
+            "after": 0,
+            "afterFindings": [
+              "0 playability error(s), 104 warning(s)."
+            ],
+            "beforeFindings": [
+              "Every part is physically playable."
+            ]
+          }
+        }
+      },
+      {
+        "case": "dance-full",
+        "criticScore": {
+          "before": 75,
+          "after": 72
+        },
+        "feasible": {
+          "before": true,
+          "after": true
+        },
+        "playabilityErrors": {
+          "before": 0,
+          "after": 0
+        },
+        "noteCount": {
+          "before": 915,
+          "after": 660
+        },
+        "familiesAfter": [
+          "Intro:drums+bass",
+          "Verse:drums+bass",
+          "Chorus:drums+bass+synth+keys",
+          "Breakdown:drums+bass",
+          "Chorus 2:drums+bass+synth+keys"
+        ],
+        "familiesBefore": [
+          "Intro:drums+bass+keys",
+          "Verse:drums+bass+keys",
+          "Chorus:drums+bass+keys+synth",
+          "Breakdown:drums+bass+keys",
+          "Chorus 2:drums+bass+keys+synth"
+        ],
+        "dimensionsChanged": {
+          "playability": {
+            "before": 64,
+            "after": 0,
+            "afterFindings": [
+              "0 playability error(s), 107 warning(s)."
+            ],
+            "beforeFindings": [
+              "0 playability error(s), 6 warning(s)."
+            ]
+          }
+        }
+      },
+      {
+        "case": "acoustic-demo",
+        "criticScore": {
+          "before": 74,
+          "after": 74
+        },
+        "feasible": {
+          "before": true,
+          "after": true
+        },
+        "playabilityErrors": {
+          "before": 0,
+          "after": 0
+        },
+        "noteCount": {
+          "before": 489,
+          "after": 424
+        },
+        "familiesAfter": [
+          "Verse:bass+guitar",
+          "Chorus:bass+guitar+drums",
+          "Verse 2:bass+guitar",
+          "Chorus 2:bass+guitar+drums"
+        ],
+        "familiesBefore": [
+          "Verse:drums+bass",
+          "Chorus:drums+bass+guitar",
+          "Verse 2:drums+bass",
+          "Chorus 2:drums+bass+guitar"
+        ],
+        "dimensionsChanged": {
+          "performancePotential": {
+            "before": 68,
+            "after": 86,
+            "afterFindings": [
+              "Wide dynamic range leaves room for a real performance.",
+              "Phrase endings are shaped, not just cut off."
+            ],
+            "beforeFindings": [
+              "Narrow dynamic range — the performance will feel flat.",
+              "Phrase endings are shaped, not just cut off."
+            ]
+          }
+        }
+      },
+      {
+        "case": "orchestral-midi",
+        "criticScore": {
+          "before": 70,
+          "after": 67
+        },
+        "feasible": {
+          "before": true,
+          "after": true
+        },
+        "playabilityErrors": {
+          "before": 0,
+          "after": 0
+        },
+        "noteCount": {
+          "before": 449,
+          "after": 372
+        },
+        "familiesAfter": [
+          "Intro:strings+keys",
+          "Verse:strings+keys+bass",
+          "Chorus:strings+keys+bass+brass+drums",
+          "Outro:strings+keys"
+        ],
+        "familiesBefore": [
+          "Intro:drums+bass+keys",
+          "Verse:drums+bass+keys",
+          "Chorus:drums+bass+keys+strings+brass",
+          "Outro:drums+bass+keys"
+        ],
+        "dimensionsChanged": {
+          "groove": {
+            "before": 80,
+            "after": 44,
+            "afterFindings": [
+              "Groove feel is coherent.",
+              "The subdivision keeps changing without a clear feel.",
+              "Some energy lifts have no fill to carry them.",
+              "Kick and bass are not locked."
+            ],
+            "beforeFindings": [
+              "Groove feel is coherent.",
+              "The subdivision keeps changing without a clear feel.",
+              "Fills mark the lifts.",
+              "Kick and bass lock tightly."
+            ]
+          },
+          "playability": {
+            "before": 16,
+            "after": 46,
+            "afterFindings": [
+              "0 playability error(s), 9 warning(s)."
+            ],
+            "beforeFindings": [
+              "0 playability error(s), 14 warning(s)."
+            ]
+          }
+        }
+      },
+      {
+        "case": "ethnic-vocal",
+        "criticScore": {
+          "before": 72,
+          "after": 74
+        },
+        "feasible": {
+          "before": true,
+          "after": true
+        },
+        "playabilityErrors": {
+          "before": 0,
+          "after": 0
+        },
+        "noteCount": {
+          "before": 413,
+          "after": 350
+        },
+        "familiesAfter": [
+          "Verse:keys+bass",
+          "Chorus:keys+bass+drums",
+          "Verse 2:keys+bass+drums"
+        ],
+        "familiesBefore": [
+          "Verse:drums+bass",
+          "Chorus:drums+bass+keys",
+          "Verse 2:drums+bass+keys"
+        ],
+        "dimensionsChanged": {
+          "voiceLeading": {
+            "before": 60,
+            "after": 72,
+            "afterFindings": [
+              "bass: smooth voice leading.",
+              "keys: smooth voice leading."
+            ],
+            "beforeFindings": [
+              "bass: smooth voice leading.",
+              "ensemble: voices leap between chords (avg 6.8 semitones)."
+            ]
+          },
+          "performancePotential": {
+            "before": 68,
+            "after": 86,
+            "afterFindings": [
+              "Wide dynamic range leaves room for a real performance.",
+              "Phrase endings are shaped, not just cut off."
+            ],
+            "beforeFindings": [
+              "Narrow dynamic range — the performance will feel flat.",
+              "Phrase endings are shaped, not just cut off."
+            ]
+          }
+        }
+      },
+      {
+        "case": "jazz-full",
+        "criticScore": {
+          "before": 77,
+          "after": 73
+        },
+        "feasible": {
+          "before": true,
+          "after": true
+        },
+        "playabilityErrors": {
+          "before": 0,
+          "after": 0
+        },
+        "noteCount": {
+          "before": 930,
+          "after": 1089
+        },
+        "familiesAfter": [
+          "Verse:keys+bass",
+          "Chorus:keys+bass+drums",
+          "Verse 2:keys+bass+drums"
+        ],
+        "familiesBefore": [
+          "Verse:drums+bass",
+          "Chorus:drums+bass+keys",
+          "Verse 2:drums+bass+keys"
+        ],
+        "dimensionsChanged": {
+          "playability": {
+            "before": 100,
+            "after": 0,
+            "afterFindings": [
+              "0 playability error(s), 208 warning(s)."
+            ],
+            "beforeFindings": [
+              "Every part is physically playable."
+            ]
+          },
+          "performancePotential": {
+            "before": 68,
+            "after": 86,
+            "afterFindings": [
+              "Wide dynamic range leaves room for a real performance.",
+              "Phrase endings are shaped, not just cut off."
+            ],
+            "beforeFindings": [
+              "Narrow dynamic range — the performance will feel flat.",
+              "Phrase endings are shaped, not just cut off."
+            ]
+          }
+        }
+      },
+      {
+        "case": "cinematic-midi",
+        "criticScore": {
+          "before": 72,
+          "after": 69
+        },
+        "feasible": {
+          "before": true,
+          "after": true
+        },
+        "playabilityErrors": {
+          "before": 0,
+          "after": 0
+        },
+        "noteCount": {
+          "before": 441,
+          "after": 444
+        },
+        "familiesAfter": [
+          "Intro:keys+bass",
+          "Verse:keys+bass+strings",
+          "Chorus:keys+bass+strings+percussion+drums+brass",
+          "Outro:keys+bass+strings"
+        ],
+        "familiesBefore": [
+          "Intro:drums+bass+keys",
+          "Verse:drums+bass+keys+percussion",
+          "Chorus:drums+bass+keys+percussion+strings+brass",
+          "Outro:drums+bass+keys"
+        ],
+        "dimensionsChanged": {
+          "groove": {
+            "before": 64,
+            "after": 50,
+            "afterFindings": [
+              "Groove feel is coherent.",
+              "Some energy lifts have no fill to carry them.",
+              "Kick and bass are not locked."
+            ],
+            "beforeFindings": [
+              "Groove feel is coherent.",
+              "Fills mark the lifts.",
+              "Kick and bass are not locked."
+            ]
+          },
+          "playability": {
+            "before": 82,
+            "after": 58,
+            "afterFindings": [
+              "0 playability error(s), 7 warning(s)."
+            ],
+            "beforeFindings": [
+              "0 playability error(s), 3 warning(s)."
+            ]
+          }
+        }
+      }
+    ],
+    "reading": [
+      "playabilityErrors 0 -> 0 on every case (the gate); every case still feasible",
+      "criticScore mean 74.33 -> 73.0. The drops are in dimensions the plan-level critic grades from proxies (F1/F11 in the diagnosis, no positive controls): 'playability' counts *warnings* at -6 each - almost all are 'same pitch re-struck after 8-17 ms; drums needs 30 ms' from the reference composer's 16th-note hi-hat branch (density > 0.6, tempo-blind, 90 ms hat duration) which the arc now reaches in ff choruses (rock 104, dance 107, jazz 208 warnings); 'groove' on orchestral / cinematic reads 'kick and bass not locked' because the bass now moves per beat where the kick stays on 1 and 3 (B-04 owns the shared groove); 'transitions' on rock-full lost the ensemble pickup figure that is no longer written",
+      "gains in the same run: sectionDevelopment on rock-full 61 -> 82 and on the owner's song 46 -> 67; performancePotential 'wide dynamic range' on acoustic / ethnic / jazz / the owner's song; voiceLeading no longer penalised for the `ensemble` piano that nobody planned"
+    ]
+  },
+  "constantsChanged": [
+    {
+      "where": "globalArrangementPlanner.ts sectionTargets[].energy",
+      "old": "bar-weighted mean of the source RMS curve x sectionEnergyBias",
+      "new": "the arc's intended dynamic level: pp 0.10, p 0.25, mp 0.40, mf 0.55, f 0.70, ff 0.85 (+ a source prior of at most +-0.05 and a contrast nudge of +-0.03)",
+      "why": "source != intent (charter rule 5); the RMS is kept as sourceEnergy"
+    },
+    {
+      "where": "globalArrangementPlanner.ts sectionTargets[].density",
+      "old": "source onsets per bar / max, x sectionDensityBias",
+      "new": "arcDensity = floor + level*w + texture*0.1 with (0.2, 0.45) for pop / band / electronic and (0.1, 0.35, 0.08) for ballad / cinematic",
+      "why": "on the composer contract ~0.4 is a pulse per beat and ~0.6 subdivision-level busy; a pop verse at mp lands near 0.43, a chorus at f near 0.59, only an ff climax crosses 0.6; a ballad never reaches the subdivision level"
+    },
+    {
+      "where": "globalArrangementPlanner.ts sectionTargets[].tension",
+      "old": "source harmonic tension (or energy*0.6)",
+      "new": "0.75 x tension role (setup 0.3, lift 0.6, arrival 0.8, release 0.4, afterglow 0.2, breath 0.25) + 0.25 x source harmonic tension",
+      "why": "tension is a role in the form; the source's chord-quality tension is evidence, not the plan"
+    },
+    {
+      "where": "globalArrangementPlanner.ts noveltyVsPrevious",
+      "old": "|energy - previous *raw section* energy|*0.6 + roleChanged*0.4",
+      "new": "same formula on the previous *target* level",
+      "why": "the 1.0 planner compared an intent with a measurement (diagnosis 1)"
+    },
+    {
+      "where": "globalArrangementPlanner.ts climax",
+      "old": "map climax candidate ranked by source energy (+0.25 for a brief-named section, which could not conjure one)",
+      "new": "the arc's primary climax: the brief's named section, else the last chorus, else the highest template marking; the map's candidate only places the bar inside that section",
+      "why": "a climax is a decision"
+    },
+    {
+      "where": "sectionPhrasePlanner.ts active family count",
+      "old": "round(2 + (energy + activeFamilyBias*0.5) * (palette-2)), min 2",
+      "new": "the arc's texture level: solo 1 / duo 2 / bed (2 for <=4 families, 3, 4 for >=7) / full (3, or n-1 for >=5) / tutti n, in the template's family order (brief-named families first)",
+      "why": "the family count followed the recording's loudness; now it follows the form and the brief"
+    },
+    {
+      "where": "sectionPhrasePlanner.ts dynamicShape",
+      "old": "delta of two measured energies (+-0.15 / +-0.05 thresholds)",
+      "new": "the arc's marking; lift = marking->marking+1, release / afterglow = marking->marking-1",
+      "why": "the dynamic is the plan's, not a delta of two measurements"
+    },
+    {
+      "where": "sectionPhrasePlanner.ts leadRole",
+      "old": "vocals only when a vocal phrase overlaps, else the first of keys/guitar/synth (LEAD)",
+      "new": "vocal_map when a phrase overlaps; sung_by_default for verse / prechorus / chorus / bridge / neutral when the vocal map is not_available; an instrument leads only in an instrumental section",
+      "why": "F5: an accompaniment family promoted to LEAD wrote nothing"
+    },
+    {
+      "where": "sectionPhrasePlanner.ts OSTINATO",
+      "old": "keys/guitar OSTINATO when rhythmicActivity > 0.6 (the fallback value was the planned density)",
+      "new": "only when the rhythm map is measured (detected) and > 0.6",
+      "why": "the fallback turned every full chorus into arpeggiated eighths"
+    },
+    {
+      "where": "sectionPhrasePlanner.ts entryBar/exitBar, phrases[].entersFamilies/leavesFamilies",
+      "old": "section bounds; full set on unit 0; leavesFamilies always []",
+      "new": "the arc's entry / exit bar offsets (staggered colour entry in the first verse, a two-bar breath before the final chorus, the outro thinning to its core, boundary exits for families the next section does not carry, everyone out at the end)",
+      "why": "D3"
+    },
+    {
+      "where": "sectionPhrasePlanner.ts activeFamilyBias (deprecated)",
+      "old": "shifts the count by up to half the palette",
+      "new": "one family in or out, only where the arc heard nothing from the brief about texture",
+      "why": "kept for older callers (the provider test); the brief now sends globalTextureSteps"
+    },
+    {
+      "where": "partComposer.ts taskFor(LEAD)",
+      "old": "null outside instrumental sections",
+      "new": "the family's harmonic-bed task (recorded as lead_kept_as_bed)",
+      "why": "F5 belt and braces for stored plans that still say LEAD"
+    },
+    {
+      "where": "partComposer.ts ensemble / winds / mix",
+      "old": "`ensemble` intro/ending/transition figures and `winds` parts resolved to the piano definition; `mix` could be tasked",
+      "new": "excluded with a recorded reason (PartComposerPlan.decisions); non-family hints excluded; a family whose definition falls back to the piano is excluded",
+      "why": "D4: a real family or an explicit exclusion, never a silent piano. Giving the figure to a real family put it on top of that family's own chord and broke its polyphony (measured on the provider's contract test)"
+    },
+    {
+      "where": "partComposer.ts safeDefinition",
+      "old": "getInstrumentDefinition(instrument, role)",
+      "new": "the role is withheld for a named family (keys, guitar, bass, drums, percussion, strings, pads, synth, brass, winds)",
+      "why": "musicEngines FAMILY_WORDS has no keyboard word, so keys in RHYTHMIC_HARMONY was constrained as the drum kit (range 35-81, 4 voices)"
+    },
+    {
+      "where": "briefToPlanner.ts",
+      "old": "energy words -> sectionEnergyBias x1.15 / x0.85, density words -> x1.15 / x0.8 + activeFamilyBias; per-section bias -> x(1+0.35v)",
+      "new": "global energy -> globalDynamicSteps +-1; global density -> globalTextureSteps +-1; per-section energyBias v -> sectionDynamicSteps round(v/0.3); densityBias v -> textureSteps round(v/0.3); climax primary -> climaxSectionName + at least +1 marking; aesthetic / genre words -> arcTemplate; hierarchy (core & foundation, feature, colour) -> familyPriority. The old multipliers are still emitted and act on the source prior only",
+      "why": "D2 brief levers state intent"
+    },
+    {
+      "where": "planningSupervisionAgreement.ts (not owned - one line)",
+      "old": "platform energy / density = target.energy / density",
+      "new": "target.sourceEnergy ?? energy, target.sourceDensity ?? density",
+      "why": "the agreement measures the platform's derivers against the human score's measured curve; with intent-based targets the test's MAD rose to 0.32"
+    },
+    {
+      "where": "plan versions",
+      "old": "GlobalArrangementPlan / SectionPhrasePlan / PartComposerPlan 1.0",
+      "new": "1.1 (stored 1.0 plans are stale by version)",
+      "why": "the digests hash inputs, not the algorithm"
+    }
+  ],
+  "capabilityLadder": {
+    "ArrangementArc (intent per section from form + brief + template, source a weak prior)": "TESTED (unit: determinism, digest, UNKNOWN, template defaults, brief overrides, prior <= 0.05 per 10x RMS, contrast) + INTEGRATED (globalArrangementPlanner targets, sectionPhrasePlanner families / dynamics / entries) + BENCHMARKED (this file) - not VALIDATED ON OUTPUT (nothing rendered or listened to)",
+    "brief levers (sectionDynamics / steps, textureLevels / steps, climax, template, family priority)": "TESTED + INTEGRATED (briefToPlanner -> plannerHints -> planners; the job path carries them as plain JSON)",
+    "form memory + development operators": "TESTED at plan level (chorus 2 != chorus 1 in the stated dimension; operators not reused; identity explicit). add_layer, raise_register, activate_counterline, change_comping_subdivision reach the notes through families, register bands and roles the reference composer already reads; thicken_voicing and drop_to_solo_before_last are INTEGRATED-pending (the composer ignores voicingStrategy and partWindow)",
+    "staggered entries / exits": "TESTED at plan level (entryBar / exitBar, entersFamilies / leavesFamilies); INTEGRATED-pending at note level: composeReferencePart writes request.section.startBar..endBar and ignores partWindow",
+    "F5 fixes (sung by default, no accompaniment LEAD, bed task for LEAD, non-family hints excluded, no silent piano)": "TESTED + INTEGRATED (owner's fixture: keys plays every verse / chorus / bridge; mix absent; ensemble gone)",
+    "hard rule: planned family with zero notes in a mandatory section": "IMPLEMENTED + TESTED (positive and negative control) as a pure helper (silentPlannedFamilyFindings); orchestrator wiring is B-00's",
+    "PartGenerationRequest.formMemory / arcIntent / partWindow": "IMPLEMENTED + INTEGRATED (every request carries them); the composer does not read them yet (INTEGRATED-pending)"
+  },
+  "changesNeededInFilesNotOwned": [
+    {
+      "file": "artifacts/api-server/src/lib/musicEngines.ts",
+      "where": "FAMILY_WORDS (getInstrumentDefinition)",
+      "change": "add \"key\", \"piano\", \"organ\", \"rhodes\" so a keyboard named in any 'rhythm*' role is a piano, not the kit",
+      "why": "the orchestrator's trackModelFor(instrument, role) still resolves a keys track whose first task is RHYTHMIC_HARMONY to the drum kit definition (measured on rock-full: 'keys' constrained as drums, 2 limb errors). The part request side is patched in partComposer; the track side needs this one line (B-03)"
+    },
+    {
+      "file": "artifacts/api-server/src/lib/referencePartComposer.ts",
+      "where": "case BASS, walking branch",
+      "change": "clip each step's duration to the chord end (Math.min(beatSeconds*0.85, chordEnd - t)) and skip steps at or past chordEnd",
+      "why": "when a chord's span is not a whole number of beats the last step's 0.85-beat note laps into the next chord's first note: '2 notes sound together; the bass ceiling is 1'. On the owner's song this fires as soon as the bass density reaches 0.4 (the old planner never got there); the ballad density scale keeps it under 0.4 for now"
+    },
+    {
+      "file": "artifacts/api-server/src/lib/referencePartComposer.ts",
+      "where": "all cases",
+      "change": "honour request.partWindow (compose bars partWindow.startBar..endBar, not the whole section) and read request.formMemory.developmentOperator for thicken_voicing / drop_to_solo_before_last",
+      "why": "staggered entries / exits and two of the seven operators are plan-only until then"
+    },
+    {
+      "file": "artifacts/api-server/src/lib/referencePartComposer.ts",
+      "where": "case DRUMS hatSteps",
+      "change": "choose the hat subdivision by tempo (16ths only when a 16th is >= ~120 ms) and shorten hat durations",
+      "why": "at density > 0.6 the composer writes 16th hats at any tempo; the calibrated constraint engine flags each as a re-strike warning (rock 104, jazz 208), which is most of the benchmark critic delta"
+    },
+    {
+      "file": "artifacts/api-server/src/lib/referencePartComposer.ts",
+      "where": "case INTRO",
+      "change": "fall back to request.context.nextBars.chords[0] when the intro has no chord",
+      "why": "the owner's chord sheet starts at bar 3; the 2-bar intro has no harmony to voice and stays silent"
+    },
+    {
+      "file": "artifacts/api-server/src/lib/arrangementOrchestrator.ts",
+      "where": "after compose / critique",
+      "change": "call silentPlannedFamilyFindings(songModel, { sectionPlan, partComposerPlan }, trackModels) and merge its errors into the hard-rule gate",
+      "why": "B-00 owns the orchestrator; the rule and its test ship here"
+    },
+    {
+      "file": "artifacts/api-server/src/lib/producerIntelligence/briefCompiler.ts",
+      "where": "energy inference from instrument qualifiers",
+      "change": "'soft strings, gentle bass' should qualify those families (a colour / dynamic hint per family), not become a *global* low-energy decision",
+      "why": "on the owner's brief the compiler emits 'global energy low', which the arc honours as -1 marking everywhere (pp verses)"
+    }
+  ],
+  "honestLimits": [
+    "Nothing was rendered or listened to: the evidence is plans, part tasks, note counts, the constraint engine and the plan-level critic. VALIDATED ON OUTPUT is not claimed for anything.",
+    "The reference composer does not realise thicken_voicing or drop_to_solo_before_last, ignores partWindow (staggered entries / exits exist in the plan only) and does not read formMemory / arcIntent; those are INTEGRATED-pending.",
+    "The plan-level critic's mean score on the synthetic benchmark fell 74.33 -> 73.0 (playability errors unchanged at 0). The drops are attributed above to composer idiom (16th hats at any tempo, the bass moving against a 1-and-3 kick) exposed by realistic densities, and to a critic that grades proxies without positive controls (F1 / F11); they were not designed around.",
+    "With the owner's brief the arc lands at pp verses because the brief compiler reads 'soft strings, gentle bass' as a global low-energy decision; that reading is upstream of this stream.",
+    "The intro of the owner's song is silent in every run (before and after) because its two bars carry no chord in the sheet; only the composer can anticipate the first chord.",
+    "The source recording still decides two things in the section planner: rhythmicActivity / melodicActivity (source onset and melody densities, used for role activity numbers and the OSTINATO rule when measured) and gapHeavy (arrangement-space windows). Both are labelled as measurements in the code but are not yet routed through the arc.",
+    "The ensemble intro / ending / transition figures were removed rather than re-homed (a real family already states the harmony at that instant; the runner's contract failed when the figure was stacked on the keys). The drum fill remains the realised transition device; per-family device realisation is B-04.",
+    "The 'before' half of this file was produced by running the 3bf23aa planners copied beside the new ones (same orchestrator, critic and composer), not from stored production runs; the stored v3 numbers of the owner's run are reproduced by the fixture within 0.06 and quoted from the diagnosis.",
+    "The keys track can still be constrained and performed as a drum kit whenever its first composed task is RHYTHMIC_HARMONY (musicEngines FAMILY_WORDS); only the part-request side is fixed here."
+  ]
+}

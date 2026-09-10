@@ -2,14 +2,24 @@
  * Brief → planner hints (Wave U, PR-U1).
  *
  * The brief never writes notes and never replaces a planner. It is reduced to
- * a small set of *biases* that `deriveGlobalArrangementPlan` and
- * `deriveSectionPhrasePlan` accept through their optional `hints`: section
- * energy / density multipliers, palette additions and removals, a preferred
- * climax section, a production aesthetic the palette can carry, and a groove
- * the evidence does not contradict. Categorical hints are only emitted when
- * grounded in the user's own words; research findings never become one.
+ * the levers `deriveGlobalArrangementPlan` and `deriveSectionPhrasePlan`
+ * accept through their optional `hints`.
+ *
+ * Brain B-01: the arc levers state *intent* and are honoured as stated -
+ * dynamic markings / step shifts per section and globally, texture levels /
+ * steps, the climax section, the arc template ("intimate ballad"), and the
+ * brief's family priority. The Wave-U multipliers (`sectionEnergyBias`,
+ * `sectionDensityBias`, `activeFamilyBias`) are still emitted for the record
+ * and for older readers, but they now touch the source *prior* only.
+ * Palette additions and removals, a production aesthetic the palette can
+ * carry and a groove the evidence does not contradict are unchanged.
+ * Categorical hints are only emitted when grounded in the user's own words;
+ * research findings never become one.
  */
 import type {
+  ArcDynamicMarking,
+  ArcTemplateId,
+  ArcTextureLevel,
   ArrangementPlan,
   GlobalArrangementPlan,
   ProducerBriefDecision,
@@ -30,6 +40,28 @@ export type BriefPlannerHints = {
 };
 
 const clampMul = (v: number): number => Math.max(0.6, Math.min(1.4, Math.round(v * 1000) / 1000));
+/** A -1..1 brief bias in marking / texture steps: +-0.3 is one step, +-0.6 two. */
+const stepsOf = (bias: number): number => Math.max(-2, Math.min(2, Math.round(bias / 0.3)));
+const signed = (n: number): string => (n > 0 ? `+${n}` : `${n}`);
+
+/** The arc template a brief word implies, when the brief says nothing more specific. */
+const TEMPLATE_WORDS: Array<{ pattern: RegExp; template: ArcTemplateId }> = [
+  { pattern: /ballad|intimate|acoustic|singer.?songwriter|lullaby|chanson/i, template: "intimate_ballad" },
+  { pattern: /cinematic|orchestral|epic|film|score|symphon/i, template: "cinematic_swell" },
+  { pattern: /edm|house|techno|trance|dance|electro|dubstep|drum.?and.?bass|synthwave/i, template: "electronic_drop" },
+  { pattern: /rock|punk|metal|grunge|indie|garage/i, template: "band_steady" },
+  { pattern: /pop|r&b|soul|funk|gospel|reggae/i, template: "pop_build" },
+];
+
+const TEMPLATE_FOR_AESTHETIC: Record<NonNullable<ProductionBrief["productionAesthetic"]["plannerAesthetic"]>, ArcTemplateId> = {
+  intimate: "intimate_ballad", cinematic: "cinematic_swell", orchestral: "cinematic_swell",
+  electronic: "electronic_drop", raw_band: "band_steady", polished_pop: "pop_build",
+};
+
+/** The brief's instrumentation tiers in the order the arc should keep them when the texture thins. */
+const TIER_RANK: Record<ProductionBrief["instrumentation"]["hierarchy"][number]["tier"], number> = {
+  core: 0, foundation: 0, feature: 1, colour: 2,
+};
 
 const GROOVE_FROM_DIMENSION: Array<{ dimension: StyleDimensionName; value: string; groove: GlobalArrangementPlan["grooveStrategy"] }> = [
   { dimension: "grooveFamily", value: "swung", groove: "swing" },
@@ -46,6 +78,15 @@ export function briefPlannerHints(brief: ProductionBrief): BriefPlannerHints {
   const paletteRemove = new Set<string>();
   let activeFamilyBias = 0;
   let climaxSectionName: string | undefined;
+  // B-01 arc levers.
+  const sectionDynamics: Record<string, ArcDynamicMarking> = {};
+  const sectionDynamicSteps: Record<string, number> = {};
+  const textureLevels: Record<string, ArcTextureLevel> = {};
+  const textureSteps: Record<string, number> = {};
+  let globalDynamicSteps = 0;
+  let globalTextureSteps = 0;
+  let arcTemplate: ArcTemplateId | undefined;
+  let arcTemplateWhy = "";
 
   const decisions = activeDecisions(brief);
 
@@ -54,40 +95,50 @@ export function briefPlannerHints(brief: ProductionBrief): BriefPlannerHints {
   // compiler's boundary verb; it means the opposite direction of `value`.
   const boundary = (d: ProducerBriefDecision): boolean => /^(?:no|less) /.test(d.statement);
 
-  // Global energy / density decisions bias every section a little.
+  // Global energy / density decisions: one marking / texture step for every
+  // section (the arc lever), plus the deprecated multipliers on the prior.
   for (const d of decisions) {
     if (d.scope.kind !== "global") continue;
     if (d.topic === "energy" && (d.value === "high" || d.value === "low")) {
       const higher = (d.value === "high") !== boundary(d);
       const mul = higher ? 1.15 : 0.85;
       for (const name of brief.sectionNames) sectionEnergyBias[name] = clampMul((sectionEnergyBias[name] ?? 1) * mul);
-      evidence.push(`${d.id}: global energy ${boundary(d) ? `not ${d.value}` : d.value} → all sections ×${mul}`);
+      globalDynamicSteps += higher ? 1 : -1;
+      evidence.push(`${d.id}: global energy ${boundary(d) ? `not ${d.value}` : d.value} → every section ${higher ? "+1" : "-1"} marking (prior ×${mul})`);
     }
     if (d.topic === "density" && (d.value === "dense" || d.value === "sparse")) {
       const denser = (d.value === "dense") !== boundary(d);
       const mul = denser ? 1.15 : 0.8;
       for (const name of brief.sectionNames) sectionDensityBias[name] = clampMul((sectionDensityBias[name] ?? 1) * mul);
       activeFamilyBias += denser ? 0.3 : -0.35;
-      evidence.push(`${d.id}: global density ${boundary(d) ? `not ${d.value}` : d.value} → all sections ×${mul}, family bias ${denser ? "+0.3" : "-0.35"}`);
+      globalTextureSteps += denser ? 1 : -1;
+      evidence.push(`${d.id}: global density ${boundary(d) ? `not ${d.value}` : d.value} → every section ${denser ? "+1" : "-1"} texture level (prior ×${mul}, family bias ${denser ? "+0.3" : "-0.35"})`);
     }
   }
 
-  // Per-section intentions.
+  // Per-section intentions: a -1..1 bias is a marking / texture step shift
+  // on the arc (the intent), and the deprecated multiplier on the prior.
   for (const s of brief.sectionIntentions) {
     if (s.energyBias) {
       sectionEnergyBias[s.sectionName] = clampMul((sectionEnergyBias[s.sectionName] ?? 1) * (1 + 0.35 * s.energyBias.value));
-      evidence.push(`${s.sectionName}: energy bias ${s.energyBias.value} (${s.energyBias.provenance}) → ×${sectionEnergyBias[s.sectionName]}`);
+      const steps = stepsOf(s.energyBias.value);
+      if (steps !== 0) sectionDynamicSteps[s.sectionName] = steps;
+      evidence.push(`${s.sectionName}: energy bias ${s.energyBias.value} (${s.energyBias.provenance}) → ${signed(steps)} marking (prior ×${sectionEnergyBias[s.sectionName]})`);
     }
     if (s.densityBias) {
       sectionDensityBias[s.sectionName] = clampMul((sectionDensityBias[s.sectionName] ?? 1) * (1 + 0.35 * s.densityBias.value));
-      evidence.push(`${s.sectionName}: density bias ${s.densityBias.value} (${s.densityBias.provenance}) → ×${sectionDensityBias[s.sectionName]}`);
+      const steps = stepsOf(s.densityBias.value);
+      if (steps !== 0) textureSteps[s.sectionName] = steps;
+      evidence.push(`${s.sectionName}: density bias ${s.densityBias.value} (${s.densityBias.provenance}) → ${signed(steps)} texture level (prior ×${sectionDensityBias[s.sectionName]})`);
       // A thinner section keeps fewer families; a fuller one more. Only the
       // strongest per-section request moves the global family bias.
       if (s.densityBias.value <= -0.3 && sectionFamilies[s.sectionName] === undefined) sectionFamilies[s.sectionName] = {};
     }
     if (s.climax?.value === "primary") {
       climaxSectionName = s.sectionName;
-      evidence.push(`${s.sectionName}: climax primary (${s.climax.provenance})`);
+      // A climax is louder than what surrounds it, whatever else was said.
+      sectionDynamicSteps[s.sectionName] = Math.max(1, sectionDynamicSteps[s.sectionName] ?? 0);
+      evidence.push(`${s.sectionName}: climax primary (${s.climax.provenance}) → the arc's primary climax, at least +1 marking`);
     }
     const instrumentation = s.instrumentation;
     if (instrumentation && (instrumentation.add.length || instrumentation.remove.length || instrumentation.feature.length)) {
@@ -104,7 +155,9 @@ export function briefPlannerHints(brief: ProductionBrief): BriefPlannerHints {
     if (Object.keys(sectionFamilies[name]).length === 0) delete sectionFamilies[name];
   }
 
-  // Palette: every family the brief names joins; excluded ones leave.
+  // Palette: every family the brief names joins; excluded ones leave. The
+  // named families, core and foundation first, are the arc's priority order
+  // (a family the producer asked for is kept when the texture thins).
   for (const entry of brief.instrumentation.hierarchy) {
     if (entry.family === "vocals") continue;
     paletteAdd.add(entry.family);
@@ -115,6 +168,35 @@ export function briefPlannerHints(brief: ProductionBrief): BriefPlannerHints {
     paletteAdd.delete(family);
     evidence.push(`palette -${family} (excluded)`);
   }
+  const familyPriority = brief.instrumentation.hierarchy
+    .filter((entry) => entry.family !== "vocals" && !brief.instrumentation.excludedFamilies.includes(entry.family))
+    .map((entry, index) => ({ entry, index }))
+    .sort((a, b) => TIER_RANK[a.entry.tier] - TIER_RANK[b.entry.tier] || a.index - b.index)
+    .map(({ entry }) => entry.family)
+    .filter((family, index, all) => all.indexOf(family) === index);
+  if (familyPriority.length) evidence.push(`family priority ${familyPriority.join(" > ")} (brief tiers)`);
+
+  // Arc template: the aesthetic the brief states, else a genre / mood word
+  // in the user's own text, else nothing (the planner reads the style).
+  const plannerAesthetic = brief.productionAesthetic.plannerAesthetic;
+  if (plannerAesthetic) {
+    arcTemplate = TEMPLATE_FOR_AESTHETIC[plannerAesthetic];
+    arcTemplateWhy = `stated aesthetic ${plannerAesthetic}`;
+  }
+  if (!arcTemplate) {
+    const words = [
+      ...brief.productionAesthetic.descriptors.map((d) => d.value),
+      ...decisions.filter((d) => d.topic === "aesthetic" || d.topic === "style_dimension").map((d) => String(d.value ?? "")),
+      ...brief.dimensionDecisions
+        .filter((d) => d.dimension === "genre" && d.disposition !== "reject" && (d.provenance === "stated" || d.decidedBy === "answer" || d.decidedBy === "producer"))
+        .map((d) => String(d.disposition === "modify" ? d.briefValue : d.styleValue)),
+    ];
+    for (const word of words) {
+      const match = TEMPLATE_WORDS.find((t) => t.pattern.test(word));
+      if (match) { arcTemplate = match.template; arcTemplateWhy = `"${word}"`; break; }
+    }
+  }
+  if (arcTemplate) evidence.push(`arc template ${arcTemplate} (${arcTemplateWhy})`);
 
   // Categorical hints: only when grounded in the user's words.
   const grounded = (refs: string[] | undefined): boolean => (refs ?? []).some((r) => r.startsWith("text:") || r.startsWith("answer:"));
@@ -142,6 +224,15 @@ export function briefPlannerHints(brief: ProductionBrief): BriefPlannerHints {
     ...(climaxSectionName ? { climaxSectionName } : {}),
     ...(productionAesthetic ? { productionAesthetic } : {}),
     ...(grooveStrategy ? { grooveStrategy } : {}),
+    // B-01 arc levers.
+    ...(Object.keys(sectionDynamics).length ? { sectionDynamics } : {}),
+    ...(Object.keys(sectionDynamicSteps).length ? { sectionDynamicSteps } : {}),
+    ...(globalDynamicSteps ? { globalDynamicSteps: Math.max(-2, Math.min(2, globalDynamicSteps)) } : {}),
+    ...(Object.keys(textureLevels).length ? { textureLevels } : {}),
+    ...(Object.keys(textureSteps).length ? { textureSteps } : {}),
+    ...(globalTextureSteps ? { globalTextureSteps: Math.max(-2, Math.min(2, globalTextureSteps)) } : {}),
+    ...(arcTemplate ? { arcTemplate } : {}),
+    ...(familyPriority.length ? { familyPriority } : {}),
   };
   const section: SectionPlannerHints = {
     ...(activeFamilyBias !== 0 ? { activeFamilyBias: Math.max(-1, Math.min(1, Math.round(activeFamilyBias * 1000) / 1000)) } : {}),

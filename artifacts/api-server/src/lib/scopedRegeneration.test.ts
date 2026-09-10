@@ -99,7 +99,9 @@ test("the EditPlan's families are resolved to the arrangement's own tracks; unkn
   assert.ok(resolved.requested.length > 0 && resolved.requested.every((s) => s.instrument === "bass"), "only the bass is requested");
   const drumLocks = resolved.locks.locks.filter((l) => l.instrument === "drums");
   assert.ok(drumLocks.length >= 1 && drumLocks.every((l) => l.scope === "track" && l.trackId === undefined), "the drum lock is by instrument, the identity PR-17 merges on");
-  assert.deepEqual(resolved.unmatchedFamilies, ["keys"], "the palette lists keys but no track plays them");
+  // Brain B-01: the keys family is no longer silent in sung sections (it was
+  // LEAD with a null task), so every palette family has a track.
+  assert.deepEqual(resolved.unmatchedFamilies, [], "every palette family has a track that plays it");
 });
 
 test("'הפזמון השני עמוס מדי': only Chorus 2 is rewritten; every other bar of every track is byte-identical", () => {
@@ -118,7 +120,9 @@ test("'הפזמון השני עמוס מדי': only Chorus 2 is rewritten; every
   assert.ok(report.verification.checkedLockedNotes > 0, "locked notes were actually checked");
   assert.equal(report.blockedByLock.length, 0, "the plan's own locks never block its own scopes");
   assert.ok(report.regenerated.length > 0 && report.regenerated.every((s) => s.sectionName === "Chorus 2" && s.startBar === 13 && s.endBar === 16));
-  assert.ok(report.requested.some((s) => s.instrument === "ensemble"), "a section-wide edit covers the ensemble's transitions in that section too");
+  // Brain B-01: there is no `ensemble` instrument any more (it was a piano
+  // nobody planned); a section-wide edit covers the section's own keys part.
+  assert.ok(report.requested.some((s) => s.instrument === "keys"), "a section-wide edit covers the keys part of that section too");
   assert.deepEqual(report.changed.sections, ["Chorus 2"]);
   assert.deepEqual(report.preserved.sections, ["Verse 1", "Chorus 1", "Verse 2", "Bridge", "Final Chorus"]);
   assert.ok(report.replacedNotes > 0, "fresh material entered the chorus");
@@ -155,8 +159,8 @@ test("'הפזמון השני עמוס מדי': only Chorus 2 is rewritten; every
   assert.ok(result.plan.provenance.parentIds.includes("arr-1"));
   assert.equal(result.plan.globalPlan?.sectionTargets.find((s) => s.sectionName === "Chorus 2")?.density! <
     previous.plan.globalPlan!.sectionTargets.find((s) => s.sectionName === "Chorus 2")!.density, true, "the new plan is thinner in Chorus 2");
-  // The palette lists keys but the brain composed none: said, not hidden.
-  assert.deepEqual(report.warnings, ["No track of this arrangement plays keys; those parts of the edit had nothing to act on."]);
+  // Brain B-01: the keys family plays (it used to be LEAD with a null task), so nothing is unmatched.
+  assert.deepEqual(report.warnings, []);
 });
 
 test("'keep the drums, regenerate the bass': the drum track is the same bytes; the bass is fresh, playable and re-sealed", () => {
@@ -175,7 +179,7 @@ test("'keep the drums, regenerate the bass': the drum track is the same bytes; t
   assert.equal(drums, drumsBefore, "the locked track is the very same object");
   assert.equal(JSON.stringify(drums), JSON.stringify(drumsBefore), "and therefore byte-identical, evidence included");
   assert.deepEqual(report.changed.instruments, ["bass"]);
-  assert.deepEqual(report.preserved.instruments, ["drums", "ensemble", "strings"]);
+  assert.deepEqual(report.preserved.instruments, ["drums", "keys", "strings"]);
   assert.ok(bass.notes.length > 0 && bass.notes.every((n) => !isPrevious(n)), "no old bass note survived");
   assert.equal(bass.id, bassBefore.id, "a regenerated part keeps its track row");
   assert.equal(bass.version, bassBefore.version + 1);
@@ -183,14 +187,14 @@ test("'keep the drums, regenerate the bass': the drum track is the same bytes; t
   assert.notEqual(bass.performanceEvidence?.performedMaterialSha256, bassBefore.performanceEvidence?.performedMaterialSha256);
   assert.equal(bass.performanceEvidence?.playability.checkedNotes, bass.notes.length);
   assert.equal(report.locksHonoured, true);
-  assert.deepEqual(report.unmatchedFamilies, ["keys"]);
-  assert.match(report.warnings.join(" "), /No track of this arrangement plays keys/);
-  assert.equal(report.keptNotes, drums.notes.length + result.trackModels.filter((t) => t.instrument === "strings" || t.instrument === "ensemble").reduce((s, t) => s + t.notes.length, 0));
+  assert.deepEqual(report.unmatchedFamilies, []);
+  assert.deepEqual(report.warnings, []);
+  assert.equal(report.keptNotes, drums.notes.length + result.trackModels.filter((t) => t.instrument === "strings" || t.instrument === "keys").reduce((s, t) => s + t.notes.length, 0));
 
   const words = describeRegeneration(report, { version: 2 });
   assert.match(words, /Applied "keep the drums, regenerate the bass" → arrangement v2 \(from v1\)/);
   assert.match(words, /Regenerated bass in/);
-  assert.match(words, /drums, ensemble, strings untouched/);
+  assert.match(words, /drums, keys, strings untouched/);
   assert.match(words, /Locks verified: \d+ locked note\(s\) byte-identical/);
   assert.match(words, /3 candidates ranked/);
   assert.match(words, /The brief shaped the planners/);
