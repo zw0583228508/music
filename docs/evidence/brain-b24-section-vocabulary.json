@@ -1,0 +1,134 @@
+{
+  "stream": "B-24",
+  "title": "the section name a producer types",
+  "recordedAt": "2026-09-11",
+  "baseSha": "2df2872",
+  "claim": "Section function is decided from the section's name. The vocabulary was English only, so a Hebrew-named song was planned as neutral sections. B-24 makes one shared vocabulary that speaks Hebrew and stops three writers from hashing the name.",
+  "invariant": {
+    "suite": "artifacts/api-server/src/lib/invariants/sectionNaming.property.test.ts",
+    "seeds": 20,
+    "hebrew": {
+      "before": {
+        "seedsPassing": 0,
+        "sectionFunctionsChanged": 99,
+        "seedsLosingClimaxLayer": 19,
+        "violationCodes": {
+          "function_changed": 99,
+          "families_changed": 31,
+          "roles_changed": 62,
+          "task_count_changed": 31,
+          "notes_changed": 95,
+          "transition_changed": 55,
+          "climax_layer_changed": 19
+        }
+      },
+      "after": {
+        "seedsPassing": 0,
+        "sectionFunctionsChanged": 0,
+        "seedsLosingClimaxLayer": 0,
+        "violationCodes": {
+          "notes_changed": 65
+        }
+      },
+      "reading": "The treatment half is closed: identical functions, families, roles, climax layer, task counts and transition devices. Only note counts still move, and their cause is isolated below."
+    },
+    "unnamed": {
+      "before": {
+        "seedsPassing": 0,
+        "sectionFunctionsChanged": 99,
+        "seedsLosingClimaxLayer": 19
+      },
+      "after": {
+        "seedsPassing": 0,
+        "sectionFunctionsChanged": 99,
+        "seedsLosingClimaxLayer": 19
+      },
+      "reading": "Unchanged on purpose. 'Section 3' states nothing and neutral is the honest answer. What it measures is that section function is derived from the name only: no planner can hear form. Recorded, unassigned."
+    },
+    "ownerShapeFixture": {
+      "sections": 8,
+      "treatmentDifferencesAfterHebrewRename": 6,
+      "allOfCode": "notes_changed",
+      "climaxLayer": "true -> true",
+      "reading": "A Hebrew rename of an eight-section song changes nothing about its treatment; the six differences are all seeded note counts."
+    },
+    "controls": {
+      "positive": "renaming the chorus 'Part B' changes its treatment and the check reports it (function_changed) - the comparison has sensitivity",
+      "null": "the English twin compared with itself shows no drift"
+    }
+  },
+  "changes": [
+    {
+      "file": "artifacts/api-server/src/lib/sectionNames.ts",
+      "what": "the only vocabulary: an ordered table per section function, English and Hebrew in one entry, containment traps documented (pre-chorus before chorus, פרה-פזמון before פזמון, breakdown before break)"
+    },
+    {
+      "file": "artifacts/api-server/src/lib/globalArrangementPlanner.ts:92",
+      "what": "classifySection delegates to it; decision order unchanged"
+    },
+    {
+      "file": "artifacts/api-server/src/lib/copilotInterpreter.ts:46",
+      "what": "recognised 'פזמון' in the command and then searched for an English 'chorus' in the project's section names, so a Hebrew instruction about a Hebrew-named song matched nothing; both sides now ask the same vocabulary"
+    },
+    {
+      "file": "artifacts/api-server/src/lib/songMusicalMap.ts:745",
+      "what": "the climax name prior reads the vocabulary; MUSICAL_MAP_VERSION 2.2 -> 2.3 so stored maps of Hebrew-named songs are re-derived"
+    },
+    {
+      "file": "artifacts/api-server/src/lib/groovePlan.ts:452",
+      "what": "which fill is played was hash01(sectionName:bar); now the section's function, occurrence and start bar"
+    },
+    {
+      "file": "artifacts/api-server/src/lib/performanceEngine.ts:515,559",
+      "what": "timing and velocity jitter were seeded from note.id, and ids carry the section name; now seeded from family, role, onset and pitch"
+    },
+    {
+      "file": "artifacts/api-server/src/lib/performanceEngine.ts:209",
+      "what": "clampPolyphony grouped onsets by whole milliseconds and then compared held notes against the rounded value, so a 30.1 ms overlap read as legal against a 30 ms tolerance; it now judges against the real start of the earliest note in the group"
+    }
+  ],
+  "intendedEnglishChanges": [
+    {
+      "name": "Pre Chorus",
+      "from": "chorus",
+      "to": "prechorus",
+      "why": "the old pattern was pre-?chorus, which does not match a space"
+    },
+    {
+      "name": "Pre Hook",
+      "from": "chorus",
+      "to": "prechorus",
+      "why": "the old pattern was pre-?hook, which does not match a space"
+    }
+  ],
+  "englishParity": "every other English name in a 32-name list classifies exactly as the pre-B-24 regexes, which the test keeps verbatim as its reference implementation",
+  "goldenFixture": {
+    "repinned": true,
+    "noteCountsUnchanged": {
+      "pop-full": [
+        921,
+        938,
+        1304
+      ]
+    },
+    "why": "only performed timing and velocity moved; the cause is appended to recordedAt in referencePartComposer.golden.test.ts"
+  },
+  "handoffs": [
+    {
+      "to": "B-21",
+      "file": "artifacts/api-server/src/lib/partComposer.ts:135",
+      "finding": "seedFor seeds every part from `part-<sectionName>-<instrument>-<role>` and from musicalMap.inputsDigestSha256, which hashes model.sections with their names. Renaming a section changes the composition seed twice over. One change - identify a part by its position in the form, seed from a digest of the musical content rather than the staleness digest - closes the remaining notes_changed and B-12b defect 7 (duplicate section names -> duplicate note ids)."
+    },
+    {
+      "to": "unassigned",
+      "file": "artifacts/api-server/src/lib/arrangementArc.ts:56",
+      "finding": "FAMILY_ALIASES is English only and briefCompiler parses free-text instrumentation, so a Hebrew brief naming פסנתר or כינור would not resolve to a family. Same class of defect, but nobody has measured it: no invariant, no failing run. Recorded rather than fixed on the strength of the analogy."
+    }
+  ],
+  "honestLimits": [
+    "No human has judged an arrangement because of this stream. It changes which treatment a Hebrew-named song receives, not whether that treatment is good.",
+    "The owner's own song is unaffected in its planning: its sections carry English names from the analysis. What did change for it, as for every song, are the performance jitter values and the fill choices.",
+    "The unnamed variant stays at 0/20 and keeps its todo. It is a capability gap (inferring section function from the music), not a classifier bug.",
+    "The Hebrew vocabulary was chosen deliberately narrow. עלייה was considered and dropped as too common a word to be safe on free text; מעבר reading as an interlude is a judgement, not a measurement."
+  ]
+}

@@ -717,7 +717,8 @@ export type MusicalMapBarSpan = {
  * already present on the model.
  */
 export type SongModelMusicalMap = {
-  version: "2.2";
+  /** "2.3" since B-24: the climax name prior reads the shared section vocabulary. */
+  version: "2.3";
   /** ISO timestamp the map was derived. */
   derivedAt: string;
   /** SHA-256 over the canonical evidence this map was derived from. */

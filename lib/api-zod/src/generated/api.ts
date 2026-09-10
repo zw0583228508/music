@@ -4226,7 +4226,7 @@ export const GetProjectSongModelResponse = zod.object({
 })
 }),
   "musicalMap": zod.object({
-  "version": zod.enum(['2.2']),
+  "version": zod.enum(['2.3']),
   "derivedAt": zod.coerce.date(),
   "inputsDigestSha256": zod.string().regex(getProjectSongModelResponseMusicalMapInputsDigestSha256RegExp),
   "harmony": zod.object({
@@ -6516,7 +6516,7 @@ export const CorrectProjectSongModelResponse = zod.object({
 })
 }),
   "musicalMap": zod.object({
-  "version": zod.enum(['2.2']),
+  "version": zod.enum(['2.3']),
   "derivedAt": zod.coerce.date(),
   "inputsDigestSha256": zod.string().regex(correctProjectSongModelResponseMusicalMapInputsDigestSha256RegExp),
   "harmony": zod.object({

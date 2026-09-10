@@ -1,4 +1,5 @@
 import { RunCopilotResponse } from "@workspace/api-zod";
+import { classifySectionName, textRefersToSectionFunction } from "./sectionNames";
 
 const ALLOWED_OPERATION_TYPES = new Set([
   "SET_SECTION_ENERGY",
@@ -48,17 +49,14 @@ function affectedSectionsFor(command: string, scope: CopilotScope, proposed: str
   const allowed = new Set(scope.sectionNames);
   const matches = proposed.filter((section) => allowed.has(section));
   if (matches.length) return [...new Set(matches)];
+  // B-24: one vocabulary (`sectionNames.ts`) for both sides of the question.
+  // This used to recognise "פזמון" in the command and then look for a section
+  // whose *name* contained the English "chorus", so a Hebrew instruction about
+  // a Hebrew-named song matched nothing at all.
   const affected: string[] = [];
-  if (command.includes("bridge") || command.includes("גשר")) {
-    const section = scope.sectionNames.find((name) => name.toLowerCase().includes("bridge"));
-    if (section) affected.push(section);
-  }
-  if (command.includes("chorus") || command.includes("פזמון")) {
-    const section = scope.sectionNames.find((name) => name.toLowerCase().includes("chorus"));
-    if (section) affected.push(section);
-  }
-  if (command.includes("verse") || command.includes("בית")) {
-    const section = scope.sectionNames.find((name) => name.toLowerCase().includes("verse"));
+  for (const fn of ["bridge", "chorus", "verse"] as const) {
+    if (!textRefersToSectionFunction(command, fn)) continue;
+    const section = scope.sectionNames.find((name) => classifySectionName(name) === fn);
     if (section) affected.push(section);
   }
   return [...new Set(affected)];

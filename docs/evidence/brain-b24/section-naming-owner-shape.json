@@ -1,0 +1,313 @@
+{
+  "invariant": "section-naming-owner-shape",
+  "driftCount": 6,
+  "drift": [
+    {
+      "code": "notes_changed",
+      "sectionName": "#1 Intro / פתיחה",
+      "detail": "{\"bass\":5,\"keys\":61} -> {\"bass\":5,\"keys\":62}"
+    },
+    {
+      "code": "notes_changed",
+      "sectionName": "#2 Verse / בית",
+      "detail": "{\"drums\":3,\"bass\":10,\"keys\":230} -> {\"drums\":3,\"bass\":9,\"keys\":229}"
+    },
+    {
+      "code": "notes_changed",
+      "sectionName": "#3 Chorus 1 / פזמון 1",
+      "detail": "{\"drums\":224,\"bass\":36,\"keys\":60} -> {\"drums\":224,\"bass\":37,\"keys\":68}"
+    },
+    {
+      "code": "notes_changed",
+      "sectionName": "#4 Solo / סולו",
+      "detail": "{\"drums\":30,\"bass\":6,\"keys\":38} -> {\"drums\":30,\"bass\":6,\"keys\":37,\"strings\":4}"
+    },
+    {
+      "code": "notes_changed",
+      "sectionName": "#5 Chorus 2 / פזמון 2",
+      "detail": "{\"drums\":111,\"bass\":19,\"keys\":28,\"strings\":32} -> {\"drums\":113,\"bass\":16,\"keys\":29,\"strings\":28}"
+    },
+    {
+      "code": "notes_changed",
+      "sectionName": "#6 Outro / סיום",
+      "detail": "{\"drums\":14,\"bass\":3,\"keys\":21} -> {\"drums\":12,\"bass\":3,\"keys\":21}"
+    }
+  ],
+  "english": [
+    {
+      "index": 0,
+      "name": "Intro",
+      "function": "intro",
+      "activeFamilies": [
+        "bass",
+        "keys"
+      ],
+      "roles": {
+        "keys": "RHYTHMIC_HARMONY",
+        "bass": "BASS"
+      },
+      "climaxLayer": false,
+      "taskCount": 2,
+      "notesPerFamily": {
+        "bass": 5,
+        "keys": 61
+      },
+      "transitionDevicesIn": 0
+    },
+    {
+      "index": 1,
+      "name": "Verse",
+      "function": "verse",
+      "activeFamilies": [
+        "bass",
+        "keys"
+      ],
+      "roles": {
+        "keys": "RHYTHMIC_HARMONY",
+        "bass": "BASS"
+      },
+      "climaxLayer": false,
+      "taskCount": 2,
+      "notesPerFamily": {
+        "drums": 3,
+        "bass": 10,
+        "keys": 230
+      },
+      "transitionDevicesIn": 0
+    },
+    {
+      "index": 2,
+      "name": "Chorus 1",
+      "function": "chorus",
+      "activeFamilies": [
+        "bass",
+        "drums",
+        "keys"
+      ],
+      "roles": {
+        "keys": "HARMONIC_BED",
+        "bass": "BASS",
+        "drums": "GROOVE"
+      },
+      "climaxLayer": false,
+      "taskCount": 3,
+      "notesPerFamily": {
+        "drums": 224,
+        "bass": 36,
+        "keys": 60
+      },
+      "transitionDevicesIn": 2
+    },
+    {
+      "index": 3,
+      "name": "Solo",
+      "function": "instrumental",
+      "activeFamilies": [
+        "bass",
+        "drums",
+        "keys"
+      ],
+      "roles": {
+        "keys": "LEAD",
+        "bass": "BASS",
+        "drums": "GROOVE"
+      },
+      "climaxLayer": false,
+      "taskCount": 3,
+      "notesPerFamily": {
+        "drums": 30,
+        "bass": 6,
+        "keys": 38
+      },
+      "transitionDevicesIn": 0
+    },
+    {
+      "index": 4,
+      "name": "Chorus 2",
+      "function": "chorus",
+      "activeFamilies": [
+        "bass",
+        "drums",
+        "keys",
+        "strings"
+      ],
+      "roles": {
+        "keys": "HARMONIC_BED",
+        "bass": "BASS",
+        "drums": "CLIMAX_LAYER",
+        "strings": "CLIMAX_LAYER"
+      },
+      "climaxLayer": true,
+      "taskCount": 4,
+      "notesPerFamily": {
+        "drums": 111,
+        "bass": 19,
+        "keys": 28,
+        "strings": 32
+      },
+      "transitionDevicesIn": 2
+    },
+    {
+      "index": 5,
+      "name": "Outro",
+      "function": "outro",
+      "activeFamilies": [
+        "bass",
+        "drums",
+        "keys"
+      ],
+      "roles": {
+        "keys": "RHYTHMIC_HARMONY",
+        "bass": "BASS",
+        "drums": "GROOVE"
+      },
+      "climaxLayer": false,
+      "taskCount": 3,
+      "notesPerFamily": {
+        "drums": 14,
+        "bass": 3,
+        "keys": 21
+      },
+      "transitionDevicesIn": 1
+    }
+  ],
+  "hebrew": [
+    {
+      "index": 0,
+      "name": "פתיחה",
+      "function": "intro",
+      "activeFamilies": [
+        "bass",
+        "keys"
+      ],
+      "roles": {
+        "keys": "RHYTHMIC_HARMONY",
+        "bass": "BASS"
+      },
+      "climaxLayer": false,
+      "taskCount": 2,
+      "notesPerFamily": {
+        "bass": 5,
+        "keys": 62
+      },
+      "transitionDevicesIn": 0
+    },
+    {
+      "index": 1,
+      "name": "בית",
+      "function": "verse",
+      "activeFamilies": [
+        "bass",
+        "keys"
+      ],
+      "roles": {
+        "keys": "RHYTHMIC_HARMONY",
+        "bass": "BASS"
+      },
+      "climaxLayer": false,
+      "taskCount": 2,
+      "notesPerFamily": {
+        "drums": 3,
+        "bass": 9,
+        "keys": 229
+      },
+      "transitionDevicesIn": 0
+    },
+    {
+      "index": 2,
+      "name": "פזמון 1",
+      "function": "chorus",
+      "activeFamilies": [
+        "bass",
+        "drums",
+        "keys"
+      ],
+      "roles": {
+        "keys": "HARMONIC_BED",
+        "bass": "BASS",
+        "drums": "GROOVE"
+      },
+      "climaxLayer": false,
+      "taskCount": 3,
+      "notesPerFamily": {
+        "drums": 224,
+        "bass": 37,
+        "keys": 68
+      },
+      "transitionDevicesIn": 2
+    },
+    {
+      "index": 3,
+      "name": "סולו",
+      "function": "instrumental",
+      "activeFamilies": [
+        "bass",
+        "drums",
+        "keys"
+      ],
+      "roles": {
+        "keys": "LEAD",
+        "bass": "BASS",
+        "drums": "GROOVE"
+      },
+      "climaxLayer": false,
+      "taskCount": 3,
+      "notesPerFamily": {
+        "drums": 30,
+        "bass": 6,
+        "keys": 37,
+        "strings": 4
+      },
+      "transitionDevicesIn": 0
+    },
+    {
+      "index": 4,
+      "name": "פזמון 2",
+      "function": "chorus",
+      "activeFamilies": [
+        "bass",
+        "drums",
+        "keys",
+        "strings"
+      ],
+      "roles": {
+        "keys": "HARMONIC_BED",
+        "bass": "BASS",
+        "drums": "CLIMAX_LAYER",
+        "strings": "CLIMAX_LAYER"
+      },
+      "climaxLayer": true,
+      "taskCount": 4,
+      "notesPerFamily": {
+        "drums": 113,
+        "bass": 16,
+        "keys": 29,
+        "strings": 28
+      },
+      "transitionDevicesIn": 2
+    },
+    {
+      "index": 5,
+      "name": "סיום",
+      "function": "outro",
+      "activeFamilies": [
+        "bass",
+        "drums",
+        "keys"
+      ],
+      "roles": {
+        "keys": "RHYTHMIC_HARMONY",
+        "bass": "BASS",
+        "drums": "GROOVE"
+      },
+      "climaxLayer": false,
+      "taskCount": 3,
+      "notesPerFamily": {
+        "drums": 12,
+        "bass": 3,
+        "keys": 21
+      },
+      "transitionDevicesIn": 1
+    }
+  ]
+}

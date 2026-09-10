@@ -2868,7 +2868,7 @@ components:
         inputs are absent.
       required: [version, derivedAt, inputsDigestSha256, harmony, melody, rhythm, energy, structure, styleFingerprint, vocals, arrangementSpace]
       properties:
-        version: { type: string, enum: ["2.2"] }
+        version: { type: string, enum: ["2.3"] }
         derivedAt: { type: string, format: date-time }
         inputsDigestSha256: { type: string, pattern: "^[a-f0-9]{64}$" }
         harmony:

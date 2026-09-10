@@ -211,8 +211,16 @@ export function clampPolyphony(notes: MusicalNote[], ceiling: number): number {
   const onsets = [...new Set(notes.map((note) => Math.round(note.start * 1000)))].sort((a, b) => a - b);
   let released = 0;
   for (const onsetMs of onsets) {
-    const onset = onsetMs / 1000;
     const startingHere = notes.filter((note) => Math.round(note.start * 1000) === onsetMs).length;
+    // B-24: onsets are *grouped* by whole milliseconds, but the note that
+    // sounds must be judged against the real start of the earliest note in the
+    // group. Judging against the rounded value let a note that starts at
+    // 3.6955 s be treated as starting at 3.696 s, and a held note ending
+    // 30.1 ms into it read as legal against a 30 ms tolerance — a half-
+    // millisecond of rounding deciding whether two notes sound together.
+    const onset = Math.min(
+      ...notes.filter((note) => Math.round(note.start * 1000) === onsetMs).map((note) => note.start),
+    );
     const held = notes
       .map((note, index) => ({ note, index }))
       .filter(({ note }) => Math.round(note.start * 1000) < onsetMs && note.start + note.duration > onset + LEGATO_TOLERANCE_SECONDS)
@@ -507,7 +515,12 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
     if (warp.offsetSeconds > 0) reasons.push(`ritardando +${(warp.offsetSeconds * 1000).toFixed(0)}ms`);
     // Tighter on strong beats; looser off the grid.
     const jitterScale = profile.jitterMs * (0.4 + (1 - weight) * 0.9) * microJitterScale;
-    const jitter = seededUnit(seed, `${anchor.id}:t`) * jitterScale;
+    // B-24: seeded from where the note is and who plays it, never from the
+    // note's id — ids are built as `part-<sectionName>-<instrument>-<role>`
+    // (`partComposer.ts:233`), so seeding on them made a player's micro-timing
+    // depend on the *label* the producer typed for the section. Renaming
+    // "Chorus" to "פזמון" moved every onset.
+    const jitter = seededUnit(seed, `${family}:${role}:t:${anchor.start.toFixed(4)}`) * jitterScale;
     offsetMs += jitter;
     reasons.push(`metrical weight ${weight.toFixed(2)}`);
     offsets.push(offsetMs);
@@ -550,7 +563,8 @@ export function applyPerformance(input: PerformanceInput): PerformedTrack {
         if (note.pitch === 42 || note.pitch === 44 || note.pitch === 46) velocity *= 0.72;
         if (note.pitch === 36 || note.pitch === 38) velocity *= 1.08;
       }
-      velocity += seededUnit(seed, `${note.id}:v`) * 4;
+      // B-24: same rule as the timing jitter — the music, not the label.
+      velocity += seededUnit(seed, `${family}:v:${note.start.toFixed(4)}:${note.pitch}`) * 4;
       const performedVelocity = midi(velocity);
 
       // --- length -----------------------------------------------------

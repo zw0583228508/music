@@ -26,8 +26,14 @@ import type {
   SongModelMusicalMap,
 } from "@workspace/db";
 import { createCanonicalTimeline } from "./canonicalTimeline";
+import { classifySectionName } from "./sectionNames";
 
-export const MUSICAL_MAP_VERSION = "2.2" as const;
+/**
+ * "2.3" since B-24: the climax name prior reads the shared section vocabulary
+ * instead of an English regular expression, so a stored 2.2 map derived from a
+ * Hebrew-named song scored its chorus differently and must be re-derived.
+ */
+export const MUSICAL_MAP_VERSION = "2.3" as const;
 
 type Timeline = ReturnType<typeof createCanonicalTimeline>;
 
@@ -742,7 +748,15 @@ function deriveStructure(
     const midBar = Math.round((section.startBar + section.endBar) / 2);
     const energy = energyAt(midBar);
     const lateness = totalBars > 1 ? section.startBar / totalBars : 0;
-    const named = /chorus|hook|drop|climax|final/i.test(section.name) ? 0.15 : 0;
+    // B-24: the name prior is asked of the shared vocabulary, so a section
+    // called פזמון counts as a chorus exactly as one called Chorus does. It
+    // was an English regular expression, and a Hebrew-named song lost this
+    // 0.15 on every section — one of the two causes the naming-invariance
+    // invariant measured. "climax" and "final" are not section functions, so
+    // they stay as words here, with their Hebrew equivalents.
+    const looksLikeChorus = classifySectionName(section.name) === "chorus";
+    const looksLikeAPeak = /climax|final|שיא|סופי|אחרון/i.test(section.name);
+    const named = looksLikeChorus || looksLikeAPeak ? 0.15 : 0;
     const tension = tensionAt(midBar, geometry) * 0.15;
     const melodicPeak = highPitch !== null && (model.melody ?? []).some((note) => {
       const { start, end } = geometry.barBounds(midBar);

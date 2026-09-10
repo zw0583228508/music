@@ -1,0 +1,664 @@
+{
+  "invariant": "section-naming-hebrew",
+  "description": "Section treatment (function, active families, roles, climax layer, task count, notes per family, transition devices) of a hebrew twin equals the English-named original.",
+  "seeds": [
+    501,
+    502,
+    503,
+    504,
+    505,
+    506,
+    507,
+    508,
+    509,
+    510,
+    511,
+    512,
+    513,
+    514,
+    515,
+    516,
+    517,
+    518,
+    519,
+    520
+  ],
+  "passed": 0,
+  "failed": 20,
+  "status": "known_failure",
+  "knownFailure": "0/20 seeds pass, but only on note *counts* — and the treatment half is closed. After B-24 the Hebrew twin gets the identical section functions (99 changed → 0), families, roles, climax layer, task counts and transition devices; the only violation code left is `notes_changed` (70 → 65 as B-24 removed the groove-fill and performance-jitter name hashes). The remaining cause is isolated and belongs to the writers, not to the classifier: `partComposer.seedFor` (`partComposer.ts:135`) seeds every part from `part-<sectionName>-<instrument>-<role>` **and** from `musicalMap.inputsDigestSha256`, which hashes `model.sections` — names included. Renaming a section therefore changes the composition seed twice over, and B-12b already measured that the seed changes pitch content (defect 6). The fix is one change that also closes B-12b defect 7 (duplicate section names → duplicate note ids): identify a part by its position in the form (section index) rather than by its label, and seed from a digest of the musical content rather than from the staleness digest. Owner: B-21 (it owns `partComposer.ts`). Recorded by B-24.",
+  "violationCodes": {
+    "notes_changed": 65
+  },
+  "outcomes": [
+    {
+      "seed": 501,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Chorus 1 / פזמון 1",
+          "detail": "{\"bass\":15,\"keys\":102,\"strings\":11} -> {\"bass\":15,\"keys\":101,\"strings\":11}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Verse 2 / בית 2",
+          "detail": "{\"drums\":3,\"bass\":9,\"keys\":26,\"strings\":16} -> {\"drums\":3,\"bass\":9,\"keys\":27,\"strings\":16}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#7 Chorus 3 / פזמון 3",
+          "detail": "{\"drums\":111,\"bass\":17,\"keys\":70,\"strings\":69} -> {\"drums\":111,\"bass\":17,\"keys\":71,\"strings\":68}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#8 Outro / סיום",
+          "detail": "{\"keys\":21,\"strings\":7} -> {\"keys\":20,\"strings\":8}"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,chorus,verse,chorus,bridge,chorus,outro",
+        "functionsEnglish": "intro,verse,chorus,verse,chorus,bridge,chorus,outro",
+        "functionsTwin": "intro,verse,chorus,verse,chorus,bridge,chorus,outro",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 22,
+        "tasksTwin": 22
+      }
+    },
+    {
+      "seed": 502,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#7 Chorus 2 / פזמון 2",
+          "detail": "{\"keys\":27,\"pads\":36} -> {\"keys\":25,\"pads\":36}"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,prechorus,chorus,verse,prechorus,chorus,outro",
+        "functionsEnglish": "intro,verse,prechorus,chorus,verse,prechorus,chorus,outro",
+        "functionsTwin": "intro,verse,prechorus,chorus,verse,prechorus,chorus,outro",
+        "climaxLayerEnglish": false,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 16,
+        "tasksTwin": 16
+      }
+    },
+    {
+      "seed": 503,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse 1 / בית 1",
+          "detail": "{\"drums\":250,\"bass\":20,\"keys\":545,\"brass\":32} -> {\"drums\":250,\"bass\":20,\"keys\":544,\"brass\":32}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Verse 2 / בית 2",
+          "detail": "{\"drums\":183,\"bass\":19,\"keys\":505,\"brass\":28} -> {\"drums\":183,\"bass\":19,\"keys\":506,\"brass\":28}"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus,verse,chorus",
+        "functionsEnglish": "verse,chorus,verse,chorus",
+        "functionsTwin": "verse,chorus,verse,chorus",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 18,
+        "tasksTwin": 18
+      }
+    },
+    {
+      "seed": 504,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Verse 2 / בית 2",
+          "detail": "{\"drums\":65,\"bass\":11} -> {\"drums\":65,\"bass\":11,\"brass\":1}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#5 Chorus 2 / פזמון 2",
+          "detail": "{\"drums\":98,\"bass\":7,\"brass\":8} -> {\"drums\":98,\"bass\":9,\"brass\":7}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#6 Bridge / גשר",
+          "detail": "{\"drums\":79,\"bass\":13,\"brass\":1} -> {\"drums\":79,\"bass\":11,\"brass\":1}"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,chorus,verse,chorus,bridge,chorus,outro",
+        "functionsEnglish": "intro,verse,chorus,verse,chorus,bridge,chorus,outro",
+        "functionsTwin": "intro,verse,chorus,verse,chorus,bridge,chorus,outro",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 19,
+        "tasksTwin": 19
+      }
+    },
+    {
+      "seed": 505,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse / בית",
+          "detail": "{\"drums\":3,\"bass\":11,\"keys\":27,\"pads\":30,\"strings\":7} -> {\"drums\":3,\"bass\":13,\"keys\":27,\"pads\":30,\"strings\":7}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Chorus 1 / פזמון 1",
+          "detail": "{\"drums\":66,\"bass\":9,\"percussion\":15,\"guitar\":28,\"keys\":34,\"pads\":21,\"strings\":7} -> {\"drums\":66,\"bass\":11,\"percussion\":15,\"keys\":35,\"guitar\":28,\"pads\":21,\"strings\":7}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Solo / סולו",
+          "detail": "{\"drums\":57,\"bass\":8,\"percussion\":12,\"guitar\":38,\"keys\":50,\"pads\":41,\"strings\":8} -> {\"drums\":57,\"bass\":8,\"percussion\":12,\"keys\":49,\"guitar\":38,\"pads\":41,\"strings\":8}"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,chorus,instrumental,chorus,outro",
+        "functionsEnglish": "intro,verse,chorus,instrumental,chorus,outro",
+        "functionsTwin": "intro,verse,chorus,instrumental,chorus,outro",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 34,
+        "tasksTwin": 34
+      }
+    },
+    {
+      "seed": 506,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse / בית",
+          "detail": "{\"bass\":8,\"keys\":27} -> {\"bass\":7,\"keys\":27}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Chorus / פזמון",
+          "detail": "{\"drums\":90,\"bass\":20,\"keys\":33} -> {\"drums\":90,\"bass\":20,\"keys\":37}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Outro / סיום",
+          "detail": "{\"bass\":7,\"keys\":22} -> {\"bass\":7,\"keys\":20}"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,chorus,outro",
+        "functionsEnglish": "intro,verse,chorus,outro",
+        "functionsTwin": "intro,verse,chorus,outro",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 9,
+        "tasksTwin": 9
+      }
+    },
+    {
+      "seed": 507,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Verse 2 / בית 2",
+          "detail": "{\"drums\":3,\"bass\":4,\"keys\":27} -> {\"drums\":3,\"bass\":4,\"keys\":29}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Chorus 2 / פזמון 2",
+          "detail": "{\"drums\":41,\"bass\":4,\"keys\":32} -> {\"drums\":41,\"bass\":4,\"keys\":30}"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus,verse,chorus",
+        "functionsEnglish": "verse,chorus,verse,chorus",
+        "functionsTwin": "verse,chorus,verse,chorus",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 10,
+        "tasksTwin": 10
+      }
+    },
+    {
+      "seed": 508,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse 2 / בית 2",
+          "detail": "{\"drums\":3,\"bass\":8,\"keys\":16} -> {\"drums\":3,\"bass\":8,\"keys\":17}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Chorus 1 / פזמון 1",
+          "detail": "{\"drums\":69,\"bass\":18,\"keys\":27} -> {\"drums\":69,\"bass\":16,\"keys\":26}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Verse 3 / בית 3",
+          "detail": "{\"drums\":3,\"bass\":11,\"keys\":25} -> {\"drums\":3,\"bass\":11,\"keys\":26}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#5 Chorus 2 / פזמון 2",
+          "detail": "{\"drums\":168,\"bass\":35,\"keys\":60,\"brass\":32} -> {\"drums\":168,\"bass\":34,\"keys\":59,\"brass\":32}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#6 Bridge / גשר",
+          "detail": "{\"drums\":3,\"bass\":20,\"keys\":146} -> {\"drums\":3,\"bass\":19,\"keys\":146}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#7 Chorus 3 / פזמון 3",
+          "detail": "{\"drums\":115,\"bass\":21,\"keys\":34,\"brass\":1} -> {\"drums\":115,\"bass\":20,\"keys\":32,\"brass\":1}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#8 Chorus 4 / פזמון 4",
+          "detail": "{\"drums\":87,\"bass\":17,\"keys\":40,\"brass\":3} -> {\"drums\":88,\"bass\":18,\"keys\":43,\"brass\":3}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#9 Outro / סיום",
+          "detail": "{\"bass\":3,\"keys\":10} -> {\"bass\":3,\"keys\":9}"
+        }
+      ],
+      "notes": {
+        "form": "verse,verse,chorus,verse,chorus,bridge,chorus,chorus,outro",
+        "functionsEnglish": "verse,verse,chorus,verse,chorus,bridge,chorus,chorus,outro",
+        "functionsTwin": "verse,verse,chorus,verse,chorus,bridge,chorus,chorus,outro",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 25,
+        "tasksTwin": 25
+      }
+    },
+    {
+      "seed": 509,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse / בית",
+          "detail": "{\"drums\":3,\"bass\":9,\"guitar\":22,\"keys\":27} -> {\"drums\":3,\"bass\":10,\"guitar\":22,\"keys\":28}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus / פזמון",
+          "detail": "{\"drums\":69,\"bass\":8,\"percussion\":14,\"guitar\":21,\"keys\":24} -> {\"drums\":69,\"bass\":8,\"percussion\":14,\"guitar\":21,\"keys\":23}"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus",
+        "functionsEnglish": "verse,chorus",
+        "functionsTwin": "verse,chorus",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 8,
+        "tasksTwin": 8
+      }
+    },
+    {
+      "seed": 510,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus / פזמון",
+          "detail": "{\"drums\":110,\"bass\":23,\"keys\":40} -> {\"drums\":110,\"bass\":25,\"keys\":40}"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus",
+        "functionsEnglish": "verse,chorus",
+        "functionsTwin": "verse,chorus",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 5,
+        "tasksTwin": 5
+      }
+    },
+    {
+      "seed": 511,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse 1 / בית 1",
+          "detail": "{\"drums\":61,\"bass\":8,\"guitar\":70,\"keys\":70} -> {\"drums\":61,\"bass\":8,\"guitar\":69,\"keys\":70}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus 1 / פזמון 1",
+          "detail": "{\"drums\":25,\"bass\":7,\"percussion\":4,\"guitar\":8,\"keys\":8,\"brass\":8} -> {\"drums\":25,\"bass\":8,\"percussion\":4,\"guitar\":9,\"keys\":8,\"brass\":8}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Verse 2 / בית 2",
+          "detail": "{\"drums\":127,\"bass\":19,\"guitar\":214,\"keys\":244,\"winds\":3} -> {\"drums\":127,\"bass\":21,\"guitar\":213,\"keys\":244,\"brass\":1}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Chorus 2 / פזמון 2",
+          "detail": "{\"drums\":32,\"bass\":7,\"percussion\":6,\"guitar\":11,\"keys\":11,\"winds\":6,\"brass\":3} -> {\"drums\":32,\"bass\":6,\"percussion\":6,\"guitar\":12,\"keys\":11,\"winds\":9,\"brass\":2}"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus,verse,chorus",
+        "functionsEnglish": "verse,chorus,verse,chorus",
+        "functionsTwin": "verse,chorus,verse,chorus",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 21,
+        "tasksTwin": 21
+      }
+    },
+    {
+      "seed": 512,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse / בית",
+          "detail": "{\"drums\":3,\"bass\":8,\"keys\":29} -> {\"drums\":3,\"bass\":8,\"keys\":27}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus / פזמון",
+          "detail": "{\"drums\":151,\"bass\":34,\"keys\":64} -> {\"drums\":151,\"bass\":35,\"keys\":66}"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus",
+        "functionsEnglish": "verse,chorus",
+        "functionsTwin": "verse,chorus",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 5,
+        "tasksTwin": 5
+      }
+    },
+    {
+      "seed": 513,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse 1 / בית 1",
+          "detail": "{\"drums\":3,\"bass\":11,\"guitar\":27,\"keys\":27} -> {\"drums\":3,\"bass\":11,\"guitar\":27,\"keys\":28}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus 1 / פזמון 1",
+          "detail": "{\"drums\":48,\"bass\":17,\"guitar\":17,\"keys\":18,\"brass\":8} -> {\"drums\":48,\"bass\":17,\"guitar\":16,\"keys\":17,\"brass\":8}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Verse 2 / בית 2",
+          "detail": "{\"drums\":3,\"bass\":7,\"guitar\":20,\"keys\":25,\"winds\":3,\"brass\":1} -> {\"drums\":3,\"bass\":7,\"guitar\":20,\"keys\":25,\"winds\":3}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Chorus 2 / פזמון 2",
+          "detail": "{\"drums\":92,\"bass\":29,\"guitar\":27,\"keys\":27,\"winds\":24,\"brass\":4} -> {\"drums\":92,\"bass\":29,\"guitar\":27,\"keys\":27,\"winds\":24,\"brass\":5}"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus,verse,chorus",
+        "functionsEnglish": "verse,chorus,verse,chorus",
+        "functionsTwin": "verse,chorus,verse,chorus",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 17,
+        "tasksTwin": 17
+      }
+    },
+    {
+      "seed": 514,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse / בית",
+          "detail": "{\"drums\":48,\"brass\":3} -> {\"drums\":48,\"brass\":4}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus / פזמון",
+          "detail": "{\"drums\":143,\"brass\":9} -> {\"drums\":143,\"brass\":8}"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus",
+        "functionsEnglish": "verse,chorus",
+        "functionsTwin": "verse,chorus",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 4,
+        "tasksTwin": 4
+      }
+    },
+    {
+      "seed": 515,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Intro / פתיחה",
+          "detail": "{\"bass\":7,\"keys\":66} -> {\"bass\":7,\"keys\":65}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse / בית",
+          "detail": "{\"bass\":11,\"keys\":180} -> {\"bass\":10,\"keys\":181}"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,chorus,outro",
+        "functionsEnglish": "intro,verse,chorus,outro",
+        "functionsTwin": "intro,verse,chorus,outro",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 11,
+        "tasksTwin": 11
+      }
+    },
+    {
+      "seed": 516,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse 1 / בית 1",
+          "detail": "{\"drums\":3,\"bass\":10,\"pads\":27} -> {\"drums\":3,\"bass\":9,\"pads\":27}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Chorus 1 / פזמון 1",
+          "detail": "{\"drums\":144,\"bass\":18,\"pads\":66} -> {\"drums\":144,\"bass\":19,\"pads\":66}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#6 Bridge / גשר",
+          "detail": "{\"drums\":3,\"bass\":10,\"pads\":39} -> {\"drums\":3,\"bass\":11,\"pads\":39}"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,chorus,verse,chorus,bridge,chorus,outro",
+        "functionsEnglish": "intro,verse,chorus,verse,chorus,bridge,chorus,outro",
+        "functionsTwin": "intro,verse,chorus,verse,chorus,bridge,chorus,outro",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 20,
+        "tasksTwin": 20
+      }
+    },
+    {
+      "seed": 517,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse / בית",
+          "detail": "{\"guitar\":52,\"winds\":3} -> {\"guitar\":51,\"winds\":3}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus 1 / פזמון 1",
+          "detail": "{\"guitar\":25,\"winds\":3} -> {\"guitar\":26,\"winds\":3}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Bridge / גשר",
+          "detail": "{\"guitar\":213,\"winds\":3} -> {\"guitar\":213,\"winds\":7}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Chorus 2 / פזמון 2",
+          "detail": "{\"guitar\":51,\"winds\":52} -> {\"guitar\":51,\"winds\":48}"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus,bridge,chorus",
+        "functionsEnglish": "verse,chorus,bridge,chorus",
+        "functionsTwin": "verse,chorus,bridge,chorus",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 8,
+        "tasksTwin": 8
+      }
+    },
+    {
+      "seed": 518,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Intro / פתיחה",
+          "detail": "{\"drums\":73,\"bass\":12,\"keys\":83} -> {\"drums\":73,\"bass\":11,\"keys\":83}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse / בית",
+          "detail": "{\"drums\":142,\"bass\":22,\"keys\":165} -> {\"drums\":142,\"bass\":22,\"keys\":164}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Chorus 1 / פזמון 1",
+          "detail": "{\"drums\":88,\"bass\":11,\"percussion\":16,\"keys\":19} -> {\"drums\":88,\"bass\":10,\"percussion\":16,\"keys\":20}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Solo / סולו",
+          "detail": "{\"drums\":135,\"bass\":16,\"percussion\":24,\"keys\":126,\"winds\":3} -> {\"drums\":135,\"bass\":15,\"percussion\":24,\"keys\":126,\"winds\":3}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#5 Chorus 2 / פזמון 2",
+          "detail": "{\"drums\":183,\"bass\":26,\"percussion\":32,\"keys\":28,\"winds\":25} -> {\"drums\":183,\"bass\":29,\"percussion\":32,\"keys\":28,\"winds\":25}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#6 Outro / סיום",
+          "detail": "{\"drums\":13,\"bass\":5,\"percussion\":4,\"keys\":42} -> {\"drums\":13,\"bass\":4,\"percussion\":4,\"keys\":42}"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,chorus,instrumental,chorus,outro",
+        "functionsEnglish": "intro,verse,chorus,instrumental,chorus,outro",
+        "functionsTwin": "intro,verse,chorus,instrumental,chorus,outro",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 23,
+        "tasksTwin": 23
+      }
+    },
+    {
+      "seed": 519,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse / בית",
+          "detail": "{\"bass\":11,\"keys\":39} -> {\"drums\":3,\"bass\":13,\"keys\":39}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus / פזמון",
+          "detail": "{\"drums\":45,\"bass\":8,\"keys\":14} -> {\"drums\":42,\"bass\":7,\"keys\":14}"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus",
+        "functionsEnglish": "verse,chorus",
+        "functionsTwin": "verse,chorus",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 5,
+        "tasksTwin": 5
+      }
+    },
+    {
+      "seed": 520,
+      "passed": false,
+      "violations": [
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Intro / פתיחה",
+          "detail": "{\"drums\":73,\"bass\":7,\"keys\":107} -> {\"drums\":73,\"bass\":8,\"keys\":108}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse 1 / בית 1",
+          "detail": "{\"drums\":123,\"bass\":11,\"keys\":217} -> {\"drums\":123,\"bass\":10,\"keys\":216}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Pre-Chorus 1 / פרה-פזמון 1",
+          "detail": "{\"drums\":144,\"bass\":11,\"guitar\":54,\"keys\":54,\"strings\":8} -> {\"drums\":145,\"bass\":12,\"keys\":52,\"guitar\":54,\"strings\":7}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Chorus 1 / פזמון 1",
+          "detail": "{\"drums\":88,\"bass\":18,\"guitar\":27,\"keys\":26,\"strings\":11} -> {\"drums\":88,\"bass\":17,\"keys\":28,\"guitar\":27,\"strings\":12}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#5 Verse 2 / בית 2",
+          "detail": "{\"drums\":72,\"bass\":8,\"keys\":16} -> {\"drums\":72,\"bass\":7,\"keys\":15,\"strings\":1}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#6 Pre-Chorus 2 / פרה-פזמון 2",
+          "detail": "{\"drums\":80,\"bass\":8,\"guitar\":25,\"keys\":28,\"strings\":12} -> {\"drums\":80,\"bass\":6,\"keys\":29,\"guitar\":25,\"strings\":11}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#7 Chorus 2 / פזמון 2",
+          "detail": "{\"drums\":57,\"bass\":9,\"guitar\":17,\"keys\":16,\"brass\":2,\"strings\":18} -> {\"drums\":57,\"bass\":11,\"keys\":16,\"guitar\":17,\"brass\":2,\"strings\":18}"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,prechorus,chorus,verse,prechorus,chorus,outro",
+        "functionsEnglish": "intro,verse,prechorus,chorus,verse,prechorus,chorus,outro",
+        "functionsTwin": "intro,verse,prechorus,chorus,verse,prechorus,chorus,outro",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": true,
+        "tasksEnglish": 35,
+        "tasksTwin": 35
+      }
+    }
+  ],
+  "extra": {
+    "seedsLosingClimaxLayer": 0,
+    "sectionFunctionsChanged": 0
+  }
+}

@@ -109,7 +109,8 @@ test("the reference part composer produces byte-identical parts to the golden fi
   const current = currentGolden();
   if (process.env.B00_WRITE_GOLDEN === "1") {
     writeFileSync(FIXTURE, `${JSON.stringify({
-      recordedAt: "composer digests and shipped-note digests recorded on main 39aad30 before the B-00 composer split, " +
+      recordedAt: "RE-PINNED at the B-24 merge: the performance engine's timing and velocity jitter are seeded from the music (family, role, onset, pitch) instead of from the note id, because ids are built as part-<sectionName>-<instrument>-<role> and a producer renaming a section moved every onset; and clampPolyphony now judges a held note against the real start of the earliest note in an onset group instead of that group's value rounded to whole milliseconds, which had let a 30.1 ms overlap pass a 30 ms tolerance. Note counts are unchanged for every case (921 / 938 / 1304 on pop-full); only the performed timing and velocity moved, so every digest moved with them. " +
+        "composer digests and shipped-note digests recorded on main 39aad30 before the B-00 composer split, " +
         "orchestration noteCount re-pinned after B-00 D1; RE-PINNED at the B-01 merge (planners v1.1: arc targets, sung-by-default, " +
         "mix/ensemble excluded, operators) - every part request changed, so every digest changed; the split itself was verified " +
         "byte-identical at 39aad30 -> B-00. RE-PINNED again at the B-03 merge: instrument definitions now come from " +

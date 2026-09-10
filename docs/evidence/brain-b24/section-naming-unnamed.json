@@ -1,0 +1,1415 @@
+{
+  "invariant": "section-naming-unnamed",
+  "description": "Section treatment (function, active families, roles, climax layer, task count, notes per family, transition devices) of a unnamed twin equals the English-named original.",
+  "seeds": [
+    501,
+    502,
+    503,
+    504,
+    505,
+    506,
+    507,
+    508,
+    509,
+    510,
+    511,
+    512,
+    513,
+    514,
+    515,
+    516,
+    517,
+    518,
+    519,
+    520
+  ],
+  "passed": 0,
+  "failed": 20,
+  "status": "known_failure",
+  "knownFailure": "0/20 seeds pass, and this one is not a bug in the classifier. A section called \"Section 3\" states nothing, so it is classified 'neutral' — the honest answer — and a neutral section is arranged differently from a chorus. What this measures is that section function in this platform is derived from the *name* only: the planner cannot hear the form. The musical map already carries the evidence that would settle it (structure.subphrases, repetition, climaxCandidates, the energy curve) and no planner reads it for this. Closing it means inferring section function from the music and stating the inference's confidence — a capability, not a patch. Recorded by B-24; unassigned.",
+  "violationCodes": {
+    "function_changed": 99,
+    "families_changed": 31,
+    "roles_changed": 62,
+    "task_count_changed": 31,
+    "notes_changed": 97,
+    "transition_changed": 55,
+    "climax_layer_changed": 19
+  },
+  "outcomes": [
+    {
+      "seed": 501,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "intro -> neutral"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "families_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "keys,strings -> bass,keys,strings"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "{\"strings\":\"COUNTER_MELODY\",\"keys\":\"RHYTHMIC_HARMONY\"} -> {\"strings\":\"COUNTER_MELODY\",\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\"}"
+        },
+        {
+          "code": "task_count_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "2 -> 3"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "{\"keys\":51,\"strings\":7} -> {\"bass\":17,\"keys\":67,\"strings\":7}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "{\"bass\":15,\"keys\":102,\"strings\":11} -> {\"bass\":14,\"keys\":96,\"strings\":11}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#4 Verse 2 / Section 4",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Verse 2 / Section 4",
+          "detail": "{\"drums\":3,\"bass\":9,\"keys\":26,\"strings\":16} -> {\"bass\":8,\"keys\":26,\"strings\":16}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#5 Chorus 2 / Section 5",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "families_changed",
+          "sectionName": "#5 Chorus 2 / Section 5",
+          "detail": "bass,drums,keys,strings -> bass,keys,strings"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,chorus,verse,chorus,bridge,chorus,outro",
+        "functionsEnglish": "intro,verse,chorus,verse,chorus,bridge,chorus,outro",
+        "functionsTwin": "neutral,neutral,neutral,neutral,neutral,neutral,neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 22,
+        "tasksTwin": 24
+      }
+    },
+    {
+      "seed": 502,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "intro -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "{\"keys\":9,\"pads\":6} -> {\"keys\":25,\"pads\":9}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "{\"keys\":\"RHYTHMIC_HARMONY\",\"pads\":\"PAD\"} -> {\"keys\":\"HARMONIC_BED\",\"pads\":\"PAD\"}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "{\"keys\":51,\"pads\":51} -> {\"keys\":50,\"pads\":51}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#3 Pre-Chorus 1 / Section 3",
+          "detail": "prechorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#3 Pre-Chorus 1 / Section 3",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"pads\":\"PAD\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"pads\":\"PAD\"}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Pre-Chorus 1 / Section 3",
+          "detail": "{\"keys\":129,\"pads\":92} -> {\"keys\":41,\"pads\":39}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#4 Chorus 1 / Section 4",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#4 Chorus 1 / Section 4",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"pads\":\"PAD\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"pads\":\"PAD\"}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Chorus 1 / Section 4",
+          "detail": "{\"keys\":17,\"pads\":19} -> {\"keys\":13,\"pads\":15}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#5 Verse 2 / Section 5",
+          "detail": "verse -> neutral"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,prechorus,chorus,verse,prechorus,chorus,outro",
+        "functionsEnglish": "intro,verse,prechorus,chorus,verse,prechorus,chorus,outro",
+        "functionsTwin": "neutral,neutral,neutral,neutral,neutral,neutral,neutral,neutral",
+        "climaxLayerEnglish": false,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 16,
+        "tasksTwin": 16
+      }
+    },
+    {
+      "seed": 503,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Verse 1 / Section 1",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse 1 / Section 1",
+          "detail": "{\"drums\":250,\"bass\":20,\"keys\":545,\"brass\":32} -> {\"drums\":229,\"bass\":19,\"keys\":540,\"brass\":32}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "{\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"keys\":\"HARMONIC_BED\",\"brass\":\"CALL_RESPONSE\",\"percussion\":\"ACCENT\"} -> {\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"keys\":\"RHYTHMIC_HARMONY\",\"brass\":\"CALL_RESPONSE\",\"percussion\":\"FILL\"}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "{\"drums\":32,\"bass\":8,\"percussion\":4,\"keys\":21,\"brass\":8} -> {\"drums\":46,\"bass\":4,\"percussion\":7,\"keys\":115,\"brass\":8}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "4 -> 3 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "{\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"keys\":\"RHYTHMIC_HARMONY\",\"brass\":\"CALL_RESPONSE\"} -> {\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"keys\":\"HARMONIC_BED\",\"brass\":\"CALL_RESPONSE\"}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "{\"drums\":183,\"bass\":19,\"keys\":505,\"brass\":28} -> {\"drums\":249,\"bass\":19,\"keys\":128,\"brass\":64}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "3 -> 2 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#4 Chorus 2 / Section 4",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#4 Chorus 2 / Section 4",
+          "detail": "{\"bass\":\"BASS\",\"drums\":\"CLIMAX_LAYER\",\"keys\":\"HARMONIC_BED\",\"brass\":\"CLIMAX_LAYER\",\"percussion\":\"ACCENT\"} -> {\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"keys\":\"RHYTHMIC_HARMONY\",\"brass\":\"CALL_RESPONSE\",\"percussion\":\"ACCENT\"}"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus,verse,chorus",
+        "functionsEnglish": "verse,chorus,verse,chorus",
+        "functionsTwin": "neutral,neutral,neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 18,
+        "tasksTwin": 18
+      }
+    },
+    {
+      "seed": 504,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "intro -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "{\"drums\":30,\"bass\":7} -> {\"drums\":45,\"bass\":7}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "families_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "bass,drums -> bass,brass,drums"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "{\"bass\":\"BASS\",\"drums\":\"GROOVE\"} -> {\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"brass\":\"CALL_RESPONSE\"}"
+        },
+        {
+          "code": "task_count_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "2 -> 3"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "{\"drums\":87,\"bass\":19} -> {\"drums\":123,\"bass\":9,\"brass\":16}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "{\"drums\":184,\"bass\":16,\"brass\":32} -> {\"drums\":202,\"bass\":16,\"brass\":64}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "4 -> 2 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#4 Verse 2 / Section 4",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Verse 2 / Section 4",
+          "detail": "{\"drums\":65,\"bass\":11} -> {\"drums\":67,\"bass\":12}"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,chorus,verse,chorus,bridge,chorus,outro",
+        "functionsEnglish": "intro,verse,chorus,verse,chorus,bridge,chorus,outro",
+        "functionsTwin": "neutral,neutral,neutral,neutral,neutral,neutral,neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 19,
+        "tasksTwin": 19
+      }
+    },
+    {
+      "seed": 505,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "intro -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "{\"bass\":7,\"keys\":12,\"pads\":6,\"strings\":8} -> {\"bass\":6,\"keys\":69,\"pads\":12,\"strings\":8}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "families_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "bass,keys,pads,strings -> bass,drums,guitar,keys,pads,percussion,strings"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "{\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"strings\":\"COUNTER_MELODY\",\"pads\":\"PAD\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"strings\":\"COUNTER_MELODY\",\"pads\":\"PAD\",\"guitar\":\"RHYTHMIC_HARMONY\",\"percussion\":\"FILL\",\"drums\":\"GROOVE\"}"
+        },
+        {
+          "code": "task_count_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "4 -> 7"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "{\"drums\":3,\"bass\":11,\"keys\":27,\"pads\":30,\"strings\":7} -> {\"drums\":88,\"bass\":11,\"percussion\":16,\"keys\":136,\"guitar\":135,\"pads\":24,\"strings\":7}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "2 -> 3 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "{\"drums\":66,\"bass\":9,\"percussion\":15,\"guitar\":28,\"keys\":34,\"pads\":21,\"strings\":7} -> {\"drums\":67,\"bass\":9,\"percussion\":15,\"keys\":35,\"guitar\":29,\"pads\":21,\"strings\":7}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "5 -> 3 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#4 Solo / Section 4",
+          "detail": "instrumental -> neutral"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,chorus,instrumental,chorus,outro",
+        "functionsEnglish": "intro,verse,chorus,instrumental,chorus,outro",
+        "functionsTwin": "neutral,neutral,neutral,neutral,neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 34,
+        "tasksTwin": 40
+      }
+    },
+    {
+      "seed": 506,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "intro -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "{\"bass\":6,\"keys\":15} -> {\"drums\":3,\"bass\":6,\"keys\":75}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "families_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "bass,keys -> bass,drums,keys"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "{\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\"}"
+        },
+        {
+          "code": "task_count_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "2 -> 3"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "{\"bass\":8,\"keys\":27} -> {\"drums\":91,\"bass\":20,\"keys\":159}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "2 -> 3 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#3 Chorus / Section 3",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#3 Chorus / Section 3",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"CLIMAX_LAYER\"} -> {\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"GROOVE\"}"
+        },
+        {
+          "code": "climax_layer_changed",
+          "sectionName": "#3 Chorus / Section 3",
+          "detail": "true -> false"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Chorus / Section 3",
+          "detail": "{\"drums\":90,\"bass\":20,\"keys\":33} -> {\"drums\":84,\"bass\":19,\"keys\":33}"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,chorus,outro",
+        "functionsEnglish": "intro,verse,chorus,outro",
+        "functionsTwin": "neutral,neutral,neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 9,
+        "tasksTwin": 11
+      }
+    },
+    {
+      "seed": 507,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Verse 1 / Section 1",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse 1 / Section 1",
+          "detail": "{\"drums\":3,\"bass\":8,\"keys\":28} -> {\"drums\":3,\"bass\":7,\"keys\":182}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"GROOVE\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\"}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "{\"drums\":44,\"bass\":3,\"keys\":31} -> {\"drums\":44,\"bass\":3,\"keys\":238}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "5 -> 3 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "{\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\"} -> {\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\"}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "{\"drums\":3,\"bass\":4,\"keys\":27} -> {\"drums\":3,\"bass\":8,\"keys\":29}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#4 Chorus 2 / Section 4",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#4 Chorus 2 / Section 4",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"CLIMAX_LAYER\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\"}"
+        },
+        {
+          "code": "climax_layer_changed",
+          "sectionName": "#4 Chorus 2 / Section 4",
+          "detail": "true -> false"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus,verse,chorus",
+        "functionsEnglish": "verse,chorus,verse,chorus",
+        "functionsTwin": "neutral,neutral,neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 10,
+        "tasksTwin": 10
+      }
+    },
+    {
+      "seed": 508,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Verse 1 / Section 1",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse 1 / Section 1",
+          "detail": "{\"bass\":8,\"keys\":24} -> {\"bass\":8,\"keys\":138}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Verse 2 / Section 2",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse 2 / Section 2",
+          "detail": "{\"drums\":3,\"bass\":8,\"keys\":16} -> {\"drums\":3,\"bass\":8,\"keys\":18}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"GROOVE\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\"}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "{\"drums\":69,\"bass\":18,\"keys\":27} -> {\"drums\":80,\"bass\":18,\"keys\":177}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "4 -> 3 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#4 Verse 3 / Section 4",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Verse 3 / Section 4",
+          "detail": "{\"drums\":3,\"bass\":11,\"keys\":25} -> {\"bass\":11,\"keys\":146}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#4 Verse 3 / Section 4",
+          "detail": "3 -> 2 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#5 Chorus 2 / Section 5",
+          "detail": "chorus -> neutral"
+        }
+      ],
+      "notes": {
+        "form": "verse,verse,chorus,verse,chorus,bridge,chorus,chorus,outro",
+        "functionsEnglish": "verse,verse,chorus,verse,chorus,bridge,chorus,chorus,outro",
+        "functionsTwin": "neutral,neutral,neutral,neutral,neutral,neutral,neutral,neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 25,
+        "tasksTwin": 21
+      }
+    },
+    {
+      "seed": 509,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Verse / Section 1",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse / Section 1",
+          "detail": "{\"drums\":3,\"bass\":9,\"guitar\":22,\"keys\":27} -> {\"drums\":3,\"bass\":13,\"guitar\":136,\"keys\":137}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"guitar\":\"HARMONIC_BED\",\"percussion\":\"ACCENT\",\"drums\":\"CLIMAX_LAYER\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"guitar\":\"RHYTHMIC_HARMONY\",\"percussion\":\"ACCENT\",\"drums\":\"GROOVE\"}"
+        },
+        {
+          "code": "climax_layer_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "true -> false"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "{\"drums\":69,\"bass\":8,\"percussion\":14,\"guitar\":21,\"keys\":24} -> {\"drums\":69,\"bass\":7,\"percussion\":14,\"guitar\":65,\"keys\":64}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "4 -> 3 devices"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus",
+        "functionsEnglish": "verse,chorus",
+        "functionsTwin": "neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 8,
+        "tasksTwin": 8
+      }
+    },
+    {
+      "seed": 510,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Verse / Section 1",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse / Section 1",
+          "detail": "{\"drums\":3,\"bass\":8,\"keys\":27} -> {\"drums\":3,\"bass\":7,\"keys\":135}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"CLIMAX_LAYER\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\"}"
+        },
+        {
+          "code": "climax_layer_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "true -> false"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "{\"drums\":110,\"bass\":23,\"keys\":40} -> {\"drums\":110,\"bass\":24,\"keys\":226}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "5 -> 4 devices"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus",
+        "functionsEnglish": "verse,chorus",
+        "functionsTwin": "neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 5,
+        "tasksTwin": 5
+      }
+    },
+    {
+      "seed": 511,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Verse 1 / Section 1",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse 1 / Section 1",
+          "detail": "{\"drums\":61,\"bass\":8,\"guitar\":70,\"keys\":70} -> {\"drums\":51,\"bass\":8,\"guitar\":70,\"keys\":72}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"guitar\":\"HARMONIC_BED\",\"percussion\":\"ACCENT\",\"brass\":\"CALL_RESPONSE\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"guitar\":\"RHYTHMIC_HARMONY\",\"percussion\":\"FILL\",\"brass\":\"CALL_RESPONSE\"}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "{\"drums\":25,\"bass\":7,\"percussion\":4,\"guitar\":8,\"keys\":8,\"brass\":8} -> {\"drums\":31,\"bass\":3,\"percussion\":7,\"guitar\":59,\"keys\":57,\"brass\":8}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "4 -> 3 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "{\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"guitar\":\"RHYTHMIC_HARMONY\"} -> {\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"guitar\":\"HARMONIC_BED\"}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "{\"drums\":127,\"bass\":19,\"guitar\":214,\"keys\":244,\"winds\":3} -> {\"drums\":169,\"bass\":23,\"guitar\":48,\"keys\":54}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "3 -> 2 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#4 Chorus 2 / Section 4",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#4 Chorus 2 / Section 4",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"CLIMAX_LAYER\",\"guitar\":\"HARMONIC_BED\",\"percussion\":\"ACCENT\",\"brass\":\"CLIMAX_LAYER\",\"winds\":\"CLIMAX_LAYER\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"guitar\":\"RHYTHMIC_HARMONY\",\"percussion\":\"ACCENT\",\"brass\":\"CALL_RESPONSE\",\"winds\":\"CALL_RESPONSE\"}"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus,verse,chorus",
+        "functionsEnglish": "verse,chorus,verse,chorus",
+        "functionsTwin": "neutral,neutral,neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 21,
+        "tasksTwin": 21
+      }
+    },
+    {
+      "seed": 512,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Verse / Section 1",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse / Section 1",
+          "detail": "{\"drums\":3,\"bass\":8,\"keys\":29} -> {\"drums\":3,\"bass\":12,\"keys\":126}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"CLIMAX_LAYER\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\"}"
+        },
+        {
+          "code": "climax_layer_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "true -> false"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "{\"drums\":151,\"bass\":34,\"keys\":64} -> {\"drums\":151,\"bass\":35,\"keys\":295}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "4 -> 3 devices"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus",
+        "functionsEnglish": "verse,chorus",
+        "functionsTwin": "neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 5,
+        "tasksTwin": 5
+      }
+    },
+    {
+      "seed": 513,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Verse 1 / Section 1",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse 1 / Section 1",
+          "detail": "{\"drums\":3,\"bass\":11,\"guitar\":27,\"keys\":27} -> {\"drums\":2,\"bass\":10,\"guitar\":163,\"keys\":163}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"guitar\":\"HARMONIC_BED\",\"drums\":\"GROOVE\",\"brass\":\"CALL_RESPONSE\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"guitar\":\"RHYTHMIC_HARMONY\",\"drums\":\"GROOVE\",\"brass\":\"CALL_RESPONSE\"}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "{\"drums\":48,\"bass\":17,\"guitar\":17,\"keys\":18,\"brass\":8} -> {\"drums\":52,\"bass\":5,\"guitar\":78,\"keys\":78,\"brass\":8}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "2 -> 1 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "families_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "bass,guitar,keys -> bass,brass,drums,guitar,keys"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "{\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"guitar\":\"RHYTHMIC_HARMONY\"} -> {\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"guitar\":\"HARMONIC_BED\",\"drums\":\"GROOVE\",\"brass\":\"CALL_RESPONSE\"}"
+        },
+        {
+          "code": "task_count_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "3 -> 5"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "{\"drums\":3,\"bass\":7,\"guitar\":20,\"keys\":25,\"winds\":3,\"brass\":1} -> {\"drums\":103,\"bass\":11,\"guitar\":33,\"keys\":30,\"brass\":12}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#3 Verse 2 / Section 3",
+          "detail": "2 -> 1 devices"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus,verse,chorus",
+        "functionsEnglish": "verse,chorus,verse,chorus",
+        "functionsTwin": "neutral,neutral,neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 17,
+        "tasksTwin": 19
+      }
+    },
+    {
+      "seed": 514,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Verse / Section 1",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse / Section 1",
+          "detail": "{\"drums\":48,\"brass\":3} -> {\"drums\":47,\"brass\":3}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "{\"drums\":\"CLIMAX_LAYER\",\"brass\":\"CLIMAX_LAYER\"} -> {\"drums\":\"GROOVE\",\"brass\":\"ACCENT\"}"
+        },
+        {
+          "code": "climax_layer_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "true -> false"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "{\"drums\":143,\"brass\":9} -> {\"drums\":143,\"brass\":3}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "1 -> 2 devices"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus",
+        "functionsEnglish": "verse,chorus",
+        "functionsTwin": "neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 4,
+        "tasksTwin": 4
+      }
+    },
+    {
+      "seed": 515,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "intro -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "{\"bass\":7,\"keys\":66} -> {\"drums\":2,\"bass\":7,\"keys\":56}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "families_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "bass,keys -> bass,drums,keys"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "{\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\"}"
+        },
+        {
+          "code": "task_count_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "2 -> 3"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "{\"bass\":11,\"keys\":180} -> {\"drums\":108,\"bass\":12,\"keys\":192}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#3 Chorus / Section 3",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "families_changed",
+          "sectionName": "#3 Chorus / Section 3",
+          "detail": "bass,drums,keys,percussion -> bass,drums,keys"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#3 Chorus / Section 3",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"CLIMAX_LAYER\",\"percussion\":\"ACCENT\"} -> {\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"GROOVE\"}"
+        },
+        {
+          "code": "climax_layer_changed",
+          "sectionName": "#3 Chorus / Section 3",
+          "detail": "true -> false"
+        },
+        {
+          "code": "task_count_changed",
+          "sectionName": "#3 Chorus / Section 3",
+          "detail": "4 -> 3"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,chorus,outro",
+        "functionsEnglish": "intro,verse,chorus,outro",
+        "functionsTwin": "neutral,neutral,neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 11,
+        "tasksTwin": 12
+      }
+    },
+    {
+      "seed": 516,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "intro -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "{\"bass\":3,\"pads\":6} -> {\"drums\":2,\"bass\":4,\"pads\":9}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "families_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "bass,pads -> bass,drums,pads"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "{\"bass\":\"BASS\",\"pads\":\"PAD\"} -> {\"bass\":\"BASS\",\"pads\":\"PAD\",\"drums\":\"GROOVE\"}"
+        },
+        {
+          "code": "task_count_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "2 -> 3"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "{\"drums\":3,\"bass\":10,\"pads\":27} -> {\"drums\":72,\"bass\":8,\"pads\":33}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "0 -> 1 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "{\"drums\":144,\"bass\":18,\"pads\":66} -> {\"drums\":145,\"bass\":18,\"pads\":66}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "2 -> 1 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#4 Verse 2 / Section 4",
+          "detail": "verse -> neutral"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,chorus,verse,chorus,bridge,chorus,outro",
+        "functionsEnglish": "intro,verse,chorus,verse,chorus,bridge,chorus,outro",
+        "functionsTwin": "neutral,neutral,neutral,neutral,neutral,neutral,neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 20,
+        "tasksTwin": 23
+      }
+    },
+    {
+      "seed": 517,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Verse / Section 1",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse / Section 1",
+          "detail": "{\"guitar\":52,\"winds\":3} -> {\"guitar\":429,\"winds\":3}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "{\"guitar\":25,\"winds\":3} -> {\"guitar\":24,\"winds\":3}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#2 Chorus 1 / Section 2",
+          "detail": "2 -> 1 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#3 Bridge / Section 3",
+          "detail": "bridge -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Bridge / Section 3",
+          "detail": "{\"guitar\":213,\"winds\":3} -> {\"guitar\":214,\"winds\":3}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#4 Chorus 2 / Section 4",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#4 Chorus 2 / Section 4",
+          "detail": "{\"guitar\":\"HARMONIC_BED\",\"winds\":\"CLIMAX_LAYER\"} -> {\"guitar\":\"RHYTHMIC_HARMONY\",\"winds\":\"ACCENT\"}"
+        },
+        {
+          "code": "climax_layer_changed",
+          "sectionName": "#4 Chorus 2 / Section 4",
+          "detail": "true -> false"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Chorus 2 / Section 4",
+          "detail": "{\"guitar\":51,\"winds\":52} -> {\"guitar\":302,\"winds\":3}"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus,bridge,chorus",
+        "functionsEnglish": "verse,chorus,bridge,chorus",
+        "functionsTwin": "neutral,neutral,neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 8,
+        "tasksTwin": 8
+      }
+    },
+    {
+      "seed": 518,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "intro -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "{\"drums\":73,\"bass\":12,\"keys\":83} -> {\"drums\":74,\"bass\":12,\"keys\":82}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "{\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\"} -> {\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"GROOVE\"}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse / Section 2",
+          "detail": "{\"drums\":142,\"bass\":22,\"keys\":165} -> {\"drums\":127,\"bass\":21,\"keys\":29}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"percussion\":\"ACCENT\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"percussion\":\"FILL\"}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "{\"drums\":88,\"bass\":11,\"percussion\":16,\"keys\":19} -> {\"drums\":57,\"bass\":8,\"percussion\":16,\"keys\":102}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#3 Chorus 1 / Section 3",
+          "detail": "5 -> 3 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#4 Solo / Section 4",
+          "detail": "instrumental -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#4 Solo / Section 4",
+          "detail": "{\"keys\":\"LEAD\",\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"percussion\":\"ACCENT\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"percussion\":\"FILL\"}"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#4 Solo / Section 4",
+          "detail": "{\"drums\":135,\"bass\":16,\"percussion\":24,\"keys\":126,\"winds\":3} -> {\"drums\":128,\"bass\":22,\"percussion\":32,\"keys\":219}"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,chorus,instrumental,chorus,outro",
+        "functionsEnglish": "intro,verse,chorus,instrumental,chorus,outro",
+        "functionsTwin": "neutral,neutral,neutral,neutral,neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 23,
+        "tasksTwin": 23
+      }
+    },
+    {
+      "seed": 519,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Verse / Section 1",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Verse / Section 1",
+          "detail": "{\"bass\":11,\"keys\":39} -> {\"drums\":3,\"bass\":9,\"keys\":267}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"CLIMAX_LAYER\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\"}"
+        },
+        {
+          "code": "climax_layer_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "true -> false"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "{\"drums\":45,\"bass\":8,\"keys\":14} -> {\"drums\":42,\"bass\":7,\"keys\":87}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#2 Chorus / Section 2",
+          "detail": "5 -> 4 devices"
+        }
+      ],
+      "notes": {
+        "form": "verse,chorus",
+        "functionsEnglish": "verse,chorus",
+        "functionsTwin": "neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 5,
+        "tasksTwin": 5
+      }
+    },
+    {
+      "seed": 520,
+      "passed": false,
+      "violations": [
+        {
+          "code": "function_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "intro -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#1 Intro / Section 1",
+          "detail": "{\"drums\":73,\"bass\":7,\"keys\":107} -> {\"drums\":74,\"bass\":8,\"keys\":113,\"guitar\":1,\"strings\":1}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "verse -> neutral"
+        },
+        {
+          "code": "families_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "bass,drums,keys -> bass,drums,guitar,keys,strings"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "{\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"guitar\":\"RHYTHMIC_HARMONY\",\"strings\":\"COUNTER_MELODY\"}"
+        },
+        {
+          "code": "task_count_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "3 -> 5"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#2 Verse 1 / Section 2",
+          "detail": "{\"drums\":123,\"bass\":11,\"keys\":217} -> {\"drums\":118,\"bass\":9,\"keys\":263,\"guitar\":218,\"strings\":11}"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#3 Pre-Chorus 1 / Section 3",
+          "detail": "prechorus -> neutral"
+        },
+        {
+          "code": "notes_changed",
+          "sectionName": "#3 Pre-Chorus 1 / Section 3",
+          "detail": "{\"drums\":144,\"bass\":11,\"guitar\":54,\"keys\":54,\"strings\":8} -> {\"drums\":125,\"bass\":12,\"keys\":30,\"guitar\":30,\"strings\":7}"
+        },
+        {
+          "code": "transition_changed",
+          "sectionName": "#3 Pre-Chorus 1 / Section 3",
+          "detail": "2 -> 3 devices"
+        },
+        {
+          "code": "function_changed",
+          "sectionName": "#4 Chorus 1 / Section 4",
+          "detail": "chorus -> neutral"
+        },
+        {
+          "code": "roles_changed",
+          "sectionName": "#4 Chorus 1 / Section 4",
+          "detail": "{\"keys\":\"HARMONIC_BED\",\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"guitar\":\"HARMONIC_BED\",\"strings\":\"COUNTER_MELODY\"} -> {\"keys\":\"RHYTHMIC_HARMONY\",\"bass\":\"BASS\",\"drums\":\"GROOVE\",\"guitar\":\"RHYTHMIC_HARMONY\",\"strings\":\"COUNTER_MELODY\"}"
+        }
+      ],
+      "notes": {
+        "form": "intro,verse,prechorus,chorus,verse,prechorus,chorus,outro",
+        "functionsEnglish": "intro,verse,prechorus,chorus,verse,prechorus,chorus,outro",
+        "functionsTwin": "neutral,neutral,neutral,neutral,neutral,neutral,neutral,neutral",
+        "climaxLayerEnglish": true,
+        "climaxLayerTwin": false,
+        "tasksEnglish": 35,
+        "tasksTwin": 33
+      }
+    }
+  ],
+  "extra": {
+    "seedsLosingClimaxLayer": 19,
+    "sectionFunctionsChanged": 99
+  }
+}

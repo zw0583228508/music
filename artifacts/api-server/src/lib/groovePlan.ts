@@ -449,7 +449,12 @@ function fillsFor(seed: GrooveSectionSeed, spec: MeterSpec, family: StyleFamily,
   const pick = (bar: number, intensity: number): GrooveFillKind => {
     const pool = vocabulary.value.filter((k) => (intensity >= 0.6 ? BIG_FILLS.has(k) : !BIG_FILLS.has(k)));
     const from = pool.length ? pool : vocabulary.value;
-    return from[Math.floor(hash01(`${seed.sectionName}:${bar}`) * from.length) % from.length];
+    // B-24: which fill is played is a property of *where you are in the form*,
+    // not of the label the producer typed. Hashing `sectionName` meant renaming
+    // "Chorus" to "פזמון" chose a different fill — the naming-invariance
+    // invariant's remaining `notes_changed` violations. The function, the
+    // occurrence and the bar span identify the section without its name.
+    return from[Math.floor(hash01(`${seed.function}:${seed.occurrenceIndex}:${seed.startBar}:${bar}`) * from.length) % from.length];
   };
   const place = (bar: number, kind: GrooveFillKind, lengthUnits: number, intensity: number, source: GrooveValueSource, reason: string) => {
     if (bar < seed.startBar || bar > seed.endBar) return;
