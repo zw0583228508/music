@@ -61,11 +61,17 @@ test("negative control: removing a track makes its planned sections silent, and 
   assert.ok(after > before, `the missing bass is reported (${before} -> ${after} silent bass sections)`);
 });
 
-test("the known defect, isolated: an instrumental-lead keys family in a sung section produces no task and no notes", () => {
-  // No vocals in the analysis, keys in the palette: the planner makes keys the instrumental lead
-  // in every non-instrumental section, and taskFor(LEAD) returns null there.
+test("the defect B-12 isolated is closed by B-01: keys is never the instrumental lead in a sung section, and no keys LEAD is silent", () => {
+  // Before B-01: no vocals in the analysis + keys in the palette made keys the instrumental lead in every
+  // non-instrumental section and taskFor(LEAD) returned null there. B-01 treats sung sections as sung by
+  // default and keeps the bed task for an accompaniment family.
   const { model } = generateSongModel(902, { stems: ["drums", "bass", "keys"], vocals: false, naming: "english" });
   const result = runBrain(model, { candidateCount: 1 });
+  const sungKeysLead = (result.plan.sectionPlan?.sections ?? []).filter((s) => s.leadRole === "instrument:keys" && s.function !== "instrumental");
+  assert.equal(sungKeysLead.length, 0, "keys is never LEAD in a sung section");
+  const silent = plannedButSilent(result.candidates[0], result, model);
+  assert.equal(silent.filter((p) => p.family === "keys" && p.role === "LEAD").length, 0, "no keys LEAD is silent");
+});
   const leadSections = (result.plan.sectionPlan?.sections ?? []).filter((s) => s.leadRole === "instrument:keys");
   assert.ok(leadSections.length > 0, "keys is the instrumental lead somewhere");
   const silent = plannedButSilent(result.candidates[0], result, model);

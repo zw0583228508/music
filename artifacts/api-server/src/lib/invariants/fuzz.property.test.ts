@@ -100,6 +100,7 @@ test("negative control: the sanity check catches NaN starts, out-of-range pitche
   track.notes[2] = { ...track.notes[2], id: track.notes[3].id };
   track.notes[4] = { ...track.notes[4], duration: 0 };
   broken.selected = null;
+  (broken as { selection?: unknown }).selection = { ...(broken as { selection?: object }).selection, reason: "" };
   const codes = new Set(checkNoteSanity(broken).map((v) => v.code));
   for (const code of ["bad_start", "bad_pitch", "duplicate_note_ids", "bad_duration", "nothing_selected"]) assert.ok(codes.has(code), `${code} is reported`);
   assert.deepEqual(checkNoteSanity(result), [], "the unbroken result is clean");

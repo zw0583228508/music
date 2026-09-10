@@ -59,7 +59,7 @@ test("controls: random pitches destroy the chord-tone share and drums-only destr
   const candidate = result.candidates[0];
   const before = chordToneShare(candidate.trackModels, model);
   const after = chordToneShare(randomPitches(candidate.trackModels, makeRng(1)), model);
-  assert.ok(before > 0.85, `the reference composer writes chord tones (${before.toFixed(2)})`);
+  assert.ok(before > 0.75, `the reference composer writes chord tones (${before.toFixed(2)})`); // 0.79 after B-01 (keys plays in every section; passing tones in the fuller beds)
   assert.ok(after < before - 0.3, `random pitches are mostly non-chord tones (${after.toFixed(2)})`);
   const coverage = plannedCoverage({ ...candidate, trackModels: drumsOnly(candidate.trackModels) }, result, model);
   assert.ok(coverage < plannedCoverage(candidate, result, model), "drums-only covers fewer planned parts");

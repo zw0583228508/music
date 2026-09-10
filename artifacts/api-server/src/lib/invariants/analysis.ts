@@ -636,7 +636,10 @@ export function checkNoteSanity(result: OrchestrationResult): Violation[] {
       for (const event of track.cc) if (!finite(event.time) || !finite(event.value)) violations.push({ code: "bad_cc", trackId: track.id, detail: `${candidate.candidateId}/${track.id}` });
     }
   }
-  if (result.candidates.length && !result.selected) violations.push({ code: "nothing_selected", detail: `${result.candidates.length} candidates, none selected` });
+  // B-00: a run may legitimately select nothing when every candidate failed the hard-rule gate - but then
+  // the selection must say so. A missing selection with no reason is the malformed case.
+  const reason = (result as { selection?: { reason?: string } }).selection?.reason;
+  if (result.candidates.length && !result.selected && !(typeof reason === "string" && reason.trim())) violations.push({ code: "nothing_selected", detail: `${result.candidates.length} candidates, none selected and no reason given` });
   return violations;
 }
 
