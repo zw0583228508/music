@@ -1636,7 +1636,7 @@ export async function runArrangementGeneration(jobId: string): Promise<void> {
         const providerGate = candidateStatusAfterProviderGate(candidateStatus, candidate.parameters);
         if (providerGate.status !== candidateStatus) {
           candidateStatus = providerGate.status;
-          evaluation = { ...evaluation, status: "rejected", error: providerGate.reason ?? evaluation.error };
+          evaluation = { ...evaluation, status: "provider_hard_rule_refused", error: providerGate.reason ?? evaluation.error };
         }
         const artifactParentIds = [planArtifactId, ...candidateParentIds];
         artifactRows.push({

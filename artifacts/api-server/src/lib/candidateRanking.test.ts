@@ -18,6 +18,7 @@ const supportedStatuses = {
   diversity_rejected: true,
   repair_not_improved: true,
   repair_scope_violated: true,
+  provider_hard_rule_refused: true,
 } satisfies Record<CandidateEvaluationStatus, true>;
 
 const musicCritic: CandidateEvaluation["musicCritic"] = {

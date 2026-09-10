@@ -4770,7 +4770,7 @@ components:
       properties:
         status:
           type: string
-          enum: [plan_received, rendering, render_succeeded, analyzing, evaluated, render_failed, analysis_failed, diversity_rejected, repair_not_improved, repair_scope_violated]
+          enum: [plan_received, rendering, render_succeeded, analyzing, evaluated, render_failed, analysis_failed, diversity_rejected, repair_not_improved, repair_scope_violated, provider_hard_rule_refused]
         providerScore: { type: number }
         renderArtifactIds:
           type: array
