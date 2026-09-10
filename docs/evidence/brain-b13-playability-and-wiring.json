@@ -1,0 +1,2851 @@
+{
+  "title": "Brain B-13 - one playability truth, one groove for every part: validator agreement, the perform -> repair cascade, and the wiring the shipped notes were missing",
+  "generatedAt": "2026-09-10T12:00:00.000Z",
+  "method": [
+    "measureB13(): the 24 B-12 seeds x 3 candidates through orchestrateArrangement (render false) with the provider contract, the constraint engine and the playability repair asked of every shipped track; the audit's Probe 4 controls; the nine synthetic benchmark cases and the owner's song fixture (PR-98 brief) with their composed notes captured through an injected composer that is the reference composer, so every composed -> shipped comparison is two stages of one run.",
+    "`before` is not re-derived here: it carries the numbers the R-1 musical review (round b) and the B-02 evidence measured on the base tree, each row naming its source.",
+    "Voices sounding together, chord gestures and melodic leaps are counted by `musicalConstraints` - the same predicates the contract validator and the repair now use."
+  ],
+  "before": {
+    "source": {
+      "r1b": "R-1 independent review, musical attack (round b), on origin/main 4c5d967; every figure below is from its Appendix B or the tables it cites.",
+      "b02": "docs/evidence/brain-b02-harmony-realisation.json (before capture at a751796).",
+      "b04": "docs/evidence/brain-b04-groove-and-transitions.json (this stream's base, 30041f5).",
+      "b04/b08": "docs/evidence/brain-b04-groove-and-transitions.json and brain-b08-benchmark-measure.json, plus the candidate reading in the R-1b review's section 1."
+    },
+    "ownerStringBed": {
+      "source": "r1b",
+      "composedNotes": 304,
+      "shippedNotes": 91,
+      "polyphonyReleases": 323,
+      "dropped": 200,
+      "meanShippedVoicesPerSection": 1,
+      "verse1": {
+        "composedNotes": 45,
+        "composedVoices": 3,
+        "shippedNotes": 17,
+        "shippedVoices": 1,
+        "releases": 42,
+        "drops": 28
+      },
+      "controls": {
+        "repairOnComposedNotes": {
+          "releases": 0,
+          "drops": 0
+        },
+        "repairOnPerformedNotes": {
+          "releases": 42,
+          "drops": 28
+        },
+        "repairOnPerformedNotesWithoutTheStagger": {
+          "releases": 42,
+          "drops": 0
+        }
+      },
+      "note": "playabilityRepair tested `o.start === n.start`; the performance engine staggers a chord's voices by ~1.5 ms (performanceEngine chord gesture, 12 ms window), so the lower voices read as earlier notes whose release fell under minNoteDuration and were dropped."
+    },
+    "ownerRepairCounts": {
+      "source": "b02",
+      "strings": {
+        "leapFolds": 118,
+        "polyphonyReleases": 320,
+        "dropped": 199
+      },
+      "note": "the B-02 tracker's recorded numbers for the owner's strings track."
+    },
+    "orchestralMidiStrings": {
+      "source": "r1b",
+      "composedNotes": 54,
+      "shippedNotes": 24,
+      "polyphonyReleases": 56,
+      "dropped": 30
+    },
+    "chordOnsets": {
+      "source": "r1b",
+      "fromNearestBeat": {
+        "medianMs": 136,
+        "p75Ms": 185,
+        "maxMs": 229,
+        "overFiftyMs": 79,
+        "n": 92
+      },
+      "shippedKeysOnsets": {
+        "medianMs": 119,
+        "p90Ms": 199
+      },
+      "control": "owner-q (chord onsets snapped to the beat, nothing else changed): groove critic 0 -> 97.57, off_grid 23 -> 0, keys onsets median 119 -> 9 ms, keys velocity Verse 1 30 -> 40 and Chorus 3 52 -> 66."
+    },
+    "velocityRatio": {
+      "source": "r1b",
+      "keysComposedToShipped": [
+        {
+          "section": "Verse 1",
+          "composed": 51,
+          "shipped": 30
+        },
+        {
+          "section": "Verse 2",
+          "composed": 48,
+          "shipped": 29
+        },
+        {
+          "section": "Chorus",
+          "composed": 70,
+          "shipped": 42
+        },
+        {
+          "section": "Chorus 2",
+          "composed": 74,
+          "shipped": 44
+        },
+        {
+          "section": "Verse 3",
+          "composed": 53,
+          "shipped": 35
+        },
+        {
+          "section": "Bridge",
+          "composed": 66,
+          "shipped": 39
+        },
+        {
+          "section": "Chorus 3",
+          "composed": 86,
+          "shipped": 52
+        },
+        {
+          "section": "Outro",
+          "composed": 50,
+          "shipped": 29
+        }
+      ],
+      "ratioRange": [
+        0.58,
+        0.6
+      ],
+      "strings": [
+        0.64,
+        0.8
+      ],
+      "bass": [
+        0.54,
+        0.76
+      ],
+      "percussion": 0.48,
+      "note": "the orchestrator resolved one role assignment per instrument - the first section's - and performed the whole track as the intro's pp."
+    },
+    "kickBass": {
+      "source": "b04",
+      "meanKickToBassOnShippedNotes": 0.617,
+      "note": "docs/evidence/brain-b04-groove-and-transitions.json, shipped interlocking mean."
+    },
+    "candidateDistance": {
+      "source": "b04/b08",
+      "note": "three candidates scored 72/72/72 on the owner's song and differed by two bass notes (r1b section 1); the production diversity gate's threshold is 0.25."
+    }
+  },
+  "after": {
+    "validatorAgreement": {
+      "seeds": 24,
+      "candidates": 72,
+      "tracks": 276,
+      "agreeingTracks": 276,
+      "disagreements": [],
+      "contractErrors": 0,
+      "engineErrorCodes": {},
+      "repairRuleCodes": {},
+      "swap": {
+        "swaps": 12,
+        "tracks": 24,
+        "disagreements": [],
+        "engineErrorCodes": {}
+      }
+    },
+    "documentedControls": [
+      {
+        "id": "bass_30_semitone_leap",
+        "description": "a 30-semitone bass leap (must fail under all three)",
+        "verdict": {
+          "trackId": "bass-bass",
+          "contract": [
+            "bass-bass contains an unplayable melodic leap"
+          ],
+          "engine": [
+            "impossible_leap"
+          ],
+          "repairRules": [
+            "leap"
+          ],
+          "agree": true
+        }
+      },
+      {
+        "id": "bass_legato_10ms",
+        "description": "a legato bass line whose notes overlap the next by 10 ms (must pass under all three)",
+        "verdict": {
+          "trackId": "bass-bass",
+          "contract": [],
+          "engine": [],
+          "repairRules": [],
+          "agree": true
+        }
+      },
+      {
+        "id": "piano_c2_e4_apart",
+        "description": "piano C2 and E4 struck apart, twice (a two-hand figure; must pass under all three)",
+        "verdict": {
+          "trackId": "piano-harmonic_bed",
+          "contract": [],
+          "engine": [],
+          "repairRules": [],
+          "agree": true
+        }
+      },
+      {
+        "id": "piano_c2_e4_chord",
+        "description": "piano C2 + E4 struck together (a legal two-hand chord; must pass under all three)",
+        "verdict": {
+          "trackId": "piano-harmonic_bed",
+          "contract": [],
+          "engine": [],
+          "repairRules": [],
+          "agree": true
+        }
+      },
+      {
+        "id": "strings_bed_top_to_bottom",
+        "description": "a four-voice string bed whose chord A top lies 14 semitones above chord B's bottom (voice-led; must pass under all three)",
+        "verdict": {
+          "trackId": "strings-pad",
+          "contract": [],
+          "engine": [],
+          "repairRules": [],
+          "agree": true
+        }
+      },
+      {
+        "id": "plain_piano",
+        "description": "a plain playable piano line (must pass under all three)",
+        "verdict": {
+          "trackId": "piano-harmonic_bed",
+          "contract": [],
+          "engine": [],
+          "repairRules": [],
+          "agree": true
+        }
+      }
+    ],
+    "playabilityRepair": {
+      "corpus": [
+        {
+          "id": "pop-full",
+          "tracksRepaired": 0,
+          "leapFolds": 0,
+          "bassLeapFolds": 0,
+          "rangeFolds": 0,
+          "polyphonyReleases": 0,
+          "dropped": 0,
+          "durationLengthened": 0,
+          "breathTruncated": 0,
+          "perTrack": [],
+          "selected": true,
+          "feasible": true,
+          "noteCount": 921
+        },
+        {
+          "id": "ballad-piano-vocal",
+          "tracksRepaired": 0,
+          "leapFolds": 0,
+          "bassLeapFolds": 0,
+          "rangeFolds": 0,
+          "polyphonyReleases": 0,
+          "dropped": 0,
+          "durationLengthened": 0,
+          "breathTruncated": 0,
+          "perTrack": [],
+          "selected": true,
+          "feasible": true,
+          "noteCount": 280
+        },
+        {
+          "id": "rock-full",
+          "tracksRepaired": 1,
+          "leapFolds": 0,
+          "bassLeapFolds": 0,
+          "rangeFolds": 0,
+          "polyphonyReleases": 4,
+          "dropped": 2,
+          "durationLengthened": 0,
+          "breathTruncated": 0,
+          "perTrack": [
+            {
+              "trackId": "guitar-harmonic_bed",
+              "leapFolds": 0,
+              "rangeFolds": 0,
+              "polyphonyReleases": 4,
+              "dropped": 2,
+              "residual": []
+            }
+          ],
+          "selected": true,
+          "feasible": true,
+          "noteCount": 793
+        },
+        {
+          "id": "dance-full",
+          "tracksRepaired": 0,
+          "leapFolds": 0,
+          "bassLeapFolds": 0,
+          "rangeFolds": 0,
+          "polyphonyReleases": 0,
+          "dropped": 0,
+          "durationLengthened": 0,
+          "breathTruncated": 0,
+          "perTrack": [],
+          "selected": true,
+          "feasible": true,
+          "noteCount": 799
+        },
+        {
+          "id": "acoustic-demo",
+          "tracksRepaired": 1,
+          "leapFolds": 0,
+          "bassLeapFolds": 0,
+          "rangeFolds": 0,
+          "polyphonyReleases": 6,
+          "dropped": 3,
+          "durationLengthened": 0,
+          "breathTruncated": 0,
+          "perTrack": [
+            {
+              "trackId": "guitar-harmonic_bed",
+              "leapFolds": 0,
+              "rangeFolds": 0,
+              "polyphonyReleases": 6,
+              "dropped": 3,
+              "residual": []
+            }
+          ],
+          "selected": true,
+          "feasible": true,
+          "noteCount": 378
+        },
+        {
+          "id": "orchestral-midi",
+          "tracksRepaired": 1,
+          "leapFolds": 0,
+          "bassLeapFolds": 0,
+          "rangeFolds": 0,
+          "polyphonyReleases": 0,
+          "dropped": 1,
+          "durationLengthened": 1,
+          "breathTruncated": 0,
+          "perTrack": [
+            {
+              "trackId": "strings-climax_layer",
+              "leapFolds": 0,
+              "rangeFolds": 0,
+              "polyphonyReleases": 0,
+              "dropped": 1,
+              "residual": []
+            }
+          ],
+          "selected": true,
+          "feasible": true,
+          "noteCount": 424
+        },
+        {
+          "id": "ethnic-vocal",
+          "tracksRepaired": 0,
+          "leapFolds": 0,
+          "bassLeapFolds": 0,
+          "rangeFolds": 0,
+          "polyphonyReleases": 0,
+          "dropped": 0,
+          "durationLengthened": 0,
+          "breathTruncated": 0,
+          "perTrack": [],
+          "selected": true,
+          "feasible": true,
+          "noteCount": 221
+        },
+        {
+          "id": "jazz-full",
+          "tracksRepaired": 0,
+          "leapFolds": 0,
+          "bassLeapFolds": 0,
+          "rangeFolds": 0,
+          "polyphonyReleases": 0,
+          "dropped": 0,
+          "durationLengthened": 0,
+          "breathTruncated": 0,
+          "perTrack": [],
+          "selected": true,
+          "feasible": true,
+          "noteCount": 1249
+        },
+        {
+          "id": "cinematic-midi",
+          "tracksRepaired": 0,
+          "leapFolds": 0,
+          "bassLeapFolds": 0,
+          "rangeFolds": 0,
+          "polyphonyReleases": 0,
+          "dropped": 0,
+          "durationLengthened": 0,
+          "breathTruncated": 0,
+          "perTrack": [],
+          "selected": true,
+          "feasible": true,
+          "noteCount": 202
+        }
+      ],
+      "owner": {
+        "id": "rachem-na-v3",
+        "tracksRepaired": 1,
+        "leapFolds": 0,
+        "bassLeapFolds": 0,
+        "rangeFolds": 0,
+        "polyphonyReleases": 0,
+        "dropped": 0,
+        "durationLengthened": 6,
+        "breathTruncated": 0,
+        "perTrack": [
+          {
+            "trackId": "bass-bass",
+            "leapFolds": 0,
+            "rangeFolds": 0,
+            "polyphonyReleases": 0,
+            "dropped": 0,
+            "residual": []
+          }
+        ],
+        "selected": true,
+        "feasible": true,
+        "noteCount": 2182
+      },
+      "totals": {
+        "corpusLeapFolds": 0,
+        "corpusBassLeapFolds": 0,
+        "corpusPolyphonyReleases": 10,
+        "corpusDropped": 6,
+        "ownerLeapFolds": 0,
+        "ownerPolyphonyReleases": 0,
+        "ownerDropped": 0
+      },
+      "composedBass": {
+        "corpusComposedBassLeapsOverLimit": 0,
+        "corpusComposedBassOverlaps": 0
+      }
+    },
+    "kickBass": {
+      "composed": {
+        "rows": 44,
+        "meanKickToBass": 0.897
+      },
+      "shipped": {
+        "rows": [
+          {
+            "song": "pop-full",
+            "section": "Intro",
+            "relation": "lock",
+            "kicks": 0,
+            "bassOnsets": 11,
+            "kickToBass": null,
+            "bassToKick": null
+          },
+          {
+            "song": "pop-full",
+            "section": "Verse",
+            "relation": "lock",
+            "kicks": 1,
+            "bassOnsets": 19,
+            "kickToBass": 1,
+            "bassToKick": 0.053
+          },
+          {
+            "song": "pop-full",
+            "section": "Chorus",
+            "relation": "lock",
+            "kicks": 27,
+            "bassOnsets": 31,
+            "kickToBass": 1,
+            "bassToKick": 0.871
+          },
+          {
+            "song": "pop-full",
+            "section": "Verse 2",
+            "relation": "lock",
+            "kicks": 1,
+            "bassOnsets": 13,
+            "kickToBass": 1,
+            "bassToKick": 0.077
+          },
+          {
+            "song": "pop-full",
+            "section": "Chorus 2",
+            "relation": "lock",
+            "kicks": 29,
+            "bassOnsets": 33,
+            "kickToBass": 1,
+            "bassToKick": 0.879
+          },
+          {
+            "song": "pop-full",
+            "section": "Outro",
+            "relation": "pedal",
+            "kicks": 7,
+            "bassOnsets": 2,
+            "kickToBass": 0,
+            "bassToKick": 0
+          },
+          {
+            "song": "ballad-piano-vocal",
+            "section": "Verse",
+            "relation": "pedal",
+            "kicks": 1,
+            "bassOnsets": 8,
+            "kickToBass": 1,
+            "bassToKick": 0.125
+          },
+          {
+            "song": "ballad-piano-vocal",
+            "section": "Chorus",
+            "relation": "pedal",
+            "kicks": 7,
+            "bassOnsets": 4,
+            "kickToBass": 0.429,
+            "bassToKick": 0.75
+          },
+          {
+            "song": "ballad-piano-vocal",
+            "section": "Chorus 2",
+            "relation": "pedal",
+            "kicks": 8,
+            "bassOnsets": 5,
+            "kickToBass": 0.625,
+            "bassToKick": 1
+          },
+          {
+            "song": "rock-full",
+            "section": "Intro",
+            "relation": "lock",
+            "kicks": 0,
+            "bassOnsets": 11,
+            "kickToBass": null,
+            "bassToKick": null
+          },
+          {
+            "song": "rock-full",
+            "section": "Verse",
+            "relation": "lock",
+            "kicks": 1,
+            "bassOnsets": 19,
+            "kickToBass": 1,
+            "bassToKick": 0.053
+          },
+          {
+            "song": "rock-full",
+            "section": "Chorus",
+            "relation": "lock",
+            "kicks": 27,
+            "bassOnsets": 30,
+            "kickToBass": 1,
+            "bassToKick": 0.9
+          },
+          {
+            "song": "rock-full",
+            "section": "Bridge",
+            "relation": "lock",
+            "kicks": 1,
+            "bassOnsets": 25,
+            "kickToBass": 0,
+            "bassToKick": 0
+          },
+          {
+            "song": "rock-full",
+            "section": "Chorus 2",
+            "relation": "lock",
+            "kicks": 25,
+            "bassOnsets": 29,
+            "kickToBass": 1,
+            "bassToKick": 0.862
+          },
+          {
+            "song": "dance-full",
+            "section": "Intro",
+            "relation": "lock",
+            "kicks": 9,
+            "bassOnsets": 11,
+            "kickToBass": 1,
+            "bassToKick": 0.818
+          },
+          {
+            "song": "dance-full",
+            "section": "Verse",
+            "relation": "lock",
+            "kicks": 16,
+            "bassOnsets": 19,
+            "kickToBass": 1,
+            "bassToKick": 0.842
+          },
+          {
+            "song": "dance-full",
+            "section": "Chorus",
+            "relation": "lock",
+            "kicks": 28,
+            "bassOnsets": 31,
+            "kickToBass": 1,
+            "bassToKick": 0.903
+          },
+          {
+            "song": "dance-full",
+            "section": "Breakdown",
+            "relation": "lock",
+            "kicks": 9,
+            "bassOnsets": 7,
+            "kickToBass": 0.778,
+            "bassToKick": 1
+          },
+          {
+            "song": "dance-full",
+            "section": "Chorus 2",
+            "relation": "lock",
+            "kicks": 25,
+            "bassOnsets": 28,
+            "kickToBass": 1,
+            "bassToKick": 0.893
+          },
+          {
+            "song": "acoustic-demo",
+            "section": "Verse",
+            "relation": "complement",
+            "kicks": 1,
+            "bassOnsets": 8,
+            "kickToBass": 1,
+            "bassToKick": 0.125
+          },
+          {
+            "song": "acoustic-demo",
+            "section": "Chorus",
+            "relation": "complement",
+            "kicks": 12,
+            "bassOnsets": 30,
+            "kickToBass": 1,
+            "bassToKick": 0.4
+          },
+          {
+            "song": "acoustic-demo",
+            "section": "Verse 2",
+            "relation": "complement",
+            "kicks": 1,
+            "bassOnsets": 12,
+            "kickToBass": 1,
+            "bassToKick": 0.083
+          },
+          {
+            "song": "acoustic-demo",
+            "section": "Chorus 2",
+            "relation": "complement",
+            "kicks": 11,
+            "bassOnsets": 28,
+            "kickToBass": 1,
+            "bassToKick": 0.393
+          },
+          {
+            "song": "orchestral-midi",
+            "section": "Verse",
+            "relation": "lock",
+            "kicks": 1,
+            "bassOnsets": 6,
+            "kickToBass": 1,
+            "bassToKick": 0.167
+          },
+          {
+            "song": "orchestral-midi",
+            "section": "Chorus",
+            "relation": "lock",
+            "kicks": 6,
+            "bassOnsets": 12,
+            "kickToBass": 1,
+            "bassToKick": 0.5
+          },
+          {
+            "song": "ethnic-vocal",
+            "section": "Verse",
+            "relation": "lock",
+            "kicks": 0,
+            "bassOnsets": 7,
+            "kickToBass": null,
+            "bassToKick": null
+          },
+          {
+            "song": "ethnic-vocal",
+            "section": "Chorus",
+            "relation": "lock",
+            "kicks": 17,
+            "bassOnsets": 17,
+            "kickToBass": 1,
+            "bassToKick": 1
+          },
+          {
+            "song": "ethnic-vocal",
+            "section": "Verse 2",
+            "relation": "lock",
+            "kicks": 7,
+            "bassOnsets": 7,
+            "kickToBass": 1,
+            "bassToKick": 1
+          },
+          {
+            "song": "jazz-full",
+            "section": "Verse",
+            "relation": "lock",
+            "kicks": 0,
+            "bassOnsets": 29,
+            "kickToBass": null,
+            "bassToKick": null
+          },
+          {
+            "song": "jazz-full",
+            "section": "Chorus",
+            "relation": "lock",
+            "kicks": 56,
+            "bassOnsets": 63,
+            "kickToBass": 1,
+            "bassToKick": 0.889
+          },
+          {
+            "song": "jazz-full",
+            "section": "Verse 2",
+            "relation": "lock",
+            "kicks": 54,
+            "bassOnsets": 61,
+            "kickToBass": 1,
+            "bassToKick": 0.885
+          },
+          {
+            "song": "cinematic-midi",
+            "section": "Intro",
+            "relation": "pedal",
+            "kicks": 0,
+            "bassOnsets": 7,
+            "kickToBass": null,
+            "bassToKick": null
+          },
+          {
+            "song": "cinematic-midi",
+            "section": "Verse",
+            "relation": "pedal",
+            "kicks": 1,
+            "bassOnsets": 3,
+            "kickToBass": 1,
+            "bassToKick": 0.333
+          },
+          {
+            "song": "cinematic-midi",
+            "section": "Chorus",
+            "relation": "pedal",
+            "kicks": 7,
+            "bassOnsets": 4,
+            "kickToBass": 0.429,
+            "bassToKick": 0.75
+          },
+          {
+            "song": "cinematic-midi",
+            "section": "Outro",
+            "relation": "pedal",
+            "kicks": 0,
+            "bassOnsets": 4,
+            "kickToBass": null,
+            "bassToKick": null
+          },
+          {
+            "song": "owner-rachem-na",
+            "section": "Verse 1",
+            "relation": "pedal",
+            "kicks": 1,
+            "bassOnsets": 16,
+            "kickToBass": 0,
+            "bassToKick": 0
+          },
+          {
+            "song": "owner-rachem-na",
+            "section": "Verse 2",
+            "relation": "lock",
+            "kicks": 62,
+            "bassOnsets": 66,
+            "kickToBass": 1,
+            "bassToKick": 0.939
+          },
+          {
+            "song": "owner-rachem-na",
+            "section": "Chorus",
+            "relation": "lock",
+            "kicks": 62,
+            "bassOnsets": 63,
+            "kickToBass": 1,
+            "bassToKick": 0.984
+          },
+          {
+            "song": "owner-rachem-na",
+            "section": "Chorus 2",
+            "relation": "lock",
+            "kicks": 61,
+            "bassOnsets": 62,
+            "kickToBass": 1,
+            "bassToKick": 0.984
+          },
+          {
+            "song": "owner-rachem-na",
+            "section": "Verse 3",
+            "relation": "pedal",
+            "kicks": 0,
+            "bassOnsets": 17,
+            "kickToBass": null,
+            "bassToKick": null
+          },
+          {
+            "song": "owner-rachem-na",
+            "section": "Bridge",
+            "relation": "lock",
+            "kicks": 1,
+            "bassOnsets": 57,
+            "kickToBass": 1,
+            "bassToKick": 0.018
+          },
+          {
+            "song": "owner-rachem-na",
+            "section": "Chorus 3",
+            "relation": "lock",
+            "kicks": 62,
+            "bassOnsets": 63,
+            "kickToBass": 1,
+            "bassToKick": 0.984
+          },
+          {
+            "song": "owner-rachem-na",
+            "section": "Outro",
+            "relation": "pedal",
+            "kicks": 0,
+            "bassOnsets": 6,
+            "kickToBass": null,
+            "bassToKick": null
+          }
+        ],
+        "meanKickToBass": 0.865,
+        "lock": {
+          "sections": 24,
+          "meanKickToBass": 0.949,
+          "minKickToBass": 0
+        },
+        "complement": {
+          "sections": 4,
+          "meanKickToBass": 1,
+          "minKickToBass": 1
+        },
+        "pedal": {
+          "sections": 7,
+          "meanKickToBass": 0.498,
+          "minKickToBass": 0
+        }
+      }
+    },
+    "adversarial": {
+      "perCase": [
+        {
+          "song": "pop-full",
+          "causality": 0,
+          "causalityKinds": [],
+          "machineMade": 2.296,
+          "arbitrariness": 3.5,
+          "feasible": true
+        },
+        {
+          "song": "ballad-piano-vocal",
+          "causality": 0,
+          "causalityKinds": [],
+          "machineMade": 5.3376,
+          "arbitrariness": 0,
+          "feasible": true
+        },
+        {
+          "song": "rock-full",
+          "causality": 0,
+          "causalityKinds": [],
+          "machineMade": 2.296,
+          "arbitrariness": 3.2928,
+          "feasible": true
+        },
+        {
+          "song": "dance-full",
+          "causality": 0,
+          "causalityKinds": [],
+          "machineMade": 0.8604,
+          "arbitrariness": 9.8784,
+          "feasible": true
+        },
+        {
+          "song": "acoustic-demo",
+          "causality": 0,
+          "causalityKinds": [],
+          "machineMade": 0.5416,
+          "arbitrariness": 3.2176,
+          "feasible": true
+        },
+        {
+          "song": "orchestral-midi",
+          "causality": 2.74,
+          "causalityKinds": [
+            "unmotivated_entry[minor]@12-13:bass-bass"
+          ],
+          "machineMade": 1.4052,
+          "arbitrariness": 9,
+          "feasible": true
+        },
+        {
+          "song": "ethnic-vocal",
+          "causality": 0,
+          "causalityKinds": [],
+          "machineMade": 0,
+          "arbitrariness": 6.2112,
+          "feasible": true
+        },
+        {
+          "song": "jazz-full",
+          "causality": 5.6256,
+          "causalityKinds": [
+            "climax_not_realised[major]@17-32:bass-bass+drums-climax_layer+keys-harmonic_bed"
+          ],
+          "machineMade": 4.2216,
+          "arbitrariness": 5.1712,
+          "feasible": true
+        },
+        {
+          "song": "cinematic-midi",
+          "causality": 0,
+          "causalityKinds": [],
+          "machineMade": 5.1632,
+          "arbitrariness": 6,
+          "feasible": true
+        },
+        {
+          "song": "owner-rachem-na",
+          "causality": 11.184,
+          "causalityKinds": [
+            "unmotivated_entry[minor]@3-4:keys-rhythmic_harmony",
+            "transition_unprepared[minor]@39-41:bass-bass+drums-groove+keys-rhythmic_harmony",
+            "unmotivated_entry[minor]@74-75:bass-bass",
+            "ending_missing[major]@141-141:bass-bass+drums-groove+keys-rhythmic_harmony"
+          ],
+          "machineMade": 22.4316,
+          "arbitrariness": 37.116,
+          "feasible": true
+        }
+      ],
+      "totals": {
+        "causalityPenalty": 19.55,
+        "machineMadePenalty": 44.553,
+        "arbitrarinessPenalty": 83.387,
+        "feasible": 10
+      }
+    },
+    "candidateDistance": {
+      "perCase": [
+        {
+          "id": "pop-full",
+          "mean": 0.101,
+          "harmony": 0.327,
+          "roleInstrument": 0,
+          "noteShape": 0.79,
+          "pairs": 10,
+          "noteCounts": [
+            921,
+            1088,
+            936,
+            413,
+            1302
+          ],
+          "selected": "cand-A",
+          "eligible": 5
+        },
+        {
+          "id": "ballad-piano-vocal",
+          "mean": 0.153,
+          "harmony": 0.651,
+          "roleInstrument": 0,
+          "noteShape": 0.5,
+          "pairs": 10,
+          "noteCounts": [
+            280,
+            601,
+            318,
+            144,
+            734
+          ],
+          "selected": "cand-A",
+          "eligible": 5
+        },
+        {
+          "id": "rock-full",
+          "mean": 0.123,
+          "harmony": 0.433,
+          "roleInstrument": 0,
+          "noteShape": 0.8,
+          "pairs": 10,
+          "noteCounts": [
+            793,
+            1024,
+            807,
+            406,
+            1071
+          ],
+          "selected": "cand-A",
+          "eligible": 5
+        },
+        {
+          "id": "dance-full",
+          "mean": 0.094,
+          "harmony": 0.273,
+          "roleInstrument": 0,
+          "noteShape": 0.876,
+          "pairs": 10,
+          "noteCounts": [
+            799,
+            927,
+            806,
+            564,
+            1052
+          ],
+          "selected": "cand-A",
+          "eligible": 5
+        },
+        {
+          "id": "acoustic-demo",
+          "mean": 0.102,
+          "harmony": 0.319,
+          "roleInstrument": 0,
+          "noteShape": 0.85,
+          "pairs": 10,
+          "noteCounts": [
+            378,
+            707,
+            416,
+            290,
+            853
+          ],
+          "selected": "cand-D",
+          "eligible": 5
+        },
+        {
+          "id": "orchestral-midi",
+          "mean": 0.081,
+          "harmony": 0.258,
+          "roleInstrument": 0,
+          "noteShape": 0.661,
+          "pairs": 10,
+          "noteCounts": [
+            424,
+            448,
+            425,
+            353,
+            446
+          ],
+          "selected": "cand-A",
+          "eligible": 5
+        },
+        {
+          "id": "ethnic-vocal",
+          "mean": 0.093,
+          "harmony": 0.285,
+          "roleInstrument": 0,
+          "noteShape": 0.79,
+          "pairs": 10,
+          "noteCounts": [
+            221,
+            348,
+            233,
+            174,
+            392
+          ],
+          "selected": "cand-D",
+          "eligible": 5
+        },
+        {
+          "id": "jazz-full",
+          "mean": 0.122,
+          "harmony": 0.424,
+          "roleInstrument": 0,
+          "noteShape": 0.82,
+          "pairs": 10,
+          "noteCounts": [
+            1249,
+            1423,
+            1259,
+            622,
+            1631
+          ],
+          "selected": "cand-A",
+          "eligible": 5
+        },
+        {
+          "id": "cinematic-midi",
+          "mean": 0.027,
+          "harmony": 0,
+          "roleInstrument": 0,
+          "noteShape": 0.595,
+          "pairs": 10,
+          "noteCounts": [
+            202,
+            416,
+            202,
+            127,
+            434
+          ],
+          "selected": "cand-C",
+          "eligible": 5
+        },
+        {
+          "id": "owner-rachem-na",
+          "mean": 0.148,
+          "harmony": 0.574,
+          "roleInstrument": 0,
+          "noteShape": 0.742,
+          "pairs": 10,
+          "noteCounts": [
+            2182,
+            2601,
+            2301,
+            1348,
+            3077
+          ],
+          "selected": "cand-A",
+          "eligible": 5
+        }
+      ],
+      "meanOverCases": 0.104,
+      "meanHarmony": 0.354,
+      "meanNoteShape": 0.742,
+      "meanRoleInstrument": 0,
+      "threshold": 0.25
+    },
+    "shipped": {
+      "bedVoices": {
+        "rows": [
+          {
+            "song": "dance-full",
+            "instrument": "synth",
+            "section": "Chorus",
+            "composedNotes": 24,
+            "shippedNotes": 24,
+            "composedMaxVoices": 4,
+            "shippedMaxVoices": 8,
+            "composedMeanVoices": 4,
+            "shippedMeanVoices": 6,
+            "shippedPitchRange": [
+              59,
+              86
+            ]
+          },
+          {
+            "song": "dance-full",
+            "instrument": "synth",
+            "section": "Chorus 2",
+            "composedNotes": 28,
+            "shippedNotes": 21,
+            "composedMaxVoices": 4,
+            "shippedMaxVoices": 6,
+            "composedMeanVoices": 4,
+            "shippedMeanVoices": 4.286,
+            "shippedPitchRange": [
+              74,
+              93
+            ]
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "strings",
+            "section": "Intro",
+            "composedNotes": 10,
+            "shippedNotes": 10,
+            "composedMaxVoices": 3,
+            "shippedMaxVoices": 4,
+            "composedMeanVoices": 2.571,
+            "shippedMeanVoices": 3.143,
+            "shippedPitchRange": [
+              71,
+              85
+            ]
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "strings",
+            "section": "Verse",
+            "composedNotes": 44,
+            "shippedNotes": 43,
+            "composedMaxVoices": 3,
+            "shippedMaxVoices": 4,
+            "composedMeanVoices": 3,
+            "shippedMeanVoices": 3,
+            "shippedPitchRange": [
+              61,
+              84
+            ]
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "strings",
+            "section": "Chorus",
+            "composedNotes": 48,
+            "shippedNotes": 48,
+            "composedMaxVoices": 4,
+            "shippedMaxVoices": 4,
+            "composedMeanVoices": 4,
+            "shippedMeanVoices": 4,
+            "shippedPitchRange": [
+              65,
+              86
+            ]
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "strings",
+            "section": "Outro",
+            "composedNotes": 6,
+            "shippedNotes": 6,
+            "composedMaxVoices": 2,
+            "shippedMaxVoices": 4,
+            "composedMeanVoices": 2,
+            "shippedMeanVoices": 3.333,
+            "shippedPitchRange": [
+              73,
+              82
+            ]
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "strings",
+            "section": "Verse",
+            "composedNotes": 3,
+            "shippedNotes": 3,
+            "composedMaxVoices": 3,
+            "shippedMaxVoices": 3,
+            "composedMeanVoices": 3,
+            "shippedMeanVoices": 3,
+            "shippedPitchRange": [
+              58,
+              79
+            ]
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "strings",
+            "section": "Chorus",
+            "composedNotes": 16,
+            "shippedNotes": 13,
+            "composedMaxVoices": 4,
+            "shippedMaxVoices": 4,
+            "composedMeanVoices": 4,
+            "shippedMeanVoices": 3.75,
+            "shippedPitchRange": [
+              65,
+              84
+            ]
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "strings",
+            "section": "Outro",
+            "composedNotes": 6,
+            "shippedNotes": 6,
+            "composedMaxVoices": 3,
+            "shippedMaxVoices": 4,
+            "composedMeanVoices": 3,
+            "shippedMeanVoices": 3.5,
+            "shippedPitchRange": [
+              67,
+              75
+            ]
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Verse 1",
+            "composedNotes": 48,
+            "shippedNotes": 48,
+            "composedMaxVoices": 3,
+            "shippedMaxVoices": 4,
+            "composedMeanVoices": 3,
+            "shippedMeanVoices": 3.875,
+            "shippedPitchRange": [
+              71,
+              82
+            ]
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Verse 2",
+            "composedNotes": 64,
+            "shippedNotes": 60,
+            "composedMaxVoices": 4,
+            "shippedMaxVoices": 4,
+            "composedMeanVoices": 4,
+            "shippedMeanVoices": 4,
+            "shippedPitchRange": [
+              60,
+              84
+            ]
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Chorus",
+            "composedNotes": 36,
+            "shippedNotes": 31,
+            "composedMaxVoices": 4,
+            "shippedMaxVoices": 4,
+            "composedMeanVoices": 4,
+            "shippedMeanVoices": 3.889,
+            "shippedPitchRange": [
+              62,
+              82
+            ]
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Chorus 2",
+            "composedNotes": 24,
+            "shippedNotes": 24,
+            "composedMaxVoices": 4,
+            "shippedMaxVoices": 4,
+            "composedMeanVoices": 4,
+            "shippedMeanVoices": 4,
+            "shippedPitchRange": [
+              65,
+              80
+            ]
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Verse 3",
+            "composedNotes": 39,
+            "shippedNotes": 39,
+            "composedMaxVoices": 3,
+            "shippedMaxVoices": 4,
+            "composedMeanVoices": 3,
+            "shippedMeanVoices": 3.846,
+            "shippedPitchRange": [
+              63,
+              74
+            ]
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Bridge",
+            "composedNotes": 10,
+            "shippedNotes": 13,
+            "composedMaxVoices": 1,
+            "shippedMaxVoices": 3,
+            "composedMeanVoices": 1,
+            "shippedMeanVoices": 2.167,
+            "shippedPitchRange": [
+              63,
+              87
+            ]
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Chorus 3",
+            "composedNotes": 48,
+            "shippedNotes": 42,
+            "composedMaxVoices": 4,
+            "shippedMaxVoices": 4,
+            "composedMeanVoices": 4,
+            "shippedMeanVoices": 3.909,
+            "shippedPitchRange": [
+              72,
+              92
+            ]
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Outro",
+            "composedNotes": 21,
+            "shippedNotes": 21,
+            "composedMaxVoices": 3,
+            "shippedMaxVoices": 4,
+            "composedMeanVoices": 3,
+            "shippedMeanVoices": 3.857,
+            "shippedPitchRange": [
+              63,
+              72
+            ]
+          }
+        ],
+        "sectionsWithABed": 17,
+        "sectionsShippedAsOneVoice": 0,
+        "meanComposedVoices": 3.269,
+        "meanShippedVoices": 3.739,
+        "composedNotes": 475,
+        "shippedNotes": 452,
+        "owner": {
+          "sections": 8,
+          "composedNotes": 290,
+          "shippedNotes": 278,
+          "meanShippedVoices": 3.693,
+          "minShippedMaxVoices": 3
+        }
+      },
+      "velocity": {
+        "rows": [
+          {
+            "song": "pop-full",
+            "instrument": "drums",
+            "section": "Chorus",
+            "composedMean": 91.179,
+            "shippedMean": 61.513,
+            "ratio": 0.675
+          },
+          {
+            "song": "pop-full",
+            "instrument": "drums",
+            "section": "Chorus 2",
+            "composedMean": 101.173,
+            "shippedMean": 70.232,
+            "ratio": 0.694
+          },
+          {
+            "song": "pop-full",
+            "instrument": "drums",
+            "section": "Outro",
+            "composedMean": 87.5,
+            "shippedMean": 59.909,
+            "ratio": 0.685
+          },
+          {
+            "song": "pop-full",
+            "instrument": "bass",
+            "section": "Intro",
+            "composedMean": 79.3,
+            "shippedMean": 71.455,
+            "ratio": 0.901
+          },
+          {
+            "song": "pop-full",
+            "instrument": "bass",
+            "section": "Verse",
+            "composedMean": 78.632,
+            "shippedMean": 70.947,
+            "ratio": 0.902
+          },
+          {
+            "song": "pop-full",
+            "instrument": "bass",
+            "section": "Chorus",
+            "composedMean": 91,
+            "shippedMean": 86.581,
+            "ratio": 0.951
+          },
+          {
+            "song": "pop-full",
+            "instrument": "bass",
+            "section": "Verse 2",
+            "composedMean": 74.462,
+            "shippedMean": 63,
+            "ratio": 0.846
+          },
+          {
+            "song": "pop-full",
+            "instrument": "bass",
+            "section": "Chorus 2",
+            "composedMean": 100.909,
+            "shippedMean": 98.909,
+            "ratio": 0.98
+          },
+          {
+            "song": "pop-full",
+            "instrument": "bass",
+            "section": "Outro",
+            "composedMean": 93.333,
+            "shippedMean": 88,
+            "ratio": 0.943
+          },
+          {
+            "song": "pop-full",
+            "instrument": "keys",
+            "section": "Intro",
+            "composedMean": 68.345,
+            "shippedMean": 53.393,
+            "ratio": 0.781
+          },
+          {
+            "song": "pop-full",
+            "instrument": "keys",
+            "section": "Verse",
+            "composedMean": 67.836,
+            "shippedMean": 53.785,
+            "ratio": 0.793
+          },
+          {
+            "song": "pop-full",
+            "instrument": "keys",
+            "section": "Chorus",
+            "composedMean": 89.5,
+            "shippedMean": 89.556,
+            "ratio": 1.001
+          },
+          {
+            "song": "pop-full",
+            "instrument": "keys",
+            "section": "Verse 2",
+            "composedMean": 66.93,
+            "shippedMean": 53.877,
+            "ratio": 0.805
+          },
+          {
+            "song": "pop-full",
+            "instrument": "keys",
+            "section": "Chorus 2",
+            "composedMean": 98.778,
+            "shippedMean": 102.714,
+            "ratio": 1.04
+          },
+          {
+            "song": "pop-full",
+            "instrument": "keys",
+            "section": "Outro",
+            "composedMean": 72.154,
+            "shippedMean": 52.462,
+            "ratio": 0.727
+          },
+          {
+            "song": "ballad-piano-vocal",
+            "instrument": "drums",
+            "section": "Chorus",
+            "composedMean": 82.553,
+            "shippedMean": 62.432,
+            "ratio": 0.756
+          },
+          {
+            "song": "ballad-piano-vocal",
+            "instrument": "drums",
+            "section": "Chorus 2",
+            "composedMean": 92.909,
+            "shippedMean": 75.114,
+            "ratio": 0.808
+          },
+          {
+            "song": "ballad-piano-vocal",
+            "instrument": "bass",
+            "section": "Verse",
+            "composedMean": 75.143,
+            "shippedMean": 68.875,
+            "ratio": 0.917
+          },
+          {
+            "song": "ballad-piano-vocal",
+            "instrument": "bass",
+            "section": "Chorus",
+            "composedMean": 93,
+            "shippedMean": 99.5,
+            "ratio": 1.07
+          },
+          {
+            "song": "ballad-piano-vocal",
+            "instrument": "bass",
+            "section": "Chorus 2",
+            "composedMean": 104.6,
+            "shippedMean": 117.8,
+            "ratio": 1.126
+          },
+          {
+            "song": "ballad-piano-vocal",
+            "instrument": "keys",
+            "section": "Verse",
+            "composedMean": 62.25,
+            "shippedMean": 60.56,
+            "ratio": 0.973
+          },
+          {
+            "song": "ballad-piano-vocal",
+            "instrument": "keys",
+            "section": "Chorus",
+            "composedMean": 82,
+            "shippedMean": 88.407,
+            "ratio": 1.078
+          },
+          {
+            "song": "ballad-piano-vocal",
+            "instrument": "keys",
+            "section": "Bridge",
+            "composedMean": 79.344,
+            "shippedMean": 67.862,
+            "ratio": 0.855
+          },
+          {
+            "song": "ballad-piano-vocal",
+            "instrument": "keys",
+            "section": "Chorus 2",
+            "composedMean": 93.25,
+            "shippedMean": 106.885,
+            "ratio": 1.146
+          },
+          {
+            "song": "rock-full",
+            "instrument": "drums",
+            "section": "Chorus",
+            "composedMean": 91.689,
+            "shippedMean": 62.214,
+            "ratio": 0.679
+          },
+          {
+            "song": "rock-full",
+            "instrument": "drums",
+            "section": "Chorus 2",
+            "composedMean": 99.525,
+            "shippedMean": 69.636,
+            "ratio": 0.7
+          },
+          {
+            "song": "rock-full",
+            "instrument": "bass",
+            "section": "Intro",
+            "composedMean": 79.3,
+            "shippedMean": 70.273,
+            "ratio": 0.886
+          },
+          {
+            "song": "rock-full",
+            "instrument": "bass",
+            "section": "Verse",
+            "composedMean": 78.947,
+            "shippedMean": 70.421,
+            "ratio": 0.892
+          },
+          {
+            "song": "rock-full",
+            "instrument": "bass",
+            "section": "Chorus",
+            "composedMean": 91.419,
+            "shippedMean": 86.567,
+            "ratio": 0.947
+          },
+          {
+            "song": "rock-full",
+            "instrument": "bass",
+            "section": "Bridge",
+            "composedMean": 81.16,
+            "shippedMean": 70,
+            "ratio": 0.862
+          },
+          {
+            "song": "rock-full",
+            "instrument": "bass",
+            "section": "Chorus 2",
+            "composedMean": 99.414,
+            "shippedMean": 98.345,
+            "ratio": 0.989
+          },
+          {
+            "song": "rock-full",
+            "instrument": "keys",
+            "section": "Intro",
+            "composedMean": 68.345,
+            "shippedMean": 53.386,
+            "ratio": 0.781
+          },
+          {
+            "song": "rock-full",
+            "instrument": "keys",
+            "section": "Verse",
+            "composedMean": 68.213,
+            "shippedMean": 54.306,
+            "ratio": 0.796
+          },
+          {
+            "song": "rock-full",
+            "instrument": "keys",
+            "section": "Chorus",
+            "composedMean": 89.5,
+            "shippedMean": 89.4,
+            "ratio": 0.999
+          },
+          {
+            "song": "rock-full",
+            "instrument": "keys",
+            "section": "Bridge",
+            "composedMean": 75.063,
+            "shippedMean": 58.281,
+            "ratio": 0.776
+          },
+          {
+            "song": "rock-full",
+            "instrument": "keys",
+            "section": "Chorus 2",
+            "composedMean": 98.75,
+            "shippedMean": 103.708,
+            "ratio": 1.05
+          },
+          {
+            "song": "rock-full",
+            "instrument": "guitar",
+            "section": "Chorus 2",
+            "composedMean": 98.75,
+            "shippedMean": 103.533,
+            "ratio": 1.048
+          },
+          {
+            "song": "dance-full",
+            "instrument": "drums",
+            "section": "Intro",
+            "composedMean": 74,
+            "shippedMean": 52.422,
+            "ratio": 0.708
+          },
+          {
+            "song": "dance-full",
+            "instrument": "drums",
+            "section": "Verse",
+            "composedMean": 69.252,
+            "shippedMean": 42.993,
+            "ratio": 0.621
+          },
+          {
+            "song": "dance-full",
+            "instrument": "drums",
+            "section": "Chorus",
+            "composedMean": 86.803,
+            "shippedMean": 51.697,
+            "ratio": 0.596
+          },
+          {
+            "song": "dance-full",
+            "instrument": "drums",
+            "section": "Breakdown",
+            "composedMean": 63.644,
+            "shippedMean": 42.318,
+            "ratio": 0.665
+          },
+          {
+            "song": "dance-full",
+            "instrument": "drums",
+            "section": "Chorus 2",
+            "composedMean": 93.89,
+            "shippedMean": 56.319,
+            "ratio": 0.6
+          },
+          {
+            "song": "dance-full",
+            "instrument": "bass",
+            "section": "Intro",
+            "composedMean": 84.5,
+            "shippedMean": 82,
+            "ratio": 0.97
+          },
+          {
+            "song": "dance-full",
+            "instrument": "bass",
+            "section": "Verse",
+            "composedMean": 78.947,
+            "shippedMean": 70.579,
+            "ratio": 0.894
+          },
+          {
+            "song": "dance-full",
+            "instrument": "bass",
+            "section": "Chorus",
+            "composedMean": 91.516,
+            "shippedMean": 86.097,
+            "ratio": 0.941
+          },
+          {
+            "song": "dance-full",
+            "instrument": "bass",
+            "section": "Breakdown",
+            "composedMean": 67.857,
+            "shippedMean": 53.857,
+            "ratio": 0.794
+          },
+          {
+            "song": "dance-full",
+            "instrument": "bass",
+            "section": "Chorus 2",
+            "composedMean": 98.931,
+            "shippedMean": 96.143,
+            "ratio": 0.972
+          },
+          {
+            "song": "dance-full",
+            "instrument": "keys",
+            "section": "Chorus",
+            "composedMean": 89.286,
+            "shippedMean": 85.81,
+            "ratio": 0.961
+          },
+          {
+            "song": "dance-full",
+            "instrument": "keys",
+            "section": "Chorus 2",
+            "composedMean": 98.375,
+            "shippedMean": 103.292,
+            "ratio": 1.05
+          },
+          {
+            "song": "dance-full",
+            "instrument": "synth",
+            "section": "Chorus",
+            "composedMean": 75,
+            "shippedMean": 76.458,
+            "ratio": 1.019
+          },
+          {
+            "song": "dance-full",
+            "instrument": "synth",
+            "section": "Chorus 2",
+            "composedMean": 84.286,
+            "shippedMean": 93.238,
+            "ratio": 1.106
+          },
+          {
+            "song": "acoustic-demo",
+            "instrument": "drums",
+            "section": "Chorus",
+            "composedMean": 77.03,
+            "shippedMean": 50.618,
+            "ratio": 0.657
+          },
+          {
+            "song": "acoustic-demo",
+            "instrument": "drums",
+            "section": "Chorus 2",
+            "composedMean": 86.385,
+            "shippedMean": 58.726,
+            "ratio": 0.68
+          },
+          {
+            "song": "acoustic-demo",
+            "instrument": "bass",
+            "section": "Verse",
+            "composedMean": 70.429,
+            "shippedMean": 56.75,
+            "ratio": 0.806
+          },
+          {
+            "song": "acoustic-demo",
+            "instrument": "bass",
+            "section": "Chorus",
+            "composedMean": 82.548,
+            "shippedMean": 73.567,
+            "ratio": 0.891
+          },
+          {
+            "song": "acoustic-demo",
+            "instrument": "bass",
+            "section": "Verse 2",
+            "composedMean": 70.909,
+            "shippedMean": 56.833,
+            "ratio": 0.801
+          },
+          {
+            "song": "acoustic-demo",
+            "instrument": "bass",
+            "section": "Chorus 2",
+            "composedMean": 92.138,
+            "shippedMean": 87.643,
+            "ratio": 0.951
+          },
+          {
+            "song": "acoustic-demo",
+            "instrument": "guitar",
+            "section": "Verse",
+            "composedMean": 60.889,
+            "shippedMean": 50.37,
+            "ratio": 0.827
+          },
+          {
+            "song": "acoustic-demo",
+            "instrument": "guitar",
+            "section": "Chorus",
+            "composedMean": 80.5,
+            "shippedMean": 76.32,
+            "ratio": 0.948
+          },
+          {
+            "song": "acoustic-demo",
+            "instrument": "guitar",
+            "section": "Verse 2",
+            "composedMean": 55.571,
+            "shippedMean": 39.857,
+            "ratio": 0.717
+          },
+          {
+            "song": "acoustic-demo",
+            "instrument": "guitar",
+            "section": "Chorus 2",
+            "composedMean": 90.75,
+            "shippedMean": 93.208,
+            "ratio": 1.027
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "drums",
+            "section": "Chorus",
+            "composedMean": 96.202,
+            "shippedMean": 60.593,
+            "ratio": 0.63
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "bass",
+            "section": "Verse",
+            "composedMean": 71.4,
+            "shippedMean": 65.833,
+            "ratio": 0.922
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "bass",
+            "section": "Chorus",
+            "composedMean": 107.538,
+            "shippedMean": 106.083,
+            "ratio": 0.986
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "keys",
+            "section": "Intro",
+            "composedMean": 50.667,
+            "shippedMean": 34.1,
+            "ratio": 0.673
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "keys",
+            "section": "Verse",
+            "composedMean": 56.118,
+            "shippedMean": 41.519,
+            "ratio": 0.74
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "keys",
+            "section": "Chorus",
+            "composedMean": 91.343,
+            "shippedMean": 82.591,
+            "ratio": 0.904
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "keys",
+            "section": "Outro",
+            "composedMean": 57.586,
+            "shippedMean": 42.759,
+            "ratio": 0.743
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "brass",
+            "section": "Chorus",
+            "composedMean": 110,
+            "shippedMean": 125.6,
+            "ratio": 1.142
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "strings",
+            "section": "Intro",
+            "composedMean": 50.4,
+            "shippedMean": 40.7,
+            "ratio": 0.808
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "strings",
+            "section": "Verse",
+            "composedMean": 52.477,
+            "shippedMean": 42.744,
+            "ratio": 0.815
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "strings",
+            "section": "Chorus",
+            "composedMean": 84,
+            "shippedMean": 92.104,
+            "ratio": 1.096
+          },
+          {
+            "song": "orchestral-midi",
+            "instrument": "strings",
+            "section": "Outro",
+            "composedMean": 53,
+            "shippedMean": 53.667,
+            "ratio": 1.013
+          },
+          {
+            "song": "ethnic-vocal",
+            "instrument": "drums",
+            "section": "Chorus",
+            "composedMean": 85.932,
+            "shippedMean": 62,
+            "ratio": 0.722
+          },
+          {
+            "song": "ethnic-vocal",
+            "instrument": "drums",
+            "section": "Verse 2",
+            "composedMean": 67.892,
+            "shippedMean": 46.829,
+            "ratio": 0.69
+          },
+          {
+            "song": "ethnic-vocal",
+            "instrument": "bass",
+            "section": "Verse",
+            "composedMean": 69.143,
+            "shippedMean": 44.857,
+            "ratio": 0.649
+          },
+          {
+            "song": "ethnic-vocal",
+            "instrument": "bass",
+            "section": "Chorus",
+            "composedMean": 94.688,
+            "shippedMean": 90.353,
+            "ratio": 0.954
+          },
+          {
+            "song": "ethnic-vocal",
+            "instrument": "bass",
+            "section": "Verse 2",
+            "composedMean": 73,
+            "shippedMean": 58.714,
+            "ratio": 0.804
+          },
+          {
+            "song": "ethnic-vocal",
+            "instrument": "keys",
+            "section": "Verse",
+            "composedMean": 58.444,
+            "shippedMean": 39.815,
+            "ratio": 0.681
+          },
+          {
+            "song": "ethnic-vocal",
+            "instrument": "keys",
+            "section": "Chorus",
+            "composedMean": 89.857,
+            "shippedMean": 85.963,
+            "ratio": 0.957
+          },
+          {
+            "song": "ethnic-vocal",
+            "instrument": "keys",
+            "section": "Verse 2",
+            "composedMean": 58,
+            "shippedMean": 48.52,
+            "ratio": 0.837
+          },
+          {
+            "song": "jazz-full",
+            "instrument": "drums",
+            "section": "Chorus",
+            "composedMean": 100.114,
+            "shippedMean": 70.857,
+            "ratio": 0.708
+          },
+          {
+            "song": "jazz-full",
+            "instrument": "drums",
+            "section": "Verse 2",
+            "composedMean": 74.65,
+            "shippedMean": 47.706,
+            "ratio": 0.639
+          },
+          {
+            "song": "jazz-full",
+            "instrument": "bass",
+            "section": "Verse",
+            "composedMean": 74.586,
+            "shippedMean": 60.586,
+            "ratio": 0.812
+          },
+          {
+            "song": "jazz-full",
+            "instrument": "bass",
+            "section": "Chorus",
+            "composedMean": 99.778,
+            "shippedMean": 98.857,
+            "ratio": 0.991
+          },
+          {
+            "song": "jazz-full",
+            "instrument": "bass",
+            "section": "Verse 2",
+            "composedMean": 74.262,
+            "shippedMean": 63.852,
+            "ratio": 0.86
+          },
+          {
+            "song": "jazz-full",
+            "instrument": "keys",
+            "section": "Verse",
+            "composedMean": 66.177,
+            "shippedMean": 52.968,
+            "ratio": 0.8
+          },
+          {
+            "song": "jazz-full",
+            "instrument": "keys",
+            "section": "Chorus",
+            "composedMean": 98.133,
+            "shippedMean": 99.31,
+            "ratio": 1.012
+          },
+          {
+            "song": "jazz-full",
+            "instrument": "keys",
+            "section": "Verse 2",
+            "composedMean": 63.983,
+            "shippedMean": 45.744,
+            "ratio": 0.715
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "drums",
+            "section": "Chorus",
+            "composedMean": 92.553,
+            "shippedMean": 71.75,
+            "ratio": 0.775
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "bass",
+            "section": "Intro",
+            "composedMean": 75,
+            "shippedMean": 64.714,
+            "ratio": 0.863
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "bass",
+            "section": "Verse",
+            "composedMean": 77,
+            "shippedMean": 84.333,
+            "ratio": 1.095
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "bass",
+            "section": "Chorus",
+            "composedMean": 103,
+            "shippedMean": 105.25,
+            "ratio": 1.022
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "bass",
+            "section": "Outro",
+            "composedMean": 75.8,
+            "shippedMean": 69.75,
+            "ratio": 0.92
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "percussion",
+            "section": "Chorus",
+            "composedMean": 76,
+            "shippedMean": 61.625,
+            "ratio": 0.811
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "keys",
+            "section": "Intro",
+            "composedMean": 61.25,
+            "shippedMean": 58,
+            "ratio": 0.947
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "keys",
+            "section": "Verse",
+            "composedMean": 62.25,
+            "shippedMean": 63.87,
+            "ratio": 1.026
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "keys",
+            "section": "Chorus",
+            "composedMean": 92,
+            "shippedMean": 101.909,
+            "ratio": 1.108
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "keys",
+            "section": "Outro",
+            "composedMean": 59.391,
+            "shippedMean": 54.476,
+            "ratio": 0.917
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "brass",
+            "section": "Chorus",
+            "composedMean": 102,
+            "shippedMean": 118.333,
+            "ratio": 1.16
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "strings",
+            "section": "Verse",
+            "composedMean": 52,
+            "shippedMean": 48,
+            "ratio": 0.923
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "strings",
+            "section": "Chorus",
+            "composedMean": 78,
+            "shippedMean": 87.769,
+            "ratio": 1.125
+          },
+          {
+            "song": "cinematic-midi",
+            "instrument": "strings",
+            "section": "Outro",
+            "composedMean": 52,
+            "shippedMean": 49.667,
+            "ratio": 0.955
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "drums",
+            "section": "Chorus 2",
+            "composedMean": 77.621,
+            "shippedMean": 49.943,
+            "ratio": 0.643
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "drums",
+            "section": "Chorus 3",
+            "composedMean": 89.236,
+            "shippedMean": 61.888,
+            "ratio": 0.694
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "bass",
+            "section": "Verse 1",
+            "composedMean": 64.375,
+            "shippedMean": 41.813,
+            "ratio": 0.65
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "bass",
+            "section": "Verse 2",
+            "composedMean": 64.369,
+            "shippedMean": 50.53,
+            "ratio": 0.785
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "bass",
+            "section": "Chorus",
+            "composedMean": 73.127,
+            "shippedMean": 65.492,
+            "ratio": 0.896
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "bass",
+            "section": "Chorus 2",
+            "composedMean": 76.952,
+            "shippedMean": 68.516,
+            "ratio": 0.89
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "bass",
+            "section": "Verse 3",
+            "composedMean": 62.25,
+            "shippedMean": 49.353,
+            "ratio": 0.793
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "bass",
+            "section": "Bridge",
+            "composedMean": 74.379,
+            "shippedMean": 61.138,
+            "ratio": 0.822
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "bass",
+            "section": "Chorus 3",
+            "composedMean": 89,
+            "shippedMean": 87.667,
+            "ratio": 0.985
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "bass",
+            "section": "Outro",
+            "composedMean": 61.667,
+            "shippedMean": 38.833,
+            "ratio": 0.63
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "percussion",
+            "section": "Verse 2",
+            "composedMean": 42,
+            "shippedMean": 26.813,
+            "ratio": 0.638
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "percussion",
+            "section": "Chorus",
+            "composedMean": 55,
+            "shippedMean": 30.048,
+            "ratio": 0.546
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "percussion",
+            "section": "Chorus 2",
+            "composedMean": 59,
+            "shippedMean": 32.411,
+            "ratio": 0.549
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "percussion",
+            "section": "Chorus 3",
+            "composedMean": 71,
+            "shippedMean": 43.469,
+            "ratio": 0.612
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "keys",
+            "section": "Verse 1",
+            "composedMean": 54.091,
+            "shippedMean": 47.121,
+            "ratio": 0.871
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "keys",
+            "section": "Verse 2",
+            "composedMean": 50.5,
+            "shippedMean": 44.429,
+            "ratio": 0.88
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "keys",
+            "section": "Chorus",
+            "composedMean": 71.08,
+            "shippedMean": 62.489,
+            "ratio": 0.879
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "keys",
+            "section": "Chorus 2",
+            "composedMean": 75.579,
+            "shippedMean": 69.08,
+            "ratio": 0.914
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "keys",
+            "section": "Verse 3",
+            "composedMean": 54.543,
+            "shippedMean": 44.429,
+            "ratio": 0.815
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "keys",
+            "section": "Bridge",
+            "composedMean": 66.496,
+            "shippedMean": 53.142,
+            "ratio": 0.799
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "keys",
+            "section": "Chorus 3",
+            "composedMean": 85.926,
+            "shippedMean": 82.673,
+            "ratio": 0.962
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "keys",
+            "section": "Outro",
+            "composedMean": 52,
+            "shippedMean": 46.472,
+            "ratio": 0.894
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Verse 1",
+            "composedMean": 42.063,
+            "shippedMean": 32.917,
+            "ratio": 0.783
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Verse 2",
+            "composedMean": 39.688,
+            "shippedMean": 31.467,
+            "ratio": 0.793
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Chorus",
+            "composedMean": 56.889,
+            "shippedMean": 53.29,
+            "ratio": 0.937
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Chorus 2",
+            "composedMean": 63,
+            "shippedMean": 63.917,
+            "ratio": 1.015
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Verse 3",
+            "composedMean": 39.846,
+            "shippedMean": 33.205,
+            "ratio": 0.833
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Bridge",
+            "composedMean": 71.5,
+            "shippedMean": 62.769,
+            "ratio": 0.878
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Chorus 3",
+            "composedMean": 72,
+            "shippedMean": 73.19,
+            "ratio": 1.017
+          },
+          {
+            "song": "owner-rachem-na",
+            "instrument": "strings",
+            "section": "Outro",
+            "composedMean": 41.286,
+            "shippedMean": 34.333,
+            "ratio": 0.832
+          }
+        ],
+        "meanRatio": 0.859,
+        "minRatio": 0.546,
+        "maxRatio": 1.16
+      },
+      "grid": [
+        {
+          "song": "pop-full",
+          "chordEvents": {
+            "analysed": {
+              "n": 20,
+              "medianMs": 0,
+              "p75Ms": 0,
+              "overFiftyMs": 0
+            },
+            "asRead": {
+              "n": 20,
+              "medianMs": 0,
+              "p75Ms": 0,
+              "overFiftyMs": 0
+            }
+          },
+          "shippedHarmonyOnsets": {
+            "n": 651,
+            "medianMs": 5,
+            "p75Ms": 8,
+            "overFiftyMs": 0
+          },
+          "shippedKitOnsets": {
+            "n": 168,
+            "medianMs": 4,
+            "p75Ms": 8,
+            "overFiftyMs": 33
+          }
+        },
+        {
+          "song": "ballad-piano-vocal",
+          "chordEvents": {
+            "analysed": {
+              "n": 14,
+              "medianMs": 0,
+              "p75Ms": 0,
+              "overFiftyMs": 0
+            },
+            "asRead": {
+              "n": 14,
+              "medianMs": 0.024,
+              "p75Ms": 0.035,
+              "overFiftyMs": 0
+            }
+          },
+          "shippedHarmonyOnsets": {
+            "n": 189,
+            "medianMs": 7.294,
+            "p75Ms": 11.471,
+            "overFiftyMs": 0
+          },
+          "shippedKitOnsets": {
+            "n": 58,
+            "medianMs": 2.588,
+            "p75Ms": 4.235,
+            "overFiftyMs": 0
+          }
+        },
+        {
+          "song": "rock-full",
+          "chordEvents": {
+            "analysed": {
+              "n": 18,
+              "medianMs": 0,
+              "p75Ms": 0,
+              "overFiftyMs": 0
+            },
+            "asRead": {
+              "n": 18,
+              "medianMs": 0.027,
+              "p75Ms": 0.038,
+              "overFiftyMs": 0
+            }
+          },
+          "shippedHarmonyOnsets": {
+            "n": 560,
+            "medianMs": 5.162,
+            "p75Ms": 8.378,
+            "overFiftyMs": 0
+          },
+          "shippedKitOnsets": {
+            "n": 147,
+            "medianMs": 4.595,
+            "p75Ms": 7.243,
+            "overFiftyMs": 27
+          }
+        },
+        {
+          "song": "dance-full",
+          "chordEvents": {
+            "analysed": {
+              "n": 20,
+              "medianMs": 0,
+              "p75Ms": 0,
+              "overFiftyMs": 0
+            },
+            "asRead": {
+              "n": 20,
+              "medianMs": 0.029,
+              "p75Ms": 0.038,
+              "overFiftyMs": 0
+            }
+          },
+          "shippedHarmonyOnsets": {
+            "n": 155,
+            "medianMs": 5.905,
+            "p75Ms": 8,
+            "overFiftyMs": 0
+          },
+          "shippedKitOnsets": {
+            "n": 423,
+            "medianMs": 6.238,
+            "p75Ms": 114.286,
+            "overFiftyMs": 162
+          }
+        },
+        {
+          "song": "acoustic-demo",
+          "chordEvents": {
+            "analysed": {
+              "n": 16,
+              "medianMs": 0,
+              "p75Ms": 0,
+              "overFiftyMs": 0
+            },
+            "asRead": {
+              "n": 16,
+              "medianMs": 0.022,
+              "p75Ms": 0.035,
+              "overFiftyMs": 0
+            }
+          },
+          "shippedHarmonyOnsets": {
+            "n": 175,
+            "medianMs": 7.217,
+            "p75Ms": 14.826,
+            "overFiftyMs": 0
+          },
+          "shippedKitOnsets": {
+            "n": 147,
+            "medianMs": 4.391,
+            "p75Ms": 6.87,
+            "overFiftyMs": 27
+          }
+        },
+        {
+          "song": "orchestral-midi",
+          "chordEvents": {
+            "analysed": {
+              "n": 18,
+              "medianMs": 0,
+              "p75Ms": 0,
+              "overFiftyMs": 0
+            },
+            "asRead": {
+              "n": 18,
+              "medianMs": 0.026,
+              "p75Ms": 0.037,
+              "overFiftyMs": 0
+            }
+          },
+          "shippedHarmonyOnsets": {
+            "n": 307,
+            "medianMs": 4.105,
+            "p75Ms": 8.579,
+            "overFiftyMs": 7
+          },
+          "shippedKitOnsets": {
+            "n": 84,
+            "medianMs": 2.158,
+            "p75Ms": 3.895,
+            "overFiftyMs": 11
+          }
+        },
+        {
+          "song": "ethnic-vocal",
+          "chordEvents": {
+            "analysed": {
+              "n": 12,
+              "medianMs": 0,
+              "p75Ms": 0,
+              "overFiftyMs": 0
+            },
+            "asRead": {
+              "n": 12,
+              "medianMs": 0.023,
+              "p75Ms": 0.038,
+              "overFiftyMs": 0
+            }
+          },
+          "shippedHarmonyOnsets": {
+            "n": 110,
+            "medianMs": 5.846,
+            "p75Ms": 9.154,
+            "overFiftyMs": 0
+          },
+          "shippedKitOnsets": {
+            "n": 77,
+            "medianMs": 2.769,
+            "p75Ms": 4.154,
+            "overFiftyMs": 0
+          }
+        },
+        {
+          "song": "jazz-full",
+          "chordEvents": {
+            "analysed": {
+              "n": 24,
+              "medianMs": 0,
+              "p75Ms": 0,
+              "overFiftyMs": 0
+            },
+            "asRead": {
+              "n": 24,
+              "medianMs": 0.027,
+              "p75Ms": 0.036,
+              "overFiftyMs": 0
+            }
+          },
+          "shippedHarmonyOnsets": {
+            "n": 784,
+            "medianMs": 4.727,
+            "p75Ms": 7.545,
+            "overFiftyMs": 0
+          },
+          "shippedKitOnsets": {
+            "n": 296,
+            "medianMs": 4.182,
+            "p75Ms": 6.818,
+            "overFiftyMs": 56
+          }
+        },
+        {
+          "song": "cinematic-midi",
+          "chordEvents": {
+            "analysed": {
+              "n": 16,
+              "medianMs": 0,
+              "p75Ms": 0,
+              "overFiftyMs": 0
+            },
+            "asRead": {
+              "n": 16,
+              "medianMs": 0,
+              "p75Ms": 0,
+              "overFiftyMs": 0
+            }
+          },
+          "shippedHarmonyOnsets": {
+            "n": 146,
+            "medianMs": 8,
+            "p75Ms": 12,
+            "overFiftyMs": 0
+          },
+          "shippedKitOnsets": {
+            "n": 38,
+            "medianMs": 3,
+            "p75Ms": 5,
+            "overFiftyMs": 0
+          }
+        },
+        {
+          "song": "owner-rachem-na",
+          "chordEvents": {
+            "analysed": {
+              "n": 92,
+              "medianMs": 140.831,
+              "p75Ms": 187.335,
+              "overFiftyMs": 79
+            },
+            "asRead": {
+              "n": 92,
+              "medianMs": 0.039,
+              "p75Ms": 229.977,
+              "overFiftyMs": 37
+            }
+          },
+          "shippedHarmonyOnsets": {
+            "n": 1479,
+            "medianMs": 7.162,
+            "p75Ms": 12.992,
+            "overFiftyMs": 155
+          },
+          "shippedKitOnsets": {
+            "n": 517,
+            "medianMs": 4.138,
+            "p75Ms": 5.681,
+            "overFiftyMs": 58
+          }
+        }
+      ],
+      "ownerPlayabilityRepairs": [
+        {
+          "trackId": "bass-bass",
+          "leapFolds": 0,
+          "polyphonyReleases": 0,
+          "dropped": 0,
+          "durationLengthened": 6,
+          "residual": [],
+          "changedNoteIds": 6,
+          "decisionId": "perform:playability_repair:bass-bass"
+        }
+      ],
+      "ownerTracks": [
+        {
+          "id": "drums-groove",
+          "instrument": "drums",
+          "role": "GROOVE",
+          "notes": 485,
+          "maxVoices": 3,
+          "pitchRange": [
+            36,
+            49
+          ]
+        },
+        {
+          "id": "bass-bass",
+          "instrument": "bass",
+          "role": "BASS",
+          "notes": 322,
+          "maxVoices": 1,
+          "pitchRange": [
+            29,
+            53
+          ]
+        },
+        {
+          "id": "percussion-fill",
+          "instrument": "percussion",
+          "role": "FILL",
+          "notes": 215,
+          "maxVoices": 1,
+          "pitchRange": [
+            54,
+            82
+          ]
+        },
+        {
+          "id": "keys-rhythmic_harmony",
+          "instrument": "keys",
+          "role": "RHYTHMIC_HARMONY",
+          "notes": 882,
+          "maxVoices": 8,
+          "pitchRange": [
+            53,
+            86
+          ]
+        },
+        {
+          "id": "strings-pad",
+          "instrument": "strings",
+          "role": "PAD",
+          "notes": 278,
+          "maxVoices": 4,
+          "pitchRange": [
+            60,
+            92
+          ]
+        }
+      ],
+      "ownerSelected": "cand-A",
+      "ownerScore": 72,
+      "ownerHardRuleFeasible": true
+    }
+  },
+  "gates": {
+    "validatorsAgreeOnTheB12Seeds": true,
+    "documentedControlsAgree": true,
+    "noBedShipsAsOneVoice": true,
+    "ownerBedKeepsThreeVoices": true,
+    "ownerBedDroppedNothing": true,
+    "ownerRunIsSelectable": true,
+    "noResidualPlayabilityRule": true
+  }
+}

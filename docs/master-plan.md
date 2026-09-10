@@ -8553,6 +8553,227 @@ cases are byte-identical, and so is every case's section plan.
   two-bar intro is still a blocking `planned_family_silent`: neither is this
   stream's to fix, and neither is claimed.
 - **Still nothing rendered or listened to.** VALIDATED ON OUTPUT is not claimed.
+### PR-B13 — Brain B-13: one playability truth, one groove for every part
+
+- **PR-B13** ✅ (open; the lead merges) — `ws-brain-b13` (Arrangement &
+  Orchestration Brain, stream B-13, playability + the wiring the shipped notes
+  were missing). Three stages between the plan and the MIDI were undoing the
+  plan: a playability repair that dropped a string bed's voices, harmony
+  writers on their own grid, and a performance stage that played a four-minute
+  track as its intro. This stream is those three, plus the density model that
+  deleted notes to make a candidate. Pure TypeScript, no database, nothing
+  rendered.
+
+  **What changed.** `musicalConstraints.ts` is now the one place that answers
+  "who sounds together" and "what is a leap": `simultaneousVoicesAt`,
+  `polyphonyClusters`, `maxSimultaneousVoices`, `outerVoices`,
+  `melodicLeapViolations`, `isSectionPart`, `breathCapacityFor`, and
+  `contractPlayabilityErrors` — the contract's rules as one function over the
+  engine. `musicProviders.ts` (`validateArrangementProviderOutput`,
+  `validateCanonicalTrackModels`) and `playabilityRepair.ts` call it instead of
+  holding their own definitions, so the three verdicts are one verdict.
+  Simultaneity is judged under two tolerances that were already in the code but
+  not shared: the legato tolerance (30 ms — a tail that laps the next onset is
+  a connected line) and **the performance engine's own 12 ms chord-gesture
+  window** (`GESTURE_WINDOW_SECONDS`, the same figure `performanceEngine.ts`
+  groups its rolled and strummed chords with), so a chord the engine staggered
+  is one onset downstream and not three. `playabilityRepair.ts` releases the
+  earlier voices of a crowded onset and **never drops a voice because its
+  release would be shorter than the instrument's minimum duration** — the rule
+  that cost the owner's string bed 200 notes; when no earlier voice can let go,
+  a single unreleasable tail is dropped last, after every releasable one, and
+  says so. Ties are broken by start then note id, never by pitch; every change
+  is reported per note with its rule, before and after, and tagged
+  `perform:playability_repair:<trackId>` (B-11).
+
+  `composer/harmonyParts.ts`: the harmony writers take their onsets from the
+  shared GroovePlan. `writeBassLine` places the planner's pitches on
+  `bassRhythmFor(frame)` — the kick/bass relation's onsets, the shared
+  anticipations (the next root early, its downbeat tied), the approach into a
+  change at the style's rate, the pedal, the held ending — and leaves through
+  one buffer that keeps the line monophonic, inside the instrument's leap, and
+  released before the next chord. `writeKeysVoicing` / `writeStringBed` place
+  the solved voicing on `compingRhythmFor(frame, cell)` as the candidate's
+  texture asks (a sustained bed tied across bars, block chords on the plan's
+  cell, or an arpeggio through the voicing at the plan's step), each chord
+  released before the next is struck. `entryGestureFor`, `endingGestureFor`
+  and `transitionGesturesFor` are realised by the pitched families, the regular
+  onsets yielding to them. `harmonyPlan/shared.ts`: `chordEventsIn` takes a
+  `ChordGrid` — an analysed chord onset is read as the beat it states when it
+  is within 0.35 of a beat, else as the 8th it pushes to, else left alone; the
+  analysed time survives on the event as `rawStart` (evidence, never a note
+  position), and `quantiseChordsToGrid` gives the measurements the same grid.
+
+  `composer/texture.ts` (new) replaces `applyDensity`'s stride: a strategy is a
+  `TextureIntent` the writers realise while writing — chordal archetype and
+  cell, voice count, extension level, spacing, bass figures, kit hats and
+  ghosts. Every candidate-strategy parameter now drives something
+  (`syncopationBias`, `harmonicAdventurousness`, `registerSpread`,
+  `orchestrationSizeDelta`, `densityMultiplier`); what is left of the
+  multiplier in the orchestrator is the part of it that was always a dynamic
+  reading (`applyStrategyDynamics`). Nothing deletes a chord tone, a kick, a
+  crash, a push, a fill or a motif note.
+
+  `arrangementOrchestrator.ts`: `plan.groovePlan = deriveGroovePlan(...)`
+  persisted; `siblings` and `texture` passed to the composer;
+  `chordOnsets`, `agogics` and — the fix — `sectionRanges` passed to
+  `applyPerformance`, so each section is performed with **its own** role,
+  dynamic shape and place in its own ramp instead of the first section's.
+  `performanceEngine.ts` gains that one input (`sectionRanges`) and resolves
+  `role`, the dynamic ramp and `progress` per section; with no ranges it is
+  V1, unchanged. `transitionRealisation.ts` gains `agogicsFor`, the planned
+  ritardandi as the engine takes them.
+
+  Tests: `brainB13Wiring.test.ts` (6 — each one a defect R-1b located with
+  controls, re-asked of this tree), `composer/texture.test.ts` (7),
+  `musicalConstraints.test.ts` (15), `playabilityRepair.test.ts` (13,
+  including the review's own string cascade as a regression: composed → the
+  engine's stagger → the repair, 0 drops, 45 of 45 notes, 4 voices);
+  `arrangementOrchestrator` 13/13, `arrangementBrainIntegrity` 12/12,
+  `referencePartComposer` 5/5, `brainB01RachemNa` 6/6, `brainB02Harmony` 7/7,
+  `brainB04Evidence` 4/4, `brainB10Motif` 5/5, `groovePlan` 13/13,
+  `rhythmRealisation` 10/10, `transitionRealisation` 9/9,
+  `performanceEngine.b04` 6/6, `harmonyPlan` 13/13, `arrangementArc` 12/12,
+  `critics/controls` 5/5 (ledger regenerated), `critics/judge` 10/10,
+  `musicProviders.trackModelContract` 3/3 and the twelve B-12 invariant suites
+  green; golden re-pinned with the cause in `recordedAt`; typecheck green.
+  Evidence: `docs/evidence/brain-b13-playability-and-wiring.json` (regenerate
+  with `artifacts/api-server/scripts/brain-b13-playability-evidence.mjs`).
+
+  **Measured (before → after; before = R-1b's controlled measurements on the
+  base tree and the B-02 capture, each row naming its source in the evidence
+  document's `before` block).**
+  *One playability truth.* On the 24 B-12 seeds × 3 candidates: 276 shipped
+  tracks, the provider contract, the constraint engine and the repair's rule
+  set agreeing on **276 of 276**, zero disagreements; the keys→guitar swap
+  generator 12 swaps / 24 guitar tracks, zero disagreements. The audit's
+  Probe 4 controls and B-12's documented cases (a 30-semitone bass leap; a
+  legato bass overlapping by 10 ms; piano C2+E4 apart and together; a
+  voice-led four-voice string bed whose chord A top lies 14 semitones above
+  chord B's bottom; a plain piano line) all agree under all three.
+  *The string bed (P0-1).* Owner's song: strings 304 composed → 91 shipped,
+  323 polyphony releases and **200 drops**, mean 1.00 simultaneous voices in
+  every section → **290 composed → 278 shipped, 0 releases, 0 drops**, mean
+  3.69 voices, and no bed section below 3 voices (Verse 1 4, Verse 2 4,
+  Chorus 4, Chorus 2 4, Verse 3 4, Bridge 3, Chorus 3 4, Outro 4). The whole
+  owner run's repair report is now one line: bass, 6 notes lengthened to the
+  instrument's minimum, 0 folds, 0 releases, 0 drops, no residual rule (the
+  B-02 tracker's recorded strings row was 118 leap folds / 320 releases / 199
+  drops). `orchestral-midi` strings 54 composed → 24 shipped (56 releases, 30
+  drops) → 108 composed → 107 shipped, mean 3.1–4.0 voices per section.
+  Across the ten songs **no bed anywhere ships as a single voice** (0 of the
+  17 string / pad sections, 16 of them written in more than one voice), and the
+  whole corpus's repair is 0 leap folds, 10 releases and 6 drops — every drop a transition run's last note that the performance stage
+  pushed across the next chord's downbeat, named as such in its reason.
+  *One grid (P0-2).* The owner fixture's analysed chord onsets sit median
+  140.8 ms / p75 187.3 ms from the nearest beat (79 of 92 over 50 ms); read as
+  the beat they state, **median 0.04 ms** and 37 of 92 over 50 ms — those 37
+  are the ones read as a pushed 8th, and they are 8ths. The shipped harmony
+  onsets against the 8th grid the kit is written on: **median 7.2 ms, p75
+  13.0 ms** (before: keys median 119 ms, p90 199 ms from the beat), against
+  the kit's own median 4.1 ms; across all ten cases shipped harmony median
+  4.1–8.0 ms and p75 7.5–14.8 ms. Shipped kick/bass agreement **0.617 → 0.865**
+  (locked sections 0.949 over 24, complement 1.00 over 4, pedal 0.498 over 7 —
+  by design).
+  *The arc reaches the notes (P0-3).* Composed → shipped velocity was ×0.58–0.60
+  in every one of the owner's nine sections → **×0.80–0.96 for keys** (mean
+  0.808 over all the owner's parts, 0.859 over all ten cases, range
+  0.546–1.16). The owner's keys ship Verse 1 47, Chorus 62, Chorus 2 69,
+  **Chorus 3 83** — composed 85.9, and the same composed 86 shipped at 52
+  before — and the loudest shipped section is the climax. `critics/controls`'s ledger, regenerated from the
+  harness, moves `emotionalArcAndTension` from **informing to gated**
+  (detection rate 0.875 → 1.000, n 8, clean-anchor blocking rate 0) — the
+  flatten-arc control is now detectable because the arc is now in the notes;
+  `groove` stays gated (0.9688 → 0.9355 on n 31).
+  *Texture instead of thinning.* Owner Bridge counter-line 10 composed → 5
+  shipped → **10 of 10 shipped**, with its motif provenance intact.
+  Candidate note counts on the owner's song 1867 / 1980 / 1978 (B and C two
+  bass notes apart) → 2182 / 2301 / 3077 over three, 1348–3077 over five.
+  Adversarial penalties on the shipped notes across the ten cases: causality
+  85.1 → **19.55**, machineMade 198.9 → **44.55**, arbitrariness 70.7 → 83.39,
+  feasible 10 / 10.
+
+  **Capability ladder (D = designed, I = implemented, N = integrated on the
+  production path, T = tested with a positive control, B = benchmarked,
+  V = validated on output).**
+  - *One playability truth* — **T**. One module answers simultaneity and leap;
+    the contract validator, the constraint engine and the repair call it; the
+    B-12 seeds and the audit's Probe 4 controls are the positive controls
+    (276/276 agreement, six documented cases). **N** on the production path:
+    every provider output and every canonical TrackModel goes through it.
+  - *The perform → repair cascade* — **T/V**. The review's own control is a
+    test: composed bed → the engine's 1.5 ms stagger → the repair, 0 drops.
+    Validated on the shipped notes of ten songs (0 of the 17 string / pad
+    sections ship as one voice).
+  - *One groove for every part* — **N**. `bassRhythmFor` / `compingRhythmFor`
+    have production callers; the GroovePlan is persisted on the plan; the
+    shipped harmony and the shipped kit share a grid to within the engine's
+    feel. **Not V**: no one has heard it.
+  - *Per-section performance* — **T**. Measured composed → shipped per section
+    on ten songs, and the arc control the B-05a harness could not detect before
+    is now gated.
+  - *Texture archetypes* — **I/T**. Every strategy parameter drives a writer
+    decision, unit-tested; the candidates differ by what they write. **Not B**:
+    whether the archetypes are the *right* five is not measured, and the
+    diversity gate still is not met (below).
+  - *Idiom* — **D**. A sustained bed, block chords and an arpeggio are three
+    gestures, not a piano part. B-03's gesture vocabulary still has no reader.
+
+  **Honest limits.**
+  - **The strings are still written too high.** The owner's Chorus 3 string bed
+    ships at MIDI 72–92 against a comfortable ceiling of 86, and Verse 1 at
+    71–82 — R-1b's `string_bed_too_high` is *not* fixed here. The cause is in
+    the composer, not the cascade: `raise_register` lifts the target and
+    `composer/registers.ts` still does not call B-03's `registerBoundsFor`.
+    This stream gave the bed its voices back; B-02/B-03 owe it its register.
+    Every one of those notes is now audible, so the defect is louder than it
+    was, not quieter.
+  - **The candidate diversity gate is still not met.** Mean pairwise candidate
+    distance over five candidates is 0.104 (threshold 0.25; per case
+    0.027–0.153, owner 0.148). The strategies now write differently — note
+    counts spread 1348–3077 on the owner's song where they used to differ by
+    two notes — but the fingerprint the gate reads is dominated by the shared
+    harmony and the shared role/instrument set, which no texture changes. The
+    before value was not re-derived on the base tree (see below), so this is
+    an "after" against a threshold, not a before → after.
+  - **The `before` column is not re-run.** B-13 has no runnable "before"
+    module: the numbers it improves were measured on the base tree by the R-1b
+    review and by the B-02 capture, and the evidence document carries them with
+    their source per row rather than re-deriving them here. Every "after" is a
+    measurement of this tree by `measureB13()`.
+  - **A mid-song ritardando is planned and not performed.** `agogics` is wired,
+    but a ritardando carries a permanent offset into everything after its
+    window, and the export cannot carry a multi-segment tempo map to say the
+    grid moved — so a planned ritardando is performed only when it lands in the
+    song's last bar. On `cinematic-midi` the Outro's ritardando is therefore
+    silent in the notes (it is in the plan and in the gesture's tempo events),
+    and without that rule the whole Outro read as `off_grid` to the B-05a
+    groove dimension. A tempo map the export accepts is the real fix and is
+    not this stream's.
+  - **Six notes are still dropped on the corpus**, all in `rock-full`,
+    `acoustic-demo` and `orchestral-midi`: a transition run's last note that
+    the performance stage pushed 30–60 ms across the next chord's downbeat and
+    that cannot be released and still last the instrument's minimum duration.
+    The composition is legal; the performance makes it illegal. The right fix
+    is for the gesture writer to know the instrument's minimum duration, or for
+    the engine not to push a gesture across a boundary — neither is done here.
+  - **The velocity ratio is not 1.0 and should not be.** The performance stage
+    still shapes velocity (metrical accent, phrase arc, the section's own ramp);
+    the claim is that the *arc* survives, and the measurement is that the
+    loudest shipped section is the climax and the ratio no longer sits flat at
+    0.6. Eight of the owner's thirty section × track rows still ship under
+    ×0.75 — every one of them drums (0.64–0.69), percussion (0.55–0.64) or bass
+    (0.63–0.65), which the engine scales by its own accent depth and its
+    plucked profile. The pitched harmony, which is what carried the arc, is
+    0.80–0.96 (keys) and 0.78–1.02 (strings).
+  - **Nothing here has been listened to.** Every claim is a measurement on the
+    shipped `TrackModel` notes. The `arrangementBrainIntegrity` chain, the
+    critics and the invariants agree with those measurements; a musician has
+    not.
+  - **P0-4 and P0-5 are untouched.** The arrival is still thinner than the
+    setup on several cases (`louder_section_thinner`), and the B-05 critics
+    still do not rank or gate on the production path. R-1b's items 5 and 10
+    belong to B-02/B-03 and to B-06.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 

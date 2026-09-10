@@ -895,6 +895,12 @@ const suites = {
       ["src/lib/critics/rank.test.ts", "rank.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
     ],
   },
+  "brain-b13": {
+    bundles: [
+      ["src/lib/brainB13Wiring.test.ts", "brain-b13-wiring.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/composer/texture.test.ts", "texture.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
   "brain-invariants": {
     bundles: [
       ["src/lib/invariants/generators.property.test.ts", "b12-generators.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],

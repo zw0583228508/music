@@ -158,7 +158,16 @@ test("the reference part composer produces byte-identical parts to the golden fi
         "notes); the mode-restricted cases (ballad-piano-vocal, acoustic-demo, orchestral-midi, ethnic-vocal, " +
         "cinematic-midi) are byte-identical, and so is every case's section plan - the per-family role rule that " +
         "went in with this re-pin only fires where a brief named a family's level, which no corpus case does. " +
-        "A future digest change must again name its cause here.",
+        "A future digest change must again name its cause here. " +
+        "RE-PINNED again at the B-13 merge (one playability truth, one groove for every part, base 30041f5): every harmony writer " +
+        "now takes its onsets from the shared GroovePlan instead of subdividing the analysed chord span - the bass from " +
+        "bassRhythmFor (kick/bass relation, shared anticipations, approach tones, pedal, held ending), keys / guitar / strings / " +
+        "pads from compingRhythmFor on the texture the candidate strategy asks for (sustained bed, block chords, arpeggio) - and " +
+        "the analysed chord onsets are read as the beat or the 8th they state (chordEventsIn's grid), so every composer digest " +
+        "changed on every case. The shipped-note digests changed with them and for three more reasons: the strategy no longer " +
+        "thins a part by an evenly spaced stride (texture instead of deletion), the performance engine performs each section with " +
+        "its own role and dynamic shape instead of the first section's, and the playability repair reads a rolled or staggered " +
+        "chord as one gesture so a bed keeps its voices. A future digest change must again name its cause here.",
       cases: current,
     }, null, 2)}\n`);
     return;
