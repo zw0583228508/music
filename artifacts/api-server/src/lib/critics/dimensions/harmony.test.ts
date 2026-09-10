@@ -100,25 +100,71 @@ test("null control: no blocking harmony observation on any clean anchor, and eve
   // at 66 of 66 changes but the root at 33 - and it belongs to whoever reads
   // the tracker entry, not to a threshold change here.
   //
-  //   anchor              score  located findings (all minor unless marked)
-  //   pop-full            75.04  bass_rarely_states_root x4, clash_share x2, approach_tone_wrong_mode x2
+  // **Re-measured at the second reconciliation, with B-18 on top.** Still no
+  // threshold moved and no anchor was exempted; one *writer* defect was fixed
+  // at its cause (`composer/harmonyParts.writeBassLine`). Every score rose or
+  // held and both MAJOR findings are gone; one row also gained a finding, and
+  // it is named below rather than left to be discovered.
+  //
+  // B-13 puts the bass on the groove plan's onsets, and it promoted the last
+  // onset before a chord change to an approach tone however far from the
+  // change that onset happened to sit. That was harmless while the groove
+  // answered a quarter-note pulse. B-18 reads a jazz standard's own
+  // convention instead of the tempo map, so jazz-full's bass plays beats 1
+  // and 3: the same rule then wrote a non-chord tone a beat and a half before
+  // the arrival, sounding a third of the chord's length, and this dimension
+  // heard exactly what it is - `clash_share` 0.209 on the Verse, not an
+  // approach. Its pitch was chosen by a copy of the pre-B-18 approach rule
+  // that lived in the writer, so it could be the major third of the minor
+  // chord it sounded over (B natural under Gm7, E natural under Cm7 - R-1b
+  // P1-6's own note), which the planner's `approachToneChoice` refuses in
+  // every style.
+  //
+  // `writeBassLine` now writes the approach where the bass planner writes its
+  // own - on the last beat of the chord it is leaving - and takes its pitch
+  // from `approachToneChoice`. jazz-full's bass: chord-tone share 0.878 ->
+  // 0.952, the Verse's clash share 0.209 (major) -> 0.087 (minor), Verse 2
+  // no longer reporting one at all (it was 0.125), no major finding anywhere,
+  // 73.00 (B-13 alone) -> 74.80.
+  //
+  // **The number that did not improve, stated plainly.** jazz-full now
+  // carries three `approach_tone_wrong_mode` findings where B-13 alone
+  // carried two, and that is the honest price of leading into the change at
+  // all. Its approaches are chromatic because nothing else is available: into
+  // C over Gm7 the only steps are B (the major third of a minor chord, which
+  // `approachToneChoice` refuses outright), D and Bb (both tones of the Gm7
+  // being left, so not approaches) and Db; into F over Cm7 they are Gb, G and
+  // Eb (chord tones) and E (again the major third of a minor chord). A jazz
+  // bassist plays exactly those chromatic notes, and this dimension grades an
+  // approach against the *sounding chord's* own mode rather than the style's
+  // idiom, so it calls each of them `minor`. That is the writer/critic mode
+  // disagreement B-18 recorded as an honest limit, now visible on three
+  // sections instead of two; it is not tuned away here and jazz-full is not
+  // exempted. The alternative - refusing to lead into a change the groove
+  // gives no onset beside - scores jazz-full 89.20 and takes the owner's own
+  // song from eight approaches into the chord the bass states to **zero**,
+  // which is the defect `static_bass_no_approach` is named for. The bass
+  // leads in.
+  //
+  //   anchor              score  located findings (all minor; no anchor carries a major)
+  //   pop-full            81.28  bass_rarely_states_root x4, approach_tone_wrong_mode x2   (was 75.04, clash_share x2)
   //   ballad-piano-vocal 100.00  none
-  //   rock-full           81.20  bass_rarely_states_root x4, clash_share x2
-  //   dance-full          87.52  bass_rarely_states_root x3, clash_share x1
-  //   acoustic-demo       83.50  bass_rarely_states_root x3, clash_share x1, approach_tone_wrong_mode x1
-  //   orchestral-midi     74.80  bass_rarely_states_root x2, clash_share x5   (was 89.2)
-  //   ethnic-vocal        80.20  bass_rarely_states_root x1, clash_share x3   (one MAJOR)
-  //   jazz-full           73.00  bass_rarely_states_root x3, clash_share x1, approach_tone_wrong_mode x2 (one MAJOR)
+  //   rock-full           81.20  bass_rarely_states_root x4, clash_share x2                (unchanged)
+  //   dance-full          90.64  bass_rarely_states_root x3                                (was 87.52, clash_share x1)
+  //   acoustic-demo       83.50  bass_rarely_states_root x3, clash_share x1, approach_tone_wrong_mode x1  (unchanged)
+  //   orchestral-midi     82.00  bass_rarely_states_root x1, clash_share x4                (was 74.80, root x2 / clash x5)
+  //   ethnic-vocal        85.60  bass_rarely_states_root x1, clash_share x3                (was 80.20; its MAJOR clash 0.241 -> 0.143 minor)
+  //   jazz-full           74.80  bass_rarely_states_root x3, approach_tone_wrong_mode x3, clash_share x1  (was 73.00, one MAJOR)
   //   cinematic-midi     100.00  none
   const measured: Record<string, { minScore: number; kinds: Record<string, number>; majors: number }> = {
-    "pop-full": { minScore: 75, kinds: { bass_rarely_states_root: 4, clash_share: 2, approach_tone_wrong_mode: 2 }, majors: 0 },
+    "pop-full": { minScore: 81, kinds: { bass_rarely_states_root: 4, approach_tone_wrong_mode: 2 }, majors: 0 },
     "ballad-piano-vocal": { minScore: 100, kinds: {}, majors: 0 },
     "rock-full": { minScore: 81, kinds: { bass_rarely_states_root: 4, clash_share: 2 }, majors: 0 },
-    "dance-full": { minScore: 87, kinds: { bass_rarely_states_root: 3, clash_share: 1 }, majors: 0 },
+    "dance-full": { minScore: 90, kinds: { bass_rarely_states_root: 3 }, majors: 0 },
     "acoustic-demo": { minScore: 83, kinds: { bass_rarely_states_root: 3, clash_share: 1, approach_tone_wrong_mode: 1 }, majors: 0 },
-    "orchestral-midi": { minScore: 74, kinds: { bass_rarely_states_root: 2, clash_share: 5 }, majors: 0 },
-    "ethnic-vocal": { minScore: 80, kinds: { bass_rarely_states_root: 1, clash_share: 3 }, majors: 1 },
-    "jazz-full": { minScore: 73, kinds: { bass_rarely_states_root: 3, clash_share: 1, approach_tone_wrong_mode: 2 }, majors: 1 },
+    "orchestral-midi": { minScore: 82, kinds: { bass_rarely_states_root: 1, clash_share: 4 }, majors: 0 },
+    "ethnic-vocal": { minScore: 85, kinds: { bass_rarely_states_root: 1, clash_share: 3 }, majors: 0 },
+    "jazz-full": { minScore: 74, kinds: { bass_rarely_states_root: 3, approach_tone_wrong_mode: 3, clash_share: 1 }, majors: 0 },
     "cinematic-midi": { minScore: 100, kinds: {}, majors: 0 },
   };
   let rootRarely = 0;
@@ -143,5 +189,13 @@ test("null control: no blocking harmony observation on any clean anchor, and eve
     }
   }
   // The regression itself, asserted as one number so it cannot drift quietly.
-  assert.equal(rootRarely, 20, `bass_rarely_states_root across the clean anchors: ${rootRarely} (B-05c measured 1)`);
+  // B-05c measured 1; B-13 took it to 20 and recorded that; the second
+  // reconciliation with B-18 gives back exactly one of the twenty, and it is
+  // named rather than rounded away: orchestral-midi's Chorus opened 2 of its
+  // 6 chords on the root and now opens 3, because the note that opened one of
+  // them was an approach tone the writer had placed in the middle of a chord's
+  // span instead of beside the change. Nineteen is still the loud number this
+  // stream owns, and the threshold behind it (`stated / counted < 0.5` over
+  // 4+ changes) is untouched.
+  assert.equal(rootRarely, 19, `bass_rarely_states_root across the clean anchors: ${rootRarely} (B-05c measured 1; B-13 alone measured 20)`);
 });

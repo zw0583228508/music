@@ -203,7 +203,15 @@ test("corpus, end to end: the shipped bass takes zero leap folds on every case; 
   // second, at B-02's own bar of 5, because that is the musical property
   // `static_bass_no_approach` named - the bass leads by step into the change -
   // and the threshold is not moved.
-  assert.equal(evidence.owner.composed.bassApproachedByStep, 3, "owner approaches into a *root* arrival: 3 of 33 (B-02's base: >= 5, before B-02: 0); 20 of those 33 are in pedal sections");
+  //
+  // Second reconciliation (with B-18): 4 of 34 and 8 of 67. `writeBassLine`
+  // was turning whichever groove onset happened to be last before a change
+  // into the approach, however far from the change it sat; it now writes the
+  // approach on the last beat of the chord, where the planner writes its own.
+  // The count into the arrival the bass states is the same eight - the same
+  // changes are led into, from a beat away instead of from the middle of the
+  // chord - and one more of them now meets its chord in root position.
+  assert.equal(evidence.owner.composed.bassApproachedByStep, 4, "owner approaches into a *root* arrival: 4 of 34 (B-02's base: >= 5, before B-02: 0; B-13 alone: 3 of 33); the pedal sections still refuse an approach on purpose");
   assert.ok(
     (evidence.owner.composed.bassApproachedIntoStatedChord ?? 0) >= 5,
     `owner approaches into the arrival the bass states ${evidence.owner.composed.bassApproachedIntoStatedChord} of ${evidence.owner.composed.bassChangesStatingChord} (before B-02: 0; into a root arrival: ${evidence.owner.composed.bassApproachedByStep} of ${evidence.owner.composed.bassChangesLandingOnRoot})`,

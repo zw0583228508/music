@@ -49,14 +49,14 @@
 import type { ChordHarmonyEvent, MusicalNote } from "@workspace/db";
 import type { ComposeFrame } from "./frame";
 import { registerBounds, registerOf, voiceNear } from "./registers";
-import { chordFromEvent, parsePitchClass } from "../chordSymbols";
+import { chordFromEvent, parsePitchClass, type ParsedChord } from "../chordSymbols";
 import { canonicalFamily, REGISTER_SHIFTABLE_FAMILIES } from "../arrangementArc";
 import { getInstrumentDefinition } from "../musicEngines";
 import type { PartGenerationRequest } from "../partComposer";
-import { harmonyStyleParams, type HarmonyStyleParams } from "../harmonyPlan/styleParams";
+import { approachToneChoice, harmonyStyleParams, tonalCentreOf, type HarmonyStyleParams, type TonalCentre } from "../harmonyPlan/styleParams";
 import { planBassLine, planBassSkeleton, topVoiceGuide, type BassPlan } from "../harmonyPlan/bassLine";
 import { planVoicings, voiceCountFor, type VoicingPlan, type VoicingRoleKind } from "../harmonyPlan/voicings";
-import { chordEventsIn, nearestPitch, quantiseChordsToGrid, nearestPitchWithin, pc, scaleOf, seededUnit, type HarmonyChordEvent } from "../harmonyPlan/shared";
+import { chordEventsIn, nearestPitch, quantiseChordsToGrid, nearestPitchWithin, pc, seededUnit, type HarmonyChordEvent } from "../harmonyPlan/shared";
 import { bassRhythmFor, compingRhythmFor, grooveOf, visibleChords, type BassOnset, type CompingOnset } from "./rhythmParts";
 import { stepUnitsFor } from "../groovePlan";
 import { endingGestureFor, entryGestureFor, familyOfInstrument, transitionGesturesFor, type TransitionGesture } from "../transitionRealisation";
@@ -342,16 +342,31 @@ export function bassPlanFor(frame: HarmonyFrame): BassPlan {
   });
 }
 
-/** A step into `target` from `prev` that is not a tone of the chord being left; chromatic when the style is. */
-function approachPitch(prev: number, target: number, leavingPcs: ReadonlySet<number>, style: HarmonyStyleParams, scale: ReadonlySet<number>, lo: number, hi: number, maxLeap: number, seed: number, key: string): number | null {
+/**
+ * A step into `target` from `prev` that is not a tone of the chord being left.
+ *
+ * The candidate list is this writer's (the style's side preference, the range
+ * and both leap limits); *which* of them may sound is B-18's one answer for
+ * the whole program - `approachToneChoice` reads the song's own mode and
+ * refuses the major third of a minor chord in every style, the source chord's
+ * and the target's alike. Before this the groove-driven bass had its own copy
+ * of the pre-B-18 rule (`chromaticApproach || scale.has(pc) || a whole tone`),
+ * so the planner honoured the refusal and the shipped notes did not: on
+ * jazz-full it wrote B natural under Gm7 and E natural under Cm7 - the note
+ * R-1b P1-6 named - because a chromatic style took the first half step it
+ * found.
+ */
+function approachPitch(
+  prev: number, target: number, leavingPcs: ReadonlySet<number>, style: HarmonyStyleParams,
+  centre: TonalCentre, sourceChord: ParsedChord | null, targetChord: ParsedChord | null,
+  lo: number, hi: number, maxLeap: number, seed: number, key: string,
+): number | null {
   if (prev === target) return null;
   const above = seededUnit(seed, `side:${key}`) > 0.72;
   const order = style.chromaticApproach ? (above ? [1, 2, -1, -2] : [-1, -2, 1, 2]) : (above ? [2, 1, -2, -1] : [-2, -1, 2, 1]);
   const admissible = order.map((offset) => target + offset)
     .filter((p) => p >= lo && p <= hi && Math.abs(p - prev) <= maxLeap && Math.abs(p - target) <= maxLeap);
-  return admissible.find((p) => !leavingPcs.has(pc(p)) && (style.chromaticApproach || scale.has(pc(p)) || Math.abs(p - target) === 2))
-    ?? admissible.find((p) => !leavingPcs.has(pc(p)))
-    ?? null;
+  return approachToneChoice({ admissible, target, avoidPcs: leavingPcs, style, centre, sourceChord, targetChord });
 }
 
 /**
@@ -383,8 +398,11 @@ export function writeBassLine(frame: ComposeFrame): void {
   const { gestures, spans } = gesturesFor(frame, "bass");
   const ending = endingGestureFor(frame);
   const entry = entryGestureFor(frame);
-  const scale = scaleOf([...ctx.warmup, ...ctx.events]);
   const events = ctx.events;
+  // The song's own tonal centre, read exactly as the bass planner reads it
+  // (B-18): the tonic the chords spend their time on and that chord's own
+  // third, never the union of every pitch class the song touches.
+  const centre = tonalCentreOf([...ctx.warmup, ...events].map((e) => ({ ...e.chord, start: e.start, end: e.end })));
 
   /** The skeleton pitch for a chord: the window event under it, or - for a chord outside the window (an anticipated next section) - its bass nearest the line. */
   const anchorFor = (chord: ChordHarmonyEvent, at: number, prev: number | null): number | null => {
@@ -446,9 +464,35 @@ export function writeBassLine(frame: ComposeFrame): void {
     // arrival, because walking up into the push is what a bassist does with a
     // chord that lands early. (B-02's `approachToneRate`; the pedal is exempt,
     // a pedal that moves is not a pedal.)
-    if (figure !== "pedal" && relation === "lock" && changesNext && nextAnchor !== null && nextAnchor !== anchor &&
-      seededUnit(frame.seed, `approach:${o.bar}:${o.unit}`) < ctx.style.approachToneRate) figure = "approach";
-    if (figure === "approach" && (!changesNext || nextAnchor === null)) figure = "root";
+    //
+    // *Where* it goes is the bass planner's rule and not the groove's. The
+    // planner writes its approach on `e - beatSeconds`, the last beat of the
+    // chord it is leaving, and how long the note sounds follows from that.
+    // Turning whichever onset happens to be last into the approach makes the
+    // note as long as the gap to the arrival, which is a wrong note and not
+    // voice leading as soon as that gap is bigger than a beat: measured on
+    // jazz-full, where B-18 reads a jazz standard's own convention instead of
+    // the tempo map and the bass plays beats 1 and 3, the "approach" sounded
+    // 1.5 beats - a third of the chord - and B-05c's harmony dimension heard
+    // exactly that (`clash_share` 0.209 on the Verse, not `approach_tone_*`).
+    //
+    // So the onset keeps its chord tone and the approach is written on the
+    // last beat, where a bassist plays it; only an onset already on (or past)
+    // that beat becomes the approach itself. Nothing is lost by the gate: on
+    // the owner's ballad, whose bass onsets are further apart still, the
+    // approaches are the same eight and they now lead in from the last beat
+    // instead of from the middle of the chord.
+    const arrival = next ? next.start : Number.POSITIVE_INFINITY;
+    const changeAt = events.find((e) => e.start > o.start + 1e-3)?.start ?? arrival;
+    // A chord that lands early is led into at its push, not at its bar line.
+    let approachAt = changeAt - frame.beatSeconds;
+    if (approachAt >= arrival - minDur - gap) approachAt = arrival - frame.beatSeconds;
+    const wantsApproach = figure !== "pedal" && changesNext && nextAnchor !== null && nextAnchor !== anchor &&
+      (figure === "approach"
+        || (relation === "lock" && seededUnit(frame.seed, `approach:${o.bar}:${o.unit}`) < ctx.style.approachToneRate));
+    const onsetLeadsIn = wantsApproach && approachAt <= o.start + minDur + gap;
+    const leadAt = wantsApproach && !onsetLeadsIn && approachAt < arrival - minDur - gap ? approachAt : null;
+    figure = onsetLeadsIn ? "approach" : figure === "approach" ? "root" : figure;
 
     let pitch = anchor;
     if (figure === "fifth" && fifthPc !== undefined) {
@@ -456,7 +500,8 @@ export function writeBassLine(frame: ComposeFrame): void {
     } else if (figure === "octave") {
       pitch = anchor + 12 <= hi && Math.abs(anchor + 12 - (prev ?? anchor)) <= maxLeap && Math.abs(anchor + 12 - (nextAnchor ?? anchor)) <= maxLeap ? anchor + 12 : anchor;
     } else if (figure === "approach" && nextAnchor !== null) {
-      pitch = approachPitch(prev ?? anchor, nextAnchor, leaving, ctx.style, scale, lo, hi, maxLeap, frame.seed, `${o.bar}:${o.unit}`) ?? anchor;
+      pitch = approachPitch(prev ?? anchor, nextAnchor, leaving, ctx.style, centre, parsed, nextChord ? chordFromEvent(nextChord) : null,
+        lo, hi, maxLeap, frame.seed, `${o.bar}:${o.unit}`) ?? anchor;
     }
     // The planner keeps its skeleton within the instrument's leap *between
     // chords*; the groove's own figures (an octave, a fifth, an approach)
@@ -480,6 +525,16 @@ export function writeBassLine(frame: ComposeFrame): void {
       + (isEnding ? (ending!.kind === "held_hit" ? 8 : -6) : 0);
     emit(o.start, duration, pitch, velocity, `b${o.start.toFixed(2)}`);
     prev = pitch;
+    // The approach on the last beat of the chord: one extra note in the line,
+    // released into the arrival, softer than the beat it steps off.
+    if (leadAt !== null && nextAnchor !== null) {
+      const lead = approachPitch(pitch, nextAnchor, leaving, ctx.style, centre, parsed, nextChord ? chordFromEvent(nextChord) : null,
+        lo, hi, maxLeap, frame.seed, `${o.bar}:${o.unit}`);
+      if (lead !== null) {
+        emit(leadAt, Math.max(minDur, Math.min(frame.beatSeconds * 0.85, arrival - leadAt - gap)), lead, velocity - 6, `bl${leadAt.toFixed(3)}`);
+        prev = lead;
+      }
+    }
   });
 
   for (const g of gestures) for (const note of g.notes) emit(note.start, note.duration, note.pitch, note.velocity, note.id);

@@ -107,8 +107,37 @@ test("P0-3: every section is performed as itself - the composed arc survives, an
   const loudest = rows.reduce((best, row) => ((row.shippedMean ?? 0) > (best.shippedMean ?? 0) ? row : best), rows[0]);
   assert.equal(loudest.section, "Chorus 3", `the loudest shipped keys section is ${loudest.section}`);
   const verse = rows.find((r) => r.section === "Verse 1")!;
-  assert.ok((loudest.shippedMean ?? 0) - (verse.shippedMean ?? 0) > 25,
-    `climax ${loudest.shippedMean} vs Verse 1 ${verse.shippedMean}: the arc reaches the notes`);
+  const composedSpan = (loudest.composedMean ?? 0) - (verse.composedMean ?? 0);
+  const shippedSpan = (loudest.shippedMean ?? 0) - (verse.shippedMean ?? 0);
+  // Restated at the second reconciliation (with B-18), with the cause beside
+  // it. This assertion used to read `shippedSpan > 25`, and that number was
+  // measured against a *composed* arc B-18 has since changed at its floor.
+  //
+  // The brief is "intimate ballad; piano, soft strings, gentle bass, light
+  // percussion; big final chorus". Before B-18 the three support words were
+  // read as one global marking step down, so the piano - which the brief names
+  // without a level - was dragged down with them: the arc gave keys pp/0.136
+  // in Verse 1 and f/0.671 in Chorus 3 (composed 54.091 -> 85.926, span
+  // 31.835; shipped 47.121 -> 82.673, span 35.552). B-18 gives the step to the
+  // three families that were asked for it and leaves the piano on the
+  // section's own marking, so Verse 1 is p/0.286 while the climax is untouched
+  // at f/0.671 (composed 62.182 -> 84.926, span 22.744; shipped 58.182 ->
+  // 82.630, span 24.448). The piano's floor came up by one marking; nothing
+  // flattened the climax, and the strings still sit a full marking under the
+  // piano in every section, which is what "soft strings" asked for.
+  //
+  // So the absolute 25 is a fact about the old arc, not about this stream's
+  // fix. What P0-3 owns is the *performance* stage, and that is what is pinned
+  // here: the composer writes an arc, and the shipped notes keep or widen it
+  // (x1.075 here; B-13 alone measured x1.117). The defect this test was
+  // written for fails that clause by a mile - it scaled every section by
+  // 0.58-0.60, taking a composed span of 35 to a shipped span of 22, x0.63 -
+  // and a uniform x0.59 applied to today's arc is 13.4 against 22.744, which
+  // fails it just as clearly.
+  assert.ok(composedSpan > 20,
+    `the composed keys arc is ${composedSpan} (Verse 1 ${verse.composedMean} -> ${loudest.section} ${loudest.composedMean})`);
+  assert.ok(shippedSpan >= composedSpan,
+    `climax ${loudest.shippedMean} vs Verse 1 ${verse.shippedMean}: shipped span ${shippedSpan} against composed ${composedSpan} - the arc reaches the notes`);
 });
 
 test("D2: the plan carries the GroovePlan the notes were written from, and it is the one every part derives", () => {

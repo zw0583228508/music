@@ -71,8 +71,11 @@ test("same input, same seed: byte-identical TrackModels, plan and selection over
  * tracker says so: 19/20 seeds passed on main, 3/20 pass here.**
  */
 const KNOWN_FAILURE =
-  "3/20 seeds pass (was 19/20 on main da21dff); 64 harmony_changed_with_seed violations, almost all on bass-bass. " +
-  "B-13's bass writer decides whether the last onset before a chord change becomes an approach tone with " +
+  "3/20 seeds pass (was 19/20 on main da21dff); 63 harmony_changed_with_seed violations, almost all on bass-bass. " +
+  "(Re-measured at the second reconciliation with B-18: 64 -> 63 violations, the same 3/20 seeds. The approach tone " +
+  "moved from whichever groove onset was last before the change to the last beat of the chord, which is where the bass " +
+  "planner writes its own; the seed still chooses whether a change is led into, so the conflict below is unchanged.) " +
+  "B-13's bass writer decides whether a chord change is led into by an approach tone with " +
   "`seededUnit(frame.seed, `approach:${bar}:${unit}`) < style.approachToneRate` (composer/harmonyParts.ts, writeBassLine), " +
   "so the part's seed chooses a *pitch* and not only a performance: reseeding the model moves which onsets are approach " +
   "tones and the pitch-class histogram of the bass changes with it. That is deliberate per-candidate variation in B-13's " +

@@ -8915,6 +8915,154 @@ cases are byte-identical, and so is every case's section plan.
   silently stopped controlling. The call index now rides on the note id. Every
   other invariant suite is unchanged by B-13.
 
+  **Second reconciliation (with B-18).** Rebased onto `origin/main` 9930873
+  (PR-B18, the brief read like a musician). Exactly two suites failed, and
+  neither branch alone shows either of them.
+
+  *`brainB13Wiring` P0-3 — the owner's keys arc, restated with its cause.* The
+  clause that failed was the margin, not the ordering: Chorus 3 is still the
+  loudest shipped keys section (82.630 against Verse 1's 58.182) and the span
+  is 24.448 where the assertion asked for more than 25. The cause is B-18
+  doing its job. "intimate ballad; piano, soft strings, gentle bass, light
+  percussion; big final chorus" used to be read as one **global** marking step
+  down, which dragged the *piano* — a family the brief names without a level —
+  down with the three families it does name. B-18 gives the step to strings,
+  bass and percussion only, so the arc's keys line is `p`/0.286 in Verse 1
+  where it was `pp`/0.136 while the climax is untouched at `f`/0.671: the
+  composed keys span is 62.182 → 84.926 = **22.744** where B-13 alone measured
+  54.091 → 85.926 = 31.835. Neither stream undoes the other — B-18 moved the
+  composed arc's floor, B-13 owns the performance stage — and the performance
+  stage still widens what it is handed (shipped span 24.448 ≥ composed 22.744,
+  ×1.075; B-13 alone ×1.117). The assertion now says that, with the cause
+  written beside it: the composer writes an arc wider than 20 and the shipped
+  notes keep or widen it. The two clauses that were already true are untouched
+  (every section's composed→shipped ratio > 0.75, measured 0.846–0.973, and
+  the loudest shipped section is Chorus 3), and the defect P0-3 was written
+  for — every section scaled ×0.58–0.60, a composed span of 35 shipped as 22,
+  ×0.63 — fails the restated clause by a mile on the old arc and on this one.
+
+  *`critics/dimensions/harmony` — jazz-full's bass: placed wrongly, and chosen
+  wrongly with it.* Two failures, both on `jazz-full/bass-bass`: chord-tone
+  share **0.878** against the 0.9 the reference-parts test asks for, and a
+  `clash_share` where the null control had recorded an `approach_tone_wrong_mode`.
+  Instrumented onset by onset: of the twelve non-chord tones, nine sit on beat
+  3 of the bar and sound **0.65 s each — a third of the chord — two beats
+  before the change**, two more sit on beat 3.5 for 0.43 s, and one is a short
+  anticipated root. By pitch: B natural under Gm7 ×4, C sharp under F7 ×3,
+  F sharp under Cm7 ×2, E natural under Cm7, A flat under Bb, and the
+  anticipated F under Cm7.
+
+  **Placement is the cause.** `writeBassLine` promoted whichever groove onset
+  happened to be the last before a chord change into an approach tone, however
+  far from the change it sat, and the note's length then follows from the gap
+  to the arrival rather than from any decision. That was harmless while the
+  groove answered a quarter-note pulse. B-18 reads a jazz standard's own
+  convention instead of the tempo map (`steady_pulse`, not `four_on_floor`),
+  so jazz-full's bass plays beats 1 and 3 — and the same rule then wrote a
+  non-chord tone a beat and a half from the arrival. That is not an approach
+  and B-05c's harmony dimension is right to grade it `clash_share` (0.209 of
+  the Verse's sounding time, **major**), not `approach_tone_*`. **The choice
+  was wrong too**, and for a second reason: this writer carried its own copy
+  of the pre-B-18 approach rule (`chromaticApproach || scale.has(pc) || a
+  whole tone`, against the union of every pitch class the song touches), so
+  B-18's `approachToneChoice` — which refuses the major third of a minor chord
+  in every style, the chord left and the chord approached alike — was honoured
+  by the planner and bypassed by the shipped notes. B natural under Gm7 and E
+  natural under Cm7 are exactly the notes R-1b P1-6 named.
+
+  Both are fixed at the cause, in `composer/harmonyParts.ts` and nowhere else.
+  The approach is written where the bass *planner* writes its own — on the
+  last beat of the chord being left (`realiseBassLine`: `e - beatSeconds`),
+  clamped to land before an anticipated arrival — so the onset keeps its chord
+  tone and the lead-in is one beat or less; only an onset already on (or past)
+  that beat becomes the approach itself. `approachPitch` no longer decides
+  anything: it builds the candidate list (the style's side preference, the
+  range, both leap limits) and hands it to `approachToneChoice` with the
+  song's tonal centre, the chord being left and the chord approached.
+
+  *What moved.* jazz-full's bass: chord-tone share 0.878 → **0.952**, the
+  Verse's clash share 0.209 (major) → 0.087 (minor), Verse 2 no longer
+  reporting one at all (it was 0.125), no **major** finding on any clean
+  anchor, harmony 73.00 (B-13 alone) → 74.80.
+  Every other anchor improved or held: pop-full 75.04 → 81.28 (its two
+  `clash_share` gone), dance-full 87.52 → 90.64, orchestral-midi 74.80 → 82.00,
+  ethnic-vocal 80.20 → 85.60 (its MAJOR clash 0.241 → 0.143 minor), rock-full
+  and acoustic-demo unchanged, the two 100s unchanged. `bass_rarely_states_root`
+  across the clean anchors is **19**, not 20: orchestral-midi's Chorus opened 2
+  of its 6 chords on the root and now opens 3, because the note that opened one
+  of them was an approach the writer had placed in the middle of a chord's
+  span. Its threshold (`stated / counted < 0.5` over 4+ changes) is untouched
+  and no anchor was exempted; 19 is still the loud number this stream owns
+  against B-05c's 1. On the owner's song `brainB02Harmony`'s approach count
+  went 3 of 33 root arrivals → 4 of 34, and 8 of 66 into the arrival the bass
+  states → 8 of 67 — the same eight changes led into, from a beat away instead
+  of from the middle of the chord. `invariants/determinism.property`'s
+  `different seed` todo was re-measured with it: still 3/20 seeds, 64 → 63
+  `harmony_changed_with_seed` violations. The seed still chooses *whether* a
+  change is led into, so the conflict that todo records is unchanged and its
+  reason now says so.
+
+  *The number that did not improve, and why it stands.* jazz-full carries
+  three `approach_tone_wrong_mode` findings where B-13 alone carried two. Its
+  approaches are chromatic because nothing else exists: into C over Gm7 the
+  steps are B (the major third of a minor chord, refused outright), D and Bb
+  (tones of the Gm7 being left, so not approaches) and Db; into F over Cm7
+  they are Gb, G and Eb (chord tones) and E (the major third of a minor chord
+  again). A jazz bassist plays those chromatic notes; the dimension grades an
+  approach against the *sounding chord's* own mode rather than the style's
+  idiom and calls each one `minor`. That is the writer/critic mode
+  disagreement B-18 recorded as an honest limit, now visible on three sections
+  instead of two. It is recorded, not tuned away, and jazz-full is not in any
+  exemption map. The alternative — refusing to lead into a change the groove
+  gives no onset beside — scores jazz-full 89.20 and takes the owner's song
+  from eight approaches into the chord the bass states to **zero**, which is
+  the defect `static_bass_no_approach` is named for. The bass leads in.
+
+  *Re-pins.* Seven of the golden fixture's nine cases moved (`recordedAt`
+  carries the cause): pop-full 906 → 907, rock-full 781 → 783, dance-full
+  788 → 789, orchestral-midi 413 → 414 and ethnic-vocal 227 → 228 gain the
+  approach notes the groove had no onset for; acoustic-demo's count is
+  unchanged at 380 and only its digest moved; jazz-full goes 1202 → 1365, most
+  of it B-18's own groove reading for a jazz standard, which this stream's
+  writer now plays through. ballad-piano-vocal and cinematic-midi are
+  byte-identical — `brainB02Evidence` measures zero bass approaches on both, so
+  there was nothing here to move. Section plans, kit, comping and
+  counter-melody are untouched.
+  `B05A_WRITE_LEDGER=1` regenerates `docs/evidence/brain-b05a-critic-controls.json`
+  from the new anchors; `dimensions/controlLedger.ts` is byte-identical, so no
+  control changed tier. `docs/evidence/brain-b13-playability-and-wiring.json`
+  is **not** regenerated: it is this stream's own before/after capture at its
+  merge, and both sets of P0-3 numbers are quoted above rather than overwritten.
+
+  *Still red on arrival, and not this reconciliation's doing.* Three
+  `invariants/*.property` suites carry failures on the rebased branch that
+  neither of the two reported failures covers, and they are the same failures
+  with and without this fix. Isolated by a control, not assumed: the whole
+  `src` tree was copied, `composer/harmonyParts.ts` alone reverted to 8628546
+  in the copy, and the three suites run from it.
+
+  | suite | baseline (harmonyParts.ts at 8628546) | with the fix |
+  | --- | --- | --- |
+  | `invariants/harmony.property` | pass 3, fail 3, todo 3 | pass 3, fail 3, todo 3 |
+  | `invariants/shippedMusic.property` | pass 1, fail 1, todo 4 | pass 1, fail 1, todo 4 |
+  | `invariants/wiring.property` | pass 1, fail 1, todo 2 | pass 1, fail 1, todo 2 |
+
+  The failures are identical, message for message and number for number:
+  `harmony.property`'s `no_chord_tone_at_onset` list is byte-identical (all
+  eight are brass `CLIMAX_LAYER` and pads `PAD` parts, no bass) and its two
+  negative controls fail on the untouched output (`slash_bass_ignored` already
+  present where the control expects none; "pairs judged: 0");
+  `shippedMusic.property`'s negative control reads "the nudged track's own
+  median is the nudge (39.3 ms for a 44 ms shift)" in both runs;
+  `wiring.property`'s reads "removing the groove plan is refused" in both, and
+  the reason is visible in the source - the control removes `plan.groovePlan`
+  from a result that B-13 has since made *carry* one, so the control no longer
+  removes anything. One number did move, and it moved the right way: the
+  `slash_bass_ignored` todo on `harmony.property` counts 119 violations at the
+  baseline and **98** with the fix. None of the three is touched here: each
+  belongs to a writer or a control outside this bass fix, and a negative
+  control is not something to edit quietly.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
