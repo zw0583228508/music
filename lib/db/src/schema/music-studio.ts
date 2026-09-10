@@ -2181,8 +2181,19 @@ export type StyleSpec = {
   orchestration: { density: number; registerSpread: number; dynamics: string };
   production: { stereoWidth: number; room: string; mixProfile: string };
   dynamics: { range: number; accentStrength: number };
-  /** Absent on historical arrangements. */
+  /** Absent on historical arrangements. @deprecated Brain B-09: a projection of the StyleGrammar contract (`styleGrammar.ts`); kept for readers of `grammar.vocabulary`. */
   grammar?: StyleGrammar;
+  /**
+   * Brain B-09: which StyleGrammar this spec was projected from and where
+   * each vocabulary word came from (`brief` / `template` / `research` /
+   * `fingerprint` / `default` = the legacy regex or slider fallback).
+   */
+  styleResolution?: {
+    contractVersion: string;
+    inputsDigestSha256: string;
+    sources: string[];
+    provenance: Record<string, string>;
+  };
 };
 
 export type TrackModel = {
@@ -2707,6 +2718,18 @@ export type GlobalArrangementPlan = {
   productionAesthetic:
     | "intimate" | "polished_pop" | "cinematic" | "raw_band"
     | "electronic" | "orchestral";
+  /**
+   * Brain B-09: where the style, aesthetic and groove decisions came from —
+   * the StyleGrammar's provenance (`brief` / `template` / `research` /
+   * `fingerprint` / `default`), an explicit brief `hint`, or the musical
+   * map's `map_heuristic` fallback — and the digest of the grammar read.
+   */
+  styleDecisions?: {
+    styleGrammarSha256: string | null;
+    style: string;
+    productionAesthetic: string;
+    grooveStrategy: string;
+  };
 };
 
 /** Standard arrangement roles an instrument can hold in a section. */

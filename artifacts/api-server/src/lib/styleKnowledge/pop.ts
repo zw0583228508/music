@@ -1,0 +1,109 @@
+import { kv, t, type StyleKnowledgeEntry } from "./schema";
+
+/** Mainstream produced pop. Parent of pop_ballad. */
+export const pop: StyleKnowledgeEntry = {
+  id: "pop",
+  label: { en: "mainstream pop", he: "פופ מיינסטרים" },
+  match: { requires: [[t("genre", "pop")]] },
+  levels: {
+    genre: { "identity.genre": kv("pop", 0.9, "the brief names it") },
+    subgenre: "unknown",
+    tradition: "unknown",
+    era: "unknown",
+    ensemble: {
+      "identity.ensembleType": kv("produced_band", 0.5, "a rhythm section, keys or guitar, and produced layers"),
+      "arrangement.familyPriority": kv(["drums", "bass", "keys", "guitar", "synth", "strings"], 0.5, "rhythm section first"),
+    },
+    rhythmic: {
+      "groove.family": kv("backbeat", 0.7, "a straight backbeat"),
+      "groove.subdivision": kv("8th", 0.5, "eighths; sixteenth hats in the chorus"),
+      "groove.fillFrequency": kv("moderate", 0.6, "fills at section ends"),
+      "groove.kickSnareLanguage": kv("backbeat_2_and_4", 0.8, "snare on two and four"),
+      "groove.tempoBehavior": kv("strict_grid", 0.55, "produced to a grid"),
+      "bass.attackPosition": kv("on_the_beat", 0.6, "on the kick"),
+      "bass.motion": kv("roots", 0.55, "roots with octave and fifth movement"),
+      "bass.lockToKick": kv(true, 0.7, "bass and kick agree"),
+      "keys.chordRhythm": kv("pulsing", 0.5, "pulsing chords"),
+    },
+    harmonic: {
+      "harmony.extensions": kv("triads", 0.55, "triads with add9 and sus colour"),
+      "harmony.modalFlavour": kv("major_or_natural_minor", 0.45, "diatonic major or natural minor"),
+      "harmony.harmonicRhythm": kv("moderate", 0.6, "a chord a bar"),
+      "harmony.parallelism": kv("tolerated", 0.5, "nobody counts parallel fifths in a pop mix"),
+      "keys.voicingWidth": kv("close", 0.5, "close, mid-register keyboard voicings"),
+      "melodic.phraseLength": kv("regular", 0.7, "four-bar phrases"),
+      "melodic.callAndResponse": kv("occasional", 0.45, "an occasional answer"),
+      "melodic.hookExpectation": kv(true, 0.85, "the chorus is a hook"),
+    },
+    orchestration: {
+      "strings.role": kv("pad", 0.4, "strings pad when present"),
+      "brassWinds.role": kv("none", 0.5, "no brass by default"),
+      "keys.role": kv("comping", 0.5, "keys comp"),
+      "arrangement.doubling": kv("octaves", 0.4, "octave doublings in the chorus"),
+      "arrangement.textureLadder": kv({ intro: "bed", verse: "bed", prechorus: "full", chorus: "full", bridge: "bed", outro: "bed" }, 0.55, "the pop ladder"),
+      "arrangement.silenceConventions": kv(["a drop before the last chorus", "a stripped half of the last chorus, then everything back"], 0.5, "how pop uses silence"),
+      "arrangement.transitionLanguage": kv("drum_fills", 0.55, "a fill or a riser into the chorus"),
+      "arrangement.development": kv("additive", 0.6, "each chorus adds"),
+      "arrangement.phraseBehavior": kv("continuous", 0.5, "continuous accompaniment"),
+      "arrangement.arcTemplate": kv("pop_build", 0.7, "the pop arc"),
+    },
+    aesthetic: {
+      "sound.aesthetic": kv("polished_pop", 0.7, "polished"),
+      "sound.instrumentation": kv("hybrid", 0.6, "played and programmed"),
+      "sound.roomSize": kv("medium", 0.5, "a produced room"),
+      "sound.saturation": kv("clean", 0.55, "clean"),
+      "sound.stereo": kv("wide", 0.6, "wide"),
+    },
+    performance: {
+      "performance.articulationLanguage": kv("tight", 0.6, "tight"),
+      "performance.dynamics": kv("moderate", 0.6, "a produced range"),
+      "performance.humanise": kv("natural", 0.5, "lightly humanised"),
+      "melodic.ornamentation": kv("light", 0.6, "light"),
+      "groove.microtiming": kv("on_top", 0.5, "on the beat"),
+    },
+  },
+  basis: "common practice of produced pop; B-09 specialist, not measured",
+  coverage: "general_practice",
+};
+
+export const popBallad: StyleKnowledgeEntry = {
+  id: "pop_ballad",
+  label: { en: "a pop ballad", he: "בלדת פופ" },
+  extends: "ballad",
+  match: {
+    requires: [[t("genre", "ballad")], [t("genre", "pop"), t("aesthetic", "polished"), t("aesthetic", "polished_pop"), t("word", "production_feel=polished")]],
+  },
+  levels: {
+    genre: { "identity.genre": kv("pop", 0.8, "a pop song in a ballad tempo") },
+    subgenre: { "identity.subgenre": kv("pop_ballad", 0.85, "the produced pop ballad") },
+    tradition: "unknown",
+    era: "unknown",
+    ensemble: {
+      "identity.ensembleType": kv("piano_led_band", 0.6, "piano or guitar under the voice, a rhythm section that grows"),
+      "arrangement.familyPriority": kv(["keys", "bass", "drums", "strings", "guitar"], 0.55, "piano first"),
+    },
+    rhythmic: {
+      "groove.family": kv("backbeat", 0.55, "a half-time backbeat once the drums are in"),
+      "groove.kickSnareLanguage": kv("half_time_backbeat", 0.55, "snare on three"),
+    },
+    harmonic: {
+      "harmony.extensions": kv("sevenths", 0.5, "add9, sus and maj7 colour"),
+      "harmony.modalFlavour": kv("major_or_natural_minor", 0.5, "diatonic"),
+      "keys.voicingWidth": kv("open", 0.6, "open piano voicings under the voice"),
+      "melodic.hookExpectation": kv(true, 0.8, "the chorus is a hook"),
+    },
+    orchestration: {
+      "keys.role": kv("bed", 0.7, "the piano is the bed"),
+      "arrangement.development": kv("additive", 0.65, "each chorus adds"),
+    },
+    aesthetic: {
+      "sound.aesthetic": kv("polished_pop", 0.55, "a produced ballad"),
+      "sound.instrumentation": kv("hybrid", 0.6, "played core, produced layers"),
+    },
+    performance: {
+      "performance.dynamics": kv("wide", 0.65, "quiet verse, big last chorus"),
+    },
+  },
+  basis: "common practice of the produced pop ballad; B-09 specialist, not measured",
+  coverage: "general_practice",
+};

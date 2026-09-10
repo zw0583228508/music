@@ -266,7 +266,8 @@ test("performanceStyleFromProfile carries only evidenced dimensions, with proven
   assert.equal(style.microtiming, "behind");
   assert.equal(style.dynamics, undefined, "an out-of-vocabulary value is not carried");
   assert.equal(style.melodicOrnamentation, undefined, "absent stays absent");
-  assert.deepEqual(style.sources?.map((s) => [s.dimension, s.provenance]), [["swingRatio", "stated"], ["microtiming", "inferred"]]);
+  // Brain B-09: the profile is adapted into the StyleGrammar; a profile value the producer stated or the vocabulary implied is provenance `brief`.
+  assert.deepEqual(style.sources?.map((s) => [s.dimension, s.provenance]), [["swingRatio", "brief"], ["microtiming", "brief"]]);
   assert.deepEqual(performanceStyleFromProfile(null), {});
 });
 

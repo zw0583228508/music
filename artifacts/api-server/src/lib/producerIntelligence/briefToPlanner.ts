@@ -30,6 +30,9 @@ import type {
 } from "@workspace/db";
 import { deriveGlobalArrangementPlan, type GlobalPlannerHints } from "../globalArrangementPlanner";
 import { deriveSectionPhrasePlan, type SectionPlannerHints } from "../sectionPhrasePlanner";
+import { deriveStyleFingerprint } from "../styleFingerprint";
+import { STYLE_PATHS } from "../styleGrammar";
+import { resolveStyle, type StyleResolution } from "../styleResolver";
 import { activeDecisions } from "./briefCompiler";
 
 export type BriefPlannerHints = {
@@ -37,6 +40,21 @@ export type BriefPlannerHints = {
   section: SectionPlannerHints;
   /** One line per hint, naming the decision or dimension it came from. */
   evidence: string[];
+  /**
+   * Brain B-09: the style resolution the hints were derived from — the
+   * knowledge entry, the grammar digest and the questions worth asking. The
+   * grammar itself rides in `global.styleGrammar` for the planner's pickers.
+   */
+  style?: {
+    inputsDigestSha256: string;
+    knowledgeEntry: string | null;
+    questions: StyleResolution["questions"];
+  };
+};
+
+export type BriefPlannerHintOptions = {
+  /** The song, so the brief's grammar can meet the song's measured behaviour (PR-27 fingerprint). */
+  songModel?: SongModelData | null;
 };
 
 const clampMul = (v: number): number => Math.max(0.6, Math.min(1.4, Math.round(v * 1000) / 1000));
@@ -69,8 +87,38 @@ const GROOVE_FROM_DIMENSION: Array<{ dimension: StyleDimensionName; value: strin
   { dimension: "kickSnareLanguage", value: "four_on_floor", groove: "four_on_floor" },
 ];
 
-export function briefPlannerHints(brief: ProductionBrief): BriefPlannerHints {
+/** The brief's StyleGrammar, with the song's fingerprint when the song is at hand. */
+export function resolveBriefStyle(brief: ProductionBrief, options: BriefPlannerHintOptions = {}): StyleResolution {
+  let fingerprint = null;
+  const model = options.songModel ?? null;
+  if (model) {
+    try {
+      fingerprint = deriveStyleFingerprint({
+        source: { kind: "song_model", id: `brief:${brief.id}`, version: null },
+        songModel: model,
+        tempoBpm: model.tempoMap?.[0]?.bpm,
+        meter: model.meterMap?.[0]?.meter,
+      });
+    } catch {
+      fingerprint = null; // a fingerprint that cannot be taken is a missing measurement, not a missing brief
+    }
+  }
+  return resolveStyle({
+    brief,
+    fingerprint,
+    song: model ? { tempoBpm: model.tempoMap?.[0]?.bpm ?? null, key: model.keyMap?.[0]?.key ?? null } : null,
+  });
+}
+
+export function briefPlannerHints(brief: ProductionBrief, options: BriefPlannerHintOptions = {}): BriefPlannerHints {
   const evidence: string[] = [];
+  // Brain B-09: one style contract behind the levers. The grammar's
+  // arrangement section supplies the global dynamic / texture levers, the
+  // template when the brief names none, and the family priority when the
+  // brief names no instruments; the planner's pickers read the grammar itself.
+  const styleResolution = resolveBriefStyle(brief, options);
+  const grammar = styleResolution.grammar;
+  const grammarSaysSomething = grammar.unknown.length < STYLE_PATHS.length && styleResolution.terms.length > 0;
   const sectionEnergyBias: Record<string, number> = {};
   const sectionDensityBias: Record<string, number> = {};
   const sectionFamilies: SectionPlannerHints["sectionFamilies"] = {};
@@ -95,25 +143,36 @@ export function briefPlannerHints(brief: ProductionBrief): BriefPlannerHints {
   // compiler's boundary verb; it means the opposite direction of `value`.
   const boundary = (d: ProducerBriefDecision): boolean => /^(?:no|less) /.test(d.statement);
 
-  // Global energy / density decisions: one marking / texture step for every
-  // section (the arc lever), plus the deprecated multipliers on the prior.
+  // Global energy / density decisions: the deprecated multipliers on the prior
+  // and the family bias still come from the decisions one by one; the arc
+  // levers (one marking / texture step for every section) come from the
+  // grammar's arrangement section, which merged those same decisions into
+  // `globalDynamic` / `globalTexture` with provenance `brief`.
   for (const d of decisions) {
     if (d.scope.kind !== "global") continue;
     if (d.topic === "energy" && (d.value === "high" || d.value === "low")) {
       const higher = (d.value === "high") !== boundary(d);
       const mul = higher ? 1.15 : 0.85;
       for (const name of brief.sectionNames) sectionEnergyBias[name] = clampMul((sectionEnergyBias[name] ?? 1) * mul);
-      globalDynamicSteps += higher ? 1 : -1;
-      evidence.push(`${d.id}: global energy ${boundary(d) ? `not ${d.value}` : d.value} → every section ${higher ? "+1" : "-1"} marking (prior ×${mul})`);
+      evidence.push(`${d.id}: global energy ${boundary(d) ? `not ${d.value}` : d.value} (prior ×${mul})`);
     }
     if (d.topic === "density" && (d.value === "dense" || d.value === "sparse")) {
       const denser = (d.value === "dense") !== boundary(d);
       const mul = denser ? 1.15 : 0.8;
       for (const name of brief.sectionNames) sectionDensityBias[name] = clampMul((sectionDensityBias[name] ?? 1) * mul);
       activeFamilyBias += denser ? 0.3 : -0.35;
-      globalTextureSteps += denser ? 1 : -1;
-      evidence.push(`${d.id}: global density ${boundary(d) ? `not ${d.value}` : d.value} → every section ${denser ? "+1" : "-1"} texture level (prior ×${mul}, family bias ${denser ? "+0.3" : "-0.35"})`);
+      evidence.push(`${d.id}: global density ${boundary(d) ? `not ${d.value}` : d.value} (prior ×${mul}, family bias ${denser ? "+0.3" : "-0.35"})`);
     }
+  }
+  const globalDynamic = grammar.arrangement.globalDynamic;
+  if (globalDynamic && globalDynamic.provenance === "brief" && globalDynamic.value !== "moderate") {
+    globalDynamicSteps = globalDynamic.value === "high" ? 1 : -1;
+    evidence.push(`style grammar arrangement.globalDynamic=${globalDynamic.value} (brief ${globalDynamic.confidence}) → every section ${signed(globalDynamicSteps)} marking`);
+  }
+  const globalTexture = grammar.arrangement.globalTexture;
+  if (globalTexture && globalTexture.provenance === "brief" && globalTexture.value !== "moderate") {
+    globalTextureSteps = globalTexture.value === "full" ? 1 : -1;
+    evidence.push(`style grammar arrangement.globalTexture=${globalTexture.value} (brief ${globalTexture.confidence}) → every section ${signed(globalTextureSteps)} texture level`);
   }
 
   // Per-section intentions: a -1..1 bias is a marking / texture step shift
@@ -168,13 +227,20 @@ export function briefPlannerHints(brief: ProductionBrief): BriefPlannerHints {
     paletteAdd.delete(family);
     evidence.push(`palette -${family} (excluded)`);
   }
-  const familyPriority = brief.instrumentation.hierarchy
+  let familyPriority = brief.instrumentation.hierarchy
     .filter((entry) => entry.family !== "vocals" && !brief.instrumentation.excludedFamilies.includes(entry.family))
     .map((entry, index) => ({ entry, index }))
     .sort((a, b) => TIER_RANK[a.entry.tier] - TIER_RANK[b.entry.tier] || a.index - b.index)
     .map(({ entry }) => entry.family)
     .filter((family, index, all) => all.indexOf(family) === index);
   if (familyPriority.length) evidence.push(`family priority ${familyPriority.join(" > ")} (brief tiers)`);
+  // No instruments named: the style's own hierarchy (knowledge base or
+  // research) is the priority, minus what the brief excluded.
+  const grammarPriority = grammar.arrangement.familyPriority;
+  if (!familyPriority.length && grammarPriority && grammarPriority.provenance !== "fingerprint") {
+    familyPriority = grammarPriority.value.filter((f) => f !== "vocals" && !brief.instrumentation.excludedFamilies.includes(f));
+    if (familyPriority.length) evidence.push(`family priority ${familyPriority.join(" > ")} (style grammar, ${grammarPriority.provenance} ${grammarPriority.confidence})`);
+  }
 
   // Arc template: the aesthetic the brief states, else a genre / mood word
   // in the user's own text, else nothing (the planner reads the style).
@@ -195,6 +261,13 @@ export function briefPlannerHints(brief: ProductionBrief): BriefPlannerHints {
       const match = TEMPLATE_WORDS.find((t) => t.pattern.test(word));
       if (match) { arcTemplate = match.template; arcTemplateWhy = `"${word}"`; break; }
     }
+  }
+  // Still nothing: the style's template (the knowledge base's arc for the
+  // resolved world, or a researched one) — never a measured one.
+  const grammarTemplate = grammar.arrangement.arcTemplate;
+  if (!arcTemplate && grammarTemplate && grammarTemplate.provenance !== "fingerprint") {
+    arcTemplate = grammarTemplate.value;
+    arcTemplateWhy = `style grammar, ${grammarTemplate.provenance} ${grammarTemplate.confidence}${styleResolution.knowledge.entry ? ` (${styleResolution.knowledge.entry})` : ""}`;
   }
   if (arcTemplate) evidence.push(`arc template ${arcTemplate} (${arcTemplateWhy})`);
 
@@ -233,12 +306,22 @@ export function briefPlannerHints(brief: ProductionBrief): BriefPlannerHints {
     ...(globalTextureSteps ? { globalTextureSteps: Math.max(-2, Math.min(2, globalTextureSteps)) } : {}),
     ...(arcTemplate ? { arcTemplate } : {}),
     ...(familyPriority.length ? { familyPriority } : {}),
+    // B-09: the grammar itself, for the planner's style / aesthetic / groove pickers.
+    ...(grammarSaysSomething ? { styleGrammar: grammar } : {}),
   };
   const section: SectionPlannerHints = {
     ...(activeFamilyBias !== 0 ? { activeFamilyBias: Math.max(-1, Math.min(1, Math.round(activeFamilyBias * 1000) / 1000)) } : {}),
     ...(Object.keys(sectionFamilies).length ? { sectionFamilies } : {}),
   };
-  return { global, section, evidence };
+  if (grammarSaysSomething) {
+    evidence.push(`style grammar ${grammar.inputsDigestSha256.slice(0, 12)}: ${styleResolution.knowledge.entry ? `knowledge entry ${styleResolution.knowledge.entry}` : "no knowledge entry matched"}, ${STYLE_PATHS.length - grammar.unknown.length} of ${STYLE_PATHS.length} fields known, ${styleResolution.questions.length} question(s) worth asking`);
+  }
+  return {
+    global,
+    section,
+    evidence,
+    ...(grammarSaysSomething ? { style: { inputsDigestSha256: grammar.inputsDigestSha256, knowledgeEntry: styleResolution.knowledge.entry, questions: styleResolution.questions } } : {}),
+  };
 }
 
 /** The reference an ArrangementPlan carries to the brief it was planned from. */
@@ -281,7 +364,7 @@ export function applyBriefToPlans(
   hints: BriefPlannerHints;
   planRef: { productionBriefId: string; productionBriefDigestSha256: string };
 } {
-  const hints = briefPlannerHints(brief);
+  const hints = briefPlannerHints(brief, { songModel });
   const globalPlan = deriveGlobalArrangementPlan(songModel, { now: options.now, hints: hints.global });
   const sectionPlan = deriveSectionPhrasePlan(songModel, globalPlan, { now: options.now, hints: hints.section });
   return {

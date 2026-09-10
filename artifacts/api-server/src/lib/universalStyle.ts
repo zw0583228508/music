@@ -30,7 +30,12 @@
 import { createHash } from "node:crypto";
 import type { InstrumentArrangementRole, RegisterBand, StyleFingerprint } from "@workspace/db";
 import type { StyleGrammarSlot } from "./partGenerationContextV2";
-import { MIN_RULE_WEIGHT, type GrammarDirective } from "./styleGrammar";
+import {
+  MIN_RULE_WEIGHT, assembleStyleGrammar, validateStyleValue,
+  type BassMotion, type GrammarDirective, type GrooveFamily, type PhraseBehavior, type StyleCandidate, type StyleGrammar, type StylePath, type StyleProvenance,
+  type Subdivision as GrammarSubdivision, type TempoBehavior as GrammarTempoBehavior,
+} from "./styleGrammar";
+import { AESTHETIC_OF_DESCRIPTOR } from "./styleResolver";
 import {
   ERAS, GROOVES, INSTRUMENTS, MODIFIER_WORDS, PITCH_SYSTEMS, REGIONS, STOP_WORDS, STYLE_WORDS, TEMPO_WORDS,
   type GrooveClaim, type InstrumentEntry, type PitchSystemDefinition,
@@ -38,6 +43,8 @@ import {
 import {
   BASIS_RANK, FIELD_REGISTRY, ROLE_NAMES, UNIVERSAL_STYLE_VERSION, emptyUniversalStyle, fieldSpec, getField, isFieldPath, listFields, setField,
   type Basis, type EnsembleMember, type FieldPath, type FieldSpec, type PitchSystemRef, type RoleMap, type RoleName, type StyleField, type UniversalStyle,
+  type BassAttack, type ChordVocabulary, type Doubling, type Era, type GrooveFeel, type Meter, type Ornamentation, type PhraseShape, type Register,
+  type Room, type Saturation, type Subdivision, type TempoBehavior, type VoicingWidth,
 } from "./universalStyleSchema";
 import { SEED_PROVIDER_ID, SEED_STYLE_KNOWLEDGE, ensembleFromIds, matchingSeedNotes, pitchSystemRef, seedField, type SeedNote } from "./universalStyleSeed";
 
@@ -816,8 +823,27 @@ export function applyClarificationAnswer(style: UniversalStyle, path: FieldPath,
 // ---------------------------------------------------------------------------
 
 /** The directives PR-44 defined, plus the ones a universal style can state and a fingerprint cannot. */
+/**
+ * @deprecated B-09: the canonical `GrammarDirective` (styleGrammar.ts) carries
+ * only the kinds a composer pass reads (`swing`, `microtiming`). The universal
+ * style's own slot keeps emitting these older kinds for `routes/style.ts`
+ * (`POST /style/decompose`, not on the arrangement path); nothing consumes
+ * them. The universal style reaches the arrangement through
+ * `grammarFromUniversalStyle` → `StyleGrammar` instead.
+ */
+export type LegacyGrammarDirective =
+  | { kind: "ratio"; feature: "syncopation" | "stepwise" | "ornamentation" | "functionalMotion" | "extensions"; target: number }
+  | { kind: "rate"; feature: "onsetsPerBeat" | "chordsPerBar" | "notesPerBar"; target: number }
+  | { kind: "chordExtensions"; level: "triads" | "sevenths" | "extended" }
+  | { kind: "phraseLength"; beats: number }
+  | { kind: "register"; tendency: StyleFingerprint["register"]["tendency"] }
+  | { kind: "velocityRange"; min: number; max: number }
+  | { kind: "arc"; shape: StyleFingerprint["density"]["arcShape"]; points: number[] }
+  | { kind: "hierarchy"; families: string[] };
+
 export type UniversalGrammarDirective =
   | GrammarDirective
+  | LegacyGrammarDirective
   | { kind: "tempo"; bpmMin: number; bpmMax: number }
   | { kind: "meter"; numerator: number; denominator: number; grouping: number[] | null }
   | { kind: "subdivision"; unit: string }
@@ -1429,3 +1455,94 @@ export function fieldCatalogue(): Array<{ path: FieldPath; consequence: number; 
 
 export type { PitchSystemDefinition };
 export const UNIVERSAL_STYLE_VERSION_ID = UNIVERSAL_STYLE_VERSION;
+
+// ---------------------------------------------------------------------------
+// Brain B-09: the universal style as an input of the one StyleGrammar contract
+// ---------------------------------------------------------------------------
+
+/** Universal-style basis → grammar provenance. A user's word is the brief; a seed or provider note is knowledge; an inference is weaker knowledge. */
+const GRAMMAR_PROVENANCE_OF_BASIS: Record<Exclude<Basis, "unknown">, StyleProvenance> = {
+  user_stated: "brief", evidence: "template", inferred: "template",
+};
+
+const UNIVERSAL_GROOVE_FAMILY: Partial<Record<GrooveFeel, GrooveFamily>> = { straight: "straight", swung: "swung", rubato: "rubato" };
+const UNIVERSAL_SUBDIVISION: Partial<Record<Subdivision, GrammarSubdivision>> = { quarter: "quarter", eighth: "8th", sixteenth: "16th", triplet: "triplet" };
+const UNIVERSAL_TEMPO_BEHAVIOR: Partial<Record<TempoBehavior, GrammarTempoBehavior>> = { strict_grid: "strict_grid", breathing: "breathing", rubato: "rubato_tolerant" };
+const UNIVERSAL_BASS_MOTION: Record<string, BassMotion> = {
+  walking: "walking", root_pulse: "roots", sustained: "roots", tumbao: "riff", ostinato: "riff", sub_808: "riff", riff: "riff", pedal: "pedal", melodic: "melodic", octaves: "octaves",
+};
+const UNIVERSAL_PHRASE_BEHAVIOR: Partial<Record<PhraseShape, PhraseBehavior>> = { call_response: "call_response", riff_based: "motivic", periodic: "continuous", through_composed: "continuous", cyclic: "continuous" };
+
+/**
+ * Adapt a decomposed universal style into the StyleGrammar contract. Every
+ * resolved registry field becomes a candidate with the basis mapped to a
+ * provenance and the field's own confidence (a hypothesis is weakened); an
+ * unknown field contributes nothing, so unknown stays unknown. Fields the
+ * contract has no home for (meter, tempo band, energy, tension, pitch
+ * system detail) stay on the universal style and are listed in `omitted`.
+ *
+ * `styleGrammarFromUniversalStyle` (the older rule list) is kept for
+ * `routes/style.ts`; new code reads the grammar this function returns.
+ */
+export function grammarFromUniversalStyle(style: UniversalStyle): StyleGrammar {
+  const candidates: StyleCandidate[] = [];
+  const omitted: string[] = [];
+  const ref = (path: FieldPath): string => `universalStyle:${path}`;
+  const add = <T>(field: StyleField<T>, path: FieldPath, target: StylePath, map: (value: T) => unknown): void => {
+    if (field.basis === "unknown" || field.value === null) { omitted.push(`${path}: unknown`); return; }
+    const value = map(field.value);
+    if (value === undefined) { omitted.push(`${path}: no grammar field for ${JSON.stringify(field.value)}`); return; }
+    candidates.push({
+      path: target, value, confidence: clamp01(field.confidence * (field.hypothesis ? 0.7 : 1)),
+      provenance: GRAMMAR_PROVENANCE_OF_BASIS[field.basis], sourceRefs: [ref(path), ...field.sources],
+      rationale: field.hypothesis ? `universal style (hypothesis)` : "universal style",
+    });
+  };
+  const fields = new Map(listFields(style).map((f) => [f.path, f.field]));
+  const f = <T>(path: FieldPath): StyleField<T> => fields.get(path) as StyleField<T>;
+
+  add(f<string[]>("identity.region"), "identity.region", "identity.region", (regions) => regions[0]);
+  add(f<Era>("identity.era"), "identity.era", "identity.era", (era) => era.label);
+  add(f<EnsembleMember[]>("ensemble"), "ensemble", "arrangement.familyPriority", (members) => {
+    const families = [...new Set(members.map((m) => String(m.family)).filter((fam) => fam !== "vocals"))];
+    return families.length ? families : undefined;
+  });
+  add(f<GrooveFeel>("groove.feel"), "groove.feel", "groove.family", (feel) => UNIVERSAL_GROOVE_FAMILY[feel]);
+  add(f<Subdivision>("groove.subdivision"), "groove.subdivision", "groove.subdivision", (s) => UNIVERSAL_SUBDIVISION[s]);
+  add(f<number>("groove.swingRatio"), "groove.swingRatio", "groove.swingRatio", (r) => r);
+  add(f<number>("groove.syncopation"), "groove.syncopation", "groove.syncopation", (s) => s);
+  add(f<number>("groove.microtimingMs"), "groove.microtimingMs", "groove.microtimingMs", (ms) => ms);
+  add(f<number>("groove.microtimingMs"), "groove.microtimingMs", "groove.microtiming", (ms) => (Math.abs(ms) < 8 ? "on_top" : ms < 0 ? "ahead" : "behind"));
+  add(f<TempoBehavior>("tempo.behavior"), "tempo.behavior", "groove.tempoBehavior", (b) => UNIVERSAL_TEMPO_BEHAVIOR[b]);
+  add(f<string>("drums.language"), "drums.language", "groove.kickSnareLanguage", (l) => l);
+  add(f<string>("bass.language"), "bass.language", "bass.motion", (l) => UNIVERSAL_BASS_MOTION[l]);
+  add(f<BassAttack>("bass.attack"), "bass.attack", "bass.attackPosition", (a) => a);
+  add(f<PitchSystemRef>("harmony.pitchSystem"), "harmony.pitchSystem", "melodic.pitchSystem", (p) => p.id);
+  add(f<ChordVocabulary>("harmony.chordVocabulary"), "harmony.chordVocabulary", "harmony.extensions",
+    (v) => (v === "power_chords" ? "triads" : v === "triads" || v === "sevenths" || v === "extended" || v === "quartal" || v === "modal" ? v : undefined));
+  add(f<ChordVocabulary>("harmony.chordVocabulary"), "harmony.chordVocabulary", "harmony.parallelism", (v) => (v === "power_chords" ? "characteristic" : undefined));
+  add(f<number>("harmony.chordsPerBar"), "harmony.chordsPerBar", "harmony.chordsPerBar", (c) => c);
+  add(f<string[]>("harmony.cadence"), "harmony.cadence", "harmony.cadenceLanguage", (habits) => habits.join("; "));
+  add(f<number>("harmony.functionalMotion"), "harmony.functionalMotion", "harmony.functionalMotion", (m) => m);
+  add(f<VoicingWidth>("voicing.width"), "voicing.width", "keys.voicingWidth", (w) => (w === "unison" ? undefined : w));
+  add(f<VoicingWidth>("voicing.width"), "voicing.width", "arrangement.doubling", (w) => (w === "unison" ? "unison_sections" : undefined));
+  add(f<Doubling>("voicing.doubling"), "voicing.doubling", "arrangement.doubling", (d) => d);
+  add(f<Ornamentation>("melody.ornamentation"), "melody.ornamentation", "melodic.ornamentation", (o) => o);
+  add(f<number>("melody.stepwiseRatio"), "melody.stepwiseRatio", "melodic.stepwiseRatio", (r) => r);
+  const meter = f<Meter>("meter");
+  add(f<number>("phrase.lengthBars"), "phrase.lengthBars", "melodic.phraseLengthBeats", (bars) => bars * beatsPerBar(meter.value));
+  add(f<PhraseShape>("phrase.shape"), "phrase.shape", "arrangement.phraseBehavior", (s) => UNIVERSAL_PHRASE_BEHAVIOR[s]);
+  add(f<PhraseShape>("phrase.shape"), "phrase.shape", "melodic.callAndResponse", (s) => (s === "call_response" ? "structural" : undefined));
+  add(f<Register>("register"), "register", "arrangement.registerTendency", (r) => r);
+  add(f<string[]>("transitions"), "transitions", "arrangement.transitionLanguage", (devices) => devices.find((d) => validateStyleValue("arrangement.transitionLanguage", d) === null));
+  add(f<string[]>("production.aesthetic"), "production.aesthetic", "sound.aesthetic", (words) => {
+    for (const word of words) { const mapped = AESTHETIC_OF_DESCRIPTOR[word]; if (mapped) return mapped; }
+    return undefined;
+  });
+  add(f<Saturation>("production.saturation"), "production.saturation", "sound.saturation", (s) => s);
+  add(f<Room>("production.room"), "production.room", "sound.roomSize", (r) => r);
+  for (const path of ["identity.tags", "roles", "meter", "tempo.bpm", "drums.kit", "drums.hiHat", "melody.contour", "melody.rangeSemitones", "rhythmicVocabulary", "density", "energy", "tension"] as FieldPath[]) {
+    omitted.push(`${path}: stays on the universal style (no grammar field)`);
+  }
+  return assembleStyleGrammar(candidates, { sources: [`universalStyle:${sha256(style.description).slice(0, 12)}`], omitted });
+}

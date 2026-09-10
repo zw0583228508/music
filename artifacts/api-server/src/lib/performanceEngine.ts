@@ -24,6 +24,8 @@ import type {
 } from "@workspace/db";
 import { LEGATO_TOLERANCE_SECONDS } from "./musicalConstraints";
 import { accentWeight, meterOf, type MeterSpec } from "./composer/frame";
+import type { StyleGrammar, StyleValue } from "./styleGrammar";
+import { resolveStyle } from "./styleResolver";
 
 export const PERFORMANCE_ENGINE = "PERFORMANCE_ENGINE_V2" as const;
 const MAX_DECISION_SAMPLE = 64;
@@ -36,35 +38,47 @@ const MELODIC_ROLES: ReadonlySet<string> = new Set(["LEAD", "COUNTER_MELODY", "C
 const SUSTAINING_FAMILIES: ReadonlySet<string> = new Set(["strings", "brass", "winds", "voice"]);
 
 /**
- * The performance-relevant slice of a resolved StyleProfile. Only dimensions
- * the profile actually evidences are carried, each with its provenance, so
- * the evidence can say *why* a bass sits behind the beat. Absent stays absent:
- * the engine then behaves exactly as V1 for that parameter.
+ * Brain B-09: the performance-relevant slice of the resolved StyleGrammar.
+ * Only values the grammar evidences are carried, each with its provenance
+ * (`brief` / `template` / `research` / `fingerprint`), so the evidence can say
+ * *why* a bass sits behind the beat. Absent stays absent: the engine then
+ * behaves exactly as V1 for that parameter.
  */
-export function performanceStyleFromProfile(profile: StyleProfile | null | undefined): PerformanceStyle {
+export function performanceStyleFromGrammar(grammar: StyleGrammar | null | undefined): PerformanceStyle {
   const style: PerformanceStyle = {};
-  if (!profile) return style;
-  const dims = profile.dimensions as Record<string, { value: unknown; provenance: string } | undefined>;
+  if (!grammar) return style;
   const sources: NonNullable<PerformanceStyle["sources"]> = [];
-  const take = <K extends keyof PerformanceStyle>(key: K, dimension: string, accept: (value: unknown) => PerformanceStyle[K] | undefined) => {
-    const dim = dims[dimension];
-    if (!dim) return;
-    const value = accept(dim.value);
-    if (value === undefined) return;
-    style[key] = value;
-    sources.push({ dimension, value: value as string | number, provenance: dim.provenance });
+  const take = <K extends keyof PerformanceStyle>(key: K, value: StyleValue<unknown> | undefined, accept: (v: unknown) => PerformanceStyle[K] | undefined) => {
+    if (!value) return;
+    const accepted = accept(value.value);
+    if (accepted === undefined) return;
+    style[key] = accepted;
+    sources.push({ dimension: key, value: accepted as string | number, provenance: value.provenance });
   };
   const oneOf = <T extends string>(...allowed: T[]) => (value: unknown): T | undefined =>
     typeof value === "string" && (allowed as string[]).includes(value) ? (value as T) : undefined;
-  take("swingRatio", "swingRatio", (v) => (typeof v === "number" && v >= 0.5 && v <= 0.8 ? v : undefined));
-  take("microtiming", "microtiming", oneOf("quantized", "on_top", "behind", "ahead", "loose"));
-  take("dynamics", "dynamics", oneOf("narrow", "moderate", "wide"));
-  take("melodicOrnamentation", "melodicOrnamentation", oneOf("none", "light", "moderate", "heavy"));
-  take("bassAttackPosition", "bassAttackPosition", oneOf("on_the_beat", "anticipated", "laid_back", "sustained"));
-  take("fillFrequency", "fillFrequency", oneOf("rare", "moderate", "frequent"));
-  take("articulationLanguage", "articulationLanguage", (v) => (typeof v === "string" && v.trim() ? v : undefined));
+  take("swingRatio", grammar.groove.swingRatio, (v) => (typeof v === "number" && v >= 0.5 && v <= 0.8 ? v : undefined));
+  take("microtiming", grammar.groove.microtiming, oneOf("quantized", "on_top", "behind", "ahead", "loose"));
+  take("dynamics", grammar.performance.dynamics, oneOf("narrow", "moderate", "wide"));
+  take("melodicOrnamentation", grammar.melodic.ornamentation, oneOf("none", "light", "moderate", "heavy"));
+  take("bassAttackPosition", grammar.bass.attackPosition, oneOf("on_the_beat", "anticipated", "laid_back", "sustained"));
+  take("fillFrequency", grammar.groove.fillFrequency, oneOf("rare", "moderate", "frequent"));
+  take("articulationLanguage", grammar.performance.articulationLanguage, (v) => (typeof v === "string" && v.trim() ? v : undefined));
   if (sources.length) style.sources = sources;
   return style;
+}
+
+/**
+ * @deprecated Brain B-09: a StyleProfile is one *input* of the StyleGrammar.
+ * This adapter resolves the profile (with the knowledge base the profile's
+ * identity names) and projects the grammar; kept for the callers that still
+ * hold a bare profile (`arrangementOrchestratorProvider`, `scopedRegeneration`,
+ * the arranger training pipeline). An out-of-vocabulary profile value is
+ * dropped by the contract's validation and is not carried.
+ */
+export function performanceStyleFromProfile(profile: StyleProfile | null | undefined): PerformanceStyle {
+  if (!profile) return {};
+  return performanceStyleFromGrammar(resolveStyle({ styleProfile: profile }).grammar);
 }
 
 export type PerformanceInput = {

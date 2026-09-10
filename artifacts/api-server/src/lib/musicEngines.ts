@@ -32,6 +32,8 @@ import { deriveTransitionPlan } from "./transitionEngine";
 import { buildPartComposerPlan } from "./partComposer";
 import { planCandidateGeneration } from "./candidateStrategies";
 import { gmProgramFor } from "./gmPrograms";
+import type { StyleGrammar as StyleGrammarContract, StyleValue } from "./styleGrammar";
+import { resolveStyle } from "./styleResolver";
 
 export type PerformanceNote = MusicalNote & {
   articulation: string;
@@ -402,10 +404,34 @@ export function getInstrumentDefinition(instrument: string, role = ""): Instrume
   return instrumentDefinitionFor(instrument, role);
 }
 
+/** Vocabulary words the legacy StyleSpec grammar speaks, from the contract's groove families. */
+const SPEC_GROOVE_OF_FAMILY: Partial<Record<string, StyleGrammar["vocabulary"]["groove"]>> = {
+  straight: "straight", backbeat: "straight", waltz: "straight", march: "straight", compound_6_8: "straight", rubato: "straight", half_time: "straight",
+  swung: "swung", shuffle: "swung",
+  syncopated: "syncopated", bossa: "syncopated", breakbeat: "syncopated", boom_bap: "syncopated", maqsum: "syncopated", trap: "syncopated",
+  four_on_floor: "four_on_floor",
+};
+const SPEC_TRANSITION_OF: Record<string, StyleGrammar["vocabulary"]["transitions"]> = {
+  swells_and_builds: "orchestral_swell", drum_fills: "hard_cut", hard_cut: "hard_cut", riser: "riser", breakdown: "thin_build", thin_build: "thin_build",
+};
+const SPEC_SUBDIVISION_OF: Record<string, string> = { quarter: "8th", "8th": "8th", "16th": "16th", triplet: "triplet", "12_8": "triplet" };
+const SPEC_DYNAMICS_RANGE: Record<string, number> = { narrow: 0.35, moderate: 0.6, wide: 0.8 };
+
+/**
+ * Brain B-09: `StyleSpec` is a *projection* of the StyleGrammar contract.
+ * The grammar comes from the caller (a job's brief) or is resolved from the
+ * arrangement's style string against the knowledge base; every vocabulary
+ * word the grammar leaves unknown falls back to the pre-B-09 regex / slider
+ * reading and is recorded as `default` in `styleResolution.provenance`, so a
+ * reader can tell a style decision from a guess.
+ *
+ * @deprecated as a style *source*: read `StyleGrammar` (styleGrammar.ts) directly in new code.
+ */
 export function createStyleSpec(
   style: string,
   controls: { density: number; harmonyComplexity: number; energy: number; orchestraSize?: number; rhythmIntensity?: number },
   generationPreference?: GenerationPreferenceSnapshot | null,
+  styleGrammar?: StyleGrammarContract | null,
 ): StyleSpec {
   const genre = style.split(/\s+/)[0]?.toLowerCase() || "pop";
   const normalizedStyle = style.toLowerCase();
@@ -413,21 +439,43 @@ export function createStyleSpec(
   const jazz = genre === "jazz";
   const electronic = /edm|electro|techno|house|synth/.test(normalizedStyle);
   const sparse = /ambient|minimal|ballad/.test(normalizedStyle);
+  const resolved = styleGrammar ?? resolveStyle({ styleText: style }).grammar;
+  const provenance: Record<string, string> = {};
+  const project = <T, V>(key: string, value: StyleValue<T> | undefined, map: (v: T) => V | undefined, fallback: V): V => {
+    const mapped = value ? map(value.value) : undefined;
+    if (value && mapped !== undefined) { provenance[key] = value.provenance; return mapped; }
+    provenance[key] = "default";
+    return fallback;
+  };
+  const rhythmIntensity = controls.rhythmIntensity ?? .6;
+  const width = resolved.keys.voicingWidth;
+  const extensions = resolved.harmony.extensions;
+  const grammarVoicing: StyleGrammar["vocabulary"]["voicing"] | undefined = width
+    ? (extensions?.value === "extended" && width.value !== "wide" ? "drop_two" : width.value)
+    : extensions?.value === "extended" ? "drop_two" : undefined;
   const grammarVocabulary: StyleGrammar["vocabulary"] = {
-    groove: jazz ? "swung" : /house|techno|edm/.test(normalizedStyle)
-      ? "four_on_floor" : (controls.rhythmIntensity ?? .6) > .68 ? "syncopated" : "straight",
+    groove: project("groove", resolved.groove.family, (f) => SPEC_GROOVE_OF_FAMILY[f],
+      jazz ? "swung" : /house|techno|edm/.test(normalizedStyle) ? "four_on_floor" : rhythmIntensity > .68 ? "syncopated" : "straight"),
     voicing: generationPreference?.effects.voicingCharacter ??
-      (jazz ? "drop_two" : cinematic ? "wide" : electronic ? "open" : "close"),
-    articulation: jazz ? "accented" : electronic ? "pulsed" : sparse ? "legato" : "tight",
-    instrumentation: cinematic ? "orchestral" : electronic ? "electronic"
-      : jazz ? "acoustic" : "hybrid",
-    phraseBehavior: jazz ? "call_response" : sparse ? "sparse_answers"
-      : cinematic ? "motivic" : "continuous",
-    fills: sparse ? "none" : jazz ? "frequent" : cinematic ? "sectional" : "cadential",
-    transitions: cinematic ? "orchestral_swell" : electronic ? "riser"
-      : sparse ? "thin_build" : "hard_cut",
-    development: cinematic ? "dynamic_arc" : electronic ? "additive"
-      : jazz ? "transformative" : "repetition",
+      project("voicing", width ?? extensions, () => grammarVoicing, jazz ? "drop_two" : cinematic ? "wide" : electronic ? "open" : "close"),
+    articulation: project("articulation", resolved.performance.articulationLanguage, (a) => a,
+      jazz ? "accented" : electronic ? "pulsed" : sparse ? "legato" : "tight"),
+    instrumentation: project("instrumentation", resolved.sound.instrumentation, (i) => i,
+      cinematic ? "orchestral" : electronic ? "electronic" : jazz ? "acoustic" : "hybrid"),
+    phraseBehavior: project("phraseBehavior", resolved.arrangement.phraseBehavior ?? resolved.melodic.callAndResponse,
+      (p) => (p === "structural" ? "call_response" : p === "occasional" || p === "none" ? undefined : p as StyleGrammar["vocabulary"]["phraseBehavior"]),
+      jazz ? "call_response" : sparse ? "sparse_answers" : cinematic ? "motivic" : "continuous"),
+    fills: project("fills", resolved.groove.fillFrequency, (f) => {
+      if (resolved.sound.instrumentation?.value === "orchestral") return "sectional";
+      if (f === "frequent") return "frequent";
+      if (f === "moderate") return "cadential";
+      const transition = resolved.arrangement.transitionLanguage?.value;
+      return transition === "swells_and_builds" || transition === "thin_build" ? "none" : "cadential";
+    }, sparse ? "none" : jazz ? "frequent" : cinematic ? "sectional" : "cadential"),
+    transitions: project("transitions", resolved.arrangement.transitionLanguage, (t) => SPEC_TRANSITION_OF[t],
+      cinematic ? "orchestral_swell" : electronic ? "riser" : sparse ? "thin_build" : "hard_cut"),
+    development: project("development", resolved.arrangement.development, (d) => d,
+      cinematic ? "dynamic_arc" : electronic ? "additive" : jazz ? "transformative" : "repetition"),
   };
   const grammarEvidenceSha256 = createHash("sha256").update(canonicalJson({
     style: normalizedStyle.replace(/\s+/g, " ").trim(),
@@ -436,18 +484,41 @@ export function createStyleSpec(
     vocabulary: grammarVocabulary,
   })).digest("hex");
   const preferenceDensity = generationPreference?.effects.orchestrationDensity ?? 0;
+  const swingRatio = resolved.groove.swingRatio;
+  const familyPriority = resolved.arrangement.familyPriority;
   return {
     genre,
     subgenre: style.toLowerCase().replace(/\s+/g, "_"),
-    era: "modern",
-    tempoCharacter: controls.energy > 0.72 ? "driving" : "steady",
-    rhythm: { swing: jazz ? 0.18 : 0, syncopation: clamp(controls.density * 0.45 + (controls.rhythmIntensity ?? .6) * .4), subdivision: (controls.rhythmIntensity ?? .6) > .72 || electronic ? "16th" : "8th" },
+    era: project("era", resolved.identity.era, (e) => e, "unknown"),
+    tempoCharacter: project("tempoCharacter", resolved.groove.tempoBehavior,
+      (t) => (t === "rubato_tolerant" ? "rubato" : undefined), controls.energy > 0.72 ? "driving" : "steady"),
+    rhythm: {
+      // A 0.62 swing ratio is the 0.18 the legacy jazz branch wrote; straight is 0.
+      swing: project("swing", swingRatio, (r) => clamp((r - 0.5) * 1.5), jazz ? 0.18 : 0),
+      syncopation: project("syncopation", resolved.groove.syncopation, (s) => clamp(s), clamp(controls.density * 0.45 + rhythmIntensity * .4)),
+      subdivision: project("subdivision", (resolved.groove.subdivision ?? resolved.groove.onsetsPerBeat) as StyleValue<string | number> | undefined,
+        (s) => (typeof s === "number" ? (s > 2.5 ? "16th" : "8th") : SPEC_SUBDIVISION_OF[s]),
+        rhythmIntensity > .72 || electronic ? "16th" : "8th"),
+    },
     harmony: { complexity: controls.harmonyComplexity, tension: clamp((controls.harmonyComplexity - 1) / 9), voicing: grammarVocabulary.voicing },
-    instrumentation: { preferredFamilies: cinematic ? ["keys", "strings", "brass", "drums"] : electronic ? ["synth", "drums", "bass", "keys"] : ["keys", "strings", "bass", "drums"], avoid: [] },
+    instrumentation: {
+      preferredFamilies: project("preferredFamilies", familyPriority, (f) => [...f],
+        cinematic ? ["keys", "strings", "brass", "drums"] : electronic ? ["synth", "drums", "bass", "keys"] : ["keys", "strings", "bass", "drums"]),
+      avoid: [],
+    },
     orchestration: { density: clamp(controls.density * .65 + (controls.orchestraSize ?? .5) * .35 + preferenceDensity), registerSpread: clamp((cinematic ? .72 : .48) + (controls.orchestraSize ?? .5) * .35), dynamics: controls.energy > 0.7 ? "arc" : "intimate" },
     production: { stereoWidth: cinematic ? 0.85 : 0.65, room: cinematic ? "scoring_stage" : "studio", mixProfile: "streaming" },
-    dynamics: { range: cinematic ? 0.8 : 0.6, accentStrength: clamp(0.35 + controls.energy * 0.5) },
+    dynamics: {
+      range: project("dynamicsRange", resolved.performance.dynamics, (d) => SPEC_DYNAMICS_RANGE[d], cinematic ? 0.8 : 0.6),
+      accentStrength: clamp(0.35 + controls.energy * 0.5),
+    },
     grammar: { version: "1.0", evidenceSha256: grammarEvidenceSha256, vocabulary: grammarVocabulary },
+    styleResolution: {
+      contractVersion: resolved.version,
+      inputsDigestSha256: resolved.inputsDigestSha256,
+      sources: resolved.basis.sources,
+      provenance,
+    },
   };
 }
 
