@@ -5677,13 +5677,35 @@ any of it.
   the lease; the second run passes `plannerHints` (keys, strings, pads,
   light percussion; no drums; half-time feel; climax at the last chorus).
 
+  **Then the owner listened — and heard one long drone.** The delivered master
+  had a dead-flat RMS (−16.4 dB every second, including the 3.8 s before the
+  first note), constant chord-tone peaks (C2/F2/G2/C3) and stems at
+  +1.6 dBFS. Forensics: the exported MIDI holds 173 real notes; an
+  independent render of it is music; the *same* route function run offline
+  on the same DB rows and controls produces a dynamic master (−21 → −11 →
+  −17 dB). The only difference was the API's native renderers (local VST3
+  worker :8023 + cloud sfizz): the bounded local synth cannot exceed 0 dBFS,
+  a native render can — so a native stem (most likely Abbey Road One,
+  mis-declared strings/brass by the lead's own manifest entry, with the
+  stuck plugin state SPITFIRE-1 measured) came back as a drone and
+  `validateNativeRenderSamples` (length, finite, not silent, clipping
+  < 0.1 %) let it through. Fixes in this PR: **`nativeRenderGate.ts`** — a
+  native stem must follow the preview render's envelope of the same notes
+  (silent before the first note, silent through rests, dynamics
+  correlated); the test reproduces the owner's drone and rejects it (5
+  tests). **`projectTracks.ts`** — track rows retired by a later arrangement
+  version are muted on selection and never rendered (a stale drums row had
+  blocked the revision and the export). The owner's v3, rendered with the
+  natives off, measures LRA 7.7 LU / −14 LUFS / −1 dBTP and was delivered.
   **Honest limits.** The chord sheet is BTC's reading, not a human's (0.786
   root accuracy on synthetic audio); sections are the lead's musical
   judgement; melody is still not_available so the Brain arranges harmony and
   form, not around the sung line; `trusted_automatically` means every field
   was confirmed, not that the analysis was right on its own — v1 was wrong
   on tempo and contested on key. No studio panel enters a chord sheet yet;
-  the export render still runs on the event loop.
+  the export render still runs on the event loop. Which native renderer
+  produced the drone is inferred, not logged — the export records no
+  per-stem renderer in its manifest; that logging is owed.
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
