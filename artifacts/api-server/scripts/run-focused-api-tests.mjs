@@ -809,6 +809,12 @@ const suites = {
       ["src/lib/motifLedger.test.ts", "motif-ledger.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
     ],
   },
+  "brain-b08": {
+    bundles: [
+      ["src/lib/benchmarkMeasures.test.ts", "benchmark-measures.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+      ["src/lib/positiveControlLedger.test.ts", "positive-control-ledger.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
   "brain-invariants": {
     bundles: [
       ["src/lib/invariants/generators.property.test.ts", "b12-generators.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
