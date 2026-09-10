@@ -10,5 +10,5 @@ export type SongModelMusicalMapVersion = typeof SongModelMusicalMapVersion[keyof
 
 
 export const SongModelMusicalMapVersion = {
-  '22': '2.2',
+  '23': '2.3',
 } as const;

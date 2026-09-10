@@ -40,6 +40,7 @@ import {
 } from "./arrangementArc";
 import type { StyleGrammar, StyleProvenance } from "./styleGrammar";
 import { grooveStrategyOfFamily, inferStyleFromSong, type SongHarmonyEvidence } from "./styleResolver";
+import { classifySectionName } from "./sectionNames";
 
 /** "1.1" since Brain B-01 (arc-derived targets); stored "1.0" plans are stale. */
 export const GLOBAL_ARRANGEMENT_PLAN_VERSION = "1.1" as const;
@@ -89,17 +90,14 @@ export function classifySectionFunction(name: string): SectionRole {
   return classifySection(name);
 }
 
+/**
+ * B-24: the vocabulary moved to `sectionNames.ts` and grew Hebrew. It was an
+ * English-only regex here, so a song whose sections are called בית and פזמון
+ * was planned as neutral sections with no chorus arrival — 0 of 20 models
+ * passed the naming-invariance invariant. The decision order is unchanged.
+ */
 function classifySection(name: string): SectionRole {
-  const n = name.toLowerCase();
-  if (/intro|count/.test(n)) return "intro";
-  if (/pre-?chorus|pre-?hook|lift|build/.test(n)) return "prechorus";
-  if (/chorus|hook|drop|refrain/.test(n)) return "chorus";
-  if (/bridge|middle 8|middle eight/.test(n)) return "bridge";
-  if (/break ?down|break/.test(n)) return "breakdown";
-  if (/outro|coda|ending|tag/.test(n)) return "outro";
-  if (/verse/.test(n)) return "verse";
-  if (/solo|instrumental|interlude|turnaround/.test(n)) return "instrumental";
-  return "neutral";
+  return classifySectionName(name) as SectionRole;
 }
 
 /** Bar-weighted mean of a bar-span metric over [startBar, endBar]. */

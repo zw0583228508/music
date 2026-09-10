@@ -14815,9 +14815,9 @@
   }
  },
  "musicalMap": {
-  "version": "2.2",
+  "version": "2.3",
   "derivedAt": "2026-09-10T00:50:51.169Z",
-  "inputsDigestSha256": "ec57f7aef9d50f456a6664917a7a964f3b431b74ff41f3577caea6179ad225da",
+  "inputsDigestSha256": "a9e5d81b2406249c8f7bae9e5d41ecc925689abf57cd26f82a1fcf78b00bc382",
   "harmony": {
    "status": "detected",
    "reason": null,

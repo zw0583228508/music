@@ -9619,6 +9619,135 @@ cases are byte-identical, and so is every case's section plan.
   production files reverted — it is B-13's already-documented stale control and
   is not touched. (10) Nobody listened to anything.
 
+### PR-B24 — Brain B-24: the section name a producer types
+
+The planner decides a section's *function* from its name — an intro is planned
+as an intro, a chorus gets the chorus treatment, the last chorus gets the
+`CLIMAX_LAYER` — and it did that with an English-only regular expression. The
+owner of this platform writes Hebrew. B-12b built the invariant that measures
+the cost (`sectionNaming.property.test.ts`: plan the same song twice, once with
+English names and once with Hebrew ones, and demand identical treatment) and
+recorded the result: **0 of 20 seeds passed**, 99 section functions changed, the
+final chorus lost its `CLIMAX_LAYER` in 19 of 20 seeds, intro and ending tasks
+were not planned at all, a chorus `HARMONIC_BED` became `RHYTHMIC_HARMONY`, and
+transitions carried fewer devices. A song whose sections are called בית and
+פזמון was arranged as nine neutral sections.
+
+**D1 — one vocabulary, and it speaks Hebrew.** `src/lib/sectionNames.ts` is the
+only place that knows what a section is called: an ordered table of patterns
+per function, English and Hebrew in the same entry, with the containment traps
+written down (`pre-chorus` before `chorus`, `פרה-פזמון` before `פזמון`,
+`breakdown` before a bare `break`). `classifySectionName` answers for a name;
+`textRefersToSectionFunction` answers for a sentence, which is the same question
+asked of a producer's instruction. `globalArrangementPlanner.classifySection`
+delegates to it and keeps its decision order exactly.
+
+Adding the vocabulary uncovered a defect nobody had reported:
+`copilotInterpreter.affectedSectionsFor` recognised "פזמון" in the *command* and
+then searched the project for a section whose name contained the English
+"chorus", so a Hebrew instruction about a Hebrew-named song matched nothing at
+all. It now asks the shared vocabulary on both sides.
+
+**D2 — the climax prior reads the vocabulary too.** `songMusicalMap`'s climax
+scoring added 0.15 to any section whose name matched `chorus|hook|drop|climax|
+final`, so a Hebrew-named song lost that prior on every section — the second of
+the two causes the invariant named. It now asks `classifySectionName`, with
+`climax` / `final` (and שיא / סופי / אחרון) kept as words because they are not
+section functions. `MUSICAL_MAP_VERSION` 2.2 → 2.3: a stored 2.2 map of a
+Hebrew-named song scored its chorus differently and must be re-derived. The version is a literal in four places and all four moved: the constant,
+the `SongModelMusicalMap` type in `lib/db/src/schema/music-studio.ts`, the
+OpenAPI enum, and the regenerated clients. (The input digest already covers
+the ordinary case — it hashes `model.sections`, so *renaming* a section
+restales the map on its own. The version bump is for the map of a song whose
+sections were Hebrew all along: its digest never changes, so nothing else
+would have told it to re-derive.)
+
+**D3 — the notes stopped depending on the label.** With the functions fixed, the
+treatment matched but the *notes* still differed, because two writers hashed a
+name to make a choice:
+
+- `groovePlan.fillsFor` picked which fill to play from `hash01(sectionName:bar)`.
+  Which fill a drummer plays is a property of where you are in the form, not of
+  the label; it is now seeded from the section's function, occurrence and bar.
+- `performanceEngine` seeded its timing and velocity jitter from `note.id`, and
+  ids are built as `part-<sectionName>-<instrument>-<role>`
+  (`partComposer.ts:233`), so renaming a section moved every onset in it. Both
+  are now seeded from the music: family, role, onset, pitch.
+
+Reseeding the jitter exposed a rounding defect underneath it.
+`clampPolyphony` groups onsets by whole milliseconds — correct, notes that
+start together should be judged together — but then compared held notes against
+that *rounded* value. A note starting at 3.6955 s was treated as starting at
+3.696 s, and a held note ending 30.1 ms into it read as legal against a 30 ms
+tolerance. Half a millisecond of rounding decided whether two notes sound
+together. It now judges against the real start of the earliest note in the
+group. On main the ornament test passed only because the old jitter happened to
+leave room.
+
+**Measured.** On B-12b's naming-invariance invariant (20 seeds, the same song planned twice,
+once with English section names and once with Hebrew ones, treatment compared
+section by section):
+
+| | before B-24 | after B-24 |
+|---|---|---|
+| section functions changed | 99 | **0** |
+| seeds losing the final chorus's `CLIMAX_LAYER` | 19 of 20 | **0** |
+| violation codes | `function_changed` 99, `roles_changed` 62, `transition_changed` 55, `families_changed` 31, `task_count_changed` 31, `climax_layer_changed` 19, `notes_changed` 95 | `notes_changed` 65 |
+| seeds passing | 0 of 20 | 0 of 20 |
+
+The treatment half is closed: a Hebrew-named song now gets the identical
+functions, families, roles, climax layer, task counts and transition devices as
+its English twin. The suite still reports 0 of 20 because it compares note
+counts too, and those still move — the cause is isolated and named below.
+
+**Honest limits.**
+
+- The **unnamed** half of the invariant is unchanged at 0/20 and keeps its
+  `todo`, with a rewritten reason. It is not a classifier bug: a section called
+  "Section 3" states nothing, `neutral` is the honest answer, and a neutral
+  section is legitimately arranged differently from a chorus. What it measures
+  is that section function in this platform is derived from the name **only** —
+  the planner cannot hear form. The musical map already carries the evidence
+  that would settle it (`structure.subphrases`, repetition, `climaxCandidates`,
+  the energy curve) and no planner reads it for this. Closing it means inferring
+  section function from the music and stating the inference's confidence. That
+  is a capability, not a patch; recorded, unassigned.
+- Two English names change meaning on purpose and are asserted as intended
+  differences: "Pre Chorus" and "Pre Hook" *with a space* were classified as
+  choruses, because the old patterns were `pre-?chorus` and `pre-?hook`. They
+  are pre-choruses. Every other English name classifies exactly as before,
+  checked against the pre-B-24 regexes kept verbatim in the test.
+- The Hebrew vocabulary is what a producer writes, chosen deliberately narrow.
+  `עלייה` (a lift) was considered and dropped: it is a common word with other
+  meanings and would misfire on free text. A section named מעבר reads as an
+  interlude, which is a judgement, not a measurement.
+- **The instrument vocabulary is still English-only and this stream did not
+  touch it.** `FAMILY_ALIASES` (`arrangementArc.ts:56`) maps piano / keyboard /
+  horn / flute in English, and `briefCompiler` parses free-text producer
+  statements into an `instrumentation` topic, so a Hebrew brief naming פסנתר or
+  כינור would not resolve to a family. That is the same class of defect — but
+  **nobody has measured it**: there is no invariant for it and no failing run.
+  It is recorded rather than fixed on the strength of the analogy.
+- The golden fixture is re-pinned (cause appended to `recordedAt`). Note counts
+  are unchanged for every case (921 / 938 / 1304 on pop-full); only performed
+  timing and velocity moved. Any stream that lands after this one and re-pins
+  the same fixture must regenerate rather than take either side.
+- **The remaining `notes_changed` belongs to the writers and this stream does
+  not own them.** `partComposer.seedFor` (`partComposer.ts:135`) seeds every
+  part from `part-<sectionName>-<instrument>-<role>` *and* from
+  `musicalMap.inputsDigestSha256`, which hashes `model.sections` with their
+  names in it. Renaming a section therefore changes the composition seed twice
+  over, and B-12b already measured that the seed changes pitch content (its
+  defect 6). One change closes both that and B-12b's defect 7 (duplicate
+  section names → duplicate note ids): identify a part by its position in the
+  form rather than by its label, and seed from a digest of the musical content
+  rather than from the staleness digest. Handed to B-21 with the file and line;
+  the Hebrew assertion keeps a `todo` that says exactly this.
+
+- The owner's own song is unaffected: its sections carry English names from the
+  analysis, so nothing about "רחם נא" changes because of this stream except the
+  performance jitter values and the fill choices, which moved for every song.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a
