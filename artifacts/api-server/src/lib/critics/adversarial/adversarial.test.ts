@@ -61,8 +61,10 @@ for (const m of ADVERSARIAL_MODULES) {
   test(`${m.dimension}: positive control - the worsened arrangement is rejected harder on every anchor where the module applies`, () => {
     let tried = 0;
     for (const a of ALL) {
+      const damaged = control.apply(a.input);
+      if (damaged === a.input) continue; // the damage needs material the anchor lacks (e.g. two pitched non-bass parts) - not a control on this anchor
       const ref = m.run(a.input);
-      const worse = m.run(control.apply(a.input));
+      const worse = m.run(damaged);
       if (!ref.applicable && !worse.applicable) continue; // e.g. copied repeats on a form with no repeated section
       tried += 1;
       const refPenalty = penaltyOf(ref.observations);
@@ -147,34 +149,24 @@ test("the reference composer is rejected on several axes (recorded, not hidden)"
   }
   // Each of these is a defect the program diagnosis named; the adversarial critic now measures it at note level.
   assert.ok((byKind.get("string_bed_too_high") ?? 0) >= 2, "strings written at MIDI 79+ (the owner's-song defect) in the orchestral anchors");
-  assert.ok((byKind.get("planned_family_silent") ?? 0) >= 4, "the planned LEAD keys wrote nothing (F5)");
+  // F5 (the planned LEAD keys wrote nothing) was closed by B-01: keys is never LEAD in a sung section, so the count is no longer asserted here.
   assert.ok((byKind.get("section_note_copy") ?? 0) >= 4, "repeated sections are note copies (diagnosis §11.2)");
   assert.ok((byKind.get("root_position_only") ?? 0) >= 1, "root-position-only harmony (F6)");
   assert.ok((byKind.get("melody_masked") ?? 0) >= 3, "keys at high velocity in the vocal register while sung (audit §1.3)");
 });
 
-test("instrument reality: a keys part that resolved to a drum-kit definition is a blocking mismatch (dance-full)", () => {
+test("instrument reality: after B-03 no keys part resolves to a drum-kit definition (dance-full)", () => {
   const a = anchorFor("dance-full");
   const report = critiqueInstrumentReality(a.input);
   const mismatch = report.observations.filter((o) => o.kind === "definition_family_mismatch");
-  assert.equal(mismatch.length, 1);
-  assert.equal(mismatch[0].severity, "blocking");
-  assert.equal(mismatch[0].evidence.namedFamily, "keys");
-  assert.equal(mismatch[0].evidence.definitionFamily, "drums");
-  assert.equal(mismatch[0].suspectedOrigin, "orchestration");
+  assert.equal(mismatch.length, 0, "keys in RHYTHMIC_HARMONY was a drum kit before B-03's profiles; it is a piano now");
+  assert.ok(a.input.trackModels.some((t) => t.instrument === "keys" && t.instrumentDefinition.family === "keys"));
 });
 
-test("arbitrariness: the plan's silent LEAD keys is blocking, attributed to composition, with the plan's own numbers as evidence", () => {
+test("arbitrariness: after B-01 the orchestral anchor has no silent planned keys (the F5 defect is closed)", () => {
   const a = anchorFor("orchestral-midi");
-  const silent = critiqueArbitrariness(a.input).observations.filter((o) => o.kind === "planned_family_silent");
-  assert.ok(silent.length >= 3, "one per planned section");
-  for (const o of silent) {
-    assert.equal(o.evidence.instrument, "keys");
-    assert.equal(o.evidence.plannedRole, "LEAD");
-    assert.equal(o.evidence.activeBarsInSection, 0);
-    assert.equal(o.suspectedOrigin, "compose", "the plan asked and nothing was written: the composer, not the plan");
-    assert.equal(o.location.sectionName !== undefined, true);
-  }
+  const silent = critiqueArbitrariness(a.input).observations.filter((o) => o.kind === "planned_family_silent" && o.evidence.instrument === "keys");
+  assert.equal(silent.length, 0, "keys was LEAD-and-silent in every section before B-01");
 });
 
 test("copied repeats: abstains on a form with no repeated section, and grades the final chorus copy major", () => {

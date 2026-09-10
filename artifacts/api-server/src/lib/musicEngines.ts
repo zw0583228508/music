@@ -109,7 +109,6 @@ const PERFORMANCE_CAPABILITIES: Record<InstrumentDefinition["family"], Instrumen
   keys: { family: "keys", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "key-attack-and-pedal", timingProfile: "phrase-locked-keyboard", dynamicsProfile: "velocity-and-expression" },
   strings: { family: "strings", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "bowed-and-pizzicato", timingProfile: "phrase-legato", dynamicsProfile: "continuous-bow-expression" },
   brass: { family: "brass", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "breath-and-tongue", timingProfile: "breath-phrase", dynamicsProfile: "breath-expression" },
-  winds: { family: "winds", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "breath-and-tongue", timingProfile: "breath-phrase", dynamicsProfile: "breath-expression" },
   drums: { family: "drums", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "kit-limb-articulation", timingProfile: "meter-aware-groove", dynamicsProfile: "accent-and-ghost-note" },
   guitar: { family: "guitar", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "pick-strum-and-fret", timingProfile: "string-aware-phrase", dynamicsProfile: "pick-velocity" },
   voice: { family: "voice", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "source-phrase-preserving", timingProfile: "canonical-source-locked", dynamicsProfile: "phrase-expression" },

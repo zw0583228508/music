@@ -39,6 +39,7 @@ import type {
   SongModelMusicalMap,
   TransitionPlan,
 } from "@workspace/db";
+import { isUnknownInstrumentDefinition } from "./instrumentProfile";
 import { getInstrumentDefinition } from "./musicEngines";
 import { deriveGlobalArrangementPlan } from "./globalArrangementPlanner";
 import { deriveSectionPhrasePlan } from "./sectionPhrasePlanner";
@@ -161,7 +162,10 @@ function lacksDefinition(instrument: string, role: InstrumentArrangementRole): b
   const family = canonicalFamily(instrument);
   if (family === "keys") return false;
   try {
-    return getInstrumentDefinition(instrument, NAMED_FAMILIES.has(family) ? "" : role).id === "piano";
+    const definition = getInstrumentDefinition(instrument, NAMED_FAMILIES.has(family) ? "" : role);
+    // B-03: a name no profile knows is the explicit UNKNOWN definition (before B-03 it fell through to a
+    // piano, which is what the `id === "piano"` test caught); either way the family has no definition.
+    return isUnknownInstrumentDefinition(definition) || definition.id === "piano";
   } catch {
     return true;
   }
@@ -565,7 +569,10 @@ const NAMED_FAMILIES = new Set(["keys", "guitar", "bass", "drums", "percussion",
 
 function safeDefinition(instrument: string, role: InstrumentArrangementRole) {
   try {
-    return getInstrumentDefinition(instrument, NAMED_FAMILIES.has(canonicalFamily(instrument)) ? "" : role);
+    const definition = getInstrumentDefinition(instrument, NAMED_FAMILIES.has(canonicalFamily(instrument)) ? "" : role);
+    // B-03: a name no profile knows comes back as the explicit UNKNOWN definition instead of throwing;
+    // for the part plan that is still "no definition" and the family is excluded with its reason.
+    return isUnknownInstrumentDefinition(definition) ? null : definition;
   } catch {
     return null;
   }

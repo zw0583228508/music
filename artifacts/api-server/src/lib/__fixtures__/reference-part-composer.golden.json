@@ -1,12 +1,12 @@
 {
-  "recordedAt": "composer digests and shipped-note digests recorded on main 39aad30 before the B-00 composer split, orchestration noteCount re-pinned after B-00 D1; RE-PINNED at the B-01 merge (planners v1.1: arc targets, sung-by-default, mix/ensemble excluded, operators) - every part request changed, so every digest changed; the split itself was verified byte-identical at 39aad30 -> B-00. A future digest change must again name its cause here.",
+  "recordedAt": "composer digests and shipped-note digests recorded on main 39aad30 before the B-00 composer split, orchestration noteCount re-pinned after B-00 D1; RE-PINNED at the B-01 merge (planners v1.1: arc targets, sung-by-default, mix/ensemble excluded, operators) - every part request changed, so every digest changed; the split itself was verified byte-identical at 39aad30 -> B-00. RE-PINNED again at the B-03 merge: instrument definitions now come from sourced profiles (ranges, polyphony and leap limits from the GM table, e.g. strings leap 10 -> 24; keys never a kit), which changes the constraints every part is composed under. A future digest change must again name its cause here.",
   "cases": [
     {
       "id": "pop-full",
       "composer": {
         "tasks": 15,
         "notes": 734,
-        "digest": "5e2969b70393e3548b224908d28b453324496e4abb9d691023941be2acbd73e1"
+        "digest": "cc52c1b2ab234540af08f9183270992394cef5613419e0a80e9b763a8e4dcd35"
       },
       "orchestration": [
         {
@@ -18,7 +18,7 @@
             "bass",
             "keys"
           ],
-          "digest": "54515a0dfc0c3cbe00845e24708989e04835f30d3f9e21a849d041a6ec3f9919"
+          "digest": "e4b229b88c896333b4a31db6a86717be0c98cd1a5d9dcaf27ae10f32efb286ed"
         },
         {
           "candidateId": "cand-B",
@@ -29,7 +29,7 @@
             "bass",
             "keys"
           ],
-          "digest": "acd363b28e1a46260af6f293af4803306e1387cf34594d513ddc98388ae11adb"
+          "digest": "dd1f13269d99bf25d397ea96eb721f0edfd3fe9ff555ea3fc5d7f9260f3bc02b"
         },
         {
           "candidateId": "cand-C",
@@ -40,7 +40,7 @@
             "bass",
             "keys"
           ],
-          "digest": "1e571c5c40e71360711db889060c6e8898f7df6d40ab96a21758416d4ad7eaf7"
+          "digest": "a043ccf31d3cfd85eca9e7cbe095fc1ab2f3830a224feb4536efcc6a90c08e33"
         }
       ]
     },
@@ -49,7 +49,7 @@
       "composer": {
         "tasks": 10,
         "notes": 402,
-        "digest": "51091a87a09a33fc93d998634af9510cb083db687a4b777d4a444bb8a5ac0e66"
+        "digest": "1cbb0c99672b49d6cbcd3024c726c24cb9af46680d7988ed9fa41953b874d8c2"
       },
       "orchestration": [
         {
@@ -61,7 +61,7 @@
             "bass",
             "keys"
           ],
-          "digest": "eaadbfe63c44014e80e4ee2ee0ec46f9d53802e593e09be39c3870908c662506"
+          "digest": "ea0879add0cfcf0d42cfab8cefc946adf2e1ff1dfa02f1651d3196ddf52024a9"
         },
         {
           "candidateId": "cand-B",
@@ -72,7 +72,7 @@
             "bass",
             "keys"
           ],
-          "digest": "7d84f3c51967f7e2d7b23d54ee7df2c978932946ed0aebc72b214f75263e20ba"
+          "digest": "adc1f54fe22d7275938b10d09f902bca98779c95b4bf323bd72bcbfb21d261b2"
         },
         {
           "candidateId": "cand-C",
@@ -83,7 +83,7 @@
             "bass",
             "keys"
           ],
-          "digest": "f4c601c81087c3ede705124c7908cb1aa3c3b3bbcc9db47257f243f67651b9ac"
+          "digest": "4957b4a0fa4e13e882bf273a60c69bf0a00190aaa996a377fc2e5ae2d0fef048"
         }
       ]
     },
@@ -92,7 +92,7 @@
       "composer": {
         "tasks": 13,
         "notes": 662,
-        "digest": "1b40af4ee703d21ab5a2e3203a1dca8cdfcd79ed2378affb45301174f1abbcef"
+        "digest": "b71f6577d970ce815f79a3d617719de50117213bba8799377b6200c543fa8305"
       },
       "orchestration": [
         {
@@ -105,7 +105,7 @@
             "keys",
             "guitar"
           ],
-          "digest": "9c9b5e137445051f594aa1a8795dabc22dde28c303cc719f75991f8d2da69256"
+          "digest": "24ca05b7efa0041551c0db34ec1a98c1b7f82723b20de279f4184ee0db0b0a3d"
         },
         {
           "candidateId": "cand-B",
@@ -117,7 +117,7 @@
             "keys",
             "guitar"
           ],
-          "digest": "f608673b6001f464ba9b94e04ef81e0c21b5a6936a8fe0499dd95b33137ec91c"
+          "digest": "17e4b5bd782d3d5e3cdd28675c98ad6fcc91f76f01a87c56786431cbf0ad67b5"
         },
         {
           "candidateId": "cand-C",
@@ -129,7 +129,7 @@
             "keys",
             "guitar"
           ],
-          "digest": "4cd8c14c91a46fb29f28c948a18c84701756bc975938332d1f58faadd2858c58"
+          "digest": "5d3b402e83a321943ea959a645fb3abec7e3a9bf7f1b1da7109601bb493c4dbf"
         }
       ]
     },
@@ -138,7 +138,7 @@
       "composer": {
         "tasks": 14,
         "notes": 708,
-        "digest": "c1d78ecf1e1346ac750953b0ca51a0178a99f4b9c230c3f2ff04afafb536beaa"
+        "digest": "1ab899296f037fc063f847db8c5b038433e426d86787d7147b4aecae7860c1c2"
       },
       "orchestration": [
         {
@@ -151,7 +151,7 @@
             "keys",
             "synth"
           ],
-          "digest": "e442a5396e6b2931af16e6acd7dbb331723fb3543e5888dd9e769f1d83447d71"
+          "digest": "1cb9c7e729a3f289b0d328500368caa861657abbf6c3778bfdce6fd69e642779"
         },
         {
           "candidateId": "cand-B",
@@ -163,7 +163,7 @@
             "keys",
             "synth"
           ],
-          "digest": "42cc0a79b4e2447ca02e36032c4a3b1b494fd097863cc808331303ba0ec3ef42"
+          "digest": "87f5401eb163149e48f7fd0938b2987012668f524ee17af13045ee860c31ec51"
         },
         {
           "candidateId": "cand-C",
@@ -175,7 +175,7 @@
             "keys",
             "synth"
           ],
-          "digest": "10d66a7d8c23c9ea570a5fcc48208bfa95af5b4301166ba01a3bd05c256ef11e"
+          "digest": "4ce159b40d34576b7a21719e515c3167cdcf1d6c006fd30277f5df3ca6c85860"
         }
       ]
     },
@@ -184,7 +184,7 @@
       "composer": {
         "tasks": 10,
         "notes": 452,
-        "digest": "068ce9c3fd4b40d0f631f3760b8c8c0d0fdfe892d200046d49c683c78d3bf7b2"
+        "digest": "6bd424a1ddc361fb7088af0278169b298d4de475d3c751f50a33431a9ce6d1ec"
       },
       "orchestration": [
         {
@@ -196,7 +196,7 @@
             "bass",
             "guitar"
           ],
-          "digest": "783fc71a986023ae5112aabaa988ec3634facf04082a9a3982f2b141daa93454"
+          "digest": "11a9418a5c4da9de39d54d0016a3698b4a91d7be9fa7c0c1d20e0b9341be5774"
         },
         {
           "candidateId": "cand-B",
@@ -207,7 +207,7 @@
             "bass",
             "guitar"
           ],
-          "digest": "d62bcbc2fc3ee34c83f4f85d30208cb330851ed33203b6a3ef19b90215f5cfd8"
+          "digest": "27c430da0b991289973350ce22173c1959de58c501d1efd69878543acbc10ef4"
         },
         {
           "candidateId": "cand-C",
@@ -218,7 +218,7 @@
             "bass",
             "guitar"
           ],
-          "digest": "8dba52d1e6f24b0485c0454828c587a06793a4fbf082658a50a5eef038512520"
+          "digest": "4d02809230a4fd0530cfdca0c7d243a2227d046754b5cfe94574f2c251433b65"
         }
       ]
     },
@@ -227,7 +227,7 @@
       "composer": {
         "tasks": 12,
         "notes": 396,
-        "digest": "1c488d42afd888aa96aa49b93882ca7b9eefb430add45d674806f32fa947523c"
+        "digest": "b0416412fff9b1a88e34691f1635d1523da1f409d52f000ecd7be7d0ec824cc9"
       },
       "orchestration": [
         {
@@ -241,7 +241,7 @@
             "brass",
             "strings"
           ],
-          "digest": "dac99cbd668763cd7cc4939ff6bfb6f53e072b4444a52c202bc7f7f2d407b3c1"
+          "digest": "960ba4e56b099cc3c7fe70c3cb7279be0dda34bac5ac3f49f54caa53484fb270"
         },
         {
           "candidateId": "cand-B",
@@ -254,7 +254,7 @@
             "brass",
             "strings"
           ],
-          "digest": "bfde6b2160a1655f24207995deded29fa1ed13dbf04d67f91deb39602a05c47f"
+          "digest": "61118ffb9b6c8e670f30b14865e7666ed9493311ab36702c4fa968ba07ea211c"
         },
         {
           "candidateId": "cand-C",
@@ -267,7 +267,7 @@
             "brass",
             "strings"
           ],
-          "digest": "a50234457b1ab6d8f1a12006f1a4b40825c40ac5a392614c881f1fe7f401f5d0"
+          "digest": "a2510da47fb8b736426101ed2ea797451bf53640db091a4554dbf7189f43a7fc"
         }
       ]
     },
@@ -288,7 +288,7 @@
             "bass",
             "keys"
           ],
-          "digest": "f0411b40d4f4810f1ad742ccaf7024212e84c94fa2b2cc9d4f9a9ac15e5f084f"
+          "digest": "a684e954d78e80f7c0a3b7a307dea58d0d7652553550fd70d460140d2cd00d80"
         },
         {
           "candidateId": "cand-B",
@@ -299,7 +299,7 @@
             "bass",
             "keys"
           ],
-          "digest": "0283e8cb25b8deb850848a0e723821dedf0befba64dd8e9eb06f5242b5b3b265"
+          "digest": "982da25297592300e0258f967dcd75139064d82cdae9bf06d32d2ea20d7eca14"
         },
         {
           "candidateId": "cand-C",
@@ -310,7 +310,7 @@
             "bass",
             "keys"
           ],
-          "digest": "a6ced3b5f6bb43a2216b9866f9faee048f3f5c92ea02ba2855e25b3925b3f5eb"
+          "digest": "5294674bf87ab3a185ab7b4387207fbadbb2c03cffd1db937e594354313641ef"
         }
       ]
     },
@@ -319,7 +319,7 @@
       "composer": {
         "tasks": 8,
         "notes": 1158,
-        "digest": "375796f9f9b803c7fa2844cd94c7e3315c0a72046dbf77fce4a467e5ff15a166"
+        "digest": "967c198d2e5d3fbd6f83a13c42732eb85630218ca2aad24770618853df2c0a41"
       },
       "orchestration": [
         {
@@ -331,7 +331,7 @@
             "bass",
             "keys"
           ],
-          "digest": "80d1d96ed7eb794793d37ebc5db1ea7c393dfbf2856a9be62b792791153f2d59"
+          "digest": "d498d77962af6d4f0cba8dcbb258d38941fc148ccfb025dc0251d9c265e811c4"
         },
         {
           "candidateId": "cand-B",
@@ -342,7 +342,7 @@
             "bass",
             "keys"
           ],
-          "digest": "b39d22a9d5c81efd1e9db7c66aee7c79b00d8140994269a840fe951bad97d999"
+          "digest": "a2cfe605f2e74e822afe230c7b9cb6f8911dd79ab0b8d752bce8b4b55dc0c740"
         },
         {
           "candidateId": "cand-C",
@@ -353,7 +353,7 @@
             "bass",
             "keys"
           ],
-          "digest": "ef096f7ba5e9f5dede7c877881088ff8eba1956845145a13e00f3a388d4c73d8"
+          "digest": "5456db4dc96b365d71c37035fc5c9b9c6b3c81894428411003ba3f502f2f5946"
         }
       ]
     },
@@ -362,7 +362,7 @@
       "composer": {
         "tasks": 14,
         "notes": 468,
-        "digest": "597f8984b192347c5b4081941bfd2b52a392b1eef9a1627b6f91bde8d8b9fe1a"
+        "digest": "b88b243191a8bbcc0277980c8ee745bf72d31dc4db11870a866b4eec4faee74f"
       },
       "orchestration": [
         {
@@ -377,7 +377,7 @@
             "brass",
             "strings"
           ],
-          "digest": "6ea71d7207fc7ce50e978cb1f8aa7f0e9bcd64ae7a49f49a9aaf778fa7646892"
+          "digest": "a8a914971e555ad5c8d57086bf084d15664adb49d7df40021d5fd8b6ad2268e4"
         },
         {
           "candidateId": "cand-B",
@@ -391,7 +391,7 @@
             "brass",
             "strings"
           ],
-          "digest": "681936885265f26483f5100ebbf2942ecbec4cbdd950b244cb0d76216f0bcdee"
+          "digest": "06d54c8e691236977cf5593e862b369af3782f7e139f41a199c83cf8d29f3796"
         },
         {
           "candidateId": "cand-C",
@@ -405,7 +405,7 @@
             "brass",
             "strings"
           ],
-          "digest": "7e86777c7029b03955ebc637b7feacd9f69b5c2019fd427f04a6d25ccbbf4ac5"
+          "digest": "35f391a5bc003d105e68251d326eaecb4bb466f6941a6045ded12547d6f6bade"
         }
       ]
     }
