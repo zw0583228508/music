@@ -185,7 +185,35 @@ test("the reference part composer produces byte-identical parts to the golden fi
         "most of it B-18's own groove reading for a jazz standard, which this writer now plays through. " +
         "ballad-piano-vocal and cinematic-midi are byte-identical - `brainB02Evidence` measures zero bass approaches on " +
         "both, so there was nothing here to move. The section plans, the kit, the comping and the counter-melody are " +
-        "untouched. A future digest change must again name its cause here.",
+        "untouched. " +
+        "RE-PINNED again at the B-21 merge (the writers write music, base 3b9ace3). All nine cases moved, composer and " +
+        "shipped digests together, for five named causes, every one of them a writer reading a decision that already " +
+        "existed. (1) REGISTER (`composer/registers.ts`): a part's register window is now the role register its own " +
+        "instrument profile gives it - `roleRegisterFor(profile, role)`, the same table `critics/dimensions/register` " +
+        "measures against - instead of the family comfortable range widened by the argmax of `section.registerDistribution`. " +
+        "That distribution is a *histogram of the section's active families* (sectionPhrasePlanner), so using it to shift " +
+        "each part raised the bass, the keys and the strings together whenever a section leaned high: on the owner's song " +
+        "the keys wrote to MIDI 89 against a HARMONIC_BED ceiling of 67 and the strings to 92, four " +
+        "`top_line_above_comfortable_ceiling` findings and one `climax_all_treble`. `raise_register` now lifts the floor " +
+        "inside the window instead of the ceiling above it. (2) THE ARPEGGIO IS A BROKEN CHORD (`composer/texture.ts` + " +
+        "`writeChordal`): an `arpeggio` archetype whose group is shorter than two arpeggio steps - which every onset of an " +
+        "`arpeggiated_8ths` cell is - fell through to the block-chord path and struck the whole voicing on every eighth. " +
+        "The archetype and the notes now agree: one voice per onset with the bottom voice held under it. This is most of " +
+        "the count change (the owner's Verse 1 keys 501 -> 187 notes; jazz-full 1365 -> 1013). (3) THE ARC'S LEVEL " +
+        "CHOOSES THE COMPING RATE: a struck bed at a `full` / `tutti` texture, or from level 0.5, re-articulates on the " +
+        "meter's pulses instead of holding the chord, so an arrival is heard (ballad-piano-vocal 292 -> 411, " +
+        "cinematic-midi 205 -> 298). Before this the only reads of the arc in `chordalTextureFor` were `isFull(level)` " +
+        "and `level !== \"tutti\"`, neither of which can move a rate. (4) ONE GRID FOR WHERE THE CHORD CHANGES " +
+        "(`visibleChords`): the comping and bass onsets were placed from the analysed chord times while the voicing solver " +
+        "worked from `chordEventsIn(..., { grid })`, whose onsets B-13 snapped to the beat; on the owner's Outro that " +
+        "230 ms disagreement made the piano voice the *previous* chord for a whole bar (`harmony:clash_share` 0.42-0.58, " +
+        "blocking). `visibleChords` now returns the same quantised chords. (5) THE PEDAL BASS KEEPS THE PLAN'S ONSETS " +
+        "(`bassRhythmFor`): the pedal branch discarded `groove.bassUnits` and rebuilt its onsets from chord starts, " +
+        "re-articulating only every second bar when a bar had none - 12 empty bars of 24 in the owner's Verse 3 " +
+        "(`density:foundation_gaps`, major, twice). Also in this re-pin: the phrase breath (a comping or bed part rests " +
+        "the last 1.5 beats of a phrase-final bar), the two-sound percussion cell, the arc's opening figure written over " +
+        "an intro the chord analysis left empty, and the arc's ending gesture read instead of the section's level. " +
+        "A future digest change must again name its cause here.",
       cases: current,
     }, null, 2)}\n`);
     return;

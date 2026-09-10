@@ -901,6 +901,14 @@ const suites = {
       ["src/lib/composer/texture.test.ts", "texture.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
     ],
   },
+  // Brain B-21: the note writers write music - the register the instrument's
+  // own profile gives the part, the broken chord, the arc's comping rate, the
+  // pedal bass's onsets, and the arc's opening figure and ending gesture.
+  "brain-b21": {
+    bundles: [
+      ["src/lib/brainB21Writers.test.ts", "brain-b21-writers.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
   "brain-invariants": {
     bundles: [
       ["src/lib/invariants/generators.property.test.ts", "b12-generators.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
