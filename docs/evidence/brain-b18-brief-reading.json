@@ -1,0 +1,1011 @@
+{
+  "stream": "B-18",
+  "title": "the brief read like a musician",
+  "review": "docs/brain/reviews/2026-09-10-r1b-musical-attack.md (P1-2, P1-3, P1-6, P1-7, §7 item 7)",
+  "song": {
+    "name": "רחם נא (Song Model v3 fixture)",
+    "key": "C minor",
+    "tempoBpm": 130.43,
+    "chords": 92,
+    "sections": [
+      "Intro 1-2",
+      "Verse 1 3-24",
+      "Verse 2 25-40",
+      "Chorus 41-56",
+      "Chorus 2 57-72",
+      "Verse 3 73-96",
+      "Bridge 97-112",
+      "Chorus 3 113-128",
+      "Outro 129-141"
+    ],
+    "rhythmStatus": "not_available",
+    "paletteHints": [
+      "mix"
+    ]
+  },
+  "brief": {
+    "text": "intimate ballad; piano, soft strings, gentle bass, light percussion; big final chorus",
+    "withTradition": "intimate chassidic ballad; piano, soft strings, gentle bass, light percussion; big final chorus"
+  },
+  "d1_perFamilyLevels": {
+    "claim": "\"soft strings, gentle bass, light percussion\" are three family levels, never a marking for the song (R-1b P1-2)",
+    "before": {
+      "measured": "R-1b P1-2 / B-09 evidence: globalDynamicSteps -1 -> arrangement.globalDynamic=low; template chorus mf -> mp, verse p -> pp, Verse 3 to level 0.059",
+      "globalDynamicSteps": -1,
+      "familyLevels": null
+    },
+    "after": {
+      "globalDynamicSteps": null,
+      "familyLevels": [
+        {
+          "family": "bass",
+          "dynamicSteps": -1,
+          "emphasis": "support",
+          "word": "gentle",
+          "confidence": 0.85,
+          "provenance": "stated",
+          "sourceRefs": [
+            "text:gentle bass"
+          ],
+          "rationale": "\"gentle bass\": a level for bass, not for the song"
+        },
+        {
+          "family": "percussion",
+          "dynamicSteps": -1,
+          "emphasis": "support",
+          "word": "light",
+          "confidence": 0.85,
+          "provenance": "stated",
+          "sourceRefs": [
+            "text:light percussion"
+          ],
+          "rationale": "\"light percussion\": a level for percussion, not for the song"
+        },
+        {
+          "family": "strings",
+          "dynamicSteps": -1,
+          "emphasis": "support",
+          "word": "soft",
+          "confidence": 0.85,
+          "provenance": "stated",
+          "sourceRefs": [
+            "text:soft strings"
+          ],
+          "rationale": "\"soft strings\": a level for strings, not for the song"
+        }
+      ],
+      "familyDynamicSteps": {
+        "bass": -1,
+        "percussion": -1,
+        "strings": -1
+      },
+      "familyEmphasis": {
+        "bass": "support",
+        "percussion": "support",
+        "strings": "support"
+      },
+      "grammarGlobalDynamic": null,
+      "evidence": [
+        "bass: \"gentle\" (stated 0.85) -> -1 marking for bass only, role support — not a global marking (R-1b P1-2)",
+        "percussion: \"light\" (stated 0.85) -> -1 marking for percussion only, role support — not a global marking (R-1b P1-2)",
+        "strings: \"soft\" (stated 0.85) -> -1 marking for strings only, role support — not a global marking (R-1b P1-2)"
+      ]
+    },
+    "controls": {
+      "a word about the song still moves the song": {
+        "brief": "a quiet, understated ballad on piano",
+        "globalDynamicSteps": -1,
+        "familyLevels": []
+      },
+      "a word that features a family moves it up": [
+        {
+          "family": "drums",
+          "dynamicSteps": 1,
+          "emphasis": "feature",
+          "word": "big",
+          "confidence": 0.85,
+          "provenance": "stated",
+          "sourceRefs": [
+            "text:big drums"
+          ],
+          "rationale": "\"big drums\": a level for drums, not for the song"
+        },
+        {
+          "family": "guitar",
+          "dynamicSteps": 1,
+          "emphasis": "feature",
+          "word": "prominent",
+          "confidence": 0.85,
+          "provenance": "stated",
+          "sourceRefs": [
+            "text:prominent guitar"
+          ],
+          "rationale": "\"prominent guitar\": a level for guitar, not for the song"
+        }
+      ]
+    },
+    "arcDiff": [
+      {
+        "section": "Intro",
+        "before": {
+          "marking": "pp",
+          "level": 0.1,
+          "everyFamily": "pp",
+          "reason": "intimate_ballad intro = p, brief global -1"
+        },
+        "after": {
+          "marking": "p",
+          "level": 0.25,
+          "perFamily": {
+            "keys": "p",
+            "strings": "pp",
+            "bass": "pp"
+          },
+          "reason": "intimate_ballad intro = p"
+        }
+      },
+      {
+        "section": "Verse 1",
+        "before": {
+          "marking": "pp",
+          "level": 0.136,
+          "everyFamily": "pp",
+          "reason": "intimate_ballad verse = p, brief global -1; source prior +0.036"
+        },
+        "after": {
+          "marking": "p",
+          "level": 0.286,
+          "perFamily": {
+            "keys": "p",
+            "strings": "pp",
+            "bass": "pp"
+          },
+          "reason": "intimate_ballad verse = p; source prior +0.036"
+        }
+      },
+      {
+        "section": "Verse 2",
+        "before": {
+          "marking": "pp",
+          "level": 0.102,
+          "everyFamily": "pp",
+          "reason": "intimate_ballad verse = p, brief global -1; source prior +0.002"
+        },
+        "after": {
+          "marking": "p",
+          "level": 0.252,
+          "perFamily": {
+            "keys": "p",
+            "strings": "pp",
+            "bass": "pp",
+            "percussion": "pp"
+          },
+          "reason": "intimate_ballad verse = p; source prior +0.002"
+        }
+      },
+      {
+        "section": "Chorus",
+        "before": {
+          "marking": "mp",
+          "level": 0.398,
+          "everyFamily": "mp",
+          "reason": "intimate_ballad chorus = mf, brief global -1; source prior -0.002"
+        },
+        "after": {
+          "marking": "mf",
+          "level": 0.548,
+          "perFamily": {
+            "keys": "mf",
+            "strings": "mp",
+            "bass": "mp",
+            "percussion": "mp"
+          },
+          "reason": "intimate_ballad chorus = mf; source prior -0.002"
+        }
+      },
+      {
+        "section": "Chorus 2",
+        "before": {
+          "marking": "mp",
+          "level": 0.465,
+          "everyFamily": "mp",
+          "reason": "intimate_ballad chorus = mf, brief global -1; source prior +0.065"
+        },
+        "after": {
+          "marking": "mf",
+          "level": 0.615,
+          "perFamily": {
+            "keys": "mf",
+            "strings": "mp",
+            "bass": "mp",
+            "percussion": "mp"
+          },
+          "reason": "intimate_ballad chorus = mf; source prior +0.065"
+        }
+      },
+      {
+        "section": "Verse 3",
+        "before": {
+          "marking": "pp",
+          "level": 0.062,
+          "everyFamily": "pp",
+          "reason": "intimate_ballad verse = p, brief global -1; source prior -0.038"
+        },
+        "after": {
+          "marking": "p",
+          "level": 0.212,
+          "perFamily": {
+            "keys": "p",
+            "strings": "pp",
+            "bass": "pp"
+          },
+          "reason": "intimate_ballad verse = p; source prior -0.038"
+        }
+      },
+      {
+        "section": "Bridge",
+        "before": {
+          "marking": "mp",
+          "level": 0.43,
+          "everyFamily": "mp",
+          "reason": "intimate_ballad bridge = mf, brief global -1; source prior +0.03"
+        },
+        "after": {
+          "marking": "mf",
+          "level": 0.58,
+          "perFamily": {
+            "keys": "mf",
+            "strings": "mp",
+            "bass": "mp"
+          },
+          "reason": "intimate_ballad bridge = mf; source prior +0.03"
+        }
+      },
+      {
+        "section": "Chorus 3",
+        "before": {
+          "marking": "f",
+          "level": 0.671,
+          "everyFamily": "f",
+          "reason": "intimate_ballad chorus = mf, brief +1, brief global -1; raised to f as the primary climax; source prior -0.029"
+        },
+        "after": {
+          "marking": "f",
+          "level": 0.671,
+          "perFamily": {
+            "keys": "f",
+            "strings": "mf",
+            "bass": "mf",
+            "percussion": "mf"
+          },
+          "reason": "intimate_ballad chorus = mf, brief +1; source prior -0.029"
+        }
+      },
+      {
+        "section": "Outro",
+        "before": {
+          "marking": "pp",
+          "level": 0.1,
+          "everyFamily": "pp",
+          "reason": "intimate_ballad outro = p, brief global -1"
+        },
+        "after": {
+          "marking": "p",
+          "level": 0.25,
+          "perFamily": {
+            "keys": "p",
+            "strings": "pp",
+            "bass": "pp"
+          },
+          "reason": "intimate_ballad outro = p"
+        }
+      }
+    ],
+    "sectionPlanDiff": {
+      "note": "the section planner still writes one dynamicShape per section (B-07 owns that file). The per-family shape is `arrangementArc.familyDynamicShape(arcSection, family)`; the read B-07 must add is listed in the PR body.",
+      "before": [
+        {
+          "instrument": "keys",
+          "dynamicShape": "f"
+        },
+        {
+          "instrument": "bass",
+          "dynamicShape": "f"
+        },
+        {
+          "instrument": "strings",
+          "dynamicShape": "f"
+        },
+        {
+          "instrument": "percussion",
+          "dynamicShape": "f"
+        },
+        {
+          "instrument": "drums",
+          "dynamicShape": "f"
+        }
+      ],
+      "after": [
+        {
+          "instrument": "keys",
+          "dynamicShape": "f",
+          "perFamilyPlanned": "f"
+        },
+        {
+          "instrument": "bass",
+          "dynamicShape": "f",
+          "perFamilyPlanned": "mf"
+        },
+        {
+          "instrument": "strings",
+          "dynamicShape": "f",
+          "perFamilyPlanned": "mf"
+        },
+        {
+          "instrument": "percussion",
+          "dynamicShape": "f",
+          "perFamilyPlanned": "mf"
+        },
+        {
+          "instrument": "drums",
+          "dynamicShape": "f",
+          "perFamilyPlanned": "f"
+        }
+      ]
+    }
+  },
+  "d2_pulse": {
+    "claim": "an intimate ballad at 130 BPM is felt at 65; four_on_floor is never the reading for a ballad / chassidic / singer-songwriter / jazz-standard world; with no brief the song's own chords are read (R-1b P1-3, §7 item 7)",
+    "before": {
+      "withBrief": "grooveStrategy steady_pulse -> the kit plays a backbeat on 2 and 4 at 130 BPM (R-1b §1)",
+      "withoutBrief": "grooveStrategy four_on_floor from the map's tempo band -> a kick on every beat in all three choruses (R-1b §1, P1-3)"
+    },
+    "after": {
+      "withBrief": {
+        "feltPulse": {
+          "value": "half_time",
+          "confidence": 0.7,
+          "provenance": "template",
+          "sourceRefs": [
+            "knowledge:ballad/pulse"
+          ],
+          "rationale": "130 BPM is outside ballad's written band 50-108: felt half_time"
+        },
+        "pulseStrategy": {
+          "value": "half_time_feel",
+          "confidence": 0.595,
+          "provenance": "template",
+          "sourceRefs": [
+            "knowledge:ballad/pulse"
+          ],
+          "rationale": "ballad: a ballad's pulse is slow. Above about 108 written BPM the analysis is counting the subdivision, not the pulse, and the arrangement is felt at half (the owner's song: 130.43 written, felt at 65). A ballad is never built on a dance grid."
+        },
+        "forbidden": [
+          "four_on_floor",
+          "syncopated"
+        ],
+        "grooveStrategy": "half_time_feel",
+        "styleDecisions": {
+          "styleGrammarSha256": "547ec1831042b31322a46aa7a4156b9b75d1e99c8d5ed0e585db2eeb84846733",
+          "style": "brief",
+          "productionAesthetic": "brief",
+          "grooveStrategy": "template"
+        },
+        "knowledgeEntry": "ballad"
+      },
+      "withBriefAndTradition": {
+        "knowledgeEntry": "chassidic_ballad",
+        "feltPulse": {
+          "value": "half_time",
+          "confidence": 0.75,
+          "provenance": "template",
+          "sourceRefs": [
+            "knowledge:chassidic_ballad/pulse"
+          ],
+          "rationale": "130 BPM is outside chassidic_ballad's written band 48-110: felt half_time"
+        },
+        "pulseStrategy": {
+          "value": "half_time_feel",
+          "confidence": 0.637,
+          "provenance": "template",
+          "sourceRefs": [
+            "knowledge:chassidic_ballad/pulse"
+          ],
+          "rationale": "chassidic_ballad: the nigun breathes with the voice; a soft two-and-four arrives with the first chorus and sits on the felt pulse, not on the counted one. Kick on every beat is the simcha dance, not this form."
+        },
+        "forbidden": [
+          "four_on_floor",
+          "syncopated",
+          "swing"
+        ]
+      },
+      "withoutBrief": {
+        "style": "unknown",
+        "grooveStrategy": "half_time_feel",
+        "styleDecisions": {
+          "styleGrammarSha256": null,
+          "style": "map_heuristic",
+          "productionAesthetic": "map_heuristic",
+          "grooveStrategy": "template",
+          "grooveReason": "0.65 chord changes a bar over plain triads in a minor key and no rhythm section in the source: one or two chords under a long phrase, the harmonic rhythm of a slow sung song → ballad: a ballad's pulse is slow. Above about 108 written BPM the analysis is counting the subdivision, not the pulse, and the arrangement is felt at half (the owner's song: 130.43 written, felt at 65). A ballad is never built on a dance grid."
+        },
+        "inference": {
+          "status": "inferred",
+          "candidates": [
+            {
+              "entryId": "ballad",
+              "confidence": 0.55,
+              "why": "0.65 chord changes a bar over plain triads in a minor key and no rhythm section in the source: one or two chords under a long phrase, the harmonic rhythm of a slow sung song"
+            }
+          ],
+          "strategy": {
+            "value": "half_time_feel",
+            "confidence": 0.55,
+            "why": "0.65 chord changes a bar over plain triads in a minor key and no rhythm section in the source: one or two chords under a long phrase, the harmonic rhythm of a slow sung song → ballad: a ballad's pulse is slow. Above about 108 written BPM the analysis is counting the subdivision, not the pulse, and the arrangement is felt at half (the owner's song: 130.43 written, felt at 65). A ballad is never built on a dance grid."
+          },
+          "forbidden": [
+            "four_on_floor",
+            "syncopated"
+          ],
+          "notes": [
+            "read from 92 chords in C minor; nothing here names a tradition — that stays a question"
+          ]
+        }
+      }
+    },
+    "questions": {
+      "verbatim": [
+        {
+          "path": "identity.tradition",
+          "reason": "unknown",
+          "gain": 0.4,
+          "options": [
+            "hasidic",
+            "mizrahi",
+            "gospel",
+            "brazilian"
+          ]
+        },
+        {
+          "path": "groove.feltPulse",
+          "reason": "inferred",
+          "gain": 0.3,
+          "options": [
+            "as_written",
+            "half_time"
+          ]
+        }
+      ],
+      "withTradition": [
+        {
+          "path": "performance.dynamics",
+          "reason": "contested",
+          "gain": 0.348,
+          "options": [
+            "wide",
+            "narrow"
+          ]
+        },
+        {
+          "path": "groove.feltPulse",
+          "reason": "inferred",
+          "gain": 0.3,
+          "options": [
+            "as_written",
+            "half_time"
+          ]
+        }
+      ],
+      "answered": {
+        "note": "answering the felt-pulse question moves the plan in both directions; the assertions are in brainB18BriefReading.test.ts",
+        "as_written": "grooveStrategy steady_pulse (styleDecisions.grooveStrategy = brief)",
+        "half_time": "grooveStrategy half_time_feel (styleDecisions.grooveStrategy = brief)"
+      }
+    },
+    "knowledgeEntries": [
+      {
+        "entry": "chassidic_ballad",
+        "writtenBpm": {
+          "min": 48,
+          "max": 110
+        },
+        "above": "half_time",
+        "below": "as_written",
+        "strategy": "steady_pulse",
+        "halfTimeStrategy": "half_time_feel",
+        "never": [
+          "four_on_floor",
+          "syncopated",
+          "swing"
+        ],
+        "confidence": 0.75,
+        "why": "the nigun breathes with the voice; a soft two-and-four arrives with the first chorus and sits on the felt pulse, not on the counted one. Kick on every beat is the simcha dance, not this form.",
+        "atOwnerTempo": {
+          "bpm": 130.43,
+          "feltPulse": "half_time",
+          "strategy": "half_time_feel"
+        },
+        "introFigure": "piano_motif",
+        "endingGesture": "held_final_chord"
+      },
+      {
+        "entry": "chassidic_simcha_dance",
+        "writtenBpm": {
+          "min": 110,
+          "max": 190
+        },
+        "above": "half_time",
+        "below": "double_time",
+        "strategy": "steady_pulse",
+        "halfTimeStrategy": "half_time_feel",
+        "never": [
+          "rubato",
+          "swing"
+        ],
+        "confidence": 0.7,
+        "why": "the freilach is a fast 2/4 danced in one-two: counted below about 110 the analysis has halved the pulse, above 190 it has doubled it. It is never rubato and never swung.",
+        "atOwnerTempo": {
+          "bpm": 130.43,
+          "feltPulse": "as_written",
+          "strategy": "steady_pulse"
+        },
+        "introFigure": "pickup_only",
+        "endingGesture": "stop"
+      },
+      {
+        "entry": "mizrahi_pop",
+        "writtenBpm": {
+          "min": 85,
+          "max": 145
+        },
+        "above": "half_time",
+        "below": "as_written",
+        "strategy": "syncopated",
+        "halfTimeStrategy": "half_time_feel",
+        "never": [
+          "four_on_floor",
+          "rubato"
+        ],
+        "confidence": 0.6,
+        "why": "the maqsum's dum-tak cycle is the pulse; a mizrahi pop tune counted above about 145 is being counted in eighths. The darbuka pattern is syncopated, never a four-on-the-floor grid.",
+        "atOwnerTempo": {
+          "bpm": 130.43,
+          "feltPulse": "as_written",
+          "strategy": "syncopated"
+        },
+        "introFigure": "tonic_pad",
+        "endingGesture": "stop"
+      },
+      {
+        "entry": "pop_ballad",
+        "writtenBpm": {
+          "min": 50,
+          "max": 110
+        },
+        "above": "half_time",
+        "below": "as_written",
+        "strategy": "steady_pulse",
+        "halfTimeStrategy": "half_time_feel",
+        "never": [
+          "four_on_floor",
+          "rubato"
+        ],
+        "confidence": 0.7,
+        "why": "the produced pop ballad is a half-time backbeat: the snare lands on three of the felt bar. Above about 110 written BPM the count is the eighth-note, and the half-time reading is the arrangement.",
+        "atOwnerTempo": {
+          "bpm": 130.43,
+          "feltPulse": "half_time",
+          "strategy": "half_time_feel"
+        },
+        "introFigure": "piano_motif",
+        "endingGesture": "held_final_chord"
+      },
+      {
+        "entry": "singer_songwriter_acoustic",
+        "writtenBpm": {
+          "min": 60,
+          "max": 125
+        },
+        "above": "half_time",
+        "below": "as_written",
+        "strategy": "steady_pulse",
+        "halfTimeStrategy": "half_time_feel",
+        "never": [
+          "four_on_floor",
+          "syncopated"
+        ],
+        "confidence": 0.65,
+        "why": "one player and a voice: the strum is the pulse and it breathes. A four-on-the-floor kick under a fingerpicked song is a reading nobody in this world would give.",
+        "atOwnerTempo": {
+          "bpm": 130.43,
+          "feltPulse": "half_time",
+          "strategy": "half_time_feel"
+        },
+        "introFigure": "piano_motif",
+        "endingGesture": "held_final_chord"
+      },
+      {
+        "entry": "rock",
+        "writtenBpm": {
+          "min": 80,
+          "max": 200
+        },
+        "above": "half_time",
+        "below": "as_written",
+        "strategy": "steady_pulse",
+        "halfTimeStrategy": "half_time_feel",
+        "never": [
+          "rubato"
+        ],
+        "confidence": 0.7,
+        "why": "a rock band's backbeat is the written tempo across a wide band; above about 200 the count is the eighth-note and the band plays half-time. Four-on-the-floor is a real rock reading (disco-rock, motorik) and is not forbidden here.",
+        "atOwnerTempo": {
+          "bpm": 130.43,
+          "feltPulse": "as_written",
+          "strategy": "steady_pulse"
+        },
+        "introFigure": "pickup_only",
+        "endingGesture": "stop"
+      },
+      {
+        "entry": "edm_dance",
+        "writtenBpm": {
+          "min": 100,
+          "max": 155
+        },
+        "above": "as_written",
+        "below": "double_time",
+        "strategy": "four_on_floor",
+        "halfTimeStrategy": "half_time_feel",
+        "never": [
+          "rubato",
+          "swing"
+        ],
+        "confidence": 0.85,
+        "why": "the four-on-the-floor kick *is* the pulse and the genre is written at it. Counted below 100 the analysis has halved it (a 128 BPM track read as 64).",
+        "atOwnerTempo": {
+          "bpm": 130.43,
+          "feltPulse": "as_written",
+          "strategy": "four_on_floor"
+        },
+        "introFigure": "tonic_pad",
+        "endingGesture": "fade"
+      },
+      {
+        "entry": "jazz_standard",
+        "writtenBpm": {
+          "min": 50,
+          "max": 240
+        },
+        "above": "half_time",
+        "below": "as_written",
+        "strategy": "swing",
+        "halfTimeStrategy": "swing",
+        "never": [
+          "four_on_floor"
+        ],
+        "confidence": 0.7,
+        "why": "a standard is played at any tempo and the feel changes with it; above about 240 the band plays in two, which is still a swing feel and not a half-time backbeat. A jazz standard is never a dance grid.",
+        "atOwnerTempo": {
+          "bpm": 130.43,
+          "feltPulse": "as_written",
+          "strategy": "swing"
+        },
+        "introFigure": "pickup_only",
+        "endingGesture": "held_final_chord"
+      },
+      {
+        "entry": "orchestral_cinematic",
+        "writtenBpm": {
+          "min": 40,
+          "max": 160
+        },
+        "above": "half_time",
+        "below": "as_written",
+        "strategy": "steady_pulse",
+        "halfTimeStrategy": "half_time_feel",
+        "never": [
+          "four_on_floor",
+          "swing"
+        ],
+        "confidence": 0.6,
+        "why": "a cue's pulse is the conductor's beat and it breathes; a written 180 is an ostinato counted in eighths over a felt 90. Score music is not built on a dance grid.",
+        "atOwnerTempo": {
+          "bpm": 130.43,
+          "feltPulse": "as_written",
+          "strategy": "steady_pulse"
+        },
+        "introFigure": "tonic_pad",
+        "endingGesture": "held_final_chord"
+      },
+      {
+        "entry": "gospel",
+        "writtenBpm": {
+          "min": 50,
+          "max": 140
+        },
+        "above": "half_time",
+        "below": "as_written",
+        "strategy": "steady_pulse",
+        "halfTimeStrategy": "half_time_feel",
+        "never": [
+          "four_on_floor",
+          "rubato"
+        ],
+        "confidence": 0.6,
+        "why": "the 12/8 ballad is felt in four slow beats and the contemporary backbeat in four fast ones; both are the written tempo inside this band. The choir's tempo breathes, but the arrangement is not rubato.",
+        "atOwnerTempo": {
+          "bpm": 130.43,
+          "feltPulse": "as_written",
+          "strategy": "steady_pulse"
+        },
+        "introFigure": "piano_motif",
+        "endingGesture": "held_final_chord"
+      },
+      {
+        "entry": "bossa_latin",
+        "writtenBpm": {
+          "min": 100,
+          "max": 180
+        },
+        "above": "half_time",
+        "below": "double_time",
+        "strategy": "syncopated",
+        "halfTimeStrategy": "half_time_feel",
+        "never": [
+          "four_on_floor",
+          "rubato"
+        ],
+        "confidence": 0.65,
+        "why": "the clave cycle is two written bars; a bossa notated in 2/4 counts around 130 and one notated in 4/4 counts around 65, so a count below 100 is the same music halved. Never a four-on-the-floor grid.",
+        "atOwnerTempo": {
+          "bpm": 130.43,
+          "feltPulse": "as_written",
+          "strategy": "syncopated"
+        },
+        "introFigure": "tonic_pad",
+        "endingGesture": "fade"
+      },
+      {
+        "entry": "hip_hop_rnb",
+        "writtenBpm": {
+          "min": 60,
+          "max": 110
+        },
+        "above": "half_time",
+        "below": "as_written",
+        "strategy": "syncopated",
+        "halfTimeStrategy": "half_time_feel",
+        "never": [
+          "swing",
+          "rubato"
+        ],
+        "confidence": 0.7,
+        "why": "trap is written at 130-160 and felt at half of it (the snare on three of the felt bar); boom-bap is written at its own pulse near 90. Above about 110 the half-time reading is the one the producer means.",
+        "atOwnerTempo": {
+          "bpm": 130.43,
+          "feltPulse": "half_time",
+          "strategy": "half_time_feel"
+        },
+        "introFigure": "tonic_pad",
+        "endingGesture": "fade"
+      },
+      {
+        "entry": "ballad",
+        "writtenBpm": {
+          "min": 50,
+          "max": 108
+        },
+        "above": "half_time",
+        "below": "as_written",
+        "strategy": "steady_pulse",
+        "halfTimeStrategy": "half_time_feel",
+        "never": [
+          "four_on_floor",
+          "syncopated"
+        ],
+        "confidence": 0.7,
+        "why": "a ballad's pulse is slow. Above about 108 written BPM the analysis is counting the subdivision, not the pulse, and the arrangement is felt at half (the owner's song: 130.43 written, felt at 65). A ballad is never built on a dance grid.",
+        "atOwnerTempo": {
+          "bpm": 130.43,
+          "feltPulse": "half_time",
+          "strategy": "half_time_feel"
+        },
+        "introFigure": "tonic_pad",
+        "endingGesture": "held_final_chord"
+      },
+      {
+        "entry": "pop",
+        "writtenBpm": {
+          "min": 70,
+          "max": 135
+        },
+        "above": "half_time",
+        "below": "as_written",
+        "strategy": "steady_pulse",
+        "halfTimeStrategy": "half_time_feel",
+        "never": [
+          "rubato"
+        ],
+        "confidence": 0.65,
+        "why": "produced pop sits on a backbeat at its written tempo; above about 135 the count is usually the eighth-note of a half-time chorus. Four-on-the-floor is a genuine pop reading (dance-pop) and stays available.",
+        "atOwnerTempo": {
+          "bpm": 130.43,
+          "feltPulse": "as_written",
+          "strategy": "steady_pulse"
+        },
+        "introFigure": "tonic_pad",
+        "endingGesture": "held_final_chord"
+      }
+    ]
+  },
+  "d3_approachTones": {
+    "claim": "in a minor key the approach set excludes the major third above the root unless the style says otherwise; leading tones and lower neighbours are preferred for chassidic / liturgical entries (R-1b P1-6)",
+    "tonalCentre": {
+      "tonicPc": 0,
+      "tonic": "C",
+      "mode": "minor",
+      "why": "tonic pitch class 0 (the chord the song spends most time on, and the first or last chord), minor from its own third"
+    },
+    "before": {
+      "rule": "!previousChordPcs.has(pc) && (chromaticApproach || scale.has(pc) || Math.abs(p - target) === 2), then a fallback to any non-chord tone",
+      "scaleWas": "the union of every pitch class any chord of the song uses",
+      "unionPitchClasses": [
+        "C",
+        "C#",
+        "D",
+        "Eb",
+        "E",
+        "F",
+        "F#",
+        "G",
+        "Ab",
+        "A",
+        "Bb",
+        "B"
+      ],
+      "admittedInCMinor": [
+        "E (the major third above the tonic; one C major triad in 92 chords puts it in the union)",
+        "A (from a D major, an F major and a Dm)"
+      ],
+      "measured": "R-1b P1-6: E natural under Cm (b115.2), A natural under Fm (b117.3), G natural under Ab (b120.2); ballad case: Ab under Dm, B natural under Bb"
+    },
+    "after": {
+      "intimate_ballad": {
+        "preferredOffsets": [],
+        "admissiblePitchClasses": [
+          "C",
+          "D",
+          "Eb",
+          "F",
+          "G",
+          "Ab",
+          "Bb",
+          "B"
+        ],
+        "excluded": [
+          "E",
+          "A"
+        ],
+        "why": "diatonic approaches from the mode's own scale; in minor the major third and major sixth above the tonic are not passing tones, they are a change of mode"
+      },
+      "chassidic": {
+        "preferredOffsets": [
+          -1,
+          -2,
+          1,
+          2
+        ],
+        "admissiblePitchClasses": [
+          "C",
+          "D",
+          "Eb",
+          "F",
+          "G",
+          "Ab",
+          "Bb",
+          "B"
+        ],
+        "why": "leading tones and lower neighbours: the chassidic / liturgical cadence is V-i with the raised seventh, and the line arrives from underneath"
+      },
+      "jazz": {
+        "modeOnly": false,
+        "why": "chromatic approach is the idiom: a walking line leads into every change by a half step from either side"
+      },
+      "goldenImpact": "ballad-piano-vocal, ethnic-vocal and cinematic-midi composer digests moved with identical note counts; acoustic-demo's shipped notes moved; the four chromatic-style cases are byte-identical (see reference-part-composer.golden.json recordedAt)"
+    },
+    "plannerRead": {
+      "file": "artifacts/api-server/src/lib/harmonyPlan/bassLine.ts",
+      "lines": [
+        "import { approachToneChoice, tonalCentreOf, type HarmonyStyleParams } from \"./styleParams\";",
+        "const choice = approachToneChoice({ admissible, target, avoidPcs: previousChordPcs, style: input.style, centre: tonalCentreOf(...) });",
+        "the now-dead `const scale = scaleOf(...)` local and `scaleOf` from the shared import were removed"
+      ]
+    }
+  },
+  "d4_introAndEnding": {
+    "claim": "the arc states an intro figure and an ending; the owner's 2-bar intro implies the tonic rather than 'no harmony' (R-1b P1-7)",
+    "before": "Intro bars 1-2: no chord under them -> three dropped_part warnings and two bars of silence; Outro: the last piano stab ends 1.06 s before the song end, no held chord, no ritardando (ending_missing major)",
+    "after": {
+      "verbatim": {
+        "opening": {
+          "value": {
+            "figure": "tonic_pad",
+            "sectionName": "Intro",
+            "barCount": 2,
+            "impliesTonic": true,
+            "families": [
+              "keys",
+              "bass",
+              "strings"
+            ]
+          },
+          "source": "brief",
+          "reason": "stated by the brief as tonic_pad; the intro implies the tonic even where the chord analysis found no chord (R-1b P1-7)"
+        },
+        "ending": {
+          "value": {
+            "gesture": "held_final_chord",
+            "sectionName": "Outro",
+            "bars": 2,
+            "ritardando": true,
+            "families": [
+              "keys",
+              "bass",
+              "strings"
+            ]
+          },
+          "source": "brief",
+          "reason": "stated by the brief as held_final_chord"
+        }
+      },
+      "withTradition": {
+        "introFigure": "piano_motif",
+        "endingGesture": "held_final_chord",
+        "opening": {
+          "value": {
+            "figure": "piano_motif",
+            "sectionName": "Intro",
+            "barCount": 2,
+            "impliesTonic": true,
+            "families": [
+              "keys",
+              "bass",
+              "strings"
+            ]
+          },
+          "source": "brief",
+          "reason": "stated by the brief as piano_motif; the intro implies the tonic even where the chord analysis found no chord (R-1b P1-7)"
+        },
+        "ending": {
+          "value": {
+            "gesture": "held_final_chord",
+            "sectionName": "Outro",
+            "bars": 2,
+            "ritardando": true,
+            "families": [
+              "keys",
+              "bass",
+              "strings"
+            ]
+          },
+          "source": "brief",
+          "reason": "stated by the brief as held_final_chord"
+        }
+      }
+    },
+    "writerReads": "listed in the PR body for B-13"
+  },
+  "honestLimits": [
+    "The plan side only. No writer realises the intro figure, the ending gesture, the per-family level or the approach preference at note level yet; the reads B-13 and B-07 must add are listed in the PR body. Until they do, the owner's shipped notes change only where the bass planner already read HarmonyStyleParams (D3).",
+    "`sectionPhrasePlanner.dynamicShapeFor` still writes one dynamicShape per section, so the per-family marking reaches the section plan only through `arrangementArc.familyDynamicShape` — which nothing calls yet. D1 is proven at the arc, not at the role assignment.",
+    "The family-word reader is adjacency-based on the producer's own text: an adjective reaches at most one word past the instrument, and a word about the world ends its reach. \"Make the strings, which enter in the chorus, soft\" is not read; it stays a global word.",
+    "`applyConstraint` (\"not too busy\", \"less drums\") is untouched: a *constraint* about a family is still compiled as a section-scoped density nudge, not as a family level.",
+    "The forbidden degrees are excluded whatever the target chord is. A minor-key song that genuinely borrows a major-III chord loses the major third as an approach tone into it; no case in the corpus does this, and no test covers it.",
+    "`tonalCentreOf` reads one tonal centre for the whole part window. A song that modulates is read in its opening key; the fixture does not modulate (keyChanges 0).",
+    "The pulse conventions are the B-18 specialist's generalisations about each style, not measurements of a corpus — the same standing as every other knowledge-base value. Their bands are round numbers a musician would defend, and each carries its why.",
+    "`inferStyleFromSong` claims a *form*, never a tradition: a triadic minor song with a slow harmonic rhythm and no rhythm section reads as ballad-shaped, and which world it belongs to stays a question. It returns `unknown` whenever the evidence supports no reading.",
+    "The no-brief reading replaces a bad default only: it is consulted when the map's answer is a reading the style forbids or a dance grid nothing evidenced. A defensible measurement is never overwritten (the eight corpus cases with a detected rhythm section keep their readings; only jazz-full changed, and only because its ii-V vocabulary forbids four_on_floor).",
+    "`groove.pulseStrategy` outranks `groove.family` in `grooveFromGrammar`. A knowledge entry whose pulse strategy and groove family disagree would now be read by the strategy; every shipped entry's pair agrees, and no test enforces the invariant across future entries."
+  ]
+}

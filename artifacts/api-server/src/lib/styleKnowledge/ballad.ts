@@ -28,6 +28,8 @@ export const ballad: StyleKnowledgeEntry = {
       "melodic.phraseLength": kv("regular", 0.6, "even four- and eight-bar phrases"),
     },
     orchestration: {
+      "arrangement.introFigure": kv("tonic_pad", 0.55, "a held tonic under the first bars is the plainest honest opening of a slow song"),
+      "arrangement.endingGesture": kv("held_final_chord", 0.6, "a ballad ends on a held chord, not on a short stab"),
       "strings.role": kv("pad", 0.5, "when strings are present they pad and swell"),
       "strings.articulation": kv("legato", 0.7, "bowed and connected; nothing short under a sung line"),
       "arrangement.arcTemplate": kv("intimate_ballad", 0.6, "quiet thin verses, choruses open up, the last chorus is the climax"),
@@ -40,6 +42,16 @@ export const ballad: StyleKnowledgeEntry = {
     performance: {
       "performance.articulationLanguage": kv("legato", 0.6, "connected playing under a voice"),
     },
+  },
+  pulse: {
+    writtenBpm: { min: 50, max: 108 },
+    above: "half_time",
+    below: "as_written",
+    strategy: "steady_pulse",
+    halfTimeStrategy: "half_time_feel",
+    never: ["four_on_floor", "syncopated"],
+    confidence: 0.7,
+    why: "a ballad's pulse is slow. Above about 108 written BPM the analysis is counting the subdivision, not the pulse, and the arrangement is felt at half (the owner's song: 130.43 written, felt at 65). A ballad is never built on a dance grid.",
   },
   basis: "common practice of the slow sung song across traditions; written by the B-09 style specialist, not measured",
   coverage: "general_practice",

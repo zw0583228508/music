@@ -8162,6 +8162,178 @@ gate declared met.
   `brain-b02` groups (R-1a P2-8) - the group was verified with `node --check`
   and by running each of its ten bundles directly.
 
+### PR-B18 — Brain B-18: the brief read like a musician
+
+R-1b §7 item 7, in one line: *"soft strings, gentle bass" = per-family role and
+level, not a global marking; "intimate ballad" at 130 BPM = half-time or 2-feel
+by default; never `four_on_floor` for a ballad reading; without a brief, infer
+the style from the chord vocabulary too.* Four of the review's P1 findings are
+plan-side defects, and this stream fixes the plan. The writers that realise the
+plan are B-13's; every read they must add is listed at the end of this entry.
+
+**D1 — a word in front of an instrument is that instrument's level (P1-2).**
+The owner's brief says "piano, soft strings, gentle bass, light percussion".
+Before this PR the extractor produced one *global* `energy=low` inference from
+the words "soft" and "gentle", the compiler made it a global decision, the
+grammar made it `arrangement.globalDynamic=low`, and `briefToPlanner` emitted
+`globalDynamicSteps: -1` — one marking off **every** section of a four-minute
+song (template chorus mf → mp, verse p → pp, Verse 3 down to level 0.059).
+`briefCompiler.familyLevelsFromText` now reads the producer's own text: a level
+word attached to an instrument (either side of it — English puts the adjective
+first, Hebrew after — at most one word away, and a word about the world
+"ballad", "intimate" ends its reach) becomes a `BriefFamilyLevel` for that
+family, a track-scoped decision the producer can later supersede, and a
+`familyDynamicSteps` / `familyEmphasis` lever on the arc. A global energy or
+density inference every one of whose evidence words a family has claimed is
+withheld, and the compiler records *why* in the decision list. The arc carries
+`ArcFamilyDynamic[]` per section; `familyMarkingIn` / `familyLevelIn` /
+`familyEmphasisIn` / `familyDynamicShape` are the readers. On the owner's song
+the section markings are exactly what they are with no brief lever at all
+(Chorus 3 `f`, verses `p`), the piano plays the section's marking, and strings,
+bass and percussion play one step under it — **Chorus 3 is `f` for the piano and
+`mf` for the strings**. A word about the *song* ("a quiet, understated ballad")
+still moves the whole song, which is the control.
+
+**D2 — the pulse comes from the style and the song, not the tempo band (P1-3).**
+All 14 knowledge entries now carry a `pulse` convention: the written-BPM band
+inside which the measured tempo *is* the felt pulse, what it means above and
+below that band, the groove strategy the style is arranged on, and the readings
+it must never be given. `styleResolver.styleCandidatesFromPulse` turns it into
+three grammar values against the song's measured tempo — `groove.feltPulse`,
+`groove.pulseStrategy`, `groove.forbiddenStrategies` — and `pickGroove` reads
+the pulse strategy above `groove.family`. The owner's "intimate ballad" at
+130.43 BPM is outside a ballad's 50–108 band, so it is felt at 65 and planned as
+`half_time_feel`; `four_on_floor` is forbidden by the ballad, chassidic-ballad,
+singer-songwriter and jazz-standard conventions at every tempo. The felt pulse
+stays a **question** whenever the count falls outside the style's band
+(`reason: "inferred"`), and answering it moves the plan in both directions:
+`as_written` → `steady_pulse`, `half_time` → `half_time_feel`, both with
+provenance `brief`. With **no brief at all** — R-1b's "common case", where the
+map's tempo band answered `four_on_floor` and put a kick on every beat in all
+three choruses of a chassidic ballad — `inferStyleFromSong` reads the song's own
+chord vocabulary and harmonic rhythm (0.65 changes a bar over plain triads in C
+minor, and nothing in the source plays a beat: `rhythm: not_available`, one
+`mix` stem) as a ballad-shaped song and plans `half_time_feel`, recording the
+reading in `styleDecisions.grooveReason`. It claims a *form*, never a tradition,
+and returns `unknown` when the evidence supports no reading. The song's reading
+replaces a bad default only: it is consulted when the map's answer is forbidden
+or is a dance grid nothing evidenced, so the eight corpus cases with a detected
+rhythm section keep their measured readings.
+
+**D3 — approach tones from the mode, not from the chord union (P1-6).**
+`bassLine.ts` chose approach tones with `!previousChordPcs.has(pc) &&
+(chromaticApproach || scale.has(pc) || Math.abs(p - target) === 2)`, with a
+fallback to *any* non-chord tone — and `scale` was `scaleOf(events)`, the union
+of every pitch class any chord of the song uses. On the owner's 92 chords that
+union is **all twelve pitch classes**, so "diatonic" admitted E natural (the
+major third above a C minor tonic) and A natural: the notes the review heard
+under Cm and Fm. `HarmonyStyleParams.approachTones` is now an
+`ApproachToneVocabulary` per aesthetic — preferred offsets, forbidden degrees
+per mode, whether the mode restricts at all — and `approachToneChoice` filters
+the planner's own candidates against the mode's own scale (natural minor plus
+the raised seventh; major as written), refusing the major third and the major
+sixth above a minor tonic. A style that finds nothing admissible writes **no
+approach**: a plainer bass line beats a wrong note. Blues / jazz / pop / band /
+electronic keep the chromatic idiom ("unless the style says otherwise"), and
+their candidate order is untouched, so their notes are byte-identical. A new
+`chassidic` parameter set (selected by the resolved tradition, or by a grammar
+whose `harmony.modalFlavour` is harmonic minor / freygish) prefers the leading
+tone and the lower neighbour — the V–i of the niggun repertoire.
+
+**D4 — the song opens and closes on purpose (P1-7).** Every arc template and
+every knowledge entry states an intro figure (`tonic_pad` / `piano_motif` /
+`pickup_only` / `none`) and an ending (`held_final_chord` / `stop` / `fade`,
+with a ritardando where the style takes one). `ArrangementArc.opening` /
+`.ending` carry them as decisions with a source and a reason, and the owner's
+two-bar intro is marked `impliesTonic: true` — bars 1–2 are not "no harmony",
+they are the tonic, whatever the chord analysis found under them. A one-bar
+intro is a pickup; a form with no intro says `none` rather than inventing one;
+the brief overrides both and says so.
+
+**Tests.** `brainB18BriefReading.test.ts` (13 tests, registered as the
+`brain-b18` focused suite) covers each deliverable with its control: the family
+reader in English and Hebrew, with adjacency and world-word negative controls; a
+word about the song still moving the song; all 14 pulse conventions with their
+band edges, their forbidden readings at seven tempos and the EDM positive
+control; the felt-pulse question answered both ways at the plan; the no-brief
+inference with a jazz-vocabulary positive control and two `unknown` controls;
+the approach set with the old union quoted as the defect it was; the leading-tone
+preference; an invariant tying every aesthetic's vocabulary to its own
+`chromaticApproach` flag; the arc's opening and ending per template and per
+entry; and determinism of the whole reading. Existing expectations that moved
+(`brainB09StyleGrammar`, `styleResolver`, `styleKnowledge`) carry the cause
+beside them; none was weakened.
+
+**Capability ladder.** Per-family levels — DESIGNED ✓ IMPLEMENTED ✓ (brief →
+grammar → arc) TESTED ✓ INTEGRATED — (the section planner and the writers do
+not read them yet: `familyDynamicShape` has no caller, and the reads B-07 /
+B-13 must add are listed below) BENCHMARKED — VALIDATED ON OUTPUT —. Pulse
+conventions on 14 entries — IMPLEMENTED ✓ TESTED ✓ INTEGRATED ✓ (`pickGroove`
+reads `groove.pulseStrategy` and `groove.forbiddenStrategies`; the owner's song
+plans `half_time_feel` with and without a brief). Felt-pulse question that
+changes the plan — IMPLEMENTED ✓ TESTED ✓ INTEGRATED ✓ (`answerStyleQuestion`
+→ `deriveGlobalArrangementPlan`); asked in production — (the production path
+still asks no style questions; that wiring is not this stream's). Style from
+the song's own chords with confidence, provenance and `unknown` — IMPLEMENTED ✓
+TESTED ✓ INTEGRATED ✓ (`pickGroove` with no grammar). Approach-tone vocabulary
+per mode and style — IMPLEMENTED ✓ TESTED ✓ INTEGRATED ✓ (the bass planner
+reads it; the golden fixture moved on four cases and is re-pinned with the
+cause). Intro figure and ending intent — IMPLEMENTED ✓ TESTED ✓ INTEGRATED —
+(plan fields only; no writer realises them). Nothing rendered or listened to.
+
+**The reads the writers must add** (for B-13 and B-07; none of them is in this
+PR, because those files belong to other streams):
+
+| file : function | read to add | what it fixes |
+|---|---|---|
+| `sectionPhrasePlanner.ts : dynamicShapeFor` | take the family and return `familyDynamicShape(arcSection, family)`; the caller already has `family` in its `for (const family of activeFamilies)` loop | one `dynamicShape` per section is what makes "soft strings" unrealisable at note level (P1-2) |
+| `arrangementOrchestrator.ts` (part-request assembly) : `arcIntent.level` | `familyLevelIn(arcSection, request.instrument)` instead of `arcSection.intendedDynamic.value.level` | the part's own level, so the strings are soft and the piano is not |
+| `composer/harmonyParts.ts : harmonyContext` | pass the resolved grammar: `harmonyStyleParams({ ..., grammar: request.globalPlan.styleGrammar ?? request.styleGrammar })` | the chassidic parameter set and the leading-tone approach vocabulary reach the owner's song (today only the aesthetic word does) |
+| `composer/*` (intro): the first section's writer | `arc.opening.value` — write the tonic figure over an intro the chord analysis left empty | two bars of silence at the top of the owner's song (P1-7) |
+| `composer/*` (ending) + `applyPerformance` | `arc.ending.value` — hold the final chord on every pitched part, and pass `agogics` for the ritardando | the song ending on a staccato stab 1.06 s early (P1-7) |
+
+**Honest limits.**
+- **The plan side only.** No writer realises the intro figure, the ending
+  gesture, the per-family level or the approach *preference* at note level. The
+  only shipped notes this PR moves are where the bass planner already read
+  `HarmonyStyleParams` (D3). D1 and D4 are proven at the arc, not at the notes.
+- **`familyDynamicShape` has no caller.** The per-family marking reaches the
+  section plan only through a reader B-07 must add; until then every role
+  assignment in a section still carries one `dynamicShape`.
+- **The family-word reader is adjacency-based** on the producer's own text.
+  "Make the strings, which enter in the chorus, soft" is not read as a family
+  level; it stays a word about the song. `applyConstraint` ("not too busy",
+  "less drums") is untouched: a *constraint* about a family is still a
+  section-scoped density nudge.
+- **The forbidden degrees are excluded whatever the target chord is.** A minor
+  song that genuinely borrows a major-III chord loses the major third as an
+  approach tone into it. No corpus case does this and no test covers it.
+- **`tonalCentreOf` reads one centre per part window.** A song that modulates is
+  read in its opening key; the owner's fixture does not modulate.
+- **The pulse conventions are generalisations**, written by this stream from
+  common practice — the same standing as every other knowledge-base value, not
+  measurements of a corpus. Each carries its band, its confidence and its why.
+- **`groove.pulseStrategy` outranks `groove.family`** in `grooveFromGrammar`. An
+  entry whose two disagree would now be read by the strategy; every shipped
+  entry's pair agrees, and no test enforces that across future entries.
+- **The production path still asks no style questions.** The felt-pulse question
+  is generated and its answer demonstrably moves the plan, but nothing in
+  production surfaces it to the producer.
+- **One out-of-scope one-line fix**, found while re-pinning the golden corpus and
+  listed here for the lead: `arrangerTrainingPipeline.policyOrchestrateOptions`
+  returned `performanceStyle: {}` for a NEUTRAL policy, and
+  `orchestrateArrangement` reads any present style as "use the V2 performance
+  stage" — so a neutral policy silently produced different track models for
+  every corpus case while claiming to decide nothing, and the evaluation gate's
+  "reproduces the reference run exactly" assertion held only because the two
+  runs' *rounded* aggregate metrics happened to coincide. An empty style is now
+  omitted, and the test's expectation is `{}`.
+- **The golden fixture moved and is re-pinned with its cause** in `recordedAt`:
+  four cases from the approach-tone change (identical note counts) and
+  `jazz-full` from the no-brief groove reading (988 → 972 composed notes, all
+  kit, because a ii-V vocabulary forbids `four_on_floor`).
+- **Nothing rendered or listened to.** VALIDATED ON OUTPUT is not claimed.
+
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 
 Adopted 2026-09-09, on the owner's direction. Waves 1–7 and Wave U built a

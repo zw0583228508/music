@@ -24,7 +24,12 @@ import { createHash } from "node:crypto";
 import type {
   ArcDecision,
   ArcDynamicMarking,
+  ArcEndingGesture,
+  ArcEndingIntent,
+  ArcFamilyDynamic,
   ArcFamilyEvent,
+  ArcIntroFigure,
+  ArcOpeningIntent,
   ArcSourceContrast,
   ArcTemplateId,
   ArcTensionRole,
@@ -174,6 +179,17 @@ type ArcTemplate = {
   operators: Partial<Record<ArrangementSectionFunction, SectionDevelopmentOperator[]>>;
   /** Later choruses sit this many steps above the first (before brief steps). */
   chorusRepeatStep: number;
+  /**
+   * Brain B-18 (R-1b P1-7). How this style opens and closes. Before B-18 the
+   * arc said nothing: the owner's two-bar intro carried no chord and shipped
+   * as two bars of silence, and the song ended on a staccato piano stab 1.06 s
+   * before the last bar. The figures here are *intent*; the writers that
+   * realise them are B-13's.
+   */
+  introFigure: ArcIntroFigure;
+  endingGesture: ArcEndingGesture;
+  /** A ritardando over the closing bars is idiomatic in this style. */
+  endingRitardando: boolean;
 };
 
 const OPERATORS_DEFAULT: Partial<Record<ArrangementSectionFunction, SectionDevelopmentOperator[]>> = {
@@ -210,6 +226,10 @@ const TEMPLATES: Record<ArcTemplateId, ArcTemplate> = {
     // A ballad's second chorus develops by texture and register (the
     // operator), not by getting louder; the dynamics are kept for the last.
     chorusRepeatStep: 0,
+    // the piano states the tune's first phrase over the intro; the song ends on a held chord with a ritardando
+    introFigure: "piano_motif",
+    endingGesture: "held_final_chord",
+    endingRitardando: true,
   },
   pop_build: {
     id: "pop_build",
@@ -230,6 +250,10 @@ const TEMPLATES: Record<ArcTemplateId, ArcTemplate> = {
     familyOrder: ["keys", "bass", "drums", "guitar", "synth", "pads", "strings", "percussion", "brass", "winds"],
     operators: OPERATORS_DEFAULT,
     chorusRepeatStep: 0,
+    // a tonic pad opens; the last chorus ends on a held chord
+    introFigure: "tonic_pad",
+    endingGesture: "held_final_chord",
+    endingRitardando: false,
   },
   band_steady: {
     id: "band_steady",
@@ -250,6 +274,10 @@ const TEMPLATES: Record<ArcTemplateId, ArcTemplate> = {
     familyOrder: ["guitar", "bass", "drums", "keys", "synth", "brass", "percussion", "strings", "pads", "winds"],
     operators: OPERATORS_DEFAULT,
     chorusRepeatStep: 0,
+    // the band counts in and stops together on the last hit
+    introFigure: "pickup_only",
+    endingGesture: "stop",
+    endingRitardando: false,
   },
   cinematic_swell: {
     id: "cinematic_swell",
@@ -270,6 +298,10 @@ const TEMPLATES: Record<ArcTemplateId, ArcTemplate> = {
     familyOrder: ["strings", "pads", "keys", "bass", "brass", "winds", "percussion", "drums", "guitar", "synth"],
     operators: OPERATORS_DEFAULT,
     chorusRepeatStep: 1,
+    // a tonic pad swells in; the cue lands on a held chord and slows
+    introFigure: "tonic_pad",
+    endingGesture: "held_final_chord",
+    endingRitardando: true,
   },
   electronic_drop: {
     id: "electronic_drop",
@@ -290,6 +322,10 @@ const TEMPLATES: Record<ArcTemplateId, ArcTemplate> = {
     familyOrder: ["drums", "bass", "synth", "pads", "keys", "percussion", "guitar", "strings", "brass", "winds"],
     operators: OPERATORS_DEFAULT,
     chorusRepeatStep: 0,
+    // a tonic pad over the intro; the arrangement fades out
+    introFigure: "tonic_pad",
+    endingGesture: "fade",
+    endingRitardando: false,
   },
 };
 
@@ -308,6 +344,12 @@ export function templateForStyle(
   const s = style.toLowerCase();
   const a = (aesthetic ?? "").toLowerCase();
   const sub = (substyle ?? "").toLowerCase();
+  // B-18: the knowledge base's own worlds, by the id or subgenre the resolver
+  // settled on, before the generic form words. A chassidic ballad is a ballad;
+  // a chassidic simcha dance is not.
+  if (/simcha|freilach|dance/.test(sub) && /chassidic|hasidic|jewish/.test(`${s} ${sub}`)) return "band_steady";
+  if (/chassidic|hasidic|liturg|cantorial|niggun|kumzitz/.test(`${s} ${sub}`)) return "intimate_ballad";
+  if (/singer.?songwriter|acoustic/.test(sub)) return "intimate_ballad";
   if (s === "ballad" || s === "acoustic") return "intimate_ballad";
   if (s === "orchestral" || s === "cinematic") return "cinematic_swell";
   if (s === "electronic" || s === "dance") return "electronic_drop";
@@ -345,6 +387,18 @@ export type ArcHints = {
   /** Families the brief named, most important first; they join before unnamed ones. */
   familyPriority?: string[];
   /**
+   * Brain B-18 (R-1b P1-2): marking steps for one family relative to the
+   * section's own marking ("soft strings" = strings -1). The section keeps its
+   * arc marking; only the named family moves. Never a global shift.
+   */
+  familyDynamicSteps?: Record<string, number>;
+  /** Brain B-18: the role the brief gave a family ("soft strings" = support). */
+  familyEmphasis?: Record<string, ArcFamilyDynamic["emphasis"]>;
+  /** Brain B-18 (R-1b P1-7): the intro figure the style or the brief asks for. */
+  introFigure?: ArcIntroFigure;
+  /** Brain B-18 (R-1b P1-7): how the song ends. */
+  endingGesture?: ArcEndingGesture;
+  /**
    * @deprecated Multiplier on the analysed section energy. Since B-01 it scales
    * the *source prior* only (a nudge of at most +-0.05 on the level); use
    * `sectionDynamics` / `sectionDynamicSteps` to state intent.
@@ -373,6 +427,8 @@ export type ArrangementArcInput = {
 const ARC_HINT_KEYS: Array<keyof ArcHints> = [
   "sectionDynamics", "sectionDynamicSteps", "globalDynamicSteps", "textureLevels", "textureSteps",
   "globalTextureSteps", "climaxSectionName", "arcTemplate", "familyPriority", "sectionEnergyBias",
+  // Brain B-18.
+  "familyDynamicSteps", "familyEmphasis", "introFigure", "endingGesture",
 ];
 
 /** The arc-relevant subset of a hint object (so digests ignore unrelated keys). */
@@ -661,6 +717,30 @@ export function deriveArrangementArc(
     }
     const intendedDynamic = decide({ marking, level: round3(level) }, levelSource, markingReason);
 
+    // --- per-family levels (B-18, R-1b P1-2) --------------------------------
+    // "Soft strings, gentle bass" moves those two families relative to this
+    // section's marking; the section itself, and every other family, keep it.
+    const familyDynamics: ArcFamilyDynamic[] = [];
+    for (const [rawFamily, steps] of Object.entries(hints.familyDynamicSteps ?? {})) {
+      const fam = canonicalFamily(rawFamily);
+      const clamped = Math.max(-2, Math.min(2, Math.round(steps)));
+      const emphasis = hints.familyEmphasis?.[rawFamily] ?? hints.familyEmphasis?.[fam]
+        ?? (clamped < 0 ? "support" : clamped > 0 ? "feature" : "neutral");
+      const famMarking = shiftMarking(marking, clamped);
+      familyDynamics.push({
+        family: fam,
+        marking: famMarking,
+        level: round3(DYNAMIC_LEVEL[famMarking]),
+        steps: DYNAMIC_MARKINGS.indexOf(famMarking) - DYNAMIC_MARKINGS.indexOf(marking),
+        emphasis,
+        source: "brief",
+        reason: clamped === 0
+          ? `the brief names ${fam} without moving its level`
+          : `the brief puts ${fam} ${Math.abs(clamped)} marking${Math.abs(clamped) > 1 ? "s" : ""} ${clamped < 0 ? "under" : "over"} the section (${marking} -> ${famMarking})`,
+      });
+    }
+    familyDynamics.sort((a, b) => a.family.localeCompare(b.family));
+
     // --- texture -----------------------------------------------------------
     let texture: ArcTextureLevel;
     let textureSource: ArcValueSource = "template";
@@ -819,6 +899,7 @@ export function deriveArrangementArc(
       occurrenceIndex: occ,
       occurrenceCount: occurrenceCount.get(fn) ?? 1,
       intendedDynamic,
+      ...(familyDynamics.length ? { familyDynamics: familyDynamics.filter((f) => active.includes(f.family)) } : {}),
       textureLevel: textureDecision,
       tensionRole: tensionDecision,
       activeFamilies: active,
@@ -863,6 +944,10 @@ export function deriveArrangementArc(
     };
   };
 
+  // --- how the song opens and closes (B-18, R-1b P1-7) ---------------------
+  const opening = openingIntentOf(out, template, hints);
+  const ending = endingIntentOf(out, template, hints);
+
   return {
     ...base,
     status: "available",
@@ -872,7 +957,131 @@ export function deriveArrangementArc(
     sections: out,
     primaryClimax: climaxOf(primaryIndex, primarySource, primaryReason),
     secondaryClimax: climaxOf(secondaryIndex, "template", secondaryReason),
+    opening,
+    ending,
   };
+}
+
+/**
+ * The opening figure (B-18, R-1b P1-7). The owner's two-bar intro shipped as
+ * silence because the chord analysis found no chord under bars 1-2 and every
+ * harmony writer takes its harmony from the analysed events. Two bars before a
+ * verse in C minor are not "no harmony": they are the tonic. The arc says so,
+ * and names the figure the style plays over it; the writers are B-13's.
+ */
+function openingIntentOf(
+  sections: ArrangementArcSection[],
+  template: ArcTemplate,
+  hints: ArcHints,
+): ArcDecision<ArcOpeningIntent> {
+  const first = sections[0];
+  const intro = first && first.function === "intro" ? first : null;
+  const bars = intro ? intro.endBar - intro.startBar + 1 : 0;
+  const stated = hints.introFigure;
+  // A one- or two-bar intro is a pickup into the first sung bar; anything
+  // longer is a figure of its own. A stated figure wins over both.
+  const figure: ArcIntroFigure = stated
+    ?? (!intro ? "none" : bars <= 1 ? "pickup_only" : template.introFigure);
+  const families = intro ? intro.activeFamilies : [];
+  const reason = !intro
+    ? "the form has no intro: the song opens with its first sung section"
+    : stated
+      ? `stated by the brief as ${figure}`
+      : bars <= 1
+        ? `a ${bars}-bar intro is a pickup into the first section`
+        : `${template.id}: ${figure} over ${bars} bar(s)`;
+  return decide(
+    {
+      figure,
+      sectionName: intro?.sectionName ?? null,
+      barCount: bars,
+      // The key's tonic is the harmony of an intro the analysis left empty.
+      impliesTonic: !!intro && figure !== "none",
+      families,
+    },
+    !intro ? "template" : stated ? "brief" : "template",
+    intro && figure !== "none"
+      ? `${reason}; the intro implies the tonic even where the chord analysis found no chord (R-1b P1-7)`
+      : reason,
+  );
+}
+
+/**
+ * The ending (B-18, R-1b P1-7). The owner's song ended on a staccato piano
+ * stab 1.06 s before the last bar, with no held chord and no ritardando.
+ */
+function endingIntentOf(
+  sections: ArrangementArcSection[],
+  template: ArcTemplate,
+  hints: ArcHints,
+): ArcDecision<ArcEndingIntent> {
+  const last = sections[sections.length - 1];
+  const gesture: ArcEndingGesture = hints.endingGesture ?? template.endingGesture;
+  const barCount = last ? last.endBar - last.startBar + 1 : 0;
+  // The gesture owns the final bar; a ritardando needs room to be heard.
+  const bars = gesture === "fade" ? Math.min(barCount, Math.max(2, Math.ceil(barCount / 2))) : Math.min(barCount, 2);
+  return decide(
+    {
+      gesture,
+      sectionName: last?.sectionName ?? null,
+      bars,
+      ritardando: gesture === "held_final_chord" && template.endingRitardando,
+      families: last ? last.activeFamilies : [],
+    },
+    hints.endingGesture ? "brief" : "template",
+    hints.endingGesture
+      ? `stated by the brief as ${gesture}`
+      : `${template.id}: ${gesture}${gesture === "held_final_chord" && template.endingRitardando ? " with a ritardando" : ""} over the last ${bars} bar(s)`,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Readers (Brain B-18) — the two calls the section planner and the writers add
+// ---------------------------------------------------------------------------
+
+/**
+ * The marking one family plays in a section: its own when the brief gave it a
+ * level, the section's otherwise. This is the whole of "soft strings, gentle
+ * bass" at the plan level — the section stays as loud as the arc says, and
+ * only the named families move.
+ *
+ * Readers to add (listed for the lead, B-07 / B-13):
+ *   - `sectionPhrasePlanner.dynamicShapeFor(arcSection, section, previousEnergy, family)`
+ *     → `familyDynamicShape(arcSection, family)` per role assignment;
+ *   - `arrangementOrchestrator` / the composer writers: the part's base level
+ *     is `familyLevelIn(arcSection, family)`, not `arcSection.intendedDynamic.value.level`.
+ */
+export function familyMarkingIn(section: ArrangementArcSection, family: string): ArcDynamicMarking {
+  const fam = canonicalFamily(family);
+  return section.familyDynamics?.find((f) => f.family === fam)?.marking ?? section.intendedDynamic.value.marking;
+}
+
+/** The 0..1 intent level one family plays in a section (see `familyMarkingIn`). */
+export function familyLevelIn(section: ArrangementArcSection, family: string): number {
+  const fam = canonicalFamily(family);
+  const own = section.familyDynamics?.find((f) => f.family === fam);
+  return own ? own.level : section.intendedDynamic.value.level;
+}
+
+/** The role the brief gave a family here (`support` for "soft strings"). */
+export function familyEmphasisIn(section: ArrangementArcSection, family: string): ArcFamilyDynamic["emphasis"] {
+  const fam = canonicalFamily(family);
+  return section.familyDynamics?.find((f) => f.family === fam)?.emphasis ?? "neutral";
+}
+
+/**
+ * The section planner's `dynamicShape` string for one family: the family's own
+ * marking, rising through a lift and settling through a release / afterglow —
+ * the same rule the section planner applies to the section's marking today.
+ */
+export function familyDynamicShape(section: ArrangementArcSection, family: string): string {
+  const marking = familyMarkingIn(section, family);
+  switch (section.tensionRole.value) {
+    case "lift": return `${marking}->${shiftMarking(marking, 1)}`;
+    case "release":
+    case "afterglow": return `${marking}->${shiftMarking(marking, -1)}`;
+    default: return marking;
+  }
 }
 
 /** The planners' tension number for an arc section: mostly the role, a little of the source's harmony. */

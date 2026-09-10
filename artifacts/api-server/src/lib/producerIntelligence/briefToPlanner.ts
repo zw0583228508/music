@@ -18,6 +18,9 @@
  */
 import type {
   ArcDynamicMarking,
+  ArcEndingGesture,
+  ArcFamilyDynamic,
+  ArcIntroFigure,
   ArcTemplateId,
   ArcTextureLevel,
   ArrangementPlan,
@@ -164,6 +167,18 @@ export function briefPlannerHints(brief: ProductionBrief, options: BriefPlannerH
       evidence.push(`${d.id}: global density ${boundary(d) ? `not ${d.value}` : d.value} (prior ×${mul}, family bias ${denser ? "+0.3" : "-0.35"})`);
     }
   }
+  // B-18 (R-1b P1-2): the families the brief gave a level of their own. These
+  // move only their family; the section keeps its arc marking. Before B-18
+  // "soft strings, gentle bass" became `globalDynamicSteps: -1` and quietened
+  // every section of the song (template chorus mf -> mp, verse p -> pp).
+  const familyDynamicSteps: Record<string, number> = {};
+  const familyEmphasis: Record<string, ArcFamilyDynamic["emphasis"]> = {};
+  for (const level of brief.familyLevels ?? []) {
+    familyDynamicSteps[level.family] = Math.max(-2, Math.min(2, level.dynamicSteps));
+    familyEmphasis[level.family] = level.emphasis;
+    evidence.push(`${level.family}: "${level.word}" (${level.provenance} ${level.confidence}) -> ${signed(level.dynamicSteps)} marking for ${level.family} only, role ${level.emphasis} — not a global marking (R-1b P1-2)`);
+  }
+
   const globalDynamic = grammar.arrangement.globalDynamic;
   if (globalDynamic && globalDynamic.provenance === "brief" && globalDynamic.value !== "moderate") {
     globalDynamicSteps = globalDynamic.value === "high" ? 1 : -1;
@@ -271,6 +286,18 @@ export function briefPlannerHints(brief: ProductionBrief, options: BriefPlannerH
   }
   if (arcTemplate) evidence.push(`arc template ${arcTemplate} (${arcTemplateWhy})`);
 
+  // B-18 (R-1b P1-7): the style's opening figure and ending, when the
+  // knowledge base or the brief states one. Never measured: how a song ends is
+  // an arrangement decision, not something the source's last bar can settle.
+  const introValue = grammar.arrangement.introFigure;
+  const introFigure: ArcIntroFigure | undefined =
+    introValue && introValue.provenance !== "fingerprint" ? introValue.value : undefined;
+  if (introFigure) evidence.push(`intro figure ${introFigure} (style grammar, ${introValue!.provenance} ${introValue!.confidence})`);
+  const endingValue = grammar.arrangement.endingGesture;
+  const endingGesture: ArcEndingGesture | undefined =
+    endingValue && endingValue.provenance !== "fingerprint" ? endingValue.value : undefined;
+  if (endingGesture) evidence.push(`ending ${endingGesture} (style grammar, ${endingValue!.provenance} ${endingValue!.confidence})`);
+
   // Categorical hints: only when grounded in the user's words.
   const grounded = (refs: string[] | undefined): boolean => (refs ?? []).some((r) => r.startsWith("text:") || r.startsWith("answer:"));
   let grooveStrategy: GlobalArrangementPlan["grooveStrategy"] | undefined;
@@ -306,6 +333,11 @@ export function briefPlannerHints(brief: ProductionBrief, options: BriefPlannerH
     ...(globalTextureSteps ? { globalTextureSteps: Math.max(-2, Math.min(2, globalTextureSteps)) } : {}),
     ...(arcTemplate ? { arcTemplate } : {}),
     ...(familyPriority.length ? { familyPriority } : {}),
+    // B-18 arc levers.
+    ...(Object.keys(familyDynamicSteps).length ? { familyDynamicSteps } : {}),
+    ...(Object.keys(familyEmphasis).length ? { familyEmphasis } : {}),
+    ...(introFigure ? { introFigure } : {}),
+    ...(endingGesture ? { endingGesture } : {}),
     // B-09: the grammar itself, for the planner's style / aesthetic / groove pickers.
     ...(grammarSaysSomething ? { styleGrammar: grammar } : {}),
   };

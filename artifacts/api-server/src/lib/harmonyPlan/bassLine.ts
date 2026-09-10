@@ -19,8 +19,8 @@
  */
 import type { ArcTensionRole } from "@workspace/db";
 import { solveChain } from "../voiceLeading";
-import type { HarmonyStyleParams } from "./styleParams";
-import { nearestPitch, nearestPitchWithin, pc, pitchesOf, scaleOf, seededUnit, type HarmonyChordEvent } from "./shared";
+import { approachToneChoice, tonalCentreOf, type HarmonyStyleParams } from "./styleParams";
+import { nearestPitch, nearestPitchWithin, pc, pitchesOf, seededUnit, type HarmonyChordEvent } from "./shared";
 
 export type BassSkeletonEntry = {
   index: number;
@@ -227,7 +227,6 @@ export function realiseBassLine(skeleton: BassSkeletonEntry[], input: BassPlanIn
   const { beatSeconds, barSeconds, beatsPerBar, origin } = input.timing;
   const { lo, hi } = input.range;
   const pattern = patternFor(input);
-  const scale = scaleOf([...(input.warmup ?? []), ...events]);
   const notes: BassNote[] = [];
   const notes_: string[] = [];
   let approaches = 0;
@@ -341,9 +340,7 @@ export function realiseBassLine(skeleton: BassSkeletonEntry[], input: BassPlanIn
         .map((offset) => target + offset)
         .filter((p) => p >= lo && p <= hi && Math.abs(p - prevPitch) <= input.maxLeap && Math.abs(p - target) <= input.maxLeap);
       // A passing or leading tone, not a tone of the chord being left; diatonic when the style is.
-      const choice = admissible.find((p) => !previousChordPcs.has(pc(p)) && (input.style.chromaticApproach || scale.has(pc(p)) || Math.abs(p - target) === 2))
-        ?? admissible.find((p) => !previousChordPcs.has(pc(p)))
-        ?? null;
+      const choice = approachToneChoice({ admissible, target, avoidPcs: previousChordPcs, style: input.style, centre: tonalCentreOf([...(input.warmup ?? []), ...events].map((e) => ({ ...e.chord, start: e.start, end: e.end }))) }); // B-18 (R-1b P1-6): the mode's own approach set, not the union of every chord's pitch classes
       if (choice !== null && lastBeat > s + 1e-6 && e - lastBeat >= (input.minNoteDuration ?? 0.08) + gap) {
         // The note before the approach must itself be long enough to play.
         const kept = planned.filter((n) => n.start <= lastBeat - ((input.minNoteDuration ?? 0.08) + gap));

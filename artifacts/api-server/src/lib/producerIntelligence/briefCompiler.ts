@@ -16,6 +16,7 @@ import type {
   ArrangementSectionFunction,
   BriefDelta,
   BriefDimensionDecision,
+  BriefFamilyLevel,
   BriefInstrumentationEntry,
   BriefSectionIntention,
   ClarificationAnswer,
@@ -38,7 +39,7 @@ import type {
 } from "@workspace/db";
 import { classifySectionFunction } from "../globalArrangementPlanner";
 import { applyClarificationAnswers, planClarifications, type ClarificationOptions } from "./clarification";
-import { instrumentFamily, lookupWord } from "./vocabulary";
+import { findLexiconHits, instrumentFamily, lookupWord } from "./vocabulary";
 
 export const PRODUCTION_BRIEF_VERSION = "1.0" as const;
 const METHOD = "brief-compiler/v1";
@@ -115,6 +116,147 @@ export function markSupersedes(all: ProducerBriefDecision[]): ProducerBriefDecis
 }
 
 // ---------------------------------------------------------------------------
+// Per-family levels (Brain B-18, R-1b P1-2)
+// ---------------------------------------------------------------------------
+
+/**
+ * The words a producer puts *in front of an instrument*. They describe that
+ * instrument's level and role, not the song's dynamic: "soft strings, gentle
+ * bass, light percussion" asks for three quiet families under a piano, not for
+ * a quiet song. Before B-18 all three compiled into one global `energy=low`
+ * decision, the grammar turned it into `arrangement.globalDynamic=low`, and
+ * `briefToPlanner` shifted **every** section one marking down (R-1b P1-2:
+ * template chorus mf → mp, verse p → pp, Verse 3 to level 0.059).
+ *
+ * The table is deliberately its own: the producer lexicon's `energy` slot is
+ * about the song, and a family word like "light" is not in it at all.
+ */
+type FamilyLevelWord = { steps: number; emphasis: BriefFamilyLevel["emphasis"]; terms: string[] };
+
+const FAMILY_LEVEL_WORDS: FamilyLevelWord[] = [
+  { steps: -2, emphasis: "support", terms: ["barely there", "barely audible", "whispered", "almost inaudible", "בקושי נשמע", "כמעט לא נשמע"] },
+  {
+    steps: -1, emphasis: "support",
+    terms: [
+      "soft", "gentle", "light", "quiet", "delicate", "subtle", "restrained", "understated",
+      "tender", "mellow", "subdued", "discreet", "airy", "distant",
+      "רך", "רכים", "רכות", "רכה", "עדין", "עדינה", "עדינים", "עדינות",
+      "קל", "קלה", "קלים", "קלות", "שקט", "שקטה", "שקטים", "שקטות",
+      "מאופק", "מאופקת", "מאופקים", "עדין מאוד",
+    ],
+  },
+  {
+    steps: 1, emphasis: "feature",
+    terms: [
+      "big", "loud", "driving", "prominent", "featured", "forward", "strong", "powerful", "bold",
+      "גדול", "גדולה", "גדולים", "חזק", "חזקה", "חזקים", "בולט", "בולטת", "דומיננטי", "דומיננטית",
+    ],
+  },
+  { steps: 2, emphasis: "feature", terms: ["huge", "massive", "enormous", "ענק", "ענקית", "אדיר", "אדירה"] },
+];
+
+/** Clause separators: a producer lists families with commas and semicolons. */
+const CLAUSE_SPLIT = /[,;:\n•()]|\s+with\s+/gi;
+
+/**
+ * The lexicon slots that end an adjective's reach. "understated ballad on
+ * piano" is a sentence about the song even though an instrument stands in it;
+ * "soft strings" is not. A word about the world between the adjective and the
+ * instrument means the adjective was never about that instrument.
+ */
+const NON_INSTRUMENT_SLOTS = new Set(["genre_word", "mood", "tradition", "era", "scene", "production_feel", "ensemble_size", "tempo_feel", "vocal_treatment"]);
+/** How many words may stand between a level word and the instrument it describes. */
+const ADJACENCY_TOKENS = 1;
+
+const HEBREW_LETTER = /[֐-׿]/;
+const wordBoundary = (text: string, index: number, length: number): boolean => {
+  const before = index > 0 ? text[index - 1] : " ";
+  const after = index + length < text.length ? text[index + length] : " ";
+  const isWord = (c: string): boolean => /[A-Za-z0-9]/.test(c) || HEBREW_LETTER.test(c);
+  return !isWord(before) && !isWord(after);
+};
+
+/**
+ * Family-scoped level words in `text`. A word counts for a family only when
+ * the two sit in the *same clause*: "soft strings" is the strings' level,
+ * "keep it soft; strings later" is not. A clause with a level word and no
+ * instrument leaves the word to the global reading ("quiet", "intimate",
+ * "epic" are words about the song).
+ */
+export function familyLevelsFromText(text: string): { levels: BriefFamilyLevel[]; claimedWords: string[] } {
+  const levels: BriefFamilyLevel[] = [];
+  const claimedWords: string[] = [];
+  if (!text.trim()) return { levels, claimedWords };
+  // Clause spans, with their offset into the original text.
+  const clauses: Array<{ start: number; end: number }> = [];
+  let cursor = 0;
+  CLAUSE_SPLIT.lastIndex = 0;
+  for (let m = CLAUSE_SPLIT.exec(text); m; m = CLAUSE_SPLIT.exec(text)) {
+    clauses.push({ start: cursor, end: m.index });
+    cursor = m.index + m[0].length;
+  }
+  clauses.push({ start: cursor, end: text.length });
+
+  for (const clause of clauses) {
+    const span = text.slice(clause.start, clause.end);
+    if (!span.trim()) continue;
+    const hits = findLexiconHits(span);
+    const instruments = hits.filter((hit) => hit.entry.slot === "instrument");
+    if (!instruments.length) continue;
+    // Every level word in the clause, with where it sits.
+    const words: Array<{ entry: FamilyLevelWord; word: string; at: number }> = [];
+    for (const entry of FAMILY_LEVEL_WORDS) {
+      for (const term of entry.terms) {
+        const at = span.toLowerCase().indexOf(term.toLowerCase());
+        if (at < 0 || !wordBoundary(span, at, term.length)) continue;
+        words.push({ entry, word: span.slice(at, at + term.length), at });
+      }
+    }
+    for (const { entry, word, at } of words) {
+      // The word must stand *beside* the instrument: English puts the
+      // adjective first ("soft strings"), Hebrew after it ("מיתרים רכים"), so
+      // both sides count. At most one word may stand between them, and a word
+      // about the world ("ballad", "intimate") ends the adjective's reach.
+      const claimed = instruments.filter((hit) => {
+        const [lo, hi] = at < hit.index ? [at + word.length, hit.index] : [hit.index + hit.span.length, at];
+        if (hi < lo) return false;
+        const between = span.slice(lo, hi).split(/[^\p{L}\p{N}']+/u).filter(Boolean);
+        if (between.length > ADJACENCY_TOKENS) return false;
+        return !between.some((token) => NON_INSTRUMENT_SLOTS.has(lookupWord(token)?.slot ?? ""));
+      });
+      if (!claimed.length) continue;
+      claimedWords.push(word.toLowerCase());
+      const families = [...new Set(claimed.map((hit) => instrumentFamily(hit.entry.value)))];
+      for (const family of families) {
+        if (levels.some((l) => l.family === family && l.word.toLowerCase() === word.toLowerCase())) continue;
+        levels.push({
+          family,
+          dynamicSteps: entry.steps,
+          emphasis: entry.emphasis,
+          word,
+          confidence: families.length === 1 ? 0.85 : 0.6,
+          provenance: "stated",
+          sourceRefs: [`text:${span.trim()}`],
+          rationale: families.length === 1
+            ? `"${span.trim()}": a level for ${family}, not for the song`
+            : `"${span.trim()}": ${families.length} families share the word, so each takes it at lower confidence`,
+        });
+      }
+    }
+  }
+  // One level per family: the strongest request wins, ties keep the first.
+  const byFamily = new Map<string, BriefFamilyLevel>();
+  for (const level of levels) {
+    const existing = byFamily.get(level.family);
+    if (!existing || Math.abs(level.dynamicSteps) > Math.abs(existing.dynamicSteps)) byFamily.set(level.family, level);
+  }
+  return {
+    levels: [...byFamily.values()].sort((a, b) => a.family.localeCompare(b.family)),
+    claimedWords: [...new Set(claimedWords)],
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Compiler state
 // ---------------------------------------------------------------------------
 
@@ -129,6 +271,10 @@ type State = {
   descriptors: StyleDimension<string>[];
   vocal: VocalSpacePolicy;
   unresolved: IntentSectionRequest[];
+  /** B-18: per-family levels read off the producer's own text. */
+  familyLevels: BriefFamilyLevel[];
+  /** B-18: words a family already claimed; they no longer speak for the song. */
+  claimedWords: Set<string>;
 };
 
 function addDecision(
@@ -350,6 +496,23 @@ function applyInference(state: State, inference: IntentInference, request?: Inte
   for (const scope of scopes) {
     const section = scope.kind === "section" ? sectionIntention(state, scope.sectionName) : null;
     if (scope.kind === "global") {
+      // B-18 (R-1b P1-2): an energy / density word every one of whose evidence
+      // spans a family already claimed ("soft strings", "gentle bass") is not
+      // a statement about the song. It became a per-family level; making it a
+      // global decision too would quieten the whole arrangement a second time.
+      const wordsClaimed = (inference.slot === "energy" || inference.slot === "density") &&
+        inference.evidence.length > 0 &&
+        inference.evidence.every((e) => state.claimedWords.has(e.trim().toLowerCase()));
+      if (wordsClaimed) {
+        const families = state.familyLevels.map((l) => l.family).join(", ");
+        addDecision(state, {
+          scope, topic: inference.slot === "energy" ? "energy" : "density",
+          statement: `"${inference.evidence.join('", "')}" describes ${families}, not the song — read per family (B-18)`,
+          strength: "soft", provenance: inference.provenance, confidence: inference.confidence,
+          sourceRefs, createdBy: "intake",
+        });
+        continue;
+      }
       switch (inference.slot) {
         case "energy":
           addDecision(state, { scope, topic: "energy", statement: `${inference.value} energy overall`, value: inference.value, strength: "soft", provenance: inference.provenance, confidence: inference.confidence, sourceRefs, createdBy: "intake" });
@@ -549,6 +712,9 @@ export function compileProductionBrief(
     .map((s) => ({ name: s.name, startBar: s.startBar, endBar: s.endBar }))
     .sort((a, b) => a.startBar - b.startBar);
   const vocalsKnown = songModel?.musicalMap?.vocals.status === "detected" || songModel?.musicalMap?.vocals.status === "low_confidence";
+  // B-18: read the family words before the inferences, so a word a family
+  // claimed cannot also be read as a statement about the song.
+  const family = familyLevelsFromText(intent.rawText);
   const state: State = {
     now: now.toISOString(),
     sections,
@@ -562,8 +728,22 @@ export function compileProductionBrief(
       ? { underLead: "open", gapFill: "sparse", counterMelodyAllowed: true, provenance: "inferred", confidence: 0.6, rationale: "the Song Model holds no vocal evidence: nothing to protect under a lead" }
       : { underLead: "moderate", gapFill: "sparse", counterMelodyAllowed: true, provenance: "default", confidence: 0.5, rationale: "default policy: thin under the lead, answer in the gaps" },
     unresolved: [],
+    familyLevels: family.levels,
+    claimedWords: new Set(family.claimedWords),
   };
   for (const s of sections) sectionIntention(state, s.name);
+  // Each family level is a durable, track-scoped decision the producer can see
+  // and later supersede ("actually, let the strings sing").
+  for (const level of state.familyLevels) {
+    addDecision(state, {
+      scope: { kind: "track", instrument: level.family },
+      topic: "energy",
+      statement: `${level.family}: ${level.word} (${level.dynamicSteps > 0 ? "+" : ""}${level.dynamicSteps} marking, ${level.emphasis})`,
+      value: level.dynamicSteps < 0 ? "low" : level.dynamicSteps > 0 ? "high" : "moderate",
+      strength: "soft", provenance: level.provenance, confidence: level.confidence,
+      sourceRefs: level.sourceRefs, createdBy: "intake",
+    });
+  }
 
   // 1. Style profile → dimension decisions (adopt), instrumentation hierarchy.
   for (const [name, dim] of Object.entries(profile.dimensions) as Array<[StyleDimensionName, StyleDimension<StyleDimensionValue>]>) {
@@ -650,6 +830,7 @@ export function compileProductionBrief(
       ...(plannerAesthetic ? { plannerAesthetic } : {}),
     },
     producerDecisions,
+    ...(state.familyLevels.length ? { familyLevels: state.familyLevels } : {}),
     openQuestionIds: applied.unanswered,
     answeredQuestionIds: applied.answered,
     confidence,
