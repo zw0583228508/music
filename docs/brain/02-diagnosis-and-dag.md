@@ -1,6 +1,6 @@
 # Arrangement Brain — consolidated diagnosis and implementation DAG
 
-Status: coordinator synthesis of four independent read-only reviews run on
+Status: coordinator synthesis of four independent read-only reviews (all four archived under `docs/brain/reviews/`) run on
 2026-09-10 against `ws-main-live` (main `3bf23aa` + PR-98): the architecture
 map, the musical-quality diagnosis (music director + harmony + orchestration
 panel), the adversarial audit (fake intelligence, silent failure, tests) and
@@ -94,24 +94,30 @@ owner (agent), file ownership listed so no two streams touch the same file.
 "Gate" = what must be true before the stream may merge, beyond the charter's
 release gates.
 
-### B-00 — Fix the measure and the integrity defects (blocks everything)
-Owner: evaluation specialist. Files: `arrangementOrchestrator.ts` (ranking
-and critique order only), `criticRepairLoop.ts` (result carries the plan),
-`arrangementBenchmark.ts`, `benchmark-cli.ts`, `musicCritic.ts` (the
-`.some(() => …)` bug and the confidence literals), `arrangementOrchestratorProvider.ts`
-(readiness/confidence honesty), `scripts/run-focused-api-tests.mjs`.
+### B-00 — Fix the integrity defects and decompose the composer (blocks B-02/03/04/05)
+Owner: integration specialist. Files: `arrangementOrchestrator.ts` (ranking,
+critique order, dropped-part reporting, `traceable`, defaults), `criticRepairLoop.ts`
+(result carries the plan), `musicCritic.ts` (the `.some(() => …)` bug and the
+confidence literals), `arrangementOrchestratorProvider.ts` (readiness /
+confidence honesty; persist the brain's plan and stage evidence),
+`arrangementGeneration.ts` materialisation (the runner must grade and
+diversify the brain's own plan, not a second legacy plan — architecture map
+hot spot 1), `referencePartComposer.ts` (mechanical split into
+`composer/harmonyParts.ts`, `composer/rhythmParts.ts`, `composer/registers.ts`,
+`composer/transitions.ts` with byte-identical output pinned by a golden test,
+so B-02/B-03/B-04 own separate files), `scripts/run-focused-api-tests.mjs`.
+(`arrangementBenchmark.ts` and `benchmark-cli.ts` moved to B-08.)
 - Rank on the critique of the **performed, repaired** notes; if the repair loop
   is kept, recompose from its plan or demote it to advisory; persist
   `CriticRepairPass[]` and playability-repair counts on the candidate.
-- Benchmark: candidate-dependent harmony (chord-tone / clash share on the
-  candidate), `initialCritique` and `finalCritique` both reported, coherence
-  components instead of `sectionConsistency`/`candidateDiversity`, `--out` /
-  `--compare` CLI, baseline snapshot stored under `docs/evidence/benchmark-baseline/<sha>.json`
-  with critic versions pinned.
-- Register the fourteen unregistered chain suites; add a first
-  `referencePartComposer.test.ts`.
-- Gate: a baseline snapshot exists; a deliberately worsened arrangement scores
-  lower than the reference on at least the benchmark's note-level metrics.
+- Expose `initialCritique` and the critique of the performed notes on the
+  result; report dropped parts as findings; `traceable` means every stage ran
+  or says why not; tempo/meter defaults become UNKNOWN findings, not 120/4/4.
+- Register the fourteen unregistered chain suites; add the golden test for
+  the composer split and a first behavioural `referencePartComposer` suite.
+- Gate: golden output byte-identical after the split; the shipped candidate's
+  score is computed on the shipped notes; a drums-only arrangement is not
+  selectable as "best available" without a hard-rule failure recorded.
 
 ### B-01 — ArrangementArc and form memory
 Owner: music director. Files: new `arrangementArc.ts` (+ types in
