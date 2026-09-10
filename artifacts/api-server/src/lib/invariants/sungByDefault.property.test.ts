@@ -47,8 +47,51 @@ test("with no vocal stem, no accompaniment family is LEAD in a non-instrumental 
   assert.deepEqual(outcomes.filter((o) => !o.passed).map((o) => `${o.seed}: ${describe(o.violations)}`), []);
 });
 
-/** Observed 2026-09-10 on main 4c5d967 (B-12b); the assertion is unchanged. */
-const KNOWN_FAILURE_SILENT = "";
+/**
+ * Refreshed for B-12b at the merge (2026-09-10, branch tip aa20e6e on B-06);
+ * the assertion is unchanged.
+ *
+ * **23/24 seeds pass.** The one failure is seed 1304, section `בית`: the shipped
+ * section plan marks `guitar` active there with a RHYTHMIC_HARMONY role over
+ * bars 3-18, and the guitar writes no note inside them.
+ *
+ * The control - the *same* Song Model, `renameSections` and nothing else, so
+ * every bar, chord, stem and energy sample is byte-identical:
+ *
+ * | names                                | classifySection            | silent |
+ * | ------------------------------------ | -------------------------- | ------ |
+ * | `פתיחה בית פזמון סיום` (as generated) | neutral x4                 | 1 (`בית`/guitar) |
+ * | `Aleph Bet Gimel Dalet`               | neutral x4                 | 1 (`Bet`/guitar) |
+ * | `הקדמה "בית ראשון" רפרין סוף`         | neutral x4                 | 1 |
+ * | `Intro Verse Chorus Outro`            | intro,verse,chorus,outro   | 0 |
+ * | `"פתיחה Intro" "בית Verse" ...`       | intro,verse,chorus,outro   | 0 |
+ *
+ * So it is neither the Hebrew script (Latin names the regex cannot read fail the
+ * same way) nor the digest a rename moves (a Hebrew name carrying an English
+ * function word passes): the section *function* decides it.
+ * `globalArrangementPlanner.ts:92-103` classifies by an English regex and falls
+ * through to `"neutral"` at `:102` for every name it cannot read. B-12 recorded
+ * the classifier as English-only; this is the first invariant that reaches its
+ * musical consequence, and a Hebrew-speaking producer reaches it by typing the
+ * section names of their own language.
+ *
+ * What is observed downstream of that neutral function, not isolated by a
+ * control: B-06's repair pass 3 reopens the section's development operator
+ * (`add_layer -> change_comping_subdivision`; a neutral section's whole operator
+ * vocabulary is those two, `arrangementArc.ts:188`) and re-derives the section
+ * plan and the part plan at `arrangementOrchestrator.ts:776`. The plan that
+ * ships then calls guitar active in `בית` while the `partComposerPlan` that
+ * ships holds no guitar task there. The pass's own guard,
+ * `familiesSilencedByPass` at `arrangementOrchestrator.ts:799`, only rejects a
+ * pass that *removes* a family's notes, so a pass that adds a family to the plan
+ * without composing it is kept.
+ *
+ * Recorded rather than narrowed: a family the plan calls active in a section
+ * must play there. That is the invariant B-12 wrote and it is the right one -
+ * planned silence is the defect the program started from.
+ */
+const KNOWN_FAILURE_SILENT =
+  "globalArrangementPlanner.ts:92-103 classifies section names by an English regex and returns \"neutral\" at :102 for a name it cannot read (here the Hebrew `בית`); the plan then calls guitar active in that section while the shipped partComposerPlan has no guitar task there, and the repair pass's guard arrangementOrchestrator.ts:799 only rejects passes that remove notes - 23/24 seeds pass, seed 1304, 1 planned_part_silent (בית: guitar as RHYTHMIC_HARMONY). Control: renaming the same model to Latin names the regex also cannot read reproduces it; renaming to English function names, or appending one to the Hebrew name, removes it.";
 
 test("every family the plan marks active in a section writes at least one note there, on the no-vocals corpus (24 seeds; B-12 measured 12/24 on its own corpus)", { todo: KNOWN_FAILURE_SILENT || undefined }, (t) => {
   const outcomes: SeedOutcome[] = [];
