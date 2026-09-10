@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { CandidateAudioCriticReport } from './candidateAudioCriticReport';
+import type { CandidateCriticVerdict } from './candidateCriticVerdict';
 import type { CandidateEvaluationArtifactsItem } from './candidateEvaluationArtifactsItem';
 import type { CandidateEvaluationDiversity } from './candidateEvaluationDiversity';
 import type { CandidateEvaluationStatus } from './candidateEvaluationStatus';
@@ -27,4 +28,5 @@ export interface CandidateEvaluation {
   strategy?: CandidateEvaluationStrategy;
   diversity?: CandidateEvaluationDiversity;
   repair?: CandidateRepairEvidence;
+  criticVerdict?: CandidateCriticVerdict;
 }

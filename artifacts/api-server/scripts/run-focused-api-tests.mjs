@@ -911,6 +911,11 @@ const suites = {
       ["src/lib/renderOffThread.test.ts", "render-off-thread.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
     ],
   },
+  "brain-b19": {
+    bundles: [
+      ["src/lib/brainB19CriticsDecide.test.ts", "brain-b19-critics-decide.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
   "brain-invariants": {
     bundles: [
       ["src/lib/invariants/generators.property.test.ts", "b12-generators.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],

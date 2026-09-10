@@ -1130,6 +1130,22 @@ export const getProjectResponseArrangementsItemGenerationProvenanceOneEvaluation
 export const getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin = 0;
 export const getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax = 1;
 
+export const getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationCriticVerdictBlockingCountMin = 0;
+
+export const getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationCriticVerdictRefusalCountMin = 0;
+
+
+
+
+
+export const getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationCriticVerdictSalienceWeightedMajorsMin = 0;
+
+
+
+export const getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationCriticVerdictDimensionsApplicableMin = 0;
+
+export const getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationCriticVerdictDimensionsTotalMin = 0;
+
 export const getProjectResponseTracksItemPerformancePerformedMaterialSha256RegExp = new RegExp('^[a-f0-9]{64}$');
 export const getProjectResponseTracksItemTrackModelArticulationsItemTimeMin = 0;
 
@@ -1332,7 +1348,7 @@ export const GetProjectResponse = zod.object({
   "parameters": zod.record(zod.string(), zod.unknown()),
   "parentArtifactIds": zod.array(zod.string()),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused', 'critic_judge_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({
@@ -2146,7 +2162,56 @@ export const GetProjectResponse = zod.object({
   "sourceQualityScore": zod.number().min(getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationRepairSourceQualityScoreMin).max(getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationRepairSourceQualityScoreMax),
   "repairedQualityScore": zod.number().min(getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin).max(getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax).nullable(),
   "improved": zod.boolean()
-}).optional()
+}).optional(),
+  "criticVerdict": zod.object({
+  "version": zod.string(),
+  "rankVersion": zod.string(),
+  "releasable": zod.boolean(),
+  "reasons": zod.array(zod.string()),
+  "blockingCount": zod.number().min(getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationCriticVerdictBlockingCountMin),
+  "refusalCount": zod.number().min(getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationCriticVerdictRefusalCountMin),
+  "refusals": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "rule": zod.string(),
+  "detail": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "sectionName": zod.string().nullable(),
+  "repairOperation": zod.string().nullable()
+})),
+  "topProblems": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "bars": zod.string(),
+  "section": zod.string().nullable(),
+  "priority": zod.number(),
+  "whatToFix": zod.string(),
+  "repairOperation": zod.string().nullable()
+})),
+  "contested": zod.array(zod.object({
+  "topic": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "positions": zod.array(zod.string()),
+  "rationale": zod.string()
+})),
+  "salienceWeightedMajors": zod.number().min(getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationCriticVerdictSalienceWeightedMajorsMin),
+  "constructiveScore": zod.number(),
+  "rank": zod.number().min(1),
+  "why": zod.string(),
+  "tiedWith": zod.array(zod.string()),
+  "tieGroup": zod.number().min(1).describe('First rank of this candidate\'s tie group; equal for every candidate the ranking could not separate.'),
+  "nearIdentical": zod.string().nullable(),
+  "gatedDimensions": zod.array(zod.string()),
+  "dimensionsApplicable": zod.number().min(getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationCriticVerdictDimensionsApplicableMin),
+  "dimensionsTotal": zod.number().min(getProjectResponseArrangementsItemGenerationProvenanceOneEvaluationCriticVerdictDimensionsTotalMin),
+  "requestedRepairOperations": zod.array(zod.string())
+}).optional().describe('Brain B-19: the release judge\'s decision on this candidate. `releasable` false means the candidate is refused and cannot be selected; `refusals` names each blocking observation with the release rule that refused it, and `topProblems` names the repair operator each asked for. `contested` carries the disagreements the judge deliberately kept open - an empty `refusals` list with a non-empty `contested` list is not agreement.')
 })
 }),zod.null()]).optional(),
   "createdAt": zod.string()
@@ -7953,6 +8018,22 @@ export const listArrangementsResponseGenerationProvenanceOneEvaluationRepairSour
 export const listArrangementsResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin = 0;
 export const listArrangementsResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax = 1;
 
+export const listArrangementsResponseGenerationProvenanceOneEvaluationCriticVerdictBlockingCountMin = 0;
+
+export const listArrangementsResponseGenerationProvenanceOneEvaluationCriticVerdictRefusalCountMin = 0;
+
+
+
+
+
+export const listArrangementsResponseGenerationProvenanceOneEvaluationCriticVerdictSalienceWeightedMajorsMin = 0;
+
+
+
+export const listArrangementsResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsApplicableMin = 0;
+
+export const listArrangementsResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsTotalMin = 0;
+
 
 
 export const ListArrangementsResponseItem = zod.object({
@@ -8039,7 +8120,7 @@ export const ListArrangementsResponseItem = zod.object({
   "parameters": zod.record(zod.string(), zod.unknown()),
   "parentArtifactIds": zod.array(zod.string()),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused', 'critic_judge_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({
@@ -8853,7 +8934,56 @@ export const ListArrangementsResponseItem = zod.object({
   "sourceQualityScore": zod.number().min(listArrangementsResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMin).max(listArrangementsResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMax),
   "repairedQualityScore": zod.number().min(listArrangementsResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin).max(listArrangementsResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax).nullable(),
   "improved": zod.boolean()
-}).optional()
+}).optional(),
+  "criticVerdict": zod.object({
+  "version": zod.string(),
+  "rankVersion": zod.string(),
+  "releasable": zod.boolean(),
+  "reasons": zod.array(zod.string()),
+  "blockingCount": zod.number().min(listArrangementsResponseGenerationProvenanceOneEvaluationCriticVerdictBlockingCountMin),
+  "refusalCount": zod.number().min(listArrangementsResponseGenerationProvenanceOneEvaluationCriticVerdictRefusalCountMin),
+  "refusals": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "rule": zod.string(),
+  "detail": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "sectionName": zod.string().nullable(),
+  "repairOperation": zod.string().nullable()
+})),
+  "topProblems": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "bars": zod.string(),
+  "section": zod.string().nullable(),
+  "priority": zod.number(),
+  "whatToFix": zod.string(),
+  "repairOperation": zod.string().nullable()
+})),
+  "contested": zod.array(zod.object({
+  "topic": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "positions": zod.array(zod.string()),
+  "rationale": zod.string()
+})),
+  "salienceWeightedMajors": zod.number().min(listArrangementsResponseGenerationProvenanceOneEvaluationCriticVerdictSalienceWeightedMajorsMin),
+  "constructiveScore": zod.number(),
+  "rank": zod.number().min(1),
+  "why": zod.string(),
+  "tiedWith": zod.array(zod.string()),
+  "tieGroup": zod.number().min(1).describe('First rank of this candidate\'s tie group; equal for every candidate the ranking could not separate.'),
+  "nearIdentical": zod.string().nullable(),
+  "gatedDimensions": zod.array(zod.string()),
+  "dimensionsApplicable": zod.number().min(listArrangementsResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsApplicableMin),
+  "dimensionsTotal": zod.number().min(listArrangementsResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsTotalMin),
+  "requestedRepairOperations": zod.array(zod.string())
+}).optional().describe('Brain B-19: the release judge\'s decision on this candidate. `releasable` false means the candidate is refused and cannot be selected; `refusals` names each blocking observation with the release rule that refused it, and `topProblems` names the repair operator each asked for. `contested` carries the disagreements the judge deliberately kept open - an empty `refusals` list with a non-empty `contested` list is not agreement.')
 })
 }),zod.null()]).optional(),
   "createdAt": zod.string()
@@ -9478,6 +9608,22 @@ export const createArrangementResponseGenerationProvenanceOneEvaluationRepairSou
 export const createArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin = 0;
 export const createArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax = 1;
 
+export const createArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictBlockingCountMin = 0;
+
+export const createArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictRefusalCountMin = 0;
+
+
+
+
+
+export const createArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictSalienceWeightedMajorsMin = 0;
+
+
+
+export const createArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsApplicableMin = 0;
+
+export const createArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsTotalMin = 0;
+
 
 
 export const CreateArrangementResponse = zod.object({
@@ -9564,7 +9710,7 @@ export const CreateArrangementResponse = zod.object({
   "parameters": zod.record(zod.string(), zod.unknown()),
   "parentArtifactIds": zod.array(zod.string()),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused', 'critic_judge_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({
@@ -10378,7 +10524,56 @@ export const CreateArrangementResponse = zod.object({
   "sourceQualityScore": zod.number().min(createArrangementResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMin).max(createArrangementResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMax),
   "repairedQualityScore": zod.number().min(createArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin).max(createArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax).nullable(),
   "improved": zod.boolean()
-}).optional()
+}).optional(),
+  "criticVerdict": zod.object({
+  "version": zod.string(),
+  "rankVersion": zod.string(),
+  "releasable": zod.boolean(),
+  "reasons": zod.array(zod.string()),
+  "blockingCount": zod.number().min(createArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictBlockingCountMin),
+  "refusalCount": zod.number().min(createArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictRefusalCountMin),
+  "refusals": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "rule": zod.string(),
+  "detail": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "sectionName": zod.string().nullable(),
+  "repairOperation": zod.string().nullable()
+})),
+  "topProblems": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "bars": zod.string(),
+  "section": zod.string().nullable(),
+  "priority": zod.number(),
+  "whatToFix": zod.string(),
+  "repairOperation": zod.string().nullable()
+})),
+  "contested": zod.array(zod.object({
+  "topic": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "positions": zod.array(zod.string()),
+  "rationale": zod.string()
+})),
+  "salienceWeightedMajors": zod.number().min(createArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictSalienceWeightedMajorsMin),
+  "constructiveScore": zod.number(),
+  "rank": zod.number().min(1),
+  "why": zod.string(),
+  "tiedWith": zod.array(zod.string()),
+  "tieGroup": zod.number().min(1).describe('First rank of this candidate\'s tie group; equal for every candidate the ranking could not separate.'),
+  "nearIdentical": zod.string().nullable(),
+  "gatedDimensions": zod.array(zod.string()),
+  "dimensionsApplicable": zod.number().min(createArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsApplicableMin),
+  "dimensionsTotal": zod.number().min(createArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsTotalMin),
+  "requestedRepairOperations": zod.array(zod.string())
+}).optional().describe('Brain B-19: the release judge\'s decision on this candidate. `releasable` false means the candidate is refused and cannot be selected; `refusals` names each blocking observation with the release rule that refused it, and `topProblems` names the repair operator each asked for. `contested` carries the disagreements the judge deliberately kept open - an empty `refusals` list with a non-empty `contested` list is not agreement.')
 })
 }),zod.null()]).optional(),
   "createdAt": zod.string()
@@ -10994,6 +11189,22 @@ export const getArrangementResponseGenerationProvenanceOneEvaluationRepairSource
 export const getArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin = 0;
 export const getArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax = 1;
 
+export const getArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictBlockingCountMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictRefusalCountMin = 0;
+
+
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictSalienceWeightedMajorsMin = 0;
+
+
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsApplicableMin = 0;
+
+export const getArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsTotalMin = 0;
+
 export const getArrangementResponsePlanOneSectionsItemTrackDirectivesRhythmicActivityMin = 0;
 export const getArrangementResponsePlanOneSectionsItemTrackDirectivesRhythmicActivityMax = 1;
 
@@ -11377,7 +11588,7 @@ export const GetArrangementResponse = zod.object({
   "parameters": zod.record(zod.string(), zod.unknown()),
   "parentArtifactIds": zod.array(zod.string()),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused', 'critic_judge_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({
@@ -12191,7 +12402,56 @@ export const GetArrangementResponse = zod.object({
   "sourceQualityScore": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMax),
   "repairedQualityScore": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin).max(getArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax).nullable(),
   "improved": zod.boolean()
-}).optional()
+}).optional(),
+  "criticVerdict": zod.object({
+  "version": zod.string(),
+  "rankVersion": zod.string(),
+  "releasable": zod.boolean(),
+  "reasons": zod.array(zod.string()),
+  "blockingCount": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictBlockingCountMin),
+  "refusalCount": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictRefusalCountMin),
+  "refusals": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "rule": zod.string(),
+  "detail": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "sectionName": zod.string().nullable(),
+  "repairOperation": zod.string().nullable()
+})),
+  "topProblems": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "bars": zod.string(),
+  "section": zod.string().nullable(),
+  "priority": zod.number(),
+  "whatToFix": zod.string(),
+  "repairOperation": zod.string().nullable()
+})),
+  "contested": zod.array(zod.object({
+  "topic": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "positions": zod.array(zod.string()),
+  "rationale": zod.string()
+})),
+  "salienceWeightedMajors": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictSalienceWeightedMajorsMin),
+  "constructiveScore": zod.number(),
+  "rank": zod.number().min(1),
+  "why": zod.string(),
+  "tiedWith": zod.array(zod.string()),
+  "tieGroup": zod.number().min(1).describe('First rank of this candidate\'s tie group; equal for every candidate the ranking could not separate.'),
+  "nearIdentical": zod.string().nullable(),
+  "gatedDimensions": zod.array(zod.string()),
+  "dimensionsApplicable": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsApplicableMin),
+  "dimensionsTotal": zod.number().min(getArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsTotalMin),
+  "requestedRepairOperations": zod.array(zod.string())
+}).optional().describe('Brain B-19: the release judge\'s decision on this candidate. `releasable` false means the candidate is refused and cannot be selected; `refusals` names each blocking observation with the release rule that refused it, and `topProblems` names the repair operator each asked for. `contested` carries the disagreements the judge deliberately kept open - an empty `refusals` list with a non-empty `contested` list is not agreement.')
 })
 }),zod.null()]).optional(),
   "createdAt": zod.string(),
@@ -13559,6 +13819,22 @@ export const updateArrangementResponseGenerationProvenanceOneEvaluationRepairSou
 export const updateArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin = 0;
 export const updateArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax = 1;
 
+export const updateArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictBlockingCountMin = 0;
+
+export const updateArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictRefusalCountMin = 0;
+
+
+
+
+
+export const updateArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictSalienceWeightedMajorsMin = 0;
+
+
+
+export const updateArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsApplicableMin = 0;
+
+export const updateArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsTotalMin = 0;
+
 
 
 export const UpdateArrangementResponse = zod.object({
@@ -13645,7 +13921,7 @@ export const UpdateArrangementResponse = zod.object({
   "parameters": zod.record(zod.string(), zod.unknown()),
   "parentArtifactIds": zod.array(zod.string()),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused', 'critic_judge_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({
@@ -14459,7 +14735,56 @@ export const UpdateArrangementResponse = zod.object({
   "sourceQualityScore": zod.number().min(updateArrangementResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMin).max(updateArrangementResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMax),
   "repairedQualityScore": zod.number().min(updateArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin).max(updateArrangementResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax).nullable(),
   "improved": zod.boolean()
-}).optional()
+}).optional(),
+  "criticVerdict": zod.object({
+  "version": zod.string(),
+  "rankVersion": zod.string(),
+  "releasable": zod.boolean(),
+  "reasons": zod.array(zod.string()),
+  "blockingCount": zod.number().min(updateArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictBlockingCountMin),
+  "refusalCount": zod.number().min(updateArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictRefusalCountMin),
+  "refusals": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "rule": zod.string(),
+  "detail": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "sectionName": zod.string().nullable(),
+  "repairOperation": zod.string().nullable()
+})),
+  "topProblems": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "bars": zod.string(),
+  "section": zod.string().nullable(),
+  "priority": zod.number(),
+  "whatToFix": zod.string(),
+  "repairOperation": zod.string().nullable()
+})),
+  "contested": zod.array(zod.object({
+  "topic": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "positions": zod.array(zod.string()),
+  "rationale": zod.string()
+})),
+  "salienceWeightedMajors": zod.number().min(updateArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictSalienceWeightedMajorsMin),
+  "constructiveScore": zod.number(),
+  "rank": zod.number().min(1),
+  "why": zod.string(),
+  "tiedWith": zod.array(zod.string()),
+  "tieGroup": zod.number().min(1).describe('First rank of this candidate\'s tie group; equal for every candidate the ranking could not separate.'),
+  "nearIdentical": zod.string().nullable(),
+  "gatedDimensions": zod.array(zod.string()),
+  "dimensionsApplicable": zod.number().min(updateArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsApplicableMin),
+  "dimensionsTotal": zod.number().min(updateArrangementResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsTotalMin),
+  "requestedRepairOperations": zod.array(zod.string())
+}).optional().describe('Brain B-19: the release judge\'s decision on this candidate. `releasable` false means the candidate is refused and cannot be selected; `refusals` names each blocking observation with the release rule that refused it, and `topProblems` names the repair operator each asked for. `contested` carries the disagreements the judge deliberately kept open - an empty `refusals` list with a non-empty `contested` list is not agreement.')
 })
 }),zod.null()]).optional(),
   "createdAt": zod.string()
@@ -15205,6 +15530,22 @@ export const restoreArrangementRevisionResponseGenerationProvenanceOneEvaluation
 export const restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin = 0;
 export const restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax = 1;
 
+export const restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationCriticVerdictBlockingCountMin = 0;
+
+export const restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationCriticVerdictRefusalCountMin = 0;
+
+
+
+
+
+export const restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationCriticVerdictSalienceWeightedMajorsMin = 0;
+
+
+
+export const restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsApplicableMin = 0;
+
+export const restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsTotalMin = 0;
+
 
 
 export const RestoreArrangementRevisionResponse = zod.object({
@@ -15291,7 +15632,7 @@ export const RestoreArrangementRevisionResponse = zod.object({
   "parameters": zod.record(zod.string(), zod.unknown()),
   "parentArtifactIds": zod.array(zod.string()),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused', 'critic_judge_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({
@@ -16105,7 +16446,56 @@ export const RestoreArrangementRevisionResponse = zod.object({
   "sourceQualityScore": zod.number().min(restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMin).max(restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMax),
   "repairedQualityScore": zod.number().min(restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin).max(restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax).nullable(),
   "improved": zod.boolean()
-}).optional()
+}).optional(),
+  "criticVerdict": zod.object({
+  "version": zod.string(),
+  "rankVersion": zod.string(),
+  "releasable": zod.boolean(),
+  "reasons": zod.array(zod.string()),
+  "blockingCount": zod.number().min(restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationCriticVerdictBlockingCountMin),
+  "refusalCount": zod.number().min(restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationCriticVerdictRefusalCountMin),
+  "refusals": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "rule": zod.string(),
+  "detail": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "sectionName": zod.string().nullable(),
+  "repairOperation": zod.string().nullable()
+})),
+  "topProblems": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "bars": zod.string(),
+  "section": zod.string().nullable(),
+  "priority": zod.number(),
+  "whatToFix": zod.string(),
+  "repairOperation": zod.string().nullable()
+})),
+  "contested": zod.array(zod.object({
+  "topic": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "positions": zod.array(zod.string()),
+  "rationale": zod.string()
+})),
+  "salienceWeightedMajors": zod.number().min(restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationCriticVerdictSalienceWeightedMajorsMin),
+  "constructiveScore": zod.number(),
+  "rank": zod.number().min(1),
+  "why": zod.string(),
+  "tiedWith": zod.array(zod.string()),
+  "tieGroup": zod.number().min(1).describe('First rank of this candidate\'s tie group; equal for every candidate the ranking could not separate.'),
+  "nearIdentical": zod.string().nullable(),
+  "gatedDimensions": zod.array(zod.string()),
+  "dimensionsApplicable": zod.number().min(restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsApplicableMin),
+  "dimensionsTotal": zod.number().min(restoreArrangementRevisionResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsTotalMin),
+  "requestedRepairOperations": zod.array(zod.string())
+}).optional().describe('Brain B-19: the release judge\'s decision on this candidate. `releasable` false means the candidate is refused and cannot be selected; `refusals` names each blocking observation with the release rule that refused it, and `topProblems` names the repair operator each asked for. `contested` carries the disagreements the judge deliberately kept open - an empty `refusals` list with a non-empty `contested` list is not agreement.')
 })
 }),zod.null()]).optional(),
   "createdAt": zod.string()
@@ -17342,6 +17732,22 @@ export const listGenerationCandidatesResponseEvaluationRepairSourceQualityScoreM
 export const listGenerationCandidatesResponseEvaluationRepairRepairedQualityScoreMin = 0;
 export const listGenerationCandidatesResponseEvaluationRepairRepairedQualityScoreMax = 1;
 
+export const listGenerationCandidatesResponseEvaluationCriticVerdictBlockingCountMin = 0;
+
+export const listGenerationCandidatesResponseEvaluationCriticVerdictRefusalCountMin = 0;
+
+
+
+
+
+export const listGenerationCandidatesResponseEvaluationCriticVerdictSalienceWeightedMajorsMin = 0;
+
+
+
+export const listGenerationCandidatesResponseEvaluationCriticVerdictDimensionsApplicableMin = 0;
+
+export const listGenerationCandidatesResponseEvaluationCriticVerdictDimensionsTotalMin = 0;
+
 
 
 export const ListGenerationCandidatesResponseItem = zod.object({
@@ -17630,7 +18036,7 @@ export const ListGenerationCandidatesResponseItem = zod.object({
 })).max(listGenerationCandidatesResponseHarmonyDecisionsItemBassSupportEvidenceMax).optional()
 })),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused', 'critic_judge_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({
@@ -18444,7 +18850,56 @@ export const ListGenerationCandidatesResponseItem = zod.object({
   "sourceQualityScore": zod.number().min(listGenerationCandidatesResponseEvaluationRepairSourceQualityScoreMin).max(listGenerationCandidatesResponseEvaluationRepairSourceQualityScoreMax),
   "repairedQualityScore": zod.number().min(listGenerationCandidatesResponseEvaluationRepairRepairedQualityScoreMin).max(listGenerationCandidatesResponseEvaluationRepairRepairedQualityScoreMax).nullable(),
   "improved": zod.boolean()
-}).optional()
+}).optional(),
+  "criticVerdict": zod.object({
+  "version": zod.string(),
+  "rankVersion": zod.string(),
+  "releasable": zod.boolean(),
+  "reasons": zod.array(zod.string()),
+  "blockingCount": zod.number().min(listGenerationCandidatesResponseEvaluationCriticVerdictBlockingCountMin),
+  "refusalCount": zod.number().min(listGenerationCandidatesResponseEvaluationCriticVerdictRefusalCountMin),
+  "refusals": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "rule": zod.string(),
+  "detail": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "sectionName": zod.string().nullable(),
+  "repairOperation": zod.string().nullable()
+})),
+  "topProblems": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "bars": zod.string(),
+  "section": zod.string().nullable(),
+  "priority": zod.number(),
+  "whatToFix": zod.string(),
+  "repairOperation": zod.string().nullable()
+})),
+  "contested": zod.array(zod.object({
+  "topic": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "positions": zod.array(zod.string()),
+  "rationale": zod.string()
+})),
+  "salienceWeightedMajors": zod.number().min(listGenerationCandidatesResponseEvaluationCriticVerdictSalienceWeightedMajorsMin),
+  "constructiveScore": zod.number(),
+  "rank": zod.number().min(1),
+  "why": zod.string(),
+  "tiedWith": zod.array(zod.string()),
+  "tieGroup": zod.number().min(1).describe('First rank of this candidate\'s tie group; equal for every candidate the ranking could not separate.'),
+  "nearIdentical": zod.string().nullable(),
+  "gatedDimensions": zod.array(zod.string()),
+  "dimensionsApplicable": zod.number().min(listGenerationCandidatesResponseEvaluationCriticVerdictDimensionsApplicableMin),
+  "dimensionsTotal": zod.number().min(listGenerationCandidatesResponseEvaluationCriticVerdictDimensionsTotalMin),
+  "requestedRepairOperations": zod.array(zod.string())
+}).optional().describe('Brain B-19: the release judge\'s decision on this candidate. `releasable` false means the candidate is refused and cannot be selected; `refusals` names each blocking observation with the release rule that refused it, and `topProblems` names the repair operator each asked for. `contested` carries the disagreements the judge deliberately kept open - an empty `refusals` list with a non-empty `contested` list is not agreement.')
 }),
   "preference": zod.object({
   "modelVersion": zod.number(),
@@ -19061,6 +19516,22 @@ export const selectGenerationCandidateResponseGenerationProvenanceOneEvaluationR
 export const selectGenerationCandidateResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin = 0;
 export const selectGenerationCandidateResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax = 1;
 
+export const selectGenerationCandidateResponseGenerationProvenanceOneEvaluationCriticVerdictBlockingCountMin = 0;
+
+export const selectGenerationCandidateResponseGenerationProvenanceOneEvaluationCriticVerdictRefusalCountMin = 0;
+
+
+
+
+
+export const selectGenerationCandidateResponseGenerationProvenanceOneEvaluationCriticVerdictSalienceWeightedMajorsMin = 0;
+
+
+
+export const selectGenerationCandidateResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsApplicableMin = 0;
+
+export const selectGenerationCandidateResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsTotalMin = 0;
+
 
 
 export const SelectGenerationCandidateResponse = zod.object({
@@ -19147,7 +19618,7 @@ export const SelectGenerationCandidateResponse = zod.object({
   "parameters": zod.record(zod.string(), zod.unknown()),
   "parentArtifactIds": zod.array(zod.string()),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused', 'critic_judge_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({
@@ -19961,7 +20432,56 @@ export const SelectGenerationCandidateResponse = zod.object({
   "sourceQualityScore": zod.number().min(selectGenerationCandidateResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMin).max(selectGenerationCandidateResponseGenerationProvenanceOneEvaluationRepairSourceQualityScoreMax),
   "repairedQualityScore": zod.number().min(selectGenerationCandidateResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMin).max(selectGenerationCandidateResponseGenerationProvenanceOneEvaluationRepairRepairedQualityScoreMax).nullable(),
   "improved": zod.boolean()
-}).optional()
+}).optional(),
+  "criticVerdict": zod.object({
+  "version": zod.string(),
+  "rankVersion": zod.string(),
+  "releasable": zod.boolean(),
+  "reasons": zod.array(zod.string()),
+  "blockingCount": zod.number().min(selectGenerationCandidateResponseGenerationProvenanceOneEvaluationCriticVerdictBlockingCountMin),
+  "refusalCount": zod.number().min(selectGenerationCandidateResponseGenerationProvenanceOneEvaluationCriticVerdictRefusalCountMin),
+  "refusals": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "rule": zod.string(),
+  "detail": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "sectionName": zod.string().nullable(),
+  "repairOperation": zod.string().nullable()
+})),
+  "topProblems": zod.array(zod.object({
+  "observationId": zod.string(),
+  "dimension": zod.string(),
+  "kind": zod.string(),
+  "severity": zod.enum(['info', 'minor', 'major', 'blocking']),
+  "bars": zod.string(),
+  "section": zod.string().nullable(),
+  "priority": zod.number(),
+  "whatToFix": zod.string(),
+  "repairOperation": zod.string().nullable()
+})),
+  "contested": zod.array(zod.object({
+  "topic": zod.string(),
+  "startBar": zod.number().min(1),
+  "endBar": zod.number().min(1),
+  "positions": zod.array(zod.string()),
+  "rationale": zod.string()
+})),
+  "salienceWeightedMajors": zod.number().min(selectGenerationCandidateResponseGenerationProvenanceOneEvaluationCriticVerdictSalienceWeightedMajorsMin),
+  "constructiveScore": zod.number(),
+  "rank": zod.number().min(1),
+  "why": zod.string(),
+  "tiedWith": zod.array(zod.string()),
+  "tieGroup": zod.number().min(1).describe('First rank of this candidate\'s tie group; equal for every candidate the ranking could not separate.'),
+  "nearIdentical": zod.string().nullable(),
+  "gatedDimensions": zod.array(zod.string()),
+  "dimensionsApplicable": zod.number().min(selectGenerationCandidateResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsApplicableMin),
+  "dimensionsTotal": zod.number().min(selectGenerationCandidateResponseGenerationProvenanceOneEvaluationCriticVerdictDimensionsTotalMin),
+  "requestedRepairOperations": zod.array(zod.string())
+}).optional().describe('Brain B-19: the release judge\'s decision on this candidate. `releasable` false means the candidate is refused and cannot be selected; `refusals` names each blocking observation with the release rule that refused it, and `topProblems` names the repair operator each asked for. `contested` carries the disagreements the judge deliberately kept open - an empty `refusals` list with a non-empty `contested` list is not agreement.')
 })
 }),zod.null()]).optional(),
   "createdAt": zod.string()
