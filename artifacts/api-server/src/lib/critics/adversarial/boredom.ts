@@ -6,7 +6,7 @@
  * an ensemble in which everyone always plays. Every observation is located
  * (bars, tracks) and carries the numbers it rests on.
  */
-import type { CriticDimensionReport, CriticInput, CriticObservation } from "../types.b05b";
+import type { CriticDimensionReport, CriticInput, CriticObservation } from "../types";
 import {
   barSignature, buildReport, cellCoverage, confidenceFromEvidence, effectPast, makeObservation, mean,
   normalisedEntropy, entropyBits, ngrams, notApplicable, prepare, rhythmToken, std, topLine, type ControlStatus,

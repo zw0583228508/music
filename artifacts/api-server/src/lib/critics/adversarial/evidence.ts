@@ -9,7 +9,7 @@
 import { REFERENCE_PART_COMPOSER } from "../../referencePartComposer";
 import { judge, judgeContextFromInput, JUDGE_VERSION } from "../judge";
 import { FAILURE_TAXONOMY_VERSION, codeForKind } from "../failureTaxonomy";
-import type { CriticDimensionReport, CriticObservation } from "../types.b05b";
+import type { CriticDimensionReport, CriticObservation } from "../types";
 import { ANCHOR_CASE_IDS, anchorFor, anchors } from "./anchors";
 import { CONTROLS, ledgerStatusFromDetection } from "./controls";
 import { cleanFixture } from "./fixture";
@@ -78,8 +78,13 @@ export function buildB05bEvidence(options: { anchorIds?: readonly string[]; now?
     const control = CONTROLS.find((c) => c.dimension === m.dimension)!;
     const perAnchor = all.map((a) => {
       const ref = m.run(a.input);
-      const worse = m.run(control.apply(a.input));
-      const applicable = ref.applicable || worse.applicable;
+      const damaged = control.apply(a.input);
+      // Same rule as adversarial.test.ts: a damage that needs material the anchor lacks
+      // (fighting needs two pitched non-bass parts; since B-01 removed the `ensemble`
+      // transition track, pop / ballad / jazz have one) returns the input unchanged and
+      // is not a control on that anchor.
+      const worse = m.run(damaged);
+      const applicable = damaged !== a.input && (ref.applicable || worse.applicable);
       const refPenalty = penaltyOf(ref.observations);
       const worsePenalty = penaltyOf(worse.observations);
       return {
@@ -102,11 +107,15 @@ export function buildB05bEvidence(options: { anchorIds?: readonly string[]; now?
   const nullControl = runAdversarialCritics(fixture).map((r) => ({ dimension: r.dimension, score: r.summary.score0to100, observations: r.observations.map((o) => `${o.kind}[${o.severity}]`) }));
 
   // 4. Judge verdicts on anchors, with the measured ledger and without any ledger.
-  const judgeExamples = ["orchestral-midi", "pop-full", "jazz-full"].filter((id) => ids.includes(id)).map((id) => {
-    const a = anchorFor(id);
-    const ctx = judgeContextFromInput(a.input);
+  // `orchestral-midi+keys_silenced` injects the defect the anchor carried before
+  // B-01 (keys planned in every section, never written) so the evidence still
+  // shows a blocking finding blocking under the measured ledger.
+  const judgeExamples = ["orchestral-midi", "orchestral-midi+keys_silenced", "pop-full", "jazz-full"].filter((id) => ids.includes(id.split("+")[0])).map((id) => {
+    const a = anchorFor(id.split("+")[0]);
+    const input = id.endsWith("+keys_silenced") ? { ...a.input, trackModels: a.input.trackModels.filter((t) => t.instrument.toLowerCase() !== "keys") } : a.input;
+    const ctx = judgeContextFromInput(input);
     const summarise = (ledger: ControlLedger | undefined) => {
-      const v = judge(runAdversarialCritics(a.input, ledger ? { controlLedger: ledger } : {}), ctx);
+      const v = judge(runAdversarialCritics(input, ledger ? { controlLedger: ledger } : {}), ctx);
       return {
         releasable: v.overall.releasable, reasons: v.overall.reasons,
         blocking: v.blocking.map((b) => b.id),

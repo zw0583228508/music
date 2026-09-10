@@ -6450,6 +6450,299 @@ any of it.
   `definition.profile.status` (B-00). A mapped kit key is not the right
   sound (GM 54 = tambourine hit a crash). No audio was rendered or listened
   to in this PR.
+### PR-B05a — Brain B-05a: critics that read the notes
+
+- **PR-B05a** ⏳ — `ws-brain-b05a` (Brain program, stream B-05a: the
+  constructive music critic). Sixteen note-level critic dimensions under
+  `artifacts/api-server/src/lib/critics/dimensions/`, the shared contract
+  `critics/types.ts` (B-05b imports it unchanged), the positive-control
+  harness `critics/controls.ts`, and evidence
+  `docs/evidence/brain-b05a-critic-controls.json` (1,645 anchor × control
+  items, 77 controls, 1,232 table rows, all three corruption severities).
+  Answers audit finding F1 (the critic grades the plan and the source, not
+  the notes) and F11 (no production critic has a positive control): every
+  dimension reads the composed notes, locates each claim to bars and tracks,
+  carries the numbers behind it, a suspected origin layer with a computed
+  confidence and a repair the originating layer can act on — and may report
+  `applicable: false` (UNKNOWN) instead of inventing a value.
+
+  **The contract (`critics/types.ts`).** `CriticObservation { id, dimension,
+  kind, severity: info|minor|major|blocking, location {startBar, endBar,
+  sectionName?, trackIds}, evidence, suspectedOrigin: OriginLayer,
+  originConfidence, recommendedRepair {operation, scope: note|part|section|
+  plan, detail} | null, confidence }`; `CriticDimensionReport { dimension,
+  version, applicable, reasonIfNot?, observations, summary {score0to100 |
+  null, coverage, controlStatus} }`; `CriticInput { songModel, plan,
+  trackModels, arc?, groovePlan? }`; `CriticDimension { dimension, version,
+  evaluate }`. Ids are stable (`dimension:kind:trackIds:startBar-endBar`).
+  The score is only a documented summary of the observations
+  (`scoreFromObservations`: info 0 / minor 6 / major 15 / blocking 35, scaled
+  by bar extent, capped at 40 when anything blocks) — never an independent
+  judgement; confidences come from evidence counts (`confidenceFromCount`),
+  never from a literal; `controlStatus` is read from the generated ledger
+  `dimensions/controlLedger.ts`, which `controls.test.ts` regenerates from
+  the harness and fails on when stale.
+
+  **Dimensions (all DESIGNED → IMPLEMENTED → TESTED with positive controls;
+  NOT INTEGRATED — no production path calls them; B-00 / B-06 wire them in,
+  and only then may a `gated` dimension gate anything).** Ledger, severity 3,
+  seed 1, nine benchmark anchors composed by the reference composer through
+  `orchestrateArrangement` (six clean; the 7/8 anchor and the two MIDI
+  anchors with a LEAD keys assignment carry real composer defects, listed in
+  `DEFECT_ANCHOR_REASONS`); a control is *detected* when the score drops and
+  a located non-info observation appears on the damaged tracks that the
+  anchor did not carry; exact Clopper–Pearson 95 % intervals; `gated` =
+  strongest claimed control ≥ 90 % with CI lower ≥ 60 % and no blocking
+  observation on a clean anchor, `informing` ≥ 50 %, `demoted` < 50 %,
+  `uncalibrated` = nothing measurable:
+  (The per-dimension numbers below are the pre-merge calibration on the old
+  anchors; "Recalibrated at the merge" further down gives the current ledger.)
+  - harmony **gated** — chord_tone_to_non_chord_tone@3 24/24 [0.86, 1];
+    pitch_shift_out_of_key@3 24/24; cross_part_clash@3 23/24;
+    duration_overhang@3 14/24 (`overhang_across_chord_change`); random-pitch
+    probe 8/8. Non-chord tones classified passing / neighbour / suspension /
+    anticipation / appoggiatura / clash from the part's own context.
+  - voiceLeading **gated** — bass_roots_only_leaps 8/8 [0.63, 1] (`bass_leaps`
+    in every section, score 97 → 27); parallel_doubling@3 15/24
+    (`part_doubles_another`); random-pitch 4/8. Per-part motion, parallels
+    inside and between parts, crossing, common-tone retention.
+  - melodyAndCounterline **gated** — top_line_into_vocal_register 8/8
+    (`line_masks_vocal`); top_line_erratic 3/6. Contour, range, phrase shape,
+    relation to the lead melody with `leadIsVocal` saying whether the Song
+    Model's vocal evidence backs it.
+  - motifRecurrenceAndDevelopment **informing** — random-pitch 6/7 [0.42, 1]
+    (`no_recurrence`); motif_destruction@3 8/19. Six-note cells (four-note
+    cells recur by chance under a uniform comping rhythm — measured);
+    exact / transposed / rhythmic-variant / developed recurrence.
+  - groove **gated** — erase_boundary_events 8/8 (`planned_fill_missing` at
+    the bar before each planned build); onset_jitter@3 29/34 (`off_grid`,
+    tolerance max(30 ms, 5 % of a beat)); phrase_shift@3 14/34
+    (`backbeat_displaced`, `kick_bass_disagreement`); quantisation_
+    coarsening@3 8/34 (a straight anchor has little to coarsen).
+  - rhythmicInteraction **gated** — homorhythm 8/8 (`grid_saturation`);
+    parallel_doubling@3 22/24 (`part_doubles_part`). Locked / interlocking /
+    independent pairs per section.
+  - orchestration **gated** — drums_only 8/8 and silence_planned_family 8/8
+    (`planned_family_silent`, blocking for LEAD/BASS/GROOVE or when half the
+    planned families of a verse/chorus are silent; origin `compose` when a
+    part task existed, `orchestration` when only a role assignment did);
+    tutti_everywhere 5/8 (`continuous_tutti`). Lead / support / pulse /
+    answer / accent read from the notes.
+  - idiomaticity **informing** — piano_wide_voicing 6/6 [0.54, 1]
+    (`hand_span_exceeded`, `guitar_voicing_unfingerable`), brass_hold_forever
+    2/2 (`phrase_too_long_for_breath`); only six anchors have a chordal part.
+  - register **informing** — role_inversion@3 14/18 [0.52, 0.94];
+    strings_up_two_octaves 6/8 (`part_outside_planned_band`,
+    `part_outside_comfortable_range`); octave_displacement@3 13/24. Low-mid
+    pile-up, vocal masking per beat, planned band vs actual.
+  - density **informing** — piano_one_note_per_bar 6/6 [0.54, 1]
+    (`bed_single_voice`), chorus_thinner_than_verse 7/8
+    (`louder_section_thinner`), density_thinning@3 18/34 (`foundation_gaps`).
+  - transitions **gated** — erase_boundary_events 8/8
+    (`planned_device_unrealised` drum_fill, major on strong builds);
+    section_swap@3 10/34. Devices the notes cannot verify (riser, build_up,
+    ritardando …) are `device_unverifiable_from_notes`, info, not failure.
+  - repetitionVsVariation **informing** — chorus_copy 5/5 [0.48, 1]
+    (`section_verbatim_copy`), bar_copy_repetition@3 18/34
+    (`loop_without_variation`).
+  - sectionDevelopment **informing** — chorus_copy on an anchor *prepared*
+    by `develop_chorus_2` 5/5 [0.48, 1] (`repeat_without_development`,
+    major at the planned climax): the reference composer already sits at
+    this dimension's floor, so the control develops chorus 2 first
+    (bed +12, +10 velocity) and then pastes chorus 1 over it.
+  - playability **gated** — wraps the calibrated constraint engine only;
+    bass_roots_only_leaps 8/8 (`impossible_leap`, `part_unplayable`
+    blocking), strings_up_two_octaves 8/8; `unrealistic_repetition` (a
+    documented false positive on human parts) carried as info.
+  - performanceRealisation **gated** — strip_cc_and_quantise 8/8
+    (`mechanical_timing`, `no_expression_cc`), velocity_flatten_all 8/8
+    (`flat_dynamics`, `no_dynamics_anywhere`,
+    `no_dynamic_contrast_between_sections`, score 100 → 0–11);
+    dynamics_flattening@3 8/34 (`accents_inverted` on every drum part).
+  - emotionalArcAndTension **informing** — flatten_arc 7/8 [0.47, 1],
+    swap_climax_with_quietest 5/8 (`climax_misplaced`). Energy proxy per bar
+    from onsets, velocity, active parts and register spread; tension proxy
+    from non-chord-tone share and the top voice's height.
+
+  **The audit's probes as fixtures (`controls.test.ts`,
+  `orchestration.test.ts`).** Probe 5 (drums-only composer): orchestration
+  100 → **0** on pop-full with 8 blocking `planned_family_silent`
+  observations across 6 sections (bass: `taskPlanned: true`, origin
+  `compose`); 0 on all eight purpose-built anchors. Probe 1 (random-pitch
+  composer, same rhythm, steps ≤ 7): harmony 100 → **0** on 8/8 cases with
+  11–14 blocking `clash_share` observations per case, `bass_leaves_chord`
+  and `out_of_key_share` alongside; voiceLeading moved on 4/8
+  (`voice_crossing_between_parts`, `no_common_tone_retention`) — with steps
+  ≤ 7 a random line is still smooth, so the leaps it lacks are found by
+  playability (rock 100 → 28.8) and the crossings by voiceLeading, not by a
+  leap count. Under `musicCritic.ts` both probes scored 69–73, identical to
+  the reference.
+
+  **What the critics found on the reference composer itself (real
+  findings, all located, all with numbers).** The beds sit on the singer's
+  pitches (`vocal_masking` in every vocal case; rock-full register 68);
+  chorus 2 is chorus 1 with nothing developed, at the planned climax
+  (`repeat_without_development` major on pop / rock / dance / acoustic);
+  dance-full's Breakdown is its Verse note for note
+  (`sections_indistinguishable`); jazz-full's energy peaks in Verse 2, not in
+  its planned Chorus (`climax_misplaced`: the comping keys out-weigh the
+  chorus bed); no common tone is ever kept in the same voice
+  (`commonToneRetention: 0`); cymbal_swell / cymbal_choke / ending_hit /
+  riser / bass_pickup devices are planned and never realised
+  (`planned_device_unrealised` on every anchor); orchestral-midi and
+  cinematic-midi assign keys LEAD in every section and never build a task
+  for it (blocking, origin `orchestration`, `taskPlanned: false` — diagnosis
+  weakness #3); ethnic-vocal (7/8) has its bass silent in two of three
+  planned sections and pickup notes after the song ends
+  (`notes_outside_song`).
+
+  **For the lead — defects found outside this stream's files, not fixed
+  here.** (1) `referencePartComposer.ts` derives `beatSeconds = 60 / tempo`
+  ignoring the metre's denominator, so every 7/8 (and 6/8) part is twice
+  too slow and overflows the song. (2) `musicEngines.getInstrumentDefinition
+  ("keys", "RHYTHMIC_HARMONY")` resolves to a drum kit (`FAMILY_WORDS` has no
+  "key"/"piano" and the role says "rhythm"): dance-full's keys carry the
+  kit's ranges and are performed without CC; the critics derive family from
+  the instrument name and fall back to family ranges when the definition
+  disagrees. (3) The section planner assigns keys LEAD in MIDI cases while
+  the part-composer plan builds no KEYS task. (4) The reference composer
+  never writes a crash cymbal, so no cymbal device can be realised.
+
+  **Tests.** 17 suites, 80 tests (groove +1 at the merge), registered in
+  `run-focused-api-tests.mjs`: per dimension a positive control on ≥ 3
+  anchors (kind + location + origin asserted), a null control (no blocking
+  observation on a clean anchor; every score backed by observations; no
+  literal confidence), a unit check of the core measure; `controls.test.ts`
+  runs the harness (severity 3, ~8 s), the two probes, determinism
+  (byte-identical reports on cloned input) and the ledger-freshness gate
+  (`B05A_WRITE_LEDGER=1` regenerates ledger + evidence;
+  `B05A_ALL_SEVERITIES=1` adds severities 1–2, 19 s). `pnpm run typecheck`
+  green.
+
+  **Recalibrated at the merge (rebased onto B-00 / B-01 / B-03 / B-12; harness
+  `B05A_CONTROLS_v2`).** The anchors changed under the controls: B-01's arc
+  brings the drums in at the chorus (silent in intro / verse / bridge on seven
+  of eight anchors, a single cymbal choke left behind), thins the bass to one
+  note every other bar in quiet sections, develops chorus 2 (drums to
+  CLIMAX_LAYER, guitar entering, register lift, dynamic step), gives the two
+  MIDI cases a keys part in every section and drops the `ensemble` transition
+  track (`mix` / `ensemble` are not families); B-03's profiles moved
+  registers. Twelve suites failed on the rebased branch (17 assertions + 2 in
+  B-05b). Every failing assertion was re-derived from the new truth, with the
+  cause written next to it in the test; nothing was weakened to hide a
+  regression:
+  - *(a) anchor assumptions recomputed* — density's `louder_section_thinner`
+    test drops acoustic-demo (a chorus thinned to a third, 3.1 onsets/bar, is
+    still denser than a drum-less verse, 4.5; the control is detected there
+    through `foundation_gaps` on the thinned bass — 8/8 in the table); the
+    jazz `climax_misplaced` finding now sits inside the dimension's 0.05
+    margin (Verse 2 0.751 vs Chorus 0.725: B-01 put the drums in the chorus
+    but Verse 2 keeps drums + the 228-note comping) and the test asserts the
+    numbers, not a certainty; pop's Verse 2 repeats only the keys (B-01 exits
+    the bass at bar 26) and the test says so; the "chorus 2 develops nothing"
+    finding is *gone* — B-01 develops it (density / rhythm on pop, + register
+    on rock, + dynamics on dance / acoustic) and the test now pins that and
+    forbids the old finding; the pop bed keeps 5 of 13 common tones (was 0)
+    with Verse 2 still under the 0.3 floor; the roots-only-bass score drop is
+    asserted ≥ 15 (was ≥ 20) because the B-01/B-03 reference bass already
+    carries minor `bass_leaps` in most sections (pop 78.5 before the control),
+    every section still upgraded to major; the transitions unit test reads the
+    drum *entry* at pop's chorus (`fillRatio` null, planned fill unrealised)
+    and the real fill on dance-full; orchestral-midi and cinematic-midi lost
+    their "LEAD keys never tasked" defect (B-01) and joined the clean set (8
+    clean anchors, `FIXED_ANCHOR_DEFECTS` says why; `VOCAL_ANCHOR_IDS` keeps
+    the leadIsVocal assertion honest); B-05b's judge and evidence tests inject
+    that defect (`orchestral-midi+keys_silenced`: the planned keys removed)
+    instead of relying on it.
+  - *(b) damage not applicable on the new anchor → the control skips it* —
+    `top_line_erratic` skips parts with no seven-note top line in any section
+    (dance-full's keys and pad are four whole-note chords per chorus; 6/7,
+    cinematic's miss is the lifted bed unmasking the singer, one major
+    replacing another); `erase_drum_fills` (new; planned-fill boundaries only)
+    skips a drummer with nothing to erase (n = 2 — only dance-full's drummer
+    plays before its planned fills); `tutti_everywhere` and `flatten_arc` read
+    `playsIn` (sounding in more than a quarter of a section's bars) instead of
+    "has a note" — one cymbal hit in a bridge is not playing — tutti 4/8 → 6/8
+    (the two MIDI anchors' sustained beds stay undetected), flatten 7/8
+    (dance's peak moves by < 0.05); B-05b's evidence builder now applies the
+    adversarial suite's own rule (an input the damage left unchanged is not a
+    control): `fighting` needs two pitched non-bass parts and the `ensemble`
+    track is gone, so it is 4/4 and **informing** (CI lower 0.40) instead of
+    7/7 gated.
+  - *(c) real loss of sensitivity, recorded* — voiceLeading does not hear the
+    random-pitch probe (2/8): a random line with steps ≤ 7 is *smoother* than
+    the reference bass and voiceLeading scores it higher on 6/8 anchors (pop
+    78 → 91, rock 81 → 97) — it hears motion, not pitch sense; the claim is
+    withdrawn from `CLAIMED_CONTROLS` and Probe 1 asserts harmony alone (4/4
+    blocking `clash_share`) and logs voiceLeading. The raw
+    `erase_boundary_events` fell 8/8 → 1/8 for groove and 8/8 → 5/8 for
+    transitions because the reference composer sits at the floor of both
+    dimensions on these anchors (no entry fill, no pickup: nothing to erase
+    and the anchor already carries the finding); both dimensions now claim the
+    control on anchors prepared by `realise_boundaries` (a two-beat snare/tom
+    fill before every planned drum_fill, two eighth-note pickups before every
+    planned pickup — the same device as `develop_chorus_2`), 8/8 each; the raw
+    rows stay in the table.
+  - *(d) dimension gaps the fuller anchors exposed, fixed* — groove 1.1 reads
+    a planned drum fill at the drummer's entry on the fill bar alone
+    (`planned_fill_missing` with `drumsSilentBeforeBoundary: true`; four
+    onsets or a tom realise it): a real finding on seven anchors — the
+    transition plan asks for a fill into the chorus and the composer writes no
+    entry fill (pop groove 100 → 87.6); repetitionVsVariation 1.1 carries a
+    `measured` observation behind its score on a form with no repeated section
+    type (the MIDI anchors) instead of a score with nothing behind it.
+  Ledger before → after: **gated** harmony, voiceLeading,
+  melodyAndCounterline, groove, rhythmicInteraction, orchestration,
+  transitions, playability, performanceRealisation (kept); density informing →
+  gated (chorus_thinner_than_verse 8/8 [0.63, 1]); register informing → gated
+  (role_inversion@3 13/13 [0.75, 1]); emotionalArcAndTension informing → gated
+  (swap_climax_with_quietest 8/8); **informing** motif 7/8, idiomaticity 7/7
+  (CI lower 0.59), repetitionVsVariation and sectionDevelopment 5/5 (five
+  anchors with two choruses) — unchanged; **demoted** none. 11 gated / 5
+  informing / 0 demoted (was 9 / 7 / 0); groove and transitions keep `gated`
+  only through the prepared control (raw 1/8 and 5/8). Evidence regenerated:
+  611 items, 42 controls, 8 clean anchors, per-item results sampled (25) under
+  `itemsOmitted`; `brain-b05b-adversarial-judge.json` regenerated too —
+  machineMade now rejects 6/7 anchors (was 3/7), arbitrariness 0/7 (was 2/7:
+  the silent keys are gone), fighting informing, and the new judge example
+  shows the injected blocking finding blocking under the measured ledger and
+  not without one. New real findings on the reference composer at the merge:
+  the bass leaps beyond a fifth in ≥ 25 % of its moves in most sections
+  (`bass_leaps` minor on seven anchors, voiceLeading 75–93 instead of 97);
+  `foundation_gaps` major where the bass plays one note every other bar (pop /
+  ballad / rock / acoustic); no entry fill anywhere; every planned pickup
+  still unrealised. Limits added by the recalibration: the prepared boundary
+  controls test the erasure of *our* fills, not the composer's; a control's
+  side effect can cancel its damage in the score summary (the lifted bed
+  unmasking the vocal, a peak moving by < 0.05) and the harness counts that as
+  a miss; `erase_drum_fills` has n = 2; the 7/8 anchor still overflows the
+  song (`referencePartComposer` beatSeconds from the tempo alone — unfixed on
+  main); tests 17 suites / 80 tests, `pnpm run typecheck` green.
+
+  **Honest limits.** Nothing is integrated: `musicCritic.ts` and
+  `candidateQuality.ts` still decide rank and repair; `gated` in the ledger
+  means "has passed a positive control on synthetic anchors", not "gates".
+  The anchors are nine synthetic corpus cases by one composer, only six
+  clean; each purpose-built control has n = 8, so 8/8 gives a CI lower
+  bound of 0.63 and the gate hinges on the 0.60 rule — one miss is
+  `informing` (density, idiomaticity, repetition and sectionDevelopment sit
+  at 100 % with n = 5–6 and stay informing for that reason). Detection needs
+  a *new* observation, so a defect the anchor already carries cannot be
+  detected again (the beds already mask the vocal; `top_line_into_vocal_
+  register` is 2/8 for register); the sectionDevelopment control needed a
+  preparation for the same reason. Corruption severities 1–2 are largely
+  undetected (641/7,713 and 904/7,960 dimension × family cells, most of them
+  unclaimed pairs); motif_destruction@3 is 8/19 because the reference beds
+  carry too little top-voice material; quantisation_coarsening finds little
+  to coarsen in a straight anchor. Every threshold is a hand-set constant
+  documented in its module and calibrated against these anchors only;
+  false-positive rates on human music are unknown for every dimension but
+  playability (PR-61); no human has judged a single observation; no real
+  arrangement — not "רחם נא" — has been critiqued yet (the lead can run
+  `evaluateAllDimensions` on the v6 track models). The vocal relation uses
+  the Song Model melody as the lead line and marks `leadIsVocal` from the
+  vocal evidence rather than pretending. The energy/tension proxies are
+  proxies. The evidence JSON is 4.5 MB.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 

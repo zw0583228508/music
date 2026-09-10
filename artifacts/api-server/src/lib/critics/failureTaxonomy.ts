@@ -13,7 +13,7 @@
  * sharpened only when the plan itself can confirm or deny a layer. No module
  * types an origin confidence by hand.
  */
-import type { OriginLayer } from "./types.b05b";
+import type { OriginLayer } from "./types";
 
 export const FAILURE_TAXONOMY_VERSION = "FAILURE_TAXONOMY_v1" as const;
 

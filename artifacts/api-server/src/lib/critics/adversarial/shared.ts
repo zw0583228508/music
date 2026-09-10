@@ -17,7 +17,7 @@ import type {
   CriticObservation,
   OriginLayer,
   Severity,
-} from "../types.b05b";
+} from "../types";
 
 // ---------------------------------------------------------------------------
 // Numbers

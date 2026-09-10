@@ -12,7 +12,7 @@
  * is graded major: that is where the development was owed.
  */
 import type { MusicalNote } from "@workspace/db";
-import type { CriticDimensionReport, CriticInput, CriticObservation } from "../types.b05b";
+import type { CriticDimensionReport, CriticInput, CriticObservation } from "../types";
 import {
   barSpan, buildReport, cellCoverage, confidenceFromEvidence, effectPast, makeObservation, notApplicable, prepare,
   type PartView, type SectionInfo, type ControlStatus,

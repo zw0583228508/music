@@ -8,7 +8,7 @@
  * the instruments.
  */
 import type { MusicalNote } from "@workspace/db";
-import type { CriticDimensionReport, CriticInput, CriticObservation, Severity } from "../types.b05b";
+import type { CriticDimensionReport, CriticInput, CriticObservation, Severity } from "../types";
 import {
   barSpan, buildReport, cellCoverage, chordAt, chordTonePcs, clustersOf, confidenceFromEvidence, effectPast, makeObservation, mean,
   notApplicable, pc, prepare, rootPcOf, type BarGrid, type PartView, type SectionInfo, type ControlStatus,

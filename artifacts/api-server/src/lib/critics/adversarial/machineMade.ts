@@ -7,7 +7,7 @@
  * downbeat, and parts that never take a breath.
  */
 import type { MusicalNote } from "@workspace/db";
-import type { CriticDimensionReport, CriticInput, CriticObservation } from "../types.b05b";
+import type { CriticDimensionReport, CriticInput, CriticObservation } from "../types";
 import {
   barSpan, beatPosition, buildReport, cellCoverage, chordAt, clustersOf, confidenceFromEvidence, effectPast,
   makeObservation, mean, median, notApplicable, pc, prepare, rootPcOf, std, type BarGrid, type ControlStatus,

@@ -13,7 +13,7 @@
  */
 import type { MusicalNote, TrackModel } from "@workspace/db";
 import { exactBinomialCi } from "../../listeningSensitivity";
-import type { CriticInput } from "../types.b05b";
+import type { CriticInput } from "../types";
 import { ARBITRARINESS_DIMENSION } from "./arbitrariness";
 import { BOREDOM_DIMENSION } from "./boredom";
 import { CAUSALITY_DIMENSION } from "./causality";

@@ -417,6 +417,94 @@ const suites = {
         "reward-model-v0.test.mjs",
         ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
       ],
+      // Brain B-05a: note-level critic dimensions with positive controls, the
+      // audit's drums-only / random-pitch probes as fixtures, and the control
+      // harness whose detection table is the source of every controlStatus.
+      [
+        "src/lib/critics/dimensions/harmony.test.ts",
+        "critics-harmony.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/dimensions/voiceLeading.test.ts",
+        "critics-voice-leading.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/dimensions/melodyAndCounterline.test.ts",
+        "critics-melody-and-counterline.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/dimensions/motifRecurrenceAndDevelopment.test.ts",
+        "critics-motif-recurrence-and-development.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/dimensions/groove.test.ts",
+        "critics-groove.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/dimensions/rhythmicInteraction.test.ts",
+        "critics-rhythmic-interaction.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/dimensions/orchestration.test.ts",
+        "critics-orchestration.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/dimensions/idiomaticity.test.ts",
+        "critics-idiomaticity.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/dimensions/register.test.ts",
+        "critics-register.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/dimensions/density.test.ts",
+        "critics-density.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/dimensions/transitions.test.ts",
+        "critics-transitions.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/dimensions/repetitionVsVariation.test.ts",
+        "critics-repetition-vs-variation.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/dimensions/sectionDevelopment.test.ts",
+        "critics-section-development.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/dimensions/playability.test.ts",
+        "critics-playability.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/dimensions/performanceRealisation.test.ts",
+        "critics-performance-realisation.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/dimensions/emotionalArcAndTension.test.ts",
+        "critics-emotional-arc-and-tension.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
+      [
+        "src/lib/critics/controls.test.ts",
+        "critics-controls.test.mjs",
+        ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"],
+      ],
       // PR-72: listening benchmark V2 - positive controls, the side-MIDI writer
       // with its context-identity proof, the V2 listening renderer and its
       // objective check, the session composition + leak test, the sensitivity

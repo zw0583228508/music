@@ -13,7 +13,7 @@
 import type { ArrangementPlan, MusicalNote, TrackModel } from "@workspace/db";
 import { getInstrumentDefinition } from "../../musicEngines";
 import { buildBenchmarkSongModel, type BenchmarkCase } from "../../benchmarkCorpus";
-import type { CriticInput } from "../types.b05b";
+import type { CriticInput } from "../types";
 
 export const FIXTURE_SPEC: BenchmarkCase = {
   id: "b05b-clean-fixture", genre: "pop", inputType: "full_song", tempoBpm: 120, meter: "4/4", key: "C",

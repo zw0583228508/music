@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { CriticDimensionReport, CriticObservation, Severity } from "./types.b05b";
+import type { CriticDimensionReport, CriticObservation, Severity } from "./types";
 import { OPPOSITIONS, PRIORITY_RULES, RESOLUTION_RULES, judge, judgeContextFromInput, type JudgeContext } from "./judge";
 import { anchorFor } from "./adversarial/anchors";
 import { runAdversarialCritics } from "./adversarial/index";
@@ -161,6 +161,11 @@ test("coverage is reported per dimension and weighted by control status", () => 
 });
 
 test("on a real anchor: context comes from the plan and the vocal evidence, and the verdict on uncalibrated reports cannot block", () => {
+  // Recalibrated at the merge (B-01): orchestral-midi's keys used to be
+  // assigned LEAD with no part written, which gave this anchor a blocking
+  // `planned_family_silent` for free. B-01 gives the keys a part in every
+  // section, so the blocking finding is produced deliberately here by
+  // silencing the planned keys (`keysSilenced`) — the same defect, injected.
   const a = anchorFor("orchestral-midi");
   const ctx = judgeContextFromInput(a.input);
   assert.ok(ctx.sections.length >= 3);
@@ -168,12 +173,16 @@ test("on a real anchor: context comes from the plan and the vocal evidence, and 
   assert.ok(ctx.sections.every((s) => !s.isSung), "an instrumental anchor has no sung section");
   const pop = judgeContextFromInput(anchorFor("pop-full").input);
   assert.ok(pop.sections.some((s) => s.isSung), "a vocal anchor has sung sections");
-  const verdict = judge(runAdversarialCritics(a.input), ctx);
+  const keysSilenced = { ...a.input, trackModels: a.input.trackModels.filter((t) => t.instrument.toLowerCase() !== "keys") };
+  assert.ok(keysSilenced.trackModels.length < a.input.trackModels.length, "the anchor has a keys part to silence (B-01)");
+  const verdict = judge(runAdversarialCritics(keysSilenced), ctx);
   assert.equal(verdict.overall.releasable, true);
   assert.ok(verdict.ranked.some((r) => r.observation.kind === "planned_family_silent"));
   assert.ok(verdict.overall.reasons.some((r) => /could not block because their dimension is not gated/.test(r)));
   // With a measured ledger the same blocking finding blocks.
-  const gated = judge(runAdversarialCritics(a.input, { controlLedger: { "adversarial.arbitrariness": "gated" } }), ctx);
+  const gated = judge(runAdversarialCritics(keysSilenced, { controlLedger: { "adversarial.arbitrariness": "gated" } }), ctx);
   assert.equal(gated.overall.releasable, false);
   assert.ok(gated.blocking.every((b) => b.dimension === "adversarial.arbitrariness"));
+  // The intact anchor no longer carries that finding: B-01 fixed it.
+  assert.ok(!runAdversarialCritics(a.input).some((r) => r.observations.some((o) => o.kind === "planned_family_silent")), "since B-01 the keys are written in every planned section");
 });

@@ -6,7 +6,7 @@
  * in the vocal's register while the vocal is sounding.
  */
 import type { MusicalNote } from "@workspace/db";
-import type { CriticDimensionReport, CriticInput, CriticObservation } from "../types.b05b";
+import type { CriticDimensionReport, CriticInput, CriticObservation } from "../types";
 import {
   barAt, barSpan, buildReport, cellCoverage, confidenceFromEvidence, effectPast, makeObservation, mergeRuns, notApplicable,
   prepare, sungBars, type BarGrid, type PartView, type ControlStatus,
