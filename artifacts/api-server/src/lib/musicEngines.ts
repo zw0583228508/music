@@ -494,7 +494,9 @@ export function getInstrumentDefinition(instrument: string, role = ""): Instrume
       polyphonic: true,
       maxVoices: 3,
       articulations: ["legato", "sustain", "staccato", "trill", "flutter", "marcato"],
-      constraints: { maxLeap: 12, minNoteDuration: 0.1, maxSimultaneousNotes: 3, breathSeconds: 8 },
+      // A woodwind section leaps freely (the planner's climax layer spans two
+      // octaves); the first regeneration with a leap limit of 12 was refused whole.
+      constraints: { maxLeap: 24, minNoteDuration: 0.1, maxSimultaneousNotes: 3, breathSeconds: 8 },
       controls: { dynamics: [1], expression: [11], pitchBend: true, aftertouch: false },
       directiveMappings: directiveMappings("winds"),
     };

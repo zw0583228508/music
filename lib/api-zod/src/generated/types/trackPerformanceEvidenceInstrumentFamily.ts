@@ -13,6 +13,7 @@ export const TrackPerformanceEvidenceInstrumentFamily = {
   keys: 'keys',
   strings: 'strings',
   brass: 'brass',
+  winds: 'winds',
   drums: 'drums',
   guitar: 'guitar',
   voice: 'voice',

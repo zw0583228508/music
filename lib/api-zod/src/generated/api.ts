@@ -2191,7 +2191,7 @@ export const GetProjectResponse = zod.object({
 }),
   "instrumentDefinition": zod.object({
   "id": zod.string(),
-  "family": zod.enum(['keys', 'strings', 'brass', 'drums', 'guitar', 'voice', 'synth']),
+  "family": zod.enum(['keys', 'strings', 'brass', 'winds', 'drums', 'guitar', 'voice', 'synth']),
   "playableRange": zod.object({
   "min": zod.number(),
   "max": zod.number()
@@ -2241,7 +2241,7 @@ export const GetProjectResponse = zod.object({
   "instrument": zod.string(),
   "instrumentDefinition": zod.object({
   "id": zod.string(),
-  "family": zod.enum(['keys', 'strings', 'brass', 'drums', 'guitar', 'voice', 'synth']),
+  "family": zod.enum(['keys', 'strings', 'brass', 'winds', 'drums', 'guitar', 'voice', 'synth']),
   "playableRange": zod.object({
   "min": zod.number(),
   "max": zod.number()
@@ -2388,7 +2388,7 @@ export const GetProjectResponse = zod.object({
   "performanceEvidence": zod.object({
   "version": zod.enum(['1.0']),
   "seed": zod.number(),
-  "instrumentFamily": zod.enum(['keys', 'strings', 'brass', 'drums', 'guitar', 'voice', 'synth']),
+  "instrumentFamily": zod.enum(['keys', 'strings', 'brass', 'winds', 'drums', 'guitar', 'voice', 'synth']),
   "articulationProfile": zod.string(),
   "timingProfile": zod.string(),
   "dynamicsProfile": zod.string(),
@@ -12651,7 +12651,7 @@ zod.literal("event")]),
   "instrument": zod.string(),
   "instrumentDefinition": zod.object({
   "id": zod.string(),
-  "family": zod.enum(['keys', 'strings', 'brass', 'drums', 'guitar', 'voice', 'synth']),
+  "family": zod.enum(['keys', 'strings', 'brass', 'winds', 'drums', 'guitar', 'voice', 'synth']),
   "playableRange": zod.object({
   "min": zod.number(),
   "max": zod.number()
@@ -12798,7 +12798,7 @@ zod.literal("event")]),
   "performanceEvidence": zod.object({
   "version": zod.enum(['1.0']),
   "seed": zod.number(),
-  "instrumentFamily": zod.enum(['keys', 'strings', 'brass', 'drums', 'guitar', 'voice', 'synth']),
+  "instrumentFamily": zod.enum(['keys', 'strings', 'brass', 'winds', 'drums', 'guitar', 'voice', 'synth']),
   "articulationProfile": zod.string(),
   "timingProfile": zod.string(),
   "dynamicsProfile": zod.string(),
@@ -17206,7 +17206,7 @@ export const ListGenerationCandidatesResponseItem = zod.object({
   "instrument": zod.string(),
   "instrumentDefinition": zod.object({
   "id": zod.string(),
-  "family": zod.enum(['keys', 'strings', 'brass', 'drums', 'guitar', 'voice', 'synth']),
+  "family": zod.enum(['keys', 'strings', 'brass', 'winds', 'drums', 'guitar', 'voice', 'synth']),
   "playableRange": zod.object({
   "min": zod.number(),
   "max": zod.number()
@@ -17353,7 +17353,7 @@ export const ListGenerationCandidatesResponseItem = zod.object({
   "performanceEvidence": zod.object({
   "version": zod.enum(['1.0']),
   "seed": zod.number(),
-  "instrumentFamily": zod.enum(['keys', 'strings', 'brass', 'drums', 'guitar', 'voice', 'synth']),
+  "instrumentFamily": zod.enum(['keys', 'strings', 'brass', 'winds', 'drums', 'guitar', 'voice', 'synth']),
   "articulationProfile": zod.string(),
   "timingProfile": zod.string(),
   "dynamicsProfile": zod.string(),
@@ -20091,7 +20091,7 @@ export const ListTracksResponseItem = zod.object({
 }),
   "instrumentDefinition": zod.object({
   "id": zod.string(),
-  "family": zod.enum(['keys', 'strings', 'brass', 'drums', 'guitar', 'voice', 'synth']),
+  "family": zod.enum(['keys', 'strings', 'brass', 'winds', 'drums', 'guitar', 'voice', 'synth']),
   "playableRange": zod.object({
   "min": zod.number(),
   "max": zod.number()
@@ -20141,7 +20141,7 @@ export const ListTracksResponseItem = zod.object({
   "instrument": zod.string(),
   "instrumentDefinition": zod.object({
   "id": zod.string(),
-  "family": zod.enum(['keys', 'strings', 'brass', 'drums', 'guitar', 'voice', 'synth']),
+  "family": zod.enum(['keys', 'strings', 'brass', 'winds', 'drums', 'guitar', 'voice', 'synth']),
   "playableRange": zod.object({
   "min": zod.number(),
   "max": zod.number()
@@ -20288,7 +20288,7 @@ export const ListTracksResponseItem = zod.object({
   "performanceEvidence": zod.object({
   "version": zod.enum(['1.0']),
   "seed": zod.number(),
-  "instrumentFamily": zod.enum(['keys', 'strings', 'brass', 'drums', 'guitar', 'voice', 'synth']),
+  "instrumentFamily": zod.enum(['keys', 'strings', 'brass', 'winds', 'drums', 'guitar', 'voice', 'synth']),
   "articulationProfile": zod.string(),
   "timingProfile": zod.string(),
   "dynamicsProfile": zod.string(),

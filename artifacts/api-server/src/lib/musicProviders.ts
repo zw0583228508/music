@@ -2754,7 +2754,7 @@ function isCanonicalInstrumentDefinition(value: unknown): value is TrackModel["i
   const controls = value["controls"];
   if (
     typeof value["id"] !== "string" ||
-    !["keys", "strings", "brass", "drums", "guitar", "voice", "synth"].includes(String(family)) ||
+    !["keys", "strings", "brass", "winds", "drums", "guitar", "voice", "synth"].includes(String(family)) ||
     !isRecord(playable) ||
     !isRecord(comfortable) ||
     !integer(playable["min"], 0, 127) ||
