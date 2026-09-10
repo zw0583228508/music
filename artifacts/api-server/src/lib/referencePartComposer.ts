@@ -20,9 +20,8 @@ import type { MusicalNote } from "@workspace/db";
 import type { PartGenerationRequest } from "./partComposer";
 import type { ComposeFrame, PartWriter } from "./composer/frame";
 import { registerBounds } from "./composer/registers";
-import {
-  writeBassLine, writeBrassAccents, writeCounterMelody, writeKeysVoicing, writeStringBed,
-} from "./composer/harmonyParts";
+import { writeBassLine, writeBrassAccents, writeKeysVoicing, writeStringBed } from "./composer/harmonyParts";
+import { writeCounterMelody } from "./composer/melodyParts";
 import { writeDrumKit, writeOstinato, writePercussion } from "./composer/rhythmParts";
 import { writeIntroOrEnding, writeTransitionFigure } from "./composer/transitions";
 

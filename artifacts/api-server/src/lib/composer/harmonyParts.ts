@@ -3,8 +3,8 @@
  * voicing rules that will replace these).
  *
  * Moved verbatim from `referencePartComposer.ts`: chord-tone parsing, the bass
- * line, keys/guitar voicings, string/pad beds, brass accents and the
- * counter-melody answer figure. The known defects the diagnosis names — root-
+ * line, keys/guitar voicings, string/pad beds and brass accents (the
+ * counter-melody answer figure moved to `melodyParts.ts`, Brain B-10). The known defects the diagnosis names — root-
  * position close triads from the register centre, no common tones, the bass
  * root re-voiced per chord — are here, unchanged, pinned by the golden test.
  */
@@ -108,31 +108,5 @@ export function writeBrassAccents(frame: ComposeFrame): void {
     const tones = chordPitchClasses(chord);
     const pitch = voiceNear(tones[0], (lo + hi) / 2, lo, hi);
     push(barStart, beatSeconds * 1.2, pitch, baseVelocity + 10, `a${bar}`);
-  }
-}
-
-/** COUNTER_MELODY / CALL_RESPONSE: a four-note answer figure where the singer leaves room. */
-export function writeCounterMelody(frame: ComposeFrame): void {
-  const { request, chords, lo, hi, origin, barSeconds, beatSeconds, endSeconds, baseVelocity, push } = frame;
-  // Answer only where the singer leaves room.
-  const gaps = request.budgetWindows.filter((w) => w.vocalAttention < 0.3);
-  const windows = gaps.length
-    ? gaps
-    : [{ startBar: request.section.endBar, endBar: request.section.endBar, budgets: { melodic: 0.4 } }];
-  for (const [index, window] of windows.entries()) {
-    const gapStart = origin + (window.startBar - 1) * barSeconds;
-    const gapEnd = origin + window.endBar * barSeconds;
-    const chord = chords.find((c) => c.end > gapStart && c.start < gapEnd) ?? chords[0];
-    if (!chord) continue;
-    const tones = chordPitchClasses(chord);
-    const figure = [0, 1, 2, 1];
-    const span = Math.min(gapEnd, endSeconds) - gapStart;
-    if (span <= 0) continue;
-    const stepCount = Math.min(figure.length, Math.max(2, Math.round(span / (beatSeconds * 0.75))));
-    for (let s = 0; s < stepCount; s += 1) {
-      const pc = tones[figure[s % figure.length] % tones.length];
-      push(gapStart + s * beatSeconds * 0.75, beatSeconds * 0.6,
-        voiceNear(pc, hi - 8, lo, hi), baseVelocity - 4, `cm${index}-${s}`);
-    }
   }
 }
