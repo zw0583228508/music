@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
+import { arrangementTrackRows } from "./projectTracks";
 import { and, desc, eq, gt, gte, sql } from "drizzle-orm";
 import {
   arrangementsTable,
@@ -227,7 +228,7 @@ export async function runExportProductionJob(jobId: string): Promise<void> {
       .where(eq(musicProjectsTable.id, job.projectId)).limit(1);
     const [arrangement] = await db.select().from(arrangementsTable)
       .where(and(eq(arrangementsTable.id, input.arrangementId), eq(arrangementsTable.projectId, job.projectId))).limit(1);
-    const [tracks, songModels, artifacts] = await Promise.all([
+    const [projectTrackRows, songModels, artifacts] = await Promise.all([
       db.select().from(tracksTable).where(eq(tracksTable.projectId, job.projectId)),
       db.select().from(songModelsTable).where(eq(songModelsTable.projectId, job.projectId)).orderBy(desc(songModelsTable.version)),
       db.select().from(musicArtifactsTable).where(eq(musicArtifactsTable.projectId, job.projectId)),
@@ -235,6 +236,9 @@ export async function runExportProductionJob(jobId: string): Promise<void> {
     if (!project || !arrangement) {
       throw permanentExportFailure("Export project or arrangement is unavailable");
     }
+    // Rows retired by a later arrangement version (projectTracks.ts) are not
+    // this export's tracks; the render must match the TrackModels one-to-one.
+    const tracks = arrangementTrackRows(projectTrackRows, arrangement.trackModels);
     if (!input.approvedRevisionId) {
       throw permanentExportFailure("Export requires an approved mix/master revision");
     }

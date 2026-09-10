@@ -211,6 +211,7 @@ import {
 } from "../lib/export-pipeline";
 import { deriveMixPlan, mixPlanToControls } from "../lib/mixBrain";
 import { correctionFields, regridTimeline, sectionCountMayChange, verifiedConfidence, chordSheetToEvents } from "../lib/songModelCorrection";
+import { arrangementTrackRows } from "../lib/projectTracks";
 import { compareFingerprints, deriveStyleFingerprint } from "../lib/styleFingerprint";
 import { FEATURE_NAMES, recordPreferenceEvent, trainingRows, type PreferenceSubjectInput } from "../lib/preferenceEvents";
 import { DbPreferenceEventStore } from "../lib/preferenceEventsDbStore";
@@ -3527,7 +3528,7 @@ router.post("/projects/:projectId/mix-master-revisions", async (req, res): Promi
     res.status(400).json({ error: "Invalid mix/master revision request" });
     return;
   }
-  const [arrangementRows, projectRows, songModelRows, tracks, parentArtifacts] = await Promise.all([
+  const [arrangementRows, projectRows, songModelRows, projectTrackRows, parentArtifacts] = await Promise.all([
     db.select().from(arrangementsTable).where(and(eq(arrangementsTable.id, body.data.arrangementId), eq(arrangementsTable.projectId, params.data.projectId))).limit(1),
     db.select().from(musicProjectsTable).where(and(
       eq(musicProjectsTable.id, params.data.projectId),
@@ -3550,7 +3551,12 @@ router.post("/projects/:projectId/mix-master-revisions", async (req, res): Promi
     res.status(409).json({ error: "A persisted arrangement, Song Model, plan, style, and TrackModels are required to audition a revision" });
     return;
   }
-  const unknownTrack = Object.keys(body.data.tracks).find((id) => !tracks.some((track) => track.id === id));
+  // Only the rows this arrangement version carries are rendered; a retired
+  // row from an earlier version (see projectTracks.ts) needs no controls and
+  // must not reach the one-to-one TrackModel check.
+  const allProjectTracks = projectTrackRows;
+  const tracks = arrangementTrackRows(allProjectTracks, arrangement.trackModels);
+  const unknownTrack = Object.keys(body.data.tracks).find((id) => !allProjectTracks.some((track) => track.id === id));
   if (unknownTrack) {
     res.status(400).json({ error: `Mix controls reference unknown track ${unknownTrack}` });
     return;

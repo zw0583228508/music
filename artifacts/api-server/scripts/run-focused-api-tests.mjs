@@ -395,6 +395,8 @@ const suites = {
   validation: {
     bundles: [
       ["src/lib/songModelValidation.test.ts", "song-model-validation.test.mjs"],
+      // PR-98: project track rows retired by a later arrangement version are not rendered.
+      ["src/lib/projectTracks.test.ts", "project-tracks.test.mjs"],
       ["src/lib/canonicalTimeline.test.ts", "canonical-timeline.test.mjs"],
       [
         "src/lib/songModelCorrection.test.ts",

@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { retiredTrackIds } from "./projectTracks";
 import { createHash, randomInt, randomUUID } from "node:crypto";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -2559,9 +2560,13 @@ export async function selectGenerationCandidate(
             trackModel,
             provenance: trackModel.provenance,
             status: "rendered",
+            muted: false,
           }).where(eq(tracksTable.id, track.id))
-        : Promise.resolve();
+        // A row the new arrangement does not carry (v2 had drums, this one
+        // does not) is retired: muted, kept for the older versions' lineage.
+        : tx.update(tracksTable).set({ muted: true }).where(eq(tracksTable.id, track.id));
     }));
+    void retiredTrackIds;
     if (candidate.artifactId) {
       const serializedPlan = JSON.stringify(plan);
       const checksum = sha256(serializedPlan);
