@@ -1,0 +1,369 @@
+{
+  "version": "1.0",
+  "stream": "B-06",
+  "title": "Repair that reopens the decision that caused it",
+  "generatedFrom": "artifacts/api-server/src/lib/brainB06Repair.test.ts + src/lib/__fixtures__/b06DefectCorpus.ts",
+  "method": {
+    "plan": "critic observations (B-05a dimensions + B-05b adversarial) grouped by scope; the origin layer is the critics' weighted vote, refined where the plan can confirm it, then the failure taxonomy's owning layers; each group becomes one bounded operation on that layer's plan objects (repairPlanner.ts)",
+    "execute": "the operation edits the named layer's plan object and every layer below it is re-derived (arc -> section plan -> budget -> transitions -> part plan); only the tasks in scope are recomposed and spliced over the candidate's notes (repairExecutor.ts)",
+    "accept": "the pass is kept only if every targeted observation is gone, the judge's burden and blocking count did not rise, no note outside the pass's windows changed (notesOutsideScopePreserved) and no planned family was silenced; otherwise it is reverted and recorded as tried/rejected with the reason (criticRepairLoop.ts runBacktrackingRepairLoop)",
+    "noOp": "a pass that changed neither the plan nor the notes is rejected before it spends a pass and can never be reported as a repair (R-1a P1-4)",
+    "passes": "default 3, at most 5; the queue is deeper than the budget and is dealt round-robin over operation shape so the budget covers distinct problems"
+  },
+  "corpus": {
+    "defects": 8,
+    "repaired": 1,
+    "attributedToTheLayerThatCausedIt": 4,
+    "planSeededAttributedCorrectly": "4/4",
+    "gate": "the DAG asks for >= 80 % repaired at the originating layer; the measured number is reported instead, with the reason per defect",
+    "rows": [
+      {
+        "id": "arrival_thinner_than_setup",
+        "description": "the chorus is planned as a bed under a verse planned full: the arrival is thinner than its own setup",
+        "song": "pop-full",
+        "seeding": "plan",
+        "r1b": "P0-4 (the first chorus is thinner and quieter than the verse before it)",
+        "negativeControl": null,
+        "expectedLayer": "arc",
+        "layersNamed": [
+          "arc"
+        ],
+        "layerCorrect": true,
+        "present": 2,
+        "resolved": 2,
+        "fixed": true,
+        "outsideScopePreserved": true,
+        "judgeWorse": false,
+        "burdenBefore": 1031.2888,
+        "burdenAfter": 998.9866,
+        "acceptedPasses": 1,
+        "rejectedPasses": 4,
+        "noOpPasses": 0,
+        "layersReopened": [
+          "arc"
+        ],
+        "reasons": [
+          "groove.groove.add_fill: 1 of 1 targeted observation(s) persist after the pass",
+          "register.register.shift_section_band: 2 of 2 targeted observation(s) persist after the pass",
+          "form.form.add_transition_device: 1 of 1 targeted observation(s) persist after the pass",
+          "register.register.shift_section_band: 2 of 2 targeted observation(s) persist after the pass",
+          "deferred: the only layer named for this group is the composer, and these notes were just composed from this plan: recomposing the part would write the same notes. Nothing is attempted, because nothing would change"
+        ]
+      },
+      {
+        "id": "climax_planned_thin",
+        "description": "the section the arc calls the climax is marked mp and planned as a bed while a verse is marked f: the repeat then differs from its first statement by dynamics alone",
+        "song": "pop-full",
+        "seeding": "plan",
+        "r1b": "the DAG's \"early climax\" seeded defect",
+        "negativeControl": null,
+        "expectedLayer": "form",
+        "layersNamed": [
+          "form"
+        ],
+        "layerCorrect": true,
+        "present": 1,
+        "resolved": 0,
+        "fixed": false,
+        "outsideScopePreserved": true,
+        "judgeWorse": false,
+        "burdenBefore": 1089.9458,
+        "burdenAfter": 1089.9458,
+        "acceptedPasses": 0,
+        "rejectedPasses": 6,
+        "noOpPasses": 1,
+        "layersReopened": [],
+        "reasons": [
+          "register.register.shift_section_band: 2 of 2 targeted observation(s) persist after the pass",
+          "groove.groove.add_fill: 1 of 1 targeted observation(s) persist after the pass",
+          "form.form.add_transition_device: 1 of 1 targeted observation(s) persist after the pass",
+          "harmony.harmony.resolve_voicings: the operation changed neither the plan nor the notes (a deterministic recompose from an unchanged plan writes the same part)",
+          "groove.groove.change_comping_subdivision: 1 of 1 targeted observation(s) persist after the pass",
+          "form.form.change_development_operator: 1 of 1 targeted observation(s) persist after the pass"
+        ]
+      },
+      {
+        "id": "tutti_everywhere",
+        "description": "every section planned tutti: the ensemble never changes, so the arrival has nowhere to go",
+        "song": "pop-full",
+        "seeding": "plan",
+        "r1b": null,
+        "negativeControl": null,
+        "expectedLayer": "arc",
+        "layersNamed": [
+          "arc"
+        ],
+        "layerCorrect": true,
+        "present": 1,
+        "resolved": 0,
+        "fixed": false,
+        "outsideScopePreserved": true,
+        "judgeWorse": false,
+        "burdenBefore": 965.9972,
+        "burdenAfter": 965.9972,
+        "acceptedPasses": 0,
+        "rejectedPasses": 5,
+        "noOpPasses": 0,
+        "layersReopened": [],
+        "reasons": [
+          "groove.groove.add_fill: 1 of 1 targeted observation(s) persist after the pass",
+          "register.register.shift_section_band: 2 of 2 targeted observation(s) persist after the pass",
+          "form.form.add_transition_device: 1 of 1 targeted observation(s) persist after the pass",
+          "form.form.change_development_operator: 1 of 1 targeted observation(s) persist after the pass",
+          "arc.arc.set_texture_level: 1 of 1 targeted observation(s) persist after the pass"
+        ]
+      },
+      {
+        "id": "repeat_no_development",
+        "description": "the second chorus is planned exactly as the first: a repeat with nothing developed",
+        "song": "pop-full",
+        "seeding": "plan",
+        "r1b": null,
+        "negativeControl": null,
+        "expectedLayer": "form",
+        "layersNamed": [
+          "form",
+          "register"
+        ],
+        "layerCorrect": true,
+        "present": 5,
+        "resolved": 1,
+        "fixed": false,
+        "outsideScopePreserved": true,
+        "judgeWorse": false,
+        "burdenBefore": 1063.4058,
+        "burdenAfter": 920.3058,
+        "acceptedPasses": 1,
+        "rejectedPasses": 6,
+        "noOpPasses": 3,
+        "layersReopened": [
+          "form"
+        ],
+        "reasons": [
+          "register.register.shift_section_band: 2 of 2 targeted observation(s) persist after the pass",
+          "groove.groove.add_fill: 1 of 1 targeted observation(s) persist after the pass",
+          "form.form.add_transition_device: 1 of 1 targeted observation(s) persist after the pass",
+          "groove.groove.add_fill: no part task lies in the operation's scope",
+          "form.form.add_transition_device: no part task lies in the operation's scope",
+          "groove.groove.change_comping_subdivision: the pass silenced drums in Verse 2, which the plan it wrote still plans there"
+        ]
+      },
+      {
+        "id": "bed_single_voice",
+        "description": "the sustained bed arrives at the repair stage as one line: every chord reduced to its top voice",
+        "song": "pop-full",
+        "seeding": "notes",
+        "r1b": "P0-1 (the string bed ships as a single voice)",
+        "negativeControl": null,
+        "expectedLayer": "compose",
+        "layersNamed": [
+          "arc"
+        ],
+        "layerCorrect": false,
+        "present": 2,
+        "resolved": 0,
+        "fixed": false,
+        "outsideScopePreserved": true,
+        "judgeWorse": false,
+        "burdenBefore": 685.1152,
+        "burdenAfter": 556.9032,
+        "acceptedPasses": 1,
+        "rejectedPasses": 8,
+        "noOpPasses": 5,
+        "layersReopened": [
+          "form"
+        ],
+        "reasons": [
+          "groove.groove.add_fill: 1 of 1 targeted observation(s) persist after the pass",
+          "form.form.add_transition_device: 1 of 1 targeted observation(s) persist after the pass",
+          "groove.groove.add_fill: no part task lies in the operation's scope",
+          "form.form.add_transition_device: no part task lies in the operation's scope",
+          "groove.groove.change_comping_subdivision: the pass silenced drums in Verse 2, which the plan it wrote still plans there",
+          "form.form.change_development_operator: 1 of 1 targeted observation(s) persist after the pass",
+          "arc.arc.set_texture_level: the pass silenced drums in Outro, Verse 2, which the plan it wrote still plans there",
+          "arc.arc.set_texture_level: the pass silenced drums in Verse 2, which the plan it wrote still plans there"
+        ]
+      },
+      {
+        "id": "owner_bed_single_voice",
+        "description": "the owner's song with its harmony bed collapsed to one line, as the perform -> playability cascade delivers it today",
+        "song": "rachem-na",
+        "seeding": "notes",
+        "r1b": "P0-1 on the owner's song",
+        "negativeControl": null,
+        "expectedLayer": "compose",
+        "layersNamed": [
+          "groove"
+        ],
+        "layerCorrect": false,
+        "present": 4,
+        "resolved": 0,
+        "fixed": false,
+        "outsideScopePreserved": true,
+        "judgeWorse": false,
+        "burdenBefore": 4108.792,
+        "burdenAfter": 4108.792,
+        "acceptedPasses": 0,
+        "rejectedPasses": 9,
+        "noOpPasses": 4,
+        "layersReopened": [],
+        "reasons": [
+          "groove.groove.recompose_rhythm_section: the operation changed neither the plan nor the notes (a deterministic recompose from an unchanged plan writes the same part)",
+          "groove.groove.change_comping_subdivision: the pass silenced drums in Verse 2, which the plan it wrote still plans there",
+          "form.form.add_transition_device: 1 of 1 targeted observation(s) persist after the pass",
+          "arc.arc.set_texture_level: 1 of 1 targeted observation(s) persist after the pass",
+          "groove.groove.add_fill: 1 of 1 targeted observation(s) persist after the pass",
+          "form.form.change_development_operator: 1 of 1 targeted observation(s) persist after the pass",
+          "groove.groove.recompose_rhythm_section: the operation changed neither the plan nor the notes (a deterministic recompose from an unchanged plan writes the same part)",
+          "harmony.harmony.resolve_voicings: the operation changed neither the plan nor the notes (a deterministic recompose from an unchanged plan writes the same part)",
+          "groove.groove.change_comping_subdivision: 1 of 1 targeted observation(s) persist after the pass",
+          "deferred: beyond the planned queue (20 operations for a budget of 5 passes); would have been groove.change_comping_subdivision on Chorus 2",
+          "deferred: beyond the planned queue (20 operations for a budget of 5 passes); would have been groove.recompose_rhythm_section on Verse 3"
+        ]
+      },
+      {
+        "id": "bed_two_octaves_up",
+        "description": "the bed arrives two octaves above the band the plan gave it: out of its planned band, out of its comfortable range, on top of the singer",
+        "song": "pop-full",
+        "seeding": "notes",
+        "r1b": "P0-1 (the climax is all treble: strings at MIDI 89-92)",
+        "negativeControl": null,
+        "expectedLayer": "compose",
+        "layersNamed": [],
+        "layerCorrect": false,
+        "present": 7,
+        "resolved": 0,
+        "fixed": false,
+        "outsideScopePreserved": true,
+        "judgeWorse": false,
+        "burdenBefore": 1286.1732,
+        "burdenAfter": 1195.5852,
+        "acceptedPasses": 1,
+        "rejectedPasses": 7,
+        "noOpPasses": 3,
+        "layersReopened": [
+          "form"
+        ],
+        "reasons": [
+          "groove.groove.add_fill: 1 of 1 targeted observation(s) persist after the pass",
+          "form.form.add_transition_device: 1 of 1 targeted observation(s) persist after the pass",
+          "harmony.harmony.resolve_voicings: the operation changed neither the plan nor the notes (a deterministic recompose from an unchanged plan writes the same part)",
+          "groove.groove.change_comping_subdivision: 1 of 2 targeted observation(s) persist after the pass",
+          "groove.groove.add_fill: no part task lies in the operation's scope",
+          "form.form.add_transition_device: no part task lies in the operation's scope",
+          "arc.arc.set_texture_level: the verdict worsened: the judge's burden rose 1195.5852 -> 1286.1732 (19/30 -> 21/29 major/minor)",
+          "deferred: the only layer named for this group is the composer, and these notes were just composed from this plan: recomposing the part would write the same notes. Nothing is attempted, because nothing would change",
+          "deferred: the only layer named for this group is the composer, and these notes were just composed from this plan: recomposing the part would write the same notes. Nothing is attempted, because nothing would change",
+          "deferred: the only layer named for this group is the composer, and these notes were just composed from this plan: recomposing the part would write the same notes. Nothing is attempted, because nothing would change",
+          "deferred: the only layer named for this group is the composer, and these notes were just composed from this plan: recomposing the part would write the same notes. Nothing is attempted, because nothing would change",
+          "deferred: the only layer named for this group is the composer, and these notes were just composed from this plan: recomposing the part would write the same notes. Nothing is attempted, because nothing would change",
+          "deferred: the only layer named for this group is the composer, and these notes were just composed from this plan: recomposing the part would write the same notes. Nothing is attempted, because nothing would change"
+        ]
+      },
+      {
+        "id": "off_grid_harmony",
+        "description": "every harmony onset displaced 130 ms from the grid the kit plays on",
+        "song": "pop-full",
+        "seeding": "notes",
+        "r1b": "P0-2 (the harmony parts are off the beat; the kit is on it)",
+        "negativeControl": "no critic on this path emits an `off_grid` observation for it: the groove dimension measures the harmony onsets against the chord grid those writers already follow, so displacing both leaves nothing to see. A stage that is never told about a defect cannot repair it, and must not claim to.",
+        "expectedLayer": "compose",
+        "layersNamed": [],
+        "layerCorrect": false,
+        "present": 0,
+        "resolved": 0,
+        "fixed": false,
+        "outsideScopePreserved": true,
+        "judgeWorse": false,
+        "burdenBefore": 753.4258,
+        "burdenAfter": 672.5258,
+        "acceptedPasses": 1,
+        "rejectedPasses": 6,
+        "noOpPasses": 2,
+        "layersReopened": [
+          "form"
+        ],
+        "reasons": [
+          "groove.groove.add_fill: 1 of 1 targeted observation(s) persist after the pass",
+          "register.register.shift_section_band: 2 of 2 targeted observation(s) persist after the pass",
+          "form.form.add_transition_device: 1 of 1 targeted observation(s) persist after the pass",
+          "groove.groove.add_fill: no part task lies in the operation's scope",
+          "form.form.add_transition_device: no part task lies in the operation's scope",
+          "arc.arc.set_texture_level: the verdict worsened: the judge's burden rose 672.5258 -> 753.4258 (14/18 -> 16/17 major/minor)"
+        ]
+      }
+    ]
+  },
+  "r1bDefects": [
+    {
+      "finding": "single-voice bed",
+      "defect": "bed_single_voice",
+      "layerNamed": [
+        "arc"
+      ],
+      "fixed": false,
+      "why": [
+        "groove.groove.add_fill: 1 of 1 targeted observation(s) persist after the pass",
+        "form.form.add_transition_device: 1 of 1 targeted observation(s) persist after the pass"
+      ]
+    },
+    {
+      "finding": "off-grid harmony",
+      "defect": "off_grid_harmony",
+      "layerNamed": [],
+      "fixed": false,
+      "why": [
+        "groove.groove.add_fill: 1 of 1 targeted observation(s) persist after the pass",
+        "register.register.shift_section_band: 2 of 2 targeted observation(s) persist after the pass"
+      ]
+    },
+    {
+      "finding": "arrival thinner than setup",
+      "defect": "arrival_thinner_than_setup",
+      "layerNamed": [
+        "arc"
+      ],
+      "fixed": true,
+      "why": [
+        "groove.groove.add_fill: 1 of 1 targeted observation(s) persist after the pass",
+        "register.register.shift_section_band: 2 of 2 targeted observation(s) persist after the pass"
+      ]
+    },
+    {
+      "finding": "climax all treble",
+      "defect": "bed_two_octaves_up",
+      "layerNamed": [],
+      "fixed": false,
+      "why": [
+        "groove.groove.add_fill: 1 of 1 targeted observation(s) persist after the pass",
+        "form.form.add_transition_device: 1 of 1 targeted observation(s) persist after the pass"
+      ]
+    },
+    {
+      "finding": "unrealised transitions",
+      "defect": "owner_bed_single_voice",
+      "layerNamed": [
+        "groove"
+      ],
+      "fixed": false,
+      "why": [
+        "groove.groove.recompose_rhythm_section: the operation changed neither the plan nor the notes (a deterministic recompose from an unchanged plan writes the same part)",
+        "groove.groove.change_comping_subdivision: the pass silenced drums in Verse 2, which the plan it wrote still plans there"
+      ]
+    }
+  ],
+  "seedings": {
+    "plan": [
+      "arrival_thinner_than_setup",
+      "climax_planned_thin",
+      "tutti_everywhere",
+      "repeat_no_development"
+    ],
+    "notes": [
+      "bed_single_voice",
+      "owner_bed_single_voice",
+      "bed_two_octaves_up",
+      "off_grid_harmony"
+    ]
+  }
+}

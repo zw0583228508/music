@@ -82,6 +82,7 @@ import {
   applyBoundedRepair,
   boundedRepairSourceSeed,
   audioFindingToRepairFinding,
+  classifyRepairFinding,
   MAX_REPAIR_ATTEMPTS,
   repairTimeBounds,
   validateServerAuthoredRepairFinding,
@@ -2121,6 +2122,11 @@ export async function queueCandidateRepair(
   // A bounded repair is another evaluation of the persisted candidate, not a
   // new stochastic branch. Its seed remains source-owned end to end.
   const seed = boundedRepairSourceSeed(candidate.seed);
+  // B-06 (D3): the finding travels to the provider with its failure code and
+  // origin layer, so the brain's repair stage can reopen the layer that caused
+  // it inside the finding's scope. The idempotency key is still the finding as
+  // the critic authored it, so a re-queued repair of the same finding dedupes.
+  const classifiedFinding = classifyRepairFinding(normalizedFinding);
   return queueArrangementGeneration(candidate.arrangementId, {
     candidates: 1,
     provider: candidate.provider as MusicProviderId,
@@ -2137,7 +2143,7 @@ export async function queueCandidateRepair(
         : candidate.evaluation.musicCritic!.score,
       seed,
       maxAttempts: MAX_REPAIR_ATTEMPTS,
-      finding: normalizedFinding,
+      finding: classifiedFinding,
       plan: candidate.evaluatedPlan,
       trackModels: candidate.trackModels,
     },

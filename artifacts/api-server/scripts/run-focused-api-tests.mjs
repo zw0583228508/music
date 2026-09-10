@@ -828,6 +828,11 @@ const suites = {
       ["src/lib/brainB01RachemNa.test.ts", "brain-b01-rachem-na.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
     ],
   },
+  "brain-b06": {
+    bundles: [
+      ["src/lib/brainB06Repair.test.ts", "brain-b06-repair.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],
+    ],
+  },
   "brain-b11": {
     bundles: [
       ["src/lib/arrangementOrchestrator.b11.test.ts", "arrangement-orchestrator.b11.test.mjs", ["--alias:@workspace/db=./src/lib/musicProviders.testDbStub.ts"]],

@@ -4,6 +4,7 @@ import type {
   CandidateRepairSnapshot,
   CriticRepairFinding,
   CandidateAudioCriticFinding,
+  FailureClassification,
   TrackModel,
   ArrangementHierarchyScope,
 } from "@workspace/db";
@@ -776,4 +777,96 @@ export function applyBoundedRepair(input: {
   ));
   const changedScopes = changedHierarchyScopes(originalHierarchy, plan.hierarchy);
   return { plan, trackModels, outsideScopePreserved, changedScopes };
+}
+
+// ===========================================================================
+// Brain B-06: scope preservation for the orchestrator's backtracking passes
+// ===========================================================================
+
+/** Where a repair pass may change notes: the instruments it recomposed and the sections' time windows (seconds, [start, end)). */
+export type RepairNoteScope = {
+  instruments: ReadonlySet<string>;
+  windows: ReadonlyArray<{ start: number; end: number }>;
+};
+
+export function noteOnsetInWindows(start: number, windows: ReadonlyArray<{ start: number; end: number }>): boolean {
+  return windows.some((w) => start >= w.start - 1e-6 && start < w.end - 1e-6);
+}
+
+/**
+ * The same byte-equality discipline `applyBoundedRepair` verifies for a
+ * producer's repair, applied to a repair pass inside the orchestrator: every
+ * track whose instrument the pass did not recompose is identical, and a
+ * recomposed track is identical outside the pass's windows (notes by onset;
+ * cc / articulations / automation by time). A track that appears must be one
+ * of the pass's instruments. Returns every violation it found, never only the
+ * first, so a rejected pass says exactly what leaked.
+ */
+export function notesOutsideScopePreserved(
+  before: readonly TrackModel[],
+  after: readonly TrackModel[],
+  scope: RepairNoteScope,
+): { preserved: boolean; violations: string[] } {
+  const violations: string[] = [];
+  const outside = (start: number) => !noteOnsetInWindows(start, scope.windows);
+  const same = (a: unknown, b: unknown) => isDeepStrictEqual(a, b);
+  for (const base of before) {
+    const repaired = after.find((t) => t.id === base.id) ?? after.find((t) => t.instrument === base.instrument);
+    if (!scope.instruments.has(base.instrument)) {
+      if (!repaired) violations.push(`${base.id}: track missing after a pass that did not include ${base.instrument}`);
+      else if (!same(base.notes, repaired.notes) || !same(base.cc, repaired.cc) || !same(base.articulations, repaired.articulations) || !same(base.automation, repaired.automation)) {
+        violations.push(`${base.id}: material changed on an instrument outside the pass's scope`);
+      }
+      continue;
+    }
+    if (!repaired) continue; // the pass may remove a part entirely inside its scope (a family that left the section)
+    if (!same(base.notes.filter((n) => outside(n.start)), repaired.notes.filter((n) => outside(n.start)))) {
+      violations.push(`${base.id}: notes outside the pass's windows changed`);
+    }
+    if (!same(base.cc.filter((e) => outside(e.time)), repaired.cc.filter((e) => outside(e.time)))) violations.push(`${base.id}: cc outside the pass's windows changed`);
+    if (!same(base.articulations.filter((e) => outside(e.time)), repaired.articulations.filter((e) => outside(e.time)))) violations.push(`${base.id}: articulations outside the pass's windows changed`);
+    if (!same(base.automation.filter((e) => outside(e.time)), repaired.automation.filter((e) => outside(e.time)))) violations.push(`${base.id}: automation outside the pass's windows changed`);
+  }
+  for (const added of after) {
+    if (before.some((t) => t.id === added.id || t.instrument === added.instrument)) continue;
+    if (!scope.instruments.has(added.instrument)) violations.push(`${added.id}: a track appeared for ${added.instrument}, which the pass did not include`);
+    else if (added.notes.some((n) => outside(n.start))) violations.push(`${added.id}: a new track has notes outside the pass's windows`);
+  }
+  return { preserved: violations.length === 0, violations };
+}
+
+/**
+ * The runner's music critic authors repair findings with ids of the form
+ * `music-critic-v2:<dimension>:<section>:<bars>:<tracks>`; the dimension is
+ * the only vocabulary they carry. This stamps the failure code and the origin
+ * layer the repair planner needs (B-06 D3), so the provider can hand the
+ * orchestrator a finding that names its layer. A dimension nobody mapped is
+ * `INPUT_UNKNOWN / unknown` — the planner then plans from the critic
+ * observations inside the scope, never from a guessed cause. Idempotent.
+ */
+export const REPAIR_FINDING_DIMENSION_CLASSIFICATION: Readonly<Record<string, FailureClassification>> = Object.freeze({
+  harmony: { failureCode: "HARMONY_FAILURE", originLayer: "harmony" },
+  voiceLeading: { failureCode: "VOICE_LEADING_FAILURE", originLayer: "harmony" },
+  grooveCoordination: { failureCode: "GROOVE_FAILURE", originLayer: "groove" },
+  vocalInteraction: { failureCode: "VOCAL_SPACE_FAILURE", originLayer: "register" },
+  vocalFit: { failureCode: "VOCAL_SPACE_FAILURE", originLayer: "register" },
+  roleDuplication: { failureCode: "ORCHESTRATION_FAILURE", originLayer: "orchestration" },
+  orchestralBalance: { failureCode: "MASKING_FAILURE", originLayer: "register" },
+  motifContinuityAndDevelopment: { failureCode: "MOTIF_FAILURE", originLayer: "compose" },
+  countermelodyShape: { failureCode: "MOTIF_FAILURE", originLayer: "compose" },
+  phraseIntent: { failureCode: "CAUSALITY_FAILURE", originLayer: "compose" },
+  dramaticTrajectory: { failureCode: "ENERGY_ARC_FAILURE", originLayer: "arc" },
+});
+
+export function classifyRepairFinding(finding: CriticRepairFinding): CriticRepairFinding {
+  if (finding.failureCode && finding.originLayer) return finding;
+  const parts = finding.id.split(":");
+  const dimension = parts[0] === "music-critic-v2" ? parts[1] : null;
+  const classification = (dimension && REPAIR_FINDING_DIMENSION_CLASSIFICATION[dimension]) || { failureCode: "INPUT_UNKNOWN" as const, originLayer: "unknown" as const };
+  return {
+    ...finding,
+    ...(dimension ? { kind: finding.kind ?? `music_critic_${dimension}` } : {}),
+    failureCode: classification.failureCode,
+    originLayer: classification.originLayer,
+  };
 }
