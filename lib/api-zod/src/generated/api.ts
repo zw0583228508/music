@@ -1332,7 +1332,7 @@ export const GetProjectResponse = zod.object({
   "parameters": zod.record(zod.string(), zod.unknown()),
   "parentArtifactIds": zod.array(zod.string()),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({
@@ -8039,7 +8039,7 @@ export const ListArrangementsResponseItem = zod.object({
   "parameters": zod.record(zod.string(), zod.unknown()),
   "parentArtifactIds": zod.array(zod.string()),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({
@@ -9564,7 +9564,7 @@ export const CreateArrangementResponse = zod.object({
   "parameters": zod.record(zod.string(), zod.unknown()),
   "parentArtifactIds": zod.array(zod.string()),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({
@@ -11377,7 +11377,7 @@ export const GetArrangementResponse = zod.object({
   "parameters": zod.record(zod.string(), zod.unknown()),
   "parentArtifactIds": zod.array(zod.string()),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({
@@ -13645,7 +13645,7 @@ export const UpdateArrangementResponse = zod.object({
   "parameters": zod.record(zod.string(), zod.unknown()),
   "parentArtifactIds": zod.array(zod.string()),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({
@@ -15291,7 +15291,7 @@ export const RestoreArrangementRevisionResponse = zod.object({
   "parameters": zod.record(zod.string(), zod.unknown()),
   "parentArtifactIds": zod.array(zod.string()),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({
@@ -17630,7 +17630,7 @@ export const ListGenerationCandidatesResponseItem = zod.object({
 })).max(listGenerationCandidatesResponseHarmonyDecisionsItemBassSupportEvidenceMax).optional()
 })),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({
@@ -19147,7 +19147,7 @@ export const SelectGenerationCandidateResponse = zod.object({
   "parameters": zod.record(zod.string(), zod.unknown()),
   "parentArtifactIds": zod.array(zod.string()),
   "evaluation": zod.object({
-  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated']),
+  "status": zod.enum(['plan_received', 'rendering', 'render_succeeded', 'analyzing', 'evaluated', 'render_failed', 'analysis_failed', 'diversity_rejected', 'repair_not_improved', 'repair_scope_violated', 'provider_hard_rule_refused']),
   "providerScore": zod.number(),
   "renderArtifactIds": zod.array(zod.string()),
   "artifacts": zod.array(zod.object({

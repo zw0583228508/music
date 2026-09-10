@@ -20,4 +20,5 @@ export const CandidateEvaluationStatus = {
   diversity_rejected: 'diversity_rejected',
   repair_not_improved: 'repair_not_improved',
   repair_scope_violated: 'repair_scope_violated',
+  provider_hard_rule_refused: 'provider_hard_rule_refused',
 } as const;

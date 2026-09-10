@@ -2059,7 +2059,9 @@ export type CandidateEvaluationStatus =
   | "analysis_failed"
   | "diversity_rejected"
   | "repair_not_improved"
-  | "repair_scope_violated";
+  | "repair_scope_violated"
+  /** R-1a P0-1: the provider ran its own hard-rule gate and refused this candidate; the runner never validates it. */
+  | "provider_hard_rule_refused";
 export type CandidatePlan = {
   sections: ArrangementSection[];
   tracks?: Array<{
