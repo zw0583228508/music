@@ -115,6 +115,40 @@ binaries by taking the first exported plugin. Plugins that need a GUI to
 activate (MT Power Drum Kit) crash pedalboard's headless host and are listed
 under `failed` rather than offered.
 
+## Playable range on `/health` (Arrangement Brain B-03)
+
+On the owner's first real song the API's sound-selection brain chose the cello
+ensemble (sampled C2-F5, MIDI 36-77) for a string part written at MIDI 79-91;
+the render was silence and was only rejected after the fact. Every asset now
+publishes what it can sound, so the API refuses such a choice *before* a render:
+
+| field | meaning | where it comes from |
+|---|---|---|
+| `keyRange` | lowest/highest key any region sounds, inclusive MIDI | the SFZ regions (`sfz_range.py`); `[0,127]` for a synth; `--key-range lo,hi` to declare |
+| `sampledRange` | keys backed by their own samples (`pitch_keycenter` span); outside it sfizz stretches a neighbour | the SFZ regions |
+| `mappedKeys` | kits only: the exact keys with a sample | the SFZ regions (keys with gaps = a kit) |
+| `velocityLayers` | distinct `lovel`/`hivel` pairs | the SFZ regions |
+| `articulations` | what the asset offers (`sustain`, `pizzicato`, ...) | `--articulations` |
+| `keyRangeSource` | `sfz-regions`, `synth: ...` or `operator-declared` | |
+
+`make_manifest.py` writes them for every new asset. An existing manifest gets
+them in place, without loading a plugin, with `python annotate_manifest.py`
+(`--force` re-reads declared ranges; `--known-table` also rewrites
+`known_asset_ranges.json`). Until a manifest is annotated the worker still
+publishes ranges for the libraries it knows: `known_asset_ranges.json` holds
+the ranges of the ten open SFZ libraries read from their files, keyed by the
+SFZ file's SHA-256, and `host.asset_public_fields` consults it by
+`sfzSha256` at `/health` time. A sample library the worker does not know
+publishes no range and the API scores it below one that declares a fitting
+range; it never invents one.
+
+The parser (`sfz_range.py`, tested in `tests/test_sfz_range.py`) expands
+`#define` macros, resolves `#include` relative to the root file (the
+DrumGizmo port includes two files per line), inherits `<global>` / `<master>`
+/ `<group>` opcodes into regions, treats `key=` as lokey/hikey/keycenter, and
+ignores regions with no key opcode (release and pedal-noise layers) and
+`*silence` regions.
+
 ## Smoke contract (`smoke.py`)
 
 Gates: a real TrackModel renders at the exact frame count, audibly, without

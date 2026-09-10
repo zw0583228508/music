@@ -6319,6 +6319,137 @@ any of it.
   checks judge kick/snare/hat placement only and 3/4 passes a non-waltz cell;
   golden digests describe output, not quality; no production module was
   changed and nothing was fixed; nobody has listened.
+### PR-B03 — Brain B-03: instruments as instruments
+
+- **Status:** committed on `ws-brain-b03`, PR open, not merged. Stream B-03 of
+  the Arrangement & Orchestration Brain (`docs/brain/02-diagnosis-and-dag.md`
+  §4). Evidence `docs/evidence/brain-b03-instrument-profiles.json`.
+- **What was wrong (diagnosis §0 fact 4, §1 P1, review §5/§6/§11 w7+w9):**
+  the arranger knew seven instruments by substring and everything else —
+  `WOODWINDS`, `ensemble`, `mix`, a viola, a flute — was a ten-voice piano
+  with a 21–108 range, silently; the register "plan" counted families per
+  band and no composer read it (the owner's strings landed at MIDI 79–91 over
+  a piano at 61–77); the sound-selection brain did not know an asset's
+  playable range (a cello ensemble sampled 36–77 was chosen for that part,
+  rendered silence, was rejected after the fact); silence was never a
+  decision.
+- **D1 `instrumentProfile.ts` (new) + types in `music-studio.ts`.** 32
+  profiles (piano, electric piano, organ, harp; violin/viola/cello sections
+  and solos, double-bass section, string section with four desks; electric /
+  acoustic / synth bass; drum kit, hand percussion; horn, trumpet, trombone,
+  tuba, brass section; flute, oboe, clarinet, bassoon, woodwind section;
+  synth pad, synth lead; acoustic / electric guitar; choir, solo voice).
+  Each carries absolute + comfortable range, registers with character, a
+  register per role, polyphony / hands / divisi, leap, min duration, breath,
+  bow, transposition, role suitability, idiomatic gestures per role (piano
+  block chords / LH root-fifth + RH voicing / arpeggio / broken octaves;
+  strings sustained pad / arco line / pizz ostinato / tremolo / divisi;
+  brass stab / pad / fanfare; bass root-fifth / walking / pedal …), blend,
+  density tolerance, doubling, register flexibility, aliases — **every value
+  with a `source`**: GM ranges / polyphony / leaps / breath are *reused* from
+  `instrumentReference.ts` (calibrated on 30,570 human windows; the test
+  checks they are the table's values), register character and section
+  practice are labelled `orchestration-reference`, kept pre-B-03 numbers are
+  labelled `platform-convention`. `getInstrumentDefinition` is now an
+  adapter over the profiles: same output contract (ids `piano/bass/strings/
+  cello/drums/brass/guitar/synth_pad` kept as the sfizz map's routing
+  contract; legacy `low/middle/high` registers kept for the legacy engine),
+  plus `profile: { id, status, matchedBy, note }`. `mix`, `ensemble`,
+  `strings` are *labelled* aliases (`mix` → piano with the F5 note,
+  `ensemble` → string section, `strings` → the violin desk because one track
+  renders through one asset). An unknown name returns the explicit UNKNOWN
+  definition (`family: "unknown"`, full MIDI range because nothing is known,
+  `profile.status: "unknown"`) which routes to no native renderer — never a
+  piano. Family union gains `winds` and `unknown` (+ two rows in
+  `PERFORMANCE_CAPABILITIES`).
+- **D2 `orchestrationBudget.ts` v1.1 — the register plan.** Occupancy on
+  **pitch bands over time** (low < C3, low_mid C3–B3, mid, upper_mid, high ≥
+  C6) per window: each role assignment gets its profile's role register,
+  voicing kind (close / open / line / unpitched) and voices; independent
+  close voicings that sit on top of each other (a fourth of overlap between
+  sustained beds or against the singer; centres within a fifth for comping)
+  are resolved foundation-first by trim → octave shift → tacet, the bass's
+  octave is closed to close voicings, low-mid accumulation (> 4 voices or two
+  close voicings in C3–B3) raises the most flexible colour voicing; each
+  entry records `bounds`, `desks`, `registerShift`, `action`, `reason`.
+  `instrumentAdjustments[].registerShift` and `registerOccupancy` are derived
+  from it (PR-06 fields kept; every overcrowded band has a resolution).
+  Exported pure `deriveRegisterPlan` and **`registerBoundsFor({ profile, role,
+  window, plan, instrument })`** for the composer (B-02). **On the owner's
+  stored plan (export v6):** verse 1 / chorus 2 / outro string bed → violins
+  **68–79** (trimmed above the piano's 48–67), violas 55–72, cellos 43/48–64,
+  bass 28–55; bridge counter-line 62–86; chorus 3 climax 67–91; strings below
+  MIDI 80 in every verse; piano and violins never share a close band (gate
+  checked in `registerPlan.test.ts`, positive controls for collision,
+  low-mid, vocal band, second bass, unknown instrument).
+- **D3 range-aware sound selection.** Worker: `sfz_range.py` reads
+  `keyRange` / `sampledRange` / `mappedKeys` / `velocityLayers` from an SFZ
+  (defines, root-relative includes, header inheritance); `make_manifest.py`
+  writes them (`--key-range`, `--articulations`), `annotate_manifest.py`
+  fills an existing manifest, `known_asset_ranges.json` holds the ten open
+  libraries' ranges read from the files on this machine, keyed by
+  `sfzSha256`, and `/health` publishes them (synths: 0–127 by convention; an
+  unknown library gets no invented range). API: `toSoundCatalogue` carries
+  them; `assessKeyRangeFit` + `scoreCatalogueEntry` reject an asset whose
+  range does not cover the notes *with the reason*, prefer a fitting sampled
+  range, allow but out-score an undeclared one; an operator rule naming an
+  asset that cannot sound the part is **refused**, not rendered silent.
+  **The five v6 stems, before → after:** bass Meatbass arco → same;
+  percussion DRSKit → same (GM 54 is a mapped key — the left crash's tip);
+  piano Salamander → same; **strings 79–91: brain-before = cello ensemble
+  (the v4 failure reproduced), brain-after = every sustained string asset
+  rejected (violins are sampled 55–86, cellos 36–77) and the harp chosen as
+  the only strings asset that sounds it; the owner's v6 rule (strings →
+  violin ensemble) is refused for that part with the reason**; the same bed
+  where the register plan puts it (68–79) → violin ensemble. ensemble →
+  Salamander (v6 family kept).
+- **D4 `shouldRest`** (pure, tested, not wired): brass tacet in an intimate
+  verse, percussion rests in a quiet intro/outro, pad rests for a solo entry,
+  climax layer only at an arrival, family entry plan, texture level, counter-
+  melody yields to a quiet vocal, breakdown thins, unsuited role — each with
+  a named convention, a confidence and a positive control; the brief's
+  `requested` overrides a suggestion.
+- **Tests / gates.** New: `instrumentProfile.test.ts` (6),
+  `registerPlan.test.ts` (6), 5 range tests in `soundSelectionBrain.test.ts`,
+  worker `tests/test_sfz_range.py` (5); registered in the focused runner
+  (`instrumentProfile`, `registerPlan`, `orchestrationBudget`,
+  `soundSelectionBrain`). Regression: 28 suites re-run green (music-engines
+  40, playabilityRepair 6, musicalConstraints 11, performanceEngine 20,
+  arrangementOrchestrator 13, nativeRendererRouting 10, judgeCalibration 14,
+  candidateQuality 21 …); worker 37/37; `pnpm run typecheck` green. Two
+  pinned tests were rewritten to derive fixtures from the definition
+  (`playabilityRepair.test.ts`: strings leap 10 → GM 24, four voices → the
+  section's; `musicalConstraints.test.ts`: "brass" meant a trumpet,
+  "violin" meant "violins").
+- **Capability ladder.** Instrument profiles: IMPLEMENTED + INTEGRATED (range
+  / polyphony / leap / controls, through the adapter) + TESTED; gestures,
+  suitability, blend, density tolerance have no production reader yet.
+  Unknown-never-a-piano: INTEGRATED + TESTED. Register plan: IMPLEMENTED +
+  TESTED, **INTEGRATED-pending** (`deriveOrchestrationBudget` carries it on
+  the production path; no composer calls `registerBoundsFor`). Range-aware
+  selection: INTEGRATED + TESTED on the API path; the live worker publishes
+  ranges only after a restart. Silence as a decision: IMPLEMENTED + TESTED,
+  wiring is B-01/B-02. Nothing BENCHMARKED or VALIDATED ON OUTPUT.
+- **Honest limits.** The owner's strings would still be written at 79–91
+  today: `referencePartComposer.registerBounds` does not read the plan
+  (integration point for B-02; B-00 is splitting that file). The plan's
+  numbers come from the owner's *stored* section plan; a brief-less
+  re-derivation from the Song Model keeps only bass + drums (F4), so the
+  fixture alone cannot reproduce the bed. The stored plan still has `keys`
+  as LEAD everywhere and `mix` as a family (F5, B-01). Vocal-band protection
+  is exercised only synthetically (the owner's vocal map is
+  `not_available`). Collision thresholds are conventions checked on one
+  song and four synthetic layouts, calibrated on no corpus. Profile
+  conventions were written by this stream and reviewed by nobody
+  independent. A single `strings` track cannot realise the cellos the plan
+  proposes (one track per desk is B-02). The sfizz cloud route carries
+  `keyRange` on its map but nothing checks it (integration point:
+  `exportEngine` / `nativeRendererRouting`). `partComposer.safeDefinition` /
+  `musicalConstraints.safeDefinition` still hold `{0,127}` / `"keys"`
+  fallbacks for a throw that no longer happens; they should read
+  `definition.profile.status` (B-00). A mapped kit key is not the right
+  sound (GM 54 = tambourine hit a crash). No audio was rendered or listened
+  to in this PR.
 
 ## Wave Q — World-Class Musical Intelligence (the plan of record)
 

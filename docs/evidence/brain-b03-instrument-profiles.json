@@ -1,0 +1,5088 @@
+{
+  "stream": "B-03 — instrument profiles, register plan, range-aware sound selection, silence as a decision",
+  "generatedAt": "2026-09-10T00:00:00.000Z",
+  "sources": {
+    "songModel": "artifacts/api-server/src/lib/__fixtures__/rachem-na-song-model-v3.b03.json (owner's song, Song Model v3)",
+    "sectionPlan": "artifacts/api-server/src/lib/__fixtures__/rachem-na-section-plan-v7.b03.json (the plan the owner's export v6 was composed from)",
+    "workerHealth": "GET /health of the local PEDALBOARD_VST3 worker (:8022) captured 2026-09-10 — 12 attested assets, no ranges published yet",
+    "knownRanges": "services/vst3-render-worker/known_asset_ranges.json — read from the SFZ files on this machine (C:/MusicLibraries) by sfz_range.py, matched to the health payload by sfzSha256"
+  },
+  "d1_profiles": {
+    "count": 32,
+    "table": [
+      {
+        "id": "piano",
+        "name": "Piano",
+        "family": "keys",
+        "definitionId": "piano",
+        "gmProgram": 0,
+        "section": false,
+        "absolute": [
+          21,
+          108
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[0] (piano) range.std — instrumentReference.ts",
+        "comfortable": [
+          36,
+          96
+        ],
+        "comfortableSource": "platform-convention: pre-B-03 platform definition (musicEngines.ts): comfortable 36–96",
+        "maxVoices": 10,
+        "leapStd": 24,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "LEAD",
+          "FOUNDATION",
+          "RHYTHMIC_HARMONY",
+          "HARMONIC_BED",
+          "OSTINATO",
+          "COUNTER_MELODY",
+          "CALL_RESPONSE",
+          "ACCENT",
+          "TRANSITION",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "block_chords",
+          "lh_root_fifth_rh_voicing",
+          "arpeggio",
+          "broken_octaves",
+          "comping_stabs",
+          "single_line",
+          "pedal_point",
+          "bass_octaves",
+          "tremolo_octaves"
+        ],
+        "aliases": [
+          "piano",
+          "keys",
+          "keyboard",
+          "grand",
+          "grand piano",
+          "acoustic piano",
+          "upright piano",
+          "pno"
+        ]
+      },
+      {
+        "id": "electric_piano",
+        "name": "Electric piano",
+        "family": "keys",
+        "definitionId": "electric_piano",
+        "gmProgram": 4,
+        "section": false,
+        "absolute": [
+          21,
+          108
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[4] (piano) range.std — instrumentReference.ts",
+        "comfortable": [
+          40,
+          88
+        ],
+        "comfortableSource": "platform-convention: platform convention; a 73-key Rhodes spans E1–E7 (28–100)",
+        "maxVoices": 10,
+        "leapStd": 24,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "RHYTHMIC_HARMONY",
+          "HARMONIC_BED",
+          "OSTINATO",
+          "COUNTER_MELODY",
+          "PAD"
+        ],
+        "gestures": [
+          "block_chords",
+          "comping_stabs",
+          "arpeggio",
+          "single_line"
+        ],
+        "aliases": [
+          "electric piano",
+          "e piano",
+          "ep",
+          "rhodes",
+          "wurlitzer",
+          "wurli",
+          "fender rhodes"
+        ]
+      },
+      {
+        "id": "organ",
+        "name": "Organ",
+        "family": "keys",
+        "definitionId": "organ",
+        "gmProgram": 16,
+        "section": false,
+        "absolute": [
+          24,
+          108
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[16] (organ) range.std — instrumentReference.ts",
+        "comfortable": [
+          36,
+          96
+        ],
+        "comfortableSource": "platform-convention: platform convention (manuals; pedals reach 24)",
+        "maxVoices": 12,
+        "leapStd": 24,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "FOUNDATION",
+          "RHYTHMIC_HARMONY",
+          "HARMONIC_BED",
+          "PAD",
+          "TRANSITION",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "sustained_chords",
+          "swell",
+          "pedal_bass",
+          "comping_stabs"
+        ],
+        "aliases": [
+          "organ",
+          "hammond",
+          "b3",
+          "church organ",
+          "pipe organ"
+        ]
+      },
+      {
+        "id": "harp",
+        "name": "Harp",
+        "family": "strings",
+        "definitionId": "harp",
+        "gmProgram": 46,
+        "section": false,
+        "absolute": [
+          24,
+          103
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[46] (harp) range.std — instrumentReference.ts",
+        "comfortable": [
+          36,
+          91
+        ],
+        "comfortableSource": "orchestration-reference: Adler: the extremes are weak; the middle two and a half octaves sing",
+        "maxVoices": 8,
+        "leapStd": 24,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "HARMONIC_BED",
+          "OSTINATO",
+          "ACCENT",
+          "FILL",
+          "TRANSITION"
+        ],
+        "gestures": [
+          "arpeggio",
+          "glissando",
+          "bisbigliando",
+          "plucked_bass",
+          "harmonics"
+        ],
+        "aliases": [
+          "harp",
+          "concert harp",
+          "celtic harp"
+        ]
+      },
+      {
+        "id": "violin_section",
+        "name": "Violin section",
+        "family": "strings",
+        "definitionId": "strings",
+        "gmProgram": 40,
+        "section": true,
+        "absolute": [
+          55,
+          103
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[40] (violin) range.std — instrumentReference.ts",
+        "comfortable": [
+          60,
+          86
+        ],
+        "comfortableSource": "orchestration-reference: Adler: section writing sits comfortably up to about D6; above it the section thins (the VSCO2 violin ensemble is sampled 55–86 — a library fact, kept on the asset)",
+        "maxVoices": 4,
+        "leapStd": 24,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "LEAD",
+          "HARMONIC_BED",
+          "OSTINATO",
+          "COUNTER_MELODY",
+          "CALL_RESPONSE",
+          "PAD",
+          "TRANSITION",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "sustained_pad",
+          "arco_line",
+          "pizzicato_ostinato",
+          "tremolo",
+          "divisi_chord",
+          "string_run",
+          "unison_line"
+        ],
+        "aliases": [
+          "violins",
+          "1st violins",
+          "2nd violins",
+          "violin i",
+          "violin ii",
+          "vln",
+          "violin section",
+          "violin ensemble"
+        ]
+      },
+      {
+        "id": "violin_solo",
+        "name": "Solo violin",
+        "family": "strings",
+        "definitionId": "violin",
+        "gmProgram": 40,
+        "section": false,
+        "absolute": [
+          55,
+          103
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[40] (violin) range.std — instrumentReference.ts",
+        "comfortable": [
+          55,
+          96
+        ],
+        "comfortableSource": "orchestration-reference: a soloist uses the whole fingerboard; above C7 only for effect",
+        "maxVoices": 2,
+        "leapStd": 24,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "LEAD",
+          "COUNTER_MELODY",
+          "CALL_RESPONSE"
+        ],
+        "gestures": [
+          "arco_line",
+          "double_stops",
+          "pizzicato_line",
+          "tremolo",
+          "harmonics"
+        ],
+        "aliases": [
+          "violin",
+          "solo violin",
+          "violin solo",
+          "fiddle"
+        ]
+      },
+      {
+        "id": "viola_section",
+        "name": "Viola section",
+        "family": "strings",
+        "definitionId": "viola",
+        "gmProgram": 41,
+        "section": true,
+        "absolute": [
+          48,
+          91
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[41] (viola) range.std — instrumentReference.ts",
+        "comfortable": [
+          53,
+          79
+        ],
+        "comfortableSource": "orchestration-reference: the inner voice of the section; strained above E5",
+        "maxVoices": 3,
+        "leapStd": 24,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "HARMONIC_BED",
+          "OSTINATO",
+          "COUNTER_MELODY",
+          "PAD",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "sustained_pad",
+          "arco_line",
+          "pizzicato_ostinato",
+          "tremolo"
+        ],
+        "aliases": [
+          "violas",
+          "viola",
+          "vla",
+          "viola section"
+        ]
+      },
+      {
+        "id": "cello_section",
+        "name": "Cello section",
+        "family": "strings",
+        "definitionId": "cello",
+        "gmProgram": 42,
+        "section": true,
+        "absolute": [
+          36,
+          84
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[42] (cello) range.std — instrumentReference.ts",
+        "comfortable": [
+          43,
+          74
+        ],
+        "comfortableSource": "platform-convention: pre-B-03 platform definition: comfortable 43–74",
+        "maxVoices": 3,
+        "leapStd": 24,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "LEAD",
+          "FOUNDATION",
+          "HARMONIC_BED",
+          "OSTINATO",
+          "COUNTER_MELODY",
+          "CALL_RESPONSE",
+          "PAD",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "sustained_pad",
+          "arco_line",
+          "pizzicato_ostinato",
+          "tremolo",
+          "bass_doubling"
+        ],
+        "aliases": [
+          "cellos",
+          "celli",
+          "vc",
+          "cello section",
+          "cello ensemble"
+        ]
+      },
+      {
+        "id": "cello_solo",
+        "name": "Solo cello",
+        "family": "strings",
+        "definitionId": "cello",
+        "gmProgram": 42,
+        "section": false,
+        "absolute": [
+          36,
+          84
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[42] (cello) range.std — instrumentReference.ts",
+        "comfortable": [
+          43,
+          79
+        ],
+        "comfortableSource": "orchestration-reference: a soloist uses the whole fingerboard",
+        "maxVoices": 2,
+        "leapStd": 24,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "LEAD",
+          "COUNTER_MELODY",
+          "CALL_RESPONSE"
+        ],
+        "gestures": [
+          "arco_line",
+          "double_stops",
+          "pizzicato_line"
+        ],
+        "aliases": [
+          "cello",
+          "violoncello",
+          "solo cello",
+          "cello solo"
+        ]
+      },
+      {
+        "id": "double_bass_section",
+        "name": "Double bass section",
+        "family": "strings",
+        "definitionId": "bass",
+        "gmProgram": 43,
+        "section": true,
+        "absolute": [
+          28,
+          67
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[43] (contrabass) range.std — instrumentReference.ts",
+        "comfortable": [
+          28,
+          55
+        ],
+        "comfortableSource": "orchestration-reference: orchestral basses live in the bottom two octaves",
+        "maxVoices": 2,
+        "leapStd": 24,
+        "breathSeconds": null,
+        "transposition": -12,
+        "roles": [
+          "FOUNDATION",
+          "BASS",
+          "OSTINATO"
+        ],
+        "gestures": [
+          "pizzicato_walk",
+          "arco_pedal",
+          "root_fifth",
+          "octave_doubling_of_cellos"
+        ],
+        "aliases": [
+          "double bass",
+          "double basses",
+          "contrabass",
+          "contrabasses",
+          "basses",
+          "orchestral bass"
+        ]
+      },
+      {
+        "id": "string_section",
+        "name": "String section",
+        "family": "strings",
+        "definitionId": "strings",
+        "gmProgram": 48,
+        "section": true,
+        "absolute": [
+          28,
+          103
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[48] (string section) range.std — instrumentReference.ts",
+        "comfortable": [
+          48,
+          86
+        ],
+        "comfortableSource": "orchestration-reference: four desks: cellos from C3 to violins about D6",
+        "maxVoices": 8,
+        "leapStd": 24,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "LEAD",
+          "FOUNDATION",
+          "HARMONIC_BED",
+          "OSTINATO",
+          "COUNTER_MELODY",
+          "CALL_RESPONSE",
+          "PAD",
+          "TRANSITION",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "sustained_pad",
+          "arco_line",
+          "pizzicato_ostinato",
+          "tremolo",
+          "string_run",
+          "divisi_chord",
+          "unison_line",
+          "swell"
+        ],
+        "aliases": [
+          "string section",
+          "string ensemble",
+          "orchestra strings",
+          "str",
+          "string orchestra",
+          "full strings"
+        ]
+      },
+      {
+        "id": "electric_bass",
+        "name": "Electric bass",
+        "family": "strings",
+        "definitionId": "bass",
+        "gmProgram": 33,
+        "section": false,
+        "absolute": [
+          28,
+          67
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[33] (bass guitar) range.std — instrumentReference.ts",
+        "comfortable": [
+          28,
+          57
+        ],
+        "comfortableSource": "orchestration-reference: four strings E1–G2 open; practical up to A3 (a 5-string adds B0 = 23, the GM ext floor)",
+        "maxVoices": 1,
+        "leapStd": 12,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "FOUNDATION",
+          "BASS",
+          "OSTINATO"
+        ],
+        "gestures": [
+          "root_fifth",
+          "walking",
+          "pedal",
+          "syncopated_riff",
+          "octave_pop",
+          "slide_fill"
+        ],
+        "aliases": [
+          "bass",
+          "bass guitar",
+          "electric bass",
+          "e bass",
+          "fingered bass",
+          "picked bass",
+          "p bass",
+          "j bass",
+          "fretless bass"
+        ]
+      },
+      {
+        "id": "acoustic_bass",
+        "name": "Acoustic (upright) bass",
+        "family": "strings",
+        "definitionId": "bass",
+        "gmProgram": 32,
+        "section": false,
+        "absolute": [
+          28,
+          67
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[32] (acoustic bass) range.std — instrumentReference.ts",
+        "comfortable": [
+          28,
+          55
+        ],
+        "comfortableSource": "orchestration-reference: pizzicato upright: the bottom two octaves",
+        "maxVoices": 1,
+        "leapStd": 12,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "FOUNDATION",
+          "BASS",
+          "OSTINATO"
+        ],
+        "gestures": [
+          "walking",
+          "two_feel",
+          "root_fifth",
+          "arco_pedal"
+        ],
+        "aliases": [
+          "acoustic bass",
+          "upright bass",
+          "upright",
+          "string bass",
+          "standup bass"
+        ]
+      },
+      {
+        "id": "synth_bass",
+        "name": "Synth bass",
+        "family": "synth",
+        "definitionId": "bass",
+        "gmProgram": 38,
+        "section": false,
+        "absolute": [
+          24,
+          72
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[38] (synth bass) range.std — instrumentReference.ts",
+        "comfortable": [
+          24,
+          55
+        ],
+        "comfortableSource": "orchestration-reference: sub and fundamental; above C3 it becomes a lead",
+        "maxVoices": 2,
+        "leapStd": 24,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "FOUNDATION",
+          "BASS",
+          "OSTINATO"
+        ],
+        "gestures": [
+          "root_pulse",
+          "octave_bounce",
+          "arp_16ths",
+          "sub_pedal",
+          "filter_riff"
+        ],
+        "aliases": [
+          "synth bass",
+          "sub bass",
+          "sub",
+          "808",
+          "808 bass",
+          "moog bass",
+          "bass synth",
+          "reese"
+        ]
+      },
+      {
+        "id": "drum_kit",
+        "name": "Drum kit",
+        "family": "drums",
+        "definitionId": "drums",
+        "gmProgram": 128,
+        "section": false,
+        "absolute": [
+          35,
+          81
+        ],
+        "absoluteSource": "gm-percussion-key-map: GM percussion key map: B0 acoustic bass drum … A4 open triangle",
+        "comfortable": [
+          36,
+          59
+        ],
+        "comfortableSource": "platform-convention: pre-B-03 platform definition: kick … ride bell / crash 2",
+        "maxVoices": 4,
+        "leapStd": 46,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "GROOVE",
+          "ACCENT",
+          "FILL",
+          "TRANSITION",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "backbeat",
+          "four_on_the_floor",
+          "half_time",
+          "ride_pattern",
+          "hat_only",
+          "kick_only",
+          "fill",
+          "crash_on_one",
+          "cymbal_swell",
+          "brushes"
+        ],
+        "aliases": [
+          "drums",
+          "drum",
+          "drum kit",
+          "drumkit",
+          "kit",
+          "drumset",
+          "drum set",
+          "acoustic drums",
+          "electronic drums",
+          "beat"
+        ]
+      },
+      {
+        "id": "hand_percussion",
+        "name": "Hand percussion",
+        "family": "drums",
+        "definitionId": "percussion",
+        "gmProgram": null,
+        "section": false,
+        "absolute": [
+          54,
+          82
+        ],
+        "absoluteSource": "gm-percussion-key-map: GM percussion key map: 54 tambourine … 82 shaker (a specific kit maps differently: see the asset's mappedKeys)",
+        "comfortable": [
+          54,
+          82
+        ],
+        "comfortableSource": "gm-percussion-key-map: the GM latin/hand percussion keys",
+        "maxVoices": 2,
+        "leapStd": 28,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "GROOVE",
+          "OSTINATO",
+          "ACCENT",
+          "FILL"
+        ],
+        "gestures": [
+          "shaker_8ths",
+          "tambourine_backbeat",
+          "conga_tumbao",
+          "clave",
+          "triangle_accent",
+          "perc_fill"
+        ],
+        "aliases": [
+          "percussion",
+          "perc",
+          "hand percussion",
+          "shaker",
+          "tambourine",
+          "conga",
+          "congas",
+          "bongo",
+          "bongos",
+          "darbuka",
+          "cajon",
+          "claps",
+          "clap",
+          "triangle",
+          "cowbell",
+          "djembe"
+        ]
+      },
+      {
+        "id": "french_horn",
+        "name": "French horn",
+        "family": "brass",
+        "definitionId": "horn",
+        "gmProgram": 60,
+        "section": false,
+        "absolute": [
+          41,
+          77
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[60] (french horn) range.std — instrumentReference.ts",
+        "comfortable": [
+          48,
+          72
+        ],
+        "comfortableSource": "orchestration-reference: Adler: the middle octave and a half is where the horn sings and blends",
+        "maxVoices": 1,
+        "leapStd": 12,
+        "breathSeconds": 12,
+        "transposition": -7,
+        "roles": [
+          "LEAD",
+          "HARMONIC_BED",
+          "COUNTER_MELODY",
+          "CALL_RESPONSE",
+          "ACCENT",
+          "PAD",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "sustained_pad",
+          "stab",
+          "fanfare_call",
+          "counter_line",
+          "rip",
+          "stopped_note"
+        ],
+        "aliases": [
+          "french horn",
+          "horn",
+          "horn in f",
+          "corno"
+        ]
+      },
+      {
+        "id": "trumpet",
+        "name": "Trumpet",
+        "family": "brass",
+        "definitionId": "trumpet",
+        "gmProgram": 56,
+        "section": false,
+        "absolute": [
+          52,
+          84
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[56] (trumpet) range.std — instrumentReference.ts",
+        "comfortable": [
+          55,
+          79
+        ],
+        "comfortableSource": "orchestration-reference: clear from G3 to G5; above that a specialist's register",
+        "maxVoices": 1,
+        "leapStd": 12,
+        "breathSeconds": 12,
+        "transposition": -2,
+        "roles": [
+          "LEAD",
+          "COUNTER_MELODY",
+          "CALL_RESPONSE",
+          "ACCENT",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "stab",
+          "fanfare",
+          "lead_line",
+          "fall",
+          "muted_pad"
+        ],
+        "aliases": [
+          "trumpet",
+          "trumpets",
+          "tpt",
+          "flugelhorn",
+          "cornet"
+        ]
+      },
+      {
+        "id": "trombone",
+        "name": "Trombone",
+        "family": "brass",
+        "definitionId": "trombone",
+        "gmProgram": 57,
+        "section": false,
+        "absolute": [
+          40,
+          74
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[57] (trombone) range.std — instrumentReference.ts",
+        "comfortable": [
+          45,
+          70
+        ],
+        "comfortableSource": "orchestration-reference: A2 to B♭4; pedal tones and the high register are special",
+        "maxVoices": 1,
+        "leapStd": 12,
+        "breathSeconds": 12,
+        "transposition": null,
+        "roles": [
+          "FOUNDATION",
+          "HARMONIC_BED",
+          "ACCENT",
+          "PAD",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "sustained_pad",
+          "stab",
+          "glissando",
+          "bass_line_doubling"
+        ],
+        "aliases": [
+          "trombone",
+          "trombones",
+          "tbn",
+          "bass trombone"
+        ]
+      },
+      {
+        "id": "tuba",
+        "name": "Tuba",
+        "family": "brass",
+        "definitionId": "tuba",
+        "gmProgram": 58,
+        "section": false,
+        "absolute": [
+          26,
+          65
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[58] (tuba) range.std — instrumentReference.ts",
+        "comfortable": [
+          29,
+          57
+        ],
+        "comfortableSource": "orchestration-reference: F1 to A3",
+        "maxVoices": 1,
+        "leapStd": 12,
+        "breathSeconds": 10,
+        "transposition": null,
+        "roles": [
+          "FOUNDATION",
+          "BASS"
+        ],
+        "gestures": [
+          "sustained_pedal",
+          "oompah",
+          "bass_line"
+        ],
+        "aliases": [
+          "tuba",
+          "sousaphone"
+        ]
+      },
+      {
+        "id": "brass_section",
+        "name": "Brass section",
+        "family": "brass",
+        "definitionId": "brass",
+        "gmProgram": 61,
+        "section": true,
+        "absolute": [
+          28,
+          84
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[61] (brass section) range.std — instrumentReference.ts",
+        "comfortable": [
+          43,
+          79
+        ],
+        "comfortableSource": "orchestration-reference: trombones / horns / trumpets stacked",
+        "maxVoices": 8,
+        "leapStd": 24,
+        "breathSeconds": 12,
+        "transposition": null,
+        "roles": [
+          "HARMONIC_BED",
+          "CALL_RESPONSE",
+          "ACCENT",
+          "PAD",
+          "TRANSITION",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "stab",
+          "sustained_pad",
+          "fanfare",
+          "push",
+          "swell",
+          "unison_riff"
+        ],
+        "aliases": [
+          "brass",
+          "brass section",
+          "horns",
+          "horn section"
+        ]
+      },
+      {
+        "id": "flute",
+        "name": "Flute",
+        "family": "winds",
+        "definitionId": "flute",
+        "gmProgram": 73,
+        "section": false,
+        "absolute": [
+          60,
+          96
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[73] (flute (and alto/bass flute)) range.std — instrumentReference.ts",
+        "comfortable": [
+          62,
+          91
+        ],
+        "comfortableSource": "orchestration-reference: D4 to G6",
+        "maxVoices": 1,
+        "leapStd": 19,
+        "breathSeconds": 10,
+        "transposition": null,
+        "roles": [
+          "LEAD",
+          "COUNTER_MELODY",
+          "CALL_RESPONSE",
+          "TRANSITION",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "lead_line",
+          "answer_phrase",
+          "trill",
+          "run",
+          "octave_doubling_of_violins"
+        ],
+        "aliases": [
+          "flute",
+          "flutes",
+          "fl",
+          "alto flute",
+          "c flute"
+        ]
+      },
+      {
+        "id": "oboe",
+        "name": "Oboe",
+        "family": "winds",
+        "definitionId": "oboe",
+        "gmProgram": 68,
+        "section": false,
+        "absolute": [
+          58,
+          91
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[68] (oboe (and oboe d'amore, bass oboe)) range.std — instrumentReference.ts",
+        "comfortable": [
+          60,
+          84
+        ],
+        "comfortableSource": "orchestration-reference: C4 to C6",
+        "maxVoices": 1,
+        "leapStd": 19,
+        "breathSeconds": 12,
+        "transposition": null,
+        "roles": [
+          "LEAD",
+          "COUNTER_MELODY",
+          "CALL_RESPONSE"
+        ],
+        "gestures": [
+          "lead_line",
+          "answer_phrase",
+          "grace_ornament"
+        ],
+        "aliases": [
+          "oboe",
+          "oboes",
+          "ob"
+        ]
+      },
+      {
+        "id": "clarinet",
+        "name": "Clarinet",
+        "family": "winds",
+        "definitionId": "clarinet",
+        "gmProgram": 71,
+        "section": false,
+        "absolute": [
+          50,
+          94
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[71] (clarinet (and bass clarinet)) range.std — instrumentReference.ts",
+        "comfortable": [
+          52,
+          86
+        ],
+        "comfortableSource": "orchestration-reference: chalumeau to the upper clarion",
+        "maxVoices": 1,
+        "leapStd": 19,
+        "breathSeconds": 12,
+        "transposition": -2,
+        "roles": [
+          "LEAD",
+          "COUNTER_MELODY",
+          "CALL_RESPONSE"
+        ],
+        "gestures": [
+          "lead_line",
+          "answer_phrase",
+          "chalumeau_pad",
+          "arpeggio_run"
+        ],
+        "aliases": [
+          "clarinet",
+          "clarinets",
+          "cl",
+          "bass clarinet"
+        ]
+      },
+      {
+        "id": "bassoon",
+        "name": "Bassoon",
+        "family": "winds",
+        "definitionId": "bassoon",
+        "gmProgram": 70,
+        "section": false,
+        "absolute": [
+          34,
+          75
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[70] (bassoon (and contrabassoon)) range.std — instrumentReference.ts",
+        "comfortable": [
+          38,
+          67
+        ],
+        "comfortableSource": "orchestration-reference: D2 to G4",
+        "maxVoices": 1,
+        "leapStd": 19,
+        "breathSeconds": 12,
+        "transposition": null,
+        "roles": [
+          "FOUNDATION",
+          "COUNTER_MELODY"
+        ],
+        "gestures": [
+          "bass_line_doubling",
+          "tenor_line",
+          "staccato_ostinato",
+          "sustained_inner_voice"
+        ],
+        "aliases": [
+          "bassoon",
+          "bassoons",
+          "bsn",
+          "contrabassoon"
+        ]
+      },
+      {
+        "id": "woodwind_section",
+        "name": "Woodwind section",
+        "family": "winds",
+        "definitionId": "woodwinds",
+        "gmProgram": null,
+        "section": true,
+        "absolute": [
+          34,
+          96
+        ],
+        "absoluteSource": "gm-reference-table: union of GM_REFERENCE[70] bassoon std 34–75 … [73] flute std 60–96",
+        "comfortable": [
+          55,
+          84
+        ],
+        "comfortableSource": "orchestration-reference: the choir's core: clarinets/oboes with flutes on top",
+        "maxVoices": 4,
+        "leapStd": 19,
+        "breathSeconds": 12,
+        "transposition": null,
+        "roles": [
+          "LEAD",
+          "HARMONIC_BED",
+          "COUNTER_MELODY",
+          "CALL_RESPONSE",
+          "ACCENT",
+          "PAD",
+          "TRANSITION",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "chorale_pad",
+          "answer_phrase",
+          "interlocking_ostinato",
+          "run",
+          "unison_line"
+        ],
+        "aliases": [
+          "winds",
+          "woodwinds",
+          "woodwind",
+          "wind",
+          "wind section",
+          "ww"
+        ]
+      },
+      {
+        "id": "synth_pad",
+        "name": "Synth pad",
+        "family": "synth",
+        "definitionId": "synth_pad",
+        "gmProgram": 88,
+        "section": false,
+        "absolute": [
+          24,
+          108
+        ],
+        "absoluteSource": "platform-convention: pre-B-03 platform definition (GM_REFERENCE synth std 12–120 is unconstrained)",
+        "comfortable": [
+          40,
+          88
+        ],
+        "comfortableSource": "platform-convention: pre-B-03 platform definition",
+        "maxVoices": 8,
+        "leapStd": 24,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "HARMONIC_BED",
+          "PAD",
+          "TRANSITION",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "sustained_chords",
+          "swell",
+          "riser",
+          "drone",
+          "gated_chords",
+          "arp"
+        ],
+        "aliases": [
+          "pad",
+          "pads",
+          "synth pad",
+          "warm pad",
+          "string pad",
+          "synth",
+          "synthesizer",
+          "synths",
+          "poly synth",
+          "polysynth",
+          "poly",
+          "atmosphere",
+          "texture"
+        ]
+      },
+      {
+        "id": "synth_lead",
+        "name": "Synth lead",
+        "family": "synth",
+        "definitionId": "synth_lead",
+        "gmProgram": 80,
+        "section": false,
+        "absolute": [
+          36,
+          108
+        ],
+        "absoluteSource": "platform-convention: platform convention for a lead patch",
+        "comfortable": [
+          55,
+          96
+        ],
+        "comfortableSource": "platform-convention: platform convention",
+        "maxVoices": 1,
+        "leapStd": 24,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "LEAD",
+          "OSTINATO",
+          "COUNTER_MELODY",
+          "CALL_RESPONSE"
+        ],
+        "gestures": [
+          "lead_line",
+          "arp",
+          "portamento_line",
+          "stab"
+        ],
+        "aliases": [
+          "lead synth",
+          "synth lead",
+          "arp",
+          "arpeggiator",
+          "mono synth",
+          "monosynth",
+          "acid"
+        ]
+      },
+      {
+        "id": "acoustic_guitar",
+        "name": "Acoustic guitar",
+        "family": "guitar",
+        "definitionId": "guitar",
+        "gmProgram": 25,
+        "section": false,
+        "absolute": [
+          40,
+          88
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[25] (guitar) range.std — instrumentReference.ts",
+        "comfortable": [
+          45,
+          79
+        ],
+        "comfortableSource": "platform-convention: pre-B-03 platform definition",
+        "maxVoices": 6,
+        "leapStd": 16,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "RHYTHMIC_HARMONY",
+          "HARMONIC_BED",
+          "OSTINATO",
+          "COUNTER_MELODY"
+        ],
+        "gestures": [
+          "strum",
+          "fingerpick_arpeggio",
+          "travis",
+          "single_line",
+          "harmonics",
+          "muted_chunk"
+        ],
+        "aliases": [
+          "acoustic guitar",
+          "acoustic",
+          "nylon guitar",
+          "classical guitar",
+          "steel string",
+          "folk guitar",
+          "nylon",
+          "acoustic gtr"
+        ]
+      },
+      {
+        "id": "electric_guitar",
+        "name": "Electric guitar",
+        "family": "guitar",
+        "definitionId": "guitar",
+        "gmProgram": 27,
+        "section": false,
+        "absolute": [
+          40,
+          88
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[27] (guitar) range.std — instrumentReference.ts",
+        "comfortable": [
+          45,
+          84
+        ],
+        "comfortableSource": "orchestration-reference: 22 frets: up to about C6 in the lead register",
+        "maxVoices": 6,
+        "leapStd": 16,
+        "breathSeconds": null,
+        "transposition": null,
+        "roles": [
+          "LEAD",
+          "RHYTHMIC_HARMONY",
+          "HARMONIC_BED",
+          "OSTINATO",
+          "COUNTER_MELODY",
+          "CALL_RESPONSE",
+          "ACCENT",
+          "FILL",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "power_chords",
+          "palm_mute_8ths",
+          "clean_arpeggio",
+          "volume_swell",
+          "lead_line",
+          "stab_chords"
+        ],
+        "aliases": [
+          "electric guitar",
+          "guitar",
+          "rhythm guitar",
+          "lead guitar",
+          "clean guitar",
+          "gtr",
+          "e guitar",
+          "distorted guitar",
+          "guitars"
+        ]
+      },
+      {
+        "id": "choir",
+        "name": "Choir",
+        "family": "voice",
+        "definitionId": "choir",
+        "gmProgram": 52,
+        "section": true,
+        "absolute": [
+          36,
+          84
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[52] (choir) range.std — instrumentReference.ts",
+        "comfortable": [
+          43,
+          79
+        ],
+        "comfortableSource": "orchestration-reference: SATB comfortable ranges: G2 to G5",
+        "maxVoices": 8,
+        "leapStd": 12,
+        "breathSeconds": 12,
+        "transposition": null,
+        "roles": [
+          "LEAD",
+          "HARMONIC_BED",
+          "CALL_RESPONSE",
+          "PAD",
+          "CLIMAX_LAYER"
+        ],
+        "gestures": [
+          "sustained_oohs",
+          "unison_line",
+          "block_harmony",
+          "swell"
+        ],
+        "aliases": [
+          "choir",
+          "backing vocals",
+          "bvs",
+          "vocal pad",
+          "ooh",
+          "aah",
+          "gang vocals",
+          "chorus voices"
+        ]
+      },
+      {
+        "id": "solo_voice",
+        "name": "Solo voice",
+        "family": "voice",
+        "definitionId": "voice",
+        "gmProgram": 53,
+        "section": false,
+        "absolute": [
+          36,
+          84
+        ],
+        "absoluteSource": "gm-reference-table: GM_REFERENCE[52/53] choir std 36–84: the union of voice types; a singer's own range must come from the vocal map (registerMap) — no narrower range is claimed here",
+        "comfortable": [
+          43,
+          79
+        ],
+        "comfortableSource": "orchestration-reference: union of SATB comfortable ranges",
+        "maxVoices": 1,
+        "leapStd": 12,
+        "breathSeconds": 12,
+        "transposition": null,
+        "roles": [
+          "LEAD",
+          "CALL_RESPONSE"
+        ],
+        "gestures": [
+          "sung_line",
+          "ad_lib",
+          "hum_pad"
+        ],
+        "aliases": [
+          "vocal",
+          "vocals",
+          "voice",
+          "vox",
+          "lead vocal",
+          "lead vocals",
+          "singer",
+          "main vocal",
+          "vocalist"
+        ]
+      }
+    ],
+    "legacyNameResolution": [
+      {
+        "name": "keys",
+        "status": "resolved",
+        "profileId": "piano",
+        "matchedBy": "alias",
+        "definitionId": "piano",
+        "family": "keys",
+        "playableRange": [
+          21,
+          108
+        ],
+        "comfortableRange": [
+          36,
+          96
+        ],
+        "maxVoices": 10,
+        "maxLeap": 24,
+        "note": null
+      },
+      {
+        "name": "mix",
+        "status": "resolved",
+        "profileId": "piano",
+        "matchedBy": "alias",
+        "definitionId": "piano",
+        "family": "keys",
+        "playableRange": [
+          21,
+          108
+        ],
+        "comfortableRange": [
+          36,
+          96
+        ],
+        "maxVoices": 10,
+        "maxLeap": 24,
+        "note": "'mix' is the source's full-mix stem hint, not an instrument; it plays as a piano and the planner should not pass it as a family (diagnosis F5, B-01)"
+      },
+      {
+        "name": "ensemble",
+        "status": "resolved",
+        "profileId": "string_section",
+        "matchedBy": "alias",
+        "definitionId": "strings",
+        "family": "strings",
+        "playableRange": [
+          28,
+          103
+        ],
+        "comfortableRange": [
+          48,
+          86
+        ],
+        "maxVoices": 8,
+        "maxLeap": 24,
+        "note": "'ensemble' is the composer's INTRO/ENDING/TRANSITION task name; the platform's nearest real profile is the string section (sustained, wide range, section polyphony)"
+      },
+      {
+        "name": "percussion",
+        "status": "resolved",
+        "profileId": "hand_percussion",
+        "matchedBy": "alias",
+        "definitionId": "percussion",
+        "family": "drums",
+        "playableRange": [
+          54,
+          82
+        ],
+        "comfortableRange": [
+          54,
+          82
+        ],
+        "maxVoices": 2,
+        "maxLeap": 28,
+        "note": null
+      },
+      {
+        "name": "strings",
+        "status": "resolved",
+        "profileId": "violin_section",
+        "matchedBy": "alias",
+        "definitionId": "strings",
+        "family": "strings",
+        "playableRange": [
+          55,
+          103
+        ],
+        "comfortableRange": [
+          60,
+          86
+        ],
+        "maxVoices": 4,
+        "maxLeap": 24,
+        "note": "a single 'strings' track is rendered by one asset (the violin ensemble on both workers), so its definition is the violin desk; the whole section with violas, cellos and basses is 'string_section' (desks), which needs one track per desk (B-02) — the register plan plans 'strings' with those desks and hands the composer the violins' bounds as the track's"
+      },
+      {
+        "name": "bass",
+        "status": "resolved",
+        "profileId": "electric_bass",
+        "matchedBy": "alias",
+        "definitionId": "bass",
+        "family": "strings",
+        "playableRange": [
+          28,
+          67
+        ],
+        "comfortableRange": [
+          28,
+          57
+        ],
+        "maxVoices": 1,
+        "maxLeap": 12,
+        "note": null
+      },
+      {
+        "name": "WOODWINDS",
+        "status": "resolved",
+        "profileId": "woodwind_section",
+        "matchedBy": "alias",
+        "definitionId": "woodwinds",
+        "family": "winds",
+        "playableRange": [
+          34,
+          96
+        ],
+        "comfortableRange": [
+          55,
+          84
+        ],
+        "maxVoices": 4,
+        "maxLeap": 19,
+        "note": null
+      },
+      {
+        "name": "winds",
+        "status": "resolved",
+        "profileId": "woodwind_section",
+        "matchedBy": "alias",
+        "definitionId": "woodwinds",
+        "family": "winds",
+        "playableRange": [
+          34,
+          96
+        ],
+        "comfortableRange": [
+          55,
+          84
+        ],
+        "maxVoices": 4,
+        "maxLeap": 19,
+        "note": null
+      },
+      {
+        "name": "flute",
+        "status": "resolved",
+        "profileId": "flute",
+        "matchedBy": "exact",
+        "definitionId": "flute",
+        "family": "winds",
+        "playableRange": [
+          60,
+          96
+        ],
+        "comfortableRange": [
+          62,
+          91
+        ],
+        "maxVoices": 1,
+        "maxLeap": 19,
+        "note": null
+      },
+      {
+        "name": "horn",
+        "status": "resolved",
+        "profileId": "french_horn",
+        "matchedBy": "alias",
+        "definitionId": "horn",
+        "family": "brass",
+        "playableRange": [
+          41,
+          77
+        ],
+        "comfortableRange": [
+          48,
+          72
+        ],
+        "maxVoices": 1,
+        "maxLeap": 12,
+        "note": null
+      },
+      {
+        "name": "Violins",
+        "status": "resolved",
+        "profileId": "violin_section",
+        "matchedBy": "alias",
+        "definitionId": "strings",
+        "family": "strings",
+        "playableRange": [
+          55,
+          103
+        ],
+        "comfortableRange": [
+          60,
+          86
+        ],
+        "maxVoices": 4,
+        "maxLeap": 24,
+        "note": null
+      },
+      {
+        "name": "cello",
+        "status": "resolved",
+        "profileId": "cello_solo",
+        "matchedBy": "alias",
+        "definitionId": "cello",
+        "family": "strings",
+        "playableRange": [
+          36,
+          84
+        ],
+        "comfortableRange": [
+          43,
+          79
+        ],
+        "maxVoices": 2,
+        "maxLeap": 24,
+        "note": null
+      },
+      {
+        "name": "viola",
+        "status": "resolved",
+        "profileId": "viola_section",
+        "matchedBy": "alias",
+        "definitionId": "viola",
+        "family": "strings",
+        "playableRange": [
+          48,
+          91
+        ],
+        "comfortableRange": [
+          53,
+          79
+        ],
+        "maxVoices": 3,
+        "maxLeap": 24,
+        "note": null
+      },
+      {
+        "name": "vocals",
+        "status": "resolved",
+        "profileId": "solo_voice",
+        "matchedBy": "alias",
+        "definitionId": "voice",
+        "family": "voice",
+        "playableRange": [
+          36,
+          84
+        ],
+        "comfortableRange": [
+          43,
+          79
+        ],
+        "maxVoices": 1,
+        "maxLeap": 12,
+        "note": null
+      },
+      {
+        "name": "pads",
+        "status": "resolved",
+        "profileId": "synth_pad",
+        "matchedBy": "alias",
+        "definitionId": "synth_pad",
+        "family": "synth",
+        "playableRange": [
+          24,
+          108
+        ],
+        "comfortableRange": [
+          40,
+          88
+        ],
+        "maxVoices": 8,
+        "maxLeap": 24,
+        "note": null
+      },
+      {
+        "name": "brass",
+        "status": "resolved",
+        "profileId": "brass_section",
+        "matchedBy": "alias",
+        "definitionId": "brass",
+        "family": "brass",
+        "playableRange": [
+          28,
+          84
+        ],
+        "comfortableRange": [
+          43,
+          79
+        ],
+        "maxVoices": 8,
+        "maxLeap": 24,
+        "note": null
+      },
+      {
+        "name": "guitar",
+        "status": "resolved",
+        "profileId": "electric_guitar",
+        "matchedBy": "alias",
+        "definitionId": "guitar",
+        "family": "guitar",
+        "playableRange": [
+          40,
+          88
+        ],
+        "comfortableRange": [
+          45,
+          84
+        ],
+        "maxVoices": 6,
+        "maxLeap": 16,
+        "note": null
+      },
+      {
+        "name": "anything",
+        "status": "unknown",
+        "profileId": null,
+        "matchedBy": "none",
+        "definitionId": "unknown",
+        "family": "unknown",
+        "playableRange": [
+          0,
+          127
+        ],
+        "comfortableRange": [
+          0,
+          127
+        ],
+        "maxVoices": 16,
+        "maxLeap": 127,
+        "note": "no instrument profile matches \"anything\"; the caller must resolve it instead of composing for a piano"
+      }
+    ]
+  },
+  "d2_registerPlan": {
+    "method": "register-plan/v1",
+    "bandBounds": {
+      "low": [
+        0,
+        47
+      ],
+      "low_mid": [
+        48,
+        59
+      ],
+      "mid": [
+        60,
+        71
+      ],
+      "upper_mid": [
+        72,
+        83
+      ],
+      "high": [
+        84,
+        127
+      ]
+    },
+    "windows": 21,
+    "unresolved": [],
+    "stringsBySection": {
+      "Verse 1": {
+        "role": "PAD",
+        "violinsBounds": [
+          68,
+          79
+        ],
+        "desks": [
+          "violins 68-79",
+          "violas 55-72",
+          "cellos 43-64"
+        ],
+        "action": "trim",
+        "v6Written": [
+          79,
+          91
+        ]
+      },
+      "Chorus 2": {
+        "role": "HARMONIC_BED",
+        "violinsBounds": [
+          68,
+          79
+        ],
+        "desks": [
+          "violins 68-79",
+          "violas 55-72",
+          "cellos 48-64"
+        ],
+        "action": "trim",
+        "v6Written": [
+          79,
+          91
+        ]
+      },
+      "Bridge": {
+        "role": "COUNTER_MELODY",
+        "violinsBounds": [
+          62,
+          86
+        ],
+        "desks": [
+          "violins 62-86",
+          "violas 55-79",
+          "cellos 50-72"
+        ],
+        "action": "keep",
+        "v6Written": [
+          79,
+          91
+        ]
+      },
+      "Chorus 3": {
+        "role": "CLIMAX_LAYER",
+        "violinsBounds": [
+          67,
+          91
+        ],
+        "desks": [
+          "violins 67-91",
+          "violas 60-84",
+          "cellos 55-79"
+        ],
+        "action": "keep",
+        "v6Written": [
+          79,
+          91
+        ]
+      },
+      "Outro": {
+        "role": "PAD",
+        "violinsBounds": [
+          68,
+          79
+        ],
+        "desks": [
+          "violins 68-79",
+          "violas 55-72",
+          "cellos 43-64"
+        ],
+        "action": "trim",
+        "v6Written": [
+          79,
+          91
+        ]
+      }
+    },
+    "pianoBySection": {
+      "Intro": {
+        "role": "HARMONIC_BED",
+        "bounds": [
+          48,
+          67
+        ],
+        "action": "keep",
+        "v6Written": [
+          61,
+          77
+        ]
+      },
+      "Verse 1": {
+        "role": "HARMONIC_BED",
+        "bounds": [
+          48,
+          67
+        ],
+        "action": "keep",
+        "v6Written": [
+          61,
+          77
+        ]
+      },
+      "Verse 2": {
+        "role": "HARMONIC_BED",
+        "bounds": [
+          48,
+          67
+        ],
+        "action": "keep",
+        "v6Written": [
+          61,
+          77
+        ]
+      },
+      "Chorus": {
+        "role": "HARMONIC_BED",
+        "bounds": [
+          48,
+          67
+        ],
+        "action": "keep",
+        "v6Written": [
+          61,
+          77
+        ]
+      },
+      "Chorus 2": {
+        "role": "HARMONIC_BED",
+        "bounds": [
+          48,
+          67
+        ],
+        "action": "keep",
+        "v6Written": [
+          61,
+          77
+        ]
+      },
+      "Verse 3": {
+        "role": "HARMONIC_BED",
+        "bounds": [
+          48,
+          67
+        ],
+        "action": "keep",
+        "v6Written": [
+          61,
+          77
+        ]
+      },
+      "Bridge": {
+        "role": "HARMONIC_BED",
+        "bounds": [
+          48,
+          67
+        ],
+        "action": "keep",
+        "v6Written": [
+          61,
+          77
+        ]
+      },
+      "Chorus 3": {
+        "role": "HARMONIC_BED",
+        "bounds": [
+          48,
+          67
+        ],
+        "action": "keep",
+        "v6Written": [
+          61,
+          77
+        ]
+      },
+      "Outro": {
+        "role": "HARMONIC_BED",
+        "bounds": [
+          48,
+          67
+        ],
+        "action": "keep",
+        "v6Written": [
+          61,
+          77
+        ]
+      }
+    },
+    "gate": {
+      "stringsBelow80InVerses": true,
+      "pianoAndStringsNeverShareACloseBand": true
+    },
+    "windowsDetail": [
+      {
+        "id": "phrase-Intro-1",
+        "section": "Intro",
+        "bars": [
+          1,
+          2
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.71,
+          "low_mid": 2.09,
+          "mid": 1.61,
+          "upper_mid": 0.41,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 2.09,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Verse_1-1",
+        "section": "Verse 1",
+        "bars": [
+          3,
+          10
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.94,
+          "low_mid": 2.91,
+          "mid": 3.17,
+          "upper_mid": 1.8,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 2.91,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [
+          "mid: mix vs strings (60-67) -> strings: trim → 68–79"
+        ],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          },
+          {
+            "instrument": "strings",
+            "profile": "string_section",
+            "role": "PAD",
+            "voicing": "close",
+            "voices": 4,
+            "target": [
+              48,
+              79
+            ],
+            "bounds": [
+              43,
+              79
+            ],
+            "desks": [
+              "violins 68-79 (close)",
+              "violas 55-72 (open)",
+              "cellos 43-64 (open)"
+            ],
+            "action": "trim",
+            "registerShift": 0,
+            "reason": "trimmed off mix (48–67) in the mid band; string_section yields as the later-entering (tier 4) voicing"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Verse_1-2",
+        "section": "Verse 1",
+        "bars": [
+          11,
+          18
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.94,
+          "low_mid": 2.91,
+          "mid": 3.17,
+          "upper_mid": 1.8,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 2.91,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [
+          "mid: mix vs strings (60-67) -> strings: trim → 68–79"
+        ],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          },
+          {
+            "instrument": "strings",
+            "profile": "string_section",
+            "role": "PAD",
+            "voicing": "close",
+            "voices": 4,
+            "target": [
+              48,
+              79
+            ],
+            "bounds": [
+              43,
+              79
+            ],
+            "desks": [
+              "violins 68-79 (close)",
+              "violas 55-72 (open)",
+              "cellos 43-64 (open)"
+            ],
+            "action": "trim",
+            "registerShift": 0,
+            "reason": "trimmed off mix (48–67) in the mid band; string_section yields as the later-entering (tier 4) voicing"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Verse_1-3",
+        "section": "Verse 1",
+        "bars": [
+          19,
+          24
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.94,
+          "low_mid": 2.91,
+          "mid": 3.17,
+          "upper_mid": 1.8,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 2.91,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [
+          "mid: mix vs strings (60-67) -> strings: trim → 68–79"
+        ],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          },
+          {
+            "instrument": "strings",
+            "profile": "string_section",
+            "role": "PAD",
+            "voicing": "close",
+            "voices": 4,
+            "target": [
+              48,
+              79
+            ],
+            "bounds": [
+              43,
+              79
+            ],
+            "desks": [
+              "violins 68-79 (close)",
+              "violas 55-72 (open)",
+              "cellos 43-64 (open)"
+            ],
+            "action": "trim",
+            "registerShift": 0,
+            "reason": "trimmed off mix (48–67) in the mid band; string_section yields as the later-entering (tier 4) voicing"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Verse_2-1",
+        "section": "Verse 2",
+        "bars": [
+          25,
+          32
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.71,
+          "low_mid": 2.09,
+          "mid": 1.61,
+          "upper_mid": 0.41,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 2.09,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Verse_2-2",
+        "section": "Verse 2",
+        "bars": [
+          33,
+          40
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.71,
+          "low_mid": 2.09,
+          "mid": 1.61,
+          "upper_mid": 0.41,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 2.09,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Chorus-1",
+        "section": "Chorus",
+        "bars": [
+          41,
+          48
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.71,
+          "low_mid": 2.09,
+          "mid": 1.61,
+          "upper_mid": 0.41,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 2.09,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          },
+          {
+            "instrument": "percussion",
+            "profile": "hand_percussion",
+            "role": "FILL",
+            "voicing": "unpitched",
+            "voices": 2,
+            "target": [
+              54,
+              82
+            ],
+            "bounds": [
+              54,
+              82
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "hand_percussion is unpitched; it claims no pitch band"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Chorus-2",
+        "section": "Chorus",
+        "bars": [
+          49,
+          56
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.71,
+          "low_mid": 2.09,
+          "mid": 1.61,
+          "upper_mid": 0.41,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 2.09,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          },
+          {
+            "instrument": "percussion",
+            "profile": "hand_percussion",
+            "role": "FILL",
+            "voicing": "unpitched",
+            "voices": 2,
+            "target": [
+              54,
+              82
+            ],
+            "bounds": [
+              54,
+              82
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "hand_percussion is unpitched; it claims no pitch band"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Chorus_2-1",
+        "section": "Chorus 2",
+        "bars": [
+          57,
+          64
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.71,
+          "low_mid": 3.07,
+          "mid": 3.24,
+          "upper_mid": 1.8,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 3.07,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [
+          "mid: mix vs strings (60-67) -> strings: trim → 68–79"
+        ],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          },
+          {
+            "instrument": "percussion",
+            "profile": "hand_percussion",
+            "role": "ACCENT",
+            "voicing": "unpitched",
+            "voices": 2,
+            "target": [
+              54,
+              82
+            ],
+            "bounds": [
+              54,
+              82
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "hand_percussion is unpitched; it claims no pitch band"
+          },
+          {
+            "instrument": "strings",
+            "profile": "string_section",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              79
+            ],
+            "bounds": [
+              48,
+              79
+            ],
+            "desks": [
+              "violins 68-79 (close)",
+              "violas 55-72 (open)",
+              "cellos 48-64 (open)"
+            ],
+            "action": "trim",
+            "registerShift": 0,
+            "reason": "trimmed off mix (48–67) in the mid band; string_section yields as the later-entering (tier 4) voicing"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Chorus_2-2",
+        "section": "Chorus 2",
+        "bars": [
+          65,
+          72
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.71,
+          "low_mid": 3.07,
+          "mid": 3.24,
+          "upper_mid": 1.8,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 3.07,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [
+          "mid: mix vs strings (60-67) -> strings: trim → 68–79"
+        ],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          },
+          {
+            "instrument": "percussion",
+            "profile": "hand_percussion",
+            "role": "ACCENT",
+            "voicing": "unpitched",
+            "voices": 2,
+            "target": [
+              54,
+              82
+            ],
+            "bounds": [
+              54,
+              82
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "hand_percussion is unpitched; it claims no pitch band"
+          },
+          {
+            "instrument": "strings",
+            "profile": "string_section",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              79
+            ],
+            "bounds": [
+              48,
+              79
+            ],
+            "desks": [
+              "violins 68-79 (close)",
+              "violas 55-72 (open)",
+              "cellos 48-64 (open)"
+            ],
+            "action": "trim",
+            "registerShift": 0,
+            "reason": "trimmed off mix (48–67) in the mid band; string_section yields as the later-entering (tier 4) voicing"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Verse_3-1",
+        "section": "Verse 3",
+        "bars": [
+          73,
+          80
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.71,
+          "low_mid": 2.09,
+          "mid": 1.61,
+          "upper_mid": 0.41,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 2.09,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Verse_3-2",
+        "section": "Verse 3",
+        "bars": [
+          81,
+          88
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.71,
+          "low_mid": 2.09,
+          "mid": 1.61,
+          "upper_mid": 0.41,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 2.09,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Verse_3-3",
+        "section": "Verse 3",
+        "bars": [
+          89,
+          96
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.71,
+          "low_mid": 2.09,
+          "mid": 1.61,
+          "upper_mid": 0.41,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 2.09,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Bridge-1",
+        "section": "Bridge",
+        "bars": [
+          97,
+          104
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.71,
+          "low_mid": 2.72,
+          "mid": 3.02,
+          "upper_mid": 1.26,
+          "high": 0.29
+        },
+        "lowMid": {
+          "voices": 2.72,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          },
+          {
+            "instrument": "percussion",
+            "profile": "hand_percussion",
+            "role": "ACCENT",
+            "voicing": "unpitched",
+            "voices": 2,
+            "target": [
+              54,
+              82
+            ],
+            "bounds": [
+              54,
+              82
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "hand_percussion is unpitched; it claims no pitch band"
+          },
+          {
+            "instrument": "strings",
+            "profile": "string_section",
+            "role": "COUNTER_MELODY",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              50,
+              86
+            ],
+            "bounds": [
+              50,
+              86
+            ],
+            "desks": [
+              "violins 62-86 (line)",
+              "violas 55-79 (line)",
+              "cellos 50-72 (line)"
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "string_section COUNTER_MELODY register: a line in cellos or violins"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Bridge-2",
+        "section": "Bridge",
+        "bars": [
+          105,
+          112
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.71,
+          "low_mid": 2.72,
+          "mid": 3.02,
+          "upper_mid": 1.26,
+          "high": 0.29
+        },
+        "lowMid": {
+          "voices": 2.72,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          },
+          {
+            "instrument": "percussion",
+            "profile": "hand_percussion",
+            "role": "ACCENT",
+            "voicing": "unpitched",
+            "voices": 2,
+            "target": [
+              54,
+              82
+            ],
+            "bounds": [
+              54,
+              82
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "hand_percussion is unpitched; it claims no pitch band"
+          },
+          {
+            "instrument": "strings",
+            "profile": "string_section",
+            "role": "COUNTER_MELODY",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              50,
+              86
+            ],
+            "bounds": [
+              50,
+              86
+            ],
+            "desks": [
+              "violins 62-86 (line)",
+              "violas 55-79 (line)",
+              "cellos 50-72 (line)"
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "string_section COUNTER_MELODY register: a line in cellos or violins"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Chorus_3-1",
+        "section": "Chorus 3",
+        "bars": [
+          113,
+          120
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.71,
+          "low_mid": 2.29,
+          "mid": 2.97,
+          "upper_mid": 2.17,
+          "high": 0.85
+        },
+        "lowMid": {
+          "voices": 2.29,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          },
+          {
+            "instrument": "percussion",
+            "profile": "hand_percussion",
+            "role": "ACCENT",
+            "voicing": "unpitched",
+            "voices": 2,
+            "target": [
+              54,
+              82
+            ],
+            "bounds": [
+              54,
+              82
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "hand_percussion is unpitched; it claims no pitch band"
+          },
+          {
+            "instrument": "strings",
+            "profile": "string_section",
+            "role": "CLIMAX_LAYER",
+            "voicing": "close",
+            "voices": 4,
+            "target": [
+              48,
+              91
+            ],
+            "bounds": [
+              55,
+              91
+            ],
+            "desks": [
+              "violins 67-91 (close)",
+              "violas 60-84 (open)",
+              "cellos 55-79 (open)"
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "string_section CLIMAX_LAYER register: tutti, octaves"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Chorus_3-2",
+        "section": "Chorus 3",
+        "bars": [
+          121,
+          128
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.71,
+          "low_mid": 2.29,
+          "mid": 2.97,
+          "upper_mid": 2.17,
+          "high": 0.85
+        },
+        "lowMid": {
+          "voices": 2.29,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          },
+          {
+            "instrument": "percussion",
+            "profile": "hand_percussion",
+            "role": "ACCENT",
+            "voicing": "unpitched",
+            "voices": 2,
+            "target": [
+              54,
+              82
+            ],
+            "bounds": [
+              54,
+              82
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "hand_percussion is unpitched; it claims no pitch band"
+          },
+          {
+            "instrument": "strings",
+            "profile": "string_section",
+            "role": "CLIMAX_LAYER",
+            "voicing": "close",
+            "voices": 4,
+            "target": [
+              48,
+              91
+            ],
+            "bounds": [
+              55,
+              91
+            ],
+            "desks": [
+              "violins 67-91 (close)",
+              "violas 60-84 (open)",
+              "cellos 55-79 (open)"
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "string_section CLIMAX_LAYER register: tutti, octaves"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Outro-1",
+        "section": "Outro",
+        "bars": [
+          129,
+          132
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.94,
+          "low_mid": 2.91,
+          "mid": 3.17,
+          "upper_mid": 1.8,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 2.91,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [
+          "mid: mix vs strings (60-67) -> strings: trim → 68–79"
+        ],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          },
+          {
+            "instrument": "strings",
+            "profile": "string_section",
+            "role": "PAD",
+            "voicing": "close",
+            "voices": 4,
+            "target": [
+              48,
+              79
+            ],
+            "bounds": [
+              43,
+              79
+            ],
+            "desks": [
+              "violins 68-79 (close)",
+              "violas 55-72 (open)",
+              "cellos 43-64 (open)"
+            ],
+            "action": "trim",
+            "registerShift": 0,
+            "reason": "trimmed off mix (48–67) in the mid band; string_section yields as the later-entering (tier 4) voicing"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Outro-2",
+        "section": "Outro",
+        "bars": [
+          133,
+          136
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.94,
+          "low_mid": 2.91,
+          "mid": 3.17,
+          "upper_mid": 1.8,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 2.91,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [
+          "mid: mix vs strings (60-67) -> strings: trim → 68–79"
+        ],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          },
+          {
+            "instrument": "strings",
+            "profile": "string_section",
+            "role": "PAD",
+            "voicing": "close",
+            "voices": 4,
+            "target": [
+              48,
+              79
+            ],
+            "bounds": [
+              43,
+              79
+            ],
+            "desks": [
+              "violins 68-79 (close)",
+              "violas 55-72 (open)",
+              "cellos 43-64 (open)"
+            ],
+            "action": "trim",
+            "registerShift": 0,
+            "reason": "trimmed off mix (48–67) in the mid band; string_section yields as the later-entering (tier 4) voicing"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Outro-3",
+        "section": "Outro",
+        "bars": [
+          137,
+          140
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.94,
+          "low_mid": 2.91,
+          "mid": 3.17,
+          "upper_mid": 1.8,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 2.91,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [
+          "mid: mix vs strings (60-67) -> strings: trim → 68–79"
+        ],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          },
+          {
+            "instrument": "strings",
+            "profile": "string_section",
+            "role": "PAD",
+            "voicing": "close",
+            "voices": 4,
+            "target": [
+              48,
+              79
+            ],
+            "bounds": [
+              43,
+              79
+            ],
+            "desks": [
+              "violins 68-79 (close)",
+              "violas 55-72 (open)",
+              "cellos 43-64 (open)"
+            ],
+            "action": "trim",
+            "registerShift": 0,
+            "reason": "trimmed off mix (48–67) in the mid band; string_section yields as the later-entering (tier 4) voicing"
+          }
+        ]
+      },
+      {
+        "id": "phrase-Outro-4",
+        "section": "Outro",
+        "bars": [
+          141,
+          141
+        ],
+        "vocal": "not_available",
+        "occupancy": {
+          "low": 0.94,
+          "low_mid": 2.91,
+          "mid": 3.17,
+          "upper_mid": 1.8,
+          "high": 0.17
+        },
+        "lowMid": {
+          "voices": 2.91,
+          "closeVoicings": 1,
+          "flagged": false,
+          "note": "within tolerance"
+        },
+        "collisions": [
+          "mid: mix vs strings (60-67) -> strings: trim → 68–79"
+        ],
+        "entries": [
+          {
+            "instrument": "bass",
+            "profile": "electric_bass",
+            "role": "BASS",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              28,
+              55
+            ],
+            "bounds": [
+              28,
+              55
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "electric_bass BASS register: the bass line"
+          },
+          {
+            "instrument": "keys",
+            "profile": "piano",
+            "role": "LEAD",
+            "voicing": "line",
+            "voices": 1,
+            "target": [
+              60,
+              88
+            ],
+            "bounds": [
+              60,
+              88
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano LEAD register: single line in the middle/upper register"
+          },
+          {
+            "instrument": "mix",
+            "profile": "piano",
+            "role": "HARMONIC_BED",
+            "voicing": "close",
+            "voices": 3,
+            "target": [
+              48,
+              67
+            ],
+            "bounds": [
+              48,
+              67
+            ],
+            "action": "keep",
+            "registerShift": 0,
+            "reason": "piano HARMONIC_BED register: LH root/fifth around C3, RH close voicing below the vocal's centre (Adler: keyboard accompaniment sits under the melody)"
+          },
+          {
+            "instrument": "strings",
+            "profile": "string_section",
+            "role": "PAD",
+            "voicing": "close",
+            "voices": 4,
+            "target": [
+              48,
+              79
+            ],
+            "bounds": [
+              43,
+              79
+            ],
+            "desks": [
+              "violins 68-79 (close)",
+              "violas 55-72 (open)",
+              "cellos 43-64 (open)"
+            ],
+            "action": "trim",
+            "registerShift": 0,
+            "reason": "trimmed off mix (48–67) in the mid band; string_section yields as the later-entering (tier 4) voicing"
+          }
+        ]
+      }
+    ]
+  },
+  "d3_soundSelection": {
+    "method": "sound-selection-brain/v2-range-aware",
+    "catalogueRanges": [
+      {
+        "assetId": "surge-xt-1.3.4",
+        "keyRange": [
+          0,
+          127
+        ],
+        "source": "synth: a VST3 synthesizer answers every MIDI key (no sample map)"
+      },
+      {
+        "assetId": "dexed-1.0.1",
+        "keyRange": [
+          0,
+          127
+        ],
+        "source": "synth: a VST3 synthesizer answers every MIDI key (no sample map)"
+      },
+      {
+        "assetId": "sfizz-salamander-grand-v3",
+        "keyRange": [
+          21,
+          108
+        ],
+        "sampledRange": [
+          21,
+          108
+        ],
+        "source": "sfz-regions"
+      },
+      {
+        "assetId": "sfizz-vsco2-violin-ens-sus",
+        "keyRange": [
+          55,
+          86
+        ],
+        "sampledRange": [
+          55,
+          86
+        ],
+        "source": "sfz-regions"
+      },
+      {
+        "assetId": "sfizz-vsco2-cello-ens-sus",
+        "keyRange": [
+          36,
+          77
+        ],
+        "sampledRange": [
+          36,
+          77
+        ],
+        "source": "sfz-regions"
+      },
+      {
+        "assetId": "sfizz-vsco2-horn-sus",
+        "keyRange": [
+          33,
+          77
+        ],
+        "sampledRange": [
+          33,
+          77
+        ],
+        "source": "sfz-regions"
+      },
+      {
+        "assetId": "sfizz-vsco2-flute-sus",
+        "keyRange": [
+          60,
+          96
+        ],
+        "sampledRange": [
+          60,
+          96
+        ],
+        "source": "sfz-regions"
+      },
+      {
+        "assetId": "sfizz-vsco2-harp",
+        "keyRange": [
+          28,
+          101
+        ],
+        "sampledRange": [
+          28,
+          101
+        ],
+        "source": "sfz-regions"
+      },
+      {
+        "assetId": "sfizz-drskit-stereo",
+        "keyRange": [
+          35,
+          76
+        ],
+        "sampledRange": [
+          35,
+          76
+        ],
+        "mappedKeys": 38,
+        "source": "sfz-regions"
+      },
+      {
+        "assetId": "sfizz-meatbass-arco",
+        "keyRange": [
+          12,
+          72
+        ],
+        "sampledRange": [
+          21,
+          69
+        ],
+        "source": "sfz-regions"
+      },
+      {
+        "assetId": "sfizz-meatbass-pizz",
+        "keyRange": [
+          12,
+          79
+        ],
+        "sampledRange": [
+          21,
+          79
+        ],
+        "source": "sfz-regions"
+      },
+      {
+        "assetId": "sfizz-emilyguitar-basic",
+        "keyRange": [
+          33,
+          96
+        ],
+        "sampledRange": [
+          37,
+          96
+        ],
+        "source": "sfz-regions"
+      }
+    ],
+    "fiveStems": [
+      {
+        "stem": "bass-bass",
+        "instrument": "bass",
+        "role": "BASS",
+        "family": "strings",
+        "writtenRange": [
+          36,
+          50
+        ],
+        "v6Actual": {
+          "assetId": "sfizz-meatbass-arco",
+          "source": "operator",
+          "reason": "routed by instrument \"bass\" -> sfizz-meatbass-arco"
+        },
+        "brainBefore": {
+          "assetId": "sfizz-meatbass-arco",
+          "reason": "sfizz-meatbass-arco (score 10): declared for family strings; no key range declared; range fit for the part (36–50) is unverified; declared for role BASS; \"dark\" fits dark; \"mono\" fits mono / low register; \"acoustic\" fits acoustic — over sfizz-meatbass-pizz (10), sfizz-vsco2-cello-ens-sus (2), sfizz-vsco2-harp (1), sfizz-vsco2-violin-ens-sus (1)"
+        },
+        "brainAfter": {
+          "assetId": "sfizz-meatbass-arco",
+          "reason": "sfizz-meatbass-arco (score 15): declared for family strings; sampled range 21–69 covers the part (36–50) with its own samples; no stretched samples; declared for role BASS; \"dark\" fits dark; \"mono\" fits mono / low register; \"acoustic\" fits acoustic — over sfizz-meatbass-pizz (15), sfizz-vsco2-cello-ens-sus (7), sfizz-vsco2-harp (6)",
+          "rejected": [
+            {
+              "assetId": "surge-xt-1.3.4",
+              "reason": "declared for synth, not strings"
+            },
+            {
+              "assetId": "dexed-1.0.1",
+              "reason": "declared for synth, not strings"
+            },
+            {
+              "assetId": "sfizz-salamander-grand-v3",
+              "reason": "declared for keys, not strings"
+            },
+            {
+              "assetId": "sfizz-vsco2-violin-ens-sus",
+              "reason": "key range 55–86 does not cover the part (36–50): 12 of 12 notes would be silent"
+            },
+            {
+              "assetId": "sfizz-vsco2-horn-sus",
+              "reason": "declared for brass, not strings"
+            },
+            {
+              "assetId": "sfizz-vsco2-flute-sus",
+              "reason": "declared for winds, not strings"
+            },
+            {
+              "assetId": "sfizz-drskit-stereo",
+              "reason": "declared for drums, not strings"
+            },
+            {
+              "assetId": "sfizz-emilyguitar-basic",
+              "reason": "declared for guitar, not strings"
+            }
+          ]
+        },
+        "operatorRuleAfter": {
+          "assetId": "sfizz-meatbass-arco",
+          "source": "operator",
+          "reason": "routed by instrument \"bass\" -> sfizz-meatbass-arco"
+        },
+        "rangeFitPerFamilyAsset": {
+          "sfizz-vsco2-violin-ens-sus": "key range 55–86 does not cover the part (36–50): 12 of 12 notes would be silent",
+          "sfizz-vsco2-cello-ens-sus": "sampled range 36–77 covers the part (36–50) with its own samples",
+          "sfizz-vsco2-harp": "sampled range 28–101 covers the part (36–50) with its own samples",
+          "sfizz-meatbass-arco": "sampled range 21–69 covers the part (36–50) with its own samples",
+          "sfizz-meatbass-pizz": "sampled range 21–79 covers the part (36–50) with its own samples"
+        }
+      },
+      {
+        "stem": "percussion-accent",
+        "instrument": "percussion",
+        "role": "ACCENT",
+        "family": "drums",
+        "writtenRange": [
+          54,
+          54
+        ],
+        "v6Actual": {
+          "assetId": "sfizz-drskit-stereo",
+          "source": "operator",
+          "reason": "routed by instrument \"percussion\" -> sfizz-drskit-stereo"
+        },
+        "brainBefore": {
+          "assetId": "sfizz-drskit-stereo",
+          "reason": "sfizz-drskit-stereo (score 2): declared for family drums; no key range declared; range fit for the part (54–54) is unverified; declared for GROOVE/FILL, not ACCENT; \"drum\" fits sharp, short; \"acoustic\" fits acoustic"
+        },
+        "brainAfter": {
+          "assetId": "sfizz-drskit-stereo",
+          "reason": "sfizz-drskit-stereo (score 7): declared for family drums; every note is a mapped kit key (part 54–54); no stretched samples; declared for GROOVE/FILL, not ACCENT; \"drum\" fits sharp, short; \"acoustic\" fits acoustic",
+          "rejected": [
+            {
+              "assetId": "surge-xt-1.3.4",
+              "reason": "declared for synth, not drums"
+            },
+            {
+              "assetId": "dexed-1.0.1",
+              "reason": "declared for synth, not drums"
+            },
+            {
+              "assetId": "sfizz-salamander-grand-v3",
+              "reason": "declared for keys, not drums"
+            },
+            {
+              "assetId": "sfizz-vsco2-violin-ens-sus",
+              "reason": "declared for strings, not drums"
+            },
+            {
+              "assetId": "sfizz-vsco2-cello-ens-sus",
+              "reason": "declared for strings, not drums"
+            },
+            {
+              "assetId": "sfizz-vsco2-horn-sus",
+              "reason": "declared for brass, not drums"
+            },
+            {
+              "assetId": "sfizz-vsco2-flute-sus",
+              "reason": "declared for winds, not drums"
+            },
+            {
+              "assetId": "sfizz-vsco2-harp",
+              "reason": "declared for strings, not drums"
+            },
+            {
+              "assetId": "sfizz-meatbass-arco",
+              "reason": "declared for bass/strings, not drums"
+            },
+            {
+              "assetId": "sfizz-meatbass-pizz",
+              "reason": "declared for bass/strings, not drums"
+            },
+            {
+              "assetId": "sfizz-emilyguitar-basic",
+              "reason": "declared for guitar, not drums"
+            }
+          ]
+        },
+        "operatorRuleAfter": {
+          "assetId": "sfizz-drskit-stereo",
+          "source": "operator",
+          "reason": "routed by instrument \"percussion\" -> sfizz-drskit-stereo"
+        },
+        "rangeFitPerFamilyAsset": {
+          "sfizz-drskit-stereo": "every note is a mapped kit key (part 54–54)"
+        }
+      },
+      {
+        "stem": "mix-harmonic_bed",
+        "instrument": "mix",
+        "role": "HARMONIC_BED",
+        "family": "keys",
+        "writtenRange": [
+          61,
+          77
+        ],
+        "v6Actual": {
+          "assetId": "sfizz-salamander-grand-v3",
+          "source": "operator",
+          "reason": "routed by family keys -> sfizz-salamander-grand-v3"
+        },
+        "brainBefore": {
+          "assetId": "sfizz-salamander-grand-v3",
+          "reason": "sfizz-salamander-grand-v3 (score 5): declared for family keys; no key range declared; range fit for the part (61–77) is unverified; \"acoustic\" fits acoustic"
+        },
+        "brainAfter": {
+          "assetId": "sfizz-salamander-grand-v3",
+          "reason": "sfizz-salamander-grand-v3 (score 10): declared for family keys; sampled range 21–108 covers the part (61–77) with its own samples; no stretched samples; \"acoustic\" fits acoustic",
+          "rejected": [
+            {
+              "assetId": "surge-xt-1.3.4",
+              "reason": "declared for synth, not keys"
+            },
+            {
+              "assetId": "dexed-1.0.1",
+              "reason": "declared for synth, not keys"
+            },
+            {
+              "assetId": "sfizz-vsco2-violin-ens-sus",
+              "reason": "declared for strings, not keys"
+            },
+            {
+              "assetId": "sfizz-vsco2-cello-ens-sus",
+              "reason": "declared for strings, not keys"
+            },
+            {
+              "assetId": "sfizz-vsco2-horn-sus",
+              "reason": "declared for brass, not keys"
+            },
+            {
+              "assetId": "sfizz-vsco2-flute-sus",
+              "reason": "declared for winds, not keys"
+            },
+            {
+              "assetId": "sfizz-vsco2-harp",
+              "reason": "declared for strings, not keys"
+            },
+            {
+              "assetId": "sfizz-drskit-stereo",
+              "reason": "declared for drums, not keys"
+            },
+            {
+              "assetId": "sfizz-meatbass-arco",
+              "reason": "declared for bass/strings, not keys"
+            },
+            {
+              "assetId": "sfizz-meatbass-pizz",
+              "reason": "declared for bass/strings, not keys"
+            },
+            {
+              "assetId": "sfizz-emilyguitar-basic",
+              "reason": "declared for guitar, not keys"
+            }
+          ]
+        },
+        "operatorRuleAfter": {
+          "assetId": "sfizz-salamander-grand-v3",
+          "source": "operator",
+          "reason": "routed by family keys -> sfizz-salamander-grand-v3"
+        },
+        "rangeFitPerFamilyAsset": {
+          "sfizz-salamander-grand-v3": "sampled range 21–108 covers the part (61–77) with its own samples"
+        }
+      },
+      {
+        "stem": "strings-harmonic_bed",
+        "instrument": "strings",
+        "role": "HARMONIC_BED",
+        "family": "strings",
+        "writtenRange": [
+          79,
+          91
+        ],
+        "v6Actual": {
+          "assetId": "sfizz-vsco2-violin-ens-sus",
+          "source": "operator",
+          "reason": "routed by instrument \"strings\" -> sfizz-vsco2-violin-ens-sus"
+        },
+        "brainBefore": {
+          "assetId": "sfizz-vsco2-cello-ens-sus",
+          "reason": "sfizz-vsco2-cello-ens-sus (score 8): declared for family strings; no key range declared; range fit for the part (79–91) is unverified; declared for role HARMONIC_BED; \"acoustic\" fits acoustic — over sfizz-vsco2-violin-ens-sus (8), sfizz-meatbass-arco (1), sfizz-meatbass-pizz (1), sfizz-vsco2-harp (1)"
+        },
+        "brainAfter": {
+          "assetId": "sfizz-vsco2-harp",
+          "reason": "sfizz-vsco2-harp (score 6): declared for family strings; sampled range 28–101 covers the part (79–91) with its own samples; no stretched samples; declared for OSTINATO/ACCENT, not HARMONIC_BED; \"acoustic\" fits acoustic",
+          "rejected": [
+            {
+              "assetId": "surge-xt-1.3.4",
+              "reason": "declared for synth, not strings"
+            },
+            {
+              "assetId": "dexed-1.0.1",
+              "reason": "declared for synth, not strings"
+            },
+            {
+              "assetId": "sfizz-salamander-grand-v3",
+              "reason": "declared for keys, not strings"
+            },
+            {
+              "assetId": "sfizz-vsco2-violin-ens-sus",
+              "reason": "key range 55–86 does not cover the part (79–91): 5 of 12 notes would be silent"
+            },
+            {
+              "assetId": "sfizz-vsco2-cello-ens-sus",
+              "reason": "key range 36–77 does not cover the part (79–91): 12 of 12 notes would be silent"
+            },
+            {
+              "assetId": "sfizz-vsco2-horn-sus",
+              "reason": "declared for brass, not strings"
+            },
+            {
+              "assetId": "sfizz-vsco2-flute-sus",
+              "reason": "declared for winds, not strings"
+            },
+            {
+              "assetId": "sfizz-drskit-stereo",
+              "reason": "declared for drums, not strings"
+            },
+            {
+              "assetId": "sfizz-meatbass-arco",
+              "reason": "key range 12–72 does not cover the part (79–91): 12 of 12 notes would be silent"
+            },
+            {
+              "assetId": "sfizz-meatbass-pizz",
+              "reason": "key range 12–79 does not cover the part (79–91): 11 of 12 notes would be silent"
+            },
+            {
+              "assetId": "sfizz-emilyguitar-basic",
+              "reason": "declared for guitar, not strings"
+            }
+          ]
+        },
+        "operatorRuleAfter": {
+          "assetId": null,
+          "source": "refused",
+          "reason": "operator rule (routed by instrument \"strings\" -> sfizz-vsco2-violin-ens-sus) names sfizz-vsco2-violin-ens-sus, but its key range 55–86 does not cover the part (79–91): 5 of 12 notes would be silent"
+        },
+        "rangeFitPerFamilyAsset": {
+          "sfizz-vsco2-violin-ens-sus": "key range 55–86 does not cover the part (79–91): 5 of 12 notes would be silent",
+          "sfizz-vsco2-cello-ens-sus": "key range 36–77 does not cover the part (79–91): 12 of 12 notes would be silent",
+          "sfizz-vsco2-harp": "sampled range 28–101 covers the part (79–91) with its own samples",
+          "sfizz-meatbass-arco": "key range 12–72 does not cover the part (79–91): 12 of 12 notes would be silent",
+          "sfizz-meatbass-pizz": "key range 12–79 does not cover the part (79–91): 11 of 12 notes would be silent"
+        }
+      },
+      {
+        "stem": "ensemble-transition",
+        "instrument": "ensemble",
+        "role": "TRANSITION",
+        "family": "keys",
+        "writtenRange": [
+          62,
+          79
+        ],
+        "v6Actual": {
+          "assetId": "sfizz-salamander-grand-v3",
+          "source": "operator",
+          "reason": "routed by family keys -> sfizz-salamander-grand-v3"
+        },
+        "brainBefore": {
+          "assetId": "sfizz-salamander-grand-v3",
+          "reason": "sfizz-salamander-grand-v3 (score 5): declared for family keys; no key range declared; range fit for the part (62–79) is unverified; \"acoustic\" fits acoustic"
+        },
+        "brainAfter": {
+          "assetId": "sfizz-salamander-grand-v3",
+          "reason": "sfizz-salamander-grand-v3 (score 10): declared for family keys; sampled range 21–108 covers the part (62–79) with its own samples; no stretched samples; \"acoustic\" fits acoustic",
+          "rejected": [
+            {
+              "assetId": "surge-xt-1.3.4",
+              "reason": "declared for synth, not keys"
+            },
+            {
+              "assetId": "dexed-1.0.1",
+              "reason": "declared for synth, not keys"
+            },
+            {
+              "assetId": "sfizz-vsco2-violin-ens-sus",
+              "reason": "declared for strings, not keys"
+            },
+            {
+              "assetId": "sfizz-vsco2-cello-ens-sus",
+              "reason": "declared for strings, not keys"
+            },
+            {
+              "assetId": "sfizz-vsco2-horn-sus",
+              "reason": "declared for brass, not keys"
+            },
+            {
+              "assetId": "sfizz-vsco2-flute-sus",
+              "reason": "declared for winds, not keys"
+            },
+            {
+              "assetId": "sfizz-vsco2-harp",
+              "reason": "declared for strings, not keys"
+            },
+            {
+              "assetId": "sfizz-drskit-stereo",
+              "reason": "declared for drums, not keys"
+            },
+            {
+              "assetId": "sfizz-meatbass-arco",
+              "reason": "declared for bass/strings, not keys"
+            },
+            {
+              "assetId": "sfizz-meatbass-pizz",
+              "reason": "declared for bass/strings, not keys"
+            },
+            {
+              "assetId": "sfizz-emilyguitar-basic",
+              "reason": "declared for guitar, not keys"
+            }
+          ]
+        },
+        "operatorRuleAfter": {
+          "assetId": "sfizz-salamander-grand-v3",
+          "source": "operator",
+          "reason": "routed by family keys -> sfizz-salamander-grand-v3"
+        },
+        "rangeFitPerFamilyAsset": {
+          "sfizz-salamander-grand-v3": "sampled range 21–108 covers the part (62–79) with its own samples"
+        }
+      }
+    ],
+    "registerPlannedStringBed": {
+      "written": [
+        68,
+        79
+      ],
+      "assetId": "sfizz-vsco2-violin-ens-sus",
+      "reason": "sfizz-vsco2-violin-ens-sus (score 13): declared for family strings; sampled range 55–86 covers the part (68–79) with its own samples; no stretched samples; declared for role HARMONIC_BED; \"acoustic\" fits acoustic — over sfizz-meatbass-pizz (6), sfizz-vsco2-harp (6)"
+    }
+  },
+  "d4_shouldRest": [
+    {
+      "section": "Intro",
+      "function": "intro",
+      "energy": 0.026,
+      "instrument": "brass",
+      "role": "PAD",
+      "rest": true,
+      "convention": "brass_tacet_in_intimate",
+      "reason": "brass is tacet in an intimate intro (energy 0.03); it enters at the lift"
+    },
+    {
+      "section": "Intro",
+      "function": "intro",
+      "energy": 0.026,
+      "instrument": "percussion",
+      "role": "ACCENT",
+      "rest": true,
+      "convention": "percussion_rests_in_intro_outro",
+      "reason": "Hand percussion rests in a quiet intro unless the brief asks for it"
+    },
+    {
+      "section": "Intro",
+      "function": "intro",
+      "energy": 0.026,
+      "instrument": "strings",
+      "role": "PAD",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Intro",
+      "function": "intro",
+      "energy": 0.026,
+      "instrument": "strings",
+      "role": "CLIMAX_LAYER",
+      "rest": true,
+      "convention": "climax_layer_only_at_arrival",
+      "reason": "a climax layer plays only at an arrival (tension role unknown, energy 0.03)"
+    },
+    {
+      "section": "Verse 1",
+      "function": "verse",
+      "energy": 0.313,
+      "instrument": "brass",
+      "role": "PAD",
+      "rest": true,
+      "convention": "brass_tacet_in_intimate",
+      "reason": "brass is tacet in an intimate verse (energy 0.31); it enters at the lift"
+    },
+    {
+      "section": "Verse 1",
+      "function": "verse",
+      "energy": 0.313,
+      "instrument": "percussion",
+      "role": "ACCENT",
+      "rest": true,
+      "convention": "percussion_is_colour",
+      "reason": "hand percussion is colour: it waits for a section with energy (here 0.31)"
+    },
+    {
+      "section": "Verse 1",
+      "function": "verse",
+      "energy": 0.313,
+      "instrument": "strings",
+      "role": "PAD",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Verse 1",
+      "function": "verse",
+      "energy": 0.313,
+      "instrument": "strings",
+      "role": "CLIMAX_LAYER",
+      "rest": true,
+      "convention": "climax_layer_only_at_arrival",
+      "reason": "a climax layer plays only at an arrival (tension role unknown, energy 0.31)"
+    },
+    {
+      "section": "Verse 2",
+      "function": "verse",
+      "energy": 0.171,
+      "instrument": "brass",
+      "role": "PAD",
+      "rest": true,
+      "convention": "brass_tacet_in_intimate",
+      "reason": "brass is tacet in an intimate verse (energy 0.17); it enters at the lift"
+    },
+    {
+      "section": "Verse 2",
+      "function": "verse",
+      "energy": 0.171,
+      "instrument": "percussion",
+      "role": "ACCENT",
+      "rest": true,
+      "convention": "percussion_is_colour",
+      "reason": "hand percussion is colour: it waits for a section with energy (here 0.17)"
+    },
+    {
+      "section": "Verse 2",
+      "function": "verse",
+      "energy": 0.171,
+      "instrument": "strings",
+      "role": "PAD",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Verse 2",
+      "function": "verse",
+      "energy": 0.171,
+      "instrument": "strings",
+      "role": "CLIMAX_LAYER",
+      "rest": true,
+      "convention": "climax_layer_only_at_arrival",
+      "reason": "a climax layer plays only at an arrival (tension role unknown, energy 0.17)"
+    },
+    {
+      "section": "Chorus",
+      "function": "chorus",
+      "energy": 0.449,
+      "instrument": "brass",
+      "role": "PAD",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Chorus",
+      "function": "chorus",
+      "energy": 0.449,
+      "instrument": "percussion",
+      "role": "ACCENT",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Chorus",
+      "function": "chorus",
+      "energy": 0.449,
+      "instrument": "strings",
+      "role": "PAD",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Chorus",
+      "function": "chorus",
+      "energy": 0.449,
+      "instrument": "strings",
+      "role": "CLIMAX_LAYER",
+      "rest": true,
+      "convention": "climax_layer_only_at_arrival",
+      "reason": "a climax layer plays only at an arrival (tension role unknown, energy 0.45)"
+    },
+    {
+      "section": "Chorus 2",
+      "function": "chorus",
+      "energy": 1,
+      "instrument": "brass",
+      "role": "PAD",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Chorus 2",
+      "function": "chorus",
+      "energy": 1,
+      "instrument": "percussion",
+      "role": "ACCENT",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Chorus 2",
+      "function": "chorus",
+      "energy": 1,
+      "instrument": "strings",
+      "role": "PAD",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Chorus 2",
+      "function": "chorus",
+      "energy": 1,
+      "instrument": "strings",
+      "role": "CLIMAX_LAYER",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Verse 3",
+      "function": "verse",
+      "energy": 0.153,
+      "instrument": "brass",
+      "role": "PAD",
+      "rest": true,
+      "convention": "brass_tacet_in_intimate",
+      "reason": "brass is tacet in an intimate verse (energy 0.15); it enters at the lift"
+    },
+    {
+      "section": "Verse 3",
+      "function": "verse",
+      "energy": 0.153,
+      "instrument": "percussion",
+      "role": "ACCENT",
+      "rest": true,
+      "convention": "percussion_is_colour",
+      "reason": "hand percussion is colour: it waits for a section with energy (here 0.15)"
+    },
+    {
+      "section": "Verse 3",
+      "function": "verse",
+      "energy": 0.153,
+      "instrument": "strings",
+      "role": "PAD",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Verse 3",
+      "function": "verse",
+      "energy": 0.153,
+      "instrument": "strings",
+      "role": "CLIMAX_LAYER",
+      "rest": true,
+      "convention": "climax_layer_only_at_arrival",
+      "reason": "a climax layer plays only at an arrival (tension role unknown, energy 0.15)"
+    },
+    {
+      "section": "Bridge",
+      "function": "bridge",
+      "energy": 0.66,
+      "instrument": "brass",
+      "role": "PAD",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Bridge",
+      "function": "bridge",
+      "energy": 0.66,
+      "instrument": "percussion",
+      "role": "ACCENT",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Bridge",
+      "function": "bridge",
+      "energy": 0.66,
+      "instrument": "strings",
+      "role": "PAD",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Bridge",
+      "function": "bridge",
+      "energy": 0.66,
+      "instrument": "strings",
+      "role": "CLIMAX_LAYER",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Chorus 3",
+      "function": "chorus",
+      "energy": 0.782,
+      "instrument": "brass",
+      "role": "PAD",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Chorus 3",
+      "function": "chorus",
+      "energy": 0.782,
+      "instrument": "percussion",
+      "role": "ACCENT",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Chorus 3",
+      "function": "chorus",
+      "energy": 0.782,
+      "instrument": "strings",
+      "role": "PAD",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Chorus 3",
+      "function": "chorus",
+      "energy": 0.782,
+      "instrument": "strings",
+      "role": "CLIMAX_LAYER",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Outro",
+      "function": "outro",
+      "energy": 0.345,
+      "instrument": "brass",
+      "role": "PAD",
+      "rest": true,
+      "convention": "brass_tacet_in_intimate",
+      "reason": "brass is tacet in an intimate outro (energy 0.34); it enters at the lift"
+    },
+    {
+      "section": "Outro",
+      "function": "outro",
+      "energy": 0.345,
+      "instrument": "percussion",
+      "role": "ACCENT",
+      "rest": true,
+      "convention": "percussion_rests_in_intro_outro",
+      "reason": "Hand percussion rests in a quiet outro unless the brief asks for it"
+    },
+    {
+      "section": "Outro",
+      "function": "outro",
+      "energy": 0.345,
+      "instrument": "strings",
+      "role": "PAD",
+      "rest": false,
+      "convention": null,
+      "reason": "no convention asks for silence here"
+    },
+    {
+      "section": "Outro",
+      "function": "outro",
+      "energy": 0.345,
+      "instrument": "strings",
+      "role": "CLIMAX_LAYER",
+      "rest": true,
+      "convention": "climax_layer_only_at_arrival",
+      "reason": "a climax layer plays only at an arrival (tension role unknown, energy 0.34)"
+    }
+  ],
+  "capabilityLadder": {
+    "legend": "DESIGNED > IMPLEMENTED > INTEGRATED (consumed on the production path) > TESTED (unit + positive control) > BENCHMARKED > VALIDATED ON OUTPUT",
+    "instrumentProfiles": {
+      "rung": "TESTED",
+      "note": "32 profiles; getInstrumentDefinition is an adapter over them on the production path (INTEGRATED for range / polyphony / leap / controls, as before); gestures, role suitability, blend, density tolerance and doubling have no production reader yet (B-02 composer split)."
+    },
+    "unknownInstrumentNeverAPiano": {
+      "rung": "INTEGRATED + TESTED",
+      "note": "family 'unknown' routes to no native renderer, so an export of such a track is preview-only with the reason; partComposer.safeDefinition / musicalConstraints.safeDefinition (not B-03 files) still fall back to {0,127} / 'keys' when getInstrumentDefinition *throws* - it no longer throws, so those paths are dead, but they should read definition.profile.status and report (integration point for B-00)."
+    },
+    "registerPlanPitchBands": {
+      "rung": "IMPLEMENTED + TESTED, INTEGRATED-pending",
+      "note": "deriveOrchestrationBudget (production path) now carries registerPlan and derives registerShift / registerOccupancy from it; registerBoundsFor is a pure function the composer does not call yet (referencePartComposer.registerBounds still uses comfortableRange + the section's majority band) - B-02."
+    },
+    "rangeAwareSoundSelection": {
+      "rung": "INTEGRATED + TESTED on the API side; the live worker publishes no ranges until restarted",
+      "note": "resolveTrackAsset / selectTrackSound reject an asset whose keyRange does not cover the notes (exportEngine already passes the notes); the local worker's /health gains keyRange etc. from known_asset_ranges.json once the lead restarts it; the sfizz cloud route (nativeRendererRouting) already has keyRange on its map entries but nothing checks them - integration point."
+    },
+    "silenceAsADecision": {
+      "rung": "IMPLEMENTED + TESTED, not wired",
+      "note": "shouldRest is a pure function with named conventions and a positive control per convention; B-01 supplies the arc/window fields, B-02 honours a tacet."
+    }
+  },
+  "honestLimits": [
+    "The register plan is not read by any composer yet: the owner's strings would still be written at 79-91 by referencePartComposer.registerBounds until B-02 calls registerBoundsFor. The evidence shows what the plan *would* hand the composer, not what was rendered.",
+    "The plan's numbers in this file come from the owner's *stored* section plan (export v6); re-deriving the plan from the Song Model fixture without the owner's brief yields bass + drums only (diagnosis F4: source RMS as intent), so a fixture-only run cannot reproduce the string bed. Both runs are in registerPlan.test.ts.",
+    "The stored plan still has 'keys' as LEAD everywhere and 'mix' as a family (diagnosis F5). The register plan takes the plan as given: the piano bed is the 'mix' entry; the 'keys' LEAD is planned as a line and does not own a band. B-01 fixes the plan, not this stream.",
+    "Vocal register protection is implemented but the owner's song has vocals.status = not_available, so every window here says vocal: not_available and no vocal band was protected. The synthetic test covers the detected case.",
+    "Collision rules are conventions expressed as thresholds (a fourth of overlap, a fifth between centres, 10 semitones minimum for a close voicing, 4 voices in C3-B3). They were checked against the owner's plan and four synthetic layouts, not against a corpus; no critic has been calibrated on them (B-05/B-08).",
+    "Profile numbers: GM ranges, polyphony, leaps and breath come from instrumentReference.ts (calibrated on 30,570 human windows); register character, comfortable ranges, role registers, suitability, blend, density tolerance and doubling are the orchestration references' conventions written down by this stream and reviewed by nobody independent yet. They are labelled as such (source: orchestration-reference / platform-convention).",
+    "The palette word 'strings' resolves to the violin desk (violin_section) because one track renders through one asset (the violin ensemble on both workers); the full section with violas / cellos / basses needs one track per desk, which the composer cannot write yet. A single 'strings' track therefore cannot realise the cellos 48-64 the plan proposes.",
+    "String-section polyphony in the definition is 8 (four desks divisi a2, platform convention), not the GM table's 16, and the pre-B-03 strings leap of 10 became the GM-calibrated 24: two pinned tests (playabilityRepair.test.ts, musicalConstraints.test.ts) were rewritten to derive their fixtures from the definition instead of the old numbers.",
+    "Family 'winds' and 'unknown' were added to InstrumentDefinition.family and to PERFORMANCE_CAPABILITIES in musicEngines.ts (outside the getInstrumentDefinition block) - the smallest change that keeps typecheck honest; the openapi spec carries no family enum, so generated clients are unaffected.",
+    "The percussion stem of v6 played GM 54 (tambourine) on the DRSKit, where key 54 is the left crash's tip: the new mappedKeys check would *allow* it (the key is mapped) - a mapped key is not the right sound; instrument-specific key maps for kits are not modelled.",
+    "The live worker (:8022) has not been restarted with this code: its /health still publishes no ranges, so range-aware selection on the production path is inert until the lead restarts it (no manifest change needed: known_asset_ranges.json is keyed by sfzSha256). The sfizz cloud worker's map already carries keyRange per entry; the export does not check it (integration point: exportEngine / nativeRendererRouting).",
+    "The two synths (Surge XT, Dexed) are declared 0-127 by convention; no measurement of their audible range was made.",
+    "Nothing here was rendered or listened to: no audio evidence in this PR."
+  ],
+  "integrationPoints": [
+    "referencePartComposer.ts:registerBounds (B-00/B-02 owner) -> call registerBoundsFor({ profile, role, window: { startBar, endBar }, plan: request.orchestrationBudget.registerPlan, instrument }) and honour tacet / desks.",
+    "partComposer.ts:safeDefinition and musicalConstraints.ts:safeDefinition / checkArrangementConstraints -> getInstrumentDefinition no longer throws; check definition.profile?.status === 'unknown' (isUnknownInstrumentDefinition) and report instead of {0,127} / 'keys'.",
+    "partComposer.ts task table (WOODWINDS / ensemble / INTRO / ENDING / TRANSITION) -> use the resolved profile's gestures (profile.gestures) instead of the fixed figures; 'ensemble' resolves to string_section.",
+    "sectionPhrasePlanner.ts / arrangementArc (B-01) -> call shouldRest per window with { sectionFunction, energy, barsIntoSection, soloEntry, vocalActive, isFinalChorus } and the arc's { dynamic, textureLevel, tensionRole, familyEntryBar, requested }; record the RestDecision on the role assignment.",
+    "exportEngine.ts ~line 760 (sfizz candidates) -> assessKeyRangeFit(rendered.trackModel.notes, { keyRange: candidate.keyRange }) before renderAttested; refuse with the reason like the pedalboard path does. nativeRendererRouting.ts already types keyRange on SfizzInstrumentMapEntry.",
+    "performanceEngine.ts:profileFor -> FAMILY_PROFILES has no 'winds' / 'unknown' row (falls back to keys); add a winds row (breath-phrase) and make unknown explicit.",
+    "The lead's local worker (:8022): restart to publish ranges; optionally python annotate_manifest.py to write them into the manifest."
+  ],
+  "tests": {
+    "api": [
+      "instrumentProfile.test.ts (6)",
+      "registerPlan.test.ts (6)",
+      "soundSelectionBrain.test.ts (14, 5 new)",
+      "orchestrationBudget.test.ts (5, unchanged, on the 1.1 engine)",
+      "playabilityRepair.test.ts / musicalConstraints.test.ts (fixtures derived from the definition instead of pre-B-03 numbers)"
+    ],
+    "worker": [
+      "tests/test_sfz_range.py (5)",
+      "tests/test_bridge_and_host.py public-fields test updated for the synth convention"
+    ]
+  },
+  "notes": [
+    "d3_soundSelection.fiveStems.*.brainBefore reproduces the v4 failure with the catalogue exactly as the live worker published it (no ranges): the brain picks the cello ensemble for the 79-91 string part. brainAfter, with the ranges read from the SFZ files, rejects every sustained string asset with the reason and picks the harp (the only strings asset that sounds 79-91); operatorRuleAfter shows the owner's v6 rule (strings -> violin ensemble, sampled 55-86) refused for that part with the reason.",
+    "d3_soundSelection.registerPlannedStringBed: the same brain, given the bed where the register plan puts it (68-79), picks the violin ensemble - the choice the owner made by hand in v6.",
+    "The 'ensemble' stem is listed with its v6 family (keys -> Salamander). Under the new profile 'ensemble' resolves to string_section (family strings) and, at 62-79, would go to the violin ensemble; the export's family comes from the stored TrackModel, so v6's stems keep their families."
+  ]
+}

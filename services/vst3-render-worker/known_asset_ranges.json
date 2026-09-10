@@ -1,0 +1,236 @@
+{
+  "note": "Playable ranges of the open SFZ libraries this worker is known to host, read from the SFZ files by sfz_range.py (Arrangement Brain B-03) and keyed by the SFZ file's SHA-256 so a manifest written before ranges existed still publishes them on /health. Regenerate with: python annotate_manifest.py --known-table (needs the libraries locally).",
+  "generatedBy": "sfz_range.py",
+  "bySfzSha256": {
+    "c8b282f03fdb2d9e6be24a99df0d97a05e7ece718d1a14e0b882c518161f7837": {
+      "knownAssetId": "sfizz-salamander-grand-v3",
+      "library": "Salamander Grand Piano V3 (CC-BY 3.0, Alexander Holm; sfz by sfzinstruments)",
+      "sfzFile": "Salamander Grand Piano V3.sfz",
+      "keyRangeSource": "sfz-regions",
+      "articulations": [
+        "sustain",
+        "release",
+        "pedal_noise"
+      ],
+      "keyRange": [
+        21,
+        108
+      ],
+      "sampledRange": [
+        21,
+        108
+      ],
+      "velocityLayers": 4
+    },
+    "4591e212cccf1cbcff0c78cf8429a8221bb0820b70cb7c8dd6685f470ace4eaa": {
+      "knownAssetId": "sfizz-vsco2-violin-ens-sus",
+      "library": "VSCO 2 Community Edition 1.1.0 (CC0, Versilian Studios) ViolinEnsSusVib.sfz",
+      "sfzFile": "ViolinEnsSusVib.sfz",
+      "keyRangeSource": "sfz-regions",
+      "articulations": [
+        "sustain",
+        "vibrato"
+      ],
+      "keyRange": [
+        55,
+        86
+      ],
+      "sampledRange": [
+        55,
+        86
+      ],
+      "velocityLayers": 2
+    },
+    "276352639dda425dd12a4fdb3acdf545867fdb0ff4f89876319f4ec3cf12a19f": {
+      "knownAssetId": "sfizz-vsco2-cello-ens-sus",
+      "library": "VSCO 2 Community Edition 1.1.0 (CC0, Versilian Studios) CelloEnsSusVib.sfz",
+      "sfzFile": "CelloEnsSusVib.sfz",
+      "keyRangeSource": "sfz-regions",
+      "articulations": [
+        "sustain",
+        "vibrato"
+      ],
+      "keyRange": [
+        36,
+        77
+      ],
+      "sampledRange": [
+        36,
+        77
+      ],
+      "velocityLayers": 4
+    },
+    "52a8ccef8baaf0dbea4b3e528b8096c89ffb5c8aafba2b69c4c38af1d64587a5": {
+      "knownAssetId": "sfizz-vsco2-horn-sus",
+      "library": "VSCO 2 Community Edition 1.1.0 (CC0, Versilian Studios) FHornSus.sfz",
+      "sfzFile": "FHornSus.sfz",
+      "keyRangeSource": "sfz-regions",
+      "articulations": [
+        "sustain"
+      ],
+      "keyRange": [
+        33,
+        77
+      ],
+      "sampledRange": [
+        33,
+        77
+      ],
+      "velocityLayers": 8
+    },
+    "26b0dedaa483b6f7f4201d144673b26ab1d0e4585493a97815d03904319a0734": {
+      "knownAssetId": "sfizz-vsco2-flute-sus",
+      "library": "VSCO 2 Community Edition 1.1.0 (CC0, Versilian Studios) FluteSusVib.sfz",
+      "sfzFile": "FluteSusVib.sfz",
+      "keyRangeSource": "sfz-regions",
+      "articulations": [
+        "sustain",
+        "vibrato"
+      ],
+      "keyRange": [
+        60,
+        96
+      ],
+      "sampledRange": [
+        60,
+        96
+      ],
+      "velocityLayers": 3
+    },
+    "25b553eb756a94f833b1cc1239fe3e6dced3ebc83335bac95d05c951589f7da9": {
+      "knownAssetId": "sfizz-vsco2-harp",
+      "library": "VSCO 2 Community Edition 1.1.0 (CC0, Versilian Studios) Harp.sfz",
+      "sfzFile": "Harp.sfz",
+      "keyRangeSource": "sfz-regions",
+      "articulations": [
+        "pluck"
+      ],
+      "keyRange": [
+        28,
+        101
+      ],
+      "sampledRange": [
+        28,
+        101
+      ],
+      "velocityLayers": 1
+    },
+    "14634014dcea45235de643d854d77197334ac702f06c68a9a2cd7f8f97828a48": {
+      "knownAssetId": "sfizz-drskit-stereo",
+      "library": "DrumGizmo DRSKit v1.0 sfz port (CC-BY 4.0, DrumGizmo team / kinwie) Stereo",
+      "sfzFile": "DrumGizmo DRSKit.sfz",
+      "keyRangeSource": "sfz-regions",
+      "articulations": [
+        "kick",
+        "snare",
+        "toms",
+        "hihat",
+        "ride",
+        "crash"
+      ],
+      "keyRange": [
+        35,
+        76
+      ],
+      "sampledRange": [
+        35,
+        76
+      ],
+      "mappedKeys": [
+        35,
+        36,
+        37,
+        38,
+        40,
+        41,
+        42,
+        43,
+        44,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        76
+      ],
+      "velocityLayers": 25
+    },
+    "008cf9b04358b4e499104792956c7c8d9f926df233c84d5ac195910cf3b82631": {
+      "knownAssetId": "sfizz-meatbass-arco",
+      "library": "Karoryfer Meatbass v1.001 (CC0, Karoryfer Samples) 02_arco_3vel.sfz",
+      "sfzFile": "02_arco_3vel.sfz",
+      "keyRangeSource": "sfz-regions",
+      "articulations": [
+        "arco"
+      ],
+      "keyRange": [
+        12,
+        72
+      ],
+      "sampledRange": [
+        21,
+        69
+      ],
+      "velocityLayers": 3
+    },
+    "af95601d4be39dea012a10bdec49b72c376a68ad201e31c5dc37e5f21512a628": {
+      "knownAssetId": "sfizz-meatbass-pizz",
+      "library": "Karoryfer Meatbass v1.001 (CC0, Karoryfer Samples) 04_pizz.sfz",
+      "sfzFile": "04_pizz.sfz",
+      "keyRangeSource": "sfz-regions",
+      "articulations": [
+        "pizzicato"
+      ],
+      "keyRange": [
+        12,
+        79
+      ],
+      "sampledRange": [
+        21,
+        79
+      ],
+      "velocityLayers": 5
+    },
+    "6374cae8516592aa50c0bc00de431b9e4ab45d5a8af66ddddc183a3945e907f0": {
+      "knownAssetId": "sfizz-emilyguitar-basic",
+      "library": "Karoryfer Emilyguitar v1.001 (CC0, Karoryfer Samples) emily_basic.sfz",
+      "sfzFile": "emily_basic.sfz",
+      "keyRangeSource": "sfz-regions",
+      "articulations": [
+        "pick"
+      ],
+      "keyRange": [
+        33,
+        96
+      ],
+      "sampledRange": [
+        37,
+        96
+      ],
+      "velocityLayers": 5
+    }
+  }
+}

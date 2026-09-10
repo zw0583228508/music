@@ -19,6 +19,18 @@
  * explicit operator rule wins; otherwise the brain; then the table default;
  * then the worker's own default. A rule naming an unattested asset refuses,
  * exactly as PR-22 decided.
+ *
+ * B-03 (Arrangement Brain): the brain now knows an asset's playable range.
+ * On the owner's song a cello ensemble sampled 36–77 was chosen for a string
+ * part written at MIDI 79–91, rendered silence and was rejected after the
+ * fact. A catalogue entry may now carry `keyRange` (the keys it sounds),
+ * `sampledRange` (keys backed by their own samples) and, for kits,
+ * `mappedKeys`. An asset whose range does not cover the part is rejected
+ * *before* rendering, with the reason; one whose sampled range fits scores
+ * above one that would stretch samples; one that declares no range is still
+ * allowed but scores below a fitting declared one. The same rule binds an
+ * operator rule: an instruction to render notes an asset cannot sound is a
+ * refusal, not silence presented as a stem.
  */
 import { createHash } from "node:crypto";
 import type {
@@ -32,7 +44,7 @@ import type {
 } from "@workspace/db";
 import { routePremiumInstrument, type PremiumRoutingTable } from "./premiumInstrumentRouting";
 
-export const SOUND_SELECTION_METHOD = "sound-selection-brain/v1";
+export const SOUND_SELECTION_METHOD = "sound-selection-brain/v2-range-aware";
 
 export type SoundTrack = {
   trackId: string;
@@ -207,6 +219,64 @@ export function deriveSoundTarget(
 }
 
 // ---------------------------------------------------------------------------
+// Range fit (B-03)
+// ---------------------------------------------------------------------------
+
+export type KeyRangeFit = {
+  /** covers: every note inside keyRange; outside: at least one note the asset cannot sound; unverified: no keyRange declared. */
+  status: "covers" | "outside" | "unverified" | "no-notes";
+  noteRange: [number, number] | null;
+  total: number;
+  outside: number;
+  /** Pitches a kit does not map (only when the entry declares `mappedKeys`). */
+  unmapped: number[];
+  /** covers: inside sampledRange; stretched: covered but beyond the sampled keys; unknown: no sampledRange. */
+  sampled: "covers" | "stretched" | "unknown";
+  detail: string;
+};
+
+/** Whether an asset can sound every note of a part, from its declared ranges. Pure. */
+export function assessKeyRangeFit(
+  notes: readonly Pick<MusicalNote, "pitch">[] | undefined,
+  entry: Pick<SoundCatalogueEntry, "keyRange" | "sampledRange" | "mappedKeys">,
+): KeyRangeFit {
+  const pitches = (notes ?? []).map((n) => n.pitch);
+  if (!pitches.length) return { status: "no-notes", noteRange: null, total: 0, outside: 0, unmapped: [], sampled: "unknown", detail: "the part has no notes" };
+  const lo = Math.min(...pitches);
+  const hi = Math.max(...pitches);
+  const noteRange: [number, number] = [lo, hi];
+  if (entry.mappedKeys?.length) {
+    const mapped = new Set(entry.mappedKeys);
+    const unmapped = [...new Set(pitches.filter((p) => !mapped.has(p)))].sort((a, b) => a - b);
+    if (unmapped.length) {
+      const count = pitches.filter((p) => !mapped.has(p)).length;
+      return { status: "outside", noteRange, total: pitches.length, outside: count, unmapped, sampled: "unknown",
+        detail: `kit does not map key${unmapped.length > 1 ? "s" : ""} ${unmapped.join(", ")} (${count} of ${pitches.length} notes would be silent)` };
+    }
+    return { status: "covers", noteRange, total: pitches.length, outside: 0, unmapped: [], sampled: "covers", detail: `every note is a mapped kit key (part ${lo}–${hi})` };
+  }
+  if (!entry.keyRange) {
+    return { status: "unverified", noteRange, total: pitches.length, outside: 0, unmapped: [], sampled: "unknown", detail: `no key range declared; range fit for the part (${lo}–${hi}) is unverified` };
+  }
+  const [klo, khi] = entry.keyRange;
+  const outside = pitches.filter((p) => p < klo || p > khi).length;
+  if (outside) {
+    return { status: "outside", noteRange, total: pitches.length, outside, unmapped: [], sampled: "unknown",
+      detail: `key range ${klo}–${khi} does not cover the part (${lo}–${hi}): ${outside} of ${pitches.length} notes would be silent` };
+  }
+  if (entry.sampledRange) {
+    const [slo, shi] = entry.sampledRange;
+    const stretched = pitches.filter((p) => p < slo || p > shi).length;
+    if (stretched) {
+      return { status: "covers", noteRange, total: pitches.length, outside: 0, unmapped: [], sampled: "stretched",
+        detail: `key range ${klo}–${khi} covers the part (${lo}–${hi}); ${stretched} note${stretched > 1 ? "s" : ""} beyond the sampled ${slo}–${shi} would play stretched samples` };
+    }
+    return { status: "covers", noteRange, total: pitches.length, outside: 0, unmapped: [], sampled: "covers", detail: `sampled range ${slo}–${shi} covers the part (${lo}–${hi}) with its own samples` };
+  }
+  return { status: "covers", noteRange, total: pitches.length, outside: 0, unmapped: [], sampled: "unknown", detail: `key range ${klo}–${khi} covers the part (${lo}–${hi})` };
+}
+
+// ---------------------------------------------------------------------------
 // Layer 2: the catalogue
 // ---------------------------------------------------------------------------
 
@@ -248,6 +318,17 @@ export function scoreCatalogueEntry(
   if (!familyOk) return { assetId: entry.assetId, rejected: `declared for ${families.join("/")}, not ${family}` };
   if (!families.length) { score += 1; reasons.push("universal instrument (no families declared)"); }
   else { score += 4; reasons.push(`declared for family ${family}`); }
+
+  // B-03: an asset that cannot sound the part is not a candidate at all; one
+  // that declares a fitting range outranks one that declares nothing.
+  const fit = assessKeyRangeFit(track.notes, entry);
+  if (fit.status === "outside") return { assetId: entry.assetId, rejected: fit.detail };
+  if (fit.status === "covers") {
+    score += 3; reasons.push(fit.detail);
+    if (fit.sampled === "covers" && entry.sampledRange) { score += 2; reasons.push("no stretched samples"); }
+  } else if (fit.status === "unverified") {
+    reasons.push(fit.detail);
+  }
 
   if (roles.length) {
     // An instrument that names its roles is *for* those roles: a pad
@@ -304,7 +385,9 @@ export function selectTrackSound(
     method: SOUND_SELECTION_METHOD,
     track: { instrument: track.instrument, role: track.role, family: track.family, noteCount: track.notes?.length ?? 0 },
     target,
-    catalogue: catalogue.map((c) => c.assetId).sort(),
+    catalogue: catalogue.map((c) => ({ assetId: c.assetId, keyRange: c.keyRange ?? null, sampledRange: c.sampledRange ?? null, mappedKeys: c.mappedKeys ?? null }))
+      .sort((a, b) => (a.assetId < b.assetId ? -1 : a.assetId > b.assetId ? 1 : 0)),
+    noteRange: track.notes?.length ? [Math.min(...track.notes.map((n) => n.pitch)), Math.max(...track.notes.map((n) => n.pitch))] : null,
     exclusions: (styleProfile?.exclusions ?? []).map((e) => e.value),
   })).digest("hex");
   return {
@@ -333,12 +416,24 @@ export function resolveTrackAsset(input: {
 }): ResolvedTrackAsset {
   const attested = input.catalogue.map((c) => c.assetId);
   const routable = { instrument: input.track.instrument, role: input.track.role, family: input.track.family };
+  // B-03: an operator's instruction to render notes the asset cannot sound is
+  // refused with the reason — the alternative is silence labelled as a stem.
+  const rangeRefusal = (assetId: string, how: string): string | null => {
+    const entry = input.catalogue.find((c) => c.assetId === assetId);
+    if (!entry) return null;
+    const fit = assessKeyRangeFit(input.track.notes, entry);
+    return fit.status === "outside" ? `${how} names ${assetId}, but its ${fit.detail}` : null;
+  };
   if (input.table) {
     // Explicit rules first, without the default: the default is a fallback
     // the brain outranks, an explicit rule is an instruction it obeys.
     const { default: tableDefault, ...explicit } = input.table;
     const route = routePremiumInstrument(routable, explicit, attested);
-    if (route.assetId) return { assetId: route.assetId, source: "operator", reason: route.reason, soundProfile: null };
+    if (route.assetId) {
+      const refusal = rangeRefusal(route.assetId, `operator rule (${route.reason})`);
+      if (refusal) return { assetId: null, source: "refused", reason: refusal, soundProfile: null };
+      return { assetId: route.assetId, source: "operator", reason: route.reason, soundProfile: null };
+    }
     if (route.rule) return { assetId: null, source: "refused", reason: route.reason, soundProfile: null };
     const profile = input.catalogue.length ? selectTrackSound(input.track, input.catalogue, input.styleProfile) : null;
     if (profile?.selection.assetId) {
@@ -346,9 +441,12 @@ export function resolveTrackAsset(input: {
     }
     if (tableDefault) {
       const fallback = routePremiumInstrument(routable, { default: tableDefault }, attested);
-      return fallback.assetId
-        ? { assetId: fallback.assetId, source: "operator-default", reason: fallback.reason, soundProfile: profile }
-        : { assetId: null, source: "refused", reason: fallback.reason, soundProfile: profile };
+      if (fallback.assetId) {
+        const refusal = rangeRefusal(fallback.assetId, `the table default (${fallback.reason})`);
+        if (refusal) return { assetId: null, source: "refused", reason: refusal, soundProfile: profile };
+        return { assetId: fallback.assetId, source: "operator-default", reason: fallback.reason, soundProfile: profile };
+      }
+      return { assetId: null, source: "refused", reason: fallback.reason, soundProfile: profile };
     }
     return { assetId: null, source: "worker-default", reason: profile?.selection.reason ?? "no routing rule and no attested catalogue; the worker's default asset renders", soundProfile: profile };
   }
@@ -361,9 +459,13 @@ export function resolveTrackAsset(input: {
     : { assetId: null, source: "worker-default", reason: profile.selection.reason, soundProfile: profile };
 }
 
-/** The renderer's attested asset list, as the brain reads it. */
+const isRange = (v: unknown): v is [number, number] =>
+  Array.isArray(v) && v.length === 2 && v.every((n) => Number.isInteger(n) && n >= 0 && n <= 127) && v[0] <= v[1];
+
+/** The renderer's attested asset list, as the brain reads it (B-03: with its playable range, when the worker declares one). */
 export function toSoundCatalogue(assets: ReadonlyArray<{
   id: string; name?: string; manufacturer?: string; families?: string[]; roles?: string[]; character?: string[];
+  keyRange?: unknown; sampledRange?: unknown; mappedKeys?: unknown; velocityLayers?: unknown; articulations?: unknown; keyRangeSource?: unknown;
 }>): SoundCatalogueEntry[] {
   return assets.map((a) => ({
     assetId: a.id,
@@ -372,5 +474,13 @@ export function toSoundCatalogue(assets: ReadonlyArray<{
     ...(a.families?.length ? { families: a.families } : {}),
     ...(a.roles?.length ? { roles: a.roles } : {}),
     ...(a.character?.length ? { character: a.character } : {}),
+    ...(isRange(a.keyRange) ? { keyRange: [a.keyRange[0], a.keyRange[1]] as [number, number] } : {}),
+    ...(isRange(a.sampledRange) ? { sampledRange: [a.sampledRange[0], a.sampledRange[1]] as [number, number] } : {}),
+    ...(Array.isArray(a.mappedKeys) && a.mappedKeys.length && a.mappedKeys.every((k) => Number.isInteger(k))
+      ? { mappedKeys: [...(a.mappedKeys as number[])].sort((x, y) => x - y) } : {}),
+    ...(Number.isInteger(a.velocityLayers) && (a.velocityLayers as number) > 0 ? { velocityLayers: a.velocityLayers as number } : {}),
+    ...(Array.isArray(a.articulations) && a.articulations.length && a.articulations.every((x) => typeof x === "string")
+      ? { articulations: a.articulations as string[] } : {}),
+    ...(typeof a.keyRangeSource === "string" && a.keyRangeSource ? { keyRangeSource: a.keyRangeSource } : {}),
   }));
 }

@@ -22,6 +22,7 @@ import type {
   StyleGrammar,
 } from "@workspace/db";
 import { createHash } from "node:crypto";
+import { instrumentDefinitionFor } from "./instrumentProfile";
 import type { SfizzInstrumentMap, SfizzWorkerState } from "./nativeRendererRouting";
 import { CANONICAL_PPQ, createCanonicalTimeline } from "./canonicalTimeline";
 import { deriveGlobalArrangementPlan, type GlobalPlannerHints } from "./globalArrangementPlanner";
@@ -113,6 +114,12 @@ const PERFORMANCE_CAPABILITIES: Record<InstrumentDefinition["family"], Instrumen
   guitar: { family: "guitar", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "pick-strum-and-fret", timingProfile: "string-aware-phrase", dynamicsProfile: "pick-velocity" },
   voice: { family: "voice", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "source-phrase-preserving", timingProfile: "canonical-source-locked", dynamicsProfile: "phrase-expression" },
   synth: { family: "synth", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "patch-articulation", timingProfile: "phrase-locked-synth", dynamicsProfile: "velocity-expression-aftertouch" },
+  // B-03: woodwinds are a family of their own (the VSCO2 flute is attested on the local worker).
+  winds: { family: "winds", nativeRenderers: ["PEDALBOARD_VST3", "SFIZZ_VSCO2_CE"], articulationProfile: "breath-and-tongue", timingProfile: "breath-phrase", dynamicsProfile: "breath-expression" },
+  // B-03: an instrument no profile knows routes to no native renderer — the
+  // export falls back to the preview stem *with that reason* instead of
+  // rendering a piano as if it were the right instrument.
+  unknown: { family: "unknown", nativeRenderers: [], articulationProfile: "unknown-instrument", timingProfile: "unknown-instrument", dynamicsProfile: "unknown-instrument" },
 };
 
 export function getInstrumentPerformanceCapability(
@@ -380,170 +387,19 @@ function provenance(
   return { model, version, parameters, parentIds, createdBy: "arrangement-engine" };
 }
 
-const RANGE = (min: number, max: number) => ({
-  min,
-  max,
-  registers: [
-    { name: "low", min, max: Math.round(min + (max - min) * 0.32), character: "warm" },
-    { name: "middle", min: Math.round(min + (max - min) * 0.25), max: Math.round(min + (max - min) * 0.75), character: "core" },
-    { name: "high", min: Math.round(min + (max - min) * 0.68), max, character: "bright" },
-  ],
-});
-const directiveMappings = (id: string) => ({
-  registers: {
-    low: { min: id === "bass" ? 28 : 36, max: id === "bass" ? 45 : 60 },
-    middle: { min: id === "bass" ? 36 : 48, max: id === "bass" ? 60 : 78 },
-    high: { min: id === "bass" ? 48 : 60, max: id === "bass" ? 67 : 96 },
-  },
-  articulationFamilies: {
-    legato: ["legato", "sustain", "normal", "finger"],
-    accent: ["marcato", "hard", "pick", "snare", "kick"],
-    tight: ["staccato", "spiccato", "mute", "closed_hat"],
-  },
-  dynamicTargets: { pp: 42, mp: 64, mf: 84, f: 108 },
-  controls: { dynamics: 1, expression: 11, articulation: 32 },
-});
-
-/** Words in an instrument's own name that settle its family; the role is consulted only when none is present. */
-const FAMILY_WORDS = ["drum", "percussion", "bass", "violin", "cello", "string", "horn", "brass", "trumpet", "guitar", "pad", "synth", "wind", "flute", "oboe", "clarinet", "bassoon", "reed"];
-
+/**
+ * B-03: `getInstrumentDefinition` is an adapter over the instrument profiles
+ * (`instrumentProfile.ts`). The output contract is unchanged for existing
+ * callers (id / family / ranges / polyphony / constraints / controls /
+ * directiveMappings); the definition now also carries `profile` — which
+ * profile answered and how the name matched. Names the profiles do not know
+ * come back as the explicit UNKNOWN definition (`family: "unknown"`,
+ * `profile.status: "unknown"`), never as a silent ten-voice piano. Before
+ * B-03 seven substring definitions lived here and everything else — WOODWINDS,
+ * ensemble, mix, a viola, a flute — was a piano.
+ */
 export function getInstrumentDefinition(instrument: string, role = ""): InstrumentDefinition {
-  const id = instrument.toLowerCase().replace(/[^a-z0-9]+/g, "_");
-  // PR-61: the role used to be matched with the same weight as the name, so a
-  // guitar in the RHYTHMIC_HARMONY role became a drum kit (range 35-81, four
-  // voices): 6.5 % of human guitar windows out of range and every five- or
-  // six-string chord an error. The name decides when it names a family, and
-  // "rhythm" means a kit only when the name names nothing else.
-  const namesFamily = FAMILY_WORDS.some((word) => id.includes(word));
-  const normalized = namesFamily ? id : `${id} ${role.toLowerCase()}`;
-  const kitByRhythm = normalized.includes("rhythm") &&
-    !FAMILY_WORDS.some((word) => word !== "drum" && word !== "percussion" && id.includes(word));
-  if (normalized.includes("drum") || normalized.includes("percussion") || kitByRhythm) {
-    return {
-      id: "drums",
-      family: "drums",
-      playableRange: { min: 35, max: 81 },
-      comfortableRange: { min: 36, max: 60 },
-      registers: RANGE(35, 81).registers,
-      polyphonic: true,
-      maxVoices: 4,
-      articulations: ["kick", "snare", "ghost", "flam", "closed_hat", "open_hat", "ride", "tom_fill"],
-      constraints: { maxLeap: 46, minNoteDuration: 0.04, maxSimultaneousNotes: 4, hands: 2, feet: 2 },
-      controls: { dynamics: [1, 11], expression: [11], pitchBend: false, aftertouch: false },
-      directiveMappings: directiveMappings("drums"),
-    };
-  }
-  if (normalized.includes("bass")) {
-    return {
-      id: "bass",
-      family: "strings",
-      playableRange: { min: 28, max: 67 },
-      comfortableRange: { min: 36, max: 60 },
-      registers: RANGE(28, 67).registers,
-      polyphonic: false,
-      maxVoices: 1,
-      articulations: ["finger", "pick", "slap", "mute", "slide"],
-      constraints: { maxLeap: 12, minNoteDuration: 0.08, maxSimultaneousNotes: 1, strings: 4 },
-      controls: { dynamics: [1], expression: [11], pitchBend: true, aftertouch: false },
-      directiveMappings: directiveMappings("bass"),
-    };
-  }
-  if (normalized.includes("violin") || normalized.includes("cello") || normalized.includes("string")) {
-    const cello = normalized.includes("cello");
-    const range = cello ? { min: 36, max: 84 } : { min: 55, max: 103 };
-    return {
-      id: cello ? "cello" : "strings",
-      family: "strings",
-      playableRange: range,
-      comfortableRange: cello ? { min: 43, max: 74 } : { min: 60, max: 91 },
-      registers: RANGE(range.min, range.max).registers,
-      polyphonic: true,
-      maxVoices: cello ? 2 : 4,
-      articulations: ["legato", "sustain", "staccato", "spiccato", "pizzicato", "tremolo", "trill", "harmonic", "vibrato"],
-      constraints: { maxLeap: cello ? 12 : 10, minNoteDuration: 0.1, maxSimultaneousNotes: cello ? 2 : 4, strings: 4 },
-      controls: { dynamics: [1], expression: [11], pitchBend: true, aftertouch: true },
-      directiveMappings: directiveMappings(cello ? "cello" : "strings"),
-    };
-  }
-  if (normalized.includes("horn") || normalized.includes("brass") || normalized.includes("trumpet")) {
-    return {
-      id: "brass",
-      family: "brass",
-      playableRange: { min: 40, max: 82 },
-      comfortableRange: { min: 48, max: 74 },
-      registers: RANGE(40, 82).registers,
-      polyphonic: false,
-      maxVoices: 1,
-      articulations: ["legato", "marcato", "staccato", "fall", "doit", "shake", "mute"],
-      constraints: { maxLeap: 12, minNoteDuration: 0.12, maxSimultaneousNotes: 1, breathSeconds: 8 },
-      controls: { dynamics: [1], expression: [11], pitchBend: true, aftertouch: true },
-      directiveMappings: directiveMappings("brass"),
-    };
-  }
-  // PR-97: the planner's "winds" part (orchestral / cinematic styles) and any
-  // named woodwind. Before this branch a "winds" track was a piano: pedal on,
-  // ten voices, no breath - and no native woodwind library could ever serve it.
-  if (normalized.includes("wind") || normalized.includes("flute") || normalized.includes("oboe") ||
-    normalized.includes("clarinet") || normalized.includes("bassoon") || normalized.includes("reed")) {
-    return {
-      id: "winds",
-      family: "winds",
-      playableRange: { min: 48, max: 96 },
-      comfortableRange: { min: 55, max: 88 },
-      registers: RANGE(48, 96).registers,
-      polyphonic: true,
-      maxVoices: 3,
-      articulations: ["legato", "sustain", "staccato", "trill", "flutter", "marcato"],
-      // A woodwind section leaps freely (the planner's climax layer spans two
-      // octaves); the first regeneration with a leap limit of 12 was refused whole.
-      constraints: { maxLeap: 24, minNoteDuration: 0.1, maxSimultaneousNotes: 3, breathSeconds: 8 },
-      controls: { dynamics: [1], expression: [11], pitchBend: true, aftertouch: false },
-      directiveMappings: directiveMappings("winds"),
-    };
-  }
-  if (normalized.includes("guitar")) {
-    return {
-      id: "guitar",
-      family: "guitar",
-      playableRange: { min: 40, max: 88 },
-      comfortableRange: { min: 45, max: 79 },
-      registers: RANGE(40, 88).registers,
-      polyphonic: true,
-      maxVoices: 6,
-      articulations: ["pick", "strum_up", "strum_down", "slide", "hammer_on", "pull_off", "palm_mute"],
-      constraints: { maxLeap: 16, minNoteDuration: 0.08, maxSimultaneousNotes: 6, strings: 6, frets: 22 },
-      controls: { dynamics: [1], expression: [11], pitchBend: true, aftertouch: false },
-      directiveMappings: directiveMappings("guitar"),
-    };
-  }
-  if (normalized.includes("pad") || normalized.includes("synth")) {
-    return {
-      id: "synth_pad",
-      family: "synth",
-      playableRange: { min: 24, max: 108 },
-      comfortableRange: { min: 40, max: 88 },
-      registers: RANGE(24, 108).registers,
-      polyphonic: true,
-      maxVoices: 8,
-      articulations: ["sustain", "pluck", "rise", "fall"],
-      constraints: { maxLeap: 24, minNoteDuration: 0.2, maxSimultaneousNotes: 8 },
-      controls: { dynamics: [1], expression: [11], sustain: 64, pitchBend: true, aftertouch: true },
-      directiveMappings: directiveMappings("synth_pad"),
-    };
-  }
-  return {
-    id: "piano",
-    family: "keys",
-    playableRange: { min: 21, max: 108 },
-    comfortableRange: { min: 36, max: 96 },
-    registers: RANGE(21, 108).registers,
-    polyphonic: true,
-    maxVoices: 10,
-    articulations: ["soft", "normal", "hard", "sustain", "staccato"],
-    constraints: { maxLeap: 24, minNoteDuration: 0.05, maxSimultaneousNotes: 10, hands: 2 },
-    controls: { dynamics: [1], expression: [11], sustain: 64, pitchBend: false, aftertouch: true },
-    directiveMappings: directiveMappings("piano"),
-  };
+  return instrumentDefinitionFor(instrument, role);
 }
 
 export function createStyleSpec(

@@ -28,24 +28,37 @@ test("a bass leap wider than the instrument allows is taken by the octave, not r
 });
 
 test("a string bed whose held chords lap the next is released at the next onset", () => {
-  // Four-voice chords, each held 1.2 s over a 1 s harmonic rhythm: eight voices sound at every downbeat but the first.
-  const chord = (t: number, root: number, tag: string) => [0, 4, 7, 11].map((iv, i) => note(`${tag}${i}`, t, 1.2, root + iv));
-  const notes = [...chord(0, 60, "a"), ...chord(1, 62, "b"), ...chord(2, 60, "c")];
+  // Full-polyphony chords (B-03: the definition says how many voices the
+  // section has), each held 1.2 s over a 1 s harmonic rhythm: twice the
+  // allowed voices sound at every downbeat but the first.
+  const voices = strings.constraints.maxSimultaneousNotes;
+  const intervals = Array.from({ length: voices }, (_, i) => [0, 4, 7, 11, 14, 16, 19, 23, 24, 28][i % 10] + 12 * Math.floor(i / 10));
+  const chord = (t: number, root: number, tag: string) => intervals.map((iv, i) => note(`${tag}${i}`, t, 1.2, root + iv));
+  const notes = [...chord(0, 48, "a"), ...chord(1, 50, "b"), ...chord(2, 48, "c")];
   assert.ok(checkPlayabilityRules(notes, strings).includes("polyphony"));
   const { notes: fixed, report } = repairPlayability({ notes, definition: strings });
   assert.equal(report.dropped, 0, "no voice is lost when a release suffices");
-  assert.ok(report.polyphonyReleases >= 8);
+  assert.ok(report.polyphonyReleases >= voices * 2);
   assert.deepEqual(checkPlayabilityRules(fixed, strings), []);
   assert.deepEqual(contractErrors(fixed, strings), []);
-  assert.equal(fixed.length, 12);
+  assert.equal(fixed.length, voices * 3);
 });
 
 test("a chord wider than the instrument's leap rule is closed up, bottom voice kept", () => {
-  // strings maxLeap 10: A3 (57) to C5 (72) to E5 (76) in one chord: gaps of 15 and 4 in the start-sorted, pitch-tied stream.
-  const notes = [note("a", 0, 1, 57), note("b", 0, 1, 72), note("c", 0, 1, 76)];
+  // B-03: the leap rule comes from the profile (GM reference). A3 (57), then
+  // a voice maxLeap + 5 above it, then one 4 above that: in the start-sorted,
+  // pitch-tied stream the first gap breaks the rule and the second does not
+  // until the first is folded.
+  const leap = strings.constraints.maxLeap;
+  const notes = [note("a", 0, 1, 57), note("b", 0, 1, 57 + leap + 5), note("c", 0, 1, 57 + leap + 9)];
   const { notes: fixed, report } = repairPlayability({ notes, definition: strings });
   assert.equal(report.leapFolds, 2);
-  assert.deepEqual(fixed.map((n) => n.pitch), [57, 60, 64]);
+  assert.equal(fixed[0].pitch, 57, "the bottom voice is kept");
+  // Each folded voice keeps its pitch class and lands on the octave nearest the voice below it.
+  assert.equal(fixed[1].pitch % 12, (57 + leap + 5) % 12);
+  assert.ok(Math.abs(fixed[1].pitch - fixed[0].pitch) <= 6);
+  assert.equal(fixed[2].pitch % 12, (57 + leap + 9) % 12);
+  assert.ok(Math.abs(fixed[2].pitch - fixed[1].pitch) <= 6);
   assert.deepEqual(checkPlayabilityRules(fixed, strings), []);
   assert.deepEqual(contractErrors(fixed, strings), []);
 });

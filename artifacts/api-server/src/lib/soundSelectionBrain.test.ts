@@ -3,6 +3,7 @@ import test from "node:test";
 import type { MusicalNote, SoundCatalogueEntry, StyleProfile } from "@workspace/db";
 import {
   SOUND_SELECTION_METHOD,
+  assessKeyRangeFit,
   deriveSoundTarget,
   resolveTrackAsset,
   selectTrackSound,
@@ -163,4 +164,131 @@ test("the renderer's asset list becomes a catalogue without paths or empty hints
     { id: "b" },
   ]);
   assert.deepEqual(entries, [{ assetId: "a", name: "A", roles: ["PAD"], character: ["warm"] }, { assetId: "b" }]);
+});
+
+// ---------------------------------------------------------------------------
+// B-03: range-aware selection. The catalogue below is the local worker's
+// twelve attested assets with the ranges read from their SFZ files
+// (services/vst3-render-worker/known_asset_ranges.json); the two synths
+// answer every key.
+// ---------------------------------------------------------------------------
+
+const LOCAL_WORKER: SoundCatalogueEntry[] = [
+  { assetId: "surge-xt-1.3.4", name: "Surge XT", families: ["synth"], character: ["analog", "wide", "clean", "digital"], keyRange: [0, 127], keyRangeSource: "synth" },
+  { assetId: "dexed-1.0.1", name: "Dexed", families: ["synth"], character: ["digital", "fm", "bright", "vintage", "electric"], keyRange: [0, 127], keyRangeSource: "synth" },
+  { assetId: "sfizz-salamander-grand-v3", name: "Salamander Grand Piano", families: ["keys"], character: ["acoustic", "piano", "natural", "sampled", "grand"], keyRange: [21, 108], sampledRange: [21, 108], velocityLayers: 4 },
+  { assetId: "sfizz-vsco2-violin-ens-sus", name: "VSCO2 Violin Ensemble Sustain", families: ["strings"], roles: ["PAD", "HARMONIC_BED", "TRANSITION", "CLIMAX_LAYER", "COUNTER_MELODY"], character: ["acoustic", "orchestral", "sampled", "sustain", "natural"], keyRange: [55, 86], sampledRange: [55, 86] },
+  { assetId: "sfizz-vsco2-cello-ens-sus", name: "VSCO2 Cello Ensemble Sustain", families: ["strings"], roles: ["FOUNDATION", "HARMONIC_BED", "COUNTER_MELODY", "PAD"], character: ["acoustic", "orchestral", "sampled", "dark", "sustain"], keyRange: [36, 77], sampledRange: [36, 77] },
+  { assetId: "sfizz-vsco2-horn-sus", name: "VSCO2 French Horn Sustain", families: ["brass"], roles: ["PAD", "CLIMAX_LAYER", "HARMONIC_BED", "COUNTER_MELODY"], character: ["acoustic", "orchestral", "sampled", "warm"], keyRange: [33, 77], sampledRange: [33, 77] },
+  { assetId: "sfizz-vsco2-flute-sus", name: "VSCO2 Flute Sustain Vibrato", families: ["winds"], roles: ["LEAD", "COUNTER_MELODY", "CALL_RESPONSE"], character: ["acoustic", "orchestral", "sampled", "airy"], keyRange: [60, 96], sampledRange: [60, 96] },
+  { assetId: "sfizz-vsco2-harp", name: "VSCO2 Harp", families: ["strings"], roles: ["OSTINATO", "ACCENT"], character: ["acoustic", "orchestral", "plucked", "sampled"], keyRange: [28, 101], sampledRange: [28, 101] },
+  { assetId: "sfizz-drskit-stereo", name: "DrumGizmo DRSKit", families: ["drums"], roles: ["GROOVE", "FILL"], character: ["acoustic", "kit", "drum", "natural", "sampled"], keyRange: [35, 76], mappedKeys: [35, 36, 37, 38, 40, 41, 42, 43, 44, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 76] },
+  { assetId: "sfizz-meatbass-arco", name: "Karoryfer Meatbass Arco", families: ["bass", "strings"], roles: ["BASS", "FOUNDATION"], character: ["acoustic", "dark", "mono", "sampled", "bowed"], keyRange: [12, 72], sampledRange: [21, 69] },
+  { assetId: "sfizz-meatbass-pizz", name: "Karoryfer Meatbass Pizzicato", families: ["bass", "strings"], roles: ["BASS", "FOUNDATION", "OSTINATO"], character: ["acoustic", "dark", "mono", "sampled", "plucked"], keyRange: [12, 79], sampledRange: [21, 79] },
+  { assetId: "sfizz-emilyguitar-basic", name: "Karoryfer Emilyguitar Electric", families: ["guitar"], roles: ["RHYTHMIC_HARMONY", "LEAD", "COUNTER_MELODY", "ACCENT"], character: ["electric", "clean", "vintage", "sampled"], keyRange: [33, 96], sampledRange: [37, 96] },
+];
+/** The catalogue as the live worker published it on 2026-09-10: no ranges at all. */
+const LOCAL_WORKER_NO_RANGES: SoundCatalogueEntry[] = LOCAL_WORKER.map(({ keyRange, sampledRange, mappedKeys, velocityLayers, keyRangeSource, ...rest }) => rest);
+
+const span = (lo: number, hi: number, duration = 1.0, count = 12): MusicalNote[] =>
+  Array.from({ length: count }, (_, i) => ({ id: `s${i}`, start: i * 0.5, duration, pitch: lo + Math.round((hi - lo) * (i / Math.max(1, count - 1))), velocity: 80 }));
+
+/** The owner's v6 string part: HARMONIC_BED written at MIDI 79–91. */
+const ownerStrings = { trackId: "strings-harmonic_bed", instrument: "strings", role: "HARMONIC_BED", family: "strings", notes: span(79, 91, 1.8) };
+
+test("assessKeyRangeFit says whether an asset can sound the part, and how well", () => {
+  const cello = LOCAL_WORKER.find((c) => c.assetId === "sfizz-vsco2-cello-ens-sus")!;
+  const outside = assessKeyRangeFit(ownerStrings.notes, cello);
+  assert.equal(outside.status, "outside");
+  assert.equal(outside.outside, ownerStrings.notes.length, "every note of a 79–91 part is above a 36–77 cello");
+  assert.match(outside.detail, /key range 36–77 does not cover the part \(79–91\)/);
+  const violins = LOCAL_WORKER.find((c) => c.assetId === "sfizz-vsco2-violin-ens-sus")!;
+  const partly = assessKeyRangeFit(ownerStrings.notes, violins);
+  assert.equal(partly.status, "outside", "the violin ensemble is sampled to D6 (86): 87–91 would be silent too");
+  assert.ok(partly.outside > 0 && partly.outside < ownerStrings.notes.length);
+  const fits = assessKeyRangeFit(span(60, 79, 1.8), violins);
+  assert.equal(fits.status, "covers"); assert.equal(fits.sampled, "covers");
+  const stretched = assessKeyRangeFit(span(15, 40), LOCAL_WORKER.find((c) => c.assetId === "sfizz-meatbass-arco")!);
+  assert.equal(stretched.status, "covers"); assert.equal(stretched.sampled, "stretched");
+  assert.match(stretched.detail, /stretched samples/);
+  const unverified = assessKeyRangeFit(span(60, 79), { });
+  assert.equal(unverified.status, "unverified");
+  const kit = LOCAL_WORKER.find((c) => c.assetId === "sfizz-drskit-stereo")!;
+  assert.equal(assessKeyRangeFit([{ pitch: 54 }], kit).status, "covers", "GM 54 (tambourine) is a mapped DRSKit key (crash L tip)");
+  const unmapped = assessKeyRangeFit([{ pitch: 36 }, { pitch: 59 }, { pitch: 75 }], kit);
+  assert.equal(unmapped.status, "outside"); assert.deepEqual(unmapped.unmapped, [59, 75]);
+  assert.equal(assessKeyRangeFit([], kit).status, "no-notes");
+});
+
+test("the owner's MIDI 79–91 string part is never routed to the cello ensemble; with ranges declared it is refused outright rather than rendered silent", () => {
+  const withRanges = selectTrackSound(ownerStrings, LOCAL_WORKER);
+  assert.notEqual(withRanges.selection.assetId, "sfizz-vsco2-cello-ens-sus");
+  const cello = withRanges.selection.rejected.find((r) => r.assetId === "sfizz-vsco2-cello-ens-sus");
+  assert.ok(cello && /does not cover the part \(79–91\)/.test(cello.reason), cello?.reason);
+  const violins = withRanges.selection.rejected.find((r) => r.assetId === "sfizz-vsco2-violin-ens-sus");
+  assert.ok(violins && /55–86/.test(violins.reason), "the violins are sampled to 86: the part reaches 91");
+  // Nothing in the strings family can sound 79–91 except the harp (28–101); the brain says so.
+  assert.equal(withRanges.selection.assetId, "sfizz-vsco2-harp");
+  assert.match(withRanges.selection.reason, /range 28–101 covers the part \(79–91\)/);
+  assert.equal(withRanges.method, SOUND_SELECTION_METHOD);
+  // Before B-03 (no ranges on the catalogue) the same call picked the cello ensemble - the v4 failure.
+  const before = selectTrackSound(ownerStrings, LOCAL_WORKER_NO_RANGES);
+  assert.equal(before.selection.assetId, "sfizz-vsco2-cello-ens-sus", "positive control: without ranges the old choice comes back");
+  // The operator's v6 rule (strings -> violin ensemble) is refused for this part, with the reason.
+  const operator = resolveTrackAsset({ track: ownerStrings, table: { byInstrument: { strings: "sfizz-vsco2-violin-ens-sus" } }, catalogue: LOCAL_WORKER });
+  assert.equal(operator.source, "refused");
+  assert.match(operator.reason, /operator rule .* names sfizz-vsco2-violin-ens-sus, but its key range 55–86 does not cover/);
+  // Written where the register plan puts a string bed (60–79), the same rule and the same brain both give the violins.
+  const bed = { ...ownerStrings, notes: span(60, 79, 1.8) };
+  assert.equal(resolveTrackAsset({ track: bed, table: { byInstrument: { strings: "sfizz-vsco2-violin-ens-sus" } }, catalogue: LOCAL_WORKER }).source, "operator");
+  const brainBed = selectTrackSound(bed, LOCAL_WORKER);
+  assert.equal(brainBed.selection.assetId, "sfizz-vsco2-violin-ens-sus");
+  assert.match(brainBed.selection.reason, /sampled range 55–86 covers the part/);
+});
+
+test("a bass part is never routed to a violin; the sampled-range fit and a declared range beat an undeclared one", () => {
+  const bassPart = { trackId: "bass-bass", instrument: "bass", role: "BASS", family: "strings", notes: span(36, 50, 0.4) };
+  const pick = selectTrackSound(bassPart, LOCAL_WORKER);
+  assert.notEqual(pick.selection.assetId, "sfizz-vsco2-violin-ens-sus");
+  assert.ok(pick.selection.rejected.some((r) => r.assetId === "sfizz-vsco2-violin-ens-sus" && /55–86 does not cover the part \(36–50\)/.test(r.reason)));
+  assert.equal(pick.selection.assetId, "sfizz-meatbass-arco", "the bass asset declared for BASS with its own samples across 36–50");
+  // A declared fitting range outranks silence about the range.
+  const declared: SoundCatalogueEntry = { assetId: "declared", families: ["strings"], roles: ["BASS"], keyRange: [28, 67], sampledRange: [28, 67] };
+  const silent: SoundCatalogueEntry = { assetId: "silent", families: ["strings"], roles: ["BASS"] };
+  const compare = selectTrackSound(bassPart, [silent, declared]);
+  assert.equal(compare.selection.assetId, "declared");
+  const silentCandidate = compare.selection.candidates.find((c) => c.assetId === "silent")!;
+  assert.ok(silentCandidate, "an asset without a range is still a candidate");
+  assert.ok(silentCandidate.reasons.some((r) => /unverified/.test(r)));
+  assert.ok(compare.selection.candidates.find((c) => c.assetId === "declared")!.score > silentCandidate.score);
+  // Sampled fit breaks a tie between two covering assets.
+  const stretchy: SoundCatalogueEntry = { assetId: "stretchy", families: ["strings"], roles: ["BASS"], keyRange: [12, 79], sampledRange: [55, 79] };
+  assert.equal(selectTrackSound(bassPart, [stretchy, declared]).selection.assetId, "declared");
+});
+
+test("the owner's five v6 stems under the new rules, against the local worker's catalogue with ranges", () => {
+  const stems = [
+    { trackId: "bass-bass", instrument: "bass", role: "BASS", family: "strings", notes: span(36, 50, 0.4) },
+    { trackId: "percussion-accent", instrument: "percussion", role: "ACCENT", family: "drums", notes: span(54, 54, 0.1) },
+    { trackId: "mix-harmonic_bed", instrument: "mix", role: "HARMONIC_BED", family: "keys", notes: span(61, 77, 1.5) },
+    ownerStrings,
+    { trackId: "ensemble-transition", instrument: "ensemble", role: "TRANSITION", family: "keys", notes: span(62, 79, 0.5) },
+  ];
+  const chosen = Object.fromEntries(stems.map((stem) => [stem.trackId, selectTrackSound(stem, LOCAL_WORKER).selection.assetId]));
+  assert.equal(chosen["bass-bass"], "sfizz-meatbass-arco");
+  assert.equal(chosen["percussion-accent"], "sfizz-drskit-stereo");
+  assert.equal(chosen["mix-harmonic_bed"], "sfizz-salamander-grand-v3");
+  assert.equal(chosen["strings-harmonic_bed"], "sfizz-vsco2-harp", "79–91 is above every sustained string asset; the harp is the only strings asset that sounds it (and the brain says why)");
+  assert.equal(chosen["ensemble-transition"], "sfizz-salamander-grand-v3");
+});
+
+test("the renderer's range hints ride into the catalogue, validated", () => {
+  const entries = toSoundCatalogue([
+    { id: "a", keyRange: [55, 86], sampledRange: [55, 86], velocityLayers: 2, articulations: ["sustain"], keyRangeSource: "sfz-regions" },
+    { id: "b", keyRange: [90, 10], mappedKeys: ["x"], velocityLayers: 0, articulations: [] },
+    { id: "c", mappedKeys: [38, 36, 42] },
+  ]);
+  assert.deepEqual(entries[0], { assetId: "a", keyRange: [55, 86], sampledRange: [55, 86], velocityLayers: 2, articulations: ["sustain"], keyRangeSource: "sfz-regions" });
+  assert.deepEqual(entries[1], { assetId: "b" }, "an inverted range and non-numeric keys are dropped, not trusted");
+  assert.deepEqual(entries[2], { assetId: "c", mappedKeys: [36, 38, 42] });
 });

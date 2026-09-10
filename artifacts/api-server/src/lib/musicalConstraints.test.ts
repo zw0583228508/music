@@ -137,10 +137,10 @@ test("guitar fingering follows strings and frets, not pitch spread; the program'
   assert.ok(!asProgram.violations.some((v) => v.code === "excess_polyphony"));
 
   // Two trumpet notes struck together: divisi on one staff — a warning, not an error; five is an error.
-  const divisi = checkInstrumentConstraints({ family: "brass", instrument: "brass", tempoBpm: 100, notes: [n(0, 1, 64), n(0, 1, 67)] });
+  const divisi = checkInstrumentConstraints({ family: "brass", instrument: "trumpet", tempoBpm: 100, notes: [n(0, 1, 64), n(0, 1, 67)] });
   const d = divisi.violations.find((v) => v.code === "excess_polyphony");
   assert.ok(d && d.severity === "warning" && /divisi/.test(d.message));
-  const five = checkInstrumentConstraints({ family: "brass", instrument: "brass", tempoBpm: 100, notes: [n(0, 1, 55), n(0, 1, 59), n(0, 1, 62), n(0, 1, 67), n(0, 1, 71)] });
+  const five = checkInstrumentConstraints({ family: "brass", instrument: "trumpet", tempoBpm: 100, notes: [n(0, 1, 55), n(0, 1, 59), n(0, 1, 62), n(0, 1, 67), n(0, 1, 71)] });
   assert.ok(five.violations.some((v) => v.code === "excess_polyphony" && v.severity === "error"));
 
   // A leap between two voices is not a melody: the earlier note is still sounding.
@@ -151,17 +151,17 @@ test("guitar fingering follows strings and frets, not pitch spread; the program'
   assert.ok(line.violations.some((v) => v.code === "impossible_leap"));
   // The caller's leap ceiling replaces the definition's 1.5 × maxLeap.
   const brassLeap = [n(0, 0.4, 52), n(0.4, 0.4, 72)];
-  assert.ok(checkInstrumentConstraints({ family: "brass", instrument: "brass", tempoBpm: 120, notes: brassLeap }).violations.some((v) => v.code === "impossible_leap"));
-  assert.ok(!checkInstrumentConstraints({ family: "brass", instrument: "brass", tempoBpm: 120, notes: brassLeap, leapCeiling: 24 }).violations.some((v) => v.code === "impossible_leap"));
+  assert.ok(checkInstrumentConstraints({ family: "brass", instrument: "trumpet", tempoBpm: 120, notes: brassLeap }).violations.some((v) => v.code === "impossible_leap"));
+  assert.ok(!checkInstrumentConstraints({ family: "brass", instrument: "trumpet", tempoBpm: 120, notes: brassLeap, leapCeiling: 24 }).violations.some((v) => v.code === "impossible_leap"));
 });
 
 test("solo strings cannot hold a triple stop; a section can", () => {
   const chord = [n(0, 2, 55), n(0, 2, 59), n(0, 2, 62)];
-  // The cello definition models two voices — a single player, so a triple stop
-  // is impossible. The violin definition models four (a section) and is fine.
+  // A single "cello" is one player (two voices: double stops), so a triple stop
+  // is impossible. "violins" is a section definition (four voices) and is fine.
   const solo = checkInstrumentConstraints({ family: "strings", instrument: "cello", tempoBpm: 90, notes: chord });
   assert.ok(solo.violations.some((v) => v.code === "triple_stop"));
-  const inferredSection = checkInstrumentConstraints({ family: "strings", instrument: "violin", tempoBpm: 90, notes: chord });
+  const inferredSection = checkInstrumentConstraints({ family: "strings", instrument: "violins", tempoBpm: 90, notes: chord });
   assert.ok(!inferredSection.violations.some((v) => v.code === "triple_stop"),
     "a 4-voice string definition is treated as a section");
   const explicitSection = checkInstrumentConstraints({
