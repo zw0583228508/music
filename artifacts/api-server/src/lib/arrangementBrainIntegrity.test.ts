@@ -297,6 +297,6 @@ test("owner's song with the PR-98 brief: after B-01 keys is never LEAD in a sung
     assert.ok(keys && keys.notes.length > 100, `keys shipped ${keys?.notes.length ?? 0} notes`);
     assert.ok(!candidate.trackModels.some((t) => t.instrument === "mix"), "'mix' is not a family and ships no track");
   }
-  assert.ok(run.plan.sectionPlan.sections.every((s) => s.leadRole !== "instrument:keys"), "keys is never LEAD in a sung section");
+  assert.ok((run.plan.sectionPlan?.sections ?? []).every((s) => s.leadRole !== "instrument:keys"), "keys is never LEAD in a sung section");
   assert.equal(run.traceable, true);
 });
